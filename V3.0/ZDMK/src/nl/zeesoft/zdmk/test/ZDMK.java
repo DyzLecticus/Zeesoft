@@ -77,18 +77,22 @@ public class ZDMK {
 		boolean first = true;
 		for (TransformationObject transformation: Transformations.getAllTransformations()) {
 			if (!first) {
-				System.out.println("  ");
+				//System.out.println("  ");
 			}
 			first = false;
 			System.out.print(" * " + Tester.getInstance().getLinkForClass(transformation.getClass()));
 			System.out.println("  ");
-			System.out.println("   *" + transformation.getDescription() + "*  ");
+			System.out.println("   " + transformation.getDescription() + "  ");
 			if (!summary && transformation.getParameters().size()>0) {
 				for (TransformationParameter param: transformation.getParameters()) {
-					System.out.print("   Parameter **" + param.getName() + "**: " + param.getDescription());
+					String par = "   * ";
 					if (param.isMandatory()) {
-						System.out.print(" (mandatory)");
+						par += "Mandatory parameter ";
+					} else {
+						par += "Optional parameter ";
 					}
+					par += "**" + param.getName() + "**: " + param.getDescription();
+					System.out.print(par);
 					System.out.println("  ");
 				}
 			}
