@@ -1,0 +1,86 @@
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: ZIDS
+  description: Zeesoft Intelligent Dialog Server
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /dialog:
+    post:
+      description: |
+        Handles session dialog requests
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            title: Session dialog request
+            type: object
+            properties:
+              type:
+                type: string
+                description: |
+                  Mandatory request type. Possible values; 'SessionProcessInputRequest' or 'SessionEndedRequest'.
+              sessionId:
+                type: string              
+                description: |
+                  Mandatory unique session identifier.
+              input:
+                type: string              
+                description: |
+                  The dialog text input. Mandatory for type 'SessionProcessInputRequest'.
+              context:
+                type: string              
+                description: |
+                  The optional dialog context.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            title: Session dialog response
+            type: object
+            properties:
+              type:
+                type: string
+                description: |
+                  Possible values; 'SessionProcessInputRequest' or 'SessionEndedRequest'.
+              sessionId:
+                type: string              
+                description: |
+                  The unique session identifier.
+              context:
+                type: string              
+                description: |
+                  The dialog context.
+              output:
+                type: string              
+                description: |
+                  The dialog text output. Only returned for type 'SessionProcessInputRequest'.
+              log:
+                type: string              
+                description: |
+                  The dialog input/output log.
+              logThoughts:
+                type: string              
+                description: |
+                  The dialog input/output log including thoughts.
+              logAssignments:
+                type: string              
+                description: |
+                  The dialog assignment log (only included in debugging mode)
+        400:
+          description: Error response
+          schema:
+            title: Session dialog error response
+            type: object
+            properties:
+              error:
+                type: string
+                description: |
+                  The error message.

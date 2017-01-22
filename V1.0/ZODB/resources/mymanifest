@@ -1,0 +1,5 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zodb/ nl/zeesoft/zodb/batch/ nl/zeesoft/zodb/batch/impl/ nl/zeesoft/zodb/client/ nl/zeesoft/zodb/database/ nl/zeesoft/zodb/database/query/ nl/zeesoft/zdob/event/ nl/zeesoft/zodb/file/ nl/zeesoft/zodb/model/ nl/zeesoft/zodb/model/annotations/ nl/zeesoft/zodb/model/datatypes/ nl/zeesoft/zodb/model/impl/ nl/zeesoft/zodb/protocol/ 
+Main-Class: nl.zeesoft.zodb.ZODB
+Created-By: 1.0 (André van der Zee)
+

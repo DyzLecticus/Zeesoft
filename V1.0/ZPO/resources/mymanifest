@@ -1,0 +1,5 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zpo/ nl/zeesoft/zpo/batch/impl/ nl/zeesoft/zpo/controller/impl/ nl/zeesoft/zpo/format/impl/ nl/zeesoft/zpo/model/ nl/zeesoft/zpo/model/impl/ zadf.jar zodb.jar
+Main-Class: nl.zeesoft.zpo.ZPO
+Created-By: 1.0 (André van der Zee)
+

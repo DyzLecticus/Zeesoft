@@ -1,0 +1,22 @@
+{
+  "intents": [
+    {
+      "intent": "DialogIntent"
+      "slots":[
+        {
+          "name": "input",
+          "type": "AMAZON.LITERAL"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}

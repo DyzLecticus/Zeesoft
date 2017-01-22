@@ -1,0 +1,4 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zdsm nl/zeesoft/zdsm/database/cache nl/zeesoft/zdsm/database/model nl/zeesoft/zdsm/database/server nl/zeesoft/zdsm/monitor nl/zeesoft/zdsm/process nl/zeesoft/zdsm/process/impl zodb.jar  
+Main-Class: nl.zeesoft.zdsm.ZDSM
+Created-By: 1.0 (André van der Zee)

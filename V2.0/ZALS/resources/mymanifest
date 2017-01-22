@@ -1,0 +1,4 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zals nl/zeesoft/zals/database/cache nl/zeesoft/zals/database/model nl/zeesoft/zals/database/server nl/zeesoft/zals/simulator nl/zeesoft/zals/simulator/animals nl/zeesoft/zals/simulator/object zac.jar zodb.jar  
+Main-Class: nl.zeesoft.zals.ZALS
+Created-By: 1.0 (André van der Zee)

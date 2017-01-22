@@ -1,0 +1,4 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zac nl/zeesoft/zac/database/cache nl/zeesoft/zac/database/model nl/zeesoft/zac/database/server nl/zeesoft/zac/module zodb.jar  
+Main-Class: nl.zeesoft.zac.ZAC
+Created-By: 1.0 (André van der Zee)

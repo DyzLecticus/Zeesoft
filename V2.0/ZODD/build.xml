@@ -1,0 +1,142 @@
+<!DOCTYPE project>
+<project name="ZODD" default="dist" basedir=".">
+	<description>ZODD build file</description>
+
+	<!-- set global properties for this build -->
+	<property name="release" location="release"/>
+
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+	<property name="demo" location="demo"/>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<copy file="../ZODB/resources/zodb.jar" tofile="resources/zodb.jar" failonerror="false"/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<mkdir dir="${build}"/>
+		<path id="libraries">
+			<fileset dir="resources/">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		<javac srcdir="${src}" destdir="${build}" debug="on" classpathref="libraries" includeantruntime="false">
+			<exclude name="**/zeesoft/zodb/test/**" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile" description="Generate the ZODD distribution">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/lib/"/>
+        
+		<copy todir="${build}">
+            <fileset dir="${src}" />
+        </copy>		
+		<copy file="build.xml" tofile="${build}/build.xml"/>
+		<mkdir dir="${build}/resources/"/>
+		<copy file="resources/mymanifest" tofile="${build}/resources/mymanifest"/>
+		<copy file="resources/README.txt" tofile="${build}/resources/README.txt"/>
+		<copy file="resources/install.bat" tofile="${build}/resources/install.bat"/>
+
+		<jar jarfile="${dist}/lib/zodd.jar" basedir="${build}" manifest="resources/mymanifest"/>
+		
+		<copy file="resources/README.txt" tofile="${dist}/README.txt"/>
+		<copy file="resources/install.bat" tofile="${dist}/install.bat"/>
+		<copy file="resources/zodb.jar" tofile="${dist}/lib/zodb.jar"/>
+		
+		<delete>
+            <fileset dir="${build}" includes="**/*.java"/>
+		</delete>
+	</target>
+
+	<target name="demo_install" depends="dist" description="Install the ZODD application">
+		<copy todir="${demo}">
+            <fileset dir="${dist}" />
+        </copy>		
+		<exec dir="${demo}" executable="cmd" > 
+			<arg line="/c install.bat"/>
+		</exec> 
+	</target>
+
+	<target name="clean" description="Clean up" depends="init">
+		<antcall target="stop_if_working"/>
+		<antcall target="clean_if_not_working"/>
+		<antcall target="clean_anyway"/>
+	</target>
+
+	<target name="zip" description="zip">
+		<antcall target="clean_anyway"/>
+		<antcall target="dist"/>
+		<zip destfile="ZODD.zip" basedir="${dist}"/>
+	</target>
+	
+	<target name="stop" description="Stop">
+		<antcall target="stop_if_working"/>
+	</target>
+
+	<target name="start" description="Start">
+		<antcall target="start_if_installed"/>
+	</target>
+
+	<target name="control" description="Control">
+		<antcall target="control_if_installed"/>
+	</target>
+
+	<target name="check_installed">
+	    <available file="${demo}/lib/install.log" property="_installed"/>
+	</target>
+	
+	<target name="check_working" depends="check_installed" if="_installed">
+	    <available file="${demo}/data/DB_STATUS" property="_working"/>
+	</target>
+
+	<target name="stop_if_working" depends="check_working" if="_working">
+		<exec dir="${demo}" executable="cmd" > 
+			<arg line="/c stop.bat"/>
+		</exec>
+		<sleep seconds="3"/>
+	</target>
+
+	<target name="start_if_installed" depends="check_installed" if="_installed">
+		<exec dir="${demo}" executable="cmd" > 
+			<arg line="/c start.bat"/>
+		</exec>
+	</target>
+
+	<target name="control_if_installed" depends="check_installed" if="_installed">
+		<exec dir="${demo}" executable="cmd" > 
+			<arg line="/c control.bat"/>
+		</exec>
+	</target>
+
+	<target name="check_not_working_demo" depends="check_installed" if="_installed">
+		<condition property="_not_working">
+		    <not>
+			    <available file="${demo}/data/DB_STATUS"/>
+		    </not>
+		</condition>
+	</target>
+
+	<target name="check_not_working" depends="check_installed" if="_installed">
+		<condition property="_not_working">
+		    <not>
+			    <available file="${demo}/data/DB_STATUS"/>
+		    </not>
+		</condition>
+	</target>
+
+	<target name="clean_if_not_working" depends="check_not_working" if="_not_working">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+		<delete dir="${demo}"/>
+	</target>
+	
+	<target name="clean_anyway">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+</project>
+

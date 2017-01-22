@@ -1,0 +1,177 @@
+<project name="ZCRM" default="dist_install" basedir=".">
+	<description>ZCRM build file</description>
+
+	<!-- set global properties for this build -->
+	<property name="release" location="release"/>
+
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+
+	<property name="dist_zodb" location="../ZODB/dist/"/>
+	<property name="dist_zadf" location="../ZADF/dist/"/>
+	<property name="dist_zpo" location="../ZPO/dist/"/>
+
+	<property name="install.bat" value="${base.dir}/dist/bin/install.bat"/> 
+	
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<copy file="${dist_zodb}/lib/zodb.jar" tofile="resources/zodb.jar" failonerror="false"/>
+		<copy file="${dist_zadf}/lib/zadf.jar" tofile="resources/zadf.jar" failonerror="false"/>
+		<copy file="${dist_zpo}/lib/zpo.jar" tofile="resources/zpo.jar" failonerror="false"/>
+		<copy todir="resources/icons/">
+			<fileset dir="${dist_zpo}/icons/">
+				<include name="*.png" />
+			</fileset>
+		</copy>
+		<!--
+		<copy file="${dist_zadf}/README.txt" tofile="resources/README.txt"/>
+		-->
+	</target>
+	
+	<target name="compile" depends="init">
+		<mkdir dir="${build}"/>
+		<copy todir="${build}">
+			<fileset dir="${src}">
+				<exclude name="**/zeesoft/zcrm/test/**/*.java" />
+			</fileset>
+		</copy>
+
+		<path id="libraries">
+			<fileset dir="resources/">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		
+		<javac srcdir="${src}" destdir="${build}" debug="on" classpathref="libraries" includeantruntime="false">
+			<exclude name="**/zeesoft/zcrm/test/**/*.java" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/lib/"/>
+		<mkdir dir="${dist}/bin/"/>
+		<mkdir dir="${dist}/icons/"/>
+
+		<jar jarfile="${dist}/lib/zcrm.jar" basedir="${build}" manifest="resources/mymanifest"/>
+
+		<copy file="resources/zodb.jar" tofile="${dist}/lib/zodb.jar"/>
+		<copy file="resources/zadf.jar" tofile="${dist}/lib/zadf.jar"/>
+		<copy file="resources/zpo.jar" tofile="${dist}/lib/zpo.jar"/>
+		<copy file="resources/java.exe" tofile="${dist}/bin/java.exe"/>
+		<copy file="resources/install.bat" tofile="${dist}/bin/install.bat"/>
+		<copy file="resources/README.txt" tofile="${dist}/README.txt"/>
+		<copy todir="${dist}/icons/">
+			<fileset dir="resources/icons/">
+				<include name="*.png" />
+			</fileset>
+		</copy>
+
+		<exec dir="resources" executable="cmd" > 
+			<arg line="/c describe.bat"/>
+		</exec> 
+	</target>
+
+	<target name="dist_install" depends="dist" description="Generate the ZCRM distribution">
+		<antcall target="install_if_not_installed"/>
+	</target>
+
+	<target name="release" depends="dist" description="Create release">
+		<delete dir="${release}"/>
+		<mkdir dir="${release}"/>
+		
+		<mkdir dir="${release}/source"/>
+
+		<copy todir="${release}/source">
+			<fileset dir="../">
+				<include name="**/ZODB/src/**"/>
+				<include name="**/ZODB/resources/**"/>
+				<include name="**/ZODB/.classpath"/>
+				<include name="**/ZODB/.project"/>
+				<include name="**/ZODB/build.xml"/>
+				<include name="**/ZADF/src/**"/>
+				<include name="**/ZADF/resources/**"/>
+				<include name="**/ZADF/.classpath"/>
+				<include name="**/ZADF/.project"/>
+				<include name="**/ZADF/build.xml"/>
+				<include name="**/ZPO/src/**"/>
+				<include name="**/ZPO/resources/**"/>
+				<include name="**/ZPO/.classpath"/>
+				<include name="**/ZPO/.project"/>
+				<include name="**/ZPO/build.xml"/>
+				<include name="**/ZCRM/src/**"/>
+				<include name="**/ZCRM/resources/**"/>
+				<include name="**/ZCRM/.classpath"/>
+				<include name="**/ZCRM/.project"/>
+				<include name="**/ZCRM/build.xml"/>
+			</fileset>
+		</copy>
+		
+		<zip destfile="${release}/ZODB_ZADF_ZPO_ZCRM_src.zip" basedir="${release}/source/"/>
+		<delete dir="${release}/source"/>
+		
+		<antcall target="clean"/>
+		<antcall target="dist"/>
+		<zip destfile="${release}/ZCRM.zip" basedir="${dist}"/>
+		<antcall target="install_if_not_installed"/>
+	</target>
+
+	<target name="clean" description="Clean up">
+		<antcall target="check_lock"/>
+		<antcall target="stop_if_running"/>
+		<antcall target="clean_if_not_running"/>
+	</target>
+
+	<target name="check_running" depends="check_installed" if="stopServer_bat_present">
+	    <available file="${dist}/data/.lock" property="_lock_present"/>
+	</target>
+
+	<target name="check_not_running">
+		<condition property="_lock_not_present">
+		    <not>
+			    <available file="${dist}/data/.lock"/>
+		    </not>
+		</condition>
+	</target>
+	
+	<target name="check_installed">
+	    <available file="${dist}/bin/stopServer.bat" property="stopServer_bat_present"/>
+	</target>
+
+	<target name="check_not_installed">
+		<condition property="stopServer_bat_not_present">
+		    <not>
+			    <available file="${dist}/bin/stopServer.bat"/>
+		    </not>
+		</condition>
+	</target>
+
+	<target name="check_lock" depends="check_running" if="_lock_present">
+		<exec dir="${dist}/bin" executable="cmd" > 
+			<arg line="/c checkLock.bat"/>
+		</exec>
+		<sleep seconds="2"/>
+	</target>
+
+	<target name="stop_if_running" depends="check_running" if="_lock_present">
+		<exec dir="${dist}/bin" executable="cmd" > 
+			<arg line="/c stopServer.bat"/>
+		</exec> 
+		<sleep seconds="2"/>
+	</target>
+
+	<target name="clean_if_not_running" depends="check_not_running" if="_lock_not_present">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="install_if_not_installed" depends="check_not_installed" if="stopServer_bat_not_present">
+		<exec dir="${dist}/bin" executable="cmd" > 
+			<arg line="/c install.bat"/>
+		</exec> 
+	</target>
+
+</project>
+

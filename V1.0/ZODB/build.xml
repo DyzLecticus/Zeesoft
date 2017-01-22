@@ -1,0 +1,109 @@
+<project name="ZODB" default="dist" basedir=".">
+	<description>ZODB build file</description>
+
+	<!-- set global properties for this build -->
+	<property name="release" location="release"/>
+
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<mkdir dir="${build}"/>
+		<copy todir="${build}">
+			<fileset dir="${src}">
+				<exclude name="**/zeesoft/zodb/test/**/*.java" />
+			</fileset>
+		</copy>
+
+		<path id="libraries">
+			<fileset dir="resources/">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		
+		<javac srcdir="${src}" destdir="${build}" debug="on" classpathref="libraries" includeantruntime="false">
+			<exclude name="**/zeesoft/zodb/test/**/*.java" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile" description="Generate the ZODB distribution">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/lib/"/>
+		<mkdir dir="${dist}/bin/"/>
+
+		<jar jarfile="${dist}/lib/zodb.jar" basedir="${build}" manifest="resources/mymanifest"/>
+
+		<copy file="resources/java.exe" tofile="${dist}/bin/java.exe"/>
+		<copy file="resources/install.bat" tofile="${dist}/bin/install.bat"/>
+		<exec dir="resources" executable="cmd" > 
+			<arg line="/c describe.bat"/>
+		</exec> 
+	</target>
+
+	<target name="dist_install" depends="dist" description="Generate the ZODB distribution">
+		<antcall target="install_if_not_installed"/>
+	</target>
+
+	<target name="clean" description="Clean up">
+		<antcall target="check_lock"/>
+		<antcall target="stop_if_running"/>
+		<antcall target="clean_if_not_running"/>
+	</target>
+
+	<target name="check_running" depends="check_installed" if="stopServer_bat_present">
+	    <available file="${dist}/data/.lock" property="_lock_present"/>
+	</target>
+
+	<target name="check_not_running">
+		<condition property="_lock_not_present">
+		    <not>
+			    <available file="${dist}/data/.lock"/>
+		    </not>
+		</condition>
+	</target>
+	
+	<target name="check_installed">
+	    <available file="${dist}/bin/stopServer.bat" property="stopServer_bat_present"/>
+	</target>
+
+	<target name="check_not_installed">
+		<condition property="stopServer_bat_not_present">
+		    <not>
+			    <available file="${dist}/bin/stopServer.bat"/>
+		    </not>
+		</condition>
+	</target>
+
+	<target name="check_lock" depends="check_running" if="_lock_present">
+		<exec dir="${dist}/bin" executable="cmd" > 
+			<arg line="/c checkLock.bat"/>
+		</exec>
+		<sleep seconds="2"/>
+	</target>
+
+	<target name="stop_if_running" depends="check_running" if="_lock_present">
+		<exec dir="${dist}/bin" executable="cmd" > 
+			<arg line="/c stopServer.bat"/>
+		</exec> 
+		<sleep seconds="2"/>
+	</target>
+
+	<target name="clean_if_not_running" depends="check_not_running" if="_lock_not_present">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="install_if_not_installed" depends="check_not_installed" if="stopServer_bat_not_present">
+		<exec dir="${dist}/bin" executable="cmd" > 
+			<arg line="/c install.bat"/>
+		</exec> 
+	</target>
+
+</project>
+

@@ -1,0 +1,5 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zcrm/ nl/zeesoft/zcrm/batch/impl/ nl/zeesoft/zcrm/controller/impl/ nl/zeesoft/zcrm/format/impl/ nl/zeesoft/zcrm/model/ nl/zeesoft/zcrm/model/impl/ zpo.jar zadf.jar zodb.jar
+Main-Class: nl.zeesoft.zcrm.ZCRM
+Created-By: 1.0 (André van der Zee)
+

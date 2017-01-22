@@ -1,0 +1,5 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zodb/ nl/zeesoft/zodb/database/ nl/zeesoft/zodb/database/cache nl/zeesoft/zodb/database/index/ nl/zeesoft/zodb/database/model/ nl/zeesoft/zodb/database/request/ nl/zeesoft/zodb/database/server/ nl/zeesoft/zodb/database/protocol/ nl/zeesoft/zodb/event/ nl/zeesoft/zodb/file/ nl/zeesoft/zodb/file/image/ nl/zeesoft/zodb/file/json/ nl/zeesoft/zodb/file/xml/ nl/zeesoft/zodb/file/image/
+Main-Class: nl.zeesoft.zodb.ZODB
+Created-By: 1.0 (André van der Zee)
+

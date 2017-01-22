@@ -1,0 +1,5 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zacs nl/zeesoft/zacs/database/cache nl/zeesoft/zacs/database/model nl/zeesoft/zacs/database/server nl/zeesoft/zacs/simulator nl/zeesoft/zacs/image zodb.jar  
+Main-Class: nl.zeesoft.zacs.ZACS
+Created-By: 1.0 (André van der Zee)
+

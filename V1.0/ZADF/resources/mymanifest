@@ -1,0 +1,5 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zadf/ nl/zeesoft/zadf/controller/ nl/zeesoft/zadf/batch/impl/ nl/zeesoft/zadf/controller/impl/ nl/zeesoft/zadf/format/ nl/zeesoft/zadf/format/impl/ nl/zeesoft/zadf/gui/ nl/zeesoft/zadf/gui/panel/ nl/zeesoft/zadf/gui/property/ nl/zeesoft/zadf/model/ nl/zeesoft/zadf/model/impl/ zodb.jar 
+Main-Class: nl.zeesoft.zadf.ZADF
+Created-By: 1.0 (André van der Zee)
+

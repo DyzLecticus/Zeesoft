@@ -1,0 +1,3 @@
+Manifest-Version: 1.2
+Class-path: nl/zeesoft/zids nl/zeesoft/zids/database/cache nl/zeesoft/zids/database/model nl/zeesoft/zids/database/pattern nl/zeesoft/zids/dialog/controller nl/zeesoft/zids/dialog/pattern nl/zeesoft/zids/json nl/zeesoft/zids/server nl/zeesoft/zids/server/requesthandler nl/zeesoft/zids/server/resource zacs.jar zodb.jar 
+Created-By: 1.0 (André van der Zee)
