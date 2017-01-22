@@ -81,23 +81,11 @@ public class ZDMK {
 			}
 			first = false;
 			System.out.print(" * " + Tester.getInstance().getLinkForClass(transformation.getClass()));
-			System.out.print("(");
-			boolean firstParam = true;
-			for (TransformationParameter param: transformation.getParameters()) {
-				if (!summary || param.isMandatory()) {
-					if (!firstParam) {
-						System.out.print(", ");
-					}
-					firstParam = false;
-					System.out.print(param.getName());
-				}
-			}
-			System.out.print(")");
 			System.out.println("  ");
 			System.out.println("   *" + transformation.getDescription() + "*  ");
 			if (!summary && transformation.getParameters().size()>0) {
 				for (TransformationParameter param: transformation.getParameters()) {
-					System.out.print("   **" + param.getName() + "**: " + param.getDescription());
+					System.out.print("   Parameter **" + param.getName() + "**: " + param.getDescription());
 					if (param.isMandatory()) {
 						System.out.print(" (mandatory)");
 					}
