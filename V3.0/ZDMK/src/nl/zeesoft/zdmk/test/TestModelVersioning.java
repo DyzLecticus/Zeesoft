@@ -57,22 +57,22 @@ public class TestModelVersioning extends TestObject {
 		for (TransformationObject transformation: transformations) {
 			model.applyTransformation(transformation);
 		}		
-		assertEqual(model.getVersions().size(),3,"Number of model versions does not meet expectation");
-		if (model.getVersions().size()>=3) {
-			assertEqual(model.getVersions().get(0).getInitialTransformations().size(),1,"Number of version 1 initial transformations does not meet expectation");
-			assertEqual(model.getVersions().get(1).getInitialTransformations().size(),7,"Number of version 2 initial transformations does not meet expectation");
-			assertEqual(model.getVersions().get(2).getInitialTransformations().size(),15,"Number of version 3 initial transformations does not meet expectation");
-			assertEqual(model.getVersions().get(2).getTransformations().size(),9,"Number of version 3 transformations does not meet expectation");
+		assertEqual(model.getVersionsCopy().size(),3,"Number of model versions does not meet expectation");
+		if (model.getVersionsCopy().size()>=3) {
+			assertEqual(model.getVersionsCopy().get(0).getInitialTransformations().size(),1,"Number of version 1 initial transformations does not meet expectation");
+			assertEqual(model.getVersionsCopy().get(1).getInitialTransformations().size(),7,"Number of version 2 initial transformations does not meet expectation");
+			assertEqual(model.getVersionsCopy().get(2).getInitialTransformations().size(),15,"Number of version 3 initial transformations does not meet expectation");
+			assertEqual(model.getVersionsCopy().get(2).getTransformations().size(),9,"Number of version 3 transformations does not meet expectation");
 		}
-		assertEqual(model.getPackages().size(),3,"Number of model packages does not meet expectation");
-		assertEqual(model.getPackages().get(2).getClasses().size(),1,"Number of package classes does not meet expectation");
+		assertEqual(model.getPackagesCopy().size(),3,"Number of model packages does not meet expectation");
+		assertEqual(model.getPackagesCopy().get(2).getClasses().size(),1,"Number of package classes does not meet expectation");
 
 		// Revert current version changes
 		model.applyTransformation(new RevertVersionCurrent());
 		String error = model.applyTransformation(new RevertVersionCurrent());
-		assertEqual(model.getVersions().size(),3,"Number of model versions does not meet expectation");
-		assertEqual(model.getPackages().size(),2,"Number of model packages does not meet expectation");
-		assertEqual(model.getPackages().get(1).getClasses().size(),2,"Number of package classes does not meet expectation");
+		assertEqual(model.getVersionsCopy().size(),3,"Number of model versions does not meet expectation");
+		assertEqual(model.getPackagesCopy().size(),2,"Number of model packages does not meet expectation");
+		assertEqual(model.getPackagesCopy().get(1).getClasses().size(),2,"Number of package classes does not meet expectation");
 		assertEqual(error,"The current model version does not contain any changes","Revert changes error message does not meet expectation");
 
 		ZDMK.describeModelVersionLogs(model);
@@ -80,9 +80,9 @@ public class TestModelVersioning extends TestObject {
 
 		// Revert back to first version
 		model.applyTransformation(new RevertVersion(1));
-		assertEqual(model.getVersions().size(),1,"Number of model versions does not meet expectation");
-		assertEqual(model.getPackages().size(),1,"Number of model packages does not meet expectation");
-		assertEqual(model.getPackages().get(0).getClasses().size(),2,"Number of package classes does not meet expectation");
+		assertEqual(model.getVersionsCopy().size(),1,"Number of model versions does not meet expectation");
+		assertEqual(model.getPackagesCopy().size(),1,"Number of model packages does not meet expectation");
+		assertEqual(model.getPackagesCopy().get(0).getClasses().size(),2,"Number of package classes does not meet expectation");
 		
 		ZDMK.describeModelVersionLogs(model);
 		ZDMK.describeModelPackages(model,true);

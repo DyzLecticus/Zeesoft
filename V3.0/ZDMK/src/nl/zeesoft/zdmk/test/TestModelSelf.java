@@ -39,19 +39,19 @@ public class TestModelSelf extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		ModelSelf modelSelf = (ModelSelf) Tester.getInstance().getMockedObject(MockModelSelf.class.getName());
-		assertEqual(modelSelf.getVersions().size(),2,"Number of versions does not meet expectation");
-		if (modelSelf.getVersions().size()>=1) {
-			assertEqual(modelSelf.getVersions().get(0).getTransformations().size(),28,"Number of version transformations does not meet expectation");
+		assertEqual(modelSelf.getVersionsCopy().size(),2,"Number of versions does not meet expectation");
+		if (modelSelf.getVersionsCopy().size()>=1) {
+			assertEqual(modelSelf.getVersionsCopy().get(0).getTransformations().size(),28,"Number of version transformations does not meet expectation");
 		}
-		if (modelSelf.getVersions().size()>=2) {
-			assertEqual(modelSelf.getVersions().get(1).getInitialTransformations().size(),32,"Number of version initial transformations does not meet expectation");
+		if (modelSelf.getVersionsCopy().size()>=2) {
+			assertEqual(modelSelf.getVersionsCopy().get(1).getInitialTransformations().size(),32,"Number of version initial transformations does not meet expectation");
 		}
-		assertEqual(modelSelf.getPackages().size(),1,"Number of packages does not meet expectation");
-		if (modelSelf.getPackages().size()>0) {
-			assertEqual(modelSelf.getPackages().get(0).getClasses().size(),9,"Number of package classes does not meet expectation");
-			if (modelSelf.getPackages().get(0).getClasses().size()>=9) {
-				assertEqual(modelSelf.getPackages().get(0).getClasses().get(8).getProperties().size(),2,"Number of package class properties does not meet expectation");
-				assertEqual(modelSelf.getPackages().get(0).getClasses().get(8).getExtendedProperties().size(),4,"Number of extended package class properties does not meet expectation");
+		assertEqual(modelSelf.getPackagesCopy().size(),1,"Number of packages does not meet expectation");
+		if (modelSelf.getPackagesCopy().size()>0) {
+			assertEqual(modelSelf.getPackagesCopy().get(0).getClasses().size(),9,"Number of package classes does not meet expectation");
+			if (modelSelf.getPackagesCopy().get(0).getClasses().size()>=9) {
+				assertEqual(modelSelf.getPackagesCopy().get(0).getClasses().get(8).getProperties().size(),2,"Number of package class properties does not meet expectation");
+				assertEqual(modelSelf.getPackagesCopy().get(0).getClasses().get(8).getExtendedProperties().size(),4,"Number of extended package class properties does not meet expectation");
 			}
 		}
 		ZDMK.describeModelVersionLogs(modelSelf);

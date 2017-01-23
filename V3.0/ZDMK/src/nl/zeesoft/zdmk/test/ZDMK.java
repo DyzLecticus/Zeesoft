@@ -28,7 +28,7 @@ public class ZDMK {
 		System.out.println("==========================");
 		System.out.println("The Zeesoft Data Modelling Kit (ZDMK) is an open source library for Java application development.");
 		System.out.println("It provides support for versioned data model management.");
-		System.out.println("The ZDMK extends the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK)(ZDK).");
+		System.out.println("The ZDMK extends the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK) (ZDK).");
 		System.out.println();
 		System.out.println("**Release downloads**  ");
 		System.out.println("Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDMK/releases/zdmk-" + version + ".zip) to download the latest ZDMK release (version " + version + ").");
@@ -47,7 +47,7 @@ public class ZDMK {
 		System.out.println("Models are created and changed by applying transformations.");
 		System.out.println("All model transformations are logged in model versions.");
 		System.out.println("A model version also contains a set of transformations that can be used to recreate initial state of the model for that version.");
-		System.out.println("Please note that models are not thread safe and that directly manipulating the internal model structure is not supported.");
+		System.out.println("Please note that models are not thread safe.");
 		System.out.println();
 		System.out.println("**Transformations**  ");
 		System.out.println("Models support the following transformations;  ");
@@ -74,12 +74,7 @@ public class ZDMK {
 	}
 	
 	public static void describeTransformations(boolean summary) {
-		boolean first = true;
 		for (TransformationObject transformation: Transformations.getAllTransformations()) {
-			if (!first) {
-				//System.out.println("  ");
-			}
-			first = false;
 			System.out.print(" * " + Tester.getInstance().getLinkForClass(transformation.getClass()));
 			System.out.println("  ");
 			System.out.println("   " + transformation.getDescription() + "  ");
@@ -101,7 +96,7 @@ public class ZDMK {
 
 	public static void describeModelVersionLogs(Model model) {
 		StringBuilder desc = new StringBuilder();
-		for (ModelVersion version: model.getVersions()) {
+		for (ModelVersion version: model.getVersionsCopy()) {
 			if (version.getLog().length()>0) {
 				if (desc.length()>0) {
 					desc.append("\n");
@@ -121,7 +116,7 @@ public class ZDMK {
 	
 	public static final StringBuilder getModelPackageDescription(Model model, boolean includeExtendedProperties) {
 		StringBuilder desc = new StringBuilder();
-		for (ModelPackage pack: model.getPackages()) {
+		for (ModelPackage pack: model.getPackagesCopy()) {
 			desc.append("Package: ");
 			desc.append(pack.getName());
 			desc.append("\n");

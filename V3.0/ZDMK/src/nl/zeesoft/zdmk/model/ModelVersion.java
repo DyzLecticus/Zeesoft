@@ -16,10 +16,6 @@ public final class ModelVersion {
 	private List<TransformationObject> 	initialTransformations	= new ArrayList<TransformationObject>();
 	private StringBuilder				log						= new StringBuilder();
 
-	protected ModelVersion() {
-		
-	}
-	
 	protected void appliedTransformation(TransformationObject transformation,boolean appendLog) {
 		transformations.add(transformation);
 		if (appendLog) {
@@ -38,6 +34,19 @@ public final class ModelVersion {
 		log.append(" ");
 		log.append(line);
 		log.append("\n");
+	}
+
+	protected ModelVersion getCopy() {
+		ModelVersion r = new ModelVersion();
+		r.setNumber(number);
+		r.setLog(new StringBuilder(log));
+		for (TransformationObject trans: transformations) {
+			r.getTransformations().add(trans.getCopy());
+		}
+		for (TransformationObject trans: initialTransformations) {
+			r.getInitialTransformations().add(trans.getCopy());
+		}
+		return r;
 	}
 	
 	/**

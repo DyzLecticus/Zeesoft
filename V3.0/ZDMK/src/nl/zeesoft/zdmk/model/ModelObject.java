@@ -10,10 +10,6 @@ import nl.zeesoft.zdmk.model.transformations.TransformationObject;
 public abstract class ModelObject {
 	private Model	model	= null;
 	
-	protected ModelObject() {
-		
-	}
-	
 	/**
 	 * Applies a transformation to this object.
 	 * 
@@ -71,5 +67,14 @@ public abstract class ModelObject {
 	 */
 	protected void setModel(Model model) {
 		this.model = model;
+	}
+
+	/**
+	 * Returns a copy of the model object. 
+	 * 
+	 * @return A copy of the model object
+	 */
+	protected ModelObject getCopy() {
+		return null;
 	}
 }

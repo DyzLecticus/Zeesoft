@@ -15,10 +15,6 @@ public final class ModelClass extends ModelNamedObject {
 	private boolean				abstr			= false;
 	private List<ModelProperty>	properties		= new ArrayList<ModelProperty>();
 	
-	protected ModelClass() {
-		
-	}
-	
 	@Override
 	protected void addInitialTransformationsToList(List<TransformationObject> list) {
 		AddClass trans = new AddClass(pack.getName(),getName());
@@ -38,7 +34,7 @@ public final class ModelClass extends ModelNamedObject {
 
 	@Override
 	protected void cleanUp() {
-		setModel(null);
+		super.cleanUp();
 		pack = null;
 		extendsClass = null;
 		for (ModelProperty prop: properties) {
@@ -46,7 +42,29 @@ public final class ModelClass extends ModelNamedObject {
 		}
 		properties.clear();
 	}
-	
+
+	@Override
+	protected ModelObject getCopy() {
+		ModelClass r = new ModelClass();
+		r.setName(getName());
+		r.setAbstr(abstr);
+		r.setExtendsClass(extendsClass);
+		for (ModelProperty prop: properties) {
+			ModelProperty copy = (ModelProperty) prop.getCopy();
+			copy.setCls(r);
+			r.getProperties().add(copy);
+		}
+		return r;
+	}
+
+	@Override
+	protected void setModel(Model model) {
+		super.setModel(model);
+		for (ModelProperty prop: properties) {
+			prop.setModel(model);
+		}
+	}
+
 	/**
 	 * Returns a specific class (extended) property.
 	 * 

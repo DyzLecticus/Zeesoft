@@ -29,7 +29,7 @@ public final class Transformations {
 	private Transformations() {
 		// Abstract
 	}
-	
+		
 	public final static List<TransformationObject> getAllTransformations() {
 		List<TransformationObject> r = new ArrayList<TransformationObject>();
 		r.add(new AddPackage());

@@ -8,10 +8,6 @@ import nl.zeesoft.zdmk.model.transformations.TransformationObject;
  */
 public abstract class ModelNamedObject extends ModelObject {
 	private String name = "";
-
-	protected ModelNamedObject() {
-		
-	}
 	
 	/**
 	 * Returns the full name for the current object.

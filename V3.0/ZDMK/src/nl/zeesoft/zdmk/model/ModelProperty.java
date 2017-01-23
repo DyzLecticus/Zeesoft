@@ -13,10 +13,6 @@ public final class ModelProperty extends ModelNamedObject {
 	private String			type			= String.class.getName();
 	private boolean			list			= false;
 	
-	protected ModelProperty() {
-		
-	}
-	
 	@Override
 	protected void addInitialTransformationsToList(List<TransformationObject> list) {
 		AddProperty trans = new AddProperty(cls.getPack().getName(),cls.getName(),getName());
@@ -36,8 +32,17 @@ public final class ModelProperty extends ModelNamedObject {
 
 	@Override
 	protected void cleanUp() {
-		setModel(null);
+		super.cleanUp();
 		cls = null;
+	}
+
+	@Override
+	protected ModelObject getCopy() {
+		ModelProperty r = new ModelProperty();
+		r.setName(getName());
+		r.setType(type);
+		r.setList(list);
+		return r;
 	}
 
 	/**

@@ -38,21 +38,21 @@ public class TestModel extends TestObject {
 		model.applyTransformation(new AddPackage("new.package"));
 		model.applyTransformation(new AddPackage("another.new.package"));
 		String error = model.applyTransformation(new AddPackage("another.new.package"));
-		assertEqual(model.getPackages().size(),2,"Number of model packages does not meet expectation");
-		if (model.getPackages().size()>0) {
-			assertEqual(model.getPackages().get(0).getName(),"new.package","Package name does not match expectation");
+		assertEqual(model.getPackagesCopy().size(),2,"Number of model packages does not meet expectation");
+		if (model.getPackagesCopy().size()>0) {
+			assertEqual(model.getPackagesCopy().get(0).getName(),"new.package","Package name does not match expectation");
 		}
 		assertEqual(error,"Package another.new.package already exists","Package add error does not meet expectation");
-		if (model.getPackages().size()>0) {
+		if (model.getPackagesCopy().size()>0) {
 			error = model.applyTransformation(new SetPackageName("new.package","another.new.package"));
-			assertEqual(model.getPackages().get(0).getName(),"new.package","Package name does not match expectation");
+			assertEqual(model.getPackagesCopy().get(0).getName(),"new.package","Package name does not match expectation");
 			assertEqual(error,"Package another.new.package already exists","Package rename error does not meet expectation");
 			error = model.applyTransformation(new SetPackageName("new.package","new.package.newName"));
-			assertEqual(model.getPackages().get(0).getName(),"new.package.newName","Renamed package name does not match expectation");
+			assertEqual(model.getPackagesCopy().get(0).getName(),"new.package.newName","Renamed package name does not match expectation");
 			error = model.applyTransformation(new RemovePackage("new.package.newName"));
 			error = model.applyTransformation(new RemovePackage("new.package.newName"));
 			assertEqual(error,"Package new.package.newName does not exist","Package remove error does not meet expectation");
-			assertEqual(model.getPackages().size(),1,"Number of model packages does not meet expectation");
+			assertEqual(model.getPackagesCopy().size(),1,"Number of model packages does not meet expectation");
 		}
 		ZDMK.describeModelVersionLogs(model);
 		ZDMK.describeModelPackages(model,true);

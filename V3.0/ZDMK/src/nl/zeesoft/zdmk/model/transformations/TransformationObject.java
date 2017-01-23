@@ -28,6 +28,24 @@ public abstract class TransformationObject {
 		}
 	}
 
+	public final TransformationObject getCopy() {
+		TransformationObject r = null;
+		try {
+			r = (TransformationObject) this.getClass().newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		if (r!=null) {
+			for (TransformationParameter param: getParameters()) {
+				r.addParameter(param.getName(),param.isMandatory(),param.getDescription());
+				r.setParameterValue(param.getName(),param.getValue());
+			}
+		}
+		return r;
+	}
+
 	public final TransformationParameter getParameter(String name) {
 		TransformationParameter r = null;
 		for (TransformationParameter param: parameters) {

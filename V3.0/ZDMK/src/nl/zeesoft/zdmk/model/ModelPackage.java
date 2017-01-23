@@ -11,10 +11,6 @@ import nl.zeesoft.zdmk.model.transformations.impl.AddPackage;
  */
 public final class ModelPackage extends ModelNamedObject {
 	private List<ModelClass>	classes	= new ArrayList<ModelClass>();
-
-	protected ModelPackage() {
-		
-	}
 	
 	@Override
 	protected void addInitialTransformationsToList(List<TransformationObject> list) {
@@ -31,13 +27,33 @@ public final class ModelPackage extends ModelNamedObject {
 
 	@Override
 	protected void cleanUp() {
-		setModel(null);
+		super.cleanUp();
 		for (ModelClass cls: classes) {
 			cls.cleanUp();
 		}
 		classes.clear();
 	}
 
+	@Override
+	protected ModelObject getCopy() {
+		ModelPackage r = new ModelPackage();
+		r.setName(getName());
+		for (ModelClass cls: classes) {
+			ModelClass copy = (ModelClass) cls.getCopy();
+			copy.setPack(r);
+			r.getClasses().add(copy);
+		}
+		return r;
+	}
+
+	@Override
+	protected void setModel(Model model) {
+		super.setModel(model);
+		for (ModelClass cls: classes) {
+			cls.setModel(model);
+		}
+	}
+	
 	/**
 	 * Returns the package classes.
 	 * 

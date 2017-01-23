@@ -40,11 +40,11 @@ public class TestModelSelfConvertModel extends TestObject {
 		ModelSelf modelSelf = (ModelSelf) Tester.getInstance().getMockedObject(MockModelSelf.class.getName());
 		String error = modelSelf.applyTransformation(new ConvertModel());
 		assertEqual(error,"","Unexpected error");
-		assertEqual(modelSelf.getPackages().size(),1,"Number of packages does not meet expectation");
-		if (modelSelf.getPackages().size()>0) {
-			assertEqual(modelSelf.getPackages().get(0).getClasses().size(),7,"Number of package classes does not meet expectation");
-			if (modelSelf.getPackages().get(0).getClasses().size()>=7) {
-				assertEqual(modelSelf.getPackages().get(0).getClasses().get(6).getProperties().size(),4,"Number of package class properties does not meet expectation");
+		assertEqual(modelSelf.getPackagesCopy().size(),1,"Number of packages does not meet expectation");
+		if (modelSelf.getPackagesCopy().size()>0) {
+			assertEqual(modelSelf.getPackagesCopy().get(0).getClasses().size(),7,"Number of package classes does not meet expectation");
+			if (modelSelf.getPackagesCopy().get(0).getClasses().size()>=7) {
+				assertEqual(modelSelf.getPackagesCopy().get(0).getClasses().get(6).getProperties().size(),4,"Number of package class properties does not meet expectation");
 			}
 		}
 		ZDMK.describeModelVersionLogs(modelSelf);

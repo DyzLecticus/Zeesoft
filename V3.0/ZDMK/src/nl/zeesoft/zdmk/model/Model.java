@@ -95,6 +95,24 @@ public class Model extends ModelObject {
 	}
 
 	/**
+	 * Returns a copy of the module
+	 * 
+	 * @return A copy of the module
+	 */
+	@Override
+	public Model getModel() {
+		Model copy = new Model();
+		for (ModelVersion version: getVersionsCopy()) {			
+			copy.getVersions().add(version);
+		}
+		for (ModelPackage pack: getPackagesCopy()) {
+			pack.setModel(copy);
+			copy.getPackages().add(pack);
+		}
+		return copy;
+	}
+
+	/**
 	 * Adds transformations that can convert the current model to an object model to a specified list.
 	 * 
 	 * @param list The list to add the transformations to
@@ -222,7 +240,7 @@ public class Model extends ModelObject {
 	 * 
 	 * @return The current model version
 	 */
-	public ModelVersion getCurrentVersion() {
+	protected ModelVersion getCurrentVersion() {
 		if (versions.size()==0) {
 			applyTransformation(new IncrementVersion());
 		}
@@ -232,19 +250,33 @@ public class Model extends ModelObject {
 	/**
 	 * Returns all model versions.
 	 * 
-	 * @return All model version
+	 * @return All model versions
 	 */
-	public List<ModelVersion> getVersions() {
+	protected List<ModelVersion> getVersions() {
 		return versions;
 	}
+
 	
+	/**
+	 * Returns a copy of all model versions.
+	 * 
+	 * @return A copy of all model versions
+	 */
+	public List<ModelVersion> getVersionsCopy() {
+		List<ModelVersion> r = new ArrayList<ModelVersion>();
+		for (ModelVersion v: versions) {
+			r.add(v.getCopy());
+		}
+		return r;
+	}
+
 	/**
 	 * Returns a specific version number.
 	 * 
 	 * @param number The version number of the version 
 	 * @return The version or null if it does not exist
 	 */
-	public ModelVersion getVersion(int number) {
+	protected ModelVersion getVersion(int number) {
 		ModelVersion r = null;
 		for (ModelVersion version: versions) {
 			if (version.getNumber()==number) {
@@ -310,7 +342,34 @@ public class Model extends ModelObject {
 	 * 
 	 * @return All model packages
 	 */
-	public List<ModelPackage> getPackages() {
+	protected List<ModelPackage> getPackages() {
+		return packages;
+	}
+	
+	/**
+	 * Returns a complete copy of all model packages.
+	 * 
+	 * @return A complete copy of all model packages
+	 */
+	public List<ModelPackage> getPackagesCopy() {
+		List<ModelPackage> r = new ArrayList<ModelPackage>();
+		for (ModelPackage pack: packages) {
+			r.add((ModelPackage)pack.getCopy());
+		}
+		for (ModelPackage pack: r) {
+			for (ModelClass cls: pack.getClasses()) {
+				if (cls.getExtendsClass()!=null) {
+					ModelClass clsExt = null;
+					for (ModelPackage sPack: r) {
+						clsExt = sPack.getClass(cls.getExtendsClass().getName());
+						if (clsExt!=null) {
+							break;
+						}
+					}
+					cls.setExtendsClass(clsExt);
+				}
+			}
+		}
 		return packages;
 	}
 
@@ -320,7 +379,7 @@ public class Model extends ModelObject {
 	 * @param name The name of the package
 	 * @return The package or null if it does not exist
 	 */
-	public ModelPackage getPackage(String name) {
+	protected ModelPackage getPackage(String name) {
 		ModelPackage r = null;
 		for (ModelPackage pack: packages) {
 			if (pack.getName().equals(name)) {
