@@ -40,6 +40,35 @@ public class Model extends ModelObject {
 		setModel(this);
 	}
 	
+	public Model(List<ModelPackage> packages,List<ModelVersion> versions) {
+		initialze(packages,versions);
+	}
+	
+	/**
+	 * Initializes the model with the specified versions and package structure.
+	 * 
+	 * Creates a new version if none is provided.
+	 * 
+	 * @param packages The packages
+	 * @param versions The optional versions
+	 */
+	public void initialze(List<ModelPackage> packages,List<ModelVersion> versions) {
+		getPackages().clear();
+		getVersions().clear();
+		setModel(this);
+		for (ModelPackage pack: packages) {
+			pack.setModel(this);
+			getPackages().add(pack);
+		}
+		if (versions.size()==0) {
+			for (ModelVersion version: versions) {			
+				getVersions().add(version);
+			}
+		} else {
+			getCurrentVersion();
+		}
+	}
+	
 	@Override
 	public String applyTransformation(TransformationObject transformation) {
 		String error = transformation.checkParameters();
@@ -69,10 +98,30 @@ public class Model extends ModelObject {
 		return error;
 	}
 
-	@Override
+	/**
+	 * Adds initial model state transformations to a list.
+	 * 
+	 * These transformations can be used to reconstruct the current model state.
+	 * 
+	 * @param list The list to add the transformations to
+	 */
 	public void addInitialTransformationsToList(List<TransformationObject> list) {
 		for (ModelPackage pack: packages) {
-			pack.addInitialTransformationsToList(list);
+			list.add(new AddPackage(pack.getName()));
+			for (ModelClass cls: pack.getClasses()) {
+				AddClass addClass = new AddClass(pack.getName(),cls.getName());
+				if (cls.isAbstr()) {
+					addClass.setAbstract("true");
+				}
+				list.add(addClass);
+				for (ModelProperty prop: cls.getProperties()) {
+					AddProperty addProperty = new AddProperty(cls.getPack().getName(),cls.getName(),prop.getName(),prop.getType());
+					if (prop.isList()) {
+						addProperty.setList("true");
+					}
+					list.add(addProperty);
+				}
+			}
 		}
 		List<ModelClass> added = new ArrayList<ModelClass>();
 		for (ModelPackage pack: packages) {
@@ -101,15 +150,7 @@ public class Model extends ModelObject {
 	 */
 	@Override
 	public Model getModel() {
-		Model copy = new Model();
-		for (ModelVersion version: getVersionsCopy()) {			
-			copy.getVersions().add(version);
-		}
-		for (ModelPackage pack: getPackagesCopy()) {
-			pack.setModel(copy);
-			copy.getPackages().add(pack);
-		}
-		return copy;
+		return new Model(getPackagesCopy(),getVersionsCopy());
 	}
 
 	/**
@@ -131,8 +172,11 @@ public class Model extends ModelObject {
 		}
 	}
 	
+	/**
+	 * Call this method when the model is no longer needed to ensure resources can be garbage collected.
+	 */
 	@Override
-	protected final void cleanUp() {
+	public final void cleanUp() {
 		for (ModelPackage pack: packages) {
 			pack.cleanUp();
 		}
@@ -458,9 +502,7 @@ public class Model extends ModelObject {
 					error = "Classes may not extend themselves";
 				}
 				if (error.length()==0) {
-					cls = new ModelClass();
-					cls.setModel(this);
-					cls.setPack(pack);
+					cls = pack.getNewClass();
 					cls.setName(name);
 					if (trans.getAbstract().length()>0) {
 						cls.setAbstr(Boolean.parseBoolean(trans.getAbstract()));
@@ -468,7 +510,6 @@ public class Model extends ModelObject {
 					if (extCls!=null) {
 						cls.setExtendsClass(extCls);
 					}
-					pack.getClasses().add(cls);
 				}
 			} else if (transformation instanceof SetClassName) {
 				ModelClass cls = pack.getClass(name);
@@ -586,9 +627,7 @@ public class Model extends ModelObject {
 					error = checkSubclassContainsProperty(cls,name);
 				}
 				if (error.length()==0) {
-					prop = new ModelProperty();
-					prop.setModel(this);
-					prop.setCls(cls);
+					prop = cls.getNewProperty();
 					prop.setName(trans.getName());
 					if (trans.getType().length()>0) {
 						prop.setType(trans.getType());
@@ -596,7 +635,6 @@ public class Model extends ModelObject {
 					if (trans.getList().length()>0) {
 						prop.setList(Boolean.parseBoolean(trans.getList()));
 					}
-					cls.getProperties().add(prop);
 				}
 			} else if (transformation instanceof SetPropertyName) {
 				ModelProperty prop = cls.getProperty(name);

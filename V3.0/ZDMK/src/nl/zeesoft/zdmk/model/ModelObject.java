@@ -19,15 +19,6 @@ public abstract class ModelObject {
 	protected abstract String applyTransformation(TransformationObject transformation);
 	
 	/**
-	 * Adds initial model state transformations to a list.
-	 * 
-	 * These transformations can be used to reconstruct the current model state.
-	 * 
-	 * @param list The list to add the transformations to
-	 */
-	protected abstract void addInitialTransformationsToList(List<TransformationObject> list);
-	
-	/**
 	 * Applies a list of transformations to this object.
 	 * 
 	 * @param transformations The transformations to apply

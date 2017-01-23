@@ -3,23 +3,25 @@ package nl.zeesoft.zdmk.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdmk.model.transformations.TransformationObject;
-import nl.zeesoft.zdmk.model.transformations.impl.AddPackage;
-
 /**
  * Represents a model package.
  */
 public final class ModelPackage extends ModelNamedObject {
 	private List<ModelClass>	classes	= new ArrayList<ModelClass>();
 	
-	@Override
-	protected void addInitialTransformationsToList(List<TransformationObject> list) {
-		list.add(new AddPackage(getName()));
-		for (ModelClass cls: classes) {
-			cls.addInitialTransformationsToList(list);
-		}
+	/**
+	 * Adds a new class to this package.
+	 * 
+	 * @return The class
+	 */
+	public ModelClass getNewClass() {
+		ModelClass r = new ModelClass();
+		r.setModel(getModel());
+		r.setPack(this);
+		classes.add(r);
+		return r;
 	}
-
+	
 	@Override
 	public String getFullName() {
 		return getName();
@@ -50,6 +52,7 @@ public final class ModelPackage extends ModelNamedObject {
 	protected void setModel(Model model) {
 		super.setModel(model);
 		for (ModelClass cls: classes) {
+			cls.setPack(this);
 			cls.setModel(model);
 		}
 	}

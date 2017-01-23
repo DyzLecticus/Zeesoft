@@ -3,9 +3,6 @@ package nl.zeesoft.zdmk.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdmk.model.transformations.TransformationObject;
-import nl.zeesoft.zdmk.model.transformations.impl.AddClass;
-
 /**
  * Represents a model package class.
  */
@@ -15,18 +12,23 @@ public final class ModelClass extends ModelNamedObject {
 	private boolean				abstr			= false;
 	private List<ModelProperty>	properties		= new ArrayList<ModelProperty>();
 	
-	@Override
-	protected void addInitialTransformationsToList(List<TransformationObject> list) {
-		AddClass trans = new AddClass(pack.getName(),getName());
-		if (abstr) {
-			trans.setAbstract("true");
-		}
-		list.add(trans);
-		for (ModelProperty prop: properties) {
-			prop.addInitialTransformationsToList(list);
-		}
+	protected ModelClass() {
+		
 	}
-
+	
+	/**
+	 * Adds a new property to this class.
+	 * 
+	 * @return The property
+	 */
+	public ModelProperty getNewProperty() {
+		ModelProperty r = new ModelProperty();
+		r.setModel(getModel());
+		r.setCls(this);
+		properties.add(r);
+		return r;
+	}
+	
 	@Override
 	public String getFullName() {
 		return pack.getFullName() + "." + getName();
@@ -61,6 +63,7 @@ public final class ModelClass extends ModelNamedObject {
 	protected void setModel(Model model) {
 		super.setModel(model);
 		for (ModelProperty prop: properties) {
+			prop.setCls(this);
 			prop.setModel(model);
 		}
 	}
@@ -86,16 +89,16 @@ public final class ModelClass extends ModelNamedObject {
 	 * 
 	 * @return The package this class belongs to
 	 */
-	public ModelPackage getPack() {
+	protected ModelPackage getPack() {
 		return pack;
 	}
 
 	/**
-	 * Sets the package this class belongs to
+	 * Sets the package this class belongs to.
 	 * 
 	 * @param pack The package this class belongs to
 	 */
-	public void setPack(ModelPackage pack) {
+	protected void setPack(ModelPackage pack) {
 		this.pack = pack;
 	}
 
@@ -178,11 +181,13 @@ public final class ModelClass extends ModelNamedObject {
 			return;
 		}
 		depth++;
-		for (ModelPackage pack: getModel().getPackages()) {
-			for (ModelClass subCls: pack.getClasses()) {
-				if (subCls.getExtendsClass()==supCls && !clss.contains(subCls)) {
-					clss.add(subCls);
-					addSubClassesToList(subCls,depth,maxDepth,clss);
+		if (getModel()!=null) {
+			for (ModelPackage pack: getModel().getPackages()) {
+				for (ModelClass subCls: pack.getClasses()) {
+					if (subCls.getExtendsClass()==supCls && !clss.contains(subCls)) {
+						clss.add(subCls);
+						addSubClassesToList(subCls,depth,maxDepth,clss);
+					}
 				}
 			}
 		}

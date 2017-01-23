@@ -1,10 +1,5 @@
 package nl.zeesoft.zdmk.model;
 
-import java.util.List;
-
-import nl.zeesoft.zdmk.model.transformations.TransformationObject;
-import nl.zeesoft.zdmk.model.transformations.impl.AddProperty;
-
 /**
  * Represents a model package class property.
  */
@@ -13,16 +8,8 @@ public final class ModelProperty extends ModelNamedObject {
 	private String			type			= String.class.getName();
 	private boolean			list			= false;
 	
-	@Override
-	protected void addInitialTransformationsToList(List<TransformationObject> list) {
-		AddProperty trans = new AddProperty(cls.getPack().getName(),cls.getName(),getName());
-		if (type.length()>0) {
-			trans.setType(type);
-		}
-		if (this.list) {
-			trans.setList("true");
-		}
-		list.add(trans);
+	protected ModelProperty() {
+		
 	}
 
 	@Override
@@ -50,7 +37,7 @@ public final class ModelProperty extends ModelNamedObject {
 	 * 
 	 * @return The class this property belongs to
 	 */
-	public ModelClass getCls() {
+	protected ModelClass getCls() {
 		return cls;
 	}
 
@@ -59,7 +46,7 @@ public final class ModelProperty extends ModelNamedObject {
 	 * 
 	 * @param cls The class this property belongs to
 	 */
-	public void setCls(ModelClass cls) {
+	protected void setCls(ModelClass cls) {
 		this.cls = cls;
 	}
 	

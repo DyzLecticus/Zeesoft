@@ -3,6 +3,8 @@ package nl.zeesoft.zdmk.model.transformations;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Generic;
+
 /**
  * Abstract transformation object.
  */
@@ -39,7 +41,6 @@ public abstract class TransformationObject {
 		}
 		if (r!=null) {
 			for (TransformationParameter param: getParameters()) {
-				r.addParameter(param.getName(),param.isMandatory(),param.getDescription());
 				r.setParameterValue(param.getName(),param.getValue());
 			}
 		}
@@ -92,6 +93,10 @@ public abstract class TransformationObject {
 	
 	@Override
 	public String toString() {
+		return toStringBuilder().toString();
+	}
+	
+	public StringBuilder toStringBuilder() {
 		StringBuilder sb = new StringBuilder();
 		String[] split = this.getClass().getName().split("\\."); 
 		sb.append(split[split.length - 1]);
@@ -112,8 +117,53 @@ public abstract class TransformationObject {
 				}
 			}
 		}
-		sb.append(")");
-		return sb.toString();
+		sb.append(" ) ");
+		return sb;
+	}
+
+	public static final TransformationObject fromString(String s) {
+		return fromStringBuilder(new StringBuilder(s));
+	}
+
+	public static final TransformationObject fromStringBuilder(StringBuilder sb) {
+		TransformationObject r = null;
+		sb = Generic.stringBuilderTrim(sb);
+		if (Generic.stringBuilderEndsWith(sb,")")) {
+			sb.replace(sb.length()-1,sb.length(),"");
+		}
+		sb = Generic.stringBuilderReplace(sb,")","");
+		List<StringBuilder> trans = Generic.stringBuilderSplit(sb,"(");
+		if (trans.size()>=1 && trans.size()<=2) {
+			String className = Generic.stringBuilderTrim(trans.get(0)).toString();
+			try {
+				Class<?> clas = Class.forName(TransformationObject.class.getPackage().getName() + ".impl." + className);
+				r = (TransformationObject) clas.newInstance();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			if (r!=null && trans.size()==2) {
+				List<StringBuilder> params = Generic.stringBuilderSplit(trans.get(1),",");
+				for (StringBuilder nameValue: params) {
+					List<StringBuilder> nv = Generic.stringBuilderSplit(nameValue,"=");
+					if (nv.size()==2) {
+						String name = Generic.stringBuilderTrim(nv.get(0)).toString();
+						String value = Generic.stringBuilderTrim(nv.get(1)).toString();
+						if (value.startsWith("\"")) {
+							value = value.substring(1,value.length());
+						}
+						if (value.endsWith("\"")) {
+							value = value.substring(0,value.length()-1);
+						}
+						r.setParameterValue(name,value);
+					}
+				}
+			}
+		}
+		return r;
 	}
 
 	protected String checkParameter(TransformationParameter param) {
