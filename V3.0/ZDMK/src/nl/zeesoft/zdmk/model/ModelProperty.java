@@ -19,7 +19,6 @@ public final class ModelProperty extends ModelNamedObject {
 
 	@Override
 	protected void cleanUp() {
-		super.cleanUp();
 		cls = null;
 	}
 

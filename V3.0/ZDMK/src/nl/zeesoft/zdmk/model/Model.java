@@ -37,7 +37,7 @@ public class Model extends ModelObject {
 	private List<ModelPackage>	packages			= new ArrayList<ModelPackage>();
 
 	public Model() {
-		setModel(this);
+		
 	}
 	
 	public Model(List<ModelPackage> packages,List<ModelVersion> versions) {
@@ -55,7 +55,6 @@ public class Model extends ModelObject {
 	public void initialze(List<ModelPackage> packages,List<ModelVersion> versions) {
 		getPackages().clear();
 		getVersions().clear();
-		setModel(this);
 		for (ModelPackage pack: packages) {
 			pack.setModel(this);
 			getPackages().add(pack);
@@ -127,7 +126,7 @@ public class Model extends ModelObject {
 		for (ModelPackage pack: packages) {
 			for (ModelClass cls: pack.getClasses()) {
 				if (cls.getExtendsClass()==null) {
-					for (ModelClass subCls: cls.getSubClasses(0)) {
+					for (ModelClass subCls: getSubClassesForClass(cls,0)) {
 						if (!added.contains(subCls)) {
 							added.add(subCls);
 							SetClassExtendsClass setExtends = new SetClassExtendsClass(); 
@@ -149,7 +148,7 @@ public class Model extends ModelObject {
 	 * @return A copy of the module
 	 */
 	@Override
-	public Model getModel() {
+	public Model getCopy() {
 		return new Model(getPackagesCopy(),getVersionsCopy());
 	}
 
@@ -711,7 +710,7 @@ public class Model extends ModelObject {
 	private String checkRemovePackage(ModelPackage pack) {
 		String error = "";
 		for (ModelClass cls: pack.getClasses()) {
-			for (ModelClass subCls: cls.getSubClasses(0)) {
+			for (ModelClass subCls: getSubClassesForClass(cls,0)) {
 				if (subCls.getPack()!=pack) {
 					error = "Unable to remove package due to outside subclass dependency; " + subCls.getFullName();
 					break;
@@ -734,7 +733,7 @@ public class Model extends ModelObject {
 
 	private String checkRemoveClass(ModelClass cls) {
 		String error = "";
-		List<ModelClass> subClss = cls.getSubClasses(1);
+		List<ModelClass> subClss = getSubClassesForClass(cls,1);
 		if (subClss.size()>0) {
 			error = "Unable to remove class due to subclass dependency; " + subClss.get(0).getFullName();
 		}
@@ -749,7 +748,7 @@ public class Model extends ModelObject {
 
 	private String checkSubclassContainsProperty(ModelClass cls,String propertyName) {
 		String error = "";
-		List<ModelClass> subClss = cls.getSubClasses(0);
+		List<ModelClass> subClss = getSubClassesForClass(cls,0);
 		for (ModelClass subCls: subClss) {
 			for (ModelProperty prop: subCls.getProperties()) {
 				if (prop.getName().equals(propertyName)) {
@@ -762,7 +761,7 @@ public class Model extends ModelObject {
 
 	private List<ModelProperty> getSubclassProperties(ModelClass cls,String name) {
 		List<ModelProperty> r = new ArrayList<ModelProperty>();
-		for (ModelClass subCls: cls.getSubClasses(0)) {
+		for (ModelClass subCls: getSubClassesForClass(cls,0)) {
 			for (ModelProperty prop: subCls.getProperties()) {
 				if (prop.getName().equals(name)) {
 					r.add(prop);
@@ -807,6 +806,28 @@ public class Model extends ModelObject {
 	private void updatePropertyType(String type,String newType) {
 		for (ModelProperty prop: getProperties(type)) {
 			prop.setType(newType);
+		}
+	}
+	
+	private List<ModelClass> getSubClassesForClass(ModelClass cls,int maxDepth) {
+		List<ModelClass> r = new ArrayList<ModelClass>();
+		addSubClassesToList(cls,0,maxDepth,r);
+		return r;
+		
+	}
+
+	private void addSubClassesToList(ModelClass supCls,int depth,int maxDepth,List<ModelClass> clss) {
+		if (depth==maxDepth && maxDepth>0) {
+			return;
+		}
+		depth++;
+		for (ModelPackage pack: packages) {
+			for (ModelClass subCls: pack.getClasses()) {
+				if (subCls.getExtendsClass()==supCls && !clss.contains(subCls)) {
+					clss.add(subCls);
+					addSubClassesToList(subCls,depth,maxDepth,clss);
+				}
+			}
 		}
 	}
 }

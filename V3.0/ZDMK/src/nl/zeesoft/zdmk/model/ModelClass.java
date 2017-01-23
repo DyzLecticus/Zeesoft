@@ -5,6 +5,8 @@ import java.util.List;
 
 /**
  * Represents a model package class.
+ * 
+ * Use the getNewClass method to obtain a new class for this package.
  */
 public final class ModelClass extends ModelNamedObject {
 	private ModelPackage		pack			= null;
@@ -23,7 +25,6 @@ public final class ModelClass extends ModelNamedObject {
 	 */
 	public ModelProperty getNewProperty() {
 		ModelProperty r = new ModelProperty();
-		r.setModel(getModel());
 		r.setCls(this);
 		properties.add(r);
 		return r;
@@ -36,7 +37,6 @@ public final class ModelClass extends ModelNamedObject {
 
 	@Override
 	protected void cleanUp() {
-		super.cleanUp();
 		pack = null;
 		extendsClass = null;
 		for (ModelProperty prop: properties) {
@@ -57,15 +57,6 @@ public final class ModelClass extends ModelNamedObject {
 			r.getProperties().add(copy);
 		}
 		return r;
-	}
-
-	@Override
-	protected void setModel(Model model) {
-		super.setModel(model);
-		for (ModelProperty prop: properties) {
-			prop.setCls(this);
-			prop.setModel(model);
-		}
 	}
 
 	/**
@@ -100,6 +91,9 @@ public final class ModelClass extends ModelNamedObject {
 	 */
 	protected void setPack(ModelPackage pack) {
 		this.pack = pack;
+		for (ModelProperty prop: properties) {
+			prop.setCls(this);
+		}
 	}
 
 	/**
@@ -157,41 +151,6 @@ public final class ModelClass extends ModelNamedObject {
 		addSuperClassToList(r);
 		return r;
 	}
-
-	protected void addSuperClassToList(List<ModelClass> clss) {
-		if (extendsClass!=null) {
-			clss.add(extendsClass);
-			extendsClass.addSuperClassToList(clss);
-		}
-	}
-
-	/**
-	 * Returns a list of sub classes of this class.
-	 * 
-	 * @return A list of sub classes
-	 */
-	public List<ModelClass> getSubClasses(int maxDepth) {
-		List<ModelClass> r = new ArrayList<ModelClass>();
-		addSubClassesToList(this,0,maxDepth,r);
-		return r;
-	}
-
-	protected void addSubClassesToList(ModelClass supCls,int depth,int maxDepth,List<ModelClass> clss) {
-		if (depth==maxDepth && maxDepth>0) {
-			return;
-		}
-		depth++;
-		if (getModel()!=null) {
-			for (ModelPackage pack: getModel().getPackages()) {
-				for (ModelClass subCls: pack.getClasses()) {
-					if (subCls.getExtendsClass()==supCls && !clss.contains(subCls)) {
-						clss.add(subCls);
-						addSubClassesToList(subCls,depth,maxDepth,clss);
-					}
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Returns all properties of this class including extended properties.
@@ -202,6 +161,13 @@ public final class ModelClass extends ModelNamedObject {
 		List<ModelProperty> r = new ArrayList<ModelProperty>();
 		addPropertiesAndExtendedPropertiesToList(r);
 		return r;
+	}
+
+	protected void addSuperClassToList(List<ModelClass> clss) {
+		if (extendsClass!=null) {
+			clss.add(extendsClass);
+			extendsClass.addSuperClassToList(clss);
+		}
 	}
 	
 	protected void addPropertiesAndExtendedPropertiesToList(List<ModelProperty> props) {

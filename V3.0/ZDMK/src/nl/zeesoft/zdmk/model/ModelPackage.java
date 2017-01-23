@@ -5,8 +5,11 @@ import java.util.List;
 
 /**
  * Represents a model package.
+ * 
+ * Use the getNewClass method to obtain a new class for this package.
  */
 public final class ModelPackage extends ModelNamedObject {
+	private Model				model	= null;
 	private List<ModelClass>	classes	= new ArrayList<ModelClass>();
 	
 	/**
@@ -16,7 +19,6 @@ public final class ModelPackage extends ModelNamedObject {
 	 */
 	public ModelClass getNewClass() {
 		ModelClass r = new ModelClass();
-		r.setModel(getModel());
 		r.setPack(this);
 		classes.add(r);
 		return r;
@@ -29,7 +31,7 @@ public final class ModelPackage extends ModelNamedObject {
 
 	@Override
 	protected void cleanUp() {
-		super.cleanUp();
+		model = null;
 		for (ModelClass cls: classes) {
 			cls.cleanUp();
 		}
@@ -48,12 +50,24 @@ public final class ModelPackage extends ModelNamedObject {
 		return r;
 	}
 
-	@Override
+	/**
+	 * Returns the model this object belongs to.
+	 * 
+	 * @return The model this object belongs to
+	 */
+	public Model getModel() {
+		return model;
+	}
+
+	/**
+	 * Sets the model this object belongs to.
+	 *  
+	 * @param model The model this object belongs to
+	 */
 	protected void setModel(Model model) {
-		super.setModel(model);
+		this.model = model;
 		for (ModelClass cls: classes) {
 			cls.setPack(this);
-			cls.setModel(model);
 		}
 	}
 	

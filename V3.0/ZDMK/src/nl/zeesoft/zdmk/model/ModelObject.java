@@ -8,8 +8,6 @@ import nl.zeesoft.zdmk.model.transformations.TransformationObject;
  * Abstract model object.
  */
 public abstract class ModelObject {
-	private Model	model	= null;
-	
 	/**
 	 * Applies a transformation to this object.
 	 * 
@@ -17,6 +15,18 @@ public abstract class ModelObject {
 	 * @return The error message if applicable
 	 */
 	protected abstract String applyTransformation(TransformationObject transformation);
+
+	/**
+	 * Cleans up references for garbage collection
+	 */
+	protected abstract void cleanUp();
+
+	/**
+	 * Returns a copy of the model object. 
+	 * 
+	 * @return A copy of the model object
+	 */
+	protected abstract ModelObject getCopy();
 	
 	/**
 	 * Applies a list of transformations to this object.
@@ -33,39 +43,5 @@ public abstract class ModelObject {
 			}
 		}
 		return error;
-	}
-
-	/**
-	 * Cleans up references for garbage collection
-	 */
-	protected void cleanUp() {
-		model = null;
-	}
-	
-	/**
-	 * Returns the model this object belongs to.
-	 * 
-	 * @return The model this object belongs to
-	 */
-	public Model getModel() {
-		return model;
-	}
-
-	/**
-	 * Sets the model this object belongs to.
-	 *  
-	 * @param model The model this object belongs to
-	 */
-	protected void setModel(Model model) {
-		this.model = model;
-	}
-
-	/**
-	 * Returns a copy of the model object. 
-	 * 
-	 * @return A copy of the model object
-	 */
-	protected ModelObject getCopy() {
-		return null;
 	}
 }
