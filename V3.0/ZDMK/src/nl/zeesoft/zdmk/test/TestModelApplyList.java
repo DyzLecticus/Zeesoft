@@ -64,9 +64,6 @@ public class TestModelApplyList extends TestObject {
 		ZDMK.describeModelPackages(model,true);
 
 		System.out.println("Transformation error message: " + error);
-		
-		System.out.println("// Clean up model to free resources for garbage collection");
-		System.out.println("model.cleanUp();");
 
 		model.cleanUp();
 	}

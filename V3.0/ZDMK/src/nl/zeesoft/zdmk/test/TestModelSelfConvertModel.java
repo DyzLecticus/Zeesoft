@@ -1,8 +1,11 @@
 package nl.zeesoft.zdmk.test;
 
+import java.util.List;
+
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdmk.model.Model;
+import nl.zeesoft.zdmk.model.ModelPackage;
 import nl.zeesoft.zdmk.model.ModelSelf;
 import nl.zeesoft.zdmk.model.transformations.impl.ConvertModel;
 
@@ -40,11 +43,12 @@ public class TestModelSelfConvertModel extends TestObject {
 		ModelSelf modelSelf = (ModelSelf) Tester.getInstance().getMockedObject(MockModelSelf.class.getName());
 		String error = modelSelf.applyTransformation(new ConvertModel());
 		assertEqual(error,"","Unexpected error");
-		assertEqual(modelSelf.getPackagesCopy().size(),1,"Number of packages does not meet expectation");
-		if (modelSelf.getPackagesCopy().size()>0) {
-			assertEqual(modelSelf.getPackagesCopy().get(0).getClasses().size(),7,"Number of package classes does not meet expectation");
-			if (modelSelf.getPackagesCopy().get(0).getClasses().size()>=7) {
-				assertEqual(modelSelf.getPackagesCopy().get(0).getClasses().get(6).getProperties().size(),4,"Number of package class properties does not meet expectation");
+		List<ModelPackage> packages = modelSelf.getPackagesCopy();
+		assertEqual(packages.size(),1,"Number of packages does not meet expectation");
+		if (packages.size()>0) {
+			assertEqual(packages.get(0).getClasses().size(),7,"Number of package classes does not meet expectation");
+			if (packages.get(0).getClasses().size()>=7) {
+				assertEqual(packages.get(0).getClasses().get(6).getProperties().size(),4,"Number of package class properties does not meet expectation");
 			}
 		}
 		ZDMK.describeModelVersionLogs(modelSelf);
