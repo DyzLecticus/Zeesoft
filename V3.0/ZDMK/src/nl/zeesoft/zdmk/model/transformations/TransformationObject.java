@@ -117,7 +117,7 @@ public abstract class TransformationObject {
 				}
 			}
 		}
-		sb.append(" ) ");
+		sb.append(")");
 		return sb;
 	}
 

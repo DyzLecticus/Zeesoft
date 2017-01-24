@@ -12,16 +12,34 @@ public final class ModelPackage extends ModelNamedObject {
 	private Model				model	= null;
 	private List<ModelClass>	classes	= new ArrayList<ModelClass>();
 	
+	public ModelPackage(String name) {
+		super(name);
+	}
+	
 	/**
 	 * Adds a new class to this package.
 	 * 
+	 * @param name The name of the class
 	 * @return The class
 	 */
-	public ModelClass getNewClass() {
-		ModelClass r = new ModelClass();
+	public ModelClass getNewClass(String name) {
+		ModelClass r = new ModelClass(name);
 		r.setPack(this);
 		classes.add(r);
 		return r;
+	}
+
+	/**
+	 * Removes a specific class from this package.
+	 * 
+	 * @param name The name of the class
+	 */
+	public void removeClass(String name) {
+		ModelClass cls = getClass(name);
+		if (cls!=null) {
+			cls.cleanUp();
+			classes.remove(cls);
+		}
 	}
 	
 	@Override
@@ -40,8 +58,7 @@ public final class ModelPackage extends ModelNamedObject {
 
 	@Override
 	protected ModelObject getCopy() {
-		ModelPackage r = new ModelPackage();
-		r.setName(getName());
+		ModelPackage r = new ModelPackage(getName());
 		for (ModelClass cls: classes) {
 			ModelClass copy = (ModelClass) cls.getCopy();
 			copy.setPack(r);
@@ -77,7 +94,7 @@ public final class ModelPackage extends ModelNamedObject {
 	 * @return The package classes
 	 */
 	public List<ModelClass> getClasses() {
-		return classes;
+		return new ArrayList<ModelClass>(classes);
 	}
 	
 	/**

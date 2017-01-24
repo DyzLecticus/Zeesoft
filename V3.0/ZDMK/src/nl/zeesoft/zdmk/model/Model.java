@@ -39,32 +39,52 @@ public class Model extends ModelObject {
 	public Model() {
 		
 	}
+
+	public Model(List<ModelPackage> packages) {
+		initialze(packages,null);
+	}
 	
 	public Model(List<ModelPackage> packages,List<ModelVersion> versions) {
 		initialze(packages,versions);
 	}
 	
 	/**
-	 * Initializes the model with the specified versions and package structure.
+	 * Initializes the model with the specified package structure and optional version history.
 	 * 
-	 * Creates a new version if none is provided.
+	 * Creates a new version before adding the packages if none is provided.
 	 * 
 	 * @param packages The packages
 	 * @param versions The optional versions
 	 */
 	public void initialze(List<ModelPackage> packages,List<ModelVersion> versions) {
-		getPackages().clear();
+		cleanUp();
 		getVersions().clear();
-		for (ModelPackage pack: packages) {
-			pack.setModel(this);
-			getPackages().add(pack);
-		}
-		if (versions.size()==0) {
+		if (versions!=null && versions.size()==0) {
 			for (ModelVersion version: versions) {			
 				getVersions().add(version);
 			}
 		} else {
-			getCurrentVersion();
+			ModelVersion version = getCurrentVersion();
+			if (appendLog) {
+				if (packages.size()==0) {
+					version.addLogLine("Initialized model");
+				} else if (packages.size()==1) {
+					version.addLogLine("Initialized model (package: " + packages.get(0).getName() + ")");
+				} else {
+					StringBuilder pkgs = new StringBuilder();
+					for (ModelPackage pack: packages) {
+						if (pkgs.length()>0) {
+							pkgs.append(", ");
+						}
+						pkgs.append(pack.getName());
+					}
+					version.addLogLine("Initialized model (packages: " + pkgs + ")");
+				}
+			}
+		}
+		for (ModelPackage pack: packages) {
+			pack.setModel(this);
+			getPackages().add(pack);
 		}
 	}
 	
@@ -441,9 +461,8 @@ public class Model extends ModelObject {
 			if (pack!=null) {
 				error = "Package " + name + " already exists";
 			} else {
-				pack = new ModelPackage();
+				pack = new ModelPackage(name);
 				pack.setModel(this);
-				pack.setName(name);
 				packages.add(pack);
 			}
 		} else if (transformation instanceof SetPackageName) {
@@ -501,8 +520,7 @@ public class Model extends ModelObject {
 					error = "Classes may not extend themselves";
 				}
 				if (error.length()==0) {
-					cls = pack.getNewClass();
-					cls.setName(name);
+					cls = pack.getNewClass(name);
 					if (trans.getAbstract().length()>0) {
 						cls.setAbstr(Boolean.parseBoolean(trans.getAbstract()));
 					}
@@ -580,7 +598,7 @@ public class Model extends ModelObject {
 				}
 				if (error.length()==0) {
 					cls.cleanUp();
-					pack.getClasses().remove(cls);
+					pack.removeClass(cls.getName());
 				}
 			} else if (transformation instanceof TransformationNamedPackageClassObject) {
 				error = applyNamedPackageClassTransformation((TransformationNamedPackageClassObject) transformation);
@@ -626,8 +644,7 @@ public class Model extends ModelObject {
 					error = checkSubclassContainsProperty(cls,name);
 				}
 				if (error.length()==0) {
-					prop = cls.getNewProperty();
-					prop.setName(trans.getName());
+					prop = cls.getNewProperty(name);
 					if (trans.getType().length()>0) {
 						prop.setType(trans.getType());
 					}
@@ -700,7 +717,7 @@ public class Model extends ModelObject {
 				}
 				if (error.length()==0) {
 					prop.cleanUp();
-					cls.getProperties().remove(prop);
+					cls.removeProperty(prop.getName());
 				}
 			}
 		}

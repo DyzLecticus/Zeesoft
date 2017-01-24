@@ -1,8 +1,11 @@
 package nl.zeesoft.zdmk.test;
 
+import java.util.List;
+
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdmk.model.Model;
+import nl.zeesoft.zdmk.model.ModelPackage;
 import nl.zeesoft.zdmk.model.transformations.impl.AddPackage;
 import nl.zeesoft.zdmk.model.transformations.impl.RemovePackage;
 import nl.zeesoft.zdmk.model.transformations.impl.SetPackageName;
@@ -22,6 +25,8 @@ public class TestModel extends TestObject {
 		System.out.println("Model model = new Model();");
 		System.out.println("// Create and apply transformation");
 		System.out.println("model.applyTransformation(new AddPackage(\"new.package.name\"));");
+		System.out.println("// Clean up model to free resources for garbage collection");
+		System.out.println("model.cleanUp();");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
@@ -38,23 +43,25 @@ public class TestModel extends TestObject {
 		model.applyTransformation(new AddPackage("new.package"));
 		model.applyTransformation(new AddPackage("another.new.package"));
 		String error = model.applyTransformation(new AddPackage("another.new.package"));
-		assertEqual(model.getPackagesCopy().size(),2,"Number of model packages does not meet expectation");
-		if (model.getPackagesCopy().size()>0) {
-			assertEqual(model.getPackagesCopy().get(0).getName(),"new.package","Package name does not match expectation");
+		List<ModelPackage> packages = model.getPackagesCopy();
+		assertEqual(packages.size(),2,"Number of model packages does not meet expectation");
+		if (packages.size()>0) {
+			assertEqual(packages.get(0).getName(),"new.package","Package name does not match expectation");
 		}
 		assertEqual(error,"Package another.new.package already exists","Package add error does not meet expectation");
-		if (model.getPackagesCopy().size()>0) {
+		if (packages.size()>0) {
 			error = model.applyTransformation(new SetPackageName("new.package","another.new.package"));
-			assertEqual(model.getPackagesCopy().get(0).getName(),"new.package","Package name does not match expectation");
+			assertEqual(packages.get(0).getName(),"new.package","Package name does not match expectation");
 			assertEqual(error,"Package another.new.package already exists","Package rename error does not meet expectation");
 			error = model.applyTransformation(new SetPackageName("new.package","new.package.newName"));
-			assertEqual(model.getPackagesCopy().get(0).getName(),"new.package.newName","Renamed package name does not match expectation");
+			assertEqual(packages.get(0).getName(),"new.package.newName","Renamed package name does not match expectation");
 			error = model.applyTransformation(new RemovePackage("new.package.newName"));
 			error = model.applyTransformation(new RemovePackage("new.package.newName"));
 			assertEqual(error,"Package new.package.newName does not exist","Package remove error does not meet expectation");
-			assertEqual(model.getPackagesCopy().size(),1,"Number of model packages does not meet expectation");
+			assertEqual(packages.size(),1,"Number of model packages does not meet expectation");
 		}
 		ZDMK.describeModelVersionLogs(model);
 		ZDMK.describeModelPackages(model,true);
+		model.cleanUp();
 	}
 }

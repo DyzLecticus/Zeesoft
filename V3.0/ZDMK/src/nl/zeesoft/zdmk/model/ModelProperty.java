@@ -8,8 +8,8 @@ public final class ModelProperty extends ModelNamedObject {
 	private String			type			= String.class.getName();
 	private boolean			list			= false;
 	
-	protected ModelProperty() {
-		
+	protected ModelProperty(String name) {
+		super(name);
 	}
 
 	@Override
@@ -24,8 +24,7 @@ public final class ModelProperty extends ModelNamedObject {
 
 	@Override
 	protected ModelObject getCopy() {
-		ModelProperty r = new ModelProperty();
-		r.setName(getName());
+		ModelProperty r = new ModelProperty(getName());
 		r.setType(type);
 		r.setList(list);
 		return r;

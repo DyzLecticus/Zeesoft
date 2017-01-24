@@ -128,7 +128,7 @@ public class ZDMK {
 				}
 				if (cls.getExtendsClass()!=null) {
 					desc.append(", extends: ");
-					desc.append(cls.getExtendsClass().getName());
+					desc.append(cls.getExtendsClass().getFullName());
 				}
 				desc.append("\n");
 				List<ModelProperty> props = null;
@@ -153,11 +153,10 @@ public class ZDMK {
 						eProp = cls.getExtendsClass().getProperty(prop.getName());
 						if (eProp!=null) {
 							if (!cls.getProperties().contains(prop)) {
-								desc.append(" (extended)");
+								desc.append(" (extends: " + eProp.getFullName() + ")");
 							} else {
-								desc.append(" (overriden)");
+								desc.append(" (overrides: " + eProp.getFullName() + ")");
 							}
-							desc.append(")");
 						}
 					}
 					desc.append("\n");

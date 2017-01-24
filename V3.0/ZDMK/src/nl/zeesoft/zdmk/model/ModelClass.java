@@ -14,22 +14,36 @@ public final class ModelClass extends ModelNamedObject {
 	private boolean				abstr			= false;
 	private List<ModelProperty>	properties		= new ArrayList<ModelProperty>();
 	
-	protected ModelClass() {
-		
+	protected ModelClass(String name) {
+		super(name);
 	}
 	
 	/**
 	 * Adds a new property to this class.
 	 * 
+	 * @param name The name of the property
 	 * @return The property
 	 */
-	public ModelProperty getNewProperty() {
-		ModelProperty r = new ModelProperty();
+	public ModelProperty getNewProperty(String name) {
+		ModelProperty r = new ModelProperty(name);
 		r.setCls(this);
 		properties.add(r);
 		return r;
 	}
-	
+
+	/**
+	 * Removes a specific property from this class.
+	 * 
+	 * @param name The name of the property
+	 */
+	public void removeProperty(String name) {
+		ModelProperty prop = getProperty(name,false);
+		if (prop!=null) {
+			prop.cleanUp();
+			properties.remove(prop);
+		}
+	}
+
 	@Override
 	public String getFullName() {
 		return pack.getFullName() + "." + getName();
@@ -47,8 +61,7 @@ public final class ModelClass extends ModelNamedObject {
 
 	@Override
 	protected ModelObject getCopy() {
-		ModelClass r = new ModelClass();
-		r.setName(getName());
+		ModelClass r = new ModelClass(getName());
 		r.setAbstr(abstr);
 		r.setExtendsClass(extendsClass);
 		for (ModelProperty prop: properties) {
@@ -66,15 +79,9 @@ public final class ModelClass extends ModelNamedObject {
 	 * @return The property or null if it does not exist
 	 */
 	public ModelProperty getProperty(String name) {
-		ModelProperty r = null;
-		for (ModelProperty prop: getExtendedProperties()) {
-			if (prop.getName().equals(name)) {
-				r = prop;
-			}
-		}
-		return r;
+		return getProperty(name,true);
 	}
-
+	
 	/**
 	 * Returns the package this class belongs to.
 	 * 
@@ -138,7 +145,7 @@ public final class ModelClass extends ModelNamedObject {
 	 * @return The class properties
 	 */
 	public List<ModelProperty> getProperties() {
-		return properties;
+		return new ArrayList<ModelProperty>(properties);
 	}
 
 	/**
@@ -160,6 +167,33 @@ public final class ModelClass extends ModelNamedObject {
 	public List<ModelProperty> getExtendedProperties() {
 		List<ModelProperty> r = new ArrayList<ModelProperty>();
 		addPropertiesAndExtendedPropertiesToList(r);
+		return r;
+	}
+
+	/**
+	 * Returns a specific class (extended) property.
+	 * 
+	 * When extended properties are included, the class' own properties are prioritized over the extended properties.
+	 * 
+	 * @param name The name of the property
+	 * @param extended Indicates extended properties should be included in the search.
+	 * @return The property or null if it does not exist
+	 */
+	protected ModelProperty getProperty(String name,boolean extended) {
+		ModelProperty r = null;
+		if (extended) {
+			for (ModelProperty prop: getExtendedProperties()) {
+				if (prop.getName().equals(name)) {
+					r = prop;
+				}
+			}
+		} else {
+			for (ModelProperty prop: properties) {
+				if (prop.getName().equals(name)) {
+					r = prop;
+				}
+			}
+		}
 		return r;
 	}
 
