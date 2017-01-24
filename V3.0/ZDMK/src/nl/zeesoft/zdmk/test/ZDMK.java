@@ -62,6 +62,7 @@ public class ZDMK {
 		List<TestObject> tests = Tester.getInstance().getTests();
 		tests.add(new TestModel());
 		tests.add(new TestModelApplyList());
+		tests.add(new TestModelInitialize());
 		tests.add(new TestModelVersioning());
 		tests.add(new TestModelSelf());
 		tests.add(new TestModelSelfConvertModel());

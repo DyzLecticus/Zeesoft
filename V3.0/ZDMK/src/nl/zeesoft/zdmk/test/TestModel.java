@@ -25,7 +25,7 @@ public class TestModel extends TestObject {
 		System.out.println("Model model = new Model();");
 		System.out.println("// Create and apply transformation");
 		System.out.println("model.applyTransformation(new AddPackage(\"new.package.name\"));");
-		System.out.println("// Clean up model to free resources for garbage collection");
+		System.out.println("// Clean up model after use to free resources (allow garbage collection)");
 		System.out.println("model.cleanUp();");
 		System.out.println("~~~~");
 		System.out.println();

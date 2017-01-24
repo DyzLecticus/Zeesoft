@@ -32,7 +32,7 @@ public class TestModelVersioning extends TestObject {
 		System.out.println("model.applyTransformation(new RevertVersionCurrent());");
 		System.out.println("// Revert version");
 		System.out.println("model.applyTransformation(new RevertVersion(1));");
-		System.out.println("// Clean up model to free resources for garbage collection");
+		System.out.println("// Clean up model after use to free resources (allow garbage collection)");
 		System.out.println("model.cleanUp();");
 		System.out.println("~~~~");
 		System.out.println();
