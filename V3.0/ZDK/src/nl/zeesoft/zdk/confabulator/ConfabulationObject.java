@@ -79,7 +79,7 @@ public abstract class ConfabulationObject {
 	 * @return The input sequence symbols as a list
 	 */
 	public List<String> getSequenceAsList() {
-		return SymbolParser.parseSymbolsFromText(getSequence());
+		return SymbolParser.parseSymbols(getSequence());
 	}
 
 	/**
@@ -90,7 +90,7 @@ public abstract class ConfabulationObject {
 	 * @return The context symbols as a list
 	 */
 	public List<String> getContextAsList() {
-		return SymbolParser.parseSymbolsFromText(getContext());
+		return SymbolParser.parseSymbols(getContext());
 	}
 
 	/**
@@ -101,7 +101,7 @@ public abstract class ConfabulationObject {
 	 * @return The output symbols as a list
 	 */
 	public List<String> getOutputAsList() {
-		return SymbolParser.parseSymbolsFromText(getOutput());
+		return SymbolParser.parseSymbols(getOutput());
 	}
 
 	/**

@@ -3,7 +3,7 @@
 	<description>ZDK build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.5"/>
+	<property name="version" value="0.9.6"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
 	
@@ -35,11 +35,11 @@
 		<!-- Build jar file -->
 		<jar jarfile="${dist}/zdk.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Run tests and generate README.md -->
-		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="error" logError="true"> 
+		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="_error" logError="true"> 
 			<arg line="/c java -jar zdk.jar ${version}"/>
 		</exec>
 		<condition property="_abort">
-			<equals arg1="${error}" arg2="1"/>
+			<equals arg1="${_error}" arg2="1"/>
 		</condition>
 		<fail if="_abort" message="One or more tests failed"/>		
 		<!-- Rebuild jar file (include README.md) -->

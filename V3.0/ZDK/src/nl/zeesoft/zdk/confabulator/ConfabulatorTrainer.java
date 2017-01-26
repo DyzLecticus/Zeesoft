@@ -56,8 +56,8 @@ public class ConfabulatorTrainer extends ConfabulatorObject {
 			context = new StringBuilder();
 		}
 		boolean divide = false;
-		List<String> contextSymbols = SymbolParser.parseSymbolsFromText(context);
-		List<String> sequenceSymbols = SymbolParser.parseSymbolsFromText(sequence);
+		List<String> contextSymbols = SymbolParser.parseSymbols(context);
+		List<String> sequenceSymbols = SymbolParser.parseSymbols(sequence);
 		if (sequenceSymbols.size()>1) {
 			lockMe(this);
 			if (contextSymbols.size()==0) {
