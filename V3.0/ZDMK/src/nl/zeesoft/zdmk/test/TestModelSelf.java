@@ -45,7 +45,6 @@ public class TestModelSelf extends TestObject {
 		ModelSelf modelSelf = (ModelSelf) Tester.getInstance().getMockedObject(MockModelSelf.class.getName());
 		List<ModelVersion> versions = modelSelf.getVersionsCopy();
 		List<ModelPackage> packages = modelSelf.getPackagesCopy();
-
 		assertEqual(versions.size(),2,"Number of versions does not meet expectation");
 		if (versions.size()>=1) {
 			assertEqual(versions.get(0).getTransformations().size(),28,"Number of version transformations does not meet expectation");

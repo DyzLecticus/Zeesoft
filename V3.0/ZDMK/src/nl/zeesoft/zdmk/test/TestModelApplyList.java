@@ -1,5 +1,6 @@
 package nl.zeesoft.zdmk.test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.test.TestObject;
@@ -49,12 +50,13 @@ public class TestModelApplyList extends TestObject {
 
 		@SuppressWarnings("unchecked")
 		List<TransformationObject> transformations = (List<TransformationObject>) Tester.getInstance().getMockedObject(MockModelTransformations.class.getName());
+		assertEqual(transformations.size(),24,"Number of transformations does not meet expectation");
 		String error = model.applyTransformationList(transformations);
 		assertEqual(error,"","Unexpected error");
 
 		ZDMK.describeModelPackages(model,true);
 		
-		transformations.clear();
+		transformations = new ArrayList<TransformationObject>();
 		transformations.add(new SetPropertyName("test.package","TestClassA","testPropertyB","testPropertyZ"));
 		transformations.add(new IncrementVersion());
 		transformations.add(new SetPropertyName("test.package","TestClassA","testPropertyZ","testPropertyC"));

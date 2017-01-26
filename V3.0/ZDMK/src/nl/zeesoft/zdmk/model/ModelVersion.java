@@ -17,7 +17,7 @@ public final class ModelVersion {
 	private StringBuilder				log						= new StringBuilder();
 
 	protected void appliedTransformation(TransformationObject transformation,boolean appendLog) {
-		transformations.add(transformation);
+		transformations.add(transformation.getCopy());
 		if (appendLog) {
 			addLogLine("Applied transformation: " + transformation);
 		}

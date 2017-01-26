@@ -53,5 +53,6 @@ public class TestModelSelfConvertModel extends TestObject {
 		}
 		ZDMK.describeModelVersionLogs(modelSelf);
 		ZDMK.describeModelPackages(modelSelf,true);
+		modelSelf.revertVersion(1);
 	}
 }

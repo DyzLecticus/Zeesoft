@@ -58,6 +58,7 @@ public class TestModelVersioning extends TestObject {
 		// Build model
 		@SuppressWarnings("unchecked")
 		List<TransformationObject> transformations = (List<TransformationObject>) Tester.getInstance().getMockedObject(MockModelTransformations.class.getName());
+		assertEqual(transformations.size(),24,"Number of transformations does not meet expectation");
 		for (TransformationObject transformation: transformations) {
 			model.applyTransformation(transformation);
 		}
