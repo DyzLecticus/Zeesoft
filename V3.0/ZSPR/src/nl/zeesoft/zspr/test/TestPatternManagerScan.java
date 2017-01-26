@@ -30,10 +30,11 @@ public class TestPatternManagerScan extends TestObject {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestPatternManagerScan.class));
+		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockPatternManager.class));
 		System.out.println(" * " + Tester.getInstance().getLinkForClass(PatternManager.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows some test strings and their corresponding value translation and back to string translation.  ");
+		System.out.println("The output of this test shows some test strings with corresponding string to value translation and value to string translation.  ");
 		System.out.println("Please note how the date of the request is inferred automatically by the pattern translation mechanism.  ");
 	}
 

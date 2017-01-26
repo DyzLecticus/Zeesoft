@@ -33,6 +33,7 @@ public class TestPatternManager extends TestObject {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestPatternManager.class));
+		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockPatternManager.class));
 		System.out.println(" * " + Tester.getInstance().getLinkForClass(PatternManager.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
