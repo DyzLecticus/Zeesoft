@@ -40,7 +40,7 @@ public class TestPatternManagerScan extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		PatternManager manager = (PatternManager) Tester.getInstance().getMockedObject(MockPatternManager.class.getName());
-				
+		
 		System.out.println("==> Test English");
 		testScanAndTranslate(manager,
 			"I want to book a room for five people on december twentysecond at twentyfive minutes past four for one hour and thirtythree minutes.",
@@ -62,7 +62,7 @@ public class TestPatternManagerScan extends TestObject {
 		assertEqual(to.toString(),expectedTo,"String to value translation does not meet expectation");
 		System.out.println("Values: " + to);
 		StringBuilder back = manager.scanAndTranslateOutput(new StringBuilder(to));
-		assertEqual(back.toString(),expectedBack,"Value to string does not meet expectation");
+		assertEqual(back.toString(),expectedBack,"Value to string translation does not meet expectation");
 		System.out.println("String: " + back);
 	}
 }

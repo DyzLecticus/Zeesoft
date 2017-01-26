@@ -8,6 +8,8 @@ import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishDate extends PatternObjectLiteralToValue {
+	private	Date	currentDate	= null;
+	
 	public EnglishDate() {
 		super(TYPE_DATE,"ENG");
 	}
@@ -31,8 +33,10 @@ public class EnglishDate extends PatternObjectLiteralToValue {
 			monthPattern.initializePatternStrings(manager);
 		}
 		
+		currentDate = manager.getCurrentDate();
+		
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(manager.getCurrentDate());
+		cal.setTime(currentDate);
 		for (int day = 0; day<365; day++) {
 			int year = cal.get(Calendar.YEAR);
 			int month = cal.get(Calendar.MONTH);
@@ -79,16 +83,16 @@ public class EnglishDate extends PatternObjectLiteralToValue {
 	protected String transformStringToValueNoLock(String str) {
 		if (str.equals("now") || str.equals("right now") || str.equals("today")) {
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
+			cal.setTime(currentDate);
 			str = getValueFromCalendar(cal);
 		} else if (str.equals("tomorrow")) {
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
+			cal.setTime(currentDate);
 			cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 1);
 			str = getValueFromCalendar(cal);
 		} else if (str.equals("the day after tomorrow")) {
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
+			cal.setTime(currentDate);
 			cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 2);
 			str = getValueFromCalendar(cal);
 		} else {

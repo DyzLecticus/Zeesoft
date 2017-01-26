@@ -29,14 +29,19 @@ import nl.zeesoft.zspr.pattern.patterns.english.EnglishOrder2;
 import nl.zeesoft.zspr.pattern.patterns.english.EnglishPreposition;
 import nl.zeesoft.zspr.pattern.patterns.english.EnglishTime;
 
-public class PatternManager {
-	protected static String			VALUE_CONCATENATOR	= ":";
-	protected static String			OR_CONCATENATOR		= "|";
-	
-	private List<PatternObject> 	patterns 			= new ArrayList<PatternObject>();
+public class PatternManager {	
+	private List<PatternObject>		patterns	= new ArrayList<PatternObject>();
 
 	protected void addCustomPatterns(List<PatternObject> patterns) {
 		// Override to modify or extend
+	}
+	
+	public String getValueConcatenator() {
+		return ":";
+	}
+
+	public String getOrConcatenator() {
+		return "|";
 	}
 	
 	public int getMaximumNumber() {
@@ -46,17 +51,17 @@ public class PatternManager {
 	public int getMaximumOrder() {
 		return 999;
 	}
-	
+
 	public Date getCurrentDate() {
 		return new Date();
 	}
-	
 	
 	public final void initializePatterns() {
 		patterns.clear();
 		addDefaultPatterns();
 		addCustomPatterns(patterns);
 		for (PatternObject pattern: patterns) {
+			pattern.setConcatenators(getValueConcatenator(),getOrConcatenator());
 			if (pattern.getNumPatternStrings()==0) {
 				pattern.initializePatternStrings(this);
 			}
@@ -86,7 +91,7 @@ public class PatternManager {
 
 	public final List<PatternObject> getPatternsForValues(String str) {
 		List<PatternObject> ptns = new ArrayList<PatternObject>();
-		if (str.indexOf(OR_CONCATENATOR)>0) {
+		if (str.indexOf(getOrConcatenator())>0) {
 			String[] ptnVals = str.split("\\|");
 			for (String ptnVal: ptnVals) {
 				PatternObject ptn = getPatternForValue(ptnVal);
@@ -105,8 +110,8 @@ public class PatternManager {
 	
 	public final PatternObject getPatternForValue(String str) {
 		PatternObject ptn = null;
-		if (str.indexOf(VALUE_CONCATENATOR)>0) {
-			String[] ptnVal = str.split(VALUE_CONCATENATOR);
+		if (str.indexOf(getValueConcatenator())>0) {
+			String[] ptnVal = str.split(getValueConcatenator());
 			for (PatternObject pattern: patterns) {
 				if (pattern.getValuePrefix().equals(ptnVal[0])) {
 					ptn = pattern;
@@ -179,7 +184,7 @@ public class PatternManager {
 					symbol = "";
 					for (PatternObject pattern: matchingPatterns) {
 						if (symbol.length()>0) {
-							symbol += OR_CONCATENATOR;
+							symbol += getOrConcatenator();
 						}
 						String value = matchingPatternStrings.get(pattern.getClass().getName());
 						if (pattern.getNumPatternStrings()>0) {
@@ -212,8 +217,8 @@ public class PatternManager {
 			}
 			List<PatternObject> patterns = getPatternsForValues(symbol);
 			if (patterns.size()>0) {
-				if (symbol.indexOf(OR_CONCATENATOR)>0) {
-					symbol = symbol.split("\\" + OR_CONCATENATOR)[0];
+				if (symbol.indexOf(getOrConcatenator())>0) {
+					symbol = symbol.split("\\" + getOrConcatenator())[0];
 				}
 				output.append(patterns.get(0).getStringForValue(symbol));
 			} else {
@@ -280,7 +285,7 @@ public class PatternManager {
 		PatternObject pattern = getPatternForValue(value);
 		if (pattern!=null && pattern.getBaseValueType().equals(PatternObject.TYPE_TIME)) {
 			String str = getStringValueFromPatternValue(pattern,value);
-			String[] vals = str.split(VALUE_CONCATENATOR);
+			String[] vals = str.split(getValueConcatenator());
 			for (int i = 0; i<vals.length; i++) {
 				long val = Long.parseLong(vals[i]);
 				if (i==0) {
@@ -300,7 +305,7 @@ public class PatternManager {
 		PatternObject pattern = getPatternForValue(value);
 		if (pattern!=null && pattern.getBaseValueType().equals(PatternObject.TYPE_DURATION)) {
 			String str = getStringValueFromPatternValue(pattern,value);
-			String[] vals = str.split(VALUE_CONCATENATOR);
+			String[] vals = str.split(getValueConcatenator());
 			for (int i = 0; i<vals.length; i++) {
 				long val = Long.parseLong(vals[i]);
 				if (i==0) {

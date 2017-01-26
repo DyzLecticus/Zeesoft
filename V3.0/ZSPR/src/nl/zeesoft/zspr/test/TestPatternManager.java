@@ -1,10 +1,7 @@
 package nl.zeesoft.zspr.test;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import nl.zeesoft.zdk.Generic;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zspr.pattern.PatternManager;
@@ -103,31 +100,24 @@ public class TestPatternManager extends TestObject {
 		System.out.println("==> Test universal number");
 		testStringForPattern(manager,"5348",1,"NUMBER_UNI:5348");
 
-		Date now = new Date();
-		Calendar cal = Calendar.getInstance();
-		
-		cal.setTime(now);
 		System.out.println();
 		System.out.println("==> Test english date");
-		testStringForPattern(manager,"december twentysecond",1);
-		testStringForPattern(manager,"january fifth",1);
-		testStringForPattern(manager,"the fifth of january",1);
-		testStringForPattern(manager,"the 12th of august",1);
-		testStringForPattern(manager,"october 2nd",1);
-		testStringForPattern(manager,"now",3,"DATE_ENG:" + cal.get(Calendar.YEAR) + "-" + Generic.minStrInt(cal.get(Calendar.MONTH) + 1,2) + "-" + Generic.minStrInt(cal.get(Calendar.DATE),2));
-		testStringForPattern(manager,"today",2,"DATE_ENG:" + cal.get(Calendar.YEAR) + "-" + Generic.minStrInt(cal.get(Calendar.MONTH) + 1,2) + "-" + Generic.minStrInt(cal.get(Calendar.DATE),2));
-		cal.set(Calendar.DATE,cal.get(Calendar.DATE) + 1);
-		testStringForPattern(manager,"tomorrow",2,"DATE_ENG:" + cal.get(Calendar.YEAR) + "-" + Generic.minStrInt(cal.get(Calendar.MONTH) + 1,2) + "-" + Generic.minStrInt(cal.get(Calendar.DATE),2));
+		testStringForPattern(manager,"december twentysecond",1,"DATE_ENG:2017-12-22");
+		testStringForPattern(manager,"january fifth",1,"DATE_ENG:2017-01-05");
+		testStringForPattern(manager,"the fifth of january",1,"DATE_ENG:2017-01-05");
+		testStringForPattern(manager,"the 12th of august",1,"DATE_ENG:2017-08-12");
+		testStringForPattern(manager,"october 2nd",1,"DATE_ENG:2017-10-02");
+		testStringForPattern(manager,"now",3,"DATE_ENG:2017-01-01");
+		testStringForPattern(manager,"today",2,"DATE_ENG:2017-01-01");
+		testStringForPattern(manager,"tomorrow",2,"DATE_ENG:2017-01-02");
 
-		cal.setTime(now);
 		System.out.println();
 		System.out.println("==> Test dutch date");
-		testStringForPattern(manager,"tweeentwintig december",1);
-		testStringForPattern(manager,"vijf januari",1);
-		testStringForPattern(manager,"nu",2,"DATE_NED:" + cal.get(Calendar.YEAR) + "-" + Generic.minStrInt(cal.get(Calendar.MONTH) + 1,2) + "-" + Generic.minStrInt(cal.get(Calendar.DATE),2));
-		testStringForPattern(manager,"vandaag",2,"DATE_NED:" + cal.get(Calendar.YEAR) + "-" + Generic.minStrInt(cal.get(Calendar.MONTH) + 1,2) + "-" + Generic.minStrInt(cal.get(Calendar.DATE),2));
-		cal.set(Calendar.DATE,cal.get(Calendar.DATE) + 1);
-		testStringForPattern(manager,"morgen",2,"DATE_NED:" + cal.get(Calendar.YEAR) + "-" + Generic.minStrInt(cal.get(Calendar.MONTH) + 1,2) + "-" + Generic.minStrInt(cal.get(Calendar.DATE),2));
+		testStringForPattern(manager,"tweeentwintig december",1,"DATE_NED:2017-12-22");
+		testStringForPattern(manager,"vijf januari",1,"DATE_NED:2017-01-05");
+		testStringForPattern(manager,"nu",2,"DATE_NED:2017-01-01");
+		testStringForPattern(manager,"vandaag",2,"DATE_NED:2017-01-01");
+		testStringForPattern(manager,"morgen",2,"DATE_NED:2017-01-02");
 		
 		System.out.println();
 		System.out.println("==> Test english duration");
@@ -141,10 +131,6 @@ public class TestPatternManager extends TestObject {
 		testStringForPattern(manager,"twee uur",2,"TIME_NED:14:00:00","DURATION_NED:02:00");
 		testStringForPattern(manager,"3 uur en 4 minuten",1,"DURATION_NED:03:04");
 		testStringForPattern(manager,"een uur en vijfenveertig minuten",1,"DURATION_NED:01:45");
-	}
-
-	private void testStringForPattern(PatternManager manager, String testString, int expectedPatterns) {
-		testStringForPattern(manager,testString,expectedPatterns,"","");
 	}
 
 	private void testStringForPattern(PatternManager manager, String testString, int expectedPatterns, String expectedValue1) {

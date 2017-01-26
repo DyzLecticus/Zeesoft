@@ -8,6 +8,8 @@ import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class DutchDate extends PatternObjectLiteralToValue {
+	private	Date	currentDate	= null;
+
 	public DutchDate() {
 		super(TYPE_DATE,"NED");
 	}
@@ -23,8 +25,10 @@ public class DutchDate extends PatternObjectLiteralToValue {
 			monthPattern.initializePatternStrings(manager);
 		}
 		
+		currentDate = manager.getCurrentDate();
+		
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(manager.getCurrentDate());
+		cal.setTime(currentDate);
 		for (int day = 0; day<365; day++) {
 			int year = cal.get(Calendar.YEAR);
 			int month = cal.get(Calendar.MONTH);
@@ -65,16 +69,16 @@ public class DutchDate extends PatternObjectLiteralToValue {
 	protected String transformStringToValueNoLock(String str) {
 		if (str.equals("nu") || str.equals("nu direct") || str.equals("vandaag")) {
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
+			cal.setTime(currentDate);
 			str = getValueFromCalendar(cal);
 		} else if (str.equals("morgen")) {
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
+			cal.setTime(currentDate);
 			cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 1);
 			str = getValueFromCalendar(cal);
 		} else if (str.equals("overmorgen")) {
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
+			cal.setTime(currentDate);
 			cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 2);
 			str = getValueFromCalendar(cal);
 		} else {

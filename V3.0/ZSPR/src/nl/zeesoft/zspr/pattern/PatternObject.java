@@ -23,6 +23,8 @@ public abstract class PatternObject extends Locker {
 
 	private String					baseValueType		= "";
 	private String					typeSpecifier		= "";
+	private String					valueConcatenator	= "";
+	private String					orConcatenator		= "";
 
 	private List<String> 			patternStrings		= new ArrayList<String>();
 
@@ -55,11 +57,18 @@ public abstract class PatternObject extends Locker {
 	public abstract String transformValueToString(String str);
 		
 	public final String getValueForString(String str) {
-		return getValuePrefix() + PatternManager.VALUE_CONCATENATOR + transformStringToValue(str);
+		return getValuePrefix() + valueConcatenator + transformStringToValue(str);
 	}
 
 	public final String getStringForValue(String str) {
 		return transformValueToString(str.substring(getValuePrefix().length() + 1));
+	}
+
+	protected void setConcatenators(String value,String or) {
+		lockMe(this);
+		this.valueConcatenator = value;
+		this.orConcatenator = or;
+		unlockMe(this);
 	}
 	
 	public final List<String> getPatternStrings() {
@@ -108,6 +117,22 @@ public abstract class PatternObject extends Locker {
 	public final boolean stringMatchesPattern(String str) {
 		lockMe(this);
 		boolean r = stringMatchesPatternNoLock(str);
+		unlockMe(this);
+		return r;
+	}
+
+	public String getValueConcatenator() {
+		String r = "";
+		lockMe(this);
+		r = valueConcatenator;
+		unlockMe(this);
+		return r;
+	}
+
+	public String getOrConcatenator() {
+		String r = "";
+		lockMe(this);
+		r = orConcatenator;
 		unlockMe(this);
 		return r;
 	}
