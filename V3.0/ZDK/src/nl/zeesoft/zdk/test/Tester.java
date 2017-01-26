@@ -101,7 +101,7 @@ public final class Tester {
 			
 			Runtime rt = Runtime.getRuntime();
 			rt.gc();
-			usedMemory.add(rt.totalMemory() - rt.freeMemory());
+			usedMemory.add((rt.totalMemory() - rt.freeMemory()) / 1024);
 		}
 		
 		System.out.println();
@@ -123,7 +123,7 @@ public final class Tester {
 			System.out.println("Memory usage per test;  ");
 			i = 0;
 			for (TestObject test: tests) {
-				System.out.println(" * " + test.getClass().getName() + ": " + usedMemory.get(i));
+				System.out.println(" * " + test.getClass().getName() + ": " + usedMemory.get(i) + " Kb / " + (usedMemory.get(i) / 1024) + " Mb");
 				i++;
 			}
 		}
