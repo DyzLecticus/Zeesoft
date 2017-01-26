@@ -15,7 +15,6 @@ public class TestPatternManagerScan extends TestObject {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-
 		System.out.println("// Create pattern manager");
 		System.out.println("PatternManager manager = new PatternManager();");
 		System.out.println("// Initialize patterns");
@@ -41,7 +40,6 @@ public class TestPatternManagerScan extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		PatternManager manager = (PatternManager) Tester.getInstance().getMockedObject(MockPatternManager.class.getName());
-		
 		System.out.println("==> Test English");
 		testScanAndTranslate(manager,
 			"I want to book a room for five people on december twentysecond at twentyfive minutes past four for one hour and thirtythree minutes.",
