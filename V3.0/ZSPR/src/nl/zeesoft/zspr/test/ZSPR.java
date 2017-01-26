@@ -34,6 +34,11 @@ public class ZSPR {
 		System.out.println();
 		System.out.println("*All jar files in the release include source code and build scripts.*  ");
 		System.out.println();
+		System.out.println("**Self documenting and self testing**  ");
+		System.out.println("The tests used to develop the ZSPR are also used to generate this README file.");		
+		System.out.println("Run the " + Tester.getInstance().getLinkForClass(ZSPR.class) + " class as a java application to print this documentation to the standard out.");
+		System.out.println("Click [here](#test-results) to scroll down to the test result summary.");
+		System.out.println();
 		
 		List<TestObject> tests = Tester.getInstance().getTests();
 		tests.add(new TestPatternManager());
