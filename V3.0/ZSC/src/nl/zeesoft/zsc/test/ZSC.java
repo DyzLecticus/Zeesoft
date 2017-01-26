@@ -23,6 +23,7 @@ public class ZSC {
 		System.out.println("==============================");
 		System.out.println("Zeesoft Symbolic Confabulation (ZSC) is an open source library for Java application development.");
 		System.out.println("It provides support for confabulation; the process of learning, generating and forgetting context sensitive symbolic sequences.");
+		System.out.println("The ZSC extends the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK) (ZDK).");
 		System.out.println();
 		System.out.println("**Release downloads**  ");
 		System.out.println("Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSC/releases/zsc-" + version + ".zip) to download the latest ZSC release (version " + version + ").");
