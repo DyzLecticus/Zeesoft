@@ -195,10 +195,10 @@ public final class Tester {
 			}
 		}
 		if (r==null) {
-			Class<?> mockObjectClass;
 			try {
-				mockObjectClass = Class.forName(mockObjectClassName);
+				Class<?> mockObjectClass = Class.forName(mockObjectClassName);
 				r = (MockObject) mockObjectClass.newInstance();
+				mocks.add(r);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {
