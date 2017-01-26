@@ -1,4 +1,4 @@
-package nl.zeesoft.zspr.pattern.test;
+package nl.zeesoft.zspr.test;
 
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;

@@ -6,7 +6,7 @@
 	<property name="version" value="0.1.8"/>
 	
 	<!-- ZDK version -->
-	<property name="versionZDK" value="0.9.7"/>
+	<property name="versionZDK" value="0.9.8"/>
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -51,7 +51,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zspr nl/zeesoft/zspr/model nl/zeesoft/zspr/model/transformations nl/zeesoft/zspr/model/transformations/impl nl/zeesoft/zspr/test zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zspr nl/zeesoft/zspr/pattern nl/zeesoft/zspr/pattern/patterns nl/zeesoft/zspr/pattern/patterns/english nl/zeesoft/zspr/pattern/patterns/dutch nl/zeesoft/zspr/test zdk.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zspr.test.ZSPR"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -60,7 +60,10 @@
 		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="_error" logError="true"> 
 			<arg line="/c java -jar zspr.jar ${version}"/>
 		</exec>
-		<fail if="_error" message="One or more tests failed"/>		
+		<condition property="_abort">
+			<equals arg1="${_error}" arg2="1"/>
+		</condition>
+		<fail if="_abort" message="One or more tests failed"/>		
 		<!-- Rebuild jar file (include README.md) -->
 		<copy file="${dist}/README.md" tofile="${build}/README.md"/>
 		<jar jarfile="${dist}/zspr.jar" basedir="${build}" manifest="dist/mymanifest"/>
@@ -108,7 +111,7 @@
             <fileset dir="${src}" />
         </copy>		
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zspr,nl.zeesoft.zspr.model,nl.zeesoft.zspr.model.transformations,nl.zeesoft.zspr.model.transformations.impl"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zspr,nl.zeesoft.zspr.pattern,nl.zeesoft.zspr.pattern.patterns,nl.zeesoft.zspr.pattern.patterns.english,nl.zeesoft.zspr.pattern.patterns.dutch"/>
 		<zip destfile="${dist}/zspr-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>
@@ -116,7 +119,7 @@
 
 	<target name="clean" description="Clean up">
 		<delete dir="${build}"/>
-		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
 	</target>
 
 	<target name="failIfReleaseExists">

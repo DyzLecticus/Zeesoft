@@ -1,4 +1,4 @@
-package nl.zeesoft.zspr.pattern.test;
+package nl.zeesoft.zspr.test;
 
 import java.util.Date;
 
