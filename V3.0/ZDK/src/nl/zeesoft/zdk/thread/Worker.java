@@ -82,9 +82,9 @@ public abstract class Worker extends Locker implements Runnable {
 	}
 
 	/**
-	 * Returns true if the confabulator is working.
+	 * Returns true if the worker is working.
 	 * 
-	 * @return True if the confabulator is working
+	 * @return True if the worker is working
 	 */
 	public final boolean isWorking() {
 		boolean r = false;

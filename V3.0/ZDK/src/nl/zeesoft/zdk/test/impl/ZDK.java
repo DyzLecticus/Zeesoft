@@ -28,7 +28,6 @@ public class ZDK {
 		System.out.println(" * [Extended StringBuilder manipulation](" + Tester.getInstance().getAnchorUrlForTest(TestSymbolParser.class) + ").");
 		System.out.println(" * [Multi threading](" + Tester.getInstance().getAnchorUrlForTest(TestMessenger.class) + ").");
 		System.out.println(" * [Application message handling](" + Tester.getInstance().getAnchorUrlForTest(TestMessenger.class) + ").");
-		System.out.println(" * [Confabulation (artificial cognition)](" + Tester.getInstance().getAnchorUrlForTest(TestConfabulatorTraining.class) + ").");
 		System.out.println();
 		System.out.println("**Release downloads**  ");
 		System.out.println("Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-" + version + ".zip) to download the latest ZDK release (version " + version + ").");
@@ -45,10 +44,6 @@ public class ZDK {
 		tests.add(new TestEncoderDecoder());
 		tests.add(new TestSymbolParser());
 		tests.add(new TestMessenger());
-		tests.add(new TestConfabulatorTraining());
-		tests.add(new TestConfabulatorContextConfabulation());
-		tests.add(new TestConfabulatorCorrectionConfabulation());
-		tests.add(new TestConfabulatorExtensionConfabulation());
 		boolean success = Tester.getInstance().test(args);
 		if (success) {
 			System.exit(0);

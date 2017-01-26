@@ -21,9 +21,6 @@ public class TestSymbolParser extends TestObject {
 		System.out.println("List<String> symbols = SymbolParser.parseSymbolsFromText(new StringBuilder(\"Example text.\"));");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("The *SymbolParser* is used by confabulators to parse sequence and context text input.");
-		System.out.println("It uses the extended StringBuilder manipulation functions of the *Generic* class to perform its task.");
-		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestSymbolParser.class));
 		System.out.println(" * " + Tester.getInstance().getLinkForClass(SymbolParser.class));

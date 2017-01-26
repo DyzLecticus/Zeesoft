@@ -3,7 +3,7 @@
 	<description>ZDK build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.7"/>
+	<property name="version" value="0.9.8"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
 	
@@ -29,7 +29,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zdk nl/zeesoft/zdk/confabulator nl/zeesoft/zdk/confabulator/confabulations nl/zeesoft/zdk/messenger nl/zeesoft/zdk/messenger/messages nl/zeesoft/zdk/test nl/zeesoft/zdk/test/impl nl/zeesoft/zdk/thread"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zdk nl/zeesoft/zdk/messenger nl/zeesoft/zdk/messenger/messages nl/zeesoft/zdk/test nl/zeesoft/zdk/test/impl nl/zeesoft/zdk/thread"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zdk.test.impl.ZDK"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -78,14 +78,14 @@
 	<target name="javadoc" description="Generate the ZDK documentation">
 		<mkdir dir="${dist}"/>
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${src}" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zdk,nl.zeesoft.zdk.confabulator,nl.zeesoft.zdk.confabulator.confabulations,nl.zeesoft.zdk.messenger,nl.zeesoft.zdk.messenger.messages,nl.zeesoft.zdk.test,nl.zeesoft.zdk.thread"/>
+		<javadoc sourcepath="${src}" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zdk,nl.zeesoft.zdk.messenger,nl.zeesoft.zdk.messenger.messages,nl.zeesoft.zdk.test,nl.zeesoft.zdk.thread"/>
 		<zip destfile="${dist}/zdk-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 	</target>
 
 	<target name="clean" description="Clean up">
 		<delete dir="${build}"/>
-		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
 	</target>
 
 	<target name="failIfReleaseExists">
