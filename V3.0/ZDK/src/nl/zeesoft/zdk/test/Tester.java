@@ -75,6 +75,7 @@ public final class Tester {
 
 		int assertions = 0;
 		List<String> failures = new ArrayList<String>();
+		List<Long> usedMemory = new ArrayList<Long>();
 		int sleepMs = 0;
 		
 		Date start = new Date();
@@ -97,6 +98,10 @@ public final class Tester {
 			failures.addAll(test.getFailures());
 			sleepMs += test.getSleeptMs();
 			System.out.println("~~~~");
+			
+			Runtime rt = Runtime.getRuntime();
+			rt.gc();
+			usedMemory.add(rt.totalMemory() - rt.freeMemory());
 		}
 		
 		System.out.println();
@@ -114,6 +119,13 @@ public final class Tester {
 		} else {
 			System.out.println("All " + tests.size() + " tests have been executed successfully (" + assertions + " assertions).  ");
 			System.out.println("Total test duration: " + ((new Date()).getTime() - start.getTime()) + " ms (total sleep duration: " + sleepMs + " ms).  ");
+			System.out.println();
+			System.out.println("Memory usage per test;  ");
+			i = 0;
+			for (TestObject test: tests) {
+				System.out.println(" * " + test.getClass().getName() + ": " + usedMemory.get(i));
+				i++;
+			}
 		}
 		
 		if (failures.size()>0) {
