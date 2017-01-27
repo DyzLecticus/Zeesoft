@@ -461,11 +461,11 @@ public class PatternManager extends Locker {
 	protected final void addPattern(PatternObject pattern) {
 		patterns.add(pattern);
 	}
-	
+
 	protected final void addPattern(int index, PatternObject pattern) {
 		patterns.add(index,pattern);
 	}
-
+	
 	private final void addDefaultPatterns() {
 		addPattern(new EnglishConfirmation());
 		addPattern(new DutchConfirmation());
