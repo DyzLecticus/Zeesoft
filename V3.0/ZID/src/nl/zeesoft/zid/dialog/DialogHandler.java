@@ -1,27 +1,34 @@
 package nl.zeesoft.zid.dialog;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.SymbolParser;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zsc.Generic;
 import nl.zeesoft.zsc.confabulator.Confabulator;
+import nl.zeesoft.zsc.confabulator.confabulations.ContextConfabulation;
+import nl.zeesoft.zsc.confabulator.confabulations.ExtensionConfabulation;
 import nl.zeesoft.zspr.pattern.PatternManager;
 
 public class DialogHandler extends Locker {
-	private List<Dialog>				dialogs				= null;
-	private PatternManager				patternManager		= null;
+	private static final String				SELECTED_DIALOG_OUTPUT			= "[SELECTED_DIALOG_OUTPUT]";
+	private static final String				PROMPT_VARIABLE_QUESTION		= "[PROMPT_VARIABLE_QUESTION]";
 
-	private Confabulator				contextConfabulator	= new Confabulator();
+	private List<Dialog>					dialogs							= null;
+	private PatternManager					patternManager					= null;
 
-	private StringBuilder				log					= new StringBuilder();
-	private SortedMap<String,String>	variables			= new TreeMap<String,String>(); 
-	private StringBuilder				prevOutput			= new StringBuilder();
-	private Dialog						dialog				= null;
-	private SortedMap<String,String>	dialogVariables		= new TreeMap<String,String>();
+	private Confabulator					contextConfabulator				= new Confabulator();
+	private SortedMap<String,Confabulator>	dialogConfabulators				= new TreeMap<String,Confabulator>();
+	private SortedMap<String,Confabulator>	dialogVariableConfabulators		= new TreeMap<String,Confabulator>();
+
+	private StringBuilder					log								= new StringBuilder();
+	private SortedMap<String,String>		variables						= new TreeMap<String,String>(); 
+	private StringBuilder					prevOutput						= new StringBuilder();
+	private Dialog							dialog							= null;
+	private SortedMap<String,String>		dialogVariables					= new TreeMap<String,String>();
 	
 	public DialogHandler(List<Dialog> dialogs, PatternManager patternManager) {
 		this.dialogs = dialogs;
@@ -30,6 +37,8 @@ public class DialogHandler extends Locker {
 	
 	public void initialize() {
 		lockMe(this);
+		contextConfabulator = new Confabulator();
+		contextConfabulator.setLog(true);
 		for (Dialog dialog: dialogs) {
 			for (DialogExample example: dialog.getExamples()) {
 				StringBuilder sequence = new StringBuilder();
@@ -41,9 +50,9 @@ public class DialogHandler extends Locker {
 			for (DialogVariable variable: dialog.getVariables()) {
 				for (DialogVariableExample example: variable.getExamples()) {
 					StringBuilder sequence = new StringBuilder();
-					sequence.append(example.getInput());
+					sequence.append(example.getQuestion());
 					sequence.append(" ");
-					sequence.append(example.getOutput());
+					sequence.append(example.getAnswer());
 					contextConfabulator.learnSequence(sequence,new StringBuilder(dialog.getName()));
 				}
 			}
@@ -52,18 +61,50 @@ public class DialogHandler extends Locker {
 	}
 	
 	public StringBuilder processInput(StringBuilder input) {
-		addLogLine("<<< " + input);
 		StringBuilder output = new StringBuilder();
 		
-		// Determine input context
-		StringBuilder context = new StringBuilder();
-		addLogLine("Context " + context);
-
+		// Correct input
+		input = getSafeText(input);
+		addLogLine("<<< " + input);
 		
-		// Determine dialog
-		// Use context to extend line ending if missing
-		// Use context to correct input (parse variables)
-		// Use context 
+		// Determine context
+		String context = "";
+		ContextConfabulation contextConfab = new ContextConfabulation();
+		contextConfab.setSequence(input);
+		
+		lockMe(this);
+		contextConfabulator.confabulate(contextConfab);
+		unlockMe(this);
+		
+		StringBuilder confabulatedContext = contextConfab.getOutput();
+		List<String> contextSymbols = SymbolParser.parseSymbols(confabulatedContext);
+		boolean selectedDialog = false;
+		
+		lockMe(this);
+		if (contextSymbols.size()==0 && dialog!=null) {
+			context = dialog.getName();
+		} else {
+			context = contextSymbols.get(0);
+			if (dialog==null || !dialog.getName().equals(context)) {
+				setDialogNoLock(context);
+				if (dialog==null) {
+					context = "";
+				} else {
+					selectedDialog = true;
+				}
+			}
+		}
+		unlockMe(this);
+				
+		if (context.length()>0) {
+			if (selectedDialog) {
+				addLogLine("--- Selected dialog: " + context);
+			} else {
+				addLogLine("--- Continuing dialog: " + context);
+			}
+		} else {
+			addLogLine("--- Unable to determine dialog");
+		}
 		
 		addLogLine(">>> " + output);
 		prevOutput = new StringBuilder(output);
@@ -82,21 +123,6 @@ public class DialogHandler extends Locker {
 		lockMe(this);
 		log = new StringBuilder();
 		unlockMe(this);
-	}
-	
-	protected final void setDialog(String name) {
-		Dialog newDialog = getDialog(name);
-		if (dialog!=newDialog) {
-			lockMe(this);
-			dialog = newDialog;
-			unlockMe(this);
-			clearDialogVariables();
-			if (newDialog!=null) {
-				for (DialogVariable dv: newDialog.getVariables()) {
-					setDialogVariable(dv.getName(),"");
-				}
-			}
-		}
 	}
 	
 	protected final void setVariable(String name,String value) {
@@ -168,13 +194,43 @@ public class DialogHandler extends Locker {
 		unlockMe(this);
 	}
 
-	private Dialog getDialog(String name) {
+	private final void setDialogNoLock(String name) {
+		Dialog newDialog = getDialogNoLock(name);
+		if (newDialog!=null && dialog!=newDialog) {
+			dialog = newDialog;
+			dialogVariables.clear();
+			if (newDialog!=null) {
+				for (DialogVariable dv: newDialog.getVariables()) {
+					dialogVariables.put(dv.getName(),"");
+				}
+			}
+		}
+	}
+	
+	private Dialog getDialogNoLock(String name) {
 		Dialog r = null;
 		for (Dialog dialog: dialogs) {
 			if (dialog.getName().equals(name)) {
 				r = dialog;
 				break;
 			}
+		}
+		return r;
+	}
+	
+	protected final static StringBuilder getSafeText(StringBuilder text) {
+		StringBuilder r = new StringBuilder();
+		text = Generic.stringBuilderTrim(text);
+		text.replace(0,1,text.substring(0,1).toUpperCase());
+		if (!SymbolParser.endsWithLineEndSymbol(text)) {
+			text.append(".");
+		}
+		List<String> symbols = SymbolParser.parseSymbolsFromText(text);
+		for (String symbol: symbols) {
+			if (r.length()>0) {
+				r.append(" ");
+			}
+			r.append(symbol);
 		}
 		return r;
 	}
