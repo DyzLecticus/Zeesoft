@@ -8,6 +8,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.SymbolParser;
+import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zspr.pattern.patterns.UniversalAlphabetic;
 import nl.zeesoft.zspr.pattern.patterns.UniversalNumber;
 import nl.zeesoft.zspr.pattern.patterns.UniversalTime;
@@ -29,38 +30,84 @@ import nl.zeesoft.zspr.pattern.patterns.english.EnglishOrder2;
 import nl.zeesoft.zspr.pattern.patterns.english.EnglishPreposition;
 import nl.zeesoft.zspr.pattern.patterns.english.EnglishTime;
 
-public class PatternManager {	
+/**
+ * A PatternManager provides an extensible, thread safe object for translating symbolic sequences into primary value objects.
+ */
+public class PatternManager extends Locker {	
 	private List<PatternObject>		patterns	= new ArrayList<PatternObject>();
 
+	/**
+	 * Override this to modify or extend the default patterns.
+	 * 
+	 * The order of the patterns determines the order of the pattern matching search results.  
+	 * 
+	 * @param patterns The default patterns provided by the pattern manager.
+	 */
 	protected void addCustomPatterns(List<PatternObject> patterns) {
 		// Override to modify or extend
 	}
 	
+	/**
+	 * Specifies how the pattern manager should concatenate values to pattern object value prefixes.
+	 * 
+	 * @return The value concatenator 
+	 */
 	public String getValueConcatenator() {
 		return ":";
 	}
 
+	/**
+	 * Specifies how the pattern manager should concatenate multiple pattern values for the same string. 
+	 * 
+	 * @return The or concatenator 
+	 */
 	public String getOrConcatenator() {
 		return "|";
 	}
 	
+	/**
+	 * Specifies the maximum number string pattern to generate (starting at zero).
+	 * 
+	 * In order to support current and future dates, this should be at least 9999.
+	 * 
+	 * @return The maximum number string pattern to generate
+	 */
 	public int getMaximumNumber() {
 		return 99999;
 	}
 
+	/**
+	 * Specifies the maximum order string pattern to generate (starting at zero).
+	 * 
+	 * In order to support current and future dates, this should be at least 99.
+	 * 
+	 * @return The maximum order string pattern to generate
+	 */
 	public int getMaximumOrder() {
 		return 999;
 	}
 
+	/**
+	 * Specifies the current date (default = new Date()).
+	 * 
+	 * Used to translate patterns like 'now', 'today', 'tomorrow'.
+	 * 
+	 * @return The current date
+	 */
 	public Date getCurrentDate() {
 		return new Date();
 	}
 	
+	/**
+	 * Call this method to (re)initialize all the patterns defined for this pattern manager.
+	 */
 	public final void initializePatterns() {
+		lockMe(this);
 		patterns.clear();
 		addDefaultPatterns();
 		addCustomPatterns(patterns);
-		for (PatternObject pattern: patterns) {
+		unlockMe(this);
+		for (PatternObject pattern: getPatterns()) {
 			pattern.setConcatenators(getValueConcatenator(),getOrConcatenator());
 			if (pattern.getNumPatternStrings()==0) {
 				pattern.initializePatternStrings(this);
@@ -68,9 +115,15 @@ public class PatternManager {
 		}
 	}
 	
+	/**
+	 * Returns the specified pattern or null if it does not exist.
+	 * 
+	 * @param name The full class name (including package) of the pattern
+	 * @return The pattern or null
+	 */
 	public final PatternObject getPatternByClassName(String name) {
 		PatternObject ptn = null;
-		for (PatternObject pattern: patterns) {
+		for (PatternObject pattern: getPatterns()) {
 			if (pattern.getClass().getName().equals(name)) {
 				ptn = pattern;
 				break;
@@ -79,9 +132,17 @@ public class PatternManager {
 		return ptn;
 	}
 	
+	/**
+	 * Returns a list of patterns that match a certain string.
+	 * 
+	 * These patterns can then be used to translate the string into values.
+	 * 
+	 * @param str The string
+	 * @return A list of patterns that match a certain string
+	 */
 	public final List<PatternObject> getMatchingPatternsForString(String str) {
 		List<PatternObject> matches = new ArrayList<PatternObject>();
-		for (PatternObject pattern: patterns) {
+		for (PatternObject pattern: getPatterns()) {
 			if (pattern.stringMatchesPattern(str)) {
 				matches.add(pattern);
 			}
@@ -89,6 +150,14 @@ public class PatternManager {
 		return matches;
 	}
 
+	/**
+	 * Returns a list of patterns that can translate certain values.
+	 *
+	 * These patterns can then be used to translate the values back into string representations.
+	 * 
+	 * @param str The values
+	 * @return A list of patterns that can translate certain values
+	 */
 	public final List<PatternObject> getPatternsForValues(String str) {
 		List<PatternObject> ptns = new ArrayList<PatternObject>();
 		if (str.indexOf(getOrConcatenator())>0) {
@@ -108,22 +177,17 @@ public class PatternManager {
 		return ptns;
 	}
 	
-	public final PatternObject getPatternForValue(String str) {
-		PatternObject ptn = null;
-		if (str.indexOf(getValueConcatenator())>0) {
-			String[] ptnVal = str.split(getValueConcatenator());
-			for (PatternObject pattern: patterns) {
-				if (pattern.getValuePrefix().equals(ptnVal[0])) {
-					ptn = pattern;
-					break;
-				}
-			}
-		}
-		return ptn;
-	}
-	
-	public final StringBuilder scanAndTranslateInput(StringBuilder input, List<String> expectedTypes) {
-		List<String> symbols = SymbolParser.parseSymbols(input);
+	/**
+	 * Scans a symbol sequence and translates it to a primary value object string using all matching patterns.
+	 * 
+	 * Selects longest matching symbol sequence patterns over shorter symbol sequence patterns.
+	 * 
+	 * @param sequence The symbol sequence
+	 * @param expectedTypes The optional list of expected pattern base value types to limit the translation
+	 * @return The translated values
+	 */
+	public final StringBuilder scanAndTranslateSequence(StringBuilder sequence, List<String> expectedTypes) {
+		List<String> symbols = SymbolParser.parseSymbols(sequence);
 		List<String> translated = new ArrayList<String>();
 		int i = 0;
 		int skip = 0;
@@ -133,7 +197,7 @@ public class PatternManager {
 			} else {
 				List<PatternObject> matchingPatterns = new ArrayList<PatternObject>();
 				SortedMap<String,String> matchingPatternStrings = new TreeMap<String,String>();
-				for (PatternObject pattern: patterns) {
+				for (PatternObject pattern: getPatterns()) {
 					if (expectedTypes==null || expectedTypes.size()==0 || expectedTypes.contains(pattern.getBaseValueType())) {
 						if (pattern.getMaximumSymbols()>1) {
 							int max = pattern.getMaximumSymbols();
@@ -198,40 +262,62 @@ public class PatternManager {
 			i++;
 		}
 		symbols = translated;
-		input = new StringBuilder();
+		sequence = new StringBuilder();
 		for (String symbol: symbols) {
-			if (input.length()>0) {
-				input.append(" ");
+			if (sequence.length()>0) {
+				sequence.append(" ");
 			}
-			input.append(symbol);
+			sequence.append(symbol);
 		}
-		return input;
+		return sequence;
 	}
 
-	public final StringBuilder scanAndTranslateOutput(StringBuilder output) {
-		List<String> symbols = SymbolParser.parseSymbols(output);
-		output = new StringBuilder();
+	/**
+	 * Scans and translates values to a symbol sequence.
+	 * 
+	 * In case of multiple value representations the first matching pattern value prefix will be used.
+	 * 
+	 * @param values A string representation of the values
+	 * @return The translated symbol sequence
+	 */
+	public final StringBuilder scanAndTranslateValues(StringBuilder values) {
+		List<String> symbols = SymbolParser.parseSymbols(values);
+		values = new StringBuilder();
 		for (String symbol: symbols) {
-			if (output.length()>0) {
-				output.append(" ");
+			if (values.length()>0) {
+				values.append(" ");
 			}
 			List<PatternObject> patterns = getPatternsForValues(symbol);
 			if (patterns.size()>0) {
 				if (symbol.indexOf(getOrConcatenator())>0) {
 					symbol = symbol.split("\\" + getOrConcatenator())[0];
 				}
-				output.append(patterns.get(0).getStringForValue(symbol));
+				values.append(patterns.get(0).getStringForValue(symbol));
 			} else {
-				output.append(symbol);
+				values.append(symbol);
 			}
 		}
-		return output;
+		return values;
 	}
 	
+	/**
+	 * Returns a read only list of patterns.
+	 * 
+	 * @return A read only list of patterns
+	 */
 	public final List<PatternObject> getPatterns() {
-		return new ArrayList<PatternObject>(patterns);
+		lockMe(this);
+		List<PatternObject> r = new ArrayList<PatternObject>(patterns);
+		unlockMe(this);
+		return r;
 	}
 	
+	/**
+	 * Helper function to easily translate a value to an integer primitive 
+	 * 
+	 * @param value The value string
+	 * @return The integer primitive
+	 */
 	public final int getNumberValueFromPatternValue(String value) {
 		int r = 0;
 		PatternObject pattern = getPatternForValue(value);
@@ -242,6 +328,12 @@ public class PatternManager {
 		return r;
 	}
 
+	/**
+	 * Helper function to easily translate a value to a boolean primitive 
+	 * 
+	 * @param value The value string
+	 * @return The boolean primitive
+	 */
 	public final boolean getConfirmationValueFromPatternValue(String value) {
 		boolean r = false;
 		PatternObject pattern = getPatternForValue(value);
@@ -252,6 +344,12 @@ public class PatternManager {
 		return r;
 	}
 
+	/**
+	 * Helper function to easily translate a value to a Date object 
+	 * 
+	 * @param value The value string
+	 * @return The Date object
+	 */
 	public final Date getDateValueFromPatternValue(String value) {
 		Date r = null;
 		PatternObject pattern = getPatternForValue(value);
@@ -280,6 +378,12 @@ public class PatternManager {
 		return r;
 	}
 
+	/**
+	 * Helper function to easily translate a time value to a long primitive 
+	 * 
+	 * @param value The time value string
+	 * @return The long primitive
+	 */
 	public final long getTimeValueFromPatternValue(String value) {
 		long r = 0;
 		PatternObject pattern = getPatternForValue(value);
@@ -300,6 +404,12 @@ public class PatternManager {
 		return r;
 	}
 
+	/**
+	 * Helper function to easily translate a duration value to a long primitive 
+	 * 
+	 * @param value The duration value string
+	 * @return The long primitive
+	 */
 	public final long getDurationValueFromPatternValue(String value) {
 		long r = 0;
 		PatternObject pattern = getPatternForValue(value);
@@ -318,6 +428,12 @@ public class PatternManager {
 		return r;
 	}
 
+	/**
+	 * Helper function to easily translate a preposition value 
+	 * 
+	 * @param value The value string
+	 * @return The preposition
+	 */
 	public final String getPrepositionStringValueFromPatternValue(String value) {
 		String r = "";
 		PatternObject pattern = getPatternForValue(value);
@@ -327,6 +443,12 @@ public class PatternManager {
 		return r;
 	}
 
+	/**
+	 * Helper function to easily translate a string value 
+	 * 
+	 * @param value The value string
+	 * @return The string
+	 */
 	public final String getStringValueFromPatternValue(String value) {
 		String r = "";
 		PatternObject pattern = getPatternForValue(value);
@@ -335,22 +457,11 @@ public class PatternManager {
 		}
 		return r;
 	}
-	
-	public final String getStringValueFromPatternValue(PatternObject pattern, String value) {
-		String r = "";
-		if (pattern==null) {
-			pattern = getPatternForValue(value);
-		}
-		if (pattern!=null) {
-			r = value.substring(pattern.getValuePrefix().length() + 1);
-		}
-		return r;
-	}
-	
+
 	protected final void addPattern(PatternObject pattern) {
 		patterns.add(pattern);
 	}
-
+	
 	protected final void addPattern(int index, PatternObject pattern) {
 		patterns.add(index,pattern);
 	}
@@ -376,5 +487,30 @@ public class PatternManager {
 		addPattern(new UniversalTime());
 		addPattern(new UniversalNumber());
 		addPattern(new UniversalAlphabetic());
+	}
+
+	private String getStringValueFromPatternValue(PatternObject pattern, String value) {
+		String r = "";
+		if (pattern==null) {
+			pattern = getPatternForValue(value);
+		}
+		if (pattern!=null) {
+			r = value.substring(pattern.getValuePrefix().length() + 1);
+		}
+		return r;
+	}
+	
+	private PatternObject getPatternForValue(String str) {
+		PatternObject ptn = null;
+		if (str.indexOf(getValueConcatenator())>0) {
+			String[] ptnVal = str.split(getValueConcatenator());
+			for (PatternObject pattern: getPatterns()) {
+				if (pattern.getValuePrefix().equals(ptnVal[0])) {
+					ptn = pattern;
+					break;
+				}
+			}
+		}
+		return ptn;
 	}
 }

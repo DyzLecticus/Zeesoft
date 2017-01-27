@@ -57,10 +57,10 @@ public class TestPatternManagerScan extends TestObject {
 
 	private void testScanAndTranslate(PatternManager manager,String from,String expectedTo,String expectedBack) {
 		System.out.println("Input: " + from);
-		StringBuilder to = manager.scanAndTranslateInput(new StringBuilder(from),null);
+		StringBuilder to = manager.scanAndTranslateSequence(new StringBuilder(from),null);
 		assertEqual(to.toString(),expectedTo,"String to value translation does not meet expectation");
 		System.out.println("Values: " + to);
-		StringBuilder back = manager.scanAndTranslateOutput(new StringBuilder(to));
+		StringBuilder back = manager.scanAndTranslateValues(new StringBuilder(to));
 		assertEqual(back.toString(),expectedBack,"Value to string translation does not meet expectation");
 		System.out.println("String: " + back);
 	}

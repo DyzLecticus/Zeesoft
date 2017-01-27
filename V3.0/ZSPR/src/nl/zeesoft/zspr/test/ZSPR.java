@@ -4,6 +4,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zspr.pattern.PatternManager;
 
 public class ZSPR {
 
@@ -33,6 +34,12 @@ public class ZSPR {
 		System.out.println(" * Separate zip files containing the generated java documentation for each jar file.  ");
 		System.out.println();
 		System.out.println("*All jar files in the release include source code and build scripts.*  ");
+		System.out.println();
+		System.out.println("Symbolic Pattern Recognition");
+		System.out.println("----------------------------");
+		System.out.println("When parsing symbolic sequences to discern meaning, certain patterns may be easily translated into primary objects like numbers, dates and duration.");
+		System.out.println("This library provides an extendable, thread safe " + Tester.getInstance().getLinkForClass(PatternManager.class) + " to do just that.");
+		System.out.println("Please note that initializing the default *PatternManager* might take a few seconds and that it requires quite a lot of memory.");
 		System.out.println();
 		System.out.println("**Self documenting and self testing**  ");
 		System.out.println("The tests used to develop the ZSPR are also used to generate this README file.");		

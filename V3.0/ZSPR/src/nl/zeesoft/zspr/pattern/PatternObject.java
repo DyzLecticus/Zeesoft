@@ -5,6 +5,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.thread.Locker;
 
+/**
+ * Abstract pattern object.
+ */
 public abstract class PatternObject extends Locker {
 	public final static	String		TYPE_ALPHABETIC		= "ALPHABETIC";
 	public final static	String		TYPE_NUMBER			= "NUMBER";
@@ -28,56 +31,85 @@ public abstract class PatternObject extends Locker {
 
 	private List<String> 			patternStrings		= new ArrayList<String>();
 
+	/**
+	 * @param baseValueType The base value type specifies the primary data type this pattern will recognize
+	 * @param typeSpecifier The type specifier is a string that is used to make this pattern unique among the other patterns in the pattern manager
+	 */
 	public PatternObject(String baseValueType, String typeSpecifier) {
 		this.baseValueType = baseValueType;
 		this.typeSpecifier = typeSpecifier;
 	}
-
+	
 	/**
-	 * @return the baseValueType
+	 * Returns the value prefix used for values this pattern translates.
+	 * 
+	 * @return The value prefix
 	 */
-	public final String getBaseValueType() {
-		return baseValueType;
-	}
-
-	/**
-	 * @return the typeSpecifier
-	 */
-	public final String getTypeSpecifier() {
-		return typeSpecifier;
-	}
-
 	public final String getValuePrefix() {
 		return baseValueType + "_" + typeSpecifier;
 	}
 	
+	/**
+	 * Initialize the strings for this pattern.
+	 * 
+	 * @param manager The manager this pattern belongs to
+	 */
 	public abstract void initializePatternStrings(PatternManager manager);
 	
-	public abstract String transformStringToValue(String str);
-	public abstract String transformValueToString(String str);
+	/**
+	 * Transform a certain string to a value for this pattern.
+	 * 
+	 * Locking must be programmed explicitly and use the '*NoLock' methods of this class.
+	 * 
+	 * @param str The string to translate
+	 * @return The value
+	 */
+	protected abstract String transformStringToValue(String str);
+	
+	/**
+	 * Transform a certain value to a string for this pattern.
+	 * 
+	 * Locking must be programmed explicitly and use the '*NoLock' methods of this class.
+	 * 
+	 * @param str The value to translate
+	 * @return The string
+	 */
+	protected abstract String transformValueToString(String str);
 		
+	/**
+	 * Returns the maximum symbol sequence length this pattern will recognize.
+	 * 
+	 * @return The maximum symbol sequence length
+	 */
+	public int getMaximumSymbols() {
+		return 1;
+	}
+
+	/**
+	 * Returns a value translation for a certain string.
+	 *  
+	 * @param str The string
+	 * @return The value
+	 */
 	public final String getValueForString(String str) {
 		return getValuePrefix() + valueConcatenator + transformStringToValue(str);
 	}
 
+	/**
+	 * Returns a string translation for a certain value.
+	 * 
+	 * @param str The value
+	 * @return The string
+	 */
 	public final String getStringForValue(String str) {
 		return transformValueToString(str.substring(getValuePrefix().length() + 1));
 	}
-
-	protected void setConcatenators(String value,String or) {
-		lockMe(this);
-		this.valueConcatenator = value;
-		this.orConcatenator = or;
-		unlockMe(this);
-	}
 	
-	public final List<String> getPatternStrings() {
-		lockMe(this);
-		List<String> r = getPatternStringsNoLock();
-		unlockMe(this);
-		return r;
-	}
-
+	/**
+	 * Returns the number of pattern strings
+	 * 
+	 * @return The number of pattern strings
+	 */
 	public final int getNumPatternStrings() {
 		int r = 0;
 		lockMe(this);
@@ -85,15 +117,13 @@ public abstract class PatternObject extends Locker {
 		unlockMe(this);
 		return r;
 	}
-
-	protected final int getPatternStringIndex(String str) {
-		int r = -1;
-		lockMe(this);
-		r = getPatternStringIndexNoLock(str);
-		unlockMe(this);
-		return r;
-	}
 	
+	/**
+	 * Returns a specific pattern string or an empty string.
+	 * 
+	 * @param index The index of the pattern string
+	 * @return The pattern string or an empty string
+	 */
 	public final String getPatternString(int index) {
 		String r = "";
 		lockMe(this);
@@ -102,18 +132,32 @@ public abstract class PatternObject extends Locker {
 		return r;
 	}
 
+	/**
+	 * Adds a specific pattern string to the pattern.
+	 * 
+	 * @param str The pattern string
+	 */
 	protected final void addPatternString(String str) {
 		lockMe(this);
 		addPatternStringNoLock(str);
 		unlockMe(this);
 	}
 
+	/**
+	 * Removes all pattern strings from the pattern.
+	 */
 	protected final void clearPatternStrings() {
 		lockMe(this);
 		clearPatternStringsNoLock();
 		unlockMe(this);
 	}
 
+	/**
+	 * Returns true if a certain string matches this pattern.
+	 * 
+	 * @param str The string to match
+	 * @return True if the string matches this pattern
+	 */
 	public final boolean stringMatchesPattern(String str) {
 		lockMe(this);
 		boolean r = stringMatchesPatternNoLock(str);
@@ -121,37 +165,72 @@ public abstract class PatternObject extends Locker {
 		return r;
 	}
 
-	public String getValueConcatenator() {
+	/**
+	 * Returns the value concatenator for this pattern.
+	 * 
+	 * @return The value concatenator
+	 */
+	public final String getValueConcatenator() {
 		String r = "";
 		lockMe(this);
-		r = valueConcatenator;
+		r = getValueConcatenatorNoLock();
 		unlockMe(this);
 		return r;
 	}
 
-	public String getOrConcatenator() {
+	/**
+	 * Returns the or concatenator for this pattern.
+	 * 
+	 * @return The or concatenator
+	 */
+	public final String getOrConcatenator() {
 		String r = "";
 		lockMe(this);
-		r = orConcatenator;
+		r = getOrConcatenatorNoLock();
 		unlockMe(this);
 		return r;
 	}
 	
-	/************ DO NOT EXPOSE NO LOCK VARIATIONS *************/ 
-	
-	protected List<String> getPatternStringsNoLock() {
-		return new ArrayList<String>(patternStrings);
+	/**
+	 * Sets the concatenators for this pattern.
+	 * 
+	 * @param value The value concatenator
+	 * @param or The or concatenator
+	 */
+	protected void setConcatenators(String value,String or) {
+		lockMe(this);
+		this.valueConcatenator = value;
+		this.orConcatenator = or;
+		unlockMe(this);
 	}
 
-	protected int getNumPatternStringsNoLock() {
+	/**
+	 * Returns the base value type.
+	 * 
+	 * @return The base value type
+	 */
+	public final String getBaseValueType() {
+		return baseValueType;
+	}
+
+	/**
+	 * Returns the base value type specifier.
+	 * 
+	 * @return The base value type specifier
+	 */
+	public final String getTypeSpecifier() {
+		return typeSpecifier;
+	}
+	
+	protected final int getNumPatternStringsNoLock() {
 		return patternStrings.size();
 	}
 	
-	protected int getPatternStringIndexNoLock(String str) {
+	protected final int getPatternStringIndexNoLock(String str) {
 		return patternStrings.indexOf(str);
 	}
 	
-	protected String getPatternStringNoLock(int index) {
+	protected final String getPatternStringNoLock(int index) {
 		return patternStrings.get(index);
 	}
 
@@ -166,11 +245,21 @@ public abstract class PatternObject extends Locker {
 	protected boolean stringMatchesPatternNoLock(String str) {
 		return patternStrings.contains(str.toLowerCase());
 	}
+	
+	protected final String getValueConcatenatorNoLock() {
+		return valueConcatenator;
+	}
 
-	public int getMaximumSymbols() {
-		return 1;
+	protected final String getOrConcatenatorNoLock() {
+		return orConcatenator;
 	}
 	
+	/**
+	 * Returns true if a string is alphabetic.
+	 * 
+	 * @param str The string
+	 * @return True if the string is alphabetic
+	 */
 	public static final boolean isAlphabetic(String str) {
 		boolean r = true;
 		for (char c:str.toCharArray()) {
@@ -182,6 +271,12 @@ public abstract class PatternObject extends Locker {
 	    return r;
 	}
 
+	/**
+	 * Returns true if a string is numeric.
+	 * 
+	 * @param str The string
+	 * @return True if the string is numeric
+	 */
 	public static final boolean isNumeric(String str) {
 		boolean r = true;
 		for (char c:str.toCharArray()) {
