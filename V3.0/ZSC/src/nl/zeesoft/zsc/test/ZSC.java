@@ -29,7 +29,7 @@ public class ZSC {
 		System.out.println("Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSC/releases/zsc-" + version + ".zip) to download the latest ZSC release (version " + version + ").");
 		System.out.println("All ZSC releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZSC/releases).");
 		System.out.println("ZSC releases contain;  ");
-		System.out.println(" * the ZDMK jar file.  ");
+		System.out.println(" * the ZSC jar file.  ");
 		System.out.println(" * the corresponding ZDK jar file.  ");
 		System.out.println(" * this README file.  ");
 		System.out.println(" * Separate zip files containing the generated java documentation for each jar file.  ");

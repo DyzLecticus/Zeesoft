@@ -11,7 +11,7 @@ public class TestPatternManagerScan extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to create and initialzie a *PatternManager* instance and then use it to translate a sentence to its value and back.");
+		System.out.println("This test shows how to create and initialzie a *PatternManager* instance and then use it to translate a symbol sequence to its values and back.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -19,10 +19,10 @@ public class TestPatternManagerScan extends TestObject {
 		System.out.println("PatternManager manager = new PatternManager();");
 		System.out.println("// Initialize patterns");
 		System.out.println("manager.initializePatterns();");
-		System.out.println("// Get patterns for string");
-		System.out.println("List<PatternObject> patterns = manager.getMatchingPatternsForString(\"one hour and fourtyfive minutes\");");
-		System.out.println("// Translate string to pattern value");
-		System.out.println("String value = patterns.get(0).getValueForString(\"one hour and fourtyfive minutes\");");
+		System.out.println("// Get values for sequence");
+		System.out.println("StringBuilder values = manager.scanAndTranslateSequence(new StringBuilder(\"I walked one hour and fourtyfive minutes\"),null);");
+		System.out.println("// Get sequence for values");
+		System.out.println("StringBuilder sequence = manager.scanAndTranslateValues(values);");
 		System.out.println("~~~~");
 		System.out.println();
 		Tester.getInstance().describeMock(MockPatternManager.class.getName());
@@ -60,7 +60,7 @@ public class TestPatternManagerScan extends TestObject {
 		StringBuilder to = manager.scanAndTranslateSequence(new StringBuilder(from),null);
 		assertEqual(to.toString(),expectedTo,"String to value translation does not meet expectation");
 		System.out.println("Values: " + to);
-		StringBuilder back = manager.scanAndTranslateValues(new StringBuilder(to));
+		StringBuilder back = manager.scanAndTranslateValues(to);
 		assertEqual(back.toString(),expectedBack,"Value to string translation does not meet expectation");
 		System.out.println("String: " + back);
 	}
