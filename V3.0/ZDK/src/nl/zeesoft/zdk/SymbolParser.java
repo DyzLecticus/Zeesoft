@@ -94,8 +94,8 @@ public final class SymbolParser {
 	
 	public static final boolean isLineEndSymbol(String symbol) {
 		boolean r = false;
-		for (int i = 0; i < LINE_END_SYMBOLS.length; i++) {
-			if (symbol.equals(LINE_END_SYMBOLS[i])) {
+		for (String lineEnd: LINE_END_SYMBOLS) {
+			if (symbol.equals(lineEnd)) {
 				r = true;
 				break;
 			}
