@@ -1,5 +1,6 @@
 package nl.zeesoft.zid.dialog;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
@@ -10,12 +11,15 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zsc.Generic;
 import nl.zeesoft.zsc.confabulator.Confabulator;
 import nl.zeesoft.zsc.confabulator.confabulations.ContextConfabulation;
+import nl.zeesoft.zsc.confabulator.confabulations.CorrectionConfabulation;
 import nl.zeesoft.zsc.confabulator.confabulations.ExtensionConfabulation;
 import nl.zeesoft.zspr.pattern.PatternManager;
+import nl.zeesoft.zspr.pattern.PatternObject;
+import nl.zeesoft.zspr.pattern.patterns.UniversalAlphabetic;
 
 public class DialogHandler extends Locker {
-	private static final String				SELECTED_DIALOG_OUTPUT			= "[SELECTED_DIALOG_OUTPUT]";
-	private static final String				PROMPT_VARIABLE_QUESTION		= "[PROMPT_VARIABLE_QUESTION]";
+	private static final String				END_INPUT						= "[END_INPUT]";
+	private static final String				END_OUTPUT						= "[END_OUTPUT]";
 
 	private List<Dialog>					dialogs							= null;
 	private PatternManager					patternManager					= null;
@@ -44,8 +48,12 @@ public class DialogHandler extends Locker {
 				StringBuilder sequence = new StringBuilder();
 				sequence.append(example.getInput());
 				sequence.append(" ");
+				sequence.append(END_INPUT);
+				sequence.append(" ");
 				sequence.append(example.getOutput());
-				contextConfabulator.learnSequence(sequence,new StringBuilder(dialog.getName()));
+				sequence.append(" ");
+				sequence.append(END_OUTPUT);
+				contextConfabulator.learnSequence(getSafeText(sequence),new StringBuilder(dialog.getName()));
 			}
 			for (DialogVariable variable: dialog.getVariables()) {
 				for (DialogVariableExample example: variable.getExamples()) {
@@ -53,9 +61,14 @@ public class DialogHandler extends Locker {
 					sequence.append(example.getQuestion());
 					sequence.append(" ");
 					sequence.append(example.getAnswer());
-					contextConfabulator.learnSequence(sequence,new StringBuilder(dialog.getName()));
+					contextConfabulator.learnSequence(getSafeText(sequence),new StringBuilder(dialog.getName()));
 				}
 			}
+		}
+		UniversalAlphabetic pattern = (UniversalAlphabetic) patternManager.getPatternByClassName(UniversalAlphabetic.class.getName());
+		if (pattern!=null) {
+			contextConfabulator.confabulate(new ContextConfabulation());
+			pattern.setKnownSymbols(contextConfabulator.getAllSequenceSymbols());
 		}
 		unlockMe(this);
 	}
@@ -69,16 +82,17 @@ public class DialogHandler extends Locker {
 		
 		// Determine context
 		String context = "";
-		ContextConfabulation contextConfab = new ContextConfabulation();
-		contextConfab.setSequence(input);
+		List<String> contextSymbols = confabulateContext(input);
+		if (prevOutput.length()>0) {
+			input.insert(0," ");
+			input.insert(0,prevOutput);
+			if (contextSymbols.size()==0) {
+				contextSymbols = confabulateContext(input);
+			}
+		}
 		
-		lockMe(this);
-		contextConfabulator.confabulate(contextConfab);
-		unlockMe(this);
-		
-		StringBuilder confabulatedContext = contextConfab.getOutput();
-		List<String> contextSymbols = SymbolParser.parseSymbols(confabulatedContext);
 		boolean selectedDialog = false;
+		List<String> expectedTypes = null;
 		
 		lockMe(this);
 		if (contextSymbols.size()==0 && dialog!=null) {
@@ -94,6 +108,14 @@ public class DialogHandler extends Locker {
 				}
 			}
 		}
+		if (dialog!=null) {
+			expectedTypes = new ArrayList<String>();
+			for (DialogVariable variable: dialog.getVariables()) {
+				if (!expectedTypes.contains(variable.getType())) {
+					expectedTypes.add(variable.getType());
+				}
+			}
+		}
 		unlockMe(this);
 				
 		if (context.length()>0) {
@@ -106,6 +128,90 @@ public class DialogHandler extends Locker {
 			addLogLine("--- Unable to determine dialog");
 		}
 		
+		// Translate input
+		input = patternManager.scanAndTranslateSequence(input, expectedTypes);
+		addLogLine("--- Translated input: " + input);
+
+		// Correct input
+		CorrectionConfabulation correction = confabulateCorrection(input,context);
+		input = stringBuilderFromSymbols(SymbolParser.parseSymbols(correction.getOutput()));
+		addLogLine("--- Corrected input: " + input);
+		
+		// Update variables
+		List<DialogVariable> updatedVariables = new ArrayList<DialogVariable>(); 
+		if (correction.getCorrectionValues().size()>0) {
+			lockMe(this);
+			for (DialogVariable variable: dialog.getVariables()) {
+				String macro = "{" + variable.getName() + "}";
+				if (correction.getCorrectionValues().contains(macro)) {
+					String value = correction.getCorrectionKeys().get(correction.getCorrectionValues().indexOf(macro));
+					PatternObject pattern = getPatternForDialogVariableValue(variable, value);
+					if (pattern!=null) {
+						dialogVariables.put(variable.getName(),value);
+						updatedVariables.add(variable);
+					}
+				}
+			}
+			unlockMe(this);
+		}
+
+		if (updatedVariables.size()>0) {
+			StringBuilder variables = new StringBuilder(); 
+			for (DialogVariable variable: updatedVariables) {
+				if (variables.length()>0) {
+					variables.append(", ");
+				}
+				variables.append(variable.getName());
+				variables.append(" = ");
+				variables.append(getDialogVariable(variable.getName()));
+			}
+			addLogLine("--- Updated variables: " + variables);
+			// TODO: pass updated variables to dialog handler
+		}
+		
+		if (input.length()>0) {
+			input.append(" ");
+		}
+		input.append(END_INPUT);
+		
+		// Extend input to output
+		List<String> extensionSymbols = confabulateExtension(input,context);
+		for (String symbol: extensionSymbols) {
+			if (symbol.equals(END_INPUT)) {
+				output = new StringBuilder();
+			} else if (symbol.equals(END_OUTPUT)) {
+				break;
+			}
+			if (symbol.startsWith("{") && symbol.endsWith("}") && symbol.length()>2) {
+				String name = symbol.substring(1,(symbol.length()-1));
+				DialogVariable variable = null;
+				String value = "";
+				lockMe(this);
+				if (dialog!=null) {
+					variable = dialog.getVariable(name);
+					value = dialogVariables.get(name);
+				}
+				unlockMe(this);
+				if (variable!=null && value.length()>0) {
+					symbol = getPatternStringForDialogVariableValue(variable, value);
+				}
+			}
+			// TODO: Detect and translate variables
+			if (output.length()>0 && !SymbolParser.isLineEndSymbol(symbol)) {
+				output.append(" ");
+			}
+			output.append(symbol);
+		}
+		
+		if (output.length()>0) {
+			addLogLine("--- Extended input to output: " + output);
+			output = patternManager.scanAndTranslateSequence(output, expectedTypes);
+			addLogLine("--- Translated output: " + output);
+		} else {
+			addLogLine("--- Failed to extend input");
+		}
+		
+		output = getSafeText(output);
 		addLogLine(">>> " + output);
 		prevOutput = new StringBuilder(output);
 		return output;
@@ -131,7 +237,7 @@ public class DialogHandler extends Locker {
 		unlockMe(this);
 	}
 	
-	protected final String getVariable(String name,String value) {
+	protected final String getVariable(String name) {
 		String r = "";
 		lockMe(this);
 		if (variables.containsKey(name)) {
@@ -161,7 +267,7 @@ public class DialogHandler extends Locker {
 		unlockMe(this);
 	}
 	
-	protected final String getDialogVariable(String name,String value) {
+	protected final String getDialogVariable(String name) {
 		String r = "";
 		lockMe(this);
 		if (dialogVariables.containsKey(name)) {
@@ -217,17 +323,74 @@ public class DialogHandler extends Locker {
 		}
 		return r;
 	}
+
+	private final List<String> confabulateContext(StringBuilder sequence) {
+		ContextConfabulation confab = new ContextConfabulation();
+		confab.setSequence(sequence);
+		lockMe(this);
+		contextConfabulator.confabulate(confab);
+		unlockMe(this);
+		return SymbolParser.parseSymbols(confab.getOutput());
+	}
+
+	private final CorrectionConfabulation confabulateCorrection(StringBuilder sequence,String context) {
+		CorrectionConfabulation confab = new CorrectionConfabulation();
+		confab.setSequence(sequence);
+		if (context!=null && context.length()>0) {
+			confab.setContext(new StringBuilder(context));
+		}
+		lockMe(this);
+		contextConfabulator.confabulate(confab);
+		unlockMe(this);
+		return confab;
+	}
+
+	private final List<String> confabulateExtension(StringBuilder sequence,String context) {
+		ExtensionConfabulation confab = new ExtensionConfabulation();
+		confab.setSequence(sequence);
+		if (context!=null && context.length()>0) {
+			confab.setContext(new StringBuilder(context));
+		}
+		lockMe(this);
+		contextConfabulator.confabulate(confab);
+		unlockMe(this);
+		return SymbolParser.parseSymbols(confab.getOutput());
+	}
 	
-	protected final static StringBuilder getSafeText(StringBuilder text) {
-		StringBuilder r = new StringBuilder();
+	private final String getPatternStringForDialogVariableValue(DialogVariable variable,String value) {
+		String r = "";
+		PatternObject pattern = getPatternForDialogVariableValue(variable,value);
+		if (pattern!=null) {
+			r = pattern.getStringForValue(value);
+		}
+		return r;
+	}
+	
+	private final PatternObject getPatternForDialogVariableValue(DialogVariable variable,String value) {
+		PatternObject r = null;
+		List<PatternObject> patterns = patternManager.getPatternsForValues(value);
+		for (PatternObject pattern: patterns) {
+			if (pattern.getBaseValueType().equals(variable.getType())) {
+				r = pattern;
+				break;
+			}
+		}
+		return r;
+	}
+	
+	private final static StringBuilder getSafeText(StringBuilder text) {
 		text = Generic.stringBuilderTrim(text);
 		text.replace(0,1,text.substring(0,1).toUpperCase());
 		if (!SymbolParser.endsWithLineEndSymbol(text)) {
 			text.append(".");
 		}
-		List<String> symbols = SymbolParser.parseSymbolsFromText(text);
+		return stringBuilderFromSymbols(SymbolParser.parseSymbolsFromText(text));
+	}
+	
+	private final static StringBuilder stringBuilderFromSymbols(List<String> symbols) {
+		StringBuilder r = new StringBuilder();
 		for (String symbol: symbols) {
-			if (r.length()>0) {
+			if (r.length()>0 && !SymbolParser.isLineEndSymbol(symbol)) {
 				r.append(" ");
 			}
 			r.append(symbol);

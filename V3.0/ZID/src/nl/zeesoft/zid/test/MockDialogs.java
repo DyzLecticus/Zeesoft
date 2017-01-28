@@ -48,7 +48,9 @@ public class MockDialogs extends MockObject {
 		dialog.addVariableExample("lastName","What is your lastname?","{preposition} {lastName}.");
 		dialog.addVariableExample("lastName","What is your lastname?","{lastName}, {preposition}.");
 		dialog.addVariableExample("lastName","What is your lastname?","{lastName}.");
-		
+
+		dialog.addVariable("preposition",PatternObject.TYPE_PREPOSITION);
+
 		dialog = new Dialog("DutchHandshake");
 		dialogs.add(dialog);
 
@@ -76,13 +78,15 @@ public class MockDialogs extends MockObject {
 		dialog.addVariableExample("firstName","Wat is jouw naam?","{firstName}.");
 
 		dialog.addVariable("lastName",PatternObject.TYPE_ALPHABETIC);
-		dialog.addVariableExample("lastName","Wat is jouw achternaam?","Mijn achternaam is{preposition} {lastName}.");
-		dialog.addVariableExample("lastName","Wat is jouw achternaam?","Mijn achternaam is{lastName}, {preposition}.");
-		dialog.addVariableExample("lastName","Wat is jouw achternaam?","Mijn achternaam is{lastName}.");
+		dialog.addVariableExample("lastName","Wat is jouw achternaam?","Mijn achternaam is {preposition} {lastName}.");
+		dialog.addVariableExample("lastName","Wat is jouw achternaam?","Mijn achternaam is {lastName}, {preposition}.");
+		dialog.addVariableExample("lastName","Wat is jouw achternaam?","Mijn achternaam is {lastName}.");
 		dialog.addVariableExample("lastName","Wat is jouw achternaam?","{preposition} {lastName}.");
 		dialog.addVariableExample("lastName","Wat is jouw achternaam?","{lastName}, {preposition}.");
 		dialog.addVariableExample("lastName","Wat is jouw achternaam?","{lastName}.");
 
+		dialog.addVariable("preposition",PatternObject.TYPE_PREPOSITION);
+		
 		return dialogs;
 	}
 }

@@ -18,7 +18,8 @@ public class TestDialogHandler extends TestObject {
 	protected void test(String[] args) {
 		DialogHandler handler = (DialogHandler) Tester.getInstance().getMockedObject(MockDialogHandler.class.getName());
 		StringBuilder output = handler.processInput(new StringBuilder("hello"));
-		assertEqual(output.toString(),"","Output does not match expectation");
+		assertEqual(output.toString(),"Hello. My name is Dyz Lecticus. What is your name?","Output does not match expectation");
+		output = handler.processInput(new StringBuilder("my name is Andre van der Zee"));
 		System.out.println(handler.getLog());
 	}
 }
