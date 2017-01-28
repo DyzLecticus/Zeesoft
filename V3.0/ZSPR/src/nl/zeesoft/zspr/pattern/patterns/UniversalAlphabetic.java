@@ -1,5 +1,6 @@
 package nl.zeesoft.zspr.pattern.patterns;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zspr.pattern.PatternManager;
@@ -25,7 +26,7 @@ public class UniversalAlphabetic extends PatternObject {
 	@Override
 	protected boolean stringMatchesPatternNoLock(String str) {
 		boolean r = false;
-		if (isAlphabetic(str) && (knownSymbols==null || knownSymbols.contains(str))) {
+		if (isAlphabetic(str) && (knownSymbols==null || knownSymbols.size()==0 || !knownSymbols.contains(str))) {
 			r = true;
 		}
 		return r;
@@ -38,7 +39,13 @@ public class UniversalAlphabetic extends PatternObject {
 
 	public void setKnownSymbols(List<String> knownSymbols) {
 		lockMe(this);
-		this.knownSymbols = knownSymbols;
+		this.knownSymbols = new ArrayList<String>();
+		for (String symbol: knownSymbols) {
+			symbol = symbol.toLowerCase();
+			if (!this.knownSymbols.contains(symbol)) {
+				this.knownSymbols.add(symbol);
+			}
+		}
 		unlockMe(this);
 	}
 
@@ -48,6 +55,7 @@ public class UniversalAlphabetic extends PatternObject {
 			this.knownSymbols = knownSymbols;
 		} else {
 			for (String symbol: knownSymbols) {
+				symbol = symbol.toLowerCase();
 				if (!this.knownSymbols.contains(symbol)) {
 					this.knownSymbols.add(symbol);
 				}
