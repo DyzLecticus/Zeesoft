@@ -151,7 +151,7 @@ public final class Tester {
 	 * @return the URL for the source code
 	 */
 	public String getUrlForClass(@SuppressWarnings("rawtypes") Class cls) {
-		return baseUrl + "/src/" + cls.getName().replace(".","/") + ".java";
+		return baseUrl + "src/" + cls.getName().replace(".","/") + ".java";
 	}
 	
 	/**

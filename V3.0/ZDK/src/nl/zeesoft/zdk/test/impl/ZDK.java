@@ -13,8 +13,9 @@ public class ZDK extends LibraryObject {
 	public ZDK() {
 		setNameAbbreviated("ZDK");
 		setNameFull("Zeesoft Development Kit");
+		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/");
 		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/");
-		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK");
+		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/");
 	}
 
 	public static void main(String[] args) {
@@ -36,6 +37,7 @@ public class ZDK extends LibraryObject {
 		describeRelease();
 		System.out.println();
 		describeTesting(ZDK.class);
+		System.out.println();
 	}
 
 	@Override
