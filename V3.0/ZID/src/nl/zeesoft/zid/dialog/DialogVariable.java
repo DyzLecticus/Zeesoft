@@ -13,8 +13,8 @@ public class DialogVariable {
 		this.type = type;
 	}
 
-	protected void addExample(String input, String output) {
-		DialogVariableExample example = new DialogVariableExample(new StringBuilder(input),new StringBuilder(output));
+	protected void addExample(String question, String answer) {
+		DialogVariableExample example = new DialogVariableExample(new StringBuilder(question),new StringBuilder(answer));
 		examples.add(example);
 	}
 	

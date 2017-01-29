@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Dialog {
-	private DialogControllerObject	controller 	= null;
-	private String					name		= "";
-	private List<DialogExample>		examples	= new ArrayList<DialogExample>();
-	private List<DialogVariable>	variables	= new ArrayList<DialogVariable>();
+	private String					name				= "";
+	private String					controllerClassName	= "";
+	private List<DialogExample>		examples			= new ArrayList<DialogExample>();
+	private List<DialogVariable>	variables			= new ArrayList<DialogVariable>();
 	
-	public Dialog(String name) {
+	public Dialog(String name,String controllerClassName) {
 		this.name = name;
+		this.controllerClassName = controllerClassName;
 	}
 	
 	public void addExample(String input, String output) {
@@ -25,10 +26,10 @@ public class Dialog {
 		}
 	}
 
-	public void addVariableExample(String name,String input, String output) {
+	public void addVariableExample(String name,String question, String answer) {
 		DialogVariable variable = getVariable(name);
 		if (variable!=null) {
-			variable.addExample(input, output);
+			variable.addExample(question, answer);
 		}
 	}
 
@@ -43,12 +44,12 @@ public class Dialog {
 		return r;
 	}
 	
-	public DialogControllerObject getController() {
-		return controller;
+	public String getControllerClassName() {
+		return controllerClassName;
 	}
 
-	public void setController(DialogControllerObject controller) {
-		this.controller = controller;
+	public void setControllerClassName(String controllerClassName) {
+		this.controllerClassName = controllerClassName;
 	}
 
 	public List<DialogExample> getExamples() {
@@ -61,5 +62,30 @@ public class Dialog {
 
 	public String getName() {
 		return name;
+	}
+	
+	protected DialogControllerObject getNewController()  {
+		DialogControllerObject r = null;
+		try {
+			Class<?> clas = Class.forName(controllerClassName);
+			r = (DialogControllerObject) clas.newInstance();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return r;
+	}
+	
+	protected List<String> getExpectedTypes() {
+		List<String> expectedTypes = new ArrayList<String>();
+		for (DialogVariable variable: getVariables()) {
+			if (!expectedTypes.contains(variable.getType())) {
+				expectedTypes.add(variable.getType());
+			}
+		}
+		return expectedTypes;
 	}
 }

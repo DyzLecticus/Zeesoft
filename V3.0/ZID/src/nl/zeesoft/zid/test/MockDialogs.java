@@ -17,15 +17,15 @@ public class MockDialogs extends MockObject {
 	protected Object initialzeMock() {
 		List<Dialog> dialogs = new ArrayList<Dialog>();
 		
-		Dialog dialog = new Dialog("EnglishHandshake");
+		Dialog dialog = new Dialog("EnglishHandshake",HandshakeController.class.getName());
 		dialogs.add(dialog);
 		
-		dialog.addExample("Hello. My name is {firstName} {preposition} {lastName}.","Hello.");
-		dialog.addExample("Hello. My name is {firstName} {lastName}.","Hello.");
-		dialog.addExample("Hello. My name is {firstName}.","Hello.");
-		dialog.addExample("Hi. My name is {firstName} {preposition} {lastName}.","Hello.");
-		dialog.addExample("Hi. My name is {firstName} {lastName}.","Hello.");
-		dialog.addExample("Hi. My name is {firstName}.","Hello.");
+		dialog.addExample("Hello. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");
+		dialog.addExample("Hello, my name is {firstName} {lastName}.","Hello {fullName}.");
+		dialog.addExample("Hello. My name is {firstName}.","Hello {firstName}. What is your lastname?");
+		dialog.addExample("Hi. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");
+		dialog.addExample("Hi, my name is {firstName} {lastName}.","Hello {fullName}.");
+		dialog.addExample("Hi. My name is {firstName}.","Hello {firstName}. What is your lastname?");
 		
 		dialog.addExample("Hello.","Hello. My name is Dyz Lecticus. What is your name?");
 		dialog.addExample("Hello!","Hello. My name is Dyz Lecticus. What is your name?");
@@ -51,21 +51,26 @@ public class MockDialogs extends MockObject {
 
 		dialog.addVariable("preposition",PatternObject.TYPE_PREPOSITION);
 
-		dialog = new Dialog("DutchHandshake");
+		dialog.addVariable("nextDialog",PatternObject.TYPE_ALPHABETIC);
+		dialog.addVariableExample("nextDialog","What can I do for you {fullName}.","{nextDialog}.");
+
+		dialog = new Dialog("DutchHandshake",HandshakeController.class.getName());
 		dialogs.add(dialog);
 
-		dialog.addExample("Hallo. Mijn naam is {firstName} {preposition} {lastName}.","Hallo.");
-		dialog.addExample("Hallo. Mijn naam is {firstName} {lastName}.","Hallo.");
-		dialog.addExample("Hallo. Mijn naam is {firstName}.","Hello.");
-		dialog.addExample("Hoi. Mijn naam is {firstName} {preposition} {lastName}.","Hallo.");
-		dialog.addExample("Hoi. Mijn naam is {firstName} {lastName}.","Hallo.");
-		dialog.addExample("Hoi. Mijn naam is {firstName}.","Hallo.");
+		dialog.addExample("Hallo. Mijn naam is {firstName} {preposition} {lastName}.","Hallo {fullName}.");
+		dialog.addExample("Hallo. Ik heet {firstName} {preposition} {lastName}.","Hallo {fullName}.");
+		dialog.addExample("Hallo, mijn naam is {firstName} {lastName}.","Hallo {fullName}.");
+		dialog.addExample("Hallo, ik heet {firstName}.","Hallo {firstName}. Wat is je achternaam?");
+		dialog.addExample("Hoi. Mijn naam is {firstName} {preposition} {lastName}.","Hallo {fullName}.");
+		dialog.addExample("Hoi. Ik heet is {firstName} {preposition} {lastName}.","Hallo {fullName}.");
+		dialog.addExample("Hoi, mijn naam is {firstName} {lastName}.","Hallo {fullName}.");
+		dialog.addExample("Hoi, ik heet {firstName}.","Hallo {firstName}. Wat is je achternaam?");
 		
-		dialog.addExample("Hallo.","Hello. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
-		dialog.addExample("Hallo.","Hello. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
-		dialog.addExample("Hallo!","Hello. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
-		dialog.addExample("Hoi.","Hi. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
-		dialog.addExample("Hoi!","Hi. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		dialog.addExample("Hallo.","Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		dialog.addExample("Hallo.","Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		dialog.addExample("Hallo!","Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		dialog.addExample("Hoi.","Hoi. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		dialog.addExample("Hoi!","Hoi. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
 		dialog.addExample("Hoe heet jij?","Mijn naam is Dyz Lecticus. Wat is jouw naam?");
 		dialog.addExample("Wat is jouw naam?","Mijn naam is Dyz Lecticus. Wat is jouw naam?");
 		
@@ -86,6 +91,9 @@ public class MockDialogs extends MockObject {
 		dialog.addVariableExample("lastName","Wat is jouw achternaam?","{lastName}.");
 
 		dialog.addVariable("preposition",PatternObject.TYPE_PREPOSITION);
+
+		dialog.addVariable("nextDialog",PatternObject.TYPE_ALPHABETIC);
+		dialog.addVariableExample("nextDialog","Wat kan ik voor je doen {fullName}?","{nextDialog}.");
 		
 		return dialogs;
 	}
