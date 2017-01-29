@@ -79,6 +79,8 @@ public class DialogHandler extends Locker {
 					StringBuilder context = new StringBuilder();
 					context.append(dialog.getName());
 					context.append(" ");
+					context.append(dialog.getName());
+					context.append(":");
 					context.append(variable.getName());
 					correctionConfabulator.learnSequence(getSafeText(sequence),context);
 				}
@@ -201,7 +203,7 @@ public class DialogHandler extends Locker {
 
 		// Correct input
 		CorrectionConfabulation correction = correctInput(input,currentDialog,currentDialogVariable);
-		input = stringBuilderFromSymbols(SymbolParser.parseSymbols(correction.getOutput()));
+		input = stringBuilderFromSymbols(SymbolParser.parseSymbols(correction.getOutput()),true,true);
 		addLogLine("--- Corrected input: " + input);
 		
 		// Update variables
@@ -346,7 +348,7 @@ public class DialogHandler extends Locker {
 			addLogLine("--- Failed to confabulate output");
 		}
 		
-		output = getSafeText(output);
+		output = getSafeText(output,true);
 		addLogLine(">>> " + output);
 		return output;
 	}
@@ -447,12 +449,12 @@ public class DialogHandler extends Locker {
 		StringBuilder context = new StringBuilder();
 		if (currentDialog!=null) {
 			context.append(currentDialog.getName());
-		}
-		if (currentDialogVariable!=null && currentDialogVariable.length()>0) {
-			if (context.length()>0) {
+			if (currentDialogVariable!=null && currentDialogVariable.length()>0) {
 				context.append(" ");
+				context.append(currentDialog.getName());
+				context.append(":");
+				context.append(currentDialogVariable);
 			}
-			context.append(currentDialogVariable);
 		}
 		return confabulateCorrection(sequence,context);
 	}
@@ -557,26 +559,40 @@ public class DialogHandler extends Locker {
 		}
 		return r;
 	}
-	
+
 	private final static StringBuilder getSafeText(StringBuilder text) {
+		return getSafeText(text,false);
+	}
+	
+	private final static StringBuilder getSafeText(StringBuilder text,boolean correctPunctuation) {
 		if (text.length()>0) {
 			text = Generic.stringBuilderTrim(text);
 			text.replace(0,1,text.substring(0,1).toUpperCase());
 			if (!SymbolParser.endsWithLineEndSymbol(text)) {
 				text.append(".");
 			}
-			text = stringBuilderFromSymbols(SymbolParser.parseSymbolsFromText(text));
+			text = stringBuilderFromSymbols(SymbolParser.parseSymbolsFromText(text),true,correctPunctuation);
 		}
 		return text;
 	}
 	
-	private final static StringBuilder stringBuilderFromSymbols(List<String> symbols) {
+	private final static StringBuilder stringBuilderFromSymbols(List<String> symbols, boolean correctCase, boolean correctPunctuation) {
 		StringBuilder r = new StringBuilder();
+		boolean upperCaseFirstNext = correctCase;
 		for (String symbol: symbols) {
-			if (r.length()>0 && !SymbolParser.isLineEndSymbol(symbol)) {
+			if (r.length()>0 && !SymbolParser.isLineEndSymbol(symbol) && 
+				(!correctPunctuation || (!symbol.equals(",") && !symbol.equals(":") && !symbol.equals(";")))
+				) {
 				r.append(" ");
 			}
+			if (upperCaseFirstNext) {
+				symbol = symbol.substring(0,1).toUpperCase() + symbol.substring(1);
+				upperCaseFirstNext = false;
+			}
 			r.append(symbol);
+			if (correctCase && SymbolParser.isLineEndSymbol(symbol)) {
+				upperCaseFirstNext = true;
+			}
 		}
 		return r;
 	}
