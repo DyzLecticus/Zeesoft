@@ -567,7 +567,6 @@ public class DialogHandler extends Locker {
 	private final static StringBuilder getSafeText(StringBuilder text,boolean correctPunctuation) {
 		if (text.length()>0) {
 			text = Generic.stringBuilderTrim(text);
-			text.replace(0,1,text.substring(0,1).toUpperCase());
 			if (!SymbolParser.endsWithLineEndSymbol(text)) {
 				text.append(".");
 			}
