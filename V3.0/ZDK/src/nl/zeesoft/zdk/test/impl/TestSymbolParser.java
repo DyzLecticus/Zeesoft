@@ -45,7 +45,8 @@ public class TestSymbolParser extends TestObject {
 			System.out.print(symbol);
 		}
 		System.out.println();
-		
 		assertEqual(symbols.size(),14,"Total parsed symbols does not match expectation");
+		text = SymbolParser.textFromSymbols(symbols,true,true);
+		assertEqual(text.toString(),TestEncoderDecoder.getTestText(),"Merged string does not match expectation");
 	}
 }

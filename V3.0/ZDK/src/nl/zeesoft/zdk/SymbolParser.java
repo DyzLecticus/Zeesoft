@@ -75,6 +75,36 @@ public final class SymbolParser {
 		return symbols;
 	}
 	
+	/**
+	 * Merges parsed symbols back into a nice text.
+	 * Can optionally correct case and merge non line ending punctuation.
+	 * 
+	 * @param symbols The list of symbols to merge
+	 * @param correctCase Indicates case is to be corrected
+	 * @param correctPunctuation Indicates the punctuation is to be corrected
+	 * @return The merged symbols
+	 */
+	public final static StringBuilder textFromSymbols(List<String> symbols, boolean correctCase, boolean correctPunctuation) {
+		StringBuilder r = new StringBuilder();
+		boolean upperCaseFirstNext = correctCase;
+		for (String symbol: symbols) {
+			if (r.length()>0 && !SymbolParser.isLineEndSymbol(symbol) && 
+				(!correctPunctuation || (!symbol.equals(",") && !symbol.equals(":") && !symbol.equals(";")))
+				) {
+				r.append(" ");
+			}
+			if (upperCaseFirstNext) {
+				symbol = symbol.substring(0,1).toUpperCase() + symbol.substring(1);
+				upperCaseFirstNext = false;
+			}
+			r.append(symbol);
+			if (correctCase && SymbolParser.isLineEndSymbol(symbol)) {
+				upperCaseFirstNext = true;
+			}
+		}
+		return r;
+	}
+
 	public static final boolean endsWithLineEndSymbol(StringBuilder symbol) {
 		boolean r = false;
 		if (symbol.length()>1) {
