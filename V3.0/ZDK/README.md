@@ -9,14 +9,14 @@ It provides support for;
  * [Application message handling](#nlzeesoftzdktestimpltestmessenger).
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.10.zip) to download the latest ZDK release (version 0.9.10).
-All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/releases).
-ZDK releases contain the ZDK jar file (includes source code and build scripts), this README file, and a separate zip file containing the generated java documentation.
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.11.zip) to download the latest ZDK release (version 0.9.11).  
+All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/).  
+*All jar files in the release include source code and build scripts.*  
 
 **Self documenting and self testing**  
-The tests used to develop the ZDK are also used to generate this README file.
-Run the [ZDK](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/src/nl/zeesoft/zdk/test/impl/ZDK.java) class as a java application to print this documentation to the standard out.
-Click [here](#test-results) to scroll down to the test result summary.
+The tests used to develop this libary are also used to generate this README file.  
+Run the [ZDK](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/src/nl/zeesoft/zdk/test/impl/ZDK.java) class as a java application to print this documentation to the standard out.  
+Click [here](#test-results) to scroll down to the test result summary.  
 
 nl.zeesoft.zdk.test.impl.TestEncoderDecoder
 -------------------------------------------
@@ -42,9 +42,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 9921185730281450116141795363475643841528749220384486735694569722
+Key: 8657953996500957347567506865780610096675151568608710546280085668
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
-Encoded text: iEbEO~8:E~NDsAPDIAgzp~jDl:#BSAf#d:h#kBv:BBq#ODrEcB8A3CIAZB9D~BYB2AdAPEe~d:nBj~KDaD3BsEI:E~p#4AGEABYBMEdBYDZAtBoCEF2A0
+Encoded text: by2xyxcyt#fvYuK#G#UwXwYsOtlzkvFyQv#vixCxvyFxvwwtexQz6xpweypy~sAwjscsZtmy3xnxJyRvsu6wruivhx~zDxJtIz:yNtlrqwFwMx5uszts0
 Decoded text: Hello, my name is Dyz Lecticus. How are you feeling today?
 ~~~~
 
@@ -110,17 +110,17 @@ Class references;
 **Test output**  
 The output of this test shows the standard (and error) output of the test log messages.
 ~~~~
-2017-01-26 22:50:24:106 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2017-01-26 22:50:24:407 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2017-01-26 22:50:24:718 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2017-01-30 17:52:25:791 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2017-01-30 17:52:26:091 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2017-01-30 17:52:26:427 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
-All 3 tests have been executed successfully (6 assertions).  
-Total test duration: 691 ms (total sleep duration: 600 ms).  
+All 3 tests have been executed successfully (7 assertions).  
+Total test duration: 739 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestEncoderDecoder: 238 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestSymbolParser: 244 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 295 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestEncoderDecoder: 336 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestSymbolParser: 285 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 346 Kb / 0 Mb

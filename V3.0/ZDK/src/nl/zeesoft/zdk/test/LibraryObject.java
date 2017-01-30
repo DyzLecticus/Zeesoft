@@ -50,10 +50,14 @@ public abstract class LibraryObject {
 
 	protected void describeDependencies() {
 		if (dependencies.size()>0) {
-			System.out.println("**Dependencies**  ");
-			System.out.println("This library depends on the following libraries;  ");
-			for (LibraryObject library: dependencies) {
-				System.out.println(" * [" + library.getNameFull() + "](" + library.getBaseProjectUrl() + ")  ");		
+			if (dependencies.size()==1) {
+				System.out.println("This library depends on the [" + dependencies.get(0).getNameFull() + "](" + dependencies.get(0).getBaseProjectUrl() + ").  ");
+			} else {
+				System.out.println("**Dependencies**  ");
+				System.out.println("This library depends on the following libraries;  ");
+				for (LibraryObject library: dependencies) {
+					System.out.println(" * [" + library.getNameFull() + "](" + library.getBaseProjectUrl() + ")  ");		
+				}
 			}
 		}
 	}
