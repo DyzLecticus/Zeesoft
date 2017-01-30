@@ -8,12 +8,13 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.dialog.DialogHandler;
 import nl.zeesoft.zspr.pattern.PatternManager;
+import nl.zeesoft.zspr.test.MockPatternManager;
 
 public class MockDialogHandler extends MockObject {
 	@Override
 	protected void describe() {
 		System.out.println("This test uses the *MockDialogHandler*.");
-		System.out.println("The *MockDialogHandler* uses the *MockDialogs*.");
+		System.out.println("The *MockDialogHandler* uses the *MockDialogs* and the *PatternManager*.");
 	}
 
 	@Override
@@ -21,7 +22,7 @@ public class MockDialogHandler extends MockObject {
 		@SuppressWarnings("unchecked")
 		List<Dialog> dialogs = (List<Dialog>) Tester.getInstance().getMockedObject(MockDialogs.class.getName());
 				
-		PatternManager manager = new PatternManager();
+		PatternManager manager = (PatternManager) Tester.getInstance().getMockedObject(MockPatternManager.class.getName());
 		manager.initializePatterns();
 		
 		Date start = new Date();

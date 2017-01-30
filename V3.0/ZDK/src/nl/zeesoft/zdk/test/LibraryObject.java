@@ -26,6 +26,7 @@ public abstract class LibraryObject {
 		if (args!=null && args.length>=1 && args[0]!=null && args[0].length()>0) {
 			version = args[0];
 		}
+		Tester.getInstance().setBaseUrl(baseSrcUrl);
 		describe();
 		boolean success = test(args);
 		if (success) {
@@ -105,7 +106,6 @@ public abstract class LibraryObject {
 	}
 
 	public void setBaseSrcUrl(String baseSrcUrl) {
-		Tester.getInstance().setBaseUrl(baseSrcUrl);
 		this.baseSrcUrl = baseSrcUrl;
 	}
 

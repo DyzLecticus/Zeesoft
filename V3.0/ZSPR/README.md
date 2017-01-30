@@ -2,29 +2,23 @@ Zeesoft Symbolic Pattern Recognition
 ====================================
 Zeesoft Symbolic Pattern Recognition (ZSPR) is an open source library for Java application development.
 It provides support for sequential symbolic pattern recognition.
-The ZSPR extends the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK) (ZDK).
+This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/zspr-0.9.0.zip) to download the latest ZSPR release (version 0.9.0).
-All ZSPR releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZSPR/releases).
-ZSPR releases contain;  
- * the ZSPR jar file.  
- * the corresponding ZDK jar file.  
- * this README file.  
- * Separate zip files containing the generated java documentation for each jar file.  
-
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/zspr-0.9.1.zip) to download the latest ZSPR release (version 0.9.1).  
+All ZSPR releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/).  
 *All jar files in the release include source code and build scripts.*  
+
+**Self documenting and self testing**  
+The tests used to develop this libary are also used to generate this README file.  
+Run the [ZSPR](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSPR/src/nl/zeesoft/zspr/test/ZSPR.java) class as a java application to print this documentation to the standard out.  
+Click [here](#test-results) to scroll down to the test result summary.  
 
 Symbolic Pattern Recognition
 ----------------------------
 When parsing symbolic sequences to discern meaning, certain patterns may be easily translated into primary objects like numbers, dates and duration.
 This library provides an extendable, thread safe [PatternManager](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSPR/src/nl/zeesoft/zspr/pattern/PatternManager.java) to do just that.
 Please note that initializing the default *PatternManager* might take a few seconds and that it requires quite a lot of memory.
-
-**Self documenting and self testing**  
-The tests used to develop the ZSPR are also used to generate this README file.
-Run the [ZSPR](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSPR/src/nl/zeesoft/zspr/test/ZSPR.java) class as a java application to print this documentation to the standard out.
-Click [here](#test-results) to scroll down to the test result summary.
 
 nl.zeesoft.zspr.test.TestPatternManager
 ---------------------------------------
@@ -53,7 +47,7 @@ Class references;
 The output of this test shows some test strings and their corresponding pattern values.  
 Please note how some test strings trigger multiple patterns that translate to different value types.  
 ~~~~
-Initializing pattern manager took 944 ms
+Initializing pattern manager took 1449 ms
 
 ==> Test English order
 first = ORDER_ENG:1 (1)
@@ -120,7 +114,7 @@ the fifth of january = DATE_ENG:2017-01-05
 the 12th of august = DATE_ENG:2017-08-12
 october 2nd = DATE_ENG:2017-10-02
 now = DATE_ENG:2017-01-01 (1)
-now = TIME_ENG:13:55:00 (2)
+now = TIME_ENG:21:50:00 (2)
 now = ALPHABETIC_UNI:now (3)
 today = DATE_ENG:2017-01-01 (1)
 today = ALPHABETIC_UNI:today (2)
@@ -152,7 +146,7 @@ een uur en vijfenveertig minuten = DURATION_NED:01:45
 
 nl.zeesoft.zspr.test.TestPatternManagerScan
 -------------------------------------------
-This test shows how to create and initialzie a *PatternManager* instance and then use it to translate a sentence to its value and back.
+This test shows how to create and initialzie a *PatternManager* instance and then use it to translate a symbol sequence to its values and back.
 
 **Example implementation**  
 ~~~~
@@ -160,10 +154,10 @@ This test shows how to create and initialzie a *PatternManager* instance and the
 PatternManager manager = new PatternManager();
 // Initialize patterns
 manager.initializePatterns();
-// Get patterns for string
-List<PatternObject> patterns = manager.getMatchingPatternsForString("one hour and fourtyfive minutes");
-// Translate string to pattern value
-String value = patterns.get(0).getValueForString("one hour and fourtyfive minutes");
+// Get values for sequence
+StringBuilder values = manager.scanAndTranslateSequence(new StringBuilder("I walked one hour and fourtyfive minutes"),null);
+// Get sequence for values
+StringBuilder sequence = manager.scanAndTranslateValues(values);
 ~~~~
 
 This test uses the *MockPatternManager*. It is used to instantiate a shared *PatternManager* for tests.
@@ -191,8 +185,8 @@ String: Ik wil een kamer boeken voor vijf personen op dertig december tweeduizen
 Test results
 ------------
 All 2 tests have been executed successfully (112 assertions).  
-Total test duration: 2994 ms (total sleep duration: 0 ms).  
+Total test duration: 2973 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zspr.test.TestPatternManager: 35155 Kb / 34 Mb
- * nl.zeesoft.zspr.test.TestPatternManagerScan: 34243 Kb / 33 Mb
+ * nl.zeesoft.zspr.test.TestPatternManager: 35164 Kb / 34 Mb
+ * nl.zeesoft.zspr.test.TestPatternManagerScan: 34246 Kb / 33 Mb

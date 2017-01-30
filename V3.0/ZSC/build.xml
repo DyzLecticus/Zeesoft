@@ -3,10 +3,10 @@
 	<description>ZSC build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.0"/>
+	<property name="version" value="0.9.1"/>
 	
 	<!-- ZDK version -->
-	<property name="versionZDK" value="0.9.10"/>
+	<property name="versionZDK" value="0.9.12"/>
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -85,6 +85,7 @@
 
 	<target name="releaseConfirmed">
 		<antcall target="failIfReleaseExists"/>
+		<antcall target="clean"/>
 		<antcall target="dist"/>
 		<antcall target="javadoc"/>
 		<mkdir dir="${releases}"/>

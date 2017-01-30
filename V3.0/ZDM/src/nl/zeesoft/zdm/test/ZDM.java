@@ -2,8 +2,10 @@ package nl.zeesoft.zdm.test;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.test.impl.ZDK;
 import nl.zeesoft.zdm.model.Model;
 import nl.zeesoft.zdm.model.ModelClass;
 import nl.zeesoft.zdm.model.ModelPackage;
@@ -13,33 +15,31 @@ import nl.zeesoft.zdm.model.transformations.TransformationObject;
 import nl.zeesoft.zdm.model.transformations.TransformationParameter;
 import nl.zeesoft.zdm.model.transformations.Transformations;
 
-public class ZDM {
+public class ZDM extends LibraryObject {
+	public ZDM() {
+		setNameAbbreviated("ZDK");
+		setNameFull("Zeesoft Data Modelling");
+		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDM/");
+		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDM/releases/");
+		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDM/");
+		getDependencies().add(new ZDK());
+	}
+
 	public static void main(String[] args) {
-		Tester.getInstance().setBaseUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDM");
-	
-		String version = "";
-		if (args!=null && args.length>=1 && args[0]!=null && args[0].length()>0) {
-			version = args[0];
-		} else {
-			version = "[???]";
-		}
-		
+		(new ZDM()).describeAndTest(args);
+	}
+
+	@Override
+	public void describe() {
 		System.out.println("Zeesoft Data Modelling");
 		System.out.println("======================");
 		System.out.println("Zeesoft Data Modelling (ZDM) is an open source library for Java application development.");
 		System.out.println("It provides support for versioned data model management.");
-		System.out.println("The ZDM extends the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK) (ZDK).");
+		describeDependencies();
 		System.out.println();
-		System.out.println("**Release downloads**  ");
-		System.out.println("Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDM/releases/zdmk-" + version + ".zip) to download the latest ZDM release (version " + version + ").");
-		System.out.println("All ZDM releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDM/releases).");
-		System.out.println("ZDM releases contain;  ");
-		System.out.println(" * the ZDM jar file.  ");
-		System.out.println(" * the corresponding ZDK jar file.  ");
-		System.out.println(" * this README file.  ");
-		System.out.println(" * Separate zip files containing the generated java documentation for each jar file.  ");
+		describeRelease();
 		System.out.println();
-		System.out.println("*All jar files in the release include source code and build scripts.*  ");
+		describeTesting(ZDM.class);
 		System.out.println();
 		System.out.println("Versioned data modelling");
 		System.out.println("------------------------");
@@ -53,12 +53,10 @@ public class ZDM {
 		System.out.println("Models support the following transformations;  ");
 		describeTransformations(false);
 		System.out.println();
-		System.out.println("**Self documenting and self testing**  ");
-		System.out.println("The tests used to develop the ZDM are also used to generate this README file.");
-		System.out.println("Run the " + Tester.getInstance().getLinkForClass(ZDM.class) + " class as a java application to print this documentation to the standard out.");
-		System.out.println("Click [here](#test-results) to scroll down to the test result summary.");
-		System.out.println();
-		
+	}
+
+	@Override
+	public boolean test(String[] args) {
 		List<TestObject> tests = Tester.getInstance().getTests();
 		tests.add(new TestModel());
 		tests.add(new TestModelApplyList());
@@ -66,14 +64,9 @@ public class ZDM {
 		tests.add(new TestModelVersioning());
 		tests.add(new TestModelSelf());
 		tests.add(new TestModelSelfConvertModel());
-		boolean success = Tester.getInstance().test(args);
-		if (success) {
-			System.exit(0);
-		} else {
-			System.exit(1);
-		}
+		return Tester.getInstance().test(args);
 	}
-	
+
 	public static void describeTransformations(boolean summary) {
 		for (TransformationObject transformation: Transformations.getAllTransformations()) {
 			System.out.print(" * " + Tester.getInstance().getLinkForClass(transformation.getClass()));
