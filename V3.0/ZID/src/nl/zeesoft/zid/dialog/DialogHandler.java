@@ -6,7 +6,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZDate;
-import nl.zeesoft.zdk.ZStringEncoder;
+import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -288,11 +288,8 @@ public class DialogHandler extends Locker {
 				addLogLine("--- Controller requests prompt for: " + currentDialogController.getPromptForDialogVariable());
 				DialogVariable variable = currentDialog.getVariable(currentDialogController.getPromptForDialogVariable());
 				if (variable.getExamples().size()>0) {
-					int select = 0;
-					if (variable.getExamples().size()>1) {
-						select = (new ZStringEncoder()).generateRandom(0,(variable.getExamples().size() - 1)); 
-					}
-					symbols = variable.getExamples().get(select).getQuestion().toSymbols();
+					ZIntegerGenerator random = new ZIntegerGenerator(0,(variable.getExamples().size() - 1));
+					symbols = variable.getExamples().get(random.getNewInteger()).getQuestion().toSymbols();
 				}
 			}
 			if (symbols!=null) {
