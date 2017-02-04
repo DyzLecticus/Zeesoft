@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zsc.confabulator.confabulations.ContextConfabulation;
 import nl.zeesoft.zsc.confabulator.confabulations.CorrectionConfabulation;
@@ -52,7 +53,7 @@ public final class Confabulator extends ConfabulatorTrainer {
 	 * @param confab The confabulation object to use
 	 */
 	public void confabulate(ConfabulationObject confab) {
-		confab.setOutput(new StringBuilder());
+		confab.setOutput(new ZStringSymbolParser());
 		confab.setLog(new StringBuilder());
 		lockMe(this);
 		if (getDeriveLinkDataNoLock()) {

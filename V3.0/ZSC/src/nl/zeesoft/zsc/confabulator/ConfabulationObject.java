@@ -15,7 +15,7 @@ public abstract class ConfabulationObject {
 	private ZStringSymbolParser	context					= new ZStringSymbolParser();
 
 	private StringBuilder		log						= new StringBuilder();
-	private StringBuilder		output					= new StringBuilder();
+	private ZStringSymbolParser	output					= new ZStringSymbolParser();
 
 	public ConfabulationObject() {
 		
@@ -193,7 +193,7 @@ public abstract class ConfabulationObject {
 	 * 
 	 * @return The confabulation output
 	 */
-	public StringBuilder getOutput() {
+	public ZStringSymbolParser getOutput() {
 		return output;
 	}
 
@@ -202,7 +202,7 @@ public abstract class ConfabulationObject {
 	 * 
 	 * @param output The confabulation output
 	 */
-	public void setOutput(StringBuilder output) {
+	public void setOutput(ZStringSymbolParser output) {
 		this.output = output;
 	}
 }

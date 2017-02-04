@@ -3,7 +3,7 @@
 	<description>ZSC build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.3"/>
+	<property name="version" value="0.9.4"/>
 	
 	<!-- ZDK version -->
 	<property name="versionZDK" value="0.9.15"/>
