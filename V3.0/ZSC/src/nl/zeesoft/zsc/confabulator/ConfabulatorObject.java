@@ -63,7 +63,7 @@ public class ConfabulatorObject extends Locker {
 	 * @return A copy of this confabulator
 	 */
 	public ConfabulatorObject getCopy() {
-		ConfabulatorObject copy = new ConfabulatorObject(getMsgr());
+		ConfabulatorObject copy = new ConfabulatorObject(getMessenger());
 		lockMe(this);
 		int maxD = maxLinkDistance;
 		int maxC = maxLinkCount;
