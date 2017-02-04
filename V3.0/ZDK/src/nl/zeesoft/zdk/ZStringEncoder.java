@@ -17,36 +17,39 @@ public class ZStringEncoder extends ZStringBuilder {
 	}
 	
 	public ZStringEncoder(ZIntegerGenerator random) {
-		if (random==null) {
-			random = new ZIntegerGenerator(0,99999999);
-		}
 		this.random = random;
 	}
 
 	public ZStringEncoder(String s,ZIntegerGenerator random) {
 		super(s);
-		if (random==null) {
-			random = new ZIntegerGenerator(0,99999999);
-		}
 		this.random = random;
 	}
 
 	public ZStringEncoder(StringBuilder sb,ZIntegerGenerator random) {
 		super(sb);
-		if (random==null) {
-			random = new ZIntegerGenerator(0,99999999);
-		}
 		this.random = random;
 	}
 
 	public ZStringEncoder(ZStringBuilder zsb,ZIntegerGenerator random) {
 		super(zsb);
-		if (random==null) {
-			random = new ZIntegerGenerator(0,99999999);
-		}
 		this.random = random;
 	}
 
+	public ZStringEncoder(String s) {
+		super(s);
+		random = new ZIntegerGenerator(0,99999999);
+	}
+
+	public ZStringEncoder(StringBuilder sb) {
+		super(sb);
+		random = new ZIntegerGenerator(0,99999999);
+	}
+
+	public ZStringEncoder(ZStringBuilder zsb) {
+		super(zsb);
+		random = new ZIntegerGenerator(0,99999999);
+	}
+	
 	@Override
 	public ZStringEncoder getCopy() {
 		return new ZStringEncoder(getStringBuilder(),null);
