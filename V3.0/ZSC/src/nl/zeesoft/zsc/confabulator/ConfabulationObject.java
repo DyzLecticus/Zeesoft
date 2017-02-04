@@ -1,10 +1,9 @@
 package nl.zeesoft.zsc.confabulator;
 
 import java.util.Date;
-import java.util.List;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsc.Generic;
-import nl.zeesoft.zsc.SymbolParser;
 
 /**
  * Abstract confabulation object.
@@ -14,8 +13,8 @@ public abstract class ConfabulationObject {
 	private int					accuracy				= 100;
 	private boolean				logModuleSymbolLevels	= false;
 
-	private StringBuilder		sequence				= new StringBuilder();
-	private StringBuilder		context					= new StringBuilder();
+	private ZStringSymbolParser	sequence				= new ZStringSymbolParser();
+	private ZStringSymbolParser	context					= new ZStringSymbolParser();
 
 	private StringBuilder		log						= new StringBuilder();
 	private StringBuilder		output					= new StringBuilder();
@@ -25,12 +24,12 @@ public abstract class ConfabulationObject {
 	}
 
 	public ConfabulationObject(String sequence) {
-		this.sequence = new StringBuilder(sequence);
+		this.sequence = new ZStringSymbolParser(sequence);
 	}
 
 	public ConfabulationObject(String sequence, String context) {
-		this.sequence = new StringBuilder(sequence);
-		this.context = new StringBuilder(context);
+		this.sequence = new ZStringSymbolParser(sequence);
+		this.context = new ZStringSymbolParser(context);
 	}
 
 	/**
@@ -69,39 +68,6 @@ public abstract class ConfabulationObject {
 			output.append(" ");
 		}
 		output.append(symbol);
-	}
-
-	/**
-	 * Returns the input sequence symbols as a list (read only).
-	 * 
-	 * Uses the SymbolParser to parse the input sequence.
-	 * 
-	 * @return The input sequence symbols as a list
-	 */
-	public List<String> getSequenceAsList() {
-		return SymbolParser.parseSymbols(getSequence());
-	}
-
-	/**
-	 * Returns the context symbols as a list (read only).
-	 * 
-	 * Uses the SymbolParser to parse the context symbols.
-	 * 
-	 * @return The context symbols as a list
-	 */
-	public List<String> getContextAsList() {
-		return SymbolParser.parseSymbols(getContext());
-	}
-
-	/**
-	 * Returns the output symbols as a list (read only).
-	 * 
-	 * Uses the SymbolParser to parse the output symbols.
-	 * 
-	 * @return The output symbols as a list
-	 */
-	public List<String> getOutputAsList() {
-		return SymbolParser.parseSymbols(getOutput());
 	}
 
 	/**
@@ -175,7 +141,7 @@ public abstract class ConfabulationObject {
 	 * 
 	 * @return The input symbol sequence
 	 */
-	public StringBuilder getSequence() {
+	public ZStringSymbolParser getSequence() {
 		return sequence;
 	}
 
@@ -184,7 +150,7 @@ public abstract class ConfabulationObject {
 	 * 
 	 * @param sequence The input symbol sequence
 	 */
-	public void setSequence(StringBuilder sequence) {
+	public void setSequence(ZStringSymbolParser sequence) {
 		this.sequence = sequence;
 	}
 
@@ -193,7 +159,7 @@ public abstract class ConfabulationObject {
 	 * 
 	 * @return The context symbols
 	 */
-	public StringBuilder getContext() {
+	public ZStringSymbolParser getContext() {
 		return context;
 	}
 
@@ -202,7 +168,7 @@ public abstract class ConfabulationObject {
 	 * 
 	 * @param context The context symbols
 	 */
-	public void setContext(StringBuilder context) {
+	public void setContext(ZStringSymbolParser context) {
 		this.context = context;
 	}	
 

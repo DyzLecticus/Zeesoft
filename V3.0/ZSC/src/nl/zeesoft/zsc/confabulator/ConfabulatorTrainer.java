@@ -3,8 +3,8 @@ package nl.zeesoft.zsc.confabulator;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
-import nl.zeesoft.zsc.SymbolParser;
 
 /**
  * Training confabulator.
@@ -28,8 +28,18 @@ public class ConfabulatorTrainer extends ConfabulatorObject {
 	 * @param sequence The sequence to learn
 	 * @return True if learning the sequence has caused a division of all link counts (and possible removal of links)
 	 */
+	public boolean learnSequence(ZStringSymbolParser sequence) {
+		return learnSequence(sequence,null);
+	}
+
+	/**
+	 * Learns confabulator link data.
+	 * 
+	 * @param sequence The sequence to learn
+	 * @return True if learning the sequence has caused a division of all link counts (and possible removal of links)
+	 */
 	public boolean learnSequence(String sequence) {
-		return learnSequence(sequence,"");
+		return learnSequence(new ZStringSymbolParser(sequence),null);
 	}
 
 	/**
@@ -40,17 +50,7 @@ public class ConfabulatorTrainer extends ConfabulatorObject {
 	 * @return True if learning the sequence has caused a division of all link counts (and possible removal of links)
 	 */
 	public boolean learnSequence(String sequence, String context) {
-		return learnSequence(new StringBuilder(sequence),new StringBuilder(context));
-	}
-
-	/**
-	 * Learns confabulator link data.
-	 * 
-	 * @param sequence The sequence to learn
-	 * @return True if learning the sequence has caused a division of all link counts (and possible removal of links)
-	 */
-	public boolean learnSequence(StringBuilder sequence) {
-		return learnSequence(sequence,null);
+		return learnSequence(new ZStringSymbolParser(sequence),new ZStringSymbolParser(context));
 	}
 	
 	/**
@@ -60,13 +60,13 @@ public class ConfabulatorTrainer extends ConfabulatorObject {
 	 * @param context The optional sequence context to learn
 	 * @return True if learning the sequence has caused a division of all link counts (and possible removal of links)
 	 */
-	public boolean learnSequence(StringBuilder sequence, StringBuilder context) {
+	public boolean learnSequence(ZStringSymbolParser sequence, ZStringSymbolParser context) {
 		if (context==null) {
-			context = new StringBuilder();
+			context = new ZStringSymbolParser();
 		}
 		boolean divide = false;
-		List<String> contextSymbols = SymbolParser.parseSymbols(context);
-		List<String> sequenceSymbols = SymbolParser.parseSymbols(sequence);
+		List<String> contextSymbols = context.toSymbols();
+		List<String> sequenceSymbols = sequence.toSymbols();
 		if (sequenceSymbols.size()>1) {
 			lockMe(this);
 			if (contextSymbols.size()==0) {

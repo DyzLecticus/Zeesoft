@@ -1,5 +1,6 @@
 package nl.zeesoft.zsc.test;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsc.confabulator.Confabulator;
@@ -60,7 +61,7 @@ public class TestConfabulatorCorrectionConfabulation extends TestObject {
 		System.out.println();
 
 		// Test with context
-		confab.setContext(new StringBuilder("Goal"));
+		confab.setContext(new ZStringSymbolParser("Goal"));
 		TestConfabulatorContextConfabulation.testConfabulation(confabulator,confab);
 		assertEqual(confab.getOutput().toString(),"What is your goal ?","Confabulation output does not match expectation");
 		assertEqual(confab.getCorrectionKeys().size(),1,"Number of correction keys not match expectation");

@@ -1,5 +1,6 @@
 package nl.zeesoft.zsc.test;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsc.confabulator.Confabulator;
@@ -59,7 +60,7 @@ public class TestConfabulatorExtensionConfabulation extends TestObject {
 		System.out.println();
 
 		// Test sequence without context
-		confab.setSequence(new StringBuilder("What is artificial cognition?"));
+		confab.setSequence(new ZStringSymbolParser("What is artificial cognition?"));
 		confab.setMaxOutputSymbols(16);
 		TestConfabulatorContextConfabulation.testConfabulation(confabulator,confab);
 		assertEqual(confab.getOutput().toString(),"My name is Dyz Lecticus .","Confabulation output does not match expectation");
@@ -67,14 +68,14 @@ public class TestConfabulatorExtensionConfabulation extends TestObject {
 		System.out.println();
 
 		// Test sequence with context Cognition
-		confab.setContext(new StringBuilder("Cognition"));
+		confab.setContext(new ZStringSymbolParser("Cognition"));
 		TestConfabulatorContextConfabulation.testConfabulation(confabulator,confab);
 		assertEqual(confab.getOutput().toString(),"Cognition refers to mental processes within the brain .","Confabulation output does not match expectation");
 
 		System.out.println();
 
 		// Test sequence with context Name
-		confab.setContext(new StringBuilder("Artificial"));
+		confab.setContext(new ZStringSymbolParser("Artificial"));
 		TestConfabulatorContextConfabulation.testConfabulation(confabulator,confab);
 		assertEqual(confab.getOutput().toString(),"I am an artificial cognition .","Confabulation output does not match expectation");
 	}
