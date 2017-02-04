@@ -476,26 +476,26 @@ public class PatternManager extends Locker {
 	}
 	
 	private final void addDefaultPatterns() {
-		addPattern(new EnglishConfirmation(getMsgr()));
-		addPattern(new DutchConfirmation(getMsgr()));
-		addPattern(new EnglishDate(getMsgr()));
-		addPattern(new DutchDate(getMsgr()));
-		addPattern(new EnglishTime(getMsgr()));
-		addPattern(new DutchTime(getMsgr()));
-		addPattern(new EnglishDuration(getMsgr()));
-		addPattern(new DutchDuration(getMsgr()));
-		addPattern(new EnglishMonth(getMsgr()));
-		addPattern(new DutchMonth(getMsgr()));
-		addPattern(new EnglishOrder(getMsgr()));
-		addPattern(new EnglishOrder2(getMsgr()));
-		addPattern(new DutchOrder(getMsgr()));
-		addPattern(new EnglishNumber(getMsgr()));
-		addPattern(new DutchNumber(getMsgr()));
-		addPattern(new EnglishPreposition(getMsgr()));
-		addPattern(new DutchPreposition(getMsgr()));
-		addPattern(new UniversalTime(getMsgr()));
-		addPattern(new UniversalNumber(getMsgr()));
-		addPattern(new UniversalAlphabetic(getMsgr()));
+		addPattern(new EnglishConfirmation(getMessenger()));
+		addPattern(new DutchConfirmation(getMessenger()));
+		addPattern(new EnglishDate(getMessenger()));
+		addPattern(new DutchDate(getMessenger()));
+		addPattern(new EnglishTime(getMessenger()));
+		addPattern(new DutchTime(getMessenger()));
+		addPattern(new EnglishDuration(getMessenger()));
+		addPattern(new DutchDuration(getMessenger()));
+		addPattern(new EnglishMonth(getMessenger()));
+		addPattern(new DutchMonth(getMessenger()));
+		addPattern(new EnglishOrder(getMessenger()));
+		addPattern(new EnglishOrder2(getMessenger()));
+		addPattern(new DutchOrder(getMessenger()));
+		addPattern(new EnglishNumber(getMessenger()));
+		addPattern(new DutchNumber(getMessenger()));
+		addPattern(new EnglishPreposition(getMessenger()));
+		addPattern(new DutchPreposition(getMessenger()));
+		addPattern(new UniversalTime(getMessenger()));
+		addPattern(new UniversalNumber(getMessenger()));
+		addPattern(new UniversalAlphabetic(getMessenger()));
 	}
 
 	private String getStringValueFromPatternValue(PatternObject pattern, String value) {
