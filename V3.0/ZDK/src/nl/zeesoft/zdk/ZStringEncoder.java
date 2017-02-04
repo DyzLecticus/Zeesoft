@@ -307,12 +307,12 @@ public class ZStringEncoder extends ZStringBuilder {
 		if (getStringBuilder()!=null) {
 			StringBuilder r = new StringBuilder();
 			if (getStringBuilder().length()>0) {
-				List<StringBuilder> keyVals = split(",");
+				List<ZStringBuilder> keyVals = split(",");
 				if (keyVals.size()>=2) {
 					int key = Integer.parseInt(keyVals.get(0).toString());
 					int i = 0;
 					int pKey = key;
-					for (StringBuilder val: keyVals) {
+					for (ZStringBuilder val: keyVals) {
 						if (i>0) {
 							int iKey = key + ((i * pKey * 7) % 24);
 							pKey = iKey;

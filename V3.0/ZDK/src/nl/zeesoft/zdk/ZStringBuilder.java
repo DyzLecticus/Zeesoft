@@ -47,7 +47,15 @@ public class ZStringBuilder {
 	public void setStringBuilder(StringBuilder sb) {
 		this.sb = sb;
 	}
-	
+
+	public int length() {
+		int r = 0;
+		if (sb!=null) {
+			r = sb.length();
+		}
+		return r;
+	}
+
 	public boolean endsWith(String s) {
 		return (sb!=null && sb.length()>=s.length() && sb.substring(sb.length() - s.length(),sb.length()).equals(s));
 	}
@@ -165,10 +173,10 @@ public class ZStringBuilder {
 		return sb;
 	}
 
-	public List<StringBuilder> split(String split) {
-		List<StringBuilder> strs = new ArrayList<StringBuilder>();
+	public List<ZStringBuilder> split(String split) {
+		List<ZStringBuilder> strs = new ArrayList<ZStringBuilder>();
 		if (sb!=null) {
-			StringBuilder sAdd = new StringBuilder();
+			ZStringBuilder sAdd = new ZStringBuilder();
 			int length = sb.length();
 			int sLength = split.length();
 			boolean found = true;
@@ -187,9 +195,9 @@ public class ZStringBuilder {
 				if (found) {
 					strs.add(sAdd);
 					i = i + (sLength - 1);
-					sAdd = new StringBuilder();
+					sAdd = new ZStringBuilder();
 				} else {
-					sAdd.append(sb.substring(i,i + 1));
+					sAdd.getStringBuilder().append(sb.substring(i,i + 1));
 				}
 			}
 			if (sAdd.length()>0) {

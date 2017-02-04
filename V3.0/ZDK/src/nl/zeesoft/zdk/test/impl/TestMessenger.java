@@ -40,14 +40,14 @@ public class TestMessenger extends TestObject {
 		System.out.println("// Stop the messenger");
 		System.out.println("messenger.stop();");
 		System.out.println("// Ensure all application workers are stopped");
-		System.out.println("WorkerUnion.getInstance().stopWorkers();");
+		System.out.println("factory.getWorkerUnion(messenger).stopWorkers();");
 		System.out.println("// Trigger the messenger to print the remaining messages");
 		System.out.println("messenger.whileWorking();");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("The *Messenger* can be used to log debug, warning and error messages and print them to the standard and/or error out.");
 		System.out.println("It implements the *Worker* to minimize wait time impact for threads that call the *Messenger*.");
-		System.out.println("The Messenger is thread safe so it can be shared across the entire application.");
+		System.out.println("The *Messenger* is thread safe so it can be shared across the entire application.");
 		System.out.println("Classes that implement the *MessengerListener* interface can subscribe to *Messenger* message printing events.");
 		System.out.println("The *WorkerUnion* can be used to ensure all workers that have been started are stopped when stopping the application.");
 		System.out.println("It will log an error if it fails to stop a worker.");

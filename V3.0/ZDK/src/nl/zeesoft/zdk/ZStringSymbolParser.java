@@ -71,12 +71,12 @@ public class ZStringSymbolParser extends ZStringBuilder {
 			replace("   "," ");
 			replace("  "," ");
 			trim();
-			List<StringBuilder> syms = split(" ");
-	
-			for (StringBuilder sym: syms) {
-				if (sym.length()>1 && endsWithLineEndSymbol(sym)) {
-					ZStringBuilder symbol = new ZStringBuilder(sym.substring(0,sym.length() - 1));
-					String lineEnd = sym.substring(sym.length() - 1);
+			
+			List<ZStringBuilder> syms = split(" ");
+			for (ZStringBuilder sym: syms) {
+				if (sym.length()>1 && endsWithLineEndSymbol(sym.getStringBuilder())) {
+					ZStringBuilder symbol = new ZStringBuilder(sym.getStringBuilder().substring(0,sym.length() - 1));
+					String lineEnd = sym.getStringBuilder().substring(sym.length() - 1);
 					removeLineEndSymbols(symbol); 
 					symbols.add(symbol.toString());
 					symbols.add(lineEnd);
