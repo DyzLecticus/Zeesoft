@@ -3,6 +3,7 @@ package nl.zeesoft.zsc.confabulator;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zsc.SymbolParser;
 
 /**
@@ -12,6 +13,14 @@ import nl.zeesoft.zsc.SymbolParser;
  */
 public class ConfabulatorTrainer extends ConfabulatorObject {
 	private boolean deriveLinkData = false;
+
+	public ConfabulatorTrainer() {
+		super(null);
+	}
+
+	public ConfabulatorTrainer(Messenger msgr) {
+		super(msgr);
+	}
 
 	/**
 	 * Learns confabulator link data.

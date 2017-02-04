@@ -11,17 +11,18 @@ import nl.zeesoft.zdk.test.impl.ZDK;
  * Documents and tests the ZSC.
  */
 public class ZSC extends LibraryObject {
-	public ZSC() {
+	public ZSC(Tester tester) {
+		super(tester);
 		setNameAbbreviated("ZSC");
 		setNameFull("Zeesoft Symbolic Confabulation");
 		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZSC/");
 		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSC/releases/");
 		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSC/");
-		getDependencies().add(new ZDK());
+		getDependencies().add(new ZDK(null));
 	}
 
 	public static void main(String[] args) {
-		(new ZSC()).describeAndTest(args);
+		(new ZSC(new Tester())).describeAndTest(args);
 	}
 
 	@Override
@@ -39,12 +40,10 @@ public class ZSC extends LibraryObject {
 	}
 
 	@Override
-	public boolean test(String[] args) {
-		List<TestObject> tests = Tester.getInstance().getTests();
-		tests.add(new TestConfabulatorTraining());
-		tests.add(new TestConfabulatorContextConfabulation());
-		tests.add(new TestConfabulatorCorrectionConfabulation());
-		tests.add(new TestConfabulatorExtensionConfabulation());
-		return Tester.getInstance().test(args);
+	public void addTests(List<TestObject> tests) {
+		tests.add(new TestConfabulatorTraining(getTester()));
+		tests.add(new TestConfabulatorContextConfabulation(getTester()));
+		tests.add(new TestConfabulatorCorrectionConfabulation(getTester()));
+		tests.add(new TestConfabulatorExtensionConfabulation(getTester()));
 	}
 }

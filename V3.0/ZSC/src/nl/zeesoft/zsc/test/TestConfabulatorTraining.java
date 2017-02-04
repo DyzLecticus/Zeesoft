@@ -9,8 +9,12 @@ import nl.zeesoft.zsc.confabulator.Confabulator;
 import nl.zeesoft.zsc.confabulator.Link;
 
 public class TestConfabulatorTraining extends TestObject {
+	public TestConfabulatorTraining(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestConfabulatorTraining()).test(args);
+		(new TestConfabulatorTraining(new Tester())).test(args);
 	}
 
 	@Override
@@ -37,12 +41,12 @@ public class TestConfabulatorTraining extends TestObject {
 		System.out.println("Links that have a count of 1 are removed by this division process.");
 		System.out.println("When repeatedly confronted with a slowly changing training set, this mechanism allows the *Confabulator* to slowly forget links that are no longer part of the training set.");
 		System.out.println();
-		Tester.getInstance().describeMock(MockConfabulator.class.getName());
+		getTester().describeMock(MockConfabulator.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestConfabulatorTraining.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockConfabulator.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Confabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestConfabulatorTraining.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConfabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(Confabulator.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows a brief summary of the link data that is created based on the training set.");
@@ -53,7 +57,7 @@ public class TestConfabulatorTraining extends TestObject {
 	protected void test(String[] args) {
 		Date start = new Date();
 		long ms = 0;
-		Confabulator confabulator = (Confabulator) Tester.getInstance().getMockedObject(MockConfabulator.class.getName());
+		Confabulator confabulator = (Confabulator) getTester().getMockedObject(MockConfabulator.class.getName());
 		ms = (new Date()).getTime() - start.getTime();
 		int i = 0;
 		List<Link> links = confabulator.getLinks();

@@ -3,6 +3,7 @@ package nl.zeesoft.zsc.confabulator;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 /**
@@ -15,8 +16,8 @@ public class ConfabulatorObject extends Locker {
 	private int					maxLinkCount		= 1000;
 	private List<Link>			links				= new ArrayList<Link>();
 	
-	protected ConfabulatorObject() {
-		// Only used for copying
+	protected ConfabulatorObject(Messenger msgr) {
+		super(msgr);
 	}
 	
 	/**
@@ -62,7 +63,7 @@ public class ConfabulatorObject extends Locker {
 	 * @return A copy of this confabulator
 	 */
 	public ConfabulatorObject getCopy() {
-		ConfabulatorObject copy = new ConfabulatorObject();
+		ConfabulatorObject copy = new ConfabulatorObject(getMsgr());
 		lockMe(this);
 		int maxD = maxLinkDistance;
 		int maxC = maxLinkCount;

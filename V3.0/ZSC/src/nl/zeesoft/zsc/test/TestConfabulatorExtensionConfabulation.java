@@ -6,8 +6,12 @@ import nl.zeesoft.zsc.confabulator.Confabulator;
 import nl.zeesoft.zsc.confabulator.confabulations.ExtensionConfabulation;
 
 public class TestConfabulatorExtensionConfabulation extends TestObject {
+	public TestConfabulatorExtensionConfabulation(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestConfabulatorExtensionConfabulation()).test(args);
+		(new TestConfabulatorExtensionConfabulation(new Tester())).test(args);
 	}
 
 	@Override
@@ -27,10 +31,10 @@ public class TestConfabulatorExtensionConfabulation extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestConfabulatorExtensionConfabulation.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockConfabulator.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Confabulator.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(ExtensionConfabulation.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestConfabulatorExtensionConfabulation.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConfabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(Confabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(ExtensionConfabulation.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the confabulation input sequence, log summary, and output for several confabulations;  ");
@@ -43,7 +47,7 @@ public class TestConfabulatorExtensionConfabulation extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		Confabulator confabulator = (Confabulator) Tester.getInstance().getMockedObject(MockConfabulator.class.getName());
+		Confabulator confabulator = (Confabulator) getTester().getMockedObject(MockConfabulator.class.getName());
 
 		// Test sequence start without context
 		ExtensionConfabulation confab = new ExtensionConfabulation();

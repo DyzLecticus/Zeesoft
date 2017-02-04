@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zsc.Generic;
 import nl.zeesoft.zsc.confabulator.confabulations.ContextConfabulation;
 import nl.zeesoft.zsc.confabulator.confabulations.CorrectionConfabulation;
@@ -37,6 +38,14 @@ public final class Confabulator extends ConfabulatorTrainer {
 	private int							maxCount					= 0;
 	private List<String>				allSequenceSymbols			= new ArrayList<String>();
 	private List<String>				allContextSymbols			= new ArrayList<String>();
+	
+	public Confabulator() {
+		super(null);
+	}
+	
+	public Confabulator(Messenger msgr) {
+		super(msgr);
+	}
 	
 	/**
 	 * Uses the confabulator link data to do confabulations.

@@ -11,8 +11,12 @@ import nl.zeesoft.zsc.confabulator.Confabulator;
 import nl.zeesoft.zsc.confabulator.confabulations.ContextConfabulation;
 
 public class TestConfabulatorContextConfabulation extends TestObject {
+	public TestConfabulatorContextConfabulation(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestConfabulatorContextConfabulation()).test(args);
+		(new TestConfabulatorContextConfabulation(new Tester())).test(args);
 	}
 
 	@Override
@@ -32,10 +36,10 @@ public class TestConfabulatorContextConfabulation extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestConfabulatorContextConfabulation.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockConfabulator.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Confabulator.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(ContextConfabulation.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestConfabulatorContextConfabulation.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConfabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(Confabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(ContextConfabulation.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the confabulation input sequence, log summary, and output.  ");
@@ -44,7 +48,7 @@ public class TestConfabulatorContextConfabulation extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		Confabulator confabulator = (Confabulator) Tester.getInstance().getMockedObject(MockConfabulator.class.getName());
+		Confabulator confabulator = (Confabulator) getTester().getMockedObject(MockConfabulator.class.getName());
 		
 		ContextConfabulation confab = new ContextConfabulation("What is your name?");
 		confab.setLogModuleSymbolLevels(true);

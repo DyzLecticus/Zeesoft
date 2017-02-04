@@ -6,8 +6,12 @@ import nl.zeesoft.zsc.confabulator.Confabulator;
 import nl.zeesoft.zsc.confabulator.confabulations.CorrectionConfabulation;
 
 public class TestConfabulatorCorrectionConfabulation extends TestObject {
+	public TestConfabulatorCorrectionConfabulation(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestConfabulatorCorrectionConfabulation()).test(args);
+		(new TestConfabulatorCorrectionConfabulation(new Tester())).test(args);
 	}
 
 	@Override
@@ -27,10 +31,10 @@ public class TestConfabulatorCorrectionConfabulation extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestConfabulatorCorrectionConfabulation.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockConfabulator.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Confabulator.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(CorrectionConfabulation.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestConfabulatorCorrectionConfabulation.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConfabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(Confabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(CorrectionConfabulation.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the confabulation input sequence, log summary, and output for several confabulations;  ");
@@ -42,7 +46,7 @@ public class TestConfabulatorCorrectionConfabulation extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		Confabulator confabulator = (Confabulator) Tester.getInstance().getMockedObject(MockConfabulator.class.getName());
+		Confabulator confabulator = (Confabulator) getTester().getMockedObject(MockConfabulator.class.getName());
 		
 		CorrectionConfabulation confab = new CorrectionConfabulation("What is your bla?");
 		confab.setLogModuleSymbolLevels(true);
