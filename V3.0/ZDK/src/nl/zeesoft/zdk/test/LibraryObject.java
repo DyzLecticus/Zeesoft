@@ -9,6 +9,7 @@ import java.util.List;
  * Can be used to create self documenting and self testing libraries.
  */
 public abstract class LibraryObject {
+	private	Tester				tester			= null;
 	private String 				nameAbbreviated	= "";
 	private String 				nameFull		= "";
 	private String 				version			= "[???]";
@@ -16,6 +17,10 @@ public abstract class LibraryObject {
 	private String 				baseSrcUrl		= "src/";
 	private String 				baseReleaseUrl	= "releases/";
 	private List<LibraryObject> dependencies	= new ArrayList<LibraryObject>();
+	
+	public LibraryObject(Tester tester) {
+		this.tester = tester;
+	}
 	
 	/**
 	 * Call this method from the main method.
@@ -26,9 +31,10 @@ public abstract class LibraryObject {
 		if (args!=null && args.length>=1 && args[0]!=null && args[0].length()>0) {
 			version = args[0];
 		}
-		Tester.getInstance().setBaseUrl(baseSrcUrl);
+		tester.setBaseUrl(baseSrcUrl);
+		addTests(tester.getTests());
 		describe();
-		boolean success = test(args);
+		boolean success = tester.test(args);
 		if (success) {
 			System.exit(0);
 		} else {
@@ -40,14 +46,23 @@ public abstract class LibraryObject {
 	 * Describe the library.
 	 */
 	public abstract void describe();
+	
+	/**
+	 * Add the tests for this library to the list.
+	 * 
+	 * @param tests The list of tests for this library
+	 */
+	public abstract void addTests(List<TestObject> tests);
 
 	/**
-	 * Test the library.
+	 * Tests the library.
 	 * 
 	 * @param args The command line arguments
 	 * @return True if the tests were successful
 	 */
-	public abstract boolean test(String[] args);
+	protected boolean test(String[] args) {
+		return tester.test(args);
+	}
 
 	protected void describeDependencies() {
 		if (dependencies.size()>0) {
@@ -73,8 +88,12 @@ public abstract class LibraryObject {
 	protected void describeTesting(Class<?> cls) {
 		System.out.println("**Self documenting and self testing**  ");
 		System.out.println("The tests used to develop this libary are also used to generate this README file.  ");		
-		System.out.println("Run the " + Tester.getInstance().getLinkForClass(cls) + " class as a java application to print this documentation to the standard out.  ");
+		System.out.println("Run the " + tester.getLinkForClass(cls) + " class as a java application to print this documentation to the standard out.  ");
 		System.out.println("Click [here](#test-results) to scroll down to the test result summary.  ");
+	}
+
+	public Tester getTester() {
+		return tester;
 	}
 
 	public String getNameAbbreviated() {

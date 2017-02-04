@@ -2,14 +2,17 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.Generic;
-import nl.zeesoft.zdk.SymbolParser;
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestSymbolParser extends TestObject {
+public class TestZStringSymbolParser extends TestObject {
+	public TestZStringSymbolParser(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestSymbolParser()).test(args);
+		(new TestZStringSymbolParser(new Tester())).test(args);
 	}
 
 	@Override
@@ -22,9 +25,8 @@ public class TestSymbolParser extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestSymbolParser.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(SymbolParser.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Generic.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestZStringSymbolParser.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZStringSymbolParser.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the input text and the parsed symbols separated by spaces.");
@@ -32,9 +34,9 @@ public class TestSymbolParser extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		StringBuilder text = new StringBuilder(TestEncoderDecoder.getTestText());
-		System.out.println("Input text: " + text);
-		List<String> symbols = SymbolParser.parseSymbolsFromText(text);
+		ZStringSymbolParser parser = new ZStringSymbolParser(TestZStringEncoder.getTestText());
+		System.out.println("Input text: " + parser);
+		List<String> symbols = parser.toSymbolsPunctuated();
 		System.out.print("Parsed symbols: ");
 		int i = 0;
 		for (String symbol: symbols) {
@@ -46,7 +48,7 @@ public class TestSymbolParser extends TestObject {
 		}
 		System.out.println();
 		assertEqual(symbols.size(),14,"Total parsed symbols does not match expectation");
-		text = SymbolParser.textFromSymbols(symbols,true,true);
-		assertEqual(text.toString(),TestEncoderDecoder.getTestText(),"Merged string does not match expectation");
+		parser.fromSymbols(symbols,true,true);
+		assertEqual(parser.toString(),TestZStringEncoder.getTestText(),"Merged string does not match expectation");
 	}
 }

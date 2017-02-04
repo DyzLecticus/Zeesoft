@@ -2,18 +2,22 @@ package nl.zeesoft.zdk.thread;
 
 import java.util.Date;
 
-import nl.zeesoft.zdk.Generic;
 import nl.zeesoft.zdk.messenger.Messenger;
 
 /**
  * Abstract multiple threading worker. 
  */
 public abstract class Worker extends Locker implements Runnable {
+	private WorkerUnion		union				= null;
 	private int				sleep				= 100; // ms
 	private Thread 			worker 				= null;
 	private boolean 		working 			= false;
 	private boolean			stopOnException		= true;
 	private Exception		caughtException		= null;
+
+	public Worker(Messenger msgr, WorkerUnion union) {
+		super(msgr);
+	}
 	
 	/**
 	 * Starts the worker
@@ -112,7 +116,9 @@ public abstract class Worker extends Locker implements Runnable {
 	 */
 	@Override
 	public final void run() {
-		WorkerUnion.getInstance().addWorker(this);
+		if (union!=null) {
+			union.addWorker(this);
+		}
 
 		Thread wrkr = null;
 		int slp = 100;
@@ -141,8 +147,8 @@ public abstract class Worker extends Locker implements Runnable {
 					lockMe(this);
 					worker = null;
 					unlockMe(this);
-					if (!(this instanceof Messenger)) {
-						Messenger.getInstance().warn(this,"Worker has stopped on exception");
+					if (getMsgr()!=null) {
+						getMsgr().warn(this,"Worker has stopped on exception");
 					}
 				}
 			}
@@ -180,7 +186,9 @@ public abstract class Worker extends Locker implements Runnable {
 		working = false;
 		unlockMe(this);
 		
-		WorkerUnion.getInstance().removeWorker(this);
+		if (union!=null) {
+			union.removeWorker(this);
+		}
 	}
 	
 	/**
@@ -199,14 +207,16 @@ public abstract class Worker extends Locker implements Runnable {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				Messenger.getInstance().error(this,"Stopping worker was interrupted");
+				if (getMsgr()!=null) {
+					getMsgr().error(this,"Stopping worker was interrupted");
+				}
 			}
 			if (tries>maxTries) {
 				break;
 			}
 		}
-		if (tries>maxTries && !silent) {
-			Messenger.getInstance().error(this,"Failed to stop worker within " + timeOutSeconds + " seconds");
+		if (tries>maxTries && !silent && getMsgr()!=null) {
+			getMsgr().error(this,"Failed to stop worker within " + timeOutSeconds + " seconds");
 		}
 	}
 	
@@ -220,8 +230,8 @@ public abstract class Worker extends Locker implements Runnable {
 	}
 
 	protected void setCaughtException(Exception caughtException) {
-		if (!(this instanceof Messenger)) {
-			Messenger.getInstance().error(this,"Error while working: " + caughtException + "\n" + Generic.getCallStackString(caughtException.getStackTrace(),""));
+		if (getMsgr()!=null) {
+			getMsgr().error(this,"Error while working: " + caughtException);
 		}
 		lockMe(this);
 		this.caughtException = caughtException;

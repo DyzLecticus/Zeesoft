@@ -6,7 +6,12 @@ import nl.zeesoft.zdk.messenger.Messenger;
  * Synchronization locker 
  */
 public class Locker {
-	private Object lockedBy = null;
+	private Messenger	msgr		= null;
+	private Object		lockedBy	= null;
+	
+	public Locker(Messenger msgr) {
+		this.msgr = msgr;
+	}
 	
 	public static String getLockFailedMessage(int attempts, Object source) {
 		return "Lock failed after " + attempts + " attempts. Source:" + source;
@@ -22,7 +27,9 @@ public class Locker {
 			}
 			attempt ++;
 			if (attempt>=1000) {
-				Messenger.getInstance().warn(this,getLockFailedMessage(attempt,source));
+				if (msgr!=null) {
+					msgr.warn(this,getLockFailedMessage(attempt,source));
+				}
 				attempt = 0;
 			}
 		}
@@ -43,6 +50,10 @@ public class Locker {
 			locked = true;
 		}
 		return locked;
+	}
+
+	protected Messenger getMsgr() {
+		return msgr;
 	}
 
 	private synchronized boolean isLocked() {

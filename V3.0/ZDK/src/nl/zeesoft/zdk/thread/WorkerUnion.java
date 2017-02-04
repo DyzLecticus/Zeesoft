@@ -11,35 +11,15 @@ import nl.zeesoft.zdk.messenger.Messenger;
  * The stopWorkers method will check for working workers and try to stop them.
  */
 public final class WorkerUnion extends Locker {
-	private static WorkerUnion			union					= null;
 	private	List<Worker>				workers					= new ArrayList<Worker>();
 	private boolean						done					= false;
-	
-	private WorkerUnion() {
-		// Singleton
+
+	public WorkerUnion() {
+		super(null);
 	}
 
-	/**
-	 * Blocks instance cloning by throwing a CloneNotSupportedException.
-	 * 
-	 * @return null
-	 * @throws CloneNotSupportedException
-	 */
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException(); 
-	}
-
-	/**
-	 * Use this method to access the singleton.
-	 * 
-	 * @return The WorkerUnion singleton 
-	 */
-	public static WorkerUnion getInstance() {
-		if (union==null) {
-			union = new WorkerUnion();
-		}
-		return union;
+	public WorkerUnion(Messenger msgr) {
+		super(msgr);
 	}
 
 	protected void addWorker(Worker w) {
@@ -92,7 +72,9 @@ public final class WorkerUnion extends Locker {
 				for (Worker w: workers) {
 					if ((ignoreWorker==null) || (w!=ignoreWorker)) {
 						if (w.isWorking()) {
-							Messenger.getInstance().warn(this, "Stopping worker: " + w.getClass().getName());
+							if (getMsgr()!=null) {
+								getMsgr().warn(this, "Stopping worker: " + w.getClass().getName());
+							}
 							stoppingWorkers.add(w);
 							w.stop();
 							if (w.getSleep()>maxSleep) {
@@ -112,11 +94,15 @@ public final class WorkerUnion extends Locker {
 					for (Worker w: stoppingWorkers) {
 						if (w.isWorking()) {
 							workers.add(w);
-							Messenger.getInstance().error(this, "Failed to stop worker: " + w.getClass().getName());
+							if (getMsgr()!=null) {
+								getMsgr().error(this, "Failed to stop worker: " + w.getClass().getName());
+							}
 						}
 					}
 				} else {
-					Messenger.getInstance().debug(this, "All workers have been stopped");
+					if (getMsgr()!=null) {
+						getMsgr().debug(this, "All workers have been stopped");
+					}
 				}
 			}
 			done = true;

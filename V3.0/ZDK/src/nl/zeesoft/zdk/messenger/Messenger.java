@@ -7,16 +7,15 @@ import nl.zeesoft.zdk.messenger.messages.DebugMessage;
 import nl.zeesoft.zdk.messenger.messages.ErrorMessage;
 import nl.zeesoft.zdk.messenger.messages.WarningMessage;
 import nl.zeesoft.zdk.thread.Worker;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 
 /**
- * The Messenger singleton can be used to log debug, warning and error messages and print them to the standard and/or error out.
- * It is implemented as a thread safe singleton to allow easy application wide access.
+ * A Messenger can be used to log debug, warning and error messages and print them to the standard and/or error out.
  * It implements the Worker class to minimize wait time impact for threads that call the Messenger.
  * Classes that implement the MessengerListener interface can subscribe to Messenger message printing events.
+ * The Messenger is thread safe so it can be shared across the entire application.
  */
-public final class Messenger extends Worker  {
-	private static Messenger 			messenger			= null;
-	
+public class Messenger extends Worker  {
 	private List<MessageObject>			messages			= new ArrayList<MessageObject>();
 	private List<MessengerListener>		listeners			= new ArrayList<MessengerListener>();
 
@@ -25,31 +24,9 @@ public final class Messenger extends Worker  {
 	private boolean						warning				= false;
 	private boolean						error				= false;
 	
-	private Messenger() {
+	public Messenger(WorkerUnion union) {
+		super(null,union);
 		setSleep(100);
-	}
-
-	/**
-	 * Use this method to access the singleton.
-	 * 
-	 * @return The Messenger singleton 
-	 */
-	public static Messenger getInstance() {
-		if (messenger==null) {
-			messenger = new Messenger();
-		}
-		return messenger;
-	}
-
-	/**
-	 * Blocks instance cloning by throwing a CloneNotSupportedException.
-	 * 
-	 * @return null
-	 * @throws CloneNotSupportedException
-	 */
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException(); 
 	}
 
 	/**

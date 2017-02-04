@@ -2,13 +2,13 @@ package nl.zeesoft.zdk.messenger;
 
 import java.util.Date;
 
-import nl.zeesoft.zdk.Generic;
+import nl.zeesoft.zdk.ZDate;
 
 /**
  * Abstract message object.
  */
 public abstract class MessageObject {
-	private Date	date		= new Date();
+	private ZDate	date		= new ZDate();
 	private Object	source		= null;
 	private String	message		= "";
 	
@@ -26,7 +26,7 @@ public abstract class MessageObject {
 	 * 
 	 * @return the date the message was created
 	 */
-	public Date getDate() {
+	public ZDate getDate() {
 		return date;
 	}
 
@@ -56,7 +56,7 @@ public abstract class MessageObject {
 	@Override
 	public String toString() {
 		StringBuilder msg = new StringBuilder();
-		msg.append(Generic.getDateTimeString(getDate()));
+		msg.append(getDate().getDateTimeString());
 		msg.append(" ");
 		msg.append(getType());
 		msg.append(" ");
@@ -88,7 +88,7 @@ public abstract class MessageObject {
 	 */
 	protected void copyDataToMessageObject(MessageObject copy) {
 		Date d = new Date();
-		d.setTime(getDate().getTime());
+		d.setTime(getDate().getDate().getTime());
 		copy.setDate(d);
 		copy.setSource(getSource());
 		copy.setMessage(new String(getMessage()));
@@ -100,7 +100,7 @@ public abstract class MessageObject {
 	 * @param date The message creation date
 	 */
 	protected void setDate(Date date) {
-		this.date = date;
+		this.date.setDate(date);
 	}
 
 	/**

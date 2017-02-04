@@ -10,7 +10,8 @@ import nl.zeesoft.zdk.test.Tester;
  * Documents and tests the ZDK.
  */
 public class ZDK extends LibraryObject {
-	public ZDK() {
+	public ZDK(Tester tester) {
+		super(tester);
 		setNameAbbreviated("ZDK");
 		setNameFull("Zeesoft Development Kit");
 		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/");
@@ -19,20 +20,20 @@ public class ZDK extends LibraryObject {
 	}
 
 	public static void main(String[] args) {
-		(new ZDK()).describeAndTest(args);
+		(new ZDK(new Tester())).describeAndTest(args);
 	}
 
 	@Override
 	public void describe() {
 		System.out.println("Zeesoft Development Kit");
 		System.out.println("=======================");
-		System.out.println("The Zeesoft Development Kit (ZDK) is an open source library for Java application development.");
+		System.out.println("The Zeesoft Development Kit (ZDK) is an open source library for Java application development.  ");
 		System.out.println();
-		System.out.println("It provides support for;");
-		System.out.println(" * [Advanced encoding and decoding](" + Tester.getInstance().getAnchorUrlForTest(TestEncoderDecoder.class) + ").");
-		System.out.println(" * [Extended StringBuilder manipulation](" + Tester.getInstance().getAnchorUrlForTest(TestSymbolParser.class) + ").");
-		System.out.println(" * [Multi threading](" + Tester.getInstance().getAnchorUrlForTest(TestMessenger.class) + ").");
-		System.out.println(" * [Application message handling](" + Tester.getInstance().getAnchorUrlForTest(TestMessenger.class) + ").");
+		System.out.println("It provides support for;  ");
+		System.out.println(" * Extended StringBuilder manipulation  ");
+		System.out.println(" * Multi threading  ");
+		System.out.println(" * Application message handling");
+		System.out.println(" * Self documenting and testing libraries  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -41,11 +42,9 @@ public class ZDK extends LibraryObject {
 	}
 
 	@Override
-	public boolean test(String[] args) {
-		List<TestObject> tests = Tester.getInstance().getTests();
-		tests.add(new TestEncoderDecoder());
-		tests.add(new TestSymbolParser());
-		tests.add(new TestMessenger());
-		return Tester.getInstance().test(args);
+	public void addTests(List<TestObject> tests) {
+		tests.add(new TestZStringEncoder(getTester()));
+		tests.add(new TestZStringSymbolParser(getTester()));
+		tests.add(new TestMessenger(getTester()));
 	}
 }

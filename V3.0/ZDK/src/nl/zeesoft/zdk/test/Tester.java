@@ -5,42 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * The Tester singleton provides an easy way to create a self testing and documenting library.
+ * A Tester provides an easy way to create a self testing and documenting library.
  * It is designed to sequentially execute tests that extend the abstract TestObject class.
  */
 public final class Tester {
-	private static Tester		tester			= null;
-
 	private String				baseUrl			= "";
 	private List<TestObject>	tests 			= new ArrayList<TestObject>();
 	private List<MockObject>	mocks			= new ArrayList<MockObject>();
-	
-	private Tester() {
-		// Singleton
-	}
-	
-	/**
-	 * Use this method to access the singleton.
-	 * 
-	 * @return The Tester singleton 
-	 */
-	public static Tester getInstance() {
-		if (tester==null) {
-			tester = new Tester();
-		}
-		return tester;
-	}
-
-	/**
-	 * Blocks instance cloning by throwing a CloneNotSupportedException.
-	 * 
-	 * @return null
-	 * @throws CloneNotSupportedException
-	 */
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException(); 
-	}
 	
 	/**
 	 * Use this method to specify a base URL for documentation links.
@@ -132,16 +103,6 @@ public final class Tester {
 			success = false;
 		}
 		return success;
-	}
-	
-	/**
-	 * Returns the anchor URL for a certain test.
-	 * 
-	 * @param cls The class (must extends TestObject)
-	 * @return The anchor URL
-	 */
-	public String getAnchorUrlForTest(@SuppressWarnings("rawtypes") Class cls) {
-		return "#" + cls.getName().replace(".","").toLowerCase();
 	}
 
 	/**
