@@ -274,9 +274,9 @@ public class PatternManager extends Locker {
 		sequence = new ZStringSymbolParser();
 		for (String symbol: symbols) {
 			if (sequence.length()>0) {
-				sequence.getStringBuilder().append(" ");
+				sequence.append(" ");
 			}
-			sequence.getStringBuilder().append(symbol);
+			sequence.append(symbol);
 		}
 		return sequence;
 	}
@@ -294,16 +294,16 @@ public class PatternManager extends Locker {
 		values = new ZStringSymbolParser();
 		for (String symbol: symbols) {
 			if (values.length()>0) {
-				values.getStringBuilder().append(" ");
+				values.append(" ");
 			}
 			List<PatternObject> patterns = getPatternsForValues(symbol);
 			if (patterns.size()>0) {
 				if (symbol.indexOf(getOrConcatenator())>0) {
 					symbol = symbol.split("\\" + getOrConcatenator())[0];
 				}
-				values.getStringBuilder().append(patterns.get(0).getStringForValue(symbol));
+				values.append(patterns.get(0).getStringForValue(symbol));
 			} else {
-				values.getStringBuilder().append(symbol);
+				values.append(symbol);
 			}
 		}
 		return values;

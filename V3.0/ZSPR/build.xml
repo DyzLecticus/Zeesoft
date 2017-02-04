@@ -3,10 +3,10 @@
 	<description>ZSPR build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.2"/>
+	<property name="version" value="0.9.3"/>
 	
 	<!-- ZDK version -->
-	<property name="versionZDK" value="0.9.14"/>
+	<property name="versionZDK" value="0.9.15"/>
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
