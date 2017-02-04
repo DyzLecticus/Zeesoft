@@ -11,8 +11,12 @@ import nl.zeesoft.zdm.model.transformations.impl.IncrementVersion;
 import nl.zeesoft.zdm.model.transformations.impl.SetPropertyName;
 
 public class TestModelApplyList extends TestObject {
+	public TestModelApplyList(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestModelApplyList()).test(args);
+		(new TestModelApplyList(new Tester())).test(args);
 	}
 
 	@Override
@@ -33,12 +37,12 @@ public class TestModelApplyList extends TestObject {
 		System.out.println("model.cleanUp();");
 		System.out.println("~~~~");
 		System.out.println();
-		Tester.getInstance().describeMock(MockModelTransformations.class.getName());
+		getTester().describeMock(MockModelTransformations.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestModel.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockModelTransformations.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Model.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestModel.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockModelTransformations.class));
+		System.out.println(" * " + getTester().getLinkForClass(Model.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the model package structure before and after the list of transformations is applied and the transformation error message that is returned.  ");
@@ -49,7 +53,7 @@ public class TestModelApplyList extends TestObject {
 		Model model = new Model();
 
 		@SuppressWarnings("unchecked")
-		List<TransformationObject> transformations = (List<TransformationObject>) Tester.getInstance().getMockedObject(MockModelTransformations.class.getName());
+		List<TransformationObject> transformations = (List<TransformationObject>) getTester().getMockedObject(MockModelTransformations.class.getName());
 		assertEqual(transformations.size(),24,"Number of transformations does not meet expectation");
 		String error = model.applyTransformationList(transformations);
 		assertEqual(error,"","Unexpected error");

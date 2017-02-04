@@ -11,8 +11,12 @@ import nl.zeesoft.zdm.model.transformations.impl.RemovePackage;
 import nl.zeesoft.zdm.model.transformations.impl.SetPackageName;
 
 public class TestModel extends TestObject {
+	public TestModel(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestModel()).test(args);
+		(new TestModel(new Tester())).test(args);
 	}
 
 	@Override
@@ -30,8 +34,8 @@ public class TestModel extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestModel.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Model.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestModel.class));
+		System.out.println(" * " + getTester().getLinkForClass(Model.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the model transformation log for all versions of the model and the resulting package structure.  ");

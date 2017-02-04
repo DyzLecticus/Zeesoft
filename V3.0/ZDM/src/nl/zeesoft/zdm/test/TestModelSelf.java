@@ -10,8 +10,12 @@ import nl.zeesoft.zdm.model.ModelSelf;
 import nl.zeesoft.zdm.model.ModelVersion;
 
 public class TestModelSelf extends TestObject {
+	public TestModelSelf(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestModelSelf()).test(args);
+		(new TestModelSelf(new Tester())).test(args);
 	}
 
 	@Override
@@ -28,13 +32,13 @@ public class TestModelSelf extends TestObject {
 		System.out.println();
 		System.out.println("A *ModelSelf* extends the *Model* class. It contains a method that will generate a model that descibes itself.  ");
 		System.out.println();
-		Tester.getInstance().describeMock(MockModelSelf.class.getName());
+		getTester().describeMock(MockModelSelf.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestModelSelf.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockModelSelf.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(ModelSelf.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Model.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestModelSelf.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockModelSelf.class));
+		System.out.println(" * " + getTester().getLinkForClass(ModelSelf.class));
+		System.out.println(" * " + getTester().getLinkForClass(Model.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the model transformation log for all versions of the model and the resulting package structure.  ");
@@ -42,7 +46,7 @@ public class TestModelSelf extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		ModelSelf modelSelf = (ModelSelf) Tester.getInstance().getMockedObject(MockModelSelf.class.getName());
+		ModelSelf modelSelf = (ModelSelf) getTester().getMockedObject(MockModelSelf.class.getName());
 		List<ModelVersion> versions = modelSelf.getVersionsCopy();
 		List<ModelPackage> packages = modelSelf.getPackagesCopy();
 		assertEqual(versions.size(),2,"Number of versions does not meet expectation");

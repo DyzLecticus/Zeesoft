@@ -16,17 +16,18 @@ import nl.zeesoft.zdm.model.transformations.TransformationParameter;
 import nl.zeesoft.zdm.model.transformations.Transformations;
 
 public class ZDM extends LibraryObject {
-	public ZDM() {
+	public ZDM(Tester tester) {
+		super(tester);
 		setNameAbbreviated("ZDK");
 		setNameFull("Zeesoft Data Modelling");
 		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDM/");
 		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDM/releases/");
 		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDM/");
-		getDependencies().add(new ZDK());
+		getDependencies().add(new ZDK(null));
 	}
 
 	public static void main(String[] args) {
-		(new ZDM()).describeAndTest(args);
+		(new ZDM(new Tester())).describeAndTest(args);
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class ZDM extends LibraryObject {
 		System.out.println();
 		System.out.println("Versioned data modelling");
 		System.out.println("------------------------");
-		System.out.println("A " + Tester.getInstance().getLinkForClass(Model.class) + " instance can be used to represent and manipulate object oriented data structures (packages, classes and properties).");
+		System.out.println("A " + getTester().getLinkForClass(Model.class) + " instance can be used to represent and manipulate object oriented data structures (packages, classes and properties).");
 		System.out.println("Models are created and changed by applying transformations.");
 		System.out.println("All model transformations are logged in model versions.");
 		System.out.println("A model version also contains a set of transformations that can be used to recreate initial state of the model for that version.");
@@ -56,20 +57,18 @@ public class ZDM extends LibraryObject {
 	}
 
 	@Override
-	public boolean test(String[] args) {
-		List<TestObject> tests = Tester.getInstance().getTests();
-		tests.add(new TestModel());
-		tests.add(new TestModelApplyList());
-		tests.add(new TestModelInitialize());
-		tests.add(new TestModelVersioning());
-		tests.add(new TestModelSelf());
-		tests.add(new TestModelSelfConvertModel());
-		return Tester.getInstance().test(args);
+	public void addTests(List<TestObject> tests) {
+		tests.add(new TestModel(getTester()));
+		tests.add(new TestModelApplyList(getTester()));
+		tests.add(new TestModelInitialize(getTester()));
+		tests.add(new TestModelVersioning(getTester()));
+		tests.add(new TestModelSelf(getTester()));
+		tests.add(new TestModelSelfConvertModel(getTester()));
 	}
 
-	public static void describeTransformations(boolean summary) {
+	public void describeTransformations(boolean summary) {
 		for (TransformationObject transformation: Transformations.getAllTransformations()) {
-			System.out.print(" * " + Tester.getInstance().getLinkForClass(transformation.getClass()));
+			System.out.print(" * " + getTester().getLinkForClass(transformation.getClass()));
 			System.out.println("  ");
 			System.out.println("   " + transformation.getDescription() + "  ");
 			if (!summary && transformation.getParameters().size()>0) {

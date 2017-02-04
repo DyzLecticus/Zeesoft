@@ -1,10 +1,9 @@
 package nl.zeesoft.zdm.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import nl.zeesoft.zdk.Generic;
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdm.model.transformations.TransformationObject;
 
 /**
@@ -30,7 +29,7 @@ public final class ModelVersion {
 	}
 
 	protected void addLogLine(String line) {
-		log.append(Generic.getDateTimeString(new Date()));
+		log.append((new ZDate()).getDateTimeString());
 		log.append(" ");
 		log.append(line);
 		log.append("\n");

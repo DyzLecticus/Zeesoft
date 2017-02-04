@@ -3,7 +3,7 @@ package nl.zeesoft.zdm.model.transformations;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Generic;
+import nl.zeesoft.zdk.ZStringBuilder;
 
 /**
  * Abstract transformation object.
@@ -93,10 +93,10 @@ public abstract class TransformationObject {
 	
 	@Override
 	public String toString() {
-		return toStringBuilder().toString();
+		return toZStringBuilder().toString();
 	}
 	
-	public StringBuilder toStringBuilder() {
+	public ZStringBuilder toZStringBuilder() {
 		StringBuilder sb = new StringBuilder();
 		String[] split = this.getClass().getName().split("\\."); 
 		sb.append(split[split.length - 1]);
@@ -118,23 +118,23 @@ public abstract class TransformationObject {
 			}
 		}
 		sb.append(")");
-		return sb;
+		return new ZStringBuilder(sb);
 	}
 
 	public static final TransformationObject fromString(String s) {
-		return fromStringBuilder(new StringBuilder(s));
+		return fromZStringBuilder(new ZStringBuilder(s));
 	}
 
-	public static final TransformationObject fromStringBuilder(StringBuilder sb) {
+	public static final TransformationObject fromZStringBuilder(ZStringBuilder zsb) {
 		TransformationObject r = null;
-		sb = Generic.stringBuilderTrim(sb);
-		if (Generic.stringBuilderEndsWith(sb,")")) {
-			sb.replace(sb.length()-1,sb.length(),"");
+		zsb.trim();
+		if (zsb.endsWith(")")) {
+			zsb.getStringBuilder().replace(zsb.getStringBuilder().length()-1,zsb.getStringBuilder().length(),"");
 		}
-		sb = Generic.stringBuilderReplace(sb,")","");
-		List<StringBuilder> trans = Generic.stringBuilderSplit(sb,"(");
+		zsb.replace(")","");
+		List<StringBuilder> trans = zsb.split("(");
 		if (trans.size()>=1 && trans.size()<=2) {
-			String className = Generic.stringBuilderTrim(trans.get(0)).toString();
+			String className = (new ZStringBuilder(trans.get(0))).trim().toString();
 			try {
 				Class<?> clas = Class.forName(TransformationObject.class.getPackage().getName() + ".impl." + className);
 				r = (TransformationObject) clas.newInstance();
@@ -146,12 +146,12 @@ public abstract class TransformationObject {
 				e.printStackTrace();
 			}
 			if (r!=null && trans.size()==2) {
-				List<StringBuilder> params = Generic.stringBuilderSplit(trans.get(1),",");
+				List<StringBuilder> params =  (new ZStringBuilder(trans.get(1))).split(",");
 				for (StringBuilder nameValue: params) {
-					List<StringBuilder> nv = Generic.stringBuilderSplit(nameValue,"=");
+					List<StringBuilder> nv = (new ZStringBuilder(nameValue)).split("=");
 					if (nv.size()==2) {
-						String name = Generic.stringBuilderTrim(nv.get(0)).toString();
-						String value = Generic.stringBuilderTrim(nv.get(1)).toString();
+						String name = (new ZStringBuilder(nv.get(0))).trim().toString();
+						String value = (new ZStringBuilder(nv.get(1))).trim().toString();
 						if (value.startsWith("\"")) {
 							value = value.substring(1,value.length());
 						}

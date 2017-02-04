@@ -12,8 +12,12 @@ import nl.zeesoft.zdm.model.transformations.impl.RevertVersion;
 import nl.zeesoft.zdm.model.transformations.impl.RevertVersionCurrent;
 
 public class TestModelVersioning extends TestObject {
+	public TestModelVersioning(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestModelVersioning()).test(args);
+		(new TestModelVersioning(new Tester())).test(args);
 	}
 
 	@Override
@@ -38,12 +42,12 @@ public class TestModelVersioning extends TestObject {
 		System.out.println("model.cleanUp();");
 		System.out.println("~~~~");
 		System.out.println();
-		Tester.getInstance().describeMock(MockModelTransformations.class.getName());
+		getTester().describeMock(MockModelTransformations.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestModelVersioning.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockModelTransformations.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Model.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestModelVersioning.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockModelTransformations.class));
+		System.out.println(" * " + getTester().getLinkForClass(Model.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows two model transformation logs and corresponding package structures;  ");
@@ -57,7 +61,7 @@ public class TestModelVersioning extends TestObject {
 
 		// Build model
 		@SuppressWarnings("unchecked")
-		List<TransformationObject> transformations = (List<TransformationObject>) Tester.getInstance().getMockedObject(MockModelTransformations.class.getName());
+		List<TransformationObject> transformations = (List<TransformationObject>) getTester().getMockedObject(MockModelTransformations.class.getName());
 		assertEqual(transformations.size(),24,"Number of transformations does not meet expectation");
 		for (TransformationObject transformation: transformations) {
 			model.applyTransformation(transformation);

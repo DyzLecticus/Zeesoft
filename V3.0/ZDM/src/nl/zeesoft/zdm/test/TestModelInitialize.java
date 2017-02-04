@@ -11,8 +11,12 @@ import nl.zeesoft.zdm.model.ModelPackage;
 import nl.zeesoft.zdm.model.ModelProperty;
 
 public class TestModelInitialize extends TestObject {
+	public TestModelInitialize(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestModelInitialize()).test(args);
+		(new TestModelInitialize(new Tester())).test(args);
 	}
 
 	@Override
@@ -36,8 +40,8 @@ public class TestModelInitialize extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestModelInitialize.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Model.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestModelInitialize.class));
+		System.out.println(" * " + getTester().getLinkForClass(Model.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the model transformation log for all versions of the model and the resulting package structure.  ");

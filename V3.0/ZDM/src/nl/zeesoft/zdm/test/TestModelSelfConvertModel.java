@@ -10,8 +10,12 @@ import nl.zeesoft.zdm.model.ModelSelf;
 import nl.zeesoft.zdm.model.transformations.impl.ConvertModel;
 
 public class TestModelSelfConvertModel extends TestObject {
+	public TestModelSelfConvertModel(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestModelSelfConvertModel()).test(args);
+		(new TestModelSelfConvertModel(new Tester())).test(args);
 	}
 
 	@Override
@@ -29,10 +33,10 @@ public class TestModelSelfConvertModel extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestModelSelfConvertModel.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockModelSelf.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(ModelSelf.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(Model.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestModelSelfConvertModel.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockModelSelf.class));
+		System.out.println(" * " + getTester().getLinkForClass(ModelSelf.class));
+		System.out.println(" * " + getTester().getLinkForClass(Model.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the model transformation log for all versions of the model and the resulting package structure.  ");
@@ -40,7 +44,7 @@ public class TestModelSelfConvertModel extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		ModelSelf modelSelf = (ModelSelf) Tester.getInstance().getMockedObject(MockModelSelf.class.getName());
+		ModelSelf modelSelf = (ModelSelf) getTester().getMockedObject(MockModelSelf.class.getName());
 		String error = modelSelf.applyTransformation(new ConvertModel());
 		assertEqual(error,"","Unexpected error");
 		List<ModelPackage> packages = modelSelf.getPackagesCopy();
