@@ -20,7 +20,7 @@ public class TestZStringEncoder extends TestObject {
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the ZStringEncoder");
-		System.out.println("ZStringEncoder encoder = new ZStringEncoder(\"Example text to be encoded.\");");
+		System.out.println("ZStringEncoder encoder = new ZStringEncoder(null,\"Example text to be encoded.\");");
 		System.out.println("// Generate a key");
 		System.out.println("String key = encoder.generateNewKey(1024);");
 		System.out.println("// Use the key to encode the text");
@@ -42,7 +42,7 @@ public class TestZStringEncoder extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		ZStringEncoder encoder = new ZStringEncoder(getTestText());
+		ZStringEncoder encoder = new ZStringEncoder(getTestText(),null);
 		String key = encoder.generateNewKey(64);
 		System.out.println("Key: " + key);
 		assertEqual(key.length(),64,"The generated key length does not match expectation");

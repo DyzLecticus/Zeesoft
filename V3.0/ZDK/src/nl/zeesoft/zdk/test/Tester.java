@@ -98,6 +98,10 @@ public final class Tester {
 				i++;
 			}
 		}
+
+		// Garbage collection
+		tests.clear();
+		mocks.clear();
 		
 		if (failures.size()>0) {
 			success = false;
@@ -171,6 +175,7 @@ public final class Tester {
 			try {
 				Class<?> mockObjectClass = Class.forName(mockObjectClassName);
 				r = (MockObject) mockObjectClass.newInstance();
+				r.setTester(this);
 				mocks.add(r);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();

@@ -52,7 +52,7 @@ public class Locker {
 		return locked;
 	}
 
-	protected Messenger getMsgr() {
+	protected Messenger getMessenger() {
 		return msgr;
 	}
 

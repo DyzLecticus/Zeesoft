@@ -72,8 +72,8 @@ public final class WorkerUnion extends Locker {
 				for (Worker w: workers) {
 					if ((ignoreWorker==null) || (w!=ignoreWorker)) {
 						if (w.isWorking()) {
-							if (getMsgr()!=null) {
-								getMsgr().warn(this, "Stopping worker: " + w.getClass().getName());
+							if (getMessenger()!=null) {
+								getMessenger().warn(this, "Stopping worker: " + w.getClass().getName());
 							}
 							stoppingWorkers.add(w);
 							w.stop();
@@ -94,14 +94,14 @@ public final class WorkerUnion extends Locker {
 					for (Worker w: stoppingWorkers) {
 						if (w.isWorking()) {
 							workers.add(w);
-							if (getMsgr()!=null) {
-								getMsgr().error(this, "Failed to stop worker: " + w.getClass().getName());
+							if (getMessenger()!=null) {
+								getMessenger().error(this, "Failed to stop worker: " + w.getClass().getName());
 							}
 						}
 					}
 				} else {
-					if (getMsgr()!=null) {
-						getMsgr().debug(this, "All workers have been stopped");
+					if (getMessenger()!=null) {
+						getMessenger().debug(this, "All workers have been stopped");
 					}
 				}
 			}

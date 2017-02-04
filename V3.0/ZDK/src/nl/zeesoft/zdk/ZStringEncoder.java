@@ -1,7 +1,6 @@
 package nl.zeesoft.zdk;
 
 import java.util.List;
-import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -11,41 +10,46 @@ import java.util.TreeMap;
 public class ZStringEncoder extends ZStringBuilder {
 	private static final String[]	CHAR_COMPRESS	= {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","#",":","~"};
 	
+	private ZIntegerGenerator		random			= null;
+
 	public ZStringEncoder() {
-		super();
+		random = new ZIntegerGenerator(0,99999999);
+	}
+	
+	public ZStringEncoder(ZIntegerGenerator random) {
+		if (random==null) {
+			random = new ZIntegerGenerator(0,99999999);
+		}
+		this.random = random;
 	}
 
-	public ZStringEncoder(String s) {
+	public ZStringEncoder(String s,ZIntegerGenerator random) {
 		super(s);
+		if (random==null) {
+			random = new ZIntegerGenerator(0,99999999);
+		}
+		this.random = random;
 	}
 
-	public ZStringEncoder(StringBuilder sb) {
+	public ZStringEncoder(StringBuilder sb,ZIntegerGenerator random) {
 		super(sb);
+		if (random==null) {
+			random = new ZIntegerGenerator(0,99999999);
+		}
+		this.random = random;
 	}
 
-	public ZStringEncoder(ZStringBuilder zsb) {
+	public ZStringEncoder(ZStringBuilder zsb,ZIntegerGenerator random) {
 		super(zsb);
+		if (random==null) {
+			random = new ZIntegerGenerator(0,99999999);
+		}
+		this.random = random;
 	}
 
 	@Override
 	public ZStringEncoder getCopy() {
-		return new ZStringEncoder(getStringBuilder());
-	}
-	
-	/**
-	 * Generates a random integer.
-	 * 
-	 * @param valFrom Value from
-	 * @param valTill Value till
-	 * @return A random integer
-	 */
-	public int generateRandom (int valFrom, int valTill) {
-		Random rand = new Random();
-		int num = -1;
-		while (num < valFrom) {
-			 num = (int) (rand.nextDouble() * (valTill + 1));
-		}
-		return num;
+		return new ZStringEncoder(getStringBuilder(),null);
 	}
 	
 	/**
@@ -60,8 +64,7 @@ public class ZStringEncoder extends ZStringBuilder {
 			length = 64;
 		}
 		for (int i = 0; i < length; i++) {
-			int val = generateRandom(0,99999999);
-			ps.append(val);
+			ps.append(random.getNewInteger());
 			i = (ps.length() - 1);
 			if (i < length) {
 				try {

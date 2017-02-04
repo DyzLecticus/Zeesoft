@@ -147,8 +147,8 @@ public abstract class Worker extends Locker implements Runnable {
 					lockMe(this);
 					worker = null;
 					unlockMe(this);
-					if (getMsgr()!=null) {
-						getMsgr().warn(this,"Worker has stopped on exception");
+					if (getMessenger()!=null) {
+						getMessenger().warn(this,"Worker has stopped on exception");
 					}
 				}
 			}
@@ -207,16 +207,16 @@ public abstract class Worker extends Locker implements Runnable {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				if (getMsgr()!=null) {
-					getMsgr().error(this,"Stopping worker was interrupted");
+				if (getMessenger()!=null) {
+					getMessenger().error(this,"Stopping worker was interrupted");
 				}
 			}
 			if (tries>maxTries) {
 				break;
 			}
 		}
-		if (tries>maxTries && !silent && getMsgr()!=null) {
-			getMsgr().error(this,"Failed to stop worker within " + timeOutSeconds + " seconds");
+		if (tries>maxTries && !silent && getMessenger()!=null) {
+			getMessenger().error(this,"Failed to stop worker within " + timeOutSeconds + " seconds");
 		}
 	}
 	
@@ -230,8 +230,8 @@ public abstract class Worker extends Locker implements Runnable {
 	}
 
 	protected void setCaughtException(Exception caughtException) {
-		if (getMsgr()!=null) {
-			getMsgr().error(this,"Error while working: " + caughtException);
+		if (getMessenger()!=null) {
+			getMessenger().error(this,"Error while working: " + caughtException);
 		}
 		lockMe(this);
 		this.caughtException = caughtException;

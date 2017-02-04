@@ -5,6 +5,7 @@ package nl.zeesoft.zdk.test;
  * Can be used to create mock objects and share them across tests.
  */
 public abstract class MockObject {
+	private Tester	tester			= null;
 	private Object	mockedObject	= null;
 	
 	/**
@@ -29,5 +30,16 @@ public abstract class MockObject {
 			mockedObject = initialzeMock();
 		}
 		return mockedObject;
+	}
+
+	protected Tester getTester() {
+		if (tester==null) {
+			tester = new Tester();
+		}
+		return tester;
+	}
+
+	protected void setTester(Tester tester) {
+		this.tester = tester;
 	}
 }
