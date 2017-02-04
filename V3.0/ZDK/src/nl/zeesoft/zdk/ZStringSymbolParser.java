@@ -25,6 +25,11 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	public ZStringSymbolParser(ZStringBuilder zsb) {
 		super(zsb);
 	}
+
+	@Override
+	public ZStringSymbolParser getCopy() {
+		return new ZStringSymbolParser(getStringBuilder());
+	}
 	
 	/**
 	 * Parses symbols (words and punctuation) from the StringBuilder value.

@@ -26,6 +26,11 @@ public class ZStringEncoder extends ZStringBuilder {
 	public ZStringEncoder(ZStringBuilder zsb) {
 		super(zsb);
 	}
+
+	@Override
+	public ZStringEncoder getCopy() {
+		return new ZStringEncoder(getStringBuilder());
+	}
 	
 	/**
 	 * Generates a random integer.
@@ -121,10 +126,9 @@ public class ZStringEncoder extends ZStringBuilder {
 			int idx = 0;
 			int end = 0;
 			
-			StringBuilder s = new StringBuilder();
-			s.append(decompress(getCharCompressForKey(key,seed)));
-			
-			int len = s.length();
+			decompress(getCharCompressForKey(key,seed));
+			StringBuilder sb = getStringBuilder();
+			int len = sb.length();
 			char[] characters = new char[(len / 3)];
 			for (int p = 0; p < (len / 3); p++) {
 				idx = p % key.length();
@@ -132,12 +136,12 @@ public class ZStringEncoder extends ZStringBuilder {
 				if (end > key.length()) {
 					end = key.length();
 				}
-				str = s.substring((p * 3), ((p * 3) + 3));
+				str = sb.substring((p * 3), ((p * 3) + 3));
 				characters[p] = (char) (Integer.parseInt(str) - ((Integer.parseInt(key.substring(idx,end))) / 2) - sVar);
 			}
-			s = new StringBuilder();
-			s.append(characters);
-			setStringBuilder(s);
+			sb = new StringBuilder();
+			sb.append(characters);
+			setStringBuilder(sb);
 		}
 		return getStringBuilder();
 	}

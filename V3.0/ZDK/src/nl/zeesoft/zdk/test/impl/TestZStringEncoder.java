@@ -15,7 +15,7 @@ public class TestZStringEncoder extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use the *ZStringEncoder* class to generate a key and use that to encode and decode a text.");
+		System.out.println("This test shows how to use the *ZStringEncoder* to generate a key and then use that to encode and decode a text.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");

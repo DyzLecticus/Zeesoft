@@ -36,6 +36,10 @@ public class ZStringBuilder {
 		return r;
 	}
 	
+	public ZStringBuilder getCopy() {
+		return new ZStringBuilder(sb);
+	}
+	
 	public StringBuilder getStringBuilder() {
 		return sb;
 	}

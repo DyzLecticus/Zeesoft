@@ -46,27 +46,30 @@ public class TestMessenger extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("The *Messenger* can be used to log debug, warning and error messages and print them to the standard and/or error out.");
-		System.out.println("It implements the *Worker* class to minimize wait time impact for threads that call the *Messenger*.");
+		System.out.println("It implements the *Worker* to minimize wait time impact for threads that call the *Messenger*.");
 		System.out.println("The Messenger is thread safe so it can be shared across the entire application.");
 		System.out.println("Classes that implement the *MessengerListener* interface can subscribe to *Messenger* message printing events.");
 		System.out.println("The *WorkerUnion* can be used to ensure all workers that have been started are stopped when stopping the application.");
 		System.out.println("It will log an error if it fails to stop a worker.");
 		System.out.println();
+		getTester().describeMock(MockMessenger.class.getName());
+		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestMessenger.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockMessenger.class));
 		System.out.println(" * " + getTester().getLinkForClass(Messenger.class));
 		System.out.println(" * " + getTester().getLinkForClass(MessengerListener.class));
 		System.out.println(" * " + getTester().getLinkForClass(Worker.class));
 		System.out.println(" * " + getTester().getLinkForClass(WorkerUnion.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the standard (and error) output of the test log messages.");
+		System.out.println("The output of this test shows the standard output of the test log messages.");
 	}
 	
 	@Override
 	protected void test(String[] args) {
 		ZDKFactory factory = new ZDKFactory();
-		Messenger messenger = factory.getMessenger();
+		Messenger messenger = (Messenger) getTester().getMockedObject(MockMessenger.class.getName());
 		WorkerUnion workerUnion = factory.getWorkerUnion(messenger);
 		TestMessengerListener listener = new TestMessengerListener();
 		messenger.debug(listener,"Test log debug message before Messenger has started");

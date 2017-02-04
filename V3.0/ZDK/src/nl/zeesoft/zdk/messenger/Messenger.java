@@ -93,16 +93,15 @@ public class Messenger extends Worker  {
 		if (messages.size()>0) {
 			for (MessageObject msg: messages) {
 				if (msg instanceof ErrorMessage) {
-					System.out.println(msg);
-					System.err.println(msg);
+					printMessage(msg,true);
 				} else if (!(msg instanceof DebugMessage) || printDebugMessages) {
-					System.out.println(msg);
+					printMessage(msg,false);
 				}
 			}
 		}
 		unlockMe(this);
 	}
-
+	
 	/**
 	 * Clears the message buffer.
 	 */
@@ -207,6 +206,13 @@ public class Messenger extends Worker  {
 		lockMe(this);
 		this.printDebugMessages = printDebugMessages;
 		unlockMe(this);
+	}
+
+	protected void printMessage(MessageObject msg, boolean error) {
+		System.out.println(msg);
+		if (error) {
+			System.err.println(msg);
+		}
 	}
 
 	private void addMessage(MessageObject msg) {

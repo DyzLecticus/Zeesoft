@@ -17,11 +17,14 @@ public class TestZStringSymbolParser extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use the *SymbolParser* class to parse symbols (words and punctuation) from a certain text.");
+		System.out.println("This test shows how to use the *ZStringSymbolParser* to parse symbols (words and punctuation) from a certain text.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("List<String> symbols = SymbolParser.parseSymbolsFromText(new StringBuilder(\"Example text.\"));");
+		System.out.println("// Create the ZStringSymbolParser");
+		System.out.println("ZStringSymbolParser parser = new ZStringSymbolParser(\"Example text.\"));");
+		System.out.println("// Parse the string");
+		System.out.println("List<String> symbols = parser.toSymbolsPunctuated();");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
