@@ -1,9 +1,7 @@
 package nl.zeesoft.zsc.confabulator;
 
-import java.util.Date;
-
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zsc.Generic;
 
 /**
  * Abstract confabulation object.
@@ -51,7 +49,7 @@ public abstract class ConfabulationObject {
 	 * @param line The line to add a line to the confabulation log
 	 */
 	protected void addLogLine(String line) {
-		log.append(Generic.getDateTimeString(new Date()));
+		log.append((new ZDate()).getDateTimeString());
 		log.append(":");
 		log.append(" ");
 		log.append(line);

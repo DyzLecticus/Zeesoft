@@ -3,9 +3,9 @@ package nl.zeesoft.zsc.test;
 import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsc.Generic;
 import nl.zeesoft.zsc.confabulator.ConfabulationObject;
 import nl.zeesoft.zsc.confabulator.Confabulator;
 import nl.zeesoft.zsc.confabulator.confabulations.ContextConfabulation;
@@ -67,10 +67,10 @@ public class TestConfabulatorContextConfabulation extends TestObject {
 		long ms = 0;
 		confabulator.confabulate(confab);
 		ms = (new Date()).getTime() - start.getTime();
-		List<StringBuilder> lines = Generic.stringBuilderSplit(confab.getLog(),"\n");
+		List<ZStringBuilder> lines = (new ZStringBuilder(confab.getLog())).split("\n");
 		if (lines.size()>100) {
 			int i = 0;
-			for (StringBuilder line: lines) {
+			for (ZStringBuilder line: lines) {
 				if (i<=30 || i>(lines.size()-30)) {
 					System.out.println(line);
 				} else if (i==31) {

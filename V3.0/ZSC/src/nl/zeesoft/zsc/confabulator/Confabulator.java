@@ -7,7 +7,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.messenger.Messenger;
-import nl.zeesoft.zsc.Generic;
 import nl.zeesoft.zsc.confabulator.confabulations.ContextConfabulation;
 import nl.zeesoft.zsc.confabulator.confabulations.CorrectionConfabulation;
 import nl.zeesoft.zsc.confabulator.confabulations.ExtensionConfabulation;
@@ -449,7 +448,10 @@ public final class Confabulator extends ConfabulatorTrainer {
 				if (activeSymbols.size()>0) {
 					line.append("\n");
 					line.append("Module ");
-					line.append(Generic.minStrInt(entry.getKey() + 1,2));
+					if (modules.size()<10) {
+						line.append("0");
+					}
+					line.append(entry.getKey());
 					line.append(": ");
 					int added = 0;
 					for (String activeSymbol: activeSymbols) {
