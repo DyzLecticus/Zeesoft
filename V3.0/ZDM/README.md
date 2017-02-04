@@ -2,18 +2,17 @@ Zeesoft Data Modelling
 ======================
 Zeesoft Data Modelling (ZDM) is an open source library for Java application development.
 It provides support for versioned data model management.
-The ZDM extends the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK) (ZDK).
+This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDM/releases/zdmk-0.9.0.zip) to download the latest ZDM release (version 0.9.0).
-All ZDM releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDM/releases).
-ZDM releases contain;  
- * the ZDM jar file.  
- * the corresponding ZDK jar file.  
- * this README file.  
- * Separate zip files containing the generated java documentation for each jar file.  
-
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDM/releases/zdk-0.9.1.zip) to download the latest ZDK release (version 0.9.1).  
+All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDM/releases/).  
 *All jar files in the release include source code and build scripts.*  
+
+**Self documenting and self testing**  
+The tests used to develop this libary are also used to generate this README file.  
+Run the [ZDM](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDM/src/nl/zeesoft/zdm/test/ZDM.java) class as a java application to print this documentation to the standard out.  
+Click [here](#test-results) to scroll down to the test result summary.  
 
 Versioned data modelling
 ------------------------
@@ -106,11 +105,6 @@ Models support the following transformations;
    * Optional parameter **idPropertyName**: The name of the ID property to add. Specifying this parameter will make the conversion add a property with the specified name to all remaining classes.  
    * Optional parameter **idPropertyType**: The type of the ID property. Defaults to 'java.lang.String'.  
 
-**Self documenting and self testing**  
-The tests used to develop the ZDM are also used to generate this README file.
-Run the [ZDM](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDM/src/nl/zeesoft/zdm/test/ZDM.java) class as a java application to print this documentation to the standard out.
-Click [here](#test-results) to scroll down to the test result summary.
-
 nl.zeesoft.zdm.test.TestModel
 -----------------------------
 This test shows how to create a *Model* instance and then apply some transformations to it.
@@ -133,14 +127,14 @@ Class references;
 The output of this test shows the model transformation log for all versions of the model and the resulting package structure.  
 ~~~~
 Version: 0
-2017-01-26 23:09:19:602 Applied transformation: IncrementVersion()
-2017-01-26 23:09:19:636 Applied transformation: AddPackage(name="new.package")
-2017-01-26 23:09:19:637 Applied transformation: AddPackage(name="another.new.package")
-2017-01-26 23:09:19:637 Failed to apply transformation: AddPackage(name="another.new.package"), error: Package another.new.package already exists
-2017-01-26 23:09:19:638 Failed to apply transformation: SetPackageName(name="new.package",newName="another.new.package"), error: Package another.new.package already exists
-2017-01-26 23:09:19:639 Applied transformation: SetPackageName(name="new.package",newName="new.package.newName")
-2017-01-26 23:09:19:639 Applied transformation: RemovePackage(name="new.package.newName")
-2017-01-26 23:09:19:640 Failed to apply transformation: RemovePackage(name="new.package.newName"), error: Package new.package.newName does not exist
+2017-02-04 20:08:25:629 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:658 Applied transformation: AddPackage(name="new.package")
+2017-02-04 20:08:25:658 Applied transformation: AddPackage(name="another.new.package")
+2017-02-04 20:08:25:658 Failed to apply transformation: AddPackage(name="another.new.package"), error: Package another.new.package already exists
+2017-02-04 20:08:25:659 Failed to apply transformation: SetPackageName(name="new.package",newName="another.new.package"), error: Package another.new.package already exists
+2017-02-04 20:08:25:660 Applied transformation: SetPackageName(name="new.package",newName="new.package.newName")
+2017-02-04 20:08:25:660 Applied transformation: RemovePackage(name="new.package.newName")
+2017-02-04 20:08:25:660 Failed to apply transformation: RemovePackage(name="new.package.newName"), error: Package new.package.newName does not exist
 
 Package: another.new.package
 
@@ -246,8 +240,8 @@ Class references;
 The output of this test shows the model transformation log for all versions of the model and the resulting package structure.  
 ~~~~
 Version: 0
-2017-01-26 23:09:19:778 Applied transformation: IncrementVersion()
-2017-01-26 23:09:19:778 Initialized model (package: test.package)
+2017-02-04 20:08:25:778 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:779 Initialized model (package: test.package)
 
 Package: test.package
 - Class: TestClass
@@ -291,53 +285,53 @@ The output of this test shows two model transformation logs and corresponding pa
  * Once after reverting back to version one of the model (leaving only the initial version).  
 ~~~~
 Version: 0
-2017-01-26 23:09:19:795 Applied transformation: IncrementVersion()
-2017-01-26 23:09:19:796 Applied transformation: AddPackage(name="test.package")
-2017-01-26 23:09:19:796 Applied transformation: AddClass(packageName="test.package",name="TestClassA")
-2017-01-26 23:09:19:797 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyA",type="java.lang.Boolean")
-2017-01-26 23:09:19:797 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyB",type="java.lang.String",list="true")
-2017-01-26 23:09:19:798 Applied transformation: AddClass(packageName="test.package",name="TestClassB")
-2017-01-26 23:09:19:798 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyA",type="java.lang.Integer")
-2017-01-26 23:09:19:799 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyB",type="test.package.TestClassA")
+2017-02-04 20:08:25:821 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:821 Applied transformation: AddPackage(name="test.package")
+2017-02-04 20:08:25:821 Applied transformation: AddClass(packageName="test.package",name="TestClassA")
+2017-02-04 20:08:25:822 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyA",type="java.lang.Boolean")
+2017-02-04 20:08:25:822 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyB",type="java.lang.String",list="true")
+2017-02-04 20:08:25:822 Applied transformation: AddClass(packageName="test.package",name="TestClassB")
+2017-02-04 20:08:25:823 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyA",type="java.lang.Integer")
+2017-02-04 20:08:25:823 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyB",type="test.package.TestClassA")
 
 Version: 1
-2017-01-26 23:09:19:799 Applied transformation: IncrementVersion()
-2017-01-26 23:09:19:801 Applied transformation: AddPackage(name="another.test.package")
-2017-01-26 23:09:19:801 Applied transformation: AddClass(packageName="another.test.package",name="TestClassA",extendsPackageName="test.package",extendsClassName="TestClassA",abstract="false")
-2017-01-26 23:09:19:801 Applied transformation: AddProperty(className="TestClassA",packageName="another.test.package",name="testPropertyB",type="java.lang.String",list="true")
-2017-01-26 23:09:19:802 Applied transformation: AddProperty(className="TestClassA",packageName="another.test.package",name="testPropertyC",type="java.lang.Boolean")
-2017-01-26 23:09:19:802 Applied transformation: AddClass(packageName="another.test.package",name="TestClassB")
-2017-01-26 23:09:19:802 Applied transformation: AddProperty(className="TestClassB",packageName="another.test.package",name="testPropertyA")
-2017-01-26 23:09:19:803 Applied transformation: AddProperty(className="TestClassB",packageName="another.test.package",name="testPropertyB")
+2017-02-04 20:08:25:824 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:825 Applied transformation: AddPackage(name="another.test.package")
+2017-02-04 20:08:25:825 Applied transformation: AddClass(packageName="another.test.package",name="TestClassA",extendsPackageName="test.package",extendsClassName="TestClassA",abstract="false")
+2017-02-04 20:08:25:825 Applied transformation: AddProperty(className="TestClassA",packageName="another.test.package",name="testPropertyB",type="java.lang.String",list="true")
+2017-02-04 20:08:25:826 Applied transformation: AddProperty(className="TestClassA",packageName="another.test.package",name="testPropertyC",type="java.lang.Boolean")
+2017-02-04 20:08:25:826 Applied transformation: AddClass(packageName="another.test.package",name="TestClassB")
+2017-02-04 20:08:25:826 Applied transformation: AddProperty(className="TestClassB",packageName="another.test.package",name="testPropertyA")
+2017-02-04 20:08:25:826 Applied transformation: AddProperty(className="TestClassB",packageName="another.test.package",name="testPropertyB")
 
 Version: 2
-2017-01-26 23:09:19:804 Applied transformation: IncrementVersion()
-2017-01-26 23:09:19:804 Applied transformation: AddPackage(name="yet.another.test.package")
-2017-01-26 23:09:19:804 Applied transformation: AddClass(packageName="yet.another.test.package",name="TestClassA")
-2017-01-26 23:09:19:805 Applied transformation: AddProperty(className="TestClassA",packageName="yet.another.test.package",name="testPropertyA")
-2017-01-26 23:09:19:805 Applied transformation: AddProperty(className="TestClassA",packageName="yet.another.test.package",name="testPropertyB")
-2017-01-26 23:09:19:805 Applied transformation: AddClass(packageName="yet.another.test.package",name="TestClassB")
-2017-01-26 23:09:19:806 Applied transformation: AddProperty(className="TestClassB",packageName="yet.another.test.package",name="testPropertyA")
-2017-01-26 23:09:19:806 Applied transformation: AddProperty(className="TestClassB",packageName="yet.another.test.package",name="testPropertyB")
-2017-01-26 23:09:19:806 Applied transformation: RemoveClass(packageName="yet.another.test.package",name="TestClassA")
-2017-01-26 23:09:19:808 Applied transformation: RemovePackageAll()
-2017-01-26 23:09:19:808 Applied transformation: AddPackage(name="test.package")
-2017-01-26 23:09:19:809 Applied transformation: AddClass(packageName="test.package",name="TestClassA")
-2017-01-26 23:09:19:809 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyA",type="java.lang.Boolean")
-2017-01-26 23:09:19:809 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyB",type="java.lang.String",list="true")
-2017-01-26 23:09:19:809 Applied transformation: AddClass(packageName="test.package",name="TestClassB")
-2017-01-26 23:09:19:810 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyA",type="java.lang.Integer")
-2017-01-26 23:09:19:810 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyB",type="test.package.TestClassA")
-2017-01-26 23:09:19:810 Applied transformation: AddPackage(name="another.test.package")
-2017-01-26 23:09:19:811 Applied transformation: AddClass(packageName="another.test.package",name="TestClassA")
-2017-01-26 23:09:19:811 Applied transformation: AddProperty(className="TestClassA",packageName="another.test.package",name="testPropertyB",type="java.lang.String",list="true")
-2017-01-26 23:09:19:812 Applied transformation: AddProperty(className="TestClassA",packageName="another.test.package",name="testPropertyC",type="java.lang.Boolean")
-2017-01-26 23:09:19:812 Applied transformation: AddClass(packageName="another.test.package",name="TestClassB")
-2017-01-26 23:09:19:812 Applied transformation: AddProperty(className="TestClassB",packageName="another.test.package",name="testPropertyA",type="java.lang.String")
-2017-01-26 23:09:19:813 Applied transformation: AddProperty(className="TestClassB",packageName="another.test.package",name="testPropertyB",type="java.lang.String")
-2017-01-26 23:09:19:813 Applied transformation: SetClassExtendsClass(packageName="another.test.package",name="TestClassA",extendsPackageName="test.package",extendsClassName="TestClassA")
-2017-01-26 23:09:19:813 Applied transformation: RevertVersionCurrent()
-2017-01-26 23:09:19:813 Failed to apply transformation: RevertVersionCurrent(), error: The current model version does not contain any changes
+2017-02-04 20:08:25:827 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:827 Applied transformation: AddPackage(name="yet.another.test.package")
+2017-02-04 20:08:25:827 Applied transformation: AddClass(packageName="yet.another.test.package",name="TestClassA")
+2017-02-04 20:08:25:828 Applied transformation: AddProperty(className="TestClassA",packageName="yet.another.test.package",name="testPropertyA")
+2017-02-04 20:08:25:828 Applied transformation: AddProperty(className="TestClassA",packageName="yet.another.test.package",name="testPropertyB")
+2017-02-04 20:08:25:828 Applied transformation: AddClass(packageName="yet.another.test.package",name="TestClassB")
+2017-02-04 20:08:25:829 Applied transformation: AddProperty(className="TestClassB",packageName="yet.another.test.package",name="testPropertyA")
+2017-02-04 20:08:25:829 Applied transformation: AddProperty(className="TestClassB",packageName="yet.another.test.package",name="testPropertyB")
+2017-02-04 20:08:25:830 Applied transformation: RemoveClass(packageName="yet.another.test.package",name="TestClassA")
+2017-02-04 20:08:25:832 Applied transformation: RemovePackageAll()
+2017-02-04 20:08:25:832 Applied transformation: AddPackage(name="test.package")
+2017-02-04 20:08:25:832 Applied transformation: AddClass(packageName="test.package",name="TestClassA")
+2017-02-04 20:08:25:832 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyA",type="java.lang.Boolean")
+2017-02-04 20:08:25:833 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyB",type="java.lang.String",list="true")
+2017-02-04 20:08:25:833 Applied transformation: AddClass(packageName="test.package",name="TestClassB")
+2017-02-04 20:08:25:833 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyA",type="java.lang.Integer")
+2017-02-04 20:08:25:833 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyB",type="test.package.TestClassA")
+2017-02-04 20:08:25:834 Applied transformation: AddPackage(name="another.test.package")
+2017-02-04 20:08:25:834 Applied transformation: AddClass(packageName="another.test.package",name="TestClassA")
+2017-02-04 20:08:25:834 Applied transformation: AddProperty(className="TestClassA",packageName="another.test.package",name="testPropertyB",type="java.lang.String",list="true")
+2017-02-04 20:08:25:834 Applied transformation: AddProperty(className="TestClassA",packageName="another.test.package",name="testPropertyC",type="java.lang.Boolean")
+2017-02-04 20:08:25:835 Applied transformation: AddClass(packageName="another.test.package",name="TestClassB")
+2017-02-04 20:08:25:835 Applied transformation: AddProperty(className="TestClassB",packageName="another.test.package",name="testPropertyA",type="java.lang.String")
+2017-02-04 20:08:25:835 Applied transformation: AddProperty(className="TestClassB",packageName="another.test.package",name="testPropertyB",type="java.lang.String")
+2017-02-04 20:08:25:835 Applied transformation: SetClassExtendsClass(packageName="another.test.package",name="TestClassA",extendsPackageName="test.package",extendsClassName="TestClassA")
+2017-02-04 20:08:25:836 Applied transformation: RevertVersionCurrent()
+2017-02-04 20:08:25:836 Failed to apply transformation: RevertVersionCurrent(), error: The current model version does not contain any changes
 
 Package: test.package
 - Class: TestClassA
@@ -356,15 +350,15 @@ Package: another.test.package
   - Property: testPropertyB, type: java.lang.String
 
 Version: 0
-2017-01-26 23:09:19:795 Applied transformation: IncrementVersion()
-2017-01-26 23:09:19:796 Applied transformation: AddPackage(name="test.package")
-2017-01-26 23:09:19:796 Applied transformation: AddClass(packageName="test.package",name="TestClassA")
-2017-01-26 23:09:19:797 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyA",type="java.lang.Boolean")
-2017-01-26 23:09:19:797 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyB",type="java.lang.String",list="true")
-2017-01-26 23:09:19:798 Applied transformation: AddClass(packageName="test.package",name="TestClassB")
-2017-01-26 23:09:19:798 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyA",type="java.lang.Integer")
-2017-01-26 23:09:19:799 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyB",type="test.package.TestClassA")
-2017-01-26 23:09:19:883 Applied transformation: RevertVersion(number="1")
+2017-02-04 20:08:25:821 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:821 Applied transformation: AddPackage(name="test.package")
+2017-02-04 20:08:25:821 Applied transformation: AddClass(packageName="test.package",name="TestClassA")
+2017-02-04 20:08:25:822 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyA",type="java.lang.Boolean")
+2017-02-04 20:08:25:822 Applied transformation: AddProperty(className="TestClassA",packageName="test.package",name="testPropertyB",type="java.lang.String",list="true")
+2017-02-04 20:08:25:822 Applied transformation: AddClass(packageName="test.package",name="TestClassB")
+2017-02-04 20:08:25:823 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyA",type="java.lang.Integer")
+2017-02-04 20:08:25:823 Applied transformation: AddProperty(className="TestClassB",packageName="test.package",name="testPropertyB",type="test.package.TestClassA")
+2017-02-04 20:08:25:924 Applied transformation: RevertVersion(number="1")
 
 Package: test.package
 - Class: TestClassA
@@ -402,37 +396,37 @@ Class references;
 The output of this test shows the model transformation log for all versions of the model and the resulting package structure.  
 ~~~~
 Version: 0
-2017-01-26 23:09:19:903 Applied transformation: IncrementVersion()
-2017-01-26 23:09:19:903 Applied transformation: AddPackage(name="nl.zeesoft.zdm.model")
-2017-01-26 23:09:19:904 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelObject",abstract="true")
-2017-01-26 23:09:19:904 Applied transformation: AddProperty(className="ModelObject",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long")
-2017-01-26 23:09:19:904 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelSelf",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelObject",abstract="false")
-2017-01-26 23:09:19:904 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="versions",type="nl.zeesoft.zdm.model.ModelVersion",list="true")
-2017-01-26 23:09:19:905 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="packages",type="nl.zeesoft.zdm.model.ModelPackage",list="true")
-2017-01-26 23:09:19:905 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelNamedObject",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelObject",abstract="true")
-2017-01-26 23:09:19:906 Applied transformation: AddProperty(className="ModelNamedObject",packageName="nl.zeesoft.zdm.model",name="name")
-2017-01-26 23:09:19:906 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelVersion")
-2017-01-26 23:09:19:906 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="number",type="java.lang.Integer")
-2017-01-26 23:09:19:907 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="log",type="java.lang.StringBuilder")
-2017-01-26 23:09:19:907 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="transformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
-2017-01-26 23:09:19:907 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="initialTransformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
-2017-01-26 23:09:19:907 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformation")
-2017-01-26 23:09:19:908 Applied transformation: AddProperty(className="ModelTransformation",packageName="nl.zeesoft.zdm.model",name="parameters",type="nl.zeesoft.zdm.model.ModelTransformationParameter",list="true")
-2017-01-26 23:09:19:908 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformationParameter")
-2017-01-26 23:09:19:908 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="name")
-2017-01-26 23:09:19:908 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="value")
-2017-01-26 23:09:19:909 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelPackage",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
-2017-01-26 23:09:19:909 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="classes",type="nl.zeesoft.zdm.model.ModelClass",list="true")
-2017-01-26 23:09:19:909 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelClass",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
-2017-01-26 23:09:19:909 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="properties",type="nl.zeesoft.zdm.model.ModelProperty",list="true")
-2017-01-26 23:09:19:909 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="extendsClass",type="nl.zeesoft.zdm.model.ModelClass")
-2017-01-26 23:09:19:910 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="abstract",type="java.lang.Boolean")
-2017-01-26 23:09:19:910 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelProperty",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
-2017-01-26 23:09:19:910 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="type")
-2017-01-26 23:09:19:911 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="list",type="java.lang.Boolean")
+2017-02-04 20:08:25:948 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:948 Applied transformation: AddPackage(name="nl.zeesoft.zdm.model")
+2017-02-04 20:08:25:948 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelObject",abstract="true")
+2017-02-04 20:08:25:949 Applied transformation: AddProperty(className="ModelObject",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long")
+2017-02-04 20:08:25:949 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelSelf",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelObject",abstract="false")
+2017-02-04 20:08:25:949 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="versions",type="nl.zeesoft.zdm.model.ModelVersion",list="true")
+2017-02-04 20:08:25:949 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="packages",type="nl.zeesoft.zdm.model.ModelPackage",list="true")
+2017-02-04 20:08:25:950 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelNamedObject",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelObject",abstract="true")
+2017-02-04 20:08:25:950 Applied transformation: AddProperty(className="ModelNamedObject",packageName="nl.zeesoft.zdm.model",name="name")
+2017-02-04 20:08:25:950 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelVersion")
+2017-02-04 20:08:25:950 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="number",type="java.lang.Integer")
+2017-02-04 20:08:25:950 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="log",type="java.lang.StringBuilder")
+2017-02-04 20:08:25:951 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="transformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
+2017-02-04 20:08:25:951 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="initialTransformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
+2017-02-04 20:08:25:951 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformation")
+2017-02-04 20:08:25:952 Applied transformation: AddProperty(className="ModelTransformation",packageName="nl.zeesoft.zdm.model",name="parameters",type="nl.zeesoft.zdm.model.ModelTransformationParameter",list="true")
+2017-02-04 20:08:25:952 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformationParameter")
+2017-02-04 20:08:25:952 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="name")
+2017-02-04 20:08:25:953 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="value")
+2017-02-04 20:08:25:953 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelPackage",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
+2017-02-04 20:08:25:954 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="classes",type="nl.zeesoft.zdm.model.ModelClass",list="true")
+2017-02-04 20:08:25:954 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelClass",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
+2017-02-04 20:08:25:954 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="properties",type="nl.zeesoft.zdm.model.ModelProperty",list="true")
+2017-02-04 20:08:25:954 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="extendsClass",type="nl.zeesoft.zdm.model.ModelClass")
+2017-02-04 20:08:25:955 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="abstract",type="java.lang.Boolean")
+2017-02-04 20:08:25:955 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelProperty",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
+2017-02-04 20:08:25:955 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="type")
+2017-02-04 20:08:25:955 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="list",type="java.lang.Boolean")
 
 Version: 1
-2017-01-26 23:09:19:911 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:956 Applied transformation: IncrementVersion()
 
 Package: nl.zeesoft.zdm.model
 - Class: ModelObject (abstract)
@@ -496,69 +490,69 @@ Class references;
 The output of this test shows the model transformation log for all versions of the model and the resulting package structure.  
 ~~~~
 Version: 0
-2017-01-26 23:09:19:903 Applied transformation: IncrementVersion()
-2017-01-26 23:09:19:903 Applied transformation: AddPackage(name="nl.zeesoft.zdm.model")
-2017-01-26 23:09:19:904 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelObject",abstract="true")
-2017-01-26 23:09:19:904 Applied transformation: AddProperty(className="ModelObject",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long")
-2017-01-26 23:09:19:904 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelSelf",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelObject",abstract="false")
-2017-01-26 23:09:19:904 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="versions",type="nl.zeesoft.zdm.model.ModelVersion",list="true")
-2017-01-26 23:09:19:905 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="packages",type="nl.zeesoft.zdm.model.ModelPackage",list="true")
-2017-01-26 23:09:19:905 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelNamedObject",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelObject",abstract="true")
-2017-01-26 23:09:19:906 Applied transformation: AddProperty(className="ModelNamedObject",packageName="nl.zeesoft.zdm.model",name="name")
-2017-01-26 23:09:19:906 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelVersion")
-2017-01-26 23:09:19:906 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="number",type="java.lang.Integer")
-2017-01-26 23:09:19:907 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="log",type="java.lang.StringBuilder")
-2017-01-26 23:09:19:907 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="transformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
-2017-01-26 23:09:19:907 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="initialTransformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
-2017-01-26 23:09:19:907 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformation")
-2017-01-26 23:09:19:908 Applied transformation: AddProperty(className="ModelTransformation",packageName="nl.zeesoft.zdm.model",name="parameters",type="nl.zeesoft.zdm.model.ModelTransformationParameter",list="true")
-2017-01-26 23:09:19:908 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformationParameter")
-2017-01-26 23:09:19:908 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="name")
-2017-01-26 23:09:19:908 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="value")
-2017-01-26 23:09:19:909 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelPackage",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
-2017-01-26 23:09:19:909 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="classes",type="nl.zeesoft.zdm.model.ModelClass",list="true")
-2017-01-26 23:09:19:909 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelClass",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
-2017-01-26 23:09:19:909 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="properties",type="nl.zeesoft.zdm.model.ModelProperty",list="true")
-2017-01-26 23:09:19:909 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="extendsClass",type="nl.zeesoft.zdm.model.ModelClass")
-2017-01-26 23:09:19:910 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="abstract",type="java.lang.Boolean")
-2017-01-26 23:09:19:910 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelProperty",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
-2017-01-26 23:09:19:910 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="type")
-2017-01-26 23:09:19:911 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="list",type="java.lang.Boolean")
+2017-02-04 20:08:25:948 Applied transformation: IncrementVersion()
+2017-02-04 20:08:25:948 Applied transformation: AddPackage(name="nl.zeesoft.zdm.model")
+2017-02-04 20:08:25:948 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelObject",abstract="true")
+2017-02-04 20:08:25:949 Applied transformation: AddProperty(className="ModelObject",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long")
+2017-02-04 20:08:25:949 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelSelf",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelObject",abstract="false")
+2017-02-04 20:08:25:949 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="versions",type="nl.zeesoft.zdm.model.ModelVersion",list="true")
+2017-02-04 20:08:25:949 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="packages",type="nl.zeesoft.zdm.model.ModelPackage",list="true")
+2017-02-04 20:08:25:950 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelNamedObject",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelObject",abstract="true")
+2017-02-04 20:08:25:950 Applied transformation: AddProperty(className="ModelNamedObject",packageName="nl.zeesoft.zdm.model",name="name")
+2017-02-04 20:08:25:950 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelVersion")
+2017-02-04 20:08:25:950 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="number",type="java.lang.Integer")
+2017-02-04 20:08:25:950 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="log",type="java.lang.StringBuilder")
+2017-02-04 20:08:25:951 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="transformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
+2017-02-04 20:08:25:951 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="initialTransformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
+2017-02-04 20:08:25:951 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformation")
+2017-02-04 20:08:25:952 Applied transformation: AddProperty(className="ModelTransformation",packageName="nl.zeesoft.zdm.model",name="parameters",type="nl.zeesoft.zdm.model.ModelTransformationParameter",list="true")
+2017-02-04 20:08:25:952 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformationParameter")
+2017-02-04 20:08:25:952 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="name")
+2017-02-04 20:08:25:953 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="value")
+2017-02-04 20:08:25:953 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelPackage",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
+2017-02-04 20:08:25:954 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="classes",type="nl.zeesoft.zdm.model.ModelClass",list="true")
+2017-02-04 20:08:25:954 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelClass",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
+2017-02-04 20:08:25:954 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="properties",type="nl.zeesoft.zdm.model.ModelProperty",list="true")
+2017-02-04 20:08:25:954 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="extendsClass",type="nl.zeesoft.zdm.model.ModelClass")
+2017-02-04 20:08:25:955 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="abstract",type="java.lang.Boolean")
+2017-02-04 20:08:25:955 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelProperty",extendsPackageName="nl.zeesoft.zdm.model",extendsClassName="ModelNamedObject",abstract="false")
+2017-02-04 20:08:25:955 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="type")
+2017-02-04 20:08:25:955 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="list",type="java.lang.Boolean")
 
 Version: 1
-2017-01-26 23:09:19:911 Applied transformation: IncrementVersion()
-2017-01-26 23:09:20:000 Applied transformation: RemovePackageAll()
-2017-01-26 23:09:20:001 Applied transformation: AddPackage(name="nl.zeesoft.zdm.model")
-2017-01-26 23:09:20:001 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelSelf")
-2017-01-26 23:09:20:001 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="versions",type="nl.zeesoft.zdm.model.ModelVersion",list="true")
-2017-01-26 23:09:20:001 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="packages",type="nl.zeesoft.zdm.model.ModelPackage",list="true")
-2017-01-26 23:09:20:002 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long",list="false")
-2017-01-26 23:09:20:002 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelVersion")
-2017-01-26 23:09:20:003 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="number",type="java.lang.Integer",list="false")
-2017-01-26 23:09:20:003 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="log",type="java.lang.StringBuilder",list="false")
-2017-01-26 23:09:20:003 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="transformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
-2017-01-26 23:09:20:004 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="initialTransformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
-2017-01-26 23:09:20:004 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformation")
-2017-01-26 23:09:20:004 Applied transformation: AddProperty(className="ModelTransformation",packageName="nl.zeesoft.zdm.model",name="parameters",type="nl.zeesoft.zdm.model.ModelTransformationParameter",list="true")
-2017-01-26 23:09:20:004 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformationParameter")
-2017-01-26 23:09:20:005 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="name",type="java.lang.String",list="false")
-2017-01-26 23:09:20:005 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="value",type="java.lang.String",list="false")
-2017-01-26 23:09:20:005 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelPackage")
-2017-01-26 23:09:20:006 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="classes",type="nl.zeesoft.zdm.model.ModelClass",list="true")
-2017-01-26 23:09:20:006 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="name",type="java.lang.String",list="false")
-2017-01-26 23:09:20:006 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long",list="false")
-2017-01-26 23:09:20:007 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelClass")
-2017-01-26 23:09:20:007 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="properties",type="nl.zeesoft.zdm.model.ModelProperty",list="true")
-2017-01-26 23:09:20:008 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="extendsClass",type="nl.zeesoft.zdm.model.ModelClass",list="false")
-2017-01-26 23:09:20:008 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="abstract",type="java.lang.Boolean",list="false")
-2017-01-26 23:09:20:008 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="name",type="java.lang.String",list="false")
-2017-01-26 23:09:20:009 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long",list="false")
-2017-01-26 23:09:20:009 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelProperty")
-2017-01-26 23:09:20:009 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="type",type="java.lang.String",list="false")
-2017-01-26 23:09:20:010 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="list",type="java.lang.Boolean",list="false")
-2017-01-26 23:09:20:010 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="name",type="java.lang.String",list="false")
-2017-01-26 23:09:20:010 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long",list="false")
-2017-01-26 23:09:20:011 Applied transformation: ConvertModel()
+2017-02-04 20:08:25:956 Applied transformation: IncrementVersion()
+2017-02-04 20:08:26:044 Applied transformation: RemovePackageAll()
+2017-02-04 20:08:26:044 Applied transformation: AddPackage(name="nl.zeesoft.zdm.model")
+2017-02-04 20:08:26:045 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelSelf")
+2017-02-04 20:08:26:045 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="versions",type="nl.zeesoft.zdm.model.ModelVersion",list="true")
+2017-02-04 20:08:26:045 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="packages",type="nl.zeesoft.zdm.model.ModelPackage",list="true")
+2017-02-04 20:08:26:046 Applied transformation: AddProperty(className="ModelSelf",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long",list="false")
+2017-02-04 20:08:26:046 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelVersion")
+2017-02-04 20:08:26:046 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="number",type="java.lang.Integer",list="false")
+2017-02-04 20:08:26:047 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="log",type="java.lang.StringBuilder",list="false")
+2017-02-04 20:08:26:047 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="transformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
+2017-02-04 20:08:26:047 Applied transformation: AddProperty(className="ModelVersion",packageName="nl.zeesoft.zdm.model",name="initialTransformations",type="nl.zeesoft.zdm.model.ModelTransformation",list="true")
+2017-02-04 20:08:26:047 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformation")
+2017-02-04 20:08:26:048 Applied transformation: AddProperty(className="ModelTransformation",packageName="nl.zeesoft.zdm.model",name="parameters",type="nl.zeesoft.zdm.model.ModelTransformationParameter",list="true")
+2017-02-04 20:08:26:048 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelTransformationParameter")
+2017-02-04 20:08:26:048 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="name",type="java.lang.String",list="false")
+2017-02-04 20:08:26:049 Applied transformation: AddProperty(className="ModelTransformationParameter",packageName="nl.zeesoft.zdm.model",name="value",type="java.lang.String",list="false")
+2017-02-04 20:08:26:049 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelPackage")
+2017-02-04 20:08:26:049 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="classes",type="nl.zeesoft.zdm.model.ModelClass",list="true")
+2017-02-04 20:08:26:050 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="name",type="java.lang.String",list="false")
+2017-02-04 20:08:26:050 Applied transformation: AddProperty(className="ModelPackage",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long",list="false")
+2017-02-04 20:08:26:050 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelClass")
+2017-02-04 20:08:26:051 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="properties",type="nl.zeesoft.zdm.model.ModelProperty",list="true")
+2017-02-04 20:08:26:051 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="extendsClass",type="nl.zeesoft.zdm.model.ModelClass",list="false")
+2017-02-04 20:08:26:051 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="abstract",type="java.lang.Boolean",list="false")
+2017-02-04 20:08:26:051 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="name",type="java.lang.String",list="false")
+2017-02-04 20:08:26:052 Applied transformation: AddProperty(className="ModelClass",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long",list="false")
+2017-02-04 20:08:26:052 Applied transformation: AddClass(packageName="nl.zeesoft.zdm.model",name="ModelProperty")
+2017-02-04 20:08:26:052 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="type",type="java.lang.String",list="false")
+2017-02-04 20:08:26:053 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="list",type="java.lang.Boolean",list="false")
+2017-02-04 20:08:26:053 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="name",type="java.lang.String",list="false")
+2017-02-04 20:08:26:053 Applied transformation: AddProperty(className="ModelProperty",packageName="nl.zeesoft.zdm.model",name="id",type="java.lang.Long",list="false")
+2017-02-04 20:08:26:054 Applied transformation: ConvertModel()
 
 Package: nl.zeesoft.zdm.model
 - Class: ModelSelf
@@ -596,12 +590,12 @@ Package: nl.zeesoft.zdm.model
 Test results
 ------------
 All 6 tests have been executed successfully (42 assertions).  
-Total test duration: 535 ms (total sleep duration: 0 ms).  
+Total test duration: 544 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdm.test.TestModel: 387 Kb / 0 Mb
- * nl.zeesoft.zdm.test.TestModelApplyList: 417 Kb / 0 Mb
- * nl.zeesoft.zdm.test.TestModelInitialize: 419 Kb / 0 Mb
- * nl.zeesoft.zdm.test.TestModelVersioning: 242 Kb / 0 Mb
- * nl.zeesoft.zdm.test.TestModelSelf: 282 Kb / 0 Mb
- * nl.zeesoft.zdm.test.TestModelSelfConvertModel: 285 Kb / 0 Mb
+ * nl.zeesoft.zdm.test.TestModel: 399 Kb / 0 Mb
+ * nl.zeesoft.zdm.test.TestModelApplyList: 429 Kb / 0 Mb
+ * nl.zeesoft.zdm.test.TestModelInitialize: 431 Kb / 0 Mb
+ * nl.zeesoft.zdm.test.TestModelVersioning: 244 Kb / 0 Mb
+ * nl.zeesoft.zdm.test.TestModelSelf: 283 Kb / 0 Mb
+ * nl.zeesoft.zdm.test.TestModelSelfConvertModel: 287 Kb / 0 Mb
