@@ -22,7 +22,7 @@ public class TestZStringSymbolParser extends TestObject {
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the ZStringSymbolParser");
-		System.out.println("ZStringSymbolParser parser = new ZStringSymbolParser(\"Example text.\"));");
+		System.out.println("ZStringSymbolParser parser = new ZStringSymbolParser(\"Example text.\");");
 		System.out.println("// Parse the string");
 		System.out.println("List<String> symbols = parser.toSymbolsPunctuated();");
 		System.out.println("~~~~");
