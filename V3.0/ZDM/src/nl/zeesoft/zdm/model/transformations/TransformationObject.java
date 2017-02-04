@@ -129,7 +129,7 @@ public abstract class TransformationObject {
 		TransformationObject r = null;
 		zsb.trim();
 		if (zsb.endsWith(")")) {
-			zsb.getStringBuilder().replace(zsb.length()-1,zsb.length(),"");
+			zsb.replace(zsb.length()-1,zsb.length(),"");
 		}
 		zsb.replace(")","");
 		List<ZStringBuilder> trans = zsb.split("(");
