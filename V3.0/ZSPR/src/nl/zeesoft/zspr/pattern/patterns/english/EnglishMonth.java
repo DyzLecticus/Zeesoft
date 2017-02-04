@@ -1,11 +1,12 @@
 package nl.zeesoft.zspr.pattern.patterns.english;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishMonth extends PatternObjectLiteralToValue {
-	public EnglishMonth() {
-		super(TYPE_MONTH,"ENG");
+	public EnglishMonth(Messenger msgr) {
+		super(msgr,TYPE_MONTH,"ENG");
 	}
 	
 	@Override

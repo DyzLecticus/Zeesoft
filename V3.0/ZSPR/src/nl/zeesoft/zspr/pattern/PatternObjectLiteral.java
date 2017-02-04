@@ -1,8 +1,10 @@
 package nl.zeesoft.zspr.pattern;
 
+import nl.zeesoft.zdk.messenger.Messenger;
+
 public abstract class PatternObjectLiteral extends PatternObject {
-	public PatternObjectLiteral(String baseValueType,String typeSpecifier) {
-		super(baseValueType,typeSpecifier);
+	public PatternObjectLiteral(Messenger msgr, String baseValueType,String typeSpecifier) {
+		super(msgr,baseValueType,typeSpecifier);
 	}
 	
 	@Override

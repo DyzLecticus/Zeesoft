@@ -1,11 +1,12 @@
 package nl.zeesoft.zspr.pattern.patterns.dutch;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class DutchOrder extends PatternObjectLiteralToValue {
-	public DutchOrder() {
-		super(TYPE_ORDER,"NED");
+	public DutchOrder(Messenger msgr) {
+		super(msgr,TYPE_ORDER,"NED");
 	}
 	
 	@Override

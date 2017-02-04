@@ -3,6 +3,7 @@ package nl.zeesoft.zspr.pattern;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 /**
@@ -35,7 +36,8 @@ public abstract class PatternObject extends Locker {
 	 * @param baseValueType The base value type specifies the primary data type this pattern will recognize
 	 * @param typeSpecifier The type specifier is a string that is used to make this pattern unique among the other patterns in the pattern manager
 	 */
-	public PatternObject(String baseValueType, String typeSpecifier) {
+	public PatternObject(Messenger msgr, String baseValueType, String typeSpecifier) {
+		super(msgr);
 		this.baseValueType = baseValueType;
 		this.typeSpecifier = typeSpecifier;
 	}
@@ -286,5 +288,16 @@ public abstract class PatternObject extends Locker {
 	        }
 	    }
 	    return r;
+	}
+
+	protected String minStrInt(int i, int l) {
+		String s = "" + i;
+		int sl = s.length();
+		if (sl<l) {
+			for (int z = 0; z < (l - sl); z++) {
+				s = "0" + s;
+			}
+		}
+		return s;
 	}
 }

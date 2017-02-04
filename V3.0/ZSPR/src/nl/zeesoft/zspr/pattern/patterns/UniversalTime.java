@@ -1,13 +1,13 @@
 package nl.zeesoft.zspr.pattern.patterns;
 
-import nl.zeesoft.zdk.Generic;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObject;
 
 
 public class UniversalTime extends PatternObject {
-	public UniversalTime() {
-		super(TYPE_TIME,SPECIFIER_UNIVERSAL);
+	public UniversalTime(Messenger msgr) {
+		super(msgr,TYPE_TIME,SPECIFIER_UNIVERSAL);
 	}
 	
 	@Override
@@ -28,11 +28,11 @@ public class UniversalTime extends PatternObject {
 	@Override
 	public void initializePatternStrings(PatternManager manager) {
 		for (int h = 0; h<24; h++) {
-			String HH = Generic.minStrInt(h,2);
+			String HH = minStrInt(h,2);
 			for (int m = 0; m<60; m++) {
-				String MM = Generic.minStrInt(m,2);
+				String MM = minStrInt(m,2);
 				for (int s = 0; s<60; s++) {
-					String SS = Generic.minStrInt(s,2);
+					String SS = minStrInt(s,2);
 					addPatternString(HH + ":" + MM + ":" + SS);
 				}
 			}

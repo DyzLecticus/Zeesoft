@@ -3,13 +3,13 @@ package nl.zeesoft.zspr.pattern.patterns.english;
 import java.util.Calendar;
 import java.util.Date;
 
-import nl.zeesoft.zdk.Generic;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishTime extends PatternObjectLiteralToValue {
-	public EnglishTime() {
-		super(TYPE_TIME,"ENG");
+	public EnglishTime(Messenger msgr) {
+		super(msgr,TYPE_TIME,"ENG");
 	}
 	
 	@Override
@@ -27,7 +27,7 @@ public class EnglishTime extends PatternObjectLiteralToValue {
 		addPatternStringAndValue("midnight","00:00:00");
 
 		for (int h = 0; h<24; h++) {
-			String HH = Generic.minStrInt(h,2);
+			String HH = minStrInt(h,2);
 
 			String H = "";
 			if (h==0) {
@@ -55,7 +55,7 @@ public class EnglishTime extends PatternObjectLiteralToValue {
 
 			for (int m = 0; m<60; m++) {
 				String M = numPattern.transformValueToString("" + m);
-				String MM = Generic.minStrInt(m,2);
+				String MM = minStrInt(m,2);
 				String value = HH + ":" + MM + ":" + "00";
 				String minutes = "minutes";
 				
@@ -126,7 +126,7 @@ public class EnglishTime extends PatternObjectLiteralToValue {
 				minute = 0;
 				cal.add(Calendar.HOUR,1);
 			}
-			str = Generic.minStrInt(cal.get(Calendar.HOUR_OF_DAY),2) + ":" + Generic.minStrInt(minute,2) + ":00";
+			str = minStrInt(cal.get(Calendar.HOUR_OF_DAY),2) + ":" + minStrInt(minute,2) + ":00";
 		} else {
 			str = super.transformStringToValueNoLock(str);
 		}

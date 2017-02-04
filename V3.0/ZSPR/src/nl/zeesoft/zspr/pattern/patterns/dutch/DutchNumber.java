@@ -1,11 +1,12 @@
 package nl.zeesoft.zspr.pattern.patterns.dutch;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteral;
 
 public class DutchNumber extends PatternObjectLiteral {
-	public DutchNumber() {
-		super(TYPE_NUMBER,"NED");
+	public DutchNumber(Messenger msgr) {
+		super(msgr,TYPE_NUMBER,"NED");
 	}
 	
 	@Override

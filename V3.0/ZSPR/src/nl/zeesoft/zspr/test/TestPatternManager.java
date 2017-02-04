@@ -8,8 +8,12 @@ import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObject;
 
 public class TestPatternManager extends TestObject {
+	public TestPatternManager(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestPatternManager()).test(args);
+		(new TestPatternManager(new Tester())).test(args);
 	}
 
 	@Override
@@ -28,12 +32,12 @@ public class TestPatternManager extends TestObject {
 		System.out.println("String value = patterns.get(0).getValueForString(\"one hour and fourtyfive minutes\");");
 		System.out.println("~~~~");
 		System.out.println();
-		Tester.getInstance().describeMock(MockPatternManager.class.getName());
+		getTester().describeMock(MockPatternManager.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestPatternManager.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockPatternManager.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(PatternManager.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestPatternManager.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockPatternManager.class));
+		System.out.println(" * " + getTester().getLinkForClass(PatternManager.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows some test strings and their corresponding pattern values.  ");
@@ -42,7 +46,7 @@ public class TestPatternManager extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		PatternManager manager = (PatternManager) Tester.getInstance().getMockedObject(MockPatternManager.class.getName());
+		PatternManager manager = (PatternManager) getTester().getMockedObject(MockPatternManager.class.getName());
 		assertEqual(manager.getPatterns().size(),20,"Number of patterns does not meet expectation");
 		
 		System.out.println("==> Test English order");

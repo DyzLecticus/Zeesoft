@@ -1,11 +1,12 @@
 package nl.zeesoft.zspr.pattern.patterns;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObject;
 
 public class UniversalNumber extends PatternObject {
-	public UniversalNumber() {
-		super(TYPE_NUMBER,SPECIFIER_UNIVERSAL);
+	public UniversalNumber(Messenger msgr) {
+		super(msgr,TYPE_NUMBER,SPECIFIER_UNIVERSAL);
 	}
 	
 	@Override

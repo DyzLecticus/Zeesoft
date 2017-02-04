@@ -3,15 +3,15 @@ package nl.zeesoft.zspr.pattern.patterns.dutch;
 import java.util.Calendar;
 import java.util.Date;
 
-import nl.zeesoft.zdk.Generic;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class DutchDate extends PatternObjectLiteralToValue {
 	private	Date	currentDate	= null;
 
-	public DutchDate() {
-		super(TYPE_DATE,"NED");
+	public DutchDate(Messenger msgr) {
+		super(msgr,TYPE_DATE,"NED");
 	}
 	
 	@Override
@@ -94,8 +94,8 @@ public class DutchDate extends PatternObjectLiteralToValue {
 
 	private String getValueFromCalendar(Calendar cal) {
 		return 
-			Generic.minStrInt(cal.get(Calendar.YEAR),4) + "-" + 
-			Generic.minStrInt((cal.get(Calendar.MONTH) + 1),2) + "-" + 
-			Generic.minStrInt(cal.get(Calendar.DATE),2);
+			minStrInt(cal.get(Calendar.YEAR),4) + "-" + 
+			minStrInt((cal.get(Calendar.MONTH) + 1),2) + "-" + 
+			minStrInt(cal.get(Calendar.DATE),2);
 	}
 }

@@ -3,14 +3,15 @@ package nl.zeesoft.zspr.pattern.patterns;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObject;
 
 public class UniversalAlphabetic extends PatternObject {
 	private List<String> knownSymbols = null;
 	
-	public UniversalAlphabetic() {
-		super(TYPE_ALPHABETIC,SPECIFIER_UNIVERSAL);
+	public UniversalAlphabetic(Messenger msgr) {
+		super(msgr,TYPE_ALPHABETIC,SPECIFIER_UNIVERSAL);
 	}
 	
 	@Override

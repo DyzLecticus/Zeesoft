@@ -1,11 +1,12 @@
 package nl.zeesoft.zspr.pattern.patterns.english;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishConfirmation extends PatternObjectLiteralToValue {
-	public EnglishConfirmation() {
-		super(TYPE_CONFIRMATION,"ENG");
+	public EnglishConfirmation(Messenger msgr) {
+		super(msgr,TYPE_CONFIRMATION,"ENG");
 	}
 	
 	@Override

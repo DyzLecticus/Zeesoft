@@ -3,11 +3,13 @@ package nl.zeesoft.zspr.pattern;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.messenger.Messenger;
+
 public abstract class PatternObjectLiteralToValue extends PatternObjectLiteral {
 	private List<String> valuesForPatterns = new ArrayList<String>();
 	
-	public PatternObjectLiteralToValue(String baseValueType,String typeSpecifier) {
-		super(baseValueType,typeSpecifier);
+	public PatternObjectLiteralToValue(Messenger msgr, String baseValueType,String typeSpecifier) {
+		super(msgr,baseValueType,typeSpecifier);
 	}
 
 	@Override

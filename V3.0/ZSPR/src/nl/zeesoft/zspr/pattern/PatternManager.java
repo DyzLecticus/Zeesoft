@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.SymbolParser;
+import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zspr.pattern.patterns.UniversalAlphabetic;
 import nl.zeesoft.zspr.pattern.patterns.UniversalNumber;
@@ -35,6 +36,14 @@ import nl.zeesoft.zspr.pattern.patterns.english.EnglishTime;
  */
 public class PatternManager extends Locker {	
 	private List<PatternObject>		patterns	= new ArrayList<PatternObject>();
+
+	public PatternManager() {
+		super(null);
+	}
+
+	public PatternManager(Messenger msgr) {
+		super(msgr);
+	}
 
 	/**
 	 * Override this to modify or extend the default patterns.
@@ -186,8 +195,8 @@ public class PatternManager extends Locker {
 	 * @param expectedTypes The optional list of expected pattern base value types to limit the translation
 	 * @return The translated values
 	 */
-	public final StringBuilder scanAndTranslateSequence(StringBuilder sequence, List<String> expectedTypes) {
-		List<String> symbols = SymbolParser.parseSymbols(sequence);
+	public final ZStringSymbolParser scanAndTranslateSequence(ZStringSymbolParser sequence, List<String> expectedTypes) {
+		List<String> symbols = sequence.toSymbols();
 		List<String> translated = new ArrayList<String>();
 		int i = 0;
 		int skip = 0;
@@ -262,12 +271,12 @@ public class PatternManager extends Locker {
 			i++;
 		}
 		symbols = translated;
-		sequence = new StringBuilder();
+		sequence = new ZStringSymbolParser();
 		for (String symbol: symbols) {
 			if (sequence.length()>0) {
-				sequence.append(" ");
+				sequence.getStringBuilder().append(" ");
 			}
-			sequence.append(symbol);
+			sequence.getStringBuilder().append(symbol);
 		}
 		return sequence;
 	}
@@ -280,21 +289,21 @@ public class PatternManager extends Locker {
 	 * @param values A string representation of the values
 	 * @return The translated symbol sequence
 	 */
-	public final StringBuilder scanAndTranslateValues(StringBuilder values) {
-		List<String> symbols = SymbolParser.parseSymbols(values);
-		values = new StringBuilder();
+	public final ZStringSymbolParser scanAndTranslateValues(ZStringSymbolParser values) {
+		List<String> symbols = values.toSymbols();
+		values = new ZStringSymbolParser();
 		for (String symbol: symbols) {
 			if (values.length()>0) {
-				values.append(" ");
+				values.getStringBuilder().append(" ");
 			}
 			List<PatternObject> patterns = getPatternsForValues(symbol);
 			if (patterns.size()>0) {
 				if (symbol.indexOf(getOrConcatenator())>0) {
 					symbol = symbol.split("\\" + getOrConcatenator())[0];
 				}
-				values.append(patterns.get(0).getStringForValue(symbol));
+				values.getStringBuilder().append(patterns.get(0).getStringForValue(symbol));
 			} else {
-				values.append(symbol);
+				values.getStringBuilder().append(symbol);
 			}
 		}
 		return values;
@@ -467,26 +476,26 @@ public class PatternManager extends Locker {
 	}
 	
 	private final void addDefaultPatterns() {
-		addPattern(new EnglishConfirmation());
-		addPattern(new DutchConfirmation());
-		addPattern(new EnglishDate());
-		addPattern(new DutchDate());
-		addPattern(new EnglishTime());
-		addPattern(new DutchTime());
-		addPattern(new EnglishDuration());
-		addPattern(new DutchDuration());
-		addPattern(new EnglishMonth());
-		addPattern(new DutchMonth());
-		addPattern(new EnglishOrder());
-		addPattern(new EnglishOrder2());
-		addPattern(new DutchOrder());
-		addPattern(new EnglishNumber());
-		addPattern(new DutchNumber());
-		addPattern(new EnglishPreposition());
-		addPattern(new DutchPreposition());
-		addPattern(new UniversalTime());
-		addPattern(new UniversalNumber());
-		addPattern(new UniversalAlphabetic());
+		addPattern(new EnglishConfirmation(getMsgr()));
+		addPattern(new DutchConfirmation(getMsgr()));
+		addPattern(new EnglishDate(getMsgr()));
+		addPattern(new DutchDate(getMsgr()));
+		addPattern(new EnglishTime(getMsgr()));
+		addPattern(new DutchTime(getMsgr()));
+		addPattern(new EnglishDuration(getMsgr()));
+		addPattern(new DutchDuration(getMsgr()));
+		addPattern(new EnglishMonth(getMsgr()));
+		addPattern(new DutchMonth(getMsgr()));
+		addPattern(new EnglishOrder(getMsgr()));
+		addPattern(new EnglishOrder2(getMsgr()));
+		addPattern(new DutchOrder(getMsgr()));
+		addPattern(new EnglishNumber(getMsgr()));
+		addPattern(new DutchNumber(getMsgr()));
+		addPattern(new EnglishPreposition(getMsgr()));
+		addPattern(new DutchPreposition(getMsgr()));
+		addPattern(new UniversalTime(getMsgr()));
+		addPattern(new UniversalNumber(getMsgr()));
+		addPattern(new UniversalAlphabetic(getMsgr()));
 	}
 
 	private String getStringValueFromPatternValue(PatternObject pattern, String value) {

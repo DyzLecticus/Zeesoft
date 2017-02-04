@@ -1,12 +1,12 @@
 package nl.zeesoft.zspr.pattern.patterns.dutch;
 
-import nl.zeesoft.zdk.Generic;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class DutchDuration extends PatternObjectLiteralToValue {
-	public DutchDuration() {
-		super(TYPE_DURATION,"NED");
+	public DutchDuration(Messenger msgr) {
+		super(msgr,TYPE_DURATION,"NED");
 	}
 	
 	@Override
@@ -18,7 +18,7 @@ public class DutchDuration extends PatternObjectLiteralToValue {
 		
 		for (int h = 0; h<100; h++) {
 			for (int m = 0; m<=59; m++) {
-				String value = Generic.minStrInt(h,2) + ":" + Generic.minStrInt(m,2);
+				String value = minStrInt(h,2) + ":" + minStrInt(m,2);
 				String H = numPattern.getPatternString(h);
 				String M = numPattern.getPatternString(m);
 				

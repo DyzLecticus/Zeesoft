@@ -1,12 +1,18 @@
 package nl.zeesoft.zspr.test;
 
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zspr.pattern.PatternManager;
 
 public class TestPatternManagerScan extends TestObject {
+	public TestPatternManagerScan(Tester tester) {
+		super(tester);
+	}
+
 	public static void main(String[] args) {
-		(new TestPatternManagerScan()).test(args);
+		(new TestPatternManagerScan(new Tester())).test(args);
 	}
 
 	@Override
@@ -25,12 +31,12 @@ public class TestPatternManagerScan extends TestObject {
 		System.out.println("StringBuilder sequence = manager.scanAndTranslateValues(values);");
 		System.out.println("~~~~");
 		System.out.println();
-		Tester.getInstance().describeMock(MockPatternManager.class.getName());
+		getTester().describeMock(MockPatternManager.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(TestPatternManagerScan.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(MockPatternManager.class));
-		System.out.println(" * " + Tester.getInstance().getLinkForClass(PatternManager.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestPatternManagerScan.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockPatternManager.class));
+		System.out.println(" * " + getTester().getLinkForClass(PatternManager.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows some test strings with corresponding string to value translation and value to string translation.  ");
@@ -39,7 +45,7 @@ public class TestPatternManagerScan extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		PatternManager manager = (PatternManager) Tester.getInstance().getMockedObject(MockPatternManager.class.getName());
+		PatternManager manager = (PatternManager) getTester().getMockedObject(MockPatternManager.class.getName());
 		System.out.println("==> Test English");
 		testScanAndTranslate(manager,
 			"I want to book a room for five people on december twentysecond at twentyfive minutes past four for one hour and thirtythree minutes.",
@@ -57,10 +63,10 @@ public class TestPatternManagerScan extends TestObject {
 
 	private void testScanAndTranslate(PatternManager manager,String from,String expectedTo,String expectedBack) {
 		System.out.println("Input: " + from);
-		StringBuilder to = manager.scanAndTranslateSequence(new StringBuilder(from),null);
+		ZStringSymbolParser to = manager.scanAndTranslateSequence(new ZStringSymbolParser(from),null);
 		assertEqual(to.toString(),expectedTo,"String to value translation does not meet expectation");
 		System.out.println("Values: " + to);
-		StringBuilder back = manager.scanAndTranslateValues(to);
+		ZStringBuilder back = manager.scanAndTranslateValues(to);
 		assertEqual(back.toString(),expectedBack,"Value to string translation does not meet expectation");
 		System.out.println("String: " + back);
 	}

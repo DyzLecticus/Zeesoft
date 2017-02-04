@@ -3,15 +3,15 @@ package nl.zeesoft.zspr.pattern.patterns.english;
 import java.util.Calendar;
 import java.util.Date;
 
-import nl.zeesoft.zdk.Generic;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishDate extends PatternObjectLiteralToValue {
 	private	Date	currentDate	= null;
 	
-	public EnglishDate() {
-		super(TYPE_DATE,"ENG");
+	public EnglishDate(Messenger msgr) {
+		super(msgr,TYPE_DATE,"ENG");
 	}
 	
 	@Override
@@ -108,8 +108,8 @@ public class EnglishDate extends PatternObjectLiteralToValue {
 	
 	private String getValueFromCalendar(Calendar cal) {
 		return 
-			Generic.minStrInt(cal.get(Calendar.YEAR),4) + "-" + 
-			Generic.minStrInt((cal.get(Calendar.MONTH) + 1),2) + "-" + 
-			Generic.minStrInt(cal.get(Calendar.DATE),2);
+			minStrInt(cal.get(Calendar.YEAR),4) + "-" + 
+			minStrInt((cal.get(Calendar.MONTH) + 1),2) + "-" + 
+			minStrInt(cal.get(Calendar.DATE),2);
 	}
 }
