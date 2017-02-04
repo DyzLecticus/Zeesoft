@@ -3,6 +3,8 @@ package nl.zeesoft.zid.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
+
 public class Dialog {
 	private String					name				= "";
 	private String					controllerClassName	= "";
@@ -15,7 +17,7 @@ public class Dialog {
 	}
 	
 	public void addExample(String input, String output) {
-		DialogExample example = new DialogExample(new StringBuilder(input),new StringBuilder(output));
+		DialogExample example = new DialogExample(new ZStringSymbolParser(input),new ZStringSymbolParser(output));
 		examples.add(example);
 	}
 

@@ -1,14 +1,15 @@
 package nl.zeesoft.zid.dialog;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.SymbolParser;
+import nl.zeesoft.zdk.ZDate;
+import nl.zeesoft.zdk.ZStringEncoder;
+import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
-import nl.zeesoft.zsc.Generic;
 import nl.zeesoft.zsc.confabulator.Confabulator;
 import nl.zeesoft.zsc.confabulator.confabulations.ContextConfabulation;
 import nl.zeesoft.zsc.confabulator.confabulations.CorrectionConfabulation;
@@ -30,14 +31,21 @@ public class DialogHandler extends Locker {
 
 	private StringBuilder					log								= new StringBuilder();
 	private SortedMap<String,Object>		variables						= new TreeMap<String,Object>(); 
-	private StringBuilder					prevOutput						= new StringBuilder();
+	private ZStringSymbolParser				prevOutput						= new ZStringSymbolParser();
 
 	private Dialog							dialog							= null;
 	private DialogControllerObject			dialogController				= null;
 	private SortedMap<String,String>		dialogVariables					= new TreeMap<String,String>();
 	private String							promptForDialogVariable			= "";
-	
+
 	public DialogHandler(List<Dialog> dialogs, PatternManager patternManager) {
+		super(null);
+		this.dialogs = dialogs;
+		this.patternManager = patternManager;
+	}
+	
+	public DialogHandler(Messenger msgr, List<Dialog> dialogs, PatternManager patternManager) {
+		super(msgr);
 		this.dialogs = dialogs;
 		this.patternManager = patternManager;
 	}
@@ -52,15 +60,15 @@ public class DialogHandler extends Locker {
 		extensionConfabulator.setLog(true);
 		for (Dialog dialog: dialogs) {
 			for (DialogExample example: dialog.getExamples()) {
-				StringBuilder sequence = new StringBuilder();
+				ZStringSymbolParser sequence = new ZStringSymbolParser();
 				sequence.append(example.getOutput());
 				sequence.append(" ");
 				sequence.append(example.getInput());
-				contextConfabulator.learnSequence(getSafeText(sequence),new StringBuilder(dialog.getName()));
+				contextConfabulator.learnSequence(getSafeText(sequence),new ZStringSymbolParser(dialog.getName()));
 
-				correctionConfabulator.learnSequence(getSafeText(example.getInput()),new StringBuilder(dialog.getName()));
+				correctionConfabulator.learnSequence(getSafeText(example.getInput()),new ZStringSymbolParser(dialog.getName()));
 
-				sequence = new StringBuilder();
+				sequence = new ZStringSymbolParser();
 				sequence.append(example.getInput());
 				sequence.append(" ");
 				sequence.append(END_INPUT);
@@ -68,15 +76,15 @@ public class DialogHandler extends Locker {
 				sequence.append(example.getOutput());
 				sequence.append(" ");
 				sequence.append(END_OUTPUT);
-				extensionConfabulator.learnSequence(getSafeText(sequence),new StringBuilder(dialog.getName()));
+				extensionConfabulator.learnSequence(getSafeText(sequence),new ZStringSymbolParser(dialog.getName()));
 			}
 			for (DialogVariable variable: dialog.getVariables()) {
 				for (DialogVariableExample example: variable.getExamples()) {
-					StringBuilder sequence = new StringBuilder();
+					ZStringSymbolParser sequence = new ZStringSymbolParser();
 					sequence.append(example.getQuestion());
 					sequence.append(" ");
 					sequence.append(example.getAnswer());
-					StringBuilder context = new StringBuilder();
+					ZStringSymbolParser context = new ZStringSymbolParser();
 					context.append(dialog.getName());
 					context.append(" ");
 					context.append(dialog.getName());
@@ -98,11 +106,11 @@ public class DialogHandler extends Locker {
 		unlockMe(this);
 	}
 
-	public StringBuilder processInput(StringBuilder input) {
-		StringBuilder output = processInputDefault(input);
+	public ZStringSymbolParser processInput(ZStringSymbolParser input) {
+		ZStringSymbolParser output = processInputDefault(input);
 		boolean retry = false;
 		lockMe(this);
-		if (dialog!=null && prevOutput.length()>0 && Generic.stringBuilderEquals(output, prevOutput)) {
+		if (dialog!=null && prevOutput.length()>0 && output.equals(prevOutput)) {
 			setDialogNoLock(null);
 			retry = true;
 		}
@@ -111,13 +119,13 @@ public class DialogHandler extends Locker {
 			output = processInputDefault(input);
 		}
 		lockMe(this);
-		prevOutput = new StringBuilder(output);
+		prevOutput = new ZStringSymbolParser(output);
 		unlockMe(this);
 		return output;
 	}
 
-	protected StringBuilder processInputDefault(StringBuilder input) {
-		StringBuilder output = new StringBuilder();
+	protected ZStringSymbolParser processInputDefault(ZStringSymbolParser input) {
+		ZStringSymbolParser output = new ZStringSymbolParser();
 		
 		Dialog currentDialog = null;
 		DialogControllerObject currentDialogController = null;
@@ -141,7 +149,7 @@ public class DialogHandler extends Locker {
 			context = currentDialog.getName();
 			expectedTypes = currentDialog.getExpectedTypes();
 		} else {
-			StringBuilder sequence = new StringBuilder(input);
+			ZStringSymbolParser sequence = new ZStringSymbolParser(input);
 			List<String> contextSymbols = confabulateContext(sequence);
 			if (contextSymbols.size()==0) {
 				lockMe(this);
@@ -157,7 +165,7 @@ public class DialogHandler extends Locker {
 			lockMe(this);
 			if (contextSymbols.size()==0 && dialog!=null) {
 				context = dialog.getName();
-			} else {
+			} else if (contextSymbols.size()>0) {
 				context = contextSymbols.get(0);
 				if (dialog==null || !dialog.getName().equals(context)) {
 					setDialogNoLock(context);
@@ -203,7 +211,7 @@ public class DialogHandler extends Locker {
 
 		// Correct input
 		CorrectionConfabulation correction = correctInput(input,currentDialog,currentDialogVariable);
-		input = stringBuilderFromSymbols(SymbolParser.parseSymbols(correction.getOutput()),true,true);
+		input.fromSymbols(correction.getOutput().toSymbols(),true,true);
 		addLogLine("--- Corrected input: " + input);
 		
 		// Update variables
@@ -271,26 +279,26 @@ public class DialogHandler extends Locker {
 				variables.append(getDialogVariable(variable.getName()));
 			}
 			addLogLine("--- Updated variables: " + variables);
-			StringBuilder controllerOutput = currentDialogController.updatedDialogVariables(this,currentDialog);
+			ZStringSymbolParser controllerOutput = currentDialogController.updatedDialogVariables(this,currentDialog);
 			List<String> symbols = null;
 			if (controllerOutput.length()>0) {
 				addLogLine("--- Controller output: " + controllerOutput);
-				symbols = SymbolParser.parseSymbolsFromText(controllerOutput);
+				symbols = controllerOutput.toSymbolsPunctuated();
 			} else if (currentDialogController.getPromptForDialogVariable().length()>0) {
 				addLogLine("--- Controller requests prompt for: " + currentDialogController.getPromptForDialogVariable());
 				DialogVariable variable = currentDialog.getVariable(currentDialogController.getPromptForDialogVariable());
 				if (variable.getExamples().size()>0) {
 					int select = 0;
 					if (variable.getExamples().size()>1) {
-						select = Generic.generateRandom(0,(variable.getExamples().size() - 1)); 
+						select = (new ZStringEncoder()).generateRandom(0,(variable.getExamples().size() - 1)); 
 					}
-					symbols = SymbolParser.parseSymbols(variable.getExamples().get(select).getQuestion());
+					symbols = variable.getExamples().get(select).getQuestion().toSymbols();
 				}
 			}
 			if (symbols!=null) {
 				for (String symbol: symbols) {
 					symbol = translateSymbolToVariableValue(symbol);
-					if (output.length()>0 && !SymbolParser.isLineEndSymbol(symbol)) {
+					if (output.length()>0 && !output.isLineEndSymbol(symbol)) {
 						output.append(" ");
 					}
 					output.append(symbol);
@@ -321,13 +329,13 @@ public class DialogHandler extends Locker {
 			List<String> extensionSymbols = confabulateExtension(input,context);
 			for (String symbol: extensionSymbols) {
 				if (symbol.equals(END_INPUT)) {
-					output = new StringBuilder();
+					output = new ZStringSymbolParser();
 				} else if (symbol.equals(END_OUTPUT)) {
 					break;
 				} else {
 					symbol = translateSymbolToVariableValue(symbol);
 					if (symbol.length()>0) {
-						if (output.length()>0 && !SymbolParser.isLineEndSymbol(symbol)) {
+						if (output.length()>0 && !output.isLineEndSymbol(symbol)) {
 							output.append(" ");
 						}
 						output.append(symbol);
@@ -429,7 +437,7 @@ public class DialogHandler extends Locker {
 
 	protected final void addLogLine(String line) {
 		lockMe(this);
-		log.append(Generic.getDateTimeString(new Date()));
+		log.append((new ZDate()).getDateTimeString());
 		log.append(": ");
 		log.append(line);
 		log.append("\n");
@@ -445,8 +453,8 @@ public class DialogHandler extends Locker {
 		return r;
 	}
 	
-	protected CorrectionConfabulation correctInput(StringBuilder sequence, Dialog currentDialog,String currentDialogVariable) {
-		StringBuilder context = new StringBuilder();
+	protected CorrectionConfabulation correctInput(ZStringSymbolParser sequence, Dialog currentDialog,String currentDialogVariable) {
+		ZStringSymbolParser context = new ZStringSymbolParser();
 		if (currentDialog!=null) {
 			context.append(currentDialog.getName());
 			if (currentDialogVariable!=null && currentDialogVariable.length()>0) {
@@ -478,7 +486,7 @@ public class DialogHandler extends Locker {
 			promptForDialogVariable = "";
 		}
 	}
-	
+
 	private Dialog getDialogNoLock(String name) {
 		Dialog r = null;
 		for (Dialog dialog: dialogs) {
@@ -513,21 +521,20 @@ public class DialogHandler extends Locker {
 		return symbol;
 	}
 	
-
-	private final List<String> confabulateContext(StringBuilder sequence) {
+	private final List<String> confabulateContext(ZStringSymbolParser sequence) {
 		ContextConfabulation confab = new ContextConfabulation();
 		confab.setSequence(sequence);
 		lockMe(this);
 		contextConfabulator.confabulate(confab);
 		unlockMe(this);
-		return SymbolParser.parseSymbols(confab.getOutput());
+		return confab.getOutput().toSymbols();
 	}
 
-	private final CorrectionConfabulation confabulateCorrection(StringBuilder sequence,StringBuilder context) {
+	private final CorrectionConfabulation confabulateCorrection(ZStringSymbolParser sequence,ZStringSymbolParser context) {
 		CorrectionConfabulation confab = new CorrectionConfabulation();
 		confab.setSequence(sequence);
 		if (context!=null && context.length()>0) {
-			confab.setContext(new StringBuilder(context));
+			confab.setContext(context);
 		}
 		lockMe(this);
 		correctionConfabulator.confabulate(confab);
@@ -535,17 +542,17 @@ public class DialogHandler extends Locker {
 		return confab;
 	}
 
-	private final List<String> confabulateExtension(StringBuilder sequence,String context) {
+	private final List<String> confabulateExtension(ZStringSymbolParser sequence,String context) {
 		ExtensionConfabulation confab = new ExtensionConfabulation();
 		confab.setSequence(sequence);
 		confab.setForceMaxDepth(true);
 		if (context!=null && context.length()>0) {
-			confab.setContext(new StringBuilder(context));
+			confab.setContext(new ZStringSymbolParser(context));
 		}
 		lockMe(this);
 		extensionConfabulator.confabulate(confab);
 		unlockMe(this);
-		return SymbolParser.parseSymbols(confab.getOutput());
+		return confab.getOutput().toSymbols();
 	}
 	
 	private final PatternObject getPatternForDialogVariableValue(DialogVariable variable,String value) {
@@ -560,39 +567,18 @@ public class DialogHandler extends Locker {
 		return r;
 	}
 
-	private final static StringBuilder getSafeText(StringBuilder text) {
+	private final static ZStringSymbolParser getSafeText(ZStringSymbolParser text) {
 		return getSafeText(text,false);
 	}
 	
-	private final static StringBuilder getSafeText(StringBuilder text,boolean correctPunctuation) {
+	private final static ZStringSymbolParser getSafeText(ZStringSymbolParser text,boolean correctPunctuation) {
 		if (text.length()>0) {
-			text = Generic.stringBuilderTrim(text);
-			if (!SymbolParser.endsWithLineEndSymbol(text)) {
-				text.append(".");
+			text.trim();
+			if (!text.endsWithLineEndSymbol(text)) {
+				text.getStringBuilder().append(".");
 			}
-			text = stringBuilderFromSymbols(SymbolParser.parseSymbolsFromText(text),true,correctPunctuation);
+			text.fromSymbols(text.toSymbolsPunctuated(),true,correctPunctuation);
 		}
 		return text;
-	}
-	
-	private final static StringBuilder stringBuilderFromSymbols(List<String> symbols, boolean correctCase, boolean correctPunctuation) {
-		StringBuilder r = new StringBuilder();
-		boolean upperCaseFirstNext = correctCase;
-		for (String symbol: symbols) {
-			if (r.length()>0 && !SymbolParser.isLineEndSymbol(symbol) && 
-				(!correctPunctuation || (!symbol.equals(",") && !symbol.equals(":") && !symbol.equals(";")))
-				) {
-				r.append(" ");
-			}
-			if (upperCaseFirstNext) {
-				symbol = symbol.substring(0,1).toUpperCase() + symbol.substring(1);
-				upperCaseFirstNext = false;
-			}
-			r.append(symbol);
-			if (correctCase && SymbolParser.isLineEndSymbol(symbol)) {
-				upperCaseFirstNext = true;
-			}
-		}
-		return r;
 	}
 }

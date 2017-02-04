@@ -4,11 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.test.MockObject;
-import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.dialog.DialogHandler;
 import nl.zeesoft.zspr.pattern.PatternManager;
-import nl.zeesoft.zspr.test.MockPatternManager;
 
 public class MockDialogHandler extends MockObject {
 	@Override
@@ -19,10 +17,11 @@ public class MockDialogHandler extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
+		// TODO: get mocks through tester
 		@SuppressWarnings("unchecked")
-		List<Dialog> dialogs = (List<Dialog>) Tester.getInstance().getMockedObject(MockDialogs.class.getName());
+		List<Dialog> dialogs = (List<Dialog>) (new MockDialogs()).initialzeMock();
 				
-		PatternManager manager = (PatternManager) Tester.getInstance().getMockedObject(MockPatternManager.class.getName());
+		PatternManager manager = new PatternManager();
 		manager.initializePatterns();
 		
 		Date start = new Date();

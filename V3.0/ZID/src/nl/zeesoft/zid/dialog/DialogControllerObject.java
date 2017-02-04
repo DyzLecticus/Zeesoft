@@ -1,25 +1,27 @@
 package nl.zeesoft.zid.dialog;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
+
 public abstract class DialogControllerObject {
-	private StringBuilder	output					= new StringBuilder();
-	private String			promptForDialogVariable = "";
-	private boolean			completed				= false;
+	private ZStringSymbolParser	output					= new ZStringSymbolParser();
+	private String				promptForDialogVariable = "";
+	private boolean				completed				= false;
 	
 	public abstract void updatedVariables(DialogHandler handler,Dialog dialog);
 	
-	protected final StringBuilder updatedDialogVariables(DialogHandler handler,Dialog dialog) {
-		output = new StringBuilder();
+	protected final ZStringSymbolParser updatedDialogVariables(DialogHandler handler,Dialog dialog) {
+		output = new ZStringSymbolParser();
 		promptForDialogVariable = "";
 		completed = false;
 		updatedVariables(handler,dialog);
 		return output;
 	}
 
-	protected StringBuilder getOutput() {
+	protected ZStringSymbolParser getOutput() {
 		return output;
 	}
 
-	protected void setOutput(StringBuilder output) {
+	protected void setOutput(ZStringSymbolParser output) {
 		this.output = output;
 	}
 	

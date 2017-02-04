@@ -1,19 +1,21 @@
 package nl.zeesoft.zid.dialog;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
+
 public class DialogExample {
-	private StringBuilder	input	= null; 
-	private StringBuilder	output	= null;
+	private ZStringSymbolParser	input	= null; 
+	private ZStringSymbolParser	output	= null;
 	
-	protected DialogExample(StringBuilder input, StringBuilder output) {
+	protected DialogExample(ZStringSymbolParser input, ZStringSymbolParser output) {
 		this.input = input;
 		this.output = output;
 	}
 	
-	public StringBuilder getInput() {
+	public ZStringSymbolParser getInput() {
 		return input;
 	}
 
-	public StringBuilder getOutput() {
+	public ZStringSymbolParser getOutput() {
 		return output;
 	}
 }

@@ -52,7 +52,7 @@ public class MockDialogs extends MockObject {
 		dialog.addVariable("preposition",PatternObject.TYPE_PREPOSITION);
 
 		dialog.addVariable("nextDialog",PatternObject.TYPE_ALPHABETIC);
-		dialog.addVariableExample("nextDialog","What can I do for you {fullName}.","{nextDialog}.");
+		dialog.addVariableExample("nextDialog","What can I do for you {fullName}?","{nextDialog}.");
 
 		dialog = new Dialog("DutchHandshake",HandshakeController.class.getName());
 		dialogs.add(dialog);
