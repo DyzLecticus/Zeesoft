@@ -129,12 +129,12 @@ public abstract class TransformationObject {
 		TransformationObject r = null;
 		zsb.trim();
 		if (zsb.endsWith(")")) {
-			zsb.getStringBuilder().replace(zsb.getStringBuilder().length()-1,zsb.getStringBuilder().length(),"");
+			zsb.getStringBuilder().replace(zsb.length()-1,zsb.length(),"");
 		}
 		zsb.replace(")","");
-		List<StringBuilder> trans = zsb.split("(");
+		List<ZStringBuilder> trans = zsb.split("(");
 		if (trans.size()>=1 && trans.size()<=2) {
-			String className = (new ZStringBuilder(trans.get(0))).trim().toString();
+			String className = trans.get(0).trim().toString();
 			try {
 				Class<?> clas = Class.forName(TransformationObject.class.getPackage().getName() + ".impl." + className);
 				r = (TransformationObject) clas.newInstance();
@@ -146,12 +146,12 @@ public abstract class TransformationObject {
 				e.printStackTrace();
 			}
 			if (r!=null && trans.size()==2) {
-				List<StringBuilder> params =  (new ZStringBuilder(trans.get(1))).split(",");
-				for (StringBuilder nameValue: params) {
-					List<StringBuilder> nv = (new ZStringBuilder(nameValue)).split("=");
+				List<ZStringBuilder> params = trans.get(1).split(",");
+				for (ZStringBuilder nameValue: params) {
+					List<ZStringBuilder> nv = nameValue.split("=");
 					if (nv.size()==2) {
-						String name = (new ZStringBuilder(nv.get(0))).trim().toString();
-						String value = (new ZStringBuilder(nv.get(1))).trim().toString();
+						String name = nv.get(0).trim().toString();
+						String value = nv.get(1).trim().toString();
 						if (value.startsWith("\"")) {
 							value = value.substring(1,value.length());
 						}
