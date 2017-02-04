@@ -36,6 +36,64 @@ public class ZStringBuilder {
 		return r;
 	}
 	
+	public void append(String x) {
+		if (sb!=null) {
+			sb.append(x);
+		}
+	}
+
+	public void append(StringBuilder x) {
+		if (sb!=null) {
+			sb.append(x);
+		}
+	}
+
+	public void append(ZStringBuilder x) {
+		if (sb!=null) {
+			sb.append(x.getStringBuilder());
+		}
+	}
+	
+	public void insert(int pos,String x) {
+		if (sb!=null) {
+			sb.insert(pos,x);
+		}
+	}
+
+	public void insert(int pos,StringBuilder x) {
+		if (sb!=null) {
+			sb.insert(pos,x);
+		}
+	}
+
+	public void insert(int pos,ZStringBuilder x) {
+		if (sb!=null) {
+			sb.insert(pos,x.getStringBuilder());
+		}
+	}
+
+	public void replace(int start, int end, String replace) {
+		if (sb!=null) {
+			sb.replace(start, end, replace);
+		}
+	}
+
+	public String substring(int start) {
+		String r = null;
+		if (sb!=null) {
+			r = substring(start,sb.length());
+		}
+		return r;
+	}
+
+	public String substring(int start, int end) {
+		String r = null;
+		if (sb!=null) {
+			r = sb.substring(start,end);
+		}
+		return r;
+	}
+	
 	public ZStringBuilder getCopy() {
 		return new ZStringBuilder(sb);
 	}
@@ -197,7 +255,7 @@ public class ZStringBuilder {
 					i = i + (sLength - 1);
 					sAdd = new ZStringBuilder();
 				} else {
-					sAdd.getStringBuilder().append(sb.substring(i,i + 1));
+					sAdd.append(sb.substring(i,i + 1));
 				}
 			}
 			if (sAdd.length()>0) {

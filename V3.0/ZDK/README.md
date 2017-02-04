@@ -9,7 +9,7 @@ It provides support for;
  * Self documenting and testing libraries  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.14.zip) to download the latest ZDK release (version 0.9.14).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.15.zip) to download the latest ZDK release (version 0.9.15).  
 All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -44,9 +44,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 1810075760732066718878536195640014320653146232288184483718209266
+Key: 8456558625499247778710421163197584282764274395130423340208966479
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
-Encoded text: mSCXiS#R9SmWLUoXoWTRbXNT8TUSuVBW0XMRHXuYKXTX0VbU9W9TOYHV:WGU#QtQ4SSV0UVSPRBWvVKSPS8VsW9STUaTBTiYKXXTVYMTmVZYfURX8T9X0
+Encoded text: Wtqrms3smsyrutOsap4qRruv9uMpwqVt7tSs6tEt2oamJqxpKoopNskpDpAvSslqVtmrmqcsXpYtPs8pkpKtxrRpeuPrTomqiniqHpqpJq0q3nspSodt0
 Decoded text: Hello, my name is Dyz Lecticus. How are you feeling today?
 ~~~~
 
@@ -121,17 +121,17 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2017-02-04 18:17:08:298 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2017-02-04 18:17:08:600 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2017-02-04 18:17:08:910 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2017-02-04 20:47:41:098 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2017-02-04 20:47:41:400 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2017-02-04 20:47:41:711 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
 All 3 tests have been executed successfully (8 assertions).  
-Total test duration: 718 ms (total sleep duration: 600 ms).  
+Total test duration: 738 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 244 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 252 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 315 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 246 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 253 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 316 Kb / 0 Mb

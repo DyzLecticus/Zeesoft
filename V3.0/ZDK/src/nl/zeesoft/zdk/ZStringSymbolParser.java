@@ -74,7 +74,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 			
 			List<ZStringBuilder> syms = split(" ");
 			for (ZStringBuilder sym: syms) {
-				if (sym.length()>1 && endsWithLineEndSymbol(sym.getStringBuilder())) {
+				if (sym.length()>1 && endsWithLineEndSymbol(sym)) {
 					ZStringBuilder symbol = new ZStringBuilder(sym.getStringBuilder().substring(0,sym.length() - 1));
 					String lineEnd = sym.getStringBuilder().substring(sym.length() - 1);
 					removeLineEndSymbols(symbol); 
@@ -121,8 +121,19 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		}
 		return getStringBuilder();
 	}
+	
+	public boolean isLineEndSymbol(String symbol) {
+		boolean r = false;
+		for (String lineEnd: LINE_END_SYMBOLS) {
+			if (symbol.equals(lineEnd)) {
+				r = true;
+				break;
+			}
+		}
+		return r;
+	}
 
-	private boolean endsWithLineEndSymbol(StringBuilder symbol) {
+	public boolean endsWithLineEndSymbol(ZStringBuilder symbol) {
 		boolean r = false;
 		if (symbol.length()>1) {
 			r = isLineEndSymbol(symbol.substring(symbol.length() - 1));
@@ -136,16 +147,5 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		for (String lineEnd: LINE_END_SYMBOLS) {
 			symbol.replace(lineEnd,"");
 		}
-	}
-	
-	private boolean isLineEndSymbol(String symbol) {
-		boolean r = false;
-		for (String lineEnd: LINE_END_SYMBOLS) {
-			if (symbol.equals(lineEnd)) {
-				r = true;
-				break;
-			}
-		}
-		return r;
 	}
 }
