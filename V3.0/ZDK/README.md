@@ -9,7 +9,7 @@ It provides support for;
  * Self documenting and testing libraries  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.13.zip) to download the latest ZDK release (version 0.9.13).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.14.zip) to download the latest ZDK release (version 0.9.14).  
 All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -44,9 +44,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 6226998413482616189458146666556441115592508614232187541248191068
+Key: 1810075760732066718878536195640014320653146232288184483718209266
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
-Encoded text: S5i3H327o9f8W6P4S2a3p5P7E3i6H1n6d3n7j8o5l6J6i295C6T6H6z65676D5R3g4z2G2E1L5j6D8q2K5n2q8d5D2M4l384i383j8i6V5R4v2p3z5g70
+Encoded text: mSCXiS#R9SmWLUoXoWTRbXNT8TUSuVBW0XMRHXuYKXTX0VbU9W9TOYHV:WGU#QtQ4SSV0UVSPRBWvVKSPS8VsW9STUaTBTiYKXXTVYMTmVZYfURX8T9X0
 Decoded text: Hello, my name is Dyz Lecticus. How are you feeling today?
 ~~~~
 
@@ -96,14 +96,14 @@ messenger.error(this,"Example error message");
 // Stop the messenger
 messenger.stop();
 // Ensure all application workers are stopped
-WorkerUnion.getInstance().stopWorkers();
+factory.getWorkerUnion(messenger).stopWorkers();
 // Trigger the messenger to print the remaining messages
 messenger.whileWorking();
 ~~~~
 
 The *Messenger* can be used to log debug, warning and error messages and print them to the standard and/or error out.
 It implements the *Worker* to minimize wait time impact for threads that call the *Messenger*.
-The Messenger is thread safe so it can be shared across the entire application.
+The *Messenger* is thread safe so it can be shared across the entire application.
 Classes that implement the *MessengerListener* interface can subscribe to *Messenger* message printing events.
 The *WorkerUnion* can be used to ensure all workers that have been started are stopped when stopping the application.
 It will log an error if it fails to stop a worker.
@@ -121,9 +121,9 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2017-02-04 17:41:41:240 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2017-02-04 17:41:41:540 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2017-02-04 17:41:41:851 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2017-02-04 18:17:08:298 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2017-02-04 18:17:08:600 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2017-02-04 18:17:08:910 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
