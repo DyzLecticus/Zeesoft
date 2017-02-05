@@ -11,3 +11,4 @@ Libraries;
  * [ZDM](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDM/) Zeesoft Data Modelling
  * [ZSC](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSC/) Zeesoft Symbolic Confabulation
  * [ZSPR](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSPR/) Zeesoft Symbolic Pattern Recognition
+ * [ZID](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZID/) Zeesoft Intelligent Dialogs
