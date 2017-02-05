@@ -10,44 +10,44 @@ import java.util.TreeMap;
 public class ZStringEncoder extends ZStringBuilder {
 	private static final String[]	CHAR_COMPRESS	= {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","#",":","~"};
 	
-	private ZIntegerGenerator		random			= null;
+	private ZIntegerGenerator		generator		= null;
 
 	public ZStringEncoder() {
-		random = new ZIntegerGenerator(0,99999999);
+		generator = new ZIntegerGenerator(0,99999999);
 	}
 	
-	public ZStringEncoder(ZIntegerGenerator random) {
-		this.random = random;
+	public ZStringEncoder(ZIntegerGenerator generator) {
+		this.generator = generator;
 	}
 
-	public ZStringEncoder(String s,ZIntegerGenerator random) {
+	public ZStringEncoder(String s,ZIntegerGenerator generator) {
 		super(s);
-		this.random = random;
+		this.generator = generator;
 	}
 
-	public ZStringEncoder(StringBuilder sb,ZIntegerGenerator random) {
+	public ZStringEncoder(StringBuilder sb,ZIntegerGenerator generator) {
 		super(sb);
-		this.random = random;
+		this.generator = generator;
 	}
 
-	public ZStringEncoder(ZStringBuilder zsb,ZIntegerGenerator random) {
+	public ZStringEncoder(ZStringBuilder zsb,ZIntegerGenerator generator) {
 		super(zsb);
-		this.random = random;
+		this.generator = generator;
 	}
 
 	public ZStringEncoder(String s) {
 		super(s);
-		random = new ZIntegerGenerator(0,99999999);
+		generator = new ZIntegerGenerator(0,99999999);
 	}
 
 	public ZStringEncoder(StringBuilder sb) {
 		super(sb);
-		random = new ZIntegerGenerator(0,99999999);
+		generator = new ZIntegerGenerator(0,99999999);
 	}
 
 	public ZStringEncoder(ZStringBuilder zsb) {
 		super(zsb);
-		random = new ZIntegerGenerator(0,99999999);
+		generator = new ZIntegerGenerator(0,99999999);
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class ZStringEncoder extends ZStringBuilder {
 			length = 64;
 		}
 		for (int i = 0; i < length; i++) {
-			ps.append(random.getNewInteger());
+			ps.append(generator.getNewInteger());
 			i = (ps.length() - 1);
 			if (i < length) {
 				try {
