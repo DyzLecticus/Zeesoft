@@ -136,17 +136,24 @@ public final class Confabulator extends ConfabulatorTrainer {
 		if (confab.getSequence().length()>0) {
 			List<String> sequenceSymbols = confab.getSequence().toSymbols();
 			int i = 0;
-			for (String symbol: sequenceSymbols) {
-				String symbolTo = null;
+			if (sequenceSymbols.size()==1) {
 				for (int distance = 1; distance<=getMaxLinkDistanceNoLock(); distance++) {
-					int index = i + distance;
-					if (index>=sequenceSymbols.size()) {
-						break;
-					} else {
-						symbolTo = sequenceSymbols.get(index);
-					}
-					List<Link> lnks = getLinksBySymbolFromDistanceToNoLock(symbol,distance,symbolTo);
+					List<Link> lnks = getLinksBySymbolFromDistanceToNoLock(sequenceSymbols.get(0),distance,"");
 					fireLinksIntoModule(confab,0,lnks,true,true);
+				}
+			} else {
+				for (String symbol: sequenceSymbols) {
+					String symbolTo = null;
+					for (int distance = 1; distance<=getMaxLinkDistanceNoLock(); distance++) {
+						int index = i + distance;
+						if (index>=sequenceSymbols.size()) {
+							break;
+						} else {
+							symbolTo = sequenceSymbols.get(index);
+						}
+						List<Link> lnks = getLinksBySymbolFromDistanceToNoLock(symbol,distance,symbolTo);
+						fireLinksIntoModule(confab,0,lnks,true,true);
+					}
 				}
 			}
 		}
@@ -479,7 +486,7 @@ public final class Confabulator extends ConfabulatorTrainer {
 	private List<Link> getLinksBySymbolFromDistanceToNoLock(String symbolFrom, int distance, String symbolTo) {
 		List<Link> r = new ArrayList<Link>();
 		for (Link lnk: getLinksNoLock()) {
-			if (lnk.getSymbolFrom().equals(symbolFrom) && lnk.getDistance()==distance && lnk.getSymbolTo().equals(symbolTo) && lnk.getCount()>1 && lnk.getSymbolContext().length()>0) {
+			if (lnk.getSymbolFrom().equals(symbolFrom) && lnk.getDistance()==distance && (symbolTo==null || symbolTo.length()==0 || lnk.getSymbolTo().equals(symbolTo)) && lnk.getCount()>1 && lnk.getSymbolContext().length()>0) {
 				r.add(lnk);
 			}
 		}
