@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZIntegerGenerator;
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -119,6 +120,10 @@ public class DialogHandler extends Locker {
 		ZStringSymbolParser output = processInputDefault(input);
 		lockMe(this);
 		prevOutput = new ZStringSymbolParser(output);
+		if (prevOutput.endsWith("?") && prevOutput.containsOneOfCharacters(".")) {
+			List<ZStringBuilder> split = prevOutput.split(".");
+			prevOutput = new ZStringSymbolParser(split.get(split.size()-1));
+		}
 		unlockMe(this);
 		return output;
 	}
@@ -231,11 +236,20 @@ public class DialogHandler extends Locker {
 		}
 		
 		// Translate input
-		input = patternManager.scanAndTranslateSequence(input, expectedTypes,null);
+		input = patternManager.scanAndTranslateSequence(input,expectedTypes,null);
 		addLogLine("--- Translated input: " + input);
 
 		// Correct input
-		CorrectionConfabulation correction = correctInput(input,currentDialog,currentDialogVariable);
+		sequence = new ZStringSymbolParser(input);
+		if (currentDialogVariable!=null) {
+			lockMe(this);
+			if (prevOutput.length()>0) {
+				sequence.insert(0," ");
+				sequence.insert(0,prevOutput);
+			}
+			unlockMe(this);
+		}
+		CorrectionConfabulation correction = correctInput(sequence,currentDialog,currentDialogVariable);
 		input.fromSymbols(correction.getOutput().toSymbols(),true,true);
 		addLogLine("--- Corrected input: " + input);
 		
@@ -244,31 +258,35 @@ public class DialogHandler extends Locker {
 		if (currentDialog!=null && currentDialogController!=null && correction.getCorrectionValues().size()>0) {
 			lockMe(this);
 			
-			List<String> values = new ArrayList<String>(correction.getCorrectionKeys());
-			int i = 0;
-			for (String value: values) {
-				for (DialogVariable variable: dialog.getVariables()) {
-					if (dialogVariables.get(variable.getName()).equals("")) {
-						if (value.startsWith(variable.getType())) {
-							if (value.contains(patternManager.getOrConcatenator())) {
-								for (String val: value.split("\\" + patternManager.getOrConcatenator())) {
-									if (val.startsWith(variable.getType())) {
-										value = val;
-										break;
+			/*
+			if (currentDialogVariable==null) {
+				List<String> values = new ArrayList<String>(correction.getCorrectionKeys());
+				int i = 0;
+				for (String value: values) {
+					for (DialogVariable variable: dialog.getVariables()) {
+						if (dialogVariables.get(variable.getName()).equals("")) {
+							if (value.startsWith(variable.getType())) {
+								if (value.contains(patternManager.getOrConcatenator())) {
+									for (String val: value.split("\\" + patternManager.getOrConcatenator())) {
+										if (val.startsWith(variable.getType())) {
+											value = val;
+											break;
+										}
 									}
 								}
+								dialogVariables.put(variable.getName(),value);
+								updatedVariables.add(variable);
+								correction.getCorrectionKeys().remove(i);
+								correction.getCorrectionValues().remove(i);
+								i--;
+								break;
 							}
-							dialogVariables.put(variable.getName(),value);
-							updatedVariables.add(variable);
-							correction.getCorrectionKeys().remove(i);
-							correction.getCorrectionValues().remove(i);
-							i--;
-							break;
 						}
 					}
+					i++;
 				}
-				i++;
 			}
+			*/
 			
 			for (DialogVariable variable: dialog.getVariables()) {
 				String macro = "{" + variable.getName() + "}";
@@ -289,6 +307,35 @@ public class DialogHandler extends Locker {
 					}
 				}
 			}
+			
+			if (updatedVariables.size()<dialogVariables.size()) {
+				List<String> values = new ArrayList<String>(correction.getCorrectionKeys());
+				int i = 0;
+				for (String value: values) {
+					for (DialogVariable variable: dialog.getVariables()) {
+						if (dialogVariables.get(variable.getName()).equals("")) {
+							if (value.startsWith(variable.getType())) {
+								if (value.contains(patternManager.getOrConcatenator())) {
+									for (String val: value.split("\\" + patternManager.getOrConcatenator())) {
+										if (val.startsWith(variable.getType())) {
+											value = val;
+											break;
+										}
+									}
+								}
+								dialogVariables.put(variable.getName(),value);
+								updatedVariables.add(variable);
+								correction.getCorrectionKeys().remove(i);
+								correction.getCorrectionValues().remove(i);
+								i--;
+								break;
+							}
+						}
+					}
+					i++;
+				}
+			}
+			
 			unlockMe(this);
 		}
 
@@ -479,6 +526,8 @@ public class DialogHandler extends Locker {
 		ZStringSymbolParser context = new ZStringSymbolParser();
 		if (currentDialog!=null) {
 			context.append(currentDialog.getName());
+			context.append(" ");
+			context.append(currentDialog.getLanguage().getCode());
 			if (currentDialogVariable!=null && currentDialogVariable.length()>0) {
 				context.append(" ");
 				context.append(currentDialog.getName());
