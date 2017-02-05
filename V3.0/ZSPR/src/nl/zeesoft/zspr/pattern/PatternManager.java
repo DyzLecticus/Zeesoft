@@ -193,20 +193,24 @@ public class PatternManager extends Locker {
 	 * 
 	 * @param sequence The symbol sequence
 	 * @param expectedTypes The optional list of expected pattern base value types to limit the translation
+	 * @param customPatterns An optional list of custom patterns to use for the translation
 	 * @return The translated values
 	 */
-	public final ZStringSymbolParser scanAndTranslateSequence(ZStringSymbolParser sequence, List<String> expectedTypes) {
+	public final ZStringSymbolParser scanAndTranslateSequence(ZStringSymbolParser sequence, List<String> expectedTypes, List<PatternObject> customPatterns) {
 		List<String> symbols = sequence.toSymbols();
 		List<String> translated = new ArrayList<String>();
 		int i = 0;
 		int skip = 0;
+		if (customPatterns==null || customPatterns.size()==0) {
+			customPatterns = getPatterns();
+		}
 		for (String symbol: symbols) {
 			if (skip>0) {
 				skip--;
 			} else {
 				List<PatternObject> matchingPatterns = new ArrayList<PatternObject>();
 				SortedMap<String,String> matchingPatternStrings = new TreeMap<String,String>();
-				for (PatternObject pattern: getPatterns()) {
+				for (PatternObject pattern: customPatterns) {
 					if (expectedTypes==null || expectedTypes.size()==0 || expectedTypes.contains(pattern.getBaseValueType())) {
 						if (pattern.getMaximumSymbols()>1) {
 							int max = pattern.getMaximumSymbols();

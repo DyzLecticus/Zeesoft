@@ -1,12 +1,13 @@
 package nl.zeesoft.zspr.pattern.patterns.english;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishOrder extends PatternObjectLiteralToValue {
 	public EnglishOrder(Messenger msgr) {
-		super(msgr,TYPE_ORDER,"ENG");
+		super(msgr,TYPE_ORDER,Language.ENG);
 	}
 	
 	@Override

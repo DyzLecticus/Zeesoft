@@ -1,12 +1,13 @@
 package nl.zeesoft.zspr.pattern.patterns.dutch;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class DutchPreposition extends PatternObjectLiteralToValue {
 	public DutchPreposition(Messenger msgr) {
-		super(msgr,TYPE_PREPOSITION,"NED");
+		super(msgr,TYPE_PREPOSITION,Language.NLD);
 	}
 	
 	@Override

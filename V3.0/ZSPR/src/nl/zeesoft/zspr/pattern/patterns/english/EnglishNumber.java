@@ -1,12 +1,13 @@
 package nl.zeesoft.zspr.pattern.patterns.english;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteral;
 
 public class EnglishNumber extends PatternObjectLiteral {
 	public EnglishNumber(Messenger msgr) {
-		super(msgr,TYPE_NUMBER,"ENG");
+		super(msgr,TYPE_NUMBER,Language.ENG);
 	}
 	
 	@Override

@@ -4,12 +4,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishTime extends PatternObjectLiteralToValue {
 	public EnglishTime(Messenger msgr) {
-		super(msgr,TYPE_TIME,"ENG");
+		super(msgr,TYPE_TIME,Language.ENG);
 	}
 	
 	@Override

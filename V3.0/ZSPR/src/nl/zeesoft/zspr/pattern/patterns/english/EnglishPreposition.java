@@ -1,12 +1,13 @@
 package nl.zeesoft.zspr.pattern.patterns.english;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishPreposition extends PatternObjectLiteralToValue {
 	public EnglishPreposition(Messenger msgr) {
-		super(msgr,TYPE_PREPOSITION,"ENG");
+		super(msgr,TYPE_PREPOSITION,Language.ENG);
 	}
 	
 	@Override

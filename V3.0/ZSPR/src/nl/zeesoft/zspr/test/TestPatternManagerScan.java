@@ -56,14 +56,14 @@ public class TestPatternManagerScan extends TestObject {
 		System.out.println("==> Test Dutch");
 		testScanAndTranslate(manager,
 			"Ik wil een kamer boeken voor vijf personen op dertig december om vijfentwintig minuten over vier voor twee uur.",
-			"ALPHABETIC_UNI:Ik ALPHABETIC_UNI:wil NUMBER_NED:1|ALPHABETIC_UNI:een ALPHABETIC_UNI:kamer ALPHABETIC_UNI:boeken ALPHABETIC_UNI:voor NUMBER_NED:5|ALPHABETIC_UNI:vijf ALPHABETIC_UNI:personen ALPHABETIC_UNI:op DATE_NED:2017-12-30 ALPHABETIC_UNI:om TIME_NED:16:25:00 ALPHABETIC_UNI:voor TIME_NED:14:00:00|DURATION_NED:02:00 .",
+			"ALPHABETIC_UNI:Ik ALPHABETIC_UNI:wil NUMBER_NLD:1|ALPHABETIC_UNI:een ALPHABETIC_UNI:kamer ALPHABETIC_UNI:boeken ALPHABETIC_UNI:voor NUMBER_NLD:5|ALPHABETIC_UNI:vijf ALPHABETIC_UNI:personen ALPHABETIC_UNI:op DATE_NLD:2017-12-30 ALPHABETIC_UNI:om TIME_NLD:16:25:00 ALPHABETIC_UNI:voor TIME_NLD:14:00:00|DURATION_NLD:02:00 .",
 			"Ik wil een kamer boeken voor vijf personen op dertig december tweeduizendzeventien om vier uur vijfentwintig voor twee uur ."
 			);
 	}
 
 	private void testScanAndTranslate(PatternManager manager,String from,String expectedTo,String expectedBack) {
 		System.out.println("Input: " + from);
-		ZStringSymbolParser to = manager.scanAndTranslateSequence(new ZStringSymbolParser(from),null);
+		ZStringSymbolParser to = manager.scanAndTranslateSequence(new ZStringSymbolParser(from),null,null);
 		assertEqual(to.toString(),expectedTo,"String to value translation does not meet expectation");
 		System.out.println("Values: " + to);
 		ZStringBuilder back = manager.scanAndTranslateValues(to);

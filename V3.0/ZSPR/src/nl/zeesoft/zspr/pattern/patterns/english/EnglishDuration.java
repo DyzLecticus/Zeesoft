@@ -1,12 +1,13 @@
 package nl.zeesoft.zspr.pattern.patterns.english;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
 public class EnglishDuration extends PatternObjectLiteralToValue {
 	public EnglishDuration(Messenger msgr) {
-		super(msgr,TYPE_DURATION,"ENG");
+		super(msgr,TYPE_DURATION,Language.ENG);
 	}
 	
 	@Override

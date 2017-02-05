@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObjectLiteralToValue;
 
@@ -11,7 +12,7 @@ public class EnglishDate extends PatternObjectLiteralToValue {
 	private	Date	currentDate	= null;
 	
 	public EnglishDate(Messenger msgr) {
-		super(msgr,TYPE_DATE,"ENG");
+		super(msgr,TYPE_DATE,Language.ENG);
 	}
 	
 	@Override

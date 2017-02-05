@@ -56,9 +56,9 @@ public class TestPatternManager extends TestObject {
 
 		System.out.println();
 		System.out.println("==> Test Dutch order");
-		testStringForPattern(manager,"eerste",2,"ORDER_NED:1");
-		testStringForPattern(manager,"drieenvijftigste",2,"ORDER_NED:53");
-		testStringForPattern(manager,"driehonderdzesennegentigste",2,"ORDER_NED:396");
+		testStringForPattern(manager,"eerste",2,"ORDER_NLD:1");
+		testStringForPattern(manager,"drieenvijftigste",2,"ORDER_NLD:53");
+		testStringForPattern(manager,"driehonderdzesennegentigste",2,"ORDER_NLD:396");
 
 		System.out.println();
 		System.out.println("==> Test English time");
@@ -77,16 +77,16 @@ public class TestPatternManager extends TestObject {
 		
 		System.out.println();
 		System.out.println("==> Test Dutch time");
-		testStringForPattern(manager,"12 uur",2,"TIME_NED:12:00:00","DURATION_NED:12:00");
-		testStringForPattern(manager,"twaalf uur",2,"TIME_NED:12:00:00","DURATION_NED:12:00");
-		testStringForPattern(manager,"vijftien over twaalf",1,"TIME_NED:12:15:00");
-		testStringForPattern(manager,"vijftien minuten over twaalf",1,"TIME_NED:12:15:00");
-		testStringForPattern(manager,"kwart over twaalf",1,"TIME_NED:12:15:00");
-		testStringForPattern(manager,"een minuut over een",1,"TIME_NED:13:01:00");
-		testStringForPattern(manager,"een minuut voor twaalf",1,"TIME_NED:11:59:00");
-		testStringForPattern(manager,"twaalf uur dertig",1,"TIME_NED:12:30:00");
-		testStringForPattern(manager,"half een",1,"TIME_NED:12:30:00");
-		testStringForPattern(manager,"twaalf uur vijfenveertig",1,"TIME_NED:12:45:00");
+		testStringForPattern(manager,"12 uur",2,"TIME_NLD:12:00:00","DURATION_NLD:12:00");
+		testStringForPattern(manager,"twaalf uur",2,"TIME_NLD:12:00:00","DURATION_NLD:12:00");
+		testStringForPattern(manager,"vijftien over twaalf",1,"TIME_NLD:12:15:00");
+		testStringForPattern(manager,"vijftien minuten over twaalf",1,"TIME_NLD:12:15:00");
+		testStringForPattern(manager,"kwart over twaalf",1,"TIME_NLD:12:15:00");
+		testStringForPattern(manager,"een minuut over een",1,"TIME_NLD:13:01:00");
+		testStringForPattern(manager,"een minuut voor twaalf",1,"TIME_NLD:11:59:00");
+		testStringForPattern(manager,"twaalf uur dertig",1,"TIME_NLD:12:30:00");
+		testStringForPattern(manager,"half een",1,"TIME_NLD:12:30:00");
+		testStringForPattern(manager,"twaalf uur vijfenveertig",1,"TIME_NLD:12:45:00");
 
 		System.out.println();
 		System.out.println("==> Test English number");
@@ -94,7 +94,7 @@ public class TestPatternManager extends TestObject {
 
 		System.out.println();
 		System.out.println("==> Test Dutch number");
-		testStringForPattern(manager,"driehonderdzevenenzestig",2,"NUMBER_NED:367");
+		testStringForPattern(manager,"driehonderdzevenenzestig",2,"NUMBER_NLD:367");
 
 		System.out.println();
 		System.out.println("==> Test Universal time");
@@ -117,11 +117,11 @@ public class TestPatternManager extends TestObject {
 
 		System.out.println();
 		System.out.println("==> Test Dutch date");
-		testStringForPattern(manager,"tweeentwintig december",1,"DATE_NED:2017-12-22");
-		testStringForPattern(manager,"vijf januari",1,"DATE_NED:2017-01-05");
-		testStringForPattern(manager,"nu",2,"DATE_NED:2017-01-01");
-		testStringForPattern(manager,"vandaag",2,"DATE_NED:2017-01-01");
-		testStringForPattern(manager,"morgen",2,"DATE_NED:2017-01-02");
+		testStringForPattern(manager,"tweeentwintig december",1,"DATE_NLD:2017-12-22");
+		testStringForPattern(manager,"vijf januari",1,"DATE_NLD:2017-01-05");
+		testStringForPattern(manager,"nu",2,"DATE_NLD:2017-01-01");
+		testStringForPattern(manager,"vandaag",2,"DATE_NLD:2017-01-01");
+		testStringForPattern(manager,"morgen",2,"DATE_NLD:2017-01-02");
 		
 		System.out.println();
 		System.out.println("==> Test English duration");
@@ -132,9 +132,9 @@ public class TestPatternManager extends TestObject {
 
 		System.out.println();
 		System.out.println("Test Dutch duration");
-		testStringForPattern(manager,"twee uur",2,"TIME_NED:14:00:00","DURATION_NED:02:00");
-		testStringForPattern(manager,"3 uur en 4 minuten",1,"DURATION_NED:03:04");
-		testStringForPattern(manager,"een uur en vijfenveertig minuten",1,"DURATION_NED:01:45");
+		testStringForPattern(manager,"twee uur",2,"TIME_NLD:14:00:00","DURATION_NLD:02:00");
+		testStringForPattern(manager,"3 uur en 4 minuten",1,"DURATION_NLD:03:04");
+		testStringForPattern(manager,"een uur en vijfenveertig minuten",1,"DURATION_NLD:01:45");
 	}
 
 	private void testStringForPattern(PatternManager manager, String testString, int expectedPatterns, String expectedValue1) {

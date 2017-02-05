@@ -5,7 +5,7 @@ It provides support for sequential symbolic pattern recognition.
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/zspr-0.9.5.zip) to download the latest ZSPR release (version 0.9.5).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/zspr-0.9.6.zip) to download the latest ZSPR release (version 0.9.6).  
 All ZSPR releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -47,7 +47,7 @@ Class references;
 The output of this test shows some test strings and their corresponding pattern values.  
 Please note how some test strings trigger multiple patterns that translate to different value types.  
 ~~~~
-Initializing pattern manager took 1859 ms
+Initializing pattern manager took 1678 ms
 
 ==> Test English order
 first = ORDER_ENG:1 (1)
@@ -58,11 +58,11 @@ threehundredandsixtyninth = ORDER_ENG:369 (1)
 threehundredandsixtyninth = ALPHABETIC_UNI:threehundredandsixtyninth (2)
 
 ==> Test Dutch order
-eerste = ORDER_NED:1 (1)
+eerste = ORDER_NLD:1 (1)
 eerste = ALPHABETIC_UNI:eerste (2)
-drieenvijftigste = ORDER_NED:53 (1)
+drieenvijftigste = ORDER_NLD:53 (1)
 drieenvijftigste = ALPHABETIC_UNI:drieenvijftigste (2)
-driehonderdzesennegentigste = ORDER_NED:396 (1)
+driehonderdzesennegentigste = ORDER_NLD:396 (1)
 driehonderdzesennegentigste = ALPHABETIC_UNI:driehonderdzesennegentigste (2)
 
 ==> Test English time
@@ -80,25 +80,25 @@ half past twelve = TIME_ENG:12:30:00
 twelve fourtyfive = TIME_ENG:12:45:00
 
 ==> Test Dutch time
-12 uur = TIME_NED:12:00:00 (1)
-12 uur = DURATION_NED:12:00 (2)
-twaalf uur = TIME_NED:12:00:00 (1)
-twaalf uur = DURATION_NED:12:00 (2)
-vijftien over twaalf = TIME_NED:12:15:00
-vijftien minuten over twaalf = TIME_NED:12:15:00
-kwart over twaalf = TIME_NED:12:15:00
-een minuut over een = TIME_NED:13:01:00
-een minuut voor twaalf = TIME_NED:11:59:00
-twaalf uur dertig = TIME_NED:12:30:00
-half een = TIME_NED:12:30:00
-twaalf uur vijfenveertig = TIME_NED:12:45:00
+12 uur = TIME_NLD:12:00:00 (1)
+12 uur = DURATION_NLD:12:00 (2)
+twaalf uur = TIME_NLD:12:00:00 (1)
+twaalf uur = DURATION_NLD:12:00 (2)
+vijftien over twaalf = TIME_NLD:12:15:00
+vijftien minuten over twaalf = TIME_NLD:12:15:00
+kwart over twaalf = TIME_NLD:12:15:00
+een minuut over een = TIME_NLD:13:01:00
+een minuut voor twaalf = TIME_NLD:11:59:00
+twaalf uur dertig = TIME_NLD:12:30:00
+half een = TIME_NLD:12:30:00
+twaalf uur vijfenveertig = TIME_NLD:12:45:00
 
 ==> Test English number
 onehundredandeightyone = NUMBER_ENG:181 (1)
 onehundredandeightyone = ALPHABETIC_UNI:onehundredandeightyone (2)
 
 ==> Test Dutch number
-driehonderdzevenenzestig = NUMBER_NED:367 (1)
+driehonderdzevenenzestig = NUMBER_NLD:367 (1)
 driehonderdzevenenzestig = ALPHABETIC_UNI:driehonderdzevenenzestig (2)
 
 ==> Test Universal time
@@ -114,7 +114,7 @@ the fifth of january = DATE_ENG:2017-01-05
 the 12th of august = DATE_ENG:2017-08-12
 october 2nd = DATE_ENG:2017-10-02
 now = DATE_ENG:2017-01-01 (1)
-now = TIME_ENG:11:10:00 (2)
+now = TIME_ENG:14:40:00 (2)
 now = ALPHABETIC_UNI:now (3)
 today = DATE_ENG:2017-01-01 (1)
 today = ALPHABETIC_UNI:today (2)
@@ -122,13 +122,13 @@ tomorrow = DATE_ENG:2017-01-02 (1)
 tomorrow = ALPHABETIC_UNI:tomorrow (2)
 
 ==> Test Dutch date
-tweeentwintig december = DATE_NED:2017-12-22
-vijf januari = DATE_NED:2017-01-05
-nu = DATE_NED:2017-01-01 (1)
+tweeentwintig december = DATE_NLD:2017-12-22
+vijf januari = DATE_NLD:2017-01-05
+nu = DATE_NLD:2017-01-01 (1)
 nu = ALPHABETIC_UNI:nu (2)
-vandaag = DATE_NED:2017-01-01 (1)
+vandaag = DATE_NLD:2017-01-01 (1)
 vandaag = ALPHABETIC_UNI:vandaag (2)
-morgen = DATE_NED:2017-01-02 (1)
+morgen = DATE_NLD:2017-01-02 (1)
 morgen = ALPHABETIC_UNI:morgen (2)
 
 ==> Test English duration
@@ -138,10 +138,10 @@ one hour and fourtyfive minutes = DURATION_ENG:01:45
 one hour and thirtythree minutes = DURATION_ENG:01:33
 
 Test Dutch duration
-twee uur = TIME_NED:14:00:00 (1)
-twee uur = DURATION_NED:02:00 (2)
-3 uur en 4 minuten = DURATION_NED:03:04
-een uur en vijfenveertig minuten = DURATION_NED:01:45
+twee uur = TIME_NLD:14:00:00 (1)
+twee uur = DURATION_NLD:02:00 (2)
+3 uur en 4 minuten = DURATION_NLD:03:04
+een uur en vijfenveertig minuten = DURATION_NLD:01:45
 ~~~~
 
 nl.zeesoft.zspr.test.TestPatternManagerScan
@@ -178,15 +178,15 @@ String: I want to book a room for five people on december twentysecond twothousa
 
 ==> Test Dutch
 Input: Ik wil een kamer boeken voor vijf personen op dertig december om vijfentwintig minuten over vier voor twee uur.
-Values: ALPHABETIC_UNI:Ik ALPHABETIC_UNI:wil NUMBER_NED:1|ALPHABETIC_UNI:een ALPHABETIC_UNI:kamer ALPHABETIC_UNI:boeken ALPHABETIC_UNI:voor NUMBER_NED:5|ALPHABETIC_UNI:vijf ALPHABETIC_UNI:personen ALPHABETIC_UNI:op DATE_NED:2017-12-30 ALPHABETIC_UNI:om TIME_NED:16:25:00 ALPHABETIC_UNI:voor TIME_NED:14:00:00|DURATION_NED:02:00 .
+Values: ALPHABETIC_UNI:Ik ALPHABETIC_UNI:wil NUMBER_NLD:1|ALPHABETIC_UNI:een ALPHABETIC_UNI:kamer ALPHABETIC_UNI:boeken ALPHABETIC_UNI:voor NUMBER_NLD:5|ALPHABETIC_UNI:vijf ALPHABETIC_UNI:personen ALPHABETIC_UNI:op DATE_NLD:2017-12-30 ALPHABETIC_UNI:om TIME_NLD:16:25:00 ALPHABETIC_UNI:voor TIME_NLD:14:00:00|DURATION_NLD:02:00 .
 String: Ik wil een kamer boeken voor vijf personen op dertig december tweeduizendzeventien om vier uur vijfentwintig voor twee uur .
 ~~~~
 
 Test results
 ------------
 All 2 tests have been executed successfully (112 assertions).  
-Total test duration: 3766 ms (total sleep duration: 0 ms).  
+Total test duration: 3136 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zspr.test.TestPatternManager: 35176 Kb / 34 Mb
+ * nl.zeesoft.zspr.test.TestPatternManager: 35177 Kb / 34 Mb
  * nl.zeesoft.zspr.test.TestPatternManagerScan: 34241 Kb / 33 Mb
