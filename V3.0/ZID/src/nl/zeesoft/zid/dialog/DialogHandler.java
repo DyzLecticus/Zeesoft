@@ -295,7 +295,7 @@ public class DialogHandler extends Locker {
 			if (symbols!=null) {
 				for (String symbol: symbols) {
 					symbol = translateSymbolToVariableValue(symbol);
-					if (output.length()>0 && !output.isLineEndSymbol(symbol)) {
+					if (output.length()>0 && !ZStringSymbolParser.isLineEndSymbol(symbol)) {
 						output.append(" ");
 					}
 					output.append(symbol);
@@ -332,7 +332,7 @@ public class DialogHandler extends Locker {
 				} else {
 					symbol = translateSymbolToVariableValue(symbol);
 					if (symbol.length()>0) {
-						if (output.length()>0 && !output.isLineEndSymbol(symbol)) {
+						if (output.length()>0 && !ZStringSymbolParser.isLineEndSymbol(symbol)) {
 							output.append(" ");
 						}
 						output.append(symbol);
@@ -571,7 +571,7 @@ public class DialogHandler extends Locker {
 	private final static ZStringSymbolParser getSafeText(ZStringSymbolParser text,boolean correctPunctuation) {
 		if (text.length()>0) {
 			text.trim();
-			if (!text.endsWithLineEndSymbol(text)) {
+			if (!ZStringSymbolParser.endsWithLineEndSymbol(text)) {
 				text.getStringBuilder().append(".");
 			}
 			text.fromSymbols(text.toSymbolsPunctuated(),true,correctPunctuation);
