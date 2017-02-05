@@ -116,8 +116,8 @@ public class DialogHandler extends Locker {
 		unlockMe(this);
 	}
 
-	public ZStringSymbolParser processInput(ZStringSymbolParser input) {
-		ZStringSymbolParser output = processInputDefault(input);
+	public ZStringSymbolParser handleInput(ZStringSymbolParser input) {
+		ZStringSymbolParser output = handleInputDefault(input);
 		lockMe(this);
 		prevOutput = new ZStringSymbolParser(output);
 		if (prevOutput.endsWith("?") && prevOutput.containsOneOfCharacters(".")) {
@@ -128,7 +128,7 @@ public class DialogHandler extends Locker {
 		return output;
 	}
 
-	protected final ZStringSymbolParser processInputDefault(ZStringSymbolParser input) {
+	protected final ZStringSymbolParser handleInputDefault(ZStringSymbolParser input) {
 		ZStringSymbolParser output = new ZStringSymbolParser();
 		
 		Dialog currentDialog = null;

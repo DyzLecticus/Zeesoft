@@ -10,7 +10,7 @@
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<!-- ZSC version -->
-	<property name="versionZSC" value="0.9.7"/>
+	<property name="versionZSC" value="0.9.8"/>
 	<property name="releasesZSC" location="../ZSC/releases"/>
 
 	<!-- ZSPR version -->
@@ -76,6 +76,8 @@
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
 		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
+		<copy file="${lib}/zsc.jar" tofile="${dist}/zsc.jar"/>
+		<copy file="${lib}/zspr.jar" tofile="${dist}/zspr.jar"/>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
@@ -120,6 +122,10 @@
 		<mkdir dir="${releases}/${version}"/>
 		<copy file="${dist}/zdk.jar" tofile="${releases}/${version}/zdk.jar"/>
 		<copy file="${lib}/zdk-javadoc.zip" tofile="${releases}/${version}/zdk-javadoc.zip"/>
+		<copy file="${dist}/zsc.jar" tofile="${releases}/${version}/zsc.jar"/>
+		<copy file="${lib}/zsc-javadoc.zip" tofile="${releases}/${version}/zsc-javadoc.zip"/>
+		<copy file="${dist}/zspr.jar" tofile="${releases}/${version}/zspr.jar"/>
+		<copy file="${lib}/zspr-javadoc.zip" tofile="${releases}/${version}/zspr-javadoc.zip"/>
 		<copy file="${dist}/zid.jar" tofile="${releases}/${version}/zid.jar"/>
 		<copy file="${dist}/zid-javadoc.zip" tofile="${releases}/${version}/zid-javadoc.zip"/>
 		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
@@ -132,6 +138,16 @@
 		<mkdir dir="${dist}"/>
 		<mkdir dir="${dist}/src"/>
 		<unzip src="${lib}/zdk.jar" dest="${dist}/src">
+		    <patternset>
+		        <include name="**/*.java"/>
+		    </patternset>
+		</unzip>
+		<unzip src="${lib}/zsc.jar" dest="${dist}/src">
+		    <patternset>
+		        <include name="**/*.java"/>
+		    </patternset>
+		</unzip>
+		<unzip src="${lib}/zspr.jar" dest="${dist}/src">
 		    <patternset>
 		        <include name="**/*.java"/>
 		    </patternset>

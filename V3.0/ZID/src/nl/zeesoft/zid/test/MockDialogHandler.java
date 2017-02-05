@@ -18,7 +18,6 @@ public class MockDialogHandler extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
-		// TODO: get mocks through tester
 		@SuppressWarnings("unchecked")
 		List<Dialog> dialogs = (List<Dialog>) getTester().getMockedObject(MockDialogs.class.getName());
 				
