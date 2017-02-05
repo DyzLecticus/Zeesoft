@@ -7,37 +7,52 @@ import java.util.List;
  * The Zeesoft StringSymbolParser can be used to parse symbols (words and punctuation) from the StringBuilder value and merge them back together.
  */
 public class ZStringSymbolParser extends ZStringBuilder {
-	public static final String[]	LINE_END_SYMBOLS		= {"." , "?" , "!"};
-	public static final String		PUNCTUATION_SYMBOLS		= "():;,'\"";
-
+	private static List<String>	lineEndSymbols		= new ArrayList<String>();
+	private static List<String>	punctuationSymbols	= new ArrayList<String>();
+	
 	public ZStringSymbolParser() {
 		super();
+		if (lineEndSymbols.size()==0) {
+			initializeDefaultConfiguration();
+		}
 	}
 
 	public ZStringSymbolParser(String s) {
 		super(s);
+		if (lineEndSymbols.size()==0) {
+			initializeDefaultConfiguration();
+		}
 	}
 
 	public ZStringSymbolParser(StringBuilder sb) {
 		super(sb);
+		if (lineEndSymbols.size()==0) {
+			initializeDefaultConfiguration();
+		}
 	}
 
 	public ZStringSymbolParser(ZStringBuilder zsb) {
 		super(zsb);
+		if (lineEndSymbols.size()==0) {
+			initializeDefaultConfiguration();
+		}
 	}
 
 	@Override
 	public ZStringSymbolParser getCopy() {
 		return new ZStringSymbolParser(getStringBuilder());
 	}
-	
+
 	/**
 	 * Parses symbols (words and punctuation) from the StringBuilder value.
+	 * 
+	 * Separates all punctuation symbols and then calls toSymbols to do the remaining work.
+	 * Uses the configured line ending and punctuation symbols.
 	 * 
 	 * @return A list of symbols
 	 */
 	public List<String> toSymbolsPunctuated() {
-		return toSymbolsPunctuated(PUNCTUATION_SYMBOLS);
+		return toSymbolsPunctuated(lineEndSymbols,punctuationSymbols);
 	}
 
 	/**
@@ -45,25 +60,37 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	 * 
 	 * Separates all punctuation symbols and then calls toSymbols to do the remaining work.
 	 * 
-	 * @param punctuationSymbols The string containing the punctuation symbols to separate
+	 * @param lineEnds A list of line end symbols
+	 * @param punctuations A list of punctuation symbols to separate
 	 * @return A list of symbols
 	 */
-	public List<String> toSymbolsPunctuated(String punctuationSymbols) {
+	public List<String> toSymbolsPunctuated(List<String> lineEnds,List<String> punctuations) {
 		if (getStringBuilder()!=null) {
-			for (int i = 0; i < punctuationSymbols.length(); i++) {
-				String c = punctuationSymbols.substring(i,i+1);
-				replace(c," " + c + " ");
+			for (String symbol: punctuations) {
+				replace(symbol," " + symbol + " ");
 			}
 		}
-		return toSymbols();
+		return toSymbols(lineEnds);
 	}
 
 	/**
 	 * Parses symbols (words and line endings) from a text.
 	 * 
+	 * Uses the configured line ending and punctuation symbols.
+	 * 
 	 * @return A list of symbols
 	 */
 	public List<String> toSymbols() {
+		return toSymbols(lineEndSymbols);
+	}
+
+	/**
+	 * Parses symbols (words and line endings) from a text.
+	 * 
+	 * @param lineEnds A list of line end symbols
+	 * @return A list of symbols
+	 */
+	public List<String> toSymbols(List<String> lineEnds) {
 		List<String> symbols = new ArrayList<String>();
 		if (getStringBuilder()!=null) {
 			replace("     "," ");
@@ -74,10 +101,10 @@ public class ZStringSymbolParser extends ZStringBuilder {
 			
 			List<ZStringBuilder> syms = split(" ");
 			for (ZStringBuilder sym: syms) {
-				if (sym.length()>1 && endsWithLineEndSymbol(sym)) {
+				if (sym.length()>1 && endsWithLineEndSymbol(sym,lineEnds)) {
 					ZStringBuilder symbol = new ZStringBuilder(sym.getStringBuilder().substring(0,sym.length() - 1));
 					String lineEnd = sym.getStringBuilder().substring(sym.length() - 1);
-					removeLineEndSymbols(symbol); 
+					removeLineEndSymbols(symbol,lineEnds); 
 					symbols.add(symbol.toString());
 					symbols.add(lineEnd);
 				} else {
@@ -122,9 +149,48 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		return getStringBuilder();
 	}
 	
-	public boolean isLineEndSymbol(String symbol) {
+	/**
+	 * Initializes the default global configuration for the parser.
+	 */
+	public static void initializeDefaultConfiguration() {
+		lineEndSymbols.clear();
+		lineEndSymbols.add(".");
+		lineEndSymbols.add("?");
+		lineEndSymbols.add("!");
+		punctuationSymbols.clear();
+		punctuationSymbols.add("(");
+		punctuationSymbols.add(")");
+		punctuationSymbols.add(":");
+		punctuationSymbols.add(";");
+		punctuationSymbols.add(",");
+		punctuationSymbols.add("'");
+		punctuationSymbols.add("\"");
+	}
+
+	/**
+	 * Initializes a specific global configuration for the parser.
+	 * 
+	 * @param lineEndSyms A list of line end symbols
+	 * @param punctuations A list of punctuation symbols
+	 */
+	public static void initializeConfiguration(List<String> lineEndSyms,List<String> punctuations) {
+		lineEndSymbols.clear();
+		for (String symbol: lineEndSyms) {
+			lineEndSymbols.add(symbol);
+		}
+		punctuationSymbols.clear();
+		for (String symbol: punctuations) {
+			punctuationSymbols.add(symbol);
+		}
+	}
+	
+	public static boolean isLineEndSymbol(String symbol) {
+		return isLineEndSymbol(symbol,lineEndSymbols);
+	}
+
+	public static boolean isLineEndSymbol(String symbol,List<String> lineEnds) {
 		boolean r = false;
-		for (String lineEnd: LINE_END_SYMBOLS) {
+		for (String lineEnd: lineEnds) {
 			if (symbol.equals(lineEnd)) {
 				r = true;
 				break;
@@ -133,18 +199,22 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		return r;
 	}
 
-	public boolean endsWithLineEndSymbol(ZStringBuilder symbol) {
+	public static boolean endsWithLineEndSymbol(ZStringBuilder symbol) {
+		return endsWithLineEndSymbol(symbol,lineEndSymbols);
+	}
+
+	public static boolean endsWithLineEndSymbol(ZStringBuilder symbol,List<String> lineEnds) {
 		boolean r = false;
 		if (symbol.length()>1) {
-			r = isLineEndSymbol(symbol.substring(symbol.length() - 1));
+			r = isLineEndSymbol(symbol.substring(symbol.length() - 1),lineEnds);
 		} else {
-			r = isLineEndSymbol(symbol.toString());
+			r = isLineEndSymbol(symbol.toString(),lineEnds);
 		}
 		return r;
 	}
 
-	private void removeLineEndSymbols(ZStringBuilder symbol) {
-		for (String lineEnd: LINE_END_SYMBOLS) {
+	private void removeLineEndSymbols(ZStringBuilder symbol,List<String> lineEnds) {
+		for (String lineEnd: lineEnds) {
 			symbol.replace(lineEnd,"");
 		}
 	}

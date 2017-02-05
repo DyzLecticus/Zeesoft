@@ -24,15 +24,6 @@ public class ZIntegerGenerator {
 		}
 		this.min = min;
 		this.max = max;
-		if (min<max) {
-			this.min = min;
-			this.max = max;
-			Random rand = new Random();
-			int num = -1;
-			while (num < min) {
-				 num = (int) (rand.nextDouble() * (max + 1));
-			}
-		}
 	}
 	
 	/**
@@ -41,12 +32,14 @@ public class ZIntegerGenerator {
 	 * @return The random integer value
 	 */
 	public int getNewInteger() {
-		int num = min;
-		if (min>max) {
+		int num = -1;
+		if (min<max) {
 			Random rand = new Random();
 			while (num < min) {
 				 num = (int) (rand.nextDouble() * (max + 1));
 			}
+		} else {
+			num = min;
 		}
 		return num;
 	}

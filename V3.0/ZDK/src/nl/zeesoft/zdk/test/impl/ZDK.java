@@ -43,6 +43,7 @@ public class ZDK extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
+		tests.add(new TestZIntegerGenerator(getTester()));
 		tests.add(new TestZStringEncoder(getTester()));
 		tests.add(new TestZStringSymbolParser(getTester()));
 		tests.add(new TestMessenger(getTester()));

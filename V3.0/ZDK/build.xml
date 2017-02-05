@@ -3,7 +3,7 @@
 	<description>ZDK build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.16"/>
+	<property name="version" value="0.9.17"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
 	

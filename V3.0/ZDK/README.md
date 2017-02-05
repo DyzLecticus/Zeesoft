@@ -9,7 +9,7 @@ It provides support for;
  * Self documenting and testing libraries  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.16.zip) to download the latest ZDK release (version 0.9.16).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.17.zip) to download the latest ZDK release (version 0.9.17).  
 All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -18,6 +18,32 @@ The tests used to develop this libary are also used to generate this README file
 Run the [ZDK](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/src/nl/zeesoft/zdk/test/impl/ZDK.java) class as a java application to print this documentation to the standard out.  
 Click [here](#test-results) to scroll down to the test result summary.  
 
+nl.zeesoft.zdk.test.impl.TestZIntegerGenerator
+----------------------------------------------
+This test shows how to use the *ZIntegerGenerator* to generate non-negative random integers.
+
+**Example implementation**  
+~~~~
+// Create the ZIntegerGenerator
+ZIntegerGenerator generator = new ZIntegerGenerator(0,9);
+// Generate a random integer
+int random = generator.getNewInteger();
+~~~~
+
+Class references;  
+ * [TestZIntegerGenerator](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/src/nl/zeesoft/zdk/test/impl/TestZIntegerGenerator.java)
+ * [ZIntegerGenerator](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/src/nl/zeesoft/zdk/ZIntegerGenerator.java)
+
+**Test output**  
+The output of this test shows 100 randomly generated integers within the range 0 - 9.
+~~~~
+8 2 6 4 0 4 7 8 8 6 6 5 1 7 1 5 8 7 0 8
+0 5 8 1 8 7 5 2 8 2 0 4 4 9 4 4 6 3 4 6
+0 1 3 1 3 7 8 6 7 5 3 5 7 0 0 8 4 8 7 8
+1 3 1 5 4 8 8 6 3 9 3 7 3 4 6 6 4 6 4 0
+0 4 9 0 5 3 8 3 6 4 9 0 9 4 4 1 5 8 8 5
+~~~~
+
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
 -------------------------------------------
 This test shows how to use the *ZStringEncoder* to generate a key and then use that to encode and decode a text.
@@ -25,7 +51,7 @@ This test shows how to use the *ZStringEncoder* to generate a key and then use t
 **Example implementation**  
 ~~~~
 // Create the ZStringEncoder
-ZStringEncoder encoder = new ZStringEncoder(null,"Example text to be encoded.");
+ZStringEncoder encoder = new ZStringEncoder("Example text to be encoded.");
 // Generate a key
 String key = encoder.generateNewKey(1024);
 // Use the key to encode the text
@@ -44,9 +70,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 0000000000000000000000000000000000000000000000000000000000000000
+Key: 3718720432520902629209966559799674851625251927404439602056318102
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
-Encoded text: HBaBhBhBkBiA7AiBuB7AjB7BiBaB7AeBoB7ADBuBvB7ALBaB9BpBeB9BqBoBkA7AHBkBsB7A7BnBaB7AuBkBqB7AbBaBaBhBeBjBcB7ApBkB0B7BuB:A0
+Encoded text: NTVXWTeY7X7SEQQVdUiSzVWTeSmYzQvTtW~SYYkTvS1YtYxWqWVW4WTZMXiZZYyVHWiVeYkU~SqWmToUCTzV9TuXyT7XxUQSRVUVvUIXhWHRXTLR3WEV0
 Decoded text: Hello, my name is Dyz Lecticus. How are you feeling today?
 ~~~~
 
@@ -57,7 +83,7 @@ This test shows how to use the *ZStringSymbolParser* to parse symbols (words and
 **Example implementation**  
 ~~~~
 // Create the ZStringSymbolParser
-ZStringSymbolParser parser = new ZStringSymbolParser("Example text."));
+ZStringSymbolParser parser = new ZStringSymbolParser("Example text.");
 // Parse the string
 List<String> symbols = parser.toSymbolsPunctuated();
 ~~~~
@@ -121,17 +147,18 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2017-02-04 22:41:32:471 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2017-02-04 22:41:32:772 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2017-02-04 22:41:33:087 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2017-02-05 11:05:12:936 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2017-02-05 11:05:13:237 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2017-02-05 11:05:13:548 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
-All 3 tests have been executed successfully (8 assertions).  
-Total test duration: 786 ms (total sleep duration: 600 ms).  
+All 4 tests have been executed successfully (108 assertions).  
+Total test duration: 731 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 248 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 256 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 319 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 222 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 254 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 263 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 253 Kb / 0 Mb
