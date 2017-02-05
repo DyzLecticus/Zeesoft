@@ -5,6 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.test.MockObject;
 import nl.zeesoft.zid.dialog.Dialog;
+import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternObject;
 
 public class MockDialogs extends MockObject {
@@ -17,7 +18,7 @@ public class MockDialogs extends MockObject {
 	protected Object initialzeMock() {
 		List<Dialog> dialogs = new ArrayList<Dialog>();
 		
-		Dialog dialog = new Dialog("EnglishHandshake",HandshakeController.class.getName());
+		Dialog dialog = new Dialog("Handshake",Language.ENG,HandshakeController.class.getName());
 		dialogs.add(dialog);
 		
 		dialog.addExample("Hello. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");
@@ -54,7 +55,7 @@ public class MockDialogs extends MockObject {
 		dialog.addVariable("nextDialog",PatternObject.TYPE_ALPHABETIC);
 		dialog.addVariableExample("nextDialog","What can I do for you {fullName}?","{nextDialog}.");
 
-		dialog = new Dialog("DutchHandshake",HandshakeController.class.getName());
+		dialog = new Dialog("Handdruk",Language.NLD,HandshakeController.class.getName());
 		dialogs.add(dialog);
 
 		dialog.addExample("Hallo. Mijn naam is {firstName} {preposition} {lastName}.","Hallo {fullName}.");

@@ -33,15 +33,15 @@ public class HandshakeController extends DialogControllerObject {
 			name.append(lName);
 			
 			if (name.toString().equals("Andre van der Zee")) {
-				if (dialog.getName().equals("EnglishHandshake")) {
+				if (dialog.getName().equals("Handshake")) {
 					getOutput().append("Nice to interact with you again {fullName}.");
-				} else if (dialog.getName().equals("DutchHandshake")) {
+				} else if (dialog.getName().equals("Handdruk")) {
 					getOutput().append("Leuk om weer een interactie met je aan te gaan {fullName}.");
 				}
 			} else if (name.toString().equals("Dyz Lecticus")) {
-				if (dialog.getName().equals("EnglishHandshake")) {
+				if (dialog.getName().equals("Handshake")) {
 					getOutput().append("This is going to be very confusing {fullName}.");
-				} else if (dialog.getName().equals("DutchHandshake")) {
+				} else if (dialog.getName().equals("Handdruk")) {
 					getOutput().append("Dit wordt heel verwarrend {fullName}.");
 				}
 			}

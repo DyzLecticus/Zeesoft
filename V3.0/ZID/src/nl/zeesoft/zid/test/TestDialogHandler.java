@@ -43,15 +43,13 @@ public class TestDialogHandler extends TestObject {
 		output = handler.processInput(new ZStringSymbolParser("gekke henkie"));
 		assertEqual(output.toString(),"Wat kan ik voor je doen Gekke Henkie?","Output does not match expectation");
 		output = handler.processInput(new ZStringSymbolParser("gekke"));
-		assertEqual(output.toString(),"Wat is jouw achternaam?","Output does not match expectation");
+		assertEqual(output.toString(),"Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?","Output does not match expectation");
 		output = handler.processInput(new ZStringSymbolParser("van henkie"));
-		assertEqual(output.toString(),"Wat kan ik voor je doen Gekke van Henkie?","Output does not match expectation");
+		assertEqual(output.toString(),"Wat is jouw achternaam?","Output does not match expectation");
 
 		// Handshake context switch
 		output = handler.processInput(new ZStringSymbolParser("what is your name?"));
 		assertEqual(output.toString(),"My name is Dyz Lecticus. What is your name?","Output does not match expectation");
-		output = handler.processInput(new ZStringSymbolParser("hoe heet jij?"));
-		assertEqual(output.toString(),"Hello. My name is Dyz Lecticus. What is your name?","Output does not match expectation");
 		output = handler.processInput(new ZStringSymbolParser("hoe heet jij?"));
 		assertEqual(output.toString(),"Mijn naam is Dyz Lecticus. Wat is jouw naam?","Output does not match expectation");
 

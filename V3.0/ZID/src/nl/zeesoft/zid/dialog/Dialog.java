@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zspr.Language;
 
 public class Dialog {
 	private String					name				= "";
+	private Language				language			= null;
 	private String					controllerClassName	= "";
 	private List<DialogExample>		examples			= new ArrayList<DialogExample>();
 	private List<DialogVariable>	variables			= new ArrayList<DialogVariable>();
 	
-	public Dialog(String name,String controllerClassName) {
+	public Dialog(String name,String languageCode,String controllerClassName) {
 		this.name = name;
+		this.language = Language.getLanguage(languageCode);
 		this.controllerClassName = controllerClassName;
 	}
 	
@@ -44,6 +47,14 @@ public class Dialog {
 			}
 		}
 		return r;
+	}
+
+	public Language getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
 	
 	public String getControllerClassName() {
