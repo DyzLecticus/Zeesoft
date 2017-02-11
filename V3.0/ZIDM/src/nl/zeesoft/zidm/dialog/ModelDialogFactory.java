@@ -1,5 +1,6 @@
 package nl.zeesoft.zidm.dialog;
 
+import nl.zeesoft.zdm.model.Model;
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zspr.Language;
 
@@ -15,8 +16,8 @@ public class ModelDialogFactory {
 	
 	public static final String defaultAnswer			= "Interesting.";
 	
-	public Dialog getEnglishModelDialog() {
-		Dialog dialog = new Dialog(Modelling,Language.ENG,ModelDialogController.class.getName());
+	public Dialog getEnglishModelDialog(Model model) {
+		Dialog dialog = new ModelDialog(Modelling,Language.ENG,ModelDialogController.class.getName(),model);
 		dialog.addExample("A {" + classNameSingle + "} is a {" + extendedClassNameSingle + "}.",defaultAnswer);
 		dialog.addExample("A {" + classNameSingle + "} is an {" + extendedClassNameSingle + "}.",defaultAnswer);
 		dialog.addExample("An {" + classNameSingle + "} is a {" + extendedClassNameSingle + "}.",defaultAnswer);
