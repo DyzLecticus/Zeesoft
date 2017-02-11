@@ -7,7 +7,7 @@ import nl.zeesoft.zsc.confabulator.ConfabulationSequenceObject;
  */
 public final class ExtensionConfabulation extends ConfabulationSequenceObject {
 	public ExtensionConfabulation() {
-		
+
 	}
 
 	public ExtensionConfabulation(String sequence) {

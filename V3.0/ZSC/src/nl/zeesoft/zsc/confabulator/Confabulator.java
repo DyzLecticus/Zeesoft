@@ -339,37 +339,84 @@ public final class Confabulator extends ConfabulatorTrainer {
 		while (confabulate) {
 			String[] conclusions = getConclusions(workingExtension,futureConclusions);
 			applyConclusionsToModules(conclusions);
-			winner = confabulateForward(confab,conclusions);
-			if (winner.length()==0) {
-				winner = confabulateBackward(confab,conclusions);
-			}
-			if (winner.length()==0) {
-				newFutureConclusions = new ArrayList<String>();
-				int newFilledConclusions = 0;
-				for (int nM = (getMaxLinkDistanceNoLock() + 1); nM<conclusions.length; nM++) {
-					String nWinner = modules.get(nM).getWinningModuleSymbol();
-					newFutureConclusions.add(nWinner);
-					if (nWinner.length()>0) {
-						newFilledConclusions++;
-					}
-				}
-				if (filledConclusions==newFilledConclusions) {
+			if (confab.isStrict()) {
+				List<String> activeSymbols = getActiveSymbols(confab,conclusions);
+				if (activeSymbols.size()==1) {
+					winner = activeSymbols.get(0);
 					confabulate = false;
+				} else if (activeSymbols.size()>0) {
+					for (String symbol: activeSymbols) {
+						modules.get(getMaxLinkDistanceNoLock()).getActiveSymbols().add(symbol);
+					}
 				} else {
-					filledConclusions = newFilledConclusions;
-					futureConclusions = newFutureConclusions;
+					confabulate = false;
 				}
-			} else {
-				confabulate = false;
+			}
+			if (confabulate) {
+				winner = confabulateForward(confab,conclusions);
+				if (winner.length()==0) {
+					winner = confabulateBackward(confab,conclusions);
+				}
+				if (winner.length()==0) {
+					newFutureConclusions = new ArrayList<String>();
+					int newFilledConclusions = 0;
+					for (int nM = (getMaxLinkDistanceNoLock() + 1); nM<conclusions.length; nM++) {
+						String nWinner = modules.get(nM).getWinningModuleSymbol();
+						newFutureConclusions.add(nWinner);
+						if (nWinner.length()>0) {
+							newFilledConclusions++;
+						}
+					}
+					if (filledConclusions==newFilledConclusions) {
+						confabulate = false;
+					} else {
+						filledConclusions = newFilledConclusions;
+						futureConclusions = newFutureConclusions;
+					}
+				} else {
+					confabulate = false;
+				}
 			}
 		}
 		return winner;
 	}
-	
+
+	private List<String> getActiveSymbols(ConfabulationSequenceObject confab,String[] conclusions) {
+		List<String> activeSymbols = new ArrayList<String>(allSequenceSymbols);
+		for (String symbol: allSequenceSymbols) {
+			int distance = getMaxLinkDistanceNoLock();
+			int start = 0;
+			if (confab instanceof ExtensionConfabulation) {
+				distance = 1;
+				start = (getMaxLinkDistanceNoLock() - 1);
+			}
+			for (int c = start; c < conclusions.length; c++) {
+				if (c!=getMaxLinkDistanceNoLock() && conclusions[c].length()>0) {
+					if (c<getMaxLinkDistanceNoLock()) {
+						List<Link> lnks = getLinksBySymbolFromToDistanceNoLock(conclusions[c],symbol,distance,confab.getContext().toSymbols());
+						if (lnks.size()==0) {
+							activeSymbols.remove(symbol);
+						}
+					} else {
+						List<Link> lnks = getLinksBySymbolFromToDistanceNoLock(symbol,conclusions[c],distance,confab.getContext().toSymbols());
+						if (lnks.size()==0) {
+							activeSymbols.remove(symbol);
+						}
+					}
+				}
+				if (c<getMaxLinkDistanceNoLock()) {
+					distance--;
+				} else {
+					distance++;
+				}
+			}
+		}
+		return activeSymbols;
+	}
+
 	private String confabulateForward(ConfabulationSequenceObject confab,String[] conclusions) {
 		String winner = "";
 		for (int c = getMaxLinkDistanceNoLock(); c < conclusions.length; c++) {
-			boolean foundLinks = false;
 			if (conclusions[c].length()==0) {
 				int distance = 0;
 				for (int pM = (c - 1); pM>=0; pM--) {
@@ -380,37 +427,19 @@ public final class Confabulator extends ConfabulatorTrainer {
 							modules.get(pM).setSymbolLevel(symbolFrom,0);
 						} else {
 							List<Link> lnks = getLinksBySymbolFromDistanceNoLock(symbolFrom,distance,confab.getContext().toSymbols());
-							if (lnks.size()>0) {
-								foundLinks = true;
-							}
-							if (confab.isStrict() && distance==1) {
-								for (Link lnk: lnks) {
-									if (!modules.get(c).getActiveSymbols().contains(lnk.getSymbolTo())) {
-										modules.get(c).getActiveSymbols().add(lnk.getSymbolTo());
-									}
-								}
-							}
 							fireLinksIntoModule(confab,c,lnks,true,false);
 						}
 						s++;
-					}
-					if (!foundLinks && confab.isStrict() && c==getMaxLinkDistanceNoLock() && distance==1) {
-						break;
 					}
 					if (distance>=getMaxLinkDistanceNoLock()) {
 						break;
 					}
 				}
 			}
-			if (c==getMaxLinkDistanceNoLock()) {
-				if (!foundLinks && confab.isStrict()) {
+			if (c==getMaxLinkDistanceNoLock() && !confab.isForceMaxDepth()) {
+				winner = modules.get(getMaxLinkDistanceNoLock()).getWinningModuleSymbol();
+				if (winner.length()>0) {
 					break;
-				}
-				if (!confab.isForceMaxDepth()) {
-					winner = modules.get(getMaxLinkDistanceNoLock()).getWinningModuleSymbol();
-					if (winner.length()>0) {
-						break;
-					}
 				}
 			}
 		}
@@ -509,19 +538,22 @@ public final class Confabulator extends ConfabulatorTrainer {
 	}
 
 	private List<Link> getLinksBySymbolFromDistanceNoLock(String symbolFrom, int distance, List<String> context) {
-		List<Link> r = new ArrayList<Link>();
-		for (Link lnk: getLinksNoLock()) {
-			if (lnk.getSymbolFrom().equals(symbolFrom) && lnk.getDistance()==distance && (context==null || context.size()==0 || context.contains(lnk.getSymbolContext())) && lnk.getCount()>1) {
-				r.add(lnk);
-			}
-		}
-		return r;
+		return getLinksBySymbolFromToDistanceNoLock(symbolFrom,null,distance,context);
 	}
 
 	private List<Link> getLinksBySymbolToDistanceNoLock(String symbolTo, int distance, List<String> context) {
+		return getLinksBySymbolFromToDistanceNoLock(null,symbolTo,distance,context);
+	}
+
+	private List<Link> getLinksBySymbolFromToDistanceNoLock(String symbolFrom, String symbolTo, int distance, List<String> context) {
 		List<Link> r = new ArrayList<Link>();
 		for (Link lnk: getLinksNoLock()) {
-			if (lnk.getSymbolTo().equals(symbolTo) && lnk.getDistance()==distance && (context==null || context.size()==0 || context.contains(lnk.getSymbolContext())) && lnk.getCount()>1) {
+			if (lnk.getDistance()==distance &&
+				lnk.getCount()>1 &&
+				(symbolFrom==null || symbolFrom.length()==0 || lnk.getSymbolFrom().equals(symbolFrom)) &&
+				(symbolTo==null || symbolTo.length()==0 || lnk.getSymbolTo().equals(symbolTo)) &&
+				(context==null || context.size()==0 || context.contains(lnk.getSymbolContext())) 
+				) {
 				r.add(lnk);
 			}
 		}
