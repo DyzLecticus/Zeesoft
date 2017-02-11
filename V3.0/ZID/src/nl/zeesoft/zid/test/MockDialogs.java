@@ -41,7 +41,11 @@ public class MockDialogs extends MockObject {
 		dialog.addVariableExample("firstName","What is your name?","My name is {firstName}.");
 		dialog.addVariableExample("firstName","What is your name?","{firstName} {preposition} {lastName}.");
 		dialog.addVariableExample("firstName","What is your name?","{firstName} {lastName}.");
+		dialog.addVariableExample("firstName","What is your name?","{firstName} {lastName}.");
+		dialog.addVariableExample("firstName","What is your name?","{firstName} {lastName}.");
 		dialog.addVariableExample("firstName","What is your name?","{firstName}.");
+		dialog.addVariableExample("firstName","What is your firstname?","{firstName}.");
+		dialog.addVariableExample("firstName","What is your firstname?","My firstname is {firstName}.");
 
 		dialog.addVariable("lastName",PatternObject.TYPE_ALPHABETIC);
 		dialog.addVariableExample("lastName","What is your lastname?","My lastname is {preposition} {lastName}.");
@@ -82,7 +86,10 @@ public class MockDialogs extends MockObject {
 		dialog.addVariableExample("firstName","Wat is jouw naam?","Mijn naam is {firstName}.");
 		dialog.addVariableExample("firstName","Wat is jouw naam?","{firstName} {preposition} {lastName}.");
 		dialog.addVariableExample("firstName","Wat is jouw naam?","{firstName} {lastName}.");
+		dialog.addVariableExample("firstName","Wat is jouw naam?","{firstName} {lastName}.");
+		dialog.addVariableExample("firstName","Wat is jouw naam?","{firstName} {lastName}.");
 		dialog.addVariableExample("firstName","Wat is jouw naam?","{firstName}.");
+		dialog.addVariableExample("firstName","Wat is jouw voornaam?","{firstName}.");
 
 		dialog.addVariable("lastName",PatternObject.TYPE_ALPHABETIC);
 		dialog.addVariableExample("lastName","Wat is jouw achternaam?","Mijn achternaam is {preposition} {lastName}.");

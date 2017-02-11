@@ -147,7 +147,7 @@ public class DialogHandler extends Locker {
 
 		// Determine context
 		String context = "";
-		boolean selectedDialog = false;
+		//boolean selectedDialog = false;
 		List<String> expectedTypes = null;
 
 		ZStringSymbolParser sequence = new ZStringSymbolParser(input);
@@ -196,28 +196,38 @@ public class DialogHandler extends Locker {
 		}
 		
 		// Determine dialog
+		boolean changedDialog = false;
 		lockMe(this);
 		if (dialog!=null && inputLanguage!=dialog.getLanguage()) {
 			setDialogNoLock("");
+			changedDialog = true;
 		}
 		if (inputDialog!=null && (dialog==null || dialog!=inputDialog)) {
 			setDialogNoLock(inputDialog.getName());
-			selectedDialog = true;
+			changedDialog = true;
 		}
-		
-		if (dialog!=null) {
-			currentDialog = dialog;
-			currentDialogController = dialogController;
-			currentDialogVariable = "";
-			expectedTypes = dialog.getExpectedTypes();
-			for (DialogVariable variable: dialog.getVariables()) {
-				if (currentDialogVariable.length()==0) {
-					promptForDialogVariable = variable.getName();
-					currentDialogVariable = promptForDialogVariable;
-					break;
+		if (changedDialog) {
+			if (dialog!=null) {
+				currentDialog = dialog;
+				currentDialogController = dialogController;
+				currentDialogVariable = "";
+				expectedTypes = dialog.getExpectedTypes();
+				for (DialogVariable variable: dialog.getVariables()) {
+					if (currentDialogVariable.length()==0) {
+						promptForDialogVariable = variable.getName();
+						currentDialogVariable = promptForDialogVariable;
+						break;
+					}
 				}
+				context = currentDialog.getName() + " " + currentDialog.getLanguage().getCode();
+			} else {
+				currentDialog = null;
+				currentDialogController = null;
+				currentDialogVariable = "";
 			}
+		} else if (currentDialog!=null) {
 			context = currentDialog.getName() + " " + currentDialog.getLanguage().getCode();
+			expectedTypes = currentDialog.getExpectedTypes();
 		} else {
 			currentDialog = null;
 			currentDialogController = null;
@@ -226,7 +236,7 @@ public class DialogHandler extends Locker {
 		unlockMe(this);
 
 		if (context.length()>0) {
-			if (selectedDialog) {
+			if (changedDialog) {
 				addLogLine("--- Selected dialog: " + currentDialog.getName() + " (controller: " + currentDialog.getControllerClassName() + ")");
 			} else {
 				addLogLine("--- Continuing dialog: " + currentDialog.getName());
@@ -258,40 +268,12 @@ public class DialogHandler extends Locker {
 		if (currentDialog!=null && currentDialogController!=null && correction.getCorrectionValues().size()>0) {
 			lockMe(this);
 			
-			/*
-			if (currentDialogVariable==null) {
-				List<String> values = new ArrayList<String>(correction.getCorrectionKeys());
-				int i = 0;
-				for (String value: values) {
-					for (DialogVariable variable: dialog.getVariables()) {
-						if (dialogVariables.get(variable.getName()).equals("")) {
-							if (value.startsWith(variable.getType())) {
-								if (value.contains(patternManager.getOrConcatenator())) {
-									for (String val: value.split("\\" + patternManager.getOrConcatenator())) {
-										if (val.startsWith(variable.getType())) {
-											value = val;
-											break;
-										}
-									}
-								}
-								dialogVariables.put(variable.getName(),value);
-								updatedVariables.add(variable);
-								correction.getCorrectionKeys().remove(i);
-								correction.getCorrectionValues().remove(i);
-								i--;
-								break;
-							}
-						}
-					}
-					i++;
-				}
-			}
-			*/
-			
+			List<String> correctedKeys = new ArrayList<String>();
 			for (DialogVariable variable: dialog.getVariables()) {
 				String macro = "{" + variable.getName() + "}";
 				if (correction.getCorrectionValues().contains(macro)) {
 					String value = correction.getCorrectionKeys().get(correction.getCorrectionValues().indexOf(macro));
+					correctedKeys.add(value);
 					PatternObject pattern = getPatternForDialogVariableValue(variable, value);
 					if (pattern!=null) {
 						if (value.contains(patternManager.getOrConcatenator())) {
@@ -310,29 +292,26 @@ public class DialogHandler extends Locker {
 			
 			if (updatedVariables.size()<dialogVariables.size()) {
 				List<String> values = new ArrayList<String>(correction.getCorrectionKeys());
-				int i = 0;
 				for (String value: values) {
-					for (DialogVariable variable: dialog.getVariables()) {
-						if (dialogVariables.get(variable.getName()).equals("")) {
-							if (value.startsWith(variable.getType())) {
-								if (value.contains(patternManager.getOrConcatenator())) {
-									for (String val: value.split("\\" + patternManager.getOrConcatenator())) {
-										if (val.startsWith(variable.getType())) {
-											value = val;
-											break;
+					if (value.contains(patternManager.getOrConcatenator()) || !correctedKeys.contains(value)) {
+						for (DialogVariable variable: dialog.getVariables()) {
+							if (dialogVariables.get(variable.getName()).equals("")) {
+								if (value.startsWith(variable.getType())) {
+									if (value.contains(patternManager.getOrConcatenator())) {
+										for (String val: value.split("\\" + patternManager.getOrConcatenator())) {
+											if (val.startsWith(variable.getType())) {
+												value = val;
+												break;
+											}
 										}
 									}
+									dialogVariables.put(variable.getName(),value);
+									updatedVariables.add(variable);
+									break;
 								}
-								dialogVariables.put(variable.getName(),value);
-								updatedVariables.add(variable);
-								correction.getCorrectionKeys().remove(i);
-								correction.getCorrectionValues().remove(i);
-								i--;
-								break;
 							}
 						}
 					}
-					i++;
 				}
 			}
 			
@@ -376,7 +355,7 @@ public class DialogHandler extends Locker {
 			}
 			if (currentDialogController.isCompleted()) {
 				lockMe(this);
-				setDialogNoLock(null);
+				setDialogNoLock("");
 				currentDialog = dialog;
 				currentDialogController = dialogController;
 				currentDialogVariable = promptForDialogVariable;
@@ -539,7 +518,10 @@ public class DialogHandler extends Locker {
 	}
 
 	protected final void setDialogNoLock(String name) {
-		Dialog newDialog = getDialogNoLock(name);
+		Dialog newDialog = null;
+		if (name!=null && name.length()>0) {
+			newDialog = getDialogNoLock(name);
+		}
 		if (newDialog!=null && dialog!=newDialog) {
 			dialog = newDialog;
 			dialogController = dialog.getNewController();

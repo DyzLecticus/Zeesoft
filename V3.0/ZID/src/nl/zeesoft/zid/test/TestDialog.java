@@ -84,7 +84,7 @@ public class TestDialog extends TestObject {
 			assertEqual(dialogs.get(0).getVariables().size(),4,"Number of dialog variables does not match expectation");
 			if (dialogs.get(0).getVariables().size()>0) {
 				assertEqual(dialogs.get(0).getVariables().get(0).getType(),PatternObject.TYPE_ALPHABETIC,"Dialog variable type does not match expectation");
-				assertEqual(dialogs.get(0).getVariables().get(0).getExamples().size(),6,"Number of dialog variable examples does not match expectation");
+				assertEqual(dialogs.get(0).getVariables().get(0).getExamples().size(),10,"Number of dialog variable examples does not match expectation");
 			}
 		}
 	}

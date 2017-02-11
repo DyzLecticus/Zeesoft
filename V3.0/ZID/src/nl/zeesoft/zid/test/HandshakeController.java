@@ -3,8 +3,11 @@ package nl.zeesoft.zid.test;
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.dialog.DialogControllerObject;
 import nl.zeesoft.zid.dialog.DialogHandler;
+import nl.zeesoft.zspr.Language;
 
 public class HandshakeController extends DialogControllerObject {	
+	boolean promptFirstNameExplicitly = false;
+
 	@Override
 	public void updatedVariables(DialogHandler handler, Dialog dialog) {
 		String fName = getDialogVariableValueString(handler,dialog.getVariable("firstName"));
@@ -12,7 +15,17 @@ public class HandshakeController extends DialogControllerObject {
 		String lName = getDialogVariableValueString(handler,dialog.getVariable("lastName"));
 
 		Object fullName = getVariable(handler,"fullName");
-
+		
+		if (!promptFirstNameExplicitly && (fName.toLowerCase().equals(prepo) || fName.toLowerCase().equals(lName.toLowerCase()))) {
+			setDialogVariable(handler,"firstName","");
+			fName = "";
+			if (lName.length()>0) {
+				 promptFirstNameExplicitly = true;
+			}
+		} else {
+			promptFirstNameExplicitly = false;
+		}
+		
 		if (fName.length()>0) {
 			fName = fName.substring(0,1).toUpperCase() + fName.substring(1);
 			if (fullName!=null && !fullName.toString().startsWith(fName)) {
@@ -22,7 +35,7 @@ public class HandshakeController extends DialogControllerObject {
 		if (lName.length()>0) {
 			lName = lName.substring(0,1).toUpperCase() + lName.substring(1);
 		}
-				
+		
 		if (fName.length()>0 && lName.length()>0) {
 			StringBuilder name = new StringBuilder(fName);
 			if (prepo.length()>0) {
@@ -33,15 +46,15 @@ public class HandshakeController extends DialogControllerObject {
 			name.append(lName);
 			
 			if (name.toString().equals("Andre van der Zee")) {
-				if (dialog.getName().equals("Handshake")) {
+				if (dialog.getLanguage().getCode().equals(Language.ENG)) {
 					getOutput().append("Nice to interact with you again {fullName}.");
-				} else if (dialog.getName().equals("Handdruk")) {
+				} else if (dialog.getLanguage().getCode().equals(Language.NLD)) {
 					getOutput().append("Leuk om weer een interactie met je aan te gaan {fullName}.");
 				}
 			} else if (name.toString().equals("Dyz Lecticus")) {
-				if (dialog.getName().equals("Handshake")) {
+				if (dialog.getLanguage().getCode().equals(Language.ENG)) {
 					getOutput().append("This is going to be very confusing {fullName}.");
-				} else if (dialog.getName().equals("Handdruk")) {
+				} else if (dialog.getLanguage().getCode().equals(Language.NLD)) {
 					getOutput().append("Dit wordt heel verwarrend {fullName}.");
 				}
 			}
@@ -50,6 +63,13 @@ public class HandshakeController extends DialogControllerObject {
 			setCompleted(true);
 		} else {
 			if (fName.length()==0) {
+				if (promptFirstNameExplicitly) {
+					if (dialog.getLanguage().getCode().equals(Language.ENG)) {
+						getOutput().append("What is your firstname?");
+					} else if (dialog.getLanguage().getCode().equals(Language.NLD)) {
+						getOutput().append("Wat is jouw voornaam?");
+					}
+				}
 				setPromptForDialogVariable("firstName");
 			} else if (lName.length()==0) {
 				setPromptForDialogVariable("lastName");
