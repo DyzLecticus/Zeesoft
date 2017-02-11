@@ -340,7 +340,10 @@ public final class Confabulator extends ConfabulatorTrainer {
 			String[] conclusions = getConclusions(workingExtension,futureConclusions);
 			applyConclusionsToModules(conclusions);
 			if (confab.isStrict()) {
-				List<String> activeSymbols = getActiveSymbols(confab,conclusions);
+				List<String> activeSymbols = getActiveSymbols(confab,conclusions,true);
+				if (activeSymbols.size()==0) {
+					activeSymbols = getActiveSymbols(confab,conclusions,false);
+				}
 				if (activeSymbols.size()==1) {
 					winner = activeSymbols.get(0);
 					confabulate = false;
@@ -381,12 +384,12 @@ public final class Confabulator extends ConfabulatorTrainer {
 		return winner;
 	}
 
-	private List<String> getActiveSymbols(ConfabulationSequenceObject confab,String[] conclusions) {
+	private List<String> getActiveSymbols(ConfabulationSequenceObject confab,String[] conclusions,boolean fullStrict) {
 		List<String> activeSymbols = new ArrayList<String>(allSequenceSymbols);
 		for (String symbol: allSequenceSymbols) {
 			int distance = getMaxLinkDistanceNoLock();
 			int start = 0;
-			if (confab instanceof ExtensionConfabulation) {
+			if (!fullStrict) {
 				distance = 1;
 				start = (getMaxLinkDistanceNoLock() - 1);
 			}

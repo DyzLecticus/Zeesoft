@@ -5,7 +5,7 @@ It provides support for confabulation; the process of learning, generating and f
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSC/releases/zsc-0.9.9.zip) to download the latest ZSC release (version 0.9.9).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSC/releases/zsc-0.9.10.zip) to download the latest ZSC release (version 0.9.10).  
 All ZSC releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSC/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -78,7 +78,7 @@ Link: 1079, from: 'Zee', to: '.', distance: 1, count: 2, context: 'I'
 Link: 1080, from: 'Zee', to: '.', distance: 1, count: 2, context: 'Self'
 Link: 1081, from: 'Zee', to: '.', distance: 1, count: 2, context: 'My'
 Link: 1082, from: 'Zee', to: '.', distance: 1, count: 2, context: 'Creator'
-Total Links: 1082 (49 ms)
+Total Links: 1082 (52 ms)
 ~~~~
 
 nl.zeesoft.zsc.test.TestConfabulatorContextConfabulation
@@ -108,9 +108,9 @@ The output of this test shows the confabulation input sequence, log summary, and
 Please note how the context confabulation favours the most significant context symbol over the stronger associated context symbols in the *MockConfabulator*.  
 ~~~~
 Confabulation input sequence: What is your name?
-2017-02-11 11:57:23:029: Confabulated winning context symbol: Name
+2017-02-11 12:35:08:733: Confabulated winning context symbol: Name
 Module 00:  Name (786) My (564) Self (462) I (462) Goal (342) ... [1]
-Confabulation output: Name (49 ms)
+Confabulation output: Name (53 ms)
 ~~~~
 
 nl.zeesoft.zsc.test.TestConfabulatorCorrectionConfabulation
@@ -143,7 +143,7 @@ The output of this test shows the confabulation input sequence, log summary, and
 Please note how the modules are used in the first confabulation to search through all possible symbol combinations.
 ~~~~
 Confabulation input sequence: What is your bla?
-2017-02-11 11:57:23:126: Confabulated replacement symbol: name, for: bla
+2017-02-11 12:35:08:837: Confabulated replacement symbol: name, for: bla
 Module 5:  What (1)
 Module 6:  is (1)
 Module 7:  your (1)
@@ -156,15 +156,15 @@ Module 13:  Dyz (4160) to (4032) cognition (2583) artificial (2560) by (2128) ..
 Module 14:  model (4160) Lecticus (4160) cognition (3075) interactions (2600) Andre (2600) ... [13]
 Module 15:  reality (4160) is (3394) . (3220) with (3120) van (3120) ... [13]
 Module 16:  through (4160) people (3640) der (3640) My (3509) with (2600) ... [21]
-Confabulation output: What is your name ? (41 ms)
+Confabulation output: What is your name ? (59 ms)
 
 Confabulation input sequence: What is your bla? (context: Goal)
-2017-02-11 11:57:23:137: Confabulated replacement symbol: goal, for: bla
+2017-02-11 12:35:08:851: Confabulated replacement symbol: goal, for: bla
 Module 5:  What (1)
 Module 6:  is (1)
 Module 7:  your (1)
 Module 9:  ? (1)
-Confabulation output: What is your goal ? (10 ms)
+Confabulation output: What is your goal ? (14 ms)
 ~~~~
 
 nl.zeesoft.zsc.test.TestConfabulatorExtensionConfabulation
@@ -198,16 +198,16 @@ The output of this test shows the confabulation input sequence, log summary, and
 Please note how the confabulated extensions depend on the (lack of) context.
 ~~~~
 Confabulation input sequence: 
-2017-02-11 11:57:23:158: Confabulated first symbol: What
+2017-02-11 12:35:08:874: Confabulated first symbol: What
 Module 8:  What (13248) Who (4216)
-2017-02-11 11:57:23:161: Confabulated next symbol: is
+2017-02-11 12:35:08:877: Confabulated next symbol: is
 Module 7:  What (1)
 Module 8:  is (864) are (745)
-2017-02-11 11:57:23:165: Confabulated next symbol: your
+2017-02-11 12:35:08:883: Confabulated next symbol: your
 Module 6:  What (1)
 Module 7:  is (1)
-Module 8:  your (1750) Dyz (520) to (504) cognition (246)
-2017-02-11 11:57:23:201: Confabulated next symbol: name
+Module 8:  your (1750) cognition (246)
+2017-02-11 12:35:08:918: Confabulated next symbol: name
 Module 5:  What (1)
 Module 6:  is (1)
 Module 7:  your (1)
@@ -220,23 +220,22 @@ Module 13:  Dyz (4160) to (4032) My (3509) cognition (3198) through (2600) ... [
 Module 14:  model (4160) Lecticus (4160) name (3556) goal (3556) interactions (3120) ... [21]
 Module 15:  is (4884) reality (4160) with (3640) . (3220) van (3120) ... [27]
 Module 16:  through (4160) people (4160) to (3906) der (3640) Zee (3640) ... [30]
-2017-02-11 11:57:23:203: Confabulated next symbol: ?
+2017-02-11 12:35:08:927: Confabulated next symbol: ?
 Module 4:  What (1)
 Module 5:  is (1)
 Module 6:  your (1)
 Module 7:  name (1)
-Module 8:  ? (2673) is (476)
-Confabulation output: What is your name ? (49 ms)
+Confabulation output: What is your name ? (55 ms)
 
 Confabulation input sequence: What is artificial cognition?
-2017-02-11 11:57:23:206: Confabulated next symbol: My
+2017-02-11 12:35:08:940: Confabulated next symbol: My
 Module 3:  What (1)
 Module 4:  is (1)
 Module 5:  artificial (1)
 Module 6:  cognition (1)
 Module 7:  ? (1)
 Module 8:  My (2445) I (1010) Cognition (300)
-2017-02-11 11:57:23:233: Confabulated next symbol: name
+2017-02-11 12:35:08:977: Confabulated next symbol: name
 Module 2:  What (1)
 Module 3:  is (1)
 Module 4:  artificial (1)
@@ -252,7 +251,7 @@ Module 13:  through (3640) My (3509) der (2600) Dyz (2600) artificial (2560) ...
 Module 14:  interactions (4160) name (3556) goal (3556) model (3120) Zee (3120) ... [18]
 Module 15:  is (4884) . (4572) with (4160) reality (3640) artificial (3200) ... [20]
 Module 16:  through (4160) people (4160) cognition (3813) der (3640) Dyz (3640) ... [24]
-2017-02-11 11:57:23:236: Confabulated next symbol: is
+2017-02-11 12:35:08:990: Confabulated next symbol: is
 Module 1:  What (1)
 Module 2:  is (1)
 Module 3:  artificial (1)
@@ -261,7 +260,7 @@ Module 5:  ? (1)
 Module 6:  My (1)
 Module 7:  name (1)
 Module 8:  is (3456) ? (468)
-2017-02-11 11:57:23:239: Confabulated next symbol: Dyz
+2017-02-11 12:35:09:004: Confabulated next symbol: Dyz
 Module 0:  What (1)
 Module 1:  is (1)
 Module 2:  artificial (1)
@@ -271,7 +270,7 @@ Module 5:  My (1)
 Module 6:  name (1)
 Module 7:  is (1)
 Module 8:  Dyz (3120) to (2520) your (875) cognition (738)
-2017-02-11 11:57:23:241: Confabulated next symbol: Lecticus
+2017-02-11 12:35:09:020: Confabulated next symbol: Lecticus
 Module 0:  is (1)
 Module 1:  artificial (1)
 Module 2:  cognition (1)
@@ -280,7 +279,7 @@ Module 4:  My (1)
 Module 5:  name (1)
 Module 6:  is (1)
 Module 7:  Dyz (1)
-2017-02-11 11:57:23:243: Confabulated next symbol: .
+2017-02-11 12:35:09:034: Confabulated next symbol: .
 Module 0:  artificial (1)
 Module 1:  cognition (1)
 Module 2:  ? (1)
@@ -289,7 +288,7 @@ Module 4:  name (1)
 Module 5:  is (1)
 Module 6:  Dyz (1)
 Module 7:  Lecticus (1)
-2017-02-11 11:57:23:245: Failed to confabulate next symbol
+2017-02-11 12:35:09:049: Failed to confabulate next symbol
 Module 0:  cognition (1)
 Module 1:  ? (1)
 Module 2:  My (1)
@@ -298,24 +297,24 @@ Module 4:  is (1)
 Module 5:  Dyz (1)
 Module 6:  Lecticus (1)
 Module 7:  . (1)
-Confabulation output: My name is Dyz Lecticus . (41 ms)
+Confabulation output: My name is Dyz Lecticus . (121 ms)
 
 Confabulation input sequence: What is artificial cognition? (context: Cognition)
-2017-02-11 11:57:23:249: Confabulated next symbol: Cognition
+2017-02-11 12:35:09:067: Confabulated next symbol: Cognition
 Module 3:  What (1)
 Module 4:  is (1)
 Module 5:  artificial (1)
 Module 6:  cognition (1)
 Module 7:  ? (1)
 Module 8:  Cognition (300) I (130)
-2017-02-11 11:57:23:252: Confabulated next symbol: refers
+2017-02-11 12:35:09:090: Confabulated next symbol: refers
 Module 2:  What (1)
 Module 3:  is (1)
 Module 4:  artificial (1)
 Module 5:  cognition (1)
 Module 6:  ? (1)
 Module 7:  Cognition (1)
-2017-02-11 11:57:23:255: Confabulated next symbol: to
+2017-02-11 12:35:09:118: Confabulated next symbol: to
 Module 1:  What (1)
 Module 2:  is (1)
 Module 3:  artificial (1)
@@ -323,7 +322,7 @@ Module 4:  cognition (1)
 Module 5:  ? (1)
 Module 6:  Cognition (1)
 Module 7:  refers (1)
-2017-02-11 11:57:23:257: Confabulated next symbol: mental
+2017-02-11 12:35:09:136: Confabulated next symbol: mental
 Module 0:  What (1)
 Module 1:  is (1)
 Module 2:  artificial (1)
@@ -332,7 +331,7 @@ Module 4:  ? (1)
 Module 5:  Cognition (1)
 Module 6:  refers (1)
 Module 7:  to (1)
-2017-02-11 11:57:23:260: Confabulated next symbol: processes
+2017-02-11 12:35:09:155: Confabulated next symbol: processes
 Module 0:  is (1)
 Module 1:  artificial (1)
 Module 2:  cognition (1)
@@ -341,7 +340,7 @@ Module 4:  Cognition (1)
 Module 5:  refers (1)
 Module 6:  to (1)
 Module 7:  mental (1)
-2017-02-11 11:57:23:262: Confabulated next symbol: within
+2017-02-11 12:35:09:173: Confabulated next symbol: within
 Module 0:  artificial (1)
 Module 1:  cognition (1)
 Module 2:  ? (1)
@@ -350,7 +349,7 @@ Module 4:  refers (1)
 Module 5:  to (1)
 Module 6:  mental (1)
 Module 7:  processes (1)
-2017-02-11 11:57:23:265: Confabulated next symbol: the
+2017-02-11 12:35:09:190: Confabulated next symbol: the
 Module 0:  cognition (1)
 Module 1:  ? (1)
 Module 2:  Cognition (1)
@@ -359,7 +358,7 @@ Module 4:  to (1)
 Module 5:  mental (1)
 Module 6:  processes (1)
 Module 7:  within (1)
-2017-02-11 11:57:23:267: Confabulated next symbol: brain
+2017-02-11 12:35:09:205: Confabulated next symbol: brain
 Module 0:  ? (1)
 Module 1:  Cognition (1)
 Module 2:  refers (1)
@@ -368,7 +367,7 @@ Module 4:  mental (1)
 Module 5:  processes (1)
 Module 6:  within (1)
 Module 7:  the (1)
-2017-02-11 11:57:23:270: Confabulated next symbol: .
+2017-02-11 12:35:09:229: Confabulated next symbol: .
 Module 0:  Cognition (1)
 Module 1:  refers (1)
 Module 2:  to (1)
@@ -377,7 +376,7 @@ Module 4:  processes (1)
 Module 5:  within (1)
 Module 6:  the (1)
 Module 7:  brain (1)
-2017-02-11 11:57:23:272: Failed to confabulate next symbol
+2017-02-11 12:35:09:247: Failed to confabulate next symbol
 Module 0:  refers (1)
 Module 1:  to (1)
 Module 2:  mental (1)
@@ -386,23 +385,23 @@ Module 4:  within (1)
 Module 5:  the (1)
 Module 6:  brain (1)
 Module 7:  . (1)
-Confabulation output: Cognition refers to mental processes within the brain . (27 ms)
+Confabulation output: Cognition refers to mental processes within the brain . (196 ms)
 
 Confabulation input sequence: What is artificial cognition? (context: Artificial)
-2017-02-11 11:57:23:291: Confabulated next symbol: I
+2017-02-11 12:35:09:260: Confabulated next symbol: I
 Module 3:  What (1)
 Module 4:  is (1)
 Module 5:  artificial (1)
 Module 6:  cognition (1)
 Module 7:  ? (1)
-2017-02-11 11:57:23:293: Confabulated next symbol: am
+2017-02-11 12:35:09:276: Confabulated next symbol: am
 Module 2:  What (1)
 Module 3:  is (1)
 Module 4:  artificial (1)
 Module 5:  cognition (1)
 Module 6:  ? (1)
 Module 7:  I (1)
-2017-02-11 11:57:23:296: Confabulated next symbol: an
+2017-02-11 12:35:09:298: Confabulated next symbol: an
 Module 1:  What (1)
 Module 2:  is (1)
 Module 3:  artificial (1)
@@ -410,7 +409,7 @@ Module 4:  cognition (1)
 Module 5:  ? (1)
 Module 6:  I (1)
 Module 7:  am (1)
-2017-02-11 11:57:23:298: Confabulated next symbol: artificial
+2017-02-11 12:35:09:332: Confabulated next symbol: artificial
 Module 0:  What (1)
 Module 1:  is (1)
 Module 2:  artificial (1)
@@ -419,7 +418,7 @@ Module 4:  ? (1)
 Module 5:  I (1)
 Module 6:  am (1)
 Module 7:  an (1)
-2017-02-11 11:57:23:301: Confabulated next symbol: cognition
+2017-02-11 12:35:09:357: Confabulated next symbol: cognition
 Module 0:  is (1)
 Module 1:  artificial (1)
 Module 2:  cognition (1)
@@ -428,7 +427,7 @@ Module 4:  I (1)
 Module 5:  am (1)
 Module 6:  an (1)
 Module 7:  artificial (1)
-2017-02-11 11:57:23:303: Confabulated next symbol: .
+2017-02-11 12:35:09:377: Confabulated next symbol: .
 Module 0:  artificial (1)
 Module 1:  cognition (1)
 Module 2:  ? (1)
@@ -437,7 +436,7 @@ Module 4:  am (1)
 Module 5:  an (1)
 Module 6:  artificial (1)
 Module 7:  cognition (1)
-2017-02-11 11:57:23:309: Failed to confabulate next symbol
+2017-02-11 12:35:09:398: Failed to confabulate next symbol
 Module 0:  cognition (1)
 Module 1:  ? (1)
 Module 2:  I (1)
@@ -446,13 +445,13 @@ Module 4:  an (1)
 Module 5:  artificial (1)
 Module 6:  cognition (1)
 Module 7:  . (1)
-Confabulation output: I am an artificial cognition . (22 ms)
+Confabulation output: I am an artificial cognition . (150 ms)
 ~~~~
 
 Test results
 ------------
 All 4 tests have been executed successfully (12 assertions).  
-Total test duration: 400 ms (total sleep duration: 0 ms).  
+Total test duration: 799 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zsc.test.TestConfabulatorTraining: 353 Kb / 0 Mb
