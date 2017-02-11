@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 public abstract class ConfabulationObject {
 	private int					maxOutputSymbols		= 32;
 	private int					accuracy				= 100;
+	private int					countFactor				= 2;
 	private boolean				logModuleSymbolLevels	= false;
 
 	private ZStringSymbolParser	sequence				= new ZStringSymbolParser();
@@ -114,6 +115,31 @@ public abstract class ConfabulationObject {
 			accuracy = 10000;
 		}
 		this.accuracy = accuracy;
+	}
+
+	/**
+	 * Returns the count factor to be used for this confabulation.
+	 * 
+	 * @return The count factor to be used for this confabulation
+	 */
+	public int getCountFactor() {
+		return countFactor;
+	}
+
+	/**
+	 * Sets the count factor to be used for this confabulation (range 0 - 10, default 3).
+	 * 
+	 * Higher count factor means the link count is weighed higher than the number of links to a certain symbol (count factor 1 = equal).
+	 * 
+	 * @param countFactor The count factor to be used for this confabulation
+	 */
+	public void setCountFactor(int countFactor) {
+		if (countFactor<0) {
+			countFactor = 0;
+		} else if (countFactor>10) {
+			countFactor = 10;
+		}
+		this.countFactor = countFactor;
 	}
 
 	/**

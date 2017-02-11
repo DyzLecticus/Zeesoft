@@ -629,7 +629,7 @@ public final class Confabulator extends ConfabulatorTrainer {
 			maxTo = 1;
 		}
 		add = (confab.getAccuracy() + 1) - ((numTo * confab.getAccuracy()) / maxTo);
-		add += 1 + ((lnk.getCount() * confab.getAccuracy()) / maxCount);
+		add += 1 + (((lnk.getCount() * confab.getAccuracy()) / maxCount) * confab.getCountFactor());
 		return add;
 	}
 }
