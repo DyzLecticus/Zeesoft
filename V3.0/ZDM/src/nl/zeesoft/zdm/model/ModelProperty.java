@@ -35,7 +35,7 @@ public final class ModelProperty extends ModelNamedObject {
 	 * 
 	 * @return The class this property belongs to
 	 */
-	protected ModelClass getCls() {
+	public ModelClass getCls() {
 		return cls;
 	}
 

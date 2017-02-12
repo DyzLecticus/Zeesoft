@@ -87,7 +87,7 @@ public final class ModelClass extends ModelNamedObject {
 	 * 
 	 * @return The package this class belongs to
 	 */
-	protected ModelPackage getPack() {
+	public ModelPackage getPack() {
 		return pack;
 	}
 
