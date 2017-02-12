@@ -251,15 +251,19 @@ public class DialogHandler extends Locker {
 
 		// Correct input
 		sequence = new ZStringSymbolParser(input);
-		if (currentDialogVariable!=null) {
+		CorrectionConfabulation correction = correctInput(sequence,currentDialog,currentDialogVariable);
+		if (!changedDialog && currentDialogVariable!=null) {
 			lockMe(this);
 			if (prevOutput.length()>0) {
 				sequence.insert(0," ");
 				sequence.insert(0,prevOutput);
 			}
 			unlockMe(this);
+			CorrectionConfabulation correction2 = correctInput(sequence,currentDialog,currentDialogVariable);
+			if (correction2.getCorrectionKeys().size()>=correction.getCorrectionKeys().size()) {
+				correction = correction2;
+			}
 		}
-		CorrectionConfabulation correction = correctInput(sequence,currentDialog,currentDialogVariable);
 		input.fromSymbols(correction.getOutput().toSymbols(),true,true);
 		addLogLine("--- Corrected input: " + input);
 		

@@ -10,7 +10,7 @@ This library depends on the following libraries;
  * [Zeesoft Symbolic Pattern Recognition](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZSPR/)  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZID/releases/zid-0.9.2.zip) to download the latest ZID release (version 0.9.2).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZID/releases/zid-0.9.3.zip) to download the latest ZID release (version 0.9.3).  
 All ZID releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZID/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -162,109 +162,109 @@ Class references;
 **Test output**  
 The output of this test shows the mock initialization duration, the dialog handler log and the average time spent thinking per response.  
 ~~~~
-Initializing pattern manager took 1641 ms
+Initializing pattern manager took 1465 ms
 
-Initializing dialog handler took 830 ms
+Initializing dialog handler took 740 ms
 
-2017-02-11 15:32:14:443: <<< Hello.
-2017-02-11 15:32:14:447: --- Input language: ENG, input dialog: Handshake
-2017-02-11 15:32:14:448: --- Selected dialog: Handshake (controller: nl.zeesoft.zid.test.HandshakeController)
-2017-02-11 15:32:14:448: --- Translated input: Hello .
-2017-02-11 15:32:14:449: --- Corrected input: Hello.
-2017-02-11 15:32:16:124: --- Extended input to output: Hello. My name is Dyz Lecticus. What is your name?
-2017-02-11 15:32:16:124: --- Translated output: Hello . My name is Dyz Lecticus . What is your name ?
-2017-02-11 15:32:16:124: >>> Hello. My name is Dyz Lecticus. What is your name?
-2017-02-11 15:32:16:125: <<< My name is andre van der zee.
-2017-02-11 15:32:16:130: --- Input language: ENG, input dialog: Handshake
-2017-02-11 15:32:16:130: --- Continuing dialog: Handshake
-2017-02-11 15:32:16:131: --- Translated input: My name is ALPHABETIC_UNI:andre PREPOSITION_NLD:3 ALPHABETIC_UNI:zee .
-2017-02-11 15:32:16:279: --- Corrected input: What is your name? My name is {firstName} {preposition} {lastName}.
-2017-02-11 15:32:16:280: --- Updated variables: firstName = ALPHABETIC_UNI:andre, lastName = ALPHABETIC_UNI:zee, preposition = PREPOSITION_NLD:3
-2017-02-11 15:32:16:280: --- Controller output: Nice to interact with you again {fullName}.
-2017-02-11 15:32:16:281: --- Translated controller output: Nice to interact with you again Andre van der Zee.
-2017-02-11 15:32:16:281: --- Translated output: Nice to interact with you again Andre van der Zee .
-2017-02-11 15:32:16:282: >>> Nice to interact with you again Andre van der Zee.
-2017-02-11 15:32:16:282: <<< Hallo , ik heet karel de grote.
-2017-02-11 15:32:16:285: --- Input language: NLD, input dialog: Handdruk
-2017-02-11 15:32:16:285: --- Selected dialog: Handdruk (controller: nl.zeesoft.zid.test.HandshakeController)
-2017-02-11 15:32:16:286: --- Translated input: Hallo , ik heet ALPHABETIC_UNI:karel PREPOSITION_NLD:5|ALPHABETIC_UNI:de ALPHABETIC_UNI:grote .
-2017-02-11 15:32:17:042: --- Corrected input: Nice to interact with you again Andre van der Zee. Hallo, ik heet {firstName} {preposition} {lastName}.
-2017-02-11 15:32:17:043: --- Updated variables: firstName = ALPHABETIC_UNI:karel, lastName = ALPHABETIC_UNI:grote, preposition = PREPOSITION_NLD:5
-2017-02-11 15:32:17:044: --- Controller requests prompt for: nextDialog
-2017-02-11 15:32:17:046: --- Translated controller output: Wat kan ik voor je doen Karel de Grote?
-2017-02-11 15:32:17:046: --- Translated output: Wat kan ik voor je doen Karel de Grote ?
-2017-02-11 15:32:17:046: >>> Wat kan ik voor je doen Karel de Grote?
-2017-02-11 15:32:17:047: <<< Hallo?
-2017-02-11 15:32:17:047: --- Input language: NLD, input dialog: Handdruk
-2017-02-11 15:32:17:048: --- Selected dialog: Handdruk (controller: nl.zeesoft.zid.test.HandshakeController)
-2017-02-11 15:32:17:048: --- Translated input: Hallo ?
-2017-02-11 15:32:17:263: --- Corrected input: Wat kan ik voor je doen Karel de Grote? Hallo?
-2017-02-11 15:32:18:961: --- Extended input to output: Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?
-2017-02-11 15:32:18:961: --- Translated output: Hallo . Mijn naam is Dyz Lecticus . Wat is jouw naam ?
-2017-02-11 15:32:18:961: >>> Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?
-2017-02-11 15:32:18:961: <<< Gekke henkie.
-2017-02-11 15:32:18:965: --- Input language: NLD, input dialog: Handdruk
-2017-02-11 15:32:18:965: --- Continuing dialog: Handdruk
-2017-02-11 15:32:18:965: --- Translated input: ALPHABETIC_UNI:Gekke ALPHABETIC_UNI:henkie .
-2017-02-11 15:32:19:032: --- Corrected input: Wat is jouw naam? {firstName} {lastName}.
-2017-02-11 15:32:19:033: --- Updated variables: firstName = ALPHABETIC_UNI:Gekke, lastName = ALPHABETIC_UNI:henkie
-2017-02-11 15:32:19:033: --- Controller requests prompt for: nextDialog
-2017-02-11 15:32:19:033: --- Translated controller output: Wat kan ik voor je doen Gekke Henkie?
-2017-02-11 15:32:19:034: --- Translated output: Wat kan ik voor je doen Gekke Henkie ?
-2017-02-11 15:32:19:034: >>> Wat kan ik voor je doen Gekke Henkie?
-2017-02-11 15:32:19:034: <<< Gekke.
-2017-02-11 15:32:19:039: --- Input language: 
-2017-02-11 15:32:19:040: --- Unable to determine dialog
-2017-02-11 15:32:19:061: --- Translated input: ALPHABETIC_UNI:Gekke .
-2017-02-11 15:32:19:179: --- Corrected input: Wat kan ik voor je doen Gekke Henkie? {firstName}.
-2017-02-11 15:32:20:584: --- Extended input to output: Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?
-2017-02-11 15:32:20:584: --- Translated output: Hallo . Mijn naam is Dyz Lecticus . Wat is jouw naam ?
-2017-02-11 15:32:20:584: >>> Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?
-2017-02-11 15:32:20:584: <<< Van henkie.
-2017-02-11 15:32:20:588: --- Input language: NLD, input dialog: Handdruk
-2017-02-11 15:32:20:588: --- Selected dialog: Handdruk (controller: nl.zeesoft.zid.test.HandshakeController)
-2017-02-11 15:32:20:588: --- Translated input: PREPOSITION_NLD:1|ALPHABETIC_UNI:Van ALPHABETIC_UNI:henkie .
-2017-02-11 15:32:20:665: --- Corrected input: Wat is jouw naam? {firstName} {lastName}.
-2017-02-11 15:32:20:665: --- Updated variables: firstName = ALPHABETIC_UNI:Van, lastName = ALPHABETIC_UNI:henkie, preposition = PREPOSITION_NLD:1
-2017-02-11 15:32:20:666: --- Controller output: Wat is jouw voornaam?
-2017-02-11 15:32:20:666: --- Translated controller output: Wat is jouw voornaam?
-2017-02-11 15:32:20:666: --- Translated output: Wat is jouw voornaam ?
-2017-02-11 15:32:20:666: >>> Wat is jouw voornaam?
-2017-02-11 15:32:20:666: <<< Gekke.
-2017-02-11 15:32:20:669: --- Input language: NLD, input dialog: Handdruk
-2017-02-11 15:32:20:669: --- Continuing dialog: Handdruk
-2017-02-11 15:32:20:669: --- Translated input: ALPHABETIC_UNI:Gekke .
-2017-02-11 15:32:20:699: --- Corrected input: Wat is jouw voornaam? {firstName}.
-2017-02-11 15:32:20:699: --- Updated variables: firstName = ALPHABETIC_UNI:Gekke
-2017-02-11 15:32:20:700: --- Controller requests prompt for: nextDialog
-2017-02-11 15:32:20:700: --- Translated controller output: Wat kan ik voor je doen Gekke van Henkie?
-2017-02-11 15:32:20:700: --- Translated output: Wat kan ik voor je doen Gekke van Henkie ?
-2017-02-11 15:32:20:700: >>> Wat kan ik voor je doen Gekke van Henkie?
-2017-02-11 15:32:20:701: <<< What is your name?
-2017-02-11 15:32:20:702: --- Input language: ENG, input dialog: Handshake
-2017-02-11 15:32:20:702: --- Selected dialog: Handshake (controller: nl.zeesoft.zid.test.HandshakeController)
-2017-02-11 15:32:20:703: --- Translated input: What is your name ?
-2017-02-11 15:32:21:009: --- Corrected input: Wat kan ik voor je doen Gekke van Henkie? What is your name?
-2017-02-11 15:32:23:075: --- Extended input to output: My name is Dyz Lecticus. What is your name?
-2017-02-11 15:32:23:075: --- Translated output: My name is Dyz Lecticus . What is your name ?
-2017-02-11 15:32:23:076: >>> My name is Dyz Lecticus. What is your name?
-2017-02-11 15:32:23:076: <<< Hoe heet jij?
-2017-02-11 15:32:23:078: --- Input language: NLD, input dialog: Handdruk
-2017-02-11 15:32:23:078: --- Selected dialog: Handdruk (controller: nl.zeesoft.zid.test.HandshakeController)
-2017-02-11 15:32:23:078: --- Translated input: Hoe heet jij ?
-2017-02-11 15:32:23:079: --- Corrected input: What is your name? Hoe heet jij?
-2017-02-11 15:32:24:537: --- Extended input to output: Mijn naam is Dyz Lecticus. Wat is jouw naam?
-2017-02-11 15:32:24:537: --- Translated output: Mijn naam is Dyz Lecticus . Wat is jouw naam ?
-2017-02-11 15:32:24:538: >>> Mijn naam is Dyz Lecticus. Wat is jouw naam?
+2017-02-12 20:17:19:508: <<< Hello.
+2017-02-12 20:17:19:512: --- Input language: ENG, input dialog: Handshake
+2017-02-12 20:17:19:513: --- Selected dialog: Handshake (controller: nl.zeesoft.zid.test.HandshakeController)
+2017-02-12 20:17:19:513: --- Translated input: Hello .
+2017-02-12 20:17:19:514: --- Corrected input: Hello.
+2017-02-12 20:17:20:769: --- Extended input to output: Hello. My name is Dyz Lecticus. What is your name?
+2017-02-12 20:17:20:769: --- Translated output: Hello . My name is Dyz Lecticus . What is your name ?
+2017-02-12 20:17:20:769: >>> Hello. My name is Dyz Lecticus. What is your name?
+2017-02-12 20:17:20:770: <<< My name is andre van der zee.
+2017-02-12 20:17:20:775: --- Input language: ENG, input dialog: Handshake
+2017-02-12 20:17:20:775: --- Continuing dialog: Handshake
+2017-02-12 20:17:20:776: --- Translated input: My name is ALPHABETIC_UNI:andre PREPOSITION_NLD:3 ALPHABETIC_UNI:zee .
+2017-02-12 20:17:20:973: --- Corrected input: What is your name? My name is {firstName} {preposition} {lastName}.
+2017-02-12 20:17:20:974: --- Updated variables: firstName = ALPHABETIC_UNI:andre, lastName = ALPHABETIC_UNI:zee, preposition = PREPOSITION_NLD:3
+2017-02-12 20:17:20:974: --- Controller output: Nice to interact with you again {fullName}.
+2017-02-12 20:17:20:975: --- Translated controller output: Nice to interact with you again Andre van der Zee.
+2017-02-12 20:17:20:975: --- Translated output: Nice to interact with you again Andre van der Zee .
+2017-02-12 20:17:20:975: >>> Nice to interact with you again Andre van der Zee.
+2017-02-12 20:17:20:975: <<< Hallo , ik heet karel de grote.
+2017-02-12 20:17:20:978: --- Input language: NLD, input dialog: Handdruk
+2017-02-12 20:17:20:978: --- Selected dialog: Handdruk (controller: nl.zeesoft.zid.test.HandshakeController)
+2017-02-12 20:17:20:979: --- Translated input: Hallo , ik heet ALPHABETIC_UNI:karel PREPOSITION_NLD:5|ALPHABETIC_UNI:de ALPHABETIC_UNI:grote .
+2017-02-12 20:17:21:072: --- Corrected input: Hallo, ik heet {firstName} {preposition} {lastName}.
+2017-02-12 20:17:21:073: --- Updated variables: firstName = ALPHABETIC_UNI:karel, lastName = ALPHABETIC_UNI:grote, preposition = PREPOSITION_NLD:5
+2017-02-12 20:17:21:073: --- Controller requests prompt for: nextDialog
+2017-02-12 20:17:21:075: --- Translated controller output: Wat kan ik voor je doen Karel de Grote?
+2017-02-12 20:17:21:075: --- Translated output: Wat kan ik voor je doen Karel de Grote ?
+2017-02-12 20:17:21:075: >>> Wat kan ik voor je doen Karel de Grote?
+2017-02-12 20:17:21:075: <<< Hallo?
+2017-02-12 20:17:21:076: --- Input language: NLD, input dialog: Handdruk
+2017-02-12 20:17:21:076: --- Selected dialog: Handdruk (controller: nl.zeesoft.zid.test.HandshakeController)
+2017-02-12 20:17:21:076: --- Translated input: Hallo ?
+2017-02-12 20:17:21:077: --- Corrected input: Hallo?
+2017-02-12 20:17:22:414: --- Extended input to output: Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?
+2017-02-12 20:17:22:414: --- Translated output: Hallo . Mijn naam is Dyz Lecticus . Wat is jouw naam ?
+2017-02-12 20:17:22:415: >>> Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?
+2017-02-12 20:17:22:415: <<< Gekke henkie.
+2017-02-12 20:17:22:418: --- Input language: NLD, input dialog: Handdruk
+2017-02-12 20:17:22:418: --- Continuing dialog: Handdruk
+2017-02-12 20:17:22:419: --- Translated input: ALPHABETIC_UNI:Gekke ALPHABETIC_UNI:henkie .
+2017-02-12 20:17:22:502: --- Corrected input: Wat is jouw naam? {firstName} {lastName}.
+2017-02-12 20:17:22:503: --- Updated variables: firstName = ALPHABETIC_UNI:Gekke, lastName = ALPHABETIC_UNI:henkie
+2017-02-12 20:17:22:503: --- Controller requests prompt for: nextDialog
+2017-02-12 20:17:22:503: --- Translated controller output: Wat kan ik voor je doen Gekke Henkie?
+2017-02-12 20:17:22:503: --- Translated output: Wat kan ik voor je doen Gekke Henkie ?
+2017-02-12 20:17:22:504: >>> Wat kan ik voor je doen Gekke Henkie?
+2017-02-12 20:17:22:504: <<< Gekke.
+2017-02-12 20:17:22:508: --- Input language: 
+2017-02-12 20:17:22:509: --- Unable to determine dialog
+2017-02-12 20:17:22:530: --- Translated input: ALPHABETIC_UNI:Gekke .
+2017-02-12 20:17:22:642: --- Corrected input: Wat kan ik voor je doen Gekke Henkie? {firstName}.
+2017-02-12 20:17:23:659: --- Extended input to output: Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?
+2017-02-12 20:17:23:659: --- Translated output: Hallo . Mijn naam is Dyz Lecticus . Wat is jouw naam ?
+2017-02-12 20:17:23:659: >>> Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?
+2017-02-12 20:17:23:659: <<< Van henkie.
+2017-02-12 20:17:23:661: --- Input language: NLD, input dialog: Handdruk
+2017-02-12 20:17:23:662: --- Selected dialog: Handdruk (controller: nl.zeesoft.zid.test.HandshakeController)
+2017-02-12 20:17:23:662: --- Translated input: PREPOSITION_NLD:1|ALPHABETIC_UNI:Van ALPHABETIC_UNI:henkie .
+2017-02-12 20:17:23:676: --- Corrected input: {preposition} {lastName}.
+2017-02-12 20:17:23:676: --- Updated variables: lastName = ALPHABETIC_UNI:henkie, preposition = PREPOSITION_NLD:1
+2017-02-12 20:17:23:676: --- Controller output: Wat is jouw voornaam?
+2017-02-12 20:17:23:676: --- Translated controller output: Wat is jouw voornaam?
+2017-02-12 20:17:23:676: --- Translated output: Wat is jouw voornaam ?
+2017-02-12 20:17:23:677: >>> Wat is jouw voornaam?
+2017-02-12 20:17:23:677: <<< Gekke.
+2017-02-12 20:17:23:678: --- Input language: NLD, input dialog: Handdruk
+2017-02-12 20:17:23:678: --- Continuing dialog: Handdruk
+2017-02-12 20:17:23:678: --- Translated input: ALPHABETIC_UNI:Gekke .
+2017-02-12 20:17:23:707: --- Corrected input: Wat is jouw voornaam? {firstName}.
+2017-02-12 20:17:23:707: --- Updated variables: firstName = ALPHABETIC_UNI:Gekke
+2017-02-12 20:17:23:707: --- Controller requests prompt for: nextDialog
+2017-02-12 20:17:23:707: --- Translated controller output: Wat kan ik voor je doen Gekke van Henkie?
+2017-02-12 20:17:23:707: --- Translated output: Wat kan ik voor je doen Gekke van Henkie ?
+2017-02-12 20:17:23:707: >>> Wat kan ik voor je doen Gekke van Henkie?
+2017-02-12 20:17:23:707: <<< What is your name?
+2017-02-12 20:17:23:708: --- Input language: ENG, input dialog: Handshake
+2017-02-12 20:17:23:709: --- Selected dialog: Handshake (controller: nl.zeesoft.zid.test.HandshakeController)
+2017-02-12 20:17:23:709: --- Translated input: What is your name ?
+2017-02-12 20:17:23:709: --- Corrected input: What is your name?
+2017-02-12 20:17:24:486: --- Extended input to output: My name is Dyz Lecticus. What is your name?
+2017-02-12 20:17:24:487: --- Translated output: My name is Dyz Lecticus . What is your name ?
+2017-02-12 20:17:24:487: >>> My name is Dyz Lecticus. What is your name?
+2017-02-12 20:17:24:487: <<< Hoe heet jij?
+2017-02-12 20:17:24:487: --- Input language: NLD, input dialog: Handdruk
+2017-02-12 20:17:24:488: --- Selected dialog: Handdruk (controller: nl.zeesoft.zid.test.HandshakeController)
+2017-02-12 20:17:24:488: --- Translated input: Hoe heet jij ?
+2017-02-12 20:17:24:488: --- Corrected input: Hoe heet jij?
+2017-02-12 20:17:25:095: --- Extended input to output: Mijn naam is Dyz Lecticus. Wat is jouw naam?
+2017-02-12 20:17:25:095: --- Translated output: Mijn naam is Dyz Lecticus . Wat is jouw naam ?
+2017-02-12 20:17:25:096: >>> Mijn naam is Dyz Lecticus. Wat is jouw naam?
 
-Average time spent thinking per response: 1009 ms
+Average time spent thinking per response: 567 ms
 ~~~~
 
 Test results
 ------------
 All 2 tests have been executed successfully (17 assertions).  
-Total test duration: 12783 ms (total sleep duration: 0 ms).  
+Total test duration: 8031 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zid.test.TestDialog: 321 Kb / 0 Mb
- * nl.zeesoft.zid.test.TestDialogHandler: 34559 Kb / 33 Mb
+ * nl.zeesoft.zid.test.TestDialogHandler: 34555 Kb / 33 Mb

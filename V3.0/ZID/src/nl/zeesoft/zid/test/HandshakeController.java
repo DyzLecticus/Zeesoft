@@ -16,10 +16,12 @@ public class HandshakeController extends DialogControllerObject {
 
 		Object fullName = getVariable(handler,"fullName");
 		
-		if (!promptFirstNameExplicitly && (fName.toLowerCase().equals(prepo) || fName.toLowerCase().equals(lName.toLowerCase()))) {
-			setDialogVariable(handler,"firstName","");
-			fName = "";
-			if (lName.length()>0) {
+		if (!promptFirstNameExplicitly) {
+			if (fName.toLowerCase().equals(prepo) || fName.toLowerCase().equals(lName.toLowerCase())) {
+				setDialogVariable(handler,"firstName","");
+				fName = "";
+			}
+			if (lName.length()>0 && fName.length()==0) {
 				 promptFirstNameExplicitly = true;
 			}
 		} else {
