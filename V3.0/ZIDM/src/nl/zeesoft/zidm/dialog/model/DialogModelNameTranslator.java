@@ -1,4 +1,4 @@
-package nl.zeesoft.zidm.dialog;
+package nl.zeesoft.zidm.dialog.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class DialogModelNameTranslator extends Locker {
 			}
 		} 
 		if (!exists) {
-			exists = (getNameNoLock(languageCode,translation)).length()>0;
+			exists = (getNameNoLock(languageCode,singular,translation)).length()>0;
 			if (exists) {
 				System.err.println("Translation already exists: " + languageCode + " " + translation);
 			}
@@ -83,10 +83,10 @@ public class DialogModelNameTranslator extends Locker {
 		return translation;
 	}
 
-	public String getName(String languageCode,String translation) {
+	public String getName(String languageCode,boolean singular,String translation) {
 		String name = "";
 		lockMe(this);
-		name = getNameNoLock(languageCode,translation);
+		name = getNameNoLock(languageCode,singular,translation);
 		unlockMe(this);
 		return name;
 	}
@@ -105,11 +105,12 @@ public class DialogModelNameTranslator extends Locker {
 		return translation;
 	}
 
-	private String getNameNoLock(String languageCode,String translation) {
+	private String getNameNoLock(String languageCode,boolean singular,String translation) {
 		String name = "";
 		for (DialogModelNameTranslation trans: translations) {
-			if (trans.getLanguage().getCode().equals(languageCode) &&
-				trans.getTranslation().equals(translation)
+			if (trans.getTranslation().equals(translation) &&
+				trans.getLanguage().getCode().equals(languageCode) &&
+				trans.isSingular() == singular
 				) {
 				name = trans.getName();
 				break;

@@ -1,11 +1,15 @@
 package nl.zeesoft.zidm.test;
 
+import java.util.Date;
+
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdm.test.ZDM;
 import nl.zeesoft.zid.dialog.DialogHandler;
 import nl.zeesoft.zidm.dialog.ModelDialogFactory;
-import nl.zeesoft.zspr.pattern.PatternManager;
+import nl.zeesoft.zidm.dialog.model.DialogModel;
+import nl.zeesoft.zidm.dialog.pattern.ModelPatternManager;
 
 public class TestModelDialogHandler extends TestObject {
 	public TestModelDialogHandler(Tester tester) {
@@ -49,11 +53,16 @@ public class TestModelDialogHandler extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
+		System.out.println("Initializing model dialog handler ...");
+		Date start = new Date();
 		ModelDialogFactory mdf = new ModelDialogFactory();
-		PatternManager pm = new PatternManager();
-		pm.initializePatterns();
-		DialogHandler handler = new DialogHandler(mdf.getModelDialogs(),pm);
+		ModelPatternManager mpm = mdf.getModelPatternManager();
+		mpm.initializePatterns();
+		DialogModel model = mdf.getDialogModel();
+		DialogHandler handler = new DialogHandler(mdf.getModelDialogs(model),mpm);
 		handler.initialize();
+		System.out.println("Initializing model dialog handler took " + ((new Date()).getTime() - start.getTime()) + " ms");
+		System.out.println();
 
 		ZStringSymbolParser output = handler.handleInput(new ZStringSymbolParser("A primitive is an object that has a value"));
 		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
@@ -79,47 +88,13 @@ public class TestModelDialogHandler extends TestObject {
 		output = handler.handleInput(new ZStringSymbolParser("A human is a primate"));
 		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
 		output = handler.handleInput(new ZStringSymbolParser("humans have names"));
+		assertEqual(output.toString(),"What are humans?","Output does not match expectation");
+		output = handler.handleInput(new ZStringSymbolParser("humans is the plural of human"));
 		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
 		
 		System.out.println(handler.getLog());
 		
-		/*
-		DialogHandler handler = (DialogHandler) getTester().getMockedObject(MockDialogHandler.class.getName());
-		
-		Date started = new Date();
-		
-		// Known user handshake
-		ZStringSymbolParser output = handler.handleInput(new ZStringSymbolParser("hello"));
-		assertEqual(output.toString(),"Hello. My name is Dyz Lecticus. What is your name?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("my name is andre van der zee"));
-		assertEqual(output.toString(),"Nice to interact with you again Andre van der Zee.","Output does not match expectation");
-		
-		// Extended handshake
-		output = handler.handleInput(new ZStringSymbolParser("hallo,ik heet karel de grote."));
-		assertEqual(output.toString(),"Wat kan ik voor je doen Karel de Grote?","Output does not match expectation");
-		
-		// Handshake prompt sequence
-		output = handler.handleInput(new ZStringSymbolParser("hallo?"));
-		assertEqual(output.toString(),"Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("gekke henkie"));
-		assertEqual(output.toString(),"Wat kan ik voor je doen Gekke Henkie?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("gekke"));
-		assertEqual(output.toString(),"Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("van henkie"));
-		assertEqual(output.toString(),"Wat is jouw voornaam?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("gekke"));
-		assertEqual(output.toString(),"Wat kan ik voor je doen Gekke van Henkie?","Output does not match expectation");
-
-		// Handshake context switch
-		output = handler.handleInput(new ZStringSymbolParser("what is your name?"));
-		assertEqual(output.toString(),"My name is Dyz Lecticus. What is your name?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("hoe heet jij?"));
-		assertEqual(output.toString(),"Mijn naam is Dyz Lecticus. Wat is jouw naam?","Output does not match expectation");
-
-		System.out.println(handler.getLog());
-
-		long time = ((new Date()).getTime() - started.getTime()) / 10; 
-		System.out.println("Average time spent thinking per response: " + time + " ms");
-		*/
+		ZDM.describeModelVersionLogs(model);
+		ZDM.describeModelPackages(model,true);
 	}
 }

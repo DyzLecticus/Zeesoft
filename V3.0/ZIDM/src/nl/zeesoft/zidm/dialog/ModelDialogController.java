@@ -5,9 +5,11 @@ import java.util.List;
 import nl.zeesoft.zdm.model.ModelClass;
 import nl.zeesoft.zdm.model.ModelPackage;
 import nl.zeesoft.zdm.model.transformations.impl.AddClass;
+import nl.zeesoft.zdm.model.transformations.impl.AddProperty;
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.dialog.DialogControllerObject;
 import nl.zeesoft.zid.dialog.DialogHandler;
+import nl.zeesoft.zidm.dialog.model.DialogModel;
 import nl.zeesoft.zspr.Language;
 
 public class ModelDialogController extends DialogControllerObject {
@@ -15,12 +17,14 @@ public class ModelDialogController extends DialogControllerObject {
 	@Override
 	public void updatedVariables(DialogHandler handler, Dialog dialog) {
 		DialogModel model = ((ModelDialog) dialog).getModel();
+		String cIA = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.classInArt)));
 		String cNS = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.classNameSingle)));
 		String cNM = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.classNameMulti)));
+		String eCIA = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.extendedClassInArt)));
 		String eCNS = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.extendedClassNameSingle)));
 		String eCNM = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.extendedClassNameMulti)));
-		//String pNS = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.propertyNameSingle)));
-		//String pNM = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.propertyNameMulti)));
+		String pNS = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.propertyNameSingle)));
+		String pNM = upperCaseFirst(getDialogVariableValueString(handler,dialog.getVariable(ModelDialogFactory.propertyNameMulti)));
 
 		ModelPackage pkg = getBasePackage(model);
 		
@@ -28,27 +32,29 @@ public class ModelDialogController extends DialogControllerObject {
 		ModelClass extendsCls = null;
 		//ModelProperty prop = null;
 		
-		boolean clearClassVariables = false;
-		boolean clearExtendedClassVariables = false;
+		boolean clearClassVariables = true;
+		boolean clearExtendedClassVariables = true;
+		boolean clearPropertyVariables = true;
 		
 		String eName = "";
 		if (eCNS.length()>0) {
-			eName = model.getTranslator().getName(dialog.getLanguage().getCode(),eCNS);
+			eName = model.getTranslator().getName(dialog.getLanguage().getCode(),true,eCNS);
 		} else if (eCNM.length()>0) {
-			eName = model.getTranslator().getName(dialog.getLanguage().getCode(),eCNM);
+			eName = model.getTranslator().getName(dialog.getLanguage().getCode(),false,eCNM);
 		}
 		if (eCNS.length()>0 || eCNM.length()>0) {
 			//System.out.println("Looking for class " + eName + " ...");
 			if (eName.length()==0) {
 				if (dialog.getLanguage().getCode().equals(Language.ENG)) {
 					if (eCNS.length()>0) {
-						// TODO: Find solution for english adjectives 'a' versus 'an'
-						getOutput().append("What is a ");
-						getOutput().append(eCNS);
+						getOutput().append("What is ");
+						getOutput().append(eCIA.toLowerCase());
+						getOutput().append(" ");
+						getOutput().append(eCNS.toLowerCase());
 						getOutput().append("?");
 					} else {
 						getOutput().append("What are ");
-						getOutput().append(eCNM);
+						getOutput().append(eCNM.toLowerCase());
 						getOutput().append("?");
 					}
 				}
@@ -62,49 +68,99 @@ public class ModelDialogController extends DialogControllerObject {
 			if (cNM.length()==0 && cls==null) {
 				if (extendsCls==null) {
 					if (dialog.getLanguage().getCode().equals(Language.ENG)) {
-						// TODO: Find solution for english adjectives 'a' versus 'an'
-						getOutput().append("What is a ");
-						getOutput().append(cNS);
+						getOutput().append("What is ");
+						getOutput().append(cIA.toLowerCase());
+						getOutput().append(" ");
+						getOutput().append(cNS.toLowerCase());
 						getOutput().append("?");
 					}
+					clearClassVariables = false;
+					clearExtendedClassVariables = false;
+					clearPropertyVariables = false;
 				} else {
 					cls = addClass(dialog,model,pkg,cNS,extendsCls);
 				}
 			}
-			clearClassVariables = true;
-			clearExtendedClassVariables = true;
 		}
 
 		if (cNM.length()>0) {
 			boolean addedTranslation = false;
 			if (cls!=null && extendsCls==null) {
-				String name = model.getTranslator().getName(dialog.getLanguage().getCode(),cNS);
+				String name = model.getTranslator().getName(dialog.getLanguage().getCode(),true,cNS);
 				if (name.length()>0) {
 					model.getTranslator().addTranslation(name,dialog.getLanguage().getCode(),false,cNM);
 					addedTranslation = true;
 				}
 			}
 			if (!addedTranslation) {
-				//ModelClass mCls = getOrAddClass(dialog,model,pkg,cNM,extendsCls);
-				// ...?
+				String name = model.getTranslator().getName(dialog.getLanguage().getCode(),false,cNM);
+				if (name.length()==0) {
+					if (dialog.getLanguage().getCode().equals(Language.ENG)) {
+						getOutput().append("What are ");
+						getOutput().append(cNM.toLowerCase());
+						getOutput().append("?");
+					}
+					clearClassVariables = false;
+					clearExtendedClassVariables = false;
+					clearPropertyVariables = false;
+				}
 			}
-			clearClassVariables = true;
-			clearExtendedClassVariables = true;
 		}
-		
+
+		if (cls!=null) {
+			boolean pList = false;
+			if (pNM.length()>0) {
+				String name = model.getTranslator().getName(dialog.getLanguage().getCode(),false,pNM);
+				if (name.length()>0) {
+					pNS = model.getTranslator().getTranslation(name,dialog.getLanguage().getCode(),true);
+					if (cNS.length()>0) {
+						pList = true;
+					}
+				}
+			}
+			if (pNS.length()>0) {
+				String pName = model.getTranslator().getName(dialog.getLanguage().getCode(),true,pNS);
+				String pType = "";
+				if (pName.length()>0) {
+					ModelClass pCls = pkg.getClass(pName);
+					if (pCls!=null && pCls.getExtendsClass()!=null) {
+						pType = pCls.getExtendsClass().getFullName();
+					}
+				} else {
+					pName = model.getTranslator().addTranslation(pNS,dialog.getLanguage().getCode(),true,pNS);
+				}
+				pName = pName.toLowerCase();
+				AddProperty addProp = new AddProperty(model.getBasePackageName(),cls.getName(),pName);
+				if (pType.length()>0) {
+					addProp.setType(pType);
+				}
+				if (pList) {
+					addProp.setList("" + pList);
+				}
+				model.applyTransformation(new AddProperty(model.getBasePackageName(),cls.getName(),pName));
+			}
+		}
+
 		if (clearClassVariables) {
+			setDialogVariable(handler,ModelDialogFactory.classInArt,"");
 			setDialogVariable(handler,ModelDialogFactory.classNameSingle,"");
 			setDialogVariable(handler,ModelDialogFactory.classNameMulti,"");
 		}
 		if (clearExtendedClassVariables) {
+			setDialogVariable(handler,ModelDialogFactory.extendedClassInArt,"");
 			setDialogVariable(handler,ModelDialogFactory.extendedClassNameSingle,"");
 			setDialogVariable(handler,ModelDialogFactory.extendedClassNameMulti,"");
+		}
+		if (clearPropertyVariables) {
+			setDialogVariable(handler,ModelDialogFactory.propertyInArt,"");
+			setDialogVariable(handler,ModelDialogFactory.propertyNameSingle,"");
+			setDialogVariable(handler,ModelDialogFactory.propertyNameMulti,"");
 		}
 	}
 
 	private ModelClass getClass(Dialog dialog,DialogModel model,ModelPackage pkg,String classNameSingle) {
 		ModelClass r = null;
-		String name = model.getTranslator().getName(dialog.getLanguage().getCode(),classNameSingle);
+		String name = model.getTranslator().getName(dialog.getLanguage().getCode(),true,classNameSingle);
 		r = pkg.getClass(name);
 		return r;
 	}

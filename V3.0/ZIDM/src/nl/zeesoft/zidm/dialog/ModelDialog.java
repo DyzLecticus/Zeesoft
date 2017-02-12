@@ -1,6 +1,7 @@
 package nl.zeesoft.zidm.dialog;
 
 import nl.zeesoft.zid.dialog.Dialog;
+import nl.zeesoft.zidm.dialog.model.DialogModel;
 
 public class ModelDialog extends Dialog {
 	private DialogModel model = null;

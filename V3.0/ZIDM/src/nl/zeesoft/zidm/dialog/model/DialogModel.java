@@ -1,4 +1,4 @@
-package nl.zeesoft.zidm.dialog;
+package nl.zeesoft.zidm.dialog.model;
 
 import nl.zeesoft.zdm.model.Model;
 import nl.zeesoft.zdm.model.transformations.impl.AddClass;

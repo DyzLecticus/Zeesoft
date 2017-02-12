@@ -1,4 +1,4 @@
-package nl.zeesoft.zidm.dialog;
+package nl.zeesoft.zidm.dialog.model;
 
 import nl.zeesoft.zspr.Language;
 
