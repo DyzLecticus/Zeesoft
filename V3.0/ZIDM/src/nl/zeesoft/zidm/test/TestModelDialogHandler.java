@@ -61,11 +61,11 @@ public class TestModelDialogHandler extends TestObject {
 		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
 		output = handler.handleInput(new ZStringSymbolParser("A string is a primitive"));
 		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("Strings the plural form of string"));
+		output = handler.handleInput(new ZStringSymbolParser("Strings is the plural form of string"));
 		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
 		output = handler.handleInput(new ZStringSymbolParser("A name is a string"));
 		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("Names the plural for name"));
+		output = handler.handleInput(new ZStringSymbolParser("Names is the plural for name"));
 		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
 		
 		output = handler.handleInput(new ZStringSymbolParser("An organism is an object"));

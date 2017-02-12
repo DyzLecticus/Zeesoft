@@ -55,8 +55,10 @@ public class ModelDialogFactory {
 		dialog.addExample("{" + classNameMulti + "} have {" + propertyNameMulti + "}.",defaultAnswer);
 		dialog.addExample("{" + classNameMulti + "} have a {" + propertyNameSingle + "}.",defaultAnswer);
 
-		dialog.addExample("{" + classNameMulti + "} is the plural of {" + classNameSingle + "}.",defaultAnswer);
-		dialog.addExample("{" + classNameSingle + "} is the singular of {" + classNameMulti + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameMulti + "} is the plural for {" + classNameSingle + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameSingle + "} is the singular for {" + classNameMulti + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameMulti + "} is plural for {" + classNameSingle + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameSingle + "} is singular for {" + classNameMulti + "}.",defaultAnswer);
 		dialog.addExample("{" + classNameMulti + "} is the plural form of {" + classNameSingle + "}.",defaultAnswer);
 		dialog.addExample("{" + classNameSingle + "} is the singular form of {" + classNameMulti + "}.",defaultAnswer);
 		dialog.addExample("{" + classNameMulti + "} is the plural of the word {" + classNameSingle + "}.",defaultAnswer);
@@ -97,6 +99,9 @@ public class ModelDialogFactory {
 			dialog.addExample("An {" + classNameSingle + "} is a kind of {" + extendedClassNameSingle + "}" + propertyAttachmentS + ".",defaultAnswer);
 			dialog.addExample("{" + classNameMulti + "} are {" + extendedClassNameMulti + "}" + propertyAttachmentM + ".",defaultAnswer);
 			dialog.addExample("{" + classNameMulti + "} are a kind of {" + extendedClassNameSingle + "}" + propertyAttachmentM + ".",defaultAnswer);
+
+			dialog.addExample("{" + classNameMulti + "} have {" + propertyNameMulti + "}.",defaultAnswer);
+			dialog.addExample("{" + classNameMulti + "} have a {" + propertyNameSingle + "}.",defaultAnswer);
 		}
 		
 		dialog.addVariable(classNameSingle,PatternObject.TYPE_ALPHABETIC);

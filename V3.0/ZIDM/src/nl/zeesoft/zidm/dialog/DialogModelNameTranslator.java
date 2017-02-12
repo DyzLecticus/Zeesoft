@@ -33,10 +33,6 @@ public class DialogModelNameTranslator extends Locker {
 		return transList;
 	}
 	
-	//public String addTranslation(String languageCode, boolean singular, String translation) {
-	//	return addTranslation("",languageCode,singular,translation);
-	//}
-	
 	public String addTranslation(String name,String languageCode, boolean singular, String translation) {
 		lockMe(this);
 		boolean exists = false;
@@ -53,6 +49,7 @@ public class DialogModelNameTranslator extends Locker {
 			}
 		}
 		if (!exists) {
+			//System.out.println("Add translation: " + name + " " + languageCode + " " + singular + " " + translation);
 			if (name.length()==0) {
 				name = getNewUniqueNameNoLock();
 			}
