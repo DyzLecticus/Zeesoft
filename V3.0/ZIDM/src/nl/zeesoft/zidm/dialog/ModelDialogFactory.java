@@ -1,8 +1,11 @@
 package nl.zeesoft.zidm.dialog;
 
-import nl.zeesoft.zdm.model.Model;
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zspr.Language;
+import nl.zeesoft.zspr.pattern.PatternObject;
 
 public class ModelDialogFactory {
 	public static final String Modelling				= "Modelling";
@@ -15,8 +18,30 @@ public class ModelDialogFactory {
 	public static final String propertyNameMulti		= "propertyNameMulti";
 	
 	public static final String defaultAnswer			= "Interesting.";
+
+	public DialogModel getDialogModel() {
+		DialogModel model = new DialogModel(getDialogModelNameTranslator());
+		model.initializeBaseModel();
+		model.getTranslator().addTranslation(model.getBaseClassName(),Language.ENG,true,model.getBaseClassName());
+		model.getTranslator().addTranslation(model.getBaseClassName(),Language.ENG,false,model.getBaseClassName() + "s");
+		model.getTranslator().addTranslation(model.getBaseClassName(),Language.NLD,true,model.getBaseClassName());
+		model.getTranslator().addTranslation(model.getBaseClassName(),Language.NLD,false,model.getBaseClassName() + "en");
+		return model;
+	}
 	
-	public Dialog getEnglishModelDialog(Model model) {
+	public DialogModelNameTranslator getDialogModelNameTranslator() {
+		DialogModelNameTranslator translator = new DialogModelNameTranslator();
+		return translator;
+	}
+	
+	public List<Dialog> getModelDialogs() {
+		List<Dialog> dialogs = new ArrayList<Dialog>();
+		DialogModel model = getDialogModel();
+		dialogs.add(getEnglishModelDialog(model));
+		return dialogs;
+	}
+
+	public Dialog getEnglishModelDialog(DialogModel model) {
 		Dialog dialog = new ModelDialog(Modelling,Language.ENG,ModelDialogController.class.getName(),model);
 		dialog.addExample("A {" + classNameSingle + "} is a {" + extendedClassNameSingle + "}.",defaultAnswer);
 		dialog.addExample("A {" + classNameSingle + "} is an {" + extendedClassNameSingle + "}.",defaultAnswer);
@@ -26,6 +51,18 @@ public class ModelDialogFactory {
 		dialog.addExample("An {" + classNameSingle + "} is a kind of {" + extendedClassNameSingle + "}.",defaultAnswer);
 		dialog.addExample("{" + classNameMulti + "} are {" + extendedClassNameMulti + "}.",defaultAnswer);
 		dialog.addExample("{" + classNameMulti + "} are a kind of {" + extendedClassNameMulti + "}.",defaultAnswer);
+		
+		dialog.addExample("{" + classNameMulti + "} have {" + propertyNameMulti + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameMulti + "} have a {" + propertyNameSingle + "}.",defaultAnswer);
+
+		dialog.addExample("{" + classNameMulti + "} is the plural of {" + classNameSingle + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameSingle + "} is the singular of {" + classNameMulti + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameMulti + "} is the plural form of {" + classNameSingle + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameSingle + "} is the singular form of {" + classNameMulti + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameMulti + "} is the plural of the word {" + classNameSingle + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameSingle + "} is the singular of the word {" + classNameMulti + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameMulti + "} is the plural form of the word {" + classNameSingle + "}.",defaultAnswer);
+		dialog.addExample("{" + classNameSingle + "} is the singular form of the word {" + classNameMulti + "}.",defaultAnswer);
 
 		for (int i = 0; i < 6; i++) {
 			String propertyAttachmentS = " with {" + propertyNameMulti + "}";
@@ -62,6 +99,13 @@ public class ModelDialogFactory {
 			dialog.addExample("{" + classNameMulti + "} are a kind of {" + extendedClassNameSingle + "}" + propertyAttachmentM + ".",defaultAnswer);
 		}
 		
+		dialog.addVariable(classNameSingle,PatternObject.TYPE_ALPHABETIC);
+		dialog.addVariable(classNameMulti,PatternObject.TYPE_ALPHABETIC);
+		dialog.addVariable(extendedClassNameSingle,PatternObject.TYPE_ALPHABETIC);
+		dialog.addVariable(extendedClassNameMulti,PatternObject.TYPE_ALPHABETIC);
+		dialog.addVariable(propertyNameSingle,PatternObject.TYPE_ALPHABETIC);
+		dialog.addVariable(propertyNameMulti,PatternObject.TYPE_ALPHABETIC);
+
 		return dialog;
 	}
 }

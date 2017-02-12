@@ -1,17 +1,16 @@
 package nl.zeesoft.zidm.dialog;
 
-import nl.zeesoft.zdm.model.Model;
 import nl.zeesoft.zid.dialog.Dialog;
 
 public class ModelDialog extends Dialog {
-	private Model model = null;
+	private DialogModel model = null;
 	
-	public ModelDialog(String name, String languageCode, String controllerClassName,Model model) {
+	public ModelDialog(String name, String languageCode, String controllerClassName,DialogModel model) {
 		super(name, languageCode, controllerClassName);
 		this.model = model;
 	}
 
-	public Model getModel() {
+	public DialogModel getModel() {
 		return model;
 	}
 }
