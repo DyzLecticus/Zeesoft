@@ -113,7 +113,7 @@ public class ModelDialogController extends DialogControllerObject {
 				String name = model.getTranslator().getName(dialog.getLanguage().getCode(),false,pNM);
 				if (name.length()>0) {
 					pNS = model.getTranslator().getTranslation(name,dialog.getLanguage().getCode(),true);
-					if (cNS.length()>0) {
+					if (cNS.length()>0 && cNM.length()==0) {
 						pList = true;
 					}
 				}
@@ -137,7 +137,7 @@ public class ModelDialogController extends DialogControllerObject {
 				if (pList) {
 					addProp.setList("" + pList);
 				}
-				model.applyTransformation(new AddProperty(model.getBasePackageName(),cls.getName(),pName));
+				model.applyTransformation(addProp);
 			}
 		}
 
