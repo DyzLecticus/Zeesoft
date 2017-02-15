@@ -30,6 +30,8 @@ public class TestPatternManager extends TestObject {
 		System.out.println("List<PatternObject> patterns = manager.getMatchingPatternsForString(\"one hour and fourtyfive minutes\");");
 		System.out.println("// Translate string to pattern value");
 		System.out.println("String value = patterns.get(0).getValueForString(\"one hour and fourtyfive minutes\");");
+		System.out.println("// Translate value back to string");
+		System.out.println("String str = patterns.get(0).getStringForValue(value);");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockPatternManager.class.getName());
@@ -131,7 +133,7 @@ public class TestPatternManager extends TestObject {
 		testStringForPattern(manager,"one hour and thirtythree minutes",1,"DURATION_ENG:01:33");
 
 		System.out.println();
-		System.out.println("Test Dutch duration");
+		System.out.println("==> Test Dutch duration");
 		testStringForPattern(manager,"twee uur",2,"TIME_NLD:14:00:00","DURATION_NLD:02:00");
 		testStringForPattern(manager,"3 uur en 4 minuten",1,"DURATION_NLD:03:04");
 		testStringForPattern(manager,"een uur en vijfenveertig minuten",1,"DURATION_NLD:01:45");

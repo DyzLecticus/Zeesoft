@@ -185,6 +185,31 @@ public class PatternManager extends Locker {
 		}
 		return ptns;
 	}
+
+	/**
+	 * Scans a symbol sequence and translates it to a primary value object string using all matching patterns.
+	 * 
+	 * Selects longest matching symbol sequence patterns over shorter symbol sequence patterns.
+	 * 
+	 * @param sequence The symbol sequence
+	 * @return The translated values
+	 */
+	public final ZStringSymbolParser scanAndTranslateSequence(ZStringSymbolParser sequence) {
+		return scanAndTranslateSequence(sequence,null,null);
+	}
+
+	/**
+	 * Scans a symbol sequence and translates it to a primary value object string using all matching patterns.
+	 * 
+	 * Selects longest matching symbol sequence patterns over shorter symbol sequence patterns.
+	 * 
+	 * @param sequence The symbol sequence
+	 * @param expectedTypes The optional list of expected pattern base value types to limit the translation
+	 * @return The translated values
+	 */
+	public final ZStringSymbolParser scanAndTranslateSequence(ZStringSymbolParser sequence, List<String> expectedTypes) {
+		return scanAndTranslateSequence(sequence,expectedTypes,null);
+	}
 	
 	/**
 	 * Scans a symbol sequence and translates it to a primary value object string using all matching patterns.

@@ -26,9 +26,9 @@ public class TestPatternManagerScan extends TestObject {
 		System.out.println("// Initialize patterns");
 		System.out.println("manager.initializePatterns();");
 		System.out.println("// Get values for sequence");
-		System.out.println("StringBuilder values = manager.scanAndTranslateSequence(new StringBuilder(\"I walked one hour and fourtyfive minutes\"),null);");
+		System.out.println("ZStringSymbolParser values = manager.scanAndTranslateSequence(new ZStringSymbolParser(\"I walked one hour and fourtyfive minutes\"));");
 		System.out.println("// Get sequence for values");
-		System.out.println("StringBuilder sequence = manager.scanAndTranslateValues(values);");
+		System.out.println("ZStringSymbolParser sequence = manager.scanAndTranslateValues(values);");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockPatternManager.class.getName());
@@ -39,7 +39,7 @@ public class TestPatternManagerScan extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(PatternManager.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows some test strings with corresponding string to value translation and value to string translation.  ");
+		System.out.println("The output of this test shows some test sequences with corresponding sequences to values translation and values to sequences translation.  ");
 		System.out.println("Please note how the date of the request is inferred automatically by the pattern translation mechanism.  ");
 	}
 
@@ -63,7 +63,7 @@ public class TestPatternManagerScan extends TestObject {
 
 	private void testScanAndTranslate(PatternManager manager,String from,String expectedTo,String expectedBack) {
 		System.out.println("Input: " + from);
-		ZStringSymbolParser to = manager.scanAndTranslateSequence(new ZStringSymbolParser(from),null,null);
+		ZStringSymbolParser to = manager.scanAndTranslateSequence(new ZStringSymbolParser(from));
 		assertEqual(to.toString(),expectedTo,"String to value translation does not meet expectation");
 		System.out.println("Values: " + to);
 		ZStringBuilder back = manager.scanAndTranslateValues(to);
