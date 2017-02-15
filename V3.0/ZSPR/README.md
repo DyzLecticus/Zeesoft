@@ -5,7 +5,7 @@ It provides support for sequential symbolic pattern recognition.
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/zspr-0.9.6.zip) to download the latest ZSPR release (version 0.9.6).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/zspr-0.9.7.zip) to download the latest ZSPR release (version 0.9.7).  
 All ZSPR releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -34,6 +34,8 @@ manager.initializePatterns();
 List<PatternObject> patterns = manager.getMatchingPatternsForString("one hour and fourtyfive minutes");
 // Translate string to pattern value
 String value = patterns.get(0).getValueForString("one hour and fourtyfive minutes");
+// Translate value back to string
+String str = patterns.get(0).getStringForValue(value);
 ~~~~
 
 This test uses the *MockPatternManager*. It is used to instantiate a shared *PatternManager* for tests.
@@ -47,7 +49,7 @@ Class references;
 The output of this test shows some test strings and their corresponding pattern values.  
 Please note how some test strings trigger multiple patterns that translate to different value types.  
 ~~~~
-Initializing pattern manager took 1678 ms
+Initializing pattern manager took 1673 ms
 
 ==> Test English order
 first = ORDER_ENG:1 (1)
@@ -114,7 +116,7 @@ the fifth of january = DATE_ENG:2017-01-05
 the 12th of august = DATE_ENG:2017-08-12
 october 2nd = DATE_ENG:2017-10-02
 now = DATE_ENG:2017-01-01 (1)
-now = TIME_ENG:14:40:00 (2)
+now = TIME_ENG:22:05:00 (2)
 now = ALPHABETIC_UNI:now (3)
 today = DATE_ENG:2017-01-01 (1)
 today = ALPHABETIC_UNI:today (2)
@@ -137,7 +139,7 @@ two hours = DURATION_ENG:02:00
 one hour and fourtyfive minutes = DURATION_ENG:01:45
 one hour and thirtythree minutes = DURATION_ENG:01:33
 
-Test Dutch duration
+==> Test Dutch duration
 twee uur = TIME_NLD:14:00:00 (1)
 twee uur = DURATION_NLD:02:00 (2)
 3 uur en 4 minuten = DURATION_NLD:03:04
@@ -155,9 +157,9 @@ PatternManager manager = new PatternManager();
 // Initialize patterns
 manager.initializePatterns();
 // Get values for sequence
-StringBuilder values = manager.scanAndTranslateSequence(new StringBuilder("I walked one hour and fourtyfive minutes"),null);
+ZStringSymbolParser values = manager.scanAndTranslateSequence(new ZStringSymbolParser("I walked one hour and fourtyfive minutes"));
 // Get sequence for values
-StringBuilder sequence = manager.scanAndTranslateValues(values);
+ZStringSymbolParser sequence = manager.scanAndTranslateValues(values);
 ~~~~
 
 This test uses the *MockPatternManager*. It is used to instantiate a shared *PatternManager* for tests.
@@ -168,7 +170,7 @@ Class references;
  * [PatternManager](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSPR/src/nl/zeesoft/zspr/pattern/PatternManager.java)
 
 **Test output**  
-The output of this test shows some test strings with corresponding string to value translation and value to string translation.  
+The output of this test shows some test sequences with corresponding sequences to values translation and values to sequences translation.  
 Please note how the date of the request is inferred automatically by the pattern translation mechanism.  
 ~~~~
 ==> Test English
@@ -185,8 +187,8 @@ String: Ik wil een kamer boeken voor vijf personen op dertig december tweeduizen
 Test results
 ------------
 All 2 tests have been executed successfully (112 assertions).  
-Total test duration: 3136 ms (total sleep duration: 0 ms).  
+Total test duration: 3076 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zspr.test.TestPatternManager: 35177 Kb / 34 Mb
- * nl.zeesoft.zspr.test.TestPatternManagerScan: 34241 Kb / 33 Mb
+ * nl.zeesoft.zspr.test.TestPatternManagerScan: 34242 Kb / 33 Mb
