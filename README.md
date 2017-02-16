@@ -29,6 +29,10 @@ The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V2.0">V2.0</a> f
 Version 3.0 of the Zeesoft architecture is a departure from previous full stack Zeesoft architectures.
 The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0">V3.0</a> folder contains the complete source code for the following products;
  * [ZDK](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/) Zeesoft Development Kit
+ * [ZDM](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDM/) Zeesoft Data Modelling
+ * [ZSC](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSC/) Zeesoft Symbolic Confabulation
+ * [ZSPR](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSPR/) Zeesoft Symbolic Pattern Recognition
+ * [ZID](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZID/) Zeesoft Intelligent Dialogs
  
 Future development
 ------------------
