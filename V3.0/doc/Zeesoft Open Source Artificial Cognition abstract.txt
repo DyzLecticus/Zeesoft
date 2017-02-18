@@ -6,7 +6,7 @@ Goal;
 	- Zeesoft Intelligent Dialogs
 	- Zeesoft Data Modelling
 	- Zeesoft Interactive Data Modelling
-- To show how these components can be combined to create artificial conciousness.
+- To show how these components can be combined to create artificial consciousness.
 - To remind listeners of the ethical importance of open source software.
 
 Slides and presentation;
@@ -32,5 +32,5 @@ Slides and presentation;
 
 Estimated duration; 30 - 45 minutes
 
-Required hardware; big screen with VGA connections for laptop(s)
+Required hardware; big screen with VGA connections for laptop(s).
 Internet connection would be required to show GitHub documentation.
