@@ -1,0 +1,36 @@
+Goal;
+- To give the listeners insight into some philosophical concepts related to symbolic artificial intelligence.
+- To inform the listeners about Zeesoft open source software and in some detail about;
+	- Zeesoft Symbolic Confabulation
+	- Zeesoft Symbolic Pattern Recognition
+	- Zeesoft Intelligent Dialogs
+	- Zeesoft Data Modelling
+	- Zeesoft Interactive Data Modelling
+- To show how these components can be combined to create artificial conciousness.
+- To remind listeners of the ethical importance of open source software.
+
+Slides and presentation;
+1)
+	Title	
+2) 
+	Zeesoft Github
+	What/Why Zeesoft and where the source code can be found
+3)
+	My background and inspiration
+4 - 8)
+	Confabulation theory and my interpretation
+9 - 23)
+	Zeesoft software including code examples
+24)
+	Combining Zeesoft components into interactive data modelling
+	(Show detailed GitHub ZIDM documentation?)
+	(Demonstrate working example/test code?)
+25)
+	Vision on artificial consciousness
+26)
+	The ethical importance of open source
+
+Estimated duration; 30 - 45 minutes
+
+Required hardware; big screen with VGA connections for laptop(s)
+Internet connection would be required to show GitHub documentation.
