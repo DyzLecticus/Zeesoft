@@ -25,20 +25,24 @@ public abstract class TestDialogHandlerObject extends TestObject {
 	}
 	
 	protected void testScript(DialogHandler handler) {
-		Date started = new Date();
-		int l = 0;
-		for (TestDialogHandlerScriptLine line: script) {
-			l++;
-			System.out.println("<<< " + line.getInput());
-			ZStringSymbolParser output = handler.handleInput(new ZStringSymbolParser(line.getInput()));
-			System.out.println(">>> " + output);
-			if (l<10) {
-				assertEqual(output.toString(),line.getOutput(),"Line  " + l + ": " + line.getMessage());
-			} else {
-				assertEqual(output.toString(),line.getOutput(),"Line " + l + ": " + line.getMessage());
+		if (script.size()>0) {
+			Date started = new Date();
+			int l = 0;
+			for (TestDialogHandlerScriptLine line: script) {
+				l++;
+				System.out.println("<<< " + line.getInput());
+				ZStringSymbolParser output = handler.handleInput(new ZStringSymbolParser(line.getInput()));
+				System.out.println(">>> " + output);
+				if (l<10) {
+					assertEqual(output.toString(),line.getOutput(),"Line  " + l + ": " + line.getMessage());
+				} else {
+					assertEqual(output.toString(),line.getOutput(),"Line " + l + ": " + line.getMessage());
+				}
 			}
+			System.out.println();
+			long time = ((new Date()).getTime() - started.getTime()) / 10; 
+			System.out.println("Average time spent thinking per response: " + time + " ms");
+			System.out.println();
 		}
-		long time = ((new Date()).getTime() - started.getTime()) / 10; 
-		System.out.println("Average time spent thinking per response: " + time + " ms");
 	}
 }

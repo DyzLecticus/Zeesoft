@@ -37,7 +37,11 @@ public class TestDialogHandler extends TestDialogHandlerObject {
 		System.out.println(" * " + getTester().getLinkForClass(DialogHandler.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the mock initialization duration, the dialog handler log and the average time spent thinking per response.  ");
+		System.out.println("The output of this test shows;  ");
+		System.out.println(" * The mock initialization duration.  ");
+		System.out.println(" * The scripted dialog handler input with corresponding output.  ");
+		System.out.println(" * The average time spent thinking per response.  ");
+		System.out.println(" * The dialog handler log.  ");
 	}
 
 	@Override
