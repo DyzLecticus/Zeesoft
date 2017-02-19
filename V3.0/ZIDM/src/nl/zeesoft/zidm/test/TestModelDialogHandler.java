@@ -2,16 +2,15 @@ package nl.zeesoft.zidm.test;
 
 import java.util.Date;
 
-import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdm.test.ZDM;
 import nl.zeesoft.zid.dialog.DialogHandler;
+import nl.zeesoft.zid.test.TestDialogHandlerObject;
 import nl.zeesoft.zidm.dialog.ModelDialogFactory;
 import nl.zeesoft.zidm.dialog.model.DialogModel;
 import nl.zeesoft.zidm.dialog.pattern.ModelPatternManager;
 
-public class TestModelDialogHandler extends TestObject {
+public class TestModelDialogHandler extends TestDialogHandlerObject {
 	public TestModelDialogHandler(Tester tester) {
 		super(tester);
 	}
@@ -64,33 +63,22 @@ public class TestModelDialogHandler extends TestObject {
 		System.out.println("Initializing model dialog handler took " + ((new Date()).getTime() - start.getTime()) + " ms");
 		System.out.println();
 
-		ZStringSymbolParser output = handler.handleInput(new ZStringSymbolParser("A primitive is an object that has a value"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("Primitives is the plural of primitive"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("A string is a primitive"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("Strings is the plural form of string"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("A name is a string"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("Names is the plural for name"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
+		addScriptLine("A primitive is an object that has a value",ModelDialogFactory.defaultAnswer);
+		addScriptLine("Primitives is the plural of primitive",ModelDialogFactory.defaultAnswer);
+		addScriptLine("A string is a primitive",ModelDialogFactory.defaultAnswer);
+		addScriptLine("Strings is the plural form of string",ModelDialogFactory.defaultAnswer);
+		addScriptLine("A name is a string",ModelDialogFactory.defaultAnswer);
+		addScriptLine("Names is the plural for name",ModelDialogFactory.defaultAnswer);
 		
-		output = handler.handleInput(new ZStringSymbolParser("An organism is an object"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("An animal is an organism"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("A plant is an organism"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("A primate is an animal"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("A human is a primate"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("humans have names"));
-		assertEqual(output.toString(),"What are humans?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("humans is the plural of human"));
-		assertEqual(output.toString(),ModelDialogFactory.defaultAnswer,"Output does not match expectation");
+		addScriptLine("An organism is an object",ModelDialogFactory.defaultAnswer);
+		addScriptLine("An animal is an organism",ModelDialogFactory.defaultAnswer);
+		addScriptLine("A plant is an organism",ModelDialogFactory.defaultAnswer);
+		addScriptLine("A primate is an animal",ModelDialogFactory.defaultAnswer);
+		addScriptLine("A human is a primate",ModelDialogFactory.defaultAnswer);
+		addScriptLine("humans have names","What are humans?");
+		addScriptLine("humans is the plural of human",ModelDialogFactory.defaultAnswer);
+
+		testScript(handler);
 		
 		System.out.println(handler.getLog());
 		

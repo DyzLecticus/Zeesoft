@@ -10,7 +10,6 @@ import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.dialog.DialogControllerObject;
 import nl.zeesoft.zid.dialog.DialogHandler;
 import nl.zeesoft.zidm.dialog.model.DialogModel;
-import nl.zeesoft.zspr.Language;
 
 public class ModelDialogController extends DialogControllerObject {
 
@@ -45,7 +44,7 @@ public class ModelDialogController extends DialogControllerObject {
 		if (eCNS.length()>0 || eCNM.length()>0) {
 			//System.out.println("Looking for class " + eName + " ...");
 			if (eName.length()==0) {
-				if (dialog.getLanguage().getCode().equals(Language.ENG)) {
+				if (dialog.isEnglish()) {
 					if (eCNS.length()>0) {
 						getOutput().append("What is ");
 						getOutput().append(eCIA.toLowerCase());
@@ -54,6 +53,16 @@ public class ModelDialogController extends DialogControllerObject {
 						getOutput().append("?");
 					} else {
 						getOutput().append("What are ");
+						getOutput().append(eCNM.toLowerCase());
+						getOutput().append("?");
+					}
+				} else if (dialog.isDutch()) {
+					if (eCNS.length()>0) {
+						getOutput().append("Wat is een ");
+						getOutput().append(eCNS.toLowerCase());
+						getOutput().append("?");
+					} else {
+						getOutput().append("Wat zijn ");
 						getOutput().append(eCNM.toLowerCase());
 						getOutput().append("?");
 					}
@@ -67,11 +76,15 @@ public class ModelDialogController extends DialogControllerObject {
 			cls = getClass(dialog,model,pkg,cNS);
 			if (cNM.length()==0 && cls==null) {
 				if (extendsCls==null) {
-					if (dialog.getLanguage().getCode().equals(Language.ENG)) {
+					if (dialog.isEnglish()) {
 						getOutput().append("What is ");
 						getOutput().append(cIA.toLowerCase());
 						getOutput().append(" ");
 						getOutput().append(cNS.toLowerCase());
+						getOutput().append("?");
+					} else if (dialog.isDutch()) {
+						getOutput().append("Wat is een ");
+						getOutput().append(eCNS.toLowerCase());
 						getOutput().append("?");
 					}
 					clearClassVariables = false;
@@ -95,7 +108,7 @@ public class ModelDialogController extends DialogControllerObject {
 			if (!addedTranslation) {
 				String name = model.getTranslator().getName(dialog.getLanguage().getCode(),false,cNM);
 				if (name.length()==0) {
-					if (dialog.getLanguage().getCode().equals(Language.ENG)) {
+					if (dialog.isEnglish()) {
 						getOutput().append("What are ");
 						getOutput().append(cNM.toLowerCase());
 						getOutput().append("?");
