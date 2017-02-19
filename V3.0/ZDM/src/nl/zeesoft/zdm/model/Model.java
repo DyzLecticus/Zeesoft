@@ -27,25 +27,29 @@ import nl.zeesoft.zdm.model.transformations.impl.SetPropertyName;
 import nl.zeesoft.zdm.model.transformations.impl.SetPropertyType;
 
 /**
- * A Model can contain package, class and property definitions. 
- * In order to bring a model to a certain state, transformations can be applied to it.
- * Models versions are tracked and can be created and restored using specific transformations.
+ * A Model uses a ModelStructure to contain package, class and property definitions. 
+ * In order to bring a Model to a certain state, transformations can be applied to it.
+ * Model versions are tracked and can be created and restored using specific transformations.
  */
-public class Model extends ModelObject {
+public class Model {
 	private boolean				appendLog			= true;
 	private List<ModelVersion>	versions			= new ArrayList<ModelVersion>();
-	private List<ModelPackage>	packages			= new ArrayList<ModelPackage>();
+	private ModelStructure		structure			= new ModelStructure();
 
 	public Model() {
 		
 	}
-
-	public Model(List<ModelPackage> packages) {
-		initialze(packages,null);
+	
+	public Model(ModelStructure structure) {
+		initialize(structure,null);
 	}
 	
-	public Model(List<ModelPackage> packages,List<ModelVersion> versions) {
-		initialze(packages,versions);
+	public Model(ModelStructure structure,List<ModelVersion> versions) {
+		initialize(structure,versions);
+	}
+
+	public void initialize(ModelStructure structure) {
+		initialize(structure,null);
 	}
 	
 	/**
@@ -53,19 +57,18 @@ public class Model extends ModelObject {
 	 * 
 	 * Creates a new version before adding the packages if none is provided.
 	 * 
-	 * @param packages The packages
+	 * @param structure The package structure
 	 * @param versions The optional versions
 	 */
-	public void initialze(List<ModelPackage> packages,List<ModelVersion> versions) {
-		cleanUp();
-		getVersions().clear();
-		if (versions!=null && versions.size()==0) {
-			for (ModelVersion version: versions) {			
-				getVersions().add(version);
-			}
+	public void initialize(ModelStructure structure,List<ModelVersion> versions) {
+		this.structure = structure;
+		this.versions.clear();
+		if (versions!=null) {
+			this.versions = versions;
 		} else {
 			ModelVersion version = getCurrentVersion();
 			if (appendLog) {
+				List<ModelPackage> packages = structure.getPackages(); 
 				if (packages.size()==0) {
 					version.addLogLine("Initialized model");
 				} else if (packages.size()==1) {
@@ -82,13 +85,14 @@ public class Model extends ModelObject {
 				}
 			}
 		}
-		for (ModelPackage pack: packages) {
-			pack.setModel(this);
-			getPackages().add(pack);
-		}
 	}
 	
-	@Override
+	/**
+	 * Applies a transformation to the model.
+	 * 
+	 * @param transformation The transformation to apply
+	 * @return The error message if applicable
+	 */
 	public String applyTransformation(TransformationObject transformation) {
 		String error = transformation.checkParameters();
 		if (error.length()==0) {
@@ -99,7 +103,9 @@ public class Model extends ModelObject {
 			} else if (transformation instanceof RevertVersionCurrent) {
 				error = revertVersionCurrent();
 			} else if (transformation instanceof RemovePackageAll) {
-				cleanUp();
+				for (ModelPackage pack: structure.getPackages()) {
+					structure.removePackage(pack.getName());
+				}
 			} else if (transformation instanceof ConvertModel) {
 				ConvertModel conv = (ConvertModel) transformation;
 				error = convertModel(conv.getIdPropertyName(),conv.getIdPropertyType());
@@ -118,6 +124,23 @@ public class Model extends ModelObject {
 	}
 
 	/**
+	 * Applies a list of transformations to the model.
+	 * 
+	 * @param transformations The transformations to apply
+	 * @return The error message if applicable
+	 */
+	protected String applyTransformations(List<TransformationObject> transformations) {
+		String error = "";
+		for (TransformationObject trans: transformations) {
+			error = applyTransformation(trans);
+			if (error.length()>0) {
+				break;
+			}
+		}
+		return error;
+	}
+
+	/**
 	 * Adds initial model state transformations to a list.
 	 * 
 	 * These transformations can be used to reconstruct the current model state.
@@ -125,16 +148,16 @@ public class Model extends ModelObject {
 	 * @param list The list to add the transformations to
 	 */
 	public void addInitialTransformationsToList(List<TransformationObject> list) {
-		for (ModelPackage pack: packages) {
+		for (ModelPackage pack: structure.getPackages()) {
 			list.add(new AddPackage(pack.getName()));
-			for (ModelClass cls: pack.getClasses()) {
+			for (ModelClass cls: structure.getClasses(pack.getName())) {
 				AddClass addClass = new AddClass(pack.getName(),cls.getName());
 				if (cls.isAbstr()) {
 					addClass.setAbstract("true");
 				}
 				list.add(addClass);
-				for (ModelProperty prop: cls.getProperties()) {
-					AddProperty addProperty = new AddProperty(cls.getPack().getName(),cls.getName(),prop.getName(),prop.getType());
+				for (ModelProperty prop: structure.getProperties(cls.getPackageName(),cls.getName())) {
+					AddProperty addProperty = new AddProperty(cls.getPackageName(),cls.getName(),prop.getName(),prop.getType());
 					if (prop.isList()) {
 						addProperty.setList("true");
 					}
@@ -142,34 +165,18 @@ public class Model extends ModelObject {
 				}
 			}
 		}
-		List<ModelClass> added = new ArrayList<ModelClass>();
-		for (ModelPackage pack: packages) {
-			for (ModelClass cls: pack.getClasses()) {
-				if (cls.getExtendsClass()==null) {
-					for (ModelClass subCls: getSubClassesForClass(cls,0)) {
-						if (!added.contains(subCls)) {
-							added.add(subCls);
-							SetClassExtendsClass setExtends = new SetClassExtendsClass(); 
-							setExtends.setPackageName(subCls.getPack().getName());
-							setExtends.setName(subCls.getName());
-							setExtends.setExtendsPackageName(subCls.getExtendsClass().getPack().getName());
-							setExtends.setExtendsClassName(subCls.getExtendsClass().getName());
-							list.add(setExtends);
-						}
-					}
+		for (ModelPackage pack: structure.getPackages()) {
+			for (ModelClass cls: structure.getClasses(pack.getName())) {
+				if (cls.getExtendsPackageName().length()>0 && cls.getExtendsClassName().length()>0) {
+					SetClassExtendsClass setExtends = new SetClassExtendsClass(); 
+					setExtends.setPackageName(cls.getPackageName());
+					setExtends.setName(cls.getName());
+					setExtends.setExtendsPackageName(cls.getExtendsPackageName());
+					setExtends.setExtendsClassName(cls.getExtendsClassName());
+					list.add(setExtends);
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns a copy of the module
-	 * 
-	 * @return A copy of the module
-	 */
-	@Override
-	public Model getCopy() {
-		return new Model(getPackagesCopy(),getVersionsCopy());
 	}
 
 	/**
@@ -178,28 +185,17 @@ public class Model extends ModelObject {
 	 * @param list The list to add the transformations to
 	 */
 	public void addConvertModelTransformationsToList(List<TransformationObject> list) {
-		for (ModelPackage pack: packages) {
+		for (ModelPackage pack: structure.getPackages()) {
 			list.add(new AddPackage(pack.getName()));
-			for (ModelClass cls: pack.getClasses()) {
+			for (ModelClass cls: structure.getClasses(pack.getName())) {
 				if (!cls.isAbstr()) {
 					list.add(new AddClass(pack.getName(),cls.getName()));
-					for (ModelProperty prop: cls.getExtendedProperties()) {
+					for (ModelProperty prop: structure.getPropertiesExtended(cls.getPackageName(),cls.getName())) {
 						list.add(new AddProperty(pack.getName(),cls.getName(),prop.getName(),prop.getType(),prop.isList()));
 					}
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Call this method when the model is no longer needed to ensure resources can be garbage collected.
-	 */
-	@Override
-	public final void cleanUp() {
-		for (ModelPackage pack: packages) {
-			pack.cleanUp();
-		}
-		packages.clear();
 	}
 
 	/**
@@ -315,24 +311,20 @@ public class Model extends ModelObject {
 	 * 
 	 * @return All model versions
 	 */
-	protected List<ModelVersion> getVersions() {
-		return versions;
+	public List<ModelVersion> getVersions() {
+		return new ArrayList<ModelVersion>(versions);
 	}
 
 	
 	/**
-	 * Returns a copy of all model versions.
+	 * Returns the model structure.
 	 * 
-	 * @return A copy of all model versions
+	 * @return The model structure
 	 */
-	public List<ModelVersion> getVersionsCopy() {
-		List<ModelVersion> r = new ArrayList<ModelVersion>();
-		for (ModelVersion v: versions) {
-			r.add(v.getCopy());
-		}
-		return r;
+	public ModelStructure getStructure() {
+		return structure;
 	}
-
+	
 	/**
 	 * Returns a specific version number.
 	 * 
@@ -364,16 +356,14 @@ public class Model extends ModelObject {
 			idPropertyType = String.class.getName();
 		}
 		String error = "";
-		if (packages.size()==0) {
+		if (structure.getPackages().size()==0) {
 			error = "No packages to convert";
 		}
 		if (error.length()==0 && idPropertyName.length()>0) {
-			for (ModelPackage pack: packages) {
-				for (ModelClass cls: pack.getClasses()) {
-					if (!cls.isAbstr() && cls.getProperty(idPropertyName)!=null) {
-						error = "Class " + cls.getFullName() + " already contains a property named " + idPropertyName;
-						break;
-					}
+			for (ModelClass cls: structure.getClasses()) {
+				if (!cls.isAbstr() && structure.getProperty(cls.getPackageName(),cls.getName(),idPropertyName,true)!=null) {
+					error = "Class " + cls.getFullName() + " already contains a property named " + idPropertyName;
+					break;
 				}
 			}
 		}
@@ -381,110 +371,51 @@ public class Model extends ModelObject {
 			List<TransformationObject> list = new ArrayList<TransformationObject>();
 			addConvertModelTransformationsToList(list);
 			if (idPropertyName!=null && idPropertyName.length()>0) {
-				for (ModelPackage pack: packages) {
-					for (ModelClass cls: pack.getClasses()) {
-						if (!cls.isAbstr()) {
-							list.add(new AddProperty(pack.getName(),cls.getName(),idPropertyName,idPropertyType));
-						}
+				for (ModelClass cls: structure.getClasses()) {
+					if (!cls.isAbstr()) {
+						list.add(new AddProperty(cls.getPackageName(),cls.getName(),idPropertyName,idPropertyType));
 					}
 				}
 			}
 			if (getCurrentVersion().getTransformations().size()>1) {
 				applyTransformation(new IncrementVersion());
 			}
-			if (packages.size()>0) {
-				applyTransformation(new RemovePackageAll());
-			}
+			applyTransformation(new RemovePackageAll());
 			error = applyTransformations(list);
 		}
 		return error;
-	}
-
-	/**
-	 * Returns all model packages.
-	 * 
-	 * @return All model packages
-	 */
-	protected List<ModelPackage> getPackages() {
-		return packages;
-	}
-	
-	/**
-	 * Returns a complete copy of all model packages.
-	 * 
-	 * @return A complete copy of all model packages
-	 */
-	public List<ModelPackage> getPackagesCopy() {
-		List<ModelPackage> r = new ArrayList<ModelPackage>();
-		for (ModelPackage pack: packages) {
-			r.add((ModelPackage)pack.getCopy());
-		}
-		for (ModelPackage pack: r) {
-			for (ModelClass cls: pack.getClasses()) {
-				if (cls.getExtendsClass()!=null) {
-					ModelClass clsExt = null;
-					for (ModelPackage sPack: r) {
-						clsExt = sPack.getClass(cls.getExtendsClass().getName());
-						if (clsExt!=null) {
-							break;
-						}
-					}
-					cls.setExtendsClass(clsExt);
-				}
-			}
-		}
-		return packages;
-	}
-
-	/**
-	 * Returns a specific package.
-	 * 
-	 * @param name The name of the package
-	 * @return The package or null if it does not exist
-	 */
-	protected ModelPackage getPackage(String name) {
-		ModelPackage r = null;
-		for (ModelPackage pack: packages) {
-			if (pack.getName().equals(name)) {
-				r = pack;
-				break;
-			}
-		}
-		return r;
 	}
 	
 	private String applyNamedTransformation(TransformationNamedObject transformation) {
 		String error = "";
 		String name = transformation.getName();
 		if (transformation instanceof AddPackage) {
-			ModelPackage pack = getPackage(name);
+			ModelPackage pack = structure.getPackage(name);
 			if (pack!=null) {
 				error = "Package " + name + " already exists";
 			} else {
-				pack = new ModelPackage(name);
-				pack.setModel(this);
-				packages.add(pack);
+				pack = structure.addPackage(name);
 			}
 		} else if (transformation instanceof SetPackageName) {
-			ModelPackage pack = getPackage(name);
-			ModelPackage newPack = getPackage(((SetPackageName) transformation).getNewName());
+			ModelPackage pack = structure.getPackage(name);
+			String newName = ((SetPackageName) transformation).getNewName();
+			ModelPackage newPack = structure.getPackage(newName);
 			if (pack==null) {
 				error = "Package " + name + " does not exist";
 			} else if (newPack!=null) {
 				error = "Package " + newPack.getName() + " already exists";
 			} else {
-				error = pack.applyTransformation(transformation);
+				structure.renamePackage(name, newName);
 			}
 		} else if (transformation instanceof RemovePackage) {
-			ModelPackage pack = getPackage(name);
+			ModelPackage pack = structure.getPackage(name);
 			if (pack==null) {
 				error = "Package " + name + " does not exist";
 			} else {
 				error = checkRemovePackage(pack);
 			}
 			if (error.length()==0) {
-				pack.cleanUp();
-				packages.remove(pack);
+				structure.removePackage(name);
 			}
 		} else if (transformation instanceof TransformationNamedPackageObject) {
 			error = applyNamedPackageTransformation((TransformationNamedPackageObject) transformation);
@@ -496,74 +427,76 @@ public class Model extends ModelObject {
 		String error = "";
 		String name = transformation.getName();
 		String packageName = transformation.getPackageName();
-		ModelPackage pack = getPackage(packageName);
+		ModelPackage pack = structure.getPackage(packageName);
 		if (pack!=null) {
 			if (transformation instanceof AddClass) {
 				AddClass trans = (AddClass) transformation;
-				ModelClass cls = pack.getClass(name);
+				ModelClass cls = structure.getClass(packageName,name);
 				ModelClass extCls = null;
 				if (cls!=null) {
 					error = "Class " + packageName + "." + name + " already exists";
 				}
 				if (error.length()==0 && trans.getExtendsClassName().length()>0) {
-					ModelPackage extendsPackage = getPackage(trans.getExtendsPackageName());
+					ModelPackage extendsPackage = structure.getPackage(trans.getExtendsPackageName());
 					if (extendsPackage==null) {
 						error = "Extend class package " + trans.getExtendsPackageName() + " does not exist";
 					} else {
-						extCls = extendsPackage.getClass(trans.getExtendsClassName());
+						extCls = structure.getClass(trans.getExtendsPackageName(),trans.getExtendsClassName());
 						if (extCls==null) {
 							error = "Extend class " + trans.getExtendsPackageName() + "." + trans.getExtendsClassName() + " does not exist";
 						}
 					}
 				}
-				if (error.length()==0 && extCls!=null && (extCls==cls || extCls.getSuperClasses().contains(cls))) {
-					error = "Classes may not extend themselves";
+				if (error.length()==0 && extCls!=null && (extCls==cls || structure.getSuperClasses(extCls.getPackageName(),extCls.getName()).contains(cls))) {
+					error = "Classes may not indirectly extend themselves";
 				}
 				if (error.length()==0) {
-					cls = pack.getNewClass(name);
+					cls = structure.addClass(packageName,name);
 					if (trans.getAbstract().length()>0) {
 						cls.setAbstr(Boolean.parseBoolean(trans.getAbstract()));
 					}
 					if (extCls!=null) {
-						cls.setExtendsClass(extCls);
+						cls.setExtendsPackageName(extCls.getPackageName());
+						cls.setExtendsClassName(extCls.getName());
 					}
 				}
 			} else if (transformation instanceof SetClassName) {
-				ModelClass cls = pack.getClass(name);
-				ModelClass newCls = pack.getClass(((SetClassName) transformation).getNewName());
+				ModelClass cls = structure.getClass(packageName, name);
+				String newName = ((SetClassName) transformation).getNewName();
+				ModelClass newCls = structure.getClass(packageName,newName);
 				if (cls==null) {
 					error = "Class " + packageName + "." + name + " does not exist";
 				} else if (newCls!=null) {
 					error = "Class " + packageName + "." + newCls.getName() + " already exists";
 				} else {
 					String type = cls.getFullName();
-					cls.applyTransformation(transformation);
+					structure.renameClass(packageName, name, newName);
 					updatePropertyType(type,cls.getFullName());
 				}
 			} else if (transformation instanceof SetClassExtendsClass) {
 				SetClassExtendsClass trans = (SetClassExtendsClass) transformation;
-				ModelClass cls = pack.getClass(name);
+				ModelClass cls = structure.getClass(packageName, name);
 				ModelClass extCls = null;
 				if (cls==null) {
 					error = "Class " + packageName + "." + name + " does not exist";
 				}
 				if (error.length()==0 && trans.getExtendsClassName().length()>0) {
-					ModelPackage extendsPackage = getPackage(trans.getExtendsPackageName());
+					ModelPackage extendsPackage = structure.getPackage(trans.getExtendsPackageName());
 					if (extendsPackage==null) {
 						error = "Extend class package " + trans.getExtendsPackageName() + " does not exist";
 					} else {
-						extCls = extendsPackage.getClass(trans.getExtendsClassName());
+						extCls = structure.getClass(trans.getExtendsPackageName(),trans.getExtendsClassName());
 						if (extCls==null) {
 							error = "Extend class " + trans.getExtendsPackageName() + "." + trans.getExtendsClassName() + " does not exist";
 						}
 					}
 				}
-				if (error.length()==0 && extCls!=null && (extCls==cls || extCls.getSuperClasses().contains(cls))) {
+				if (error.length()==0 && extCls!=null && (extCls==cls || structure.getSuperClasses(cls.getPackageName(),cls.getName()).contains(cls))) {
 					error = "Classes may not extend themselves";
 				}
 				if (error.length()==0 && extCls!=null) {
-					for (ModelProperty prop: cls.getProperties()) {
-						ModelProperty eProp = extCls.getProperty(prop.getName());
+					for (ModelProperty prop: structure.getProperties(cls.getPackageName(),cls.getName())) {
+						ModelProperty eProp = structure.getProperty(extCls.getPackageName(),extCls.getName(),prop.getName(),true);
 						if (eProp!=null && !eProp.getType().equals(prop.getType())) {
 							error = "Extended class already defines a property named " + prop.getName() + " with a different type";
 							break;
@@ -571,7 +504,7 @@ public class Model extends ModelObject {
 					}
 				}
 				if (error.length()==0 && extCls!=null) {
-					for (ModelProperty prop: extCls.getExtendedProperties()) {
+					for (ModelProperty prop: structure.getPropertiesExtended(extCls.getPackageName(),extCls.getName())) {
 						error = checkSubclassContainsProperty(cls,prop.getName());
 						if (error.length()>0) {
 							break;
@@ -579,26 +512,26 @@ public class Model extends ModelObject {
 					}
 				}
 				if (error.length()==0) {
-					cls.setExtendsClass(extCls);
+					cls.setExtendsPackageName(extCls.getPackageName());
+					cls.setExtendsClassName(extCls.getName());
 				}
 			} else if (transformation instanceof SetClassAbstract) {
 				SetClassAbstract trans = (SetClassAbstract) transformation;
-				ModelClass cls = pack.getClass(name);
+				ModelClass cls = structure.getClass(packageName, name);
 				if (cls==null) {
 					error = "Class " + packageName + "." + name + " does not exist";
 				} else {
 					cls.setAbstr(Boolean.parseBoolean(trans.getAbstract()));
 				}
 			} else if (transformation instanceof RemoveClass) {
-				ModelClass cls = pack.getClass(name);
+				ModelClass cls = structure.getClass(packageName, name);
 				if (cls==null) {
 					error = "Class " + packageName + "." + name + " does not exist";
 				} else {
 					error = checkRemoveClass(cls);
 				}
 				if (error.length()==0) {
-					cls.cleanUp();
-					pack.removeClass(cls.getName());
+					structure.removeClass(packageName, name);
 				}
 			} else if (transformation instanceof TransformationNamedPackageClassObject) {
 				error = applyNamedPackageClassTransformation((TransformationNamedPackageClassObject) transformation);
@@ -614,13 +547,13 @@ public class Model extends ModelObject {
 		String name = transformation.getName();
 		String packageName = transformation.getPackageName();
 		String className = transformation.getClassName();
-		ModelPackage pack = getPackage(packageName);
+		ModelPackage pack = structure.getPackage(packageName);
 		ModelClass cls = null;
 		if (pack==null) {
 			error = "Package " + packageName + " does not exist";
 		}
 		if (error.length()==0) {
-			cls = pack.getClass(className);
+			cls = structure.getClass(packageName,className);
 			if (cls==null) {
 				error = "Class " + packageName + "." + className + " does not exist";
 			}
@@ -628,9 +561,9 @@ public class Model extends ModelObject {
 		if (error.length()==0) {
 			if (transformation instanceof AddProperty) {
 				AddProperty trans = (AddProperty) transformation;
-				ModelProperty prop = cls.getProperty(name);
+				ModelProperty prop = structure.getProperty(packageName,className,name,true);
 				if (prop!=null) {
-					if (cls.getProperties().contains(prop)) {
+					if (structure.getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
 						error = "Property " + cls.getFullName() + ":" + name + " already exists";
 					} else if (!prop.getType().equals(trans.getType()) || prop.isList()!=Boolean.parseBoolean(trans.getList())) {
 						if (prop.isList()) {
@@ -644,7 +577,7 @@ public class Model extends ModelObject {
 					error = checkSubclassContainsProperty(cls,name);
 				}
 				if (error.length()==0) {
-					prop = cls.getNewProperty(name);
+					prop = structure.addProperty(packageName,className,name);
 					if (trans.getType().length()>0) {
 						prop.setType(trans.getType());
 					}
@@ -653,32 +586,33 @@ public class Model extends ModelObject {
 					}
 				}
 			} else if (transformation instanceof SetPropertyName) {
-				ModelProperty prop = cls.getProperty(name);
-				ModelProperty newProp = cls.getProperty(((SetPropertyName) transformation).getNewName());
+				ModelProperty prop = structure.getProperty(packageName,className,name,true);
+				String newName = ((SetPropertyName) transformation).getNewName();
+				ModelProperty newProp = structure.getProperty(packageName,className,newName,true);
 				if (prop==null) {
 					error = "Property " + cls.getFullName() + ":" + name + " does not exist";
 				} else if (newProp!=null) {
-					if (!cls.getProperties().contains(newProp) && !newProp.getType().equals(prop.getType())) {
+					if (!structure.getProperties(cls.getPackageName(),cls.getName()).contains(newProp) && !newProp.getType().equals(prop.getType())) {
 						error = "Override of " + newProp.getFullName() + " must equal type " + newProp.getFullName();
 					} else {
 						error = "Property " + cls.getFullName() + ":" + name + " already exists";
 					}
 				}
 				if (error.length()==0) {
-					error = checkSubclassContainsProperty(cls,((SetPropertyName) transformation).getNewName());
+					error = checkSubclassContainsProperty(cls,newName);
 				}
 				if (error.length()==0) {
-					prop.applyTransformation(transformation);
+					structure.renameProperty(packageName, className,name,newName);
 					setSubclassPropertyName(cls,name,prop.getName());
 				}
 			} else if (transformation instanceof SetPropertyType) {
-				ModelProperty prop = cls.getProperty(name);
+				ModelProperty prop = structure.getProperty(packageName,className,name,true);
 				if (prop!=null) {
-					if (!cls.getProperties().contains(prop)) {
+					if (!structure.getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
 						error = "Class " + cls.getFullName() + " does not define a property named " + name;
-					} else if (cls.getExtendsClass()!=null) {
-						if (cls.getExtendsClass().getProperty(name)!=null) {
-							error = "Property " + cls.getFullName() + " overrides a superclass property";
+					} else if (cls.getExtendsPackageName().length()>0 && cls.getExtendsClassName().length()>0) {
+						if (structure.getProperty(cls.getExtendsPackageName(),cls.getExtendsClassName(),name,true)!=null) {
+							error = "Property " + prop.getFullName() + " overrides a superclass property";
 						}
 					}
 				}
@@ -690,13 +624,13 @@ public class Model extends ModelObject {
 					setSubclassPropertyType(cls,name,prop.getType());
 				}
 			} else if (transformation instanceof SetPropertyList) {
-				ModelProperty prop = cls.getProperty(name);
+				ModelProperty prop = structure.getProperty(packageName,className,name,true);
 				if (prop!=null) {
-					if (!cls.getProperties().contains(prop)) {
+					if (!structure.getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
 						error = "Class " + cls.getFullName() + " does not define a property named " + name;
-					} else if (cls.getExtendsClass()!=null) {
-						if (cls.getExtendsClass().getProperty(name)!=null) {
-							error = "Property " + cls.getFullName() + " is overrides a superclass property";
+					} else if (cls.getExtendsPackageName().length()>0 && cls.getExtendsClassName().length()>0) {
+						if (structure.getProperty(cls.getExtendsPackageName(),cls.getExtendsClassName(),name,true)!=null) {
+							error = "Property " + prop.getFullName() + " overrides a superclass property";
 						}
 					}
 				}
@@ -708,16 +642,15 @@ public class Model extends ModelObject {
 					setSubclassPropertyList(cls,name,prop.isList());
 				}
 			} else if (transformation instanceof RemoveProperty) {
-				ModelProperty prop = cls.getProperty(name);
-				if (prop!=null && !cls.getProperties().contains(prop)) {
+				ModelProperty prop = structure.getProperty(packageName,className,name,true);
+				if (prop!=null && !structure.getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
 					error = "Class " + cls.getFullName() + " does not define a property named " + name;
 				}
 				if (error.length()==0 && prop==null) {
 					error = "Property " + cls.getFullName() + ":" + name + " does not exist";
 				}
 				if (error.length()==0) {
-					prop.cleanUp();
-					cls.removeProperty(prop.getName());
+					structure.removeProperty(packageName, className, name);
 				}
 			}
 		}
@@ -726,19 +659,19 @@ public class Model extends ModelObject {
 	
 	private String checkRemovePackage(ModelPackage pack) {
 		String error = "";
-		for (ModelClass cls: pack.getClasses()) {
-			for (ModelClass subCls: getSubClassesForClass(cls,0)) {
-				if (subCls.getPack()!=pack) {
-					error = "Unable to remove package due to outside subclass dependency; " + subCls.getFullName();
-					break;
-				}
-			}
-			if (error.length()==0) {
-				for (ModelProperty prop: getProperties(cls.getFullName())) {
-					if (prop.getCls().getPack()!=pack) {
-						error = "Unable to remove package due to outside property type dependency; " + prop.getFullName();
-						break;
+		for (ModelClass cls: structure.getClasses()) {
+			if (cls.getPackageName().equals(pack.getName())) {
+				if (error.length()==0) {
+					for (ModelProperty prop: structure.getProperties(cls.getFullName())) {
+						if (!prop.getPackageName().equals(pack.getName())) {
+							error = "Unable to remove package due to outside property type dependency; " + prop.getFullName();
+							break;
+						}
 					}
+				}
+			} else {
+				if (cls.getExtendsPackageName().equals(pack.getName())) {
+					error = "Unable to remove package due to outside subclass dependency; " + cls.getFullName();
 				}
 			}
 			if (error.length()>0) {
@@ -750,12 +683,12 @@ public class Model extends ModelObject {
 
 	private String checkRemoveClass(ModelClass cls) {
 		String error = "";
-		List<ModelClass> subClss = getSubClassesForClass(cls,1);
+		List<ModelClass> subClss = structure.getSubClasses(cls.getPackageName(),cls.getName(),1);
 		if (subClss.size()>0) {
 			error = "Unable to remove class due to subclass dependency; " + subClss.get(0).getFullName();
 		}
 		if (error.length()==0) {
-			for (ModelProperty prop: getProperties(cls.getFullName())) {
+			for (ModelProperty prop: structure.getProperties(cls.getFullName())) {
 				error = "Unable to remove class due to property type dependency; " + prop.getFullName();
 				break;
 			}
@@ -765,9 +698,9 @@ public class Model extends ModelObject {
 
 	private String checkSubclassContainsProperty(ModelClass cls,String propertyName) {
 		String error = "";
-		List<ModelClass> subClss = getSubClassesForClass(cls,0);
+		List<ModelClass> subClss = structure.getSubClasses(cls.getPackageName(),cls.getName(),0);
 		for (ModelClass subCls: subClss) {
-			for (ModelProperty prop: subCls.getProperties()) {
+			for (ModelProperty prop: structure.getProperties(subCls.getPackageName(),subCls.getName())) {
 				if (prop.getName().equals(propertyName)) {
 					error = "Subclass " + cls.getFullName() + " already defines a property named " + propertyName;
 				}
@@ -778,8 +711,8 @@ public class Model extends ModelObject {
 
 	private List<ModelProperty> getSubclassProperties(ModelClass cls,String name) {
 		List<ModelProperty> r = new ArrayList<ModelProperty>();
-		for (ModelClass subCls: getSubClassesForClass(cls,0)) {
-			for (ModelProperty prop: subCls.getProperties()) {
+		for (ModelClass subCls: structure.getSubClasses(cls.getPackageName(),cls.getName(),0)) {
+			for (ModelProperty prop: structure.getProperties(subCls.getPackageName(),subCls.getName())) {
 				if (prop.getName().equals(name)) {
 					r.add(prop);
 				}
@@ -805,46 +738,10 @@ public class Model extends ModelObject {
 			prop.setList(newList);
 		}
 	}
-
-	private List<ModelProperty> getProperties(String type) {
-		List<ModelProperty> r = new ArrayList<ModelProperty>();
-		for (ModelPackage pack: packages) {
-			for (ModelClass cls: pack.getClasses()) {
-				for (ModelProperty prop: cls.getProperties()) {
-					if (prop.getType().equals(type)) {
-						r.add(prop);
-					}
-				}
-			}
-		}
-		return r;
-	}
 	
 	private void updatePropertyType(String type,String newType) {
-		for (ModelProperty prop: getProperties(type)) {
+		for (ModelProperty prop: structure.getProperties(type)) {
 			prop.setType(newType);
-		}
-	}
-	
-	private List<ModelClass> getSubClassesForClass(ModelClass cls,int maxDepth) {
-		List<ModelClass> r = new ArrayList<ModelClass>();
-		addSubClassesToList(cls,0,maxDepth,r);
-		return r;
-		
-	}
-
-	private void addSubClassesToList(ModelClass supCls,int depth,int maxDepth,List<ModelClass> clss) {
-		if (depth==maxDepth && maxDepth>0) {
-			return;
-		}
-		depth++;
-		for (ModelPackage pack: packages) {
-			for (ModelClass subCls: pack.getClasses()) {
-				if (subCls.getExtendsClass()==supCls && !clss.contains(subCls)) {
-					clss.add(subCls);
-					addSubClassesToList(subCls,depth,maxDepth,clss);
-				}
-			}
 		}
 	}
 }

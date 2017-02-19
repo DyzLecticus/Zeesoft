@@ -40,18 +40,10 @@ public class ModelSelf extends Model {
 
 		transformations.add(new AddPackage(packageName));
 
-		// Model object
-		transformations.add(new AddClass(packageName,classNamePrefix + "Object",true));
-		transformations.add(new AddProperty(packageName,classNamePrefix + "Object","id",Long.class.getName()));
-
 		// Model
-		transformations.add(new AddClass(packageName,classNamePrefix + "Self",false,packageName,classNamePrefix + "Object"));
+		transformations.add(new AddClass(packageName,classNamePrefix + "Self",false));
 		transformations.add(new AddProperty(packageName,classNamePrefix + "Self","versions",packageName + "." + classNamePrefix + "Version",true));
 		transformations.add(new AddProperty(packageName,classNamePrefix + "Self","packages",packageName + "." + classNamePrefix + "Package",true));
-
-		// Model named object
-		transformations.add(new AddClass(packageName,classNamePrefix + "NamedObject",true,packageName,classNamePrefix + "Object"));
-		transformations.add(new AddProperty(packageName,classNamePrefix + "NamedObject","name"));
 
 		// Version
 		transformations.add(new AddClass(packageName,classNamePrefix + "Version"));
@@ -68,6 +60,11 @@ public class ModelSelf extends Model {
 		transformations.add(new AddClass(packageName,classNamePrefix + "TransformationParameter"));
 		transformations.add(new AddProperty(packageName,classNamePrefix + "TransformationParameter","name"));
 		transformations.add(new AddProperty(packageName,classNamePrefix + "TransformationParameter","value"));
+
+		// Model named object
+		transformations.add(new AddClass(packageName,classNamePrefix + "NamedObject",true));
+		transformations.add(new AddProperty(packageName,classNamePrefix + "NamedObject","id",Long.class.getName()));
+		transformations.add(new AddProperty(packageName,classNamePrefix + "NamedObject","name"));
 		
 		// Package
 		transformations.add(new AddClass(packageName,classNamePrefix + "Package",false,packageName,classNamePrefix + "NamedObject"));

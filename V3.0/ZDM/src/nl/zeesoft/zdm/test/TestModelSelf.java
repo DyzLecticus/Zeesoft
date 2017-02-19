@@ -5,7 +5,9 @@ import java.util.List;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdm.model.Model;
+import nl.zeesoft.zdm.model.ModelClass;
 import nl.zeesoft.zdm.model.ModelPackage;
+import nl.zeesoft.zdm.model.ModelProperty;
 import nl.zeesoft.zdm.model.ModelSelf;
 import nl.zeesoft.zdm.model.ModelVersion;
 
@@ -47,21 +49,24 @@ public class TestModelSelf extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		ModelSelf modelSelf = (ModelSelf) getTester().getMockedObject(MockModelSelf.class.getName());
-		List<ModelVersion> versions = modelSelf.getVersionsCopy();
-		List<ModelPackage> packages = modelSelf.getPackagesCopy();
+		List<ModelVersion> versions = modelSelf.getVersions();
+		List<ModelPackage> packages = modelSelf.getStructure().getPackages();
 		assertEqual(versions.size(),2,"Number of versions does not meet expectation");
 		if (versions.size()>=1) {
-			assertEqual(versions.get(0).getTransformations().size(),28,"Number of version transformations does not meet expectation");
+			assertEqual(versions.get(0).getTransformations().size(),27,"Number of version transformations does not meet expectation");
 		}
 		if (versions.size()>=2) {
-			assertEqual(versions.get(1).getInitialTransformations().size(),32,"Number of version initial transformations does not meet expectation");
+			assertEqual(versions.get(1).getInitialTransformations().size(),29,"Number of version initial transformations does not meet expectation");
 		}
 		assertEqual(packages.size(),1,"Number of packages does not meet expectation");
 		if (packages.size()>0) {
-			assertEqual(packages.get(0).getClasses().size(),9,"Number of package classes does not meet expectation");
-			if (packages.get(0).getClasses().size()>=9) {
-				assertEqual(packages.get(0).getClasses().get(8).getProperties().size(),2,"Number of package class properties does not meet expectation");
-				assertEqual(packages.get(0).getClasses().get(8).getExtendedProperties().size(),4,"Number of extended package class properties does not meet expectation");
+			List<ModelClass> classes = modelSelf.getStructure().getClasses(packages.get(0).getName());
+			assertEqual(classes.size(),8,"Number of package classes does not meet expectation");
+			if (classes.size()>=8) {
+				List<ModelProperty> properties = modelSelf.getStructure().getProperties(packages.get(0).getName(),classes.get(7).getName());
+				List<ModelProperty> propertiesExt = modelSelf.getStructure().getPropertiesExtended(packages.get(0).getName(),classes.get(7).getName());
+				assertEqual(properties.size(),2,"Number of package class properties does not meet expectation");
+				assertEqual(propertiesExt.size(),4,"Number of extended package class properties does not meet expectation");
 			}
 		}
 		ZDM.describeModelVersionLogs(modelSelf);

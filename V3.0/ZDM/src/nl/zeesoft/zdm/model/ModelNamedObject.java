@@ -1,12 +1,9 @@
 package nl.zeesoft.zdm.model;
 
-import nl.zeesoft.zdm.model.transformations.TransformationNamedObjectSetName;
-import nl.zeesoft.zdm.model.transformations.TransformationObject;
-
 /**
  * Abstract named model object.
  */
-public abstract class ModelNamedObject extends ModelObject {
+public abstract class ModelNamedObject {
 	private String name = "";
 	
 	public ModelNamedObject(String name) {
@@ -21,15 +18,6 @@ public abstract class ModelNamedObject extends ModelObject {
 	 * @return The full name
 	 */
 	public abstract String getFullName();
-
-	@Override
-	protected String applyTransformation(TransformationObject transformation) {
-		String error = "";
-		if (transformation instanceof TransformationNamedObjectSetName) {
-			setName(((TransformationNamedObjectSetName) transformation).getNewName());
-		}
-		return error;
-	}
 
 	/**
 	 * Returns the name of this object.

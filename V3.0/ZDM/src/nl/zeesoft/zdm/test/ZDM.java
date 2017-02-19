@@ -89,7 +89,7 @@ public class ZDM extends LibraryObject {
 
 	public static void describeModelVersionLogs(Model model) {
 		StringBuilder desc = new StringBuilder();
-		for (ModelVersion version: model.getVersionsCopy()) {
+		for (ModelVersion version: model.getVersions()) {
 			if (version.getLog().length()>0) {
 				if (desc.length()>0) {
 					desc.append("\n");
@@ -109,26 +109,26 @@ public class ZDM extends LibraryObject {
 	
 	public static final StringBuilder getModelPackageDescription(Model model, boolean includeExtendedProperties) {
 		StringBuilder desc = new StringBuilder();
-		for (ModelPackage pack: model.getPackagesCopy()) {
+		for (ModelPackage pack: model.getStructure().getPackages()) {
 			desc.append("Package: ");
 			desc.append(pack.getName());
 			desc.append("\n");
-			for (ModelClass cls: pack.getClasses()) {
+			for (ModelClass cls: model.getStructure().getClasses(pack.getName())) {
 				desc.append("- Class: ");
 				desc.append(cls.getName());
 				if (cls.isAbstr()) {
 					desc.append(" (abstract)");
 				}
-				if (cls.getExtendsClass()!=null) {
+				if (cls.getExtendsPackageName().length()>0 && cls.getExtendsClassName().length()>0) {
 					desc.append(", extends: ");
-					desc.append(cls.getExtendsClass().getFullName());
+					desc.append(cls.getExtendsPackageName() + "." + cls.getExtendsClassName());
 				}
 				desc.append("\n");
 				List<ModelProperty> props = null;
 				if (includeExtendedProperties) {
-					props = cls.getExtendedProperties();
+					props = model.getStructure().getPropertiesExtended(cls.getPackageName(),cls.getName());
 				} else {
-					props = cls.getProperties();
+					props = model.getStructure().getProperties(cls.getPackageName(),cls.getName());
 				}
 				for (ModelProperty prop: props) {
 					desc.append("  - Property: ");
@@ -142,10 +142,10 @@ public class ZDM extends LibraryObject {
 						desc.append(prop.getType());
 					}
 					ModelProperty eProp = null;
-					if (cls.getExtendsClass()!=null) {
-						eProp = cls.getExtendsClass().getProperty(prop.getName());
+					if (cls.getExtendsPackageName().length()>0 && cls.getExtendsClassName().length()>0) {
+						eProp = model.getStructure().getProperty(cls.getPackageName(), cls.getName(), prop.getName(), true);
 						if (eProp!=null) {
-							if (!cls.getProperties().contains(prop)) {
+							if (!model.getStructure().getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
 								desc.append(" (extends: " + eProp.getFullName() + ")");
 							} else {
 								desc.append(" (overrides: " + eProp.getFullName() + ")");

@@ -33,8 +33,6 @@ public class TestModelApplyList extends TestObject {
 		System.out.println("transformations.add(new AddPackage(\"new.package.name\"));");
 		System.out.println("// Apply transformations");
 		System.out.println("model.applyTransformationList(transformations);");
-		System.out.println("// Clean up model after use to free resources (allow garbage collection)");
-		System.out.println("model.cleanUp();");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockModelTransformations.class.getName());
@@ -70,7 +68,5 @@ public class TestModelApplyList extends TestObject {
 		ZDM.describeModelPackages(model,true);
 
 		System.out.println("Transformation error message: " + error);
-
-		model.cleanUp();
 	}
 }

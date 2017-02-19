@@ -29,8 +29,6 @@ public class TestModel extends TestObject {
 		System.out.println("Model model = new Model();");
 		System.out.println("// Create and apply transformation");
 		System.out.println("model.applyTransformation(new AddPackage(\"new.package.name\"));");
-		System.out.println("// Clean up model after use to free resources (allow garbage collection)");
-		System.out.println("model.cleanUp();");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
@@ -47,7 +45,7 @@ public class TestModel extends TestObject {
 		model.applyTransformation(new AddPackage("new.package"));
 		model.applyTransformation(new AddPackage("another.new.package"));
 		String error = model.applyTransformation(new AddPackage("another.new.package"));
-		List<ModelPackage> packages = model.getPackagesCopy();
+		List<ModelPackage> packages = model.getStructure().getPackages();
 		assertEqual(packages.size(),2,"Number of model packages does not meet expectation");
 		if (packages.size()>0) {
 			assertEqual(packages.get(0).getName(),"new.package","Package name does not match expectation");
@@ -62,10 +60,10 @@ public class TestModel extends TestObject {
 			error = model.applyTransformation(new RemovePackage("new.package.newName"));
 			error = model.applyTransformation(new RemovePackage("new.package.newName"));
 			assertEqual(error,"Package new.package.newName does not exist","Package remove error does not meet expectation");
-			assertEqual(packages.size(),1,"Number of model packages does not meet expectation");
+			packages = model.getStructure().getPackages();
+			assertEqual(packages.size(),1,"Number of model packages after removal does not meet expectation");
 		}
 		ZDM.describeModelVersionLogs(model);
 		ZDM.describeModelPackages(model,true);
-		model.cleanUp();
 	}
 }
