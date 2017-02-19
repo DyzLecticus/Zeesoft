@@ -3,7 +3,7 @@
 	<description>ZID build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.4"/>
+	<property name="version" value="0.9.5"/>
 	
 	<!-- ZDK version -->
 	<property name="versionZDK" value="0.9.18"/>

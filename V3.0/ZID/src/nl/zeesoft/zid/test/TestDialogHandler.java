@@ -1,13 +1,9 @@
 package nl.zeesoft.zid.test;
 
-import java.util.Date;
-
-import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zid.dialog.DialogHandler;
 
-public class TestDialogHandler extends TestObject {
+public class TestDialogHandler extends TestDialogHandlerObject {
 	public TestDialogHandler(Tester tester) {
 		super(tester);
 	}
@@ -48,39 +44,26 @@ public class TestDialogHandler extends TestObject {
 	protected void test(String[] args) {
 		DialogHandler handler = (DialogHandler) getTester().getMockedObject(MockDialogHandler.class.getName());
 		
-		Date started = new Date();
-		
 		// Known user handshake
-		ZStringSymbolParser output = handler.handleInput(new ZStringSymbolParser("hello"));
-		assertEqual(output.toString(),"Hello. My name is Dyz Lecticus. What is your name?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("my name is andre van der zee"));
-		assertEqual(output.toString(),"Nice to interact with you again Andre van der Zee.","Output does not match expectation");
-		
+		addScriptLine("hello","Hello. My name is Dyz Lecticus. What is your name?");
+		addScriptLine("my name is andre van der zee","Nice to interact with you again Andre van der Zee.");
+				
 		// Extended handshake
-		output = handler.handleInput(new ZStringSymbolParser("hallo,ik heet karel de grote."));
-		assertEqual(output.toString(),"Wat kan ik voor je doen Karel de Grote?","Output does not match expectation");
+		addScriptLine("hallo,ik heet karel de grote.","Wat kan ik voor je doen Karel de Grote?");
 		
 		// Handshake prompt sequence
-		output = handler.handleInput(new ZStringSymbolParser("hallo?"));
-		assertEqual(output.toString(),"Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("gekke henkie"));
-		assertEqual(output.toString(),"Wat kan ik voor je doen Gekke Henkie?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("gekke"));
-		assertEqual(output.toString(),"Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("van henkie"));
-		assertEqual(output.toString(),"Wat is jouw voornaam?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("gekke"));
-		assertEqual(output.toString(),"Wat kan ik voor je doen Gekke van Henkie?","Output does not match expectation");
+		addScriptLine("hallo?","Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		addScriptLine("gekke henkie","Wat kan ik voor je doen Gekke Henkie?");
+		addScriptLine("gekke","Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		addScriptLine("van henkie","Wat is jouw voornaam?");
+		addScriptLine("gekke","Wat kan ik voor je doen Gekke van Henkie?");
 
 		// Handshake context switch
-		output = handler.handleInput(new ZStringSymbolParser("what is your name?"));
-		assertEqual(output.toString(),"My name is Dyz Lecticus. What is your name?","Output does not match expectation");
-		output = handler.handleInput(new ZStringSymbolParser("hoe heet jij?"));
-		assertEqual(output.toString(),"Mijn naam is Dyz Lecticus. Wat is jouw naam?","Output does not match expectation");
+		addScriptLine("what is your name?","My name is Dyz Lecticus. What is your name?");
+		addScriptLine("hoe heet jij?","Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		
+		testScript(handler);
 
 		System.out.println(handler.getLog());
-
-		long time = ((new Date()).getTime() - started.getTime()) / 10; 
-		System.out.println("Average time spent thinking per response: " + time + " ms");
 	}
 }
