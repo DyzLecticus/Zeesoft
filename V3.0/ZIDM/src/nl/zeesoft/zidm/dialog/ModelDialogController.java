@@ -1,7 +1,5 @@
 package nl.zeesoft.zidm.dialog;
 
-import java.util.List;
-
 import nl.zeesoft.zdm.model.ModelClass;
 import nl.zeesoft.zdm.model.ModelPackage;
 import nl.zeesoft.zdm.model.transformations.impl.AddClass;
@@ -68,7 +66,7 @@ public class ModelDialogController extends DialogControllerObject {
 					}
 				}
 			} else {
-				extendsCls = pkg.getClass(eName);
+				extendsCls = model.getStructure().getClass(model.getBasePackageName(),eName);
 			}
 		}
 
@@ -135,9 +133,9 @@ public class ModelDialogController extends DialogControllerObject {
 				String pName = model.getTranslator().getName(dialog.getLanguage().getCode(),true,pNS);
 				String pType = "";
 				if (pName.length()>0) {
-					ModelClass pCls = pkg.getClass(pName);
-					if (pCls!=null && pCls.getExtendsClass()!=null) {
-						pType = pCls.getExtendsClass().getFullName();
+					ModelClass pCls = model.getStructure().getClass(model.getBasePackageName(),pName);
+					if (pCls!=null && pCls.getExtendsPackageName().length()>0 && pCls.getExtendsClassName().length()>0) {
+						pType = pCls.getExtendsPackageName() + "." + pCls.getExtendsClassName();
 					}
 				} else {
 					pName = model.getTranslator().addTranslation(pNS,dialog.getLanguage().getCode(),true,pNS);
@@ -174,7 +172,7 @@ public class ModelDialogController extends DialogControllerObject {
 	private ModelClass getClass(Dialog dialog,DialogModel model,ModelPackage pkg,String classNameSingle) {
 		ModelClass r = null;
 		String name = model.getTranslator().getName(dialog.getLanguage().getCode(),true,classNameSingle);
-		r = pkg.getClass(name);
+		r = model.getStructure().getClass(model.getBasePackageName(),name);
 		return r;
 	}
 	
@@ -183,25 +181,17 @@ public class ModelDialogController extends DialogControllerObject {
 		String name = model.getTranslator().addTranslation(classNameSingle,dialog.getLanguage().getCode(),true,classNameSingle);
 		AddClass addCls = new AddClass(model.getBasePackageName(),name);
 		if (extendsCls!=null) {
-			addCls.setExtendsPackageName(extendsCls.getPack().getName());
+			addCls.setExtendsPackageName(extendsCls.getPackageName());
 			addCls.setExtendsClassName(extendsCls.getName());
 		}
 		model.applyTransformation(addCls);
 		pkg = getBasePackage(model);
-		r = pkg.getClass(name);
+		r = model.getStructure().getClass(model.getBasePackageName(),name);
 		return r;
 	}
 	
 	private ModelPackage getBasePackage(DialogModel model) {
-		ModelPackage r = null;
-		List<ModelPackage> packages = model.getPackagesCopy();
-		for (ModelPackage pack: packages) {
-			if (pack.getName().equals(model.getBasePackageName())) {
-				r = pack;
-				break;
-			}
-		}
-		return r;
+		return model.getStructure().getPackage(model.getBasePackageName());
 	}
 	
 	private String upperCaseFirst(String str) {

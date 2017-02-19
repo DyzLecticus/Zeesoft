@@ -6,7 +6,7 @@
 	<property name="version" value="0.9.0"/>
 
 	<!-- ZDM version -->
-	<property name="versionZDM" value="0.9.3"/>
+	<property name="versionZDM" value="0.9.4"/>
 	<property name="releasesZDM" location="../ZDM/releases"/>
 	
 	<!-- ZID version -->
