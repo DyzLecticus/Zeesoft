@@ -3,7 +3,7 @@
 	<description>ZID build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.3"/>
+	<property name="version" value="0.9.4"/>
 	
 	<!-- ZDK version -->
 	<property name="versionZDK" value="0.9.18"/>
@@ -14,7 +14,7 @@
 	<property name="releasesZSC" location="../ZSC/releases"/>
 
 	<!-- ZSPR version -->
-	<property name="versionZSPR" value="0.9.6"/>
+	<property name="versionZSPR" value="0.9.7"/>
 	<property name="releasesZSPR" location="../ZSPR/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>

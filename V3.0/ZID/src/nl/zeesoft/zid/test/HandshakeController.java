@@ -3,7 +3,6 @@ package nl.zeesoft.zid.test;
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.dialog.DialogControllerObject;
 import nl.zeesoft.zid.dialog.DialogHandler;
-import nl.zeesoft.zspr.Language;
 
 public class HandshakeController extends DialogControllerObject {	
 	boolean promptFirstNameExplicitly = false;
@@ -48,15 +47,15 @@ public class HandshakeController extends DialogControllerObject {
 			name.append(lName);
 			
 			if (name.toString().equals("Andre van der Zee")) {
-				if (dialog.getLanguage().getCode().equals(Language.ENG)) {
+				if (dialog.isEnglish()) {
 					getOutput().append("Nice to interact with you again {fullName}.");
-				} else if (dialog.getLanguage().getCode().equals(Language.NLD)) {
+				} else if (dialog.isDutch()) {
 					getOutput().append("Leuk om weer een interactie met je aan te gaan {fullName}.");
 				}
 			} else if (name.toString().equals("Dyz Lecticus")) {
-				if (dialog.getLanguage().getCode().equals(Language.ENG)) {
+				if (dialog.isEnglish()) {
 					getOutput().append("This is going to be very confusing {fullName}.");
-				} else if (dialog.getLanguage().getCode().equals(Language.NLD)) {
+				} else if (dialog.isDutch()) {
 					getOutput().append("Dit wordt heel verwarrend {fullName}.");
 				}
 			}
@@ -66,9 +65,9 @@ public class HandshakeController extends DialogControllerObject {
 		} else {
 			if (fName.length()==0) {
 				if (promptFirstNameExplicitly) {
-					if (dialog.getLanguage().getCode().equals(Language.ENG)) {
+					if (dialog.isEnglish()) {
 						getOutput().append("What is your firstname?");
-					} else if (dialog.getLanguage().getCode().equals(Language.NLD)) {
+					} else if (dialog.isDutch()) {
 						getOutput().append("Wat is jouw voornaam?");
 					}
 				}

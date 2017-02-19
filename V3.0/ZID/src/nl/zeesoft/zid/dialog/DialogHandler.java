@@ -551,7 +551,7 @@ public class DialogHandler extends Locker {
 	protected final Dialog getDialogNoLock(String name, String languageCode) {
 		Dialog r = null;
 		for (Dialog dialog: dialogs) {
-			if (dialog.getName().equals(name) && (languageCode==null || languageCode.length()==0 || dialog.getLanguage().getCode().equals(languageCode))) {
+			if (dialog.getName().equals(name) && (languageCode==null || languageCode.length()==0 || dialog.isLanguageCode(languageCode))) {
 				r = dialog;
 				break;
 			}

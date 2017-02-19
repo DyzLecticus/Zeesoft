@@ -77,6 +77,18 @@ public class Dialog {
 		return name;
 	}
 	
+	public boolean isEnglish() {
+		return isLanguageCode(Language.ENG);
+	}
+
+	public boolean isDutch() {
+		return isLanguageCode(Language.NLD);
+	}
+
+	protected boolean isLanguageCode(String languageCode) {
+		return language.getCode().equals(languageCode);
+	}
+
 	protected DialogControllerObject getNewController()  {
 		DialogControllerObject r = null;
 		try {
