@@ -165,6 +165,18 @@ public class PatternManager extends Locker {
 	 * These patterns can then be used to translate the values back into string representations.
 	 * 
 	 * @param str The values
+	 * @return A list of patterns that can translate certain values
+	 */
+	public final List<PatternObject> getPatternsForValues(String str) {
+		return getPatternsForValues(str,null);
+	}
+
+	/**
+	 * Returns a list of patterns that can translate certain values.
+	 *
+	 * These patterns can then be used to translate the values back into string representations.
+	 * 
+	 * @param str The values
 	 * @param customPatterns An optional list of custom patterns to use for the selection
 	 * @return A list of patterns that can translate certain values
 	 */
