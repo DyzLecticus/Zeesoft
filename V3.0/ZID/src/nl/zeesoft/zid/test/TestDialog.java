@@ -69,9 +69,9 @@ public class TestDialog extends TestObject {
 			for (DialogVariable variable: dialog.getVariables()) {
 				System.out.println("  - Variable: " + variable.getName() + ", type: " + variable.getType());
 				if (variable.getExamples().size()>0) {
-					System.out.println("  - Variable examples;");
+					System.out.println("    - Variable examples;");
 					for (DialogVariableExample example: variable.getExamples()) {
-						System.out.println("    - " + example.getQuestion() + " " + example.getAnswer());
+						System.out.println("      - " + example.getQuestion() + " " + example.getAnswer());
 					}
 				}
 			}
