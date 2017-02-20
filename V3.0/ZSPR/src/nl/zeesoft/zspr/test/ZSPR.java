@@ -46,6 +46,6 @@ public class ZSPR extends LibraryObject {
 	@Override
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestPatternManager(getTester()));
-		tests.add(new TestPatternManagerScan(getTester()));
+		tests.add(new TestPatternManagerTranslate(getTester()));
 	}
 }

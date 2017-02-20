@@ -6,13 +6,13 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zspr.pattern.PatternManager;
 
-public class TestPatternManagerScan extends TestObject {
-	public TestPatternManagerScan(Tester tester) {
+public class TestPatternManagerTranslate extends TestObject {
+	public TestPatternManagerTranslate(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestPatternManagerScan(new Tester())).test(args);
+		(new TestPatternManagerTranslate(new Tester())).test(args);
 	}
 
 	@Override
@@ -26,15 +26,15 @@ public class TestPatternManagerScan extends TestObject {
 		System.out.println("// Initialize patterns");
 		System.out.println("manager.initializePatterns();");
 		System.out.println("// Get values for sequence");
-		System.out.println("ZStringSymbolParser values = manager.scanAndTranslateSequence(new ZStringSymbolParser(\"I walked one hour and fourtyfive minutes\"));");
+		System.out.println("ZStringSymbolParser values = manager.translateSequence(new ZStringSymbolParser(\"I walked one hour and fourtyfive minutes\"));");
 		System.out.println("// Get sequence for values");
-		System.out.println("ZStringSymbolParser sequence = manager.scanAndTranslateValues(values);");
+		System.out.println("ZStringSymbolParser sequence = manager.translateValues(values);");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockPatternManager.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestPatternManagerScan.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestPatternManagerTranslate.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockPatternManager.class));
 		System.out.println(" * " + getTester().getLinkForClass(PatternManager.class));
 		System.out.println();
@@ -63,10 +63,10 @@ public class TestPatternManagerScan extends TestObject {
 
 	private void testScanAndTranslate(PatternManager manager,String from,String expectedTo,String expectedBack) {
 		System.out.println("Input: " + from);
-		ZStringSymbolParser to = manager.scanAndTranslateSequence(new ZStringSymbolParser(from));
+		ZStringSymbolParser to = manager.translateSequence(new ZStringSymbolParser(from));
 		assertEqual(to.toString(),expectedTo,"String to value translation does not meet expectation");
 		System.out.println("Values: " + to);
-		ZStringBuilder back = manager.scanAndTranslateValues(to);
+		ZStringBuilder back = manager.translateValues(to);
 		assertEqual(back.toString(),expectedBack,"Value to string translation does not meet expectation");
 		System.out.println("String: " + back);
 	}

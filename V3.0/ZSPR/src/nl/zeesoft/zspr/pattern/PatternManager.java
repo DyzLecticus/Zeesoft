@@ -165,20 +165,21 @@ public class PatternManager extends Locker {
 	 * These patterns can then be used to translate the values back into string representations.
 	 * 
 	 * @param str The values
+	 * @param customPatterns An optional list of custom patterns to use for the selection
 	 * @return A list of patterns that can translate certain values
 	 */
-	public final List<PatternObject> getPatternsForValues(String str) {
+	public final List<PatternObject> getPatternsForValues(String str, List<PatternObject> customPatterns) {
 		List<PatternObject> ptns = new ArrayList<PatternObject>();
 		if (str.indexOf(getOrConcatenator())>0) {
 			String[] ptnVals = str.split("\\|");
 			for (String ptnVal: ptnVals) {
-				PatternObject ptn = getPatternForValue(ptnVal);
+				PatternObject ptn = getPatternForValue(ptnVal,customPatterns);
 				if (ptn!=null) {
 					ptns.add(ptn);
 				}
 			}
 		} else {
-			PatternObject ptn = getPatternForValue(str);
+			PatternObject ptn = getPatternForValue(str,customPatterns);
 			if (ptn!=null) {
 				ptns.add(ptn);
 			}
@@ -194,8 +195,8 @@ public class PatternManager extends Locker {
 	 * @param sequence The symbol sequence
 	 * @return The translated values
 	 */
-	public final ZStringSymbolParser scanAndTranslateSequence(ZStringSymbolParser sequence) {
-		return scanAndTranslateSequence(sequence,null,null);
+	public final ZStringSymbolParser translateSequence(ZStringSymbolParser sequence) {
+		return translateSequence(sequence,null,null);
 	}
 
 	/**
@@ -207,8 +208,8 @@ public class PatternManager extends Locker {
 	 * @param expectedTypes The optional list of expected pattern base value types to limit the translation
 	 * @return The translated values
 	 */
-	public final ZStringSymbolParser scanAndTranslateSequence(ZStringSymbolParser sequence, List<String> expectedTypes) {
-		return scanAndTranslateSequence(sequence,expectedTypes,null);
+	public final ZStringSymbolParser translateSequence(ZStringSymbolParser sequence, List<String> expectedTypes) {
+		return translateSequence(sequence,expectedTypes,null);
 	}
 	
 	/**
@@ -221,7 +222,7 @@ public class PatternManager extends Locker {
 	 * @param customPatterns An optional list of custom patterns to use for the translation
 	 * @return The translated values
 	 */
-	public final ZStringSymbolParser scanAndTranslateSequence(ZStringSymbolParser sequence, List<String> expectedTypes, List<PatternObject> customPatterns) {
+	public final ZStringSymbolParser translateSequence(ZStringSymbolParser sequence, List<String> expectedTypes, List<PatternObject> customPatterns) {
 		List<String> symbols = sequence.toSymbols();
 		List<String> translated = new ArrayList<String>();
 		int i = 0;
@@ -318,14 +319,28 @@ public class PatternManager extends Locker {
 	 * @param values A string representation of the values
 	 * @return The translated symbol sequence
 	 */
-	public final ZStringSymbolParser scanAndTranslateValues(ZStringSymbolParser values) {
+	public final ZStringSymbolParser translateValues(ZStringSymbolParser values) {
+		return translateValues(values,null);
+	}
+
+	
+	/**
+	 * Scans and translates values to a symbol sequence.
+	 * 
+	 * In case of multiple value representations the first matching pattern value prefix will be used.
+	 * 
+	 * @param values A string representation of the values
+	 * @param customPatterns An optional list of custom patterns to use for the translation
+	 * @return The translated symbol sequence
+	 */
+	public final ZStringSymbolParser translateValues(ZStringSymbolParser values, List<PatternObject> customPatterns) {
 		List<String> symbols = values.toSymbols();
 		values = new ZStringSymbolParser();
 		for (String symbol: symbols) {
 			if (values.length()>0) {
 				values.append(" ");
 			}
-			List<PatternObject> patterns = getPatternsForValues(symbol);
+			List<PatternObject> patterns = getPatternsForValues(symbol,customPatterns);
 			if (patterns.size()>0) {
 				if (symbol.indexOf(getOrConcatenator())>0) {
 					symbol = symbol.split("\\" + getOrConcatenator())[0];
@@ -537,12 +552,20 @@ public class PatternManager extends Locker {
 		}
 		return r;
 	}
-	
+
 	private PatternObject getPatternForValue(String str) {
+		return getPatternForValue(str,null);
+	}
+
+	private PatternObject getPatternForValue(String str, List<PatternObject> customPatterns) {
 		PatternObject ptn = null;
 		if (str.indexOf(getValueConcatenator())>0) {
 			String[] ptnVal = str.split(getValueConcatenator());
-			for (PatternObject pattern: getPatterns()) {
+			List<PatternObject> usePatterns = getPatterns();
+			if (customPatterns!=null) {
+				usePatterns = customPatterns;
+			}
+			for (PatternObject pattern: usePatterns) {
 				if (pattern.getValuePrefix().equals(ptnVal[0])) {
 					ptn = pattern;
 					break;
