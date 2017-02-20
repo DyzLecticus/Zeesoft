@@ -6,11 +6,11 @@
 	<property name="version" value="0.9.0"/>
 
 	<!-- ZDM version -->
-	<property name="versionZDM" value="0.9.4"/>
+	<property name="versionZDM" value="0.9.5"/>
 	<property name="releasesZDM" location="../ZDM/releases"/>
 	
 	<!-- ZID version -->
-	<property name="versionZID" value="0.9.6"/>
+	<property name="versionZID" value="0.9.7"/>
 	<property name="releasesZID" location="../ZID/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
