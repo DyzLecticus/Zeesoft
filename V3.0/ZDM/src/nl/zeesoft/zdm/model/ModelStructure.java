@@ -117,6 +117,10 @@ public class ModelStructure extends Locker {
 		return r;
 	}
 
+	public List<ModelClass> getClasses(ModelPackage pack) {
+		return getClasses(pack.getName());
+	}
+
 	public List<ModelClass> getClasses(String packageName) {
 		List<ModelClass> r = null;
 		lockMe(this);
@@ -130,12 +134,20 @@ public class ModelStructure extends Locker {
 		return r;
 	}
 
+	public List<ModelClass> getSubClasses(ModelClass cls,int maxDepth) {
+		return getSubClasses(cls.getPackageName(),cls.getName(),maxDepth);
+	}
+
 	public List<ModelClass> getSubClasses(String packageName,String className,int maxDepth) {
 		List<ModelClass> r = null;
 		lockMe(this);
 		r = getSubClassesNoLock(packageName, className, maxDepth);
 		unlockMe(this);
 		return r;
+	}
+
+	public List<ModelClass> getSuperClasses(ModelClass cls) {
+		return getSuperClasses(cls.getPackageName(),cls.getName());
 	}
 
 	public List<ModelClass> getSuperClasses(String packageName,String className) {
@@ -232,12 +244,20 @@ public class ModelStructure extends Locker {
 		return r;
 	}
 	
+	public List<ModelProperty> getProperties(ModelClass cls) {
+		return getProperties(cls.getPackageName(),cls.getName());
+	}
+
 	public List<ModelProperty> getProperties(String packageName,String className) {
 		List<ModelProperty> r = null;
 		lockMe(this);
 		r = getPropertiesNoLock(packageName,className);
 		unlockMe(this);
 		return r;
+	}
+
+	public List<ModelProperty> getPropertiesExtended(ModelClass cls) {
+		return getPropertiesExtended(cls.getPackageName(),cls.getName());
 	}
 
 	public List<ModelProperty> getPropertiesExtended(String packageName,String className) {
@@ -247,7 +267,11 @@ public class ModelStructure extends Locker {
 		unlockMe(this);
 		return r;
 	}
-	
+
+	public ModelProperty addProperty(ModelClass cls,String name) {
+		return addProperty(cls.getPackageName(),cls.getName(),name);
+	}
+
 	public ModelProperty addProperty(String packageName,String className,String name) {
 		ModelProperty prop = null;
 		lockMe(this);
@@ -263,6 +287,10 @@ public class ModelStructure extends Locker {
 		}
 		unlockMe(this);
 		return prop;
+	}
+
+	public ModelProperty getProperty(ModelClass cls,String name,boolean includeExtendedProperties) {
+		return getProperty(cls.getPackageName(),cls.getName(),name,includeExtendedProperties);
 	}
 
 	public ModelProperty getProperty(String packageName,String className,String name,boolean includeExtendedProperties) {
@@ -281,6 +309,10 @@ public class ModelStructure extends Locker {
 		return r;
 	}
 
+	public void removeProperty(ModelClass cls,String name) {
+		removeProperty(cls.getPackageName(),cls.getName(),name);
+	}
+
 	public void removeProperty(String packageName,String className,String name) {
 		ModelProperty r = null;
 		lockMe(this);
@@ -289,6 +321,10 @@ public class ModelStructure extends Locker {
 			classProperties.get(packageName + "." + name).remove(r);
 		}
 		unlockMe(this);
+	}
+
+	public void renameProperty(ModelClass cls,String name,String newName) {
+		renameProperty(cls.getPackageName(),cls.getName(),name,newName);
 	}
 
 	public void renameProperty(String packageName,String className,String name,String newName) {

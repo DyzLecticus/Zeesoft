@@ -156,7 +156,7 @@ public class Model {
 					addClass.setAbstract("true");
 				}
 				list.add(addClass);
-				for (ModelProperty prop: structure.getProperties(cls.getPackageName(),cls.getName())) {
+				for (ModelProperty prop: structure.getProperties(cls)) {
 					AddProperty addProperty = new AddProperty(cls.getPackageName(),cls.getName(),prop.getName(),prop.getType());
 					if (prop.isList()) {
 						addProperty.setList("true");
@@ -190,7 +190,7 @@ public class Model {
 			for (ModelClass cls: structure.getClasses(pack.getName())) {
 				if (!cls.isAbstr()) {
 					list.add(new AddClass(pack.getName(),cls.getName()));
-					for (ModelProperty prop: structure.getPropertiesExtended(cls.getPackageName(),cls.getName())) {
+					for (ModelProperty prop: structure.getPropertiesExtended(cls)) {
 						list.add(new AddProperty(pack.getName(),cls.getName(),prop.getName(),prop.getType(),prop.isList()));
 					}
 				}
@@ -361,7 +361,7 @@ public class Model {
 		}
 		if (error.length()==0 && idPropertyName.length()>0) {
 			for (ModelClass cls: structure.getClasses()) {
-				if (!cls.isAbstr() && structure.getProperty(cls.getPackageName(),cls.getName(),idPropertyName,true)!=null) {
+				if (!cls.isAbstr() && structure.getProperty(cls,idPropertyName,true)!=null) {
 					error = "Class " + cls.getFullName() + " already contains a property named " + idPropertyName;
 					break;
 				}
@@ -447,7 +447,7 @@ public class Model {
 						}
 					}
 				}
-				if (error.length()==0 && extCls!=null && (extCls==cls || structure.getSuperClasses(extCls.getPackageName(),extCls.getName()).contains(cls))) {
+				if (error.length()==0 && extCls!=null && (extCls==cls || structure.getSuperClasses(extCls).contains(cls))) {
 					error = "Classes may not indirectly extend themselves";
 				}
 				if (error.length()==0) {
@@ -491,12 +491,12 @@ public class Model {
 						}
 					}
 				}
-				if (error.length()==0 && extCls!=null && (extCls==cls || structure.getSuperClasses(cls.getPackageName(),cls.getName()).contains(cls))) {
+				if (error.length()==0 && extCls!=null && (extCls==cls || structure.getSuperClasses(cls).contains(cls))) {
 					error = "Classes may not extend themselves";
 				}
 				if (error.length()==0 && extCls!=null) {
-					for (ModelProperty prop: structure.getProperties(cls.getPackageName(),cls.getName())) {
-						ModelProperty eProp = structure.getProperty(extCls.getPackageName(),extCls.getName(),prop.getName(),true);
+					for (ModelProperty prop: structure.getProperties(cls)) {
+						ModelProperty eProp = structure.getProperty(extCls,prop.getName(),true);
 						if (eProp!=null && !eProp.getType().equals(prop.getType())) {
 							error = "Extended class already defines a property named " + prop.getName() + " with a different type";
 							break;
@@ -504,7 +504,7 @@ public class Model {
 					}
 				}
 				if (error.length()==0 && extCls!=null) {
-					for (ModelProperty prop: structure.getPropertiesExtended(extCls.getPackageName(),extCls.getName())) {
+					for (ModelProperty prop: structure.getPropertiesExtended(extCls)) {
 						error = checkSubclassContainsProperty(cls,prop.getName());
 						if (error.length()>0) {
 							break;
@@ -561,9 +561,9 @@ public class Model {
 		if (error.length()==0) {
 			if (transformation instanceof AddProperty) {
 				AddProperty trans = (AddProperty) transformation;
-				ModelProperty prop = structure.getProperty(packageName,className,name,true);
+				ModelProperty prop = structure.getProperty(cls,name,true);
 				if (prop!=null) {
-					if (structure.getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
+					if (structure.getProperties(cls).contains(prop)) {
 						error = "Property " + cls.getFullName() + ":" + name + " already exists";
 					} else if (!prop.getType().equals(trans.getType()) || prop.isList()!=Boolean.parseBoolean(trans.getList())) {
 						if (prop.isList()) {
@@ -577,7 +577,7 @@ public class Model {
 					error = checkSubclassContainsProperty(cls,name);
 				}
 				if (error.length()==0) {
-					prop = structure.addProperty(packageName,className,name);
+					prop = structure.addProperty(cls,name);
 					if (trans.getType().length()>0) {
 						prop.setType(trans.getType());
 					}
@@ -586,13 +586,13 @@ public class Model {
 					}
 				}
 			} else if (transformation instanceof SetPropertyName) {
-				ModelProperty prop = structure.getProperty(packageName,className,name,true);
+				ModelProperty prop = structure.getProperty(cls,name,true);
 				String newName = ((SetPropertyName) transformation).getNewName();
-				ModelProperty newProp = structure.getProperty(packageName,className,newName,true);
+				ModelProperty newProp = structure.getProperty(cls,newName,true);
 				if (prop==null) {
 					error = "Property " + cls.getFullName() + ":" + name + " does not exist";
 				} else if (newProp!=null) {
-					if (!structure.getProperties(cls.getPackageName(),cls.getName()).contains(newProp) && !newProp.getType().equals(prop.getType())) {
+					if (!structure.getProperties(cls).contains(newProp) && !newProp.getType().equals(prop.getType())) {
 						error = "Override of " + newProp.getFullName() + " must equal type " + newProp.getFullName();
 					} else {
 						error = "Property " + cls.getFullName() + ":" + name + " already exists";
@@ -602,16 +602,17 @@ public class Model {
 					error = checkSubclassContainsProperty(cls,newName);
 				}
 				if (error.length()==0) {
-					structure.renameProperty(packageName, className,name,newName);
+					structure.renameProperty(cls,name,newName);
 					setSubclassPropertyName(cls,name,prop.getName());
 				}
 			} else if (transformation instanceof SetPropertyType) {
-				ModelProperty prop = structure.getProperty(packageName,className,name,true);
+				ModelProperty prop = structure.getProperty(cls,name,true);
 				if (prop!=null) {
-					if (!structure.getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
+					if (!structure.getProperties(cls).contains(prop)) {
 						error = "Class " + cls.getFullName() + " does not define a property named " + name;
 					} else if (cls.getExtendsPackageName().length()>0 && cls.getExtendsClassName().length()>0) {
-						if (structure.getProperty(cls.getExtendsPackageName(),cls.getExtendsClassName(),name,true)!=null) {
+						ModelClass extCls = structure.getClass(cls.getExtendsPackageName(),cls.getExtendsClassName());
+						if (structure.getProperty(extCls,name,true)!=null) {
 							error = "Property " + prop.getFullName() + " overrides a superclass property";
 						}
 					}
@@ -624,12 +625,13 @@ public class Model {
 					setSubclassPropertyType(cls,name,prop.getType());
 				}
 			} else if (transformation instanceof SetPropertyList) {
-				ModelProperty prop = structure.getProperty(packageName,className,name,true);
+				ModelProperty prop = structure.getProperty(cls,name,true);
 				if (prop!=null) {
-					if (!structure.getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
+					if (!structure.getProperties(cls).contains(prop)) {
 						error = "Class " + cls.getFullName() + " does not define a property named " + name;
 					} else if (cls.getExtendsPackageName().length()>0 && cls.getExtendsClassName().length()>0) {
-						if (structure.getProperty(cls.getExtendsPackageName(),cls.getExtendsClassName(),name,true)!=null) {
+						ModelClass extCls = structure.getClass(cls.getExtendsPackageName(),cls.getExtendsClassName());
+						if (structure.getProperty(extCls,name,true)!=null) {
 							error = "Property " + prop.getFullName() + " overrides a superclass property";
 						}
 					}
@@ -642,15 +644,15 @@ public class Model {
 					setSubclassPropertyList(cls,name,prop.isList());
 				}
 			} else if (transformation instanceof RemoveProperty) {
-				ModelProperty prop = structure.getProperty(packageName,className,name,true);
-				if (prop!=null && !structure.getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
+				ModelProperty prop = structure.getProperty(cls,name,true);
+				if (prop!=null && !structure.getProperties(cls).contains(prop)) {
 					error = "Class " + cls.getFullName() + " does not define a property named " + name;
 				}
 				if (error.length()==0 && prop==null) {
 					error = "Property " + cls.getFullName() + ":" + name + " does not exist";
 				}
 				if (error.length()==0) {
-					structure.removeProperty(packageName, className, name);
+					structure.removeProperty(cls, name);
 				}
 			}
 		}
@@ -683,7 +685,7 @@ public class Model {
 
 	private String checkRemoveClass(ModelClass cls) {
 		String error = "";
-		List<ModelClass> subClss = structure.getSubClasses(cls.getPackageName(),cls.getName(),1);
+		List<ModelClass> subClss = structure.getSubClasses(cls,1);
 		if (subClss.size()>0) {
 			error = "Unable to remove class due to subclass dependency; " + subClss.get(0).getFullName();
 		}
@@ -698,9 +700,9 @@ public class Model {
 
 	private String checkSubclassContainsProperty(ModelClass cls,String propertyName) {
 		String error = "";
-		List<ModelClass> subClss = structure.getSubClasses(cls.getPackageName(),cls.getName(),0);
+		List<ModelClass> subClss = structure.getSubClasses(cls,0);
 		for (ModelClass subCls: subClss) {
-			for (ModelProperty prop: structure.getProperties(subCls.getPackageName(),subCls.getName())) {
+			for (ModelProperty prop: structure.getProperties(subCls)) {
 				if (prop.getName().equals(propertyName)) {
 					error = "Subclass " + cls.getFullName() + " already defines a property named " + propertyName;
 				}
@@ -711,8 +713,8 @@ public class Model {
 
 	private List<ModelProperty> getSubclassProperties(ModelClass cls,String name) {
 		List<ModelProperty> r = new ArrayList<ModelProperty>();
-		for (ModelClass subCls: structure.getSubClasses(cls.getPackageName(),cls.getName(),0)) {
-			for (ModelProperty prop: structure.getProperties(subCls.getPackageName(),subCls.getName())) {
+		for (ModelClass subCls: structure.getSubClasses(cls,0)) {
+			for (ModelProperty prop: structure.getProperties(subCls)) {
 				if (prop.getName().equals(name)) {
 					r.add(prop);
 				}

@@ -55,7 +55,7 @@ public class TestModelSelfConvertModel extends TestObject {
 			List<ModelClass> classes = modelSelf.getStructure().getClasses(packages.get(0).getName());
 			assertEqual(classes.size(),7,"Number of package classes does not meet expectation");
 			if (classes.size()>=7) {
-				List<ModelProperty> properties = modelSelf.getStructure().getProperties(packages.get(0).getName(),classes.get(6).getName());
+				List<ModelProperty> properties = modelSelf.getStructure().getProperties(classes.get(6));
 				assertEqual(properties.size(),4,"Number of package class properties does not meet expectation");
 			}
 		}

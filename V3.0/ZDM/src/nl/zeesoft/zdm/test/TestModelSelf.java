@@ -63,8 +63,8 @@ public class TestModelSelf extends TestObject {
 			List<ModelClass> classes = modelSelf.getStructure().getClasses(packages.get(0).getName());
 			assertEqual(classes.size(),8,"Number of package classes does not meet expectation");
 			if (classes.size()>=8) {
-				List<ModelProperty> properties = modelSelf.getStructure().getProperties(packages.get(0).getName(),classes.get(7).getName());
-				List<ModelProperty> propertiesExt = modelSelf.getStructure().getPropertiesExtended(packages.get(0).getName(),classes.get(7).getName());
+				List<ModelProperty> properties = modelSelf.getStructure().getProperties(classes.get(7));
+				List<ModelProperty> propertiesExt = modelSelf.getStructure().getPropertiesExtended(classes.get(7));
 				assertEqual(properties.size(),2,"Number of package class properties does not meet expectation");
 				assertEqual(propertiesExt.size(),4,"Number of extended package class properties does not meet expectation");
 			}

@@ -126,9 +126,9 @@ public class ZDM extends LibraryObject {
 				desc.append("\n");
 				List<ModelProperty> props = null;
 				if (includeExtendedProperties) {
-					props = model.getStructure().getPropertiesExtended(cls.getPackageName(),cls.getName());
+					props = model.getStructure().getPropertiesExtended(cls);
 				} else {
-					props = model.getStructure().getProperties(cls.getPackageName(),cls.getName());
+					props = model.getStructure().getProperties(cls);
 				}
 				for (ModelProperty prop: props) {
 					desc.append("  - Property: ");
@@ -143,9 +143,9 @@ public class ZDM extends LibraryObject {
 					}
 					ModelProperty eProp = null;
 					if (cls.getExtendsPackageName().length()>0 && cls.getExtendsClassName().length()>0) {
-						eProp = model.getStructure().getProperty(cls.getPackageName(), cls.getName(), prop.getName(), true);
+						eProp = model.getStructure().getProperty(cls, prop.getName(), true);
 						if (eProp!=null) {
-							if (!model.getStructure().getProperties(cls.getPackageName(),cls.getName()).contains(prop)) {
+							if (!model.getStructure().getProperties(cls).contains(prop)) {
 								desc.append(" (extends: " + eProp.getFullName() + ")");
 							} else {
 								desc.append(" (overrides: " + eProp.getFullName() + ")");
