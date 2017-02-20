@@ -246,7 +246,7 @@ public class DialogHandler extends Locker {
 		}
 		
 		// Translate input
-		input = patternManager.scanAndTranslateSequence(input,expectedTypes,null);
+		input = patternManager.translateSequence(input,expectedTypes,null);
 		addLogLine("--- Translated input: " + input);
 
 		// Correct input
@@ -402,7 +402,7 @@ public class DialogHandler extends Locker {
 		}
 		
 		if (output.length()>0) {
-			output = patternManager.scanAndTranslateValues(output);
+			output = patternManager.translateValues(output);
 			addLogLine("--- Translated output: " + output);
 		} else {
 			addLogLine("--- Failed to confabulate output");
