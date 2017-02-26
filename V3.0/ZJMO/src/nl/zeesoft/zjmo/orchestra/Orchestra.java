@@ -17,6 +17,10 @@ public class Orchestra {
 		addMember(CONDUCTOR,0,"localhost",5433,5432);
 	}
 	
+	public void initialize() {
+		// Override to implement
+	}
+	
 	public List<Position> getPositions() {
 		return new ArrayList<Position>(positions);
 	}
