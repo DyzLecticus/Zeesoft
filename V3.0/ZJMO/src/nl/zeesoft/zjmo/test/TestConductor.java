@@ -22,15 +22,18 @@ public class TestConductor extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to create, start and stop a *Conductor* instance.");
+		System.out.println("This test shows how to control an orchestra through a *Conductor* instance.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create conductor");
 		System.out.println("Conductor con = new Conductor(orchestra);");
 		System.out.println("// Start the conductor");
-		System.out.println("con.start();");
-		// TODO: Finish
+		System.out.println("boolean started = con.start();");
+		System.out.println("// Create client");
+		System.out.println("MemberClient client = new MemberClient(\"localhost\",5433);");
+		System.out.println("// Send stop command to conductor");
+		System.out.println("ZStringBuilder response = client.sendCommand(Protocol.STOP_PROGRAM);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("This test uses the *MockConductor* and the *MockPlayers*.");
@@ -42,11 +45,10 @@ public class TestConductor extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(Conductor.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		// TODO: Finish
 		System.out.println("The output of this test shows;  ");
 		System.out.println(" * The orchestra initialization duration.  ");
-		System.out.println(" * The GET_STATE command output for the conductor.  ");
-		System.out.println(" * The orchestra JSON structure including the member state.  ");
+		System.out.println(" * The conductor GET_STATE command response.  ");
+		System.out.println(" * The orchestra state JSON.  ");
 	}
 
 	@Override
@@ -74,14 +76,14 @@ public class TestConductor extends TestObject {
 			if (client.isOpen()) {
 
 				ZStringBuilder response = client.sendCommand(Protocol.GET_STATE);
-				System.out.println("Get state response: " + response);
+				System.out.println("GET_STATE command response: " + response);
 				System.out.println();
 				
 				response = client.sendCommand(Protocol.STOP_PROGRAM);
 				assertEqual(response.toString(),"","Stop program response does not match expectation");
 			}
 
-			System.out.println("Conductor member state JSON:");
+			System.out.println("Orchestra state JSON:");
 			System.out.println(con.getMemberState().toStringBuilderReadFormat());
 		} else {
 			System.err.println("Failed to start conductor");

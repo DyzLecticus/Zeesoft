@@ -23,6 +23,17 @@ public class MockPlayers extends MockObject {
 			if (!member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
 				Player player = new Player(orch,member.getPosition().getName(),member.getPositionBackupNumber()) {
 					@Override
+					public boolean start() {
+						System.out.println("Starting " + getPosition().getName() + "/" + getPositionBackupNumber() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");
+						boolean started = super.start();
+						if (started) {
+							System.out.println("Started " + getPosition().getName() + "/" + getPositionBackupNumber());
+						} else {
+							System.err.println("Failed to start " + getPosition().getName() + "/" + getPositionBackupNumber());
+						}
+						return started;
+					}
+					@Override
 					protected void stopProgram() {
 						//System.out.println("Stopping MockPlayer ...");
 						stop();
