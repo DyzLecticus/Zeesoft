@@ -35,15 +35,15 @@ public class TestTestOrchestra extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(Orchestra.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows JSON structure of the *TestOrchestra*.  ");
+		System.out.println("The output of this test shows the JSON structure of the *TestOrchestra*.  ");
 	}
 
 	@Override
 	protected void test(String[] args) {
 		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
-		ZStringBuilder before = orch.toJson(true).toStringBuilderReadFormat();
+		ZStringBuilder before = orch.toJson(false).toStringBuilderReadFormat();
 		orch.fromJson(orch.toJson(true));
-		ZStringBuilder after = orch.toJson(true).toStringBuilderReadFormat();
+		ZStringBuilder after = orch.toJson(false).toStringBuilderReadFormat();
 		assertEqual(after,before,"The after conversion orchestra does not match expectation");
 		System.out.println(after);
 	}

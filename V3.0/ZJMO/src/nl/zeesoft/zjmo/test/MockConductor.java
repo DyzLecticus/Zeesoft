@@ -16,7 +16,9 @@ public class MockConductor extends MockObject {
 		Conductor con = new Conductor(orch) {
 			@Override
 			protected void stopProgram() {
+				//System.out.println("Stopping MockConductor ...");
 				stop();
+				//System.out.println("Stopped MockConductor");
 			}
 		};
 		return con;

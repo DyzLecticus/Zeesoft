@@ -72,7 +72,7 @@ public class MemberController {
 				client.open();
 			}
 			if (!client.isOpen()) {
-				member.setErrorMessage("Unable to open socket");
+				member.setErrorMessage("Failed to open control client");
 				member.setState(MemberState.getState(MemberState.UNKNOWN));
 				member.setWorkLoad(0);
 				member.setMemoryUsage(0);
@@ -98,7 +98,9 @@ public class MemberController {
 		OrchestraMember member = orchestra.getMemberForPosition(positionName, positionBackupNumber);
 		if (member!=null) {
 			MemberClient client = getClientForMember(member);
-			client.sendCommand(command);
+			if (client.isOpen()) {
+				client.sendCommand(command);
+			}
 		}
 	}
 	

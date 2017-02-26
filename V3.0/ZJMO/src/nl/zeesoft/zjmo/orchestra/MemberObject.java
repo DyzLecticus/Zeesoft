@@ -3,7 +3,6 @@ package nl.zeesoft.zjmo.orchestra;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,16 +67,6 @@ public abstract class MemberObject extends OrchestraMember {
 			}
 		}
 		if (controlSocket!=null && workSocket!=null) {
-			try {
-				controlSocket.setSoTimeout(1000);
-			} catch (SocketException e) {
-				//e.printStackTrace();
-			}
-			try {
-				workSocket.setSoTimeout(1000);
-			} catch (SocketException e) {
-				//e.printStackTrace();
-			}
 			if (controlWorker==null) {
 				controlWorker = new MemberControlWorker(this);
 			}
@@ -92,7 +81,6 @@ public abstract class MemberObject extends OrchestraMember {
 				try {
 					controlSocket.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -107,7 +95,6 @@ public abstract class MemberObject extends OrchestraMember {
 			try {
 				controlSocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -115,7 +102,6 @@ public abstract class MemberObject extends OrchestraMember {
 			try {
 				workSocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

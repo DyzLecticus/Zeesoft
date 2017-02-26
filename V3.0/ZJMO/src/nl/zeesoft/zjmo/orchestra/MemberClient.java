@@ -49,25 +49,11 @@ public class MemberClient extends Locker {
 		open = false;
 		unlockMe(this);
 	}
-	
-	public void writeOutput(ZStringBuilder output) {
-		lockMe(this);
-		writeOutputNoLock(output);
-		unlockMe(this);
-	}
 
 	public ZStringBuilder writeOutputReadInput(ZStringBuilder output) {
 		ZStringBuilder input = null;
 		lockMe(this);
 		writeOutputNoLock(output);
-		input = readInputNoLock();
-		unlockMe(this);
-		return input;
-	}
-
-	public ZStringBuilder readInput() {
-		ZStringBuilder input = null;
-		lockMe(this);
 		input = readInputNoLock();
 		unlockMe(this);
 		return input;

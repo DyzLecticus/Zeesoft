@@ -21,7 +21,14 @@ public class MockPlayers extends MockObject {
 		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
 		for (OrchestraMember member: orch.getMembers()) {
 			if (!member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
-				Player player = new Player(orch,member.getPosition().getName(),member.getPositionBackupNumber());
+				Player player = new Player(orch,member.getPosition().getName(),member.getPositionBackupNumber()) {
+					@Override
+					protected void stopProgram() {
+						//System.out.println("Stopping MockPlayer ...");
+						stop();
+						//System.out.println("Stopped MockPlayer");
+					}
+				};
 				players.add(player);
 			}
 		}

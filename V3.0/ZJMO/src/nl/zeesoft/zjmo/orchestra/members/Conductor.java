@@ -13,15 +13,18 @@ public class Conductor extends MemberObject {
 	}
 	
 	public JsFile getMemberState() {
-		controller.getState();
 		return getOrchestra().toJson(true);
 	}
 	
 	@Override
 	public boolean start() {
+		System.out.println("Starting " + getPosition().getName() + "/" + getPositionBackupNumber() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");
 		boolean started = super.start();
 		if (started) {
 			controller.initialize();
+			System.out.println("Started " + getPosition().getName() + "/" + getPositionBackupNumber());
+		} else {
+			System.err.println("Failed to start " + getPosition().getName() + "/" + getPositionBackupNumber());
 		}
 		return started;
 	}
