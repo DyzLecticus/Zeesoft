@@ -49,11 +49,25 @@ public class MemberController {
 		}
 	}
 
+	protected void setPlayersOffLine() {
+		for (OrchestraMember mem: orchestra.getMembers()) {
+			if (!mem.getPosition().equals(Orchestra.CONDUCTOR)) {
+				setPlayerOffLine(mem.getPosition().getName(),mem.getPositionBackupNumber());
+			}
+		}
+	}
+
+	protected void setPlayerOffLine(String positionName,int positionBackupNumber) {
+		sendMemberCommand(positionName,positionBackupNumber,Protocol.FORCE_OFFLINE);
+	}
+
+	protected void drainPlayerOffLine(String positionName,int positionBackupNumber) {
+		sendMemberCommand(positionName,positionBackupNumber,Protocol.DRAIN_OFFLINE);
+	}
+
 	protected void getState() {
-		int i = 0;
 		for (MemberClient client: clients) {
-			OrchestraMember member = orchestra.getMembers().get(i);
-			i++;
+			OrchestraMember member = getMemberForClient(client);
 			if (!client.isOpen()) {
 				client.open();
 			}
@@ -78,5 +92,42 @@ public class MemberController {
 				}
 			}
 		}
+	}
+
+	private void sendMemberCommand(String positionName,int positionBackupNumber,String command) {
+		OrchestraMember member = orchestra.getMemberForPosition(positionName, positionBackupNumber);
+		if (member!=null) {
+			MemberClient client = getClientForMember(member);
+			client.sendCommand(command);
+		}
+	}
+	
+	
+	private OrchestraMember getMemberForClient(MemberClient client) {
+		OrchestraMember r = null;
+		int i = 0;
+		for (MemberClient cl: clients) {
+			OrchestraMember member = orchestra.getMembers().get(i);
+			i++;
+			if (cl==client) {
+				r = member;
+				break;
+			}
+		}
+		return r;
+	}
+
+	private MemberClient getClientForMember(OrchestraMember member) {
+		MemberClient r = null;
+		int i = 0;
+		for (OrchestraMember mem: orchestra.getMembers()) {
+			MemberClient client = clients.get(i);
+			i++;
+			if (mem==member) {
+				r = client;
+				break;
+			}
+		}
+		return r;
 	}
 }

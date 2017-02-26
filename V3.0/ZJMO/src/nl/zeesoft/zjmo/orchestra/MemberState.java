@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MemberState {
-	public static final String			UNKNOWN 		= "UNKNOWN";
-	public static final String			ONLINE 			= "ONLINE";
-	public static final String			OFFLINE 		= "OFFLINE";
+	public static final String			UNKNOWN 			= "UNKNOWN";
+	public static final String			ONLINE 				= "ONLINE";
+	public static final String			GOING_OFFLINE		= "GOING_OFFLINE";
+	public static final String			DRAINING_OFFLINE	= "GOING_OFFLINE";
+	public static final String			OFFLINE 			= "OFFLINE";
+	public static final String			STOPPING 			= "STOPPING";
 	
 	private static List<MemberState>	states 			= new ArrayList<MemberState>();
 	
@@ -46,5 +49,9 @@ public class MemberState {
 	private static void initializeDefaultStates() {
 		states.add(new MemberState(UNKNOWN));
 		states.add(new MemberState(ONLINE));
+		states.add(new MemberState(GOING_OFFLINE));
+		states.add(new MemberState(DRAINING_OFFLINE));
+		states.add(new MemberState(OFFLINE));
+		states.add(new MemberState(STOPPING));
 	}
 }

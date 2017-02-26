@@ -1,5 +1,8 @@
 package nl.zeesoft.zjmo.orchestra;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -69,9 +72,26 @@ public class MemberClient extends Locker {
 		unlockMe(this);
 		return input;
 	}
-	
+
 	public ZStringBuilder sendCommand(String command) {
-		return writeOutputReadInput(protocol.getCommandJson(command));
+		return writeOutputReadInput(protocol.getCommandJson(command,null));
+	}
+
+	public ZStringBuilder sendCommand(String command, String pName, String pValue) {
+		SortedMap<String,String> params = new TreeMap<String,String>();
+		params.put(pName,pValue);
+		return writeOutputReadInput(protocol.getCommandJson(command,params));
+	}
+
+	public ZStringBuilder sendCommand(String command, String pName1, String pValue1, String pName2, String pValue2) {
+		SortedMap<String,String> params = new TreeMap<String,String>();
+		params.put(pName1,pValue1);
+		params.put(pName2,pValue2);
+		return writeOutputReadInput(protocol.getCommandJson(command,params));
+	}
+
+	public ZStringBuilder sendCommand(String command,SortedMap<String,String> parameters) {
+		return writeOutputReadInput(protocol.getCommandJson(command,parameters));
 	}
 
 	protected Protocol getNewProtocol() {

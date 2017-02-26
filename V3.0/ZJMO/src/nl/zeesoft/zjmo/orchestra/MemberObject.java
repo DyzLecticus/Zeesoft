@@ -19,7 +19,7 @@ public abstract class MemberObject extends OrchestraMember {
 	private List<MemberWorker>	workers				= new ArrayList<MemberWorker>();
 
 	public MemberObject() {
-		setState(MemberState.getState(MemberState.UNKNOWN));
+		super.setState(MemberState.getState(MemberState.UNKNOWN));
 	}
 	
 	public boolean isWorking() {
@@ -77,7 +77,7 @@ public abstract class MemberObject extends OrchestraMember {
 				workWorker = new MemberWorkWorker(this);
 			}
 			workWorker.start();
-			setState(MemberState.getState(MemberState.ONLINE));
+			super.setState(MemberState.getState(MemberState.ONLINE));
 		} else {
 			if (controlSocket!=null) {
 				try {
@@ -120,8 +120,25 @@ public abstract class MemberObject extends OrchestraMember {
 			worker.stop();
 		}
 		workers.clear();
-		setState(MemberState.getState(MemberState.OFFLINE));
+		super.setState(MemberState.getState(MemberState.OFFLINE));
 		unlockMe(this);
+	}
+
+	public boolean goToStateIfState(String goToState,String ifState1) {
+		return goToStateIfState(goToState,ifState1,null);
+	}
+	
+	public boolean goToStateIfState(String goToState,String ifState1,String ifState2) {
+		boolean r = false;
+		lockMe(this);
+		if (super.getState().getCode().equals(ifState1) ||
+			(ifState2!=null && ifState2.length()>0 && super.getState().getCode().equals(ifState2))
+			) {
+			super.setState(MemberState.getState(goToState));
+			r = true;
+		}
+		unlockMe(this);
+		return r;
 	}
 
 	protected void stopProgram() {
@@ -186,7 +203,7 @@ public abstract class MemberObject extends OrchestraMember {
 		lockMe(this);
 		Runtime rt = Runtime.getRuntime();
 		f.rootElement = new JsElem();
-		f.rootElement.children.add(new JsElem("state",getState().getCode(),true));
+		f.rootElement.children.add(new JsElem("state",super.getState().getCode(),true));
 		f.rootElement.children.add(new JsElem("workLoad","" + workers.size()));
 		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
 		unlockMe(this);
