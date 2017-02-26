@@ -58,7 +58,7 @@ public class MemberController {
 	}
 
 	protected void setPlayerOffLine(String positionName,int positionBackupNumber) {
-		sendMemberCommand(positionName,positionBackupNumber,Protocol.FORCE_OFFLINE);
+		sendMemberCommand(positionName,positionBackupNumber,Protocol.TAKE_OFFLINE);
 	}
 
 	protected void drainPlayerOffLine(String positionName,int positionBackupNumber) {

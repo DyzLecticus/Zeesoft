@@ -7,8 +7,9 @@ public class MemberState {
 	public static final String			UNKNOWN 			= "UNKNOWN";
 	public static final String			ONLINE 				= "ONLINE";
 	public static final String			GOING_OFFLINE		= "GOING_OFFLINE";
-	public static final String			DRAINING_OFFLINE	= "GOING_OFFLINE";
+	public static final String			DRAINING_OFFLINE	= "DRAINING_OFFLINE";
 	public static final String			OFFLINE 			= "OFFLINE";
+	public static final String			COMING_ONLINE		= "COMING_ONLINE";
 	public static final String			STOPPING 			= "STOPPING";
 	
 	private static List<MemberState>	states 			= new ArrayList<MemberState>();

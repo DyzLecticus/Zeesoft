@@ -5,17 +5,16 @@ import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 
 public class Conductor extends MemberObject {
-	private Orchestra			orchestra	= null;
 	private MemberController	controller	= null;
 	
 	public Conductor(Orchestra orchestra) {
-		this.orchestra = orchestra;
+		super(orchestra,Orchestra.CONDUCTOR,0);
 		this.controller = new MemberController(orchestra);
 	}
 	
 	public JsFile getMemberState() {
 		controller.getState();
-		return orchestra.toJson(true);
+		return getOrchestra().toJson(true);
 	}
 	
 	@Override

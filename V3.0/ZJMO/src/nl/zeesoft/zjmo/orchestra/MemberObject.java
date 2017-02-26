@@ -12,14 +12,23 @@ import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.json.JsFile;
 
 public abstract class MemberObject extends OrchestraMember {
+	private Orchestra			orchestra			= null;
 	private MemberControlWorker	controlWorker		= null;
 	private MemberWorkWorker	workWorker			= null;
 	private ServerSocket 		controlSocket		= null;
 	private ServerSocket 		workSocket			= null;
 	private List<MemberWorker>	workers				= new ArrayList<MemberWorker>();
-
-	public MemberObject() {
+	
+	public MemberObject(Orchestra orchestra,String positionName, int positionBackupNumber) {
+		this.orchestra = orchestra;
+		setPosition(orchestra.getPosition(positionName));
+		setPositionBackupNumber(positionBackupNumber);
 		super.setState(MemberState.getState(MemberState.UNKNOWN));
+		getConfigurationFromOrchestraPosition();
+	}
+	
+	public Orchestra getOrchestra() {
+		return orchestra;
 	}
 	
 	public boolean isWorking() {
@@ -141,6 +150,48 @@ public abstract class MemberObject extends OrchestraMember {
 		return r;
 	}
 
+	public boolean takeOffLine() {
+		boolean r = goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE);
+		if (r) {
+			lockMe(this);
+			super.setState(MemberState.getState(MemberState.GOING_OFFLINE));
+			List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);
+			for (MemberWorker wrkr: wrkrs) {
+				if (!wrkr.isControl()) {
+					stopWorkerNoLock(wrkr);
+				}
+			}
+			workWorker.stop();
+			super.setState(MemberState.getState(MemberState.OFFLINE));
+			unlockMe(this);
+		}
+		return r;
+	}
+
+	public boolean drainOffLine() {
+		boolean r = goToStateIfState(MemberState.DRAINING_OFFLINE,MemberState.ONLINE);
+		if (r) {
+			lockMe(this);
+			super.setState(MemberState.getState(MemberState.DRAINING_OFFLINE));
+			workWorker.stop();
+			super.setState(MemberState.getState(MemberState.OFFLINE));
+			unlockMe(this);
+		}
+		return r;
+	}
+
+	public boolean bringOnLine() {
+		boolean r = goToStateIfState(MemberState.COMING_ONLINE,MemberState.OFFLINE);
+		if (r) {
+			lockMe(this);
+			super.setState(MemberState.getState(MemberState.COMING_ONLINE));
+			workWorker.stop();
+			super.setState(MemberState.getState(MemberState.ONLINE));
+			unlockMe(this);
+		}
+		return r;
+	}
+
 	protected void stopProgram() {
 		stop();
 		System.exit(0);
@@ -151,8 +202,7 @@ public abstract class MemberObject extends OrchestraMember {
 		List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);
 		for (MemberWorker wrkr: wrkrs) {
 			if (wrkr==worker) {
-				worker.stop();
-				workers.remove(wrkr);
+				stopWorkerNoLock(wrkr);
 			}
 		}
 		unlockMe(this);
@@ -173,7 +223,7 @@ public abstract class MemberObject extends OrchestraMember {
 			lockMe(this);
 			SocketHandler sh = new SocketHandler();
 			sh.setSocket(socket);
-			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewProtocol());
+			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewProtocol(),true);
 			workers.add(worker);
 			unlockMe(this);
 			worker.start();
@@ -191,7 +241,7 @@ public abstract class MemberObject extends OrchestraMember {
 			lockMe(this);
 			SocketHandler sh = new SocketHandler();
 			sh.setSocket(socket);
-			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewProtocol());
+			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewProtocol(),false);
 			workers.add(worker);
 			unlockMe(this);
 			worker.start();
@@ -200,13 +250,33 @@ public abstract class MemberObject extends OrchestraMember {
 	
 	protected ZStringBuilder getStateJson() {
 		JsFile f = new JsFile();
+		int workLoad = 0;
 		lockMe(this);
 		Runtime rt = Runtime.getRuntime();
+		for (MemberWorker worker: workers) {
+			if (!worker.isControl()) {
+				workLoad++;
+			}
+		}
 		f.rootElement = new JsElem();
 		f.rootElement.children.add(new JsElem("state",super.getState().getCode(),true));
-		f.rootElement.children.add(new JsElem("workLoad","" + workers.size()));
+		f.rootElement.children.add(new JsElem("workLoad","" + workLoad));
 		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
 		unlockMe(this);
 		return f.toStringBuilder();
+	}
+	
+	private void stopWorkerNoLock(MemberWorker worker) {
+		worker.stop();
+		workers.remove(worker);
+	}
+
+	private void getConfigurationFromOrchestraPosition() {
+		OrchestraMember member = orchestra.getMemberForPosition(getPosition().getName(),getPositionBackupNumber());
+		if (member!=null) {
+			setIpAddressOrHostName(member.getIpAddressOrHostName());
+			setControlPort(member.getControlPort());
+			setWorkPort(member.getWorkPort());
+		}
 	}
 }

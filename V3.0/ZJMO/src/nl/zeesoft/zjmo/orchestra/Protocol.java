@@ -10,9 +10,9 @@ public class Protocol {
 	public static final String STOP_PROGRAM		= "STOP_PROGRAM";
 	public static final String CLOSE_SESSION 	= "CLOSE_SESSION";
 	public static final String GET_STATE 		= "GET_STATE";
-	public static final String FORCE_OFFLINE	= "FORCE_OFFLINE";
+	public static final String TAKE_OFFLINE		= "TAKE_OFFLINE";
 	public static final String DRAIN_OFFLINE	= "DRAIN_OFFLINE";
-	public static final String FORCE_ONLINE		= "FORCE_ONLINE";
+	public static final String BRING_ONLINE		= "BRING_ONLINE";
 	
 	private boolean stop	= false;
 	private boolean close	= false;
@@ -29,13 +29,17 @@ public class Protocol {
 				close = true;
 			} else if (command.equals(GET_STATE)) {
 				output = member.getStateJson();
-			} else if (command.equals(FORCE_OFFLINE)) {
-				if (member.goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE)) {
-					// TODO: Implement force offline
+			} else if (command.equals(TAKE_OFFLINE)) {
+				if (!member.takeOffLine()) {
+					output = getErrorJson("Failed to execute command");
 				}
 			} else if (command.equals(DRAIN_OFFLINE)) {
-				if (member.goToStateIfState(MemberState.DRAINING_OFFLINE,MemberState.ONLINE)) {
-					// TODO: Implement drain offline
+				if (!member.drainOffLine()) {
+					output = getErrorJson("Failed to execute command");
+				}
+			} else if (command.equals(BRING_ONLINE)) {
+				if (!member.bringOnLine()) {
+					output = getErrorJson("Failed to execute command");
 				}
 			}
 		}
@@ -75,19 +79,13 @@ public class Protocol {
 		r.append("}");
 		return r;
 	}
-	
+
 	protected boolean isCommandJson(ZStringBuilder json) {
 		return json.startsWith("{\"command\":\"");
 	}
 
 	protected String getCommandFromJson(ZStringBuilder json) {
-		String r = "";
-		JsFile f = new JsFile();
-		f.fromStringBuilder(json);
-		if (f.rootElement.children.size()>0) {
-			r = f.rootElement.children.get(0).value.toString();
-		}
-		return r;
+		return getFirstElementValueFromJson(json);
 	}
 	
 	protected String getCommandParameterFromJson(ZStringBuilder json,String name) {
@@ -99,4 +97,31 @@ public class Protocol {
 		}
 		return r;
 	}
+	
+	protected ZStringBuilder getErrorJson(String error) {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("{\"error\":\"");
+		r.append(error);
+		r.append("\"}");
+		return r;
+	}
+
+	protected boolean isErrorJson(ZStringBuilder json) {
+		return json.startsWith("{\"error\":\"");
+	}
+
+	protected String getErrorFromJson(ZStringBuilder json) {
+		return getFirstElementValueFromJson(json);
+	}
+	
+	private String getFirstElementValueFromJson(ZStringBuilder json) {
+		String r = "";
+		JsFile f = new JsFile();
+		f.fromStringBuilder(json);
+		if (f.rootElement.children.size()>0) {
+			r = f.rootElement.children.get(0).value.toString();
+		}
+		return r;
+	}
+	
 }

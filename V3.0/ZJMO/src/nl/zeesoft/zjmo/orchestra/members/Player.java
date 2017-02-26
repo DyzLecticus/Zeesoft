@@ -1,9 +1,10 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
 import nl.zeesoft.zjmo.orchestra.MemberObject;
+import nl.zeesoft.zjmo.orchestra.Orchestra;
 
 public class Player extends MemberObject {
-	private String 	conductorIpAddressOrHostName	= "localhost";
-	private int		conductorControlPort			= 5433;
-	private int		conductorWorkPort				= 5432;
+	public Player(Orchestra orchestra,String positionName,int positionBackupNumber) {
+		super(orchestra,positionName,positionBackupNumber);
+	}
 }

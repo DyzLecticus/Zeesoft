@@ -9,21 +9,28 @@ public class MemberWorker extends Worker {
 	private MemberObject		member		= null;
 	private SocketHandler		socket		= null;
 	private Protocol			protocol	= null;
+	private boolean				control		= false;
 
-	public MemberWorker(MemberObject member,SocketHandler socket, Protocol protocol) {
+	public MemberWorker(MemberObject member,SocketHandler socket, Protocol protocol, boolean control) {
 		super(null,null);
 		setSleep(0);
 		this.member = member;
 		this.socket = socket;
 		this.protocol = protocol;
+		this.control = control;
 	}
 
-	public MemberWorker(Messenger msgr, WorkerUnion union,MemberObject member,SocketHandler socket, Protocol protocol) {
+	public MemberWorker(Messenger msgr, WorkerUnion union,MemberObject member,SocketHandler socket, Protocol protocol,boolean control) {
 		super(msgr,union);
 		setSleep(0);
 		this.member = member;
 		this.socket = socket;
 		this.protocol = protocol;
+		this.control = control;
+	}
+
+	public boolean isControl() {
+		return control;
 	}
 	
 	@Override
