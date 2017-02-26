@@ -69,7 +69,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zidm nl/zeesoft/zidm/dialog nl/zeesoft/zidm/test zdk.jar zsc.jar zspr.jar zid.jar zdm.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zidm nl/zeesoft/zidm/dialog nl/zeesoft/zidm/dialog/model nl/zeesoft/zidm/dialog/pattern nl/zeesoft/zidm/test zdk.jar zsc.jar zspr.jar zid.jar zdm.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zidm.test.ZIDM"/>
 		</manifest>		
 		<!-- Build jar file -->
