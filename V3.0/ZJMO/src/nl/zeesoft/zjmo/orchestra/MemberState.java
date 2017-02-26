@@ -5,9 +5,7 @@ import java.util.List;
 
 public class MemberState {
 	public static final String			UNKNOWN 		= "UNKNOWN";
-	public static final String			INACTIVE 		= "INACTIVE";
-	public static final String			UNRESPONSIVE 	= "UNRESPONSIVE";
-	public static final String			ACTIVE 			= "ACTIVE";
+	public static final String			ONLINE 			= "ONLINE";
 	
 	private static List<MemberState>	states 			= new ArrayList<MemberState>();
 	
@@ -46,8 +44,6 @@ public class MemberState {
 	
 	private static void initializeDefaultStates() {
 		states.add(new MemberState(UNKNOWN));
-		states.add(new MemberState(INACTIVE));
-		states.add(new MemberState(UNRESPONSIVE));
-		states.add(new MemberState(ACTIVE));
+		states.add(new MemberState(ONLINE));
 	}
 }

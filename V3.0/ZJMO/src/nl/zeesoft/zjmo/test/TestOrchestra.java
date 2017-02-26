@@ -5,6 +5,18 @@ import nl.zeesoft.zjmo.orchestra.Orchestra;
 public class TestOrchestra {
 
 	public static void main(String[] args) {
+		Orchestra orc = getTestOrchestra();
+		
+		System.out.println("Orchestra JSON:");
+		System.out.println(orc.toJson(true).toStringBuilderReadFormat());
+		
+		orc.fromJson(orc.toJson(false));
+
+		System.out.println("After to and from JSON:");
+		System.out.println(orc.toJson(true).toStringBuilderReadFormat());
+	}
+	
+	public static final Orchestra getTestOrchestra() {
 		Orchestra orc = new Orchestra();
 		orc.addPosition("Database X");
 		orc.addPosition("Database Y");
@@ -19,13 +31,6 @@ public class TestOrchestra {
 		// Backup databases
 		orc.addMember("Database X",1,"localhost",6541,6540);
 		orc.addMember("Database Y",1,"localhost",7652,7651);
-		
-		System.out.println("Orchestra JSON:");
-		System.out.println(orc.toJson(true).toStringBuilderReadFormat());
-		
-		orc.fromJson(orc.toJson(false));
-
-		System.out.println("After to and from JSON:");
-		System.out.println(orc.toJson(true).toStringBuilderReadFormat());
+		return orc;
 	}
 }

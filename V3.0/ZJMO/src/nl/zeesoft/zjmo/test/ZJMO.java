@@ -1,9 +1,9 @@
 package nl.zeesoft.zjmo.test;
 
 /**
- * Zeesoft JSON Machine Orchestration
+ * Zeesoft JSON Machine Orchestration.
  * 
- * The aim of the ZJMO project is to create a scalable, high availability, JSON based, work distribution architecture.
+ * The aim of the ZJMO project is to provide a scalable, high availability, JSON based, work distribution architecture.
  * Imagine an orchestra where the conductor directs the other members to play a certain composition.
  * All the members speak JSON on two TCP ports; one for control and another one for work.
  */

@@ -3,8 +3,13 @@ package nl.zeesoft.zjmo.orchestra;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zjmo.json.JsElem;
+import nl.zeesoft.zjmo.json.JsFile;
 
 public abstract class MemberObject extends OrchestraMember {
 	private MemberControlWorker	controlWorker		= null;
@@ -34,7 +39,6 @@ public abstract class MemberObject extends OrchestraMember {
 		if (controlSocket==null) {
 			try {
 				controlSocket = new ServerSocket(getControlPort());
-				controlSocket.setSoTimeout(1000);
 			} catch (IOException e) {
 				controlSocket = null;
 				started = false;
@@ -43,8 +47,7 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		if (workSocket==null) {
 			try {
-				workSocket = new ServerSocket(getControlPort());
-				workSocket.setSoTimeout(1000);
+				workSocket = new ServerSocket(getWorkPort());
 			} catch (IOException e) {
 				workSocket = null;
 				started = false;
@@ -52,6 +55,16 @@ public abstract class MemberObject extends OrchestraMember {
 			}
 		}
 		if (controlSocket!=null && workSocket!=null) {
+			try {
+				controlSocket.setSoTimeout(1000);
+			} catch (SocketException e) {
+				//e.printStackTrace();
+			}
+			try {
+				workSocket.setSoTimeout(1000);
+			} catch (SocketException e) {
+				//e.printStackTrace();
+			}
 			if (controlWorker==null) {
 				controlWorker = new MemberControlWorker(this);
 			}
@@ -60,6 +73,15 @@ public abstract class MemberObject extends OrchestraMember {
 				workWorker = new MemberWorkWorker(this);
 			}
 			workWorker.start();
+		} else {
+			if (controlSocket!=null) {
+				try {
+					controlSocket.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		unlockMe(this);
 		return started;
@@ -67,6 +89,22 @@ public abstract class MemberObject extends OrchestraMember {
 	
 	public void stop() {
 		lockMe(this);
+		if (controlSocket!=null) {
+			try {
+				controlSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (workSocket!=null) {
+			try {
+				workSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		if (controlWorker!=null) {
 			controlWorker.stop();
 		}
@@ -80,6 +118,11 @@ public abstract class MemberObject extends OrchestraMember {
 		unlockMe(this);
 	}
 
+	protected void stopProgram() {
+		stop();
+		System.exit(0);
+	}
+	
 	protected void stopWorker(MemberWorker worker) {
 		lockMe(this);
 		List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);
@@ -105,7 +148,9 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		if (socket!=null) {
 			lockMe(this);
-			MemberWorker worker = new MemberWorker(null,null,this,socket,getNewProtocol());
+			SocketHandler sh = new SocketHandler();
+			sh.setSocket(socket);
+			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewProtocol());
 			workers.add(worker);
 			worker.start();
 			unlockMe(this);
@@ -121,10 +166,24 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		if (socket!=null) {
 			lockMe(this);
-			MemberWorker worker = new MemberWorker(null,null,this,socket,getNewProtocol());
+			SocketHandler sh = new SocketHandler();
+			sh.setSocket(socket);
+			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewProtocol());
 			workers.add(worker);
 			worker.start();
 			unlockMe(this);
 		}
+	}
+	
+	protected ZStringBuilder getStateJson() {
+		JsFile f = new JsFile();
+		lockMe(this);
+		Runtime rt = Runtime.getRuntime();
+		f.rootElement = new JsElem();
+		f.rootElement.children.add(new JsElem("state",getState().toString(),true));
+		f.rootElement.children.add(new JsElem("workLoad","" + workers.size()));
+		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
+		unlockMe(this);
+		return f.toStringBuilder();
 	}
 }

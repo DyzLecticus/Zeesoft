@@ -20,11 +20,11 @@ public class JsFile {
 		}
 	}
 
-	public StringBuilder toStringBuilder() {
+	public ZStringBuilder toStringBuilder() {
 		return toStringBuilder(false);
 	}	
 
-	public StringBuilder toStringBuilderReadFormat() {
+	public ZStringBuilder toStringBuilderReadFormat() {
 		return toStringBuilder(true);
 	}	
 
@@ -132,8 +132,8 @@ public class JsFile {
 		}
 	}
 	
-	private StringBuilder toStringBuilder(boolean readFormat) {
-		StringBuilder s = new StringBuilder();
+	private ZStringBuilder toStringBuilder(boolean readFormat) {
+		ZStringBuilder s = new ZStringBuilder();
 		s.append("{");
 		if (rootElement!=null) {
 			boolean added = false;
@@ -152,8 +152,8 @@ public class JsFile {
 		return s;
 	}
 
-	private StringBuilder elementToStringBuilder(JsElem elem, int level, boolean readFormat) {
-		StringBuilder s = new StringBuilder();
+	private ZStringBuilder elementToStringBuilder(JsElem elem, int level, boolean readFormat) {
+		ZStringBuilder s = new ZStringBuilder();
 		if (readFormat) {
 			s.append("\n");
 			for (int i = 0; i < level; i++) {

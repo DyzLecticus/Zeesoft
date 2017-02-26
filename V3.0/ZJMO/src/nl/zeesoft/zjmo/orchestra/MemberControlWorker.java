@@ -9,6 +9,7 @@ public class MemberControlWorker extends Worker {
 
 	protected MemberControlWorker(MemberObject member) {
 		super(null,null);
+		setSleep(1);
 		this.member = member;
 	}
 
@@ -19,8 +20,8 @@ public class MemberControlWorker extends Worker {
 
 	@Override
 	public void stop() {
-		waitForStop(10,false);
 		super.stop();
+		waitForStop(10,false);
 	}
 	
 	@Override
