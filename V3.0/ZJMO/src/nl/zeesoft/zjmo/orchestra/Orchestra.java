@@ -127,7 +127,15 @@ public class Orchestra {
 			mem.children.add(new JsElem("controlPort","" + member.getControlPort()));
 			mem.children.add(new JsElem("workPort","" + member.getWorkPort()));
 			if (includeState) {
-				mem.children.add(new JsElem("state",member.getState().getCode()));
+				mem.children.add(new JsElem("state",member.getState().getCode(),true));
+				if (!member.getState().getCode().equals(MemberState.UNKNOWN)) {
+					mem.children.add(new JsElem("workLoad","" + member.getWorkLoad()));
+					mem.children.add(new JsElem("memoryUsage","" + member.getMemoryUsage()));
+				}
+				if (member.getErrorDate()!=null && member.getErrorMessage().length()>0) {
+					mem.children.add(new JsElem("errorTime","" + member.getErrorDate().getDate().getTime()));
+					mem.children.add(new JsElem("errorMessage",member.getErrorMessage(),true));
+				}
 			}
 		}
 		return f;

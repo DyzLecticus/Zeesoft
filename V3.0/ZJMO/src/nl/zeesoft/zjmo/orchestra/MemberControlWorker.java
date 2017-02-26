@@ -15,6 +15,7 @@ public class MemberControlWorker extends Worker {
 
 	protected MemberControlWorker(Messenger msgr, WorkerUnion union,MemberObject member) {
 		super(msgr,union);
+		setSleep(1);
 		this.member = member;
 	}
 

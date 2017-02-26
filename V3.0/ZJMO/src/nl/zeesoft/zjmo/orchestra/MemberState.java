@@ -6,6 +6,7 @@ import java.util.List;
 public class MemberState {
 	public static final String			UNKNOWN 		= "UNKNOWN";
 	public static final String			ONLINE 			= "ONLINE";
+	public static final String			OFFLINE 		= "OFFLINE";
 	
 	private static List<MemberState>	states 			= new ArrayList<MemberState>();
 	

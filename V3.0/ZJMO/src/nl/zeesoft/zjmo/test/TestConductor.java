@@ -1,5 +1,7 @@
 package nl.zeesoft.zjmo.test;
 
+import java.util.Date;
+
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -29,12 +31,11 @@ public class TestConductor extends TestObject {
 		// TODO: Finish
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockTestOrchestra.class.getName());
+		getTester().describeMock(MockConductor.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestTestOrchestra.class));
-		System.out.println(" * " + getTester().getLinkForClass(MockTestOrchestra.class));
-		System.out.println(" * " + getTester().getLinkForClass(TestOrchestra.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestConductor.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConductor.class));
 		System.out.println(" * " + getTester().getLinkForClass(Conductor.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
@@ -44,32 +45,24 @@ public class TestConductor extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		// TODO: Assertions
-		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
-		Conductor con = new Conductor(orch) {
-			@Override
-			protected void stopProgram() {
-				System.out.println("Conductor stop program method called");
-				stop();
-				System.out.println("Conductor stopped");
-			}
-		};
-		
+		Conductor con = (Conductor) getTester().getMockedObject(MockConductor.class.getName());
+		Date start = new Date();
+		System.out.println("Starting conductor ...");
 		boolean started = con.start();
+		System.out.println("Starting conductor took " + ((new Date()).getTime() - start.getTime()) + " ms");
+		assertEqual(started,true,"Failed to start the conductor");
 		if (started) {
 			MemberClient client = new MemberClient("localhost",5433);
 			client.open();
-			if (!client.isOpen()) {
-				System.err.println("Failed to connect to conductor");
-			} else {
-				ZStringBuilder response = client.sendCommand(Protocol.STOP_PROGRAM);
-				System.out.println("Stop program command response: " + response);
+			assertEqual(client.isOpen(),true,"Failed to open the client");
+			if (client.isOpen()) {
+				ZStringBuilder response = client.sendCommand(Protocol.GET_STATE);
+				System.out.println("Get state response: " + response);
+				response = client.sendCommand(Protocol.STOP_PROGRAM);
+				assertEqual(response.toString(),"","Stop program response does not match expectation");
 			}
-			/*
-			if (con.isWorking()) {
-				con.stop();
-			}
-			*/
+			System.out.println("Conductor member state JSON:");
+			System.out.println(con.getMemberState().toStringBuilderReadFormat());
 		} else {
 			System.err.println("Failed to start conductor");
 		}

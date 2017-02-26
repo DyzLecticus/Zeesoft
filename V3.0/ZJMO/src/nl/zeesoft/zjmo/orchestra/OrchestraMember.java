@@ -1,5 +1,6 @@
 package nl.zeesoft.zjmo.orchestra;
 
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
@@ -10,6 +11,12 @@ public class OrchestraMember extends Locker {
 	private int			controlPort				= 5433;
 	private int			workPort				= 5432;
 
+	private MemberState	state					= null;
+	private int			workLoad				= 0;
+	private long		memoryUsage				= 0;
+	private ZDate		errorDate				= null;
+	private String		errorMessage			= "";
+
 	public OrchestraMember() {
 		super(null);
 	}
@@ -17,8 +24,6 @@ public class OrchestraMember extends Locker {
 	public OrchestraMember(Messenger msgr) {
 		super(msgr);
 	}
-
-	private MemberState	state					= null;
 
 	public String getIpAddressOrHostName() {
 		return ipAddressOrHostName;
@@ -66,5 +71,42 @@ public class OrchestraMember extends Locker {
 
 	public void setState(MemberState state) {
 		this.state = state;
+	}
+
+	public int getWorkLoad() {
+		return workLoad;
+	}
+
+	public void setWorkLoad(int workLoad) {
+		this.workLoad = workLoad;
+	}
+
+	public long getMemoryUsage() {
+		return memoryUsage;
+	}
+
+	public void setMemoryUsage(long memoryUsage) {
+		this.memoryUsage = memoryUsage;
+	}
+
+	public ZDate getErrorDate() {
+		return errorDate;
+	}
+
+	public void setErrorDate(ZDate errorDate) {
+		this.errorDate = errorDate;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		if (errorMessage.length()>0) {
+			errorDate = new ZDate();
+		} else {
+			errorDate = null;
+		}
+		this.errorMessage = errorMessage;
 	}
 }
