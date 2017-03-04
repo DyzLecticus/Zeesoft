@@ -6,17 +6,18 @@ public class JsFile {
 	public JsElem rootElement = null;
 	
 	public void fromStringBuilder(ZStringBuilder str) {
+		ZStringBuilder work = new ZStringBuilder(str);
 		if (rootElement!=null) {
 			rootElement.children.clear();
 			rootElement = null;
 		}
-		str.trim();
-		if (str.startsWith("{") &&
-			str.endsWith("}")
+		work.trim();
+		if (work.startsWith("{") &&
+			work.endsWith("}")
 			) {
 			rootElement = new JsElem();
 			rootElement.name = "rootElement";
-			elementsFromStringBuilder(rootElement,str);
+			elementsFromStringBuilder(rootElement,work);
 		}
 	}
 

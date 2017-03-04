@@ -20,6 +20,38 @@ public class SocketHandler {
 		socket = s;
 	}
 
+	protected String getSocketIpAddress() {
+		String r = "";
+		if (socket!=null && socket.getInetAddress()!=null) {
+			r = socket.getInetAddress().getHostAddress();
+		}
+		return r;
+	}
+
+	protected int getSocketPort() {
+		int r = 0;
+		if (socket!=null && socket.getInetAddress()!=null) {
+			r = socket.getPort();
+		}
+		return r;
+	}
+
+	protected String getSocketIpAddressAndPort() {
+		String r = "";
+		if (socket!=null && socket.getInetAddress()!=null) {
+			r = getSocketIpAddress() + ":" + getSocketPort();
+		}
+		return r;
+	}
+
+	protected boolean isOpen() {
+		boolean r = false;
+		if (socket!=null && !socket.isClosed() && !socket.isInputShutdown() && !socket.isOutputShutdown()) {
+			r = true;
+		}
+		return r;
+	}
+
 	protected boolean open(String ipAddressOrHostName, int port,boolean timeOut) {
 		try {
 			socket = new Socket(ipAddressOrHostName,port);

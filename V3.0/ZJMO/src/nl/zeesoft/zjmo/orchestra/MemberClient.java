@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class MemberClient extends Locker {
-	private Protocol			protocol			= null;
+	private ProtocolControl		protocol			= null;
 	private String				ipAddressOrHostName	= "localhost";
 	private int					port				= 5432;
 	private SocketHandler		socket				= null;
@@ -18,14 +18,14 @@ public class MemberClient extends Locker {
 		super(null);
 		this.ipAddressOrHostName = ipAddressOrHostName;
 		this.port = port;
-		this.protocol = getNewProtocol();
+		this.protocol = getNewControlProtocol();
 	}
 
 	public MemberClient(Messenger msgr,String ipAddressOrHostName, int port) {
 		super(msgr);
 		this.ipAddressOrHostName = ipAddressOrHostName;
 		this.port = port;
-		this.protocol = getNewProtocol();
+		this.protocol = getNewControlProtocol();
 	}
 
 	public boolean open() {
@@ -38,6 +38,9 @@ public class MemberClient extends Locker {
 	public boolean isOpen() {
 		boolean r = false;
 		lockMe(this);
+		if (open) {
+			open = socket.isOpen();
+		}
 		r = open;
 		unlockMe(this);
 		return r;
@@ -80,8 +83,8 @@ public class MemberClient extends Locker {
 		return writeOutputReadInput(protocol.getCommandJson(command,parameters));
 	}
 
-	protected Protocol getNewProtocol() {
-		return new Protocol();
+	protected ProtocolControl getNewControlProtocol() {
+		return new ProtocolControl();
 	}
 	
 	private void writeOutputNoLock(ZStringBuilder output) {
@@ -96,15 +99,14 @@ public class MemberClient extends Locker {
 
 	private void initializeConnectionNoLock() {
 		if (!open) {
-			initializeSocketHandlerNoLock();
-			open = socket.open();
-		}
-	}
-	
-	private void initializeSocketHandlerNoLock() {
-		if (socket==null) {
-			socket = new SocketHandler();
-			socket.open(ipAddressOrHostName,port,false);
+			if (socket==null) {
+				socket = new SocketHandler();
+				//System.out.println("Initializing client socket to: " + ipAddressOrHostName + ":" + port);
+				open = socket.open(ipAddressOrHostName,port,false);
+			} else {
+				//System.out.println("Opening client socket to: " + ipAddressOrHostName + ":" + port);
+				open = socket.open(ipAddressOrHostName,port,false);
+			}
 		}
 	}
 }

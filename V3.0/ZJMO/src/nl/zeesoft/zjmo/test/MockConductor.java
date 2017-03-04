@@ -16,12 +16,12 @@ public class MockConductor extends MockObject {
 		Conductor con = new Conductor(orch) {
 			@Override
 			public boolean start() {
-				System.out.println("Starting " + getPosition().getName() + "/" + getPositionBackupNumber() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");
+				System.out.println("Starting " + getId() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");
 				boolean started = super.start();
 				if (started) {
-					System.out.println("Started " + getPosition().getName() + "/" + getPositionBackupNumber());
+					System.out.println("Started " + getId());
 				} else {
-					System.err.println("Failed to start " + getPosition().getName() + "/" + getPositionBackupNumber());
+					System.err.println("Failed to start " + getId());
 				}
 				return started;
 			}

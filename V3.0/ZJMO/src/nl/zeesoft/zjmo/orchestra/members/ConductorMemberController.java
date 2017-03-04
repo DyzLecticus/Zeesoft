@@ -12,17 +12,17 @@ import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
-import nl.zeesoft.zjmo.orchestra.Protocol;
+import nl.zeesoft.zjmo.orchestra.ProtocolControl;
 
-public class MemberController {
+public class ConductorMemberController {
 	private Orchestra 			orchestra	= null;
 	private List<MemberClient>	clients		= new ArrayList<MemberClient>();
 
-	protected MemberController(Orchestra orchestra) {
+	protected ConductorMemberController(Orchestra orchestra) {
 		this.orchestra = orchestra;
 	}
 
-	protected MemberController(Messenger msgr, WorkerUnion union, Orchestra orchestra) {
+	protected ConductorMemberController(Messenger msgr, WorkerUnion union, Orchestra orchestra) {
 		this.orchestra = orchestra;
 	}
 
@@ -34,7 +34,7 @@ public class MemberController {
 			clients.add(client);
 		}
 		open();
-		getState();
+		getState(null);
 	}
 
 	protected void open() {
@@ -58,36 +58,38 @@ public class MemberController {
 	}
 
 	protected void setPlayerOffLine(String positionName,int positionBackupNumber) {
-		sendMemberCommand(positionName,positionBackupNumber,Protocol.TAKE_OFFLINE);
+		sendMemberCommand(positionName,positionBackupNumber,ProtocolControl.TAKE_OFFLINE);
 	}
 
 	protected void drainPlayerOffLine(String positionName,int positionBackupNumber) {
-		sendMemberCommand(positionName,positionBackupNumber,Protocol.DRAIN_OFFLINE);
+		sendMemberCommand(positionName,positionBackupNumber,ProtocolControl.DRAIN_OFFLINE);
 	}
 
-	protected void getState() {
+	protected void getState(String memberId) {
 		for (MemberClient client: clients) {
 			OrchestraMember member = getMemberForClient(client);
-			if (!client.isOpen()) {
-				client.open();
-			}
-			if (!client.isOpen()) {
-				member.setErrorMessage("Failed to open control client");
-				member.setState(MemberState.getState(MemberState.UNKNOWN));
-				member.setWorkLoad(0);
-				member.setMemoryUsage(0);
-			} else {
-				member.setErrorMessage("");
-				ZStringBuilder state = client.sendCommand(Protocol.GET_STATE);
-				JsFile json = new JsFile();
-				json.fromStringBuilder(state);
-				for (JsElem elem: json.rootElement.children) {
-					if (elem.name.equals("state")) {
-						member.setState(MemberState.getState(elem.value.toString()));
-					} else if (elem.name.equals("workLoad")) {
-						member.setWorkLoad(Integer.parseInt(elem.value.toString()));
-					} else if (elem.name.equals("memoryUsage")) {
-						member.setMemoryUsage(Long.parseLong(elem.value.toString()));
+			if (memberId==null || memberId.length()==0 || member.getId().equals(memberId)) {
+				if (!client.isOpen()) {
+					client.open();
+				}
+				if (!client.isOpen()) {
+					member.setErrorMessage("Failed to open control client");
+					member.setState(MemberState.getState(MemberState.UNKNOWN));
+					member.setWorkLoad(0);
+					member.setMemoryUsage(0);
+				} else {
+					member.setErrorMessage("");
+					ZStringBuilder state = client.sendCommand(ProtocolControl.GET_STATE);
+					JsFile json = new JsFile();
+					json.fromStringBuilder(state);
+					for (JsElem elem: json.rootElement.children) {
+						if (elem.name.equals("state")) {
+							member.setState(MemberState.getState(elem.value.toString()));
+						} else if (elem.name.equals("workLoad")) {
+							member.setWorkLoad(Integer.parseInt(elem.value.toString()));
+						} else if (elem.name.equals("memoryUsage")) {
+							member.setMemoryUsage(Long.parseLong(elem.value.toString()));
+						}
 					}
 				}
 			}

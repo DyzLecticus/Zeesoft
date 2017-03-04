@@ -25,6 +25,14 @@ public class OrchestraMember extends Locker {
 		super(msgr);
 	}
 
+	public String getId() {
+		String r = "";
+		if (position!=null) {
+			r = position.getName() + "/" + positionBackupNumber; 
+		}
+		return r;
+	}
+	
 	public String getIpAddressOrHostName() {
 		return ipAddressOrHostName;
 	}

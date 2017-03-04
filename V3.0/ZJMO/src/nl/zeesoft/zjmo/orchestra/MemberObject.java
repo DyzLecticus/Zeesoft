@@ -93,6 +93,7 @@ public abstract class MemberObject extends OrchestraMember {
 		lockMe(this);
 		if (controlSocket!=null) {
 			try {
+				//System.out.println("Closing control socket ...");
 				controlSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -100,21 +101,31 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		if (workSocket!=null) {
 			try {
+				//System.out.println("Closing work socket ...");
 				workSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		if (controlWorker!=null) {
+			//System.out.println("Stopping control worker ...");
 			controlWorker.stop();
 		}
 		if (workWorker!=null) {
+			//System.out.println("Stopping work worker ...");
 			workWorker.stop();
 		}
+		//System.out.println("Stopping member workers ...");
 		for (MemberWorker worker: workers) {
-			worker.stop();
+			if (worker.isWorking()) {
+				//System.out.println("Stopping member worker ...");
+				worker.stop();
+			} else {
+				//System.out.println("Member worker already stopped");
+			}
 		}
 		workers.clear();
+		//System.out.println("Stopped member workers");
 		super.setState(MemberState.getState(MemberState.OFFLINE));
 		unlockMe(this);
 	}
@@ -194,8 +205,8 @@ public abstract class MemberObject extends OrchestraMember {
 		unlockMe(this);
 	}
 
-	protected Protocol getNewProtocol() {
-		return new Protocol();
+	protected ProtocolControl getNewControlProtocol() {
+		return new ProtocolControl();
 	}
 	
 	protected void acceptControl() {
@@ -203,13 +214,13 @@ public abstract class MemberObject extends OrchestraMember {
 		try {
 			socket = controlSocket.accept();
 		} catch (IOException e) {
-			// Ignore
+			socket = null;
 		}
 		if (socket!=null) {
 			lockMe(this);
 			SocketHandler sh = new SocketHandler();
 			sh.setSocket(socket);
-			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewProtocol(),true);
+			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewControlProtocol());
 			workers.add(worker);
 			unlockMe(this);
 			worker.start();
@@ -227,7 +238,7 @@ public abstract class MemberObject extends OrchestraMember {
 			lockMe(this);
 			SocketHandler sh = new SocketHandler();
 			sh.setSocket(socket);
-			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewProtocol(),false);
+			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewControlProtocol());
 			workers.add(worker);
 			unlockMe(this);
 			worker.start();
@@ -253,7 +264,9 @@ public abstract class MemberObject extends OrchestraMember {
 	}
 	
 	private void stopWorkerNoLock(MemberWorker worker) {
-		worker.stop();
+		if (worker.isWorking()) {
+			worker.stop();
+		}
 		workers.remove(worker);
 	}
 

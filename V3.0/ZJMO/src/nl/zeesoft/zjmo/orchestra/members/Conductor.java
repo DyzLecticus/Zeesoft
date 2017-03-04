@@ -5,11 +5,11 @@ import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 
 public class Conductor extends MemberObject {
-	private MemberController	controller	= null;
+	private ConductorMemberController	controller	= null;
 	
 	public Conductor(Orchestra orchestra) {
 		super(orchestra,Orchestra.CONDUCTOR,0);
-		this.controller = new MemberController(orchestra);
+		this.controller = new ConductorMemberController(orchestra);
 	}
 	
 	public JsFile getMemberState() {
@@ -30,7 +30,16 @@ public class Conductor extends MemberObject {
 
 	@Override
 	public void stop() {
+		//System.out.println("Closing controller ...");
 		controller.close();
+		//System.out.println("Stopping conductor ...");
 		super.stop();
+	}
+
+	public void updateState(String memberId) {
+		lockMe(this);
+		System.out.println("Get state: " + memberId);
+		controller.getState(memberId);
+		unlockMe(this);
 	}
 }

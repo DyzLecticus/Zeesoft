@@ -45,7 +45,7 @@ public class Orchestra {
 	}
 
 	public OrchestraMember getConductor() {
-		return getMember(CONDUCTOR,0);
+		return this.getMemberForPosition(CONDUCTOR,0);
 	}
 
 	public OrchestraMember getMember(String ipAddressOrHostName,int port) {

@@ -8,37 +8,38 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 public class MemberWorker extends Worker {
 	private MemberObject		member		= null;
 	private SocketHandler		socket		= null;
-	private Protocol			protocol	= null;
-	private boolean				control		= false;
+	private ProtocolObject		protocol	= null;
 
-	public MemberWorker(MemberObject member,SocketHandler socket, Protocol protocol, boolean control) {
+	public MemberWorker(MemberObject member,SocketHandler socket, ProtocolObject protocol) {
 		super(null,null);
 		setSleep(0);
 		this.member = member;
 		this.socket = socket;
 		this.protocol = protocol;
-		this.control = control;
+		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
+		//	System.out.println(member.getPosition().getName() + " accepted control from " + socket.getSocketIpAddressAndPort());
+		//}
 	}
 
-	public MemberWorker(Messenger msgr, WorkerUnion union,MemberObject member,SocketHandler socket, Protocol protocol,boolean control) {
+	public MemberWorker(Messenger msgr, WorkerUnion union,MemberObject member,SocketHandler socket, ProtocolObject protocol) {
 		super(msgr,union);
 		setSleep(0);
 		this.member = member;
 		this.socket = socket;
 		this.protocol = protocol;
-		this.control = control;
+		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
+		//	System.out.println(member.getPosition().getName() + " accepted control from " + socket.getSocketIpAddressAndPort());
+		//}
 	}
 
 	public boolean isControl() {
-		return control;
+		return protocol instanceof ProtocolControl;
 	}
 	
 	@Override
 	public void start() {
 		boolean start = false;
-		lockMe(this);
 		start = socket.open();
-		unlockMe(this);
 		if (start) {
 			super.start();
 		}
@@ -46,30 +47,41 @@ public class MemberWorker extends Worker {
 
 	@Override
 	public void stop() {
-		lockMe(this);
+		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
+		//	System.out.println("Closing socket: " + socket.getSocketIpAddressAndPort() + " ...");
+		//}
 		socket.close();
-		unlockMe(this);
+		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
+		//	System.out.println("Stopping member worker ...");
+		//}
 		super.stop();
-		waitForStop(1,false);
+		//waitForStop(1,false);
+		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
+		//	System.out.println("Stopped member worker");
+		//}
 	}
 	
 	@Override
 	public void whileWorking() {
 		boolean close = false;
 		boolean stop = false;
-		lockMe(this);
 		ZStringBuilder input = socket.readInput();
 		ZStringBuilder output = null;
-		if (input==null) {
+		if (!socket.isOpen()) {
 			close = true;
 		} else {
-			protocol.setStop(false);
-			protocol.setClose(false);
-			output = protocol.handleInput(member,input);
-			close = output==null || protocol.isClose();
-			stop = protocol.isStop();
+			lockMe(this);
+			if (input==null) {
+				close = true;
+			} else {
+				protocol.setStop(false);
+				protocol.setClose(false);
+				output = protocol.handleInput(member,input);
+				close = output==null || protocol.isClose();
+				stop = protocol.isStop();
+			}
+			unlockMe(this);
 		}
-		unlockMe(this);
 		if (stop) {
 			member.stopWorker(this);
 			member.stopProgram();
