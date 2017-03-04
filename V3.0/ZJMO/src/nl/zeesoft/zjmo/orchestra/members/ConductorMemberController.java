@@ -52,19 +52,40 @@ public class ConductorMemberController extends Locker {
 	protected void setPlayersOffLine() {
 		for (OrchestraMember mem: orchestra.getMembers()) {
 			if (!mem.getPosition().equals(Orchestra.CONDUCTOR)) {
-				setPlayerOffLine(mem.getPosition().getName(),mem.getPositionBackupNumber());
+				takeOffline(mem.getId());
 			}
 		}
 	}
 
-	protected void setPlayerOffLine(String positionName,int positionBackupNumber) {
-		sendMemberCommand(positionName,positionBackupNumber,ProtocolControl.TAKE_OFFLINE);
+	public JsFile getOrchestraState() {
+		//getState(null);
+		lockMe(this);
+		JsFile f = orchestra.toJson(true);
+		unlockMe(this);
+		return f;
 	}
 
-	protected void drainPlayerOffLine(String positionName,int positionBackupNumber) {
-		sendMemberCommand(positionName,positionBackupNumber,ProtocolControl.DRAIN_OFFLINE);
+	public JsFile getMemberState(String id) {
+		//getState(null);
+		lockMe(this);
+		JsFile f = new JsFile();
+		f.rootElement = orchestra.getMemberById(id).toJsonElem(true);
+		unlockMe(this);
+		return f;
+	}
+	
+	protected ZStringBuilder takeOffline(String id) {
+		return sendMemberCommand(id,ProtocolControl.TAKE_OFFLINE);
 	}
 
+	protected ZStringBuilder drainOffline(String id) {
+		return sendMemberCommand(id,ProtocolControl.DRAIN_OFFLINE);
+	}
+
+	protected ZStringBuilder bringOnline(String id) {
+		return sendMemberCommand(id,ProtocolControl.BRING_ONLINE);
+	}
+	
 	protected void getState(String memberId) {
 		lockMe(this);
 		for (MemberClient client: clients) {
@@ -126,14 +147,16 @@ public class ConductorMemberController extends Locker {
 		member.setMemoryUsage(0);
 	}
 	
-	private void sendMemberCommand(String positionName,int positionBackupNumber,String command) {
-		OrchestraMember member = orchestra.getMemberForPosition(positionName, positionBackupNumber);
+	private ZStringBuilder sendMemberCommand(String id,String command) {
+		ZStringBuilder response = null;
+		OrchestraMember member = orchestra.getMemberById(id);
 		if (member!=null) {
 			MemberClient client = getClientForMember(member);
 			if (client.isOpen()) {
 				client.sendCommand(command);
 			}
 		}
+		return response;
 	}
 	
 	private OrchestraMember getMemberForClient(MemberClient client) {

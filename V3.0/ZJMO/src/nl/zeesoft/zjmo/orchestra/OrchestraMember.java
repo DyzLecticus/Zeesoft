@@ -3,6 +3,7 @@ package nl.zeesoft.zjmo.orchestra;
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zjmo.json.JsElem;
 
 public class OrchestraMember extends Locker {
 	private Position	position				= null;
@@ -116,5 +117,26 @@ public class OrchestraMember extends Locker {
 			errorDate = null;
 		}
 		this.errorMessage = errorMessage;
+	}
+	
+	public JsElem toJsonElem(boolean includeState) {
+		JsElem mem = new JsElem();
+		mem.children.add(new JsElem("positionName",getPosition().getName(),true));
+		mem.children.add(new JsElem("positionBackupNumber","" + getPositionBackupNumber()));
+		mem.children.add(new JsElem("ipAddressOrHostName",getIpAddressOrHostName(),true));
+		mem.children.add(new JsElem("controlPort","" + getControlPort()));
+		mem.children.add(new JsElem("workPort","" + getWorkPort()));
+		if (includeState) {
+			mem.children.add(new JsElem("state",getState().getCode(),true));
+			if (!getState().getCode().equals(MemberState.UNKNOWN)) {
+				mem.children.add(new JsElem("workLoad","" + getWorkLoad()));
+				mem.children.add(new JsElem("memoryUsage","" + getMemoryUsage()));
+			}
+			if (getErrorDate()!=null && getErrorMessage().length()>0) {
+				mem.children.add(new JsElem("errorTime","" + getErrorDate().getDate().getTime()));
+				mem.children.add(new JsElem("errorMessage",getErrorMessage(),true));
+			}
+		}
+		return mem;
 	}
 }

@@ -46,7 +46,7 @@ public class Orchestra {
 	}
 
 	public OrchestraMember getConductor() {
-		return this.getMemberForPosition(CONDUCTOR,0);
+		return getMemberById(CONDUCTORID);
 	}
 
 	public OrchestraMember getMember(String ipAddressOrHostName,int port) {
@@ -60,8 +60,21 @@ public class Orchestra {
 			}
 		}
 		return r;
+	
 	}
 
+	public OrchestraMember getMemberById(String id) {
+		OrchestraMember r = null;
+		for (OrchestraMember member: members) {
+			if (member.getId().equals(id)) {
+				r = member;
+				break;
+			}
+		}
+		return r;
+	}
+
+	/*
 	public OrchestraMember getMemberForPosition(String positionName) {
 		return getMemberForPosition(positionName,0);
 	}
@@ -78,6 +91,7 @@ public class Orchestra {
 		}
 		return r;
 	}
+	*/
 	
 	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort) {
 		OrchestraMember r = null;
@@ -87,7 +101,7 @@ public class Orchestra {
 				if (positionName.equals(CONDUCTOR)) {
 					positionBackupNumber = 0;
 				}
-				r = getMemberForPosition(positionName,positionBackupNumber);
+				r = getMemberById(positionName + "/" + positionBackupNumber);
 			}
 			if (r==null) {
 				r = new OrchestraMember();
@@ -120,24 +134,7 @@ public class Orchestra {
 		JsElem membs = new JsElem("members",true);
 		f.rootElement.children.add(membs);
 		for (OrchestraMember member: members) {
-			JsElem mem = new JsElem();
-			membs.children.add(mem);
-			mem.children.add(new JsElem("positionName",member.getPosition().getName(),true));
-			mem.children.add(new JsElem("positionBackupNumber","" + member.getPositionBackupNumber()));
-			mem.children.add(new JsElem("ipAddressOrHostName",member.getIpAddressOrHostName(),true));
-			mem.children.add(new JsElem("controlPort","" + member.getControlPort()));
-			mem.children.add(new JsElem("workPort","" + member.getWorkPort()));
-			if (includeState) {
-				mem.children.add(new JsElem("state",member.getState().getCode(),true));
-				if (!member.getState().getCode().equals(MemberState.UNKNOWN)) {
-					mem.children.add(new JsElem("workLoad","" + member.getWorkLoad()));
-					mem.children.add(new JsElem("memoryUsage","" + member.getMemoryUsage()));
-				}
-				if (member.getErrorDate()!=null && member.getErrorMessage().length()>0) {
-					mem.children.add(new JsElem("errorTime","" + member.getErrorDate().getDate().getTime()));
-					mem.children.add(new JsElem("errorMessage",member.getErrorMessage(),true));
-				}
-			}
+			membs.children.add(member.toJsonElem(includeState));
 		}
 		return f;
 	}

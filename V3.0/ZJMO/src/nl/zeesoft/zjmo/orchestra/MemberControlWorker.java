@@ -22,7 +22,7 @@ public class MemberControlWorker extends Worker {
 	@Override
 	public void stop() {
 		super.stop();
-		waitForStop(10,false);
+		//waitForStop(10,false);
 	}
 	
 	@Override

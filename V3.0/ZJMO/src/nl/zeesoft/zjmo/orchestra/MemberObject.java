@@ -107,11 +107,11 @@ public abstract class MemberObject extends OrchestraMember {
 				e.printStackTrace();
 			}
 		}
-		if (controlWorker!=null) {
+		if (controlWorker!=null && controlWorker.isWorking()) {
 			//System.out.println("Stopping control worker ...");
 			controlWorker.stop();
 		}
-		if (workWorker!=null) {
+		if (workWorker!=null && workWorker.isWorking()) {
 			//System.out.println("Stopping work worker ...");
 			workWorker.stop();
 		}
@@ -150,7 +150,9 @@ public abstract class MemberObject extends OrchestraMember {
 	}
 
 	public boolean takeOffLine() {
+		System.out.println(this + ": Take offline");
 		boolean r = goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE);
+		System.out.println(this + ": Taking offline: " + r);
 		if (r) {
 			lockMe(this);
 			super.setState(MemberState.getState(MemberState.GOING_OFFLINE));
@@ -164,6 +166,7 @@ public abstract class MemberObject extends OrchestraMember {
 			super.setState(MemberState.getState(MemberState.OFFLINE));
 			unlockMe(this);
 		}
+		System.out.println(this + ": Taken offline: " + r);
 		return r;
 	}
 
@@ -273,7 +276,7 @@ public abstract class MemberObject extends OrchestraMember {
 	}
 
 	private void getConfigurationFromOrchestraPosition() {
-		OrchestraMember member = orchestra.getMemberForPosition(getPosition().getName(),getPositionBackupNumber());
+		OrchestraMember member = orchestra.getMemberById(getId());
 		if (member!=null) {
 			setIpAddressOrHostName(member.getIpAddressOrHostName());
 			setControlPort(member.getControlPort());

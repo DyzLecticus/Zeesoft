@@ -82,44 +82,59 @@ public class TestMemberOnlineOffline extends TestObject {
 		started = backup.start();
 		assertEqual(started,true,"Failed to start the backup: ");
 		if (started) {
-			sleep(1000);
+			sleep(2000);
 			System.out.println();
 			System.out.println("Orchestra state JSON:");
-			System.out.println(con.getMemberState(this).toStringBuilderReadFormat());
+			System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
 			
 			System.out.println();
 			System.out.println("Stopping backup ...");
 			backup.stop();
 			System.out.println("Stopped backup");
 
-			sleep(1000);
+			sleep(2000);
 			System.out.println();
 			System.out.println("Orchestra state JSON:");
-			System.out.println(con.getMemberState(this).toStringBuilderReadFormat());
+			System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
 
 			System.out.println();
 			System.out.println("Starting backup ...");
 			backup.start();
 			System.out.println("Started backup");
 
-			sleep(3000);
+			sleep(2000);
 			System.out.println();
 			System.out.println("Orchestra state JSON:");
-			System.out.println(con.getMemberState(this).toStringBuilderReadFormat());
+			System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
 			
 			MemberClient client = new MemberClient("localhost",5433);
 			client.open();
 			assertEqual(client.isOpen(),true,"Failed to open the client");
 			if (client.isOpen()) {
+				/*
+				 * TODO: Finish take offline
+				sleep(2000);
+				System.out.println();
+				System.out.println("Taking backup offline ...");
+				ZStringBuilder response = client.sendCommand(ProtocolControlConductor.TAKE_MEMBER_OFFLINE,"id",backup.getId());
+				assertEqual(response.toString(),"","Take backup offline response does not match expectation");
+				System.out.println("Take backup offline response: " + response);
 				
-				sleep(1000);
+				sleep(2000);
+				System.out.println();
+				System.out.println("Orchestra state JSON:");
+				System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
+				 */
+				
+				sleep(2000);
 				System.out.println();
 				System.out.println("Stopping conductor ...");
 				ZStringBuilder response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
 				assertEqual(response.toString(),"","Stop program response does not match expectation");
+				System.out.println("Stop conductor response: " + response);
 			}
 
-			sleep(1000);
+			sleep(2000);
 			System.out.println();
 			System.out.println("Checking conductor ...");
 			boolean working = con.isWorking();

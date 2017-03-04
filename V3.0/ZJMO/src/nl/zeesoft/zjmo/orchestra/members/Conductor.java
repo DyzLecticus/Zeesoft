@@ -1,8 +1,11 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zjmo.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
+import nl.zeesoft.zjmo.orchestra.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.ProtocolControlConductor;
 
 public class Conductor extends MemberObject {
 	private ConductorMemberController	controller	= null;
@@ -10,14 +13,6 @@ public class Conductor extends MemberObject {
 	public Conductor(Orchestra orchestra) {
 		super(orchestra,Orchestra.CONDUCTOR,0);
 		controller = new ConductorMemberController(orchestra);
-	}
-	
-	public JsFile getMemberState(Object source) {
-		//controller.getState(null);
-		lockMe(source);
-		JsFile f = getOrchestra().toJson(true);
-		unlockMe(source);
-		return f;
 	}
 	
 	@Override
@@ -38,9 +33,32 @@ public class Conductor extends MemberObject {
 		super.stop();
 	}
 
-	public void updateState(String memberId, Object source) {
-		System.out.println("Get state: " + memberId);
+	@Override
+	protected ProtocolControl getNewControlProtocol() {
+		return new ProtocolControlConductor();
+	}
+
+	public JsFile getOrchestraState() {
+		return controller.getOrchestraState();
+	}
+	
+	public JsFile getMemberState(String memberId) {
+		return controller.getMemberState(memberId);
+	}
+	
+	public void updateState(String memberId) {
 		controller.getState(memberId);
-		System.out.println("Got state: " + memberId);
+	}
+
+	public ZStringBuilder takeOffline(String memberId) {
+		return controller.takeOffline(memberId);
+	}
+
+	public ZStringBuilder drainOffline(String memberId) {
+		return controller.drainOffline(memberId);
+	}
+
+	public ZStringBuilder bringOnline(String memberId) {
+		return controller.bringOnline(memberId);
 	}
 }

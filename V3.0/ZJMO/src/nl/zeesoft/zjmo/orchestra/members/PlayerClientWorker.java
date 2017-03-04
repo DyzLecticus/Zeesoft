@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
-import nl.zeesoft.zjmo.orchestra.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.ProtocolControlConductor;
 
 public class PlayerClientWorker extends Worker {
 	private MemberClient		client		= null;
@@ -31,7 +31,7 @@ public class PlayerClientWorker extends Worker {
 			boolean open = client.open();
 			if (open) {
 				//System.out.println("Connected to conductor");
-				client.sendCommand(ProtocolControl.UPDATE_STATE,"id",memberId);
+				client.sendCommand(ProtocolControlConductor.UPDATE_MEMBER_STATE,"id",memberId);
 			} else {
 				//System.out.println("Failed to connect to conductor");
 			}
