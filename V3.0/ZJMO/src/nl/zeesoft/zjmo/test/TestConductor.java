@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
-import nl.zeesoft.zjmo.orchestra.Protocol;
+import nl.zeesoft.zjmo.orchestra.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 
@@ -61,13 +61,12 @@ public class TestConductor extends TestObject {
 		List<Player> players = (List<Player>) getTester().getMockedObject(MockPlayers.class.getName());
 		for (Player player: players) {
 			started = player.start();
-			assertEqual(started,true,"Failed to start player: " + player.getPosition().getName() + "/" + player.getPositionBackupNumber());
+			assertEqual(started,true,"Failed to start player: " + player.getId());
 		}
 		Conductor con = (Conductor) getTester().getMockedObject(MockConductor.class.getName());
 		started = con.start();
 		assertEqual(started,true,"Failed to start the conductor");
 		System.out.println("Starting members took " + ((new Date()).getTime() - start.getTime()) + " ms");
-		System.out.println();
 
 		if (started) {
 			MemberClient client = new MemberClient("localhost",5433);
@@ -75,30 +74,34 @@ public class TestConductor extends TestObject {
 			assertEqual(client.isOpen(),true,"Failed to open the client");
 			if (client.isOpen()) {
 
-				ZStringBuilder response = client.sendCommand(Protocol.GET_STATE);
+				ZStringBuilder response = client.sendCommand(ProtocolControl.GET_STATE);
+				System.out.println();
 				System.out.println("GET_STATE command response: " + response);
 				System.out.println();
+				System.out.println("Orchestra state JSON:");
+				System.out.println(con.getMemberState().toStringBuilderReadFormat());
+				sleep(1000);
 				
-				response = client.sendCommand(Protocol.STOP_PROGRAM);
+				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
 				assertEqual(response.toString(),"","Stop program response does not match expectation");
 			}
 
-			System.out.println("Orchestra state JSON:");
-			System.out.println(con.getMemberState().toStringBuilderReadFormat());
-		} else {
-			System.err.println("Failed to start conductor");
+			sleep(1000);
+			
+			System.out.println();
+			System.out.println("Checking conductor ...");
+			boolean working = con.isWorking();
+			assertEqual(working,false,"Failed to stop the conductor");
+			if (working) {
+				con.stop();
+			}
 		}
-		
-		sleep(5000);
-		
-		boolean working = con.isWorking();
-		assertEqual(working,false,"Failed to stop the conductor");
-		if (working) {
-			con.stop();
-		}
+
+		System.out.println();
+		System.out.println("Stopping players ...");
 		for (Player player: players) {
-			working = player.isWorking();
-			//assertEqual(working,false,"Failed to stop player: " + player.getPosition().getName() + "/" + player.getPositionBackupNumber());
+			boolean working = player.isWorking();
+			//assertEqual(working,false,"Failed to stop player: " + player.getId());
 			if (working) {
 				player.stop();
 			}
