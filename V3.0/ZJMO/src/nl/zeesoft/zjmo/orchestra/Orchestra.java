@@ -8,6 +8,7 @@ import nl.zeesoft.zjmo.json.JsFile;
 
 public class Orchestra {
 	public static final String		CONDUCTOR		= "Conductor";
+	public static final String		CONDUCTORID		= "Conductor/0";
 	
 	private List<Position> 			positions		= new ArrayList<Position>();
 	private List<OrchestraMember>	members			= new ArrayList<OrchestraMember>();

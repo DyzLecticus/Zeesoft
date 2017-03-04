@@ -9,13 +9,14 @@ public class Conductor extends MemberObject {
 	
 	public Conductor(Orchestra orchestra) {
 		super(orchestra,Orchestra.CONDUCTOR,0);
-		this.controller = new ConductorMemberController(orchestra);
+		controller = new ConductorMemberController(orchestra);
 	}
 	
-	public JsFile getMemberState() {
-		lockMe(this);
+	public JsFile getMemberState(Object source) {
+		//controller.getState(null);
+		lockMe(source);
 		JsFile f = getOrchestra().toJson(true);
-		unlockMe(this);
+		unlockMe(source);
 		return f;
 	}
 	
@@ -23,7 +24,8 @@ public class Conductor extends MemberObject {
 	public boolean start() {
 		boolean started = super.start();
 		if (started) {
-			controller.initialize();
+			controller.open();
+			controller.getState(Orchestra.CONDUCTORID);
 		}
 		return started;
 	}
@@ -36,10 +38,9 @@ public class Conductor extends MemberObject {
 		super.stop();
 	}
 
-	public void updateState(String memberId) {
-		lockMe(this);
+	public void updateState(String memberId, Object source) {
 		System.out.println("Get state: " + memberId);
 		controller.getState(memberId);
-		unlockMe(this);
+		System.out.println("Got state: " + memberId);
 	}
 }

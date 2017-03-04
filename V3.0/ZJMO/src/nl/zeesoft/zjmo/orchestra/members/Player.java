@@ -31,6 +31,8 @@ public class Player extends MemberObject {
 	public void stop() {
 		clientWorker.stop();
 		client.close();
+		client = null;
+		clientWorker = null;
 		super.stop();
 	}
 }

@@ -38,8 +38,10 @@ public class MemberClient extends Locker {
 	public boolean isOpen() {
 		boolean r = false;
 		lockMe(this);
-		if (open) {
+		if (socket!=null && open) {
 			open = socket.isOpen();
+		} else if (socket==null) {
+			open = false;
 		}
 		r = open;
 		unlockMe(this);
@@ -48,7 +50,9 @@ public class MemberClient extends Locker {
 	
 	public void close() {
 		lockMe(this);
-		socket.close();
+		if (socket!=null) {
+			socket.close();
+		}
 		open = false;
 		unlockMe(this);
 	}
@@ -62,6 +66,14 @@ public class MemberClient extends Locker {
 		return input;
 	}
 
+	public ZStringBuilder readInput() {
+		ZStringBuilder input = null;
+		lockMe(this);
+		input = readInputNoLock();
+		unlockMe(this);
+		return input;
+	}
+	
 	public ZStringBuilder sendCommand(String command) {
 		return writeOutputReadInput(protocol.getCommandJson(command,null));
 	}

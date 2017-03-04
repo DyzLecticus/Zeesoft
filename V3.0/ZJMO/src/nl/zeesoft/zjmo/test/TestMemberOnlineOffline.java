@@ -85,14 +85,33 @@ public class TestMemberOnlineOffline extends TestObject {
 			sleep(1000);
 			System.out.println();
 			System.out.println("Orchestra state JSON:");
-			System.out.println(con.getMemberState().toStringBuilderReadFormat());
+			System.out.println(con.getMemberState(this).toStringBuilderReadFormat());
 			
-			// TODO: Test online offline variations
+			System.out.println();
+			System.out.println("Stopping backup ...");
+			backup.stop();
+			System.out.println("Stopped backup");
+
+			sleep(1000);
+			System.out.println();
+			System.out.println("Orchestra state JSON:");
+			System.out.println(con.getMemberState(this).toStringBuilderReadFormat());
+
+			System.out.println();
+			System.out.println("Starting backup ...");
+			backup.start();
+			System.out.println("Started backup");
+
+			sleep(3000);
+			System.out.println();
+			System.out.println("Orchestra state JSON:");
+			System.out.println(con.getMemberState(this).toStringBuilderReadFormat());
 			
 			MemberClient client = new MemberClient("localhost",5433);
 			client.open();
 			assertEqual(client.isOpen(),true,"Failed to open the client");
 			if (client.isOpen()) {
+				
 				sleep(1000);
 				System.out.println();
 				System.out.println("Stopping conductor ...");

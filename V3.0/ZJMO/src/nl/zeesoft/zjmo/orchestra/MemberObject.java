@@ -115,6 +115,8 @@ public abstract class MemberObject extends OrchestraMember {
 			//System.out.println("Stopping work worker ...");
 			workWorker.stop();
 		}
+		controlSocket = null;
+		workSocket = null;
 		//System.out.println("Stopping member workers ...");
 		for (MemberWorker worker: workers) {
 			if (worker.isWorking()) {

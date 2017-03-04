@@ -79,7 +79,7 @@ public class TestConductor extends TestObject {
 				System.out.println("GET_STATE command response: " + response);
 				System.out.println();
 				System.out.println("Orchestra state JSON:");
-				System.out.println(con.getMemberState().toStringBuilderReadFormat());
+				System.out.println(con.getMemberState(this).toStringBuilderReadFormat());
 				sleep(1000);
 				
 				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);

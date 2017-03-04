@@ -23,14 +23,13 @@ public class ProtocolControl extends ProtocolObject {
 				}
 			} else if (command.equals(CLOSE_SESSION)) {
 				setClose(true);
-				// TODO: Update state?
 			} else if (command.equals(GET_STATE)) {
 				output = member.getStateJson();
 			} else if (command.equals(UPDATE_STATE)) {
 				if (member instanceof Conductor) {
 					String memberId = getCommandParameterFromJson(input,"id");
 					Conductor con = (Conductor) member;
-					con.updateState(memberId);
+					con.updateState(memberId,this);
 					output = new ZStringBuilder();
 				}
 			} else if (command.equals(TAKE_OFFLINE)) {

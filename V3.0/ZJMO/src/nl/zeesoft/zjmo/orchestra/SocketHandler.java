@@ -46,7 +46,7 @@ public class SocketHandler {
 
 	protected boolean isOpen() {
 		boolean r = false;
-		if (socket!=null && !socket.isClosed() && !socket.isInputShutdown() && !socket.isOutputShutdown()) {
+		if (socket!=null && !socket.isClosed() && !socket.isInputShutdown() && !socket.isOutputShutdown() && socket.isConnected()) {
 			r = true;
 		}
 		return r;

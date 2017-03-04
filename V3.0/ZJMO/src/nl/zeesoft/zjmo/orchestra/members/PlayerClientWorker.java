@@ -30,7 +30,7 @@ public class PlayerClientWorker extends Worker {
 			//System.out.println("Attempting to connect to conductor ...");
 			boolean open = client.open();
 			if (open) {
-				System.out.println("Connected to conductor");
+				//System.out.println("Connected to conductor");
 				client.sendCommand(ProtocolControl.UPDATE_STATE,"id",memberId);
 			} else {
 				//System.out.println("Failed to connect to conductor");
