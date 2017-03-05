@@ -139,4 +139,12 @@ public class OrchestraMember extends Locker {
 		}
 		return mem;
 	}
+	
+	public MemberClient getNewControlClient() {
+		return new MemberClient(getIpAddressOrHostName(),getControlPort());
+	}
+
+	public MemberClient getNewWorkClient() {
+		return new MemberClient(getIpAddressOrHostName(),getWorkPort());
+	}
 }

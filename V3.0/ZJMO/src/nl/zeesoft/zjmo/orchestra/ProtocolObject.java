@@ -81,7 +81,23 @@ public abstract class ProtocolObject {
 	protected String getErrorFromJson(ZStringBuilder json) {
 		return getFirstElementValueFromJson(json);
 	}
-	
+
+	protected ZStringBuilder getResponseJson(String response) {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("{\"response\":\"");
+		r.append(response);
+		r.append("\"}");
+		return r;
+	}
+
+	protected boolean isResponseJson(ZStringBuilder json) {
+		return json.startsWith("{\"response\":\"");
+	}
+
+	protected String getResponseFromJson(ZStringBuilder json) {
+		return getFirstElementValueFromJson(json);
+	}
+
 	private String getFirstElementValueFromJson(ZStringBuilder json) {
 		String r = "";
 		JsFile f = new JsFile();

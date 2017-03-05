@@ -38,12 +38,7 @@ public class MemberClient extends Locker {
 	public boolean isOpen() {
 		boolean r = false;
 		lockMe(this);
-		if (socket!=null && open) {
-			open = socket.isOpen();
-		} else if (socket==null) {
-			open = false;
-		}
-		r = open;
+		r = isOpenNoLock();
 		unlockMe(this);
 		return r;
 	}
@@ -110,7 +105,7 @@ public class MemberClient extends Locker {
 	}
 
 	private void initializeConnectionNoLock() {
-		if (!open) {
+		if (!isOpenNoLock()) {
 			if (socket==null) {
 				socket = new SocketHandler();
 				//System.out.println("Initializing client socket to: " + ipAddressOrHostName + ":" + port);
@@ -120,5 +115,14 @@ public class MemberClient extends Locker {
 				open = socket.open(ipAddressOrHostName,port,false);
 			}
 		}
+	}
+	
+	private boolean isOpenNoLock() {
+		if (socket!=null && open) {
+			open = socket.isOpen();
+		} else if (socket==null) {
+			open = false;
+		}
+		return open;
 	}
 }

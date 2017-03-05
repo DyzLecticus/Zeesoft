@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.ProtocolControlConductor;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 
@@ -22,8 +23,7 @@ public class TestMemberOnlineOffline extends TestObject {
 
 	@Override
 	protected void describe() {
-		/*
-		System.out.println("This test shows how to control an orchestra through a *Conductor* instance.");
+		System.out.println("This test shows how to how a *Conductor* maintains its orchestra member state representation.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -31,26 +31,23 @@ public class TestMemberOnlineOffline extends TestObject {
 		System.out.println("Conductor con = new Conductor(orchestra);");
 		System.out.println("// Start the conductor");
 		System.out.println("boolean started = con.start();");
-		System.out.println("// Create client");
+		System.out.println("// Create client using conductor control port settings");
 		System.out.println("MemberClient client = new MemberClient(\"localhost\",5433);");
-		System.out.println("// Send stop command to conductor");
-		System.out.println("ZStringBuilder response = client.sendCommand(Protocol.STOP_PROGRAM);");
+		System.out.println("// Send get member state request");
+		System.out.println("ZStringBuilder response = client.sendCommand(ProtocolControl.GET_MEMBER_STATE,\"id\",\"[MEMBERID]\");");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("This test uses the *MockConductor* and the *MockPlayers*.");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestMemberOnLineOffLine.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestMemberOnlineOffline.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockConductor.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockPlayers.class));
 		System.out.println(" * " + getTester().getLinkForClass(Conductor.class));
+		System.out.println(" * " + getTester().getLinkForClass(Player.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows;  ");
-		System.out.println(" * The orchestra initialization duration.  ");
-		System.out.println(" * The conductor GET_STATE command response.  ");
-		System.out.println(" * The orchestra state JSON.  ");
-		*/
+		System.out.println("The output of this test shows how the orchestra member state representation changes while the state of one of the backup members is manipulated  ");
 	}
 
 	@Override
@@ -84,8 +81,8 @@ public class TestMemberOnlineOffline extends TestObject {
 		if (started) {
 			sleep(2000);
 			System.out.println();
-			System.out.println("Orchestra state JSON:");
-			System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
+			System.out.println("Backup member state JSON:");
+			System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 			
 			System.out.println();
 			System.out.println("Stopping backup ...");
@@ -94,8 +91,8 @@ public class TestMemberOnlineOffline extends TestObject {
 
 			sleep(2000);
 			System.out.println();
-			System.out.println("Orchestra state JSON:");
-			System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
+			System.out.println("Backup member state JSON:");
+			System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 
 			System.out.println();
 			System.out.println("Starting backup ...");
@@ -104,34 +101,44 @@ public class TestMemberOnlineOffline extends TestObject {
 
 			sleep(2000);
 			System.out.println();
-			System.out.println("Orchestra state JSON:");
-			System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
+			System.out.println("Backup member state JSON:");
+			System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 			
 			MemberClient client = new MemberClient("localhost",5433);
 			client.open();
 			assertEqual(client.isOpen(),true,"Failed to open the client");
 			if (client.isOpen()) {
-				/*
-				 * TODO: Finish take offline
+				ZStringBuilder response = null;
+				
 				sleep(2000);
 				System.out.println();
 				System.out.println("Taking backup offline ...");
-				ZStringBuilder response = client.sendCommand(ProtocolControlConductor.TAKE_MEMBER_OFFLINE,"id",backup.getId());
-				assertEqual(response.toString(),"","Take backup offline response does not match expectation");
+				response = client.sendCommand(ProtocolControlConductor.TAKE_MEMBER_OFFLINE,"id",backup.getId());
+				assertEqual(response.toString(),"{\"response\":\"Executed command\"}","Take backup offline response does not match expectation");
 				System.out.println("Take backup offline response: " + response);
 				
 				sleep(2000);
 				System.out.println();
-				System.out.println("Orchestra state JSON:");
-				System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
-				 */
+				System.out.println("Backup member state JSON:");
+				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 				
 				sleep(2000);
 				System.out.println();
+				System.out.println("Bringing backup online ...");
+				response = client.sendCommand(ProtocolControlConductor.BRING_MEMBER_ONLINE,"id",backup.getId());
+				assertEqual(response.toString(),"{\"response\":\"Executed command\"}","Bring backup online response does not match expectation");
+				System.out.println("Bring backup online response: " + response);
+				
+				sleep(2000);
+				System.out.println();
+				System.out.println("Backup member state JSON:");
+				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+
+				sleep(2000);
+				System.out.println();
 				System.out.println("Stopping conductor ...");
-				ZStringBuilder response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
+				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
 				assertEqual(response.toString(),"","Stop program response does not match expectation");
-				System.out.println("Stop conductor response: " + response);
 			}
 
 			sleep(2000);
@@ -148,7 +155,7 @@ public class TestMemberOnlineOffline extends TestObject {
 		System.out.println("Stopping players ...");
 		for (Player player: players) {
 			boolean working = player.isWorking();
-			//assertEqual(working,false,"Failed to stop player: " + player.getId());
+			assertEqual(working,true,"Player is not working: " + player.getId());
 			if (working) {
 				player.stop();
 			}

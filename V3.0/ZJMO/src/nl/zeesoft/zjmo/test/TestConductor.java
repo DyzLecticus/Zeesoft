@@ -22,7 +22,7 @@ public class TestConductor extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to control an orchestra through a *Conductor* instance.");
+		System.out.println("This test shows how to start and stop *Conductor* and *Player* instances.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -30,10 +30,10 @@ public class TestConductor extends TestObject {
 		System.out.println("Conductor con = new Conductor(orchestra);");
 		System.out.println("// Start the conductor");
 		System.out.println("boolean started = con.start();");
-		System.out.println("// Create client");
+		System.out.println("// Create client using conductor control port settings");
 		System.out.println("MemberClient client = new MemberClient(\"localhost\",5433);");
-		System.out.println("// Send stop command to conductor");
-		System.out.println("ZStringBuilder response = client.sendCommand(Protocol.STOP_PROGRAM);");
+		System.out.println("// Send stop command");
+		System.out.println("ZStringBuilder response = client.sendCommand(ProtocolControl.STOP_PROGRAM);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("This test uses the *MockConductor* and the *MockPlayers*.");
@@ -43,6 +43,7 @@ public class TestConductor extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(MockConductor.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockPlayers.class));
 		System.out.println(" * " + getTester().getLinkForClass(Conductor.class));
+		System.out.println(" * " + getTester().getLinkForClass(Player.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
@@ -88,8 +89,7 @@ public class TestConductor extends TestObject {
 				assertEqual(response.toString(),"","Stop program response does not match expectation");
 			}
 
-			sleep(1000);
-			
+			sleep(2000);
 			System.out.println();
 			System.out.println("Checking conductor ...");
 			boolean working = con.isWorking();
@@ -103,7 +103,7 @@ public class TestConductor extends TestObject {
 		System.out.println("Stopping players ...");
 		for (Player player: players) {
 			boolean working = player.isWorking();
-			//assertEqual(working,false,"Failed to stop player: " + player.getId());
+			assertEqual(working,true,"Player is not working: " + player.getId());
 			if (working) {
 				player.stop();
 			}

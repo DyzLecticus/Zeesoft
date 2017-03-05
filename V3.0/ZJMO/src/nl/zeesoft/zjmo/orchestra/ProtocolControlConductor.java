@@ -23,7 +23,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 				command.equals(DRAIN_MEMBER_OFFLINE) ||
 				command.equals(BRING_MEMBER_ONLINE)
 				) {
-				System.out.println(this + ": Handle command: " + command);
+				//System.out.println(this + ": Handle command: " + command);
 				handled = true;
 				output = handleMemberCommand(member,input,command);
 			}
@@ -53,13 +53,22 @@ public class ProtocolControlConductor extends ProtocolControl {
 					output = con.getMemberState(memberId).toStringBuilder();
 				} else if (command.equals(UPDATE_MEMBER_STATE)) {
 					con.updateState(memberId);
-					output = new ZStringBuilder();
+					output = getResponseJson("Executed command");
 				} else if (command.equals(TAKE_MEMBER_OFFLINE)) {
 					output = con.takeOffline(memberId);
+					if (!isErrorJson(output)) {
+						con.updateState(memberId);
+					}
 				} else if (command.equals(DRAIN_MEMBER_OFFLINE)) {
 					output = con.drainOffline(memberId);
+					if (!isErrorJson(output)) {
+						con.updateState(memberId);
+					}
 				} else if (command.equals(BRING_MEMBER_ONLINE)) {
 					output = con.bringOnline(memberId);
+					if (!isErrorJson(output)) {
+						con.updateState(memberId);
+					}
 				}
 			}
 		}

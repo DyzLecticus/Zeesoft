@@ -66,6 +66,7 @@ public class MemberWorker extends Worker {
 		boolean close = false;
 		boolean stop = false;
 		ZStringBuilder input = socket.readInput();
+		//System.out.println(this + ": Input: " + input);
 		ZStringBuilder output = null;
 		if (!socket.isOpen()) {
 			close = true;

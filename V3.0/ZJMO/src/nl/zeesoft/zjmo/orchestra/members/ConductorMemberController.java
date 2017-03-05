@@ -35,8 +35,7 @@ public class ConductorMemberController extends Locker {
 		}
 		clients.clear();
 		for (OrchestraMember member: orchestra.getMembers()) {
-			MemberClient client = new MemberClient(member.getIpAddressOrHostName(),member.getControlPort());
-			clients.add(client);
+			clients.add(member.getNewControlClient());
 		}
 		unlockMe(this);
 	}
@@ -95,7 +94,7 @@ public class ConductorMemberController extends Locker {
 				if (!client.isOpen()) {
 					client.open();
 					if (client.isOpen()) {
-						MemberClient stateClient = new MemberClient(member.getIpAddressOrHostName(),member.getControlPort());
+						MemberClient stateClient = member.getNewControlClient();
 						ConductorMemberStateWorker stateWorker = new ConductorMemberStateWorker(this,stateClient,member.getId());
 						stateWorker.start();
 					}
@@ -153,7 +152,7 @@ public class ConductorMemberController extends Locker {
 		if (member!=null) {
 			MemberClient client = getClientForMember(member);
 			if (client.isOpen()) {
-				client.sendCommand(command);
+				response = client.sendCommand(command);
 			}
 		}
 		return response;

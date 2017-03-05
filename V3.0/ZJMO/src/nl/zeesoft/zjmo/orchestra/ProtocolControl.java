@@ -13,34 +13,36 @@ public class ProtocolControl extends ProtocolObject {
 		ZStringBuilder output = null;
 		if (isCommandJson(input)) {
 			String command = getCommandFromJson(input);
-			System.out.println(this + ": Handle command: " + command);
+			//System.out.println(this + ": Handle command: " + command);
 			if (command.equals(STOP_PROGRAM)) {
 				if (member.goToStateIfState(MemberState.STOPPING,MemberState.ONLINE,MemberState.OFFLINE)) {
 					setStop(true);
+					output = getResponseJson("Executed command");
 				} else {
 					output = getErrorJson("Failed to execute command");
 				}
 			} else if (command.equals(CLOSE_SESSION)) {
 				setClose(true);
+				output = getResponseJson("Executed command");
 			} else if (command.equals(GET_STATE)) {
 				output = member.getStateJson();
 			} else if (command.equals(TAKE_OFFLINE)) {
 				if (!member.takeOffLine()) {
 					output = getErrorJson("Failed to execute command");
 				} else {
-					output = new ZStringBuilder();
+					output = getResponseJson("Executed command");
 				}
 			} else if (command.equals(DRAIN_OFFLINE)) {
 				if (!member.drainOffLine()) {
 					output = getErrorJson("Failed to execute command");
 				} else {
-					output = new ZStringBuilder();
+					output = getResponseJson("Executed command");
 				}
 			} else if (command.equals(BRING_ONLINE)) {
 				if (!member.bringOnLine()) {
 					output = getErrorJson("Failed to execute command");
 				} else {
-					output = new ZStringBuilder();
+					output = getResponseJson("Executed command");
 				}
 			}
 		}

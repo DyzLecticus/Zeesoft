@@ -137,11 +137,13 @@ public class SocketHandler {
 		if (error) {
 			input = null;
 		}
+		//System.out.println("Read input: " + input);
 		return input;
 	}
 	
 	protected void writeOutput(ZStringBuilder output) {
 		if (out!=null) {
+			//System.out.println("Write output: " + output);
 			out.print(output.toString());
 			out.print("\n");
 			out.print(END_OF_PROTOCOL_OUTPUT);

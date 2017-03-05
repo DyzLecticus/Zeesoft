@@ -150,9 +150,9 @@ public abstract class MemberObject extends OrchestraMember {
 	}
 
 	public boolean takeOffLine() {
-		System.out.println(this + ": Take offline");
+		//System.out.println(this + ": Take offline");
 		boolean r = goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE);
-		System.out.println(this + ": Taking offline: " + r);
+		//System.out.println(this + ": Taking offline: " + r);
 		if (r) {
 			lockMe(this);
 			super.setState(MemberState.getState(MemberState.GOING_OFFLINE));
@@ -166,7 +166,7 @@ public abstract class MemberObject extends OrchestraMember {
 			super.setState(MemberState.getState(MemberState.OFFLINE));
 			unlockMe(this);
 		}
-		System.out.println(this + ": Taken offline: " + r);
+		//System.out.println(this + ": Taken offline: " + r);
 		return r;
 	}
 
