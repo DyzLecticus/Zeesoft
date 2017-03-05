@@ -20,35 +20,43 @@ public class ProtocolControl extends ProtocolObject {
 			if (command.equals(STOP_PROGRAM)) {
 				if (member.goToStateIfState(MemberState.STOPPING,MemberState.ONLINE,MemberState.OFFLINE)) {
 					setStop(true);
-					output = getResponseJson("Executed command");
+					output = getExecutedCommandResponse();
 				} else {
-					output = getErrorJson("Failed to execute command");
+					output = getFailedToExecuteCommandResponse();
 				}
 			} else if (command.equals(CLOSE_SESSION)) {
 				setClose(true);
-				output = getResponseJson("Executed command");
+				output = getExecutedCommandResponse();
 			} else if (command.equals(GET_STATE)) {
 				output = member.getStateJson();
 			} else if (command.equals(TAKE_OFFLINE)) {
 				if (!member.takeOffLine()) {
-					output = getErrorJson("Failed to execute command");
+					output = getFailedToExecuteCommandResponse();
 				} else {
-					output = getResponseJson("Executed command");
+					output = getExecutedCommandResponse();
 				}
 			} else if (command.equals(DRAIN_OFFLINE)) {
 				if (!member.drainOffLine()) {
-					output = getErrorJson("Failed to execute command");
+					output = getFailedToExecuteCommandResponse();
 				} else {
-					output = getResponseJson("Executed command");
+					output = getExecutedCommandResponse();
 				}
 			} else if (command.equals(BRING_ONLINE)) {
 				if (!member.bringOnLine()) {
-					output = getErrorJson("Failed to execute command");
+					output = getFailedToExecuteCommandResponse();
 				} else {
-					output = getResponseJson("Executed command");
+					output = getExecutedCommandResponse();
 				}
 			}
 		}
 		return output;
+	}
+
+	public static ZStringBuilder getExecutedCommandResponse() {
+		return getResponseJson("Executed command");
+	}
+
+	public static ZStringBuilder getFailedToExecuteCommandResponse() {
+		return getErrorJson("Failed to execute command");
 	}
 }

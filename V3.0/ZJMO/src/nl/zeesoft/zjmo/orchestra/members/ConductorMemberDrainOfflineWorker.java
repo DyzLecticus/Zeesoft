@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 
 public class ConductorMemberDrainOfflineWorker extends Worker {
 	private ConductorMemberController	controller	= null;
@@ -28,7 +29,7 @@ public class ConductorMemberDrainOfflineWorker extends Worker {
 		controller.getState(memberId);
 		if (controller.getMemberWorkLoad(memberId)==0) {
 			ZStringBuilder response = controller.takeOffline(memberId);
-			if (response.toString().equals("{\"response\":\"Executed command\"}")) {
+			if (ProtocolObject.isResponseJson(response)) {
 				controller.getState(memberId);
 			}
 			stop();

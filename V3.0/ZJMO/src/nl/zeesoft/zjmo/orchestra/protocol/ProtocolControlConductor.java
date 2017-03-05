@@ -54,7 +54,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 					output = con.getMemberState(memberId).toStringBuilder();
 				} else if (command.equals(UPDATE_MEMBER_STATE)) {
 					con.updateState(memberId);
-					output = getResponseJson("Executed command");
+					output = getExecutedCommandResponse();
 				} else if (command.equals(TAKE_MEMBER_OFFLINE)) {
 					output = con.takeOffline(memberId);
 					if (!isErrorJson(output)) {

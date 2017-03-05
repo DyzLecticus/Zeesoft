@@ -66,7 +66,7 @@ public abstract class ProtocolObject {
 		return r;
 	}
 	
-	protected ZStringBuilder getErrorJson(String error) {
+	public static ZStringBuilder getErrorJson(String error) {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("{\"error\":\"");
 		r.append(error);
@@ -74,15 +74,15 @@ public abstract class ProtocolObject {
 		return r;
 	}
 
-	protected boolean isErrorJson(ZStringBuilder json) {
+	public static boolean isErrorJson(ZStringBuilder json) {
 		return json.startsWith("{\"error\":\"");
 	}
 
-	protected String getErrorFromJson(ZStringBuilder json) {
+	public static String getErrorFromJson(ZStringBuilder json) {
 		return getFirstElementValueFromJson(json);
 	}
 
-	protected ZStringBuilder getResponseJson(String response) {
+	public static ZStringBuilder getResponseJson(String response) {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("{\"response\":\"");
 		r.append(response);
@@ -90,15 +90,15 @@ public abstract class ProtocolObject {
 		return r;
 	}
 
-	protected boolean isResponseJson(ZStringBuilder json) {
+	public static boolean isResponseJson(ZStringBuilder json) {
 		return json.startsWith("{\"response\":\"");
 	}
 
-	protected String getResponseFromJson(ZStringBuilder json) {
+	public static String getResponseFromJson(ZStringBuilder json) {
 		return getFirstElementValueFromJson(json);
 	}
 
-	private String getFirstElementValueFromJson(ZStringBuilder json) {
+	public static String getFirstElementValueFromJson(ZStringBuilder json) {
 		String r = "";
 		JsFile f = new JsFile();
 		f.fromStringBuilder(json);
@@ -107,5 +107,4 @@ public abstract class ProtocolObject {
 		}
 		return r;
 	}
-	
 }

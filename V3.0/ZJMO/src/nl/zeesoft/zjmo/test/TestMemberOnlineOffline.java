@@ -114,7 +114,7 @@ public class TestMemberOnlineOffline extends TestObject {
 				System.out.println();
 				System.out.println("Taking backup offline ...");
 				response = client.sendCommand(ProtocolControlConductor.TAKE_MEMBER_OFFLINE,"id",backup.getId());
-				assertEqual(response.toString(),"{\"response\":\"Executed command\"}","Take backup offline response does not match expectation");
+				assertEqual(response,ProtocolControl.getExecutedCommandResponse(),"Take backup offline response does not match expectation");
 				System.out.println("Take backup offline response: " + response);
 				
 				sleep(2000);
@@ -126,7 +126,7 @@ public class TestMemberOnlineOffline extends TestObject {
 				System.out.println();
 				System.out.println("Bringing backup online ...");
 				response = client.sendCommand(ProtocolControlConductor.BRING_MEMBER_ONLINE,"id",backup.getId());
-				assertEqual(response.toString(),"{\"response\":\"Executed command\"}","Bring backup online response does not match expectation");
+				assertEqual(response,ProtocolControl.getExecutedCommandResponse(),"Bring backup online response does not match expectation");
 				System.out.println("Bring backup online response: " + response);
 				
 				sleep(2000);
@@ -138,7 +138,7 @@ public class TestMemberOnlineOffline extends TestObject {
 				System.out.println();
 				System.out.println("Draining backup offline ...");
 				response = client.sendCommand(ProtocolControlConductor.DRAIN_MEMBER_OFFLINE,"id",backup.getId());
-				assertEqual(response.toString(),"{\"response\":\"Executed command\"}","Drain backup offline response does not match expectation");
+				assertEqual(response,ProtocolControl.getExecutedCommandResponse(),"Drain backup offline response does not match expectation");
 				System.out.println("Drain backup offline response: " + response);
 
 				System.out.println();
