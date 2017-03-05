@@ -1,6 +1,7 @@
-package nl.zeesoft.zjmo.orchestra;
+package nl.zeesoft.zjmo.orchestra.protocol;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 
 public class ProtocolControlConductor extends ProtocolControl {
@@ -63,6 +64,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 					output = con.drainOffline(memberId);
 					if (!isErrorJson(output)) {
 						con.updateState(memberId);
+						con.drainOfflineWorker(memberId);
 					}
 				} else if (command.equals(BRING_MEMBER_ONLINE)) {
 					output = con.bringOnline(memberId);

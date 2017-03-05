@@ -33,6 +33,7 @@ public class ConductorMemberStateWorker extends Worker {
 		//System.out.println("-------------->>> Input: " + input);
 		if (input==null || input.length()==0) {
 			controller.setStateUnknown(memberId,"Lost connection");
+			client.close();
 			stop();
 		}
 	}

@@ -12,7 +12,7 @@ import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
-import nl.zeesoft.zjmo.orchestra.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public class ConductorMemberController extends Locker {
 	private Orchestra 			orchestra	= null;
@@ -57,7 +57,6 @@ public class ConductorMemberController extends Locker {
 	}
 
 	public JsFile getOrchestraState() {
-		//getState(null);
 		lockMe(this);
 		JsFile f = orchestra.toJson(true);
 		unlockMe(this);
@@ -65,12 +64,19 @@ public class ConductorMemberController extends Locker {
 	}
 
 	public JsFile getMemberState(String id) {
-		//getState(null);
 		lockMe(this);
 		JsFile f = new JsFile();
 		f.rootElement = orchestra.getMemberById(id).toJsonElem(true);
 		unlockMe(this);
 		return f;
+	}
+
+	protected int getMemberWorkLoad(String id) {
+		int r = 0;
+		lockMe(this);
+		r = orchestra.getMemberById(id).getWorkLoad();
+		unlockMe(this);
+		return r;
 	}
 	
 	protected ZStringBuilder takeOffline(String id) {

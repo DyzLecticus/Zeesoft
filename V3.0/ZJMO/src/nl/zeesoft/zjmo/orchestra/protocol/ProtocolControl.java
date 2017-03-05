@@ -1,6 +1,9 @@
-package nl.zeesoft.zjmo.orchestra;
+package nl.zeesoft.zjmo.orchestra.protocol;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zjmo.orchestra.MemberObject;
+import nl.zeesoft.zjmo.orchestra.MemberState;
+import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 
 public class ProtocolControl extends ProtocolObject {
 	public static final String STOP_PROGRAM		= "STOP_PROGRAM";

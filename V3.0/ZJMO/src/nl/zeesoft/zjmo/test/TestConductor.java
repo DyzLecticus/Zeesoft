@@ -7,9 +7,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
-import nl.zeesoft.zjmo.orchestra.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public class TestConductor extends TestObject {
 	public TestConductor(Tester tester) {

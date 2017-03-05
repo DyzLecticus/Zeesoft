@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public class MemberClient extends Locker {
 	private ProtocolControl		protocol			= null;

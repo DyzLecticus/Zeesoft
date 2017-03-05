@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public class MemberWorker extends Worker {
 	private MemberObject		member		= null;

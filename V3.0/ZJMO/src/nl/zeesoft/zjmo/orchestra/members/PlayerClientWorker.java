@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
-import nl.zeesoft.zjmo.orchestra.ProtocolControlConductor;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
 public class PlayerClientWorker extends Worker {
 	private MemberClient		client		= null;

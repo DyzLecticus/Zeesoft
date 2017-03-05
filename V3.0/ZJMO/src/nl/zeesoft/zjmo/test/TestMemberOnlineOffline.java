@@ -7,10 +7,10 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
-import nl.zeesoft.zjmo.orchestra.ProtocolControl;
-import nl.zeesoft.zjmo.orchestra.ProtocolControlConductor;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
 public class TestMemberOnlineOffline extends TestObject {
 	public TestMemberOnlineOffline(Tester tester) {
@@ -134,6 +134,22 @@ public class TestMemberOnlineOffline extends TestObject {
 				System.out.println("Backup member state JSON:");
 				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 
+				sleep(2000);
+				System.out.println();
+				System.out.println("Draining backup offline ...");
+				response = client.sendCommand(ProtocolControlConductor.DRAIN_MEMBER_OFFLINE,"id",backup.getId());
+				assertEqual(response.toString(),"{\"response\":\"Executed command\"}","Drain backup offline response does not match expectation");
+				System.out.println("Drain backup offline response: " + response);
+
+				System.out.println();
+				System.out.println("Backup member state JSON:");
+				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+				
+				sleep(2000);
+				System.out.println();
+				System.out.println("Backup member state JSON:");
+				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+				
 				sleep(2000);
 				System.out.println();
 				System.out.println("Stopping conductor ...");

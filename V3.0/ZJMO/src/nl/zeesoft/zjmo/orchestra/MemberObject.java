@@ -9,6 +9,7 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.json.JsFile;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public abstract class MemberObject extends OrchestraMember {
 	private Orchestra			orchestra			= null;
@@ -151,11 +152,10 @@ public abstract class MemberObject extends OrchestraMember {
 
 	public boolean takeOffLine() {
 		//System.out.println(this + ": Take offline");
-		boolean r = goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE);
+		boolean r = goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE,MemberState.DRAINING_OFFLINE);
 		//System.out.println(this + ": Taking offline: " + r);
 		if (r) {
 			lockMe(this);
-			super.setState(MemberState.getState(MemberState.GOING_OFFLINE));
 			List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);
 			for (MemberWorker wrkr: wrkrs) {
 				if (!wrkr.isControl()) {
@@ -174,9 +174,7 @@ public abstract class MemberObject extends OrchestraMember {
 		boolean r = goToStateIfState(MemberState.DRAINING_OFFLINE,MemberState.ONLINE);
 		if (r) {
 			lockMe(this);
-			super.setState(MemberState.getState(MemberState.DRAINING_OFFLINE));
 			workWorker.stop();
-			super.setState(MemberState.getState(MemberState.OFFLINE));
 			unlockMe(this);
 		}
 		return r;
@@ -194,6 +192,24 @@ public abstract class MemberObject extends OrchestraMember {
 		return r;
 	}
 
+	public ZStringBuilder getStateJson() {
+		JsFile f = new JsFile();
+		int workLoad = 0;
+		lockMe(this);
+		Runtime rt = Runtime.getRuntime();
+		for (MemberWorker worker: workers) {
+			if (!worker.isControl()) {
+				workLoad++;
+			}
+		}
+		f.rootElement = new JsElem();
+		f.rootElement.children.add(new JsElem("state",super.getState().getCode(),true));
+		f.rootElement.children.add(new JsElem("workLoad","" + workLoad));
+		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
+		unlockMe(this);
+		return f.toStringBuilder();
+	}
+	
 	protected void stopProgram() {
 		stop();
 		System.exit(0);
@@ -248,24 +264,6 @@ public abstract class MemberObject extends OrchestraMember {
 			unlockMe(this);
 			worker.start();
 		}
-	}
-	
-	protected ZStringBuilder getStateJson() {
-		JsFile f = new JsFile();
-		int workLoad = 0;
-		lockMe(this);
-		Runtime rt = Runtime.getRuntime();
-		for (MemberWorker worker: workers) {
-			if (!worker.isControl()) {
-				workLoad++;
-			}
-		}
-		f.rootElement = new JsElem();
-		f.rootElement.children.add(new JsElem("state",super.getState().getCode(),true));
-		f.rootElement.children.add(new JsElem("workLoad","" + workLoad));
-		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
-		unlockMe(this);
-		return f.toStringBuilder();
 	}
 	
 	private void stopWorkerNoLock(MemberWorker worker) {

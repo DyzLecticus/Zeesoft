@@ -4,8 +4,8 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zjmo.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
-import nl.zeesoft.zjmo.orchestra.ProtocolControl;
-import nl.zeesoft.zjmo.orchestra.ProtocolControlConductor;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
 public class Conductor extends MemberObject {
 	private ConductorMemberController	controller	= null;
@@ -56,6 +56,11 @@ public class Conductor extends MemberObject {
 
 	public ZStringBuilder drainOffline(String memberId) {
 		return controller.drainOffline(memberId);
+	}
+
+	public void drainOfflineWorker(String memberId) {
+		ConductorMemberDrainOfflineWorker worker = new ConductorMemberDrainOfflineWorker(controller,memberId);
+		worker.start();
 	}
 
 	public ZStringBuilder bringOnline(String memberId) {
