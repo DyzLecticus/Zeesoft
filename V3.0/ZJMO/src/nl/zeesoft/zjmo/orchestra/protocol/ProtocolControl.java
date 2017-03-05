@@ -12,6 +12,7 @@ public class ProtocolControl extends ProtocolObject {
 	public static final String DRAIN_OFFLINE	= "DRAIN_OFFLINE";
 	public static final String BRING_ONLINE		= "BRING_ONLINE";
 	
+	@Override
 	protected ZStringBuilder handleInput(MemberObject member,ZStringBuilder input) {
 		ZStringBuilder output = null;
 		if (isCommandJson(input)) {

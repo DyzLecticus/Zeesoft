@@ -1,4 +1,4 @@
-package nl.zeesoft.zjmo.test;
+package nl.zeesoft.zjmo.test.mocks;
 
 import java.util.ArrayList;
 import java.util.List;

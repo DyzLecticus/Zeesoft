@@ -11,6 +11,8 @@ import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
+import nl.zeesoft.zjmo.test.mocks.MockConductor;
+import nl.zeesoft.zjmo.test.mocks.MockPlayers;
 
 public class TestMemberOnlineOffline extends TestObject {
 	public TestMemberOnlineOffline(Tester tester) {

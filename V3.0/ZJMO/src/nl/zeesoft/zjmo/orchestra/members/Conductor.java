@@ -6,6 +6,8 @@ import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWorkConductor;
 
 public class Conductor extends MemberObject {
 	private ConductorMemberController	controller	= null;
@@ -36,6 +38,11 @@ public class Conductor extends MemberObject {
 	@Override
 	protected ProtocolControl getNewControlProtocol() {
 		return new ProtocolControlConductor();
+	}
+
+	@Override
+	protected ProtocolWork getNewWorkProtocol() {
+		return new ProtocolWorkConductor();
 	}
 
 	public JsFile getOrchestraState() {

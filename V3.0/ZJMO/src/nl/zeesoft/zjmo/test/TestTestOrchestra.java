@@ -4,6 +4,8 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
+import nl.zeesoft.zjmo.test.mocks.TestOrchestra;
+import nl.zeesoft.zjmo.test.mocks.MockTestOrchestra;
 
 public class TestTestOrchestra extends TestObject {
 	public TestTestOrchestra(Tester tester) {
@@ -31,7 +33,7 @@ public class TestTestOrchestra extends TestObject {
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestTestOrchestra.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockTestOrchestra.class));
-		System.out.println(" * " + getTester().getLinkForClass(TestOrchestra.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestTestOrchestra.class));
 		System.out.println(" * " + getTester().getLinkForClass(Orchestra.class));
 		System.out.println();
 		System.out.println("**Test output**  ");

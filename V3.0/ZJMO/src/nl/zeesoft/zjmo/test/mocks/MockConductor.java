@@ -1,4 +1,4 @@
-package nl.zeesoft.zjmo.test;
+package nl.zeesoft.zjmo.test.mocks;
 
 import nl.zeesoft.zdk.test.MockObject;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;

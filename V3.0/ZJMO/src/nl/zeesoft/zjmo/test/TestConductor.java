@@ -10,6 +10,8 @@ import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
+import nl.zeesoft.zjmo.test.mocks.MockConductor;
+import nl.zeesoft.zjmo.test.mocks.MockPlayers;
 
 public class TestConductor extends TestObject {
 	public TestConductor(Tester tester) {

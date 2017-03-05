@@ -12,6 +12,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 	public static final String DRAIN_MEMBER_OFFLINE	= "DRAIN_MEMBER_OFFLINE";
 	public static final String BRING_MEMBER_ONLINE	= "BRING_MEMBER_ONLINE";
 	
+	@Override
 	protected ZStringBuilder handleInput(MemberObject member,ZStringBuilder input) {
 		ZStringBuilder output = null;
 		if (isCommandJson(input)) {

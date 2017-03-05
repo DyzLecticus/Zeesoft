@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
 
 public abstract class MemberObject extends OrchestraMember {
 	private Orchestra			orchestra			= null;
@@ -229,7 +230,11 @@ public abstract class MemberObject extends OrchestraMember {
 	protected ProtocolControl getNewControlProtocol() {
 		return new ProtocolControl();
 	}
-	
+
+	protected ProtocolWork getNewWorkProtocol() {
+		return new ProtocolWork();
+	}
+
 	protected void acceptControl() {
 		Socket socket = null;
 		try {
@@ -259,7 +264,7 @@ public abstract class MemberObject extends OrchestraMember {
 			lockMe(this);
 			SocketHandler sh = new SocketHandler();
 			sh.setSocket(socket);
-			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewControlProtocol());
+			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewWorkProtocol());
 			workers.add(worker);
 			unlockMe(this);
 			worker.start();
