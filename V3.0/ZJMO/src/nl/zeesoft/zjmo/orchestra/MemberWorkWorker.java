@@ -7,12 +7,6 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 public class MemberWorkWorker extends Worker {
 	private MemberObject		member		= null;
 
-	protected MemberWorkWorker(MemberObject member) {
-		super(null,null);
-		setSleep(1);
-		this.member = member;
-	}
-
 	protected MemberWorkWorker(Messenger msgr, WorkerUnion union,MemberObject member) {
 		super(msgr,union);
 		setSleep(1);

@@ -1,6 +1,7 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zjmo.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
@@ -12,9 +13,9 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWorkConductor;
 public class Conductor extends MemberObject {
 	private ConductorMemberController	controller	= null;
 	
-	public Conductor(Orchestra orchestra) {
-		super(orchestra,Orchestra.CONDUCTOR,0);
-		controller = new ConductorMemberController(orchestra);
+	public Conductor(Messenger msgr,Orchestra orchestra) {
+		super(msgr,orchestra,Orchestra.CONDUCTOR,0);
+		controller = new ConductorMemberController(getMessenger(),getUnion(),orchestra);
 	}
 	
 	@Override
@@ -29,9 +30,7 @@ public class Conductor extends MemberObject {
 
 	@Override
 	public void stop() {
-		//System.out.println("Closing controller ...");
 		controller.close();
-		//System.out.println("Stopping conductor ...");
 		super.stop();
 	}
 
@@ -66,7 +65,7 @@ public class Conductor extends MemberObject {
 	}
 
 	public void drainOfflineWorker(String memberId) {
-		ConductorMemberDrainOfflineWorker worker = new ConductorMemberDrainOfflineWorker(controller,memberId);
+		ConductorMemberDrainOfflineWorker worker = new ConductorMemberDrainOfflineWorker(getMessenger(),getUnion(),controller,memberId);
 		worker.start();
 	}
 

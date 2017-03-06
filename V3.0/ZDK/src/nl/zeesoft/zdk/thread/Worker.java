@@ -17,6 +17,7 @@ public abstract class Worker extends Locker implements Runnable {
 
 	public Worker(Messenger msgr, WorkerUnion union) {
 		super(msgr);
+		this.union = union;
 	}
 	
 	/**

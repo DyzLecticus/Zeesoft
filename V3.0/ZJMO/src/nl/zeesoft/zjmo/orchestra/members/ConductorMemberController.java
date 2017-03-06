@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
@@ -15,17 +16,14 @@ import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public class ConductorMemberController extends Locker {
+	private WorkerUnion			union		= null;
 	private Orchestra 			orchestra	= null;
 	private List<MemberClient>	clients		= new ArrayList<MemberClient>();
 
-	protected ConductorMemberController(Orchestra orchestra) {
-		super(null);
-		this.orchestra = orchestra;
-	}
-
-	protected ConductorMemberController(Messenger msgr,Orchestra orchestra) {
+	protected ConductorMemberController(Messenger msgr,WorkerUnion uni,Orchestra orchestra) {
 		super(msgr);
 		this.orchestra = orchestra;
+		this.union = uni;
 	}
 
 	protected void open() {
@@ -101,7 +99,7 @@ public class ConductorMemberController extends Locker {
 					client.open();
 					if (client.isOpen()) {
 						MemberClient stateClient = member.getNewControlClient();
-						ConductorMemberStateWorker stateWorker = new ConductorMemberStateWorker(this,stateClient,member.getId());
+						ConductorMemberStateWorker stateWorker = new ConductorMemberStateWorker(getMessenger(),union,this,stateClient,member.getId());
 						stateWorker.start();
 					}
 				}

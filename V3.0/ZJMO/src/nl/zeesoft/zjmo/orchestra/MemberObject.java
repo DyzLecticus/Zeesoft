@@ -7,25 +7,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
 
 public abstract class MemberObject extends OrchestraMember {
-	private Orchestra			orchestra			= null;
-	private MemberControlWorker	controlWorker		= null;
-	private MemberWorkWorker	workWorker			= null;
-	private ServerSocket 		controlSocket		= null;
-	private ServerSocket 		workSocket			= null;
-	private List<MemberWorker>	workers				= new ArrayList<MemberWorker>();
+	private boolean				debug						= false;
+	private Messenger			messenger					= null;
+	private WorkerUnion			union						= null;
+	private boolean				startAndStopMessenger		= false;
 	
-	public MemberObject(Orchestra orchestra,String positionName, int positionBackupNumber) {
+	private Orchestra			orchestra					= null;
+	private MemberControlWorker	controlWorker				= null;
+	private MemberWorkWorker	workWorker					= null;
+	private ServerSocket 		controlSocket				= null;
+	private ServerSocket 		workSocket					= null;
+	private List<MemberWorker>	workers						= new ArrayList<MemberWorker>();
+	
+	public MemberObject(Messenger msgr,Orchestra orchestra,String positionName, int positionBackupNumber) {
 		this.orchestra = orchestra;
 		setPosition(orchestra.getPosition(positionName));
 		setPositionBackupNumber(positionBackupNumber);
 		super.setState(MemberState.getState(MemberState.UNKNOWN));
 		getConfigurationFromOrchestraPosition();
+		
+		if (msgr!=null) {
+			messenger = msgr;
+		} else {
+			messenger = new Messenger(null);
+			startAndStopMessenger = true;
+		}
+		union = new WorkerUnion(messenger);
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public Messenger getMessenger() {
+		return messenger;
+	}
+
+	public WorkerUnion getUnion() {
+		return union;
 	}
 	
 	public Orchestra getOrchestra() {
@@ -49,6 +76,12 @@ public abstract class MemberObject extends OrchestraMember {
 		if (isWorking()) {
 			return false;
 		}
+		
+		if (startAndStopMessenger) {
+			getMessenger().setPrintDebugMessages(debug);
+			getMessenger().start();
+		}
+
 		lockMe(this);
 		if (controlSocket==null) {
 			try {
@@ -70,11 +103,11 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		if (controlSocket!=null && workSocket!=null) {
 			if (controlWorker==null) {
-				controlWorker = new MemberControlWorker(this);
+				controlWorker = new MemberControlWorker(getMessenger(),union,this);
 			}
 			controlWorker.start();
 			if (workWorker==null) {
-				workWorker = new MemberWorkWorker(this);
+				workWorker = new MemberWorkWorker(getMessenger(),union,this);
 			}
 			workWorker.start();
 			super.setState(MemberState.getState(MemberState.ONLINE));
@@ -132,6 +165,11 @@ public abstract class MemberObject extends OrchestraMember {
 		//System.out.println("Stopped member workers");
 		super.setState(MemberState.getState(MemberState.OFFLINE));
 		unlockMe(this);
+
+		if (startAndStopMessenger) {
+			getMessenger().stop();
+		}
+		union.stopWorkers();
 	}
 
 	public boolean goToStateIfState(String goToState,String ifState1) {
@@ -246,7 +284,7 @@ public abstract class MemberObject extends OrchestraMember {
 			lockMe(this);
 			SocketHandler sh = new SocketHandler();
 			sh.setSocket(socket);
-			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewControlProtocol());
+			MemberWorker worker = new MemberWorker(getMessenger(),union,this,sh,getNewControlProtocol());
 			workers.add(worker);
 			unlockMe(this);
 			worker.start();
@@ -264,7 +302,7 @@ public abstract class MemberObject extends OrchestraMember {
 			lockMe(this);
 			SocketHandler sh = new SocketHandler();
 			sh.setSocket(socket);
-			MemberWorker worker = new MemberWorker(null,null,this,sh,getNewWorkProtocol());
+			MemberWorker worker = new MemberWorker(getMessenger(),union,this,sh,getNewWorkProtocol());
 			workers.add(worker);
 			unlockMe(this);
 			worker.start();

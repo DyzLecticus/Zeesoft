@@ -11,17 +11,6 @@ public class MemberWorker extends Worker {
 	private SocketHandler		socket		= null;
 	private ProtocolObject		protocol	= null;
 
-	public MemberWorker(MemberObject member,SocketHandler socket, ProtocolObject protocol) {
-		super(null,null);
-		setSleep(0);
-		this.member = member;
-		this.socket = socket;
-		this.protocol = protocol;
-		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
-		//	System.out.println(member.getPosition().getName() + " accepted control from " + socket.getSocketIpAddressAndPort());
-		//}
-	}
-
 	public MemberWorker(Messenger msgr, WorkerUnion union,MemberObject member,SocketHandler socket, ProtocolObject protocol) {
 		super(msgr,union);
 		setSleep(0);

@@ -13,7 +13,7 @@ public class MockConductor extends MockObject {
 	@Override
 	protected Object initialzeMock() {
 		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
-		Conductor con = new Conductor(orch) {
+		Conductor con = new Conductor(null,orch) {
 			@Override
 			public boolean start() {
 				System.out.println("Starting " + getId() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");

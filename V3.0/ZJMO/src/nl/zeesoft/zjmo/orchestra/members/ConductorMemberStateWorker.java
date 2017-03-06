@@ -11,14 +11,6 @@ public class ConductorMemberStateWorker extends Worker {
 	private MemberClient				client		= null;
 	private String						memberId	= "";
 
-	public ConductorMemberStateWorker(ConductorMemberController controller,MemberClient client, String memberId) {
-		super(null,null);
-		setSleep(0);
-		this.controller = controller;
-		this.client = client;
-		this.memberId = memberId;
-	}
-
 	public ConductorMemberStateWorker(Messenger msgr, WorkerUnion union,ConductorMemberController controller,MemberClient client, String memberId) {
 		super(msgr,union);
 		setSleep(0);

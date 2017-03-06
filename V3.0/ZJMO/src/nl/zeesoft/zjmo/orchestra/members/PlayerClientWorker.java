@@ -10,13 +10,6 @@ public class PlayerClientWorker extends Worker {
 	private MemberClient		client		= null;
 	private String				memberId	= "";
 
-	public PlayerClientWorker(MemberClient client, String memberId) {
-		super(null,null);
-		setSleep(1000);
-		this.client = client;
-		this.memberId = memberId;
-	}
-
 	public PlayerClientWorker(Messenger msgr, WorkerUnion union,MemberClient client, String memberId) {
 		super(msgr,union);
 		setSleep(1000);

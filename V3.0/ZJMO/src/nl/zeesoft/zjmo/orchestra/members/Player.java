@@ -1,5 +1,6 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
@@ -9,8 +10,8 @@ public class Player extends MemberObject {
 	private MemberClient		client			= null;
 	private PlayerClientWorker	clientWorker	= null;
 	
-	public Player(Orchestra orchestra,String positionName,int positionBackupNumber) {
-		super(orchestra,positionName,positionBackupNumber);
+	public Player(Messenger msgr,Orchestra orchestra,String positionName,int positionBackupNumber) {
+		super(msgr,orchestra,positionName,positionBackupNumber);
 	}
 
 	@Override
@@ -20,7 +21,7 @@ public class Player extends MemberObject {
 			if (client==null) {
 				OrchestraMember conductor = getOrchestra().getConductor();
 				client = conductor.getNewControlClient();
-				clientWorker = new PlayerClientWorker(client,getId());
+				clientWorker = new PlayerClientWorker(getMessenger(),getUnion(),client,getId());
 				clientWorker.start();
 			}
 		}

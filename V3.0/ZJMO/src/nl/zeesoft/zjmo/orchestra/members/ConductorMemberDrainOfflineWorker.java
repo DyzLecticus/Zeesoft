@@ -10,13 +10,6 @@ public class ConductorMemberDrainOfflineWorker extends Worker {
 	private ConductorMemberController	controller	= null;
 	private String						memberId	= "";
 
-	public ConductorMemberDrainOfflineWorker(ConductorMemberController controller,String memberId) {
-		super(null,null);
-		setSleep(1000);
-		this.controller = controller;
-		this.memberId = memberId;
-	}
-
 	public ConductorMemberDrainOfflineWorker(Messenger msgr, WorkerUnion union,ConductorMemberController controller,String memberId) {
 		super(msgr,union);
 		setSleep(1000);
