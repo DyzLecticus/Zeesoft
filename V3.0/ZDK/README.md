@@ -9,7 +9,7 @@ It provides support for;
  * Self documenting and testing libraries  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.19.zip) to download the latest ZDK release (version 0.9.19).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.20.zip) to download the latest ZDK release (version 0.9.20).  
 All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -37,11 +37,11 @@ Class references;
 **Test output**  
 The output of this test shows 100 randomly generated integers within the range 0 - 9.
 ~~~~
-2 8 8 9 1 1 6 9 4 0 8 9 5 5 5 0 2 4 9 8
-9 0 0 2 2 7 3 8 7 7 9 4 9 7 7 8 2 5 1 9
-4 9 6 3 6 8 4 1 6 3 6 3 3 7 5 2 0 6 7 0
-0 0 3 5 6 0 3 6 5 9 5 9 2 7 3 8 5 7 8 9
-4 4 8 1 2 3 3 6 2 6 5 7 7 3 8 0 5 2 8 3
+9 8 9 7 2 1 3 5 9 8 2 9 5 2 1 2 7 6 2 6
+9 0 1 7 3 9 5 2 7 7 1 0 4 6 7 2 5 6 5 8
+7 2 9 0 2 6 2 7 1 9 1 6 0 0 5 7 1 1 0 8
+9 1 8 2 5 0 7 5 6 8 4 4 5 4 9 7 4 7 0 0
+6 2 0 0 7 2 5 7 3 3 9 4 0 5 9 9 7 2 7 7
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
@@ -70,9 +70,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 3677391641157737615051307032687830755247727907931410535160705591
+Key: 3204336790010341197503821184860162193996234532832749545914327584
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
-Encoded text: KS~VsWbWzT#W~QsVQUdQIRKUtW4WeSjWlVvQKT6RDUlQnSVRKVRRXTrSUWnX#VHVjS8RuW:TnUvS4UhViWFSHWjW1RvWzXUTyRFTeRIPIUfTmU#RnVmQ0
+Encoded text: Fafa797bqbAaOcReTfA8S9p049ibKaC0pa7eVdPci0za~eiaz0kagfocyfwdW8Q9ZcwaraOeEbyg5fpcLaubpcGbdbPa5eibPa#ewcWe6cmccdCf50qb0
 Decoded text: Hello, my name is Dyz Lecticus. How are you feeling today?
 ~~~~
 
@@ -147,15 +147,15 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2017-03-06 21:16:18:829 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2017-03-06 21:16:19:131 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2017-03-06 21:16:19:442 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2017-03-06 21:38:28:885 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2017-03-06 21:38:29:185 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2017-03-06 21:38:29:497 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
 All 4 tests have been executed successfully (108 assertions).  
-Total test duration: 751 ms (total sleep duration: 600 ms).  
+Total test duration: 744 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 222 Kb / 0 Mb
