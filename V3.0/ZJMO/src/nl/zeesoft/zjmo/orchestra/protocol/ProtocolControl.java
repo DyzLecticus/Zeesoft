@@ -14,8 +14,8 @@ public class ProtocolControl extends ProtocolObject {
 	
 	@Override
 	protected ZStringBuilder handleInput(MemberObject member,ZStringBuilder input) {
-		ZStringBuilder output = null;
-		if (isCommandJson(input)) {
+		ZStringBuilder output = super.handleInput(member, input);
+		if (output==null && isCommandJson(input)) {
 			String command = getCommandFromJson(input);
 			//System.out.println(this + ": Handle command: " + command);
 			if (command.equals(STOP_PROGRAM)) {
@@ -25,9 +25,6 @@ public class ProtocolControl extends ProtocolObject {
 				} else {
 					output = getFailedToExecuteCommandResponse();
 				}
-			} else if (command.equals(CLOSE_SESSION)) {
-				setClose(true);
-				output = getExecutedCommandResponse();
 			} else if (command.equals(GET_STATE)) {
 				output = member.getStateJson();
 			} else if (command.equals(TAKE_OFFLINE)) {
@@ -51,13 +48,5 @@ public class ProtocolControl extends ProtocolObject {
 			}
 		}
 		return output;
-	}
-
-	public static ZStringBuilder getExecutedCommandResponse() {
-		return getResponseJson("Executed command");
-	}
-
-	public static ZStringBuilder getFailedToExecuteCommandResponse() {
-		return getErrorJson("Failed to execute command");
 	}
 }

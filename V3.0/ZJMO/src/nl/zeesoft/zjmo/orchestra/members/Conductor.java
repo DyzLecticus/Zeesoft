@@ -72,4 +72,12 @@ public class Conductor extends MemberObject {
 	public ZStringBuilder bringOnline(String memberId) {
 		return controller.bringOnline(memberId);
 	}
+
+	public WorkClient getClient(Object source,String positionName) {
+		return controller.getClient(source, positionName);
+	}
+
+	public void returnClient(WorkClient client) {
+		controller.returnClient(client);
+	}
 }

@@ -20,6 +20,12 @@ public class ConductorMemberStateWorker extends Worker {
 	}
 	
 	@Override
+	public void stop() {
+		super.stop();
+		client.close();
+	}
+	
+	@Override
 	public void whileWorking() {
 		ZStringBuilder input = client.readInput();
 		//System.out.println("-------------->>> Input: " + input);

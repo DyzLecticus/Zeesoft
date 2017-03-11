@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zjmo.json.JsElem;
+import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
 public class OrchestraMember extends Locker {
 	private Position	position				= null;
@@ -140,11 +141,11 @@ public class OrchestraMember extends Locker {
 		return mem;
 	}
 	
-	public MemberClient getNewControlClient() {
-		return new MemberClient(getIpAddressOrHostName(),getControlPort());
+	public MemberClient getNewControlClient(Messenger messenger) {
+		return new MemberClient(messenger,getIpAddressOrHostName(),getControlPort());
 	}
 
-	public MemberClient getNewWorkClient() {
-		return new MemberClient(getIpAddressOrHostName(),getWorkPort());
+	public WorkClient getNewWorkClient(Messenger messenger) {
+		return new WorkClient(messenger,getId(),getIpAddressOrHostName(),getWorkPort());
 	}
 }

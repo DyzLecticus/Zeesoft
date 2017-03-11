@@ -12,7 +12,18 @@ public abstract class ProtocolObject {
 	private boolean stop	= false;
 	private boolean close	= false;
 	
-	protected abstract ZStringBuilder handleInput(MemberObject member,ZStringBuilder input);
+	protected ZStringBuilder handleInput(MemberObject member,ZStringBuilder input) {
+		ZStringBuilder output = null;
+		if (isCommandJson(input)) {
+			String command = getCommandFromJson(input);
+			//System.out.println(this + ": Handle command: " + command);
+			if (command.equals(CLOSE_SESSION)) {
+				setClose(true);
+				output = getExecutedCommandResponse();
+			}
+		}
+		return output;
+	}
 
 	protected boolean isStop() {
 		return stop;
@@ -106,5 +117,13 @@ public abstract class ProtocolObject {
 			r = f.rootElement.children.get(0).value.toString();
 		}
 		return r;
+	}
+
+	public static ZStringBuilder getExecutedCommandResponse() {
+		return getResponseJson("Executed command");
+	}
+
+	public static ZStringBuilder getFailedToExecuteCommandResponse() {
+		return getErrorJson("Failed to execute command");
 	}
 }

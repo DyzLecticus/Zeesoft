@@ -2,6 +2,9 @@ package nl.zeesoft.zjmo.orchestra;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.json.JsFile;
@@ -74,24 +77,19 @@ public class Orchestra {
 		return r;
 	}
 
-	/*
-	public OrchestraMember getMemberForPosition(String positionName) {
-		return getMemberForPosition(positionName,0);
-	}
-	
-	public OrchestraMember getMemberForPosition(String positionName,int positionBackupNumber) {
-		OrchestraMember r = null;
+	public List<OrchestraMember> getMembersForPosition(String positionName) {
+		List<OrchestraMember> r = new ArrayList<OrchestraMember>();
+		SortedMap<Integer,OrchestraMember> sorter = new TreeMap<Integer,OrchestraMember>();
 		for (OrchestraMember member: members) {
-			if (member.getPosition().getName().equals(positionName) &&
-				member.getPositionBackupNumber()==positionBackupNumber
-				) {
-				r = member;
-				break;
+			if (member.getPosition().getName().equals(positionName)) {
+				sorter.put(member.getPositionBackupNumber(),member);
 			}
+		}
+		for (Entry<Integer,OrchestraMember> entry: sorter.entrySet()) {
+			r.add(entry.getValue());
 		}
 		return r;
 	}
-	*/
 	
 	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort) {
 		OrchestraMember r = null;

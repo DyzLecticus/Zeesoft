@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public class MemberClient extends Locker {
-	private ProtocolControl		protocol			= null;
+	private ProtocolObject		protocol			= null;
 	private String				ipAddressOrHostName	= "localhost";
 	private int					port				= 5432;
 	private SocketHandler		socket				= null;
@@ -19,14 +19,14 @@ public class MemberClient extends Locker {
 		super(null);
 		this.ipAddressOrHostName = ipAddressOrHostName;
 		this.port = port;
-		this.protocol = getNewControlProtocol();
+		this.protocol = getNewProtocol();
 	}
 
 	public MemberClient(Messenger msgr,String ipAddressOrHostName, int port) {
 		super(msgr);
 		this.ipAddressOrHostName = ipAddressOrHostName;
 		this.port = port;
-		this.protocol = getNewControlProtocol();
+		this.protocol = getNewProtocol();
 	}
 
 	public boolean open() {
@@ -91,7 +91,7 @@ public class MemberClient extends Locker {
 		return writeOutputReadInput(protocol.getCommandJson(command,parameters));
 	}
 
-	protected ProtocolControl getNewControlProtocol() {
+	protected ProtocolObject getNewProtocol() {
 		return new ProtocolControl();
 	}
 	

@@ -20,7 +20,7 @@ public class Player extends MemberObject {
 		if (started) {
 			if (client==null) {
 				OrchestraMember conductor = getOrchestra().getConductor();
-				client = conductor.getNewControlClient();
+				client = conductor.getNewControlClient(getMessenger());
 				clientWorker = new PlayerClientWorker(getMessenger(),getUnion(),client,getId());
 				clientWorker.start();
 			}

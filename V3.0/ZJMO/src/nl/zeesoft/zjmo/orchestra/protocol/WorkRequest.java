@@ -1,5 +1,6 @@
 package nl.zeesoft.zjmo.orchestra.protocol;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.json.JsFile;
 
@@ -8,6 +9,15 @@ public class WorkRequest {
 	private String	error			= "";
 	private JsFile	request			= null;
 	private JsFile	response		= null;
+	
+	public WorkRequest() {
+		
+	}
+
+	public WorkRequest(String positionName,String request) {
+		this.positionName = positionName;
+		setRequest(request);
+	}
 	
 	public String getError() {
 		return error;
@@ -23,6 +33,14 @@ public class WorkRequest {
 
 	public void setRequest(JsFile request) {
 		this.request = request;
+	}
+
+	public void setRequest(String request) {
+		request = request.trim();
+		if (request.startsWith("{") && request.endsWith("}")) {
+			this.request = new JsFile();
+			this.request.fromStringBuilder(new ZStringBuilder(request));
+		}
 	}
 
 	public JsFile getResponse() {
@@ -46,17 +64,17 @@ public class WorkRequest {
 		f.rootElement = new JsElem();
 		f.rootElement.children.add(new JsElem("positionName",positionName,true));
 		if (error.length()>0) {
-			f.rootElement.children.add(new JsElem("error","error",true));
+			f.rootElement.children.add(new JsElem("error",error,true));
 		}
-		if (request!=null) {
+		if (request!=null && request.rootElement.children.size()>0) {
 			JsElem rElem = new JsElem("request");
 			f.rootElement.children.add(rElem);
-			rElem.children.add(request.rootElement);
+			rElem.children.add(request.rootElement.children.get(0));
 		}
-		if (response!=null) {
+		if (response!=null && response.rootElement.children.size()>0) {
 			JsElem rElem = new JsElem("response");
 			f.rootElement.children.add(rElem);
-			rElem.children.add(response.rootElement);
+			rElem.children.add(response.rootElement.children.get(0));
 		}
 		return f;
 	}
@@ -68,20 +86,28 @@ public class WorkRequest {
 		response = null;
 		if (json.rootElement!=null && json.rootElement.children.size()>0) {
 			for (JsElem elem: json.rootElement.children) {
-				if (elem.name.equals("positionName")) {
+				if (elem.name.equals("positionName") && elem.value!=null) {
 					positionName = elem.value.toString();
-				} else if (elem.name.equals("error")) {
+				} else if (elem.name.equals("error") && elem.value!=null) {
 					error = elem.value.toString();
-				} else if (elem.name.equals("request")) {
+				} else if (elem.name.equals("request") && elem.children.size()>0) {
 					JsFile r = new JsFile();
 					r.rootElement = elem;
 					request = r;
-				} else if (elem.name.equals("response")) {
+				} else if (elem.name.equals("response") && elem.children.size()>0) {
 					JsFile r = new JsFile();
 					r.rootElement = elem;
 					response = r;
 				}
 			}
+		}
+	}
+	
+	public void fromStringBuilder(ZStringBuilder str) {
+		if (str!=null) {
+			JsFile resp = new JsFile();
+			resp.fromStringBuilder(str);
+			fromJson(resp);
 		}
 	}
 }

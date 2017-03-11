@@ -89,6 +89,7 @@ public class TestConductor extends TestObject {
 				sleep(2000);
 				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
 				assertEqual(response.toString(),"","Stop program response does not match expectation");
+				client.close();
 			}
 
 			sleep(2000);

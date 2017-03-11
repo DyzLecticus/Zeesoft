@@ -44,5 +44,6 @@ public class ZJMO extends LibraryObject {
 		tests.add(new TestTestOrchestra(this.getTester()));
 		tests.add(new TestConductor(this.getTester()));
 		tests.add(new TestMemberOnlineOffline(this.getTester()));
+		tests.add(new TestWorkRequest(this.getTester()));
 	}
 }

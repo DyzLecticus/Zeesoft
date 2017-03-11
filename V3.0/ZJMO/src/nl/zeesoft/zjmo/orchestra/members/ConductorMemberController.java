@@ -19,11 +19,13 @@ public class ConductorMemberController extends Locker {
 	private WorkerUnion			union		= null;
 	private Orchestra 			orchestra	= null;
 	private List<MemberClient>	clients		= new ArrayList<MemberClient>();
+	private WorkClientPool		workClients	= null;
 
 	protected ConductorMemberController(Messenger msgr,WorkerUnion uni,Orchestra orchestra) {
 		super(msgr);
 		this.orchestra = orchestra;
 		this.union = uni;
+		workClients = new WorkClientPool(msgr,orchestra);
 	}
 
 	protected void open() {
@@ -33,7 +35,7 @@ public class ConductorMemberController extends Locker {
 		}
 		clients.clear();
 		for (OrchestraMember member: orchestra.getMembers()) {
-			clients.add(member.getNewControlClient());
+			clients.add(member.getNewControlClient(getMessenger()));
 		}
 		unlockMe(this);
 	}
@@ -54,14 +56,14 @@ public class ConductorMemberController extends Locker {
 		}
 	}
 
-	public JsFile getOrchestraState() {
+	protected JsFile getOrchestraState() {
 		lockMe(this);
 		JsFile f = orchestra.toJson(true);
 		unlockMe(this);
 		return f;
 	}
 
-	public JsFile getMemberState(String id) {
+	protected JsFile getMemberState(String id) {
 		lockMe(this);
 		JsFile f = new JsFile();
 		f.rootElement = orchestra.getMemberById(id).toJsonElem(true);
@@ -82,7 +84,11 @@ public class ConductorMemberController extends Locker {
 	}
 
 	protected ZStringBuilder drainOffline(String id) {
-		return sendMemberCommand(id,ProtocolControl.DRAIN_OFFLINE);
+		ZStringBuilder response = sendMemberCommand(id,ProtocolControl.DRAIN_OFFLINE);
+		if (ProtocolControl.isResponseJson(response)) {
+			
+		}
+		return response;
 	}
 
 	protected ZStringBuilder bringOnline(String id) {
@@ -98,7 +104,7 @@ public class ConductorMemberController extends Locker {
 				if (!client.isOpen()) {
 					client.open();
 					if (client.isOpen()) {
-						MemberClient stateClient = member.getNewControlClient();
+						MemberClient stateClient = member.getNewControlClient(getMessenger());
 						ConductorMemberStateWorker stateWorker = new ConductorMemberStateWorker(getMessenger(),union,this,stateClient,member.getId());
 						stateWorker.start();
 					}
@@ -143,6 +149,35 @@ public class ConductorMemberController extends Locker {
 		unlockMe(this);
 	}
 
+	protected WorkClient getClient(Object source,String positionName) {
+		WorkClient r = null;
+		lockMe(source);
+		List<OrchestraMember> mems = orchestra.getMembersForPosition(positionName);
+		for (OrchestraMember mem: mems) {
+			if (mem.getState().getCode().equals(MemberState.ONLINE)) {
+				r = workClients.getClient(source,mem.getId());
+				if (r!=null) {
+					break;
+				} else {
+					getMessenger().debug(this,"Failed to connect to: " + mem.getId());
+				}
+			}
+		}
+		unlockMe(source);
+		if (r==null) {
+			getMessenger().error(this,"Failed to setup work client for: " + positionName + " (members: " + mems.size() + ")");
+		}
+		return r;
+	}
+
+	protected void returnClient(WorkClient client) {
+		workClients.returnClient(client);
+	}
+	
+	protected void closeUnusedClients(String memberId,long unusedMs) {
+		workClients.closeUnusedClients(memberId, unusedMs);
+	}
+	
 	private void setMemberStateUnknown(OrchestraMember member,String errorMessage) {
 		member.setErrorMessage(errorMessage);
 		member.setState(MemberState.getState(MemberState.UNKNOWN));
