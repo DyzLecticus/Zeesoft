@@ -32,25 +32,31 @@ public class ProtocolWorkConductor extends ProtocolWork {
 					output = wr.toJson().toStringBuilder();
 				}
 				if (output==null) {
-					client = con.getClient(this,wr.getPositionName());
-					if (client==null) {
-						wr.setError("No players online for position: " + wr.getPositionName());
-						output = wr.toJson().toStringBuilder();
+					boolean retry = true;
+					while (retry) {
+						client = con.getClient(this,wr.getPositionName());
+						if (client==null) {
+							wr.setError("No players online for position: " + wr.getPositionName());
+							output = wr.toJson().toStringBuilder();
+							retry = false;
+						} else {
+							wr.setResponse(null);
+							//System.out.println(this + ": Sending request: " + wr.getRequest().toStringBuilder());
+							ZStringBuilder response = client.writeOutputReadInput(wr.getRequest().toStringBuilder());
+							con.returnClient(client);
+							if (client.isOpen()) {
+								JsFile resp = new JsFile();
+								resp.fromStringBuilder(response);
+								if (resp.rootElement==null) {
+									wr.setError("Player did not return valid JSON: " + client.getMemberId());
+								} else {
+									wr.setResponse(resp);
+								}
+								output = wr.toJson().toStringBuilder();
+								retry = false;
+							}
+						}
 					}
-				}
-				if (output==null && client!=null) {
-					wr.setResponse(null);
-					//System.out.println(this + ": Sending request: " + wr.getRequest().toStringBuilder());
-					ZStringBuilder response = client.writeOutputReadInput(wr.getRequest().toStringBuilder());
-					con.returnClient(client);
-					JsFile resp = new JsFile();
-					resp.fromStringBuilder(response);
-					if (resp.rootElement==null) {
-						wr.setError("Player did not return JSON: " + client.getMemberId());
-					} else {
-						wr.setResponse(resp);
-					}
-					output = wr.toJson().toStringBuilder();
 				}
 			} else {
 				output = getErrorJson("Unrecognized input");

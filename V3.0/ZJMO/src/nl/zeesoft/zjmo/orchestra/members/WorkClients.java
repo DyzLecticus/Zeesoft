@@ -49,6 +49,9 @@ public class WorkClients extends Locker {
 
 	protected void returnClient(WorkClient client) {
 		client.unSetInUseBy();
+		if (!client.isOpen()) {
+			clients.remove(client);
+		}
 	}
 	
 	protected void closeUnusedClients(long unusedMs) {
@@ -61,6 +64,17 @@ public class WorkClients extends Locker {
 				client.close();
 				clients.remove(client);
 			}
+		}
+		unlockMe(this);
+	}
+
+	protected void closeAllClients() {
+		lockMe(this);
+		List<WorkClient> testClients = new ArrayList<WorkClient>(clients);
+		for (WorkClient client: testClients) {
+			client.sendCloseSessionCommand();
+			client.close();
+			clients.remove(client);
 		}
 		unlockMe(this);
 	}

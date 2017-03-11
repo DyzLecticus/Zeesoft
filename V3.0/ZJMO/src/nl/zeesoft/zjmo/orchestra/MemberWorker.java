@@ -17,9 +17,6 @@ public class MemberWorker extends Worker {
 		this.member = member;
 		this.socket = socket;
 		this.protocol = protocol;
-		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
-		//	System.out.println(member.getPosition().getName() + " accepted control from " + socket.getSocketIpAddressAndPort());
-		//}
 	}
 
 	public boolean isControl() {
@@ -37,18 +34,8 @@ public class MemberWorker extends Worker {
 
 	@Override
 	public void stop() {
-		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
-		//	System.out.println("Closing socket: " + socket.getSocketIpAddressAndPort() + " ...");
-		//}
 		socket.close();
-		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
-		//	System.out.println("Stopping member worker ...");
-		//}
 		super.stop();
-		//waitForStop(1,false);
-		//if (control && member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
-		//	System.out.println("Stopped member worker");
-		//}
 	}
 	
 	@Override
@@ -56,7 +43,6 @@ public class MemberWorker extends Worker {
 		boolean close = false;
 		boolean stop = false;
 		ZStringBuilder input = socket.readInput();
-		//System.out.println(this + ": Input: " + input);
 		ZStringBuilder output = null;
 		if (!socket.isOpen()) {
 			close = true;

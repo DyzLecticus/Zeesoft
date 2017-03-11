@@ -55,6 +55,7 @@ public class ConductorMemberController extends Locker {
 		for (ConductorMemberStateWorker worker: stateWorkers) {
 			worker.stop();
 		}
+		workClientPool.closeAllClients();
 		unlockMe(this);
 	}
 

@@ -56,4 +56,12 @@ public class WorkClientPool extends Locker {
 		}
 		unlockMe(this);
 	}
+
+	protected void closeAllClients() {
+		lockMe(this);
+		for (WorkClients workCl: workClientsList) {
+			workCl.closeAllClients();
+		}
+		unlockMe(this);
+	}
 }

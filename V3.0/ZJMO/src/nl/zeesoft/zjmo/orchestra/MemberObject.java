@@ -133,7 +133,6 @@ public abstract class MemberObject extends OrchestraMember {
 		lockMe(this);
 		if (controlSocket!=null) {
 			try {
-				//System.out.println("Closing control socket ...");
 				controlSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -141,33 +140,25 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		if (workSocket!=null) {
 			try {
-				//System.out.println("Closing work socket ...");
 				workSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		if (controlWorker!=null && controlWorker.isWorking()) {
-			//System.out.println("Stopping control worker ...");
 			controlWorker.stop();
 		}
 		if (workWorker!=null && workWorker.isWorking()) {
-			//System.out.println("Stopping work worker ...");
 			workWorker.stop();
 		}
 		controlSocket = null;
 		workSocket = null;
-		//System.out.println("Stopping member workers ...");
 		for (MemberWorker worker: workers) {
 			if (worker.isWorking()) {
-				//System.out.println("Stopping member worker ...");
 				worker.stop();
-			} else {
-				//System.out.println("Member worker already stopped");
 			}
 		}
 		workers.clear();
-		//System.out.println("Stopped member workers");
 		super.setState(MemberState.getState(MemberState.OFFLINE));
 		unlockMe(this);
 
@@ -199,9 +190,7 @@ public abstract class MemberObject extends OrchestraMember {
 	}
 
 	public boolean takeOffLine() {
-		//System.out.println(this + ": Take offline");
 		boolean r = goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE,MemberState.DRAINING_OFFLINE);
-		//System.out.println(this + ": Taking offline: " + r);
 		if (r) {
 			lockMe(this);
 			List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);
@@ -214,7 +203,6 @@ public abstract class MemberObject extends OrchestraMember {
 			super.setState(MemberState.getState(MemberState.OFFLINE));
 			unlockMe(this);
 		}
-		//System.out.println(this + ": Taken offline: " + r);
 		return r;
 	}
 

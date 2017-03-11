@@ -113,10 +113,8 @@ public class MemberClient extends Locker {
 		if (!isOpenNoLock()) {
 			if (socket==null) {
 				socket = new SocketHandler();
-				//System.out.println("Initializing client socket to: " + ipAddressOrHostName + ":" + port);
 				open = socket.open(ipAddressOrHostName,port,false);
 			} else {
-				//System.out.println("Opening client socket to: " + ipAddressOrHostName + ":" + port);
 				open = socket.open(ipAddressOrHostName,port,false);
 			}
 		}
