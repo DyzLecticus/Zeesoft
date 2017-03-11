@@ -8,6 +8,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.json.JsFile;
@@ -124,7 +125,11 @@ public abstract class MemberObject extends OrchestraMember {
 		return started;
 	}
 	
-	public void stop() {
+	public final void stop() {
+		stop(null);
+	}
+	
+	public void stop(Worker ignoreWorker) {
 		lockMe(this);
 		if (controlSocket!=null) {
 			try {
@@ -168,8 +173,9 @@ public abstract class MemberObject extends OrchestraMember {
 
 		if (startAndStopMessenger) {
 			getMessenger().stop();
+		} else {
+			union.stopWorkers(ignoreWorker);
 		}
-		union.stopWorkers();
 	}
 
 	public boolean goToStateIfState(String goToState,String ifState1) {
@@ -249,8 +255,8 @@ public abstract class MemberObject extends OrchestraMember {
 		return f.toStringBuilder();
 	}
 	
-	protected void stopProgram() {
-		stop();
+	protected void stopProgram(Worker ignoreWorker) {
+		stop(ignoreWorker);
 		System.exit(0);
 	}
 	

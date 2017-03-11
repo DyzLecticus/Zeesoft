@@ -75,7 +75,7 @@ public class MemberWorker extends Worker {
 		}
 		if (stop) {
 			member.stopWorker(this);
-			member.stopProgram();
+			member.stopProgram(this);
 		} else if (close) {
 			member.stopWorker(this);
 		} else {

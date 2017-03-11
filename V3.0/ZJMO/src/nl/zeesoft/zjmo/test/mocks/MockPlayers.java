@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.test.MockObject;
+import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
@@ -35,10 +36,9 @@ public class MockPlayers extends MockObject {
 						}
 						return started;
 					}
-					@Override
-					protected void stopProgram() {
+					protected void stopProgram(Worker ignoreWorker) {
 						//System.out.println("Stopping MockPlayer ...");
-						stop();
+						stop(ignoreWorker);
 						//System.out.println("Stopped MockPlayer");
 					}
 				};

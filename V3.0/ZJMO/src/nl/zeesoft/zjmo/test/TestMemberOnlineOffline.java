@@ -112,31 +112,31 @@ public class TestMemberOnlineOffline extends TestObject {
 			if (client.isOpen()) {
 				ZStringBuilder response = null;
 				
-				sleep(2000);
+				sleep(1000);
 				System.out.println();
 				System.out.println("Taking backup offline ...");
 				response = client.sendCommand(ProtocolControlConductor.TAKE_MEMBER_OFFLINE,"id",backup.getId());
 				assertEqual(response,ProtocolControl.getExecutedCommandResponse(),"Take backup offline response does not match expectation");
 				System.out.println("Take backup offline response: " + response);
 				
-				sleep(2000);
+				sleep(1000);
 				System.out.println();
 				System.out.println("Backup member state JSON:");
 				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 				
-				sleep(2000);
+				sleep(1000);
 				System.out.println();
 				System.out.println("Bringing backup online ...");
 				response = client.sendCommand(ProtocolControlConductor.BRING_MEMBER_ONLINE,"id",backup.getId());
 				assertEqual(response,ProtocolControl.getExecutedCommandResponse(),"Bring backup online response does not match expectation");
 				System.out.println("Bring backup online response: " + response);
 				
-				sleep(2000);
+				sleep(1000);
 				System.out.println();
 				System.out.println("Backup member state JSON:");
 				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 
-				sleep(2000);
+				sleep(1000);
 				System.out.println();
 				System.out.println("Draining backup offline ...");
 				response = client.sendCommand(ProtocolControlConductor.DRAIN_MEMBER_OFFLINE,"id",backup.getId());
@@ -147,12 +147,12 @@ public class TestMemberOnlineOffline extends TestObject {
 				System.out.println("Backup member state JSON:");
 				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 				
-				sleep(2000);
+				sleep(1000);
 				System.out.println();
 				System.out.println("Backup member state JSON:");
 				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
 				
-				sleep(2000);
+				sleep(1000);
 				System.out.println();
 				System.out.println("Stopping conductor ...");
 				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
@@ -160,7 +160,7 @@ public class TestMemberOnlineOffline extends TestObject {
 				client.close();
 			}
 
-			sleep(2000);
+			sleep(1000);
 			System.out.println();
 			System.out.println("Checking conductor ...");
 			boolean working = con.isWorking();

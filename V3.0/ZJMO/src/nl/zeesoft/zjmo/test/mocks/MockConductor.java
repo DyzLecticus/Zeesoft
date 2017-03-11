@@ -3,6 +3,7 @@ package nl.zeesoft.zjmo.test.mocks;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.MockObject;
 import nl.zeesoft.zdk.test.impl.MockMessenger;
+import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 
 public class MockConductor extends MockObject {
@@ -32,9 +33,9 @@ public class MockConductor extends MockObject {
 				return started;
 			}
 			@Override
-			protected void stopProgram() {
+			protected void stopProgram(Worker ignoreWorker) {
 				//System.out.println("Stopping MockConductor ...");
-				stop();
+				stop(ignoreWorker);
 				//System.out.println("Stopped MockConductor");
 			}
 		};

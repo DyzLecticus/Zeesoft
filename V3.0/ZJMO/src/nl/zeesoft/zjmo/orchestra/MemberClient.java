@@ -69,7 +69,11 @@ public class MemberClient extends Locker {
 		unlockMe(this);
 		return input;
 	}
-	
+
+	public void sendCloseSessionCommand() {
+		writeOutputNoLock(protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null));
+	}
+
 	public ZStringBuilder sendCommand(String command) {
 		return writeOutputReadInput(protocol.getCommandJson(command,null));
 	}

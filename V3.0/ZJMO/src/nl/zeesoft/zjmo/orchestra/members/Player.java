@@ -1,6 +1,7 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
@@ -29,11 +30,11 @@ public class Player extends MemberObject {
 	}
 
 	@Override
-	public void stop() {
+	public void stop(Worker ignoreWorker) {
 		clientWorker.stop();
 		client.close();
 		client = null;
 		clientWorker = null;
-		super.stop();
+		super.stop(ignoreWorker);
 	}
 }

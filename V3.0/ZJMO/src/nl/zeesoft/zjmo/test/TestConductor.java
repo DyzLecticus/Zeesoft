@@ -76,7 +76,6 @@ public class TestConductor extends TestObject {
 			client.open();
 			assertEqual(client.isOpen(),true,"Failed to open the client");
 			if (client.isOpen()) {
-				sleep(2000);
 				ZStringBuilder response = client.sendCommand(ProtocolControl.GET_STATE);
 				System.out.println();
 				System.out.println("GET_STATE command response: " + response);
@@ -86,13 +85,12 @@ public class TestConductor extends TestObject {
 				System.out.println("Orchestra state JSON:");
 				System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
 
-				sleep(2000);
 				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
 				assertEqual(response.toString(),"","Stop program response does not match expectation");
 				client.close();
 			}
 
-			sleep(2000);
+			sleep(1000);
 			System.out.println();
 			System.out.println("Checking conductor ...");
 			boolean working = con.isWorking();
