@@ -38,12 +38,12 @@ public abstract class MemberObject extends OrchestraMember {
 		if (msgr!=null) {
 			messenger = msgr;
 		} else {
-			messenger = new Messenger(null);
+			messenger = getNewMessenger();
 			startAndStopMessenger = true;
 		}
 		union = new WorkerUnion(messenger);
 	}
-
+	
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
@@ -173,8 +173,11 @@ public abstract class MemberObject extends OrchestraMember {
 
 		if (startAndStopMessenger) {
 			getMessenger().stop();
-		} else {
-			union.stopWorkers(ignoreWorker);
+		}
+		union.stopWorkers(ignoreWorker);
+		union = new WorkerUnion(messenger);
+		if (startAndStopMessenger) {
+			getMessenger().whileWorking();
 		}
 	}
 
@@ -253,6 +256,10 @@ public abstract class MemberObject extends OrchestraMember {
 		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
 		unlockMe(this);
 		return f.toStringBuilder();
+	}
+
+	protected Messenger getNewMessenger() {
+		return new Messenger(null);
 	}
 	
 	protected void stopProgram(Worker ignoreWorker) {

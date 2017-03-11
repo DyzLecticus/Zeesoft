@@ -179,5 +179,6 @@ public class TestMemberOnlineOffline extends TestObject {
 				player.stop();
 			}
 		}
+		con.getMessenger().whileWorking();
 	}
 }

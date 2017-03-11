@@ -16,10 +16,7 @@ public class MockConductor extends MockObject {
 	@Override
 	protected Object initialzeMock() {
 		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
-		Messenger msgr = (Messenger) getTester().getMockedObject(MockMessenger.class.getName());
-		msgr.setPrintDebugMessages(true);
-		msgr.start();
-		Conductor con = new Conductor(msgr,orch) {
+		Conductor con = new Conductor(null,orch) {
 			@Override
 			public boolean start() {
 				//getMessenger().getMessages();
@@ -31,6 +28,10 @@ public class MockConductor extends MockObject {
 					System.err.println("Failed to start " + getId());
 				}
 				return started;
+			}
+			@Override
+			protected Messenger getNewMessenger() {
+				return (Messenger) getTester().getMockedObject(MockMessenger.class.getName());
 			}
 			@Override
 			protected void stopProgram(Worker ignoreWorker) {

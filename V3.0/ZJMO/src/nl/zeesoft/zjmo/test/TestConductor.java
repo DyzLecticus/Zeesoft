@@ -85,6 +85,8 @@ public class TestConductor extends TestObject {
 				System.out.println("Orchestra state JSON:");
 				System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
 
+				System.out.println();
+				System.out.println("Stopping conductor ...");
 				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
 				assertEqual(response.toString(),"","Stop program response does not match expectation");
 				client.close();
@@ -109,5 +111,6 @@ public class TestConductor extends TestObject {
 				player.stop();
 			}
 		}
+		con.getMessenger().whileWorking();
 	}
 }

@@ -156,5 +156,6 @@ public class TestWorkRequest extends TestObject {
 				player.stop();
 			}
 		}
+		con.getMessenger().whileWorking();
 	}
 }
