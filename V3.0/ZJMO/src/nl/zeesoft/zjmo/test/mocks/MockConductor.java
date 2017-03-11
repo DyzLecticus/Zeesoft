@@ -19,15 +19,8 @@ public class MockConductor extends MockObject {
 		Conductor con = new Conductor(null,orch) {
 			@Override
 			public boolean start() {
-				//getMessenger().getMessages();
 				System.out.println("Starting " + getId() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");
-				boolean started = super.start();
-				if (started) {
-					System.out.println("Started " + getId());
-				} else {
-					System.err.println("Failed to start " + getId());
-				}
-				return started;
+				return super.start();
 			}
 			@Override
 			protected Messenger getNewMessenger() {

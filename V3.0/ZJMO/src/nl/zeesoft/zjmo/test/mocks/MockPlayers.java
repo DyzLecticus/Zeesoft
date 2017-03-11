@@ -28,13 +28,7 @@ public class MockPlayers extends MockObject {
 					@Override
 					public boolean start() {
 						System.out.println("Starting " + getId() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");
-						boolean started = super.start();
-						if (started) {
-							System.out.println("Started " + getId());
-						} else {
-							System.err.println("Failed to start " + getId());
-						}
-						return started;
+						return super.start();
 					}
 					protected void stopProgram(Worker ignoreWorker) {
 						//System.out.println("Stopping MockPlayer ...");
