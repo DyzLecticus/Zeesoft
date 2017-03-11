@@ -12,9 +12,11 @@ import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
 import nl.zeesoft.zjmo.test.mocks.MockConductor;
 import nl.zeesoft.zjmo.test.mocks.MockPlayers;
+import nl.zeesoft.zjmo.test.mocks.PlayerCommandWorker;
 
 public class TestWorkRequest extends TestObject {
 	public TestWorkRequest(Tester tester) {
@@ -64,9 +66,15 @@ public class TestWorkRequest extends TestObject {
 		System.out.println("Starting members ...");
 		@SuppressWarnings("unchecked")
 		List<Player> players = (List<Player>) getTester().getMockedObject(MockPlayers.class.getName());
+		int i = 0;
+		Player dbX = null;
 		for (Player player: players) {
 			started = player.start();
 			assertEqual(started,true,"Failed to start player: " + player.getId());
+			if (i==0) {
+				dbX = player;
+			}
+			i++;
 		}
 		Conductor con = (Conductor) getTester().getMockedObject(MockConductor.class.getName());
 		started = con.start();
@@ -77,6 +85,7 @@ public class TestWorkRequest extends TestObject {
 		JsFile request = new JsFile();
 		request.rootElement = new JsElem();
 		request.rootElement.children.add(new JsElem("echoMe","Echo me this",true));
+		request.rootElement.children.add(new JsElem("sleep","1000",true));
 		
 		if (started) {
 			sleep(2000);
@@ -104,7 +113,7 @@ public class TestWorkRequest extends TestObject {
 				
 				wr.setPositionName("Database Z");
 				wr.setRequest(request);
-				
+
 				//System.out.println();	
 				//System.out.println("Sending work request: " + wr.toJson().toStringBuilder());
 				response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
@@ -115,15 +124,25 @@ public class TestWorkRequest extends TestObject {
 				wr.setPositionName("Database X");
 				wr.setRequest(request);
 
+				PlayerCommandWorker pcw = new PlayerCommandWorker(con,dbX,ProtocolControlConductor.DRAIN_MEMBER_OFFLINE);
+				pcw.start();
+				
 				System.out.println();	
 				System.out.println("Sending work request: " + wr.toJson().toStringBuilder());
 				response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
+
+				System.out.println();	
 				System.out.println("Work request response: " + response);
 				wr.fromStringBuilder(response);
 				assertEqual(wr.getResponse()!=null,true,"Response is empty");
 				if (wr.getResponse()!=null) {
 					assertEqual(wr.getRequest().toStringBuilder(),wr.getResponse().toStringBuilder(),"Response does not equal request");
 				}
+				
+				sleep(2000);
+				System.out.println();
+				System.out.println("Player state JSON:");
+				System.out.println(con.getMemberState(dbX.getId()).toStringBuilderReadFormat());
 			}
 
 			MemberClient stopClient = new MemberClient("localhost",5433);
@@ -138,8 +157,6 @@ public class TestWorkRequest extends TestObject {
 			}
 
 			sleep(1000);
-			System.out.println();
-			System.out.println("Checking conductor ...");
 			boolean working = con.isWorking();
 			assertEqual(working,false,"Failed to stop the conductor");
 			if (working) {

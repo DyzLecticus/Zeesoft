@@ -161,8 +161,6 @@ public class TestMemberOnlineOffline extends TestObject {
 			}
 
 			sleep(1000);
-			System.out.println();
-			System.out.println("Checking conductor ...");
 			boolean working = con.isWorking();
 			assertEqual(working,false,"Failed to stop the conductor");
 			if (working) {

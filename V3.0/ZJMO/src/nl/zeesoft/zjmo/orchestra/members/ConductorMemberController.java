@@ -45,6 +45,7 @@ public class ConductorMemberController extends Locker {
 	protected void close() {
 		lockMe(this);
 		for (MemberClient client: clients) {
+			client.sendCloseSessionCommand();
 			client.close();
 		}
 		for (MemberClient client: stateClients) {

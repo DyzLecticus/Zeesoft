@@ -1,0 +1,57 @@
+package nl.zeesoft.zjmo.test.mocks;
+
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.thread.Worker;
+import nl.zeesoft.zjmo.orchestra.MemberClient;
+import nl.zeesoft.zjmo.orchestra.members.Conductor;
+import nl.zeesoft.zjmo.orchestra.members.Player;
+
+public class PlayerCommandWorker extends Worker {
+	private Conductor 		conductor	= null;
+	private Player 			player 		= null;
+	private String			command		= null;
+	private int				delayStart	= 500;
+	private ZStringBuilder	response	= null;
+
+	public PlayerCommandWorker(Conductor conductor,Player player,String command) {
+		super(conductor.getMessenger(),conductor.getUnion());
+		setSleep(1000);
+		this.conductor = conductor;
+		this.player = player;
+		this.command = command;
+	}
+
+	@Override
+	public void whileWorking() {
+		try {
+			Thread.sleep(delayStart);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MemberClient client = conductor.getNewControlClient(getMessenger());
+		if (client.open()) {
+			response = client.sendCommand(command,"id",player.getId());
+			
+			System.out.println();
+			System.out.println("Player state JSON:");
+			System.out.println(conductor.getMemberState(player.getId()).toStringBuilderReadFormat());
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println();
+			System.out.println("Player state JSON:");
+			System.out.println(conductor.getMemberState(player.getId()).toStringBuilderReadFormat());
+		}
+		stop();
+	}
+	
+	public ZStringBuilder getResponse() {
+		return response;
+	}
+}

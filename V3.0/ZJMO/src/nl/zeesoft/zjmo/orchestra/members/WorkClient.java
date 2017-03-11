@@ -10,7 +10,7 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
 public class WorkClient extends MemberClient {
 	private String	memberId	= "";
 	private Object	inUseBy		= null;
-	private Date	lastUsed	= null;
+	private Date	lastUsed	= new Date();
 
 	public WorkClient(String memberId,String ipAddressOrHostName, int port) {
 		super(null, ipAddressOrHostName, port);

@@ -32,6 +32,7 @@ public class Player extends MemberObject {
 	@Override
 	public void stop(Worker ignoreWorker) {
 		clientWorker.stop();
+		client.sendCloseSessionCommand();
 		client.close();
 		client = null;
 		clientWorker = null;

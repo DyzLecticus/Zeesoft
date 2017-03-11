@@ -69,12 +69,16 @@ public class WorkRequest {
 		if (request!=null && request.rootElement.children.size()>0) {
 			JsElem rElem = new JsElem("request");
 			f.rootElement.children.add(rElem);
-			rElem.children.add(request.rootElement.children.get(0));
+			for (JsElem cElem: request.rootElement.children) {
+				rElem.children.add(cElem);
+			}
 		}
 		if (response!=null && response.rootElement.children.size()>0) {
 			JsElem rElem = new JsElem("response");
 			f.rootElement.children.add(rElem);
-			rElem.children.add(response.rootElement.children.get(0));
+			for (JsElem cElem: request.rootElement.children) {
+				rElem.children.add(cElem);
+			}
 		}
 		return f;
 	}
