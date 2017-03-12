@@ -4,12 +4,14 @@ The Zeesoft Development Kit (ZDK) is an open source library for Java application
 
 It provides support for;  
  * Extended StringBuilder manipulation and validation  
+ * Basic file writing and reading  
+ * JSON  
  * Multi threading  
  * Application message handling
  * Self documenting and testing libraries  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.20.zip) to download the latest ZDK release (version 0.9.20).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.21.zip) to download the latest ZDK release (version 0.9.21).  
 All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -37,11 +39,11 @@ Class references;
 **Test output**  
 The output of this test shows 100 randomly generated integers within the range 0 - 9.
 ~~~~
-9 8 9 7 2 1 3 5 9 8 2 9 5 2 1 2 7 6 2 6
-9 0 1 7 3 9 5 2 7 7 1 0 4 6 7 2 5 6 5 8
-7 2 9 0 2 6 2 7 1 9 1 6 0 0 5 7 1 1 0 8
-9 1 8 2 5 0 7 5 6 8 4 4 5 4 9 7 4 7 0 0
-6 2 0 0 7 2 5 7 3 3 9 4 0 5 9 9 7 2 7 7
+7 5 0 0 3 2 3 8 0 4 5 3 5 8 1 2 4 9 4 7
+0 4 4 9 1 8 5 6 2 7 2 3 4 3 0 6 4 5 0 0
+3 0 5 3 3 7 7 3 0 1 9 8 8 3 0 0 8 7 4 3
+8 5 3 0 0 1 3 4 0 8 1 4 7 0 8 1 6 9 6 4
+2 6 9 6 9 4 6 5 3 3 3 1 7 2 7 3 0 9 7 1
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
@@ -70,9 +72,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 3204336790010341197503821184860162193996234532832749545914327584
+Key: 4399299540115875158924605701698379247876408819405560596394810171
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
-Encoded text: Fafa797bqbAaOcReTfA8S9p049ibKaC0pa7eVdPci0za~eiaz0kagfocyfwdW8Q9ZcwaraOeEbyg5fpcLaubpcGbdbPa5eibPa#ewcWe6cmccdCf50qb0
+Encoded text: #0G0oeSd60qdUcUa20D6D8M8hbndmbDa587aZc4dQ980Ta57ZagcO7T8gcqeecv9icTdN9g0Bc:dxcwa6au8DdRb09RdJ0a8Ya6bkb26tbceybA0feJ00
 Decoded text: Hello, my name is Dyz Lecticus. How are you feeling today?
 ~~~~
 
@@ -97,6 +99,75 @@ The output of this test shows the input text and the parsed symbols separated by
 ~~~~
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
 Parsed symbols: Hello , my name is Dyz Lecticus . How are you feeling today ?
+~~~~
+
+nl.zeesoft.zdk.test.impl.TestJson
+---------------------------------
+This test shows how to create a *JsFile* instance from a JSON string.
+
+**Example implementation**  
+~~~~
+// Create JSON object
+JsFile json = new JsFile();
+// Parse JSON from string
+json.fromStringBuilder(new ZStringBuilder("{\"command\":\"doStuff\"}"));
+~~~~
+
+Class references;  
+ * [TestJson](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/src/nl/zeesoft/zdk/test/impl/TestJson.java)
+ * [JsFile](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/src/nl/zeesoft/zdk/json/JsFile.java)
+
+**Test output**  
+The output of this test shows the string input and the resulting JSON structure.  
+~~~~
+input:
+{
+    "qwerValue" : "qwerqwer",
+    "qwerObject1" : {"qwerName":"name1" ,"qwerNumber": 1234},
+    "qwerObject2" : {
+        "qwerName": "name2",
+        "qwerNumber": 12345,
+        "qwerArray": [],
+        "qwerSubObject1": {qwerqwer:"qwer qwer1",qwertqwert:"qwert qwert1"},
+        "qwerSubObject2": {qwerqwer:"qwer qwer2",qwertqwert:"qwert qwert2"},
+        "qwerObjectArray": [{asdfasdf:"asdf","qwer":["qwerqwer","qwerqwerqwer","qwerqwerqwerqwer"]},{asdf:"asdfasdf"}]
+    }
+}
+
+JSON structure:
+{
+  "qwerValue": "qwerqwer",
+  "qwerObject1": {
+    "qwerName": "name1",
+    "qwerNumber": 1234
+  },
+  "qwerObject2": {
+    "qwerName": "name2",
+    "qwerNumber": 12345,
+    "qwerArray": [],
+    "qwerSubObject1": {
+      "qwerqwer": "qwer qwer1",
+      "qwertqwert": "qwert qwert1"
+    },
+    "qwerSubObject2": {
+      "qwerqwer": "qwer qwer2",
+      "qwertqwert": "qwert qwert2"
+    },
+    "qwerObjectArray": [
+      {
+        "asdfasdf": "asdf",
+        "qwer": [
+          "qwerqwer",
+          "qwerqwerqwer",
+          "qwerqwerqwerqwer"
+        ]
+      },
+      {
+        "asdf": "asdfasdf"
+      }
+    ]
+  }
+}
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestMessenger
@@ -147,18 +218,19 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2017-03-06 21:38:28:885 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2017-03-06 21:38:29:185 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2017-03-06 21:38:29:497 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2017-03-12 15:38:34:377 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2017-03-12 15:38:34:681 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2017-03-12 15:38:34:991 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
-All 4 tests have been executed successfully (108 assertions).  
-Total test duration: 744 ms (total sleep duration: 600 ms).  
+All 5 tests have been executed successfully (110 assertions).  
+Total test duration: 802 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 222 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 254 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 263 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 253 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 227 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 263 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 272 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestJson: 206 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 269 Kb / 0 Mb
