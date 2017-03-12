@@ -1,6 +1,5 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
@@ -21,11 +20,9 @@ public class ConductorMemberStateWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		ZStringBuilder input = client.readInput();
-		if (input==null || input.length()==0) {
-			controller.setStateUnknown(memberId,"Lost connection");
-			client.close();
-			stop();
-		}
+		client.readInput();
+		controller.setStateUnknown(memberId,"Lost connection");
+		client.close();
+		stop();
 	}
 }

@@ -19,7 +19,7 @@ public abstract class ProtocolObject {
 			//System.out.println(this + ": Handle command: " + command);
 			if (command.equals(CLOSE_SESSION)) {
 				setClose(true);
-				output = getExecutedCommandResponse();
+				output = input;
 			}
 		}
 		return output;

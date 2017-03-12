@@ -61,7 +61,7 @@ public class SocketHandler {
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}
-		if (timeOut) {
+		if (socket!=null && timeOut) {
 			try {
 				socket.setSoTimeout(1000);
 			} catch (SocketException e) {

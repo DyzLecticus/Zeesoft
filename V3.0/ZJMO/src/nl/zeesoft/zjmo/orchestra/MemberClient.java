@@ -106,7 +106,13 @@ public class MemberClient extends Locker {
 
 	private ZStringBuilder readInputNoLock() {
 		initializeConnectionNoLock();
-		return socket.readInput();
+		ZStringBuilder input = socket.readInput();
+		ZStringBuilder closeSession = protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null);
+		if (input.equals(closeSession)) {
+			socket.writeOutput(closeSession);
+			socket.close();
+		}
+		return input;
 	}
 
 	private void initializeConnectionNoLock() {

@@ -34,8 +34,9 @@ public class MemberWorker extends Worker {
 
 	@Override
 	public void stop() {
-		socket.close();
 		super.stop();
+		socket.writeOutput(protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null));
+		socket.close();
 	}
 	
 	@Override
@@ -47,7 +48,6 @@ public class MemberWorker extends Worker {
 		if (!socket.isOpen()) {
 			close = true;
 		} else {
-			lockMe(this);
 			if (input==null) {
 				close = true;
 			} else {
@@ -57,7 +57,6 @@ public class MemberWorker extends Worker {
 				close = output==null || protocol.isClose();
 				stop = protocol.isStop();
 			}
-			unlockMe(this);
 		}
 		if (stop) {
 			member.stopWorker(this);

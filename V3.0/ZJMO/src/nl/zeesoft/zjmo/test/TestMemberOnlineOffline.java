@@ -156,7 +156,7 @@ public class TestMemberOnlineOffline extends TestObject {
 				System.out.println();
 				System.out.println("Stopping conductor ...");
 				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
-				assertEqual(response.toString(),"","Stop program response does not match expectation");
+				assertEqual(response.toString(),"{\"command\":\"CLOSE_SESSION\"}","Stop program response does not match expectation");
 				client.close();
 			}
 
