@@ -113,9 +113,9 @@ public class MemberClient extends Locker {
 		if (!isOpenNoLock()) {
 			if (socket==null) {
 				socket = new SocketHandler();
-				open = socket.open(ipAddressOrHostName,port,false);
+				open = socket.open(ipAddressOrHostName,port,true);
 			} else {
-				open = socket.open(ipAddressOrHostName,port,false);
+				open = socket.open(ipAddressOrHostName,port,true);
 			}
 		}
 	}

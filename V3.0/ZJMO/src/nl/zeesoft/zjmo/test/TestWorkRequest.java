@@ -116,6 +116,7 @@ public class TestWorkRequest extends TestObject {
 				wr.setError("");
 
 				PlayerCommandWorker pcw = new PlayerCommandWorker(con,dbX,ProtocolControlConductor.DRAIN_MEMBER_OFFLINE);
+				//PlayerCommandWorker pcw = new PlayerCommandWorker(con,dbX,ProtocolControlConductor.TAKE_MEMBER_OFFLINE);
 				pcw.start();
 				
 				wr.setPositionName("Database X");
@@ -134,7 +135,7 @@ public class TestWorkRequest extends TestObject {
 				}
 
 				sleep(2000);
-				
+
 				request = new JsFile();
 				request.rootElement = new JsElem();
 				request.rootElement.children.add(new JsElem("echoMe","Echo me this",true));
@@ -170,7 +171,7 @@ public class TestWorkRequest extends TestObject {
 				if (wr.getResponse()!=null) {
 					assertEqual(wr.getRequest().toStringBuilder(),wr.getResponse().toStringBuilder(),"Response does not equal request");
 				}
-				
+
 				sleep(1000);
 			}
 

@@ -3,6 +3,7 @@ package nl.zeesoft.zjmo.orchestra;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,9 +64,7 @@ public abstract class MemberObject extends OrchestraMember {
 	public boolean isWorking() {
 		boolean r = false;
 		lockMe(this);
-		if (controlWorker!=null && controlWorker.isWorking() && 
-			workWorker!=null && workWorker.isWorking()
-			) {
+		if (controlWorker!=null && controlWorker.isWorking()) {
 			r = true;
 		}
 		unlockMe(this);
@@ -131,6 +130,12 @@ public abstract class MemberObject extends OrchestraMember {
 	
 	public void stop(Worker ignoreWorker) {
 		lockMe(this);
+		if (controlWorker!=null && controlWorker.isWorking()) {
+			controlWorker.stop();
+		}
+		if (workWorker!=null && workWorker.isWorking()) {
+			workWorker.stop();
+		}
 		if (controlSocket!=null) {
 			try {
 				controlSocket.close();
@@ -144,12 +149,6 @@ public abstract class MemberObject extends OrchestraMember {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-		if (controlWorker!=null && controlWorker.isWorking()) {
-			controlWorker.stop();
-		}
-		if (workWorker!=null && workWorker.isWorking()) {
-			workWorker.stop();
 		}
 		controlSocket = null;
 		workSocket = null;
@@ -193,13 +192,21 @@ public abstract class MemberObject extends OrchestraMember {
 		boolean r = goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE,MemberState.DRAINING_OFFLINE);
 		if (r) {
 			lockMe(this);
+			workWorker.stop();
+			if (workSocket!=null) {
+				try {
+					workSocket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			workSocket = null;
 			List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);
 			for (MemberWorker wrkr: wrkrs) {
 				if (!wrkr.isControl()) {
 					stopWorkerNoLock(wrkr);
 				}
 			}
-			workWorker.stop();
 			super.setState(MemberState.getState(MemberState.OFFLINE));
 			unlockMe(this);
 		}
@@ -221,8 +228,23 @@ public abstract class MemberObject extends OrchestraMember {
 		if (r) {
 			lockMe(this);
 			super.setState(MemberState.getState(MemberState.COMING_ONLINE));
-			workWorker.stop();
-			super.setState(MemberState.getState(MemberState.ONLINE));
+			boolean opened = true;
+			if (workSocket==null) {
+				try {
+					workSocket = new ServerSocket(getWorkPort());
+				} catch (IOException e) {
+					workSocket = null;
+					opened = false;
+					e.printStackTrace();
+				}
+			}
+			if (opened) {
+				workWorker.start();
+				super.setState(MemberState.getState(MemberState.ONLINE));
+			} else {
+				super.setState(MemberState.getState(MemberState.OFFLINE));
+				r = false;
+			}
 			unlockMe(this);
 		}
 		return r;
@@ -303,6 +325,11 @@ public abstract class MemberObject extends OrchestraMember {
 			lockMe(this);
 			SocketHandler sh = new SocketHandler();
 			sh.setSocket(socket);
+			try {
+				socket.setSoTimeout(1000);
+			} catch (SocketException e) {
+				//e.printStackTrace();
+			}
 			MemberWorker worker = new MemberWorker(getMessenger(),union,this,sh,getNewWorkProtocol());
 			workers.add(worker);
 			unlockMe(this);

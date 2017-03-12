@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -55,15 +56,17 @@ public class SocketHandler {
 	protected boolean open(String ipAddressOrHostName, int port,boolean timeOut) {
 		try {
 			socket = new Socket(ipAddressOrHostName,port);
-			if (timeOut) {
-				socket.setSoTimeout(1000);
-			}
-		} catch (SocketException e) {
-			//e.printStackTrace();
 		} catch (UnknownHostException e) {
 			//e.printStackTrace();
 		} catch (IOException e) {
 			//e.printStackTrace();
+		}
+		if (timeOut) {
+			try {
+				socket.setSoTimeout(1000);
+			} catch (SocketException e) {
+				//e.printStackTrace();
+			}
 		}
 		return open();
 	}
@@ -92,6 +95,14 @@ public class SocketHandler {
 	}
 	
 	protected void close() {
+		if (socket!=null) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				//e.printStackTrace();
+			}
+			socket = null;
+		}
 		if (out!=null) {
 			out.close();
 			out = null;
@@ -104,34 +115,31 @@ public class SocketHandler {
 			}
 			in = null;
 		}
-		if (socket!=null) {
-			try {
-				socket.close();
-			} catch (IOException e) {
-				//e.printStackTrace();
-			}
-			socket = null;
-		}
 	}
 	
 	protected ZStringBuilder readInput() {
 		ZStringBuilder input = new ZStringBuilder();
 		boolean error = false;
 		boolean stop = false;
-		while (!stop) {
+		while (!stop && in!=null) {
 			String line = null;
+			boolean timeout = false;
 			try {
 				line = in.readLine();
+			} catch (SocketTimeoutException e) {
+				timeout = true;
 			} catch (IOException e) {
 				error = true;
 			}
-			if (!error && line!=null && !line.equals(END_OF_PROTOCOL_OUTPUT)) {
-				if (input.length()>0) {
-					input.append("\n");
+			if (!timeout) {
+				if (!error && line!=null && !line.equals(END_OF_PROTOCOL_OUTPUT)) {
+					if (input.length()>0) {
+						input.append("\n");
+					}
+					input.append(line);
+				} else {
+					stop = true;
 				}
-				input.append(line);
-			} else {
-				stop = true;
 			}
 		}
 		if (error) {
