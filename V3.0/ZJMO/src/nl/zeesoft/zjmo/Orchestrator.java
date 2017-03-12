@@ -23,7 +23,7 @@ public class Orchestrator {
 
 		String action = "";
 		
-		String generateClassName = "";
+		String orchestraClassName = "";
 		String generateDirectory = "";
 
 		String positionName = Orchestra.CONDUCTOR;
@@ -32,7 +32,7 @@ public class Orchestrator {
 		if (args!=null && args.length>=2) {
 			action = args[0];
 			if (action.equals(GENERATE)) {
-				generateClassName = args[1];
+				orchestraClassName = args[1];
 				if (args.length>=3) {
 					generateDirectory = args[2];
 				}
@@ -40,84 +40,89 @@ public class Orchestrator {
 				action.equals(START) || 
 				action.equals(STOP)
 				) {
-				positionName = args[1];
-				if (args.length>=3) {
+				orchestraClassName = args[1];
+				positionName = args[2];
+				if (args.length>=4) {
 					try {
-						positionBackupNumber = Integer.parseInt(args[2]);
+						positionBackupNumber = Integer.parseInt(args[3]);
 					} catch(NumberFormatException e) {
 						action = "";
-						err = "Unable to parse position backup number: '" + args[2] + "', error: " + e;
+						err = "Unable to parse position backup number: '" + args[3] + "', error: " + e;
 					}
 				}
 			}
 		}
 		
-		if (action.equals(GENERATE)) {
-			Orchestra orch = null;
-			File genDir = new File(generateDirectory);
-			if (generateClassName.length()==0) {
-				err = "Orchestra generation requires an orchestra class name as second parameter";
+		Orchestra orch = null;
+		if (orchestraClassName.length()==0) {
+			err = "The second parameter must refer to a valid orchestra class name";
+		} else {
+			Object obj = null;
+			try {
+				Class<?> clas = Class.forName(orchestraClassName);
+				obj = clas.newInstance();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
 			}
-			if (err.length()==0) {
-				Object obj = null;
-				try {
-					Class<?> clas = Class.forName(generateClassName);
-					obj = clas.newInstance();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+			if (obj==null) {
+				err = "Unable to instantiate orchestra class name: " + orchestraClassName;
+			} else if (!(obj instanceof Orchestra)) {
+				err = "Class name: " + orchestraClassName + " must extend " + Orchestra.class.getName();
+			} else {
+				orch = (Orchestra) obj;
+			}
+		}
+		
+		if (orch!=null) {
+			if (action.equals(GENERATE)) {
+				File genDir = new File(generateDirectory);
+				if (orchestraClassName.length()==0) {
+					err = "Orchestra generation requires an orchestra class name as second parameter";
 				}
-				if (obj==null) {
-					err = "Unable to instantiate orchestra class name: " + generateClassName;
-				} else if (!(obj instanceof Orchestra)) {
-					err = "Class name: " + generateClassName + " must extend " + Orchestra.class.getName();
-				} else {
-					orch = (Orchestra) obj;
+				if (err.length()==0) {
+					orch.initialize();
+					OrchestraGenerator generator = orch.getNewGenerator();
+					System.out.println("Generating " + orchestraClassName + " to directory: " + genDir.getAbsolutePath() + " ...");
+					err = generator.generate(orch,genDir);
 				}
-			}
-			if (err.length()==0) {
-				orch.initialize();
-				OrchestraGenerator generator = orch.getNewGenerator();
-				System.out.println("Generating " + generateClassName + " to directory: " + genDir.getAbsolutePath() + " ...");
-				err = generator.generate(orch,genDir);
-			}
-		} else if (action.equals(START) || action.equals(STOP)) {
-			Orchestra orch = new Orchestra();
-			OrchestraMember member = null;
-			File orchJs = new File("orchestra.json");
-			if (!orchJs.exists()) {
-				err = "Orchestra JSON file not found: orchestra.json";
-			}
-			if (err.length()==0) {
-				JsFile jsonFile = new JsFile();
-				err = jsonFile.fromFile(orchJs.getAbsolutePath());
-				if (err.length()>0) {
-					err = "Error parsing orchestra.json: " + err;
-				} else {
-					orch.fromJson(jsonFile);
+			} else if (action.equals(START) || action.equals(STOP)) {
+				OrchestraMember member = null;
+				File orchJs = new File("orchestra.json");
+				if (!orchJs.exists()) {
+					err = "Orchestra JSON file not found: orchestra.json";
 				}
-			}
-			if (err.length()==0) {
-				member = orch.getMemberForPosition(positionName,positionBackupNumber);
-				if (member==null) {
-					err = "Orchestra member not found: " + positionName + "/" + positionBackupNumber;
-				}
-			}
-			if (member!=null) {
-				if (action.equals(START)) {
-					MemberObject mem = null;
-					if (positionName.equals(Orchestra.CONDUCTOR)) {
-						mem = orch.getNewConductor(null);
+				if (err.length()==0) {
+					JsFile jsonFile = new JsFile();
+					err = jsonFile.fromFile(orchJs.getAbsolutePath());
+					if (err.length()>0) {
+						err = "Error parsing orchestra.json: " + err;
 					} else {
-						mem = orch.getNewPlayer(null,positionName,positionBackupNumber);
+						orch.fromJson(jsonFile);
 					}
-					mem.start();
-				} else if (action.equals(STOP)) {
-					MemberClient client = member.getNewControlClient(null);
-					client.sendCommand(ProtocolControl.STOP_PROGRAM);
+				}
+				if (err.length()==0) {
+					member = orch.getMemberForPosition(positionName,positionBackupNumber);
+					if (member==null) {
+						err = "Orchestra member not found: " + positionName + "/" + positionBackupNumber;
+					}
+				}
+				if (member!=null) {
+					if (action.equals(START)) {
+						MemberObject mem = null;
+						if (positionName.equals(Orchestra.CONDUCTOR)) {
+							mem = orch.getNewConductor(null);
+						} else {
+							mem = orch.getNewPlayer(null,positionName,positionBackupNumber);
+						}
+						mem.start();
+					} else if (action.equals(STOP)) {
+						MemberClient client = member.getNewControlClient(null);
+						client.sendCommand(ProtocolControl.STOP_PROGRAM);
+					}
 				}
 			}
 		}
