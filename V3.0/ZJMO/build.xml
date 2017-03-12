@@ -51,7 +51,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zjmo nl/zeesoft/zjmo/model nl/zeesoft/zjmo/model/transformations nl/zeesoft/zjmo/model/transformations/impl nl/zeesoft/zjmo/test zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zjmo nl/zeesoft/zjmo/json nl/zeesoft/zjmo/orchestra nl/zeesoft/zjmo/orchestra/members nl/zeesoft/zjmo/orchestra/protocol nl/zeesoft/zjmo/test nl/zeesoft/zjmo/test/mocks zdk.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zjmo.test.ZJMO"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -71,6 +71,7 @@
 		<delete>
             <fileset dir="${build}" includes="**/*.java"/>
 		</delete>
+		<antcall target="updateOrchestra"/>
 	</target>
 
 	<target name="release" description="Release the ZJMO">
@@ -112,7 +113,7 @@
             <fileset dir="${src}" />
         </copy>		
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zjmo,nl.zeesoft.zjmo.model,nl.zeesoft.zjmo.model.transformations,nl.zeesoft.zjmo.model.transformations.impl"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zjmo,nl.zeesoft.zjmo.json,nl.zeesoft.zjmo.orchestra,nl.zeesoft.zjmo.orchestra.members,nl.zeesoft.zjmo.orchestra.protocol"/>
 		<zip destfile="${dist}/zjmo-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>
@@ -128,6 +129,22 @@
 			<available file="${releases}/zjmo-${version}.zip"/>
 		</condition>
 		<fail if="_released" message="Version ${version} has already been released"/>		
+	</target>
+
+	<target name="updateOrchestra" depends="orchestraExists" if="_orchestraExists">
+		<copy file="${dist}/zjmo.jar" tofile="orchestra/lib/zjmo.jar"/>
+		<copy todir="orchestra/lib">
+            <fileset dir="lib/" includes="**/*.jar"/>
+        </copy>		
+		<exec dir="orchestra/" executable="cmd"> 
+			<arg line="/c copyLib.bat"/>
+		</exec>
+	</target>
+
+	<target name="orchestraExists">
+		<condition property="_orchestraExists">
+			<available file="orchestra" type="dir"/>
+		</condition>
 	</target>
 </project>
 

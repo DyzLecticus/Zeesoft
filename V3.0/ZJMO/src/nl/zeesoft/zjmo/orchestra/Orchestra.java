@@ -90,6 +90,17 @@ public class Orchestra {
 		}
 		return r;
 	}
+
+	public OrchestraMember getMemberForPosition(String positionName,int positionBackupNumber) {
+		OrchestraMember r = null;
+		for (OrchestraMember member: members) {
+			if (member.getPosition().getName().equals(positionName) && member.getPositionBackupNumber()==positionBackupNumber) {
+				r = member;
+				break;
+			}
+		}
+		return r;
+	}
 	
 	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort) {
 		OrchestraMember r = null;

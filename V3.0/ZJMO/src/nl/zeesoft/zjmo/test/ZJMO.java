@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
+import nl.zeesoft.zjmo.Orchestrator;
 
 public class ZJMO extends LibraryObject {
 	public ZJMO(Tester tester) {
@@ -19,7 +20,13 @@ public class ZJMO extends LibraryObject {
 	}
 
 	public static void main(String[] args) {
-		(new ZJMO(new Tester())).describeAndTest(args);
+		if (args!=null && args.length>1 && 
+			(args[0].equals(Orchestrator.GENERATE) || args[0].equals(Orchestrator.START) || args[0].equals(Orchestrator.STOP))
+			) {
+			Orchestrator.main(args);
+		} else {
+			(new ZJMO(new Tester())).describeAndTest(args);
+		}
 	}
 
 	@Override
