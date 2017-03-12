@@ -31,6 +31,8 @@ public class ZDK extends LibraryObject {
 		System.out.println();
 		System.out.println("It provides support for;  ");
 		System.out.println(" * Extended StringBuilder manipulation and validation  ");
+		System.out.println(" * Basic file writing and reading  ");
+		System.out.println(" * JSON  ");
 		System.out.println(" * Multi threading  ");
 		System.out.println(" * Application message handling");
 		System.out.println(" * Self documenting and testing libraries  ");
@@ -46,6 +48,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestZIntegerGenerator(getTester()));
 		tests.add(new TestZStringEncoder(getTester()));
 		tests.add(new TestZStringSymbolParser(getTester()));
+		tests.add(new TestJson(getTester()));
 		tests.add(new TestMessenger(getTester()));
 	}
 }
