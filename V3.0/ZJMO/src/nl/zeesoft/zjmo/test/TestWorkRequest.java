@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zjmo.json.JsElem;
-import nl.zeesoft.zjmo.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
@@ -85,7 +85,7 @@ public class TestWorkRequest extends TestObject {
 		JsFile request = new JsFile();
 		request.rootElement = new JsElem();
 		request.rootElement.children.add(new JsElem("echoMe","Echo me this",true));
-		request.rootElement.children.add(new JsElem("sleep","1000",true));
+		request.rootElement.children.add(new JsElem("sleep","1000"));
 		
 		if (started) {
 			sleep(2000);

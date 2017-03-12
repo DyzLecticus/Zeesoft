@@ -6,8 +6,11 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zjmo.json.JsElem;
-import nl.zeesoft.zjmo.json.JsFile;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zjmo.orchestra.members.Conductor;
+import nl.zeesoft.zjmo.orchestra.members.Player;
 
 public class Orchestra {
 	public static final String		CONDUCTOR		= "Conductor";
@@ -24,7 +27,19 @@ public class Orchestra {
 	public void initialize() {
 		// Override to implement
 	}
-	
+
+	public OrchestraGenerator getNewGenerator() {
+		return new OrchestraGenerator();
+	}
+
+	public Conductor getNewConductor(Messenger msgr) {
+		return new Conductor(msgr,this);
+	}
+
+	public Player getNewPlayer(Messenger msgr,String positionName,int positionBackupNumber) {
+		return new Player(msgr,this,positionName,positionBackupNumber);
+	}
+
 	public List<Position> getPositions() {
 		return new ArrayList<Position>(positions);
 	}

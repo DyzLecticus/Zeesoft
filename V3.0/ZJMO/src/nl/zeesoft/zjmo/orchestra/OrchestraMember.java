@@ -1,9 +1,9 @@
 package nl.zeesoft.zjmo.orchestra;
 
 import nl.zeesoft.zdk.ZDate;
+import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
-import nl.zeesoft.zjmo.json.JsElem;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
 public class OrchestraMember extends Locker {

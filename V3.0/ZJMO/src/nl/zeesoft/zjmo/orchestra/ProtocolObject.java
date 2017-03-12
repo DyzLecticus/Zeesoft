@@ -4,7 +4,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zjmo.json.JsFile;
+import nl.zeesoft.zdk.json.JsFile;
 
 public abstract class ProtocolObject {
 	public static final String CLOSE_SESSION 	= "CLOSE_SESSION";

@@ -1,9 +1,9 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
-import nl.zeesoft.zjmo.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;

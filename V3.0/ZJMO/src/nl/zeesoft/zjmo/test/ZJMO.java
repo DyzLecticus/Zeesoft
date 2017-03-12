@@ -47,7 +47,6 @@ public class ZJMO extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		tests.add(new TestJson(this.getTester()));
 		tests.add(new TestTestOrchestra(this.getTester()));
 		tests.add(new TestConductor(this.getTester()));
 		tests.add(new TestMemberOnlineOffline(this.getTester()));

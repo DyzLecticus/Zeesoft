@@ -1,8 +1,8 @@
 package nl.zeesoft.zjmo.orchestra.protocol;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zjmo.json.JsElem;
-import nl.zeesoft.zjmo.json.JsFile;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 
