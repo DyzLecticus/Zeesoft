@@ -16,18 +16,20 @@ import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public class ConductorMemberController extends Locker {
-	private WorkerUnion							union			= null;
-	private Orchestra 							orchestra		= null;
-	private List<MemberClient>					clients			= new ArrayList<MemberClient>();
-	private List<MemberClient>					stateClients	= new ArrayList<MemberClient>(); 
-	private List<ConductorMemberStateWorker>	stateWorkers	= new ArrayList<ConductorMemberStateWorker>(); 
-	private WorkClientPool						workClientPool	= null;
+	private WorkerUnion							union					= null;
+	private Orchestra 							orchestra				= null;
+	private List<MemberClient>					clients					= new ArrayList<MemberClient>();
+	private List<MemberClient>					stateClients			= new ArrayList<MemberClient>(); 
+	private List<ConductorMemberStateWorker>	stateWorkers			= new ArrayList<ConductorMemberStateWorker>(); 
+	private WorkClientPool						workClientPool			= null;
+	private WorkClientPoolWorker				workClientPoolWorker	= null;
 
 	protected ConductorMemberController(Messenger msgr,WorkerUnion uni,Orchestra orchestra) {
 		super(msgr);
 		this.orchestra = orchestra;
 		this.union = uni;
 		workClientPool = new WorkClientPool(msgr,orchestra);
+		workClientPoolWorker = new WorkClientPoolWorker(msgr,uni,workClientPool,orchestra.closeUnusedWorkClientsMilliseconds());
 	}
 
 	protected void open() {
@@ -39,6 +41,7 @@ public class ConductorMemberController extends Locker {
 		for (OrchestraMember member: orchestra.getMembers()) {
 			clients.add(member.getNewControlClient(getMessenger()));
 		}
+		workClientPoolWorker.start();
 		unlockMe(this);
 	}
 
@@ -55,6 +58,7 @@ public class ConductorMemberController extends Locker {
 		for (ConductorMemberStateWorker worker: stateWorkers) {
 			worker.stop();
 		}
+		workClientPoolWorker.stop();
 		workClientPool.closeAllClients();
 		unlockMe(this);
 	}

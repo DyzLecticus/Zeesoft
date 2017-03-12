@@ -9,11 +9,13 @@ import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
 public class WorkClientPool extends Locker {
-	private List<WorkClients> workClientsList = new ArrayList<WorkClients>();
+	private Orchestra			orchestra		= null;
+	private List<WorkClients>	workClientsList	= new ArrayList<WorkClients>();
 
-	protected WorkClientPool(Messenger msgr, Orchestra orch) {
+	protected WorkClientPool(Messenger msgr, Orchestra orchestra) {
 		super(msgr);
-		for (OrchestraMember member: orch.getMembers()) {
+		this.orchestra = orchestra;
+		for (OrchestraMember member: orchestra.getMembers()) {
 			workClientsList.add(new WorkClients(msgr,member));
 		}
 	}
@@ -46,17 +48,29 @@ public class WorkClientPool extends Locker {
 		unlockMe(this);
 	}
 
+	protected void closeUnusedClients(long unusedMs) {
+		lockMe(this);
+		for (OrchestraMember member: orchestra.getMembers()) {
+			closeUnusedClientsNoLock(member.getId(),unusedMs);
+		}
+		unlockMe(this);
+	}
+	
 	protected void closeUnusedClients(String memberId,long unusedMs) {
 		lockMe(this);
+		closeUnusedClientsNoLock(memberId,unusedMs);
+		unlockMe(this);
+	}
+
+	protected void closeUnusedClientsNoLock(String memberId,long unusedMs) {
 		for (WorkClients workCl: workClientsList) {
 			if (workCl.getMember().getId().equals(memberId)) {
 				workCl.closeUnusedClients(unusedMs);
 				break;
 			}
 		}
-		unlockMe(this);
 	}
-
+	
 	protected void closeAllClients() {
 		lockMe(this);
 		for (WorkClients workCl: workClientsList) {
