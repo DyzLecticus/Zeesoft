@@ -13,6 +13,8 @@ import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 
 public class Orchestra {
+	public static final String		LOCALHOST		= "localhost";
+	public static final String		LOCALHOSTIP		= "127.0.0.1";
 	public static final String		CONDUCTOR		= "Conductor";
 	public static final String		CONDUCTORID		= "Conductor/0";
 	
@@ -40,6 +42,17 @@ public class Orchestra {
 		return new Player(msgr,this,positionName,positionBackupNumber);
 	}
 
+	public boolean isLocalHost() {
+		boolean r = true;
+		for (OrchestraMember member: members) {
+			if (!member.getIpAddressOrHostName().equals(LOCALHOST) && !member.getIpAddressOrHostName().equals(LOCALHOSTIP)) {
+				r = false;
+				break;
+			}
+		}
+		return r;
+	}
+	
 	public List<Position> getPositions() {
 		return new ArrayList<Position>(positions);
 	}
