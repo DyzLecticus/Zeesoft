@@ -12,7 +12,10 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 
-public class Orchestra {
+/**
+ * Extend this class and implement the initialize method to create a custom orchestra.
+ */
+public abstract class Orchestra {
 	public static final String		LOCALHOST		= "localhost";
 	public static final String		LOCALHOSTIP		= "127.0.0.1";
 	
@@ -27,9 +30,7 @@ public class Orchestra {
 		addMember(CONDUCTOR,0,"localhost",5433,5432);
 	}
 	
-	public void initialize() {
-		// Override to implement
-	}
+	public abstract void initialize();
 
 	public OrchestraGenerator getNewGenerator() {
 		return new OrchestraGenerator();

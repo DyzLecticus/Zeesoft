@@ -4,6 +4,9 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * Accepts control sessions on the MemberObject.
+ */
 public class MemberControlWorker extends Worker {
 	private MemberObject		member		= null;
 

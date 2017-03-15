@@ -6,6 +6,9 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
+/**
+ * Orchestra member data object.
+ */
 public class OrchestraMember extends Locker {
 	private Position	position				= null;
 	private int			positionBackupNumber	= 0;

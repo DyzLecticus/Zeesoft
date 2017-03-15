@@ -7,6 +7,9 @@ import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
+/**
+ * Orchestra position player.
+ */
 public class Player extends MemberObject {
 	private MemberClient		client			= null;
 	private PlayerClientWorker	clientWorker	= null;

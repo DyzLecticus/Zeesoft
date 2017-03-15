@@ -1,5 +1,8 @@
 package nl.zeesoft.zjmo.orchestra;
 
+/**
+ * Orchestra positions.
+ */
 public class Position {
 	private String 	name	= "";
 

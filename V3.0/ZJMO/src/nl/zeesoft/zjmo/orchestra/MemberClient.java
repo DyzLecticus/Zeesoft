@@ -8,6 +8,9 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
+/**
+ * Used to connect to orchestra MemberObject instances.
+ */
 public class MemberClient extends Locker {
 	private ProtocolObject		protocol			= null;
 	private String				ipAddressOrHostName	= "localhost";

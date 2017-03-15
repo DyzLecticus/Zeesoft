@@ -16,6 +16,9 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
 
+/**
+ * Abstract member object that implements the control and work protocols.
+ */
 public abstract class MemberObject extends OrchestraMember {
 	private boolean				debug						= false;
 	private Messenger			messenger					= null;

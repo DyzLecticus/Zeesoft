@@ -3,6 +3,9 @@ package nl.zeesoft.zjmo.orchestra;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Member states. 
+ */
 public class MemberState {
 	public static final String			UNKNOWN 			= "UNKNOWN";
 	public static final String			ONLINE 				= "ONLINE";
@@ -12,9 +15,9 @@ public class MemberState {
 	public static final String			COMING_ONLINE		= "COMING_ONLINE";
 	public static final String			STOPPING 			= "STOPPING";
 	
-	private static List<MemberState>	states 			= new ArrayList<MemberState>();
+	private static List<MemberState>	states 				= new ArrayList<MemberState>();
 	
-	private String 						code 			= "";
+	private String 						code 				= "";
 	
 	public MemberState(String code) {
 		this.code = code;

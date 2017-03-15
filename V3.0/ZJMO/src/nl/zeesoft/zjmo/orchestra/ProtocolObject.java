@@ -6,6 +6,9 @@ import java.util.SortedMap;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 
+/**
+ * Abstract protocol object.
+ */
 public abstract class ProtocolObject {
 	public static final String CLOSE_SESSION 	= "CLOSE_SESSION";
 	

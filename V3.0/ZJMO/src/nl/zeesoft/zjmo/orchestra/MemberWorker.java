@@ -6,6 +6,9 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
+/**
+ * Handles sessions for the MemberObject.
+ */
 public class MemberWorker extends Worker {
 	private MemberObject		member		= null;
 	private SocketHandler		socket		= null;

@@ -11,6 +11,9 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWorkConductor;
 
+/**
+ * Orchestra conductor.
+ */
 public class Conductor extends MemberObject {
 	private ConductorMemberController	controller	= null;
 	

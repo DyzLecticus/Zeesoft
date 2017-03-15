@@ -11,6 +11,9 @@ import java.net.UnknownHostException;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
+/**
+ * Handles socket input and output. 
+ */
 public class SocketHandler {
 	private static final String END_OF_PROTOCOL_OUTPUT	= "END_OF_PROTOCOL_OUTPUT";
 	private Socket 				socket					= null;

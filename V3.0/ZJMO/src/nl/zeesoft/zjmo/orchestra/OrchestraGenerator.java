@@ -5,6 +5,9 @@ import java.io.File;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zjmo.Orchestrator;
 
+/**
+ * Generates the orchestra directory containing scripts and folders required to manage MemberObject instances.
+ */
 public class OrchestraGenerator {
 	public String generate(Orchestra orch,File dir) {
 		String err = "";
