@@ -28,8 +28,6 @@ public class WorkClientPool extends Locker {
 				r = workCl.getClient(source);
 				if (r!=null) {
 					break;
-				} else {
-					getMessenger().debug(this,"Failed to connect to: " + memberId);
 				}
 			}
 		}

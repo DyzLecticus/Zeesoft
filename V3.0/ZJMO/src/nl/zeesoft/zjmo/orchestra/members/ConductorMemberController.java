@@ -175,8 +175,6 @@ public class ConductorMemberController extends Locker {
 				r = workClientPool.getClient(source,mem.getId());
 				if (r!=null) {
 					break;
-				} else {
-					getMessenger().debug(this,"Failed to connect to: " + mem.getId());
 				}
 			}
 		}

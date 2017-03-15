@@ -39,8 +39,6 @@ public class WorkClients extends Locker {
 				client.getSetInUseBy(source);
 				clients.add(client);
 				r = client;
-			} else {
-				getMessenger().debug(this,"Failed to connect to: " + member.getId());				
 			}
 		}
 		unlockMe(source);
