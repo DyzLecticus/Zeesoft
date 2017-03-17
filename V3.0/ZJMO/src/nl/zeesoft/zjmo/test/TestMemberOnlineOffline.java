@@ -49,7 +49,7 @@ public class TestMemberOnlineOffline extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(Player.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows how the orchestra member state representation changes while the state of one of the backup members is manipulated  ");
+		System.out.println("The output of this test shows how the orchestra member state representation changes while the state of one of the backup members is manipulated.  ");
 	}
 
 	@Override

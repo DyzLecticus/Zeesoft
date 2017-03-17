@@ -17,6 +17,7 @@ public class TestOrchestrator extends TestObject {
 	@Override
 	protected void describe() {
 		System.out.println("This test shows how to how the *Orchestrator* can be used to prepare machine contents.");
+		System.out.println("It is not included in the ZJMO test set because it writes files.");
 	}
 
 	@Override

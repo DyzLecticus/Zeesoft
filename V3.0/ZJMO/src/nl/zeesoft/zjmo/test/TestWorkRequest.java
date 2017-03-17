@@ -52,10 +52,9 @@ public class TestWorkRequest extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(MockConductor.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockPlayers.class));
 		System.out.println(" * " + getTester().getLinkForClass(WorkRequest.class));
-		System.out.println(" * " + getTester().getLinkForClass(Player.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows how the orchestra member state representation changes while the state of one of the backup members is manipulated  ");
+		System.out.println("The output of this test shows how one of the players handles a work request while draining offline, allowing a backup player to take over the position for the next work requests.  ");
 	}
 
 	@Override
