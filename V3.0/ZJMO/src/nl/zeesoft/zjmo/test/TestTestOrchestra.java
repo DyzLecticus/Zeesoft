@@ -24,7 +24,7 @@ public class TestTestOrchestra extends TestObject {
 		System.out.println("~~~~");
 		System.out.println("// Create orchestra");
 		System.out.println("TestOrchestra orch = new TestOrchestra();");
-		System.out.println("// initialize the orchestra");
+		System.out.println("// Initialize the orchestra");
 		System.out.println("orch.initialize();");
 		System.out.println("~~~~");
 		System.out.println();

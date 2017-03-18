@@ -13,25 +13,11 @@ public class ProtocolWork extends ProtocolObject {
 		if (output==null) {
 			JsFile json = getJsonForInput(input);
 			if (json.rootElement!=null) {
-				JsElem sleep = json.rootElement.getChildByName("sleep");
-				if (sleep!=null && sleep.value!=null && sleep.value.length()>0) {
-					int slp = 0;
-					try {
-						slp = Integer.parseInt(sleep.value.toString());
-					} catch (NumberFormatException e) {
-						output = getErrorJson("The sleep parameter requires a valid integer value");
-					}
-					if (slp>0) {
-						try {
-							Thread.sleep(slp);
-						} catch (InterruptedException e) {
-							// Ignore
-						}
-					}
-				}
+				output = handleJson(member,json);
 			}
-			//System.out.println(this + ": Handle work: " + input);
-			output = input;
+			if (output==null) {
+				output = input;
+			}
 		}
 		return output;
 	}
@@ -42,5 +28,26 @@ public class ProtocolWork extends ProtocolObject {
 			json.fromStringBuilder(input);
 		}
 		return json;
+	}
+	
+	protected ZStringBuilder handleJson(MemberObject member,JsFile json) {
+		ZStringBuilder output = null;
+		JsElem sleep = json.rootElement.getChildByName("sleep");
+		if (sleep!=null && sleep.value!=null && sleep.value.length()>0) {
+			int slp = 0;
+			try {
+				slp = Integer.parseInt(sleep.value.toString());
+			} catch (NumberFormatException e) {
+				output = getErrorJson("The sleep parameter requires a valid integer value");
+			}
+			if (slp>0) {
+				try {
+					Thread.sleep(slp);
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+			}
+		}
+		return output;
 	}
 }

@@ -15,7 +15,7 @@ public class ZJMO extends LibraryObject {
 		setNameFull("Zeesoft JSON Machine Orchestration");
 		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZJMO/");
 		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZJMO/releases/");
-		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJM/");
+		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/");
 		getDependencies().add(new ZDK(null));
 	}
 
@@ -32,7 +32,7 @@ public class ZJMO extends LibraryObject {
 	@Override
 	public void describe() {
 		System.out.println("Zeesoft JSON Machine Orchestration");
-		System.out.println("======================");
+		System.out.println("==================================");
 		System.out.println("Zeesoft JSON Machine Orchestration (ZJMO) is an open source library for Java application development.");
 		System.out.println("The aim of the ZJMO project is to provide a scalable, high availability, JSON based, work distribution architecture.");
 		System.out.println("Imagine an orchestra where the conductor directs the other members to play a certain composition.");
