@@ -118,9 +118,12 @@ public class Orchestrator {
 						} else {
 							mem = orch.getNewPlayer(null,positionName,positionBackupNumber);
 						}
-						mem.start();
+						if (!mem.start()) {
+							mem.stop();
+							err = "Failed to start " + mem.getId();
+						}
 					} else if (action.equals(STOP)) {
-						MemberClient client = member.getNewControlClient(null);
+						MemberClient client = member.getNewControlClient(null,null);
 						client.sendCommand(ProtocolControl.STOP_PROGRAM);
 					}
 				}

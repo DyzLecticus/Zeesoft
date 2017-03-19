@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
 /**
@@ -15,6 +16,8 @@ public class OrchestraMember extends Locker {
 	private String 		ipAddressOrHostName		= "";
 	private int			controlPort				= 5433;
 	private int			workPort				= 5432;
+	private int			workRequestTimeout		= 500;
+	private boolean		workRequestTimeoutDrain	= false;
 
 	private MemberState	state					= null;
 	private int			workLoad				= 0;
@@ -62,6 +65,22 @@ public class OrchestraMember extends Locker {
 		this.workPort = workPort;
 	}
 
+	public int getWorkRequestTimeout() {
+		return workRequestTimeout;
+	}
+
+	public void setWorkRequestTimeout(int workRequestTimeout) {
+		this.workRequestTimeout = workRequestTimeout;
+	}
+
+	public boolean isWorkRequestTimeoutDrain() {
+		return workRequestTimeoutDrain;
+	}
+
+	public void setWorkRequestTimeoutDrain(boolean workRequestTimeoutDrain) {
+		this.workRequestTimeoutDrain = workRequestTimeoutDrain;
+	}
+	
 	public Position getPosition() {
 		return position;
 	}
@@ -130,6 +149,8 @@ public class OrchestraMember extends Locker {
 		mem.children.add(new JsElem("ipAddressOrHostName",getIpAddressOrHostName(),true));
 		mem.children.add(new JsElem("controlPort","" + getControlPort()));
 		mem.children.add(new JsElem("workPort","" + getWorkPort()));
+		mem.children.add(new JsElem("workRequestTimeout","" + getWorkRequestTimeout()));
+		mem.children.add(new JsElem("workRequestTimeoutDrain","" + isWorkRequestTimeoutDrain()));
 		if (includeState) {
 			mem.children.add(new JsElem("state",getState().getCode(),true));
 			if (!getState().getCode().equals(MemberState.UNKNOWN)) {
@@ -144,11 +165,11 @@ public class OrchestraMember extends Locker {
 		return mem;
 	}
 	
-	public MemberClient getNewControlClient(Messenger messenger) {
-		return new MemberClient(messenger,getIpAddressOrHostName(),getControlPort());
+	public MemberClient getNewControlClient(Messenger messenger,WorkerUnion union) {
+		return new MemberClient(messenger,union,getIpAddressOrHostName(),getControlPort());
 	}
 
-	public WorkClient getNewWorkClient(Messenger messenger) {
-		return new WorkClient(messenger,getId(),getIpAddressOrHostName(),getWorkPort());
+	public WorkClient getNewWorkClient(Messenger messenger,WorkerUnion union) {
+		return new WorkClient(messenger,union,getId(),getIpAddressOrHostName(),getWorkPort(),workRequestTimeout);
 	}
 }

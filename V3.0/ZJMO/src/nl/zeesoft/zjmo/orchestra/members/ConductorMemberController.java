@@ -28,7 +28,7 @@ public class ConductorMemberController extends Locker {
 		super(msgr);
 		this.orchestra = orchestra;
 		this.union = uni;
-		workClientPool = new WorkClientPool(msgr,orchestra);
+		workClientPool = new WorkClientPool(msgr,uni,orchestra);
 		workClientPoolWorker = new WorkClientPoolWorker(msgr,uni,workClientPool,orchestra.closeUnusedWorkClientsMilliseconds());
 	}
 
@@ -39,7 +39,7 @@ public class ConductorMemberController extends Locker {
 		stateClients.clear();
 		stateWorkers.clear();
 		for (OrchestraMember member: orchestra.getMembers()) {
-			clients.add(member.getNewControlClient(getMessenger()));
+			clients.add(member.getNewControlClient(getMessenger(),union));
 		}
 		workClientPoolWorker.start();
 		unlockMe(this);
@@ -99,11 +99,7 @@ public class ConductorMemberController extends Locker {
 	}
 
 	protected ZStringBuilder drainOffline(String id) {
-		ZStringBuilder response = sendMemberCommand(id,ProtocolControl.DRAIN_OFFLINE);
-		if (ProtocolControl.isResponseJson(response)) {
-			
-		}
-		return response;
+		return sendMemberCommand(id,ProtocolControl.DRAIN_OFFLINE);
 	}
 
 	protected ZStringBuilder bringOnline(String id) {
@@ -119,7 +115,7 @@ public class ConductorMemberController extends Locker {
 				if (!client.isOpen()) {
 					client.open();
 					if (client.isOpen()) {
-						MemberClient stateClient = member.getNewControlClient(getMessenger());
+						MemberClient stateClient = member.getNewControlClient(getMessenger(),union);
 						ConductorMemberStateWorker stateWorker = new ConductorMemberStateWorker(getMessenger(),union,this,stateClient,member.getId());
 						stateClients.add(stateClient);
 						stateWorkers.add(stateWorker);
@@ -153,6 +149,20 @@ public class ConductorMemberController extends Locker {
 		unlockMe(this);
 	}
 
+	protected boolean workRequestTimedOut(WorkClient client) {
+		boolean drain = false;
+		lockMe(this);
+		for (OrchestraMember mem: orchestra.getMembers()) {
+			if (mem.getId().equals(client.getMemberId()) && !mem.getState().getCode().equals(MemberState.UNKNOWN)) {
+				setMemberStateUnknown(mem,"Work request timed out");
+				drain = mem.isWorkRequestTimeoutDrain();
+				break;
+			}
+		}
+		unlockMe(this);
+		return drain;
+	}
+	
 	protected void setStateUnknown(String memberId,String errorMessage) {
 		lockMe(this);
 		for (OrchestraMember mem: orchestra.getMembers()) {
@@ -180,7 +190,7 @@ public class ConductorMemberController extends Locker {
 		}
 		unlockMe(source);
 		if (r==null) {
-			getMessenger().error(this,"Failed to setup work client for: " + positionName + " (members: " + mems.size() + ")");
+			getMessenger().error(this,"No players online for: " + positionName + " (members: " + mems.size() + ")");
 		}
 		return r;
 	}

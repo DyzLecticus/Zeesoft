@@ -29,7 +29,7 @@ public class PlayerCommandWorker extends Worker {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		MemberClient client = conductor.getNewControlClient(getMessenger());
+		MemberClient client = conductor.getNewControlClient(conductor.getMessenger(),conductor.getUnion());
 		if (client.open()) {
 			response = client.sendCommand(command,"id",player.getId());
 			

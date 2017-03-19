@@ -6,14 +6,17 @@ import java.util.List;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
 public class WorkClients extends Locker {
+	private WorkerUnion			union		= null;
 	private OrchestraMember		member		= null;
 	private List<WorkClient> 	clients 	= new ArrayList<WorkClient>();
 	
-	protected WorkClients(Messenger msgr,OrchestraMember member) {
+	protected WorkClients(Messenger msgr,WorkerUnion union,OrchestraMember member) {
 		super(msgr);
+		this.union = union;
 		this.member = member;
 	}
 	
@@ -34,7 +37,7 @@ public class WorkClients extends Locker {
 			}
 		}
 		if (r==null) {
-			WorkClient client = member.getNewWorkClient(getMessenger());
+			WorkClient client = member.getNewWorkClient(getMessenger(),union);
 			if (client.open()) {
 				client.getSetInUseBy(source);
 				clients.add(client);

@@ -3,6 +3,7 @@ package nl.zeesoft.zjmo.orchestra.protocol;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
+import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
@@ -36,15 +37,20 @@ public class ProtocolWorkConductor extends ProtocolWork {
 					while (retry) {
 						client = con.getClient(this,wr.getPositionName());
 						if (client==null) {
-							wr.setError("No players online for position: " + wr.getPositionName());
+							if (wr.getError().length()==0) {
+								wr.setError("No players online for position: " + wr.getPositionName());
+							}
 							output = wr.toJson().toStringBuilder();
 							retry = false;
 						} else {
 							wr.setResponse(null);
 							//System.out.println(this + ": Sending request: " + wr.getRequest().toStringBuilder());
-							ZStringBuilder response = client.writeOutputReadInput(wr.getRequest().toStringBuilder());
+							ZStringBuilder response = client.sendWorkRequestRequest(wr);
 							con.returnClient(client);
-							if (client.isOpen()) {
+							if (response==null || response.equals(getCommandJson(ProtocolObject.CLOSE_SESSION,null))) {
+								wr.setError("Work request timed out on: " + client.getMemberId());
+								con.workRequestTimedOut(client);
+							} else if (client.isOpen()) {
 								JsFile resp = new JsFile();
 								resp.fromStringBuilder(response);
 								if (resp.rootElement==null) {

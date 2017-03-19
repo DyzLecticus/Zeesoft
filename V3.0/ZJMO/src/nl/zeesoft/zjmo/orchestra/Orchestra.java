@@ -25,9 +25,14 @@ public abstract class Orchestra {
 	private List<Position> 			positions		= new ArrayList<Position>();
 	private List<OrchestraMember>	members			= new ArrayList<OrchestraMember>();
 	
+	// TODO: Create update orchestra (apart from generate)
+	// TODO: Client latency feedback including state update
+	// TODO: GUI
+	// TODO: Java documentation
+	
 	public Orchestra() {
 		addPosition(CONDUCTOR);
-		addMember(CONDUCTOR,0,"localhost",5433,5432);
+		addMember(CONDUCTOR,0,"localhost",5433,5432,500,false);
 	}
 	
 	public abstract void initialize();
@@ -135,8 +140,12 @@ public abstract class Orchestra {
 		}
 		return r;
 	}
-	
+
 	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort) {
+		return addMember(positionName,positionBackupNumber,ipAddressOrHostName,controlPort,workPort,500,false);
+	}
+
+	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort,int workRequestTimeout,boolean workRequestTimeoutDrain) {
 		OrchestraMember r = null;
 		if (getPosition(positionName)!=null) {
 			r = getMember(ipAddressOrHostName,controlPort);
@@ -153,6 +162,8 @@ public abstract class Orchestra {
 				r.setIpAddressOrHostName(ipAddressOrHostName);
 				r.setControlPort(controlPort);
 				r.setWorkPort(workPort);
+				r.setWorkRequestTimeout(workRequestTimeout);
+				r.setWorkRequestTimeoutDrain(workRequestTimeoutDrain);
 				r.setState(MemberState.getState(MemberState.UNKNOWN));
 				members.add(r);
 			}
@@ -206,10 +217,22 @@ public abstract class Orchestra {
 							member.setControlPort(Integer.parseInt(meme.value.toString()));
 						} else if (meme.name.equals("workPort") && meme.value!=null) {
 							member.setWorkPort(Integer.parseInt(meme.value.toString()));
+						} else if (meme.name.equals("workRequestTimeout") && meme.value!=null) {
+							member.setWorkRequestTimeout(Integer.parseInt(meme.value.toString()));
+						} else if (meme.name.equals("workRequestTimeoutDrain") && meme.value!=null) {
+							member.setWorkRequestTimeoutDrain(Boolean.parseBoolean(meme.value.toString()));
 						}
 					}
 					if (member.getPosition()!=null) {
-						addMember(member.getPosition().getName(),member.getPositionBackupNumber(),member.getIpAddressOrHostName(),member.getControlPort(),member.getWorkPort());
+						addMember(
+							member.getPosition().getName(),
+							member.getPositionBackupNumber(),
+							member.getIpAddressOrHostName(),
+							member.getControlPort(),
+							member.getWorkPort(),
+							member.getWorkRequestTimeout(),
+							member.isWorkRequestTimeoutDrain()
+							);
 					}
 				}
 			}

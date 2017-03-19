@@ -20,7 +20,7 @@ public class ConductorMemberStateWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		client.readInput();
+		client.readInput(0);
 		controller.setStateUnknown(memberId,"Lost connection");
 		client.close();
 		stop();

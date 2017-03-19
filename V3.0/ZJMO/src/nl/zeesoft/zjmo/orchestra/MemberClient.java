@@ -1,17 +1,20 @@
 package nl.zeesoft.zjmo.orchestra;
 
+import java.util.Date;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 /**
  * Used to connect to orchestra MemberObject instances.
  */
 public class MemberClient extends Locker {
+	private WorkerUnion			union				= null;
 	private ProtocolObject		protocol			= null;
 	private String				ipAddressOrHostName	= "localhost";
 	private int					port				= 5432;
@@ -25,8 +28,9 @@ public class MemberClient extends Locker {
 		this.protocol = getNewProtocol();
 	}
 
-	public MemberClient(Messenger msgr,String ipAddressOrHostName, int port) {
+	public MemberClient(Messenger msgr,WorkerUnion union,String ipAddressOrHostName, int port) {
 		super(msgr);
+		this.union = union;
 		this.ipAddressOrHostName = ipAddressOrHostName;
 		this.port = port;
 		this.protocol = getNewProtocol();
@@ -56,19 +60,19 @@ public class MemberClient extends Locker {
 		unlockMe(this);
 	}
 
-	public ZStringBuilder writeOutputReadInput(ZStringBuilder output) {
+	public ZStringBuilder writeOutputReadInput(ZStringBuilder output,int timeout) {
 		ZStringBuilder input = null;
 		lockMe(this);
 		writeOutputNoLock(output);
-		input = readInputNoLock();
+		input = readInputNoLock(timeout);
 		unlockMe(this);
 		return input;
 	}
 
-	public ZStringBuilder readInput() {
+	public ZStringBuilder readInput(int timeout) {
 		ZStringBuilder input = null;
 		lockMe(this);
-		input = readInputNoLock();
+		input = readInputNoLock(timeout);
 		unlockMe(this);
 		return input;
 	}
@@ -78,24 +82,24 @@ public class MemberClient extends Locker {
 	}
 
 	public ZStringBuilder sendCommand(String command) {
-		return writeOutputReadInput(protocol.getCommandJson(command,null));
+		return writeOutputReadInput(protocol.getCommandJson(command,null),100);
 	}
 
 	public ZStringBuilder sendCommand(String command, String pName, String pValue) {
 		SortedMap<String,String> params = new TreeMap<String,String>();
 		params.put(pName,pValue);
-		return writeOutputReadInput(protocol.getCommandJson(command,params));
+		return writeOutputReadInput(protocol.getCommandJson(command,params),100);
 	}
 
 	public ZStringBuilder sendCommand(String command, String pName1, String pValue1, String pName2, String pValue2) {
 		SortedMap<String,String> params = new TreeMap<String,String>();
 		params.put(pName1,pValue1);
 		params.put(pName2,pValue2);
-		return writeOutputReadInput(protocol.getCommandJson(command,params));
+		return writeOutputReadInput(protocol.getCommandJson(command,params),100);
 	}
 
 	public ZStringBuilder sendCommand(String command,SortedMap<String,String> parameters) {
-		return writeOutputReadInput(protocol.getCommandJson(command,parameters));
+		return writeOutputReadInput(protocol.getCommandJson(command,parameters),100);
 	}
 
 	protected ProtocolObject getNewProtocol() {
@@ -107,11 +111,56 @@ public class MemberClient extends Locker {
 		socket.writeOutput(output);
 	}
 
-	private ZStringBuilder readInputNoLock() {
+	private ZStringBuilder readInputNoLock(int timeout) {
 		initializeConnectionNoLock();
-		ZStringBuilder input = socket.readInput();
+		ZStringBuilder input = null;
 		ZStringBuilder closeSession = protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null);
-		if (input.equals(closeSession)) {
+		if (timeout>0) {
+			long started = (new Date()).getTime();
+			MemberClientWorker worker = new MemberClientWorker(getMessenger(),union,socket,timeout);
+			worker.start();
+			int i = 0;
+			int s = 1;
+			boolean error = false;
+			boolean timedOut = false;
+			while (worker.isReading()) {
+				try {
+					if (i>20) {
+						s = 5;
+					}
+					if (i>50) {
+						s = 10;
+					}
+					Thread.sleep(s);
+				} catch (InterruptedException e) {
+					if (getMessenger()!=null) {
+						getMessenger().error(this,"Read input was interrupted");
+					}
+					error = true;
+					break;
+				}
+				if ((new Date()).getTime() > started + timeout) {
+					timedOut = true;
+					break;
+				}
+				i++;
+			}
+			if (!error) {
+				if (timedOut) {
+					input = closeSession;
+				} else {
+					input = worker.getInput();
+					if (input==null) {
+						input = closeSession;
+					}
+				}
+			} else {
+				input = closeSession;
+			}
+		} else {
+			input = socket.readInput();
+		}
+		if (input!=null && input.equals(closeSession)) {
 			socket.writeOutput(closeSession);
 			socket.close();
 		}

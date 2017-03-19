@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
+import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
@@ -67,11 +68,14 @@ public class TestWorkRequest extends TestObject {
 		List<Player> players = (List<Player>) getTester().getMockedObject(MockPlayers.class.getName());
 		int i = 0;
 		Player dbX = null;
+		Player dbX1 = null;
 		for (Player player: players) {
 			started = player.start();
 			assertEqual(started,true,"Failed to start player: " + player.getId());
 			if (i==0) {
 				dbX = player;
+			} else if (i==4) {
+				dbX1 = player;
 			}
 			i++;
 		}
@@ -90,18 +94,18 @@ public class TestWorkRequest extends TestObject {
 			sleep(2000);
 			ZStringBuilder response = null;
 
-			MemberClient client = new MemberClient("localhost",5432);
+			WorkClient client = new WorkClient("localhost",5432,5000);
 			client.open();
 			assertEqual(client.isOpen(),true,"Failed to open the work client");
 			if (client.isOpen()) {
-				response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
+				response = client.sendWorkRequest(wr);
 				wr.fromStringBuilder(response);
 				assertEqual(wr.getError(),"Work request requires a position name","Response error does not match expectation");
 				wr.setError("");
 
 				wr.setPositionName("Database Z");
 
-				response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
+				response = client.sendWorkRequest(wr);
 				wr.fromStringBuilder(response);
 				assertEqual(wr.getError(),"Work request is empty","Response error does not match expectation");
 				wr.setError("");
@@ -109,7 +113,7 @@ public class TestWorkRequest extends TestObject {
 				wr.setPositionName("Database Z");
 				wr.setRequest(request);
 
-				response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
+				response = client.sendWorkRequest(wr);
 				wr.fromStringBuilder(response);
 				assertEqual(wr.getError(),"Work request position does not exist: Database Z","Response error does not match expectation");
 				wr.setError("");
@@ -123,7 +127,7 @@ public class TestWorkRequest extends TestObject {
 
 				System.out.println();	
 				System.out.println("Sending work request: " + wr.toJson().toStringBuilder());
-				response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
+				response = client.sendWorkRequest(wr);
 
 				System.out.println();	
 				System.out.println("Work request response: " + response);
@@ -146,7 +150,7 @@ public class TestWorkRequest extends TestObject {
 				System.out.println();	
 				start = new Date();
 				System.out.println("Sending work request to backup: " + wr.toJson().toStringBuilder());
-				response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
+				response = client.sendWorkRequest(wr);
 				System.out.println("Work request response from backup: " + response);
 				System.out.println("First work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
 				wr.fromStringBuilder(response);
@@ -162,7 +166,7 @@ public class TestWorkRequest extends TestObject {
 				System.out.println();	
 				start = new Date();
 				System.out.println("Sending work request to backup: " + wr.toJson().toStringBuilder());
-				response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
+				response = client.sendWorkRequest(wr);
 				System.out.println("Work request response from backup: " + response);
 				System.out.println("Second work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
 				wr.fromStringBuilder(response);
@@ -171,7 +175,34 @@ public class TestWorkRequest extends TestObject {
 					assertEqual(wr.getRequest().toStringBuilder(),wr.getResponse().toStringBuilder(),"Response does not equal request");
 				}
 
-				sleep(1000);
+				request = new JsFile();
+				request.rootElement = new JsElem();
+				request.rootElement.children.add(new JsElem("echoMe","Echo me this",true));
+				request.rootElement.children.add(new JsElem("sleep","3000"));
+				
+				wr.setPositionName("Database X");
+				wr.setRequest(request);
+				wr.setResponse(null);
+				
+				System.out.println();	
+				start = new Date();
+				System.out.println("Sending work request to backup: " + wr.toJson().toStringBuilder());
+				response = client.sendWorkRequest(wr);
+				System.out.println("Work request response from backup: " + response);
+				System.out.println("Second work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
+				wr.fromStringBuilder(response);
+				assertEqual(wr.getResponse()==null,true,"Response is not empty");
+				assertEqual(wr.getError(),"Work request timed out on: Database X/1","Time out error does not match expectation");
+				
+				System.out.println();
+				System.out.println("Player state JSON:");
+				System.out.println(con.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
+				
+				sleep(3000);
+				
+				System.out.println();
+				System.out.println("Player state JSON:");
+				System.out.println(con.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
 			}
 
 			MemberClient stopClient = new MemberClient("localhost",5433);

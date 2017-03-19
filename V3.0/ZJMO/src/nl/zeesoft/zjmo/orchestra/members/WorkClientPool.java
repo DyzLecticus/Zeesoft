@@ -5,6 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
@@ -12,11 +13,11 @@ public class WorkClientPool extends Locker {
 	private Orchestra			orchestra		= null;
 	private List<WorkClients>	workClientsList	= new ArrayList<WorkClients>();
 
-	protected WorkClientPool(Messenger msgr, Orchestra orchestra) {
+	protected WorkClientPool(Messenger msgr,WorkerUnion union,Orchestra orchestra) {
 		super(msgr);
 		this.orchestra = orchestra;
 		for (OrchestraMember member: orchestra.getMembers()) {
-			workClientsList.add(new WorkClients(msgr,member));
+			workClientsList.add(new WorkClients(msgr,union,member));
 		}
 	}
 

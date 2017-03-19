@@ -22,11 +22,15 @@ public class ConductorMemberDrainOfflineWorker extends Worker {
 		controller.closeUnusedClients(memberId,0);
 		controller.getState(memberId);
 		if (controller.getMemberWorkLoad(memberId)==0) {
-			ZStringBuilder response = controller.takeOffline(memberId);
+			ZStringBuilder response = getTakeOfflineResponse(controller,memberId);
 			if (ProtocolObject.isResponseJson(response)) {
 				controller.getState(memberId);
 			}
 			stop();
 		}
+	}
+	
+	public ZStringBuilder getTakeOfflineResponse(ConductorMemberController controller, String memberId) {
+		return controller.takeOffline(memberId);
 	}
 }
