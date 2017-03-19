@@ -117,6 +117,7 @@
 		<copy file="${dist}/zso.jar" tofile="${releases}/${version}/zso.jar"/>
 		<copy file="${dist}/zso-javadoc.zip" tofile="${releases}/${version}/zso-javadoc.zip"/>
 		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
+		<antcall target="releaseOrchestra"/>
 		<zip destfile="${releases}/zso-${version}.zip" basedir="${releases}/${version}"/>
 		<delete dir="${releases}/${version}"/>
 		<copy file="${dist}/README.md" tofile="README.md"/>
@@ -130,9 +131,14 @@
 		        <include name="**/*.java"/>
 		    </patternset>
 		</unzip>
+		<unzip src="${lib}/zjmo.jar" dest="${dist}/src">
+		    <patternset>
+		        <include name="**/*.java"/>
+		    </patternset>
+		</unzip>
 		<copy todir="${dist}/src">
             <fileset dir="${src}" />
-        </copy>		
+        </copy>
 		<mkdir dir="${dist}/javadoc"/>
 		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zso,nl.zeesoft.zso.orchestra,nl.zeesoft.zso.orchestra.members"/>
 		<zip destfile="${dist}/zso-javadoc.zip" basedir="${dist}/javadoc"/>
@@ -162,6 +168,13 @@
 		</exec>
 	</target>
 
+	<target name="releaseOrchestra" depends="orchestraExists" if="_orchestraExists">
+		<mkdir dir="${releases}/${version}/orchestra"/>
+		<copy todir="${releases}/${version}/orchestra">
+            <fileset dir="orchestra/" excludes="**/members/**"/>
+        </copy>		
+	</target>
+	
 	<target name="orchestraExists">
 		<condition property="_orchestraExists">
 			<available file="orchestra" type="dir"/>

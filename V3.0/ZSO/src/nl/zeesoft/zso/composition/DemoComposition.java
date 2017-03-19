@@ -17,8 +17,9 @@ public class DemoComposition extends Composition {
 		getSteps().add(new Step(SampleOrchestra.HIHAT,1,7,100,50));
 		getSteps().add(new Step(SampleOrchestra.HIHAT,1,8,100,50));
 		getSteps().add(new Step(SampleOrchestra.HIHAT,1,9,150,10));
+		getSteps().add(new Step(SampleOrchestra.HIHAT,1,10,150,10));
 		getSteps().add(new Step(SampleOrchestra.HIHAT,1,11,100,50));
 		getSteps().add(new Step(SampleOrchestra.HIHAT,1,13,150,10));
-		getSteps().add(new Step(SampleOrchestra.HIHAT,1,15,0,100));
+		getSteps().add(new Step(SampleOrchestra.HIHAT,1,15,0,150));
 	}
 }
