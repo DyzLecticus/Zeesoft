@@ -11,6 +11,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
@@ -28,6 +29,12 @@ public class SamplePlayer extends Player {
 		} else {
 			error = "Failed to load sample";
 		}
+	}
+
+	@Override
+	public void stop(Worker ignoreWorker) {
+		worker.stop();
+		super.stop(ignoreWorker);
 	}
 
 	@Override
@@ -80,5 +87,9 @@ public class SamplePlayer extends Player {
 	
 	protected void stopClip(){
 		clip.stop();
+	}	
+
+	protected boolean clipHasStopped(){
+		return !clip.isActive();
 	}	
 }

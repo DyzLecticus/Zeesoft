@@ -33,7 +33,12 @@ public class SamplePlayerWorker extends Worker {
 	@Override
 	public void whileWorking() {
 		if (end>0 && (new Date()).getTime()>=end) {
+			stop();
 			player.stopClip();
+			player.setStartMs(0);
+		} else if (player.clipHasStopped()) {
+			stop();
+			player.setStartMs(0);
 		}
 	}
 }
