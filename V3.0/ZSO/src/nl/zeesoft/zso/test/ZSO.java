@@ -47,6 +47,6 @@ public class ZSO extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		tests.add(new TestDemoComposition(this.getTester()));
+		tests.add(new TestDemoComposition(getTester()));
 	}
 }

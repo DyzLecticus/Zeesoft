@@ -28,7 +28,10 @@ public class OrchestraGenerator {
 			memberDir.mkdir();
 		}
 		if (err.length()==0) {
-			generateLibraryCopyScript(orchDir,memberDir,orch);
+			err = orch.toJson(false).toFile(orchDir.getAbsolutePath() + "/orchestra.json",true);
+		}
+		if (err.length()==0) {
+			generateMemberUpdateScript(orchDir,memberDir,orch);
 			generateMemberDirs(memberDir,orch);
 			generateMemberScripts(memberDir,orch);
 			if (orch.isLocalHost()) {
@@ -112,12 +115,16 @@ public class OrchestraGenerator {
 	protected void generateMemberScripts(File memberDir,Orchestra orch) {
 		ZStringBuilder json = orch.toJson(false).toStringBuilderReadFormat();
 		for (OrchestraMember member: orch.getMembers()) {
-			generateMemberStartScript(orch,memberDir,member);
-			generateMemberStopScript(orch,memberDir,member);
-			json.toFile(getDirectoryNameForMember(memberDir,member) + "/orchestra.json");
-			if (isWindows()) {
-				generateMemberBackgroundScript(memberDir,member);
-			}
+			generateMemberScripts(memberDir,orch,json,member);
+		}
+	}
+
+	protected void generateMemberScripts(File memberDir,Orchestra orch,ZStringBuilder json,OrchestraMember member) {
+		generateMemberStartScript(orch,memberDir,member);
+		generateMemberStopScript(orch,memberDir,member);
+		json.toFile(getDirectoryNameForMember(memberDir,member) + "/orchestra.json");
+		if (isWindows()) {
+			generateMemberBackgroundScript(memberDir,member);
 		}
 	}
 	
@@ -219,22 +226,30 @@ public class OrchestraGenerator {
 		return script;
 	}
 	
-	protected void generateLibraryCopyScript(File orchDir,File memberDir,Orchestra orch) {
-		String fileName = orchDir.getAbsolutePath() + "/copyLib";
+	protected void generateMemberUpdateScript(File orchDir,File memberDir,Orchestra orch) {
+		String fileName = orchDir.getAbsolutePath() + "/updateMembers";
 		ZStringBuilder script = null;
 		if (isWindows()) {
 			fileName += ".bat";
-			script = getLibraryCopyBatScript(memberDir,orch);
+			script = getMemberUpdateBatScript(memberDir,orch);
 		} else {
 			fileName += ".sh";
-			script = getLibraryCopyScript(memberDir,orch);
+			script = getMemberUpdateScript(memberDir,orch);
 		}
 		script.toFile(fileName);
 	}
 
-	protected ZStringBuilder getLibraryCopyScript(File memberDir,Orchestra orch) {
+	protected ZStringBuilder getMemberUpdateScript(File memberDir,Orchestra orch) {
 		ZStringBuilder script = new ZStringBuilder();
 		script.append("#!/bin/bash\n");
+		script.append("\n");
+		script.append("java -jar lib/");
+		script.append(getJarFileName());
+		script.append(".jar ");
+		script.append(Orchestrator.UPDATE);
+		script.append(" ");
+		script.append(orch.getClass().getName());
+		script.append(" ../");
 		script.append("\n");
 		for (OrchestraMember member: orch.getMembers()) {
 			script.append("cp lib/*  ");
@@ -244,8 +259,16 @@ public class OrchestraGenerator {
 		return script;
 	}
 
-	protected ZStringBuilder getLibraryCopyBatScript(File memberDir,Orchestra orch) {
+	protected ZStringBuilder getMemberUpdateBatScript(File memberDir,Orchestra orch) {
 		ZStringBuilder script = new ZStringBuilder();
+		script.append("java -jar lib\\");
+		script.append(getJarFileName());
+		script.append(".jar ");
+		script.append(Orchestrator.UPDATE);
+		script.append(" ");
+		script.append(orch.getClass().getName());
+		script.append(" ..\\");
+		script.append("\r\n");
 		for (OrchestraMember member: orch.getMembers()) {
 			script.append("xcopy lib\\*  ");
 			script.append(getRelativeDirectoryNameForMember(member) + "\\lib");

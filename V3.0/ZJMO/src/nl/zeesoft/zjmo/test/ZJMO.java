@@ -21,7 +21,12 @@ public class ZJMO extends LibraryObject {
 
 	public static void main(String[] args) {
 		if (args!=null && args.length>1 && 
-			(args[0].equals(Orchestrator.GENERATE) || args[0].equals(Orchestrator.START) || args[0].equals(Orchestrator.STOP))
+			(
+				args[0].equals(Orchestrator.GENERATE) || 
+				args[0].equals(Orchestrator.UPDATE) || 
+				args[0].equals(Orchestrator.START) || 
+				args[0].equals(Orchestrator.STOP)
+			)
 			) {
 			Orchestrator.main(args);
 		} else {
@@ -47,9 +52,9 @@ public class ZJMO extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		tests.add(new TestTestOrchestra(this.getTester()));
-		tests.add(new TestConductor(this.getTester()));
-		tests.add(new TestMemberOnlineOffline(this.getTester()));
-		tests.add(new TestWorkRequest(this.getTester()));
+		tests.add(new TestTestOrchestra(getTester()));
+		tests.add(new TestConductor(getTester()));
+		tests.add(new TestMemberOnlineOffline(getTester()));
+		tests.add(new TestWorkRequest(getTester()));
 	}
 }

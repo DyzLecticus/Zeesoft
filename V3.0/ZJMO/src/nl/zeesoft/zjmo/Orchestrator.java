@@ -14,7 +14,8 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
  * Entry point for local orchestra generation and member control.
  */
 public class Orchestrator {
-	public static final String	GENERATE	= "GENERATE_ORCHESTRA";
+	public static final String	GENERATE	= "GENERATE";
+	public static final String	UPDATE		= "UPDATE";
 	public static final String	START		= "START";
 	public static final String	STOP		= "STOP";
 	
@@ -31,7 +32,7 @@ public class Orchestrator {
 		
 		if (args!=null && args.length>=2) {
 			action = args[0];
-			if (action.equals(GENERATE)) {
+			if (action.equals(GENERATE) || action.equals(UPDATE)) {
 				orchestraClassName = args[1];
 				if (args.length>=3) {
 					generateDirectory = args[2];
@@ -80,14 +81,29 @@ public class Orchestrator {
 		if (orch!=null) {
 			if (action.equals(GENERATE)) {
 				File genDir = new File(generateDirectory);
-				if (orchestraClassName.length()==0) {
-					err = "Orchestra generation requires an orchestra class name as second parameter";
+				if (generateDirectory.length()>0 && !genDir.isDirectory()) {
+					err = "Orchestra generation requires valid directory as a third parameter";
 				}
 				if (err.length()==0) {
 					orch.initialize();
 					OrchestraGenerator generator = orch.getNewGenerator();
 					System.out.println("Generating " + orchestraClassName + " to directory: " + genDir.getAbsolutePath() + " ...");
 					err = generator.generate(orch,genDir);
+				}
+			} else if (action.equals(UPDATE)) {
+				File genDir = new File(generateDirectory);
+				if (generateDirectory.length()>0 && !genDir.isDirectory()) {
+					err = "Orchestra generation requires valid directory as a third parameter";
+				}
+				if (err.length()==0) {
+					JsFile json = new JsFile();
+					err = json.fromFile(genDir.getAbsolutePath() + "/orchestra/orchestra.json");
+					if (err.length()==0) {
+						orch.fromJson(json);
+						OrchestraGenerator generator = orch.getNewGenerator();
+						System.out.println("Updating " + orchestraClassName + " in directory: " + genDir.getAbsolutePath() + " ...");
+						err = generator.generate(orch,genDir);
+					}
 				}
 			} else if (action.equals(START) || action.equals(STOP)) {
 				OrchestraMember member = null;

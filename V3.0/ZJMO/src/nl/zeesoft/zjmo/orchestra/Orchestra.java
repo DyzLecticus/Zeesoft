@@ -25,7 +25,6 @@ public abstract class Orchestra {
 	private List<Position> 			positions		= new ArrayList<Position>();
 	private List<OrchestraMember>	members			= new ArrayList<OrchestraMember>();
 	
-	// TODO: Create update orchestra (apart from generate)
 	// TODO: Client latency feedback including state update
 	// TODO: GUI
 	// TODO: Java documentation
