@@ -71,7 +71,7 @@ public class CompositionPlayerWorker extends Worker {
 			WorkRequest wr = new WorkRequest();
 			wr.setPositionName(positionName);
 			wr.setRequest(req);
-			client.writeOutputReadInput(wr.toJson().toStringBuilder());
+			client.sendWorkRequest(wr);
 			setPlayDateTime(0,0,0);
 		}
 	}

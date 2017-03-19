@@ -22,9 +22,9 @@ public class CompositionPlayer extends Worker {
 		super(msgr, union);
 		setSleep(1);
 		this.conductor = conductor;
-		workers.put(SampleOrchestra.BASEBEAT,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr),SampleOrchestra.BASEBEAT));
-		workers.put(SampleOrchestra.SNARE,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr),SampleOrchestra.SNARE));
-		workers.put(SampleOrchestra.HIHAT,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr),SampleOrchestra.HIHAT));
+		workers.put(SampleOrchestra.BASEBEAT,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr,union),SampleOrchestra.BASEBEAT));
+		workers.put(SampleOrchestra.SNARE,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr,union),SampleOrchestra.SNARE));
+		workers.put(SampleOrchestra.HIHAT,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr,union),SampleOrchestra.HIHAT));
 	}
 	
 	@Override

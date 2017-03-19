@@ -19,14 +19,14 @@ public class SampleOrchestra extends Orchestra {
 		addPosition(SNARE);
 		addPosition(HIHAT);
 		
-		addMember(BASEBEAT,0,LOCALHOST,6543,6542);
-		addMember(SNARE,0,LOCALHOST,7654,7653);
-		addMember(HIHAT,0,LOCALHOST,8765,8764);
+		addMember(BASEBEAT,0,LOCALHOST,6543,6542,100,true);
+		addMember(SNARE,0,LOCALHOST,7654,7653,100,true);
+		addMember(HIHAT,0,LOCALHOST,8765,8764,100,true);
 
 		// Backups 
-		addMember(BASEBEAT,1,LOCALHOST,6541,6540);
-		addMember(SNARE,1,LOCALHOST,7652,7651);
-		addMember(HIHAT,1,LOCALHOST,8763,8762);
+		addMember(BASEBEAT,1,LOCALHOST,6541,6540,100,false);
+		addMember(SNARE,1,LOCALHOST,7652,7651,100,false);
+		addMember(HIHAT,1,LOCALHOST,8763,8762,100,false);
 	}
 
 	@Override
