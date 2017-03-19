@@ -82,6 +82,16 @@ public class Composition {
 		}
 	}
 	
+	public int getBars() {
+		int bar = 0;
+		for (Step step: steps) {
+			if (step.getBar()>bar) {
+				bar = step.getBar();
+			}
+		}
+		return bar;
+	}
+
 	public int getStepsPerBar() {
 		return (beatsPerBar * stepsPerBeat);
 	}
@@ -90,6 +100,18 @@ public class Composition {
 		return (60000 / beatsPerMinute) / stepsPerBeat;
 	}
 
+	public List<Step> getSteps(int bar, int number) {
+		List<Step> r = new ArrayList<Step>();
+		List<String> added = new ArrayList<String>();
+		for (Step step: steps) {
+			if (step.getBar()==bar && step.getNumber()==number && !added.contains(step.getPositionName())) {
+				r.add(step);
+				added.add(step.getPositionName());
+			}
+		}
+		return r;
+	}
+	
 	public String getName() {
 		return name;
 	}

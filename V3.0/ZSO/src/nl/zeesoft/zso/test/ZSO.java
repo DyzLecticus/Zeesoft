@@ -36,6 +36,7 @@ public class ZSO extends LibraryObject {
 		System.out.println("Zeesoft Sample Orchestration");
 		System.out.println("============================");
 		System.out.println("Zeesoft Sample Orchestration (ZSO) is an extendable sample based orchestra that can play compositions.");
+		System.out.println();
 		describeDependencies();
 		System.out.println();
 		describeRelease();

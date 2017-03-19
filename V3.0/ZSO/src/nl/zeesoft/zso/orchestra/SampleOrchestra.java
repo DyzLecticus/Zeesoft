@@ -3,7 +3,9 @@ package nl.zeesoft.zso.orchestra;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraGenerator;
+import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
+import nl.zeesoft.zso.orchestra.members.SampleConductor;
 import nl.zeesoft.zso.orchestra.members.SamplePlayer;
 
 public class SampleOrchestra extends Orchestra {
@@ -22,9 +24,9 @@ public class SampleOrchestra extends Orchestra {
 		addMember(HIHAT,0,LOCALHOST,8765,8764);
 
 		// Backups 
-		addMember(BASEBEAT,0,LOCALHOST,6541,6540);
-		addMember(SNARE,0,LOCALHOST,7652,7651);
-		addMember(HIHAT,0,LOCALHOST,8763,8762);
+		addMember(BASEBEAT,1,LOCALHOST,6541,6540);
+		addMember(SNARE,1,LOCALHOST,7652,7651);
+		addMember(HIHAT,1,LOCALHOST,8763,8762);
 	}
 
 	@Override
@@ -33,7 +35,12 @@ public class SampleOrchestra extends Orchestra {
 	}
 
 	@Override
+	public Conductor getNewConductor(Messenger msgr) {
+		return new SampleConductor(msgr,this);
+	}
+
+	@Override
 	public Player getNewPlayer(Messenger msgr, String positionName, int positionBackupNumber) {
-		return new SamplePlayer(msgr, this, positionName, positionBackupNumber);
+		return new SamplePlayer(msgr,this,positionName,positionBackupNumber);
 	}
 }

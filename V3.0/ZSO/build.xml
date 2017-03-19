@@ -3,7 +3,7 @@
 	<description>ZSO build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.1.0"/>
+	<property name="version" value="0.9.0"/>
 	
 	<!-- ZDK version -->
 	<property name="versionZDK" value="0.9.21"/>
@@ -62,10 +62,11 @@
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
 		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
+		<copy file="${lib}/zjmo.jar" tofile="${dist}/zjmo.jar"/>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zso nl/zeesoft/zso/json nl/zeesoft/zso/orchestra nl/zeesoft/zso/orchestra/members nl/zeesoft/zso/orchestra/protocol nl/zeesoft/zso/test nl/zeesoft/zso/test/mocks zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zso nl/zeesoft/zso/orchestra nl/zeesoft/zso/orchestra/members nl/zeesoft/zso/test zdk.jar zjmo.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zso.test.ZSO"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -80,6 +81,10 @@
 		<fail if="_abort" message="One or more tests failed"/>		
 		<!-- Rebuild jar file (include README.md) -->
 		<copy file="${dist}/README.md" tofile="${build}/README.md"/>
+		<mkdir dir="${build}/samples"/>
+		<copy todir="${build}/samples">
+            <fileset dir="samples/" includes="**/*.wav"/>
+        </copy>		
 		<jar jarfile="${dist}/zso.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Remove sources from build directory -->
 		<delete>
@@ -107,6 +112,8 @@
 		<mkdir dir="${releases}/${version}"/>
 		<copy file="${dist}/zdk.jar" tofile="${releases}/${version}/zdk.jar"/>
 		<copy file="${lib}/zdk-javadoc.zip" tofile="${releases}/${version}/zdk-javadoc.zip"/>
+		<copy file="${dist}/zjmo.jar" tofile="${releases}/${version}/zjmo.jar"/>
+		<copy file="${lib}/zjmo-javadoc.zip" tofile="${releases}/${version}/zjmo-javadoc.zip"/>
 		<copy file="${dist}/zso.jar" tofile="${releases}/${version}/zso.jar"/>
 		<copy file="${dist}/zso-javadoc.zip" tofile="${releases}/${version}/zso-javadoc.zip"/>
 		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
@@ -127,7 +134,7 @@
             <fileset dir="${src}" />
         </copy>		
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zso,nl.zeesoft.zso.json,nl.zeesoft.zso.orchestra,nl.zeesoft.zso.orchestra.members,nl.zeesoft.zso.orchestra.protocol"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zso,nl.zeesoft.zso.orchestra,nl.zeesoft.zso.orchestra.members"/>
 		<zip destfile="${dist}/zso-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>
