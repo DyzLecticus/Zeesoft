@@ -153,6 +153,14 @@ public abstract class Orchestra {
 					positionBackupNumber = 0;
 				}
 				r = getMemberById(positionName + "/" + positionBackupNumber);
+				if (r!=null) {
+					r.setIpAddressOrHostName(ipAddressOrHostName);
+					r.setControlPort(controlPort);
+					r.setWorkPort(workPort);
+					r.setWorkRequestTimeout(workRequestTimeout);
+					r.setWorkRequestTimeoutDrain(workRequestTimeoutDrain);
+					r.setState(MemberState.getState(MemberState.UNKNOWN));
+				}
 			}
 			if (r==null) {
 				r = new OrchestraMember();
