@@ -23,7 +23,7 @@ public class ConductorMemberDrainOfflineWorker extends Worker {
 		controller.getState(memberId);
 		if (controller.getMemberWorkLoad(memberId)==0) {
 			ZStringBuilder response = getTakeOfflineResponse(controller,memberId);
-			if (ProtocolObject.isResponseJson(response)) {
+			if (response==null || ProtocolObject.isResponseJson(response)) {
 				controller.getState(memberId);
 			}
 			stop();

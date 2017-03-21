@@ -79,7 +79,7 @@ public class Conductor extends MemberObject {
 
 	public void workRequestTimedOut(WorkClient client) {
 		if (controller.workRequestTimedOut(client)) {
-			drainOffline(client.getMemberId());
+			
 			ConductorMemberDrainOnlineWorker worker = new ConductorMemberDrainOnlineWorker(getMessenger(),getUnion(),controller,client.getMemberId());
 			worker.start();
 		}
