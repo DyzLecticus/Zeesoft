@@ -11,7 +11,7 @@ It provides support for;
  * Self documenting and testing libraries  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.21.zip) to download the latest ZDK release (version 0.9.21).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-0.9.22.zip) to download the latest ZDK release (version 0.9.22).  
 All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -39,11 +39,11 @@ Class references;
 **Test output**  
 The output of this test shows 100 randomly generated integers within the range 0 - 9.
 ~~~~
-7 5 0 0 3 2 3 8 0 4 5 3 5 8 1 2 4 9 4 7
-0 4 4 9 1 8 5 6 2 7 2 3 4 3 0 6 4 5 0 0
-3 0 5 3 3 7 7 3 0 1 9 8 8 3 0 0 8 7 4 3
-8 5 3 0 0 1 3 4 0 8 1 4 7 0 8 1 6 9 6 4
-2 6 9 6 9 4 6 5 3 3 3 1 7 2 7 3 0 9 7 1
+9 9 4 2 7 2 3 6 4 7 9 4 3 6 4 0 5 7 2 0
+0 6 5 0 3 5 0 5 2 8 6 4 0 8 7 2 3 3 6 3
+0 0 8 0 6 4 5 5 4 5 1 0 0 7 9 8 9 9 9 0
+8 7 2 7 9 1 5 9 0 7 4 4 0 8 2 8 5 8 9 2
+5 5 1 8 4 6 0 8 0 6 8 0 3 7 9 6 5 5 9 6
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
@@ -72,9 +72,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 4399299540115875158924605701698379247876408819405560596394810171
+Key: 7144093249423387219062160793731223111003176677425676097769931476
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
-Encoded text: #0G0oeSd60qdUcUa20D6D8M8hbndmbDa587aZc4dQ980Ta57ZagcO7T8gcqeecv9icTdN9g0Bc:dxcwa6au8DdRb09RdJ0a8Ya6bkb26tbceybA0feJ00
+Encoded text: z3AYZ2J1nYM4VYyZA2F4S1eZe1u10474pZTXX5iY~37YmYa35YO4K5l1n481~X0YOY31BYiXdYHXIXRYaZz4R3C2u4d4K1:ZU2P3o482uYa6t4m4b4z50
 Decoded text: Hello, my name is Dyz Lecticus. How are you feeling today?
 ~~~~
 
@@ -218,19 +218,29 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2017-03-12 15:38:34:377 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2017-03-12 15:38:34:681 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2017-03-12 15:38:34:991 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2017-03-21 22:02:03:598 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2017-03-21 22:02:03:900 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2017-03-21 22:02:03:900 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+java.lang.NumberFormatException: For input string: "A"
+	at java.lang.NumberFormatException.forInputString(Unknown Source)
+	at java.lang.Integer.parseInt(Unknown Source)
+	at java.lang.Integer.parseInt(Unknown Source)
+	at nl.zeesoft.zdk.test.impl.TestMessenger.test(TestMessenger.java:83)
+	at nl.zeesoft.zdk.test.Tester.test(Tester.java:67)
+	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:37)
+	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:23)
+
+2017-03-21 22:02:04:210 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
 All 5 tests have been executed successfully (110 assertions).  
-Total test duration: 802 ms (total sleep duration: 600 ms).  
+Total test duration: 780 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 227 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 263 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 272 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 228 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 264 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 273 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestJson: 206 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 269 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 272 Kb / 0 Mb

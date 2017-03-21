@@ -79,6 +79,11 @@ public class TestMessenger extends TestObject {
 		messenger.start();
 		sleep(150);
 		messenger.error(listener,"Test log error message while Messenger is working");
+		try {
+			Integer.parseInt("A");
+		} catch (NumberFormatException ex) {
+			messenger.error(listener,"Test log exception stack trace",ex);
+		}
 		sleep(150);
 		messenger.stop();
 		sleep(150);
@@ -88,6 +93,6 @@ public class TestMessenger extends TestObject {
 		assertEqual(messenger.isWorking(),false,"Failed to stop the messenger");
 		assertEqual(messenger.isWarning(),true,"The messenger failed to register the warning message correctly");
 		assertEqual(messenger.isError(),true,"The messenger failed to register the warning error correctly");
-		assertEqual(listener.getMessages().size(),3,"Number of listened messages does not meet expectation");
+		assertEqual(listener.getMessages().size(),4,"Number of listened messages does not meet expectation");
 	}
 }

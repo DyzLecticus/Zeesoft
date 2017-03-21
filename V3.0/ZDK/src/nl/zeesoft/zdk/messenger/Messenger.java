@@ -36,10 +36,32 @@ public class Messenger extends Worker  {
 	 * @param message The message
 	 */
 	public void error(Object source, String message) {
+		error(source,message,null);
+	}
+	
+	/**
+	 * Adds an error message including the exception stack trace to the buffer.
+	 * 
+	 * @param source The source of the message
+	 * @param message The message
+	 * @param exception The exception
+	 */
+	public void error(Object source, String message,Exception exception) {
+		if (exception!=null) {
+			StringBuilder st = new StringBuilder("\n");
+			st.append(exception.toString());
+			st.append("\n");
+			for (StackTraceElement elem: exception.getStackTrace()) {
+				st.append("\tat ");
+				st.append(elem.toString());
+				st.append("\n");
+			}
+			message += st;
+		}
 		ErrorMessage msg = new ErrorMessage(source,message);
 		addMessage(msg);
 	}
-	
+		
 	/**
 	 * Adds a warning message to the buffer.
 	 * 
