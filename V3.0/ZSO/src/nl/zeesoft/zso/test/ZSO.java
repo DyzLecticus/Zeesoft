@@ -22,14 +22,7 @@ public class ZSO extends LibraryObject {
 	}
 
 	public static void main(String[] args) {
-		if (args!=null && args.length>1 && 
-			(
-				args[0].equals(Orchestrator.GENERATE) ||
-				args[0].equals(Orchestrator.UPDATE) ||
-				args[0].equals(Orchestrator.START) ||
-				args[0].equals(Orchestrator.STOP)
-			)
-			) {
+		if (args!=null && args.length>1 && Orchestrator.isOrchestratorAction(args[0])) {
 			Orchestrator.main(args);
 		} else {
 			(new ZSO(new Tester())).describeAndTest(args);
