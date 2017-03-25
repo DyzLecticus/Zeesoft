@@ -32,7 +32,24 @@ public class OrchestraMember extends Locker {
 	public OrchestraMember(Messenger msgr) {
 		super(msgr);
 	}
-
+	
+	public OrchestraMember getCopy() {
+		OrchestraMember copy = new OrchestraMember();
+		copy.setPosition(getPosition());
+		copy.setPositionBackupNumber(getPositionBackupNumber());
+		copy.setIpAddressOrHostName(getIpAddressOrHostName());
+		copy.setControlPort(getControlPort());
+		copy.setWorkPort(getWorkPort());
+		copy.setWorkRequestTimeout(getWorkRequestTimeout());
+		copy.setWorkRequestTimeoutDrain(isWorkRequestTimeoutDrain());
+		copy.setState(getState());
+		copy.setWorkLoad(getWorkLoad());
+		copy.setMemoryUsage(getMemoryUsage());
+		copy.setErrorDate(getErrorDate());
+		copy.setErrorMessage(getErrorMessage());
+		return copy;
+	}
+	
 	public String getId() {
 		String r = "";
 		if (position!=null) {

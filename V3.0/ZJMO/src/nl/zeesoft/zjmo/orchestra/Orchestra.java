@@ -1,11 +1,13 @@
 package nl.zeesoft.zjmo.orchestra;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -228,18 +230,24 @@ public abstract class Orchestra {
 							member.setWorkRequestTimeout(Integer.parseInt(meme.value.toString()));
 						} else if (meme.name.equals("workRequestTimeoutDrain") && meme.value!=null) {
 							member.setWorkRequestTimeoutDrain(Boolean.parseBoolean(meme.value.toString()));
+						} else if (meme.name.equals("state") && meme.value!=null) {
+							member.setState(MemberState.getState(meme.value.toString()));
+						} else if (meme.name.equals("workLoad") && meme.value!=null) {
+							member.setWorkLoad(Integer.parseInt(meme.value.toString()));
+						} else if (meme.name.equals("memoryUsage") && meme.value!=null) {
+							member.setMemoryUsage(Long.parseLong(meme.value.toString()));
+						} else if (meme.name.equals("errorDate") && meme.value!=null) {
+							Date d = new Date();
+							d.setTime(Long.parseLong(meme.value.toString()));
+							ZDate zd = new ZDate();
+							zd.setDate(d);
+							member.setErrorDate(zd);
+						} else if (meme.name.equals("errorMessage") && meme.value!=null) {
+							member.setErrorMessage(meme.value.toString());
 						}
 					}
 					if (member.getPosition()!=null) {
-						addMember(
-							member.getPosition().getName(),
-							member.getPositionBackupNumber(),
-							member.getIpAddressOrHostName(),
-							member.getControlPort(),
-							member.getWorkPort(),
-							member.getWorkRequestTimeout(),
-							member.isWorkRequestTimeoutDrain()
-							);
+						members.add(member);
 					}
 				}
 			}
