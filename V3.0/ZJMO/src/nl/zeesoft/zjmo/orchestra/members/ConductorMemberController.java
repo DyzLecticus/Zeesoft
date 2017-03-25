@@ -155,7 +155,7 @@ public class ConductorMemberController extends Locker {
 		boolean drain = false;
 		lockMe(this);
 		for (OrchestraMember mem: orchestra.getMembers()) {
-			if (mem.getId().equals(client.getMemberId()) && !mem.getState().getCode().equals(MemberState.UNKNOWN)) {
+			if (mem.getId().equals(client.getMemberId()) && mem.getState()!=null && !mem.getState().getCode().equals(MemberState.UNKNOWN)) {
 				setMemberStateUnknown(mem,"Work request timed out");
 				drain = mem.isWorkRequestTimeoutDrain();
 				break;
@@ -183,7 +183,7 @@ public class ConductorMemberController extends Locker {
 		lockMe(source);
 		List<OrchestraMember> mems = orchestra.getMembersForPosition(positionName);
 		for (OrchestraMember mem: mems) {
-			if (mem.getState().getCode().equals(MemberState.ONLINE)) {
+			if (mem.getState()!=null && mem.getState().getCode().equals(MemberState.ONLINE)) {
 				r = workClientPool.getClient(source,mem.getId());
 				if (r!=null) {
 					break;

@@ -181,8 +181,8 @@ public abstract class MemberObject extends OrchestraMember {
 	public boolean goToStateIfState(String goToState,String ifState1,String ifState2) {
 		boolean r = false;
 		lockMe(this);
-		if (super.getState().getCode().equals(ifState1) ||
-			(ifState2!=null && ifState2.length()>0 && super.getState().getCode().equals(ifState2))
+		if (super.getState()!=null && super.getState().getCode().equals(ifState1) ||
+			(ifState2!=null && ifState2.length()>0 && super.getState()!=null && super.getState().getCode().equals(ifState2))
 			) {
 			super.setState(MemberState.getState(goToState));
 			r = true;
@@ -264,7 +264,11 @@ public abstract class MemberObject extends OrchestraMember {
 			}
 		}
 		f.rootElement = new JsElem();
-		f.rootElement.children.add(new JsElem("state",super.getState().getCode(),true));
+		if (super.getState()!=null) {
+			f.rootElement.children.add(new JsElem("state",super.getState().getCode(),true));
+		} else {
+			f.rootElement.children.add(new JsElem("state",MemberState.UNKNOWN,true));
+		}
 		f.rootElement.children.add(new JsElem("workLoad","" + workLoad));
 		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
 		unlockMe(this);
