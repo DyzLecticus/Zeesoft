@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
 @SuppressWarnings("serial")
@@ -34,22 +35,22 @@ public class GridController extends AbstractTableModel {
 	}
 	
 	@Override
-    public int getColumnCount() {
+	public int getColumnCount() {
 		return headers.length;
-    }
+	}
 
 	@Override
-    public int getRowCount() {
+	public int getRowCount() {
 		return members.size();
-    }
+	}
 
 	@Override
-    public String getColumnName(int col) {
+	public String getColumnName(int col) {
 		return headers[col];
-    }
+	}
 
 	@Override
-    public Class<?> getColumnClass(int col) {
+	public Class<?> getColumnClass(int col) {
 		Class<?> r = super.getColumnClass(col);
 		if (headers[col].endsWith("Control port") ||
 			headers[col].endsWith("Work port") ||
@@ -61,12 +62,12 @@ public class GridController extends AbstractTableModel {
 			r = String.class;
 		}
 		return r;
-    }
+	}
 
 	@Override
-    public boolean isCellEditable(int row, int col) {
-        return false;
-    }
+	public boolean isCellEditable(int row, int col) {
+		return false;
+	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
@@ -81,7 +82,11 @@ public class GridController extends AbstractTableModel {
 		} else if (headers[columnIndex].equals("Work port")) {
 			r = member.getWorkPort();
 		} else if (headers[columnIndex].equals("State")) {
-			r = member.getState().getCode();
+			if (member.getState()!=null) {
+				r = member.getState().getCode();
+			} else {
+				r = MemberState.UNKNOWN;
+			}
 		} else if (headers[columnIndex].equals("Work load")) {
 			r = member.getWorkLoad();
 		} else if (headers[columnIndex].equals("Memory usage")) {
@@ -89,8 +94,10 @@ public class GridController extends AbstractTableModel {
 		} else if (headers[columnIndex].equals("Error")) {
 			if (member.getErrorDate()!=null && member.getErrorMessage().length()>0) {
 				r = member.getErrorDate().getDateTimeString() + ": " + member.getErrorMessage();   
+			} else {
+				r = "";
 			}
 		}
-    	return r;
+		return r;
 	}
 }

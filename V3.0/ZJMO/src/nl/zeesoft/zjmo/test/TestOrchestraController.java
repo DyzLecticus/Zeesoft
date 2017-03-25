@@ -37,7 +37,7 @@ public class TestOrchestraController extends TestObject {
 		
 		TestOrchestra orch = new TestOrchestra();
 		orch.initialize();
-		OrchestraController controller = new OrchestraController(orch);
+		OrchestraController controller = new OrchestraController(orch,false);
 		
 		System.out.println("Starting members ...");
 		@SuppressWarnings("unchecked")
@@ -101,7 +101,6 @@ public class TestOrchestraController extends TestObject {
 		}
 		con.getMessenger().whileWorking();
 		
-		// TODO: Include exit in controller stop.
 		System.exit(0);
 	}
 }

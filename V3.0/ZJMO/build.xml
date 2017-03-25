@@ -137,7 +137,7 @@
             <fileset dir="lib/" includes="**/*.jar"/>
         </copy>		
 		<exec dir="orchestra/" executable="cmd"> 
-			<arg line="/c updateMembers.bat"/>
+			<arg line="/c update.bat"/>
 		</exec>
 	</target>
 

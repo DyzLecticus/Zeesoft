@@ -277,7 +277,11 @@ public abstract class MemberObject extends OrchestraMember {
 	
 	protected void stopProgram(Worker ignoreWorker) {
 		stop(ignoreWorker);
-		System.exit(0);
+		int status = 0;
+		if (getMessenger().isError()) {
+			status = 1;
+		}
+		System.exit(status);
 	}
 	
 	protected void stopWorker(MemberWorker worker) {

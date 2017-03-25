@@ -8,6 +8,7 @@ import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraGenerator;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.controller.OrchestraController;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 /**
@@ -18,7 +19,21 @@ public class Orchestrator {
 	public static final String	UPDATE		= "UPDATE";
 	public static final String	START		= "START";
 	public static final String	STOP		= "STOP";
+	public static final String	CONTROL		= "CONTROL";
 	
+	public static boolean isOrchestratorAction(String action) {
+		boolean r = false;
+		if (action.equals(GENERATE) ||
+			action.equals(UPDATE) ||
+			action.equals(START) ||
+			action.equals(STOP) ||
+			action.equals(CONTROL)
+			) {
+			r = true;
+		}
+		return r;
+	}
+
 	public static void main(String[] args) {
 		String err = "";
 
@@ -51,6 +66,8 @@ public class Orchestrator {
 						err = "Unable to parse position backup number: '" + args[3] + "', error: " + e;
 					}
 				}
+			} else if (action.equals(CONTROL)) {
+				orchestraClassName = args[1];
 			}
 		}
 		
@@ -142,6 +159,24 @@ public class Orchestrator {
 						MemberClient client = member.getNewControlClient(null,null);
 						client.sendCommand(ProtocolControl.STOP_PROGRAM);
 					}
+				}
+			} else if (action.equals(CONTROL)) {
+				File orchJs = new File("orchestra.json");
+				if (!orchJs.exists()) {
+					err = "Orchestra JSON file not found: orchestra.json";
+				}
+				if (err.length()==0) {
+					JsFile jsonFile = new JsFile();
+					err = jsonFile.fromFile(orchJs.getAbsolutePath());
+					if (err.length()>0) {
+						err = "Error parsing orchestra.json: " + err;
+					} else {
+						orch.fromJson(jsonFile);
+					}
+				}
+				if (err.length()==0) {
+					OrchestraController controller = new OrchestraController(orch,true);
+					err = controller.start();
 				}
 			}
 		}

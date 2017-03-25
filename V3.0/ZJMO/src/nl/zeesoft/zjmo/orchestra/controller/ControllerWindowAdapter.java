@@ -10,15 +10,15 @@ public class ControllerWindowAdapter extends WindowAdapter{
 		this.controller = controller;
 	}
 	
-    public void windowClosing(WindowEvent e) {
-    	controller.windowClosing(e);
-    }
-    
-    public void windowIconified(WindowEvent e) {
-    	// Ignore
-    }
-    
+	public void windowClosing(WindowEvent e) {
+		controller.windowClosing(e);
+	}
+	
+	public void windowIconified(WindowEvent e) {
+		// Ignore
+	}
+	
 	public void windowStateChanged(WindowEvent e) {
-    	// Ignore
+		// Ignore
 	}
 }

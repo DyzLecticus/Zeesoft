@@ -169,8 +169,10 @@ public class OrchestraMember extends Locker {
 		mem.children.add(new JsElem("workRequestTimeout","" + getWorkRequestTimeout()));
 		mem.children.add(new JsElem("workRequestTimeoutDrain","" + isWorkRequestTimeoutDrain()));
 		if (includeState) {
-			mem.children.add(new JsElem("state",getState().getCode(),true));
-			if (!getState().getCode().equals(MemberState.UNKNOWN)) {
+			if (getState()==null || getState().getCode().equals(MemberState.UNKNOWN)) {
+				mem.children.add(new JsElem("state",MemberState.UNKNOWN,true));
+			} else {
+				mem.children.add(new JsElem("state",getState().getCode(),true));
 				mem.children.add(new JsElem("workLoad","" + getWorkLoad()));
 				mem.children.add(new JsElem("memoryUsage","" + getMemoryUsage()));
 			}

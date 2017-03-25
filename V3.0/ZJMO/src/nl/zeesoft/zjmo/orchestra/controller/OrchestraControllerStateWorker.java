@@ -4,10 +4,10 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class OrchestraControllerWorker extends Worker {
+public class OrchestraControllerStateWorker extends Worker {
 	private OrchestraController controller = null;
 
-	public OrchestraControllerWorker(Messenger msgr, WorkerUnion union,OrchestraController controller) {
+	public OrchestraControllerStateWorker(Messenger msgr, WorkerUnion union,OrchestraController controller) {
 		super(msgr, union);
 		setSleep(1000);
 		this.controller = controller;
