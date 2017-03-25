@@ -13,7 +13,6 @@ import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.test.mocks.MockConductor;
 import nl.zeesoft.zjmo.test.mocks.MockPlayers;
-import nl.zeesoft.zjmo.test.mocks.MockTestOrchestra;
 import nl.zeesoft.zjmo.test.mocks.TestOrchestra;
 
 public class TestOrchestraController extends TestObject {
@@ -36,7 +35,8 @@ public class TestOrchestraController extends TestObject {
 		boolean started = false;
 		Date start = new Date();
 		
-		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
+		TestOrchestra orch = new TestOrchestra();
+		orch.initialize();
 		OrchestraController controller = new OrchestraController(orch);
 		
 		System.out.println("Starting members ...");

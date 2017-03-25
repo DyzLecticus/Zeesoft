@@ -26,8 +26,7 @@ public class PlayerCommandWorker extends Worker {
 		try {
 			Thread.sleep(delayStart);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			getMessenger().error(this,"Player command worker was interrupted (1)");
 		}
 		MemberClient client = conductor.getNewControlClient(conductor.getMessenger(),conductor.getUnion());
 		if (client.open()) {
@@ -40,8 +39,7 @@ public class PlayerCommandWorker extends Worker {
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				getMessenger().error(this,"Player command worker was interrupted (2)");
 			}
 			
 			System.out.println();

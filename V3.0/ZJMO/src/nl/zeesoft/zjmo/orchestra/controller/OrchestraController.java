@@ -1,12 +1,19 @@
 package nl.zeesoft.zjmo.orchestra.controller;
 
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -19,18 +26,21 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.ProtocolObject;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
-public class OrchestraController extends Locker {
+public class OrchestraController extends Locker implements ActionListener {
 	private boolean						working			= false;
 	private WorkerUnion					union			= null;
 	private Orchestra					orchestra		= null;
 	private MemberClient				client			= null;
 	private OrchestraControllerWorker	worker			= null;
 	
-	private JFrame						mainFrame		= new JFrame();
+	private JFrame						mainFrame		= null;
 	private JLabel						stateLabel		= new JLabel();
-	private GridController				gridController	= new GridController();
+	private JTable						grid			= new JTable();
+	private GridController				gridController	= new GridController();	
 	
 	public OrchestraController(Orchestra orchestra) {
 		super(new Messenger(null));
@@ -55,12 +65,14 @@ public class OrchestraController extends Locker {
 			err = "Envrironment is headless";
 		}
 		if (err.length()==0) {
-			// TODO: Create reconnector
 			OrchestraMember con = orchestra.getConductor();
 			client = con.getNewControlClient(getMessenger(),union);
 			client.open();
 			if (!client.isOpen()) {
-				err = "Failed to connect to conductor: " + con.getIpAddressOrHostName() + ":" + con.getControlPort(); 
+				err = "Failed to connect to: " + con.getId() + " (" + con.getIpAddressOrHostName() + ":" + con.getControlPort() + ")"; 
+				stateLabel.setText(err);
+			} else {
+				stateLabel.setText("Connected to: " + con.getId() + " (" + con.getIpAddressOrHostName() + ":" + con.getControlPort() + ")");
 			}
 		}
 		if (err.length()==0) {
@@ -98,20 +110,62 @@ public class OrchestraController extends Locker {
 		unlockMe(this);
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		if (!client.isOpen()) {
+			lockMe(this);
+			OrchestraMember con = orchestra.getConductor();
+			stateLabel.setText("Lost connection to: " + con.getId() + " (" + con.getIpAddressOrHostName() + ":" + con.getControlPort() + ")");
+			unlockMe(this);
+		} else {
+			List<OrchestraMember> members = gridController.getSelectedMembers(grid);
+			for (OrchestraMember member: members) {
+				ZStringBuilder response = null;
+				if (evt.getActionCommand().equals(ProtocolControl.DRAIN_OFFLINE)) {
+					response = client.sendCommand(ProtocolControlConductor.DRAIN_MEMBER_OFFLINE,"id",member.getId());
+				} else if (evt.getActionCommand().equals(ProtocolControl.TAKE_OFFLINE)) {
+					response = client.sendCommand(ProtocolControlConductor.TAKE_MEMBER_OFFLINE,"id",member.getId());
+				} else if (evt.getActionCommand().equals(ProtocolControl.BRING_ONLINE)) {
+					response = client.sendCommand(ProtocolControlConductor.BRING_MEMBER_ONLINE,"id",member.getId());
+				}
+				if (response==null || !ProtocolObject.isResponseJson(response)) {
+					// TODO: Handle unexpected response
+				}
+			}
+		}
+	}
+
 	protected boolean updateOrchestraState() {
 		boolean r = client.isOpen();
 		if (!r) {
 			r = client.open();
+			if (r) {
+				lockMe(this);
+				OrchestraMember con = orchestra.getConductor();
+				stateLabel.setText("Connected to: " + con.getId() + " (" + con.getIpAddressOrHostName() + ":" + con.getControlPort() + ")");
+				unlockMe(this);
+			} else {
+				lockMe(this);
+				OrchestraMember con = orchestra.getConductor();
+				stateLabel.setText("Failed to connect to: " + con.getId() + " (" + con.getIpAddressOrHostName() + ":" + con.getControlPort() + ")");
+				unlockMe(this);
+			}
 		}
 		if (r) {
 			ZStringBuilder response = client.sendCommand(ProtocolControlConductor.GET_ORCHESTRA_STATE);
 			if (response!=null) {
-				JsFile json = new JsFile();
-				json.fromStringBuilder(response);
 				lockMe(this);
-				orchestra.fromJson(json);
-				gridController.updatedOrchestraMembers(getOrchestraMembers());
+				ZStringBuilder current = orchestra.toJson(true).toStringBuilder();
 				unlockMe(this);
+				if (!response.equals(current)) {
+					JsFile json = new JsFile();
+					json.fromStringBuilder(response);
+					lockMe(this);
+					orchestra.fromJson(json);
+					gridController.updatedOrchestraMembers(getOrchestraMembers());
+					gridController.fireTableDataChanged();
+					unlockMe(this);
+				}
 			} else {
 				r = false;
 			}
@@ -142,14 +196,50 @@ public class OrchestraController extends Locker {
 		frame.setTitle("Zeesoft Orchestra Controller");
 		frame.setSize(800,600);
 		
-		JTable grid = new JTable();
+		frame.setJMenuBar(getMainMenuBar());
+		
+		grid = new JTable();
 		grid.setModel(gridController);
 		
-		JScrollPane scroller = new JScrollPane(grid);
+		JPanel statePanel = new JPanel();
+		statePanel.setLayout(new BoxLayout(statePanel,BoxLayout.LINE_AXIS));
+		statePanel.add(stateLabel);
 		
-		frame.add(stateLabel);
-		frame.add(scroller);
+		JScrollPane gridScroller = new JScrollPane(grid);
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
+		panel.add(statePanel);
+		panel.add(gridScroller);
+
+		frame.add(panel);
 		
 		return frame;
+	}
+
+	public JMenuBar getMainMenuBar() {
+		JMenuBar bar = new JMenuBar();
+		bar.add(getMainMenu());
+		return bar;
+	}
+	
+	public JMenu getMainMenu() {
+		JMenu menu = new JMenu("Member");
+		JMenuItem item = null;
+		
+		item = new JMenuItem("Drain offline");
+		item.setActionCommand(ProtocolControl.DRAIN_OFFLINE);
+		item.addActionListener(this);
+		menu.add(item);
+		
+		item = new JMenuItem("Take offline");
+		item.setActionCommand(ProtocolControl.TAKE_OFFLINE);
+		item.addActionListener(this);
+		menu.add(item);
+
+		item = new JMenuItem("Bring online");
+		item.setActionCommand(ProtocolControl.BRING_ONLINE);
+		item.addActionListener(this);
+		menu.add(item);
+		return menu;
 	}
 }

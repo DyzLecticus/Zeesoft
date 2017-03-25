@@ -3,6 +3,7 @@ package nl.zeesoft.zjmo.orchestra.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
@@ -22,6 +23,14 @@ public class GridController extends AbstractTableModel {
 
 	protected void updatedOrchestraMembers(List<OrchestraMember> members) {
 		this.members = members;
+	}
+	
+	protected List<OrchestraMember> getSelectedMembers(JTable grid) {
+		List<OrchestraMember> mems = new ArrayList<OrchestraMember>();
+		for (Integer row: grid.getSelectedRows()) {
+			mems.add(members.get(row));
+		}
+		return mems;
 	}
 	
 	@Override
