@@ -6,11 +6,24 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class ConductorConnectorWorker extends Worker {
 	private ConductorConnector	connector	= null;
+	private boolean				stopping	= false;
 
 	public ConductorConnectorWorker(Messenger msgr, WorkerUnion union,ConductorConnector connector) {
 		super(msgr,union);
 		setSleep(1000);
 		this.connector = connector;
+	}
+
+	@Override
+	public void start() {
+		setStopping(false);
+		super.start();
+	}
+
+	public void setStopping(boolean stopping) {
+		lockMe(this);
+		this.stopping = stopping;
+		unlockMe(this);
 	}
 	
 	@Override
@@ -21,6 +34,12 @@ public class ConductorConnectorWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		connector.connect();
+		boolean stop = false;
+		lockMe(this);
+		stop = stopping;
+		unlockMe(this);
+		if (!stop) {
+			connector.connect();
+		}
 	}
 }

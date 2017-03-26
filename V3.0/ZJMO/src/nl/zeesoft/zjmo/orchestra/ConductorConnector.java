@@ -41,6 +41,9 @@ public class ConductorConnector extends Locker {
 
 	public void close() {
 		lockMe(this);
+		if (worker!=null) {
+			worker.setStopping(true);
+		}
 		closeClients();
 		if (worker!=null) {
 			worker.stop();
@@ -65,7 +68,9 @@ public class ConductorConnector extends Locker {
 	public OrchestraMember getConductorForClient(MemberClient client) {
 		OrchestraMember r = null;
 		lockMe(this);
-		r = conductors.get(clients.indexOf(client));
+		if (client!=null) {
+			r = conductors.get(clients.indexOf(client));
+		}
 		unlockMe(this);
 		return r;
 	}

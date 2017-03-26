@@ -108,7 +108,6 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	public void stop() {
 		lockMe(this);
-		connector.close();
 		if (mainFrame!=null) {
 			mainFrame.setVisible(false);
 			mainFrame = null;
@@ -118,6 +117,7 @@ public class OrchestraController extends Locker implements ActionListener {
 			actionWorker.stop();
 			actionWorker = null;
 		}
+		connector.close();
 		getMessenger().stop();
 		union.stopWorkers();
 		getMessenger().whileWorking();
@@ -210,12 +210,12 @@ public class OrchestraController extends Locker implements ActionListener {
 			for (JMenuItem item: menuItems) {
 				item.setEnabled(connected);
 			}
-			MemberClient client = connector.getClient();
-			OrchestraMember conductor = connector.getConductorForClient(client);
 			if (connected) {
+				MemberClient client = connector.getClient();
+				OrchestraMember conductor = connector.getConductorForClient(client);
 				stateLabel.setText("Connected to: " + conductor.getId() + " (" + conductor.getIpAddressOrHostName() + ":" + conductor.getControlPort() + ")");
 			} else {
-				stateLabel.setText("Failed to connect to: " + conductor.getId() + " (" + conductor.getIpAddressOrHostName() + ":" + conductor.getControlPort() + ")");
+				stateLabel.setText("Failed to connect to a conductor");
 				for (OrchestraMember member: orchestra.getMembers()) {
 					member.setState(MemberState.getState(MemberState.UNKNOWN));
 				}
