@@ -166,9 +166,6 @@
 		<exec dir="orchestra/" executable="cmd"> 
 			<arg line="/c update.bat"/>
 		</exec>
-		<copy todir="orchestra/sequencer/lib">
-            <fileset dir="orchestra/lib/" includes="**/*.jar"/>
-        </copy>		
 	</target>
 
 	<target name="releaseOrchestra" depends="orchestraExists" if="_orchestraExists">
