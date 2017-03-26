@@ -20,7 +20,6 @@ public class MockConductor1 extends MockObject {
 	@Override
 	protected Object initialzeMock() {
 		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
-		// TODO: Multi conductor testing
 		Conductor con = new Conductor(null,orch,getPositionBackupNumber()) {
 			@Override
 			public boolean start() {
