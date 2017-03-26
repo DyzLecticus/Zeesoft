@@ -156,7 +156,7 @@ public class Orchestrator {
 					}
 				}
 				if (err.length()==0) {
-					OrchestraController controller = new OrchestraController(orch,true);
+					OrchestraController controller = orch.getNewController(true);
 					err = controller.start();
 				}
 			}

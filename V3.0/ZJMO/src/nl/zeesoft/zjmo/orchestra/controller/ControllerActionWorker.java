@@ -12,14 +12,14 @@ import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
-public class OrchestraControllerActionWorker extends Worker {
+public class ControllerActionWorker extends Worker {
 	private OrchestraController 	controller 	= null;
 	private MemberClient		 	client 		= null;
 
 	private String					action		= "";
 	private List<OrchestraMember>	members		= null;
 
-	public OrchestraControllerActionWorker(Messenger msgr, WorkerUnion union,OrchestraController controller,MemberClient client) {
+	public ControllerActionWorker(Messenger msgr, WorkerUnion union,OrchestraController controller,MemberClient client) {
 		super(msgr, union);
 		setSleep(1000);
 		this.controller = controller;

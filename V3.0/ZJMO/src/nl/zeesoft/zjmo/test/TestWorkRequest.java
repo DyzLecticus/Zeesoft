@@ -8,6 +8,9 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zjmo.orchestra.ConductorConnector;
+import nl.zeesoft.zjmo.orchestra.Orchestra;
+import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
@@ -187,7 +190,7 @@ public class TestWorkRequest extends TestObject {
 				System.out.println("Sending work request to backup: " + wr.toJson().toStringBuilder());
 				response = client.sendWorkRequest(wr);
 				System.out.println("Work request response from backup: " + response);
-				System.out.println("Second work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
+				System.out.println("time out work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
 				wr.fromStringBuilder(response);
 				assertEqual(wr.getResponse()==null,true,"Response is not empty");
 				assertEqual(wr.getError(),"Work request timed out on: Database X/1","Time out error does not match expectation");
@@ -196,11 +199,28 @@ public class TestWorkRequest extends TestObject {
 				System.out.println("Player state JSON:");
 				System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
 				
-				sleep(3000);
-				
+				sleep(1000);
+
 				System.out.println();
 				System.out.println("Player state JSON:");
 				System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
+				
+				con1.takeOffLine();
+				sleep(1000);
+
+				ConductorConnector connector = new ConductorConnector(con1.getMessenger(),con1.getUnion());
+				connector.initialize(con1.getOrchestra().getConductors(),false);
+				connector.open();
+
+				sleep(2000);
+				
+				WorkClient wc = connector.getWorkClient();
+				assertEqual(wc!=null,true,"Failed to get work client from connector");
+				if (wc!=null) {
+					OrchestraMember conductor = connector.getConductorForClient(wc);
+					assertEqual(conductor.getId(),Orchestra.CONDUCTOR + "/1","Failed to connect to backup conductor");
+					//System.out.println("Connected to conductor: " + conductor.getId());
+				}
 			}
 		}
 		

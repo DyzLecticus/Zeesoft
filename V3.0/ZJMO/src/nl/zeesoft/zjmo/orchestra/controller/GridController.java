@@ -33,6 +33,23 @@ public class GridController extends AbstractTableModel {
 		}
 		return mems;
 	}
+
+	protected void selectMembers(JTable grid,List<OrchestraMember> select) {
+		int r = -1;
+		int i = 0;
+		for (OrchestraMember member: members) {
+			for (OrchestraMember sel: select) {
+				if (member.getId().equals(sel.getId())) {
+					r = i;
+					break;
+				}
+			}
+			i++;
+		}
+		if (select.size()>0) {
+			grid.setRowSelectionInterval(r, r);
+		}
+	}
 	
 	@Override
 	public int getColumnCount() {

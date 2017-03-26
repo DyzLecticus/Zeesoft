@@ -41,21 +41,22 @@ public class OrchestraController extends Locker implements ActionListener {
 	private boolean							connected		= false;
 	private boolean							stopping		= false;
 	
-	private Orchestra						orchestra		= null;
-	private boolean							exitOnClose		= false;
-	private WorkerUnion						union			= null;
+	private Orchestra						orchestra			= null;
+	private boolean							exitOnClose			= false;
+	private WorkerUnion						union				= null;
 
-	private ConductorConnector 				connector		= null;
-	private MemberClient 					client			= null;
-	private OrchestraControllerStateWorker	stateWorker		= null;
-	private OrchestraControllerActionWorker	actionWorker	= null;
+	private ConductorConnector 				connector			= null;
+	private MemberClient 					client				= null;
+	private ControllerStateWorker			stateWorker			= null;
+	private ControllerStateUpdateWorker		stateUpdateWorker	= null;
+	private ControllerActionWorker			actionWorker		= null;
 	
-	private JFrame							mainFrame		= null;
-	private JLabel							stateLabel		= null;
-	private JTable							grid			= null;
-	private GridController					gridController	= new GridController();
+	private JFrame							mainFrame			= null;
+	private JLabel							stateLabel			= null;
+	private JTable							grid				= null;
+	private GridController					gridController		= new GridController();
 	
-	private List<JMenuItem>					menuItems		= new ArrayList<JMenuItem>(); 
+	private List<JMenuItem>					menuItems			= new ArrayList<JMenuItem>(); 
 	
 	public OrchestraController(Orchestra orchestra,boolean exitOnClose) {
 		super(new Messenger(null));
@@ -64,6 +65,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		union = new WorkerUnion(getMessenger());
 		gridController.updatedOrchestraMembers(getOrchestraMembers());
 		stateWorker = getNewStateWorker();
+		stateUpdateWorker = getNewStateUpdateWorker();
 		connector = new ConductorConnector(getMessenger(),union);
 		connector.initialize(orchestra.getConductors(),true);
 	}
@@ -110,6 +112,7 @@ public class OrchestraController extends Locker implements ActionListener {
 			connector.open();
 			getMessenger().start();
 			stateWorker.start();
+			stateUpdateWorker.start();
 			mainFrame = getMainFrame();
 			mainFrame.setVisible(true);
 			working = true;
@@ -123,6 +126,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		stopping = true;
 		unlockMe(this);
 		stateWorker.stop();
+		stateUpdateWorker.stop();
 		lockMe(this);
 		if (client!=null) {
 			client.sendCloseSessionCommand();
@@ -148,7 +152,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		MemberClient client = getClient();
-		if (client!=null) {
+		if (client!=null && client.isOpen() && !isStopping()) {
 			String err = "";
 			List<OrchestraMember> members = gridController.getSelectedMembers(grid);
 			if (evt.getActionCommand().equals(ProtocolControl.GET_STATE) && members.size()==0) {
@@ -169,17 +173,31 @@ public class OrchestraController extends Locker implements ActionListener {
 					confirmed = showConfirmMessage(confirmMessage,"Are you sure?");
 				}
 				if (confirmed && client.isOpen() && !isStopping()) {
+					lockMe(this);
 					if (actionWorker==null || !actionWorker.isWorking()) {
 						actionWorker = getNewActionWorker(client);
 						actionWorker.handleAction(evt.getActionCommand(), members);
 					} else {
 						err = "Action worker is busy";
 					}
+					unlockMe(this);
 				}
 			}
 			if (err.length()>0) {
 				showErrorMessage(err,"Error");
 			}
+		}
+	}
+
+	protected void forceUpdateOrchestraState() {
+		MemberClient client = getClient();
+		if (client!=null && client.isOpen() && !isStopping()) {
+			lockMe(this);
+			if (actionWorker==null || !actionWorker.isWorking()) {
+				actionWorker = getNewActionWorker(client);
+				actionWorker.handleAction(ProtocolControl.GET_STATE,getOrchestraMembers());
+			}
+			unlockMe(this);
 		}
 	}
 
@@ -196,8 +214,10 @@ public class OrchestraController extends Locker implements ActionListener {
 					json.fromStringBuilder(response);
 					lockMe(this);
 					orchestra.fromJson(json);
+					List<OrchestraMember> selected = gridController.getSelectedMembers(grid);
 					gridController.updatedOrchestraMembers(getOrchestraMembers());
 					gridController.fireTableDataChanged();
+					gridController.selectMembers(grid,selected);
 					unlockMe(this);
 				}
 			}
@@ -264,12 +284,16 @@ public class OrchestraController extends Locker implements ActionListener {
 		return members;
 	}
 
-	protected OrchestraControllerStateWorker getNewStateWorker() {
-		return new OrchestraControllerStateWorker(getMessenger(),union,this);
+	protected ControllerStateWorker getNewStateWorker() {
+		return new ControllerStateWorker(getMessenger(),union,this);
 	}
 
-	protected OrchestraControllerActionWorker getNewActionWorker(MemberClient client) {
-		return new OrchestraControllerActionWorker(getMessenger(),union,this,client);
+	protected ControllerStateUpdateWorker getNewStateUpdateWorker() {
+		return new ControllerStateUpdateWorker(getMessenger(),union,this);
+	}
+
+	protected ControllerActionWorker getNewActionWorker(MemberClient client) {
+		return new ControllerActionWorker(getMessenger(),union,this,client);
 	}
 	
 	protected ControllerWindowAdapter getNewAdapter() {

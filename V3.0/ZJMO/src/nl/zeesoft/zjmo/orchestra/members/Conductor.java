@@ -27,7 +27,7 @@ public class Conductor extends MemberObject {
 		boolean started = super.start();
 		if (started) {
 			controller.open();
-			controller.getState(getId());
+			controller.getState(null);
 		}
 		return started;
 	}

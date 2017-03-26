@@ -33,7 +33,7 @@ public class TestOrchestraController extends TestObject {
 		
 		TestOrchestra orch = new TestOrchestra();
 		orch.initialize();
-		OrchestraController controller = new OrchestraController(orch,false);
+		OrchestraController controller = orch.getNewController(false);
 		
 		@SuppressWarnings("unchecked")
 		List<Player> players = (List<Player>) getTester().getMockedObject(MockPlayers.class.getName());

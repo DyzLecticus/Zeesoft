@@ -60,7 +60,7 @@ public class WorkClients extends Locker {
 		long cutOff = (new Date().getTime() - unusedMs);
 		List<WorkClient> testClients = new ArrayList<WorkClient>(clients);
 		for (WorkClient client: testClients) {
-			if (!client.isInUse() && (cutOff > client.getLastUsed().getTime())) {
+			if (!client.isInUse() && (unusedMs==0 || cutOff > client.getLastUsed().getTime())) {
 				client.sendCloseSessionCommand();
 				client.close();
 				clients.remove(client);

@@ -136,8 +136,6 @@ public class ConductorMemberController extends Locker {
 						}
 					}
 				}
-				
-				
 			}
 		}
 		unlockMe(this);

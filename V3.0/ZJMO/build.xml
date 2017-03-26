@@ -3,7 +3,7 @@
 	<description>ZJMO build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.8"/>
+	<property name="version" value="0.9.9"/>
 	
 	<!-- ZDK version -->
 	<property name="versionZDK" value="0.9.23"/>

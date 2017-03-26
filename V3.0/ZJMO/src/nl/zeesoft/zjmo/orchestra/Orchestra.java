@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zjmo.orchestra.controller.OrchestraController;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 
@@ -46,6 +47,10 @@ public abstract class Orchestra {
 
 	public Player getNewPlayer(Messenger msgr,String positionName,int positionBackupNumber) {
 		return new Player(msgr,this,positionName,positionBackupNumber);
+	}
+
+	public OrchestraController getNewController(boolean exitOnClose) {
+		return new OrchestraController(this,exitOnClose);
 	}
 
 	public int closeUnusedWorkClientsMilliseconds() {
