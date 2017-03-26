@@ -37,6 +37,13 @@ public class ZSO extends LibraryObject {
 			}
 			if (err.length()==0) {
 				JsFile json = new JsFile();
+				err = json.fromFile("orchestra.json");
+				if (err.length()==0) {
+					orch.fromJson(json);
+				}
+			}
+			if (err.length()==0) {
+				JsFile json = new JsFile();
 				err = json.fromFile("composition.json");
 				if (err.length()==0) {
 					comp = new Composition();

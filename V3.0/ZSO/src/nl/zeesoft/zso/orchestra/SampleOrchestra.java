@@ -16,12 +16,14 @@ public class SampleOrchestra extends Orchestra {
 		addPosition(BASEBEAT);
 		addPosition(SNARE);
 		addPosition(HIHAT);
-		
+
+		getConductors().get(0).setWorkRequestTimeoutDrain(true);
 		addMember(BASEBEAT,0,LOCALHOST,6543,6542,100,true);
 		addMember(SNARE,0,LOCALHOST,7654,7653,100,true);
 		addMember(HIHAT,0,LOCALHOST,8765,8764,100,true);
 
 		// Backups 
+		addMember(CONDUCTOR,1,LOCALHOST,5431,5430,500,false);
 		addMember(BASEBEAT,1,LOCALHOST,6541,6540,200,false);
 		addMember(SNARE,1,LOCALHOST,7652,7651,200,false);
 		addMember(HIHAT,1,LOCALHOST,8763,8762,200,false);

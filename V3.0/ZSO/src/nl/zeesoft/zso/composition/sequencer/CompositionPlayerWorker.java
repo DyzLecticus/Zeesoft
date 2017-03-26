@@ -2,6 +2,7 @@ package nl.zeesoft.zso.composition.sequencer;
 
 import java.util.Date;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -80,8 +81,23 @@ public class CompositionPlayerWorker extends Worker {
 			if (client==null || !client.isOpen()) {
 				client = connector.getWorkClient();
 			}
+			boolean handled = true;
 			if (client!=null && client.isOpen()) {
-				client.sendWorkRequest(wr);
+				ZStringBuilder response = client.sendWorkRequest(wr);
+				if (response==null) {
+					handled = false;
+				} else {
+					WorkRequest rwr = new WorkRequest();
+					rwr.fromStringBuilder(response);
+					if (rwr.getError().length()>0) {
+						handled = false;
+					}
+				}
+			} else {
+				handled = false;
+			}
+			if (!handled) {
+				getMessenger().error(this,"Failed to play position: " + positionName);
 			}
 			setPlayDateTime(0,0,0);
 		}

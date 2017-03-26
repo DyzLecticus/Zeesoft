@@ -43,6 +43,7 @@ public class Sequencer extends Locker {
 	}
 
 	public void start() {
+		getMessenger().start();
 		compositionPlayer.start();
 	}
 
@@ -50,6 +51,7 @@ public class Sequencer extends Locker {
 		if (compositionPlayer.isWorking()) {
 			compositionPlayer.stop();
 		}
+		getMessenger().stop();
 		union.stopWorkers(ignoreWorker);
 		getMessenger().whileWorking();
 	}
