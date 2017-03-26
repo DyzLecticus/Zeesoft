@@ -3,7 +3,7 @@
 	<description>ZSO build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.3"/>
+	<property name="version" value="0.9.4"/>
 	
 	<!-- ZDK version -->
 	<property name="versionZDK" value="0.9.23"/>
@@ -66,7 +66,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zso nl/zeesoft/zso/composition nl/zeesoft/zso/orchestra nl/zeesoft/zso/orchestra/members nl/zeesoft/zso/test zdk.jar zjmo.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zso nl/zeesoft/zso/composition nl/zeesoft/zso/composition/sequencer nl/zeesoft/zso/orchestra nl/zeesoft/zso/orchestra/members nl/zeesoft/zso/test zdk.jar zjmo.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zso.test.ZSO"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -140,7 +140,7 @@
             <fileset dir="${src}" />
         </copy>
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zso,nl.zeesoft.zso.composition,nl.zeesoft.zso.orchestra,nl.zeesoft.zso.orchestra.members"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zso,nl.zeesoft.zso.composition,nl.zeesoft.zso.composition.sequencer,nl.zeesoft.zso.orchestra,nl.zeesoft.zso.orchestra.members"/>
 		<zip destfile="${dist}/zso-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>
@@ -174,7 +174,13 @@
 	<target name="releaseOrchestra" depends="orchestraExists" if="_orchestraExists">
 		<mkdir dir="${releases}/${version}/orchestra"/>
 		<copy todir="${releases}/${version}/orchestra">
-            <fileset dir="orchestra/" excludes="**/members/**"/>
+            <fileset dir="orchestra/">
+            	<exclude name="**/members/**"/>
+            	<exclude name="**/controller/**"/>
+            	<exclude name="**/start.bat"/>
+            	<exclude name="**/stop.bat"/>
+            	<exclude name="**/sequencer/**"/>
+           	</fileset>
         </copy>		
 	</target>
 	

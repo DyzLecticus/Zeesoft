@@ -54,4 +54,22 @@ public class SampleOrchestraGenerator extends OrchestraGenerator {
 			startScript.toFile(sequencerDir.getAbsolutePath() + "/start.sh");
 		}
 	}
+
+	@Override
+	protected ZStringBuilder getMemberUpdateScript(File memberDir,Orchestra orch) {
+		ZStringBuilder script = super.getMemberUpdateScript(memberDir, orch);
+		script.append("cp lib/* sequencer/lib");
+		script.append("\n");
+		return script;
+	}
+
+	@Override
+	protected ZStringBuilder getMemberUpdateBatScript(File memberDir,Orchestra orch) {
+		ZStringBuilder script = super.getMemberUpdateBatScript(memberDir, orch);
+		script.append("xcopy lib\\* sequencer\\lib");
+		script.append(" /Y \r\n");
+		return script;
+	}
+	
+	
 }
