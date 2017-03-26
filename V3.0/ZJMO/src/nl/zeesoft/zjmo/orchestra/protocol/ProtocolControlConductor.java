@@ -64,18 +64,18 @@ public class ProtocolControlConductor extends ProtocolControl {
 				} else if (command.equals(TAKE_MEMBER_OFFLINE)) {
 					output = con.takeOffline(memberId);
 					if (!isErrorJson(output)) {
-						con.updateState(memberId,false);
+						con.updateState(memberId,true);
 					}
 				} else if (command.equals(DRAIN_MEMBER_OFFLINE)) {
 					output = con.drainOffline(memberId);
 					if (!isErrorJson(output)) {
-						con.updateState(memberId,false);
+						con.updateState(memberId,true);
 						con.drainOfflineWorker(memberId);
 					}
 				} else if (command.equals(BRING_MEMBER_ONLINE)) {
 					output = con.bringOnline(memberId);
 					if (!isErrorJson(output)) {
-						con.updateState(memberId,false);
+						con.updateState(memberId,true);
 					}
 				}
 			}
