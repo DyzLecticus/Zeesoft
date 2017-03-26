@@ -17,5 +17,4 @@ public class OrchestraControllerStateWorker extends Worker {
 	public void whileWorking() {
 		controller.updateOrchestraState();
 	}
-
 }

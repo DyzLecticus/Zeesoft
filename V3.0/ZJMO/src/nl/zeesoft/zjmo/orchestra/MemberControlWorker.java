@@ -15,12 +15,6 @@ public class MemberControlWorker extends Worker {
 		setSleep(1);
 		this.member = member;
 	}
-
-	@Override
-	public void stop() {
-		super.stop();
-		//waitForStop(10,false);
-	}
 	
 	@Override
 	public void whileWorking() {

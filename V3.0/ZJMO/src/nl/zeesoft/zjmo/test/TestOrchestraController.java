@@ -1,17 +1,14 @@
 package nl.zeesoft.zjmo.test;
 
-import java.util.Date;
 import java.util.List;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.controller.OrchestraController;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
-import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
-import nl.zeesoft.zjmo.test.mocks.MockConductor;
+import nl.zeesoft.zjmo.test.mocks.MockConductor1;
+import nl.zeesoft.zjmo.test.mocks.MockConductor2;
 import nl.zeesoft.zjmo.test.mocks.MockPlayers;
 import nl.zeesoft.zjmo.test.mocks.TestOrchestra;
 
@@ -33,23 +30,18 @@ public class TestOrchestraController extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		boolean started = false;
-		Date start = new Date();
 		
 		TestOrchestra orch = new TestOrchestra();
 		orch.initialize();
 		OrchestraController controller = new OrchestraController(orch,false);
 		
-		System.out.println("Starting members ...");
 		@SuppressWarnings("unchecked")
 		List<Player> players = (List<Player>) getTester().getMockedObject(MockPlayers.class.getName());
-		for (Player player: players) {
-			started = player.start();
-			assertEqual(started,true,"Failed to start player: " + player.getId());
-		}
-		Conductor con = (Conductor) getTester().getMockedObject(MockConductor.class.getName());
-		started = con.start();
-		assertEqual(started,true,"Failed to start the conductor");
-		System.out.println("Starting members took " + ((new Date()).getTime() - start.getTime()) + " ms");
+		Conductor con1 = (Conductor) getTester().getMockedObject(MockConductor1.class.getName());
+		Conductor con2 = (Conductor) getTester().getMockedObject(MockConductor2.class.getName());
+		
+		started = TestConductor.startTestOrchestra(players,con1,con2);
+		assertEqual(started,true,"Failed to start orchestra");
 		
 		if (started) {
 			sleep(500);
@@ -59,7 +51,7 @@ public class TestOrchestraController extends TestObject {
 			
 			sleep(1000);
 			System.out.println();
-			System.out.println(con.getOrchestraState().toStringBuilderReadFormat());
+			System.out.println(con1.getOrchestraState().toStringBuilderReadFormat());
 			
 			if (controller.isWorking()) {
 				System.out.println();
@@ -68,38 +60,10 @@ public class TestOrchestraController extends TestObject {
 					sleep(100);
 				}
 			}
-			
-			ZStringBuilder response = null;
+		}
 
-			MemberClient stopClient = new MemberClient("localhost",5433);
-			stopClient.open();
-			assertEqual(stopClient.isOpen(),true,"Failed to open the control client");
-			if (stopClient.isOpen()) {
-				System.out.println();
-				System.out.println("Stopping conductor ...");
-				response = stopClient.sendCommand(ProtocolControl.STOP_PROGRAM);
-				assertEqual(response.toString(),"{\"command\":\"CLOSE_SESSION\"}","Stop program response does not match expectation");
-				stopClient.close();
-			}
-			
-			sleep(1000);
-			boolean working = con.isWorking();
-			assertEqual(working,false,"Failed to stop the conductor");
-			if (working) {
-				con.stop();
-			}
-		}
-		
 		System.out.println();
-		System.out.println("Stopping players ...");
-		for (Player player: players) {
-			boolean working = player.isWorking();
-			assertEqual(working,true,"Player is not working: " + player.getId());
-			if (working) {
-				player.stop();
-			}
-		}
-		con.getMessenger().whileWorking();
+		TestConductor.stopTestOrchestra(players,con1,con2);
 		
 		System.exit(0);
 	}

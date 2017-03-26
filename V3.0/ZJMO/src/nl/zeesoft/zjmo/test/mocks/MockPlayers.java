@@ -20,7 +20,7 @@ public class MockPlayers extends MockObject {
 	@Override
 	protected Object initialzeMock() {
 		List<Player> players = new ArrayList<Player>();
-		Conductor con = (Conductor) getTester().getMockedObject(MockConductor.class.getName());
+		Conductor con = (Conductor) getTester().getMockedObject(MockConductor1.class.getName());
 		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
 		for (OrchestraMember member: orch.getMembers()) {
 			if (!member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {

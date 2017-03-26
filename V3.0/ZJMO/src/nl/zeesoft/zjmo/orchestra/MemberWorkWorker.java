@@ -17,12 +17,6 @@ public class MemberWorkWorker extends Worker {
 	}
 
 	@Override
-	public void stop() {
-		super.stop();
-		//waitForStop(10,false);
-	}
-
-	@Override
 	public void whileWorking() {
 		member.acceptWork();
 	}

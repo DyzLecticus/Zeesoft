@@ -31,7 +31,7 @@ public abstract class Orchestra {
 	
 	public Orchestra() {
 		addPosition(CONDUCTOR);
-		addMember(CONDUCTOR,0,"localhost",5433,5432,500,false);
+		addMember(CONDUCTOR,0,LOCALHOST,5433,5432,500,false);
 	}
 	
 	public abstract void initialize();

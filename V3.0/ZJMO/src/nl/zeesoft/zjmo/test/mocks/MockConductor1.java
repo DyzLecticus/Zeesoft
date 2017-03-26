@@ -6,18 +6,22 @@ import nl.zeesoft.zdk.test.impl.MockMessenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 
-public class MockConductor extends MockObject {
+public class MockConductor1 extends MockObject {
 	@Override
 	protected void describe() {
-		System.out.println("This test uses the *MockConductor*.");
-		System.out.println("The *MockConductor* uses the *MockTestOrchestra*.");
+		System.out.println("This test uses the *MockConductor1*.");
+		System.out.println("The *MockConductor1* uses the *MockTestOrchestra*.");
 	}
 
+	protected int getPositionBackupNumber() {
+		return 0;
+	}
+	
 	@Override
 	protected Object initialzeMock() {
 		TestOrchestra orch = (TestOrchestra) getTester().getMockedObject(MockTestOrchestra.class.getName());
 		// TODO: Multi conductor testing
-		Conductor con = new Conductor(null,orch,0) {
+		Conductor con = new Conductor(null,orch,getPositionBackupNumber()) {
 			@Override
 			public boolean start() {
 				System.out.println("Starting " + getId() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");

@@ -8,14 +8,13 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
-import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
-import nl.zeesoft.zjmo.test.mocks.MockConductor;
+import nl.zeesoft.zjmo.test.mocks.MockConductor1;
+import nl.zeesoft.zjmo.test.mocks.MockConductor2;
 import nl.zeesoft.zjmo.test.mocks.MockPlayers;
 import nl.zeesoft.zjmo.test.mocks.PlayerCommandWorker;
 
@@ -50,7 +49,7 @@ public class TestWorkRequest extends TestObject {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestWorkRequest.class));
-		System.out.println(" * " + getTester().getLinkForClass(MockConductor.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConductor1.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockPlayers.class));
 		System.out.println(" * " + getTester().getLinkForClass(WorkRequest.class));
 		System.out.println();
@@ -62,16 +61,19 @@ public class TestWorkRequest extends TestObject {
 	protected void test(String[] args) {
 		boolean started = false;
 		Date start = new Date();
-		
-		System.out.println("Starting members ...");
+
 		@SuppressWarnings("unchecked")
 		List<Player> players = (List<Player>) getTester().getMockedObject(MockPlayers.class.getName());
+		Conductor con1 = (Conductor) getTester().getMockedObject(MockConductor1.class.getName());
+		Conductor con2 = (Conductor) getTester().getMockedObject(MockConductor2.class.getName());
+		
+		started = TestConductor.startTestOrchestra(players,con1,con2);
+		assertEqual(started,true,"Failed to start orchestra");
+
 		int i = 0;
 		Player dbX = null;
 		Player dbX1 = null;
 		for (Player player: players) {
-			started = player.start();
-			assertEqual(started,true,"Failed to start player: " + player.getId());
 			if (i==0) {
 				dbX = player;
 			} else if (i==4) {
@@ -79,10 +81,6 @@ public class TestWorkRequest extends TestObject {
 			}
 			i++;
 		}
-		Conductor con = (Conductor) getTester().getMockedObject(MockConductor.class.getName());
-		started = con.start();
-		assertEqual(started,true,"Failed to start the conductor");
-		System.out.println("Starting members took " + ((new Date()).getTime() - start.getTime()) + " ms");
 
 		WorkRequest wr = new WorkRequest();
 		JsFile request = new JsFile();
@@ -118,7 +116,7 @@ public class TestWorkRequest extends TestObject {
 				assertEqual(wr.getError(),"Work request position does not exist: Database Z","Response error does not match expectation");
 				wr.setError("");
 
-				PlayerCommandWorker pcw = new PlayerCommandWorker(con,dbX,ProtocolControlConductor.DRAIN_MEMBER_OFFLINE);
+				PlayerCommandWorker pcw = new PlayerCommandWorker(con1,dbX,ProtocolControlConductor.DRAIN_MEMBER_OFFLINE);
 				//PlayerCommandWorker pcw = new PlayerCommandWorker(con,dbX,ProtocolControlConductor.TAKE_MEMBER_OFFLINE);
 				pcw.start();
 				
@@ -184,7 +182,7 @@ public class TestWorkRequest extends TestObject {
 				wr.setRequest(request);
 				wr.setResponse(null);
 				
-				System.out.println();	
+				System.out.println();
 				start = new Date();
 				System.out.println("Sending work request to backup: " + wr.toJson().toStringBuilder());
 				response = client.sendWorkRequest(wr);
@@ -196,43 +194,17 @@ public class TestWorkRequest extends TestObject {
 				
 				System.out.println();
 				System.out.println("Player state JSON:");
-				System.out.println(con.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
+				System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
 				
 				sleep(3000);
 				
 				System.out.println();
 				System.out.println("Player state JSON:");
-				System.out.println(con.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
-			}
-
-			MemberClient stopClient = new MemberClient("localhost",5433);
-			stopClient.open();
-			assertEqual(stopClient.isOpen(),true,"Failed to open the control client");
-			if (stopClient.isOpen()) {
-				System.out.println();
-				System.out.println("Stopping conductor ...");
-				response = stopClient.sendCommand(ProtocolControl.STOP_PROGRAM);
-				assertEqual(response.toString(),"{\"command\":\"CLOSE_SESSION\"}","Stop program response does not match expectation");
-				stopClient.close();
-			}
-			
-			sleep(1000);
-			boolean working = con.isWorking();
-			assertEqual(working,false,"Failed to stop the conductor");
-			if (working) {
-				con.stop();
+				System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
 			}
 		}
 		
 		System.out.println();
-		System.out.println("Stopping players ...");
-		for (Player player: players) {
-			boolean working = player.isWorking();
-			assertEqual(working,true,"Player is not working: " + player.getId());
-			if (working) {
-				player.stop();
-			}
-		}
-		con.getMessenger().whileWorking();
+		TestConductor.stopTestOrchestra(players,con1,con2);
 	}
 }

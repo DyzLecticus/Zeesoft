@@ -39,12 +39,14 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 public class OrchestraController extends Locker implements ActionListener {
 	private boolean							working			= false;
 	private boolean							connected		= false;
+	private boolean							stopping		= false;
 	
 	private Orchestra						orchestra		= null;
 	private boolean							exitOnClose		= false;
 	private WorkerUnion						union			= null;
 
 	private ConductorConnector 				connector		= null;
+	private MemberClient 					client			= null;
 	private OrchestraControllerStateWorker	stateWorker		= null;
 	private OrchestraControllerActionWorker	actionWorker	= null;
 	
@@ -82,6 +84,14 @@ public class OrchestraController extends Locker implements ActionListener {
 		return r;
 	}
 
+	public boolean isStopping() {
+		boolean r = false;
+		lockMe(this);
+		r = stopping;
+		unlockMe(this);
+		return r;
+	}
+
 	public String start() {
 		String err = "";
 		lockMe(this);
@@ -89,6 +99,8 @@ public class OrchestraController extends Locker implements ActionListener {
 			err = "Envrironment is headless";
 		}
 		if (err.length()==0) {
+			stopping = false;
+			connected = false;
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				JFrame.setDefaultLookAndFeelDecorated(true);
@@ -108,11 +120,19 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	public void stop() {
 		lockMe(this);
+		stopping = true;
+		unlockMe(this);
+		stateWorker.stop();
+		lockMe(this);
+		if (client!=null) {
+			client.sendCloseSessionCommand();
+			client.close();
+			client = null;
+		}
 		if (mainFrame!=null) {
 			mainFrame.setVisible(false);
 			mainFrame = null;
 		}
-		stateWorker.stop();
 		if (actionWorker!=null) {
 			actionWorker.stop();
 			actionWorker = null;
@@ -127,10 +147,8 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		MemberClient client = connector.getClient();
-		if (client==null) {
-			setConnected(false);
-		} else {
+		MemberClient client = getClient();
+		if (client!=null) {
 			String err = "";
 			List<OrchestraMember> members = gridController.getSelectedMembers(grid);
 			if (evt.getActionCommand().equals(ProtocolControl.GET_STATE) && members.size()==0) {
@@ -150,7 +168,7 @@ public class OrchestraController extends Locker implements ActionListener {
 				if (confirmMessage.length()>0) {
 					confirmed = showConfirmMessage(confirmMessage,"Are you sure?");
 				}
-				if (confirmed) {
+				if (confirmed && client.isOpen() && !isStopping()) {
 					if (actionWorker==null || !actionWorker.isWorking()) {
 						actionWorker = getNewActionWorker(client);
 						actionWorker.handleAction(evt.getActionCommand(), members);
@@ -166,15 +184,10 @@ public class OrchestraController extends Locker implements ActionListener {
 	}
 
 	protected void updateOrchestraState() {
-		MemberClient client = connector.getClient();
-		if (client==null) {
-			setConnected(false);
-		} else {
-			if (!isConnected()) {
-				setConnected(true);
-			}
+		MemberClient client = getClient();
+		if (client!=null && client.isOpen() && !isStopping()) {
 			ZStringBuilder response = client.sendCommand(ProtocolControlConductor.GET_ORCHESTRA_STATE);
-			if (response!=null && client.isOpen()) {
+			if (response!=null && client.isOpen() && !isStopping()) {
 				lockMe(this);
 				ZStringBuilder current = orchestra.toJson(true).toStringBuilder();
 				unlockMe(this);
@@ -189,6 +202,25 @@ public class OrchestraController extends Locker implements ActionListener {
 				}
 			}
 		}
+	}
+	
+	protected MemberClient getClient() {
+		MemberClient r = null;
+		boolean stop = false;
+		lockMe(this);
+		if (client==null || !client.isOpen()) {
+			client = null;
+			if (!stopping) {
+				client = connector.getClient();
+			}
+		}
+		r = client;
+		stop = stopping;
+		unlockMe(this);
+		if (!stop) {
+			setConnected(r!=null);
+		}
+		return r;
 	}
 	
 	protected void windowClosing(WindowEvent e) {

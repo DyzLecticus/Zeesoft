@@ -1,6 +1,6 @@
 package nl.zeesoft.zjmo.test;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -11,7 +11,8 @@ import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
-import nl.zeesoft.zjmo.test.mocks.MockConductor;
+import nl.zeesoft.zjmo.test.mocks.MockConductor1;
+import nl.zeesoft.zjmo.test.mocks.MockConductor2;
 import nl.zeesoft.zjmo.test.mocks.MockPlayers;
 
 public class TestMemberOnlineOffline extends TestObject {
@@ -43,7 +44,7 @@ public class TestMemberOnlineOffline extends TestObject {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestMemberOnlineOffline.class));
-		System.out.println(" * " + getTester().getLinkForClass(MockConductor.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConductor1.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockPlayers.class));
 		System.out.println(" * " + getTester().getLinkForClass(Conductor.class));
 		System.out.println(" * " + getTester().getLinkForClass(Player.class));
@@ -55,28 +56,28 @@ public class TestMemberOnlineOffline extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		boolean started = false;
-		Date start = new Date();
 		
-		System.out.println("Starting members ...");
 		@SuppressWarnings("unchecked")
 		List<Player> players = (List<Player>) getTester().getMockedObject(MockPlayers.class.getName());
+		Conductor con1 = (Conductor) getTester().getMockedObject(MockConductor1.class.getName());
+		Conductor con2 = (Conductor) getTester().getMockedObject(MockConductor2.class.getName());
+		
+		List<Player> startPlayers = new ArrayList<Player>();
 		Player backup = null;
 		int i = 0;
 		for (Player player: players) {
 			if (i<(players.size() - 1)) {
-				started = player.start();
-				assertEqual(started,true,"Failed to start player: " + player.getId());
+				startPlayers.add(player);
 			} else {
 				backup = player;
 			}
 			i++;
 		}
-		Conductor con = (Conductor) getTester().getMockedObject(MockConductor.class.getName());
-		started = con.start();
-		assertEqual(started,true,"Failed to start the conductor");
-		System.out.println("Starting members took " + ((new Date()).getTime() - start.getTime()) + " ms");
-		System.out.println();
+		
+		started = TestConductor.startTestOrchestra(startPlayers,con1,con2);
+		assertEqual(started,true,"Failed to start orchestra");
 
+		System.out.println();
 		System.out.println("Starting backup ...");
 		started = backup.start();
 		assertEqual(started,true,"Failed to start the backup: ");
@@ -84,7 +85,7 @@ public class TestMemberOnlineOffline extends TestObject {
 			sleep(2000);
 			System.out.println();
 			System.out.println("Backup member state JSON:");
-			System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+			System.out.println(con1.getMemberState(backup.getId()).toStringBuilderReadFormat());
 			
 			System.out.println();
 			System.out.println("Stopping backup ...");
@@ -94,7 +95,7 @@ public class TestMemberOnlineOffline extends TestObject {
 			sleep(2000);
 			System.out.println();
 			System.out.println("Backup member state JSON:");
-			System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+			System.out.println(con1.getMemberState(backup.getId()).toStringBuilderReadFormat());
 
 			System.out.println();
 			System.out.println("Starting backup ...");
@@ -104,7 +105,7 @@ public class TestMemberOnlineOffline extends TestObject {
 			sleep(2000);
 			System.out.println();
 			System.out.println("Backup member state JSON:");
-			System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+			System.out.println(con1.getMemberState(backup.getId()).toStringBuilderReadFormat());
 			
 			MemberClient client = new MemberClient("localhost",5433);
 			client.open();
@@ -122,7 +123,7 @@ public class TestMemberOnlineOffline extends TestObject {
 				sleep(1000);
 				System.out.println();
 				System.out.println("Backup member state JSON:");
-				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+				System.out.println(con1.getMemberState(backup.getId()).toStringBuilderReadFormat());
 				
 				sleep(1000);
 				System.out.println();
@@ -134,7 +135,7 @@ public class TestMemberOnlineOffline extends TestObject {
 				sleep(1000);
 				System.out.println();
 				System.out.println("Backup member state JSON:");
-				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+				System.out.println(con1.getMemberState(backup.getId()).toStringBuilderReadFormat());
 
 				sleep(1000);
 				System.out.println();
@@ -145,38 +146,16 @@ public class TestMemberOnlineOffline extends TestObject {
 
 				System.out.println();
 				System.out.println("Backup member state JSON:");
-				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
+				System.out.println(con1.getMemberState(backup.getId()).toStringBuilderReadFormat());
 				
 				sleep(1000);
 				System.out.println();
 				System.out.println("Backup member state JSON:");
-				System.out.println(con.getMemberState(backup.getId()).toStringBuilderReadFormat());
-				
-				sleep(1000);
-				System.out.println();
-				System.out.println("Stopping conductor ...");
-				response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
-				assertEqual(response.toString(),"{\"command\":\"CLOSE_SESSION\"}","Stop program response does not match expectation");
-				client.close();
-			}
-
-			sleep(1000);
-			boolean working = con.isWorking();
-			assertEqual(working,false,"Failed to stop the conductor");
-			if (working) {
-				con.stop();
+				System.out.println(con1.getMemberState(backup.getId()).toStringBuilderReadFormat());
 			}
 		}
 		
 		System.out.println();
-		System.out.println("Stopping players ...");
-		for (Player player: players) {
-			boolean working = player.isWorking();
-			assertEqual(working,true,"Player is not working: " + player.getId());
-			if (working) {
-				player.stop();
-			}
-		}
-		con.getMessenger().whileWorking();
+		TestConductor.stopTestOrchestra(players,con1,con2);
 	}
 }

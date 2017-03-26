@@ -9,6 +9,9 @@ public class TestOrchestra extends Orchestra {
 		addPosition("Database Y");
 		addPosition("Application server X");
 		addPosition("Application server Y");
+
+		getConductors().get(0).setWorkRequestTimeoutDrain(true);
+		addMember(CONDUCTOR,1,LOCALHOST,5431,5430,500,false);
 		
 		addMember("Database X",0,LOCALHOST,6543,6542,2000,true);
 		addMember("Database Y",0,LOCALHOST,7654,7653,2000,true);

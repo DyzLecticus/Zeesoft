@@ -27,12 +27,6 @@ public class ConductorConnectorWorker extends Worker {
 	}
 	
 	@Override
-	public void stop() {
-		super.stop();
-		this.waitForStop(1,false);
-	}
-	
-	@Override
 	public void whileWorking() {
 		boolean stop = false;
 		lockMe(this);
