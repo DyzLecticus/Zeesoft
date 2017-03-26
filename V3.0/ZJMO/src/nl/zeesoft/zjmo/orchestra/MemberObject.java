@@ -20,17 +20,19 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
  * Abstract member object that implements the control and work protocols.
  */
 public abstract class MemberObject extends OrchestraMember {
-	private boolean				debug						= false;
-	private Messenger			messenger					= null;
-	private WorkerUnion			union						= null;
-	private boolean				startAndStopMessenger		= false;
+	private boolean					debug						= false;
+	private Messenger				messenger					= null;
+	private WorkerUnion				union						= null;
+	private boolean					startAndStopMessenger		= false;
 	
-	private Orchestra			orchestra					= null;
-	private MemberControlWorker	controlWorker				= null;
-	private MemberWorkWorker	workWorker					= null;
-	private ServerSocket 		controlSocket				= null;
-	private ServerSocket 		workSocket					= null;
-	private List<MemberWorker>	workers						= new ArrayList<MemberWorker>();
+	private Orchestra				orchestra					= null;
+	private MemberControlWorker		controlWorker				= null;
+	private MemberWorkWorker		workWorker					= null;
+	private ServerSocket 			controlSocket				= null;
+	private ServerSocket 			workSocket					= null;
+	private List<MemberWorker>		workers						= new ArrayList<MemberWorker>();
+	
+	private ConductorStateConnector stateConnector				= null;
 	
 	public MemberObject(Messenger msgr,Orchestra orchestra,String positionName, int positionBackupNumber) {
 		this.orchestra = orchestra;
@@ -46,6 +48,8 @@ public abstract class MemberObject extends OrchestraMember {
 			startAndStopMessenger = true;
 		}
 		union = new WorkerUnion(messenger);
+		stateConnector = new ConductorStateConnector(messenger,union,getId());
+		stateConnector.initialize(orchestra.getConductors(),true);
 	}
 	
 	public void setDebug(boolean debug) {
@@ -113,6 +117,7 @@ public abstract class MemberObject extends OrchestraMember {
 				workWorker = new MemberWorkWorker(getMessenger(),union,this);
 			}
 			workWorker.start();
+			stateConnector.open();
 			super.setState(MemberState.getState(MemberState.ONLINE));
 		} else {
 			if (controlSocket!=null) {
@@ -133,6 +138,7 @@ public abstract class MemberObject extends OrchestraMember {
 	
 	public void stop(Worker ignoreWorker) {
 		lockMe(this);
+		stateConnector.close();
 		if (controlWorker!=null && controlWorker.isWorking()) {
 			controlWorker.stop();
 		}

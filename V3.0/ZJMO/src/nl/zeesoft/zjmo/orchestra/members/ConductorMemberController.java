@@ -63,14 +63,6 @@ public class ConductorMemberController extends Locker {
 		unlockMe(this);
 	}
 
-	protected void setPlayersOffLine() {
-		for (OrchestraMember mem: orchestra.getMembers()) {
-			if (!mem.getPosition().equals(Orchestra.CONDUCTOR)) {
-				takeOffline(mem.getId());
-			}
-		}
-	}
-
 	protected JsFile getOrchestraState() {
 		lockMe(this);
 		JsFile f = orchestra.toJson(true);

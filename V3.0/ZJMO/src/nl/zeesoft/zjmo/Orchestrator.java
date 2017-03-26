@@ -147,7 +147,7 @@ public class Orchestrator {
 					if (action.equals(START)) {
 						MemberObject mem = null;
 						if (positionName.equals(Orchestra.CONDUCTOR)) {
-							mem = orch.getNewConductor(null);
+							mem = orch.getNewConductor(null,positionBackupNumber);
 						} else {
 							mem = orch.getNewPlayer(null,positionName,positionBackupNumber);
 						}

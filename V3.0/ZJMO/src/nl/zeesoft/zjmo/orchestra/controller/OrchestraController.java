@@ -28,6 +28,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.orchestra.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
@@ -40,11 +41,10 @@ public class OrchestraController extends Locker implements ActionListener {
 	private boolean							connected		= false;
 	
 	private Orchestra						orchestra		= null;
-	private OrchestraMember					conductor		= null;
 	private boolean							exitOnClose		= false;
 	private WorkerUnion						union			= null;
 
-	private MemberClient					client			= null;
+	private ConductorConnector 				connector		= null;
 	private OrchestraControllerStateWorker	stateWorker		= null;
 	private OrchestraControllerActionWorker	actionWorker	= null;
 	
@@ -62,6 +62,8 @@ public class OrchestraController extends Locker implements ActionListener {
 		union = new WorkerUnion(getMessenger());
 		gridController.updatedOrchestraMembers(getOrchestraMembers());
 		stateWorker = getNewStateWorker();
+		connector = new ConductorConnector(getMessenger(),union);
+		connector.initialize(orchestra.getConductors(),true);
 	}
 
 	public boolean isConnected() {
@@ -93,9 +95,7 @@ public class OrchestraController extends Locker implements ActionListener {
 			} catch (Exception e) {
 				// Ignore
 			}
-			conductor = orchestra.getConductor();
-			client = conductor.getNewControlClient(getMessenger(),union);
-			actionWorker = getNewActionWorker(client);
+			connector.open();
 			getMessenger().start();
 			stateWorker.start();
 			mainFrame = getMainFrame();
@@ -108,11 +108,7 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	public void stop() {
 		lockMe(this);
-		if (client!=null && client.isOpen()) {
-			client.sendCloseSessionCommand();
-			client.close();
-			client = null;
-		}
+		connector.close();
 		if (mainFrame!=null) {
 			mainFrame.setVisible(false);
 			mainFrame = null;
@@ -120,6 +116,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		stateWorker.stop();
 		if (actionWorker!=null) {
 			actionWorker.stop();
+			actionWorker = null;
 		}
 		getMessenger().stop();
 		union.stopWorkers();
@@ -130,7 +127,8 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (!client.isOpen()) {
+		MemberClient client = connector.getClient();
+		if (client==null) {
 			setConnected(false);
 		} else {
 			String err = "";
@@ -153,7 +151,8 @@ public class OrchestraController extends Locker implements ActionListener {
 					confirmed = showConfirmMessage(confirmMessage,"Are you sure?");
 				}
 				if (confirmed) {
-					if (!actionWorker.isWorking()) {
+					if (actionWorker==null || !actionWorker.isWorking()) {
+						actionWorker = getNewActionWorker(client);
 						actionWorker.handleAction(evt.getActionCommand(), members);
 					} else {
 						err = "Action worker is busy";
@@ -166,13 +165,14 @@ public class OrchestraController extends Locker implements ActionListener {
 		}
 	}
 
-	protected boolean updateOrchestraState() {
-		boolean r = client.isOpen();
-		if (!r) {
-			r = client.open();
-			setConnected(r);
-		}
-		if (r) {
+	protected void updateOrchestraState() {
+		MemberClient client = connector.getClient();
+		if (client==null) {
+			setConnected(false);
+		} else {
+			if (!isConnected()) {
+				setConnected(true);
+			}
 			ZStringBuilder response = client.sendCommand(ProtocolControlConductor.GET_ORCHESTRA_STATE);
 			if (response!=null && client.isOpen()) {
 				lockMe(this);
@@ -187,11 +187,8 @@ public class OrchestraController extends Locker implements ActionListener {
 					gridController.fireTableDataChanged();
 					unlockMe(this);
 				}
-			} else {
-				r = false;
 			}
 		}
-		return r;
 	}
 	
 	protected void windowClosing(WindowEvent e) {
@@ -213,6 +210,8 @@ public class OrchestraController extends Locker implements ActionListener {
 			for (JMenuItem item: menuItems) {
 				item.setEnabled(connected);
 			}
+			MemberClient client = connector.getClient();
+			OrchestraMember conductor = connector.getConductorForClient(client);
 			if (connected) {
 				stateLabel.setText("Connected to: " + conductor.getId() + " (" + conductor.getIpAddressOrHostName() + ":" + conductor.getControlPort() + ")");
 			} else {

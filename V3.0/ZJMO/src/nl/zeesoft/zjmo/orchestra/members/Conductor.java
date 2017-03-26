@@ -17,8 +17,8 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWorkConductor;
 public class Conductor extends MemberObject {
 	private ConductorMemberController	controller	= null;
 	
-	public Conductor(Messenger msgr,Orchestra orchestra) {
-		super(msgr,orchestra,Orchestra.CONDUCTOR,0);
+	public Conductor(Messenger msgr,Orchestra orchestra,int positionBackupNumber) {
+		super(msgr,orchestra,Orchestra.CONDUCTOR,positionBackupNumber);
 		controller = new ConductorMemberController(getMessenger(),getUnion(),orchestra);
 	}
 	
@@ -27,7 +27,7 @@ public class Conductor extends MemberObject {
 		boolean started = super.start();
 		if (started) {
 			controller.open();
-			controller.getState(Orchestra.CONDUCTORID);
+			controller.getState(getId());
 		}
 		return started;
 	}

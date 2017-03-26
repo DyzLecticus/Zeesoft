@@ -22,13 +22,11 @@ public abstract class Orchestra {
 	public static final String		LOCALHOSTIP		= "127.0.0.1";
 	
 	public static final String		CONDUCTOR		= "Conductor";
-	public static final String		CONDUCTORID		= "Conductor/0";
 	
 	private List<Position> 			positions		= new ArrayList<Position>();
 	private List<OrchestraMember>	members			= new ArrayList<OrchestraMember>();
 	
 	// TODO: Client latency feedback including state update
-	// TODO: GUI
 	// TODO: Java documentation
 	
 	public Orchestra() {
@@ -42,8 +40,8 @@ public abstract class Orchestra {
 		return new OrchestraGenerator();
 	}
 
-	public Conductor getNewConductor(Messenger msgr) {
-		return new Conductor(msgr,this);
+	public Conductor getNewConductor(Messenger msgr,int positionBackupNumber) {
+		return new Conductor(msgr,this,positionBackupNumber);
 	}
 
 	public Player getNewPlayer(Messenger msgr,String positionName,int positionBackupNumber) {
@@ -88,8 +86,12 @@ public abstract class Orchestra {
 		return r;
 	}
 
-	public OrchestraMember getConductor() {
-		return getMemberById(CONDUCTORID);
+	public List<OrchestraMember> getConductors() {
+		return getMembersForPosition(CONDUCTOR);
+	}
+	
+	public OrchestraMember getConductor(int positionBackupNumber) {
+		return getMemberById(CONDUCTOR + "/" + positionBackupNumber);
 	}
 
 	public OrchestraMember getMember(String ipAddressOrHostName,int port) {
@@ -151,18 +153,10 @@ public abstract class Orchestra {
 		if (getPosition(positionName)!=null) {
 			r = getMember(ipAddressOrHostName,controlPort);
 			if (r==null) {
-				if (positionName.equals(CONDUCTOR)) {
-					positionBackupNumber = 0;
-				}
+				r = getMember(ipAddressOrHostName,workPort);
+			}
+			if (r==null) {
 				r = getMemberById(positionName + "/" + positionBackupNumber);
-				if (r!=null) {
-					r.setIpAddressOrHostName(ipAddressOrHostName);
-					r.setControlPort(controlPort);
-					r.setWorkPort(workPort);
-					r.setWorkRequestTimeout(workRequestTimeout);
-					r.setWorkRequestTimeoutDrain(workRequestTimeoutDrain);
-					r.setState(MemberState.getState(MemberState.UNKNOWN));
-				}
 			}
 			if (r==null) {
 				r = new OrchestraMember();
@@ -247,7 +241,16 @@ public abstract class Orchestra {
 						}
 					}
 					if (member.getPosition()!=null) {
-						members.add(member);
+						OrchestraMember existing = getMember(member.getIpAddressOrHostName(),member.getControlPort());
+						if (existing==null) {
+							existing = getMember(member.getIpAddressOrHostName(),member.getWorkPort());
+						}
+						if (existing==null) {
+							existing = getMemberById(member.getId());
+						}
+						if (existing==null) {
+							members.add(member);
+						}
 					}
 				}
 			}
