@@ -1,4 +1,4 @@
-package nl.zeesoft.zso.orchestra.members;
+package nl.zeesoft.zso.composition.sequencer;
 
 import java.util.Date;
 import java.util.List;
@@ -13,18 +13,18 @@ import nl.zeesoft.zso.composition.Step;
 import nl.zeesoft.zso.orchestra.SampleOrchestra;
 
 public class CompositionPlayer extends Worker {
-	private	SampleConductor								conductor	= null;
+	private	Sequencer									sequencer	= null;
 	private int											bar			= 1;
 	private int											step		= 0;
 	private SortedMap<String,CompositionPlayerWorker>	workers		= new TreeMap<String,CompositionPlayerWorker>();
 	
-	public CompositionPlayer(Messenger msgr, WorkerUnion union,SampleConductor conductor) {
+	public CompositionPlayer(Messenger msgr, WorkerUnion union,Sequencer sequencer) {
 		super(msgr, union);
 		setSleep(1);
-		this.conductor = conductor;
-		workers.put(SampleOrchestra.BASEBEAT,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr,union),SampleOrchestra.BASEBEAT));
-		workers.put(SampleOrchestra.SNARE,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr,union),SampleOrchestra.SNARE));
-		workers.put(SampleOrchestra.HIHAT,new CompositionPlayerWorker(msgr,union,conductor.getNewWorkClient(msgr,union),SampleOrchestra.HIHAT));
+		this.sequencer = sequencer;
+		workers.put(SampleOrchestra.BASEBEAT,new CompositionPlayerWorker(msgr,union,sequencer,SampleOrchestra.BASEBEAT));
+		workers.put(SampleOrchestra.SNARE,new CompositionPlayerWorker(msgr,union,sequencer,SampleOrchestra.SNARE));
+		workers.put(SampleOrchestra.HIHAT,new CompositionPlayerWorker(msgr,union,sequencer,SampleOrchestra.HIHAT));
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class CompositionPlayer extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		Composition comp = conductor.getComposition();
+		Composition comp = sequencer.getComposition();
 		Date now = new Date();	
 		if (comp!=null) {
 			long playDateTime = now.getTime() + (comp.getMsForStep(step) / 2);

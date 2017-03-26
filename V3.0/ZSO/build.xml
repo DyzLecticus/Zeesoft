@@ -10,7 +10,7 @@
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<!-- ZJMO version -->
-	<property name="versionZJMO" value="0.9.7"/>
+	<property name="versionZJMO" value="0.9.8"/>
 	<property name="releasesZJMO" location="../ZJMO/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -162,10 +162,13 @@
 		<copy file="${dist}/zso.jar" tofile="orchestra/lib/zso.jar"/>
 		<copy todir="orchestra/lib">
             <fileset dir="lib/" includes="**/*.jar"/>
-        </copy>		
+        </copy>
 		<exec dir="orchestra/" executable="cmd"> 
 			<arg line="/c update.bat"/>
 		</exec>
+		<copy todir="orchestra/sequencer/lib">
+            <fileset dir="orchestra/lib/" includes="**/*.jar"/>
+        </copy>		
 	</target>
 
 	<target name="releaseOrchestra" depends="orchestraExists" if="_orchestraExists">

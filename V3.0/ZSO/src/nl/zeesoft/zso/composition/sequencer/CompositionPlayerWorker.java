@@ -1,4 +1,4 @@
-package nl.zeesoft.zso.orchestra.members;
+package nl.zeesoft.zso.composition.sequencer;
 
 import java.util.Date;
 
@@ -7,39 +7,45 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.orchestra.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
 
 public class CompositionPlayerWorker extends Worker {
-	private WorkClient		client			= null;
-	private String			positionName	= "";
+	private String				positionName	= "";
+
+	private ConductorConnector	connector		= null;
+	private WorkClient			client			= null;
 	
-	private long			playDateTime	= 0;
-	private long			startMs			= 0;
-	private long			durationMs		= 0;
+	private long				playDateTime	= 0;
+	private long				startMs			= 0;
+	private long				durationMs		= 0;
 	
-	public CompositionPlayerWorker(Messenger msgr, WorkerUnion union,WorkClient client,String positionName) {
+	public CompositionPlayerWorker(Messenger msgr, WorkerUnion union,Sequencer sequencer,String positionName) {
 		super(msgr, union);
 		setSleep(1);
-		this.client = client;
 		this.positionName = positionName;
+		connector = new ConductorConnector(msgr,union);
+		connector.initialize(sequencer.getOrchestra().getConductors(),false);
 	}
 	
 	
 	@Override
 	public void start() {
-		if (client.open()) {
-			super.start();
-		}
+		connector.open();
+		super.start();
 	}
 	
 	@Override
 	public void stop() {
 		super.stop();
-		if (client.isOpen()) {
+		lockMe(this);
+		if (client!=null && client.isOpen()) {
 			client.sendCloseSessionCommand();
 			client.close();
 		}
+		unlockMe(this);
+		connector.close();
 	}
 
 	public long getPlayDateTime() {
@@ -71,7 +77,12 @@ public class CompositionPlayerWorker extends Worker {
 			WorkRequest wr = new WorkRequest();
 			wr.setPositionName(positionName);
 			wr.setRequest(req);
-			client.sendWorkRequest(wr);
+			if (client==null || !client.isOpen()) {
+				client = connector.getWorkClient();
+			}
+			if (client!=null && client.isOpen()) {
+				client.sendWorkRequest(wr);
+			}
 			setPlayDateTime(0,0,0);
 		}
 	}

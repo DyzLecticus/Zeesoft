@@ -71,28 +71,9 @@ public class Orchestrator {
 			}
 		}
 		
-		Orchestra orch = null;
-		if (orchestraClassName.length()==0) {
+		Orchestra orch = getOrchestraForClassName(orchestraClassName);
+		if (orch==null) {
 			err = "The second parameter must refer to a valid orchestra class name";
-		} else {
-			Object obj = null;
-			try {
-				Class<?> clas = Class.forName(orchestraClassName);
-				obj = clas.newInstance();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-			if (obj==null) {
-				err = "Unable to instantiate orchestra class name: " + orchestraClassName;
-			} else if (!(obj instanceof Orchestra)) {
-				err = "Class name: " + orchestraClassName + " must extend " + Orchestra.class.getName();
-			} else {
-				orch = (Orchestra) obj;
-			}
 		}
 		
 		if (orch!=null) {
@@ -110,7 +91,7 @@ public class Orchestrator {
 			} else if (action.equals(UPDATE)) {
 				File genDir = new File(generateDirectory);
 				if (generateDirectory.length()>0 && !genDir.isDirectory()) {
-					err = "Orchestra generation requires valid directory as a third parameter";
+					err = "Orchestra update requires valid directory as a third parameter";
 				}
 				if (err.length()==0) {
 					JsFile json = new JsFile();
@@ -185,5 +166,26 @@ public class Orchestrator {
 			System.err.println(err);
 			System.exit(1);
 		}
+	}
+	
+	public static Orchestra getOrchestraForClassName(String orchestraClassName) {
+		Orchestra orch = null;
+		if (orchestraClassName.length()>0) {
+			Object obj = null;
+			try {
+				Class<?> clas = Class.forName(orchestraClassName);
+				obj = clas.newInstance();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			if (obj!=null && obj instanceof Orchestra) {
+				orch = (Orchestra) obj;
+			}
+		}
+		return orch;
 	}
 }
