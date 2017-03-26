@@ -91,9 +91,17 @@ public class Messenger extends Worker  {
 	 */
 	@Override
 	public void whileWorking() {
-		printMessages();
-		printedMessages(messages);
-		flushMessages();
+		List<MessageObject> printed = new ArrayList<MessageObject>();
+		lockMe(this);
+		if (messages.size()>0) {
+			printMessagesNoLock();
+			for (MessageObject msg: messages) {
+				printed.add(msg.getCopy());
+			}
+			messages.clear();
+		}
+		unlockMe(this);
+		printedMessagesNoLock(printed);
 	}
 	
 	/**
@@ -107,79 +115,6 @@ public class Messenger extends Worker  {
 		waitForStop(1,true);
 	}
 	
-	/**
-	 * Prints all messages in the buffer.
-	 */
-	public void printMessages() {
-		lockMe(this);
-		if (messages.size()>0) {
-			for (MessageObject msg: messages) {
-				if (msg instanceof ErrorMessage) {
-					printMessage(msg,true);
-				} else if (!(msg instanceof DebugMessage) || printDebugMessages) {
-					printMessage(msg,false);
-				}
-			}
-		}
-		unlockMe(this);
-	}
-	
-	/**
-	 * Clears the message buffer.
-	 */
-	public void flushMessages() {
-		lockMe(this);
-		messages.clear();
-		unlockMe(this);
-	}
-
-	/**
-	 * Returns the messages in the buffer.
-	 * 
-	 * @return The messages in the buffer
-	 */
-	public List<MessageObject> getMessages() {
-		List<MessageObject> r = new ArrayList<MessageObject>();
-		lockMe(this);
-		if (messages.size()>0) {
-			for (MessageObject msg: messages) {
-				r.add(msg.getCopy());
-			}
-		}
-		unlockMe(this);
-		return r;
-	}
-
-	/**
-	 * Notifies attached listeners that a message has been printed.
-	 * 
-	 * @param msg The message that has been printed
-	 */
-	public void printedMessage(MessageObject msg) {
-		lockMe(this);
-		if (listeners.size()>0) {
-			for (MessengerListener listener: listeners) {
-				if (!(msg instanceof DebugMessage) || printDebugMessages) {
-					listener.printedMessage(msg);
-				}
-			}
-		}
-		unlockMe(this);
-	}
-	
-	/**
-	 * Notifies the Messenger a certain set of messages has been printed.
-	 * 
-	 * @param messages The list of printed messages
-	 */
-	public void printedMessages(List<MessageObject> messages) {
-		if (messages.size()>0) {
-			for (MessageObject msg: messages) {
-				printedMessage(msg);
-			}
-		}
-	}
-
 	/**
 	 * Returns true if a warning message has been added to the Messenger.
 	 * 
@@ -250,4 +185,35 @@ public class Messenger extends Worker  {
 		}
 		unlockMe(msg.getSource());
 	}
+
+	private void printMessagesNoLock() {
+		if (messages.size()>0) {
+			for (MessageObject msg: messages) {
+				if (msg instanceof ErrorMessage) {
+					printMessage(msg,true);
+				} else if (!(msg instanceof DebugMessage) || printDebugMessages) {
+					printMessage(msg,false);
+				}
+			}
+		}
+	}
+
+	private void printedMessagesNoLock(List<MessageObject> messages) {
+		if (messages.size()>0) {
+			for (MessageObject msg: messages) {
+				printedMessageNoLock(msg);
+			}
+		}
+	}
+
+	private void printedMessageNoLock(MessageObject msg) {
+		if (listeners.size()>0) {
+			for (MessengerListener listener: listeners) {
+				if (!(msg instanceof DebugMessage) || printDebugMessages) {
+					listener.printedMessage(msg);
+				}
+			}
+		}
+	}
+	
 }
