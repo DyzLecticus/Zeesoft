@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
 public class ConductorConnector extends Locker {
 	private boolean						closing		= false;
@@ -26,6 +27,8 @@ public class ConductorConnector extends Locker {
 		for (OrchestraMember conductor: conductors) {
 			if (control) {
 				clients.add(conductor.getNewControlClient(getMessenger(), union));
+			} else {
+				clients.add(conductor.getNewWorkClient(getMessenger(), union));
 			}
 		}
 		unlockMe(this);
@@ -66,6 +69,14 @@ public class ConductorConnector extends Locker {
 		return r;
 	}
 	
+	public WorkClient getWorkClient() {
+		WorkClient r = null;
+		MemberClient c = getClient();
+		if (c!=null && c instanceof WorkClient) {
+			r = (WorkClient) c;
+		}
+		return r;
+	}
 	
 	public MemberClient getClient() {
 		MemberClient r = null;

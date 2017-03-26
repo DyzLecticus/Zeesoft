@@ -89,10 +89,6 @@ public abstract class Orchestra {
 	public List<OrchestraMember> getConductors() {
 		return getMembersForPosition(CONDUCTOR);
 	}
-	
-	public OrchestraMember getConductor(int positionBackupNumber) {
-		return getMemberById(CONDUCTOR + "/" + positionBackupNumber);
-	}
 
 	public OrchestraMember getMember(String ipAddressOrHostName,int port) {
 		OrchestraMember r = null;

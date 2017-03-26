@@ -243,7 +243,6 @@ public class OrchestraController extends Locker implements ActionListener {
 				item.setEnabled(connected);
 			}
 			if (connected) {
-				MemberClient client = connector.getClient();
 				OrchestraMember conductor = connector.getConductorForClient(client);
 				stateLabel.setText("Connected to: " + conductor.getId() + " (" + conductor.getIpAddressOrHostName() + ":" + conductor.getControlPort() + ")");
 			} else {
@@ -295,7 +294,7 @@ public class OrchestraController extends Locker implements ActionListener {
 			item.setEnabled(connected);
 		}
 		
-		stateLabel = new JLabel();
+		stateLabel = new JLabel("Connecting ...");
 		JPanel statePanel = new JPanel();
 		statePanel.setLayout(new BoxLayout(statePanel,BoxLayout.LINE_AXIS));
 		statePanel.add(stateLabel);
