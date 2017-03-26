@@ -98,13 +98,13 @@ public class ConductorMemberController extends Locker {
 		return sendMemberCommand(id,ProtocolControl.BRING_ONLINE);
 	}
 	
-	protected void getState(String memberId) {
+	protected void getState(String memberId,boolean connect) {
 		lockMe(this);
 		for (MemberClient client: clients) {
 			OrchestraMember member = getMemberForClient(client);
 			if (memberId==null || memberId.length()==0 || member.getId().equals(memberId)) {
 				
-				if (!client.isOpen()) {
+				if (!client.isOpen() && connect) {
 					client.open();
 					if (client.isOpen()) {
 						MemberClient stateClient = member.getNewControlClient(getMessenger(),union);
@@ -112,11 +112,13 @@ public class ConductorMemberController extends Locker {
 						stateClients.add(stateClient);
 						stateWorkers.add(stateWorker);
 						stateWorker.start();
+					} else {
+						setMemberStateUnknown(member,"Failed to open control client");
 					}
 				}
 				
 				if (!client.isOpen()) {
-					setMemberStateUnknown(member,"Failed to open control client");
+					setMemberStateUnknown(member,"Not connected");
 				} else {
 					member.setErrorMessage("");
 					ZStringBuilder state = client.sendCommand(ProtocolControl.GET_STATE);

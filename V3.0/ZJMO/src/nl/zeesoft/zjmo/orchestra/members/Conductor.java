@@ -27,7 +27,7 @@ public class Conductor extends MemberObject {
 		boolean started = super.start();
 		if (started) {
 			controller.open();
-			controller.getState(null);
+			controller.getState(null,true);
 		}
 		return started;
 	}
@@ -56,8 +56,8 @@ public class Conductor extends MemberObject {
 		return controller.getMemberState(memberId);
 	}
 	
-	public void updateState(String memberId) {
-		controller.getState(memberId);
+	public void updateState(String memberId,boolean connect) {
+		controller.getState(memberId,connect);
 	}
 
 	public ZStringBuilder takeOffline(String memberId) {

@@ -20,11 +20,11 @@ public class ConductorMemberDrainOfflineWorker extends Worker {
 	@Override
 	public void whileWorking() {
 		controller.closeUnusedClients(memberId,0);
-		controller.getState(memberId);
+		controller.getState(memberId,false);
 		if (controller.getMemberWorkLoad(memberId)==0) {
 			ZStringBuilder response = getTakeOfflineResponse(controller,memberId);
 			if (response==null || ProtocolObject.isResponseJson(response)) {
-				controller.getState(memberId);
+				controller.getState(memberId,false);
 			}
 			stop();
 		}

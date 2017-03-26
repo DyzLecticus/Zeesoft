@@ -27,6 +27,6 @@ public class ConductorStateConnector extends ConductorConnector {
 	}
 	
 	protected void onOpenClient(MemberClient client) {
-		client.sendCommand(ProtocolControlConductor.UPDATE_MEMBER_STATE,"id",memberId);
+		client.sendCommand(ProtocolControlConductor.CONNECT_MEMBER,"id",memberId);
 	}
 }

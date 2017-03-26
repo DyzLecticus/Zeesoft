@@ -7,6 +7,7 @@ import nl.zeesoft.zjmo.orchestra.members.Conductor;
 public class ProtocolControlConductor extends ProtocolControl {
 	public static final String GET_ORCHESTRA_STATE	= "GET_ORCHESTRA_STATE";
 	public static final String GET_MEMBER_STATE		= "GET_MEMBER_STATE";
+	public static final String CONNECT_MEMBER		= "CONNECT_MEMBER";
 	public static final String UPDATE_MEMBER_STATE	= "UPDATE_MEMBER_STATE";
 	public static final String TAKE_MEMBER_OFFLINE	= "TAKE_MEMBER_OFFLINE";
 	public static final String DRAIN_MEMBER_OFFLINE	= "DRAIN_MEMBER_OFFLINE";
@@ -20,6 +21,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 			boolean handled = false;
 			if (command.equals(GET_ORCHESTRA_STATE) ||
 				command.equals(GET_MEMBER_STATE) ||
+				command.equals(CONNECT_MEMBER) ||
 				command.equals(UPDATE_MEMBER_STATE) ||
 				command.equals(TAKE_MEMBER_OFFLINE) ||
 				command.equals(DRAIN_MEMBER_OFFLINE) ||
@@ -53,24 +55,27 @@ public class ProtocolControlConductor extends ProtocolControl {
 					output = con.getOrchestraState().toStringBuilder();
 				} else if (command.equals(GET_MEMBER_STATE)) {
 					output = con.getMemberState(memberId).toStringBuilder();
+				} else if (command.equals(CONNECT_MEMBER)) {
+					con.updateState(memberId,true);
+					output = getExecutedCommandResponse();
 				} else if (command.equals(UPDATE_MEMBER_STATE)) {
-					con.updateState(memberId);
+					con.updateState(memberId,false);
 					output = getExecutedCommandResponse();
 				} else if (command.equals(TAKE_MEMBER_OFFLINE)) {
 					output = con.takeOffline(memberId);
 					if (!isErrorJson(output)) {
-						con.updateState(memberId);
+						con.updateState(memberId,false);
 					}
 				} else if (command.equals(DRAIN_MEMBER_OFFLINE)) {
 					output = con.drainOffline(memberId);
 					if (!isErrorJson(output)) {
-						con.updateState(memberId);
+						con.updateState(memberId,false);
 						con.drainOfflineWorker(memberId);
 					}
 				} else if (command.equals(BRING_MEMBER_ONLINE)) {
 					output = con.bringOnline(memberId);
 					if (!isErrorJson(output)) {
-						con.updateState(memberId);
+						con.updateState(memberId,false);
 					}
 				}
 			}
