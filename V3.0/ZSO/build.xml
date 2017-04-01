@@ -10,7 +10,7 @@
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<!-- ZJMO version -->
-	<property name="versionZJMO" value="0.9.12"/>
+	<property name="versionZJMO" value="0.9.13"/>
 	<property name="releasesZJMO" location="../ZJMO/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
