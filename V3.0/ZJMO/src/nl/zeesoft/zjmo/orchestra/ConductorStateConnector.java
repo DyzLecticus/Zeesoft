@@ -26,7 +26,8 @@ public class ConductorStateConnector extends ConductorConnector {
 		super.initialize(cons,control);
 	}
 	
-	protected void onOpenClient(MemberClient client) {
-		client.sendCommand(ProtocolControlConductor.CONNECT_MEMBER,"id",memberId);
+	@Override
+	protected void onOpenClient(ConductorConnectorClient client) {
+		client.getClient().sendCommand(ProtocolControlConductor.CONNECT_MEMBER,"id",memberId);
 	}
 }

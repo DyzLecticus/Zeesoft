@@ -9,11 +9,10 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
 public class ConductorConnector extends Locker {
-	private boolean						closing		= false;
-	private WorkerUnion					union		= null;
-	private	ConductorConnectorWorker	worker		= null;
-	private List<OrchestraMember>		conductors	= new ArrayList<OrchestraMember>();
-	private List<MemberClient>			clients		= new ArrayList<MemberClient>();
+	private boolean							closing		= false;
+	private WorkerUnion						union		= null;
+	private	ConductorConnectorWorker		worker		= null;
+	private List<ConductorConnectorClient>	clients		= new ArrayList<ConductorConnectorClient>();
 	
 	public ConductorConnector(Messenger msgr, WorkerUnion uni) {
 		super(msgr);
@@ -22,14 +21,16 @@ public class ConductorConnector extends Locker {
 	
 	public void initialize(List<OrchestraMember> conductors,boolean control) {
 		lockMe(this);
-		this.conductors = conductors;
 		clients.clear();
 		for (OrchestraMember conductor: conductors) {
+			ConductorConnectorClient client = new ConductorConnectorClient(getMessenger());
+			client.setConductor(conductor);
 			if (control) {
-				clients.add(conductor.getNewControlClient(getMessenger(), union));
+				client.setClient(conductor.getNewControlClient(getMessenger(), union));
 			} else {
-				clients.add(conductor.getNewWorkClient(getMessenger(), union));
+				client.setClient(conductor.getNewWorkClient(getMessenger(), union));
 			}
+			clients.add(client);
 		}
 		unlockMe(this);
 	}
@@ -50,7 +51,7 @@ public class ConductorConnector extends Locker {
 		if (worker!=null) {
 			worker.setStopping(true);
 		}
-		List<MemberClient> cls = new ArrayList<MemberClient>(clients);
+		List<ConductorConnectorClient> cls = new ArrayList<ConductorConnectorClient>(clients);
 		unlockMe(this);
 		closeClients(cls);
 		lockMe(this);
@@ -81,9 +82,9 @@ public class ConductorConnector extends Locker {
 	public MemberClient getClient() {
 		MemberClient r = null;
 		lockMe(this);
-		for (MemberClient client: clients) {
-			if (client.isOpen()) {
-				r = client;
+		for (ConductorConnectorClient cl: clients) {
+			if (cl.isOpen()) {
+				r = cl.getClient();
 				break;
 			}
 		}
@@ -94,42 +95,42 @@ public class ConductorConnector extends Locker {
 	public OrchestraMember getConductorForClient(MemberClient client) {
 		OrchestraMember r = null;
 		lockMe(this);
-		if (client!=null) {
-			r = conductors.get(clients.indexOf(client));
+		for (ConductorConnectorClient cl: clients) {
+			if (cl.getClient()==client) {
+				r = cl.getConductor();
+			}
 		}
 		unlockMe(this);
 		return r;
 	}
 	
-	protected void connect() {
+	public void connect() {
 		lockMe(this);
-		List<MemberClient> cls = new ArrayList<MemberClient>(clients);
+		List<ConductorConnectorClient> cls = new ArrayList<ConductorConnectorClient>(clients);
 		unlockMe(this);
 		openClients(cls);
 	}
 	
-	protected void onOpenClient(MemberClient client) {
+	protected void onOpenClient(ConductorConnectorClient client) {
 		// Override to implement
 	}
 	
-	protected void openClients(List<MemberClient> clients) {
-		for (MemberClient client: clients) {
-			if (!client.isOpen() && !isClosing()) {
-				boolean open = client.open();
-				if (open) {
+	protected void openClients(List<ConductorConnectorClient> clients) {
+		for (ConductorConnectorClient client: clients) {
+			if (!client.checkOpen() && !isClosing()) {
+				client.open();
+				if (client.isOpen()) {
 					onOpenClient(client);
 				}
 			}
 		}
 	}
 
-	protected void closeClients(List<MemberClient> clients) {
-		for (MemberClient client: clients) {
+	protected void closeClients(List<ConductorConnectorClient> clients) {
+		for (ConductorConnectorClient client: clients) {
 			if (client.isOpen()) {
-				client.sendCloseSessionCommand();
 				client.close();
 			}
 		}
 	}
-
 }

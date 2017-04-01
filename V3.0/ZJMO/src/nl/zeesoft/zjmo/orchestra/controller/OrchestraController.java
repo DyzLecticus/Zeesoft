@@ -48,7 +48,6 @@ public class OrchestraController extends Locker implements ActionListener {
 	private ConductorConnector 				connector			= null;
 	private MemberClient 					client				= null;
 	private ControllerStateWorker			stateWorker			= null;
-	private ControllerStateUpdateWorker		stateUpdateWorker	= null;
 	private ControllerActionWorker			actionWorker		= null;
 	
 	private JFrame							mainFrame			= null;
@@ -65,7 +64,6 @@ public class OrchestraController extends Locker implements ActionListener {
 		union = new WorkerUnion(getMessenger());
 		gridController.updatedOrchestraMembers(getOrchestraMembers());
 		stateWorker = getNewStateWorker();
-		stateUpdateWorker = getNewStateUpdateWorker();
 		connector = new ConductorConnector(getMessenger(),union);
 		connector.initialize(orchestra.getConductors(),true);
 	}
@@ -110,9 +108,9 @@ public class OrchestraController extends Locker implements ActionListener {
 				// Ignore
 			}
 			connector.open();
+			connector.connect();
 			getMessenger().start();
 			stateWorker.start();
-			stateUpdateWorker.start();
 			mainFrame = getMainFrame();
 			mainFrame.setVisible(true);
 			working = true;
@@ -126,7 +124,6 @@ public class OrchestraController extends Locker implements ActionListener {
 		stopping = true;
 		unlockMe(this);
 		stateWorker.stop();
-		stateUpdateWorker.stop();
 		lockMe(this);
 		if (client!=null) {
 			client.sendCloseSessionCommand();
@@ -186,18 +183,6 @@ public class OrchestraController extends Locker implements ActionListener {
 			if (err.length()>0) {
 				showErrorMessage(err,"Error");
 			}
-		}
-	}
-
-	protected void forceUpdateOrchestraState() {
-		MemberClient client = getClient();
-		if (client!=null && client.isOpen() && !isStopping()) {
-			lockMe(this);
-			if (actionWorker==null || !actionWorker.isWorking()) {
-				actionWorker = getNewActionWorker(client);
-				actionWorker.handleAction(ProtocolControl.GET_STATE,getOrchestraMembers());
-			}
-			unlockMe(this);
 		}
 	}
 
@@ -286,10 +271,6 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	protected ControllerStateWorker getNewStateWorker() {
 		return new ControllerStateWorker(getMessenger(),union,this);
-	}
-
-	protected ControllerStateUpdateWorker getNewStateUpdateWorker() {
-		return new ControllerStateUpdateWorker(getMessenger(),union,this);
 	}
 
 	protected ControllerActionWorker getNewActionWorker(MemberClient client) {

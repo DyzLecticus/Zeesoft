@@ -57,6 +57,7 @@ public class ProtocolWorkConductor extends ProtocolWork {
 									wr.setError("Player did not return valid JSON: " + client.getMemberId());
 								} else {
 									wr.setResponse(resp);
+									wr.setError("");
 								}
 								output = wr.toJson().toStringBuilder();
 								retry = false;

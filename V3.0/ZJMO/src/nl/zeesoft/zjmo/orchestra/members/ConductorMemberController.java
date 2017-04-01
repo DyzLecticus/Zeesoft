@@ -18,6 +18,7 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 public class ConductorMemberController extends Locker {
 	private WorkerUnion							union					= null;
 	private Orchestra 							orchestra				= null;
+	private	ConductorMemberControllerWorker		worker					= null;
 	private List<MemberClient>					clients					= new ArrayList<MemberClient>();
 	private List<MemberClient>					stateClients			= new ArrayList<MemberClient>(); 
 	private List<ConductorMemberStateWorker>	stateWorkers			= new ArrayList<ConductorMemberStateWorker>(); 
@@ -28,6 +29,7 @@ public class ConductorMemberController extends Locker {
 		super(msgr);
 		this.orchestra = orchestra;
 		this.union = uni;
+		worker = new ConductorMemberControllerWorker(msgr,uni,this);
 		workClientPool = new WorkClientPool(msgr,uni,orchestra);
 		workClientPoolWorker = new WorkClientPoolWorker(msgr,uni,workClientPool,orchestra.closeUnusedWorkClientsMilliseconds());
 	}
@@ -43,9 +45,11 @@ public class ConductorMemberController extends Locker {
 		}
 		workClientPoolWorker.start();
 		unlockMe(this);
+		worker.start();
 	}
 
 	protected void close() {
+		worker.stop();
 		lockMe(this);
 		for (MemberClient client: clients) {
 			client.sendCloseSessionCommand();
