@@ -8,7 +8,7 @@ This library depends on the following libraries;
  * [Zeesoft JSON Machine Orchestration](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZJMO/)  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/zso-0.9.6.zip) to download the latest ZSO release (version 0.9.6).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/zso-0.9.7.zip) to download the latest ZSO release (version 0.9.7).  
 All ZSO releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
