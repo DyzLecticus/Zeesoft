@@ -34,6 +34,7 @@ public class CompositionPlayerWorker extends Worker {
 	@Override
 	public void start() {
 		connector.open();
+		connector.connect();
 		super.start();
 	}
 	
@@ -81,23 +82,32 @@ public class CompositionPlayerWorker extends Worker {
 			if (client==null || !client.isOpen()) {
 				client = connector.getWorkClient();
 			}
-			boolean handled = true;
+			boolean handled = false;
+			String err = "";
 			if (client!=null && client.isOpen()) {
 				ZStringBuilder response = client.sendWorkRequest(wr);
-				if (response==null) {
-					handled = false;
-				} else {
+				if (response==null || !client.isOpen()) {
+					WorkClient next = connector.getWorkClient();
+					if (next!=null && !next.getMemberId().equals(client.getMemberId())) {
+						response = next.sendWorkRequest(wr);
+					}
+				}
+				if (response!=null) {
 					WorkRequest rwr = new WorkRequest();
 					rwr.fromStringBuilder(response);
 					if (rwr.getError().length()>0) {
-						handled = false;
+						err = rwr.getError();
+					} else {
+						handled = true;
 					}
 				}
-			} else {
-				handled = false;
 			}
 			if (!handled) {
-				getMessenger().error(this,"Failed to play position: " + positionName);
+				if (err.length()>0) {
+					getMessenger().error(this,"Failed to play position: " + positionName + ", error: " + err);
+				} else {
+					getMessenger().error(this,"Failed to play position: " + positionName);
+				}
 			}
 			setPlayDateTime(0,0,0);
 		}
