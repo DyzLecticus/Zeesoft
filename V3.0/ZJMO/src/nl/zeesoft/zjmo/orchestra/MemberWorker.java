@@ -67,9 +67,7 @@ public class MemberWorker extends Worker {
 		} else if (close) {
 			member.stopWorker(this);
 		} else {
-			lockMe(this);
 			socket.writeOutput(output);
-			unlockMe(this);
 		}
 	}
 }

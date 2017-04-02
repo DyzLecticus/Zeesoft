@@ -66,7 +66,9 @@ public class TestConductor extends TestObject {
 		
 		started = startTestOrchestra(players,con1,con2);
 		assertEqual(started,true,"Failed to start orchestra");
-		
+
+		sleep(1000);
+
 		if (started) {
 			MemberClient client = new MemberClient("localhost",5433);
 			client.open();

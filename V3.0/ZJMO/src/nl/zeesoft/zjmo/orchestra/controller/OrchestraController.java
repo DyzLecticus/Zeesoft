@@ -28,11 +28,12 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zjmo.orchestra.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
+import nl.zeesoft.zjmo.orchestra.client.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
@@ -46,7 +47,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	private WorkerUnion						union				= null;
 
 	private ConductorConnector 				connector			= null;
-	private MemberClient 					client				= null;
+	//private MemberClient 					client				= null;
 	private ControllerStateWorker			stateWorker			= null;
 	private ControllerActionWorker			actionWorker		= null;
 	
@@ -64,8 +65,8 @@ public class OrchestraController extends Locker implements ActionListener {
 		union = new WorkerUnion(getMessenger());
 		gridController.updatedOrchestraMembers(getOrchestraMembers());
 		stateWorker = getNewStateWorker();
-		connector = new ConductorConnector(getMessenger(),union);
-		connector.initialize(orchestra.getConductors(),true);
+		connector = new ConductorConnector(getMessenger(),union,true);
+		connector.initialize(orchestra,null);
 	}
 
 	public boolean isConnected() {
@@ -108,7 +109,6 @@ public class OrchestraController extends Locker implements ActionListener {
 				// Ignore
 			}
 			connector.open();
-			connector.connect();
 			getMessenger().start();
 			stateWorker.start();
 			mainFrame = getMainFrame();
@@ -125,11 +125,13 @@ public class OrchestraController extends Locker implements ActionListener {
 		unlockMe(this);
 		stateWorker.stop();
 		lockMe(this);
+		/*
 		if (client!=null) {
 			client.sendCloseSessionCommand();
 			client.close();
 			client = null;
 		}
+		*/
 		if (mainFrame!=null) {
 			mainFrame.setVisible(false);
 			mainFrame = null;
@@ -211,19 +213,18 @@ public class OrchestraController extends Locker implements ActionListener {
 	
 	protected MemberClient getClient() {
 		MemberClient r = null;
+		ActiveClient ac = null;
 		boolean stop = false;
 		lockMe(this);
-		if (client==null || !client.isOpen()) {
-			client = null;
-			if (!stopping) {
-				client = connector.getClient();
-			}
+		List<ActiveClient> clients = connector.getOpenClients();
+		if (clients.size()>0) {
+			ac = clients.get(0);
+			r = ac.getClient();
 		}
-		r = client;
 		stop = stopping;
 		unlockMe(this);
 		if (!stop) {
-			setConnected(r!=null);
+			setConnected(r!=null,ac);
 		}
 		return r;
 	}
@@ -239,7 +240,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		}
 	}
 	
-	protected void setConnected(boolean connected) {
+	protected void setConnected(boolean connected,ActiveClient client) {
 		lockMe(this);
 		this.connected = connected;
 		if (mainFrame!=null) {
@@ -248,7 +249,7 @@ public class OrchestraController extends Locker implements ActionListener {
 				item.setEnabled(connected);
 			}
 			if (connected) {
-				OrchestraMember conductor = connector.getConductorForClient(client);
+				OrchestraMember conductor = client.getMember();
 				stateLabel.setText("Connected to: " + conductor.getId() + " (" + conductor.getIpAddressOrHostName() + ":" + conductor.getControlPort() + ")");
 			} else {
 				stateLabel.setText("Failed to connect to a conductor");

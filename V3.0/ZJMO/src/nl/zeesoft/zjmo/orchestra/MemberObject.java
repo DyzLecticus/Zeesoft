@@ -13,6 +13,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.orchestra.client.ConductorStateConnector;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
 
@@ -48,8 +49,8 @@ public abstract class MemberObject extends OrchestraMember {
 			startAndStopMessenger = true;
 		}
 		union = new WorkerUnion(messenger);
-		stateConnector = new ConductorStateConnector(messenger,union,getId());
-		stateConnector.initialize(orchestra.getConductors(),true);
+		stateConnector = new ConductorStateConnector(messenger,union,true,getId());
+		stateConnector.initialize(orchestra,getId());
 	}
 	
 	public void setDebug(boolean debug) {
@@ -96,7 +97,11 @@ public abstract class MemberObject extends OrchestraMember {
 			} catch (IOException e) {
 				controlSocket = null;
 				started = false;
-				e.printStackTrace();
+				if (messenger!=null) {
+					messenger.error(this,"Failed to open control socket",e);
+				} else {
+					e.printStackTrace();
+				}
 			}
 		}
 		if (workSocket==null) {
@@ -105,7 +110,11 @@ public abstract class MemberObject extends OrchestraMember {
 			} catch (IOException e) {
 				workSocket = null;
 				started = false;
-				e.printStackTrace();
+				if (messenger!=null) {
+					messenger.error(this,"Failed to open work socket",e);
+				} else {
+					e.printStackTrace();
+				}
 			}
 		}
 		if (controlSocket!=null && workSocket!=null) {
@@ -124,7 +133,11 @@ public abstract class MemberObject extends OrchestraMember {
 				try {
 					controlSocket.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					if (messenger!=null) {
+						messenger.error(this,"Failed to close control socket",e);
+					} else {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -149,14 +162,22 @@ public abstract class MemberObject extends OrchestraMember {
 			try {
 				controlSocket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				if (messenger!=null) {
+					messenger.error(this,"Failed to close control socket",e);
+				} else {
+					e.printStackTrace();
+				}
 			}
 		}
 		if (workSocket!=null) {
 			try {
 				workSocket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				if (messenger!=null) {
+					messenger.error(this,"Failed to close work socket",e);
+				} else {
+					e.printStackTrace();
+				}
 			}
 		}
 		controlSocket = null;
@@ -244,7 +265,11 @@ public abstract class MemberObject extends OrchestraMember {
 				} catch (IOException e) {
 					workSocket = null;
 					opened = false;
-					e.printStackTrace();
+					if (messenger!=null) {
+						messenger.error(this,"Failed to open work socket",e);
+					} else {
+						e.printStackTrace();
+					}
 				}
 			}
 			if (opened) {
@@ -345,7 +370,7 @@ public abstract class MemberObject extends OrchestraMember {
 			try {
 				socket.setSoTimeout(1000);
 			} catch (SocketException e) {
-				//e.printStackTrace();
+				// Ignore
 			}
 			MemberWorker worker = new MemberWorker(getMessenger(),union,this,sh,getNewWorkProtocol());
 			workers.add(worker);

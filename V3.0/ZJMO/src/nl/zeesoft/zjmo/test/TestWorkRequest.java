@@ -8,9 +8,9 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zjmo.orchestra.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
-import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
+import nl.zeesoft.zjmo.orchestra.client.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
@@ -204,23 +204,40 @@ public class TestWorkRequest extends TestObject {
 				System.out.println();
 				System.out.println("Player state JSON:");
 				System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
-				
-				con1.takeOffLine();
-				sleep(1000);
 
-				ConductorConnector connector = new ConductorConnector(con1.getMessenger(),con1.getUnion());
-				connector.initialize(con1.getOrchestra().getConductors(),false);
+				System.out.println();
+				System.out.println("Testing connector ...");
+				
+				ConductorConnector connector = new ConductorConnector(con1.getMessenger(),con1.getUnion(),false);
+				connector.initialize(con1.getOrchestra(),null);
 				connector.open();
 
+				con1.takeOffLine();
+				System.out.println();
+				System.out.println("Conductor state JSON:");
+				System.out.println(con1.getMemberState(con1.getId()).toStringBuilderReadFormat());
+				
 				sleep(2000);
 				
-				WorkClient wc = connector.getWorkClient();
-				assertEqual(wc!=null,true,"Failed to get work client from connector");
-				if (wc!=null) {
-					OrchestraMember conductor = connector.getConductorForClient(wc);
-					assertEqual(conductor.getId(),Orchestra.CONDUCTOR + "/1","Failed to connect to backup conductor");
-					//System.out.println("Connected to conductor: " + conductor.getId());
+				System.out.println();
+				System.out.println("Get open client ...");
+				List<ActiveClient> clients = connector.getOpenClients();
+				assertEqual(clients.size(),1,"Number of open clients does not meet expectation");
+				if (clients.size()>0) {
+					ActiveClient ac = clients.get(0);
+					System.out.println("Got open client: " + ac.getMember().getId());
+					assertEqual(ac.getMember().getId(),Orchestra.CONDUCTOR + "/1","Failed to connect to backup conductor");
+					request = new JsFile();
+					request.rootElement = new JsElem();
+					request.rootElement.children.add(new JsElem("echoMe","Echo me this",true));
+					wr.setPositionName("Database Y");
+					wr.setRequest(request);
+					wr.setResponse(null);
+					connector.sendWorkRequest(wr);
+					sleep(1000);
 				}
+				
+				connector.close();
 			}
 		}
 		
