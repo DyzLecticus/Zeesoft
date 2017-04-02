@@ -2,21 +2,18 @@ package nl.zeesoft.zso.composition.sequencer;
 
 import java.util.Date;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zjmo.orchestra.ConductorConnector;
-import nl.zeesoft.zjmo.orchestra.members.WorkClient;
+import nl.zeesoft.zjmo.orchestra.client.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
 
 public class CompositionPlayerWorker extends Worker {
 	private String				positionName	= "";
 
 	private ConductorConnector	connector		= null;
-	private WorkClient			client			= null;
 	
 	private long				playDateTime	= 0;
 	private long				startMs			= 0;
@@ -26,10 +23,9 @@ public class CompositionPlayerWorker extends Worker {
 		super(msgr, union);
 		setSleep(1);
 		this.positionName = positionName;
-		connector = new ConductorConnector(msgr,union);
-		connector.initialize(sequencer.getOrchestra().getConductors(),false);
+		connector = new ConductorConnector(msgr,union,false);
+		connector.initialize(sequencer.getOrchestra(),null);
 	}
-	
 	
 	@Override
 	public void start() {
@@ -41,12 +37,6 @@ public class CompositionPlayerWorker extends Worker {
 	@Override
 	public void stop() {
 		super.stop();
-		lockMe(this);
-		if (client!=null && client.isOpen()) {
-			client.sendCloseSessionCommand();
-			client.close();
-		}
-		unlockMe(this);
 		connector.close();
 	}
 
@@ -79,35 +69,17 @@ public class CompositionPlayerWorker extends Worker {
 			WorkRequest wr = new WorkRequest();
 			wr.setPositionName(positionName);
 			wr.setRequest(req);
-			if (client==null || !client.isOpen()) {
-				client = connector.getWorkClient();
-			}
-			boolean handled = false;
+			WorkRequest rwr = connector.sendWorkRequest(wr);
 			String err = "";
-			if (client!=null && client.isOpen()) {
-				ZStringBuilder response = client.sendWorkRequest(wr);
-				if (response==null || !client.isOpen()) {
-					WorkClient next = connector.getWorkClient();
-					if (next!=null && !next.getMemberId().equals(client.getMemberId())) {
-						response = next.sendWorkRequest(wr);
-					}
+			if (rwr!=null) {
+				if (rwr.getError().length()>0) {
+					err = "Failed to play position: " + positionName + ", error: " + rwr.getError();
 				}
-				if (response!=null) {
-					WorkRequest rwr = new WorkRequest();
-					rwr.fromStringBuilder(response);
-					if (rwr.getError().length()>0) {
-						err = rwr.getError();
-					} else {
-						handled = true;
-					}
-				}
+			} else {
+				err = "Failed to play position: " + positionName;
 			}
-			if (!handled) {
-				if (err.length()>0) {
-					getMessenger().error(this,"Failed to play position: " + positionName + ", error: " + err);
-				} else {
-					getMessenger().error(this,"Failed to play position: " + positionName);
-				}
+			if (err.length()>0) {
+				getMessenger().error(this,err);
 			}
 			setPlayDateTime(0,0,0);
 		}
