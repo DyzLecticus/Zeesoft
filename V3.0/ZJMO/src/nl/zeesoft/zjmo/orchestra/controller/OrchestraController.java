@@ -151,7 +151,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		MemberClient client = getClient();
-		if (client!=null && client.isOpen() && !isStopping()) {
+		if (client!=null && !isStopping()) {
 			String err = "";
 			List<OrchestraMember> members = gridController.getSelectedMembers(grid);
 			if (evt.getActionCommand().equals(ProtocolControl.GET_STATE) && members.size()==0) {
@@ -190,7 +190,7 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	protected void updateOrchestraState() {
 		MemberClient client = getClient();
-		if (client!=null && client.isOpen() && !isStopping()) {
+		if (client!=null && !isStopping()) {
 			ZStringBuilder response = client.sendCommand(ProtocolControlConductor.GET_ORCHESTRA_STATE);
 			if (response!=null && client.isOpen() && !isStopping()) {
 				lockMe(this);
