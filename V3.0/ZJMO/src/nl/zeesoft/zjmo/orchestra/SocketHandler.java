@@ -128,7 +128,9 @@ public class SocketHandler {
 			String line = null;
 			boolean timeout = false;
 			try {
-				line = in.readLine();
+				if (in!=null) {
+					line = in.readLine();
+				}
 			} catch (SocketTimeoutException e) {
 				timeout = true;
 			} catch (IOException e) {

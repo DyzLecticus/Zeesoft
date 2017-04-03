@@ -1,6 +1,5 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -9,62 +8,41 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 
 public class ConductorMemberController extends Locker {
-	private WorkerUnion							union					= null;
 	private Orchestra 							orchestra				= null;
 	private	ConductorMemberControllerWorker		worker					= null;
-	private List<MemberClient>					clients					= new ArrayList<MemberClient>();
-	private List<MemberClient>					stateClients			= new ArrayList<MemberClient>(); 
-	private List<ConductorMemberStateWorker>	stateWorkers			= new ArrayList<ConductorMemberStateWorker>(); 
+	private ConductorMemberConnector			connector				= null;
 	private WorkClientPool						workClientPool			= null;
 	private WorkClientPoolWorker				workClientPoolWorker	= null;
 
 	protected ConductorMemberController(Messenger msgr,WorkerUnion uni,Orchestra orchestra) {
 		super(msgr);
 		this.orchestra = orchestra;
-		this.union = uni;
 		worker = new ConductorMemberControllerWorker(msgr,uni,this);
+		connector = new ConductorMemberConnector(msgr,uni,true,this);
+		connector.initialize(orchestra,null);
 		workClientPool = new WorkClientPool(msgr,uni,orchestra);
 		workClientPoolWorker = new WorkClientPoolWorker(msgr,uni,workClientPool,orchestra.closeUnusedWorkClientsMilliseconds());
 	}
 
 	protected void open() {
 		close();
-		lockMe(this);
-		clients.clear();
-		stateClients.clear();
-		stateWorkers.clear();
-		for (OrchestraMember member: orchestra.getMembers()) {
-			clients.add(member.getNewControlClient(getMessenger(),union));
-		}
+		connector.open();
 		workClientPoolWorker.start();
-		unlockMe(this);
 		worker.start();
 	}
 
 	protected void close() {
 		worker.stop();
-		lockMe(this);
-		for (MemberClient client: clients) {
-			client.sendCloseSessionCommand();
-			client.close();
-		}
-		for (MemberClient client: stateClients) {
-			client.sendCloseSessionCommand();
-			client.close();
-		}
-		for (ConductorMemberStateWorker worker: stateWorkers) {
-			worker.stop();
-		}
+		connector.close();
 		workClientPoolWorker.stop();
 		workClientPool.closeAllClients();
-		unlockMe(this);
 	}
 
 	protected JsFile getOrchestraState() {
@@ -103,31 +81,28 @@ public class ConductorMemberController extends Locker {
 	}
 	
 	protected void getState(String memberId,boolean connect) {
-		lockMe(this);
-		for (MemberClient client: clients) {
-			OrchestraMember member = getMemberForClient(client);
+		for (OrchestraMember member: orchestra.getMembers()) {
 			if (memberId==null || memberId.length()==0 || member.getId().equals(memberId)) {
-				
-				if (!client.isOpen() && connect) {
-					client.open();
-					if (client.isOpen()) {
-						MemberClient stateClient = member.getNewControlClient(getMessenger(),union);
-						ConductorMemberStateWorker stateWorker = new ConductorMemberStateWorker(getMessenger(),union,this,stateClient,member.getId());
-						stateClients.add(stateClient);
-						stateWorkers.add(stateWorker);
-						stateWorker.start();
+				ActiveClient ac = connector.getClient(member.getId());
+				if (!ac.isOpen()) {
+					if (connect) {
+						ac.connectClient();
+						if (!ac.isOpen()) {
+							setMemberStateUnknown(member,"Failed to connect");
+						}
 					} else {
-						setMemberStateUnknown(member,"Failed to open control client");
+						lockMe(this);
+						setMemberStateUnknown(member,"Not connected");
+						unlockMe(this);
 					}
 				}
 				
-				if (!client.isOpen()) {
-					setMemberStateUnknown(member,"Not connected");
-				} else {
+				if (ac.isOpen()) {
+					ZStringBuilder state = ac.getClient().sendCommand(ProtocolControl.GET_STATE);
+					lockMe(this);
 					member.setErrorMessage("");
-					ZStringBuilder state = client.sendCommand(ProtocolControl.GET_STATE);
 					if (state==null) {
-						setMemberStateUnknown(member,"Control client has been closed");
+						setMemberStateUnknown(member,"Failed to get member state");
 					} else {
 						JsFile json = new JsFile();
 						json.fromStringBuilder(state);
@@ -141,10 +116,10 @@ public class ConductorMemberController extends Locker {
 							}
 						}
 					}
+					unlockMe(this);
 				}
 			}
 		}
-		unlockMe(this);
 	}
 
 	protected boolean workRequestTimedOut(WorkClient client) {
@@ -163,14 +138,7 @@ public class ConductorMemberController extends Locker {
 	
 	protected void setStateUnknown(String memberId,String errorMessage) {
 		lockMe(this);
-		for (OrchestraMember mem: orchestra.getMembers()) {
-			if (mem.getId().equals(memberId)) {
-				MemberClient client = getClientForMember(mem);
-				client.close();
-				setMemberStateUnknown(mem,errorMessage);
-				break;
-			}
-		}
+		setMemberStateUnknown(orchestra.getMemberById(memberId),errorMessage);
 		unlockMe(this);
 	}
 
@@ -210,41 +178,10 @@ public class ConductorMemberController extends Locker {
 	
 	private ZStringBuilder sendMemberCommand(String id,String command) {
 		ZStringBuilder response = null;
-		OrchestraMember member = orchestra.getMemberById(id);
-		if (member!=null) {
-			MemberClient client = getClientForMember(member);
-			if (client.isOpen()) {
-				response = client.sendCommand(command);
-			}
+		ActiveClient ac = connector.getClient(id);
+		if (ac.isOpen()) {
+			response = ac.getClient().sendCommand(command);
 		}
 		return response;
-	}
-	
-	private OrchestraMember getMemberForClient(MemberClient client) {
-		OrchestraMember r = null;
-		int i = 0;
-		for (MemberClient cl: clients) {
-			OrchestraMember member = orchestra.getMembers().get(i);
-			i++;
-			if (cl==client) {
-				r = member;
-				break;
-			}
-		}
-		return r;
-	}
-
-	private MemberClient getClientForMember(OrchestraMember member) {
-		MemberClient r = null;
-		int i = 0;
-		for (OrchestraMember mem: orchestra.getMembers()) {
-			MemberClient client = clients.get(i);
-			i++;
-			if (mem==member) {
-				r = client;
-				break;
-			}
-		}
-		return r;
 	}
 }

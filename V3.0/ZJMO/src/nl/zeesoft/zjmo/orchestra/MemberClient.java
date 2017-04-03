@@ -78,7 +78,9 @@ public class MemberClient extends Locker {
 	}
 
 	public void sendCloseSessionCommand() {
-		socket.writeOutput(protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null));
+		if (isOpenNoLock()) {
+			writeOutputNoLock(protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null));
+		}
 	}
 
 	public ZStringBuilder sendCommand(String command) {

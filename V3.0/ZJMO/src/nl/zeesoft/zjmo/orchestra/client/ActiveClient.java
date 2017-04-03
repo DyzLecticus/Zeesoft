@@ -96,19 +96,22 @@ public class ActiveClient extends Locker {
 		}
 		unlockMe(this);
 		if (connect) {
-			client.open();
-			if (client.isOpen()) {
-				lockMe(this);
-				open = true;
-				unlockMe(this);
-				connected();
-			}
+			connectClient();
 		}
 	}
 
+	public void connectClient() {
+		client.open();
+		if (client.isOpen()) {
+			lockMe(this);
+			open = true;
+			unlockMe(this);
+			connected();
+		}
+	}
+	
 	protected void disconnect() {
 		if (client.isOpen()) {
-			client.sendCloseSessionCommand();
 			client.close();
 			lockMe(this);
 			open = false;

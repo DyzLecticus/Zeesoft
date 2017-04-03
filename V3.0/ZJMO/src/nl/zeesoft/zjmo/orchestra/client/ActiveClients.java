@@ -46,7 +46,8 @@ public class ActiveClients extends Locker {
 	public void connect() {
 		lockMe(this);
 		for (ActiveClient client: clients) {
-			client.connect();
+			System.out.println("Connecting to: " + client.getMember().getId());
+			client.connectClient();
 		}
 		unlockMe(this);
 	}
