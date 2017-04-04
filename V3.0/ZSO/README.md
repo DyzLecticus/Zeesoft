@@ -1,6 +1,7 @@
 Zeesoft Sample Orchestration
 ============================
 Zeesoft Sample Orchestration (ZSO) is an extendable sample based orchestra that can play compositions.
+The goal of this software is to demonstrate the scalability, maintainability and fault tolerance of the Zeesoft JSON Machine Orchestration.
 
 **Dependencies**  
 This library depends on the following libraries;  
@@ -8,7 +9,7 @@ This library depends on the following libraries;
  * [Zeesoft JSON Machine Orchestration](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZJMO/)  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/zso-0.9.8.zip) to download the latest ZSO release (version 0.9.8).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/zso-0.9.9.zip) to download the latest ZSO release (version 0.9.9).  
 All ZSO releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -136,6 +137,327 @@ The output of this test shows the JSON structure of the *DemoComposition*.
       "number": 15,
       "startMs": 0,
       "durationMs": 150
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 2,
+      "number": 1,
+      "startMs": 0
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 2,
+      "number": 7,
+      "startMs": 0
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 2,
+      "number": 11,
+      "startMs": 0
+    },
+    {
+      "positionName": "Snare",
+      "bar": 2,
+      "number": 5,
+      "startMs": 0
+    },
+    {
+      "positionName": "Snare",
+      "bar": 2,
+      "number": 13,
+      "startMs": 0
+    },
+    {
+      "positionName": "Snare",
+      "bar": 2,
+      "number": 16,
+      "startMs": 0,
+      "durationMs": 100
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 1,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 3,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 5,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 7,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 8,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 9,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 10,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 11,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 13,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 2,
+      "number": 15,
+      "startMs": 0,
+      "durationMs": 150
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 3,
+      "number": 1,
+      "startMs": 0
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 3,
+      "number": 11,
+      "startMs": 0
+    },
+    {
+      "positionName": "Snare",
+      "bar": 3,
+      "number": 5,
+      "startMs": 0
+    },
+    {
+      "positionName": "Snare",
+      "bar": 3,
+      "number": 13,
+      "startMs": 0
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 1,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 3,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 5,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 7,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 8,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 9,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 10,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 11,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 13,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 3,
+      "number": 15,
+      "startMs": 0,
+      "durationMs": 150
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 4,
+      "number": 1,
+      "startMs": 0
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 4,
+      "number": 3,
+      "startMs": 0
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 4,
+      "number": 7,
+      "startMs": 0
+    },
+    {
+      "positionName": "Basebeat",
+      "bar": 4,
+      "number": 11,
+      "startMs": 0
+    },
+    {
+      "positionName": "Snare",
+      "bar": 4,
+      "number": 5,
+      "startMs": 0
+    },
+    {
+      "positionName": "Snare",
+      "bar": 4,
+      "number": 13,
+      "startMs": 0
+    },
+    {
+      "positionName": "Snare",
+      "bar": 4,
+      "number": 15,
+      "startMs": 0,
+      "durationMs": 100
+    },
+    {
+      "positionName": "Snare",
+      "bar": 4,
+      "number": 16,
+      "startMs": 0,
+      "durationMs": 100
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 1,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 3,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 5,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 7,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 8,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 9,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 10,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 11,
+      "startMs": 100,
+      "durationMs": 50
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 13,
+      "startMs": 150,
+      "durationMs": 10
+    },
+    {
+      "positionName": "Hihat",
+      "bar": 4,
+      "number": 15,
+      "startMs": 0,
+      "durationMs": 150
     }
   ]
 }
@@ -144,7 +466,7 @@ The output of this test shows the JSON structure of the *DemoComposition*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 38 ms (total sleep duration: 0 ms).  
+Total test duration: 71 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zso.test.TestDemoComposition: 265 Kb / 0 Mb
+ * nl.zeesoft.zso.test.TestDemoComposition: 266 Kb / 0 Mb
