@@ -205,27 +205,24 @@ public class TestWorkRequest extends TestObject {
 				System.out.println("Player state JSON:");
 				System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
 
-				System.out.println();
-				System.out.println("Testing connector ...");
+				//System.out.println();
+				//System.out.println("Testing connector ...");
 				
 				ConductorConnector connector = new ConductorConnector(con1.getMessenger(),con1.getUnion(),false);
 				connector.initialize(con1.getOrchestra(),null);
 				connector.open();
 
 				con1.takeOffLine();
-				System.out.println();
-				System.out.println("Conductor state JSON:");
-				System.out.println(con1.getMemberState(con1.getId()).toStringBuilderReadFormat());
+								
+				sleep(1000);
 				
-				sleep(2000);
-				
-				System.out.println();
-				System.out.println("Get open client ...");
+				//System.out.println();
+				//System.out.println("Get open client ...");
 				List<ActiveClient> clients = connector.getOpenClients();
 				assertEqual(clients.size(),1,"Number of open clients does not meet expectation");
 				if (clients.size()>0) {
 					ActiveClient ac = clients.get(0);
-					System.out.println("Got open client: " + ac.getMember().getId());
+					//System.out.println("Got open client: " + ac.getMember().getId());
 					assertEqual(ac.getMember().getId(),Orchestra.CONDUCTOR + "/1","Failed to connect to backup conductor");
 					request = new JsFile();
 					request.rootElement = new JsElem();

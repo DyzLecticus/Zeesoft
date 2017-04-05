@@ -23,15 +23,17 @@ public abstract class Orchestra {
 	public static final String		LOCALHOSTIP		= "127.0.0.1";
 	
 	public static final String		CONDUCTOR		= "Conductor";
+	public static final String		SYSTEM			= "System";
 	
 	private List<Position> 			positions		= new ArrayList<Position>();
+	private List<Channel> 			channels		= new ArrayList<Channel>();
 	private List<OrchestraMember>	members			= new ArrayList<OrchestraMember>();
 	
-	// TODO: Client latency feedback including state update
 	// TODO: Java documentation
 	
 	public Orchestra() {
 		addPosition(CONDUCTOR);
+		addChannel(SYSTEM);
 		addMember(CONDUCTOR,0,LOCALHOST,5433,5432,500,false);
 	}
 	
@@ -87,6 +89,29 @@ public abstract class Orchestra {
 		Position r = getPosition(name);
 		if (r==null) {
 			positions.add(new Position(name));
+		}
+		return r;
+	}
+
+	public List<Channel> getChannels() {
+		return new ArrayList<Channel>(channels);
+	}
+
+	public Channel getChannel(String name) {
+		Channel r = null;
+		for (Channel chan: channels) {
+			if (chan.getName().equals(name)) {
+				r = chan;
+				break;
+			}
+		}
+		return r;
+	}
+
+	public Channel addChannel(String name) {
+		Channel r = getChannel(name);
+		if (r==null) {
+			channels.add(new Channel(name));
 		}
 		return r;
 	}
@@ -189,6 +214,13 @@ public abstract class Orchestra {
 			posits.children.add(new JsElem("" + i,pos.getName(),true));
 			i++;
 		}
+		i = 0;
+		JsElem chans = new JsElem("channels");
+		f.rootElement.children.add(chans);
+		for (Channel chan: channels) {
+			chans.children.add(new JsElem("" + i,chan.getName(),true));
+			i++;
+		}
 		JsElem membs = new JsElem("members",true);
 		f.rootElement.children.add(membs);
 		for (OrchestraMember member: members) {
@@ -199,12 +231,19 @@ public abstract class Orchestra {
 
 	public void fromJson(JsFile file) {
 		positions.clear();
+		channels.clear();
 		members.clear();
 		for (JsElem el: file.rootElement.children) {
 			if (el.name.equals("positions")) {
 				for (JsElem pos: el.children) {
 					if (pos.value!=null && pos.value.length()>0) {
 						addPosition(pos.value.toString());
+					}
+				}
+			} else if (el.name.equals("channels")) {
+				for (JsElem chan: el.children) {
+					if (chan.value!=null && chan.value.length()>0) {
+						addChannel(chan.value.toString());
 					}
 				}
 			} else if (el.name.equals("members")) {
