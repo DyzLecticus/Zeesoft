@@ -1,5 +1,8 @@
 package nl.zeesoft.zjmo.orchestra;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -11,19 +14,21 @@ import nl.zeesoft.zjmo.orchestra.members.WorkClient;
  * Orchestra member data object.
  */
 public class OrchestraMember extends Locker {
-	private Position	position				= null;
-	private int			positionBackupNumber	= 0;
-	private String 		ipAddressOrHostName		= "";
-	private int			controlPort				= 5433;
-	private int			workPort				= 5432;
-	private int			workRequestTimeout		= 500;
-	private boolean		workRequestTimeoutDrain	= false;
+	private Position		position				= null;
+	private int				positionBackupNumber	= 0;
+	private String 			ipAddressOrHostName		= "";
+	private int				controlPort				= 5433;
+	private int				workPort				= 5432;
+	private int				workRequestTimeout		= 500;
+	private boolean			workRequestTimeoutDrain	= false;
 
-	private MemberState	state					= null;
-	private int			workLoad				= 0;
-	private long		memoryUsage				= 0;
-	private ZDate		errorDate				= null;
-	private String		errorMessage			= "";
+	private MemberState		state					= null;
+	private int				workLoad				= 0;
+	private long			memoryUsage				= 0;
+	private ZDate			errorDate				= null;
+	private String			errorMessage			= "";
+	
+	private List<Channel>	channels				= new ArrayList<Channel>();
 
 	public OrchestraMember() {
 		super(null);
@@ -47,6 +52,9 @@ public class OrchestraMember extends Locker {
 		copy.setMemoryUsage(getMemoryUsage());
 		copy.setErrorDate(getErrorDate());
 		copy.setErrorMessage(getErrorMessage());
+		for (Channel chan: channels) {
+			copy.getChannels().add(chan);
+		}
 		return copy;
 	}
 	
@@ -158,6 +166,10 @@ public class OrchestraMember extends Locker {
 		}
 		this.errorMessage = errorMessage;
 	}
+
+	public List<Channel> getChannels() {
+		return channels;
+	}
 	
 	public JsElem toJsonElem(boolean includeState) {
 		JsElem mem = new JsElem();
@@ -168,6 +180,15 @@ public class OrchestraMember extends Locker {
 		mem.children.add(new JsElem("workPort","" + getWorkPort()));
 		mem.children.add(new JsElem("workRequestTimeout","" + getWorkRequestTimeout()));
 		mem.children.add(new JsElem("workRequestTimeoutDrain","" + isWorkRequestTimeoutDrain()));
+		if (channels.size()>0) {
+			JsElem chans = new JsElem("channels");
+			int i = 0;
+			for (Channel chan: channels) {
+				chans.children.add(new JsElem("" + i,chan.getName(),true));
+				i++;
+			}
+			mem.children.add(chans);
+		}
 		if (includeState) {
 			if (getState()==null || getState().getCode().equals(MemberState.UNKNOWN)) {
 				mem.children.add(new JsElem("state",MemberState.UNKNOWN,true));

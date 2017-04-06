@@ -33,7 +33,7 @@ public abstract class Orchestra {
 	
 	public Orchestra() {
 		addPosition(CONDUCTOR);
-		addChannel(SYSTEM);
+		addChannel(SYSTEM,true);
 		addMember(CONDUCTOR,0,LOCALHOST,5433,5432,500,false);
 	}
 	
@@ -108,10 +108,10 @@ public abstract class Orchestra {
 		return r;
 	}
 
-	public Channel addChannel(String name) {
+	public Channel addChannel(String name, boolean failOnMissingSubscriber) {
 		Channel r = getChannel(name);
 		if (r==null) {
-			channels.add(new Channel(name));
+			channels.add(new Channel(name,failOnMissingSubscriber));
 		}
 		return r;
 	}
@@ -194,6 +194,10 @@ public abstract class Orchestra {
 				r.setWorkRequestTimeout(workRequestTimeout);
 				r.setWorkRequestTimeoutDrain(workRequestTimeoutDrain);
 				r.setState(MemberState.getState(MemberState.UNKNOWN));
+				Channel sys = getChannel(SYSTEM);
+				if (sys!=null) {
+					r.getChannels().add(sys);
+				}
 				members.add(r);
 			}
 		}
@@ -214,12 +218,13 @@ public abstract class Orchestra {
 			posits.children.add(new JsElem("" + i,pos.getName(),true));
 			i++;
 		}
-		i = 0;
-		JsElem chans = new JsElem("channels");
+		JsElem chans = new JsElem("channels",true);
 		f.rootElement.children.add(chans);
 		for (Channel chan: channels) {
-			chans.children.add(new JsElem("" + i,chan.getName(),true));
-			i++;
+			JsElem ch = new JsElem();
+			chans.children.add(ch);
+			ch.children.add(new JsElem("name",chan.getName(),true));
+			ch.children.add(new JsElem("failOnMissingSubscriber","" + chan.isFailOnMissingSubscriber()));
 		}
 		JsElem membs = new JsElem("members",true);
 		f.rootElement.children.add(membs);
@@ -241,12 +246,23 @@ public abstract class Orchestra {
 					}
 				}
 			} else if (el.name.equals("channels")) {
-				for (JsElem chan: el.children) {
-					if (chan.value!=null && chan.value.length()>0) {
-						addChannel(chan.value.toString());
+				if (el.children.size()>0) {
+					JsElem ch = el.children.get(0);
+					String name = "";
+					boolean fail = false;
+					for (JsElem chan: ch.children) {
+						if (chan.name.equals("name") && chan.value!=null && chan.value.length()>0) {
+							name = chan.value.toString();
+						} else if (chan.name.equals("failOnMissingSubscriber") && chan.value!=null && chan.value.length()>0) {
+							fail = Boolean.parseBoolean(chan.value.toString());
+						}
 					}
+					addChannel(name,fail);
 				}
-			} else if (el.name.equals("members")) {
+			}
+		}
+		for (JsElem el: file.rootElement.children) {
+			if (el.name.equals("members")) {
 				for (JsElem mem: el.children) {
 					OrchestraMember member = new OrchestraMember();
 					for (JsElem meme: mem.children) {
@@ -264,6 +280,15 @@ public abstract class Orchestra {
 							member.setWorkRequestTimeout(Integer.parseInt(meme.value.toString()));
 						} else if (meme.name.equals("workRequestTimeoutDrain") && meme.value!=null) {
 							member.setWorkRequestTimeoutDrain(Boolean.parseBoolean(meme.value.toString()));
+						} else if (meme.name.equals("channels") && meme.children.size()>0) {
+							for (JsElem chan: meme.children) {
+								if (chan.value!=null && chan.value.length()>0) {
+									Channel channel = getChannel(chan.value.toString());
+									if (channel!=null) {
+										member.getChannels().add(channel);
+									}
+								}
+							}
 						} else if (meme.name.equals("state") && meme.value!=null) {
 							member.setState(MemberState.getState(meme.value.toString()));
 						} else if (meme.name.equals("workLoad") && meme.value!=null) {
