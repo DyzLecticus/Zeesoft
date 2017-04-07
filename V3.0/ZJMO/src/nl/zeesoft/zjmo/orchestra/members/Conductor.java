@@ -88,6 +88,10 @@ public class Conductor extends MemberObject {
 		return controller.getClient(source, positionName);
 	}
 
+	public WorkClient getClientForMember(Object source,String memberId) {
+		return controller.getClient(source, memberId);
+	}
+
 	public void returnClient(WorkClient client) {
 		controller.returnClient(client);
 	}

@@ -155,12 +155,20 @@ public class ConductorMemberController extends Locker {
 			}
 		}
 		unlockMe(source);
-		if (r==null) {
-			getMessenger().error(this,"No players online for: " + positionName + " (members: " + mems.size() + ")");
-		}
 		return r;
 	}
 
+	protected WorkClient getClientForMember(Object source,String memberId) {
+		WorkClient r = null;
+		lockMe(source);
+		OrchestraMember mem = orchestra.getMemberById(memberId);
+		if (mem.getState()!=null && mem.getState().getCode().equals(MemberState.ONLINE)) {
+			r = workClientPool.getClient(source,mem.getId());
+		}
+		unlockMe(source);
+		return r;
+	}
+	
 	protected void returnClient(WorkClient client) {
 		workClientPool.returnClient(client);
 	}

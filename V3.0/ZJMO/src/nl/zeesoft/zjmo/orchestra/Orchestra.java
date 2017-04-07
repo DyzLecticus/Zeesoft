@@ -108,10 +108,10 @@ public abstract class Orchestra {
 		return r;
 	}
 
-	public Channel addChannel(String name, boolean failOnMissingSubscriber) {
+	public Channel addChannel(String name, boolean failOnSubscriberError) {
 		Channel r = getChannel(name);
 		if (r==null) {
-			channels.add(new Channel(name,failOnMissingSubscriber));
+			channels.add(new Channel(name,failOnSubscriberError));
 		}
 		return r;
 	}
@@ -170,6 +170,19 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	public List<OrchestraMember> getMembersForChannel(String channelName) {
+		List<OrchestraMember> r = new ArrayList<OrchestraMember>();
+		for (OrchestraMember member: members) {
+			for (Channel chan: member.getChannels()) {
+				if (chan.getName().equals(channelName)) {
+					r.add(member);
+					break;
+				}
+			}
+		}
+		return r;
+	}
+	
 	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort) {
 		return addMember(positionName,positionBackupNumber,ipAddressOrHostName,controlPort,workPort,500,false);
 	}
@@ -224,7 +237,7 @@ public abstract class Orchestra {
 			JsElem ch = new JsElem();
 			chans.children.add(ch);
 			ch.children.add(new JsElem("name",chan.getName(),true));
-			ch.children.add(new JsElem("failOnMissingSubscriber","" + chan.isFailOnMissingSubscriber()));
+			ch.children.add(new JsElem("failOnSubscriberError","" + chan.isFailOnSubscriberError()));
 		}
 		JsElem membs = new JsElem("members",true);
 		f.rootElement.children.add(membs);
@@ -253,7 +266,7 @@ public abstract class Orchestra {
 					for (JsElem chan: ch.children) {
 						if (chan.name.equals("name") && chan.value!=null && chan.value.length()>0) {
 							name = chan.value.toString();
-						} else if (chan.name.equals("failOnMissingSubscriber") && chan.value!=null && chan.value.length()>0) {
+						} else if (chan.name.equals("failOnSubscriberError") && chan.value!=null && chan.value.length()>0) {
 							fail = Boolean.parseBoolean(chan.value.toString());
 						}
 					}

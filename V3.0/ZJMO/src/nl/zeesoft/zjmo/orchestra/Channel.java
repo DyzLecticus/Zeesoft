@@ -5,22 +5,22 @@ package nl.zeesoft.zjmo.orchestra;
  */
 public class Channel {
 	private String		name						= "";
-	private boolean		failOnMissingSubscriber		= false;
+	private boolean		failOnSubscriberError		= false;
 
-	public Channel(String name, boolean failOnMissingSubscriber) {
+	public Channel(String name, boolean failOnSubscriberError) {
 		this.name = name;
-		this.failOnMissingSubscriber = failOnMissingSubscriber;
+		this.failOnSubscriberError = failOnSubscriberError;
 	}
 	
 	public String getName() {
 		return name;
 	}
 
-	public boolean isFailOnMissingSubscriber() {
-		return failOnMissingSubscriber;
+	public boolean isFailOnSubscriberError() {
+		return failOnSubscriberError;
 	}
 
-	public void setFailOnMissingSubscriber(boolean failOnMissingSubscriber) {
-		this.failOnMissingSubscriber = failOnMissingSubscriber;
+	public void setFailOnSubscriberError(boolean failOnSubscriberError) {
+		this.failOnSubscriberError = failOnSubscriberError;
 	}
 }
