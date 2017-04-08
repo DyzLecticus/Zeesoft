@@ -81,9 +81,6 @@ public class TestConductorConnector extends TestObject {
 		
 		if (started) {
 			sleep(2000);
-
-			System.out.println();
-			System.out.println("Testing connector ...");
 			
 			ConductorConnector connector = new ConductorConnector(con1.getMessenger(),con1.getUnion(),false);
 			connector.initialize(con1.getOrchestra(),null);
