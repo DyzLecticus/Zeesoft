@@ -154,11 +154,12 @@ public class SocketHandler {
 	}
 	
 	protected void writeOutput(ZStringBuilder output) {
+		ZStringBuilder put = new ZStringBuilder(output);
+		put.append("\n");
+		put.append(END_OF_PROTOCOL_OUTPUT);
+		put.append("\n");
 		if (out!=null) {
-			out.print(output.toString());
-			out.print("\n");
-			out.print(END_OF_PROTOCOL_OUTPUT);
-			out.print("\n");
+			out.print(put);
 			out.flush();
 		}
 	}

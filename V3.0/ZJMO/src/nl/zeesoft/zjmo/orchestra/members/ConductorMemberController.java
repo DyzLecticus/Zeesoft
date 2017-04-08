@@ -11,8 +11,10 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
+import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
 public class ConductorMemberController extends Locker {
 	private Orchestra 							orchestra				= null;
@@ -68,16 +70,32 @@ public class ConductorMemberController extends Locker {
 		return r;
 	}
 	
+	protected void handleCommandResponse(ZStringBuilder response,String id) {
+		if (!ProtocolObject.isErrorJson(response)) {
+			for (OrchestraMember con: orchestra.getConductors()) {
+				if (!con.getId().equals(id)) {
+					sendMemberCommand(con.getId(),ProtocolControlConductor.UPDATE_MEMBER_STATE,"id",id);
+				}
+			}
+		}
+	}
+	
 	protected ZStringBuilder takeOffline(String id) {
-		return sendMemberCommand(id,ProtocolControl.TAKE_OFFLINE);
+		ZStringBuilder response = sendMemberCommand(id,ProtocolControl.TAKE_OFFLINE);
+		handleCommandResponse(response,id);
+		return response;
 	}
 
 	protected ZStringBuilder drainOffline(String id) {
-		return sendMemberCommand(id,ProtocolControl.DRAIN_OFFLINE);
+		ZStringBuilder response = sendMemberCommand(id,ProtocolControl.DRAIN_OFFLINE);
+		handleCommandResponse(response,id);
+		return response;
 	}
 
 	protected ZStringBuilder bringOnline(String id) {
-		return sendMemberCommand(id,ProtocolControl.BRING_ONLINE);
+		ZStringBuilder response = sendMemberCommand(id,ProtocolControl.BRING_ONLINE);
+		handleCommandResponse(response,id);
+		return response;
 	}
 	
 	protected void getState(String memberId,boolean connect) {
@@ -185,10 +203,18 @@ public class ConductorMemberController extends Locker {
 	}
 	
 	private ZStringBuilder sendMemberCommand(String id,String command) {
+		return sendMemberCommand(id,command,null,null);
+	}
+	
+	private ZStringBuilder sendMemberCommand(String id,String command,String key,String value) {
 		ZStringBuilder response = null;
 		ActiveClient ac = connector.getClient(id);
 		if (ac.isOpen()) {
-			response = ac.getClient().sendCommand(command);
+			if (key!=null && key.length()>0 && value!=null && value.length()>0) {
+				response = ac.getClient().sendCommand(command,key,value);
+			} else {
+				response = ac.getClient().sendCommand(command);
+			}
 		}
 		return response;
 	}

@@ -23,7 +23,7 @@ public class TestOrchestraController extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how the *Controller* can be used to manage an active orchestra.");
+		System.out.println("This test shows how the *OrchestraController* can be used to manage a working orchestra.");
 		System.out.println("It is not included in the ZJMO test set because it waits for user interaction.");
 	}
 

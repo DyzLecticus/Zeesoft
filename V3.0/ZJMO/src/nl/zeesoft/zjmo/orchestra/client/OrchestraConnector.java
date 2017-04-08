@@ -9,6 +9,8 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
+import nl.zeesoft.zjmo.orchestra.protocol.PublishRequest;
+import nl.zeesoft.zjmo.orchestra.protocol.RequestObject;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
 
 public class OrchestraConnector extends ActiveClients {
@@ -32,16 +34,35 @@ public class OrchestraConnector extends ActiveClients {
 
 	public WorkRequest sendWorkRequest(WorkRequest wr) {
 		WorkRequest response = null;
+		RequestObject r = sendRequest(wr);
+		if (r!=null) {
+			response = (WorkRequest) r;
+		}
+		return response;
+	}
+
+	public PublishRequest publishRequest(PublishRequest pr) {
+		PublishRequest response = null;
+		RequestObject r = sendRequest(pr);
+		if (r!=null) {
+			response = (PublishRequest) r;
+		}
+		return response;
+	}
+
+	public RequestObject sendRequest(RequestObject r) {
+		RequestObject response = null;
 		List<ActiveClient> acs = getOpenClients(Orchestra.CONDUCTOR);
 		for (ActiveClient client: acs) {
 			WorkClient wc = client.getWorkClient();
 			if (wc!=null) {
-				ZStringBuilder resp = wc.sendWorkRequest(wr);
-				response = new WorkRequest();
-				response.fromStringBuilder(resp);
-				if (response.getError().length()==0) {
-					break;
+				ZStringBuilder resp = wc.sendRequest(r);
+				if (r instanceof WorkRequest) {
+					response = new WorkRequest();
+				} else if (r instanceof PublishRequest) {
+					response = new PublishRequest();
 				}
+				response.fromStringBuilder(resp);
 			}
 		}
 		return response;

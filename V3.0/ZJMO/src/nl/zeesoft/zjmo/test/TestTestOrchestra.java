@@ -19,13 +19,14 @@ public class TestTestOrchestra extends TestObject {
 	@Override
 	protected void describe() {
 		System.out.println("This test shows how to create and initialize a *TestOrchestra* instance.");
+		System.out.println("The *TestOrchestra* extends the *Orchestra* class which functions as a factory for other objects.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create orchestra");
-		System.out.println("TestOrchestra orch = new TestOrchestra();");
+		System.out.println("TestOrchestra orchestra = new TestOrchestra();");
 		System.out.println("// Initialize the orchestra");
-		System.out.println("orch.initialize();");
+		System.out.println("orchestra.initialize();");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockTestOrchestra.class.getName());

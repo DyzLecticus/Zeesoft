@@ -8,9 +8,6 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zjmo.orchestra.Orchestra;
-import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
-import nl.zeesoft.zjmo.orchestra.client.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
@@ -32,12 +29,12 @@ public class TestWorkRequest extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to how a *Conductor* handles work requests.");
+		System.out.println("This test shows how a *Conductor* handles work requests.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create conductor");
-		System.out.println("Conductor con = new Conductor(orchestra);");
+		System.out.println("Conductor con = new Conductor(null,orchestra,0);");
 		System.out.println("// Start the conductor");
 		System.out.println("boolean started = con.start();");
 		System.out.println("// Create client using conductor work port settings");
@@ -48,11 +45,12 @@ public class TestWorkRequest extends TestObject {
 		System.out.println("ZStringBuilder response = client.writeOutputReadInput(wr.toJson().toStringBuilder());");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("This test uses the *MockConductor* and the *MockPlayers*.");
+		System.out.println("This test uses *MockConductor1*, *MockConductor2* and the *MockPlayers*.");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestWorkRequest.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockConductor1.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConductor2.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockPlayers.class));
 		System.out.println(" * " + getTester().getLinkForClass(WorkRequest.class));
 		System.out.println();
@@ -99,14 +97,14 @@ public class TestWorkRequest extends TestObject {
 			client.open();
 			assertEqual(client.isOpen(),true,"Failed to open the work client");
 			if (client.isOpen()) {
-				response = client.sendWorkRequest(wr);
+				response = client.sendRequest(wr);
 				wr.fromStringBuilder(response);
-				assertEqual(wr.getError(),"Work request requires a position name","Response error does not match expectation");
+				assertEqual(wr.getError(),"Unrecognized input","Response error does not match expectation");
 				wr.setError("");
 
 				wr.setPositionName("Database Z");
 
-				response = client.sendWorkRequest(wr);
+				response = client.sendRequest(wr);
 				wr.fromStringBuilder(response);
 				assertEqual(wr.getError(),"Work request is empty","Response error does not match expectation");
 				wr.setError("");
@@ -114,7 +112,7 @@ public class TestWorkRequest extends TestObject {
 				wr.setPositionName("Database Z");
 				wr.setRequest(request);
 
-				response = client.sendWorkRequest(wr);
+				response = client.sendRequest(wr);
 				wr.fromStringBuilder(response);
 				assertEqual(wr.getError(),"Work request position does not exist: Database Z","Response error does not match expectation");
 				wr.setError("");
@@ -128,7 +126,7 @@ public class TestWorkRequest extends TestObject {
 
 				System.out.println();	
 				System.out.println("Sending work request: " + wr.toJson().toStringBuilder());
-				response = client.sendWorkRequest(wr);
+				response = client.sendRequest(wr);
 
 				System.out.println();	
 				System.out.println("Work request response: " + response);
@@ -151,7 +149,7 @@ public class TestWorkRequest extends TestObject {
 				System.out.println();	
 				start = new Date();
 				System.out.println("Sending work request to backup: " + wr.toJson().toStringBuilder());
-				response = client.sendWorkRequest(wr);
+				response = client.sendRequest(wr);
 				System.out.println("Work request response from backup: " + response);
 				System.out.println("First work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
 				wr.fromStringBuilder(response);
@@ -167,7 +165,7 @@ public class TestWorkRequest extends TestObject {
 				System.out.println();	
 				start = new Date();
 				System.out.println("Sending work request to backup: " + wr.toJson().toStringBuilder());
-				response = client.sendWorkRequest(wr);
+				response = client.sendRequest(wr);
 				System.out.println("Work request response from backup: " + response);
 				System.out.println("Second work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
 				wr.fromStringBuilder(response);
@@ -188,9 +186,9 @@ public class TestWorkRequest extends TestObject {
 				System.out.println();
 				start = new Date();
 				System.out.println("Sending work request to backup: " + wr.toJson().toStringBuilder());
-				response = client.sendWorkRequest(wr);
+				response = client.sendRequest(wr);
 				System.out.println("Work request response from backup: " + response);
-				System.out.println("time out work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
+				System.out.println("Time out work request to backup took " + ((new Date()).getTime() - start.getTime()) + " ms");
 				wr.fromStringBuilder(response);
 				assertEqual(wr.getResponse()==null,true,"Response is not empty");
 				assertEqual(wr.getError(),"Work request timed out on: Database X/1","Time out error does not match expectation");
@@ -204,37 +202,6 @@ public class TestWorkRequest extends TestObject {
 				System.out.println();
 				System.out.println("Player state JSON:");
 				System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
-
-				//System.out.println();
-				//System.out.println("Testing connector ...");
-				
-				ConductorConnector connector = new ConductorConnector(con1.getMessenger(),con1.getUnion(),false);
-				connector.initialize(con1.getOrchestra(),null);
-				connector.open();
-
-				con1.takeOffLine();
-								
-				sleep(1000);
-				
-				//System.out.println();
-				//System.out.println("Get open client ...");
-				List<ActiveClient> clients = connector.getOpenClients();
-				assertEqual(clients.size(),1,"Number of open clients does not meet expectation");
-				if (clients.size()>0) {
-					ActiveClient ac = clients.get(0);
-					//System.out.println("Got open client: " + ac.getMember().getId());
-					assertEqual(ac.getMember().getId(),Orchestra.CONDUCTOR + "/1","Failed to connect to backup conductor");
-					request = new JsFile();
-					request.rootElement = new JsElem();
-					request.rootElement.children.add(new JsElem("echoMe","Echo me this",true));
-					wr.setPositionName("Database Y");
-					wr.setRequest(request);
-					wr.setResponse(null);
-					connector.sendWorkRequest(wr);
-					sleep(1000);
-				}
-				
-				connector.close();
 			}
 		}
 		

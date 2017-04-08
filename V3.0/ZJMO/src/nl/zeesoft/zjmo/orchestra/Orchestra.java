@@ -19,21 +19,23 @@ import nl.zeesoft.zjmo.orchestra.members.Player;
  * Extend this class and implement the initialize method to create a custom orchestra.
  */
 public abstract class Orchestra {
-	public static final String		LOCALHOST		= "localhost";
-	public static final String		LOCALHOSTIP		= "127.0.0.1";
+	public static final String		LOCALHOST			= "localhost";
+	public static final String		LOCALHOSTIP			= "127.0.0.1";
 	
-	public static final String		CONDUCTOR		= "Conductor";
-	public static final String		SYSTEM			= "System";
+	public static final String		CONDUCTOR			= "Conductor";
+	public static final String		ORCHESTRA_CRITICAL	= "Orchestra critical";
+	public static final String		ORCHESTRA_OPTIONAL	= "Orchestra optional";
 	
-	private List<Position> 			positions		= new ArrayList<Position>();
-	private List<Channel> 			channels		= new ArrayList<Channel>();
-	private List<OrchestraMember>	members			= new ArrayList<OrchestraMember>();
+	private List<Position> 			positions			= new ArrayList<Position>();
+	private List<Channel> 			channels			= new ArrayList<Channel>();
+	private List<OrchestraMember>	members				= new ArrayList<OrchestraMember>();
 	
 	// TODO: Java documentation
 	
 	public Orchestra() {
 		addPosition(CONDUCTOR);
-		addChannel(SYSTEM,true);
+		addChannel(ORCHESTRA_CRITICAL,true);
+		addChannel(ORCHESTRA_OPTIONAL,false);
 		addMember(CONDUCTOR,0,LOCALHOST,5433,5432,500,false);
 	}
 	
@@ -207,9 +209,13 @@ public abstract class Orchestra {
 				r.setWorkRequestTimeout(workRequestTimeout);
 				r.setWorkRequestTimeoutDrain(workRequestTimeoutDrain);
 				r.setState(MemberState.getState(MemberState.UNKNOWN));
-				Channel sys = getChannel(SYSTEM);
-				if (sys!=null) {
-					r.getChannels().add(sys);
+				Channel crit = getChannel(ORCHESTRA_CRITICAL);
+				if (crit!=null) {
+					r.getChannels().add(crit);
+				}
+				Channel opti = getChannel(ORCHESTRA_OPTIONAL);
+				if (opti!=null) {
+					r.getChannels().add(opti);
 				}
 				members.add(r);
 			}
@@ -260,17 +266,18 @@ public abstract class Orchestra {
 				}
 			} else if (el.name.equals("channels")) {
 				if (el.children.size()>0) {
-					JsElem ch = el.children.get(0);
-					String name = "";
-					boolean fail = false;
-					for (JsElem chan: ch.children) {
-						if (chan.name.equals("name") && chan.value!=null && chan.value.length()>0) {
-							name = chan.value.toString();
-						} else if (chan.name.equals("failOnSubscriberError") && chan.value!=null && chan.value.length()>0) {
-							fail = Boolean.parseBoolean(chan.value.toString());
+					for (JsElem ch: el.children) {
+						String name = "";
+						boolean fail = false;
+						for (JsElem chan: ch.children) {
+							if (chan.name.equals("name") && chan.value!=null && chan.value.length()>0) {
+								name = chan.value.toString();
+							} else if (chan.name.equals("failOnSubscriberError") && chan.value!=null && chan.value.length()>0) {
+								fail = Boolean.parseBoolean(chan.value.toString());
+							}
 						}
+						addChannel(name,fail);
 					}
-					addChannel(name,fail);
 				}
 			}
 		}

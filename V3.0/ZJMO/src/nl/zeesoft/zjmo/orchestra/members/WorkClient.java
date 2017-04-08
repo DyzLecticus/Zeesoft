@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
+import nl.zeesoft.zjmo.orchestra.protocol.RequestObject;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
 
 public class WorkClient extends MemberClient {
@@ -31,12 +32,12 @@ public class WorkClient extends MemberClient {
 		return memberId;
 	}
 	
-	public ZStringBuilder sendWorkRequest(WorkRequest wr) {
-		return sendWorkRequest(wr,timeout);
+	public ZStringBuilder sendRequest(RequestObject r) {
+		return sendRequest(r,timeout);
 	}
 
-	public ZStringBuilder sendWorkRequest(WorkRequest wr,int timeout) {
-		return writeOutputReadInput(wr.toJson().toStringBuilder(),timeout);
+	public ZStringBuilder sendRequest(RequestObject r,int timeout) {
+		return writeOutputReadInput(r.toJson().toStringBuilder(),timeout);
 	}
 
 	public ZStringBuilder sendWorkRequestRequest(WorkRequest wr) {

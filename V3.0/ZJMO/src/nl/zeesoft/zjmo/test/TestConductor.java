@@ -30,7 +30,7 @@ public class TestConductor extends TestObject {
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create conductor");
-		System.out.println("Conductor con = new Conductor(orchestra);");
+		System.out.println("Conductor con = new Conductor(null,orchestra,0);");
 		System.out.println("// Start the conductor");
 		System.out.println("boolean started = con.start();");
 		System.out.println("// Create client using conductor control port settings");
@@ -39,11 +39,12 @@ public class TestConductor extends TestObject {
 		System.out.println("ZStringBuilder response = client.sendCommand(ProtocolControl.STOP_PROGRAM);");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("This test uses the *MockConductor* and the *MockPlayers*.");
+		System.out.println("This test uses *MockConductor1*, *MockConductor2* and the *MockPlayers*.");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestConductor.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockConductor1.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConductor2.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockPlayers.class));
 		System.out.println(" * " + getTester().getLinkForClass(Conductor.class));
 		System.out.println(" * " + getTester().getLinkForClass(Player.class));

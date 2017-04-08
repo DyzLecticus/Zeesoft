@@ -283,7 +283,7 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		return r;
 	}
-
+	
 	public ZStringBuilder getStateJson() {
 		JsFile f = new JsFile();
 		int workLoad = 0;

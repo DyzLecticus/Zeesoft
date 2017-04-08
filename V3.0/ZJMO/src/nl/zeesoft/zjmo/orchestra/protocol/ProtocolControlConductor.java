@@ -63,20 +63,23 @@ public class ProtocolControlConductor extends ProtocolControl {
 					output = getExecutedCommandResponse();
 				} else if (command.equals(TAKE_MEMBER_OFFLINE)) {
 					output = con.takeOffline(memberId);
-					if (!isErrorJson(output)) {
-						con.updateState(memberId,true);
-					}
+					//if (!isErrorJson(output)) {
+					//	con.updateState(memberId,true);
+						// TODO: Update other conductors
+					//}
 				} else if (command.equals(DRAIN_MEMBER_OFFLINE)) {
 					output = con.drainOffline(memberId);
 					if (!isErrorJson(output)) {
-						con.updateState(memberId,true);
+					//	con.updateState(memberId,true);
+						// TODO: Update other conductors
 						con.drainOfflineWorker(memberId);
 					}
 				} else if (command.equals(BRING_MEMBER_ONLINE)) {
 					output = con.bringOnline(memberId);
-					if (!isErrorJson(output)) {
-						con.updateState(memberId,true);
-					}
+					//if (!isErrorJson(output)) {
+					//	con.updateState(memberId,true);
+						// TODO: Update other conductors
+					//}
 				}
 			}
 		}
