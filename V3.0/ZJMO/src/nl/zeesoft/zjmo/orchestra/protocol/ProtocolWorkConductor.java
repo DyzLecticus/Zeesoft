@@ -38,6 +38,7 @@ public class ProtocolWorkConductor extends ProtocolWork {
 						output = handleWorkRequest(con,wr);
 					} else if (pr.getChannelName().length()>0) {
 						output = handlePublishRequest(con,pr);
+						System.out.println("-------------------> " + output);
 					}
 				}
 			} else {
@@ -136,55 +137,52 @@ public class ProtocolWorkConductor extends ProtocolWork {
 			for (PublishRequestWorker worker: workers) {
 				worker.start();
 			}
-			if (!channel.isFailOnSubscriberError()) {
-				JsFile resp = new JsFile();
-				resp.fromStringBuilder(getExecutedCommandResponse());
-				pr.setResponse(resp);
-			} else {
-				for (PublishRequestWorker worker: workers) {
-					int i = 0;
-					while (!worker.isDone()) {
-						i++;
-						try {
-							if (i>10) {
-								Thread.sleep(10);
-							} else {
-								Thread.sleep(1);
-							}
-						} catch (InterruptedException e) {
-							con.getMessenger().error(this,"Request publishing was interrupted");
+			for (PublishRequestWorker worker: workers) {
+				int i = 0;
+				while (!worker.isDone()) {
+					i++;
+					try {
+						if (i>10) {
+							Thread.sleep(10);
+						} else {
+							Thread.sleep(1);
 						}
+					} catch (InterruptedException e) {
+						con.getMessenger().error(this,"Request publishing was interrupted");
 					}
 				}
-				ZStringBuilder errors = new ZStringBuilder();
-				for (PublishRequestWorker worker: workers) {
-					con.returnClient(worker.getClient());
-					if (worker.getResponse()==null || worker.getResponse().equals(getCommandJson(ProtocolObject.CLOSE_SESSION,null))) {
+			}
+			ZStringBuilder errors = new ZStringBuilder();
+			for (PublishRequestWorker worker: workers) {
+				con.returnClient(worker.getClient());
+			}
+			for (PublishRequestWorker worker: workers) {
+				if (worker.getResponse()==null || worker.getResponse().equals(getCommandJson(ProtocolObject.CLOSE_SESSION,null))) {
+					if (errors.length()>0) {
+						errors.append("\n");
+					}
+					errors.append("Work request timed out on: " + worker.getClient().getMemberId());
+					con.workRequestTimedOut(worker.getClient());
+				} else if (worker.getClient().isOpen()) {
+					JsFile resp = new JsFile();
+					resp.fromStringBuilder(worker.getResponse());
+					if (resp.rootElement==null) {
 						if (errors.length()>0) {
 							errors.append("\n");
 						}
-						errors.append("Work request timed out on: " + worker.getClient().getMemberId());
-						con.workRequestTimedOut(worker.getClient());
-					} else if (worker.getClient().isOpen()) {
-						JsFile resp = new JsFile();
-						resp.fromStringBuilder(worker.getResponse());
-						if (resp.rootElement==null) {
-							if (errors.length()>0) {
-								errors.append("\n");
-							}
-							errors.append("Member did not return valid JSON: " + worker.getClient().getMemberId());
-						}
+						errors.append("Member did not return valid JSON: " + worker.getClient().getMemberId());
 					}
 				}
-				if (errors.length()>0) {
-					JsFile resp = new JsFile();
-					resp.fromStringBuilder(getErrorJson("Error(s) occured while publishing the request"));
-					pr.setResponse(resp);
-				} else {
-					JsFile resp = new JsFile();
-					resp.fromStringBuilder(getExecutedCommandResponse());
-					pr.setResponse(resp);
-				}
+			}
+			if (errors.length()>0) {
+				JsFile resp = new JsFile();
+				resp.fromStringBuilder(getErrorJson("Error(s) occured while publishing the request"));
+				pr.setResponse(resp);
+				pr.setError(errors.toString());
+			} else {
+				JsFile resp = new JsFile();
+				resp.fromStringBuilder(getExecutedCommandResponse());
+				pr.setResponse(resp);
 			}
 			output = pr.toJson().toStringBuilder();
 		}

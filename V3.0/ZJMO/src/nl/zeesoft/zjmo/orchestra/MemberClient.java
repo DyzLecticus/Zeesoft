@@ -77,9 +77,13 @@ public class MemberClient extends Locker {
 		return input;
 	}
 
+	public ZStringBuilder getCloseSessionCommand() {
+		return protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null);
+	}
+	
 	public void sendCloseSessionCommand() {
 		if (isOpenNoLock()) {
-			writeOutputNoLock(protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null));
+			writeOutputNoLock(getCloseSessionCommand());
 		}
 	}
 
@@ -116,7 +120,6 @@ public class MemberClient extends Locker {
 	private ZStringBuilder readInputNoLock(int timeout) {
 		initializeConnectionNoLock();
 		ZStringBuilder input = null;
-		ZStringBuilder closeSession = protocol.getCommandJson(ProtocolObject.CLOSE_SESSION,null);
 		if (timeout>0) {
 			long started = (new Date()).getTime();
 			MemberClientWorker worker = new MemberClientWorker(getMessenger(),union,socket,timeout);
@@ -149,22 +152,23 @@ public class MemberClient extends Locker {
 			}
 			if (!error) {
 				if (timedOut) {
-					input = closeSession;
+					input = getCloseSessionCommand();
 				} else {
 					input = worker.getInput();
 					if (input==null) {
-						input = closeSession;
+						input = getCloseSessionCommand();
 					}
 				}
 			} else {
-				input = closeSession;
+				input = getCloseSessionCommand();
 			}
 		} else {
 			input = socket.readInput();
 		}
-		if (input!=null && input.equals(closeSession)) {
-			socket.writeOutput(closeSession);
+		if (input!=null && input.equals(getCloseSessionCommand())) {
+			socket.writeOutput(getCloseSessionCommand());
 			socket.close();
+			open = false;
 		}
 		return input;
 	}

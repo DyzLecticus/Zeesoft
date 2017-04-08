@@ -39,7 +39,7 @@ public class TestWorkRequest extends TestObject {
 		System.out.println("boolean started = con.start();");
 		System.out.println("// Create client using conductor work port settings");
 		System.out.println("MemberClient client = new MemberClient(\"localhost\",5432);");
-		System.out.println("// Create work request");
+		System.out.println("// Create work request for a certain position");
 		System.out.println("WorkRequest wr = new WorkRequest(\"Database X\",\"{\\\"something\\\":\\\"json\\\"}\");");
 		System.out.println("// Send work request to conductor");
 		System.out.println("ZStringBuilder response = client.writeOutputReadInput(wr.toJson().toStringBuilder());");

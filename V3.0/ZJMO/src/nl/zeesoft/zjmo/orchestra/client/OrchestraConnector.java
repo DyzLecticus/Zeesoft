@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 import nl.zeesoft.zjmo.orchestra.protocol.PublishRequest;
 import nl.zeesoft.zjmo.orchestra.protocol.RequestObject;
@@ -53,17 +54,44 @@ public class OrchestraConnector extends ActiveClients {
 	public RequestObject sendRequest(RequestObject r) {
 		RequestObject response = null;
 		List<ActiveClient> acs = getOpenClients(Orchestra.CONDUCTOR);
+		ZStringBuilder errors = new ZStringBuilder();
 		for (ActiveClient client: acs) {
 			WorkClient wc = client.getWorkClient();
 			if (wc!=null) {
 				ZStringBuilder resp = wc.sendRequest(r);
-				if (r instanceof WorkRequest) {
-					response = new WorkRequest();
-				} else if (r instanceof PublishRequest) {
-					response = new PublishRequest();
+				System.out.println("--------------------> Response: " + resp);
+				if (!ProtocolObject.isErrorJson(resp)) {
+					if (!resp.equals(wc.getCloseSessionCommand()) && wc.isOpen()) {
+						if (r instanceof WorkRequest) {
+							response = new WorkRequest();
+						} else if (r instanceof PublishRequest) {
+							response = new PublishRequest();
+						}
+						response.fromStringBuilder(resp);
+						errors = new ZStringBuilder();
+						break;
+					} else {
+						if (errors.length()>0) {
+							errors.append("\n");
+						}
+						errors.append("Request timed out on: " + wc.getMemberId());
+					}
+				} else {
+					if (errors.length()>0) {
+						errors.append("\n");
+					}
+					errors.append(ProtocolObject.getErrorFromJson(resp));
 				}
-				response.fromStringBuilder(resp);
 			}
+		}
+		if (errors.length()>0) {
+			if (r instanceof WorkRequest) {
+				response = new WorkRequest();
+			} else if (r instanceof PublishRequest) {
+				response = new PublishRequest();
+			}
+			response.fromJson(r.toJson());
+			r.setError(errors.toString());
 		}
 		return response;
 	}
