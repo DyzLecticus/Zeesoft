@@ -112,12 +112,13 @@ public class ActiveClient extends Locker {
 	
 	protected void disconnect() {
 		if (client.isOpen()) {
+			client.sendCloseSessionCommand();
 			client.close();
 			lockMe(this);
 			open = false;
 			unlockMe(this);
+			disconnected();
 		}
-		disconnected();
 	}
 
 	protected void connected() {

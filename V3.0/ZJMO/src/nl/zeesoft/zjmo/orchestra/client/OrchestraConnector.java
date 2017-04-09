@@ -59,28 +59,34 @@ public class OrchestraConnector extends ActiveClients {
 			WorkClient wc = client.getWorkClient();
 			if (wc!=null) {
 				ZStringBuilder resp = wc.sendRequest(r);
-				System.out.println("--------------------> Response: " + resp);
-				if (!ProtocolObject.isErrorJson(resp)) {
-					if (!resp.equals(wc.getCloseSessionCommand()) && wc.isOpen()) {
-						if (r instanceof WorkRequest) {
-							response = new WorkRequest();
-						} else if (r instanceof PublishRequest) {
-							response = new PublishRequest();
+				if (resp==null || !wc.isOpen()) {
+					if (errors.length()>0) {
+						errors.append("\n");
+					}
+					errors.append("Request timed out on: " + wc.getMemberId());
+				} else {
+					if (!ProtocolObject.isErrorJson(resp)) {
+						if (!resp.toString().equals(wc.getCloseSessionCommand().toString())) {
+							if (r instanceof WorkRequest) {
+								response = new WorkRequest();
+							} else if (r instanceof PublishRequest) {
+								response = new PublishRequest();
+							}
+							response.fromStringBuilder(resp);
+							errors = new ZStringBuilder();
+						} else {
+							if (errors.length()>0) {
+								errors.append("\n");
+							}
+							errors.append(wc.getMemberId() + " closed the sesssion");
 						}
-						response.fromStringBuilder(resp);
-						errors = new ZStringBuilder();
-						break;
 					} else {
 						if (errors.length()>0) {
 							errors.append("\n");
 						}
-						errors.append("Request timed out on: " + wc.getMemberId());
+						errors.append(ProtocolObject.getErrorFromJson(resp));
 					}
-				} else {
-					if (errors.length()>0) {
-						errors.append("\n");
-					}
-					errors.append(ProtocolObject.getErrorFromJson(resp));
+					break;
 				}
 			}
 		}
@@ -91,7 +97,7 @@ public class OrchestraConnector extends ActiveClients {
 				response = new PublishRequest();
 			}
 			response.fromJson(r.toJson());
-			r.setError(errors.toString());
+			response.setError(errors.toString());
 		}
 		return response;
 	}

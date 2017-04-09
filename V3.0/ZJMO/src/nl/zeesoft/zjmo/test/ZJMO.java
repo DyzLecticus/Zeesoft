@@ -50,5 +50,6 @@ public class ZJMO extends LibraryObject {
 		tests.add(new TestMemberOnlineOffline(getTester()));
 		tests.add(new TestWorkRequest(getTester()));
 		tests.add(new TestConductorConnector(getTester()));
+		tests.add(new TestPublishRequest(getTester()));
 	}
 }

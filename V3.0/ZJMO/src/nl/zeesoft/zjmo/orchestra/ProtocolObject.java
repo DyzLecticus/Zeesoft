@@ -63,7 +63,7 @@ public abstract class ProtocolObject {
 	}
 
 	protected boolean isCommandJson(ZStringBuilder json) {
-		return json!=null && json.startsWith("{\"command\":\"");
+		return json!=null && json.startsWith("{\"command\":");
 	}
 
 	protected String getCommandFromJson(ZStringBuilder json) {
@@ -89,7 +89,7 @@ public abstract class ProtocolObject {
 	}
 
 	public static boolean isErrorJson(ZStringBuilder json) {
-		return json!=null && json.startsWith("{\"error\":\"");
+		return json!=null && json.startsWith("{\"error\":");
 	}
 
 	public static String getErrorFromJson(ZStringBuilder json) {
@@ -105,7 +105,7 @@ public abstract class ProtocolObject {
 	}
 
 	public static boolean isResponseJson(ZStringBuilder json) {
-		return json!=null && json.startsWith("{\"response\":\"");
+		return json!=null && json.startsWith("{\"response\":");
 	}
 
 	public static String getResponseFromJson(ZStringBuilder json) {

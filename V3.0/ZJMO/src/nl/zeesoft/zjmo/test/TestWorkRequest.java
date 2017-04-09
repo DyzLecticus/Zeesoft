@@ -99,7 +99,8 @@ public class TestWorkRequest extends TestObject {
 			if (client.isOpen()) {
 				response = client.sendRequest(wr);
 				wr.fromStringBuilder(response);
-				assertEqual(wr.getError(),"Unrecognized input","Response error does not match expectation");
+				assertEqual(wr.getError(),"Work request requires a position name","Response error does not match expectation");
+				assertEqual(wr.getResponse()==null,true,"Response does not match expectation");
 				wr.setError("");
 
 				wr.setPositionName("Database Z");
@@ -193,9 +194,9 @@ public class TestWorkRequest extends TestObject {
 				assertEqual(wr.getResponse()==null,true,"Response is not empty");
 				assertEqual(wr.getError(),"Work request timed out on: Database X/1","Time out error does not match expectation");
 				
-				System.out.println();
-				System.out.println("Player state JSON:");
-				System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
+				//System.out.println();
+				//System.out.println("Player state JSON:");
+				//System.out.println(con1.getMemberState(dbX1.getId()).toStringBuilderReadFormat());
 				
 				sleep(1000);
 

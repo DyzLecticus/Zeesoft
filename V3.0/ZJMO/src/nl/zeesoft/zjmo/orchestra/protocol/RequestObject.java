@@ -57,7 +57,7 @@ public abstract class RequestObject {
 		if (response!=null && response.rootElement.children.size()>0) {
 			JsElem rElem = new JsElem("response");
 			f.rootElement.children.add(rElem);
-			for (JsElem cElem: request.rootElement.children) {
+			for (JsElem cElem: response.rootElement.children) {
 				rElem.children.add(cElem);
 			}
 		}

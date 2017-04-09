@@ -22,23 +22,25 @@ public class ProtocolWorkConductor extends ProtocolWork {
 			//System.out.println(this + ": Handle work: " + input);
 			input.trim();
 			if (input.startsWith("{")) {
-				Conductor con = (Conductor) member;
-				WorkRequest wr = new WorkRequest();
-				wr.fromStringBuilder(input);
-				PublishRequest pr = new PublishRequest();
-				pr.fromStringBuilder(input);
-				if (wr.getPositionName().length()==0 && pr.getChannelName().length()==0) {
-					output = handleUnknownJsonRequest(con,input);
-					if (output==null) {
-						wr.setError("Unrecognized input");
-						output = wr.toJson().toStringBuilder();
-					}
-				} else {
-					if (wr.getPositionName().length()>0) {
+				JsFile json = getJsonForInput(input);
+				if (json.rootElement!=null) {
+					if (json.rootElement.getChildByName("positionName")!=null) {
+						Conductor con = (Conductor) member;
+						WorkRequest wr = new WorkRequest();
+						wr.fromJson(json);
 						output = handleWorkRequest(con,wr);
-					} else if (pr.getChannelName().length()>0) {
+					} else if (json.rootElement.getChildByName("channelName")!=null) {
+						Conductor con = (Conductor) member;
+						PublishRequest pr = new PublishRequest();
+						pr.fromJson(json);
 						output = handlePublishRequest(con,pr);
-						System.out.println("-------------------> " + output);
+					} else {
+						if (json.rootElement!=null) {
+							output = handleJson(member,json);
+						}
+						if (output==null) {
+							output = input;
+						}
 					}
 				}
 			} else {
@@ -49,12 +51,24 @@ public class ProtocolWorkConductor extends ProtocolWork {
 	}
 
 	protected ZStringBuilder handleUnknownJsonRequest(Conductor con,ZStringBuilder input) {
-		return null;
+		ZStringBuilder output = null;
+		JsFile json = getJsonForInput(input);
+		if (json.rootElement!=null) {
+			output = handleJson(con,json);
+		}
+		if (output==null) {
+			output = input;
+		}
+		return output;
 	}
 
 	protected ZStringBuilder handleWorkRequest(Conductor con,WorkRequest wr) {
 		ZStringBuilder output = null;
-		if (wr.getRequest()==null) {
+		if (wr.getPositionName().length()==0) {
+			wr.setError("Work request requires a position name");
+			output = wr.toJson().toStringBuilder();
+		}
+		if (output==null && wr.getRequest()==null) {
 			wr.setError("Work request is empty");
 			output = wr.toJson().toStringBuilder();
 		}
@@ -75,17 +89,18 @@ public class ProtocolWorkConductor extends ProtocolWork {
 					retry = false;
 				} else {
 					wr.setResponse(null);
-					//System.out.println(this + ": Sending request: " + wr.getRequest().toStringBuilder());
 					ZStringBuilder response = client.sendWorkRequestRequest(wr);
 					con.returnClient(client);
 					if (response==null || response.equals(getCommandJson(ProtocolObject.CLOSE_SESSION,null))) {
 						wr.setError("Work request timed out on: " + client.getMemberId());
 						con.workRequestTimedOut(client);
-					} else if (client.isOpen()) {
+					} else if (ProtocolObject.isErrorJson(response)) {
+						wr.setError(client.getMemberId() + " returned an error: " + ProtocolObject.getFirstElementValueFromJson(response));
+					} else {
 						JsFile resp = new JsFile();
 						resp.fromStringBuilder(response);
 						if (resp.rootElement==null) {
-							wr.setError("Player did not return valid JSON: " + client.getMemberId());
+							wr.setError(client.getMemberId() + " did not return valid JSON");
 						} else {
 							wr.setResponse(resp);
 							wr.setError("");
@@ -102,7 +117,11 @@ public class ProtocolWorkConductor extends ProtocolWork {
 	protected ZStringBuilder handlePublishRequest(Conductor con,PublishRequest pr) {
 		ZStringBuilder output = null;
 		Channel channel = null;
-		if (pr.getRequest()==null) {
+		if (pr.getChannelName().length()==0) {
+			pr.setError("Publish request requires a channel name");
+			output = pr.toJson().toStringBuilder();
+		}
+		if (output==null && pr.getRequest()==null) {
 			pr.setError("Publish request is empty");
 			output = pr.toJson().toStringBuilder();
 		}
@@ -159,18 +178,23 @@ public class ProtocolWorkConductor extends ProtocolWork {
 			for (PublishRequestWorker worker: workers) {
 				if (worker.getResponse()==null || worker.getResponse().equals(getCommandJson(ProtocolObject.CLOSE_SESSION,null))) {
 					if (errors.length()>0) {
-						errors.append("\n");
+						errors.append(", ");
 					}
 					errors.append("Work request timed out on: " + worker.getClient().getMemberId());
 					con.workRequestTimedOut(worker.getClient());
-				} else if (worker.getClient().isOpen()) {
+				} else if (ProtocolObject.isErrorJson(worker.getResponse())) {
+					if (errors.length()>0) {
+						errors.append(", ");
+					}
+					errors.append(worker.getClient().getMemberId() + " returned an error: " + ProtocolObject.getFirstElementValueFromJson(worker.getResponse()));
+				} else {
 					JsFile resp = new JsFile();
 					resp.fromStringBuilder(worker.getResponse());
 					if (resp.rootElement==null) {
 						if (errors.length()>0) {
-							errors.append("\n");
+							errors.append(", ");
 						}
-						errors.append("Member did not return valid JSON: " + worker.getClient().getMemberId());
+						errors.append(worker.getClient().getMemberId() + " did not return valid JSON");
 					}
 				}
 			}
