@@ -167,6 +167,8 @@ public class OrchestraController extends Locker implements ActionListener {
 					confirmMessage = "Are you sure you want to drain the selected members offline?";
 				} else if (evt.getActionCommand().equals(ProtocolControl.TAKE_OFFLINE)) {
 					confirmMessage = "Are you sure you want to take the selected members offline?";
+				} else if (evt.getActionCommand().equals(ProtocolControl.RESTART_PROGRAM)) {
+					confirmMessage = "Are you sure you want to restart the selected members?";
 				}
 				if (confirmMessage.length()>0) {
 					confirmed = showConfirmMessage(confirmMessage,"Are you sure?");
@@ -352,6 +354,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		addMemberOptionToMenu(menu,"Drain offline",ProtocolControl.DRAIN_OFFLINE);
 		addMemberOptionToMenu(menu,"Take offline",ProtocolControl.TAKE_OFFLINE);
 		addMemberOptionToMenu(menu,"Bring online",ProtocolControl.BRING_ONLINE);
+		addMemberOptionToMenu(menu,"Restart",ProtocolControl.RESTART_PROGRAM);
 	}
 	
 	protected void showErrorMessage(String message,String title) {

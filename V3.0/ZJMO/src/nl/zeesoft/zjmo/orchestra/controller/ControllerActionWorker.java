@@ -58,6 +58,8 @@ public class ControllerActionWorker extends Worker {
 			response = client.sendCommand(ProtocolControlConductor.TAKE_MEMBER_OFFLINE,"id",member.getId());
 		} else if (action.equals(ProtocolControl.BRING_ONLINE)) {
 			response = client.sendCommand(ProtocolControlConductor.BRING_MEMBER_ONLINE,"id",member.getId());
+		} else if (action.equals(ProtocolControl.RESTART_PROGRAM)) {
+			response = client.sendCommand(ProtocolControlConductor.RESTART_MEMBER,"id",member.getId());
 		}
 		return response;
 	}

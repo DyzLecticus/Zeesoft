@@ -12,7 +12,7 @@ import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 @SuppressWarnings("serial")
 public class GridController extends AbstractTableModel {
 	private List<OrchestraMember>	members		= new ArrayList<OrchestraMember>();
-	private String[]				headers		= new String[5];
+	private String[]				headers		= new String[6];
 	
 	public GridController() {
 		headers[0] = "ID";
@@ -20,6 +20,7 @@ public class GridController extends AbstractTableModel {
 		headers[2] = "Error";
 		headers[3] = "Work load";
 		headers[4] = "Memory usage";
+		headers[5] = "Restart";
 	}
 
 	protected void updatedOrchestraMembers(List<OrchestraMember> members) {
@@ -70,6 +71,8 @@ public class GridController extends AbstractTableModel {
 			headers[col].equals("Memory usage")
 			) {
 			r = Integer.class;
+		} else if (headers[col].endsWith("Restart")) {
+			r = Boolean.class;
 		} else {
 			r = String.class;
 		}
@@ -99,16 +102,18 @@ public class GridController extends AbstractTableModel {
 			} else {
 				r = MemberState.UNKNOWN;
 			}
-		} else if (headers[columnIndex].equals("Work load")) {
-			r = member.getWorkLoad();
-		} else if (headers[columnIndex].equals("Memory usage")) {
-			r = member.getMemoryUsage();
 		} else if (headers[columnIndex].equals("Error")) {
 			if (member.getErrorDate()!=null && member.getErrorMessage().length()>0) {
 				r = member.getErrorDate().getDateTimeString() + ": " + member.getErrorMessage();   
 			} else {
 				r = "";
 			}
+		} else if (headers[columnIndex].equals("Work load")) {
+			r = member.getWorkLoad();
+		} else if (headers[columnIndex].equals("Memory usage")) {
+			r = member.getMemoryUsage();
+		} else if (headers[columnIndex].equals("RestartRequired")) {
+			r = member.isRestartRequired();
 		}
 		return r;
 	}

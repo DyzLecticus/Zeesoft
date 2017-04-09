@@ -13,6 +13,7 @@ public abstract class ProtocolObject {
 	public static final String CLOSE_SESSION 	= "CLOSE_SESSION";
 	
 	private boolean stop	= false;
+	private boolean restart	= false;
 	private boolean close	= false;
 	
 	protected ZStringBuilder handleInput(MemberObject member,ZStringBuilder input) {
@@ -34,6 +35,14 @@ public abstract class ProtocolObject {
 
 	protected void setStop(boolean stop) {
 		this.stop = stop;
+	}
+
+	protected boolean isRestart() {
+		return restart;
+	}
+
+	protected void setRestart(boolean restart) {
+		this.restart = restart;
 	}
 
 	protected boolean isClose() {

@@ -7,6 +7,7 @@ import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 
 public class ProtocolControl extends ProtocolObject {
 	public static final String STOP_PROGRAM		= "STOP_PROGRAM";
+	public static final String RESTART_PROGRAM	= "RESTART_PROGRAM";
 	public static final String GET_STATE 		= "GET_STATE";
 	public static final String TAKE_OFFLINE		= "TAKE_OFFLINE";
 	public static final String DRAIN_OFFLINE	= "DRAIN_OFFLINE";
@@ -21,6 +22,13 @@ public class ProtocolControl extends ProtocolObject {
 			if (command.equals(STOP_PROGRAM)) {
 				if (member.goToStateIfState(MemberState.STOPPING,MemberState.ONLINE,MemberState.OFFLINE)) {
 					setStop(true);
+					output = getExecutedCommandResponse();
+				} else {
+					output = getFailedToExecuteCommandResponse();
+				}
+			} else if (command.equals(RESTART_PROGRAM)) {
+				if (member.goToStateIfState(MemberState.RESTARTING,MemberState.ONLINE,MemberState.OFFLINE)) {
+					setRestart(true);
 					output = getExecutedCommandResponse();
 				} else {
 					output = getFailedToExecuteCommandResponse();

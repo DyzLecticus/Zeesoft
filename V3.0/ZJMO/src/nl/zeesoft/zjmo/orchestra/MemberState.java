@@ -14,6 +14,7 @@ public class MemberState {
 	public static final String			OFFLINE 			= "OFFLINE";
 	public static final String			COMING_ONLINE		= "COMING_ONLINE";
 	public static final String			STOPPING 			= "STOPPING";
+	public static final String			RESTARTING 			= "RESTARTING";
 	
 	private static List<MemberState>	states 				= new ArrayList<MemberState>();
 	
@@ -56,6 +57,8 @@ public class MemberState {
 		states.add(new MemberState(GOING_OFFLINE));
 		states.add(new MemberState(DRAINING_OFFLINE));
 		states.add(new MemberState(OFFLINE));
+		states.add(new MemberState(COMING_ONLINE));
 		states.add(new MemberState(STOPPING));
+		states.add(new MemberState(RESTARTING));
 	}
 }

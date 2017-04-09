@@ -302,6 +302,7 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		f.rootElement.children.add(new JsElem("workLoad","" + workLoad));
 		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
+		f.rootElement.children.add(new JsElem("restartRequired","" + isRestartRequired()));
 		unlockMe(this);
 		return f.toStringBuilder();
 	}
@@ -318,7 +319,36 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		System.exit(status);
 	}
-	
+
+	protected void restartProgram(Worker ignoreWorker) {
+		stop(ignoreWorker);
+		union = new WorkerUnion(messenger);
+		JsFile oriJson = new JsFile();
+		String err = oriJson.fromFile("orchestra.json");
+		if (err.length()==0) {
+			orchestra.fromJson(oriJson);
+		}
+		lockMe(this);
+		setRestartRequired(false);
+		unlockMe(this);
+		start();
+	}
+
+	protected void updateConfiguration(Orchestra newOrchestra) {
+		JsFile oriJson = new JsFile();
+		String err = oriJson.fromFile("orchestra.json");
+		if (err.length()==0) {
+			ZStringBuilder oriZ = oriJson.toStringBuilder();
+			ZStringBuilder newZ = newOrchestra.toJson(false).toStringBuilder();
+			if (!newZ.equals(oriZ)) {
+				newZ.toFile("orchestra.json");
+				lockMe(this);
+				setRestartRequired(true);
+				unlockMe(this);
+			}
+		}
+	}
+
 	protected void stopWorker(MemberWorker worker) {
 		lockMe(this);
 		List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);

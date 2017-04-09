@@ -46,6 +46,7 @@ public class MemberWorker extends Worker {
 	public void whileWorking() {
 		boolean close = false;
 		boolean stop = false;
+		boolean restart = false;
 		ZStringBuilder input = socket.readInput();
 		ZStringBuilder output = null;
 		if (!socket.isOpen()) {
@@ -55,13 +56,18 @@ public class MemberWorker extends Worker {
 				close = true;
 			} else {
 				protocol.setStop(false);
+				protocol.setRestart(false);
 				protocol.setClose(false);
 				output = protocol.handleInput(member,input);
 				close = output==null || protocol.isClose();
 				stop = protocol.isStop();
+				restart = protocol.isRestart();
 			}
 		}
-		if (stop) {
+		if (restart) {
+			member.stopWorker(this);
+			member.restartProgram(this);
+		} else if (stop) {
 			member.stopWorker(this);
 			member.stopProgram(this);
 		} else if (close) {

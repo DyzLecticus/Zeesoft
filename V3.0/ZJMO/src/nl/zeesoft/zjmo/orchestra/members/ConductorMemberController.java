@@ -97,6 +97,12 @@ public class ConductorMemberController extends Locker {
 		handleCommandResponse(response,id);
 		return response;
 	}
+
+	protected ZStringBuilder restart(String id) {
+		ZStringBuilder response = sendMemberCommand(id,ProtocolControl.RESTART_PROGRAM);
+		handleCommandResponse(response,id);
+		return response;
+	}
 	
 	protected void getState(String memberId,boolean connect) {
 		for (OrchestraMember member: orchestra.getMembers()) {
@@ -131,6 +137,8 @@ public class ConductorMemberController extends Locker {
 								member.setWorkLoad(Integer.parseInt(elem.value.toString()));
 							} else if (elem.name.equals("memoryUsage")) {
 								member.setMemoryUsage(Long.parseLong(elem.value.toString()));
+							} else if (elem.name.equals("restartRequired")) {
+								member.setRestartRequired(Boolean.parseBoolean(elem.value.toString()));
 							}
 						}
 					}

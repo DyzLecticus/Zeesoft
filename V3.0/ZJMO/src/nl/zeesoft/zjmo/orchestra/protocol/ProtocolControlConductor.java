@@ -8,6 +8,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 	public static final String GET_ORCHESTRA_STATE	= "GET_ORCHESTRA_STATE";
 	public static final String GET_MEMBER_STATE		= "GET_MEMBER_STATE";
 	public static final String CONNECT_MEMBER		= "CONNECT_MEMBER";
+	public static final String RESTART_MEMBER		= "RESTART_MEMBER";
 	public static final String UPDATE_MEMBER_STATE	= "UPDATE_MEMBER_STATE";
 	public static final String TAKE_MEMBER_OFFLINE	= "TAKE_MEMBER_OFFLINE";
 	public static final String DRAIN_MEMBER_OFFLINE	= "DRAIN_MEMBER_OFFLINE";
@@ -22,6 +23,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 			if (command.equals(GET_ORCHESTRA_STATE) ||
 				command.equals(GET_MEMBER_STATE) ||
 				command.equals(CONNECT_MEMBER) ||
+				command.equals(RESTART_MEMBER) ||
 				command.equals(UPDATE_MEMBER_STATE) ||
 				command.equals(TAKE_MEMBER_OFFLINE) ||
 				command.equals(DRAIN_MEMBER_OFFLINE) ||
@@ -63,23 +65,15 @@ public class ProtocolControlConductor extends ProtocolControl {
 					output = getExecutedCommandResponse();
 				} else if (command.equals(TAKE_MEMBER_OFFLINE)) {
 					output = con.takeOffline(memberId);
-					//if (!isErrorJson(output)) {
-					//	con.updateState(memberId,true);
-						// TODO: Update other conductors
-					//}
 				} else if (command.equals(DRAIN_MEMBER_OFFLINE)) {
 					output = con.drainOffline(memberId);
 					if (!isErrorJson(output)) {
-					//	con.updateState(memberId,true);
-						// TODO: Update other conductors
 						con.drainOfflineWorker(memberId);
 					}
 				} else if (command.equals(BRING_MEMBER_ONLINE)) {
 					output = con.bringOnline(memberId);
-					//if (!isErrorJson(output)) {
-					//	con.updateState(memberId,true);
-						// TODO: Update other conductors
-					//}
+				} else if (command.equals(RESTART_MEMBER)) {
+					output = con.restart(memberId);
 				}
 			}
 		}

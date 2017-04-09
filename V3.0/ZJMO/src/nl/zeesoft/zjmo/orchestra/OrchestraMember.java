@@ -21,14 +21,14 @@ public class OrchestraMember extends Locker {
 	private int				workPort				= 5432;
 	private int				workRequestTimeout		= 500;
 	private boolean			workRequestTimeoutDrain	= false;
+	private List<Channel>	channels				= new ArrayList<Channel>();
 
 	private MemberState		state					= null;
 	private int				workLoad				= 0;
 	private long			memoryUsage				= 0;
 	private ZDate			errorDate				= null;
 	private String			errorMessage			= "";
-	
-	private List<Channel>	channels				= new ArrayList<Channel>();
+	private boolean			restartRequired			= false;
 
 	public OrchestraMember() {
 		super(null);
@@ -47,14 +47,15 @@ public class OrchestraMember extends Locker {
 		copy.setWorkPort(getWorkPort());
 		copy.setWorkRequestTimeout(getWorkRequestTimeout());
 		copy.setWorkRequestTimeoutDrain(isWorkRequestTimeoutDrain());
+		for (Channel chan: channels) {
+			copy.getChannels().add(chan);
+		}
 		copy.setState(getState());
 		copy.setWorkLoad(getWorkLoad());
 		copy.setMemoryUsage(getMemoryUsage());
 		copy.setErrorDate(getErrorDate());
 		copy.setErrorMessage(getErrorMessage());
-		for (Channel chan: channels) {
-			copy.getChannels().add(chan);
-		}
+		copy.setRestartRequired(isRestartRequired());
 		return copy;
 	}
 	
@@ -122,6 +123,10 @@ public class OrchestraMember extends Locker {
 		this.positionBackupNumber = positionBackupNumber;
 	}
 
+	public List<Channel> getChannels() {
+		return channels;
+	}
+
 	public MemberState getState() {
 		return state;
 	}
@@ -167,8 +172,12 @@ public class OrchestraMember extends Locker {
 		this.errorMessage = errorMessage;
 	}
 
-	public List<Channel> getChannels() {
-		return channels;
+	public boolean isRestartRequired() {
+		return restartRequired;
+	}
+
+	public void setRestartRequired(boolean restartRequired) {
+		this.restartRequired = restartRequired;
 	}
 	
 	public JsElem toJsonElem(boolean includeState) {
@@ -200,6 +209,9 @@ public class OrchestraMember extends Locker {
 			if (getErrorDate()!=null && getErrorMessage().length()>0) {
 				mem.children.add(new JsElem("errorTime","" + getErrorDate().getDate().getTime()));
 				mem.children.add(new JsElem("errorMessage",getErrorMessage(),true));
+			}
+			if (isRestartRequired()) {
+				mem.children.add(new JsElem("restartRequired","" + isRestartRequired()));
 			}
 		}
 		return mem;

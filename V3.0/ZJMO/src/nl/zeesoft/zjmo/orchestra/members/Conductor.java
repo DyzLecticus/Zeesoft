@@ -76,6 +76,10 @@ public class Conductor extends MemberObject {
 		return controller.bringOnline(memberId);
 	}
 
+	public ZStringBuilder restart(String memberId) {
+		return controller.restart(memberId);
+	}
+
 	public void workRequestTimedOut(WorkClient client) {
 		if (controller.workRequestTimedOut(client)) {
 			ConductorMemberDrainOnlineWorker worker = new ConductorMemberDrainOnlineWorker(getMessenger(),getUnion(),controller,client.getMemberId());

@@ -323,6 +323,8 @@ public abstract class Orchestra {
 							member.setErrorDate(zd);
 						} else if (meme.name.equals("errorMessage") && meme.value!=null) {
 							member.setErrorMessage(meme.value.toString());
+						} else if (meme.name.equals("restartRequired") && meme.value!=null) {
+							member.setRestartRequired(Boolean.parseBoolean(meme.value.toString()));
 						}
 					}
 					if (member.getPosition()!=null) {
