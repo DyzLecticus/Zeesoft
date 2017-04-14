@@ -6,6 +6,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,9 +78,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		gridController.updatedOrchestraMembers(getOrchestraMembers());
 		stateWorker = getNewStateWorker();
 		connector = new ConductorConnector(getMessenger(),union,true);
-		connector.initialize(orchestra,null);
 		workConnector = new ConductorConnector(getMessenger(),union,false);
-		workConnector.initialize(orchestra,null);
 	}
 
 	public boolean isConnected() {
@@ -121,13 +120,19 @@ public class OrchestraController extends Locker implements ActionListener {
 			} catch (Exception e) {
 				// Ignore
 			}
+			connector.initialize(orchestraUpdate,null);
 			connector.open();
+			workConnector.initialize(orchestraUpdate,null);
 			workConnector.open();
 			getMessenger().start();
 			stateWorker.start();
-			mainFrame = getMainFrame();
-			mainFrame.setVisible(true);
-			memberFrame = getMemberFrame(orchestraUpdate);
+			if (memberFrame==null) {
+				memberFrame = getMemberFrame(orchestraUpdate);
+			}
+			if (mainFrame==null) {
+				mainFrame = getMainFrame();
+				mainFrame.setVisible(true);
+			}
 			working = true;
 		}
 		unlockMe(this);
@@ -140,9 +145,8 @@ public class OrchestraController extends Locker implements ActionListener {
 		unlockMe(this);
 		stateWorker.stop();
 		lockMe(this);
-		if (mainFrame!=null) {
-			mainFrame.setVisible(false);
-			mainFrame = null;
+		if (memberFrame!=null && memberFrame.getFrame().isVisible()) {
+			memberFrame.getFrame().setVisible(false);
 		}
 		if (actionWorker!=null) {
 			actionWorker.stop();
@@ -153,7 +157,6 @@ public class OrchestraController extends Locker implements ActionListener {
 		getMessenger().stop();
 		union.stopWorkers();
 		getMessenger().whileWorking();
-		working = false;
 		unlockMe(this);
 	}
 
@@ -187,6 +190,11 @@ public class OrchestraController extends Locker implements ActionListener {
 						showErrorMessage("Failed to publish request","Error");
 					} else if (pr.getError().length()>0) {
 						showErrorMessage(pr.getError(),"Error");
+					} else {
+						File f = new File("orchestra.json");
+						if (f.exists()) {
+							orchestraUpdate.toJson(false).toFile("orchestra.json",true);
+						}
 					}
 				}
 			} else {
@@ -200,8 +208,7 @@ public class OrchestraController extends Locker implements ActionListener {
 				}
 				if (err.length()==0) {
 					if (evt.getActionCommand().equals(UPDATE_MEMBER)) {
-						memberFrame.setMember(members.get(0));
-						memberFrame.getFrame().setVisible(true);
+						updateMemberIfSelected();
 					} else {
 						String confirmMessage = "";
 						boolean confirmed = true;
@@ -234,6 +241,21 @@ public class OrchestraController extends Locker implements ActionListener {
 		}
 	}
 
+	protected void restartedMember(OrchestraMember member) {
+		if (member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
+			lockMe(this);
+			stateWorker.stop();
+			connector.close();
+			connector.initialize(orchestraUpdate,null);
+			connector.open();
+			workConnector.initialize(orchestraUpdate,null);
+			workConnector.open();
+			workConnector.close();
+			stateWorker.start();
+			unlockMe(this);
+		}
+	}
+	
 	protected void updateOrchestraState() {
 		MemberClient client = getClient();
 		if (client!=null && !isStopping()) {
@@ -277,10 +299,13 @@ public class OrchestraController extends Locker implements ActionListener {
 	
 	protected void windowClosing(WindowEvent e) {
 		if (e.getWindow()==mainFrame) {
-			if (memberFrame!=null && memberFrame.getFrame().isVisible()) {
-				memberFrame.getFrame().setVisible(false);
+			if (mainFrame!=null) {
+				mainFrame.setVisible(false);
 			}
 			stop();
+			lockMe(this);
+			working = false;
+			unlockMe(this);
 			if (exitOnClose) {
 				int status = 0;
 				if (getMessenger().isError()) {
@@ -290,6 +315,15 @@ public class OrchestraController extends Locker implements ActionListener {
 			}
 		} else {
 			e.getWindow().setVisible(false);
+		}
+	}
+
+	protected void updateMemberIfSelected() {
+		List<OrchestraMember> members = gridController.getSelectedMembers(grid);
+		if (members.size()>0) {
+			OrchestraMember updateMember = orchestraUpdate.getMemberById(members.get(0).getId());
+			memberFrame.setMember(updateMember);
+			memberFrame.getFrame().setVisible(true);
 		}
 	}
 	
@@ -335,6 +369,10 @@ public class OrchestraController extends Locker implements ActionListener {
 		return new ControllerWindowAdapter(this);
 	}
 
+	protected GridMouseListener getNewGridMouseListener() {
+		return new GridMouseListener(this);
+	}
+
 	protected JFrame getMainFrame() {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -347,6 +385,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		grid = new JTable();
 		grid.setModel(gridController);
 		grid.setComponentPopupMenu(getMemberPopupMenu());
+		grid.addMouseListener(getNewGridMouseListener());
 		
 		grid.setEnabled(connected);
 		for (JMenuItem item: menuItems) {

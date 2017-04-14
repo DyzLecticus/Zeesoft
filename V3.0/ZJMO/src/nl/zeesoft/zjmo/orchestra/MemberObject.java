@@ -41,7 +41,6 @@ public abstract class MemberObject extends OrchestraMember {
 		setPositionBackupNumber(positionBackupNumber);
 		super.setState(MemberState.getState(MemberState.UNKNOWN));
 		getConfigurationFromOrchestraPosition();
-		
 		if (msgr!=null) {
 			messenger = msgr;
 		} else {
@@ -50,7 +49,6 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		union = new WorkerUnion(messenger);
 		stateConnector = new ConductorStateConnector(messenger,union,true,getId());
-		stateConnector.initialize(orchestra,getId());
 	}
 	
 	public void setDebug(boolean debug) {
@@ -85,6 +83,7 @@ public abstract class MemberObject extends OrchestraMember {
 			return false;
 		}
 		
+		stateConnector.initialize(orchestra,getId());
 		if (startAndStopMessenger) {
 			getMessenger().setPrintDebugMessages(debug);
 			getMessenger().start();
@@ -315,12 +314,12 @@ public abstract class MemberObject extends OrchestraMember {
 			ZStringBuilder newZ = newOrchestra.toJson(false).toStringBuilder();
 			if (!newZ.equals(oriZ)) {
 				newZ.toFile("orchestra.json");
-				updatedOrchestra();
+				setRestartRequired();
 			}
 		}
 	}
-
-	protected void updatedOrchestra() {
+	
+	public void setRestartRequired() {
 		lockMe(this);
 		setRestartRequired(true);
 		unlockMe(this);
@@ -341,16 +340,22 @@ public abstract class MemberObject extends OrchestraMember {
 
 	protected void restartProgram(Worker ignoreWorker) {
 		stop(ignoreWorker);
+		boolean stopProgram = false;
 		union = new WorkerUnion(messenger);
 		JsFile oriJson = new JsFile();
 		String err = oriJson.fromFile("orchestra.json");
 		if (err.length()==0) {
 			orchestra.fromJson(oriJson);
+			stopProgram = getConfigurationFromOrchestraPosition();
 		}
 		lockMe(this);
 		setRestartRequired(false);
 		unlockMe(this);
-		start();
+		if (stopProgram) {
+			stopProgram(ignoreWorker);
+		} else {
+			start();
+		}
 	}
 
 	protected void stopWorker(MemberWorker worker) {
@@ -420,12 +425,16 @@ public abstract class MemberObject extends OrchestraMember {
 		workers.remove(worker);
 	}
 
-	private void getConfigurationFromOrchestraPosition() {
+	private boolean getConfigurationFromOrchestraPosition() {
+		boolean stop = false;
 		OrchestraMember member = orchestra.getMemberById(getId());
 		if (member!=null) {
 			setIpAddressOrHostName(member.getIpAddressOrHostName());
 			setControlPort(member.getControlPort());
 			setWorkPort(member.getWorkPort());
+		} else {
+			stop = true;
 		}
+		return stop;
 	}
 }

@@ -29,8 +29,8 @@ public class MockConductor1 extends MockObject {
 			}
 			@Override
 			public void updateOrchestra(Orchestra newOrchestra) {
-				System.out.println(getId() + ": Updated orchestra"); 
-				updatedOrchestra();
+				System.out.println(getId() + ": Updated orchestra");
+				setRestartRequired();
 			}
 			@Override
 			protected Messenger getNewMessenger() {

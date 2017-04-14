@@ -33,7 +33,7 @@ public class MockPlayers extends MockObject {
 					@Override
 					public void updateOrchestra(Orchestra newOrchestra) {
 						System.out.println(getId() + ": Updated orchestra"); 
-						updatedOrchestra();
+						setRestartRequired();
 					}
 					protected void stopProgram(Worker ignoreWorker) {
 						//System.out.println("Stopping MockPlayer ...");

@@ -179,7 +179,7 @@ public class OrchestraMember extends Locker {
 	public void setRestartRequired(boolean restartRequired) {
 		this.restartRequired = restartRequired;
 	}
-	
+
 	public JsElem toJsonElem(boolean includeState) {
 		JsElem mem = new JsElem();
 		mem.children.add(new JsElem("positionName",getPosition().getName(),true));

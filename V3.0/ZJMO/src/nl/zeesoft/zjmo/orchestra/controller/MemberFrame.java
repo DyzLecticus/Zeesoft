@@ -127,23 +127,6 @@ public class MemberFrame {
 		return member;
 	}
 
-	protected OrchestraMember getSaveMember() {
-		OrchestraMember member = null;
-		if (getMember()==null) {
-			member = new OrchestraMember();
-			member.setPosition(orchestra.getPosition(position.getSelectedItem().toString()));
-			member.setPositionBackupNumber(Integer.parseInt(positionBackupNumber.getValue().toString()));
-			member.setIpAddressOrHostName(ipAddressOrHostName.getValue().toString());
-		} else {
-			member = getMember().getCopy();
-		}
-		member.setControlPort(Integer.parseInt(controlPort.getValue().toString()));
-		member.setWorkPort(Integer.parseInt(workPort.getValue().toString()));
-		member.setWorkRequestTimeout(Integer.parseInt(workRequestTimeout.getValue().toString()));
-		member.setWorkRequestTimeoutDrain(workRequestTimeoutDrain.isSelected());
-		return member;
-	}
-
 	protected void setMember(OrchestraMember member) {
 		this.member = member;
 
@@ -196,6 +179,23 @@ public class MemberFrame {
 		return err.length() == 0;
 	}
 	
+	protected OrchestraMember getSaveMember() {
+		OrchestraMember member = null;
+		if (getMember()==null) {
+			member = new OrchestraMember();
+			member.setPosition(orchestra.getPosition(position.getSelectedItem().toString()));
+			member.setPositionBackupNumber(Integer.parseInt(positionBackupNumber.getValue().toString()));
+			member.setIpAddressOrHostName(ipAddressOrHostName.getValue().toString());
+		} else {
+			member = getMember().getCopy();
+		}
+		member.setControlPort(Integer.parseInt(controlPort.getValue().toString()));
+		member.setWorkPort(Integer.parseInt(workPort.getValue().toString()));
+		member.setWorkRequestTimeout(Integer.parseInt(workRequestTimeout.getValue().toString()));
+		member.setWorkRequestTimeoutDrain(workRequestTimeoutDrain.isSelected());
+		return member;
+	}
+
 	protected JFrame getFrame() {
 		return frame;
 	}
