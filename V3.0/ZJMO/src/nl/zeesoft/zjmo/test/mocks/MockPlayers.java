@@ -30,6 +30,11 @@ public class MockPlayers extends MockObject {
 						System.out.println("Starting " + getId() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");
 						return super.start();
 					}
+					@Override
+					public void updateOrchestra(Orchestra newOrchestra) {
+						System.out.println(getId() + ": Updated orchestra"); 
+						updatedOrchestra();
+					}
 					protected void stopProgram(Worker ignoreWorker) {
 						//System.out.println("Stopping MockPlayer ...");
 						stop(ignoreWorker);

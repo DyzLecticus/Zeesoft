@@ -307,6 +307,25 @@ public abstract class MemberObject extends OrchestraMember {
 		return f.toStringBuilder();
 	}
 
+	public void updateOrchestra(Orchestra newOrchestra) {
+		JsFile oriJson = new JsFile();
+		String err = oriJson.fromFile("orchestra.json");
+		if (err.length()==0) {
+			ZStringBuilder oriZ = oriJson.toStringBuilder();
+			ZStringBuilder newZ = newOrchestra.toJson(false).toStringBuilder();
+			if (!newZ.equals(oriZ)) {
+				newZ.toFile("orchestra.json");
+				updatedOrchestra();
+			}
+		}
+	}
+
+	protected void updatedOrchestra() {
+		lockMe(this);
+		setRestartRequired(true);
+		unlockMe(this);
+	}
+	
 	protected Messenger getNewMessenger() {
 		return new Messenger(null);
 	}
@@ -332,21 +351,6 @@ public abstract class MemberObject extends OrchestraMember {
 		setRestartRequired(false);
 		unlockMe(this);
 		start();
-	}
-
-	protected void updateConfiguration(Orchestra newOrchestra) {
-		JsFile oriJson = new JsFile();
-		String err = oriJson.fromFile("orchestra.json");
-		if (err.length()==0) {
-			ZStringBuilder oriZ = oriJson.toStringBuilder();
-			ZStringBuilder newZ = newOrchestra.toJson(false).toStringBuilder();
-			if (!newZ.equals(oriZ)) {
-				newZ.toFile("orchestra.json");
-				lockMe(this);
-				setRestartRequired(true);
-				unlockMe(this);
-			}
-		}
 	}
 
 	protected void stopWorker(MemberWorker worker) {

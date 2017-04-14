@@ -112,7 +112,7 @@ public class GridController extends AbstractTableModel {
 			r = member.getWorkLoad();
 		} else if (headers[columnIndex].equals("Memory usage")) {
 			r = member.getMemoryUsage();
-		} else if (headers[columnIndex].equals("RestartRequired")) {
+		} else if (headers[columnIndex].equals("Restart")) {
 			r = member.isRestartRequired();
 		}
 		return r;

@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.MockObject;
 import nl.zeesoft.zdk.test.impl.MockMessenger;
 import nl.zeesoft.zdk.thread.Worker;
+import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 
 public class MockConductor1 extends MockObject {
@@ -25,6 +26,11 @@ public class MockConductor1 extends MockObject {
 			public boolean start() {
 				System.out.println("Starting " + getId() + " (control: " + getControlPort() + ", work: " + getWorkPort() +  ") ...");
 				return super.start();
+			}
+			@Override
+			public void updateOrchestra(Orchestra newOrchestra) {
+				System.out.println(getId() + ": Updated orchestra"); 
+				updatedOrchestra();
 			}
 			@Override
 			protected Messenger getNewMessenger() {

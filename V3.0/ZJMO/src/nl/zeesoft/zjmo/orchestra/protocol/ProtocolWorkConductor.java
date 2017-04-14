@@ -50,18 +50,6 @@ public class ProtocolWorkConductor extends ProtocolWork {
 		return output;
 	}
 
-	protected ZStringBuilder handleUnknownJsonRequest(Conductor con,ZStringBuilder input) {
-		ZStringBuilder output = null;
-		JsFile json = getJsonForInput(input);
-		if (json.rootElement!=null) {
-			output = handleJson(con,json);
-		}
-		if (output==null) {
-			output = input;
-		}
-		return output;
-	}
-
 	protected ZStringBuilder handleWorkRequest(Conductor con,WorkRequest wr) {
 		ZStringBuilder output = null;
 		if (wr.getPositionName().length()==0) {

@@ -205,13 +205,11 @@ public class OrchestraMember extends Locker {
 				mem.children.add(new JsElem("state",getState().getCode(),true));
 				mem.children.add(new JsElem("workLoad","" + getWorkLoad()));
 				mem.children.add(new JsElem("memoryUsage","" + getMemoryUsage()));
+				mem.children.add(new JsElem("restartRequired","" + isRestartRequired()));
 			}
 			if (getErrorDate()!=null && getErrorMessage().length()>0) {
 				mem.children.add(new JsElem("errorTime","" + getErrorDate().getDate().getTime()));
 				mem.children.add(new JsElem("errorMessage",getErrorMessage(),true));
-			}
-			if (isRestartRequired()) {
-				mem.children.add(new JsElem("restartRequired","" + isRestartRequired()));
 			}
 		}
 		return mem;

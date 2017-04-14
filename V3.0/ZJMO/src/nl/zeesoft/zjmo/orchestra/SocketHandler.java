@@ -160,6 +160,8 @@ public class SocketHandler {
 		put.append("\n");
 		if (out!=null) {
 			out.print(put);
+		}
+		if (out!=null) {
 			out.flush();
 		}
 	}

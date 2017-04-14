@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zjmo.Orchestrator;
 import nl.zeesoft.zjmo.orchestra.controller.OrchestraController;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 import nl.zeesoft.zjmo.orchestra.members.Player;
@@ -59,6 +60,12 @@ public abstract class Orchestra {
 
 	public int closeUnusedWorkClientsMilliseconds() {
 		return 60000;
+	}
+
+	public Orchestra getCopy(boolean includeState) {
+		Orchestra orch = Orchestrator.getOrchestraForClassName(this.getClass().getName());
+		orch.fromJson(toJson(includeState));
+		return orch;
 	}
 
 	public boolean isLocalHost() {
