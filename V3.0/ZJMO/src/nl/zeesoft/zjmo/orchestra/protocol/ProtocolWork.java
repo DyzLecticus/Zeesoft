@@ -40,7 +40,10 @@ public class ProtocolWork extends ProtocolObject {
 			if (type.value.toString().equals(UPDATE_ORCHESTRA)) {
 				Orchestra orch = member.getOrchestra().getCopy(false);
 				orch.fromJson(json);
-				member.updateOrchestra(orch);
+				String err = member.updateOrchestra(orch);
+				if (err.length()>0) {
+					output = getErrorJson(err);
+				}
 			}
 		} else {
 			JsElem sleep = json.rootElement.getChildByName("sleep");

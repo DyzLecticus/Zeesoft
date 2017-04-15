@@ -124,13 +124,12 @@ public class SocketHandler {
 		ZStringBuilder input = new ZStringBuilder();
 		boolean error = false;
 		boolean stop = false;
+		BufferedReader r = in;
 		while (!stop && in!=null) {
 			String line = null;
 			boolean timeout = false;
 			try {
-				if (in!=null) {
-					line = in.readLine();
-				}
+				line = r.readLine();
 			} catch (SocketTimeoutException e) {
 				timeout = true;
 			} catch (IOException e) {
@@ -158,11 +157,10 @@ public class SocketHandler {
 		put.append("\n");
 		put.append(END_OF_PROTOCOL_OUTPUT);
 		put.append("\n");
-		if (out!=null) {
-			out.print(put);
-		}
-		if (out!=null) {
-			out.flush();
+		PrintWriter w = out;
+		if (w!=null) {
+			w.print(put);
+			w.flush();
 		}
 	}
 }

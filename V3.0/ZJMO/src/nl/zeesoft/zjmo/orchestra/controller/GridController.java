@@ -30,7 +30,9 @@ public class GridController extends AbstractTableModel {
 	protected List<OrchestraMember> getSelectedMembers(JTable grid) {
 		List<OrchestraMember> mems = new ArrayList<OrchestraMember>();
 		for (Integer row: grid.getSelectedRows()) {
-			mems.add(members.get(row));
+			if (members.size()>row) {
+				mems.add(members.get(row));
+			}
 		}
 		return mems;
 	}

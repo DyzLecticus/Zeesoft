@@ -47,6 +47,11 @@ public class Conductor extends MemberObject {
 		return new ProtocolWorkConductor();
 	}
 
+	@Override
+	protected boolean checkRestartRequired(Orchestra newOrchestra) {
+		return true;
+	}
+
 	public JsFile getOrchestraState() {
 		return controller.getOrchestraState();
 	}

@@ -52,11 +52,10 @@ public class ActiveClient extends Locker {
 		}
 		if (stateWorker!=null && stateWorker.isWorking()) {
 			stateWorker.stop();
-			stateClient.sendCloseSessionCommand();
 			stateWorker = null;
 		}
 		unlockMe(this);
-		
+
 		if (client.isOpen()) {
 			client.sendCloseSessionCommand();
 			client.close();
@@ -92,7 +91,7 @@ public class ActiveClient extends Locker {
 		lockMe(this);
 		if (!closing && stateWorker!=null && !stateWorker.isWorking()) {
 			stateWorker.start();
-			connect = true;
+			connect = !client.isOpen();
 		}
 		unlockMe(this);
 		if (connect) {

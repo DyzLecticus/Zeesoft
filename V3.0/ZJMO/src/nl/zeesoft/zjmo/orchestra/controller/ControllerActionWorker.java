@@ -60,7 +60,7 @@ public class ControllerActionWorker extends Worker {
 			response = client.sendCommand(ProtocolControlConductor.BRING_MEMBER_ONLINE,"id",member.getId());
 		} else if (action.equals(ProtocolControl.RESTART_PROGRAM)) {
 			response = client.sendCommand(ProtocolControlConductor.RESTART_MEMBER,"id",member.getId());
-			if (response==null || !ProtocolObject.isErrorJson(response)) {
+			if (response==null || !response.equals(ProtocolControl.getFailedToExecuteCommandResponse())) {
 				controller.restartedMember(member);
 			}
 		}

@@ -15,11 +15,17 @@ public class ActiveClientStateWorker extends Worker {
 		this.activeClient = activeClient;
 		this.stateClient = stateClient;
 	}
-	
+
+	@Override
+	public void stop() {
+		super.stop();
+		stateClient.sendCloseSessionCommand();
+		stateClient.close();
+	}
+
 	@Override
 	public void whileWorking() {
 		stateClient.readInput(0);
-		stateClient.close();
 		stop();
 		activeClient.disconnect();
 	}

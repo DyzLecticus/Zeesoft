@@ -301,32 +301,49 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 		f.rootElement.children.add(new JsElem("workLoad","" + workLoad));
 		f.rootElement.children.add(new JsElem("memoryUsage","" + (rt.totalMemory() - rt.freeMemory())));
-		f.rootElement.children.add(new JsElem("restartRequired","" + isRestartRequired()));
+		f.rootElement.children.add(new JsElem("restartRequired","" + super.isRestartRequired()));
 		unlockMe(this);
 		return f.toStringBuilder();
 	}
 
-	public void updateOrchestra(Orchestra newOrchestra) {
+	public String updateOrchestra(Orchestra newOrchestra) {
 		JsFile oriJson = new JsFile();
 		String err = oriJson.fromFile("orchestra.json");
 		if (err.length()==0) {
 			ZStringBuilder oriZ = oriJson.toStringBuilder();
 			ZStringBuilder newZ = newOrchestra.toJson(false).toStringBuilder();
 			if (!newZ.equals(oriZ)) {
-				newZ.toFile("orchestra.json");
-				setRestartRequired();
+				err = newZ.toFile("orchestra.json");
+				if (checkRestartRequired(newOrchestra)) {
+					setRestartRequired(true);
+				}
 			}
 		}
+		return err;
 	}
 	
-	public void setRestartRequired() {
+	@Override
+	public void setRestartRequired(boolean restartRequired) {
 		lockMe(this);
-		setRestartRequired(true);
+		super.setRestartRequired(restartRequired);
 		unlockMe(this);
 	}
 	
+	@Override
+	public boolean isRestartRequired() {
+		boolean r = false;
+		lockMe(this);
+		r = super.isRestartRequired();
+		unlockMe(this);
+		return r;
+	}
+
 	protected Messenger getNewMessenger() {
 		return new Messenger(null);
+	}
+
+	protected boolean checkRestartRequired(Orchestra newOrchestra) {
+		return false;
 	}
 	
 	protected void stopProgram(Worker ignoreWorker) {
@@ -348,16 +365,14 @@ public abstract class MemberObject extends OrchestraMember {
 			orchestra.fromJson(oriJson);
 			stopProgram = getConfigurationFromOrchestraPosition();
 		}
-		lockMe(this);
 		setRestartRequired(false);
-		unlockMe(this);
 		if (stopProgram) {
 			stopProgram(ignoreWorker);
 		} else {
 			start();
 		}
 	}
-
+	
 	protected void stopWorker(MemberWorker worker) {
 		lockMe(this);
 		List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);

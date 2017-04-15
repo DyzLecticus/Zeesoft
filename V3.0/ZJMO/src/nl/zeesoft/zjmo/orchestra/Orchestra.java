@@ -191,7 +191,14 @@ public abstract class Orchestra {
 		}
 		return r;
 	}
-	
+
+	public void removeMember(String id) {
+		OrchestraMember member = getMemberById(id);
+		if (member!=null && !(member.getPosition().getName().equals(CONDUCTOR) && member.getPositionBackupNumber()==0)) {
+			members.remove(member);
+		}
+	}
+
 	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort) {
 		return addMember(positionName,positionBackupNumber,ipAddressOrHostName,controlPort,workPort,500,false);
 	}

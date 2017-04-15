@@ -174,25 +174,59 @@ public class MemberFrame {
 			err = "Work request timeout must be greater or equal to zero";
 		}
 		if (err.length()>0) {
-			JOptionPane.showMessageDialog(frame, err, "Error",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame,err,"Error",JOptionPane.ERROR_MESSAGE);
 		}
 		return err.length() == 0;
 	}
 	
-	protected OrchestraMember getSaveMember() {
+	protected OrchestraMember getSaveMember(Orchestra orchestraUpdate) {
 		OrchestraMember member = null;
-		if (getMember()==null) {
-			member = new OrchestraMember();
-			member.setPosition(orchestra.getPosition(position.getSelectedItem().toString()));
-			member.setPositionBackupNumber(Integer.parseInt(positionBackupNumber.getValue().toString()));
-			member.setIpAddressOrHostName(ipAddressOrHostName.getValue().toString());
-		} else {
-			member = getMember().getCopy();
+		if (checkSave()) {
+			if (getMember()==null) {
+				member = new OrchestraMember();
+				member.setPosition(orchestra.getPosition(position.getSelectedItem().toString()));
+				member.setPositionBackupNumber(Integer.parseInt(positionBackupNumber.getValue().toString()));
+				member.setIpAddressOrHostName(ipAddressOrHostName.getValue().toString());
+			} else {
+				member = getMember().getCopy();
+			}
+			member.setControlPort(Integer.parseInt(controlPort.getValue().toString()));
+			member.setWorkPort(Integer.parseInt(workPort.getValue().toString()));
+			member.setWorkRequestTimeout(Integer.parseInt(workRequestTimeout.getValue().toString()));
+			member.setWorkRequestTimeoutDrain(workRequestTimeoutDrain.isSelected());
 		}
-		member.setControlPort(Integer.parseInt(controlPort.getValue().toString()));
-		member.setWorkPort(Integer.parseInt(workPort.getValue().toString()));
-		member.setWorkRequestTimeout(Integer.parseInt(workRequestTimeout.getValue().toString()));
-		member.setWorkRequestTimeoutDrain(workRequestTimeoutDrain.isSelected());
+		String err = "";
+		if (getMember()!=null && member!=null) {
+			if (getMember().getControlPort()==member.getControlPort() &&
+				getMember().getWorkPort()==member.getWorkPort() &&
+				getMember().getWorkRequestTimeout()==member.getWorkRequestTimeout() &&
+				getMember().isWorkRequestTimeoutDrain()==member.isWorkRequestTimeoutDrain()
+				) {
+				err = "No changes to save";
+				member = null;
+			}
+		}
+		if (getMember()==null && member!=null) {
+			if (orchestraUpdate.getMemberById(member.getId())!=null) {
+				err = "Member already exists: " + member.getId();
+				member = null;
+			}
+		}
+		if (getMember()==null && member!=null) {
+			if (orchestraUpdate.getMember(member.getIpAddressOrHostName(),member.getControlPort())!=null) {
+				err = "Member already exists: " + member.getIpAddressOrHostName() + ":" + member.getControlPort();
+				member = null;
+			}
+		}
+		if (getMember()==null && member!=null) {
+			if (orchestraUpdate.getMember(member.getIpAddressOrHostName(),member.getWorkPort())!=null) {
+				err = "Member already exists: " + member.getIpAddressOrHostName() + ":" + member.getWorkPort();
+				member = null;
+			}
+		}
+		if (err.length()>0) {
+			JOptionPane.showMessageDialog(frame,err,"Error",JOptionPane.ERROR_MESSAGE);
+		}
 		return member;
 	}
 
