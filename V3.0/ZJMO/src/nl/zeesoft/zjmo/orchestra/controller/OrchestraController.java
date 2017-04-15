@@ -297,6 +297,30 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	protected void publishedOrchestraUpdate() {
 		setOrchestraChanged(false);
+		MemberClient client = getClient();
+		if (client!=null) {
+			String err = "";
+			lockMe(this);
+			List<OrchestraMember> members = new ArrayList<OrchestraMember>();
+			for (OrchestraMember member: orchestra.getMembers()) {
+				OrchestraMember updateMember = orchestraUpdate.getMemberById(member.getId());
+				if (updateMember==null) {
+					members.add(member.getCopy());
+				}
+			}
+			if (members.size()>0) {
+				if (actionWorker==null || !actionWorker.isWorking()) {
+					actionWorker = getNewActionWorker(client);
+					actionWorker.handleAction(ProtocolControl.RESTART_PROGRAM,members);
+				} else {
+					err = "Unable to restart removed members";
+				}
+			}
+			unlockMe(this);
+			if (err.length()>0) {
+				showErrorMessage(err,"Error");
+			}
+		}
 	}
 
 	protected void setOrchestraChanged(boolean orchestraChanged) {
@@ -486,6 +510,11 @@ public class OrchestraController extends Locker implements ActionListener {
 		grid.setModel(gridController);
 		grid.setComponentPopupMenu(getMemberPopupMenu());
 		grid.addMouseListener(getNewGridMouseListener());
+		grid.getColumnModel().getColumn(0).setPreferredWidth(100);
+		grid.getColumnModel().getColumn(1).setPreferredWidth(40);
+		grid.getColumnModel().getColumn(2).setPreferredWidth(200);
+		grid.getColumnModel().getColumn(3).setPreferredWidth(30);
+		grid.getColumnModel().getColumn(5).setPreferredWidth(30);
 		
 		grid.setEnabled(connected);
 		for (JMenuItem item: menuItems) {

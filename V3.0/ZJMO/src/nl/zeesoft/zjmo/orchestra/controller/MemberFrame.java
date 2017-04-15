@@ -44,12 +44,12 @@ public class MemberFrame {
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(controller.getNewAdapter());
 		frame.setTitle("Member details");
-		frame.setSize(400,400);
+		frame.setSize(400,250);
 		frame.setIconImage(new ImageIconLabel("z",32,Color.WHITE).getBufferedImage());
 		
 		JPanel details = new JPanel();
 		details.setLayout(new GridBagLayout());
-		details.setPreferredSize(new Dimension(300,300));
+		details.setPreferredSize(new Dimension(300,200));
 		details.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 		
 		int row = 0;

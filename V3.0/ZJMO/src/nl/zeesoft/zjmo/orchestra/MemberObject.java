@@ -25,15 +25,16 @@ public abstract class MemberObject extends OrchestraMember {
 	private Messenger				messenger					= null;
 	private WorkerUnion				union						= null;
 	private boolean					startAndStopMessenger		= false;
-	
+
 	private Orchestra				orchestra					= null;
 	private MemberControlWorker		controlWorker				= null;
 	private MemberWorkWorker		workWorker					= null;
 	private ServerSocket 			controlSocket				= null;
 	private ServerSocket 			workSocket					= null;
 	private List<MemberWorker>		workers						= new ArrayList<MemberWorker>();
-	
 	private ConductorStateConnector stateConnector				= null;
+
+	private boolean					stopOnRestart				= false;
 	
 	public MemberObject(Messenger msgr,Orchestra orchestra,String positionName, int positionBackupNumber) {
 		this.orchestra = orchestra;
@@ -315,6 +316,10 @@ public abstract class MemberObject extends OrchestraMember {
 			if (!newZ.equals(oriZ)) {
 				if (newOrchestra.getMemberById(getId())!=null) {
 					err = newZ.toFile("orchestra.json");
+				} else {
+					lockMe(this);
+					stopOnRestart = true;
+					unlockMe(this);
 				}
 				if (checkRestartRequired(newOrchestra)) {
 					setRestartRequired(true);
@@ -358,19 +363,23 @@ public abstract class MemberObject extends OrchestraMember {
 	}
 
 	protected void restartProgram(Worker ignoreWorker) {
-		stop(ignoreWorker);
-		boolean stopProgram = false;
-		union = new WorkerUnion(messenger);
-		JsFile oriJson = new JsFile();
-		String err = oriJson.fromFile("orchestra.json");
-		if (err.length()==0) {
-			orchestra.fromJson(oriJson);
-			stopProgram = getConfigurationFromOrchestraPosition();
-		}
-		setRestartRequired(false);
+		lockMe(this);
+		boolean stopProgram = stopOnRestart;
+		unlockMe(this);
 		if (stopProgram) {
 			stopProgram(ignoreWorker);
 		} else {
+			stop(ignoreWorker);
+			union = new WorkerUnion(messenger);
+			JsFile json = new JsFile();
+			String err = json.fromFile("orchestra.json");
+			if (err.length()==0) {
+				orchestra.fromJson(json);
+				getConfigurationFromOrchestraPosition();
+			} else if (getMessenger()!=null) {
+				getMessenger().error(this,err);
+			}
+			setRestartRequired(false);
 			start();
 		}
 	}
@@ -442,16 +451,12 @@ public abstract class MemberObject extends OrchestraMember {
 		workers.remove(worker);
 	}
 
-	private boolean getConfigurationFromOrchestraPosition() {
-		boolean stop = false;
+	private void getConfigurationFromOrchestraPosition() {
 		OrchestraMember member = orchestra.getMemberById(getId());
 		if (member!=null) {
 			setIpAddressOrHostName(member.getIpAddressOrHostName());
 			setControlPort(member.getControlPort());
 			setWorkPort(member.getWorkPort());
-		} else {
-			stop = true;
 		}
-		return stop;
 	}
 }
