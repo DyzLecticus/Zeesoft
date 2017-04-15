@@ -9,7 +9,7 @@ import nl.zeesoft.zjmo.Orchestrator;
  * Generates the orchestra directory containing scripts and folders required to manage MemberObject instances.
  */
 public class OrchestraGenerator {
-	public String generate(Orchestra orch,File dir) {
+	public String generate(Orchestra orch,File dir,boolean update) {
 		String err = "";
 		File orchDir = new File(dir.getAbsolutePath() + "/orchestra");
 		if (!orchDir.exists()) {
@@ -21,16 +21,20 @@ public class OrchestraGenerator {
 		}
 		File controllerDir = new File(orchDir.getAbsolutePath() + "/controller");
 		if (controllerDir.exists()) {
-			if (!emptyDirectory(controllerDir)) {
-				err = "Unable to cleanup controller directory: " + controllerDir.getAbsolutePath();
+			if (!update) {
+				if (!emptyDirectory(controllerDir)) {
+					err = "Unable to cleanup controller directory: " + controllerDir.getAbsolutePath();
+				}
 			}
 		} else {
 			controllerDir.mkdir();
 		}
 		File memberDir = new File(orchDir.getAbsolutePath() + "/members");
 		if (memberDir.exists()) {
-			if (!emptyDirectory(memberDir)) {
-				err = "Unable to cleanup member directory: " + memberDir.getAbsolutePath();
+			if (!update) {
+				if (!emptyDirectory(memberDir)) {
+					err = "Unable to cleanup member directory: " + memberDir.getAbsolutePath();
+				}
 			}
 		} else {
 			memberDir.mkdir();

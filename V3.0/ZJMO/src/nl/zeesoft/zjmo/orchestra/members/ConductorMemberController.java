@@ -163,9 +163,12 @@ public class ConductorMemberController extends Locker {
 	}
 	
 	protected void setStateUnknown(String memberId,String errorMessage) {
-		lockMe(this);
-		setMemberStateUnknown(orchestra.getMemberById(memberId),errorMessage);
-		unlockMe(this);
+		OrchestraMember member = orchestra.getMemberById(memberId);
+		if (member!=null) {
+			lockMe(this);
+			setMemberStateUnknown(member,errorMessage);
+			unlockMe(this);
+		}
 	}
 
 	protected WorkClient getClient(Object source,String positionName) {

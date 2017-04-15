@@ -86,7 +86,7 @@ public class Orchestrator {
 					orch.initialize();
 					OrchestraGenerator generator = orch.getNewGenerator();
 					System.out.println("Generating " + orchestraClassName + " to directory: " + genDir.getAbsolutePath() + " ...");
-					err = generator.generate(orch,genDir);
+					err = generator.generate(orch,genDir,false);
 				}
 			} else if (action.equals(UPDATE)) {
 				File genDir = new File(generateDirectory);
@@ -100,7 +100,7 @@ public class Orchestrator {
 						orch.fromJson(json);
 						OrchestraGenerator generator = orch.getNewGenerator();
 						System.out.println("Updating " + orchestraClassName + " in directory: " + genDir.getAbsolutePath() + " ...");
-						err = generator.generate(orch,genDir);
+						err = generator.generate(orch,genDir,true);
 					}
 				}
 			} else if (action.equals(START) || action.equals(STOP)) {

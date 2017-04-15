@@ -311,9 +311,11 @@ public abstract class MemberObject extends OrchestraMember {
 		String err = oriJson.fromFile("orchestra.json");
 		if (err.length()==0) {
 			ZStringBuilder oriZ = oriJson.toStringBuilder();
-			ZStringBuilder newZ = newOrchestra.toJson(false).toStringBuilder();
+			ZStringBuilder newZ = newOrchestra.toJson(false).toStringBuilderReadFormat();
 			if (!newZ.equals(oriZ)) {
-				err = newZ.toFile("orchestra.json");
+				if (newOrchestra.getMemberById(getId())!=null) {
+					err = newZ.toFile("orchestra.json");
+				}
 				if (checkRestartRequired(newOrchestra)) {
 					setRestartRequired(true);
 				}
