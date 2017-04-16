@@ -1,5 +1,6 @@
 package nl.zeesoft.zjmo.orchestra.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -7,6 +8,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
+import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
@@ -28,22 +30,44 @@ public class ControllerActionWorker extends Worker {
 
 	public void handleAction(String action,List<OrchestraMember> members) {
 		this.action = action;
-		this.members = members;
+		List<OrchestraMember> orderedMembers = new ArrayList<OrchestraMember>();
+		for (OrchestraMember member: members) {
+			if (!member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
+				orderedMembers.add(member);
+			}
+		}
+		for (OrchestraMember member: members) {
+			if (member.getPosition().getName().equals(Orchestra.CONDUCTOR) && member.getPositionBackupNumber()>0) {
+				orderedMembers.add(member);
+			}
+		}
+		for (OrchestraMember member: members) {
+			if (member.getPosition().getName().equals(Orchestra.CONDUCTOR) && member.getPositionBackupNumber()==0) {
+				orderedMembers.add(member);
+			}
+		}
+		this.members = orderedMembers;
 		start();
 	}
 	
 	@Override
 	public void whileWorking() {
 		String err = "";
+		List<OrchestraMember> doneMembers = new ArrayList<OrchestraMember>();
 		for (OrchestraMember member: members) {
 			ZStringBuilder response = sendMemberCommandForAction(client,member,action);
 			if (response!=null && ProtocolObject.isErrorJson(response)) {
 				err = member.getId() + ": " + ProtocolObject.getFirstElementValueFromJson(response);
 				break;
+			} else {
+				doneMembers.add(member);
 			}
 		}
+		if (action.equals(ProtocolControl.RESTART_PROGRAM)) {
+			controller.restartedMembers(doneMembers);
+		}
 		if (err.length() > 0) {
-			controller.showErrorMessage(err,"Error");
+			controller.showErrorMessage(err);
 		}
 		stop();
 	}
@@ -60,9 +84,6 @@ public class ControllerActionWorker extends Worker {
 			response = client.sendCommand(ProtocolControlConductor.BRING_MEMBER_ONLINE,"id",member.getId());
 		} else if (action.equals(ProtocolControl.RESTART_PROGRAM)) {
 			response = client.sendCommand(ProtocolControlConductor.RESTART_MEMBER,"id",member.getId());
-			if (response==null || !response.equals(ProtocolControl.getFailedToExecuteCommandResponse())) {
-				controller.restartedMember(member);
-			}
 		}
 		return response;
 	}

@@ -370,14 +370,11 @@ public abstract class MemberObject extends OrchestraMember {
 			stopProgram(ignoreWorker);
 		} else {
 			stop(ignoreWorker);
-			union = new WorkerUnion(messenger);
 			JsFile json = new JsFile();
 			String err = json.fromFile("orchestra.json");
 			if (err.length()==0) {
 				orchestra.fromJson(json);
 				getConfigurationFromOrchestraPosition();
-			} else if (getMessenger()!=null) {
-				getMessenger().error(this,err);
 			}
 			setRestartRequired(false);
 			start();

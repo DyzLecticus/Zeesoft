@@ -51,7 +51,7 @@ public class ControllerPublishWorker extends Worker {
 			controller.publishedOrchestraUpdate();
 		}
 		if (err.length() > 0) {
-			controller.showErrorMessage(err,"Error");
+			controller.showErrorMessage(err);
 		}
 		stop();
 	}

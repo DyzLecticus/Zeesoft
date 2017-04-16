@@ -11,7 +11,7 @@ import nl.zeesoft.zjmo.Orchestrator;
 public class OrchestraGenerator {
 	public String generate(Orchestra orch,File dir,boolean update) {
 		String err = "";
-		File orchDir = new File(dir.getAbsolutePath() + "/orchestra");
+		File orchDir = new File(dir.getAbsolutePath());
 		if (!orchDir.exists()) {
 			orchDir.mkdirs();
 		}
@@ -298,7 +298,7 @@ public class OrchestraGenerator {
 		script.append(Orchestrator.UPDATE);
 		script.append(" ");
 		script.append(orch.getClass().getName());
-		script.append(" ../");
+		script.append(" .");
 		script.append("\n");
 		script.append("cp lib/* controller/lib");
 		script.append("\n");
@@ -318,7 +318,7 @@ public class OrchestraGenerator {
 		script.append(Orchestrator.UPDATE);
 		script.append(" ");
 		script.append(orch.getClass().getName());
-		script.append(" ..\\");
+		script.append(" .");
 		script.append("\r\n");
 		script.append("xcopy lib\\* controller\\lib /Y ");
 		script.append("\r\n");
