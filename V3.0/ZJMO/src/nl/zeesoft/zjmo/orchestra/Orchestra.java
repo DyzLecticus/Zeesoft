@@ -362,5 +362,13 @@ public abstract class Orchestra {
 				}
 			}
 		}
+		Position tp = getPosition(CONDUCTOR);
+		if (tp==null) {
+			addPosition(CONDUCTOR);
+		}
+		OrchestraMember tc = getMemberForPosition(CONDUCTOR,0);
+		if (tc==null) {
+			addMember(CONDUCTOR,0,LOCALHOST,5433,5432,500,false);
+		}
 	}
 }
