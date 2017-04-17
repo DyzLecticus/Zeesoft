@@ -1,8 +1,5 @@
 package nl.zeesoft.zjmo.orchestra;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -21,7 +18,6 @@ public class OrchestraMember extends Locker {
 	private int				workPort				= 5432;
 	private int				workRequestTimeout		= 500;
 	private boolean			workRequestTimeoutDrain	= false;
-	private List<Channel>	channels				= new ArrayList<Channel>();
 
 	private MemberState		state					= null;
 	private int				workLoad				= 0;
@@ -47,9 +43,6 @@ public class OrchestraMember extends Locker {
 		copy.setWorkPort(getWorkPort());
 		copy.setWorkRequestTimeout(getWorkRequestTimeout());
 		copy.setWorkRequestTimeoutDrain(isWorkRequestTimeoutDrain());
-		for (Channel chan: channels) {
-			copy.getChannels().add(chan);
-		}
 		copy.setState(getState());
 		copy.setWorkLoad(getWorkLoad());
 		copy.setMemoryUsage(getMemoryUsage());
@@ -123,10 +116,6 @@ public class OrchestraMember extends Locker {
 		this.positionBackupNumber = positionBackupNumber;
 	}
 
-	public List<Channel> getChannels() {
-		return channels;
-	}
-
 	public MemberState getState() {
 		return state;
 	}
@@ -189,15 +178,6 @@ public class OrchestraMember extends Locker {
 		mem.children.add(new JsElem("workPort","" + getWorkPort()));
 		mem.children.add(new JsElem("workRequestTimeout","" + getWorkRequestTimeout()));
 		mem.children.add(new JsElem("workRequestTimeoutDrain","" + isWorkRequestTimeoutDrain()));
-		if (channels.size()>0) {
-			JsElem chans = new JsElem("channels");
-			int i = 0;
-			for (Channel chan: channels) {
-				chans.children.add(new JsElem("" + i,chan.getName(),true));
-				i++;
-			}
-			mem.children.add(chans);
-		}
 		if (includeState) {
 			if (getState()==null || getState().getCode().equals(MemberState.UNKNOWN)) {
 				mem.children.add(new JsElem("state",MemberState.UNKNOWN,true));

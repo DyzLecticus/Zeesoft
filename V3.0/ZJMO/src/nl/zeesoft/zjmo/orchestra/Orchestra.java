@@ -97,7 +97,8 @@ public abstract class Orchestra {
 	public Position addPosition(String name) {
 		Position r = getPosition(name);
 		if (r==null) {
-			positions.add(new Position(name));
+			r = new Position(name);
+			positions.add(r);
 		}
 		return r;
 	}
@@ -120,7 +121,8 @@ public abstract class Orchestra {
 	public Channel addChannel(String name, boolean failOnSubscriberError) {
 		Channel r = getChannel(name);
 		if (r==null) {
-			channels.add(new Channel(name,failOnSubscriberError));
+			r = new Channel(name,failOnSubscriberError);
+			channels.add(r);
 		}
 		return r;
 	}
@@ -181,11 +183,12 @@ public abstract class Orchestra {
 
 	public List<OrchestraMember> getMembersForChannel(String channelName) {
 		List<OrchestraMember> r = new ArrayList<OrchestraMember>();
-		for (OrchestraMember member: members) {
-			for (Channel chan: member.getChannels()) {
-				if (chan.getName().equals(channelName)) {
+		Channel chan = getChannel(channelName);
+		if (chan!=null) {
+			for (String id: chan.getSubscriberIdList()) {
+				OrchestraMember member = getMemberById(id);
+				if (member!=null) {
 					r.add(member);
-					break;
 				}
 			}
 		}
@@ -196,6 +199,9 @@ public abstract class Orchestra {
 		OrchestraMember member = getMemberById(id);
 		if (member!=null && !(member.getPosition().getName().equals(CONDUCTOR) && member.getPositionBackupNumber()==0)) {
 			members.remove(member);
+			for (Channel chan: channels) {
+				chan.getSubscriberIdList().remove(member.getId());
+			}
 		}
 	}
 
@@ -224,13 +230,9 @@ public abstract class Orchestra {
 				r.setWorkRequestTimeoutDrain(workRequestTimeoutDrain);
 				r.setState(MemberState.getState(MemberState.UNKNOWN));
 				Channel crit = getChannel(ORCHESTRA_CRITICAL);
-				if (crit!=null) {
-					r.getChannels().add(crit);
-				}
+				crit.getSubscriberIdList().add(r.getId());
 				Channel opti = getChannel(ORCHESTRA_OPTIONAL);
-				if (opti!=null) {
-					r.getChannels().add(opti);
-				}
+				opti.getSubscriberIdList().add(r.getId());
 				members.add(r);
 			}
 		}
@@ -258,6 +260,15 @@ public abstract class Orchestra {
 			chans.children.add(ch);
 			ch.children.add(new JsElem("name",chan.getName(),true));
 			ch.children.add(new JsElem("failOnSubscriberError","" + chan.isFailOnSubscriberError()));
+			if (chan.getSubscriberIdList().size()>0) {
+				JsElem subs = new JsElem("subscriberIdList",true);
+				ch.children.add(subs);
+				i = 0;
+				for (String id: chan.getSubscriberIdList()) {
+					subs.children.add(new JsElem(""+ i,id,true));
+					i++;
+				}
+			}
 		}
 		JsElem membs = new JsElem("members",true);
 		f.rootElement.children.add(membs);
@@ -283,14 +294,26 @@ public abstract class Orchestra {
 					for (JsElem ch: el.children) {
 						String name = "";
 						boolean fail = false;
+						List<String> subs = new ArrayList<String>();
 						for (JsElem chan: ch.children) {
 							if (chan.name.equals("name") && chan.value!=null && chan.value.length()>0) {
 								name = chan.value.toString();
 							} else if (chan.name.equals("failOnSubscriberError") && chan.value!=null && chan.value.length()>0) {
 								fail = Boolean.parseBoolean(chan.value.toString());
+							} else if (chan.name.equals("subscriberIdList") && chan.children.size()>0) {
+								for (JsElem sub: chan.children) {
+									if (sub.value!=null && sub.value.toString().length()>0) {
+										subs.add(sub.value.toString());
+									}
+								}
 							}
 						}
-						addChannel(name,fail);
+						Channel chan = addChannel(name,fail);
+						if (subs.size()>0) {
+							for (String id: subs) {
+								chan.getSubscriberIdList().add(id);
+							}
+						}
 					}
 				}
 			}
@@ -314,15 +337,6 @@ public abstract class Orchestra {
 							member.setWorkRequestTimeout(Integer.parseInt(meme.value.toString()));
 						} else if (meme.name.equals("workRequestTimeoutDrain") && meme.value!=null) {
 							member.setWorkRequestTimeoutDrain(Boolean.parseBoolean(meme.value.toString()));
-						} else if (meme.name.equals("channels") && meme.children.size()>0) {
-							for (JsElem chan: meme.children) {
-								if (chan.value!=null && chan.value.length()>0) {
-									Channel channel = getChannel(chan.value.toString());
-									if (channel!=null) {
-										member.getChannels().add(channel);
-									}
-								}
-							}
 						} else if (meme.name.equals("state") && meme.value!=null) {
 							member.setState(MemberState.getState(meme.value.toString()));
 						} else if (meme.name.equals("workLoad") && meme.value!=null) {
