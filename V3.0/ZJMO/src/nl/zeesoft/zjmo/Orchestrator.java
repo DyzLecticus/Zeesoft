@@ -15,11 +15,13 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
  * Entry point for local orchestra generation and member control.
  */
 public class Orchestrator {
-	public static final String	GENERATE	= "GENERATE";
-	public static final String	UPDATE		= "UPDATE";
-	public static final String	START		= "START";
-	public static final String	STOP		= "STOP";
-	public static final String	CONTROL		= "CONTROL";
+	public static final String	ORCHESTRA_JSON	= "orchestra.json";
+	
+	public static final String	GENERATE		= "GENERATE";
+	public static final String	UPDATE			= "UPDATE";
+	public static final String	START			= "START";
+	public static final String	STOP			= "STOP";
+	public static final String	CONTROL			= "CONTROL";
 	
 	public static boolean isOrchestratorAction(String action) {
 		boolean r = false;
@@ -95,7 +97,7 @@ public class Orchestrator {
 				}
 				if (err.length()==0) {
 					JsFile json = new JsFile();
-					err = json.fromFile(genDir.getAbsolutePath() + "/orchestra/orchestra.json");
+					err = json.fromFile(genDir.getAbsolutePath() + "/orchestra.json");
 					if (err.length()==0) {
 						orch.fromJson(json);
 						OrchestraGenerator generator = orch.getNewGenerator();
@@ -105,7 +107,7 @@ public class Orchestrator {
 				}
 			} else if (action.equals(START) || action.equals(STOP)) {
 				OrchestraMember member = null;
-				File orchJs = new File("orchestra.json");
+				File orchJs = new File(ORCHESTRA_JSON);
 				if (!orchJs.exists()) {
 					err = "Orchestra JSON file not found: orchestra.json";
 				}
@@ -142,18 +144,19 @@ public class Orchestrator {
 					}
 				}
 			} else if (action.equals(CONTROL)) {
-				File orchJs = new File("orchestra.json");
-				if (!orchJs.exists()) {
-					err = "Orchestra JSON file not found: orchestra.json";
-				}
-				if (err.length()==0) {
+				File orchJs = new File(ORCHESTRA_JSON);
+				if (orchJs.exists()) {
 					JsFile jsonFile = new JsFile();
 					err = jsonFile.fromFile(orchJs.getAbsolutePath());
 					if (err.length()>0) {
-						err = "Error parsing orchestra.json: " + err;
+						orch.initialize();
+						err = orch.toJson(false).toFile(ORCHESTRA_JSON,true);
 					} else {
 						orch.fromJson(jsonFile);
 					}
+				} else {
+					orch.initialize();
+					err = orch.toJson(false).toFile(ORCHESTRA_JSON,true);
 				}
 				if (err.length()==0) {
 					OrchestraController controller = orch.getNewController(true);

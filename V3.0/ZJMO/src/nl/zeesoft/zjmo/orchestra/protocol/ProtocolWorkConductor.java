@@ -9,8 +9,8 @@ import nl.zeesoft.zjmo.orchestra.Channel;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
+import nl.zeesoft.zjmo.orchestra.client.WorkClient;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
-import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
 public class ProtocolWorkConductor extends ProtocolWork {
 	@Override

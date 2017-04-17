@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zjmo.orchestra.members.WorkClient;
+import nl.zeesoft.zjmo.orchestra.client.WorkClient;
 
 /**
  * Accepts work sessions on the MemberObject.

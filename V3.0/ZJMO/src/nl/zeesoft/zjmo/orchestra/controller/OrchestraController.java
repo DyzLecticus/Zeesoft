@@ -55,12 +55,11 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	private Orchestra						orchestraUpdate		= null;
 	private boolean							orchestraChanged	= false;
-	private JMenu 							changesMenu			= null;
+	private JMenu 							orchestraMenu		= null;
 	
 	private ConductorConnector 				connector			= null;
 	private ControllerStateWorker			stateWorker			= null;
 	private ControllerActionWorker			actionWorker		= null;
-	private ControllerPublishWorker			publishWorker		= null;
 	private ControllerImportExportWorker	importExportWorker	= null;
 	
 	private JFrame							mainFrame			= null;
@@ -155,10 +154,6 @@ public class OrchestraController extends Locker implements ActionListener {
 		if (actionWorker!=null) {
 			actionWorker.stop();
 			actionWorker = null;
-		}
-		if (publishWorker!=null) {
-			publishWorker.stop();
-			publishWorker = null;
 		}
 		if (importExportWorker!=null) {
 			importExportWorker.stop();
@@ -273,13 +268,13 @@ public class OrchestraController extends Locker implements ActionListener {
 						err = "No changes to publish";
 					} else {
 						boolean confirmed = this.showConfirmMessage("Are you sure you want to publish the orchestra changes?");
-						if (confirmed) {
+						if (confirmed && client.isOpen() && !isStopping()) {
 							lockMe(this);
-							if (publishWorker==null || !publishWorker.isWorking()) {
-								publishWorker = getNewPublishWorker(union,connector);
-								publishWorker.publishOrchestraUpdate(orchestraUpdate);
+							if (actionWorker==null || !actionWorker.isWorking()) {
+								actionWorker = getNewActionWorker(union,client);
+								actionWorker.publishOrchestraUpdate(orchestraUpdate);
 							} else {
-								err = "Publish worker is busy";
+								err = "Action worker is busy";
 							}
 							unlockMe(this);
 						}
@@ -364,13 +359,15 @@ public class OrchestraController extends Locker implements ActionListener {
 	protected void setOrchestraChanged(boolean orchestraChanged) {
 		lockMe(this);
 		this.orchestraChanged = orchestraChanged;
-		if (orchestraChanged) {
-			changesMenu.setText("Changes*");
-		} else {
-			changesMenu.setText("Changes");
-		}
 		publishMenuItem.setEnabled(orchestraChanged);
 		revertMenuItem.setEnabled(orchestraChanged);
+		if (orchestraChanged) {
+			orchestraMenu.setText("Orchestra*");
+			publishMenuItem.setText("Publish*");
+		} else {
+			orchestraMenu.setText("Orchestra");
+			publishMenuItem.setText("Publish");
+		}
 		refreshGrid();
 		unlockMe(this);
 	}
@@ -532,10 +529,6 @@ public class OrchestraController extends Locker implements ActionListener {
 		return new ControllerActionWorker(getMessenger(),union,this,client);
 	}
 	
-	protected ControllerPublishWorker getNewPublishWorker(WorkerUnion union,ConductorConnector connector) {
-		return new ControllerPublishWorker(getMessenger(),union,this,connector);
-	}
-	
 	protected ControllerImportExportWorker getNewImportExportWorker(WorkerUnion union) {
 		return new ControllerImportExportWorker(getMessenger(),union,this);
 	}
@@ -595,8 +588,8 @@ public class OrchestraController extends Locker implements ActionListener {
 	
 	protected JMenuBar getMainMenuBar() {
 		JMenuBar bar = new JMenuBar();
+		bar.add(getOrchestraMenu());
 		bar.add(getMemberMenu());
-		bar.add(getChangesMenu());
 		return bar;
 	}
 	
@@ -606,15 +599,15 @@ public class OrchestraController extends Locker implements ActionListener {
 		return menu;
 	}
 
-	protected JMenu getChangesMenu() {
-		changesMenu = new JMenu("Changes");
-		addOptionToMenu(changesMenu,"Import",ControllerImportExportWorker.IMPORT_CHANGES);
-		addOptionToMenu(changesMenu,"Export",ControllerImportExportWorker.EXPORT_CHANGES);
-		publishMenuItem = addOptionToMenu(changesMenu,"Publish",ProtocolControl.UPDATE_ORCHESTRA);
-		revertMenuItem = addOptionToMenu(changesMenu,"Revert",REVERT_CHANGES);
+	protected JMenu getOrchestraMenu() {
+		orchestraMenu = new JMenu("Orchestra");
+		addOptionToMenu(orchestraMenu,"Import",ControllerImportExportWorker.IMPORT_CHANGES);
+		addOptionToMenu(orchestraMenu,"Export",ControllerImportExportWorker.EXPORT_CHANGES);
+		publishMenuItem = addOptionToMenu(orchestraMenu,"Publish",ProtocolControl.UPDATE_ORCHESTRA);
+		revertMenuItem = addOptionToMenu(orchestraMenu,"Revert",REVERT_CHANGES);
 		publishMenuItem.setEnabled(false);
 		revertMenuItem.setEnabled(false);
-		return changesMenu;
+		return orchestraMenu;
 	}
 
 	protected JPopupMenu getMemberPopupMenu() {

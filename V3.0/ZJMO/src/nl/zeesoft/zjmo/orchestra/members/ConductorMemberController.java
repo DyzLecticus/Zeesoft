@@ -14,6 +14,9 @@ import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
 import nl.zeesoft.zjmo.orchestra.client.OrchestraConnector;
+import nl.zeesoft.zjmo.orchestra.client.WorkClient;
+import nl.zeesoft.zjmo.orchestra.client.WorkClientPool;
+import nl.zeesoft.zjmo.orchestra.client.WorkClientPoolWorker;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
@@ -227,12 +230,15 @@ public class ConductorMemberController extends Locker {
 		
 	}
 
-	protected void returnControlChannel() {
+	protected void returnControlChannel(boolean getState) {
 		lockMe(this);
 		if (controlChannelInUse) {
 			controlChannelInUse = false;
 		}
 		unlockMe(this);
+		if (getState) {
+			this.getState(null,false);
+		}
 	}
 
 	private void setMemberStateUnknown(OrchestraMember member,String errorMessage) {

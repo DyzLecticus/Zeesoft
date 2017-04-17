@@ -9,7 +9,6 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
-import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 import nl.zeesoft.zjmo.orchestra.protocol.PublishRequest;
 import nl.zeesoft.zjmo.orchestra.protocol.RequestObject;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;

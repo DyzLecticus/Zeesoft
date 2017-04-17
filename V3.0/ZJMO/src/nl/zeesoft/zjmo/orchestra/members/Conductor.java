@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.client.OrchestraConnector;
+import nl.zeesoft.zjmo.orchestra.client.WorkClient;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
@@ -109,7 +110,7 @@ public class Conductor extends MemberObject {
 		return controller.getControlChannel();
 	}
 
-	public void returnControlChannel() {
-		controller.returnControlChannel();
+	public void returnControlChannel(boolean getState) {
+		controller.returnControlChannel(getState);
 	}
 }

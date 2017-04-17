@@ -1,4 +1,4 @@
-package nl.zeesoft.zjmo.orchestra.members;
+package nl.zeesoft.zjmo.orchestra.client;
 
 import java.util.Date;
 

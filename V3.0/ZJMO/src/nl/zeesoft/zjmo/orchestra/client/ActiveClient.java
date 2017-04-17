@@ -5,7 +5,6 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
-import nl.zeesoft.zjmo.orchestra.members.WorkClient;
 
 public class ActiveClient extends Locker {
 	private	WorkerUnion					union			= null;

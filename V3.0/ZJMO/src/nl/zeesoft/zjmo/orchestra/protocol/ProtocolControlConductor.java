@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
 import nl.zeesoft.zjmo.orchestra.client.OrchestraConnector;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
@@ -132,15 +133,19 @@ public class ProtocolControlConductor extends ProtocolControl {
 				}
 				for (ControlChannelWorker worker: workers) {
 					if (worker.getResponse()==null || !worker.getResponse().equals(getExecutedCommandResponse())) {
-						output = getErrorJson(worker.getClient().getMember().getId() + " failed to execute command");
+						if (ProtocolObject.isErrorJson(worker.getResponse())) {
+							output = getErrorJson(worker.getClient().getMember().getId() + " failed to execute command: " + ProtocolObject.getErrorFromJson(worker.getResponse()));
+						} else {
+							output = getErrorJson(worker.getClient().getMember().getId() + " failed to execute command");
+						}
 						break;
 					}
 				}
 			}
+			con.returnControlChannel(output==null);
 			if (output==null) {
 				output = getExecutedCommandResponse();
 			}
-			con.returnControlChannel();
 		}
 		return output;
 	}

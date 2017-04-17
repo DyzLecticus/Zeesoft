@@ -1,4 +1,4 @@
-package nl.zeesoft.zjmo.orchestra.members;
+package nl.zeesoft.zjmo.orchestra.client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public class WorkClientPool extends Locker {
 	private Orchestra			orchestra		= null;
 	private List<WorkClients>	workClientsList	= new ArrayList<WorkClients>();
 
-	protected WorkClientPool(Messenger msgr,WorkerUnion union,Orchestra orchestra) {
+	public WorkClientPool(Messenger msgr,WorkerUnion union,Orchestra orchestra) {
 		super(msgr);
 		this.orchestra = orchestra;
 		for (OrchestraMember member: orchestra.getMembers()) {
@@ -21,7 +21,7 @@ public class WorkClientPool extends Locker {
 		}
 	}
 
-	protected WorkClient getClient(Object source,String memberId) {
+	public WorkClient getClient(Object source,String memberId) {
 		WorkClient r = null;
 		lockMe(source);
 		for (WorkClients workCl: workClientsList) {
@@ -36,7 +36,7 @@ public class WorkClientPool extends Locker {
 		return r;
 	}
 
-	protected void returnClient(WorkClient client) {
+	public void returnClient(WorkClient client) {
 		lockMe(this);
 		for (WorkClients workCl: workClientsList) {
 			if (workCl.getMember().getId().equals(client.getMemberId())) {
@@ -47,7 +47,7 @@ public class WorkClientPool extends Locker {
 		unlockMe(this);
 	}
 
-	protected void closeUnusedClients(long unusedMs) {
+	public void closeUnusedClients(long unusedMs) {
 		lockMe(this);
 		for (OrchestraMember member: orchestra.getMembers()) {
 			closeUnusedClientsNoLock(member.getId(),unusedMs);
@@ -55,7 +55,7 @@ public class WorkClientPool extends Locker {
 		unlockMe(this);
 	}
 	
-	protected void closeUnusedClients(String memberId,long unusedMs) {
+	public void closeUnusedClients(String memberId,long unusedMs) {
 		lockMe(this);
 		closeUnusedClientsNoLock(memberId,unusedMs);
 		unlockMe(this);
@@ -70,7 +70,7 @@ public class WorkClientPool extends Locker {
 		}
 	}
 	
-	protected void closeAllClients() {
+	public void closeAllClients() {
 		lockMe(this);
 		for (WorkClients workCl: workClientsList) {
 			workCl.closeAllClients();

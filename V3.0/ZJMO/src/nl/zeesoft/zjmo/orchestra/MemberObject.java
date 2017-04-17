@@ -13,6 +13,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.Orchestrator;
 import nl.zeesoft.zjmo.orchestra.client.ConductorStateConnector;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
@@ -309,13 +310,13 @@ public abstract class MemberObject extends OrchestraMember {
 
 	public String updateOrchestra(Orchestra newOrchestra) {
 		JsFile oriJson = new JsFile();
-		String err = oriJson.fromFile("orchestra.json");
+		String err = oriJson.fromFile(Orchestrator.ORCHESTRA_JSON);
 		if (err.length()==0) {
 			ZStringBuilder oriZ = oriJson.toStringBuilder();
 			ZStringBuilder newZ = newOrchestra.toJson(false).toStringBuilderReadFormat();
 			if (!newZ.equals(oriZ)) {
 				if (newOrchestra.getMemberById(getId())!=null) {
-					err = newZ.toFile("orchestra.json");
+					err = newZ.toFile(Orchestrator.ORCHESTRA_JSON);
 				} else {
 					lockMe(this);
 					stopOnRestart = true;
@@ -371,12 +372,12 @@ public abstract class MemberObject extends OrchestraMember {
 		} else {
 			stop(ignoreWorker);
 			JsFile json = new JsFile();
-			String err = json.fromFile("orchestra.json");
+			String err = json.fromFile(Orchestrator.ORCHESTRA_JSON);
 			if (err.length()==0) {
 				orchestra.fromJson(json);
 				getConfigurationFromOrchestraPosition();
+				setRestartRequired(false);
 			}
-			setRestartRequired(false);
 			start();
 		}
 	}

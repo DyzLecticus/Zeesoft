@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zjmo.orchestra.members.WorkClient;
+import nl.zeesoft.zjmo.orchestra.client.WorkClient;
 
 /**
  * Orchestra member data object.
