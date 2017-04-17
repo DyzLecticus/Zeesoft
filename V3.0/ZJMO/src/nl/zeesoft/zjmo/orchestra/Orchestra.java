@@ -253,7 +253,7 @@ public abstract class Orchestra {
 			ch.children.add(new JsElem("name",chan.getName(),true));
 			ch.children.add(new JsElem("failOnSubscriberError","" + chan.isFailOnSubscriberError()));
 			if (chan.getSubscriberIdList().size()>0) {
-				JsElem subs = new JsElem("subscriberIdList",true);
+				JsElem subs = new JsElem("subscriberIdList");
 				ch.children.add(subs);
 				i = 0;
 				for (String id: chan.getSubscriberIdList()) {
