@@ -13,19 +13,18 @@ import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
 
 public class WorkClient extends MemberClient {
 	private String	memberId	= "";
-	private int		timeout		= 0;
 	private Object	inUseBy		= null;
 	private Date	lastUsed	= new Date();
 
 	public WorkClient(String ipAddressOrHostName, int port,int timeout) {
 		super(null,null,ipAddressOrHostName,port);
-		this.timeout = timeout;
+		setTimeout(timeout);
 	}
 	
 	public WorkClient(Messenger msgr,WorkerUnion union,String memberId, String ipAddressOrHostName, int port,int timeout) {
 		super(msgr,union,ipAddressOrHostName,port);
 		this.memberId = memberId;
-		this.timeout = timeout;
+		setTimeout(timeout);
 	}
 
 	public String getMemberId() {
@@ -33,7 +32,7 @@ public class WorkClient extends MemberClient {
 	}
 	
 	public ZStringBuilder sendRequest(RequestObject r) {
-		return sendRequest(r,timeout);
+		return sendRequest(r,getTimeout());
 	}
 
 	public ZStringBuilder sendRequest(RequestObject r,int timeout) {
@@ -41,7 +40,7 @@ public class WorkClient extends MemberClient {
 	}
 
 	public ZStringBuilder sendWorkRequestRequest(WorkRequest wr) {
-		return sendWorkRequestRequest(wr,timeout);
+		return sendWorkRequestRequest(wr,getTimeout());
 	}
 
 	public ZStringBuilder sendWorkRequestRequest(WorkRequest wr,int timeout) {

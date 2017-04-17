@@ -1,7 +1,14 @@
 package nl.zeesoft.zjmo.orchestra.protocol;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
+import nl.zeesoft.zjmo.orchestra.OrchestraMember;
+import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
+import nl.zeesoft.zjmo.orchestra.client.OrchestraConnector;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
 
 public class ProtocolControlConductor extends ProtocolControl {
@@ -13,6 +20,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 	public static final String TAKE_MEMBER_OFFLINE	= "TAKE_MEMBER_OFFLINE";
 	public static final String DRAIN_MEMBER_OFFLINE	= "DRAIN_MEMBER_OFFLINE";
 	public static final String BRING_MEMBER_ONLINE	= "BRING_MEMBER_ONLINE";
+	public static final String PUBLISH_ORCHESTRA	= "PUBLISH_ORCHESTRA";
 	
 	@Override
 	protected ZStringBuilder handleInput(MemberObject member,ZStringBuilder input) {
@@ -32,6 +40,12 @@ public class ProtocolControlConductor extends ProtocolControl {
 				//System.out.println(this + ": Handle command: " + command);
 				handled = true;
 				output = handleMemberCommand(member,input,command);
+			} else if (command.equals(PUBLISH_ORCHESTRA)) {
+				JsFile json = getJsonForInput(input);
+				json.rootElement.getChildByName("command").value = new ZStringBuilder(ProtocolControl.UPDATE_ORCHESTRA);
+				Conductor con = (Conductor) member;
+				output = handleControlChannelRequest(con,json.toStringBuilder());
+				handled = true;
 			}
 			if (!handled) {
 				output = super.handleInput(member,input);
@@ -40,7 +54,7 @@ public class ProtocolControlConductor extends ProtocolControl {
 		return output;
 	}
 	
-	private ZStringBuilder handleMemberCommand(MemberObject member,ZStringBuilder input,String command) {
+	protected ZStringBuilder handleMemberCommand(MemberObject member,ZStringBuilder input,String command) {
 		ZStringBuilder output = null;
 		if (member instanceof Conductor) {
 			String memberId = getCommandParameterFromJson(input,"id");
@@ -76,6 +90,57 @@ public class ProtocolControlConductor extends ProtocolControl {
 					output = con.restart(memberId);
 				}
 			}
+		}
+		return output;
+	}
+	
+	protected ZStringBuilder handleControlChannelRequest(Conductor con, ZStringBuilder json) {
+		ZStringBuilder output = null;
+		OrchestraConnector controlChannel = con.getControlChannel();
+		if (controlChannel==null) {
+			output = getErrorJson("Control channel is busy");
+		} else {
+			List<ControlChannelWorker> workers = new ArrayList<ControlChannelWorker>();
+			for (OrchestraMember member: con.getOrchestra().getMembers()) {
+				ActiveClient client = controlChannel.getClient(member.getId());
+				if (!client.isOpen()) {
+					output = getErrorJson("Channel subscriber is not online: " + member.getId());
+					break;
+				} else {
+					ControlChannelWorker worker = new ControlChannelWorker(con.getMessenger(),con.getUnion(),json,client);
+					workers.add(worker);
+				}
+			}
+			if (output==null) {
+				for (ControlChannelWorker worker: workers) {
+					worker.start();
+				}
+				for (ControlChannelWorker worker: workers) {
+					int i = 0;
+					while (!worker.isDone()) {
+						i++;
+						try {
+							if (i>10) {
+								Thread.sleep(10);
+							} else {
+								Thread.sleep(1);
+							}
+						} catch (InterruptedException e) {
+							con.getMessenger().error(this,"Request publishing was interrupted");
+						}
+					}
+				}
+				for (ControlChannelWorker worker: workers) {
+					if (worker.getResponse()==null || !worker.getResponse().equals(getExecutedCommandResponse())) {
+						output = getErrorJson(worker.getClient().getMember().getId() + " failed to execute command");
+						break;
+					}
+				}
+			}
+			if (output==null) {
+				output = getExecutedCommandResponse();
+			}
+			con.returnControlChannel();
 		}
 		return output;
 	}

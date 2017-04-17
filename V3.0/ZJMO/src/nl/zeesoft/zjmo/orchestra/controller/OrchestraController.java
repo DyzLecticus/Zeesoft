@@ -43,8 +43,6 @@ public class OrchestraController extends Locker implements ActionListener {
 	public static final String				ADD_MEMBER			= "ADD_MEMBER";
 	public static final String				SAVE_MEMBER			= "SAVE_MEMBER";
 	public static final String				REMOVE_MEMBERS		= "REMOVE_MEMBERS";
-
-	public static final String				PUBLISH_CHANGES		= "PUBLISH_CHANGES";
 	public static final String				REVERT_CHANGES		= "REVERT_CHANGES";
 
 	private boolean							working				= false;
@@ -60,7 +58,6 @@ public class OrchestraController extends Locker implements ActionListener {
 	private JMenu 							changesMenu			= null;
 	
 	private ConductorConnector 				connector			= null;
-	private ConductorConnector 				workConnector		= null;
 	private ControllerStateWorker			stateWorker			= null;
 	private ControllerActionWorker			actionWorker		= null;
 	private ControllerPublishWorker			publishWorker		= null;
@@ -84,7 +81,6 @@ public class OrchestraController extends Locker implements ActionListener {
 		gridController.updatedOrchestraMembers(getOrchestraMembers());
 		stateWorker = getNewStateWorker(union);
 		connector = new ConductorConnector(getMessenger(),union,true);
-		workConnector = new ConductorConnector(getMessenger(),union,false);
 	}
 
 	public boolean isConnected() {
@@ -128,8 +124,6 @@ public class OrchestraController extends Locker implements ActionListener {
 			}
 			connector.initialize(orchestraUpdate,null);
 			connector.open();
-			workConnector.initialize(orchestraUpdate,null);
-			workConnector.open();
 			getMessenger().start();
 			stateWorker.start();
 			if (memberFrame==null) {
@@ -170,7 +164,6 @@ public class OrchestraController extends Locker implements ActionListener {
 			importExportWorker.stop();
 		}
 		connector.close();
-		workConnector.close();
 		getMessenger().stop();
 		union.stopWorkers();
 		getMessenger().whileWorking();
@@ -263,19 +256,19 @@ public class OrchestraController extends Locker implements ActionListener {
 				}
 			}
 		} else if (
-			evt.getActionCommand().equals(PUBLISH_CHANGES) ||
 			evt.getActionCommand().equals(ProtocolControl.GET_STATE) || 
 			evt.getActionCommand().equals(ProtocolControl.DRAIN_OFFLINE) || 
 			evt.getActionCommand().equals(ProtocolControl.TAKE_OFFLINE) || 
 			evt.getActionCommand().equals(ProtocolControl.BRING_ONLINE) || 
-			evt.getActionCommand().equals(ProtocolControl.RESTART_PROGRAM)
+			evt.getActionCommand().equals(ProtocolControl.RESTART_PROGRAM) ||
+			evt.getActionCommand().equals(ProtocolControl.UPDATE_ORCHESTRA)
 			) {
 			String err = "";
 			MemberClient client = getClient();
 			if (client==null) {
 				err = "This action requires a connection to a conductor";
 			} else if (!isStopping()) {
-				if (evt.getActionCommand().equals(PUBLISH_CHANGES)) {
+				if (evt.getActionCommand().equals(ProtocolControl.UPDATE_ORCHESTRA)) {
 					if (!isOrchestraChanged()) {
 						err = "No changes to publish";
 					} else {
@@ -283,7 +276,7 @@ public class OrchestraController extends Locker implements ActionListener {
 						if (confirmed) {
 							lockMe(this);
 							if (publishWorker==null || !publishWorker.isWorking()) {
-								publishWorker = getNewPublishWorker(union,workConnector);
+								publishWorker = getNewPublishWorker(union,connector);
 								publishWorker.publishOrchestraUpdate(orchestraUpdate);
 							} else {
 								err = "Publish worker is busy";
@@ -402,11 +395,8 @@ public class OrchestraController extends Locker implements ActionListener {
 			lockMe(this);
 			stateWorker.stop();
 			connector.close();
-			workConnector.close();
 			connector.initialize(orchestraUpdate,null);
 			connector.open();
-			workConnector.initialize(orchestraUpdate,null);
-			workConnector.open();
 			stateWorker.start();
 			unlockMe(this);
 		}
@@ -542,8 +532,8 @@ public class OrchestraController extends Locker implements ActionListener {
 		return new ControllerActionWorker(getMessenger(),union,this,client);
 	}
 	
-	protected ControllerPublishWorker getNewPublishWorker(WorkerUnion union,ConductorConnector workConnector) {
-		return new ControllerPublishWorker(getMessenger(),union,this,workConnector);
+	protected ControllerPublishWorker getNewPublishWorker(WorkerUnion union,ConductorConnector connector) {
+		return new ControllerPublishWorker(getMessenger(),union,this,connector);
 	}
 	
 	protected ControllerImportExportWorker getNewImportExportWorker(WorkerUnion union) {
@@ -620,7 +610,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		changesMenu = new JMenu("Changes");
 		addOptionToMenu(changesMenu,"Import",ControllerImportExportWorker.IMPORT_CHANGES);
 		addOptionToMenu(changesMenu,"Export",ControllerImportExportWorker.EXPORT_CHANGES);
-		publishMenuItem = addOptionToMenu(changesMenu,"Publish",PUBLISH_CHANGES);
+		publishMenuItem = addOptionToMenu(changesMenu,"Publish",ProtocolControl.UPDATE_ORCHESTRA);
 		revertMenuItem = addOptionToMenu(changesMenu,"Revert",REVERT_CHANGES);
 		publishMenuItem.setEnabled(false);
 		revertMenuItem.setEnabled(false);

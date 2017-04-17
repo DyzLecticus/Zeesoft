@@ -24,8 +24,6 @@ public abstract class Orchestra {
 	public static final String		LOCALHOSTIP			= "127.0.0.1";
 	
 	public static final String		CONDUCTOR			= "Conductor";
-	public static final String		ORCHESTRA_CRITICAL	= "Orchestra critical";
-	public static final String		ORCHESTRA_OPTIONAL	= "Orchestra optional";
 	
 	private List<Position> 			positions			= new ArrayList<Position>();
 	private List<Channel> 			channels			= new ArrayList<Channel>();
@@ -35,8 +33,6 @@ public abstract class Orchestra {
 	
 	public Orchestra() {
 		addPosition(CONDUCTOR);
-		addChannel(ORCHESTRA_CRITICAL,true);
-		addChannel(ORCHESTRA_OPTIONAL,false);
 		addMember(CONDUCTOR,0,LOCALHOST,5433,5432,500,false);
 	}
 	
@@ -229,10 +225,6 @@ public abstract class Orchestra {
 				r.setWorkRequestTimeout(workRequestTimeout);
 				r.setWorkRequestTimeoutDrain(workRequestTimeoutDrain);
 				r.setState(MemberState.getState(MemberState.UNKNOWN));
-				Channel crit = getChannel(ORCHESTRA_CRITICAL);
-				crit.getSubscriberIdList().add(r.getId());
-				Channel opti = getChannel(ORCHESTRA_OPTIONAL);
-				opti.getSubscriberIdList().add(r.getId());
 				members.add(r);
 			}
 		}

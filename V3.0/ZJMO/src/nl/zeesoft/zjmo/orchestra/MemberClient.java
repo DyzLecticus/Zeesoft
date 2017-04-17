@@ -18,6 +18,7 @@ public class MemberClient extends Locker {
 	private ProtocolObject		protocol			= null;
 	private String				ipAddressOrHostName	= "localhost";
 	private int					port				= 5432;
+	private int					timeout				= 100;
 	private SocketHandler		socket				= null;
 	private boolean				open				= false;
 
@@ -34,6 +35,14 @@ public class MemberClient extends Locker {
 		this.ipAddressOrHostName = ipAddressOrHostName;
 		this.port = port;
 		this.protocol = getNewProtocol();
+	}
+
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 	public boolean open() {
@@ -88,24 +97,24 @@ public class MemberClient extends Locker {
 	}
 
 	public ZStringBuilder sendCommand(String command) {
-		return writeOutputReadInput(protocol.getCommandJson(command,null),100);
+		return writeOutputReadInput(protocol.getCommandJson(command,null),getTimeout());
 	}
 
 	public ZStringBuilder sendCommand(String command, String pName, String pValue) {
 		SortedMap<String,String> params = new TreeMap<String,String>();
 		params.put(pName,pValue);
-		return writeOutputReadInput(protocol.getCommandJson(command,params),100);
+		return writeOutputReadInput(protocol.getCommandJson(command,params),getTimeout());
 	}
 
 	public ZStringBuilder sendCommand(String command, String pName1, String pValue1, String pName2, String pValue2) {
 		SortedMap<String,String> params = new TreeMap<String,String>();
 		params.put(pName1,pValue1);
 		params.put(pName2,pValue2);
-		return writeOutputReadInput(protocol.getCommandJson(command,params),100);
+		return writeOutputReadInput(protocol.getCommandJson(command,params),getTimeout());
 	}
 
 	public ZStringBuilder sendCommand(String command,SortedMap<String,String> parameters) {
-		return writeOutputReadInput(protocol.getCommandJson(command,parameters),100);
+		return writeOutputReadInput(protocol.getCommandJson(command,parameters),getTimeout());
 	}
 
 	protected ProtocolObject getNewProtocol() {

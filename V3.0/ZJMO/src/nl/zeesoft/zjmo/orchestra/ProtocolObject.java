@@ -29,6 +29,14 @@ public abstract class ProtocolObject {
 		return output;
 	}
 
+	protected JsFile getJsonForInput(ZStringBuilder input) {
+		JsFile json = new JsFile();
+		if (input.trim().length()>0 && input.startsWith("{") && input.endsWith("}")) {
+			json.fromStringBuilder(input);
+		}
+		return json;
+	}
+	
 	protected boolean isStop() {
 		return stop;
 	}

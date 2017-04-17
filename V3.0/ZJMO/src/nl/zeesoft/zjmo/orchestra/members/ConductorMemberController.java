@@ -13,6 +13,7 @@ import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
+import nl.zeesoft.zjmo.orchestra.client.OrchestraConnector;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
@@ -23,6 +24,9 @@ public class ConductorMemberController extends Locker {
 	private WorkClientPool						workClientPool			= null;
 	private WorkClientPoolWorker				workClientPoolWorker	= null;
 
+	private OrchestraConnector					controlChannel			= null;
+	private boolean								controlChannelInUse		= false;
+
 	protected ConductorMemberController(Messenger msgr,WorkerUnion uni,Orchestra orchestra) {
 		super(msgr);
 		this.orchestra = orchestra;
@@ -31,6 +35,9 @@ public class ConductorMemberController extends Locker {
 		connector.initialize(orchestra,null);
 		workClientPool = new WorkClientPool(msgr,uni,orchestra);
 		workClientPoolWorker = new WorkClientPoolWorker(msgr,uni,workClientPool,orchestra.closeUnusedWorkClientsMilliseconds());
+		controlChannel = new OrchestraConnector(msgr,uni,true);
+		controlChannel.setTimeout(1000);
+		controlChannel.initialize(orchestra,null);
 	}
 
 	protected void open() {
@@ -38,6 +45,7 @@ public class ConductorMemberController extends Locker {
 		connector.open();
 		workClientPoolWorker.start();
 		worker.start();
+		controlChannel.open();
 	}
 
 	protected void close() {
@@ -45,6 +53,7 @@ public class ConductorMemberController extends Locker {
 		connector.close();
 		workClientPoolWorker.stop();
 		workClientPool.closeAllClients();
+		controlChannel.close();
 	}
 
 	protected JsFile getOrchestraState() {
@@ -206,6 +215,26 @@ public class ConductorMemberController extends Locker {
 		workClientPool.closeUnusedClients(memberId, unusedMs);
 	}
 	
+	protected OrchestraConnector getControlChannel() {
+		OrchestraConnector r = null;
+		lockMe(this);
+		if (!controlChannelInUse) {
+			controlChannelInUse = true;
+			r = controlChannel; 
+		}
+		unlockMe(this);
+		return r;
+		
+	}
+
+	protected void returnControlChannel() {
+		lockMe(this);
+		if (controlChannelInUse) {
+			controlChannelInUse = false;
+		}
+		unlockMe(this);
+	}
+
 	private void setMemberStateUnknown(OrchestraMember member,String errorMessage) {
 		member.setErrorMessage(errorMessage);
 		member.setState(MemberState.getState(MemberState.UNKNOWN));

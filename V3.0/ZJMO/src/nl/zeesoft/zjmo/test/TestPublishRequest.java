@@ -6,7 +6,6 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
 import nl.zeesoft.zjmo.orchestra.client.ConductorConnector;
 import nl.zeesoft.zjmo.orchestra.members.Conductor;
@@ -16,6 +15,7 @@ import nl.zeesoft.zjmo.orchestra.protocol.PublishRequest;
 import nl.zeesoft.zjmo.test.mocks.MockConductor1;
 import nl.zeesoft.zjmo.test.mocks.MockConductor2;
 import nl.zeesoft.zjmo.test.mocks.MockPlayers;
+import nl.zeesoft.zjmo.test.mocks.TestOrchestra;
 
 public class TestPublishRequest extends TestObject {
 	public TestPublishRequest(Tester tester) {
@@ -97,7 +97,7 @@ public class TestPublishRequest extends TestObject {
 			System.out.println("Open clients: " + clients.size());
 
 			if (clients.size()>0) {
-				PublishRequest pr = new PublishRequest(Orchestra.ORCHESTRA_CRITICAL,request.toStringBuilder().toString());
+				PublishRequest pr = new PublishRequest(TestOrchestra.ORCHESTRA_CRITICAL,request.toStringBuilder().toString());
 				System.out.println();
 				ActiveClient ac = clients.get(0);
 				System.out.println("Got open client to conductor: " + ac.getMember().getId());
@@ -116,7 +116,7 @@ public class TestPublishRequest extends TestObject {
 			System.out.println("Open clients after taking " + con1.getId() + " offline: " + clients.size());
 
 			if (clients.size()>0) {
-				PublishRequest pr = new PublishRequest(Orchestra.ORCHESTRA_CRITICAL,request.toStringBuilder().toString());
+				PublishRequest pr = new PublishRequest(TestOrchestra.ORCHESTRA_CRITICAL,request.toStringBuilder().toString());
 				System.out.println();
 				ActiveClient ac = clients.get(0);
 				System.out.println("Got open client to conductor: " + ac.getMember().getId());
@@ -126,7 +126,7 @@ public class TestPublishRequest extends TestObject {
 					assertEqual(pr.getError(),"Channel subscriber is not online: Conductor/0","Publish request error does not match expectation");
 					System.out.println("Publish request response: " + pr.toJson().toStringBuilder());
 				}
-				pr = new PublishRequest(Orchestra.ORCHESTRA_OPTIONAL,request.toStringBuilder().toString());
+				pr = new PublishRequest(TestOrchestra.ORCHESTRA_OPTIONAL,request.toStringBuilder().toString());
 				pr = connector.publishRequest(pr);
 				if (pr!=null) {
 					assertEqual(pr.getError(),"","Publish request error does not match expectation");

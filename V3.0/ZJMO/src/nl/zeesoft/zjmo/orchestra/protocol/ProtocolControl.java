@@ -3,15 +3,17 @@ package nl.zeesoft.zjmo.orchestra.protocol;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.MemberState;
+import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 
 public class ProtocolControl extends ProtocolObject {
-	public static final String STOP_PROGRAM		= "STOP_PROGRAM";
-	public static final String RESTART_PROGRAM	= "RESTART_PROGRAM";
-	public static final String GET_STATE 		= "GET_STATE";
-	public static final String TAKE_OFFLINE		= "TAKE_OFFLINE";
-	public static final String DRAIN_OFFLINE	= "DRAIN_OFFLINE";
-	public static final String BRING_ONLINE		= "BRING_ONLINE";
+	public static final String STOP_PROGRAM			= "STOP_PROGRAM";
+	public static final String RESTART_PROGRAM		= "RESTART_PROGRAM";
+	public static final String GET_STATE 			= "GET_STATE";
+	public static final String TAKE_OFFLINE			= "TAKE_OFFLINE";
+	public static final String DRAIN_OFFLINE		= "DRAIN_OFFLINE";
+	public static final String BRING_ONLINE			= "BRING_ONLINE";
+	public static final String UPDATE_ORCHESTRA		= "UPDATE_ORCHESTRA";
 	
 	@Override
 	protected ZStringBuilder handleInput(MemberObject member,ZStringBuilder input) {
@@ -49,6 +51,15 @@ public class ProtocolControl extends ProtocolObject {
 				}
 			} else if (command.equals(BRING_ONLINE)) {
 				if (!member.bringOnLine()) {
+					output = getFailedToExecuteCommandResponse();
+				} else {
+					output = getExecutedCommandResponse();
+				}
+			} else if (command.equals(UPDATE_ORCHESTRA)) {
+				Orchestra orch = member.getOrchestra().getCopy(false);
+				orch.fromJson(getJsonForInput(input));
+				String err = member.updateOrchestra(orch);
+				if (err.length()>0) {
 					output = getFailedToExecuteCommandResponse();
 				} else {
 					output = getExecutedCommandResponse();

@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
+import nl.zeesoft.zjmo.orchestra.client.OrchestraConnector;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
@@ -15,7 +16,7 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWorkConductor;
  * Orchestra conductor.
  */
 public class Conductor extends MemberObject {
-	private ConductorMemberController	controller	= null;
+	private ConductorMemberController	controller		= null;
 	
 	public Conductor(Messenger msgr,Orchestra orchestra,int positionBackupNumber) {
 		super(msgr,orchestra,Orchestra.CONDUCTOR,positionBackupNumber);
@@ -102,5 +103,13 @@ public class Conductor extends MemberObject {
 
 	public void returnClient(WorkClient client) {
 		controller.returnClient(client);
+	}
+
+	public OrchestraConnector getControlChannel() {
+		return controller.getControlChannel();
+	}
+
+	public void returnControlChannel() {
+		controller.returnControlChannel();
 	}
 }

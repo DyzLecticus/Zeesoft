@@ -11,6 +11,7 @@ public class ActiveClient extends Locker {
 	private	WorkerUnion					union			= null;
 	private OrchestraMember				member			= null;
 	private boolean						control			= true;
+	private int							timeout			= 0;
 
 	private boolean						open			= false;
 	private boolean						closing			= false;
@@ -28,7 +29,15 @@ public class ActiveClient extends Locker {
 		this.control = control;
 		initializeClients();
 	}
-	
+
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
 	public void open() {
 		lockMe(this);
 		open = false;
@@ -86,6 +95,16 @@ public class ActiveClient extends Locker {
 		return r;
 	}
 
+	public void connectClient() {
+		client.open();
+		if (client.isOpen()) {
+			lockMe(this);
+			open = true;
+			unlockMe(this);
+			connected();
+		}
+	}
+
 	protected void connect() {
 		boolean connect = false;
 		lockMe(this);
@@ -96,16 +115,6 @@ public class ActiveClient extends Locker {
 		unlockMe(this);
 		if (connect) {
 			connectClient();
-		}
-	}
-
-	public void connectClient() {
-		client.open();
-		if (client.isOpen()) {
-			lockMe(this);
-			open = true;
-			unlockMe(this);
-			connected();
 		}
 	}
 	
@@ -135,6 +144,10 @@ public class ActiveClient extends Locker {
 		} else {
 			client = member.getNewWorkClient(getMessenger(),union);
 			stateClient = member.getNewWorkClient(getMessenger(),union);
+		}
+		if (timeout>0) {
+			client.setTimeout(timeout);
+			stateClient.setTimeout(timeout);
 		}
 	}
 }

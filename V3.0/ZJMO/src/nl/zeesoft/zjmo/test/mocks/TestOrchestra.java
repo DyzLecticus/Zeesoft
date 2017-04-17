@@ -1,8 +1,13 @@
 package nl.zeesoft.zjmo.test.mocks;
 
+import nl.zeesoft.zjmo.orchestra.Channel;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
+import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
 public class TestOrchestra extends Orchestra {
+	public static final String ORCHESTRA_CRITICAL = "Orchestra critical";
+	public static final String ORCHESTRA_OPTIONAL = "Orchestra optional";
+	
 	@Override
 	public void initialize() {
 		addPosition("Database X");
@@ -21,5 +26,13 @@ public class TestOrchestra extends Orchestra {
 		// Backup databases
 		addMember("Database X",1,LOCALHOST,6541,6540,2000,true);
 		addMember("Database Y",1,LOCALHOST,7652,7651,2000,true);
+		
+		// Critical channel
+		Channel cri = addChannel(ORCHESTRA_CRITICAL,true);
+		Channel opt = addChannel(ORCHESTRA_OPTIONAL,false);
+		for (OrchestraMember member: getMembers()) {
+			cri.getSubscriberIdList().add(member.getId());
+			opt.getSubscriberIdList().add(member.getId());
+		}
 	}
 }

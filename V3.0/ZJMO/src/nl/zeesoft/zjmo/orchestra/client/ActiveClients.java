@@ -12,6 +12,7 @@ public class ActiveClients extends Locker {
 	private	WorkerUnion					union			= null;
 	private boolean						control			= true;
 	private List<ActiveClient>			clients			= new ArrayList<ActiveClient>();
+	private int							timeout			= 0;
 
 	public ActiveClients(Messenger msgr, WorkerUnion uni,boolean control) {
 		super(msgr);
@@ -19,8 +20,19 @@ public class ActiveClients extends Locker {
 		this.control = control;
 	}
 
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
 	public void addClient(ActiveClient client) {
 		lockMe(this);
+		if (timeout>0) {
+			client.setTimeout(timeout);
+		}
 		clients.add(client);
 		unlockMe(this);
 	}
