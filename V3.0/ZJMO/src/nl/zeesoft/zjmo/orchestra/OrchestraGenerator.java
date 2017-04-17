@@ -19,16 +19,6 @@ public class OrchestraGenerator {
 		if (!libDir.exists()) {
 			libDir.mkdir();
 		}
-		File controllerDir = new File(orchDir.getAbsolutePath() + "/controller");
-		if (controllerDir.exists()) {
-			if (!update) {
-				if (!emptyDirectory(controllerDir)) {
-					err = "Unable to cleanup controller directory: " + controllerDir.getAbsolutePath();
-				}
-			}
-		} else {
-			controllerDir.mkdir();
-		}
 		File memberDir = new File(orchDir.getAbsolutePath() + "/members");
 		if (memberDir.exists()) {
 			if (!update) {
@@ -44,12 +34,14 @@ public class OrchestraGenerator {
 		}
 		if (err.length()==0) {
 			generateMemberUpdateScript(orchDir,memberDir,orch);
-			generateControllerDirs(controllerDir,orch);
-			generateControllerScripts(controllerDir,orch);
+			generateControllerDirs(orchDir,orch);
+			generateControllerScripts(orchDir,orch);
 			generateMemberDirs(memberDir,orch);
 			generateMemberScripts(memberDir,orch);
 			if (orch.isLocalHost()) {
 				generateOrchestraScripts(orchDir,orch);
+			} else {
+				removeOrchestraScripts(orchDir);
 			}
 		}
 		return err;
@@ -60,8 +52,6 @@ public class OrchestraGenerator {
 	}
 	
 	protected void generateControllerDirs(File controllerDir,Orchestra orch) {
-		File libDir = new File(controllerDir.getAbsolutePath() + "/lib");
-		libDir.mkdirs();
 		File outDir = new File(controllerDir.getAbsolutePath() + "/out");
 		outDir.mkdirs();
 		if (isWindows()) {
@@ -71,7 +61,6 @@ public class OrchestraGenerator {
 	}
 
 	protected void generateControllerScripts(File controllerDir,Orchestra orch) {
-		orch.toJson(false).toFile(controllerDir.getAbsolutePath() + "/orchestra.json",true);
 		if (isWindows()) {
 			ZStringBuilder startScript = this.getBatScriptForAction(orch,Orchestrator.CONTROL,null);
 			startScript.toFile(controllerDir.getAbsolutePath() + "/bin/start.bat");
@@ -84,10 +73,10 @@ public class OrchestraGenerator {
 			startScript = new ZStringBuilder();
 			startScript.append("wscript.exe \"bin\\background.vbs\" \"bin\\start.bat\"");
 			startScript.append("\r\n");
-			startScript.toFile(controllerDir.getAbsolutePath() + "/start.bat");
+			startScript.toFile(controllerDir.getAbsolutePath() + "/startController.bat");
 		} else {
 			ZStringBuilder startScript = this.getScriptForAction(orch,Orchestrator.CONTROL,null);
-			startScript.toFile(controllerDir.getAbsolutePath() + "/start.sh");
+			startScript.toFile(controllerDir.getAbsolutePath() + "/startController.sh");
 		}
 	}
 
@@ -117,6 +106,24 @@ public class OrchestraGenerator {
 			stopScript = getOrchestraScript(orch,Orchestrator.STOP);
 			startScript.toFile(orchDir.getAbsolutePath() + "/start.sh");
 			stopScript.toFile(orchDir.getAbsolutePath() + "/stop.sh");
+		}
+	}
+
+	protected void removeOrchestraScripts(File orchDir) {
+		File f1 = null;
+		File f2 = null;
+		if (isWindows()) {
+			f1 = new File(orchDir.getAbsolutePath() + "/start.bat");
+			f2 = new File(orchDir.getAbsolutePath() + "/stop.bat");
+		} else {
+			f1 = new File(orchDir.getAbsolutePath() + "/start.sh");
+			f2 = new File(orchDir.getAbsolutePath() + "/stop.sh");
+		}
+		if (f1.exists()) {
+			f1.delete();
+		}
+		if (f2.exists()) {
+			f1.delete();
 		}
 	}
 
@@ -300,8 +307,6 @@ public class OrchestraGenerator {
 		script.append(orch.getClass().getName());
 		script.append(" .");
 		script.append("\n");
-		script.append("cp lib/* controller/lib");
-		script.append("\n");
 		for (OrchestraMember member: orch.getMembers()) {
 			script.append("cp lib/*  ");
 			script.append(getRelativeDirectoryNameForMember(member) + "/lib");
@@ -319,8 +324,6 @@ public class OrchestraGenerator {
 		script.append(" ");
 		script.append(orch.getClass().getName());
 		script.append(" .");
-		script.append("\r\n");
-		script.append("xcopy lib\\* controller\\lib /Y ");
 		script.append("\r\n");
 		for (OrchestraMember member: orch.getMembers()) {
 			script.append("xcopy lib\\*  ");

@@ -81,9 +81,14 @@ public class ControllerActionWorker extends Worker {
 				if (f.exists()) {
 					err = orchestraUpdate.toJson(false).toFile(Orchestrator.ORCHESTRA_JSON,true);
 				}
-				controller.publishedOrchestraUpdate();
+				List<OrchestraMember> restartMembers = controller.publishedOrchestraUpdate();
+				if (restartMembers.size()>0) {
+					action = ProtocolControl.RESTART_PROGRAM;
+					members = restartMembers;
+				}
 			}
-		} else {
+		}
+		if (!action.equals(ProtocolControl.UPDATE_ORCHESTRA)) {
 			List<OrchestraMember> doneMembers = new ArrayList<OrchestraMember>();
 			for (OrchestraMember member: members) {
 				ZStringBuilder response = sendMemberCommandForAction(client,member,action);

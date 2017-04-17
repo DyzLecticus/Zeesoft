@@ -7,8 +7,6 @@ import nl.zeesoft.zjmo.orchestra.MemberObject;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 
 public class ProtocolWork extends ProtocolObject {
-	public static final String UPDATE_ORCHESTRA = "UPDATE_ORCHESTRA";
-	
 	@Override
 	protected ZStringBuilder handleInput(MemberObject member,ZStringBuilder input) {
 		ZStringBuilder output = super.handleInput(member, input);

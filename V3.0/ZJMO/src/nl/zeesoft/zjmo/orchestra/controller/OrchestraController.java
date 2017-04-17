@@ -261,57 +261,60 @@ public class OrchestraController extends Locker implements ActionListener {
 			String err = "";
 			MemberClient client = getClient();
 			if (client==null) {
-				err = "This action requires a connection to a conductor";
+				err = "Not connected to a conductor";
 			} else if (!isStopping()) {
-				if (evt.getActionCommand().equals(ProtocolControl.UPDATE_ORCHESTRA)) {
-					if (!isOrchestraChanged()) {
-						err = "No changes to publish";
-					} else {
-						boolean confirmed = this.showConfirmMessage("Are you sure you want to publish the orchestra changes?");
-						if (confirmed && client.isOpen() && !isStopping()) {
-							lockMe(this);
-							if (actionWorker==null || !actionWorker.isWorking()) {
-								actionWorker = getNewActionWorker(union,client);
+				List<OrchestraMember> members = gridController.getSelectedMembers(grid);
+				if (
+					evt.getActionCommand().equals(ProtocolControl.UPDATE_ORCHESTRA) ||
+					(evt.getActionCommand().equals(ProtocolControl.GET_STATE) && members.size()==0)
+					) {
+					lockMe(this);
+					members = getOrchestraMembers();
+					unlockMe(this);
+				}
+				if (members.size()==0) {
+					err = "Select one or more members";
+				} else {
+					if (evt.getActionCommand().equals(ProtocolControl.RESTART_PROGRAM)) {
+						int conductors = 0;
+						for (OrchestraMember member: members) {
+							if (member.getPosition().getName().equals(Orchestra.CONDUCTOR)) {
+								conductors++;
+							}
+						}
+						if (conductors>1) {
+							err = "Multiple conductors cannot be restarted simultaniously";
+						}
+					}
+				}
+				if (err.length()==0) {
+					String confirmMessage = "";
+					boolean confirmed = true;
+					if (evt.getActionCommand().equals(ProtocolControl.DRAIN_OFFLINE)) {
+						confirmMessage = "Are you sure you want to drain the selected members offline?";
+					} else if (evt.getActionCommand().equals(ProtocolControl.TAKE_OFFLINE)) {
+						confirmMessage = "Are you sure you want to take the selected members offline?";
+					} else if (evt.getActionCommand().equals(ProtocolControl.RESTART_PROGRAM)) {
+						confirmMessage = "Are you sure you want to restart the selected members?";
+					} else if (evt.getActionCommand().equals(ProtocolControl.UPDATE_ORCHESTRA)) {
+						confirmMessage = "Are you sure you want to publish the orchestra changes?";
+					}
+					if (confirmMessage.length()>0) {
+						confirmed = showConfirmMessage(confirmMessage);
+					}
+					if (confirmed && client.isOpen() && !isStopping()) {
+						lockMe(this);
+						if (actionWorker==null || !actionWorker.isWorking()) {
+							actionWorker = getNewActionWorker(union,client);
+							if (evt.getActionCommand().equals(ProtocolControl.UPDATE_ORCHESTRA)) {
 								actionWorker.publishOrchestraUpdate(orchestraUpdate);
 							} else {
-								err = "Action worker is busy";
-							}
-							unlockMe(this);
-						}
-					}
-				} else {
-					List<OrchestraMember> members = gridController.getSelectedMembers(grid);
-					if (evt.getActionCommand().equals(ProtocolControl.GET_STATE) && members.size()==0) {
-						lockMe(this);
-						members = getOrchestraMembers();
-						unlockMe(this);
-					}
-					if (members.size()==0) {
-						err = "Select one or more members";
-					}
-					if (err.length()==0) {
-						String confirmMessage = "";
-						boolean confirmed = true;
-						if (evt.getActionCommand().equals(ProtocolControl.DRAIN_OFFLINE)) {
-							confirmMessage = "Are you sure you want to drain the selected members offline?";
-						} else if (evt.getActionCommand().equals(ProtocolControl.TAKE_OFFLINE)) {
-							confirmMessage = "Are you sure you want to take the selected members offline?";
-						} else if (evt.getActionCommand().equals(ProtocolControl.RESTART_PROGRAM)) {
-							confirmMessage = "Are you sure you want to restart the selected members?";
-						}
-						if (confirmMessage.length()>0) {
-							confirmed = showConfirmMessage(confirmMessage);
-						}
-						if (confirmed && client.isOpen() && !isStopping()) {
-							lockMe(this);
-							if (actionWorker==null || !actionWorker.isWorking()) {
-								actionWorker = getNewActionWorker(union,client);
 								actionWorker.handleAction(evt.getActionCommand(), members);
-							} else {
-								err = "Action worker is busy";
 							}
-							unlockMe(this);
+						} else {
+							err = "Action worker is busy";
 						}
+						unlockMe(this);
 					}
 				}
 			}
@@ -321,32 +324,18 @@ public class OrchestraController extends Locker implements ActionListener {
 		}
 	}
 
-	protected void publishedOrchestraUpdate() {
+	protected List<OrchestraMember> publishedOrchestraUpdate() {
+		List<OrchestraMember> restartMembers = new ArrayList<OrchestraMember>();
 		setOrchestraChanged(false);
-		MemberClient client = getClient();
-		if (client!=null) {
-			String err = "";
-			lockMe(this);
-			List<OrchestraMember> members = new ArrayList<OrchestraMember>();
-			for (OrchestraMember member: orchestra.getMembers()) {
-				OrchestraMember updateMember = orchestraUpdate.getMemberById(member.getId());
-				if (updateMember==null) {
-					members.add(member.getCopy());
-				}
-			}
-			if (members.size()>0) {
-				if (actionWorker==null || !actionWorker.isWorking()) {
-					actionWorker = getNewActionWorker(union,client);
-					actionWorker.handleAction(ProtocolControl.RESTART_PROGRAM,members);
-				} else {
-					err = "Unable to restart removed members";
-				}
-			}
-			unlockMe(this);
-			if (err.length()>0) {
-				showErrorMessage(err);
+		lockMe(this);
+		for (OrchestraMember member: orchestra.getMembers()) {
+			OrchestraMember updateMember = orchestraUpdate.getMemberById(member.getId());
+			if (updateMember==null) {
+				restartMembers.add(member.getCopy());
 			}
 		}
+		unlockMe(this);
+		return restartMembers;
 	}
 
 	protected void importedOrchestraUpdate(Orchestra orchestraUpdate) {
@@ -363,10 +352,10 @@ public class OrchestraController extends Locker implements ActionListener {
 		revertMenuItem.setEnabled(orchestraChanged);
 		if (orchestraChanged) {
 			orchestraMenu.setText("Orchestra*");
-			publishMenuItem.setText("Publish*");
+			publishMenuItem.setText("Publish changes*");
 		} else {
 			orchestraMenu.setText("Orchestra");
-			publishMenuItem.setText("Publish");
+			publishMenuItem.setText("Publish changes");
 		}
 		refreshGrid();
 		unlockMe(this);
@@ -468,6 +457,16 @@ public class OrchestraController extends Locker implements ActionListener {
 					}
 					System.exit(status);
 				}
+			}
+		} else {
+			e.getWindow().setVisible(false);
+		}
+	}
+
+	protected void windowIconified(WindowEvent e) {
+		if (e.getWindow()==mainFrame) {
+			if (memberFrame!=null && memberFrame.getFrame().isVisible()) {
+				memberFrame.getFrame().setVisible(false);
 			}
 		} else {
 			e.getWindow().setVisible(false);
@@ -603,8 +602,8 @@ public class OrchestraController extends Locker implements ActionListener {
 		orchestraMenu = new JMenu("Orchestra");
 		addOptionToMenu(orchestraMenu,"Import",ControllerImportExportWorker.IMPORT_CHANGES);
 		addOptionToMenu(orchestraMenu,"Export",ControllerImportExportWorker.EXPORT_CHANGES);
-		publishMenuItem = addOptionToMenu(orchestraMenu,"Publish",ProtocolControl.UPDATE_ORCHESTRA);
-		revertMenuItem = addOptionToMenu(orchestraMenu,"Revert",REVERT_CHANGES);
+		publishMenuItem = addOptionToMenu(orchestraMenu,"Publish changes",ProtocolControl.UPDATE_ORCHESTRA);
+		revertMenuItem = addOptionToMenu(orchestraMenu,"Revert changes",REVERT_CHANGES);
 		publishMenuItem.setEnabled(false);
 		revertMenuItem.setEnabled(false);
 		return orchestraMenu;

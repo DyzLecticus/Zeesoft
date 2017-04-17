@@ -15,7 +15,7 @@ public class ControllerWindowAdapter extends WindowAdapter{
 	}
 	
 	public void windowIconified(WindowEvent e) {
-		// Ignore
+		controller.windowIconified(e);
 	}
 	
 	public void windowStateChanged(WindowEvent e) {
