@@ -10,11 +10,13 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
+import nl.zeesoft.zjmo.orchestra.OrchestraGenerator;
 
 public class ControllerImportExportWorker extends Worker {
 	public static final String		INITIALIZE			= "INITIALIZE";
 	public static final String		IMPORT_CHANGES		= "IMPORT_CHANGES";
 	public static final String		EXPORT_CHANGES		= "EXPORT_CHANGES";
+	public static final String		GENERATE			= "GENERATE";
 
 	private OrchestraController 	controller 			= null;
 	private JFileChooser			fileChooser 		= null;
@@ -70,17 +72,29 @@ public class ControllerImportExportWorker extends Worker {
 					}
 				} else if (action.equals(EXPORT_CHANGES)) {
 					boolean confirmed = true;
-					if (file.exists() && file.isFile()) {
+					if (file.exists()) {
 						confirmed = controller.showConfirmMessage("Are you sure you want to overwrite the selected file?");
 					}
-					if (err.length()==0 && confirmed) {
+					if (confirmed) {
 						orchestraUpdate.toJson(false).toFile(file.getAbsolutePath(),true);
+					}
+				} else if (action.equals(GENERATE)) {
+					boolean confirmed = true;
+					File check = new File(file.getAbsolutePath() + "/orchestra.json");
+					if (check.exists()) {
+						confirmed = controller.showConfirmMessage("Are you sure you want to overwrite the selected orchestra?");
+					}
+					if (confirmed) {
+						OrchestraGenerator generator = orchestraUpdate.getNewGenerator();
+						err = generator.generate(orchestraUpdate,file);
 					}
 				}
 			}
 		}
-		if (err.length() > 0) {
+		if (err.length()>0) {
 			controller.showErrorMessage(err);
+		} else {
+			controller.completedImportExportAction(orchestraUpdate,action);
 		}
 		stop();
 	}
@@ -90,10 +104,14 @@ public class ControllerImportExportWorker extends Worker {
 		String title = "";
 		if (action.equals(IMPORT_CHANGES)) {
 			title = "Import";
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		} else if (action.equals(EXPORT_CHANGES)) {
 			title = "Export";
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		} else if (action.equals(GENERATE)) {
+			title = "Generate";
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		}
-		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		int choice = fileChooser.showDialog(controller.getMainFrame(),title);
 		if (choice==JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();

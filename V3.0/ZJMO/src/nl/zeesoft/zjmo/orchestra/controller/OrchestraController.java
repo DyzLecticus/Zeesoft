@@ -167,7 +167,11 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(ControllerImportExportWorker.IMPORT_CHANGES) || evt.getActionCommand().equals(ControllerImportExportWorker.EXPORT_CHANGES)) {
+		if (
+			evt.getActionCommand().equals(ControllerImportExportWorker.IMPORT_CHANGES) || 
+			evt.getActionCommand().equals(ControllerImportExportWorker.EXPORT_CHANGES) || 
+			evt.getActionCommand().equals(ControllerImportExportWorker.GENERATE)
+			) {
 			boolean confirmed = true;
 			if (evt.getActionCommand().equals(ControllerImportExportWorker.IMPORT_CHANGES) && isOrchestraChanged()) {
 				confirmed = showConfirmMessage("Unpublished orchestra changes will be lost. Are you sure you want to continue?");
@@ -324,6 +328,30 @@ public class OrchestraController extends Locker implements ActionListener {
 		}
 	}
 
+	protected ControllerStateWorker getNewStateWorker(WorkerUnion union) {
+		return new ControllerStateWorker(getMessenger(),union,this);
+	}
+
+	protected ControllerActionWorker getNewActionWorker(WorkerUnion union,MemberClient client) {
+		return new ControllerActionWorker(getMessenger(),union,this,client);
+	}
+	
+	protected ControllerImportExportWorker getNewImportExportWorker(WorkerUnion union) {
+		return new ControllerImportExportWorker(getMessenger(),union,this);
+	}
+	
+	protected ControllerWindowAdapter getNewAdapter() {
+		return new ControllerWindowAdapter(this);
+	}
+
+	protected GridMouseListener getNewGridMouseListener() {
+		return new GridMouseListener(this);
+	}
+
+	protected void completedImportExportAction(Orchestra orchestraUpdate, String action) {
+		// Override to extend
+	}
+
 	protected List<OrchestraMember> publishedOrchestraUpdate() {
 		List<OrchestraMember> restartMembers = new ArrayList<OrchestraMember>();
 		setOrchestraChanged(false);
@@ -337,7 +365,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		unlockMe(this);
 		return restartMembers;
 	}
-
+	
 	protected void importedOrchestraUpdate(Orchestra orchestraUpdate) {
 		lockMe(this);
 		this.orchestraUpdate = orchestraUpdate;
@@ -519,26 +547,6 @@ public class OrchestraController extends Locker implements ActionListener {
 	protected JFrame getMainFrame() {
 		return mainFrame;
 	}
-
-	protected ControllerStateWorker getNewStateWorker(WorkerUnion union) {
-		return new ControllerStateWorker(getMessenger(),union,this);
-	}
-
-	protected ControllerActionWorker getNewActionWorker(WorkerUnion union,MemberClient client) {
-		return new ControllerActionWorker(getMessenger(),union,this,client);
-	}
-	
-	protected ControllerImportExportWorker getNewImportExportWorker(WorkerUnion union) {
-		return new ControllerImportExportWorker(getMessenger(),union,this);
-	}
-	
-	protected ControllerWindowAdapter getNewAdapter() {
-		return new ControllerWindowAdapter(this);
-	}
-
-	protected GridMouseListener getNewGridMouseListener() {
-		return new GridMouseListener(this);
-	}
 	
 	protected JFrame getNewMainFrame() {
 		JFrame frame = new JFrame();
@@ -606,6 +614,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		revertMenuItem = addOptionToMenu(orchestraMenu,"Revert changes",REVERT_CHANGES);
 		publishMenuItem.setEnabled(false);
 		revertMenuItem.setEnabled(false);
+		addOptionToMenu(orchestraMenu,"Generate",ControllerImportExportWorker.GENERATE);
 		return orchestraMenu;
 	}
 
