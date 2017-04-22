@@ -20,6 +20,9 @@ import nl.zeesoft.zjmo.orchestra.client.WorkClientPoolWorker;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControl;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
+/**
+ * Controls orchestra members for conductors and maintains the conductor orchestra member state.
+ */
 public class ConductorMemberController extends Locker {
 	private Orchestra 							orchestra				= null;
 	private	ConductorMemberControllerWorker		worker					= null;

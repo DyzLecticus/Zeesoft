@@ -19,7 +19,7 @@ public class TestTestOrchestra extends TestObject {
 	@Override
 	protected void describe() {
 		System.out.println("This test shows how to create and initialize a *TestOrchestra* instance.");
-		System.out.println("The *TestOrchestra* extends the *Orchestra* class which functions as a factory for other objects.");
+		System.out.println("The *TestOrchestra* extends the *Orchestra* class which functions as a factory for other objects like conductors and players.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");

@@ -1,5 +1,8 @@
 package nl.zeesoft.zjmo.orchestra.members;
 
+/**
+ * Uses the member controller to retrieve the orchestra member state with a regular interval of ten seconds.
+ */
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;

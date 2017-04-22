@@ -35,6 +35,7 @@ public class ZJMO extends LibraryObject {
 		System.out.println("The aim of the ZJMO project is to provide a scalable, high availability, JSON based, work distribution architecture.");
 		System.out.println("Imagine an orchestra where the conductor directs the other members to play a certain composition.");
 		System.out.println("All the members speak JSON on two TCP ports; one for control and another one for work.");
+		System.out.println("One or more backup members can be created for conductors and players alike.");
 		describeDependencies();
 		System.out.println();
 		describeRelease();

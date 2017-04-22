@@ -39,7 +39,7 @@ public class TestPublishRequest extends TestObject {
 		System.out.println("// Create conductor connector");
 		System.out.println("ConductorConnector connector = new ConductorConnector(null,null,false);");
 		System.out.println("// Initialize the connector");
-		System.out.println("connector.initialize(con.getOrchestra(),null);");
+		System.out.println("connector.initialize(orchestra,null);");
 		System.out.println("// Open the connector");
 		System.out.println("connector.open();");
 		System.out.println("// Create publish request for a certain channel");

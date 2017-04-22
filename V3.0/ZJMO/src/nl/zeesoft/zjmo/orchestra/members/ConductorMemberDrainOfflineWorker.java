@@ -6,6 +6,10 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.ProtocolObject;
 
+/**
+ * Used to close unused work clients while a member is draining offline.
+ * Takes the member offline when all connections have been closed.
+ */
 public class ConductorMemberDrainOfflineWorker extends Worker {
 	private ConductorMemberController	controller	= null;
 	private String						memberId	= "";
