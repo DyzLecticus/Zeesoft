@@ -23,11 +23,10 @@ import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.Position;
 
-public class MemberFrame {
+public class MemberFrame extends FrameObject {
 	private	Orchestra				orchestra				= null;
 	private OrchestraMember			member					= null;
 	
-	private JFrame 					frame					= null;
 	private JComboBox<String>		position				= null;
 	private JFormattedTextField		positionBackupNumber	= null;
 	private JFormattedTextField		ipAddressOrHostName		= null;
@@ -40,12 +39,12 @@ public class MemberFrame {
 	
 	public MemberFrame(OrchestraController controller, Orchestra orchestra) {
 		this.orchestra = orchestra;
-		frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.addWindowListener(controller.getNewAdapter());
-		frame.setTitle("Member details");
-		frame.setSize(400,250);
-		frame.setIconImage(new ImageIconLabel("z",32,Color.WHITE).getBufferedImage());
+		setFrame(new JFrame());
+		getFrame().setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		getFrame().addWindowListener(controller.getNewAdapter());
+		getFrame().setTitle("Member details");
+		getFrame().setSize(400,250);
+		getFrame().setIconImage(new ImageIconLabel("z",32,Color.WHITE).getBufferedImage());
 		
 		JPanel details = new JPanel();
 		details.setLayout(new GridBagLayout());
@@ -120,7 +119,7 @@ public class MemberFrame {
 		details.add(filler,gbc);
 
 		JScrollPane scroller = new JScrollPane(details);
-		frame.setContentPane(scroller);
+		getFrame().setContentPane(scroller);
 	}
 	
 	protected OrchestraMember getMember() {
@@ -139,7 +138,7 @@ public class MemberFrame {
 		ipAddressOrHostName.setEnabled(enabled);
 		
 		if (member==null) {
-			frame.setTitle("Add member");
+			getFrame().setTitle("Add member");
 			position.setSelectedIndex(0);
 			positionBackupNumber.setValue(0);
 			ipAddressOrHostName.setValue(Orchestra.LOCALHOST);
@@ -148,7 +147,7 @@ public class MemberFrame {
 			workRequestTimeout.setValue(500);
 			workRequestTimeoutDrain.setSelected(false);
 		} else {
-			frame.setTitle("Update " + member.getId());
+			getFrame().setTitle("Update " + member.getId());
 			Position pos = orchestra.getPosition(member.getPosition().getName());
 			position.setSelectedIndex(orchestra.getPositions().indexOf(pos));
 			positionBackupNumber.setValue(member.getPositionBackupNumber());
@@ -174,7 +173,7 @@ public class MemberFrame {
 			err = "Work request timeout must be greater or equal to zero";
 		}
 		if (err.length()>0) {
-			JOptionPane.showMessageDialog(frame,err,"Error",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(getFrame(),err,"Error",JOptionPane.ERROR_MESSAGE);
 		}
 		return err.length() == 0;
 	}
@@ -225,13 +224,9 @@ public class MemberFrame {
 			}
 		}
 		if (err.length()>0) {
-			JOptionPane.showMessageDialog(frame,err,"Error",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(getFrame(),err,"Error",JOptionPane.ERROR_MESSAGE);
 		}
 		return member;
-	}
-
-	protected JFrame getFrame() {
-		return frame;
 	}
 	
 	protected void addLabel(JPanel panel, int row,String text) {

@@ -1,7 +1,5 @@
 package nl.zeesoft.zjmo.orchestra.controller;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -10,18 +8,9 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.UIManager;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -31,7 +20,6 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.Orchestrator;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
-import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
@@ -56,30 +44,21 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	private Orchestra						orchestraUpdate		= null;
 	private boolean							orchestraChanged	= false;
-	private JMenu 							orchestraMenu		= null;
 	
 	private ConductorConnector 				connector			= null;
 	private ControllerStateWorker			stateWorker			= null;
 	private ControllerActionWorker			actionWorker		= null;
 	private ControllerImportExportWorker	importExportWorker	= null;
 	
-	private JFrame							mainFrame			= null;
-	private JLabel							stateLabel			= null;
-	private JTable							grid				= null;
-	private GridController					gridController		= new GridController();
+	private MainFrame						mainFrame			= null;
 	private MemberFrame						memberFrame			= null;
-	private List<JMenuItem>					controlMenuItems	= new ArrayList<JMenuItem>();
-	private JMenu							changesMenu			= null;
-	private JMenuItem 						publishMenuItem		= null;
-	private JMenuItem 						revertMenuItem		= null;
-	
+
 	public OrchestraController(Orchestra orchestra,boolean exitOnClose) {
 		super(new Messenger(null));
 		this.orchestra = orchestra;
 		this.orchestraUpdate = orchestra.getCopy(false);
 		this.exitOnClose = exitOnClose;
 		union = new WorkerUnion(getMessenger());
-		gridController.updatedOrchestraMembers(getOrchestraMembers());
 		stateWorker = getNewStateWorker(union);
 		connector = new ConductorConnector(getMessenger(),union,true);
 	}
@@ -123,17 +102,18 @@ public class OrchestraController extends Locker implements ActionListener {
 			} catch (Exception e) {
 				// Ignore
 			}
-			connector.initialize(orchestraUpdate,null);
-			connector.open();
-			getMessenger().start();
-			stateWorker.start();
 			if (memberFrame==null) {
 				memberFrame = getNewMemberFrame(orchestraUpdate);
 			}
 			if (mainFrame==null) {
 				mainFrame = getNewMainFrame();
-				mainFrame.setVisible(true);
+				mainFrame.getFrame().setVisible(true);
 			}
+
+			connector.initialize(orchestraUpdate,null);
+			connector.open();
+			getMessenger().start();
+			stateWorker.start();
 			if (importExportWorker==null) {
 				importExportWorker = this.getNewImportExportWorker(union);
 				importExportWorker.initialize();
@@ -188,7 +168,7 @@ public class OrchestraController extends Locker implements ActionListener {
 				}
 			}
 		} else if (evt.getActionCommand().equals(UPDATE_MEMBER)) {
-			List<OrchestraMember> members = gridController.getSelectedMembers(grid);
+			List<OrchestraMember> members = mainFrame.getSelectedMembers();
 			if (members.size()==0) {
 				showErrorMessage("Select a member");
 			} else {
@@ -218,7 +198,7 @@ public class OrchestraController extends Locker implements ActionListener {
 			}
 		} else if (evt.getActionCommand().equals(REMOVE_MEMBERS)) {
 			String err = "";
-			List<OrchestraMember> members = gridController.getSelectedMembers(grid);
+			List<OrchestraMember> members = mainFrame.getSelectedMembers();
 			if (members.size()==0) {
 				err = "Select one or more members";
 			} else {
@@ -238,8 +218,8 @@ public class OrchestraController extends Locker implements ActionListener {
 					for (OrchestraMember member: members) {
 						orchestraUpdate.removeMember(member.getId());
 					}
-					grid.clearSelection();
-					refreshGrid();
+					mainFrame.clearSelection();
+					mainFrame.refreshGrid(getOrchestraMembers());
 					unlockMe(this);
 					setOrchestraChanged(true);
 				}
@@ -269,7 +249,7 @@ public class OrchestraController extends Locker implements ActionListener {
 			if (client==null) {
 				err = "Not connected to a conductor";
 			} else if (!isStopping()) {
-				List<OrchestraMember> members = gridController.getSelectedMembers(grid);
+				List<OrchestraMember> members = mainFrame.getSelectedMembers();
 				if (
 					evt.getActionCommand().equals(ProtocolControl.UPDATE_ORCHESTRA) ||
 					(evt.getActionCommand().equals(ProtocolControl.GET_STATE) && members.size()==0)
@@ -378,19 +358,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	protected void setOrchestraChanged(boolean orchestraChanged) {
 		lockMe(this);
 		this.orchestraChanged = orchestraChanged;
-		changesMenu.setEnabled(orchestraChanged);
-		publishMenuItem.setEnabled(orchestraChanged);
-		revertMenuItem.setEnabled(orchestraChanged);
-		if (orchestraChanged) {
-			orchestraMenu.setText("Orchestra*");
-			changesMenu.setText("Changes*");
-			publishMenuItem.setText("Publish*");
-		} else {
-			orchestraMenu.setText("Orchestra");
-			changesMenu.setText("Changes");
-			publishMenuItem.setText("Publish");
-		}
-		refreshGrid();
+		mainFrame.setOrchestraChanged(orchestraChanged);
 		unlockMe(this);
 	}
 	
@@ -434,18 +402,11 @@ public class OrchestraController extends Locker implements ActionListener {
 					json.fromStringBuilder(response);
 					lockMe(this);
 					orchestra.fromJson(json);
-					refreshGrid();
+					mainFrame.refreshGrid(getOrchestraMembers());
 					unlockMe(this);
 				}
 			}
 		}
-	}
-
-	protected void refreshGrid() {
-		List<OrchestraMember> selected = gridController.getSelectedMembers(grid);
-		gridController.updatedOrchestraMembers(getOrchestraMembers());
-		gridController.fireTableDataChanged();
-		gridController.selectMembers(grid,selected);
 	}
 	
 	protected MemberClient getClient() {
@@ -467,7 +428,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	}
 	
 	protected void windowClosing(WindowEvent e) {
-		if (e.getWindow()==mainFrame) {
+		if (e.getWindow()==mainFrame.getFrame()) {
 			boolean confirmed = true;
 			if (isOrchestraChanged()) {
 				confirmed = showConfirmMessage("Unpublished orchestra changes will be lost. Are you sure you want to quit?");
@@ -477,7 +438,7 @@ public class OrchestraController extends Locker implements ActionListener {
 					memberFrame.getFrame().setVisible(false);
 				}
 				if (mainFrame!=null) {
-					mainFrame.setVisible(false);
+					mainFrame.getFrame().setVisible(false);
 				}
 				stop();
 				lockMe(this);
@@ -497,7 +458,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	}
 
 	protected void windowIconified(WindowEvent e) {
-		if (e.getWindow()==mainFrame) {
+		if (e.getWindow()==mainFrame.getFrame()) {
 			if (memberFrame!=null && memberFrame.getFrame().isVisible()) {
 				memberFrame.getFrame().setVisible(false);
 			}
@@ -507,7 +468,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	}
 
 	protected void updateMemberIfSelected() {
-		List<OrchestraMember> members = gridController.getSelectedMembers(grid);
+		List<OrchestraMember> members = mainFrame.getSelectedMembers();
 		if (members.size()>0) {
 			OrchestraMember updateMember = orchestraUpdate.getMemberById(members.get(0).getId());
 			memberFrame.setMember(updateMember);
@@ -519,20 +480,7 @@ public class OrchestraController extends Locker implements ActionListener {
 		lockMe(this);
 		this.connected = connected;
 		if (mainFrame!=null) {
-			grid.setEnabled(connected);
-			for (JMenuItem item: controlMenuItems) {
-				item.setEnabled(connected);
-			}
-			if (connected) {
-				OrchestraMember conductor = client.getMember();
-				stateLabel.setText("Connected to: " + conductor.getId() + " (" + conductor.getIpAddressOrHostName() + ":" + conductor.getControlPort() + ")");
-			} else {
-				stateLabel.setText("Failed to connect to a conductor");
-				for (OrchestraMember member: orchestra.getMembers()) {
-					member.setState(MemberState.getState(MemberState.UNKNOWN));
-				}
-				refreshGrid();
-			}
+			mainFrame.setConnected(connected, client, getOrchestraMembers());
 		}
 		unlockMe(this);
 	}
@@ -550,120 +498,27 @@ public class OrchestraController extends Locker implements ActionListener {
 	}
 
 	protected JFrame getMainFrame() {
-		return mainFrame;
+		return mainFrame.getFrame();
 	}
 	
-	protected JFrame getNewMainFrame() {
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.addWindowListener(getNewAdapter());
-		frame.setTitle("Zeesoft Orchestra Controller");
-		frame.setSize(800,400);
-		frame.setIconImage(new ImageIconLabel("z",32,Color.WHITE).getBufferedImage());
-		frame.setJMenuBar(getMainMenuBar());
-
-		grid = new JTable();
-		grid.setModel(gridController);
-		grid.setComponentPopupMenu(getMemberPopupMenu());
-		grid.addMouseListener(getNewGridMouseListener());
-		grid.getColumnModel().getColumn(0).setPreferredWidth(100);
-		grid.getColumnModel().getColumn(1).setPreferredWidth(40);
-		grid.getColumnModel().getColumn(2).setPreferredWidth(200);
-		grid.getColumnModel().getColumn(3).setPreferredWidth(30);
-		grid.getColumnModel().getColumn(5).setPreferredWidth(30);
-		
-		grid.setEnabled(connected);
-		for (JMenuItem item: controlMenuItems) {
-			item.setEnabled(connected);
-		}
-		
-		stateLabel = new JLabel("Connecting ...");
-		JPanel statePanel = new JPanel();
-		statePanel.setLayout(new BoxLayout(statePanel,BoxLayout.LINE_AXIS));
-		statePanel.add(stateLabel);
-		
-		JScrollPane gridScroller = new JScrollPane(grid);
-		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
-		panel.add(statePanel);
-		panel.add(gridScroller);
-
-		frame.add(panel);
-		
-		return frame;
+	protected MainFrame getNewMainFrame() {
+		return new MainFrame(this);
 	}
 
 	protected MemberFrame getNewMemberFrame(Orchestra orchestra) {
 		return new MemberFrame(this,orchestra);
 	}
 	
-	protected JMenuBar getMainMenuBar() {
+	protected JMenuBar getMainMenuBar(MainFrame mainFrame) {
 		JMenuBar bar = new JMenuBar();
-		bar.add(getOrchestraMenu());
-		bar.add(getMemberMenu());
+		bar.add(mainFrame.getOrchestraMenu(this));
+		bar.add(mainFrame.getMemberMenu(this));
 		return bar;
 	}
-	
-	protected JMenu getMemberMenu() {
-		JMenu menu = new JMenu("Members");
-		addMemberOptionsToMenu(menu);
-		return menu;
-	}
-
-	protected JMenu getOrchestraMenu() {
-		orchestraMenu = new JMenu("Orchestra");
-		addOptionToMenu(orchestraMenu,"Import",ControllerImportExportWorker.IMPORT);
-		addOptionToMenu(orchestraMenu,"Export",ControllerImportExportWorker.EXPORT);
-		changesMenu = new JMenu("Changes");
-		publishMenuItem = addOptionToMenu(changesMenu,"Publish",ProtocolControl.UPDATE_ORCHESTRA);
-		revertMenuItem = addOptionToMenu(changesMenu,"Revert",REVERT_CHANGES);
-		changesMenu.setEnabled(false);
-		publishMenuItem.setEnabled(false);
-		revertMenuItem.setEnabled(false);
-		orchestraMenu.add(changesMenu);
-		addOptionToMenu(orchestraMenu,"Generate",Orchestrator.GENERATE);
-		return orchestraMenu;
-	}
-
-	protected JPopupMenu getMemberPopupMenu() {
-		JPopupMenu menu = new JPopupMenu("Members");
-		addMemberOptionsToMenu(menu);
-		return menu;
-	}
-	
-	protected JMenuItem addOptionToMenu(Component menu,String label,String action) {
-		JMenuItem item = new JMenuItem(label);
-		item.setActionCommand(action);
-		item.addActionListener(this);
-		if (menu instanceof JMenu) {
-			((JMenu) menu).add(item);
-		} else if (menu instanceof JPopupMenu) {
-			((JPopupMenu) menu).add(item);
-		}
-		return item;
-	}
-
-	protected void addMemberOptionsToMenu(Component menu) {
-		controlMenuItems.add(addOptionToMenu(menu,"Refresh",ProtocolControl.GET_STATE));
-		addOptionToMenu(menu,"Update",UPDATE_MEMBER);
-		addOptionToMenu(menu,"Add",ADD_MEMBER);
-		addOptionToMenu(menu,"Remove",REMOVE_MEMBERS);
-		JMenu subMenu = new JMenu("Control");
-		controlMenuItems.add(addOptionToMenu(subMenu,"Drain offline",ProtocolControl.DRAIN_OFFLINE));
-		controlMenuItems.add(addOptionToMenu(subMenu,"Take offline",ProtocolControl.TAKE_OFFLINE));
-		controlMenuItems.add(addOptionToMenu(subMenu,"Bring online",ProtocolControl.BRING_ONLINE));
-		controlMenuItems.add(addOptionToMenu(subMenu,"Restart",ProtocolControl.RESTART_PROGRAM));
-		if (menu instanceof JMenu) {
-			((JMenu) menu).add(subMenu);
-		} else if (menu instanceof JPopupMenu) {
-			((JPopupMenu) menu).add(subMenu);
-		}
-	}
-	
+		
 	protected void showErrorMessage(String message) {
 		if (mainFrame!=null) {
-			JOptionPane.showMessageDialog(mainFrame,message,"Error",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(mainFrame.getFrame(),message,"Error",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -674,14 +529,14 @@ public class OrchestraController extends Locker implements ActionListener {
 	protected boolean showConfirmMessage(String message,String title) {
 		boolean r = false;
 		if (mainFrame!=null) {
-			r = (JOptionPane.showConfirmDialog(mainFrame,message,title,JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+			r = (JOptionPane.showConfirmDialog(mainFrame.getFrame(),message,title,JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
 		}
 		return r;
 	}
 	
 	protected void showMemberFrame() {
-		if (!memberFrame.getFrame().isVisible()) {
-			positionFrameOverFrame(memberFrame.getFrame(),mainFrame);
+		if (!memberFrame.getFrame().isVisible() && mainFrame.getFrame().isVisible()) {
+			positionFrameOverFrame(memberFrame.getFrame(),mainFrame.getFrame());
 		}
 		memberFrame.getFrame().setVisible(true);
 	}
