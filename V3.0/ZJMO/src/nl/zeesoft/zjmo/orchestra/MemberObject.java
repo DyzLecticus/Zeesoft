@@ -36,9 +36,7 @@ public abstract class MemberObject extends OrchestraMember {
 	private ConductorStateConnector stateConnector				= null;
 
 	private boolean					stopOnRestart				= false;
-	
-	// TODO: Java documentation
-		
+			
 	public MemberObject(Messenger msgr,Orchestra orchestra,String positionName, int positionBackupNumber) {
 		this.orchestra = orchestra;
 		setPosition(orchestra.getPosition(positionName));
@@ -55,22 +53,48 @@ public abstract class MemberObject extends OrchestraMember {
 		stateConnector = new ConductorStateConnector(messenger,union,true,getId());
 	}
 	
+	/**
+	 * Sets the debug indicator.
+	 * Used to set the messenger debug logging to true when the member is started.
+	 * 
+	 * @param debug Indicates debugging
+	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 
+	/**
+	 * Returns the messenger.
+	 * 
+	 * @return The messenger
+	 */
 	public Messenger getMessenger() {
 		return messenger;
 	}
 
+	/**
+	 * Returns the worker union.
+	 * 
+	 * @return The worker union
+	 */
 	public WorkerUnion getUnion() {
 		return union;
 	}
 	
+	/**
+	 * Returns the orchestra.
+	 * 
+	 * @return The orchestra
+	 */
 	public Orchestra getOrchestra() {
 		return orchestra;
 	}
 	
+	/**
+	 * Returns true if the member is working.
+	 * 
+	 * @return True if the member is working
+	 */
 	public boolean isWorking() {
 		boolean r = false;
 		lockMe(this);
@@ -81,6 +105,11 @@ public abstract class MemberObject extends OrchestraMember {
 		return r;
 	}
 
+	/**
+	 * Starts the member.
+	 * 
+	 * @return True if the member has started.
+	 */
 	public boolean start() {
 		boolean started = true;
 		if (isWorking()) {
@@ -148,10 +177,20 @@ public abstract class MemberObject extends OrchestraMember {
 		return started;
 	}
 	
+	/**
+	 * Stops the member.
+	 * Uses the worker union to enforce all workers are stopped.
+	 */
 	public final void stop() {
 		stop(null);
 	}
 	
+	/**
+	 * Stops the member.
+	 * Uses the worker union to enforce all workers are stopped.
+	 * 
+	 * @param ignoreWorker The worker to ignore
+	 */
 	public void stop(Worker ignoreWorker) {
 		lockMe(this);
 		stateConnector.close();
@@ -203,11 +242,26 @@ public abstract class MemberObject extends OrchestraMember {
 			getMessenger().whileWorking();
 		}
 	}
-
+	
+	/**
+	 * Transfers the member state to a certain state if it is in a certain state.
+	 * 
+	 * @param goToState The state to transfer to
+	 * @param ifState1 The conditional state
+	 * @return True if the state transition is successful
+	 */
 	public boolean goToStateIfState(String goToState,String ifState1) {
 		return goToStateIfState(goToState,ifState1,null);
 	}
 	
+	/**
+	 * Transfers the member state to a certain state if it is in one or another state.
+	 * 
+	 * @param goToState The state to transfer to
+	 * @param ifState1 The first conditional state
+	 * @param ifState2 The second conditional state
+	 * @return True if the state transition is successful
+	 */
 	public boolean goToStateIfState(String goToState,String ifState1,String ifState2) {
 		boolean r = false;
 		lockMe(this);
@@ -221,6 +275,12 @@ public abstract class MemberObject extends OrchestraMember {
 		return r;
 	}
 
+	/**
+	 * Takes the member offline.
+	 * Closes the work port.
+	 * 
+	 * @return True if the member is offline 
+	 */
 	public boolean takeOffLine() {
 		boolean r = goToStateIfState(MemberState.GOING_OFFLINE,MemberState.ONLINE,MemberState.DRAINING_OFFLINE);
 		if (r) {
@@ -246,6 +306,12 @@ public abstract class MemberObject extends OrchestraMember {
 		return r;
 	}
 
+	/**
+	 * Drains the member offline.
+	 * Stops the work port from accepting new connections.
+	 * 
+	 * @return True if the member is draining offline 
+	 */
 	public boolean drainOffLine() {
 		boolean r = goToStateIfState(MemberState.DRAINING_OFFLINE,MemberState.ONLINE);
 		if (r) {
@@ -256,6 +322,11 @@ public abstract class MemberObject extends OrchestraMember {
 		return r;
 	}
 
+	/**
+	 * Brings the member online.
+	 * 
+	 * @return True if the member is online
+	 */
 	public boolean bringOnLine() {
 		boolean r = goToStateIfState(MemberState.COMING_ONLINE,MemberState.OFFLINE);
 		if (r) {
@@ -287,6 +358,11 @@ public abstract class MemberObject extends OrchestraMember {
 		return r;
 	}
 	
+	/**
+	 * Returns the member state JSON.
+	 * 
+	 * @return The member state JSON.
+	 */
 	public ZStringBuilder getStateJson() {
 		JsFile f = new JsFile();
 		int workLoad = 0;
@@ -310,6 +386,13 @@ public abstract class MemberObject extends OrchestraMember {
 		return f.toStringBuilder();
 	}
 
+	/**
+	 * Updates the orchestra.
+	 * Overwrites the orchestra.json file used to configure the instance.
+	 * 
+	 * @param newOrchestra The new orchestra configuration
+	 * @return An error message if applicable
+	 */
 	public String updateOrchestra(Orchestra newOrchestra) {
 		JsFile oriJson = new JsFile();
 		String err = oriJson.fromFile(Orchestrator.ORCHESTRA_JSON);
@@ -332,6 +415,11 @@ public abstract class MemberObject extends OrchestraMember {
 		return err;
 	}
 	
+	/**
+	 * Used to indicate a restart is required due to configuration changes.
+	 * 
+	 * @param restartRequired Indicates a restart is required
+	 */
 	@Override
 	public void setRestartRequired(boolean restartRequired) {
 		lockMe(this);
@@ -339,6 +427,11 @@ public abstract class MemberObject extends OrchestraMember {
 		unlockMe(this);
 	}
 	
+	/**
+	 * Returns true if a restart is required due to configuration changes.
+	 * 
+	 * @return True if a restart is required due to configuration changes
+	 */
 	@Override
 	public boolean isRestartRequired() {
 		boolean r = false;
@@ -348,14 +441,32 @@ public abstract class MemberObject extends OrchestraMember {
 		return r;
 	}
 
+	/**
+	 * Creates and returns a new messenger.
+	 * 
+	 * @return A new messenger
+	 */
 	protected Messenger getNewMessenger() {
 		return new Messenger(null);
 	}
 
+	/**
+	 * Returns true if a restart is required due to changes in the orchestra configuration.
+	 * Designed to be overridden by extending classes.
+	 * 
+	 * @param newOrchestra The new orchestra configuration.
+	 * @return True if a restart is required due to changes in the orchestra configuration
+	 */
 	protected boolean checkRestartRequired(Orchestra newOrchestra) {
 		return false;
 	}
 	
+	/**
+	 * Stops the program.
+	 * Calls System.exit
+	 * 
+	 * @param ignoreWorker The worker to ignore
+	 */
 	protected void stopProgram(Worker ignoreWorker) {
 		stop(ignoreWorker);
 		int status = 0;
@@ -365,6 +476,12 @@ public abstract class MemberObject extends OrchestraMember {
 		System.exit(status);
 	}
 
+	/**
+	 * Restarts the program.
+	 * Reloads the configuration and reinitializes the member while the member is not working.
+	 * 
+	 * @param ignoreWorker The worker to ignore
+	 */
 	protected void restartProgram(Worker ignoreWorker) {
 		lockMe(this);
 		boolean stopProgram = stopOnRestart;
@@ -384,6 +501,11 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 	}
 	
+	/**
+	 * Stops a certain member worker.
+	 * 
+	 * @param worker The member worker to stop.
+	 */
 	protected void stopWorker(MemberWorker worker) {
 		lockMe(this);
 		List<MemberWorker> wrkrs = new ArrayList<MemberWorker>(workers);
@@ -395,14 +517,28 @@ public abstract class MemberObject extends OrchestraMember {
 		unlockMe(this);
 	}
 
+	/**
+	 * Creates and returns a new control protocol instance.
+	 * 
+	 * @return A new control protocol instance
+	 */
 	protected ProtocolControl getNewControlProtocol() {
 		return new ProtocolControl();
 	}
 
+	/**
+	 * Creates and returns a new work protocol instance.
+	 * 
+	 * @return A new work protocol instance
+	 */
 	protected ProtocolWork getNewWorkProtocol() {
 		return new ProtocolWork();
 	}
 
+	/**
+	 * Accepts control sessions on the control socket.
+	 * Creates member workers for each session.
+	 */
 	protected void acceptControl() {
 		Socket socket = null;
 		try {
@@ -421,6 +557,10 @@ public abstract class MemberObject extends OrchestraMember {
 		}
 	}
 
+	/**
+	 * Accepts work sessions on the work socket.
+	 * Creates member workers for each session.
+	 */
 	protected void acceptWork() {
 		Socket socket = null;
 		try {
