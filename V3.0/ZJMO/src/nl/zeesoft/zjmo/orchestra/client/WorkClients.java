@@ -9,6 +9,9 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
+/**
+ * Maintains a list of work clients for a certain member within the work client pool.
+ */
 public class WorkClients extends Locker {
 	private WorkerUnion			union		= null;
 	private OrchestraMember		member		= null;

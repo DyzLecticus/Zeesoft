@@ -6,6 +6,9 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
+/**
+ * Active clients use an extra MemberClient as a circuit breaker to detect and handle connection failures.
+ */
 public class ActiveClient extends Locker {
 	private	WorkerUnion					union			= null;
 	private OrchestraMember				member			= null;

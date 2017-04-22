@@ -11,6 +11,9 @@ import nl.zeesoft.zjmo.orchestra.protocol.ProtocolWork;
 import nl.zeesoft.zjmo.orchestra.protocol.RequestObject;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
 
+/**
+ * MemberClient extension for WorkRequest and PublishRequest handling
+ */
 public class WorkClient extends MemberClient {
 	private String	memberId	= "";
 	private Object	inUseBy		= null;

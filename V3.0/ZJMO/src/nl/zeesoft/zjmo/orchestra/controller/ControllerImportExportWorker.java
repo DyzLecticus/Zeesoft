@@ -9,14 +9,14 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.Orchestrator;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraGenerator;
 
 public class ControllerImportExportWorker extends Worker {
 	public static final String		INITIALIZE			= "INITIALIZE";
-	public static final String		IMPORT_CHANGES		= "IMPORT_CHANGES";
-	public static final String		EXPORT_CHANGES		= "EXPORT_CHANGES";
-	public static final String		GENERATE			= "GENERATE";
+	public static final String		IMPORT		= "IMPORT_CHANGES";
+	public static final String		EXPORT		= "EXPORT_CHANGES";
 
 	private OrchestraController 	controller 			= null;
 	private JFileChooser			fileChooser 		= null;
@@ -55,7 +55,7 @@ public class ControllerImportExportWorker extends Worker {
 		} else {
 			File file = chooseFile(action);
 			if (file!=null) {
-				if (action.equals(IMPORT_CHANGES)) {
+				if (action.equals(IMPORT)) {
 					JsFile json = new JsFile();
 					ZStringBuilder oriJson = orchestraUpdate.toJson(false).toStringBuilderReadFormat();
 					ZStringBuilder newJson = null;
@@ -70,7 +70,7 @@ public class ControllerImportExportWorker extends Worker {
 					if (err.length()==0) {
 						controller.importedOrchestraUpdate(orchestraUpdate);
 					}
-				} else if (action.equals(EXPORT_CHANGES)) {
+				} else if (action.equals(EXPORT)) {
 					boolean confirmed = true;
 					if (file.exists()) {
 						confirmed = controller.showConfirmMessage("Are you sure you want to overwrite the selected file?");
@@ -78,7 +78,7 @@ public class ControllerImportExportWorker extends Worker {
 					if (confirmed) {
 						orchestraUpdate.toJson(false).toFile(file.getAbsolutePath(),true);
 					}
-				} else if (action.equals(GENERATE)) {
+				} else if (action.equals(Orchestrator.GENERATE)) {
 					boolean confirmed = true;
 					File check = new File(file.getAbsolutePath() + "/orchestra.json");
 					if (check.exists()) {
@@ -102,13 +102,13 @@ public class ControllerImportExportWorker extends Worker {
 	protected File chooseFile(String action) {
 		File file = null;
 		String title = "";
-		if (action.equals(IMPORT_CHANGES)) {
+		if (action.equals(IMPORT)) {
 			title = "Import";
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		} else if (action.equals(EXPORT_CHANGES)) {
+		} else if (action.equals(EXPORT)) {
 			title = "Export";
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		} else if (action.equals(GENERATE)) {
+		} else if (action.equals(Orchestrator.GENERATE)) {
 			title = "Generate";
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		}

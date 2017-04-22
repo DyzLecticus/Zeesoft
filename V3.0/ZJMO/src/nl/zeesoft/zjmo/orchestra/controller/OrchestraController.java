@@ -29,6 +29,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zjmo.Orchestrator;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 import nl.zeesoft.zjmo.orchestra.MemberState;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
@@ -68,6 +69,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	private GridController					gridController		= new GridController();
 	private MemberFrame						memberFrame			= null;
 	private List<JMenuItem>					controlMenuItems	= new ArrayList<JMenuItem>();
+	private JMenu							changesMenu			= null;
 	private JMenuItem 						publishMenuItem		= null;
 	private JMenuItem 						revertMenuItem		= null;
 	
@@ -168,12 +170,12 @@ public class OrchestraController extends Locker implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if (
-			evt.getActionCommand().equals(ControllerImportExportWorker.IMPORT_CHANGES) || 
-			evt.getActionCommand().equals(ControllerImportExportWorker.EXPORT_CHANGES) || 
-			evt.getActionCommand().equals(ControllerImportExportWorker.GENERATE)
+			evt.getActionCommand().equals(ControllerImportExportWorker.IMPORT) || 
+			evt.getActionCommand().equals(ControllerImportExportWorker.EXPORT) || 
+			evt.getActionCommand().equals(Orchestrator.GENERATE)
 			) {
 			boolean confirmed = true;
-			if (evt.getActionCommand().equals(ControllerImportExportWorker.IMPORT_CHANGES) && isOrchestraChanged()) {
+			if (evt.getActionCommand().equals(ControllerImportExportWorker.IMPORT) && isOrchestraChanged()) {
 				confirmed = showConfirmMessage("Unpublished orchestra changes will be lost. Are you sure you want to continue?");
 			}
 			if (confirmed) {
@@ -376,14 +378,17 @@ public class OrchestraController extends Locker implements ActionListener {
 	protected void setOrchestraChanged(boolean orchestraChanged) {
 		lockMe(this);
 		this.orchestraChanged = orchestraChanged;
+		changesMenu.setEnabled(orchestraChanged);
 		publishMenuItem.setEnabled(orchestraChanged);
 		revertMenuItem.setEnabled(orchestraChanged);
 		if (orchestraChanged) {
 			orchestraMenu.setText("Orchestra*");
-			publishMenuItem.setText("Publish changes*");
+			changesMenu.setText("Changes*");
+			publishMenuItem.setText("Publish*");
 		} else {
 			orchestraMenu.setText("Orchestra");
-			publishMenuItem.setText("Publish changes");
+			changesMenu.setText("Changes");
+			publishMenuItem.setText("Publish");
 		}
 		refreshGrid();
 		unlockMe(this);
@@ -608,13 +613,16 @@ public class OrchestraController extends Locker implements ActionListener {
 
 	protected JMenu getOrchestraMenu() {
 		orchestraMenu = new JMenu("Orchestra");
-		addOptionToMenu(orchestraMenu,"Import",ControllerImportExportWorker.IMPORT_CHANGES);
-		addOptionToMenu(orchestraMenu,"Export",ControllerImportExportWorker.EXPORT_CHANGES);
-		publishMenuItem = addOptionToMenu(orchestraMenu,"Publish changes",ProtocolControl.UPDATE_ORCHESTRA);
-		revertMenuItem = addOptionToMenu(orchestraMenu,"Revert changes",REVERT_CHANGES);
+		addOptionToMenu(orchestraMenu,"Import",ControllerImportExportWorker.IMPORT);
+		addOptionToMenu(orchestraMenu,"Export",ControllerImportExportWorker.EXPORT);
+		changesMenu = new JMenu("Changes");
+		publishMenuItem = addOptionToMenu(changesMenu,"Publish",ProtocolControl.UPDATE_ORCHESTRA);
+		revertMenuItem = addOptionToMenu(changesMenu,"Revert",REVERT_CHANGES);
+		changesMenu.setEnabled(false);
 		publishMenuItem.setEnabled(false);
 		revertMenuItem.setEnabled(false);
-		addOptionToMenu(orchestraMenu,"Generate",ControllerImportExportWorker.GENERATE);
+		orchestraMenu.add(changesMenu);
+		addOptionToMenu(orchestraMenu,"Generate",Orchestrator.GENERATE);
 		return orchestraMenu;
 	}
 

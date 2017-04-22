@@ -5,6 +5,9 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.MemberClient;
 
+/**
+ * Uses the state MemberClient as a circuit breaker for the ActiveClient.
+ */
 public class ActiveClientStateWorker extends Worker {
 	private ActiveClient	activeClient	= null;
 	private MemberClient	stateClient		= null;

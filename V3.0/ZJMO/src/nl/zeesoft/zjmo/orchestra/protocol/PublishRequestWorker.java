@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.client.WorkClient;
 
 /**
- * Accepts work sessions on the MemberObject.
+ * Handles publish requests for the conductor work protocol.
  */
 public class PublishRequestWorker extends Worker {
 	private	WorkRequest			request		= null;

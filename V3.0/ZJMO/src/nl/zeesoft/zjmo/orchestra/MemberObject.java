@@ -37,6 +37,8 @@ public abstract class MemberObject extends OrchestraMember {
 
 	private boolean					stopOnRestart				= false;
 	
+	// TODO: Java documentation
+		
 	public MemberObject(Messenger msgr,Orchestra orchestra,String positionName, int positionBackupNumber) {
 		this.orchestra = orchestra;
 		setPosition(orchestra.getPosition(positionName));

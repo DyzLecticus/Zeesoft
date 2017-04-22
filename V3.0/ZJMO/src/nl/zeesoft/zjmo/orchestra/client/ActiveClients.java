@@ -8,6 +8,9 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
+/**
+ * Maintains a list of active clients.
+ */
 public class ActiveClients extends Locker {
 	private	WorkerUnion					union			= null;
 	private boolean						control			= true;

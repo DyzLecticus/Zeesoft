@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.client.ActiveClient;
 
 /**
- * Accepts work sessions on the MemberObject.
+ * Handles control channel requests for the conductor control protocol.
  */
 public class ControlChannelWorker extends Worker {
 	private ZStringBuilder		json		= null;

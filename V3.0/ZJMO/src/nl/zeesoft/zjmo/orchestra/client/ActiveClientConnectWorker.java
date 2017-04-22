@@ -4,6 +4,9 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * Used to continuously attempt to connect active clients.
+ */
 public class ActiveClientConnectWorker extends Worker {
 	private ActiveClient	activeClient	= null;
 	

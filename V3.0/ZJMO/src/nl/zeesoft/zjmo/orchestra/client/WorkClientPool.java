@@ -9,6 +9,9 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 
+/**
+ * Used to maintain a pool of work clients for conductors.
+ */
 public class WorkClientPool extends Locker {
 	private Orchestra			orchestra		= null;
 	private List<WorkClients>	workClientsList	= new ArrayList<WorkClients>();

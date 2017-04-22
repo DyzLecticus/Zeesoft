@@ -4,6 +4,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
+/**
+ * Abstract request object.
+ */
 public abstract class RequestObject {
 	private String	error			= "";
 	private JsFile	request			= null;

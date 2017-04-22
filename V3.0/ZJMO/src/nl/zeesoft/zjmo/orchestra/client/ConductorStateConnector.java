@@ -5,6 +5,9 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.protocol.ProtocolControlConductor;
 
+/**
+ * Used by players to connect to conductors. 
+ */
 public class ConductorStateConnector extends ConductorConnector {
 	private String	memberId		= "";
 	

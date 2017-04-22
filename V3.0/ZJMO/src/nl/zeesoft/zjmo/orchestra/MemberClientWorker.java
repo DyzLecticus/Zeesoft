@@ -5,6 +5,9 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * Used to time out socket reading.
+ */
 public class MemberClientWorker extends Worker {
 	private ZStringBuilder		input		= null;
 	private SocketHandler		socket		= null;

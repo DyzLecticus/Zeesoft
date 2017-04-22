@@ -13,6 +13,9 @@ import nl.zeesoft.zjmo.orchestra.protocol.PublishRequest;
 import nl.zeesoft.zjmo.orchestra.protocol.RequestObject;
 import nl.zeesoft.zjmo.orchestra.protocol.WorkRequest;
 
+/**
+ * Used by conductors to connect to all orchestra members except themselves.
+ */
 public class OrchestraConnector extends ActiveClients {
 	public OrchestraConnector(Messenger msgr, WorkerUnion uni, boolean control) {
 		super(msgr, uni, control);

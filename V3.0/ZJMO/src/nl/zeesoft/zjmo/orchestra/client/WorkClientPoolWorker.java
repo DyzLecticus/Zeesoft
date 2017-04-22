@@ -4,6 +4,9 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * Closes work clients in the pool that have not been used for a certain amount of time.
+ */
 public class WorkClientPoolWorker extends Worker {
 	private WorkClientPool		pool		= null;
 

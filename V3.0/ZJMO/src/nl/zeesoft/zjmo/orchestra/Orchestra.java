@@ -18,6 +18,8 @@ import nl.zeesoft.zjmo.orchestra.members.Player;
 
 /**
  * Extend this class and implement the initialize method to create a custom orchestra.
+ * Orchestra objects are instantiated dynamically by the orchestrator.
+ * Do not implement constructors that require arguments.
  */
 public abstract class Orchestra {
 	public static final String		LOCALHOST			= "localhost";
@@ -29,41 +31,86 @@ public abstract class Orchestra {
 	private List<Channel> 			channels			= new ArrayList<Channel>();
 	private List<OrchestraMember>	members				= new ArrayList<OrchestraMember>();
 	
-	// TODO: Java documentation
-	
 	public Orchestra() {
 		addPosition(CONDUCTOR);
 		addMember(CONDUCTOR,0,LOCALHOST,5433,5432,500,false);
 	}
 	
+	/**
+	 * Called by the orchestrator when generating or updating an orchestra.
+	 * Override this method and use the methods provided by this class to create a custom orchestra.
+	 */
 	public abstract void initialize();
 
+	/**
+	 * Returns a new orchestra generator for this orchestra.
+	 * 
+	 * @return A new orchestra generator for this orchestra
+	 */
 	public OrchestraGenerator getNewGenerator() {
 		return new OrchestraGenerator();
 	}
 
+	/**
+	 * Returns a new conductor for this orchestra.
+	 * 
+	 * @param msgr The messenger
+	 * @param positionBackupNumber The conductor position backup number
+	 * @return A new conductor for this orchestra
+	 */
 	public Conductor getNewConductor(Messenger msgr,int positionBackupNumber) {
 		return new Conductor(msgr,this,positionBackupNumber);
 	}
 
+	/**
+	 * Returns a new player for this orchestra.
+	 * 
+	 * @param msgr The messenger
+	 * @param positionName The player position name
+	 * @param positionBackupNumber The player position backup number
+	 * @return A new player for this orchestra
+	 */
 	public Player getNewPlayer(Messenger msgr,String positionName,int positionBackupNumber) {
 		return new Player(msgr,this,positionName,positionBackupNumber);
 	}
 
+	/**
+	 * Returns a new orchestra controller for this orchestra.
+	 * 
+	 * @param exitOnClose Indicates the controller should call System.exit upon closing
+	 * @return A new orchestra controller for this orchestra
+	 */
 	public OrchestraController getNewController(boolean exitOnClose) {
 		return new OrchestraController(this,exitOnClose);
 	}
 
+	/**
+	 * Returns the duration after which unused work clients in the conductor work client pool are closed.
+	 * 
+	 * @return The duration after which unused work clients in the conductor work client pool are closed
+	 */
 	public int closeUnusedWorkClientsMilliseconds() {
 		return 60000;
 	}
 
+	/**
+	 * Returns a copy of this orchestra using the orchestrator for class instantiation and the to and from JSON methods.
+	 *  
+	 * @param includeState Indicates state information will be included in the copy
+	 * @return A copy of this orchestra
+	 */
 	public Orchestra getCopy(boolean includeState) {
 		Orchestra orch = Orchestrator.getOrchestraForClassName(this.getClass().getName());
 		orch.fromJson(toJson(includeState));
 		return orch;
 	}
 
+	/**
+	 * Returns true if all orchestra members are hosted locally.
+	 * Useful for testing and demonstration purposes.
+	 * 
+	 * @return True if all orchestra members are hosted locally
+	 */
 	public boolean isLocalHost() {
 		boolean r = true;
 		for (OrchestraMember member: members) {
@@ -75,10 +122,21 @@ public abstract class Orchestra {
 		return r;
 	}
 	
+	/**
+	 * Returns a read only list of orchestra positions.
+	 * 
+	 * @return A read only list of orchestra positions
+	 */
 	public List<Position> getPositions() {
 		return new ArrayList<Position>(positions);
 	}
 
+	/**
+	 * Returns the position with the specified name or null.
+	 * 
+	 * @param name The name of the position
+	 * @return The position with the specified name or null
+	 */
 	public Position getPosition(String name) {
 		Position r = null;
 		for (Position pos: positions) {
@@ -90,6 +148,13 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Adds a position to the orchestra.
+	 * Ensures the name of the position is unique within the orchestra.
+	 * 
+	 * @param name The name of the position to add
+	 * @return The new position
+	 */
 	public Position addPosition(String name) {
 		Position r = getPosition(name);
 		if (r==null) {
@@ -99,10 +164,21 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Returns a read only list of orchestra channels.
+	 * 
+	 * @return A read only list of orchestra channels
+	 */
 	public List<Channel> getChannels() {
 		return new ArrayList<Channel>(channels);
 	}
 
+	/**
+	 * Returns the channel with the specified name or null.
+	 * 
+	 * @param name The name of the channel
+	 * @return The channel with the specified name or null
+	 */
 	public Channel getChannel(String name) {
 		Channel r = null;
 		for (Channel chan: channels) {
@@ -114,6 +190,14 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Adds a channel to the orchestra.
+	 * Ensures the name of the channel is unique within the orchestra.
+	 * 
+	 * @param name The name of the channel to add
+	 * @param failOnSubscriberError Indicates publish requests should fail when a subscriber returns an error
+	 * @return The new channel
+	 */
 	public Channel addChannel(String name, boolean failOnSubscriberError) {
 		Channel r = getChannel(name);
 		if (r==null) {
@@ -123,10 +207,23 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Returns a read only list of orchestra conductors.
+	 * 
+	 * @return A read only list of orchestra conductors
+	 */
 	public List<OrchestraMember> getConductors() {
 		return getMembersForPosition(CONDUCTOR);
 	}
 
+	/**
+	 * Returns a member for a certain host and port or null.
+	 * Uses both control and work ports for the search.
+	 * 
+	 * @param ipAddressOrHostName The IP address or host name of the member
+	 * @param port The control or work port of the member
+	 * @return The member or null
+	 */
 	public OrchestraMember getMember(String ipAddressOrHostName,int port) {
 		OrchestraMember r = null;
 		for (OrchestraMember member: members) {
@@ -141,6 +238,12 @@ public abstract class Orchestra {
 	
 	}
 
+	/**
+	 * Returns the member with the specified member id or null.
+	 * 
+	 * @param id The id of the member
+	 * @return The member or null
+	 */
 	public OrchestraMember getMemberById(String id) {
 		OrchestraMember r = null;
 		for (OrchestraMember member: members) {
@@ -152,6 +255,13 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Returns a read only list of members for a certain position.
+	 * Members are ordered by position backup number, ascending.
+	 * 
+	 * @param positionName The name of the position
+	 * @return A read only list of members for a certain position
+	 */
 	public List<OrchestraMember> getMembersForPosition(String positionName) {
 		List<OrchestraMember> r = new ArrayList<OrchestraMember>();
 		SortedMap<Integer,OrchestraMember> sorter = new TreeMap<Integer,OrchestraMember>();
@@ -166,6 +276,13 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Returns a member for a certain position and backup number or null.
+	 * 
+	 * @param positionName The name of the position
+	 * @param positionBackupNumber The position backup number
+	 * @return The member or null
+	 */
 	public OrchestraMember getMemberForPosition(String positionName,int positionBackupNumber) {
 		OrchestraMember r = null;
 		for (OrchestraMember member: members) {
@@ -177,6 +294,12 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Returns a read only list of members (subscribers) for a certain channel.
+	 * 
+	 * @param channelName The name of the channel
+	 * @return A read only list of members (subscribers) for a certain channel
+	 */
 	public List<OrchestraMember> getMembersForChannel(String channelName) {
 		List<OrchestraMember> r = new ArrayList<OrchestraMember>();
 		Channel chan = getChannel(channelName);
@@ -191,6 +314,11 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Removes the member with the specified id from the orchestra
+	 * 
+	 * @param id The member id
+	 */
 	public void removeMember(String id) {
 		OrchestraMember member = getMemberById(id);
 		if (member!=null && !(member.getPosition().getName().equals(CONDUCTOR) && member.getPositionBackupNumber()==0)) {
@@ -201,10 +329,34 @@ public abstract class Orchestra {
 		}
 	}
 
+	/**
+	 * Adds a member to the orchestra with the specified parameters.
+	 * Ensures member id's are unique.
+	 * 
+	 * @param positionName The member position name
+	 * @param positionBackupNumber The member position backup number
+	 * @param ipAddressOrHostName The IP address or host name of the member
+	 * @param controlPort The control port
+	 * @param workPort The work port
+	 * @return A new orchestra member
+	 */
 	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort) {
 		return addMember(positionName,positionBackupNumber,ipAddressOrHostName,controlPort,workPort,500,false);
 	}
 
+	/**
+	 * Adds a member to the orchestra with the specified parameters.
+	 * Ensures member id's are unique.
+	 * 
+	 * @param positionName The member position name
+	 * @param positionBackupNumber The member position backup number
+	 * @param ipAddressOrHostName The IP address or host name of the member
+	 * @param controlPort The control port
+	 * @param workPort The work port
+	 * @param workRequestTimeout The work request time out in milliseconds
+	 * @param workRequestTimeoutDrain Indicates the member should drain work upon time out so that conductors will divert to backups
+	 * @return A new orchestra member
+	 */
 	public OrchestraMember addMember(String positionName,int positionBackupNumber,String ipAddressOrHostName,int controlPort,int workPort,int workRequestTimeout,boolean workRequestTimeoutDrain) {
 		OrchestraMember r = null;
 		if (getPosition(positionName)!=null) {
@@ -231,10 +383,21 @@ public abstract class Orchestra {
 		return r;
 	}
 
+	/**
+	 * Returns a read only list of orchestra members.
+	 * 
+	 * @return A read only list of orchestra members
+	 */
 	public List<OrchestraMember> getMembers() {
 		return new ArrayList<OrchestraMember>(members);
 	}
 	
+	/**
+	 * Converts the orchestra to a JSON file.
+	 * 
+	 * @param includeState Indicates member state information should be included in the JSON
+	 * @return The orchestra as a JSON file
+	 */
 	public JsFile toJson(boolean includeState) {
 		JsFile f = new JsFile();
 		f.rootElement = new JsElem();
@@ -270,6 +433,11 @@ public abstract class Orchestra {
 		return f;
 	}
 
+	/**
+	 * Initializes the orchestra using a JSON file.
+	 * 
+	 * @param file The orchestra as a JSON file
+	 */
 	public void fromJson(JsFile file) {
 		positions.clear();
 		channels.clear();
