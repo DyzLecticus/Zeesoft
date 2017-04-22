@@ -109,7 +109,6 @@ public class OrchestraController extends Locker implements ActionListener {
 				mainFrame = getNewMainFrame();
 				mainFrame.getFrame().setVisible(true);
 			}
-
 			connector.initialize(orchestraUpdate,null);
 			connector.open();
 			getMessenger().start();
@@ -132,6 +131,9 @@ public class OrchestraController extends Locker implements ActionListener {
 		lockMe(this);
 		if (memberFrame!=null && memberFrame.getFrame().isVisible()) {
 			memberFrame.getFrame().setVisible(false);
+		}
+		if (mainFrame!=null) {
+			mainFrame.getFrame().setVisible(false);
 		}
 		if (actionWorker!=null) {
 			actionWorker.stop();
@@ -322,6 +324,14 @@ public class OrchestraController extends Locker implements ActionListener {
 		return new ControllerImportExportWorker(getMessenger(),union,this);
 	}
 	
+	protected MainFrame getNewMainFrame() {
+		return new MainFrame(this);
+	}
+
+	protected MemberFrame getNewMemberFrame(Orchestra orchestra) {
+		return new MemberFrame(this,orchestra);
+	}
+		
 	protected ControllerWindowAdapter getNewAdapter() {
 		return new ControllerWindowAdapter(this);
 	}
@@ -329,7 +339,14 @@ public class OrchestraController extends Locker implements ActionListener {
 	protected GridMouseListener getNewGridMouseListener() {
 		return new GridMouseListener(this);
 	}
-
+	
+	protected JMenuBar getMainMenuBar(MainFrame mainFrame) {
+		JMenuBar bar = new JMenuBar();
+		bar.add(mainFrame.getOrchestraMenu(this));
+		bar.add(mainFrame.getMemberMenu(this));
+		return bar;
+	}
+	
 	protected void completedImportExportAction(Orchestra orchestraUpdate, String action) {
 		// Override to extend
 	}
@@ -434,12 +451,6 @@ public class OrchestraController extends Locker implements ActionListener {
 				confirmed = showConfirmMessage("Unpublished orchestra changes will be lost. Are you sure you want to quit?");
 			}
 			if (confirmed) {
-				if (memberFrame!=null && memberFrame.getFrame().isVisible()) {
-					memberFrame.getFrame().setVisible(false);
-				}
-				if (mainFrame!=null) {
-					mainFrame.getFrame().setVisible(false);
-				}
 				stop();
 				lockMe(this);
 				working = false;
@@ -500,22 +511,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	protected JFrame getMainFrame() {
 		return mainFrame.getFrame();
 	}
-	
-	protected MainFrame getNewMainFrame() {
-		return new MainFrame(this);
-	}
 
-	protected MemberFrame getNewMemberFrame(Orchestra orchestra) {
-		return new MemberFrame(this,orchestra);
-	}
-	
-	protected JMenuBar getMainMenuBar(MainFrame mainFrame) {
-		JMenuBar bar = new JMenuBar();
-		bar.add(mainFrame.getOrchestraMenu(this));
-		bar.add(mainFrame.getMemberMenu(this));
-		return bar;
-	}
-		
 	protected void showErrorMessage(String message) {
 		if (mainFrame!=null) {
 			JOptionPane.showMessageDialog(mainFrame.getFrame(),message,"Error",JOptionPane.ERROR_MESSAGE);
