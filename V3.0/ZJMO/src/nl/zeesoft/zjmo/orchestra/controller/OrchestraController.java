@@ -66,6 +66,10 @@ public class OrchestraController extends Locker implements ActionListener {
 		connector = new ConductorConnector(getMessenger(),union,true);
 	}
 
+	public WorkerUnion getUnion() {
+		return union;
+	}
+	
 	public boolean isConnected() {
 		boolean r = false;
 		lockMe(this);
@@ -323,12 +327,54 @@ public class OrchestraController extends Locker implements ActionListener {
 		return r;
 	}
 
+	public File chooseFile(boolean selectFile,String title) {
+		File file = null;
+		lockMe(this);
+		if (fileChooser!=null) {
+			if (selectFile) {
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			} else {
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			}
+			int choice = fileChooser.showDialog(mainFrame.getFrame(),title);
+			if (choice==JFileChooser.APPROVE_OPTION) {
+				file = fileChooser.getSelectedFile();
+			}
+		}
+		unlockMe(this);
+		return file;
+	}
+
 	public boolean isOrchestraChanged() {
 		boolean r = false;
 		lockMe(this);
 		r = orchestraChanged;
 		unlockMe(this);
 		return r;
+	}
+
+	public void showErrorMessage(String message) {
+		if (mainFrame!=null) {
+			JOptionPane.showMessageDialog(mainFrame.getFrame(),message,"Error",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public boolean showConfirmMessage(String message) {
+		return showConfirmMessage(message,"Are you sure?");
+	}
+	
+	public boolean showConfirmMessage(String message,String title) {
+		boolean r = false;
+		if (mainFrame!=null) {
+			r = (JOptionPane.showConfirmDialog(mainFrame.getFrame(),message,title,JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+		}
+		return r;
+	}
+	
+	public void positionFrameOverFrame(Window top,Window bottom) {
+		int x = (bottom.getX() + (bottom.getWidth() / 2)) - (top.getWidth() / 2);
+		int y = (bottom.getY() + (bottom.getHeight() / 2)) - (top.getHeight() / 2);
+		top.setLocation(x, y);
 	}
 	
 	protected ControllerStateWorker getNewStateWorker(WorkerUnion union) {
@@ -372,24 +418,6 @@ public class OrchestraController extends Locker implements ActionListener {
 		unlockMe(this);
 	}
 	
-	protected File chooseFile(boolean selectFile,String title) {
-		File file = null;
-		lockMe(this);
-		if (fileChooser!=null) {
-			if (selectFile) {
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			} else {
-				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			}
-			int choice = fileChooser.showDialog(mainFrame.getFrame(),title);
-			if (choice==JFileChooser.APPROVE_OPTION) {
-				file = fileChooser.getSelectedFile();
-			}
-		}
-		unlockMe(this);
-		return file;
-	}
-
 	protected void completedImportExportAction(Orchestra orchestraUpdate, String action) {
 		// Override to extend
 	}
@@ -543,34 +571,10 @@ public class OrchestraController extends Locker implements ActionListener {
 		return members;
 	}
 
-	protected void showErrorMessage(String message) {
-		if (mainFrame!=null) {
-			JOptionPane.showMessageDialog(mainFrame.getFrame(),message,"Error",JOptionPane.ERROR_MESSAGE);
-		}
-	}
-
-	protected boolean showConfirmMessage(String message) {
-		return showConfirmMessage(message,"Are you sure?");
-	}
-	
-	protected boolean showConfirmMessage(String message,String title) {
-		boolean r = false;
-		if (mainFrame!=null) {
-			r = (JOptionPane.showConfirmDialog(mainFrame.getFrame(),message,title,JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
-		}
-		return r;
-	}
-	
 	protected void showMemberFrame() {
 		if (!memberFrame.getFrame().isVisible() && mainFrame.getFrame().isVisible()) {
 			positionFrameOverFrame(memberFrame.getFrame(),mainFrame.getFrame());
 		}
 		memberFrame.getFrame().setVisible(true);
-	}
-	
-	protected void positionFrameOverFrame(Window top,Window bottom) {
-		int x = (bottom.getX() + (bottom.getWidth() / 2)) - (top.getWidth() / 2);
-		int y = (bottom.getY() + (bottom.getHeight() / 2)) - (top.getHeight() / 2);
-		top.setLocation(x, y);
 	}
 }
