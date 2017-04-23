@@ -5,9 +5,11 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -52,6 +54,7 @@ public class OrchestraController extends Locker implements ActionListener {
 	
 	private MainFrame						mainFrame			= null;
 	private MemberFrame						memberFrame			= null;
+	private JFileChooser					fileChooser			= null;
 
 	public OrchestraController(Orchestra orchestra,boolean exitOnClose) {
 		super(new Messenger(null));
@@ -109,9 +112,9 @@ public class OrchestraController extends Locker implements ActionListener {
 				mainFrame = getNewMainFrame();
 				mainFrame.getFrame().setVisible(true);
 			}
+			getMessenger().start();
 			connector.initialize(orchestraUpdate,null);
 			connector.open();
-			getMessenger().start();
 			stateWorker.start();
 			if (importExportWorker==null) {
 				importExportWorker = this.getNewImportExportWorker(union);
@@ -312,6 +315,22 @@ public class OrchestraController extends Locker implements ActionListener {
 		}
 	}
 
+	public JFileChooser getFileChooser() {
+		JFileChooser r = null;
+		lockMe(this);
+		r = fileChooser;
+		unlockMe(this);
+		return r;
+	}
+
+	public boolean isOrchestraChanged() {
+		boolean r = false;
+		lockMe(this);
+		r = orchestraChanged;
+		unlockMe(this);
+		return r;
+	}
+	
 	protected ControllerStateWorker getNewStateWorker(WorkerUnion union) {
 		return new ControllerStateWorker(getMessenger(),union,this);
 	}
@@ -346,7 +365,31 @@ public class OrchestraController extends Locker implements ActionListener {
 		bar.add(mainFrame.getMemberMenu(this));
 		return bar;
 	}
+
+	protected void setFileChooser(JFileChooser fileChooser) {
+		lockMe(this);
+		this.fileChooser = fileChooser;
+		unlockMe(this);
+	}
 	
+	protected File chooseFile(boolean selectFile,String title) {
+		File file = null;
+		lockMe(this);
+		if (fileChooser!=null) {
+			if (selectFile) {
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			} else {
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			}
+			int choice = fileChooser.showDialog(mainFrame.getFrame(),title);
+			if (choice==JFileChooser.APPROVE_OPTION) {
+				file = fileChooser.getSelectedFile();
+			}
+		}
+		unlockMe(this);
+		return file;
+	}
+
 	protected void completedImportExportAction(Orchestra orchestraUpdate, String action) {
 		// Override to extend
 	}
@@ -377,14 +420,6 @@ public class OrchestraController extends Locker implements ActionListener {
 		this.orchestraChanged = orchestraChanged;
 		mainFrame.setOrchestraChanged(orchestraChanged);
 		unlockMe(this);
-	}
-	
-	protected boolean isOrchestraChanged() {
-		boolean r = false;
-		lockMe(this);
-		r = orchestraChanged;
-		unlockMe(this);
-		return r;
 	}
 	
 	protected void restartedMembers(List<OrchestraMember> members) {
@@ -506,10 +541,6 @@ public class OrchestraController extends Locker implements ActionListener {
 			members.add(stateMember.getCopy());
 		}
 		return members;
-	}
-
-	protected JFrame getMainFrame() {
-		return mainFrame.getFrame();
 	}
 
 	protected void showErrorMessage(String message) {

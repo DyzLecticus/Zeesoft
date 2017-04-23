@@ -14,15 +14,14 @@ import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraGenerator;
 
 public class ControllerImportExportWorker extends Worker {
-	public static final String		INITIALIZE			= "INITIALIZE";
-	public static final String		IMPORT		= "IMPORT_CHANGES";
-	public static final String		EXPORT		= "EXPORT_CHANGES";
+	public static final String		INITIALIZE		= "INITIALIZE";
+	public static final String		IMPORT			= "IMPORT_CHANGES";
+	public static final String		EXPORT			= "EXPORT_CHANGES";
 
-	private OrchestraController 	controller 			= null;
-	private JFileChooser			fileChooser 		= null;
+	private OrchestraController 	controller 		= null;
 
-	private String					action				= "";
-	private	Orchestra				orchestraUpdate		= null;
+	private String					action			= "";
+	private	Orchestra				orchestraUpdate	= null;
 
 	public ControllerImportExportWorker(Messenger msgr, WorkerUnion union,OrchestraController controller) {
 		super(msgr, union);
@@ -48,9 +47,10 @@ public class ControllerImportExportWorker extends Worker {
 	public void whileWorking() {
 		String err = "";
 		if (action.equals(INITIALIZE)) {
-			if (fileChooser==null) {
-				fileChooser = new JFileChooser();
+			if (controller.getFileChooser()==null) {
+				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setCurrentDirectory(new File("."));
+				controller.setFileChooser(fileChooser);
 			}
 		} else {
 			File file = chooseFile(action);
@@ -101,20 +101,12 @@ public class ControllerImportExportWorker extends Worker {
 	
 	protected File chooseFile(String action) {
 		File file = null;
-		String title = "";
 		if (action.equals(IMPORT)) {
-			title = "Import";
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			file = controller.chooseFile(true,"Import");
 		} else if (action.equals(EXPORT)) {
-			title = "Export";
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			file = controller.chooseFile(true,"Export");
 		} else if (action.equals(Orchestrator.GENERATE)) {
-			title = "Generate";
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		}
-		int choice = fileChooser.showDialog(controller.getMainFrame(),title);
-		if (choice==JFileChooser.APPROVE_OPTION) {
-			file = fileChooser.getSelectedFile();
+			file = controller.chooseFile(false,"Generate");
 		}
 		return file;
 	}
