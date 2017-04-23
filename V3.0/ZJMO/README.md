@@ -8,7 +8,7 @@ One or more backup members can be created for conductors and players alike.
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZJMO/releases/zjmo-0.9.17.zip) to download the latest ZJMO release (version 0.9.17).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZJMO/releases/zjmo-0.9.18.zip) to download the latest ZJMO release (version 0.9.18).  
 All ZJMO releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZJMO/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -197,9 +197,9 @@ Starting Database X/1 (control: 6541, work: 6540) ...
 Starting Database Y/1 (control: 7652, work: 7651) ...
 Starting Conductor/1 (control: 5431, work: 5430) ...
 Starting Conductor/0 (control: 5433, work: 5432) ...
-Starting orchestra took 57 ms
+Starting orchestra took 47 ms
 
-GET_STATE command response: {"state": "ONLINE","workLoad": 0,"memoryUsage": 11324296,"restartRequired": false}
+GET_STATE command response: {"state": "ONLINE","workLoad": 0,"memoryUsage": 11155360,"restartRequired": false}
 
 Orchestra state JSON:
 {
@@ -251,7 +251,7 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 8690320,
+      "memoryUsage": 10161160,
       "restartRequired": false
     },
     {
@@ -264,7 +264,7 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": false,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 10447272,
+      "memoryUsage": 10536104,
       "restartRequired": false
     },
     {
@@ -277,7 +277,7 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 10944472,
+      "memoryUsage": 10738568,
       "restartRequired": false
     },
     {
@@ -290,7 +290,7 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 11027488,
+      "memoryUsage": 10872168,
       "restartRequired": false
     },
     {
@@ -303,7 +303,7 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": false,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 11052176,
+      "memoryUsage": 10920368,
       "restartRequired": false
     },
     {
@@ -316,7 +316,7 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": false,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 11096360,
+      "memoryUsage": 10980368,
       "restartRequired": false
     },
     {
@@ -329,7 +329,7 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 11157760,
+      "memoryUsage": 11008096,
       "restartRequired": false
     },
     {
@@ -342,7 +342,7 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 11186560,
+      "memoryUsage": 11020440,
       "restartRequired": false
     }
   ]
@@ -350,17 +350,17 @@ Orchestra state JSON:
 
 Stopping orchestra ...
 Sent stop command to: Conductor/0
-2017-04-23 10:53:24:741 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:17:329 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Sent stop command to: Conductor/1
-2017-04-23 10:53:27:863 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:21:220 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Stopping players ...
 Stopped orchestra
-2017-04-23 10:53:30:707 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-23 10:53:31:664 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-23 10:53:31:770 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-23 10:53:31:872 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-23 10:53:32:729 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-23 10:53:33:676 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:24:290 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:25:202 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:25:310 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:26:313 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:27:328 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:29:227 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 ~~~~
 
 nl.zeesoft.zjmo.test.TestMemberOnlineOffline
@@ -400,7 +400,7 @@ Starting Application server Y/0 (control: 9876, work: 9875) ...
 Starting Database X/1 (control: 6541, work: 6540) ...
 Starting Conductor/1 (control: 5431, work: 5430) ...
 Starting Conductor/0 (control: 5433, work: 5432) ...
-Starting orchestra took 94 ms
+Starting orchestra took 120 ms
 
 Starting backup ...
 Starting Database Y/1 (control: 7652, work: 7651) ...
@@ -416,13 +416,13 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "ONLINE",
   "workLoad": 0,
-  "memoryUsage": 10478368,
+  "memoryUsage": 10501960,
   "restartRequired": false
 }
 
 Stopping backup ...
 Stopped backup
-2017-04-23 10:53:35:853 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:31:400 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 
 Backup member state JSON:
 {
@@ -434,7 +434,7 @@ Backup member state JSON:
   "workRequestTimeout": 2000,
   "workRequestTimeoutDrain": true,
   "state": "UNKNOWN",
-  "errorTime": 1492937615850,
+  "errorTime": 1492939831398,
   "errorMessage": "Lost connection"
 }
 
@@ -453,7 +453,7 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "ONLINE",
   "workLoad": 0,
-  "memoryUsage": 11479264,
+  "memoryUsage": 11521776,
   "restartRequired": false
 }
 
@@ -471,7 +471,7 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "OFFLINE",
   "workLoad": 0,
-  "memoryUsage": 12456592,
+  "memoryUsage": 12483744,
   "restartRequired": false
 }
 
@@ -489,7 +489,7 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "ONLINE",
   "workLoad": 0,
-  "memoryUsage": 12991992,
+  "memoryUsage": 13018816,
   "restartRequired": false
 }
 
@@ -507,7 +507,7 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "DRAINING_OFFLINE",
   "workLoad": 0,
-  "memoryUsage": 10732328,
+  "memoryUsage": 13182416,
   "restartRequired": false
 }
 
@@ -522,15 +522,15 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "OFFLINE",
   "workLoad": 0,
-  "memoryUsage": 10939688,
+  "memoryUsage": 10745256,
   "restartRequired": false
 }
 
 Stopping orchestra ...
 Sent stop command to: Conductor/0
-2017-04-23 10:53:45:991 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:41:524 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Sent stop command to: Conductor/1
-2017-04-23 10:53:49:836 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:45:369 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Stopping players ...
 Stopped orchestra
 ~~~~
@@ -574,7 +574,7 @@ Starting Database X/1 (control: 6541, work: 6540) ...
 Starting Database Y/1 (control: 7652, work: 7651) ...
 Starting Conductor/1 (control: 5431, work: 5430) ...
 Starting Conductor/0 (control: 5433, work: 5432) ...
-Starting orchestra took 48 ms
+Starting orchestra took 34 ms
 
 Sending work request: {"request": {"echoMe": "Echo me this","sleep": 1000},"positionName": "Database X"}
 
@@ -589,7 +589,7 @@ Player state JSON:
   "workRequestTimeoutDrain": true,
   "state": "DRAINING_OFFLINE",
   "workLoad": 1,
-  "memoryUsage": 11733072,
+  "memoryUsage": 11520160,
   "restartRequired": false
 }
 
@@ -606,13 +606,13 @@ Player state JSON:
   "workRequestTimeoutDrain": true,
   "state": "OFFLINE",
   "workLoad": 0,
-  "memoryUsage": 11990464,
+  "memoryUsage": 11775328,
   "restartRequired": false
 }
 
 Sending work request to backup: {"request": {"echoMe": "Echo me this"},"positionName": "Database X"}
 Work request response from backup: {"request": {"echoMe": "Echo me this"},"response": {"echoMe": "Echo me this"},"positionName": "Database X"}
-First work request to backup took 6 ms
+First work request to backup took 4 ms
 
 Sending work request to backup: {"request": {"echoMe": "Echo me this"},"positionName": "Database X"}
 Work request response from backup: {"request": {"echoMe": "Echo me this"},"response": {"echoMe": "Echo me this"},"positionName": "Database X"}
@@ -620,7 +620,7 @@ Second work request to backup took 3 ms
 
 Sending work request to backup: {"request": {"echoMe": "Echo me this","sleep": 3000},"positionName": "Database X"}
 Work request response from backup: {"error": "Work request timed out on: Database X/1","request": {"echoMe": "Echo me this","sleep": 3000},"positionName": "Database X"}
-Time out work request to backup took 2017 ms
+Time out work request to backup took 2016 ms
 
 Player state JSON:
 {
@@ -633,17 +633,23 @@ Player state JSON:
   "workRequestTimeoutDrain": true,
   "state": "ONLINE",
   "workLoad": 1,
-  "memoryUsage": 12439152,
+  "memoryUsage": 12223192,
   "restartRequired": false
 }
 
 Stopping orchestra ...
 Sent stop command to: Conductor/0
-2017-04-23 10:54:02:122 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:30:56:638 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Sent stop command to: Conductor/1
-2017-04-23 10:54:06:120 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:00:632 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Stopping players ...
 Stopped orchestra
+2017-04-23 11:31:03:543 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:03:544 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:03:566 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:04:569 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:04:571 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:04:574 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 ~~~~
 
 nl.zeesoft.zjmo.test.TestConductorConnector
@@ -691,7 +697,7 @@ Starting Database X/1 (control: 6541, work: 6540) ...
 Starting Database Y/1 (control: 7652, work: 7651) ...
 Starting Conductor/1 (control: 5431, work: 5430) ...
 Starting Conductor/0 (control: 5433, work: 5432) ...
-Starting orchestra took 39 ms
+Starting orchestra took 44 ms
 
 Open clients: 2
 
@@ -705,9 +711,9 @@ Got open client to conductor: Conductor/0
 
 Stopping orchestra ...
 Sent stop command to: Conductor/0
-2017-04-23 10:54:14:157 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:09:696 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Sent stop command to: Conductor/1
-2017-04-23 10:54:18:137 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:13:701 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Stopping players ...
 Stopped orchestra
 ~~~~
@@ -772,9 +778,9 @@ Publish request response: {"request": {"echoMe": "Echo me this"},"response": {"r
 
 Stopping orchestra ...
 Sent stop command to: Conductor/0
-2017-04-23 10:54:26:259 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 11:31:20:891 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Sent stop command to: Conductor/1
-2017-04-23 10:54:30:234 WRN nl.zeesoft.zdk.thread.WorkerUnion: Stopping worker: nl.zeesoft.zjmo.orchestra.MemberWorker
+2017-04-23 11:31:23:862 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Stopping players ...
 Stopped orchestra
 ~~~~
@@ -782,12 +788,12 @@ Stopped orchestra
 Test results
 ------------
 All 6 tests have been executed successfully (37 assertions).  
-Total test duration: 72874 ms (total sleep duration: 29000 ms).  
+Total test duration: 76770 ms (total sleep duration: 29000 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zjmo.test.TestTestOrchestra: 342 Kb / 0 Mb
- * nl.zeesoft.zjmo.test.TestConductor: 570 Kb / 0 Mb
- * nl.zeesoft.zjmo.test.TestMemberOnlineOffline: 923 Kb / 0 Mb
- * nl.zeesoft.zjmo.test.TestWorkRequest: 367 Kb / 0 Mb
- * nl.zeesoft.zjmo.test.TestConductorConnector: 932 Kb / 0 Mb
- * nl.zeesoft.zjmo.test.TestPublishRequest: 1346 Kb / 1 Mb
+ * nl.zeesoft.zjmo.test.TestConductor: 575 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestMemberOnlineOffline: 929 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestWorkRequest: 732 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestConductorConnector: 860 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestPublishRequest: 1364 Kb / 1 Mb

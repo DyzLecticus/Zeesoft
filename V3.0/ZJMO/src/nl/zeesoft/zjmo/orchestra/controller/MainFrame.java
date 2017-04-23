@@ -33,6 +33,8 @@ public class MainFrame extends FrameObject {
 	private JMenuItem 						publishMenuItem		= null;
 	private JMenuItem 						revertMenuItem		= null;
 	
+	private int								notConnected		= 0;
+	
 	public MainFrame(OrchestraController controller) {
 		gridController.updatedOrchestraMembers(controller.getOrchestraMembers());
 		
@@ -58,7 +60,7 @@ public class MainFrame extends FrameObject {
 		grid.getColumnModel().getColumn(5).setPreferredWidth(30);
 		grid.setEnabled(false);
 		
-		stateLabel = new JLabel("Connecting ...");
+		stateLabel = new JLabel("Connecting ");
 		JPanel statePanel = new JPanel();
 		statePanel.setLayout(new BoxLayout(statePanel,BoxLayout.LINE_AXIS));
 		statePanel.add(stateLabel);
@@ -112,7 +114,15 @@ public class MainFrame extends FrameObject {
 			OrchestraMember conductor = client.getMember();
 			stateLabel.setText("Connected to: " + conductor.getId() + " (" + conductor.getIpAddressOrHostName() + ":" + conductor.getControlPort() + ")");
 		} else {
-			stateLabel.setText("Failed to connect to a conductor");
+			String text = "Connecting ";
+			for (int i = 0; i<notConnected; i++) {
+				text += ".";
+			}
+			stateLabel.setText(text);
+			notConnected++;
+			if (notConnected>3) {
+				notConnected = 0;
+			}
 			for (OrchestraMember member: members) {
 				member.setState(MemberState.getState(MemberState.UNKNOWN));
 			}
