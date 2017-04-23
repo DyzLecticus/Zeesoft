@@ -2,16 +2,12 @@ package nl.zeesoft.zso.test;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
 import nl.zeesoft.zjmo.Orchestrator;
-import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.test.ZJMO;
-import nl.zeesoft.zso.composition.Composition;
-import nl.zeesoft.zso.composition.sequencer.Sequencer;
 
 public class ZSO extends LibraryObject {
 	public ZSO(Tester tester) {
@@ -28,36 +24,6 @@ public class ZSO extends LibraryObject {
 	public static void main(String[] args) {
 		if (args!=null && args.length>1 && Orchestrator.isOrchestratorAction(args[0])) {
 			Orchestrator.main(args);
-		} else if (args!=null && args.length>1 && args[0].equals(Sequencer.PLAY_COMPOSITION)) {
-			String err = "";
-			Orchestra orch = Orchestrator.getOrchestraForClassName(args[1]);
-			Composition comp = null;
-			if (orch==null) {
-				err = "The second parameter must refer to a valid orchestra class name";
-			}
-			if (err.length()==0) {
-				JsFile json = new JsFile();
-				err = json.fromFile("orchestra.json");
-				if (err.length()==0) {
-					orch.fromJson(json);
-				}
-			}
-			if (err.length()==0) {
-				JsFile json = new JsFile();
-				err = json.fromFile("composition.json");
-				if (err.length()==0) {
-					comp = new Composition();
-					comp.fromJson(json);
-				}
-			}
-			if (err.length()==0) {
-				Sequencer seq = new Sequencer(orch,comp);
-				seq.start();
-			}
-			if (err.length()>0) {
-				System.err.println(err);
-				System.exit(1);
-			}
 		} else {
 			(new ZSO(new Tester())).describeAndTest(args);
 		}

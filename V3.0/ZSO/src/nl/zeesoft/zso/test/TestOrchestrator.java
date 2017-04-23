@@ -22,9 +22,10 @@ public class TestOrchestrator extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		String[] params = new String[2];
+		String[] params = new String[3];
 		params[0] = Orchestrator.GENERATE;
 		params[1] = SampleOrchestra.class.getName();
+		params[2] = "orchestra/";
 		Orchestrator.main(params);
 	}
 }

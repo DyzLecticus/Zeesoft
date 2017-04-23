@@ -3,7 +3,9 @@ package nl.zeesoft.zso.orchestra;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraGenerator;
+import nl.zeesoft.zjmo.orchestra.controller.OrchestraController;
 import nl.zeesoft.zjmo.orchestra.members.Player;
+import nl.zeesoft.zso.orchestra.controller.SampleOrchestraController;
 import nl.zeesoft.zso.orchestra.members.SamplePlayer;
 
 public class SampleOrchestra extends Orchestra {
@@ -32,6 +34,11 @@ public class SampleOrchestra extends Orchestra {
 	@Override
 	public OrchestraGenerator getNewGenerator() {
 		return new SampleOrchestraGenerator();
+	}
+
+	@Override
+	public OrchestraController getNewController(boolean exitOnClose) {
+		return new SampleOrchestraController(this,exitOnClose);
 	}
 
 	@Override
