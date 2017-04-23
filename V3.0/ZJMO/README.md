@@ -4,10 +4,11 @@ Zeesoft JSON Machine Orchestration (ZJMO) is an open source library for Java app
 The aim of the ZJMO project is to provide a scalable, high availability, JSON based, work distribution architecture.
 Imagine an orchestra where the conductor directs the other members to play a certain composition.
 All the members speak JSON on two TCP ports; one for control and another one for work.
+One or more backup members can be created for conductors and players alike.
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZJMO/releases/zjmo-0.9.16.zip) to download the latest ZJMO release (version 0.9.16).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZJMO/releases/zjmo-0.9.17.zip) to download the latest ZJMO release (version 0.9.17).  
 All ZJMO releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZJMO/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -19,13 +20,14 @@ Click [here](#test-results) to scroll down to the test result summary.
 nl.zeesoft.zjmo.test.TestTestOrchestra
 --------------------------------------
 This test shows how to create and initialize a *TestOrchestra* instance.
+The *TestOrchestra* extends the *Orchestra* class which functions as a factory for other objects like conductors and players.
 
 **Example implementation**  
 ~~~~
 // Create orchestra
-TestOrchestra orch = new TestOrchestra();
+TestOrchestra orchestra = new TestOrchestra();
 // Initialize the orchestra
-orch.initialize();
+orchestra.initialize();
 ~~~~
 
 This test uses the *MockTestOrchestra*.
@@ -47,6 +49,36 @@ The output of this test shows the JSON structure of the *TestOrchestra*.
     "3": "Application server X",
     "4": "Application server Y"
   },
+  "channels": [
+    {
+      "name": "Orchestra critical",
+      "failOnSubscriberError": true,
+      "subscriberIdList": {
+        "0": "Conductor/0",
+        "1": "Conductor/1",
+        "2": "Database X/0",
+        "3": "Database Y/0",
+        "4": "Application server X/0",
+        "5": "Application server Y/0",
+        "6": "Database X/1",
+        "7": "Database Y/1"
+      }
+    },
+    {
+      "name": "Orchestra optional",
+      "failOnSubscriberError": false,
+      "subscriberIdList": {
+        "0": "Conductor/0",
+        "1": "Conductor/1",
+        "2": "Database X/0",
+        "3": "Database Y/0",
+        "4": "Application server X/0",
+        "5": "Application server Y/0",
+        "6": "Database X/1",
+        "7": "Database Y/1"
+      }
+    }
+  ],
   "members": [
     {
       "positionName": "Conductor",
@@ -131,7 +163,7 @@ This test shows how to start and stop *Conductor* and *Player* instances.
 **Example implementation**  
 ~~~~
 // Create conductor
-Conductor con = new Conductor(orchestra);
+Conductor con = new Conductor(null,orchestra,0);
 // Start the conductor
 boolean started = con.start();
 // Create client using conductor control port settings
@@ -140,11 +172,12 @@ MemberClient client = new MemberClient("localhost",5433);
 ZStringBuilder response = client.sendCommand(ProtocolControl.STOP_PROGRAM);
 ~~~~
 
-This test uses the *MockConductor* and the *MockPlayers*.
+This test uses *MockConductor1*, *MockConductor2* and the *MockPlayers*.
 
 Class references;  
  * [TestConductor](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/TestConductor.java)
  * [MockConductor1](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor1.java)
+ * [MockConductor2](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor2.java)
  * [MockPlayers](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockPlayers.java)
  * [Conductor](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/orchestra/members/Conductor.java)
  * [Player](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/orchestra/members/Player.java)
@@ -164,9 +197,9 @@ Starting Database X/1 (control: 6541, work: 6540) ...
 Starting Database Y/1 (control: 7652, work: 7651) ...
 Starting Conductor/1 (control: 5431, work: 5430) ...
 Starting Conductor/0 (control: 5433, work: 5432) ...
-Starting orchestra took 50 ms
+Starting orchestra took 57 ms
 
-GET_STATE command response: {"state": "ONLINE","workLoad": 0,"memoryUsage": 7972008}
+GET_STATE command response: {"state": "ONLINE","workLoad": 0,"memoryUsage": 11324296,"restartRequired": false}
 
 Orchestra state JSON:
 {
@@ -177,6 +210,36 @@ Orchestra state JSON:
     "3": "Application server X",
     "4": "Application server Y"
   },
+  "channels": [
+    {
+      "name": "Orchestra critical",
+      "failOnSubscriberError": true,
+      "subscriberIdList": {
+        "0": "Conductor/0",
+        "1": "Conductor/1",
+        "2": "Database X/0",
+        "3": "Database Y/0",
+        "4": "Application server X/0",
+        "5": "Application server Y/0",
+        "6": "Database X/1",
+        "7": "Database Y/1"
+      }
+    },
+    {
+      "name": "Orchestra optional",
+      "failOnSubscriberError": false,
+      "subscriberIdList": {
+        "0": "Conductor/0",
+        "1": "Conductor/1",
+        "2": "Database X/0",
+        "3": "Database Y/0",
+        "4": "Application server X/0",
+        "5": "Application server Y/0",
+        "6": "Database X/1",
+        "7": "Database Y/1"
+      }
+    }
+  ],
   "members": [
     {
       "positionName": "Conductor",
@@ -188,7 +251,8 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 7297016
+      "memoryUsage": 8690320,
+      "restartRequired": false
     },
     {
       "positionName": "Conductor",
@@ -200,7 +264,8 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": false,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 7367416
+      "memoryUsage": 10447272,
+      "restartRequired": false
     },
     {
       "positionName": "Database X",
@@ -212,7 +277,8 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 7629832
+      "memoryUsage": 10944472,
+      "restartRequired": false
     },
     {
       "positionName": "Database Y",
@@ -224,7 +290,8 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 7659584
+      "memoryUsage": 11027488,
+      "restartRequired": false
     },
     {
       "positionName": "Application server X",
@@ -236,7 +303,8 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": false,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 7711880
+      "memoryUsage": 11052176,
+      "restartRequired": false
     },
     {
       "positionName": "Application server Y",
@@ -248,7 +316,8 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": false,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 7751376
+      "memoryUsage": 11096360,
+      "restartRequired": false
     },
     {
       "positionName": "Database X",
@@ -260,7 +329,8 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 7789096
+      "memoryUsage": 11157760,
+      "restartRequired": false
     },
     {
       "positionName": "Database Y",
@@ -272,33 +342,35 @@ Orchestra state JSON:
       "workRequestTimeoutDrain": true,
       "state": "ONLINE",
       "workLoad": 0,
-      "memoryUsage": 7818720
+      "memoryUsage": 11186560,
+      "restartRequired": false
     }
   ]
 }
 
 Stopping orchestra ...
 Sent stop command to: Conductor/0
-2017-04-03 22:20:26:557 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:24:741 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Sent stop command to: Conductor/1
-2017-04-03 22:20:29:548 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:27:863 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Stopping players ...
 Stopped orchestra
-2017-04-03 22:20:34:432 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-03 22:20:34:543 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-03 22:20:35:451 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-03 22:20:36:553 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
-2017-04-03 22:20:37:566 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:30:707 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:31:664 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:31:770 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:31:872 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:32:729 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:33:676 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 ~~~~
 
 nl.zeesoft.zjmo.test.TestMemberOnlineOffline
 --------------------------------------------
-This test shows how to how a *Conductor* maintains its orchestra member state representation.
+This test shows how a *Conductor* maintains its orchestra member state representation.
 
 **Example implementation**  
 ~~~~
 // Create conductor
-Conductor con = new Conductor(orchestra);
+Conductor con = new Conductor(null,orchestra,0);
 // Start the conductor
 boolean started = con.start();
 // Create client using conductor control port settings
@@ -307,11 +379,12 @@ MemberClient client = new MemberClient("localhost",5433);
 ZStringBuilder response = client.sendCommand(ProtocolControl.GET_MEMBER_STATE,"id","[MEMBERID]");
 ~~~~
 
-This test uses the *MockConductor* and the *MockPlayers*.
+This test uses *MockConductor1*, *MockConductor2* and the *MockPlayers*.
 
 Class references;  
  * [TestMemberOnlineOffline](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/TestMemberOnlineOffline.java)
  * [MockConductor1](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor1.java)
+ * [MockConductor2](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor2.java)
  * [MockPlayers](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockPlayers.java)
  * [Conductor](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/orchestra/members/Conductor.java)
  * [Player](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/orchestra/members/Player.java)
@@ -327,7 +400,7 @@ Starting Application server Y/0 (control: 9876, work: 9875) ...
 Starting Database X/1 (control: 6541, work: 6540) ...
 Starting Conductor/1 (control: 5431, work: 5430) ...
 Starting Conductor/0 (control: 5433, work: 5432) ...
-Starting orchestra took 88 ms
+Starting orchestra took 94 ms
 
 Starting backup ...
 Starting Database Y/1 (control: 7652, work: 7651) ...
@@ -343,11 +416,13 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "ONLINE",
   "workLoad": 0,
-  "memoryUsage": 7907976
+  "memoryUsage": 10478368,
+  "restartRequired": false
 }
 
 Stopping backup ...
 Stopped backup
+2017-04-23 10:53:35:853 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 
 Backup member state JSON:
 {
@@ -359,7 +434,7 @@ Backup member state JSON:
   "workRequestTimeout": 2000,
   "workRequestTimeoutDrain": true,
   "state": "UNKNOWN",
-  "errorTime": 1491250841660,
+  "errorTime": 1492937615850,
   "errorMessage": "Lost connection"
 }
 
@@ -378,7 +453,8 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "ONLINE",
   "workLoad": 0,
-  "memoryUsage": 8814128
+  "memoryUsage": 11479264,
+  "restartRequired": false
 }
 
 Taking backup offline ...
@@ -395,7 +471,8 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "OFFLINE",
   "workLoad": 0,
-  "memoryUsage": 9272704
+  "memoryUsage": 12456592,
+  "restartRequired": false
 }
 
 Bringing backup online ...
@@ -412,7 +489,8 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "ONLINE",
   "workLoad": 0,
-  "memoryUsage": 7920800
+  "memoryUsage": 12991992,
+  "restartRequired": false
 }
 
 Draining backup offline ...
@@ -429,7 +507,8 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "DRAINING_OFFLINE",
   "workLoad": 0,
-  "memoryUsage": 8072864
+  "memoryUsage": 10732328,
+  "restartRequired": false
 }
 
 Backup member state JSON:
@@ -443,41 +522,43 @@ Backup member state JSON:
   "workRequestTimeoutDrain": true,
   "state": "OFFLINE",
   "workLoad": 0,
-  "memoryUsage": 8169672
+  "memoryUsage": 10939688,
+  "restartRequired": false
 }
 
 Stopping orchestra ...
 Sent stop command to: Conductor/0
-2017-04-03 22:20:49:773 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:45:991 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Sent stop command to: Conductor/1
-2017-04-03 22:20:53:690 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:53:49:836 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Stopping players ...
 Stopped orchestra
 ~~~~
 
 nl.zeesoft.zjmo.test.TestWorkRequest
 ------------------------------------
-This test shows how to how a *Conductor* handles work requests.
+This test shows how a *Conductor* handles work requests.
 
 **Example implementation**  
 ~~~~
 // Create conductor
-Conductor con = new Conductor(orchestra);
+Conductor con = new Conductor(null,orchestra,0);
 // Start the conductor
 boolean started = con.start();
 // Create client using conductor work port settings
 MemberClient client = new MemberClient("localhost",5432);
-// Create work request
+// Create work request for a certain position
 WorkRequest wr = new WorkRequest("Database X","{\"something\":\"json\"}");
 // Send work request to conductor
 ZStringBuilder response = client.writeOutputReadInput(wr.toJson().toStringBuilder());
 ~~~~
 
-This test uses the *MockConductor* and the *MockPlayers*.
+This test uses *MockConductor1*, *MockConductor2* and the *MockPlayers*.
 
 Class references;  
  * [TestWorkRequest](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/TestWorkRequest.java)
  * [MockConductor1](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor1.java)
+ * [MockConductor2](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor2.java)
  * [MockPlayers](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockPlayers.java)
  * [WorkRequest](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/orchestra/protocol/WorkRequest.java)
 
@@ -493,9 +574,9 @@ Starting Database X/1 (control: 6541, work: 6540) ...
 Starting Database Y/1 (control: 7652, work: 7651) ...
 Starting Conductor/1 (control: 5431, work: 5430) ...
 Starting Conductor/0 (control: 5433, work: 5432) ...
-Starting orchestra took 41 ms
+Starting orchestra took 48 ms
 
-Sending work request: {"positionName": "Database X","request": {"echoMe": "Echo me this","sleep": 1000}}
+Sending work request: {"request": {"echoMe": "Echo me this","sleep": 1000},"positionName": "Database X"}
 
 Player state JSON:
 {
@@ -508,10 +589,11 @@ Player state JSON:
   "workRequestTimeoutDrain": true,
   "state": "DRAINING_OFFLINE",
   "workLoad": 1,
-  "memoryUsage": 8347296
+  "memoryUsage": 11733072,
+  "restartRequired": false
 }
 
-Work request response: {"positionName": "Database X","request": {"echoMe": "Echo me this","sleep": 1000},"response": {"echoMe": "Echo me this","sleep": 1000}}
+Work request response: {"request": {"echoMe": "Echo me this","sleep": 1000},"response": {"echoMe": "Echo me this","sleep": 1000},"positionName": "Database X"}
 
 Player state JSON:
 {
@@ -524,20 +606,21 @@ Player state JSON:
   "workRequestTimeoutDrain": true,
   "state": "OFFLINE",
   "workLoad": 0,
-  "memoryUsage": 8483536
+  "memoryUsage": 11990464,
+  "restartRequired": false
 }
 
-Sending work request to backup: {"positionName": "Database X","request": {"echoMe": "Echo me this"}}
-Work request response from backup: {"positionName": "Database X","request": {"echoMe": "Echo me this"},"response": {"echoMe": "Echo me this"}}
-First work request to backup took 5 ms
+Sending work request to backup: {"request": {"echoMe": "Echo me this"},"positionName": "Database X"}
+Work request response from backup: {"request": {"echoMe": "Echo me this"},"response": {"echoMe": "Echo me this"},"positionName": "Database X"}
+First work request to backup took 6 ms
 
-Sending work request to backup: {"positionName": "Database X","request": {"echoMe": "Echo me this"}}
-Work request response from backup: {"positionName": "Database X","request": {"echoMe": "Echo me this"},"response": {"echoMe": "Echo me this"}}
-Second work request to backup took 4 ms
+Sending work request to backup: {"request": {"echoMe": "Echo me this"},"positionName": "Database X"}
+Work request response from backup: {"request": {"echoMe": "Echo me this"},"response": {"echoMe": "Echo me this"},"positionName": "Database X"}
+Second work request to backup took 3 ms
 
-Sending work request to backup: {"positionName": "Database X","request": {"echoMe": "Echo me this","sleep": 3000}}
-Work request response from backup: {"positionName": "Database X","error": "Work request timed out on: Database X/1","request": {"echoMe": "Echo me this","sleep": 3000}}
-time out work request to backup took 2021 ms
+Sending work request to backup: {"request": {"echoMe": "Echo me this","sleep": 3000},"positionName": "Database X"}
+Work request response from backup: {"error": "Work request timed out on: Database X/1","request": {"echoMe": "Echo me this","sleep": 3000},"positionName": "Database X"}
+Time out work request to backup took 2017 ms
 
 Player state JSON:
 {
@@ -550,59 +633,161 @@ Player state JSON:
   "workRequestTimeoutDrain": true,
   "state": "ONLINE",
   "workLoad": 1,
-  "memoryUsage": 8891504
+  "memoryUsage": 12439152,
+  "restartRequired": false
 }
-2017-04-03 22:21:04:877 ERR nl.zeesoft.zjmo.orchestra.members.ConductorMemberController: No players online for: Database X (members: 2)
-
-Player state JSON:
-{
-  "positionName": "Database X",
-  "positionBackupNumber": 1,
-  "ipAddressOrHostName": "localhost",
-  "controlPort": 6541,
-  "workPort": 6540,
-  "workRequestTimeout": 2000,
-  "workRequestTimeoutDrain": true,
-  "state": "ONLINE",
-  "workLoad": 1,
-  "memoryUsage": 8891504
-}
-
-Testing connector ...
-
-Conductor state JSON:
-{
-  "positionName": "Conductor",
-  "positionBackupNumber": 0,
-  "ipAddressOrHostName": "localhost",
-  "controlPort": 5433,
-  "workPort": 5432,
-  "workRequestTimeout": 500,
-  "workRequestTimeoutDrain": true,
-  "state": "ONLINE",
-  "workLoad": 0,
-  "memoryUsage": 7477488
-}
-
-Get open client ...
-Got open client: Conductor/1
 
 Stopping orchestra ...
 Sent stop command to: Conductor/0
-2017-04-03 22:21:08:932 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:54:02:122 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
 Sent stop command to: Conductor/1
-2017-04-03 22:21:12:866 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+2017-04-23 10:54:06:120 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+Stopping players ...
+Stopped orchestra
+~~~~
+
+nl.zeesoft.zjmo.test.TestConductorConnector
+-------------------------------------------
+This test shows how to use a *ConductorConnector* to create reliable (external) connections to a working orchestra.
+
+**Example implementation**  
+~~~~
+// Create conductor
+Conductor con = new Conductor(null,orchestra,0);
+// Start the conductor
+boolean started = con.start();
+// Create conductor connector
+ConductorConnector connector = new ConductorConnector(null,null,false);
+// Initialize the connector
+connector.initialize(con.getOrchestra(),null);
+// Open the connector
+connector.open();
+// Create work request
+WorkRequest wr = new WorkRequest("Database X","{\"something\":\"json\"}");
+// Send work request to a conductor
+wr = connector.sendWorkRequest(wr);
+// Close the connector
+connector.close();
+~~~~
+
+This test uses *MockConductor1*, *MockConductor2* and the *MockPlayers*.
+
+Class references;  
+ * [TestConductorConnector](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/TestConductorConnector.java)
+ * [MockConductor1](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor1.java)
+ * [MockConductor2](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor2.java)
+ * [MockPlayers](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockPlayers.java)
+ * [ConductorConnector](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/orchestra/client/ConductorConnector.java)
+
+**Test output**  
+The output of this test shows how the *ConductorConnector* always maintains open connections to working conductors.  
+~~~~
+Starting orchestra ...
+Starting Database X/0 (control: 6543, work: 6542) ...
+Starting Database Y/0 (control: 7654, work: 7653) ...
+Starting Application server X/0 (control: 8765, work: 8764) ...
+Starting Application server Y/0 (control: 9876, work: 9875) ...
+Starting Database X/1 (control: 6541, work: 6540) ...
+Starting Database Y/1 (control: 7652, work: 7651) ...
+Starting Conductor/1 (control: 5431, work: 5430) ...
+Starting Conductor/0 (control: 5433, work: 5432) ...
+Starting orchestra took 39 ms
+
+Open clients: 2
+
+Open clients after taking Conductor/0 offline: 1
+
+Got open client to conductor: Conductor/1
+
+Open clients after bringing Conductor/0 online: 2
+
+Got open client to conductor: Conductor/0
+
+Stopping orchestra ...
+Sent stop command to: Conductor/0
+2017-04-23 10:54:14:157 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+Sent stop command to: Conductor/1
+2017-04-23 10:54:18:137 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+Stopping players ...
+Stopped orchestra
+~~~~
+
+nl.zeesoft.zjmo.test.TestPublishRequest
+---------------------------------------
+This test shows how a *PublishRequest* is executed by a *Conductor* instance.
+
+**Example implementation**  
+~~~~
+// Create conductor
+Conductor con = new Conductor(null,orchestra,0);
+// Start the conductor
+boolean started = con.start();
+// Create conductor connector
+ConductorConnector connector = new ConductorConnector(null,null,false);
+// Initialize the connector
+connector.initialize(orchestra,null);
+// Open the connector
+connector.open();
+// Create publish request for a certain channel
+PublishRequest pr = new PublishRequest("Orchestra optional","{\"something\":\"json\"}");
+// Publish request on the request channel through a conductor
+pr = connector.publishRequest(pr);
+// Close the connector
+connector.close();
+~~~~
+
+This test uses *MockConductor1*, *MockConductor2* and the *MockPlayers*.
+
+Class references;  
+ * [TestPublishRequest](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/TestPublishRequest.java)
+ * [MockConductor1](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor1.java)
+ * [MockConductor2](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockConductor2.java)
+ * [MockPlayers](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/test/mocks/MockPlayers.java)
+ * [PublishRequest](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/src/nl/zeesoft/zjmo/orchestra/protocol/PublishRequest.java)
+
+**Test output**  
+The output of this test shows how the request is handled differently depending on the channel that the request is published on.  
+~~~~
+Starting orchestra ...
+Starting Database X/0 (control: 6543, work: 6542) ...
+Starting Database Y/0 (control: 7654, work: 7653) ...
+Starting Application server X/0 (control: 8765, work: 8764) ...
+Starting Application server Y/0 (control: 9876, work: 9875) ...
+Starting Database X/1 (control: 6541, work: 6540) ...
+Starting Database Y/1 (control: 7652, work: 7651) ...
+Starting Conductor/1 (control: 5431, work: 5430) ...
+Starting Conductor/0 (control: 5433, work: 5432) ...
+Starting orchestra took 22 ms
+
+Open clients: 2
+
+Got open client to conductor: Conductor/0
+Publish request response: {"request": {"echoMe": "Echo me this"},"response": {"response": "Executed command"},"channelName": "Orchestra critical"}
+
+Open clients after taking Conductor/0 offline: 1
+
+Got open client to conductor: Conductor/1
+Publish request response: {"error": "Channel subscriber is not online: Conductor/0","request": {"echoMe": "Echo me this"},"channelName": "Orchestra critical"}
+Publish request response: {"request": {"echoMe": "Echo me this"},"response": {"response": "Executed command"},"channelName": "Orchestra optional"}
+
+Stopping orchestra ...
+Sent stop command to: Conductor/0
+2017-04-23 10:54:26:259 DBG nl.zeesoft.zdk.thread.WorkerUnion: All workers have been stopped
+Sent stop command to: Conductor/1
+2017-04-23 10:54:30:234 WRN nl.zeesoft.zdk.thread.WorkerUnion: Stopping worker: nl.zeesoft.zjmo.orchestra.MemberWorker
 Stopping players ...
 Stopped orchestra
 ~~~~
 
 Test results
 ------------
-All 4 tests have been executed successfully (24 assertions).  
-Total test duration: 54622 ms (total sleep duration: 23000 ms).  
+All 6 tests have been executed successfully (37 assertions).  
+Total test duration: 72874 ms (total sleep duration: 29000 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zjmo.test.TestTestOrchestra: 310 Kb / 0 Mb
- * nl.zeesoft.zjmo.test.TestConductor: 1007 Kb / 0 Mb
- * nl.zeesoft.zjmo.test.TestMemberOnlineOffline: 881 Kb / 0 Mb
- * nl.zeesoft.zjmo.test.TestWorkRequest: 366 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestTestOrchestra: 342 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestConductor: 570 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestMemberOnlineOffline: 923 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestWorkRequest: 367 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestConductorConnector: 932 Kb / 0 Mb
+ * nl.zeesoft.zjmo.test.TestPublishRequest: 1346 Kb / 1 Mb
