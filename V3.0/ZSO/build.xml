@@ -3,14 +3,14 @@
 	<description>ZSO build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.9"/>
+	<property name="version" value="0.9.10"/>
 	
 	<!-- ZDK version -->
 	<property name="versionZDK" value="0.9.23"/>
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<!-- ZJMO version -->
-	<property name="versionZJMO" value="0.9.17"/>
+	<property name="versionZJMO" value="0.9.18"/>
 	<property name="releasesZJMO" location="../ZJMO/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -170,15 +170,11 @@
 
 	<target name="releaseOrchestra" depends="orchestraExists" if="_orchestraExists">
 		<mkdir dir="${releases}/${version}/orchestra"/>
-		<copy todir="${releases}/${version}/orchestra">
-            <fileset dir="orchestra/">
-            	<exclude name="**/members/**"/>
-            	<exclude name="**/controller/**"/>
-            	<exclude name="**/start.bat"/>
-            	<exclude name="**/stop.bat"/>
-            	<exclude name="**/sequencer/**"/>
-           	</fileset>
+		<mkdir dir="${releases}/${version}/orchestra/lib"/>
+		<copy todir="${releases}/${version}/orchestra/lib">
+            <fileset dir="orchestra/lib"/>
         </copy>		
+		<copy file="orchestra/update.bat" tofile="${releases}/${version}/orchestra/update.bat"/>
 	</target>
 	
 	<target name="orchestraExists">

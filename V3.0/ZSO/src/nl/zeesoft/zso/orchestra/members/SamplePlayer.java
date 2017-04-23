@@ -7,6 +7,7 @@ import java.io.InputStream;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -52,20 +53,21 @@ public class SamplePlayer extends Player {
 		try {
 			stream = AudioSystem.getAudioInputStream(new BufferedInputStream(is));
 		} catch (UnsupportedAudioFileException e) {
-        	getMessenger().error(this,"File not supported: " + fileName + ", error: " + e);
+        	getMessenger().error(this,"File not supported: " + fileName + ", error: " + e,e);
 		} catch (IOException e) {
-        	getMessenger().error(this,"Exception loading file: " + fileName + ", error: " + e);
+        	getMessenger().error(this,"Exception loading file: " + fileName + ", error: " + e,e);
 		}
 		if (stream!=null) {
             try {
 				clip = AudioSystem.getClip();
 			} catch (LineUnavailableException e) {
-	        	getMessenger().error(this,"No line available: " + e);
+	        	getMessenger().error(this,"No line available: " + e,e);
 			}
             try {
 				clip.open(stream);
 			} catch (LineUnavailableException | IOException e) {
-	        	getMessenger().error(this,"Failed to open clip: " + e);
+	        	getMessenger().error(this,"Failed to open clip: " + e,e);
+	        	clip = null;
 			}
 		}
     }
@@ -91,5 +93,24 @@ public class SamplePlayer extends Player {
 
 	protected boolean clipHasStopped(){
 		return !clip.isActive();
-	}	
+	}
+	
+	protected String setClipGain(float gain) {
+    	if (worker!=null) {
+			FloatControl gainControl = null;
+	        try {
+	    		gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			} catch (IllegalArgumentException e) {
+	        	getMessenger().error(this,"Gain control is not available: " + e,e);
+			}
+	        if (gainControl!=null) {
+	            try {
+	        		gainControl.setValue(gain);
+	    		} catch (IllegalArgumentException e) {
+	            	getMessenger().error(this,"Invalid gain value: " + gain + ", error: " + e,e);
+	    		}
+	        }
+    	}
+    	return error;
+	}
 }

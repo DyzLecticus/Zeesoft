@@ -19,11 +19,11 @@ public class CompositionPlayerWorker extends Worker {
 	private long				startMs			= 0;
 	private long				durationMs		= 0;
 	
-	public CompositionPlayerWorker(Messenger msgr, WorkerUnion union,Sequencer sequencer,String positionName) {
-		super(msgr, union);
+	public CompositionPlayerWorker(Messenger msgr, WorkerUnion uni,Sequencer sequencer,String positionName) {
+		super(msgr,uni);
 		setSleep(1);
 		this.positionName = positionName;
-		connector = new ConductorConnector(msgr,union,false);
+		connector = new ConductorConnector(msgr,uni,false);
 		connector.initialize(sequencer.getOrchestra(),null);
 	}
 	

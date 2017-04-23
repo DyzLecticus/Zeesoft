@@ -13,17 +13,21 @@ import nl.zeesoft.zso.composition.sequencer.Sequencer;
 
 public class SampleOrchestraController extends OrchestraController {
 	private Sequencer		sequencer		= null;
+	private JMenu			gainMenu		= null; 
+	private JMenuItem		giMenuItem		= null;
+	private JMenuItem		gdMenuItem		= null;
 	private JMenuItem		startMenuItem	= null;
 	private JMenuItem		stopMenuItem	= null;
 	
 	public SampleOrchestraController(Orchestra orchestra, boolean exitOnClose) {
 		super(orchestra, exitOnClose);
 		sequencer = new Sequencer(getMessenger(),getUnion(),orchestra.getCopy(false),this);
+		sequencer.open();
 	}
 
 	@Override
 	public void stop() {
-		sequencer.stop();
+		sequencer.close();
 		super.stop();
 	}
 
@@ -38,6 +42,23 @@ public class SampleOrchestraController extends OrchestraController {
 		item.setActionCommand(Sequencer.LOAD_COMPOSITION);
 		item.addActionListener(sequencer);
 		sequencerMenu.add(item);
+		
+		gainMenu = new JMenu("Gain");
+		gainMenu.setEnabled(false);
+		
+		giMenuItem = new JMenuItem("+3 dB");
+		giMenuItem.setActionCommand(Sequencer.GAIN_INCREASE);
+		giMenuItem.addActionListener(sequencer);
+		giMenuItem.setEnabled(false);
+		gainMenu.add(giMenuItem);
+		
+		gdMenuItem = new JMenuItem("-3 dB");
+		gdMenuItem.setActionCommand(Sequencer.GAIN_DECREASE);
+		gdMenuItem.addActionListener(sequencer);
+		gdMenuItem.setEnabled(false);
+		gainMenu.add(gdMenuItem);
+
+		sequencerMenu.add(gainMenu);
 
 		startMenuItem = new JMenuItem("Start");
 		startMenuItem.setActionCommand(Sequencer.START);
@@ -63,6 +84,7 @@ public class SampleOrchestraController extends OrchestraController {
 	@Override
 	protected void setConnected(boolean connected, ActiveClient client) {
 		super.setConnected(connected, client);
+		resetGainEnabled();
 		resetStartStopEnabled();
 	}
 	
@@ -70,5 +92,12 @@ public class SampleOrchestraController extends OrchestraController {
 		boolean enabled = sequencer.getComposition()!=null && isConnected();
 		stopMenuItem.setEnabled(enabled);
 		startMenuItem.setEnabled(enabled);
+	}
+
+	protected void resetGainEnabled() {
+		boolean enabled = isConnected();
+		gainMenu.setEnabled(enabled);
+		giMenuItem.setEnabled(enabled);
+		gdMenuItem.setEnabled(enabled);
 	}
 }

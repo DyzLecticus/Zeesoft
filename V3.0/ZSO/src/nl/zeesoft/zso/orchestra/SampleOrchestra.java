@@ -1,20 +1,25 @@
 package nl.zeesoft.zso.orchestra;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zjmo.orchestra.Channel;
 import nl.zeesoft.zjmo.orchestra.Orchestra;
 import nl.zeesoft.zjmo.orchestra.OrchestraGenerator;
+import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.controller.OrchestraController;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zso.orchestra.controller.SampleOrchestraController;
 import nl.zeesoft.zso.orchestra.members.SamplePlayer;
 
 public class SampleOrchestra extends Orchestra {
+	public static final String CONTROL		= "Control";
 	public static final String BASEBEAT		= "Basebeat";
 	public static final String SNARE		= "Snare";
 	public static final String HIHAT		= "Hihat";
 	
 	@Override
 	public void initialize() {
+		Channel controlChannel = addChannel(CONTROL,true);
+		
 		addPosition(BASEBEAT);
 		addPosition(SNARE);
 		addPosition(HIHAT);
@@ -29,6 +34,12 @@ public class SampleOrchestra extends Orchestra {
 		addMember(BASEBEAT,1,LOCALHOST,6541,6540,200,false);
 		addMember(SNARE,1,LOCALHOST,7652,7651,200,false);
 		addMember(HIHAT,1,LOCALHOST,8763,8762,200,false);
+		
+		for (OrchestraMember member: getMembers()) {
+			if (!member.getPosition().getName().equals(CONDUCTOR)) {
+				controlChannel.getSubscriberIdList().add(member.getId());
+			}
+		}
 	}
 
 	@Override

@@ -13,17 +13,25 @@ public class SamplePlayerProtocol extends ProtocolWork {
 		ZStringBuilder output = null;
 		if (member instanceof SamplePlayer) {
 			SamplePlayer player = (SamplePlayer) member;
+			boolean adjustGain = false;
 			boolean play = false;
+			float gain = 0;
 			long startMs = 0;
 			long durationMs = 0;
 			for (JsElem cElem: json.rootElement.children) {
-				if (cElem.name.equals("startMs")) {
+				if (cElem.name.equals("gain")) {
+					gain = Float.parseFloat(cElem.value.toString());
+					adjustGain = true;
+				} else if (cElem.name.equals("startMs")) {
 					startMs = Long.parseLong(cElem.value.toString());
 					play = true;
 				} else if (cElem.name.equals("durationMs")) {
 					durationMs = Long.parseLong(cElem.value.toString());
 					play = true;
 				}
+			}
+			if (adjustGain) {
+				player.setClipGain(gain);
 			}
 			if (play) {
 				player.playClip(startMs, durationMs);

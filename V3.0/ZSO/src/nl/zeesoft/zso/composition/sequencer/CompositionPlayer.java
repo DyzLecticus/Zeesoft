@@ -18,13 +18,13 @@ public class CompositionPlayer extends Worker {
 	private int											step		= 0;
 	private SortedMap<String,CompositionPlayerWorker>	workers		= new TreeMap<String,CompositionPlayerWorker>();
 	
-	public CompositionPlayer(Messenger msgr, WorkerUnion union,Sequencer sequencer) {
-		super(msgr, union);
+	public CompositionPlayer(Messenger msgr,WorkerUnion uni,Sequencer sequencer) {
+		super(msgr,uni);
 		setSleep(1);
 		this.sequencer = sequencer;
-		workers.put(SampleOrchestra.BASEBEAT,new CompositionPlayerWorker(msgr,union,sequencer,SampleOrchestra.BASEBEAT));
-		workers.put(SampleOrchestra.SNARE,new CompositionPlayerWorker(msgr,union,sequencer,SampleOrchestra.SNARE));
-		workers.put(SampleOrchestra.HIHAT,new CompositionPlayerWorker(msgr,union,sequencer,SampleOrchestra.HIHAT));
+		workers.put(SampleOrchestra.BASEBEAT,new CompositionPlayerWorker(msgr,uni,sequencer,SampleOrchestra.BASEBEAT));
+		workers.put(SampleOrchestra.SNARE,new CompositionPlayerWorker(msgr,uni,sequencer,SampleOrchestra.SNARE));
+		workers.put(SampleOrchestra.HIHAT,new CompositionPlayerWorker(msgr,uni,sequencer,SampleOrchestra.HIHAT));
 	}
 	
 	@Override
