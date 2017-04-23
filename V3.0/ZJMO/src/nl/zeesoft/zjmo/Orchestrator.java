@@ -97,7 +97,7 @@ public class Orchestrator {
 				}
 				if (err.length()==0) {
 					JsFile json = new JsFile();
-					err = json.fromFile(genDir.getAbsolutePath() + "/orchestra.json");
+					err = json.fromFile(genDir.getAbsolutePath() + "/" + ORCHESTRA_JSON);
 					if (err.length()==0) {
 						orch.fromJson(json);
 						OrchestraGenerator generator = orch.getNewGenerator();
@@ -109,13 +109,13 @@ public class Orchestrator {
 				OrchestraMember member = null;
 				File orchJs = new File(ORCHESTRA_JSON);
 				if (!orchJs.exists()) {
-					err = "Orchestra JSON file not found: orchestra.json";
+					err = "Orchestra JSON file not found: " + ORCHESTRA_JSON;
 				}
 				if (err.length()==0) {
 					JsFile jsonFile = new JsFile();
 					err = jsonFile.fromFile(orchJs.getAbsolutePath());
 					if (err.length()>0) {
-						err = "Error parsing orchestra.json: " + err;
+						err = "Error parsing " + ORCHESTRA_JSON + ": " + err;
 					} else {
 						orch.fromJson(jsonFile);
 					}

@@ -80,7 +80,7 @@ public class ControllerImportExportWorker extends Worker {
 					}
 				} else if (action.equals(Orchestrator.GENERATE)) {
 					boolean confirmed = true;
-					File check = new File(file.getAbsolutePath() + "/orchestra.json");
+					File check = new File(file.getAbsolutePath() + "/" + Orchestrator.ORCHESTRA_JSON);
 					if (check.exists()) {
 						confirmed = controller.showConfirmMessage("Are you sure you want to overwrite the selected orchestra?");
 					}

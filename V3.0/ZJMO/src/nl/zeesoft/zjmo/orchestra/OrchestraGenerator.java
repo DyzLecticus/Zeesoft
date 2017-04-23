@@ -24,7 +24,7 @@ public class OrchestraGenerator {
 			memberDir.mkdir();
 		}
 		if (err.length()==0) {
-			err = orch.toJson(false).toFile(orchDir.getAbsolutePath() + "/orchestra.json",true);
+			err = orch.toJson(false).toFile(orchDir.getAbsolutePath() + "/" + Orchestrator.ORCHESTRA_JSON,true);
 		}
 		if (err.length()==0) {
 			generateMemberUpdateScript(orchDir,memberDir,orch);
@@ -169,7 +169,7 @@ public class OrchestraGenerator {
 	protected void generateMemberScripts(File memberDir,Orchestra orch,ZStringBuilder json,OrchestraMember member) {
 		generateMemberStartScript(orch,memberDir,member);
 		generateMemberStopScript(orch,memberDir,member);
-		json.toFile(getDirectoryNameForMember(memberDir,member) + "/orchestra.json");
+		json.toFile(getDirectoryNameForMember(memberDir,member) + "/" + Orchestrator.ORCHESTRA_JSON);
 		if (isWindows()) {
 			generateMemberBackgroundScript(memberDir,member);
 		}
