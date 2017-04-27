@@ -14,14 +14,19 @@ public class SamplePlayerProtocol extends ProtocolWork {
 		if (member instanceof SamplePlayer) {
 			SamplePlayer player = (SamplePlayer) member;
 			boolean adjustGain = false;
-			boolean play = false;
 			float gain = 0;
+			boolean adjustVolume = false;
+			float volume = 0;
+			boolean play = false;
 			long startMs = 0;
 			long durationMs = 0;
 			for (JsElem cElem: json.rootElement.children) {
 				if (cElem.name.equals("gain")) {
 					gain = Float.parseFloat(cElem.value.toString());
 					adjustGain = true;
+				} else if (cElem.name.equals("volume")) {
+					volume = Float.parseFloat(cElem.value.toString());
+					adjustVolume = true;
 				} else if (cElem.name.equals("startMs")) {
 					startMs = Long.parseLong(cElem.value.toString());
 					play = true;
@@ -32,6 +37,9 @@ public class SamplePlayerProtocol extends ProtocolWork {
 			}
 			if (adjustGain) {
 				player.setClipGain(gain);
+			}
+			if (adjustVolume) {
+				player.setClipVolume(volume);
 			}
 			if (play) {
 				player.playClip(startMs, durationMs);

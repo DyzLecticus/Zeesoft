@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zso.composition.Composition;
+import nl.zeesoft.zso.composition.MidiStep;
 import nl.zeesoft.zso.composition.Step;
 import nl.zeesoft.zso.orchestra.SampleOrchestra;
 
@@ -25,6 +26,10 @@ public class CompositionPlayer extends Worker {
 		workers.put(SampleOrchestra.BASEBEAT,new CompositionPlayerWorker(msgr,uni,sequencer,SampleOrchestra.BASEBEAT));
 		workers.put(SampleOrchestra.SNARE,new CompositionPlayerWorker(msgr,uni,sequencer,SampleOrchestra.SNARE));
 		workers.put(SampleOrchestra.HIHAT,new CompositionPlayerWorker(msgr,uni,sequencer,SampleOrchestra.HIHAT));
+		workers.put(SampleOrchestra.SYNTH_BASS,new CompositionMidiPlayerWorker(msgr,uni,sequencer,SampleOrchestra.SYNTHESIZER,SampleOrchestra.SYNTH_BASS));
+		workers.put(SampleOrchestra.SYNTH_PIANO,new CompositionMidiPlayerWorker(msgr,uni,sequencer,SampleOrchestra.SYNTHESIZER,SampleOrchestra.SYNTH_PIANO));
+		workers.put(SampleOrchestra.SYNTH_HARP,new CompositionMidiPlayerWorker(msgr,uni,sequencer,SampleOrchestra.SYNTHESIZER,SampleOrchestra.SYNTH_HARP));
+		workers.put(SampleOrchestra.SYNTH_STRINGS,new CompositionMidiPlayerWorker(msgr,uni,sequencer,SampleOrchestra.SYNTHESIZER,SampleOrchestra.SYNTH_STRINGS));
 	}
 	
 	@Override
@@ -66,9 +71,17 @@ public class CompositionPlayer extends Worker {
 			unlockMe(this);
 			setSleep((int) comp.getMsForStep(step));
 			for (Step stp: steps) {
-				CompositionPlayerWorker worker = workers.get(stp.getPositionName());
-				if (worker!=null && worker.isWorking() && worker.getPlayDateTime()==0) {
-					worker.setPlayDateTime(playDateTime,stp.getStartMs(),stp.getDurationMs());
+				if (stp instanceof MidiStep) {
+					MidiStep mStp = (MidiStep) stp;
+					CompositionMidiPlayerWorker worker = (CompositionMidiPlayerWorker) workers.get(mStp.getInstrument());
+					if (worker!=null && worker.isWorking() && worker.getPlayDateTime()==0) {
+						worker.setPlayDateTime(playDateTime,mStp.getNotes(),mStp.getVelocity(),mStp.getDurationMs());
+					}
+				} else {
+					CompositionPlayerWorker worker = workers.get(stp.getPositionName());
+					if (worker!=null && worker.isWorking() && worker.getPlayDateTime()==0) {
+						worker.setPlayDateTime(playDateTime,stp.getStartMs(),stp.getDurationMs());
+					}
 				}
 			}
 		} else {

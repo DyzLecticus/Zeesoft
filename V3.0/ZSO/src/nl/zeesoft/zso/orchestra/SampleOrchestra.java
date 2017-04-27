@@ -8,14 +8,21 @@ import nl.zeesoft.zjmo.orchestra.OrchestraMember;
 import nl.zeesoft.zjmo.orchestra.controller.OrchestraController;
 import nl.zeesoft.zjmo.orchestra.members.Player;
 import nl.zeesoft.zso.orchestra.controller.SampleOrchestraController;
+import nl.zeesoft.zso.orchestra.members.MidiPlayer;
 import nl.zeesoft.zso.orchestra.members.SamplePlayer;
 
 public class SampleOrchestra extends Orchestra {
-	public static final String CONTROL		= "Control";
-	public static final String BASEBEAT		= "Basebeat";
-	public static final String SNARE		= "Snare";
-	public static final String HIHAT		= "Hihat";
-	
+	public static final String CONTROL			= "Control";
+	public static final String BASEBEAT			= "Basebeat";
+	public static final String SNARE			= "Snare";
+	public static final String HIHAT			= "Hihat";
+	public static final String SYNTHESIZER		= "Synthesizer";
+
+	public static final String SYNTH_BASS		= "Bass";
+	public static final String SYNTH_PIANO		= "Piano";
+	public static final String SYNTH_HARP		= "Harp";
+	public static final String SYNTH_STRINGS	= "Strings";
+
 	@Override
 	public void initialize() {
 		Channel controlChannel = addChannel(CONTROL,true);
@@ -23,18 +30,27 @@ public class SampleOrchestra extends Orchestra {
 		addPosition(BASEBEAT);
 		addPosition(SNARE);
 		addPosition(HIHAT);
+		addPosition(SYNTHESIZER);
 
-		getConductors().get(0).setWorkRequestTimeoutDrain(true);
-		addMember(BASEBEAT,0,LOCALHOST,6543,6542,100,true);
-		addMember(SNARE,0,LOCALHOST,7654,7653,100,true);
-		addMember(HIHAT,0,LOCALHOST,8765,8764,100,true);
+		OrchestraMember conductor0 = getConductors().get(0);
+		conductor0.setWorkRequestTimeoutDrain(true);
+		conductor0.setControlPort(7700);
+		conductor0.setWorkPort(7701);
+		
+		addMember(BASEBEAT,0,LOCALHOST,8800,8801,100,true);
+		addMember(SNARE,0,LOCALHOST,8802,8803,100,true);
+		addMember(HIHAT,0,LOCALHOST,8804,8805,100,true);
+		//addMember(SYNTHESIZER,0,LOCALHOST,8806,8807,100,true);
 
 		// Backups 
-		addMember(CONDUCTOR,1,LOCALHOST,5431,5430,500,false);
-		addMember(BASEBEAT,1,LOCALHOST,6541,6540,200,false);
-		addMember(SNARE,1,LOCALHOST,7652,7651,200,false);
-		addMember(HIHAT,1,LOCALHOST,8763,8762,200,false);
+		addMember(CONDUCTOR,1,LOCALHOST,7702,7703,500,false);
+
+		addMember(BASEBEAT,1,LOCALHOST,9900,9901,200,true);
+		addMember(SNARE,1,LOCALHOST,9902,9903,200,true);
+		addMember(HIHAT,1,LOCALHOST,9904,9905,200,true);
+		//addMember(SYNTHESIZER,1,LOCALHOST,9906,9907,200,true);
 		
+		// Instrument control channel
 		for (OrchestraMember member: getMembers()) {
 			if (!member.getPosition().getName().equals(CONDUCTOR)) {
 				controlChannel.getSubscriberIdList().add(member.getId());
@@ -54,6 +70,12 @@ public class SampleOrchestra extends Orchestra {
 
 	@Override
 	public Player getNewPlayer(Messenger msgr, String positionName, int positionBackupNumber) {
-		return new SamplePlayer(msgr,this,positionName,positionBackupNumber);
+		Player r = null;
+		if (positionName.equals(SYNTHESIZER)) {
+			r = new MidiPlayer(msgr,this,positionName,positionBackupNumber);
+		} else {
+			r = new SamplePlayer(msgr,this,positionName,positionBackupNumber);
+		}
+		return r;
 	}
 }

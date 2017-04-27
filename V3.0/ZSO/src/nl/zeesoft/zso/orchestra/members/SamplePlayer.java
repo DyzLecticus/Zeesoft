@@ -96,18 +96,32 @@ public class SamplePlayer extends Player {
 	}
 	
 	protected String setClipGain(float gain) {
+		return setClipControlValue("gain",gain);
+	}
+
+	protected String setClipVolume(float volume) {
+		return setClipControlValue("volume",volume);
+	}
+
+	private String setClipControlValue(String type,float value) {
     	if (worker!=null) {
-			FloatControl gainControl = null;
+    		FloatControl.Type t = null;
+    		if (type.equals("gain")) {
+    			t = FloatControl.Type.MASTER_GAIN;
+    		} else if (type.equals("volume")) {
+    			t = FloatControl.Type.VOLUME;
+    		}
+			FloatControl control = null;
 	        try {
-	    		gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+	    		control = (FloatControl) clip.getControl(t);
 			} catch (IllegalArgumentException e) {
-	        	getMessenger().error(this,"Gain control is not available: " + e,e);
+	        	getMessenger().error(this,"Control type " + type + " is not available : " + e,e);
 			}
-	        if (gainControl!=null) {
+	        if (control!=null) {
 	            try {
-	        		gainControl.setValue(gain);
+	        		control.setValue(value);
 	    		} catch (IllegalArgumentException e) {
-	            	getMessenger().error(this,"Invalid gain value: " + gain + ", error: " + e,e);
+	            	getMessenger().error(this,"Invalid control value: " + value + ", error: " + e,e);
 	    		}
 	        }
     	}

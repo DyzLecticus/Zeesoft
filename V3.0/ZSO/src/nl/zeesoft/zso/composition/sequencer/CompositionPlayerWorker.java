@@ -48,6 +48,12 @@ public class CompositionPlayerWorker extends Worker {
 		return r;
 	}
 	
+	public void setPlayDateTime(long playDateTime) {
+		lockMe(this);
+		this.playDateTime = playDateTime;
+		unlockMe(this);
+	}
+
 	public void setPlayDateTime(long playDateTime,long startMs,long durationMs) {
 		lockMe(this);
 		this.playDateTime = playDateTime;
@@ -55,7 +61,7 @@ public class CompositionPlayerWorker extends Worker {
 		this.durationMs = durationMs;
 		unlockMe(this);
 	}
-	
+
 	@Override
 	public void whileWorking() {
 		long r = getPlayDateTime();
@@ -67,21 +73,25 @@ public class CompositionPlayerWorker extends Worker {
 				req.rootElement.children.add(new JsElem("durationMs","" + durationMs));
 			}
 			WorkRequest wr = new WorkRequest();
-			wr.setPositionName(positionName);
 			wr.setRequest(req);
-			WorkRequest rwr = connector.sendWorkRequest(wr);
-			String err = "";
-			if (rwr!=null) {
-				if (rwr.getError().length()>0) {
-					err = "Failed to play position: " + positionName + ", error: " + rwr.getError();
-				}
-			} else {
-				err = "Failed to play position: " + positionName;
+			sendWorkRequest(wr);
+			setPlayDateTime(0);
+		}
+	}
+	
+	protected void sendWorkRequest(WorkRequest wr) {
+		wr.setPositionName(positionName);
+		WorkRequest rwr = connector.sendWorkRequest(wr);
+		String err = "";
+		if (rwr!=null) {
+			if (rwr.getError().length()>0) {
+				err = "Failed to play position: " + positionName + ", error: " + rwr.getError();
 			}
-			if (err.length()>0) {
-				getMessenger().error(this,err);
-			}
-			setPlayDateTime(0,0,0);
+		} else {
+			err = "Failed to play position: " + positionName;
+		}
+		if (err.length()>0) {
+			getMessenger().error(this,err);
 		}
 	}
 }

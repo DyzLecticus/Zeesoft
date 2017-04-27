@@ -16,6 +16,9 @@ public class SampleOrchestraController extends OrchestraController {
 	private JMenu			gainMenu		= null; 
 	private JMenuItem		giMenuItem		= null;
 	private JMenuItem		gdMenuItem		= null;
+	private JMenu			volMenu			= null; 
+	private JMenuItem		vmMenuItem		= null;
+	private JMenuItem		vhMenuItem		= null;
 	private JMenuItem		startMenuItem	= null;
 	private JMenuItem		stopMenuItem	= null;
 	
@@ -58,8 +61,25 @@ public class SampleOrchestraController extends OrchestraController {
 		gdMenuItem.setEnabled(false);
 		gainMenu.add(gdMenuItem);
 
-		sequencerMenu.add(gainMenu);
+		//sequencerMenu.add(gainMenu);
+		
+		volMenu = new JMenu("Volume");
+		volMenu.setEnabled(false);
+		
+		vmMenuItem = new JMenuItem("1.0");
+		vmMenuItem.setActionCommand(Sequencer.VOLUME_INCREASE);
+		vmMenuItem.addActionListener(sequencer);
+		vmMenuItem.setEnabled(false);
+		volMenu.add(vmMenuItem);
+		
+		vhMenuItem = new JMenuItem("0.5");
+		vhMenuItem.setActionCommand(Sequencer.VOLUME_DECREASE);
+		vhMenuItem.addActionListener(sequencer);
+		vhMenuItem.setEnabled(false);
+		volMenu.add(vhMenuItem);
 
+		//sequencerMenu.add(volMenu);
+		
 		startMenuItem = new JMenuItem("Start");
 		startMenuItem.setActionCommand(Sequencer.START);
 		startMenuItem.addActionListener(sequencer);
@@ -99,5 +119,8 @@ public class SampleOrchestraController extends OrchestraController {
 		gainMenu.setEnabled(enabled);
 		giMenuItem.setEnabled(enabled);
 		gdMenuItem.setEnabled(enabled);
+		volMenu.setEnabled(enabled);
+		vmMenuItem.setEnabled(enabled);
+		vhMenuItem.setEnabled(enabled);
 	}
 }

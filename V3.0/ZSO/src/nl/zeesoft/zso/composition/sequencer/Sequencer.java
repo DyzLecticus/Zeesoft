@@ -20,6 +20,8 @@ public class Sequencer extends Locker implements ActionListener {
 	public static final String			LOAD_COMPOSITION	= "LOAD_COMPOSITION";
 	public static final String			GAIN_INCREASE		= "GAIN_INCREASE";
 	public static final String			GAIN_DECREASE		= "GAIN_DECREASE";
+	public static final String			VOLUME_INCREASE		= "VOLUME_INCREASE";
+	public static final String			VOLUME_DECREASE		= "VOLUME_DECREASE";
 	public static final String			START				= "START";
 	public static final String			STOP				= "STOP";
 	
@@ -75,6 +77,10 @@ public class Sequencer extends Locker implements ActionListener {
 			err = setGain(3.0F);
 		} else if (evt.getActionCommand().equals(GAIN_DECREASE)) {
 			err = setGain(-3.0F);
+		} else if (evt.getActionCommand().equals(VOLUME_INCREASE)) {
+			err = setVolume(1.0F);
+		} else if (evt.getActionCommand().equals(VOLUME_DECREASE)) {
+			err = setVolume(0.5F);
 		} else if (evt.getActionCommand().equals(START)) {
 			start();
 		} else if (evt.getActionCommand().equals(STOP)) {
@@ -115,10 +121,18 @@ public class Sequencer extends Locker implements ActionListener {
 	}
 	
 	protected String setGain(float gain) {
+		return setControlValue("gain",gain);
+	}
+		
+	protected String setVolume(float volume) {
+		return setControlValue("volume",volume);
+	}
+		
+	protected String setControlValue(String type,float value) {
 		String err = "";
 		JsFile req = new JsFile();
 		req.rootElement = new JsElem();
-		req.rootElement.children.add(new JsElem("gain","" + gain));
+		req.rootElement.children.add(new JsElem(type,"" + value));
 		PublishRequest pr = new PublishRequest();
 		pr.setChannelName(SampleOrchestra.CONTROL);
 		pr.setRequest(req);

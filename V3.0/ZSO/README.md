@@ -9,7 +9,7 @@ This library depends on the following libraries;
  * [Zeesoft JSON Machine Orchestration](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZJMO/)  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/zso-0.9.10.zip) to download the latest ZSO release (version 0.9.10).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/zso-0.9.11.zip) to download the latest ZSO release (version 0.9.11).  
 All ZSO releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSO/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -466,7 +466,7 @@ The output of this test shows the JSON structure of the *DemoComposition*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 143 ms (total sleep duration: 0 ms).  
+Total test duration: 158 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zso.test.TestDemoComposition: 265 Kb / 0 Mb
+ * nl.zeesoft.zso.test.TestDemoComposition: 270 Kb / 0 Mb
