@@ -17,35 +17,35 @@ public class Settings {
 
 	public Settings() {
 		synthesizerConfiguration = new SynthesizerConfiguration();
-		keyCodeNoteNumbers.put("Q",35);
-		keyCodeNoteNumbers.put("2",36);
-		keyCodeNoteNumbers.put("W",37);
-		keyCodeNoteNumbers.put("3",38);
-		keyCodeNoteNumbers.put("E",39);
-		keyCodeNoteNumbers.put("R",40);
-		keyCodeNoteNumbers.put("5",41);
-		keyCodeNoteNumbers.put("T",42);
-		keyCodeNoteNumbers.put("6",43);
-		keyCodeNoteNumbers.put("Y",44);
-		keyCodeNoteNumbers.put("7",45);
-		keyCodeNoteNumbers.put("U",46);
-		keyCodeNoteNumbers.put("I",47);
-		keyCodeNoteNumbers.put("9",48);
-		keyCodeNoteNumbers.put("O",49);
-		keyCodeNoteNumbers.put("0",50);
-		keyCodeNoteNumbers.put("P",51);
-		keyCodeNoteNumbers.put("Z",47);
-		keyCodeNoteNumbers.put("S",48);
-		keyCodeNoteNumbers.put("X",49);
-		keyCodeNoteNumbers.put("D",50);
-		keyCodeNoteNumbers.put("C",51);
-		keyCodeNoteNumbers.put("V",52);
-		keyCodeNoteNumbers.put("G",53);
-		keyCodeNoteNumbers.put("B",54);
-		keyCodeNoteNumbers.put("H",55);
-		keyCodeNoteNumbers.put("N",56);
-		keyCodeNoteNumbers.put("J",57);
-		keyCodeNoteNumbers.put("M",58);
+		keyCodeNoteNumbers.put("Q",36);
+		keyCodeNoteNumbers.put("2",37);
+		keyCodeNoteNumbers.put("W",38);
+		keyCodeNoteNumbers.put("3",39);
+		keyCodeNoteNumbers.put("E",40);
+		keyCodeNoteNumbers.put("R",41);
+		keyCodeNoteNumbers.put("5",42);
+		keyCodeNoteNumbers.put("T",43);
+		keyCodeNoteNumbers.put("6",44);
+		keyCodeNoteNumbers.put("Y",45);
+		keyCodeNoteNumbers.put("7",46);
+		keyCodeNoteNumbers.put("U",47);
+		keyCodeNoteNumbers.put("I",48);
+		keyCodeNoteNumbers.put("9",49);
+		keyCodeNoteNumbers.put("O",50);
+		keyCodeNoteNumbers.put("0",51);
+		keyCodeNoteNumbers.put("P",52);
+		keyCodeNoteNumbers.put("Z",48);
+		keyCodeNoteNumbers.put("S",49);
+		keyCodeNoteNumbers.put("X",50);
+		keyCodeNoteNumbers.put("D",51);
+		keyCodeNoteNumbers.put("C",52);
+		keyCodeNoteNumbers.put("V",53);
+		keyCodeNoteNumbers.put("G",54);
+		keyCodeNoteNumbers.put("B",55);
+		keyCodeNoteNumbers.put("H",56);
+		keyCodeNoteNumbers.put("N",57);
+		keyCodeNoteNumbers.put("J",58);
+		keyCodeNoteNumbers.put("M",59);
 	}
 	
 	public String fromFile() {

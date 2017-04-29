@@ -141,30 +141,30 @@ public class SynthesizerConfiguration {
 		InstrumentConfiguration inst = getInstrument(instrument);
 		if (instrument.equals(Instrument.DRUMS)) {
 			DrumConfiguration drum = null;
-			if (note==35) {
+			if (note==36) {
 				drum = getDrum(Drum.BASEBEAT);
-			} else if (note==36) {
-				drum = getDrum(Drum.CLAP);
 			} else if (note==37) {
-				drum = getDrum(Drum.SNARE);
+				drum = getDrum(Drum.CLAP);
 			} else if (note==38) {
-				drum = getDrum(Drum.HIHAT1);
+				drum = getDrum(Drum.SNARE);
 			} else if (note==39) {
-				drum = getDrum(Drum.HIHAT2);
+				drum = getDrum(Drum.HIHAT1);
 			} else if (note==40) {
-				drum = getDrum(Drum.TOM1);
+				drum = getDrum(Drum.HIHAT2);
 			} else if (note==41) {
-				drum = getDrum(Drum.TOM2);
+				drum = getDrum(Drum.TOM1);
 			} else if (note==42) {
-				drum = getDrum(Drum.RIDE);
+				drum = getDrum(Drum.TOM2);
 			} else if (note==43) {
+				drum = getDrum(Drum.RIDE);
+			} else if (note==44) {
 				drum = getDrum(Drum.CYMBAL);
 			}
 			if (drum!=null) {
 				r = drum.getNoteNum();
 			}
 		} else {
-			r = (inst.getBaseOctave() * 12) - 1 + (note - 35);
+			r = (inst.getBaseOctave() * 12) + (note - 36);
 		}
 		return r;
 	}
@@ -174,23 +174,23 @@ public class SynthesizerConfiguration {
 		InstrumentConfiguration inst = getInstrument(instrument);
 		if (instrument.equals(Instrument.DRUMS)) {
 			DrumConfiguration drum = null;
-			if (note==35) {
+			if (note==36) {
 				drum = getDrum(Drum.BASEBEAT);
-			} else if (note==36) {
-				drum = getDrum(Drum.CLAP);
 			} else if (note==37) {
-				drum = getDrum(Drum.SNARE);
+				drum = getDrum(Drum.CLAP);
 			} else if (note==38) {
-				drum = getDrum(Drum.HIHAT1);
+				drum = getDrum(Drum.SNARE);
 			} else if (note==39) {
-				drum = getDrum(Drum.HIHAT2);
+				drum = getDrum(Drum.HIHAT1);
 			} else if (note==40) {
-				drum = getDrum(Drum.TOM1);
+				drum = getDrum(Drum.HIHAT2);
 			} else if (note==41) {
-				drum = getDrum(Drum.TOM2);
+				drum = getDrum(Drum.TOM1);
 			} else if (note==42) {
-				drum = getDrum(Drum.RIDE);
+				drum = getDrum(Drum.TOM2);
 			} else if (note==43) {
+				drum = getDrum(Drum.RIDE);
+			} else if (note==44) {
 				drum = getDrum(Drum.CYMBAL);
 			}
 			if (drum!=null) {

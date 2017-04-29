@@ -44,13 +44,15 @@ public class TestMidiLayout extends TestObject {
 					//System.out.println("Loading " + instruments[i].getName() + " on channel 4");
 				} else if (instruments[i].getName().startsWith("Synth Dru")) {
 					synth.getChannels()[9].programChange(0,i);
+					//synth.getChannels()[9].controlChange(arg0, arg1);
+					//synth.getChannels()[9].
 				}
 			}
 
 			System.out.println("Playing ...");
 			synth.getChannels()[1].noteOn(60, 100);
 
-		    try {
+			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -59,38 +61,38 @@ public class TestMidiLayout extends TestObject {
 			System.out.println("Playing ...");
 			synth.getChannels()[4].noteOn(63, 100);
 
-		    try {
+			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 
-		    synth.getChannels()[1].noteOff(60);
+			synth.getChannels()[1].noteOff(60);
 			System.out.println("Stopped");
 
-		    try {
+			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 
-		    synth.getChannels()[4].noteOff(63);
+			synth.getChannels()[4].noteOff(63);
 			System.out.println("Stopped");
 
-		    try {
+			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 
-		    
+			
 			System.out.println("Playing drums ...");
-			for (int i = 35; i < 72; i ++) {
+			for (int i = 35; i < 81; i ++) {
 				System.out.println("Playing drum: " +  i);
 				for (int i2 = 0; i2 < 4; i2 ++) {
 					synth.getChannels()[9].noteOn(i, 127);
 		
-				    try {
+					try {
 						Thread.sleep(250);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
