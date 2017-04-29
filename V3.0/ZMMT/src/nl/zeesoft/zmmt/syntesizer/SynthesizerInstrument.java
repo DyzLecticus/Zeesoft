@@ -1,9 +1,11 @@
 package nl.zeesoft.zmmt.syntesizer;
 
-public class SynthesizerInstrument {
+public class SynthesizerInstrument extends InstrumentConfiguration {
 	private String		instrument	= "";
 	private int			channelNum	= 0;
 	private	int			midiNum		= 0;
+	private int			baseOctave	= 3;
+	private int			polyphony	= 4;
 
 	public int getChannelNum() {
 		return channelNum;
@@ -27,5 +29,21 @@ public class SynthesizerInstrument {
 	
 	public void setMidiNum(int midiNum) {
 		this.midiNum = midiNum;
+	}
+	
+	public int getBaseOctave() {
+		return baseOctave;
+	}
+	
+	public void setBaseOctave(int baseOctave) {
+		this.baseOctave = baseOctave;
+	}
+	
+	public int getPolyphony() {
+		return polyphony;
+	}
+	
+	public void setPolyphony(int polyphony) {
+		this.polyphony = polyphony;
 	}
 }

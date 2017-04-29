@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
@@ -11,12 +12,12 @@ public class FrameMain extends FrameObject {
 	private PanelComposition	compositionPanel	= null;
 	private PanelInstruments	instrumentsPanel	= null;
 	
-	public FrameMain(ControllerWindowAdapter adapter) {
-		super(adapter);
+	public FrameMain(ControllerWindowAdapter adapter,ControllerKeyListener keyListener) {
+		super(adapter,keyListener);
 	}
 
 	@Override
-	public void initialize() {
+	public void initialize(Controller controller) {
 		getFrame().setTitle("Zeesoft MIDI Mod Tracker");
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -28,17 +29,25 @@ public class FrameMain extends FrameObject {
 	
 		getFrame().setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		getFrame().addWindowListener(getAdapter());
+		getFrame().addKeyListener(getKeyListener());
 
-		JTabbedPane tabbedPane = new JTabbedPane();
+		JTabbedPane tabs = new JTabbedPane();
+		tabs.addKeyListener(getKeyListener());
 
 		compositionPanel = new PanelComposition();
-		compositionPanel.initialize();
-		tabbedPane.addTab("Composition",new JScrollPane(compositionPanel.getPanel()));
+		compositionPanel.initialize(controller,getKeyListener());
+		addPanelToTabs(tabs,"Composition",compositionPanel.getPanel());
 
 		instrumentsPanel = new PanelInstruments();
-		instrumentsPanel.initialize();
-		tabbedPane.addTab("Instruments",instrumentsPanel.getPanel());
+		instrumentsPanel.initialize(controller,getKeyListener());
+		addPanelToTabs(tabs,"Instruments",instrumentsPanel.getPanel());
 		
-		getFrame().setContentPane(tabbedPane);
+		getFrame().setContentPane(tabs);
+	}
+	
+	protected void addPanelToTabs(JTabbedPane tabs,String label,JPanel panel) {
+		JScrollPane scroller = new JScrollPane(panel);
+		scroller.getVerticalScrollBar().setUnitIncrement(20);
+		tabs.addTab(label,scroller);
 	}
 }
