@@ -2,20 +2,25 @@ package nl.zeesoft.zmmt.composition;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zmmt.syntesizer.Synthesizer;
+import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
 
 public class Composition {
-	private String		composer		= "";
-	private String		name			= "";
-	private int 		beatsPerMinute	= 120;
-	private int			beatsPerBar		= 4;
-	private int			stepsPerBeat	= 8;
+	private String						composer						= "";
+	private String						name							= "";
+	private int 						beatsPerMinute					= 120;
+	private int							beatsPerBar						= 4;
+	private int							stepsPerBeat					= 8;
 	
-	private Synthesizer	synthesizer		= null;
+	private SynthesizerConfiguration	synthesizerConfiguration		= null;
 	
 	public Composition() {
-		synthesizer = new Synthesizer();
-		synthesizer.initialize();
+		synthesizerConfiguration = new SynthesizerConfiguration();
+	}
+	
+	public Composition copy() {
+		Composition copy = new Composition();
+		copy.fromJson(toJson());
+		return copy;
 	}
 	
 	public JsFile toJson() {
@@ -26,21 +31,31 @@ public class Composition {
 		json.rootElement.children.add(new JsElem("beatsPerMinute","" + beatsPerMinute));
 		json.rootElement.children.add(new JsElem("beatsPerBar","" + beatsPerBar));
 		json.rootElement.children.add(new JsElem("stepsPerBeat","" + stepsPerBeat));
+		JsFile conf = synthesizerConfiguration.toJson();
+		JsElem confElem = new JsElem("synthesizerConfiguration");
+		for (JsElem conElem: conf.rootElement.children) {
+			confElem.children.add(conElem);
+		}
+		json.rootElement.children.add(confElem);
 		return json;
 	}
 
 	public void fromJson(JsFile json) {
-		for (JsElem cElem: json.rootElement.children) {
-			if (cElem.name.equals("composer")) {
-				composer = cElem.value.toString();
-			} else if (cElem.name.equals("name")) {
-				name = cElem.value.toString();
-			} else if (cElem.name.equals("beatsPerMinute")) {
-				beatsPerMinute = Integer.parseInt(cElem.value.toString());
-			} else if (cElem.name.equals("beatsPerBar")) {
-				beatsPerBar = Integer.parseInt(cElem.value.toString());
-			} else if (cElem.name.equals("stepsPerBeat")) {
-				stepsPerBeat = Integer.parseInt(cElem.value.toString());
+		for (JsElem elem: json.rootElement.children) {
+			if (elem.name.equals("composer")) {
+				composer = elem.value.toString();
+			} else if (elem.name.equals("name")) {
+				name = elem.value.toString();
+			} else if (elem.name.equals("beatsPerMinute")) {
+				beatsPerMinute = Integer.parseInt(elem.value.toString());
+			} else if (elem.name.equals("beatsPerBar")) {
+				beatsPerBar = Integer.parseInt(elem.value.toString());
+			} else if (elem.name.equals("stepsPerBeat")) {
+				stepsPerBeat = Integer.parseInt(elem.value.toString());
+			} else if (elem.name.equals("synthesizerConfiguration")) {
+				JsFile conf = new JsFile();
+				conf.rootElement = elem;
+				synthesizerConfiguration.fromJson(conf);
 			}
 		}
 	}
@@ -51,6 +66,14 @@ public class Composition {
 	
 	public long getMsForStep(int number) {
 		return (60000 / beatsPerMinute) / stepsPerBeat;
+	}
+
+	public String getComposer() {
+		return composer;
+	}
+
+	public void setComposer(String composer) {
+		this.composer = composer;
 	}
 	
 	public String getName() {
@@ -85,7 +108,11 @@ public class Composition {
 		this.stepsPerBeat = stepsPerBeat;
 	}
 
-	public Synthesizer getSynthesizer() {
-		return synthesizer;
+	public SynthesizerConfiguration getSynthesizerConfiguration() {
+		return synthesizerConfiguration;
+	}
+
+	public void setSynthesizerConfiguration(SynthesizerConfiguration synthesizerConfiguration) {
+		this.synthesizerConfiguration = synthesizerConfiguration;
 	}
 }

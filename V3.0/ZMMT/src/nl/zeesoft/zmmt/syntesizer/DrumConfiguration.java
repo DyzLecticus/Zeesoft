@@ -1,6 +1,6 @@
 package nl.zeesoft.zmmt.syntesizer;
 
-public class SynthesizerDrum extends InstrumentConfiguration {
+public class DrumConfiguration extends VelocityConfiguration {
 	private String		drum		= "";
 	private	int			noteNum		= 0;
 	
