@@ -126,8 +126,8 @@ public class MidiPlayer extends Player {
 			System.out.println(this + ": no channel to play " + instrument + ", notes: " + notes.size());
 			System.err.println(this + ": no channel to play " + instrument + ", notes: " + notes.size());
 		}
-    	return error;
-    }
+		return error;
+	}
 
 	protected void playInstrumentNotes(String instrument, List<Integer> notes, int velocity) {
 		MidiChannel chan = getMidiChannelForInstrument(instrument);
@@ -147,7 +147,7 @@ public class MidiPlayer extends Player {
 			}
 		}
 	}
-    
+	
 	protected MidiChannel getMidiChannelForInstrument(String instrument) {
 		MidiChannel r = null;
 		if (instrument.equals(SampleOrchestra.SYNTH_BASS)) {
