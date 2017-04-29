@@ -52,12 +52,7 @@ public class Controller extends Locker implements ActionListener {
 		union = new WorkerUnion(getMessenger());
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
-
-		initializeSynthesizer();
-		initializePlayer();
-		
-		setComposition(settings.getNewComposition());
-
+		player = new InstrumentPlayer();
 		mainFrame = new FrameMain(adapter,keyListener);
 		mainFrame.initialize(this);
 	}
@@ -71,16 +66,25 @@ public class Controller extends Locker implements ActionListener {
 	}
 	
 	public void start(boolean debug) {
+		setComposition(settings.getNewComposition());
+		mainFrame.getFrame().setVisible(true);
+		initializeSynthesizer();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
 		mainFrame.getFrame().setVisible(true);
 	}
 
 	public void stop(Worker ignoreWorker) {
+		stopSynthesizer();
 		mainFrame.getFrame().setVisible(false);
 		getMessenger().stop();
 		union.stopWorkers(ignoreWorker);
 		getMessenger().whileWorking();
+		lockMe(this);
+		if (synth!=null) {
+			synth.close();
+		}
+		lockMe(this);
 	}
 
 	public void windowClosing(WindowEvent e) {
@@ -108,13 +112,20 @@ public class Controller extends Locker implements ActionListener {
 		return union;
 	}
 
+	protected Settings getSettings() {
+		return settings;
+	}
+
 	protected Composition getComposition() {
 		return composition;
 	}
 
 	protected void setComposition(Composition composition) {
-		this.composition = composition;
-		updatedCompositionSynthesizer();
+		if (composition!=null) {
+			stopSynthesizer();
+			this.composition = composition;
+			reconfigureSynthesizer();
+		}
 	}
 	
 	protected void initializeSynthesizer() {
@@ -124,32 +135,32 @@ public class Controller extends Locker implements ActionListener {
 			synth = MidiSystem.getSynthesizer();
 			if (synth!=null) {
 				synth.open();
+				if (synth.isOpen()) {
+					player.setSynthesizer(synth);
+				}
 			}
 		} catch (MidiUnavailableException e) {
 			getMessenger().error(this,"Failed to initialize MIDI syntesizer",e);
 		}
 		unlockMe(this);
+		reconfigureSynthesizer();
 	}
 
-	protected void updatedCompositionSynthesizer() {
+	protected void stopSynthesizer() {
 		lockMe(this);
 		if (synth!=null) {
 			List<InstrumentConfiguration> instruments = composition.getSynthesizerConfiguration().getInstruments();
 			for (InstrumentConfiguration inst: instruments) {
-				if (player!=null) {
-					player.stopInstrumentNotes(inst.getInstrument());
-				}
+				player.stopInstrumentNotes(inst.getInstrument());
 			}
-			composition.getSynthesizerConfiguration().configureMidiSynthesizer(synth);
 		}
 		unlockMe(this);
 	}
 
-	protected void initializePlayer() {
+	protected void reconfigureSynthesizer() {
 		lockMe(this);
-		player = null;
 		if (synth!=null) {
-			player = new InstrumentPlayer(synth);
+			composition.getSynthesizerConfiguration().configureMidiSynthesizer(synth);
 		}
 		unlockMe(this);
 	}
@@ -157,23 +168,19 @@ public class Controller extends Locker implements ActionListener {
 	protected JComboBox<String> getNewInstrumentSelector() {
 		JComboBox<String> r = null;
 		lockMe(this);
-		if (player!=null) {
-			r = player.getNewSelector();
-			r.addKeyListener(keyListener);
-		}
+		r = player.getNewSelector();
+		r.addKeyListener(keyListener);
 		unlockMe(this);
 		return r;
 	}
 
 	protected void playNote(int note,boolean accent) {
 		lockMe(this);
-		if (player!=null) {
-			int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note);
-			if (playNote>=0) {
-				int velocity = composition.getSynthesizerConfiguration().getVelocityForNote(player.getSelectedInstrument(),note,accent);
-				if (velocity>=0) {
-					player.playInstrumentNote(playNote,velocity);
-				}
+		int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note);
+		if (playNote>=0) {
+			int velocity = composition.getSynthesizerConfiguration().getVelocityForNote(player.getSelectedInstrument(),note,accent);
+			if (velocity>=0) {
+				player.playInstrumentNote(playNote,velocity);
 			}
 		}
 		unlockMe(this);
@@ -181,11 +188,9 @@ public class Controller extends Locker implements ActionListener {
 
 	protected void stopNote(int note) {
 		lockMe(this);
-		if (player!=null) {
-			int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note);
-			if (playNote>=0) {
-				player.stopInstrumentNote(playNote);
-			}
+		int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note);
+		if (playNote>=0) {
+			player.stopInstrumentNote(playNote);
 		}
 		unlockMe(this);
 	}

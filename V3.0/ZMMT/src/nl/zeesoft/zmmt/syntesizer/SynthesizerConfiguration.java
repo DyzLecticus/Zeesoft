@@ -71,6 +71,7 @@ public class SynthesizerConfiguration {
 						InstrumentConfiguration current = getInstrument(inst.getInstrument());
 						if (current!=null) {
 							int index = instruments.indexOf(current);
+							inst.setChannelNum(current.getChannelNum());
 							instruments.remove(index);
 							instruments.add(index,inst);
 						}
@@ -140,30 +141,30 @@ public class SynthesizerConfiguration {
 		InstrumentConfiguration inst = getInstrument(instrument);
 		if (instrument.equals(Instrument.DRUMS)) {
 			DrumConfiguration drum = null;
-			if (note==0) {
+			if (note==35) {
 				drum = getDrum(Drum.BASEBEAT);
-			} else if (note==1) {
+			} else if (note==36) {
 				drum = getDrum(Drum.CLAP);
-			} else if (note==2) {
+			} else if (note==37) {
 				drum = getDrum(Drum.SNARE);
-			} else if (note==3) {
+			} else if (note==38) {
 				drum = getDrum(Drum.HIHAT1);
-			} else if (note==4) {
+			} else if (note==39) {
 				drum = getDrum(Drum.HIHAT2);
-			} else if (note==5) {
+			} else if (note==40) {
 				drum = getDrum(Drum.TOM1);
-			} else if (note==6) {
+			} else if (note==41) {
 				drum = getDrum(Drum.TOM2);
-			} else if (note==7) {
+			} else if (note==42) {
 				drum = getDrum(Drum.RIDE);
-			} else if (note==8) {
+			} else if (note==43) {
 				drum = getDrum(Drum.CYMBAL);
 			}
 			if (drum!=null) {
 				r = drum.getNoteNum();
 			}
 		} else {
-			r = (inst.getBaseOctave() * 12) - 1 + note;
+			r = (inst.getBaseOctave() * 12) - 1 + (note - 35);
 		}
 		return r;
 	}
@@ -173,23 +174,23 @@ public class SynthesizerConfiguration {
 		InstrumentConfiguration inst = getInstrument(instrument);
 		if (instrument.equals(Instrument.DRUMS)) {
 			DrumConfiguration drum = null;
-			if (note==0) {
+			if (note==35) {
 				drum = getDrum(Drum.BASEBEAT);
-			} else if (note==1) {
+			} else if (note==36) {
 				drum = getDrum(Drum.CLAP);
-			} else if (note==2) {
+			} else if (note==37) {
 				drum = getDrum(Drum.SNARE);
-			} else if (note==3) {
+			} else if (note==38) {
 				drum = getDrum(Drum.HIHAT1);
-			} else if (note==4) {
+			} else if (note==39) {
 				drum = getDrum(Drum.HIHAT2);
-			} else if (note==5) {
+			} else if (note==40) {
 				drum = getDrum(Drum.TOM1);
-			} else if (note==6) {
+			} else if (note==41) {
 				drum = getDrum(Drum.TOM2);
-			} else if (note==7) {
+			} else if (note==42) {
 				drum = getDrum(Drum.RIDE);
-			} else if (note==8) {
+			} else if (note==43) {
 				drum = getDrum(Drum.CYMBAL);
 			}
 			if (drum!=null) {

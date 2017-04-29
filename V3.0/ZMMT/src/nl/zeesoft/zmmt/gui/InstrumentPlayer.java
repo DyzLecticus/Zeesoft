@@ -19,7 +19,7 @@ public class InstrumentPlayer implements ActionListener {
 	
 	private List<String>					playingNotes			= new ArrayList<String>();
 	
-	public InstrumentPlayer(Synthesizer synth) {
+	public void setSynthesizer(Synthesizer synth) {
 		this.synth = synth;
 	}
 
@@ -34,31 +34,37 @@ public class InstrumentPlayer implements ActionListener {
 	}
 
 	public void playInstrumentNote(String name, int noteNumber, int velocity) {
-		String id = getNoteId(name,noteNumber);
-		if (!playingNotes.contains(id)) {
-			playingNotes.add(id);
-			int channel = Instrument.getMidiChannelForInstrument(name);
-			synth.getChannels()[channel].noteOn(noteNumber, velocity);
+		if (synth!=null) {
+			String id = getNoteId(name,noteNumber);
+			if (!playingNotes.contains(id)) {
+				playingNotes.add(id);
+				int channel = Instrument.getMidiChannelForInstrument(name);
+				synth.getChannels()[channel].noteOn(noteNumber, velocity);
+			}
 		}
 	}
 
 	public void stopInstrumentNote(String name, int noteNumber) {
-		int channel = Instrument.getMidiChannelForInstrument(name);
-		synth.getChannels()[channel].noteOff(noteNumber);
-		String id = getNoteId(name,noteNumber);
-		if (playingNotes.contains(id)) {
-			playingNotes.remove(id);
+		if (synth!=null) {
+			int channel = Instrument.getMidiChannelForInstrument(name);
+			synth.getChannels()[channel].noteOff(noteNumber);
+			String id = getNoteId(name,noteNumber);
+			if (playingNotes.contains(id)) {
+				playingNotes.remove(id);
+			}
 		}
 	}
 
 	public void stopInstrumentNotes(String name) {
-		int channel = Instrument.getMidiChannelForInstrument(name);
-		synth.getChannels()[channel].allNotesOff();
-		String pfx = name + ":";
-		List<String> playing = new ArrayList<String>(playingNotes);
-		for (String id: playing) {
-			if (id.startsWith(pfx)) {
-				playingNotes.remove(id);
+		if (synth!=null) {
+			int channel = Instrument.getMidiChannelForInstrument(name);
+			synth.getChannels()[channel].allNotesOff();
+			String pfx = name + ":";
+			List<String> playing = new ArrayList<String>(playingNotes);
+			for (String id: playing) {
+				if (id.startsWith(pfx)) {
+					playingNotes.remove(id);
+				}
 			}
 		}
 	}

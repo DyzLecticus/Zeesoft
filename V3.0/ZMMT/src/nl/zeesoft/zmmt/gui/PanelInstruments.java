@@ -40,7 +40,7 @@ public class PanelInstruments extends PanelObject implements ItemListener {
 		addComponent(getPanel(),row,0.01,instrument,false);
 		
 		row++;
-		cardPanel = getCardPanel();
+		cardPanel = getCardPanel(keyListener);
 		addComponent(getPanel(),row,0.01,cardPanel);
 		
 		row++;
@@ -50,25 +50,24 @@ public class PanelInstruments extends PanelObject implements ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		CardLayout cl = (CardLayout)(cardPanel.getLayout());
-	    cl.show(cardPanel,(String) evt.getItem());
+		cl.show(cardPanel,(String) evt.getItem());
 	}
 
-	protected JPanel getCardPanel() {
+	protected JPanel getCardPanel(KeyListener keyListener) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new CardLayout());
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-			panel.add(getInstrumentPanel(i),Instrument.INSTRUMENTS[i]);
+			panel.add(getInstrumentPanel(i,keyListener),Instrument.INSTRUMENTS[i]);
 		}
 		return panel;
 	}
 	
-	protected JPanel getInstrumentPanel(int instrumentNum) {
+	protected JPanel getInstrumentPanel(int instrumentNum,KeyListener keyListener) {
 		String name = Instrument.INSTRUMENTS[instrumentNum];
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		//panel.setBorder(BorderFactory.createTitledBorder("Settings"));
 		
 		int row = 0;
 
@@ -84,13 +83,17 @@ public class PanelInstruments extends PanelObject implements ItemListener {
 
 			row++;
 			instrumentBaseVelocity[instrumentNum] = getNewNumberTextField(3);
+			JPanel slider = getNewNumberSlider(instrumentBaseVelocity[instrumentNum],0,127,100);
+			slider.getComponent(1).addKeyListener(keyListener);
 			addLabel(panel,row,"Base velocity");
-			addProperty(panel,row,instrumentBaseVelocity[instrumentNum]);
+			addProperty(panel,row,slider);
 	
 			row++;
 			instrumentAccentVelocity[instrumentNum] = getNewNumberTextField(3);
+			slider = getNewNumberSlider(instrumentAccentVelocity[instrumentNum],0,127,100);
+			slider.getComponent(1).addKeyListener(keyListener);
 			addLabel(panel,row,"Accent velocity");
-			addProperty(panel,row,instrumentAccentVelocity[instrumentNum]);
+			addProperty(panel,row,slider);
 		}
 
 		if (name.equals(Instrument.DRUMS)) {
@@ -106,13 +109,17 @@ public class PanelInstruments extends PanelObject implements ItemListener {
 				
 				drow++;
 				drumBaseVelocity[d] = getNewNumberTextField(3);
+				JPanel slider = getNewNumberSlider(drumBaseVelocity[d],0,127,100);
+				slider.getComponent(1).addKeyListener(keyListener);
 				addLabel(drumPanel,drow,"Base velocity");
-				addProperty(drumPanel,drow,drumBaseVelocity[d]);
+				addProperty(drumPanel,drow,slider);
 		
 				drow++;
 				drumAccentVelocity[d] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(drumAccentVelocity[d],0,127,100);
+				slider.getComponent(1).addKeyListener(keyListener);
 				addLabel(drumPanel,drow,"Accent velocity");
-				addProperty(drumPanel,drow,drumAccentVelocity[d]);
+				addProperty(drumPanel,drow,slider);
 				
 				row++;
 				addComponent(panel,row,0.01,drumPanel);
