@@ -2,8 +2,9 @@ package nl.zeesoft.zmmt.gui;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
-public class ControllerWindowAdapter extends WindowAdapter {
+public class ControllerWindowAdapter extends WindowAdapter implements WindowFocusListener {
 	private Controller 	controller = null;
 	
 	public ControllerWindowAdapter(Controller controller) {
@@ -22,6 +23,16 @@ public class ControllerWindowAdapter extends WindowAdapter {
 	
 	@Override
 	public void windowStateChanged(WindowEvent e) {
+		controller.windowStateChanged(e);
+	}
+
+	@Override
+	public void windowGainedFocus(WindowEvent e) {
+		controller.windowStateChanged(e);
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent e) {
 		controller.windowStateChanged(e);
 	}
 }

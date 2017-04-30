@@ -61,10 +61,7 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("composer",composer,true));
 		JsElem kcnnsElem = new JsElem("keyCodeNoteNumbers");
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
-			JsElem kcnnElem = new JsElem("keyCodeNoteNumber");
-			kcnnElem.children.add(new JsElem("keyCode",entry.getKey(),true));
-			kcnnElem.children.add(new JsElem("noteNumber","" + entry.getValue()));
-			kcnnsElem.children.add(kcnnElem);
+			kcnnsElem.children.add(new JsElem(entry.getKey(),entry.getValue().toString()));
 		}
 		json.rootElement.children.add(kcnnsElem);
 		JsFile conf = synthesizerConfiguration.toJson();
@@ -86,8 +83,8 @@ public class Settings {
 					composer = elem.value.toString();
 				} else if (elem.name.equals("keyCodeNoteNumbers")) {
 					for (JsElem kElem: elem.children) {
-						String keyCode = kElem.getChildByName("keyCode").value.toString();
-						int noteNumber = Integer.parseInt(kElem.getChildByName("noteNumber").value.toString());
+						String keyCode = kElem.name;
+						int noteNumber = Integer.parseInt(kElem.value.toString());
 						keyCodeNoteNumbers.put(keyCode,noteNumber);
 					}
 				} else if (elem.name.equals("synthesizerConfiguration")) {

@@ -38,6 +38,7 @@ public class FrameMain extends FrameObject implements CompositionUpdater {
 	
 		getFrame().setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		getFrame().addWindowListener(getController().getAdapter());
+		getFrame().addWindowFocusListener(getController().getAdapter());
 		getFrame().addKeyListener(getController().getPlayerKeyListener());
 
 		tabs = new JTabbedPane();

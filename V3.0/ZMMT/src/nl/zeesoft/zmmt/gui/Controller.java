@@ -104,11 +104,15 @@ public class Controller extends Locker {
 	}
 	
 	public void windowIconified(WindowEvent e) {
-		// Ignore
+		if (e.getWindow()==mainFrame.getFrame()) {
+			stopSynthesizer();
+		}
 	}
 	
 	public void windowStateChanged(WindowEvent e) {
-		// Ignore
+		if (e.getWindow()==mainFrame.getFrame() && e.getID()==WindowEvent.WINDOW_LOST_FOCUS) {
+			stopSynthesizer();
+		}
 	}
 
 	public void showErrorMessage(Object source,String message) {

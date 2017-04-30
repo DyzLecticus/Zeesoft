@@ -28,11 +28,11 @@ public class SynthesizerConfiguration {
 			json.rootElement.children.add(instElem);
 			instElem.children.add(new JsElem("instrument",inst.getInstrument(),true));
 			instElem.children.add(new JsElem("midiNum","" + inst.getMidiNum()));
+			instElem.children.add(new JsElem("polyphony","" + inst.getPolyphony()));
 			if (!inst.getInstrument().equals(Instrument.DRUMS)) {
 				instElem.children.add(new JsElem("baseOctave","" + inst.getBaseOctave()));
 				instElem.children.add(new JsElem("baseVelocity","" + inst.getBaseVelocity()));
 				instElem.children.add(new JsElem("accentVelocity","" + inst.getAccentVelocity()));
-				instElem.children.add(new JsElem("polyphony","" + inst.getPolyphony()));
 			}
 		}
 		for (DrumConfiguration drum: drums) {
@@ -267,6 +267,7 @@ public class SynthesizerConfiguration {
 			instrument.setBaseOctave(5);
 		} else if (instrument.getInstrument().equals(Instrument.DRUMS)) {
 			instrument.setMidiNum(118);
+			instrument.setPolyphony(8);
 		} else if (instrument.getInstrument().equals(Instrument.STRINGS1)) {
 			instrument.setMidiNum(48);
 		} else if (instrument.getInstrument().equals(Instrument.STRINGS2)) {

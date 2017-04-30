@@ -1,5 +1,8 @@
 package nl.zeesoft.zmmt.composition;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
@@ -12,6 +15,8 @@ public class Composition {
 	private int							stepsPerBeat					= 8;
 	
 	private SynthesizerConfiguration	synthesizerConfiguration		= null;
+	
+	private List<InstrumentPattern>		patterns						= new ArrayList<InstrumentPattern>();
 	
 	public Composition() {
 		synthesizerConfiguration = new SynthesizerConfiguration();
@@ -37,10 +42,18 @@ public class Composition {
 			confElem.children.add(conElem);
 		}
 		json.rootElement.children.add(confElem);
+		if (patterns.size()>0) {
+			JsElem ptnsElem = new JsElem("patterns",true);
+			json.rootElement.children.add(ptnsElem);
+			for (InstrumentPattern pattern: patterns) {
+				ptnsElem.children.add(pattern.toJson().rootElement);
+			}
+		}
 		return json;
 	}
 
 	public void fromJson(JsFile json) {
+		patterns.clear();
 		for (JsElem elem: json.rootElement.children) {
 			if (elem.name.equals("composer")) {
 				composer = elem.value.toString();
@@ -56,6 +69,14 @@ public class Composition {
 				JsFile conf = new JsFile();
 				conf.rootElement = elem;
 				synthesizerConfiguration.fromJson(conf);
+			} else if (elem.name.equals("patterns")) {
+				for (JsElem ptnElem: elem.children) {
+					JsFile ptn = new JsFile();
+					ptn.rootElement = ptnElem;
+					InstrumentPattern pattern = new InstrumentPattern();
+					pattern.fromJson(ptn);
+					patterns.add(pattern);
+				}
 			}
 		}
 	}
@@ -66,6 +87,10 @@ public class Composition {
 	
 	public long getMsForStep(int number) {
 		return (60000 / beatsPerMinute) / stepsPerBeat;
+	}
+
+	public int getStepsForBars(int bars) {
+		return (bars * getStepsPerBar());
 	}
 
 	public String getComposer() {
@@ -114,5 +139,9 @@ public class Composition {
 
 	public void setSynthesizerConfiguration(SynthesizerConfiguration synthesizerConfiguration) {
 		this.synthesizerConfiguration = synthesizerConfiguration;
+	}
+
+	public List<InstrumentPattern> getPatterns() {
+		return patterns;
 	}
 }

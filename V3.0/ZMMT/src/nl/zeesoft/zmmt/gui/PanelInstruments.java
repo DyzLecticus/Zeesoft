@@ -205,6 +205,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				midiInstrument.removeKeyListener(midiInstrument.getKeyListeners()[l]);
 			}
 			midiInstrument.addKeyListener(getController().getPlayerKeyListener());
+			if (name.equals(Instrument.DRUMS)) {
+				instrumentMidiNum[instrumentNum].setEnabled(false);
+				midiInstrument.setEnabled(false);
+			}
 			selector.add(instrumentMidiNum[instrumentNum]);
 			selector.add(midiInstrument);
 			instrumentMidiInstrument.add(midiInstrument);
@@ -247,8 +251,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				drumPanel.setBorder(BorderFactory.createTitledBorder(Drum.DRUMS[d]));
 
 				drumNoteNum[d] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(drumNoteNum[d],35,81,35);
 				addLabel(drumPanel,drow,"Midi note number");
-				addProperty(drumPanel,drow,drumNoteNum[d]);
+				addProperty(drumPanel,drow,slider);
 				
 				drow++;
 				drumBaseVelocity[d] = getNewNumberTextField(3);
