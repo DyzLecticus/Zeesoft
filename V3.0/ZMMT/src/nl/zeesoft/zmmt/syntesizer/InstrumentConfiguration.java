@@ -1,7 +1,7 @@
 package nl.zeesoft.zmmt.syntesizer;
 
 public class InstrumentConfiguration extends VelocityConfiguration {
-	private String		instrument	= "";
+	private String		name		= "";
 	private int			channelNum	= 0;
 	private	int			midiNum		= 0;
 	private int			baseOctave	= 3;
@@ -15,12 +15,12 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 		this.channelNum = channelNum;
 	}
 
-	public String getInstrument() {
-		return instrument;
+	public String getName() {
+		return name;
 	}
 
-	public void setInstrument(String instrument) {
-		this.instrument = instrument;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public int getMidiNum() {

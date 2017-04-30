@@ -15,12 +15,12 @@ public class InstrumentPlayer implements ActionListener {
 	public static List<JComboBox<String>>	selectors				= new ArrayList<JComboBox<String>>();
 	
 	private String							selectedInstrument		= Instrument.PIANO;
-	private Synthesizer						synth					= null;
+	private Synthesizer						synthesizer				= null;
 	
 	private List<String>					playingNotes			= new ArrayList<String>();
 	
 	public void setSynthesizer(Synthesizer synth) {
-		this.synth = synth;
+		this.synthesizer = synth;
 	}
 
 	@Override
@@ -33,22 +33,38 @@ public class InstrumentPlayer implements ActionListener {
 		}
 	}
 
-	public void playInstrumentNote(String name, int noteNumber, int velocity) {
-		if (synth!=null) {
+	public void playInstrumentNote(String name, int noteNumber, int velocity, int layerNoteNumber, int layerVelocity) {
+		if (synthesizer!=null) {
 			String id = getNoteId(name,noteNumber);
 			if (!playingNotes.contains(id)) {
 				playingNotes.add(id);
-				int channel = Instrument.getMidiChannelForInstrument(name);
-				synth.getChannels()[channel].noteOn(noteNumber, velocity);
+				int channel = Instrument.getMidiChannelForInstrument(name,false);
+				synthesizer.getChannels()[channel].noteOn(noteNumber, velocity);
+			}
+			if (layerNoteNumber>=0 && layerVelocity>=0) {
+				id = getNoteId(name + " (Layer)",noteNumber);
+				if (!playingNotes.contains(id)) {
+					playingNotes.add(id);
+					int channel = Instrument.getMidiChannelForInstrument(name,true);
+					synthesizer.getChannels()[channel].noteOn(layerNoteNumber, layerVelocity);
+				}
 			}
 		}
 	}
 
-	public void stopInstrumentNote(String name, int noteNumber) {
-		if (synth!=null) {
-			int channel = Instrument.getMidiChannelForInstrument(name);
-			synth.getChannels()[channel].noteOff(noteNumber);
+	public void stopInstrumentNote(String name, int noteNumber, int layerNoteNumber) {
+		if (synthesizer!=null) {
+			int channel = Instrument.getMidiChannelForInstrument(name,false);
+			synthesizer.getChannels()[channel].noteOff(noteNumber);
 			String id = getNoteId(name,noteNumber);
+			if (playingNotes.contains(id)) {
+				playingNotes.remove(id);
+			}
+			channel = Instrument.getMidiChannelForInstrument(name,true);
+			if (channel>=0) {
+				synthesizer.getChannels()[channel].noteOff(layerNoteNumber);
+			}
+			id = getNoteId(name + " (Layer)",noteNumber);
 			if (playingNotes.contains(id)) {
 				playingNotes.remove(id);
 			}
@@ -56,11 +72,21 @@ public class InstrumentPlayer implements ActionListener {
 	}
 
 	public void stopInstrumentNotes(String name) {
-		if (synth!=null) {
-			int channel = Instrument.getMidiChannelForInstrument(name);
-			synth.getChannels()[channel].allNotesOff();
+		if (synthesizer!=null) {
+			int channel = Instrument.getMidiChannelForInstrument(name,false);
+			synthesizer.getChannels()[channel].allNotesOff();
 			String pfx = name + ":";
 			List<String> playing = new ArrayList<String>(playingNotes);
+			for (String id: playing) {
+				if (id.startsWith(pfx)) {
+					playingNotes.remove(id);
+				}
+			}
+			int layerChannel = Instrument.getMidiChannelForInstrument(name,true);
+			if (layerChannel!=channel && layerChannel>=0) {
+				synthesizer.getChannels()[channel].allNotesOff();
+			}
+			pfx = name + " (Layer):";
 			for (String id: playing) {
 				if (id.startsWith(pfx)) {
 					playingNotes.remove(id);
@@ -69,12 +95,12 @@ public class InstrumentPlayer implements ActionListener {
 		}
 	}
 
-	public void playInstrumentNote(int noteNumber, int velocity) {
-		playInstrumentNote(selectedInstrument,noteNumber,velocity);
+	public void playInstrumentNote(int noteNumber, int velocity, int layerNoteNumber, int layerVelocity) {
+		playInstrumentNote(selectedInstrument,noteNumber,velocity,layerNoteNumber,layerNoteNumber);
 	}
 
-	public void stopInstrumentNote(int noteNumber) {
-		stopInstrumentNote(selectedInstrument,noteNumber);
+	public void stopInstrumentNote(int noteNumber, int layerNoteNumber) {
+		stopInstrumentNote(selectedInstrument,noteNumber,layerNoteNumber);
 	}
 
 	public void stopInstrumentNotes() {
@@ -112,11 +138,13 @@ public class InstrumentPlayer implements ActionListener {
 	}
 
 	public void setSelectedInstrument(String selectedInstrument,Object source) {
-		stopInstrumentNotes();
-		this.selectedInstrument = selectedInstrument;
-		for (JComboBox<String> sel: selectors) {
-			if (sel!=source) {
-				sel.setSelectedIndex(getSelectedInstrumentIndex());
+		if (!this.selectedInstrument.equals(selectedInstrument)) {
+			stopInstrumentNotes();
+			this.selectedInstrument = selectedInstrument;
+			for (JComboBox<String> sel: selectors) {
+				if (sel!=source) {
+					sel.setSelectedIndex(getSelectedInstrumentIndex());
+				}
 			}
 		}
 	}

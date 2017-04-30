@@ -15,12 +15,26 @@ public class Instrument {
 	public static final	String		STRINGS2			= "Strings 2";
 	public static final String[]	INSTRUMENTS			= {SYNTH_BASS1,SYNTH_BASS2,SYNTH_BASS3,SYNTH1,SYNTH2,SYNTH3,BASS,PIANO,HARP,DRUMS,STRINGS1,STRINGS2};
 	
-	public static final int getMidiChannelForInstrument(String name) {
-		int r = 0;
-		for (int i = 0; i < INSTRUMENTS.length; i++) {
-			if (INSTRUMENTS[i].equals(name)) {
-				r = i;
-				break;
+	public static final int getMidiChannelForInstrument(String name,boolean layer) {
+		int r = -1;
+		if (layer) {
+			if (name.equals(SYNTH_BASS1)) {
+				r = 12;
+			} else if (name.equals(SYNTH1)) {
+				r = 13;
+			} else if (name.equals(PIANO)) {
+				r = 14;
+			} else if (name.equals(DRUMS)) {
+				r = 9;
+			} else if (name.equals(STRINGS1)) {
+				r = 15;
+			}
+		} else {
+			for (int i = 0; i < INSTRUMENTS.length; i++) {
+				if (INSTRUMENTS[i].equals(name)) {
+					r = i;
+					break;
+				}
 			}
 		}
 		return r;

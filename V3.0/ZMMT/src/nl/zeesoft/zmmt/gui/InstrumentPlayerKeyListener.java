@@ -10,9 +10,11 @@ public class InstrumentPlayerKeyListener extends ControllerKeyListener {
 	@Override
 	public void keyPressed(KeyEvent evt) {
 		super.keyPressed(evt);
-		int note = getNoteForKey(evt);
-		if (note>=0) {
-			getController().playNote(note,evt.isShiftDown());
+		if (!evt.isControlDown()) {
+			int note = getNoteForKey(evt);
+			if (note>=0) {
+				getController().playNote(note,evt.isShiftDown());
+			}
 		}
 	}
 

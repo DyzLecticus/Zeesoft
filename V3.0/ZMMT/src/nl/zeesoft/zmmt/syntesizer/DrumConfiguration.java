@@ -1,15 +1,15 @@
 package nl.zeesoft.zmmt.syntesizer;
 
 public class DrumConfiguration extends VelocityConfiguration {
-	private String		drum		= "";
+	private String		name		= "";
 	private	int			noteNum		= 0;
 	
-	public String getDrum() {
-		return drum;
+	public String getName() {
+		return name;
 	}
 	
-	public void setDrum(String drum) {
-		this.drum = drum;
+	public void setName(String drum) {
+		this.name = drum;
 	}
 	
 	public int getNoteNum() {

@@ -18,7 +18,7 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 
 public class Controller extends Locker {
-	private Settings					settings			= null;
+	private Settings					settings					= null;
 	
 	private boolean						exitOnClose					= true;
 	private WorkerUnion					union						= null;
@@ -33,7 +33,7 @@ public class Controller extends Locker {
 	private CompositionUpdateWorker		compositionUpdateWorker		= null;
 	private boolean						compositionChanged			= false;
 	
-	private Synthesizer					synth						= null;
+	private Synthesizer					synthesizer					= null;
 
 	public Controller(Settings settings) {
 		super(new Messenger(null));
@@ -84,21 +84,27 @@ public class Controller extends Locker {
 		union.stopWorkers(ignoreWorker);
 		getMessenger().whileWorking();
 		lockMe(this);
-		if (synth!=null) {
-			synth.close();
+		if (synthesizer!=null) {
+			synthesizer.close();
 		}
 		lockMe(this);
 	}
 
 	public void windowClosing(WindowEvent e) {
 		if (e.getWindow()==mainFrame.getFrame()) {
-			stop(null);
-			if (exitOnClose) {
-				int status = 0;
-				if (getMessenger().isError()) {
-					status = 1;
+			boolean confirmed = true;
+			if (isCompositionChanged()) {
+				confirmed = showConfirmMessage("Unpublished orchestra changes will be lost. Are you sure you want to quit?");
+			}
+			if (confirmed) {
+				stop(null);
+				if (exitOnClose) {
+					int status = 0;
+					if (getMessenger().isError()) {
+						status = 1;
+					}
+					System.exit(status);
 				}
-				System.exit(status);
 			}
 		}
 	}
@@ -141,7 +147,11 @@ public class Controller extends Locker {
 	public void switchTo(String tab) {
 		mainFrame.switchTo(tab);
 	}
-	
+
+	public void selectInstrument(String name,Object source) {
+		player.setSelectedInstrument(name,source);
+	}
+
 	public WorkerUnion getUnion() {
 		return union;
 	}
@@ -163,13 +173,20 @@ public class Controller extends Locker {
 	}
 	
 	protected Composition getComposition() {
-		return composition;
+		Composition r = null;
+		lockMe(this);
+		r = composition;
+		unlockMe(this);
+		return r;
 	}
 
 	protected void setComposition(Composition composition) {
 		if (composition!=null) {
 			stopSynthesizer();
+			lockMe(this);
 			this.composition = composition;
+			compositionChanged = false;
+			unlockMe(this);
 			reconfigureSynthesizer();
 			mainFrame.updatedComposition(null,composition);
 		}
@@ -181,6 +198,14 @@ public class Controller extends Locker {
 			updatedCompositionTabs.add(tab);
 		}
 		unlockMe(this);
+	}
+
+	protected boolean isCompositionChanged() {
+		boolean r = false;
+		lockMe(this);
+		r = compositionChanged;
+		unlockMe(this);
+		return r;
 	}
 
 	protected void handleCompositionUpdates() {
@@ -205,7 +230,7 @@ public class Controller extends Locker {
 
 	protected void setSynthesizer(Synthesizer synth) {
 		lockMe(this);
-		this.synth = synth;
+		this.synthesizer = synth;
 		player.setSynthesizer(synth);
 		unlockMe(this);
 		reconfigureSynthesizer();
@@ -213,10 +238,10 @@ public class Controller extends Locker {
 	
 	protected void stopSynthesizer() {
 		lockMe(this);
-		if (synth!=null) {
+		if (synthesizer!=null) {
 			List<InstrumentConfiguration> instruments = composition.getSynthesizerConfiguration().getInstruments();
 			for (InstrumentConfiguration inst: instruments) {
-				player.stopInstrumentNotes(inst.getInstrument());
+				player.stopInstrumentNotes(inst.getName());
 			}
 		}
 		unlockMe(this);
@@ -224,8 +249,8 @@ public class Controller extends Locker {
 
 	protected void reconfigureSynthesizer() {
 		lockMe(this);
-		if (synth!=null) {
-			composition.getSynthesizerConfiguration().configureMidiSynthesizer(synth);
+		if (synthesizer!=null) {
+			composition.getSynthesizerConfiguration().configureMidiSynthesizer(synthesizer);
 		}
 		unlockMe(this);
 	}
@@ -241,11 +266,16 @@ public class Controller extends Locker {
 
 	protected void playNote(int note,boolean accent) {
 		lockMe(this);
-		int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note);
+		int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note,false);
 		if (playNote>=0) {
-			int velocity = composition.getSynthesizerConfiguration().getVelocityForNote(player.getSelectedInstrument(),note,accent);
+			int velocity = composition.getSynthesizerConfiguration().getVelocityForNote(player.getSelectedInstrument(),note,accent,false);
 			if (velocity>=0) {
-				player.playInstrumentNote(playNote,velocity);
+				int layerNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note,true);
+				int layerVelocity = -1;
+				if (layerNote>=0) {
+					layerVelocity = composition.getSynthesizerConfiguration().getVelocityForNote(player.getSelectedInstrument(),note,accent,true);
+				}
+				player.playInstrumentNote(playNote,velocity,layerNote,layerVelocity);
 			}
 		}
 		unlockMe(this);
@@ -253,9 +283,10 @@ public class Controller extends Locker {
 
 	protected void stopNote(int note) {
 		lockMe(this);
-		int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note);
+		int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note,false);
 		if (playNote>=0) {
-			player.stopInstrumentNote(playNote);
+			int layerNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note,true);
+			player.stopInstrumentNote(playNote,layerNote);
 		}
 		unlockMe(this);
 	}
