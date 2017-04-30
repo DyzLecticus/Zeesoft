@@ -96,7 +96,7 @@ public class InstrumentPlayer implements ActionListener {
 	}
 
 	public void playInstrumentNote(int noteNumber, int velocity, int layerNoteNumber, int layerVelocity) {
-		playInstrumentNote(selectedInstrument,noteNumber,velocity,layerNoteNumber,layerNoteNumber);
+		playInstrumentNote(selectedInstrument,noteNumber,velocity,layerNoteNumber,layerVelocity);
 	}
 
 	public void stopInstrumentNote(int noteNumber, int layerNoteNumber) {

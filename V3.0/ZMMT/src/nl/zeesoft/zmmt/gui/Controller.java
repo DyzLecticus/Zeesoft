@@ -94,7 +94,7 @@ public class Controller extends Locker {
 		if (e.getWindow()==mainFrame.getFrame()) {
 			boolean confirmed = true;
 			if (isCompositionChanged()) {
-				confirmed = showConfirmMessage("Unpublished orchestra changes will be lost. Are you sure you want to quit?");
+				confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to quit?");
 			}
 			if (confirmed) {
 				stop(null);
