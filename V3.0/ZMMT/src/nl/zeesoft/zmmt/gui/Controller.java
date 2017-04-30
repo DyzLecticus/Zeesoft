@@ -1,15 +1,13 @@
 package nl.zeesoft.zmmt.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -19,27 +17,27 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 
-public class Controller extends Locker implements ActionListener {
-	private Settings				settings		= null;
+public class Controller extends Locker {
+	private Settings					settings			= null;
 	
-	private boolean					exitOnClose		= true;
-	private WorkerUnion				union			= null;
-	private Composition				composition		= null;
-	private ControllerWindowAdapter	adapter			= null;
-	private ControllerKeyListener	keyListener		= null;
-	private FrameMain				mainFrame		= null;
+	private boolean						exitOnClose					= true;
+	private WorkerUnion					union						= null;
+	private ControllerWindowAdapter		adapter						= null;
+	private ControllerKeyListener		keyListener					= null;
+	private FrameMain					mainFrame					= null;
+	private InstrumentPlayer			player						= null;
+	private InstrumentPlayerKeyListener	playerKeyListener			= null;
 	
-	private Synthesizer				synth			= null;
-	private InstrumentPlayer		player			= null;
+	private Composition					composition					= null;
+	private List<String>				updatedCompositionTabs		= new ArrayList<String>();
+	private CompositionUpdateWorker		compositionUpdateWorker		= null;
+	private boolean						compositionChanged			= false;
 	
+	private Synthesizer					synth						= null;
+
 	public Controller(Settings settings) {
 		super(new Messenger(null));
 		this.settings = settings;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		// TODO Auto-generated method stub
 	}
 
 	public void initialize() {
@@ -53,8 +51,10 @@ public class Controller extends Locker implements ActionListener {
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
 		player = new InstrumentPlayer();
-		mainFrame = new FrameMain(adapter,keyListener);
-		mainFrame.initialize(this);
+		playerKeyListener = new InstrumentPlayerKeyListener(this);
+		mainFrame = new FrameMain(this);
+		mainFrame.initialize();
+		compositionUpdateWorker = new CompositionUpdateWorker(getMessenger(),getUnion(),this);
 	}
 	
 	public void setExitOnClose(boolean exitOnClose) {
@@ -68,7 +68,9 @@ public class Controller extends Locker implements ActionListener {
 	public void start(boolean debug) {
 		setComposition(settings.getNewComposition());
 		mainFrame.getFrame().setVisible(true);
-		initializeSynthesizer();
+		compositionUpdateWorker.start();
+		InitializeSynthesizerWorker synthInit = new InitializeSynthesizerWorker(getMessenger(),getUnion(),this);
+		synthInit.start();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
 		mainFrame.getFrame().setVisible(true);
@@ -77,6 +79,7 @@ public class Controller extends Locker implements ActionListener {
 	public void stop(Worker ignoreWorker) {
 		stopSynthesizer();
 		mainFrame.getFrame().setVisible(false);
+		compositionUpdateWorker.stop();
 		getMessenger().stop();
 		union.stopWorkers(ignoreWorker);
 		getMessenger().whileWorking();
@@ -108,14 +111,53 @@ public class Controller extends Locker implements ActionListener {
 		// Ignore
 	}
 
+	public void showErrorMessage(Object source,String message) {
+		showErrorMessage(source,message,null);
+	}
+	
+	public void showErrorMessage(Object source,String message,Exception e) {
+		if (mainFrame!=null) {
+			JOptionPane.showMessageDialog(mainFrame.getFrame(),message,"Error",JOptionPane.ERROR_MESSAGE);
+			if (e!=null) {
+				getMessenger().error(source,message,e);
+			} else {
+				getMessenger().error(source,message);
+			}
+		}
+	}
+	
+	public boolean showConfirmMessage(String message) {
+		boolean r = false;
+		if (mainFrame!=null) {
+			r = (JOptionPane.showConfirmDialog(mainFrame.getFrame(),message,"Are you sure?",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+		}
+		return r;
+	}
+	
+	public void switchTo(String tab) {
+		mainFrame.switchTo(tab);
+	}
+	
 	public WorkerUnion getUnion() {
 		return union;
 	}
-
-	protected Settings getSettings() {
+	
+	public Settings getSettings() {
 		return settings;
 	}
 
+	public ControllerWindowAdapter getAdapter() {
+		return adapter;
+	}
+
+	public ControllerKeyListener getKeyListener() {
+		return keyListener;
+	}
+
+	public InstrumentPlayerKeyListener getPlayerKeyListener() {
+		return playerKeyListener;
+	}
+	
 	protected Composition getComposition() {
 		return composition;
 	}
@@ -125,27 +167,46 @@ public class Controller extends Locker implements ActionListener {
 			stopSynthesizer();
 			this.composition = composition;
 			reconfigureSynthesizer();
+			mainFrame.updatedComposition(null,composition);
 		}
 	}
 	
-	protected void initializeSynthesizer() {
+	protected void changedComposition(String tab) {
 		lockMe(this);
-		synth = null;
-		try {
-			synth = MidiSystem.getSynthesizer();
-			if (synth!=null) {
-				synth.open();
-				if (synth.isOpen()) {
-					player.setSynthesizer(synth);
-				}
-			}
-		} catch (MidiUnavailableException e) {
-			getMessenger().error(this,"Failed to initialize MIDI syntesizer",e);
+		if (compositionUpdateWorker.isWorking() && !updatedCompositionTabs.contains(tab)) {
+			updatedCompositionTabs.add(tab);
 		}
+		unlockMe(this);
+	}
+
+	protected void handleCompositionUpdates() {
+		boolean reconfigure = false;
+		lockMe(this);
+		for (String tab: updatedCompositionTabs) {
+			mainFrame.getCompositionUpdate(tab,composition);
+			mainFrame.updatedComposition(tab,composition);
+			if (tab.equals(FrameMain.INSTRUMENTS)) {
+				reconfigure = true;
+			}
+			compositionChanged = true;
+			mainFrame.setCompositionChanged(compositionChanged);
+		}
+		updatedCompositionTabs.clear();
+		unlockMe(this);
+		if (reconfigure) {
+			stopSynthesizer();
+			reconfigureSynthesizer();
+		}
+	}
+
+	protected void setSynthesizer(Synthesizer synth) {
+		lockMe(this);
+		this.synth = synth;
+		player.setSynthesizer(synth);
 		unlockMe(this);
 		reconfigureSynthesizer();
 	}
-
+	
 	protected void stopSynthesizer() {
 		lockMe(this);
 		if (synth!=null) {
@@ -169,7 +230,7 @@ public class Controller extends Locker implements ActionListener {
 		JComboBox<String> r = null;
 		lockMe(this);
 		r = player.getNewSelector();
-		r.addKeyListener(keyListener);
+		r.addKeyListener(playerKeyListener);
 		unlockMe(this);
 		return r;
 	}

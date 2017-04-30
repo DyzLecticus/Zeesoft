@@ -7,28 +7,22 @@ import javax.swing.JFrame;
 import nl.zeesoft.zmmt.gui.image.ImageIconLabel;
 
 public abstract class FrameObject {
-	private ControllerWindowAdapter adapter		= null;
-	private ControllerKeyListener	keyListener = null;
-	private JFrame					frame		= new JFrame();
+	private	Controller	controller	= null;
+	private JFrame		frame		= new JFrame();
 	
-	public FrameObject(ControllerWindowAdapter adapter,ControllerKeyListener keyListener) {
-		this.adapter = adapter;
-		this.keyListener = keyListener;
+	public FrameObject(Controller controller) {
+		this.controller = controller;
 		frame.setIconImage(new ImageIconLabel("z",32,Color.WHITE).getBufferedImage());
-		frame.addKeyListener(keyListener);
+		frame.addKeyListener(controller.getPlayerKeyListener());
 	}
 
-	public abstract void initialize(Controller controller);
+	public abstract void initialize();
 	
 	public JFrame getFrame() {
 		return frame;
 	}
 
-	public ControllerWindowAdapter getAdapter() {
-		return adapter;
-	}
-
-	public ControllerKeyListener getKeyListener() {
-		return keyListener;
+	protected Controller getController() {
+		return controller;
 	}
 }

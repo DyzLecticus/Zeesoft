@@ -7,7 +7,7 @@ import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
 public class Composition {
 	private String						composer						= "";
 	private String						name							= "";
-	private int 						beatsPerMinute					= 120;
+	private int 						beatsPerMinute					= 128;
 	private int							beatsPerBar						= 4;
 	private int							stepsPerBeat					= 8;
 	

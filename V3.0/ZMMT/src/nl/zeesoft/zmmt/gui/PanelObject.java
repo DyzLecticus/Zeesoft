@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -20,15 +19,25 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public abstract class PanelObject implements ChangeListener, PropertyChangeListener {
+	private	Controller					controller		= null;
 	private JPanel						panel			= new JPanel();
+	private boolean						validate		= true;
 	
 	private List<JFormattedTextField>	sliderNumbers	= new ArrayList<JFormattedTextField>();
 	private List<JSlider>				sliders			= new ArrayList<JSlider>();
-	
-	public abstract void initialize(Controller controller,KeyListener keyListener);
-	
-	public JPanel getPanel() {
-		return panel;
+
+	public PanelObject(Controller controller) {
+		this.controller = controller;
+	}
+
+	public abstract void initialize();
+
+	public abstract String validate();
+
+	public abstract void handleValidChange();
+
+	public void requestFocus() {
+		// Override to implement
 	}
 
 	@Override
@@ -39,6 +48,14 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 			if (number.getValue()!=null) {
 				int value = Integer.parseInt(number.getValue().toString());
 				sliders.get(index).setValue(value);
+			}
+		} 
+		if (validate) {
+			String err = validate();
+			if (err.length()>0) {
+				controller.showErrorMessage(this,err);
+			} else {
+				handleValidChange();
 			}
 		}
 	}
@@ -52,8 +69,17 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 		}
 	}
 
+	public JPanel getPanel() {
+		return panel;
+	}
+
+	protected Controller getController() {
+		return controller;
+	}
+
 	protected void addLabel(JPanel panel,int row,String text) {
 		JLabel lbl = new JLabel(text + " ");
+		lbl.addKeyListener(controller.getPlayerKeyListener());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -100,12 +126,21 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 		gbc.gridy = row;
 		panel.add(c,gbc);
 	}
-	
+
+	protected JFormattedTextField getNewTextField() {
+		JFormattedTextField r = new JFormattedTextField();
+		r.addPropertyChangeListener(this);
+		r.addKeyListener(controller.getKeyListener());
+		return r;
+	}
+
 	protected JFormattedTextField getNewNumberTextField(int digits) {
 		NumberFormat fmt = NumberFormat.getIntegerInstance(Locale.US);
 		fmt.setGroupingUsed(false);
 		fmt.setMaximumIntegerDigits(digits);
 		JFormattedTextField r = new JFormattedTextField(fmt);
+		r.addKeyListener(controller.getKeyListener());
+		r.addPropertyChangeListener(this);
 		r.setPreferredSize(new Dimension(100,20));
 		return r;
 	}
@@ -115,16 +150,16 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 		r.setLayout(new GridBagLayout());
 		JSlider slider = new JSlider(JSlider.HORIZONTAL,min,max,init);
 		slider.setPreferredSize(new Dimension(200,20));
+		slider.addKeyListener(controller.getPlayerKeyListener());
 		r.add(number);
 		r.add(slider);
-		connectNumberAndSlider(number,slider);
-		return r;
-	}
-	
-	private void connectNumberAndSlider(JFormattedTextField number,JSlider slider) {
-		number.addPropertyChangeListener(this);
 		slider.addChangeListener(this);
 		sliderNumbers.add(number);
 		sliders.add(slider);
+		return r;
+	}
+
+	protected void setValidate(boolean validate) {
+		this.validate = validate;
 	}
 }

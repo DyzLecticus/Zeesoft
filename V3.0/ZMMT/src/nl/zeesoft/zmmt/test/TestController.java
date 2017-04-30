@@ -16,7 +16,7 @@ public class TestController extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test is used to test the controller.");
+		System.out.println("This test is used to manually test the *Controller*.");
 	}
 
 	@Override
