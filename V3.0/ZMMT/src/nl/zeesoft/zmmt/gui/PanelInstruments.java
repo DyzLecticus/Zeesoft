@@ -96,8 +96,8 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration conf = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			instrumentPolyphony[i].setValue(conf.getPolyphony());
-			instrumentMidiNum[i].setValue(conf.getMidiNum());
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+				instrumentMidiNum[i].setValue(conf.getMidiNum());
 				instrumentBaseOctave[i].setValue(conf.getBaseOctave());
 				instrumentBaseVelocity[i].setValue(conf.getBaseVelocity());
 				instrumentAccentVelocity[i].setValue(conf.getAccentVelocity());
@@ -130,8 +130,8 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration inst = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			inst.setPolyphony(Integer.parseInt(instrumentPolyphony[i].getValue().toString()));
-			inst.setMidiNum(Integer.parseInt(instrumentMidiNum[i].getValue().toString()));
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+				inst.setMidiNum(Integer.parseInt(instrumentMidiNum[i].getValue().toString()));
 				inst.setBaseOctave(Integer.parseInt(instrumentBaseOctave[i].getValue().toString()));
 				inst.setBaseVelocity(Integer.parseInt(instrumentBaseVelocity[i].getValue().toString()));
 				inst.setAccentVelocity(Integer.parseInt(instrumentAccentVelocity[i].getValue().toString()));
@@ -264,17 +264,17 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		addLabel(panel,row,"Polyphony");
 		addProperty(panel,row,slider);
 
-		row++;
-		instrumentMidiNum[instrumentNum] = getNewNumberTextField(3);
-		addLabel(panel,row,"Layer 1 MIDI instrument number");
-		if (midiInstruments.size()>0) {
-			JPanel selector = getMidiInstrumentSelector(name,instrumentMidiNum[instrumentNum],midiInstruments,false);
-			addProperty(panel,row,selector);
-		} else {
-			addProperty(panel,row,instrumentMidiNum[instrumentNum]);
-		}
-		
 		if (!name.equals(Instrument.DRUMS)) {
+			row++;
+			instrumentMidiNum[instrumentNum] = getNewNumberTextField(3);
+			addLabel(panel,row,"Layer 1 MIDI instrument number");
+			if (midiInstruments.size()>0) {
+				JPanel selector = getMidiInstrumentSelector(name,instrumentMidiNum[instrumentNum],midiInstruments,false);
+				addProperty(panel,row,selector);
+			} else {
+				addProperty(panel,row,instrumentMidiNum[instrumentNum]);
+			}
+			
 			row++;
 			instrumentBaseOctave[instrumentNum] = getNewNumberTextField(1);
 			slider = getNewNumberSlider(instrumentBaseOctave[instrumentNum],0,9,3);

@@ -167,7 +167,36 @@ public class SynthesizerConfiguration {
 		}
 	}
 
-	public int getMidiNoteNumberForNote(String instrument,int note,boolean layer) {
+	public List<MidiNote> getMidiNotesForNote(String instrument, int note,boolean accent) {
+		List<MidiNote> notes = new ArrayList<MidiNote>();
+		int playNote = getMidiNoteNumberForNote(instrument,note,false);
+		if (playNote>=0) {
+			int velocity = getVelocityForNote(instrument,note,accent,false);
+			if (velocity>=0) {
+				MidiNote mn = new MidiNote();
+				mn.instrument = instrument;
+				mn.note = note;
+				mn.channel = Instrument.getMidiChannelForInstrument(instrument,false);
+				mn.midiNote = playNote;
+				mn.velocity = velocity;
+				notes.add(mn);
+				int layerNote = getMidiNoteNumberForNote(instrument,note,true);
+				if (layerNote>=0) {
+					int layerVelocity = getVelocityForNote(instrument,note,accent,true);
+					mn = new MidiNote();
+					mn.instrument = instrument;
+					mn.note = note;
+					mn.channel = Instrument.getMidiChannelForInstrument(instrument,true);
+					mn.midiNote = layerNote;
+					mn.velocity = layerVelocity;
+					notes.add(mn);
+				}
+			}
+		}
+		return notes;
+	}
+
+	protected int getMidiNoteNumberForNote(String instrument,int note,boolean layer) {
 		int r = -1;
 		InstrumentConfiguration inst = getInstrument(instrument);
 		if (instrument.equals(Instrument.DRUMS)) {
@@ -212,7 +241,7 @@ public class SynthesizerConfiguration {
 		return r;
 	}
 
-	public int getVelocityForNote(String instrument,int note,boolean accent,boolean layer) {
+	protected int getVelocityForNote(String instrument,int note,boolean accent,boolean layer) {
 		int r = -1;
 		InstrumentConfiguration inst = getInstrument(instrument);
 		if (instrument.equals(Instrument.DRUMS)) {

@@ -4,11 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.sound.midi.Synthesizer;
 import javax.swing.JComboBox;
 
 import nl.zeesoft.zmmt.syntesizer.Instrument;
+import nl.zeesoft.zmmt.syntesizer.MidiNote;
 
 public class InstrumentPlayer implements ActionListener {
 	public static final String				SELECTED_INSTRUMENT		= "SELECTED_INSTRUMENT";
@@ -17,7 +20,7 @@ public class InstrumentPlayer implements ActionListener {
 	private String							selectedInstrument		= Instrument.PIANO;
 	private Synthesizer						synthesizer				= null;
 	
-	private List<String>					playingNotes			= new ArrayList<String>();
+	private SortedMap<String,MidiNote>		playingNotes			= new TreeMap<String,MidiNote>();		
 	
 	public void setSynthesizer(Synthesizer synth) {
 		this.synthesizer = synth;
@@ -33,74 +36,43 @@ public class InstrumentPlayer implements ActionListener {
 		}
 	}
 
-	public void playInstrumentNote(String name, int noteNumber, int velocity, int layerNoteNumber, int layerVelocity) {
+	public void playInstrumentNotes(List<MidiNote> notes) {
 		if (synthesizer!=null) {
-			String id = getNoteId(name,noteNumber);
-			if (!playingNotes.contains(id)) {
-				playingNotes.add(id);
-				int channel = Instrument.getMidiChannelForInstrument(name,false);
-				synthesizer.getChannels()[channel].noteOn(noteNumber, velocity);
-			}
-			if (layerNoteNumber>=0 && layerVelocity>=0) {
-				id = getNoteId(name + " (Layer)",noteNumber);
-				if (!playingNotes.contains(id)) {
-					playingNotes.add(id);
-					int channel = Instrument.getMidiChannelForInstrument(name,true);
-					synthesizer.getChannels()[channel].noteOn(layerNoteNumber, layerVelocity);
+			for (MidiNote note: notes) {
+				if (!playingNotes.containsKey(note.getId())) {
+					playingNotes.put(note.getId(),note);
+					synthesizer.getChannels()[note.channel].noteOn(note.midiNote,note.velocity);
 				}
 			}
 		}
 	}
 
-	public void stopInstrumentNote(String name, int noteNumber, int layerNoteNumber) {
+	public void stopInstrumentNotes(List<MidiNote> notes) {
 		if (synthesizer!=null) {
-			int channel = Instrument.getMidiChannelForInstrument(name,false);
-			synthesizer.getChannels()[channel].noteOff(noteNumber);
-			String id = getNoteId(name,noteNumber);
-			if (playingNotes.contains(id)) {
-				playingNotes.remove(id);
-			}
-			channel = Instrument.getMidiChannelForInstrument(name,true);
-			if (channel>=0) {
-				synthesizer.getChannels()[channel].noteOff(layerNoteNumber);
-			}
-			id = getNoteId(name + " (Layer)",noteNumber);
-			if (playingNotes.contains(id)) {
-				playingNotes.remove(id);
+			for (MidiNote note: notes) {
+				synthesizer.getChannels()[note.channel].noteOff(note.midiNote);
+				playingNotes.remove(note.getId());
 			}
 		}
 	}
-
+	
 	public void stopInstrumentNotes(String name) {
 		if (synthesizer!=null) {
-			int channel = Instrument.getMidiChannelForInstrument(name,false);
-			synthesizer.getChannels()[channel].allNotesOff();
-			String pfx = name + ":";
-			List<String> playing = new ArrayList<String>(playingNotes);
-			for (String id: playing) {
-				if (id.startsWith(pfx)) {
-					playingNotes.remove(id);
+			SortedMap<String,MidiNote> playing = new TreeMap<String,MidiNote>(playingNotes);
+			for (String id: playing.keySet()) {
+				MidiNote note = playingNotes.get(id);
+				if (note.instrument.equals(name)) {
+					synthesizer.getChannels()[note.channel].noteOff(note.midiNote);
+					playingNotes.remove(note.getId());
 				}
 			}
+			int channel = Instrument.getMidiChannelForInstrument(name,false);
+			synthesizer.getChannels()[channel].allNotesOff();
 			int layerChannel = Instrument.getMidiChannelForInstrument(name,true);
 			if (layerChannel!=channel && layerChannel>=0) {
 				synthesizer.getChannels()[channel].allNotesOff();
 			}
-			pfx = name + " (Layer):";
-			for (String id: playing) {
-				if (id.startsWith(pfx)) {
-					playingNotes.remove(id);
-				}
-			}
 		}
-	}
-
-	public void playInstrumentNote(int noteNumber, int velocity, int layerNoteNumber, int layerVelocity) {
-		playInstrumentNote(selectedInstrument,noteNumber,velocity,layerNoteNumber,layerVelocity);
-	}
-
-	public void stopInstrumentNote(int noteNumber, int layerNoteNumber) {
-		stopInstrumentNote(selectedInstrument,noteNumber,layerNoteNumber);
 	}
 
 	public void stopInstrumentNotes() {
@@ -158,9 +130,5 @@ public class InstrumentPlayer implements ActionListener {
 			}
 		}
 		return r;
-	}
-	
-	private String getNoteId(String instrument,int noteNumber) {
-		return instrument + ":" + noteNumber;
 	}
 }

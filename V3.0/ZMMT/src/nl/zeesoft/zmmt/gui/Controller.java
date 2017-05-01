@@ -16,6 +16,7 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
+import nl.zeesoft.zmmt.syntesizer.MidiNote;
 
 public class Controller extends Locker {
 	private Settings					settings					= null;
@@ -266,28 +267,21 @@ public class Controller extends Locker {
 
 	protected void playNote(int note,boolean accent) {
 		lockMe(this);
-		int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note,false);
-		if (playNote>=0) {
-			int velocity = composition.getSynthesizerConfiguration().getVelocityForNote(player.getSelectedInstrument(),note,accent,false);
-			if (velocity>=0) {
-				int layerNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note,true);
-				int layerVelocity = -1;
-				if (layerNote>=0) {
-					layerVelocity = composition.getSynthesizerConfiguration().getVelocityForNote(player.getSelectedInstrument(),note,accent,true);
-				}
-				player.playInstrumentNote(playNote,velocity,layerNote,layerVelocity);
-			}
-		}
+		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,accent);
+		player.playInstrumentNotes(notes);
 		unlockMe(this);
 	}
 
 	protected void stopNote(int note) {
 		lockMe(this);
-		int playNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note,false);
-		if (playNote>=0) {
-			int layerNote = composition.getSynthesizerConfiguration().getMidiNoteNumberForNote(player.getSelectedInstrument(),note,true);
-			player.stopInstrumentNote(playNote,layerNote);
-		}
+		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,false);
+		player.stopInstrumentNotes(notes);
+		unlockMe(this);
+	}
+
+	protected void stopNotes() {
+		lockMe(this);
+		player.stopInstrumentNotes();
 		unlockMe(this);
 	}
 }

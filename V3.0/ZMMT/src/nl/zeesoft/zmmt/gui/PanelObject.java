@@ -4,6 +4,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -18,7 +21,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public abstract class PanelObject implements ChangeListener, PropertyChangeListener {
+public abstract class PanelObject implements ChangeListener, PropertyChangeListener, FocusListener {
 	private	Controller					controller		= null;
 	private JPanel						panel			= new JPanel();
 	private boolean						validate		= true;
@@ -38,6 +41,15 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 
 	public void requestFocus() {
 		// Override to implement
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent evt) {
+		int index = sliders.indexOf(evt.getSource());
+		if (index>=0) {
+			JSlider slider = sliders.get(index);
+			sliderNumbers.get(index).setValue(slider.getValue());
+		}
 	}
 
 	@Override
@@ -61,14 +73,27 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 	}
 
 	@Override
-	public void stateChanged(ChangeEvent evt) {
-		int index = sliders.indexOf(evt.getSource());
-		if (index>=0) {
-			JSlider slider = sliders.get(index);
-			sliderNumbers.get(index).setValue(slider.getValue());
+	public void focusGained(FocusEvent evt) {
+		if (evt.getSource() instanceof Component) {
+			boolean found = false;
+			Component comp = (Component) evt.getSource();
+			for (KeyListener listener: comp.getKeyListeners()) {
+				if (listener instanceof InstrumentPlayerKeyListener) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				controller.stopNotes();
+			}
 		}
 	}
-
+	
+	@Override
+	public void focusLost(FocusEvent evt) {
+		// Ignore
+	}
+	
 	public JPanel getPanel() {
 		return panel;
 	}
@@ -81,7 +106,7 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 		JLabel lbl = new JLabel(text + " ");
 		lbl.addKeyListener(controller.getPlayerKeyListener());
 		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 0.01;
 		gbc.gridx = 0;
@@ -129,8 +154,10 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 
 	protected JFormattedTextField getNewTextField() {
 		JFormattedTextField r = new JFormattedTextField();
+		r.addFocusListener(this);
 		r.addPropertyChangeListener(this);
 		r.addKeyListener(controller.getKeyListener());
+		r.setColumns(32);
 		return r;
 	}
 
