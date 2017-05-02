@@ -2,9 +2,8 @@ package nl.zeesoft.zmmt.syntesizer;
 
 public class DrumConfiguration extends VelocityConfiguration {
 	private String		name			= "";
-	private	int			noteNum			= 0;
-
-	private	int			layerNoteNum	= 34;
+	private	int			layer1MidiNote	= 35;
+	private	int			layer2MidiNote	= 34;
 	
 	public String getName() {
 		return name;
@@ -14,19 +13,19 @@ public class DrumConfiguration extends VelocityConfiguration {
 		this.name = drum;
 	}
 	
-	public int getNoteNum() {
-		return noteNum;
+	public int getLayer1MidiNote() {
+		return layer1MidiNote;
 	}
 	
-	public void setNoteNum(int noteNum) {
-		this.noteNum = noteNum;
+	public void setLayer1MidiNote(int note) {
+		this.layer1MidiNote = note;
 	}
 
-	public int getLayerNoteNum() {
-		return layerNoteNum;
+	public int getLayer2MidiNote() {
+		return layer2MidiNote;
 	}
 
-	public void setLayerNoteNum(int layerNoteNum) {
-		this.layerNoteNum = layerNoteNum;
+	public void setLayer2MidiNote(int note) {
+		this.layer2MidiNote = note;
 	}
 }

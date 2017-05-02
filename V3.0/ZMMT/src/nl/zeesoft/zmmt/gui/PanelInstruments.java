@@ -97,30 +97,30 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			InstrumentConfiguration conf = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			instrumentPolyphony[i].setValue(conf.getPolyphony());
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-				instrumentMidiNum[i].setValue(conf.getMidiNum());
-				instrumentBaseOctave[i].setValue(conf.getBaseOctave());
-				instrumentBaseVelocity[i].setValue(conf.getBaseVelocity());
-				instrumentAccentVelocity[i].setValue(conf.getAccentVelocity());
+				instrumentMidiNum[i].setValue(conf.getLayer1MidiNum());
+				instrumentBaseOctave[i].setValue(conf.getLayer1BaseOctave());
+				instrumentBaseVelocity[i].setValue(conf.getLayer1BaseVelocity());
+				instrumentAccentVelocity[i].setValue(conf.getLayer1AccentVelocity());
 			}
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.PIANO) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS1)
 				) {
-				instrumentLayerMidiNum[i].setValue(conf.getLayerMidiNum());
-				instrumentLayerBaseOctave[i].setValue(conf.getLayerBaseOctave());
-				instrumentLayerBaseVelocity[i].setValue(conf.getLayerBaseVelocity());
-				instrumentLayerAccentVelocity[i].setValue(conf.getLayerAccentVelocity());
+				instrumentLayerMidiNum[i].setValue(conf.getLayer2MidiNum());
+				instrumentLayerBaseOctave[i].setValue(conf.getLayer2BaseOctave());
+				instrumentLayerBaseVelocity[i].setValue(conf.getLayer2BaseVelocity());
+				instrumentLayerAccentVelocity[i].setValue(conf.getLayer2AccentVelocity());
 			}
 		}
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
 			DrumConfiguration conf = comp.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
-			drumNoteNum[d].setValue(conf.getNoteNum());
-			drumBaseVelocity[d].setValue(conf.getBaseVelocity());
-			drumAccentVelocity[d].setValue(conf.getAccentVelocity());
-			drumLayerNoteNum[d].setValue(conf.getLayerNoteNum());
-			drumLayerBaseVelocity[d].setValue(conf.getLayerBaseVelocity());
-			drumLayerAccentVelocity[d].setValue(conf.getLayerAccentVelocity());
+			drumNoteNum[d].setValue(conf.getLayer1MidiNote());
+			drumBaseVelocity[d].setValue(conf.getLayer1BaseVelocity());
+			drumAccentVelocity[d].setValue(conf.getLayer1AccentVelocity());
+			drumLayerNoteNum[d].setValue(conf.getLayer2MidiNote());
+			drumLayerBaseVelocity[d].setValue(conf.getLayer2BaseVelocity());
+			drumLayerAccentVelocity[d].setValue(conf.getLayer2AccentVelocity());
 		}
 		setValidate(true);
 	}
@@ -131,30 +131,30 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			InstrumentConfiguration inst = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			inst.setPolyphony(Integer.parseInt(instrumentPolyphony[i].getValue().toString()));
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-				inst.setMidiNum(Integer.parseInt(instrumentMidiNum[i].getValue().toString()));
-				inst.setBaseOctave(Integer.parseInt(instrumentBaseOctave[i].getValue().toString()));
-				inst.setBaseVelocity(Integer.parseInt(instrumentBaseVelocity[i].getValue().toString()));
-				inst.setAccentVelocity(Integer.parseInt(instrumentAccentVelocity[i].getValue().toString()));
+				inst.setLayer1MidiNum(Integer.parseInt(instrumentMidiNum[i].getValue().toString()));
+				inst.setLayer1BaseOctave(Integer.parseInt(instrumentBaseOctave[i].getValue().toString()));
+				inst.setLayer1BaseVelocity(Integer.parseInt(instrumentBaseVelocity[i].getValue().toString()));
+				inst.setLayer1AccentVelocity(Integer.parseInt(instrumentAccentVelocity[i].getValue().toString()));
 			}
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.PIANO) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS1)
 				) {
-				inst.setLayerMidiNum(Integer.parseInt(instrumentLayerMidiNum[i].getValue().toString()));
-				inst.setLayerBaseOctave(Integer.parseInt(instrumentLayerBaseOctave[i].getValue().toString()));
-				inst.setLayerBaseVelocity(Integer.parseInt(instrumentLayerBaseVelocity[i].getValue().toString()));
-				inst.setLayerAccentVelocity(Integer.parseInt(instrumentLayerAccentVelocity[i].getValue().toString()));
+				inst.setLayer2MidiNum(Integer.parseInt(instrumentLayerMidiNum[i].getValue().toString()));
+				inst.setLayer2BaseOctave(Integer.parseInt(instrumentLayerBaseOctave[i].getValue().toString()));
+				inst.setLayer2BaseVelocity(Integer.parseInt(instrumentLayerBaseVelocity[i].getValue().toString()));
+				inst.setLayer2AccentVelocity(Integer.parseInt(instrumentLayerAccentVelocity[i].getValue().toString()));
 			}
 		}
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
 			DrumConfiguration drum = comp.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
-			drum.setNoteNum(Integer.parseInt(drumNoteNum[d].getValue().toString()));
-			drum.setBaseVelocity(Integer.parseInt(drumBaseVelocity[d].getValue().toString()));
-			drum.setAccentVelocity(Integer.parseInt(drumAccentVelocity[d].getValue().toString()));
-			drum.setLayerNoteNum(Integer.parseInt(drumLayerNoteNum[d].getValue().toString()));
-			drum.setLayerBaseVelocity(Integer.parseInt(drumLayerBaseVelocity[d].getValue().toString()));
-			drum.setLayerAccentVelocity(Integer.parseInt(drumLayerAccentVelocity[d].getValue().toString()));
+			drum.setLayer1MidiNote(Integer.parseInt(drumNoteNum[d].getValue().toString()));
+			drum.setLayer1BaseVelocity(Integer.parseInt(drumBaseVelocity[d].getValue().toString()));
+			drum.setLayer1AccentVelocity(Integer.parseInt(drumAccentVelocity[d].getValue().toString()));
+			drum.setLayer2MidiNote(Integer.parseInt(drumLayerNoteNum[d].getValue().toString()));
+			drum.setLayer2BaseVelocity(Integer.parseInt(drumLayerBaseVelocity[d].getValue().toString()));
+			drum.setLayer2AccentVelocity(Integer.parseInt(drumLayerAccentVelocity[d].getValue().toString()));
 		}
 	}
 

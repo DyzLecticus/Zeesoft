@@ -16,7 +16,7 @@ public class Composition {
 	
 	private SynthesizerConfiguration	synthesizerConfiguration		= null;
 	
-	private List<InstrumentPattern>		patterns						= new ArrayList<InstrumentPattern>();
+	private List<Pattern>				patterns						= new ArrayList<Pattern>();
 	
 	public Composition() {
 		synthesizerConfiguration = new SynthesizerConfiguration();
@@ -45,7 +45,7 @@ public class Composition {
 		if (patterns.size()>0) {
 			JsElem ptnsElem = new JsElem("patterns",true);
 			json.rootElement.children.add(ptnsElem);
-			for (InstrumentPattern pattern: patterns) {
+			for (Pattern pattern: patterns) {
 				ptnsElem.children.add(pattern.toJson().rootElement);
 			}
 		}
@@ -73,7 +73,7 @@ public class Composition {
 				for (JsElem ptnElem: elem.children) {
 					JsFile ptn = new JsFile();
 					ptn.rootElement = ptnElem;
-					InstrumentPattern pattern = new InstrumentPattern();
+					Pattern pattern = new Pattern();
 					pattern.fromJson(ptn);
 					patterns.add(pattern);
 				}
@@ -141,7 +141,7 @@ public class Composition {
 		this.synthesizerConfiguration = synthesizerConfiguration;
 	}
 
-	public List<InstrumentPattern> getPatterns() {
+	public List<Pattern> getPatterns() {
 		return patterns;
 	}
 }

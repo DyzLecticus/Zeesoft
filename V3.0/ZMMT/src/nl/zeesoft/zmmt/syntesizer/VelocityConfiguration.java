@@ -1,41 +1,40 @@
 package nl.zeesoft.zmmt.syntesizer;
 
 public abstract class VelocityConfiguration {
-	private int 	baseVelocity		= 100;
-	private	int		accentVelocity		= 110;
+	private int 	layer1BaseVelocity		= 100;
+	private	int		layer1AccentVelocity	= 110;
+	private int 	layer2BaseVelocity		= 100;
+	private	int		layer2AccentVelocity	= 110;
 	
-	private int 	layerBaseVelocity	= 100;
-	private	int		layerAccentVelocity	= 110;
-	
-	public int getBaseVelocity() {
-		return baseVelocity;
+	public int getLayer1BaseVelocity() {
+		return layer1BaseVelocity;
 	}
 	
-	public void setBaseVelocity(int baseVelocity) {
-		this.baseVelocity = baseVelocity;
+	public void setLayer1BaseVelocity(int baseVelocity) {
+		this.layer1BaseVelocity = baseVelocity;
 	}
 	
-	public int getAccentVelocity() {
-		return accentVelocity;
+	public int getLayer1AccentVelocity() {
+		return layer1AccentVelocity;
 	}
 	
-	public void setAccentVelocity(int accentVelocity) {
-		this.accentVelocity = accentVelocity;
+	public void setLayer1AccentVelocity(int accentVelocity) {
+		this.layer1AccentVelocity = accentVelocity;
 	}
 
-	public int getLayerBaseVelocity() {
-		return layerBaseVelocity;
+	public int getLayer2BaseVelocity() {
+		return layer2BaseVelocity;
 	}
 
-	public void setLayerBaseVelocity(int layerBaseVelocity) {
-		this.layerBaseVelocity = layerBaseVelocity;
+	public void setLayer2BaseVelocity(int baseVelocity) {
+		this.layer2BaseVelocity = baseVelocity;
 	}
 
-	public int getLayerAccentVelocity() {
-		return layerAccentVelocity;
+	public int getLayer2AccentVelocity() {
+		return layer2AccentVelocity;
 	}
 
-	public void setLayerAccentVelocity(int layerAccentVelocity) {
-		this.layerAccentVelocity = layerAccentVelocity;
+	public void setLayer2AccentVelocity(int accentVelocity) {
+		this.layer2AccentVelocity = accentVelocity;
 	}
 }

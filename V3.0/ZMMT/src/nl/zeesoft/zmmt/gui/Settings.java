@@ -12,7 +12,14 @@ import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
 public class Settings {
 	private String						fileName					= "settings.json";
 	private	String						composer					= "";
+	
+	private int 						defaultBeatsPerMinute		= 128;
+	private int							defaultBeatsPerBar			= 4;
+	private int							defaultStepsPerBeat			= 8;
+	private int							defaultPatternBars			= 4;
+	
 	private SynthesizerConfiguration	synthesizerConfiguration	= null;
+	
 	private SortedMap<String,Integer>	keyCodeNoteNumbers			= new TreeMap<String,Integer>();
 
 	public Settings() {
@@ -59,6 +66,10 @@ public class Settings {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("composer",composer,true));
+		json.rootElement.children.add(new JsElem("defaultBeatsPerMinute","" + defaultBeatsPerMinute));
+		json.rootElement.children.add(new JsElem("defaultBeatsPerBar","" + defaultBeatsPerBar));
+		json.rootElement.children.add(new JsElem("defaultStepsPerBeat","" + defaultStepsPerBeat));
+		json.rootElement.children.add(new JsElem("defaultPatternBars","" + defaultPatternBars));
 		JsElem kcnnsElem = new JsElem("keyCodeNoteNumbers");
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
 			kcnnsElem.children.add(new JsElem(entry.getKey(),entry.getValue().toString()));
@@ -81,6 +92,14 @@ public class Settings {
 			for (JsElem elem: json.rootElement.children) {
 				if (elem.name.equals("composer")) {
 					composer = elem.value.toString();
+				} else if (elem.name.equals("defaultBeatsPerMinute")) {
+					defaultBeatsPerMinute = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("defaultBeatsPerBar")) {
+					defaultBeatsPerBar = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("defaultStepsPerBeat")) {
+					defaultStepsPerBeat = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("defaultPatternBars")) {
+					defaultPatternBars = Integer.parseInt(elem.value.toString());
 				} else if (elem.name.equals("keyCodeNoteNumbers")) {
 					for (JsElem kElem: elem.children) {
 						String keyCode = kElem.name;
@@ -99,6 +118,9 @@ public class Settings {
 	public Composition getNewComposition() {
 		Composition composition = new Composition();
 		composition.setComposer(composer);
+		composition.setBeatsPerMinute(defaultBeatsPerMinute);
+		composition.setBeatsPerBar(defaultBeatsPerBar);
+		composition.setStepsPerBeat(defaultStepsPerBeat);
 		composition.setSynthesizerConfiguration(synthesizerConfiguration.copy());
 		return composition;
 	}
