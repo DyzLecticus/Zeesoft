@@ -172,6 +172,15 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 		return r;
 	}
 
+	protected JSlider getSliderForNumber(JFormattedTextField number) {
+		JSlider r = null;
+		int index = sliderNumbers.indexOf(number); 
+		if (index>=0) {
+			r = sliders.get(index);
+		}
+		return r;
+	}
+	
 	protected JPanel getNewNumberSlider(JFormattedTextField number,int min,int max,int init) {
 		JPanel r = new JPanel();
 		r.setLayout(new GridBagLayout());

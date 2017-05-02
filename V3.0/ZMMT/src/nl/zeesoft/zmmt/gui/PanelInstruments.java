@@ -26,26 +26,27 @@ import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 public class PanelInstruments extends PanelObject implements ItemListener, CompositionUpdater {
 	private JComboBox<String>		instrument						= null;
 	private JPanel					cardPanel						= null;
-	private JFormattedTextField[]	instrumentMidiNum				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private List<JComboBox<String>>	instrumentMidiInstrument		= new ArrayList<JComboBox<String>>();
 	private JFormattedTextField[]	instrumentPolyphony				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentBaseOctave			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentBaseVelocity			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentAccentVelocity		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 
-	private JFormattedTextField[]	instrumentLayerMidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private List<JComboBox<String>>	instrumentLayerMidiInstrument	= new ArrayList<JComboBox<String>>();
-	private JFormattedTextField[]	instrumentLayerBaseOctave		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayerBaseVelocity		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayerAccentVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	instrumentLayer1MidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private List<JComboBox<String>>	instrumentLayer1MidiInstrument	= new ArrayList<JComboBox<String>>();
+	private JFormattedTextField[]	instrumentLayer1BaseOctave		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	instrumentLayer1BaseVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	instrumentLayer1AccentVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+
+	private JFormattedTextField[]	instrumentLayer2MidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private List<JComboBox<String>>	instrumentLayer2MidiInstrument	= new ArrayList<JComboBox<String>>();
+	private JFormattedTextField[]	instrumentLayer2BaseOctave		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	instrumentLayer2BaseVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	instrumentLayer2AccentVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 	
-	private JFormattedTextField[]	drumNoteNum						= new JFormattedTextField[Drum.DRUMS.length];
-	private JFormattedTextField[]	drumBaseVelocity				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	drumAccentVelocity				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	drumLayer1MidiNote				= new JFormattedTextField[Drum.DRUMS.length];
+	private JFormattedTextField[]	drumLayer1BaseVelocity			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	drumLayer1AccentVelocity		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 
-	private JFormattedTextField[]	drumLayerNoteNum				= new JFormattedTextField[Drum.DRUMS.length];
-	private JFormattedTextField[]	drumLayerBaseVelocity			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	drumLayerAccentVelocity			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	drumLayer2MidiNote				= new JFormattedTextField[Drum.DRUMS.length];
+	private JFormattedTextField[]	drumLayer2BaseVelocity			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	drumLayer2AccentVelocity		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 
 	public PanelInstruments(Controller controller) {
 		super(controller);
@@ -97,30 +98,42 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			InstrumentConfiguration conf = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			instrumentPolyphony[i].setValue(conf.getPolyphony());
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-				instrumentMidiNum[i].setValue(conf.getLayer1MidiNum());
-				instrumentBaseOctave[i].setValue(conf.getLayer1BaseOctave());
-				instrumentBaseVelocity[i].setValue(conf.getLayer1BaseVelocity());
-				instrumentAccentVelocity[i].setValue(conf.getLayer1AccentVelocity());
+				instrumentLayer1MidiNum[i].setValue(conf.getLayer1MidiNum());
+				instrumentLayer1BaseOctave[i].setValue(conf.getLayer1BaseOctave());
+				instrumentLayer1BaseVelocity[i].setValue(conf.getLayer1BaseVelocity());
+				instrumentLayer1AccentVelocity[i].setValue(conf.getLayer1AccentVelocity());
 			}
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.PIANO) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS1)
 				) {
-				instrumentLayerMidiNum[i].setValue(conf.getLayer2MidiNum());
-				instrumentLayerBaseOctave[i].setValue(conf.getLayer2BaseOctave());
-				instrumentLayerBaseVelocity[i].setValue(conf.getLayer2BaseVelocity());
-				instrumentLayerAccentVelocity[i].setValue(conf.getLayer2AccentVelocity());
+				instrumentLayer2MidiNum[i].setValue(conf.getLayer2MidiNum());
+				instrumentLayer2BaseOctave[i].setValue(conf.getLayer2BaseOctave());
+				instrumentLayer2BaseVelocity[i].setValue(conf.getLayer2BaseVelocity());
+				instrumentLayer2AccentVelocity[i].setValue(conf.getLayer2AccentVelocity());
+
+				instrumentLayer2BaseOctave[i].setEnabled(conf.getLayer2MidiNum()>=0);
+				instrumentLayer2BaseVelocity[i].setEnabled(conf.getLayer2MidiNum()>=0);
+				instrumentLayer2AccentVelocity[i].setEnabled(conf.getLayer2MidiNum()>=0);
+				getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+				getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+				getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 			}
 		}
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
 			DrumConfiguration conf = comp.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
-			drumNoteNum[d].setValue(conf.getLayer1MidiNote());
-			drumBaseVelocity[d].setValue(conf.getLayer1BaseVelocity());
-			drumAccentVelocity[d].setValue(conf.getLayer1AccentVelocity());
-			drumLayerNoteNum[d].setValue(conf.getLayer2MidiNote());
-			drumLayerBaseVelocity[d].setValue(conf.getLayer2BaseVelocity());
-			drumLayerAccentVelocity[d].setValue(conf.getLayer2AccentVelocity());
+			drumLayer1MidiNote[d].setValue(conf.getLayer1MidiNote());
+			drumLayer1BaseVelocity[d].setValue(conf.getLayer1BaseVelocity());
+			drumLayer1AccentVelocity[d].setValue(conf.getLayer1AccentVelocity());
+			drumLayer2MidiNote[d].setValue(conf.getLayer2MidiNote());
+			drumLayer2BaseVelocity[d].setValue(conf.getLayer2BaseVelocity());
+			drumLayer2AccentVelocity[d].setValue(conf.getLayer2AccentVelocity());
+
+			drumLayer2BaseVelocity[d].setEnabled(conf.getLayer2MidiNote()>=35);
+			drumLayer2AccentVelocity[d].setEnabled(conf.getLayer2MidiNote()>=35);
+			getSliderForNumber(drumLayer2BaseVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
+			getSliderForNumber(drumLayer2AccentVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
 		}
 		setValidate(true);
 	}
@@ -131,51 +144,52 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			InstrumentConfiguration inst = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			inst.setPolyphony(Integer.parseInt(instrumentPolyphony[i].getValue().toString()));
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-				inst.setLayer1MidiNum(Integer.parseInt(instrumentMidiNum[i].getValue().toString()));
-				inst.setLayer1BaseOctave(Integer.parseInt(instrumentBaseOctave[i].getValue().toString()));
-				inst.setLayer1BaseVelocity(Integer.parseInt(instrumentBaseVelocity[i].getValue().toString()));
-				inst.setLayer1AccentVelocity(Integer.parseInt(instrumentAccentVelocity[i].getValue().toString()));
+				inst.setLayer1MidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
+				inst.setLayer1BaseOctave(Integer.parseInt(instrumentLayer1BaseOctave[i].getValue().toString()));
+				inst.setLayer1BaseVelocity(Integer.parseInt(instrumentLayer1BaseVelocity[i].getValue().toString()));
+				inst.setLayer1AccentVelocity(Integer.parseInt(instrumentLayer1AccentVelocity[i].getValue().toString()));
 			}
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.PIANO) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS1)
 				) {
-				inst.setLayer2MidiNum(Integer.parseInt(instrumentLayerMidiNum[i].getValue().toString()));
-				inst.setLayer2BaseOctave(Integer.parseInt(instrumentLayerBaseOctave[i].getValue().toString()));
-				inst.setLayer2BaseVelocity(Integer.parseInt(instrumentLayerBaseVelocity[i].getValue().toString()));
-				inst.setLayer2AccentVelocity(Integer.parseInt(instrumentLayerAccentVelocity[i].getValue().toString()));
+				inst.setLayer2MidiNum(Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()));
+				inst.setLayer2BaseOctave(Integer.parseInt(instrumentLayer2BaseOctave[i].getValue().toString()));
+				inst.setLayer2BaseVelocity(Integer.parseInt(instrumentLayer2BaseVelocity[i].getValue().toString()));
+				inst.setLayer2AccentVelocity(Integer.parseInt(instrumentLayer2AccentVelocity[i].getValue().toString()));
 			}
 		}
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
 			DrumConfiguration drum = comp.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
-			drum.setLayer1MidiNote(Integer.parseInt(drumNoteNum[d].getValue().toString()));
-			drum.setLayer1BaseVelocity(Integer.parseInt(drumBaseVelocity[d].getValue().toString()));
-			drum.setLayer1AccentVelocity(Integer.parseInt(drumAccentVelocity[d].getValue().toString()));
-			drum.setLayer2MidiNote(Integer.parseInt(drumLayerNoteNum[d].getValue().toString()));
-			drum.setLayer2BaseVelocity(Integer.parseInt(drumLayerBaseVelocity[d].getValue().toString()));
-			drum.setLayer2AccentVelocity(Integer.parseInt(drumLayerAccentVelocity[d].getValue().toString()));
+			drum.setLayer1MidiNote(Integer.parseInt(drumLayer1MidiNote[d].getValue().toString()));
+			drum.setLayer1BaseVelocity(Integer.parseInt(drumLayer1BaseVelocity[d].getValue().toString()));
+			drum.setLayer1AccentVelocity(Integer.parseInt(drumLayer1AccentVelocity[d].getValue().toString()));
+			drum.setLayer2MidiNote(Integer.parseInt(drumLayer2MidiNote[d].getValue().toString()));
+			drum.setLayer2BaseVelocity(Integer.parseInt(drumLayer2BaseVelocity[d].getValue().toString()));
+			drum.setLayer2AccentVelocity(Integer.parseInt(drumLayer2AccentVelocity[d].getValue().toString()));
 		}
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		super.propertyChange(evt);
-		if (instrumentMidiInstrument.size()==Instrument.INSTRUMENTS.length) {
+		if (instrumentLayer1MidiInstrument.size()==Instrument.INSTRUMENTS.length) {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-				if (evt.getSource()==instrumentMidiNum[i]) {
-					JComboBox<String> midiInstrument = instrumentMidiInstrument.get(i);
-					midiInstrument.setSelectedIndex(Integer.parseInt(instrumentMidiNum[i].getValue().toString()));
+				if (evt.getSource()==instrumentLayer1MidiNum[i]) {
+					JComboBox<String> midiInstrument = instrumentLayer1MidiInstrument.get(i);
+					midiInstrument.setSelectedIndex(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
+					break;
 				}
 			}
 		}
-		if (instrumentLayerMidiInstrument.size()==4) {
+		if (instrumentLayer2MidiInstrument.size()==4) {
 			int num = 0;
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-				if (instrumentLayerMidiNum[i]!=null) {
-					if (evt.getSource()==instrumentLayerMidiNum[i]) {
-						JComboBox<String> midiInstrument = instrumentLayerMidiInstrument.get(num);
-						int index = (Integer.parseInt(instrumentLayerMidiNum[i].getValue().toString()) + 1);
+				if (instrumentLayer2MidiNum[i]!=null) {
+					if (evt.getSource()==instrumentLayer2MidiNum[i]) {
+						JComboBox<String> midiInstrument = instrumentLayer2MidiInstrument.get(num);
+						int index = (Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()) + 1);
 						midiInstrument.setSelectedIndex(index);
 						break;
 					}
@@ -192,16 +206,16 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			cl.show(cardPanel,(String) evt.getItem());
 		} else {
 			int i = 0;
-			for (JComboBox<String> midiInstrument: instrumentMidiInstrument) {
+			for (JComboBox<String> midiInstrument: instrumentLayer1MidiInstrument) {
 				if (evt.getSource()==midiInstrument) {
-					instrumentMidiNum[i].setValue(midiInstrument.getSelectedIndex());
+					instrumentLayer1MidiNum[i].setValue(midiInstrument.getSelectedIndex());
 					break;
 				}
 				i++;
 			}
 			JComboBox<String> selector = null;
 			i = 0;
-			for (JComboBox<String> midiInstrument: instrumentLayerMidiInstrument) {
+			for (JComboBox<String> midiInstrument: instrumentLayer2MidiInstrument) {
 				if (evt.getSource()==midiInstrument) {
 					selector = midiInstrument;
 					break;
@@ -216,7 +230,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				} else if (i==3) {
 					i = 10;
 				}
-				instrumentLayerMidiNum[i].setValue((selector.getSelectedIndex() - 1));
+				instrumentLayer2MidiNum[i].setValue((selector.getSelectedIndex() - 1));
 			}
 		}
 	}
@@ -266,30 +280,30 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 
 		if (!name.equals(Instrument.DRUMS)) {
 			row++;
-			instrumentMidiNum[instrumentNum] = getNewNumberTextField(3);
+			instrumentLayer1MidiNum[instrumentNum] = getNewNumberTextField(3);
 			addLabel(panel,row,"Layer 1 MIDI instrument number");
 			if (midiInstruments.size()>0) {
-				JPanel selector = getMidiInstrumentSelector(name,instrumentMidiNum[instrumentNum],midiInstruments,false);
+				JPanel selector = getMidiInstrumentSelector(name,instrumentLayer1MidiNum[instrumentNum],midiInstruments,false);
 				addProperty(panel,row,selector);
 			} else {
-				addProperty(panel,row,instrumentMidiNum[instrumentNum]);
+				addProperty(panel,row,instrumentLayer1MidiNum[instrumentNum]);
 			}
 			
 			row++;
-			instrumentBaseOctave[instrumentNum] = getNewNumberTextField(1);
-			slider = getNewNumberSlider(instrumentBaseOctave[instrumentNum],0,9,3);
+			instrumentLayer1BaseOctave[instrumentNum] = getNewNumberTextField(1);
+			slider = getNewNumberSlider(instrumentLayer1BaseOctave[instrumentNum],0,9,3);
 			addLabel(panel,row,"Layer 1 base octave");
 			addProperty(panel,row,slider);
 
 			row++;
-			instrumentBaseVelocity[instrumentNum] = getNewNumberTextField(3);
-			slider = getNewNumberSlider(instrumentBaseVelocity[instrumentNum],0,127,100);
+			instrumentLayer1BaseVelocity[instrumentNum] = getNewNumberTextField(3);
+			slider = getNewNumberSlider(instrumentLayer1BaseVelocity[instrumentNum],0,127,100);
 			addLabel(panel,row,"Layer 1 base velocity");
 			addProperty(panel,row,slider);
 	
 			row++;
-			instrumentAccentVelocity[instrumentNum] = getNewNumberTextField(3);
-			slider = getNewNumberSlider(instrumentAccentVelocity[instrumentNum],0,127,100);
+			instrumentLayer1AccentVelocity[instrumentNum] = getNewNumberTextField(3);
+			slider = getNewNumberSlider(instrumentLayer1AccentVelocity[instrumentNum],0,127,100);
 			addLabel(panel,row,"Layer 1 accent velocity");
 			addProperty(panel,row,slider);
 
@@ -299,74 +313,75 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				name.equals(Instrument.STRINGS1)
 				) {
 				row++;
-				instrumentLayerMidiNum[instrumentNum] = getNewNumberTextField(3);
+				instrumentLayer2MidiNum[instrumentNum] = getNewNumberTextField(3);
 				addLabel(panel,row,"Layer 2 MIDI instrument number");
 				if (midiInstruments.size()>0) {
-					JPanel selector = getMidiInstrumentSelector(name,instrumentLayerMidiNum[instrumentNum],midiInstruments,true);
+					JPanel selector = getMidiInstrumentSelector(name,instrumentLayer2MidiNum[instrumentNum],midiInstruments,true);
 					addProperty(panel,row,selector);
 				} else {
-					addProperty(panel,row,instrumentLayerMidiNum[instrumentNum]);
+					addProperty(panel,row,instrumentLayer2MidiNum[instrumentNum]);
 				}
 
 				row++;
-				instrumentLayerBaseOctave[instrumentNum] = getNewNumberTextField(1);
-				slider = getNewNumberSlider(instrumentLayerBaseOctave[instrumentNum],0,9,3);
+				instrumentLayer2BaseOctave[instrumentNum] = getNewNumberTextField(1);
+				slider = getNewNumberSlider(instrumentLayer2BaseOctave[instrumentNum],0,9,3);
 				addLabel(panel,row,"Layer 2 base octave");
 				addProperty(panel,row,slider);
 
 				row++;
-				instrumentLayerBaseVelocity[instrumentNum] = getNewNumberTextField(3);
-				slider = getNewNumberSlider(instrumentLayerBaseVelocity[instrumentNum],0,127,100);
+				instrumentLayer2BaseVelocity[instrumentNum] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(instrumentLayer2BaseVelocity[instrumentNum],0,127,100);
 				addLabel(panel,row,"Layer 2 base velocity");
 				addProperty(panel,row,slider);
 		
 				row++;
-				instrumentLayerAccentVelocity[instrumentNum] = getNewNumberTextField(3);
-				slider = getNewNumberSlider(instrumentLayerAccentVelocity[instrumentNum],0,127,100);
+				instrumentLayer2AccentVelocity[instrumentNum] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(instrumentLayer2AccentVelocity[instrumentNum],0,127,100);
 				addLabel(panel,row,"Layer 2 accent velocity");
 				addProperty(panel,row,slider);
 			}
 		}
 
 		if (name.equals(Instrument.DRUMS)) {
+			instrumentLayer1MidiInstrument.add(null);
 			for (int d = 0; d < Drum.DRUMS.length; d++) {
 				int drow = 0;
 				JPanel drumPanel = new JPanel();
 				drumPanel.setLayout(new GridBagLayout());
 				drumPanel.setBorder(BorderFactory.createTitledBorder(Drum.DRUMS[d]));
 
-				drumNoteNum[d] = getNewNumberTextField(3);
-				slider = getNewNumberSlider(drumNoteNum[d],35,81,35);
+				drumLayer1MidiNote[d] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(drumLayer1MidiNote[d],35,81,35);
 				addLabel(drumPanel,drow,"Layer 1 MIDI note number");
 				addProperty(drumPanel,drow,slider);
 				
 				drow++;
-				drumBaseVelocity[d] = getNewNumberTextField(3);
-				slider = getNewNumberSlider(drumBaseVelocity[d],0,127,100);
+				drumLayer1BaseVelocity[d] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(drumLayer1BaseVelocity[d],0,127,100);
 				addLabel(drumPanel,drow,"Layer 1 Base velocity");
 				addProperty(drumPanel,drow,slider);
 		
 				drow++;
-				drumAccentVelocity[d] = getNewNumberTextField(3);
-				slider = getNewNumberSlider(drumAccentVelocity[d],0,127,100);
+				drumLayer1AccentVelocity[d] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(drumLayer1AccentVelocity[d],0,127,100);
 				addLabel(drumPanel,drow,"Layer 1 Accent velocity");
 				addProperty(drumPanel,drow,slider);
 				
 				drow++;
-				drumLayerNoteNum[d] = getNewNumberTextField(3);
-				slider = getNewNumberSlider(drumLayerNoteNum[d],34,81,35);
+				drumLayer2MidiNote[d] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(drumLayer2MidiNote[d],34,81,35);
 				addLabel(drumPanel,drow,"Layer 2 Layer MIDI note number");
 				addProperty(drumPanel,drow,slider);
 				
 				drow++;
-				drumLayerBaseVelocity[d] = getNewNumberTextField(3);
-				slider = getNewNumberSlider(drumLayerBaseVelocity[d],0,127,100);
+				drumLayer2BaseVelocity[d] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(drumLayer2BaseVelocity[d],0,127,100);
 				addLabel(drumPanel,drow,"Layer 2 Layer base velocity");
 				addProperty(drumPanel,drow,slider);
 		
 				drow++;
-				drumLayerAccentVelocity[d] = getNewNumberTextField(3);
-				slider = getNewNumberSlider(drumLayerAccentVelocity[d],0,127,100);
+				drumLayer2AccentVelocity[d] = getNewNumberTextField(3);
+				slider = getNewNumberSlider(drumLayer2AccentVelocity[d],0,127,100);
 				addLabel(drumPanel,drow,"Layer 2 Layer accent velocity");
 				addProperty(drumPanel,drow,slider);
 
@@ -404,9 +419,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		selector.add(number);
 		selector.add(midiInstrument);
 		if (!layer) {
-			instrumentMidiInstrument.add(midiInstrument);
+			instrumentLayer1MidiInstrument.add(midiInstrument);
 		} else {
-			instrumentLayerMidiInstrument.add(midiInstrument);
+			instrumentLayer2MidiInstrument.add(midiInstrument);
 		}
 		return selector;
 	}
