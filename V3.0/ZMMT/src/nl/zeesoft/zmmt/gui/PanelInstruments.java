@@ -97,8 +97,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration conf = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			instrumentPolyphony[i].setValue(conf.getPolyphony());
-			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+			if (instrumentLayer1MidiNum[i]!=null) {
 				instrumentLayer1MidiNum[i].setValue(conf.getLayer1MidiNum());
+			}
+			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 				instrumentLayer1BaseOctave[i].setValue(conf.getLayer1BaseOctave());
 				instrumentLayer1BaseVelocity[i].setValue(conf.getLayer1BaseVelocity());
 				instrumentLayer1AccentVelocity[i].setValue(conf.getLayer1AccentVelocity());
@@ -288,7 +290,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			} else {
 				addProperty(panel,row,instrumentLayer1MidiNum[instrumentNum]);
 			}
-			
+
 			row++;
 			instrumentLayer1BaseOctave[instrumentNum] = getNewNumberTextField(1);
 			slider = getNewNumberSlider(instrumentLayer1BaseOctave[instrumentNum],0,9,3);

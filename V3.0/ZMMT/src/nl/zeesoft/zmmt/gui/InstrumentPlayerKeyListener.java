@@ -1,5 +1,6 @@
 package nl.zeesoft.zmmt.gui;
 
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 public class InstrumentPlayerKeyListener extends ControllerKeyListener {
@@ -13,7 +14,11 @@ public class InstrumentPlayerKeyListener extends ControllerKeyListener {
 		if (!evt.isControlDown()) {
 			int note = getNoteForKey(evt);
 			if (note>=0) {
-				getController().playNote(note,evt.isShiftDown());
+				boolean accent = evt.isShiftDown();
+				if (!accent) {
+					accent = Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
+				}
+				getController().playNote(note,accent);
 			}
 		}
 	}
