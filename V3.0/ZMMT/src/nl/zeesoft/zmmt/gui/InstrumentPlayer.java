@@ -66,9 +66,9 @@ public class InstrumentPlayer implements ActionListener {
 					playingNotes.remove(note.getId());
 				}
 			}
-			int channel = Instrument.getMidiChannelForInstrument(name,false);
+			int channel = Instrument.getMidiChannelForInstrument(name,0);
 			synthesizer.getChannels()[channel].allNotesOff();
-			int layerChannel = Instrument.getMidiChannelForInstrument(name,true);
+			int layerChannel = Instrument.getMidiChannelForInstrument(name,1);
 			if (layerChannel!=channel && layerChannel>=0) {
 				synthesizer.getChannels()[channel].allNotesOff();
 			}

@@ -49,11 +49,20 @@ public class TestMidiLayout extends TestObject {
 				}
 			}
 
-			System.out.println("Playing ...");
-			synth.getChannels()[1].noteOn(60, 100);
-
+			synth.getChannels()[1].controlChange(8,124);
+			//synth.getChannels()[1].controlChange(8,0);
+			synth.getChannels()[1].controlChange(91,124);
 			try {
 				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("Playing ...");
+			synth.getChannels()[1].noteOn(60, 127);
+
+			try {
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -91,13 +100,15 @@ public class TestMidiLayout extends TestObject {
 				System.out.println("Playing drum: " +  i);
 				for (int i2 = 0; i2 < 4; i2 ++) {
 					synth.getChannels()[9].noteOn(i, 127);
-		
 					try {
 						Thread.sleep(250);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					synth.getChannels()[9].noteOff(i);
+				}
+				if (i>=0) {
+					break;
 				}
 			}
 		}

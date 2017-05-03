@@ -41,12 +41,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	private JFormattedTextField[]	instrumentLayer2AccentVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 	
 	private JFormattedTextField[]	drumLayer1MidiNote				= new JFormattedTextField[Drum.DRUMS.length];
-	private JFormattedTextField[]	drumLayer1BaseVelocity			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	drumLayer1AccentVelocity		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	drumLayer1BaseVelocity			= new JFormattedTextField[Drum.DRUMS.length];
+	private JFormattedTextField[]	drumLayer1AccentVelocity		= new JFormattedTextField[Drum.DRUMS.length];
 
 	private JFormattedTextField[]	drumLayer2MidiNote				= new JFormattedTextField[Drum.DRUMS.length];
-	private JFormattedTextField[]	drumLayer2BaseVelocity			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	drumLayer2AccentVelocity		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	drumLayer2BaseVelocity			= new JFormattedTextField[Drum.DRUMS.length];
+	private JFormattedTextField[]	drumLayer2AccentVelocity		= new JFormattedTextField[Drum.DRUMS.length];
 
 	public PanelInstruments(Controller controller) {
 		super(controller);
@@ -105,10 +105,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				instrumentLayer1BaseVelocity[i].setValue(conf.getLayer1BaseVelocity());
 				instrumentLayer1AccentVelocity[i].setValue(conf.getLayer1AccentVelocity());
 			}
-			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.PIANO) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS1)
+				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 				) {
 				instrumentLayer2MidiNum[i].setValue(conf.getLayer2MidiNum());
 				instrumentLayer2BaseOctave[i].setValue(conf.getLayer2BaseOctave());
@@ -151,10 +151,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				inst.setLayer1BaseVelocity(Integer.parseInt(instrumentLayer1BaseVelocity[i].getValue().toString()));
 				inst.setLayer1AccentVelocity(Integer.parseInt(instrumentLayer1AccentVelocity[i].getValue().toString()));
 			}
-			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.PIANO) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS1)
+				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 				) {
 				inst.setLayer2MidiNum(Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()));
 				inst.setLayer2BaseOctave(Integer.parseInt(instrumentLayer2BaseOctave[i].getValue().toString()));
@@ -228,9 +228,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				if (i==1) {
 					i = 3;
 				} else if (i==2) {
-					i = 7;
+					i = 6;
 				} else if (i==3) {
-					i = 10;
+					i = 7;
 				}
 				instrumentLayer2MidiNum[i].setValue((selector.getSelectedIndex() - 1));
 			}
@@ -309,10 +309,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			addLabel(panel,row,"Layer 1 accent velocity");
 			addProperty(panel,row,slider);
 
-			if (name.equals(Instrument.SYNTH1) ||
-				name.equals(Instrument.SYNTH_BASS1) ||
+			if (name.equals(Instrument.SYNTH_BASS1) ||
+				name.equals(Instrument.SYNTH1) ||
 				name.equals(Instrument.PIANO) ||
-				name.equals(Instrument.STRINGS1)
+				name.equals(Instrument.STRINGS)
 				) {
 				row++;
 				instrumentLayer2MidiNum[instrumentNum] = getNewNumberTextField(3);

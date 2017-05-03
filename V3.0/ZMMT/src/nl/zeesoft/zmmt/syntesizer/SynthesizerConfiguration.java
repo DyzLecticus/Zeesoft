@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.json.JsFile;
 
 public class SynthesizerConfiguration {
 	private List<InstrumentConfiguration>	instruments	= new ArrayList<InstrumentConfiguration>();
+	private DelayConfiguration				delay		= new DelayConfiguration();
 	private List<DrumConfiguration>			drums 		= new ArrayList<DrumConfiguration>();
 	
 	public SynthesizerConfiguration() {
@@ -34,10 +35,10 @@ public class SynthesizerConfiguration {
 				instElem.children.add(new JsElem("layer1BaseVelocity","" + inst.getLayer1BaseVelocity()));
 				instElem.children.add(new JsElem("layer1AccentVelocity","" + inst.getLayer1AccentVelocity()));
 			}
-			if (inst.getName().equals(Instrument.SYNTH1) || 
-				inst.getName().equals(Instrument.SYNTH_BASS1) ||
+			if (inst.getName().equals(Instrument.SYNTH_BASS1) ||
+				inst.getName().equals(Instrument.SYNTH1) || 
 				inst.getName().equals(Instrument.PIANO) ||
-				inst.getName().equals(Instrument.STRINGS1)
+				inst.getName().equals(Instrument.STRINGS)
 				) { 
 				instElem.children.add(new JsElem("layer2MidiNum","" + inst.getLayer2MidiNum()));
 				instElem.children.add(new JsElem("layer2BaseOctave","" + inst.getLayer2BaseOctave()));
@@ -158,8 +159,8 @@ public class SynthesizerConfiguration {
 
 	public void configureMidiSynthesizer(javax.sound.midi.Synthesizer synth) {
 		for (InstrumentConfiguration inst: instruments) {
-			synth.getChannels()[Instrument.getMidiChannelForInstrument(inst.getName(),false)].programChange(inst.getLayer1MidiNum());
-			int layerChannel = Instrument.getMidiChannelForInstrument(inst.getName(),true);
+			synth.getChannels()[Instrument.getMidiChannelForInstrument(inst.getName(),0)].programChange(inst.getLayer1MidiNum());
+			int layerChannel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 			if (layerChannel>=0 && inst.getLayer2MidiNum()>=0) {
 				synth.getChannels()[layerChannel].programChange(inst.getLayer2MidiNum());
 			}
@@ -175,7 +176,7 @@ public class SynthesizerConfiguration {
 				MidiNote mn = new MidiNote();
 				mn.instrument = instrument;
 				mn.note = note;
-				mn.channel = Instrument.getMidiChannelForInstrument(instrument,false);
+				mn.channel = Instrument.getMidiChannelForInstrument(instrument,0);
 				mn.midiNote = playNote;
 				mn.velocity = velocity;
 				notes.add(mn);
@@ -185,7 +186,7 @@ public class SynthesizerConfiguration {
 					mn = new MidiNote();
 					mn.instrument = instrument;
 					mn.note = note;
-					mn.channel = Instrument.getMidiChannelForInstrument(instrument,true);
+					mn.channel = Instrument.getMidiChannelForInstrument(instrument,1);
 					mn.midiNote = layerNote;
 					mn.velocity = layerVelocity;
 					notes.add(mn);
@@ -332,23 +333,28 @@ public class SynthesizerConfiguration {
 
 	protected void initializeInstrument(InstrumentConfiguration instrument) {
 		if (instrument.getName().equals(Instrument.SYNTH_BASS1)) {
-			instrument.setLayer1MidiNum(38);
+			instrument.setLayer1MidiNum(34);
 			instrument.setLayer1BaseOctave(2);
 			instrument.setLayer1BaseVelocity(120);
 			instrument.setLayer1AccentVelocity(127);
+			instrument.setLayer1Reverb(0);
+			instrument.setLayer2MidiNum(38);
 			instrument.setLayer2BaseOctave(2);
-			instrument.setLayer2BaseVelocity(120);
-			instrument.setLayer2AccentVelocity(127);
+			instrument.setLayer2BaseVelocity(100);
+			instrument.setLayer2AccentVelocity(120);
+			instrument.setLayer2Reverb(0);
 		} else if (instrument.getName().equals(Instrument.SYNTH_BASS2)) {
 			instrument.setLayer1MidiNum(39);
 			instrument.setLayer1BaseOctave(2);
 			instrument.setLayer1BaseVelocity(120);
 			instrument.setLayer1AccentVelocity(127);
+			instrument.setLayer1Reverb(0);
 		} else if (instrument.getName().equals(Instrument.SYNTH_BASS3)) {
 			instrument.setLayer1MidiNum(80);
 			instrument.setLayer1BaseOctave(2);
 			instrument.setLayer1BaseVelocity(120);
 			instrument.setLayer1AccentVelocity(127);
+			instrument.setLayer1Reverb(0);
 		} else if (instrument.getName().equals(Instrument.SYNTH1)) {
 			instrument.setLayer1MidiNum(90);
 			instrument.setLayer1BaseOctave(4);
@@ -359,32 +365,28 @@ public class SynthesizerConfiguration {
 		} else if (instrument.getName().equals(Instrument.SYNTH3)) {
 			instrument.setLayer1MidiNum(54);
 			instrument.setLayer1BaseOctave(4);
-		} else if (instrument.getName().equals(Instrument.BASS)) {
-			instrument.setLayer1MidiNum(32);
-			instrument.setLayer1BaseVelocity(120);
-			instrument.setLayer1AccentVelocity(127);
 		} else if (instrument.getName().equals(Instrument.PIANO)) {
 			instrument.setLayer1MidiNum(0);
 			instrument.setLayer1BaseOctave(4);
 			instrument.setLayer1BaseVelocity(80);
 			instrument.setLayer1AccentVelocity(90);
+			instrument.setLayer1Reverb(127);
 			instrument.setLayer2MidiNum(50);
 			instrument.setLayer2BaseOctave(4);
 			instrument.setLayer2BaseVelocity(80);
 			instrument.setLayer2AccentVelocity(90);
-		} else if (instrument.getName().equals(Instrument.HARP)) {
-			instrument.setLayer1MidiNum(46);
-			instrument.setLayer1BaseOctave(5);
+		} else if (instrument.getName().equals(Instrument.STRINGS)) {
+			instrument.setLayer1MidiNum(48);
+			instrument.setLayer1BaseVelocity(80);
+			instrument.setLayer1AccentVelocity(90);
+			instrument.setLayer2MidiNum(49);
+			instrument.setLayer2BaseOctave(4);
+			instrument.setLayer2BaseVelocity(80);
+			instrument.setLayer2AccentVelocity(90);
 		} else if (instrument.getName().equals(Instrument.DRUMS)) {
 			instrument.setLayer1MidiNum(118);
 			instrument.setPolyphony(8);
-		} else if (instrument.getName().equals(Instrument.STRINGS1)) {
-			instrument.setLayer1MidiNum(48);
-		} else if (instrument.getName().equals(Instrument.STRINGS2)) {
-			instrument.setLayer1MidiNum(49);
-			instrument.setLayer1BaseOctave(4);
-			instrument.setLayer1BaseVelocity(80);
-			instrument.setLayer1AccentVelocity(90);
+			instrument.setLayer1Reverb(0);
 		}
 	}
 
