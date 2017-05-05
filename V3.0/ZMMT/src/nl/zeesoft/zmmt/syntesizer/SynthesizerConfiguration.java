@@ -64,6 +64,17 @@ public class SynthesizerConfiguration {
 			drumElem.children.add(new JsElem("layer2BaseVelocity","" + drum.getLayer2BaseVelocity()));
 			drumElem.children.add(new JsElem("layer2AccentVelocity","" + drum.getLayer2AccentVelocity()));
 		}
+		JsElem echoElem = new JsElem("echo");
+		json.rootElement.children.add(echoElem);
+		echoElem.children.add(new JsElem("instrument",echo.getInstrument(),true));
+		echoElem.children.add(new JsElem("layer","" + echo.getLayer()));
+		echoElem.children.add(new JsElem("steps","" + echo.getSteps()));
+		echoElem.children.add(new JsElem("velocityPercentage1","" + echo.getVelocityPercentage1()));
+		echoElem.children.add(new JsElem("velocityPercentage2","" + echo.getVelocityPercentage2()));
+		echoElem.children.add(new JsElem("velocityPercentage3","" + echo.getVelocityPercentage3()));
+		echoElem.children.add(new JsElem("reverb1","" + echo.getReverb1()));
+		echoElem.children.add(new JsElem("reverb2","" + echo.getReverb2()));
+		echoElem.children.add(new JsElem("reverb3","" + echo.getReverb3()));
 		return json;
 	}
 	
@@ -137,6 +148,28 @@ public class SynthesizerConfiguration {
 							int index = drums.indexOf(current);
 							drums.remove(index);
 							drums.add(index,drum);
+						}
+					}
+				} else if (elem.name.equals("echo")) {
+					for (JsElem val: elem.children) {
+						if (val.name.equals("instrument")) {
+							echo.setInstrument(val.value.toString());
+						} else if (val.name.equals("layer")) {
+							echo.setLayer(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("steps")) {
+							echo.setSteps(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("velocityPercentage1")) {
+							echo.setVelocityPercentage1(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("velocityPercentage2")) {
+							echo.setVelocityPercentage2(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("velocityPercentage3")) {
+							echo.setVelocityPercentage3(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("reverb1")) {
+							echo.setReverb1(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("reverb2")) {
+							echo.setReverb2(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("reverb3")) {
+							echo.setReverb3(Integer.parseInt(val.value.toString()));
 						}
 					}
 				}
@@ -400,7 +433,7 @@ public class SynthesizerConfiguration {
 	protected void initialize() {
 		instruments.clear();
 		drums.clear();
-		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 			InstrumentConfiguration inst = new InstrumentConfiguration();
 			inst.setName(Instrument.INSTRUMENTS[i]);
 			initializeInstrument(inst);
