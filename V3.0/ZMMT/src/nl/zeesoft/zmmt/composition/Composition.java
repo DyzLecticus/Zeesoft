@@ -85,7 +85,7 @@ public class Composition {
 		return (beatsPerBar * stepsPerBeat);
 	}
 	
-	public long getMsForStep(int number) {
+	public long getMsPerStep() {
 		return (60000 / beatsPerMinute) / stepsPerBeat;
 	}
 

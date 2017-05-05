@@ -15,6 +15,7 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.syntesizer.MidiNote;
 
@@ -51,7 +52,7 @@ public class Controller extends Locker {
 		union = new WorkerUnion(getMessenger());
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
-		player = new InstrumentPlayer();
+		player = new InstrumentPlayer(getMessenger(),getUnion());
 		playerKeyListener = new InstrumentPlayerKeyListener(this);
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
@@ -67,6 +68,7 @@ public class Controller extends Locker {
 	}
 	
 	public void start(boolean debug) {
+		player.start();
 		setComposition(settings.getNewComposition());
 		mainFrame.getFrame().setVisible(true);
 		compositionUpdateWorker.start();
@@ -78,6 +80,7 @@ public class Controller extends Locker {
 	}
 
 	public void stop(Worker ignoreWorker) {
+		player.stop();
 		stopSynthesizer();
 		mainFrame.getFrame().setVisible(false);
 		compositionUpdateWorker.stop();
@@ -267,14 +270,14 @@ public class Controller extends Locker {
 
 	protected void playNote(int note,boolean accent) {
 		lockMe(this);
-		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,accent);
+		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,accent,composition.getMsPerStep());
 		player.playInstrumentNotes(notes);
 		unlockMe(this);
 	}
 
 	protected void stopNote(int note) {
 		lockMe(this);
-		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,false);
+		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,false,composition.getMsPerStep());
 		player.stopInstrumentNotes(notes);
 		unlockMe(this);
 	}

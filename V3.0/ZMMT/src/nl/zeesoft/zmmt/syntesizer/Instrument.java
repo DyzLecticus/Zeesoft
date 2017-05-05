@@ -10,12 +10,12 @@ public class Instrument {
 	public static final	String		PIANO				= "Piano";
 	public static final	String		STRINGS				= "Strings";
 	public static final	String		DRUMS				= "Drums";
-	public static final	String		DELAY				= "Delay";
-	public static final String[]	INSTRUMENTS			= {SYNTH_BASS1,SYNTH_BASS2,SYNTH_BASS3,SYNTH1,SYNTH2,SYNTH3,PIANO,STRINGS,DRUMS,DELAY};
+	public static final	String		ECHO				= "Echo";
+	public static final String[]	INSTRUMENTS			= {SYNTH_BASS1,SYNTH_BASS2,SYNTH_BASS3,SYNTH1,SYNTH2,SYNTH3,PIANO,STRINGS,DRUMS,ECHO};
 	
 	public static final int getMidiChannelForInstrument(String name,int layer) {
 		int r = -1;
-		if (layer==2 && name.equals(DELAY)) {
+		if (layer==2 && name.equals(ECHO)) {
 			r = 15;
 		} else if (layer==1) {
 			if (name.equals(SYNTH_BASS1)) {
@@ -28,13 +28,13 @@ public class Instrument {
 				r = 9;
 			} else if (name.equals(STRINGS)) {
 				r = 13;
-			} else if (name.equals(DELAY)) {
+			} else if (name.equals(ECHO)) {
 				r = 14;
 			}
 		} else {
 			if (name.equals(DRUMS)) {
 				r = 9;
-			} else if (name.equals(DELAY)) {
+			} else if (name.equals(ECHO)) {
 				r = 8;
 			} else {
 				for (int i = 0; i < INSTRUMENTS.length; i++) {

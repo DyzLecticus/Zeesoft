@@ -1,6 +1,7 @@
 package nl.zeesoft.zmmt.syntesizer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.json.JsElem;
@@ -8,7 +9,7 @@ import nl.zeesoft.zdk.json.JsFile;
 
 public class SynthesizerConfiguration {
 	private List<InstrumentConfiguration>	instruments	= new ArrayList<InstrumentConfiguration>();
-	private DelayConfiguration				delay		= new DelayConfiguration();
+	private EchoConfiguration				echo		= new EchoConfiguration();
 	private List<DrumConfiguration>			drums 		= new ArrayList<DrumConfiguration>();
 	
 	public SynthesizerConfiguration() {
@@ -30,6 +31,8 @@ public class SynthesizerConfiguration {
 			instElem.children.add(new JsElem("name",inst.getName(),true));
 			instElem.children.add(new JsElem("polyphony","" + inst.getPolyphony()));
 			instElem.children.add(new JsElem("layer1MidiNum","" + inst.getLayer1MidiNum()));
+			instElem.children.add(new JsElem("layer1Pressure","" + inst.getLayer1Pressure()));
+			instElem.children.add(new JsElem("layer1Reverb","" + inst.getLayer1Reverb()));
 			if (!inst.getName().equals(Instrument.DRUMS)) {
 				instElem.children.add(new JsElem("layer1BaseOctave","" + inst.getLayer1BaseOctave()));
 				instElem.children.add(new JsElem("layer1BaseVelocity","" + inst.getLayer1BaseVelocity()));
@@ -41,6 +44,8 @@ public class SynthesizerConfiguration {
 				inst.getName().equals(Instrument.STRINGS)
 				) { 
 				instElem.children.add(new JsElem("layer2MidiNum","" + inst.getLayer2MidiNum()));
+				instElem.children.add(new JsElem("layer2Pressure","" + inst.getLayer1Pressure()));
+				instElem.children.add(new JsElem("layer2Reverb","" + inst.getLayer1Reverb()));
 				instElem.children.add(new JsElem("layer2BaseOctave","" + inst.getLayer2BaseOctave()));
 				instElem.children.add(new JsElem("layer2BaseVelocity","" + inst.getLayer2BaseVelocity()));
 				instElem.children.add(new JsElem("layer2AccentVelocity","" + inst.getLayer2AccentVelocity()));
@@ -73,6 +78,10 @@ public class SynthesizerConfiguration {
 							inst.setPolyphony(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1MidiNum")) {
 							inst.setLayer1MidiNum(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer1Reverb")) {
+							inst.setLayer1Reverb(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer1Pressure")) {
+							inst.setLayer1Pressure(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1BaseOctave")) {
 							inst.setLayer1BaseOctave(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1BaseVelocity")) {
@@ -81,6 +90,10 @@ public class SynthesizerConfiguration {
 							inst.setLayer1AccentVelocity(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2MidiNum")) {
 							inst.setLayer2MidiNum(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer2Reverb")) {
+							inst.setLayer2Reverb(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer2Pressure")) {
+							inst.setLayer2Pressure(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2BaseOctave")) {
 							inst.setLayer2BaseOctave(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2BaseVelocity")) {
@@ -159,16 +172,48 @@ public class SynthesizerConfiguration {
 
 	public void configureMidiSynthesizer(javax.sound.midi.Synthesizer synth) {
 		for (InstrumentConfiguration inst: instruments) {
-			synth.getChannels()[Instrument.getMidiChannelForInstrument(inst.getName(),0)].programChange(inst.getLayer1MidiNum());
-			int layerChannel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
-			if (layerChannel>=0 && inst.getLayer2MidiNum()>=0) {
-				synth.getChannels()[layerChannel].programChange(inst.getLayer2MidiNum());
+			if (inst.getName().equals(Instrument.ECHO)) {
+				InstrumentConfiguration echoInst = getInstrument(echo.getInstrument());
+				int layerMidiNum = echoInst.getLayer1MidiNum();
+				int layerPressure = echoInst.getLayer1Pressure();
+				if (echo.getLayer()==2) {
+					layerMidiNum = echoInst.getLayer2MidiNum();
+					layerPressure = echoInst.getLayer2Pressure();
+				}
+				if (layerMidiNum>=0) {
+					for (int e = 0; e < 3; e++) {
+						int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
+						synth.getChannels()[channel].programChange(layerMidiNum);
+						synth.getChannels()[channel].setChannelPressure(layerPressure);
+						if (e==0) {
+							synth.getChannels()[channel].controlChange(91,echo.getReverb1());
+						} else if (e==1) {
+							synth.getChannels()[channel].controlChange(91,echo.getReverb2());
+						} else if (e==2) {
+							synth.getChannels()[channel].controlChange(91,echo.getReverb3());
+						}
+					}
+				}
+			} else {
+				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),0);
+				synth.getChannels()[channel].programChange(inst.getLayer1MidiNum());
+				synth.getChannels()[channel].setChannelPressure(inst.getLayer1Pressure());
+				synth.getChannels()[channel].controlChange(91,inst.getLayer1Reverb());
+				int layerChannel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
+				if (layerChannel>=0 && inst.getLayer2MidiNum()>=0) {
+					synth.getChannels()[layerChannel].programChange(inst.getLayer2MidiNum());
+					synth.getChannels()[layerChannel].setChannelPressure(inst.getLayer2Pressure());
+					synth.getChannels()[layerChannel].controlChange(91,inst.getLayer2Reverb());
+				}
 			}
 		}
 	}
 
-	public List<MidiNote> getMidiNotesForNote(String instrument, int note,boolean accent) {
+	public List<MidiNote> getMidiNotesForNote(String instrument, int note,boolean accent,long msPerStep) {
 		List<MidiNote> notes = new ArrayList<MidiNote>();
+		if (instrument.equals(Instrument.ECHO)) {
+			instrument = echo.getInstrument();
+		}
 		int playNote = getMidiNoteNumberForNote(instrument,note,false);
 		if (playNote>=0) {
 			int velocity = getVelocityForNote(instrument,note,accent,false);
@@ -182,14 +227,42 @@ public class SynthesizerConfiguration {
 				notes.add(mn);
 				int layerNote = getMidiNoteNumberForNote(instrument,note,true);
 				if (layerNote>=0) {
-					int layerVelocity = getVelocityForNote(instrument,note,accent,true);
+					velocity = getVelocityForNote(instrument,note,accent,true);
 					mn = new MidiNote();
 					mn.instrument = instrument;
 					mn.note = note;
 					mn.channel = Instrument.getMidiChannelForInstrument(instrument,1);
 					mn.midiNote = layerNote;
-					mn.velocity = layerVelocity;
+					mn.velocity = velocity;
 					notes.add(mn);
+				}
+				if (msPerStep>0 && instrument.equals(echo.getInstrument()) && notes.size()>=echo.getLayer()) {
+					long now = (new Date()).getTime();
+					MidiNote base = notes.get((echo.getLayer()-1));
+					for (int e = 0; e < 3; e++) {
+						int perc = 0;
+						if (e==0) {
+							perc = echo.getVelocityPercentage1();
+						} else if (e==1) {
+							perc = echo.getVelocityPercentage2();
+						} else if (e==2) {
+							perc = echo.getVelocityPercentage3();
+						}
+						if (base.velocity>0) {
+							velocity = (base.velocity * perc) / 100;
+						} else {
+							velocity = 0;
+						}
+						MidiNoteDelayed mnd = new MidiNoteDelayed();
+						mnd.instrument = Instrument.ECHO;
+						mnd.note = base.note;
+						mnd.channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
+						mnd.midiNote = base.midiNote;
+						mnd.velocity = velocity;
+						mnd.delaySteps = ((e + 1) * echo.getSteps());
+						mnd.playDateTime = now + (mnd.delaySteps * msPerStep);
+						notes.add(mnd);
+					}
 				}
 			}
 		}
