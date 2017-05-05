@@ -5,10 +5,10 @@ public class EchoConfiguration {
 	private int			layer					= 1;
 	private int			steps					= 6;
 	private int			velocityPercentage1		= 60;
-	private int			velocityPercentage2		= 30;
-	private int			velocityPercentage3		= 15;
-	private int			reverb1					= 127;
-	private int			reverb2					= 127;
+	private int			velocityPercentage2		= 40;
+	private int			velocityPercentage3		= 20;
+	private int			reverb1					= 103;
+	private int			reverb2					= 115;
 	private int			reverb3					= 127;
 	
 	public String getInstrument() {

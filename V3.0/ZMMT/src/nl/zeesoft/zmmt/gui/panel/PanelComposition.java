@@ -1,4 +1,4 @@
-package nl.zeesoft.zmmt.gui;
+package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.GridBagLayout;
 
@@ -7,6 +7,9 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.gui.CompositionUpdater;
+import nl.zeesoft.zmmt.gui.Controller;
+import nl.zeesoft.zmmt.gui.FrameMain;
 
 public class PanelComposition extends PanelObject implements CompositionUpdater {
 	private JFormattedTextField		composer			= null;

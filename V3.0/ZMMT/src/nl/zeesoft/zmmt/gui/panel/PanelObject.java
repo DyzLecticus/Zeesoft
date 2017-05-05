@@ -1,9 +1,8 @@
-package nl.zeesoft.zmmt.gui;
+package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
@@ -14,21 +13,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-public abstract class PanelObject implements ChangeListener, PropertyChangeListener, FocusListener {
-	private	Controller					controller		= null;
-	private JPanel						panel			= new JPanel();
-	private boolean						validate		= true;
+import nl.zeesoft.zmmt.gui.Controller;
+import nl.zeesoft.zmmt.gui.InstrumentPlayerKeyListener;
+
+public abstract class PanelObject implements PropertyChangeListener, FocusListener {
+	private	Controller					controller			= null;
+	private JPanel						panel				= new JPanel();
+	private boolean						validate			= true;
+
+	private List<NumberSlider>			numberSliders		= new ArrayList<NumberSlider>();
+	private List<NumberComboBox>		numberComboBoxes	= new ArrayList<NumberComboBox>();
 	
-	private List<JFormattedTextField>	sliderNumbers	= new ArrayList<JFormattedTextField>();
-	private List<JSlider>				sliders			= new ArrayList<JSlider>();
-
 	public PanelObject(Controller controller) {
 		this.controller = controller;
 	}
@@ -44,24 +45,7 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 	}
 
 	@Override
-	public void stateChanged(ChangeEvent evt) {
-		int index = sliders.indexOf(evt.getSource());
-		if (index>=0) {
-			JSlider slider = sliders.get(index);
-			sliderNumbers.get(index).setValue(slider.getValue());
-		}
-	}
-
-	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		int index = sliderNumbers.indexOf(evt.getSource()); 
-		if (index>=0) {
-			JFormattedTextField number = sliderNumbers.get(index);
-			if (number.getValue()!=null) {
-				int value = Integer.parseInt(number.getValue().toString());
-				sliders.get(index).setValue(value);
-			}
-		} 
 		if (validate) {
 			String err = validate();
 			if (err.length()>0) {
@@ -172,27 +156,50 @@ public abstract class PanelObject implements ChangeListener, PropertyChangeListe
 		return r;
 	}
 
-	protected JSlider getSliderForNumber(JFormattedTextField number) {
-		JSlider r = null;
-		int index = sliderNumbers.indexOf(number); 
-		if (index>=0) {
-			r = sliders.get(index);
+	protected NumberSlider getSliderForNumber(JFormattedTextField number) {
+		NumberSlider r = null;
+		for (NumberSlider ns: numberSliders) {
+			if (ns.getNumber()==number) {
+				r = ns;
+				break;
+			}
 		}
 		return r;
 	}
 	
 	protected JPanel getNewNumberSlider(JFormattedTextField number,int min,int max,int init) {
-		JPanel r = new JPanel();
-		r.setLayout(new GridBagLayout());
 		JSlider slider = new JSlider(JSlider.HORIZONTAL,min,max,init);
 		slider.setPreferredSize(new Dimension(200,20));
 		slider.addKeyListener(controller.getPlayerKeyListener());
-		r.add(number);
-		r.add(slider);
-		slider.addChangeListener(this);
-		sliderNumbers.add(number);
-		sliders.add(slider);
+		NumberSlider ns = new NumberSlider(number,slider);
+		numberSliders.add(ns);
+		return ns.getPanel();
+	}
+
+	protected NumberComboBox getComboBoxForNumber(JFormattedTextField number) {
+		NumberComboBox r = null;
+		for (NumberComboBox nc: numberComboBoxes) {
+			if (nc.getNumber()==number) {
+				r = nc;
+				break;
+			}
+		}
 		return r;
+	}
+
+	protected JPanel getNewNumberComboBox(JFormattedTextField number,List<String> options) {
+		return getNewNumberComboBox(number,options,0);
+	}
+
+	protected JPanel getNewNumberComboBox(JFormattedTextField number,List<String> options,int subtract) {
+		JComboBox<String> comboBox = new JComboBox<String>();
+		for (String option: options) {
+			comboBox.addItem(option);
+		}
+		comboBox.addKeyListener(controller.getPlayerKeyListener());
+		NumberComboBox nc = new NumberComboBox(number,comboBox,subtract);
+		numberComboBoxes.add(nc);
+		return nc.getPanel();
 	}
 
 	protected void setValidate(boolean validate) {

@@ -196,7 +196,7 @@ public class Controller extends Locker {
 		}
 	}
 	
-	protected void changedComposition(String tab) {
+	public void changedComposition(String tab) {
 		lockMe(this);
 		if (compositionUpdateWorker.isWorking() && !updatedCompositionTabs.contains(tab)) {
 			updatedCompositionTabs.add(tab);
@@ -259,7 +259,7 @@ public class Controller extends Locker {
 		unlockMe(this);
 	}
 
-	protected JComboBox<String> getNewInstrumentSelector() {
+	public JComboBox<String> getNewInstrumentSelector() {
 		JComboBox<String> r = null;
 		lockMe(this);
 		r = player.getNewSelector();
@@ -282,7 +282,7 @@ public class Controller extends Locker {
 		unlockMe(this);
 	}
 
-	protected void stopNotes() {
+	public void stopNotes() {
 		lockMe(this);
 		player.stopInstrumentNotes();
 		unlockMe(this);

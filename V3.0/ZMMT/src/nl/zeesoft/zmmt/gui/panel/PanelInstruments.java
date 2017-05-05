@@ -1,11 +1,10 @@
-package nl.zeesoft.zmmt.gui;
+package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +17,9 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.gui.CompositionUpdater;
+import nl.zeesoft.zmmt.gui.Controller;
+import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.syntesizer.Drum;
 import nl.zeesoft.zmmt.syntesizer.DrumConfiguration;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
@@ -29,7 +31,6 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	private JFormattedTextField[]	instrumentPolyphony				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 
 	private JFormattedTextField[]	instrumentLayer1MidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private List<JComboBox<String>>	instrumentLayer1MidiInstrument	= new ArrayList<JComboBox<String>>();
 	private JFormattedTextField[]	instrumentLayer1Pressure		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 	private JFormattedTextField[]	instrumentLayer1Reverb			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 	private JFormattedTextField[]	instrumentLayer1BaseOctave		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
@@ -37,7 +38,6 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	private JFormattedTextField[]	instrumentLayer1AccentVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 
 	private JFormattedTextField[]	instrumentLayer2MidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private List<JComboBox<String>>	instrumentLayer2MidiInstrument	= new ArrayList<JComboBox<String>>();
 	private JFormattedTextField[]	instrumentLayer2Pressure		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 	private JFormattedTextField[]	instrumentLayer2Reverb			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 	private JFormattedTextField[]	instrumentLayer2BaseOctave		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
@@ -98,7 +98,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	@Override
 	public void updatedComposition(String tab,Composition comp) {
 		setValidate(false);
-		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 			InstrumentConfiguration conf = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			instrumentPolyphony[i].setValue(conf.getPolyphony());
 			if (instrumentLayer1MidiNum[i]!=null) {
@@ -123,9 +123,6 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				instrumentLayer2BaseVelocity[i].setValue(conf.getLayer2BaseVelocity());
 				instrumentLayer2AccentVelocity[i].setValue(conf.getLayer2AccentVelocity());
 
-				instrumentLayer2BaseOctave[i].setEnabled(conf.getLayer2MidiNum()>=0);
-				instrumentLayer2BaseVelocity[i].setEnabled(conf.getLayer2MidiNum()>=0);
-				instrumentLayer2AccentVelocity[i].setEnabled(conf.getLayer2MidiNum()>=0);
 				getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 				getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 				getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
@@ -140,8 +137,6 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			drumLayer2BaseVelocity[d].setValue(conf.getLayer2BaseVelocity());
 			drumLayer2AccentVelocity[d].setValue(conf.getLayer2AccentVelocity());
 
-			drumLayer2BaseVelocity[d].setEnabled(conf.getLayer2MidiNote()>=35);
-			drumLayer2AccentVelocity[d].setEnabled(conf.getLayer2MidiNote()>=35);
 			getSliderForNumber(drumLayer2BaseVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
 			getSliderForNumber(drumLayer2AccentVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
 		}
@@ -150,7 +145,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 
 	@Override
 	public void getCompositionUpdate(String tab, Composition comp) {
-		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 			InstrumentConfiguration inst = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			inst.setPolyphony(Integer.parseInt(instrumentPolyphony[i].getValue().toString()));
 			inst.setLayer1MidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
@@ -186,66 +181,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		super.propertyChange(evt);
-		if (instrumentLayer1MidiInstrument.size()==Instrument.INSTRUMENTS.length) {
-			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-				if (evt.getSource()==instrumentLayer1MidiNum[i]) {
-					JComboBox<String> midiInstrument = instrumentLayer1MidiInstrument.get(i);
-					midiInstrument.setSelectedIndex(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
-					break;
-				}
-			}
-		}
-		if (instrumentLayer2MidiInstrument.size()==4) {
-			int num = 0;
-			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-				if (instrumentLayer2MidiNum[i]!=null) {
-					if (evt.getSource()==instrumentLayer2MidiNum[i]) {
-						JComboBox<String> midiInstrument = instrumentLayer2MidiInstrument.get(num);
-						int index = (Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()) + 1);
-						midiInstrument.setSelectedIndex(index);
-						break;
-					}
-					num++;
-				}
-			}
-		}
-	}
-
-	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getSource()==instrument) {
 			CardLayout cl = (CardLayout)(cardPanel.getLayout());
 			cl.show(cardPanel,(String) evt.getItem());
-		} else {
-			int i = 0;
-			for (JComboBox<String> midiInstrument: instrumentLayer1MidiInstrument) {
-				if (evt.getSource()==midiInstrument) {
-					instrumentLayer1MidiNum[i].setValue(midiInstrument.getSelectedIndex());
-					break;
-				}
-				i++;
-			}
-			JComboBox<String> selector = null;
-			i = 0;
-			for (JComboBox<String> midiInstrument: instrumentLayer2MidiInstrument) {
-				if (evt.getSource()==midiInstrument) {
-					selector = midiInstrument;
-					break;
-				}
-				i++;
-			}
-			if (selector!=null) {
-				if (i==1) {
-					i = 3;
-				} else if (i==2) {
-					i = 6;
-				} else if (i==3) {
-					i = 7;
-				}
-				instrumentLayer2MidiNum[i].setValue((selector.getSelectedIndex() - 1));
-			}
 		}
 	}
 
@@ -296,12 +235,15 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		instrumentLayer1MidiNum[instrumentNum] = getNewNumberTextField(3);
 		addLabel(panel,row,"Layer 1 MIDI instrument number");
 		if (midiInstruments.size()>0) {
-			JPanel selector = getMidiInstrumentSelector(name,instrumentLayer1MidiNum[instrumentNum],midiInstruments,false);
+			JPanel selector = getMidiInstrumentSelector(instrumentLayer1MidiNum[instrumentNum],midiInstruments,false);
 			addProperty(panel,row,selector);
 		} else {
 			addProperty(panel,row,instrumentLayer1MidiNum[instrumentNum]);
 		}
-
+		if (name.equals(Instrument.DRUMS)) {
+			getComboBoxForNumber(instrumentLayer1MidiNum[instrumentNum]).setEnabled(false);
+		}
+		
 		row++;
 		instrumentLayer1Pressure[instrumentNum] = getNewNumberTextField(3);
 		slider = getNewNumberSlider(instrumentLayer1Pressure[instrumentNum],0,127,0);
@@ -342,7 +284,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				instrumentLayer2MidiNum[instrumentNum] = getNewNumberTextField(3);
 				addLabel(panel,row,"Layer 2 MIDI instrument number");
 				if (midiInstruments.size()>0) {
-					JPanel selector = getMidiInstrumentSelector(name,instrumentLayer2MidiNum[instrumentNum],midiInstruments,true);
+					JPanel selector = getMidiInstrumentSelector(instrumentLayer2MidiNum[instrumentNum],midiInstruments,true);
 					addProperty(panel,row,selector);
 				} else {
 					addProperty(panel,row,instrumentLayer2MidiNum[instrumentNum]);
@@ -433,33 +375,13 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		return panel;
 	}
 	
-	protected JPanel getMidiInstrumentSelector(String name, JFormattedTextField number,List<String> midiInstruments,boolean layer) {
-		JPanel selector = new JPanel();
-		selector.setLayout(new GridBagLayout());
-		
-		JComboBox<String> midiInstrument = new JComboBox<String>();
+	protected JPanel getMidiInstrumentSelector(JFormattedTextField number,List<String> midiInstruments,boolean layer) {
+		List<String> options = new ArrayList<String>(midiInstruments);
+		int subtract = 0;
 		if (layer) {
-			midiInstrument.addItem("");
+			options.add(0,"");
+			subtract = -1;
 		}
-		for (String inst: midiInstruments) {
-			midiInstrument.addItem(inst);
-		}
-		midiInstrument.addItemListener(this);
-		for (int l = 0; l < midiInstrument.getKeyListeners().length; l++) {
-			midiInstrument.removeKeyListener(midiInstrument.getKeyListeners()[l]);
-		}
-		midiInstrument.addKeyListener(getController().getPlayerKeyListener());
-		if (name.equals(Instrument.DRUMS)) {
-			number.setEnabled(false);
-			midiInstrument.setEnabled(false);
-		}
-		selector.add(number);
-		selector.add(midiInstrument);
-		if (!layer) {
-			instrumentLayer1MidiInstrument.add(midiInstrument);
-		} else {
-			instrumentLayer2MidiInstrument.add(midiInstrument);
-		}
-		return selector;
+		return getNewNumberComboBox(number,options,subtract);
 	}
 }

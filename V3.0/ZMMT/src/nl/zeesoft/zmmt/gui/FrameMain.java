@@ -9,6 +9,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.gui.panel.PanelComposition;
+import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
 
 public class FrameMain extends FrameObject implements CompositionUpdater {
 	private static final String	TITLE				= "ZeeTracker";
@@ -47,12 +49,10 @@ public class FrameMain extends FrameObject implements CompositionUpdater {
 		compositionPanel = new PanelComposition(getController());
 		compositionPanel.initialize();
 		addPanelToTabs(tabs,"Composition",compositionPanel.getPanel());
-		//tabs.setMnemonicAt(0,KeyEvent.VK_F1);
 
 		instrumentsPanel = new PanelInstruments(getController());
 		instrumentsPanel.initialize();
-		addPanelToTabs(tabs,"Instruments",instrumentsPanel.getPanel());
-		//tabs.setMnemonicAt(1,KeyEvent.VK_F2);
+		addPanelToTabs(tabs,"Instruments & FX",instrumentsPanel.getPanel());
 		
 		getFrame().setContentPane(tabs);
 	}
