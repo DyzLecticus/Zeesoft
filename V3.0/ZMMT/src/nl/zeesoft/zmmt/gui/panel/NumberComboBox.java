@@ -19,6 +19,7 @@ public class NumberComboBox implements ItemListener, PropertyChangeListener {
 	public NumberComboBox(JFormattedTextField number,JComboBox<String> comboBox,int subtract) {
 		this.number = number;
 		this.comboBox = comboBox;
+		this.subtract = subtract;
 		number.addPropertyChangeListener(this);
 		comboBox.addItemListener(this);
 		panel = new JPanel();
@@ -29,13 +30,19 @@ public class NumberComboBox implements ItemListener, PropertyChangeListener {
 	
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
-		number.setValue(comboBox.getSelectedIndex() - subtract);
+		String newValue = "" + (comboBox.getSelectedIndex() - subtract);
+		if (number.getValue()==null || !number.getValue().toString().equals(newValue)) {
+			number.setValue((comboBox.getSelectedIndex() - subtract));
+		}
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (number.getValue()!=null) {
-			comboBox.setSelectedIndex(Integer.parseInt(number.getValue().toString()) + subtract);
+			int index = Integer.parseInt(number.getValue().toString()) + subtract;
+			if (comboBox.getSelectedIndex()!=index) {
+				comboBox.setSelectedIndex(Integer.parseInt(number.getValue().toString()) + subtract);
+			}
 		}
 	}
 	

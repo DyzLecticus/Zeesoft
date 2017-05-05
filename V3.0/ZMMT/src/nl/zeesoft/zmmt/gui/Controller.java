@@ -217,7 +217,7 @@ public class Controller extends Locker {
 		lockMe(this);
 		for (String tab: updatedCompositionTabs) {
 			mainFrame.getCompositionUpdate(tab,composition);
-			mainFrame.updatedComposition(tab,composition);
+			mainFrame.updatedComposition(null,composition);
 			if (tab.equals(FrameMain.INSTRUMENTS)) {
 				reconfigure = true;
 			}

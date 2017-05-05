@@ -148,6 +148,10 @@ public class SynthesizerConfiguration {
 		return instruments;
 	}
 
+	public EchoConfiguration getEcho() {
+		return echo;
+	}
+
 	public List<DrumConfiguration> getDrums() {
 		return drums;
 	}

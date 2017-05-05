@@ -4,7 +4,6 @@ import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +21,7 @@ import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.syntesizer.Drum;
 import nl.zeesoft.zmmt.syntesizer.DrumConfiguration;
+import nl.zeesoft.zmmt.syntesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 
@@ -52,6 +52,16 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	private JFormattedTextField[]	drumLayer2BaseVelocity			= new JFormattedTextField[Drum.DRUMS.length];
 	private JFormattedTextField[]	drumLayer2AccentVelocity		= new JFormattedTextField[Drum.DRUMS.length];
 
+	private JComboBox<String>		echoInstrument					= null;
+	private JFormattedTextField		echoLayer						= null;
+	private JFormattedTextField		echoSteps						= null;
+	private JFormattedTextField		echoVelocityPercentage1			= null;
+	private JFormattedTextField		echoVelocityPercentage2			= null;
+	private JFormattedTextField		echoVelocityPercentage3			= null;
+	private JFormattedTextField		echoReverb1						= null;
+	private JFormattedTextField		echoReverb2						= null;
+	private JFormattedTextField		echoReverb3						= null;
+	
 	public PanelInstruments(Controller controller) {
 		super(controller);
 	}
@@ -71,7 +81,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		addComponent(getPanel(),row,0.01,instrument,false);
 		
 		row++;
-		cardPanel = getCardPanel(getController().getPlayerKeyListener());
+		cardPanel = getCardPanel();
 		addComponent(getPanel(),row,0.01,cardPanel);
 		
 		row++;
@@ -123,6 +133,8 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				instrumentLayer2BaseVelocity[i].setValue(conf.getLayer2BaseVelocity());
 				instrumentLayer2AccentVelocity[i].setValue(conf.getLayer2AccentVelocity());
 
+				getSliderForNumber(instrumentLayer2Pressure[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+				getSliderForNumber(instrumentLayer2Reverb[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 				getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 				getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 				getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
@@ -139,6 +151,49 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 
 			getSliderForNumber(drumLayer2BaseVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
 			getSliderForNumber(drumLayer2AccentVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
+		}
+		EchoConfiguration echo = comp.getSynthesizerConfiguration().getEcho();
+		if (echo.getInstrument().length()==0) {
+			echoInstrument.setSelectedIndex(0);
+			getSliderForNumber(echoLayer).setEnabled(false);
+			getSliderForNumber(echoSteps).setEnabled(false);
+			getSliderForNumber(echoVelocityPercentage1).setEnabled(false);
+			getSliderForNumber(echoVelocityPercentage2).setEnabled(false);
+			getSliderForNumber(echoVelocityPercentage3).setEnabled(false);
+			getSliderForNumber(echoReverb1).setEnabled(false);
+			getSliderForNumber(echoReverb2).setEnabled(false);
+			getSliderForNumber(echoReverb3).setEnabled(false);
+		} else {
+			if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
+				echo.getInstrument().equals(Instrument.SYNTH1) ||
+				echo.getInstrument().equals(Instrument.PIANO) ||
+				echo.getInstrument().equals(Instrument.STRINGS)
+				) {
+				getSliderForNumber(echoLayer).setEnabled(true);
+			} else {
+				getSliderForNumber(echoLayer).setEnabled(false);
+			}
+			getSliderForNumber(echoSteps).setEnabled(true);
+			getSliderForNumber(echoVelocityPercentage1).setEnabled(true);
+			getSliderForNumber(echoVelocityPercentage2).setEnabled(true);
+			getSliderForNumber(echoVelocityPercentage3).setEnabled(true);
+			getSliderForNumber(echoReverb1).setEnabled(true);
+			getSliderForNumber(echoReverb2).setEnabled(true);
+			getSliderForNumber(echoReverb3).setEnabled(true);
+			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
+				if (echo.getInstrument().equals(Instrument.INSTRUMENTS[i])) {
+					echoInstrument.setSelectedIndex((i + 1));
+					break;
+				}
+			}
+			echoLayer.setValue(echo.getLayer());
+			echoSteps.setValue(echo.getSteps());
+			echoVelocityPercentage1.setValue(echo.getVelocityPercentage1());
+			echoVelocityPercentage2.setValue(echo.getVelocityPercentage2());
+			echoVelocityPercentage3.setValue(echo.getVelocityPercentage3());
+			echoReverb1.setValue(echo.getReverb1());
+			echoReverb2.setValue(echo.getReverb2());
+			echoReverb3.setValue(echo.getReverb3());
 		}
 		setValidate(true);
 	}
@@ -178,6 +233,24 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			drum.setLayer2BaseVelocity(Integer.parseInt(drumLayer2BaseVelocity[d].getValue().toString()));
 			drum.setLayer2AccentVelocity(Integer.parseInt(drumLayer2AccentVelocity[d].getValue().toString()));
 		}
+		EchoConfiguration echo = comp.getSynthesizerConfiguration().getEcho();
+		echo.setInstrument(echoInstrument.getSelectedItem().toString());
+		if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
+			echo.getInstrument().equals(Instrument.SYNTH1) ||
+			echo.getInstrument().equals(Instrument.PIANO) ||
+			echo.getInstrument().equals(Instrument.STRINGS)
+			) {
+			echo.setLayer(Integer.parseInt(echoLayer.getValue().toString()));
+		} else {
+			echo.setLayer(1);
+		}
+		echo.setSteps(Integer.parseInt(echoSteps.getValue().toString()));
+		echo.setVelocityPercentage1(Integer.parseInt(echoVelocityPercentage1.getValue().toString()));
+		echo.setVelocityPercentage2(Integer.parseInt(echoVelocityPercentage2.getValue().toString()));
+		echo.setVelocityPercentage3(Integer.parseInt(echoVelocityPercentage3.getValue().toString()));
+		echo.setReverb1(Integer.parseInt(echoReverb1.getValue().toString()));
+		echo.setReverb2(Integer.parseInt(echoReverb2.getValue().toString()));
+		echo.setReverb3(Integer.parseInt(echoReverb3.getValue().toString()));
 	}
 
 	@Override
@@ -185,10 +258,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		if (evt.getSource()==instrument) {
 			CardLayout cl = (CardLayout)(cardPanel.getLayout());
 			cl.show(cardPanel,(String) evt.getItem());
+		} else if (evt.getSource()==echoInstrument) {
+			handlePropertyChanged();
 		}
 	}
 
-	protected JPanel getCardPanel(KeyListener keyListener) {
+	protected JPanel getCardPanel() {
 		JPanel panel = new JPanel();
 		CardLayout layout = new CardLayout();
 		panel.setLayout(layout);
@@ -210,14 +285,16 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			}
 		}
 		
-		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-			panel.add(getInstrumentPanel(i,keyListener,midiInstruments),Instrument.INSTRUMENTS[i]);
+		for (int i = 0; i < (Instrument.INSTRUMENTS.length -1); i++) {
+			panel.add(getInstrumentPanel(i,midiInstruments),Instrument.INSTRUMENTS[i]);
 		}
+		panel.add(getEchoPanel(),Instrument.ECHO);
+		
 		layout.show(panel,(String) instrument.getSelectedItem());
 		return panel;
 	}
 	
-	protected JPanel getInstrumentPanel(int instrumentNum,KeyListener keyListener,List<String> midiInstruments) {
+	protected JPanel getInstrumentPanel(int instrumentNum,List<String> midiInstruments) {
 		String name = Instrument.INSTRUMENTS[instrumentNum];
 
 		JPanel panel = new JPanel();
@@ -227,7 +304,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		int row = 0;
 
 		instrumentPolyphony[instrumentNum] = getNewNumberTextField(1);
-		JPanel slider = getNewNumberSlider(instrumentPolyphony[instrumentNum],0,16,4);
+		JPanel slider = getNewNumberSlider(instrumentPolyphony[instrumentNum],0,8,4);
 		addLabel(panel,row,"Polyphony");
 		addProperty(panel,row,slider);
 
@@ -375,12 +452,86 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		return panel;
 	}
 	
+	protected JPanel getEchoPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		
+		int row = 0;
+		
+		echoInstrument = new JComboBox<String>();
+		echoInstrument.addItem("");
+		echoInstrument.addItemListener(this);
+		for (int l = 0; l < echoInstrument.getKeyListeners().length; l++) {
+			echoInstrument.removeKeyListener(echoInstrument.getKeyListeners()[l]);
+		}
+		echoInstrument.addKeyListener(getController().getPlayerKeyListener());
+		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 2); i++) {
+			echoInstrument.addItem(Instrument.INSTRUMENTS[i]);
+		}
+		addLabel(panel,row,"Instrument");
+		addProperty(panel,row,echoInstrument);
+
+		row++;
+		echoLayer = getNewNumberTextField(1);
+		JPanel slider = getNewNumberSlider(echoLayer,1,2,1);
+		addLabel(panel,row,"Layer");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoSteps = getNewNumberTextField(2);
+		slider = getNewNumberSlider(echoSteps,1,24,6);
+		addLabel(panel,row,"Steps");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoVelocityPercentage1 = getNewNumberTextField(2);
+		slider = getNewNumberSlider(echoVelocityPercentage1,1,99,60);
+		addLabel(panel,row,"Echo 1 velocity percentage");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoVelocityPercentage2 = getNewNumberTextField(2);
+		slider = getNewNumberSlider(echoVelocityPercentage2,1,99,40);
+		addLabel(panel,row,"Echo 2 velocity percentage");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoVelocityPercentage3 = getNewNumberTextField(2);
+		slider = getNewNumberSlider(echoVelocityPercentage3,1,99,20);
+		addLabel(panel,row,"Echo 3 velocity percentage");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoReverb1 = getNewNumberTextField(3);
+		slider = getNewNumberSlider(echoReverb1,0,127,103);
+		addLabel(panel,row,"Echo 1 reverb");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoReverb2 = getNewNumberTextField(3);
+		slider = getNewNumberSlider(echoReverb2,0,127,115);
+		addLabel(panel,row,"Echo 2 reverb");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoReverb3 = getNewNumberTextField(3);
+		slider = getNewNumberSlider(echoReverb3,0,127,127);
+		addLabel(panel,row,"Echo 2 reverb");
+		addProperty(panel,row,slider);
+
+		row++;
+		addFiller(panel,row);
+		
+		return panel;
+	}
+	
 	protected JPanel getMidiInstrumentSelector(JFormattedTextField number,List<String> midiInstruments,boolean layer) {
 		List<String> options = new ArrayList<String>(midiInstruments);
 		int subtract = 0;
 		if (layer) {
 			options.add(0,"");
-			subtract = -1;
+			subtract = 1;
 		}
 		return getNewNumberComboBox(number,options,subtract);
 	}

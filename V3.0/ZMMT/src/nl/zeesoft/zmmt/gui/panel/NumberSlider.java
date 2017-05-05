@@ -28,13 +28,18 @@ public class NumberSlider implements ChangeListener,  PropertyChangeListener {
 	
 	@Override
 	public void stateChanged(ChangeEvent evt) {
-		number.setValue(slider.getValue());
+		if (number.getValue()==null || !number.getValue().toString().equals("" + slider.getValue())) {
+			number.setValue(slider.getValue());
+		}
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (number.getValue()!=null) {
-			slider.setValue(Integer.parseInt(number.getValue().toString()));
+			int value = Integer.parseInt(number.getValue().toString());
+			if (slider.getValue()!=value) {
+				slider.setValue(value);
+			}
 		}
 	}
 	

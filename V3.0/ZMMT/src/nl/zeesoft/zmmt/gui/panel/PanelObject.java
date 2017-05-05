@@ -46,14 +46,7 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (validate) {
-			String err = validate();
-			if (err.length()>0) {
-				controller.showErrorMessage(this,err);
-			} else {
-				handleValidChange();
-			}
-		}
+		handlePropertyChanged();
 	}
 
 	@Override
@@ -82,6 +75,17 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		return panel;
 	}
 
+	protected void handlePropertyChanged() {
+		if (validate) {
+			String err = validate();
+			if (err.length()>0) {
+				controller.showErrorMessage(this,err);
+			} else {
+				handleValidChange();
+			}
+		}
+	}
+	
 	protected Controller getController() {
 		return controller;
 	}
@@ -195,6 +199,9 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		JComboBox<String> comboBox = new JComboBox<String>();
 		for (String option: options) {
 			comboBox.addItem(option);
+		}
+		for (int l = 0; l < comboBox.getKeyListeners().length; l++) {
+			comboBox.removeKeyListener(comboBox.getKeyListeners()[l]);
 		}
 		comboBox.addKeyListener(controller.getPlayerKeyListener());
 		NumberComboBox nc = new NumberComboBox(number,comboBox,subtract);
