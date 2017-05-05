@@ -23,7 +23,7 @@ public class InstrumentPlayer extends Locker implements ActionListener {
 	
 	private InstrumentPlayerEchoWorker		echoWorker				= null;
 	
-	private String							selectedInstrument		= Instrument.PIANO;
+	private String							selectedInstrument		= Instrument.LEAD;
 	private Synthesizer						synthesizer				= null;
 	
 	private SortedMap<String,MidiNote>		playingNotes			= new TreeMap<String,MidiNote>();		

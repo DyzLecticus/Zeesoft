@@ -123,7 +123,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			}
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.PIANO) ||
+				Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 				) {
 				instrumentLayer2MidiNum[i].setValue(conf.getLayer2MidiNum());
@@ -166,7 +166,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		} else {
 			if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
 				echo.getInstrument().equals(Instrument.SYNTH1) ||
-				echo.getInstrument().equals(Instrument.PIANO) ||
+				echo.getInstrument().equals(Instrument.LEAD) ||
 				echo.getInstrument().equals(Instrument.STRINGS)
 				) {
 				getSliderForNumber(echoLayer).setEnabled(true);
@@ -213,7 +213,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			}
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.PIANO) ||
+				Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 				) {
 				inst.setLayer2MidiNum(Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()));
@@ -237,7 +237,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		echo.setInstrument(echoInstrument.getSelectedItem().toString());
 		if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
 			echo.getInstrument().equals(Instrument.SYNTH1) ||
-			echo.getInstrument().equals(Instrument.PIANO) ||
+			echo.getInstrument().equals(Instrument.LEAD) ||
 			echo.getInstrument().equals(Instrument.STRINGS)
 			) {
 			echo.setLayer(Integer.parseInt(echoLayer.getValue().toString()));
@@ -354,7 +354,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 
 			if (name.equals(Instrument.SYNTH_BASS1) ||
 				name.equals(Instrument.SYNTH1) ||
-				name.equals(Instrument.PIANO) ||
+				name.equals(Instrument.LEAD) ||
 				name.equals(Instrument.STRINGS)
 				) {
 				row++;

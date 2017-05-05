@@ -42,7 +42,7 @@ public class SynthesizerConfiguration {
 			}
 			if (inst.getName().equals(Instrument.SYNTH_BASS1) ||
 				inst.getName().equals(Instrument.SYNTH1) || 
-				inst.getName().equals(Instrument.PIANO) ||
+				inst.getName().equals(Instrument.LEAD) ||
 				inst.getName().equals(Instrument.STRINGS)
 				) { 
 				instElem.children.add(new JsElem("layer2MidiNum","" + inst.getLayer2MidiNum()));
@@ -481,7 +481,7 @@ public class SynthesizerConfiguration {
 		} else if (instrument.getName().equals(Instrument.SYNTH3)) {
 			instrument.setLayer1MidiNum(54);
 			instrument.setLayer1BaseOctave(4);
-		} else if (instrument.getName().equals(Instrument.PIANO)) {
+		} else if (instrument.getName().equals(Instrument.LEAD)) {
 			instrument.setLayer1MidiNum(0);
 			instrument.setLayer1BaseOctave(4);
 			instrument.setLayer1BaseVelocity(80);
