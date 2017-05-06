@@ -23,7 +23,6 @@ import nl.zeesoft.zmmt.syntesizer.MidiNote;
 public class Controller extends Locker {
 	private Settings					settings					= null;
 	
-	private boolean						exitOnClose					= true;
 	private WorkerUnion					union						= null;
 	private ControllerWindowAdapter		adapter						= null;
 	private ControllerKeyListener		keyListener					= null;
@@ -50,6 +49,7 @@ public class Controller extends Locker {
 		} catch (Exception e) {
 			// Ignore
 		}
+		settings.fromFile();
 		union = new WorkerUnion(getMessenger());
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
@@ -58,10 +58,6 @@ public class Controller extends Locker {
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
 		compositionUpdateWorker = new CompositionUpdateWorker(getMessenger(),getUnion(),this);
-	}
-	
-	public void setExitOnClose(boolean exitOnClose) {
-		this.exitOnClose = exitOnClose;
 	}
 
 	public void start() {
@@ -77,6 +73,12 @@ public class Controller extends Locker {
 		synthInit.start();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
+		if (settings.getWorkingTab().length()>0) {
+			mainFrame.switchTo(settings.getWorkingTab());
+		}
+		if (settings.getWorkingInstrument().length()>0) {
+			this.selectInstrument(settings.getWorkingInstrument(),this);
+		}
 		mainFrame.getFrame().setVisible(true);
 	}
 
@@ -92,7 +94,7 @@ public class Controller extends Locker {
 		if (synthesizer!=null) {
 			synthesizer.close();
 		}
-		lockMe(this);
+		unlockMe(this);
 	}
 
 	public void windowClosing(WindowEvent e) {
@@ -102,14 +104,18 @@ public class Controller extends Locker {
 				confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to quit?");
 			}
 			if (confirmed) {
-				stop(null);
-				if (exitOnClose) {
-					int status = 0;
-					if (getMessenger().isError()) {
-						status = 1;
-					}
-					System.exit(status);
+				settings.setWorkingTab(mainFrame.getSelectedTab());
+				settings.setWorkingInstrument(player.getSelectedInstrument());
+				String err = settings.toFile();
+				if (err.length()>0) {
+					showErrorMessage(settings,err);
 				}
+				stop(null);
+				int status = 0;
+				if (getMessenger().isError()) {
+					status = 1;
+				}
+				System.exit(status);
 			}
 		}
 	}
@@ -157,6 +163,11 @@ public class Controller extends Locker {
 		if (player.setSelectedInstrument(name,source)) {
 			mainFrame.selectedInstrument(name);
 		}
+	}
+	
+	public void selectPattern(int pattern, Object source) {
+		// TODO: Get pattern from composition
+		mainFrame.setSelectedPattern(null);
 	}
 
 	public WorkerUnion getUnion() {

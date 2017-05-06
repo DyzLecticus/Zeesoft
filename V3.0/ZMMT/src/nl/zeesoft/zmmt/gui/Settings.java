@@ -1,5 +1,6 @@
 package nl.zeesoft.zmmt.gui;
 
+import java.io.File;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -10,7 +11,9 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
 
 public class Settings {
-	private String						fileName					= "settings.json";
+	private static final String			WORKDIR						= "ZeeTracker";
+	private static final String			SETTINGS_JSON				= "settings.json";
+	
 	private	String						composer					= "";
 	
 	private int 						defaultBeatsPerMinute		= 128;
@@ -18,9 +21,14 @@ public class Settings {
 	private int							defaultStepsPerBeat			= 8;
 	private int							defaultPatternBars			= 4;
 	
-	private SynthesizerConfiguration	synthesizerConfiguration	= null;
+	private String						workingCompositionFileName	= "";
+	private String						workingTab					= "";
+	private String						workingInstrument			= "";
+	private String						workingPattern				= "";
 	
 	private SortedMap<String,Integer>	keyCodeNoteNumbers			= new TreeMap<String,Integer>();
+	
+	private SynthesizerConfiguration	synthesizerConfiguration	= null;
 
 	public Settings() {
 		synthesizerConfiguration = new SynthesizerConfiguration();
@@ -54,11 +62,23 @@ public class Settings {
 		keyCodeNoteNumbers.put("J",58);
 		keyCodeNoteNumbers.put("M",59);
 	}
-	
+
+	public String toFile() {
+		String err = "";
+		err = toJson().toStringBuilderReadFormat().toFile(getWorkDirName() + "/" + SETTINGS_JSON);
+		return err;
+	}
+
 	public String fromFile() {
 		String err = "";
-		JsFile json = new JsFile();
-		err = json.fromFile(fileName);
+		File workDir = getWorkDir();
+		if (workDir==null) {
+			err = "Unable to create work directory: " + getWorkDirName();
+		} else {
+			JsFile json = new JsFile();
+			err = json.fromFile(getWorkDirName() + "/" + SETTINGS_JSON);
+			fromJson(json);
+		}
 		return err;
 	}
 	
@@ -70,6 +90,10 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("defaultBeatsPerBar","" + defaultBeatsPerBar));
 		json.rootElement.children.add(new JsElem("defaultStepsPerBeat","" + defaultStepsPerBeat));
 		json.rootElement.children.add(new JsElem("defaultPatternBars","" + defaultPatternBars));
+		json.rootElement.children.add(new JsElem("workingCompositionFileName",workingCompositionFileName,true));
+		json.rootElement.children.add(new JsElem("workingTab",workingTab,true));
+		json.rootElement.children.add(new JsElem("workingInstrument",workingInstrument,true));
+		json.rootElement.children.add(new JsElem("workingPattern",workingPattern,true));
 		JsElem kcnnsElem = new JsElem("keyCodeNoteNumbers");
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
 			kcnnsElem.children.add(new JsElem(entry.getKey(),entry.getValue().toString()));
@@ -100,6 +124,14 @@ public class Settings {
 					defaultStepsPerBeat = Integer.parseInt(elem.value.toString());
 				} else if (elem.name.equals("defaultPatternBars")) {
 					defaultPatternBars = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("workingCompositionFileName")) {
+					workingCompositionFileName = elem.value.toString();
+				} else if (elem.name.equals("workingTab")) {
+					workingTab = elem.value.toString();
+				} else if (elem.name.equals("workingInstrument")) {
+					workingInstrument = elem.value.toString();
+				} else if (elem.name.equals("workingPattern")) {
+					workingPattern = elem.value.toString();
 				} else if (elem.name.equals("keyCodeNoteNumbers")) {
 					for (JsElem kElem: elem.children) {
 						String keyCode = kElem.name;
@@ -124,14 +156,6 @@ public class Settings {
 		composition.setSynthesizerConfiguration(synthesizerConfiguration.copy());
 		return composition;
 	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
 	
 	public String getComposer() {
 		return composer;
@@ -141,6 +165,74 @@ public class Settings {
 		this.composer = composer;
 	}
 
+	public int getDefaultBeatsPerMinute() {
+		return defaultBeatsPerMinute;
+	}
+
+	public void setDefaultBeatsPerMinute(int defaultBeatsPerMinute) {
+		this.defaultBeatsPerMinute = defaultBeatsPerMinute;
+	}
+
+	public int getDefaultBeatsPerBar() {
+		return defaultBeatsPerBar;
+	}
+
+	public void setDefaultBeatsPerBar(int defaultBeatsPerBar) {
+		this.defaultBeatsPerBar = defaultBeatsPerBar;
+	}
+
+	public int getDefaultStepsPerBeat() {
+		return defaultStepsPerBeat;
+	}
+
+	public void setDefaultStepsPerBeat(int defaultStepsPerBeat) {
+		this.defaultStepsPerBeat = defaultStepsPerBeat;
+	}
+
+	public int getDefaultPatternBars() {
+		return defaultPatternBars;
+	}
+
+	public void setDefaultPatternBars(int defaultPatternBars) {
+		this.defaultPatternBars = defaultPatternBars;
+	}
+
+	public String getWorkingCompositionFileName() {
+		return workingCompositionFileName;
+	}
+
+	public void setWorkingCompositionFileName(String workingCompositionFileName) {
+		this.workingCompositionFileName = workingCompositionFileName;
+	}
+
+	public String getWorkingTab() {
+		return workingTab;
+	}
+
+	public void setWorkingTab(String workingTab) {
+		this.workingTab = workingTab;
+	}
+
+	public String getWorkingInstrument() {
+		return workingInstrument;
+	}
+
+	public void setWorkingInstrument(String workingInstrument) {
+		this.workingInstrument = workingInstrument;
+	}
+
+	public String getWorkingPattern() {
+		return workingPattern;
+	}
+
+	public void setWorkingPattern(String workingPattern) {
+		this.workingPattern = workingPattern;
+	}
+
+	public SortedMap<String,Integer> getKeyCodeNoteNumbers() {
+		return keyCodeNoteNumbers;
+	}
+
 	public SynthesizerConfiguration getSynthesizerConfiguration() {
 		return synthesizerConfiguration;
 	}
@@ -148,8 +240,25 @@ public class Settings {
 	public void setSynthesizerConfiguration(SynthesizerConfiguration synthesizerConfiguration) {
 		this.synthesizerConfiguration = synthesizerConfiguration;
 	}
+	
+	private File getWorkDir() {
+		File r = new File(getWorkDirName());
+		if (!r.exists()) {
+			r.mkdirs();
+		}
+		if (!r.exists()) {
+			r = null;
+		}
+		return r;
+	}
 
-	public SortedMap<String, Integer> getKeyCodeMidiNotes() {
-		return keyCodeNoteNumbers;
+	private String getWorkDirName() {
+		String dir = System.getProperty("user.home");
+		if (dir.length()>0) {
+			dir = dir + "/" + WORKDIR;
+		} else {
+			dir = WORKDIR;
+		}
+		return dir;
 	}
 }

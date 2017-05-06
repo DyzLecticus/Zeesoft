@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class Pattern {
-	private int				pattern		= 0;
+	private int				number		= 0;
 	private int 			bars		= 8;
 	private List<Note>		notes		= new ArrayList<Note>();
 	
@@ -20,7 +20,7 @@ public class Pattern {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("pattern","" + pattern));
+		json.rootElement.children.add(new JsElem("number","" + number));
 		json.rootElement.children.add(new JsElem("bars","" + bars));
 		if (notes.size()>0) {
 			JsElem stepsElem = new JsElem("steps",true);
@@ -42,8 +42,8 @@ public class Pattern {
 	public void fromJson(JsFile json) {
 		notes.clear();
 		for (JsElem elem: json.rootElement.children) {
-			if (elem.name.equals("pattern")) {
-				pattern = Integer.parseInt(elem.value.toString());
+			if (elem.name.equals("number")) {
+				number = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("bars")) {
 				bars = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("steps")) {
@@ -70,12 +70,12 @@ public class Pattern {
 		}
 	}
 
-	public int getPattern() {
-		return pattern;
+	public int getNumber() {
+		return number;
 	}
 
-	public void setPattern(int pattern) {
-		this.pattern = pattern;
+	public void setNumber(int pattern) {
+		this.number = pattern;
 	}
 
 	public int getBars() {

@@ -16,6 +16,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.CompositionUpdater;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.FrameMain;
@@ -25,7 +26,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	
 	private JComboBox<String>		instrument						= null;
 
-	private JList<String>			pattern							= null;
+	private JList<String>			patternSelect					= null;
 	private JTable					grid							= null;
 	
 	
@@ -48,10 +49,6 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 		
 		row++;
 		addComponent(getPanel(),row,0.99,getPatternPanel(),true);		
-
-		//row++;
-		//addFiller(getPanel(),row);
-		//setValidate(true);
 	}
 
 	@Override
@@ -67,7 +64,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 
 	@Override
 	public void requestFocus() {
-		pattern.requestFocus();
+		patternSelect.requestFocus();
 	}
 
 	@Override
@@ -91,29 +88,40 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 
 	@Override
 	public void valueChanged(ListSelectionEvent evt) {
-		if (evt.getSource()==pattern) {
-			setSelectedPattern(pattern.getSelectedIndex());
+		if (evt.getSource()==patternSelect) {
+			if (setSelectedPattern(patternSelect.getSelectedIndex())) {
+				getController().selectPattern(selectedPattern,evt.getSource());
+			}
 		}
 	}
 
 	public int getSelectedPattern() {
 		return selectedPattern;
 	}
+	
+	public void setSelectedPattern(Pattern pattern) {
+		if (pattern!=null) {
+			setSelectedPattern(pattern.getNumber());
+			// TODO: Save and display pattern
+		}
+	}
 
-	public void setSelectedPattern(int selectedPattern) {
+	protected boolean setSelectedPattern(int selectedPattern) {
+		boolean changed = false;
 		if (this.selectedPattern!=selectedPattern) {
 			this.selectedPattern = selectedPattern;
-			pattern.setSelectedIndex(selectedPattern);
-			// TODO: Update controller
+			changed = true;
+			if (patternSelect.getSelectedIndex()!=selectedPattern) {
+				patternSelect.setSelectedIndex(selectedPattern);
+			}
 		}
+		return changed;
 	}
 	
 	protected JPanel getPatternPanel() {
 		JPanel r = new JPanel();
 		r.setLayout(new BorderLayout());
-		
-		//r.setPreferredSize(new Dimension(1000,1000));
-		
+
 		String[] patternNumbers = new String[100];
 		for (int p = 0; p <= 99; p++) {
 			String pat = "" + p;
@@ -122,19 +130,19 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 			}
 			patternNumbers[p] = pat;
 		}
-		pattern = new JList<String>();
-		pattern.setListData(patternNumbers);
-		pattern.setSelectedIndex(selectedPattern);
-		pattern.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		pattern.setLayoutOrientation(JList.VERTICAL);
-		pattern.addListSelectionListener(this);
-		pattern.setFocusable(true);
-		for (int l = 0; l < pattern.getKeyListeners().length; l++) {
-			pattern.removeKeyListener(pattern.getKeyListeners()[l]);
+		patternSelect = new JList<String>();
+		patternSelect.setListData(patternNumbers);
+		patternSelect.setSelectedIndex(selectedPattern);
+		patternSelect.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		patternSelect.setLayoutOrientation(JList.VERTICAL);
+		patternSelect.addListSelectionListener(this);
+		patternSelect.setFocusable(true);
+		for (int l = 0; l < patternSelect.getKeyListeners().length; l++) {
+			patternSelect.removeKeyListener(patternSelect.getKeyListeners()[l]);
 		}
-		pattern.addKeyListener(getController().getPlayerKeyListener());
+		patternSelect.addKeyListener(getController().getPlayerKeyListener());
 		
-		JScrollPane scroller = new JScrollPane(pattern);
+		JScrollPane scroller = new JScrollPane(patternSelect);
 		scroller.getVerticalScrollBar().setUnitIncrement(20);
 		r.add(scroller,BorderLayout.LINE_START);
 		

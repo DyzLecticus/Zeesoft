@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.panel.PanelComposition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
 import nl.zeesoft.zmmt.gui.panel.PanelObject;
@@ -114,6 +115,24 @@ public class FrameMain extends FrameObject implements CompositionUpdater {
 		tabs.setBackground(Instrument.getColorForInstrument(name));
 	}
 
+	protected void setSelectedPattern(Pattern pattern) {
+		patternsPanel.setSelectedPattern(pattern);
+	}
+
+	protected String getSelectedTab() {
+		String r = "";
+		if (tabs.getSelectedIndex()==0) {
+			r = COMPOSITION;
+		} else if (tabs.getSelectedIndex()==1) {
+			r = INSTRUMENTS;
+		} else if (tabs.getSelectedIndex()==2) {
+			r = PATTERNS;
+		} else {
+			r = COMPOSITION;
+		}
+		return r;
+	}
+	
 	protected void setCompositionChanged(boolean changed) {
 		if (changed) {
 			getFrame().setTitle(TITLE + "*");

@@ -22,7 +22,6 @@ public class TestController extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Settings settings = new Settings();
-		settings.setComposer("Dyz Lecticus");
 		Controller controller = new Controller(settings);
 		controller.initialize();
 		controller.start(true);

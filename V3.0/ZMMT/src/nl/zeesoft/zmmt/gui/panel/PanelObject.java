@@ -66,6 +66,21 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 			if (!found) {
 				controller.stopNotes();
 			}
+			while (comp.getParent().getParent()!=null) {
+				found = false;
+				for (Component c: panel.getComponents()) {
+					if (c==comp.getParent().getParent()) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					comp = comp.getParent();
+				} else {
+					break;
+				}
+			}
+			panel.scrollRectToVisible(comp.getBounds());
 		}
 	}
 	
@@ -165,8 +180,9 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		fmt.setGroupingUsed(false);
 		fmt.setMaximumIntegerDigits(digits);
 		JFormattedTextField r = new JFormattedTextField(fmt);
-		r.addKeyListener(controller.getKeyListener());
+		r.addFocusListener(this);
 		r.addPropertyChangeListener(this);
+		r.addKeyListener(controller.getKeyListener());
 		r.setPreferredSize(new Dimension(100,20));
 		return r;
 	}
@@ -186,6 +202,7 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		JSlider slider = new JSlider(JSlider.HORIZONTAL,min,max,init);
 		slider.setPreferredSize(new Dimension(200,20));
 		slider.addKeyListener(controller.getPlayerKeyListener());
+		slider.addFocusListener(this);
 		NumberSlider ns = new NumberSlider(number,slider);
 		numberSliders.add(ns);
 		return ns.getPanel();
@@ -215,6 +232,7 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 			comboBox.removeKeyListener(comboBox.getKeyListeners()[l]);
 		}
 		comboBox.addKeyListener(controller.getPlayerKeyListener());
+		comboBox.addFocusListener(this);
 		NumberComboBox nc = new NumberComboBox(number,comboBox,subtract);
 		numberComboBoxes.add(nc);
 		return nc.getPanel();

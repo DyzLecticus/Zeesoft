@@ -39,7 +39,7 @@ public class InstrumentPlayerKeyListener extends ControllerKeyListener {
 		int keyCode = evt.getKeyCode();
 		String key = KeyEvent.getKeyText(keyCode);
 		int note = -1;
-		Integer noteNumber = getController().getSettings().getKeyCodeMidiNotes().get(key);
+		Integer noteNumber = getController().getSettings().getKeyCodeNoteNumbers().get(key);
 		if (noteNumber!=null) {
 			note = noteNumber;
 		}
