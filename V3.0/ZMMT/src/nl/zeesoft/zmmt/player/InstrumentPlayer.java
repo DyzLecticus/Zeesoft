@@ -64,7 +64,9 @@ public class InstrumentPlayer extends Locker implements ActionListener, ListCell
 			if (selector!=null) {
 				String instrument = (String) selector.getSelectedItem();
 				selector.setBackground(Instrument.getColorForInstrument(instrument));
-				controller.selectInstrument(instrument,evt.getSource());
+				if (controller!=null) {
+					controller.selectInstrument(instrument,evt.getSource());
+				}
 			}
 		}
 	}
@@ -75,20 +77,15 @@ public class InstrumentPlayer extends Locker implements ActionListener, ListCell
 		String instrument = "" + value;
 		JLabel label = new JLabel(instrument);
 		Color color = Instrument.getColorForInstrument(instrument);
-
 		label.setOpaque(true);
 		if (isSelected) {
 			label.setBackground(list.getSelectionBackground());
 			label.setForeground(list.getSelectionForeground());
-		} else {
-			label.setBackground(color);
-		}
-		if (hasFocus) {
 			label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
 		} else {
-			label.setBorder(BorderFactory.createLineBorder(color));
+			label.setBackground(color);
+			label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
 		}
-
 		return label;
 	}
 
@@ -193,6 +190,9 @@ public class InstrumentPlayer extends Locker implements ActionListener, ListCell
 		r.setRenderer(this);
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
+		}
+		if (controller!=null) {
+			r.addKeyListener(controller.getPlayerKeyListener());
 		}
 		selectors.add(r);
 		unlockMe(this);

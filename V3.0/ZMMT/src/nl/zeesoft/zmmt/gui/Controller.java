@@ -277,7 +277,6 @@ public class Controller extends Locker {
 		JComboBox<String> r = null;
 		lockMe(this);
 		r = player.getNewSelector();
-		r.addKeyListener(playerKeyListener);
 		unlockMe(this);
 		return r;
 	}
