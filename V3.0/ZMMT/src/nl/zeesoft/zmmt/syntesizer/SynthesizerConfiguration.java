@@ -210,32 +210,31 @@ public class SynthesizerConfiguration {
 	}
 
 	public void configureMidiSynthesizer(Synthesizer synth) {
-		for (InstrumentConfiguration inst: instruments) {
-			if (inst.getName().equals(Instrument.ECHO)) {
-				InstrumentConfiguration echoInst = getInstrument(echo.getInstrument());
-				if (echoInst!=null) {
-					int layerMidiNum = echoInst.getLayer1MidiNum();
-					int layerPressure = echoInst.getLayer1Pressure();
-					if (echo.getLayer()==2) {
-						layerMidiNum = echoInst.getLayer2MidiNum();
-						layerPressure = echoInst.getLayer2Pressure();
-					}
-					if (layerMidiNum>=0) {
-						for (int e = 0; e < 3; e++) {
-							int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
-							synth.getChannels()[channel].programChange(layerMidiNum);
-							synth.getChannels()[channel].setChannelPressure(layerPressure);
-							if (e==0) {
-								synth.getChannels()[channel].controlChange(91,echo.getReverb1());
-							} else if (e==1) {
-								synth.getChannels()[channel].controlChange(91,echo.getReverb2());
-							} else if (e==2) {
-								synth.getChannels()[channel].controlChange(91,echo.getReverb3());
-							}
-						}
+		InstrumentConfiguration echoInst = getInstrument(echo.getInstrument());
+		if (echoInst!=null) {
+			int layerMidiNum = echoInst.getLayer1MidiNum();
+			int layerPressure = echoInst.getLayer1Pressure();
+			if (echo.getLayer()==2) {
+				layerMidiNum = echoInst.getLayer2MidiNum();
+				layerPressure = echoInst.getLayer2Pressure();
+			}
+			if (layerMidiNum>=0) {
+				for (int e = 0; e < 3; e++) {
+					int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
+					synth.getChannels()[channel].programChange(layerMidiNum);
+					synth.getChannels()[channel].setChannelPressure(layerPressure);
+					if (e==0) {
+						synth.getChannels()[channel].controlChange(91,echo.getReverb1());
+					} else if (e==1) {
+						synth.getChannels()[channel].controlChange(91,echo.getReverb2());
+					} else if (e==2) {
+						synth.getChannels()[channel].controlChange(91,echo.getReverb3());
 					}
 				}
-			} else {
+			}
+		}
+		for (InstrumentConfiguration inst: instruments) {
+			if (!inst.getName().equals(Instrument.ECHO)) {
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),0);
 				synth.getChannels()[channel].programChange(inst.getLayer1MidiNum());
 				synth.getChannels()[channel].setChannelPressure(inst.getLayer1Pressure());

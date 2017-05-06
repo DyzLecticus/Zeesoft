@@ -7,9 +7,9 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class Pattern {
-	private int				pattern		= 1;
+	private int				pattern		= 0;
 	private int 			bars		= 8;
-	private List<Step>		steps		= new ArrayList<Step>();
+	private List<Note>		notes		= new ArrayList<Note>();
 	
 	public Pattern copy() {
 		Pattern copy = new Pattern();
@@ -22,10 +22,10 @@ public class Pattern {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("pattern","" + pattern));
 		json.rootElement.children.add(new JsElem("bars","" + bars));
-		if (steps.size()>0) {
+		if (notes.size()>0) {
 			JsElem stepsElem = new JsElem("steps",true);
 			json.rootElement.children.add(stepsElem);
-			for (Step step: steps) {
+			for (Note step: notes) {
 				JsElem stepElem = new JsElem();
 				stepsElem.children.add(stepElem);
 				stepElem.children.add(new JsElem("instrument",step.instrument,true));
@@ -40,7 +40,7 @@ public class Pattern {
 	}
 
 	public void fromJson(JsFile json) {
-		steps.clear();
+		notes.clear();
 		for (JsElem elem: json.rootElement.children) {
 			if (elem.name.equals("pattern")) {
 				pattern = Integer.parseInt(elem.value.toString());
@@ -48,7 +48,7 @@ public class Pattern {
 				bars = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("steps")) {
 				for (JsElem stepElem: elem.children) {
-					Step step = new Step();
+					Note step = new Note();
 					for (JsElem valElem: stepElem.children) {
 						if (valElem.name.equals("instrument")) {
 							step.instrument = valElem.value.toString();
@@ -57,14 +57,14 @@ public class Pattern {
 						} else if (valElem.name.equals("step")) {
 							step.step = Integer.parseInt(valElem.value.toString());
 						} else if (valElem.name.equals("length")) {
-							step.length = Integer.parseInt(valElem.value.toString());
+							step.duration = Integer.parseInt(valElem.value.toString());
 						} else if (valElem.name.equals("note")) {
 							step.note = Integer.parseInt(valElem.value.toString());
 						} else if (valElem.name.equals("accent")) {
 							step.accent = Boolean.parseBoolean(valElem.value.toString());
 						}
 					}
-					steps.add(step);
+					notes.add(step);
 				}
 			}
 		}
@@ -86,7 +86,7 @@ public class Pattern {
 		this.bars = bars;
 	}
 
-	public List<Step> getSteps() {
-		return steps;
+	public List<Note> getSteps() {
+		return notes;
 	}
 }

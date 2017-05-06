@@ -1,7 +1,10 @@
-package nl.zeesoft.zmmt.gui;
+package nl.zeesoft.zmmt.player;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+
+import nl.zeesoft.zmmt.gui.Controller;
+import nl.zeesoft.zmmt.gui.ControllerKeyListener;
 
 public class InstrumentPlayerKeyListener extends ControllerKeyListener {
 	public InstrumentPlayerKeyListener(Controller controller) {

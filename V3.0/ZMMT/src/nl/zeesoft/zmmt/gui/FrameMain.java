@@ -4,24 +4,28 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.panel.PanelComposition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
+import nl.zeesoft.zmmt.gui.panel.PanelObject;
+import nl.zeesoft.zmmt.gui.panel.PanelPatterns;
+import nl.zeesoft.zmmt.syntesizer.Instrument;
 
 public class FrameMain extends FrameObject implements CompositionUpdater {
 	private static final String	TITLE				= "ZeeTracker";
 	
 	public static final String	COMPOSITION			= "Composition";
 	public static final String	INSTRUMENTS			= "Instruments";
+	public static final String	PATTERNS			= "Patterns";
 	
 	private JTabbedPane			tabs				= null;
 
 	private PanelComposition	compositionPanel	= null;
 	private PanelInstruments	instrumentsPanel	= null;
+	private PanelPatterns		patternsPanel		= null;
 	
 	public FrameMain(Controller controller) {
 		super(controller);
@@ -45,14 +49,20 @@ public class FrameMain extends FrameObject implements CompositionUpdater {
 
 		tabs = new JTabbedPane();
 		tabs.addKeyListener(getController().getPlayerKeyListener());
+		tabs.setOpaque(true);
+		tabs.setBackground(Instrument.getColorForInstrument(Instrument.LEAD));
 
 		compositionPanel = new PanelComposition(getController());
 		compositionPanel.initialize();
-		addPanelToTabs(tabs,"Composition",compositionPanel.getPanel());
+		addPanelToTabs(tabs,"Composition",compositionPanel);
 
 		instrumentsPanel = new PanelInstruments(getController());
 		instrumentsPanel.initialize();
-		addPanelToTabs(tabs,"Instruments & FX",instrumentsPanel.getPanel());
+		addPanelToTabs(tabs,"Instruments",instrumentsPanel);
+
+		patternsPanel = new PanelPatterns(getController());
+		patternsPanel.initialize();
+		addPanelToTabs(tabs,"Patterns",patternsPanel);
 		
 		getFrame().setContentPane(tabs);
 	}
@@ -65,6 +75,9 @@ public class FrameMain extends FrameObject implements CompositionUpdater {
 		if (tab==null || tab.length()==0 || !tab.equals(INSTRUMENTS)) {
 			instrumentsPanel.updatedComposition(tab,comp);
 		} 
+		if (tab==null || tab.length()==0 || !tab.equals(PATTERNS)) {
+			patternsPanel.updatedComposition(tab,comp);
+		} 
 	}
 
 	@Override
@@ -73,12 +86,13 @@ public class FrameMain extends FrameObject implements CompositionUpdater {
 			compositionPanel.getCompositionUpdate(tab, comp);
 		} else if (tab.equals(INSTRUMENTS)) {
 			instrumentsPanel.getCompositionUpdate(tab, comp);
+		} else if (tab.equals(PATTERNS)) {
+			patternsPanel.getCompositionUpdate(tab, comp);
 		}
 	}
 	
-	protected JScrollPane addPanelToTabs(JTabbedPane tabs,String label,JPanel panel) {
-		JScrollPane scroller = new JScrollPane(panel);
-		scroller.getVerticalScrollBar().setUnitIncrement(20);
+	protected JScrollPane addPanelToTabs(JTabbedPane tabs,String label,PanelObject panel) {
+		JScrollPane scroller = panel.getScroller();
 		tabs.addTab(label,scroller);
 		return scroller;
 	}
@@ -90,9 +104,16 @@ public class FrameMain extends FrameObject implements CompositionUpdater {
 		} else if (tab.equals(INSTRUMENTS) && tabs.getSelectedIndex()!=1) {
 			tabs.setSelectedIndex(1);
 			instrumentsPanel.requestFocus();
+		} else if (tab.equals(PATTERNS) && tabs.getSelectedIndex()!=2) {
+			tabs.setSelectedIndex(2);
+			patternsPanel.requestFocus();
 		}
 	}
-	
+
+	protected void selectedInstrument(String name) {
+		tabs.setBackground(Instrument.getColorForInstrument(name));
+	}
+
 	protected void setCompositionChanged(boolean changed) {
 		if (changed) {
 			getFrame().setTitle(TITLE + "*");

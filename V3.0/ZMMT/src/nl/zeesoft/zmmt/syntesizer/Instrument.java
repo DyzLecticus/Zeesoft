@@ -1,5 +1,7 @@
 package nl.zeesoft.zmmt.syntesizer;
 
+import java.awt.Color;
+
 public class Instrument {
 	public static final	String		SYNTH_BASS1			= "Synth bass 1";
 	public static final	String		SYNTH_BASS2			= "Synth bass 2";
@@ -44,6 +46,32 @@ public class Instrument {
 					}
 				}
 			}
+		}
+		return r;
+	}
+	
+	public static final Color getColorForInstrument(String name) {
+		Color r = null;
+		if (name.equals(SYNTH_BASS1)) {
+			r = new Color(153,204,255);
+		} else if (name.equals(SYNTH_BASS2)) {
+			r = new Color(153,153,255);
+		} else if (name.equals(SYNTH_BASS3)) {
+			r = new Color(204,153,255);
+		} else if (name.equals(SYNTH1)) {
+			r = new Color(255,153,255);
+		} else if (name.equals(SYNTH2)) {
+			r = new Color(255,153,178);
+		} else if (name.equals(SYNTH3)) {
+			r = new Color(255,102,153);
+		} else if (name.equals(LEAD)) {
+			r = new Color(255,102,102);
+		} else if (name.equals(STRINGS)) {
+			r = new Color(255,255,102);
+		} else if (name.equals(DRUMS)) {
+			r = new Color(255,178,102);
+		} else if (name.equals(ECHO)) {
+			r = new Color(178,255,102);
 		}
 		return r;
 	}

@@ -1,5 +1,7 @@
 package nl.zeesoft.zmmt.player;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -8,28 +10,36 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.sound.midi.Synthesizer;
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
 import nl.zeesoft.zmmt.syntesizer.MidiNote;
 import nl.zeesoft.zmmt.syntesizer.MidiNoteDelayed;
 
-public class InstrumentPlayer extends Locker implements ActionListener {
+public class InstrumentPlayer extends Locker implements ActionListener, ListCellRenderer<Object> {
 	public static final String				SELECTED_INSTRUMENT		= "SELECTED_INSTRUMENT";
 	public List<JComboBox<String>>			selectors				= new ArrayList<JComboBox<String>>();
+	
+	private Controller						controller				= null;
 	
 	private InstrumentPlayerEchoWorker		echoWorker				= null;
 	
 	private String							selectedInstrument		= Instrument.LEAD;
 	private Synthesizer						synthesizer				= null;
 	
-	private SortedMap<String,MidiNote>		playingNotes			= new TreeMap<String,MidiNote>();		
+	private SortedMap<String,MidiNote>		playingNotes			= new TreeMap<String,MidiNote>();
 	
-	public InstrumentPlayer(Messenger msgr, WorkerUnion uni) {
+	public InstrumentPlayer(Messenger msgr, WorkerUnion uni,Controller controller) {
 		super(msgr);
+		this.controller = controller;
 		echoWorker = new InstrumentPlayerEchoWorker(msgr,uni,this);
 	}
 
@@ -52,9 +62,34 @@ public class InstrumentPlayer extends Locker implements ActionListener {
 		if (evt.getActionCommand().equals(SELECTED_INSTRUMENT)) {
 			JComboBox<String> selector = getSelectorForSource(evt.getSource());
 			if (selector!=null) {
-				setSelectedInstrument((String) selector.getSelectedItem(),evt.getSource());
+				String instrument = (String) selector.getSelectedItem();
+				selector.setBackground(Instrument.getColorForInstrument(instrument));
+				controller.selectInstrument(instrument,evt.getSource());
 			}
 		}
+	}
+
+	@Override
+	public Component getListCellRendererComponent(
+		@SuppressWarnings("rawtypes") final JList list,final Object value,int index,boolean isSelected,boolean hasFocus) {
+		String instrument = "" + value;
+		JLabel label = new JLabel(instrument);
+		Color color = Instrument.getColorForInstrument(instrument);
+
+		label.setOpaque(true);
+		if (isSelected) {
+			label.setBackground(list.getSelectionBackground());
+			label.setForeground(list.getSelectionForeground());
+		} else {
+			label.setBackground(color);
+		}
+		if (hasFocus) {
+			label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
+		} else {
+			label.setBorder(BorderFactory.createLineBorder(color));
+		}
+
+		return label;
 	}
 
 	public void playInstrumentNotes(List<MidiNote> notes) {
@@ -153,6 +188,9 @@ public class InstrumentPlayer extends Locker implements ActionListener {
 		r.setSelectedIndex(getSelectedInstrumentIndex());
 		r.addActionListener(this);
 		r.setActionCommand(SELECTED_INSTRUMENT);
+		r.setOpaque(true);
+		r.setBackground(Instrument.getColorForInstrument(selectedInstrument));
+		r.setRenderer(this);
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}
@@ -169,7 +207,8 @@ public class InstrumentPlayer extends Locker implements ActionListener {
 		return r;
 	}
 
-	public void setSelectedInstrument(String selectedInstrument,Object source) {
+	public boolean setSelectedInstrument(String selectedInstrument,Object source) {
+		boolean selected = false;
 		if (!getSelectedInstrument().equals(selectedInstrument)) {
 			List<JComboBox<String>> updateSelectors = new ArrayList<JComboBox<String>>();
 			int updateIndex = 0;
@@ -188,7 +227,9 @@ public class InstrumentPlayer extends Locker implements ActionListener {
 					sel.setSelectedIndex(updateIndex);
 				}
 			}
+			selected = true;
 		}
+		return selected;
 	}
 	
 	private int getSelectedInstrumentIndex() {

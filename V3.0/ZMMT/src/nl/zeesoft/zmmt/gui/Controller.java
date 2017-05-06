@@ -16,6 +16,7 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.player.InstrumentPlayer;
+import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.syntesizer.MidiNote;
 
@@ -52,7 +53,7 @@ public class Controller extends Locker {
 		union = new WorkerUnion(getMessenger());
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
-		player = new InstrumentPlayer(getMessenger(),getUnion());
+		player = new InstrumentPlayer(getMessenger(),getUnion(),this);
 		playerKeyListener = new InstrumentPlayerKeyListener(this);
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
@@ -153,7 +154,9 @@ public class Controller extends Locker {
 	}
 
 	public void selectInstrument(String name,Object source) {
-		player.setSelectedInstrument(name,source);
+		if (player.setSelectedInstrument(name,source)) {
+			mainFrame.selectedInstrument(name);
+		}
 	}
 
 	public WorkerUnion getUnion() {
@@ -268,14 +271,14 @@ public class Controller extends Locker {
 		return r;
 	}
 
-	protected void playNote(int note,boolean accent) {
+	public void playNote(int note,boolean accent) {
 		lockMe(this);
 		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,accent,composition.getMsPerStep());
 		player.playInstrumentNotes(notes);
 		unlockMe(this);
 	}
 
-	protected void stopNote(int note) {
+	public void stopNote(int note) {
 		lockMe(this);
 		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,false,composition.getMsPerStep());
 		player.stopInstrumentNotes(notes);

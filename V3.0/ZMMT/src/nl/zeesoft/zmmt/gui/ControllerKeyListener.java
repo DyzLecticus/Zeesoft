@@ -41,6 +41,8 @@ public class ControllerKeyListener implements KeyListener {
 				controller.switchTo(FrameMain.COMPOSITION);
 			} else if (evt.getKeyCode()==KeyEvent.VK_F2) {
 				controller.switchTo(FrameMain.INSTRUMENTS);
+			} else if (evt.getKeyCode()==KeyEvent.VK_F3) {
+				controller.switchTo(FrameMain.PATTERNS);
 			}
 		}
 	}

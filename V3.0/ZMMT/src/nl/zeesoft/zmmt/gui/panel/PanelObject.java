@@ -17,13 +17,16 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 
 import nl.zeesoft.zmmt.gui.Controller;
-import nl.zeesoft.zmmt.gui.InstrumentPlayerKeyListener;
+import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 
 public abstract class PanelObject implements PropertyChangeListener, FocusListener {
 	private	Controller					controller			= null;
+	
+	private JScrollPane					scroller			= null;
 	private JPanel						panel				= new JPanel();
 	private boolean						validate			= true;
 
@@ -69,6 +72,14 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 	@Override
 	public void focusLost(FocusEvent evt) {
 		// Ignore
+	}
+	
+	public JScrollPane getScroller() {
+		if (scroller==null) {
+			scroller = new JScrollPane(panel);
+			scroller.getVerticalScrollBar().setUnitIncrement(20);
+		}
+		return scroller;
 	}
 	
 	public JPanel getPanel() {
@@ -130,7 +141,7 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 		if (fill) {
-			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.fill = GridBagConstraints.BOTH;
 		}
 		gbc.weightx = 1.0;
 		gbc.weighty = weighty;

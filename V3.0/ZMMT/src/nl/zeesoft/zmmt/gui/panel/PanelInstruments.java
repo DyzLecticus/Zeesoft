@@ -102,6 +102,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 
 	@Override
 	public void requestFocus() {
+		getScroller().getVerticalScrollBar().setValue(getScroller().getVerticalScrollBar().getMinimum());
 		instrument.requestFocus();
 	}
 
@@ -256,6 +257,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getSource()==instrument) {
+			getScroller().getVerticalScrollBar().setValue(getScroller().getVerticalScrollBar().getMinimum());
 			CardLayout cl = (CardLayout)(cardPanel.getLayout());
 			cl.show(cardPanel,(String) evt.getItem());
 		} else if (evt.getSource()==echoInstrument) {
