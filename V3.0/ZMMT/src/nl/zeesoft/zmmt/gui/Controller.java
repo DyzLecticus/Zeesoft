@@ -54,7 +54,7 @@ public class Controller extends Locker {
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
 		player = new InstrumentPlayer(getMessenger(),getUnion(),this);
-		playerKeyListener = new InstrumentPlayerKeyListener(this);
+		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
 		compositionUpdateWorker = new CompositionUpdateWorker(getMessenger(),getUnion(),this);
@@ -66,19 +66,24 @@ public class Controller extends Locker {
 	
 	public void start(boolean debug) {
 		player.start();
-		setComposition(settings.getNewComposition());
+		lockMe(this);
+		Composition comp = settings.getNewComposition();
+		unlockMe(this);
+		setComposition(comp);
 		mainFrame.getFrame().setVisible(true);
 		compositionUpdateWorker.start();
 		InitializeSynthesizerWorker synthInit = new InitializeSynthesizerWorker(getMessenger(),getUnion(),this);
 		synthInit.start();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
+		lockMe(this);
 		if (settings.getWorkingTab().length()>0) {
 			mainFrame.switchTo(settings.getWorkingTab());
 		}
 		if (settings.getWorkingInstrument().length()>0) {
-			this.selectInstrument(settings.getWorkingInstrument(),this);
+			selectInstrument(settings.getWorkingInstrument(),this);
 		}
+		unlockMe(this);
 		mainFrame.getFrame().setVisible(true);
 	}
 
@@ -104,12 +109,14 @@ public class Controller extends Locker {
 				confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to quit?");
 			}
 			if (confirmed) {
+				lockMe(this);
 				settings.setWorkingTab(mainFrame.getSelectedTab());
 				settings.setWorkingInstrument(player.getSelectedInstrument());
 				String err = settings.toFile();
 				if (err.length()>0) {
 					showErrorMessage(settings,err);
 				}
+				unlockMe(this);
 				stop(null);
 				int status = 0;
 				if (getMessenger().isError()) {
@@ -173,10 +180,6 @@ public class Controller extends Locker {
 	public WorkerUnion getUnion() {
 		return union;
 	}
-	
-	public Settings getSettings() {
-		return settings;
-	}
 
 	public ControllerWindowAdapter getAdapter() {
 		return adapter;
@@ -188,14 +191,6 @@ public class Controller extends Locker {
 
 	public InstrumentPlayerKeyListener getPlayerKeyListener() {
 		return playerKeyListener;
-	}
-	
-	protected Composition getComposition() {
-		Composition r = null;
-		lockMe(this);
-		r = composition;
-		unlockMe(this);
-		return r;
 	}
 
 	protected void setComposition(Composition composition) {

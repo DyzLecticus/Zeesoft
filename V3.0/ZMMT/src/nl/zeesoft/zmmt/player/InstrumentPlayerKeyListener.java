@@ -2,13 +2,17 @@ package nl.zeesoft.zmmt.player;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.util.SortedMap;
 
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.ControllerKeyListener;
 
 public class InstrumentPlayerKeyListener extends ControllerKeyListener {
-	public InstrumentPlayerKeyListener(Controller controller) {
+	private SortedMap<String,Integer>	keyCodeNoteNumbers	= null;
+	
+	public InstrumentPlayerKeyListener(Controller controller,SortedMap<String,Integer> keyCodeNoteNumbers) {
 		super(controller);
+		this.keyCodeNoteNumbers = keyCodeNoteNumbers;
 	}
 
 	@Override
@@ -39,7 +43,7 @@ public class InstrumentPlayerKeyListener extends ControllerKeyListener {
 		int keyCode = evt.getKeyCode();
 		String key = KeyEvent.getKeyText(keyCode);
 		int note = -1;
-		Integer noteNumber = getController().getSettings().getKeyCodeNoteNumbers().get(key);
+		Integer noteNumber = keyCodeNoteNumbers.get(key);
 		if (noteNumber!=null) {
 			note = noteNumber;
 		}
