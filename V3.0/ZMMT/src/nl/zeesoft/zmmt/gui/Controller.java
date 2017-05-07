@@ -217,9 +217,8 @@ public class Controller extends Locker {
 		}
 	}
 	
-	public void selectPattern(int pattern, Object source) {
-		// TODO: Get pattern from composition
-		mainFrame.setSelectedPattern(null);
+	public void selectedPattern(int pattern, Object source) {
+		// TODO: Handle sequence changes
 	}
 
 	public WorkerUnion getUnion() {

@@ -16,7 +16,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import nl.zeesoft.zmmt.composition.Composition;
-import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.CompositionUpdater;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.FrameMain;
@@ -28,8 +27,9 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 
 	private JList<String>			patternSelect					= null;
 	private JTable					grid							= null;
+	private PatternGridController	gridController					= null;
 	
-	private Pattern					pattern							= null;
+	private	Composition				compositionCopy					= null;
 	
 	public PanelPatterns(Controller controller) {
 		super(controller);
@@ -65,7 +65,12 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	@Override
 	public void updatedComposition(String tab,Composition comp) {
 		setValidate(false);
-		// TODO: Implement
+		compositionCopy = comp.copy();
+		gridController.setDefaultPatternBars(compositionCopy.getDefaultPatternBars());
+		gridController.setStepsPerBar(compositionCopy.getStepsPerBar());
+		gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
+		gridController.setPattern(compositionCopy.getPattern(selectedPattern));
+		gridController.fireTableStructureChanged();
 		setValidate(true);
 	}
 
@@ -77,6 +82,8 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getSource()==instrument) {
+			gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
+			gridController.fireTableStructureChanged();
 			// TODO: Implement
 		}
 	}
@@ -85,7 +92,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	public void valueChanged(ListSelectionEvent evt) {
 		if (evt.getSource()==patternSelect) {
 			if (setSelectedPattern(patternSelect.getSelectedIndex())) {
-				getController().selectPattern(selectedPattern,evt.getSource());
+				getController().selectedPattern(selectedPattern,evt.getSource());
 			}
 		}
 	}
@@ -94,17 +101,6 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 		return selectedPattern;
 	}
 	
-	public void setSelectedPattern(Pattern pattern) {
-		if (pattern!=null) {
-			setSelectedPattern(pattern.getNumber());
-			this.pattern = pattern;
-			// TODO: Save and display pattern
-			if (this.pattern!=null) {
-				
-			}
-		}
-	}
-
 	protected boolean setSelectedPattern(int selectedPattern) {
 		boolean changed = false;
 		if (this.selectedPattern!=selectedPattern) {
@@ -112,6 +108,10 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 			changed = true;
 			if (patternSelect.getSelectedIndex()!=selectedPattern) {
 				patternSelect.setSelectedIndex(selectedPattern);
+			}
+			if (compositionCopy!=null) {
+				gridController.setPattern(compositionCopy.getPattern(selectedPattern));
+				gridController.fireTableDataChanged();
 			}
 		}
 		return changed;
@@ -145,8 +145,10 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 		scroller.getVerticalScrollBar().setUnitIncrement(20);
 		r.add(scroller,BorderLayout.LINE_START);
 		
+		gridController = new PatternGridController();
 		grid = new JTable();
 		grid.addKeyListener(getController().getPlayerKeyListener());
+		grid.setModel(gridController);
 		scroller = new JScrollPane(grid);
 		scroller.getVerticalScrollBar().setUnitIncrement(20);
 		r.add(scroller,BorderLayout.CENTER);

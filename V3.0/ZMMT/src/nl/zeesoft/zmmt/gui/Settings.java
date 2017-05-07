@@ -162,6 +162,7 @@ public class Settings {
 		composition.setBeatsPerMinute(defaultBeatsPerMinute);
 		composition.setBeatsPerBar(defaultBeatsPerBar);
 		composition.setStepsPerBeat(defaultStepsPerBeat);
+		composition.setDefaultPatternBars(defaultPatternBars);
 		composition.setSynthesizerConfiguration(synthesizerConfiguration.copy());
 		return composition;
 	}

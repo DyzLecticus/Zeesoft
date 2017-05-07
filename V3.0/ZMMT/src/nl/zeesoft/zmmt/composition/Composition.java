@@ -94,10 +94,6 @@ public class Composition {
 		return (60000 / beatsPerMinute) / stepsPerBeat;
 	}
 
-	public int getStepsForBars(int bars) {
-		return (bars * getStepsPerBar());
-	}
-
 	public String getComposer() {
 		return composer;
 	}
@@ -156,5 +152,16 @@ public class Composition {
 
 	public List<Pattern> getPatterns() {
 		return patterns;
+	}
+
+	public Pattern getPattern(int number) {
+		Pattern r = null;
+		for (Pattern pattern: patterns) {
+			if (pattern.getNumber()==number) {
+				r = pattern;
+				break;
+			}
+		}
+		return r;
 	}
 }
