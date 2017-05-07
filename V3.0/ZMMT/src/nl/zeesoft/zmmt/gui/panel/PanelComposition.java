@@ -64,12 +64,6 @@ public class PanelComposition extends PanelObject implements CompositionUpdater 
 	}
 
 	@Override
-	public String validate() {
-		// Nothing to validate
-		return "";
-	}
-
-	@Override
 	public void handleValidChange() {
 		getController().changedComposition(FrameMain.COMPOSITION);
 	}

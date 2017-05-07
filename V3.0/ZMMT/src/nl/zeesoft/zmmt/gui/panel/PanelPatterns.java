@@ -29,6 +29,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	private JList<String>			patternSelect					= null;
 	private JTable					grid							= null;
 	
+	private Pattern					pattern							= null;
 	
 	public PanelPatterns(Controller controller) {
 		super(controller);
@@ -52,19 +53,13 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	}
 
 	@Override
-	public String validate() {
-		// Nothing to validate
-		return "";
+	public void requestFocus() {
+		patternSelect.requestFocus();
 	}
 
 	@Override
 	public void handleValidChange() {
 		getController().changedComposition(FrameMain.PATTERNS);
-	}
-
-	@Override
-	public void requestFocus() {
-		patternSelect.requestFocus();
 	}
 
 	@Override
@@ -102,7 +97,11 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	public void setSelectedPattern(Pattern pattern) {
 		if (pattern!=null) {
 			setSelectedPattern(pattern.getNumber());
+			this.pattern = pattern;
 			// TODO: Save and display pattern
+			if (this.pattern!=null) {
+				
+			}
 		}
 	}
 

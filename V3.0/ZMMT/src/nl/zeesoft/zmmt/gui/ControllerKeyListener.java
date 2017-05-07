@@ -14,7 +14,7 @@ public class ControllerKeyListener implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent evt) {
-		if (evt.isControlDown()) {
+		if (evt.isControlDown() && !evt.isAltDown()) {
 			if (evt.getKeyCode()==KeyEvent.VK_1) {
 				controller.selectInstrument(Instrument.INSTRUMENTS[0],this);
 			} else if (evt.getKeyCode()==KeyEvent.VK_2) {
@@ -37,13 +37,26 @@ public class ControllerKeyListener implements KeyListener {
 				controller.selectInstrument(Instrument.INSTRUMENTS[9],this);
 			}
 		} else {
-			if (evt.getKeyCode()==KeyEvent.VK_F1) {
-				controller.switchTo(FrameMain.COMPOSITION);
-			} else if (evt.getKeyCode()==KeyEvent.VK_F2) {
-				controller.switchTo(FrameMain.INSTRUMENTS);
-			} else if (evt.getKeyCode()==KeyEvent.VK_F3) {
-				controller.switchTo(FrameMain.PATTERNS);
+			if (!evt.isShiftDown() && !evt.isAltDown()) {
+				if (evt.getKeyCode()==KeyEvent.VK_F1) {
+					controller.switchTo(FrameMain.COMPOSITION);
+				} else if (evt.getKeyCode()==KeyEvent.VK_F2) {
+					controller.switchTo(FrameMain.INSTRUMENTS);
+				} else if (evt.getKeyCode()==KeyEvent.VK_F3) {
+					controller.switchTo(FrameMain.PATTERNS);
+				}
 			}
+		}
+		if (evt.getModifiersEx()==KeyEvent.CTRL_DOWN_MASK) {
+            if (evt.getKeyCode() == KeyEvent.VK_L) {
+				controller.loadComposition();
+            } else if (evt.getKeyCode() == KeyEvent.VK_Z) {
+				controller.undoCompositionChanges();
+            } else if (evt.getKeyCode() == KeyEvent.VK_S) {
+				controller.saveComposition();
+            } else if (evt.getKeyCode() == KeyEvent.VK_N) {
+				controller.newComposition();
+            }					
 		}
 	}
 

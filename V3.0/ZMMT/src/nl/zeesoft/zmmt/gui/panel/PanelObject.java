@@ -39,17 +39,33 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 
 	public abstract void initialize();
 
-	public abstract String validate();
-
-	public abstract void handleValidChange();
-
-	public void requestFocus() {
-		// Override to implement
-	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		handlePropertyChanged();
+	}
+
+	protected void handlePropertyChanged() {
+		if (validate) {
+			String err = validate();
+			if (err.length()>0) {
+				controller.showErrorMessage(this,err);
+			} else {
+				handleValidChange();
+			}
+		}
+	}
+
+	public String validate() {
+		return "";
+	}
+
+	public void handleValidChange() {
+		// Override to implement
+	}
+
+	public void requestFocus() {
+		// Override to implement
 	}
 
 	@Override
@@ -101,17 +117,6 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		return panel;
 	}
 
-	protected void handlePropertyChanged() {
-		if (validate) {
-			String err = validate();
-			if (err.length()>0) {
-				controller.showErrorMessage(this,err);
-			} else {
-				handleValidChange();
-			}
-		}
-	}
-	
 	protected Controller getController() {
 		return controller;
 	}

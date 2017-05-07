@@ -10,9 +10,11 @@ import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
 public class Composition {
 	private String						composer						= "";
 	private String						name							= "";
+
 	private int 						beatsPerMinute					= 128;
 	private int							beatsPerBar						= 4;
 	private int							stepsPerBeat					= 8;
+	private int							defaultPatternBars				= 4;
 	
 	private SynthesizerConfiguration	synthesizerConfiguration		= null;
 	
@@ -36,6 +38,7 @@ public class Composition {
 		json.rootElement.children.add(new JsElem("beatsPerMinute","" + beatsPerMinute));
 		json.rootElement.children.add(new JsElem("beatsPerBar","" + beatsPerBar));
 		json.rootElement.children.add(new JsElem("stepsPerBeat","" + stepsPerBeat));
+		json.rootElement.children.add(new JsElem("defaultPatternBars","" + defaultPatternBars));
 		JsFile conf = synthesizerConfiguration.toJson();
 		JsElem confElem = new JsElem("synthesizerConfiguration");
 		for (JsElem conElem: conf.rootElement.children) {
@@ -65,6 +68,8 @@ public class Composition {
 				beatsPerBar = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("stepsPerBeat")) {
 				stepsPerBeat = Integer.parseInt(elem.value.toString());
+			} else if (elem.name.equals("defaultPatternBars")) {
+				defaultPatternBars = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("synthesizerConfiguration")) {
 				JsFile conf = new JsFile();
 				conf.rootElement = elem;
@@ -131,6 +136,14 @@ public class Composition {
 
 	public void setStepsPerBeat(int stepsPerBeat) {
 		this.stepsPerBeat = stepsPerBeat;
+	}
+
+	public int getDefaultPatternBars() {
+		return defaultPatternBars;
+	}
+
+	public void setDefaultPatternBars(int defaultPatternBars) {
+		this.defaultPatternBars = defaultPatternBars;
 	}
 
 	public SynthesizerConfiguration getSynthesizerConfiguration() {

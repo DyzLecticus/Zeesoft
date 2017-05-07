@@ -1,11 +1,13 @@
 package nl.zeesoft.zmmt.gui;
 
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.midi.Synthesizer;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -31,9 +33,13 @@ public class Controller extends Locker {
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
 	
 	private Composition					composition					= null;
+	private Composition					compositionOriginal			= null;
+	private boolean						compositionChanged			= false;
 	private List<String>				updatedCompositionTabs		= new ArrayList<String>();
 	private CompositionUpdateWorker		compositionUpdateWorker		= null;
-	private boolean						compositionChanged			= false;
+	
+	private ImportExportWorker			importExportWorker			= null;
+	private File						compositionFile				= null;
 	
 	private Synthesizer					synthesizer					= null;
 
@@ -58,6 +64,7 @@ public class Controller extends Locker {
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
 		compositionUpdateWorker = new CompositionUpdateWorker(getMessenger(),getUnion(),this);
+		importExportWorker = new ImportExportWorker(getMessenger(),getUnion(),this);
 	}
 
 	public void start() {
@@ -65,17 +72,36 @@ public class Controller extends Locker {
 	}
 	
 	public void start(boolean debug) {
-		player.start();
+		String err = "";
+
 		lockMe(this);
 		Composition comp = settings.getNewComposition();
 		unlockMe(this);
 		setComposition(comp);
+		
+		boolean loading = false;
+		if (settings.getWorkingCompositionFileName().length()>0) {
+			File file = new File(settings.getWorkingCompositionFileName());
+			if (!file.exists()) {
+				err = "Working composition file not found: " + settings.getWorkingCompositionFileName();
+			} else {
+				importExportWorker.loadCompositionAndInitialize(file,settings.getWorkDirName());
+				loading = true;
+			}
+		}
+
 		mainFrame.getFrame().setVisible(true);
+
+		if (!loading) {
+			importExportWorker.initialize(settings.getWorkDirName());
+		}
+		player.start();
 		compositionUpdateWorker.start();
 		InitializeSynthesizerWorker synthInit = new InitializeSynthesizerWorker(getMessenger(),getUnion(),this);
 		synthInit.start();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
+		
 		lockMe(this);
 		if (settings.getWorkingTab().length()>0) {
 			mainFrame.switchTo(settings.getWorkingTab());
@@ -84,10 +110,14 @@ public class Controller extends Locker {
 			selectInstrument(settings.getWorkingInstrument(),this);
 		}
 		unlockMe(this);
-		mainFrame.getFrame().setVisible(true);
+		
+		if (err.length()>0) {
+			showErrorMessage(this,err);
+		}
 	}
 
 	public void stop(Worker ignoreWorker) {
+		importExportWorker.stop();
 		player.stop();
 		stopSynthesizer();
 		mainFrame.getFrame().setVisible(false);
@@ -162,6 +192,21 @@ public class Controller extends Locker {
 		return r;
 	}
 	
+	protected File chooseFile(JFileChooser fileChooser,String title) {
+		File file = null;
+		int choice = fileChooser.showDialog(mainFrame.getFrame(),title);
+		if (choice==JFileChooser.APPROVE_OPTION) {
+			file = fileChooser.getSelectedFile();
+		}
+		return file;
+	}
+
+	public void setEnabled(boolean enabled) {
+		if (mainFrame!=null) {
+			mainFrame.getFrame().setEnabled(enabled);
+		}
+	}
+
 	public void switchTo(String tab) {
 		mainFrame.switchTo(tab);
 	}
@@ -198,10 +243,12 @@ public class Controller extends Locker {
 			stopSynthesizer();
 			lockMe(this);
 			this.composition = composition;
+			compositionOriginal = composition.copy();
 			compositionChanged = false;
 			unlockMe(this);
 			reconfigureSynthesizer();
 			mainFrame.updatedComposition(null,composition);
+			mainFrame.setCompositionChanged(false);
 		}
 	}
 	
@@ -294,5 +341,73 @@ public class Controller extends Locker {
 		lockMe(this);
 		player.stopInstrumentNotes();
 		unlockMe(this);
+	}
+
+	public void loadComposition() {
+		if (importExportWorker.isWorking()) {
+			showErrorMessage(this,"Import/export worker is busy");
+		} else {
+			boolean confirmed = true;
+			if (isCompositionChanged()) {
+				confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to load a different composition?");
+			}
+			if (confirmed) {
+				importExportWorker.loadComposition();
+			}
+		}
+	}
+
+	public void undoCompositionChanges() {
+		if (isCompositionChanged()) {
+			boolean confirmed = showConfirmMessage("Are you sure you want to undo the composition changes?");
+			if (confirmed) {
+				lockMe(this);
+				composition = compositionOriginal.copy();
+				unlockMe(this);
+				setComposition(composition);
+			}
+		}
+	}
+
+	public void saveComposition() {
+		if (importExportWorker.isWorking()) {
+			showErrorMessage(this,"Import/export worker is busy");
+		} else {
+			Composition copy = composition.copy();
+			File file = compositionFile;
+			importExportWorker.saveComposition(copy,file);
+		}
+	}
+	
+	public void newComposition() {
+		boolean confirmed = true;
+		if (isCompositionChanged()) {
+			confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to create a new composition?");
+		}
+		if (confirmed) {
+			lockMe(this);
+			composition = settings.getNewComposition();
+			settings.setWorkingCompositionFileName("");
+			compositionFile = null;
+			unlockMe(this);
+			setComposition(composition);
+			switchTo(FrameMain.COMPOSITION);
+		}
+	}
+
+	public void loadedComposition(File file,Composition comp) {
+		lockMe(this);
+		settings.setWorkingCompositionFileName(file.getAbsolutePath());
+		compositionFile = file;
+		unlockMe(this);
+		setComposition(comp);
+	}
+
+	public void savedComposition(File file,Composition comp) {
+		lockMe(this);
+		settings.setWorkingCompositionFileName(file.getAbsolutePath());
+		compositionFile = file;
+		unlockMe(this);
+		setComposition(comp);
 	}
 }

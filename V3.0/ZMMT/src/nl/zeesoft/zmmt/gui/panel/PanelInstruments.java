@@ -28,7 +28,7 @@ import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 public class PanelInstruments extends PanelObject implements ItemListener, CompositionUpdater {
 	private JComboBox<String>		instrument						= null;
 	private JPanel					cardPanel						= null;
-	private JFormattedTextField[]	instrumentPolyphony				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JFormattedTextField[]	instrumentTracks				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 
 	private JFormattedTextField[]	instrumentLayer1MidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 	private JFormattedTextField[]	instrumentLayer1Pressure		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
@@ -90,12 +90,6 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	}
 
 	@Override
-	public String validate() {
-		// Nothing to validate
-		return "";
-	}
-
-	@Override
 	public void handleValidChange() {
 		getController().changedComposition(FrameMain.INSTRUMENTS);
 	}
@@ -111,7 +105,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		setValidate(false);
 		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 			InstrumentConfiguration conf = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-			instrumentPolyphony[i].setValue(conf.getPolyphony());
+			instrumentTracks[i].setValue(conf.getTracks());
 			if (instrumentLayer1MidiNum[i]!=null) {
 				instrumentLayer1MidiNum[i].setValue(conf.getLayer1MidiNum());
 			}
@@ -203,7 +197,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	public void getCompositionUpdate(String tab, Composition comp) {
 		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 			InstrumentConfiguration inst = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-			inst.setPolyphony(Integer.parseInt(instrumentPolyphony[i].getValue().toString()));
+			inst.setTracks(Integer.parseInt(instrumentTracks[i].getValue().toString()));
 			inst.setLayer1MidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
 			inst.setLayer1Pressure(Integer.parseInt(instrumentLayer1Pressure[i].getValue().toString()));
 			inst.setLayer1Reverb(Integer.parseInt(instrumentLayer1Reverb[i].getValue().toString()));
@@ -305,9 +299,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		
 		int row = 0;
 
-		instrumentPolyphony[instrumentNum] = getNewNumberTextField(1);
-		JPanel slider = getNewNumberSlider(instrumentPolyphony[instrumentNum],0,8,4);
-		addLabel(panel,row,"Polyphony");
+		instrumentTracks[instrumentNum] = getNewNumberTextField(1);
+		JPanel slider = getNewNumberSlider(instrumentTracks[instrumentNum],0,12,4);
+		addLabel(panel,row,"Tracks");
 		addProperty(panel,row,slider);
 
 		row++;
