@@ -255,7 +255,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			CardLayout cl = (CardLayout)(cardPanel.getLayout());
 			cl.show(cardPanel,(String) evt.getItem());
 		} else if (evt.getSource()==echoInstrument) {
-			handlePropertyChanged();
+			handlePropertyChanged(evt.getSource());
 		}
 	}
 

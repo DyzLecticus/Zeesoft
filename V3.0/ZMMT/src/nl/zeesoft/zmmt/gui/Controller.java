@@ -1,8 +1,10 @@
 package nl.zeesoft.zmmt.gui;
 
+import java.awt.Font;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.sound.midi.Synthesizer;
@@ -11,6 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -56,6 +59,9 @@ public class Controller extends Locker {
 			// Ignore
 		}
 		settings.fromFile();
+		if (settings.getCustomFontName().length()>0) {
+			setFont(settings.getCustomFontName(),settings.isCustomFontBold(),settings.getCustomFontSize());
+		}
 		union = new WorkerUnion(getMessenger());
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
@@ -408,5 +414,21 @@ public class Controller extends Locker {
 		compositionFile = file;
 		unlockMe(this);
 		setComposition(comp);
+	}
+	
+	protected void setFont(String name, boolean bold, int size) {
+		int type = Font.PLAIN;
+		if (bold) {
+			type = Font.BOLD;
+		}
+		FontUIResource fr = new FontUIResource(new Font(name,type,size));
+	    Enumeration<Object> keys = UIManager.getDefaults().keys();
+	    while (keys.hasMoreElements()) {
+	        Object key = keys.nextElement();
+	        Object value = UIManager.get(key);
+	        if (value instanceof FontUIResource) {
+	            UIManager.put(key, fr);
+	        }
+	    }
 	}
 }

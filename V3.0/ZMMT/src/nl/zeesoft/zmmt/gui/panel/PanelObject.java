@@ -1,7 +1,6 @@
 package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -42,10 +41,10 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		handlePropertyChanged();
+		handlePropertyChanged(evt.getSource());
 	}
 
-	protected void handlePropertyChanged() {
+	protected void handlePropertyChanged(Object source) {
 		if (validate) {
 			String err = validate();
 			if (err.length()>0) {
@@ -181,14 +180,17 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 	}
 
 	protected JFormattedTextField getNewNumberTextField(int digits) {
+		JFormattedTextField r = null;
 		NumberFormat fmt = NumberFormat.getIntegerInstance(Locale.US);
 		fmt.setGroupingUsed(false);
-		fmt.setMaximumIntegerDigits(digits);
-		JFormattedTextField r = new JFormattedTextField(fmt);
+		fmt.setParseIntegerOnly(true);
+		fmt.setMaximumIntegerDigits(3);
+		fmt.setMinimumIntegerDigits(3);
+		r = new JFormattedTextField(fmt);
 		r.addFocusListener(this);
 		r.addPropertyChangeListener(this);
 		r.addKeyListener(controller.getKeyListener());
-		r.setPreferredSize(new Dimension(100,20));
+		r.setColumns(3);
 		return r;
 	}
 
@@ -205,7 +207,6 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 	
 	protected JPanel getNewNumberSlider(JFormattedTextField number,int min,int max,int init) {
 		JSlider slider = new JSlider(JSlider.HORIZONTAL,min,max,init);
-		slider.setPreferredSize(new Dimension(200,20));
 		slider.addKeyListener(controller.getPlayerKeyListener());
 		slider.addFocusListener(this);
 		NumberSlider ns = new NumberSlider(number,slider);

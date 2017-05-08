@@ -30,6 +30,10 @@ public class Settings {
 	private String						workingInstrument			= "";
 	private int							workingCompositionPattern	= 0;
 	
+	private String						customFontName				= "Courier New";
+	private boolean						customFontBold				= false;
+	private int							customFontSize				= 14;
+	
 	private SortedMap<String,Integer>	keyCodeNoteNumbers			= new TreeMap<String,Integer>();
 	
 	private SynthesizerConfiguration	synthesizerConfiguration	= null;
@@ -103,6 +107,9 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("workingInstrument",workingInstrument,true));
 		json.rootElement.children.add(new JsElem("workingCompositionFileName",workingCompositionFileName,true));
 		json.rootElement.children.add(new JsElem("workingCompositionPattern","" + workingCompositionPattern));
+		json.rootElement.children.add(new JsElem("customFontName",customFontName,true));
+		json.rootElement.children.add(new JsElem("customFontBold","" + customFontBold));
+		json.rootElement.children.add(new JsElem("customFontSize","" + customFontSize));
 		JsElem kcnnsElem = new JsElem("keyCodeNoteNumbers");
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
 			kcnnsElem.children.add(new JsElem(entry.getKey(),entry.getValue().toString()));
@@ -141,6 +148,12 @@ public class Settings {
 					workingCompositionFileName = elem.value.toString();
 				} else if (elem.name.equals("workingCompositionPattern")) {
 					workingCompositionPattern = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("customFontName")) {
+					customFontName = elem.value.toString();
+				} else if (elem.name.equals("customFontBold")) {
+					customFontBold = Boolean.parseBoolean(elem.value.toString());
+				} else if (elem.name.equals("customFontSize")) {
+					customFontSize = Integer.parseInt(elem.value.toString());
 				} else if (elem.name.equals("keyCodeNoteNumbers")) {
 					for (JsElem kElem: elem.children) {
 						String keyCode = kElem.name;
@@ -237,6 +250,30 @@ public class Settings {
 
 	public void setWorkingCompositionPattern(int workingCompositionPattern) {
 		this.workingCompositionPattern = workingCompositionPattern;
+	}
+
+	public String getCustomFontName() {
+		return customFontName;
+	}
+
+	public void setCustomFontName(String customFontName) {
+		this.customFontName = customFontName;
+	}
+
+	public boolean isCustomFontBold() {
+		return customFontBold;
+	}
+
+	public void setCustomFontBold(boolean customFontBold) {
+		this.customFontBold = customFontBold;
+	}
+
+	public int getCustomFontSize() {
+		return customFontSize;
+	}
+
+	public void setCustomFontSize(int customFontSize) {
+		this.customFontSize = customFontSize;
 	}
 
 	public SortedMap<String,Integer> getKeyCodeNoteNumbers() {
