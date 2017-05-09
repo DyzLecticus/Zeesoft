@@ -3,7 +3,6 @@ package nl.zeesoft.zmmt.gui;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -20,12 +19,15 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
+import nl.zeesoft.zmmt.gui.state.CompositionChangeSubscriber;
+import nl.zeesoft.zmmt.gui.state.CompositionStateManager;
 import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.syntesizer.MidiNote;
 
-public class Controller extends Locker {
+public class Controller extends Locker implements CompositionChangeSubscriber {
 	private Settings					settings					= null;
 	
 	private WorkerUnion					union						= null;
@@ -34,15 +36,14 @@ public class Controller extends Locker {
 	private FrameMain					mainFrame					= null;
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
-	
+
+	private CompositionStateManager		stateManager				= null;
 	private Composition					composition					= null;
 	private Composition					compositionOriginal			= null;
 	private boolean						compositionChanged			= false;
-	private List<String>				updatedCompositionTabs		= new ArrayList<String>();
-	private CompositionUpdateWorker		compositionUpdateWorker		= null;
+	private File						compositionFile				= null;
 	
 	private ImportExportWorker			importExportWorker			= null;
-	private File						compositionFile				= null;
 	
 	private Synthesizer					synthesizer					= null;
 
@@ -67,9 +68,12 @@ public class Controller extends Locker {
 		keyListener = new ControllerKeyListener(this);
 		player = new InstrumentPlayer(getMessenger(),getUnion(),this);
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
+		stateManager = new CompositionStateManager(getMessenger(),getUnion());
+		stateManager.addSubscriber(this);
+
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
-		compositionUpdateWorker = new CompositionUpdateWorker(getMessenger(),getUnion(),this);
+		
 		importExportWorker = new ImportExportWorker(getMessenger(),getUnion(),this);
 	}
 
@@ -102,7 +106,9 @@ public class Controller extends Locker {
 			importExportWorker.initialize(settings.getWorkDirName());
 		}
 		player.start();
-		compositionUpdateWorker.start();
+		
+		stateManager.start();
+		
 		InitializeSynthesizerWorker synthInit = new InitializeSynthesizerWorker(getMessenger(),getUnion(),this);
 		synthInit.start();
 		getMessenger().setPrintDebugMessages(debug);
@@ -127,7 +133,9 @@ public class Controller extends Locker {
 		player.stop();
 		stopSynthesizer();
 		mainFrame.getFrame().setVisible(false);
-		compositionUpdateWorker.stop();
+		
+		stateManager.stop();
+		
 		getMessenger().stop();
 		union.stopWorkers(ignoreWorker);
 		getMessenger().whileWorking();
@@ -243,6 +251,10 @@ public class Controller extends Locker {
 		return playerKeyListener;
 	}
 
+	public CompositionStateManager getStateManager() {
+		return stateManager;
+	}
+	
 	protected void setComposition(Composition composition) {
 		if (composition!=null) {
 			stopSynthesizer();
@@ -251,46 +263,19 @@ public class Controller extends Locker {
 			compositionOriginal = composition.copy();
 			compositionChanged = false;
 			unlockMe(this);
+			
+			stateManager.setComposition(this,composition);
 			reconfigureSynthesizer();
-			mainFrame.updatedComposition(null,composition);
 			mainFrame.setCompositionChanged(false);
 		}
 	}
 	
-	public void changedComposition(String tab) {
-		lockMe(this);
-		if (compositionUpdateWorker.isWorking() && !updatedCompositionTabs.contains(tab)) {
-			updatedCompositionTabs.add(tab);
-		}
-		unlockMe(this);
-	}
-
 	protected boolean isCompositionChanged() {
 		boolean r = false;
 		lockMe(this);
 		r = compositionChanged;
 		unlockMe(this);
 		return r;
-	}
-
-	protected void handleCompositionUpdates() {
-		boolean reconfigure = false;
-		lockMe(this);
-		for (String tab: updatedCompositionTabs) {
-			mainFrame.getCompositionUpdate(tab,composition);
-			mainFrame.updatedComposition(null,composition);
-			if (tab.equals(FrameMain.INSTRUMENTS)) {
-				reconfigure = true;
-			}
-			compositionChanged = true;
-			mainFrame.setCompositionChanged(compositionChanged);
-		}
-		updatedCompositionTabs.clear();
-		unlockMe(this);
-		if (reconfigure) {
-			stopSynthesizer();
-			reconfigureSynthesizer();
-		}
 	}
 
 	protected void setSynthesizer(Synthesizer synth) {
@@ -430,5 +415,20 @@ public class Controller extends Locker {
 	            UIManager.put(key, fr);
 	        }
 	    }
+	}
+
+	@Override
+	public void changedComposition(Object source, Composition composition) {
+		if (source!=this) {
+			lockMe(this);
+			compositionChanged = true;
+			unlockMe(this);
+			
+			mainFrame.setCompositionChanged(true);
+			if (source instanceof PanelInstruments) {
+				stopSynthesizer();
+				reconfigureSynthesizer();
+			}
+		}
 	}
 }

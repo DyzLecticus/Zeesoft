@@ -7,14 +7,13 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.panel.PanelComposition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
 import nl.zeesoft.zmmt.gui.panel.PanelObject;
 import nl.zeesoft.zmmt.gui.panel.PanelPatterns;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
 
-public class FrameMain extends FrameObject implements CompositionUpdater {
+public class FrameMain extends FrameObject {
 	private static final String	TITLE				= "ZeeTracker";
 	
 	public static final String	COMPOSITION			= "Composition";
@@ -65,30 +64,6 @@ public class FrameMain extends FrameObject implements CompositionUpdater {
 		addPanelToTabs(tabs,"Patterns",patternsPanel);
 		
 		getFrame().setContentPane(tabs);
-	}
-	
-	@Override
-	public void updatedComposition(String tab,Composition comp) {
-		if (tab==null || tab.length()==0 || !tab.equals(COMPOSITION)) {
-			compositionPanel.updatedComposition(tab,comp);
-		} 
-		if (tab==null || tab.length()==0 || !tab.equals(INSTRUMENTS)) {
-			instrumentsPanel.updatedComposition(tab,comp);
-		} 
-		if (tab==null || tab.length()==0 || !tab.equals(PATTERNS)) {
-			patternsPanel.updatedComposition(tab,comp);
-		} 
-	}
-
-	@Override
-	public void getCompositionUpdate(String tab, Composition comp) {
-		if (tab.equals(COMPOSITION)) {
-			compositionPanel.getCompositionUpdate(tab, comp);
-		} else if (tab.equals(INSTRUMENTS)) {
-			instrumentsPanel.getCompositionUpdate(tab, comp);
-		} else if (tab.equals(PATTERNS)) {
-			patternsPanel.getCompositionUpdate(tab, comp);
-		}
 	}
 	
 	protected JScrollPane addPanelToTabs(JTabbedPane tabs,String label,PanelObject panel) {

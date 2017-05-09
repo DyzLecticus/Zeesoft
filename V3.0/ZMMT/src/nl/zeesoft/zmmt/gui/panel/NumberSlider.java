@@ -37,7 +37,11 @@ public class NumberSlider implements ChangeListener,  PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (number.getValue()!=null) {
 			int value = Integer.parseInt(number.getValue().toString());
-			if (slider.getValue()!=value) {
+			if (value>slider.getMaximum()) {
+				number.setValue(slider.getMaximum());
+			} else if (value<slider.getMinimum()) {
+				number.setValue(slider.getMinimum());
+			} else if (slider.getValue()!=value) {
 				slider.setValue(value);
 			}
 		}

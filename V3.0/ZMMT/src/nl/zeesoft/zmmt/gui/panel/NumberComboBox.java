@@ -40,8 +40,14 @@ public class NumberComboBox implements ItemListener, PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (number.getValue()!=null) {
 			int index = Integer.parseInt(number.getValue().toString()) + subtract;
-			if (comboBox.getSelectedIndex()!=index) {
-				comboBox.setSelectedIndex(Integer.parseInt(number.getValue().toString()) + subtract);
+			if (index>=comboBox.getItemCount()) {
+				index = (comboBox.getItemCount() - 1);
+				number.setValue((index - subtract));
+			} else if (index<0) {
+				index = 0;
+				number.setValue((index - subtract));
+			} else if (comboBox.getSelectedIndex()!=index) {
+				comboBox.setSelectedIndex(index);
 			}
 		}
 	}

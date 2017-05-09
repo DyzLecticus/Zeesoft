@@ -16,16 +16,16 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
 import nl.zeesoft.zmmt.composition.Composition;
-import nl.zeesoft.zmmt.gui.CompositionUpdater;
 import nl.zeesoft.zmmt.gui.Controller;
-import nl.zeesoft.zmmt.gui.FrameMain;
+import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
+import nl.zeesoft.zmmt.gui.state.CompositionChangeSubscriber;
 import nl.zeesoft.zmmt.syntesizer.Drum;
 import nl.zeesoft.zmmt.syntesizer.DrumConfiguration;
 import nl.zeesoft.zmmt.syntesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 
-public class PanelInstruments extends PanelObject implements ItemListener, CompositionUpdater {
+public class PanelInstruments extends PanelObject implements ItemListener, CompositionChangePublisher, CompositionChangeSubscriber {
 	private JComboBox<String>		instrument						= null;
 	private JPanel					cardPanel						= null;
 	private JFormattedTextField[]	instrumentTracks				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
@@ -64,6 +64,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	
 	public PanelInstruments(Controller controller) {
 		super(controller);
+		controller.getStateManager().addSubscriber(this);
 	}
 
 	@Override
@@ -90,21 +91,21 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	}
 
 	@Override
-	public void handleValidChange() {
-		getController().changedComposition(FrameMain.INSTRUMENTS);
-	}
-
-	@Override
 	public void requestFocus() {
 		getScroller().getVerticalScrollBar().setValue(getScroller().getVerticalScrollBar().getMinimum());
 		instrument.requestFocus();
 	}
 
 	@Override
-	public void updatedComposition(String tab,Composition comp) {
+	public void handleValidChange() {
+		getController().getStateManager().addWaitingPublisher(this);
+	}
+
+	@Override
+	public void changedComposition(Object source, Composition composition) {
 		setValidate(false);
 		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
-			InstrumentConfiguration conf = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
+			InstrumentConfiguration conf = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			instrumentTracks[i].setValue(conf.getTracks());
 			if (instrumentLayer1MidiNum[i]!=null) {
 				instrumentLayer1MidiNum[i].setValue(conf.getLayer1MidiNum());
@@ -136,7 +137,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			}
 		}
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
-			DrumConfiguration conf = comp.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
+			DrumConfiguration conf = composition.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
 			drumLayer1MidiNote[d].setValue(conf.getLayer1MidiNote());
 			drumLayer1BaseVelocity[d].setValue(conf.getLayer1BaseVelocity());
 			drumLayer1AccentVelocity[d].setValue(conf.getLayer1AccentVelocity());
@@ -147,7 +148,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			getSliderForNumber(drumLayer2BaseVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
 			getSliderForNumber(drumLayer2AccentVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
 		}
-		EchoConfiguration echo = comp.getSynthesizerConfiguration().getEcho();
+		EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
 		if (echo.getInstrument().length()==0) {
 			echoInstrument.setSelectedIndex(0);
 			getSliderForNumber(echoLayer).setEnabled(false);
@@ -194,9 +195,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	}
 
 	@Override
-	public void getCompositionUpdate(String tab, Composition comp) {
+	public void setChangesInComposition(Composition composition) {
 		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
-			InstrumentConfiguration inst = comp.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
+			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			inst.setTracks(Integer.parseInt(instrumentTracks[i].getValue().toString()));
 			inst.setLayer1MidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
 			inst.setLayer1Pressure(Integer.parseInt(instrumentLayer1Pressure[i].getValue().toString()));
@@ -220,7 +221,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			}
 		}
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
-			DrumConfiguration drum = comp.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
+			DrumConfiguration drum = composition.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
 			drum.setLayer1MidiNote(Integer.parseInt(drumLayer1MidiNote[d].getValue().toString()));
 			drum.setLayer1BaseVelocity(Integer.parseInt(drumLayer1BaseVelocity[d].getValue().toString()));
 			drum.setLayer1AccentVelocity(Integer.parseInt(drumLayer1AccentVelocity[d].getValue().toString()));
@@ -228,7 +229,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			drum.setLayer2BaseVelocity(Integer.parseInt(drumLayer2BaseVelocity[d].getValue().toString()));
 			drum.setLayer2AccentVelocity(Integer.parseInt(drumLayer2AccentVelocity[d].getValue().toString()));
 		}
-		EchoConfiguration echo = comp.getSynthesizerConfiguration().getEcho();
+		EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
 		echo.setInstrument(echoInstrument.getSelectedItem().toString());
 		if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
 			echo.getInstrument().equals(Instrument.SYNTH1) ||

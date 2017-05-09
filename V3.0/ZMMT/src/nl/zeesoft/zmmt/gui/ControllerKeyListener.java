@@ -50,7 +50,7 @@ public class ControllerKeyListener implements KeyListener {
 		if (evt.getModifiersEx()==KeyEvent.CTRL_DOWN_MASK) {
             if (evt.getKeyCode() == KeyEvent.VK_L) {
 				controller.loadComposition();
-            } else if (evt.getKeyCode() == KeyEvent.VK_Z) {
+            } else if (evt.getKeyCode() == KeyEvent.VK_U) {
 				controller.undoCompositionChanges();
             } else if (evt.getKeyCode() == KeyEvent.VK_S) {
 				controller.saveComposition();

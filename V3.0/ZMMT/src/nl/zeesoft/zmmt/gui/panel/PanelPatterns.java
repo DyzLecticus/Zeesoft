@@ -16,11 +16,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import nl.zeesoft.zmmt.composition.Composition;
-import nl.zeesoft.zmmt.gui.CompositionUpdater;
 import nl.zeesoft.zmmt.gui.Controller;
-import nl.zeesoft.zmmt.gui.FrameMain;
+import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
+import nl.zeesoft.zmmt.gui.state.CompositionChangeSubscriber;
 
-public class PanelPatterns extends PanelObject implements ItemListener, ListSelectionListener, CompositionUpdater {
+public class PanelPatterns extends PanelObject implements ItemListener, ListSelectionListener, CompositionChangePublisher, CompositionChangeSubscriber {
 	private int						selectedPattern					= 0;
 	
 	private JComboBox<String>		instrument						= null;
@@ -33,6 +33,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	
 	public PanelPatterns(Controller controller) {
 		super(controller);
+		controller.getStateManager().addSubscriber(this);
 	}
 
 	@Override
@@ -59,13 +60,13 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 
 	@Override
 	public void handleValidChange() {
-		getController().changedComposition(FrameMain.PATTERNS);
+		getController().getStateManager().addWaitingPublisher(this);
 	}
 
 	@Override
-	public void updatedComposition(String tab,Composition comp) {
+	public void changedComposition(Object source, Composition composition) {
 		setValidate(false);
-		compositionCopy = comp.copy();
+		compositionCopy = composition.copy();
 		gridController.setDefaultPatternBars(compositionCopy.getDefaultPatternBars());
 		gridController.setStepsPerBar(compositionCopy.getStepsPerBar());
 		gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
@@ -75,7 +76,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	}
 
 	@Override
-	public void getCompositionUpdate(String tab, Composition comp) {
+	public void setChangesInComposition(Composition composition) {
 		// TODO: Implement
 	}
 

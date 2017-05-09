@@ -7,11 +7,11 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
 import nl.zeesoft.zmmt.composition.Composition;
-import nl.zeesoft.zmmt.gui.CompositionUpdater;
 import nl.zeesoft.zmmt.gui.Controller;
-import nl.zeesoft.zmmt.gui.FrameMain;
+import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
+import nl.zeesoft.zmmt.gui.state.CompositionChangeSubscriber;
 
-public class PanelComposition extends PanelObject implements CompositionUpdater {
+public class PanelComposition extends PanelObject implements CompositionChangePublisher, CompositionChangeSubscriber {
 	private JFormattedTextField		composer			= null;
 	private JFormattedTextField		name				= null;
 	private JFormattedTextField		beatsPerMinute		= null;
@@ -20,6 +20,7 @@ public class PanelComposition extends PanelObject implements CompositionUpdater 
 	
 	public PanelComposition(Controller controller) {
 		super(controller);
+		controller.getStateManager().addSubscriber(this);
 	}
 
 	@Override
@@ -64,32 +65,36 @@ public class PanelComposition extends PanelObject implements CompositionUpdater 
 	}
 
 	@Override
-	public void handleValidChange() {
-		getController().changedComposition(FrameMain.COMPOSITION);
+	public void requestFocus() {
+		if (name.getValue()!=null && name.getValue().toString().length()>0) {
+			getSliderForNumber(beatsPerMinute).getSlider().requestFocus();
+		} else {
+			name.requestFocus();
+		}
 	}
 
 	@Override
-	public void requestFocus() {
-		name.requestFocus();
+	public void handleValidChange() {
+		getController().getStateManager().addWaitingPublisher(this);
 	}
 	
 	@Override
-	public void updatedComposition(String tab,Composition comp) {
+	public void changedComposition(Object source, Composition composition) {
 		setValidate(false);
-		composer.setValue(comp.getComposer());
-		name.setValue(comp.getName());
-		beatsPerMinute.setValue(comp.getBeatsPerMinute());
-		beatsPerBar.setValue(comp.getBeatsPerBar());
-		stepsPerBeat.setValue(comp.getStepsPerBeat());
+		composer.setValue(composition.getComposer());
+		name.setValue(composition.getName());
+		beatsPerMinute.setValue(composition.getBeatsPerMinute());
+		beatsPerBar.setValue(composition.getBeatsPerBar());
+		stepsPerBeat.setValue(composition.getStepsPerBeat());
 		setValidate(true);
 	}
 
 	@Override
-	public void getCompositionUpdate(String tab, Composition comp) {
-		comp.setComposer(composer.getValue().toString());
-		comp.setName(name.getValue().toString());
-		comp.setBeatsPerMinute(Integer.parseInt(beatsPerMinute.getValue().toString()));
-		comp.setBeatsPerBar(Integer.parseInt(beatsPerBar.getValue().toString()));
-		comp.setStepsPerBeat(Integer.parseInt(stepsPerBeat.getValue().toString()));
+	public void setChangesInComposition(Composition composition) {
+		composition.setComposer(composer.getValue().toString());
+		composition.setName(name.getValue().toString());
+		composition.setBeatsPerMinute(Integer.parseInt(beatsPerMinute.getValue().toString()));
+		composition.setBeatsPerBar(Integer.parseInt(beatsPerBar.getValue().toString()));
+		composition.setStepsPerBeat(Integer.parseInt(stepsPerBeat.getValue().toString()));
 	}
 }
