@@ -10,23 +10,19 @@ import javax.sound.midi.Synthesizer;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
 import nl.zeesoft.zmmt.syntesizer.MidiNote;
 import nl.zeesoft.zmmt.syntesizer.MidiNoteDelayed;
 
 public class InstrumentPlayer extends Locker {
-	private Controller						controller				= null;
-	
 	private InstrumentPlayerEchoWorker		echoWorker				= null;
 	
 	private Synthesizer						synthesizer				= null;
 	
 	private SortedMap<String,MidiNote>		playingNotes			= new TreeMap<String,MidiNote>();
 	
-	public InstrumentPlayer(Messenger msgr, WorkerUnion uni,Controller controller) {
+	public InstrumentPlayer(Messenger msgr, WorkerUnion uni) {
 		super(msgr);
-		this.controller = controller;
 		echoWorker = new InstrumentPlayerEchoWorker(msgr,uni,this);
 	}
 
@@ -112,9 +108,5 @@ public class InstrumentPlayer extends Locker {
 		if (name.equals(Instrument.ECHO)) {
 			echoWorker.clearNotes();
 		}
-	}
-
-	public void stopInstrumentNotes() {
-		stopInstrumentNotes(controller.getStateManager().getSelectedInstrument());
 	}
 }

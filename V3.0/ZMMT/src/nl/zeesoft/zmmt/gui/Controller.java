@@ -76,7 +76,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
-		player = new InstrumentPlayer(getMessenger(),getUnion(),this);
+		player = new InstrumentPlayer(getMessenger(),getUnion());
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
 
 		mainFrame = new FrameMain(this);
@@ -296,7 +296,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	public void stopNotes() {
 		lockMe(this);
-		player.stopInstrumentNotes();
+		player.stopInstrumentNotes(stateManager.getSelectedInstrument());
 		unlockMe(this);
 	}
 
