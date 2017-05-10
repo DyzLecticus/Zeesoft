@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.json.JsFile;
 
 public class Pattern {
 	private int				number		= 0;
-	private int 			bars		= 4;
+	private int 			bars		= 0;
 	private List<Note>		notes		= new ArrayList<Note>();
 	
 	public Pattern copy() {
@@ -21,7 +21,9 @@ public class Pattern {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("number","" + number));
-		json.rootElement.children.add(new JsElem("bars","" + bars));
+		if (bars>0) {
+			json.rootElement.children.add(new JsElem("bars","" + bars));
+		}
 		if (notes.size()>0) {
 			JsElem stepsElem = new JsElem("steps",true);
 			json.rootElement.children.add(stepsElem);

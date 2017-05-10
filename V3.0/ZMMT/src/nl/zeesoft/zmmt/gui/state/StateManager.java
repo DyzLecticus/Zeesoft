@@ -62,6 +62,15 @@ public class StateManager extends StateObject {
 		unlockMe(this);
 	}
 	
+	public void setSelectedPattern(Object source,int pattern) {
+		lockMe(this);
+		if (super.getSelectedPattern()!=pattern) {
+			super.setSelectedPattern(pattern);
+			publishStateChangeEvent(StateChangeEvent.SELECTED_PATTERN,source);
+		}
+		unlockMe(this);
+	}
+	
 	public void setCompositionChanged(Object source,boolean compositionChanged) {
 		lockMe(this);
 		if (super.isCompositionChanged()!=compositionChanged) {
@@ -116,6 +125,15 @@ public class StateManager extends StateObject {
 	}
 
 	@Override
+	public int getSelectedPattern() {
+		int r = 0;
+		lockMe(this);
+		r = super.getSelectedPattern();
+		unlockMe(this);
+		return r;
+	}
+
+	@Override
 	public boolean isCompositionChanged() {
 		boolean r = false;
 		lockMe(this);
@@ -159,6 +177,7 @@ public class StateManager extends StateObject {
 		StateChangeEvent evt = new StateChangeEvent(type,source);
 		evt.setSelectedTab(super.getSelectedTab());
 		evt.setSelectedInstrument(super.getSelectedInstrument());
+		evt.setSelectedPattern(super.getSelectedPattern());
 		evt.setCompositionChanged(super.isCompositionChanged());
 		evt.setComposition(super.getComposition());
 		evt.setSettings(super.getSettings());

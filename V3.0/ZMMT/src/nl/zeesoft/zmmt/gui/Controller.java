@@ -72,6 +72,9 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (settings.getWorkingInstrument().length()>0) {
 			stateManager.setSelectedInstrument(this,settings.getWorkingInstrument());
 		}
+		if (settings.getWorkingCompositionPattern()>0) {
+			stateManager.setSelectedPattern(this,settings.getWorkingCompositionPattern());
+		}
 		stateManager.addSubscriber(this);
 
 		adapter = new ControllerWindowAdapter(this);
@@ -155,6 +158,11 @@ public class Controller extends Locker implements StateChangeSubscriber {
 				lockMe(this);
 				settings.setWorkingTab(stateManager.getSelectedTab());
 				settings.setWorkingInstrument(stateManager.getSelectedInstrument());
+				if (settings.getWorkingCompositionFileName().length()>0) {
+					settings.setWorkingCompositionPattern(stateManager.getSelectedPattern());
+				} else {
+					settings.setWorkingCompositionPattern(0);
+				}
 				String err = settings.toFile();
 				if (err.length()>0) {
 					showErrorMessage(settings,err);
@@ -345,6 +353,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			lockMe(this);
 			composition = settings.getNewComposition();
 			settings.setWorkingCompositionFileName("");
+			settings.setWorkingCompositionPattern(0);
 			compositionFile = null;
 			unlockMe(this);
 			setComposition(composition);

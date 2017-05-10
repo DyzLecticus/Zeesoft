@@ -3,6 +3,7 @@ package nl.zeesoft.zmmt.gui.state;
 public class StateChangeEvent extends StateObject {
 	public static final String	SELECTED_TAB				= "SELECTED_TAB";
 	public static final String	SELECTED_INSTRUMENT			= "SELECTED_INSTRUMENT";
+	public static final String	SELECTED_PATTERN			= "SELECTED_PATTERN";
 
 	public static final String	CHANGED_SETTINGS			= "CHANGED_SETTINGS";
 	public static final String	CHANGED_COMPOSITION			= "CHANGED_COMPOSITION";

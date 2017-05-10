@@ -8,6 +8,7 @@ import nl.zeesoft.zmmt.gui.Settings;
 public abstract class StateObject extends Locker {
 	private String 				selectedTab				= "";
 	private String 				selectedInstrument		= "";
+	private int 				selectedPattern			= 0;
 	private boolean 			compositionChanged		= false;
 	
 	private Settings			settings				= null;
@@ -31,6 +32,14 @@ public abstract class StateObject extends Locker {
 	
 	protected void setSelectedInstrument(String selectedInstrument) {
 		this.selectedInstrument = selectedInstrument;
+	}
+
+	public int getSelectedPattern() {
+		return selectedPattern;
+	}
+
+	protected void setSelectedPattern(int selectedPattern) {
+		this.selectedPattern = selectedPattern;
 	}
 	
 	public boolean isCompositionChanged() {

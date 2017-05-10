@@ -2,39 +2,44 @@ package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
-public class PanelPatterns extends PanelObject implements ItemListener, ListSelectionListener, CompositionChangePublisher, StateChangeSubscriber {
+public class PanelPatterns extends PanelObject implements ActionListener, CompositionChangePublisher, StateChangeSubscriber {
+	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
-	
-	private JComboBox<String>		instrument						= null;
 
-	private JList<String>			patternSelect					= null;
+	private int						barsPerPattern					= 0;
+	private JCheckBox				customBars						= null;
+	private JComboBox<String>		bars							= null;
+
+	private JCheckBox				insertMode						= null;
+	
 	private JTable					grid							= null;
 	private PatternGridController	gridController					= null;
 	
 	private	Composition				compositionCopy					= null;
+	private Pattern					workingPattern					= null;
 	
 	public PanelPatterns(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
+		selectedPattern = controller.getStateManager().getSelectedPattern();
 	}
 
 	@Override
@@ -45,20 +50,18 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 		getPanel().setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
 		int row = 0;
+		addComponent(getPanel(), row, 0.01,getEditPanel());
 
-		/*
-		instrument = getController().getNewInstrumentSelector();
-		instrument.addItemListener(this);
-		addComponent(getPanel(),row,0.01,instrument,false);
-		*/
-		
+		row++;
+		addComponent(getPanel(), row, 0.01,getDetailsPanel());
+
 		row++;
 		addComponent(getPanel(),row,0.99,getPatternPanel(),true);		
 	}
 
 	@Override
 	public void requestFocus() {
-		patternSelect.requestFocus();
+		pattern.requestFocus();
 	}
 
 	@Override
@@ -69,13 +72,21 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+		if (evt.getType().equals(StateChangeEvent.SELECTED_PATTERN)) {
+			selectedPattern = evt.getSelectedPattern();
+			pattern.setSelectedIndex(selectedPattern);
+			updateWorkingPattern();
+		} else if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			compositionCopy = evt.getComposition().copy();
-			gridController.setDefaultPatternBars(compositionCopy.getBarsPerPattern());
-			gridController.setStepsPerBar(compositionCopy.getStepsPerBar());
-			//gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(evt.getSelectedInstrument()));
-			gridController.setPattern(compositionCopy.getPattern(selectedPattern));
-			gridController.fireTableStructureChanged();
+			barsPerPattern = compositionCopy.getBarsPerPattern();
+			updateWorkingPattern();
+			if (gridController.setLayout(
+				compositionCopy.getBarsPerPattern(),
+				compositionCopy.getBeatsPerBar(),
+				compositionCopy.getStepsPerBeat()
+				)) {
+				gridController.fireTableStructureChanged();
+			}
 		}
 		setValidate(true);
 	}
@@ -85,79 +96,135 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 		// TODO: Implement
 	}
 
-	@Override
-	public void itemStateChanged(ItemEvent evt) {
-		if (evt.getSource()==instrument) {
-			//gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
-			//gridController.fireTableStructureChanged();
-			// TODO: Implement
-		}
-	}
-
-	@Override
-	public void valueChanged(ListSelectionEvent evt) {
-		if (evt.getSource()==patternSelect) {
-			if (setSelectedPattern(patternSelect.getSelectedIndex())) {
-				//getController().selectedPattern(selectedPattern,evt.getSource());
-			}
-		}
-	}
-
-	public int getSelectedPattern() {
-		return selectedPattern;
-	}
-	
-	protected boolean setSelectedPattern(int selectedPattern) {
-		boolean changed = false;
-		if (this.selectedPattern!=selectedPattern) {
-			this.selectedPattern = selectedPattern;
-			changed = true;
-			if (patternSelect.getSelectedIndex()!=selectedPattern) {
-				patternSelect.setSelectedIndex(selectedPattern);
-			}
+	protected void updateWorkingPattern() {
+		Pattern current = workingPattern;
+		if (workingPattern==null || workingPattern.getNumber()!=selectedPattern) {
 			if (compositionCopy!=null) {
-				gridController.setPattern(compositionCopy.getPattern(selectedPattern));
+				workingPattern = compositionCopy.getPattern(selectedPattern);
+			} else {
+				workingPattern = null;
+			}
+			
+			if (workingPattern!=null && workingPattern.getBars()>0) {
+				bars.setSelectedIndex((workingPattern.getBars() + 1));
+				bars.setEnabled(true);
+			} else {
+				bars.setEnabled(false);
+				bars.setSelectedIndex(0);
+			}
+			
+			if (
+				(current==null && workingPattern!=null) ||
+				(current!=null && workingPattern==null) ||
+				(current!=null && workingPattern!=null)
+				) {
+				gridController.setWorkingPattern(workingPattern);
 				gridController.fireTableDataChanged();
 			}
 		}
-		return changed;
 	}
 	
-	protected JPanel getPatternPanel() {
-		JPanel r = new JPanel();
-		r.setLayout(new BorderLayout());
-
-		String[] patternNumbers = new String[100];
-		for (int p = 0; p <= 99; p++) {
-			String pat = "" + p;
-			if (p<10) {
-				pat = "0" + pat;
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		if (evt.getSource()==pattern) {
+			if (pattern.getSelectedIndex()!=selectedPattern) {
+				selectedPattern = pattern.getSelectedIndex();
+				getController().getStateManager().setSelectedPattern(this,selectedPattern);
 			}
-			patternNumbers[p] = pat;
+		} else if (evt.getSource()==customBars) {
+			if (bars.isEnabled()!=customBars.isSelected()) {
+				bars.setEnabled(customBars.isSelected());
+				if (!customBars.isSelected() && bars.getSelectedIndex()>0) {
+					bars.setSelectedIndex(0);
+					if (workingPattern!=null) {
+						workingPattern.setBars(0);
+						// TODO: publish pattern change
+					}
+				}
+			}
+		} else if (evt.getSource()==bars) {
+			if (customBars.isSelected()) {
+				if (workingPattern!=null && workingPattern.getBars()!=bars.getSelectedIndex()) {
+					workingPattern.setBars(bars.getSelectedIndex());
+					// TODO: publish pattern change
+				}
+			}
 		}
-		patternSelect = new JList<String>();
-		patternSelect.setListData(patternNumbers);
-		patternSelect.setSelectedIndex(selectedPattern);
-		patternSelect.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		patternSelect.setLayoutOrientation(JList.VERTICAL);
-		patternSelect.addListSelectionListener(this);
-		patternSelect.setFocusable(true);
-		for (int l = 0; l < patternSelect.getKeyListeners().length; l++) {
-			patternSelect.removeKeyListener(patternSelect.getKeyListeners()[l]);
-		}
-		patternSelect.addKeyListener(getController().getPlayerKeyListener());
-		
-		JScrollPane scroller = new JScrollPane(patternSelect);
-		scroller.getVerticalScrollBar().setUnitIncrement(20);
-		r.add(scroller,BorderLayout.LINE_START);
-		
+	}
+	
+	protected JScrollPane getPatternPanel() {
 		gridController = new PatternGridController();
 		grid = new JTable();
 		grid.addKeyListener(getController().getPlayerKeyListener());
 		grid.setModel(gridController);
-		scroller = new JScrollPane(grid);
-		scroller.getVerticalScrollBar().setUnitIncrement(20);
-		r.add(scroller,BorderLayout.CENTER);
+		JScrollPane r = new JScrollPane(grid);
+		r.getVerticalScrollBar().setUnitIncrement(20);
+		return r;
+	}
+	
+	protected JComboBox<String> getPatternSelector() {
+		JComboBox<String> r = new JComboBox<String>();
+		for (int p = 0; p <= 99; p++) {
+			r.addItem(String.format("%02d",p));
+		}
+		r.setSelectedIndex(selectedPattern);
+		r.addActionListener(this);
+		for (int l = 0; l < r.getKeyListeners().length; l++) {
+			r.removeKeyListener(r.getKeyListeners()[l]);
+		}
+		r.addKeyListener(getController().getPlayerKeyListener());
+		return r;
+	}
+
+	protected JComboBox<String> getBarsSelector() {
+		JComboBox<String> r = new JComboBox<String>();
+		for (int b = 0; b <= 16; b++) {
+			if (b==0) {
+				r.addItem("");
+			} else {
+				r.addItem(String.format("%02d",b));
+			}
+		}
+		r.setEnabled(false);
+		r.setSelectedIndex(barsPerPattern);
+		r.addActionListener(this);
+		for (int l = 0; l < r.getKeyListeners().length; l++) {
+			r.removeKeyListener(r.getKeyListeners()[l]);
+		}
+		r.addKeyListener(getController().getPlayerKeyListener());
+		return r;
+	}
+	
+	protected JPanel getEditPanel() {
+		JPanel r = new JPanel();
+		r.setLayout(new BorderLayout());
+
+		JPanel labelProp = new JPanel();
+		labelProp.add(new JLabel("Pattern "));
+		pattern = getPatternSelector();
+		labelProp.add(pattern);
+		r.add(labelProp,BorderLayout.LINE_START);
+
+		insertMode = new JCheckBox("Insert ");
+		insertMode.addKeyListener(getController().getPlayerKeyListener());
+		r.add(insertMode,BorderLayout.LINE_END);
+		
+		return r;
+	}
+
+	protected JPanel getDetailsPanel() {
+		JPanel r = new JPanel();
+		r.setLayout(new BorderLayout());
+		r.setBorder(BorderFactory.createTitledBorder("Details"));
+
+		JPanel labelProp = new JPanel();
+		customBars = new JCheckBox("Custom bars");
+		customBars.addActionListener(this);
+		customBars.addKeyListener(getController().getPlayerKeyListener());
+		labelProp.add(customBars);
+		bars = getBarsSelector();
+		labelProp.add(bars);
+		r.add(labelProp,BorderLayout.LINE_START);
 		
 		return r;
 	}

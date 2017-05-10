@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -130,6 +131,17 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		gbc.gridx = 0;
 		gbc.gridy = row;
 		panel.add(lbl,gbc);
+	}
+	
+	protected void addCheckBoxLabel(JPanel panel,int row,JCheckBox checkBox) {
+		checkBox.addKeyListener(controller.getPlayerKeyListener());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.LINE_START;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 0.01;
+		gbc.gridx = 0;
+		gbc.gridy = row;
+		panel.add(checkBox,gbc);
 	}
 
 	protected void addProperty(JPanel panel,int row,Component c) {
