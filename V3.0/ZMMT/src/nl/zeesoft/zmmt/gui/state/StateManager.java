@@ -6,17 +6,21 @@ import java.util.List;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.Settings;
+import nl.zeesoft.zmmt.syntesizer.Instrument;
 
 public class StateManager extends StateObject {
-	private List<StateChangeSubscriber>			subscribers					= new ArrayList<StateChangeSubscriber>();
+	private List<StateChangeSubscriber>			subscribers				= new ArrayList<StateChangeSubscriber>();
 	
-	private List<CompositionChangePublisher>	waitingPublishers			= new ArrayList<CompositionChangePublisher>();
-	private CompositionChangePublishWorker 			publishWorker				= null;
+	private List<CompositionChangePublisher>	waitingPublishers		= new ArrayList<CompositionChangePublisher>();
+	private CompositionChangePublishWorker 		publishWorker			= null;
 	
 	public StateManager(Messenger msgr,WorkerUnion union) {
 		super(msgr);
 		publishWorker = new CompositionChangePublishWorker(msgr,union,this);
+		super.setSelectedTab(FrameMain.COMPOSITION);
+		super.setSelectedInstrument(Instrument.LEAD);
 	}
 	
 	public void start() {
@@ -138,7 +142,6 @@ public class StateManager extends StateObject {
 		return r;
 	}
 
-	
 	protected void publishChanges() {
 		lockMe(this);
 		if (waitingPublishers.size() > 0) {

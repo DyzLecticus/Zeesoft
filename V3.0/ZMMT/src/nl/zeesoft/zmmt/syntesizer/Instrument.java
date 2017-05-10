@@ -15,7 +15,7 @@ public class Instrument {
 	public static final	String		ECHO				= "Echo";
 	public static final String[]	INSTRUMENTS			= {SYNTH_BASS1,SYNTH_BASS2,SYNTH_BASS3,SYNTH1,SYNTH2,SYNTH3,LEAD,STRINGS,DRUMS,ECHO};
 	
-	public static final int getMidiChannelForInstrument(String name,int layer) {
+	public static int getMidiChannelForInstrument(String name,int layer) {
 		int r = -1;
 		if (layer==2 && name.equals(ECHO)) {
 			r = 15;
@@ -39,18 +39,13 @@ public class Instrument {
 			} else if (name.equals(ECHO)) {
 				r = 8;
 			} else {
-				for (int i = 0; i < INSTRUMENTS.length; i++) {
-					if (INSTRUMENTS[i].equals(name)) {
-						r = i;
-						break;
-					}
-				}
+				r = getIndexForInstrument(name);
 			}
 		}
 		return r;
 	}
 	
-	public static final Color getColorForInstrument(String name) {
+	public static Color getColorForInstrument(String name) {
 		Color r = null;
 		if (name.equals(SYNTH_BASS1)) {
 			r = new Color(153,204,255);
@@ -72,6 +67,17 @@ public class Instrument {
 			r = new Color(255,178,102);
 		} else if (name.equals(ECHO)) {
 			r = new Color(178,255,102);
+		}
+		return r;
+	}
+	
+	public static int getIndexForInstrument(String name) {
+		int r = -1;
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			if (Instrument.INSTRUMENTS[i].equals(name)) {
+				r = i;
+				break;
+			}
 		}
 		return r;
 	}

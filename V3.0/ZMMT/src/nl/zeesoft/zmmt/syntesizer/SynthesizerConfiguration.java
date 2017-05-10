@@ -31,7 +31,6 @@ public class SynthesizerConfiguration {
 			JsElem instElem = new JsElem("instrument");
 			json.rootElement.children.add(instElem);
 			instElem.children.add(new JsElem("name",inst.getName(),true));
-			instElem.children.add(new JsElem("polyphony","" + inst.getTracks()));
 			instElem.children.add(new JsElem("layer1MidiNum","" + inst.getLayer1MidiNum()));
 			instElem.children.add(new JsElem("layer1Pressure","" + inst.getLayer1Pressure()));
 			instElem.children.add(new JsElem("layer1Reverb","" + inst.getLayer1Reverb()));
@@ -87,8 +86,6 @@ public class SynthesizerConfiguration {
 					for (JsElem val: elem.children) {
 						if (val.name.equals("name")) {
 							inst.setName(val.value.toString());
-						} else if (val.name.equals("polyphony")) {
-							inst.setTracks(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1MidiNum")) {
 							inst.setLayer1MidiNum(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1Reverb")) {
@@ -503,7 +500,6 @@ public class SynthesizerConfiguration {
 			instrument.setLayer2Reverb(127);
 		} else if (instrument.getName().equals(Instrument.DRUMS)) {
 			instrument.setLayer1MidiNum(118);
-			instrument.setTracks(8);
 			instrument.setLayer1Reverb(0);
 		}
 	}

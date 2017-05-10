@@ -7,7 +7,6 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.sound.midi.Synthesizer;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -32,17 +31,16 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private Settings					settings					= null;
 	
 	private WorkerUnion					union						= null;
+	private StateManager				stateManager				= null;
+
 	private ControllerWindowAdapter		adapter						= null;
 	private ControllerKeyListener		keyListener					= null;
 	private FrameMain					mainFrame					= null;
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
-
-	private StateManager				stateManager				= null;
 	
 	private Composition					composition					= null;
 	private Composition					compositionOriginal			= null;
-	private boolean						compositionChanged			= false;
 	private File						compositionFile				= null;
 	
 	private ImportExportWorker			importExportWorker			= null;
@@ -65,13 +63,21 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (settings.getCustomFontName().length()>0) {
 			setFont(settings.getCustomFontName(),settings.isCustomFontBold(),settings.getCustomFontSize());
 		}
+
 		union = new WorkerUnion(getMessenger());
+		stateManager = new StateManager(getMessenger(),getUnion());
+		if (settings.getWorkingTab().length()>0) {
+			stateManager.setSelectedTab(this,settings.getWorkingTab());
+		}
+		if (settings.getWorkingInstrument().length()>0) {
+			stateManager.setSelectedInstrument(this,settings.getWorkingInstrument());
+		}
+		stateManager.addSubscriber(this);
+
 		adapter = new ControllerWindowAdapter(this);
 		keyListener = new ControllerKeyListener(this);
 		player = new InstrumentPlayer(getMessenger(),getUnion(),this);
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
-		stateManager = new StateManager(getMessenger(),getUnion());
-		stateManager.addSubscriber(this);
 
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
@@ -116,15 +122,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
 		
-		lockMe(this);
-		if (settings.getWorkingTab().length()>0) {
-			mainFrame.switchTo(settings.getWorkingTab());
-		}
-		if (settings.getWorkingInstrument().length()>0) {
-			selectInstrument(settings.getWorkingInstrument(),this);
-		}
-		unlockMe(this);
-		
 		if (err.length()>0) {
 			showErrorMessage(this,err);
 		}
@@ -151,13 +148,13 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void windowClosing(WindowEvent e) {
 		if (e.getWindow()==mainFrame.getFrame()) {
 			boolean confirmed = true;
-			if (isCompositionChanged()) {
+			if (stateManager.isCompositionChanged()) {
 				confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to quit?");
 			}
 			if (confirmed) {
 				lockMe(this);
-				settings.setWorkingTab(mainFrame.getSelectedTab());
-				settings.setWorkingInstrument(player.getSelectedInstrument());
+				settings.setWorkingTab(stateManager.getSelectedTab());
+				settings.setWorkingInstrument(stateManager.getSelectedInstrument());
 				String err = settings.toFile();
 				if (err.length()>0) {
 					showErrorMessage(settings,err);
@@ -223,22 +220,12 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 
-	public void switchTo(String tab) {
-		mainFrame.switchTo(tab);
-	}
-
-	public void selectInstrument(String name,Object source) {
-		if (player.setSelectedInstrument(name,source)) {
-			mainFrame.selectedInstrument(name);
-		}
-	}
-	
-	public void selectedPattern(int pattern, Object source) {
-		// TODO: Handle sequence changes
-	}
-
 	public WorkerUnion getUnion() {
 		return union;
+	}
+
+	public StateManager getStateManager() {
+		return stateManager;
 	}
 
 	public ControllerWindowAdapter getAdapter() {
@@ -252,10 +239,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public InstrumentPlayerKeyListener getPlayerKeyListener() {
 		return playerKeyListener;
 	}
-
-	public StateManager getStateManager() {
-		return stateManager;
-	}
 	
 	protected void setComposition(Composition composition) {
 		if (composition!=null) {
@@ -263,23 +246,13 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			lockMe(this);
 			this.composition = composition;
 			compositionOriginal = composition.copy();
-			compositionChanged = false;
 			unlockMe(this);
-			
+			stateManager.setCompositionChanged(this,false);
 			stateManager.setComposition(this,composition);
 			reconfigureSynthesizer();
-			mainFrame.setCompositionChanged(false);
 		}
 	}
 	
-	protected boolean isCompositionChanged() {
-		boolean r = false;
-		lockMe(this);
-		r = compositionChanged;
-		unlockMe(this);
-		return r;
-	}
-
 	protected void setSynthesizer(Synthesizer synth) {
 		lockMe(this);
 		this.synthesizer = synth;
@@ -307,24 +280,16 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		unlockMe(this);
 	}
 
-	public JComboBox<String> getNewInstrumentSelector() {
-		JComboBox<String> r = null;
-		lockMe(this);
-		r = player.getNewSelector();
-		unlockMe(this);
-		return r;
-	}
-
 	public void playNote(int note,boolean accent) {
 		lockMe(this);
-		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,accent,composition.getMsPerStep());
+		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(stateManager.getSelectedInstrument(),note,accent,composition.getMsPerStep());
 		player.playInstrumentNotes(notes);
 		unlockMe(this);
 	}
 
 	public void stopNote(int note) {
 		lockMe(this);
-		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(player.getSelectedInstrument(),note,false,composition.getMsPerStep());
+		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(stateManager.getSelectedInstrument(),note,false,composition.getMsPerStep());
 		player.stopInstrumentNotes(notes);
 		unlockMe(this);
 	}
@@ -340,7 +305,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			showErrorMessage(this,"Import/export worker is busy");
 		} else {
 			boolean confirmed = true;
-			if (isCompositionChanged()) {
+			if (stateManager.isCompositionChanged()) {
 				confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to load a different composition?");
 			}
 			if (confirmed) {
@@ -350,7 +315,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	}
 
 	public void undoCompositionChanges() {
-		if (isCompositionChanged()) {
+		if (stateManager.isCompositionChanged()) {
 			boolean confirmed = showConfirmMessage("Are you sure you want to undo the composition changes?");
 			if (confirmed) {
 				lockMe(this);
@@ -373,7 +338,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	
 	public void newComposition() {
 		boolean confirmed = true;
-		if (isCompositionChanged()) {
+		if (stateManager.isCompositionChanged()) {
 			confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to create a new composition?");
 		}
 		if (confirmed) {
@@ -383,7 +348,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			compositionFile = null;
 			unlockMe(this);
 			setComposition(composition);
-			switchTo(FrameMain.COMPOSITION);
+			stateManager.setSelectedTab(this,FrameMain.COMPOSITION);
 		}
 	}
 
@@ -423,15 +388,13 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void handleStateChange(StateChangeEvent evt) {
 		if (evt.getSource()!=this) {
 			if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
-				lockMe(this);
-				compositionChanged = true;
-				unlockMe(this);
-				
-				mainFrame.setCompositionChanged(true);
 				if (evt.getSource() instanceof PanelInstruments) {
 					stopSynthesizer();
 					reconfigureSynthesizer();
 				}
+			} else if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
+				stopSynthesizer();
+				reconfigureSynthesizer();
 			}
 		}
 	}

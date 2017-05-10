@@ -46,9 +46,11 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 
 		int row = 0;
 
+		/*
 		instrument = getController().getNewInstrumentSelector();
 		instrument.addItemListener(this);
 		addComponent(getPanel(),row,0.01,instrument,false);
+		*/
 		
 		row++;
 		addComponent(getPanel(),row,0.99,getPatternPanel(),true);		
@@ -71,7 +73,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 			compositionCopy = evt.getComposition().copy();
 			gridController.setDefaultPatternBars(compositionCopy.getDefaultPatternBars());
 			gridController.setStepsPerBar(compositionCopy.getStepsPerBar());
-			gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
+			//gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(evt.getSelectedInstrument()));
 			gridController.setPattern(compositionCopy.getPattern(selectedPattern));
 			gridController.fireTableStructureChanged();
 		}
@@ -86,8 +88,8 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getSource()==instrument) {
-			gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
-			gridController.fireTableStructureChanged();
+			//gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
+			//gridController.fireTableStructureChanged();
 			// TODO: Implement
 		}
 	}
@@ -96,7 +98,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	public void valueChanged(ListSelectionEvent evt) {
 		if (evt.getSource()==patternSelect) {
 			if (setSelectedPattern(patternSelect.getSelectedIndex())) {
-				getController().selectedPattern(selectedPattern,evt.getSource());
+				//getController().selectedPattern(selectedPattern,evt.getSource());
 			}
 		}
 	}

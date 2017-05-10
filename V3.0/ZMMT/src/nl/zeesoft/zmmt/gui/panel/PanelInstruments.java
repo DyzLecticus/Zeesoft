@@ -1,7 +1,11 @@
 package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -13,7 +17,10 @@ import javax.sound.midi.Synthesizer;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
@@ -26,10 +33,11 @@ import nl.zeesoft.zmmt.syntesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 
-public class PanelInstruments extends PanelObject implements ItemListener, CompositionChangePublisher, StateChangeSubscriber {
+public class PanelInstruments extends PanelObject implements ItemListener, ActionListener, ListCellRenderer<Object>, CompositionChangePublisher, StateChangeSubscriber {
 	private JComboBox<String>		instrument						= null;
+	private String					selectedInstrument				= "";
+	
 	private JPanel					cardPanel						= null;
-	private JFormattedTextField[]	instrumentTracks				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 
 	private JFormattedTextField[]	instrumentLayer1MidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
 	private JFormattedTextField[]	instrumentLayer1Pressure		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
@@ -66,6 +74,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	public PanelInstruments(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
+		selectedInstrument = controller.getStateManager().getSelectedInstrument();
 	}
 
 	@Override
@@ -77,7 +86,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 				
 		int row = 0;
 
-		instrument = getController().getNewInstrumentSelector();
+		instrument = getInstrumentSelector();
 		instrument.addItemListener(this);
 		
 		addComponent(getPanel(),row,0.01,instrument,false);
@@ -105,10 +114,15 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+		if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
+			if (!evt.getSource().equals(this) && !selectedInstrument.equals(evt.getSelectedInstrument())) {
+				selectedInstrument = evt.getSelectedInstrument();
+				instrument.setSelectedIndex(Instrument.getIndexForInstrument(evt.getSelectedInstrument()));
+			}
+			instrument.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
+		} else if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 				InstrumentConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-				instrumentTracks[i].setValue(conf.getTracks());
 				if (instrumentLayer1MidiNum[i]!=null) {
 					instrumentLayer1MidiNum[i].setValue(conf.getLayer1MidiNum());
 				}
@@ -201,7 +215,6 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	public void setChangesInComposition(Composition composition) {
 		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-			inst.setTracks(Integer.parseInt(instrumentTracks[i].getValue().toString()));
 			inst.setLayer1MidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
 			inst.setLayer1Pressure(Integer.parseInt(instrumentLayer1Pressure[i].getValue().toString()));
 			inst.setLayer1Reverb(Integer.parseInt(instrumentLayer1Reverb[i].getValue().toString()));
@@ -263,6 +276,32 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		}
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		if (!selectedInstrument.equals(instrument.getSelectedItem().toString())) {
+			selectedInstrument = instrument.getSelectedItem().toString();
+			getController().getStateManager().setSelectedInstrument(this,selectedInstrument);
+		}
+	}
+
+	@Override
+	public Component getListCellRendererComponent(
+		@SuppressWarnings("rawtypes") final JList list,final Object value,int index,boolean isSelected,boolean hasFocus) {
+		String instrument = "" + value;
+		JLabel label = new JLabel(instrument);
+		Color color = Instrument.getColorForInstrument(instrument);
+		label.setOpaque(true);
+		if (isSelected) {
+			label.setBackground(list.getSelectionBackground());
+			label.setForeground(list.getSelectionForeground());
+			label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
+		} else {
+			label.setBackground(color);
+			label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
+		}
+		return label;
+	}
+
 	protected JPanel getCardPanel() {
 		JPanel panel = new JPanel();
 		CardLayout layout = new CardLayout();
@@ -303,12 +342,6 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		
 		int row = 0;
 
-		instrumentTracks[instrumentNum] = getNewNumberTextField(1);
-		JPanel slider = getNewNumberSlider(instrumentTracks[instrumentNum],0,12,4);
-		addLabel(panel,row,"Tracks");
-		addProperty(panel,row,slider);
-
-		row++;
 		instrumentLayer1MidiNum[instrumentNum] = getNewNumberTextField(3);
 		addLabel(panel,row,"Layer 1 MIDI instrument number");
 		if (midiInstruments.size()>0) {
@@ -323,7 +356,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 		
 		row++;
 		instrumentLayer1Pressure[instrumentNum] = getNewNumberTextField(3);
-		slider = getNewNumberSlider(instrumentLayer1Pressure[instrumentNum],0,127,0);
+		JPanel slider = getNewNumberSlider(instrumentLayer1Pressure[instrumentNum],0,127,0);
 		addLabel(panel,row,"Layer 1 pressure");
 		addProperty(panel,row,slider);
 
@@ -534,5 +567,22 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 			subtract = 1;
 		}
 		return getNewNumberComboBox(number,options,subtract);
+	}
+
+	protected JComboBox<String> getInstrumentSelector() {
+		JComboBox<String> r = new JComboBox<String>();
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			r.addItem(Instrument.INSTRUMENTS[i]);
+		}
+		r.setSelectedIndex(Instrument.getIndexForInstrument(selectedInstrument));
+		r.addActionListener(this);
+		r.setOpaque(true);
+		r.setBackground(Instrument.getColorForInstrument(selectedInstrument));
+		r.setRenderer(this);
+		for (int l = 0; l < r.getKeyListeners().length; l++) {
+			r.removeKeyListener(r.getKeyListeners()[l]);
+		}
+		r.addKeyListener(getController().getPlayerKeyListener());
+		return r;
 	}
 }

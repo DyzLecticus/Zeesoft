@@ -1,8 +1,6 @@
 package nl.zeesoft.zmmt.syntesizer;
 
 public class InstrumentConfiguration extends VelocityConfiguration {
-	private int			tracks				= 4;
-
 	private	int			layer1MidiNum		= 0;
 	private int			layer1BaseOctave	= 3;
 	private int 		layer1Pressure		= 0;
@@ -12,14 +10,6 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 	private int			layer2BaseOctave	= 3;
 	private int 		layer2Pressure		= 24;
 	private int			layer2Reverb		= 64;
-
-	public int getTracks() {
-		return tracks;
-	}
-	
-	public void setTracks(int tracks) {
-		this.tracks = tracks;
-	}
 
 	public int getLayer1MidiNum() {
 		return layer1MidiNum;

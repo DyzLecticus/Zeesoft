@@ -4,16 +4,19 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import nl.zeesoft.zmmt.gui.panel.PanelComposition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
 import nl.zeesoft.zmmt.gui.panel.PanelObject;
 import nl.zeesoft.zmmt.gui.panel.PanelPatterns;
+import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
+import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
 
-public class FrameMain extends FrameObject {
+public class FrameMain extends FrameObject implements ChangeListener, StateChangeSubscriber {
 	private static final String	TITLE				= "ZeeTracker";
 	
 	public static final String	COMPOSITION			= "Composition";
@@ -21,6 +24,7 @@ public class FrameMain extends FrameObject {
 	public static final String	PATTERNS			= "Patterns";
 	
 	private JTabbedPane			tabs				= null;
+	private String				selectedTab			= "";			
 
 	private PanelComposition	compositionPanel	= null;
 	private PanelInstruments	instrumentsPanel	= null;
@@ -28,6 +32,8 @@ public class FrameMain extends FrameObject {
 	
 	public FrameMain(Controller controller) {
 		super(controller);
+		controller.getStateManager().addSubscriber(this);
+		selectedTab = controller.getStateManager().getSelectedTab();
 	}
 
 	@Override
@@ -49,7 +55,7 @@ public class FrameMain extends FrameObject {
 		tabs = new JTabbedPane();
 		tabs.addKeyListener(getController().getPlayerKeyListener());
 		tabs.setOpaque(true);
-		tabs.setBackground(Instrument.getColorForInstrument(Instrument.LEAD));
+		tabs.setBackground(Instrument.getColorForInstrument(getController().getStateManager().getSelectedInstrument()));
 
 		compositionPanel = new PanelComposition(getController());
 		compositionPanel.initialize();
@@ -64,15 +70,37 @@ public class FrameMain extends FrameObject {
 		addPanelToTabs(tabs,"Patterns",patternsPanel);
 		
 		getFrame().setContentPane(tabs);
+		
+		switchTo(selectedTab);
+		tabs.addChangeListener(this);
 	}
-	
-	protected JScrollPane addPanelToTabs(JTabbedPane tabs,String label,PanelObject panel) {
-		JScrollPane scroller = panel.getScroller();
-		tabs.addTab(label,scroller);
-		return scroller;
+
+	@Override
+	public void handleStateChange(StateChangeEvent evt) {
+		if (evt.getSource()!=this) {
+			if (evt.getType().equals(StateChangeEvent.SELECTED_TAB)) {
+				switchTo(evt.getSelectedTab());
+			} else {
+				if (evt.isCompositionChanged()) {
+					getFrame().setTitle(TITLE + "*");
+				} else {
+					getFrame().setTitle(TITLE);
+				}
+				tabs.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
+			}
+		}
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent evt) {
+		if (!getSelectedTab().equals(selectedTab)) {
+			selectedTab = getSelectedTab();
+			getController().getStateManager().setSelectedTab(this,selectedTab);
+		}
 	}
 	
 	protected void switchTo(String tab) {
+		selectedTab = tab;
 		if (tab.equals(COMPOSITION) && tabs.getSelectedIndex()!=0) {
 			tabs.setSelectedIndex(0);
 			compositionPanel.requestFocus();
@@ -85,10 +113,10 @@ public class FrameMain extends FrameObject {
 		}
 	}
 
-	protected void selectedInstrument(String name) {
-		tabs.setBackground(Instrument.getColorForInstrument(name));
+	protected void addPanelToTabs(JTabbedPane tabs,String label,PanelObject panel) {
+		tabs.addTab(label,panel.getScroller());
 	}
-
+	
 	protected String getSelectedTab() {
 		String r = "";
 		if (tabs.getSelectedIndex()==0) {
@@ -101,13 +129,5 @@ public class FrameMain extends FrameObject {
 			r = COMPOSITION;
 		}
 		return r;
-	}
-	
-	protected void setCompositionChanged(boolean changed) {
-		if (changed) {
-			getFrame().setTitle(TITLE + "*");
-		} else {
-			getFrame().setTitle(TITLE);
-		}
 	}
 }

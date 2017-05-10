@@ -3,13 +3,11 @@ package nl.zeesoft.zmmt.gui.panel;
 import javax.swing.table.AbstractTableModel;
 
 import nl.zeesoft.zmmt.composition.Pattern;
-import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 
 @SuppressWarnings("serial")
 public class PatternGridController extends AbstractTableModel {
 	private int						defaultPatternBars	= 4;
 	private int						stepsPerBar			= 16;
-	private InstrumentConfiguration	instrument			= null;
 	private Pattern					pattern				= null;
 
 	public void setDefaultPatternBars(int defaultPatternBars) {
@@ -20,21 +18,13 @@ public class PatternGridController extends AbstractTableModel {
 		this.stepsPerBar = stepsPerBar;
 	}
 	
-	public void setInstrument(InstrumentConfiguration instrument) {
-		this.instrument = instrument;
-	}
-	
 	public void setPattern(Pattern pattern) {
 		this.pattern = pattern;
 	}
 
 	@Override
 	public int getColumnCount() {
-		int r = 1;
-		if (instrument!=null) {
-			r = + instrument.getTracks();
-		}
-		return r;
+		return 64;
 	}
 
 	@Override

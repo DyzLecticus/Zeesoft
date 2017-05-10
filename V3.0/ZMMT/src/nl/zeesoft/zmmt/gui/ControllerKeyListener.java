@@ -16,34 +16,34 @@ public class ControllerKeyListener implements KeyListener {
 	public void keyPressed(KeyEvent evt) {
 		if (evt.isControlDown() && !evt.isAltDown()) {
 			if (evt.getKeyCode()==KeyEvent.VK_1) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[0],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[0]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_2) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[1],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[1]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_3) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[2],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[2]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_4) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[3],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[3]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_5) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[4],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[4]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_6) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[5],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[5]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_7) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[6],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[6]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_8) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[7],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[7]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_9) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[8],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[8]);
 			} else if (evt.getKeyCode()==KeyEvent.VK_0) {
-				controller.selectInstrument(Instrument.INSTRUMENTS[9],this);
+				controller.getStateManager().setSelectedInstrument(this,Instrument.INSTRUMENTS[9]);
 			}
 		} else {
 			if (!evt.isShiftDown() && !evt.isAltDown()) {
 				if (evt.getKeyCode()==KeyEvent.VK_F1) {
-					controller.switchTo(FrameMain.COMPOSITION);
+					controller.getStateManager().setSelectedTab(this,FrameMain.COMPOSITION);
 				} else if (evt.getKeyCode()==KeyEvent.VK_F2) {
-					controller.switchTo(FrameMain.INSTRUMENTS);
+					controller.getStateManager().setSelectedTab(this,FrameMain.INSTRUMENTS);
 				} else if (evt.getKeyCode()==KeyEvent.VK_F3) {
-					controller.switchTo(FrameMain.PATTERNS);
+					controller.getStateManager().setSelectedTab(this,FrameMain.PATTERNS);
 				}
 			}
 		}
