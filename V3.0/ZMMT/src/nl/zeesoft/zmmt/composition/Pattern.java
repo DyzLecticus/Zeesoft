@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.json.JsFile;
 
 public class Pattern {
 	private int				number		= 0;
-	private int 			bars		= 8;
+	private int 			bars		= 4;
 	private List<Note>		notes		= new ArrayList<Note>();
 	
 	public Pattern copy() {

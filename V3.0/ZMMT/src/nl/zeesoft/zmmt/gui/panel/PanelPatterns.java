@@ -71,7 +71,7 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 		setValidate(false);
 		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			compositionCopy = evt.getComposition().copy();
-			gridController.setDefaultPatternBars(compositionCopy.getDefaultPatternBars());
+			gridController.setDefaultPatternBars(compositionCopy.getBarsPerPattern());
 			gridController.setStepsPerBar(compositionCopy.getStepsPerBar());
 			//gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(evt.getSelectedInstrument()));
 			gridController.setPattern(compositionCopy.getPattern(selectedPattern));

@@ -18,6 +18,7 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 	private JFormattedTextField		beatsPerMinute		= null;
 	private JFormattedTextField		beatsPerBar			= null;
 	private JFormattedTextField		stepsPerBeat		= null;
+	private JFormattedTextField		barsPerPattern		= null;
 	
 	public PanelComposition(Controller controller) {
 		super(controller);
@@ -59,6 +60,12 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		slider = getNewNumberSlider(stepsPerBeat,1,16,8);
 		addLabel(getPanel(),row,"Steps per beat");
 		addProperty(getPanel(),row,slider);
+
+		row++;
+		barsPerPattern = getNewNumberTextField(2);
+		slider = getNewNumberSlider(barsPerPattern,1,16,4);
+		addLabel(getPanel(),row,"Bars per pattern");
+		addProperty(getPanel(),row,slider);
 		
 		row++;
 		addFiller(getPanel(),row);
@@ -88,6 +95,7 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 			beatsPerMinute.setValue(evt.getComposition().getBeatsPerMinute());
 			beatsPerBar.setValue(evt.getComposition().getBeatsPerBar());
 			stepsPerBeat.setValue(evt.getComposition().getStepsPerBeat());
+			barsPerPattern.setValue(evt.getComposition().getBarsPerPattern());
 		}
 		setValidate(true);
 	}
@@ -99,5 +107,6 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		composition.setBeatsPerMinute(Integer.parseInt(beatsPerMinute.getValue().toString()));
 		composition.setBeatsPerBar(Integer.parseInt(beatsPerBar.getValue().toString()));
 		composition.setStepsPerBeat(Integer.parseInt(stepsPerBeat.getValue().toString()));
+		composition.setBarsPerPattern(Integer.parseInt(barsPerPattern.getValue().toString()));
 	}
 }

@@ -23,7 +23,7 @@ public class Settings {
 	private int 						defaultBeatsPerMinute		= 128;
 	private int							defaultBeatsPerBar			= 4;
 	private int							defaultStepsPerBeat			= 8;
-	private int							defaultPatternBars			= 4;
+	private int							defaultBarsPerPattern		= 4;
 	
 	private String						workingCompositionFileName	= "";
 	private String						workingTab					= "";
@@ -90,7 +90,9 @@ public class Settings {
 		} else {
 			JsFile json = new JsFile();
 			err = json.fromFile(getWorkDirName() + "/" + SETTINGS_JSON);
-			fromJson(json);
+			if (err.length()==0) {
+				fromJson(json);
+			}
 		}
 		return err;
 	}
@@ -102,7 +104,7 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("defaultBeatsPerMinute","" + defaultBeatsPerMinute));
 		json.rootElement.children.add(new JsElem("defaultBeatsPerBar","" + defaultBeatsPerBar));
 		json.rootElement.children.add(new JsElem("defaultStepsPerBeat","" + defaultStepsPerBeat));
-		json.rootElement.children.add(new JsElem("defaultPatternBars","" + defaultPatternBars));
+		json.rootElement.children.add(new JsElem("defaultBarsPerPattern","" + defaultBarsPerPattern));
 		json.rootElement.children.add(new JsElem("workingTab",workingTab,true));
 		json.rootElement.children.add(new JsElem("workingInstrument",workingInstrument,true));
 		json.rootElement.children.add(new JsElem("workingCompositionFileName",workingCompositionFileName,true));
@@ -138,8 +140,8 @@ public class Settings {
 					defaultBeatsPerBar = Integer.parseInt(elem.value.toString());
 				} else if (elem.name.equals("defaultStepsPerBeat")) {
 					defaultStepsPerBeat = Integer.parseInt(elem.value.toString());
-				} else if (elem.name.equals("defaultPatternBars")) {
-					defaultPatternBars = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("defaultBarsPerPattern")) {
+					defaultBarsPerPattern = Integer.parseInt(elem.value.toString());
 				} else if (elem.name.equals("workingTab")) {
 					workingTab = elem.value.toString();
 				} else if (elem.name.equals("workingInstrument")) {
@@ -175,7 +177,7 @@ public class Settings {
 		composition.setBeatsPerMinute(defaultBeatsPerMinute);
 		composition.setBeatsPerBar(defaultBeatsPerBar);
 		composition.setStepsPerBeat(defaultStepsPerBeat);
-		composition.setDefaultPatternBars(defaultPatternBars);
+		composition.setBarsPerPattern(defaultBarsPerPattern);
 		composition.setSynthesizerConfiguration(synthesizerConfiguration.copy());
 		return composition;
 	}
@@ -212,12 +214,12 @@ public class Settings {
 		this.defaultStepsPerBeat = defaultStepsPerBeat;
 	}
 
-	public int getDefaultPatternBars() {
-		return defaultPatternBars;
+	public int getDefaultBarsPerPattern() {
+		return defaultBarsPerPattern;
 	}
 
-	public void setDefaultPatternBars(int defaultPatternBars) {
-		this.defaultPatternBars = defaultPatternBars;
+	public void setDefaultBarsPerPattern(int defaultBarsPerPattern) {
+		this.defaultBarsPerPattern = defaultBarsPerPattern;
 	}
 
 	public String getWorkingTab() {
