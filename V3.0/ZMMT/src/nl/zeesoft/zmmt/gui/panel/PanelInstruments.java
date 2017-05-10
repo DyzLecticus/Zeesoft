@@ -18,14 +18,15 @@ import javax.swing.JPanel;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
-import nl.zeesoft.zmmt.gui.state.CompositionChangeSubscriber;
+import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
+import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.syntesizer.Drum;
 import nl.zeesoft.zmmt.syntesizer.DrumConfiguration;
 import nl.zeesoft.zmmt.syntesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 
-public class PanelInstruments extends PanelObject implements ItemListener, CompositionChangePublisher, CompositionChangeSubscriber {
+public class PanelInstruments extends PanelObject implements ItemListener, CompositionChangePublisher, StateChangeSubscriber {
 	private JComboBox<String>		instrument						= null;
 	private JPanel					cardPanel						= null;
 	private JFormattedTextField[]	instrumentTracks				= new JFormattedTextField[Instrument.INSTRUMENTS.length];
@@ -102,94 +103,96 @@ public class PanelInstruments extends PanelObject implements ItemListener, Compo
 	}
 
 	@Override
-	public void changedComposition(Object source, Composition composition) {
+	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
-			InstrumentConfiguration conf = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-			instrumentTracks[i].setValue(conf.getTracks());
-			if (instrumentLayer1MidiNum[i]!=null) {
-				instrumentLayer1MidiNum[i].setValue(conf.getLayer1MidiNum());
-			}
-			instrumentLayer1Pressure[i].setValue(conf.getLayer1Pressure());
-			instrumentLayer1Reverb[i].setValue(conf.getLayer1Reverb());
-			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-				instrumentLayer1BaseOctave[i].setValue(conf.getLayer1BaseOctave());
-				instrumentLayer1BaseVelocity[i].setValue(conf.getLayer1BaseVelocity());
-				instrumentLayer1AccentVelocity[i].setValue(conf.getLayer1AccentVelocity());
-			}
-			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
-				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
-				) {
-				instrumentLayer2MidiNum[i].setValue(conf.getLayer2MidiNum());
-				instrumentLayer2Pressure[i].setValue(conf.getLayer2Pressure());
-				instrumentLayer2Reverb[i].setValue(conf.getLayer2Reverb());
-				instrumentLayer2BaseOctave[i].setValue(conf.getLayer2BaseOctave());
-				instrumentLayer2BaseVelocity[i].setValue(conf.getLayer2BaseVelocity());
-				instrumentLayer2AccentVelocity[i].setValue(conf.getLayer2AccentVelocity());
-
-				getSliderForNumber(instrumentLayer2Pressure[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-				getSliderForNumber(instrumentLayer2Reverb[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-				getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-				getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-				getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-			}
-		}
-		for (int d = 0; d < Drum.DRUMS.length; d++) {
-			DrumConfiguration conf = composition.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
-			drumLayer1MidiNote[d].setValue(conf.getLayer1MidiNote());
-			drumLayer1BaseVelocity[d].setValue(conf.getLayer1BaseVelocity());
-			drumLayer1AccentVelocity[d].setValue(conf.getLayer1AccentVelocity());
-			drumLayer2MidiNote[d].setValue(conf.getLayer2MidiNote());
-			drumLayer2BaseVelocity[d].setValue(conf.getLayer2BaseVelocity());
-			drumLayer2AccentVelocity[d].setValue(conf.getLayer2AccentVelocity());
-
-			getSliderForNumber(drumLayer2BaseVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
-			getSliderForNumber(drumLayer2AccentVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
-		}
-		EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
-		if (echo.getInstrument().length()==0) {
-			echoInstrument.setSelectedIndex(0);
-			getSliderForNumber(echoLayer).setEnabled(false);
-			getSliderForNumber(echoSteps).setEnabled(false);
-			getSliderForNumber(echoVelocityPercentage1).setEnabled(false);
-			getSliderForNumber(echoVelocityPercentage2).setEnabled(false);
-			getSliderForNumber(echoVelocityPercentage3).setEnabled(false);
-			getSliderForNumber(echoReverb1).setEnabled(false);
-			getSliderForNumber(echoReverb2).setEnabled(false);
-			getSliderForNumber(echoReverb3).setEnabled(false);
-		} else {
-			if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
-				echo.getInstrument().equals(Instrument.SYNTH1) ||
-				echo.getInstrument().equals(Instrument.LEAD) ||
-				echo.getInstrument().equals(Instrument.STRINGS)
-				) {
-				getSliderForNumber(echoLayer).setEnabled(true);
-			} else {
-				getSliderForNumber(echoLayer).setEnabled(false);
-			}
-			getSliderForNumber(echoSteps).setEnabled(true);
-			getSliderForNumber(echoVelocityPercentage1).setEnabled(true);
-			getSliderForNumber(echoVelocityPercentage2).setEnabled(true);
-			getSliderForNumber(echoVelocityPercentage3).setEnabled(true);
-			getSliderForNumber(echoReverb1).setEnabled(true);
-			getSliderForNumber(echoReverb2).setEnabled(true);
-			getSliderForNumber(echoReverb3).setEnabled(true);
+		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
-				if (echo.getInstrument().equals(Instrument.INSTRUMENTS[i])) {
-					echoInstrument.setSelectedIndex((i + 1));
-					break;
+				InstrumentConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
+				instrumentTracks[i].setValue(conf.getTracks());
+				if (instrumentLayer1MidiNum[i]!=null) {
+					instrumentLayer1MidiNum[i].setValue(conf.getLayer1MidiNum());
+				}
+				instrumentLayer1Pressure[i].setValue(conf.getLayer1Pressure());
+				instrumentLayer1Reverb[i].setValue(conf.getLayer1Reverb());
+				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+					instrumentLayer1BaseOctave[i].setValue(conf.getLayer1BaseOctave());
+					instrumentLayer1BaseVelocity[i].setValue(conf.getLayer1BaseVelocity());
+					instrumentLayer1AccentVelocity[i].setValue(conf.getLayer1AccentVelocity());
+				}
+				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
+					) {
+					instrumentLayer2MidiNum[i].setValue(conf.getLayer2MidiNum());
+					instrumentLayer2Pressure[i].setValue(conf.getLayer2Pressure());
+					instrumentLayer2Reverb[i].setValue(conf.getLayer2Reverb());
+					instrumentLayer2BaseOctave[i].setValue(conf.getLayer2BaseOctave());
+					instrumentLayer2BaseVelocity[i].setValue(conf.getLayer2BaseVelocity());
+					instrumentLayer2AccentVelocity[i].setValue(conf.getLayer2AccentVelocity());
+	
+					getSliderForNumber(instrumentLayer2Pressure[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Reverb[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+					getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+					getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+					getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 				}
 			}
-			echoLayer.setValue(echo.getLayer());
-			echoSteps.setValue(echo.getSteps());
-			echoVelocityPercentage1.setValue(echo.getVelocityPercentage1());
-			echoVelocityPercentage2.setValue(echo.getVelocityPercentage2());
-			echoVelocityPercentage3.setValue(echo.getVelocityPercentage3());
-			echoReverb1.setValue(echo.getReverb1());
-			echoReverb2.setValue(echo.getReverb2());
-			echoReverb3.setValue(echo.getReverb3());
+			for (int d = 0; d < Drum.DRUMS.length; d++) {
+				DrumConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
+				drumLayer1MidiNote[d].setValue(conf.getLayer1MidiNote());
+				drumLayer1BaseVelocity[d].setValue(conf.getLayer1BaseVelocity());
+				drumLayer1AccentVelocity[d].setValue(conf.getLayer1AccentVelocity());
+				drumLayer2MidiNote[d].setValue(conf.getLayer2MidiNote());
+				drumLayer2BaseVelocity[d].setValue(conf.getLayer2BaseVelocity());
+				drumLayer2AccentVelocity[d].setValue(conf.getLayer2AccentVelocity());
+	
+				getSliderForNumber(drumLayer2BaseVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
+				getSliderForNumber(drumLayer2AccentVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
+			}
+			EchoConfiguration echo = evt.getComposition().getSynthesizerConfiguration().getEcho();
+			if (echo.getInstrument().length()==0) {
+				echoInstrument.setSelectedIndex(0);
+				getSliderForNumber(echoLayer).setEnabled(false);
+				getSliderForNumber(echoSteps).setEnabled(false);
+				getSliderForNumber(echoVelocityPercentage1).setEnabled(false);
+				getSliderForNumber(echoVelocityPercentage2).setEnabled(false);
+				getSliderForNumber(echoVelocityPercentage3).setEnabled(false);
+				getSliderForNumber(echoReverb1).setEnabled(false);
+				getSliderForNumber(echoReverb2).setEnabled(false);
+				getSliderForNumber(echoReverb3).setEnabled(false);
+			} else {
+				if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
+					echo.getInstrument().equals(Instrument.SYNTH1) ||
+					echo.getInstrument().equals(Instrument.LEAD) ||
+					echo.getInstrument().equals(Instrument.STRINGS)
+					) {
+					getSliderForNumber(echoLayer).setEnabled(true);
+				} else {
+					getSliderForNumber(echoLayer).setEnabled(false);
+				}
+				getSliderForNumber(echoSteps).setEnabled(true);
+				getSliderForNumber(echoVelocityPercentage1).setEnabled(true);
+				getSliderForNumber(echoVelocityPercentage2).setEnabled(true);
+				getSliderForNumber(echoVelocityPercentage3).setEnabled(true);
+				getSliderForNumber(echoReverb1).setEnabled(true);
+				getSliderForNumber(echoReverb2).setEnabled(true);
+				getSliderForNumber(echoReverb3).setEnabled(true);
+				for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
+					if (echo.getInstrument().equals(Instrument.INSTRUMENTS[i])) {
+						echoInstrument.setSelectedIndex((i + 1));
+						break;
+					}
+				}
+				echoLayer.setValue(echo.getLayer());
+				echoSteps.setValue(echo.getSteps());
+				echoVelocityPercentage1.setValue(echo.getVelocityPercentage1());
+				echoVelocityPercentage2.setValue(echo.getVelocityPercentage2());
+				echoVelocityPercentage3.setValue(echo.getVelocityPercentage3());
+				echoReverb1.setValue(echo.getReverb1());
+				echoReverb2.setValue(echo.getReverb2());
+				echoReverb3.setValue(echo.getReverb3());
+			}
 		}
 		setValidate(true);
 	}

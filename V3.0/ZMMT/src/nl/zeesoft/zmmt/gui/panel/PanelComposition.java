@@ -9,9 +9,10 @@ import javax.swing.JPanel;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
-import nl.zeesoft.zmmt.gui.state.CompositionChangeSubscriber;
+import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
+import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
-public class PanelComposition extends PanelObject implements CompositionChangePublisher, CompositionChangeSubscriber {
+public class PanelComposition extends PanelObject implements CompositionChangePublisher, StateChangeSubscriber {
 	private JFormattedTextField		composer			= null;
 	private JFormattedTextField		name				= null;
 	private JFormattedTextField		beatsPerMinute		= null;
@@ -79,13 +80,15 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 	}
 	
 	@Override
-	public void changedComposition(Object source, Composition composition) {
+	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		composer.setValue(composition.getComposer());
-		name.setValue(composition.getName());
-		beatsPerMinute.setValue(composition.getBeatsPerMinute());
-		beatsPerBar.setValue(composition.getBeatsPerBar());
-		stepsPerBeat.setValue(composition.getStepsPerBeat());
+		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+			composer.setValue(evt.getComposition().getComposer());
+			name.setValue(evt.getComposition().getName());
+			beatsPerMinute.setValue(evt.getComposition().getBeatsPerMinute());
+			beatsPerBar.setValue(evt.getComposition().getBeatsPerBar());
+			stepsPerBeat.setValue(evt.getComposition().getStepsPerBeat());
+		}
 		setValidate(true);
 	}
 

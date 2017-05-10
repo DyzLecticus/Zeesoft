@@ -4,10 +4,10 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class CompositionPublishWorker extends Worker {
-	private CompositionStateManager		stateManager	= null;
+public class CompositionChangePublishWorker extends Worker {
+	private StateManager		stateManager	= null;
 
-	public CompositionPublishWorker(Messenger msgr, WorkerUnion union,CompositionStateManager stateManager) {
+	public CompositionChangePublishWorker(Messenger msgr, WorkerUnion union,StateManager stateManager) {
 		super(msgr, union);
 		setSleep(100);
 		this.stateManager = stateManager;

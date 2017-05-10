@@ -20,14 +20,15 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
-import nl.zeesoft.zmmt.gui.state.CompositionChangeSubscriber;
-import nl.zeesoft.zmmt.gui.state.CompositionStateManager;
+import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
+import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
+import nl.zeesoft.zmmt.gui.state.StateManager;
 import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.syntesizer.MidiNote;
 
-public class Controller extends Locker implements CompositionChangeSubscriber {
+public class Controller extends Locker implements StateChangeSubscriber {
 	private Settings					settings					= null;
 	
 	private WorkerUnion					union						= null;
@@ -37,7 +38,8 @@ public class Controller extends Locker implements CompositionChangeSubscriber {
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
 
-	private CompositionStateManager		stateManager				= null;
+	private StateManager				stateManager				= null;
+	
 	private Composition					composition					= null;
 	private Composition					compositionOriginal			= null;
 	private boolean						compositionChanged			= false;
@@ -68,7 +70,7 @@ public class Controller extends Locker implements CompositionChangeSubscriber {
 		keyListener = new ControllerKeyListener(this);
 		player = new InstrumentPlayer(getMessenger(),getUnion(),this);
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
-		stateManager = new CompositionStateManager(getMessenger(),getUnion());
+		stateManager = new StateManager(getMessenger(),getUnion());
 		stateManager.addSubscriber(this);
 
 		mainFrame = new FrameMain(this);
@@ -251,7 +253,7 @@ public class Controller extends Locker implements CompositionChangeSubscriber {
 		return playerKeyListener;
 	}
 
-	public CompositionStateManager getStateManager() {
+	public StateManager getStateManager() {
 		return stateManager;
 	}
 	
@@ -418,16 +420,18 @@ public class Controller extends Locker implements CompositionChangeSubscriber {
 	}
 
 	@Override
-	public void changedComposition(Object source, Composition composition) {
-		if (source!=this) {
-			lockMe(this);
-			compositionChanged = true;
-			unlockMe(this);
-			
-			mainFrame.setCompositionChanged(true);
-			if (source instanceof PanelInstruments) {
-				stopSynthesizer();
-				reconfigureSynthesizer();
+	public void handleStateChange(StateChangeEvent evt) {
+		if (evt.getSource()!=this) {
+			if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+				lockMe(this);
+				compositionChanged = true;
+				unlockMe(this);
+				
+				mainFrame.setCompositionChanged(true);
+				if (evt.getSource() instanceof PanelInstruments) {
+					stopSynthesizer();
+					reconfigureSynthesizer();
+				}
 			}
 		}
 	}

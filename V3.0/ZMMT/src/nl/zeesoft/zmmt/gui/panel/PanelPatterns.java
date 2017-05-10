@@ -18,9 +18,10 @@ import javax.swing.event.ListSelectionListener;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
-import nl.zeesoft.zmmt.gui.state.CompositionChangeSubscriber;
+import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
+import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
-public class PanelPatterns extends PanelObject implements ItemListener, ListSelectionListener, CompositionChangePublisher, CompositionChangeSubscriber {
+public class PanelPatterns extends PanelObject implements ItemListener, ListSelectionListener, CompositionChangePublisher, StateChangeSubscriber {
 	private int						selectedPattern					= 0;
 	
 	private JComboBox<String>		instrument						= null;
@@ -64,14 +65,16 @@ public class PanelPatterns extends PanelObject implements ItemListener, ListSele
 	}
 
 	@Override
-	public void changedComposition(Object source, Composition composition) {
+	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		compositionCopy = composition.copy();
-		gridController.setDefaultPatternBars(compositionCopy.getDefaultPatternBars());
-		gridController.setStepsPerBar(compositionCopy.getStepsPerBar());
-		gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
-		gridController.setPattern(compositionCopy.getPattern(selectedPattern));
-		gridController.fireTableStructureChanged();
+		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+			compositionCopy = evt.getComposition().copy();
+			gridController.setDefaultPatternBars(compositionCopy.getDefaultPatternBars());
+			gridController.setStepsPerBar(compositionCopy.getStepsPerBar());
+			gridController.setInstrument(compositionCopy.getSynthesizerConfiguration().getInstrument(instrument.getSelectedItem().toString()));
+			gridController.setPattern(compositionCopy.getPattern(selectedPattern));
+			gridController.fireTableStructureChanged();
+		}
 		setValidate(true);
 	}
 
