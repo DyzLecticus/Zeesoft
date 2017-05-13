@@ -30,12 +30,15 @@ public class PatternGridController extends AbstractTableModel {
 		}
 		return changed;
 	}
-
 	
 	public void setWorkingPattern(Pattern workingPattern) {
 		this.workingPattern = workingPattern;
 	}
 
+	protected int getStepsPerBeat() {
+		return stepsPerBeat;
+	}
+	
 	@Override
 	public int getColumnCount() {
 		return TRACKS;
@@ -53,22 +56,7 @@ public class PatternGridController extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(int col) {
-		String r = "";
-		if (col==0) {
-			r = "Step";
-		} else {
-			r = 	"Track " + col;
-		}
-		return r;
-	}
-
-	@Override
-	public Class<?> getColumnClass(int col) {
-		Class<?> r = super.getColumnClass(col);
-		if (col==0) {
-			r = Integer.class;
-		}
-		return r;
+		return "Track " + String.format("%02d",(col + 1));
 	}
 
 	@Override
@@ -79,9 +67,7 @@ public class PatternGridController extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Object r = null;
-		if (columnIndex==0) {
-			r = new Integer(rowIndex + 1);
-		} else if (workingPattern!=null) {
+		if (workingPattern!=null) {
 			// TODO: Implement
 		}
 		return r;

@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Pattern;
@@ -157,7 +158,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 		grid = new JTable();
 		grid.addKeyListener(getController().getPlayerKeyListener());
 		grid.setModel(gridController);
-		JScrollPane r = new JScrollPane(grid);
+		grid.setCellSelectionEnabled(true);
+		grid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		grid.setDefaultRenderer(Object.class, new PatternGridCellRenderer(gridController));
+		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;
 	}

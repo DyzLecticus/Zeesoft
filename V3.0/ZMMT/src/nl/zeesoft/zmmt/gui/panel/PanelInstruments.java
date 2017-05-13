@@ -297,7 +297,11 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 			label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
 		} else {
 			label.setBackground(color);
-			label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
+			if (hasFocus) {
+				label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
+			} else {
+				label.setBorder(BorderFactory.createLineBorder(color));
+			}
 		}
 		return label;
 	}

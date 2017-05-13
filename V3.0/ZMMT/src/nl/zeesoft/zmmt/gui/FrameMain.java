@@ -25,16 +25,16 @@ import nl.zeesoft.zmmt.syntesizer.Instrument;
 
 public class FrameMain extends FrameObject implements ActionListener, ChangeListener, StateChangeSubscriber {
 	private static final String	TITLE				= "ZeeTracker";
-	
-	public static final String	COMPOSITION			= "Composition";
-	public static final String	INSTRUMENTS			= "Instruments";
-	public static final String	PATTERNS			= "Patterns";
 
 	private static final String	LOAD				= "LOAD";
 	private static final String	UNDO				= "UNDO";
 	private static final String	SAVE				= "SAVE";
 	private static final String	SAVE_AS				= "SAVE_AS";
 	private static final String	NEW					= "NEW";
+	
+	public static final String	COMPOSITION			= "Composition";
+	public static final String	INSTRUMENTS			= "Instruments";
+	public static final String	PATTERNS			= "Patterns";
 		
 	private JTabbedPane			tabs				= null;
 	private String				selectedTab			= "";			
