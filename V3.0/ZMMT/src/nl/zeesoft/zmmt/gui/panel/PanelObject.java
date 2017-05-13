@@ -186,7 +186,6 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		JFormattedTextField r = new JFormattedTextField();
 		r.addFocusListener(this);
 		r.addPropertyChangeListener(this);
-		r.addKeyListener(controller.getKeyListener());
 		r.setColumns(32);
 		return r;
 	}
@@ -201,7 +200,6 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		r = new JFormattedTextField(fmt);
 		r.addFocusListener(this);
 		r.addPropertyChangeListener(this);
-		r.addKeyListener(controller.getKeyListener());
 		r.setColumns(3);
 		return r;
 	}
@@ -216,7 +214,7 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		}
 		return r;
 	}
-	
+
 	protected JPanel getNewNumberSlider(JFormattedTextField number,int min,int max,int init) {
 		JSlider slider = new JSlider(JSlider.HORIZONTAL,min,max,init);
 		slider.addKeyListener(controller.getPlayerKeyListener());

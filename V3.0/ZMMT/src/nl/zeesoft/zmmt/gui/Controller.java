@@ -34,7 +34,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private StateManager				stateManager				= null;
 
 	private ControllerWindowAdapter		adapter						= null;
-	private ControllerKeyListener		keyListener					= null;
 	private FrameMain					mainFrame					= null;
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
@@ -78,7 +77,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		stateManager.addSubscriber(this);
 
 		adapter = new ControllerWindowAdapter(this);
-		keyListener = new ControllerKeyListener(this);
 		player = new InstrumentPlayer(getMessenger(),getUnion());
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
 
@@ -240,10 +238,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		return adapter;
 	}
 
-	public ControllerKeyListener getKeyListener() {
-		return keyListener;
-	}
-
 	public InstrumentPlayerKeyListener getPlayerKeyListener() {
 		return playerKeyListener;
 	}
@@ -308,7 +302,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		unlockMe(this);
 	}
 
-	public void loadComposition() {
+	protected void loadComposition() {
 		if (importExportWorker.isWorking()) {
 			showErrorMessage(this,"Import/export worker is busy");
 		} else {
@@ -322,7 +316,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 
-	public void undoCompositionChanges() {
+	protected void undoCompositionChanges() {
 		if (stateManager.isCompositionChanged()) {
 			boolean confirmed = showConfirmMessage("Are you sure you want to undo the composition changes?");
 			if (confirmed) {
@@ -334,7 +328,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 
-	public void saveComposition() {
+	protected void saveComposition() {
 		if (importExportWorker.isWorking()) {
 			showErrorMessage(this,"Import/export worker is busy");
 		} else {
@@ -343,8 +337,17 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			importExportWorker.saveComposition(copy,file);
 		}
 	}
+
+	protected void saveCompositionAs() {
+		if (importExportWorker.isWorking()) {
+			showErrorMessage(this,"Import/export worker is busy");
+		} else {
+			Composition copy = composition.copy();
+			importExportWorker.saveComposition(copy,null);
+		}
+	}
 	
-	public void newComposition() {
+	protected void newComposition() {
 		boolean confirmed = true;
 		if (stateManager.isCompositionChanged()) {
 			confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to create a new composition?");
@@ -361,7 +364,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 
-	public void loadedComposition(File file,Composition comp) {
+	protected void loadedComposition(File file,Composition comp) {
 		lockMe(this);
 		settings.setWorkingCompositionFileName(file.getAbsolutePath());
 		compositionFile = file;
@@ -369,7 +372,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		setComposition(comp);
 	}
 
-	public void savedComposition(File file,Composition comp) {
+	protected void savedComposition(File file,Composition comp) {
 		lockMe(this);
 		settings.setWorkingCompositionFileName(file.getAbsolutePath());
 		compositionFile = file;
@@ -383,14 +386,14 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			type = Font.BOLD;
 		}
 		FontUIResource fr = new FontUIResource(new Font(name,type,size));
-	    Enumeration<Object> keys = UIManager.getDefaults().keys();
-	    while (keys.hasMoreElements()) {
-	        Object key = keys.nextElement();
-	        Object value = UIManager.get(key);
-	        if (value instanceof FontUIResource) {
-	            UIManager.put(key, fr);
-	        }
-	    }
+		Enumeration<Object> keys = UIManager.getDefaults().keys();
+		while (keys.hasMoreElements()) {
+			Object key = keys.nextElement();
+			Object value = UIManager.get(key);
+			if (value instanceof FontUIResource) {
+				UIManager.put(key, fr);
+			}
+		}
 	}
 
 	@Override
