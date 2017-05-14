@@ -25,7 +25,7 @@ public class InstrumentPlayerKeyListener implements KeyListener {
 				if (!accent) {
 					accent = Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
 				}
-				controller.playNote(note,accent);
+				playNote(note,accent);
 			}
 		}
 	}
@@ -34,7 +34,7 @@ public class InstrumentPlayerKeyListener implements KeyListener {
 	public void keyReleased(KeyEvent evt) {
 		int note = getNoteForKey(evt);
 		if (note>=0) {
-			controller.stopNote(note);
+			stopNote(note);
 		}
 	}
 
@@ -43,6 +43,14 @@ public class InstrumentPlayerKeyListener implements KeyListener {
 		// Ignore
 	}
 	
+	protected void playNote(int note, boolean accent) {
+		controller.playNote(note,accent);
+	}
+
+	protected void stopNote(int note) {
+		controller.stopNote(note);
+	}
+
 	private int getNoteForKey(KeyEvent evt) {
 		int keyCode = evt.getKeyCode();
 		String key = KeyEvent.getKeyText(keyCode);

@@ -65,10 +65,10 @@ public class PatternGridController extends AbstractTableModel {
 	}
 
 	@Override
-	public Object getValueAt(int rowIndex, int columnIndex) {
+	public Object getValueAt(int row, int col) {
 		Object r = null;
 		if (workingPattern!=null) {
-			// TODO: Implement
+			r = workingPattern.getNote((col + 1),(row + 1),1);
 		}
 		return r;
 	}

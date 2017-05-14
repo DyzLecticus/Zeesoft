@@ -8,9 +8,9 @@ public class StateChangeEvent extends StateObject {
 	public static final String	CHANGED_SETTINGS			= "CHANGED_SETTINGS";
 	public static final String	CHANGED_COMPOSITION			= "CHANGED_COMPOSITION";
 	public static final String	CHANGED_COMPOSITION_STATE	= "CHANGED_COMPOSITION_STATE";
-	
-	private String				type					= "";
-	private Object				source					= "";
+
+	private String				type						= "";
+	private Object				source						= "";
 	
 	public StateChangeEvent(String type,Object source) {
 		super(null);

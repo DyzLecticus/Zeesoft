@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.Settings;
 import nl.zeesoft.zmmt.syntesizer.Instrument;
@@ -75,6 +76,10 @@ public class StateManager extends StateObject {
 		lockMe(this);
 		if (super.isCompositionChanged()!=compositionChanged) {
 			super.setCompositionChanged(compositionChanged);
+			if (!compositionChanged) {
+				super.getPatternStates().clear();
+				super.setPatternState(-1);
+			}
 			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION_STATE,source);
 		}
 		unlockMe(this);
@@ -93,8 +98,35 @@ public class StateManager extends StateObject {
 		lockMe(this);
 		if (super.getComposition()!=composition) {
 			super.setComposition(composition);
+			super.getPatternStates().clear();
+			super.setPatternState(-1);
 			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		}
+		unlockMe(this);
+	}
+
+	public void setPatternState(Object source,int state) {
+		lockMe(this);
+		if (super.getPatternState()!=state) {
+			super.setPatternState(state);
+			publishStateChangeEvent(StateChangeEvent.SELECTED_PATTERN,source);
+		}
+		unlockMe(this);
+	}
+
+	public void changedPattern(Object source,Pattern pattern) {
+		lockMe(this);
+		PatternState ps = new PatternState();
+		ps.fromPatternList(super.getComposition().getPatterns());
+		super.getPatternStates().add(ps);
+		super.setPatternState((super.getPatternStates().size() - 1));
+		Pattern existing = super.getComposition().getPattern(pattern.getNumber());
+		if (existing!=null) {
+			super.getComposition().getPatterns().remove(existing);
+		}
+		super.getComposition().getPatterns().add(pattern);
+		super.setCompositionChanged(true);
+		publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		unlockMe(this);
 	}
 
@@ -181,6 +213,10 @@ public class StateManager extends StateObject {
 		evt.setCompositionChanged(super.isCompositionChanged());
 		evt.setComposition(super.getComposition());
 		evt.setSettings(super.getSettings());
+		evt.setPatternState(getPatternState());
+		for (PatternState ps: getPatternStates()) {
+			evt.getPatternStates().add(ps);
+		}
 		return evt;
 	}
 	

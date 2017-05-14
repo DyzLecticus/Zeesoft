@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -15,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.composition.Note;
 import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
@@ -36,6 +40,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 	
 	private	Composition				compositionCopy					= null;
 	private Pattern					workingPattern					= null;
+	private List<Note>				workingNotes					= new ArrayList<Note>();
 	
 	public PanelPatterns(Controller controller) {
 		super(controller);
@@ -62,7 +67,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 
 	@Override
 	public void requestFocus() {
-		pattern.requestFocus();
+		if (!grid.hasFocus()) {
+			pattern.requestFocus();
+		}
 	}
 
 	@Override
@@ -77,9 +84,10 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 			selectedPattern = evt.getSelectedPattern();
 			pattern.setSelectedIndex(selectedPattern);
 			updateWorkingPattern();
-		} else if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+		} else if (evt.getSource()!=this && evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			compositionCopy = evt.getComposition().copy();
 			barsPerPattern = compositionCopy.getBarsPerPattern();
+			workingPattern = null;
 			updateWorkingPattern();
 			if (gridController.setLayout(
 				compositionCopy.getBarsPerPattern(),
@@ -87,6 +95,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 				compositionCopy.getStepsPerBeat()
 				)) {
 				gridController.fireTableStructureChanged();
+			} else {
+				refreshGridData();
 			}
 		}
 		setValidate(true);
@@ -95,34 +105,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 	@Override
 	public void setChangesInComposition(Composition composition) {
 		// TODO: Implement
-	}
-
-	protected void updateWorkingPattern() {
-		Pattern current = workingPattern;
-		if (workingPattern==null || workingPattern.getNumber()!=selectedPattern) {
-			if (compositionCopy!=null) {
-				workingPattern = compositionCopy.getPattern(selectedPattern);
-			} else {
-				workingPattern = null;
-			}
-			
-			if (workingPattern!=null && workingPattern.getBars()>0) {
-				bars.setSelectedIndex((workingPattern.getBars() + 1));
-				bars.setEnabled(true);
-			} else {
-				bars.setEnabled(false);
-				bars.setSelectedIndex(0);
-			}
-			
-			if (
-				(current==null && workingPattern!=null) ||
-				(current!=null && workingPattern==null) ||
-				(current!=null && workingPattern!=null)
-				) {
-				gridController.setWorkingPattern(workingPattern);
-				gridController.fireTableDataChanged();
-			}
-		}
 	}
 	
 	@Override
@@ -147,17 +129,231 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 			if (customBars.isSelected()) {
 				if (workingPattern!=null && workingPattern.getBars()!=bars.getSelectedIndex()) {
 					workingPattern.setBars(bars.getSelectedIndex());
-					// TODO: publish pattern change
+				}
+				changedPattern();
+			}
+		}
+	}
+
+	@Override
+	public void focusLost(FocusEvent evt) {
+		super.focusLost(evt);
+		if (evt.getSource()==grid) {
+			workingNotes.clear();
+		}
+	}
+
+	protected void selectPattern() {
+		pattern.requestFocus();
+	}
+
+	protected void shiftSelectedNotesNote(int mod) {
+		boolean changed = false;
+		List<Note> sns = getSelectedNotes();
+		for (Note sn: sns) {
+			if (mod>0 && sn.note<127) {
+				changed = true;
+				sn.note += mod;
+				if (sn.note>127) {
+					sn.note=127;
+				}
+			} else if (mod<0 && sn.note>0) {
+				changed = true;
+				sn.note -= (mod * -1);
+				if (sn.note<0) {
+					sn.note=0;
 				}
 			}
+		}
+		if (changed) {
+			changedPattern();
+		}
+	}
+
+	protected void shiftSelectedNotesVelocityPercentage(int mod) {
+		boolean changed = false;
+		List<Note> sns = getSelectedNotes();
+		for (Note sn: sns) {
+			if (mod>0 && sn.velocityPercentage<100) {
+				changed = true;
+				sn.velocityPercentage += mod;
+				if (sn.velocityPercentage>100) {
+					sn.velocityPercentage=100;
+				}
+			} else if (mod<0 && sn.velocityPercentage>0) {
+				changed = true;
+				sn.velocityPercentage -= (mod * -1);
+				if (sn.velocityPercentage<0) {
+					sn.velocityPercentage=0;
+				}
+			}
+		}
+		if (changed) {
+			changedPattern();
+		}
+	}
+
+	protected void deleteSelectedNotes() {
+		List<Note> sns = getSelectedNotes();
+		for (Note sn: sns) {
+			workingPattern.getNotes().remove(sn);
+		}
+		if (sns.size()>0) {
+			changedPattern();
+		}
+	}
+
+	protected void toggleInsertMode() {
+		insertMode.doClick();
+	}
+
+	protected void playNote(int note, boolean accent) {
+		if (grid.getSelectedColumn()>=0 && grid.getSelectedRow()>=0) {
+			Note pn = null;
+			for (Note wn: workingNotes) {
+				if (wn.note==note) {
+					pn = wn;
+					break;
+				}
+			}
+			if (pn==null) {
+				pn = new Note();
+				pn.note = note;
+				pn.instrument = getController().getStateManager().getSelectedInstrument();
+				pn.track = grid.getSelectedColumn() + 1 + workingNotes.size();
+				pn.step = grid.getSelectedRow() + 1;
+				pn.accent = accent;
+				Note patternNote = workingPattern.getNote(pn.track,pn.step,pn.duration);
+				if (patternNote!=null && patternNote.step<pn.step) {
+					patternNote.duration = (pn.step - patternNote.step);
+					patternNote = null;
+				}
+				if (patternNote==null) {
+					patternNote = pn;
+					workingPattern.getNotes().add(pn);
+					// TODO Update composition
+				} else if (patternNote.step==pn.step) {
+					patternNote.instrument = pn.instrument;
+					patternNote.note = pn.note;
+					patternNote.accent = pn.accent;
+					patternNote.velocityPercentage = 100;
+				}
+				workingNotes.add(patternNote);
+				changedPattern();
+			}
+		}
+	}
+
+	protected void stopNote(int note) {
+		Note pn = null;
+		for (Note wn: workingNotes) {
+			if (wn.note==note) {
+				pn = wn;
+				break;
+			}
+		}
+		if (pn!=null) {
+			workingNotes.remove(pn);
+			if ((grid.getSelectedRow() + 1)>pn.step) {
+				int newDuration = (((grid.getSelectedRow() + 1) - pn.step) + 1);
+				List<Note> trackNotes = workingPattern.getTrackNotes(pn.track,(pn.step + 1),newDuration);
+				if (trackNotes.size()>0) {
+					for (Note tn: trackNotes) {
+						if (tn.step>pn.step) {
+							newDuration = (tn.step - pn.step);
+							break;
+						}
+					}
+				}
+				pn.duration = newDuration;
+				changedPattern();
+			}
+		}
+	}
+	
+	protected void updateWorkingPattern() {
+		Pattern current = workingPattern;
+		if (workingPattern==null || workingPattern.getNumber()!=selectedPattern) {
+			if (compositionCopy!=null) {
+				workingPattern = compositionCopy.getPattern(selectedPattern);
+				if (workingPattern==null) {
+					workingPattern = new Pattern();
+					workingPattern.setNumber(pattern.getSelectedIndex());
+					if (customBars.isSelected()) {
+						workingPattern.setBars(bars.getSelectedIndex());
+					}
+					compositionCopy.getPatterns().add(workingPattern);
+				}
+			} else {
+				workingPattern = null;
+			}
+			
+			if (workingPattern!=null && workingPattern.getBars()>0) {
+				bars.setSelectedIndex((workingPattern.getBars() + 1));
+				bars.setEnabled(true);
+			} else {
+				bars.setEnabled(false);
+				bars.setSelectedIndex(0);
+			}
+			
+			if (
+				(current==null && workingPattern!=null) ||
+				(current!=null && workingPattern==null) ||
+				(current!=null && workingPattern!=null)
+				) {
+				gridController.setWorkingPattern(workingPattern);
+				refreshGridData();
+			}
+		}
+	}
+
+	protected List<Note> getSelectedNotes() {
+		List<Note> r = new ArrayList<Note>();
+		if (workingPattern!=null) {
+			int[] rows = grid.getSelectedRows();
+			int[] cols = grid.getSelectedColumns();
+			if (rows.length>0 && cols.length>0) {
+				for (int row = rows[0]; row <= rows[(rows.length - 1)]; row++) {
+					for (int col = cols[0]; col <= cols[(cols.length - 1)]; col++) {
+						int track = col + 1;
+						int step = row + 1;
+						Note sn = workingPattern.getNote(track,step,1);
+						if (sn!=null) {
+							r.add(sn);
+						}
+					}
+				}
+			}
+		}
+		return r;
+	}
+
+	protected void changedPattern() {
+		refreshGridData();
+		if (workingPattern!=null) {
+			// TODO: Publish change
+			getController().getStateManager().changedPattern(this,workingPattern);
+		}
+	}
+
+	protected void refreshGridData() {
+		int[] rows = grid.getSelectedRows();
+		int[] cols = grid.getSelectedColumns();
+		gridController.fireTableDataChanged();
+		if (rows.length>0 && cols.length>0) {
+			grid.addRowSelectionInterval(rows[0],rows[(rows.length-1)]);
+			grid.addColumnSelectionInterval(cols[0],cols[(cols.length-1)]);
 		}
 	}
 	
 	protected JScrollPane getPatternPanel() {
 		gridController = new PatternGridController();
+		PatternGridKeyListener keyListener = getController().getPatternKeyListener();
+		keyListener.setPatternPanel(this);
 		grid = new JTable();
-		grid.addKeyListener(getController().getPlayerKeyListener());
 		grid.setModel(gridController);
+		grid.addKeyListener(keyListener);
+		grid.addFocusListener(this);
 		grid.setCellSelectionEnabled(true);
 		grid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

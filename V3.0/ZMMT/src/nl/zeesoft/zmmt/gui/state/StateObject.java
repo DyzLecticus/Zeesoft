@@ -1,5 +1,8 @@
 package nl.zeesoft.zmmt.gui.state;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zmmt.composition.Composition;
@@ -13,6 +16,9 @@ public abstract class StateObject extends Locker {
 	
 	private Settings			settings				= null;
 	private Composition			composition				= null;
+	
+	private List<PatternState>	patternStates			= new ArrayList<PatternState>();
+	private int					patternState			= -1;
 	
 	public StateObject(Messenger msgr) {
 		super(msgr);
@@ -64,5 +70,17 @@ public abstract class StateObject extends Locker {
 	
 	protected void setComposition(Composition composition) {
 		this.composition = composition;
+	}
+
+	public List<PatternState> getPatternStates() {
+		return patternStates;
+	}
+
+	public int getPatternState() {
+		return patternState;
+	}
+
+	protected void setPatternState(int patternState) {
+		this.patternState = patternState;
 	}
 }

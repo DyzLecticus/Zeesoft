@@ -6,26 +6,26 @@ public class DemoComposition extends Composition {
 	public DemoComposition() {
 		setComposer("Dyz Lecticus");
 		setName("ZeeTracker demo composition");
-		getPatterns().add(generateDrumPattern());
+		getPatterns().add(generateDrumPattern(getBarsPerPattern()));
 	}
 	
-	protected Pattern generateDrumPattern() {
+	protected Pattern generateDrumPattern(int bars) {
 		Pattern pattern = new Pattern();
-		Note step = null;
-		for (int s = 1; s <= (pattern.getBars() * getStepsPerBar()); s++) {
+		Note note = null;
+		for (int s = 1; s <= (bars * getStepsPerBar()); s++) {
 			if (s==1 || s==9 || s==17 || s==25 || s==33 || s==41 || s==49 || s==57) {
-				step = new Note();
-				step.instrument = Instrument.DRUMS;
-				step.track = 1;
-				step.note = 36;
-				step.accent = true;
-				pattern.getSteps().add(step);
+				note = new Note();
+				note.instrument = Instrument.DRUMS;
+				note.track = 1;
+				note.note = 36;
+				note.accent = true;
+				pattern.getNotes().add(note);
 			} if (s==5 || s==13 || s==21 || s==29 || s==37 || s==45 || s==53 || s==61) {
-				step = new Note();
-				step.instrument = Instrument.DRUMS;
-				step.track = 2;
-				step.note = 39;
-				pattern.getSteps().add(step);
+				note = new Note();
+				note.instrument = Instrument.DRUMS;
+				note.track = 2;
+				note.note = 39;
+				pattern.getNotes().add(note);
 			}
 		}
 		return pattern;

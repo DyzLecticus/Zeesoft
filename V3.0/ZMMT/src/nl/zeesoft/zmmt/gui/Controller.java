@@ -19,6 +19,7 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
+import nl.zeesoft.zmmt.gui.panel.PatternGridKeyListener;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.gui.state.StateManager;
@@ -37,6 +38,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private FrameMain					mainFrame					= null;
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
+	private PatternGridKeyListener		patternKeyListener			= null;
 	
 	private Composition					composition					= null;
 	private Composition					compositionOriginal			= null;
@@ -79,6 +81,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		adapter = new ControllerWindowAdapter(this);
 		player = new InstrumentPlayer(getMessenger(),getUnion());
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
+		patternKeyListener = new PatternGridKeyListener(this,settings.getKeyCodeNoteNumbers());
 
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
@@ -241,7 +244,11 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public InstrumentPlayerKeyListener getPlayerKeyListener() {
 		return playerKeyListener;
 	}
-	
+
+	public PatternGridKeyListener getPatternKeyListener() {
+		return patternKeyListener;
+	}
+
 	protected void setComposition(Composition composition) {
 		if (composition!=null) {
 			stopSynthesizer();

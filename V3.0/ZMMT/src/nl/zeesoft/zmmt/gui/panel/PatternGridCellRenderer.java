@@ -3,8 +3,13 @@ package nl.zeesoft.zmmt.gui.panel;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import nl.zeesoft.zmmt.composition.Note;
+import nl.zeesoft.zmmt.syntesizer.Instrument;
 
 @SuppressWarnings("serial")
 public class PatternGridCellRenderer extends DefaultTableCellRenderer {
@@ -22,17 +27,43 @@ public class PatternGridCellRenderer extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row, int column) {
 		Component r = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		if ((row % controller.getStepsPerBeat())==0) {
-			if (isSelected) {
-				r.setBackground(BEAT_COLOR_SELECTED);
-			} else {
-				r.setBackground(BEAT_COLOR_NORMAL);
+		if (value!=null && value instanceof Note) {
+			Note note = (Note) value;
+			Color color = Instrument.getColorForInstrument(note.instrument);
+			JLabel label = new JLabel();
+			label.setOpaque(true);
+			if (note.step==(row + 1)) {
+				label.setText(note.toString());
 			}
-		} else {
-			if (isSelected) {
-				r.setBackground(COLOR_SELECTED);
+			label.setBackground(color);
+			label.setForeground(Color.BLACK);
+			if (hasFocus) {
+				label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
 			} else {
-				r.setBackground(COLOR_NORMAL);
+				Color borderColor = color;
+				if (isSelected) {
+					if ((row % controller.getStepsPerBeat())==0) {
+						borderColor = BEAT_COLOR_SELECTED;
+					} else {
+						borderColor = COLOR_SELECTED;
+					}
+				}
+				label.setBorder(BorderFactory.createLineBorder(borderColor));
+			}
+			r = label;
+		} else {
+			if ((row % controller.getStepsPerBeat())==0) {
+				if (isSelected) {
+					r.setBackground(BEAT_COLOR_SELECTED);
+				} else {
+					r.setBackground(BEAT_COLOR_NORMAL);
+				}
+			} else {
+				if (isSelected) {
+					r.setBackground(COLOR_SELECTED);
+				} else {
+					r.setBackground(COLOR_NORMAL);
+				}
 			}
 		}
 		return r;
