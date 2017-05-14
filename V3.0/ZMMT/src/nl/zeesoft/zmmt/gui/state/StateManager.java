@@ -77,8 +77,11 @@ public class StateManager extends StateObject {
 		if (super.isCompositionChanged()!=compositionChanged) {
 			super.setCompositionChanged(compositionChanged);
 			if (!compositionChanged) {
+				PatternState ps = new PatternState();
+				ps.fromPatternList(super.getComposition().getPatterns());
 				super.getPatternStates().clear();
-				super.setPatternState(-1);
+				super.getPatternStates().add(ps);
+				super.setPatternState(0);
 			}
 			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION_STATE,source);
 		}
@@ -98,35 +101,74 @@ public class StateManager extends StateObject {
 		lockMe(this);
 		if (super.getComposition()!=composition) {
 			super.setComposition(composition);
+			PatternState ps = new PatternState();
+			ps.fromPatternList(super.getComposition().getPatterns());
 			super.getPatternStates().clear();
-			super.setPatternState(-1);
+			super.getPatternStates().add(ps);
+			super.setPatternState(0);
 			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
-		}
-		unlockMe(this);
-	}
-
-	public void setPatternState(Object source,int state) {
-		lockMe(this);
-		if (super.getPatternState()!=state) {
-			super.setPatternState(state);
-			publishStateChangeEvent(StateChangeEvent.SELECTED_PATTERN,source);
 		}
 		unlockMe(this);
 	}
 
 	public void changedPattern(Object source,Pattern pattern) {
 		lockMe(this);
-		PatternState ps = new PatternState();
-		ps.fromPatternList(super.getComposition().getPatterns());
-		super.getPatternStates().add(ps);
-		super.setPatternState((super.getPatternStates().size() - 1));
+		int currentPatternState = super.getPatternState();
+		if (currentPatternState>=0) {
+			List<PatternState> patternStates = new ArrayList<PatternState>(super.getPatternStates());
+			int i = 0;
+			for (PatternState ps: patternStates) {
+				if (i>currentPatternState) {
+					super.getPatternStates().remove(ps);
+				}
+				i++;
+			}
+		}
 		Pattern existing = super.getComposition().getPattern(pattern.getNumber());
 		if (existing!=null) {
 			super.getComposition().getPatterns().remove(existing);
 		}
-		super.getComposition().getPatterns().add(pattern);
+		super.getComposition().getPatterns().add(0,pattern.copy());
 		super.setCompositionChanged(true);
+		PatternState ps = new PatternState();
+		ps.fromPatternList(super.getComposition().getPatterns());
+		super.getPatternStates().add(ps);
+		super.setPatternState(super.getPatternStates().size() - 1);
 		publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+		unlockMe(this);
+	}
+
+	public void undoPatternChange(Object source) {
+		lockMe(this);
+		int currentPatternState = super.getPatternState();
+		if (currentPatternState>0) {
+			List<Pattern> patterns = super.getPatternStates().get((currentPatternState - 1)).getPatterns();
+			super.setPatternState((currentPatternState - 1));
+			super.getComposition().getPatterns().clear();
+			for (Pattern pattern: patterns) {
+				super.getComposition().getPatterns().add(pattern);
+			}
+			super.setCompositionChanged(true);
+			super.setSelectedPattern(super.getComposition().getPatterns().get(0).getNumber());
+			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+		}
+		unlockMe(this);
+	}
+
+	public void redoPatternChange(Object source) {
+		lockMe(this);
+		int currentPatternState = super.getPatternState();
+		if (currentPatternState<(super.getPatternStates().size() - 1)) {
+			List<Pattern> patterns = super.getPatternStates().get((currentPatternState + 1)).getPatterns();
+			super.setPatternState((currentPatternState + 1));
+			super.getComposition().getPatterns().clear();
+			for (Pattern pattern: patterns) {
+				super.getComposition().getPatterns().add(pattern);
+			}
+			super.setCompositionChanged(true);
+			super.setSelectedPattern(super.getComposition().getPatterns().get(0).getNumber());
+			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+		}
 		unlockMe(this);
 	}
 

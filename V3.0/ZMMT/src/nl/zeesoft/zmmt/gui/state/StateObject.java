@@ -18,7 +18,7 @@ public abstract class StateObject extends Locker {
 	private Composition			composition				= null;
 	
 	private List<PatternState>	patternStates			= new ArrayList<PatternState>();
-	private int					patternState			= -1;
+	private int					patternState			= 0;
 	
 	public StateObject(Messenger msgr) {
 		super(msgr);

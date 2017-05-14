@@ -21,11 +21,11 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Note;
 import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.Controller;
-import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
+import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
-public class PanelPatterns extends PanelObject implements ActionListener, CompositionChangePublisher, StateChangeSubscriber {
+public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber {
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
 
@@ -73,11 +73,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 	}
 
 	@Override
-	public void handleValidChange() {
-		getController().getStateManager().addWaitingPublisher(this);
-	}
-
-	@Override
 	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
 		if (evt.getType().equals(StateChangeEvent.SELECTED_PATTERN)) {
@@ -88,6 +83,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 			compositionCopy = evt.getComposition().copy();
 			barsPerPattern = compositionCopy.getBarsPerPattern();
 			workingPattern = null;
+			selectedPattern = evt.getSelectedPattern();
+			pattern.setSelectedIndex(selectedPattern);
 			updateWorkingPattern();
 			if (gridController.setLayout(
 				compositionCopy.getBarsPerPattern(),
@@ -101,15 +98,18 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 		}
 		setValidate(true);
 	}
-
-	@Override
-	public void setChangesInComposition(Composition composition) {
-		// TODO: Implement
-	}
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getSource()==pattern) {
+		if (evt.getActionCommand().equals(FrameMain.EDIT_COPY)) {
+			
+		} else if (evt.getActionCommand().equals(FrameMain.EDIT_PASTE)) {
+			
+		} else if (evt.getActionCommand().equals(FrameMain.EDIT_UNDO)) {
+			getController().getStateManager().undoPatternChange(evt.getSource());
+		} else if (evt.getActionCommand().equals(FrameMain.EDIT_REDO)) {
+			getController().getStateManager().redoPatternChange(evt.getSource());
+		} else if (evt.getSource()==pattern) {
 			if (pattern.getSelectedIndex()!=selectedPattern) {
 				selectedPattern = pattern.getSelectedIndex();
 				getController().getStateManager().setSelectedPattern(this,selectedPattern);
@@ -121,8 +121,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 					bars.setSelectedIndex(0);
 					if (workingPattern!=null) {
 						workingPattern.setBars(0);
-						// TODO: publish pattern change
 					}
+					changedPattern();
 				}
 			}
 		} else if (evt.getSource()==bars) {
@@ -193,10 +193,14 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 		}
 	}
 
-	protected void deleteSelectedNotes() {
+	protected void removeSelectedNotes() {
 		List<Note> sns = getSelectedNotes();
 		for (Note sn: sns) {
-			workingPattern.getNotes().remove(sn);
+			if (sn.step>grid.getSelectedRow()) {
+				workingPattern.getNotes().remove(sn);
+			} else {
+				sn.duration = ((grid.getSelectedRow() - sn.step) + 1);
+			}
 		}
 		if (sns.size()>0) {
 			changedPattern();
@@ -231,7 +235,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 				if (patternNote==null) {
 					patternNote = pn;
 					workingPattern.getNotes().add(pn);
-					// TODO Update composition
 				} else if (patternNote.step==pn.step) {
 					patternNote.instrument = pn.instrument;
 					patternNote.note = pn.note;
@@ -331,7 +334,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, Compos
 	protected void changedPattern() {
 		refreshGridData();
 		if (workingPattern!=null) {
-			// TODO: Publish change
 			getController().getStateManager().changedPattern(this,workingPattern);
 		}
 	}

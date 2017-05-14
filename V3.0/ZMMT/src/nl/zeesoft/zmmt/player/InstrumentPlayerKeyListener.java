@@ -18,7 +18,7 @@ public class InstrumentPlayerKeyListener implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent evt) {
-		if (!evt.isControlDown()) {
+		if (!evt.isControlDown() && !evt.isAltDown()) {
 			int note = getNoteForKey(evt);
 			if (note>=0) {
 				boolean accent = evt.isShiftDown();

@@ -32,6 +32,11 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private static final String	SAVE_AS				= "SAVE_AS";
 	private static final String	NEW					= "NEW";
 	
+	public static final String	EDIT_COPY			= "EDIT_COPY";
+	public static final String	EDIT_PASTE			= "EDIT_PASTE";
+	public static final String	EDIT_UNDO			= "EDIT_UNDO";
+	public static final String	EDIT_REDO			= "EDIT_REDO";
+
 	public static final String	COMPOSITION			= "Composition";
 	public static final String	INSTRUMENTS			= "Instruments";
 	public static final String	PATTERNS			= "Patterns";
@@ -130,6 +135,16 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),INSTRUMENTS);
 		} else if (evt.getActionCommand().equals(PATTERNS)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),PATTERNS);
+		} else if (
+			evt.getActionCommand().equals(EDIT_COPY) ||
+			evt.getActionCommand().equals(EDIT_PASTE) ||
+			evt.getActionCommand().equals(EDIT_UNDO) ||
+			evt.getActionCommand().equals(EDIT_REDO)
+			) {
+			if (selectedTab!=PATTERNS) {
+				getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),PATTERNS);
+			}
+			patternsPanel.actionPerformed(evt);
 		} else {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				if (evt.getActionCommand().equals(Instrument.INSTRUMENTS[i])) {
@@ -210,27 +225,27 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		fileMenu.add(item);
 
 		evt = ActionEvent.SHIFT_MASK;
-		JMenu editMenu = new JMenu("Edit");
-		editMenu.setMnemonic(KeyEvent.VK_E);
-		bar.add(editMenu);
+		JMenu showMenu = new JMenu("Show");
+		showMenu.setMnemonic(KeyEvent.VK_S);
+		bar.add(showMenu);
 
 		item = new JMenuItem("Composition",KeyEvent.VK_C);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,evt));
 		item.setActionCommand(COMPOSITION);
 		item.addActionListener(this);
-		editMenu.add(item);
+		showMenu.add(item);
 
 		item = new JMenuItem("Instruments",KeyEvent.VK_I);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2,evt));
 		item.setActionCommand(INSTRUMENTS);
 		item.addActionListener(this);
-		editMenu.add(item);
+		showMenu.add(item);
 		
 		item = new JMenuItem("Patterns",KeyEvent.VK_P);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,evt));
 		item.setActionCommand(PATTERNS);
 		item.addActionListener(this);
-		editMenu.add(item);
+		showMenu.add(item);
 		
 		evt = ActionEvent.CTRL_MASK;
 		JMenu instMenu = new JMenu("Instrument");
@@ -243,11 +258,40 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			if (i == 9) {
 				ke = KeyEvent.VK_0;
 			}
-			item.setAccelerator(KeyStroke.getKeyStroke(ke,ActionEvent.CTRL_MASK));
+			item.setAccelerator(KeyStroke.getKeyStroke(ke,evt));
 			item.setActionCommand(Instrument.INSTRUMENTS[i]);
 			item.addActionListener(this);
 			instMenu.add(item);
 		}
+
+		JMenu editMenu = new JMenu("Edit");
+		editMenu.setMnemonic(KeyEvent.VK_E);
+		bar.add(editMenu);
+
+		item = new JMenuItem("Copy",KeyEvent.VK_C);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,evt));
+		item.setActionCommand(EDIT_COPY);
+		item.addActionListener(this);
+		editMenu.add(item);
+
+		item = new JMenuItem("Paste",KeyEvent.VK_P);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,evt));
+		item.setActionCommand(EDIT_PASTE);
+		item.addActionListener(this);
+		editMenu.add(item);
+
+
+		item = new JMenuItem("Undo",KeyEvent.VK_U);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,evt));
+		item.setActionCommand(EDIT_UNDO);
+		item.addActionListener(this);
+		editMenu.add(item);
+		
+		item = new JMenuItem("Redo",KeyEvent.VK_R);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y,evt));
+		item.setActionCommand(EDIT_REDO);
+		item.addActionListener(this);
+		editMenu.add(item);
 		
 		return bar;
 	}
