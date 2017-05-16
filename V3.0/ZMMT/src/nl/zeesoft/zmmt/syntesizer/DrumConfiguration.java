@@ -6,6 +6,7 @@ public class DrumConfiguration extends VelocityConfiguration {
 	
 	public DrumConfiguration copy() {
 		DrumConfiguration r = new DrumConfiguration();
+		r.setName(getName());
 
 		r.setLayer1MidiNote(layer1MidiNote);
 		r.setLayer1BaseVelocity(getLayer1BaseVelocity());

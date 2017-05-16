@@ -13,7 +13,8 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 
 	public InstrumentConfiguration copy() {
 		InstrumentConfiguration r = new InstrumentConfiguration();
-
+		r.setName(getName());
+		
 		r.setLayer1MidiNum(layer1MidiNum);
 		r.setLayer1BaseOctave(layer1BaseOctave);
 		r.setLayer1BaseVelocity(getLayer1BaseVelocity());
