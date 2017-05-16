@@ -11,6 +11,18 @@ public class Note {
 	public int		duration			= 1;
 	public int		velocityPercentage	= 100;
 	
+	public Note copy() {
+		Note r = new Note();
+		r.instrument = instrument;
+		r.track = track;
+		r.step = step;
+		r.note = note;
+		r.accent = accent;
+		r.duration = duration;
+		r.velocityPercentage = velocityPercentage;
+		return r;
+	}
+	
 	@Override
 	public String toString() {
 		ZStringBuilder sb = new ZStringBuilder();

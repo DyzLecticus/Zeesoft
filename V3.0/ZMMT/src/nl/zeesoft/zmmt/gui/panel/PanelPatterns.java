@@ -41,7 +41,10 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	private	Composition				compositionCopy					= null;
 	private Pattern					workingPattern					= null;
 	private List<Note>				workingNotes					= new ArrayList<Note>();
-	
+
+	private List<Note>				copyNotes						= new ArrayList<Note>();
+	private int						copySteps						= 0;
+
 	public PanelPatterns(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
@@ -102,7 +105,18 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getActionCommand().equals(FrameMain.EDIT_COPY)) {
-			
+			int rows[] = grid.getSelectedRows();
+			if (rows.length>0) {
+				int from = rows[0];
+				int to = rows[(rows.length - 1)];
+				copySteps = (to - from);
+				copyNotes.clear();
+				List<Note> selNotes = getSelectedNotes();
+				for (Note note: selNotes) {
+					copyNotes.add(note.copy());
+				}
+				// TODO: normalize notes to step 1, track 1
+			}
 		} else if (evt.getActionCommand().equals(FrameMain.EDIT_PASTE)) {
 			
 		} else if (evt.getActionCommand().equals(FrameMain.EDIT_UNDO)) {

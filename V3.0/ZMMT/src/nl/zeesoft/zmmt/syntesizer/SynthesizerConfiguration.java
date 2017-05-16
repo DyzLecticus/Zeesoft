@@ -20,7 +20,13 @@ public class SynthesizerConfiguration {
 	
 	public SynthesizerConfiguration copy() {
 		SynthesizerConfiguration copy = new SynthesizerConfiguration();
-		copy.fromJson(toJson());
+		for (InstrumentConfiguration inst: instruments) {
+			copy.getInstruments().add(inst.copy());
+		}
+		copy.setEcho(echo.copy());
+		for (DrumConfiguration drum: drums) {
+			copy.getDrums().add(drum.copy());
+		}
 		return copy;
 	}
 	
@@ -180,6 +186,10 @@ public class SynthesizerConfiguration {
 
 	public EchoConfiguration getEcho() {
 		return echo;
+	}
+
+	public void setEcho(EchoConfiguration echo) {
+		this.echo = echo;
 	}
 
 	public List<DrumConfiguration> getDrums() {

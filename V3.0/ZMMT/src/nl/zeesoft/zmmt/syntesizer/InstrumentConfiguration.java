@@ -11,6 +11,26 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 	private int 		layer2Pressure		= 24;
 	private int			layer2Reverb		= 64;
 
+	public InstrumentConfiguration copy() {
+		InstrumentConfiguration r = new InstrumentConfiguration();
+
+		r.setLayer1MidiNum(layer1MidiNum);
+		r.setLayer1BaseOctave(layer1BaseOctave);
+		r.setLayer1BaseVelocity(getLayer1BaseVelocity());
+		r.setLayer1AccentVelocity(getLayer1AccentVelocity());
+		r.setLayer1Pressure(layer1Pressure);
+		r.setLayer1Reverb(layer1Reverb);
+		
+		r.setLayer2MidiNum(layer2MidiNum);
+		r.setLayer2BaseOctave(layer2BaseOctave);
+		r.setLayer2BaseVelocity(getLayer2BaseVelocity());
+		r.setLayer2AccentVelocity(getLayer2AccentVelocity());
+		r.setLayer2Pressure(layer2Pressure);
+		r.setLayer2Reverb(layer2Reverb);
+
+		return r;
+	}
+	
 	public int getLayer1MidiNum() {
 		return layer1MidiNum;
 	}

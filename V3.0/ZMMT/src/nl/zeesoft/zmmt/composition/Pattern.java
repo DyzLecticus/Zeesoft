@@ -13,7 +13,11 @@ public class Pattern {
 	
 	public Pattern copy() {
 		Pattern copy = new Pattern();
-		copy.fromJson(toJson());
+		copy.setNumber(number);
+		copy.setBars(bars);
+		for (Note note: notes) {
+			copy.getNotes().add(note.copy());
+		}
 		return copy;
 	}
 	

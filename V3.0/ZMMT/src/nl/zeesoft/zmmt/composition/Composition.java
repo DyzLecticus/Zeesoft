@@ -26,7 +26,16 @@ public class Composition {
 	
 	public Composition copy() {
 		Composition copy = new Composition();
-		copy.fromJson(toJson());
+		copy.setComposer(composer);
+		copy.setName(name);
+		copy.setBeatsPerMinute(beatsPerMinute);
+		copy.setBeatsPerBar(beatsPerBar);
+		copy.setStepsPerBeat(stepsPerBeat);
+		copy.setBarsPerPattern(barsPerPattern);
+		copy.setSynthesizerConfiguration(synthesizerConfiguration.copy());
+		for (Pattern pat: patterns) {
+			copy.getPatterns().add(pat.copy());
+		}
 		return copy;
 	}
 	

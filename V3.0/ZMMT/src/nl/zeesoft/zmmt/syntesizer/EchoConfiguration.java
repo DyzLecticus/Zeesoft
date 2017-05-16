@@ -11,6 +11,20 @@ public class EchoConfiguration {
 	private int			reverb2					= 115;
 	private int			reverb3					= 127;
 	
+	public EchoConfiguration copy() {
+		EchoConfiguration r = new EchoConfiguration();
+		r.setInstrument(instrument);
+		r.setLayer(layer);
+		r.setSteps(steps);
+		r.setVelocityPercentage1(velocityPercentage1);
+		r.setVelocityPercentage2(velocityPercentage2);
+		r.setVelocityPercentage3(velocityPercentage3);
+		r.setReverb1(reverb1);
+		r.setReverb2(reverb2);
+		r.setReverb3(reverb3);
+		return r;
+	}
+
 	public String getInstrument() {
 		return instrument;
 	}
