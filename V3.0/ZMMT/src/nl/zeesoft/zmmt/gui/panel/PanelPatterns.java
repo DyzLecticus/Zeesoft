@@ -35,7 +35,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	private int						selectedPattern					= 0;
 
 	private int						barsPerPattern					= 0;
-	private JCheckBox				customBars						= null;
 	private JComboBox<String>		bars							= null;
 
 	private JCheckBox				insertMode						= null;
@@ -169,12 +168,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 					row = (grid.getRowCount() - 1);
 				}
 				grid.clearSelection();
-				grid.addRowSelectionInterval(row,row);
-				grid.addColumnSelectionInterval(col,col);
-				Rectangle rect = grid.getCellRect(row,col,true);
-				rect.height = rect.height + 20;
-				rect.width = rect.width + 100;
-				grid.scrollRectToVisible(rect);				
+				selectAndShow(row,row,col,col);
 				changedPattern();
 			}
 		} else if (evt.getSource()==pattern) {
@@ -182,22 +176,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				selectedPattern = pattern.getSelectedIndex();
 				getController().getStateManager().setSelectedPattern(this,selectedPattern);
 			}
-		} else if (evt.getSource()==customBars) {
-			if (bars.isEnabled()!=customBars.isSelected()) {
-				bars.setEnabled(customBars.isSelected());
-				if (!customBars.isSelected() && bars.getSelectedIndex()>0) {
-					bars.setSelectedIndex(0);
-					if (workingPattern!=null) {
-						workingPattern.setBars(0);
-					}
-					changedPattern();
-				}
-			}
 		} else if (evt.getSource()==bars) {
-			if (customBars.isSelected()) {
-				if (workingPattern!=null && workingPattern.getBars()!=bars.getSelectedIndex()) {
-					workingPattern.setBars(bars.getSelectedIndex());
-				}
+			if (workingPattern!=null && workingPattern.getBars()!=bars.getSelectedIndex()) {
+				workingPattern.setBars(bars.getSelectedIndex());
 				changedPattern();
 			}
 		}
@@ -217,17 +198,24 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	protected boolean reselect() {
 		boolean selected = false;
 		if (selectedRows!=null && selectedRows.length>0 && selectedCols!=null && selectedCols.length>0) {
-			grid.addRowSelectionInterval(selectedRows[0],selectedRows[(selectedRows.length - 1)]);
-			grid.addColumnSelectionInterval(selectedCols[0],selectedCols[(selectedCols.length - 1)]);
-			Rectangle rect = grid.getCellRect(selectedRows[0],selectedCols[0],true);
-			rect.height = rect.height + 20;
-			rect.width = rect.width + 100;
-			grid.scrollRectToVisible(rect);
+			selectAndShow(
+				selectedRows[0],selectedRows[(selectedRows.length - 1)],
+				selectedCols[0],selectedCols[(selectedCols.length - 1)]
+				);
 			selected = true;
 		}
 		return selected;
 	}
 
+	protected void selectAndShow(int rowFrom, int rowTo, int colFrom, int colTo) {
+		grid.addRowSelectionInterval(rowFrom,rowTo);
+		grid.addColumnSelectionInterval(colFrom,colTo);
+		Rectangle rect = grid.getCellRect(rowFrom,colFrom,true);
+		rect.height = rect.height + 20;
+		rect.width = rect.width + 100;
+		grid.scrollRectToVisible(rect);
+	}
+	
 	protected void shiftSelectedNotesNote(int mod) {
 		boolean changed = false;
 		List<Note> sns = getSelectedNotes();
@@ -369,23 +357,17 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				if (workingPattern==null) {
 					workingPattern = new Pattern();
 					workingPattern.setNumber(pattern.getSelectedIndex());
-					if (customBars.isSelected()) {
-						workingPattern.setBars(bars.getSelectedIndex());
-					}
+					workingPattern.setBars(bars.getSelectedIndex());
 					compositionCopy.getPatterns().add(workingPattern);
 				}
 			} else {
 				workingPattern = null;
 			}
 			
-			if (workingPattern!=null && workingPattern.getBars()>0) {
-				bars.setSelectedIndex((workingPattern.getBars() + 1));
-				bars.setEnabled(true);
-			} else {
-				bars.setEnabled(false);
-				bars.setSelectedIndex(0);
+			if (workingPattern!=null && bars.getSelectedIndex()!=workingPattern.getBars()) {
+				bars.setSelectedIndex(workingPattern.getBars());
 			}
-			
+
 			if (
 				(current==null && workingPattern!=null) ||
 				(current!=null && workingPattern==null) ||
@@ -497,7 +479,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				r.addItem(String.format("%02d",b));
 			}
 		}
-		r.setEnabled(false);
 		r.setSelectedIndex(barsPerPattern);
 		r.addActionListener(this);
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
@@ -530,10 +511,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		r.setBorder(BorderFactory.createTitledBorder("Details"));
 
 		JPanel labelProp = new JPanel();
-		customBars = new JCheckBox("Custom bars");
-		customBars.addActionListener(this);
-		customBars.addKeyListener(getController().getPlayerKeyListener());
-		labelProp.add(customBars);
+		labelProp.add(new JLabel("Custom bars"));
 		bars = getBarsSelector();
 		labelProp.add(bars);
 		r.add(labelProp,BorderLayout.LINE_START);
