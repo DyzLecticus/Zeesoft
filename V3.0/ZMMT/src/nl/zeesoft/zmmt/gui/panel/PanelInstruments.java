@@ -278,6 +278,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	public void actionPerformed(ActionEvent evt) {
 		if (!selectedInstrument.equals(instrument.getSelectedItem().toString())) {
 			selectedInstrument = instrument.getSelectedItem().toString();
+			instrument.setBackground(Instrument.getColorForInstrument(selectedInstrument));
 			getController().getStateManager().setSelectedInstrument(this,selectedInstrument);
 		}
 	}
@@ -461,19 +462,19 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				drow++;
 				drumLayer2MidiNote[d] = getNewNumberTextField(3);
 				slider = getNewNumberSlider(drumLayer2MidiNote[d],34,81,35);
-				addLabel(drumPanel,drow,"Layer 2 Layer MIDI note number");
+				addLabel(drumPanel,drow,"Layer 2 MIDI note number");
 				addProperty(drumPanel,drow,slider);
 				
 				drow++;
 				drumLayer2BaseVelocity[d] = getNewNumberTextField(3);
 				slider = getNewNumberSlider(drumLayer2BaseVelocity[d],0,127,100);
-				addLabel(drumPanel,drow,"Layer 2 Layer base velocity");
+				addLabel(drumPanel,drow,"Layer 2 base velocity");
 				addProperty(drumPanel,drow,slider);
 		
 				drow++;
 				drumLayer2AccentVelocity[d] = getNewNumberTextField(3);
 				slider = getNewNumberSlider(drumLayer2AccentVelocity[d],0,127,100);
-				addLabel(drumPanel,drow,"Layer 2 Layer accent velocity");
+				addLabel(drumPanel,drow,"Layer 2 accent velocity");
 				addProperty(drumPanel,drow,slider);
 
 				row++;
