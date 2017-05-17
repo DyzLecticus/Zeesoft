@@ -9,16 +9,16 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Settings;
 
 public abstract class StateObject extends Locker {
-	private String 				selectedTab				= "";
-	private String 				selectedInstrument		= "";
-	private int 				selectedPattern			= 0;
-	private boolean 			compositionChanged		= false;
+	private String 					selectedTab				= "";
+	private String 					selectedInstrument		= "";
+	private int 					selectedPattern			= 0;
+	private boolean 				compositionChanged		= false;
 	
-	private Settings			settings				= null;
-	private Composition			composition				= null;
+	private Settings				settings				= null;
+	private Composition				composition				= null;
 	
-	private List<PatternState>	patternStates			= new ArrayList<PatternState>();
-	private int					patternState			= 0;
+	private List<StateChangeEvent>	states					= new ArrayList<StateChangeEvent>();
+	private int						state					= 0;
 	
 	public StateObject(Messenger msgr) {
 		super(msgr);
@@ -72,15 +72,15 @@ public abstract class StateObject extends Locker {
 		this.composition = composition;
 	}
 
-	public List<PatternState> getPatternStates() {
-		return patternStates;
+	public List<StateChangeEvent> getStates() {
+		return states;
 	}
 
-	public int getPatternState() {
-		return patternState;
+	public int getState() {
+		return state;
 	}
 
-	protected void setPatternState(int patternState) {
-		this.patternState = patternState;
+	protected void setState(int state) {
+		this.state = state;
 	}
 }

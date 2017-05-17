@@ -2,19 +2,25 @@ package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 
 import nl.zeesoft.zmmt.composition.Composition;
@@ -44,6 +50,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	private List<Note>				copyNotes						= new ArrayList<Note>();
 	private int						copySteps						= 0;
+	private int						copyTracks						= 0;
 
 	public PanelPatterns(Controller controller) {
 		super(controller);
@@ -70,9 +77,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	@Override
 	public void requestFocus() {
-		if (!grid.hasFocus()) {
-			pattern.requestFocus();
-		}
+		pattern.requestFocus();
 	}
 
 	@Override
@@ -105,24 +110,57 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getActionCommand().equals(FrameMain.EDIT_COPY)) {
-			int rows[] = grid.getSelectedRows();
-			if (rows.length>0) {
-				int from = rows[0];
-				int to = rows[(rows.length - 1)];
-				copySteps = (to - from);
+			int[] rows = grid.getSelectedRows();
+			int[] cols = grid.getSelectedColumns();
+			if (rows.length>0 && cols.length>0) {
+				int row = rows[0];
+				int col = cols[0];
+				copySteps = (rows[(rows.length - 1)] - rows[0]);
+				copyTracks = (cols[(cols.length - 1)] - cols[0]);
 				copyNotes.clear();
 				List<Note> selNotes = getSelectedNotes();
 				for (Note note: selNotes) {
-					copyNotes.add(note.copy());
+					if (note.step>row) {
+						copyNotes.add(note.copy());
+					}
 				}
-				// TODO: normalize notes to step 1, track 1
+				for (Note note: copyNotes) {
+					note.step = note.step - row;
+					note.track = note.track - col;
+				}
 			}
 		} else if (evt.getActionCommand().equals(FrameMain.EDIT_PASTE)) {
-			
-		} else if (evt.getActionCommand().equals(FrameMain.EDIT_UNDO)) {
-			getController().getStateManager().undoPatternChange(evt.getSource());
-		} else if (evt.getActionCommand().equals(FrameMain.EDIT_REDO)) {
-			getController().getStateManager().redoPatternChange(evt.getSource());
+			int[] rows = grid.getSelectedRows();
+			int[] cols = grid.getSelectedColumns();
+			if (rows.length>0 && cols.length>0) {
+				int row = rows[0];
+				int col = cols[0];
+				int rowTo = row + copySteps;
+				int colTo = row + copyTracks;
+				List<Note> removeNotes = getNotes(row,rowTo,col,colTo);
+				removeNotes(removeNotes);
+				for (Note note: copyNotes) {
+					Note addNote = note.copy();
+					addNote.step = addNote.step + row;
+					addNote.track = addNote.track + col;
+					if (addNote.step<=grid.getRowCount() && addNote.track<=grid.getColumnCount()) {
+						// TODO: limit duration 
+						workingPattern.getNotes().add(addNote);
+					}
+				}
+				if ((rowTo + 1) < grid.getRowCount()) {
+					row = (rowTo + 1);
+				} else {
+					row = (grid.getRowCount() - 1);
+				}
+				grid.clearSelection();
+				grid.addRowSelectionInterval(row,row);
+				grid.addColumnSelectionInterval(col,col);
+				Rectangle rect = grid.getCellRect(row,col,true);
+				rect.y = rect.y + 20;
+				grid.scrollRectToVisible(rect);				
+				changedPattern();
+			}
 		} else if (evt.getSource()==pattern) {
 			if (pattern.getSelectedIndex()!=selectedPattern) {
 				selectedPattern = pattern.getSelectedIndex();
@@ -154,6 +192,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		super.focusLost(evt);
 		if (evt.getSource()==grid) {
 			workingNotes.clear();
+			grid.clearSelection();
 		}
 	}
 
@@ -209,13 +248,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	protected void removeSelectedNotes() {
 		List<Note> sns = getSelectedNotes();
-		for (Note sn: sns) {
-			if (sn.step>grid.getSelectedRow()) {
-				workingPattern.getNotes().remove(sn);
-			} else {
-				sn.duration = ((grid.getSelectedRow() - sn.step) + 1);
-			}
-		}
+		removeNotes(sns);
 		if (sns.size()>0) {
 			changedPattern();
 		}
@@ -241,7 +274,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				pn.track = grid.getSelectedColumn() + 1 + workingNotes.size();
 				pn.step = grid.getSelectedRow() + 1;
 				pn.accent = accent;
-				Note patternNote = workingPattern.getNote(pn.track,pn.step,pn.duration);
+				Note patternNote = workingPattern.getNote(pn.track,pn.step,pn.duration);				
 				if (patternNote!=null && patternNote.step<pn.step) {
 					patternNote.duration = (pn.step - patternNote.step);
 					patternNote = null;
@@ -271,19 +304,25 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 		if (pn!=null) {
 			workingNotes.remove(pn);
-			if ((grid.getSelectedRow() + 1)>pn.step) {
-				int newDuration = (((grid.getSelectedRow() + 1) - pn.step) + 1);
-				List<Note> trackNotes = workingPattern.getTrackNotes(pn.track,(pn.step + 1),newDuration);
-				if (trackNotes.size()>0) {
-					for (Note tn: trackNotes) {
-						if (tn.step>pn.step) {
-							newDuration = (tn.step - pn.step);
-							break;
+			int[] rows = grid.getSelectedRows();
+			if (rows.length>0) {
+				int lastRow = rows[(rows.length - 1)];
+				if ((lastRow + 1)>pn.step) {
+					int newDuration = (((lastRow + 1) - pn.step) + 1);
+					List<Note> trackNotes = workingPattern.getTrackNotes(pn.track,(pn.step + 1),newDuration);
+					if (trackNotes.size()>0) {
+						for (Note tn: trackNotes) {
+							if (tn.step>pn.step) {
+								newDuration = (tn.step - pn.step);
+								break;
+							}
 						}
 					}
+					if (pn.duration!=newDuration) {
+						pn.duration = newDuration;
+						changedPattern();
+					}
 				}
-				pn.duration = newDuration;
-				changedPattern();
 			}
 		}
 	}
@@ -330,14 +369,22 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			int[] rows = grid.getSelectedRows();
 			int[] cols = grid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
-				for (int row = rows[0]; row <= rows[(rows.length - 1)]; row++) {
-					for (int col = cols[0]; col <= cols[(cols.length - 1)]; col++) {
-						int track = col + 1;
-						int step = row + 1;
-						Note sn = workingPattern.getNote(track,step,1);
-						if (sn!=null) {
-							r.add(sn);
-						}
+				r = getNotes(rows[0],rows[(rows.length - 1)],cols[0],cols[(cols.length - 1)]);
+			}
+		}
+		return r;
+	}
+
+	protected List<Note> getNotes(int rowFrom, int rowTo, int colFrom, int colTo) {
+		List<Note> r = new ArrayList<Note>();
+		if (workingPattern!=null) {
+			for (int row = rowFrom; row <= rowTo; row++) {
+				for (int col = colFrom; col <= colTo; col++) {
+					int track = col + 1;
+					int step = row + 1;
+					Note sn = workingPattern.getNote(track,step,1);
+					if (sn!=null) {
+						r.add(sn);
 					}
 				}
 			}
@@ -345,6 +392,16 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		return r;
 	}
 
+	protected void removeNotes(List<Note> notes) {
+		for (Note sn: notes) {
+			if (sn.step>grid.getSelectedRow()) {
+				workingPattern.getNotes().remove(sn);
+			} else {
+				sn.duration = ((grid.getSelectedRow() - sn.step) + 1);
+			}
+		}
+	}
+	
 	protected void changedPattern() {
 		refreshGridData();
 		if (workingPattern!=null) {
@@ -374,6 +431,10 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		grid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		grid.setDefaultRenderer(Object.class, new PatternGridCellRenderer(gridController));
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+		grid.registerKeyboardAction(this,FrameMain.EDIT_COPY,stroke,JComponent.WHEN_FOCUSED);
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK, false);
+		grid.registerKeyboardAction(this,FrameMain.EDIT_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;

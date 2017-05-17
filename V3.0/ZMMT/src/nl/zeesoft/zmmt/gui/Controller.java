@@ -40,8 +40,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
 	private PatternGridKeyListener		patternKeyListener			= null;
 	
-	private Composition					composition					= null;
-	private Composition					compositionOriginal			= null;
 	private File						compositionFile				= null;
 	
 	private ImportExportWorker			importExportWorker			= null;
@@ -134,7 +132,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void stop(Worker ignoreWorker) {
 		importExportWorker.stop();
 		player.stop();
-		stopSynthesizer();
+		stopSynthesizer(stateManager.getComposition());
 		mainFrame.getFrame().setVisible(false);
 		
 		stateManager.stop();
@@ -181,13 +179,13 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	
 	public void windowIconified(WindowEvent e) {
 		if (e.getWindow()==mainFrame.getFrame()) {
-			stopSynthesizer();
+			stopSynthesizer(stateManager.getComposition());
 		}
 	}
 	
 	public void windowStateChanged(WindowEvent e) {
 		if (e.getWindow()==mainFrame.getFrame() && e.getID()==WindowEvent.WINDOW_LOST_FOCUS) {
-			stopSynthesizer();
+			stopSynthesizer(stateManager.getComposition());
 		}
 	}
 
@@ -251,14 +249,10 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	protected void setComposition(Composition composition) {
 		if (composition!=null) {
-			stopSynthesizer();
-			lockMe(this);
-			this.composition = composition;
-			compositionOriginal = composition.copy();
-			unlockMe(this);
+			stopSynthesizer(composition);
 			stateManager.setCompositionChanged(this,false);
 			stateManager.setComposition(this,composition);
-			reconfigureSynthesizer();
+			reconfigureSynthesizer(composition);
 		}
 	}
 	
@@ -267,10 +261,10 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		this.synthesizer = synth;
 		player.setSynthesizer(synth);
 		unlockMe(this);
-		reconfigureSynthesizer();
+		reconfigureSynthesizer(stateManager.getComposition());
 	}
 	
-	protected void stopSynthesizer() {
+	protected void stopSynthesizer(Composition composition) {
 		lockMe(this);
 		if (synthesizer!=null) {
 			List<InstrumentConfiguration> instruments = composition.getSynthesizerConfiguration().getInstruments();
@@ -281,7 +275,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		unlockMe(this);
 	}
 
-	protected void reconfigureSynthesizer() {
+	protected void reconfigureSynthesizer(Composition composition) {
 		lockMe(this);
 		if (synthesizer!=null) {
 			composition.getSynthesizerConfiguration().configureMidiSynthesizer(synthesizer);
@@ -291,14 +285,14 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	public void playNote(int note,boolean accent) {
 		lockMe(this);
-		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(stateManager.getSelectedInstrument(),note,accent,composition.getMsPerStep());
+		List<MidiNote> notes = getNotes(note,accent);
 		player.playInstrumentNotes(notes);
 		unlockMe(this);
 	}
 
 	public void stopNote(int note) {
 		lockMe(this);
-		List<MidiNote> notes = composition.getSynthesizerConfiguration().getMidiNotesForNote(stateManager.getSelectedInstrument(),note,false,composition.getMsPerStep());
+		List<MidiNote> notes = getNotes(note,false);
 		player.stopInstrumentNotes(notes);
 		unlockMe(this);
 	}
@@ -323,23 +317,11 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 
-	protected void undoCompositionChanges() {
-		if (stateManager.isCompositionChanged()) {
-			boolean confirmed = showConfirmMessage("Are you sure you want to undo the composition changes?");
-			if (confirmed) {
-				lockMe(this);
-				composition = compositionOriginal.copy();
-				unlockMe(this);
-				setComposition(composition);
-			}
-		}
-	}
-
 	protected void saveComposition() {
 		if (importExportWorker.isWorking()) {
 			showErrorMessage(this,"Import/export worker is busy");
-		} else {
-			Composition copy = composition.copy();
+		} else if (stateManager.isCompositionChanged()) {
+			Composition copy = stateManager.getComposition().copy();
 			File file = compositionFile;
 			importExportWorker.saveComposition(copy,file);
 		}
@@ -349,7 +331,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (importExportWorker.isWorking()) {
 			showErrorMessage(this,"Import/export worker is busy");
 		} else {
-			Composition copy = composition.copy();
+			Composition copy = stateManager.getComposition().copy();
 			importExportWorker.saveComposition(copy,null);
 		}
 	}
@@ -361,12 +343,11 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 		if (confirmed) {
 			lockMe(this);
-			composition = settings.getNewComposition();
 			settings.setWorkingCompositionFileName("");
 			settings.setWorkingCompositionPattern(0);
 			compositionFile = null;
 			unlockMe(this);
-			setComposition(composition);
+			setComposition(settings.getNewComposition());
 			stateManager.setSelectedTab(this,FrameMain.COMPOSITION);
 		}
 	}
@@ -408,13 +389,19 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (evt.getSource()!=this) {
 			if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 				if (evt.getSource() instanceof PanelInstruments) {
-					stopSynthesizer();
-					reconfigureSynthesizer();
+					stopSynthesizer(evt.getComposition());
+					reconfigureSynthesizer(evt.getComposition());
 				}
 			} else if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
-				stopSynthesizer();
-				reconfigureSynthesizer();
+				stopSynthesizer(evt.getComposition());
+				reconfigureSynthesizer(evt.getComposition());
 			}
 		}
+	}
+	
+	private List<MidiNote> getNotes(int note,boolean accent) {
+		return stateManager.getComposition().getSynthesizerConfiguration().getMidiNotesForNote(
+				stateManager.getSelectedInstrument(),note,accent,stateManager.getComposition().getMsPerStep()
+				);
 	}
 }

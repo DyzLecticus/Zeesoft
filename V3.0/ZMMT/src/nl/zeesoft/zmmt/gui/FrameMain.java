@@ -27,7 +27,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private static final String	TITLE				= "ZeeTracker";
 
 	private static final String	LOAD				= "LOAD";
-	private static final String	UNDO				= "UNDO";
 	private static final String	SAVE				= "SAVE";
 	private static final String	SAVE_AS				= "SAVE_AS";
 	private static final String	NEW					= "NEW";
@@ -97,16 +96,15 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
-		if (evt.getSource()!=this && evt.getType().equals(StateChangeEvent.SELECTED_TAB)) {
+		if (evt.getSource()!=this && !evt.getSelectedTab().equals(selectedTab)) {
 			switchTo(evt.getSelectedTab());
-		} else {
-			if (evt.isCompositionChanged()) {
-				getFrame().setTitle(TITLE + "*");
-			} else {
-				getFrame().setTitle(TITLE);
-			}
-			tabs.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
 		}
+		if (evt.isCompositionChanged()) {
+			getFrame().setTitle(TITLE + "*");
+		} else {
+			getFrame().setTitle(TITLE);
+		}
+		tabs.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
 	}
 
 	@Override
@@ -125,8 +123,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().saveComposition();
 		} else if (evt.getActionCommand().equals(SAVE_AS)) {
 			getController().saveCompositionAs();
-		} else if (evt.getActionCommand().equals(UNDO)) {
-			getController().undoCompositionChanges();
 		} else if (evt.getActionCommand().equals(NEW)) {
 			getController().newComposition();
 		} else if (evt.getActionCommand().equals(COMPOSITION)) {
@@ -135,11 +131,13 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),INSTRUMENTS);
 		} else if (evt.getActionCommand().equals(PATTERNS)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),PATTERNS);
+		} else if (evt.getActionCommand().equals(EDIT_UNDO)) {
+			getController().getStateManager().undoCompositionChange(evt.getSource());
+		} else if (evt.getActionCommand().equals(EDIT_REDO)) {
+			getController().getStateManager().redoCompositionChange(evt.getSource());
 		} else if (
 			evt.getActionCommand().equals(EDIT_COPY) ||
-			evt.getActionCommand().equals(EDIT_PASTE) ||
-			evt.getActionCommand().equals(EDIT_UNDO) ||
-			evt.getActionCommand().equals(EDIT_REDO)
+			evt.getActionCommand().equals(EDIT_PASTE)
 			) {
 			if (selectedTab!=PATTERNS) {
 				getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),PATTERNS);
@@ -208,13 +206,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		fileMenu.add(item);
 
 		item = new JMenuItem("Save as",KeyEvent.VK_A);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,evt));
 		item.setActionCommand(SAVE_AS);
-		item.addActionListener(this);
-		fileMenu.add(item);
-
-		item = new JMenuItem("Undo changes",KeyEvent.VK_U);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,evt));
-		item.setActionCommand(UNDO);
 		item.addActionListener(this);
 		fileMenu.add(item);
 
