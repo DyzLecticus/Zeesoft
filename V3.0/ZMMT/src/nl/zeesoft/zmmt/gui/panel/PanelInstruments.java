@@ -114,12 +114,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
-			if (!evt.getSource().equals(this) && !selectedInstrument.equals(evt.getSelectedInstrument())) {
-				selectedInstrument = evt.getSelectedInstrument();
-				instrument.setSelectedIndex(Instrument.getIndexForInstrument(evt.getSelectedInstrument()));
-				instrument.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
-			}
+		if (!evt.getSource().equals(this) && !selectedInstrument.equals(evt.getSelectedInstrument())) {
+			selectedInstrument = evt.getSelectedInstrument();
+			instrument.setSelectedIndex(Instrument.getIndexForInstrument(evt.getSelectedInstrument()));
+			instrument.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
 		} else if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 				InstrumentConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);

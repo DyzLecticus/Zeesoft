@@ -25,11 +25,6 @@ public class PatternGridKeyListener extends InstrumentPlayerKeyListener {
 				patternPanel.removeSelectedNotes();
 			}
 		}
-		if (evt.isShiftDown() && !evt.isControlDown() && !evt.isAltDown()) {
-			if (evt.getKeyCode()==KeyEvent.VK_INSERT) {
-				patternPanel.toggleInsertMode();
-			}
-		}
 		if (evt.isAltDown() && !evt.isControlDown() && !evt.isShiftDown()) {
 			if (evt.getKeyCode()==KeyEvent.VK_UP) {
 				patternPanel.shiftSelectedNotesNote(1);
@@ -39,6 +34,26 @@ public class PatternGridKeyListener extends InstrumentPlayerKeyListener {
 				patternPanel.shiftSelectedNotesVelocityPercentage(1);
 			} else if (evt.getKeyCode()==KeyEvent.VK_LEFT) {
 				patternPanel.shiftSelectedNotesVelocityPercentage(-1);
+			} else if (evt.getKeyCode()==KeyEvent.VK_1) {
+				patternPanel.setSelectedNotesInstrument(0);
+			} else if (evt.getKeyCode()==KeyEvent.VK_2) {
+				patternPanel.setSelectedNotesInstrument(1);
+			} else if (evt.getKeyCode()==KeyEvent.VK_3) {
+				patternPanel.setSelectedNotesInstrument(2);
+			} else if (evt.getKeyCode()==KeyEvent.VK_4) {
+				patternPanel.setSelectedNotesInstrument(3);
+			} else if (evt.getKeyCode()==KeyEvent.VK_5) {
+				patternPanel.setSelectedNotesInstrument(4);
+			} else if (evt.getKeyCode()==KeyEvent.VK_6) {
+				patternPanel.setSelectedNotesInstrument(5);
+			} else if (evt.getKeyCode()==KeyEvent.VK_7) {
+				patternPanel.setSelectedNotesInstrument(6);
+			} else if (evt.getKeyCode()==KeyEvent.VK_8) {
+				patternPanel.setSelectedNotesInstrument(7);
+			} else if (evt.getKeyCode()==KeyEvent.VK_9) {
+				patternPanel.setSelectedNotesInstrument(8);
+			} else if (evt.getKeyCode()==KeyEvent.VK_0) {
+				patternPanel.setSelectedNotesInstrument(9);
 			}
 		}
 	}

@@ -31,10 +31,15 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private static final String	SAVE_AS				= "SAVE_AS";
 	private static final String	NEW					= "NEW";
 	
-	public static final String	EDIT_COPY			= "EDIT_COPY";
-	public static final String	EDIT_PASTE			= "EDIT_PASTE";
 	public static final String	EDIT_UNDO			= "EDIT_UNDO";
 	public static final String	EDIT_REDO			= "EDIT_REDO";
+
+	public static final String	PATTERN_PREFIX		= "PATTERN_";
+	public static final String	PATTERN_SELECT		= PATTERN_PREFIX + "SELECT";
+	public static final String	PATTERN_INSERT		= PATTERN_PREFIX + "INSERT";
+	public static final String	PATTERN_EDIT		= PATTERN_PREFIX + "EDIT";
+	public static final String	PATTERN_COPY		= PATTERN_PREFIX + "COPY";
+	public static final String	PATTERN_PASTE		= PATTERN_PREFIX + "PASTE";
 
 	public static final String	COMPOSITION			= "Composition";
 	public static final String	INSTRUMENTS			= "Instruments";
@@ -135,10 +140,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().undoCompositionChange(evt.getSource());
 		} else if (evt.getActionCommand().equals(EDIT_REDO)) {
 			getController().getStateManager().redoCompositionChange(evt.getSource());
-		} else if (
-			evt.getActionCommand().equals(EDIT_COPY) ||
-			evt.getActionCommand().equals(EDIT_PASTE)
-			) {
+		} else if (evt.getActionCommand().startsWith(PATTERN_PREFIX)) {
 			if (selectedTab!=PATTERNS) {
 				getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),PATTERNS);
 			}
@@ -261,19 +263,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		editMenu.setMnemonic(KeyEvent.VK_E);
 		bar.add(editMenu);
 
-		item = new JMenuItem("Copy",KeyEvent.VK_C);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,evt));
-		item.setActionCommand(EDIT_COPY);
-		item.addActionListener(this);
-		editMenu.add(item);
-
-		item = new JMenuItem("Paste",KeyEvent.VK_P);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,evt));
-		item.setActionCommand(EDIT_PASTE);
-		item.addActionListener(this);
-		editMenu.add(item);
-
-
 		item = new JMenuItem("Undo",KeyEvent.VK_U);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,evt));
 		item.setActionCommand(EDIT_UNDO);
@@ -286,6 +275,41 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		editMenu.add(item);
 		
+		JMenu editPatternMenu = new JMenu("Pattern");
+		editPatternMenu.setMnemonic(KeyEvent.VK_P);
+		editMenu.add(editPatternMenu);
+
+		item = new JMenuItem("Select pattern",KeyEvent.VK_S);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,evt));
+		item.setActionCommand(PATTERN_SELECT);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+
+		item = new JMenuItem("Toggle insert",KeyEvent.VK_I);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,evt));
+		item.setActionCommand(PATTERN_INSERT);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+
+		item = new JMenuItem("Edit notes",KeyEvent.VK_E);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,evt));
+		item.setActionCommand(PATTERN_EDIT);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+
+		item = new JMenuItem("Copy notes",KeyEvent.VK_C);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,evt));
+		item.setActionCommand(PATTERN_COPY);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+
+		item = new JMenuItem("Paste notes",KeyEvent.VK_P);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,evt));
+		item.setActionCommand(PATTERN_PASTE);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+
+
 		return bar;
 	}
 }

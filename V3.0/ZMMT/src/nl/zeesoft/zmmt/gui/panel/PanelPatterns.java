@@ -2,7 +2,6 @@ package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 
@@ -30,6 +28,7 @@ import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
+import nl.zeesoft.zmmt.syntesizer.Instrument;
 
 public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber {
 	private JComboBox<String>		pattern							= null;
@@ -51,6 +50,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	private List<Note>				copyNotes						= new ArrayList<Note>();
 	private int						copySteps						= 0;
 	private int						copyTracks						= 0;
+	
+	private int[]					selectedRows					= null;
+	private int[]					selectedCols					= null;
 
 	public PanelPatterns(Controller controller) {
 		super(controller);
@@ -77,7 +79,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	@Override
 	public void requestFocus() {
-		pattern.requestFocus();
+		if (reselect()) {
+			grid.requestFocus();
+		} else {
+			pattern.requestFocus();
+		}
 	}
 
 	@Override
@@ -109,7 +115,17 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(FrameMain.EDIT_COPY)) {
+		if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
+			pattern.requestFocus();
+			pattern.showPopup();
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_INSERT)) {
+			insertMode.doClick();
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_EDIT)) {
+			if (!grid.hasFocus()) {
+				reselect();
+				grid.requestFocus();
+			}
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_COPY)) {
 			int[] rows = grid.getSelectedRows();
 			int[] cols = grid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
@@ -129,7 +145,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 					note.track = note.track - col;
 				}
 			}
-		} else if (evt.getActionCommand().equals(FrameMain.EDIT_PASTE)) {
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_PASTE)) {
 			int[] rows = grid.getSelectedRows();
 			int[] cols = grid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
@@ -137,17 +153,16 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				int col = cols[0];
 				int rowTo = row + copySteps;
 				int colTo = row + copyTracks;
-				List<Note> removeNotes = getNotes(row,rowTo,col,colTo);
-				removeNotes(removeNotes);
+				removeOrCutNotes(getNotes(row,rowTo,col,colTo),row);
 				for (Note note: copyNotes) {
 					Note addNote = note.copy();
 					addNote.step = addNote.step + row;
 					addNote.track = addNote.track + col;
 					if (addNote.step<=grid.getRowCount() && addNote.track<=grid.getColumnCount()) {
-						// TODO: limit duration 
 						workingPattern.getNotes().add(addNote);
 					}
 				}
+				removeOrCutNotes(getNotes(grid.getRowCount(),grid.getRowCount(),0,(grid.getColumnCount() - 1)),grid.getRowCount());
 				if ((rowTo + 1) < grid.getRowCount()) {
 					row = (rowTo + 1);
 				} else {
@@ -157,7 +172,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				grid.addRowSelectionInterval(row,row);
 				grid.addColumnSelectionInterval(col,col);
 				Rectangle rect = grid.getCellRect(row,col,true);
-				rect.y = rect.y + 20;
+				rect.height = rect.height + 20;
+				rect.width = rect.width + 100;
 				grid.scrollRectToVisible(rect);				
 				changedPattern();
 			}
@@ -192,12 +208,24 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		super.focusLost(evt);
 		if (evt.getSource()==grid) {
 			workingNotes.clear();
+			selectedRows = grid.getSelectedRows();
+			selectedCols = grid.getSelectedColumns();
 			grid.clearSelection();
 		}
 	}
 
-	protected void selectPattern() {
-		pattern.requestFocus();
+	protected boolean reselect() {
+		boolean selected = false;
+		if (selectedRows!=null && selectedRows.length>0 && selectedCols!=null && selectedCols.length>0) {
+			grid.addRowSelectionInterval(selectedRows[0],selectedRows[(selectedRows.length - 1)]);
+			grid.addColumnSelectionInterval(selectedCols[0],selectedCols[(selectedCols.length - 1)]);
+			Rectangle rect = grid.getCellRect(selectedRows[0],selectedCols[0],true);
+			rect.height = rect.height + 20;
+			rect.width = rect.width + 100;
+			grid.scrollRectToVisible(rect);
+			selected = true;
+		}
+		return selected;
 	}
 
 	protected void shiftSelectedNotesNote(int mod) {
@@ -206,13 +234,13 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		for (Note sn: sns) {
 			if (mod>0 && sn.note<127) {
 				changed = true;
-				sn.note += mod;
+				sn.note = sn.note + mod;
 				if (sn.note>127) {
 					sn.note=127;
 				}
 			} else if (mod<0 && sn.note>0) {
 				changed = true;
-				sn.note -= (mod * -1);
+				sn.note = sn.note - (mod * -1);
 				if (sn.note<0) {
 					sn.note=0;
 				}
@@ -229,13 +257,13 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		for (Note sn: sns) {
 			if (mod>0 && sn.velocityPercentage<100) {
 				changed = true;
-				sn.velocityPercentage += mod;
+				sn.velocityPercentage = sn.velocityPercentage + mod;
 				if (sn.velocityPercentage>100) {
 					sn.velocityPercentage=100;
 				}
 			} else if (mod<0 && sn.velocityPercentage>0) {
 				changed = true;
-				sn.velocityPercentage -= (mod * -1);
+				sn.velocityPercentage = sn.velocityPercentage - (mod * -1);
 				if (sn.velocityPercentage<0) {
 					sn.velocityPercentage=0;
 				}
@@ -246,16 +274,22 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 	}
 
-	protected void removeSelectedNotes() {
+	protected void setSelectedNotesInstrument(int index) {
 		List<Note> sns = getSelectedNotes();
-		removeNotes(sns);
+		for (Note sn: sns) {
+			sn.instrument = Instrument.INSTRUMENTS[index];
+		}
 		if (sns.size()>0) {
 			changedPattern();
 		}
 	}
 
-	protected void toggleInsertMode() {
-		insertMode.doClick();
+	protected void removeSelectedNotes() {
+		List<Note> sns = getSelectedNotes();
+		removeOrCutNotes(sns,grid.getSelectedRow());
+		if (sns.size()>0) {
+			changedPattern();
+		}
 	}
 
 	protected void playNote(int note, boolean accent) {
@@ -383,7 +417,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 					int track = col + 1;
 					int step = row + 1;
 					Note sn = workingPattern.getNote(track,step,1);
-					if (sn!=null) {
+					if (sn!=null && !r.contains(sn)) {
 						r.add(sn);
 					}
 				}
@@ -392,12 +426,12 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		return r;
 	}
 
-	protected void removeNotes(List<Note> notes) {
+	protected void removeOrCutNotes(List<Note> notes,int removeStartRow) {
 		for (Note sn: notes) {
-			if (sn.step>grid.getSelectedRow()) {
+			if (sn.step>removeStartRow) {
 				workingPattern.getNotes().remove(sn);
 			} else {
-				sn.duration = ((grid.getSelectedRow() - sn.step) + 1);
+				sn.duration = ((removeStartRow - sn.step) + 1);
 			}
 		}
 	}
@@ -432,9 +466,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		grid.setDefaultRenderer(Object.class, new PatternGridCellRenderer(gridController));
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
-		grid.registerKeyboardAction(this,FrameMain.EDIT_COPY,stroke,JComponent.WHEN_FOCUSED);
+		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK, false);
-		grid.registerKeyboardAction(this,FrameMain.EDIT_PASTE,stroke,JComponent.WHEN_FOCUSED);
+		grid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;
