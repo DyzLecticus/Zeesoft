@@ -325,34 +325,39 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	}
 
 	protected void stopNote(int note) {
-		Note pn = null;
+		List<Note> removeNotes = new ArrayList<Note>();
 		for (Note wn: workingNotes) {
 			if (wn.note==note) {
-				pn = wn;
-				break;
+				removeNotes.add(wn);
 			}
 		}
-		if (pn!=null) {
-			workingNotes.remove(pn);
-			int[] rows = grid.getSelectedRows();
-			if (rows.length>0) {
-				int lastRow = rows[(rows.length - 1)];
-				if ((lastRow + 1)>pn.step) {
-					int newDuration = (((lastRow + 1) - pn.step) + 1);
-					List<Note> trackNotes = workingPattern.getTrackNotes(pn.track,(pn.step + 1),newDuration);
-					if (trackNotes.size()>0) {
-						for (Note tn: trackNotes) {
-							if (tn.step>pn.step) {
-								newDuration = (tn.step - pn.step);
-								break;
+		if (removeNotes.size()>0) {
+			boolean changed = false;
+			for (Note pn: removeNotes) {
+				workingNotes.remove(pn);
+				int[] rows = grid.getSelectedRows();
+				if (rows.length>0) {
+					int lastRow = rows[(rows.length - 1)];
+					if ((lastRow + 1)>pn.step) {
+						int newDuration = (((lastRow + 1) - pn.step) + 1);
+						List<Note> trackNotes = workingPattern.getTrackNotes(pn.track,(pn.step + 1),newDuration);
+						if (trackNotes.size()>0) {
+							for (Note tn: trackNotes) {
+								if (tn.step>pn.step) {
+									newDuration = (tn.step - pn.step);
+									break;
+								}
 							}
 						}
-					}
-					if (pn.duration!=newDuration) {
-						pn.duration = newDuration;
-						changedPattern();
+						if (pn.duration!=newDuration) {
+							pn.duration = newDuration;
+							changed = true;
+						}
 					}
 				}
+			}
+			if (changed) {
+				changedPattern();
 			}
 		}
 	}
