@@ -27,11 +27,11 @@ import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
-import nl.zeesoft.zmmt.syntesizer.Drum;
-import nl.zeesoft.zmmt.syntesizer.DrumConfiguration;
-import nl.zeesoft.zmmt.syntesizer.EchoConfiguration;
-import nl.zeesoft.zmmt.syntesizer.Instrument;
-import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
+import nl.zeesoft.zmmt.synthesizer.Drum;
+import nl.zeesoft.zmmt.synthesizer.DrumConfiguration;
+import nl.zeesoft.zmmt.synthesizer.EchoConfiguration;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 
 public class PanelInstruments extends PanelObject implements ItemListener, ActionListener, ListCellRenderer<Object>, CompositionChangePublisher, StateChangeSubscriber {
 	private JComboBox<String>		instrument						= null;

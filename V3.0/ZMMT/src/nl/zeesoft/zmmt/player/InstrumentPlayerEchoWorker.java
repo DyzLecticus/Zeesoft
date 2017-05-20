@@ -7,8 +7,8 @@ import java.util.List;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zmmt.syntesizer.MidiNote;
-import nl.zeesoft.zmmt.syntesizer.MidiNoteDelayed;
+import nl.zeesoft.zmmt.synthesizer.MidiNote;
+import nl.zeesoft.zmmt.synthesizer.MidiNoteDelayed;
 
 public class InstrumentPlayerEchoWorker extends Worker {
 	private InstrumentPlayer		player		= null;

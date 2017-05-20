@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zmmt.composition.Composition;
-import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
+import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class Settings {
 	public static final String			EXTENSION_COMPOSITION		= ".ztc";

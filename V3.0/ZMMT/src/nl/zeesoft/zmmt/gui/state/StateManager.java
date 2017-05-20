@@ -9,7 +9,7 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.Settings;
-import nl.zeesoft.zmmt.syntesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 public class StateManager extends StateObject {
 	private List<StateChangeSubscriber>			subscribers				= new ArrayList<StateChangeSubscriber>();

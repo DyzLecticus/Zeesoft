@@ -1,4 +1,4 @@
-package nl.zeesoft.zmmt.syntesizer;
+package nl.zeesoft.zmmt.synthesizer;
 
 public class EchoConfiguration {
 	private String		instrument				= Instrument.LEAD;

@@ -10,9 +10,9 @@ import javax.sound.midi.Synthesizer;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zmmt.syntesizer.Instrument;
-import nl.zeesoft.zmmt.syntesizer.MidiNote;
-import nl.zeesoft.zmmt.syntesizer.MidiNoteDelayed;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.MidiNote;
+import nl.zeesoft.zmmt.synthesizer.MidiNoteDelayed;
 
 public class InstrumentPlayer extends Locker {
 	private InstrumentPlayerEchoWorker		echoWorker				= null;

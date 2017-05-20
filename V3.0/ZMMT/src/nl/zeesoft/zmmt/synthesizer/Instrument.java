@@ -1,4 +1,4 @@
-package nl.zeesoft.zmmt.syntesizer;
+package nl.zeesoft.zmmt.synthesizer;
 
 import java.awt.Color;
 

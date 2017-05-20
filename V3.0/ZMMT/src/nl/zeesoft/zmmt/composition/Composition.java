@@ -5,7 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
+import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class Composition {
 	private String						composer						= "";

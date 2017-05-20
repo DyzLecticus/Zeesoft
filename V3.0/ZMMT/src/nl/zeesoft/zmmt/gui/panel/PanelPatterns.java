@@ -28,7 +28,7 @@ import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
-import nl.zeesoft.zmmt.syntesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber {
 	private JComboBox<String>		pattern							= null;
@@ -152,7 +152,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				int row = rows[0];
 				int col = cols[0];
 				int rowTo = row + copySteps;
-				int colTo = row + copyTracks;
+				int colTo = col + copyTracks;
 				List<Note> removeNotes = getNotes(row,rowTo,col,colTo);
 				removeOrCutNotes(removeNotes,row);
 				boolean addedNotes = false;
@@ -161,7 +161,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 					addNote.step = addNote.step + row;
 					addNote.track = addNote.track + col;
 					if (addNote.step<=grid.getRowCount() && addNote.track<=grid.getColumnCount()) {
-						workingPattern.getNotes().add(addNote);
+						addOrUpdateNote(addNote);
 						addedNotes = true;
 					}
 				}
@@ -304,20 +304,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				pn.track = grid.getSelectedColumn() + 1 + workingNotes.size();
 				pn.step = grid.getSelectedRow() + 1;
 				pn.accent = accent;
-				Note patternNote = workingPattern.getNote(pn.track,pn.step,pn.duration);				
-				if (patternNote!=null && patternNote.step<pn.step) {
-					patternNote.duration = (pn.step - patternNote.step);
-					patternNote = null;
-				}
-				if (patternNote==null) {
-					patternNote = pn;
-					workingPattern.getNotes().add(pn);
-				} else if (patternNote.step==pn.step) {
-					patternNote.instrument = pn.instrument;
-					patternNote.note = pn.note;
-					patternNote.accent = pn.accent;
-					patternNote.velocityPercentage = 100;
-				}
+				Note patternNote = addOrUpdateNote(pn);
 				workingNotes.add(patternNote);
 				changedPattern();
 			}
@@ -429,6 +416,34 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				sn.duration = ((removeStartRow - sn.step) + 1);
 			}
 		}
+	}
+	
+	protected Note addOrUpdateNote(Note note) {
+		Note patternNote = workingPattern.getNote(note.track,note.step,note.duration);				
+		if (patternNote!=null) {
+			if (patternNote.step<note.step) {
+				patternNote.duration = (note.step - patternNote.step);
+				patternNote = null;
+			} else if (patternNote.step>note.step) {
+				patternNote = null;
+			}
+		}
+		if (patternNote==null) {
+			if (note.duration>1) {
+				List<Note> trackNotes = workingPattern.getTrackNotes(note.track,(note.step + 1),(note.duration - 1));
+				if (trackNotes.size()>0) {
+					note.duration = (trackNotes.get(0).step - note.step);
+				}
+			}
+			patternNote = note;
+			workingPattern.getNotes().add(note);
+		} else if (patternNote.step==note.step) {
+			patternNote.instrument = note.instrument;
+			patternNote.note = note.note;
+			patternNote.accent = note.accent;
+			patternNote.velocityPercentage = 100;
+		}
+		return patternNote;
 	}
 	
 	protected void changedPattern() {

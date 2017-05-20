@@ -1,4 +1,4 @@
-package nl.zeesoft.zmmt.syntesizer;
+package nl.zeesoft.zmmt.synthesizer;
 
 public class DrumConfiguration extends VelocityConfiguration {
 	private	int	layer1MidiNote	= 35;

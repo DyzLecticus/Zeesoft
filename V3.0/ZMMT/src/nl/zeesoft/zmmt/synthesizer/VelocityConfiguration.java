@@ -1,4 +1,4 @@
-package nl.zeesoft.zmmt.syntesizer;
+package nl.zeesoft.zmmt.synthesizer;
 
 public abstract class VelocityConfiguration extends BaseConfiguration {
 	private int 	layer1BaseVelocity		= 100;

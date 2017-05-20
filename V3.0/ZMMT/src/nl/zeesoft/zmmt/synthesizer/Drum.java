@@ -1,4 +1,4 @@
-package nl.zeesoft.zmmt.syntesizer;
+package nl.zeesoft.zmmt.synthesizer;
 
 public class Drum {
 	public static final	String		BASEBEAT		= "Basebeat";

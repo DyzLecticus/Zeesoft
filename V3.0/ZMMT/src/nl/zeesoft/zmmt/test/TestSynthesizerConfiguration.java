@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zmmt.syntesizer.SynthesizerConfiguration;
+import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class TestSynthesizerConfiguration extends TestObject {
 	public TestSynthesizerConfiguration(Tester tester) {

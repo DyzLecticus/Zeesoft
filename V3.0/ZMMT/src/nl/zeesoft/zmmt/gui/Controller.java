@@ -25,8 +25,8 @@ import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.gui.state.StateManager;
 import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
-import nl.zeesoft.zmmt.syntesizer.InstrumentConfiguration;
-import nl.zeesoft.zmmt.syntesizer.MidiNote;
+import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
+import nl.zeesoft.zmmt.synthesizer.MidiNote;
 
 public class Controller extends Locker implements StateChangeSubscriber {
 	private Settings					settings					= null;

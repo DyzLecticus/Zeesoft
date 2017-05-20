@@ -1,6 +1,6 @@
 package nl.zeesoft.zmmt.composition;
 
-import nl.zeesoft.zmmt.syntesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 public class DemoComposition extends Composition {
 	public DemoComposition() {

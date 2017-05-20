@@ -21,7 +21,7 @@ import nl.zeesoft.zmmt.gui.panel.PanelObject;
 import nl.zeesoft.zmmt.gui.panel.PanelPatterns;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
-import nl.zeesoft.zmmt.syntesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 public class FrameMain extends FrameObject implements ActionListener, ChangeListener, StateChangeSubscriber {
 	private static final String	TITLE				= "ZeeTracker";

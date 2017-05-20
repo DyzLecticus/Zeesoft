@@ -9,7 +9,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import nl.zeesoft.zmmt.composition.Note;
-import nl.zeesoft.zmmt.syntesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 @SuppressWarnings("serial")
 public class PatternGridCellRenderer extends DefaultTableCellRenderer {
