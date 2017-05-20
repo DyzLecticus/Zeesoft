@@ -72,10 +72,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		addComponent(getPanel(), row, 0.01,getEditPanel());
 
 		row++;
-		addComponent(getPanel(), row, 0.01,getDetailsPanel());
-
-		row++;
-		addComponent(getPanel(),row,0.99,getPatternPanel(),true);		
+		addComponent(getPanel(), row, 0.99,getDetailsPanel());
 	}
 
 	@Override
@@ -146,6 +143,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				}
 			}
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_PASTE)) {
+			// TODO: Insert
 			int[] rows = grid.getSelectedRows();
 			int[] cols = grid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
@@ -290,6 +288,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	protected void playNote(int note, boolean accent) {
 		if (grid.getSelectedColumn()>=0 && grid.getSelectedRow()>=0) {
+			// TODO: Insert
 			Note pn = null;
 			for (Note wn: workingNotes) {
 				if (wn.note==note) {
@@ -319,6 +318,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			}
 		}
 		if (removeNotes.size()>0) {
+			// TODO: Insert
 			boolean changed = false;
 			for (Note pn: removeNotes) {
 				workingNotes.remove(pn);
@@ -480,6 +480,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK, false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;
 	}
@@ -535,14 +536,17 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	protected JPanel getDetailsPanel() {
 		JPanel r = new JPanel();
-		r.setLayout(new BorderLayout());
-		r.setBorder(BorderFactory.createTitledBorder("Details"));
-
-		JPanel labelProp = new JPanel();
-		labelProp.add(new JLabel("Custom bars"));
+		r.setLayout(new GridBagLayout());
+		r.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		
+		int row = 0;
+		
 		bars = getBarsSelector();
-		labelProp.add(bars);
-		r.add(labelProp,BorderLayout.LINE_START);
+		addLabel(r,row,"Custom pattern bars");
+		addProperty(r,row,bars);
+
+		row++;
+		addComponent(r,row,0.99,getPatternPanel(),true);
 		
 		return r;
 	}
