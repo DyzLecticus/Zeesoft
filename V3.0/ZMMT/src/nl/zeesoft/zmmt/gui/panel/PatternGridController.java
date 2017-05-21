@@ -2,12 +2,11 @@ package nl.zeesoft.zmmt.gui.panel;
 
 import javax.swing.table.AbstractTableModel;
 
+import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Pattern;
 
 @SuppressWarnings("serial")
 public class PatternGridController extends AbstractTableModel {
-	public static final int		TRACKS			= 64;
-	
 	private int					barsPerPattern	= 4;
 	private int					beatsPerBar		= 4;
 	private int					stepsPerBeat	= 8;
@@ -41,7 +40,7 @@ public class PatternGridController extends AbstractTableModel {
 	
 	@Override
 	public int getColumnCount() {
-		return TRACKS;
+		return Composition.TRACKS;
 	}
 
 	@Override
