@@ -67,7 +67,6 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
 			}
-			sequencer.start();
 		}
 		unlockMe(this);
 	}
