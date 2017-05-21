@@ -23,6 +23,8 @@ public class PatternGridKeyListener extends InstrumentPlayerKeyListener {
 		if (!evt.isControlDown() && !evt.isShiftDown() && !evt.isAltDown()) {
 			if (evt.getKeyCode()==KeyEvent.VK_DELETE) {
 				patternPanel.removeSelectedNotes();
+			} else if (evt.getKeyCode()==KeyEvent.VK_SPACE) {
+				patternPanel.insertSpace();
 			}
 		}
 		if (evt.isAltDown() && !evt.isControlDown() && !evt.isShiftDown()) {

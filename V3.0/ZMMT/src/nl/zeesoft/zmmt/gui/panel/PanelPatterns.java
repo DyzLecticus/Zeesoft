@@ -50,15 +50,13 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	private int						copySteps						= 0;
 	private int						copyTracks						= 0;
 	
-	private int[]					selectedRows					= new int[1];
-	private int[]					selectedCols					= new int[1];
+	private int[]					selectedRows					= null;
+	private int[]					selectedCols					= null;
 
 	public PanelPatterns(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
 		selectedPattern = controller.getStateManager().getSelectedPattern();
-		selectedRows[0] = 0;
-		selectedCols[0] = 0;
 	}
 
 	@Override
@@ -147,12 +145,24 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			int[] rows = grid.getSelectedRows();
 			int[] cols = grid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
+				boolean changed = false;
 				int row = rows[0];
 				int col = cols[0];
 				int rowTo = row + copySteps;
 				int colTo = col + copyTracks;
-				List<Note> removeNotes = getNotes(row,rowTo,col,colTo);
-				removeOrCutNotes(removeNotes,row);
+				if (insertMode.isSelected()) {
+					if (rows.length>0 && cols.length>0) {
+						if (moveNotes(col,colTo,row,(copySteps + 1))) {
+							changed = true;
+						}
+					}
+				} else {
+					List<Note> removeNotes = getNotes(row,rowTo,col,colTo);
+					removeOrCutNotes(removeNotes,row);
+					if (removeNotes.size()>0) {
+						changed = true;
+					}
+				}
 				boolean addedNotes = false;
 				for (Note note: copyNotes) {
 					Note addNote = note.copy();
@@ -161,6 +171,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 					if (addNote.step<=grid.getRowCount() && addNote.track<=grid.getColumnCount()) {
 						addOrUpdateNote(addNote);
 						addedNotes = true;
+						changed = true;
 					}
 				}
 				if (addedNotes) {
@@ -173,7 +184,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				}
 				grid.clearSelection();
 				selectAndShow(row,row,col,col);
-				if (removeNotes.size()>0 || addedNotes) {
+				if (changed) {
 					changedPattern();
 				}
 			}
@@ -277,11 +288,39 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			changedPattern();
 		}
 	}
-
+	
+	protected void insertSpace() {
+		boolean changed = false;
+		if (insertMode.isSelected()) {
+			int[] rows = grid.getSelectedRows();
+			int[] cols = grid.getSelectedColumns();
+			if (rows.length>0 && cols.length>0) {
+				int mod = 1;
+				if (moveNotes(cols[0],cols[(cols.length - 1)],rows[0],mod)) {
+					changed = true;
+				}
+			}
+		}
+		if (changed) {
+			changedPattern();
+		}
+	}
+	
 	protected void removeSelectedNotes() {
 		List<Note> sns = getSelectedNotes();
 		removeOrCutNotes(sns,grid.getSelectedRow());
-		if (sns.size()>0) {
+		boolean changed = sns.size()>0; 
+		if (insertMode.isSelected()) {
+			int[] rows = grid.getSelectedRows();
+			int[] cols = grid.getSelectedColumns();
+			if (rows.length>0 && cols.length>0) {
+				int mod = ((rows[(rows.length - 1)] - rows[0]) + 1) * -1;
+				if (moveNotes(cols[0],cols[(cols.length - 1)],rows[0],mod)) {
+					changed = true;
+				}
+			}
+		}
+		if (changed) {
 			changedPattern();
 		}
 	}
@@ -444,6 +483,36 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			patternNote.velocityPercentage = 100;
 		}
 		return patternNote;
+	}
+
+	protected boolean moveNotes(int colFrom,int colTo,int row,int mod) {
+		boolean changed = false;
+		if (mod!=0 && workingPattern!=null) {
+			for (int col = colFrom; col<=colTo; col++) {
+				List<Note> trackNotes = workingPattern.getTrackNotes(col+1,row+1,grid.getRowCount());
+				if (trackNotes.size()>0) {
+					for (Note note: trackNotes) {
+						if (note.step>row) {
+							if (mod > 0) {
+								note.step = note.step + mod;
+								if (note.step + (note.duration - 1) > grid.getRowCount()) {
+									note.duration = (grid.getRowCount() - note.step) + 1; 
+								}
+							} else if (mod < 0) {
+								note.step = note.step - (mod * -1);
+							}
+							if (note.step<1 || note.step>grid.getRowCount()) {
+								workingPattern.getNotes().remove(note);
+							}
+						} else {
+							note.duration = (row + 1) - note.step;
+						}
+					}
+					changed = true;
+				}
+			}
+		}
+		return changed;
 	}
 	
 	protected void changedPattern() {
