@@ -14,7 +14,9 @@ import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
 public class SequencePlayer extends Locker implements StateChangeSubscriber, MetaEventListener {
-	private static final int			EOT					= 47;
+	private static final int			END_OF_SEQUENCE		= 47;
+	private	static final boolean		USE_LOOP_FIX		= false;
+
 	private Sequencer					sequencer			= null;
 
 	private	boolean						patternMode			= true;
@@ -31,9 +33,11 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 	public void setSequencer(Sequencer sequencer) {
 		lockMe(this);
 		this.sequencer = sequencer;
-		sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
-		// Java 1.5 loop fix
-		//sequencer.addMetaEventListener(this);
+		if (USE_LOOP_FIX) {
+			sequencer.addMetaEventListener(this);
+		} else {
+			sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
+		}
 		updateSequencerSequence();
 		unlockMe(this);
 	}
@@ -67,7 +71,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 	
 	@Override
 	public void meta(MetaMessage message) {
-		if (message.getType()==EOT) {
+		if (message.getType()==END_OF_SEQUENCE) {
 			lockMe(this);
 			if (sequencer!=null && sequencer.isOpen()) {
 				sequencer.setTickPosition(0);
