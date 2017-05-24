@@ -46,9 +46,10 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	PAUSE				= "PAUSE";
 	public static final String	STOP				= "STOP";
 
-	public static final String	COMPOSITION			= "Composition";
-	public static final String	INSTRUMENTS			= "Instruments";
-	public static final String	PATTERNS			= "Patterns";
+	public static final String	TAB_COMPOSITION		= "Composition";
+	public static final String	TAB_INSTRUMENTS		= "Instruments";
+	public static final String	TAB_PATTERNS		= "Patterns";
+	public static final String	TAB_SEQUENCE		= "Sequence";
 		
 	private JTabbedPane			tabs				= null;
 	private String				selectedTab			= "";			
@@ -135,12 +136,14 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().saveCompositionAs();
 		} else if (evt.getActionCommand().equals(NEW)) {
 			getController().newComposition();
-		} else if (evt.getActionCommand().equals(COMPOSITION)) {
-			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),COMPOSITION);
-		} else if (evt.getActionCommand().equals(INSTRUMENTS)) {
-			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),INSTRUMENTS);
-		} else if (evt.getActionCommand().equals(PATTERNS)) {
-			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),PATTERNS);
+		} else if (evt.getActionCommand().equals(TAB_COMPOSITION)) {
+			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_COMPOSITION);
+		} else if (evt.getActionCommand().equals(TAB_INSTRUMENTS)) {
+			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_INSTRUMENTS);
+		} else if (evt.getActionCommand().equals(TAB_PATTERNS)) {
+			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_PATTERNS);
+		} else if (evt.getActionCommand().equals(TAB_SEQUENCE)) {
+			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_SEQUENCE);
 		} else if (evt.getActionCommand().equals(PLAY)) {
 			getController().startSequencer();
 		} else if (evt.getActionCommand().equals(STOP)) {
@@ -150,8 +153,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		} else if (evt.getActionCommand().equals(EDIT_REDO)) {
 			getController().getStateManager().redoCompositionChange(evt.getSource());
 		} else if (evt.getActionCommand().startsWith(PATTERN_PREFIX)) {
-			if (selectedTab!=PATTERNS) {
-				getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),PATTERNS);
+			if (selectedTab!=TAB_PATTERNS) {
+				getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_PATTERNS);
 			}
 			patternsPanel.actionPerformed(evt);
 		} else {
@@ -166,13 +169,13 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	
 	protected void switchTo(String tab) {
 		selectedTab = tab;
-		if (tab.equals(COMPOSITION) && tabs.getSelectedIndex()!=0) {
+		if (tab.equals(TAB_COMPOSITION) && tabs.getSelectedIndex()!=0) {
 			tabs.setSelectedIndex(0);
 			compositionPanel.requestFocus();
-		} else if (tab.equals(INSTRUMENTS) && tabs.getSelectedIndex()!=1) {
+		} else if (tab.equals(TAB_INSTRUMENTS) && tabs.getSelectedIndex()!=1) {
 			tabs.setSelectedIndex(1);
 			instrumentsPanel.requestFocus();
-		} else if (tab.equals(PATTERNS) && tabs.getSelectedIndex()!=2) {
+		} else if (tab.equals(TAB_PATTERNS) && tabs.getSelectedIndex()!=2) {
 			tabs.setSelectedIndex(2);
 			patternsPanel.requestFocus();
 		}
@@ -185,13 +188,15 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	protected String getSelectedTab() {
 		String r = "";
 		if (tabs.getSelectedIndex()==0) {
-			r = COMPOSITION;
+			r = TAB_COMPOSITION;
 		} else if (tabs.getSelectedIndex()==1) {
-			r = INSTRUMENTS;
+			r = TAB_INSTRUMENTS;
 		} else if (tabs.getSelectedIndex()==2) {
-			r = PATTERNS;
+			r = TAB_PATTERNS;
+		} else if (tabs.getSelectedIndex()==3) {
+			r = TAB_SEQUENCE;
 		} else {
-			r = COMPOSITION;
+			r = TAB_COMPOSITION;
 		}
 		return r;
 	}
@@ -228,29 +233,35 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		fileMenu.add(item);
 
-		evt = ActionEvent.SHIFT_MASK;
+		evt = 0;
 		JMenu showMenu = new JMenu("Show");
 		showMenu.setMnemonic(KeyEvent.VK_S);
 		bar.add(showMenu);
 
 		item = new JMenuItem("Composition",KeyEvent.VK_C);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,evt));
-		item.setActionCommand(COMPOSITION);
+		item.setActionCommand(TAB_COMPOSITION);
 		item.addActionListener(this);
 		showMenu.add(item);
 
 		item = new JMenuItem("Instruments",KeyEvent.VK_I);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2,evt));
-		item.setActionCommand(INSTRUMENTS);
+		item.setActionCommand(TAB_INSTRUMENTS);
 		item.addActionListener(this);
 		showMenu.add(item);
 		
 		item = new JMenuItem("Patterns",KeyEvent.VK_P);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,evt));
-		item.setActionCommand(PATTERNS);
+		item.setActionCommand(TAB_PATTERNS);
 		item.addActionListener(this);
 		showMenu.add(item);
 		
+		item = new JMenuItem("Sequence",KeyEvent.VK_P);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,evt));
+		item.setActionCommand(TAB_SEQUENCE);
+		item.addActionListener(this);
+		showMenu.add(item);
+
 		evt = ActionEvent.CTRL_MASK;
 		JMenu instMenu = new JMenu("Instrument");
 		instMenu.setMnemonic(KeyEvent.VK_I);
@@ -318,20 +329,19 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		editPatternMenu.add(item);
 
+		evt = 0;
 		JMenu sequencerMenu = new JMenu("Sequencer");
 		sequencerMenu.setMnemonic(KeyEvent.VK_S);
 		bar.add(sequencerMenu);
-
-		evt = ActionEvent.CTRL_MASK;
 		
 		item = new JMenuItem("Play",KeyEvent.VK_P);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,evt));
 		item.setActionCommand(PLAY);
 		item.addActionListener(this);
 		sequencerMenu.add(item);
 		
 		item = new JMenuItem("Stop",KeyEvent.VK_S);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8,0));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8,evt));
 		item.setActionCommand(STOP);
 		item.addActionListener(this);
 		sequencerMenu.add(item);

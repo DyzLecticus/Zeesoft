@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,14 +17,17 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
+import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
@@ -276,6 +280,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
+		if (evt.getActionCommand().equals(F4_PRESSED)) {
+			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
+		}
 		if (!selectedInstrument.equals(instrument.getSelectedItem().toString())) {
 			selectedInstrument = instrument.getSelectedItem().toString();
 			instrument.setBackground(Instrument.getColorForInstrument(selectedInstrument));
@@ -582,6 +589,11 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		r.setOpaque(true);
 		r.setBackground(Instrument.getColorForInstrument(selectedInstrument));
 		r.setRenderer(this);
+		
+		// F4 Override
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
+		r.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}

@@ -111,7 +111,13 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(FrameMain.STOP)) {
+		if (evt.getActionCommand().equals(F2_PRESSED)) {
+			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_INSTRUMENTS);
+		} else if (evt.getActionCommand().equals(F3_PRESSED)) {
+			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
+		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
+			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
+		} else if (evt.getActionCommand().equals(FrameMain.STOP)) {
 			getController().stopSequencer();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
 			pattern.requestFocus();
@@ -546,15 +552,27 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		grid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		grid.setDefaultRenderer(Object.class, new PatternGridCellRenderer(gridController));
+		
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		// F2 Override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2,0,false);
+		grid.registerKeyboardAction(this,F2_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		// F3 Override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3,0,false);
+		grid.registerKeyboardAction(this,F3_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		// F4 Override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
+		grid.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
 
+		// F8 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
 		grid.registerKeyboardAction(this,FrameMain.STOP,stroke,JComponent.WHEN_FOCUSED);
-
+		
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;
@@ -567,6 +585,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 		r.setSelectedIndex(selectedPattern);
 		r.addActionListener(this);
+
+		// F4 Override
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
+		r.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}
@@ -585,6 +608,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 		r.setSelectedIndex(barsPerPattern);
 		r.addActionListener(this);
+		
+		// F4 Override
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
+		r.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}

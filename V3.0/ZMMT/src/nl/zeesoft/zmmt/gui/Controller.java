@@ -381,7 +381,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			unlockMe(this);
 			stopSequencer();
 			setComposition(settings.getNewComposition());
-			stateManager.setSelectedTab(this,FrameMain.COMPOSITION);
+			stateManager.setSelectedTab(this,FrameMain.TAB_COMPOSITION);
 		}
 	}
 

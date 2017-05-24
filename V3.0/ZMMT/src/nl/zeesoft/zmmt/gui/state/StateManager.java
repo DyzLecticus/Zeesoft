@@ -20,7 +20,7 @@ public class StateManager extends StateObject {
 	public StateManager(Messenger msgr,WorkerUnion union) {
 		super(msgr);
 		publishWorker = new CompositionChangePublishWorker(msgr,union,this);
-		super.setSelectedTab(FrameMain.COMPOSITION);
+		super.setSelectedTab(FrameMain.TAB_COMPOSITION);
 		super.setSelectedInstrument(Instrument.LEAD);
 	}
 	

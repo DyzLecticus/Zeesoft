@@ -27,6 +27,17 @@ public class PatternGridKeyListener extends InstrumentPlayerKeyListener {
 				patternPanel.insertSpace();
 			}
 		}
+		if (evt.isAltDown() && evt.isShiftDown() && !evt.isControlDown()) {
+			if (evt.getKeyCode()==KeyEvent.VK_UP) {
+				patternPanel.shiftSelectedNotesNote(12);
+			} else if (evt.getKeyCode()==KeyEvent.VK_DOWN) {
+				patternPanel.shiftSelectedNotesNote(-12);
+			} else if (evt.getKeyCode()==KeyEvent.VK_RIGHT) {
+				patternPanel.shiftSelectedNotesVelocityPercentage(10);
+			} else if (evt.getKeyCode()==KeyEvent.VK_LEFT) {
+				patternPanel.shiftSelectedNotesVelocityPercentage(-10);
+			}
+		}
 		if (evt.isAltDown() && !evt.isControlDown() && !evt.isShiftDown()) {
 			if (evt.getKeyCode()==KeyEvent.VK_UP) {
 				patternPanel.shiftSelectedNotesNote(1);

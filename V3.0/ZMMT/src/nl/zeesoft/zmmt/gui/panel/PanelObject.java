@@ -24,6 +24,10 @@ import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 
 public abstract class PanelObject implements PropertyChangeListener, FocusListener {
+	protected static final String		F2_PRESSED			= "F2_PRESSED";
+	protected static final String		F3_PRESSED			= "F3_PRESSED";
+	protected static final String		F4_PRESSED			= "F4_PRESSED";
+	
 	private	Controller					controller			= null;
 	
 	private JScrollPane					scroller			= null;
