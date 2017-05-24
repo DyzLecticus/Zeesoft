@@ -12,6 +12,8 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Note;
 import nl.zeesoft.zmmt.composition.Pattern;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.MidiNote;
 
 public class CompositionToSequenceConvertor {
@@ -31,7 +33,9 @@ public class CompositionToSequenceConvertor {
 
 	public Sequence getPatternSequence(int patternNumber) {
 		Sequence r = createSequence();
-		addPatternToSequence(r,1,patternNumber);
+		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
+		int endTick = addPatternToSequence(r,1,patternNumber);
+		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,endTick);
 		return r;
 	}
 
@@ -43,35 +47,21 @@ public class CompositionToSequenceConvertor {
 			if (p.getBars()>0) {
 				patternSteps = p.getBars() * composition.getStepsPerBar();
 			}
-			int ticksPerStep = (Composition.RESOLUTION * 4) / composition.getStepsPerBeat();
+			int ticksPerStep = (Composition.RESOLUTION) / composition.getStepsPerBeat();
+			System.out.println(this + ": Ticks per step: " + ticksPerStep);
 			for (int t = 1; t<=Composition.TRACKS; t++) {
-				Track track = seq.getTracks()[t];
+				Track track = seq.getTracks()[(t - 1)];
 				int currentTick = startTick;
 				for (int s = 1; s<=patternSteps; s++) {
 					for (Note note: p.getNotes()) {
 						if (note.track==t && note.step==s) {
 							List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(note.instrument,note.note,note.accent,0);
-							int endTick = ((note.duration * ticksPerStep) - 1);
+							int endTick = currentTick + ((note.duration * ticksPerStep) - 1);
 							for (MidiNote mn: midiNotes) {
-								ShortMessage noteOn = new ShortMessage();
-								ShortMessage noteOff = new ShortMessage();
 								int velocity = (mn.velocity * note.velocityPercentage) / 100;
-								try {
-									noteOn.setMessage(ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity);
-									noteOn.setMessage(ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,0);
-								} catch (InvalidMidiDataException e) {
-									if (messenger!=null) {
-										messenger.error(this,"Invalid MIDI data",e);
-									} else {
-										e.printStackTrace();
-									}
-									noteOn = null;
-									noteOff = null;
-								}
-								if (noteOn!=null && noteOff!=null) {
-									track.add(new MidiEvent(noteOn,currentTick));
-									track.add(new MidiEvent(noteOff,endTick));
-								}
+								
+								createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity,currentTick);
+								createEventOnTrack(track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,0,endTick);
 							}
 						}
 					}
@@ -94,6 +84,39 @@ public class CompositionToSequenceConvertor {
 				e.printStackTrace();
 			}
 		}
+		if (r!=null) {
+			// TODO: Add echo configuration
+			Track track = r.getTracks()[0];
+			for (InstrumentConfiguration inst: composition.getSynthesizerConfiguration().getInstruments()) {
+				if (!inst.getName().equals(Instrument.ECHO)) {
+					int channel = Instrument.getMidiChannelForInstrument(inst.getName(),0);
+					createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer1MidiNum(),0,0);
+					createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer1Pressure(),0,0);
+					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,91,inst.getLayer1Reverb(),0);
+					if (inst.getLayer2MidiNum()>=0) {
+						channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
+						createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer2MidiNum(),0,0);
+						createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer2Pressure(),0,0);
+						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,91,inst.getLayer2Reverb(),0);
+					}
+				}
+			}
+		}
 		return r;
+	}
+
+	protected void createEventOnTrack(Track track, int type, int channel, int num, int val, long tick) {
+		ShortMessage message = new ShortMessage();
+		try {
+			message.setMessage(type,channel,num,val); 
+			MidiEvent event = new MidiEvent(message,tick);
+			track.add(event);
+		} catch (InvalidMidiDataException e) {
+			if (messenger!=null) {
+				messenger.error(this,"Invalid MIDI data",e);
+			} else {
+				e.printStackTrace();
+			}
+		}
 	}
 }

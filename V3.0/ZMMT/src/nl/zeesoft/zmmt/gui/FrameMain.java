@@ -41,6 +41,11 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	PATTERN_COPY		= PATTERN_PREFIX + "COPY";
 	public static final String	PATTERN_PASTE		= PATTERN_PREFIX + "PASTE";
 
+	public static final String	PLAY				= "PLAY";
+	public static final String	RESTART				= "RESTART";
+	public static final String	PAUSE				= "PAUSE";
+	public static final String	STOP				= "STOP";
+
 	public static final String	COMPOSITION			= "Composition";
 	public static final String	INSTRUMENTS			= "Instruments";
 	public static final String	PATTERNS			= "Patterns";
@@ -136,6 +141,10 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),INSTRUMENTS);
 		} else if (evt.getActionCommand().equals(PATTERNS)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),PATTERNS);
+		} else if (evt.getActionCommand().equals(PLAY)) {
+			getController().startSequencer();
+		} else if (evt.getActionCommand().equals(STOP)) {
+			getController().stopSequencer();
 		} else if (evt.getActionCommand().equals(EDIT_UNDO)) {
 			getController().getStateManager().undoCompositionChange(evt.getSource());
 		} else if (evt.getActionCommand().equals(EDIT_REDO)) {
@@ -296,7 +305,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.setActionCommand(PATTERN_EDIT);
 		item.addActionListener(this);
 		editPatternMenu.add(item);
-
+		
 		item = new JMenuItem("Copy notes",KeyEvent.VK_C);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,evt));
 		item.setActionCommand(PATTERN_COPY);
@@ -309,6 +318,23 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		editPatternMenu.add(item);
 
+		JMenu sequencerMenu = new JMenu("Sequencer");
+		sequencerMenu.setMnemonic(KeyEvent.VK_S);
+		bar.add(sequencerMenu);
+
+		evt = ActionEvent.CTRL_MASK;
+		
+		item = new JMenuItem("Play",KeyEvent.VK_P);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));
+		item.setActionCommand(PLAY);
+		item.addActionListener(this);
+		sequencerMenu.add(item);
+		
+		item = new JMenuItem("Stop",KeyEvent.VK_S);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8,0));
+		item.setActionCommand(STOP);
+		item.addActionListener(this);
+		sequencerMenu.add(item);
 
 		return bar;
 	}

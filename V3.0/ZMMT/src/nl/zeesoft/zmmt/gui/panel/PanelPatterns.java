@@ -111,7 +111,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
+		if (evt.getActionCommand().equals(FrameMain.STOP)) {
+			getController().stopSequencer();
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
 			pattern.requestFocus();
 			pattern.showPopup();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_INSERT)) {
@@ -544,11 +546,15 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		grid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		grid.setDefaultRenderer(Object.class, new PatternGridCellRenderer(gridController));
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK, false);
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
+		grid.registerKeyboardAction(this,FrameMain.STOP,stroke,JComponent.WHEN_FOCUSED);
+
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;

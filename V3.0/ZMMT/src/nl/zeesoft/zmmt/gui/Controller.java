@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -25,6 +26,7 @@ import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.gui.state.StateManager;
 import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
+import nl.zeesoft.zmmt.sequencer.SequencePlayer;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.MidiNote;
 
@@ -45,6 +47,9 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private ImportExportWorker			importExportWorker			= null;
 	
 	private Synthesizer					synthesizer					= null;
+
+	private SequencePlayer				sequencePlayer				= null;
+	private Sequencer					sequencer					= null;
 
 	public Controller(Settings settings) {
 		super(new Messenger(null));
@@ -81,6 +86,9 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
 		patternKeyListener = new PatternGridKeyListener(this,settings.getKeyCodeNoteNumbers());
 
+		sequencePlayer = new SequencePlayer(getMessenger());
+		stateManager.addSubscriber(sequencePlayer);
+		
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
 		
@@ -119,8 +127,8 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		
 		stateManager.start();
 		
-		InitializeSynthesizerWorker synthInit = new InitializeSynthesizerWorker(getMessenger(),getUnion(),this);
-		synthInit.start();
+		InitializeMidiDevicesWorker midi = new InitializeMidiDevicesWorker(getMessenger(),getUnion(),this);
+		midi.start();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
 		
@@ -132,6 +140,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void stop(Worker ignoreWorker) {
 		importExportWorker.stop();
 		player.stop();
+		stopSequencer();
 		stopSynthesizer(stateManager.getComposition());
 		mainFrame.getFrame().setVisible(false);
 		
@@ -143,6 +152,9 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		lockMe(this);
 		if (synthesizer!=null) {
 			synthesizer.close();
+		}
+		if (sequencer!=null) {
+			sequencer.close();
 		}
 		unlockMe(this);
 	}
@@ -249,7 +261,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	protected void setComposition(Composition composition) {
 		if (composition!=null) {
-			stopSynthesizer(composition);
+			stopSynthesizer(stateManager.getComposition());
 			stateManager.setCompositionChanged(this,false);
 			stateManager.setComposition(this,composition);
 			reconfigureSynthesizer(composition);
@@ -263,7 +275,15 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		unlockMe(this);
 		reconfigureSynthesizer(stateManager.getComposition());
 	}
-	
+
+	protected void setSequencer(Sequencer seq) {
+		lockMe(this);
+		this.sequencer = seq;
+		sequencePlayer.setSequencer(seq);
+		unlockMe(this);
+		reconfigureSynthesizer(stateManager.getComposition());
+	}
+
 	protected void stopSynthesizer(Composition composition) {
 		lockMe(this);
 		if (synthesizer!=null) {
@@ -300,6 +320,18 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void stopNotes() {
 		lockMe(this);
 		player.stopInstrumentNotes(stateManager.getSelectedInstrument());
+		unlockMe(this);
+	}
+
+	public void startSequencer() {
+		lockMe(this);
+		sequencePlayer.start();
+		unlockMe(this);
+	}
+
+	public void stopSequencer() {
+		lockMe(this);
+		sequencePlayer.stop();
 		unlockMe(this);
 	}
 
@@ -347,6 +379,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			settings.setWorkingCompositionPattern(0);
 			compositionFile = null;
 			unlockMe(this);
+			stopSequencer();
 			setComposition(settings.getNewComposition());
 			stateManager.setSelectedTab(this,FrameMain.COMPOSITION);
 		}
@@ -357,6 +390,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		settings.setWorkingCompositionFileName(file.getAbsolutePath());
 		compositionFile = file;
 		unlockMe(this);
+		stopSequencer();
 		setComposition(comp);
 	}
 
@@ -401,7 +435,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	
 	private List<MidiNote> getNotes(int note,boolean accent) {
 		return stateManager.getComposition().getSynthesizerConfiguration().getMidiNotesForNote(
-				stateManager.getSelectedInstrument(),note,accent,stateManager.getComposition().getMsPerStep()
-				);
+			stateManager.getSelectedInstrument(),note,accent,stateManager.getComposition().getMsPerStep()
+			);
 	}
 }

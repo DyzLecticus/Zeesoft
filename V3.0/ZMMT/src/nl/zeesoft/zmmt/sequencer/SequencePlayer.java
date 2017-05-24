@@ -40,18 +40,25 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 	
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
-		// TODO Auto-generated method stub
 		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			lockMe(this);
 			selectedPattern = evt.getSelectedPattern();
 			compositionCopy = evt.getComposition().copy();
 			updateSequence();
 			unlockMe(this);
+		} else if (evt.getSelectedPattern()!=selectedPattern) {
+			lockMe(this);
+			selectedPattern = evt.getSelectedPattern();
+			if (patternMode) {
+				updateSequence();
+			}
+			unlockMe(this);
 		}
 	}
 	
 	public void start() {
 		lockMe(this);
+		System.out.println(this + ": Start");
 		if (sequencer!=null) {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
@@ -63,12 +70,20 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 
 	public void stop() {
 		lockMe(this);
+		System.out.println(this + ": Stop");
 		if (sequencer!=null) {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
+				sequencer.setTickPosition(0);
 			}
 		}
 		unlockMe(this);
+	}
+	
+	protected void setTempo(float fBPM) {
+		float fCurrent = sequencer.getTempoInBPM();
+		float fFactor = fBPM / fCurrent;
+		sequencer.setTempoFactor(fFactor);
 	}
 	
 	protected void updateSequence() {
@@ -84,7 +99,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 	protected void updateSequencerSequence() {
 		if (sequencer!=null && sequence!=null) {
 			boolean restart = false;
-			long currentTick = 1;
+			long currentTick = 0;
 			if (sequencer.isRunning()) {
 				restart = true;
 				sequencer.stop();
@@ -95,6 +110,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 			} catch (InvalidMidiDataException e) {
 				getMessenger().error(this,"Invalid MIDI data",e);
 			}
+			setTempo((float) compositionCopy.getBeatsPerMinute());
 			if (restart) {
 				sequencer.setTickPosition(currentTick);
 				sequencer.start();

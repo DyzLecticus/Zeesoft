@@ -3,7 +3,9 @@ package nl.zeesoft.zmmt.test;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
+import javax.sound.midi.Transmitter;
 
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -32,7 +34,6 @@ public class TestMidiLayout extends TestObject {
 			e.printStackTrace();
 		}
 		if (synth!=null && synth.isOpen()) {
-			System.out.println("Default synthesizer instruments; ");
 			Instrument[] instruments = synth.getLoadedInstruments();
 			System.out.println("Synthesizer: " + synth.getDeviceInfo().getName() + " (poly: " + synth.getMaxPolyphony() + ")");
 			System.out.println("Instrument: " + synth.getLoadedInstruments()[0].getName());
@@ -46,6 +47,18 @@ public class TestMidiLayout extends TestObject {
 					synth.getChannels()[9].programChange(0,i);
 					//synth.getChannels()[9].controlChange(arg0, arg1);
 					//synth.getChannels()[9].
+				}
+			}
+			Sequencer seq = null;
+			try {
+				seq = MidiSystem.getSequencer(true);
+				seq.open();
+			} catch (MidiUnavailableException e) {
+				e.printStackTrace();
+			}
+			if (seq!=null && seq.isOpen()) {
+				for (Transmitter t: seq.getTransmitters()) {
+					System.out.println("Sequencer is connected to: " + t.getReceiver() + " (= synth: " + (t.getReceiver() == synth) + ")");
 				}
 			}
 

@@ -9,7 +9,7 @@ import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class Composition {
 	public static final int				TRACKS							= 64;
-	public static final int				RESOLUTION						= 64;
+	public static final int				RESOLUTION						= 480;
 	
 	private String						composer						= "";
 	private String						name							= "";
