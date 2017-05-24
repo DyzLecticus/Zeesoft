@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
@@ -118,9 +119,36 @@ public class CompositionToSequenceConvertor {
 			}
 		}
 		if (r!=null) {
+			addCompositionInfoToSequenceTick(r,0);
 			addSynthesizerConfigurationToSequenceTick(r,0);
 		}
 		return r;
+	}
+	
+	protected void addCompositionInfoToSequenceTick(Sequence seq,int tick) {
+		// TODO Add track endings to all tracks
+		// TODO Add composer and composition name
+		Track track = seq.getTracks()[0];
+		int tempo = composition.getBeatsPerMinute();
+		tempo = 60000000 / tempo;
+		byte[] b = new byte[3];
+		int tmp = tempo >> 16;
+		b[0] = (byte) tmp;
+		tmp = tempo >> 8;
+		b[1] = (byte) tmp;
+		b[2] = (byte) tempo;
+		try {
+			MetaMessage message = new MetaMessage();
+			message.setMessage(0x51,b,b.length);
+			MidiEvent event = new MidiEvent(message,tick);
+			track.add(event);
+		} catch (InvalidMidiDataException e) {
+			if (messenger!=null) {
+				messenger.error(this,"Invalid MIDI data",e);
+			} else {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	protected void addSynthesizerConfigurationToSequenceTick(Sequence seq,int tick) {

@@ -134,12 +134,6 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 		}
 	}
 	
-	protected void setTempo(float fBPM) {
-		float fCurrent = sequencer.getTempoInBPM();
-		float fFactor = fBPM / fCurrent;
-		sequencer.setTempoFactor(fFactor);
-	}
-	
 	protected void updateSequencerSequence() {
 		if (sequencer!=null && sequence!=null) {
 			boolean restart = false;
@@ -154,7 +148,6 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			} catch (InvalidMidiDataException e) {
 				getMessenger().error(this,"Invalid MIDI data",e);
 			}
-			setTempo((float) compositionCopy.getBeatsPerMinute());
 			if (restart) {
 				sequencer.setTickPosition(currentTick);
 				sequencer.start();
