@@ -26,7 +26,6 @@ public class InitializeMidiDevicesWorker extends Worker {
 			if (seq!=null) {
 				seq.open();
 				if (seq.isOpen()) {
-					seq.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
 					controller.setSequencer(seq);
 				}
 			}

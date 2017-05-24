@@ -27,6 +27,7 @@ import nl.zeesoft.zmmt.gui.state.StateManager;
 import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 import nl.zeesoft.zmmt.sequencer.SequencePlayer;
+import nl.zeesoft.zmmt.sequencer.SequencePlayerUpdateWorker;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.MidiNote;
 
@@ -49,6 +50,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private Synthesizer					synthesizer					= null;
 
 	private SequencePlayer				sequencePlayer				= null;
+	private SequencePlayerUpdateWorker	sequencePlayerWorker 		= null;
 	private Sequencer					sequencer					= null;
 
 	public Controller(Settings settings) {
@@ -86,8 +88,9 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
 		patternKeyListener = new PatternGridKeyListener(this,settings.getKeyCodeNoteNumbers());
 
-		sequencePlayer = new SequencePlayer(getMessenger());
+		sequencePlayer = new SequencePlayer(getMessenger(),getUnion());
 		stateManager.addSubscriber(sequencePlayer);
+		sequencePlayerWorker = new SequencePlayerUpdateWorker(getMessenger(),getUnion(),sequencePlayer);
 		
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
@@ -124,6 +127,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			importExportWorker.initialize(settings.getWorkDirName());
 		}
 		player.start();
+		sequencePlayerWorker.start();
 		
 		stateManager.start();
 		
@@ -140,6 +144,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void stop(Worker ignoreWorker) {
 		importExportWorker.stop();
 		player.stop();
+		sequencePlayerWorker.stop();
 		stopSequencer();
 		stopSynthesizer(stateManager.getComposition());
 		mainFrame.getFrame().setVisible(false);

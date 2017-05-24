@@ -35,7 +35,10 @@ public class CompositionToSequenceConvertor {
 	public Sequence getPatternSequence(int patternNumber) {
 		Sequence r = createSequence();
 		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
-		int endTick = addPatternToSequence(r,1,patternNumber,true);
+		int endTick = addPatternToSequence(r,0,patternNumber,true);
+		for (int i = 0; i < 9; i++) {
+			endTick = addPatternToSequence(r,endTick,patternNumber,true);
+		}
 		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,(endTick - 1));
 		return r;
 	}
@@ -45,11 +48,8 @@ public class CompositionToSequenceConvertor {
 		Pattern p = composition.getPattern(patternNumber);
 		if (p!=null) {
 
-			int patternSteps = composition.getBarsPerPattern() * composition.getStepsPerBar();
-			if (p.getBars()>0) {
-				patternSteps = p.getBars() * composition.getStepsPerBar();
-			}
-			int ticksPerStep = (Composition.RESOLUTION) / composition.getStepsPerBeat();
+			int patternSteps = composition.getStepsForPattern(p);
+			int ticksPerStep = composition.getTicksPerStep();
 			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
 
 			EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
@@ -81,12 +81,11 @@ public class CompositionToSequenceConvertor {
 				// Echo
 				for (Note note: echoNotes) {
 					List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(note.instrument,note.note,note.accent,1);
-					int endTick = currentTick + ((note.duration * ticksPerStep) - 1);
 					for (MidiNote mn: midiNotes) {
 						if (mn instanceof MidiNoteDelayed) {
 							MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
-							currentTick = ((note.step - 1) + mnd.delaySteps) * ticksPerStep;
-							endTick = (((note.step - 1) + mnd.delaySteps + note.duration) * ticksPerStep) - 1;
+							currentTick = startTick + ((note.step - 1) + mnd.delaySteps) * ticksPerStep;
+							int endTick = startTick + (((note.step - 1) + mnd.delaySteps + note.duration) * ticksPerStep) - 1;
 							if (wrapEcho) {
 								if (currentTick>=nextPatternStartTick) {
 									currentTick = currentTick - (patternSteps * ticksPerStep);

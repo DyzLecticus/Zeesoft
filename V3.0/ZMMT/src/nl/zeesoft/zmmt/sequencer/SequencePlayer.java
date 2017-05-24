@@ -1,30 +1,39 @@
 package nl.zeesoft.zmmt.sequencer;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
-public class SequencePlayer extends Locker implements StateChangeSubscriber {
-	private Sequencer	sequencer				= null;
-	private	boolean		patternMode				= true;
+public class SequencePlayer extends Locker implements StateChangeSubscriber, MetaEventListener {
+	private static final int			EOT					= 47;
+	private Sequencer					sequencer			= null;
+
+	private	boolean						patternMode			= true;
+	private int							selectedPattern		= 0;
+	private Composition					compositionCopy		= null;
+
+	private Sequence 					sequence			= null;
+	private boolean						updateSequence		= false;
 	
-	private int			selectedPattern			= 0;
-	private Composition compositionCopy			= null;
-	private Sequence 	sequence				= null;
-	
-	public SequencePlayer(Messenger msgr) {
+	public SequencePlayer(Messenger msgr,WorkerUnion uni) {
 		super(msgr);
 	}
 
 	public void setSequencer(Sequencer sequencer) {
 		lockMe(this);
 		this.sequencer = sequencer;
+		sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
+		// Java 1.5 loop fix
+		//sequencer.addMetaEventListener(this);
 		updateSequencerSequence();
 		unlockMe(this);
 	}
@@ -33,7 +42,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 		lockMe(this);
 		if (!this.patternMode==patternMode) {
 			this.patternMode = patternMode;
-			updateSequence();
+			updateSequence = true;
 		}
 		unlockMe(this);
 	}
@@ -44,13 +53,25 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 			lockMe(this);
 			selectedPattern = evt.getSelectedPattern();
 			compositionCopy = evt.getComposition().copy();
-			updateSequence();
+			updateSequence = true;
 			unlockMe(this);
 		} else if (evt.getSelectedPattern()!=selectedPattern) {
 			lockMe(this);
 			selectedPattern = evt.getSelectedPattern();
 			if (patternMode) {
-				updateSequence();
+				updateSequence = true;
+			}
+			unlockMe(this);
+		}
+	}
+	
+	@Override
+	public void meta(MetaMessage message) {
+		if (message.getType()==EOT) {
+			lockMe(this);
+			if (sequencer!=null && sequencer.isOpen()) {
+				sequencer.setTickPosition(0);
+				sequencer.start();
 			}
 			unlockMe(this);
 		}
@@ -58,7 +79,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 	
 	public void start() {
 		lockMe(this);
-		if (sequencer!=null) {
+		if (sequencer!=null && sequencer.getSequence()!=null) {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
 			}
@@ -78,20 +99,41 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 		unlockMe(this);
 	}
 	
+	protected void checkUpdateSequence() {
+		boolean update = false;
+		boolean pattern = true;
+		int	number = 0;
+		Composition comp = null;
+		lockMe(this);
+		if (updateSequence) {
+			updateSequence = false;
+			update = true;
+			pattern = patternMode;
+			number = selectedPattern;
+			comp = compositionCopy;
+		}
+		unlockMe(this);
+		if (update) {
+			Sequence seq = null;
+			CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor(getMessenger(),comp);
+			if (pattern) {
+				seq = convertor.getPatternSequence(number);
+			} else {
+				// TODO: Implement
+			}
+			if (seq!=null) {
+				lockMe(this);
+				sequence = seq;
+				updateSequencerSequence();
+				unlockMe(this);
+			}
+		}
+	}
+	
 	protected void setTempo(float fBPM) {
 		float fCurrent = sequencer.getTempoInBPM();
 		float fFactor = fBPM / fCurrent;
 		sequencer.setTempoFactor(fFactor);
-	}
-	
-	protected void updateSequence() {
-		CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor(getMessenger(),compositionCopy);
-		if (patternMode) {
-			sequence = convertor.getPatternSequence(selectedPattern);
-		} else {
-			// TODO: Implement
-		}
-		updateSequencerSequence();
 	}
 	
 	protected void updateSequencerSequence() {

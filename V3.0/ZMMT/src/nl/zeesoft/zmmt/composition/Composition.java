@@ -106,6 +106,19 @@ public class Composition {
 		return (60000 / beatsPerMinute) / stepsPerBeat;
 	}
 
+	public int getTicksPerStep() {
+		return (RESOLUTION / stepsPerBeat);
+	}
+
+	public int getStepsForPattern(Pattern p) {
+		int r = getBarsPerPattern() * getStepsPerBar();
+		if (p.getBars()>0) {
+			r = p.getBars() * getStepsPerBar();
+		}
+		return r;
+	}
+
+	
 	public String getComposer() {
 		return composer;
 	}
