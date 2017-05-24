@@ -48,7 +48,6 @@ public class CompositionToSequenceConvertor {
 				patternSteps = p.getBars() * composition.getStepsPerBar();
 			}
 			int ticksPerStep = (Composition.RESOLUTION) / composition.getStepsPerBeat();
-			System.out.println(this + ": Ticks per step: " + ticksPerStep);
 			for (int t = 1; t<=Composition.TRACKS; t++) {
 				Track track = seq.getTracks()[(t - 1)];
 				int currentTick = startTick;

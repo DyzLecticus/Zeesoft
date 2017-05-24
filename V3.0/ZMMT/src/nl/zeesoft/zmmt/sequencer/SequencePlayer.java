@@ -58,7 +58,6 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 	
 	public void start() {
 		lockMe(this);
-		System.out.println(this + ": Start");
 		if (sequencer!=null) {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
@@ -70,7 +69,6 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber {
 
 	public void stop() {
 		lockMe(this);
-		System.out.println(this + ": Stop");
 		if (sequencer!=null) {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
