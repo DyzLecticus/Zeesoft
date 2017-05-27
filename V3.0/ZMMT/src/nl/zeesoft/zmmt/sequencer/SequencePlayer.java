@@ -15,7 +15,7 @@ import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
 public class SequencePlayer extends Locker implements StateChangeSubscriber, MetaEventListener {
 	private static final int			END_OF_SEQUENCE		= 47;
-	private	static final boolean		USE_LOOP_FIX		= false;
+	private	static final boolean		USE_LOOP_FIX		= true;
 
 	private Sequencer					sequencer			= null;
 

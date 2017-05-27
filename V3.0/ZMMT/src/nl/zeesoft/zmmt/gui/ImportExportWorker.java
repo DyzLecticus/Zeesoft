@@ -113,6 +113,9 @@ public class ImportExportWorker extends Worker {
 					}
 					controller.setEnabled(true);
 				} else if (action.equals(SAVE_COMPOSITION)) {
+					if (!file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) {
+						file = new File(file.getAbsolutePath() + Settings.EXTENSION_COMPOSITION);
+					}
 					boolean confirmed = true;
 					if (file.exists() && selected) {
 						confirmed = controller.showConfirmMessage("Are you sure you want to overwrite the selected file?");
