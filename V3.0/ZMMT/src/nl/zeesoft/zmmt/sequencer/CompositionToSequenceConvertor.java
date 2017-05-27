@@ -37,10 +37,10 @@ public class CompositionToSequenceConvertor {
 		Sequence r = createSequence();
 		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
 		int endTick = addPatternToSequence(r,0,patternNumber,true);
-		for (int i = 0; i < 9; i++) {
-			endTick = addPatternToSequence(r,endTick,patternNumber,true);
+		// Align track endings
+		for (int t = 0; t < Composition.TRACKS; t++) {
+			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(endTick - 1));
 		}
-		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,(endTick - 1));
 		return r;
 	}
 
@@ -126,29 +126,23 @@ public class CompositionToSequenceConvertor {
 	}
 	
 	protected void addCompositionInfoToSequenceTick(Sequence seq,int tick) {
-		// TODO Add track endings to all tracks
-		// TODO Add composer and composition name
 		Track track = seq.getTracks()[0];
-		int tempo = composition.getBeatsPerMinute();
-		tempo = 60000000 / tempo;
+		int tempo = (60000000 / composition.getBeatsPerMinute());
 		byte[] b = new byte[3];
 		int tmp = tempo >> 16;
 		b[0] = (byte) tmp;
 		tmp = tempo >> 8;
 		b[1] = (byte) tmp;
 		b[2] = (byte) tempo;
-		try {
-			MetaMessage message = new MetaMessage();
-			message.setMessage(0x51,b,b.length);
-			MidiEvent event = new MidiEvent(message,tick);
-			track.add(event);
-		} catch (InvalidMidiDataException e) {
-			if (messenger!=null) {
-				messenger.error(this,"Invalid MIDI data",e);
-			} else {
-				e.printStackTrace();
-			}
-		}
+		createMetaEventOnTrack(track,0x51,b,b.length,tick);
+
+		String txt = "Name: " + composition.getName();
+		byte[] tb = txt.getBytes();
+		createMetaEventOnTrack(track,0x01,tb,tb.length,tick);
+		
+		txt = "Composer: " + composition.getComposer();
+		tb = txt.getBytes();
+		createMetaEventOnTrack(track,0x01,tb,tb.length,tick);
 	}
 
 	protected void addSynthesizerConfigurationToSequenceTick(Sequence seq,int tick) {
@@ -197,6 +191,21 @@ public class CompositionToSequenceConvertor {
 		ShortMessage message = new ShortMessage();
 		try {
 			message.setMessage(type,channel,num,val); 
+			MidiEvent event = new MidiEvent(message,tick);
+			track.add(event);
+		} catch (InvalidMidiDataException e) {
+			if (messenger!=null) {
+				messenger.error(this,"Invalid MIDI data",e);
+			} else {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void createMetaEventOnTrack(Track track, int type, byte[] data, int length, long tick) {
+		MetaMessage message = new MetaMessage();
+		try {
+			message.setMessage(type,data,length);
 			MidiEvent event = new MidiEvent(message,tick);
 			track.add(event);
 		} catch (InvalidMidiDataException e) {
