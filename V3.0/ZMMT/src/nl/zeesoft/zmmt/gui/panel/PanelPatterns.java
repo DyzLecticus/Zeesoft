@@ -551,16 +551,16 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	}
 	
 	protected void refreshGridData(int rowFrom, int rowTo) {
-		int[] rows = grid.getSelectedRows();
-		int[] cols = grid.getSelectedColumns();
 		if (rowFrom>=0 && rowTo>=0) {
 			gridController.fireTableRowsUpdated(rowFrom,rowTo);
 		} else {
+			int[] rows = grid.getSelectedRows();
+			int[] cols = grid.getSelectedColumns();
 			gridController.fireTableDataChanged();
-		}
-		if (rows.length>0 && cols.length>0) {
-			grid.addRowSelectionInterval(rows[0],rows[(rows.length-1)]);
-			grid.addColumnSelectionInterval(cols[0],cols[(cols.length-1)]);
+			if (rows.length>0 && cols.length>0) {
+				grid.addRowSelectionInterval(rows[0],rows[(rows.length-1)]);
+				grid.addColumnSelectionInterval(cols[0],cols[(cols.length-1)]);
+			}
 		}
 	}
 	
