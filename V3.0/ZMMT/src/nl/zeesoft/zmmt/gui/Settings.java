@@ -29,7 +29,9 @@ public class Settings {
 	private String						workingTab					= "";
 	private String						workingInstrument			= "";
 	private int							workingCompositionPattern	= 0;
-	
+
+	private String						customSoundFontFileName		= "";
+
 	private String						customFontName				= "Courier New";
 	private boolean						customFontBold				= false;
 	private int							customFontSize				= 14;
@@ -109,6 +111,7 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("workingInstrument",workingInstrument,true));
 		json.rootElement.children.add(new JsElem("workingCompositionFileName",workingCompositionFileName,true));
 		json.rootElement.children.add(new JsElem("workingCompositionPattern","" + workingCompositionPattern));
+		json.rootElement.children.add(new JsElem("customSoundFontFileName",customSoundFontFileName,true));
 		json.rootElement.children.add(new JsElem("customFontName",customFontName,true));
 		json.rootElement.children.add(new JsElem("customFontBold","" + customFontBold));
 		json.rootElement.children.add(new JsElem("customFontSize","" + customFontSize));
@@ -150,6 +153,8 @@ public class Settings {
 					workingCompositionFileName = elem.value.toString();
 				} else if (elem.name.equals("workingCompositionPattern")) {
 					workingCompositionPattern = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("customSoundFontFileName")) {
+					customSoundFontFileName = elem.value.toString();
 				} else if (elem.name.equals("customFontName")) {
 					customFontName = elem.value.toString();
 				} else if (elem.name.equals("customFontBold")) {
@@ -252,6 +257,14 @@ public class Settings {
 
 	public void setWorkingCompositionPattern(int workingCompositionPattern) {
 		this.workingCompositionPattern = workingCompositionPattern;
+	}
+
+	public String getCustomSoundFontFileName() {
+		return customSoundFontFileName;
+	}
+
+	public void setCustomSoundFontFileName(String customSoundFontFileName) {
+		this.customSoundFontFileName = customSoundFontFileName;
 	}
 
 	public String getCustomFontName() {

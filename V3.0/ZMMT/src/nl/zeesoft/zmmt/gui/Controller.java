@@ -131,7 +131,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		
 		stateManager.start();
 		
-		InitializeMidiDevicesWorker midi = new InitializeMidiDevicesWorker(getMessenger(),getUnion(),this);
+		InitializeMidiDevicesWorker midi = new InitializeMidiDevicesWorker(getMessenger(),getUnion(),this,settings.getCustomSoundFontFileName());
 		midi.start();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
