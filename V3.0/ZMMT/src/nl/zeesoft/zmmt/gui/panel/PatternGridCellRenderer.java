@@ -13,7 +13,6 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 @SuppressWarnings("serial")
 public class PatternGridCellRenderer extends DefaultTableCellRenderer {
-	private static final Color	PLAYING_BORDER_COLOR	= Color.BLACK;
 	private static final Color	BAR_COLOR_SELECTED 		= new Color(80,80,80);
 	private static final Color	BAR_COLOR_NORMAL 		= new Color(180,180,180);
 	private static final Color	BEAT_COLOR_SELECTED 	= new Color(104,104,104);
@@ -53,9 +52,6 @@ public class PatternGridCellRenderer extends DefaultTableCellRenderer {
 						borderColor = COLOR_SELECTED;
 					}
 				}
-				if (row == controller.getPlayingStep()) {
-					borderColor = PLAYING_BORDER_COLOR;
-				}
 				label.setBorder(BorderFactory.createLineBorder(borderColor));
 			}
 			r = label;
@@ -80,15 +76,7 @@ public class PatternGridCellRenderer extends DefaultTableCellRenderer {
 					color = COLOR_NORMAL;
 				}
 			}
-			if (row == controller.getPlayingStep()) {
-				JLabel label = new JLabel();
-				label.setOpaque(true);
-				label.setBackground(color);
-				label.setBorder(BorderFactory.createLineBorder(PLAYING_BORDER_COLOR));
-				r = label;
-			} else {
-				r.setBackground(color);
-			}
+			r.setBackground(color);
 		}
 		return r;
 	}

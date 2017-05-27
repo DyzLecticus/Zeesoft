@@ -12,10 +12,12 @@ import nl.zeesoft.zmmt.gui.Settings;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 public class StateManager extends StateObject {
-	private List<StateChangeSubscriber>			subscribers				= new ArrayList<StateChangeSubscriber>();
+	private List<StateChangeSubscriber>			subscribers						= new ArrayList<StateChangeSubscriber>();
 	
-	private List<CompositionChangePublisher>	waitingPublishers		= new ArrayList<CompositionChangePublisher>();
-	private CompositionChangePublishWorker 		publishWorker			= null;
+	private List<CompositionChangePublisher>	waitingPublishers				= new ArrayList<CompositionChangePublisher>();
+	private CompositionChangePublishWorker 		publishWorker					= null;
+	
+	private StateChangeEvent					waitingCompositionChangeEvent	= null;
 	
 	public StateManager(Messenger msgr,WorkerUnion union) {
 		super(msgr);
@@ -123,7 +125,7 @@ public class StateManager extends StateObject {
 
 		addState(source);
 		
-		publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+		waitingCompositionChangeEvent = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		unlockMe(this);
 	}
 
@@ -140,7 +142,7 @@ public class StateManager extends StateObject {
 			super.setSelectedInstrument(state.getSelectedInstrument());
 			super.setSelectedPattern(state.getSelectedPattern());
 			
-			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+			waitingCompositionChangeEvent = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		}
 		unlockMe(this);
 	}
@@ -158,7 +160,7 @@ public class StateManager extends StateObject {
 			super.setSelectedInstrument(state.getSelectedInstrument());
 			super.setSelectedPattern(state.getSelectedPattern());
 			
-			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+			waitingCompositionChangeEvent = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		}
 		unlockMe(this);
 	}
@@ -235,6 +237,12 @@ public class StateManager extends StateObject {
 				publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,publisher);
 			}
 			waitingPublishers.clear();
+		}
+		if (waitingCompositionChangeEvent!=null) {
+			for (StateChangeSubscriber sub: subscribers) {
+				sub.handleStateChange(waitingCompositionChangeEvent);
+			}
+			waitingCompositionChangeEvent = null;
 		}
 		unlockMe(this);
 	}

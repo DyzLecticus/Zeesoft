@@ -1,8 +1,13 @@
 package nl.zeesoft.zmmt.gui.panel;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -231,8 +236,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				gridController.setPlayingStep(-1);
 				int step = Integer.parseInt(txt.substring(CompositionToSequenceConvertor.STEP_MARKER.length()));
 				if (step<=grid.getRowCount()) {
-					gridController.setPlayingStep((step - 1));
-					refreshGridData(0,(grid.getRowCount() - 1));
+					gridController.setPlayingStep(step);
+					grid.repaint();
 				}
 			}
 		}
@@ -564,11 +569,28 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 	}
 	
+	@SuppressWarnings("serial")
 	protected JScrollPane getPatternPanel() {
 		gridController = new PatternGridController();
 		PatternGridKeyListener keyListener = getController().getPatternKeyListener();
 		keyListener.setPatternPanel(this);
-		grid = new JTable();
+		grid = new JTable() {
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				if (getModel() instanceof PatternGridController) {
+					PatternGridController controller = (PatternGridController) getModel();
+					if (controller.getPlayingStep()>=0) {
+						Graphics2D g2 = (Graphics2D) g;
+						Stroke oldStroke = g2.getStroke();
+						g2.setStroke(new BasicStroke(2));
+						Rectangle r = getCellRect((controller.getPlayingStep() - 1),0,false);
+						g2.setPaint(Color.BLACK);
+						g2.drawRect(r.x,(r.y - 1),((r.width + 1) * Composition.TRACKS),(r.height + 1));
+						g2.setStroke(oldStroke);
+					}
+				}
+			}
+		};
 		grid.setModel(gridController);
 		grid.addKeyListener(keyListener);
 		grid.addFocusListener(this);
