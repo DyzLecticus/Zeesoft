@@ -7,11 +7,13 @@ import nl.zeesoft.zmmt.composition.Pattern;
 
 @SuppressWarnings("serial")
 public class PatternGridController extends AbstractTableModel {
-	private int					barsPerPattern	= 4;
-	private int					beatsPerBar		= 4;
-	private int					stepsPerBeat	= 8;
+	private int					barsPerPattern		= 4;
+	private int					beatsPerBar			= 4;
+	private int					stepsPerBeat		= 8;
 
-	private Pattern				workingPattern			= null;
+	private Pattern				workingPattern		= null;
+	
+	private int					playingStep			= -1;
 
 	public boolean setLayout(int barsPerPattern,int beatsPerBar,int stepsPerBeat) {
 		boolean changed = false;
@@ -34,10 +36,22 @@ public class PatternGridController extends AbstractTableModel {
 		this.workingPattern = workingPattern;
 	}
 
+	protected int getStepsPerBar() {
+		return beatsPerBar * stepsPerBeat;
+	}
+
 	protected int getStepsPerBeat() {
 		return stepsPerBeat;
 	}
-	
+
+	protected void setPlayingStep(int playingStep) {
+		this.playingStep = playingStep;
+	}
+
+	protected int getPlayingStep() {
+		return playingStep;
+	}
+
 	@Override
 	public int getColumnCount() {
 		return Composition.TRACKS;
@@ -45,12 +59,7 @@ public class PatternGridController extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		int r = barsPerPattern;
-		if (workingPattern!=null && workingPattern.getBars()>0) {
-			r = workingPattern.getBars();
-		}
-		r = (r * (beatsPerBar * stepsPerBeat));
-		return r;
+		return getPatternSteps();
 	}
 
 	@Override
@@ -69,6 +78,15 @@ public class PatternGridController extends AbstractTableModel {
 		if (workingPattern!=null) {
 			r = workingPattern.getNote((col + 1),(row + 1),1);
 		}
+		return r;
+	}
+	
+	private int getPatternSteps() {
+		int r = barsPerPattern;
+		if (workingPattern!=null && workingPattern.getBars()>0) {
+			r = workingPattern.getBars();
+		}
+		r = (r * (beatsPerBar * stepsPerBeat));
 		return r;
 	}
 }

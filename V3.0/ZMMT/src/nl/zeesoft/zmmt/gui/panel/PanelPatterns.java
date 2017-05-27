@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -28,9 +30,10 @@ import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
+import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
-public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber {
+public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener {
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
 
@@ -56,6 +59,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	public PanelPatterns(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
+		controller.addSequencerMetaListener(this);
 		selectedPattern = controller.getStateManager().getSelectedPattern();
 	}
 
@@ -149,7 +153,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				}
 			}
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_PASTE)) {
-			// TODO: Insert
 			int[] rows = grid.getSelectedRows();
 			int[] cols = grid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
@@ -217,6 +220,21 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			selectedRows = grid.getSelectedRows();
 			selectedCols = grid.getSelectedColumns();
 			grid.clearSelection();
+		}
+	}
+
+	@Override
+	public void meta(MetaMessage meta) {
+		if (meta.getType()==CompositionToSequenceConvertor.MARKER) {
+			String txt = new String(meta.getData());
+			if (txt.startsWith(CompositionToSequenceConvertor.STEP_MARKER)) {
+				gridController.setPlayingStep(-1);
+				int step = Integer.parseInt(txt.substring(CompositionToSequenceConvertor.STEP_MARKER.length()));
+				if (step<=grid.getRowCount()) {
+					gridController.setPlayingStep((step - 1));
+					refreshGridData(0,(grid.getRowCount() - 1));
+				}
+			}
 		}
 	}
 
@@ -335,7 +353,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	protected void playNote(int note, boolean accent) {
 		if (grid.getSelectedColumn()>=0 && grid.getSelectedRow()>=0) {
-			// TODO: Insert
 			Note pn = null;
 			for (Note wn: workingNotes) {
 				if (wn.note==note) {
@@ -365,7 +382,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			}
 		}
 		if (removeNotes.size()>0) {
-			// TODO: Insert
 			boolean changed = false;
 			for (Note pn: removeNotes) {
 				workingNotes.remove(pn);
@@ -524,16 +540,24 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	}
 	
 	protected void changedPattern() {
-		refreshGridData();
+		refreshGridData(0,(grid.getRowCount() - 1));
 		if (workingPattern!=null) {
 			getController().getStateManager().changedPattern(this,workingPattern);
 		}
 	}
 
 	protected void refreshGridData() {
+		refreshGridData(-1,-1);
+	}
+	
+	protected void refreshGridData(int rowFrom, int rowTo) {
 		int[] rows = grid.getSelectedRows();
 		int[] cols = grid.getSelectedColumns();
-		gridController.fireTableDataChanged();
+		if (rowFrom>=0 && rowTo>=0) {
+			gridController.fireTableRowsUpdated(rowFrom,rowTo);
+		} else {
+			gridController.fireTableDataChanged();
+		}
 		if (rows.length>0 && cols.length>0) {
 			grid.addRowSelectionInterval(rows[0],rows[(rows.length-1)]);
 			grid.addColumnSelectionInterval(cols[0],cols[(cols.length-1)]);

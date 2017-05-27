@@ -3,9 +3,11 @@ package nl.zeesoft.zmmt.gui;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
 import javax.swing.JFileChooser;
@@ -53,6 +55,8 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private SequencePlayerUpdateWorker	sequencePlayerWorker 		= null;
 	private Sequencer					sequencer					= null;
 
+	private List<MetaEventListener>		sequencerMetaListeners		= new ArrayList<MetaEventListener>();
+	
 	public Controller(Settings settings) {
 		super(new Messenger(null));
 		this.settings = settings;
@@ -281,14 +285,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		reconfigureSynthesizer(stateManager.getComposition());
 	}
 
-	protected void setSequencer(Sequencer seq) {
-		lockMe(this);
-		this.sequencer = seq;
-		sequencePlayer.setSequencer(seq);
-		unlockMe(this);
-		reconfigureSynthesizer(stateManager.getComposition());
-	}
-
 	protected void stopSynthesizer(Composition composition) {
 		lockMe(this);
 		if (synthesizer!=null) {
@@ -328,6 +324,21 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		unlockMe(this);
 	}
 
+	public void addSequencerMetaListener(MetaEventListener listener) {
+		sequencerMetaListeners.add(listener);
+	}
+	
+	protected void setSequencer(Sequencer seq) {
+		lockMe(this);
+		this.sequencer = seq;
+		for (MetaEventListener listener: sequencerMetaListeners) {
+			sequencer.addMetaEventListener(listener);
+		}
+		sequencePlayer.setSequencer(sequencer);
+		unlockMe(this);
+		reconfigureSynthesizer(stateManager.getComposition());
+	}
+	
 	public void startSequencer() {
 		lockMe(this);
 		sequencePlayer.start();

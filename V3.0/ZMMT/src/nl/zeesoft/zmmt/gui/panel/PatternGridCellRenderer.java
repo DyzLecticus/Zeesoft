@@ -13,6 +13,9 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 @SuppressWarnings("serial")
 public class PatternGridCellRenderer extends DefaultTableCellRenderer {
+	private static final Color	PLAYING_BORDER_COLOR	= Color.BLACK;
+	private static final Color	BAR_COLOR_SELECTED 		= new Color(80,80,80);
+	private static final Color	BAR_COLOR_NORMAL 		= new Color(180,180,180);
 	private static final Color	BEAT_COLOR_SELECTED 	= new Color(104,104,104);
 	private static final Color	BEAT_COLOR_NORMAL 		= new Color(224,224,224);
 	private static final Color	COLOR_SELECTED			= new Color(136,136,136);
@@ -42,28 +45,49 @@ public class PatternGridCellRenderer extends DefaultTableCellRenderer {
 			} else {
 				Color borderColor = color;
 				if (isSelected) {
-					if ((row % controller.getStepsPerBeat())==0) {
+					if ((row % controller.getStepsPerBar())==0) {
+						borderColor = BAR_COLOR_SELECTED;
+					} else if ((row % controller.getStepsPerBeat())==0) {
 						borderColor = BEAT_COLOR_SELECTED;
 					} else {
 						borderColor = COLOR_SELECTED;
 					}
 				}
+				if (row == controller.getPlayingStep()) {
+					borderColor = PLAYING_BORDER_COLOR;
+				}
 				label.setBorder(BorderFactory.createLineBorder(borderColor));
 			}
 			r = label;
 		} else {
-			if ((row % controller.getStepsPerBeat())==0) {
+			Color color = null;
+			if ((row % controller.getStepsPerBar())==0) {
 				if (isSelected) {
-					r.setBackground(BEAT_COLOR_SELECTED);
+					color = BAR_COLOR_SELECTED;
 				} else {
-					r.setBackground(BEAT_COLOR_NORMAL);
+					color = BAR_COLOR_NORMAL;
+				}
+			} else if ((row % controller.getStepsPerBeat())==0) {
+				if (isSelected) {
+					color = BEAT_COLOR_SELECTED;
+				} else {
+					color = BEAT_COLOR_NORMAL;
 				}
 			} else {
 				if (isSelected) {
-					r.setBackground(COLOR_SELECTED);
+					color = COLOR_SELECTED;
 				} else {
-					r.setBackground(COLOR_NORMAL);
+					color = COLOR_NORMAL;
 				}
+			}
+			if (row == controller.getPlayingStep()) {
+				JLabel label = new JLabel();
+				label.setOpaque(true);
+				label.setBackground(color);
+				label.setBorder(BorderFactory.createLineBorder(PLAYING_BORDER_COLOR));
+				r = label;
+			} else {
+				r.setBackground(color);
 			}
 		}
 		return r;
