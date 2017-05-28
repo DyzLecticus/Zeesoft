@@ -148,9 +148,11 @@ public class StateManager extends StateObject {
 			
 			super.setComposition(state.getComposition().copy());
 			super.setCompositionChanged(state.isCompositionChanged());
-			super.setSelectedTab(state.getSelectedTab());
-			super.setSelectedInstrument(state.getSelectedInstrument());
-			super.setSelectedPattern(state.getSelectedPattern());
+			if (state.isCompositionChanged()) {
+				super.setSelectedTab(state.getSelectedTab());
+				super.setSelectedInstrument(state.getSelectedInstrument());
+				super.setSelectedPattern(state.getSelectedPattern());
+			}
 			
 			waitingCompositionChangeEvent = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		}

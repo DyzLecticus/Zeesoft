@@ -78,6 +78,9 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			lockMe(this);
 			if (compositionCopy!=null) {
 				startTick = evt.getSelectedPatternRowFrom() * compositionCopy.getTicksPerStep();
+				if (startTick>0) {
+					startTick--;
+				}
 			} else {
 				startTick = 0;
 			}

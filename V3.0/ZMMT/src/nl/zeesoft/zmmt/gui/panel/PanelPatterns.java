@@ -88,7 +88,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	@Override
 	public void requestFocus() {
-		pattern.requestFocus();
+		if (selectedRows!=null && selectedCols!=null) {
+			grid.requestFocus();
+		} else {
+			pattern.requestFocus();
+		}
 	}
 
 	@Override
@@ -112,7 +116,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				)) {
 				gridController.fireTableStructureChanged();
 			} else {
-				refreshGridData();
+				//refreshGridData();
 			}
 		}
 		setValidate(true);
@@ -463,7 +467,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				workingPattern = compositionCopy.getPattern(selectedPattern);
 				if (workingPattern==null) {
 					workingPattern = new Pattern();
-					workingPattern.setNumber(pattern.getSelectedIndex());
+					workingPattern.setNumber(selectedPattern);
 					workingPattern.setBars(bars.getSelectedIndex());
 					compositionCopy.getPatterns().add(workingPattern);
 				}

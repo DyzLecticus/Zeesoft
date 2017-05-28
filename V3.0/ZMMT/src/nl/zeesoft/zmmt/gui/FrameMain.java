@@ -19,6 +19,7 @@ import nl.zeesoft.zmmt.gui.panel.PanelComposition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
 import nl.zeesoft.zmmt.gui.panel.PanelObject;
 import nl.zeesoft.zmmt.gui.panel.PanelPatterns;
+import nl.zeesoft.zmmt.gui.panel.PanelSequence;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
@@ -43,8 +44,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 
 	public static final String	PLAY_PATTERN		= "PLAY_PATTERN";
 	public static final String	PLAY_SEQUENCE		= "PLAY_SEQUENCE";
-	public static final String	CONTINUE_PLAYING			= "CONTINUE";
-	public static final String	STOP_PLAYING				= "STOP";
+	public static final String	CONTINUE_PLAYING	= "CONTINUE_PLAYING";
+	public static final String	STOP_PLAYING		= "STOP_PLAYING";
 
 	public static final String	TAB_COMPOSITION		= "Composition";
 	public static final String	TAB_INSTRUMENTS		= "Instruments";
@@ -57,6 +58,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private PanelComposition	compositionPanel	= null;
 	private PanelInstruments	instrumentsPanel	= null;
 	private PanelPatterns		patternsPanel		= null;
+	private PanelSequence		sequencePanel		= null;
 	
 	public FrameMain(Controller controller) {
 		super(controller);
@@ -99,6 +101,10 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		patternsPanel.initialize();
 		addPanelToTabs(tabs,"Patterns",patternsPanel);
 
+		sequencePanel = new PanelSequence(getController());
+		sequencePanel.initialize();
+		addPanelToTabs(tabs,"Sequence",sequencePanel);
+		
 		getFrame().setContentPane(tabs);
 		
 		switchTo(selectedTab);
@@ -182,6 +188,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		} else if (tab.equals(TAB_PATTERNS) && tabs.getSelectedIndex()!=2) {
 			tabs.setSelectedIndex(2);
 			patternsPanel.requestFocus();
+		} else if (tab.equals(TAB_SEQUENCE) && tabs.getSelectedIndex()!=3) {
+			tabs.setSelectedIndex(3);
+			sequencePanel.requestFocus();
 		}
 	}
 
