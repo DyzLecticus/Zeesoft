@@ -1,24 +1,22 @@
 package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.GridBagLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
-import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class NumberSlider implements ChangeListener,  PropertyChangeListener {
+public class NumberSlider implements ChangeListener {
 	private JPanel 				panel	= null;
-	private JFormattedTextField number	= null; 
+	private JSpinner			number	= null; 
 	private JSlider 			slider	= null;
 	
-	public NumberSlider(JFormattedTextField number,JSlider slider) {
+	public NumberSlider(JSpinner number,JSlider slider) {
 		this.number = number;
 		this.slider = slider;
-		number.addPropertyChangeListener(this);
+		number.addChangeListener(this);
 		slider.addChangeListener(this);
 		panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
@@ -28,14 +26,12 @@ public class NumberSlider implements ChangeListener,  PropertyChangeListener {
 	
 	@Override
 	public void stateChanged(ChangeEvent evt) {
-		if (number.getValue()==null || !number.getValue().toString().equals("" + slider.getValue())) {
-			number.setValue(slider.getValue());
-		}
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (number.getValue()!=null) {
+		if (evt.getSource()==slider) {
+			String fmtVal = String.format("%03d",slider.getValue());
+			if (number.getValue()==null || !number.getValue().toString().equals(fmtVal)) {
+				number.setValue(fmtVal);
+			}
+		} else if (evt.getSource()==number && number.getValue()!=null) {
 			int value = Integer.parseInt(number.getValue().toString());
 			if (value>slider.getMaximum()) {
 				number.setValue(slider.getMaximum());
@@ -56,7 +52,7 @@ public class NumberSlider implements ChangeListener,  PropertyChangeListener {
 		return panel;
 	}
 
-	public JFormattedTextField getNumber() {
+	public JSpinner getNumber() {
 		return number;
 	}
 

@@ -378,9 +378,14 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				}
 			}
 			if (pn==null) {
+				String instrument = getController().getStateManager().getSelectedInstrument();
+				if (compositionCopy!=null && instrument.equals(Instrument.ECHO)) {
+					instrument = compositionCopy.getSynthesizerConfiguration().getEcho().getInstrument();
+				}
 				pn = new Note();
 				pn.note = note;
-				pn.instrument = getController().getStateManager().getSelectedInstrument();
+				getController().getStateManager().getSelectedInstrument();
+				pn.instrument = instrument;
 				pn.track = grid.getSelectedColumn() + 1 + workingNotes.size();
 				pn.step = grid.getSelectedRow() + 1;
 				pn.accent = accent;

@@ -3,24 +3,24 @@ package nl.zeesoft.zmmt.gui.panel;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class NumberComboBox implements ItemListener, PropertyChangeListener {
+public class NumberComboBox implements ItemListener, ChangeListener {
 	private JPanel 				panel		= null;
-	private JFormattedTextField number		= null; 
+	private JSpinner			number		= null; 
 	private JComboBox<String>	comboBox	= null;
 	private int					subtract	= 0;
 	
-	public NumberComboBox(JFormattedTextField number,JComboBox<String> comboBox,int subtract) {
+	public NumberComboBox(JSpinner number,JComboBox<String> comboBox,int subtract) {
 		this.number = number;
 		this.comboBox = comboBox;
 		this.subtract = subtract;
-		number.addPropertyChangeListener(this);
+		number.addChangeListener(this);
 		comboBox.addItemListener(this);
 		panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
@@ -30,14 +30,14 @@ public class NumberComboBox implements ItemListener, PropertyChangeListener {
 	
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
-		String newValue = "" + (comboBox.getSelectedIndex() - subtract);
-		if (number.getValue()==null || !number.getValue().toString().equals(newValue)) {
-			number.setValue((comboBox.getSelectedIndex() - subtract));
+		String fmtVal = String.format("%03d",(comboBox.getSelectedIndex() - subtract));
+		if (number.getValue()==null || !number.getValue().toString().equals(fmtVal)) {
+			number.setValue(fmtVal);
 		}
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
+	public void stateChanged(ChangeEvent evt) {
 		if (number.getValue()!=null) {
 			int index = Integer.parseInt(number.getValue().toString()) + subtract;
 			if (index>=comboBox.getItemCount()) {
@@ -61,7 +61,7 @@ public class NumberComboBox implements ItemListener, PropertyChangeListener {
 		return panel;
 	}
 
-	public JFormattedTextField getNumber() {
+	public JSpinner getNumber() {
 		return number;
 	}
 

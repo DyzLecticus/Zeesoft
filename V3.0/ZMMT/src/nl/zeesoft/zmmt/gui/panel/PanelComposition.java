@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
@@ -15,10 +16,10 @@ import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 public class PanelComposition extends PanelObject implements CompositionChangePublisher, StateChangeSubscriber {
 	private JFormattedTextField		composer			= null;
 	private JFormattedTextField		name				= null;
-	private JFormattedTextField		beatsPerMinute		= null;
-	private JFormattedTextField		beatsPerBar			= null;
-	private JFormattedTextField		stepsPerBeat		= null;
-	private JFormattedTextField		barsPerPattern		= null;
+	private JSpinner				beatsPerMinute		= null;
+	private JSpinner				beatsPerBar			= null;
+	private JSpinner				stepsPerBeat		= null;
+	private JSpinner				barsPerPattern		= null;
 	
 	public PanelComposition(Controller controller) {
 		super(controller);
@@ -44,25 +45,25 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		addProperty(getPanel(),row,name,true);
 
 		row++;
-		beatsPerMinute = getNewNumberTextField(3);
+		beatsPerMinute = getNewNumberSpinner(3,1,256);
 		JPanel slider = getNewNumberSlider(beatsPerMinute,1,256,128);
 		addLabel(getPanel(),row,"Beats per minute");
 		addProperty(getPanel(),row,slider);
 
 		row++;
-		beatsPerBar = getNewNumberTextField(2);
+		beatsPerBar = getNewNumberSpinner(3,1,16);
 		slider = getNewNumberSlider(beatsPerBar,1,16,4);
 		addLabel(getPanel(),row,"Beats per bar");
 		addProperty(getPanel(),row,slider);
 
 		row++;
-		stepsPerBeat = getNewNumberTextField(2);
+		stepsPerBeat = getNewNumberSpinner(3,1,16);
 		slider = getNewNumberSlider(stepsPerBeat,1,16,8);
 		addLabel(getPanel(),row,"Steps per beat");
 		addProperty(getPanel(),row,slider);
 
 		row++;
-		barsPerPattern = getNewNumberTextField(2);
+		barsPerPattern = getNewNumberSpinner(3,1,16);
 		slider = getNewNumberSlider(barsPerPattern,1,16,4);
 		addLabel(getPanel(),row,"Bars per pattern");
 		addProperty(getPanel(),row,slider);
@@ -92,10 +93,10 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			composer.setValue(evt.getComposition().getComposer());
 			name.setValue(evt.getComposition().getName());
-			beatsPerMinute.setValue(evt.getComposition().getBeatsPerMinute());
-			beatsPerBar.setValue(evt.getComposition().getBeatsPerBar());
-			stepsPerBeat.setValue(evt.getComposition().getStepsPerBeat());
-			barsPerPattern.setValue(evt.getComposition().getBarsPerPattern());
+			beatsPerMinute.setValue(String.format("%03d",evt.getComposition().getBeatsPerMinute()));
+			beatsPerBar.setValue(String.format("%03d",evt.getComposition().getBeatsPerBar()));
+			stepsPerBeat.setValue(String.format("%03d",evt.getComposition().getStepsPerBeat()));
+			barsPerPattern.setValue(String.format("%03d",evt.getComposition().getBarsPerPattern()));
 		}
 		setValidate(true);
 	}

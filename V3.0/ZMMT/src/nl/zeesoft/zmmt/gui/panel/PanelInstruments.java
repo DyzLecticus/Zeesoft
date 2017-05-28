@@ -18,10 +18,10 @@ import javax.sound.midi.Synthesizer;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
@@ -43,37 +43,37 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	
 	private JPanel					cardPanel						= null;
 
-	private JFormattedTextField[]	instrumentLayer1MidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer1Pressure		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer1Reverb			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer1BaseOctave		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer1BaseVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer1AccentVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer1MidiNum			= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer1Pressure		= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer1Reverb			= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer1BaseOctave		= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer1BaseVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer1AccentVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
 
-	private JFormattedTextField[]	instrumentLayer2MidiNum			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer2Pressure		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer2Reverb			= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer2BaseOctave		= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer2BaseVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
-	private JFormattedTextField[]	instrumentLayer2AccentVelocity	= new JFormattedTextField[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer2MidiNum			= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer2Pressure		= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer2Reverb			= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer2BaseOctave		= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer2BaseVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer2AccentVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
 	
-	private JFormattedTextField[]	drumLayer1MidiNote				= new JFormattedTextField[Drum.DRUMS.length];
-	private JFormattedTextField[]	drumLayer1BaseVelocity			= new JFormattedTextField[Drum.DRUMS.length];
-	private JFormattedTextField[]	drumLayer1AccentVelocity		= new JFormattedTextField[Drum.DRUMS.length];
+	private JSpinner[]				drumLayer1MidiNote				= new JSpinner[Drum.DRUMS.length];
+	private JSpinner[]				drumLayer1BaseVelocity			= new JSpinner[Drum.DRUMS.length];
+	private JSpinner[]				drumLayer1AccentVelocity		= new JSpinner[Drum.DRUMS.length];
 
-	private JFormattedTextField[]	drumLayer2MidiNote				= new JFormattedTextField[Drum.DRUMS.length];
-	private JFormattedTextField[]	drumLayer2BaseVelocity			= new JFormattedTextField[Drum.DRUMS.length];
-	private JFormattedTextField[]	drumLayer2AccentVelocity		= new JFormattedTextField[Drum.DRUMS.length];
+	private JSpinner[]				drumLayer2MidiNote				= new JSpinner[Drum.DRUMS.length];
+	private JSpinner[]				drumLayer2BaseVelocity			= new JSpinner[Drum.DRUMS.length];
+	private JSpinner[]				drumLayer2AccentVelocity		= new JSpinner[Drum.DRUMS.length];
 
 	private JComboBox<String>		echoInstrument					= null;
-	private JFormattedTextField		echoLayer						= null;
-	private JFormattedTextField		echoSteps						= null;
-	private JFormattedTextField		echoVelocityPercentage1			= null;
-	private JFormattedTextField		echoVelocityPercentage2			= null;
-	private JFormattedTextField		echoVelocityPercentage3			= null;
-	private JFormattedTextField		echoReverb1						= null;
-	private JFormattedTextField		echoReverb2						= null;
-	private JFormattedTextField		echoReverb3						= null;
+	private JSpinner				echoLayer						= null;
+	private JSpinner				echoSteps						= null;
+	private JSpinner				echoVelocityPercentage1			= null;
+	private JSpinner				echoVelocityPercentage2			= null;
+	private JSpinner				echoVelocityPercentage3			= null;
+	private JSpinner				echoReverb1						= null;
+	private JSpinner				echoReverb2						= null;
+	private JSpinner				echoReverb3						= null;
 	
 	public PanelInstruments(Controller controller) {
 		super(controller);
@@ -126,26 +126,26 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 				InstrumentConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 				if (instrumentLayer1MidiNum[i]!=null) {
-					instrumentLayer1MidiNum[i].setValue(conf.getLayer1MidiNum());
+					instrumentLayer1MidiNum[i].setValue(String.format("%03d",conf.getLayer1MidiNum()));
 				}
-				instrumentLayer1Pressure[i].setValue(conf.getLayer1Pressure());
-				instrumentLayer1Reverb[i].setValue(conf.getLayer1Reverb());
+				instrumentLayer1Pressure[i].setValue(String.format("%03d",conf.getLayer1Pressure()));
+				instrumentLayer1Reverb[i].setValue(String.format("%03d",conf.getLayer1Reverb()));
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-					instrumentLayer1BaseOctave[i].setValue(conf.getLayer1BaseOctave());
-					instrumentLayer1BaseVelocity[i].setValue(conf.getLayer1BaseVelocity());
-					instrumentLayer1AccentVelocity[i].setValue(conf.getLayer1AccentVelocity());
+					instrumentLayer1BaseOctave[i].setValue(String.format("%03d",conf.getLayer1BaseOctave()));
+					instrumentLayer1BaseVelocity[i].setValue(String.format("%03d",conf.getLayer1BaseVelocity()));
+					instrumentLayer1AccentVelocity[i].setValue(String.format("%03d",conf.getLayer1AccentVelocity()));
 				}
 				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 					) {
-					instrumentLayer2MidiNum[i].setValue(conf.getLayer2MidiNum());
-					instrumentLayer2Pressure[i].setValue(conf.getLayer2Pressure());
-					instrumentLayer2Reverb[i].setValue(conf.getLayer2Reverb());
-					instrumentLayer2BaseOctave[i].setValue(conf.getLayer2BaseOctave());
-					instrumentLayer2BaseVelocity[i].setValue(conf.getLayer2BaseVelocity());
-					instrumentLayer2AccentVelocity[i].setValue(conf.getLayer2AccentVelocity());
+					instrumentLayer2MidiNum[i].setValue(String.format("%03d",conf.getLayer2MidiNum()));
+					instrumentLayer2Pressure[i].setValue(String.format("%03d",conf.getLayer2Pressure()));
+					instrumentLayer2Reverb[i].setValue(String.format("%03d",conf.getLayer2Reverb()));
+					instrumentLayer2BaseOctave[i].setValue(String.format("%03d",conf.getLayer2BaseOctave()));
+					instrumentLayer2BaseVelocity[i].setValue(String.format("%03d",conf.getLayer2BaseVelocity()));
+					instrumentLayer2AccentVelocity[i].setValue(String.format("%03d",conf.getLayer2AccentVelocity()));
 	
 					getSliderForNumber(instrumentLayer2Pressure[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 					getSliderForNumber(instrumentLayer2Reverb[i]).setEnabled(conf.getLayer2MidiNum()>=0);
@@ -156,12 +156,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 			}
 			for (int d = 0; d < Drum.DRUMS.length; d++) {
 				DrumConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
-				drumLayer1MidiNote[d].setValue(conf.getLayer1MidiNote());
-				drumLayer1BaseVelocity[d].setValue(conf.getLayer1BaseVelocity());
-				drumLayer1AccentVelocity[d].setValue(conf.getLayer1AccentVelocity());
-				drumLayer2MidiNote[d].setValue(conf.getLayer2MidiNote());
-				drumLayer2BaseVelocity[d].setValue(conf.getLayer2BaseVelocity());
-				drumLayer2AccentVelocity[d].setValue(conf.getLayer2AccentVelocity());
+				drumLayer1MidiNote[d].setValue(String.format("%03d",conf.getLayer1MidiNote()));
+				drumLayer1BaseVelocity[d].setValue(String.format("%03d",conf.getLayer1BaseVelocity()));
+				drumLayer1AccentVelocity[d].setValue(String.format("%03d",conf.getLayer1AccentVelocity()));
+				drumLayer2MidiNote[d].setValue(String.format("%03d",conf.getLayer2MidiNote()));
+				drumLayer2BaseVelocity[d].setValue(String.format("%03d",conf.getLayer2BaseVelocity()));
+				drumLayer2AccentVelocity[d].setValue(String.format("%03d",conf.getLayer2AccentVelocity()));
 	
 				getSliderForNumber(drumLayer2BaseVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
 				getSliderForNumber(drumLayer2AccentVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
@@ -200,14 +200,14 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 						break;
 					}
 				}
-				echoLayer.setValue(echo.getLayer());
-				echoSteps.setValue(echo.getSteps());
-				echoVelocityPercentage1.setValue(echo.getVelocityPercentage1());
-				echoVelocityPercentage2.setValue(echo.getVelocityPercentage2());
-				echoVelocityPercentage3.setValue(echo.getVelocityPercentage3());
-				echoReverb1.setValue(echo.getReverb1());
-				echoReverb2.setValue(echo.getReverb2());
-				echoReverb3.setValue(echo.getReverb3());
+				echoLayer.setValue(String.format("%03d",echo.getLayer()));
+				echoSteps.setValue(String.format("%03d",echo.getSteps()));
+				echoVelocityPercentage1.setValue(String.format("%03d",echo.getVelocityPercentage1()));
+				echoVelocityPercentage2.setValue(String.format("%03d",echo.getVelocityPercentage2()));
+				echoVelocityPercentage3.setValue(String.format("%03d",echo.getVelocityPercentage3()));
+				echoReverb1.setValue(String.format("%03d",echo.getReverb1()));
+				echoReverb2.setValue(String.format("%03d",echo.getReverb2()));
+				echoReverb3.setValue(String.format("%03d",echo.getReverb3()));
 			}
 		}
 		setValidate(true);
@@ -352,7 +352,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		
 		int row = 0;
 
-		instrumentLayer1MidiNum[instrumentNum] = getNewNumberTextField(3);
+		instrumentLayer1MidiNum[instrumentNum] = getNewNumberSpinner(3,0,127);
 		addLabel(panel,row,"Layer 1 MIDI instrument number");
 		if (midiInstruments.size()>0) {
 			JPanel selector = getMidiInstrumentSelector(instrumentLayer1MidiNum[instrumentNum],midiInstruments,false);
@@ -365,32 +365,32 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		}
 		
 		row++;
-		instrumentLayer1Pressure[instrumentNum] = getNewNumberTextField(3);
+		instrumentLayer1Pressure[instrumentNum] = getNewNumberSpinner(3,0,127);
 		JPanel slider = getNewNumberSlider(instrumentLayer1Pressure[instrumentNum],0,127,0);
 		addLabel(panel,row,"Layer 1 pressure");
 		addProperty(panel,row,slider);
 
 		row++;
-		instrumentLayer1Reverb[instrumentNum] = getNewNumberTextField(3);
+		instrumentLayer1Reverb[instrumentNum] = getNewNumberSpinner(3,0,127);
 		slider = getNewNumberSlider(instrumentLayer1Reverb[instrumentNum],0,127,64);
 		addLabel(panel,row,"Layer 1 reverb");
 		addProperty(panel,row,slider);
 
 		if (!name.equals(Instrument.DRUMS)) {
 			row++;
-			instrumentLayer1BaseOctave[instrumentNum] = getNewNumberTextField(1);
+			instrumentLayer1BaseOctave[instrumentNum] = getNewNumberSpinner(3,0,9);
 			slider = getNewNumberSlider(instrumentLayer1BaseOctave[instrumentNum],0,9,3);
 			addLabel(panel,row,"Layer 1 base octave");
 			addProperty(panel,row,slider);
 
 			row++;
-			instrumentLayer1BaseVelocity[instrumentNum] = getNewNumberTextField(3);
+			instrumentLayer1BaseVelocity[instrumentNum] = getNewNumberSpinner(3,0,127);
 			slider = getNewNumberSlider(instrumentLayer1BaseVelocity[instrumentNum],0,127,100);
 			addLabel(panel,row,"Layer 1 base velocity");
 			addProperty(panel,row,slider);
 	
 			row++;
-			instrumentLayer1AccentVelocity[instrumentNum] = getNewNumberTextField(3);
+			instrumentLayer1AccentVelocity[instrumentNum] = getNewNumberSpinner(3,0,127);
 			slider = getNewNumberSlider(instrumentLayer1AccentVelocity[instrumentNum],0,127,100);
 			addLabel(panel,row,"Layer 1 accent velocity");
 			addProperty(panel,row,slider);
@@ -401,7 +401,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				name.equals(Instrument.STRINGS)
 				) {
 				row++;
-				instrumentLayer2MidiNum[instrumentNum] = getNewNumberTextField(3);
+				instrumentLayer2MidiNum[instrumentNum] = getNewNumberSpinner(3,-1,127);
 				addLabel(panel,row,"Layer 2 MIDI instrument number");
 				if (midiInstruments.size()>0) {
 					JPanel selector = getMidiInstrumentSelector(instrumentLayer2MidiNum[instrumentNum],midiInstruments,true);
@@ -411,31 +411,31 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				}
 
 				row++;
-				instrumentLayer2Pressure[instrumentNum] = getNewNumberTextField(3);
+				instrumentLayer2Pressure[instrumentNum] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(instrumentLayer2Pressure[instrumentNum],0,127,0);
 				addLabel(panel,row,"Layer 2 pressure");
 				addProperty(panel,row,slider);
 
 				row++;
-				instrumentLayer2Reverb[instrumentNum] = getNewNumberTextField(3);
+				instrumentLayer2Reverb[instrumentNum] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(instrumentLayer2Reverb[instrumentNum],0,127,64);
 				addLabel(panel,row,"Layer 2 reverb");
 				addProperty(panel,row,slider);
 
 				row++;
-				instrumentLayer2BaseOctave[instrumentNum] = getNewNumberTextField(1);
+				instrumentLayer2BaseOctave[instrumentNum] = getNewNumberSpinner(3,0,9);
 				slider = getNewNumberSlider(instrumentLayer2BaseOctave[instrumentNum],0,9,3);
 				addLabel(panel,row,"Layer 2 base octave");
 				addProperty(panel,row,slider);
 
 				row++;
-				instrumentLayer2BaseVelocity[instrumentNum] = getNewNumberTextField(3);
+				instrumentLayer2BaseVelocity[instrumentNum] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(instrumentLayer2BaseVelocity[instrumentNum],0,127,100);
 				addLabel(panel,row,"Layer 2 base velocity");
 				addProperty(panel,row,slider);
 		
 				row++;
-				instrumentLayer2AccentVelocity[instrumentNum] = getNewNumberTextField(3);
+				instrumentLayer2AccentVelocity[instrumentNum] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(instrumentLayer2AccentVelocity[instrumentNum],0,127,100);
 				addLabel(panel,row,"Layer 2 accent velocity");
 				addProperty(panel,row,slider);
@@ -449,37 +449,37 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				drumPanel.setLayout(new GridBagLayout());
 				drumPanel.setBorder(BorderFactory.createTitledBorder(Drum.DRUMS[d]));
 
-				drumLayer1MidiNote[d] = getNewNumberTextField(3);
+				drumLayer1MidiNote[d] = getNewNumberSpinner(3,35,81);
 				slider = getNewNumberSlider(drumLayer1MidiNote[d],35,81,35);
 				addLabel(drumPanel,drow,"Layer 1 MIDI note number");
 				addProperty(drumPanel,drow,slider);
 				
 				drow++;
-				drumLayer1BaseVelocity[d] = getNewNumberTextField(3);
+				drumLayer1BaseVelocity[d] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(drumLayer1BaseVelocity[d],0,127,100);
 				addLabel(drumPanel,drow,"Layer 1 Base velocity");
 				addProperty(drumPanel,drow,slider);
 		
 				drow++;
-				drumLayer1AccentVelocity[d] = getNewNumberTextField(3);
+				drumLayer1AccentVelocity[d] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(drumLayer1AccentVelocity[d],0,127,100);
 				addLabel(drumPanel,drow,"Layer 1 Accent velocity");
 				addProperty(drumPanel,drow,slider);
 				
 				drow++;
-				drumLayer2MidiNote[d] = getNewNumberTextField(3);
+				drumLayer2MidiNote[d] = getNewNumberSpinner(3,34,81);
 				slider = getNewNumberSlider(drumLayer2MidiNote[d],34,81,35);
 				addLabel(drumPanel,drow,"Layer 2 MIDI note number");
 				addProperty(drumPanel,drow,slider);
 				
 				drow++;
-				drumLayer2BaseVelocity[d] = getNewNumberTextField(3);
+				drumLayer2BaseVelocity[d] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(drumLayer2BaseVelocity[d],0,127,100);
 				addLabel(drumPanel,drow,"Layer 2 base velocity");
 				addProperty(drumPanel,drow,slider);
 		
 				drow++;
-				drumLayer2AccentVelocity[d] = getNewNumberTextField(3);
+				drumLayer2AccentVelocity[d] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(drumLayer2AccentVelocity[d],0,127,100);
 				addLabel(drumPanel,drow,"Layer 2 accent velocity");
 				addProperty(drumPanel,drow,slider);
@@ -516,49 +516,49 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		addProperty(panel,row,echoInstrument);
 
 		row++;
-		echoLayer = getNewNumberTextField(1);
+		echoLayer = getNewNumberSpinner(3,1,2);
 		JPanel slider = getNewNumberSlider(echoLayer,1,2,1);
 		addLabel(panel,row,"Layer");
 		addProperty(panel,row,slider);
 
 		row++;
-		echoSteps = getNewNumberTextField(2);
+		echoSteps = getNewNumberSpinner(3,1,24);
 		slider = getNewNumberSlider(echoSteps,1,24,6);
 		addLabel(panel,row,"Steps");
 		addProperty(panel,row,slider);
 
 		row++;
-		echoVelocityPercentage1 = getNewNumberTextField(2);
+		echoVelocityPercentage1 = getNewNumberSpinner(3,1,99);
 		slider = getNewNumberSlider(echoVelocityPercentage1,1,99,60);
 		addLabel(panel,row,"Echo 1 velocity percentage");
 		addProperty(panel,row,slider);
 
 		row++;
-		echoVelocityPercentage2 = getNewNumberTextField(2);
+		echoVelocityPercentage2 = getNewNumberSpinner(3,1,99);
 		slider = getNewNumberSlider(echoVelocityPercentage2,1,99,40);
 		addLabel(panel,row,"Echo 2 velocity percentage");
 		addProperty(panel,row,slider);
 
 		row++;
-		echoVelocityPercentage3 = getNewNumberTextField(2);
+		echoVelocityPercentage3 = getNewNumberSpinner(3,1,99);
 		slider = getNewNumberSlider(echoVelocityPercentage3,1,99,20);
 		addLabel(panel,row,"Echo 3 velocity percentage");
 		addProperty(panel,row,slider);
 
 		row++;
-		echoReverb1 = getNewNumberTextField(3);
+		echoReverb1 = getNewNumberSpinner(3,0,127);
 		slider = getNewNumberSlider(echoReverb1,0,127,103);
 		addLabel(panel,row,"Echo 1 reverb");
 		addProperty(panel,row,slider);
 
 		row++;
-		echoReverb2 = getNewNumberTextField(3);
+		echoReverb2 = getNewNumberSpinner(3,0,127);
 		slider = getNewNumberSlider(echoReverb2,0,127,115);
 		addLabel(panel,row,"Echo 2 reverb");
 		addProperty(panel,row,slider);
 
 		row++;
-		echoReverb3 = getNewNumberTextField(3);
+		echoReverb3 = getNewNumberSpinner(3,0,127);
 		slider = getNewNumberSlider(echoReverb3,0,127,127);
 		addLabel(panel,row,"Echo 2 reverb");
 		addProperty(panel,row,slider);
@@ -569,7 +569,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		return panel;
 	}
 	
-	protected JPanel getMidiInstrumentSelector(JFormattedTextField number,List<String> midiInstruments,boolean layer) {
+	protected JPanel getMidiInstrumentSelector(JSpinner number,List<String> midiInstruments,boolean layer) {
 		List<String> options = new ArrayList<String>(midiInstruments);
 		int subtract = 0;
 		if (layer) {

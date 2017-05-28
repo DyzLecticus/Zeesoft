@@ -7,10 +7,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -19,11 +17,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerListModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 
-public abstract class PanelObject implements PropertyChangeListener, FocusListener {
+public abstract class PanelObject implements PropertyChangeListener, ChangeListener, FocusListener {
 	protected static final String		F2_PRESSED			= "F2_PRESSED";
 	protected static final String		F3_PRESSED			= "F3_PRESSED";
 	protected static final String		F4_PRESSED			= "F4_PRESSED";
@@ -46,6 +48,11 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		handlePropertyChanged(evt.getSource());
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent evt) {
 		handlePropertyChanged(evt.getSource());
 	}
 
@@ -194,21 +201,24 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		return r;
 	}
 
-	protected JFormattedTextField getNewNumberTextField(int digits) {
-		JFormattedTextField r = null;
-		NumberFormat fmt = NumberFormat.getIntegerInstance(Locale.US);
-		fmt.setGroupingUsed(false);
-		fmt.setParseIntegerOnly(true);
-		fmt.setMaximumIntegerDigits(3);
-		fmt.setMinimumIntegerDigits(3);
-		r = new JFormattedTextField(fmt);
+	protected JSpinner getNewNumberSpinner(int digits,int min,int max) {
+		JSpinner r = null;
+		String[] options = new String[((max - min) + 1)];
+		int opt = 0;
+		for (int i = min; i <= max; i++) {
+			String fmt = "%0" + digits + "d";
+			options[opt] = String.format(fmt,i);
+			opt++;
+		}
+		SpinnerListModel model = new SpinnerListModel(options);
+		r = new JSpinner();
+		r.setModel(model);
 		r.addFocusListener(this);
-		r.addPropertyChangeListener(this);
-		r.setColumns(3);
+		r.addChangeListener(this);
 		return r;
 	}
 
-	protected NumberSlider getSliderForNumber(JFormattedTextField number) {
+	protected NumberSlider getSliderForNumber(JSpinner number) {
 		NumberSlider r = null;
 		for (NumberSlider ns: numberSliders) {
 			if (ns.getNumber()==number) {
@@ -219,7 +229,7 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		return r;
 	}
 
-	protected JPanel getNewNumberSlider(JFormattedTextField number,int min,int max,int init) {
+	protected JPanel getNewNumberSlider(JSpinner number,int min,int max,int init) {
 		JSlider slider = new JSlider(JSlider.HORIZONTAL,min,max,init);
 		slider.addKeyListener(controller.getPlayerKeyListener());
 		slider.addFocusListener(this);
@@ -228,7 +238,7 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		return ns.getPanel();
 	}
 
-	protected NumberComboBox getComboBoxForNumber(JFormattedTextField number) {
+	protected NumberComboBox getComboBoxForNumber(JSpinner number) {
 		NumberComboBox r = null;
 		for (NumberComboBox nc: numberComboBoxes) {
 			if (nc.getNumber()==number) {
@@ -239,11 +249,11 @@ public abstract class PanelObject implements PropertyChangeListener, FocusListen
 		return r;
 	}
 
-	protected JPanel getNewNumberComboBox(JFormattedTextField number,List<String> options) {
+	protected JPanel getNewNumberComboBox(JSpinner number,List<String> options) {
 		return getNewNumberComboBox(number,options,0);
 	}
 
-	protected JPanel getNewNumberComboBox(JFormattedTextField number,List<String> options,int subtract) {
+	protected JPanel getNewNumberComboBox(JSpinner number,List<String> options,int subtract) {
 		JComboBox<String> comboBox = new JComboBox<String>();
 		for (String option: options) {
 			comboBox.addItem(option);
