@@ -351,6 +351,10 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		sequencePlayer.stop();
 	}
 
+	public void startContinueSequencer() {
+		sequencePlayer.startContinue();
+	}
+
 	protected void loadComposition() {
 		if (importExportWorker.isWorking()) {
 			showErrorMessage(this,"Import/export worker is busy");

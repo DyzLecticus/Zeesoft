@@ -30,7 +30,8 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 	private int								sequenceEndTick		= 0;
 	private boolean							updateSequence		= false;
 
-	private int								startTick			= 0;
+	private long							startTick			= 0;
+	private long							stopTick			= 0;
 
 	private List<SequencePlayerSubscriber>	subscribers			= new ArrayList<SequencePlayerSubscriber>();
 	
@@ -104,6 +105,11 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 	}
 	
 	public void start() {
+		start(startTick);
+	}
+
+		
+	public void start(long startTick) {
 		lockMe(this);
 		if (sequencer!=null && sequencer.getSequence()!=null) {
 			if (sequencer.isRunning()) {
@@ -124,6 +130,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 		if (sequencer!=null) {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
+				stopTick = sequencer.getTickPosition();
 			}
 		}
 		List<SequencePlayerSubscriber> subs = new ArrayList<SequencePlayerSubscriber>(subscribers);	
@@ -131,6 +138,10 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 		for (SequencePlayerSubscriber sub: subs) {
 			sub.stopped();
 		}
+	}
+
+	public void startContinue() {
+		start(stopTick);
 	}
 	
 	protected void checkUpdateSequence() {

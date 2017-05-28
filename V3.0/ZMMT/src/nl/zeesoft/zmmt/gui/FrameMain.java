@@ -41,10 +41,10 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	PATTERN_COPY		= PATTERN_PREFIX + "COPY";
 	public static final String	PATTERN_PASTE		= PATTERN_PREFIX + "PASTE";
 
-	public static final String	PLAY				= "PLAY";
-	public static final String	RESTART				= "RESTART";
-	public static final String	PAUSE				= "PAUSE";
-	public static final String	STOP				= "STOP";
+	public static final String	PLAY_PATTERN		= "PLAY_PATTERN";
+	public static final String	PLAY_SEQUENCE		= "PLAY_SEQUENCE";
+	public static final String	CONTINUE_PLAYING			= "CONTINUE";
+	public static final String	STOP_PLAYING				= "STOP";
 
 	public static final String	TAB_COMPOSITION		= "Composition";
 	public static final String	TAB_INSTRUMENTS		= "Instruments";
@@ -144,9 +144,13 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_PATTERNS);
 		} else if (evt.getActionCommand().equals(TAB_SEQUENCE)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_SEQUENCE);
-		} else if (evt.getActionCommand().equals(PLAY)) {
+		} else if (evt.getActionCommand().equals(PLAY_PATTERN)) {
 			getController().startSequencer();
-		} else if (evt.getActionCommand().equals(STOP)) {
+		} else if (evt.getActionCommand().equals(PLAY_SEQUENCE)) {
+			// TODO: Implement
+		} else if (evt.getActionCommand().equals(CONTINUE_PLAYING)) {
+			getController().startContinueSequencer();
+		} else if (evt.getActionCommand().equals(STOP_PLAYING)) {
 			getController().stopSequencer();
 		} else if (evt.getActionCommand().equals(EDIT_UNDO)) {
 			getController().getStateManager().undoCompositionChange(evt.getSource());
@@ -334,15 +338,27 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		sequencerMenu.setMnemonic(KeyEvent.VK_S);
 		bar.add(sequencerMenu);
 		
-		item = new JMenuItem("Play",KeyEvent.VK_P);
+		item = new JMenuItem("Play pattern",KeyEvent.VK_P);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,evt));
-		item.setActionCommand(PLAY);
+		item.setActionCommand(PLAY_PATTERN);
 		item.addActionListener(this);
 		sequencerMenu.add(item);
-		
-		item = new JMenuItem("Stop",KeyEvent.VK_S);
+
+		item = new JMenuItem("Play sequence",KeyEvent.VK_S);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6,evt));
+		item.setActionCommand(PLAY_SEQUENCE);
+		item.addActionListener(this);
+		sequencerMenu.add(item);
+
+		item = new JMenuItem("Continue",KeyEvent.VK_C);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7,evt));
+		item.setActionCommand(CONTINUE_PLAYING);
+		item.addActionListener(this);
+		sequencerMenu.add(item);
+
+		item = new JMenuItem("Pauze/Stop",KeyEvent.VK_A);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8,evt));
-		item.setActionCommand(STOP);
+		item.setActionCommand(STOP_PLAYING);
 		item.addActionListener(this);
 		sequencerMenu.add(item);
 

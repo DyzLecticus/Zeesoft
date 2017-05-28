@@ -22,7 +22,9 @@ public class Composition {
 	private SynthesizerConfiguration	synthesizerConfiguration		= null;
 	
 	private List<Pattern>				patterns						= new ArrayList<Pattern>();
-	
+
+	private List<Integer>				sequence						= new ArrayList<Integer>();
+
 	public Composition() {
 		synthesizerConfiguration = new SynthesizerConfiguration();
 	}
@@ -64,11 +66,21 @@ public class Composition {
 				ptnsElem.children.add(pattern.toJson().rootElement);
 			}
 		}
+		if (sequence.size()>0) {
+			JsElem seqElem = new JsElem("sequence",true);
+			json.rootElement.children.add(seqElem);
+			int i = 0;
+			for (Integer num: sequence) {
+				seqElem.children.add(new JsElem("" + i,"" + num));
+				i++;
+			}
+		}
 		return json;
 	}
 
 	public void fromJson(JsFile json) {
 		patterns.clear();
+		sequence.clear();
 		for (JsElem elem: json.rootElement.children) {
 			if (elem.name.equals("composer")) {
 				composer = elem.value.toString();
@@ -93,6 +105,10 @@ public class Composition {
 					Pattern pattern = new Pattern();
 					pattern.fromJson(ptn);
 					patterns.add(pattern);
+				}
+			} else if (elem.name.equals("sequence")) {
+				for (JsElem numElem: elem.children) {
+					sequence.add(Integer.parseInt(numElem.value.toString()));
 				}
 			}
 		}
@@ -177,6 +193,10 @@ public class Composition {
 
 	public List<Pattern> getPatterns() {
 		return patterns;
+	}
+
+	public List<Integer> getSequence() {
+		return sequence;
 	}
 
 	public Pattern getPattern(int number) {

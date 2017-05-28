@@ -126,7 +126,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
 		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
 			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
-		} else if (evt.getActionCommand().equals(FrameMain.STOP)) {
+		} else if (evt.getActionCommand().equals(FrameMain.STOP_PLAYING)) {
 			getController().stopSequencer();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
 			pattern.requestFocus();
@@ -657,7 +657,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 		// F8 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
-		grid.registerKeyboardAction(this,FrameMain.STOP,stroke,JComponent.WHEN_FOCUSED);
+		grid.registerKeyboardAction(this,FrameMain.STOP_PLAYING,stroke,JComponent.WHEN_FOCUSED);
 		
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);

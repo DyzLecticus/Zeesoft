@@ -7,6 +7,8 @@ public class DemoComposition extends Composition {
 		setComposer("Dyz Lecticus");
 		setName("ZeeTracker demo composition");
 		getPatterns().add(generateDrumPattern(getBarsPerPattern()));
+		getSequence().add(1);
+		getSequence().add(0);
 	}
 	
 	protected Pattern generateDrumPattern(int bars) {
