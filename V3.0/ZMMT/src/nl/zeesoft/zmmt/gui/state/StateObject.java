@@ -12,6 +12,11 @@ public abstract class StateObject extends Locker {
 	private String 					selectedTab				= "";
 	private String 					selectedInstrument		= "";
 	private int 					selectedPattern			= 0;
+	private int 					selectedPatternRowFrom	= -1;
+	private int 					selectedPatternRowTo	= -1;
+	private int 					selectedPatternColFrom	= -1;
+	private int 					selectedPatternColTo	= -1;
+	
 	private boolean 				compositionChanged		= false;
 	
 	private Settings				settings				= null;
@@ -46,6 +51,38 @@ public abstract class StateObject extends Locker {
 
 	protected void setSelectedPattern(int selectedPattern) {
 		this.selectedPattern = selectedPattern;
+	}
+
+	public int getSelectedPatternRowFrom() {
+		return selectedPatternRowFrom;
+	}
+
+	public void setSelectedPatternRowFrom(int selectedPatternRowFrom) {
+		this.selectedPatternRowFrom = selectedPatternRowFrom;
+	}
+
+	public int getSelectedPatternRowTo() {
+		return selectedPatternRowTo;
+	}
+
+	public void setSelectedPatternRowTo(int selectedPatternRowTo) {
+		this.selectedPatternRowTo = selectedPatternRowTo;
+	}
+
+	public int getSelectedPatternColFrom() {
+		return selectedPatternColFrom;
+	}
+
+	public void setSelectedPatternColFrom(int selectedPatternColFrom) {
+		this.selectedPatternColFrom = selectedPatternColFrom;
+	}
+
+	public int getSelectedPatternColTo() {
+		return selectedPatternColTo;
+	}
+
+	public void setSelectedPatternColTo(int selectedPatternColTo) {
+		this.selectedPatternColTo = selectedPatternColTo;
 	}
 	
 	public boolean isCompositionChanged() {

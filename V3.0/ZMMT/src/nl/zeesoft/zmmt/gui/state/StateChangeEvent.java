@@ -5,6 +5,7 @@ public class StateChangeEvent extends StateObject {
 	public static final String	SELECTED_INSTRUMENT			= "SELECTED_INSTRUMENT";
 	public static final String	SELECTED_PATTERN			= "SELECTED_PATTERN";
 
+	public static final String	CHANGED_PATTERN_SELECTION	= "CHANGED_PATTERN_SELECTION";
 	public static final String	CHANGED_SETTINGS			= "CHANGED_SETTINGS";
 	public static final String	CHANGED_COMPOSITION			= "CHANGED_COMPOSITION";
 	public static final String	CHANGED_COMPOSITION_STATE	= "CHANGED_COMPOSITION_STATE";

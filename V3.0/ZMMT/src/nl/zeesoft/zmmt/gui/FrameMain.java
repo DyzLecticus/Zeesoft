@@ -257,7 +257,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		showMenu.add(item);
 		
 		item = new JMenuItem("Sequence",KeyEvent.VK_P);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,evt));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,evt));
 		item.setActionCommand(TAB_SEQUENCE);
 		item.addActionListener(this);
 		showMenu.add(item);

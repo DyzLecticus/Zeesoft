@@ -29,7 +29,9 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 	private Sequence 						sequence			= null;
 	private int								sequenceEndTick		= 0;
 	private boolean							updateSequence		= false;
-	
+
+	private int								startTick			= 0;
+
 	private List<SequencePlayerSubscriber>	subscribers			= new ArrayList<SequencePlayerSubscriber>();
 	
 	public SequencePlayer(Messenger msgr,WorkerUnion uni) {
@@ -71,6 +73,14 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			compositionCopy = evt.getComposition().copy();
 			updateSequence = true;
 			unlockMe(this);
+		} else if (evt.getType().equals(StateChangeEvent.CHANGED_PATTERN_SELECTION)) {
+			lockMe(this);
+			if (compositionCopy!=null) {
+				startTick = evt.getSelectedPatternRowFrom() * compositionCopy.getTicksPerStep();
+			} else {
+				startTick = 0;
+			}
+			unlockMe(this);
 		} else if (evt.getSelectedPattern()!=selectedPattern) {
 			lockMe(this);
 			selectedPattern = evt.getSelectedPattern();
@@ -99,6 +109,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			if (sequencer.isRunning()) {
 				sequencer.stop();
 			}
+			sequencer.setTickPosition(startTick);
 			sequencer.start();
 		}
 		List<SequencePlayerSubscriber> subs = new ArrayList<SequencePlayerSubscriber>(subscribers);	
@@ -113,7 +124,6 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 		if (sequencer!=null) {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
-				sequencer.setTickPosition(0);
 			}
 		}
 		List<SequencePlayerSubscriber> subs = new ArrayList<SequencePlayerSubscriber>(subscribers);	

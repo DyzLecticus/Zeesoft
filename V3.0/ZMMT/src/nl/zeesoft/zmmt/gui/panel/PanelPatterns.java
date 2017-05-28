@@ -27,6 +27,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Note;
@@ -39,7 +41,7 @@ import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
-public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber {
+public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
 
@@ -86,11 +88,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	@Override
 	public void requestFocus() {
-		if (reselect()) {
-			grid.requestFocus();
-		} else {
-			pattern.requestFocus();
-		}
+		pattern.requestFocus();
 	}
 
 	@Override
@@ -137,8 +135,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			insertMode.doClick();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_EDIT)) {
 			if (!grid.hasFocus()) {
-				reselect();
 				grid.requestFocus();
+			} else {
+				reselect();
 			}
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_COPY)) {
 			int[] rows = grid.getSelectedRows();
@@ -224,9 +223,15 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		super.focusLost(evt);
 		if (evt.getSource()==grid) {
 			workingNotes.clear();
-			selectedRows = grid.getSelectedRows();
-			selectedCols = grid.getSelectedColumns();
 			grid.clearSelection();
+		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent evt) {
+		super.focusGained(evt);
+		if (evt.getSource()==grid) {
+			reselect();
 		}
 	}
 
@@ -246,13 +251,30 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	@Override
 	public void started() {
-		// Ignored for now
+		// Ignore
 	}
 
 	@Override
 	public void stopped() {
 		gridController.setPlayingStep(-1);
 		grid.repaint();
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent evt) {
+		int[] rows = grid.getSelectedRows();
+		int[] cols = grid.getSelectedColumns();
+		if (rows.length>0 && cols.length>0) {
+			selectedRows = rows;
+			selectedCols = cols;
+			getController().getStateManager().setSelectedPatternSelection(
+				this,
+				selectedRows[0],
+				selectedRows[selectedRows.length-1],
+				selectedCols[0],
+				selectedCols[selectedCols.length-1]
+				);
+		}
 	}
 
 	protected boolean reselect() {
@@ -602,7 +624,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 						g2.setStroke(new BasicStroke(2));
 						Rectangle r = getCellRect((controller.getPlayingStep() - 1),0,false);
 						g2.setPaint(Color.BLACK);
-						g2.drawRect(r.x,(r.y - 1),((r.width + 1) * Composition.TRACKS),(r.height + 1));
+						g2.drawRect(r.x,(r.y - 1),(((r.width + 1) * Composition.TRACKS) - 1),(r.height + 1));
 						g2.setStroke(oldStroke);
 					}
 				}
@@ -615,6 +637,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		grid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		grid.setDefaultRenderer(Object.class, new PatternGridCellRenderer(gridController));
+		grid.getSelectionModel().addListSelectionListener(this);
 		
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
