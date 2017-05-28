@@ -43,10 +43,19 @@ public class CompositionToSequenceConvertor {
 	public Sequence getPatternSequence(int patternNumber) {
 		Sequence r = createSequence();
 		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
-		int endTick = addPatternToSequence(r,0,patternNumber,true,true);
+		int nextTick = addPatternToSequence(r,0,patternNumber,true,true);
 		// Align track endings
 		for (int t = 0; t < Composition.TRACKS; t++) {
-			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(endTick - 1));
+			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(nextTick - 1));
+		}
+		return r;
+	}
+
+	public int getPatternSequenceEndTick(int patternNumber) {
+		int r = 0;
+		Pattern p = composition.getPattern(patternNumber);
+		if (p!=null) {
+			r = ((composition.getStepsForPattern(p) * composition.getTicksPerStep()) - 1);
 		}
 		return r;
 	}

@@ -36,9 +36,10 @@ import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
+import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
-public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener {
+public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber {
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
 
@@ -65,6 +66,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
 		controller.addSequencerMetaListener(this);
+		controller.addSequencerSubscriber(this);
 		selectedPattern = controller.getStateManager().getSelectedPattern();
 	}
 
@@ -233,7 +235,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		if (meta.getType()==CompositionToSequenceConvertor.MARKER) {
 			String txt = new String(meta.getData());
 			if (txt.startsWith(CompositionToSequenceConvertor.STEP_MARKER)) {
-				gridController.setPlayingStep(-1);
 				int step = Integer.parseInt(txt.substring(CompositionToSequenceConvertor.STEP_MARKER.length()));
 				if (step<=grid.getRowCount()) {
 					gridController.setPlayingStep(step);
@@ -241,6 +242,17 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				}
 			}
 		}
+	}
+
+	@Override
+	public void started() {
+		// Ignored for now
+	}
+
+	@Override
+	public void stopped() {
+		gridController.setPlayingStep(-1);
+		grid.repaint();
 	}
 
 	protected boolean reselect() {
@@ -635,7 +647,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		// F4 Override
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
 		r.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-		
+
+		// Enter override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0,false);
+		r.registerKeyboardAction(this,FrameMain.PATTERN_EDIT,stroke,JComponent.WHEN_FOCUSED);
+
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}

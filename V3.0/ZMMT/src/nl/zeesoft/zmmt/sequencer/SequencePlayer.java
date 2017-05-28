@@ -1,5 +1,8 @@
 package nl.zeesoft.zmmt.sequencer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
@@ -14,22 +17,31 @@ import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
 public class SequencePlayer extends Locker implements StateChangeSubscriber, MetaEventListener {
-	private static final int			END_OF_SEQUENCE		= 47;
-	private	static final boolean		USE_LOOP_FIX		= true;
+	private static final int				END_OF_SEQUENCE		= 47;
+	private	static final boolean			USE_LOOP_FIX		= true;
 
-	private Sequencer					sequencer			= null;
+	private Sequencer						sequencer			= null;
 
-	private	boolean						patternMode			= true;
-	private int							selectedPattern		= 0;
-	private Composition					compositionCopy		= null;
+	private	boolean							patternMode			= true;
+	private int								selectedPattern		= 0;
+	private Composition						compositionCopy		= null;
 
-	private Sequence 					sequence			= null;
-	private boolean						updateSequence		= false;
+	private Sequence 						sequence			= null;
+	private int								sequenceEndTick		= 0;
+	private boolean							updateSequence		= false;
+	
+	private List<SequencePlayerSubscriber>	subscribers			= new ArrayList<SequencePlayerSubscriber>();
 	
 	public SequencePlayer(Messenger msgr,WorkerUnion uni) {
 		super(msgr);
 	}
 
+	public void addSequencerSubscriber(SequencePlayerSubscriber sub) {
+		lockMe(this);
+		subscribers.add(sub);
+		unlockMe(this);
+	}
+	
 	public void setSequencer(Sequencer sequencer) {
 		lockMe(this);
 		this.sequencer = sequencer;
@@ -89,7 +101,11 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			}
 			sequencer.start();
 		}
+		List<SequencePlayerSubscriber> subs = new ArrayList<SequencePlayerSubscriber>(subscribers);	
 		unlockMe(this);
+		for (SequencePlayerSubscriber sub: subs) {
+			sub.started();
+		}
 	}
 
 	public void stop() {
@@ -100,7 +116,11 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 				sequencer.setTickPosition(0);
 			}
 		}
+		List<SequencePlayerSubscriber> subs = new ArrayList<SequencePlayerSubscriber>(subscribers);	
 		unlockMe(this);
+		for (SequencePlayerSubscriber sub: subs) {
+			sub.stopped();
+		}
 	}
 	
 	protected void checkUpdateSequence() {
@@ -119,15 +139,18 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 		unlockMe(this);
 		if (update) {
 			Sequence seq = null;
+			int endTick = 0;
 			CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor(getMessenger(),comp);
 			if (pattern) {
 				seq = convertor.getPatternSequence(number);
+				endTick = convertor.getPatternSequenceEndTick(number); 
 			} else {
 				// TODO: Implement
 			}
 			if (seq!=null) {
 				lockMe(this);
 				sequence = seq;
+				sequenceEndTick = endTick;
 				updateSequencerSequence();
 				unlockMe(this);
 			}
@@ -145,6 +168,11 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			}
 			try {
 				sequencer.setSequence(sequence);
+				sequencer.setLoopStartPoint(0);
+				sequencer.setLoopEndPoint(sequenceEndTick);
+				if (currentTick>sequenceEndTick) {
+					currentTick = 0;
+				}
 			} catch (InvalidMidiDataException e) {
 				getMessenger().error(this,"Invalid MIDI data",e);
 			}

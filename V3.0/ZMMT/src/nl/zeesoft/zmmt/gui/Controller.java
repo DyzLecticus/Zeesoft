@@ -29,6 +29,7 @@ import nl.zeesoft.zmmt.gui.state.StateManager;
 import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 import nl.zeesoft.zmmt.sequencer.SequencePlayer;
+import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerUpdateWorker;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.MidiNote;
@@ -54,7 +55,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private SequencePlayer				sequencePlayer				= null;
 	private SequencePlayerUpdateWorker	sequencePlayerWorker 		= null;
 	private Sequencer					sequencer					= null;
-
 	private List<MetaEventListener>		sequencerMetaListeners		= new ArrayList<MetaEventListener>();
 	
 	public Controller(Settings settings) {
@@ -328,6 +328,10 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		sequencerMetaListeners.add(listener);
 	}
 	
+	public void addSequencerSubscriber(SequencePlayerSubscriber sub) {
+		sequencePlayer.addSequencerSubscriber(sub);
+	}
+	
 	protected void setSequencer(Sequencer seq) {
 		lockMe(this);
 		this.sequencer = seq;
@@ -338,17 +342,13 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		unlockMe(this);
 		reconfigureSynthesizer(stateManager.getComposition());
 	}
-	
+
 	public void startSequencer() {
-		lockMe(this);
 		sequencePlayer.start();
-		unlockMe(this);
 	}
 
 	public void stopSequencer() {
-		lockMe(this);
 		sequencePlayer.stop();
-		unlockMe(this);
 	}
 
 	protected void loadComposition() {
