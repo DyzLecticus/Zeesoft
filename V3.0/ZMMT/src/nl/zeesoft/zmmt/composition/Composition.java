@@ -41,6 +41,9 @@ public class Composition {
 		for (Pattern pat: patterns) {
 			copy.getPatterns().add(pat.copy());
 		}
+		for (Integer num: sequence) {
+			copy.getSequence().add(new Integer(num));
+		}
 		return copy;
 	}
 	
