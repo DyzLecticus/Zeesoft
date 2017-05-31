@@ -33,9 +33,9 @@ public class Settings {
 	private String						customSoundFontFileName		= "";
 
 	private String						customFontName				= "Courier New";
-	private boolean						customFontBold				= false;
 	private int							customFontSize				= 14;
-	
+	private int							customRowHeight				= 20;
+
 	private SortedMap<String,Integer>	keyCodeNoteNumbers			= new TreeMap<String,Integer>();
 	
 	private SynthesizerConfiguration	synthesizerConfiguration	= null;
@@ -113,8 +113,8 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("workingCompositionPattern","" + workingCompositionPattern));
 		json.rootElement.children.add(new JsElem("customSoundFontFileName",customSoundFontFileName,true));
 		json.rootElement.children.add(new JsElem("customFontName",customFontName,true));
-		json.rootElement.children.add(new JsElem("customFontBold","" + customFontBold));
 		json.rootElement.children.add(new JsElem("customFontSize","" + customFontSize));
+		json.rootElement.children.add(new JsElem("customRowHeight","" + customRowHeight));
 		JsElem kcnnsElem = new JsElem("keyCodeNoteNumbers");
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
 			kcnnsElem.children.add(new JsElem(entry.getKey(),entry.getValue().toString()));
@@ -157,10 +157,10 @@ public class Settings {
 					customSoundFontFileName = elem.value.toString();
 				} else if (elem.name.equals("customFontName")) {
 					customFontName = elem.value.toString();
-				} else if (elem.name.equals("customFontBold")) {
-					customFontBold = Boolean.parseBoolean(elem.value.toString());
 				} else if (elem.name.equals("customFontSize")) {
 					customFontSize = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("customRowHeight")) {
+					customRowHeight = Integer.parseInt(elem.value.toString());
 				} else if (elem.name.equals("keyCodeNoteNumbers")) {
 					for (JsElem kElem: elem.children) {
 						String keyCode = kElem.name;
@@ -275,20 +275,20 @@ public class Settings {
 		this.customFontName = customFontName;
 	}
 
-	public boolean isCustomFontBold() {
-		return customFontBold;
-	}
-
-	public void setCustomFontBold(boolean customFontBold) {
-		this.customFontBold = customFontBold;
-	}
-
 	public int getCustomFontSize() {
 		return customFontSize;
 	}
 
 	public void setCustomFontSize(int customFontSize) {
 		this.customFontSize = customFontSize;
+	}
+
+	public int getCustomRowHeight() {
+		return customRowHeight;
+	}
+
+	public void setCustomRowHeight(int customRowHeight) {
+		this.customRowHeight = customRowHeight;
 	}
 
 	public SortedMap<String,Integer> getKeyCodeNoteNumbers() {

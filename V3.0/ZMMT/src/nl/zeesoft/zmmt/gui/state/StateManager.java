@@ -19,9 +19,10 @@ public class StateManager extends StateObject {
 	
 	private StateChangeEvent					waitingCompositionChangeEvent	= null;
 	
-	public StateManager(Messenger msgr,WorkerUnion union) {
+	public StateManager(Messenger msgr,WorkerUnion union,Settings settings) {
 		super(msgr);
 		publishWorker = new CompositionChangePublishWorker(msgr,union,this);
+		super.setSettings(settings);
 		super.setSelectedTab(FrameMain.TAB_COMPOSITION);
 		super.setSelectedInstrument(Instrument.LEAD);
 	}

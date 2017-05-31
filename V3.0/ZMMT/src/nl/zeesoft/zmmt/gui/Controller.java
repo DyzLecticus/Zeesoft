@@ -23,6 +23,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
 import nl.zeesoft.zmmt.gui.panel.PatternGridKeyListener;
+import nl.zeesoft.zmmt.gui.panel.SequenceGridKeyListener;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.gui.state.StateManager;
@@ -45,6 +46,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
 	private PatternGridKeyListener		patternKeyListener			= null;
+	private SequenceGridKeyListener		sequenceKeyListener			= null;
 	
 	private File						compositionFile				= null;
 	
@@ -70,12 +72,12 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			// Ignore
 		}
 		settings.fromFile();
-		if (settings.getCustomFontName().length()>0) {
-			setFont(settings.getCustomFontName(),settings.isCustomFontBold(),settings.getCustomFontSize());
+		if (settings.getCustomFontName().length()>0 || settings.getCustomFontSize()>0) {
+			setFont(settings.getCustomFontName(),settings.getCustomFontSize());
 		}
 
 		union = new WorkerUnion(getMessenger());
-		stateManager = new StateManager(getMessenger(),getUnion());
+		stateManager = new StateManager(getMessenger(),getUnion(),settings);
 		if (settings.getWorkingTab().length()>0) {
 			stateManager.setSelectedTab(this,settings.getWorkingTab());
 		}
@@ -91,6 +93,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		player = new InstrumentPlayer(getMessenger(),getUnion());
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
 		patternKeyListener = new PatternGridKeyListener(this,settings.getKeyCodeNoteNumbers());
+		sequenceKeyListener = new SequenceGridKeyListener(this,settings.getKeyCodeNoteNumbers());
 
 		sequencePlayer = new SequencePlayer(getMessenger(),getUnion());
 		stateManager.addSubscriber(sequencePlayer);
@@ -268,6 +271,10 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		return patternKeyListener;
 	}
 
+	public SequenceGridKeyListener getSequenceKeyListener() {
+		return sequenceKeyListener;
+	}
+
 	protected void setComposition(Composition composition) {
 		if (composition!=null) {
 			stopSynthesizer(stateManager.getComposition());
@@ -422,17 +429,29 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		setComposition(comp);
 	}
 	
-	protected void setFont(String name, boolean bold, int size) {
-		int type = Font.PLAIN;
-		if (bold) {
-			type = Font.BOLD;
-		}
-		FontUIResource fr = new FontUIResource(new Font(name,type,size));
+	protected void setFont(String name, int size) {
 		Enumeration<Object> keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
 			Object value = UIManager.get(key);
 			if (value instanceof FontUIResource) {
+				FontUIResource cfr = (FontUIResource) value;
+				String fn = name;
+				int s = size;
+				int type = Font.PLAIN;
+
+				if (fn.length()==0) {
+					fn = cfr.getName();
+				}
+				if (cfr.isBold()) {
+					type = Font.BOLD;
+				} else if (cfr.isItalic()) {
+					type = Font.ITALIC;
+				}
+				if (s<=0) {
+					s = cfr.getSize();
+				}
+				FontUIResource fr = new FontUIResource(new Font(fn,type,s));
 				UIManager.put(key, fr);
 			}
 		}

@@ -10,6 +10,8 @@ import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
@@ -33,6 +35,7 @@ import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 public class PanelSequence extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
 	private JTable					grid							= null;
 	private SequenceGridController	gridController					= null;
+	private List<Integer>			workingSequence					= new ArrayList<Integer>();
 
 	public PanelSequence(Controller controller) {
 		super(controller);
@@ -60,7 +63,12 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		// TODO: Implement
+		if (evt.getSource()!=this && evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+			workingSequence = new ArrayList<Integer>(evt.getComposition().getSequence());
+			if (gridController.setWorkingSequence(workingSequence)) {
+				gridController.fireTableDataChanged();
+			}
+		}
 		setValidate(true);
 	}
 	
@@ -99,20 +107,64 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		
 		// TODO: Implement
 	}
-		
+	
+	protected void insertPatterns() {
+		int[] rows = grid.getSelectedRows();
+		int add = 1;
+		int rowFrom = 0;
+		int rowTo = 0;
+		if (rows.length>0) {
+			rowFrom = rows[0];
+			rowTo = rows[(rows.length - 1)];
+			add = (rowTo - rowFrom) + 1;
+		}
+		if (add>0) {
+			for (int i = 0; i < add; i++) {
+				workingSequence.add(rowFrom,0);
+			}
+			if (gridController.setWorkingSequence(workingSequence)) {
+				gridController.fireTableRowsInserted(rowFrom,rowTo);
+				// TODO: Call state manager to update sequence
+			}
+		}
+	}
+	
+	protected void shiftSeletectPatterns(int mod) {
+		// TODO: Implement
+	}
+
+	protected void removeSelectedPatterns() {
+		int[] rows = grid.getSelectedRows();
+		int rowFrom = 0;
+		int rowTo = 0;
+		if (rows.length>0) {
+			rowFrom = rows[0];
+			rowTo = rows[(rows.length - 1)];
+			for (int i = 0; i < ((rowTo - rowFrom) + 1); i++) {
+				workingSequence.remove(rowFrom);
+			}
+			if (gridController.setWorkingSequence(workingSequence)) {
+				gridController.fireTableRowsDeleted(rowFrom,rowTo);
+				// TODO: Call state manager to update sequence
+			}
+		}
+	}
+	
 	@SuppressWarnings("serial")
 	protected JScrollPane getSequencePanel() {
 		gridController = new SequenceGridController();
+		SequenceGridKeyListener keyListener = getController().getSequenceKeyListener();
+		keyListener.setSequencePanel(this);
 		grid = new JTable() {
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				if (getModel() instanceof PatternGridController) {
-					PatternGridController controller = (PatternGridController) getModel();
-					if (controller.getPlayingStep()>=0) {
+				if (getModel() instanceof SequenceGridController) {
+					SequenceGridController controller = (SequenceGridController) getModel();
+					if (controller.getPlayingIndex()>=0) {
 						Graphics2D g2 = (Graphics2D) g;
 						Stroke oldStroke = g2.getStroke();
 						g2.setStroke(new BasicStroke(2));
-						Rectangle r = getCellRect((controller.getPlayingStep() - 1),0,false);
+						Rectangle r = getCellRect((controller.getPlayingIndex() - 1),0,false);
 						g2.setPaint(Color.BLACK);
 						g2.drawRect(r.x,(r.y - 1),(((r.width + 1) * Composition.TRACKS) - 1),(r.height + 1));
 						g2.setStroke(oldStroke);
@@ -120,12 +172,19 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 				}
 			}
 		};
+		grid.addKeyListener(keyListener);
 		grid.setModel(gridController);
 		grid.addFocusListener(this);
-		grid.setCellSelectionEnabled(true);
+		grid.setColumnSelectionAllowed(false);
+		grid.setRowSelectionAllowed(true);
 		grid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		grid.getSelectionModel().addListSelectionListener(this);
+		
+		int height = getController().getStateManager().getSettings().getCustomRowHeight();
+		if (height>0) {
+			grid.setRowHeight(height);
+		}
 		
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);

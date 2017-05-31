@@ -13,14 +13,14 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 @SuppressWarnings("serial")
 public class PatternGridCellRenderer extends DefaultTableCellRenderer {
-	private static final Color	BAR_COLOR_SELECTED 		= new Color(80,80,80);
-	private static final Color	BAR_COLOR_NORMAL 		= new Color(180,180,180);
-	private static final Color	BEAT_COLOR_SELECTED 	= new Color(104,104,104);
-	private static final Color	BEAT_COLOR_NORMAL 		= new Color(224,224,224);
-	private static final Color	COLOR_SELECTED			= new Color(136,136,136);
-	private static final Color	COLOR_NORMAL			= new Color(255,255,255);
+	private static final Color		BAR_COLOR_SELECTED 		= new Color(80,80,80);
+	private static final Color		BAR_COLOR_NORMAL 		= new Color(180,180,180);
+	private static final Color		BEAT_COLOR_SELECTED 	= new Color(104,104,104);
+	private static final Color		BEAT_COLOR_NORMAL 		= new Color(224,224,224);
+	private static final Color		COLOR_SELECTED			= new Color(136,136,136);
+	private static final Color		COLOR_NORMAL			= new Color(255,255,255);
 	
-	private PatternGridController controller = null;
+	private PatternGridController	controller				= null;
 
 	public PatternGridCellRenderer(PatternGridController controller) {
 		this.controller = controller;

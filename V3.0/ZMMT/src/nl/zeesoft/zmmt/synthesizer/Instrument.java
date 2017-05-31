@@ -14,6 +14,7 @@ public class Instrument {
 	public static final	String		DRUMS				= "Drums";
 	public static final	String		ECHO				= "Echo";
 	public static final String[]	INSTRUMENTS			= {SYNTH_BASS1,SYNTH_BASS2,SYNTH_BASS3,SYNTH1,SYNTH2,SYNTH3,LEAD,STRINGS,DRUMS,ECHO};
+	public static final String[]	INSTRUMENT_SHORTS	= {"SB1","SB2","SB3","SN1","SN2","SN3","LD","STR","DRM","ECH"};
 	
 	public static int getMidiChannelForInstrument(String name,int layer) {
 		int r = -1;

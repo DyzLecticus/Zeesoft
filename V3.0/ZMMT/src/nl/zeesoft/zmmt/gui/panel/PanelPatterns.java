@@ -642,6 +642,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		grid.setDefaultRenderer(Object.class, new PatternGridCellRenderer(gridController));
 		grid.getSelectionModel().addListSelectionListener(this);
 		
+		int height = getController().getStateManager().getSettings().getCustomRowHeight();
+		if (height>0) {
+			grid.setRowHeight(height);
+		}
+		
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
