@@ -140,6 +140,22 @@ public class StateManager extends StateObject {
 		unlockMe(this);
 	}
 
+	public void changedSequence(Object source,List<Integer> sequence) {
+		lockMe(this);
+		
+		super.getComposition().getSequence().clear();
+		for (Integer num: sequence) {
+			super.getComposition().getSequence().add(num);
+		}
+		super.setCompositionChanged(true);
+
+		addState(source);
+		
+		waitingCompositionChangeEvent = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+		unlockMe(this);
+	}
+
+
 	public void undoCompositionChange(Object source) {
 		lockMe(this);
 		int currentState = super.getState();

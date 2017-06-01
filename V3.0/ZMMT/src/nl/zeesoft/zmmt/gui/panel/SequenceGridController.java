@@ -5,10 +5,12 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 @SuppressWarnings("serial")
 public class SequenceGridController extends AbstractTableModel {
+	private List<Pattern>	patterns			= new ArrayList<Pattern>();
 	private List<Integer>	workingSequence		= new ArrayList<Integer>();
 	private int				playingIndex		= -1;
 
@@ -49,12 +51,17 @@ public class SequenceGridController extends AbstractTableModel {
 		}
 		return r;
 	}
-	
+
+	protected void setWorkingSequenceAndPatterns(List<Integer> seq,List<Pattern> ptns) {
+		this.workingSequence = new ArrayList<Integer>(seq);
+		this.patterns = ptns;
+	}
+
 	protected boolean setWorkingSequence(List<Integer> seq) {
 		boolean changed = false;
-		if (sequencesAreDifferent(workingSequence,seq)) {
-			changed = true;
+		if (this.sequencesAreDifferent(workingSequence, seq)) {
 			this.workingSequence = new ArrayList<Integer>(seq);
+			changed = true;
 		}
 		return changed;
 	}
@@ -65,6 +72,10 @@ public class SequenceGridController extends AbstractTableModel {
 
 	protected void setPlayingIndex(int playingIndex) {
 		this.playingIndex = playingIndex;
+	}
+
+	protected List<Pattern> getPatterns() {
+		return patterns;
 	}
 
 	private boolean sequencesAreDifferent(List<Integer> seq1,List<Integer> seq2) {

@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
@@ -35,6 +36,8 @@ import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 public class PanelSequence extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
 	private JTable					grid							= null;
 	private SequenceGridController	gridController					= null;
+	
+	private List<Pattern>			compositionPatternsCopy			= new ArrayList<Pattern>();
 	private List<Integer>			workingSequence					= new ArrayList<Integer>();
 
 	public PanelSequence(Controller controller) {
@@ -65,9 +68,12 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		setValidate(false);
 		if (evt.getSource()!=this && evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			workingSequence = new ArrayList<Integer>(evt.getComposition().getSequence());
-			if (gridController.setWorkingSequence(workingSequence)) {
-				gridController.fireTableDataChanged();
+			compositionPatternsCopy.clear();
+			for (Pattern ptn: evt.getComposition().getPatterns()) {
+				compositionPatternsCopy.add(ptn.copy());
 			}
+			gridController.setWorkingSequenceAndPatterns(workingSequence,compositionPatternsCopy);
+			gridController.fireTableDataChanged();
 		}
 		setValidate(true);
 	}
@@ -80,6 +86,8 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
 		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
 			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
+		} else if (evt.getActionCommand().equals(FrameMain.STOP_PLAYING)) {
+			getController().stopSequencer();
 		}
 	}
 
@@ -122,10 +130,7 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 			for (int i = 0; i < add; i++) {
 				workingSequence.add(rowFrom,0);
 			}
-			if (gridController.setWorkingSequence(workingSequence)) {
-				gridController.fireTableRowsInserted(rowFrom,rowTo);
-				// TODO: Call state manager to update sequence
-			}
+			changedSequence(rowFrom,rowTo);
 		}
 	}
 	
@@ -143,10 +148,14 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 			for (int i = 0; i < ((rowTo - rowFrom) + 1); i++) {
 				workingSequence.remove(rowFrom);
 			}
-			if (gridController.setWorkingSequence(workingSequence)) {
-				gridController.fireTableRowsDeleted(rowFrom,rowTo);
-				// TODO: Call state manager to update sequence
-			}
+			changedSequence(rowFrom,rowTo);
+		}
+	}
+	
+	protected void changedSequence(int rowFrom,int rowTo) {
+		if (gridController.setWorkingSequence(workingSequence)) {
+			gridController.fireTableRowsDeleted(rowFrom,rowTo);
+			getController().getStateManager().changedSequence(this,workingSequence);
 		}
 	}
 	
