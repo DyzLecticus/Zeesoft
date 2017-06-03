@@ -5,7 +5,6 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zmmt.composition.Composition;
-import nl.zeesoft.zmmt.composition.DemoComposition;
 
 public class TestComposition extends TestObject {
 	public TestComposition(Tester tester) {
@@ -40,7 +39,7 @@ public class TestComposition extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		DemoComposition comp = new DemoComposition();
+		MockComposition comp = new MockComposition();
 		JsFile json = comp.toJson();
 		ZStringBuilder before = json.toStringBuilderReadFormat();
 		comp.fromJson(json);

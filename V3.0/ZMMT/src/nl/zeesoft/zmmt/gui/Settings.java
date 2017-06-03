@@ -143,7 +143,7 @@ public class Settings {
 		}
 		json.rootElement.children.add(kcnnsElem);
 		JsFile conf = synthesizerConfiguration.toJson();
-		JsElem confElem = new JsElem("synthesizerConfiguration");
+		JsElem confElem = new JsElem("instruments");
 		for (JsElem conElem: conf.rootElement.children) {
 			confElem.children.add(conElem);
 		}
@@ -189,7 +189,7 @@ public class Settings {
 						int noteNumber = Integer.parseInt(kElem.value.toString());
 						keyCodeNoteNumbers.put(keyCode,noteNumber);
 					}
-				} else if (elem.name.equals("synthesizerConfiguration")) {
+				} else if (elem.name.equals("instruments")) {
 					JsFile conf = new JsFile();
 					conf.rootElement = elem;
 					synthesizerConfiguration.fromJson(conf);

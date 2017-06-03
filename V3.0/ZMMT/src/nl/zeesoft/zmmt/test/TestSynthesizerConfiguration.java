@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class TestSynthesizerConfiguration extends TestObject {
@@ -40,6 +41,12 @@ public class TestSynthesizerConfiguration extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		SynthesizerConfiguration conf = new SynthesizerConfiguration();
+		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1MidiNum(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1BaseOctave(5);
+		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Pressure(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Reverb(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1BaseVelocity(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1AccentVelocity(123);
 		JsFile json = conf.toJson();
 		ZStringBuilder before = json.toStringBuilderReadFormat();
 		conf.fromJson(json);

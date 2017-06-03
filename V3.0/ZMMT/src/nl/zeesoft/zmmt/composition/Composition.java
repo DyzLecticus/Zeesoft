@@ -57,7 +57,7 @@ public class Composition {
 		json.rootElement.children.add(new JsElem("stepsPerBeat","" + stepsPerBeat));
 		json.rootElement.children.add(new JsElem("barsPerPattern","" + barsPerPattern));
 		JsFile conf = synthesizerConfiguration.toJson();
-		JsElem confElem = new JsElem("synthesizerConfiguration");
+		JsElem confElem = new JsElem("instruments");
 		for (JsElem conElem: conf.rootElement.children) {
 			confElem.children.add(conElem);
 		}
@@ -97,7 +97,7 @@ public class Composition {
 				stepsPerBeat = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("barsPerPattern")) {
 				barsPerPattern = Integer.parseInt(elem.value.toString());
-			} else if (elem.name.equals("synthesizerConfiguration")) {
+			} else if (elem.name.equals("instruments")) {
 				JsFile conf = new JsFile();
 				conf.rootElement = elem;
 				synthesizerConfiguration.fromJson(conf);

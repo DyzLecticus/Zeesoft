@@ -20,10 +20,12 @@ public class SynthesizerConfiguration {
 	
 	public SynthesizerConfiguration copy() {
 		SynthesizerConfiguration copy = new SynthesizerConfiguration();
+		copy.getInstruments().clear();
 		for (InstrumentConfiguration inst: instruments) {
 			copy.getInstruments().add(inst.copy());
 		}
 		copy.setEcho(echo.copy());
+		copy.getDrums().clear();
 		for (DrumConfiguration drum: drums) {
 			copy.getDrums().add(drum.copy());
 		}
