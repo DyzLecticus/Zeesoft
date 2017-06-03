@@ -9,8 +9,6 @@ import java.awt.Stroke;
 
 import javax.swing.JTable;
 
-import nl.zeesoft.zmmt.composition.Composition;
-
 @SuppressWarnings("serial")
 public class Grid extends JTable {
 	@Override
@@ -44,8 +42,8 @@ public class Grid extends JTable {
 		Rectangle r = new Rectangle();
 		Rectangle cell = getCellRect(row,0,false);
 		r.setLocation(cell.getLocation());
-		r.setLocation(cell.x,(cell.y - 1));
-		r.setSize((((cell.width + 1) * Composition.TRACKS) - 1),(cell.height + 1));
+		r.setLocation(cell.x,cell.y);
+		r.setSize((((cell.width + 1) * getModel().getColumnCount()) - 1),cell.height);
 		return r;
 	}
 }
