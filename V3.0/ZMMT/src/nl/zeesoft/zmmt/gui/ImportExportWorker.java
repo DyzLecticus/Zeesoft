@@ -1,7 +1,10 @@
 package nl.zeesoft.zmmt.gui;
 
 import java.io.File;
+import java.io.IOException;
 
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -10,6 +13,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
+import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 
 public class ImportExportWorker extends Worker {
 	private static final String		INITIALIZE			= "INITIALIZE";
@@ -27,6 +31,7 @@ public class ImportExportWorker extends Worker {
 	private File					actionFile			= null;
 	
 	private FileFilter				compositionFilter	= null;
+	private FileFilter				midiFilter			= null;
 
 	public ImportExportWorker(Messenger msgr, WorkerUnion union,Controller controller) {
 		super(msgr, union);
@@ -45,6 +50,20 @@ public class ImportExportWorker extends Worker {
 			@Override
 			public String getDescription() {
 				return "ZeeTracker Compositions (*.ztc)";
+			}
+		};
+		midiFilter = new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				boolean accept = false;
+				if (file.getAbsolutePath().toLowerCase().endsWith(Settings.EXTENSION_MIDI)) {
+					accept = true;
+				}
+				return accept;
+			}
+			@Override
+			public String getDescription() {
+				return "Midi (*.midi)";
 			}
 		};
 	}
@@ -113,8 +132,14 @@ public class ImportExportWorker extends Worker {
 					}
 					controller.setEnabled(true);
 				} else if (action.equals(SAVE_COMPOSITION)) {
-					if (!file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) {
-						file = new File(file.getAbsolutePath() + Settings.EXTENSION_COMPOSITION);
+					if ((!file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) &&
+						(!file.getName().endsWith(Settings.EXTENSION_MIDI))
+						) {
+						if (fileChooser.getFileFilter()==compositionFilter) {
+							file = new File(file.getAbsolutePath() + Settings.EXTENSION_COMPOSITION);
+						} else if (fileChooser.getFileFilter()==midiFilter) {
+							file = new File(file.getAbsolutePath() + Settings.EXTENSION_MIDI);
+						}
 					}
 					boolean confirmed = true;
 					if (file.exists() && selected) {
@@ -122,9 +147,24 @@ public class ImportExportWorker extends Worker {
 					}
 					if (confirmed) {
 						controller.setEnabled(false);
-						err = ((Composition) actionObject).toJson().toFile(file.getAbsolutePath(),true);
-						if (err.length()==0) {
-							controller.savedComposition(file,(Composition) actionObject);
+						if (file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) {
+							err = ((Composition) actionObject).toJson().toFile(file.getAbsolutePath(),true);
+							if (err.length()==0) {
+								controller.savedComposition(file,(Composition) actionObject);
+							}
+						} else if (file.getName().endsWith(Settings.EXTENSION_MIDI)) {
+							CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor((Composition) actionObject);
+							Sequence s = convertor.getSequence(false);
+		                    try {
+		                        int[] fileTypes = MidiSystem.getMidiFileTypes(s);
+		                        if (fileTypes.length == 0) {
+		                            err = "The current MIDI system does not support this file type";
+		                        } else {
+									MidiSystem.write(s,fileTypes[0],file);
+		                        }
+							} catch (IOException e) {
+								err = "Failed to write MIDI file: " + file.getAbsolutePath();
+							} 
 						}
 						controller.setEnabled(true);
 					}
@@ -151,10 +191,12 @@ public class ImportExportWorker extends Worker {
 		if (fileChooser!=null) {
 			if (action.equals(LOAD_COMPOSITION)) {
 				fileChooser.setFileFilter(compositionFilter);
+				fileChooser.removeChoosableFileFilter(midiFilter);
 				file = controller.chooseFile(fileChooser,"Load composition");
 				getFileWithExtension(file,Settings.EXTENSION_COMPOSITION);
 			} else if (action.equals(SAVE_COMPOSITION)) {
 				fileChooser.setFileFilter(compositionFilter);
+				fileChooser.addChoosableFileFilter(midiFilter);
 				file = controller.chooseFile(fileChooser,"Save composition");
 				getFileWithExtension(file,Settings.EXTENSION_COMPOSITION);
 			}
