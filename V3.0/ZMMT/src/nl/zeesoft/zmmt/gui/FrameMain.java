@@ -70,13 +70,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public void initialize() {
 		getFrame().setTitle(TITLE);
 
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = (int) screenSize.getWidth() - 100;
-		int height = (int) screenSize.getHeight() - 100;
-		getFrame().setSize(width,height);
-		getFrame().setLocation(50,50);
-		getFrame().setExtendedState(JFrame.MAXIMIZED_BOTH);
-	
 		getFrame().setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		getFrame().addWindowListener(getController().getAdapter());
 		getFrame().addWindowFocusListener(getController().getAdapter());
@@ -107,8 +100,20 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		
 		getFrame().setContentPane(tabs);
 		
+		getFrame().pack();
+		
 		switchTo(selectedTab);
+		
 		tabs.addChangeListener(this);
+
+		getFrame().setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = (int) screenSize.getWidth() - 100;
+		int height = (int) screenSize.getHeight() - 100;
+		getFrame().setSize(width,height);
+		getFrame().setLocation(50,50);
+	
 	}
 
 	@Override
@@ -179,17 +184,25 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	
 	protected void switchTo(String tab) {
 		selectedTab = tab;
-		if (tab.equals(TAB_COMPOSITION) && tabs.getSelectedIndex()!=0) {
-			tabs.setSelectedIndex(0);
+		if (tab.equals(TAB_COMPOSITION)) {
+			if (tabs.getSelectedIndex()!=0) {
+				tabs.setSelectedIndex(0);
+			}
 			compositionPanel.requestFocus();
-		} else if (tab.equals(TAB_INSTRUMENTS) && tabs.getSelectedIndex()!=1) {
-			tabs.setSelectedIndex(1);
+		} else if (tab.equals(TAB_INSTRUMENTS)) {
+			if (tabs.getSelectedIndex()!=1) {
+				tabs.setSelectedIndex(1);
+			}
 			instrumentsPanel.requestFocus();
-		} else if (tab.equals(TAB_PATTERNS) && tabs.getSelectedIndex()!=2) {
-			tabs.setSelectedIndex(2);
+		} else if (tab.equals(TAB_PATTERNS)) {
+			if (tabs.getSelectedIndex()!=2) {
+				tabs.setSelectedIndex(2);
+			}
 			patternsPanel.requestFocus();
-		} else if (tab.equals(TAB_SEQUENCE) && tabs.getSelectedIndex()!=3) {
-			tabs.setSelectedIndex(3);
+		} else if (tab.equals(TAB_SEQUENCE)) {
+			if (tabs.getSelectedIndex()!=3) {
+				tabs.setSelectedIndex(3);
+			}
 			sequencePanel.requestFocus();
 		}
 	}
