@@ -466,6 +466,8 @@ public class Controller extends Locker implements StateChangeSubscriber {
 					stopSynthesizer(evt.getComposition());
 					reconfigureSynthesizer(evt.getComposition());
 				}
+			} else if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
+				settings = evt.getSettings().copy();
 			} else if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
 				stopSynthesizer(evt.getComposition());
 				reconfigureSynthesizer(evt.getComposition());

@@ -13,9 +13,6 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 @SuppressWarnings("serial")
 public class PatternGridCellRenderer extends DefaultTableCellRenderer {
-	public static final Color		COLOR_SELECTED			= new Color(136,136,136);
-	public static final Color		COLOR_NORMAL			= new Color(255,255,255);
-
 	private static final Color		BAR_COLOR_SELECTED 		= new Color(80,80,80);
 	private static final Color		BAR_COLOR_NORMAL 		= new Color(180,180,180);
 	private static final Color		BEAT_COLOR_SELECTED 	= new Color(104,104,104);
@@ -50,7 +47,7 @@ public class PatternGridCellRenderer extends DefaultTableCellRenderer {
 					} else if ((row % controller.getStepsPerBeat())==0) {
 						borderColor = BEAT_COLOR_SELECTED;
 					} else {
-						borderColor = COLOR_SELECTED;
+						borderColor = Grid.COLOR_SELECTED;
 					}
 				}
 				label.setBorder(BorderFactory.createLineBorder(borderColor));
@@ -72,9 +69,9 @@ public class PatternGridCellRenderer extends DefaultTableCellRenderer {
 				}
 			} else {
 				if (isSelected) {
-					color = COLOR_SELECTED;
+					color = Grid.COLOR_SELECTED;
 				} else {
-					color = COLOR_NORMAL;
+					color = Grid.COLOR_NORMAL;
 				}
 			}
 			r.setBackground(color);

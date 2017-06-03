@@ -324,7 +324,7 @@ public class SynthesizerConfiguration {
 		if (instrument.equals(Instrument.DRUMS)) {
 			DrumConfiguration drum = null;
 			if (note==36) {
-				drum = getDrum(Drum.BASEBEAT);
+				drum = getDrum(Drum.KICK);
 			} else if (note==37) {
 				drum = getDrum(Drum.CLAP);
 			} else if (note==38) {
@@ -375,7 +375,7 @@ public class SynthesizerConfiguration {
 		if (instrument.equals(Instrument.DRUMS)) {
 			DrumConfiguration drum = null;
 			if (note==36) {
-				drum = getDrum(Drum.BASEBEAT);
+				drum = getDrum(Drum.KICK);
 			} else if (note==37) {
 				drum = getDrum(Drum.CLAP);
 			} else if (note==38) {
@@ -515,7 +515,7 @@ public class SynthesizerConfiguration {
 	}
 
 	protected void initializeDrum(DrumConfiguration drum) {
-		if (drum.getName().equals(Drum.BASEBEAT)) {
+		if (drum.getName().equals(Drum.KICK)) {
 			drum.setLayer1MidiNote(36);
 			drum.setLayer1BaseVelocity(120);
 			drum.setLayer1AccentVelocity(127);

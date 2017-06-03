@@ -23,9 +23,9 @@ public class SequenceGridCellRenderer extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row, int column) {
 		Component r = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		Color color = PatternGridCellRenderer.COLOR_NORMAL;
+		Color color = Grid.COLOR_NORMAL;
 		if (isSelected) {
-			color = PatternGridCellRenderer.COLOR_SELECTED;
+			color = Grid.COLOR_SELECTED;
 		}
 		setBackground(color);
 		setBorder(BorderFactory.createLineBorder(color));

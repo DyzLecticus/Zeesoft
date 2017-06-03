@@ -11,6 +11,9 @@ import javax.swing.JTable;
 
 @SuppressWarnings("serial")
 public class Grid extends JTable {
+	public static final Color	COLOR_SELECTED	= new Color(136,136,136);
+	public static final Color	COLOR_NORMAL	= new Color(255,255,255);
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);

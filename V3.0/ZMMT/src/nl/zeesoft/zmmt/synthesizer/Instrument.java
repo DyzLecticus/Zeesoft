@@ -45,7 +45,7 @@ public class Instrument {
 		}
 		return r;
 	}
-	
+
 	public static Color getColorForInstrument(String name) {
 		Color r = null;
 		if (name.equals(SYNTH_BASS1)) {

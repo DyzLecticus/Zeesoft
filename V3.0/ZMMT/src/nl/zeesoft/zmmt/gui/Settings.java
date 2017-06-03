@@ -31,7 +31,6 @@ public class Settings {
 	private int							workingCompositionPattern	= 0;
 
 	private String						customSoundFontFileName		= "";
-
 	private String						customFontName				= "Courier New";
 	private int							customFontSize				= 14;
 	private int							customRowHeight				= 20;
@@ -73,6 +72,29 @@ public class Settings {
 		keyCodeNoteNumbers.put("M",59);
 	}
 
+	public Settings copy() {
+		Settings copy = new Settings();
+		copy.setComposer(composer);
+		copy.setDefaultBeatsPerMinute(defaultBeatsPerMinute);
+		copy.setDefaultBeatsPerBar(defaultBeatsPerBar);
+		copy.setDefaultStepsPerBeat(defaultStepsPerBeat);
+		copy.setDefaultBarsPerPattern(defaultBarsPerPattern);
+		copy.setWorkingCompositionFileName(workingCompositionFileName);
+		copy.setWorkingTab(workingTab);
+		copy.setWorkingInstrument(workingInstrument);
+		copy.setWorkingCompositionPattern(workingCompositionPattern);
+		copy.setCustomSoundFontFileName(customSoundFontFileName);
+		copy.setCustomFontName(customFontName);
+		copy.setCustomFontSize(customFontSize);
+		copy.setCustomRowHeight(customRowHeight);
+		copy.getKeyCodeNoteNumbers().clear();
+		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
+			copy.getKeyCodeNoteNumbers().put(entry.getKey(),new Integer(entry.getValue()));
+		}
+		copy.setSynthesizerConfiguration(synthesizerConfiguration.copy());
+		return copy;
+	}
+	
 	public String toFile() {
 		String err = "";
 		File workDir = getWorkDir();
