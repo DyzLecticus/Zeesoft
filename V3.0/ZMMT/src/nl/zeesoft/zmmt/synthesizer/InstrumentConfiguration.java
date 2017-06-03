@@ -4,11 +4,13 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 	private	int			layer1MidiNum		= 0;
 	private int			layer1BaseOctave	= 3;
 	private int 		layer1Pressure		= 0;
+	private int 		layer1Pan			= 64;
 	private int			layer1Reverb		= 64;
 
 	private	int			layer2MidiNum		= -1;
 	private int			layer2BaseOctave	= 3;
 	private int 		layer2Pressure		= 24;
+	private int 		layer2Pan			= 64;
 	private int			layer2Reverb		= 64;
 
 	public InstrumentConfiguration copy() {
@@ -20,6 +22,7 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 		r.setLayer1BaseVelocity(getLayer1BaseVelocity());
 		r.setLayer1AccentVelocity(getLayer1AccentVelocity());
 		r.setLayer1Pressure(layer1Pressure);
+		r.setLayer1Pan(layer1Pan);
 		r.setLayer1Reverb(layer1Reverb);
 		
 		r.setLayer2MidiNum(layer2MidiNum);
@@ -27,6 +30,7 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 		r.setLayer2BaseVelocity(getLayer2BaseVelocity());
 		r.setLayer2AccentVelocity(getLayer2AccentVelocity());
 		r.setLayer2Pressure(layer2Pressure);
+		r.setLayer2Pan(layer2Pan);
 		r.setLayer2Reverb(layer2Reverb);
 
 		return r;
@@ -56,6 +60,14 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 		this.layer1Pressure = layer1Pressure;
 	}
 	
+	public int getLayer1Pan() {
+		return layer1Pan;
+	}
+
+	public void setLayer1Pan(int layer1Pan) {
+		this.layer1Pan = layer1Pan;
+	}
+
 	public int getLayer1Reverb() {
 		return layer1Reverb;
 	}
@@ -86,6 +98,14 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 	
 	public void setLayer2Pressure(int layer2Pressure) {
 		this.layer2Pressure = layer2Pressure;
+	}
+
+	public int getLayer2Pan() {
+		return layer2Pan;
+	}
+
+	public void setLayer2Pan(int layer2Pan) {
+		this.layer2Pan = layer2Pan;
 	}
 
 	public int getLayer2Reverb() {

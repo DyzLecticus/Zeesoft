@@ -41,6 +41,7 @@ public class SynthesizerConfiguration {
 			instElem.children.add(new JsElem("name",inst.getName(),true));
 			instElem.children.add(new JsElem("layer1MidiNum","" + inst.getLayer1MidiNum()));
 			instElem.children.add(new JsElem("layer1Pressure","" + inst.getLayer1Pressure()));
+			instElem.children.add(new JsElem("layer1Pan","" + inst.getLayer1Pan()));
 			instElem.children.add(new JsElem("layer1Reverb","" + inst.getLayer1Reverb()));
 			if (!inst.getName().equals(Instrument.DRUMS)) {
 				instElem.children.add(new JsElem("layer1BaseOctave","" + inst.getLayer1BaseOctave()));
@@ -54,6 +55,7 @@ public class SynthesizerConfiguration {
 				) { 
 				instElem.children.add(new JsElem("layer2MidiNum","" + inst.getLayer2MidiNum()));
 				instElem.children.add(new JsElem("layer2Pressure","" + inst.getLayer1Pressure()));
+				instElem.children.add(new JsElem("layer2Pan","" + inst.getLayer2Pan()));
 				instElem.children.add(new JsElem("layer2Reverb","" + inst.getLayer1Reverb()));
 				instElem.children.add(new JsElem("layer2BaseOctave","" + inst.getLayer2BaseOctave()));
 				instElem.children.add(new JsElem("layer2BaseVelocity","" + inst.getLayer2BaseVelocity()));
@@ -82,6 +84,9 @@ public class SynthesizerConfiguration {
 		echoElem.children.add(new JsElem("reverb1","" + echo.getReverb1()));
 		echoElem.children.add(new JsElem("reverb2","" + echo.getReverb2()));
 		echoElem.children.add(new JsElem("reverb3","" + echo.getReverb3()));
+		echoElem.children.add(new JsElem("pan1","" + echo.getPan1()));
+		echoElem.children.add(new JsElem("pan2","" + echo.getPan2()));
+		echoElem.children.add(new JsElem("pan3","" + echo.getPan3()));
 		return json;
 	}
 	
@@ -96,10 +101,12 @@ public class SynthesizerConfiguration {
 							inst.setName(val.value.toString());
 						} else if (val.name.equals("layer1MidiNum")) {
 							inst.setLayer1MidiNum(Integer.parseInt(val.value.toString()));
-						} else if (val.name.equals("layer1Reverb")) {
-							inst.setLayer1Reverb(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1Pressure")) {
 							inst.setLayer1Pressure(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer1Pan")) {
+							inst.setLayer1Pan(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer1Reverb")) {
+							inst.setLayer1Reverb(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1BaseOctave")) {
 							inst.setLayer1BaseOctave(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1BaseVelocity")) {
@@ -108,10 +115,12 @@ public class SynthesizerConfiguration {
 							inst.setLayer1AccentVelocity(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2MidiNum")) {
 							inst.setLayer2MidiNum(Integer.parseInt(val.value.toString()));
-						} else if (val.name.equals("layer2Reverb")) {
-							inst.setLayer2Reverb(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2Pressure")) {
 							inst.setLayer2Pressure(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer2Pan")) {
+							inst.setLayer2Pan(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer2Reverb")) {
+							inst.setLayer2Reverb(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2BaseOctave")) {
 							inst.setLayer2BaseOctave(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2BaseVelocity")) {
@@ -175,6 +184,12 @@ public class SynthesizerConfiguration {
 							echo.setReverb2(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("reverb3")) {
 							echo.setReverb3(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("pan1")) {
+							echo.setPan1(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("pan2")) {
+							echo.setPan2(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("pan3")) {
+							echo.setPan3(Integer.parseInt(val.value.toString()));
 						}
 					}
 				}
@@ -233,10 +248,13 @@ public class SynthesizerConfiguration {
 					synth.getChannels()[channel].programChange(layerMidiNum);
 					synth.getChannels()[channel].setChannelPressure(layerPressure);
 					if (e==0) {
+						synth.getChannels()[channel].controlChange(10,echo.getPan1());
 						synth.getChannels()[channel].controlChange(91,echo.getReverb1());
 					} else if (e==1) {
+						synth.getChannels()[channel].controlChange(10,echo.getPan2());
 						synth.getChannels()[channel].controlChange(91,echo.getReverb2());
 					} else if (e==2) {
+						synth.getChannels()[channel].controlChange(10,echo.getPan3());
 						synth.getChannels()[channel].controlChange(91,echo.getReverb3());
 					}
 				}
@@ -247,11 +265,13 @@ public class SynthesizerConfiguration {
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),0);
 				synth.getChannels()[channel].programChange(inst.getLayer1MidiNum());
 				synth.getChannels()[channel].setChannelPressure(inst.getLayer1Pressure());
+				synth.getChannels()[channel].controlChange(10,inst.getLayer1Pan());
 				synth.getChannels()[channel].controlChange(91,inst.getLayer1Reverb());
 				int layerChannel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 				if (layerChannel>=0 && inst.getLayer2MidiNum()>=0) {
 					synth.getChannels()[layerChannel].programChange(inst.getLayer2MidiNum());
 					synth.getChannels()[layerChannel].setChannelPressure(inst.getLayer2Pressure());
+					synth.getChannels()[layerChannel].controlChange(10,inst.getLayer2Pan());
 					synth.getChannels()[layerChannel].controlChange(91,inst.getLayer2Reverb());
 				}
 			}
