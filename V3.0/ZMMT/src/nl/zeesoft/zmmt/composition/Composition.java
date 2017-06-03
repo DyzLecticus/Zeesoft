@@ -70,7 +70,7 @@ public class Composition {
 			}
 		}
 		if (sequence.size()>0) {
-			JsElem seqElem = new JsElem("sequence",true);
+			JsElem seqElem = new JsElem("sequence");
 			json.rootElement.children.add(seqElem);
 			int i = 0;
 			for (Integer num: sequence) {

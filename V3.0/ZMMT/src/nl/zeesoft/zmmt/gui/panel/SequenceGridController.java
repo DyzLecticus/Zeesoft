@@ -74,8 +74,16 @@ public class SequenceGridController extends AbstractTableModel {
 		this.playingIndex = playingIndex;
 	}
 
-	protected List<Pattern> getPatterns() {
-		return patterns;
+	protected Pattern getPatternForIndex(int index) {
+		Pattern r = null;
+		int num = workingSequence.get(index);
+		for (Pattern ptn: patterns) {
+			if (ptn.getNumber()==num) {
+				r = ptn;
+				break;
+			}
+		}
+		return r;
 	}
 
 	private boolean sequencesAreDifferent(List<Integer> seq1,List<Integer> seq2) {

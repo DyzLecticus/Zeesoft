@@ -1,13 +1,8 @@
 package nl.zeesoft.zmmt.gui.panel;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -50,7 +45,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	private JCheckBox				insertMode						= null;
 	
-	private JTable					grid							= null;
+	private Grid				grid							= null;
 	private PatternGridController	gridController					= null;
 	
 	private	Composition				compositionCopy					= null;
@@ -283,8 +278,17 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	protected boolean reselect() {
 		boolean selected = false;
 		if (selectedRows!=null && selectedRows.length>0 && selectedCols!=null && selectedCols.length>0) {
+			int rowFrom = selectedRows[0];
+			int rowTo = selectedRows[(selectedRows.length - 1)];
+			int max = (gridController.getRowCount() - 1);
+			if (rowFrom>max) {
+				rowFrom = max;
+			}
+			if (rowTo>max) {
+				rowTo = max;
+			}
 			selectAndShow(
-				selectedRows[0],selectedRows[(selectedRows.length - 1)],
+				rowFrom,rowTo,
 				selectedCols[0],selectedCols[(selectedCols.length - 1)]
 				);
 			selected = true;
@@ -611,28 +615,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 	}
 	
-	@SuppressWarnings("serial")
 	protected JScrollPane getPatternPanel() {
 		gridController = new PatternGridController();
 		PatternGridKeyListener keyListener = getController().getPatternKeyListener();
 		keyListener.setPatternPanel(this);
-		grid = new JTable() {
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				if (getModel() instanceof PatternGridController) {
-					PatternGridController controller = (PatternGridController) getModel();
-					if (controller.getPlayingStep()>=0) {
-						Graphics2D g2 = (Graphics2D) g;
-						Stroke oldStroke = g2.getStroke();
-						g2.setStroke(new BasicStroke(2));
-						Rectangle r = getCellRect((controller.getPlayingStep() - 1),0,false);
-						g2.setPaint(Color.BLACK);
-						g2.drawRect(r.x,(r.y - 1),(((r.width + 1) * Composition.TRACKS) - 1),(r.height + 1));
-						g2.setStroke(oldStroke);
-					}
-				}
-			}
-		};
+		grid = new Grid();
 		grid.setModel(gridController);
 		grid.addKeyListener(keyListener);
 		grid.addFocusListener(this);
