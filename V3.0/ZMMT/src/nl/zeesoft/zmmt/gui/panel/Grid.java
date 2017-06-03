@@ -27,7 +27,7 @@ public class Grid extends JTable {
 			g2.setStroke(oldStroke);
 		}
 	}
-
+	
 	protected int getPlayingRow() {
 		int r = -1;
 		if (getModel() instanceof PatternGridController) {

@@ -151,9 +151,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		} else if (evt.getActionCommand().equals(TAB_SEQUENCE)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_SEQUENCE);
 		} else if (evt.getActionCommand().equals(PLAY_PATTERN)) {
-			getController().startSequencer();
+			getController().startSequencer(true);
 		} else if (evt.getActionCommand().equals(PLAY_SEQUENCE)) {
-			// TODO: Implement
+			getController().startSequencer(false);
 		} else if (evt.getActionCommand().equals(CONTINUE_PLAYING)) {
 			getController().startContinueSequencer();
 		} else if (evt.getActionCommand().equals(STOP_PLAYING)) {

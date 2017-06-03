@@ -45,7 +45,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	private JCheckBox				insertMode						= null;
 	
-	private Grid				grid							= null;
+	private Grid					grid							= null;
 	private PatternGridController	gridController					= null;
 	
 	private	Composition				compositionCopy					= null;
@@ -58,6 +58,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	private int[]					selectedRows					= null;
 	private int[]					selectedCols					= null;
+	
+	private boolean					clearedPlayingStep				= false;
 
 	public PanelPatterns(Controller controller) {
 		super(controller);
@@ -237,11 +239,18 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	public void meta(MetaMessage meta) {
 		if (meta.getType()==CompositionToSequenceConvertor.MARKER) {
 			String txt = new String(meta.getData());
-			if (txt.startsWith(CompositionToSequenceConvertor.STEP_MARKER)) {
-				int step = Integer.parseInt(txt.substring(CompositionToSequenceConvertor.STEP_MARKER.length()));
-				if (step<=grid.getRowCount()) {
+			if (txt.startsWith(CompositionToSequenceConvertor.PATTERN_STEP_MARKER)) {
+				String[] d = txt.split(":");
+				int pattern = Integer.parseInt(d[1]);
+				int step = Integer.parseInt(d[2]);
+				if (pattern==selectedPattern && step<=grid.getRowCount()) {
 					gridController.setPlayingStep(step);
 					grid.repaint();
+					clearedPlayingStep = false;
+				} else if (pattern!=selectedPattern && !clearedPlayingStep) {
+					gridController.setPlayingStep(-1);
+					grid.repaint();
+					clearedPlayingStep = true;
 				}
 			}
 		}
@@ -256,6 +265,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	public void stopped() {
 		gridController.setPlayingStep(-1);
 		grid.repaint();
+		clearedPlayingStep = true;
 	}
 
 	@Override
@@ -638,7 +648,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
-		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		// F2 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2,0,false);
@@ -654,6 +663,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
 		grid.registerKeyboardAction(this,FrameMain.STOP_PLAYING,stroke,JComponent.WHEN_FOCUSED);
 		
+		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;

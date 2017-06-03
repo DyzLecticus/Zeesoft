@@ -92,7 +92,15 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 	@Override
 	public void meta(MetaMessage meta) {
 		if (meta.getType()==CompositionToSequenceConvertor.MARKER) {
-			// TODO: Implement
+			String txt = new String(meta.getData());
+			if (txt.startsWith(CompositionToSequenceConvertor.SEQUENCE_MARKER)) {
+				String[] d = txt.split(":");
+				int index = Integer.parseInt(d[1]);
+				if (index<grid.getRowCount()) {
+					gridController.setPlayingIndex(index);
+					grid.repaint();
+				}
+			}
 		}
 	}
 
@@ -103,7 +111,8 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 
 	@Override
 	public void stopped() {
-		// TODO: Implement
+		gridController.setPlayingIndex(-1);
+		grid.repaint();
 	}
 
 	@Override
@@ -219,12 +228,14 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 	}
 
 	protected void selectAndShow(int rowFrom, int rowTo, int colFrom, int colTo) {
-		grid.addRowSelectionInterval(rowFrom,rowTo);
-		grid.addColumnSelectionInterval(colFrom,colTo);
-		Rectangle rect = grid.getCellRect(rowFrom,colFrom,true);
-		rect.height = rect.height + 20;
-		rect.width = rect.width + 100;
-		grid.scrollRectToVisible(rect);
+		if (rowFrom>=0 && rowTo>=0) {
+			grid.addRowSelectionInterval(rowFrom,rowTo);
+			grid.addColumnSelectionInterval(colFrom,colTo);
+			Rectangle rect = grid.getCellRect(rowFrom,colFrom,true);
+			rect.height = rect.height + 20;
+			rect.width = rect.width + 100;
+			grid.scrollRectToVisible(rect);
+		}
 	}
 
 	protected JScrollPane getSequencePanel() {
@@ -251,7 +262,6 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
 		grid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
-		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		// F2 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2,0,false);
@@ -267,6 +277,7 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
 		grid.registerKeyboardAction(this,FrameMain.STOP_PLAYING,stroke,JComponent.WHEN_FOCUSED);
 		
+		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;

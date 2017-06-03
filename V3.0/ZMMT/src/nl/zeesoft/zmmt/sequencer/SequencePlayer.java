@@ -58,12 +58,20 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 	}
 
 	public void setPatternMode(boolean patternMode) {
+		boolean checkUpdate = false;
 		lockMe(this);
 		if (!this.patternMode==patternMode) {
 			this.patternMode = patternMode;
+			if (!patternMode) {
+				startTick = 0;
+			}
 			updateSequence = true;
+			checkUpdate = true;
 		}
 		unlockMe(this);
+		if (checkUpdate) {
+			checkUpdateSequence();
+		}
 	}
 	
 	@Override
@@ -169,7 +177,8 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 				seq = convertor.getPatternSequence(number);
 				endTick = convertor.getPatternSequenceEndTick(number); 
 			} else {
-				// TODO: Implement
+				seq = convertor.getSequence(true);
+				endTick = convertor.getSequenceEndTick();
 			}
 			if (seq!=null) {
 				lockMe(this);

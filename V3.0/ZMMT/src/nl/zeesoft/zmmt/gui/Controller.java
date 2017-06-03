@@ -350,7 +350,8 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		reconfigureSynthesizer(stateManager.getComposition());
 	}
 
-	public void startSequencer() {
+	public void startSequencer(boolean patternMode) {
+		sequencePlayer.setPatternMode(patternMode);
 		sequencePlayer.start();
 	}
 

@@ -21,15 +21,15 @@ import nl.zeesoft.zmmt.synthesizer.MidiNote;
 import nl.zeesoft.zmmt.synthesizer.MidiNoteDelayed;
 
 public class CompositionToSequenceConvertor {
-	public static final int		TEMPO			= 0x51;
-	public static final int		TEXT			= 0x01;
-	public static final int		MARKER			= 0x06;
+	public static final int		TEMPO				= 0x51;
+	public static final int		TEXT				= 0x01;
+	public static final int		MARKER				= 0x06;
 	
-	public static final String	PATTERN_MARKER	= "PTN:";
-	public static final String	STEP_MARKER		= "STP:";
+	public static final String	SEQUENCE_MARKER		= "SEQ:";
+	public static final String	PATTERN_STEP_MARKER	= "PS:";
 	
-	private Messenger			messenger		= null;
-	private Composition			composition		= null;
+	private Messenger			messenger			= null;
+	private Composition			composition			= null;
 	
 	public CompositionToSequenceConvertor(Composition composition) {
 		this.composition = composition;
@@ -43,6 +43,9 @@ public class CompositionToSequenceConvertor {
 	public Sequence getPatternSequence(int patternNumber) {
 		Sequence r = createSequence();
 		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
+		String seq = SEQUENCE_MARKER + "-1";
+		byte[] data = seq.getBytes();
+		createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,0);
 		int nextTick = addPatternToSequence(r,0,patternNumber,true,true);
 		// Align track endings
 		for (int t = 0; t < Composition.TRACKS; t++) {
@@ -60,6 +63,47 @@ public class CompositionToSequenceConvertor {
 		return r;
 	}
 
+	public Sequence getSequence(boolean addMarkers) {
+		Sequence r = createSequence();
+		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
+		int nextTick = 0;
+		int i = 0;
+		if (composition.getSequence().size()>0) {
+			for (Integer patternNumber: composition.getSequence()) {
+				String seq = SEQUENCE_MARKER + i;
+				byte[] data = seq.getBytes();
+				createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,nextTick);
+				nextTick = addPatternToSequence(r,nextTick,patternNumber,addMarkers,false);
+				i++;
+			}
+		} else {
+			String seq = SEQUENCE_MARKER + "-1";
+			byte[] data = seq.getBytes();
+			createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,0);
+			String ps = PATTERN_STEP_MARKER + "-1:-1";
+			data = ps.getBytes();
+			createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,0);
+			nextTick = nextTick + Composition.RESOLUTION;
+		}
+		// Align track endings
+		for (int t = 0; t < Composition.TRACKS; t++) {
+			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(nextTick - 1));
+		}
+		return r;
+	}
+
+	public int getSequenceEndTick() {
+		int r = 0;
+		for (Integer patternNumber: composition.getSequence()) {
+			Pattern p = composition.getPattern(patternNumber);
+			r = r + (composition.getStepsForPattern(p) * composition.getTicksPerStep());
+		}
+		if (r>0) {
+			r = r - 1;
+		}
+		return r;
+	}
+
 	protected int addPatternToSequence(Sequence seq,int startTick,int patternNumber,boolean addMarkers,boolean wrapEcho) {
 		int nextPatternStartTick = startTick;
 		Pattern p = composition.getPattern(patternNumber);
@@ -73,20 +117,15 @@ public class CompositionToSequenceConvertor {
 
 			for (int t = 1; t<=Composition.TRACKS; t++) {
 				Track track = seq.getTracks()[(t - 1)];
-				
-				if (t==1 && addMarkers) {
-					String ptn = PATTERN_MARKER + patternNumber;
-					byte[] data = ptn.getBytes();
-					createMetaEventOnTrack(track,MARKER,data,data.length,startTick);
-				}
+
+				int currentTick = startTick;
 
 				List<Note> echoNotes = new ArrayList<Note>();
 
-				int currentTick = startTick;
 				for (int s = 1; s<=patternSteps; s++) {
 					if (t==1 && addMarkers) {
-						String stp = STEP_MARKER + s;
-						byte[] data = stp.getBytes();
+						String ps = PATTERN_STEP_MARKER + patternNumber + ":" + s;
+						byte[] data = ps.getBytes();
 						createMetaEventOnTrack(track,MARKER,data,data.length,currentTick);
 					}
 					for (Note note: p.getNotes()) {
