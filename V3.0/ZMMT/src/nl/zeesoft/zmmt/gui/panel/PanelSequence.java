@@ -72,6 +72,7 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 			}
 			gridController.setWorkingSequenceAndPatterns(workingSequence,compositionPatternsCopy);
 			gridController.fireTableDataChanged();
+			reselect();
 		}
 		setValidate(true);
 	}
