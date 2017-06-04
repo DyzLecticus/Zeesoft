@@ -49,7 +49,7 @@ public class ImportExportWorker extends Worker {
 			}
 			@Override
 			public String getDescription() {
-				return "ZeeTracker Compositions (*.ztc)";
+				return "ZeeTracker Composition (*.ztc)";
 			}
 		};
 		midiFilter = new FileFilter() {
@@ -63,7 +63,7 @@ public class ImportExportWorker extends Worker {
 			}
 			@Override
 			public String getDescription() {
-				return "Midi (*.midi)";
+				return "Midi file (*.mid)";
 			}
 		};
 	}
