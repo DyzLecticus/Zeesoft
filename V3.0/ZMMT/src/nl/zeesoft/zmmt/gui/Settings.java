@@ -113,12 +113,16 @@ public class Settings {
 			err = "Unable to create work directory: " + getWorkDirName();
 		} else {
 			JsFile json = new JsFile();
-			err = json.fromFile(getWorkDirName() + "/" + SETTINGS_JSON);
+			err = json.fromFile(getFileName());
 			if (err.length()==0) {
 				fromJson(json);
 			}
 		}
 		return err;
+	}
+
+	public String getFileName() {
+		return getWorkDirName() + "/" + SETTINGS_JSON;
 	}
 	
 	public JsFile toJson() {

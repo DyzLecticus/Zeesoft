@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -62,6 +63,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private PanelPatterns		patternsPanel		= null;
 	private PanelSequence		sequencePanel		= null;
 	private PanelSettings		settingsPanel		= null;
+	
+	private String				fileName			= "";
+	private boolean				compositionChanged	= false;
 	
 	public FrameMain(Controller controller) {
 		super(controller);
@@ -128,10 +132,16 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		if (evt.getSource()!=this && !evt.getSelectedTab().equals(selectedTab)) {
 			switchTo(evt.getSelectedTab());
 		}
-		if (evt.isCompositionChanged()) {
-			getFrame().setTitle(TITLE + "*");
-		} else {
-			getFrame().setTitle(TITLE);
+		if (compositionChanged!=evt.isCompositionChanged()) {
+			compositionChanged = evt.isCompositionChanged();
+			resetTitle();
+		}
+		if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
+			String f = (new File(evt.getSettings().getWorkingCompositionFileName())).getName();
+			if (!fileName.equals(f)) {
+				fileName = f;
+				resetTitle();
+			}
 		}
 		tabs.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
 	}
@@ -189,6 +199,17 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 				}
 			}
 		}
+	}
+
+	protected void resetTitle() {
+		String title = TITLE;
+		if (fileName.length()>0) {
+			title = title + " - " + fileName;
+		}
+		if (compositionChanged) {
+			title = title + "*";
+		}
+		getFrame().setTitle(title);
 	}
 	
 	protected void switchTo(String tab) {

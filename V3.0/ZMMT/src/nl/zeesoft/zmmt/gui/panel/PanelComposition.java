@@ -1,6 +1,7 @@
 package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.GridBagLayout;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFormattedTextField;
@@ -14,6 +15,7 @@ import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
 public class PanelComposition extends PanelObject implements CompositionChangePublisher, StateChangeSubscriber {
+	private JFormattedTextField		file				= null;
 	private JFormattedTextField		composer			= null;
 	private JFormattedTextField		name				= null;
 	private JSpinner				beatsPerMinute		= null;
@@ -35,6 +37,12 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 
 		int row = 0;
 
+		addLabel(getPanel(),row,"File: ");
+		file = getNewTextField();
+		file.setEnabled(false);
+		addProperty(getPanel(),row,file,true);
+		
+		row++;
 		composer = getNewTextField();
 		addLabel(getPanel(),row,"Composer");
 		addProperty(getPanel(),row,composer,true);
@@ -97,6 +105,8 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 			beatsPerBar.setValue(String.format("%03d",evt.getComposition().getBeatsPerBar()));
 			stepsPerBeat.setValue(String.format("%03d",evt.getComposition().getStepsPerBeat()));
 			barsPerPattern.setValue(String.format("%03d",evt.getComposition().getBarsPerPattern()));
+		} else if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
+			file.setValue((new File(evt.getSettings().getWorkingCompositionFileName())).getAbsolutePath());
 		}
 		setValidate(true);
 	}

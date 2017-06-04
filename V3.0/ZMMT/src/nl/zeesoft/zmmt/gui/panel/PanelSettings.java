@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -48,6 +49,13 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 
 		int row = 0;
 
+		addLabel(getPanel(),row,"File: ");
+		JFormattedTextField file = getNewTextField();
+		file.setValue((new File(settingsCopy.getFileName())).getAbsolutePath());
+		file.setEnabled(false);
+		addProperty(getPanel(),row,file,true);
+
+		row++;
 		composer = getNewTextField();
 		addLabel(getPanel(),row,"Composer");
 		addProperty(getPanel(),row,composer,true);
