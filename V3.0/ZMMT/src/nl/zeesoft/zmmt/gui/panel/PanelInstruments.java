@@ -627,7 +627,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 			options.add(0,"");
 			subtract = 1;
 		}
-		return getNewNumberComboBox(number,options,subtract);
+		return getNewNumberComboBox(number,options,this,subtract);
 	}
 
 	protected JComboBox<String> getInstrumentSelector() {

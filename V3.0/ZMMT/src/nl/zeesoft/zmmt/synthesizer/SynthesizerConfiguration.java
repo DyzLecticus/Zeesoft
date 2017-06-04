@@ -54,9 +54,9 @@ public class SynthesizerConfiguration {
 				inst.getName().equals(Instrument.STRINGS)
 				) { 
 				instElem.children.add(new JsElem("layer2MidiNum","" + inst.getLayer2MidiNum()));
-				instElem.children.add(new JsElem("layer2Pressure","" + inst.getLayer1Pressure()));
+				instElem.children.add(new JsElem("layer2Pressure","" + inst.getLayer2Pressure()));
 				instElem.children.add(new JsElem("layer2Pan","" + inst.getLayer2Pan()));
-				instElem.children.add(new JsElem("layer2Reverb","" + inst.getLayer1Reverb()));
+				instElem.children.add(new JsElem("layer2Reverb","" + inst.getLayer2Reverb()));
 				instElem.children.add(new JsElem("layer2BaseOctave","" + inst.getLayer2BaseOctave()));
 				instElem.children.add(new JsElem("layer2BaseVelocity","" + inst.getLayer2BaseVelocity()));
 				instElem.children.add(new JsElem("layer2AccentVelocity","" + inst.getLayer2AccentVelocity()));
@@ -502,32 +502,37 @@ public class SynthesizerConfiguration {
 			instrument.setLayer1Pan(80);
 			instrument.setLayer1Reverb(40);
 		} else if (instrument.getName().equals(Instrument.SYNTH1)) {
-			instrument.setLayer1MidiNum(90);
-			instrument.setLayer1BaseOctave(4);
-			instrument.setLayer1BaseVelocity(70);
-			instrument.setLayer1AccentVelocity(80);
-			instrument.setLayer2MidiNum(52);
-			instrument.setLayer2BaseOctave(4);
-			instrument.setLayer2BaseVelocity(70);
-			instrument.setLayer2AccentVelocity(80);
+			instrument.setLayer1MidiNum(85);
+			instrument.setLayer1BaseOctave(5);
+			instrument.setLayer1BaseVelocity(60);
+			instrument.setLayer1AccentVelocity(70);
+			instrument.setLayer1Pan(80);
+			instrument.setLayer1Reverb(16);
+			instrument.setLayer2MidiNum(80);
+			instrument.setLayer2BaseOctave(6);
+			instrument.setLayer2BaseVelocity(50);
+			instrument.setLayer2AccentVelocity(64);
+			instrument.setLayer2Pan(48);
+			instrument.setLayer2Reverb(127);
 		} else if (instrument.getName().equals(Instrument.SYNTH2)) {
 			instrument.setLayer1MidiNum(81);
 			instrument.setLayer1BaseOctave(4);
 			instrument.setLayer1BaseVelocity(60);
 			instrument.setLayer1AccentVelocity(70);
 			instrument.setLayer1Pan(48);
+			instrument.setLayer1Reverb(127);
 		} else if (instrument.getName().equals(Instrument.SYNTH3)) {
 			instrument.setLayer1MidiNum(62);
 			instrument.setLayer1BaseOctave(3);
-			instrument.setLayer1BaseVelocity(90);
-			instrument.setLayer1AccentVelocity(100);
+			instrument.setLayer1BaseVelocity(84);
+			instrument.setLayer1AccentVelocity(96);
 			instrument.setLayer1Pan(80);
 			instrument.setLayer1Reverb(48);
 		} else if (instrument.getName().equals(Instrument.LEAD)) {
 			instrument.setLayer1MidiNum(87);
 			instrument.setLayer1BaseOctave(6);
-			instrument.setLayer1BaseVelocity(60);
-			instrument.setLayer1AccentVelocity(70);
+			instrument.setLayer1BaseVelocity(70);
+			instrument.setLayer1AccentVelocity(80);
 			instrument.setLayer1Pan(80);
 			instrument.setLayer1Reverb(91);
 			instrument.setLayer2MidiNum(102);
@@ -598,11 +603,11 @@ public class SynthesizerConfiguration {
 			drum.setLayer2AccentVelocity(70);
 		} else if (drum.getName().equals(Drum.CYMBAL)) {
 			drum.setLayer1MidiNote(57);
-			drum.setLayer1BaseVelocity(90);
-			drum.setLayer1AccentVelocity(100);
-			drum.setLayer1MidiNote(55);
-			drum.setLayer1BaseVelocity(60);
+			drum.setLayer1BaseVelocity(72);
 			drum.setLayer1AccentVelocity(80);
+			drum.setLayer2MidiNote(55);
+			drum.setLayer2BaseVelocity(72);
+			drum.setLayer2AccentVelocity(80);
 		} else if (drum.getName().equals(Drum.FX1)) {
 			drum.setLayer1MidiNote(37);
 			drum.setLayer1BaseVelocity(80);

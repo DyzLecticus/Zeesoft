@@ -2,8 +2,10 @@ package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -12,12 +14,14 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerListModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -249,11 +253,11 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		return r;
 	}
 
-	protected JPanel getNewNumberComboBox(JSpinner number,List<String> options) {
-		return getNewNumberComboBox(number,options,0);
+	protected JPanel getNewNumberComboBox(JSpinner number,List<String> options,ActionListener actionListener) {
+		return getNewNumberComboBox(number,options,actionListener,0);
 	}
 
-	protected JPanel getNewNumberComboBox(JSpinner number,List<String> options,int subtract) {
+	protected JPanel getNewNumberComboBox(JSpinner number,List<String> options,ActionListener actionListener,int subtract) {
 		JComboBox<String> comboBox = new JComboBox<String>();
 		for (String option: options) {
 			comboBox.addItem(option);
@@ -263,6 +267,11 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		}
 		comboBox.addKeyListener(controller.getPlayerKeyListener());
 		comboBox.addFocusListener(this);
+		
+		// F4 Override
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
+		comboBox.registerKeyboardAction(actionListener,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		
 		NumberComboBox nc = new NumberComboBox(number,comboBox,subtract);
 		numberComboBoxes.add(nc);
 		return nc.getPanel();

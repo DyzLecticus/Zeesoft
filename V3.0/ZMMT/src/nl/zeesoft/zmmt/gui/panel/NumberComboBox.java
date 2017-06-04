@@ -20,6 +20,8 @@ public class NumberComboBox implements ItemListener, ChangeListener {
 		this.number = number;
 		this.comboBox = comboBox;
 		this.subtract = subtract;
+		int index = Integer.parseInt(number.getValue().toString()) + subtract;
+		comboBox.setSelectedIndex(index);
 		number.addChangeListener(this);
 		comboBox.addItemListener(this);
 		panel = new JPanel();

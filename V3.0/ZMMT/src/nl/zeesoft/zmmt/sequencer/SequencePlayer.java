@@ -152,6 +152,9 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			sequencer.setTickPosition(startTick);
 			sequencer.start();
 		}
+		if (stopTick<startTick) {
+			stopTick=startTick;
+		}
 		List<SequencePlayerSubscriber> subs = new ArrayList<SequencePlayerSubscriber>(subscribers);	
 		unlockMe(this);
 		for (SequencePlayerSubscriber sub: subs) {

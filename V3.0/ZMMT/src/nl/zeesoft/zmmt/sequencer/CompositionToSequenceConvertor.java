@@ -134,7 +134,7 @@ public class CompositionToSequenceConvertor {
 								echoNotes.add(note);
 							}
 							List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(note.instrument,note.note,note.accent,0);
-							int endTick = currentTick + ((note.duration * ticksPerStep) - 1);
+							int endTick = currentTick + ((note.duration * ticksPerStep) - 10);
 							for (MidiNote mn: midiNotes) {
 								int velocity = (mn.velocity * note.velocityPercentage) / 100;
 								createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity,currentTick);

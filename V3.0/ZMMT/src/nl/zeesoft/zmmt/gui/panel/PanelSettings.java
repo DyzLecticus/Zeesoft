@@ -49,7 +49,7 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 
 		int row = 0;
 
-		addLabel(getPanel(),row,"File: ");
+		addLabel(getPanel(),row,"File");
 		JFormattedTextField file = getNewTextField();
 		file.setValue((new File(settingsCopy.getFileName())).getAbsolutePath());
 		file.setEnabled(false);

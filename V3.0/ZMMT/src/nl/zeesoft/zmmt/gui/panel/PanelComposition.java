@@ -37,7 +37,7 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 
 		int row = 0;
 
-		addLabel(getPanel(),row,"File: ");
+		addLabel(getPanel(),row,"File");
 		file = getNewTextField();
 		file.setEnabled(false);
 		addProperty(getPanel(),row,file,true);
