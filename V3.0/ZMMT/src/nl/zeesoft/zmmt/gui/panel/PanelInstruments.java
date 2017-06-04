@@ -45,6 +45,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 
 	private JSpinner[]				instrumentLayer1MidiNum			= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1Pressure		= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer1Pan				= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1Reverb			= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1BaseOctave		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1BaseVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
@@ -52,6 +53,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 
 	private JSpinner[]				instrumentLayer2MidiNum			= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2Pressure		= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer2Pan				= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2Reverb			= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2BaseOctave		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2BaseVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
@@ -74,6 +76,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	private JSpinner				echoReverb1						= null;
 	private JSpinner				echoReverb2						= null;
 	private JSpinner				echoReverb3						= null;
+	private JSpinner				echoPan1						= null;
+	private JSpinner				echoPan2						= null;
+	private JSpinner				echoPan3						= null;
 	
 	public PanelInstruments(Controller controller) {
 		super(controller);
@@ -129,6 +134,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 					instrumentLayer1MidiNum[i].setValue(String.format("%03d",conf.getLayer1MidiNum()));
 				}
 				instrumentLayer1Pressure[i].setValue(String.format("%03d",conf.getLayer1Pressure()));
+				instrumentLayer1Pan[i].setValue(String.format("%03d",conf.getLayer1Pan()));
 				instrumentLayer1Reverb[i].setValue(String.format("%03d",conf.getLayer1Reverb()));
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 					instrumentLayer1BaseOctave[i].setValue(String.format("%03d",conf.getLayer1BaseOctave()));
@@ -142,6 +148,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 					) {
 					instrumentLayer2MidiNum[i].setValue(String.format("%03d",conf.getLayer2MidiNum()));
 					instrumentLayer2Pressure[i].setValue(String.format("%03d",conf.getLayer2Pressure()));
+					instrumentLayer2Pan[i].setValue(String.format("%03d",conf.getLayer2Pan()));
 					instrumentLayer2Reverb[i].setValue(String.format("%03d",conf.getLayer2Reverb()));
 					instrumentLayer2BaseOctave[i].setValue(String.format("%03d",conf.getLayer2BaseOctave()));
 					instrumentLayer2BaseVelocity[i].setValue(String.format("%03d",conf.getLayer2BaseVelocity()));
@@ -177,6 +184,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				getSliderForNumber(echoReverb1).setEnabled(false);
 				getSliderForNumber(echoReverb2).setEnabled(false);
 				getSliderForNumber(echoReverb3).setEnabled(false);
+				getSliderForNumber(echoPan1).setEnabled(false);
+				getSliderForNumber(echoPan2).setEnabled(false);
+				getSliderForNumber(echoPan3).setEnabled(false);
 			} else {
 				if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
 					echo.getInstrument().equals(Instrument.SYNTH1) ||
@@ -194,6 +204,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				getSliderForNumber(echoReverb1).setEnabled(true);
 				getSliderForNumber(echoReverb2).setEnabled(true);
 				getSliderForNumber(echoReverb3).setEnabled(true);
+				getSliderForNumber(echoPan1).setEnabled(true);
+				getSliderForNumber(echoPan2).setEnabled(true);
+				getSliderForNumber(echoPan3).setEnabled(true);
 				for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 					if (echo.getInstrument().equals(Instrument.INSTRUMENTS[i])) {
 						echoInstrument.setSelectedIndex((i + 1));
@@ -208,6 +221,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				echoReverb1.setValue(String.format("%03d",echo.getReverb1()));
 				echoReverb2.setValue(String.format("%03d",echo.getReverb2()));
 				echoReverb3.setValue(String.format("%03d",echo.getReverb3()));
+				echoPan1.setValue(String.format("%03d",echo.getPan1()));
+				echoPan2.setValue(String.format("%03d",echo.getPan2()));
+				echoPan3.setValue(String.format("%03d",echo.getPan3()));
 			}
 		}
 		setValidate(true);
@@ -219,6 +235,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			inst.setLayer1MidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
 			inst.setLayer1Pressure(Integer.parseInt(instrumentLayer1Pressure[i].getValue().toString()));
+			inst.setLayer1Pan(Integer.parseInt(instrumentLayer1Pan[i].getValue().toString()));
 			inst.setLayer1Reverb(Integer.parseInt(instrumentLayer1Reverb[i].getValue().toString()));
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 				inst.setLayer1BaseOctave(Integer.parseInt(instrumentLayer1BaseOctave[i].getValue().toString()));
@@ -232,6 +249,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				) {
 				inst.setLayer2MidiNum(Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()));
 				inst.setLayer2Pressure(Integer.parseInt(instrumentLayer2Pressure[i].getValue().toString()));
+				inst.setLayer2Pan(Integer.parseInt(instrumentLayer2Pan[i].getValue().toString()));
 				inst.setLayer2Reverb(Integer.parseInt(instrumentLayer2Reverb[i].getValue().toString()));
 				inst.setLayer2BaseOctave(Integer.parseInt(instrumentLayer2BaseOctave[i].getValue().toString()));
 				inst.setLayer2BaseVelocity(Integer.parseInt(instrumentLayer2BaseVelocity[i].getValue().toString()));
@@ -265,6 +283,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		echo.setReverb1(Integer.parseInt(echoReverb1.getValue().toString()));
 		echo.setReverb2(Integer.parseInt(echoReverb2.getValue().toString()));
 		echo.setReverb3(Integer.parseInt(echoReverb3.getValue().toString()));
+		echo.setPan1(Integer.parseInt(echoPan1.getValue().toString()));
+		echo.setPan2(Integer.parseInt(echoPan2.getValue().toString()));
+		echo.setPan3(Integer.parseInt(echoPan3.getValue().toString()));
 	}
 
 	@Override
@@ -371,6 +392,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		addProperty(panel,row,slider);
 
 		row++;
+		instrumentLayer1Pan[instrumentNum] = getNewNumberSpinner(3,0,127);
+		slider = getNewNumberSlider(instrumentLayer1Pan[instrumentNum],0,127,64);
+		addLabel(panel,row,"Layer 1 pan");
+		addProperty(panel,row,slider);
+
+		row++;
 		instrumentLayer1Reverb[instrumentNum] = getNewNumberSpinner(3,0,127);
 		slider = getNewNumberSlider(instrumentLayer1Reverb[instrumentNum],0,127,64);
 		addLabel(panel,row,"Layer 1 reverb");
@@ -414,6 +441,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				instrumentLayer2Pressure[instrumentNum] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(instrumentLayer2Pressure[instrumentNum],0,127,0);
 				addLabel(panel,row,"Layer 2 pressure");
+				addProperty(panel,row,slider);
+
+				row++;
+				instrumentLayer2Pan[instrumentNum] = getNewNumberSpinner(3,0,127);
+				slider = getNewNumberSlider(instrumentLayer2Pan[instrumentNum],0,127,64);
+				addLabel(panel,row,"Layer 2 pan");
 				addProperty(panel,row,slider);
 
 				row++;
@@ -543,6 +576,24 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		echoVelocityPercentage3 = getNewNumberSpinner(3,1,99);
 		slider = getNewNumberSlider(echoVelocityPercentage3,1,99,20);
 		addLabel(panel,row,"Echo 3 velocity percentage");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoPan1 = getNewNumberSpinner(3,0,127);
+		slider = getNewNumberSlider(echoPan1,0,127,24);
+		addLabel(panel,row,"Echo 1 pan");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoPan2 = getNewNumberSpinner(3,0,127);
+		slider = getNewNumberSlider(echoPan2,0,127,104);
+		addLabel(panel,row,"Echo 2 pan");
+		addProperty(panel,row,slider);
+
+		row++;
+		echoPan3 = getNewNumberSpinner(3,0,127);
+		slider = getNewNumberSlider(echoPan3,0,127,48);
+		addLabel(panel,row,"Echo 3 pan");
 		addProperty(panel,row,slider);
 
 		row++;

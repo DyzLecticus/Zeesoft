@@ -16,6 +16,8 @@ public class NumberSlider implements ChangeListener {
 	public NumberSlider(JSpinner number,JSlider slider) {
 		this.number = number;
 		this.slider = slider;
+		int value = Integer.parseInt(number.getValue().toString());
+		slider.setValue(value);
 		number.addChangeListener(this);
 		slider.addChangeListener(this);
 		panel = new JPanel();

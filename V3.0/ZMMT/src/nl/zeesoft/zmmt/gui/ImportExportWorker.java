@@ -42,7 +42,7 @@ public class ImportExportWorker extends Worker {
 			@Override
 			public boolean accept(File file) {
 				boolean accept = false;
-				if (file.getAbsolutePath().toLowerCase().endsWith(Settings.EXTENSION_COMPOSITION)) {
+				if (file.isDirectory() || file.getAbsolutePath().toLowerCase().endsWith(Settings.EXTENSION_COMPOSITION)) {
 					accept = true;
 				}
 				return accept;
@@ -56,7 +56,7 @@ public class ImportExportWorker extends Worker {
 			@Override
 			public boolean accept(File file) {
 				boolean accept = false;
-				if (file.getAbsolutePath().toLowerCase().endsWith(Settings.EXTENSION_MIDI)) {
+				if (file.isDirectory() || file.getAbsolutePath().toLowerCase().endsWith(Settings.EXTENSION_MIDI)) {
 					accept = true;
 				}
 				return accept;
@@ -193,12 +193,11 @@ public class ImportExportWorker extends Worker {
 				fileChooser.setFileFilter(compositionFilter);
 				fileChooser.removeChoosableFileFilter(midiFilter);
 				file = controller.chooseFile(fileChooser,"Load composition");
-				getFileWithExtension(file,Settings.EXTENSION_COMPOSITION);
+				file = getFileWithExtension(file,Settings.EXTENSION_COMPOSITION);
 			} else if (action.equals(SAVE_COMPOSITION)) {
 				fileChooser.setFileFilter(compositionFilter);
 				fileChooser.addChoosableFileFilter(midiFilter);
 				file = controller.chooseFile(fileChooser,"Save composition");
-				getFileWithExtension(file,Settings.EXTENSION_COMPOSITION);
 			}
 		}
 		unlockMe(this);

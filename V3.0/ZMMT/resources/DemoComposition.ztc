@@ -1,0 +1,6080 @@
+{
+  "composer": "Dyz Lecticus",
+  "name": "ZeeTracker Demo Composition",
+  "beatsPerMinute": 128,
+  "beatsPerBar": 4,
+  "stepsPerBeat": 8,
+  "barsPerPattern": 4,
+  "instruments": {
+    "instrument": {
+      "name": "Synth bass 1",
+      "layer1MidiNum": 34,
+      "layer1Pressure": 0,
+      "layer1Pan": 64,
+      "layer1Reverb": 0,
+      "layer1BaseOctave": 2,
+      "layer1BaseVelocity": 127,
+      "layer1AccentVelocity": 127,
+      "layer2MidiNum": 38,
+      "layer2Pressure": 0,
+      "layer2Pan": 64,
+      "layer2Reverb": 0,
+      "layer2BaseOctave": 2,
+      "layer2BaseVelocity": 50,
+      "layer2AccentVelocity": 100
+    },
+    "instrument": {
+      "name": "Synth bass 2",
+      "layer1MidiNum": 7,
+      "layer1Pressure": 0,
+      "layer1Pan": 48,
+      "layer1Reverb": 40,
+      "layer1BaseOctave": 2,
+      "layer1BaseVelocity": 110,
+      "layer1AccentVelocity": 120
+    },
+    "instrument": {
+      "name": "Synth bass 3",
+      "layer1MidiNum": 25,
+      "layer1Pressure": 0,
+      "layer1Pan": 80,
+      "layer1Reverb": 40,
+      "layer1BaseOctave": 2,
+      "layer1BaseVelocity": 110,
+      "layer1AccentVelocity": 120
+    },
+    "instrument": {
+      "name": "Synth 1",
+      "layer1MidiNum": 90,
+      "layer1Pressure": 0,
+      "layer1Pan": 64,
+      "layer1Reverb": 64,
+      "layer1BaseOctave": 4,
+      "layer1BaseVelocity": 70,
+      "layer1AccentVelocity": 80,
+      "layer2MidiNum": 52,
+      "layer2Pressure": 0,
+      "layer2Pan": 52,
+      "layer2Reverb": 64,
+      "layer2BaseOctave": 4,
+      "layer2BaseVelocity": 70,
+      "layer2AccentVelocity": 80
+    },
+    "instrument": {
+      "name": "Synth 2",
+      "layer1MidiNum": 81,
+      "layer1Pressure": 0,
+      "layer1Pan": 48,
+      "layer1Reverb": 64,
+      "layer1BaseOctave": 4,
+      "layer1BaseVelocity": 60,
+      "layer1AccentVelocity": 70
+    },
+    "instrument": {
+      "name": "Synth 3",
+      "layer1MidiNum": 62,
+      "layer1Pressure": 0,
+      "layer1Pan": 80,
+      "layer1Reverb": 48,
+      "layer1BaseOctave": 3,
+      "layer1BaseVelocity": 90,
+      "layer1AccentVelocity": 100
+    },
+    "instrument": {
+      "name": "Lead",
+      "layer1MidiNum": 87,
+      "layer1Pressure": 0,
+      "layer1Pan": 80,
+      "layer1Reverb": 92,
+      "layer1BaseOctave": 6,
+      "layer1BaseVelocity": 60,
+      "layer1AccentVelocity": 70,
+      "layer2MidiNum": 102,
+      "layer2Pressure": 0,
+      "layer2Pan": 64,
+      "layer2Reverb": 92,
+      "layer2BaseOctave": 6,
+      "layer2BaseVelocity": 60,
+      "layer2AccentVelocity": 70
+    },
+    "instrument": {
+      "name": "Strings",
+      "layer1MidiNum": 50,
+      "layer1Pressure": 0,
+      "layer1Pan": 64,
+      "layer1Reverb": 127,
+      "layer1BaseOctave": 4,
+      "layer1BaseVelocity": 40,
+      "layer1AccentVelocity": 50,
+      "layer2MidiNum": 49,
+      "layer2Pressure": 0,
+      "layer2Pan": 64,
+      "layer2Reverb": 127,
+      "layer2BaseOctave": 5,
+      "layer2BaseVelocity": 36,
+      "layer2AccentVelocity": 44
+    },
+    "instrument": {
+      "name": "Drums",
+      "layer1MidiNum": 118,
+      "layer1Pressure": 0,
+      "layer1Pan": 64,
+      "layer1Reverb": 0
+    },
+    "drum": {
+      "name": "Kick",
+      "layer1MidiNote": 36,
+      "layer1BaseVelocity": 120,
+      "layer1AccentVelocity": 127,
+      "layer2MidiNote": 41,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "drum": {
+      "name": "Clap",
+      "layer1MidiNote": 39,
+      "layer1BaseVelocity": 70,
+      "layer1AccentVelocity": 80,
+      "layer2MidiNote": 34,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "drum": {
+      "name": "Snare",
+      "layer1MidiNote": 38,
+      "layer1BaseVelocity": 100,
+      "layer1AccentVelocity": 110,
+      "layer2MidiNote": 66,
+      "layer2BaseVelocity": 50,
+      "layer2AccentVelocity": 60
+    },
+    "drum": {
+      "name": "Hihat 1",
+      "layer1MidiNote": 44,
+      "layer1BaseVelocity": 60,
+      "layer1AccentVelocity": 70,
+      "layer2MidiNote": 34,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "drum": {
+      "name": "Hihat 2",
+      "layer1MidiNote": 69,
+      "layer1BaseVelocity": 70,
+      "layer1AccentVelocity": 80,
+      "layer2MidiNote": 42,
+      "layer2BaseVelocity": 80,
+      "layer2AccentVelocity": 90
+    },
+    "drum": {
+      "name": "Tom 1",
+      "layer1MidiNote": 43,
+      "layer1BaseVelocity": 100,
+      "layer1AccentVelocity": 110,
+      "layer2MidiNote": 34,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "drum": {
+      "name": "Tom 2",
+      "layer1MidiNote": 45,
+      "layer1BaseVelocity": 100,
+      "layer1AccentVelocity": 110,
+      "layer2MidiNote": 34,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "drum": {
+      "name": "Ride",
+      "layer1MidiNote": 59,
+      "layer1BaseVelocity": 70,
+      "layer1AccentVelocity": 80,
+      "layer2MidiNote": 51,
+      "layer2BaseVelocity": 60,
+      "layer2AccentVelocity": 70
+    },
+    "drum": {
+      "name": "Cymbal",
+      "layer1MidiNote": 55,
+      "layer1BaseVelocity": 60,
+      "layer1AccentVelocity": 80,
+      "layer2MidiNote": 34,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "drum": {
+      "name": "FX1",
+      "layer1MidiNote": 37,
+      "layer1BaseVelocity": 80,
+      "layer1AccentVelocity": 90,
+      "layer2MidiNote": 34,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "drum": {
+      "name": "FX2",
+      "layer1MidiNote": 56,
+      "layer1BaseVelocity": 70,
+      "layer1AccentVelocity": 80,
+      "layer2MidiNote": 34,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "drum": {
+      "name": "FX3",
+      "layer1MidiNote": 76,
+      "layer1BaseVelocity": 80,
+      "layer1AccentVelocity": 90,
+      "layer2MidiNote": 34,
+      "layer2BaseVelocity": 100,
+      "layer2AccentVelocity": 110
+    },
+    "echo": {
+      "instrument": "Lead",
+      "layer": 1,
+      "steps": 6,
+      "velocityPercentage1": 80,
+      "velocityPercentage2": 60,
+      "velocityPercentage3": 40,
+      "reverb1": 103,
+      "reverb2": 115,
+      "reverb3": 127,
+      "pan1": 24,
+      "pan2": 104,
+      "pan3": 48
+    }
+  },
+  "patterns": [
+    {
+      "number": 0,
+      "steps": [
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 1,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 1,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 5,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 9,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 9,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 13,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 13,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 17,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 19,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 21,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 21,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 25,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 25,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 29,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 33,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 33,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 37,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 41,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 41,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 45,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 45,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 49,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 51,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 53,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 53,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 57,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 57,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 61,
+          "note": 40,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 65,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 65,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 69,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 73,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 73,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 77,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 77,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 81,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 83,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 85,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 85,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 89,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 89,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 93,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 97,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 97,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 101,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 105,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 105,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 109,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 109,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 113,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 115,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 117,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 117,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 121,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 121,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 125,
+          "note": 40,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 127,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 127,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 3,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 5,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 7,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 11,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 13,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 15,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 17,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 19,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 21,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 23,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 27,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 29,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 31,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 35,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 37,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 37,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 39,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 39,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 41,
+          "note": 38,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 43,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 45,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 45,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 47,
+          "note": 38,
+          "duration": 4,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 51,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 53,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 53,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 55,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 55,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 57,
+          "note": 36,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 59,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 61,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 61,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 63,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 67,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 69,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 71,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 75,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 77,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 79,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 81,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 83,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 85,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 87,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 91,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 93,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 95,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 99,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 101,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 101,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 103,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 103,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 105,
+          "note": 38,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 107,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 109,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 109,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 111,
+          "note": 43,
+          "duration": 4,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 115,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 117,
+          "note": 41,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 117,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 119,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 119,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 121,
+          "note": 36,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 123,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 125,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 125,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 127,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 1,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 9,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 17,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 25,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 33,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 41,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 49,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 57,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 65,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 73,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 81,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 89,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 97,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 105,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 113,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 121,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 11,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 15,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 31,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 27,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 5,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 21,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 1,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 9,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 17,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 25,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 33,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 41,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 49,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 57,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 61,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 65,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 73,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 81,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 89,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 97,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 105,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 113,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 121,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 125,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 7,
+          "step": 1,
+          "note": 44,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 37,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 43,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 47,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 53,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 59,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 63,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 69,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 75,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 79,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 85,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 91,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 95,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 101,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 107,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 111,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 117,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 123,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 127,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 7,
+          "step": 121,
+          "note": 44,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 10,
+          "step": 1,
+          "note": 50,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 11,
+          "step": 1,
+          "note": 53,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 12,
+          "step": 1,
+          "note": 57,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 10,
+          "step": 13,
+          "note": 50,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 11,
+          "step": 13,
+          "note": 53,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 12,
+          "step": 13,
+          "note": 57,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 10,
+          "step": 25,
+          "note": 50,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 11,
+          "step": 25,
+          "note": 55,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 12,
+          "step": 25,
+          "note": 59,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 10,
+          "step": 37,
+          "note": 50,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 11,
+          "step": 37,
+          "note": 55,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 12,
+          "step": 37,
+          "note": 59,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 10,
+          "step": 49,
+          "note": 50,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 11,
+          "step": 49,
+          "note": 55,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 12,
+          "step": 49,
+          "note": 59,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 10,
+          "step": 61,
+          "note": 50,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 11,
+          "step": 61,
+          "note": 53,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 2",
+          "track": 12,
+          "step": 61,
+          "note": 57,
+          "duration": 4,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Strings",
+          "track": 13,
+          "step": 1,
+          "note": 50,
+          "duration": 32,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Strings",
+          "track": 13,
+          "step": 33,
+          "note": 55,
+          "duration": 32,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Strings",
+          "track": 13,
+          "step": 65,
+          "note": 57,
+          "duration": 32,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Strings",
+          "track": 13,
+          "step": 97,
+          "note": 60,
+          "duration": 32,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Strings",
+          "track": 14,
+          "step": 1,
+          "note": 62,
+          "duration": 32,
+          "accent": false,
+          "velocityPercentage": 80
+        },
+        {
+          "instrument": "Strings",
+          "track": 14,
+          "step": 33,
+          "note": 67,
+          "duration": 32,
+          "accent": false,
+          "velocityPercentage": 80
+        },
+        {
+          "instrument": "Strings",
+          "track": 14,
+          "step": 65,
+          "note": 69,
+          "duration": 32,
+          "accent": false,
+          "velocityPercentage": 80
+        },
+        {
+          "instrument": "Strings",
+          "track": 14,
+          "step": 97,
+          "note": 72,
+          "duration": 32,
+          "accent": false,
+          "velocityPercentage": 80
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 97,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 99,
+          "note": 48,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 101,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 103,
+          "note": 51,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 105,
+          "note": 48,
+          "duration": 3,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 109,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 111,
+          "note": 51,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 113,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 115,
+          "note": 53,
+          "duration": 3,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 119,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 121,
+          "note": 48,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 123,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 125,
+          "note": 51,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 1",
+          "track": 15,
+          "step": 127,
+          "note": 48,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 1,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 3,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 5,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 7,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 9,
+          "note": 38,
+          "duration": 3,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 13,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 15,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 17,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 19,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 21,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 23,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 25,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 27,
+          "note": 38,
+          "duration": 3,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 31,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 33,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 35,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 37,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 39,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 41,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 43,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 45,
+          "note": 38,
+          "duration": 3,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 49,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 51,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 53,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 55,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 57,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 59,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 61,
+          "note": 48,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 63,
+          "note": 36,
+          "duration": 3,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 67,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 69,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 71,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 73,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 75,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 77,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 79,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 81,
+          "note": 38,
+          "duration": 3,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 85,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 87,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 89,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 91,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 93,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 95,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 97,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 99,
+          "note": 38,
+          "duration": 3,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 103,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 105,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 107,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 109,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 111,
+          "note": 55,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 113,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 115,
+          "note": 53,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 117,
+          "note": 41,
+          "duration": 3,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 121,
+          "note": 48,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 123,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 125,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth 3",
+          "track": 16,
+          "step": 127,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 17,
+          "step": 5,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 17,
+          "step": 9,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 17,
+          "step": 17,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 17,
+          "step": 25,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 17,
+          "step": 37,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 17,
+          "step": 41,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 17,
+          "step": 49,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 17,
+          "step": 57,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Lead",
+          "track": 18,
+          "step": 5,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 90
+        },
+        {
+          "instrument": "Lead",
+          "track": 18,
+          "step": 9,
+          "note": 52,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 90
+        },
+        {
+          "instrument": "Lead",
+          "track": 18,
+          "step": 17,
+          "note": 53,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 90
+        },
+        {
+          "instrument": "Lead",
+          "track": 18,
+          "step": 25,
+          "note": 55,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 90
+        },
+        {
+          "instrument": "Lead",
+          "track": 18,
+          "step": 37,
+          "note": 52,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 90
+        },
+        {
+          "instrument": "Lead",
+          "track": 18,
+          "step": 41,
+          "note": 53,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 90
+        },
+        {
+          "instrument": "Lead",
+          "track": 18,
+          "step": 49,
+          "note": 55,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 90
+        },
+        {
+          "instrument": "Lead",
+          "track": 18,
+          "step": 57,
+          "note": 50,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 90
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "steps": [
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 1,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 1,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 1,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 5,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 5,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 9,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 9,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 9,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 11,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 13,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 13,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 15,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 17,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 17,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 19,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 21,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 21,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 21,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 25,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 25,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 25,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 27,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 29,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 31,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 33,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 33,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 33,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 37,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 37,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 41,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 41,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 41,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 43,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 45,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 45,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 47,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 49,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 49,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 51,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 53,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 53,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 53,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 57,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 57,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 57,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 59,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 61,
+          "note": 40,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 63,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 65,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 65,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 65,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 69,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 69,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 73,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 73,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 73,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 75,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 77,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 77,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 79,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 81,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 81,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 83,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 85,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 85,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 85,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 89,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 89,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 89,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 91,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 93,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 95,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 97,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 97,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 97,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 101,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 101,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 105,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 105,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 105,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 107,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 109,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 109,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 111,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 113,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 113,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 115,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 117,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 117,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 117,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 121,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 121,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 121,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 123,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 125,
+          "note": 40,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 127,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 127,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 127,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "steps": [
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 3,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 5,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 7,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 11,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 13,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 15,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 17,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 19,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 21,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 23,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 27,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 29,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 31,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 35,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 37,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 37,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 39,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 39,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 41,
+          "note": 38,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 43,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 45,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 45,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 47,
+          "note": 38,
+          "duration": 4,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 51,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 53,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 53,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 55,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 55,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 57,
+          "note": 36,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 59,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 61,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 61,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 63,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 67,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 69,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 71,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 75,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 77,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 79,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 81,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 83,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 85,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 87,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 91,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 93,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 95,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 99,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 101,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 101,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 103,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 103,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 105,
+          "note": 38,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 107,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 109,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 109,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 111,
+          "note": 43,
+          "duration": 4,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 115,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 117,
+          "note": 41,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 117,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 119,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 119,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 121,
+          "note": 36,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 123,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 125,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 125,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 127,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        }
+      ]
+    },
+    {
+      "number": 1,
+      "steps": [
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 1,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 1,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 1,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 5,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 5,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 9,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 9,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 9,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 11,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 13,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 13,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 15,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 17,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 17,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 19,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 21,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 21,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 21,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 25,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 25,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 25,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 27,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 29,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 31,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 33,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 33,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 33,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 37,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 37,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 41,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 41,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 41,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 43,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 45,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 45,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 47,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 49,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 49,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 51,
+          "note": 40,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 53,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 53,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 53,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 57,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 57,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 57,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 59,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 61,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 63,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 65,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 65,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 65,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 69,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 69,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 73,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 73,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 73,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 75,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 77,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 77,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 79,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 81,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 81,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 83,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 85,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 85,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 85,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 89,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 89,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 89,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 91,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 93,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 95,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 97,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 97,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 97,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 101,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 101,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 105,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 105,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 105,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 107,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 109,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 109,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 111,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 113,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 113,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 115,
+          "note": 40,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 1,
+          "step": 117,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 117,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 117,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 121,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 121,
+          "note": 39,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 4,
+          "step": 121,
+          "note": 46,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 123,
+          "note": 47,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 125,
+          "note": 40,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 2,
+          "step": 127,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 3,
+          "step": 127,
+          "note": 39,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 5,
+          "step": 127,
+          "note": 45,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 1,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 7,
+          "step": 1,
+          "note": 44,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 9,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 17,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 25,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 33,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 41,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 49,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 57,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 61,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 65,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 73,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 81,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 89,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 97,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 105,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 113,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 121,
+          "note": 43,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 7,
+          "step": 121,
+          "note": 44,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Drums",
+          "track": 6,
+          "step": 125,
+          "note": 43,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 3,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 5,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 7,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 11,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 13,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 15,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 17,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 19,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 21,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 23,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 27,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 29,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 31,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 35,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 37,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 37,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 39,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 39,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 41,
+          "note": 38,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 43,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 45,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 45,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 47,
+          "note": 38,
+          "duration": 4,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 51,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 53,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 53,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 55,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 55,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 57,
+          "note": 36,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 59,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 61,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 61,
+          "note": 36,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 63,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 67,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 69,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 71,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 75,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 77,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 79,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 81,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 83,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 85,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 87,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 91,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 93,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 95,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 99,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 101,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 101,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 103,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 103,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 105,
+          "note": 38,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 107,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 109,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 3",
+          "track": 9,
+          "step": 109,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 111,
+          "note": 43,
+          "duration": 4,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 115,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 117,
+          "note": 41,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 117,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 119,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 119,
+          "note": 41,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 121,
+          "note": 36,
+          "duration": 2,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 123,
+          "note": 36,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 125,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 2",
+          "track": 9,
+          "step": 125,
+          "note": 38,
+          "duration": 1,
+          "accent": false,
+          "velocityPercentage": 100
+        },
+        {
+          "instrument": "Synth bass 1",
+          "track": 8,
+          "step": 127,
+          "note": 38,
+          "duration": 1,
+          "accent": true,
+          "velocityPercentage": 100
+        }
+      ]
+    }
+  ],
+  "sequence": {
+    "0": 3,
+    "1": 1,
+    "2": 0,
+    "3": 2
+  }
+}
