@@ -85,6 +85,14 @@ public class StateManager extends StateObject {
 		unlockMe(this);
 	}
 	
+	public void setSelectedSequenceSelection(Object source,int rowFrom,int rowTo) {
+		lockMe(this);
+		super.setSelectedPatternRowFrom(rowFrom);
+		super.setSelectedPatternRowTo(rowTo);
+		publishStateChangeEvent(StateChangeEvent.CHANGED_SEQUENCE_SELECTION,source);
+		unlockMe(this);
+	}
+	
 	public void setCompositionChanged(Object source,boolean compositionChanged) {
 		lockMe(this);
 		if (super.isCompositionChanged()!=compositionChanged) {
@@ -285,6 +293,8 @@ public class StateManager extends StateObject {
 		evt.setSelectedPatternRowTo(super.getSelectedPatternRowTo());
 		evt.setSelectedPatternColFrom(super.getSelectedPatternColFrom());
 		evt.setSelectedPatternColTo(super.getSelectedPatternColTo());
+		evt.setSelectedSequenceRowFrom(super.getSelectedSequenceRowFrom());
+		evt.setSelectedSequenceRowTo(super.getSelectedSequenceRowTo());
 		evt.setCompositionChanged(super.isCompositionChanged());
 		evt.setComposition(super.getComposition());
 		evt.setSettings(super.getSettings());

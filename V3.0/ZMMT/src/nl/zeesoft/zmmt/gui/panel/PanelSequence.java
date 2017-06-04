@@ -123,6 +123,11 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		if (rows.length>0 && cols.length>0) {
 			selectedRows = rows;
 			selectedCols = cols;
+			getController().getStateManager().setSelectedSequenceSelection(
+				this,
+				selectedRows[0],
+				selectedRows[selectedRows.length-1]
+				);
 		}
 	}
 

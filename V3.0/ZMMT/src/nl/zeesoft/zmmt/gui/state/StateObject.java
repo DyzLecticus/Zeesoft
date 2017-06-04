@@ -16,6 +16,8 @@ public abstract class StateObject extends Locker {
 	private int 					selectedPatternRowTo	= -1;
 	private int 					selectedPatternColFrom	= -1;
 	private int 					selectedPatternColTo	= -1;
+	private int 					selectedSequenceRowFrom	= -1;
+	private int 					selectedSequenceRowTo	= -1;
 	
 	private boolean 				compositionChanged		= false;
 	
@@ -83,6 +85,22 @@ public abstract class StateObject extends Locker {
 
 	public void setSelectedPatternColTo(int selectedPatternColTo) {
 		this.selectedPatternColTo = selectedPatternColTo;
+	}
+
+	public int getSelectedSequenceRowFrom() {
+		return selectedSequenceRowFrom;
+	}
+
+	public void setSelectedSequenceRowFrom(int selectedSequenceRowFrom) {
+		this.selectedSequenceRowFrom = selectedSequenceRowFrom;
+	}
+
+	public int getSelectedSequenceRowTo() {
+		return selectedSequenceRowTo;
+	}
+
+	public void setSelectedSequenceRowTo(int selectedSequenceRowTo) {
+		this.selectedSequenceRowTo = selectedSequenceRowTo;
 	}
 	
 	public boolean isCompositionChanged() {
