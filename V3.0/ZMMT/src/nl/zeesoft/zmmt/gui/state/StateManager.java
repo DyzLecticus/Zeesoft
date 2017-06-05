@@ -127,7 +127,7 @@ public class StateManager extends StateObject {
 			state.setComposition(super.getComposition().copy());
 			super.getStates().add(state);
 			super.setState(0);
-			publishStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+			waitingCompositionChangeEvent = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		}
 		unlockMe(this);
 	}

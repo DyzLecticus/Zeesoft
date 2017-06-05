@@ -417,21 +417,25 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	}
 
 	protected void loadedComposition(File file,Composition comp) {
+		Settings settingsCopy = null;
 		lockMe(this);
 		settings.setWorkingCompositionFileName(file.getAbsolutePath());
 		compositionFile = file;
+		settingsCopy = settings.copy();
 		unlockMe(this);
-		stateManager.setSettings(this,settings.copy());
+		stateManager.setSettings(this,settingsCopy);
 		stopSequencer();
 		setComposition(comp);
 	}
 
 	protected void savedComposition(File file,Composition comp) {
+		Settings settingsCopy = null;
 		lockMe(this);
 		settings.setWorkingCompositionFileName(file.getAbsolutePath());
 		compositionFile = file;
+		settingsCopy = settings.copy();
 		unlockMe(this);
-		stateManager.setSettings(this,settings.copy());
+		stateManager.setSettings(this,settingsCopy);
 		setComposition(comp);
 	}
 	
@@ -472,7 +476,9 @@ public class Controller extends Locker implements StateChangeSubscriber {
 					reconfigureSynthesizer(evt.getComposition());
 				}
 			} else if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
+				lockMe(this);
 				settings = evt.getSettings().copy();
+				unlockMe(this);
 			} else if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
 				stopSynthesizer(evt.getComposition());
 				reconfigureSynthesizer(evt.getComposition());
