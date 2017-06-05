@@ -2,8 +2,10 @@ package nl.zeesoft.zdk;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -330,17 +332,28 @@ public class ZStringBuilder {
 	
 	public String fromFile(String fileName) {
 		String error = "";
-		sb = new StringBuilder();
-		
 		FileInputStream fis = null;
-		InputStreamReader isr = null;
 		try {
 			fis = new FileInputStream(fileName);
+		} catch (FileNotFoundException e) {
+			error = "File not found: " + fileName;
+		}
+		if (fis!=null) {
+			error = fromInputStream(fis);
+		}
+		return error;
+	}
+
+	public String fromInputStream(InputStream is) {
+		String error = "";
+		sb = new StringBuilder();
+		InputStreamReader isr = null;
+		try {
 			isr = null;
 			if (getEncoding().length()>0) {
-				isr = new InputStreamReader(fis,getEncoding());
+				isr = new InputStreamReader(is,getEncoding());
 			} else {
-				isr = new InputStreamReader(fis);
+				isr = new InputStreamReader(is);
 			}
 			Reader in = new BufferedReader(isr);
 			int ch;
@@ -351,9 +364,9 @@ public class ZStringBuilder {
 		} catch (IOException e) {
 			error = "" + e;
 		} finally {
-			if (fis!=null) {
+			if (is!=null) {
 				try {
-					fis.close();
+					is.close();
 				} catch (IOException e) {
 					// Ignore
 				}
