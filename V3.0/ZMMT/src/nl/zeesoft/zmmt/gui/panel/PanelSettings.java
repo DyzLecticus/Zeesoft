@@ -31,6 +31,8 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 	private JButton						saveInstruments				= null;
 	private JButton						restoreInstruments			= null;
 
+	private JFormattedTextField			customSoundFont				= null;
+
 	private Settings					settingsCopy				= null;
 	private	SynthesizerConfiguration	synthCopy					= null;
 
@@ -88,6 +90,11 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 		addLabel(getPanel(),row,"Instrument defaults");
 		addProperty(getPanel(),row,getInstrumentPanel());
 
+		row++;
+		customSoundFont = getNewTextField();
+		addLabel(getPanel(),row,"Custom sound font file");
+		addProperty(getPanel(),row,customSoundFont,true);
+
 		updatedSettings();
 		
 		row++;
@@ -111,6 +118,7 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 		settingsCopy.setDefaultBeatsPerBar(Integer.parseInt(beatsPerBar.getValue().toString()));
 		settingsCopy.setDefaultStepsPerBeat(Integer.parseInt(stepsPerBeat.getValue().toString()));
 		settingsCopy.setDefaultBarsPerPattern(Integer.parseInt(barsPerPattern.getValue().toString()));
+		settingsCopy.setCustomSoundFontFileName(customSoundFont.getValue().toString());
 		getController().getStateManager().setSettings(this,settingsCopy.copy());
 	}
 	
@@ -150,6 +158,7 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 		beatsPerBar.setValue(String.format("%03d",settingsCopy.getDefaultBeatsPerBar()));
 		stepsPerBeat.setValue(String.format("%03d",settingsCopy.getDefaultStepsPerBeat()));
 		barsPerPattern.setValue(String.format("%03d",settingsCopy.getDefaultBarsPerPattern()));
+		customSoundFont.setValue(settingsCopy.getCustomSoundFontFileName());
 	}
 	
 	protected JPanel getInstrumentPanel() {
