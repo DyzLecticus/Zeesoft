@@ -12,6 +12,7 @@ public class MockComposition extends Composition {
 		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setLayer1MidiNum(123);
 		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setLayer1BaseOctave(5);
 		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setLayer1Pressure(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setLayer1Pan(123);
 		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setLayer1Reverb(123);
 		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setLayer1BaseVelocity(123);
 		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setLayer1AccentVelocity(123);

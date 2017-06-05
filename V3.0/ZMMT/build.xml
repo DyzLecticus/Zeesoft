@@ -3,10 +3,10 @@
 	<description>ZMMT build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.18"/>
+	<property name="version" value="0.9.0"/>
 	
 	<!-- ZDK version -->
-	<property name="versionZDK" value="0.9.23"/>
+	<property name="versionZDK" value="0.9.24"/>
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -44,6 +44,8 @@
             <fileset dir="${src}" />
         </copy>		
 		<copy file="build.xml" tofile="${build}/build.xml"/>
+		<mkdir dir="${build}/resources"/>
+		<copy file="resources/DemoComposition.ztc" tofile="${build}/resources/DemoComposition.ztc"/>
 		<!-- Create distribution directory -->
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
@@ -51,7 +53,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zmmt nl/zeesoft/zmmt/orchestra nl/zeesoft/zmmt/orchestra/client nl/zeesoft/zmmt/orchestra/controller nl/zeesoft/zmmt/orchestra/members nl/zeesoft/zmmt/orchestra/protocol nl/zeesoft/zmmt/test nl/zeesoft/zmmt/test/mocks zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zmmt nl/zeesoft/zmmt/composition nl/zeesoft/zmmt/gui nl/zeesoft/zmmt/gui/panel nl/zeesoft/zmmt/gui/state nl/zeesoft/zmmt/player nl/zeesoft/zmmt/recorder nl/zeesoft/zmmt/sequencer nl/zeesoft/zmmt/synthesizer nl/zeesoft/zmmt/test zdk.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zmmt.test.ZMMT"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -71,6 +73,19 @@
 		<delete>
             <fileset dir="${build}" includes="**/*.java"/>
 		</delete>
+	</target>
+
+	<target name="distZT" depends="dist" description="Generate the ZeeTracker distribution">
+		<mkdir dir="${build}/ZT"/>
+		<copy file="${dist}/zdk.jar" tofile="${build}/ZT/zdk.jar"/>
+		<copy file="${dist}/zmmt.jar" tofile="${build}/ZT/zmmt.jar"/>
+		<!-- Generate manifest -->
+		<manifest file="${dist}/mymanifest">
+			<attribute name="Built-By" value="${version} ${creator}"/>
+			<attribute name="Class-path" value="zmmt.jar zdk.jar"/>  
+			<attribute name="Main-Class" value="nl.zeesoft.zmmt.ZeeTracker"/>
+		</manifest>		
+		<jar jarfile="${dist}/ZeeTracker.jar" basedir="${build}/ZT" manifest="dist/mymanifest"/>
 	</target>
 
 	<target name="release" description="Release the ZMMT">
@@ -112,7 +127,7 @@
             <fileset dir="${src}" />
         </copy>		
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zmmt,nl.zeesoft.zmmt.orchestra,nl.zeesoft.zmmt.orchestra.client,nl.zeesoft.zmmt.orchestra.controller,nl.zeesoft.zmmt.orchestra.members,nl.zeesoft.zmmt.orchestra.protocol"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zmmt,nl.zeesoft.zmmt.composition,nl.zeesoft.zmmt.gui,nl.zeesoft.zmmt.gui.panel,nl.zeesoft.zmmt.gui.state,nl.zeesoft.zmmt.player,nl.zeesoft.zmmt.recorder,nl.zeesoft.zmmt.sequencer,nl.zeesoft.zmmt.synthesizer"/>
 		<zip destfile="${dist}/zmmt-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>

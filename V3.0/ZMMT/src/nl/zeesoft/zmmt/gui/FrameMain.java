@@ -33,6 +33,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private static final String	SAVE				= "SAVE";
 	private static final String	SAVE_AS				= "SAVE_AS";
 	private static final String	NEW					= "NEW";
+	private static final String	DEMO				= "DEMO";
 	
 	public static final String	EDIT_UNDO			= "EDIT_UNDO";
 	public static final String	EDIT_REDO			= "EDIT_REDO";
@@ -163,7 +164,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		} else if (evt.getActionCommand().equals(SAVE_AS)) {
 			getController().saveCompositionAs();
 		} else if (evt.getActionCommand().equals(NEW)) {
-			getController().newComposition();
+			getController().newComposition(false);
+		} else if (evt.getActionCommand().equals(DEMO)) {
+			getController().newComposition(true);
 		} else if (evt.getActionCommand().equals(TAB_COMPOSITION)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_COMPOSITION);
 		} else if (evt.getActionCommand().equals(TAB_INSTRUMENTS)) {
@@ -293,6 +296,11 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item = new JMenuItem("New",KeyEvent.VK_N);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,evt));
 		item.setActionCommand(NEW);
+		item.addActionListener(this);
+		fileMenu.add(item);
+
+		item = new JMenuItem("Demo",KeyEvent.VK_D);
+		item.setActionCommand(DEMO);
 		item.addActionListener(this);
 		fileMenu.add(item);
 

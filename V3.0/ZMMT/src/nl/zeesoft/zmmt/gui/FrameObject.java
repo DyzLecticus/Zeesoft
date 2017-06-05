@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
-import nl.zeesoft.zmmt.gui.image.ImageIconLabel;
+import nl.zeesoft.zdk.image.ImageIcon;
 
 public abstract class FrameObject {
 	private	Controller	controller	= null;
@@ -12,7 +12,7 @@ public abstract class FrameObject {
 	
 	public FrameObject(Controller controller) {
 		this.controller = controller;
-		frame.setIconImage(new ImageIconLabel("z",32,Color.WHITE).getBufferedImage());
+		frame.setIconImage(new ImageIcon("z",32,Color.WHITE).getBufferedImage());
 		frame.addKeyListener(controller.getPlayerKeyListener());
 	}
 

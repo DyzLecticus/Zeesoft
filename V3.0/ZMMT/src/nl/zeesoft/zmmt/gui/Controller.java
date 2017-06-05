@@ -113,7 +113,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		String err = "";
 
 		lockMe(this);
-		Composition comp = settings.getNewComposition();
+		Composition comp = settings.getNewComposition(false);
 		unlockMe(this);
 		setComposition(comp);
 		
@@ -396,20 +396,22 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 	
-	protected void newComposition() {
+	protected void newComposition(boolean demo) {
 		boolean confirmed = true;
 		if (stateManager.isCompositionChanged()) {
 			confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to create a new composition?");
 		}
 		if (confirmed) {
+			Settings settingsCopy = null;
 			lockMe(this);
 			settings.setWorkingCompositionFileName("");
 			settings.setWorkingCompositionPattern(0);
+			settingsCopy = settings.copy();
 			compositionFile = null;
 			unlockMe(this);
 			stopSequencer();
-			setComposition(settings.getNewComposition());
-			stateManager.setSettings(this,settings.copy());
+			setComposition(settingsCopy.getNewComposition(demo));
+			stateManager.setSettings(this,settingsCopy.copy());
 			stateManager.setSelectedTab(this,FrameMain.TAB_COMPOSITION);
 		}
 	}

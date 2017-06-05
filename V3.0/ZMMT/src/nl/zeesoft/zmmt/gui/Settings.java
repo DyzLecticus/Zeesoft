@@ -1,10 +1,12 @@
 package nl.zeesoft.zmmt.gui;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zmmt.composition.Composition;
@@ -17,6 +19,7 @@ public class Settings {
 			
 	private static final String			WORK_DIR					= "ZeeTracker";
 	private static final String			SETTINGS_JSON				= "settings.json";
+	private static final String			DEMO_COMPOSITION			= "resources/DemoComposition.ztc";
 	
 	private	String						composer					= "";
 	
@@ -202,14 +205,42 @@ public class Settings {
 		}
 	}
 
-	public Composition getNewComposition() {
+	public Composition getNewComposition(boolean demo) {
+		Composition composition = null;
+		if (demo) {
+			composition = getNewDemoComposition();
+		} else {
+			composition = new Composition();
+			composition.setComposer(composer);
+			composition.setBeatsPerMinute(defaultBeatsPerMinute);
+			composition.setBeatsPerBar(defaultBeatsPerBar);
+			composition.setStepsPerBeat(defaultStepsPerBeat);
+			composition.setBarsPerPattern(defaultBarsPerPattern);
+			composition.setSynthesizerConfiguration(synthesizerConfiguration.copy());
+		}
+		return composition;
+	}
+	
+	public Composition getNewDemoComposition() {
 		Composition composition = new Composition();
-		composition.setComposer(composer);
-		composition.setBeatsPerMinute(defaultBeatsPerMinute);
-		composition.setBeatsPerBar(defaultBeatsPerBar);
-		composition.setStepsPerBeat(defaultStepsPerBeat);
-		composition.setBarsPerPattern(defaultBarsPerPattern);
-		composition.setSynthesizerConfiguration(synthesizerConfiguration.copy());
+		String err = "";
+		ZStringBuilder sb = new ZStringBuilder();
+		InputStream is = getClass().getResourceAsStream(DEMO_COMPOSITION);
+		if (is!=null) {
+			err = sb.fromInputStream(is);
+		} else {
+			File file = new File(DEMO_COMPOSITION);
+			if (file.exists()) {
+				err = sb.fromFile(DEMO_COMPOSITION);
+			}
+		}
+		if (err.length()==0) {
+			JsFile json = new JsFile();
+			json.fromStringBuilder(sb);
+			composition.fromJson(json);
+		} else {
+			System.err.println(err);
+		}
 		return composition;
 	}
 	
