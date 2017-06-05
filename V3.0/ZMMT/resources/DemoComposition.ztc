@@ -28,7 +28,7 @@
       "layer1MidiNum": 7,
       "layer1Pressure": 0,
       "layer1Pan": 48,
-      "layer1Reverb": 40,
+      "layer1Reverb": 16,
       "layer1BaseOctave": 2,
       "layer1BaseVelocity": 110,
       "layer1AccentVelocity": 120
@@ -38,7 +38,7 @@
       "layer1MidiNum": 25,
       "layer1Pressure": 0,
       "layer1Pan": 80,
-      "layer1Reverb": 40,
+      "layer1Reverb": 16,
       "layer1BaseOctave": 2,
       "layer1BaseVelocity": 110,
       "layer1AccentVelocity": 120
@@ -75,7 +75,7 @@
       "layer1MidiNum": 62,
       "layer1Pressure": 0,
       "layer1Pan": 80,
-      "layer1Reverb": 80,
+      "layer1Reverb": 40,
       "layer1BaseOctave": 3,
       "layer1BaseVelocity": 84,
       "layer1AccentVelocity": 96
@@ -127,8 +127,8 @@
       "layer1BaseVelocity": 120,
       "layer1AccentVelocity": 127,
       "layer2MidiNote": 41,
-      "layer2BaseVelocity": 100,
-      "layer2AccentVelocity": 110
+      "layer2BaseVelocity": 80,
+      "layer2AccentVelocity": 100
     },
     "drum": {
       "name": "Clap",

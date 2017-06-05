@@ -106,7 +106,12 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 			stepsPerBeat.setValue(String.format("%03d",evt.getComposition().getStepsPerBeat()));
 			barsPerPattern.setValue(String.format("%03d",evt.getComposition().getBarsPerPattern()));
 		} else if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
-			file.setValue((new File(evt.getSettings().getWorkingCompositionFileName())).getAbsolutePath());
+			String fileName = evt.getSettings().getWorkingCompositionFileName();
+			if (fileName.length()>0) {
+				file.setValue((new File(fileName)).getAbsolutePath());
+			} else {
+				file.setValue("");
+			}
 		}
 		setValidate(true);
 	}

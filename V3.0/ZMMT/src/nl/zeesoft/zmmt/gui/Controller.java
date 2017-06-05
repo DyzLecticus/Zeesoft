@@ -410,9 +410,9 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			compositionFile = null;
 			unlockMe(this);
 			stopSequencer();
-			setComposition(settingsCopy.getNewComposition(demo));
-			stateManager.setSettings(this,settingsCopy.copy());
 			stateManager.setSelectedTab(this,FrameMain.TAB_COMPOSITION);
+			stateManager.setSettings(this,settingsCopy.copy());
+			setComposition(settingsCopy.getNewComposition(demo));
 		}
 	}
 
