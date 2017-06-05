@@ -77,8 +77,6 @@
 
 	<target name="distZT" depends="dist" description="Generate the ZeeTracker distribution">
 		<mkdir dir="${build}/ZT"/>
-		<copy file="${dist}/zdk.jar" tofile="${build}/ZT/zdk.jar"/>
-		<copy file="${dist}/zmmt.jar" tofile="${build}/ZT/zmmt.jar"/>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
