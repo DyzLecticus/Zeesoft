@@ -39,7 +39,8 @@ public class TestMidiLayout extends TestObject {
 			System.out.println("Instrument: " + synth.getLoadedInstruments()[0].getName());
 			System.out.println("Synthesizer instruments; ");
 			for (int i = 0; i < instruments.length; i++) {
-				System.out.println("  " + i + ": "+ instruments[i].getName());
+				//System.out.println("  " + i + ": "+ instruments[i].getName());
+				System.out.println("  " + i + ": "+ instruments[i]);
 				if (instruments[i].getName().startsWith("Organ 1")) {
 					synth.getChannels()[4].programChange(0,i);
 					//System.out.println("Loading " + instruments[i].getName() + " on channel 4");

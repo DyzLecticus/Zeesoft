@@ -9,6 +9,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
+import javax.sound.midi.Transmitter;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
@@ -26,6 +27,8 @@ public class InitializeMidiDevicesWorker extends Worker {
 			File sf = new File(customSoundFontFileName);
 			if (sf.exists()) {
 				this.soundFont = sf;
+			} else {
+				controller.showErrorMessage(this,"Custom sound font file not found: " + customSoundFontFileName);
 			}
 		}
 	}
@@ -34,7 +37,7 @@ public class InitializeMidiDevicesWorker extends Worker {
 	public void whileWorking() {
 		Sequencer seq = null;
 		try {
-			seq = MidiSystem.getSequencer(true);
+			seq = MidiSystem.getSequencer(false);
 			if (seq!=null) {
 				seq.open();
 				if (seq.isOpen()) {
@@ -49,13 +52,34 @@ public class InitializeMidiDevicesWorker extends Worker {
 			if (seq instanceof Synthesizer) {
 				synth = (Synthesizer) seq;
 			} else {
-				try {
-					synth = MidiSystem.getSynthesizer();
-					if (synth!=null) {
-						synth.open();
+				if (synth==null) {
+					try {
+						synth = MidiSystem.getSynthesizer();
+					} catch (MidiUnavailableException e) {
+						controller.showErrorMessage(this,"Failed to obtain MIDI synthesizer",e);
 					}
-				} catch (MidiUnavailableException e) {
-					controller.showErrorMessage(this,"Failed to initialize MIDI syntesizer",e);
+				}
+				if (synth!=null) {
+					try {
+						synth.open();
+					} catch (MidiUnavailableException e) {
+						controller.showErrorMessage(this,"Failed to open MIDI synthesizer",e);
+					}
+				}
+				if (seq.getTransmitters().size()>0) {
+					for (Transmitter trm: seq.getTransmitters()) {
+						try {
+							trm.setReceiver(synth.getReceiver());
+						} catch (MidiUnavailableException e) {
+							controller.showErrorMessage(this,"Failed to link sequencer to synthesizer",e);
+						}
+					}
+				} else {
+					try {
+						seq.getTransmitter().setReceiver(synth.getReceiver());
+					} catch (MidiUnavailableException e) {
+						controller.showErrorMessage(this,"Failed to link sequencer to synthesizer",e);
+					}
 				}
 			}
 			if (synth!=null && synth.isOpen()) {

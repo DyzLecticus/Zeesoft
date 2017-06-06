@@ -187,7 +187,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 		int	number = 0;
 		Composition comp = null;
 		lockMe(this);
-		if (updateSequence) {
+		if (updateSequence && compositionCopy!=null) {
 			updateSequence = false;
 			update = true;
 			pattern = patternMode;
