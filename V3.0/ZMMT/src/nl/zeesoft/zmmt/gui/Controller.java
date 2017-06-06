@@ -118,6 +118,10 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		setComposition(comp);
 		
 		boolean loading = false;
+		String workDirName = "";
+		
+		lockMe(this);
+		workDirName = settings.getWorkDirName();
 		if (settings.getWorkingCompositionFileName().length()>0) {
 			File file = new File(settings.getWorkingCompositionFileName());
 			if (!file.exists()) {
@@ -127,12 +131,14 @@ public class Controller extends Locker implements StateChangeSubscriber {
 				loading = true;
 			}
 		}
+		unlockMe(this);
 
 		mainFrame.getFrame().setVisible(true);
 
 		if (!loading) {
-			importExportWorker.initialize(settings.getWorkDirName());
+			importExportWorker.initialize(workDirName);
 		}
+		
 		player.start();
 		sequencePlayerWorker.start();
 		
@@ -312,15 +318,15 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	}
 
 	public void playNote(int note,boolean accent) {
-		lockMe(this);
 		List<MidiNote> notes = getNotes(note,accent);
+		lockMe(this);
 		player.playInstrumentNotes(notes);
 		unlockMe(this);
 	}
 
 	public void stopNote(int note) {
-		lockMe(this);
 		List<MidiNote> notes = getNotes(note,false);
+		lockMe(this);
 		player.stopInstrumentNotes(notes);
 		unlockMe(this);
 	}
