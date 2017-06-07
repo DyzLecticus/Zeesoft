@@ -43,6 +43,8 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	private ControllerWindowAdapter		adapter						= null;
 	private FrameMain					mainFrame					= null;
+	private WindowBusy					busyWindow					= null;
+	
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
 	private PatternGridKeyListener		patternKeyListener			= null;
@@ -101,6 +103,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
+		busyWindow = new WindowBusy(getMessenger(),mainFrame.getFrame());
 		
 		importExportWorker = new ImportExportWorker(getMessenger(),getUnion(),this);
 	}
@@ -251,16 +254,25 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		return file;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public void setBusy(Object source,String busy,String details) {
+		busyWindow.setBusy(source,busy,details);
 		if (mainFrame!=null) {
-			mainFrame.getFrame().setEnabled(enabled);
+			mainFrame.getFrame().setEnabled(false);
+		}
+	}
+
+	public void setDone(Object source) {
+		if (busyWindow.setDone(source)==0) {
+			if (mainFrame!=null) {
+				mainFrame.getFrame().setEnabled(true);
+			}
 		}
 	}
 
 	public WorkerUnion getUnion() {
 		return union;
 	}
-
+	
 	public StateManager getStateManager() {
 		return stateManager;
 	}
@@ -384,12 +396,14 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	}
 
 	protected void saveComposition() {
-		if (importExportWorker.isWorking()) {
-			showErrorMessage(this,"Import/export worker is busy");
-		} else if (stateManager.isCompositionChanged()) {
-			Composition copy = stateManager.getComposition().copy();
-			File file = compositionFile;
-			importExportWorker.saveComposition(copy,file);
+		if (stateManager.isCompositionChanged()) {
+			if (importExportWorker.isWorking()) {
+				showErrorMessage(this,"Import/export worker is busy");
+			} else {
+				Composition copy = stateManager.getComposition().copy();
+				File file = compositionFile;
+				importExportWorker.saveComposition(copy,file);
+			}
 		}
 	}
 
@@ -416,17 +430,30 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			compositionFile = null;
 			unlockMe(this);
 			stopSequencer();
-			stateManager.setSelectedTab(this,FrameMain.TAB_COMPOSITION);
-			stateManager.setSettings(this,settingsCopy.copy());
-			setComposition(settingsCopy.getNewComposition(demo));
+			if (demo) {
+				if (importExportWorker.isWorking()) {
+					showErrorMessage(this,"Import/export worker is busy");
+				} else {
+					importExportWorker.loadDemoComposition(settingsCopy);
+				}
+			} else {
+				stateManager.setSelectedTab(this,FrameMain.TAB_COMPOSITION);
+				stateManager.setSettings(this,settingsCopy.copy());
+				setComposition(settingsCopy.getNewComposition(demo));
+			}
 		}
 	}
 
 	protected void loadedComposition(File file,Composition comp) {
 		Settings settingsCopy = null;
 		lockMe(this);
-		settings.setWorkingCompositionFileName(file.getAbsolutePath());
-		compositionFile = file;
+		if (file!=null) {
+			settings.setWorkingCompositionFileName(file.getAbsolutePath());
+			compositionFile = file;
+		} else {
+			settings.setWorkingCompositionFileName("");
+			compositionFile = null;
+		}
 		settingsCopy = settings.copy();
 		unlockMe(this);
 		stateManager.setSettings(this,settingsCopy);

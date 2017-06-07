@@ -85,6 +85,7 @@ public class InitializeMidiDevicesWorker extends Worker {
 			if (synth!=null && synth.isOpen()) {
 				controller.setSynthesizer(synth);
 				if (soundFont!=null) {
+					controller.setBusy(this,"Loading custom sound font",soundFont.getAbsolutePath());
 					Soundbank defaultSoundbank = synth.getDefaultSoundbank();
 					Soundbank customSoundbank = null;
 					try {
@@ -96,6 +97,7 @@ public class InitializeMidiDevicesWorker extends Worker {
 						synth.unloadAllInstruments(defaultSoundbank);
 						synth.loadAllInstruments(customSoundbank);
 					}
+					controller.setDone(this);
 				}
 			}
 		}

@@ -105,7 +105,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			workingPattern = null;
 			selectedPattern = evt.getSelectedPattern();
 			pattern.setSelectedIndex(selectedPattern);
-			pattern.repaint();
 			updateWorkingPattern();
 			if (gridController.setLayout(
 				compositionCopy.getBarsPerPattern(),

@@ -16,22 +16,23 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 
 public class ImportExportWorker extends Worker {
-	private static final String		INITIALIZE			= "INITIALIZE";
-	private static final String		LOAD_COMPOSITION	= "LOAD_COMPOSITION";
-	private static final String		SAVE_COMPOSITION	= "SAVE_COMPOSITION";
+	private static final String		INITIALIZE				= "INITIALIZE";
+	private static final String		LOAD_COMPOSITION		= "LOAD_COMPOSITION";
+	private static final String		SAVE_COMPOSITION		= "SAVE_COMPOSITION";
+	private static final String		LOAD_DEMO_COMPOSITION	= "LOAD_DEMO_COMPOSITION";
 	
-	private Controller				controller			= null;
+	private Controller				controller				= null;
 
-	private String					workingDirName		= "";
-	private boolean					initializing		= false;
-	private JFileChooser			fileChooser			= null;
+	private String					workingDirName			= "";
+	private boolean					initializing			= false;
+	private JFileChooser			fileChooser				= null;
 	
-	private String					action				= "";
-	private	Object					actionObject		= null;
-	private File					actionFile			= null;
+	private String					action					= "";
+	private	Object					actionObject			= null;
+	private File					actionFile				= null;
 	
-	private FileFilter				compositionFilter	= null;
-	private FileFilter				midiFilter			= null;
+	private FileFilter				compositionFilter		= null;
+	private FileFilter				midiFilter				= null;
 
 	public ImportExportWorker(Messenger msgr, WorkerUnion union,Controller controller) {
 		super(msgr, union);
@@ -96,6 +97,10 @@ public class ImportExportWorker extends Worker {
 	public void saveComposition(Composition composition,File file) {
 		handleAction(SAVE_COMPOSITION,composition,file);
 	}
+
+	public void loadDemoComposition(Settings settings) {
+		handleAction(LOAD_DEMO_COMPOSITION,settings,null);
+	}
 	
 	@Override
 	public void whileWorking() {
@@ -112,7 +117,10 @@ public class ImportExportWorker extends Worker {
 				initializing = false;
 			}
 			unlockMe(this);
-		} else {
+		} else if (
+			action.equals(LOAD_COMPOSITION) || 
+			action.equals(SAVE_COMPOSITION)
+			) {
 			boolean selected = false;
 			File file = actionFile;
 			if (file==null) {
@@ -121,16 +129,15 @@ public class ImportExportWorker extends Worker {
 			}
 			if (file!=null) {
 				if (action.equals(LOAD_COMPOSITION)) {
-					controller.setEnabled(false);
+					controller.setBusy(this,"Loading composition",file.getAbsolutePath());
 					JsFile json = new JsFile();
 					err = json.fromFile(file.getAbsolutePath());
 					if (err.length()==0) {
 						Composition comp = new Composition();
 						comp.fromJson(json);
-						actionObject = comp;
-						controller.loadedComposition(file,(Composition) actionObject);
+						controller.loadedComposition(file,comp);
 					}
-					controller.setEnabled(true);
+					controller.setDone(this);
 				} else if (action.equals(SAVE_COMPOSITION)) {
 					if ((!file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) &&
 						(!file.getName().endsWith(Settings.EXTENSION_MIDI))
@@ -146,7 +153,7 @@ public class ImportExportWorker extends Worker {
 						confirmed = controller.showConfirmMessage("Are you sure you want to overwrite the selected file?");
 					}
 					if (confirmed) {
-						controller.setEnabled(false);
+						controller.setBusy(this,"Saving composition",file.getAbsolutePath());
 						if (file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) {
 							err = ((Composition) actionObject).toJson().toFile(file.getAbsolutePath(),true);
 							if (err.length()==0) {
@@ -166,10 +173,16 @@ public class ImportExportWorker extends Worker {
 								err = "Failed to write MIDI file: " + file.getAbsolutePath();
 							} 
 						}
-						controller.setEnabled(true);
+						controller.setDone(this);
 					}
 				}
 			}
+		} else if (action.equals(LOAD_DEMO_COMPOSITION)) {
+			controller.setBusy(this,"Loading demo composition","");
+			Settings settings = (Settings) actionObject;
+			Composition composition = settings.getNewComposition(true);
+			controller.loadedComposition(null,composition);
+			controller.setDone(this);
 		}
 		if (err.length()>0) {
 			controller.showErrorMessage(this,err);
