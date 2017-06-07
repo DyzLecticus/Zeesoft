@@ -34,13 +34,13 @@ public class Pattern {
 			for (Note note: notes) {
 				JsElem stepElem = new JsElem();
 				stepsElem.children.add(stepElem);
-				stepElem.children.add(new JsElem("instrument",note.instrument,true));
-				stepElem.children.add(new JsElem("track","" + note.track));
-				stepElem.children.add(new JsElem("step","" + note.step));
-				stepElem.children.add(new JsElem("note","" + note.note));
-				stepElem.children.add(new JsElem("duration","" + note.duration));
-				stepElem.children.add(new JsElem("accent","" + note.accent));
-				stepElem.children.add(new JsElem("velocityPercentage","" + note.velocityPercentage));
+				stepElem.children.add(new JsElem("i",note.instrument,true));
+				stepElem.children.add(new JsElem("t","" + note.track));
+				stepElem.children.add(new JsElem("s","" + note.step));
+				stepElem.children.add(new JsElem("n","" + note.note));
+				stepElem.children.add(new JsElem("d","" + note.duration));
+				stepElem.children.add(new JsElem("a","" + note.accent));
+				stepElem.children.add(new JsElem("v","" + note.velocityPercentage));
 			}
 		}
 		return json;
@@ -57,19 +57,19 @@ public class Pattern {
 				for (JsElem stepElem: elem.children) {
 					Note note = new Note();
 					for (JsElem valElem: stepElem.children) {
-						if (valElem.name.equals("instrument")) {
+						if (valElem.name.equals("i")) {
 							note.instrument = valElem.value.toString();
-						} else if (valElem.name.equals("track")) {
+						} else if (valElem.name.equals("t")) {
 							note.track = Integer.parseInt(valElem.value.toString());
-						} else if (valElem.name.equals("step")) {
+						} else if (valElem.name.equals("s")) {
 							note.step = Integer.parseInt(valElem.value.toString());
-						} else if (valElem.name.equals("duration")) {
+						} else if (valElem.name.equals("d")) {
 							note.duration = Integer.parseInt(valElem.value.toString());
-						} else if (valElem.name.equals("note")) {
+						} else if (valElem.name.equals("n")) {
 							note.note = Integer.parseInt(valElem.value.toString());
-						} else if (valElem.name.equals("accent")) {
+						} else if (valElem.name.equals("a")) {
 							note.accent = Boolean.parseBoolean(valElem.value.toString());
-						} else if (valElem.name.equals("velocityPercentage")) {
+						} else if (valElem.name.equals("v")) {
 							note.velocityPercentage = Integer.parseInt(valElem.value.toString());
 						}
 					}

@@ -155,7 +155,7 @@ public class ImportExportWorker extends Worker {
 					if (confirmed) {
 						controller.setBusy(this,"Saving composition",file.getAbsolutePath());
 						if (file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) {
-							err = ((Composition) actionObject).toJson().toFile(file.getAbsolutePath(),true);
+							err = ((Composition) actionObject).toJson().toFile(file.getAbsolutePath(),false);
 							if (err.length()==0) {
 								controller.savedComposition(file,(Composition) actionObject);
 							}

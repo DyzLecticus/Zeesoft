@@ -265,6 +265,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (busyWindow.setDone(source)==0) {
 			if (mainFrame!=null) {
 				mainFrame.getFrame().setEnabled(true);
+				mainFrame.switchTo(stateManager.getSelectedTab());
 			}
 		}
 	}

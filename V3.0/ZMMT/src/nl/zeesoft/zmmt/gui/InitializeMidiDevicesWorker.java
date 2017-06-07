@@ -35,6 +35,7 @@ public class InitializeMidiDevicesWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
+		controller.setBusy(this,"Initializing MIDI devices","");
 		Sequencer seq = null;
 		try {
 			seq = MidiSystem.getSequencer(false);
@@ -97,10 +98,10 @@ public class InitializeMidiDevicesWorker extends Worker {
 						synth.unloadAllInstruments(defaultSoundbank);
 						synth.loadAllInstruments(customSoundbank);
 					}
-					controller.setDone(this);
 				}
 			}
 		}
+		controller.setDone(this);
 		stop();
 	}
 }
