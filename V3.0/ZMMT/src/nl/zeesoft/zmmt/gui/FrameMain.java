@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zmmt.gui.panel.PanelComposition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
 import nl.zeesoft.zmmt.gui.panel.PanelObject;
@@ -26,7 +27,7 @@ import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
-public class FrameMain extends FrameObject implements ActionListener, ChangeListener, StateChangeSubscriber {
+public class FrameMain extends FrameObject implements ActionListener, ChangeListener, StateChangeSubscriber, Describer {
 	private static final String	TITLE				= "ZeeTracker";
 
 	private static final String	LOAD				= "LOAD";
@@ -74,6 +75,31 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		selectedTab = controller.getStateManager().getSelectedTab();
 	}
 
+	@Override
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("ZeeTracker Help\n");
+		r.append("===============\n");
+		r.append("ZeeTracker is designed to provide a fast music creating workflow.\n");
+		r.append("The interface is based on mod trackers like Scream Tracker and Impulse Tracker.\n");
+		r.append("This means that the program is made for keyboard control.\n");
+		r.append("For instance, if you explore the menu bar you will see that most menu options have keyboard shortcuts.\n");
+		r.append("\n");
+		r.append("File\n");
+		r.append(" * Load  \n");
+		r.append("   Presents a file dialog allowing the user to load a ZeeTracker composition file (*.ztc).\n");
+		r.append(" * Save  \n");
+		r.append("   When the current composition has not been saved yet, this option will presents a file dialog allowing the user to save the composition file.\n");
+		r.append("   Else the current working composition file is overwritten and the undo buffer is cleared.\n");
+		r.append(" * Save as  \n");
+		r.append("   Presents a file dialog allowing the user to save a composition as a ZeeTracker composition (*.ztc) or a MIDI file (*.mid).\n");
+		r.append(" * New  \n");
+		r.append("   Creates a new ZeeTracker composition file based on the current settings.\n");
+		r.append(" * Demo  \n");
+		r.append("   Loads the ZeeTracker demo composition.\n");
+		return r;
+	}
+	
 	@Override
 	public void initialize() {
 		getFrame().setTitle(TITLE);
