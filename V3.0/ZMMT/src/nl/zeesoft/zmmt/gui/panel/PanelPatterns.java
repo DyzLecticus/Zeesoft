@@ -13,11 +13,14 @@ import java.util.List;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -37,11 +40,20 @@ import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
+	public static final String		EDIT_NOTES						= "EDIT_NOTES";
+	public static final String		EDIT_CONTROLS					= "EDIT_CONTROLS";
+	
 	private static final String		PAGE_DOWN						= "PAGE_DOWN";
 	private static final String		PAGE_UP							= "PAGE_UP";
+	private static final String		SHIFT_PAGE_DOWN					= "SHIFT_PAGE_DOWN";
+	private static final String		SHIFT_PAGE_UP					= "SHIFT_PAGE_UP";
 	
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
+	
+	private JRadioButton			editNotes						= null;
+	private JRadioButton			editControls					= null;
+	private String					selectedEditMode				= "";
 
 	private int						barsPerPattern					= 0;
 	private JComboBox<String>		bars							= null;
@@ -69,6 +81,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		controller.getStateManager().addSubscriber(this);
 		controller.addSequencerMetaListener(this);
 		controller.addSequencerSubscriber(this);
+		selectedEditMode = controller.getStateManager().getPatternEditMode();
 		selectedPattern = controller.getStateManager().getSelectedPattern();
 	}
 
@@ -98,7 +111,14 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		if (evt.getType().equals(StateChangeEvent.SELECTED_PATTERN)) {
+		if (evt.getType().equals(StateChangeEvent.CHANGED_PATTERN_EDIT_MODE)) {
+			selectedEditMode = evt.getPatternEditMode();
+			if (selectedEditMode.equals(EDIT_NOTES) && !editNotes.isSelected()) {
+				editNotes.doClick();
+			} else if (selectedEditMode.equals(EDIT_CONTROLS) && !editControls.isSelected()) {
+				editControls.doClick();
+			}
+		} else if (evt.getType().equals(StateChangeEvent.SELECTED_PATTERN)) {
 			selectedPattern = evt.getSelectedPattern();
 			pattern.setSelectedIndex(selectedPattern);
 			updateWorkingPattern();
@@ -128,43 +148,100 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
 		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
 			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
-		} else if (evt.getActionCommand().equals(PAGE_DOWN)) {
+		} else if (evt.getActionCommand().equals(FrameMain.STOP_PLAYING)) {
+			getController().stopSequencer();
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_EDIT_MODE)) {
+			if (editNotes.isSelected()) {
+				editControls.doClick();
+			} else if (editControls.isSelected()) {
+				editNotes.doClick();
+			}
+		} else if (evt.getActionCommand().equals(EDIT_NOTES)) {
+			getController().getStateManager().setPatternEditMode(evt.getActionCommand());
+		} else if (evt.getActionCommand().equals(EDIT_CONTROLS)) {
+			getController().getStateManager().setPatternEditMode(evt.getActionCommand());
+		} else if (
+			evt.getActionCommand().equals(PAGE_DOWN) ||
+			evt.getActionCommand().equals(SHIFT_PAGE_DOWN)
+			) {
 			if (compositionCopy!=null) {
 				int row = grid.getSelectedRow();
 				if (row<(grid.getRowCount() - 1)) {
+					int[] rows = grid.getSelectedRows();
+					int[] cols = grid.getSelectedColumns();
 					if (row<0) {
 						row = 0;
 					}
+					int rowFrom = row;
+					if (rows.length>0 && (rows[0] - rows[(rows.length - 1)])!=0) {
+						row = rows[(rows.length - 1)];
+					} else if (evt.getActionCommand().equals(SHIFT_PAGE_DOWN)) {
+						row = row - 1;
+					}
 					row = row + compositionCopy.getStepsPerBar();
-					int col = grid.getSelectedColumn();
 					if (row>=grid.getRowCount()) {
 						row = (grid.getRowCount() - 1);
 					}
+					int col = grid.getSelectedColumn();
 					if (col<0) {
 						col = 0;
 					}
+					int colFrom = col;
 					grid.clearSelection();
-					selectAndShow(row,row,col,col);
+					if (evt.getActionCommand().equals(SHIFT_PAGE_DOWN)) {
+						if (cols.length>0) {
+							colFrom = cols[0];
+							col = cols[(cols.length - 1)];
+						}
+						selectAndShow(rowFrom,row,colFrom,col,true);
+					} else {
+						selectAndShow(row,row,col,col,true);
+					}
 				}
 			}
-		} else if (evt.getActionCommand().equals(PAGE_UP)) {
+		} else if (
+			evt.getActionCommand().equals(PAGE_UP) ||
+			evt.getActionCommand().equals(SHIFT_PAGE_UP)
+			) {
 			if (compositionCopy!=null) {
-				int row = grid.getSelectedRow();
-				if (row>0) {
-					row = row - compositionCopy.getStepsPerBar();
-					int col = grid.getSelectedColumn();
+				int[] rows = grid.getSelectedRows();
+				if (rows.length>0) {
+					boolean showTo = false;
+					int[] cols = grid.getSelectedColumns();
+					int row = rows[0];
+					int rowTo = rows[(rows.length - 1)];
+					if (row==0 && (rowTo - row)!=0) {
+						rowTo = rowTo - compositionCopy.getStepsPerBar();
+						showTo = true;
+					} else {
+						if ((rowTo - row)==0) {
+							row = row + 1;
+						}
+						row = row - compositionCopy.getStepsPerBar();
+					}
 					if (row<0) {
 						row = 0;
 					}
+					if (rowTo<row) {
+						rowTo = 0;
+					}
+					int col = grid.getSelectedColumn();
 					if (col<0) {
 						col = 0;
 					}
+					int colFrom = col;
 					grid.clearSelection();
-					selectAndShow(row,row,col,col);
+					if (evt.getActionCommand().equals(SHIFT_PAGE_UP)) {
+						if (cols.length>0) {
+							colFrom = cols[0];
+							col = cols[(cols.length - 1)];
+						}
+						selectAndShow(row,rowTo,colFrom,col,showTo);
+					} else {
+						selectAndShow(row,row,col,col,false);
+					}
 				}
 			}
-		} else if (evt.getActionCommand().equals(FrameMain.STOP_PLAYING)) {
-			getController().stopSequencer();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
 			pattern.requestFocus();
 			pattern.showPopup();
@@ -237,7 +314,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 					row = (grid.getRowCount() - 1);
 				}
 				grid.clearSelection();
-				selectAndShow(row,row,col,col);
+				selectAndShow(row,row,col,col,true);
 				if (changed) {
 					changedPattern();
 				}
@@ -336,17 +413,23 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			}
 			selectAndShow(
 				rowFrom,rowTo,
-				selectedCols[0],selectedCols[(selectedCols.length - 1)]
+				selectedCols[0],selectedCols[(selectedCols.length - 1)],
+				true
 				);
 			selected = true;
 		}
 		return selected;
 	}
 
-	protected void selectAndShow(int rowFrom, int rowTo, int colFrom, int colTo) {
+	protected void selectAndShow(int rowFrom, int rowTo, int colFrom, int colTo,boolean showTo) {
 		grid.addRowSelectionInterval(rowFrom,rowTo);
 		grid.addColumnSelectionInterval(colFrom,colTo);
-		Rectangle rect = grid.getCellRect(rowFrom,colFrom,true);
+		Rectangle rect = null;
+		if (showTo) {
+			rect = grid.getCellRect(rowTo,colTo,true);
+		} else {
+			rect = grid.getCellRect(rowFrom,colFrom,true);
+		}
 		rect.height = rect.height + 20;
 		rect.width = rect.width + 100;
 		grid.scrollRectToVisible(rect);
@@ -722,6 +805,15 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,0,false);
 		grid.registerKeyboardAction(this,PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
 
+		// Shift page down override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,ActionEvent.SHIFT_MASK,false);
+		grid.registerKeyboardAction(this,SHIFT_PAGE_DOWN,stroke,JComponent.WHEN_FOCUSED);
+
+		// Shift page up override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.SHIFT_MASK,false);
+		grid.registerKeyboardAction(this,SHIFT_PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
+
+
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);
@@ -784,6 +876,35 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		labelProp.add(pattern);
 		r.add(labelProp,BorderLayout.LINE_START);
 
+		editNotes = new JRadioButton("Notes");
+		editNotes.setActionCommand(EDIT_NOTES);
+		editNotes.addActionListener(this);
+		
+		editControls = new JRadioButton("Controls");
+		editControls.setActionCommand(EDIT_CONTROLS);
+		editControls.addActionListener(this);
+
+		ButtonGroup group = new ButtonGroup();
+		group.add(editNotes);
+		group.add(editControls);
+		
+		if (selectedEditMode.equals(EDIT_NOTES)) {
+			editNotes.doClick();
+		} else if (selectedEditMode.equals(EDIT_CONTROLS)) {
+			editControls.doClick();
+		}
+		
+		JPanel edit = new JPanel();
+		edit.setLayout(new BoxLayout(edit,BoxLayout.X_AXIS));
+		edit.add(editNotes);
+		edit.add(editControls);
+		
+		JPanel wrapper = new JPanel();
+		wrapper.setLayout(new GridBagLayout());
+		wrapper.add(edit);
+		
+		r.add(wrapper,BorderLayout.CENTER);
+		
 		insertMode = new JCheckBox("Insert ");
 		insertMode.addKeyListener(getController().getPlayerKeyListener());
 		r.add(insertMode,BorderLayout.LINE_END);

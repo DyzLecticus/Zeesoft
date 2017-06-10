@@ -11,6 +11,7 @@ import nl.zeesoft.zmmt.gui.Settings;
 public abstract class StateObject extends Locker {
 	private String 					selectedTab				= "";
 	private String 					selectedInstrument		= "";
+	private String 					patternEditMode			= "";
 	private int 					selectedPattern			= 0;
 	private int 					selectedPatternRowFrom	= -1;
 	private int 					selectedPatternRowTo	= -1;
@@ -45,6 +46,14 @@ public abstract class StateObject extends Locker {
 	
 	protected void setSelectedInstrument(String selectedInstrument) {
 		this.selectedInstrument = selectedInstrument;
+	}
+
+	public String getPatternEditMode() {
+		return patternEditMode;
+	}
+
+	public void setPatternEditMode(String patternEditMode) {
+		this.patternEditMode = patternEditMode;
 	}
 
 	public int getSelectedPattern() {

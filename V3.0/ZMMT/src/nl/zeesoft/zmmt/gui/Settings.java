@@ -28,9 +28,10 @@ public class Settings {
 	private int							defaultStepsPerBeat			= 8;
 	private int							defaultBarsPerPattern		= 4;
 	
-	private String						workingCompositionFileName	= "";
 	private String						workingTab					= "";
 	private String						workingInstrument			= "";
+	private String						workingPatternEditMode		= "";
+	private String						workingCompositionFileName	= "";
 	private int							workingCompositionPattern	= 0;
 
 	private String						customSoundFontFileName		= "";
@@ -85,9 +86,10 @@ public class Settings {
 		copy.setDefaultBeatsPerBar(defaultBeatsPerBar);
 		copy.setDefaultStepsPerBeat(defaultStepsPerBeat);
 		copy.setDefaultBarsPerPattern(defaultBarsPerPattern);
-		copy.setWorkingCompositionFileName(workingCompositionFileName);
 		copy.setWorkingTab(workingTab);
 		copy.setWorkingInstrument(workingInstrument);
+		copy.setWorkingPatternEditMode(workingPatternEditMode);
+		copy.setWorkingCompositionFileName(workingCompositionFileName);
 		copy.setWorkingCompositionPattern(workingCompositionPattern);
 		copy.setCustomSoundFontFileName(customSoundFontFileName);
 		copy.setCustomFontName(customFontName);
@@ -143,6 +145,7 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("defaultBarsPerPattern","" + defaultBarsPerPattern));
 		json.rootElement.children.add(new JsElem("workingTab",workingTab,true));
 		json.rootElement.children.add(new JsElem("workingInstrument",workingInstrument,true));
+		json.rootElement.children.add(new JsElem("workingPatternEditMode",workingPatternEditMode,true));
 		json.rootElement.children.add(new JsElem("workingCompositionFileName",workingCompositionFileName,true));
 		json.rootElement.children.add(new JsElem("workingCompositionPattern","" + workingCompositionPattern));
 		json.rootElement.children.add(new JsElem("customSoundFontFileName",customSoundFontFileName,true));
@@ -185,6 +188,8 @@ public class Settings {
 					workingTab = elem.value.toString();
 				} else if (elem.name.equals("workingInstrument")) {
 					workingInstrument = elem.value.toString();
+				} else if (elem.name.equals("workingPatternEditMode")) {
+					workingPatternEditMode = elem.value.toString();
 				} else if (elem.name.equals("workingCompositionFileName")) {
 					workingCompositionFileName = elem.value.toString();
 				} else if (elem.name.equals("workingCompositionPattern")) {
@@ -309,6 +314,14 @@ public class Settings {
 
 	public void setWorkingInstrument(String workingInstrument) {
 		this.workingInstrument = workingInstrument;
+	}
+
+	public String getWorkingPatternEditMode() {
+		return workingPatternEditMode;
+	}
+
+	public void setWorkingPatternEditMode(String workingPatternEditMode) {
+		this.workingPatternEditMode = workingPatternEditMode;
 	}
 
 	public String getWorkingCompositionFileName() {

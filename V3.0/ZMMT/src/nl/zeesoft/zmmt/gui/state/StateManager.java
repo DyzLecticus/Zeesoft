@@ -9,6 +9,7 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.Settings;
+import nl.zeesoft.zmmt.gui.panel.PanelPatterns;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 public class StateManager extends StateObject {
@@ -25,6 +26,7 @@ public class StateManager extends StateObject {
 		super.setSettings(settings);
 		super.setSelectedTab(FrameMain.TAB_COMPOSITION);
 		super.setSelectedInstrument(Instrument.LEAD);
+		super.setPatternEditMode(PanelPatterns.EDIT_NOTES);
 	}
 	
 	public void start() {
@@ -65,7 +67,16 @@ public class StateManager extends StateObject {
 		}
 		unlockMe(this);
 	}
-	
+
+	public void setPatternEditMode(Object source,String editMode) {
+		lockMe(this);
+		if (!super.getPatternEditMode().equals(editMode)) {
+			super.setPatternEditMode(editMode);
+			publishStateChangeEvent(StateChangeEvent.CHANGED_PATTERN_EDIT_MODE,source);
+		}
+		unlockMe(this);
+	}
+
 	public void setSelectedPattern(Object source,int pattern) {
 		lockMe(this);
 		if (super.getSelectedPattern()!=pattern) {
@@ -229,6 +240,15 @@ public class StateManager extends StateObject {
 	}
 
 	@Override
+	public String getPatternEditMode() {
+		String r = "";
+		lockMe(this);
+		r = super.getPatternEditMode();
+		unlockMe(this);
+		return r;
+	}
+
+	@Override
 	public int getSelectedPattern() {
 		int r = 0;
 		lockMe(this);
@@ -288,6 +308,7 @@ public class StateManager extends StateObject {
 		StateChangeEvent evt = new StateChangeEvent(type,source);
 		evt.setSelectedTab(super.getSelectedTab());
 		evt.setSelectedInstrument(super.getSelectedInstrument());
+		evt.setPatternEditMode(super.getPatternEditMode());
 		evt.setSelectedPattern(super.getSelectedPattern());
 		evt.setSelectedPatternRowFrom(super.getSelectedPatternRowFrom());
 		evt.setSelectedPatternRowTo(super.getSelectedPatternRowTo());

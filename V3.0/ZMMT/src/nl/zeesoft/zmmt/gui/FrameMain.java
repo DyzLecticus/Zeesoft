@@ -40,6 +40,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 
 	public static final String	PATTERN_PREFIX		= "PATTERN_";
 	public static final String	PATTERN_SELECT		= PATTERN_PREFIX + "SELECT";
+	public static final String	PATTERN_EDIT_MODE	= PATTERN_PREFIX + "EDIT_MODE";
 	public static final String	PATTERN_INSERT		= PATTERN_PREFIX + "INSERT";
 	public static final String	PATTERN_EDIT		= PATTERN_PREFIX + "EDIT";
 	public static final String	PATTERN_COPY		= PATTERN_PREFIX + "COPY";
@@ -381,6 +382,12 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item = new JMenuItem("Select pattern",KeyEvent.VK_S);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,evt));
 		item.setActionCommand(PATTERN_SELECT);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+
+		item = new JMenuItem("Toggle edit mode",KeyEvent.VK_O);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,evt));
+		item.setActionCommand(PATTERN_EDIT_MODE);
 		item.addActionListener(this);
 		editPatternMenu.add(item);
 

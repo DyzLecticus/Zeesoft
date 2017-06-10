@@ -86,6 +86,9 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (settings.getWorkingInstrument().length()>0) {
 			stateManager.setSelectedInstrument(this,settings.getWorkingInstrument());
 		}
+		if (settings.getWorkingPatternEditMode().length()>0) {
+			stateManager.setPatternEditMode(this,settings.getWorkingPatternEditMode());
+		}
 		if (settings.getWorkingCompositionPattern()>0) {
 			stateManager.setSelectedPattern(this,settings.getWorkingCompositionPattern());
 		}
@@ -195,6 +198,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 				lockMe(this);
 				settings.setWorkingTab(stateManager.getSelectedTab());
 				settings.setWorkingInstrument(stateManager.getSelectedInstrument());
+				settings.setWorkingPatternEditMode(stateManager.getPatternEditMode());
 				if (settings.getWorkingCompositionFileName().length()>0) {
 					settings.setWorkingCompositionPattern(stateManager.getSelectedPattern());
 				} else {
