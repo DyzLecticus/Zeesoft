@@ -47,6 +47,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	private static final String		PAGE_UP							= "PAGE_UP";
 	private static final String		SHIFT_PAGE_DOWN					= "SHIFT_PAGE_DOWN";
 	private static final String		SHIFT_PAGE_UP					= "SHIFT_PAGE_UP";
+	private static final String		CONTROL_PAGE_DOWN				= "CONTROL_PAGE_DOWN";
+	private static final String		CONTROL_PAGE_UP					= "CONTROL_PAGE_UP";
 	
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
@@ -241,6 +243,14 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 						selectAndShow(row,row,col,col,false);
 					}
 				}
+			}
+		} else if (evt.getActionCommand().equals(CONTROL_PAGE_DOWN)) {
+			if (selectedPattern<99) {
+				getController().getStateManager().setSelectedPattern(this,(selectedPattern + 1));
+			}
+		} else if (evt.getActionCommand().equals(CONTROL_PAGE_UP)) {
+			if (selectedPattern>0) {
+				getController().getStateManager().setSelectedPattern(this,(selectedPattern - 1));
 			}
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
 			pattern.requestFocus();
@@ -813,6 +823,13 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.SHIFT_MASK,false);
 		grid.registerKeyboardAction(this,SHIFT_PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
 
+		// Shift page down override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,ActionEvent.CTRL_MASK,false);
+		grid.registerKeyboardAction(this,CONTROL_PAGE_DOWN,stroke,JComponent.WHEN_FOCUSED);
+
+		// Shift page up override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.CTRL_MASK,false);
+		grid.registerKeyboardAction(this,CONTROL_PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
 
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
