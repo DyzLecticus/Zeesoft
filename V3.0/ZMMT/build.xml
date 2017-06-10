@@ -46,6 +46,7 @@
 		<copy file="build.xml" tofile="${build}/build.xml"/>
 		<mkdir dir="${build}/resources"/>
 		<copy file="resources/DemoComposition.ztc" tofile="${build}/resources/DemoComposition.ztc"/>
+		<copy file="resources/ZeeTrackerDrumKit.sf2" tofile="${build}/resources/ZeeTrackerDrumKit.sf2"/>
 		<!-- Create distribution directory -->
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->

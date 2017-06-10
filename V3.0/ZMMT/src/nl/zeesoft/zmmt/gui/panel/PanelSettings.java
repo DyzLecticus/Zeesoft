@@ -138,7 +138,7 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getActionCommand().equals(SAVE_INSTRUMENTS)) {
-			boolean confirmed = getController().showConfirmMessage("Are you sure you want to save the current instruments defaults");
+			boolean confirmed = getController().showConfirmMessage("Are you sure you want to save the current instruments as defaults");
 			if (confirmed) {
 				settingsCopy.setSynthesizerConfiguration(synthCopy);
 				getController().getStateManager().setSettings(this,settingsCopy.copy());

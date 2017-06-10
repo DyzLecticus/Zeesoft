@@ -137,7 +137,7 @@ public class ImportExportWorker extends Worker {
 						comp.fromJson(json);
 						controller.loadedComposition(file,comp);
 					}
-					controller.setDone(this);
+					controller.setDone(this,true);
 				} else if (action.equals(SAVE_COMPOSITION)) {
 					if ((!file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) &&
 						(!file.getName().endsWith(Settings.EXTENSION_MIDI))
@@ -173,7 +173,7 @@ public class ImportExportWorker extends Worker {
 								err = "Failed to write MIDI file: " + file.getAbsolutePath();
 							} 
 						}
-						controller.setDone(this);
+						controller.setDone(this,false);
 					}
 				}
 			}
@@ -182,7 +182,7 @@ public class ImportExportWorker extends Worker {
 			Settings settings = (Settings) actionObject;
 			Composition composition = settings.getNewComposition(true);
 			controller.loadedComposition(null,composition);
-			controller.setDone(this);
+			controller.setDone(this,true);
 		}
 		if (err.length()>0) {
 			controller.showErrorMessage(this,err);

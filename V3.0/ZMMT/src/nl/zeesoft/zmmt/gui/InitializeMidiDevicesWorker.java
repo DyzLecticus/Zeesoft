@@ -2,7 +2,9 @@ package nl.zeesoft.zmmt.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
@@ -16,13 +18,21 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class InitializeMidiDevicesWorker extends Worker {
-	private Controller		controller		= null;
-	private File			soundFont		= null;
+	private static final String		INTERNAL_DRUM		= "resources/ZeeTrackerDrumKit.sf2";
+	// TODO: Create synthesizers sound font and implement
+	private static final String		INTERNAL_SYNTH		= "resources/ZeeTrackerSynthesizers.sf2";
+	
+	private Controller				controller			= null;
+	private File					soundFont			= null;
+	private boolean					useInternalDrum		= false;
+	private boolean					useInternalSynth	= false;
 
-	public InitializeMidiDevicesWorker(Messenger msgr, WorkerUnion union,Controller controller,String customSoundFontFileName) {
+	public InitializeMidiDevicesWorker(Messenger msgr, WorkerUnion union,Controller controller,String customSoundFontFileName,boolean useInternalDrum,boolean useInternalSynth) {
 		super(msgr, union);
 		setSleep(1);
 		this.controller = controller;
+		this.useInternalDrum = useInternalDrum;
+		this.useInternalSynth = useInternalSynth;
 		if (customSoundFontFileName.length()>0) {
 			File sf = new File(customSoundFontFileName);
 			if (sf.exists()) {
@@ -99,9 +109,49 @@ public class InitializeMidiDevicesWorker extends Worker {
 						synth.loadAllInstruments(customSoundbank);
 					}
 				}
+				if (useInternalDrum) {
+					replaceSoundBankInstruments(synth,INTERNAL_DRUM);
+				}
+				if (useInternalSynth) {
+					replaceSoundBankInstruments(synth,INTERNAL_SYNTH);
+				}
 			}
 		}
-		controller.setDone(this);
+		controller.setDone(this,true);
 		stop();
+	}
+	
+	protected void replaceSoundBankInstruments(Synthesizer synth,String path) {
+		Soundbank sb = loadSoundBank(path);
+		if (sb!=null) {
+			for (Instrument inst: sb.getInstruments()) {
+				for (Instrument synthInst: synth.getLoadedInstruments()) {
+					if (synthInst.getPatch().getProgram()==inst.getPatch().getProgram()) {
+						synth.unloadInstrument(synthInst);
+						synth.loadInstrument(inst);
+					}
+				}
+			}
+		}
+	}
+
+	protected Soundbank loadSoundBank(String path) {
+		Soundbank r = null;
+		InputStream is = getClass().getResourceAsStream(path);
+		try {
+			if (is!=null) {
+				r = MidiSystem.getSoundbank(is);
+			} else {
+				File file = new File(path);
+				if (file.exists()) {
+					r = MidiSystem.getSoundbank(file);
+				}
+			}
+		} catch (InvalidMidiDataException e) {
+			controller.showErrorMessage(this,"Failed to load internal sound font: " + path,e);
+		} catch (IOException e) {
+			controller.showErrorMessage(this,"Failed to load internal sound font: " + path,e);
+		}
+		return r;
 	}
 }

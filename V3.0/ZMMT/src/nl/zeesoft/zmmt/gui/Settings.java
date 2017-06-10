@@ -38,6 +38,9 @@ public class Settings {
 	private int							customFontSize				= 14;
 	private int							customRowHeight				= 20;
 
+	private boolean						useInternalDrumSoundFont	= true;
+	private boolean						useInternalSynthSoundFont	= true;
+
 	private SortedMap<String,Integer>	keyCodeNoteNumbers			= new TreeMap<String,Integer>();
 	
 	private SynthesizerConfiguration	synthesizerConfiguration	= null;
@@ -90,6 +93,8 @@ public class Settings {
 		copy.setCustomFontName(customFontName);
 		copy.setCustomFontSize(customFontSize);
 		copy.setCustomRowHeight(customRowHeight);
+		copy.setUseInternalDrumSoundFont(useInternalDrumSoundFont);
+		copy.setUseInternalSynthSoundFont(useInternalSynthSoundFont);
 		copy.getKeyCodeNoteNumbers().clear();
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
 			copy.getKeyCodeNoteNumbers().put(entry.getKey(),new Integer(entry.getValue()));
@@ -144,6 +149,8 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("customFontName",customFontName,true));
 		json.rootElement.children.add(new JsElem("customFontSize","" + customFontSize));
 		json.rootElement.children.add(new JsElem("customRowHeight","" + customRowHeight));
+		json.rootElement.children.add(new JsElem("useInternalDrumSoundFont","" + useInternalDrumSoundFont));
+		json.rootElement.children.add(new JsElem("useInternalSynthSoundFont","" + useInternalSynthSoundFont));
 		JsElem kcnnsElem = new JsElem("keyCodeNoteNumbers");
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
 			kcnnsElem.children.add(new JsElem(entry.getKey(),entry.getValue().toString()));
@@ -190,6 +197,10 @@ public class Settings {
 					customFontSize = Integer.parseInt(elem.value.toString());
 				} else if (elem.name.equals("customRowHeight")) {
 					customRowHeight = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("useInternalDrumSoundFont")) {
+					useInternalDrumSoundFont = Boolean.parseBoolean(elem.value.toString());
+				} else if (elem.name.equals("useInternalSynthSoundFont")) {
+					useInternalSynthSoundFont = Boolean.parseBoolean(elem.value.toString());
 				} else if (elem.name.equals("keyCodeNoteNumbers")) {
 					for (JsElem kElem: elem.children) {
 						String keyCode = kElem.name;
@@ -346,6 +357,22 @@ public class Settings {
 
 	public void setCustomRowHeight(int customRowHeight) {
 		this.customRowHeight = customRowHeight;
+	}
+
+	public boolean isUseInternalDrumSoundFont() {
+		return useInternalDrumSoundFont;
+	}
+
+	public void setUseInternalDrumSoundFont(boolean useInternalDrumSoundFont) {
+		this.useInternalDrumSoundFont = useInternalDrumSoundFont;
+	}
+
+	public boolean isUseInternalSynthSoundFont() {
+		return useInternalSynthSoundFont;
+	}
+
+	public void setUseInternalSynthSoundFont(boolean useInternalSynthSoundFont) {
+		this.useInternalSynthSoundFont = useInternalSynthSoundFont;
 	}
 
 	public SortedMap<String,Integer> getKeyCodeNoteNumbers() {

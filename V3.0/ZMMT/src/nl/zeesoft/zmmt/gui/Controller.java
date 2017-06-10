@@ -147,7 +147,12 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		
 		stateManager.start();
 		
-		InitializeMidiDevicesWorker midi = new InitializeMidiDevicesWorker(getMessenger(),getUnion(),this,settings.getCustomSoundFontFileName());
+		InitializeMidiDevicesWorker midi = new InitializeMidiDevicesWorker(
+			getMessenger(),getUnion(),this,
+			settings.getCustomSoundFontFileName(),
+			settings.isUseInternalDrumSoundFont(),
+			settings.isUseInternalSynthSoundFont()
+			);
 		midi.start();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
@@ -261,11 +266,13 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 
-	public void setDone(Object source) {
+	public void setDone(Object source, boolean refocus) {
 		if (busyWindow.setDone(source)==0) {
 			if (mainFrame!=null) {
 				mainFrame.getFrame().setEnabled(true);
-				mainFrame.switchTo(stateManager.getSelectedTab());
+				if (refocus) {
+					mainFrame.switchTo(stateManager.getSelectedTab());
+				}
 			}
 		}
 	}
