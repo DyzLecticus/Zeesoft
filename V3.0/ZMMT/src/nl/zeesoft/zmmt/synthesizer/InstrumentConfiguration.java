@@ -6,12 +6,14 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 	private int 		layer1Pressure		= 0;
 	private int 		layer1Pan			= 64;
 	private int			layer1Reverb		= 64;
+	private int			layer1Modulation	= 0;
 
 	private	int			layer2MidiNum		= -1;
 	private int			layer2BaseOctave	= 3;
 	private int 		layer2Pressure		= 24;
 	private int 		layer2Pan			= 64;
 	private int			layer2Reverb		= 64;
+	private int			layer2Modulation	= 0;
 
 	public InstrumentConfiguration copy() {
 		InstrumentConfiguration r = new InstrumentConfiguration();
@@ -24,6 +26,7 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 		r.setLayer1Pressure(layer1Pressure);
 		r.setLayer1Pan(layer1Pan);
 		r.setLayer1Reverb(layer1Reverb);
+		r.setLayer1Modulation(layer1Modulation);
 		
 		r.setLayer2MidiNum(layer2MidiNum);
 		r.setLayer2BaseOctave(layer2BaseOctave);
@@ -32,6 +35,7 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 		r.setLayer2Pressure(layer2Pressure);
 		r.setLayer2Pan(layer2Pan);
 		r.setLayer2Reverb(layer2Reverb);
+		r.setLayer2Modulation(layer2Modulation);
 
 		return r;
 	}
@@ -72,6 +76,18 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 		return layer1Reverb;
 	}
 
+	public void setLayer1Reverb(int layer1Reverb) {
+		this.layer1Reverb = layer1Reverb;
+	}
+
+	public int getLayer1Modulation() {
+		return layer1Modulation;
+	}
+
+	public void setLayer1Modulation(int layer1Modulation) {
+		this.layer1Modulation = layer1Modulation;
+	}
+
 	public int getLayer2MidiNum() {
 		return layer2MidiNum;
 	}
@@ -86,10 +102,6 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 
 	public void setLayer2BaseOctave(int baseOctave) {
 		this.layer2BaseOctave = baseOctave;
-	}
-
-	public void setLayer1Reverb(int layer1Reverb) {
-		this.layer1Reverb = layer1Reverb;
 	}
 	
 	public int getLayer2Pressure() {
@@ -114,5 +126,13 @@ public class InstrumentConfiguration extends VelocityConfiguration {
 
 	public void setLayer2Reverb(int layer2Reverb) {
 		this.layer2Reverb = layer2Reverb;
+	}
+
+	public int getLayer2Modulation() {
+		return layer2Modulation;
+	}
+
+	public void setLayer2Modulation(int layer2Modulation) {
+		this.layer2Modulation = layer2Modulation;
 	}
 }

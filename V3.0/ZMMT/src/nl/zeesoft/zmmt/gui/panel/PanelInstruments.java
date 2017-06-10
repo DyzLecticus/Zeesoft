@@ -47,6 +47,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	private JSpinner[]				instrumentLayer1Pressure		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1Pan				= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1Reverb			= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer1Modulation		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1BaseOctave		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1BaseVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1AccentVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
@@ -55,6 +56,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	private JSpinner[]				instrumentLayer2Pressure		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2Pan				= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2Reverb			= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentLayer2Modulation		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2BaseOctave		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2BaseVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer2AccentVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
@@ -136,6 +138,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				instrumentLayer1Pressure[i].setValue(String.format("%03d",conf.getLayer1Pressure()));
 				instrumentLayer1Pan[i].setValue(String.format("%03d",conf.getLayer1Pan()));
 				instrumentLayer1Reverb[i].setValue(String.format("%03d",conf.getLayer1Reverb()));
+				instrumentLayer1Modulation[i].setValue(String.format("%03d",conf.getLayer1Modulation()));
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 					instrumentLayer1BaseOctave[i].setValue(String.format("%03d",conf.getLayer1BaseOctave()));
 					instrumentLayer1BaseVelocity[i].setValue(String.format("%03d",conf.getLayer1BaseVelocity()));
@@ -150,12 +153,14 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 					instrumentLayer2Pressure[i].setValue(String.format("%03d",conf.getLayer2Pressure()));
 					instrumentLayer2Pan[i].setValue(String.format("%03d",conf.getLayer2Pan()));
 					instrumentLayer2Reverb[i].setValue(String.format("%03d",conf.getLayer2Reverb()));
+					instrumentLayer2Modulation[i].setValue(String.format("%03d",conf.getLayer2Modulation()));
 					instrumentLayer2BaseOctave[i].setValue(String.format("%03d",conf.getLayer2BaseOctave()));
 					instrumentLayer2BaseVelocity[i].setValue(String.format("%03d",conf.getLayer2BaseVelocity()));
 					instrumentLayer2AccentVelocity[i].setValue(String.format("%03d",conf.getLayer2AccentVelocity()));
 	
 					getSliderForNumber(instrumentLayer2Pressure[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 					getSliderForNumber(instrumentLayer2Reverb[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Modulation[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 					getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 					getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
 					getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
@@ -237,6 +242,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 			inst.setLayer1Pressure(Integer.parseInt(instrumentLayer1Pressure[i].getValue().toString()));
 			inst.setLayer1Pan(Integer.parseInt(instrumentLayer1Pan[i].getValue().toString()));
 			inst.setLayer1Reverb(Integer.parseInt(instrumentLayer1Reverb[i].getValue().toString()));
+			inst.setLayer1Modulation(Integer.parseInt(instrumentLayer1Modulation[i].getValue().toString()));
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 				inst.setLayer1BaseOctave(Integer.parseInt(instrumentLayer1BaseOctave[i].getValue().toString()));
 				inst.setLayer1BaseVelocity(Integer.parseInt(instrumentLayer1BaseVelocity[i].getValue().toString()));
@@ -251,6 +257,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				inst.setLayer2Pressure(Integer.parseInt(instrumentLayer2Pressure[i].getValue().toString()));
 				inst.setLayer2Pan(Integer.parseInt(instrumentLayer2Pan[i].getValue().toString()));
 				inst.setLayer2Reverb(Integer.parseInt(instrumentLayer2Reverb[i].getValue().toString()));
+				inst.setLayer2Modulation(Integer.parseInt(instrumentLayer2Modulation[i].getValue().toString()));
 				inst.setLayer2BaseOctave(Integer.parseInt(instrumentLayer2BaseOctave[i].getValue().toString()));
 				inst.setLayer2BaseVelocity(Integer.parseInt(instrumentLayer2BaseVelocity[i].getValue().toString()));
 				inst.setLayer2AccentVelocity(Integer.parseInt(instrumentLayer2AccentVelocity[i].getValue().toString()));
@@ -403,6 +410,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		addLabel(panel,row,"Layer 1 reverb");
 		addProperty(panel,row,slider);
 
+		row++;
+		instrumentLayer1Modulation[instrumentNum] = getNewNumberSpinner(3,0,127);
+		slider = getNewNumberSlider(instrumentLayer1Modulation[instrumentNum],0,127,0);
+		addLabel(panel,row,"Layer 1 modulation");
+		addProperty(panel,row,slider);
+
 		if (!name.equals(Instrument.DRUMS)) {
 			row++;
 			instrumentLayer1BaseOctave[instrumentNum] = getNewNumberSpinner(3,0,9);
@@ -453,6 +466,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				instrumentLayer2Reverb[instrumentNum] = getNewNumberSpinner(3,0,127);
 				slider = getNewNumberSlider(instrumentLayer2Reverb[instrumentNum],0,127,64);
 				addLabel(panel,row,"Layer 2 reverb");
+				addProperty(panel,row,slider);
+
+				row++;
+				instrumentLayer2Modulation[instrumentNum] = getNewNumberSpinner(3,0,127);
+				slider = getNewNumberSlider(instrumentLayer2Modulation[instrumentNum],0,127,0);
+				addLabel(panel,row,"Layer 2 modulation");
 				addProperty(panel,row,slider);
 
 				row++;

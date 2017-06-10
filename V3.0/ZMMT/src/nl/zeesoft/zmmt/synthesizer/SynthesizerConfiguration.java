@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
 import nl.zeesoft.zdk.json.JsElem;
@@ -43,6 +46,7 @@ public class SynthesizerConfiguration {
 			instElem.children.add(new JsElem("layer1Pressure","" + inst.getLayer1Pressure()));
 			instElem.children.add(new JsElem("layer1Pan","" + inst.getLayer1Pan()));
 			instElem.children.add(new JsElem("layer1Reverb","" + inst.getLayer1Reverb()));
+			instElem.children.add(new JsElem("layer1Modulation","" + inst.getLayer1Modulation()));
 			if (!inst.getName().equals(Instrument.DRUMS)) {
 				instElem.children.add(new JsElem("layer1BaseOctave","" + inst.getLayer1BaseOctave()));
 				instElem.children.add(new JsElem("layer1BaseVelocity","" + inst.getLayer1BaseVelocity()));
@@ -60,6 +64,7 @@ public class SynthesizerConfiguration {
 				instElem.children.add(new JsElem("layer2BaseOctave","" + inst.getLayer2BaseOctave()));
 				instElem.children.add(new JsElem("layer2BaseVelocity","" + inst.getLayer2BaseVelocity()));
 				instElem.children.add(new JsElem("layer2AccentVelocity","" + inst.getLayer2AccentVelocity()));
+				instElem.children.add(new JsElem("layer2Modulation","" + inst.getLayer2Modulation()));
 			}
 		}
 		for (DrumConfiguration drum: drums) {
@@ -107,6 +112,8 @@ public class SynthesizerConfiguration {
 							inst.setLayer1Pan(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1Reverb")) {
 							inst.setLayer1Reverb(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer1Modulation")) {
+							inst.setLayer1Modulation(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1BaseOctave")) {
 							inst.setLayer1BaseOctave(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1BaseVelocity")) {
@@ -121,6 +128,8 @@ public class SynthesizerConfiguration {
 							inst.setLayer2Pan(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2Reverb")) {
 							inst.setLayer2Reverb(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer2Modulation")) {
+							inst.setLayer2Modulation(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2BaseOctave")) {
 							inst.setLayer2BaseOctave(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2BaseVelocity")) {
@@ -238,15 +247,18 @@ public class SynthesizerConfiguration {
 		if (echoInst!=null) {
 			int layerMidiNum = echoInst.getLayer1MidiNum();
 			int layerPressure = echoInst.getLayer1Pressure();
+			int layerModulation = echoInst.getLayer1Modulation();
 			if (echo.getLayer()==2) {
 				layerMidiNum = echoInst.getLayer2MidiNum();
 				layerPressure = echoInst.getLayer2Pressure();
+				layerModulation = echoInst.getLayer2Modulation();
 			}
 			if (layerMidiNum>=0) {
 				for (int e = 0; e < 3; e++) {
 					int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
 					synth.getChannels()[channel].programChange(layerMidiNum);
 					synth.getChannels()[channel].setChannelPressure(layerPressure);
+					sendControlMessageToSynthesizer(synth,channel,1,layerModulation);
 					if (e==0) {
 						synth.getChannels()[channel].controlChange(10,echo.getPan1());
 						synth.getChannels()[channel].controlChange(91,echo.getReverb1());
@@ -265,12 +277,14 @@ public class SynthesizerConfiguration {
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),0);
 				synth.getChannels()[channel].programChange(inst.getLayer1MidiNum());
 				synth.getChannels()[channel].setChannelPressure(inst.getLayer1Pressure());
+				sendControlMessageToSynthesizer(synth,channel,1,inst.getLayer1Modulation());
 				synth.getChannels()[channel].controlChange(10,inst.getLayer1Pan());
 				synth.getChannels()[channel].controlChange(91,inst.getLayer1Reverb());
 				int layerChannel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 				if (layerChannel>=0 && inst.getLayer2MidiNum()>=0) {
 					synth.getChannels()[layerChannel].programChange(inst.getLayer2MidiNum());
 					synth.getChannels()[layerChannel].setChannelPressure(inst.getLayer2Pressure());
+					sendControlMessageToSynthesizer(synth,layerChannel,1,inst.getLayer2Modulation());
 					synth.getChannels()[layerChannel].controlChange(10,inst.getLayer2Pan());
 					synth.getChannels()[layerChannel].controlChange(91,inst.getLayer2Reverb());
 				}
@@ -620,6 +634,18 @@ public class SynthesizerConfiguration {
 			drum.setLayer1MidiNote(76);
 			drum.setLayer1BaseVelocity(80);
 			drum.setLayer1AccentVelocity(90);
+		}
+	}
+	
+	protected void sendControlMessageToSynthesizer(Synthesizer synth,int channel,int control, int value) {
+		ShortMessage sMsg = new ShortMessage();
+		try {
+			sMsg.setMessage(ShortMessage.CONTROL_CHANGE,channel,control,value);
+			synth.getReceiver().send(sMsg,-1);
+		} catch (InvalidMidiDataException e1) {
+			// Ignore
+		} catch (MidiUnavailableException e2) {
+			// Ignore
 		}
 	}
 }

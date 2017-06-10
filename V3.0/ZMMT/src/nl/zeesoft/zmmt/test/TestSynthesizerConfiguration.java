@@ -46,6 +46,7 @@ public class TestSynthesizerConfiguration extends TestObject {
 		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Pressure(123);
 		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Pan(123);
 		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Reverb(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Modulation(123);
 		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1BaseVelocity(123);
 		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1AccentVelocity(123);
 		JsFile json = conf.toJson();
