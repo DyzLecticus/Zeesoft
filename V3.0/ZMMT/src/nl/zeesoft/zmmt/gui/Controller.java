@@ -243,9 +243,13 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	}
 	
 	public boolean showConfirmMessage(String message) {
+		return showConfirmMessage("Are you sure?",message);
+	}
+	
+	public boolean showConfirmMessage(String title,String message) {
 		boolean r = false;
 		if (mainFrame!=null) {
-			r = (JOptionPane.showConfirmDialog(mainFrame.getFrame(),message,"Are you sure?",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+			r = (JOptionPane.showConfirmDialog(mainFrame.getFrame(),message,title,JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
 		}
 		return r;
 	}

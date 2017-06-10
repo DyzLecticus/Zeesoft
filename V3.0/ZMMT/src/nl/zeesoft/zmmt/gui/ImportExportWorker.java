@@ -160,8 +160,9 @@ public class ImportExportWorker extends Worker {
 								controller.savedComposition(file,(Composition) actionObject);
 							}
 						} else if (file.getName().endsWith(Settings.EXTENSION_MIDI)) {
+							boolean externalize = controller.showConfirmMessage("Externalize?","Do you want to externalize the MIDI file?");
 							CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor((Composition) actionObject);
-							Sequence s = convertor.getSequence(false);
+							Sequence s = convertor.getSequence(externalize,false);
 		                    try {
 		                        int[] fileTypes = MidiSystem.getMidiFileTypes(s);
 		                        if (fileTypes.length == 0) {

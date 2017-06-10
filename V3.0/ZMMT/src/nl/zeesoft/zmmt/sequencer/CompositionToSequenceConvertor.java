@@ -14,6 +14,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Note;
 import nl.zeesoft.zmmt.composition.Pattern;
+import nl.zeesoft.zmmt.synthesizer.Drum;
 import nl.zeesoft.zmmt.synthesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
@@ -46,7 +47,7 @@ public class CompositionToSequenceConvertor {
 		String seq = SEQUENCE_MARKER + "-1";
 		byte[] data = seq.getBytes();
 		createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,0);
-		int nextTick = addPatternToSequence(r,0,patternNumber,true,true);
+		int nextTick = addPatternToSequence(r,0,patternNumber,false,true,true);
 		// Align track endings
 		for (int t = 0; t < Composition.TRACKS; t++) {
 			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(nextTick - 1));
@@ -63,7 +64,7 @@ public class CompositionToSequenceConvertor {
 		return r;
 	}
 
-	public Sequence getSequence(boolean addMarkers) {
+	public Sequence getSequence(boolean externalize,boolean addMarkers) {
 		Sequence r = createSequence();
 		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
 		int nextTick = 0;
@@ -73,7 +74,7 @@ public class CompositionToSequenceConvertor {
 				String seq = SEQUENCE_MARKER + i;
 				byte[] data = seq.getBytes();
 				createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,nextTick);
-				nextTick = addPatternToSequence(r,nextTick,patternNumber,addMarkers,false);
+				nextTick = addPatternToSequence(r,nextTick,patternNumber,externalize,addMarkers,false);
 				i++;
 			}
 		} else {
@@ -104,7 +105,7 @@ public class CompositionToSequenceConvertor {
 		return r;
 	}
 
-	protected int addPatternToSequence(Sequence seq,int startTick,int patternNumber,boolean addMarkers,boolean wrapEcho) {
+	protected int addPatternToSequence(Sequence seq,int startTick,int patternNumber,boolean externalize,boolean addMarkers,boolean wrapEcho) {
 		int nextPatternStartTick = startTick;
 		Pattern p = composition.getPattern(patternNumber);
 		if (p!=null) {
@@ -136,9 +137,15 @@ public class CompositionToSequenceConvertor {
 							List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(note.instrument,note.note,note.accent,0);
 							int endTick = currentTick + ((note.duration * ticksPerStep) - 10);
 							for (MidiNote mn: midiNotes) {
+								if (externalize && note.instrument.equals(Instrument.DRUMS)) {
+									mn.midiNote = Drum.getExternalMidiNoteForNote(note.note);
+								}
 								int velocity = (mn.velocity * note.velocityPercentage) / 100;
 								createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity,currentTick);
 								createEventOnTrack(track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,0,endTick);
+								if (externalize) {
+									break;
+								}
 							}
 						}
 					}
@@ -160,6 +167,9 @@ public class CompositionToSequenceConvertor {
 								if (endTick>=nextPatternStartTick) {
 									endTick = endTick - (patternSteps * ticksPerStep);
 								}
+							}
+							if (externalize && note.instrument.equals(Instrument.DRUMS)) {
+								mn.midiNote = Drum.getExternalMidiNoteForNote(note.note);
 							}
 							int velocity = (mn.velocity * note.velocityPercentage) / 100;
 							createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity,currentTick);
@@ -218,15 +228,18 @@ public class CompositionToSequenceConvertor {
 		if (echoInst!=null) {
 			int layerMidiNum = echoInst.getLayer1MidiNum();
 			int layerPressure = echoInst.getLayer1Pressure();
+			int layerModulation = echoInst.getLayer1Modulation();
 			if (echo.getLayer()==2) {
 				layerMidiNum = echoInst.getLayer2MidiNum();
 				layerPressure = echoInst.getLayer2Pressure();
+				layerModulation = echoInst.getLayer2Modulation();
 			}
 			if (layerMidiNum>=0) {
 				for (int e = 0; e < 3; e++) {
 					int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
 					createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,layerMidiNum,0,tick);
 					createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,layerPressure,0,tick);
+					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,1,layerModulation,tick);
 					if (e==0) {
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,10,echo.getPan1(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,91,echo.getReverb1(),tick);
@@ -247,12 +260,14 @@ public class CompositionToSequenceConvertor {
 				createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer1Pressure(),0,tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,10,inst.getLayer1Pan(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,91,inst.getLayer1Reverb(),tick);
+				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,1,inst.getLayer1Modulation(),tick);
 				if (inst.getLayer2MidiNum()>=0) {
 					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 					createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer2MidiNum(),0,tick);
 					createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer2Pressure(),0,tick);
 					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,10,inst.getLayer2Pan(),tick);
 					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,91,inst.getLayer2Reverb(),tick);
+					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,1,inst.getLayer2Modulation(),tick);
 				}
 			}
 		}
