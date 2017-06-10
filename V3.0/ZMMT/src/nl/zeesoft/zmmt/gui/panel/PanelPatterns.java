@@ -37,6 +37,9 @@ import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
+	private static final String		PAGE_DOWN						= "PAGE_DOWN";
+	private static final String		PAGE_UP							= "PAGE_UP";
+	
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
 
@@ -125,6 +128,41 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
 		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
 			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
+		} else if (evt.getActionCommand().equals(PAGE_DOWN)) {
+			if (compositionCopy!=null) {
+				int row = grid.getSelectedRow();
+				if (row<(grid.getRowCount() - 1)) {
+					if (row<0) {
+						row = 0;
+					}
+					row = row + compositionCopy.getStepsPerBar();
+					int col = grid.getSelectedColumn();
+					if (row>=grid.getRowCount()) {
+						row = (grid.getRowCount() - 1);
+					}
+					if (col<0) {
+						col = 0;
+					}
+					grid.clearSelection();
+					selectAndShow(row,row,col,col);
+				}
+			}
+		} else if (evt.getActionCommand().equals(PAGE_UP)) {
+			if (compositionCopy!=null) {
+				int row = grid.getSelectedRow();
+				if (row>0) {
+					row = row - compositionCopy.getStepsPerBar();
+					int col = grid.getSelectedColumn();
+					if (row<0) {
+						row = 0;
+					}
+					if (col<0) {
+						col = 0;
+					}
+					grid.clearSelection();
+					selectAndShow(row,row,col,col);
+				}
+			}
 		} else if (evt.getActionCommand().equals(FrameMain.STOP_PLAYING)) {
 			getController().stopSequencer();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
@@ -312,6 +350,20 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		rect.height = rect.height + 20;
 		rect.width = rect.width + 100;
 		grid.scrollRectToVisible(rect);
+
+		selectedRows = new int[2];
+		selectedRows[0] = rowFrom;
+		selectedRows[1] = rowTo;
+		selectedCols = new int[2];
+		selectedCols[0] = colFrom;
+		selectedCols[1] = colTo;
+		getController().getStateManager().setSelectedPatternSelection(
+			this,
+			selectedRows[0],
+			selectedRows[selectedRows.length-1],
+			selectedCols[0],
+			selectedCols[selectedCols.length-1]
+			);
 	}
 	
 	protected void shiftSelectedNotesNote(int mod) {
@@ -661,7 +713,15 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		// F8 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
 		grid.registerKeyboardAction(this,FrameMain.STOP_PLAYING,stroke,JComponent.WHEN_FOCUSED);
-		
+
+		// Page down override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,0,false);
+		grid.registerKeyboardAction(this,PAGE_DOWN,stroke,JComponent.WHEN_FOCUSED);
+
+		// Page up override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,0,false);
+		grid.registerKeyboardAction(this,PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
+
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);

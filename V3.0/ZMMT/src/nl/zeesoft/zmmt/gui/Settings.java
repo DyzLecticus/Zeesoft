@@ -36,7 +36,7 @@ public class Settings {
 	private String						customSoundFontFileName		= "";
 	private String						customFontName				= "Courier New";
 	private int							customFontSize				= 14;
-	private int							customRowHeight				= 20;
+	private int							customRowHeight				= 18;
 
 	private boolean						useInternalDrumSoundFont	= true;
 	private boolean						useInternalSynthSoundFont	= true;

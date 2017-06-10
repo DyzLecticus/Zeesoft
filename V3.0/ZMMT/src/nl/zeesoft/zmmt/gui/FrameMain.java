@@ -191,9 +191,11 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().redoCompositionChange(evt.getSource());
 		} else if (evt.getActionCommand().startsWith(PATTERN_PREFIX)) {
 			if (selectedTab!=TAB_PATTERNS) {
-				getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_PATTERNS);
+				switchTo(TAB_PATTERNS);
+				getController().getStateManager().setSelectedTab(this,selectedTab);
+			} else {
+				patternsPanel.actionPerformed(evt);
 			}
-			patternsPanel.actionPerformed(evt);
 		} else {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				if (evt.getActionCommand().equals(Instrument.INSTRUMENTS[i])) {
