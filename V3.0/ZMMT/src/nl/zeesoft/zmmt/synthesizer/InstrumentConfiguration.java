@@ -12,7 +12,7 @@ public class InstrumentConfiguration extends BaseConfiguration {
 		InstrumentConfiguration r = new InstrumentConfiguration();
 		r.setName(getName());
 		r.setLayer1(layer1.copy());
-		r.setLayer2(layer1.copy());
+		r.setLayer2(layer2.copy());
 		return r;
 	}
 
