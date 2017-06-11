@@ -21,7 +21,7 @@ public class SequenceGridKeyListener extends InstrumentPlayerKeyListener {
 	public void keyPressed(KeyEvent evt) {
 		super.keyPressed(evt);
 		if (!evt.isControlDown() && !evt.isShiftDown() && !evt.isAltDown()) {
-			if (evt.getKeyCode()==KeyEvent.VK_INSERT) {
+			if (evt.getKeyCode()==KeyEvent.VK_INSERT || evt.getKeyCode()==KeyEvent.VK_SPACE) {
 				sequencePanel.insertPatterns();
 			} else if (evt.getKeyCode()==KeyEvent.VK_DELETE) {
 				sequencePanel.removeSelectedPatterns();

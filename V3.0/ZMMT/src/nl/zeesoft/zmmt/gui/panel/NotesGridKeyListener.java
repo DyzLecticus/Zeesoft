@@ -23,7 +23,7 @@ public class NotesGridKeyListener extends InstrumentPlayerKeyListener {
 		if (!evt.isControlDown() && !evt.isShiftDown() && !evt.isAltDown()) {
 			if (evt.getKeyCode()==KeyEvent.VK_DELETE) {
 				patternPanel.removeSelectedNotes();
-			} else if (evt.getKeyCode()==KeyEvent.VK_SPACE) {
+			} else if (evt.getKeyCode()==KeyEvent.VK_INSERT || evt.getKeyCode()==KeyEvent.VK_SPACE) {
 				patternPanel.insertSpace();
 			}
 		}
