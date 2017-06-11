@@ -40,6 +40,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 
 	public static final String	PATTERN_PREFIX		= "PATTERN_";
 	public static final String	PATTERN_SELECT		= PATTERN_PREFIX + "SELECT";
+	public static final String	PATTERN_SELECT_NEXT	= PATTERN_PREFIX + "SELECT_NEXT";
+	public static final String	PATTERN_SELECT_PREV	= PATTERN_PREFIX + "SELECT_PREV";
 	public static final String	PATTERN_EDIT_MODE	= PATTERN_PREFIX + "EDIT_MODE";
 	public static final String	PATTERN_INSERT		= PATTERN_PREFIX + "INSERT";
 	public static final String	PATTERN_EDIT		= PATTERN_PREFIX + "EDIT";
@@ -385,6 +387,18 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		editPatternMenu.add(item);
 
+		item = new JMenuItem("Next pattern",KeyEvent.VK_N);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,evt));
+		item.setActionCommand(PATTERN_SELECT_NEXT);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+		
+		item = new JMenuItem("Previous pattern",KeyEvent.VK_R);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,evt));
+		item.setActionCommand(PATTERN_SELECT_PREV);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+		
 		item = new JMenuItem("Toggle edit mode",KeyEvent.VK_O);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,evt));
 		item.setActionCommand(PATTERN_EDIT_MODE);
@@ -397,7 +411,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		editPatternMenu.add(item);
 
-		item = new JMenuItem("Edit notes",KeyEvent.VK_E);
+		item = new JMenuItem("Edit pattern",KeyEvent.VK_E);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,evt));
 		item.setActionCommand(PATTERN_EDIT);
 		item.addActionListener(this);

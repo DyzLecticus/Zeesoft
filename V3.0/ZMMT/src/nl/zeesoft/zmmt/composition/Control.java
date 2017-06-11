@@ -9,9 +9,6 @@ public class Control {
 	public static final int			REVERB					= 91;
 	public static final int			CHORUS					= 93;
 	
-	public static final int[]		PATTERN_CONTROLS		= {EXPRESSION,MODULATION,FILTER}; 
-	public static final String[]	PATTERN_CONTROL_LABELS	= {"VOL","MOD","FLT"}; 
-	
 	public String					instrument				= "";
 	public int						control					= 0;		
 	public int						step					= 0;

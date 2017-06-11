@@ -44,6 +44,10 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
 	public static final String		EDIT_NOTES						= "EDIT_NOTES";
 	public static final String		EDIT_CONTROLS					= "EDIT_CONTROLS";
+
+	public static final String		EDIT_EXPRESSION					= "EDIT_EXPRESSION";
+	public static final String		EDIT_MODULATION					= "EDIT_MODULATION";
+	public static final String		EDIT_FILTER						= "EDIT_FILTER";
 	
 	private static final String		PAGE_DOWN						= "PAGE_DOWN";
 	private static final String		PAGE_UP							= "PAGE_UP";
@@ -56,7 +60,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	private int						selectedPattern					= 0;
 	
 	private JRadioButton			editNotes						= null;
-	private JRadioButton			editControls					= null;
+	private JRadioButton			editExpression					= null;
+	private JRadioButton			editModulation					= null;
+	private JRadioButton			editFilter						= null;
 	private String					selectedEditMode				= "";
 
 	private int						barsPerPattern					= 0;
@@ -109,7 +115,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	@Override
 	public void requestFocus() {
 		if (selectedRows!=null && selectedCols!=null) {
-			getCurrentGrid().requestFocus();
+			if (!getCurrentGrid().hasFocus()) {
+				getCurrentGrid().requestFocus();
+			} else {
+				reselect();
+			}
 		} else {
 			pattern.requestFocus();
 		}
@@ -122,10 +132,13 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			selectedEditMode = evt.getPatternEditMode();
 			if (selectedEditMode.equals(EDIT_NOTES) && !editNotes.isSelected()) {
 				editNotes.doClick();
-			} else if (selectedEditMode.equals(EDIT_CONTROLS) && !editControls.isSelected()) {
-				editControls.doClick();
+			} else if (selectedEditMode.equals(EDIT_EXPRESSION) && !editExpression.isSelected()) {
+				editExpression.doClick();
+			} else if (selectedEditMode.equals(EDIT_MODULATION) && !editModulation.isSelected()) {
+				editModulation.doClick();
+			} else if (selectedEditMode.equals(EDIT_FILTER) && !editFilter.isSelected()) {
+				editFilter.doClick();
 			}
-			getCurrentGrid().clearSelection();
 			changedSelectedEditMode();
 			getCurrentGrid().requestFocus();
 		} else if (evt.getType().equals(StateChangeEvent.SELECTED_PATTERN)) {
@@ -169,13 +182,20 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			getController().stopSequencer();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_EDIT_MODE)) {
 			if (editNotes.isSelected()) {
-				editControls.doClick();
-			} else if (editControls.isSelected()) {
+				editExpression.doClick();
+			} else if (editExpression.isSelected()) {
+				editModulation.doClick();
+			} else if (editModulation.isSelected()) {
+				editFilter.doClick();
+			} else if (editFilter.isSelected()) {
 				editNotes.doClick();
 			}
-		} else if (evt.getActionCommand().equals(EDIT_NOTES)) {
-			getController().getStateManager().setPatternEditMode(this,evt.getActionCommand());
-		} else if (evt.getActionCommand().equals(EDIT_CONTROLS)) {
+		} else if (
+			evt.getActionCommand().equals(EDIT_NOTES) ||
+			evt.getActionCommand().equals(EDIT_EXPRESSION) ||
+			evt.getActionCommand().equals(EDIT_MODULATION) ||
+			evt.getActionCommand().equals(EDIT_FILTER)
+			) {
 			getController().getStateManager().setPatternEditMode(this,evt.getActionCommand());
 		} else if (
 			evt.getActionCommand().equals(PAGE_DOWN) ||
@@ -187,11 +207,17 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			evt.getActionCommand().equals(SHIFT_PAGE_UP)
 			) {
 			handlePageUp(evt.getActionCommand());
-		} else if (evt.getActionCommand().equals(CONTROL_PAGE_DOWN)) {
+		} else if (
+			evt.getActionCommand().equals(CONTROL_PAGE_DOWN) ||
+			evt.getActionCommand().equals(FrameMain.PATTERN_SELECT_NEXT)
+			) {
 			if (selectedPattern<99) {
 				getController().getStateManager().setSelectedPattern(this,(selectedPattern + 1));
 			}
-		} else if (evt.getActionCommand().equals(CONTROL_PAGE_UP)) {
+		} else if (
+			evt.getActionCommand().equals(CONTROL_PAGE_UP) ||
+			evt.getActionCommand().equals(FrameMain.PATTERN_SELECT_PREV)
+			) {
 			if (selectedPattern>0) {
 				getController().getStateManager().setSelectedPattern(this,(selectedPattern - 1));
 			}
@@ -359,7 +385,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		Grid grid = null;
 		if (selectedEditMode.equals(EDIT_NOTES)) {
 			grid = notesGrid;
-		} else if (selectedEditMode.equals(EDIT_CONTROLS)) {
+		} else if (
+			selectedEditMode.equals(EDIT_EXPRESSION) ||
+			selectedEditMode.equals(EDIT_MODULATION) ||
+			selectedEditMode.equals(EDIT_FILTER)
+			) {
 			grid = controlsGrid;
 		}
 		return grid;
@@ -367,8 +397,12 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	protected int getSelectedControl() {
 		int r = -1;
-		if (selectedEditMode.equals(EDIT_CONTROLS)) {
+		if (selectedEditMode.equals(EDIT_EXPRESSION)) {
 			r = Control.EXPRESSION;
+		} else if (selectedEditMode.equals(EDIT_MODULATION)) {
+			r = Control.MODULATION;
+		} else if (selectedEditMode.equals(EDIT_FILTER)) {
+			r = Control.FILTER;
 		}
 		return r;
 	}
@@ -459,7 +493,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		boolean r = false;
 		if (selectedEditMode.equals(EDIT_NOTES)) {
 			r = reselect(notesGrid,notesGridController);
-		} else if (selectedEditMode.equals(EDIT_CONTROLS)) {
+		} else if (
+			selectedEditMode.equals(EDIT_EXPRESSION) ||
+			selectedEditMode.equals(EDIT_MODULATION) ||
+			selectedEditMode.equals(EDIT_FILTER)
+			) {
 			r = reselect(controlsGrid,controlsGridController);
 		}
 		return r;
@@ -807,7 +845,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	}
 	
 	protected void changedPattern() {
-		refreshGridData(0,(notesGrid.getRowCount() - 1));
+		refreshGridData(0,(getCurrentGrid().getRowCount() - 1));
 		if (workingPattern!=null) {
 			getController().getStateManager().changedPattern(this,workingPattern);
 		}
@@ -818,15 +856,19 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	}
 	
 	protected void refreshGridData(int rowFrom, int rowTo) {
+		NotesGridController controller = notesGridController;
+		if (getCurrentGrid()==controlsGrid) {
+			controller = controlsGridController;
+		}
 		if (rowFrom>=0 && rowTo>=0) {
-			notesGridController.fireTableRowsUpdated(rowFrom,rowTo);
+			controller.fireTableRowsUpdated(rowFrom,rowTo);
 		} else {
-			int[] rows = notesGrid.getSelectedRows();
-			int[] cols = notesGrid.getSelectedColumns();
-			notesGridController.fireTableDataChanged();
+			int[] rows = getCurrentGrid().getSelectedRows();
+			int[] cols = getCurrentGrid().getSelectedColumns();
+			controller.fireTableDataChanged();
 			if (rows.length>0 && cols.length>0) {
-				notesGrid.addRowSelectionInterval(rows[0],rows[(rows.length-1)]);
-				notesGrid.addColumnSelectionInterval(cols[0],cols[(cols.length-1)]);
+				getCurrentGrid().addRowSelectionInterval(rows[0],rows[(rows.length-1)]);
+				getCurrentGrid().addColumnSelectionInterval(cols[0],cols[(cols.length-1)]);
 			}
 		}
 	}
@@ -931,14 +973,26 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		// Shift page up override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.SHIFT_MASK,false);
 		grid.registerKeyboardAction(this,SHIFT_PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
+		
+		addControlPageUpDownOverridesToComponent(grid);
+	}
+	
+	protected void addF4DownOverrideToComponent(JComponent comp) {
+		// F4 Override
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
+		comp.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+	}
 
-		// Shift page down override
+	protected void addControlPageUpDownOverridesToComponent(JComponent comp) {
+		KeyStroke stroke = null; 
+
+		// Control page down override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,ActionEvent.CTRL_MASK,false);
-		grid.registerKeyboardAction(this,CONTROL_PAGE_DOWN,stroke,JComponent.WHEN_FOCUSED);
+		comp.registerKeyboardAction(this,CONTROL_PAGE_DOWN,stroke,JComponent.WHEN_FOCUSED);
 
-		// Shift page up override
+		// Control page down override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.CTRL_MASK,false);
-		grid.registerKeyboardAction(this,CONTROL_PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
+		comp.registerKeyboardAction(this,CONTROL_PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
 	}
 	
 	protected JComboBox<String> getPatternSelector() {
@@ -949,12 +1003,11 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		r.setSelectedIndex(selectedPattern);
 		r.addActionListener(this);
 
-		// F4 Override
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
-		r.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-
+		addF4DownOverrideToComponent(r);
+		addControlPageUpDownOverridesToComponent(r);
+		
 		// Enter override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0,false);
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0,false);
 		r.registerKeyboardAction(this,FrameMain.PATTERN_EDIT,stroke,JComponent.WHEN_FOCUSED);
 
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
@@ -976,10 +1029,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		r.setSelectedIndex(barsPerPattern);
 		r.addActionListener(this);
 		
-		// F4 Override
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
-		r.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-		
+		addF4DownOverrideToComponent(r);
+		addControlPageUpDownOverridesToComponent(r);
+
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}
@@ -1000,26 +1052,47 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		editNotes = new JRadioButton("Notes");
 		editNotes.setActionCommand(EDIT_NOTES);
 		
-		editControls = new JRadioButton("Controls");
-		editControls.setActionCommand(EDIT_CONTROLS);
+		editExpression = new JRadioButton("Volume");
+		editExpression.setActionCommand(EDIT_EXPRESSION);
 
+		editModulation = new JRadioButton("Modulation");
+		editModulation.setActionCommand(EDIT_MODULATION);
+
+		editFilter = new JRadioButton("Filter");
+		editFilter.setActionCommand(EDIT_FILTER);
+
+		addControlPageUpDownOverridesToComponent(editNotes);
+		addControlPageUpDownOverridesToComponent(editExpression);
+		addControlPageUpDownOverridesToComponent(editModulation);
+		addControlPageUpDownOverridesToComponent(editFilter);
+		
 		ButtonGroup group = new ButtonGroup();
 		group.add(editNotes);
-		group.add(editControls);
+		group.add(editExpression);
+		group.add(editModulation);
+		group.add(editFilter);
 		
 		if (selectedEditMode.equals(EDIT_NOTES)) {
 			editNotes.doClick();
-		} else if (selectedEditMode.equals(EDIT_CONTROLS)) {
-			editControls.doClick();
+		} else if (selectedEditMode.equals(EDIT_EXPRESSION)) {
+			editExpression.doClick();
+		} else if (selectedEditMode.equals(EDIT_MODULATION)) {
+			editModulation.doClick();
+		} else if (selectedEditMode.equals(EDIT_FILTER)) {
+			editFilter.doClick();
 		}
 
 		editNotes.addActionListener(this);
-		editControls.addActionListener(this);
+		editExpression.addActionListener(this);
+		editModulation.addActionListener(this);
+		editFilter.addActionListener(this);
 		
 		JPanel edit = new JPanel();
 		edit.setLayout(new BoxLayout(edit,BoxLayout.X_AXIS));
 		edit.add(editNotes);
-		edit.add(editControls);
+		edit.add(editExpression);
+		edit.add(editModulation);
+		edit.add(editFilter);
 		
 		JPanel wrapper = new JPanel();
 		wrapper.setLayout(new GridBagLayout());
@@ -1029,6 +1102,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		
 		insertMode = new JCheckBox("Insert ");
 		insertMode.addKeyListener(getController().getPlayerKeyListener());
+		addControlPageUpDownOverridesToComponent(insertMode);
 		r.add(insertMode,BorderLayout.LINE_END);
 		
 		return r;
@@ -1062,6 +1136,14 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	protected void changedSelectedEditMode() {
 		CardLayout layout = (CardLayout) cardPanel.getLayout();
-		layout.show(cardPanel,selectedEditMode);
+		String show = EDIT_NOTES;
+		if (
+			selectedEditMode.equals(EDIT_EXPRESSION) ||
+			selectedEditMode.equals(EDIT_MODULATION) ||
+			selectedEditMode.equals(EDIT_FILTER)
+			) {
+			show = EDIT_CONTROLS;
+		}
+		layout.show(cardPanel,show);
 	}
 }
