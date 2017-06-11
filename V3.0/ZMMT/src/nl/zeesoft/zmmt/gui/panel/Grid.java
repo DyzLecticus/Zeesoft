@@ -31,8 +31,8 @@ public class Grid extends JTable {
 	
 	protected int getPlayingRow() {
 		int r = -1;
-		if (getModel() instanceof PatternGridController) {
-			PatternGridController controller = (PatternGridController) getModel();
+		if (getModel() instanceof NotesGridController) {
+			NotesGridController controller = (NotesGridController) getModel();
 			r = (controller.getPlayingStep() - 1);
 		} else if (getModel() instanceof SequenceGridController) {
 			SequenceGridController controller = (SequenceGridController) getModel();

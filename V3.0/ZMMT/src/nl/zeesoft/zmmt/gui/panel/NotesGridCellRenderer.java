@@ -12,16 +12,20 @@ import nl.zeesoft.zmmt.composition.Note;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 @SuppressWarnings("serial")
-public class PatternGridCellRenderer extends DefaultTableCellRenderer {
-	private static final Color		BAR_COLOR_SELECTED 		= new Color(80,80,80);
-	private static final Color		BAR_COLOR_NORMAL 		= new Color(180,180,180);
-	private static final Color		BEAT_COLOR_SELECTED 	= new Color(104,104,104);
-	private static final Color		BEAT_COLOR_NORMAL 		= new Color(224,224,224);
+public class NotesGridCellRenderer extends DefaultTableCellRenderer {
+	protected static final Color	BAR_COLOR_SELECTED 		= new Color(80,80,80);
+	protected static final Color	BAR_COLOR_NORMAL 		= new Color(180,180,180);
+	protected static final Color	BEAT_COLOR_SELECTED 	= new Color(104,104,104);
+	protected static final Color	BEAT_COLOR_NORMAL 		= new Color(224,224,224);
 	
-	private PatternGridController	controller				= null;
+	private NotesGridController		controller				= null;
 
-	public PatternGridCellRenderer(PatternGridController controller) {
+	public NotesGridCellRenderer(NotesGridController controller) {
 		this.controller = controller;
+	}
+	
+	protected NotesGridController getController() {
+		return controller;
 	}
 	
 	@Override
@@ -54,28 +58,32 @@ public class PatternGridCellRenderer extends DefaultTableCellRenderer {
 			}
 			r = label;
 		} else {
-			Color color = null;
-			if ((row % controller.getStepsPerBar())==0) {
-				if (isSelected) {
-					color = BAR_COLOR_SELECTED;
-				} else {
-					color = BAR_COLOR_NORMAL;
-				}
-			} else if ((row % controller.getStepsPerBeat())==0) {
-				if (isSelected) {
-					color = BEAT_COLOR_SELECTED;
-				} else {
-					color = BEAT_COLOR_NORMAL;
-				}
-			} else {
-				if (isSelected) {
-					color = Grid.COLOR_SELECTED;
-				} else {
-					color = Grid.COLOR_NORMAL;
-				}
-			}
-			r.setBackground(color);
+			r.setBackground(getDefaultColor(row,isSelected,hasFocus));
 		}
 		return r;
+	}
+	
+	protected Color getDefaultColor(int row,boolean isSelected,boolean hasFocus) {
+		Color color = null;
+		if ((row % controller.getStepsPerBar())==0) {
+			if (isSelected) {
+				color = BAR_COLOR_SELECTED;
+			} else {
+				color = BAR_COLOR_NORMAL;
+			}
+		} else if ((row % controller.getStepsPerBeat())==0) {
+			if (isSelected) {
+				color = BEAT_COLOR_SELECTED;
+			} else {
+				color = BEAT_COLOR_NORMAL;
+			}
+		} else {
+			if (isSelected) {
+				color = Grid.COLOR_SELECTED;
+			} else {
+				color = Grid.COLOR_NORMAL;
+			}
+		}
+		return color;
 	}
 }

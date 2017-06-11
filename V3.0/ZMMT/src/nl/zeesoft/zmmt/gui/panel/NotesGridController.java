@@ -6,7 +6,7 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Pattern;
 
 @SuppressWarnings("serial")
-public class PatternGridController extends AbstractTableModel {
+public class NotesGridController extends AbstractTableModel {
 	private int					barsPerPattern		= 4;
 	private int					beatsPerBar			= 4;
 	private int					stepsPerBeat		= 8;
@@ -34,6 +34,10 @@ public class PatternGridController extends AbstractTableModel {
 	
 	public void setWorkingPattern(Pattern workingPattern) {
 		this.workingPattern = workingPattern;
+	}
+
+	protected Pattern getWorkingPattern() {
+		return workingPattern;
 	}
 
 	protected int getStepsPerBar() {

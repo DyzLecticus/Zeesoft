@@ -6,10 +6,10 @@ import java.util.SortedMap;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 
-public class PatternGridKeyListener extends InstrumentPlayerKeyListener {
+public class NotesGridKeyListener extends InstrumentPlayerKeyListener {
 	private PanelPatterns patternPanel = null;
 	
-	public PatternGridKeyListener(Controller controller,SortedMap<String,Integer> keyCodeNoteNumbers) {
+	public NotesGridKeyListener(Controller controller,SortedMap<String,Integer> keyCodeNoteNumbers) {
 		super(controller,keyCodeNoteNumbers);
 	}
 

@@ -258,6 +258,8 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		grid.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		grid.getSelectionModel().addListSelectionListener(this);
 		grid.setDefaultRenderer(Object.class,new SequenceGridCellRenderer(gridController));
+		grid.getTableHeader().setReorderingAllowed(false);
+		grid.getTableHeader().setResizingAllowed(false);
 		
 		int height = getController().getStateManager().getSettings().getCustomRowHeight();
 		if (height>0) {
