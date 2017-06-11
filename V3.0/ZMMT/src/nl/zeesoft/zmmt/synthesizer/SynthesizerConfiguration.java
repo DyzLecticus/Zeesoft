@@ -266,10 +266,16 @@ public class SynthesizerConfiguration {
 			int layerMidiNum = echoInst.getLayer1().getMidiNum();
 			int layerPressure = echoInst.getLayer1().getPressure();
 			int layerModulation = echoInst.getLayer1().getModulation();
+			int layerVolume = echoInst.getLayer1().getVolume();
+			int layerFilter = echoInst.getLayer1().getFilter();
+			int layerChorus = echoInst.getLayer1().getChorus();
 			if (echo.getLayer()==2) {
 				layerMidiNum = echoInst.getLayer2().getMidiNum();
 				layerPressure = echoInst.getLayer2().getPressure();
 				layerModulation = echoInst.getLayer2().getModulation();
+				layerVolume = echoInst.getLayer2().getVolume();
+				layerFilter = echoInst.getLayer2().getFilter();
+				layerChorus = echoInst.getLayer2().getChorus();
 			}
 			if (layerMidiNum>=0) {
 				for (int e = 0; e < 3; e++) {
@@ -277,6 +283,9 @@ public class SynthesizerConfiguration {
 					synth.getChannels()[channel].programChange(layerMidiNum);
 					synth.getChannels()[channel].setChannelPressure(layerPressure);
 					synth.getChannels()[channel].controlChange(Control.MODULATION,layerModulation);
+					synth.getChannels()[channel].controlChange(Control.VOLUME,layerVolume);
+					synth.getChannels()[channel].controlChange(Control.FILTER,layerFilter);
+					synth.getChannels()[channel].controlChange(Control.CHORUS,layerChorus);
 					if (e==0) {
 						synth.getChannels()[channel].controlChange(Control.PAN,echo.getPan1());
 						synth.getChannels()[channel].controlChange(Control.REVERB,echo.getReverb1());
@@ -298,13 +307,21 @@ public class SynthesizerConfiguration {
 				synth.getChannels()[channel].controlChange(Control.PAN,inst.getLayer1().getPan());
 				synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer1().getReverb());
 				synth.getChannels()[channel].controlChange(Control.MODULATION,inst.getLayer1().getModulation());
-				int layerChannel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
-				if (layerChannel>=0 && inst.getLayer2().getMidiNum()>=0) {
-					synth.getChannels()[layerChannel].programChange(inst.getLayer2().getMidiNum());
-					synth.getChannels()[layerChannel].setChannelPressure(inst.getLayer2().getPressure());
-					synth.getChannels()[layerChannel].controlChange(Control.PAN,inst.getLayer2().getPan());
-					synth.getChannels()[layerChannel].controlChange(Control.REVERB,inst.getLayer2().getReverb());
-					synth.getChannels()[layerChannel].controlChange(Control.MODULATION,inst.getLayer2().getModulation());
+				synth.getChannels()[channel].controlChange(Control.VOLUME,inst.getLayer1().getVolume());
+				synth.getChannels()[channel].controlChange(Control.FILTER,inst.getLayer1().getFilter());
+				synth.getChannels()[channel].controlChange(Control.CHORUS,inst.getLayer1().getChorus());
+				if (inst.getLayer2().getMidiNum()>=0) {
+					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
+					if (channel>=0) {
+						synth.getChannels()[channel].programChange(inst.getLayer2().getMidiNum());
+						synth.getChannels()[channel].setChannelPressure(inst.getLayer2().getPressure());
+						synth.getChannels()[channel].controlChange(Control.PAN,inst.getLayer2().getPan());
+						synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer2().getReverb());
+						synth.getChannels()[channel].controlChange(Control.MODULATION,inst.getLayer2().getModulation());
+						synth.getChannels()[channel].controlChange(Control.VOLUME,inst.getLayer2().getVolume());
+						synth.getChannels()[channel].controlChange(Control.FILTER,inst.getLayer2().getFilter());
+						synth.getChannels()[channel].controlChange(Control.CHORUS,inst.getLayer2().getChorus());
+					}
 				}
 			}
 		}

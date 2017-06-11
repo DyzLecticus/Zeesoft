@@ -1,12 +1,15 @@
 package nl.zeesoft.zmmt.composition;
 
 public class Control {
-	public static final int		MODULATION	= 1;
-	public static final int		PAN			= 10;
-	public static final int		VOLUME		= 11;
-	public static final int		FILTER		= 74;
-	public static final int		REVERB		= 91;
-	public static final int		CHORUS		= 93;
+	public static final int		MODULATION			= 1;
+	public static final int		PAN					= 10;
+	public static final int		VOLUME				= 7;
+	public static final int		EXPRESSION			= 11;
+	public static final int		FILTER				= 74;
+	public static final int		REVERB				= 91;
+	public static final int		CHORUS				= 93;
+	
+	public static final int[]	PATTERN_CONTROLS	= {EXPRESSION,MODULATION,FILTER}; 
 	
 	public String	instrument				= "";
 	public int		control					= 0;		

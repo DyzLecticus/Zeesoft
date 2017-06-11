@@ -5,7 +5,7 @@ public class InstrumentLayerConfiguration {
 
 	private int			modulation		= 0;
 	private int 		pan				= 64;
-	private int			volume			= 127;
+	private int			volume			= 110;
 	private int			filter			= 127;
 	private int			reverb			= 24;
 	private int			chorus			= 0;
