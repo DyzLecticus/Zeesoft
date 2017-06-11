@@ -133,37 +133,37 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 				InstrumentConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 				if (instrumentLayer1MidiNum[i]!=null) {
-					instrumentLayer1MidiNum[i].setValue(String.format("%03d",conf.getLayer1MidiNum()));
+					instrumentLayer1MidiNum[i].setValue(String.format("%03d",conf.getLayer1().getMidiNum()));
 				}
-				instrumentLayer1Pressure[i].setValue(String.format("%03d",conf.getLayer1Pressure()));
-				instrumentLayer1Pan[i].setValue(String.format("%03d",conf.getLayer1Pan()));
-				instrumentLayer1Reverb[i].setValue(String.format("%03d",conf.getLayer1Reverb()));
-				instrumentLayer1Modulation[i].setValue(String.format("%03d",conf.getLayer1Modulation()));
+				instrumentLayer1Pressure[i].setValue(String.format("%03d",conf.getLayer1().getPressure()));
+				instrumentLayer1Pan[i].setValue(String.format("%03d",conf.getLayer1().getPan()));
+				instrumentLayer1Reverb[i].setValue(String.format("%03d",conf.getLayer1().getReverb()));
+				instrumentLayer1Modulation[i].setValue(String.format("%03d",conf.getLayer1().getModulation()));
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-					instrumentLayer1BaseOctave[i].setValue(String.format("%03d",conf.getLayer1BaseOctave()));
-					instrumentLayer1BaseVelocity[i].setValue(String.format("%03d",conf.getLayer1BaseVelocity()));
-					instrumentLayer1AccentVelocity[i].setValue(String.format("%03d",conf.getLayer1AccentVelocity()));
+					instrumentLayer1BaseOctave[i].setValue(String.format("%03d",conf.getLayer1().getBaseOctave()));
+					instrumentLayer1BaseVelocity[i].setValue(String.format("%03d",conf.getLayer1().getBaseVelocity()));
+					instrumentLayer1AccentVelocity[i].setValue(String.format("%03d",conf.getLayer1().getAccentVelocity()));
 				}
 				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 					) {
-					instrumentLayer2MidiNum[i].setValue(String.format("%03d",conf.getLayer2MidiNum()));
-					instrumentLayer2Pressure[i].setValue(String.format("%03d",conf.getLayer2Pressure()));
-					instrumentLayer2Pan[i].setValue(String.format("%03d",conf.getLayer2Pan()));
-					instrumentLayer2Reverb[i].setValue(String.format("%03d",conf.getLayer2Reverb()));
-					instrumentLayer2Modulation[i].setValue(String.format("%03d",conf.getLayer2Modulation()));
-					instrumentLayer2BaseOctave[i].setValue(String.format("%03d",conf.getLayer2BaseOctave()));
-					instrumentLayer2BaseVelocity[i].setValue(String.format("%03d",conf.getLayer2BaseVelocity()));
-					instrumentLayer2AccentVelocity[i].setValue(String.format("%03d",conf.getLayer2AccentVelocity()));
+					instrumentLayer2MidiNum[i].setValue(String.format("%03d",conf.getLayer2().getMidiNum()));
+					instrumentLayer2Pressure[i].setValue(String.format("%03d",conf.getLayer2().getPressure()));
+					instrumentLayer2Pan[i].setValue(String.format("%03d",conf.getLayer2().getPan()));
+					instrumentLayer2Reverb[i].setValue(String.format("%03d",conf.getLayer2().getReverb()));
+					instrumentLayer2Modulation[i].setValue(String.format("%03d",conf.getLayer2().getModulation()));
+					instrumentLayer2BaseOctave[i].setValue(String.format("%03d",conf.getLayer2().getBaseOctave()));
+					instrumentLayer2BaseVelocity[i].setValue(String.format("%03d",conf.getLayer2().getBaseVelocity()));
+					instrumentLayer2AccentVelocity[i].setValue(String.format("%03d",conf.getLayer2().getAccentVelocity()));
 	
-					getSliderForNumber(instrumentLayer2Pressure[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Reverb[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Modulation[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-					getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-					getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
-					getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2MidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Pressure[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Reverb[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Modulation[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
 				}
 			}
 			for (int d = 0; d < Drum.DRUMS.length; d++) {
@@ -238,29 +238,29 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	public void setChangesInComposition(Composition composition) {
 		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-			inst.setLayer1MidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
-			inst.setLayer1Pressure(Integer.parseInt(instrumentLayer1Pressure[i].getValue().toString()));
-			inst.setLayer1Pan(Integer.parseInt(instrumentLayer1Pan[i].getValue().toString()));
-			inst.setLayer1Reverb(Integer.parseInt(instrumentLayer1Reverb[i].getValue().toString()));
-			inst.setLayer1Modulation(Integer.parseInt(instrumentLayer1Modulation[i].getValue().toString()));
+			inst.getLayer1().setMidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
+			inst.getLayer1().setPressure(Integer.parseInt(instrumentLayer1Pressure[i].getValue().toString()));
+			inst.getLayer1().setPan(Integer.parseInt(instrumentLayer1Pan[i].getValue().toString()));
+			inst.getLayer1().setReverb(Integer.parseInt(instrumentLayer1Reverb[i].getValue().toString()));
+			inst.getLayer1().setModulation(Integer.parseInt(instrumentLayer1Modulation[i].getValue().toString()));
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-				inst.setLayer1BaseOctave(Integer.parseInt(instrumentLayer1BaseOctave[i].getValue().toString()));
-				inst.setLayer1BaseVelocity(Integer.parseInt(instrumentLayer1BaseVelocity[i].getValue().toString()));
-				inst.setLayer1AccentVelocity(Integer.parseInt(instrumentLayer1AccentVelocity[i].getValue().toString()));
+				inst.getLayer1().setBaseOctave(Integer.parseInt(instrumentLayer1BaseOctave[i].getValue().toString()));
+				inst.getLayer1().setBaseVelocity(Integer.parseInt(instrumentLayer1BaseVelocity[i].getValue().toString()));
+				inst.getLayer1().setAccentVelocity(Integer.parseInt(instrumentLayer1AccentVelocity[i].getValue().toString()));
 			}
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 				) {
-				inst.setLayer2MidiNum(Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()));
-				inst.setLayer2Pressure(Integer.parseInt(instrumentLayer2Pressure[i].getValue().toString()));
-				inst.setLayer2Pan(Integer.parseInt(instrumentLayer2Pan[i].getValue().toString()));
-				inst.setLayer2Reverb(Integer.parseInt(instrumentLayer2Reverb[i].getValue().toString()));
-				inst.setLayer2Modulation(Integer.parseInt(instrumentLayer2Modulation[i].getValue().toString()));
-				inst.setLayer2BaseOctave(Integer.parseInt(instrumentLayer2BaseOctave[i].getValue().toString()));
-				inst.setLayer2BaseVelocity(Integer.parseInt(instrumentLayer2BaseVelocity[i].getValue().toString()));
-				inst.setLayer2AccentVelocity(Integer.parseInt(instrumentLayer2AccentVelocity[i].getValue().toString()));
+				inst.getLayer2().setMidiNum(Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()));
+				inst.getLayer2().setPressure(Integer.parseInt(instrumentLayer2Pressure[i].getValue().toString()));
+				inst.getLayer2().setPan(Integer.parseInt(instrumentLayer2Pan[i].getValue().toString()));
+				inst.getLayer2().setReverb(Integer.parseInt(instrumentLayer2Reverb[i].getValue().toString()));
+				inst.getLayer2().setModulation(Integer.parseInt(instrumentLayer2Modulation[i].getValue().toString()));
+				inst.getLayer2().setBaseOctave(Integer.parseInt(instrumentLayer2BaseOctave[i].getValue().toString()));
+				inst.getLayer2().setBaseVelocity(Integer.parseInt(instrumentLayer2BaseVelocity[i].getValue().toString()));
+				inst.getLayer2().setAccentVelocity(Integer.parseInt(instrumentLayer2AccentVelocity[i].getValue().toString()));
 			}
 		}
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
@@ -562,7 +562,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		}
 		echoInstrument.addKeyListener(getController().getPlayerKeyListener());
 		for (int i = 0; i < (Instrument.INSTRUMENTS.length - 2); i++) {
-			echoInstrument.addItem(Instrument.INSTRUMENTS[i]);
+			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+				echoInstrument.addItem(Instrument.INSTRUMENTS[i]);
+			}
 		}
 		addLabel(panel,row,"Instrument");
 		addProperty(panel,row,echoInstrument);

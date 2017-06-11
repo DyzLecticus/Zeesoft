@@ -10,6 +10,7 @@ public class Pattern {
 	private int				number		= 0;
 	private int 			bars		= 0;
 	private List<Note>		notes		= new ArrayList<Note>();
+	private List<Control>	controls	= new ArrayList<Control>();
 	
 	public Pattern copy() {
 		Pattern copy = new Pattern();
@@ -17,6 +18,9 @@ public class Pattern {
 		copy.setBars(bars);
 		for (Note note: notes) {
 			copy.getNotes().add(note.copy());
+		}
+		for (Control control: controls) {
+			copy.getControls().add(control.copy());
 		}
 		return copy;
 	}
@@ -29,18 +33,30 @@ public class Pattern {
 			json.rootElement.children.add(new JsElem("bars","" + bars));
 		}
 		if (notes.size()>0) {
-			JsElem stepsElem = new JsElem("steps",true);
-			json.rootElement.children.add(stepsElem);
+			JsElem notesElem = new JsElem("notes",true);
+			json.rootElement.children.add(notesElem);
 			for (Note note: notes) {
-				JsElem stepElem = new JsElem();
-				stepsElem.children.add(stepElem);
-				stepElem.children.add(new JsElem("i",note.instrument,true));
-				stepElem.children.add(new JsElem("t","" + note.track));
-				stepElem.children.add(new JsElem("s","" + note.step));
-				stepElem.children.add(new JsElem("n","" + note.note));
-				stepElem.children.add(new JsElem("d","" + note.duration));
-				stepElem.children.add(new JsElem("a","" + note.accent));
-				stepElem.children.add(new JsElem("v","" + note.velocityPercentage));
+				JsElem noteElem = new JsElem();
+				notesElem.children.add(noteElem);
+				noteElem.children.add(new JsElem("i",note.instrument,true));
+				noteElem.children.add(new JsElem("t","" + note.track));
+				noteElem.children.add(new JsElem("s","" + note.step));
+				noteElem.children.add(new JsElem("n","" + note.note));
+				noteElem.children.add(new JsElem("d","" + note.duration));
+				noteElem.children.add(new JsElem("a","" + note.accent));
+				noteElem.children.add(new JsElem("v","" + note.velocityPercentage));
+			}
+		}
+		if (controls.size()>0) {
+			JsElem ctrlsElem = new JsElem("controls",true);
+			json.rootElement.children.add(ctrlsElem);
+			for (Control ctrl: controls) {
+				JsElem ctrlElem = new JsElem();
+				ctrlsElem.children.add(ctrlElem);
+				ctrlElem.children.add(new JsElem("i",ctrl.instrument,true));
+				ctrlElem.children.add(new JsElem("c","" + ctrl.control));
+				ctrlElem.children.add(new JsElem("s","" + ctrl.step));
+				ctrlElem.children.add(new JsElem("p","" + ctrl.percentage));
 			}
 		}
 		return json;
@@ -48,12 +64,13 @@ public class Pattern {
 
 	public void fromJson(JsFile json) {
 		notes.clear();
+		controls.clear();
 		for (JsElem elem: json.rootElement.children) {
 			if (elem.name.equals("number")) {
 				number = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("bars")) {
 				bars = Integer.parseInt(elem.value.toString());
-			} else if (elem.name.equals("steps")) {
+			} else if (elem.name.equals("notes") || elem.name.equals("steps")) { // TODO: remove steps as option
 				for (JsElem stepElem: elem.children) {
 					Note note = new Note();
 					for (JsElem valElem: stepElem.children) {
@@ -74,6 +91,22 @@ public class Pattern {
 						}
 					}
 					notes.add(note);
+				}
+			} else if (elem.name.equals("controls")) {
+				for (JsElem ctrlElem: elem.children) {
+					Control ctrl = new Control();
+					for (JsElem valElem: ctrlElem.children) {
+						if (valElem.name.equals("i")) {
+							ctrl.instrument = valElem.value.toString();
+						} else if (valElem.name.equals("c")) {
+							ctrl.control = Integer.parseInt(valElem.value.toString());
+						} else if (valElem.name.equals("s")) {
+							ctrl.step = Integer.parseInt(valElem.value.toString());
+						} else if (valElem.name.equals("p")) {
+							ctrl.percentage = Integer.parseInt(valElem.value.toString());
+						}
+					}
+					controls.add(ctrl);
 				}
 			}
 		}
@@ -134,5 +167,9 @@ public class Pattern {
 
 	public List<Note> getNotes() {
 		return notes;
+	}
+
+	public List<Control> getControls() {
+		return controls;
 	}
 }

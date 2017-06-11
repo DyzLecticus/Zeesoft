@@ -41,14 +41,18 @@ public class TestSynthesizerConfiguration extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		SynthesizerConfiguration conf = new SynthesizerConfiguration();
-		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1MidiNum(123);
-		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1BaseOctave(5);
-		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Pressure(123);
-		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Pan(123);
-		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Reverb(123);
-		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1Modulation(123);
-		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1BaseVelocity(123);
-		conf.getInstrument(Instrument.SYNTH_BASS1).setLayer1AccentVelocity(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setMidiNum(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setBaseOctave(5);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setVolume(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setFilter(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setChorus(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setModulation(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setPressure(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setPan(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setReverb(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setModulation(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setBaseVelocity(123);
+		conf.getInstrument(Instrument.SYNTH_BASS1).getLayer1().setAccentVelocity(123);
 		JsFile json = conf.toJson();
 		ZStringBuilder before = json.toStringBuilderReadFormat();
 		conf.fromJson(json);

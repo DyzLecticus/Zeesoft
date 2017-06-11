@@ -8,6 +8,7 @@ import javax.sound.midi.Synthesizer;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zmmt.composition.Control;
 
 public class SynthesizerConfiguration {
 	private List<InstrumentConfiguration>	instruments	= new ArrayList<InstrumentConfiguration>();
@@ -39,29 +40,35 @@ public class SynthesizerConfiguration {
 			JsElem instElem = new JsElem("instrument");
 			json.rootElement.children.add(instElem);
 			instElem.children.add(new JsElem("name",inst.getName(),true));
-			instElem.children.add(new JsElem("layer1MidiNum","" + inst.getLayer1MidiNum()));
-			instElem.children.add(new JsElem("layer1Pressure","" + inst.getLayer1Pressure()));
-			instElem.children.add(new JsElem("layer1Pan","" + inst.getLayer1Pan()));
-			instElem.children.add(new JsElem("layer1Reverb","" + inst.getLayer1Reverb()));
-			instElem.children.add(new JsElem("layer1Modulation","" + inst.getLayer1Modulation()));
+			instElem.children.add(new JsElem("layer1MidiNum","" + inst.getLayer1().getMidiNum()));
+			instElem.children.add(new JsElem("layer1Volume","" + inst.getLayer1().getVolume()));
+			instElem.children.add(new JsElem("layer1Filter","" + inst.getLayer1().getFilter()));
+			instElem.children.add(new JsElem("layer1Chorus","" + inst.getLayer1().getChorus()));
+			instElem.children.add(new JsElem("layer1Pressure","" + inst.getLayer1().getPressure()));
+			instElem.children.add(new JsElem("layer1Pan","" + inst.getLayer1().getPan()));
+			instElem.children.add(new JsElem("layer1Reverb","" + inst.getLayer1().getReverb()));
+			instElem.children.add(new JsElem("layer1Modulation","" + inst.getLayer1().getModulation()));
 			if (!inst.getName().equals(Instrument.DRUMS)) {
-				instElem.children.add(new JsElem("layer1BaseOctave","" + inst.getLayer1BaseOctave()));
-				instElem.children.add(new JsElem("layer1BaseVelocity","" + inst.getLayer1BaseVelocity()));
-				instElem.children.add(new JsElem("layer1AccentVelocity","" + inst.getLayer1AccentVelocity()));
+				instElem.children.add(new JsElem("layer1BaseOctave","" + inst.getLayer1().getBaseOctave()));
+				instElem.children.add(new JsElem("layer1BaseVelocity","" + inst.getLayer1().getBaseVelocity()));
+				instElem.children.add(new JsElem("layer1AccentVelocity","" + inst.getLayer1().getAccentVelocity()));
 			}
 			if (inst.getName().equals(Instrument.SYNTH_BASS1) ||
 				inst.getName().equals(Instrument.SYNTH1) || 
 				inst.getName().equals(Instrument.LEAD) ||
 				inst.getName().equals(Instrument.STRINGS)
 				) { 
-				instElem.children.add(new JsElem("layer2MidiNum","" + inst.getLayer2MidiNum()));
-				instElem.children.add(new JsElem("layer2Pressure","" + inst.getLayer2Pressure()));
-				instElem.children.add(new JsElem("layer2Pan","" + inst.getLayer2Pan()));
-				instElem.children.add(new JsElem("layer2Reverb","" + inst.getLayer2Reverb()));
-				instElem.children.add(new JsElem("layer2BaseOctave","" + inst.getLayer2BaseOctave()));
-				instElem.children.add(new JsElem("layer2BaseVelocity","" + inst.getLayer2BaseVelocity()));
-				instElem.children.add(new JsElem("layer2AccentVelocity","" + inst.getLayer2AccentVelocity()));
-				instElem.children.add(new JsElem("layer2Modulation","" + inst.getLayer2Modulation()));
+				instElem.children.add(new JsElem("layer2MidiNum","" + inst.getLayer2().getMidiNum()));
+				instElem.children.add(new JsElem("layer2Volume","" + inst.getLayer2().getVolume()));
+				instElem.children.add(new JsElem("layer2Filter","" + inst.getLayer2().getFilter()));
+				instElem.children.add(new JsElem("layer2Chorus","" + inst.getLayer2().getChorus()));
+				instElem.children.add(new JsElem("layer2Pressure","" + inst.getLayer2().getPressure()));
+				instElem.children.add(new JsElem("layer2Pan","" + inst.getLayer2().getPan()));
+				instElem.children.add(new JsElem("layer2Reverb","" + inst.getLayer2().getReverb()));
+				instElem.children.add(new JsElem("layer2BaseOctave","" + inst.getLayer2().getBaseOctave()));
+				instElem.children.add(new JsElem("layer2BaseVelocity","" + inst.getLayer2().getBaseVelocity()));
+				instElem.children.add(new JsElem("layer2AccentVelocity","" + inst.getLayer2().getAccentVelocity()));
+				instElem.children.add(new JsElem("layer2Modulation","" + inst.getLayer2().getModulation()));
 			}
 		}
 		for (DrumConfiguration drum: drums) {
@@ -101,38 +108,52 @@ public class SynthesizerConfiguration {
 					for (JsElem val: elem.children) {
 						if (val.name.equals("name")) {
 							inst.setName(val.value.toString());
+						// Layer 1
 						} else if (val.name.equals("layer1MidiNum")) {
-							inst.setLayer1MidiNum(Integer.parseInt(val.value.toString()));
+							inst.getLayer1().setMidiNum(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer1Volume")) {
+							inst.getLayer1().setVolume(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer1Filter")) {
+							inst.getLayer1().setFilter(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer1Chorus")) {
+							inst.getLayer1().setChorus(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1Pressure")) {
-							inst.setLayer1Pressure(Integer.parseInt(val.value.toString()));
+							inst.getLayer1().setPressure(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1Pan")) {
-							inst.setLayer1Pan(Integer.parseInt(val.value.toString()));
+							inst.getLayer1().setPan(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1Reverb")) {
-							inst.setLayer1Reverb(Integer.parseInt(val.value.toString()));
+							inst.getLayer1().setReverb(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1Modulation")) {
-							inst.setLayer1Modulation(Integer.parseInt(val.value.toString()));
+							inst.getLayer1().setModulation(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1BaseOctave")) {
-							inst.setLayer1BaseOctave(Integer.parseInt(val.value.toString()));
+							inst.getLayer1().setBaseOctave(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1BaseVelocity")) {
-							inst.setLayer1BaseVelocity(Integer.parseInt(val.value.toString()));
+							inst.getLayer1().setBaseVelocity(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer1AccentVelocity")) {
-							inst.setLayer1AccentVelocity(Integer.parseInt(val.value.toString()));
+							inst.getLayer1().setAccentVelocity(Integer.parseInt(val.value.toString()));
+						// Layer 2
 						} else if (val.name.equals("layer2MidiNum")) {
-							inst.setLayer2MidiNum(Integer.parseInt(val.value.toString()));
+							inst.getLayer2().setMidiNum(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer2Volume")) {
+							inst.getLayer2().setVolume(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer2Filter")) {
+							inst.getLayer2().setFilter(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("layer2Chorus")) {
+							inst.getLayer2().setChorus(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2Pressure")) {
-							inst.setLayer2Pressure(Integer.parseInt(val.value.toString()));
+							inst.getLayer2().setPressure(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2Pan")) {
-							inst.setLayer2Pan(Integer.parseInt(val.value.toString()));
+							inst.getLayer2().setPan(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2Reverb")) {
-							inst.setLayer2Reverb(Integer.parseInt(val.value.toString()));
+							inst.getLayer2().setReverb(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2Modulation")) {
-							inst.setLayer2Modulation(Integer.parseInt(val.value.toString()));
+							inst.getLayer2().setModulation(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2BaseOctave")) {
-							inst.setLayer2BaseOctave(Integer.parseInt(val.value.toString()));
+							inst.getLayer2().setBaseOctave(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2BaseVelocity")) {
-							inst.setLayer2BaseVelocity(Integer.parseInt(val.value.toString()));
+							inst.getLayer2().setBaseVelocity(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("layer2AccentVelocity")) {
-							inst.setLayer2AccentVelocity(Integer.parseInt(val.value.toString()));
+							inst.getLayer2().setAccentVelocity(Integer.parseInt(val.value.toString()));
 						}
 					}
 					if (inst.getName().length()>0) {
@@ -242,29 +263,29 @@ public class SynthesizerConfiguration {
 	public void configureMidiSynthesizer(Synthesizer synth) {
 		InstrumentConfiguration echoInst = getInstrument(echo.getInstrument());
 		if (echoInst!=null) {
-			int layerMidiNum = echoInst.getLayer1MidiNum();
-			int layerPressure = echoInst.getLayer1Pressure();
-			int layerModulation = echoInst.getLayer1Modulation();
+			int layerMidiNum = echoInst.getLayer1().getMidiNum();
+			int layerPressure = echoInst.getLayer1().getPressure();
+			int layerModulation = echoInst.getLayer1().getModulation();
 			if (echo.getLayer()==2) {
-				layerMidiNum = echoInst.getLayer2MidiNum();
-				layerPressure = echoInst.getLayer2Pressure();
-				layerModulation = echoInst.getLayer2Modulation();
+				layerMidiNum = echoInst.getLayer2().getMidiNum();
+				layerPressure = echoInst.getLayer2().getPressure();
+				layerModulation = echoInst.getLayer2().getModulation();
 			}
 			if (layerMidiNum>=0) {
 				for (int e = 0; e < 3; e++) {
 					int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
 					synth.getChannels()[channel].programChange(layerMidiNum);
 					synth.getChannels()[channel].setChannelPressure(layerPressure);
-					synth.getChannels()[channel].controlChange(1,layerModulation);
+					synth.getChannels()[channel].controlChange(Control.MODULATION,layerModulation);
 					if (e==0) {
-						synth.getChannels()[channel].controlChange(10,echo.getPan1());
-						synth.getChannels()[channel].controlChange(91,echo.getReverb1());
+						synth.getChannels()[channel].controlChange(Control.PAN,echo.getPan1());
+						synth.getChannels()[channel].controlChange(Control.REVERB,echo.getReverb1());
 					} else if (e==1) {
-						synth.getChannels()[channel].controlChange(10,echo.getPan2());
-						synth.getChannels()[channel].controlChange(91,echo.getReverb2());
+						synth.getChannels()[channel].controlChange(Control.PAN,echo.getPan2());
+						synth.getChannels()[channel].controlChange(Control.REVERB,echo.getReverb2());
 					} else if (e==2) {
-						synth.getChannels()[channel].controlChange(10,echo.getPan3());
-						synth.getChannels()[channel].controlChange(91,echo.getReverb3());
+						synth.getChannels()[channel].controlChange(Control.PAN,echo.getPan3());
+						synth.getChannels()[channel].controlChange(Control.REVERB,echo.getReverb3());
 					}
 				}
 			}
@@ -272,18 +293,18 @@ public class SynthesizerConfiguration {
 		for (InstrumentConfiguration inst: instruments) {
 			if (!inst.getName().equals(Instrument.ECHO)) {
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),0);
-				synth.getChannels()[channel].programChange(inst.getLayer1MidiNum());
-				synth.getChannels()[channel].setChannelPressure(inst.getLayer1Pressure());
-				synth.getChannels()[channel].controlChange(10,inst.getLayer1Pan());
-				synth.getChannels()[channel].controlChange(91,inst.getLayer1Reverb());
-				synth.getChannels()[channel].controlChange(1,inst.getLayer1Modulation());
+				synth.getChannels()[channel].programChange(inst.getLayer1().getMidiNum());
+				synth.getChannels()[channel].setChannelPressure(inst.getLayer1().getPressure());
+				synth.getChannels()[channel].controlChange(Control.PAN,inst.getLayer1().getPan());
+				synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer1().getReverb());
+				synth.getChannels()[channel].controlChange(Control.MODULATION,inst.getLayer1().getModulation());
 				int layerChannel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
-				if (layerChannel>=0 && inst.getLayer2MidiNum()>=0) {
-					synth.getChannels()[layerChannel].programChange(inst.getLayer2MidiNum());
-					synth.getChannels()[layerChannel].setChannelPressure(inst.getLayer2Pressure());
-					synth.getChannels()[layerChannel].controlChange(10,inst.getLayer2Pan());
-					synth.getChannels()[layerChannel].controlChange(91,inst.getLayer2Reverb());
-					synth.getChannels()[layerChannel].controlChange(1,inst.getLayer2Modulation());
+				if (layerChannel>=0 && inst.getLayer2().getMidiNum()>=0) {
+					synth.getChannels()[layerChannel].programChange(inst.getLayer2().getMidiNum());
+					synth.getChannels()[layerChannel].setChannelPressure(inst.getLayer2().getPressure());
+					synth.getChannels()[layerChannel].controlChange(Control.PAN,inst.getLayer2().getPan());
+					synth.getChannels()[layerChannel].controlChange(Control.REVERB,inst.getLayer2().getReverb());
+					synth.getChannels()[layerChannel].controlChange(Control.MODULATION,inst.getLayer2().getModulation());
 				}
 			}
 		}
@@ -392,11 +413,11 @@ public class SynthesizerConfiguration {
 			}
 		} else {
 			if (layer) { 
-				if (inst.getLayer2MidiNum()>=0 && inst.getLayer2MidiNum()!=inst.getLayer1MidiNum()) {
-					r = (inst.getLayer2BaseOctave() * 12) + (note - 36);
+				if (inst.getLayer2().getMidiNum()>=0 && inst.getLayer2().getMidiNum()!=inst.getLayer1().getMidiNum()) {
+					r = (inst.getLayer2().getBaseOctave() * 12) + (note - 36);
 				}
 			} else {
-				r = (inst.getLayer1BaseOctave() * 12) + (note - 36);
+				r = (inst.getLayer1().getBaseOctave() * 12) + (note - 36);
 			}
 		}
 		return r;
@@ -451,18 +472,18 @@ public class SynthesizerConfiguration {
 			}
 		} else {
 			if (layer) {
-				if (inst.getLayer2MidiNum()>=0 && inst.getLayer2MidiNum()!=inst.getLayer1MidiNum()) {
+				if (inst.getLayer2().getMidiNum()>=0 && inst.getLayer2().getMidiNum()!=inst.getLayer1().getMidiNum()) {
 					if (accent) {
-						r = inst.getLayer2AccentVelocity();
+						r = inst.getLayer2().getAccentVelocity();
 					} else {
-						r = inst.getLayer2BaseVelocity();
+						r = inst.getLayer2().getBaseVelocity();
 					}
 				}
 			} else {
 				if (accent) {
-					r = inst.getLayer1AccentVelocity();
+					r = inst.getLayer1().getAccentVelocity();
 				} else {
-					r = inst.getLayer1BaseVelocity();
+					r = inst.getLayer1().getBaseVelocity();
 				}
 			}
 		}
@@ -488,86 +509,72 @@ public class SynthesizerConfiguration {
 
 	protected void initializeInstrument(InstrumentConfiguration instrument) {
 		if (instrument.getName().equals(Instrument.SYNTH_BASS1)) {
-			instrument.setLayer1MidiNum(34);
-			instrument.setLayer1BaseOctave(2);
-			instrument.setLayer1BaseVelocity(127);
-			instrument.setLayer1AccentVelocity(127);
-			instrument.setLayer1Reverb(0);
-			instrument.setLayer2MidiNum(38);
-			instrument.setLayer2BaseOctave(2);
-			instrument.setLayer2BaseVelocity(50);
-			instrument.setLayer2AccentVelocity(100);
-			instrument.setLayer2Reverb(0);
+			instrument.getLayer1().setMidiNum(34);
+			instrument.getLayer1().setBaseOctave(3);
+			instrument.getLayer2().setMidiNum(38);
+			instrument.getLayer2().setBaseOctave(3);
 		} else if (instrument.getName().equals(Instrument.SYNTH_BASS2)) {
-			instrument.setLayer1MidiNum(7);
-			instrument.setLayer1BaseOctave(2);
-			instrument.setLayer1BaseVelocity(110);
-			instrument.setLayer1AccentVelocity(120);
-			instrument.setLayer1Pan(48);
-			instrument.setLayer1Reverb(16);
+			instrument.getLayer1().setMidiNum(7);
+			instrument.getLayer1().setBaseOctave(3);
 		} else if (instrument.getName().equals(Instrument.SYNTH_BASS3)) {
-			instrument.setLayer1MidiNum(25);
-			instrument.setLayer1BaseOctave(2);
-			instrument.setLayer1BaseVelocity(110);
-			instrument.setLayer1AccentVelocity(120);
-			instrument.setLayer1Pan(80);
-			instrument.setLayer1Reverb(16);
+			instrument.getLayer1().setMidiNum(25);
+			instrument.getLayer1().setBaseOctave(3);
 		} else if (instrument.getName().equals(Instrument.SYNTH1)) {
-			instrument.setLayer1MidiNum(85);
-			instrument.setLayer1BaseOctave(5);
-			instrument.setLayer1BaseVelocity(60);
-			instrument.setLayer1AccentVelocity(70);
-			instrument.setLayer1Pan(80);
-			instrument.setLayer1Reverb(16);
-			instrument.setLayer2MidiNum(80);
-			instrument.setLayer2BaseOctave(6);
-			instrument.setLayer2BaseVelocity(50);
-			instrument.setLayer2AccentVelocity(64);
-			instrument.setLayer2Pan(48);
-			instrument.setLayer2Reverb(127);
+			instrument.getLayer1().setMidiNum(85);
+			instrument.getLayer1().setBaseOctave(5);
+			instrument.getLayer1().setBaseVelocity(60);
+			instrument.getLayer1().setAccentVelocity(70);
+			instrument.getLayer1().setPan(80);
+			instrument.getLayer1().setReverb(16);
+			instrument.getLayer2().setMidiNum(80);
+			instrument.getLayer2().setBaseOctave(6);
+			instrument.getLayer2().setBaseVelocity(50);
+			instrument.getLayer2().setAccentVelocity(64);
+			instrument.getLayer2().setPan(48);
+			instrument.getLayer2().setReverb(127);
 		} else if (instrument.getName().equals(Instrument.SYNTH2)) {
-			instrument.setLayer1MidiNum(81);
-			instrument.setLayer1BaseOctave(4);
-			instrument.setLayer1BaseVelocity(60);
-			instrument.setLayer1AccentVelocity(70);
-			instrument.setLayer1Pan(48);
-			instrument.setLayer1Reverb(127);
+			instrument.getLayer1().setMidiNum(81);
+			instrument.getLayer1().setBaseOctave(4);
+			instrument.getLayer1().setBaseVelocity(60);
+			instrument.getLayer1().setAccentVelocity(70);
+			instrument.getLayer1().setPan(48);
+			instrument.getLayer1().setReverb(127);
 		} else if (instrument.getName().equals(Instrument.SYNTH3)) {
-			instrument.setLayer1MidiNum(62);
-			instrument.setLayer1BaseOctave(3);
-			instrument.setLayer1BaseVelocity(84);
-			instrument.setLayer1AccentVelocity(96);
-			instrument.setLayer1Pan(40);
-			instrument.setLayer1Reverb(48);
+			instrument.getLayer1().setMidiNum(62);
+			instrument.getLayer1().setBaseOctave(3);
+			instrument.getLayer1().setBaseVelocity(84);
+			instrument.getLayer1().setAccentVelocity(96);
+			instrument.getLayer1().setPan(40);
+			instrument.getLayer1().setReverb(48);
 		} else if (instrument.getName().equals(Instrument.LEAD)) {
-			instrument.setLayer1MidiNum(87);
-			instrument.setLayer1BaseOctave(6);
-			instrument.setLayer1BaseVelocity(70);
-			instrument.setLayer1AccentVelocity(80);
-			instrument.setLayer1Pan(80);
-			instrument.setLayer1Reverb(91);
-			instrument.setLayer2MidiNum(102);
-			instrument.setLayer2BaseOctave(6);
-			instrument.setLayer2BaseVelocity(60);
-			instrument.setLayer2AccentVelocity(70);
-			instrument.setLayer2Pan(48);
-			instrument.setLayer2Reverb(127);
+			instrument.getLayer1().setMidiNum(87);
+			instrument.getLayer1().setBaseOctave(6);
+			instrument.getLayer1().setBaseVelocity(70);
+			instrument.getLayer1().setAccentVelocity(80);
+			instrument.getLayer1().setPan(80);
+			instrument.getLayer1().setReverb(64);
+			instrument.getLayer2().setMidiNum(102);
+			instrument.getLayer2().setBaseOctave(6);
+			instrument.getLayer2().setBaseVelocity(60);
+			instrument.getLayer2().setAccentVelocity(70);
+			instrument.getLayer2().setPan(48);
+			instrument.getLayer2().setReverb(127);
 		} else if (instrument.getName().equals(Instrument.STRINGS)) {
-			instrument.setLayer1MidiNum(50);
-			instrument.setLayer1BaseOctave(4);
-			instrument.setLayer1BaseVelocity(40);
-			instrument.setLayer1AccentVelocity(50);
-			instrument.setLayer1Pan(48);
-			instrument.setLayer1Reverb(127);
-			instrument.setLayer2MidiNum(49);
-			instrument.setLayer2BaseOctave(5);
-			instrument.setLayer2BaseVelocity(36);
-			instrument.setLayer2AccentVelocity(44);
-			instrument.setLayer2Pan(80);
-			instrument.setLayer2Reverb(127);
+			instrument.getLayer1().setMidiNum(50);
+			instrument.getLayer1().setBaseOctave(4);
+			instrument.getLayer1().setBaseVelocity(40);
+			instrument.getLayer1().setAccentVelocity(50);
+			instrument.getLayer1().setPan(48);
+			instrument.getLayer1().setReverb(127);
+			instrument.getLayer2().setMidiNum(49);
+			instrument.getLayer2().setBaseOctave(5);
+			instrument.getLayer2().setBaseVelocity(36);
+			instrument.getLayer2().setAccentVelocity(44);
+			instrument.getLayer2().setPan(80);
+			instrument.getLayer2().setReverb(127);
 		} else if (instrument.getName().equals(Instrument.DRUMS)) {
-			instrument.setLayer1MidiNum(118);
-			instrument.setLayer1Reverb(0);
+			instrument.getLayer1().setMidiNum(118);
+			instrument.getLayer1().setReverb(0);
 		}
 	}
 

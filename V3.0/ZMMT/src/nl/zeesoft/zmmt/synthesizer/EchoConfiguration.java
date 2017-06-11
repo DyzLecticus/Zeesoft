@@ -7,8 +7,8 @@ public class EchoConfiguration {
 	private int			velocityPercentage1		= 80;
 	private int			velocityPercentage2		= 60;
 	private int			velocityPercentage3		= 40;
-	private int			reverb1					= 103;
-	private int			reverb2					= 115;
+	private int			reverb1					= 80;
+	private int			reverb2					= 104;
 	private int			reverb3					= 127;
 	private int			pan1					= 24;
 	private int			pan2					= 104;
