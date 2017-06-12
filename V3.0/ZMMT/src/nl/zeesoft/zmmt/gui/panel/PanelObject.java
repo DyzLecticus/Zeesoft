@@ -148,17 +148,6 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		panel.add(lbl,gbc);
 	}
 	
-	protected void addCheckBoxLabel(JPanel panel,int row,JCheckBox checkBox) {
-		checkBox.addKeyListener(controller.getPlayerKeyListener());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.LINE_START;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 0.01;
-		gbc.gridx = 0;
-		gbc.gridy = row;
-		panel.add(checkBox,gbc);
-	}
-
 	protected void addProperty(JPanel panel,int row,Component c) {
 		addProperty(panel,row,c,false);
 	}
@@ -202,6 +191,13 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		r.addFocusListener(this);
 		r.addPropertyChangeListener(this);
 		r.setColumns(32);
+		return r;
+	}
+
+	protected JCheckBox getNewCheckBox() {
+		JCheckBox r = new JCheckBox();
+		r.addFocusListener(this);
+		r.addKeyListener(controller.getPlayerKeyListener());
 		return r;
 	}
 

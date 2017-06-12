@@ -11,6 +11,9 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zmmt.composition.Control;
 
 public class SynthesizerConfiguration {
+	public static final String				INTERNAL_DRUMKIT		= "resources/ZeeTrackerDrumKit.sf2";
+	public static final String				INTERNAL_SYNTHESIZERS	= "resources/ZeeTrackerSynthesizers.sf2";
+	
 	private List<InstrumentConfiguration>	instruments				= new ArrayList<InstrumentConfiguration>();
 	private EchoConfiguration				echo					= new EchoConfiguration();
 	private List<DrumConfiguration>			drums 					= new ArrayList<DrumConfiguration>();

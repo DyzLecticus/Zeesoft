@@ -1,9 +1,12 @@
 package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -14,7 +17,7 @@ import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
-public class PanelComposition extends PanelObject implements CompositionChangePublisher, StateChangeSubscriber {
+public class PanelComposition extends PanelObject implements ActionListener, CompositionChangePublisher, StateChangeSubscriber {
 	private JFormattedTextField		file				= null;
 	private JFormattedTextField		composer			= null;
 	private JFormattedTextField		name				= null;
@@ -22,6 +25,8 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 	private JSpinner				beatsPerBar			= null;
 	private JSpinner				stepsPerBeat		= null;
 	private JSpinner				barsPerPattern		= null;
+	private JCheckBox				useDrumKit			= null;
+	private JCheckBox				useSynthesizers		= null;
 	
 	public PanelComposition(Controller controller) {
 		super(controller);
@@ -77,6 +82,18 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		addProperty(getPanel(),row,slider);
 		
 		row++;
+		useDrumKit = getNewCheckBox();
+		useDrumKit.addActionListener(this);
+		addLabel(getPanel(),row,"Use internal drum kit");
+		addProperty(getPanel(),row,useDrumKit);
+		
+		row++;
+		useSynthesizers = getNewCheckBox();
+		useSynthesizers.addActionListener(this);
+		addLabel(getPanel(),row,"Use internal drum synthesizers");
+		addProperty(getPanel(),row,useSynthesizers);
+		
+		row++;
 		addFiller(getPanel(),row);
 		setValidate(true);
 	}
@@ -94,6 +111,15 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 	public void handleValidChange() {
 		getController().getStateManager().addWaitingPublisher(this);
 	}
+
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		if (evt.getSource()==useDrumKit) {
+			handleValidChange();
+		} else if (evt.getSource()==useSynthesizers) {
+			handleValidChange();
+		}
+	}
 	
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
@@ -105,6 +131,8 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 			beatsPerBar.setValue(String.format("%03d",evt.getComposition().getBeatsPerBar()));
 			stepsPerBeat.setValue(String.format("%03d",evt.getComposition().getStepsPerBeat()));
 			barsPerPattern.setValue(String.format("%03d",evt.getComposition().getBarsPerPattern()));
+			useDrumKit.setSelected(evt.getComposition().getSynthesizerConfiguration().isUseInternalDrumKit());
+			useSynthesizers.setSelected(evt.getComposition().getSynthesizerConfiguration().isUseInternalSynthesizers());
 		} else if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
 			String fileName = evt.getSettings().getWorkingCompositionFileName();
 			if (fileName.length()>0) {
@@ -124,5 +152,7 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		composition.setBeatsPerBar(Integer.parseInt(beatsPerBar.getValue().toString()));
 		composition.setStepsPerBeat(Integer.parseInt(stepsPerBeat.getValue().toString()));
 		composition.setBarsPerPattern(Integer.parseInt(barsPerPattern.getValue().toString()));
+		composition.getSynthesizerConfiguration().setUseInternalDrumKit(useDrumKit.isSelected());
+		composition.getSynthesizerConfiguration().setUseInternalSynthesizers(useSynthesizers.isSelected());
 	}
 }

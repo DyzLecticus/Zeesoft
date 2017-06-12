@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.sound.midi.Instrument;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -51,11 +53,18 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private ImportExportWorker			importExportWorker			= null;
 	
 	private Synthesizer					synthesizer					= null;
+	private Soundbank					baseSoundFont				= null;
+	private Soundbank					internalDrumKit				= null;
+	private Soundbank					internalSynthesizers		= null;
+	private boolean						initializedSoundFont		= false;
 
 	private SequencePlayer				sequencePlayer				= null;
 	private SequencePlayerUpdateWorker	sequencePlayerWorker 		= null;
 	private Sequencer					sequencer					= null;
 	private List<MetaEventListener>		sequencerMetaListeners		= new ArrayList<MetaEventListener>();
+	
+	private boolean						useInternalDrumKit			= true;
+	private boolean						useInternalSynthesizers		= true;
 	
 	public Controller(Settings settings) {
 		super(new Messenger(null));
@@ -88,6 +97,8 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (settings.getWorkingCompositionPattern()>0) {
 			stateManager.setSelectedPattern(this,settings.getWorkingCompositionPattern());
 		}
+		useInternalDrumKit = settings.getSynthesizerConfiguration().isUseInternalDrumKit();
+		useInternalSynthesizers = settings.getSynthesizerConfiguration().isUseInternalSynthesizers();
 		stateManager.addSubscriber(this);
 
 		adapter = new ControllerWindowAdapter(this);
@@ -144,12 +155,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		
 		stateManager.start();
 		
-		InitializeMidiDevicesWorker midi = new InitializeMidiDevicesWorker(
-			getMessenger(),getUnion(),this,
-			settings.getCustomSoundFontFileName(),
-			settings.isUseInternalDrumSoundFont(),
-			settings.isUseInternalSynthSoundFont()
-			);
+		InitializeMidiDevicesWorker midi = new InitializeMidiDevicesWorker(getMessenger(),getUnion(),this,settings.getCustomSoundFontFileName());
 		midi.start();
 		getMessenger().setPrintDebugMessages(debug);
 		getMessenger().start();
@@ -180,6 +186,28 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			sequencer.close();
 		}
 		unlockMe(this);
+	}
+
+	@Override
+	public void handleStateChange(StateChangeEvent evt) {
+		if (evt.getSource()!=this) {
+			if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+				if (evt.getSource() instanceof PanelInstruments ||
+					useInternalDrumKit!=evt.getComposition().getSynthesizerConfiguration().isUseInternalDrumKit() ||
+					useInternalSynthesizers!=evt.getComposition().getSynthesizerConfiguration().isUseInternalSynthesizers()
+					) {
+					stopSynthesizer(evt.getComposition());
+					reconfigureSynthesizer(evt.getComposition());
+				}
+			} else if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
+				lockMe(this);
+				settings = evt.getSettings().copy();
+				unlockMe(this);
+			} else if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
+				stopSynthesizer(evt.getComposition());
+				reconfigureSynthesizer(evt.getComposition());
+			}
+		}
 	}
 
 	public void windowClosing(WindowEvent e) {
@@ -308,9 +336,12 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 	
-	protected void setSynthesizer(Synthesizer synth) {
+	protected void setSynthesizer(Synthesizer synth,Soundbank baseSF,Soundbank internalDK,Soundbank internalSynths) {
 		lockMe(this);
 		this.synthesizer = synth;
+		this.baseSoundFont = baseSF;
+		this.internalDrumKit = internalDK;
+		this.internalSynthesizers = internalSynths;
 		player.setSynthesizer(synth);
 		unlockMe(this);
 		reconfigureSynthesizer(stateManager.getComposition());
@@ -330,7 +361,24 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	protected void reconfigureSynthesizer(Composition composition) {
 		lockMe(this);
 		if (synthesizer!=null) {
+			if (!initializedSoundFont || useInternalDrumKit!=composition.getSynthesizerConfiguration().isUseInternalDrumKit()) {
+				useInternalDrumKit = composition.getSynthesizerConfiguration().isUseInternalDrumKit();
+				if (useInternalDrumKit) {
+					replaceSoundBankInstruments(synthesizer,internalDrumKit);
+				} else {
+					restoreSoundBankInstruments(synthesizer,internalDrumKit);
+				}
+			}
+			if (!initializedSoundFont || useInternalSynthesizers!=composition.getSynthesizerConfiguration().isUseInternalSynthesizers()) {
+				useInternalSynthesizers = composition.getSynthesizerConfiguration().isUseInternalSynthesizers();
+				if (useInternalSynthesizers) {
+					replaceSoundBankInstruments(synthesizer,internalSynthesizers);
+				} else {
+					restoreSoundBankInstruments(synthesizer,internalSynthesizers);
+				}
+			}
 			composition.getSynthesizerConfiguration().configureMidiSynthesizer(synthesizer);
+			initializedSoundFont = true;
 		}
 		unlockMe(this);
 	}
@@ -506,25 +554,32 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 	}
 
-	@Override
-	public void handleStateChange(StateChangeEvent evt) {
-		if (evt.getSource()!=this) {
-			if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
-				if (evt.getSource() instanceof PanelInstruments) {
-					stopSynthesizer(evt.getComposition());
-					reconfigureSynthesizer(evt.getComposition());
+	protected void replaceSoundBankInstruments(Synthesizer synth,Soundbank sb) {
+		if (sb!=null) {
+			for (Instrument inst: sb.getInstruments()) {
+				for (Instrument synthInst: synth.getLoadedInstruments()) {
+					if (synthInst.getPatch().getProgram()==inst.getPatch().getProgram()) {
+						synth.unloadInstrument(synthInst);
+						synth.loadInstrument(inst);
+					}
 				}
-			} else if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
-				lockMe(this);
-				settings = evt.getSettings().copy();
-				unlockMe(this);
-			} else if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
-				stopSynthesizer(evt.getComposition());
-				reconfigureSynthesizer(evt.getComposition());
 			}
 		}
 	}
-	
+
+	protected void restoreSoundBankInstruments(Synthesizer synth,Soundbank sb) {
+		if (sb!=null) {
+			for (Instrument inst: sb.getInstruments()) {
+				for (Instrument synthInst: synth.getLoadedInstruments()) {
+					if (synthInst.getPatch().getProgram()==inst.getPatch().getProgram()) {
+						synth.unloadInstrument(synthInst);
+						synth.loadInstrument(baseSoundFont.getInstrument(inst.getPatch()));
+					}
+				}
+			}
+		}
+	}
+
 	private List<MidiNote> getNotes(int note,boolean accent) {
 		return stateManager.getComposition().getSynthesizerConfiguration().getMidiNotesForNote(
 			stateManager.getSelectedInstrument(),note,accent,stateManager.getComposition().getMsPerStep()
