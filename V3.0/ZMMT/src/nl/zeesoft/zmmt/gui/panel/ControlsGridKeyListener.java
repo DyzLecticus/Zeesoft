@@ -24,5 +24,19 @@ public class ControlsGridKeyListener extends InstrumentPlayerKeyListener {
 				patternPanel.insertSpace();
 			}
 		}
+		if (evt.isAltDown() && evt.isShiftDown() && !evt.isControlDown()) {
+			if (evt.getKeyCode()==KeyEvent.VK_RIGHT) {
+				patternPanel.shiftSelectedControlsPercentage(10);
+			} else if (evt.getKeyCode()==KeyEvent.VK_LEFT) {
+				patternPanel.shiftSelectedControlsPercentage(-10);
+			}
+		}
+		if (evt.isAltDown() && !evt.isShiftDown() && !evt.isControlDown()) {
+			if (evt.getKeyCode()==KeyEvent.VK_RIGHT) {
+				patternPanel.shiftSelectedControlsPercentage(1);
+			} else if (evt.getKeyCode()==KeyEvent.VK_LEFT) {
+				patternPanel.shiftSelectedControlsPercentage(-1);
+			}
+		}
 	}
 }

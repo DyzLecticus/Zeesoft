@@ -34,29 +34,11 @@ public class NotesGridCellRenderer extends DefaultTableCellRenderer {
 		if (value!=null && value instanceof Note) {
 			Note note = (Note) value;
 			Color color = Instrument.getColorForInstrument(note.instrument);
-			JLabel label = new JLabel();
-			label.setOpaque(true);
+			String text = "";
 			if (note.step==(row + 1)) {
-				label.setText(note.toString());
+				text = note.toString();
 			}
-			label.setBackground(color);
-			label.setForeground(Color.BLACK);
-			if (hasFocus) {
-				label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
-			} else {
-				Color borderColor = color;
-				if (isSelected) {
-					if ((row % controller.getStepsPerBar())==0) {
-						borderColor = BAR_COLOR_SELECTED;
-					} else if ((row % controller.getStepsPerBeat())==0) {
-						borderColor = BEAT_COLOR_SELECTED;
-					} else {
-						borderColor = Grid.COLOR_SELECTED;
-					}
-				}
-				label.setBorder(BorderFactory.createLineBorder(borderColor));
-			}
-			r = label;
+			r = getLabelForPatternElement(text,color,row,isSelected,hasFocus);
 		} else {
 			r.setBackground(getDefaultColor(row,isSelected,hasFocus));
 		}
@@ -85,5 +67,29 @@ public class NotesGridCellRenderer extends DefaultTableCellRenderer {
 			}
 		}
 		return color;
+	}
+
+	protected JLabel getLabelForPatternElement(String text,Color color,int row,boolean isSelected,boolean hasFocus) {
+		JLabel label = new JLabel();
+		label.setOpaque(true);
+		label.setText(text);
+		label.setBackground(color);
+		label.setForeground(Color.BLACK);
+		if (hasFocus) {
+			label.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
+		} else {
+			Color borderColor = color;
+			if (isSelected) {
+				if ((row % getController().getStepsPerBar())==0) {
+					borderColor = BAR_COLOR_SELECTED;
+				} else if ((row % getController().getStepsPerBeat())==0) {
+					borderColor = BEAT_COLOR_SELECTED;
+				} else {
+					borderColor = Grid.COLOR_SELECTED;
+				}
+			}
+			label.setBorder(BorderFactory.createLineBorder(borderColor));
+		}
+		return label;
 	}
 }

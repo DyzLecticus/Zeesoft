@@ -22,4 +22,9 @@ public class Control {
 		r.percentage = percentage;
 		return r;
 	}
+	
+	@Override
+	public String toString() {
+		return "" + percentage;
+	}
 }

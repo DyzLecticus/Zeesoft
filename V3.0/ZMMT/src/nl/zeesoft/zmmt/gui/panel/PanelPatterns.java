@@ -529,25 +529,29 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 	}
 	
-	protected void insertSpace() {
+	protected void shiftSelectedControlsPercentage(int mod) {
 		boolean changed = false;
-		if (insertMode.isSelected()) {
-			int[] rows = notesGrid.getSelectedRows();
-			int[] cols = notesGrid.getSelectedColumns();
-			if (rows.length>0 && cols.length>0) {
-				int mod = 1;
-				if (moveNotes(cols[0],cols[(cols.length - 1)],rows[0],mod)) {
-					changed = true;
+		List<Control> scs = getSelectedControls();
+		for (Control sc: scs) {
+			if (mod>0 && sc.percentage<100) {
+				changed = true;
+				sc.percentage = sc.percentage + mod;
+				if (sc.percentage>100) {
+					sc.percentage=100;
+				}
+			} else if (mod<0 && sc.percentage>0) {
+				changed = true;
+				sc.percentage = sc.percentage - (mod * -1);
+				if (sc.percentage<0) {
+					sc.percentage=0;
 				}
 			}
-		} else if (getCurrentGrid()==controlsGrid) {
-			// TODO: Add control
 		}
 		if (changed) {
 			changedPattern();
 		}
 	}
-	
+
 	protected void removeSelectedNotes() {
 		List<Note> sns = getSelectedNotes();
 		removeOrCutNotes(sns,notesGrid.getSelectedRow());
@@ -568,7 +572,13 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	}
 
 	protected void removeSelectedControls() {
-		// TODO: Implement
+		List<Control> scs = getSelectedControls();
+		for (Control c: scs) {
+			workingPattern.getControls().remove(c);
+		}
+		if (scs.size()>0) {
+			changedPattern();
+		}
 	}
 
 	protected void playNote(int note, boolean accent) {
@@ -637,6 +647,43 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 	}
 	
+	protected void insertSpace() {
+		boolean changed = false;
+		if (insertMode.isSelected()) {
+			int[] rows = getCurrentGrid().getSelectedRows();
+			int[] cols = getCurrentGrid().getSelectedColumns();
+			if (rows.length>0 && cols.length>0) {
+				int mod = 1;
+				if (getCurrentGrid()==notesGrid) {
+					if (moveNotes(cols[0],cols[(cols.length - 1)],rows[0],mod)) {
+						changed = true;
+					}
+				}
+			}
+		} else if (getCurrentGrid()==controlsGrid) {
+			if (controlsGrid.getSelectedColumn()>=0 && controlsGrid.getSelectedRow()>=0) {
+				String instrument = Instrument.INSTRUMENTS[controlsGrid.getSelectedColumn()];
+				int control =  getSelectedControl();
+				int step = (controlsGrid.getSelectedRow() + 1);
+				Control ctrl = workingPattern.getInstrumentControl(instrument,control,step);
+				if (ctrl==null) {
+					ctrl = new Control();
+					ctrl.instrument = instrument;
+					ctrl.control = control;
+					ctrl.step = step;
+					if (control==Control.EXPRESSION) {
+						ctrl.percentage = 100;
+					}
+					workingPattern.getControls().add(ctrl);
+					changed = true;
+				}
+			}
+		}
+		if (changed) {
+			changedPattern();
+		}
+	}
+	
 	protected void updateWorkingPattern() {
 		Pattern current = workingPattern;
 		if (workingPattern==null || workingPattern.getNumber()!=selectedPattern) {
@@ -675,6 +722,26 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			int[] cols = notesGrid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
 				r = getNotes(rows[0],rows[(rows.length - 1)],cols[0],cols[(cols.length - 1)]);
+			}
+		}
+		return r;
+	}
+
+	protected List<Control> getSelectedControls() {
+		List<Control> r = new ArrayList<Control>();
+		if (workingPattern!=null) {
+			int[] rows = controlsGrid.getSelectedRows();
+			int[] cols = controlsGrid.getSelectedColumns();
+			if (rows.length>0 && cols.length>0) {
+				int stepFrom = (rows[0] + 1);
+				int stepTo = (rows[(rows.length - 1)] + 1);
+				for (int col = cols[0]; col <= cols[(cols.length - 1)]; col++) {
+					String instrument = Instrument.INSTRUMENTS[col];
+					List<Control> ics = workingPattern.getInstrumentControls(instrument,getSelectedControl(),stepFrom,stepTo);
+					for (Control c: ics) {
+						r.add(c);
+					}
+				}
 			}
 		}
 		return r;
@@ -803,6 +870,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			selectedEditMode.equals(EDIT_FILTER)
 			) {
 			show = EDIT_CONTROLS;
+			if (controlsGridController.setSelectedControl(getSelectedControl())) {
+				controlsGridController.fireTableDataChanged();
+			}
 		}
 		layout.show(cardPanel,show);
 	}

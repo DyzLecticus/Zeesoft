@@ -4,16 +4,13 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 
 @SuppressWarnings("serial")
 public class ControlsGridController extends NotesGridController {
-	private String	selectedInstrument	= "";
 	private int 	selectedControl		= 0;
 	
-	public boolean setSelectedInstrumentAndControl(String selectedInstrument,int selectedControl) {
+	public boolean setSelectedControl(int selectedControl) {
 		boolean changed = false;
-		if (!this.selectedInstrument.equals(selectedInstrument) ||
-			this.selectedControl != selectedControl
-			) {
-			this.selectedInstrument = selectedInstrument;
-			this.selectedControl = selectedControl;
+		if (this.selectedControl!=selectedControl) {
+			this.selectedControl=selectedControl;
+			changed = true;
 		}
 		return changed;
 	}
@@ -37,8 +34,7 @@ public class ControlsGridController extends NotesGridController {
 	public Object getValueAt(int row, int col) {
 		Object r = null;
 		if (getWorkingPattern()!=null) {
-			// TODO: Get control
-			//r = workingPattern.getNote((col + 1),(row + 1),1);
+			r = getWorkingPattern().getInstrumentControl(Instrument.INSTRUMENTS[col],selectedControl,(row + 1));
 		}
 		return r;
 	}
