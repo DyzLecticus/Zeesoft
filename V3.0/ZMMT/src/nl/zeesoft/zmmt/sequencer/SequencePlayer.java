@@ -203,7 +203,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 				seq = convertor.getPatternSequence(number);
 				endTick = convertor.getPatternSequenceEndTick(number); 
 			} else {
-				seq = convertor.getSequence(true,false);
+				seq = convertor.getSequence(false,true);
 				endTick = convertor.getSequenceEndTick();
 			}
 			if (seq!=null) {

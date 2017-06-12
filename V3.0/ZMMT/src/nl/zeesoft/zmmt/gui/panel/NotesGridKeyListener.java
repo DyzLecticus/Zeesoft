@@ -9,11 +9,8 @@ import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 public class NotesGridKeyListener extends InstrumentPlayerKeyListener {
 	private PanelPatterns patternPanel = null;
 	
-	public NotesGridKeyListener(Controller controller,SortedMap<String,Integer> keyCodeNoteNumbers) {
+	public NotesGridKeyListener(Controller controller,SortedMap<String,Integer> keyCodeNoteNumbers,PanelPatterns patternPanel) {
 		super(controller,keyCodeNoteNumbers);
-	}
-
-	public void setPatternPanel(PanelPatterns patternPanel) {
 		this.patternPanel = patternPanel;
 	}
 

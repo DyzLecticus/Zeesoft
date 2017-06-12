@@ -3,7 +3,6 @@ package nl.zeesoft.zmmt.gui.panel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.GridBagLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -73,8 +72,10 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	private JPanel					cardPanel						= null;
 	private Grid					notesGrid						= null;
 	private NotesGridController		notesGridController				= null;
+	private NotesGridKeyListener	notesGridKeyListener			= null;
 	private Grid					controlsGrid					= null;
 	private ControlsGridController	controlsGridController			= null;
+	private ControlsGridKeyListener	controlsGridKeyListener			= null;
 	
 	private	Composition				compositionCopy					= null;
 	private Pattern					workingPattern					= null;
@@ -96,6 +97,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		controller.addSequencerSubscriber(this);
 		selectedEditMode = controller.getStateManager().getPatternEditMode();
 		selectedPattern = controller.getStateManager().getSelectedPattern();
+		notesGridKeyListener = new NotesGridKeyListener(controller,controller.getStateManager().getSettings().getKeyCodeNoteNumbers(),this);
+		controlsGridKeyListener = new ControlsGridKeyListener(controller,controller.getStateManager().getSettings().getKeyCodeNoteNumbers(),this);
 	}
 
 	@Override
@@ -409,140 +412,52 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	protected void handlePageDown(String actionCommand) {
 		if (compositionCopy!=null) {
-			Grid grid = getCurrentGrid();
-			int row = grid.getSelectedRow();
-			if (row<(grid.getRowCount() - 1)) {
-				int[] rows = grid.getSelectedRows();
-				int[] cols = grid.getSelectedColumns();
-				if (row<0) {
-					row = 0;
-				}
-				int rowFrom = row;
-				if (rows.length>0 && (rows[0] - rows[(rows.length - 1)])!=0) {
-					row = rows[(rows.length - 1)];
-				} else if (actionCommand.equals(SHIFT_PAGE_DOWN)) {
-					row = row - 1;
-				}
-				row = row + compositionCopy.getStepsPerBar();
-				if (row>=grid.getRowCount()) {
-					row = (grid.getRowCount() - 1);
-				}
-				int col = grid.getSelectedColumn();
-				if (col<0) {
-					col = 0;
-				}
-				int colFrom = col;
-				grid.clearSelection();
-				if (actionCommand.equals(SHIFT_PAGE_DOWN)) {
-					if (cols.length>0) {
-						colFrom = cols[0];
-						col = cols[(cols.length - 1)];
-					}
-					selectAndShow(grid,rowFrom,row,colFrom,col,true);
-				} else {
-					selectAndShow(grid,row,row,col,col,true);
-				}
-			}
+			getCurrentGrid().handlePageDown(compositionCopy.getStepsPerBar(),actionCommand.equals(SHIFT_PAGE_DOWN));
+			changedSelection();
 		}
 	}
 	
 	protected void handlePageUp(String actionCommand) {
 		if (compositionCopy!=null) {
-			Grid grid = getCurrentGrid();
-			int[] rows = grid.getSelectedRows();
-			if (rows.length>0) {
-				boolean showTo = false;
-				int[] cols = grid.getSelectedColumns();
-				int row = rows[0];
-				int rowTo = rows[(rows.length - 1)];
-				if (row==0 && (rowTo - row)!=0) {
-					rowTo = rowTo - compositionCopy.getStepsPerBar();
-					showTo = true;
-				} else {
-					if (row == (grid.getRowCount() - 1)) {
-						row = row + 1;
-					}
-					row = row - compositionCopy.getStepsPerBar();
-				}
-				if (row<0) {
-					row = 0;
-				}
-				if (rowTo<row) {
-					rowTo = 0;
-				}
-				int col = grid.getSelectedColumn();
-				if (col<0) {
-					col = 0;
-				}
-				int colFrom = col;
-				grid.clearSelection();
-				if (actionCommand.equals(SHIFT_PAGE_UP)) {
-					if (cols.length>0) {
-						colFrom = cols[0];
-						col = cols[(cols.length - 1)];
-					}
-					selectAndShow(grid,row,rowTo,colFrom,col,showTo);
-				} else {
-					selectAndShow(grid,row,row,col,col,false);
-				}
-			}
+			getCurrentGrid().handlePageUp(compositionCopy.getStepsPerBar(),actionCommand.equals(SHIFT_PAGE_UP));
+			changedSelection();
 		}
 	}
 
-	protected boolean reselect() {
-		boolean r = false;
+	protected void reselect() {
 		if (selectedEditMode.equals(EDIT_NOTES)) {
-			r = reselect(notesGrid,notesGridController);
+			reselect(notesGrid,notesGridController);
 		} else if (
 			selectedEditMode.equals(EDIT_EXPRESSION) ||
 			selectedEditMode.equals(EDIT_MODULATION) ||
 			selectedEditMode.equals(EDIT_FILTER)
 			) {
-			r = reselect(controlsGrid,controlsGridController);
+			reselect(controlsGrid,controlsGridController);
 		}
-		return r;
 	}
 
-	protected boolean reselect(Grid grid,NotesGridController controller) {
-		boolean selected = false;
+	protected void reselect(Grid grid,NotesGridController controller) {
 		if (selectedRows!=null && selectedRows.length>0 && selectedCols!=null && selectedCols.length>0) {
 			int rowFrom = selectedRows[0];
 			int rowTo = selectedRows[(selectedRows.length - 1)];
-			int max = (controller.getRowCount() - 1);
-			if (rowFrom>max) {
-				rowFrom = max;
-			}
-			if (rowTo>max) {
-				rowTo = max;
-			}
 			int colFrom = selectedCols[0];
 			int colTo = selectedCols[(selectedCols.length - 1)];
-			max = (controller.getColumnCount() - 1);
-			if (colFrom>max) {
-				colFrom = max;
-			}
-			if (colTo>max) {
-				colTo = max;
-			}
 			selectAndShow(grid,rowFrom,rowTo,colFrom,colTo,true);
-			selected = true;
 		}
-		return selected;
 	}
 
 	protected void selectAndShow(Grid grid,int rowFrom, int rowTo, int colFrom, int colTo,boolean showTo) {
-		grid.addRowSelectionInterval(rowFrom,rowTo);
-		grid.addColumnSelectionInterval(colFrom,colTo);
-		Rectangle rect = null;
-		if (showTo) {
-			rect = grid.getCellRect(rowTo,colTo,true);
-		} else {
-			rect = grid.getCellRect(rowFrom,colFrom,true);
-		}
-		rect.height = rect.height + 20;
-		rect.width = rect.width + 100;
-		grid.scrollRectToVisible(rect);
+		grid.selectAndShow(rowFrom,rowTo,colFrom,colTo,showTo);
+		changedSelection();
+	}
 
+	protected void changedSelection() {
+		int[] rows = getCurrentGrid().getSelectedRows();
+		int[] cols = getCurrentGrid().getSelectedColumns();
+		changedSelection(rows[0],rows[(rows.length - 1)],cols[0],cols[(cols.length - 1)]);
+	}
+
+	protected void changedSelection(int rowFrom, int rowTo, int colFrom, int colTo) {
 		selectedRows = new int[2];
 		selectedRows[0] = rowFrom;
 		selectedRows[1] = rowTo;
@@ -557,7 +472,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			selectedCols[selectedCols.length-1]
 			);
 	}
-	
+
 	protected void shiftSelectedNotesNote(int mod) {
 		boolean changed = false;
 		List<Note> sns = getSelectedNotes();
@@ -625,6 +540,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 					changed = true;
 				}
 			}
+		} else if (getCurrentGrid()==controlsGrid) {
+			// TODO: Add control
 		}
 		if (changed) {
 			changedPattern();
@@ -648,6 +565,10 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		if (changed) {
 			changedPattern();
 		}
+	}
+
+	protected void removeSelectedControls() {
+		// TODO: Implement
 	}
 
 	protected void playNote(int note, boolean accent) {
@@ -873,13 +794,24 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 	}
 	
+	protected void changedSelectedEditMode() {
+		CardLayout layout = (CardLayout) cardPanel.getLayout();
+		String show = EDIT_NOTES;
+		if (
+			selectedEditMode.equals(EDIT_EXPRESSION) ||
+			selectedEditMode.equals(EDIT_MODULATION) ||
+			selectedEditMode.equals(EDIT_FILTER)
+			) {
+			show = EDIT_CONTROLS;
+		}
+		layout.show(cardPanel,show);
+	}
+	
 	protected JScrollPane getNotesPanel() {
 		notesGridController = new NotesGridController();
-		NotesGridKeyListener keyListener = getController().getPatternKeyListener();
-		keyListener.setPatternPanel(this);
 		notesGrid = new Grid();
 		notesGrid.setModel(notesGridController);
-		notesGrid.addKeyListener(keyListener);
+		notesGrid.addKeyListener(notesGridKeyListener);
 		notesGrid.addFocusListener(this);
 		notesGrid.setCellSelectionEnabled(true);
 		notesGrid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -909,11 +841,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 
 	protected JScrollPane getControlsPanel() {
 		controlsGridController = new ControlsGridController();
-		NotesGridKeyListener keyListener = getController().getPatternKeyListener();
-		keyListener.setPatternPanel(this);
 		controlsGrid = new Grid();
 		controlsGrid.setModel(controlsGridController);
-		controlsGrid.addKeyListener(keyListener);
+		controlsGrid.addKeyListener(controlsGridKeyListener);
 		controlsGrid.addFocusListener(this);
 		controlsGrid.setCellSelectionEnabled(true);
 		controlsGrid.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -1132,18 +1062,5 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		changedSelectedEditMode();
 		
 		return r;
-	}
-	
-	protected void changedSelectedEditMode() {
-		CardLayout layout = (CardLayout) cardPanel.getLayout();
-		String show = EDIT_NOTES;
-		if (
-			selectedEditMode.equals(EDIT_EXPRESSION) ||
-			selectedEditMode.equals(EDIT_MODULATION) ||
-			selectedEditMode.equals(EDIT_FILTER)
-			) {
-			show = EDIT_CONTROLS;
-		}
-		layout.show(cardPanel,show);
 	}
 }

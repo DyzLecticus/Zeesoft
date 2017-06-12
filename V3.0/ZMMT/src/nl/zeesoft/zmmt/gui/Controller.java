@@ -22,8 +22,6 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
-import nl.zeesoft.zmmt.gui.panel.NotesGridKeyListener;
-import nl.zeesoft.zmmt.gui.panel.SequenceGridKeyListener;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.gui.state.StateManager;
@@ -47,8 +45,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
-	private NotesGridKeyListener		patternKeyListener			= null;
-	private SequenceGridKeyListener		sequenceKeyListener			= null;
 	
 	private File						compositionFile				= null;
 	
@@ -97,8 +93,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		adapter = new ControllerWindowAdapter(this);
 		player = new InstrumentPlayer(getMessenger(),getUnion());
 		playerKeyListener = new InstrumentPlayerKeyListener(this,settings.getKeyCodeNoteNumbers());
-		patternKeyListener = new NotesGridKeyListener(this,settings.getKeyCodeNoteNumbers());
-		sequenceKeyListener = new SequenceGridKeyListener(this,settings.getKeyCodeNoteNumbers());
 
 		sequencePlayer = new SequencePlayer(getMessenger(),getUnion());
 		stateManager.addSubscriber(sequencePlayer);
@@ -299,14 +293,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	public InstrumentPlayerKeyListener getPlayerKeyListener() {
 		return playerKeyListener;
-	}
-
-	public NotesGridKeyListener getPatternKeyListener() {
-		return patternKeyListener;
-	}
-
-	public SequenceGridKeyListener getSequenceKeyListener() {
-		return sequenceKeyListener;
 	}
 
 	protected void setComposition(Composition composition) {

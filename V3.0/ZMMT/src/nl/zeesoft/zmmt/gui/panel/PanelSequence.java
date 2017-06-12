@@ -29,20 +29,22 @@ import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 
 public class PanelSequence extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
-	private Grid					grid							= null;
-	private SequenceGridController	gridController					= null;
+	private Grid					grid						= null;
+	private SequenceGridController	gridController				= null;
+	private SequenceGridKeyListener	gridKeyListener				= null;
 	
-	private List<Pattern>			compositionPatternsCopy			= new ArrayList<Pattern>();
-	private List<Integer>			workingSequence					= new ArrayList<Integer>();
+	private List<Pattern>			compositionPatternsCopy		= new ArrayList<Pattern>();
+	private List<Integer>			workingSequence				= new ArrayList<Integer>();
 	
-	private int[]					selectedRows					= null;
-	private int[]					selectedCols					= null;
+	private int[]					selectedRows				= null;
+	private int[]					selectedCols				= null;
 
 	public PanelSequence(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
 		controller.addSequencerMetaListener(this);
 		controller.addSequencerSubscriber(this);
+		gridKeyListener = new SequenceGridKeyListener(controller,controller.getStateManager().getSettings().getKeyCodeNoteNumbers());
 	}
 
 	@Override
@@ -246,10 +248,8 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 
 	protected JScrollPane getSequencePanel() {
 		gridController = new SequenceGridController();
-		SequenceGridKeyListener keyListener = getController().getSequenceKeyListener();
-		keyListener.setSequencePanel(this);
 		grid = new Grid();
-		grid.addKeyListener(keyListener);
+		grid.addKeyListener(gridKeyListener);
 		grid.setModel(gridController);
 		grid.addFocusListener(this);
 		grid.setColumnSelectionAllowed(false);

@@ -49,4 +49,110 @@ public class Grid extends JTable {
 		r.setSize((((cell.width + 1) * getModel().getColumnCount()) - 1),cell.height);
 		return r;
 	}
+	
+	protected void handlePageDown(int rowsPerPage,boolean select) {
+		int row = getSelectedRow();
+		if (row<(getRowCount() - 1)) {
+			int[] rows = getSelectedRows();
+			int[] cols = getSelectedColumns();
+			if (row<0) {
+				row = 0;
+			}
+			int rowFrom = row;
+			if (rows.length>0 && (rows[0] - rows[(rows.length - 1)])!=0) {
+				row = rows[(rows.length - 1)];
+			} else if (select) {
+				row = row - 1;
+			}
+			row = row + rowsPerPage;
+			if (row>=getRowCount()) {
+				row = (getRowCount() - 1);
+			}
+			int col = getSelectedColumn();
+			if (col<0) {
+				col = 0;
+			}
+			int colFrom = col;
+			clearSelection();
+			if (select) {
+				if (cols.length>0) {
+					colFrom = cols[0];
+					col = cols[(cols.length - 1)];
+				}
+				selectAndShow(rowFrom,row,colFrom,col,true);
+			} else {
+				selectAndShow(row,row,col,col,true);
+			}
+		}
+	}
+	
+	protected void handlePageUp(int rowsPerPage,boolean select) {
+		int[] rows = getSelectedRows();
+		if (rows.length>0) {
+			boolean showTo = false;
+			int[] cols = getSelectedColumns();
+			int row = rows[0];
+			int rowTo = rows[(rows.length - 1)];
+			if (row==0 && (rowTo - row)!=0) {
+				rowTo = rowTo - rowsPerPage;
+				showTo = true;
+			} else {
+				if ((rowTo - row)==0) {
+					row = row + 1;
+				}
+				row = row - rowsPerPage;
+			}
+			if (row<0) {
+				row = 0;
+			}
+			if (rowTo<row) {
+				rowTo = 0;
+			}
+			int col = getSelectedColumn();
+			if (col<0) {
+				col = 0;
+			}
+			int colFrom = col;
+			clearSelection();
+			if (select) {
+				if (cols.length>0) {
+					colFrom = cols[0];
+					col = cols[(cols.length - 1)];
+				}
+				selectAndShow(row,rowTo,colFrom,col,showTo);
+			} else {
+				selectAndShow(row,row,col,col,false);
+			}
+		}
+	}
+	
+	protected void selectAndShow(int rowFrom, int rowTo, int colFrom, int colTo,boolean showTo) {
+		int max = (getRowCount() - 1);
+		if (rowFrom>max) {
+			rowFrom = max;
+		}
+		if (rowTo>max) {
+			rowTo = max;
+		}
+		max = (getColumnCount() - 1);
+		if (colFrom>max) {
+			colFrom = max;
+		}
+		if (colTo>max) {
+			colTo = max;
+		}
+		if (rowTo>=0 && colTo>=0) {
+			addRowSelectionInterval(rowFrom,rowTo);
+			addColumnSelectionInterval(colFrom,colTo);
+			Rectangle rect = null;
+			if (showTo) {
+				rect = getCellRect(rowTo,colTo,true);
+			} else {
+				rect = getCellRect(rowFrom,colFrom,true);
+			}
+			rect.height = rect.height + 20;
+			rect.width = rect.width + 100;
+			scrollRectToVisible(rect);
+		}
+	}
 }
