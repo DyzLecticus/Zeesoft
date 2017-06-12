@@ -11,9 +11,11 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zmmt.composition.Control;
 
 public class SynthesizerConfiguration {
-	private List<InstrumentConfiguration>	instruments	= new ArrayList<InstrumentConfiguration>();
-	private EchoConfiguration				echo		= new EchoConfiguration();
-	private List<DrumConfiguration>			drums 		= new ArrayList<DrumConfiguration>();
+	private List<InstrumentConfiguration>	instruments				= new ArrayList<InstrumentConfiguration>();
+	private EchoConfiguration				echo					= new EchoConfiguration();
+	private List<DrumConfiguration>			drums 					= new ArrayList<DrumConfiguration>();
+	private boolean							useInternalDrumKit		= true;
+	private boolean							useInternalSynthesizers	= true;
 	
 	public SynthesizerConfiguration() {
 		initialize();
@@ -21,6 +23,8 @@ public class SynthesizerConfiguration {
 	
 	public SynthesizerConfiguration copy() {
 		SynthesizerConfiguration copy = new SynthesizerConfiguration();
+		copy.setUseInternalDrumKit(useInternalDrumKit);
+		copy.setUseInternalSynthesizers(useInternalSynthesizers);
 		copy.getInstruments().clear();
 		for (InstrumentConfiguration inst: instruments) {
 			copy.getInstruments().add(inst.copy());
@@ -36,6 +40,8 @@ public class SynthesizerConfiguration {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("useInternalDrumKit","" + useInternalDrumKit));
+		json.rootElement.children.add(new JsElem("useInternalSynthesizers","" + useInternalSynthesizers));
 		for (InstrumentConfiguration inst: instruments) {
 			JsElem instElem = new JsElem("instrument");
 			json.rootElement.children.add(instElem);
@@ -103,7 +109,11 @@ public class SynthesizerConfiguration {
 		initialize();
 		if (json.rootElement!=null) {
 			for (JsElem elem: json.rootElement.children) {
-				if (elem.name.equals("instrument")) {
+				if (elem.name.equals("useInternalDrumKit")) {
+					useInternalDrumKit = Boolean.parseBoolean(elem.value.toString());
+				} else if (elem.name.equals("useInternalSynthesizers")) {
+					useInternalSynthesizers = Boolean.parseBoolean(elem.value.toString());
+				} else if (elem.name.equals("instrument")) {
 					InstrumentConfiguration inst = new InstrumentConfiguration();
 					for (JsElem val: elem.children) {
 						if (val.name.equals("name")) {
@@ -238,6 +248,22 @@ public class SynthesizerConfiguration {
 
 	public List<DrumConfiguration> getDrums() {
 		return drums;
+	}
+
+	public boolean isUseInternalDrumKit() {
+		return useInternalDrumKit;
+	}
+
+	public void setUseInternalDrumKit(boolean useInternalDrumKit) {
+		this.useInternalDrumKit = useInternalDrumKit;
+	}
+
+	public boolean isUseInternalSynthesizers() {
+		return useInternalSynthesizers;
+	}
+
+	public void setUseInternalSynthesizers(boolean useInternalSynthesizers) {
+		this.useInternalSynthesizers = useInternalSynthesizers;
 	}
 
 	public InstrumentConfiguration getInstrument(String instrument) {

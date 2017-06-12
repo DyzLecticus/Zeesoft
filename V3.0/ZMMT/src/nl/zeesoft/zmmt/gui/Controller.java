@@ -184,32 +184,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	public void windowClosing(WindowEvent e) {
 		if (e.getWindow()==mainFrame.getFrame()) {
-			boolean confirmed = true;
-			if (stateManager.isCompositionChanged()) {
-				confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to quit?");
-			}
-			if (confirmed) {
-				lockMe(this);
-				settings.setWorkingTab(stateManager.getSelectedTab());
-				settings.setWorkingInstrument(stateManager.getSelectedInstrument());
-				settings.setWorkingPatternEditMode(stateManager.getPatternEditMode());
-				if (settings.getWorkingCompositionFileName().length()>0) {
-					settings.setWorkingCompositionPattern(stateManager.getSelectedPattern());
-				} else {
-					settings.setWorkingCompositionPattern(0);
-				}
-				String err = settings.toFile();
-				if (err.length()>0) {
-					showErrorMessage(settings,err);
-				}
-				unlockMe(this);
-				stop(null);
-				int status = 0;
-				if (getMessenger().isError()) {
-					status = 1;
-				}
-				System.exit(status);
-			}
+			closeProgram();
 		}
 	}
 	
@@ -251,7 +226,36 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 		return r;
 	}
-	
+
+	protected void closeProgram() {
+		boolean confirmed = true;
+		if (stateManager.isCompositionChanged()) {
+			confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to quit?");
+		}
+		if (confirmed) {
+			lockMe(this);
+			settings.setWorkingTab(stateManager.getSelectedTab());
+			settings.setWorkingInstrument(stateManager.getSelectedInstrument());
+			settings.setWorkingPatternEditMode(stateManager.getPatternEditMode());
+			if (settings.getWorkingCompositionFileName().length()>0) {
+				settings.setWorkingCompositionPattern(stateManager.getSelectedPattern());
+			} else {
+				settings.setWorkingCompositionPattern(0);
+			}
+			String err = settings.toFile();
+			if (err.length()>0) {
+				showErrorMessage(settings,err);
+			}
+			unlockMe(this);
+			stop(null);
+			int status = 0;
+			if (getMessenger().isError()) {
+				status = 1;
+			}
+			System.exit(status);
+		}
+	}
+
 	protected File chooseFile(JFileChooser fileChooser,String title) {
 		File file = null;
 		int choice = fileChooser.showDialog(mainFrame.getFrame(),title);

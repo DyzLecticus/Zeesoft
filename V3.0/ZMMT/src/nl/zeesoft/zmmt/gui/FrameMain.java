@@ -29,11 +29,12 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 public class FrameMain extends FrameObject implements ActionListener, ChangeListener, StateChangeSubscriber {
 	private static final String	TITLE				= "ZeeTracker";
 
+	private static final String	DEMO				= "DEMO";
 	private static final String	LOAD				= "LOAD";
 	private static final String	SAVE				= "SAVE";
 	private static final String	SAVE_AS				= "SAVE_AS";
 	private static final String	NEW					= "NEW";
-	private static final String	DEMO				= "DEMO";
+	private static final String	QUIT				= "QUIT";
 	
 	public static final String	EDIT_UNDO			= "EDIT_UNDO";
 	public static final String	EDIT_REDO			= "EDIT_REDO";
@@ -160,7 +161,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(LOAD)) {
+		if (evt.getActionCommand().equals(DEMO)) {
+			getController().newComposition(true);
+		} else if (evt.getActionCommand().equals(LOAD)) {
 			getController().loadComposition();
 		} else if (evt.getActionCommand().equals(SAVE)) {
 			getController().saveComposition();
@@ -168,8 +171,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().saveCompositionAs();
 		} else if (evt.getActionCommand().equals(NEW)) {
 			getController().newComposition(false);
-		} else if (evt.getActionCommand().equals(DEMO)) {
-			getController().newComposition(true);
+		} else if (evt.getActionCommand().equals(QUIT)) {
+			getController().closeProgram();
 		} else if (evt.getActionCommand().equals(TAB_COMPOSITION)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_COMPOSITION);
 		} else if (evt.getActionCommand().equals(TAB_INSTRUMENTS)) {
@@ -279,8 +282,13 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		bar.add(fileMenu);
 		
+		JMenuItem item = new JMenuItem("Demo",KeyEvent.VK_D);
+		item.setActionCommand(DEMO);
+		item.addActionListener(this);
+		fileMenu.add(item);
+
 		int evt = ActionEvent.CTRL_MASK;
-		JMenuItem item = new JMenuItem("Load",KeyEvent.VK_L);
+		item = new JMenuItem("Load",KeyEvent.VK_L);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,evt));
 		item.setActionCommand(LOAD);
 		item.addActionListener(this);
@@ -304,8 +312,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		fileMenu.add(item);
 
-		item = new JMenuItem("Demo",KeyEvent.VK_D);
-		item.setActionCommand(DEMO);
+		item = new JMenuItem("Quit",KeyEvent.VK_Q);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,evt));
+		item.setActionCommand(QUIT);
 		item.addActionListener(this);
 		fileMenu.add(item);
 

@@ -591,9 +591,12 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				}
 			}
 			if (pn==null) {
-				String instrument = getController().getStateManager().getSelectedInstrument();
+				String instrument = "";
 				if (compositionCopy!=null && instrument.equals(Instrument.ECHO)) {
 					instrument = compositionCopy.getSynthesizerConfiguration().getEcho().getInstrument();
+				}
+				if (instrument.length()==0) {
+					instrument = getController().getStateManager().getSelectedInstrument();
 				}
 				pn = new Note();
 				pn.note = note;
@@ -661,21 +664,24 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 				}
 			}
 		} else if (getCurrentGrid()==controlsGrid) {
-			if (controlsGrid.getSelectedColumn()>=0 && controlsGrid.getSelectedRow()>=0) {
-				String instrument = Instrument.INSTRUMENTS[controlsGrid.getSelectedColumn()];
+			int[] cols = controlsGrid.getSelectedColumns();
+			if (cols.length>0 && controlsGrid.getSelectedRow()>=0) {
 				int control =  getSelectedControl();
 				int step = (controlsGrid.getSelectedRow() + 1);
-				Control ctrl = workingPattern.getInstrumentControl(instrument,control,step);
-				if (ctrl==null) {
-					ctrl = new Control();
-					ctrl.instrument = instrument;
-					ctrl.control = control;
-					ctrl.step = step;
-					if (control==Control.EXPRESSION) {
-						ctrl.percentage = 100;
+				for (int col = cols[0]; col <= cols[(cols.length - 1)]; col++) {
+					String instrument = Instrument.INSTRUMENTS[col];
+					Control ctrl = workingPattern.getInstrumentControl(instrument,control,step);
+					if (ctrl==null) {
+						ctrl = new Control();
+						ctrl.instrument = instrument;
+						ctrl.control = control;
+						ctrl.step = step;
+						if (control==Control.EXPRESSION) {
+							ctrl.percentage = 100;
+						}
+						workingPattern.getControls().add(ctrl);
+						changed = true;
 					}
-					workingPattern.getControls().add(ctrl);
-					changed = true;
 				}
 			}
 		}

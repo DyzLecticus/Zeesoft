@@ -35,6 +35,8 @@ public class ZeeTracker {
 		r.append("   Creates a new ZeeTracker composition file based on the current settings.\n");
 		r.append(" * Demo  \n");
 		r.append("   Loads the ZeeTracker demo composition.\n");
+		r.append(" * Quit  \n");
+		r.append("   Stops the program.\n");
 		r.append("**Show**  \n");
 		r.append(" * Composition (F1)  \n");
 		r.append("   Switches to the composition tab.\n");
@@ -57,9 +59,8 @@ public class ZeeTracker {
 		r.append(" * Synth 2 (Ctrl+5)  \n");
 		r.append(" * Synth 3 (Ctrl+6)  \n");
 		r.append(" * Lead (Ctrl+7)  \n");
-		// TODO: Switch drums and strings
-		r.append(" * Strings (Ctrl+8)  \n");
-		r.append(" * Drums (Ctrl+9)  \n");
+		r.append(" * Drums (Ctrl+8)  \n");
+		r.append(" * Strings (Ctrl+9)  \n");
 		r.append(" * Echo (Ctrl+0)  \n");
 		r.append("Edit\n");
 		r.append(" * Undo (Ctrl+Z)  \n");
@@ -67,8 +68,10 @@ public class ZeeTracker {
 		r.append(" * Redo (Ctrl+Y)  \n");
 		r.append(" * Pattern  \n");
 		r.append("   * Select pattern (Ctrl+P)  \n");
+		r.append("   * Next pattern (Ctrl+PageDown)  \n");
+		r.append("   * Previous pattern (Ctrl+PageUp)  \n");
 		r.append("   * Toggle insert (Ctrl+I)  \n");
-		r.append("   * Edit notes (Ctrl+E)  \n");
+		r.append("   * Edit pattern (Ctrl+E)  \n");
 		r.append("   * Copy notes (Ctrl+C)  \n");
 		r.append("   * Paste notes (Ctrl+V)  \n");
 		r.append("Sequencer\n");
