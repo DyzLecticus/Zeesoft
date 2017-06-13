@@ -1122,8 +1122,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		int row = 0;
 		
 		bars = getBarsSelector();
-		addLabel(r,row,"Custom pattern bars");
-		addProperty(r,row,bars);
+		addLabelProperty(r,row,"Custom pattern bars",bars);
 
 		cardPanel = new JPanel();
 		CardLayout layout = new CardLayout();

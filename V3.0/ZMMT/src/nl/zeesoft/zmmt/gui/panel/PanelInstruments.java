@@ -402,154 +402,74 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		
 		int row = 0;
 
+		row++;
 		instrumentLayer1MidiNum[instrumentNum] = getNewNumberSpinner(3,0,127);
-		addLabel(panel,row,"Layer 1 MIDI instrument number");
+		Component prop = instrumentLayer1MidiNum[instrumentNum];
 		if (midiInstruments.size()>0) {
-			JPanel selector = getMidiInstrumentSelector(instrumentLayer1MidiNum[instrumentNum],midiInstruments,false);
-			addProperty(panel,row,selector);
-		} else {
-			addProperty(panel,row,instrumentLayer1MidiNum[instrumentNum]);
+			prop = getMidiInstrumentSelector(instrumentLayer1MidiNum[instrumentNum],midiInstruments,false);
 		}
+		addLabelProperty(panel,row,"MIDI instrument number 1",prop);
 		if (name.equals(Instrument.DRUMS)) {
 			getComboBoxForNumber(instrumentLayer1MidiNum[instrumentNum]).setEnabled(false);
 		}
-		
-		row++;
-		instrumentLayer1Volume[instrumentNum] = getNewNumberSpinner(3,0,127);
-		JPanel slider = getNewNumberSlider(instrumentLayer1Volume[instrumentNum],0,127,110);
-		addLabel(panel,row,"Layer 1 volume");
-		addProperty(panel,row,slider);
 
 		row++;
-		instrumentLayer1Pan[instrumentNum] = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(instrumentLayer1Pan[instrumentNum],0,127,64);
-		addLabel(panel,row,"Layer 1 pan");
-		addProperty(panel,row,slider);
-
+		instrumentLayer1Volume[instrumentNum] = addLabelNumberToPanel(panel,row,"Volume",0,127,110);
 		row++;
-		instrumentLayer1Pressure[instrumentNum] = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(instrumentLayer1Pressure[instrumentNum],0,127,0);
-		addLabel(panel,row,"Layer 1 pressure");
-		addProperty(panel,row,slider);
-
+		instrumentLayer1Pan[instrumentNum] = addLabelNumberToPanel(panel,row,"Pan",0,127,64);
 		row++;
-		instrumentLayer1Chorus[instrumentNum] = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(instrumentLayer1Chorus[instrumentNum],0,127,0);
-		addLabel(panel,row,"Layer 1 chorus");
-		addProperty(panel,row,slider);
-
+		instrumentLayer1Pressure[instrumentNum] = addLabelNumberToPanel(panel,row,"Pressure",0,127,0);
 		row++;
-		instrumentLayer1Modulation[instrumentNum] = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(instrumentLayer1Modulation[instrumentNum],0,127,0);
-		addLabel(panel,row,"Layer 1 modulation");
-		addProperty(panel,row,slider);
-
+		instrumentLayer1Chorus[instrumentNum] = addLabelNumberToPanel(panel,row,"Chorus",0,127,0);
 		row++;
-		instrumentLayer1Filter[instrumentNum] = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(instrumentLayer1Filter[instrumentNum],0,127,127);
-		addLabel(panel,row,"Layer 1 filter");
-		addProperty(panel,row,slider);
-
+		instrumentLayer1Modulation[instrumentNum] = addLabelNumberToPanel(panel,row,"Modulation",0,127,0);
 		row++;
-		instrumentLayer1Reverb[instrumentNum] = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(instrumentLayer1Reverb[instrumentNum],0,127,64);
-		addLabel(panel,row,"Layer 1 reverb");
-		addProperty(panel,row,slider);
+		instrumentLayer1Filter[instrumentNum] = addLabelNumberToPanel(panel,row,"Filter",0,127,127);
+		row++;
+		instrumentLayer1Reverb[instrumentNum] = addLabelNumberToPanel(panel,row,"Reverb",0,127,24);
 
 		if (!name.equals(Instrument.DRUMS)) {
 			row++;
-			instrumentLayer1BaseOctave[instrumentNum] = getNewNumberSpinner(3,0,9);
-			slider = getNewNumberSlider(instrumentLayer1BaseOctave[instrumentNum],0,9,3);
-			addLabel(panel,row,"Layer 1 base octave");
-			addProperty(panel,row,slider);
-
+			instrumentLayer1BaseOctave[instrumentNum] = addLabelNumberToPanel(panel,row,"Base octave",0,9,3);
 			row++;
-			instrumentLayer1BaseVelocity[instrumentNum] = getNewNumberSpinner(3,0,127);
-			slider = getNewNumberSlider(instrumentLayer1BaseVelocity[instrumentNum],0,127,100);
-			addLabel(panel,row,"Layer 1 base velocity");
-			addProperty(panel,row,slider);
-	
+			instrumentLayer1BaseVelocity[instrumentNum] = addLabelNumberToPanel(panel,row,"Base velocity",0,127,100);
 			row++;
-			instrumentLayer1AccentVelocity[instrumentNum] = getNewNumberSpinner(3,0,127);
-			slider = getNewNumberSlider(instrumentLayer1AccentVelocity[instrumentNum],0,127,100);
-			addLabel(panel,row,"Layer 1 accent velocity");
-			addProperty(panel,row,slider);
-
-			if (name.equals(Instrument.SYNTH_BASS1) ||
-				name.equals(Instrument.SYNTH1) ||
-				name.equals(Instrument.LEAD) ||
-				name.equals(Instrument.STRINGS)
-				) {
-				row++;
-				instrumentLayer2MidiNum[instrumentNum] = getNewNumberSpinner(3,-1,127);
-				addLabel(panel,row,"Layer 2 MIDI instrument number");
-				if (midiInstruments.size()>0) {
-					JPanel selector = getMidiInstrumentSelector(instrumentLayer2MidiNum[instrumentNum],midiInstruments,true);
-					addProperty(panel,row,selector);
-				} else {
-					addProperty(panel,row,instrumentLayer2MidiNum[instrumentNum]);
-				}
-
-				row++;
-				instrumentLayer2Volume[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2Volume[instrumentNum],0,127,110);
-				addLabel(panel,row,"Layer 2 volume");
-				addProperty(panel,row,slider);
-
-				row++;
-				instrumentLayer2Pan[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2Pan[instrumentNum],0,127,64);
-				addLabel(panel,row,"Layer 2 pan");
-				addProperty(panel,row,slider);
-
-				row++;
-				instrumentLayer2Pressure[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2Pressure[instrumentNum],0,127,0);
-				addLabel(panel,row,"Layer 2 pressure");
-				addProperty(panel,row,slider);
-
-				row++;
-				instrumentLayer2Chorus[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2Chorus[instrumentNum],0,127,0);
-				addLabel(panel,row,"Layer 2 chorus");
-				addProperty(panel,row,slider);
-
-				row++;
-				instrumentLayer2Modulation[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2Modulation[instrumentNum],0,127,0);
-				addLabel(panel,row,"Layer 2 modulation");
-				addProperty(panel,row,slider);
-
-				row++;
-				instrumentLayer2Filter[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2Filter[instrumentNum],0,127,127);
-				addLabel(panel,row,"Layer 2 filter");
-				addProperty(panel,row,slider);
-
-				row++;
-				instrumentLayer2Reverb[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2Reverb[instrumentNum],0,127,64);
-				addLabel(panel,row,"Layer 2 reverb");
-				addProperty(panel,row,slider);
-
-				row++;
-				instrumentLayer2BaseOctave[instrumentNum] = getNewNumberSpinner(3,0,9);
-				slider = getNewNumberSlider(instrumentLayer2BaseOctave[instrumentNum],0,9,3);
-				addLabel(panel,row,"Layer 2 base octave");
-				addProperty(panel,row,slider);
-
-				row++;
-				instrumentLayer2BaseVelocity[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2BaseVelocity[instrumentNum],0,127,100);
-				addLabel(panel,row,"Layer 2 base velocity");
-				addProperty(panel,row,slider);
+			instrumentLayer1AccentVelocity[instrumentNum] = addLabelNumberToPanel(panel,row,"Accent velocity",0,127,110);
+		}
 		
-				row++;
-				instrumentLayer2AccentVelocity[instrumentNum] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(instrumentLayer2AccentVelocity[instrumentNum],0,127,100);
-				addLabel(panel,row,"Layer 2 accent velocity");
-				addProperty(panel,row,slider);
+		if (name.equals(Instrument.SYNTH_BASS1) ||
+			name.equals(Instrument.SYNTH1) ||
+			name.equals(Instrument.LEAD) ||
+			name.equals(Instrument.STRINGS)
+			) {
+			row++;
+			instrumentLayer2MidiNum[instrumentNum] = getNewNumberSpinner(3,-1,127);
+			prop = instrumentLayer2MidiNum[instrumentNum];
+			if (midiInstruments.size()>0) {
+				prop =  getMidiInstrumentSelector(instrumentLayer2MidiNum[instrumentNum],midiInstruments,true);
 			}
+			addLabelProperty(panel,row,"MIDI instrument number 2",prop);
+
+			row++;
+			instrumentLayer2Volume[instrumentNum] = addLabelNumberToPanel(panel,row,"Volume",0,127,110);
+			row++;
+			instrumentLayer2Pan[instrumentNum] = addLabelNumberToPanel(panel,row,"Pan",0,127,64);
+			row++;
+			instrumentLayer2Pressure[instrumentNum] = addLabelNumberToPanel(panel,row,"Pressure",0,127,0);
+			row++;
+			instrumentLayer2Chorus[instrumentNum] = addLabelNumberToPanel(panel,row,"Chorus",0,127,0);
+			row++;
+			instrumentLayer2Modulation[instrumentNum] = addLabelNumberToPanel(panel,row,"Modulation",0,127,0);
+			row++;
+			instrumentLayer2Filter[instrumentNum] = addLabelNumberToPanel(panel,row,"Filter",0,127,127);
+			row++;
+			instrumentLayer2Reverb[instrumentNum] = addLabelNumberToPanel(panel,row,"Reverb",0,127,24);
+			row++;
+			instrumentLayer2BaseOctave[instrumentNum] = addLabelNumberToPanel(panel,row,"Base octave",0,9,3);
+			row++;
+			instrumentLayer2BaseVelocity[instrumentNum] = addLabelNumberToPanel(panel,row,"Base velocity",0,127,100);
+			row++;
+			instrumentLayer2AccentVelocity[instrumentNum] = addLabelNumberToPanel(panel,row,"Accent velocity",0,127,110);
 		}
 
 		if (name.equals(Instrument.DRUMS)) {
@@ -559,40 +479,18 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				drumPanel.setLayout(new GridBagLayout());
 				drumPanel.setBorder(BorderFactory.createTitledBorder(Drum.DRUMS[d]));
 
-				drumLayer1MidiNote[d] = getNewNumberSpinner(3,35,81);
-				slider = getNewNumberSlider(drumLayer1MidiNote[d],35,81,35);
-				addLabel(drumPanel,drow,"Layer 1 MIDI note number");
-				addProperty(drumPanel,drow,slider);
-				
+				drumLayer1MidiNote[d] = addLabelNumberToPanel(drumPanel,drow,"MIDI note number 1",35,81,35);
 				drow++;
-				drumLayer1BaseVelocity[d] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(drumLayer1BaseVelocity[d],0,127,100);
-				addLabel(drumPanel,drow,"Layer 1 Base velocity");
-				addProperty(drumPanel,drow,slider);
-		
+				drumLayer1BaseVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Base velocity",0,127,100);
 				drow++;
-				drumLayer1AccentVelocity[d] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(drumLayer1AccentVelocity[d],0,127,100);
-				addLabel(drumPanel,drow,"Layer 1 Accent velocity");
-				addProperty(drumPanel,drow,slider);
-				
+				drumLayer1AccentVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Accent velocity",0,127,110);
+
 				drow++;
-				drumLayer2MidiNote[d] = getNewNumberSpinner(3,34,81);
-				slider = getNewNumberSlider(drumLayer2MidiNote[d],34,81,35);
-				addLabel(drumPanel,drow,"Layer 2 MIDI note number");
-				addProperty(drumPanel,drow,slider);
-				
+				drumLayer2MidiNote[d] = addLabelNumberToPanel(drumPanel,drow,"MIDI note number 2",34,81,34);
 				drow++;
-				drumLayer2BaseVelocity[d] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(drumLayer2BaseVelocity[d],0,127,100);
-				addLabel(drumPanel,drow,"Layer 2 base velocity");
-				addProperty(drumPanel,drow,slider);
-		
+				drumLayer2BaseVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Base velocity",0,127,100);
 				drow++;
-				drumLayer2AccentVelocity[d] = getNewNumberSpinner(3,0,127);
-				slider = getNewNumberSlider(drumLayer2AccentVelocity[d],0,127,100);
-				addLabel(drumPanel,drow,"Layer 2 accent velocity");
-				addProperty(drumPanel,drow,slider);
+				drumLayer2AccentVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Accent velocity",0,127,110);
 
 				row++;
 				addComponent(panel,row,0.01,drumPanel);
@@ -624,74 +522,33 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				echoInstrument.addItem(Instrument.INSTRUMENTS[i]);
 			}
 		}
-		addLabel(panel,row,"Instrument");
-		addProperty(panel,row,echoInstrument);
+		addLabelProperty(panel,row,"Instrument",echoInstrument);
 
 		row++;
-		echoLayer = getNewNumberSpinner(3,1,2);
-		JPanel slider = getNewNumberSlider(echoLayer,1,2,1);
-		addLabel(panel,row,"Layer");
-		addProperty(panel,row,slider);
+		echoLayer = addLabelNumberToPanel(panel,row,"Layer",1,2,1);
+		row++;
+		echoSteps = addLabelNumberToPanel(panel,row,"Steps",1,24,6);
 
 		row++;
-		echoSteps = getNewNumberSpinner(3,1,24);
-		slider = getNewNumberSlider(echoSteps,1,24,6);
-		addLabel(panel,row,"Steps");
-		addProperty(panel,row,slider);
+		echoVelocityPercentage1 = addLabelNumberToPanel(panel,row,"Echo 1 velocity percentage",1,99,80);
+		row++;
+		echoVelocityPercentage2 = addLabelNumberToPanel(panel,row,"Echo 1 velocity percentage",1,99,60);
+		row++;
+		echoVelocityPercentage3 = addLabelNumberToPanel(panel,row,"Echo 3 velocity percentage",1,99,40);
 
 		row++;
-		echoVelocityPercentage1 = getNewNumberSpinner(3,1,99);
-		slider = getNewNumberSlider(echoVelocityPercentage1,1,99,60);
-		addLabel(panel,row,"Echo 1 velocity percentage");
-		addProperty(panel,row,slider);
-
+		echoPan1 = addLabelNumberToPanel(panel,row,"Echo 1 pan",0,127,24);
 		row++;
-		echoVelocityPercentage2 = getNewNumberSpinner(3,1,99);
-		slider = getNewNumberSlider(echoVelocityPercentage2,1,99,40);
-		addLabel(panel,row,"Echo 2 velocity percentage");
-		addProperty(panel,row,slider);
-
+		echoPan2 = addLabelNumberToPanel(panel,row,"Echo 2 pan",0,127,104);
 		row++;
-		echoVelocityPercentage3 = getNewNumberSpinner(3,1,99);
-		slider = getNewNumberSlider(echoVelocityPercentage3,1,99,20);
-		addLabel(panel,row,"Echo 3 velocity percentage");
-		addProperty(panel,row,slider);
-
+		echoPan3 = addLabelNumberToPanel(panel,row,"Echo 3 pan",0,127,48);
+		
 		row++;
-		echoPan1 = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(echoPan1,0,127,24);
-		addLabel(panel,row,"Echo 1 pan");
-		addProperty(panel,row,slider);
-
+		echoReverb1 = addLabelNumberToPanel(panel,row,"Echo 1 reverb",0,127,80);
 		row++;
-		echoPan2 = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(echoPan2,0,127,104);
-		addLabel(panel,row,"Echo 2 pan");
-		addProperty(panel,row,slider);
-
+		echoReverb2 = addLabelNumberToPanel(panel,row,"Echo 2 reverb",0,127,104);
 		row++;
-		echoPan3 = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(echoPan3,0,127,48);
-		addLabel(panel,row,"Echo 3 pan");
-		addProperty(panel,row,slider);
-
-		row++;
-		echoReverb1 = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(echoReverb1,0,127,103);
-		addLabel(panel,row,"Echo 1 reverb");
-		addProperty(panel,row,slider);
-
-		row++;
-		echoReverb2 = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(echoReverb2,0,127,115);
-		addLabel(panel,row,"Echo 2 reverb");
-		addProperty(panel,row,slider);
-
-		row++;
-		echoReverb3 = getNewNumberSpinner(3,0,127);
-		slider = getNewNumberSlider(echoReverb3,0,127,127);
-		addLabel(panel,row,"Echo 2 reverb");
-		addProperty(panel,row,slider);
+		echoReverb3 = addLabelNumberToPanel(panel,row,"Echo 3 reverb",0,127,127);
 
 		row++;
 		addFiller(panel,row);

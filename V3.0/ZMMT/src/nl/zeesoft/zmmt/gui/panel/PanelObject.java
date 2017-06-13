@@ -19,6 +19,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
@@ -136,6 +137,35 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		return controller;
 	}
 
+	protected JFormattedTextField addLabelTextFieldToPanel(JPanel panel,int row,String label) {
+		JFormattedTextField r = getNewTextField();
+		addLabelProperty(panel,row,label,r);
+		return r;
+	}
+
+	protected JSpinner addLabelNumberToPanel(JPanel panel,int row,String label,int min, int max, int init) {
+		JSpinner r = getNewNumberSpinner(3,min,max);
+		JPanel slider = getNewNumberSlider(r,min,max,init);
+		addLabelProperty(panel,row,label,slider);
+		return r;
+	}
+
+	protected JCheckBox addLabelCheckBoxToPanel(JPanel panel,int row,String label) {
+		JCheckBox r = getNewCheckBox();
+		addLabelProperty(panel,row,label,r);
+		return r;
+	}
+
+	protected void addLabelProperty(JPanel panel,int row,String label,Component c) {
+		boolean fill = (c instanceof JFormattedTextField);
+		addLabel(panel,row,label);
+		addProperty(panel,row,c,fill);
+	}
+
+	protected void addSeparator(JPanel panel, int row) {
+		addComponent(panel,row,0.01,new JSeparator(JSeparator.HORIZONTAL),true,true);
+	}
+	
 	protected void addLabel(JPanel panel,int row,String text) {
 		JLabel lbl = new JLabel(text + " ");
 		lbl.addKeyListener(controller.getPlayerKeyListener());
@@ -169,14 +199,26 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	}
 
 	protected void addComponent(JPanel panel,int row,double weighty,Component c) {
-		addComponent(panel,row,weighty,c,true);
+		addComponent(panel,row,weighty,c,true,false);
 	}
 
 	protected void addComponent(JPanel panel,int row,double weighty,Component c,boolean fill) {
+		addComponent(panel,row,weighty,c,fill,false);
+	}
+
+	protected void addComponent(JPanel panel,int row,double weighty,Component c,boolean fill,boolean centered) {
 		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		if (centered) {
+			gbc.anchor = GridBagConstraints.LINE_START;
+		} else {
+			gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		}
 		if (fill) {
-			gbc.fill = GridBagConstraints.BOTH;
+			if (centered) {
+				gbc.fill = GridBagConstraints.HORIZONTAL;
+			} else {
+				gbc.fill = GridBagConstraints.BOTH;
+			}
 		}
 		gbc.weightx = 1.0;
 		gbc.weighty = weighty;

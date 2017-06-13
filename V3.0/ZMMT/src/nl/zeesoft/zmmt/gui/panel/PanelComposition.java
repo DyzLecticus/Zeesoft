@@ -8,7 +8,6 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
-import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
 import nl.zeesoft.zmmt.composition.Composition;
@@ -42,56 +41,28 @@ public class PanelComposition extends PanelObject implements ActionListener, Com
 
 		int row = 0;
 
-		addLabel(getPanel(),row,"File");
-		file = getNewTextField();
+		file = addLabelTextFieldToPanel(getPanel(),row,"File");
 		file.setEnabled(false);
-		addProperty(getPanel(),row,file,true);
 		
 		row++;
-		composer = getNewTextField();
-		addLabel(getPanel(),row,"Composer");
-		addProperty(getPanel(),row,composer,true);
-
+		composer = addLabelTextFieldToPanel(getPanel(),row,"Composer");
 		row++;
-		name = getNewTextField();
-		addLabel(getPanel(),row,"Name");
-		addProperty(getPanel(),row,name,true);
-
+		name = addLabelTextFieldToPanel(getPanel(),row,"Name");
 		row++;
-		beatsPerMinute = getNewNumberSpinner(3,1,256);
-		JPanel slider = getNewNumberSlider(beatsPerMinute,1,256,128);
-		addLabel(getPanel(),row,"Beats per minute");
-		addProperty(getPanel(),row,slider);
-
+		beatsPerMinute = addLabelNumberToPanel(getPanel(),row,"Beats per minute",1,256,128);
 		row++;
-		beatsPerBar = getNewNumberSpinner(3,1,16);
-		slider = getNewNumberSlider(beatsPerBar,1,16,4);
-		addLabel(getPanel(),row,"Beats per bar");
-		addProperty(getPanel(),row,slider);
-
+		beatsPerBar = addLabelNumberToPanel(getPanel(),row,"Beats per bar",1,16,4);
 		row++;
-		stepsPerBeat = getNewNumberSpinner(3,1,16);
-		slider = getNewNumberSlider(stepsPerBeat,1,16,8);
-		addLabel(getPanel(),row,"Steps per beat");
-		addProperty(getPanel(),row,slider);
-
+		stepsPerBeat = addLabelNumberToPanel(getPanel(),row,"Steps per beat",1,16,8);
 		row++;
-		barsPerPattern = getNewNumberSpinner(3,1,16);
-		slider = getNewNumberSlider(barsPerPattern,1,16,4);
-		addLabel(getPanel(),row,"Bars per pattern");
-		addProperty(getPanel(),row,slider);
+		barsPerPattern = addLabelNumberToPanel(getPanel(),row,"Bars per pattern",1,16,4);
 		
 		row++;
-		useDrumKit = getNewCheckBox();
+		useDrumKit = addLabelCheckBoxToPanel(getPanel(),row,"Use internal drum kit");
 		useDrumKit.addActionListener(this);
-		addLabel(getPanel(),row,"Use internal drum kit");
-		addProperty(getPanel(),row,useDrumKit);
-		
 		row++;
-		useSynthesizers = getNewCheckBox();
+		useSynthesizers = addLabelCheckBoxToPanel(getPanel(),row,"Use internal drum synthesizers");
 		useSynthesizers.addActionListener(this);
-		addLabel(getPanel(),row,"Use internal drum synthesizers");
-		addProperty(getPanel(),row,useSynthesizers);
 		
 		row++;
 		addFiller(getPanel(),row);

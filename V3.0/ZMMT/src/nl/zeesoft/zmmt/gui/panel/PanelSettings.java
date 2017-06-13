@@ -51,49 +51,26 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 
 		int row = 0;
 
-		addLabel(getPanel(),row,"File");
-		JFormattedTextField file = getNewTextField();
+		JFormattedTextField file = addLabelTextFieldToPanel(getPanel(),row,"File");
 		file.setValue((new File(settingsCopy.getFileName())).getAbsolutePath());
 		file.setEnabled(false);
-		addProperty(getPanel(),row,file,true);
 
 		row++;
-		composer = getNewTextField();
-		addLabel(getPanel(),row,"Composer");
-		addProperty(getPanel(),row,composer,true);
+		composer = addLabelTextFieldToPanel(getPanel(),row,"Composer");
+		row++;
+		beatsPerMinute = addLabelNumberToPanel(getPanel(),row,"Beats per minute",1,256,128);
+		row++;
+		beatsPerBar = addLabelNumberToPanel(getPanel(),row,"Beats per bar",1,16,4);
+		row++;
+		stepsPerBeat = addLabelNumberToPanel(getPanel(),row,"Steps per beat",1,16,8);
+		row++;
+		barsPerPattern = addLabelNumberToPanel(getPanel(),row,"Bars per pattern",1,16,4);
+		
+		row++;
+		addLabelProperty(getPanel(),row,"Instrument defaults",getInstrumentPanel());
 
 		row++;
-		beatsPerMinute = getNewNumberSpinner(3,1,256);
-		JPanel slider = getNewNumberSlider(beatsPerMinute,1,256,128);
-		addLabel(getPanel(),row,"Default beats per minute");
-		addProperty(getPanel(),row,slider);
-
-		row++;
-		beatsPerBar = getNewNumberSpinner(3,1,16);
-		slider = getNewNumberSlider(beatsPerBar,1,16,4);
-		addLabel(getPanel(),row,"Default beats per bar");
-		addProperty(getPanel(),row,slider);
-
-		row++;
-		stepsPerBeat = getNewNumberSpinner(3,1,16);
-		slider = getNewNumberSlider(stepsPerBeat,1,16,8);
-		addLabel(getPanel(),row,"Default steps per beat");
-		addProperty(getPanel(),row,slider);
-
-		row++;
-		barsPerPattern = getNewNumberSpinner(3,1,16);
-		slider = getNewNumberSlider(barsPerPattern,1,16,4);
-		addLabel(getPanel(),row,"Default bars per pattern");
-		addProperty(getPanel(),row,slider);
-
-		row++;
-		addLabel(getPanel(),row,"Instrument defaults");
-		addProperty(getPanel(),row,getInstrumentPanel());
-
-		row++;
-		customSoundFont = getNewTextField();
-		addLabel(getPanel(),row,"Custom sound font file");
-		addProperty(getPanel(),row,customSoundFont,true);
+		customSoundFont = addLabelTextFieldToPanel(getPanel(),row,"Custom sound font file");
 
 		updatedSettings();
 		
