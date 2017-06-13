@@ -877,7 +877,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			) {
 			show = EDIT_CONTROLS;
 			if (controlsGridController.setSelectedControl(getSelectedControl())) {
-				controlsGridController.fireTableDataChanged();
+				refreshGridData();
 			}
 		}
 		layout.show(cardPanel,show);
