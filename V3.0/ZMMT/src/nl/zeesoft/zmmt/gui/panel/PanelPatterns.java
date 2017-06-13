@@ -882,8 +882,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 		layout.show(cardPanel,show);
 	}
-	
-	protected JScrollPane getNotesPanel() {
+
+	protected void initializeNotesGrid() {
 		notesGridController = new NotesGridController();
 		notesGrid = new Grid();
 		notesGrid.setModel(notesGridController);
@@ -908,14 +908,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		notesGrid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		
 		addKeyStrokeOverridesToGrid(notesGrid);
-
-		JScrollPane r = new JScrollPane(notesGrid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-		r.getVerticalScrollBar().setUnitIncrement(20);
-		return r;
 	}
 
-	protected JScrollPane getControlsPanel() {
+	protected void initializeControlsGrid() {
 		controlsGridController = new ControlsGridController();
 		controlsGrid = new Grid();
 		controlsGrid.setModel(controlsGridController);
@@ -940,11 +935,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		controlsGrid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		
 		addKeyStrokeOverridesToGrid(controlsGrid);
-		
-		JScrollPane r = new JScrollPane(controlsGrid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-		r.getVerticalScrollBar().setUnitIncrement(20);
-		return r;
 	}
 	
 	protected void addKeyStrokeOverridesToGrid(Grid grid) {
@@ -1114,6 +1104,22 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		return r;
 	}
 
+	protected JScrollPane getNotesPanel() {
+		initializeNotesGrid();
+		
+		JScrollPane r = new JScrollPane(notesGrid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		r.getVerticalScrollBar().setUnitIncrement(20);
+		return r;
+	}
+
+	protected JScrollPane getControlsPanel() {
+		initializeControlsGrid();
+		
+		JScrollPane r = new JScrollPane(controlsGrid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		r.getVerticalScrollBar().setUnitIncrement(20);
+		return r;
+	}
+
 	protected JPanel getDetailsPanel() {
 		JPanel r = new JPanel();
 		r.setLayout(new GridBagLayout());
@@ -1127,7 +1133,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		cardPanel = new JPanel();
 		CardLayout layout = new CardLayout();
 		cardPanel.setLayout(layout);
-		
+
 		cardPanel.add(getNotesPanel(),EDIT_NOTES);
 		cardPanel.add(getControlsPanel(),EDIT_CONTROLS);
 

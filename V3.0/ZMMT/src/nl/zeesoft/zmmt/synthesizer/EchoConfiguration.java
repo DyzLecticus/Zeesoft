@@ -1,18 +1,18 @@
 package nl.zeesoft.zmmt.synthesizer;
 
 public class EchoConfiguration {
-	private String		instrument				= Instrument.LEAD;
+	private String		instrument				= "";
 	private int			layer					= 1;
 	private int			steps					= 6;
-	private int			velocityPercentage1		= 80;
-	private int			velocityPercentage2		= 60;
-	private int			velocityPercentage3		= 40;
+	private int			velocityPercentage1		= 70;
+	private int			velocityPercentage2		= 50;
+	private int			velocityPercentage3		= 30;
 	private int			reverb1					= 80;
 	private int			reverb2					= 104;
 	private int			reverb3					= 127;
-	private int			pan1					= 24;
-	private int			pan2					= 104;
-	private int			pan3					= 48;
+	private int			pan1					= 0;
+	private int			pan2					= 127;
+	private int			pan3					= 64;
 	
 	public EchoConfiguration copy() {
 		EchoConfiguration r = new EchoConfiguration();

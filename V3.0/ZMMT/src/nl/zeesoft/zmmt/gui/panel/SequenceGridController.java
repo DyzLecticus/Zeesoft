@@ -16,7 +16,7 @@ public class SequenceGridController extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return Instrument.INSTRUMENTS.length;
+		return Instrument.INSTRUMENTS.length + 1;
 	}
 
 	@Override

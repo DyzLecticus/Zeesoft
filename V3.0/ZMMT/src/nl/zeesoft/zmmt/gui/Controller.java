@@ -558,7 +558,14 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (sb!=null) {
 			for (Instrument inst: sb.getInstruments()) {
 				for (Instrument synthInst: synth.getLoadedInstruments()) {
-					if (synthInst.getPatch().getProgram()==inst.getPatch().getProgram()) {
+					/**
+					 * The sound bank number is not loaded correctly and an empty piano is always loaded.
+					 * We identify the piano by name and do not replace it.
+					 */
+					if (!synthInst.getName().startsWith("Piano 1") &&
+						synthInst.getPatch().getProgram()==inst.getPatch().getProgram() &&
+						synthInst.getPatch().getBank()==inst.getPatch().getBank()
+						) {
 						synth.unloadInstrument(synthInst);
 						synth.loadInstrument(inst);
 					}
@@ -571,7 +578,14 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (sb!=null) {
 			for (Instrument inst: sb.getInstruments()) {
 				for (Instrument synthInst: synth.getLoadedInstruments()) {
-					if (synthInst.getPatch().getProgram()==inst.getPatch().getProgram()) {
+					/**
+					 * The sound bank number is not loaded correctly and an empty piano is always loaded.
+					 * We identify the piano by name and do not replace it.
+					 */
+					if (!synthInst.getName().startsWith("Piano 1") && 
+						synthInst.getPatch().getProgram()==inst.getPatch().getProgram() &&
+						synthInst.getPatch().getBank()==inst.getPatch().getBank()
+						) {
 						synth.unloadInstrument(synthInst);
 						synth.loadInstrument(baseSoundFont.getInstrument(inst.getPatch()));
 					}

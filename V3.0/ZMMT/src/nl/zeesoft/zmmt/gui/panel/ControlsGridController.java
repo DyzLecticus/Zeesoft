@@ -17,7 +17,7 @@ public class ControlsGridController extends NotesGridController {
 	
 	@Override
 	public int getColumnCount() {
-		return (Instrument.INSTRUMENT_SHORTS.length - 1);
+		return Instrument.INSTRUMENT_SHORTS.length;
 	}
 
 	@Override
