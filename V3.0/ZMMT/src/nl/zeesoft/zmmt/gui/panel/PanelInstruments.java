@@ -43,8 +43,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	
 	private JPanel					cardPanel						= null;
 
-	private JSpinner[]				instrumentVolume				= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentPan					= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentHoldPercentage				= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1MidiNum			= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1Filter			= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1Chorus			= new JSpinner[Instrument.INSTRUMENTS.length];
@@ -137,8 +136,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 			EchoConfiguration echo = evt.getComposition().getSynthesizerConfiguration().getEcho();
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				InstrumentConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-				instrumentVolume[i].setValue(String.format("%03d",conf.getVolume()));
-				instrumentPan[i].setValue(String.format("%03d",conf.getPan()));
+				instrumentHoldPercentage[i].setValue(String.format("%03d",conf.getHoldPercentage()));
 				instrumentLayer1MidiNum[i].setValue(String.format("%03d",conf.getLayer1().getMidiNum()));
 				instrumentLayer1Filter[i].setValue(String.format("%03d",conf.getLayer1().getFilter()));
 				instrumentLayer1Chorus[i].setValue(String.format("%03d",conf.getLayer1().getChorus()));
@@ -176,8 +174,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				}
 				if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
 					getComboBoxForNumber(instrumentLayer1MidiNum[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentVolume[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentPan[i]).setEnabled(echo.getInstrument().length()==0);
+					getSliderForNumber(instrumentHoldPercentage[i]).setEnabled(echo.getInstrument().length()==0);
 					getSliderForNumber(instrumentLayer1Filter[i]).setEnabled(echo.getInstrument().length()==0);
 					getSliderForNumber(instrumentLayer1Chorus[i]).setEnabled(echo.getInstrument().length()==0);
 					getSliderForNumber(instrumentLayer1Pressure[i]).setEnabled(echo.getInstrument().length()==0);
@@ -247,8 +244,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	public void setChangesInComposition(Composition composition) {
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-			inst.setVolume(Integer.parseInt(instrumentVolume[i].getValue().toString()));
-			inst.setPan(Integer.parseInt(instrumentPan[i].getValue().toString()));
+			inst.setHoldPercentage(Integer.parseInt(instrumentHoldPercentage[i].getValue().toString()));
 			inst.getLayer1().setMidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
 			inst.getLayer1().setFilter(Integer.parseInt(instrumentLayer1Filter[i].getValue().toString()));
 			inst.getLayer1().setChorus(Integer.parseInt(instrumentLayer1Chorus[i].getValue().toString()));
@@ -396,9 +392,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		
 		int row = 0;
 
-		instrumentVolume[instrumentNum] = addLabelNumberToPanel(panel,row,"Volume",0,127,110);
-		row++;
-		instrumentPan[instrumentNum] = addLabelNumberToPanel(panel,row,"Pan",0,127,64);
+		instrumentHoldPercentage[instrumentNum] = addLabelNumberToPanel(panel,row,"Hold percentage",0,100,75);
 
 		row++;
 		instrumentLayer1MidiNum[instrumentNum] = getNewNumberSpinner(3,0,127);

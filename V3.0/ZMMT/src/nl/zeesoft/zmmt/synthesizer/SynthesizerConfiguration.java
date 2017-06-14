@@ -49,6 +49,7 @@ public class SynthesizerConfiguration {
 			instElem.children.add(new JsElem("muted","" + inst.isMuted()));
 			instElem.children.add(new JsElem("volume","" + inst.getVolume()));
 			instElem.children.add(new JsElem("pan","" + inst.getPan()));
+			instElem.children.add(new JsElem("holdPercentage","" + inst.getHoldPercentage()));
 			instElem.children.add(new JsElem("l1MidiNum","" + inst.getLayer1().getMidiNum()));
 			instElem.children.add(new JsElem("l1Filter","" + inst.getLayer1().getFilter()));
 			instElem.children.add(new JsElem("l1Chorus","" + inst.getLayer1().getChorus()));
@@ -123,6 +124,8 @@ public class SynthesizerConfiguration {
 							inst.setVolume(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("pan")) {
 							inst.setPan(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("holdPercentage")) {
+							inst.setHoldPercentage(Integer.parseInt(val.value.toString()));
 						// Layer 1
 						} else if (val.name.equals("l1MidiNum")) {
 							inst.getLayer1().setMidiNum(Integer.parseInt(val.value.toString()));

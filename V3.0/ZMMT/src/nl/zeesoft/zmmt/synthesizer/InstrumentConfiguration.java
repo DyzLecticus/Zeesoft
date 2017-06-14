@@ -1,11 +1,12 @@
 package nl.zeesoft.zmmt.synthesizer;
 
 public class InstrumentConfiguration extends BaseConfiguration {
-	private boolean							muted	= false;
-	private int								volume	= 110;
-	private int 							pan		= 64;
-	private	InstrumentLayerConfiguration	layer1	= new InstrumentLayerConfiguration();
-	private	InstrumentLayerConfiguration	layer2	= new InstrumentLayerConfiguration();
+	private boolean							muted			= false;
+	private int								volume			= 110;
+	private int 							pan				= 64;
+	private int								holdPercentage	= 75;
+	private	InstrumentLayerConfiguration	layer1			= new InstrumentLayerConfiguration();
+	private	InstrumentLayerConfiguration	layer2			= new InstrumentLayerConfiguration();
 	
 	public InstrumentConfiguration() {
 		layer2.setMidiNum(-1);
@@ -17,6 +18,7 @@ public class InstrumentConfiguration extends BaseConfiguration {
 		r.setMuted(muted);
 		r.setPan(pan);
 		r.setVolume(volume);
+		r.setHoldPercentage(holdPercentage);
 		r.setLayer1(layer1.copy());
 		r.setLayer2(layer2.copy());
 		return r;
@@ -36,6 +38,14 @@ public class InstrumentConfiguration extends BaseConfiguration {
 
 	public void setVolume(int volume) {
 		this.volume = volume;
+	}
+
+	public int getHoldPercentage() {
+		return holdPercentage;
+	}
+
+	public void setHoldPercentage(int holdPercentage) {
+		this.holdPercentage = holdPercentage;
 	}
 	
 	public int getPan() {
