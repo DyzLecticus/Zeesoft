@@ -560,7 +560,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 				for (Instrument synthInst: synth.getLoadedInstruments()) {
 					/**
 					 * The sound bank number is not loaded correctly and an empty piano is always loaded.
-					 * We identify the piano by name and do not replace it.
 					 */
 					if (!synthInst.getName().startsWith("Piano 1") &&
 						synthInst.getPatch().getProgram()==inst.getPatch().getProgram() &&
@@ -580,7 +579,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 				for (Instrument synthInst: synth.getLoadedInstruments()) {
 					/**
 					 * The sound bank number is not loaded correctly and an empty piano is always loaded.
-					 * We identify the piano by name and do not replace it.
 					 */
 					if (!synthInst.getName().startsWith("Piano 1") && 
 						synthInst.getPatch().getProgram()==inst.getPatch().getProgram() &&

@@ -231,17 +231,16 @@ public class CompositionToSequenceConvertor {
 			echoInst = composition.getSynthesizerConfiguration().getInstrument(Instrument.ECHO);
 			channels = 2;
 		}
+		int volume = echoInst.getVolume();
 		int layerMidiNum = echoInst.getLayer1().getMidiNum();
 		int layerPressure = echoInst.getLayer1().getPressure();
 		int layerModulation = echoInst.getLayer1().getModulation();
-		int layerVolume = echoInst.getLayer1().getVolume();
 		int layerFilter = echoInst.getLayer1().getFilter();
 		int layerChorus = echoInst.getLayer1().getChorus();
 		if (echo.getLayer()==2) {
 			layerMidiNum = echoInst.getLayer2().getMidiNum();
 			layerPressure = echoInst.getLayer2().getPressure();
 			layerModulation = echoInst.getLayer2().getModulation();
-			layerVolume = echoInst.getLayer2().getVolume();
 			layerFilter = echoInst.getLayer2().getFilter();
 			layerChorus = echoInst.getLayer2().getChorus();
 		}
@@ -250,8 +249,8 @@ public class CompositionToSequenceConvertor {
 				int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
 				createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,layerMidiNum,0,tick);
 				createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,layerPressure,0,tick);
+				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,volume,tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.MODULATION,layerModulation,tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,layerVolume,tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.FILTER,layerFilter,tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,layerChorus,tick);
 				if (e==0) {
@@ -275,10 +274,10 @@ public class CompositionToSequenceConvertor {
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),layer);
 				createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer1().getMidiNum(),0,tick);
 				createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer1().getPressure(),0,tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getLayer1().getPan(),tick);
+				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
+				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer1().getReverb(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.MODULATION,inst.getLayer1().getModulation(),tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getLayer1().getVolume(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.FILTER,inst.getLayer1().getFilter(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,inst.getLayer1().getChorus(),tick);
 				if (inst.getLayer2().getMidiNum()>=0) {
@@ -286,10 +285,10 @@ public class CompositionToSequenceConvertor {
 					if (channel>=0) {
 						createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer2().getMidiNum(),0,tick);
 						createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer2().getPressure(),0,tick);
-						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getLayer2().getPan(),tick);
+						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
+						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer2().getReverb(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.MODULATION,inst.getLayer2().getModulation(),tick);
-						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getLayer2().getVolume(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.FILTER,inst.getLayer2().getFilter(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,inst.getLayer2().getChorus(),tick);
 					}

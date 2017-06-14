@@ -4,8 +4,6 @@ public class InstrumentLayerConfiguration {
 	private	int			midiNum			= 0;
 
 	private int			modulation		= 0;
-	private int 		pan				= 64;
-	private int			volume			= 110;
 	private int			filter			= 127;
 	private int			reverb			= 24;
 	private int			chorus			= 0;
@@ -23,8 +21,6 @@ public class InstrumentLayerConfiguration {
 
 		r.setModulation(modulation);
 		r.setPressure(pressure);
-		r.setPan(pan);
-		r.setVolume(volume);
 		r.setFilter(filter);
 		r.setReverb(reverb);
 		r.setChorus(chorus);
@@ -59,14 +55,6 @@ public class InstrumentLayerConfiguration {
 	public void setPressure(int pressure) {
 		this.pressure = pressure;
 	}
-	
-	public int getPan() {
-		return pan;
-	}
-
-	public void setPan(int pan) {
-		this.pan = pan;
-	}
 
 	public int getReverb() {
 		return reverb;
@@ -98,14 +86,6 @@ public class InstrumentLayerConfiguration {
 
 	public void setAccentVelocity(int accentVelocity) {
 		this.accentVelocity = accentVelocity;
-	}
-
-	public int getVolume() {
-		return volume;
-	}
-
-	public void setVolume(int volume) {
-		this.volume = volume;
 	}
 
 	public int getFilter() {
