@@ -65,7 +65,7 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 
 	@Override
 	public void requestFocus() {
-		//grid.requestFocus();
+		solo.requestFocus();
 	}
 
 	@Override

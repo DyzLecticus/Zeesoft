@@ -2,6 +2,8 @@ package nl.zeesoft.zmmt.sequencer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -15,7 +17,6 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Control;
 import nl.zeesoft.zmmt.composition.Note;
 import nl.zeesoft.zmmt.composition.Pattern;
-import nl.zeesoft.zmmt.synthesizer.Drum;
 import nl.zeesoft.zmmt.synthesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
@@ -50,7 +51,7 @@ public class CompositionToSequenceConvertor {
 		createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,0);
 		int nextTick = addPatternToSequence(r,0,patternNumber,false,true,true);
 		// Align track endings
-		for (int t = 0; t < Composition.TRACKS; t++) {
+		for (int t = 0; t < r.getTracks().length; t++) {
 			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(nextTick - 1));
 		}
 		return r;
@@ -88,7 +89,7 @@ public class CompositionToSequenceConvertor {
 			nextTick = nextTick + Composition.RESOLUTION;
 		}
 		// Align track endings
-		for (int t = 0; t < Composition.TRACKS; t++) {
+		for (int t = 0; t < r.getTracks().length; t++) {
 			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(nextTick - 1));
 		}
 		return r;
@@ -139,7 +140,7 @@ public class CompositionToSequenceConvertor {
 							int endTick = currentTick + ((note.duration * ticksPerStep) - 10);
 							for (MidiNote mn: midiNotes) {
 								if (externalize && note.instrument.equals(Instrument.DRUMS)) {
-									mn.midiNote = Drum.getExternalMidiNoteForNote(note.note);
+									mn.midiNote = getExternalMidiNoteForNote(note.note);
 								}
 								int velocity = (mn.velocity * note.velocityPercentage) / 100;
 								createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity,currentTick);
@@ -170,7 +171,7 @@ public class CompositionToSequenceConvertor {
 								}
 							}
 							if (externalize && note.instrument.equals(Instrument.DRUMS)) {
-								mn.midiNote = Drum.getExternalMidiNoteForNote(note.note);
+								mn.midiNote = getExternalMidiNoteForNote(note.note);
 							}
 							int velocity = (mn.velocity * note.velocityPercentage) / 100;
 							createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity,currentTick);
@@ -182,6 +183,59 @@ public class CompositionToSequenceConvertor {
 			
 		}
 		return nextPatternStartTick;
+	}
+	
+	protected List<SeqNote>	getPatternNotes(List<Pattern> patterns,int startTick,boolean externalize) {
+		List<SeqNote> r = new ArrayList<SeqNote>();
+	
+		SortedMap<String,InstrumentConfiguration> instruments = new TreeMap<String,InstrumentConfiguration>();
+		for (InstrumentConfiguration inst: composition.getSynthesizerConfiguration().getInstruments()) {
+			instruments.put(inst.getName(),inst);
+		}
+		
+		int nextPatternStartTick = 0;
+		int ticksPerStep = composition.getTicksPerStep();
+
+		for (Pattern p: patterns) {
+			int patternSteps = composition.getStepsForPattern(p);
+			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
+			for (Note n: p.getNotes()) {
+				if (n.step<=patternSteps && !instruments.get(n.instrument).isMuted()) {
+					List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(n.instrument,n.note,n.accent,1);
+					for (MidiNote mn: midiNotes) {
+						if (externalize && n.instrument.equals(Instrument.DRUMS)) {
+							mn.midiNote = getExternalMidiNoteForNote(n.note);
+						}
+						SeqNote sn = new SeqNote();
+						sn.instrument = mn.instrument;
+						sn.midiNote = mn.midiNote;
+						sn.channel = mn.channel;
+						sn.velocity = (mn.velocity * n.velocityPercentage) / 100;
+						int tick = (n.step - 1) * ticksPerStep;
+						int tickEnd = tick + ((n.duration * ticksPerStep) - 1);
+						if (mn instanceof MidiNoteDelayed) {
+							MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
+							tick = tick + (mnd.delaySteps * ticksPerStep);
+							tickEnd = tickEnd + (mnd.delaySteps * ticksPerStep);
+						}
+						if (tickEnd>=nextPatternStartTick) {
+							tickEnd = nextPatternStartTick - 1;
+						}
+						if (instruments.get(sn.instrument).getHoldPercentage()<100) {
+							int hold = (ticksPerStep * instruments.get(sn.instrument).getHoldPercentage()) / 100;
+							int subtract = (ticksPerStep - hold);
+							tickEnd = (tickEnd - subtract);
+							if (tickEnd<=tick) {
+								tickEnd = tick + 1;
+							}
+						}
+					}
+				}
+			}
+			startTick = nextPatternStartTick;
+		}
+		
+		return r;
 	}
 	
 	protected Sequence createSequence() {
@@ -325,5 +379,35 @@ public class CompositionToSequenceConvertor {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	protected int getExternalMidiNoteForNote(int note) {
+		int r = 36;
+		if (note==36) {
+			r = 36;
+		} else if (note==37) {
+			r = 39; 
+		} else if (note==38) {
+			r = 40; 
+		} else if (note==39) {
+			r = 42;
+		} else if (note==40) {
+			r = 46; 
+		} else if (note==41) {
+			r = 41; 
+		} else if (note==42) {
+			r = 43; 
+		} else if (note==43) {
+			r = 51; 
+		} else if (note==44) {
+			r = 49; 
+		} else if (note==45) {
+			r = 76; 
+		} else if (note==46) {
+			r = 80; 
+		} else if (note==47) {
+			r = 56; 
+		}
+		return r;
 	}
 }
