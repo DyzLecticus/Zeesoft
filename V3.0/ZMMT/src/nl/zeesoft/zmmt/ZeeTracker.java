@@ -20,7 +20,8 @@ public class ZeeTracker {
 		r.append("The interface is based on mod trackers like Scream Tracker and Impulse Tracker.\n");
 		r.append("This means that ZeeTracker is made for keyboard control.\n");
 		r.append("Mouse control is supported but not needed to create music with ZeeTracker.\n");
-		r.append("\n");
+		r.append("  \n");
+		r.append("  \n");
 		r.append("Menu options\n");
 		r.append("------------\n");
 		r.append("**File**  \n");
@@ -46,9 +47,10 @@ public class ZeeTracker {
 		r.append("   Switches to the patterns tab.\n");
 		r.append(" * Sequence (F4)  \n");
 		r.append("   Switches to the pattern sequence tab.\n");
-		r.append(" * Settings (F9)  \n");
+		r.append(" * Mix (F9)  \n");
+		r.append("   Switches to the mix tab.\n");
+		r.append(" * Settings (F12)  \n");
 		r.append("   Switches to the settings tab.\n");
-		// TODO: Include manual
 		r.append("**Instrument**  \n");
 		r.append("This menu provides options to select a specific working instrument.\n");
 		r.append("The currently selected instrument is reflected in the background color of the tab selectors.\n");
@@ -80,6 +82,7 @@ public class ZeeTracker {
 		r.append(" * Continue (F7)  \n");
 		r.append(" * Pause/Stop (F8)  \n");
 		// TODO: Finish manual
+		// TODO: Include manual
 		return r;
 	}
 }

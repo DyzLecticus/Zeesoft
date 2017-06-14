@@ -18,6 +18,7 @@ import javax.swing.event.ChangeListener;
 
 import nl.zeesoft.zmmt.gui.panel.PanelComposition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
+import nl.zeesoft.zmmt.gui.panel.PanelMix;
 import nl.zeesoft.zmmt.gui.panel.PanelObject;
 import nl.zeesoft.zmmt.gui.panel.PanelPatterns;
 import nl.zeesoft.zmmt.gui.panel.PanelSequence;
@@ -58,6 +59,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	TAB_INSTRUMENTS		= "Instruments";
 	public static final String	TAB_PATTERNS		= "Patterns";
 	public static final String	TAB_SEQUENCE		= "Sequence";
+	public static final String	TAB_MIX				= "Mix";
 	public static final String	TAB_SETTINGS		= "Settings";
 		
 	private JTabbedPane			tabs				= null;
@@ -67,6 +69,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private PanelInstruments	instrumentsPanel	= null;
 	private PanelPatterns		patternsPanel		= null;
 	private PanelSequence		sequencePanel		= null;
+	private PanelMix			mixPanel			= null;
 	private PanelSettings		settingsPanel		= null;
 	
 	private String				fileName			= "";
@@ -109,6 +112,10 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		sequencePanel = new PanelSequence(getController());
 		sequencePanel.initialize();
 		addPanelToTabs(tabs,"Sequence",sequencePanel);
+		
+		mixPanel = new PanelMix(getController());
+		mixPanel.initialize();
+		addPanelToTabs(tabs,"Mix",mixPanel);
 		
 		settingsPanel = new PanelSettings(getController());
 		settingsPanel.initialize();
@@ -181,6 +188,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_PATTERNS);
 		} else if (evt.getActionCommand().equals(TAB_SEQUENCE)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_SEQUENCE);
+		} else if (evt.getActionCommand().equals(TAB_MIX)) {
+			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_MIX);
 		} else if (evt.getActionCommand().equals(TAB_SETTINGS)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_SETTINGS);
 		} else if (evt.getActionCommand().equals(PLAY_PATTERN)) {
@@ -245,9 +254,14 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 				tabs.setSelectedIndex(3);
 			}
 			sequencePanel.requestFocus();
-		} else if (tab.equals(TAB_SETTINGS)) {
+		} else if (tab.equals(TAB_MIX)) {
 			if (tabs.getSelectedIndex()!=4) {
 				tabs.setSelectedIndex(4);
+			}
+			mixPanel.requestFocus();
+		} else if (tab.equals(TAB_SETTINGS)) {
+			if (tabs.getSelectedIndex()!=5) {
+				tabs.setSelectedIndex(5);
 			}
 			settingsPanel.requestFocus();
 		}
@@ -268,6 +282,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		} else if (tabs.getSelectedIndex()==3) {
 			r = TAB_SEQUENCE;
 		} else if (tabs.getSelectedIndex()==4) {
+			r = TAB_MIX;
+		} else if (tabs.getSelectedIndex()==5) {
 			r = TAB_SETTINGS;
 		} else {
 			r = TAB_COMPOSITION;
@@ -346,9 +362,15 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.setActionCommand(TAB_SEQUENCE);
 		item.addActionListener(this);
 		showMenu.add(item);
-		
-		item = new JMenuItem("Settings",KeyEvent.VK_E);
+
+		item = new JMenuItem("Mix",KeyEvent.VK_M);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9,evt));
+		item.setActionCommand(TAB_MIX);
+		item.addActionListener(this);
+		showMenu.add(item);
+
+		item = new JMenuItem("Settings",KeyEvent.VK_E);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12,evt));
 		item.setActionCommand(TAB_SETTINGS);
 		item.addActionListener(this);
 		showMenu.add(item);

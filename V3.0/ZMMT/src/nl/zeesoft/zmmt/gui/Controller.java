@@ -24,6 +24,7 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.panel.PanelInstruments;
+import nl.zeesoft.zmmt.gui.panel.PanelMix;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.gui.state.StateManager;
@@ -193,6 +194,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		if (evt.getSource()!=this) {
 			if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 				if (evt.getSource() instanceof PanelInstruments ||
+					evt.getSource() instanceof PanelMix ||
 					useInternalDrumKit!=evt.getComposition().getSynthesizerConfiguration().isUseInternalDrumKit() ||
 					useInternalSynthesizers!=evt.getComposition().getSynthesizerConfiguration().isUseInternalSynthesizers()
 					) {

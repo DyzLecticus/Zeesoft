@@ -46,6 +46,7 @@ public class SynthesizerConfiguration {
 			JsElem instElem = new JsElem("instrument");
 			json.rootElement.children.add(instElem);
 			instElem.children.add(new JsElem("name",inst.getName(),true));
+			instElem.children.add(new JsElem("muted","" + inst.isMuted()));
 			instElem.children.add(new JsElem("volume","" + inst.getVolume()));
 			instElem.children.add(new JsElem("pan","" + inst.getPan()));
 			instElem.children.add(new JsElem("l1MidiNum","" + inst.getLayer1().getMidiNum()));
@@ -116,6 +117,8 @@ public class SynthesizerConfiguration {
 					for (JsElem val: elem.children) {
 						if (val.name.equals("name")) {
 							inst.setName(val.value.toString());
+						} else if (val.name.equals("muted")) {
+							inst.setMuted(Boolean.parseBoolean(val.value.toString()));
 						} else if (val.name.equals("volume")) {
 							inst.setVolume(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("pan")) {

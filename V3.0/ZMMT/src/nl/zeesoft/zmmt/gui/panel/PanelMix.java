@@ -1,52 +1,49 @@
 package nl.zeesoft.zmmt.gui.panel;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
-import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MetaMessage;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JToggleButton;
 
-import nl.zeesoft.zmmt.composition.Pattern;
+import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
-import nl.zeesoft.zmmt.gui.FrameMain;
+import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
-import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
-import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
+import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
-public class PanelMix extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber {
-	private JButton[]				muteButton					= new JButton[Instrument.INSTRUMENTS.length];
-	private JLabel[]				volumeLabel					= new JLabel[Instrument.INSTRUMENTS.length];
-	private JSlider[]				volumeSlider				= new JSlider[Instrument.INSTRUMENTS.length];
-	private JLabel[]				panLabel					= new JLabel[Instrument.INSTRUMENTS.length];
-	private JSlider[]				panSlider					= new JSlider[Instrument.INSTRUMENTS.length];
-
-	private JLabel					playingTime					= null;
-	private JLabel					playingPattern				= null;
-	private JLabel					playingSequence				= null;
+public class PanelMix extends PanelObject implements ActionListener, StateChangeSubscriber, CompositionChangePublisher {
+	private static final String			SOLO						= "SOLO";
+	private static final String			UNMUTE						= "UNMUTE";
+	
+	private	JButton						solo						= null;
+	private	JButton						unmute						= null;
+	
+	private JToggleButton[]				muteButton					= new JToggleButton[Instrument.INSTRUMENTS.length];
+	private JLabel[]					volumeLabel					= new JLabel[Instrument.INSTRUMENTS.length];
+	private JSlider[]					volumeSlider				= new JSlider[Instrument.INSTRUMENTS.length];
+	private JLabel[]					panLabel					= new JLabel[Instrument.INSTRUMENTS.length];
+	private JSlider[]					panSlider					= new JSlider[Instrument.INSTRUMENTS.length];
+	
+	private SynthesizerConfiguration	synthConfigCopy				= null;
+	private String						selectedInstrument			= "";
 
 	public PanelMix(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
-		controller.addSequencerMetaListener(this);
-		controller.addSequencerSubscriber(this);
+		selectedInstrument = controller.getStateManager().getSelectedInstrument();
 	}
 
 	@Override
@@ -56,8 +53,14 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 		getPanel().setLayout(new GridBagLayout());
 		getPanel().setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-		//int row = 0;
-		//addComponent(getPanel(), row, 0.01,getSequencePanel());
+		int row = 0;
+		addComponent(getPanel(), row, 0.01,getMutePanel());
+
+		row++;
+		addComponent(getPanel(), row, 0.01,getMixPanel());
+
+		row++;
+		addFiller(getPanel(),row);
 	}
 
 	@Override
@@ -68,44 +71,169 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 	@Override
 	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
-		if (evt.getSource()!=this && evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
-			// ...
+		if (evt.getType().equals(StateChangeEvent.SELECTED_INSTRUMENT)) {
+			selectedInstrument = evt.getSelectedInstrument();
+		} else if (evt.getSource()!=this && evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
+			synthConfigCopy = evt.getComposition().getSynthesizerConfiguration().copy();
+			updatedSynthConfig();
 		}
 		setValidate(true);
+	}
+
+	@Override
+	public void setChangesInComposition(Composition composition) {
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
+			inst.setMuted(muteButton[i].isSelected());
+			inst.setVolume(volumeSlider[i].getValue());
+			inst.setPan(panSlider[i].getValue());
+		}
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(F2_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_INSTRUMENTS);
-		} else if (evt.getActionCommand().equals(F3_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
-		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
-		} else if (evt.getActionCommand().equals(FrameMain.STOP_PLAYING)) {
-			getController().stopSequencer();
-		}
-	}
-
-	@Override
-	public void meta(MetaMessage meta) {
-		if (meta.getType()==CompositionToSequenceConvertor.MARKER) {
-			String txt = new String(meta.getData());
-			if (txt.startsWith(CompositionToSequenceConvertor.SEQUENCE_MARKER)) {
-				//String[] d = txt.split(":");
-				//int index = Integer.parseInt(d[1]);
-				// ...
+		if (evt.getActionCommand().equals(SOLO)) {
+			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+				InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
+				if (Instrument.INSTRUMENTS[i].equals(selectedInstrument)) {
+					inst.setMuted(false);
+				} else {
+					inst.setMuted(true);
+				}
+			}
+			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+				if (Instrument.INSTRUMENTS[i].equals(selectedInstrument)) {
+					if (muteButton[i].isSelected()) {
+						muteButton[i].doClick();
+					}
+				} else {
+					if (!muteButton[i].isSelected()) {
+						muteButton[i].doClick();
+					}
+				}
+			}
+			getController().getStateManager().addWaitingPublisher(this);
+		} else if (evt.getActionCommand().equals(UNMUTE)) {
+			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+				InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
+				inst.setMuted(false);
+			}
+			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+				if (muteButton[i].isSelected()) {
+					muteButton[i].doClick();
+				}
+			}
+			getController().getStateManager().addWaitingPublisher(this);
+		} else {
+			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+				if (evt.getSource()==muteButton[i]) {
+					if (!muteButton[i].isOpaque()==muteButton[i].isSelected()) {
+						muteButton[i].setOpaque(muteButton[i].isSelected());
+					}
+					InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
+					if (muteButton[i].isSelected()!=inst.isMuted()) {
+						inst.setMuted(muteButton[i].isSelected());
+						getController().getStateManager().addWaitingPublisher(this);
+					}
+					break;
+				}
 			}
 		}
 	}
 
 	@Override
-	public void started() {
-		// Ignore
+	public void handleValidChange() {
+		updateLabels();
+		getController().getStateManager().addWaitingPublisher(this);
 	}
 
-	@Override
-	public void stopped() {
-		// ...
+	protected JPanel getMutePanel() {
+		JPanel r = new JPanel();
+		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
+		solo = new JButton("Solo");
+		solo.setActionCommand(SOLO);
+		solo.addActionListener(this);
+		solo.addKeyListener(getController().getPlayerKeyListener());
+		unmute = new JButton("Unmute all");
+		unmute.setActionCommand(UNMUTE);
+		unmute.addActionListener(this);
+		unmute.addKeyListener(getController().getPlayerKeyListener());
+		r.add(solo);
+		r.add(unmute);
+		return r;
+	}
+	
+	protected JPanel getMixPanel() {
+		JPanel r = new JPanel();
+		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
+		r.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			r.add(getColumnForInstrument(i));
+		}
+		return r;
+	}
+	
+	protected JPanel getColumnForInstrument(int i) {
+		JPanel r = new JPanel();
+		r.setLayout(new BoxLayout(r,BoxLayout.Y_AXIS));
+		
+		Color col = Instrument.getColorForInstrument(Instrument.INSTRUMENTS[i]);
+		
+		JLabel label = new JLabel(Instrument.INSTRUMENT_SHORTS[i]);
+		label.setOpaque(true);
+		label.setBackground(col);
+		label.setBorder(BorderFactory.createLineBorder(col,2,true));
+		muteButton[i] = new JToggleButton("M");
+		muteButton[i].addActionListener(this);
+		muteButton[i].setBackground(Color.RED);
+		volumeLabel[i] = new JLabel();
+		volumeSlider[i] = new JSlider(JSlider.VERTICAL,0,127,110);
+		volumeSlider[i].addChangeListener(this);
+		panLabel[i] = new JLabel();
+		panSlider[i] = new JSlider(JSlider.HORIZONTAL,0,127,64);
+		panSlider[i].setPreferredSize(new Dimension(50,50));
+		panSlider[i].setMaximumSize(new Dimension(50,50));
+		panSlider[i].addChangeListener(this);
+
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		muteButton[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+		volumeLabel[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+		volumeSlider[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+		panLabel[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+		panSlider[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		muteButton[i].addKeyListener(getController().getPlayerKeyListener());
+		volumeLabel[i].addKeyListener(getController().getPlayerKeyListener());
+		volumeSlider[i].addKeyListener(getController().getPlayerKeyListener());
+		panLabel[i].addKeyListener(getController().getPlayerKeyListener());
+		panSlider[i].addKeyListener(getController().getPlayerKeyListener());
+		
+		r.add(label);
+		r.add(muteButton[i]);
+		r.add(volumeLabel[i]);
+		r.add(volumeSlider[i]);
+		r.add(panLabel[i]);
+		r.add(panSlider[i]);
+		
+		return r;
+	}
+	
+	protected void updatedSynthConfig() {
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
+			if (inst.isMuted()!=muteButton[i].isSelected()) {
+				muteButton[i].doClick();
+			}
+			volumeSlider[i].setValue(inst.getVolume());
+			panSlider[i].setValue(inst.getPan());
+		}
+		updateLabels();
+	}
+	
+	protected void updateLabels() {
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			volumeLabel[i].setText("" + volumeSlider[i].getValue());
+			panLabel[i].setText("" + panSlider[i].getValue());
+		}
 	}
 }
