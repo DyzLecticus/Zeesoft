@@ -140,10 +140,12 @@ public class JsFile {
 			}
 			pC=c;
 		}
-		if (value.length()>0) {
-			parsedChildValue(child,value);
-		} else if (!parseObject) {
-			parent.children.remove(child);
+		if (child!=null) {
+			if (value.length()>0) {
+				parsedChildValue(child,value);
+			} else if (!parseObject) {
+				parent.children.remove(child);
+			}
 		}
 	}
 
