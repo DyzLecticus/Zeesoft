@@ -9,11 +9,8 @@ import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 public class SequenceGridKeyListener extends InstrumentPlayerKeyListener {
 	private PanelSequence sequencePanel = null;
 	
-	public SequenceGridKeyListener(Controller controller,SortedMap<String,Integer> keyCodeNoteNumbers) {
+	public SequenceGridKeyListener(Controller controller,SortedMap<String,Integer> keyCodeNoteNumbers,PanelSequence sequencePanel) {
 		super(controller,keyCodeNoteNumbers);
-	}
-
-	public void setSequencePanel(PanelSequence sequencePanel) {
 		this.sequencePanel = sequencePanel;
 	}
 

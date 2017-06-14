@@ -44,7 +44,7 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		controller.getStateManager().addSubscriber(this);
 		controller.addSequencerMetaListener(this);
 		controller.addSequencerSubscriber(this);
-		gridKeyListener = new SequenceGridKeyListener(controller,controller.getStateManager().getSettings().getKeyCodeNoteNumbers());
+		gridKeyListener = new SequenceGridKeyListener(controller,controller.getStateManager().getSettings().getKeyCodeNoteNumbers(),this);
 	}
 
 	@Override
