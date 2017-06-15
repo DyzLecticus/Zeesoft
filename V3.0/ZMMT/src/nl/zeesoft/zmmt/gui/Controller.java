@@ -379,7 +379,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 					restoreSoundBankInstruments(synthesizer,internalSynthesizers);
 				}
 			}
-			composition.getSynthesizerConfiguration().configureMidiSynthesizer(synthesizer);
+			composition.getSynthesizerConfiguration().configureMidiSynthesizer(synthesizer,!sequencePlayer.isPlaying());
 			initializedSoundFont = true;
 		}
 		unlockMe(this);

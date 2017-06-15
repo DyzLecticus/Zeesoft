@@ -286,7 +286,7 @@ public class SynthesizerConfiguration {
 		return r;
 	}
 
-	public void configureMidiSynthesizer(Synthesizer synth) {
+	public void configureMidiSynthesizer(Synthesizer synth,boolean configureControls) {
 		int channels = 3;
 		InstrumentConfiguration echoInst = getInstrument(echo.getInstrument());
 		if (echoInst==null) {
@@ -312,9 +312,11 @@ public class SynthesizerConfiguration {
 				synth.getChannels()[channel].programChange(layerMidiNum);
 				synth.getChannels()[channel].setChannelPressure(layerPressure);
 				synth.getChannels()[channel].controlChange(Control.VOLUME,volume);
-				synth.getChannels()[channel].controlChange(Control.MODULATION,layerModulation);
-				synth.getChannels()[channel].controlChange(Control.FILTER,layerFilter);
-				synth.getChannels()[channel].controlChange(Control.CHORUS,layerChorus);
+				if (configureControls) {
+					synth.getChannels()[channel].controlChange(Control.CHORUS,layerChorus);
+					synth.getChannels()[channel].controlChange(Control.MODULATION,layerModulation);
+					synth.getChannels()[channel].controlChange(Control.FILTER,layerFilter);
+				}
 				if (e==0) {
 					synth.getChannels()[channel].controlChange(Control.PAN,echo.getPan1());
 					synth.getChannels()[channel].controlChange(Control.REVERB,echo.getReverb1());
@@ -334,25 +336,35 @@ public class SynthesizerConfiguration {
 					layer = 2;
 				}
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),layer);
-				synth.getChannels()[channel].programChange(inst.getLayer1().getMidiNum());
+				int prog = synth.getChannels()[channel].getProgram();
+				if (prog!=inst.getLayer1().getMidiNum()) {
+					synth.getChannels()[channel].programChange(inst.getLayer1().getMidiNum());
+				}
 				synth.getChannels()[channel].setChannelPressure(inst.getLayer1().getPressure());
 				synth.getChannels()[channel].controlChange(Control.VOLUME,inst.getVolume());
 				synth.getChannels()[channel].controlChange(Control.PAN,inst.getPan());
+				if (configureControls) {
+					synth.getChannels()[channel].controlChange(Control.CHORUS,inst.getLayer1().getChorus());
+					synth.getChannels()[channel].controlChange(Control.MODULATION,inst.getLayer1().getModulation());
+					synth.getChannels()[channel].controlChange(Control.FILTER,inst.getLayer1().getFilter());
+				}
 				synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer1().getReverb());
-				synth.getChannels()[channel].controlChange(Control.MODULATION,inst.getLayer1().getModulation());
-				synth.getChannels()[channel].controlChange(Control.FILTER,inst.getLayer1().getFilter());
-				synth.getChannels()[channel].controlChange(Control.CHORUS,inst.getLayer1().getChorus());
 				if (inst.getLayer2().getMidiNum()>=0) {
 					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 					if (channel>=0) {
-						synth.getChannels()[channel].programChange(inst.getLayer2().getMidiNum());
+						prog = synth.getChannels()[channel].getProgram();
+						if (prog!=inst.getLayer2().getMidiNum()) {
+							synth.getChannels()[channel].programChange(inst.getLayer2().getMidiNum());
+						}
 						synth.getChannels()[channel].setChannelPressure(inst.getLayer2().getPressure());
 						synth.getChannels()[channel].controlChange(Control.VOLUME,inst.getVolume());
 						synth.getChannels()[channel].controlChange(Control.PAN,inst.getPan());
+						if (configureControls) {
+							synth.getChannels()[channel].controlChange(Control.CHORUS,inst.getLayer2().getChorus());
+							synth.getChannels()[channel].controlChange(Control.MODULATION,inst.getLayer2().getModulation());
+							synth.getChannels()[channel].controlChange(Control.FILTER,inst.getLayer2().getFilter());
+						}
 						synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer2().getReverb());
-						synth.getChannels()[channel].controlChange(Control.MODULATION,inst.getLayer2().getModulation());
-						synth.getChannels()[channel].controlChange(Control.FILTER,inst.getLayer2().getFilter());
-						synth.getChannels()[channel].controlChange(Control.CHORUS,inst.getLayer2().getChorus());
 					}
 				}
 			}

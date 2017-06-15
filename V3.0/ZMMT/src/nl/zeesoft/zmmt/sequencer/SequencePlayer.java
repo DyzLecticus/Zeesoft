@@ -23,6 +23,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 
 	private Sequencer						sequencer			= null;
 
+	private	boolean							playing				= false;
 	private	boolean							patternMode			= true;
 	private int								selectedPattern		= 0;
 	private Composition						compositionCopy		= null;
@@ -144,6 +145,7 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 	}
 		
 	public void start(long startTick) {
+		boolean started = false;
 		lockMe(this);
 		if (sequencer!=null && sequencer.getSequence()!=null) {
 			if (sequencer.isRunning()) {
@@ -151,34 +153,51 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			}
 			sequencer.setTickPosition(startTick);
 			sequencer.start();
+			playing = true;
+			started = true;
 		}
 		if (stopTick<startTick) {
 			stopTick=startTick;
 		}
 		List<SequencePlayerSubscriber> subs = new ArrayList<SequencePlayerSubscriber>(subscribers);	
 		unlockMe(this);
-		for (SequencePlayerSubscriber sub: subs) {
-			sub.started();
+		if (started) {
+			for (SequencePlayerSubscriber sub: subs) {
+				sub.started();
+			}
 		}
 	}
 
 	public void stop() {
+		boolean stopped = false;
 		lockMe(this);
 		if (sequencer!=null) {
 			if (sequencer.isRunning()) {
 				sequencer.stop();
 				stopTick = sequencer.getTickPosition();
+				playing = false;
+				stopped = true;
 			}
 		}
 		List<SequencePlayerSubscriber> subs = new ArrayList<SequencePlayerSubscriber>(subscribers);	
 		unlockMe(this);
-		for (SequencePlayerSubscriber sub: subs) {
-			sub.stopped();
+		if (stopped) {
+			for (SequencePlayerSubscriber sub: subs) {
+				sub.stopped();
+			}
 		}
 	}
 
 	public void startContinue() {
 		start(stopTick);
+	}
+
+	public boolean isPlaying() {
+		boolean r = false;
+		lockMe(this);
+		r = playing;
+		unlockMe(this);
+		return r;
 	}
 	
 	protected void checkUpdateSequence() {

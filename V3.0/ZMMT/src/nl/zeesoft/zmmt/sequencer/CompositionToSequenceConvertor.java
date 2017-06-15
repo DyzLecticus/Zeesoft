@@ -67,7 +67,7 @@ public class CompositionToSequenceConvertor {
 	}
 
 	public void convertPattern(int patternNumber,boolean externalize,boolean addMarkers) {
-		initialize(-1,externalize,addMarkers);
+		initialize(patternNumber,externalize,addMarkers);
 		if (sequence!=null) {
 			addEvents(false);
 		}
@@ -368,6 +368,7 @@ public class CompositionToSequenceConvertor {
 		return String.format("%03d",channel) + ":" + control;
 	}
 	
+	// TODO: Handle echo channel control
 	protected List<SeqControl> getPatternControls(int startTick) {
 		List<SeqControl> r = new ArrayList<SeqControl>();
 	
@@ -376,6 +377,7 @@ public class CompositionToSequenceConvertor {
 		int nextPatternStartTick = 0;
 		int ticksPerStep = composition.getTicksPerStep();
 		
+		// Build channel control map
 		for (Pattern p: patterns) {
 			int patternSteps = composition.getStepsForPattern(p);
 			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
