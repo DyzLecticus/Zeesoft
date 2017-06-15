@@ -39,6 +39,9 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 	private int[]					selectedRows				= null;
 	private int[]					selectedCols				= null;
 
+	// TODO: Grey out echo if not source
+	// TODO: Add control columns
+	
 	public PanelSequence(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
@@ -277,10 +280,9 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		// F3 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3,0,false);
 		grid.registerKeyboardAction(this,F3_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-		// F4 Override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
-		grid.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-
+		
+		addF4OverrideToComponent(this,grid);
+		
 		// F8 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
 		grid.registerKeyboardAction(this,FrameMain.STOP_PLAYING,stroke,JComponent.WHEN_FOCUSED);

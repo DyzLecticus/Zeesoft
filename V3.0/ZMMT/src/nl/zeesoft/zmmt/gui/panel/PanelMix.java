@@ -40,6 +40,9 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 	private SynthesizerConfiguration	synthConfigCopy				= null;
 	private String						selectedInstrument			= "";
 
+	// TODO: Solo and un-mute keyboard shortcuts
+	// TODO: Animated LED volume strips
+	
 	public PanelMix(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);

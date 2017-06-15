@@ -4,9 +4,12 @@ public class InstrumentLayerConfiguration {
 	private	int			midiNum			= 0;
 
 	private int			modulation		= 0;
-	private int			filter			= 127;
+	private int			filter			= 64;
 	private int			reverb			= 24;
+
 	private int			chorus			= 0;
+	
+	// TODO: resonance, attack, release, decay, vibrato rate, vibrato depth, vibrato delay
 
 	private int 		pressure		= 0;
 

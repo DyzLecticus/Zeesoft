@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +16,10 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 
 import nl.zeesoft.zmmt.composition.Composition;
@@ -43,7 +40,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 	
 	private JPanel					cardPanel						= null;
 
-	private JSpinner[]				instrumentHoldPercentage				= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSpinner[]				instrumentHoldPercentage		= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1MidiNum			= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1Filter			= new JSpinner[Instrument.INSTRUMENTS.length];
 	private JSpinner[]				instrumentLayer1Chorus			= new JSpinner[Instrument.INSTRUMENTS.length];
@@ -498,13 +495,14 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				echoInstrument.removeKeyListener(echoInstrument.getKeyListeners()[l]);
 			}
 			echoInstrument.addKeyListener(getController().getPlayerKeyListener());
+			addF4OverrideToComponent(this,echoInstrument);
 			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 2); i++) {
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 					echoInstrument.addItem(Instrument.INSTRUMENTS[i]);
 				}
 			}
 			addLabelProperty(panel,row,"Echo instrument",echoInstrument);
-
+			
 			row++;
 			echoLayer = addLabelNumberToPanel(panel,row,"Echo layer",1,2,1);
 			row++;
@@ -559,10 +557,8 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		r.setBackground(Instrument.getColorForInstrument(selectedInstrument));
 		r.setRenderer(this);
 		
-		// F4 Override
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
-		r.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-		
+		addF4OverrideToComponent(this,r);
+
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}

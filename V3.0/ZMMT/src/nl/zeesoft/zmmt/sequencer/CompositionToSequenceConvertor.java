@@ -369,7 +369,6 @@ public class CompositionToSequenceConvertor {
 		return String.format("%03d",channel) + ":" + control;
 	}
 	
-	// TODO: Handle echo channel control
 	protected List<SeqControl> getPatternControls(int startTick) {
 		List<SeqControl> r = new ArrayList<SeqControl>();
 	

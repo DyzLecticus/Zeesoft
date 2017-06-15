@@ -306,9 +306,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		comboBox.addKeyListener(controller.getPlayerKeyListener());
 		comboBox.addFocusListener(this);
 		
-		// F4 Override
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
-		comboBox.registerKeyboardAction(actionListener,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		addF4OverrideToComponent(actionListener,comboBox);
 		
 		NumberComboBox nc = new NumberComboBox(number,comboBox,subtract);
 		numberComboBoxes.add(nc);
@@ -317,5 +315,11 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 
 	protected void setValidate(boolean validate) {
 		this.validate = validate;
+	}
+
+	protected void addF4OverrideToComponent(ActionListener actionlistener,JComponent comp) {
+		// F4 Override
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
+		comp.registerKeyboardAction(actionlistener,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
 	}
 }

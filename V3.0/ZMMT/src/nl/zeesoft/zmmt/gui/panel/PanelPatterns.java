@@ -90,6 +90,10 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	private boolean					clearedPlayingStep				= false;
 
+	// TODO: Fix bars changing refresh
+	// TODO: Bars focus keyboard shortcut
+	// TODO: Copy instrument controls when copying full track length pattern notes
+	
 	public PanelPatterns(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
@@ -948,9 +952,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		// F3 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3,0,false);
 		grid.registerKeyboardAction(this,F3_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-		// F4 Override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
-		grid.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+
+		addF4OverrideToComponent(this,grid);
 
 		// F8 Override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
@@ -975,12 +978,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		addControlPageUpDownOverridesToComponent(grid);
 	}
 	
-	protected void addF4DownOverrideToComponent(JComponent comp) {
-		// F4 Override
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
-		comp.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-	}
-
 	protected void addControlPageUpDownOverridesToComponent(JComponent comp) {
 		KeyStroke stroke = null; 
 
@@ -1001,7 +998,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		r.setSelectedIndex(selectedPattern);
 		r.addActionListener(this);
 
-		addF4DownOverrideToComponent(r);
+		addF4OverrideToComponent(this,r);
 		addControlPageUpDownOverridesToComponent(r);
 		
 		// Enter override
@@ -1027,7 +1024,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		r.setSelectedIndex(barsPerPattern);
 		r.addActionListener(this);
 		
-		addF4DownOverrideToComponent(r);
+		addF4OverrideToComponent(this,r);
 		addControlPageUpDownOverridesToComponent(r);
 
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
