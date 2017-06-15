@@ -208,7 +208,9 @@ public class CompositionToSequenceConvertor {
 				createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,layerMidiNum,0,tick);
 				createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,layerPressure,0,tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,volume,tick);
+				
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,layerChorus,tick);
+				
 				if (e==0) {
 					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan1(),tick);
 					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,echo.getReverb1(),tick);
@@ -233,6 +235,7 @@ public class CompositionToSequenceConvertor {
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer1().getReverb(),tick);
+				
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,inst.getLayer1().getChorus(),tick);
 				if (inst.getLayer2().getMidiNum()>=0) {
 					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
@@ -242,6 +245,7 @@ public class CompositionToSequenceConvertor {
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer2().getReverb(),tick);
+						
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,inst.getLayer2().getChorus(),tick);
 					}
 				}
@@ -297,6 +301,8 @@ public class CompositionToSequenceConvertor {
 	protected List<SeqNote> getPatternNotes(int startTick) {
 		List<SeqNote> r = new ArrayList<SeqNote>();
 		
+		EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
+
 		int nextPatternStartTick = 0;
 		int ticksPerStep = composition.getTicksPerStep();
 
@@ -304,53 +310,48 @@ public class CompositionToSequenceConvertor {
 			int patternSteps = composition.getStepsForPattern(p);
 			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
 			for (Note n: p.getNotes()) {
-				if (n.step<=patternSteps && !instruments.get(n.instrument).isMuted()) {
+				if (n.step<=patternSteps && !instruments.get(n.instrument).isMuted() &&
+					(!n.instrument.equals(Instrument.ECHO) || echo.getInstrument().length()==0)	
+					) {
 					List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(n.instrument,n.note,n.accent,1);
-					int num = 0;
 					for (MidiNote mn: midiNotes) {
 						if (externalize) {
-							if (!(mn instanceof MidiNoteDelayed)) {
-								if (num>0) {
-									break;
+							externalizeMidiNote(n,mn);
+						}
+						if (mn.midiNote>=0) {
+							SeqNote sn = new SeqNote();
+							sn.instrument = mn.instrument;
+							sn.midiNote = mn.midiNote;
+							sn.channel = mn.channel;
+							sn.velocity = (mn.velocity * n.velocityPercentage) / 100;
+							int tick = startTick + ((n.step - 1) * ticksPerStep);
+							int tickEnd = tick + ((n.duration * ticksPerStep) - 1);
+							if (mn instanceof MidiNoteDelayed) {
+								MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
+								tick = tick + (mnd.delaySteps * ticksPerStep);
+								tickEnd = tickEnd + (mnd.delaySteps * ticksPerStep);
+							} else if (tickEnd>=nextPatternStartTick) {
+								tickEnd = nextPatternStartTick - 1;
+							}
+							if (instruments.get(sn.instrument).getHoldPercentage()<100) {
+								int hold = (ticksPerStep * instruments.get(sn.instrument).getHoldPercentage()) / 100;
+								int subtract = (ticksPerStep - hold);
+								tickEnd = (tickEnd - subtract);
+								if (tickEnd<=tick) {
+									tickEnd = tick + 1;
 								}
-								num++;
 							}
-							if (n.instrument.equals(Instrument.DRUMS)) {
-								mn.midiNote = getExternalDrumMidiNoteForNote(n.note);
+							if (tick>sequenceEndTick) {
+								tick = (tick - sequenceEndTick);
 							}
-						}
-						SeqNote sn = new SeqNote();
-						sn.instrument = mn.instrument;
-						sn.midiNote = mn.midiNote;
-						sn.channel = mn.channel;
-						sn.velocity = (mn.velocity * n.velocityPercentage) / 100;
-						int tick = startTick + ((n.step - 1) * ticksPerStep);
-						int tickEnd = tick + ((n.duration * ticksPerStep) - 1);
-						if (mn instanceof MidiNoteDelayed) {
-							MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
-							tick = tick + (mnd.delaySteps * ticksPerStep);
-							tickEnd = tickEnd + (mnd.delaySteps * ticksPerStep);
-						} else if (tickEnd>=nextPatternStartTick) {
-							tickEnd = nextPatternStartTick - 1;
-						}
-						if (instruments.get(sn.instrument).getHoldPercentage()<100) {
-							int hold = (ticksPerStep * instruments.get(sn.instrument).getHoldPercentage()) / 100;
-							int subtract = (ticksPerStep - hold);
-							tickEnd = (tickEnd - subtract);
-							if (tickEnd<=tick) {
-								tickEnd = tick + 1;
+							if (tickEnd>sequenceEndTick) {
+								tickEnd = (tickEnd - sequenceEndTick);
 							}
+							sn.tickStart = tick;
+							sn.tickEnd = tickEnd;
+							r.add(sn);
+							channelHasNotes[sn.channel] = true;
 						}
-						if (tick>sequenceEndTick) {
-							tick = (tick - sequenceEndTick);
-						}
-						if (tickEnd>sequenceEndTick) {
-							tickEnd = (tickEnd - sequenceEndTick);
-						}
-						sn.tickStart = tick;
-						sn.tickEnd = tickEnd;
-						r.add(sn);
-						channelHasNotes[sn.channel] = true;
 					}
 				}
 			}
@@ -372,6 +373,7 @@ public class CompositionToSequenceConvertor {
 	protected List<SeqControl> getPatternControls(int startTick) {
 		List<SeqControl> r = new ArrayList<SeqControl>();
 	
+		EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
 		SortedMap<String,List<SeqControl>> channelControlMap = new TreeMap<String,List<SeqControl>>();
 
 		int nextPatternStartTick = 0;
@@ -382,8 +384,17 @@ public class CompositionToSequenceConvertor {
 			int patternSteps = composition.getStepsForPattern(p);
 			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
 			for (Control c: p.getControls()) {
-				if (c.step<=patternSteps && !instruments.get(c.instrument).isMuted()) {
-					for (int layer = 0; layer < 2; layer++) {
+				if (c.step<=patternSteps && !instruments.get(c.instrument).isMuted() &&
+					(!c.instrument.equals(Instrument.ECHO) || echo.getInstrument().length()==0)	
+					) {
+					int layers = 2;
+					if (c.instrument.equals(Instrument.ECHO)) {
+						layers = 1;
+					}
+					for (int layer = 0; layer < layers; layer++) {
+						if (c.instrument.equals(Instrument.ECHO)) {
+							layer = 2;
+						}
 						int channel = Instrument.getMidiChannelForInstrument(c.instrument,layer);
 						if (channel>=0 && channelHasNotes[channel]) {
 							SeqControl sc = new SeqControl();
@@ -396,14 +407,14 @@ public class CompositionToSequenceConvertor {
 							if (c.control==Control.EXPRESSION) {
 								base = 127;
 							} else if (c.control==Control.MODULATION) {
-								if (layer==0) {
+								if (layer==0 || layer==2) {
 									add = instruments.get(c.instrument).getLayer1().getModulation();
 								} else if (layer==1) {
 									add = instruments.get(c.instrument).getLayer2().getModulation();
 								}
 								base = 127 - add;
 							} else if (c.control==Control.FILTER) {
-								if (layer==0) {
+								if (layer==0 || layer==2) {
 									base = instruments.get(c.instrument).getLayer1().getFilter();
 								} else if (layer==1) {
 									base = instruments.get(c.instrument).getLayer2().getFilter();
@@ -418,11 +429,11 @@ public class CompositionToSequenceConvertor {
 							} else {
 								int i = 0;
 								for (SeqControl tsc: list) {
-									addIndex = i;
-									if (tsc.tick>sc.tick) {
+									if (sc.tick<tsc.tick) {
 										break;
 									}
 									i++;
+									addIndex = i;
 								}
 							}
 							list.add(addIndex,sc);
@@ -435,94 +446,151 @@ public class CompositionToSequenceConvertor {
 		
 		// Force start control events for all instruments
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-			for (int layer = 0; layer < 2; layer++) {
-				int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
-				if (channel>=0) {
-					for (int co = 0; co < CONTROLS.length; co++) {
-						List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
-						if (list==null) {
-							int value = 0;
-							if (CONTROLS[co]==Control.EXPRESSION) {
-								value = 127;
-							} else if (CONTROLS[co]==Control.MODULATION) {
-								if (layer==0) {
-									value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer1().getModulation();
-								} else if (layer==1) {
-									value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer2().getModulation();
+			if (!instruments.get(Instrument.INSTRUMENTS[i]).isMuted() &&
+				(!Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) || echo.getInstrument().length()==0)
+				) {
+				int layers = 2;
+				if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
+					layers = 1;
+				}
+				for (int layer = 0; layer < layers; layer++) {
+					if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
+						layer = 2;
+					}
+					int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
+					if (channel>=0) {
+						for (int co = 0; co < CONTROLS.length; co++) {
+							List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
+							if (list==null) {
+								int value = 0;
+								if (CONTROLS[co]==Control.EXPRESSION) {
+									value = 127;
+								} else if (CONTROLS[co]==Control.MODULATION) {
+									if (layer==0 || layer==2) {
+										value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer1().getModulation();
+									} else if (layer==1) {
+										value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer2().getModulation();
+									}
+								} else if (CONTROLS[co]==Control.FILTER) {
+									if (layer==0 || layer==2) {
+										value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer1().getFilter();
+									} else if (layer==1) {
+										value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer2().getFilter();
+									}
 								}
-							} else if (CONTROLS[co]==Control.FILTER) {
-								if (layer==0) {
-									value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer1().getFilter();
-								} else if (layer==1) {
-									value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer2().getFilter();
-								}
+								SeqControl sc = new SeqControl();
+								sc.instrument = Instrument.INSTRUMENTS[i];
+								sc.channel = channel;
+								sc.control = CONTROLS[co];
+								sc.tick = 0;
+								sc.value = value;
+								list = new ArrayList<SeqControl>();
+								list.add(sc);
+								channelControlMap.put(getId(sc),list);
 							}
-							SeqControl sc = new SeqControl();
-							sc.instrument = Instrument.INSTRUMENTS[i];
-							sc.channel = channel;
-							sc.control = CONTROLS[co];
-							sc.tick = 0;
-							sc.value = value;
-							list = new ArrayList<SeqControl>();
-							list.add(sc);
-							channelControlMap.put(getId(sc),list);
 						}
 					}
 				}
 			}
 		}
 
+		List<SeqControl> echoControls = new ArrayList<SeqControl>();
+
 		// Calculate control changes between pattern controls
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-			for (int layer = 0; layer < 2; layer++) {
-				int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
-				if (channel>=0) {
-					for (int co = 0; co < CONTROLS.length; co++) {
-						List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
-						int c = 0;
-						for (SeqControl sc: list) {
-							r.add(sc);
-							if ((c+1) < list.size()) {
-								SeqControl nsc = list.get((c+1));
-								long tickDiff = nsc.tick - sc.tick;
-								int valueStart = sc.value;
-								int valueEnd = nsc.value;
-								int valueDiff = 0;
-								boolean add = true;
-								if (valueStart<valueEnd) {
-									valueDiff = (valueEnd - valueStart);
-									add = true;
-								} else if (valueStart>valueEnd) {
-									valueDiff = (valueStart - valueEnd);
-									add = false;
+			if (!instruments.get(Instrument.INSTRUMENTS[i]).isMuted() &&
+				(!Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) || echo.getInstrument().length()==0)
+				) {
+				int layers = 2;
+				if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
+					layers = 1;
+				}
+				for (int layer = 0; layer < layers; layer++) {
+					if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
+						layer = 2;
+					}
+					int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
+					if (channel>=0) {
+						for (int co = 0; co < CONTROLS.length; co++) {
+							List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
+							int c = 0;
+							for (SeqControl sc: list) {
+								r.add(sc);
+								if ((echo.getInstrument().equals(sc.instrument) && echo.getLayer()==layer) || 
+									(sc.instrument.equals(Instrument.ECHO) && echo.getInstrument().length()==0)
+									) {
+									echoControls.add(sc);
 								}
-								valueDiff = (valueDiff - 1);
-								if (valueDiff>1 && tickDiff>valueDiff) {
-									long ticksPerValueChange = (tickDiff / valueDiff);
-									for (int vc = 1; vc < valueDiff; vc++) {
-										int value = sc.value;
-										if (add) {
-											value = value + vc;
-										} else {
-											value = value - vc;
+								if ((c+1) < list.size()) {
+									SeqControl nsc = list.get((c+1));
+									long tickDiff = nsc.tick - sc.tick;
+									int valueStart = sc.value;
+									int valueEnd = nsc.value;
+									int valueDiff = 0;
+									boolean add = true;
+									if (valueStart<valueEnd) {
+										valueDiff = (valueEnd - valueStart);
+										add = true;
+									} else if (valueStart>valueEnd) {
+										valueDiff = (valueStart - valueEnd);
+										add = false;
+									}
+									valueDiff = (valueDiff - 1);
+									if (valueDiff>1 && tickDiff>valueDiff) {
+										long ticksPerValueChange = (tickDiff / valueDiff);
+										for (int vc = 1; vc < valueDiff; vc++) {
+											int value = sc.value;
+											if (add) {
+												value = value + vc;
+											} else {
+												value = value - vc;
+											}
+											SeqControl asc = new SeqControl();
+											asc.instrument = sc.instrument;
+											asc.channel = sc.channel;
+											asc.control = sc.control;
+											asc.tick = sc.tick + (vc * ticksPerValueChange);
+											asc.value = value;
+											r.add(asc);
+											if ((echo.getInstrument().equals(sc.instrument) && echo.getLayer()==layer) || 
+												(sc.instrument.equals(Instrument.ECHO) && echo.getInstrument().length()==0)
+												) {
+												echoControls.add(asc);
+											}
 										}
-										SeqControl asc = new SeqControl();
-										asc.instrument = sc.instrument;
-										asc.channel = sc.channel;
-										asc.control = sc.control;
-										asc.tick = sc.tick + (vc * ticksPerValueChange);
-										asc.value = value;
-										r.add(asc);
 									}
 								}
+								c++;
 							}
-							c++;
 						}
 					}
 				}
 			}
 		}
 		
+		// Copy echo controls to echo channels 
+		if (echoControls.size()>0) {
+			for (SeqControl sc: echoControls) {
+				int layers = 3;
+				if (echo.getInstrument().length()==0) {
+					layers = 2;
+				}
+				for (int l = 0; l < layers; l++) {
+					long tick = sc.tick + ((l * echo.getSteps()) * ticksPerStep);
+					if (tick>sequenceEndTick) {
+						tick = (tick - sequenceEndTick);
+					}
+					SeqControl asc = new SeqControl();
+					asc.instrument = sc.instrument;
+					asc.channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,l);
+					asc.control = sc.control;
+					asc.tick = tick;
+					asc.value = sc.value;
+					r.add(asc);
+				}
+			}
+		}
+
 		return r;
 	}
 	
@@ -555,32 +623,45 @@ public class CompositionToSequenceConvertor {
 			}
 		}
 	}
+
+	/**
+	 * Used to externalize MIDI notes.
+	 * Set the midiNote to -1 to disable the MidiNote from beeing included in the sequence.
+	 * 
+	 * @param note The pattern note
+	 * @param midiNote The MIDI note corresponding to the pattern
+	 */
+	protected void externalizeMidiNote(Note note,MidiNote midiNote) {
+		if (note.instrument.equals(Instrument.DRUMS)) {
+			midiNote.midiNote = getExternalDrumMidiNoteForNote(note.note);
+		}
+	}
 	
-	protected int getExternalDrumMidiNoteForNote(int note) {
+	protected int getExternalDrumMidiNoteForNote(int patternNote) {
 		int r = 36;
-		if (note==36) {
+		if (patternNote==36) {
 			r = 36;
-		} else if (note==37) {
+		} else if (patternNote==37) {
 			r = 39; 
-		} else if (note==38) {
+		} else if (patternNote==38) {
 			r = 40; 
-		} else if (note==39) {
+		} else if (patternNote==39) {
 			r = 42;
-		} else if (note==40) {
+		} else if (patternNote==40) {
 			r = 46; 
-		} else if (note==41) {
+		} else if (patternNote==41) {
 			r = 41; 
-		} else if (note==42) {
+		} else if (patternNote==42) {
 			r = 43; 
-		} else if (note==43) {
+		} else if (patternNote==43) {
 			r = 51; 
-		} else if (note==44) {
+		} else if (patternNote==44) {
 			r = 49; 
-		} else if (note==45) {
+		} else if (patternNote==45) {
 			r = 76; 
-		} else if (note==46) {
+		} else if (patternNote==46) {
 			r = 80; 
-		} else if (note==47) {
+		} else if (patternNote==47) {
 			r = 56; 
 		}
 		return r;

@@ -226,6 +226,13 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 			}
 			volumeSlider[i].setValue(inst.getVolume());
 			panSlider[i].setValue(inst.getPan());
+			boolean enabled = true;
+			if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) && synthConfigCopy.getEcho().getInstrument().length()>0) {
+				enabled = false;
+			}
+			muteButton[i].setEnabled(enabled);
+			volumeSlider[i].setEnabled(enabled);
+			panSlider[i].setEnabled(enabled);
 		}
 		updateLabels();
 	}
@@ -234,6 +241,12 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			volumeLabel[i].setText("" + volumeSlider[i].getValue());
 			panLabel[i].setText("" + panSlider[i].getValue());
+			boolean enabled = true;
+			if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) && synthConfigCopy.getEcho().getInstrument().length()>0) {
+				enabled = false;
+			}
+			volumeLabel[i].setEnabled(enabled);
+			panLabel[i].setEnabled(enabled);
 		}
 	}
 }
