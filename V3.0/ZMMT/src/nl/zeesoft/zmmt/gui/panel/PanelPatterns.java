@@ -678,6 +678,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 						ctrl.step = step;
 						if (control==Control.EXPRESSION) {
 							ctrl.percentage = 100;
+						} else if (control==Control.FILTER) {
+							ctrl.percentage = 100;
 						}
 						workingPattern.getControls().add(ctrl);
 						changed = true;

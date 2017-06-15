@@ -200,12 +200,12 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 			int endTick = 0;
 			CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor(getMessenger(),comp);
 			if (pattern) {
-				seq = convertor.getPatternSequence(number);
-				endTick = convertor.getPatternSequenceEndTick(number); 
+				convertor.convertPatternInternal(number);
 			} else {
-				seq = convertor.getSequence(false,true);
-				endTick = convertor.getSequenceEndTick();
+				convertor.convertSequenceInternal();
 			}
+			seq = convertor.getSequence();
+			endTick = convertor.getSequenceEndTick();
 			if (seq!=null) {
 				lockMe(this);
 				sequence = seq;

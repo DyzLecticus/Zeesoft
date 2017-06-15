@@ -162,17 +162,22 @@ public class ImportExportWorker extends Worker {
 						} else if (file.getName().endsWith(Settings.EXTENSION_MIDI)) {
 							boolean externalize = controller.showConfirmMessage("Externalize?","Do you want to externalize the MIDI file?");
 							CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor((Composition) actionObject);
-							Sequence s = convertor.getSequence(externalize,false);
-		                    try {
-		                        int[] fileTypes = MidiSystem.getMidiFileTypes(s);
-		                        if (fileTypes.length == 0) {
-		                            err = "The current MIDI system does not support this file type";
-		                        } else {
-									MidiSystem.write(s,fileTypes[0],file);
-		                        }
-							} catch (IOException e) {
-								err = "Failed to write MIDI file: " + file.getAbsolutePath();
-							} 
+							convertor.convertSequence(externalize,false);
+							Sequence s = convertor.getSequence();
+							if (s==null) {
+								err = "Failed to convert composition to MIDI file";
+							} else {
+			                    try {
+			                        int[] fileTypes = MidiSystem.getMidiFileTypes(s);
+			                        if (fileTypes.length == 0) {
+			                            err = "The current MIDI system does not support this file type";
+			                        } else {
+										MidiSystem.write(s,fileTypes[0],file);
+			                        }
+								} catch (IOException e) {
+									err = "Failed to write MIDI file: " + file.getAbsolutePath();
+								}
+							}
 						}
 						controller.setDone(this,false);
 					}

@@ -24,15 +24,26 @@ import nl.zeesoft.zmmt.synthesizer.MidiNote;
 import nl.zeesoft.zmmt.synthesizer.MidiNoteDelayed;
 
 public class CompositionToSequenceConvertor {
-	public static final int		TEMPO				= 0x51;
-	public static final int		TEXT				= 0x01;
-	public static final int		MARKER				= 0x06;
+	public static final int								TEMPO					= 0x51;
+	public static final int								TEXT					= 0x01;
+	public static final int								MARKER					= 0x06;
 	
-	public static final String	SEQUENCE_MARKER		= "SEQ:";
-	public static final String	PATTERN_STEP_MARKER	= "PS:";
+	public static final String							SEQUENCE_MARKER			= "SEQ:";
+	public static final String							PATTERN_STEP_MARKER		= "PS:";
 	
-	private Messenger			messenger			= null;
-	private Composition			composition			= null;
+	private static final int[]							CONTROLS				= {Control.EXPRESSION,Control.MODULATION,Control.FILTER};
+	
+	private Messenger									messenger				= null;
+	private Composition									composition				= null;
+	
+	private Sequence									sequence				= null;
+	private int											sequenceEndTick			= 0;
+	
+	private boolean										addMarkers				= false;
+	private boolean										externalize				= false;
+	private SortedMap<String,InstrumentConfiguration>	instruments				= new TreeMap<String,InstrumentConfiguration>();
+	private boolean[]									channelHasNotes			= new boolean[16];
+	private List<Pattern>								patterns				= null;
 	
 	public CompositionToSequenceConvertor(Composition composition) {
 		this.composition = composition;
@@ -43,205 +54,106 @@ public class CompositionToSequenceConvertor {
 		this.composition = composition;
 	}
 
-	public Sequence getPatternSequence(int patternNumber) {
-		Sequence r = createSequence();
-		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
-		String seq = SEQUENCE_MARKER + "-1";
-		byte[] data = seq.getBytes();
-		createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,0);
-		int nextTick = addPatternToSequence(r,0,patternNumber,false,true,true);
-		// Align track endings
-		for (int t = 0; t < r.getTracks().length; t++) {
-			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(nextTick - 1));
-		}
-		return r;
-	}
-
-	public int getPatternSequenceEndTick(int patternNumber) {
-		int r = 0;
-		Pattern p = composition.getPattern(patternNumber);
-		if (p!=null) {
-			r = ((composition.getStepsForPattern(p) * composition.getTicksPerStep()) - 1);
-		}
-		return r;
-	}
-
-	public Sequence getSequence(boolean externalize,boolean addMarkers) {
-		Sequence r = createSequence();
-		createEventOnTrack(r.getTracks()[0],ShortMessage.NOTE_OFF,0,0,0,0);
-		int nextTick = 0;
-		int i = 0;
-		if (composition.getSequence().size()>0) {
-			for (Integer patternNumber: composition.getSequence()) {
-				String seq = SEQUENCE_MARKER + i;
-				byte[] data = seq.getBytes();
-				createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,nextTick);
-				nextTick = addPatternToSequence(r,nextTick,patternNumber,externalize,addMarkers,false);
-				i++;
-			}
-		} else {
-			String seq = SEQUENCE_MARKER + "-1";
-			byte[] data = seq.getBytes();
-			createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,0);
-			String ps = PATTERN_STEP_MARKER + "-1:-1";
-			data = ps.getBytes();
-			createMetaEventOnTrack(r.getTracks()[0],MARKER,data,data.length,0);
-			nextTick = nextTick + Composition.RESOLUTION;
-		}
-		// Align track endings
-		for (int t = 0; t < r.getTracks().length; t++) {
-			createEventOnTrack(r.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,(nextTick - 1));
-		}
-		return r;
+	public Sequence getSequence() {
+		return sequence;
 	}
 
 	public int getSequenceEndTick() {
-		int r = 0;
-		for (Integer patternNumber: composition.getSequence()) {
+		return sequenceEndTick;
+	}
+
+	public void convertPatternInternal(int patternNumber) {
+		convertPattern(patternNumber,false,true);
+	}
+
+	public void convertPattern(int patternNumber,boolean externalize,boolean addMarkers) {
+		initialize(-1,externalize,addMarkers);
+		if (sequence!=null) {
+			addEvents(false);
+		}
+	}
+	
+	public void convertSequenceInternal() {
+		convertSequence(false,true);
+	}
+
+	public void convertSequence(boolean externalize,boolean addMarkers) {
+		initialize(-1,externalize,addMarkers);
+		if (sequence!=null) {
+			addEvents(true);
+		}
+	}
+
+	protected void initialize(int patternNumber, boolean externalize,boolean addMarkers) {
+		this.sequence = createSequence();
+		if (sequence!=null) {
+			addCompositionInfoToSequenceTick(0);
+			addSynthesizerConfigurationToSequenceTick(0);
+			this.sequenceEndTick = 0;
+			this.externalize = externalize;
+			this.addMarkers = addMarkers;
+			for (InstrumentConfiguration inst: composition.getSynthesizerConfiguration().getInstruments()) {
+				instruments.put(inst.getName(),inst);
+			}
+			for (int c = 0; c < channelHasNotes.length; c++) {
+				channelHasNotes[c] = false;
+			}
+			patterns = getPatternList(patternNumber);
+			setSequenceEndTick(patterns);
+		}
+	}
+	
+	protected void addEvents(boolean addSequence) {
+		List<SeqNote> notes = getPatternNotes(0);
+		if (notes.size()>0) {
+			addNotes(notes);
+			addControls(getPatternControls(0));
+		}
+		if (addMarkers) {
+			addMarkers(0,addSequence);
+		}
+		// Align track endings
+		for (int t = 0; t < sequence.getTracks().length; t++) {
+			createEventOnTrack(sequence.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,sequenceEndTick);
+		}
+	}
+	
+	protected List<Pattern> getPatternList(int patternNumber) {
+		List<Pattern> r = new ArrayList<Pattern>();
+		if (patternNumber>=0) {
 			Pattern p = composition.getPattern(patternNumber);
-			r = r + (composition.getStepsForPattern(p) * composition.getTicksPerStep());
-		}
-		if (r>0) {
-			r = r - 1;
+			if (p==null) {
+				p = new Pattern();
+				p.setNumber(patternNumber);
+			}
+			r.add(p);
+		} else {
+			for (Integer number: composition.getSequence()) {
+				Pattern p = composition.getPattern(number);
+				if (p==null) {
+					p = new Pattern();
+					p.setNumber(patternNumber);
+				}
+				r.add(p);
+			}
 		}
 		return r;
 	}
-
-	protected int addPatternToSequence(Sequence seq,int startTick,int patternNumber,boolean externalize,boolean addMarkers,boolean wrapEcho) {
-		int nextPatternStartTick = startTick;
-		Pattern p = composition.getPattern(patternNumber);
-		if (p!=null) {
-
-			int patternSteps = composition.getStepsForPattern(p);
-			int ticksPerStep = composition.getTicksPerStep();
-			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
-
-			EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
-
-			for (int t = 1; t<=Composition.TRACKS; t++) {
-				Track track = seq.getTracks()[(t - 1)];
-
-				int currentTick = startTick;
-
-				List<Note> echoNotes = new ArrayList<Note>();
-
-				for (int s = 1; s<=patternSteps; s++) {
-					if (t==1 && addMarkers) {
-						String ps = PATTERN_STEP_MARKER + patternNumber + ":" + s;
-						byte[] data = ps.getBytes();
-						createMetaEventOnTrack(track,MARKER,data,data.length,currentTick);
-					}
-					for (Note note: p.getNotes()) {
-						if (note.track==t && note.step==s) {
-							if (note.instrument.equals(echo.getInstrument()) || (echo.getInstrument().length()==0 && note.instrument.equals(Instrument.ECHO))) {
-								echoNotes.add(note);
-							}
-							List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(note.instrument,note.note,note.accent,0);
-							int endTick = currentTick + ((note.duration * ticksPerStep) - 10);
-							for (MidiNote mn: midiNotes) {
-								if (externalize && note.instrument.equals(Instrument.DRUMS)) {
-									mn.midiNote = getExternalMidiNoteForNote(note.note);
-								}
-								int velocity = (mn.velocity * note.velocityPercentage) / 100;
-								createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity,currentTick);
-								createEventOnTrack(track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,0,endTick);
-								if (externalize) {
-									break;
-								}
-							}
-						}
-					}
-					currentTick = currentTick + ticksPerStep;
-				}
-
-				// Echo
-				for (Note note: echoNotes) {
-					List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(note.instrument,note.note,note.accent,1);
-					for (MidiNote mn: midiNotes) {
-						if (mn instanceof MidiNoteDelayed) {
-							MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
-							currentTick = startTick + ((note.step - 1) + mnd.delaySteps) * ticksPerStep;
-							int endTick = startTick + (((note.step - 1) + mnd.delaySteps + note.duration) * ticksPerStep) - 1;
-							if (wrapEcho) {
-								if (currentTick>=nextPatternStartTick) {
-									currentTick = currentTick - (patternSteps * ticksPerStep);
-								}
-								if (endTick>=nextPatternStartTick) {
-									endTick = endTick - (patternSteps * ticksPerStep);
-								}
-							}
-							if (externalize && note.instrument.equals(Instrument.DRUMS)) {
-								mn.midiNote = getExternalMidiNoteForNote(note.note);
-							}
-							int velocity = (mn.velocity * note.velocityPercentage) / 100;
-							createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,velocity,currentTick);
-							createEventOnTrack(track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,0,endTick);
-						}
-					}
-				}
-			}
-			
-		}
-		return nextPatternStartTick;
-	}
 	
-	protected List<SeqNote>	getPatternNotes(List<Pattern> patterns,int startTick,boolean externalize) {
-		List<SeqNote> r = new ArrayList<SeqNote>();
-	
-		SortedMap<String,InstrumentConfiguration> instruments = new TreeMap<String,InstrumentConfiguration>();
-		for (InstrumentConfiguration inst: composition.getSynthesizerConfiguration().getInstruments()) {
-			instruments.put(inst.getName(),inst);
-		}
-		
-		int nextPatternStartTick = 0;
-		int ticksPerStep = composition.getTicksPerStep();
-
+	public void setSequenceEndTick(List<Pattern> patterns) {
+		sequenceEndTick = 0;
 		for (Pattern p: patterns) {
-			int patternSteps = composition.getStepsForPattern(p);
-			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
-			for (Note n: p.getNotes()) {
-				if (n.step<=patternSteps && !instruments.get(n.instrument).isMuted()) {
-					List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(n.instrument,n.note,n.accent,1);
-					for (MidiNote mn: midiNotes) {
-						if (externalize && n.instrument.equals(Instrument.DRUMS)) {
-							mn.midiNote = getExternalMidiNoteForNote(n.note);
-						}
-						SeqNote sn = new SeqNote();
-						sn.instrument = mn.instrument;
-						sn.midiNote = mn.midiNote;
-						sn.channel = mn.channel;
-						sn.velocity = (mn.velocity * n.velocityPercentage) / 100;
-						int tick = (n.step - 1) * ticksPerStep;
-						int tickEnd = tick + ((n.duration * ticksPerStep) - 1);
-						if (mn instanceof MidiNoteDelayed) {
-							MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
-							tick = tick + (mnd.delaySteps * ticksPerStep);
-							tickEnd = tickEnd + (mnd.delaySteps * ticksPerStep);
-						}
-						if (tickEnd>=nextPatternStartTick) {
-							tickEnd = nextPatternStartTick - 1;
-						}
-						if (instruments.get(sn.instrument).getHoldPercentage()<100) {
-							int hold = (ticksPerStep * instruments.get(sn.instrument).getHoldPercentage()) / 100;
-							int subtract = (ticksPerStep - hold);
-							tickEnd = (tickEnd - subtract);
-							if (tickEnd<=tick) {
-								tickEnd = tick + 1;
-							}
-						}
-					}
-				}
-			}
-			startTick = nextPatternStartTick;
+			sequenceEndTick = sequenceEndTick + (composition.getStepsForPattern(p) * composition.getTicksPerStep());
 		}
-		
-		return r;
+		if (sequenceEndTick>0) {
+			sequenceEndTick = sequenceEndTick - 1;
+		}
 	}
-	
+
 	protected Sequence createSequence() {
 		Sequence r = null;
 		try {
-			r = new Sequence(Sequence.PPQ,Composition.RESOLUTION,Composition.TRACKS);
+			r = new Sequence(Sequence.PPQ,Composition.RESOLUTION,(Instrument.INSTRUMENTS.length + 1));
 		} catch (InvalidMidiDataException e) {
 			if (messenger!=null) {
 				messenger.error(this,"Invalid MIDI data",e);
@@ -249,15 +161,11 @@ public class CompositionToSequenceConvertor {
 				e.printStackTrace();
 			}
 		}
-		if (r!=null) {
-			addCompositionInfoToSequenceTick(r,0);
-			addSynthesizerConfigurationToSequenceTick(r,0);
-		}
 		return r;
 	}
-	
-	protected void addCompositionInfoToSequenceTick(Sequence seq,int tick) {
-		Track track = seq.getTracks()[0];
+
+	protected void addCompositionInfoToSequenceTick(int tick) {
+		Track track = sequence.getTracks()[0];
 		int tempo = (60000000 / composition.getBeatsPerMinute());
 		byte[] b = new byte[3];
 		int tmp = tempo >> 16;
@@ -276,8 +184,8 @@ public class CompositionToSequenceConvertor {
 		createMetaEventOnTrack(track,TEXT,tb,tb.length,tick);
 	}
 
-	protected void addSynthesizerConfigurationToSequenceTick(Sequence seq,int tick) {
-		Track track = seq.getTracks()[0];
+	protected void addSynthesizerConfigurationToSequenceTick(int tick) {
+		Track track = sequence.getTracks()[0];
 		int channels = 3;
 		EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
 		InstrumentConfiguration echoInst = composition.getSynthesizerConfiguration().getInstrument(echo.getInstrument());
@@ -288,14 +196,10 @@ public class CompositionToSequenceConvertor {
 		int volume = echoInst.getVolume();
 		int layerMidiNum = echoInst.getLayer1().getMidiNum();
 		int layerPressure = echoInst.getLayer1().getPressure();
-		int layerModulation = echoInst.getLayer1().getModulation();
-		int layerFilter = echoInst.getLayer1().getFilter();
 		int layerChorus = echoInst.getLayer1().getChorus();
 		if (echo.getLayer()==2) {
 			layerMidiNum = echoInst.getLayer2().getMidiNum();
 			layerPressure = echoInst.getLayer2().getPressure();
-			layerModulation = echoInst.getLayer2().getModulation();
-			layerFilter = echoInst.getLayer2().getFilter();
 			layerChorus = echoInst.getLayer2().getChorus();
 		}
 		if (layerMidiNum>=0) {
@@ -304,8 +208,6 @@ public class CompositionToSequenceConvertor {
 				createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,layerMidiNum,0,tick);
 				createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,layerPressure,0,tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,volume,tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.MODULATION,layerModulation,tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.FILTER,layerFilter,tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,layerChorus,tick);
 				if (e==0) {
 					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan1(),tick);
@@ -331,8 +233,6 @@ public class CompositionToSequenceConvertor {
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer1().getReverb(),tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.MODULATION,inst.getLayer1().getModulation(),tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.FILTER,inst.getLayer1().getFilter(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,inst.getLayer1().getChorus(),tick);
 				if (inst.getLayer2().getMidiNum()>=0) {
 					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
@@ -342,13 +242,286 @@ public class CompositionToSequenceConvertor {
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer2().getReverb(),tick);
-						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.MODULATION,inst.getLayer2().getModulation(),tick);
-						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.FILTER,inst.getLayer2().getFilter(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,inst.getLayer2().getChorus(),tick);
 					}
 				}
 			}
 		}
+	}
+	
+	protected void addMarkers(int startTick, boolean addSequence) {
+		int elem = 0;
+		int ticksPerStep = composition.getTicksPerStep();
+		int tick = startTick;
+		if (patterns.size()==0) {
+			String seq = SEQUENCE_MARKER + "-1";
+			byte[] data = seq.getBytes();
+			createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,0);
+			String ps = PATTERN_STEP_MARKER + "-1:-1";
+			data = ps.getBytes();
+			createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,0);
+		} else {
+			for (Pattern p: patterns) {
+				if (addSequence) {
+					String seq = SEQUENCE_MARKER + elem;
+					byte[] data = seq.getBytes();
+					createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,tick);
+				}
+				int patternSteps = composition.getStepsForPattern(p);
+				for (int s = 1; s<=patternSteps; s++) {
+					String ps = PATTERN_STEP_MARKER + p.getNumber() + ":" + s;
+					byte[] data = ps.getBytes();
+					createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,tick);
+					tick = tick + ticksPerStep;
+				}
+				elem++;
+			}
+		}
+	}
+	
+	protected void addNotes(List<SeqNote> notes) {
+		for (SeqNote sn: notes) {
+			int track = (Instrument.getIndexForInstrument(sn.instrument) + 1);
+			createEventOnTrack(sequence.getTracks()[track],ShortMessage.NOTE_ON,sn.channel,sn.midiNote,sn.velocity,sn.tickStart);
+			createEventOnTrack(sequence.getTracks()[track],ShortMessage.NOTE_OFF,sn.channel,sn.midiNote,0,sn.tickEnd);
+		}
+	}
+
+	protected void addControls(List<SeqControl> controls) {
+		for (SeqControl sc: controls) {
+			int track = (Instrument.getIndexForInstrument(sc.instrument) + 1);
+			createEventOnTrack(sequence.getTracks()[track],ShortMessage.CONTROL_CHANGE,sc.channel,sc.control,sc.value,sc.tick);
+		}
+	}
+
+	protected List<SeqNote> getPatternNotes(int startTick) {
+		List<SeqNote> r = new ArrayList<SeqNote>();
+		
+		int nextPatternStartTick = 0;
+		int ticksPerStep = composition.getTicksPerStep();
+
+		for (Pattern p: patterns) {
+			int patternSteps = composition.getStepsForPattern(p);
+			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
+			for (Note n: p.getNotes()) {
+				if (n.step<=patternSteps && !instruments.get(n.instrument).isMuted()) {
+					List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(n.instrument,n.note,n.accent,1);
+					int num = 0;
+					for (MidiNote mn: midiNotes) {
+						if (externalize) {
+							if (!(mn instanceof MidiNoteDelayed)) {
+								if (num>0) {
+									break;
+								}
+								num++;
+							}
+							if (n.instrument.equals(Instrument.DRUMS)) {
+								mn.midiNote = getExternalDrumMidiNoteForNote(n.note);
+							}
+						}
+						SeqNote sn = new SeqNote();
+						sn.instrument = mn.instrument;
+						sn.midiNote = mn.midiNote;
+						sn.channel = mn.channel;
+						sn.velocity = (mn.velocity * n.velocityPercentage) / 100;
+						int tick = startTick + ((n.step - 1) * ticksPerStep);
+						int tickEnd = tick + ((n.duration * ticksPerStep) - 1);
+						if (mn instanceof MidiNoteDelayed) {
+							MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
+							tick = tick + (mnd.delaySteps * ticksPerStep);
+							tickEnd = tickEnd + (mnd.delaySteps * ticksPerStep);
+						} else if (tickEnd>=nextPatternStartTick) {
+							tickEnd = nextPatternStartTick - 1;
+						}
+						if (instruments.get(sn.instrument).getHoldPercentage()<100) {
+							int hold = (ticksPerStep * instruments.get(sn.instrument).getHoldPercentage()) / 100;
+							int subtract = (ticksPerStep - hold);
+							tickEnd = (tickEnd - subtract);
+							if (tickEnd<=tick) {
+								tickEnd = tick + 1;
+							}
+						}
+						if (tick>sequenceEndTick) {
+							tick = (tick - sequenceEndTick);
+						}
+						if (tickEnd>sequenceEndTick) {
+							tickEnd = (tickEnd - sequenceEndTick);
+						}
+						sn.tickStart = tick;
+						sn.tickEnd = tickEnd;
+						r.add(sn);
+						channelHasNotes[sn.channel] = true;
+					}
+				}
+			}
+			startTick = nextPatternStartTick;
+		}
+		
+		return r;
+	}
+
+	protected String getId(SeqControl sc) {
+		return getId(sc.channel,sc.control);
+	}
+
+	protected String getId(int channel,int control) {
+		return String.format("%03d",channel) + ":" + control;
+	}
+	
+	protected List<SeqControl> getPatternControls(int startTick) {
+		List<SeqControl> r = new ArrayList<SeqControl>();
+	
+		SortedMap<String,List<SeqControl>> channelControlMap = new TreeMap<String,List<SeqControl>>();
+
+		int nextPatternStartTick = 0;
+		int ticksPerStep = composition.getTicksPerStep();
+		
+		for (Pattern p: patterns) {
+			int patternSteps = composition.getStepsForPattern(p);
+			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
+			for (Control c: p.getControls()) {
+				if (c.step<=patternSteps && !instruments.get(c.instrument).isMuted()) {
+					for (int layer = 0; layer < 2; layer++) {
+						int channel = Instrument.getMidiChannelForInstrument(c.instrument,layer);
+						if (channel>=0 && channelHasNotes[channel]) {
+							SeqControl sc = new SeqControl();
+							sc.instrument = c.instrument;
+							sc.channel = channel;
+							sc.control = c.control;
+							sc.tick = startTick + ((c.step - 1) * ticksPerStep);
+							int base = 0;
+							int add = 0;
+							if (c.control==Control.EXPRESSION) {
+								base = 127;
+							} else if (c.control==Control.MODULATION) {
+								if (layer==0) {
+									add = instruments.get(c.instrument).getLayer1().getModulation();
+								} else if (layer==1) {
+									add = instruments.get(c.instrument).getLayer2().getModulation();
+								}
+								base = 127 - add;
+							} else if (c.control==Control.FILTER) {
+								if (layer==0) {
+									base = instruments.get(c.instrument).getLayer1().getFilter();
+								} else if (layer==1) {
+									base = instruments.get(c.instrument).getLayer2().getFilter();
+								}
+							}
+							sc.value = add + (base * c.percentage) / 100;
+							List<SeqControl> list = channelControlMap.get(getId(sc));
+							int addIndex = 0;
+							if (list==null) {
+								list = new ArrayList<SeqControl>();
+								channelControlMap.put(getId(sc),list);
+							} else {
+								int i = 0;
+								for (SeqControl tsc: list) {
+									addIndex = i;
+									if (tsc.tick>sc.tick) {
+										break;
+									}
+									i++;
+								}
+							}
+							list.add(addIndex,sc);
+						}
+					}
+				}
+			}
+			startTick = nextPatternStartTick;
+		}
+		
+		// Force start control events for all instruments
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			for (int layer = 0; layer < 2; layer++) {
+				int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
+				if (channel>=0) {
+					for (int co = 0; co < CONTROLS.length; co++) {
+						List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
+						if (list==null) {
+							int value = 0;
+							if (CONTROLS[co]==Control.EXPRESSION) {
+								value = 127;
+							} else if (CONTROLS[co]==Control.MODULATION) {
+								if (layer==0) {
+									value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer1().getModulation();
+								} else if (layer==1) {
+									value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer2().getModulation();
+								}
+							} else if (CONTROLS[co]==Control.FILTER) {
+								if (layer==0) {
+									value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer1().getFilter();
+								} else if (layer==1) {
+									value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer2().getFilter();
+								}
+							}
+							SeqControl sc = new SeqControl();
+							sc.instrument = Instrument.INSTRUMENTS[i];
+							sc.channel = channel;
+							sc.control = CONTROLS[co];
+							sc.tick = 0;
+							sc.value = value;
+							list = new ArrayList<SeqControl>();
+							list.add(sc);
+							channelControlMap.put(getId(sc),list);
+						}
+					}
+				}
+			}
+		}
+
+		// Calculate control changes between pattern controls
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			for (int layer = 0; layer < 2; layer++) {
+				int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
+				if (channel>=0) {
+					for (int co = 0; co < CONTROLS.length; co++) {
+						List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
+						int c = 0;
+						for (SeqControl sc: list) {
+							r.add(sc);
+							if ((c+1) < list.size()) {
+								SeqControl nsc = list.get((c+1));
+								long tickDiff = nsc.tick - sc.tick;
+								int valueStart = sc.value;
+								int valueEnd = nsc.value;
+								int valueDiff = 0;
+								boolean add = true;
+								if (valueStart<valueEnd) {
+									valueDiff = (valueEnd - valueStart);
+									add = true;
+								} else if (valueStart>valueEnd) {
+									valueDiff = (valueStart - valueEnd);
+									add = false;
+								}
+								valueDiff = (valueDiff - 1);
+								if (valueDiff>1 && tickDiff>valueDiff) {
+									long ticksPerValueChange = (tickDiff / valueDiff);
+									for (int vc = 1; vc < valueDiff; vc++) {
+										int value = sc.value;
+										if (add) {
+											value = value + vc;
+										} else {
+											value = value - vc;
+										}
+										SeqControl asc = new SeqControl();
+										asc.instrument = sc.instrument;
+										asc.channel = sc.channel;
+										asc.control = sc.control;
+										asc.tick = sc.tick + (vc * ticksPerValueChange);
+										asc.value = value;
+										r.add(asc);
+									}
+								}
+							}
+							c++;
+						}
+					}
+				}
+			}
+		}
+		
+		return r;
 	}
 	
 	protected void createEventOnTrack(Track track, int type, int channel, int num, int val, long tick) {
@@ -380,8 +553,8 @@ public class CompositionToSequenceConvertor {
 			}
 		}
 	}
-
-	protected int getExternalMidiNoteForNote(int note) {
+	
+	protected int getExternalDrumMidiNoteForNote(int note) {
 		int r = 36;
 		if (note==36) {
 			r = 36;
