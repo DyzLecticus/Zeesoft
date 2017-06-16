@@ -20,6 +20,7 @@ import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.synthesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
+import nl.zeesoft.zmmt.synthesizer.InstrumentLayerConfiguration;
 import nl.zeesoft.zmmt.synthesizer.MidiNote;
 import nl.zeesoft.zmmt.synthesizer.MidiNoteDelayed;
 
@@ -32,6 +33,16 @@ public class CompositionToSequenceConvertor {
 	public static final String							PATTERN_STEP_MARKER		= "PS:";
 	
 	private static final int[]							CONTROLS				= {Control.EXPRESSION,Control.MODULATION,Control.FILTER};
+	private static final int[]							ALL_CONTROLS			= {Control.EXPRESSION,Control.MODULATION,Control.FILTER,
+		Control.CHORUS,
+		Control.RESONANCE,
+		Control.ATTACK,
+		Control.DECAY,
+		Control.RELEASE,
+		Control.VIB_RATE,
+		Control.VIB_DEPTH,
+		Control.VIB_DELAY
+		};
 	
 	private Messenger									messenger				= null;
 	private Composition									composition				= null;
@@ -194,13 +205,11 @@ public class CompositionToSequenceConvertor {
 			channels = 2;
 		}
 		int volume = echoInst.getVolume();
-		int layerMidiNum = echoInst.getLayer1().getMidiNum();
-		int layerPressure = echoInst.getLayer1().getPressure();
-		int layerChorus = echoInst.getLayer1().getChorus();
+		int layerMidiNum = echoInst.getLayer((echo.getLayer() - 1)).getMidiNum();
+		int layerPressure = echoInst.getLayer((echo.getLayer() - 1)).getPressure();
 		if (echo.getLayer()==2) {
 			layerMidiNum = echoInst.getLayer2().getMidiNum();
 			layerPressure = echoInst.getLayer2().getPressure();
-			layerChorus = echoInst.getLayer2().getChorus();
 		}
 		if (layerMidiNum>=0) {
 			for (int e = 0; e < channels; e++) {
@@ -208,9 +217,6 @@ public class CompositionToSequenceConvertor {
 				createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,layerMidiNum,0,tick);
 				createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,layerPressure,0,tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,volume,tick);
-				
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,layerChorus,tick);
-				
 				if (e==0) {
 					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan1(),tick);
 					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,echo.getReverb1(),tick);
@@ -235,8 +241,6 @@ public class CompositionToSequenceConvertor {
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer1().getReverb(),tick);
-				
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,inst.getLayer1().getChorus(),tick);
 				if (inst.getLayer2().getMidiNum()>=0) {
 					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 					if (channel>=0) {
@@ -245,8 +249,6 @@ public class CompositionToSequenceConvertor {
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer2().getReverb(),tick);
-						
-						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.CHORUS,inst.getLayer2().getChorus(),tick);
 					}
 				}
 			}
@@ -378,7 +380,7 @@ public class CompositionToSequenceConvertor {
 		int nextPatternStartTick = 0;
 		int ticksPerStep = composition.getTicksPerStep();
 		
-		// Build channel control map
+		// Build channel control map for CONTROLS
 		for (Pattern p: patterns) {
 			int patternSteps = composition.getStepsForPattern(p);
 			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
@@ -386,9 +388,13 @@ public class CompositionToSequenceConvertor {
 				if (c.step<=patternSteps && !instruments.get(c.instrument).isMuted() &&
 					(!c.instrument.equals(Instrument.ECHO) || echo.getInstrument().length()==0)	
 					) {
-					int layers = 2;
-					if (c.instrument.equals(Instrument.ECHO)) {
-						layers = 1;
+					int layers = 1;
+					if (c.instrument.equals(Instrument.SYNTH_BASS1) ||
+						c.instrument.equals(Instrument.SYNTH1) ||
+						c.instrument.equals(Instrument.LEAD) ||
+						c.instrument.equals(Instrument.STRINGS)
+						) {
+						layers = 2;
 					}
 					for (int layer = 0; layer < layers; layer++) {
 						if (c.instrument.equals(Instrument.ECHO)) {
@@ -406,18 +412,10 @@ public class CompositionToSequenceConvertor {
 							if (c.control==Control.EXPRESSION) {
 								base = 127;
 							} else if (c.control==Control.MODULATION) {
-								if (layer==0 || layer==2) {
-									add = instruments.get(c.instrument).getLayer1().getModulation();
-								} else if (layer==1) {
-									add = instruments.get(c.instrument).getLayer2().getModulation();
-								}
+								add = instruments.get(c.instrument).getLayer(layer % 2).getModulation();
 								base = 127 - add;
 							} else if (c.control==Control.FILTER) {
-								if (layer==0 || layer==2) {
-									base = instruments.get(c.instrument).getLayer1().getFilter();
-								} else if (layer==1) {
-									base = instruments.get(c.instrument).getLayer2().getFilter();
-								}
+								base = instruments.get(c.instrument).getLayer(layer % 2).getFilter();
 							}
 							sc.value = add + (base * c.percentage) / 100;
 							List<SeqControl> list = channelControlMap.get(getId(sc));
@@ -443,47 +441,74 @@ public class CompositionToSequenceConvertor {
 			startTick = nextPatternStartTick;
 		}
 		
-		// Force start control events for all instruments
+		// Force start control events for ALL_CONTROLS on all instruments
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			if (!instruments.get(Instrument.INSTRUMENTS[i]).isMuted() &&
 				(!Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) || echo.getInstrument().length()==0)
 				) {
-				int layers = 2;
-				if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
-					layers = 1;
+				int layers = 1;
+				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
+					) {
+					layers = 2;
 				}
 				for (int layer = 0; layer < layers; layer++) {
 					if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
 						layer = 2;
 					}
+					InstrumentLayerConfiguration conf = instruments.get(Instrument.INSTRUMENTS[i]).getLayer(layer % 2);
 					int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
 					if (channel>=0) {
-						for (int co = 0; co < CONTROLS.length; co++) {
-							List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
-							if (list==null) {
-								int value = 0;
-								if (CONTROLS[co]==Control.EXPRESSION) {
-									value = 127;
-								} else if (CONTROLS[co]==Control.MODULATION) {
-									if (layer==0 || layer==2) {
-										value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer1().getModulation();
-									} else if (layer==1) {
-										value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer2().getModulation();
+						for (int co = 0; co < ALL_CONTROLS.length; co++) {
+							if (co<CONTROLS.length) {
+								List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
+								if (list==null) {
+									int value = 0;
+									if (CONTROLS[co]==Control.EXPRESSION) {
+										value = 127;
+									} else if (CONTROLS[co]==Control.MODULATION) {
+										value = conf.getModulation();
+									} else if (CONTROLS[co]==Control.FILTER) {
+										value = conf.getFilter();
 									}
-								} else if (CONTROLS[co]==Control.FILTER) {
-									if (layer==0 || layer==2) {
-										value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer1().getFilter();
-									} else if (layer==1) {
-										value = instruments.get(Instrument.INSTRUMENTS[i]).getLayer2().getFilter();
-									}
+									SeqControl sc = new SeqControl();
+									sc.instrument = Instrument.INSTRUMENTS[i];
+									sc.channel = channel;
+									sc.control = CONTROLS[co];
+									sc.tick = 0;
+									sc.value = value;
+									list = new ArrayList<SeqControl>();
+									list.add(sc);
+									channelControlMap.put(getId(sc),list);
+								}
+							} else {
+								int value = 64;
+								if (ALL_CONTROLS[co]==Control.CHORUS) {
+									value = conf.getChorus();
+								} else if (ALL_CONTROLS[co]==Control.RESONANCE) {
+									value = conf.getResonance();
+								} else if (ALL_CONTROLS[co]==Control.ATTACK) {
+									value = conf.getAttack();
+								} else if (ALL_CONTROLS[co]==Control.DECAY) {
+									value = conf.getDecay();
+								} else if (ALL_CONTROLS[co]==Control.RELEASE) {
+									value = conf.getRelease();
+								} else if (ALL_CONTROLS[co]==Control.VIB_RATE) {
+									value = conf.getVibRate();
+								} else if (ALL_CONTROLS[co]==Control.VIB_DEPTH) {
+									value = conf.getVibDepth();
+								} else if (ALL_CONTROLS[co]==Control.VIB_DELAY) {
+									value = conf.getVibDelay();
 								}
 								SeqControl sc = new SeqControl();
 								sc.instrument = Instrument.INSTRUMENTS[i];
 								sc.channel = channel;
-								sc.control = CONTROLS[co];
+								sc.control = ALL_CONTROLS[co];
 								sc.tick = 0;
 								sc.value = value;
-								list = new ArrayList<SeqControl>();
+								List<SeqControl> list = new ArrayList<SeqControl>();
 								list.add(sc);
 								channelControlMap.put(getId(sc),list);
 							}
@@ -495,14 +520,18 @@ public class CompositionToSequenceConvertor {
 
 		List<SeqControl> echoControls = new ArrayList<SeqControl>();
 
-		// Calculate control changes between pattern controls
+		// Calculate control changes between ALL_CONTROLS
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			if (!instruments.get(Instrument.INSTRUMENTS[i]).isMuted() &&
 				(!Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) || echo.getInstrument().length()==0)
 				) {
-				int layers = 2;
-				if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
-					layers = 1;
+				int layers = 1;
+				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
+					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
+					) {
+					layers = 2;
 				}
 				for (int layer = 0; layer < layers; layer++) {
 					if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
@@ -510,8 +539,8 @@ public class CompositionToSequenceConvertor {
 					}
 					int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
 					if (channel>=0) {
-						for (int co = 0; co < CONTROLS.length; co++) {
-							List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
+						for (int co = 0; co < ALL_CONTROLS.length; co++) {
+							List<SeqControl> list = channelControlMap.get(getId(channel,ALL_CONTROLS[co]));
 							int c = 0;
 							for (SeqControl sc: list) {
 								r.add(sc);

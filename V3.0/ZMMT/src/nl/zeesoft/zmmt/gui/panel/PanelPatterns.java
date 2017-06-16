@@ -825,7 +825,6 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	}
 	
 	protected void changedPattern() {
-		System.out.println("Changed pattern: " + getCurrentGrid().getRowCount());
 		refreshGridData(0,(getCurrentGrid().getRowCount() - 1));
 		if (workingPattern!=null) {
 			getController().getStateManager().changedPattern(this,workingPattern);

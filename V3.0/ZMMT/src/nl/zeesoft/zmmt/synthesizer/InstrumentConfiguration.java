@@ -55,7 +55,18 @@ public class InstrumentConfiguration extends BaseConfiguration {
 	public void setPan(int pan) {
 		this.pan = pan;
 	}
-	
+
+	public InstrumentLayerConfiguration getLayer(int layer) {
+		InstrumentLayerConfiguration r = null;
+		if (layer==0) {
+			r = layer1;
+		} else if (layer==1) {
+			r = layer2;
+		}
+		return r;
+	}
+
+
 	public InstrumentLayerConfiguration getLayer1() {
 		return layer1;
 	}
