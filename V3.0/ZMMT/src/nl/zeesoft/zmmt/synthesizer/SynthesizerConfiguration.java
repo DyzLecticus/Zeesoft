@@ -86,9 +86,9 @@ public class SynthesizerConfiguration {
 				instElem.children.add(new JsElem("l2VibRate","" + inst.getLayer2().getVibRate()));
 				instElem.children.add(new JsElem("l2VibDepth","" + inst.getLayer2().getVibDepth()));
 				instElem.children.add(new JsElem("l2VibDelay","" + inst.getLayer2().getVibDelay()));
-				instElem.children.add(new JsElem("l2BaseOctave","" + inst.getLayer1().getBaseOctave()));
-				instElem.children.add(new JsElem("l2BaseVelocity","" + inst.getLayer1().getBaseVelocity()));
-				instElem.children.add(new JsElem("l2AccentVelocity","" + inst.getLayer1().getAccentVelocity()));
+				instElem.children.add(new JsElem("l2BaseOctave","" + inst.getLayer2().getBaseOctave()));
+				instElem.children.add(new JsElem("l2BaseVelocity","" + inst.getLayer2().getBaseVelocity()));
+				instElem.children.add(new JsElem("l2AccentVelocity","" + inst.getLayer2().getAccentVelocity()));
 			}
 		}
 		for (DrumConfiguration drum: drums) {
@@ -417,6 +417,7 @@ public class SynthesizerConfiguration {
 				if (inst.getLayer2().getMidiNum()>=0) {
 					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 					if (channel>=0) {
+						layer = 1;
 						val = synth.getChannels()[channel].getProgram();
 						if (val!=inst.getLayer2().getMidiNum()) {
 							synth.getChannels()[channel].programChange(inst.getLayer2().getMidiNum());

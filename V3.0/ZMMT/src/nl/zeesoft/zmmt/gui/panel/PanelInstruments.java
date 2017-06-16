@@ -430,7 +430,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		if (synth!=null) {
 			javax.sound.midi.Instrument[] instruments = synth.getAvailableInstruments();
 			for (int i = 0; i < instruments.length; i++) {
-				midiInstruments.add(instruments[i].getName());
+				midiInstruments.add(String.format("%03d",i) + " " + instruments[i].getName());
 				if (midiInstruments.size()>=128) {
 					break;
 				}

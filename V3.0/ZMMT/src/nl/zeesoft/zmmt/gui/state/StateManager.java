@@ -146,7 +146,7 @@ public class StateManager extends StateObject {
 		}
 		unlockMe(this);
 	}
-	
+
 	public void setComposition(Object source,Composition composition) {
 		lockMe(this);
 		if (super.getComposition()!=composition) {

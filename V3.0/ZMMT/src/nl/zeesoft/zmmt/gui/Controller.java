@@ -525,7 +525,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		settingsCopy = settings.copy();
 		unlockMe(this);
 		stateManager.setSettings(this,settingsCopy);
-		setComposition(comp);
+		stateManager.setCompositionChanged(this,false);
 	}
 	
 	protected void setFont(String name, int size) {
