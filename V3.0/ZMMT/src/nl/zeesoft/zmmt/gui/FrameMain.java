@@ -53,6 +53,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	NOTES_COPY			= NOTES_PREFIX + "COPY";
 	public static final String	NOTES_PASTE			= NOTES_PREFIX + "PASTE";
 
+	public static final String	SOLO				= "SOLO";
+	public static final String	UNMUTE				= "UNMUTE";
+	
 	public static final String	PLAY_PATTERN		= "PLAY_PATTERN";
 	public static final String	PLAY_SEQUENCE		= "PLAY_SEQUENCE";
 	public static final String	CONTINUE_PLAYING	= "CONTINUE_PLAYING";
@@ -218,6 +221,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 				getController().getStateManager().setSelectedTab(this,selectedTab);
 			}
 			patternsPanel.actionPerformed(evt);
+		} else if (evt.getActionCommand().equals(SOLO) || evt.getActionCommand().equals(UNMUTE)) {
+			mixPanel.actionPerformed(evt);
 		} else {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				if (evt.getActionCommand().equals(Instrument.INSTRUMENTS[i])) {
@@ -476,7 +481,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.setActionCommand(NOTES_PASTE);
 		item.addActionListener(this);
 		editNotesMenu.add(item);
-		
+
 		evt = 0;
 		JMenu sequencerMenu = new JMenu("Sequencer");
 		sequencerMenu.setMnemonic(KeyEvent.VK_S);
@@ -506,6 +511,23 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		sequencerMenu.add(item);
 
+		evt = ActionEvent.CTRL_MASK;
+		JMenu mixerMenu = new JMenu("Mixer");
+		mixerMenu.setMnemonic(KeyEvent.VK_M);
+		bar.add(mixerMenu);
+
+		item = new JMenuItem("Solo selected instrument",KeyEvent.VK_S);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,evt));
+		item.setActionCommand(SOLO);
+		item.addActionListener(this);
+		mixerMenu.add(item);
+
+		item = new JMenuItem("Unmute all",KeyEvent.VK_U);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,evt));
+		item.setActionCommand(UNMUTE);
+		item.addActionListener(this);
+		mixerMenu.add(item);
+		
 		return bar;
 	}
 }

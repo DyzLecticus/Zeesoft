@@ -16,6 +16,7 @@ import javax.swing.JToggleButton;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
+import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
@@ -24,9 +25,6 @@ import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class PanelMix extends PanelObject implements StateChangeSubscriber, CompositionChangePublisher {
-	private static final String			SOLO						= "SOLO";
-	private static final String			UNMUTE						= "UNMUTE";
-	
 	private	JButton						solo						= null;
 	private	JButton						unmute						= null;
 	
@@ -39,7 +37,6 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	private SynthesizerConfiguration	synthConfigCopy				= null;
 	private String						selectedInstrument			= "";
 
-	// TODO: Solo and un-mute keyboard shortcuts
 	// TODO: Animated LED volume strips
 	
 	public PanelMix(Controller controller) {
@@ -95,7 +92,7 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		super.actionPerformed(evt);
-		if (evt.getActionCommand().equals(SOLO)) {
+		if (evt.getActionCommand().equals(FrameMain.SOLO)) {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
 				if (Instrument.INSTRUMENTS[i].equals(selectedInstrument)) {
@@ -116,7 +113,7 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 				}
 			}
 			getController().getStateManager().addWaitingPublisher(this);
-		} else if (evt.getActionCommand().equals(UNMUTE)) {
+		} else if (evt.getActionCommand().equals(FrameMain.UNMUTE)) {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
 				inst.setMuted(false);
@@ -154,12 +151,12 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		JPanel r = new JPanel();
 		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
 		solo = new JButton("Solo");
-		solo.setActionCommand(SOLO);
+		solo.setActionCommand(FrameMain.SOLO);
 		solo.addActionListener(this);
 		solo.addKeyListener(getController().getPlayerKeyListener());
 		addControlPageUpDownOverridesToComponent(solo);
 		unmute = new JButton("Unmute all");
-		unmute.setActionCommand(UNMUTE);
+		unmute.setActionCommand(FrameMain.UNMUTE);
 		unmute.addActionListener(this);
 		unmute.addKeyListener(getController().getPlayerKeyListener());
 		addControlPageUpDownOverridesToComponent(unmute);

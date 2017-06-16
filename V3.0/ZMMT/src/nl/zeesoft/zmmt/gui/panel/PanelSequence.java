@@ -38,9 +38,6 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 	private int[]					selectedRows				= null;
 	private int[]					selectedCols				= null;
 
-	// TODO: Grey out echo if not source
-	// TODO: Add control columns
-	
 	public PanelSequence(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
