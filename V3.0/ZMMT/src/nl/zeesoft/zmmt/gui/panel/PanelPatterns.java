@@ -88,6 +88,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	private boolean					clearedPlayingStep				= false;
 
 	// TODO: Copy instrument controls when copying full track length pattern notes
+	// TODO: Keyboard shortcuts for accent toggle and length increase
 	
 	public PanelPatterns(Controller controller) {
 		super(controller);

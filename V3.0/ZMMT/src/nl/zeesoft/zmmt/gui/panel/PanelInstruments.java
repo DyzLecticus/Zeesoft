@@ -154,6 +154,13 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				instrumentLayer1Chorus[i].setValue(String.format("%03d",conf.getLayer1().getChorus()));
 				
 				instrumentLayer1Filter[i].setValue(String.format("%03d",conf.getLayer1().getFilter()));
+				instrumentLayer1Resonance[i].setValue(String.format("%03d",conf.getLayer1().getResonance()));
+				instrumentLayer1Attack[i].setValue(String.format("%03d",conf.getLayer1().getAttack()));
+				instrumentLayer1Decay[i].setValue(String.format("%03d",conf.getLayer1().getDecay()));
+				instrumentLayer1Release[i].setValue(String.format("%03d",conf.getLayer1().getRelease()));
+				instrumentLayer1VibRate[i].setValue(String.format("%03d",conf.getLayer1().getVibRate()));
+				instrumentLayer1VibDepth[i].setValue(String.format("%03d",conf.getLayer1().getVibDepth()));
+				instrumentLayer1VibDelay[i].setValue(String.format("%03d",conf.getLayer1().getVibDelay()));
 				
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 					instrumentLayer1BaseOctave[i].setValue(String.format("%03d",conf.getLayer1().getBaseOctave()));
@@ -172,6 +179,13 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					instrumentLayer2Chorus[i].setValue(String.format("%03d",conf.getLayer2().getChorus()));
 					
 					instrumentLayer2Filter[i].setValue(String.format("%03d",conf.getLayer2().getFilter()));
+					instrumentLayer2Resonance[i].setValue(String.format("%03d",conf.getLayer2().getResonance()));
+					instrumentLayer2Attack[i].setValue(String.format("%03d",conf.getLayer2().getAttack()));
+					instrumentLayer2Decay[i].setValue(String.format("%03d",conf.getLayer2().getDecay()));
+					instrumentLayer2Release[i].setValue(String.format("%03d",conf.getLayer2().getRelease()));
+					instrumentLayer2VibRate[i].setValue(String.format("%03d",conf.getLayer2().getVibRate()));
+					instrumentLayer2VibDepth[i].setValue(String.format("%03d",conf.getLayer2().getVibDepth()));
+					instrumentLayer2VibDelay[i].setValue(String.format("%03d",conf.getLayer2().getVibDelay()));
 
 					instrumentLayer2BaseOctave[i].setValue(String.format("%03d",conf.getLayer2().getBaseOctave()));
 					instrumentLayer2BaseVelocity[i].setValue(String.format("%03d",conf.getLayer2().getBaseVelocity()));
@@ -183,6 +197,13 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					getSliderForNumber(instrumentLayer2Chorus[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
 
 					getSliderForNumber(instrumentLayer2Filter[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Resonance[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Attack[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Decay[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2Release[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2VibRate[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2VibDepth[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					getSliderForNumber(instrumentLayer2VibDelay[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
 					
 					getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
 					getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
@@ -197,6 +218,13 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					getSliderForNumber(instrumentLayer1Chorus[i]).setEnabled(echo.getInstrument().length()==0);
 					
 					getSliderForNumber(instrumentLayer1Filter[i]).setEnabled(echo.getInstrument().length()==0);
+					getSliderForNumber(instrumentLayer1Resonance[i]).setEnabled(echo.getInstrument().length()==0);
+					getSliderForNumber(instrumentLayer1Attack[i]).setEnabled(echo.getInstrument().length()==0);
+					getSliderForNumber(instrumentLayer1Decay[i]).setEnabled(echo.getInstrument().length()==0);
+					getSliderForNumber(instrumentLayer1Release[i]).setEnabled(echo.getInstrument().length()==0);
+					getSliderForNumber(instrumentLayer1VibRate[i]).setEnabled(echo.getInstrument().length()==0);
+					getSliderForNumber(instrumentLayer1VibDepth[i]).setEnabled(echo.getInstrument().length()==0);
+					getSliderForNumber(instrumentLayer1VibDelay[i]).setEnabled(echo.getInstrument().length()==0);
 
 					getSliderForNumber(instrumentLayer1BaseOctave[i]).setEnabled(echo.getInstrument().length()==0);
 					getSliderForNumber(instrumentLayer1BaseVelocity[i]).setEnabled(echo.getInstrument().length()==0);
@@ -270,6 +298,13 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			inst.getLayer1().setChorus(Integer.parseInt(instrumentLayer1Chorus[i].getValue().toString()));
 			
 			inst.getLayer1().setFilter(Integer.parseInt(instrumentLayer1Filter[i].getValue().toString()));
+			inst.getLayer1().setResonance(Integer.parseInt(instrumentLayer1Resonance[i].getValue().toString()));
+			inst.getLayer1().setAttack(Integer.parseInt(instrumentLayer1Attack[i].getValue().toString()));
+			inst.getLayer1().setDecay(Integer.parseInt(instrumentLayer1Decay[i].getValue().toString()));
+			inst.getLayer1().setRelease(Integer.parseInt(instrumentLayer1Release[i].getValue().toString()));
+			inst.getLayer1().setVibRate(Integer.parseInt(instrumentLayer1VibRate[i].getValue().toString()));
+			inst.getLayer1().setVibDepth(Integer.parseInt(instrumentLayer1VibDepth[i].getValue().toString()));
+			inst.getLayer1().setVibDelay(Integer.parseInt(instrumentLayer1VibDelay[i].getValue().toString()));
 			
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 				inst.getLayer1().setBaseOctave(Integer.parseInt(instrumentLayer1BaseOctave[i].getValue().toString()));
@@ -288,6 +323,13 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				inst.getLayer2().setChorus(Integer.parseInt(instrumentLayer2Chorus[i].getValue().toString()));
 				
 				inst.getLayer2().setFilter(Integer.parseInt(instrumentLayer2Filter[i].getValue().toString()));
+				inst.getLayer2().setResonance(Integer.parseInt(instrumentLayer2Resonance[i].getValue().toString()));
+				inst.getLayer2().setAttack(Integer.parseInt(instrumentLayer2Attack[i].getValue().toString()));
+				inst.getLayer2().setDecay(Integer.parseInt(instrumentLayer2Decay[i].getValue().toString()));
+				inst.getLayer2().setRelease(Integer.parseInt(instrumentLayer2Release[i].getValue().toString()));
+				inst.getLayer2().setVibRate(Integer.parseInt(instrumentLayer2VibRate[i].getValue().toString()));
+				inst.getLayer2().setVibDepth(Integer.parseInt(instrumentLayer2VibDepth[i].getValue().toString()));
+				inst.getLayer2().setVibDelay(Integer.parseInt(instrumentLayer2VibDelay[i].getValue().toString()));
 
 				inst.getLayer2().setBaseOctave(Integer.parseInt(instrumentLayer2BaseOctave[i].getValue().toString()));
 				inst.getLayer2().setBaseVelocity(Integer.parseInt(instrumentLayer2BaseVelocity[i].getValue().toString()));
@@ -441,8 +483,23 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		instrumentLayer1Reverb[instrumentNum] = addLabelNumberToPanel(panel,row,"Reverb",0,127,24);
 		row++;
 		instrumentLayer1Chorus[instrumentNum] = addLabelNumberToPanel(panel,row,"Chorus",0,127,0);
+
 		row++;
 		instrumentLayer1Filter[instrumentNum] = addLabelNumberToPanel(panel,row,"Filter",0,127,127);
+		row++;
+		instrumentLayer1Resonance[instrumentNum] = addLabelNumberToPanel(panel,row,"Resonance",0,127,127);
+		row++;
+		instrumentLayer1Attack[instrumentNum] = addLabelNumberToPanel(panel,row,"Attack",0,127,127);
+		row++;
+		instrumentLayer1Decay[instrumentNum] = addLabelNumberToPanel(panel,row,"Decay",0,127,127);
+		row++;
+		instrumentLayer1Release[instrumentNum] = addLabelNumberToPanel(panel,row,"Release",0,127,127);
+		row++;
+		instrumentLayer1VibRate[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato rate",0,127,127);
+		row++;
+		instrumentLayer1VibDepth[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato depth",0,127,127);
+		row++;
+		instrumentLayer1VibDelay[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato delay",0,127,127);
 
 		if (!name.equals(Instrument.DRUMS)) {
 			row++;
@@ -474,8 +531,24 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			instrumentLayer2Reverb[instrumentNum] = addLabelNumberToPanel(panel,row,"Reverb",0,127,24);
 			row++;
 			instrumentLayer2Chorus[instrumentNum] = addLabelNumberToPanel(panel,row,"Chorus",0,127,0);
+
 			row++;
 			instrumentLayer2Filter[instrumentNum] = addLabelNumberToPanel(panel,row,"Filter",0,127,127);
+			row++;
+			instrumentLayer2Resonance[instrumentNum] = addLabelNumberToPanel(panel,row,"Resonance",0,127,127);
+			row++;
+			instrumentLayer2Attack[instrumentNum] = addLabelNumberToPanel(panel,row,"Attack",0,127,127);
+			row++;
+			instrumentLayer2Decay[instrumentNum] = addLabelNumberToPanel(panel,row,"Decay",0,127,127);
+			row++;
+			instrumentLayer2Release[instrumentNum] = addLabelNumberToPanel(panel,row,"Release",0,127,127);
+			row++;
+			instrumentLayer2VibRate[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato rate",0,127,127);
+			row++;
+			instrumentLayer2VibDepth[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato depth",0,127,127);
+			row++;
+			instrumentLayer2VibDelay[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato delay",0,127,127);
+
 			row++;
 			instrumentLayer2BaseOctave[instrumentNum] = addLabelNumberToPanel(panel,row,"Base octave",0,9,3);
 			row++;
