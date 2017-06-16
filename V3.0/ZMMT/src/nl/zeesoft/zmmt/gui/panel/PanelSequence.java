@@ -87,7 +87,11 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 				int index = Integer.parseInt(d[1]);
 				if (index<grid.getRowCount()) {
 					gridController.setPlayingIndex(index);
-					grid.repaint();
+					if (index>0) {
+						grid.repaintBar((index - 1),index);
+					} else {
+						grid.repaintBar((grid.getRowCount() - 1),index);
+					}
 				}
 			}
 		}

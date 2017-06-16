@@ -355,9 +355,14 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 				if (pattern==selectedPattern && step<=notesGrid.getRowCount()) {
 					notesGridController.setPlayingStep(step);
 					controlsGridController.setPlayingStep(step);
-					getCurrentGrid().repaint();
+					if (step>1) {
+						getCurrentGrid().repaintBar((step - 2),(step - 1));
+					} else {
+						getCurrentGrid().repaintBar((getCurrentGrid().getRowCount() - 1),(step - 1));
+					}
 					clearedPlayingStep = false;
 				} else if (pattern!=selectedPattern && !clearedPlayingStep) {
+					step = notesGridController.getPlayingStep();
 					notesGridController.setPlayingStep(-1);
 					controlsGridController.setPlayingStep(-1);
 					getCurrentGrid().repaint();

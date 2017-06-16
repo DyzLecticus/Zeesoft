@@ -14,6 +14,10 @@ public class Grid extends JTable {
 	public static final Color	COLOR_SELECTED	= new Color(136,136,136);
 	public static final Color	COLOR_NORMAL	= new Color(255,255,255);
 
+	public Grid() {
+		super.setOpaque(true);
+	}
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -21,11 +25,23 @@ public class Grid extends JTable {
 		if (row>=0) {
 			Graphics2D g2 = (Graphics2D) g;
 			Stroke oldStroke = g2.getStroke();
-			g2.setStroke(new BasicStroke(2));
-			Rectangle r = getPlayingRectangle(row);
+			g2.setStroke(new BasicStroke(1));
+			Rectangle r = getPlayingRectangle(row,0);
 			g2.setPaint(Color.BLACK);
 			g2.drawRect(r.x,r.y,r.width,r.height);
 			g2.setStroke(oldStroke);
+		}
+	}
+	
+	protected void repaintBar(int prevRow,int currRow) {
+		Rectangle r = null;
+		if (prevRow>-1) {
+			r = getPlayingRectangle(prevRow,1);
+			repaint(r);
+		}
+		if (currRow>-1) {
+			r = getPlayingRectangle(currRow,1);
+			repaint(r);
 		}
 	}
 	
@@ -41,12 +57,11 @@ public class Grid extends JTable {
 		return r;
 	}
 	
-	protected Rectangle getPlayingRectangle(int row) {
+	protected Rectangle getPlayingRectangle(int row,int add) {
 		Rectangle r = new Rectangle();
 		Rectangle cell = getCellRect(row,0,false);
-		r.setLocation(cell.getLocation());
 		r.setLocation(cell.x,cell.y);
-		r.setSize((((cell.width + 1) * getModel().getColumnCount()) - 1),cell.height);
+		r.setSize((((cell.width + 1) * getModel().getColumnCount()) - 1) + add,(cell.height - 1) + add);
 		return r;
 	}
 	
