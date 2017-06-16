@@ -38,8 +38,10 @@ public class WindowBusy extends Locker {
 		z = z + z + z + z;
 		busy = new JLabel(z);
 		busy.setAlignmentX(Component.CENTER_ALIGNMENT);
+		busy.setFocusable(false);
 		details = new JLabel(z + z);
 		details.setAlignmentX(Component.CENTER_ALIGNMENT);
+		details.setFocusable(false);
 		
 		panel.add(busy);
 		panel.add(details);

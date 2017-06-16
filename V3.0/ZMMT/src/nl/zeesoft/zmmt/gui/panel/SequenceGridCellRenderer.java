@@ -76,6 +76,7 @@ public class SequenceGridCellRenderer extends DefaultTableCellRenderer {
 				if (hasControl) {
 					JLabel label = new JLabel();
 					label.setOpaque(true);
+					label.setFocusable(false);
 					label.setBackground(Color.LIGHT_GRAY);
 					label.setForeground(getForeground());
 					if (isSelected) {

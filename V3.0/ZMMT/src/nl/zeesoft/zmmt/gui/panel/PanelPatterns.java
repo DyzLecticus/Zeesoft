@@ -1089,7 +1089,9 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		r.setLayout(new BorderLayout());
 
 		JPanel labelProp = new JPanel();
-		labelProp.add(new JLabel("Pattern "));
+		JLabel label = new JLabel("Pattern ");
+		label.setFocusable(false);
+		labelProp.add(label);
 		pattern = getPatternSelector();
 		labelProp.add(pattern);
 		r.add(labelProp,BorderLayout.LINE_START);

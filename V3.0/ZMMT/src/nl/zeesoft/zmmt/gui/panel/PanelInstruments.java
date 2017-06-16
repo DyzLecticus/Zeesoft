@@ -398,6 +398,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		@SuppressWarnings("rawtypes") final JList list,final Object value,int index,boolean isSelected,boolean hasFocus) {
 		String instrument = "" + value;
 		JLabel label = new JLabel(instrument);
+		label.setFocusable(false);
 		Color color = Instrument.getColorForInstrument(instrument);
 		label.setOpaque(true);
 		if (isSelected) {

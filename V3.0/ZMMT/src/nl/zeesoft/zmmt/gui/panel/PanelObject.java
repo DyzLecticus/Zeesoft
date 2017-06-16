@@ -190,7 +190,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	
 	protected void addLabel(JPanel panel,int row,String text) {
 		JLabel lbl = new JLabel(text + " ");
-		lbl.addKeyListener(controller.getPlayerKeyListener());
+		lbl.setFocusable(false);
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.fill = GridBagConstraints.HORIZONTAL;

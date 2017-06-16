@@ -187,13 +187,16 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		label.setOpaque(true);
 		label.setBackground(col);
 		label.setBorder(BorderFactory.createLineBorder(col,2,true));
+		label.setFocusable(false);
 		muteButton[i] = new JToggleButton("M");
 		muteButton[i].addActionListener(this);
 		muteButton[i].setBackground(Color.RED);
 		volumeLabel[i] = new JLabel();
+		volumeLabel[i].setFocusable(false);
 		volumeSlider[i] = new JSlider(JSlider.VERTICAL,0,127,110);
 		volumeSlider[i].addChangeListener(this);
 		panLabel[i] = new JLabel();
+		panLabel[i].setFocusable(false);
 		panSlider[i] = new JSlider(JSlider.HORIZONTAL,0,127,64);
 		panSlider[i].setPreferredSize(new Dimension(50,50));
 		panSlider[i].setMaximumSize(new Dimension(50,50));
@@ -207,15 +210,11 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		panSlider[i].setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		muteButton[i].addFocusListener(this);
-		volumeLabel[i].addFocusListener(this);
 		volumeSlider[i].addFocusListener(this);
-		panLabel[i].addFocusListener(this);
 		panSlider[i].addFocusListener(this);
 		
 		muteButton[i].addKeyListener(getController().getPlayerKeyListener());
-		volumeLabel[i].addKeyListener(getController().getPlayerKeyListener());
 		volumeSlider[i].addKeyListener(getController().getPlayerKeyListener());
-		panLabel[i].addKeyListener(getController().getPlayerKeyListener());
 		panSlider[i].addKeyListener(getController().getPlayerKeyListener());
 		
 		addControlPageUpDownOverridesToComponent(muteButton[i]);
