@@ -70,7 +70,7 @@ public class Pattern {
 				number = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("bars")) {
 				bars = Integer.parseInt(elem.value.toString());
-			} else if (elem.name.equals("notes") || elem.name.equals("steps")) { // TODO: remove steps as option
+			} else if (elem.name.equals("notes")) {
 				for (JsElem stepElem: elem.children) {
 					Note note = new Note();
 					for (JsElem valElem: stepElem.children) {

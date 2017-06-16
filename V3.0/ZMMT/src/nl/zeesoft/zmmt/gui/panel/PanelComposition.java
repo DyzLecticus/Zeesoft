@@ -2,7 +2,6 @@ package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -16,7 +15,7 @@ import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
-public class PanelComposition extends PanelObject implements ActionListener, CompositionChangePublisher, StateChangeSubscriber {
+public class PanelComposition extends PanelObject implements CompositionChangePublisher, StateChangeSubscriber {
 	private JFormattedTextField		file				= null;
 	private JFormattedTextField		composer			= null;
 	private JFormattedTextField		name				= null;
@@ -85,6 +84,7 @@ public class PanelComposition extends PanelObject implements ActionListener, Com
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
+		super.actionPerformed(evt);
 		if (evt.getSource()==useDrumKit) {
 			handleValidChange();
 		} else if (evt.getSource()==useSynthesizers) {

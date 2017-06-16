@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 
-public class PanelPatterns extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
+public class PanelPatterns extends PanelObject implements StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
 	public static final String		EDIT_NOTES						= "EDIT_NOTES";
 	public static final String		EDIT_CONTROLS					= "EDIT_CONTROLS";
 
@@ -52,8 +51,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	private static final String		PAGE_UP							= "PAGE_UP";
 	private static final String		SHIFT_PAGE_DOWN					= "SHIFT_PAGE_DOWN";
 	private static final String		SHIFT_PAGE_UP					= "SHIFT_PAGE_UP";
-	private static final String		CONTROL_PAGE_DOWN				= "CONTROL_PAGE_DOWN";
-	private static final String		CONTROL_PAGE_UP					= "CONTROL_PAGE_UP";
 	
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
@@ -90,8 +87,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	private boolean					clearedPlayingStep				= false;
 
-	// TODO: Fix bars changing refresh
-	// TODO: Bars focus keyboard shortcut
 	// TODO: Copy instrument controls when copying full track length pattern notes
 	
 	public PanelPatterns(Controller controller) {
@@ -179,15 +174,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(F2_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_INSTRUMENTS);
-		} else if (evt.getActionCommand().equals(F3_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
-		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
-		} else if (evt.getActionCommand().equals(FrameMain.STOP_PLAYING)) {
-			getController().stopSequencer();
-		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_EDIT_MODE)) {
+		super.actionPerformed(evt);
+		if (evt.getActionCommand().equals(FrameMain.PATTERN_EDIT_MODE)) {
 			if (editNotes.isSelected()) {
 				editExpression.doClick();
 			} else if (editExpression.isSelected()) {
@@ -214,32 +202,23 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 			evt.getActionCommand().equals(SHIFT_PAGE_UP)
 			) {
 			handlePageUp(evt.getActionCommand());
-		} else if (
-			evt.getActionCommand().equals(CONTROL_PAGE_DOWN) ||
-			evt.getActionCommand().equals(FrameMain.PATTERN_SELECT_NEXT)
-			) {
-			if (selectedPattern<99) {
-				getController().getStateManager().setSelectedPattern(this,(selectedPattern + 1));
-			}
-		} else if (
-			evt.getActionCommand().equals(CONTROL_PAGE_UP) ||
-			evt.getActionCommand().equals(FrameMain.PATTERN_SELECT_PREV)
-			) {
-			if (selectedPattern>0) {
-				getController().getStateManager().setSelectedPattern(this,(selectedPattern - 1));
-			}
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT_NEXT)) {
+			getController().getStateManager().selectNextPattern(this);
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT_PREV)) {
+			getController().getStateManager().selectPreviousPattern(this);
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_SELECT)) {
 			pattern.requestFocus();
-			pattern.showPopup();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_INSERT)) {
 			insertMode.doClick();
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_BARS)) {
+			bars.requestFocus();
 		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_EDIT)) {
 			if (!getCurrentGrid().hasFocus()) {
 				getCurrentGrid().requestFocus();
 			} else {
 				reselect();
 			}
-		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_COPY)) {
+		} else if (evt.getActionCommand().equals(FrameMain.NOTES_COPY)) {
 			int[] rows = notesGrid.getSelectedRows();
 			int[] cols = notesGrid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
@@ -258,7 +237,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 					}
 				}
 			}
-		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_PASTE)) {
+		} else if (evt.getActionCommand().equals(FrameMain.NOTES_PASTE)) {
 			int[] rows = notesGrid.getSelectedRows();
 			int[] cols = notesGrid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
@@ -313,7 +292,8 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		} else if (evt.getSource()==bars) {
 			if (workingPattern!=null && workingPattern.getBars()!=bars.getSelectedIndex()) {
 				workingPattern.setBars(bars.getSelectedIndex());
-				changedPattern();
+				refreshGridData();
+				getController().getStateManager().changedPattern(this,workingPattern);
 			}
 		}
 	}
@@ -845,6 +825,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	}
 	
 	protected void changedPattern() {
+		System.out.println("Changed pattern: " + getCurrentGrid().getRowCount());
 		refreshGridData(0,(getCurrentGrid().getRowCount() - 1));
 		if (workingPattern!=null) {
 			getController().getStateManager().changedPattern(this,workingPattern);
@@ -909,9 +890,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 		
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
-		notesGrid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
+		notesGrid.registerKeyboardAction(this,FrameMain.NOTES_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
-		notesGrid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
+		notesGrid.registerKeyboardAction(this,FrameMain.NOTES_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		
 		addKeyStrokeOverridesToGrid(notesGrid);
 	}
@@ -936,9 +917,9 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		}
 		
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
-		controlsGrid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
+		controlsGrid.registerKeyboardAction(this,FrameMain.NOTES_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
-		controlsGrid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
+		controlsGrid.registerKeyboardAction(this,FrameMain.NOTES_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		
 		addKeyStrokeOverridesToGrid(controlsGrid);
 	}
@@ -946,18 +927,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 	protected void addKeyStrokeOverridesToGrid(Grid grid) {
 		KeyStroke stroke = null; 
 	
-		// F2 Override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2,0,false);
-		grid.registerKeyboardAction(this,F2_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-		// F3 Override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3,0,false);
-		grid.registerKeyboardAction(this,F3_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-
-		addF4OverrideToComponent(this,grid);
-
-		// F8 Override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
-		grid.registerKeyboardAction(this,FrameMain.STOP_PLAYING,stroke,JComponent.WHEN_FOCUSED);
+		addFunctionKeyOverridesToComponent(grid);
 
 		// Page down override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,0,false);
@@ -978,18 +948,6 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		addControlPageUpDownOverridesToComponent(grid);
 	}
 	
-	protected void addControlPageUpDownOverridesToComponent(JComponent comp) {
-		KeyStroke stroke = null; 
-
-		// Control page down override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,ActionEvent.CTRL_MASK,false);
-		comp.registerKeyboardAction(this,CONTROL_PAGE_DOWN,stroke,JComponent.WHEN_FOCUSED);
-
-		// Control page down override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.CTRL_MASK,false);
-		comp.registerKeyboardAction(this,CONTROL_PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
-	}
-	
 	protected JComboBox<String> getPatternSelector() {
 		JComboBox<String> r = new JComboBox<String>();
 		for (int p = 0; p <= 99; p++) {
@@ -998,7 +956,7 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		r.setSelectedIndex(selectedPattern);
 		r.addActionListener(this);
 
-		addF4OverrideToComponent(this,r);
+		addFunctionKeyOverridesToComponent(r);
 		addControlPageUpDownOverridesToComponent(r);
 		
 		// Enter override
@@ -1024,8 +982,12 @@ public class PanelPatterns extends PanelObject implements ActionListener, StateC
 		r.setSelectedIndex(barsPerPattern);
 		r.addActionListener(this);
 		
-		addF4OverrideToComponent(this,r);
+		addFunctionKeyOverridesToComponent(r);
 		addControlPageUpDownOverridesToComponent(r);
+
+		// Enter override
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0,false);
+		r.registerKeyboardAction(this,FrameMain.PATTERN_EDIT,stroke,JComponent.WHEN_FOCUSED);
 
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);

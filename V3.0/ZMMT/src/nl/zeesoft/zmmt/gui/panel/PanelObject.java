@@ -2,6 +2,7 @@ package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -28,12 +29,16 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import nl.zeesoft.zmmt.gui.Controller;
+import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.player.InstrumentPlayerKeyListener;
 
-public abstract class PanelObject implements PropertyChangeListener, ChangeListener, FocusListener {
-	protected static final String		F2_PRESSED			= "F2_PRESSED";
-	protected static final String		F3_PRESSED			= "F3_PRESSED";
-	protected static final String		F4_PRESSED			= "F4_PRESSED";
+public abstract class PanelObject implements PropertyChangeListener, ChangeListener, ActionListener, FocusListener {
+	private static final String			F2_PRESSED				= "F2_PRESSED";
+	private static final String			F3_PRESSED				= "F3_PRESSED";
+	private static final String			F4_PRESSED				= "F4_PRESSED";
+	private static final String			F8_PRESSED				= "F8_PRESSED";
+	private static final String			CTRL_PG_DN_PRESSED		= "CTRL_PG_DN_PRESSED";
+	private static final String			CTRL_PG_UP_PRESSED		= "CTRL_PG_UP_PRESSED";
 	
 	private	Controller					controller			= null;
 	
@@ -60,24 +65,22 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	public void stateChanged(ChangeEvent evt) {
 		handlePropertyChanged(evt.getSource());
 	}
-
-	protected void handlePropertyChanged(Object source) {
-		if (validate) {
-			String err = validate();
-			if (err.length()>0) {
-				controller.showErrorMessage(this,err);
-			} else {
-				handleValidChange();
-			}
+	
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		if (evt.getActionCommand().equals(F2_PRESSED)) {
+			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_INSTRUMENTS);
+		} else if (evt.getActionCommand().equals(F3_PRESSED)) {
+			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
+		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
+			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
+		} else if (evt.getActionCommand().equals(F8_PRESSED)) {
+			getController().stopSequencer();
+		} else if (evt.getActionCommand().equals(CTRL_PG_DN_PRESSED)) {
+			getController().getStateManager().selectNextPattern(this);
+		} else if (evt.getActionCommand().equals(CTRL_PG_UP_PRESSED)) {
+			getController().getStateManager().selectPreviousPattern(this);
 		}
-	}
-
-	public String validate() {
-		return "";
-	}
-
-	public void handleValidChange() {
-		// Override to implement
 	}
 
 	public void requestFocus() {
@@ -131,6 +134,25 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	
 	public JPanel getPanel() {
 		return panel;
+	}
+
+	protected void handlePropertyChanged(Object source) {
+		if (validate) {
+			String err = validate();
+			if (err.length()>0) {
+				controller.showErrorMessage(this,err);
+			} else {
+				handleValidChange();
+			}
+		}
+	}
+
+	protected String validate() {
+		return "";
+	}
+
+	protected void handleValidChange() {
+		// Override to implement
 	}
 
 	protected Controller getController() {
@@ -233,6 +255,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		r.addFocusListener(this);
 		r.addPropertyChangeListener(this);
 		r.setColumns(32);
+		addControlPageUpDownOverridesToComponent(r);
 		return r;
 	}
 
@@ -240,6 +263,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		JCheckBox r = new JCheckBox();
 		r.addFocusListener(this);
 		r.addKeyListener(controller.getPlayerKeyListener());
+		addControlPageUpDownOverridesToComponent(r);
 		return r;
 	}
 
@@ -257,6 +281,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		r.setModel(model);
 		r.addFocusListener(this);
 		r.addChangeListener(this);
+		addControlPageUpDownOverridesToComponent(r);
 		return r;
 	}
 
@@ -277,6 +302,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		slider.addFocusListener(this);
 		NumberSlider ns = new NumberSlider(number,slider);
 		numberSliders.add(ns);
+		addControlPageUpDownOverridesToComponent(slider);
 		return ns.getPanel();
 	}
 
@@ -306,7 +332,8 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		comboBox.addKeyListener(controller.getPlayerKeyListener());
 		comboBox.addFocusListener(this);
 		
-		addF4OverrideToComponent(actionListener,comboBox);
+		addFunctionKeyOverridesToComponent(comboBox);
+		addControlPageUpDownOverridesToComponent(comboBox);
 		
 		NumberComboBox nc = new NumberComboBox(number,comboBox,subtract);
 		numberComboBoxes.add(nc);
@@ -317,9 +344,30 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		this.validate = validate;
 	}
 
-	protected void addF4OverrideToComponent(ActionListener actionlistener,JComponent comp) {
+	protected void addFunctionKeyOverridesToComponent(JComponent comp) {
+		// F2 Override
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2,0,false);
+		comp.registerKeyboardAction(this,F2_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		// F3 Override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3,0,false);
+		comp.registerKeyboardAction(this,F3_PRESSED,stroke,JComponent.WHEN_FOCUSED);
 		// F4 Override
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
-		comp.registerKeyboardAction(actionlistener,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4,0,false);
+		comp.registerKeyboardAction(this,F4_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+		// F8 Override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
+		comp.registerKeyboardAction(this,F8_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+	}
+
+	protected void addControlPageUpDownOverridesToComponent(JComponent comp) {
+		KeyStroke stroke = null; 
+
+		// Control page down override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,ActionEvent.CTRL_MASK,false);
+		comp.registerKeyboardAction(this,CTRL_PG_DN_PRESSED,stroke,JComponent.WHEN_FOCUSED);
+
+		// Control page down override
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.CTRL_MASK,false);
+		comp.registerKeyboardAction(this,CTRL_PG_UP_PRESSED,stroke,JComponent.WHEN_FOCUSED);
 	}
 }

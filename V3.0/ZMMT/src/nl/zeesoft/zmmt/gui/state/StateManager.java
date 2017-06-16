@@ -86,6 +86,24 @@ public class StateManager extends StateObject {
 		unlockMe(this);
 	}
 	
+	public void selectNextPattern(Object source) {
+		lockMe(this);
+		if (super.getSelectedPattern()<99) {
+			super.setSelectedPattern((super.getSelectedPattern() + 1));
+			publishStateChangeEvent(StateChangeEvent.SELECTED_PATTERN,source);
+		}
+		unlockMe(this);
+	}
+	
+	public void selectPreviousPattern(Object source) {
+		lockMe(this);
+		if (super.getSelectedPattern()>0) {
+			super.setSelectedPattern((super.getSelectedPattern() - 1));
+			publishStateChangeEvent(StateChangeEvent.SELECTED_PATTERN,source);
+		}
+		unlockMe(this);
+	}
+	
 	public void setSelectedPatternSelection(Object source,int rowFrom,int rowTo,int colFrom,int colTo) {
 		lockMe(this);
 		super.setSelectedPatternRowFrom(rowFrom);

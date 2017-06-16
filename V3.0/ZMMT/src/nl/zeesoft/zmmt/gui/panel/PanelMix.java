@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -24,7 +23,7 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
-public class PanelMix extends PanelObject implements ActionListener, StateChangeSubscriber, CompositionChangePublisher {
+public class PanelMix extends PanelObject implements StateChangeSubscriber, CompositionChangePublisher {
 	private static final String			SOLO						= "SOLO";
 	private static final String			UNMUTE						= "UNMUTE";
 	
@@ -95,6 +94,7 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
+		super.actionPerformed(evt);
 		if (evt.getActionCommand().equals(SOLO)) {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
@@ -157,10 +157,12 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 		solo.setActionCommand(SOLO);
 		solo.addActionListener(this);
 		solo.addKeyListener(getController().getPlayerKeyListener());
+		addControlPageUpDownOverridesToComponent(solo);
 		unmute = new JButton("Unmute all");
 		unmute.setActionCommand(UNMUTE);
 		unmute.addActionListener(this);
 		unmute.addKeyListener(getController().getPlayerKeyListener());
+		addControlPageUpDownOverridesToComponent(unmute);
 		r.add(solo);
 		r.add(unmute);
 		return r;
@@ -211,6 +213,12 @@ public class PanelMix extends PanelObject implements ActionListener, StateChange
 		panLabel[i].addKeyListener(getController().getPlayerKeyListener());
 		panSlider[i].addKeyListener(getController().getPlayerKeyListener());
 		
+		addControlPageUpDownOverridesToComponent(muteButton[i]);
+		addControlPageUpDownOverridesToComponent(volumeLabel[i]);
+		addControlPageUpDownOverridesToComponent(volumeSlider[i]);
+		addControlPageUpDownOverridesToComponent(panLabel[i]);
+		addControlPageUpDownOverridesToComponent(panSlider[i]);
+
 		r.add(label);
 		r.add(muteButton[i]);
 		r.add(volumeLabel[i]);

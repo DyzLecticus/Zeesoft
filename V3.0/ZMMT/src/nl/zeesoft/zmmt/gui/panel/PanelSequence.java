@@ -3,7 +3,6 @@ package nl.zeesoft.zmmt.gui.panel;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 
-public class PanelSequence extends PanelObject implements ActionListener, StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
+public class PanelSequence extends PanelObject implements StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
 	private Grid					grid						= null;
 	private SequenceGridController	gridController				= null;
 	private SequenceGridKeyListener	gridKeyListener				= null;
@@ -80,19 +79,6 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 			reselect();
 		}
 		setValidate(true);
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(F2_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_INSTRUMENTS);
-		} else if (evt.getActionCommand().equals(F3_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_PATTERNS);
-		} else if (evt.getActionCommand().equals(F4_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
-		} else if (evt.getActionCommand().equals(FrameMain.STOP_PLAYING)) {
-			getController().stopSequencer();
-		}
 	}
 
 	@Override
@@ -270,23 +256,13 @@ public class PanelSequence extends PanelObject implements ActionListener, StateC
 		}
 		
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
-		grid.registerKeyboardAction(this,FrameMain.PATTERN_COPY,stroke,JComponent.WHEN_FOCUSED);
+		grid.registerKeyboardAction(this,FrameMain.NOTES_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
-		grid.registerKeyboardAction(this,FrameMain.PATTERN_PASTE,stroke,JComponent.WHEN_FOCUSED);
+		grid.registerKeyboardAction(this,FrameMain.NOTES_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		
-		// F2 Override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2,0,false);
-		grid.registerKeyboardAction(this,F2_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-		// F3 Override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3,0,false);
-		grid.registerKeyboardAction(this,F3_PRESSED,stroke,JComponent.WHEN_FOCUSED);
-		
-		addF4OverrideToComponent(this,grid);
-		
-		// F8 Override
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F8,0,false);
-		grid.registerKeyboardAction(this,FrameMain.STOP_PLAYING,stroke,JComponent.WHEN_FOCUSED);
-		
+		addFunctionKeyOverridesToComponent(grid);
+		addControlPageUpDownOverridesToComponent(grid);
+				
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);

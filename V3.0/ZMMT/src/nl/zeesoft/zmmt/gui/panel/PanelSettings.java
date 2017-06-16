@@ -3,7 +3,6 @@ package nl.zeesoft.zmmt.gui.panel;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -18,7 +17,7 @@ import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
-public class PanelSettings extends PanelObject implements StateChangeSubscriber, ActionListener {
+public class PanelSettings extends PanelObject implements StateChangeSubscriber {
 	private static final String			SAVE_INSTRUMENTS			= "SAVE_INSTRUMENTS";
 	private static final String			RESTORE_INSTRUMENTS			= "RESTORE_INSTRUMENTS";
 	
@@ -114,6 +113,7 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
+		super.actionPerformed(evt);
 		if (evt.getActionCommand().equals(SAVE_INSTRUMENTS)) {
 			boolean confirmed = getController().showConfirmMessage("Are you sure you want to save the current instruments as defaults");
 			if (confirmed) {
@@ -144,9 +144,11 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber,
 		saveInstruments = new JButton("Save");
 		saveInstruments.setActionCommand(SAVE_INSTRUMENTS);
 		saveInstruments.addActionListener(this);
+		saveInstruments.addKeyListener(getController().getPlayerKeyListener());
 		restoreInstruments = new JButton("Restore");
 		restoreInstruments.setActionCommand(RESTORE_INSTRUMENTS);
 		restoreInstruments.addActionListener(this);
+		restoreInstruments.addKeyListener(getController().getPlayerKeyListener());
 		panel.add(saveInstruments,BorderLayout.LINE_START);
 		panel.add(restoreInstruments,BorderLayout.CENTER);
 		return panel;

@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import javax.swing.ListCellRenderer;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
-import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
@@ -34,7 +32,7 @@ import nl.zeesoft.zmmt.synthesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 
-public class PanelInstruments extends PanelObject implements ItemListener, ActionListener, ListCellRenderer<Object>, CompositionChangePublisher, StateChangeSubscriber {
+public class PanelInstruments extends PanelObject implements ItemListener, ListCellRenderer<Object>, CompositionChangePublisher, StateChangeSubscriber {
 	private JComboBox<String>		instrument						= null;
 	private String					selectedInstrument				= "";
 	
@@ -318,9 +316,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(F4_PRESSED)) {
-			getController().getStateManager().setSelectedTab(this,FrameMain.TAB_SEQUENCE);
-		}
+		super.actionPerformed(evt);
 		if (!selectedInstrument.equals(instrument.getSelectedItem().toString())) {
 			selectedInstrument = instrument.getSelectedItem().toString();
 			instrument.setBackground(Instrument.getColorForInstrument(selectedInstrument));
@@ -495,7 +491,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 				echoInstrument.removeKeyListener(echoInstrument.getKeyListeners()[l]);
 			}
 			echoInstrument.addKeyListener(getController().getPlayerKeyListener());
-			addF4OverrideToComponent(this,echoInstrument);
+			addFunctionKeyOverridesToComponent(echoInstrument);
 			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 2); i++) {
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 					echoInstrument.addItem(Instrument.INSTRUMENTS[i]);
@@ -557,7 +553,8 @@ public class PanelInstruments extends PanelObject implements ItemListener, Actio
 		r.setBackground(Instrument.getColorForInstrument(selectedInstrument));
 		r.setRenderer(this);
 		
-		addF4OverrideToComponent(this,r);
+		addFunctionKeyOverridesToComponent(r);
+		addControlPageUpDownOverridesToComponent(r);
 
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
