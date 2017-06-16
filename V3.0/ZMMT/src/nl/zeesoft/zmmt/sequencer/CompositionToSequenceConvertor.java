@@ -196,7 +196,8 @@ public class CompositionToSequenceConvertor {
 	}
 
 	protected void addSynthesizerConfigurationToSequenceTick(int tick) {
-		Track track = sequence.getTracks()[0];
+		int track = (Instrument.getIndexForInstrument(Instrument.ECHO) + 1);
+		Track echotrack = sequence.getTracks()[track];
 		int channels = 3;
 		EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
 		InstrumentConfiguration echoInst = composition.getSynthesizerConfiguration().getInstrument(echo.getInstrument());
@@ -214,41 +215,43 @@ public class CompositionToSequenceConvertor {
 		if (layerMidiNum>=0) {
 			for (int e = 0; e < channels; e++) {
 				int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
-				createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,layerMidiNum,0,tick);
-				createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,layerPressure,0,tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,volume,tick);
+				createEventOnTrack(echotrack,ShortMessage.PROGRAM_CHANGE,channel,layerMidiNum,0,tick);
+				createEventOnTrack(echotrack,ShortMessage.CHANNEL_PRESSURE,channel,layerPressure,0,tick);
+				createEventOnTrack(echotrack,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,volume,tick);
 				if (e==0) {
-					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan1(),tick);
-					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,echo.getReverb1(),tick);
+					createEventOnTrack(echotrack,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan1(),tick);
+					createEventOnTrack(echotrack,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,echo.getReverb1(),tick);
 				} else if (e==1) {
-					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan2(),tick);
-					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,echo.getReverb2(),tick);
+					createEventOnTrack(echotrack,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan2(),tick);
+					createEventOnTrack(echotrack,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,echo.getReverb2(),tick);
 				} else if (e==2) {
-					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan3(),tick);
-					createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,echo.getReverb3(),tick);
+					createEventOnTrack(echotrack,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,echo.getPan3(),tick);
+					createEventOnTrack(echotrack,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,echo.getReverb3(),tick);
 				}
 			}
 		}
 		for (InstrumentConfiguration inst: composition.getSynthesizerConfiguration().getInstruments()) {
+			track = (Instrument.getIndexForInstrument(inst.getName()) + 1);
+			Track instTrack = sequence.getTracks()[track];
 			if (!inst.getName().equals(Instrument.ECHO) || echo.getInstrument().length()==0) {
 				int layer = 0;
 				if (inst.getName().equals(Instrument.ECHO)) {
 					layer = 2;
 				}
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),layer);
-				createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer1().getMidiNum(),0,tick);
-				createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer1().getPressure(),0,tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
-				createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer1().getReverb(),tick);
+				createEventOnTrack(instTrack,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer1().getMidiNum(),0,tick);
+				createEventOnTrack(instTrack,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer1().getPressure(),0,tick);
+				createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
+				createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
+				createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer1().getReverb(),tick);
 				if (inst.getLayer2().getMidiNum()>=0) {
 					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 					if (channel>=0) {
-						createEventOnTrack(track,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer2().getMidiNum(),0,tick);
-						createEventOnTrack(track,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer2().getPressure(),0,tick);
-						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
-						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
-						createEventOnTrack(track,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer2().getReverb(),tick);
+						createEventOnTrack(instTrack,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer2().getMidiNum(),0,tick);
+						createEventOnTrack(instTrack,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer2().getPressure(),0,tick);
+						createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
+						createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
+						createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer2().getReverb(),tick);
 					}
 				}
 			}

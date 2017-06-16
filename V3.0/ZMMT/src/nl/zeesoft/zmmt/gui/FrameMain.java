@@ -516,7 +516,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		mixerMenu.setMnemonic(KeyEvent.VK_M);
 		bar.add(mixerMenu);
 
-		item = new JMenuItem("Solo selected instrument",KeyEvent.VK_S);
+		item = new JMenuItem("Solo",KeyEvent.VK_S);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,evt));
 		item.setActionCommand(SOLO);
 		item.addActionListener(this);
