@@ -351,8 +351,14 @@ public class SynthesizerConfiguration {
 		if (layerMidiNum>=0) {
 			for (int e = 0; e < channels; e++) {
 				int channel = Instrument.getMidiChannelForInstrument(Instrument.ECHO,e);
-				synth.getChannels()[channel].programChange(layerMidiNum);
-				synth.getChannels()[channel].setChannelPressure(layerPressure);
+				int val = synth.getChannels()[channel].getProgram();
+				if (val!=layerMidiNum) {
+					synth.getChannels()[channel].programChange(layerMidiNum);
+				}
+				val = synth.getChannels()[channel].getChannelPressure();
+				if (val!=layerPressure) {
+					synth.getChannels()[channel].setChannelPressure(layerPressure);
+				}
 				synth.getChannels()[channel].controlChange(Control.VOLUME,volume);
 				if (configureControls) {
 					synth.getChannels()[channel].controlChange(Control.MODULATION,layerModulation);
@@ -385,11 +391,14 @@ public class SynthesizerConfiguration {
 					layer = 2;
 				}
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),layer);
-				int prog = synth.getChannels()[channel].getProgram();
-				if (prog!=inst.getLayer1().getMidiNum()) {
+				int val = synth.getChannels()[channel].getProgram();
+				if (val!=inst.getLayer1().getMidiNum()) {
 					synth.getChannels()[channel].programChange(inst.getLayer1().getMidiNum());
 				}
-				synth.getChannels()[channel].setChannelPressure(inst.getLayer1().getPressure());
+				val = synth.getChannels()[channel].getChannelPressure();
+				if (val!=inst.getLayer1().getPressure()) {
+					synth.getChannels()[channel].setChannelPressure(inst.getLayer1().getPressure());
+				}
 				synth.getChannels()[channel].controlChange(Control.VOLUME,inst.getVolume());
 				synth.getChannels()[channel].controlChange(Control.PAN,inst.getPan());
 				synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer1().getReverb());
@@ -408,11 +417,14 @@ public class SynthesizerConfiguration {
 				if (inst.getLayer2().getMidiNum()>=0) {
 					channel = Instrument.getMidiChannelForInstrument(inst.getName(),1);
 					if (channel>=0) {
-						prog = synth.getChannels()[channel].getProgram();
-						if (prog!=inst.getLayer2().getMidiNum()) {
+						val = synth.getChannels()[channel].getProgram();
+						if (val!=inst.getLayer2().getMidiNum()) {
 							synth.getChannels()[channel].programChange(inst.getLayer2().getMidiNum());
 						}
-						synth.getChannels()[channel].setChannelPressure(inst.getLayer2().getPressure());
+						val = synth.getChannels()[channel].getChannelPressure();
+						if (val!=inst.getLayer2().getPressure()) {
+							synth.getChannels()[channel].setChannelPressure(inst.getLayer2().getPressure());
+						}
 						synth.getChannels()[channel].controlChange(Control.VOLUME,inst.getVolume());
 						synth.getChannels()[channel].controlChange(Control.PAN,inst.getPan());
 						synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer2().getReverb());

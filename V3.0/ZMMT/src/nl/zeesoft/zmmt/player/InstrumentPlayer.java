@@ -81,8 +81,12 @@ public class InstrumentPlayer extends Locker {
 			echoWorker.addNotes(false,delayedNotes);
 		}
 	}
-	
+
 	public void stopInstrumentNotes(String name) {
+		stopInstrumentNotes(name,false);
+	}
+
+	public void stopInstrumentNotes(String name,boolean force) {
 		lockMe(this);
 		if (synthesizer!=null) {
 			SortedMap<String,MidiNote> playing = new TreeMap<String,MidiNote>(playingNotes);
@@ -93,15 +97,17 @@ public class InstrumentPlayer extends Locker {
 					playingNotes.remove(note.getId());
 				}
 			}
-			int channel1 = Instrument.getMidiChannelForInstrument(name,0);
-			synthesizer.getChannels()[channel1].allNotesOff();
-			int channel2 = Instrument.getMidiChannelForInstrument(name,1);
-			if (channel2>=0 && channel2!=channel1) {
-				synthesizer.getChannels()[channel2].allNotesOff();
-			}
-			int channel3 = Instrument.getMidiChannelForInstrument(name,2);
-			if (channel3>=0 && channel3!=channel2 && channel3!=channel1) {
-				synthesizer.getChannels()[channel3].allNotesOff();
+			if (force) {
+				int channel1 = Instrument.getMidiChannelForInstrument(name,0);
+				synthesizer.getChannels()[channel1].allNotesOff();
+				int channel2 = Instrument.getMidiChannelForInstrument(name,1);
+				if (channel2>=0 && channel2!=channel1) {
+					synthesizer.getChannels()[channel2].allNotesOff();
+				}
+				int channel3 = Instrument.getMidiChannelForInstrument(name,2);
+				if (channel3>=0 && channel3!=channel2 && channel3!=channel1) {
+					synthesizer.getChannels()[channel3].allNotesOff();
+				}
 			}
 		}
 		unlockMe(this);
