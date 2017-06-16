@@ -153,11 +153,13 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		solo = new JButton("Solo");
 		solo.setActionCommand(FrameMain.SOLO);
 		solo.addActionListener(this);
+		solo.addFocusListener(this);
 		solo.addKeyListener(getController().getPlayerKeyListener());
 		addControlPageUpDownOverridesToComponent(solo);
 		unmute = new JButton("Unmute all");
 		unmute.setActionCommand(FrameMain.UNMUTE);
 		unmute.addActionListener(this);
+		unmute.addFocusListener(this);
 		unmute.addKeyListener(getController().getPlayerKeyListener());
 		addControlPageUpDownOverridesToComponent(unmute);
 		r.add(solo);
@@ -203,6 +205,12 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		volumeSlider[i].setAlignmentX(Component.CENTER_ALIGNMENT);
 		panLabel[i].setAlignmentX(Component.CENTER_ALIGNMENT);
 		panSlider[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		muteButton[i].addFocusListener(this);
+		volumeLabel[i].addFocusListener(this);
+		volumeSlider[i].addFocusListener(this);
+		panLabel[i].addFocusListener(this);
+		panSlider[i].addFocusListener(this);
 		
 		muteButton[i].addKeyListener(getController().getPlayerKeyListener());
 		volumeLabel[i].addKeyListener(getController().getPlayerKeyListener());

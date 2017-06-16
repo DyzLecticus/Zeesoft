@@ -144,10 +144,12 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber 
 		saveInstruments = new JButton("Save");
 		saveInstruments.setActionCommand(SAVE_INSTRUMENTS);
 		saveInstruments.addActionListener(this);
+		saveInstruments.addFocusListener(this);
 		saveInstruments.addKeyListener(getController().getPlayerKeyListener());
 		restoreInstruments = new JButton("Restore");
 		restoreInstruments.setActionCommand(RESTORE_INSTRUMENTS);
 		restoreInstruments.addActionListener(this);
+		restoreInstruments.addFocusListener(this);
 		restoreInstruments.addKeyListener(getController().getPlayerKeyListener());
 		panel.add(saveInstruments,BorderLayout.LINE_START);
 		panel.add(restoreInstruments,BorderLayout.CENTER);

@@ -966,6 +966,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}
+		r.addFocusListener(this);
 		r.addKeyListener(getController().getPlayerKeyListener());
 		return r;
 	}
@@ -992,6 +993,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		for (int l = 0; l < r.getKeyListeners().length; l++) {
 			r.removeKeyListener(r.getKeyListeners()[l]);
 		}
+		r.addFocusListener(this);
 		r.addKeyListener(getController().getPlayerKeyListener());
 		return r;
 	}
@@ -1039,6 +1041,16 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 			editFilter.doClick();
 		}
 
+		editNotes.addFocusListener(this);
+		editExpression.addFocusListener(this);
+		editModulation.addFocusListener(this);
+		editFilter.addFocusListener(this);
+
+		editNotes.addKeyListener(getController().getPlayerKeyListener());
+		editExpression.addKeyListener(getController().getPlayerKeyListener());
+		editModulation.addKeyListener(getController().getPlayerKeyListener());
+		editFilter.addKeyListener(getController().getPlayerKeyListener());
+
 		editNotes.addActionListener(this);
 		editExpression.addActionListener(this);
 		editModulation.addActionListener(this);
@@ -1058,6 +1070,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		r.add(wrapper,BorderLayout.CENTER);
 		
 		insertMode = new JCheckBox("Insert ");
+		insertMode.addFocusListener(this);
 		insertMode.addKeyListener(getController().getPlayerKeyListener());
 		addControlPageUpDownOverridesToComponent(insertMode);
 		r.add(insertMode,BorderLayout.LINE_END);

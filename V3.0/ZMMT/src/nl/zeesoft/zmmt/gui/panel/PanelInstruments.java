@@ -590,6 +590,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			for (int l = 0; l < echoInstrument.getKeyListeners().length; l++) {
 				echoInstrument.removeKeyListener(echoInstrument.getKeyListeners()[l]);
 			}
+			echoInstrument.addFocusListener(this);
 			echoInstrument.addKeyListener(getController().getPlayerKeyListener());
 			addFunctionKeyOverridesToComponent(echoInstrument);
 			for (int i = 0; i < (Instrument.INSTRUMENTS.length - 2); i++) {
