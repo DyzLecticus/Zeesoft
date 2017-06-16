@@ -81,15 +81,14 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	private List<Note>				copyNotes						= new ArrayList<Note>();
 	private int						copySteps						= 0;
 	private int						copyTracks						= 0;
+	private List<String>			copyInstruments					= new ArrayList<String>();
+	private	List<Control>			copyControls					= new ArrayList<Control>();
 	
 	private int[]					selectedRows					= null;
 	private int[]					selectedCols					= null;
 	
 	private boolean					clearedPlayingStep				= false;
 
-	// TODO: Copy instrument controls when copying full track length pattern notes
-	// TODO: Keyboard shortcuts for accent toggle and length increase
-	
 	public PanelPatterns(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
@@ -228,6 +227,8 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 				copySteps = (rows[(rows.length - 1)] - rows[0]);
 				copyTracks = (cols[(cols.length - 1)] - cols[0]);
 				copyNotes.clear();
+				copyInstruments.clear();
+				copyControls.clear();
 				List<Note> selNotes = getSelectedNotes();
 				for (Note note: selNotes) {
 					if (note.step>row) {
@@ -235,6 +236,17 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 						copyNote.step = copyNote.step - row;
 						copyNote.track = copyNote.track - col;
 						copyNotes.add(copyNote);
+						if (!copyInstruments.contains(note.instrument)) {
+							copyInstruments.add(note.instrument);
+						}
+					}
+				}
+				if (copySteps==(notesGrid.getRowCount() - 1)) {
+					for (String instrument: copyInstruments) {
+						List<Control> ctrls = workingPattern.getInstrumentControls(instrument);
+						for (Control ctrl: ctrls) {
+							copyControls.add(ctrl.copy());
+						}
 					}
 				}
 			}
@@ -274,13 +286,29 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 				if (addedNotes) {
 					removeOrCutNotes(getNotes(notesGrid.getRowCount(),notesGrid.getRowCount(),0,(notesGrid.getColumnCount() - 1)),notesGrid.getRowCount());
 				}
-				if ((rowTo + 1) < notesGrid.getRowCount()) {
-					row = (rowTo + 1);
+				if (row==0 && copySteps==(notesGrid.getRowCount() - 1)) {
+					if (copyInstruments.size()>0 && copyControls.size()>0) {
+						for (String instrument: copyInstruments) {
+							List<Control> removeControls = workingPattern.getInstrumentControls(instrument);
+							for (Control ctrl: removeControls) {
+								workingPattern.getControls().remove(ctrl);
+								changed = true;
+							}
+						}
+						for (Control ctrl: copyControls) {
+							workingPattern.getControls().add(ctrl.copy());
+							changed = true;
+						}
+					}
 				} else {
-					row = (notesGrid.getRowCount() - 1);
+					if ((rowTo + 1) < notesGrid.getRowCount()) {
+						row = (rowTo + 1);
+					} else {
+						row = (notesGrid.getRowCount() - 1);
+					}
+					notesGrid.clearSelection();
+					selectAndShow(notesGrid,row,row,col,col,true);
 				}
-				notesGrid.clearSelection();
-				selectAndShow(notesGrid,row,row,col,col,true);
 				if (changed) {
 					changedPattern();
 				}
@@ -504,6 +532,18 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		}
 	}
 
+	protected void toggelSelectedNotesAccent() {
+		boolean changed = false;
+		List<Note> sns = getSelectedNotes();
+		for (Note sn: sns) {
+			sn.accent=!sn.accent;
+			changed = true;
+		}
+		if (changed) {
+			changedPattern();
+		}
+	}
+	
 	protected void setSelectedNotesInstrument(int index) {
 		List<Note> sns = getSelectedNotes();
 		for (Note sn: sns) {
@@ -558,10 +598,21 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 
 	protected void removeSelectedControls() {
 		List<Control> scs = getSelectedControls();
+		boolean changed = scs.size()>0; 
 		for (Control c: scs) {
 			workingPattern.getControls().remove(c);
 		}
-		if (scs.size()>0) {
+		if (insertMode.isSelected()) {
+			int[] rows = controlsGrid.getSelectedRows();
+			int[] cols = controlsGrid.getSelectedColumns();
+			if (rows.length>0 && cols.length>0) {
+				int mod = ((rows[(rows.length - 1)] - rows[0]) + 1) * -1;
+				if (moveControls(cols[0],cols[(cols.length - 1)],rows[0],mod)) {
+					changed = true;
+				}
+			}
+		}
+		if (changed) {
 			changedPattern();
 		}
 	}
@@ -644,6 +695,10 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 				int mod = 1;
 				if (getCurrentGrid()==notesGrid) {
 					if (moveNotes(cols[0],cols[(cols.length - 1)],rows[0],mod)) {
+						changed = true;
+					}
+				} else if (getCurrentGrid()==controlsGrid) {
+					if (moveControls(cols[0],cols[(cols.length - 1)],rows[0],mod)) {
 						changed = true;
 					}
 				}
@@ -824,7 +879,33 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		}
 		return changed;
 	}
-	
+
+	protected boolean moveControls(int colFrom,int colTo,int row,int mod) {
+		boolean changed = false;
+		if (mod!=0 && workingPattern!=null) {
+			List<Control> ctrls = new ArrayList<Control>();
+			for (int col = colFrom; col<=colTo; col++) {
+				String instrument = Instrument.INSTRUMENTS[col];
+				List<Control> list = workingPattern.getInstrumentControls(instrument,getSelectedControl(),(row+1),controlsGrid.getRowCount());
+				for (Control c: list) {
+					ctrls.add(c);
+				}
+			}
+			for (Control c: ctrls) {
+				if (mod>0) {
+					c.step = c.step + mod;
+				} else if (mod<0) {
+					c.step = c.step - (mod * -1);
+				}
+				if (c.step<1 || c.step>notesGrid.getRowCount()) {
+					workingPattern.getNotes().remove(c);
+				}
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
 	protected void changedPattern() {
 		refreshGridData(0,(getCurrentGrid().getRowCount() - 1));
 		if (workingPattern!=null) {

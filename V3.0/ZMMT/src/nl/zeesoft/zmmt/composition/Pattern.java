@@ -148,15 +148,16 @@ public class Pattern {
 		}
 		return r;
 	}
-	
-	public List<Control> getInstrumentControls(String instrument,int control) {
-		return getInstrumentControls(instrument,control,0,0);
+
+	public List<Control> getInstrumentControls(String instrument) {
+		return getInstrumentControls(instrument,-1,0,0);
 	}
 	
 	public List<Control> getInstrumentControls(String instrument,int control, int stepFrom, int stepTo) {
 		List<Control> r = new ArrayList<Control>();
 		for (Control c: controls) {
-			if (c.instrument.equals(instrument) && c.control==control &&
+			if (c.instrument.equals(instrument) && 
+				(control==-1 || c.control==control) &&
 				((stepFrom==0 && stepTo==0) || (c.step>=stepFrom && c.step<=stepTo))
 				) {
 				int addIndex = 0;
@@ -168,9 +169,6 @@ public class Pattern {
 					i++;
 				}
 				r.add(addIndex,c);
-				if (stepFrom==0 && stepTo==0) {
-					break;
-				}
 			}
 		}
 		return r;
