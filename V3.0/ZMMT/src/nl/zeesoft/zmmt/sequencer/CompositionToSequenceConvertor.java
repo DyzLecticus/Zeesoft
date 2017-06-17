@@ -337,9 +337,10 @@ public class CompositionToSequenceConvertor {
 					}
 					if (!muted) {
 						List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(n.instrument,n.note,n.accent,1);
+						int noteLayerNum = 0;
 						for (MidiNote mn: midiNotes) {
 							if (externalize) {
-								externalizeMidiNote(n,mn);
+								externalizeMidiNote(n,noteLayerNum,mn);
 							}
 							if (mn.midiNote>=0) {
 								SeqNote sn = new SeqNote();
@@ -375,6 +376,7 @@ public class CompositionToSequenceConvertor {
 								r.add(sn);
 								channelHasNotes[sn.channel] = true;
 							}
+							noteLayerNum++;
 						}
 					}
 				}
@@ -676,14 +678,19 @@ public class CompositionToSequenceConvertor {
 
 	/**
 	 * Used to externalize MIDI notes.
-	 * Set the midiNote to -1 to disable the MidiNote from beeing included in the sequence.
+	 * Set the midiNote.midiNote to -1 to exclude the note from the sequence.
 	 * 
 	 * @param note The pattern note
+	 * @param noteLayerNum For non MidiNoteDelayed objects, this will correspond with the technical origin layer number (0 - 1)
 	 * @param midiNote The MIDI note corresponding to the pattern
 	 */
-	protected void externalizeMidiNote(Note note,MidiNote midiNote) {
+	protected void externalizeMidiNote(Note note,int noteLayerNum,MidiNote midiNote) {
 		if (note.instrument.equals(Instrument.DRUMS)) {
-			midiNote.midiNote = getExternalDrumMidiNoteForNote(note.note);
+			if (noteLayerNum==0) {
+				midiNote.midiNote = getExternalDrumMidiNoteForNote(note.note);
+			} else {
+				midiNote.midiNote = -1;
+			}
 		}
 	}
 	
