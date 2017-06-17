@@ -1,6 +1,8 @@
 package nl.zeesoft.zmmt.synthesizer;
 
 public class DrumConfiguration extends BaseConfiguration {
+	private boolean	muted					= false;
+
 	private	int		layer1MidiNote			= 35;
 	private int 	layer1BaseVelocity		= 100;
 	private	int		layer1AccentVelocity	= 110;
@@ -13,6 +15,8 @@ public class DrumConfiguration extends BaseConfiguration {
 		DrumConfiguration r = new DrumConfiguration();
 		r.setName(getName());
 
+		r.setMuted(muted);
+		
 		r.setLayer1MidiNote(layer1MidiNote);
 		r.setLayer1BaseVelocity(layer1BaseVelocity);
 		r.setLayer1AccentVelocity(layer1AccentVelocity);
@@ -22,6 +26,14 @@ public class DrumConfiguration extends BaseConfiguration {
 		r.setLayer2AccentVelocity(layer2AccentVelocity);
 
 		return r;
+	}
+
+	public boolean isMuted() {
+		return muted;
+	}
+
+	public void setMuted(boolean muted) {
+		this.muted = muted;
 	}
 
 	public int getLayer1MidiNote() {

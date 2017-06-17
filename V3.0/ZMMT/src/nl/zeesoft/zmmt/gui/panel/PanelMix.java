@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -20,12 +22,17 @@ import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
+import nl.zeesoft.zmmt.synthesizer.Drum;
+import nl.zeesoft.zmmt.synthesizer.DrumConfiguration;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class PanelMix extends PanelObject implements StateChangeSubscriber, CompositionChangePublisher {
 	private	static final String			TOGGLE_MUTE					= "TOGGLE_MUTE";
+
+	private	static final String			TOGGLE_DRUM_MUTE			= "TOGGLE_DRUM_MUTE";
+	private	static final String[]		DRUM_SHORTS					= {"KCK","SNR","HHS","CLP","TMS","RD","CMB","FX"};
 	
 	private	JButton						solo						= null;
 	private	JButton						unmute						= null;
@@ -35,10 +42,12 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	private JSlider[]					volumeSlider				= new JSlider[Instrument.INSTRUMENTS.length];
 	private JLabel[]					panLabel					= new JLabel[Instrument.INSTRUMENTS.length];
 	private JSlider[]					panSlider					= new JSlider[Instrument.INSTRUMENTS.length];
+
+	private JButton[]					muteDrumButton				= new JButton[DRUM_SHORTS.length];
 	
 	private SynthesizerConfiguration	synthConfigCopy				= null;
 	private String						selectedInstrument			= "";
-
+	
 	// TODO: Animated LED volume strips
 	
 	public PanelMix(Controller controller) {
@@ -59,6 +68,9 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 
 		row++;
 		addComponent(getPanel(), row, 0.01,getMixPanel());
+
+		row++;
+		addComponent(getPanel(), row, 0.01,getDrumPanel(),false);
 
 		row++;
 		addFiller(getPanel(),row);
@@ -83,12 +95,17 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 
 	@Override
 	public void setChangesInComposition(Composition composition) {
+		for (int d = 0; d < Drum.DRUMS.length; d++) {
+			DrumConfiguration drum = composition.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
+			DrumConfiguration copy = synthConfigCopy.getDrum(Drum.DRUMS[d]);
+			drum.setMuted(copy.isMuted());
+		}
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
 			InstrumentConfiguration copy = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
 			inst.setMuted(copy.isMuted());
-			inst.setVolume(copy.getVolume());
-			inst.setPan(copy.getPan());
+			inst.setVolume(volumeSlider[i].getValue());
+			inst.setPan(panSlider[i].getValue());
 		}
 	}
 	
@@ -96,33 +113,89 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	public void actionPerformed(ActionEvent evt) {
 		super.actionPerformed(evt);
 		if (evt.getActionCommand().equals(FrameMain.SOLO)) {
+			boolean changed = false;
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
 				if (Instrument.INSTRUMENTS[i].equals(selectedInstrument)) {
-					inst.setMuted(false);
+					if (inst.isMuted()) {
+						inst.setMuted(false);
+						changed = true;
+					}
 				} else {
-					inst.setMuted(true);
+					if (!inst.isMuted()) {
+						inst.setMuted(true);
+						changed = true;
+					}
 				}
 			}
-			updatedMuteState();
-			getController().getStateManager().addWaitingPublisher(this);
+			if (changed) {
+				getController().getStateManager().addWaitingPublisher(this);
+				updatedMuteState();
+			}
 		} else if (evt.getActionCommand().equals(FrameMain.UNMUTE)) {
+			boolean changed = false;
+			for (int d = 0; d < Drum.DRUMS.length; d++) {
+				DrumConfiguration drum = synthConfigCopy.getDrum(Drum.DRUMS[d]);
+				if (drum.isMuted()) {
+					drum.setMuted(false);
+					changed = true;
+				}
+			}
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
-				inst.setMuted(false);
+				if (inst.isMuted()) {
+					inst.setMuted(false);
+					changed = true;
+				}
 			}
-			updatedMuteState();
-			getController().getStateManager().addWaitingPublisher(this);
+			if (changed) {
+				getController().getStateManager().addWaitingPublisher(this);
+				updatedDrumMuteState();
+				updatedMuteState();
+			}
 		} else if (evt.getActionCommand().equals(TOGGLE_MUTE)) {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				if (evt.getSource()==muteButton[i]) {
 					InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
 					inst.setMuted(!inst.isMuted());
-					getController().getStateManager().addWaitingPublisher(this);
 					break;
 				}
 			}
+			getController().getStateManager().addWaitingPublisher(this);
 			updatedMuteState();
+		} else if (evt.getActionCommand().equals(TOGGLE_DRUM_MUTE)) {
+			for (int d = 0; d < DRUM_SHORTS.length; d++) {
+				if (evt.getSource()==muteDrumButton[d]) {
+					List<DrumConfiguration> drums = new ArrayList<DrumConfiguration>();
+					if (d==0) {
+						drums.add(synthConfigCopy.getDrum(Drum.KICK));
+					} else if (d==1) {
+						drums.add(synthConfigCopy.getDrum(Drum.SNARE));
+					} else if (d==2) {
+						drums.add(synthConfigCopy.getDrum(Drum.HIHAT1));
+						drums.add(synthConfigCopy.getDrum(Drum.HIHAT2));
+					} else if (d==3) {
+						drums.add(synthConfigCopy.getDrum(Drum.CLAP));
+					} else if (d==4) {
+						drums.add(synthConfigCopy.getDrum(Drum.TOM1));
+						drums.add(synthConfigCopy.getDrum(Drum.TOM2));
+					} else if (d==5) {
+						drums.add(synthConfigCopy.getDrum(Drum.RIDE));
+					} else if (d==6) {
+						drums.add(synthConfigCopy.getDrum(Drum.CYMBAL));
+					} else if (d==7) {
+						drums.add(synthConfigCopy.getDrum(Drum.FX1));
+						drums.add(synthConfigCopy.getDrum(Drum.FX2));
+						drums.add(synthConfigCopy.getDrum(Drum.FX3));
+					}
+					for (DrumConfiguration drum: drums) {
+						drum.setMuted(!drum.isMuted());
+					}
+					break;
+				}
+			}
+			getController().getStateManager().addWaitingPublisher(this);
+			updatedDrumMuteState();
 		}
 	}
 
@@ -226,6 +299,47 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		return r;
 	}
 	
+	protected JPanel getDrumPanel() {
+		JPanel r = new JPanel();
+		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
+		r.setBorder(BorderFactory.createTitledBorder(Instrument.DRUMS));
+		
+		Color col = Instrument.getColorForInstrument(Instrument.DRUMS);
+		
+		for (int d = 0; d < DRUM_SHORTS.length; d++) {
+			JLabel label = new JLabel(DRUM_SHORTS[d]);
+			label.setOpaque(true);
+			label.setBackground(col);
+			label.setBorder(BorderFactory.createLineBorder(col,2,true));
+			label.setFocusable(false);
+			
+			muteDrumButton[d] = new JButton(" M ");
+			muteDrumButton[d].setOpaque(true);
+			muteDrumButton[d].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,2));
+			muteDrumButton[d].addFocusListener(this);
+			muteDrumButton[d].addKeyListener(getController().getPlayerKeyListener());
+			muteDrumButton[d].setActionCommand(TOGGLE_DRUM_MUTE);
+			muteDrumButton[d].addActionListener(this);
+
+			label.setAlignmentX(Component.CENTER_ALIGNMENT);
+			muteDrumButton[d].setAlignmentX(Component.CENTER_ALIGNMENT);
+
+			JPanel column = new JPanel();
+			column.setLayout(new BoxLayout(column,BoxLayout.Y_AXIS));
+			
+			column.add(label);
+			column.add(Box.createRigidArea(new Dimension(0,5)));
+			column.add(muteDrumButton[d]);
+			
+			if (d>0) {
+				r.add(Box.createRigidArea(new Dimension(5,0)));
+			}
+			r.add(column);
+		}
+		
+		return r;
+	}
+
 	protected void updatedSynthConfig() {
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
@@ -241,6 +355,7 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		}
 		updatedMuteState();
 		updateLabels();
+		updatedDrumMuteState();
 	}
 	
 	protected void updatedMuteState() {
@@ -254,6 +369,41 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		}
 	}
 
+	protected void updatedDrumMuteState() {
+		for (int d = 0; d < DRUM_SHORTS.length; d++) {
+			List<DrumConfiguration> drums = new ArrayList<DrumConfiguration>();
+			if (d==0) {
+				drums.add(synthConfigCopy.getDrum(Drum.KICK));
+			} else if (d==1) {
+				drums.add(synthConfigCopy.getDrum(Drum.SNARE));
+			} else if (d==2) {
+				drums.add(synthConfigCopy.getDrum(Drum.HIHAT1));
+				drums.add(synthConfigCopy.getDrum(Drum.HIHAT2));
+			} else if (d==3) {
+				drums.add(synthConfigCopy.getDrum(Drum.CLAP));
+			} else if (d==4) {
+				drums.add(synthConfigCopy.getDrum(Drum.TOM1));
+				drums.add(synthConfigCopy.getDrum(Drum.TOM2));
+			} else if (d==5) {
+				drums.add(synthConfigCopy.getDrum(Drum.RIDE));
+			} else if (d==6) {
+				drums.add(synthConfigCopy.getDrum(Drum.CYMBAL));
+			} else if (d==7) {
+				drums.add(synthConfigCopy.getDrum(Drum.FX1));
+				drums.add(synthConfigCopy.getDrum(Drum.FX2));
+				drums.add(synthConfigCopy.getDrum(Drum.FX3));
+			}
+			for (DrumConfiguration drum: drums) {
+				if (drum.isMuted()) {
+					muteDrumButton[d].setBorder(BorderFactory.createLineBorder(Color.RED,2));
+					break;
+				} else {
+					muteDrumButton[d].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,2));
+				}
+			}
+		}
+	}
+	
 	protected void updateLabels() {
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			volumeLabel[i].setText("" + volumeSlider[i].getValue());

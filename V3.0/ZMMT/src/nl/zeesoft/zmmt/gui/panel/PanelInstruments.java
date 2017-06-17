@@ -579,7 +579,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				drumLayer2AccentVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Accent velocity",0,127,110);
 
 				row++;
-				addComponent(panel,row,0.01,drumPanel);
+				addComponent(panel,row,0.01,drumPanel,false);
 			}
 		}
 		

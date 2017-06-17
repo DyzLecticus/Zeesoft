@@ -17,6 +17,8 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Control;
 import nl.zeesoft.zmmt.composition.Note;
 import nl.zeesoft.zmmt.composition.Pattern;
+import nl.zeesoft.zmmt.synthesizer.Drum;
+import nl.zeesoft.zmmt.synthesizer.DrumConfiguration;
 import nl.zeesoft.zmmt.synthesizer.EchoConfiguration;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
@@ -323,44 +325,56 @@ public class CompositionToSequenceConvertor {
 				if (n.step<=patternSteps && !instruments.get(n.instrument).isMuted() &&
 					(!n.instrument.equals(Instrument.ECHO) || echo.getInstrument().length()==0)	
 					) {
-					List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(n.instrument,n.note,n.accent,1);
-					for (MidiNote mn: midiNotes) {
-						if (externalize) {
-							externalizeMidiNote(n,mn);
+					boolean muted = false;
+					if (n.instrument.equals(Instrument.DRUMS)) {
+						String name = Drum.getDrumNameForNote(n.note);
+						if (name.length()>0) {
+							DrumConfiguration drum = composition.getSynthesizerConfiguration().getDrum(name);
+							if (drum!=null) {
+								muted = drum.isMuted();
+							}
 						}
-						if (mn.midiNote>=0) {
-							SeqNote sn = new SeqNote();
-							sn.instrument = mn.instrument;
-							sn.midiNote = mn.midiNote;
-							sn.channel = mn.channel;
-							sn.velocity = (mn.velocity * n.velocityPercentage) / 100;
-							int tick = startTick + ((n.step - 1) * ticksPerStep);
-							int tickEnd = tick + ((n.duration * ticksPerStep) - 1);
-							if (mn instanceof MidiNoteDelayed) {
-								MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
-								tick = tick + (mnd.delaySteps * ticksPerStep);
-								tickEnd = tickEnd + (mnd.delaySteps * ticksPerStep);
-							} else if (tickEnd>=nextPatternStartTick) {
-								tickEnd = nextPatternStartTick - 1;
+					}
+					if (!muted) {
+						List<MidiNote> midiNotes = composition.getSynthesizerConfiguration().getMidiNotesForNote(n.instrument,n.note,n.accent,1);
+						for (MidiNote mn: midiNotes) {
+							if (externalize) {
+								externalizeMidiNote(n,mn);
 							}
-							if (instruments.get(sn.instrument).getHoldPercentage()<100) {
-								int hold = (ticksPerStep * instruments.get(sn.instrument).getHoldPercentage()) / 100;
-								int subtract = (ticksPerStep - hold);
-								tickEnd = (tickEnd - subtract);
-								if (tickEnd<=tick) {
-									tickEnd = tick + 1;
+							if (mn.midiNote>=0) {
+								SeqNote sn = new SeqNote();
+								sn.instrument = mn.instrument;
+								sn.midiNote = mn.midiNote;
+								sn.channel = mn.channel;
+								sn.velocity = (mn.velocity * n.velocityPercentage) / 100;
+								int tick = startTick + ((n.step - 1) * ticksPerStep);
+								int tickEnd = tick + ((n.duration * ticksPerStep) - 1);
+								if (mn instanceof MidiNoteDelayed) {
+									MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
+									tick = tick + (mnd.delaySteps * ticksPerStep);
+									tickEnd = tickEnd + (mnd.delaySteps * ticksPerStep);
+								} else if (tickEnd>=nextPatternStartTick) {
+									tickEnd = nextPatternStartTick - 1;
 								}
+								if (instruments.get(sn.instrument).getHoldPercentage()<100) {
+									int hold = (ticksPerStep * instruments.get(sn.instrument).getHoldPercentage()) / 100;
+									int subtract = (ticksPerStep - hold);
+									tickEnd = (tickEnd - subtract);
+									if (tickEnd<=tick) {
+										tickEnd = tick + 1;
+									}
+								}
+								if (tick>sequenceEndTick) {
+									tick = (tick - sequenceEndTick);
+								}
+								if (tickEnd>sequenceEndTick) {
+									tickEnd = (tickEnd - sequenceEndTick);
+								}
+								sn.tickStart = tick;
+								sn.tickEnd = tickEnd;
+								r.add(sn);
+								channelHasNotes[sn.channel] = true;
 							}
-							if (tick>sequenceEndTick) {
-								tick = (tick - sequenceEndTick);
-							}
-							if (tickEnd>sequenceEndTick) {
-								tickEnd = (tickEnd - sequenceEndTick);
-							}
-							sn.tickStart = tick;
-							sn.tickEnd = tickEnd;
-							r.add(sn);
-							channelHasNotes[sn.channel] = true;
 						}
 					}
 				}
@@ -675,29 +689,30 @@ public class CompositionToSequenceConvertor {
 	
 	protected int getExternalDrumMidiNoteForNote(int patternNote) {
 		int r = 36;
-		if (patternNote==36) {
+		String name = Drum.getDrumNameForNote(patternNote);
+		if (name.equals(Drum.KICK)) {
 			r = 36;
-		} else if (patternNote==37) {
-			r = 39; 
-		} else if (patternNote==38) {
+		} else if (name.equals(Drum.SNARE)) {
 			r = 40; 
-		} else if (patternNote==39) {
+		} else if (name.equals(Drum.HIHAT1)) {
 			r = 42;
-		} else if (patternNote==40) {
+		} else if (name.equals(Drum.HIHAT2)) {
 			r = 46; 
-		} else if (patternNote==41) {
+		} else if (name.equals(Drum.CLAP)) {
+			r = 39; 
+		} else if (name.equals(Drum.TOM1)) {
 			r = 41; 
-		} else if (patternNote==42) {
+		} else if (name.equals(Drum.TOM2)) {
 			r = 43; 
-		} else if (patternNote==43) {
+		} else if (name.equals(Drum.RIDE)) {
 			r = 51; 
-		} else if (patternNote==44) {
+		} else if (name.equals(Drum.CYMBAL)) {
 			r = 49; 
-		} else if (patternNote==45) {
+		} else if (name.equals(Drum.FX1)) {
 			r = 76; 
-		} else if (patternNote==46) {
+		} else if (name.equals(Drum.FX2)) {
 			r = 80; 
-		} else if (patternNote==47) {
+		} else if (name.equals(Drum.FX3)) {
 			r = 56; 
 		}
 		return r;

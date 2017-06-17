@@ -95,6 +95,7 @@ public class SynthesizerConfiguration {
 			JsElem drumElem = new JsElem("drum");
 			json.rootElement.children.add(drumElem);
 			drumElem.children.add(new JsElem("name",drum.getName(),true));
+			drumElem.children.add(new JsElem("muted","" + drum.isMuted()));
 			drumElem.children.add(new JsElem("l1MidiNote","" + drum.getLayer1MidiNote()));
 			drumElem.children.add(new JsElem("l1BaseVelocity","" + drum.getLayer1BaseVelocity()));
 			drumElem.children.add(new JsElem("l1AccentVelocity","" + drum.getLayer1AccentVelocity()));
@@ -221,6 +222,8 @@ public class SynthesizerConfiguration {
 					for (JsElem val: elem.children) {
 						if (val.name.equals("name")) {
 							drum.setName(val.value.toString());
+						} else if (val.name.equals("muted")) {
+							drum.setMuted(Boolean.parseBoolean(val.value.toString()));
 						} else if (val.name.equals("l1MidiNote")) {
 							drum.setLayer1MidiNote(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("l1BaseVelocity")) {
@@ -522,30 +525,9 @@ public class SynthesizerConfiguration {
 		InstrumentConfiguration inst = getInstrument(instrument);
 		if (instrument.equals(Instrument.DRUMS)) {
 			DrumConfiguration drum = null;
-			if (note==36) {
-				drum = getDrum(Drum.KICK);
-			} else if (note==37) {
-				drum = getDrum(Drum.CLAP);
-			} else if (note==38) {
-				drum = getDrum(Drum.SNARE);
-			} else if (note==39) {
-				drum = getDrum(Drum.HIHAT1);
-			} else if (note==40) {
-				drum = getDrum(Drum.HIHAT2);
-			} else if (note==41) {
-				drum = getDrum(Drum.TOM1);
-			} else if (note==42) {
-				drum = getDrum(Drum.TOM2);
-			} else if (note==43) {
-				drum = getDrum(Drum.RIDE);
-			} else if (note==44) {
-				drum = getDrum(Drum.CYMBAL);
-			} else if (note==45) {
-				drum = getDrum(Drum.FX1);
-			} else if (note==46) {
-				drum = getDrum(Drum.FX2);
-			} else if (note==47) {
-				drum = getDrum(Drum.FX3);
+			String name = Drum.getDrumNameForNote(note);
+			if (name.length()>0) {
+				drum = getDrum(name);
 			}
 			if (drum!=null) {
 				if (layer) { 
@@ -573,30 +555,9 @@ public class SynthesizerConfiguration {
 		InstrumentConfiguration inst = getInstrument(instrument);
 		if (instrument.equals(Instrument.DRUMS)) {
 			DrumConfiguration drum = null;
-			if (note==36) {
-				drum = getDrum(Drum.KICK);
-			} else if (note==37) {
-				drum = getDrum(Drum.CLAP);
-			} else if (note==38) {
-				drum = getDrum(Drum.SNARE);
-			} else if (note==39) {
-				drum = getDrum(Drum.HIHAT1);
-			} else if (note==40) {
-				drum = getDrum(Drum.HIHAT2);
-			} else if (note==41) {
-				drum = getDrum(Drum.TOM1);
-			} else if (note==42) {
-				drum = getDrum(Drum.TOM2);
-			} else if (note==43) {
-				drum = getDrum(Drum.RIDE);
-			} else if (note==44) {
-				drum = getDrum(Drum.CYMBAL);
-			} else if (note==45) {
-				drum = getDrum(Drum.FX1);
-			} else if (note==46) {
-				drum = getDrum(Drum.FX2);
-			} else if (note==47) {
-				drum = getDrum(Drum.FX3);
+			String name = Drum.getDrumNameForNote(note);
+			if (name.length()>0) {
+				drum = getDrum(name);
 			}
 			if (drum!=null) {
 				if (layer) {
@@ -724,10 +685,6 @@ public class SynthesizerConfiguration {
 			drum.setLayer1MidiNote(35);
 			drum.setLayer1BaseVelocity(120);
 			drum.setLayer1AccentVelocity(127);
-		} else if (drum.getName().equals(Drum.CLAP)) {
-			drum.setLayer1MidiNote(74);
-			drum.setLayer1BaseVelocity(60);
-			drum.setLayer1AccentVelocity(70);
 		} else if (drum.getName().equals(Drum.SNARE)) {
 			drum.setLayer1MidiNote(50);
 			drum.setLayer1BaseVelocity(100);
@@ -740,6 +697,10 @@ public class SynthesizerConfiguration {
 			drum.setLayer1MidiNote(45);
 			drum.setLayer1BaseVelocity(80);
 			drum.setLayer1AccentVelocity(90);
+		} else if (drum.getName().equals(Drum.CLAP)) {
+			drum.setLayer1MidiNote(74);
+			drum.setLayer1BaseVelocity(60);
+			drum.setLayer1AccentVelocity(70);
 		} else if (drum.getName().equals(Drum.TOM1)) {
 			drum.setLayer1MidiNote(55);
 		} else if (drum.getName().equals(Drum.TOM2)) {
