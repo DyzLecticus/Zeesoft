@@ -153,21 +153,17 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 			workingPattern = null;
 			selectedPattern = evt.getSelectedPattern();
 			pattern.setSelectedIndex(selectedPattern);
+			notesGridController.setLayout(
+				compositionCopy.getBarsPerPattern(),
+				compositionCopy.getBeatsPerBar(),
+				compositionCopy.getStepsPerBeat()
+				);
+			controlsGridController.setLayout(
+				compositionCopy.getBarsPerPattern(),
+				compositionCopy.getBeatsPerBar(),
+				compositionCopy.getStepsPerBeat()
+				);
 			updateWorkingPattern();
-			if (notesGridController.setLayout(
-				compositionCopy.getBarsPerPattern(),
-				compositionCopy.getBeatsPerBar(),
-				compositionCopy.getStepsPerBeat()
-				)) {
-				notesGridController.fireTableStructureChanged();
-			}
-			if (controlsGridController.setLayout(
-				compositionCopy.getBarsPerPattern(),
-				compositionCopy.getBeatsPerBar(),
-				compositionCopy.getStepsPerBeat()
-				)) {
-				controlsGridController.fireTableStructureChanged();
-			}
 		}
 		setValidate(true);
 	}
