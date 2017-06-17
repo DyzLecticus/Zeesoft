@@ -60,7 +60,7 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		useDrumKit = addLabelCheckBoxToPanel(getPanel(),row,"Use internal drum kit");
 		useDrumKit.addActionListener(this);
 		row++;
-		useSynthesizers = addLabelCheckBoxToPanel(getPanel(),row,"Use internal drum synthesizers");
+		useSynthesizers = addLabelCheckBoxToPanel(getPanel(),row,"Use internal synthesizers");
 		useSynthesizers.addActionListener(this);
 		
 		row++;
