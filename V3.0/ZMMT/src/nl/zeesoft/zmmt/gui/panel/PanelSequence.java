@@ -38,6 +38,8 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 	private int[]					selectedRows				= null;
 	private int[]					selectedCols				= null;
 
+	private boolean					clearedPlayingIndex			= false;
+
 	public PanelSequence(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
@@ -85,8 +87,14 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 			if (txt.startsWith(CompositionToSequenceConvertor.SEQUENCE_MARKER)) {
 				String[] d = txt.split(":");
 				int index = Integer.parseInt(d[1]);
-				if (index<grid.getRowCount()) {
-					gridController.setPlayingIndex(index);
+				gridController.setPlayingIndex(index);
+				if (index<0) {
+					if (!clearedPlayingIndex) {
+						grid.repaint();
+						clearedPlayingIndex = true;
+					}
+				} else if (index<grid.getRowCount()) {
+					clearedPlayingIndex = false;
 					if (index>0) {
 						grid.repaintBar((index - 1),index);
 					} else {
@@ -106,6 +114,7 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 	public void stopped() {
 		gridController.setPlayingIndex(-1);
 		grid.repaint();
+		clearedPlayingIndex = true;
 	}
 
 	@Override

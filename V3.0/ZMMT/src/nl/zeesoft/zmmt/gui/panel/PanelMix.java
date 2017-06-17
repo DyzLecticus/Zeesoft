@@ -7,12 +7,12 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JToggleButton;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
@@ -25,10 +25,12 @@ import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class PanelMix extends PanelObject implements StateChangeSubscriber, CompositionChangePublisher {
+	private	static final String			TOGGLE_MUTE					= "TOGGLE_MUTE";
+	
 	private	JButton						solo						= null;
 	private	JButton						unmute						= null;
 	
-	private JToggleButton[]				muteButton					= new JToggleButton[Instrument.INSTRUMENTS.length];
+	private JButton[]					muteButton					= new JButton[Instrument.INSTRUMENTS.length];
 	private JLabel[]					volumeLabel					= new JLabel[Instrument.INSTRUMENTS.length];
 	private JSlider[]					volumeSlider				= new JSlider[Instrument.INSTRUMENTS.length];
 	private JLabel[]					panLabel					= new JLabel[Instrument.INSTRUMENTS.length];
@@ -83,9 +85,10 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	public void setChangesInComposition(Composition composition) {
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-			inst.setMuted(muteButton[i].isSelected());
-			inst.setVolume(volumeSlider[i].getValue());
-			inst.setPan(panSlider[i].getValue());
+			InstrumentConfiguration copy = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
+			inst.setMuted(copy.isMuted());
+			inst.setVolume(copy.getVolume());
+			inst.setPan(copy.getPan());
 		}
 	}
 	
@@ -101,43 +104,25 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 					inst.setMuted(true);
 				}
 			}
-			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-				if (Instrument.INSTRUMENTS[i].equals(selectedInstrument)) {
-					if (muteButton[i].isSelected()) {
-						muteButton[i].doClick();
-					}
-				} else {
-					if (!muteButton[i].isSelected()) {
-						muteButton[i].doClick();
-					}
-				}
-			}
+			updatedMuteState();
 			getController().getStateManager().addWaitingPublisher(this);
 		} else if (evt.getActionCommand().equals(FrameMain.UNMUTE)) {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
 				inst.setMuted(false);
 			}
-			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-				if (muteButton[i].isSelected()) {
-					muteButton[i].doClick();
-				}
-			}
+			updatedMuteState();
 			getController().getStateManager().addWaitingPublisher(this);
-		} else {
+		} else if (evt.getActionCommand().equals(TOGGLE_MUTE)) {
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				if (evt.getSource()==muteButton[i]) {
-					if (!muteButton[i].isOpaque()==muteButton[i].isSelected()) {
-						muteButton[i].setOpaque(muteButton[i].isSelected());
-					}
 					InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
-					if (muteButton[i].isSelected()!=inst.isMuted()) {
-						inst.setMuted(muteButton[i].isSelected());
-						getController().getStateManager().addWaitingPublisher(this);
-					}
+					inst.setMuted(!inst.isMuted());
+					getController().getStateManager().addWaitingPublisher(this);
 					break;
 				}
 			}
+			updatedMuteState();
 		}
 	}
 
@@ -188,19 +173,17 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		label.setBackground(col);
 		label.setBorder(BorderFactory.createLineBorder(col,2,true));
 		label.setFocusable(false);
-		muteButton[i] = new JToggleButton("M");
-		muteButton[i].addActionListener(this);
-		muteButton[i].setBackground(Color.RED);
+		muteButton[i] = new JButton(" M ");
+		muteButton[i].setOpaque(true);
+		muteButton[i].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,2));
 		volumeLabel[i] = new JLabel();
 		volumeLabel[i].setFocusable(false);
 		volumeSlider[i] = new JSlider(JSlider.VERTICAL,0,127,110);
-		volumeSlider[i].addChangeListener(this);
 		panLabel[i] = new JLabel();
 		panLabel[i].setFocusable(false);
 		panSlider[i] = new JSlider(JSlider.HORIZONTAL,0,127,64);
 		panSlider[i].setPreferredSize(new Dimension(50,50));
 		panSlider[i].setMaximumSize(new Dimension(50,50));
-		panSlider[i].addChangeListener(this);
 
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		muteButton[i].setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -222,12 +205,22 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		addControlPageUpDownOverridesToComponent(volumeSlider[i]);
 		addControlPageUpDownOverridesToComponent(panLabel[i]);
 		addControlPageUpDownOverridesToComponent(panSlider[i]);
+		
+		muteButton[i].setActionCommand(TOGGLE_MUTE);
+		muteButton[i].addActionListener(this);
+		volumeSlider[i].addChangeListener(this);
+		panSlider[i].addChangeListener(this);
 
 		r.add(label);
+		r.add(Box.createRigidArea(new Dimension(0,5)));
 		r.add(muteButton[i]);
+		r.add(Box.createRigidArea(new Dimension(0,5)));
 		r.add(volumeLabel[i]);
+		r.add(Box.createRigidArea(new Dimension(0,5)));
 		r.add(volumeSlider[i]);
+		r.add(Box.createRigidArea(new Dimension(0,5)));
 		r.add(panLabel[i]);
+		r.add(Box.createRigidArea(new Dimension(0,5)));
 		r.add(panSlider[i]);
 		
 		return r;
@@ -236,9 +229,6 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	protected void updatedSynthConfig() {
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
-			if (inst.isMuted()!=muteButton[i].isSelected()) {
-				muteButton[i].doClick();
-			}
 			volumeSlider[i].setValue(inst.getVolume());
 			panSlider[i].setValue(inst.getPan());
 			boolean enabled = true;
@@ -249,9 +239,21 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 			volumeSlider[i].setEnabled(enabled);
 			panSlider[i].setEnabled(enabled);
 		}
+		updatedMuteState();
 		updateLabels();
 	}
 	
+	protected void updatedMuteState() {
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
+			if (inst.isMuted()) {
+				muteButton[i].setBorder(BorderFactory.createLineBorder(Color.RED,2));
+			} else {
+				muteButton[i].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,2));
+			}
+		}
+	}
+
 	protected void updateLabels() {
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			volumeLabel[i].setText("" + volumeSlider[i].getValue());

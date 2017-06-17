@@ -259,17 +259,17 @@ public class CompositionToSequenceConvertor {
 	}
 	
 	protected void addMarkers(int startTick, boolean addSequence) {
-		int elem = 0;
-		int ticksPerStep = composition.getTicksPerStep();
-		int tick = startTick;
 		if (patterns.size()==0) {
 			String seq = SEQUENCE_MARKER + "-1";
 			byte[] data = seq.getBytes();
-			createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,0);
+			createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,startTick);
 			String ps = PATTERN_STEP_MARKER + "-1:-1";
 			data = ps.getBytes();
-			createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,0);
+			createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,startTick);
 		} else {
+			int elem = 0;
+			int ticksPerStep = composition.getTicksPerStep();
+			int tick = startTick;
 			for (Pattern p: patterns) {
 				if (addSequence) {
 					String seq = SEQUENCE_MARKER + elem;
@@ -278,6 +278,11 @@ public class CompositionToSequenceConvertor {
 				}
 				int patternSteps = composition.getStepsForPattern(p);
 				for (int s = 1; s<=patternSteps; s++) {
+					if (!addSequence && (s % composition.getStepsPerBeat()) == 1) {
+						String seq = SEQUENCE_MARKER + "-1";
+						byte[] data = seq.getBytes();
+						createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,tick);
+					}
 					String ps = PATTERN_STEP_MARKER + p.getNumber() + ":" + s;
 					byte[] data = ps.getBytes();
 					createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,tick);
