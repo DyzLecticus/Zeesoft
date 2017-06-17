@@ -1,7 +1,6 @@
 package nl.zeesoft.zmmt.gui.panel;
 
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -58,10 +57,8 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		
 		row++;
 		useDrumKit = addLabelCheckBoxToPanel(getPanel(),row,"Use internal drum kit");
-		useDrumKit.addActionListener(this);
 		row++;
 		useSynthesizers = addLabelCheckBoxToPanel(getPanel(),row,"Use internal synthesizers");
-		useSynthesizers.addActionListener(this);
 		
 		row++;
 		addFiller(getPanel(),row);
@@ -80,16 +77,6 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 	@Override
 	public void handleValidChange() {
 		getController().getStateManager().addWaitingPublisher(this);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		super.actionPerformed(evt);
-		if (evt.getSource()==useDrumKit) {
-			handleValidChange();
-		} else if (evt.getSource()==useSynthesizers) {
-			handleValidChange();
-		}
 	}
 	
 	@Override

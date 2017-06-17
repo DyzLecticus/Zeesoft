@@ -19,7 +19,6 @@ import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -40,6 +39,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	private static final String			F8_PRESSED				= "F8_PRESSED";
 	private static final String			CTRL_PG_DN_PRESSED		= "CTRL_PG_DN_PRESSED";
 	private static final String			CTRL_PG_UP_PRESSED		= "CTRL_PG_UP_PRESSED";
+	private static final String			TOGGLE_CHECKBOX			= "TOGGLE_CHECKBOX";
 	
 	private	Controller					controller			= null;
 	
@@ -78,6 +78,8 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 			getController().getStateManager().selectNextPattern(this);
 		} else if (evt.getActionCommand().equals(CTRL_PG_UP_PRESSED)) {
 			getController().getStateManager().selectPreviousPattern(this);
+		} else if (evt.getActionCommand().equals(TOGGLE_CHECKBOX)) {
+			handlePropertyChanged(evt.getSource());
 		}
 	}
 
@@ -179,12 +181,6 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		LabelComboBox ls = new LabelComboBox(new JLabel(),r,subtract);
 		JPanel lsp = ls.getPanel();
 		addLabelProperty(panel,row,label,lsp);
-		return r;
-	}
-
-	protected JRadioButton addLabelRadioButtonToPanel(JPanel panel,int row,String label) {
-		JRadioButton r = getNewRadioButton(label);
-		addProperty(panel,row,r);
 		return r;
 	}
 
@@ -300,20 +296,13 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		return comboBox;
 	}
 	
-	protected JRadioButton getNewRadioButton(String label) {
-		JRadioButton r = new JRadioButton();
-		r.setText(label);
-		r.addFocusListener(this);
-		r.addKeyListener(controller.getPlayerKeyListener());
-		addControlPageUpDownOverridesToComponent(r);
-		return r;
-	}
-	
 	protected JCheckBox getNewCheckBox(String label) {
 		JCheckBox r = new JCheckBox();
 		r.setText(label);
 		r.addFocusListener(this);
 		r.addKeyListener(controller.getPlayerKeyListener());
+		r.addActionListener(this);
+		r.setActionCommand(TOGGLE_CHECKBOX);
 		addControlPageUpDownOverridesToComponent(r);
 		return r;
 	}
