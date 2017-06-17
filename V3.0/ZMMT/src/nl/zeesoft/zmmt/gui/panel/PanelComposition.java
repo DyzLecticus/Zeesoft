@@ -7,7 +7,7 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
+import javax.swing.JSlider;
 
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.gui.Controller;
@@ -19,10 +19,10 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 	private JFormattedTextField		file				= null;
 	private JFormattedTextField		composer			= null;
 	private JFormattedTextField		name				= null;
-	private JSpinner				beatsPerMinute		= null;
-	private JSpinner				beatsPerBar			= null;
-	private JSpinner				stepsPerBeat		= null;
-	private JSpinner				barsPerPattern		= null;
+	private JSlider					beatsPerMinute		= null;
+	private JSlider					beatsPerBar			= null;
+	private JSlider					stepsPerBeat		= null;
+	private JSlider					barsPerPattern		= null;
 	private JCheckBox				useDrumKit			= null;
 	private JCheckBox				useSynthesizers		= null;
 	
@@ -48,13 +48,13 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		row++;
 		name = addLabelTextFieldToPanel(getPanel(),row,"Name");
 		row++;
-		beatsPerMinute = addLabelNumberToPanel(getPanel(),row,"Beats per minute",1,256,128);
+		beatsPerMinute = addLabelSliderToPanel(getPanel(),row,"Beats per minute",1,256,128);
 		row++;
-		beatsPerBar = addLabelNumberToPanel(getPanel(),row,"Beats per bar",1,16,4);
+		beatsPerBar = addLabelSliderToPanel(getPanel(),row,"Beats per bar",1,16,4);
 		row++;
-		stepsPerBeat = addLabelNumberToPanel(getPanel(),row,"Steps per beat",1,16,8);
+		stepsPerBeat = addLabelSliderToPanel(getPanel(),row,"Steps per beat",1,16,8);
 		row++;
-		barsPerPattern = addLabelNumberToPanel(getPanel(),row,"Bars per pattern",1,16,4);
+		barsPerPattern = addLabelSliderToPanel(getPanel(),row,"Bars per pattern",1,16,4);
 		
 		row++;
 		useDrumKit = addLabelCheckBoxToPanel(getPanel(),row,"Use internal drum kit");
@@ -71,7 +71,7 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 	@Override
 	public void requestFocus() {
 		if (name.getValue()!=null && name.getValue().toString().length()>0) {
-			getSliderForNumber(beatsPerMinute).getSlider().requestFocus();
+			beatsPerMinute.requestFocus();
 		} else {
 			name.requestFocus();
 		}
@@ -98,10 +98,10 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			composer.setValue(evt.getComposition().getComposer());
 			name.setValue(evt.getComposition().getName());
-			beatsPerMinute.setValue(String.format("%03d",evt.getComposition().getBeatsPerMinute()));
-			beatsPerBar.setValue(String.format("%03d",evt.getComposition().getBeatsPerBar()));
-			stepsPerBeat.setValue(String.format("%03d",evt.getComposition().getStepsPerBeat()));
-			barsPerPattern.setValue(String.format("%03d",evt.getComposition().getBarsPerPattern()));
+			beatsPerMinute.setValue(evt.getComposition().getBeatsPerMinute());
+			beatsPerBar.setValue(evt.getComposition().getBeatsPerBar());
+			stepsPerBeat.setValue(evt.getComposition().getStepsPerBeat());
+			barsPerPattern.setValue(evt.getComposition().getBarsPerPattern());
 			useDrumKit.setSelected(evt.getComposition().getSynthesizerConfiguration().isUseInternalDrumKit());
 			useSynthesizers.setSelected(evt.getComposition().getSynthesizerConfiguration().isUseInternalSynthesizers());
 		} else if (evt.getType().equals(StateChangeEvent.CHANGED_SETTINGS)) {
@@ -119,10 +119,10 @@ public class PanelComposition extends PanelObject implements CompositionChangePu
 	public void setChangesInComposition(Composition composition) {
 		composition.setComposer(composer.getValue().toString());
 		composition.setName(name.getValue().toString());
-		composition.setBeatsPerMinute(Integer.parseInt(beatsPerMinute.getValue().toString()));
-		composition.setBeatsPerBar(Integer.parseInt(beatsPerBar.getValue().toString()));
-		composition.setStepsPerBeat(Integer.parseInt(stepsPerBeat.getValue().toString()));
-		composition.setBarsPerPattern(Integer.parseInt(barsPerPattern.getValue().toString()));
+		composition.setBeatsPerMinute(beatsPerMinute.getValue());
+		composition.setBeatsPerBar(beatsPerBar.getValue());
+		composition.setStepsPerBeat(stepsPerBeat.getValue());
+		composition.setBarsPerPattern(barsPerPattern.getValue());
 		composition.getSynthesizerConfiguration().setUseInternalDrumKit(useDrumKit.isSelected());
 		composition.getSynthesizerConfiguration().setUseInternalSynthesizers(useSynthesizers.isSelected());
 	}

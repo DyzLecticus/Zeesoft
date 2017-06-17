@@ -9,7 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import javax.swing.JSlider;
 
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.Settings;
@@ -22,10 +22,10 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber 
 	private static final String			RESTORE_INSTRUMENTS			= "RESTORE_INSTRUMENTS";
 	
 	private JFormattedTextField			composer					= null;
-	private JSpinner					beatsPerMinute				= null;
-	private JSpinner					beatsPerBar					= null;
-	private JSpinner					stepsPerBeat				= null;
-	private JSpinner					barsPerPattern				= null;
+	private JSlider						beatsPerMinute				= null;
+	private JSlider						beatsPerBar					= null;
+	private JSlider						stepsPerBeat				= null;
+	private JSlider						barsPerPattern				= null;
 	
 	private JButton						saveInstruments				= null;
 	private JButton						restoreInstruments			= null;
@@ -57,13 +57,13 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber 
 		row++;
 		composer = addLabelTextFieldToPanel(getPanel(),row,"Composer");
 		row++;
-		beatsPerMinute = addLabelNumberToPanel(getPanel(),row,"Beats per minute",1,256,128);
+		beatsPerMinute = addLabelSliderToPanel(getPanel(),row,"Beats per minute",1,256,128);
 		row++;
-		beatsPerBar = addLabelNumberToPanel(getPanel(),row,"Beats per bar",1,16,4);
+		beatsPerBar = addLabelSliderToPanel(getPanel(),row,"Beats per bar",1,16,4);
 		row++;
-		stepsPerBeat = addLabelNumberToPanel(getPanel(),row,"Steps per beat",1,16,8);
+		stepsPerBeat = addLabelSliderToPanel(getPanel(),row,"Steps per beat",1,16,8);
 		row++;
-		barsPerPattern = addLabelNumberToPanel(getPanel(),row,"Bars per pattern",1,16,4);
+		barsPerPattern = addLabelSliderToPanel(getPanel(),row,"Bars per pattern",1,16,4);
 		
 		row++;
 		addLabelProperty(getPanel(),row,"Instrument defaults",getInstrumentPanel());
@@ -81,7 +81,7 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber 
 	@Override
 	public void requestFocus() {
 		if (composer.getValue()!=null && composer.getValue().toString().length()>0) {
-			getSliderForNumber(beatsPerMinute).getSlider().requestFocus();
+			beatsPerMinute.requestFocus();
 		} else {
 			composer.requestFocus();
 		}
@@ -90,10 +90,10 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber 
 	@Override
 	public void handleValidChange() {
 		settingsCopy.setComposer(composer.getValue().toString());
-		settingsCopy.setDefaultBeatsPerMinute(Integer.parseInt(beatsPerMinute.getValue().toString()));
-		settingsCopy.setDefaultBeatsPerBar(Integer.parseInt(beatsPerBar.getValue().toString()));
-		settingsCopy.setDefaultStepsPerBeat(Integer.parseInt(stepsPerBeat.getValue().toString()));
-		settingsCopy.setDefaultBarsPerPattern(Integer.parseInt(barsPerPattern.getValue().toString()));
+		settingsCopy.setDefaultBeatsPerMinute(beatsPerMinute.getValue());
+		settingsCopy.setDefaultBeatsPerBar(beatsPerBar.getValue());
+		settingsCopy.setDefaultStepsPerBeat(stepsPerBeat.getValue());
+		settingsCopy.setDefaultBarsPerPattern(barsPerPattern.getValue());
 		settingsCopy.setCustomSoundFontFileName(customSoundFont.getValue().toString());
 		getController().getStateManager().setSettings(this,settingsCopy.copy());
 	}
@@ -131,10 +131,10 @@ public class PanelSettings extends PanelObject implements StateChangeSubscriber 
 	
 	protected void updatedSettings() {
 		composer.setValue(settingsCopy.getComposer());
-		beatsPerMinute.setValue(String.format("%03d",settingsCopy.getDefaultBeatsPerMinute()));
-		beatsPerBar.setValue(String.format("%03d",settingsCopy.getDefaultBeatsPerBar()));
-		stepsPerBeat.setValue(String.format("%03d",settingsCopy.getDefaultStepsPerBeat()));
-		barsPerPattern.setValue(String.format("%03d",settingsCopy.getDefaultBarsPerPattern()));
+		beatsPerMinute.setValue(settingsCopy.getDefaultBeatsPerMinute());
+		beatsPerBar.setValue(settingsCopy.getDefaultBeatsPerBar());
+		stepsPerBeat.setValue(settingsCopy.getDefaultStepsPerBeat());
+		barsPerPattern.setValue(settingsCopy.getDefaultBarsPerPattern());
 		customSoundFont.setValue(settingsCopy.getCustomSoundFontFileName());
 	}
 	

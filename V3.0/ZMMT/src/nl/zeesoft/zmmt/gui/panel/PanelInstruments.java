@@ -18,7 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import javax.swing.JSlider;
 import javax.swing.ListCellRenderer;
 
 import nl.zeesoft.zmmt.composition.Composition;
@@ -38,62 +38,41 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 	
 	private JPanel					cardPanel						= null;
 
-	private JSpinner[]				instrumentHoldPercentage		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1MidiNum			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Pressure		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Modulation		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Reverb			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Chorus			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Filter			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Resonance		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Attack			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Decay			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1Release			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1VibRate			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1VibDepth		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1VibDelay		= new JSpinner[Instrument.INSTRUMENTS.length];
-
-	private JSpinner[]				instrumentLayer1BaseOctave		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1BaseVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer1AccentVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
-
-	private JSpinner[]				instrumentLayer2MidiNum			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Pressure		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Modulation		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Reverb			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Chorus			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Filter			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Resonance		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Attack			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Decay			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2Release			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2VibRate			= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2VibDepth		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2VibDelay		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2BaseOctave		= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2BaseVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
-	private JSpinner[]				instrumentLayer2AccentVelocity	= new JSpinner[Instrument.INSTRUMENTS.length];
+	private JSlider[]				instrumentHoldPercentage		= new JSlider[Instrument.INSTRUMENTS.length];
+	@SuppressWarnings("unchecked")
+	private JComboBox<String>[][]	instrumentLayerMidiNum			= new JComboBox[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerPressure			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerModulation		= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerReverb			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerChorus			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerFilter			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerResonance		= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerAttack			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerDecay			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerRelease			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerVibRate			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerVibDepth			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerVibDelay			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerBaseOctave		= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerBaseVelocity		= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerAccentVelocity	= new JSlider[2][Instrument.INSTRUMENTS.length];
 	
-	private JSpinner[]				drumLayer1MidiNote				= new JSpinner[Drum.DRUMS.length];
-	private JSpinner[]				drumLayer1BaseVelocity			= new JSpinner[Drum.DRUMS.length];
-	private JSpinner[]				drumLayer1AccentVelocity		= new JSpinner[Drum.DRUMS.length];
-
-	private JSpinner[]				drumLayer2MidiNote				= new JSpinner[Drum.DRUMS.length];
-	private JSpinner[]				drumLayer2BaseVelocity			= new JSpinner[Drum.DRUMS.length];
-	private JSpinner[]				drumLayer2AccentVelocity		= new JSpinner[Drum.DRUMS.length];
+	private JSlider[][]				drumLayerMidiNote				= new JSlider[2][Drum.DRUMS.length];
+	private JSlider[][]				drumLayerBaseVelocity			= new JSlider[2][Drum.DRUMS.length];
+	private JSlider[][]				drumLayerAccentVelocity			= new JSlider[2][Drum.DRUMS.length];
 
 	private JComboBox<String>		echoInstrument					= null;
-	private JSpinner				echoLayer						= null;
-	private JSpinner				echoSteps						= null;
-	private JSpinner				echoVelocityPercentage1			= null;
-	private JSpinner				echoVelocityPercentage2			= null;
-	private JSpinner				echoVelocityPercentage3			= null;
-	private JSpinner				echoReverb1						= null;
-	private JSpinner				echoReverb2						= null;
-	private JSpinner				echoReverb3						= null;
-	private JSpinner				echoPan1						= null;
-	private JSpinner				echoPan2						= null;
-	private JSpinner				echoPan3						= null;
+	private JSlider					echoLayer						= null;
+	private JSlider					echoSteps						= null;
+	private JSlider					echoVelocityPercentage1			= null;
+	private JSlider					echoVelocityPercentage2			= null;
+	private JSlider					echoVelocityPercentage3			= null;
+	private JSlider					echoReverb1						= null;
+	private JSlider					echoReverb2						= null;
+	private JSlider					echoReverb3						= null;
+	private JSlider					echoPan1						= null;
+	private JSlider					echoPan2						= null;
+	private JSlider					echoPan3						= null;
 	
 	public PanelInstruments(Controller controller) {
 		super(controller);
@@ -146,141 +125,146 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			EchoConfiguration echo = evt.getComposition().getSynthesizerConfiguration().getEcho();
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 				InstrumentConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-				instrumentHoldPercentage[i].setValue(String.format("%03d",conf.getHoldPercentage()));
-				instrumentLayer1MidiNum[i].setValue(String.format("%03d",conf.getLayer1().getMidiNum()));
-				instrumentLayer1Pressure[i].setValue(String.format("%03d",conf.getLayer1().getPressure()));
-				instrumentLayer1Modulation[i].setValue(String.format("%03d",conf.getLayer1().getModulation()));
-				instrumentLayer1Reverb[i].setValue(String.format("%03d",conf.getLayer1().getReverb()));
-				instrumentLayer1Chorus[i].setValue(String.format("%03d",conf.getLayer1().getChorus()));
+				instrumentHoldPercentage[i].setValue(conf.getHoldPercentage());
+
+				int l = 0;
+				instrumentLayerMidiNum[l][i].setSelectedIndex(conf.getLayer(l).getMidiNum());
+				instrumentLayerPressure[l][i].setValue(conf.getLayer(l).getPressure());
+				instrumentLayerModulation[l][i].setValue(conf.getLayer(l).getModulation());
+				instrumentLayerReverb[l][i].setValue(conf.getLayer(l).getReverb());
+				instrumentLayerChorus[l][i].setValue(conf.getLayer(l).getChorus());
 				
-				instrumentLayer1Filter[i].setValue(String.format("%03d",conf.getLayer1().getFilter()));
-				instrumentLayer1Resonance[i].setValue(String.format("%03d",conf.getLayer1().getResonance()));
-				instrumentLayer1Attack[i].setValue(String.format("%03d",conf.getLayer1().getAttack()));
-				instrumentLayer1Decay[i].setValue(String.format("%03d",conf.getLayer1().getDecay()));
-				instrumentLayer1Release[i].setValue(String.format("%03d",conf.getLayer1().getRelease()));
-				instrumentLayer1VibRate[i].setValue(String.format("%03d",conf.getLayer1().getVibRate()));
-				instrumentLayer1VibDepth[i].setValue(String.format("%03d",conf.getLayer1().getVibDepth()));
-				instrumentLayer1VibDelay[i].setValue(String.format("%03d",conf.getLayer1().getVibDelay()));
+				instrumentLayerFilter[l][i].setValue(conf.getLayer(l).getFilter());
+				instrumentLayerResonance[l][i].setValue(conf.getLayer(l).getResonance());
+				instrumentLayerAttack[l][i].setValue(conf.getLayer(l).getAttack());
+				instrumentLayerDecay[l][i].setValue(conf.getLayer(l).getDecay());
+				instrumentLayerRelease[l][i].setValue(conf.getLayer(l).getRelease());
+				instrumentLayerVibRate[l][i].setValue(conf.getLayer(l).getVibRate());
+				instrumentLayerVibDepth[l][i].setValue(conf.getLayer(l).getVibDepth());
+				instrumentLayerVibDelay[l][i].setValue(conf.getLayer(l).getVibDelay());
 				
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-					instrumentLayer1BaseOctave[i].setValue(String.format("%03d",conf.getLayer1().getBaseOctave()));
-					instrumentLayer1BaseVelocity[i].setValue(String.format("%03d",conf.getLayer1().getBaseVelocity()));
-					instrumentLayer1AccentVelocity[i].setValue(String.format("%03d",conf.getLayer1().getAccentVelocity()));
+					instrumentLayerBaseOctave[l][i].setValue(conf.getLayer(l).getBaseOctave());
+					instrumentLayerBaseVelocity[l][i].setValue(conf.getLayer(l).getBaseVelocity());
+					instrumentLayerAccentVelocity[l][i].setValue(conf.getLayer(l).getAccentVelocity());
 				}
 				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 					) {
-					instrumentLayer2MidiNum[i].setValue(String.format("%03d",conf.getLayer2().getMidiNum()));
-					instrumentLayer2Pressure[i].setValue(String.format("%03d",conf.getLayer2().getPressure()));
-					instrumentLayer2Modulation[i].setValue(String.format("%03d",conf.getLayer2().getModulation()));
-					instrumentLayer2Reverb[i].setValue(String.format("%03d",conf.getLayer2().getReverb()));
-					instrumentLayer2Chorus[i].setValue(String.format("%03d",conf.getLayer2().getChorus()));
+					l = 1;
+					instrumentLayerMidiNum[l][i].setSelectedIndex((conf.getLayer(l).getMidiNum() + 1));
+					instrumentLayerPressure[l][i].setValue(conf.getLayer(l).getPressure());
+					instrumentLayerModulation[l][i].setValue(conf.getLayer(l).getModulation());
+					instrumentLayerReverb[l][i].setValue(conf.getLayer(l).getReverb());
+					instrumentLayerChorus[l][i].setValue(conf.getLayer(l).getChorus());
 					
-					instrumentLayer2Filter[i].setValue(String.format("%03d",conf.getLayer2().getFilter()));
-					instrumentLayer2Resonance[i].setValue(String.format("%03d",conf.getLayer2().getResonance()));
-					instrumentLayer2Attack[i].setValue(String.format("%03d",conf.getLayer2().getAttack()));
-					instrumentLayer2Decay[i].setValue(String.format("%03d",conf.getLayer2().getDecay()));
-					instrumentLayer2Release[i].setValue(String.format("%03d",conf.getLayer2().getRelease()));
-					instrumentLayer2VibRate[i].setValue(String.format("%03d",conf.getLayer2().getVibRate()));
-					instrumentLayer2VibDepth[i].setValue(String.format("%03d",conf.getLayer2().getVibDepth()));
-					instrumentLayer2VibDelay[i].setValue(String.format("%03d",conf.getLayer2().getVibDelay()));
-
-					instrumentLayer2BaseOctave[i].setValue(String.format("%03d",conf.getLayer2().getBaseOctave()));
-					instrumentLayer2BaseVelocity[i].setValue(String.format("%03d",conf.getLayer2().getBaseVelocity()));
-					instrumentLayer2AccentVelocity[i].setValue(String.format("%03d",conf.getLayer2().getAccentVelocity()));
+					instrumentLayerFilter[l][i].setValue(conf.getLayer(l).getFilter());
+					instrumentLayerResonance[l][i].setValue(conf.getLayer(l).getResonance());
+					instrumentLayerAttack[l][i].setValue(conf.getLayer(l).getAttack());
+					instrumentLayerDecay[l][i].setValue(conf.getLayer(l).getDecay());
+					instrumentLayerRelease[l][i].setValue(conf.getLayer(l).getRelease());
+					instrumentLayerVibRate[l][i].setValue(conf.getLayer(l).getVibRate());
+					instrumentLayerVibDepth[l][i].setValue(conf.getLayer(l).getVibDepth());
+					instrumentLayerVibDelay[l][i].setValue(conf.getLayer(l).getVibDelay());
+					
+					instrumentLayerBaseOctave[l][i].setValue(conf.getLayer(l).getBaseOctave());
+					instrumentLayerBaseVelocity[l][i].setValue(conf.getLayer(l).getBaseVelocity());
+					instrumentLayerAccentVelocity[l][i].setValue(conf.getLayer(l).getAccentVelocity());
 	
-					getSliderForNumber(instrumentLayer2Pressure[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Modulation[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Reverb[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Chorus[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerPressure[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerModulation[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerReverb[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerChorus[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 
-					getSliderForNumber(instrumentLayer2Filter[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Resonance[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Attack[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Decay[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2Release[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2VibRate[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2VibDepth[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2VibDelay[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerFilter[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerResonance[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerAttack[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerDecay[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerRelease[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerVibRate[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerVibDepth[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerVibDelay[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 					
-					getSliderForNumber(instrumentLayer2BaseOctave[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2BaseVelocity[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
-					getSliderForNumber(instrumentLayer2AccentVelocity[i]).setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerBaseOctave[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerBaseVelocity[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerAccentVelocity[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 				}
 				if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
-					getSliderForNumber(instrumentHoldPercentage[i]).setEnabled(echo.getInstrument().length()==0);
-					getComboBoxForNumber(instrumentLayer1MidiNum[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1Pressure[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1Modulation[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1Reverb[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1Chorus[i]).setEnabled(echo.getInstrument().length()==0);
+					l = 0;
+					instrumentHoldPercentage[i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerMidiNum[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerPressure[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerModulation[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerReverb[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerChorus[l][i].setEnabled(echo.getInstrument().length()==0);
 					
-					getSliderForNumber(instrumentLayer1Filter[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1Resonance[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1Attack[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1Decay[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1Release[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1VibRate[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1VibDepth[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1VibDelay[i]).setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerFilter[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerResonance[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerAttack[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerDecay[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerRelease[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerVibRate[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerVibDepth[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerVibDelay[l][i].setEnabled(echo.getInstrument().length()==0);
 
-					getSliderForNumber(instrumentLayer1BaseOctave[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1BaseVelocity[i]).setEnabled(echo.getInstrument().length()==0);
-					getSliderForNumber(instrumentLayer1AccentVelocity[i]).setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerBaseOctave[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerBaseVelocity[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerAccentVelocity[l][i].setEnabled(echo.getInstrument().length()==0);
 				}
 			}
 			for (int d = 0; d < Drum.DRUMS.length; d++) {
 				DrumConfiguration conf = evt.getComposition().getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
-				drumLayer1MidiNote[d].setValue(String.format("%03d",conf.getLayer1MidiNote()));
-				drumLayer1BaseVelocity[d].setValue(String.format("%03d",conf.getLayer1BaseVelocity()));
-				drumLayer1AccentVelocity[d].setValue(String.format("%03d",conf.getLayer1AccentVelocity()));
-				drumLayer2MidiNote[d].setValue(String.format("%03d",conf.getLayer2MidiNote()));
-				drumLayer2BaseVelocity[d].setValue(String.format("%03d",conf.getLayer2BaseVelocity()));
-				drumLayer2AccentVelocity[d].setValue(String.format("%03d",conf.getLayer2AccentVelocity()));
-	
-				getSliderForNumber(drumLayer2BaseVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
-				getSliderForNumber(drumLayer2AccentVelocity[d]).setEnabled(conf.getLayer2MidiNote()>=35);
+				int l = 0;
+				drumLayerMidiNote[l][d].setValue(conf.getLayer1MidiNote());
+				drumLayerBaseVelocity[l][d].setValue(conf.getLayer1BaseVelocity());
+				drumLayerAccentVelocity[l][d].setValue(conf.getLayer1AccentVelocity());
+				l = 1;
+				drumLayerMidiNote[l][d].setValue(conf.getLayer2MidiNote());
+				drumLayerBaseVelocity[l][d].setValue(conf.getLayer2BaseVelocity());
+				drumLayerAccentVelocity[l][d].setValue(conf.getLayer2AccentVelocity());
+				drumLayerBaseVelocity[l][d].setEnabled(conf.getLayer2MidiNote()>=35);
+				drumLayerAccentVelocity[l][d].setEnabled(conf.getLayer2MidiNote()>=35);
 			}
 			if (echo.getInstrument().length()==0) {
 				echoInstrument.setSelectedIndex(0);
-				getSliderForNumber(echoLayer).setEnabled(false);
-				getSliderForNumber(echoVelocityPercentage3).setEnabled(false);
-				getSliderForNumber(echoReverb3).setEnabled(false);
-				getSliderForNumber(echoPan3).setEnabled(false);
-				echoLayer.setValue(String.format("%03d",1));
+				echoLayer.setEnabled(false);
+				echoVelocityPercentage3.setEnabled(false);
+				echoReverb3.setEnabled(false);
+				echoPan3.setEnabled(false);
+				echoLayer.setValue(1);
 			} else {
 				if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
 					echo.getInstrument().equals(Instrument.SYNTH1) ||
 					echo.getInstrument().equals(Instrument.LEAD) ||
 					echo.getInstrument().equals(Instrument.STRINGS)
 					) {
-					getSliderForNumber(echoLayer).setEnabled(true);
+					echoLayer.setEnabled(true);
 				} else {
-					getSliderForNumber(echoLayer).setEnabled(false);
+					echoLayer.setEnabled(false);
 				}
-				getSliderForNumber(echoSteps).setEnabled(true);
-				getSliderForNumber(echoVelocityPercentage3).setEnabled(true);
-				getSliderForNumber(echoReverb3).setEnabled(true);
-				getSliderForNumber(echoPan3).setEnabled(true);
+				echoSteps.setEnabled(true);
+				echoVelocityPercentage3.setEnabled(true);
+				echoReverb3.setEnabled(true);
+				echoPan3.setEnabled(true);
 				for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 					if (echo.getInstrument().equals(Instrument.INSTRUMENTS[i])) {
 						echoInstrument.setSelectedIndex((i + 1));
 						break;
 					}
 				}
-				echoLayer.setValue(String.format("%03d",echo.getLayer()));
-				echoSteps.setValue(String.format("%03d",echo.getSteps()));
-				echoVelocityPercentage1.setValue(String.format("%03d",echo.getVelocityPercentage1()));
-				echoVelocityPercentage2.setValue(String.format("%03d",echo.getVelocityPercentage2()));
-				echoVelocityPercentage3.setValue(String.format("%03d",echo.getVelocityPercentage3()));
-				echoReverb1.setValue(String.format("%03d",echo.getReverb1()));
-				echoReverb2.setValue(String.format("%03d",echo.getReverb2()));
-				echoReverb3.setValue(String.format("%03d",echo.getReverb3()));
-				echoPan1.setValue(String.format("%03d",echo.getPan1()));
-				echoPan2.setValue(String.format("%03d",echo.getPan2()));
-				echoPan3.setValue(String.format("%03d",echo.getPan3()));
+				echoLayer.setValue(echo.getLayer());
+				echoSteps.setValue(echo.getSteps());
+				echoVelocityPercentage1.setValue(echo.getVelocityPercentage1());
+				echoVelocityPercentage2.setValue(echo.getVelocityPercentage2());
+				echoVelocityPercentage3.setValue(echo.getVelocityPercentage3());
+				echoReverb1.setValue(echo.getReverb1());
+				echoReverb2.setValue(echo.getReverb2());
+				echoReverb3.setValue(echo.getReverb3());
+				echoPan1.setValue(echo.getPan1());
+				echoPan2.setValue(echo.getPan2());
+				echoPan3.setValue(echo.getPan3());
 			}
 		}
 		setValidate(true);
@@ -290,60 +274,66 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 	public void setChangesInComposition(Composition composition) {
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration inst = composition.getSynthesizerConfiguration().getInstrument(Instrument.INSTRUMENTS[i]);
-			inst.setHoldPercentage(Integer.parseInt(instrumentHoldPercentage[i].getValue().toString()));
-			inst.getLayer1().setMidiNum(Integer.parseInt(instrumentLayer1MidiNum[i].getValue().toString()));
-			inst.getLayer1().setPressure(Integer.parseInt(instrumentLayer1Pressure[i].getValue().toString()));
-			inst.getLayer1().setModulation(Integer.parseInt(instrumentLayer1Modulation[i].getValue().toString()));
-			inst.getLayer1().setReverb(Integer.parseInt(instrumentLayer1Reverb[i].getValue().toString()));
-			inst.getLayer1().setChorus(Integer.parseInt(instrumentLayer1Chorus[i].getValue().toString()));
+			inst.setHoldPercentage(instrumentHoldPercentage[i].getValue());
+
+			int l = 0;
+			inst.getLayer1().setMidiNum(instrumentLayerMidiNum[l][i].getSelectedIndex());
+			inst.getLayer1().setPressure(instrumentLayerPressure[l][i].getValue());
+			inst.getLayer1().setModulation(instrumentLayerModulation[l][i].getValue());
+			inst.getLayer1().setReverb(instrumentLayerReverb[l][i].getValue());
+			inst.getLayer1().setChorus(instrumentLayerChorus[l][i].getValue());
 			
-			inst.getLayer1().setFilter(Integer.parseInt(instrumentLayer1Filter[i].getValue().toString()));
-			inst.getLayer1().setResonance(Integer.parseInt(instrumentLayer1Resonance[i].getValue().toString()));
-			inst.getLayer1().setAttack(Integer.parseInt(instrumentLayer1Attack[i].getValue().toString()));
-			inst.getLayer1().setDecay(Integer.parseInt(instrumentLayer1Decay[i].getValue().toString()));
-			inst.getLayer1().setRelease(Integer.parseInt(instrumentLayer1Release[i].getValue().toString()));
-			inst.getLayer1().setVibRate(Integer.parseInt(instrumentLayer1VibRate[i].getValue().toString()));
-			inst.getLayer1().setVibDepth(Integer.parseInt(instrumentLayer1VibDepth[i].getValue().toString()));
-			inst.getLayer1().setVibDelay(Integer.parseInt(instrumentLayer1VibDelay[i].getValue().toString()));
+			inst.getLayer1().setFilter(instrumentLayerFilter[l][i].getValue());
+			inst.getLayer1().setResonance(instrumentLayerResonance[l][i].getValue());
+			inst.getLayer1().setAttack(instrumentLayerAttack[l][i].getValue());
+			inst.getLayer1().setDecay(instrumentLayerDecay[l][i].getValue());
+			inst.getLayer1().setRelease(instrumentLayerRelease[l][i].getValue());
+			inst.getLayer1().setVibRate(instrumentLayerVibRate[l][i].getValue());
+			inst.getLayer1().setVibDepth(instrumentLayerVibDepth[l][i].getValue());
+			inst.getLayer1().setVibDelay(instrumentLayerVibDelay[l][i].getValue());
 			
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
-				inst.getLayer1().setBaseOctave(Integer.parseInt(instrumentLayer1BaseOctave[i].getValue().toString()));
-				inst.getLayer1().setBaseVelocity(Integer.parseInt(instrumentLayer1BaseVelocity[i].getValue().toString()));
-				inst.getLayer1().setAccentVelocity(Integer.parseInt(instrumentLayer1AccentVelocity[i].getValue().toString()));
+				inst.getLayer1().setBaseOctave(instrumentLayerBaseOctave[l][i].getValue());
+				inst.getLayer1().setBaseVelocity(instrumentLayerBaseVelocity[l][i].getValue());
+				inst.getLayer1().setAccentVelocity(instrumentLayerAccentVelocity[l][i].getValue());
 			}
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
 				) {
-				inst.getLayer2().setMidiNum(Integer.parseInt(instrumentLayer2MidiNum[i].getValue().toString()));
-				inst.getLayer2().setPressure(Integer.parseInt(instrumentLayer2Pressure[i].getValue().toString()));
-				inst.getLayer2().setModulation(Integer.parseInt(instrumentLayer2Modulation[i].getValue().toString()));
-				inst.getLayer2().setReverb(Integer.parseInt(instrumentLayer2Reverb[i].getValue().toString()));
-				inst.getLayer2().setChorus(Integer.parseInt(instrumentLayer2Chorus[i].getValue().toString()));
-				
-				inst.getLayer2().setFilter(Integer.parseInt(instrumentLayer2Filter[i].getValue().toString()));
-				inst.getLayer2().setResonance(Integer.parseInt(instrumentLayer2Resonance[i].getValue().toString()));
-				inst.getLayer2().setAttack(Integer.parseInt(instrumentLayer2Attack[i].getValue().toString()));
-				inst.getLayer2().setDecay(Integer.parseInt(instrumentLayer2Decay[i].getValue().toString()));
-				inst.getLayer2().setRelease(Integer.parseInt(instrumentLayer2Release[i].getValue().toString()));
-				inst.getLayer2().setVibRate(Integer.parseInt(instrumentLayer2VibRate[i].getValue().toString()));
-				inst.getLayer2().setVibDepth(Integer.parseInt(instrumentLayer2VibDepth[i].getValue().toString()));
-				inst.getLayer2().setVibDelay(Integer.parseInt(instrumentLayer2VibDelay[i].getValue().toString()));
 
-				inst.getLayer2().setBaseOctave(Integer.parseInt(instrumentLayer2BaseOctave[i].getValue().toString()));
-				inst.getLayer2().setBaseVelocity(Integer.parseInt(instrumentLayer2BaseVelocity[i].getValue().toString()));
-				inst.getLayer2().setAccentVelocity(Integer.parseInt(instrumentLayer2AccentVelocity[i].getValue().toString()));
+				l = 1;
+				inst.getLayer1().setMidiNum((instrumentLayerMidiNum[l][i].getSelectedIndex() - 1));
+				inst.getLayer1().setPressure(instrumentLayerPressure[l][i].getValue());
+				inst.getLayer1().setModulation(instrumentLayerModulation[l][i].getValue());
+				inst.getLayer1().setReverb(instrumentLayerReverb[l][i].getValue());
+				inst.getLayer1().setChorus(instrumentLayerChorus[l][i].getValue());
+				
+				inst.getLayer1().setFilter(instrumentLayerFilter[l][i].getValue());
+				inst.getLayer1().setResonance(instrumentLayerResonance[l][i].getValue());
+				inst.getLayer1().setAttack(instrumentLayerAttack[l][i].getValue());
+				inst.getLayer1().setDecay(instrumentLayerDecay[l][i].getValue());
+				inst.getLayer1().setRelease(instrumentLayerRelease[l][i].getValue());
+				inst.getLayer1().setVibRate(instrumentLayerVibRate[l][i].getValue());
+				inst.getLayer1().setVibDepth(instrumentLayerVibDepth[l][i].getValue());
+				inst.getLayer1().setVibDelay(instrumentLayerVibDelay[l][i].getValue());
+				
+				inst.getLayer1().setBaseOctave(instrumentLayerBaseOctave[l][i].getValue());
+				inst.getLayer1().setBaseVelocity(instrumentLayerBaseVelocity[l][i].getValue());
+				inst.getLayer1().setAccentVelocity(instrumentLayerAccentVelocity[l][i].getValue());
 			}
 		}
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
 			DrumConfiguration drum = composition.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
-			drum.setLayer1MidiNote(Integer.parseInt(drumLayer1MidiNote[d].getValue().toString()));
-			drum.setLayer1BaseVelocity(Integer.parseInt(drumLayer1BaseVelocity[d].getValue().toString()));
-			drum.setLayer1AccentVelocity(Integer.parseInt(drumLayer1AccentVelocity[d].getValue().toString()));
-			drum.setLayer2MidiNote(Integer.parseInt(drumLayer2MidiNote[d].getValue().toString()));
-			drum.setLayer2BaseVelocity(Integer.parseInt(drumLayer2BaseVelocity[d].getValue().toString()));
-			drum.setLayer2AccentVelocity(Integer.parseInt(drumLayer2AccentVelocity[d].getValue().toString()));
+			int l = 0;
+			drum.setLayer1MidiNote(drumLayerMidiNote[l][d].getValue());
+			drum.setLayer1BaseVelocity(drumLayerBaseVelocity[l][d].getValue());
+			drum.setLayer1AccentVelocity(drumLayerAccentVelocity[l][d].getValue());
+			l = 1;
+			drum.setLayer2MidiNote(drumLayerMidiNote[l][d].getValue());
+			drum.setLayer2BaseVelocity(drumLayerBaseVelocity[l][d].getValue());
+			drum.setLayer2AccentVelocity(drumLayerAccentVelocity[l][d].getValue());
 		}
 		EchoConfiguration echo = composition.getSynthesizerConfiguration().getEcho();
 		String instrument = echoInstrument.getSelectedItem().toString();
@@ -356,20 +346,20 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			echo.getInstrument().equals(Instrument.LEAD) ||
 			echo.getInstrument().equals(Instrument.STRINGS)
 			) {
-			echo.setLayer(Integer.parseInt(echoLayer.getValue().toString()));
+			echo.setLayer(echoLayer.getValue());
 		} else {
 			echo.setLayer(1);
 		}
-		echo.setSteps(Integer.parseInt(echoSteps.getValue().toString()));
-		echo.setVelocityPercentage1(Integer.parseInt(echoVelocityPercentage1.getValue().toString()));
-		echo.setVelocityPercentage2(Integer.parseInt(echoVelocityPercentage2.getValue().toString()));
-		echo.setVelocityPercentage3(Integer.parseInt(echoVelocityPercentage3.getValue().toString()));
-		echo.setReverb1(Integer.parseInt(echoReverb1.getValue().toString()));
-		echo.setReverb2(Integer.parseInt(echoReverb2.getValue().toString()));
-		echo.setReverb3(Integer.parseInt(echoReverb3.getValue().toString()));
-		echo.setPan1(Integer.parseInt(echoPan1.getValue().toString()));
-		echo.setPan2(Integer.parseInt(echoPan2.getValue().toString()));
-		echo.setPan3(Integer.parseInt(echoPan3.getValue().toString()));
+		echo.setSteps(echoSteps.getValue());
+		echo.setVelocityPercentage1(echoVelocityPercentage1.getValue());
+		echo.setVelocityPercentage2(echoVelocityPercentage2.getValue());
+		echo.setVelocityPercentage3(echoVelocityPercentage3.getValue());
+		echo.setReverb1(echoReverb1.getValue());
+		echo.setReverb2(echoReverb2.getValue());
+		echo.setReverb3(echoReverb3.getValue());
+		echo.setPan1(echoPan1.getValue());
+		echo.setPan2(echoPan2.getValue());
+		echo.setPan3(echoPan3.getValue());
 	}
 
 	@Override
@@ -436,6 +426,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					break;
 				}
 			}
+		} else {
+			for (int i = 0; i < 128; i++) {
+				midiInstruments.add(String.format("%03d",i));
+			}
 		}
 		
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
@@ -455,10 +449,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		
 		int row = 0;
 
-		instrumentHoldPercentage[instrumentNum] = addLabelNumberToPanel(panel,row,"Hold percentage",0,100,75);
+		instrumentHoldPercentage[instrumentNum] = addLabelSliderToPanel(panel,row,"Hold percentage",0,100,75);
 
+		int l = 0;
 		row++;
-		instrumentLayer1MidiNum[instrumentNum] = getNewNumberSpinner(3,0,127);
 		String label = "MIDI instrument number";
 		if (name.equals(Instrument.SYNTH_BASS1) ||
 			name.equals(Instrument.SYNTH1) ||
@@ -467,48 +461,44 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			) {
 			label = label + " 1";
 		}
-		Component prop = instrumentLayer1MidiNum[instrumentNum];
-		if (midiInstruments.size()>0) {
-			prop = getMidiInstrumentSelector(instrumentLayer1MidiNum[instrumentNum],midiInstruments,false);
-		}
-		addLabelProperty(panel,row,label,prop);
+		instrumentLayerMidiNum[l][instrumentNum] = addLabelComboBox(panel,row,label,midiInstruments,this,0); 
 		if (name.equals(Instrument.DRUMS)) {
-			getComboBoxForNumber(instrumentLayer1MidiNum[instrumentNum]).setEnabled(false);
+			instrumentLayerMidiNum[l][instrumentNum].setEnabled(false);
 		}
 
 		row++;
-		instrumentLayer1Pressure[instrumentNum] = addLabelNumberToPanel(panel,row,"Pressure",0,127,0);
+		instrumentLayerPressure[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Pressure",0,127,0);
 		row++;
-		instrumentLayer1Modulation[instrumentNum] = addLabelNumberToPanel(panel,row,"Modulation",0,127,0);
+		instrumentLayerModulation[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Modulation",0,127,0);
 		row++;
-		instrumentLayer1Reverb[instrumentNum] = addLabelNumberToPanel(panel,row,"Reverb",0,127,24);
+		instrumentLayerReverb[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Reverb",0,127,24);
 		row++;
-		instrumentLayer1Chorus[instrumentNum] = addLabelNumberToPanel(panel,row,"Chorus",0,127,0);
+		instrumentLayerChorus[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Chorus",0,127,0);
 
 		row++;
-		instrumentLayer1Filter[instrumentNum] = addLabelNumberToPanel(panel,row,"Filter",0,127,127);
+		instrumentLayerFilter[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Filter",0,127,127);
 		row++;
-		instrumentLayer1Resonance[instrumentNum] = addLabelNumberToPanel(panel,row,"Resonance",0,127,127);
+		instrumentLayerResonance[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Resonance",0,127,127);
 		row++;
-		instrumentLayer1Attack[instrumentNum] = addLabelNumberToPanel(panel,row,"Attack",0,127,127);
+		instrumentLayerAttack[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Attack",0,127,127);
 		row++;
-		instrumentLayer1Decay[instrumentNum] = addLabelNumberToPanel(panel,row,"Decay",0,127,127);
+		instrumentLayerDecay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Decay",0,127,127);
 		row++;
-		instrumentLayer1Release[instrumentNum] = addLabelNumberToPanel(panel,row,"Release",0,127,127);
+		instrumentLayerRelease[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Release",0,127,127);
 		row++;
-		instrumentLayer1VibRate[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato rate",0,127,127);
+		instrumentLayerVibRate[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato rate",0,127,127);
 		row++;
-		instrumentLayer1VibDepth[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato depth",0,127,127);
+		instrumentLayerVibDepth[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato depth",0,127,127);
 		row++;
-		instrumentLayer1VibDelay[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato delay",0,127,127);
+		instrumentLayerVibDelay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato delay",0,127,127);
 
 		if (!name.equals(Instrument.DRUMS)) {
 			row++;
-			instrumentLayer1BaseOctave[instrumentNum] = addLabelNumberToPanel(panel,row,"Base octave",0,9,3);
+			instrumentLayerBaseOctave[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base octave",0,9,3);
 			row++;
-			instrumentLayer1BaseVelocity[instrumentNum] = addLabelNumberToPanel(panel,row,"Base velocity",0,127,100);
+			instrumentLayerBaseVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base velocity",0,127,100);
 			row++;
-			instrumentLayer1AccentVelocity[instrumentNum] = addLabelNumberToPanel(panel,row,"Accent velocity",0,127,110);
+			instrumentLayerAccentVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Accent velocity",0,127,110);
 		}
 		
 		if (name.equals(Instrument.SYNTH_BASS1) ||
@@ -516,46 +506,55 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			name.equals(Instrument.LEAD) ||
 			name.equals(Instrument.STRINGS)
 			) {
+			l = 1;
 			row++;
-			instrumentLayer2MidiNum[instrumentNum] = getNewNumberSpinner(3,-1,127);
-			prop = instrumentLayer2MidiNum[instrumentNum];
-			if (midiInstruments.size()>0) {
-				prop =  getMidiInstrumentSelector(instrumentLayer2MidiNum[instrumentNum],midiInstruments,true);
+			label = "MIDI instrument number";
+			if (name.equals(Instrument.SYNTH_BASS1) ||
+				name.equals(Instrument.SYNTH1) ||
+				name.equals(Instrument.LEAD) ||
+				name.equals(Instrument.STRINGS)
+				) {
+				label = label + " 2";
 			}
-			addLabelProperty(panel,row,"MIDI instrument number 2",prop);
+			List<String> midiInst = new ArrayList<String>(midiInstruments);
+			midiInst.add(0,"");
+			instrumentLayerMidiNum[l][instrumentNum] = addLabelComboBox(panel,row,label,midiInst,this,1); 
+			if (name.equals(Instrument.DRUMS)) {
+				instrumentLayerMidiNum[l][instrumentNum].setEnabled(false);
+			}
 
 			row++;
-			instrumentLayer2Pressure[instrumentNum] = addLabelNumberToPanel(panel,row,"Pressure",0,127,0);
+			instrumentLayerPressure[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Pressure",0,127,0);
 			row++;
-			instrumentLayer2Modulation[instrumentNum] = addLabelNumberToPanel(panel,row,"Modulation",0,127,0);
+			instrumentLayerModulation[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Modulation",0,127,0);
 			row++;
-			instrumentLayer2Reverb[instrumentNum] = addLabelNumberToPanel(panel,row,"Reverb",0,127,24);
+			instrumentLayerReverb[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Reverb",0,127,24);
 			row++;
-			instrumentLayer2Chorus[instrumentNum] = addLabelNumberToPanel(panel,row,"Chorus",0,127,0);
+			instrumentLayerChorus[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Chorus",0,127,0);
 
 			row++;
-			instrumentLayer2Filter[instrumentNum] = addLabelNumberToPanel(panel,row,"Filter",0,127,127);
+			instrumentLayerFilter[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Filter",0,127,127);
 			row++;
-			instrumentLayer2Resonance[instrumentNum] = addLabelNumberToPanel(panel,row,"Resonance",0,127,127);
+			instrumentLayerResonance[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Resonance",0,127,127);
 			row++;
-			instrumentLayer2Attack[instrumentNum] = addLabelNumberToPanel(panel,row,"Attack",0,127,127);
+			instrumentLayerAttack[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Attack",0,127,127);
 			row++;
-			instrumentLayer2Decay[instrumentNum] = addLabelNumberToPanel(panel,row,"Decay",0,127,127);
+			instrumentLayerDecay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Decay",0,127,127);
 			row++;
-			instrumentLayer2Release[instrumentNum] = addLabelNumberToPanel(panel,row,"Release",0,127,127);
+			instrumentLayerRelease[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Release",0,127,127);
 			row++;
-			instrumentLayer2VibRate[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato rate",0,127,127);
+			instrumentLayerVibRate[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato rate",0,127,127);
 			row++;
-			instrumentLayer2VibDepth[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato depth",0,127,127);
+			instrumentLayerVibDepth[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato depth",0,127,127);
 			row++;
-			instrumentLayer2VibDelay[instrumentNum] = addLabelNumberToPanel(panel,row,"Vibrato delay",0,127,127);
+			instrumentLayerVibDelay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato delay",0,127,127);
 
 			row++;
-			instrumentLayer2BaseOctave[instrumentNum] = addLabelNumberToPanel(panel,row,"Base octave",0,9,3);
+			instrumentLayerBaseOctave[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base octave",0,9,3);
 			row++;
-			instrumentLayer2BaseVelocity[instrumentNum] = addLabelNumberToPanel(panel,row,"Base velocity",0,127,100);
+			instrumentLayerBaseVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base velocity",0,127,100);
 			row++;
-			instrumentLayer2AccentVelocity[instrumentNum] = addLabelNumberToPanel(panel,row,"Accent velocity",0,127,110);
+			instrumentLayerAccentVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Accent velocity",0,127,110);
 		}
 
 		if (name.equals(Instrument.DRUMS)) {
@@ -565,18 +564,18 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				drumPanel.setLayout(new GridBagLayout());
 				drumPanel.setBorder(BorderFactory.createTitledBorder(Drum.DRUMS[d]));
 
-				drumLayer1MidiNote[d] = addLabelNumberToPanel(drumPanel,drow,"MIDI note number 1",35,81,35);
+				drumLayerMidiNote[0][d] = addLabelSliderToPanel(drumPanel,drow,"MIDI note number 1",35,81,35);
 				drow++;
-				drumLayer1BaseVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Base velocity",0,127,100);
+				drumLayerBaseVelocity[0][d] = addLabelSliderToPanel(drumPanel,drow,"Base velocity",0,127,100);
 				drow++;
-				drumLayer1AccentVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Accent velocity",0,127,110);
+				drumLayerAccentVelocity[0][d] = addLabelSliderToPanel(drumPanel,drow,"Accent velocity",0,127,110);
 
 				drow++;
-				drumLayer2MidiNote[d] = addLabelNumberToPanel(drumPanel,drow,"MIDI note number 2",34,81,34);
+				drumLayerMidiNote[1][d] = addLabelSliderToPanel(drumPanel,drow,"MIDI note number 2",34,81,34);
 				drow++;
-				drumLayer2BaseVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Base velocity",0,127,100);
+				drumLayerBaseVelocity[1][d] = addLabelSliderToPanel(drumPanel,drow,"Base velocity",0,127,100);
 				drow++;
-				drumLayer2AccentVelocity[d] = addLabelNumberToPanel(drumPanel,drow,"Accent velocity",0,127,110);
+				drumLayerAccentVelocity[1][d] = addLabelSliderToPanel(drumPanel,drow,"Accent velocity",0,127,110);
 
 				row++;
 				addComponent(panel,row,0.01,drumPanel,false);
@@ -588,7 +587,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			echoInstrument = new JComboBox<String>();
 			echoInstrument.addItem("[Self]");
 			echoInstrument.addItemListener(this);
-			for (int l = 0; l < echoInstrument.getKeyListeners().length; l++) {
+			for (l = 0; l < echoInstrument.getKeyListeners().length; l++) {
 				echoInstrument.removeKeyListener(echoInstrument.getKeyListeners()[l]);
 			}
 			echoInstrument.addFocusListener(this);
@@ -602,46 +601,36 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			addLabelProperty(panel,row,"Echo instrument",echoInstrument);
 			
 			row++;
-			echoLayer = addLabelNumberToPanel(panel,row,"Echo layer",1,2,1);
+			echoLayer = addLabelSliderToPanel(panel,row,"Echo layer",1,2,1);
 			row++;
-			echoSteps = addLabelNumberToPanel(panel,row,"Echo steps",1,24,6);
+			echoSteps = addLabelSliderToPanel(panel,row,"Echo steps",1,24,6);
 
 			row++;
-			echoVelocityPercentage1 = addLabelNumberToPanel(panel,row,"Echo 1 velocity percentage",1,99,80);
+			echoVelocityPercentage1 = addLabelSliderToPanel(panel,row,"Echo 1 velocity percentage",1,99,80);
 			row++;
-			echoPan1 = addLabelNumberToPanel(panel,row,"Echo 1 pan",0,127,24);
+			echoPan1 = addLabelSliderToPanel(panel,row,"Echo 1 pan",0,127,24);
 			row++;
-			echoReverb1 = addLabelNumberToPanel(panel,row,"Echo 1 reverb",0,127,80);
+			echoReverb1 = addLabelSliderToPanel(panel,row,"Echo 1 reverb",0,127,80);
 
 			row++;
-			echoVelocityPercentage2 = addLabelNumberToPanel(panel,row,"Echo 1 velocity percentage",1,99,60);
+			echoVelocityPercentage2 = addLabelSliderToPanel(panel,row,"Echo 1 velocity percentage",1,99,60);
 			row++;
-			echoPan2 = addLabelNumberToPanel(panel,row,"Echo 2 pan",0,127,104);
+			echoPan2 = addLabelSliderToPanel(panel,row,"Echo 2 pan",0,127,104);
 			row++;
-			echoReverb2 = addLabelNumberToPanel(panel,row,"Echo 2 reverb",0,127,104);
+			echoReverb2 = addLabelSliderToPanel(panel,row,"Echo 2 reverb",0,127,104);
 			
 			row++;
-			echoVelocityPercentage3 = addLabelNumberToPanel(panel,row,"Echo 3 velocity percentage",1,99,40);
+			echoVelocityPercentage3 = addLabelSliderToPanel(panel,row,"Echo 3 velocity percentage",1,99,40);
 			row++;
-			echoPan3 = addLabelNumberToPanel(panel,row,"Echo 3 pan",0,127,48);
+			echoPan3 = addLabelSliderToPanel(panel,row,"Echo 3 pan",0,127,48);
 			row++;
-			echoReverb3 = addLabelNumberToPanel(panel,row,"Echo 3 reverb",0,127,127);
+			echoReverb3 = addLabelSliderToPanel(panel,row,"Echo 3 reverb",0,127,127);
 		}
 		
 		row++;
 		addFiller(panel,row);
 		
 		return panel;
-	}
-	
-	protected JPanel getMidiInstrumentSelector(JSpinner number,List<String> midiInstruments,boolean layer) {
-		List<String> options = new ArrayList<String>(midiInstruments);
-		int subtract = 0;
-		if (layer) {
-			options.add(0,"");
-			subtract = 1;
-		}
-		return getNewNumberComboBox(number,options,this,subtract);
 	}
 
 	protected JComboBox<String> getInstrumentSelector() {

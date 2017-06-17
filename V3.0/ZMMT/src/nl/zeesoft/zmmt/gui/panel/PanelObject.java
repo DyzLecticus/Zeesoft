@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBox;
@@ -46,9 +45,6 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	private JScrollPane					scroller			= null;
 	private JPanel						panel				= new JPanel();
 	private boolean						validate			= true;
-
-	private List<NumberSlider>			numberSliders		= new ArrayList<NumberSlider>();
-	private List<NumberComboBox>		numberComboBoxes	= new ArrayList<NumberComboBox>();
 	
 	public PanelObject(Controller controller) {
 		this.controller = controller;
@@ -169,10 +165,19 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		return r;
 	}
 
-	protected JSpinner addLabelNumberToPanel(JPanel panel,int row,String label,int min, int max, int init) {
-		JSpinner r = getNewNumberSpinner(3,min,max);
-		JPanel slider = getNewNumberSlider(r,min,max,init);
-		addLabelProperty(panel,row,label,slider);
+	protected JSlider addLabelSliderToPanel(JPanel panel,int row,String label,int min, int max, int init) {
+		JSlider r = getNewSlider(min,max,init);
+		LabelSlider ls = new LabelSlider(new JLabel(),r);
+		JPanel lsp = ls.getPanel();
+		addLabelProperty(panel,row,label,lsp);
+		return r;
+	}
+
+	protected JComboBox<String> addLabelComboBox(JPanel panel,int row,String label,List<String> options,ActionListener actionListener,int subtract) {
+		JComboBox<String> r = getNewComboBox(options,actionListener);
+		LabelComboBox ls = new LabelComboBox(new JLabel(),r,subtract);
+		JPanel lsp = ls.getPanel();
+		addLabelProperty(panel,row,label,lsp);
 		return r;
 	}
 
@@ -263,6 +268,31 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		return r;
 	}
 
+	protected JSlider getNewSlider(int min,int max,int init) {
+		JSlider r = new JSlider(JSlider.HORIZONTAL,min,max,init);
+		r.addKeyListener(controller.getPlayerKeyListener());
+		r.addFocusListener(this);
+		r.addChangeListener(this);
+		addControlPageUpDownOverridesToComponent(r);
+		return r;
+	}
+	
+	protected JComboBox<String> getNewComboBox(List<String> options,ActionListener actionListener) {
+		JComboBox<String> comboBox = new JComboBox<String>();
+		for (String option: options) {
+			comboBox.addItem(option);
+		}
+		for (int l = 0; l < comboBox.getKeyListeners().length; l++) {
+			comboBox.removeKeyListener(comboBox.getKeyListeners()[l]);
+		}
+		comboBox.addKeyListener(controller.getPlayerKeyListener());
+		comboBox.addFocusListener(this);
+		
+		addFunctionKeyOverridesToComponent(comboBox);
+		addControlPageUpDownOverridesToComponent(comboBox);
+		return comboBox;
+	}
+	
 	protected JCheckBox getNewCheckBox() {
 		JCheckBox r = new JCheckBox();
 		r.addFocusListener(this);
@@ -270,7 +300,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		addControlPageUpDownOverridesToComponent(r);
 		return r;
 	}
-
+	
 	protected JSpinner getNewNumberSpinner(int digits,int min,int max) {
 		JSpinner r = null;
 		String[] options = new String[((max - min) + 1)];
@@ -287,61 +317,6 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		r.addChangeListener(this);
 		addControlPageUpDownOverridesToComponent(r);
 		return r;
-	}
-
-	protected NumberSlider getSliderForNumber(JSpinner number) {
-		NumberSlider r = null;
-		for (NumberSlider ns: numberSliders) {
-			if (ns.getNumber()==number) {
-				r = ns;
-				break;
-			}
-		}
-		return r;
-	}
-
-	protected JPanel getNewNumberSlider(JSpinner number,int min,int max,int init) {
-		JSlider slider = new JSlider(JSlider.HORIZONTAL,min,max,init);
-		slider.addKeyListener(controller.getPlayerKeyListener());
-		slider.addFocusListener(this);
-		NumberSlider ns = new NumberSlider(number,slider);
-		numberSliders.add(ns);
-		addControlPageUpDownOverridesToComponent(slider);
-		return ns.getPanel();
-	}
-
-	protected NumberComboBox getComboBoxForNumber(JSpinner number) {
-		NumberComboBox r = null;
-		for (NumberComboBox nc: numberComboBoxes) {
-			if (nc.getNumber()==number) {
-				r = nc;
-				break;
-			}
-		}
-		return r;
-	}
-
-	protected JPanel getNewNumberComboBox(JSpinner number,List<String> options,ActionListener actionListener) {
-		return getNewNumberComboBox(number,options,actionListener,0);
-	}
-
-	protected JPanel getNewNumberComboBox(JSpinner number,List<String> options,ActionListener actionListener,int subtract) {
-		JComboBox<String> comboBox = new JComboBox<String>();
-		for (String option: options) {
-			comboBox.addItem(option);
-		}
-		for (int l = 0; l < comboBox.getKeyListeners().length; l++) {
-			comboBox.removeKeyListener(comboBox.getKeyListeners()[l]);
-		}
-		comboBox.addKeyListener(controller.getPlayerKeyListener());
-		comboBox.addFocusListener(this);
-		
-		addFunctionKeyOverridesToComponent(comboBox);
-		addControlPageUpDownOverridesToComponent(comboBox);
-		
-		NumberComboBox nc = new NumberComboBox(number,comboBox,subtract);
-		numberComboBoxes.add(nc);
-		return nc.getPanel();
 	}
 
 	protected void setValidate(boolean validate) {
