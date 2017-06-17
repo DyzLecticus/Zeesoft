@@ -19,6 +19,7 @@ import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -181,9 +182,15 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		return r;
 	}
 
+	protected JRadioButton addLabelRadioButtonToPanel(JPanel panel,int row,String label) {
+		JRadioButton r = getNewRadioButton(label);
+		addProperty(panel,row,r);
+		return r;
+	}
+
 	protected JCheckBox addLabelCheckBoxToPanel(JPanel panel,int row,String label) {
-		JCheckBox r = getNewCheckBox();
-		addLabelProperty(panel,row,label,r);
+		JCheckBox r = getNewCheckBox(label);
+		addProperty(panel,row,r);
 		return r;
 	}
 
@@ -293,8 +300,18 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		return comboBox;
 	}
 	
-	protected JCheckBox getNewCheckBox() {
+	protected JRadioButton getNewRadioButton(String label) {
+		JRadioButton r = new JRadioButton();
+		r.setText(label);
+		r.addFocusListener(this);
+		r.addKeyListener(controller.getPlayerKeyListener());
+		addControlPageUpDownOverridesToComponent(r);
+		return r;
+	}
+	
+	protected JCheckBox getNewCheckBox(String label) {
 		JCheckBox r = new JCheckBox();
+		r.setText(label);
 		r.addFocusListener(this);
 		r.addKeyListener(controller.getPlayerKeyListener());
 		addControlPageUpDownOverridesToComponent(r);

@@ -583,7 +583,11 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		}
 		
 		if (name.equals(Instrument.ECHO)) {
-			row++;
+			JPanel echoPanel = new JPanel();
+			echoPanel.setLayout(new GridBagLayout());
+			echoPanel.setBorder(BorderFactory.createTitledBorder("Echo"));
+			
+			int erow = 0;
 			echoInstrument = new JComboBox<String>();
 			echoInstrument.addItem("[Self]");
 			echoInstrument.addItemListener(this);
@@ -598,33 +602,36 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					echoInstrument.addItem(Instrument.INSTRUMENTS[i]);
 				}
 			}
-			addLabelProperty(panel,row,"Echo instrument",echoInstrument);
+			addLabelProperty(echoPanel,erow,"Source instrument",echoInstrument);
 			
-			row++;
-			echoLayer = addLabelSliderToPanel(panel,row,"Echo layer",1,2,1);
-			row++;
-			echoSteps = addLabelSliderToPanel(panel,row,"Echo steps",1,24,6);
+			erow++;
+			echoLayer = addLabelSliderToPanel(echoPanel,erow,"Source layer",1,2,1);
+			erow++;
+			echoSteps = addLabelSliderToPanel(echoPanel,erow,"Steps",1,24,6);
+
+			erow++;
+			echoPan1 = addLabelSliderToPanel(echoPanel,erow,"Pan 1",0,127,24);
+			erow++;
+			echoPan2 = addLabelSliderToPanel(echoPanel,erow,"Pan 2",0,127,104);
+			erow++;
+			echoPan3 = addLabelSliderToPanel(echoPanel,erow,"Pan 3",0,127,48);
+
+			erow++;
+			echoVelocityPercentage1 = addLabelSliderToPanel(echoPanel,erow,"Velocity percentage 1",1,99,80);
+			erow++;
+			echoVelocityPercentage2 = addLabelSliderToPanel(echoPanel,erow,"Velocity percentage 2",1,99,60);
+			erow++;
+			echoVelocityPercentage3 = addLabelSliderToPanel(echoPanel,erow,"Velocity percentage 3",1,99,40);
+			
+			erow++;
+			echoReverb1 = addLabelSliderToPanel(echoPanel,erow,"Reverb 1",0,127,80);
+			erow++;
+			echoReverb2 = addLabelSliderToPanel(echoPanel,erow,"Reverb 2",0,127,104);
+			erow++;
+			echoReverb3 = addLabelSliderToPanel(echoPanel,erow,"Reverb 3",0,127,127);
 
 			row++;
-			echoVelocityPercentage1 = addLabelSliderToPanel(panel,row,"Echo 1 velocity percentage",1,99,80);
-			row++;
-			echoPan1 = addLabelSliderToPanel(panel,row,"Echo 1 pan",0,127,24);
-			row++;
-			echoReverb1 = addLabelSliderToPanel(panel,row,"Echo 1 reverb",0,127,80);
-
-			row++;
-			echoVelocityPercentage2 = addLabelSliderToPanel(panel,row,"Echo 1 velocity percentage",1,99,60);
-			row++;
-			echoPan2 = addLabelSliderToPanel(panel,row,"Echo 2 pan",0,127,104);
-			row++;
-			echoReverb2 = addLabelSliderToPanel(panel,row,"Echo 2 reverb",0,127,104);
-			
-			row++;
-			echoVelocityPercentage3 = addLabelSliderToPanel(panel,row,"Echo 3 velocity percentage",1,99,40);
-			row++;
-			echoPan3 = addLabelSliderToPanel(panel,row,"Echo 3 pan",0,127,48);
-			row++;
-			echoReverb3 = addLabelSliderToPanel(panel,row,"Echo 3 reverb",0,127,127);
+			addComponent(panel,row,0.01,echoPanel,false);
 		}
 		
 		row++;
