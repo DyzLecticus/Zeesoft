@@ -575,40 +575,13 @@ public class CompositionToSequenceConvertor {
 								}
 								if ((c+1) < list.size()) {
 									SeqControl nsc = list.get((c+1));
-									long tickDiff = nsc.tick - sc.tick;
-									int valueStart = sc.value;
-									int valueEnd = nsc.value;
-									int valueDiff = 0;
-									boolean add = true;
-									if (valueStart<valueEnd) {
-										valueDiff = (valueEnd - valueStart);
-										add = true;
-									} else if (valueStart>valueEnd) {
-										valueDiff = (valueStart - valueEnd);
-										add = false;
-									}
-									valueDiff = (valueDiff - 1);
-									if (valueDiff>1 && tickDiff>valueDiff) {
-										long ticksPerValueChange = (tickDiff / valueDiff);
-										for (int vc = 1; vc < valueDiff; vc++) {
-											int value = sc.value;
-											if (add) {
-												value = value + vc;
-											} else {
-												value = value - vc;
-											}
-											SeqControl asc = new SeqControl();
-											asc.instrument = sc.instrument;
-											asc.channel = sc.channel;
-											asc.control = sc.control;
-											asc.tick = sc.tick + (vc * ticksPerValueChange);
-											asc.value = value;
-											r.add(asc);
-											if ((echo.getInstrument().equals(sc.instrument) && echo.getLayer()==layer) || 
-												(sc.instrument.equals(Instrument.ECHO) && echo.getInstrument().length()==0)
-												) {
-												echoControls.add(asc);
-											}
+									List<SeqControl> slideControls = getSlideControls(sc,nsc);
+									for (SeqControl asc: slideControls) {
+										r.add(asc);
+										if ((echo.getInstrument().equals(sc.instrument) && echo.getLayer()==layer) || 
+											(sc.instrument.equals(Instrument.ECHO) && echo.getInstrument().length()==0)
+											) {
+											echoControls.add(asc);
 										}
 									}
 								}
@@ -643,6 +616,63 @@ public class CompositionToSequenceConvertor {
 			}
 		}
 
+		return r;
+	}
+	
+	protected List<SeqControl> getSlideControls(SeqControl sc, SeqControl nsc) {
+		List<SeqControl> r = new ArrayList<SeqControl>();
+		long tickDiff = nsc.tick - sc.tick;
+		int valueStart = sc.value;
+		int valueEnd = nsc.value;
+		int valueDiff = 0;
+		boolean add = true;
+		if (valueStart<valueEnd) {
+			valueDiff = (valueEnd - valueStart);
+			add = true;
+		} else if (valueStart>valueEnd) {
+			valueDiff = (valueStart - valueEnd);
+			add = false;
+		}
+		valueDiff = (valueDiff - 1);
+		if (valueDiff>1) {
+			if (tickDiff>valueDiff) {
+				long ticksPerValueChange = (tickDiff / valueDiff);
+				for (int vc = 1; vc < valueDiff; vc++) {
+					int value = sc.value;
+					if (add) {
+						value = value + vc;
+					} else {
+						value = value - vc;
+					}
+					SeqControl asc = new SeqControl();
+					asc.instrument = sc.instrument;
+					asc.channel = sc.channel;
+					asc.control = sc.control;
+					asc.tick = sc.tick + (vc * ticksPerValueChange);
+					asc.value = value;
+					r.add(asc);
+				}
+			} else {
+				int valueChangePerTick = (valueDiff / (int) tickDiff);
+				if (valueChangePerTick>0) {
+					for (int tick = 1; tick < tickDiff; tick++) {
+						int value = sc.value;
+						if (add) {
+							value = value + (tick * valueChangePerTick);
+						} else {
+							value = value - (tick * valueChangePerTick);
+						}
+						SeqControl asc = new SeqControl();
+						asc.instrument = sc.instrument;
+						asc.channel = sc.channel;
+						asc.control = sc.control;
+						asc.tick = sc.tick + tick;
+						asc.value = value;
+						r.add(asc);
+					}
+				}
+			}
+		}
 		return r;
 	}
 	
