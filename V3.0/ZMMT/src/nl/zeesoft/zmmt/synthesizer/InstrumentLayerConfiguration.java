@@ -1,26 +1,33 @@
 package nl.zeesoft.zmmt.synthesizer;
 
 public class InstrumentLayerConfiguration {
-	private	int			midiNum			= 0;
+	private	int			midiNum				= 0;
 
-	private int 		pressure		= 0;
+	private int 		pressure			= 0;
 
-	private int			modulation		= 0;
-	private int			reverb			= 24;
-	private int			chorus			= 0;
+	private int			modulation			= 0;
+	private int			reverb				= 24;
+	private int			chorus				= 0;
 
-	private int			filter			= 64;
-	private int			resonance		= 64;
-	private int			attack			= 64;
-	private int			decay			= 64;
-	private int			release			= 64;
-	private int			vibRate			= 64;
-	private int			vibDepth		= 64;
-	private int			vibDelay		= 64;
+	private int			filter				= 64;
+	private int			resonance			= 64;
+	private int			attack				= 64;
+	private int			decay				= 64;
+	private int			release				= 64;
+	private int			vibRate				= 64;
+	private int			vibDepth			= 64;
+	private int			vibDelay			= 64;
 
-	private int			baseOctave		= 3;
-	private int			baseVelocity	= 100;
-	private int			accentVelocity	= 110;
+	private int			baseOctave			= 3;
+	private int			baseVelocity		= 100;
+	private int			accentVelocity		= 110;
+	
+	private boolean		controlModulation	= true;
+	private boolean		controlFilter		= true;
+
+	private boolean		modToChorus			= false;
+	private boolean		modToResonance		= false;
+	private boolean		modToVibDepth		= true;
 	
 	public InstrumentLayerConfiguration copy() {
 		InstrumentLayerConfiguration r = new InstrumentLayerConfiguration();
@@ -46,6 +53,12 @@ public class InstrumentLayerConfiguration {
 		r.setBaseVelocity(baseVelocity);
 		r.setAccentVelocity(accentVelocity);
 
+		r.setControlModulation(controlModulation);
+		r.setControlFilter(controlFilter);
+		r.setModToChorus(modToChorus);
+		r.setModToResonance(modToResonance);
+		r.setModToVibDepth(modToVibDepth);
+		
 		return r;
 	}
 	
@@ -175,5 +188,45 @@ public class InstrumentLayerConfiguration {
 
 	public void setVibDelay(int vibDelay) {
 		this.vibDelay = vibDelay;
+	}
+
+	public boolean isControlModulation() {
+		return controlModulation;
+	}
+
+	public void setControlModulation(boolean controlModulation) {
+		this.controlModulation = controlModulation;
+	}
+
+	public boolean isControlFilter() {
+		return controlFilter;
+	}
+
+	public void setControlFilter(boolean controlFilter) {
+		this.controlFilter = controlFilter;
+	}
+
+	public boolean isModToChorus() {
+		return modToChorus;
+	}
+
+	public void setModToChorus(boolean modToChorus) {
+		this.modToChorus = modToChorus;
+	}
+
+	public boolean isModToResonance() {
+		return modToResonance;
+	}
+
+	public void setModToResonance(boolean modToResonance) {
+		this.modToResonance = modToResonance;
+	}
+
+	public boolean isModToVibDepth() {
+		return modToVibDepth;
+	}
+
+	public void setModToVibDepth(boolean modToVibDepth) {
+		this.modToVibDepth = modToVibDepth;
 	}
 }

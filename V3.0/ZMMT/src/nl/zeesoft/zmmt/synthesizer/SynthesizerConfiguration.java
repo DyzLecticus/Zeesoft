@@ -63,6 +63,11 @@ public class SynthesizerConfiguration {
 			instElem.children.add(new JsElem("l1VibRate","" + inst.getLayer1().getVibRate()));
 			instElem.children.add(new JsElem("l1VibDepth","" + inst.getLayer1().getVibDepth()));
 			instElem.children.add(new JsElem("l1VibDelay","" + inst.getLayer1().getVibDelay()));
+			instElem.children.add(new JsElem("l1ControlModulation","" + inst.getLayer1().isControlModulation()));
+			instElem.children.add(new JsElem("l1ControlFilter","" + inst.getLayer1().isControlFilter()));
+			instElem.children.add(new JsElem("l1ModToChorus","" + inst.getLayer1().isModToChorus()));
+			instElem.children.add(new JsElem("l1ModToResonance","" + inst.getLayer1().isModToResonance()));
+			instElem.children.add(new JsElem("l1ModToVibDepth","" + inst.getLayer1().isModToVibDepth()));
 			if (!inst.getName().equals(Instrument.DRUMS)) {
 				instElem.children.add(new JsElem("l1BaseOctave","" + inst.getLayer1().getBaseOctave()));
 				instElem.children.add(new JsElem("l1BaseVelocity","" + inst.getLayer1().getBaseVelocity()));
@@ -89,6 +94,11 @@ public class SynthesizerConfiguration {
 				instElem.children.add(new JsElem("l2BaseOctave","" + inst.getLayer2().getBaseOctave()));
 				instElem.children.add(new JsElem("l2BaseVelocity","" + inst.getLayer2().getBaseVelocity()));
 				instElem.children.add(new JsElem("l2AccentVelocity","" + inst.getLayer2().getAccentVelocity()));
+				instElem.children.add(new JsElem("l2ControlModulation","" + inst.getLayer2().isControlModulation()));
+				instElem.children.add(new JsElem("l2ControlFilter","" + inst.getLayer2().isControlFilter()));
+				instElem.children.add(new JsElem("l2ModToChorus","" + inst.getLayer2().isModToChorus()));
+				instElem.children.add(new JsElem("l2ModToResonance","" + inst.getLayer2().isModToResonance()));
+				instElem.children.add(new JsElem("l2ModToVibDepth","" + inst.getLayer2().isModToVibDepth()));
 			}
 		}
 		for (DrumConfiguration drum: drums) {
@@ -174,6 +184,16 @@ public class SynthesizerConfiguration {
 							inst.getLayer1().setBaseVelocity(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("l1AccentVelocity")) {
 							inst.getLayer1().setAccentVelocity(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("l1ControlModulation")) {
+							inst.getLayer1().setControlModulation(Boolean.parseBoolean(val.value.toString()));
+						} else if (val.name.equals("l1ControlFilter")) {
+							inst.getLayer1().setControlFilter(Boolean.parseBoolean(val.value.toString()));
+						} else if (val.name.equals("l1ModToChorus")) {
+							inst.getLayer1().setModToChorus(Boolean.parseBoolean(val.value.toString()));
+						} else if (val.name.equals("l1ModToResonance")) {
+							inst.getLayer1().setModToResonance(Boolean.parseBoolean(val.value.toString()));
+						} else if (val.name.equals("l1ModToVibDepth")) {
+							inst.getLayer1().setModToVibDepth(Boolean.parseBoolean(val.value.toString()));
 						// Layer 2
 						} else if (val.name.equals("l2MidiNum")) {
 							inst.getLayer2().setMidiNum(Integer.parseInt(val.value.toString()));
@@ -207,6 +227,16 @@ public class SynthesizerConfiguration {
 							inst.getLayer2().setBaseVelocity(Integer.parseInt(val.value.toString()));
 						} else if (val.name.equals("l2AccentVelocity")) {
 							inst.getLayer2().setAccentVelocity(Integer.parseInt(val.value.toString()));
+						} else if (val.name.equals("l2ControlModulation")) {
+							inst.getLayer2().setControlModulation(Boolean.parseBoolean(val.value.toString()));
+						} else if (val.name.equals("l2ControlFilter")) {
+							inst.getLayer2().setControlFilter(Boolean.parseBoolean(val.value.toString()));
+						} else if (val.name.equals("l2ModToChorus")) {
+							inst.getLayer2().setModToChorus(Boolean.parseBoolean(val.value.toString()));
+						} else if (val.name.equals("l2ModToResonance")) {
+							inst.getLayer2().setModToResonance(Boolean.parseBoolean(val.value.toString()));
+						} else if (val.name.equals("l2ModToVibDepth")) {
+							inst.getLayer2().setModToVibDepth(Boolean.parseBoolean(val.value.toString()));
 						}
 					}
 					if (inst.getName().length()>0) {

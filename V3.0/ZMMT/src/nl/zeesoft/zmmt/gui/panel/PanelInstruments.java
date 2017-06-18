@@ -37,52 +37,58 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 
 public class PanelInstruments extends PanelObject implements ItemListener, ListCellRenderer<Object>, CompositionChangePublisher, StateChangeSubscriber {
-	private static final String		TOGGLE_SHOW_FX					= "TOGGLE_SHOW_FX";
+	private static final String		TOGGLE_SHOW_FX						= "TOGGLE_SHOW_FX";
 	
-	private JComboBox<String>		instrument						= null;
-	private String					selectedInstrument				= "";
+	private JComboBox<String>		instrument							= null;
+	private String					selectedInstrument					= "";
 	
-	private JCheckBox				instrumentShowFX				= null;
-	private boolean					showFX							= false;
-	private List<JSlider>			fxSliders						= new ArrayList<JSlider>();
+	private JCheckBox				instrumentShowFX					= null;
+	private boolean					showFX								= false;
+	private List<JSlider>			fxSliders							= new ArrayList<JSlider>();
+	private List<JCheckBox>			fxCheckBoxes						= new ArrayList<JCheckBox>();
 	
-	private JPanel					cardPanel						= null;
+	private JPanel					cardPanel							= null;
 
-	private JSlider[]				instrumentHoldPercentage		= new JSlider[Instrument.INSTRUMENTS.length];
+	private JSlider[]				instrumentHoldPercentage			= new JSlider[Instrument.INSTRUMENTS.length];
 	@SuppressWarnings("unchecked")
-	private JComboBox<String>[][]	instrumentLayerMidiNum			= new JComboBox[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerPressure			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerModulation		= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerReverb			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerChorus			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerFilter			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerResonance		= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerAttack			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerDecay			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerRelease			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerVibRate			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerVibDepth			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerVibDelay			= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerBaseOctave		= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerBaseVelocity		= new JSlider[2][Instrument.INSTRUMENTS.length];
-	private JSlider[][]				instrumentLayerAccentVelocity	= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JComboBox<String>[][]	instrumentLayerMidiNum				= new JComboBox[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerPressure				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerModulation			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerReverb				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerChorus				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerFilter				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerResonance			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerAttack				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerDecay				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerRelease				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerVibRate				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerVibDepth				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerVibDelay				= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerBaseOctave			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerBaseVelocity			= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JSlider[][]				instrumentLayerAccentVelocity		= new JSlider[2][Instrument.INSTRUMENTS.length];
+	private JCheckBox[][]			instrumentLayerControlModulation	= new JCheckBox[2][Instrument.INSTRUMENTS.length];
+	private JCheckBox[][]			instrumentLayerControlFilter		= new JCheckBox[2][Instrument.INSTRUMENTS.length];
+	private JCheckBox[][]			instrumentLayerModToChorus			= new JCheckBox[2][Instrument.INSTRUMENTS.length];
+	private JCheckBox[][]			instrumentLayerModToResonance		= new JCheckBox[2][Instrument.INSTRUMENTS.length];
+	private JCheckBox[][]			instrumentLayerModToVibDepth		= new JCheckBox[2][Instrument.INSTRUMENTS.length];
 	
-	private JSlider[][]				drumLayerMidiNote				= new JSlider[2][Drum.DRUMS.length];
-	private JSlider[][]				drumLayerBaseVelocity			= new JSlider[2][Drum.DRUMS.length];
-	private JSlider[][]				drumLayerAccentVelocity			= new JSlider[2][Drum.DRUMS.length];
+	private JSlider[][]				drumLayerMidiNote					= new JSlider[2][Drum.DRUMS.length];
+	private JSlider[][]				drumLayerBaseVelocity				= new JSlider[2][Drum.DRUMS.length];
+	private JSlider[][]				drumLayerAccentVelocity				= new JSlider[2][Drum.DRUMS.length];
 
-	private JComboBox<String>		echoInstrument					= null;
-	private JSlider					echoLayer						= null;
-	private JSlider					echoSteps						= null;
-	private JSlider					echoVelocityPercentage1			= null;
-	private JSlider					echoVelocityPercentage2			= null;
-	private JSlider					echoVelocityPercentage3			= null;
-	private JSlider					echoReverb1						= null;
-	private JSlider					echoReverb2						= null;
-	private JSlider					echoReverb3						= null;
-	private JSlider					echoPan1						= null;
-	private JSlider					echoPan2						= null;
-	private JSlider					echoPan3						= null;
+	private JComboBox<String>		echoInstrument						= null;
+	private JSlider					echoLayer							= null;
+	private JSlider					echoSteps							= null;
+	private JSlider					echoVelocityPercentage1				= null;
+	private JSlider					echoVelocityPercentage2				= null;
+	private JSlider					echoVelocityPercentage3				= null;
+	private JSlider					echoReverb1							= null;
+	private JSlider					echoReverb2							= null;
+	private JSlider					echoReverb3							= null;
+	private JSlider					echoPan1							= null;
+	private JSlider					echoPan2							= null;
+	private JSlider					echoPan3							= null;
 	
 	public PanelInstruments(Controller controller) {
 		super(controller);
@@ -174,7 +180,13 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				instrumentLayerVibRate[l][i].setValue(conf.getLayer(l).getVibRate());
 				instrumentLayerVibDepth[l][i].setValue(conf.getLayer(l).getVibDepth());
 				instrumentLayerVibDelay[l][i].setValue(conf.getLayer(l).getVibDelay());
-				
+
+				instrumentLayerControlModulation[l][i].setSelected(conf.getLayer(l).isControlModulation());
+				instrumentLayerControlFilter[l][i].setSelected(conf.getLayer(l).isControlFilter());
+				instrumentLayerModToChorus[l][i].setSelected(conf.getLayer(l).isModToChorus());
+				instrumentLayerModToResonance[l][i].setSelected(conf.getLayer(l).isModToResonance());
+				instrumentLayerModToVibDepth[l][i].setSelected(conf.getLayer(l).isModToVibDepth());
+
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 					instrumentLayerBaseOctave[l][i].setValue(conf.getLayer(l).getBaseOctave());
 					instrumentLayerBaseVelocity[l][i].setValue(conf.getLayer(l).getBaseVelocity());
@@ -218,6 +230,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					instrumentLayerVibRate[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 					instrumentLayerVibDepth[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 					instrumentLayerVibDelay[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+
+					instrumentLayerControlModulation[l][i].setSelected(conf.getLayer(l).isControlModulation());
+					instrumentLayerControlFilter[l][i].setSelected(conf.getLayer(l).isControlFilter());
+					instrumentLayerModToChorus[l][i].setSelected(conf.getLayer(l).isModToChorus());
+					instrumentLayerModToResonance[l][i].setSelected(conf.getLayer(l).isModToResonance());
+					instrumentLayerModToVibDepth[l][i].setSelected(conf.getLayer(l).isModToVibDepth());
 					
 					instrumentLayerBaseOctave[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 					instrumentLayerBaseVelocity[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
@@ -241,6 +259,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					instrumentLayerVibDepth[l][i].setEnabled(echo.getInstrument().length()==0);
 					instrumentLayerVibDelay[l][i].setEnabled(echo.getInstrument().length()==0);
 
+					instrumentLayerControlModulation[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerControlFilter[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerModToChorus[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerModToResonance[l][i].setEnabled(echo.getInstrument().length()==0);
+					instrumentLayerModToVibDepth[l][i].setEnabled(echo.getInstrument().length()==0);
+					
 					instrumentLayerBaseOctave[l][i].setEnabled(echo.getInstrument().length()==0);
 					instrumentLayerBaseVelocity[l][i].setEnabled(echo.getInstrument().length()==0);
 					instrumentLayerAccentVelocity[l][i].setEnabled(echo.getInstrument().length()==0);
@@ -324,6 +348,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			inst.getLayer(l).setVibDepth(instrumentLayerVibDepth[l][i].getValue());
 			inst.getLayer(l).setVibDelay(instrumentLayerVibDelay[l][i].getValue());
 			
+			inst.getLayer(l).setControlModulation(instrumentLayerControlModulation[l][i].isSelected());
+			inst.getLayer(l).setControlFilter(instrumentLayerControlFilter[l][i].isSelected());
+			inst.getLayer(l).setModToChorus(instrumentLayerModToChorus[l][i].isSelected());
+			inst.getLayer(l).setModToResonance(instrumentLayerModToResonance[l][i].isSelected());
+			inst.getLayer(l).setModToVibDepth(instrumentLayerModToVibDepth[l][i].isSelected());
+			
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 				inst.getLayer(l).setBaseOctave(instrumentLayerBaseOctave[l][i].getValue());
 				inst.getLayer(l).setBaseVelocity(instrumentLayerBaseVelocity[l][i].getValue());
@@ -350,6 +380,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				inst.getLayer(l).setVibRate(instrumentLayerVibRate[l][i].getValue());
 				inst.getLayer(l).setVibDepth(instrumentLayerVibDepth[l][i].getValue());
 				inst.getLayer(l).setVibDelay(instrumentLayerVibDelay[l][i].getValue());
+				
+				inst.getLayer(l).setControlModulation(instrumentLayerControlModulation[l][i].isSelected());
+				inst.getLayer(l).setControlFilter(instrumentLayerControlFilter[l][i].isSelected());
+				inst.getLayer(l).setModToChorus(instrumentLayerModToChorus[l][i].isSelected());
+				inst.getLayer(l).setModToResonance(instrumentLayerModToResonance[l][i].isSelected());
+				inst.getLayer(l).setModToVibDepth(instrumentLayerModToVibDepth[l][i].isSelected());
 				
 				inst.getLayer(l).setBaseOctave(instrumentLayerBaseOctave[l][i].getValue());
 				inst.getLayer(l).setBaseVelocity(instrumentLayerBaseVelocity[l][i].getValue());
@@ -445,9 +481,16 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 
 	protected void toggleShowFX() {
 		for (JSlider s: fxSliders) {
-			LabelSlider ls = getLabelSlider(s);
-			if (ls!=null) {
-				ls.setVisible(showFX);
+			if (s!=null) {
+				LabelSlider ls = getLabelSlider(s);
+				if (ls!=null) {
+					ls.setVisible(showFX);
+				}
+			}
+		}
+		for (JCheckBox cb: fxCheckBoxes) {
+			if (cb!=null) {
+				cb.setVisible(showFX);
 			}
 		}
 	}
@@ -479,6 +522,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		}
 
 		fxSliders.clear();
+		fxCheckBoxes.clear();
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			panel.add(getInstrumentPanel(i,midiInstruments),Instrument.INSTRUMENTS[i]);
 		}
@@ -549,6 +593,17 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		row++;
 		instrumentLayerVibDelay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato delay",0,127,127);
 
+		row++;
+		instrumentLayerControlModulation[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control modulation");
+		row++;
+		instrumentLayerControlFilter[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control filter");
+		row++;
+		instrumentLayerModToChorus[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to chorus");
+		row++;
+		instrumentLayerModToResonance[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to resonance");
+		row++;
+		instrumentLayerModToVibDepth[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to vibrato depth");
+
 		if (name.equals(Instrument.SYNTH_BASS1) ||
 			name.equals(Instrument.SYNTH1) ||
 			name.equals(Instrument.LEAD) ||
@@ -604,6 +659,23 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			instrumentLayerVibDepth[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato depth",0,127,127);
 			row++;
 			instrumentLayerVibDelay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato delay",0,127,127);
+
+			row++;
+			instrumentLayerControlModulation[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control modulation");
+			row++;
+			instrumentLayerControlFilter[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control filter");
+			row++;
+			instrumentLayerModToChorus[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to chorus");
+			row++;
+			instrumentLayerModToResonance[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to resonance");
+			row++;
+			instrumentLayerModToVibDepth[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to vibrato depth");
+		} else {
+			l = 0;
+			instrumentLayerControlModulation[l][instrumentNum].setEnabled(false);
+			instrumentLayerControlFilter[l][instrumentNum].setEnabled(false);
+			instrumentLayerControlModulation[l][instrumentNum].setSelected(true);
+			instrumentLayerControlFilter[l][instrumentNum].setSelected(true);
 		}
 
 		if (name.equals(Instrument.DRUMS)) {
@@ -641,6 +713,11 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			fxSliders.add(instrumentLayerVibRate[l][instrumentNum]);
 			fxSliders.add(instrumentLayerVibDepth[l][instrumentNum]);
 			fxSliders.add(instrumentLayerVibDelay[l][instrumentNum]);
+			fxCheckBoxes.add(instrumentLayerControlModulation[l][instrumentNum]);
+			fxCheckBoxes.add(instrumentLayerControlFilter[l][instrumentNum]);
+			fxCheckBoxes.add(instrumentLayerModToChorus[l][instrumentNum]);
+			fxCheckBoxes.add(instrumentLayerModToResonance[l][instrumentNum]);
+			fxCheckBoxes.add(instrumentLayerModToVibDepth[l][instrumentNum]);
 		}
 		
 		if (name.equals(Instrument.ECHO)) {
