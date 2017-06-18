@@ -68,6 +68,15 @@ public class StateManager extends StateObject {
 		unlockMe(this);
 	}
 
+	public void setShowInstrumentFX(Object source,boolean show) {
+		lockMe(this);
+		if (super.isShowInstrumentFX()!=show) {
+			super.setShowInstrumentFX(show);
+			publishStateChangeEvent(StateChangeEvent.CHANGED_SHOW_INSTRUMENT_FX,source);
+		}
+		unlockMe(this);
+	}
+	
 	public void setPatternEditMode(Object source,String editMode) {
 		lockMe(this);
 		if (!super.getPatternEditMode().equals(editMode)) {
@@ -258,6 +267,15 @@ public class StateManager extends StateObject {
 	}
 
 	@Override
+	public boolean isShowInstrumentFX() {
+		boolean r = false;
+		lockMe(this);
+		r = super.isShowInstrumentFX();
+		unlockMe(this);
+		return r;
+	}
+
+	@Override
 	public String getPatternEditMode() {
 		String r = "";
 		lockMe(this);
@@ -326,6 +344,7 @@ public class StateManager extends StateObject {
 		StateChangeEvent evt = new StateChangeEvent(type,source);
 		evt.setSelectedTab(super.getSelectedTab());
 		evt.setSelectedInstrument(super.getSelectedInstrument());
+		evt.setShowInstrumentFX(super.isShowInstrumentFX());
 		evt.setPatternEditMode(super.getPatternEditMode());
 		evt.setSelectedPattern(super.getSelectedPattern());
 		evt.setSelectedPatternRowFrom(super.getSelectedPatternRowFrom());

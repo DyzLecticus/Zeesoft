@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBox;
@@ -46,6 +47,8 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	private JScrollPane					scroller			= null;
 	private JPanel						panel				= new JPanel();
 	private boolean						validate			= true;
+	
+	private List<ValueComponent>		valueComponents		= new ArrayList<ValueComponent>();
 	
 	public PanelObject(Controller controller) {
 		this.controller = controller;
@@ -162,6 +165,17 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		return controller;
 	}
 
+	protected LabelSlider getLabelSlider(JSlider slider) {
+		LabelSlider r = null;
+		for (ValueComponent vc: valueComponents) {
+			if (vc.getValue()==slider) {
+				r = (LabelSlider) vc;
+				break;
+			}
+		}
+		return r;
+	}
+	
 	protected JFormattedTextField addLabelTextFieldToPanel(JPanel panel,int row,String label) {
 		JFormattedTextField r = getNewTextField();
 		addLabelProperty(panel,row,label,r);
@@ -171,16 +185,18 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	protected JSlider addLabelSliderToPanel(JPanel panel,int row,String label,int min, int max, int init) {
 		JSlider r = getNewSlider(min,max,init);
 		LabelSlider ls = new LabelSlider(new JLabel(),r);
-		JPanel lsp = ls.getPanel();
-		addLabelProperty(panel,row,label,lsp);
+		ls.setPropLabel(addLabel(panel,row,label));
+		valueComponents.add(ls);
+		addProperty(panel,row,ls.getPanel());
 		return r;
 	}
-
+	
 	protected JComboBox<String> addLabelComboBox(JPanel panel,int row,String label,List<String> options,ActionListener actionListener,int subtract) {
 		JComboBox<String> r = getNewComboBox(options,actionListener);
 		LabelComboBox ls = new LabelComboBox(new JLabel(),r,subtract);
-		JPanel lsp = ls.getPanel();
-		addLabelProperty(panel,row,label,lsp);
+		ls.setPropLabel(addLabel(panel,row,label));
+		valueComponents.add(ls);
+		addProperty(panel,row,ls.getPanel());
 		return r;
 	}
 
@@ -200,7 +216,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		addComponent(panel,row,0.01,new JSeparator(JSeparator.HORIZONTAL),true,true);
 	}
 	
-	protected void addLabel(JPanel panel,int row,String text) {
+	protected JLabel addLabel(JPanel panel,int row,String text) {
 		JLabel lbl = new JLabel(text + " ");
 		lbl.setFocusable(false);
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -210,6 +226,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		gbc.gridx = 0;
 		gbc.gridy = row;
 		panel.add(lbl,gbc);
+		return lbl;
 	}
 	
 	protected void addProperty(JPanel panel,int row,Component c) {

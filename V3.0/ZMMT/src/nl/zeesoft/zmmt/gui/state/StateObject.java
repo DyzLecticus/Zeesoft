@@ -11,6 +11,7 @@ import nl.zeesoft.zmmt.gui.Settings;
 public abstract class StateObject extends Locker {
 	private String 					selectedTab				= "";
 	private String 					selectedInstrument		= "";
+	private boolean					showInstrumentFX		= false;
 	private String 					patternEditMode			= "";
 	private int 					selectedPattern			= 0;
 	private int 					selectedPatternRowFrom	= -1;
@@ -48,11 +49,19 @@ public abstract class StateObject extends Locker {
 		this.selectedInstrument = selectedInstrument;
 	}
 
+	public boolean isShowInstrumentFX() {
+		return showInstrumentFX;
+	}
+
+	protected void setShowInstrumentFX(boolean showInstrumentFX) {
+		this.showInstrumentFX = showInstrumentFX;
+	}
+
 	public String getPatternEditMode() {
 		return patternEditMode;
 	}
 
-	public void setPatternEditMode(String patternEditMode) {
+	protected void setPatternEditMode(String patternEditMode) {
 		this.patternEditMode = patternEditMode;
 	}
 
@@ -68,7 +77,7 @@ public abstract class StateObject extends Locker {
 		return selectedPatternRowFrom;
 	}
 
-	public void setSelectedPatternRowFrom(int selectedPatternRowFrom) {
+	protected void setSelectedPatternRowFrom(int selectedPatternRowFrom) {
 		this.selectedPatternRowFrom = selectedPatternRowFrom;
 	}
 
@@ -76,7 +85,7 @@ public abstract class StateObject extends Locker {
 		return selectedPatternRowTo;
 	}
 
-	public void setSelectedPatternRowTo(int selectedPatternRowTo) {
+	protected void setSelectedPatternRowTo(int selectedPatternRowTo) {
 		this.selectedPatternRowTo = selectedPatternRowTo;
 	}
 
@@ -84,7 +93,7 @@ public abstract class StateObject extends Locker {
 		return selectedPatternColFrom;
 	}
 
-	public void setSelectedPatternColFrom(int selectedPatternColFrom) {
+	protected void setSelectedPatternColFrom(int selectedPatternColFrom) {
 		this.selectedPatternColFrom = selectedPatternColFrom;
 	}
 
@@ -92,7 +101,7 @@ public abstract class StateObject extends Locker {
 		return selectedPatternColTo;
 	}
 
-	public void setSelectedPatternColTo(int selectedPatternColTo) {
+	protected void setSelectedPatternColTo(int selectedPatternColTo) {
 		this.selectedPatternColTo = selectedPatternColTo;
 	}
 
@@ -100,7 +109,7 @@ public abstract class StateObject extends Locker {
 		return selectedSequenceRowFrom;
 	}
 
-	public void setSelectedSequenceRowFrom(int selectedSequenceRowFrom) {
+	protected void setSelectedSequenceRowFrom(int selectedSequenceRowFrom) {
 		this.selectedSequenceRowFrom = selectedSequenceRowFrom;
 	}
 
@@ -108,7 +117,7 @@ public abstract class StateObject extends Locker {
 		return selectedSequenceRowTo;
 	}
 
-	public void setSelectedSequenceRowTo(int selectedSequenceRowTo) {
+	protected void setSelectedSequenceRowTo(int selectedSequenceRowTo) {
 		this.selectedSequenceRowTo = selectedSequenceRowTo;
 	}
 	

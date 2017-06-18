@@ -3,6 +3,7 @@ package nl.zeesoft.zmmt.gui.panel;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -14,6 +15,9 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -33,8 +37,14 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 
 public class PanelInstruments extends PanelObject implements ItemListener, ListCellRenderer<Object>, CompositionChangePublisher, StateChangeSubscriber {
+	private static final String		TOGGLE_SHOW_FX					= "TOGGLE_SHOW_FX";
+	
 	private JComboBox<String>		instrument						= null;
 	private String					selectedInstrument				= "";
+	
+	private JCheckBox				instrumentShowFX				= null;
+	private boolean					showFX							= false;
+	private List<JSlider>			fxSliders						= new ArrayList<JSlider>();
 	
 	private JPanel					cardPanel						= null;
 
@@ -78,6 +88,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
 		selectedInstrument = controller.getStateManager().getSelectedInstrument();
+		showFX = controller.getStateManager().isShowInstrumentFX();
 	}
 
 	@Override
@@ -91,12 +102,29 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 
 		instrument = getInstrumentSelector();
 		instrument.addItemListener(this);
+
+		instrumentShowFX = new JCheckBox();
+		instrumentShowFX.setText("Edit FX");
+		instrumentShowFX.setSelected(showFX);
+		instrumentShowFX.addActionListener(this);
+		instrumentShowFX.setActionCommand(TOGGLE_SHOW_FX);
+		instrumentShowFX.addFocusListener(this);
+		instrumentShowFX.addKeyListener(getController().getPlayerKeyListener());
+		addControlPageUpDownOverridesToComponent(instrumentShowFX);
 		
-		addComponent(getPanel(),row,0.01,instrument,false);
+		JPanel select = new JPanel();
+		select.setLayout(new BoxLayout(select,BoxLayout.X_AXIS));
+		select.add(instrument);
+		select.add(Box.createRigidArea(new Dimension(5,0)));
+		select.add(instrumentShowFX);
+		
+		addComponent(getPanel(),row,0.01,select,false);
 		
 		row++;
 		cardPanel = getCardPanel();
 		addComponent(getPanel(),row,0.01,cardPanel);
+
+		toggleShowFX();
 		
 		row++;
 		addFiller(getPanel(),row);
@@ -121,6 +149,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			selectedInstrument = evt.getSelectedInstrument();
 			instrument.setSelectedIndex(Instrument.getIndexForInstrument(evt.getSelectedInstrument()));
 			instrument.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
+		} else if (!evt.getSource().equals(this) && showFX!=evt.isShowInstrumentFX()) {
+			showFX = evt.isShowInstrumentFX();
+			instrumentShowFX.setSelected(showFX);
+			toggleShowFX();
 		} else if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
 			EchoConfiguration echo = evt.getComposition().getSynthesizerConfiguration().getEcho();
 			for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
@@ -381,6 +413,11 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			instrument.setBackground(Instrument.getColorForInstrument(selectedInstrument));
 			getController().getStateManager().setSelectedInstrument(this,selectedInstrument);
 		}
+		if (showFX!=instrumentShowFX.isSelected()) {
+			showFX=instrumentShowFX.isSelected();
+			toggleShowFX();
+			getController().getStateManager().setShowInstrumentFX(this,showFX);
+		}
 	}
 
 	@Override
@@ -406,6 +443,15 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		return label;
 	}
 
+	protected void toggleShowFX() {
+		for (JSlider s: fxSliders) {
+			LabelSlider ls = getLabelSlider(s);
+			if (ls!=null) {
+				ls.setVisible(showFX);
+			}
+		}
+	}
+	
 	protected JPanel getCardPanel() {
 		JPanel panel = new JPanel();
 		CardLayout layout = new CardLayout();
@@ -431,7 +477,8 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				midiInstruments.add(String.format("%03d",i));
 			}
 		}
-		
+
+		fxSliders.clear();
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			panel.add(getInstrumentPanel(i,midiInstruments),Instrument.INSTRUMENTS[i]);
 		}
@@ -466,6 +513,22 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			instrumentLayerMidiNum[l][instrumentNum].setEnabled(false);
 		}
 
+		if (!name.equals(Instrument.DRUMS)) {
+			row++;
+			instrumentLayerBaseOctave[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base octave",0,9,3);
+			row++;
+			instrumentLayerBaseVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base velocity",0,127,100);
+			row++;
+			instrumentLayerAccentVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Accent velocity",0,127,110);
+		}
+
+		row++;
+		instrumentLayerAttack[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Attack",0,127,127);
+		row++;
+		instrumentLayerDecay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Decay",0,127,127);
+		row++;
+		instrumentLayerRelease[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Release",0,127,127);
+		
 		row++;
 		instrumentLayerPressure[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Pressure",0,127,0);
 		row++;
@@ -480,27 +543,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		row++;
 		instrumentLayerResonance[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Resonance",0,127,127);
 		row++;
-		instrumentLayerAttack[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Attack",0,127,127);
-		row++;
-		instrumentLayerDecay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Decay",0,127,127);
-		row++;
-		instrumentLayerRelease[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Release",0,127,127);
-		row++;
 		instrumentLayerVibRate[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato rate",0,127,127);
 		row++;
 		instrumentLayerVibDepth[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato depth",0,127,127);
 		row++;
 		instrumentLayerVibDelay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato delay",0,127,127);
 
-		if (!name.equals(Instrument.DRUMS)) {
-			row++;
-			instrumentLayerBaseOctave[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base octave",0,9,3);
-			row++;
-			instrumentLayerBaseVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base velocity",0,127,100);
-			row++;
-			instrumentLayerAccentVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Accent velocity",0,127,110);
-		}
-		
 		if (name.equals(Instrument.SYNTH_BASS1) ||
 			name.equals(Instrument.SYNTH1) ||
 			name.equals(Instrument.LEAD) ||
@@ -524,6 +572,20 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			}
 
 			row++;
+			instrumentLayerBaseOctave[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base octave",0,9,3);
+			row++;
+			instrumentLayerBaseVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base velocity",0,127,100);
+			row++;
+			instrumentLayerAccentVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Accent velocity",0,127,110);
+
+			row++;
+			instrumentLayerAttack[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Attack",0,127,127);
+			row++;
+			instrumentLayerDecay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Decay",0,127,127);
+			row++;
+			instrumentLayerRelease[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Release",0,127,127);
+
+			row++;
 			instrumentLayerPressure[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Pressure",0,127,0);
 			row++;
 			instrumentLayerModulation[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Modulation",0,127,0);
@@ -537,24 +599,11 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			row++;
 			instrumentLayerResonance[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Resonance",0,127,127);
 			row++;
-			instrumentLayerAttack[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Attack",0,127,127);
-			row++;
-			instrumentLayerDecay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Decay",0,127,127);
-			row++;
-			instrumentLayerRelease[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Release",0,127,127);
-			row++;
 			instrumentLayerVibRate[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato rate",0,127,127);
 			row++;
 			instrumentLayerVibDepth[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato depth",0,127,127);
 			row++;
 			instrumentLayerVibDelay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato delay",0,127,127);
-
-			row++;
-			instrumentLayerBaseOctave[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base octave",0,9,3);
-			row++;
-			instrumentLayerBaseVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Base velocity",0,127,100);
-			row++;
-			instrumentLayerAccentVelocity[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Accent velocity",0,127,110);
 		}
 
 		if (name.equals(Instrument.DRUMS)) {
@@ -580,6 +629,18 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				row++;
 				addComponent(panel,row,0.01,drumPanel,false);
 			}
+		}
+		
+		for (l = 0; l < 2; l++) {
+			fxSliders.add(instrumentLayerPressure[l][instrumentNum]);
+			fxSliders.add(instrumentLayerModulation[l][instrumentNum]);
+			fxSliders.add(instrumentLayerReverb[l][instrumentNum]);
+			fxSliders.add(instrumentLayerChorus[l][instrumentNum]);
+			fxSliders.add(instrumentLayerFilter[l][instrumentNum]);
+			fxSliders.add(instrumentLayerResonance[l][instrumentNum]);
+			fxSliders.add(instrumentLayerVibRate[l][instrumentNum]);
+			fxSliders.add(instrumentLayerVibDepth[l][instrumentNum]);
+			fxSliders.add(instrumentLayerVibDelay[l][instrumentNum]);
 		}
 		
 		if (name.equals(Instrument.ECHO)) {

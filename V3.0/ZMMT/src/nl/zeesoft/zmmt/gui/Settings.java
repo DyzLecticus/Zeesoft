@@ -30,6 +30,7 @@ public class Settings {
 	
 	private String						workingTab					= "";
 	private String						workingInstrument			= "";
+	private boolean						workingShowInstrumentFX		= false;
 	private String						workingPatternEditMode		= "";
 	private String						workingCompositionFileName	= "";
 	private int							workingCompositionPattern	= 0;
@@ -140,6 +141,7 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("defaultBarsPerPattern","" + defaultBarsPerPattern));
 		json.rootElement.children.add(new JsElem("workingTab",workingTab,true));
 		json.rootElement.children.add(new JsElem("workingInstrument",workingInstrument,true));
+		json.rootElement.children.add(new JsElem("workingShowInstrumentFX","" + workingShowInstrumentFX));
 		json.rootElement.children.add(new JsElem("workingPatternEditMode",workingPatternEditMode,true));
 		json.rootElement.children.add(new JsElem("workingCompositionFileName",workingCompositionFileName,true));
 		json.rootElement.children.add(new JsElem("workingCompositionPattern","" + workingCompositionPattern));
@@ -181,6 +183,8 @@ public class Settings {
 					workingTab = elem.value.toString();
 				} else if (elem.name.equals("workingInstrument")) {
 					workingInstrument = elem.value.toString();
+				} else if (elem.name.equals("workingShowInstrumentFX")) {
+					workingShowInstrumentFX = Boolean.parseBoolean(elem.value.toString());
 				} else if (elem.name.equals("workingPatternEditMode")) {
 					workingPatternEditMode = elem.value.toString();
 				} else if (elem.name.equals("workingCompositionFileName")) {
@@ -303,6 +307,14 @@ public class Settings {
 
 	public void setWorkingInstrument(String workingInstrument) {
 		this.workingInstrument = workingInstrument;
+	}
+
+	public boolean isWorkingShowInstrumentFX() {
+		return workingShowInstrumentFX;
+	}
+
+	public void setWorkingShowInstrumentFX(boolean workingShowInstrumentFX) {
+		this.workingShowInstrumentFX = workingShowInstrumentFX;
 	}
 
 	public String getWorkingPatternEditMode() {

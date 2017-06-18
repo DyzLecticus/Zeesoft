@@ -13,9 +13,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public abstract class ValueComponent implements ChangeListener, ItemListener {
-	private JPanel 		panel	= null;
-	private JLabel		label	= null; 
-	private JComponent	value	= null;
+	private JPanel 		panel		= null;
+	private JLabel		label		= null; 
+	private JComponent	value		= null;
+	private JLabel		propLabel	= null;
 	
 	public ValueComponent(JLabel label,JComponent value) {
 		this.label = label;
@@ -37,6 +38,13 @@ public abstract class ValueComponent implements ChangeListener, ItemListener {
 	
 	protected abstract String getStringValue();
 	
+	public void setVisible(boolean visible) {
+		panel.setVisible(visible);
+		if (propLabel!=null) {
+			propLabel.setVisible(visible);
+		}
+	}
+
 	@Override
 	public void stateChanged(ChangeEvent evt) {
 		if (evt.getSource()==value) {
@@ -56,5 +64,29 @@ public abstract class ValueComponent implements ChangeListener, ItemListener {
 			initialize();
 		}
 		return panel;
+	}
+
+	public JLabel getLabel() {
+		return label;
+	}
+
+	public void setLabel(JLabel label) {
+		this.label = label;
+	}
+
+	public JComponent getValue() {
+		return value;
+	}
+
+	public void setValue(JComponent value) {
+		this.value = value;
+	}
+
+	public JLabel getPropLabel() {
+		return propLabel;
+	}
+
+	public void setPropLabel(JLabel propLabel) {
+		this.propLabel = propLabel;
 	}
 }
