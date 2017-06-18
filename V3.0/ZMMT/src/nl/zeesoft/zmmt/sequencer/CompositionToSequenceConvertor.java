@@ -425,7 +425,11 @@ public class CompositionToSequenceConvertor {
 							layer = 2;
 						}
 						int channel = Instrument.getMidiChannelForInstrument(c.instrument,layer);
-						if (channel>=0 && channelHasNotes[channel]) {
+						InstrumentLayerConfiguration conf = instruments.get(c.instrument).getLayer(layer % 2);
+						if (channel>=0 && channelHasNotes[channel] && 
+							(c.control!=Control.MODULATION || conf.isControlModulation()) &&
+							(c.control!=Control.FILTER || conf.isControlFilter())
+							) {
 							SeqControl sc = new SeqControl();
 							sc.instrument = c.instrument;
 							sc.channel = channel;
