@@ -2,6 +2,8 @@ package nl.zeesoft.zmmt.gui;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -39,6 +41,8 @@ public class Settings {
 	private String						customFontName				= "Courier New";
 	private int							customFontSize				= 14;
 	private int							customRowHeight				= 18;
+	
+	private List<String>				recentFiles					= new ArrayList<String>();
 
 	private SortedMap<String,Integer>	keyCodeNoteNumbers			= new TreeMap<String,Integer>();
 	
@@ -93,6 +97,10 @@ public class Settings {
 		copy.setCustomFontName(customFontName);
 		copy.setCustomFontSize(customFontSize);
 		copy.setCustomRowHeight(customRowHeight);
+		copy.getRecentFiles().clear();
+		for (String fileName: recentFiles) {
+			copy.getRecentFiles().add(fileName);
+		}
 		copy.getKeyCodeNoteNumbers().clear();
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
 			copy.getKeyCodeNoteNumbers().put(entry.getKey(),new Integer(entry.getValue()));
@@ -149,6 +157,16 @@ public class Settings {
 		json.rootElement.children.add(new JsElem("customFontName",customFontName,true));
 		json.rootElement.children.add(new JsElem("customFontSize","" + customFontSize));
 		json.rootElement.children.add(new JsElem("customRowHeight","" + customRowHeight));
+		if (recentFiles.size()>0) {
+			JsElem rfElem = new JsElem("recentFiles");
+			int i = 0;
+			for (String fileName: recentFiles) {
+				JsElem fElem = new JsElem("" + i,fileName,true);
+				rfElem.children.add(fElem);
+				i++;
+			}
+			json.rootElement.children.add(rfElem);
+		}
 		JsElem kcnnsElem = new JsElem("keyCodeNoteNumbers");
 		for (Entry<String,Integer> entry: keyCodeNoteNumbers.entrySet()) {
 			kcnnsElem.children.add(new JsElem(entry.getKey(),entry.getValue().toString()));
@@ -199,7 +217,13 @@ public class Settings {
 					customFontSize = Integer.parseInt(elem.value.toString());
 				} else if (elem.name.equals("customRowHeight")) {
 					customRowHeight = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("recentFiles")) {
+					recentFiles.clear();
+					for (JsElem fElem: elem.children) {
+						recentFiles.add(fElem.value.toString());
+					}
 				} else if (elem.name.equals("keyCodeNoteNumbers")) {
+					keyCodeNoteNumbers.clear();
 					for (JsElem kElem: elem.children) {
 						String keyCode = kElem.name;
 						int noteNumber = Integer.parseInt(kElem.value.toString());
@@ -371,6 +395,10 @@ public class Settings {
 
 	public void setCustomRowHeight(int customRowHeight) {
 		this.customRowHeight = customRowHeight;
+	}
+
+	public List<String> getRecentFiles() {
+		return recentFiles;
 	}
 
 	public SortedMap<String,Integer> getKeyCodeNoteNumbers() {

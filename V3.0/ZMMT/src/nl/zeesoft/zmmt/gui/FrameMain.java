@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -81,10 +83,15 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private String				fileName			= "";
 	private boolean				compositionChanged	= false;
 	
+	private List<String>		recentFilesCopy		= null;
+	private JMenu				fileMenu			= null;
+	private List<JMenuItem>		recentFileMenus		= new ArrayList<JMenuItem>();
+	
 	public FrameMain(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
 		selectedTab = controller.getStateManager().getSelectedTab();
+		recentFilesCopy = new ArrayList<String>(controller.getStateManager().getSettings().getRecentFiles());
 	}
 
 	@Override
@@ -163,8 +170,26 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 				fileName = f;
 				resetTitle();
 			}
+			recentFilesCopy = new ArrayList<String>(evt.getSettings().getRecentFiles());
+			updateRecentFiles();
 		}
 		tabs.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
+	}
+	
+	protected void updateRecentFiles() {
+		if (recentFilesCopy!=null) {
+			for (JMenuItem recentFileMenu: recentFileMenus) {
+				fileMenu.remove(recentFileMenu);
+			}
+			if (recentFilesCopy.size()>0) {
+				for (String fileName: recentFilesCopy) {
+					JMenuItem recentFileMenu = new JMenuItem(fileName);
+					// TODO: Reconfigure file menu
+				}
+			} else {
+				// TODO: Remove separator
+			}
+		}
 	}
 
 	@Override
@@ -320,7 +345,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	protected JMenuBar getMenuBar() {
 		JMenuBar bar = new JMenuBar();
 		
-		JMenu fileMenu = new JMenu("File");
+		fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		bar.add(fileMenu);
 		
@@ -541,6 +566,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.setActionCommand(UNMUTE);
 		item.addActionListener(this);
 		mixerMenu.add(item);
+		
+		updateRecentFiles();
 		
 		return bar;
 	}

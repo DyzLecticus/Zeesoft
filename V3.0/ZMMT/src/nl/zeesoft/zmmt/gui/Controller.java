@@ -507,6 +507,16 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		lockMe(this);
 		if (file!=null) {
 			settings.setWorkingCompositionFileName(file.getAbsolutePath());
+			if (settings.getRecentFiles().contains(file.getAbsolutePath())) {
+				settings.getRecentFiles().set(0,file.getAbsolutePath());
+			} else {
+				settings.getRecentFiles().add(0,file.getAbsolutePath());
+			}
+			if (settings.getRecentFiles().size()>8) {
+				for (int i = 8; i < settings.getRecentFiles().size(); i++) {
+					settings.getRecentFiles().remove(8);
+				}
+			}
 			compositionFile = file;
 		} else {
 			settings.setWorkingCompositionFileName("");
