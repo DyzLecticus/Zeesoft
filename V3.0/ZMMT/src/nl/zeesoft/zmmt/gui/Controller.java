@@ -309,7 +309,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			if (mainFrame!=null) {
 				mainFrame.getFrame().setEnabled(true);
 				if (refocus) {
-					mainFrame.switchTo(stateManager.getSelectedTab());
+					mainFrame.requestFocus();
 				}
 			}
 		}

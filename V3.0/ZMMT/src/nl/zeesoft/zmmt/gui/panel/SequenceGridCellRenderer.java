@@ -32,7 +32,7 @@ public class SequenceGridCellRenderer extends DefaultTableCellRenderer {
 		setBorder(BorderFactory.createLineBorder(color));
 		if (column==0 && value!=null && value instanceof Integer) {
 			setText(String.format("%02d",((Integer) value)));
-		} else if (column<=Instrument.INSTRUMENTS.length) {
+		} else if (column>0 && column<=Instrument.INSTRUMENTS.length) {
 			String instrument = Instrument.INSTRUMENTS[(column - 1)];
 			Pattern ptn = controller.getPatternForIndex(row);
 			if (ptn!=null) {

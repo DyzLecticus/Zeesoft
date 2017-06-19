@@ -766,7 +766,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			erow++;
 			echoReverb2 = addLabelSliderToPanel(echoPanel,erow,"Reverb 2",0,127,104);
 			erow++;
-			echoReverb3 = addLabelSliderToPanel(echoPanel,erow,"Reverb",0,127,127);
+			echoReverb3 = addLabelSliderToPanel(echoPanel,erow,"Reverb 3",0,127,127);
 
 			row++;
 			addComponent(panel,row,0.01,echoPanel,false);

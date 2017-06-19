@@ -41,6 +41,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	private static final String			CTRL_PG_DN_PRESSED		= "CTRL_PG_DN_PRESSED";
 	private static final String			CTRL_PG_UP_PRESSED		= "CTRL_PG_UP_PRESSED";
 	private static final String			TOGGLE_CHECKBOX			= "TOGGLE_CHECKBOX";
+	private static final String			TOGGLE_COMBOBOX			= "TOGGLE_CHECKBOX";
 	
 	private	Controller					controller			= null;
 	
@@ -82,6 +83,8 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		} else if (evt.getActionCommand().equals(CTRL_PG_UP_PRESSED)) {
 			getController().getStateManager().selectPreviousPattern(this);
 		} else if (evt.getActionCommand().equals(TOGGLE_CHECKBOX)) {
+			handlePropertyChanged(evt.getSource());
+		} else if (evt.getActionCommand().equals(TOGGLE_COMBOBOX)) {
 			handlePropertyChanged(evt.getSource());
 		}
 	}
@@ -307,6 +310,8 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		}
 		comboBox.addKeyListener(controller.getPlayerKeyListener());
 		comboBox.addFocusListener(this);
+		comboBox.setActionCommand(TOGGLE_COMBOBOX);
+		comboBox.addActionListener(this);
 		
 		addFunctionKeyOverridesToComponent(comboBox);
 		addControlPageUpDownOverridesToComponent(comboBox);

@@ -149,6 +149,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public void handleStateChange(StateChangeEvent evt) {
 		if (evt.getSource()!=this && !evt.getSelectedTab().equals(selectedTab)) {
 			switchTo(evt.getSelectedTab());
+			if (evt.getSource()==getFrame().getJMenuBar()) {
+				requestFocus();
+			}
 		}
 		if (compositionChanged!=evt.isCompositionChanged()) {
 			compositionChanged = evt.isCompositionChanged();
@@ -250,31 +253,42 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			if (tabs.getSelectedIndex()!=0) {
 				tabs.setSelectedIndex(0);
 			}
-			compositionPanel.requestFocus();
 		} else if (tab.equals(TAB_INSTRUMENTS)) {
 			if (tabs.getSelectedIndex()!=1) {
 				tabs.setSelectedIndex(1);
 			}
-			instrumentsPanel.requestFocus();
 		} else if (tab.equals(TAB_PATTERNS)) {
 			if (tabs.getSelectedIndex()!=2) {
 				tabs.setSelectedIndex(2);
 			}
-			patternsPanel.requestFocus();
 		} else if (tab.equals(TAB_SEQUENCE)) {
 			if (tabs.getSelectedIndex()!=3) {
 				tabs.setSelectedIndex(3);
 			}
-			sequencePanel.requestFocus();
 		} else if (tab.equals(TAB_MIX)) {
 			if (tabs.getSelectedIndex()!=4) {
 				tabs.setSelectedIndex(4);
 			}
-			mixPanel.requestFocus();
 		} else if (tab.equals(TAB_SETTINGS)) {
 			if (tabs.getSelectedIndex()!=5) {
 				tabs.setSelectedIndex(5);
 			}
+		}
+	}
+
+	protected void requestFocus() {
+		String tab = selectedTab;
+		if (tab.equals(TAB_COMPOSITION)) {
+			compositionPanel.requestFocus();
+		} else if (tab.equals(TAB_INSTRUMENTS)) {
+			instrumentsPanel.requestFocus();
+		} else if (tab.equals(TAB_PATTERNS)) {
+			patternsPanel.requestFocus();
+		} else if (tab.equals(TAB_SEQUENCE)) {
+			sequencePanel.requestFocus();
+		} else if (tab.equals(TAB_MIX)) {
+			mixPanel.requestFocus();
+		} else if (tab.equals(TAB_SETTINGS)) {
 			settingsPanel.requestFocus();
 		}
 	}

@@ -211,11 +211,12 @@ public class StateManager extends StateObject {
 			
 			super.setComposition(state.getComposition().copy());
 			super.setCompositionChanged(state.isCompositionChanged());
-			if (state.isCompositionChanged()) {
-				super.setSelectedTab(state.getSelectedTab());
-				super.setSelectedInstrument(state.getSelectedInstrument());
-				super.setSelectedPattern(state.getSelectedPattern());
-			}
+			
+			super.setSelectedTab(state.getSelectedTab());
+			super.setSelectedInstrument(state.getSelectedInstrument());
+			super.setShowInstrumentFX(state.isShowInstrumentFX());
+			super.setSelectedPattern(state.getSelectedPattern());
+			super.setPatternEditMode(state.getPatternEditMode());
 			
 			waitingCompositionChangeEvent = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		}
@@ -231,9 +232,12 @@ public class StateManager extends StateObject {
 			
 			super.setComposition(state.getComposition().copy());
 			super.setCompositionChanged(state.isCompositionChanged());
+
 			super.setSelectedTab(state.getSelectedTab());
 			super.setSelectedInstrument(state.getSelectedInstrument());
+			super.setShowInstrumentFX(state.isShowInstrumentFX());
 			super.setSelectedPattern(state.getSelectedPattern());
+			super.setPatternEditMode(state.getPatternEditMode());
 			
 			waitingCompositionChangeEvent = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		}
@@ -384,6 +388,19 @@ public class StateManager extends StateObject {
 		}
 		StateChangeEvent state = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
 		state.setComposition(super.getComposition().copy());
+
+		StateChangeEvent previousState = super.getStates().get(currentState);
+		if (!previousState.getSelectedTab().equals(state.getSelectedTab()) ||
+			!previousState.getSelectedInstrument().equals(state.getSelectedInstrument()) ||
+			previousState.isShowInstrumentFX()!=previousState.isShowInstrumentFX() ||
+			previousState.getSelectedPattern()!=state.getSelectedPattern() ||
+			!previousState.getPatternEditMode().equals(state.getPatternEditMode())
+			) {
+			StateChangeEvent prevState = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+			prevState.setComposition(previousState.getComposition());
+			super.getStates().add(prevState);
+		}
+		
 		super.getStates().add(state);
 		super.setState(super.getStates().size() - 1);
 	}

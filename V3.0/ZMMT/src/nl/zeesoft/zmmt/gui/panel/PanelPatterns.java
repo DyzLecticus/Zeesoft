@@ -131,17 +131,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	public void handleStateChange(StateChangeEvent evt) {
 		setValidate(false);
 		if (evt.getType().equals(StateChangeEvent.CHANGED_PATTERN_EDIT_MODE)) {
-			selectedEditMode = evt.getPatternEditMode();
-			if (selectedEditMode.equals(EDIT_NOTES) && !editNotes.isSelected()) {
-				editNotes.doClick();
-			} else if (selectedEditMode.equals(EDIT_EXPRESSION) && !editExpression.isSelected()) {
-				editExpression.doClick();
-			} else if (selectedEditMode.equals(EDIT_MODULATION) && !editModulation.isSelected()) {
-				editModulation.doClick();
-			} else if (selectedEditMode.equals(EDIT_FILTER) && !editFilter.isSelected()) {
-				editFilter.doClick();
-			}
-			changedSelectedEditMode();
+			updatePatternEditMode(evt.getPatternEditMode());
 			getCurrentGrid().requestFocus();
 		} else if (evt.getType().equals(StateChangeEvent.SELECTED_PATTERN)) {
 			selectedPattern = evt.getSelectedPattern();
@@ -163,11 +153,12 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 				compositionCopy.getBeatsPerBar(),
 				compositionCopy.getStepsPerBeat()
 				);
+			updatePatternEditMode(evt.getPatternEditMode());
 			updateWorkingPattern();
 		}
 		setValidate(true);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		super.actionPerformed(evt);
@@ -438,6 +429,22 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		}
 	}
 
+	protected void updatePatternEditMode(String editMode) {
+		if (!selectedEditMode.equals(editMode)) {
+			selectedEditMode = editMode;
+			if (selectedEditMode.equals(EDIT_NOTES) && !editNotes.isSelected()) {
+				editNotes.setSelected(true);
+			} else if (selectedEditMode.equals(EDIT_EXPRESSION) && !editExpression.isSelected()) {
+				editExpression.setSelected(true);
+			} else if (selectedEditMode.equals(EDIT_MODULATION) && !editModulation.isSelected()) {
+				editModulation.setSelected(true);
+			} else if (selectedEditMode.equals(EDIT_FILTER) && !editFilter.isSelected()) {
+				editFilter.setSelected(true);
+			}
+			changedSelectedEditMode();
+		}
+	}
+	
 	protected void reselect() {
 		if (selectedEditMode.equals(EDIT_NOTES)) {
 			reselect(notesGrid,notesGridController);
