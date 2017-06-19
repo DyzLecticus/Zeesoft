@@ -155,6 +155,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			selectedInstrument = evt.getSelectedInstrument();
 			instrument.setSelectedIndex(Instrument.getIndexForInstrument(evt.getSelectedInstrument()));
 			instrument.setBackground(Instrument.getColorForInstrument(evt.getSelectedInstrument()));
+			instrument.repaint();
 		} else if (!evt.getSource().equals(this) && showFX!=evt.isShowInstrumentFX()) {
 			showFX = evt.isShowInstrumentFX();
 			instrumentShowFX.setSelected(showFX);
@@ -167,6 +168,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 
 				int l = 0;
 				instrumentLayerMidiNum[l][i].setSelectedIndex(conf.getLayer(l).getMidiNum());
+				instrumentLayerMidiNum[l][i].repaint();
 				instrumentLayerPressure[l][i].setValue(conf.getLayer(l).getPressure());
 				instrumentLayerModulation[l][i].setValue(conf.getLayer(l).getModulation());
 				instrumentLayerReverb[l][i].setValue(conf.getLayer(l).getReverb());
@@ -199,6 +201,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					) {
 					l = 1;
 					instrumentLayerMidiNum[l][i].setSelectedIndex((conf.getLayer(l).getMidiNum() + 1));
+					instrumentLayerMidiNum[l][i].repaint();
 					instrumentLayerPressure[l][i].setValue(conf.getLayer(l).getPressure());
 					instrumentLayerModulation[l][i].setValue(conf.getLayer(l).getModulation());
 					instrumentLayerReverb[l][i].setValue(conf.getLayer(l).getReverb());
@@ -307,6 +310,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				for (int i = 0; i < (Instrument.INSTRUMENTS.length - 1); i++) {
 					if (echo.getInstrument().equals(Instrument.INSTRUMENTS[i])) {
 						echoInstrument.setSelectedIndex((i + 1));
+						echoInstrument.repaint();
 						break;
 					}
 				}
@@ -447,6 +451,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		if (!selectedInstrument.equals(instrument.getSelectedItem().toString())) {
 			selectedInstrument = instrument.getSelectedItem().toString();
 			instrument.setBackground(Instrument.getColorForInstrument(selectedInstrument));
+			instrument.repaint();
 			getController().getStateManager().setSelectedInstrument(this,selectedInstrument);
 		}
 		if (showFX!=instrumentShowFX.isSelected()) {

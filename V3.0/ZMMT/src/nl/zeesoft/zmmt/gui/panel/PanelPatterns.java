@@ -143,6 +143,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 			workingPattern = null;
 			selectedPattern = evt.getSelectedPattern();
 			pattern.setSelectedIndex(selectedPattern);
+			pattern.repaint();
 			notesGridController.setLayout(
 				compositionCopy.getBarsPerPattern(),
 				compositionCopy.getBeatsPerBar(),
@@ -757,6 +758,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 			
 			if (workingPattern!=null && bars.getSelectedIndex()!=workingPattern.getBars()) {
 				bars.setSelectedIndex(workingPattern.getBars());
+				bars.repaint();
 			}
 
 			if (
