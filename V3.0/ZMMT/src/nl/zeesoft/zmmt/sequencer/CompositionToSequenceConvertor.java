@@ -33,9 +33,28 @@ public class CompositionToSequenceConvertor {
 	
 	public static final String							SEQUENCE_MARKER			= "SEQ:";
 	public static final String							PATTERN_STEP_MARKER		= "PS:";
+
+	private static final int							START_TICK				= 0;
 	
-	private static final int[]							CONTROLS				= {Control.EXPRESSION,Control.MODULATION,Control.FILTER};
-	private static final int[]							ALL_CONTROLS			= {Control.EXPRESSION,Control.MODULATION,Control.FILTER,
+	private static final int[]							DYNAMIC_CONTROLS		= {
+		Control.EXPRESSION,
+		Control.MODULATION,
+		Control.FILTER,
+		Control.CHORUS,
+		Control.RESONANCE,
+		Control.VIB_DEPTH
+		};
+	private static final int[]							STATIC_CONTROLS			= {
+		Control.ATTACK,
+		Control.DECAY,
+		Control.RELEASE,
+		Control.VIB_RATE,
+		Control.VIB_DELAY
+		};
+	private static final int[]							ALL_CONTROLS			= {
+		Control.EXPRESSION,
+		Control.MODULATION,
+		Control.FILTER,
 		Control.CHORUS,
 		Control.RESONANCE,
 		Control.ATTACK,
@@ -100,8 +119,8 @@ public class CompositionToSequenceConvertor {
 	protected void initialize(int patternNumber, boolean externalize,boolean addMarkers) {
 		this.sequence = createSequence();
 		if (sequence!=null) {
-			addCompositionInfoToSequenceTick(0);
-			addSynthesizerConfigurationToSequenceTick(0);
+			addCompositionInfoToSequenceTick(START_TICK);
+			addSynthesizerConfigurationToSequenceTick(START_TICK);
 			this.sequenceEndTick = 0;
 			this.externalize = externalize;
 			this.addMarkers = addMarkers;
@@ -117,13 +136,13 @@ public class CompositionToSequenceConvertor {
 	}
 	
 	protected void addEvents(boolean addSequence) {
-		List<SeqNote> notes = getPatternNotes(0);
+		List<SeqNote> notes = getPatternNotes(START_TICK);
 		if (notes.size()>0) {
 			addNotes(notes);
-			addControls(getPatternControls(0));
+			addControls(getPatternControls(START_TICK));
 		}
 		if (addMarkers) {
-			addMarkers(0,addSequence);
+			addMarkers(START_TICK,addSequence);
 		}
 		// Align track endings
 		for (int t = 0; t < sequence.getTracks().length; t++) {
@@ -403,8 +422,9 @@ public class CompositionToSequenceConvertor {
 
 		int nextPatternStartTick = 0;
 		int ticksPerStep = composition.getTicksPerStep();
+		int currentTick = startTick;
 		
-		// Build channel control map for CONTROLS
+		// Build channel control map for DYNAMIC_CONTROLS
 		for (Pattern p: patterns) {
 			int patternSteps = composition.getStepsForPattern(p);
 			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
@@ -434,7 +454,7 @@ public class CompositionToSequenceConvertor {
 							sc.instrument = c.instrument;
 							sc.channel = channel;
 							sc.control = c.control;
-							sc.tick = startTick + ((c.step - 1) * ticksPerStep);
+							sc.tick = currentTick + ((c.step - 1) * ticksPerStep);
 							int base = 0;
 							int add = 0;
 							if (c.control==Control.EXPRESSION) {
@@ -445,7 +465,7 @@ public class CompositionToSequenceConvertor {
 							} else if (c.control==Control.FILTER) {
 								base = instruments.get(c.instrument).getLayer(layer % 2).getFilter();
 							}
-							sc.value = add + (base * c.percentage) / 100;
+							sc.value = add + ((base * c.percentage) / 100);
 							List<SeqControl> list = channelControlMap.get(getId(sc));
 							int addIndex = 0;
 							if (list==null) {
@@ -462,14 +482,64 @@ public class CompositionToSequenceConvertor {
 								}
 							}
 							list.add(addIndex,sc);
+							if (c.control==Control.MODULATION) {
+								if (conf.isModToChorus()) {
+									SeqControl asc = new SeqControl();
+									asc.instrument = c.instrument;
+									asc.channel = channel;
+									asc.control = Control.CHORUS;
+									asc.tick = sc.tick;
+									add = instruments.get(c.instrument).getLayer(layer % 2).getChorus();
+									base = 127 - add;
+									asc.value = add + ((base * c.percentage) / 100);
+									list = channelControlMap.get(getId(asc));
+									if (list==null) {
+										list = new ArrayList<SeqControl>();
+										channelControlMap.put(getId(asc),list);
+									}
+									list.add(addIndex,asc);
+								}
+								if (conf.isModToResonance()) {
+									SeqControl asc = new SeqControl();
+									asc.instrument = c.instrument;
+									asc.channel = channel;
+									asc.control = Control.RESONANCE;
+									asc.tick = sc.tick;
+									add = instruments.get(c.instrument).getLayer(layer % 2).getResonance();
+									base = 127 - add;
+									asc.value = add + ((base * c.percentage) / 100);
+									list = channelControlMap.get(getId(asc));
+									if (list==null) {
+										list = new ArrayList<SeqControl>();
+										channelControlMap.put(getId(asc),list);
+									}
+									list.add(addIndex,asc);
+								}
+								if (conf.isModToVibDepth()) {
+									SeqControl asc = new SeqControl();
+									asc.instrument = c.instrument;
+									asc.channel = channel;
+									asc.control = Control.VIB_DEPTH;
+									asc.tick = sc.tick;
+									add = instruments.get(c.instrument).getLayer(layer % 2).getVibDepth();
+									base = 127 - add;
+									asc.value = add + ((base * c.percentage) / 100);
+									list = channelControlMap.get(getId(asc));
+									if (list==null) {
+										list = new ArrayList<SeqControl>();
+										channelControlMap.put(getId(asc),list);
+									}
+									list.add(addIndex,asc);
+								}
+							}
 						}
 					}
 				}
 			}
-			startTick = nextPatternStartTick;
+			currentTick = nextPatternStartTick;
 		}
 		
-		// Force start control events for ALL_CONTROLS on all instruments
+		// Force start control events for DYNAMIC_CONTROLS and STATIC_CONTROLS on all instruments
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			if (!instruments.get(Instrument.INSTRUMENTS[i]).isMuted() &&
 				(!Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) || echo.getInstrument().length()==0)
@@ -489,57 +559,58 @@ public class CompositionToSequenceConvertor {
 					InstrumentLayerConfiguration conf = instruments.get(Instrument.INSTRUMENTS[i]).getLayer(layer % 2);
 					int channel = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],layer);
 					if (channel>=0) {
-						for (int co = 0; co < ALL_CONTROLS.length; co++) {
-							if (co<CONTROLS.length) {
-								List<SeqControl> list = channelControlMap.get(getId(channel,CONTROLS[co]));
-								if (list==null) {
-									int value = 0;
-									if (CONTROLS[co]==Control.EXPRESSION) {
-										value = 127;
-									} else if (CONTROLS[co]==Control.MODULATION) {
-										value = conf.getModulation();
-									} else if (CONTROLS[co]==Control.FILTER) {
-										value = conf.getFilter();
-									}
-									SeqControl sc = new SeqControl();
-									sc.instrument = Instrument.INSTRUMENTS[i];
-									sc.channel = channel;
-									sc.control = CONTROLS[co];
-									sc.tick = 0;
-									sc.value = value;
-									list = new ArrayList<SeqControl>();
-									list.add(sc);
-									channelControlMap.put(getId(sc),list);
-								}
-							} else {
-								int value = 64;
-								if (ALL_CONTROLS[co]==Control.CHORUS) {
+						for (int co = 0; co < DYNAMIC_CONTROLS.length; co++) {
+							List<SeqControl> list = channelControlMap.get(getId(channel,DYNAMIC_CONTROLS[co]));
+							if (list==null || list.get(0).tick>startTick) {
+								int value = 0;
+								if (DYNAMIC_CONTROLS[co]==Control.EXPRESSION) {
+									value = 127;
+								} else if (DYNAMIC_CONTROLS[co]==Control.MODULATION) {
+									value = conf.getModulation();
+								} else if (DYNAMIC_CONTROLS[co]==Control.FILTER) {
+									value = conf.getFilter();
+								} else if (DYNAMIC_CONTROLS[co]==Control.CHORUS) {
 									value = conf.getChorus();
-								} else if (ALL_CONTROLS[co]==Control.RESONANCE) {
+								} else if (DYNAMIC_CONTROLS[co]==Control.RESONANCE) {
 									value = conf.getResonance();
-								} else if (ALL_CONTROLS[co]==Control.ATTACK) {
-									value = conf.getAttack();
-								} else if (ALL_CONTROLS[co]==Control.DECAY) {
-									value = conf.getDecay();
-								} else if (ALL_CONTROLS[co]==Control.RELEASE) {
-									value = conf.getRelease();
-								} else if (ALL_CONTROLS[co]==Control.VIB_RATE) {
-									value = conf.getVibRate();
-								} else if (ALL_CONTROLS[co]==Control.VIB_DEPTH) {
+								} else if (DYNAMIC_CONTROLS[co]==Control.VIB_DEPTH) {
 									value = conf.getVibDepth();
-								} else if (ALL_CONTROLS[co]==Control.VIB_DELAY) {
-									value = conf.getVibDelay();
 								}
 								SeqControl sc = new SeqControl();
 								sc.instrument = Instrument.INSTRUMENTS[i];
 								sc.channel = channel;
-								sc.control = ALL_CONTROLS[co];
-								sc.tick = 0;
+								sc.control = DYNAMIC_CONTROLS[co];
+								sc.tick = startTick;
 								sc.value = value;
-								List<SeqControl> list = new ArrayList<SeqControl>();
-								list.add(sc);
-								channelControlMap.put(getId(sc),list);
+								if (list==null) {
+									list = new ArrayList<SeqControl>();
+									channelControlMap.put(getId(sc),list);
+								}
+								list.add(0,sc);
 							}
+						}
+						for (int co = 0; co < STATIC_CONTROLS.length; co++) {
+							int value = 64;
+							if (STATIC_CONTROLS[co]==Control.ATTACK) {
+								value = conf.getAttack();
+							} else if (STATIC_CONTROLS[co]==Control.DECAY) {
+								value = conf.getDecay();
+							} else if (STATIC_CONTROLS[co]==Control.RELEASE) {
+								value = conf.getRelease();
+							} else if (STATIC_CONTROLS[co]==Control.VIB_RATE) {
+								value = conf.getVibRate();
+							} else if (STATIC_CONTROLS[co]==Control.VIB_DELAY) {
+								value = conf.getVibDelay();
+							}
+							SeqControl sc = new SeqControl();
+							sc.instrument = Instrument.INSTRUMENTS[i];
+							sc.channel = channel;
+							sc.control = STATIC_CONTROLS[co];
+							sc.tick = startTick;
+							sc.value = value;
+							List<SeqControl> list = new ArrayList<SeqControl>();
+							list.add(sc);
+							channelControlMap.put(getId(sc),list);
 						}
 					}
 				}
