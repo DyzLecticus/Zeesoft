@@ -90,8 +90,8 @@ public class ImportExportWorker extends Worker {
 		}
 	}
 
-	public void loadComposition() {
-		handleAction(LOAD_COMPOSITION,null,null);
+	public void loadComposition(File file) {
+		handleAction(LOAD_COMPOSITION,null,file);
 	}
 
 	public void saveComposition(Composition composition,File file) {

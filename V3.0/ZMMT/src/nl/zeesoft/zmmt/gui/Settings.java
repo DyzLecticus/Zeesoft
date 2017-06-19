@@ -238,6 +238,22 @@ public class Settings {
 		}
 	}
 
+	protected void updateRecentFiles(String fileName) {
+		if (recentFiles.contains(fileName)) {
+			if (recentFiles.indexOf(fileName)>0) {
+				recentFiles.remove(fileName);
+				recentFiles.add(0,fileName);
+			}
+		} else {
+			recentFiles.add(0,fileName);
+		}
+		if (recentFiles.size()>8) {
+			for (int i = 8; i < recentFiles.size(); i++) {
+				recentFiles.remove(8);
+			}
+		}
+	}
+	
 	public Composition getNewComposition(boolean demo) {
 		Composition composition = null;
 		if (demo) {

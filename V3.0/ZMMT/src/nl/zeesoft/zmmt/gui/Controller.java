@@ -143,6 +143,8 @@ public class Controller extends Locker implements StateChangeSubscriber {
 				importExportWorker.loadCompositionAndInitialize(file,settings.getWorkDirName());
 				loading = true;
 			}
+			settings.getRecentFiles().remove(settings.getWorkingCompositionFileName());
+			settings.setWorkingCompositionFileName("");
 		}
 		unlockMe(this);
 
@@ -439,7 +441,20 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		sequencePlayer.startContinue();
 	}
 
-	protected void loadComposition() {
+	protected void loadComposition(String fileName) {
+		File file = null;
+		if (fileName.length()>0) {
+			file = new File(fileName);
+			if (!file.exists()) {
+				lockMe(this);
+				settings.getRecentFiles().remove(fileName);
+				Settings settingsCopy = settings.copy();
+				unlockMe(this);
+				stateManager.setSettings(this,settingsCopy);
+				showErrorMessage(this,"Composition file not found: " + file.getAbsolutePath());
+				file = null;
+			}
+		}
 		if (importExportWorker.isWorking()) {
 			showErrorMessage(this,"Import/export worker is busy");
 		} else {
@@ -448,7 +463,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 				confirmed = showConfirmMessage("Unsaved changes will be lost. Are you sure you want to load a different composition?");
 			}
 			if (confirmed) {
-				importExportWorker.loadComposition();
+				importExportWorker.loadComposition(file);
 			}
 		}
 	}
@@ -496,7 +511,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 				}
 			} else {
 				stateManager.setSelectedTab(this,FrameMain.TAB_COMPOSITION);
-				stateManager.setSettings(this,settingsCopy.copy());
+				stateManager.setSettings(this,settingsCopy);
 				setComposition(settingsCopy.getNewComposition(demo));
 			}
 		}
@@ -507,16 +522,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		lockMe(this);
 		if (file!=null) {
 			settings.setWorkingCompositionFileName(file.getAbsolutePath());
-			if (settings.getRecentFiles().contains(file.getAbsolutePath())) {
-				settings.getRecentFiles().set(0,file.getAbsolutePath());
-			} else {
-				settings.getRecentFiles().add(0,file.getAbsolutePath());
-			}
-			if (settings.getRecentFiles().size()>8) {
-				for (int i = 8; i < settings.getRecentFiles().size(); i++) {
-					settings.getRecentFiles().remove(8);
-				}
-			}
+			settings.updateRecentFiles(file.getAbsolutePath());
 			compositionFile = file;
 		} else {
 			settings.setWorkingCompositionFileName("");
@@ -533,6 +539,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		Settings settingsCopy = null;
 		lockMe(this);
 		settings.setWorkingCompositionFileName(file.getAbsolutePath());
+		settings.updateRecentFiles(file.getAbsolutePath());
 		compositionFile = file;
 		settingsCopy = settings.copy();
 		unlockMe(this);

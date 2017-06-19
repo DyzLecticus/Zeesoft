@@ -32,12 +32,13 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 public class FrameMain extends FrameObject implements ActionListener, ChangeListener, StateChangeSubscriber {
 	private static final String	TITLE				= "ZeeTracker";
 
-	private static final String	DEMO				= "DEMO";
+	private static final String	QUIT				= "QUIT";
 	private static final String	LOAD				= "LOAD";
 	private static final String	SAVE				= "SAVE";
 	private static final String	SAVE_AS				= "SAVE_AS";
 	private static final String	NEW					= "NEW";
-	private static final String	QUIT				= "QUIT";
+	private static final String	DEMO				= "DEMO";
+	private static final String	LOAD_FILE_PREFIX	= "LOAD_FILE:";
 	
 	public static final String	EDIT_UNDO			= "EDIT_UNDO";
 	public static final String	EDIT_REDO			= "EDIT_REDO";
@@ -84,8 +85,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private boolean				compositionChanged	= false;
 	
 	private List<String>		recentFilesCopy		= null;
-	private JMenu				fileMenu			= null;
-	private List<JMenuItem>		recentFileMenus		= new ArrayList<JMenuItem>();
+	private JMenu				recentFileMenu		= null;
+	private JMenuItem[]			recentFileMenus		= new JMenuItem[8];
 	
 	public FrameMain(Controller controller) {
 		super(controller);
@@ -178,16 +179,20 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	
 	protected void updateRecentFiles() {
 		if (recentFilesCopy!=null) {
-			for (JMenuItem recentFileMenu: recentFileMenus) {
-				fileMenu.remove(recentFileMenu);
-			}
 			if (recentFilesCopy.size()>0) {
-				for (String fileName: recentFilesCopy) {
-					JMenuItem recentFileMenu = new JMenuItem(fileName);
-					// TODO: Reconfigure file menu
+				for (int i = 0; i < recentFileMenus.length; i++) {
+					if (i < recentFilesCopy.size()) {
+						File file = new File(recentFilesCopy.get(i));
+						recentFileMenus[i].setText(file.getName());
+						recentFileMenus[i].setActionCommand(LOAD_FILE_PREFIX + recentFilesCopy.get(i));
+						recentFileMenus[i].setVisible(true);
+					} else {
+						recentFileMenus[i].setVisible(false);
+					}
 				}
+				recentFileMenu.setVisible(true);
 			} else {
-				// TODO: Remove separator
+				recentFileMenu.setVisible(false);
 			}
 		}
 	}
@@ -205,7 +210,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		if (evt.getActionCommand().equals(DEMO)) {
 			getController().newComposition(true);
 		} else if (evt.getActionCommand().equals(LOAD)) {
-			getController().loadComposition();
+			getController().loadComposition("");
+		} else if (evt.getActionCommand().startsWith(LOAD_FILE_PREFIX)) {
+			getController().loadComposition(evt.getActionCommand().substring(LOAD_FILE_PREFIX.length()));
 		} else if (evt.getActionCommand().equals(SAVE)) {
 			getController().saveComposition();
 		} else if (evt.getActionCommand().equals(SAVE_AS)) {
@@ -345,16 +352,17 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	protected JMenuBar getMenuBar() {
 		JMenuBar bar = new JMenuBar();
 		
-		fileMenu = new JMenu("File");
+		int evt = ActionEvent.CTRL_MASK;
+		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		bar.add(fileMenu);
-		
-		JMenuItem item = new JMenuItem("Demo",KeyEvent.VK_D);
-		item.setActionCommand(DEMO);
+
+		JMenuItem item = new JMenuItem("Quit",KeyEvent.VK_Q);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,evt));
+		item.setActionCommand(QUIT);
 		item.addActionListener(this);
 		fileMenu.add(item);
 
-		int evt = ActionEvent.CTRL_MASK;
 		item = new JMenuItem("Load",KeyEvent.VK_L);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,evt));
 		item.setActionCommand(LOAD);
@@ -379,11 +387,20 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		fileMenu.add(item);
 
-		item = new JMenuItem("Quit",KeyEvent.VK_Q);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,evt));
-		item.setActionCommand(QUIT);
+		item = new JMenuItem("Demo",KeyEvent.VK_D);
+		item.setActionCommand(DEMO);
 		item.addActionListener(this);
 		fileMenu.add(item);
+
+		recentFileMenu = new JMenu("Recent");
+		item.addActionListener(this);
+		fileMenu.add(recentFileMenu);
+		
+		for (int i = 0; i < recentFileMenus.length; i++) {
+			recentFileMenus[i] = new JMenuItem("");
+			recentFileMenus[i].addActionListener(this);
+			recentFileMenu.add(recentFileMenus[i]);
+		}
 
 		evt = 0;
 		JMenu showMenu = new JMenu("Show");
