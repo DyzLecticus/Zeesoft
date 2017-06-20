@@ -189,6 +189,10 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				instrumentLayerModToResonance[l][i].setSelected(conf.getLayer(l).isModToResonance());
 				instrumentLayerModToVibDepth[l][i].setSelected(conf.getLayer(l).isModToVibDepth());
 
+				instrumentLayerModToChorus[l][i].setEnabled(conf.getLayer(l).isControlModulation());
+				instrumentLayerModToResonance[l][i].setEnabled(conf.getLayer(l).isControlModulation());
+				instrumentLayerModToVibDepth[l][i].setEnabled(conf.getLayer(l).isControlModulation());
+				
 				if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 					instrumentLayerBaseOctave[l][i].setValue(conf.getLayer(l).getBaseOctave());
 					instrumentLayerBaseVelocity[l][i].setValue(conf.getLayer(l).getBaseVelocity());
@@ -215,6 +219,12 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					instrumentLayerVibRate[l][i].setValue(conf.getLayer(l).getVibRate());
 					instrumentLayerVibDepth[l][i].setValue(conf.getLayer(l).getVibDepth());
 					instrumentLayerVibDelay[l][i].setValue(conf.getLayer(l).getVibDelay());
+
+					instrumentLayerControlModulation[l][i].setSelected(conf.getLayer(l).isControlModulation());
+					instrumentLayerControlFilter[l][i].setSelected(conf.getLayer(l).isControlFilter());
+					instrumentLayerModToChorus[l][i].setSelected(conf.getLayer(l).isModToChorus());
+					instrumentLayerModToResonance[l][i].setSelected(conf.getLayer(l).isModToResonance());
+					instrumentLayerModToVibDepth[l][i].setSelected(conf.getLayer(l).isModToVibDepth());
 					
 					instrumentLayerBaseOctave[l][i].setValue(conf.getLayer(l).getBaseOctave());
 					instrumentLayerBaseVelocity[l][i].setValue(conf.getLayer(l).getBaseVelocity());
@@ -233,16 +243,16 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					instrumentLayerVibRate[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 					instrumentLayerVibDepth[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 					instrumentLayerVibDelay[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
-
-					instrumentLayerControlModulation[l][i].setSelected(conf.getLayer(l).isControlModulation());
-					instrumentLayerControlFilter[l][i].setSelected(conf.getLayer(l).isControlFilter());
-					instrumentLayerModToChorus[l][i].setSelected(conf.getLayer(l).isModToChorus());
-					instrumentLayerModToResonance[l][i].setSelected(conf.getLayer(l).isModToResonance());
-					instrumentLayerModToVibDepth[l][i].setSelected(conf.getLayer(l).isModToVibDepth());
 					
 					instrumentLayerBaseOctave[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 					instrumentLayerBaseVelocity[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
 					instrumentLayerAccentVelocity[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+
+					instrumentLayerControlModulation[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerControlFilter[l][i].setEnabled(conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerModToChorus[l][i].setEnabled(conf.getLayer(l).isControlModulation() && conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerModToResonance[l][i].setEnabled(conf.getLayer(l).isControlModulation() && conf.getLayer2().getMidiNum()>=0);
+					instrumentLayerModToVibDepth[l][i].setEnabled(conf.getLayer(l).isControlModulation() && conf.getLayer2().getMidiNum()>=0);
 				}
 				if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
 					l = 0;
@@ -599,9 +609,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		instrumentLayerVibDelay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato delay",0,127,127);
 
 		row++;
-		instrumentLayerControlModulation[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control modulation");
-		row++;
 		instrumentLayerControlFilter[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control filter");
+		row++;
+		instrumentLayerControlModulation[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control modulation");
 		row++;
 		instrumentLayerModToChorus[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to chorus");
 		row++;
@@ -666,9 +676,9 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			instrumentLayerVibDelay[l][instrumentNum] = addLabelSliderToPanel(panel,row,"Vibrato delay",0,127,127);
 
 			row++;
-			instrumentLayerControlModulation[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control modulation");
-			row++;
 			instrumentLayerControlFilter[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control filter");
+			row++;
+			instrumentLayerControlModulation[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Control modulation");
 			row++;
 			instrumentLayerModToChorus[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to chorus");
 			row++;

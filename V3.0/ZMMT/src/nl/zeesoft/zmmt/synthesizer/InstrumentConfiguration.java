@@ -2,9 +2,9 @@ package nl.zeesoft.zmmt.synthesizer;
 
 public class InstrumentConfiguration extends BaseConfiguration {
 	private boolean							muted			= false;
-	private int								volume			= 110;
+	private int								volume			= 100;
 	private int 							pan				= 64;
-	private int								holdPercentage	= 75;
+	private int								holdPercentage	= 90;
 	private	InstrumentLayerConfiguration	layer1			= new InstrumentLayerConfiguration();
 	private	InstrumentLayerConfiguration	layer2			= new InstrumentLayerConfiguration();
 	
