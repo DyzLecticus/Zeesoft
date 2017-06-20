@@ -98,7 +98,9 @@ public class WindowBusy extends Locker {
 			busy.setText(maxLen(clients.get(0).busy,80));
 			details.setText(maxLen(clients.get(0).details,80));
 			positionFrameOverFrame(window,parent);
-			window.setVisible(true);
+			if (parent.isVisible()) {
+				window.setVisible(true);
+			}
 		} else {
 			window.setVisible(false);
 		}

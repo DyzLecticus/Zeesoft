@@ -111,6 +111,7 @@ public class ImportExportWorker extends Worker {
 				fileChooser = new JFileChooser();
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fileChooser.setAcceptAllFileFilterUsed(false);
+				fileChooser.setFileFilter(compositionFilter);
 				if (actionFile!=null) {
 					fileChooser.setCurrentDirectory(actionFile);
 				}
@@ -215,13 +216,22 @@ public class ImportExportWorker extends Worker {
 		lockMe(this);
 		if (fileChooser!=null) {
 			if (action.equals(LOAD_COMPOSITION)) {
-				fileChooser.setFileFilter(compositionFilter);
 				fileChooser.removeChoosableFileFilter(midiFilter);
+				fileChooser.setFileFilter(compositionFilter);
 				file = controller.chooseFile(fileChooser,"Load composition");
 				file = getFileWithExtension(file,Settings.EXTENSION_COMPOSITION);
 			} else if (action.equals(SAVE_COMPOSITION)) {
-				fileChooser.setFileFilter(compositionFilter);
-				fileChooser.addChoosableFileFilter(midiFilter);
+				boolean found = false;
+				FileFilter[] filters = fileChooser.getChoosableFileFilters();
+				for (int i = 0; i < filters.length; i++) {
+					if (filters[i]==midiFilter) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					fileChooser.addChoosableFileFilter(midiFilter);
+				}
 				file = controller.chooseFile(fileChooser,"Save composition");
 			}
 		}

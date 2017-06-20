@@ -302,14 +302,14 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void setBusy(Object source,String busy,String details) {
 		busyWindow.setBusy(source,busy,details);
 		if (mainFrame!=null) {
-			mainFrame.getFrame().setEnabled(false);
+			mainFrame.getFrame().getGlassPane().setVisible(true);
 		}
 	}
 
 	public void setDone(Object source, boolean refocus) {
 		if (busyWindow.setDone(source)==0) {
 			if (mainFrame!=null) {
-				mainFrame.getFrame().setEnabled(true);
+				mainFrame.getFrame().getGlassPane().setVisible(false);
 				if (refocus) {
 					mainFrame.requestFocus();
 				}
