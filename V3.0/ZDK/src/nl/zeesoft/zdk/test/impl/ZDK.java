@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.build.ManifestWriter;
 import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -10,6 +11,8 @@ import nl.zeesoft.zdk.test.Tester;
  * Documents and tests the ZDK.
  */
 public class ZDK extends LibraryObject {
+	public static final String WRITE_MANIFEST		= "WRITE_MANIFEST";
+	
 	public ZDK(Tester tester) {
 		super(tester);
 		setNameAbbreviated("ZDK");
@@ -20,7 +23,20 @@ public class ZDK extends LibraryObject {
 	}
 
 	public static void main(String[] args) {
-		(new ZDK(new Tester())).describeAndTest(args);
+		if (args!=null && args.length>4 && args[0].equals(WRITE_MANIFEST)) {
+			ManifestWriter mw = new ManifestWriter();
+			String jars = "";
+			if (args.length>5) {
+				jars = args[5];
+			}
+			String err = mw.writeManifest(args[1],args[2],args[3],args[4],jars);
+			if (err.length()>0) {
+				System.err.println(err);
+				System.exit(1);
+			}
+		} else {
+			(new ZDK(new Tester())).describeAndTest(args);
+		}
 	}
 
 	@Override
