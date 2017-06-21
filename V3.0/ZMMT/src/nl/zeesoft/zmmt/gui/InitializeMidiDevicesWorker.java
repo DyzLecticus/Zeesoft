@@ -1,5 +1,6 @@
 package nl.zeesoft.zmmt.gui;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +18,8 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class InitializeMidiDevicesWorker extends Worker {
-	private static final String		INTERNAL_DRUM		= "resources/ZeeTrackerDrumKit.sf2";
-	private static final String		INTERNAL_SYNTH		= "resources/ZeeTrackerSynthesizers.sf2";
+	private static final String		INTERNAL_DRUM		= Settings.RESOURCES + "ZeeTrackerDrumKit.sf2";
+	private static final String		INTERNAL_SYNTH		= Settings.RESOURCES + "ZeeTrackerSynthesizers.sf2";
 	
 	private Controller				controller			= null;
 	private File					soundFont			= null;
@@ -114,20 +115,29 @@ public class InitializeMidiDevicesWorker extends Worker {
 	
 	protected Soundbank loadSoundBank(String path) {
 		Soundbank r = null;
-		InputStream is = getClass().getResourceAsStream(path);
-		try {
-			if (is!=null) {
-				r = MidiSystem.getSoundbank(is);
-			} else {
-				File file = new File(path);
-				if (file.exists()) {
-					r = MidiSystem.getSoundbank(file);
-				}
+		InputStream is = getClass().getResourceAsStream("/" + path);
+		if (is!=null) {
+			try {
+				r = MidiSystem.getSoundbank(new BufferedInputStream(is));
+			} catch (InvalidMidiDataException e) {
+				controller.showErrorMessage(this,"Failed to load internal sound font: " + "/" + path,e);
+			} catch (IOException e) {
+				controller.showErrorMessage(this,"Failed to load internal sound font: " + "/" + path,e);
 			}
-		} catch (InvalidMidiDataException e) {
-			controller.showErrorMessage(this,"Failed to load internal sound font: " + path,e);
-		} catch (IOException e) {
-			controller.showErrorMessage(this,"Failed to load internal sound font: " + path,e);
+		} 
+		if (r==null) {
+			File file = new File(path);
+			if (file.exists()) {
+				try {
+					r = MidiSystem.getSoundbank(file);
+				} catch (InvalidMidiDataException e) {
+					controller.showErrorMessage(this,"Failed to load internal sound font: " + path,e);
+				} catch (IOException e) {
+					controller.showErrorMessage(this,"Failed to load internal sound font: " + path,e);
+				}
+			} else {
+				controller.showErrorMessage(this,"Sound font file not found: " + path);
+			}
 		}
 		return r;
 	}

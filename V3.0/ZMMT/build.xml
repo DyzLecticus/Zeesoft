@@ -6,7 +6,7 @@
 	<property name="version" value="0.9.0"/>
 	
 	<!-- ZDK version -->
-	<property name="versionZDK" value="0.9.24"/>
+	<property name="versionZDK" value="0.9.25"/>
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -34,8 +34,7 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</path>
-		<javac srcdir="${src}" destdir="${build}" classpathref="libraries" debug="on" includeantruntime="false">
-		</javac>
+		<javac srcdir="${src}" destdir="${build}" classpathref="libraries" debug="on" includeantruntime="false"/>
 	</target>
 
 	<target name="dist" depends="compile" description="Generate the ZMMT distribution">
@@ -44,19 +43,18 @@
             <fileset dir="${src}" />
         </copy>		
 		<copy file="build.xml" tofile="${build}/build.xml"/>
-		<mkdir dir="${build}/resources"/>
-		<copy file="resources/DemoComposition.ztc" tofile="${build}/resources/DemoComposition.ztc"/>
-		<copy file="resources/ZeeTrackerDrumKit.sf2" tofile="${build}/resources/ZeeTrackerDrumKit.sf2"/>
 		<!-- Create distribution directory -->
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
 		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
 		<!-- Generate manifest -->
-		<manifest file="${dist}/mymanifest">
-			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zmmt nl/zeesoft/zmmt/composition nl/zeesoft/zmmt/gui nl/zeesoft/zmmt/gui/panel nl/zeesoft/zmmt/gui/state nl/zeesoft/zmmt/player nl/zeesoft/zmmt/recorder nl/zeesoft/zmmt/sequencer nl/zeesoft/zmmt/synthesizer nl/zeesoft/zmmt/test zdk.jar"/>  
-			<attribute name="Main-Class" value="nl.zeesoft.zmmt.test.ZMMT"/>
-		</manifest>		
+		<exec dir="" executable="cmd" resultproperty="_error" logError="true"> 
+			<arg line='/c java -jar ${lib}/zdk.jar WRITE_MANIFEST "${version} ${creator}" nl.zeesoft.zmmt.test.ZMMT src ${dist}/mymanifest zdk.jar'/>
+		</exec>
+		<condition property="_abort">
+			<equals arg1="${_error}" arg2="1"/>
+		</condition>
+		<fail if="_abort" message="Failed to generate manifest"/>		
 		<!-- Build jar file -->
 		<jar jarfile="${dist}/zmmt.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Run tests and generate README.md -->
@@ -78,13 +76,49 @@
 
 	<target name="distZT" depends="dist" description="Generate the ZeeTracker distribution">
 		<mkdir dir="${build}/ZT"/>
-		<!-- Generate manifest -->
-		<manifest file="${dist}/mymanifest">
-			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="zmmt.jar zdk.jar"/>  
-			<attribute name="Main-Class" value="nl.zeesoft.zmmt.ZeeTracker"/>
-		</manifest>		
-		<jar jarfile="${dist}/ZeeTracker.jar" basedir="${build}/ZT" manifest="dist/mymanifest"/>
+		
+		<mkdir dir="${build}/ZT/src1"/>
+		<unzip src="${lib}/zdk.jar" dest="${build}/ZT/src1">
+		    <patternset>
+		        <include name="**/*.java"/>
+		    </patternset>
+		</unzip>
+		
+		<mkdir dir="${build}/ZT/src2"/>
+		<unzip src="${dist}/zmmt.jar" dest="${build}/ZT/src2">
+		    <patternset>
+		        <include name="**/*.java"/>
+		    </patternset>
+		</unzip>
+
+		<copy todir="${build}/ZT/src">
+            <fileset dir="${build}/ZT/src1" />
+        </copy>		
+		<copy todir="${build}/ZT/src">
+            <fileset dir="${build}/ZT/src2" />
+        </copy>		
+
+		
+		<mkdir dir="${build}/ZT/build"/>
+		
+		<javac srcdir="${build}/ZT/src" destdir="${build}/ZT/build" debug="on" includeantruntime="false"/>
+
+		<exec dir="" executable="cmd" resultproperty="_error" logError="true"> 
+			<arg line='/c java -jar ${lib}/zdk.jar WRITE_MANIFEST "${version} ${creator}" nl.zeesoft.zmmt.ZeeTracker build/ZT/src ${dist}/mymanifest'/>
+		</exec>
+		<condition property="_abort">
+			<equals arg1="${_error}" arg2="1"/>
+		</condition>
+		<fail if="_abort" message="Failed to generate manifest"/>		
+
+		<mkdir dir="${build}/ZT/build/resources"/>
+		<copy file="resources/DemoComposition.ztc" tofile="${build}/ZT/build/resources/DemoComposition.ztc"/>
+		<copy file="resources/ZeeTrackerDrumKit.sf2" tofile="${build}/ZT/build/resources/ZeeTrackerDrumKit.sf2"/>
+		<copy file="resources/ZeeTrackerSynthesizers.sf2" tofile="${build}/ZT/build/resources/ZeeTrackerSynthesizers.sf2"/>
+		
+		<jar jarfile="${dist}/ZeeTracker.jar" basedir="${build}/ZT/build" manifest="${dist}/mymanifest"/>
+		
+		<delete dir="${build}/ZT"/>
 	</target>
 
 	<target name="release" description="Release the ZMMT">

@@ -15,13 +15,15 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class Settings {
+	public static final String			RESOURCES					= "resources/";
+
 	public static final String			EXTENSION_COMPOSITION		= ".ztc";
 	public static final String			EXTENSION_PATCH				= ".ztp";
 	public static final String			EXTENSION_MIDI				= ".mid";
 			
 	private static final String			WORK_DIR					= "ZeeTracker";
 	private static final String			SETTINGS_JSON				= "settings.json";
-	private static final String			DEMO_COMPOSITION			= "resources/DemoComposition.ztc";
+	private static final String			DEMO_COMPOSITION			= RESOURCES + "DemoComposition.ztc";
 	
 	private	String						composer					= "";
 	
@@ -258,7 +260,8 @@ public class Settings {
 		Composition composition = null;
 		if (demo) {
 			composition = getNewDemoComposition();
-		} else {
+		}
+		if (composition==null) {
 			composition = new Composition();
 			composition.setComposer(composer);
 			composition.setBeatsPerMinute(defaultBeatsPerMinute);
@@ -274,13 +277,13 @@ public class Settings {
 		Composition composition = new Composition();
 		String err = "";
 		ZStringBuilder sb = new ZStringBuilder();
-		InputStream is = getClass().getResourceAsStream(DEMO_COMPOSITION);
+		InputStream is = getClass().getResourceAsStream("/" + DEMO_COMPOSITION);
 		if (is!=null) {
 			err = sb.fromInputStream(is);
 		} else {
 			File file = new File(DEMO_COMPOSITION);
 			if (file.exists()) {
-				err = sb.fromFile(DEMO_COMPOSITION);
+				err = sb.fromFile(file.getAbsolutePath());
 			}
 		}
 		if (err.length()==0) {
