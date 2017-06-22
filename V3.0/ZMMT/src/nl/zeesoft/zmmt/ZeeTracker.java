@@ -19,8 +19,7 @@ public class ZeeTracker {
 		r.append("ZeeTracker is designed to provide a fast music creating workflow.\n");
 		r.append("The interface is based on mod trackers like Scream Tracker and Impulse Tracker.\n");
 		r.append("This means that ZeeTracker is made for keyboard control.\n");
-		r.append("Mouse control is supported but not needed to create music with ZeeTracker.\n");
-		r.append("  \n");
+		r.append("Mouse control is supported for most operations but not needed to create music with ZeeTracker.  \n");
 		r.append("  \n");
 		r.append("Menu options\n");
 		r.append("------------\n");

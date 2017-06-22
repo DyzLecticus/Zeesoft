@@ -1035,8 +1035,9 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		// Shift page up override
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.SHIFT_MASK,false);
 		grid.registerKeyboardAction(this,SHIFT_PAGE_UP,stroke,JComponent.WHEN_FOCUSED);
-		
+
 		addControlPageUpDownOverridesToComponent(grid);
+		addAltOverridesToComponent(grid);
 	}
 	
 	protected JComboBox<String> getPatternSelector() {

@@ -377,4 +377,12 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,ActionEvent.CTRL_MASK,false);
 		comp.registerKeyboardAction(this,CTRL_PG_UP_PRESSED,stroke,JComponent.WHEN_FOCUSED);
 	}
+
+	protected void addAltOverridesToComponent(JComponent comp) {
+		KeyStroke stroke = null; 
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ALT,0,false);
+		comp.registerKeyboardAction(this,"",stroke,JComponent.WHEN_FOCUSED);
+		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ALT,0,true);
+		comp.registerKeyboardAction(this,"",stroke,JComponent.WHEN_FOCUSED);
+	}
 }

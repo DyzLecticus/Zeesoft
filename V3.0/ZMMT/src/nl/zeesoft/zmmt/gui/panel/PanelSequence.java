@@ -272,6 +272,7 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		
 		addFunctionKeyOverridesToComponent(grid);
 		addControlPageUpDownOverridesToComponent(grid);
+		addAltOverridesToComponent(grid);
 				
 		JScrollPane r = new JScrollPane(grid,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));

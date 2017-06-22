@@ -29,6 +29,7 @@ public class WindowBusy extends Locker {
 		super(msgr);
 		this.parent = parent;
 		window = new JWindow();
+		window.setAlwaysOnTop(true);
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
