@@ -392,13 +392,21 @@ public class StateManager extends StateObject {
 		StateChangeEvent previousState = super.getStates().get(currentState);
 		if (!previousState.getSelectedTab().equals(state.getSelectedTab()) ||
 			!previousState.getSelectedInstrument().equals(state.getSelectedInstrument()) ||
-			previousState.isShowInstrumentFX()!=previousState.isShowInstrumentFX() ||
+			previousState.isShowInstrumentFX()!=state.isShowInstrumentFX() ||
 			previousState.getSelectedPattern()!=state.getSelectedPattern() ||
 			!previousState.getPatternEditMode().equals(state.getPatternEditMode())
 			) {
-			StateChangeEvent prevState = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
-			prevState.setComposition(previousState.getComposition());
-			super.getStates().add(prevState);
+			if (!previousState.isCompositionChanged()) {
+				previousState.setSelectedTab(state.getSelectedTab());
+				previousState.setSelectedInstrument(state.getSelectedInstrument());
+				previousState.setShowInstrumentFX(state.isShowInstrumentFX());
+				previousState.setSelectedPattern(state.getSelectedPattern());
+				previousState.setPatternEditMode(state.getPatternEditMode());
+			} else {
+				StateChangeEvent prevState = getNewStateChangeEvent(StateChangeEvent.CHANGED_COMPOSITION,source);
+				prevState.setComposition(previousState.getComposition());
+				super.getStates().add(prevState);
+			}
 		}
 		
 		super.getStates().add(state);

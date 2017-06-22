@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
+import nl.zeesoft.zmmt.ZeeTracker;
 
 public class ZMMT extends LibraryObject {
 	public ZMMT(Tester tester) {
@@ -24,9 +25,12 @@ public class ZMMT extends LibraryObject {
 
 	@Override
 	public void describe() {
+		System.out.println(ZeeTracker.getManual());
+		System.out.println("  \n");
 		System.out.println("Zeesoft MIDI Mod Tracker");
 		System.out.println("========================");
 		System.out.println("Zeesoft MIDI Mod Tracker (ZMMT) is an old school mod tracker that implements the Java MIDI API.");
+		System.out.println("ZeeTracker is the default implementation of ZMMT.");
 		describeDependencies();
 		System.out.println();
 		describeRelease();
