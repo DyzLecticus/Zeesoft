@@ -393,9 +393,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		fileMenu.add(item);
 
 		recentFileMenu = new JMenu("Recent");
-		item.addActionListener(this);
 		fileMenu.add(recentFileMenu);
-		
 		for (int i = 0; i < recentFileMenus.length; i++) {
 			recentFileMenus[i] = new JMenuItem("");
 			recentFileMenus[i].addActionListener(this);
