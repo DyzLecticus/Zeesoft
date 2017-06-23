@@ -48,9 +48,6 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	private SynthesizerConfiguration	synthConfigCopy				= null;
 	private String						selectedInstrument			= "";
 	
-	// TODO: Animated LED volume strips
-	// 40 log (volume * expression * velocity / (127 * 127 * 127)).
-	
 	public PanelMix(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);

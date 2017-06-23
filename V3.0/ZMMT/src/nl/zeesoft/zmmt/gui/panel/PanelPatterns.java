@@ -69,11 +69,13 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	public static final String		NOTES_TOGGLE_ACCENT				= "NOTES_TOGGLE_ACCENT";
 	public static final String		NOTES_INCREMENT_DURATION		= "NOTES_INCREMENT_DURATION";
 	public static final String		NOTES_INSTRUMENT_PREFIX			= "NOTES_INSTRUMENT:";
+	public static final String		NOTES_REMOVE					= "NOTES_REMOVE";
 
 	public static final String		CONTROLS_PERC_UP_1				= "CONTROLS_PERC_UP_1";
 	public static final String		CONTROLS_PERC_DOWN_1			= "CONTROLS_PERC_DOWN_1";
 	public static final String		CONTROLS_PERC_UP_10				= "CONTROLS_PERC_UP_10";
 	public static final String		CONTROLS_PERC_DOWN_10			= "CONTROLS_PERC_DOWN_10";
+	public static final String		CONTROLS_REMOVE					= "CONTROLS_REMOVE";
 	
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
@@ -358,6 +360,8 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		} else if (evt.getActionCommand().startsWith(NOTES_INSTRUMENT_PREFIX)) {
 			int i = Integer.parseInt(evt.getActionCommand().substring(NOTES_INSTRUMENT_PREFIX.length()));
 			setSelectedNotesInstrument(i);
+		} else if (evt.getActionCommand().startsWith(NOTES_REMOVE)) {
+			removeSelectedNotes();
 		} else if (evt.getActionCommand().equals(CONTROLS_PERC_UP_1)) {
 			shiftSelectedControlsPercentage(1);
 		} else if (evt.getActionCommand().equals(CONTROLS_PERC_DOWN_1)) {
@@ -366,6 +370,8 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 			shiftSelectedControlsPercentage(10);
 		} else if (evt.getActionCommand().equals(CONTROLS_PERC_DOWN_10)) {
 			shiftSelectedControlsPercentage(-10);
+		} else if (evt.getActionCommand().startsWith(CONTROLS_REMOVE)) {
+			removeSelectedControls();
 		}
 	}
 
@@ -1391,6 +1397,12 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 			item.addActionListener(this);
 			instMenu.add(item);
 		}
+
+		item = new JMenuItem("Remove");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
+		item.setActionCommand(NOTES_REMOVE);
+		item.addActionListener(this);
+		r.add(item);
 	}
 
 	protected JPopupMenu getControlsMenu() {
@@ -1401,7 +1413,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	
 	protected void addControlsMenuOptions(JComponent r) {
 		JMenuItem item = null;
-		
+
 		int evt = ActionEvent.ALT_MASK;
 
 		item = new JMenuItem("Up 1%");
@@ -1427,6 +1439,12 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		item = new JMenuItem("Down 10%");
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
 		item.setActionCommand(CONTROLS_PERC_DOWN_10);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Remove");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
+		item.setActionCommand(CONTROLS_REMOVE);
 		item.addActionListener(this);
 		r.add(item);
 	}

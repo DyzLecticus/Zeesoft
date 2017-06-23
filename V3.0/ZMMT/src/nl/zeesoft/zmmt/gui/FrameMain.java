@@ -153,9 +153,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public void handleStateChange(StateChangeEvent evt) {
 		if (evt.getSource()!=this && !evt.getSelectedTab().equals(selectedTab)) {
 			switchTo(evt.getSelectedTab());
-			if (evt.getSource()==getFrame().getJMenuBar()) {
-				requestFocus();
-			}
+			requestFocus();
 		}
 		if (compositionChanged!=evt.isCompositionChanged()) {
 			compositionChanged = evt.isCompositionChanged();
@@ -198,6 +196,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		if (!getSelectedTab().equals(selectedTab)) {
 			selectedTab = getSelectedTab();
 			getController().getStateManager().setSelectedTab(this,selectedTab);
+			requestFocus();
 		}
 	}
 
@@ -505,7 +504,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		editPatternMenu.add(item);
 
-		item = new JMenuItem("Edit pattern notes",KeyEvent.VK_E);
+		item = new JMenuItem("Edit pattern events",KeyEvent.VK_E);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,evt));
 		item.setActionCommand(PATTERN_EDIT);
 		item.addActionListener(this);

@@ -11,8 +11,11 @@ import java.util.List;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
@@ -30,6 +33,8 @@ import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 
 public class PanelSequence extends PanelObject implements StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
+	public static final String		INSERT						= "INSERT";
+	public static final String		REMOVE						= "REMOVE";
 	public static final String		SEQUENCE_PATTERN_UP_1		= "SEQUENCE_PATTERN_UP_1";
 	public static final String		SEQUENCE_PATTERN_DOWN_1		= "SEQUENCE_PATTERN_DOWN_1";
 	public static final String		SEQUENCE_PATTERN_UP_10		= "SEQUENCE_PATTERN_UP_10";
@@ -62,8 +67,22 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		getPanel().setLayout(new GridBagLayout());
 		getPanel().setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
+		JButton insert = new JButton("Insert");
+		insert.addActionListener(this);
+		insert.setActionCommand(INSERT);
+		insert.addFocusListener(this);
+		insert.addKeyListener(getController().getPlayerKeyListener());
+		addControlPageUpDownOverridesToComponent(insert);
+
+		JPanel wrapper = new JPanel();
+		wrapper.setLayout(new BoxLayout(wrapper,BoxLayout.X_AXIS));
+		wrapper.add(insert);
+		
 		int row = 0;
-		addComponent(getPanel(), row, 0.01,getSequencePanel());
+		addComponent(getPanel(), row, 0.01,wrapper);
+		
+		row++;
+		addComponent(getPanel(), row, 0.99,getSequencePanel());
 	}
 
 	@Override
@@ -98,6 +117,10 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 			shiftSeletectPatterns(10);
 		} else if (evt.getActionCommand().equals(SEQUENCE_PATTERN_DOWN_10)) {
 			shiftSeletectPatterns(-10);
+		} else if (evt.getActionCommand().equals(INSERT)) {
+			insertPatterns();
+		} else if (evt.getActionCommand().equals(REMOVE)) {
+			removeSelectedPatterns();
 		}
 	}
 
@@ -230,7 +253,9 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		if (gridController.setWorkingSequence(workingSequence)) {
 			gridController.fireTableRowsDeleted(rowFrom,rowTo);
 			getController().getStateManager().changedSequence(this,workingSequence);
-			reselect();
+			if (grid.hasFocus()) {
+				reselect();
+			}
 		}
 	}
 	
@@ -309,6 +334,12 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		
 		int evt = ActionEvent.ALT_MASK;
 
+		item = new JMenuItem("Insert");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,0));
+		item.setActionCommand(INSERT);
+		item.addActionListener(this);
+		r.add(item);
+
 		item = new JMenuItem("Pattern up 1");
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
 		item.setActionCommand(SEQUENCE_PATTERN_UP_1);
@@ -332,6 +363,12 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		item = new JMenuItem("Pattern down 10");
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
 		item.setActionCommand(SEQUENCE_PATTERN_DOWN_10);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Remove");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
+		item.setActionCommand(REMOVE);
 		item.addActionListener(this);
 		r.add(item);
 	}
