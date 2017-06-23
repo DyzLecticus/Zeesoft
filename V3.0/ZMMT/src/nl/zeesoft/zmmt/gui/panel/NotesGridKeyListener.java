@@ -66,6 +66,8 @@ public class NotesGridKeyListener extends InstrumentPlayerKeyListener {
 				patternPanel.setSelectedNotesInstrument(9);
 			} else if (evt.getKeyCode()==KeyEvent.VK_A) {
 				patternPanel.toggelSelectedNotesAccent();
+			} else if (evt.getKeyCode()==KeyEvent.VK_D) {
+				patternPanel.incrementSelectedNotesDuration();
 			}
 		}
 	}

@@ -12,6 +12,9 @@ import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -21,13 +24,17 @@ import javax.swing.event.ListSelectionListener;
 
 import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.gui.Controller;
-import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 
 public class PanelSequence extends PanelObject implements StateChangeSubscriber, MetaEventListener, SequencePlayerSubscriber, ListSelectionListener {
+	public static final String		SEQUENCE_PATTERN_UP_1		= "SEQUENCE_PATTERN_UP_1";
+	public static final String		SEQUENCE_PATTERN_DOWN_1		= "SEQUENCE_PATTERN_DOWN_1";
+	public static final String		SEQUENCE_PATTERN_UP_10		= "SEQUENCE_PATTERN_UP_10";
+	public static final String		SEQUENCE_PATTERN_DOWN_10	= "SEQUENCE_PATTERN_DOWN_10";
+	
 	private Grid					grid						= null;
 	private SequenceGridController	gridController				= null;
 	private SequenceGridKeyListener	gridKeyListener				= null;
@@ -78,6 +85,20 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 			reselect();
 		}
 		setValidate(true);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		super.actionPerformed(evt);
+		if (evt.getActionCommand().equals(SEQUENCE_PATTERN_UP_1)) {
+			shiftSeletectPatterns(1);
+		} else if (evt.getActionCommand().equals(SEQUENCE_PATTERN_DOWN_1)) {
+			shiftSeletectPatterns(-1);
+		} else if (evt.getActionCommand().equals(SEQUENCE_PATTERN_UP_10)) {
+			shiftSeletectPatterns(10);
+		} else if (evt.getActionCommand().equals(SEQUENCE_PATTERN_DOWN_10)) {
+			shiftSeletectPatterns(-10);
+		}
 	}
 
 	@Override
@@ -135,7 +156,7 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 	@Override
 	public void focusLost(FocusEvent evt) {
 		super.focusLost(evt);
-		if (evt.getSource()==grid) {
+		if (!(evt.getOppositeComponent() instanceof JRootPane)) {
 			grid.clearSelection();
 		}
 	}
@@ -260,15 +281,12 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		grid.getTableHeader().setReorderingAllowed(false);
 		grid.getTableHeader().setResizingAllowed(false);
 		
+		grid.setComponentPopupMenu(getMenu());
+		
 		int height = getController().getStateManager().getSettings().getCustomRowHeight();
 		if (height>0) {
 			grid.setRowHeight(height);
 		}
-		
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
-		grid.registerKeyboardAction(this,FrameMain.NOTES_COPY,stroke,JComponent.WHEN_FOCUSED);
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
-		grid.registerKeyboardAction(this,FrameMain.NOTES_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		
 		addFunctionKeyOverridesToComponent(grid);
 		addControlPageUpDownOverridesToComponent(grid);
@@ -278,5 +296,43 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		r.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		r.getVerticalScrollBar().setUnitIncrement(20);
 		return r;
+	}
+
+	protected JPopupMenu getMenu() {
+		JPopupMenu r = new JPopupMenu();
+		addMenuOptions(r);
+		return r;
+	}
+	
+	protected void addMenuOptions(JComponent r) {
+		JMenuItem item = null;
+		
+		int evt = ActionEvent.ALT_MASK;
+
+		item = new JMenuItem("Pattern up 1");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
+		item.setActionCommand(SEQUENCE_PATTERN_UP_1);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Pattern down 1");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
+		item.setActionCommand(SEQUENCE_PATTERN_DOWN_1);
+		item.addActionListener(this);
+		r.add(item);
+
+		evt = ActionEvent.ALT_MASK + ActionEvent.SHIFT_MASK;
+		
+		item = new JMenuItem("Pattern up 10");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
+		item.setActionCommand(SEQUENCE_PATTERN_UP_10);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Pattern down 10");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
+		item.setActionCommand(SEQUENCE_PATTERN_DOWN_10);
+		item.addActionListener(this);
+		r.add(item);
 	}
 }

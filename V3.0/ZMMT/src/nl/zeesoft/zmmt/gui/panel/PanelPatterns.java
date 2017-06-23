@@ -18,8 +18,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -51,6 +55,25 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	private static final String		PAGE_UP							= "PAGE_UP";
 	private static final String		SHIFT_PAGE_DOWN					= "SHIFT_PAGE_DOWN";
 	private static final String		SHIFT_PAGE_UP					= "SHIFT_PAGE_UP";
+
+	public static final String		NOTES_COPY						= "NOTES_COPY";
+	public static final String		NOTES_PASTE						= "NOTES_PASTE";
+	public static final String		NOTES_SEMITONE_UP				= "NOTES_SEMITONE_UP";
+	public static final String		NOTES_SEMITONE_DOWN				= "NOTES_SEMITONE_DOWN";
+	public static final String		NOTES_OCTAVE_UP					= "NOTES_OCTAVE_UP";
+	public static final String		NOTES_OCTAVE_DOWN				= "NOTES_OCTAVE_DOWN";
+	public static final String		NOTES_VEL_PERC_UP_1				= "NOTES_VEL_PERC_UP_1";
+	public static final String		NOTES_VEL_PERC_DOWN_1			= "NOTES_VEL_PERC_DOWN_1";
+	public static final String		NOTES_VEL_PERC_UP_10			= "NOTES_VEL_PERC_UP_10";
+	public static final String		NOTES_VEL_PERC_DOWN_10			= "NOTES_VEL_PERC_DOWN_10";
+	public static final String		NOTES_TOGGLE_ACCENT				= "NOTES_TOGGLE_ACCENT";
+	public static final String		NOTES_INCREMENT_DURATION		= "NOTES_INCREMENT_DURATION";
+	public static final String		NOTES_INSTRUMENT_PREFIX			= "NOTES_INSTRUMENT:";
+
+	public static final String		CONTROLS_PERC_UP_1				= "CONTROLS_PERC_UP_1";
+	public static final String		CONTROLS_PERC_DOWN_1			= "CONTROLS_PERC_DOWN_1";
+	public static final String		CONTROLS_PERC_UP_10				= "CONTROLS_PERC_UP_10";
+	public static final String		CONTROLS_PERC_DOWN_10			= "CONTROLS_PERC_DOWN_10";
 	
 	private JComboBox<String>		pattern							= null;
 	private int						selectedPattern					= 0;
@@ -206,7 +229,18 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 			} else {
 				reselect();
 			}
-		} else if (evt.getActionCommand().equals(FrameMain.NOTES_COPY)) {
+		} else if (evt.getSource()==pattern) {
+			if (pattern.getSelectedIndex()!=selectedPattern) {
+				selectedPattern = pattern.getSelectedIndex();
+				getController().getStateManager().setSelectedPattern(this,selectedPattern);
+			}
+		} else if (evt.getSource()==bars) {
+			if (workingPattern!=null && workingPattern.getBars()!=bars.getSelectedIndex()) {
+				workingPattern.setBars(bars.getSelectedIndex());
+				refreshGridData();
+				getController().getStateManager().changedPattern(this,workingPattern);
+			}
+		} else if (evt.getActionCommand().equals(NOTES_COPY)) {
 			int[] rows = notesGrid.getSelectedRows();
 			int[] cols = notesGrid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
@@ -238,7 +272,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 					}
 				}
 			}
-		} else if (evt.getActionCommand().equals(FrameMain.NOTES_PASTE)) {
+		} else if (evt.getActionCommand().equals(NOTES_PASTE)) {
 			int[] rows = notesGrid.getSelectedRows();
 			int[] cols = notesGrid.getSelectedColumns();
 			if (rows.length>0 && cols.length>0) {
@@ -301,17 +335,37 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 					changedPattern();
 				}
 			}
-		} else if (evt.getSource()==pattern) {
-			if (pattern.getSelectedIndex()!=selectedPattern) {
-				selectedPattern = pattern.getSelectedIndex();
-				getController().getStateManager().setSelectedPattern(this,selectedPattern);
-			}
-		} else if (evt.getSource()==bars) {
-			if (workingPattern!=null && workingPattern.getBars()!=bars.getSelectedIndex()) {
-				workingPattern.setBars(bars.getSelectedIndex());
-				refreshGridData();
-				getController().getStateManager().changedPattern(this,workingPattern);
-			}
+		} else if (evt.getActionCommand().equals(NOTES_SEMITONE_UP)) {
+			shiftSelectedNotesNote(1);
+		} else if (evt.getActionCommand().equals(NOTES_SEMITONE_DOWN)) {
+			shiftSelectedNotesNote(-1);
+		} else if (evt.getActionCommand().equals(NOTES_OCTAVE_UP)) {
+			shiftSelectedNotesNote(12);
+		} else if (evt.getActionCommand().equals(NOTES_OCTAVE_DOWN)) {
+			shiftSelectedNotesNote(-12);
+		} else if (evt.getActionCommand().equals(NOTES_VEL_PERC_UP_1)) {
+			shiftSelectedNotesVelocityPercentage(1);
+		} else if (evt.getActionCommand().equals(NOTES_VEL_PERC_DOWN_1)) {
+			shiftSelectedNotesVelocityPercentage(-1);
+		} else if (evt.getActionCommand().equals(NOTES_VEL_PERC_UP_10)) {
+			shiftSelectedNotesVelocityPercentage(10);
+		} else if (evt.getActionCommand().equals(NOTES_VEL_PERC_DOWN_10)) {
+			shiftSelectedNotesVelocityPercentage(-10);
+		} else if (evt.getActionCommand().equals(NOTES_TOGGLE_ACCENT)) {
+			toggelSelectedNotesAccent();
+		} else if (evt.getActionCommand().equals(NOTES_INCREMENT_DURATION)) {
+			incrementSelectedNotesDuration();
+		} else if (evt.getActionCommand().startsWith(NOTES_INSTRUMENT_PREFIX)) {
+			int i = Integer.parseInt(evt.getActionCommand().substring(NOTES_INSTRUMENT_PREFIX.length()));
+			setSelectedNotesInstrument(i);
+		} else if (evt.getActionCommand().equals(CONTROLS_PERC_UP_1)) {
+			shiftSelectedControlsPercentage(1);
+		} else if (evt.getActionCommand().equals(CONTROLS_PERC_DOWN_1)) {
+			shiftSelectedControlsPercentage(-1);
+		} else if (evt.getActionCommand().equals(CONTROLS_PERC_UP_10)) {
+			shiftSelectedControlsPercentage(10);
+		} else if (evt.getActionCommand().equals(CONTROLS_PERC_DOWN_10)) {
+			shiftSelectedControlsPercentage(-10);
 		}
 	}
 
@@ -320,7 +374,9 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		super.focusLost(evt);
 		if (evt.getSource() instanceof Grid) {
 			workingNotes.clear();
-			getCurrentGrid().clearSelection();
+			if (!(evt.getOppositeComponent() instanceof JRootPane)) {
+				getCurrentGrid().clearSelection();
+			}
 		}
 	}
 
@@ -476,7 +532,9 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	protected void changedSelection() {
 		int[] rows = getCurrentGrid().getSelectedRows();
 		int[] cols = getCurrentGrid().getSelectedColumns();
-		changedSelection(rows[0],rows[(rows.length - 1)],cols[0],cols[(cols.length - 1)]);
+		if (rows.length>0 && cols.length>0) {
+			changedSelection(rows[0],rows[(rows.length - 1)],cols[0],cols[(cols.length - 1)]);
+		}
 	}
 
 	protected void changedSelection(int rowFrom, int rowTo, int colFrom, int colTo) {
@@ -541,6 +599,21 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		}
 	}
 
+	protected void incrementSelectedNotesDuration() {
+		boolean changed = false;
+		List<Note> sns = getSelectedNotes();
+		for (Note sn: sns) {
+			int step = (sn.step + sn.duration);
+			if (step<=notesGrid.getRowCount() && workingPattern.getNote(sn.track,step,1)==null) {
+				sn.duration = sn.duration + 1;
+				changed = true;
+			}
+		}
+		if (changed) {
+			changedPattern();
+		}
+	}
+	
 	protected void toggelSelectedNotesAccent() {
 		boolean changed = false;
 		List<Note> sns = getSelectedNotes();
@@ -975,15 +1048,17 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		notesGrid.getTableHeader().setReorderingAllowed(false);
 		notesGrid.getTableHeader().setResizingAllowed(false);
 
+		notesGrid.setComponentPopupMenu(getNotesMenu());
+		
 		int height = getController().getStateManager().getSettings().getCustomRowHeight();
 		if (height>0) {
 			notesGrid.setRowHeight(height);
 		}
 		
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
-		notesGrid.registerKeyboardAction(this,FrameMain.NOTES_COPY,stroke,JComponent.WHEN_FOCUSED);
+		notesGrid.registerKeyboardAction(this,NOTES_COPY,stroke,JComponent.WHEN_FOCUSED);
 		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
-		notesGrid.registerKeyboardAction(this,FrameMain.NOTES_PASTE,stroke,JComponent.WHEN_FOCUSED);
+		notesGrid.registerKeyboardAction(this,NOTES_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		
 		addKeyStrokeOverridesToGrid(notesGrid);
 	}
@@ -1001,16 +1076,13 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		controlsGrid.getSelectionModel().addListSelectionListener(this);
 		controlsGrid.getTableHeader().setReorderingAllowed(false);
 		controlsGrid.getTableHeader().setResizingAllowed(false);
-		
+
+		controlsGrid.setComponentPopupMenu(getControlsMenu());
+
 		int height = getController().getStateManager().getSettings().getCustomRowHeight();
 		if (height>0) {
 			controlsGrid.setRowHeight(height);
 		}
-		
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK,false);
-		controlsGrid.registerKeyboardAction(this,FrameMain.NOTES_COPY,stroke,JComponent.WHEN_FOCUSED);
-		stroke = KeyStroke.getKeyStroke(KeyEvent.VK_V,ActionEvent.CTRL_MASK,false);
-		controlsGrid.registerKeyboardAction(this,FrameMain.NOTES_PASTE,stroke,JComponent.WHEN_FOCUSED);
 		
 		addKeyStrokeOverridesToGrid(controlsGrid);
 	}
@@ -1211,5 +1283,151 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		changedSelectedEditMode();
 		
 		return r;
+	}
+	
+	protected JPopupMenu getNotesMenu() {
+		JPopupMenu r = new JPopupMenu();
+		addNotesMenuOptions(r);
+		return r;
+	}
+	
+	protected void addNotesMenuOptions(JComponent r) {
+		JMenuItem item = null;
+		
+		int evt = ActionEvent.CTRL_MASK;
+
+		item = new JMenuItem("Copy");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,evt));
+		item.setActionCommand(NOTES_COPY);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Paste");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,evt));
+		item.setActionCommand(NOTES_PASTE);
+		item.addActionListener(this);
+		r.add(item);
+
+		evt = ActionEvent.ALT_MASK;
+
+		item = new JMenuItem("Semitone up");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP,evt));
+		item.setActionCommand(NOTES_SEMITONE_UP);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Semitone down");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,evt));
+		item.setActionCommand(NOTES_SEMITONE_DOWN);
+		item.addActionListener(this);
+		r.add(item);
+
+		evt = ActionEvent.ALT_MASK + ActionEvent.SHIFT_MASK;
+		
+		item = new JMenuItem("Octave up");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP,evt));
+		item.setActionCommand(NOTES_OCTAVE_UP);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Octave down");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,evt));
+		item.setActionCommand(NOTES_OCTAVE_DOWN);
+		item.addActionListener(this);
+		r.add(item);
+
+		evt = ActionEvent.ALT_MASK;
+
+		item = new JMenuItem("Velocity up 1%");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
+		item.setActionCommand(NOTES_VEL_PERC_UP_1);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Velocity down 1%");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
+		item.setActionCommand(NOTES_VEL_PERC_DOWN_1);
+		item.addActionListener(this);
+		r.add(item);
+
+		evt = ActionEvent.ALT_MASK + ActionEvent.SHIFT_MASK;
+		
+		item = new JMenuItem("Velocity up 10%");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
+		item.setActionCommand(NOTES_VEL_PERC_UP_10);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Velocity down 10%");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
+		item.setActionCommand(NOTES_VEL_PERC_DOWN_10);
+		item.addActionListener(this);
+		r.add(item);
+
+		evt = ActionEvent.ALT_MASK;
+
+		item = new JMenuItem("Toggle accent");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,evt));
+		item.setActionCommand(NOTES_TOGGLE_ACCENT);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Increment duration");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,evt));
+		item.setActionCommand(NOTES_INCREMENT_DURATION);
+		item.addActionListener(this);
+		r.add(item);
+
+		JMenu instMenu = new JMenu("Set instrument");
+		r.add(instMenu);
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			item = new JMenuItem(Instrument.INSTRUMENTS[i]);
+			int key = (KeyEvent.VK_1 + i);
+			if (i==9) {
+				key = KeyEvent.VK_0;
+			}
+			item.setAccelerator(KeyStroke.getKeyStroke(key,evt));
+			item.setActionCommand(NOTES_INSTRUMENT_PREFIX + i);
+			item.addActionListener(this);
+			instMenu.add(item);
+		}
+	}
+
+	protected JPopupMenu getControlsMenu() {
+		JPopupMenu r = new JPopupMenu();
+		addControlsMenuOptions(r);
+		return r;
+	}
+	
+	protected void addControlsMenuOptions(JComponent r) {
+		JMenuItem item = null;
+		
+		int evt = ActionEvent.ALT_MASK;
+
+		item = new JMenuItem("Up 1%");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
+		item.setActionCommand(CONTROLS_PERC_UP_1);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Down 1%");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
+		item.setActionCommand(CONTROLS_PERC_DOWN_1);
+		item.addActionListener(this);
+		r.add(item);
+
+		evt = ActionEvent.ALT_MASK + ActionEvent.SHIFT_MASK;
+		
+		item = new JMenuItem("Up 10%");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
+		item.setActionCommand(CONTROLS_PERC_UP_10);
+		item.addActionListener(this);
+		r.add(item);
+
+		item = new JMenuItem("Down 10%");
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
+		item.setActionCommand(CONTROLS_PERC_DOWN_10);
+		item.addActionListener(this);
+		r.add(item);
 	}
 }

@@ -52,10 +52,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	PATTERN_BARS		= PATTERN_PREFIX + "BARS";
 	public static final String	PATTERN_EDIT		= PATTERN_PREFIX + "EDIT";
 
-	public static final String	NOTES_PREFIX		= "NOTES_";
-	public static final String	NOTES_COPY			= NOTES_PREFIX + "COPY";
-	public static final String	NOTES_PASTE			= NOTES_PREFIX + "PASTE";
-
 	public static final String	SOLO				= "SOLO";
 	public static final String	UNMUTE				= "UNMUTE";
 	
@@ -245,11 +241,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().undoCompositionChange(evt.getSource());
 		} else if (evt.getActionCommand().equals(EDIT_REDO)) {
 			getController().getStateManager().redoCompositionChange(evt.getSource());
-		} else if (evt.getActionCommand().startsWith(NOTES_PREFIX)) {
-			if (selectedTab!=TAB_PATTERNS) {
-				switchTo(TAB_PATTERNS);
-				getController().getStateManager().setSelectedTab(this,selectedTab);
-			}
 		} else if (evt.getActionCommand().startsWith(PATTERN_PREFIX)) {
 			if (selectedTab!=TAB_PATTERNS) {
 				switchTo(TAB_PATTERNS);
@@ -519,22 +510,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.setActionCommand(PATTERN_EDIT);
 		item.addActionListener(this);
 		editPatternMenu.add(item);
-
-		JMenu editNotesMenu = new JMenu("Notes");
-		editNotesMenu.setMnemonic(KeyEvent.VK_N);
-		editPatternMenu.add(editNotesMenu);
-		
-		item = new JMenuItem("Copy notes",KeyEvent.VK_C);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,evt));
-		item.setActionCommand(NOTES_COPY);
-		item.addActionListener(this);
-		editNotesMenu.add(item);
-
-		item = new JMenuItem("Paste notes",KeyEvent.VK_P);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,evt));
-		item.setActionCommand(NOTES_PASTE);
-		item.addActionListener(this);
-		editNotesMenu.add(item);
 
 		evt = 0;
 		JMenu sequencerMenu = new JMenu("Sequencer");
