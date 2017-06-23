@@ -3,7 +3,6 @@ package nl.zeesoft.zmmt.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,19 +97,13 @@ public class WindowBusy extends Locker {
 		if (clients.size()>0) {
 			busy.setText(maxLen(clients.get(0).busy,80));
 			details.setText(maxLen(clients.get(0).details,80));
-			positionFrameOverFrame(window,parent);
+			FrameObject.positionFrameOverFrame(window,parent);
 			if (parent.isVisible()) {
 				window.setVisible(true);
 			}
 		} else {
 			window.setVisible(false);
 		}
-	}
-
-	protected void positionFrameOverFrame(Window top,Window bottom) {
-		int x = (bottom.getX() + (bottom.getWidth() / 2)) - (top.getWidth() / 2);
-		int y = (bottom.getY() + (bottom.getHeight() / 2)) - (top.getHeight() / 2);
-		top.setLocation(x, y);
 	}
 	
 	private String maxLen(String str,int len) {

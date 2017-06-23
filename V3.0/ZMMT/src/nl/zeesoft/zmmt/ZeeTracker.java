@@ -12,86 +12,25 @@ public class ZeeTracker {
 		controller.start(true);
 	}
 
-	public static ZStringBuilder getManual() {
+	public static ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
-		r.append("ZeeTracker\n");
-		r.append("==========\n");
-		r.append("ZeeTracker is designed to provide a fast music creating workflow.\n");
+		r.append("ZeeTracker is designed to provide a fast and fun music composing workflow.\n");
 		r.append("The interface is based on mod trackers like Scream Tracker and Impulse Tracker.\n");
-		r.append("This means that ZeeTracker is made for keyboard control.\n");
-		r.append("Mouse control is supported for most operations but not needed to create music with ZeeTracker.  \n");
+		r.append("This means that ZeeTracker is made for regular computer keyboard control.\n");
+		r.append("Part of this key feature is that almost all interface components support playing notes in response to typing certain things on the keyboard.\n");
+		r.append("By default, typing \"q\", \"2\" and then \"w\" will play the corresponding notes C-3, C#3 and then D-3 on the currently selected instrument.\n");
+		r.append("This extends all the way up to C-5 when typing \"m\".\n");
+		r.append("In order to provide more control an accent velocity can be played by combining these keys with the Shift key.\n");
+		r.append("(Caps Lock is interpreted as a Shift lock).\n");
 		r.append("  \n");
-		r.append("Menu options\n");
-		r.append("------------\n");
-		r.append("**File**  \n");
-		r.append(" * Quit  \n");
-		r.append("   Stops the program.\n");
-		r.append(" * Load (Ctrl+L)  \n");
-		r.append("   Presents a file dialog allowing the user to load a ZeeTracker composition file (*.ztc).\n");
-		r.append(" * Save (Ctrl+S)  \n");
-		r.append("   When the current composition has not been saved yet, this option will presents a file dialog allowing the user to save the composition file.\n");
-		r.append("   Else the current working composition file is updated.\n");
-		r.append("   In both cases the the undo buffer is cleared when saving is successful.\n");
-		r.append(" * Save as (Ctrl+W)  \n");
-		r.append("   Presents a file dialog allowing the user to save a composition as a ZeeTracker composition (*.ztc) or a MIDI file (*.mid).\n");
-		r.append(" * New (Ctrl+N)  \n");
-		r.append("   Creates a new ZeeTracker composition file based on the current settings.\n");
-		r.append(" * Demo  \n");
-		r.append("   Loads the ZeeTracker demo composition.\n");
-		r.append(" * Recent  \n");
-		r.append("   Provides a quick load list of recently loaded compositions.\n");
-		r.append("**Show**  \n");
-		r.append(" * Composition (F1)  \n");
-		r.append("   Switches to the composition tab.\n");
-		r.append(" * Instruments (F2)  \n");
-		r.append("   Switches to the instruments tab.\n");
-		r.append(" * Patterns (F3)  \n");
-		r.append("   Switches to the patterns tab.\n");
-		r.append(" * Sequence (F4)  \n");
-		r.append("   Switches to the pattern sequence tab.\n");
-		r.append(" * Mix (F9)  \n");
-		r.append("   Switches to the mix tab.\n");
-		r.append(" * Settings (F12)  \n");
-		r.append("   Switches to the settings tab.\n");
-		r.append("**Instrument**  \n");
-		r.append("This menu provides options to select a specific working instrument.\n");
-		r.append("Each instrument has a unique color.\n");
-		r.append("The currently selected instrument is reflected in the background color of the tab selectors.\n");
-		r.append(" * Synth bass 1 (Ctrl+1)  \n");
-		r.append(" * Synth bass 2 (Ctrl+2)  \n");
-		r.append(" * Synth bass 3 (Ctrl+3)  \n");
-		r.append(" * Synth 1 (Ctrl+4)  \n");
-		r.append(" * Synth 2 (Ctrl+5)  \n");
-		r.append(" * Synth 3 (Ctrl+6)  \n");
-		r.append(" * Lead (Ctrl+7)  \n");
-		r.append(" * Drums (Ctrl+8)  \n");
-		r.append(" * Strings (Ctrl+9)  \n");
-		r.append(" * Echo (Ctrl+0)  \n");
-		r.append("Edit\n");
-		r.append(" * Undo (Ctrl+Z)  \n");
-		r.append("   Undoes the latest composition change.\n");
-		r.append(" * Redo (Ctrl+Y)  \n");
-		r.append("   Redoes the latest composition change.\n");
-		r.append(" * Pattern  \n");
-		r.append("   * Select pattern (Ctrl+P)  \n");
-		r.append("   * Next pattern (Ctrl+PageDown)  \n");
-		r.append("   * Previous pattern (Ctrl+PageUp)  \n");
-		r.append("   * Toggle insert (Ctrl+I)  \n");
-		r.append("   * Edit pattern bars (Ctrl+B)  \n");
-		r.append("   * Edit pattern notes (Ctrl+E)  \n");
-		r.append("   * Notes  \n");
-		r.append("     * Copy notes (Ctrl+C)  \n");
-		r.append("     * Paste notes (Ctrl+V)  \n");
-		r.append("Sequencer\n");
-		r.append(" * Play pattern (F5)  \n");
-		r.append(" * Play sequence (F6)  \n");
-		r.append(" * Continue (F7)  \n");
-		r.append(" * Pause/Stop (F8)  \n");
-		r.append("Mixer\n");
-		r.append(" * Solo (Ctrl+M)  \n");
-		r.append(" * Unmute all (Ctrl+U)  \n");
-		// TODO: Finish manual
-		// TODO: Include manual
+		r.append("ZeeTracker provides 10 configurable instruments, each with a unique color.\n");
+		r.append("The current working instrument is indicated by the background color of the main tab panel, directly below the menu.\n");
+		r.append("Some of these instruments can use multiple channels in order to combine multiple MIDI instruments into a single ZeeTracker instrument.\n");
+		r.append("ZeeTracker uses the default Java Sequencer and Synthesizer devices and corresponding default sound font.\n");
+		r.append("The MIDI standard instrument set was not designed for modern music styles and the Java default sound font is average at best.\n");
+		r.append("To remedy this, ZeeTracker comes with two high quality internal sound fonts and the option to use a custom sound font.\n");
+		r.append("  \n");
+		// TODO: Finish description
 		return r;
 	}
 }

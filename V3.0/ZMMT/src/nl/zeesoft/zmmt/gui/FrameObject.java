@@ -1,6 +1,7 @@
 package nl.zeesoft.zmmt.gui;
 
 import java.awt.Color;
+import java.awt.Window;
 
 import javax.swing.JFrame;
 
@@ -24,5 +25,11 @@ public abstract class FrameObject {
 
 	protected Controller getController() {
 		return controller;
+	}
+
+	public static void positionFrameOverFrame(Window top,Window bottom) {
+		int x = (bottom.getX() + (bottom.getWidth() / 2)) - (top.getWidth() / 2);
+		int y = (bottom.getY() + (bottom.getHeight() / 2)) - (top.getHeight() / 2);
+		top.setLocation(x, y);
 	}
 }

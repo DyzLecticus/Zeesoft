@@ -45,6 +45,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private ControllerWindowAdapter		adapter						= null;
 	private FrameMain					mainFrame					= null;
 	private WindowBusy					busyWindow					= null;
+	private DialogAbout					aboutDialog					= null;
 	
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
@@ -116,6 +117,8 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		busyWindow = new WindowBusy(getMessenger(),mainFrame.getFrame());
 		
 		importExportWorker = new ImportExportWorker(getMessenger(),getUnion(),this);
+		
+		aboutDialog = new DialogAbout(this,mainFrame.getFrame());
 	}
 
 	public void start() {
@@ -297,6 +300,10 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			file = fileChooser.getSelectedFile();
 		}
 		return file;
+	}
+
+	public void showAbout() {
+		aboutDialog.repositionAndShow();
 	}
 
 	public void setBusy(Object source,String busy,String details) {

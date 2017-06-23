@@ -66,7 +66,9 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	TAB_SEQUENCE		= "Sequence";
 	public static final String	TAB_MIX				= "Mix";
 	public static final String	TAB_SETTINGS		= "Settings";
-		
+
+	private static final String	ABOUT				= "ABOUT";
+	
 	private JTabbedPane			tabs				= null;
 	private String				selectedTab			= "";			
 
@@ -204,6 +206,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getActionCommand().equals(DEMO)) {
 			getController().newComposition(true);
+		} else if (evt.getActionCommand().equals(ABOUT)) {
+			getController().showAbout();
 		} else if (evt.getActionCommand().equals(LOAD)) {
 			getController().loadComposition("");
 		} else if (evt.getActionCommand().startsWith(LOAD_FILE_PREFIX)) {
@@ -428,6 +432,11 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item = new JMenuItem("Settings",KeyEvent.VK_E);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12,evt));
 		item.setActionCommand(TAB_SETTINGS);
+		item.addActionListener(this);
+		showMenu.add(item);
+
+		item = new JMenuItem("About",KeyEvent.VK_A);
+		item.setActionCommand(ABOUT);
 		item.addActionListener(this);
 		showMenu.add(item);
 
