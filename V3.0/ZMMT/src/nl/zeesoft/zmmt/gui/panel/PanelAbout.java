@@ -37,19 +37,21 @@ public class PanelAbout extends PanelObject {
 
 		int row = 0;
 
-		JLabel createdBy = new JLabel("Andre van der Zee, Leiden, The Netherlands");
+		String e = Character.toString((char)233);
+		
+		JLabel createdBy = new JLabel("Andr" + e + " van der Zee, Leiden, The Netherlands");
 		createdBy.setFocusable(false);
-		addLabelProperty(getPanel(), row,"Created by",createdBy);
+		addLabelProperty(getPanel(), row,"Created by ",createdBy);
 
 		row++;
 		JLabel license = new JLabel(DialogAbout.LICENSE_URL);
 		license.setFocusable(false);
-		addLabelProperty(getPanel(), row,"License",license);
+		addLabelProperty(getPanel(), row,"License ",license);
 		
 		row++;
 		JLabel source = new JLabel(DialogAbout.WEBSITE_URL);
 		source.setFocusable(false);
-		addLabelProperty(getPanel(), row,"Website",source);
+		addLabelProperty(getPanel(), row,"Website ",source);
 
 		row++;
 		JPanel buttons = new JPanel();

@@ -117,7 +117,7 @@ public class Settings {
 		if (workDir==null) {
 			err = "Unable to create work directory: " + getWorkDirName();
 		} else {
-			err = toJson().toStringBuilderReadFormat().toFile(getWorkDirName() + "/" + SETTINGS_JSON);
+			err = toJson().toStringBuilderReadFormat().toFile(getFileName());
 		}
 		return err;
 	}

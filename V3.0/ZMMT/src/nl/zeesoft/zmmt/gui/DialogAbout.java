@@ -51,7 +51,7 @@ public class DialogAbout implements ActionListener {
 		if (dialog==null) {
 			ZDKFactory factory = new ZDKFactory();
 			dialog = new JDialog(owner,true);
-			dialog.setTitle("About");
+			dialog.setTitle("About ZeeTracker");
 			dialog.setIconImage(factory.getZeesoftIcon32().getBufferedImage());
 			if (controller!=null) {
 				dialog.addKeyListener(controller.getPlayerKeyListener());

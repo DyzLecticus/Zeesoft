@@ -435,11 +435,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		showMenu.add(item);
 
-		item = new JMenuItem("About",KeyEvent.VK_A);
-		item.setActionCommand(ABOUT);
-		item.addActionListener(this);
-		showMenu.add(item);
-
 		evt = ActionEvent.CTRL_MASK;
 		JMenu instMenu = new JMenu("Instrument");
 		instMenu.setMnemonic(KeyEvent.VK_I);
@@ -564,7 +559,16 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.setActionCommand(UNMUTE);
 		item.addActionListener(this);
 		mixerMenu.add(item);
+
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setMnemonic(KeyEvent.VK_H);
+		bar.add(helpMenu);
 		
+		item = new JMenuItem("About ZeeTracker",KeyEvent.VK_A);
+		item.setActionCommand(ABOUT);
+		item.addActionListener(this);
+		helpMenu.add(item);
+
 		updateRecentFiles();
 		
 		return bar;

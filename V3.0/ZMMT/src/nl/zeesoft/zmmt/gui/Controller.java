@@ -38,6 +38,8 @@ import nl.zeesoft.zmmt.synthesizer.MidiNote;
 
 public class Controller extends Locker implements StateChangeSubscriber {
 	private Settings					settings					= null;
+	private boolean						firstTime					= false;
+	private boolean						displayedAbout				= false;
 	
 	private WorkerUnion					union						= null;
 	private StateManager				stateManager				= null;
@@ -80,7 +82,12 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		} catch (Exception e) {
 			// Ignore
 		}
-		settings.fromFile();
+		File file = new File(settings.getFileName());
+		if (file.exists()) {
+			settings.fromFile();
+		} else {
+			firstTime = true;
+		}
 		if (settings.getCustomFontName().length()>0 || settings.getCustomFontSize()>0) {
 			setFont(settings.getCustomFontName(),settings.getCustomFontSize());
 		}
@@ -129,7 +136,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		String err = "";
 
 		lockMe(this);
-		Composition comp = settings.getNewComposition(false);
+		Composition comp = settings.getNewComposition(firstTime);
 		unlockMe(this);
 		setComposition(comp);
 		
@@ -308,17 +315,17 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	public void setBusy(Object source,String busy,String details) {
 		busyWindow.setBusy(source,busy,details);
-		if (mainFrame!=null) {
-			mainFrame.getFrame().getGlassPane().setVisible(true);
-		}
 	}
 
 	public void setDone(Object source, boolean refocus) {
 		if (busyWindow.setDone(source)==0) {
 			if (mainFrame!=null) {
-				mainFrame.getFrame().getGlassPane().setVisible(false);
 				if (refocus) {
 					mainFrame.requestFocus();
+				}
+				if (firstTime && !displayedAbout) {
+					showAbout();
+					displayedAbout = true;
 				}
 			}
 		}
