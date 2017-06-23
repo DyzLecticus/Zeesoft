@@ -1,6 +1,5 @@
 package nl.zeesoft.zmmt.gui;
 
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +10,7 @@ import java.net.URISyntaxException;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import nl.zeesoft.zdk.image.ImageIcon;
+import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zmmt.gui.panel.PanelAbout;
 
 public class DialogAbout implements ActionListener {
@@ -50,9 +49,10 @@ public class DialogAbout implements ActionListener {
 	
 	private void initialize() {
 		if (dialog==null) {
+			ZDKFactory factory = new ZDKFactory();
 			dialog = new JDialog(owner,true);
 			dialog.setTitle("About");
-			dialog.setIconImage(new ImageIcon("z",32,Color.WHITE).getBufferedImage());
+			dialog.setIconImage(factory.getZeesoftIcon32().getBufferedImage());
 			if (controller!=null) {
 				dialog.addKeyListener(controller.getPlayerKeyListener());
 				about = new PanelAbout(controller,this);

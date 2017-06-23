@@ -6,7 +6,7 @@
 	<property name="version" value="0.9.0"/>
 	
 	<!-- ZDK version -->
-	<property name="versionZDK" value="0.9.25"/>
+	<property name="versionZDK" value="0.9.26"/>
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -176,6 +176,37 @@
 			<available file="${releases}/zmmt-${version}.zip"/>
 		</condition>
 		<fail if="_released" message="Version ${version} has already been released"/>		
+	</target>
+
+	<target name="distZTexe" description="Create the ZeeTracker executable">
+		<antcall target="failIfReleaseExists"/>
+		<input message="Are you sure you want to build the ZeeTracke exectuable (y/n)?" validargs="y,n" addproperty="_build"/>
+		<condition property="_abort">
+			<equals arg1="n" arg2="${_build}"/>
+		</condition>
+		<fail if="_abort" message="Aborted build"/>		
+		<antcall target="distZTexeConfirmed"/>
+	</target>
+
+	<target name="distZTexeConfirmed">
+		<antcall target="distZT"/>
+		<mkdir dir="${build}/ZT"/>
+		<mkdir dir="${build}/ZT/package"/>
+		<mkdir dir="${build}/ZT/package/windows"/>
+		<copy file="resources/ZeeTracker48.ico" tofile="${build}/ZT/package/windows/ZeeTracker.ico"/>
+		<copy file="resources/ZeeTracker64.bmp" tofile="${build}/ZT/package/windows/ZeeTracker-setup-icon.bmp"/>
+		<copy file="resources/ZeeTracker.iss" tofile="${build}/ZT/package/windows/ZeeTracker.iss"/>
+		<copy file="${dist}/ZeeTracker.jar" tofile="${build}/ZT/ZeeTracker.jar"/>
+		<!-- Package -->
+		<exec dir="${build}/ZT" executable="cmd" resultproperty="_error" logError="true"> 
+			<arg line='/c javafxpackager -deploy -native exe -vendor=Zeesoft -outdir packages -outfile ZeeTracker -srcfiles ZeeTracker.jar -appclass nl.zeesoft.zmmt.ZeeTracker -name "ZeeTracker" -title "ZeeTracker" -v'/>
+		</exec>
+		<condition property="_abort">
+			<equals arg1="${_error}" arg2="1"/>
+		</condition>
+		<fail if="_abort" message="Failed to package exectuable"/>		
+		<copy file="${build}/ZT/packages/bundles/ZeeTracker-1.0A.exe" tofile="${dist}/ZeeTracker-1.0A.exe"/>
+		<delete dir="${build}/ZT"/>
 	</target>
 </project>
 

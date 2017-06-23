@@ -1,11 +1,10 @@
 package nl.zeesoft.zmmt.gui;
 
-import java.awt.Color;
 import java.awt.Window;
 
 import javax.swing.JFrame;
 
-import nl.zeesoft.zdk.image.ImageIcon;
+import nl.zeesoft.zdk.ZDKFactory;
 
 public abstract class FrameObject {
 	private	Controller	controller	= null;
@@ -13,7 +12,8 @@ public abstract class FrameObject {
 	
 	public FrameObject(Controller controller) {
 		this.controller = controller;
-		frame.setIconImage(new ImageIcon("z",32,Color.WHITE).getBufferedImage());
+		ZDKFactory factory = new ZDKFactory();
+		frame.setIconImage(factory.getZeesoftIcon32().getBufferedImage());
 		frame.addKeyListener(controller.getPlayerKeyListener());
 	}
 
