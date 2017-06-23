@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk;
 
+import java.awt.Color;
+
+import nl.zeesoft.zdk.image.ImageIcon;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
@@ -36,5 +39,17 @@ public class ZDKFactory {
 			union = new WorkerUnion(msgr);
 		}
 		return union;
+	}
+	
+	public ImageIcon getZeesoftIcon32() {
+		return new ImageIcon("z",32,Color.WHITE);
+	}
+
+	public ImageIcon getZeesoftIcon48() {
+		return new ImageIcon("z",48,Color.WHITE);
+	}
+
+	public ImageIcon getZeesoftIcon64() {
+		return new ImageIcon("z",64,Color.WHITE);
 	}
 }

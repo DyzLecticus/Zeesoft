@@ -41,6 +41,12 @@ public class ImageIcon extends ImageObject {
 			fontSize = 44;
 			shadow = 2;
 		}
+		if (size>=48) {
+			xPos = 6;
+			yPos = 42;
+			fontSize = 68;
+			shadow = 3;
+		}
 		if (size>=64) {
 			xPos = 8;
 			yPos = 56;
