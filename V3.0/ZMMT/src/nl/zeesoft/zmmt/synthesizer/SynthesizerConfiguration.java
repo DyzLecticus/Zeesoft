@@ -577,6 +577,9 @@ public class SynthesizerConfiguration {
 				r = (inst.getLayer1().getBaseOctave() * 12) + (note - 36);
 			}
 		}
+		if (r>127) {
+			r = -1;
+		}
 		return r;
 	}
 
