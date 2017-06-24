@@ -25,21 +25,19 @@ public class ZMMT extends LibraryObject {
 
 	@Override
 	public void describe() {
+		System.out.println("ZeeTracker");
+		System.out.println("==========");
+		System.out.println(ZeeTracker.getDescription());
+		// TODO: Add ZeeTracker application download URL
 		System.out.println("Zeesoft MIDI Mod Tracker");
-		System.out.println("========================");
-		System.out.println("Zeesoft MIDI Mod Tracker (ZMMT) is a library that implements the Java MIDI API.");
-		System.out.println("It is used to create the ZeeTracker music tracker.");
+		System.out.println("------------------------");
+		System.out.println("Zeesoft MIDI Mod Tracker (ZMMT) is a library that contains all ZeeTracker application logic.");
 		describeDependencies();
 		System.out.println();
 		describeRelease();
 		System.out.println();
 		describeTesting(ZMMT.class);
 		System.out.println();
-		System.out.println("ZeeTracker");
-		System.out.println("----------");
-		System.out.println(ZeeTracker.getDescription());
-		System.out.println();
-		// TODO: Add ZeeTracker application download URL
 	}
 
 	@Override

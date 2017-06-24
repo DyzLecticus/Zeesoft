@@ -449,6 +449,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 	public void stopSequencer() {
 		sequencePlayer.stop();
+		reconfigureSynthesizer(stateManager.getComposition());
 	}
 
 	public void startContinueSequencer() {
