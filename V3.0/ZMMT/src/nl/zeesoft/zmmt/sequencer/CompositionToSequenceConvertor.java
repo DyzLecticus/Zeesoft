@@ -341,7 +341,7 @@ public class CompositionToSequenceConvertor {
 			int patternSteps = composition.getStepsForPattern(p);
 			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
 			for (Note n: p.getNotes()) {
-				if (n.step<=patternSteps && !instruments.get(n.instrument).isMuted() &&
+				if (n.step<=patternSteps && n.track<=Composition.TRACKS && !instruments.get(n.instrument).isMuted() &&
 					(!n.instrument.equals(Instrument.ECHO) || echo.getInstrument().length()==0)	
 					) {
 					boolean muted = false;
