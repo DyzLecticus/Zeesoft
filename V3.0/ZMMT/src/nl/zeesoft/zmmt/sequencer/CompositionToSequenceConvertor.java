@@ -33,6 +33,7 @@ public class CompositionToSequenceConvertor {
 	
 	public static final String							SEQUENCE_MARKER			= "SEQ:";
 	public static final String							PATTERN_STEP_MARKER		= "PS:";
+	public static final String							VELOCITY_MARKER			= "VEL:";
 
 	private static final int							START_TICK				= 0;
 	
@@ -76,6 +77,7 @@ public class CompositionToSequenceConvertor {
 	private SortedMap<String,InstrumentConfiguration>	instruments				= new TreeMap<String,InstrumentConfiguration>();
 	private boolean[]									channelHasNotes			= new boolean[16];
 	private List<Pattern>								patterns				= null;
+	private int[][]										velocityPerStepChannel	= null;
 	
 	public CompositionToSequenceConvertor(Composition composition) {
 		this.composition = composition;
@@ -132,6 +134,7 @@ public class CompositionToSequenceConvertor {
 			}
 			patterns = getPatternList(patternNumber);
 			setSequenceEndTick(patterns);
+			initializeVelocityArray(patterns);
 		}
 	}
 	
@@ -170,6 +173,21 @@ public class CompositionToSequenceConvertor {
 			}
 		}
 		return r;
+	}
+	
+	protected void initializeVelocityArray(List<Pattern> patterns) {
+		if (patterns.size()>0) {
+			int steps = 0;
+			for (Pattern p: patterns) {
+				steps = steps + composition.getStepsForPattern(p);
+			}
+			velocityPerStepChannel = new int[steps][16];
+			for (int s = 0; s < steps; s++) {
+				for (int c = 0; c < 16; c++) {
+					velocityPerStepChannel[s][c] = 0;
+				}
+			}
+		}
 	}
 	
 	public void setSequenceEndTick(List<Pattern> patterns) {
@@ -287,10 +305,20 @@ public class CompositionToSequenceConvertor {
 			String ps = PATTERN_STEP_MARKER + "-1:-1";
 			data = ps.getBytes();
 			createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,startTick);
+			String vel = VELOCITY_MARKER;
+			for (int c = 0; c < 16; c++) {
+				if (c>0) {
+					vel = vel + ":";
+				}
+				vel = vel + "0";
+			}
+			data = vel.getBytes();
+			createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,startTick);
 		} else {
 			int elem = 0;
 			int ticksPerStep = composition.getTicksPerStep();
 			int tick = startTick;
+			int step = 0;
 			for (Pattern p: patterns) {
 				if (addSequence) {
 					String seq = SEQUENCE_MARKER + elem;
@@ -307,7 +335,17 @@ public class CompositionToSequenceConvertor {
 					String ps = PATTERN_STEP_MARKER + p.getNumber() + ":" + s;
 					byte[] data = ps.getBytes();
 					createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,tick);
+					String vel = VELOCITY_MARKER;
+					for (int c = 0; c < 16; c++) {
+						if (c>0) {
+							vel = vel + ":";
+						}
+						vel = vel + velocityPerStepChannel[step][c];
+					}
+					data = vel.getBytes();
+					createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,startTick);
 					tick = tick + ticksPerStep;
+					step = step + 1;
 				}
 				elem++;
 			}
@@ -336,7 +374,8 @@ public class CompositionToSequenceConvertor {
 
 		int nextPatternStartTick = 0;
 		int ticksPerStep = composition.getTicksPerStep();
-
+		int patternStartStep = 0;
+		
 		for (Pattern p: patterns) {
 			int patternSteps = composition.getStepsForPattern(p);
 			nextPatternStartTick = nextPatternStartTick + (patternSteps * ticksPerStep);
@@ -369,8 +408,9 @@ public class CompositionToSequenceConvertor {
 								sn.velocity = (mn.velocity * n.velocityPercentage) / 100;
 								int tick = startTick + ((n.step - 1) * ticksPerStep);
 								int tickEnd = tick + ((n.duration * ticksPerStep) - 1);
+								MidiNoteDelayed mnd = null;
 								if (mn instanceof MidiNoteDelayed) {
-									MidiNoteDelayed mnd = (MidiNoteDelayed) mn;
+									mnd = (MidiNoteDelayed) mn;
 									tick = tick + (mnd.delaySteps * ticksPerStep);
 									tickEnd = tickEnd + (mnd.delaySteps * ticksPerStep);
 								} else if (tickEnd>=nextPatternStartTick) {
@@ -394,6 +434,16 @@ public class CompositionToSequenceConvertor {
 								sn.tickEnd = tickEnd;
 								r.add(sn);
 								channelHasNotes[sn.channel] = true;
+								
+								int currentStep = (patternStartStep + (n.step - 1));
+								if (mnd!=null) {
+									currentStep = currentStep + (mnd.delaySteps);
+								}
+								for (int s = currentStep; s < (currentStep + n.duration); s++) {
+									if (mn.velocity>velocityPerStepChannel[s][sn.channel]) {
+										velocityPerStepChannel[s][sn.channel] = mn.velocity;
+									}
+								}
 							}
 							noteLayerNum++;
 						}
@@ -401,6 +451,7 @@ public class CompositionToSequenceConvertor {
 				}
 			}
 			startTick = nextPatternStartTick;
+			patternStartStep = patternStartStep + patternSteps;
 		}
 		
 		return r;
