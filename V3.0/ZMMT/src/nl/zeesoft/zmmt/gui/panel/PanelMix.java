@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -22,13 +24,15 @@ import nl.zeesoft.zmmt.gui.FrameMain;
 import nl.zeesoft.zmmt.gui.state.CompositionChangePublisher;
 import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
 import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
+import nl.zeesoft.zmmt.sequencer.CompositionToSequenceConvertor;
+import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.synthesizer.Drum;
 import nl.zeesoft.zmmt.synthesizer.DrumConfiguration;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
-public class PanelMix extends PanelObject implements StateChangeSubscriber, CompositionChangePublisher {
+public class PanelMix extends PanelObject implements StateChangeSubscriber, CompositionChangePublisher, MetaEventListener, SequencePlayerSubscriber {
 	private	static final String			TOGGLE_MUTE					= "TOGGLE_MUTE";
 
 	private	static final String			TOGGLE_DRUM_MUTE			= "TOGGLE_DRUM_MUTE";
@@ -48,9 +52,13 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	private SynthesizerConfiguration	synthConfigCopy				= null;
 	private String						selectedInstrument			= "";
 	
+	private MixerStrip[]				strip						= new MixerStrip[16];
+	
 	public PanelMix(Controller controller) {
 		super(controller);
 		controller.getStateManager().addSubscriber(this);
+		controller.addSequencerMetaListener(this);
+		controller.addSequencerSubscriber(this);
 		selectedInstrument = controller.getStateManager().getSelectedInstrument();
 	}
 
@@ -203,6 +211,44 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		getController().getStateManager().addWaitingPublisher(this);
 	}
 
+
+	@Override
+	public void started() {
+		// Ignore
+	}
+
+	@Override
+	public void stopped() {
+		for (int c = 0; c < 16; c++) {
+			strip[c].setValue(0);
+		}
+	}
+
+	@Override
+	public void meta(MetaMessage meta) {
+		if (meta.getType()==CompositionToSequenceConvertor.MARKER) {
+			String txt = new String(meta.getData());
+			if (txt.startsWith(CompositionToSequenceConvertor.VELOCITY_MARKER)) {
+				String[] d = txt.split(":");
+				for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+					int layers = 2;
+					if (Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+						layers = 1;
+					} else if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
+						layers = 3;
+					}
+					for (int l = 0; l < layers; l++) {
+						int c = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],l);
+						if (c>=0) {
+							int value = Integer.parseInt(d[c + 1]);
+							strip[c].setValue(value);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	protected JPanel getMutePanel() {
 		JPanel r = new JPanel();
 		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
@@ -234,10 +280,30 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	}
 	
 	protected JPanel getColumnForInstrument(int i) {
+		Color col = Instrument.getColorForInstrument(Instrument.INSTRUMENTS[i]);
+
 		JPanel r = new JPanel();
 		r.setLayout(new BoxLayout(r,BoxLayout.Y_AXIS));
 		
-		Color col = Instrument.getColorForInstrument(Instrument.INSTRUMENTS[i]);
+		JPanel strips = new JPanel();
+		strips.setLayout(new BoxLayout(strips,BoxLayout.X_AXIS));
+		int layers = 2;
+		if (Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+			layers = 1;
+		} else if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO)) {
+			layers = 3;
+		}
+		for (int l = 0; l < layers; l++) {
+			int c = Instrument.getMidiChannelForInstrument(Instrument.INSTRUMENTS[i],l);
+			if (c>=0) {
+				if (l>0) {
+					strips.add(Box.createRigidArea(new Dimension(5,0)));
+				}
+				strip[c] = new MixerStrip(col);
+				strip[c].setBorder(BorderFactory.createEmptyBorder());
+				strips.add(strip[c]);
+			}
+		}
 		
 		JLabel label = new JLabel(Instrument.INSTRUMENT_SHORTS[i]);
 		label.setOpaque(true);
@@ -253,8 +319,8 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		panLabel[i] = new JLabel();
 		panLabel[i].setFocusable(false);
 		panSlider[i] = new JSlider(JSlider.HORIZONTAL,0,127,64);
-		panSlider[i].setPreferredSize(new Dimension(50,50));
-		panSlider[i].setMaximumSize(new Dimension(50,50));
+		panSlider[i].setPreferredSize(new Dimension(60,30));
+		panSlider[i].setMaximumSize(new Dimension(60,30));
 
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		muteButton[i].setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -281,14 +347,17 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		muteButton[i].addActionListener(this);
 		volumeSlider[i].addChangeListener(this);
 		panSlider[i].addChangeListener(this);
-
+		
+		strips.add(Box.createRigidArea(new Dimension(5,0)));
+		strips.add(volumeSlider[i]);
+		
 		r.add(label);
 		r.add(Box.createRigidArea(new Dimension(0,5)));
 		r.add(muteButton[i]);
 		r.add(Box.createRigidArea(new Dimension(0,5)));
 		r.add(volumeLabel[i]);
 		r.add(Box.createRigidArea(new Dimension(0,5)));
-		r.add(volumeSlider[i]);
+		r.add(strips);
 		r.add(Box.createRigidArea(new Dimension(0,5)));
 		r.add(panLabel[i]);
 		r.add(Box.createRigidArea(new Dimension(0,5)));

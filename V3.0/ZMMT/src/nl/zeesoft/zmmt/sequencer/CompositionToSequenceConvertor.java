@@ -343,7 +343,7 @@ public class CompositionToSequenceConvertor {
 						vel = vel + velocityPerStepChannel[step][c];
 					}
 					data = vel.getBytes();
-					createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,startTick);
+					createMetaEventOnTrack(sequence.getTracks()[0],MARKER,data,data.length,tick);
 					tick = tick + ticksPerStep;
 					step = step + 1;
 				}
