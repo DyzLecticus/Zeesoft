@@ -151,7 +151,7 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 
 	@Override
 	public void started() {
-		// Ignore
+		grid.repaint();
 	}
 
 	@Override
