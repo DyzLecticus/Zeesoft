@@ -40,19 +40,22 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	
 	private	JButton						solo						= null;
 	private	JButton						unmute						= null;
+
+	private JLabel						sequence					= null;
+	private JLabel						pattern						= null;
+	private JLabel						step						= null;
 	
 	private JButton[]					muteButton					= new JButton[Instrument.INSTRUMENTS.length];
 	private JLabel[]					volumeLabel					= new JLabel[Instrument.INSTRUMENTS.length];
 	private JSlider[]					volumeSlider				= new JSlider[Instrument.INSTRUMENTS.length];
 	private JLabel[]					panLabel					= new JLabel[Instrument.INSTRUMENTS.length];
 	private JSlider[]					panSlider					= new JSlider[Instrument.INSTRUMENTS.length];
+	private MixerStrip[]				strip						= new MixerStrip[16];
 
 	private JButton[]					muteDrumButton				= new JButton[DRUM_SHORTS.length];
 	
 	private SynthesizerConfiguration	synthConfigCopy				= null;
 	private String						selectedInstrument			= "";
-	
-	private MixerStrip[]				strip						= new MixerStrip[16];
 	
 	public PanelMix(Controller controller) {
 		super(controller);
@@ -70,6 +73,9 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		getPanel().setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
 		int row = 0;
+		addComponent(getPanel(), row, 0.01,getPlayingPanel());
+
+		row++;
 		addComponent(getPanel(), row, 0.01,getMutePanel());
 
 		row++;
@@ -219,6 +225,9 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 
 	@Override
 	public void stopped() {
+		sequence.setText("---");
+		pattern.setText("--");
+		step.setText("---");
 		for (int c = 0; c < 16; c++) {
 			strip[c].setValue(0);
 		}
@@ -228,8 +237,8 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	public void meta(MetaMessage meta) {
 		if (meta.getType()==CompositionToSequenceConvertor.MARKER) {
 			String txt = new String(meta.getData());
+			String[] d = txt.split(":");
 			if (txt.startsWith(CompositionToSequenceConvertor.VELOCITY_MARKER)) {
-				String[] d = txt.split(":");
 				for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 					int layers = 2;
 					if (Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
@@ -245,8 +254,62 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 						}
 					}
 				}
+			} else if (txt.startsWith(CompositionToSequenceConvertor.SEQUENCE_MARKER)) {
+				int index = Integer.parseInt(d[1]);
+				if (index<0) {
+					sequence.setText("---");
+				} else {
+					sequence.setText(String.format("%03d",index));
+				}
+			} else if (txt.startsWith(CompositionToSequenceConvertor.PATTERN_STEP_MARKER)) {
+				int p = Integer.parseInt(d[1]);
+				int s = Integer.parseInt(d[2]);
+				if (p<0) {
+					pattern.setText("--");
+				} else {
+					pattern.setText(String.format("%02d",p));
+				}
+				if (s<0) {
+					step.setText("---");
+				} else {
+					step.setText(String.format("%03d",s));
+				}
 			}
 		}
+	}
+
+	protected JPanel getPlayingPanel() {
+		JPanel r = new JPanel();
+		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
+		r.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
+		
+		JLabel playing = new JLabel("Playing");
+		sequence = new JLabel("---");
+		JLabel sep1 = new JLabel("/");
+		pattern = new JLabel("--");
+		JLabel sep2 = new JLabel("/");
+		step = new JLabel("---");
+		
+		playing.setFocusable(false);
+		sequence.setFocusable(false);
+		sep1.setFocusable(false);
+		pattern.setFocusable(false);
+		sep2.setFocusable(false);
+		step.setFocusable(false);
+
+		r.add(playing);
+		r.add(Box.createRigidArea(new Dimension(10,0)));
+		r.add(sequence);
+		r.add(Box.createRigidArea(new Dimension(5,0)));
+		r.add(sep1);
+		r.add(Box.createRigidArea(new Dimension(5,0)));
+		r.add(pattern);
+		r.add(Box.createRigidArea(new Dimension(5,0)));
+		r.add(sep2);
+		r.add(Box.createRigidArea(new Dimension(5,0)));
+		r.add(step);
+		
+		return r;
 	}
 
 	protected JPanel getMutePanel() {

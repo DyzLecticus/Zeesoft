@@ -440,8 +440,12 @@ public class CompositionToSequenceConvertor {
 									currentStep = currentStep + (mnd.delaySteps);
 								}
 								for (int s = currentStep; s < (currentStep + n.duration); s++) {
-									if (mn.velocity>velocityPerStepChannel[s][sn.channel]) {
-										velocityPerStepChannel[s][sn.channel] = mn.velocity;
+									int setStep = s;
+									if (setStep>=velocityPerStepChannel.length) {
+										setStep = (setStep % velocityPerStepChannel.length);
+									}
+									if (mn.velocity>velocityPerStepChannel[setStep][sn.channel]) {
+										velocityPerStepChannel[setStep][sn.channel] = mn.velocity;
 									}
 								}
 							}
