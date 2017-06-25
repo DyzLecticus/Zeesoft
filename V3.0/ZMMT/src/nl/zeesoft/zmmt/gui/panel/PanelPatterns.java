@@ -911,11 +911,39 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	}
 
 	protected void removeOrCutNotes(List<Note> notes,int removeStartRow) {
+		List<String> removeInstruments = new ArrayList<String>();
+		List<String> keepInstruments = new ArrayList<String>();
 		for (Note sn: notes) {
 			if (sn.step>removeStartRow) {
 				workingPattern.getNotes().remove(sn);
+				if (!removeInstruments.contains(sn.instrument)) {
+					removeInstruments.add(sn.instrument);
+				}
 			} else {
 				sn.duration = ((removeStartRow - sn.step) + 1);
+				if (!keepInstruments.contains(sn.instrument)) {
+					removeInstruments.add(sn.instrument);
+				}
+			}
+		}
+		for (String instrument: removeInstruments) {
+			if (!keepInstruments.contains(instrument)) {
+				for (Note cn: workingPattern.getNotes()) {
+					if (cn.instrument.equals(instrument)) {
+						keepInstruments.add(cn.instrument);
+						break;
+					}
+				}
+			}
+		}
+		if (removeInstruments.size()!=keepInstruments.size()) {
+			for (String instrument: removeInstruments) {
+				if (!keepInstruments.contains(instrument)) {
+					List<Control> removeControls = workingPattern.getInstrumentControls(instrument);
+					for (Control rc: removeControls) {
+						workingPattern.getControls().remove(rc);
+					}
+				}
 			}
 		}
 	}
