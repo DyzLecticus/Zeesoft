@@ -137,7 +137,6 @@ public class Composition {
 		return r;
 	}
 
-	
 	public String getComposer() {
 		return composer;
 	}

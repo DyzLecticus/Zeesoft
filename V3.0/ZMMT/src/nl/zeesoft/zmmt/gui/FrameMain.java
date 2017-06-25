@@ -51,6 +51,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	PATTERN_INSERT		= PATTERN_PREFIX + "INSERT";
 	public static final String	PATTERN_BARS		= PATTERN_PREFIX + "BARS";
 	public static final String	PATTERN_EDIT		= PATTERN_PREFIX + "EDIT";
+	public static final String	PATTERN_CLEAR		= PATTERN_PREFIX + "CLEAR";
 
 	public static final String	SOLO				= "SOLO";
 	public static final String	UNMUTE				= "UNMUTE";
@@ -511,6 +512,12 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item = new JMenuItem("Edit pattern events",KeyEvent.VK_E);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,evt));
 		item.setActionCommand(PATTERN_EDIT);
+		item.addActionListener(this);
+		editPatternMenu.add(item);
+
+		item = new JMenuItem("Clear pattern",KeyEvent.VK_C);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,evt));
+		item.setActionCommand(PATTERN_CLEAR);
 		item.addActionListener(this);
 		editPatternMenu.add(item);
 

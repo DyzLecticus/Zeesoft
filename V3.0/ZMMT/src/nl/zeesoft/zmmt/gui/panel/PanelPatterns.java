@@ -14,6 +14,7 @@ import javax.sound.midi.MetaMessage;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -55,7 +56,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 	private static final String		PAGE_UP							= "PAGE_UP";
 	private static final String		SHIFT_PAGE_DOWN					= "SHIFT_PAGE_DOWN";
 	private static final String		SHIFT_PAGE_UP					= "SHIFT_PAGE_UP";
-
+	
 	public static final String		NOTES_COPY						= "NOTES_COPY";
 	public static final String		NOTES_PASTE						= "NOTES_PASTE";
 	public static final String		NOTES_SEMITONE_UP				= "NOTES_SEMITONE_UP";
@@ -230,6 +231,14 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 				getCurrentGrid().requestFocus();
 			} else {
 				reselect();
+			}
+		} else if (evt.getActionCommand().equals(FrameMain.PATTERN_CLEAR)) {
+			if (workingPattern!=null) {
+				if (workingPattern.getNotes().size()>0 || workingPattern.getControls().size()>0) {
+					workingPattern.getNotes().clear();
+					workingPattern.getControls().clear();
+					changedPattern();
+				}
 			}
 		} else if (evt.getSource()==pattern) {
 			if (pattern.getSelectedIndex()!=selectedPattern) {
@@ -1273,9 +1282,32 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 		
 		int row = 0;
 		
-		bars = getBarsSelector();
-		addLabelProperty(r,row,"Custom pattern bars",bars);
+		JLabel label = new JLabel("Custom pattern bars ");
+		label.setFocusable(false);
 
+		bars = getBarsSelector();
+
+		JButton clear = new JButton("Clear pattern");
+		clear.addActionListener(this);
+		clear.setActionCommand(FrameMain.PATTERN_CLEAR);
+		clear.addFocusListener(this);
+		clear.addKeyListener(getController().getPlayerKeyListener());
+		addFunctionKeyOverridesToComponent(clear);
+		addControlPageUpDownOverridesToComponent(clear);
+
+		JPanel controls = new JPanel();
+		controls.setLayout(new BoxLayout(controls,BoxLayout.X_AXIS));
+		
+		label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+		bars.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+		clear.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+		
+		controls.add(label);
+		controls.add(bars);
+		controls.add(clear);
+
+		addComponent(r,row,0.01,controls,false);
+		
 		cardPanel = new JPanel();
 		CardLayout layout = new CardLayout();
 		cardPanel.setLayout(layout);
