@@ -5,6 +5,8 @@ import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.Settings;
 
 public class ZeeTracker {
+	public static final String	VERSION	= "1.0A";
+	
 	public static void main(String[] args) {
 		Settings settings = new Settings();
 		Controller controller = new Controller(settings);

@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import nl.zeesoft.zmmt.ZeeTracker;
 import nl.zeesoft.zmmt.gui.Controller;
 import nl.zeesoft.zmmt.gui.DialogAbout;
 
@@ -37,8 +38,12 @@ public class PanelAbout extends PanelObject {
 
 		int row = 0;
 
-		String e = Character.toString((char)233);
+		JLabel version = new JLabel(ZeeTracker.VERSION);
+		version.setFocusable(false);
+		addLabelProperty(getPanel(), row,"Version ",version);
 		
+		row++;
+		String e = Character.toString((char)233);
 		JLabel createdBy = new JLabel("Andr" + e + " van der Zee, Leiden, The Netherlands");
 		createdBy.setFocusable(false);
 		addLabelProperty(getPanel(), row,"Created by ",createdBy);

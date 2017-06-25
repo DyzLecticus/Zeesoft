@@ -179,8 +179,7 @@
 	</target>
 
 	<target name="distZTexe" description="Create the ZeeTracker executable">
-		<antcall target="failIfReleaseExists"/>
-		<input message="Are you sure you want to build the ZeeTracke exectuable (y/n)?" validargs="y,n" addproperty="_build"/>
+		<input message="Are you sure you want to build the ZeeTracker exectuable (y/n)?" validargs="y,n" addproperty="_build"/>
 		<condition property="_abort">
 			<equals arg1="n" arg2="${_build}"/>
 		</condition>
