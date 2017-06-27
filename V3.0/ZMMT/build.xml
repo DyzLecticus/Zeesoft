@@ -3,7 +3,7 @@
 	<description>ZMMT build file</description>
 
 	<!-- Release version -->
-	<property name="version" value="0.9.0"/>
+	<property name="version" value="0.9.1"/>
 	
 	<!-- ZDK version -->
 	<property name="versionZDK" value="0.9.26"/>
@@ -74,53 +74,6 @@
 		</delete>
 	</target>
 
-	<target name="distZT" depends="dist" description="Generate the ZeeTracker distribution">
-		<mkdir dir="${build}/ZT"/>
-		
-		<mkdir dir="${build}/ZT/src1"/>
-		<unzip src="${lib}/zdk.jar" dest="${build}/ZT/src1">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		
-		<mkdir dir="${build}/ZT/src2"/>
-		<unzip src="${dist}/zmmt.jar" dest="${build}/ZT/src2">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-
-		<copy todir="${build}/ZT/src">
-            <fileset dir="${build}/ZT/src1" />
-        </copy>		
-		<copy todir="${build}/ZT/src">
-            <fileset dir="${build}/ZT/src2" />
-        </copy>		
-
-		
-		<mkdir dir="${build}/ZT/build"/>
-		
-		<javac srcdir="${build}/ZT/src" destdir="${build}/ZT/build" debug="on" includeantruntime="false"/>
-
-		<exec dir="" executable="cmd" resultproperty="_error" logError="true"> 
-			<arg line='/c java -jar ${lib}/zdk.jar WRITE_MANIFEST "${version} ${creator}" nl.zeesoft.zmmt.ZeeTracker build/ZT/src ${dist}/mymanifest'/>
-		</exec>
-		<condition property="_abort">
-			<equals arg1="${_error}" arg2="1"/>
-		</condition>
-		<fail if="_abort" message="Failed to generate manifest"/>		
-
-		<mkdir dir="${build}/ZT/build/resources"/>
-		<copy file="resources/DemoComposition.ztc" tofile="${build}/ZT/build/resources/DemoComposition.ztc"/>
-		<copy file="resources/ZeeTrackerDrumKit.sf2" tofile="${build}/ZT/build/resources/ZeeTrackerDrumKit.sf2"/>
-		<copy file="resources/ZeeTrackerSynthesizers.sf2" tofile="${build}/ZT/build/resources/ZeeTrackerSynthesizers.sf2"/>
-		
-		<jar jarfile="${dist}/ZeeTracker.jar" basedir="${build}/ZT/build" manifest="${dist}/mymanifest"/>
-		
-		<delete dir="${build}/ZT"/>
-	</target>
-
 	<target name="release" description="Release the ZMMT">
 		<antcall target="failIfReleaseExists"/>
 		<input message="Are you sure you want to release version ${version} (y/n)?" validargs="y,n" addproperty="_release"/>
@@ -160,7 +113,7 @@
             <fileset dir="${src}" />
         </copy>		
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zmmt,nl.zeesoft.zmmt.composition,nl.zeesoft.zmmt.gui,nl.zeesoft.zmmt.gui.panel,nl.zeesoft.zmmt.gui.state,nl.zeesoft.zmmt.player,nl.zeesoft.zmmt.recorder,nl.zeesoft.zmmt.sequencer,nl.zeesoft.zmmt.synthesizer"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zmmt.composition,nl.zeesoft.zmmt.player,nl.zeesoft.zmmt.recorder,nl.zeesoft.zmmt.sequencer,nl.zeesoft.zmmt.synthesizer"/>
 		<zip destfile="${dist}/zmmt-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>
@@ -176,36 +129,6 @@
 			<available file="${releases}/zmmt-${version}.zip"/>
 		</condition>
 		<fail if="_released" message="Version ${version} has already been released"/>		
-	</target>
-
-	<target name="distZTexe" description="Create the ZeeTracker executable">
-		<input message="Are you sure you want to build the ZeeTracker exectuable (y/n)?" validargs="y,n" addproperty="_build"/>
-		<condition property="_abort">
-			<equals arg1="n" arg2="${_build}"/>
-		</condition>
-		<fail if="_abort" message="Aborted build"/>		
-		<antcall target="distZTexeConfirmed"/>
-	</target>
-
-	<target name="distZTexeConfirmed">
-		<antcall target="distZT"/>
-		<mkdir dir="${build}/ZT"/>
-		<mkdir dir="${build}/ZT/package"/>
-		<mkdir dir="${build}/ZT/package/windows"/>
-		<copy file="resources/ZeeTracker48.ico" tofile="${build}/ZT/package/windows/ZeeTracker.ico"/>
-		<copy file="resources/ZeeTracker64.bmp" tofile="${build}/ZT/package/windows/ZeeTracker-setup-icon.bmp"/>
-		<copy file="resources/ZeeTracker.iss" tofile="${build}/ZT/package/windows/ZeeTracker.iss"/>
-		<copy file="${dist}/ZeeTracker.jar" tofile="${build}/ZT/ZeeTracker.jar"/>
-		<!-- Package -->
-		<exec dir="${build}/ZT" executable="cmd" resultproperty="_error" logError="true"> 
-			<arg line='/c javafxpackager -deploy -native exe -vendor=Zeesoft -outdir packages -outfile ZeeTracker -srcfiles ZeeTracker.jar -appclass nl.zeesoft.zmmt.ZeeTracker -name "ZeeTracker" -title "ZeeTracker" -v'/>
-		</exec>
-		<condition property="_abort">
-			<equals arg1="${_error}" arg2="1"/>
-		</condition>
-		<fail if="_abort" message="Failed to package exectuable"/>		
-		<copy file="${build}/ZT/packages/bundles/ZeeTracker-1.0A.exe" tofile="${dist}/ZeeTracker-1.0A.exe"/>
-		<delete dir="${build}/ZT"/>
 	</target>
 </project>
 

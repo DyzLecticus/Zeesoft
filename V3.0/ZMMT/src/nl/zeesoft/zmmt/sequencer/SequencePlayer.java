@@ -14,10 +14,8 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Pattern;
-import nl.zeesoft.zmmt.gui.state.StateChangeEvent;
-import nl.zeesoft.zmmt.gui.state.StateChangeSubscriber;
 
-public class SequencePlayer extends Locker implements StateChangeSubscriber, MetaEventListener {
+public class SequencePlayer extends Locker implements MetaEventListener {
 	private static final int				END_OF_SEQUENCE		= 47;
 	private	static final boolean			USE_LOOP_FIX		= true;
 
@@ -71,52 +69,6 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 		unlockMe(this);
 		if (checkUpdate) {
 			checkUpdateSequence();
-		}
-	}
-	
-	@Override
-	public void handleStateChange(StateChangeEvent evt) {
-		if (evt.getType().equals(StateChangeEvent.CHANGED_COMPOSITION)) {
-			lockMe(this);
-			selectedPattern = evt.getSelectedPattern();
-			compositionCopy = evt.getComposition().copy();
-			updateSequence = true;
-			unlockMe(this);
-		} else if (evt.getType().equals(StateChangeEvent.CHANGED_PATTERN_SELECTION)) {
-			lockMe(this);
-			if (compositionCopy!=null) {
-				startPatternTick = evt.getSelectedPatternRowFrom() * compositionCopy.getTicksPerStep();
-				if (startPatternTick>0) {
-					startPatternTick--;
-				}
-			} else {
-				startPatternTick = 0;
-			}
-			unlockMe(this);
-		} else if (evt.getType().equals(StateChangeEvent.CHANGED_SEQUENCE_SELECTION)) {
-			lockMe(this);
-			if (compositionCopy!=null) {
-				startSequenceTick = 0;
-				for (int i = 0; i < evt.getSelectedPatternRowFrom(); i++) {
-					Pattern ptn = compositionCopy.getPattern(compositionCopy.getSequence().get(i));
-					int steps = compositionCopy.getStepsForPattern(ptn);
-					startSequenceTick = startSequenceTick + (steps * compositionCopy.getTicksPerStep());
-					
-				}
-				if (startSequenceTick>0) {
-					startSequenceTick--;
-				}
-			} else {
-				startSequenceTick = 0;
-			}
-			unlockMe(this);
-		} else if (evt.getSelectedPattern()!=selectedPattern) {
-			lockMe(this);
-			selectedPattern = evt.getSelectedPattern();
-			if (patternMode) {
-				updateSequence = true;
-			}
-			unlockMe(this);
 		}
 	}
 	
@@ -199,7 +151,58 @@ public class SequencePlayer extends Locker implements StateChangeSubscriber, Met
 		unlockMe(this);
 		return r;
 	}
+
+	protected void setCompositionPattern(Composition comp,int pattern) {
+		lockMe(this);
+		selectedPattern = pattern;
+		compositionCopy = comp.copy();
+		updateSequence = true;
+		unlockMe(this);
+	}
 	
+	protected void setStartTickPattern(int selectedRow) {
+		lockMe(this);
+		if (compositionCopy!=null) {
+			startPatternTick = selectedRow * compositionCopy.getTicksPerStep();
+			if (startPatternTick>0) {
+				startPatternTick--;
+			}
+		} else {
+			startPatternTick = 0;
+		}
+		unlockMe(this);
+	}
+	
+	protected void setStartTickSequence(int selectedRow) {
+		lockMe(this);
+		if (compositionCopy!=null) {
+			startSequenceTick = 0;
+			for (int i = 0; i < selectedRow; i++) {
+				Pattern ptn = compositionCopy.getPattern(compositionCopy.getSequence().get(i));
+				int steps = compositionCopy.getStepsForPattern(ptn);
+				startSequenceTick = startSequenceTick + (steps * compositionCopy.getTicksPerStep());
+				
+			}
+			if (startSequenceTick>0) {
+				startSequenceTick--;
+			}
+		} else {
+			startSequenceTick = 0;
+		}
+		unlockMe(this);
+	}
+
+	protected void setPattern(int pattern) {
+		lockMe(this);
+		if (selectedPattern!=pattern) {
+			selectedPattern = pattern;
+			if (patternMode) {
+				updateSequence = true;
+			}
+		}
+		unlockMe(this);
+	}
+
 	protected void checkUpdateSequence() {
 		boolean update = false;
 		boolean pattern = true;

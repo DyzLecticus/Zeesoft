@@ -6,7 +6,6 @@ import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
-import nl.zeesoft.zmmt.ZeeTracker;
 
 public class ZMMT extends LibraryObject {
 	public ZMMT(Tester tester) {
@@ -25,12 +24,8 @@ public class ZMMT extends LibraryObject {
 
 	@Override
 	public void describe() {
-		System.out.println("ZeeTracker");
-		System.out.println("==========");
-		System.out.println(ZeeTracker.getDescription());
-		// TODO: Add ZeeTracker application download URL
 		System.out.println("Zeesoft MIDI Mod Tracker");
-		System.out.println("------------------------");
+		System.out.println("========================");
 		System.out.println("Zeesoft MIDI Mod Tracker (ZMMT) is a library that contains all ZeeTracker application logic.");
 		describeDependencies();
 		System.out.println();
@@ -43,7 +38,6 @@ public class ZMMT extends LibraryObject {
 	@Override
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestSynthesizerConfiguration(getTester()));
-		tests.add(new TestSettings(getTester()));
 		tests.add(new TestComposition(getTester()));
 	}
 }
