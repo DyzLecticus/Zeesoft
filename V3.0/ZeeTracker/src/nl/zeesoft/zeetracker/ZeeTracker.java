@@ -5,7 +5,9 @@ import nl.zeesoft.zeetracker.gui.Controller;
 import nl.zeesoft.zeetracker.gui.Settings;
 
 public class ZeeTracker {
-	public static final String	VERSION	= "1.0A";
+	public static final String	VERSION			= "1.0A";
+	public static final String	LICENSE_URL		= "http://www.dbad-license.org";
+	public static final String	WEBSITE_URL		= "https://github.com/DyzLecticus/Zeesoft/tree/master/ZeeTracker";
 	
 	public static void main(String[] args) {
 		Settings settings = new Settings();

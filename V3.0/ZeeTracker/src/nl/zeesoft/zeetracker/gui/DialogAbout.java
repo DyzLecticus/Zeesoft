@@ -11,11 +11,11 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zeetracker.ZeeTracker;
 import nl.zeesoft.zeetracker.gui.panel.PanelAbout;
 
 public class DialogAbout implements ActionListener {
-	public static final String		WEBSITE_URL		= "https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZMMT";
-	public static final String		LICENSE_URL		= "http://www.dbad-license.org/";
+	public static final String		GO_TO_WEBSITE	= "GO_TO_WEBSITE";
 	
 	private Controller				controller		= null;
 	private JFrame					owner			= null;
@@ -40,7 +40,7 @@ public class DialogAbout implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(WEBSITE_URL)) {
+		if (evt.getActionCommand().equals(GO_TO_WEBSITE)) {
 			goToWebsite();
 		} else {
 			dialog.setVisible(false);
@@ -66,7 +66,7 @@ public class DialogAbout implements ActionListener {
 	private void goToWebsite() {
 		if (Desktop.isDesktopSupported()) {
 			try {
-				Desktop.getDesktop().browse(new URI(WEBSITE_URL));
+				Desktop.getDesktop().browse(new URI(ZeeTracker.WEBSITE_URL));
 			} catch (IOException e) {
 				if (controller!=null) {
 					controller.showErrorMessage(this,"I/O Exception",e);

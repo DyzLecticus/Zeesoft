@@ -49,12 +49,12 @@ public class PanelAbout extends PanelObject {
 		addLabelProperty(getPanel(), row,"Created by ",createdBy);
 
 		row++;
-		JLabel license = new JLabel(DialogAbout.LICENSE_URL);
+		JLabel license = new JLabel(ZeeTracker.LICENSE_URL);
 		license.setFocusable(false);
 		addLabelProperty(getPanel(), row,"License ",license);
 		
 		row++;
-		JLabel source = new JLabel(DialogAbout.WEBSITE_URL);
+		JLabel source = new JLabel(ZeeTracker.WEBSITE_URL);
 		source.setFocusable(false);
 		addLabelProperty(getPanel(), row,"Website ",source);
 
@@ -70,7 +70,7 @@ public class PanelAbout extends PanelObject {
 		if (Desktop.isDesktopSupported()) {
 			JButton goToSite = new JButton("Go to website");
 			goToSite.addActionListener(listener);
-			goToSite.setActionCommand(DialogAbout.WEBSITE_URL);
+			goToSite.setActionCommand(DialogAbout.GO_TO_WEBSITE);
 			goToSite.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 			goToSite.addFocusListener(this);
 			goToSite.addKeyListener(getController().getPlayerKeyListener());
