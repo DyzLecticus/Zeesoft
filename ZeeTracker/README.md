@@ -4,7 +4,9 @@ Welcome to the ZeeTracker landing page.
 This page contains the following information;
  * [About ZeeTracker](#about-zeetracker)
  * [Requirements and download](#requirements-and-download)
+ * [Demo composition](#demo-composition)
  * [Screen shots](#screen-shots)
+ * [Source code](#source-code)
   
 About ZeeTracker
 ----------------
@@ -33,8 +35,9 @@ Zeesoft recommends using the free audio recording and editing software called 'A
 References;  
  * [MIDI](https://en.wikipedia.org/wiki/General_MIDI)  
  * [Polyphone](http://polyphone-soundfonts.com)  
+ * [Reason](https://www.propellerheads.se)  
  * [Audacity](http://www.audacityteam.org)  
-
+  
 Requirements and download
 -------------------------
 The most recent ZeeTracker version is 1.0A.
@@ -42,18 +45,30 @@ Users with Java 1.7 installed can download the executable jar file [here](https:
 Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0A.exe) (+- 40 MB).
 ZeeTracker requires about 125 MB of working memory.
 The windows executable will require about 150 MB of free disk space.
-
+  
+Demo composition
+----------------
+<iframe width="100%" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/330499059&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=false"></iframe>
+  
 Screen shots
 ------------
 <img alt="The composition tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Composition.bmp">
-
+  
 <img alt="The instruments tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Instruments.bmp">
-
+  
 <img alt="The patterns tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Patterns.bmp">
-
+  
 <img alt="The pattern sequence tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Sequence.bmp">
-
+  
 <img alt="The mix tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Mix.bmp">
-
+  
 <img alt="The settings tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Settings.bmp">
-
+  
+Source code
+-----------
+ZeeTracker is open source.
+The application consists of the following libraries;
+ * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/) (interface)  
+ * [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/)  
+ * [Zeesoft MIDI Mod Tracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZMMT/)  
+  
