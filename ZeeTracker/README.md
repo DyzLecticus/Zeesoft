@@ -68,7 +68,7 @@ Source code
 -----------
 ZeeTracker is open source.
 The application consists of the following libraries;
- * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/) (interface)  
- * [Zeesoft MIDI Mod Tracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZMMT/)  
+ * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZeeTracker/) (Interface logic)  
+ * [Zeesoft MIDI Mod Tracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZMMT/) (Application logic) 
  * [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/)  
   
