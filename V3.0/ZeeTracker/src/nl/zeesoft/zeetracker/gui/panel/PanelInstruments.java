@@ -198,7 +198,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 					instrumentLayerBaseVelocity[l][i].setValue(conf.getLayer(l).getBaseVelocity());
 					instrumentLayerAccentVelocity[l][i].setValue(conf.getLayer(l).getAccentVelocity());
 				}
-				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+				if (Instrument.INSTRUMENTS[i].equals(Instrument.BASS1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
@@ -304,7 +304,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				echoPan3.setEnabled(false);
 				echoLayer.setValue(1);
 			} else {
-				if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
+				if (echo.getInstrument().equals(Instrument.BASS1) ||
 					echo.getInstrument().equals(Instrument.SYNTH1) ||
 					echo.getInstrument().equals(Instrument.LEAD) ||
 					echo.getInstrument().equals(Instrument.STRINGS)
@@ -373,7 +373,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 				inst.getLayer(l).setBaseVelocity(instrumentLayerBaseVelocity[l][i].getValue());
 				inst.getLayer(l).setAccentVelocity(instrumentLayerAccentVelocity[l][i].getValue());
 			}
-			if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+			if (Instrument.INSTRUMENTS[i].equals(Instrument.BASS1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 				Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
@@ -423,7 +423,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			instrument = "";
 		}
 		echo.setInstrument(instrument);
-		if (echo.getInstrument().equals(Instrument.SYNTH_BASS1) ||
+		if (echo.getInstrument().equals(Instrument.BASS1) ||
 			echo.getInstrument().equals(Instrument.SYNTH1) ||
 			echo.getInstrument().equals(Instrument.LEAD) ||
 			echo.getInstrument().equals(Instrument.STRINGS)
@@ -560,7 +560,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		int l = 0;
 		row++;
 		String label = "MIDI instrument number";
-		if (name.equals(Instrument.SYNTH_BASS1) ||
+		if (name.equals(Instrument.BASS1) ||
 			name.equals(Instrument.SYNTH1) ||
 			name.equals(Instrument.LEAD) ||
 			name.equals(Instrument.STRINGS)
@@ -619,7 +619,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		row++;
 		instrumentLayerModToVibDepth[l][instrumentNum] = addLabelCheckBoxToPanel(panel,row,"Modulation to vibrato depth");
 
-		if (name.equals(Instrument.SYNTH_BASS1) ||
+		if (name.equals(Instrument.BASS1) ||
 			name.equals(Instrument.SYNTH1) ||
 			name.equals(Instrument.LEAD) ||
 			name.equals(Instrument.STRINGS)
@@ -627,7 +627,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			l = 1;
 			row++;
 			label = "MIDI instrument number";
-			if (name.equals(Instrument.SYNTH_BASS1) ||
+			if (name.equals(Instrument.BASS1) ||
 				name.equals(Instrument.SYNTH1) ||
 				name.equals(Instrument.LEAD) ||
 				name.equals(Instrument.STRINGS)
