@@ -1,6 +1,14 @@
 ZeeTracker
 ==========
-ZeeTracker is designed to provide a fast and fun music composing work flow.
+Welcome to the ZeeTracker landing page.
+This page contains the following information;
+ * [About ZeeTracker](#about-zeetracker)
+ * [Requirements and download](#requirements-and-download)
+ * [Screen shots](#screen-shots)
+  
+About ZeeTracker
+----------------
+ZeeTracker is a music composing application designed to provide a fast and fun work flow.
 The interface is based on mod trackers like Scream Tracker and Impulse Tracker.
 This means that ZeeTracker is made for regular computer keyboard control.
 Part of this feature is that almost all interface components support playing notes in response to typing certain things on the keyboard.
@@ -23,9 +31,17 @@ Another limitation of working with the Java default Synthesizer is that audio ou
 Zeesoft recommends using the free audio recording and editing software called 'Audacity' to do this.
   
 References;  
-  ** [MIDI](https://en.wikipedia.org/wiki/General_MIDI)  
-  ** [Polyphone](http://polyphone-soundfonts.com)  
-  ** [Audacity](http://www.audacityteam.org)  
+ * [MIDI](https://en.wikipedia.org/wiki/General_MIDI)  
+ * [Polyphone](http://polyphone-soundfonts.com)  
+ * [Audacity](http://www.audacityteam.org)  
+
+Requirements and download
+-------------------------
+The most recent ZeeTracker version is 1.0A.
+Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).
+Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0A.exe) (+- 40 MB).
+ZeeTracker requires about 125 MB of working memory.
+The windows executable will require about 150 MB of free disk space.
 
 Screen shots
 ------------

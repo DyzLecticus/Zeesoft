@@ -18,7 +18,7 @@ public class ZeeTracker {
 
 	public static ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
-		r.append("ZeeTracker is designed to provide a fast and fun music composing work flow.\n");
+		r.append("ZeeTracker is a music composing application designed to provide a fast and fun work flow.\n");
 		r.append("The interface is based on mod trackers like Scream Tracker and Impulse Tracker.\n");
 		r.append("This means that ZeeTracker is made for regular computer keyboard control.\n");
 		r.append("Part of this feature is that almost all interface components support playing notes in response to typing certain things on the keyboard.\n");
@@ -41,9 +41,19 @@ public class ZeeTracker {
 		r.append("Zeesoft recommends using the free audio recording and editing software called 'Audacity' to do this.\n");
 		r.append("  \n");
 		r.append("References;  \n");
-		r.append("  ** [MIDI](https://en.wikipedia.org/wiki/General_MIDI)  \n");
-		r.append("  ** [Polyphone](http://polyphone-soundfonts.com)  \n");
-		r.append("  ** [Audacity](http://www.audacityteam.org)  \n");
+		r.append(" * [MIDI](https://en.wikipedia.org/wiki/General_MIDI)  \n");
+		r.append(" * [Polyphone](http://polyphone-soundfonts.com)  \n");
+		r.append(" * [Audacity](http://www.audacityteam.org)  \n");
+		return r;
+	}
+
+	public static ZStringBuilder getRequirementsAndDownload() {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("The most recent ZeeTracker version is " + VERSION + ".\n");
+		r.append("Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).\n");
+		r.append("Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-" + VERSION + ".exe) (+- 40 MB).\n");
+		r.append("ZeeTracker requires about 125 MB of working memory.\n");
+		r.append("The windows executable will require about 150 MB of free disk space.\n");
 		return r;
 	}
 }
