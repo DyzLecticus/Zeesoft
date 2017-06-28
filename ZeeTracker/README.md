@@ -48,7 +48,7 @@ The windows executable will require about 150 MB of free disk space.
   
 Demo composition
 ----------------
-<iframe width="100%" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/330499059&amp;auto_play=false&amp;hide_related=false&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=false"></iframe>
+The ZeeTracker demo composition is available on [SoundCloud](https://soundcloud.com/dyz-lecticus/zeetracker-demo-composition)
   
 Screen shots
 ------------
@@ -69,6 +69,6 @@ Source code
 ZeeTracker is open source.
 The application consists of the following libraries;
  * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/) (interface)  
- * [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/)  
  * [Zeesoft MIDI Mod Tracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZMMT/)  
+ * [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/)  
   
