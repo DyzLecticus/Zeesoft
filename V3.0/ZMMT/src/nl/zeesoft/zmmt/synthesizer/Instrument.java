@@ -3,9 +3,9 @@ package nl.zeesoft.zmmt.synthesizer;
 import java.awt.Color;
 
 public class Instrument {
-	public static final	String		SYNTH_BASS1			= "Synth bass 1";
-	public static final	String		SYNTH_BASS2			= "Synth bass 2";
-	public static final	String		SYNTH_BASS3			= "Synth bass 3";
+	public static final	String		BASS1				= "Bass 1";
+	public static final	String		BASS2				= "Bass 2";
+	public static final	String		BASS3				= "Bass 3";
 	public static final	String		SYNTH1				= "Synth 1";
 	public static final	String		SYNTH2				= "Synth 2";
 	public static final	String		SYNTH3				= "Synth 3";
@@ -13,15 +13,15 @@ public class Instrument {
 	public static final	String		STRINGS				= "Strings";
 	public static final	String		DRUMS				= "Drums";
 	public static final	String		ECHO				= "Echo";
-	public static final String[]	INSTRUMENTS			= {SYNTH_BASS1,SYNTH_BASS2,SYNTH_BASS3,SYNTH1,SYNTH2,SYNTH3,LEAD,DRUMS,STRINGS,ECHO};
-	public static final String[]	INSTRUMENT_SHORTS	= {"SB1","SB2","SB3","SN1","SN2","SN3","LD","DRM","STR","ECH"};
+	public static final String[]	INSTRUMENTS			= {BASS1,BASS2,BASS3,SYNTH1,SYNTH2,SYNTH3,LEAD,DRUMS,STRINGS,ECHO};
+	public static final String[]	INSTRUMENT_SHORTS	= {"BS1","BS2","BS3","SN1","SN2","SN3","LD","DRM","STR","ECH"};
 	
 	public static int getMidiChannelForInstrument(String name,int layer) {
 		int r = -1;
 		if (layer==2 && name.equals(ECHO)) {
 			r = 15;
 		} else if (layer==1) {
-			if (name.equals(SYNTH_BASS1)) {
+			if (name.equals(BASS1)) {
 				r = 10;
 			} else if (name.equals(SYNTH1)) {
 				r = 11;
@@ -50,11 +50,11 @@ public class Instrument {
 
 	public static Color getColorForInstrument(String name) {
 		Color r = null;
-		if (name.equals(SYNTH_BASS1)) {
+		if (name.equals(BASS1)) {
 			r = new Color(153,204,255);
-		} else if (name.equals(SYNTH_BASS2)) {
+		} else if (name.equals(BASS2)) {
 			r = new Color(153,153,255);
-		} else if (name.equals(SYNTH_BASS3)) {
+		} else if (name.equals(BASS3)) {
 			r = new Color(204,153,255);
 		} else if (name.equals(SYNTH1)) {
 			r = new Color(255,153,255);

@@ -488,7 +488,7 @@ public class CompositionToSequenceConvertor {
 					(!c.instrument.equals(Instrument.ECHO) || echo.getInstrument().length()==0)	
 					) {
 					int layers = 1;
-					if (c.instrument.equals(Instrument.SYNTH_BASS1) ||
+					if (c.instrument.equals(Instrument.BASS1) ||
 						c.instrument.equals(Instrument.SYNTH1) ||
 						c.instrument.equals(Instrument.LEAD) ||
 						c.instrument.equals(Instrument.STRINGS)
@@ -600,7 +600,7 @@ public class CompositionToSequenceConvertor {
 				(!Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) || echo.getInstrument().length()==0)
 				) {
 				int layers = 1;
-				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+				if (Instrument.INSTRUMENTS[i].equals(Instrument.BASS1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)
@@ -680,7 +680,7 @@ public class CompositionToSequenceConvertor {
 				(!Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) || echo.getInstrument().length()==0)
 				) {
 				int layers = 1;
-				if (Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH_BASS1) ||
+				if (Instrument.INSTRUMENTS[i].equals(Instrument.BASS1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.SYNTH1) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.LEAD) ||
 					Instrument.INSTRUMENTS[i].equals(Instrument.STRINGS)

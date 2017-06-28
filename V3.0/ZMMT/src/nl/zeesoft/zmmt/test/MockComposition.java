@@ -11,17 +11,17 @@ public class MockComposition extends Composition {
 		setComposer("Dyz Lecticus");
 		setName("ZeeTracker mock composition");
 		
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setVolume(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).setPan(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setMidiNum(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setBaseOctave(5);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setFilter(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setChorus(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setModulation(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setPressure(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setReverb(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setBaseVelocity(123);
-		getSynthesizerConfiguration().getInstrument(Instrument.SYNTH_BASS1).getLayer1().setAccentVelocity(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).setVolume(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).setPan(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setMidiNum(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setBaseOctave(5);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setFilter(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setChorus(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setModulation(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setPressure(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setReverb(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setBaseVelocity(123);
+		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).getLayer1().setAccentVelocity(123);
 		
 		getPatterns().add(generateDrumPattern(0,getBarsPerPattern()));
 		addPatternControls(getPatterns().get(0),getBarsPerPattern());

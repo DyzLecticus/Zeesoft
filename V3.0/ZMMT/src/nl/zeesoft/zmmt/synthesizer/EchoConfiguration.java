@@ -1,7 +1,7 @@
 package nl.zeesoft.zmmt.synthesizer;
 
 public class EchoConfiguration {
-	private String		instrument				= "";
+	private String		instrument				= Instrument.LEAD;
 	private int			layer					= 1;
 	private int			steps					= 6;
 	private int			velocityPercentage1		= 70;

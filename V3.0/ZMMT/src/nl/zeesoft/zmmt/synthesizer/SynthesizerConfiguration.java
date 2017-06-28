@@ -73,7 +73,7 @@ public class SynthesizerConfiguration {
 				instElem.children.add(new JsElem("l1BaseVelocity","" + inst.getLayer1().getBaseVelocity()));
 				instElem.children.add(new JsElem("l1AccentVelocity","" + inst.getLayer1().getAccentVelocity()));
 			}
-			if (inst.getName().equals(Instrument.SYNTH_BASS1) ||
+			if (inst.getName().equals(Instrument.BASS1) ||
 				inst.getName().equals(Instrument.SYNTH1) || 
 				inst.getName().equals(Instrument.LEAD) ||
 				inst.getName().equals(Instrument.STRINGS)
@@ -91,14 +91,14 @@ public class SynthesizerConfiguration {
 				instElem.children.add(new JsElem("l2VibRate","" + inst.getLayer2().getVibRate()));
 				instElem.children.add(new JsElem("l2VibDepth","" + inst.getLayer2().getVibDepth()));
 				instElem.children.add(new JsElem("l2VibDelay","" + inst.getLayer2().getVibDelay()));
-				instElem.children.add(new JsElem("l2BaseOctave","" + inst.getLayer2().getBaseOctave()));
-				instElem.children.add(new JsElem("l2BaseVelocity","" + inst.getLayer2().getBaseVelocity()));
-				instElem.children.add(new JsElem("l2AccentVelocity","" + inst.getLayer2().getAccentVelocity()));
 				instElem.children.add(new JsElem("l2ControlModulation","" + inst.getLayer2().isControlModulation()));
 				instElem.children.add(new JsElem("l2ControlFilter","" + inst.getLayer2().isControlFilter()));
 				instElem.children.add(new JsElem("l2ModToChorus","" + inst.getLayer2().isModToChorus()));
 				instElem.children.add(new JsElem("l2ModToResonance","" + inst.getLayer2().isModToResonance()));
 				instElem.children.add(new JsElem("l2ModToVibDepth","" + inst.getLayer2().isModToVibDepth()));
+				instElem.children.add(new JsElem("l2BaseOctave","" + inst.getLayer2().getBaseOctave()));
+				instElem.children.add(new JsElem("l2BaseVelocity","" + inst.getLayer2().getBaseVelocity()));
+				instElem.children.add(new JsElem("l2AccentVelocity","" + inst.getLayer2().getAccentVelocity()));
 			}
 		}
 		for (DrumConfiguration drum: drums) {
@@ -647,102 +647,325 @@ public class SynthesizerConfiguration {
 	}
 
 	protected void initializeInstrument(InstrumentConfiguration instrument) {
-		if (instrument.getName().equals(Instrument.SYNTH_BASS1)) {
+		if (instrument.getName().equals(Instrument.BASS1)) {
 			instrument.setHoldPercentage(90);
-			instrument.getLayer1().setMidiNum(34);
-			instrument.getLayer1().setBaseOctave(2);
-			instrument.getLayer1().setBaseVelocity(127);
-			instrument.getLayer1().setAccentVelocity(127);
+			
+			instrument.getLayer1().setMidiNum(81);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
 			instrument.getLayer1().setReverb(0);
-			instrument.getLayer1().setFilter(16);
+			instrument.getLayer1().setChorus(0);
+			instrument.getLayer1().setFilter(12);
+			instrument.getLayer1().setResonance(64);
+			instrument.getLayer1().setAttack(28);
+			instrument.getLayer1().setDecay(64);
+			instrument.getLayer1().setRelease(64);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
 			instrument.getLayer1().setControlFilter(false);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
 			instrument.getLayer1().setModToVibDepth(false);
-
-			instrument.getLayer2().setMidiNum(38);
+			instrument.getLayer1().setBaseOctave(2);
+			instrument.getLayer1().setBaseVelocity(120);
+			instrument.getLayer1().setAccentVelocity(124);
+			
+			instrument.getLayer2().setMidiNum(85);
+			instrument.getLayer2().setPressure(0);
+			instrument.getLayer2().setModulation(0);
+			instrument.getLayer2().setReverb(0);
+			instrument.getLayer2().setChorus(64);
+			instrument.getLayer2().setFilter(64);
+			instrument.getLayer2().setResonance(80);
+			instrument.getLayer2().setAttack(64);
+			instrument.getLayer2().setDecay(64);
+			instrument.getLayer2().setRelease(64);
+			instrument.getLayer2().setVibRate(64);
+			instrument.getLayer2().setVibDepth(64);
+			instrument.getLayer2().setVibDelay(64);
+			instrument.getLayer2().setControlModulation(true);
+			instrument.getLayer2().setControlFilter(true);
+			instrument.getLayer2().setModToChorus(false);
+			instrument.getLayer2().setModToResonance(false);
+			instrument.getLayer2().setModToVibDepth(false);
 			instrument.getLayer2().setBaseOctave(2);
-			instrument.getLayer1().setBaseVelocity(60);
-			instrument.getLayer1().setAccentVelocity(70);
+			instrument.getLayer2().setBaseVelocity(56);
+			instrument.getLayer2().setAccentVelocity(60);
+		} else if (instrument.getName().equals(Instrument.BASS2)) {
+			instrument.setHoldPercentage(80);
+			
+			instrument.getLayer1().setMidiNum(92);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
 			instrument.getLayer1().setReverb(32);
-			instrument.getLayer1().setChorus(72);
+			instrument.getLayer1().setChorus(100);
+			instrument.getLayer1().setFilter(48);
 			instrument.getLayer1().setResonance(80);
-			instrument.getLayer1().setModToResonance(true);
-			instrument.getLayer1().setModToVibDepth(false);
-		} else if (instrument.getName().equals(Instrument.SYNTH_BASS2)) {
-			instrument.setPan(48);
-			instrument.getLayer1().setMidiNum(7);
+			instrument.getLayer1().setAttack(64);
+			instrument.getLayer1().setDecay(24);
+			instrument.getLayer1().setRelease(52);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
+			instrument.getLayer1().setControlFilter(true);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
+			instrument.getLayer1().setModToVibDepth(true);
 			instrument.getLayer1().setBaseOctave(3);
-		} else if (instrument.getName().equals(Instrument.SYNTH_BASS3)) {
-			instrument.setPan(80);
-			instrument.getLayer1().setMidiNum(25);
-			instrument.getLayer1().setBaseOctave(3);
+			instrument.getLayer1().setBaseVelocity(48);
+			instrument.getLayer1().setAccentVelocity(56);
+		} else if (instrument.getName().equals(Instrument.BASS3)) {
+			instrument.setHoldPercentage(100);
+			
+			instrument.getLayer1().setMidiNum(84);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
+			instrument.getLayer1().setReverb(24);
+			instrument.getLayer1().setChorus(0);
+			instrument.getLayer1().setFilter(64);
+			instrument.getLayer1().setResonance(64);
+			instrument.getLayer1().setAttack(64);
+			instrument.getLayer1().setDecay(64);
+			instrument.getLayer1().setRelease(64);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
+			instrument.getLayer1().setControlFilter(true);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
+			instrument.getLayer1().setModToVibDepth(true);
+			instrument.getLayer1().setBaseOctave(2);
+			instrument.getLayer1().setBaseVelocity(52);
+			instrument.getLayer1().setAccentVelocity(60);
 		} else if (instrument.getName().equals(Instrument.SYNTH1)) {
-			instrument.getLayer1().setMidiNum(85);
+			instrument.setHoldPercentage(75);
+			
+			instrument.getLayer1().setMidiNum(83);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
+			instrument.getLayer1().setReverb(72);
+			instrument.getLayer1().setChorus(0);
+			instrument.getLayer1().setFilter(48);
+			instrument.getLayer1().setResonance(80);
+			instrument.getLayer1().setAttack(64);
+			instrument.getLayer1().setDecay(64);
+			instrument.getLayer1().setRelease(64);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
+			instrument.getLayer1().setControlFilter(true);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
+			instrument.getLayer1().setModToVibDepth(true);
+			instrument.getLayer1().setBaseOctave(4);
+			instrument.getLayer1().setBaseVelocity(72);
+			instrument.getLayer1().setAccentVelocity(72);
+			
+			instrument.getLayer2().setMidiNum(82);
+			instrument.getLayer2().setPressure(0);
+			instrument.getLayer2().setModulation(0);
+			instrument.getLayer2().setReverb(88);
+			instrument.getLayer2().setChorus(0);
+			instrument.getLayer2().setFilter(52);
+			instrument.getLayer2().setResonance(72);
+			instrument.getLayer2().setAttack(64);
+			instrument.getLayer2().setDecay(64);
+			instrument.getLayer2().setRelease(64);
+			instrument.getLayer2().setVibRate(64);
+			instrument.getLayer2().setVibDepth(64);
+			instrument.getLayer2().setVibDelay(64);
+			instrument.getLayer2().setControlModulation(true);
+			instrument.getLayer2().setControlFilter(true);
+			instrument.getLayer2().setModToChorus(false);
+			instrument.getLayer2().setModToResonance(false);
+			instrument.getLayer2().setModToVibDepth(true);
+			instrument.getLayer2().setBaseOctave(5);
+			instrument.getLayer2().setBaseVelocity(0);
+			instrument.getLayer2().setAccentVelocity(80);
+		} else if (instrument.getName().equals(Instrument.SYNTH2)) {
+			instrument.setHoldPercentage(80);
+			
+			instrument.getLayer1().setMidiNum(81);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
+			instrument.getLayer1().setReverb(64);
+			instrument.getLayer1().setChorus(0);
+			instrument.getLayer1().setFilter(56);
+			instrument.getLayer1().setResonance(64);
+			instrument.getLayer1().setAttack(64);
+			instrument.getLayer1().setDecay(64);
+			instrument.getLayer1().setRelease(64);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
+			instrument.getLayer1().setControlFilter(true);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
+			instrument.getLayer1().setModToVibDepth(true);
+			instrument.getLayer1().setBaseOctave(5);
+			instrument.getLayer1().setBaseVelocity(56);
+			instrument.getLayer1().setAccentVelocity(60);
+		} else if (instrument.getName().equals(Instrument.SYNTH3)) {
+			instrument.setHoldPercentage(75);
+			
+			instrument.getLayer1().setMidiNum(83);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
+			instrument.getLayer1().setReverb(72);
+			instrument.getLayer1().setChorus(0);
+			instrument.getLayer1().setFilter(48);
+			instrument.getLayer1().setResonance(80);
+			instrument.getLayer1().setAttack(64);
+			instrument.getLayer1().setDecay(64);
+			instrument.getLayer1().setRelease(64);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
+			instrument.getLayer1().setControlFilter(true);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
+			instrument.getLayer1().setModToVibDepth(true);
+			instrument.getLayer1().setBaseOctave(4);
+			instrument.getLayer1().setBaseVelocity(72);
+			instrument.getLayer1().setAccentVelocity(80);
+		} else if (instrument.getName().equals(Instrument.LEAD)) {
+			instrument.setHoldPercentage(75);
+			
+			instrument.getLayer1().setMidiNum(80);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
+			instrument.getLayer1().setReverb(72);
+			instrument.getLayer1().setChorus(0);
+			instrument.getLayer1().setFilter(52);
+			instrument.getLayer1().setResonance(64);
+			instrument.getLayer1().setAttack(64);
+			instrument.getLayer1().setDecay(64);
+			instrument.getLayer1().setRelease(64);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
+			instrument.getLayer1().setControlFilter(true);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
+			instrument.getLayer1().setModToVibDepth(true);
 			instrument.getLayer1().setBaseOctave(5);
 			instrument.getLayer1().setBaseVelocity(60);
-			instrument.getLayer1().setAccentVelocity(70);
-			instrument.getLayer1().setReverb(16);
-			instrument.getLayer2().setMidiNum(80);
-			instrument.getLayer2().setBaseOctave(6);
-			instrument.getLayer2().setBaseVelocity(50);
-			instrument.getLayer2().setAccentVelocity(64);
+			instrument.getLayer1().setAccentVelocity(60);
+			
+			instrument.getLayer2().setMidiNum(84);
+			instrument.getLayer2().setPressure(0);
+			instrument.getLayer2().setModulation(0);
 			instrument.getLayer2().setReverb(127);
-		} else if (instrument.getName().equals(Instrument.SYNTH2)) {
-			instrument.setPan(48);
-			instrument.getLayer1().setMidiNum(81);
+			instrument.getLayer2().setChorus(0);
+			instrument.getLayer2().setFilter(52);
+			instrument.getLayer2().setResonance(64);
+			instrument.getLayer2().setAttack(64);
+			instrument.getLayer2().setDecay(64);
+			instrument.getLayer2().setRelease(64);
+			instrument.getLayer2().setVibRate(64);
+			instrument.getLayer2().setVibDepth(64);
+			instrument.getLayer2().setVibDelay(64);
+			instrument.getLayer2().setControlModulation(true);
+			instrument.getLayer2().setControlFilter(true);
+			instrument.getLayer2().setModToChorus(false);
+			instrument.getLayer2().setModToResonance(false);
+			instrument.getLayer2().setModToVibDepth(true);
+			instrument.getLayer2().setBaseOctave(6);
+			instrument.getLayer2().setBaseVelocity(0);
+			instrument.getLayer2().setAccentVelocity(56);
+		} else if (instrument.getName().equals(Instrument.DRUMS)) {
+			instrument.setHoldPercentage(80);
+			
+			instrument.getLayer1().setMidiNum(118);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
+			instrument.getLayer1().setReverb(20);
+			instrument.getLayer1().setChorus(0);
+			instrument.getLayer1().setFilter(64);
+			instrument.getLayer1().setResonance(64);
+			instrument.getLayer1().setAttack(64);
+			instrument.getLayer1().setDecay(64);
+			instrument.getLayer1().setRelease(64);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
+			instrument.getLayer1().setControlFilter(true);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
+			instrument.getLayer1().setModToVibDepth(true);
+		} else if (instrument.getName().equals(Instrument.STRINGS)) {
+			instrument.setHoldPercentage(20);
+			
+			instrument.getLayer1().setMidiNum(89);
+			instrument.getLayer1().setPressure(0);
+			instrument.getLayer1().setModulation(0);
+			instrument.getLayer1().setReverb(127);
+			instrument.getLayer1().setChorus(0);
+			instrument.getLayer1().setFilter(64);
+			instrument.getLayer1().setResonance(64);
+			instrument.getLayer1().setAttack(64);
+			instrument.getLayer1().setDecay(64);
+			instrument.getLayer1().setRelease(64);
+			instrument.getLayer1().setVibRate(64);
+			instrument.getLayer1().setVibDepth(64);
+			instrument.getLayer1().setVibDelay(64);
+			instrument.getLayer1().setControlModulation(true);
+			instrument.getLayer1().setControlFilter(true);
+			instrument.getLayer1().setModToChorus(false);
+			instrument.getLayer1().setModToResonance(false);
+			instrument.getLayer1().setModToVibDepth(true);
 			instrument.getLayer1().setBaseOctave(4);
 			instrument.getLayer1().setBaseVelocity(60);
-			instrument.getLayer1().setAccentVelocity(70);
-			instrument.getLayer1().setReverb(127);
-		} else if (instrument.getName().equals(Instrument.SYNTH3)) {
-			instrument.setPan(80);
-			instrument.getLayer1().setMidiNum(62);
-			instrument.getLayer1().setBaseOctave(3);
-			instrument.getLayer1().setBaseVelocity(84);
-			instrument.getLayer1().setAccentVelocity(96);
-			instrument.getLayer1().setReverb(48);
-		} else if (instrument.getName().equals(Instrument.LEAD)) {
-			instrument.getLayer1().setMidiNum(87);
-			instrument.getLayer1().setBaseOctave(6);
-			instrument.getLayer1().setBaseVelocity(70);
 			instrument.getLayer1().setAccentVelocity(80);
-			instrument.getLayer1().setReverb(64);
-			instrument.getLayer2().setMidiNum(102);
-			instrument.getLayer2().setBaseOctave(6);
-			instrument.getLayer2().setBaseVelocity(60);
-			instrument.getLayer2().setAccentVelocity(70);
+			
+			instrument.getLayer2().setMidiNum(89);
+			instrument.getLayer2().setPressure(0);
+			instrument.getLayer2().setModulation(0);
 			instrument.getLayer2().setReverb(127);
-		} else if (instrument.getName().equals(Instrument.STRINGS)) {
-			instrument.getLayer1().setMidiNum(50);
-			instrument.getLayer1().setBaseOctave(4);
-			instrument.getLayer1().setBaseVelocity(40);
-			instrument.getLayer1().setAccentVelocity(50);
-			instrument.getLayer1().setReverb(127);
-			instrument.getLayer2().setMidiNum(49);
+			instrument.getLayer2().setChorus(48);
+			instrument.getLayer2().setFilter(64);
+			instrument.getLayer2().setResonance(64);
+			instrument.getLayer2().setAttack(80);
+			instrument.getLayer2().setDecay(64);
+			instrument.getLayer2().setRelease(64);
+			instrument.getLayer2().setVibRate(20);
+			instrument.getLayer2().setVibDepth(65);
+			instrument.getLayer2().setVibDelay(64);
+			instrument.getLayer2().setControlModulation(true);
+			instrument.getLayer2().setControlFilter(true);
+			instrument.getLayer2().setModToChorus(false);
+			instrument.getLayer2().setModToResonance(false);
+			instrument.getLayer2().setModToVibDepth(true);
 			instrument.getLayer2().setBaseOctave(5);
-			instrument.getLayer2().setBaseVelocity(36);
-			instrument.getLayer2().setAccentVelocity(44);
-			instrument.getLayer2().setReverb(127);
-		} else if (instrument.getName().equals(Instrument.DRUMS)) {
-			instrument.getLayer1().setMidiNum(118);
-			instrument.getLayer1().setReverb(0);
+			instrument.getLayer2().setBaseVelocity(60);
+			instrument.getLayer2().setAccentVelocity(80);
 		}
 	}
 
 	protected void initializeDrum(DrumConfiguration drum) {
 		if (drum.getName().equals(Drum.KICK)) {
 			drum.setLayer1MidiNote(35);
-			drum.setLayer1BaseVelocity(108);
-			drum.setLayer1AccentVelocity(116);
+			drum.setLayer1BaseVelocity(96);
+			drum.setLayer1AccentVelocity(104);
 			drum.setLayer1MidiNote(40);
 			drum.setLayer1BaseVelocity(90);
-			drum.setLayer1AccentVelocity(110);
+			drum.setLayer1AccentVelocity(116);
 		} else if (drum.getName().equals(Drum.SNARE)) {
 			drum.setLayer1MidiNote(50);
-			drum.setLayer1BaseVelocity(90);
-			drum.setLayer1AccentVelocity(100);
+			drum.setLayer1BaseVelocity(78);
+			drum.setLayer1AccentVelocity(88);
 			drum.setLayer1MidiNote(54);
-			drum.setLayer1BaseVelocity(60);
-			drum.setLayer1AccentVelocity(70);
+			drum.setLayer1BaseVelocity(48);
+			drum.setLayer1AccentVelocity(58);
 		} else if (drum.getName().equals(Drum.HIHAT1)) {
 			drum.setLayer1MidiNote(44);
 			drum.setLayer1BaseVelocity(64);
@@ -757,31 +980,35 @@ public class SynthesizerConfiguration {
 			drum.setLayer1AccentVelocity(70);
 		} else if (drum.getName().equals(Drum.TOM1)) {
 			drum.setLayer1MidiNote(55);
+			drum.setLayer1BaseVelocity(88);
+			drum.setLayer1AccentVelocity(98);
 		} else if (drum.getName().equals(Drum.TOM2)) {
 			drum.setLayer1MidiNote(59);
+			drum.setLayer1BaseVelocity(88);
+			drum.setLayer1AccentVelocity(98);
 		} else if (drum.getName().equals(Drum.RIDE)) {
 			drum.setLayer1MidiNote(69);
-			drum.setLayer1BaseVelocity(50);
-			drum.setLayer1AccentVelocity(60);
+			drum.setLayer1BaseVelocity(76);
+			drum.setLayer1AccentVelocity(82);
 		} else if (drum.getName().equals(Drum.CYMBAL)) {
 			drum.setLayer1MidiNote(70);
-			drum.setLayer1BaseVelocity(70);
-			drum.setLayer1AccentVelocity(80);
+			drum.setLayer1BaseVelocity(72);
+			drum.setLayer1AccentVelocity(76);
 			drum.setLayer1MidiNote(71);
-			drum.setLayer1BaseVelocity(40);
-			drum.setLayer1AccentVelocity(50);
+			drum.setLayer1BaseVelocity(44);
+			drum.setLayer1AccentVelocity(48);
 		} else if (drum.getName().equals(Drum.FX1)) {
 			drum.setLayer1MidiNote(80);
-			drum.setLayer1BaseVelocity(70);
-			drum.setLayer1AccentVelocity(80);
+			drum.setLayer1BaseVelocity(58);
+			drum.setLayer1AccentVelocity(68);
 		} else if (drum.getName().equals(Drum.FX2)) {
 			drum.setLayer1MidiNote(81);
-			drum.setLayer1BaseVelocity(70);
-			drum.setLayer1AccentVelocity(80);
+			drum.setLayer1BaseVelocity(58);
+			drum.setLayer1AccentVelocity(68);
 		} else if (drum.getName().equals(Drum.FX3)) {
 			drum.setLayer1MidiNote(76);
-			drum.setLayer1BaseVelocity(70);
-			drum.setLayer1AccentVelocity(80);
+			drum.setLayer1BaseVelocity(58);
+			drum.setLayer1AccentVelocity(68);
 		}
 	}
 }
