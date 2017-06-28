@@ -30,21 +30,25 @@ public class ZeeTracker {
 		r.append("ZeeTracker is based on the Java MIDI API.\n");
 		r.append("It uses the default Java Sequencer and Synthesizer devices and corresponding default sound font.\n");
 		r.append("The MIDI standard instrument set was not designed for modern music styles and the Java default sound font is average at best.\n");
-		r.append("In order to work around these limitations, ZeeTracker MIDI configuration is limited to instrument configuration.\n");
+		r.append("In order to work around these limitations, ZeeTracker MIDI configuration is mostly limited to instrument configuration.\n");
 		r.append("Note and controller events are entered in a ZeeTracker specific format and then translated to MIDI using the instrument configuration.\n");
 		r.append("ZeeTracker provides 10 configurable instruments, each with a unique color.\n");
 		r.append("Some of these instruments can use multiple MIDI channels in order to combine multiple MIDI instruments into a single ZeeTracker instrument.\n");
 		r.append("ZeeTracker also comes with two high quality internal sound fonts and the option to use a custom sound font.\n");
 		r.append("The internal sound fonts were created with the free sound font editing software called 'Polyphone'.\n");
 		r.append("The sound font samples were created with the professional audio production software called 'Reason'.\n");
-		r.append("Another limitation of working with the Java default Synthesizer is that audio output cannot be directly recorded to disk.\n");
+		r.append("The Java default Synthesizer is a slightly limited implementation implementation of the Gervill synthesizer created by Karl Helgason.\n");
+		r.append("One of those limitations is that the audio output cannot be directly recorded to disk.\n");
 		r.append("Zeesoft recommends using the free audio recording and editing software called 'Audacity' to do this.\n");
 		r.append("  \n");
 		r.append("References;  \n");
+		r.append(" * [Mod trackers](https://en.wikipedia.org/wiki/Music_tracker)  \n");
+		r.append(" * [Impulse Tracker](http://www.users.on.net/~jtlim/ImpulseTracker)  \n");
 		r.append(" * [MIDI](https://en.wikipedia.org/wiki/General_MIDI)  \n");
 		r.append(" * [Polyphone](http://polyphone-soundfonts.com)  \n");
 		r.append(" * [Reason](https://www.propellerheads.se)  \n");
 		r.append(" * [Audacity](http://www.audacityteam.org)  \n");
+		r.append(" * [Gervill](https://docs.oracle.com/javase/8/docs/technotes/guides/sound/enhancements_7.html)  \n");
 		return r;
 	}
 
@@ -54,6 +58,7 @@ public class ZeeTracker {
 		r.append("Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).\n");
 		r.append("Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-" + VERSION + ".exe) (+- 40 MB).\n");
 		r.append("ZeeTracker requires about 125 MB of working memory.\n");
+		r.append("Using a custom sound font will require more working memory, depending on the size of the sound font.\n");
 		r.append("The windows executable will require about 150 MB of free disk space.\n");
 		return r;
 	}

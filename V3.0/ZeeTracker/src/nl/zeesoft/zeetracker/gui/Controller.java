@@ -147,12 +147,12 @@ public class Controller extends Locker implements StateChangeSubscriber {
 			File file = new File(settings.getWorkingCompositionFileName());
 			if (!file.exists()) {
 				err = "Working composition file not found: " + settings.getWorkingCompositionFileName();
+				settings.getRecentFiles().remove(settings.getWorkingCompositionFileName());
+				settings.setWorkingCompositionFileName("");
 			} else {
 				importExportWorker.loadCompositionAndInitialize(file,settings.getWorkDirName());
 				loading = true;
 			}
-			settings.getRecentFiles().remove(settings.getWorkingCompositionFileName());
-			settings.setWorkingCompositionFileName("");
 		}
 		unlockMe(this);
 
