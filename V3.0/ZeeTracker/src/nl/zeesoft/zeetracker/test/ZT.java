@@ -31,7 +31,7 @@ public class ZT extends LibraryObject {
 		System.out.println("==========");
 		System.out.print(ZeeTracker.getDescription());
 		System.out.println();
-		System.out.println("**Requirements and download**");
+		System.out.println("**Requirements and download**  ");
 		System.out.print(ZeeTracker.getRequirementsAndDownload());
 		System.out.println();
 		describeDependencies();

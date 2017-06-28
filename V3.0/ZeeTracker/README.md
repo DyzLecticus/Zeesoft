@@ -28,7 +28,7 @@ References;
  * [Reason](https://www.propellerheads.se)  
  * [Audacity](http://www.audacityteam.org)  
 
-**Requirements and download**
+**Requirements and download**  
 The most recent ZeeTracker version is 1.0A.
 Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).
 Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0A.exe) (+- 40 MB).
@@ -618,7 +618,7 @@ The output of this test shows the JSON structure of the *Settings*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 95 ms (total sleep duration: 0 ms).  
+Total test duration: 99 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zeetracker.test.TestSettings: 309 Kb / 0 Mb
