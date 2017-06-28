@@ -35,6 +35,8 @@ The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0">V3.0</a> f
  * [ZID](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZID/) Zeesoft Intelligent Dialogs  
  * [ZJMO](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/) Zeesoft JSON Machine Orchestration  
  * [ZSO](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSO/) Zeesoft Sample Orchestration  
+ * [ZMMT](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZMMT/) Zeesoft MIDI Mod Tracker
+ * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/blob/master/ZeeTracker/) A fast and fun way of composing music
  
 Future development
 ------------------
