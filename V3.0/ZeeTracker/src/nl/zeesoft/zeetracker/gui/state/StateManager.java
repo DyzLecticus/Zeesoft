@@ -125,8 +125,8 @@ public class StateManager extends StateObject {
 	
 	public void setSelectedSequenceSelection(Object source,int rowFrom,int rowTo) {
 		lockMe(this);
-		super.setSelectedPatternRowFrom(rowFrom);
-		super.setSelectedPatternRowTo(rowTo);
+		super.setSelectedSequenceRowFrom(rowFrom);
+		super.setSelectedSequenceRowTo(rowTo);
 		publishStateChangeEvent(StateChangeEvent.CHANGED_SEQUENCE_SELECTION,source);
 		unlockMe(this);
 	}
