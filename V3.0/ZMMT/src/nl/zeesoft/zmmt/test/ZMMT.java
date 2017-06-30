@@ -39,5 +39,6 @@ public class ZMMT extends LibraryObject {
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestSynthesizerConfiguration(getTester()));
 		tests.add(new TestComposition(getTester()));
+		tests.add(new TestCompositionToSequenceConvertor(getTester()));
 	}
 }

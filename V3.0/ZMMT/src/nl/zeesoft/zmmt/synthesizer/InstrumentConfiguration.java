@@ -1,12 +1,13 @@
 package nl.zeesoft.zmmt.synthesizer;
 
 public class InstrumentConfiguration extends BaseConfiguration {
-	private boolean							muted			= false;
-	private int								volume			= 100;
-	private int 							pan				= 64;
-	private int								holdPercentage	= 90;
-	private	InstrumentLayerConfiguration	layer1			= new InstrumentLayerConfiguration();
-	private	InstrumentLayerConfiguration	layer2			= new InstrumentLayerConfiguration();
+	private boolean							muted				= false;
+	private int								volume				= 100;
+	private int 							pan					= 64;
+	private int								holdPercentage		= 90;
+	private int								sideChainPercentage	= 0;
+	private	InstrumentLayerConfiguration	layer1				= new InstrumentLayerConfiguration();
+	private	InstrumentLayerConfiguration	layer2				= new InstrumentLayerConfiguration();
 	
 	public InstrumentConfiguration() {
 		layer2.setMidiNum(-1);
@@ -19,6 +20,7 @@ public class InstrumentConfiguration extends BaseConfiguration {
 		r.setPan(pan);
 		r.setVolume(volume);
 		r.setHoldPercentage(holdPercentage);
+		r.setSideChainPercentage(sideChainPercentage);
 		r.setLayer1(layer1.copy());
 		r.setLayer2(layer2.copy());
 		return r;
@@ -39,6 +41,14 @@ public class InstrumentConfiguration extends BaseConfiguration {
 	public void setVolume(int volume) {
 		this.volume = volume;
 	}
+	
+	public int getPan() {
+		return pan;
+	}
+
+	public void setPan(int pan) {
+		this.pan = pan;
+	}
 
 	public int getHoldPercentage() {
 		return holdPercentage;
@@ -47,13 +57,13 @@ public class InstrumentConfiguration extends BaseConfiguration {
 	public void setHoldPercentage(int holdPercentage) {
 		this.holdPercentage = holdPercentage;
 	}
-	
-	public int getPan() {
-		return pan;
+
+	public int getSideChainPercentage() {
+		return sideChainPercentage;
 	}
 
-	public void setPan(int pan) {
-		this.pan = pan;
+	public void setSideChainPercentage(int sideChainPercentage) {
+		this.sideChainPercentage = sideChainPercentage;
 	}
 
 	public InstrumentLayerConfiguration getLayer(int layer) {
@@ -65,7 +75,6 @@ public class InstrumentConfiguration extends BaseConfiguration {
 		}
 		return r;
 	}
-
 
 	public InstrumentLayerConfiguration getLayer1() {
 		return layer1;
