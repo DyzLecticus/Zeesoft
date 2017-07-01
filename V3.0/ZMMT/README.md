@@ -4,7 +4,7 @@ Zeesoft MIDI Mod Tracker (ZMMT) is a library that contains all ZeeTracker applic
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.2.zip) to download the latest ZMMT release (version 0.9.2).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.3.zip) to download the latest ZMMT release (version 0.9.3).  
 All ZMMT releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -37,12 +37,17 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
 {
   "useInternalDrumKit": true,
   "useInternalSynthesizers": true,
+  "sideChainSource": "",
+  "sideChainAttack": 0.5,
+  "sideChainSustain": 0.5,
+  "sideChainRelease": 0.8,
   "instrument": {
     "name": "Bass 1",
     "muted": false,
     "volume": 123,
     "pan": 123,
     "holdPercentage": 90,
+    "sideChainPercentage": 40,
     "l1MidiNum": 123,
     "l1Pressure": 123,
     "l1Modulation": 123,
@@ -92,6 +97,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "volume": 100,
     "pan": 64,
     "holdPercentage": 80,
+    "sideChainPercentage": 20,
     "l1MidiNum": 92,
     "l1Pressure": 0,
     "l1Modulation": 0,
@@ -120,6 +126,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "volume": 100,
     "pan": 64,
     "holdPercentage": 100,
+    "sideChainPercentage": 0,
     "l1MidiNum": 84,
     "l1Pressure": 0,
     "l1Modulation": 0,
@@ -148,6 +155,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "volume": 100,
     "pan": 64,
     "holdPercentage": 75,
+    "sideChainPercentage": 0,
     "l1MidiNum": 83,
     "l1Pressure": 0,
     "l1Modulation": 0,
@@ -197,6 +205,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "volume": 100,
     "pan": 64,
     "holdPercentage": 80,
+    "sideChainPercentage": 0,
     "l1MidiNum": 81,
     "l1Pressure": 0,
     "l1Modulation": 0,
@@ -224,14 +233,15 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "muted": false,
     "volume": 100,
     "pan": 64,
-    "holdPercentage": 75,
-    "l1MidiNum": 83,
+    "holdPercentage": 10,
+    "sideChainPercentage": 0,
+    "l1MidiNum": 86,
     "l1Pressure": 0,
     "l1Modulation": 0,
-    "l1Reverb": 72,
-    "l1Chorus": 0,
-    "l1Filter": 48,
-    "l1Resonance": 80,
+    "l1Reverb": 0,
+    "l1Chorus": 64,
+    "l1Filter": 64,
+    "l1Resonance": 92,
     "l1Attack": 64,
     "l1Decay": 64,
     "l1Release": 64,
@@ -243,9 +253,9 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1ModToChorus": false,
     "l1ModToResonance": false,
     "l1ModToVibDepth": true,
-    "l1BaseOctave": 4,
-    "l1BaseVelocity": 72,
-    "l1AccentVelocity": 80
+    "l1BaseOctave": 3,
+    "l1BaseVelocity": 56,
+    "l1AccentVelocity": 64
   },
   "instrument": {
     "name": "Lead",
@@ -253,6 +263,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "volume": 100,
     "pan": 64,
     "holdPercentage": 75,
+    "sideChainPercentage": 0,
     "l1MidiNum": 80,
     "l1Pressure": 0,
     "l1Modulation": 0,
@@ -327,6 +338,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "volume": 100,
     "pan": 64,
     "holdPercentage": 20,
+    "sideChainPercentage": 20,
     "l1MidiNum": 89,
     "l1Pressure": 0,
     "l1Modulation": 0,
@@ -376,6 +388,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "volume": 100,
     "pan": 64,
     "holdPercentage": 90,
+    "sideChainPercentage": 0,
     "l1MidiNum": 0,
     "l1Pressure": 0,
     "l1Modulation": 0,
@@ -401,22 +414,22 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
   "drum": {
     "name": "Kick",
     "muted": false,
-    "l1MidiNote": 40,
-    "l1BaseVelocity": 90,
-    "l1AccentVelocity": 116,
-    "l2MidiNote": 34,
-    "l2BaseVelocity": 100,
-    "l2AccentVelocity": 110
+    "l1MidiNote": 35,
+    "l1BaseVelocity": 96,
+    "l1AccentVelocity": 104,
+    "l2MidiNote": 40,
+    "l2BaseVelocity": 90,
+    "l2AccentVelocity": 116
   },
   "drum": {
     "name": "Snare",
     "muted": false,
-    "l1MidiNote": 54,
-    "l1BaseVelocity": 48,
-    "l1AccentVelocity": 58,
-    "l2MidiNote": 34,
-    "l2BaseVelocity": 100,
-    "l2AccentVelocity": 110
+    "l1MidiNote": 50,
+    "l1BaseVelocity": 78,
+    "l1AccentVelocity": 88,
+    "l2MidiNote": 54,
+    "l2BaseVelocity": 48,
+    "l2AccentVelocity": 58
   },
   "drum": {
     "name": "Hihat 1",
@@ -566,12 +579,17 @@ The output of this test shows the JSON structure of the *Composition*.
   "instruments": {
     "useInternalDrumKit": true,
     "useInternalSynthesizers": true,
+    "sideChainSource": "Kick",
+    "sideChainAttack": 0.5,
+    "sideChainSustain": 0.5,
+    "sideChainRelease": 0.8,
     "instrument": {
       "name": "Bass 1",
       "muted": false,
       "volume": 123,
       "pan": 123,
       "holdPercentage": 90,
+      "sideChainPercentage": 10,
       "l1MidiNum": 123,
       "l1Pressure": 123,
       "l1Modulation": 123,
@@ -621,6 +639,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 80,
+      "sideChainPercentage": 20,
       "l1MidiNum": 92,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -649,6 +668,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 100,
+      "sideChainPercentage": 0,
       "l1MidiNum": 84,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -677,6 +697,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 75,
+      "sideChainPercentage": 0,
       "l1MidiNum": 83,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -726,6 +747,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 80,
+      "sideChainPercentage": 0,
       "l1MidiNum": 81,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -753,14 +775,15 @@ The output of this test shows the JSON structure of the *Composition*.
       "muted": false,
       "volume": 100,
       "pan": 64,
-      "holdPercentage": 75,
-      "l1MidiNum": 83,
+      "holdPercentage": 10,
+      "sideChainPercentage": 0,
+      "l1MidiNum": 86,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 72,
-      "l1Chorus": 0,
-      "l1Filter": 48,
-      "l1Resonance": 80,
+      "l1Reverb": 0,
+      "l1Chorus": 64,
+      "l1Filter": 64,
+      "l1Resonance": 92,
       "l1Attack": 64,
       "l1Decay": 64,
       "l1Release": 64,
@@ -772,9 +795,9 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1ModToChorus": false,
       "l1ModToResonance": false,
       "l1ModToVibDepth": true,
-      "l1BaseOctave": 4,
-      "l1BaseVelocity": 72,
-      "l1AccentVelocity": 80
+      "l1BaseOctave": 3,
+      "l1BaseVelocity": 56,
+      "l1AccentVelocity": 64
     },
     "instrument": {
       "name": "Lead",
@@ -782,6 +805,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 75,
+      "sideChainPercentage": 0,
       "l1MidiNum": 80,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -856,6 +880,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 20,
+      "sideChainPercentage": 20,
       "l1MidiNum": 89,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -905,6 +930,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 90,
+      "sideChainPercentage": 0,
       "l1MidiNum": 0,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -930,22 +956,22 @@ The output of this test shows the JSON structure of the *Composition*.
     "drum": {
       "name": "Kick",
       "muted": false,
-      "l1MidiNote": 40,
-      "l1BaseVelocity": 90,
-      "l1AccentVelocity": 116,
-      "l2MidiNote": 34,
-      "l2BaseVelocity": 100,
-      "l2AccentVelocity": 110
+      "l1MidiNote": 35,
+      "l1BaseVelocity": 96,
+      "l1AccentVelocity": 104,
+      "l2MidiNote": 40,
+      "l2BaseVelocity": 90,
+      "l2AccentVelocity": 116
     },
     "drum": {
       "name": "Snare",
       "muted": false,
-      "l1MidiNote": 54,
-      "l1BaseVelocity": 48,
-      "l1AccentVelocity": 58,
-      "l2MidiNote": 34,
-      "l2BaseVelocity": 100,
-      "l2AccentVelocity": 110
+      "l1MidiNote": 50,
+      "l1BaseVelocity": 78,
+      "l1AccentVelocity": 88,
+      "l2MidiNote": 54,
+      "l2BaseVelocity": 48,
+      "l2AccentVelocity": 58
     },
     "drum": {
       "name": "Hihat 1",
@@ -1087,16 +1113,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 5,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 5,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 9,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1105,7 +1140,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 9,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1114,16 +1149,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 13,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 13,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 17,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1132,7 +1176,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 17,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1141,16 +1185,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 21,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 21,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 25,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1159,7 +1212,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 25,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1168,16 +1221,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 29,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 29,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 33,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1186,7 +1248,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 33,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1195,16 +1257,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 37,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 37,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 41,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1213,7 +1284,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 41,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1222,16 +1293,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 45,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 45,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 49,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1240,7 +1320,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 49,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1249,16 +1329,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 53,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 53,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 57,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1267,7 +1356,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 57,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1276,16 +1365,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 61,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 61,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 65,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1294,7 +1392,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 65,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1303,16 +1401,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 69,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 69,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 73,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1321,7 +1428,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 73,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1330,16 +1437,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 77,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 77,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 81,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1348,7 +1464,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 81,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1357,16 +1473,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 85,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 85,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 89,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1375,7 +1500,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 89,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1384,16 +1509,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 93,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 93,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 97,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1402,7 +1536,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 97,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1411,16 +1545,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 101,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 101,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 105,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1429,7 +1572,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 105,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1438,16 +1581,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 109,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 109,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 113,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1456,7 +1608,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 113,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1465,16 +1617,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 117,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 117,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 121,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1483,7 +1644,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 121,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1492,9 +1653,18 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 125,
           "n": 40,
           "d": 1,
+          "a": false,
+          "v": 100
+        },
+        {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 125,
+          "n": 36,
+          "d": 4,
           "a": false,
           "v": 100
         }
@@ -1502,19 +1672,37 @@ The output of this test shows the JSON structure of the *Composition*.
       "controls": [
         {
           "i": "Drums",
-          "c": 7,
+          "c": 11,
           "s": 1,
           "p": 0
         },
         {
           "i": "Drums",
-          "c": 7,
+          "c": 11,
           "s": 64,
           "p": 100
         },
         {
           "i": "Drums",
-          "c": 7,
+          "c": 11,
+          "s": 128,
+          "p": 0
+        },
+        {
+          "i": "Bass 1",
+          "c": 11,
+          "s": 1,
+          "p": 50
+        },
+        {
+          "i": "Bass 1",
+          "c": 11,
+          "s": 64,
+          "p": 100
+        },
+        {
+          "i": "Bass 1",
+          "c": 11,
           "s": 128,
           "p": 0
         }
@@ -1544,16 +1732,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 5,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 5,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 9,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1562,7 +1759,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 9,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1571,16 +1768,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 13,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 13,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 17,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1589,7 +1795,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 17,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1598,16 +1804,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 21,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 21,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 25,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1616,7 +1831,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 25,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1625,16 +1840,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 29,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 29,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 33,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1643,7 +1867,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 33,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1652,16 +1876,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 37,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 37,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 41,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1670,7 +1903,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 41,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1679,16 +1912,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 45,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 45,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 49,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1697,7 +1939,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 49,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1706,16 +1948,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 53,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 53,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 57,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1724,7 +1975,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 57,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1733,16 +1984,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 61,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 61,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 65,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1751,7 +2011,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 65,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1760,16 +2020,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 69,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 69,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 73,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1778,7 +2047,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 73,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1787,16 +2056,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 77,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 77,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 81,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1805,7 +2083,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 81,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1814,16 +2092,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 85,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 85,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 89,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1832,7 +2119,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 89,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1841,16 +2128,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 93,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 93,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 97,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1859,7 +2155,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 97,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1868,16 +2164,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 101,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 101,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 105,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1886,7 +2191,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 105,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1895,16 +2200,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 109,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 109,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 113,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1913,7 +2227,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 113,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1922,16 +2236,25 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 117,
           "n": 40,
           "d": 1,
           "a": false,
           "v": 100
         },
         {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 117,
+          "n": 36,
+          "d": 4,
+          "a": false,
+          "v": 100
+        },
+        {
           "i": "Drums",
           "t": 1,
-          "s": 1,
+          "s": 121,
           "n": 36,
           "d": 1,
           "a": true,
@@ -1940,7 +2263,7 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 2,
-          "s": 1,
+          "s": 121,
           "n": 39,
           "d": 1,
           "a": true,
@@ -1949,9 +2272,18 @@ The output of this test shows the JSON structure of the *Composition*.
         {
           "i": "Drums",
           "t": 3,
-          "s": 1,
+          "s": 125,
           "n": 40,
           "d": 1,
+          "a": false,
+          "v": 100
+        },
+        {
+          "i": "Bass 1",
+          "t": 4,
+          "s": 125,
+          "n": 36,
+          "d": 4,
           "a": false,
           "v": 100
         }
@@ -1959,19 +2291,19 @@ The output of this test shows the JSON structure of the *Composition*.
       "controls": [
         {
           "i": "Drums",
-          "c": 7,
+          "c": 11,
           "s": 1,
           "p": 0
         },
         {
           "i": "Drums",
-          "c": 7,
+          "c": 11,
           "s": 64,
           "p": 100
         },
         {
           "i": "Drums",
-          "c": 7,
+          "c": 11,
           "s": 128,
           "p": 0
         }
@@ -1985,11 +2317,39 @@ The output of this test shows the JSON structure of the *Composition*.
 }
 ~~~~
 
+nl.zeesoft.zmmt.test.TestCompositionToSequenceConvertor
+-------------------------------------------------------
+This test shows how to convert a *Composition* to a *Sequence*.
+
+**Example implementation**  
+~~~~
+// Create composition
+Composition comp = new Composition();
+// Create convertor
+CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor(comp);
+// Convert to Sequence
+convertor.convertSequence(false,false);
+// Get sequence from convertor
+Sequence seq = convertor.getSequence();
+~~~~
+
+Class references;  
+ * [TestCompositionToSequenceConvertor](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZMMT/src/nl/zeesoft/zmmt/test/TestCompositionToSequenceConvertor.java)
+ * [CompositionToSequenceConvertor](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZMMT/src/nl/zeesoft/zmmt/sequencer/CompositionToSequenceConvertor.java)
+
+**Test output**  
+The output of this test shows the time it takes to convert a simple composition, with and without side chain compression.  
+~~~~
+Composition to sequence conversion with side chain compression took 228 ms
+Composition to sequence conversion without side chain compression took 10 ms
+~~~~
+
 Test results
 ------------
-All 2 tests have been executed successfully (2 assertions).  
-Total test duration: 266 ms (total sleep duration: 0 ms).  
+All 3 tests have been executed successfully (10 assertions).  
+Total test duration: 1090 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 304 Kb / 0 Mb
- * nl.zeesoft.zmmt.test.TestComposition: 313 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 326 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestComposition: 334 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestCompositionToSequenceConvertor: 348 Kb / 0 Mb
