@@ -1055,8 +1055,24 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 			int[] cols = getCurrentGrid().getSelectedColumns();
 			controller.fireTableDataChanged();
 			if (rows.length>0 && cols.length>0) {
-				getCurrentGrid().addRowSelectionInterval(rows[0],rows[(rows.length-1)]);
-				getCurrentGrid().addColumnSelectionInterval(cols[0],cols[(cols.length-1)]);
+				rowFrom = rows[0];
+				rowTo = rows[(rows.length-1)];
+				if (rowFrom>=getCurrentGrid().getRowCount()) {
+					rowFrom=(getCurrentGrid().getRowCount() - 1);
+				}
+				if (rowTo>=getCurrentGrid().getRowCount()) {
+					rowTo=(getCurrentGrid().getRowCount() - 1);
+				}
+				int colFrom = cols[0];
+				int colTo = cols[(cols.length-1)];
+				if (colFrom>=getCurrentGrid().getColumnCount()) {
+					colFrom=(getCurrentGrid().getColumnCount() - 1);
+				}
+				if (colTo>=getCurrentGrid().getColumnCount()) {
+					colTo=(getCurrentGrid().getColumnCount() - 1);
+				}
+				getCurrentGrid().addRowSelectionInterval(rowFrom,rowTo);
+				getCurrentGrid().addColumnSelectionInterval(colFrom,colTo);
 			}
 		}
 	}

@@ -16,7 +16,7 @@ public class SequenceGridController extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return Instrument.INSTRUMENTS.length + 4;
+		return Instrument.INSTRUMENTS.length + 1;
 	}
 
 	@Override
@@ -33,14 +33,6 @@ public class SequenceGridController extends AbstractTableModel {
 			r = Instrument.INSTRUMENT_SHORTS[col - 1];
 			if (r.length()<3) {
 				r = r + " ";
-			}
-		} else if (col>Instrument.INSTRUMENTS.length) {
-			if (col==(Instrument.INSTRUMENTS.length + 1)) {
-				r = "VOL";
-			} else if (col==(Instrument.INSTRUMENTS.length + 2)) {
-				r = "MOD";
-			} else if (col==(Instrument.INSTRUMENTS.length + 3)) {
-				r = "FLT";
 			}
 		}
 		return r;

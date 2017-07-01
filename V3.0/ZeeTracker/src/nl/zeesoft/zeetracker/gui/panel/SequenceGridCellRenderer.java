@@ -2,6 +2,7 @@ package nl.zeesoft.zeetracker.gui.panel;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -43,42 +44,36 @@ public class SequenceGridCellRenderer extends DefaultTableCellRenderer {
 						break;
 					}
 				}
-				if (hasInstrument) {
-					JLabel label = new JLabel();
-					label.setOpaque(true);
-					label.setBackground(Instrument.getColorForInstrument(instrument));
-					label.setForeground(getForeground());
-					if (isSelected) {
-						label.setBorder(BorderFactory.createLineBorder(color));
-					}
-					r = label;
-				}
-			}
-		} else if (column>Instrument.INSTRUMENTS.length) {
-			Pattern ptn = controller.getPatternForIndex(row);
-			if (ptn!=null) {
-				int control = 0;
-				if (column==(Instrument.INSTRUMENTS.length + 1)) {
-					control = Control.EXPRESSION;
-				} else if (column==(Instrument.INSTRUMENTS.length + 2)) {
-					control = Control.MODULATION;
-				} else if (column==(Instrument.INSTRUMENTS.length + 3)) {
-					control = Control.FILTER;
-				}
-				
-				boolean hasControl = false;
-				for (Control ctrl: ptn.getControls()) {
-					if (ctrl.control==control) {
-						hasControl = true;
-						break;
+				boolean hasVolumeControl = false;
+				boolean hasModulationControl = false;
+				boolean hasFilterControl = false;
+				List<Control> ctrls = ptn.getInstrumentControls(instrument);
+				for (Control ctrl: ctrls) {
+					if (ctrl.control==Control.EXPRESSION) {
+						hasVolumeControl = true;
+					} else if (ctrl.control==Control.MODULATION) {
+						hasModulationControl = true;
+					} else if (ctrl.control==Control.FILTER) {
+						hasFilterControl = true;
 					}
 				}
-				if (hasControl) {
-					JLabel label = new JLabel();
-					label.setOpaque(true);
-					label.setFocusable(false);
-					label.setBackground(Color.LIGHT_GRAY);
-					label.setForeground(getForeground());
+				String txt = "";
+				if (hasVolumeControl) {
+					txt += "V";
+				}
+				if (hasModulationControl) {
+					txt += "M";
+				}
+				if (hasFilterControl) {
+					txt += "F";
+				}
+				if (hasInstrument || txt.length()>0) {
+					JLabel label = new JLabel(txt);
+					if (hasInstrument) {
+						label.setOpaque(true);
+						label.setBackground(Instrument.getColorForInstrument(instrument));
+					}
+					label.setForeground(Color.BLACK);
 					if (isSelected) {
 						label.setBorder(BorderFactory.createLineBorder(color));
 					}
