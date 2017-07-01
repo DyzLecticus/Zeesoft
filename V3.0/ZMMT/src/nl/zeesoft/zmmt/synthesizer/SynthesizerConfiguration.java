@@ -1020,16 +1020,16 @@ public class SynthesizerConfiguration {
 			drum.setLayer1MidiNote(35);
 			drum.setLayer1BaseVelocity(96);
 			drum.setLayer1AccentVelocity(104);
-			drum.setLayer1MidiNote(40);
-			drum.setLayer1BaseVelocity(90);
-			drum.setLayer1AccentVelocity(116);
+			drum.setLayer2MidiNote(40);
+			drum.setLayer2BaseVelocity(90);
+			drum.setLayer2AccentVelocity(116);
 		} else if (drum.getName().equals(Drum.SNARE)) {
 			drum.setLayer1MidiNote(50);
 			drum.setLayer1BaseVelocity(78);
 			drum.setLayer1AccentVelocity(88);
-			drum.setLayer1MidiNote(54);
-			drum.setLayer1BaseVelocity(48);
-			drum.setLayer1AccentVelocity(58);
+			drum.setLayer2MidiNote(54);
+			drum.setLayer2BaseVelocity(48);
+			drum.setLayer2AccentVelocity(58);
 		} else if (drum.getName().equals(Drum.HIHAT1)) {
 			drum.setLayer1MidiNote(44);
 			drum.setLayer1BaseVelocity(64);
