@@ -179,10 +179,8 @@ public class SequencePlayer extends Locker implements MetaEventListener {
 		lockMe(this);
 		selectedPattern = pattern;
 		compositionCopy = comp.copy();
-		
 		fullSequence = null;
 		fullSequenceEndTick = 0;
-
 		updateSequence = true;
 		unlockMe(this);
 	}
@@ -272,6 +270,10 @@ public class SequencePlayer extends Locker implements MetaEventListener {
 				sequence = seq;
 				sequenceEndTick = endTick;
 				updateSequencerSequence();
+				if (!patternMode) {
+					fullSequence = seq;
+					fullSequenceEndTick = endTick;
+				}
 				unlockMe(this);
 			}
 		}

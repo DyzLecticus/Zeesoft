@@ -555,7 +555,7 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 		
 		int row = 0;
 
-		instrumentHoldPercentage[instrumentNum] = addLabelSliderToPanel(panel,row,"Hold percentage",0,100,75);
+		instrumentHoldPercentage[instrumentNum] = addLabelSliderToPanel(panel,row,"Hold %",0,100,75);
 
 		int l = 0;
 		row++;
@@ -770,11 +770,11 @@ public class PanelInstruments extends PanelObject implements ItemListener, ListC
 			echoPan3 = addLabelSliderToPanel(echoPanel,erow,"Pan 3",0,127,48);
 
 			erow++;
-			echoVelocityPercentage1 = addLabelSliderToPanel(echoPanel,erow,"Velocity percentage 1",1,99,80);
+			echoVelocityPercentage1 = addLabelSliderToPanel(echoPanel,erow,"Velocity % 1",1,99,80);
 			erow++;
-			echoVelocityPercentage2 = addLabelSliderToPanel(echoPanel,erow,"Velocity percentage 2",1,99,60);
+			echoVelocityPercentage2 = addLabelSliderToPanel(echoPanel,erow,"Velocity % 2",1,99,60);
 			erow++;
-			echoVelocityPercentage3 = addLabelSliderToPanel(echoPanel,erow,"Velocity percentage 3",1,99,40);
+			echoVelocityPercentage3 = addLabelSliderToPanel(echoPanel,erow,"Velocity % 3",1,99,40);
 			
 			erow++;
 			echoReverb1 = addLabelSliderToPanel(echoPanel,erow,"Reverb 1",0,127,80);

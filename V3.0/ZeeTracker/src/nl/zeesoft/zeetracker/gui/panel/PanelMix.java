@@ -481,11 +481,11 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 		addLabelProperty(source,row,"Source",sideChainSource);
 
 		row++;
-		sideChainAttack = addLabelSliderToPanel(source,row,"Attack",1,40,5,10);
+		sideChainAttack = addLabelSliderToPanel(source,row,new JLabel("Attack steps"),1,40,5,10);
 		row++;
-		sideChainSustain = addLabelSliderToPanel(source,row,"Sustain",1,40,15,10);
+		sideChainSustain = addLabelSliderToPanel(source,row,new JLabel("Sustain steps"),1,40,15,10);
 		row++;
-		sideChainRelease = addLabelSliderToPanel(source,row,"Release",1,80,20,10);
+		sideChainRelease = addLabelSliderToPanel(source,row,new JLabel("Release steps"),1,80,20,10);
 		row++;
 		addFiller(source,row);
 		
@@ -494,8 +494,14 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 		row = 0;
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+				Color col = Instrument.getColorForInstrument(Instrument.INSTRUMENTS[i]);
+				JLabel label = new JLabel(Instrument.INSTRUMENT_SHORTS[i]);
+				label.setOpaque(true);
+				label.setBackground(col);
+				label.setBorder(BorderFactory.createLineBorder(col,2,true));
+				label.setFocusable(false);
 				row++;
-				sideChainPercentage[i] = addLabelSliderToPanel(destination,row,Instrument.INSTRUMENTS[i],0,100,0);
+				sideChainPercentage[i] = addLabelSliderToPanel(destination,row,label,0,100,0);
 			}
 		}
 		
@@ -503,7 +509,7 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 		destination.setAlignmentY(Component.TOP_ALIGNMENT);
 
 		r.add(source);
-		r.add(Box.createRigidArea(new Dimension(5,0)));
+		r.add(Box.createRigidArea(new Dimension(10,0)));
 		r.add(destination);
 		
 		return r;

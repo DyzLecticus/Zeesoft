@@ -62,7 +62,7 @@ public class TestCompositionToSequenceConvertor extends TestObject {
 			assertEqual(seq.getTracks().length,11,"Number of sequence tracks does not meet expectation");
 			if (seq.getTracks().length>=2) {
 				assertEqual(seq.getTracks()[0].size(),5,"Number of track 0 events does not meet expectation");
-				assertEqual(seq.getTracks()[1].size(),1412,"Number of track 1 events does not meet expectation");
+				assertEqual(seq.getTracks()[1].size(),1418,"Number of track 1 events does not meet expectation");
 			}
 		}
 		System.out.println("Composition to sequence conversion with side chain compression took " + ((new Date()).getTime() - now) + " ms");

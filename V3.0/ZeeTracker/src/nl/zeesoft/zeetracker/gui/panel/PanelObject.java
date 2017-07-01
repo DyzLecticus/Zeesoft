@@ -1,6 +1,7 @@
 package nl.zeesoft.zeetracker.gui.panel;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -186,10 +189,14 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	}
 
 	protected JSlider addLabelSliderToPanel(JPanel panel,int row,String label,int min, int max, int init) {
+		return addLabelSliderToPanel(panel,row,new JLabel(label),min,max,init,1);
+	}
+
+	protected JSlider addLabelSliderToPanel(JPanel panel,int row,JLabel label,int min, int max, int init) {
 		return addLabelSliderToPanel(panel,row,label,min,max,init,1);
 	}
 
-	protected JSlider addLabelSliderToPanel(JPanel panel,int row,String label,int min, int max, int init, int divider) {
+	protected JSlider addLabelSliderToPanel(JPanel panel,int row,JLabel label,int min, int max, int init, int divider) {
 		JSlider r = getNewSlider(min,max,init);
 		LabelSlider ls = new LabelSlider(new JLabel(),r,divider);
 		ls.setPropLabel(addLabel(panel,row,label));
@@ -222,9 +229,13 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	protected void addSeparator(JPanel panel, int row) {
 		addComponent(panel,row,0.01,new JSeparator(JSeparator.HORIZONTAL),true,true);
 	}
-	
+
 	protected JLabel addLabel(JPanel panel,int row,String text) {
 		JLabel lbl = new JLabel(text + " ");
+		return addLabel(panel,row,lbl);
+	}
+	
+	protected JLabel addLabel(JPanel panel,int row,JLabel lbl) {
 		lbl.setFocusable(false);
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.LINE_START;
@@ -241,6 +252,11 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	}
 	
 	protected void addProperty(JPanel panel,int row,Component c,boolean fill) {
+		JPanel wrapper = new JPanel();
+		wrapper.setLayout(new BoxLayout(wrapper,BoxLayout.X_AXIS));
+		wrapper.add(Box.createRigidArea(new Dimension(10,0)));
+		wrapper.add(c);
+		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 		if (fill) {
@@ -249,7 +265,7 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 		gbc.weightx = 0.99;
 		gbc.gridx = 1;
 		gbc.gridy = row;
-		panel.add(c,gbc);
+		panel.add(wrapper,gbc);
 	}
 
 	protected void addFiller(JPanel panel,int row) {
