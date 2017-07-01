@@ -186,8 +186,12 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 	}
 
 	protected JSlider addLabelSliderToPanel(JPanel panel,int row,String label,int min, int max, int init) {
+		return addLabelSliderToPanel(panel,row,label,min,max,init,1);
+	}
+
+	protected JSlider addLabelSliderToPanel(JPanel panel,int row,String label,int min, int max, int init, int divider) {
 		JSlider r = getNewSlider(min,max,init);
-		LabelSlider ls = new LabelSlider(new JLabel(),r);
+		LabelSlider ls = new LabelSlider(new JLabel(),r,divider);
 		ls.setPropLabel(addLabel(panel,row,label));
 		valueComponents.add(ls);
 		addProperty(panel,row,ls.getPanel());

@@ -16,28 +16,46 @@ import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.composition.Pattern;
 
 public class SequencePlayer extends Locker implements MetaEventListener {
-	private static final int				END_OF_SEQUENCE		= 47;
-	private	static final boolean			USE_LOOP_FIX		= true;
+	private static final int				END_OF_SEQUENCE			= 47;
+	private	static final boolean			USE_LOOP_FIX			= true;
 
-	private Sequencer						sequencer			= null;
+	private Sequencer						sequencer				= null;
 
-	private	boolean							playing				= false;
-	private	boolean							patternMode			= true;
-	private int								selectedPattern		= 0;
-	private Composition						compositionCopy		= null;
+	private	boolean							playing					= false;
+	private	boolean							patternMode				= true;
+	private int								selectedPattern			= 0;
+	private Composition						compositionCopy			= null;
 
-	private Sequence 						sequence			= null;
-	private int								sequenceEndTick		= 0;
-	private boolean							updateSequence		= false;
+	private Sequence 						sequence				= null;
+	private long							sequenceEndTick			= 0;
+	private boolean							updateSequence			= false;
 
-	private long							startPatternTick	= 0;
-	private long							startSequenceTick	= 0;
-	private long							stopTick			= 0;
+	private Sequence 						fullSequence			= null;
+	private long							fullSequenceEndTick		= 0;
 
-	private List<SequencePlayerSubscriber>	subscribers			= new ArrayList<SequencePlayerSubscriber>();
+	private long							startPatternTick		= 0;
+	private long							startSequenceTick		= 0;
+	private long							stopTick				= 0;
+
+	private List<SequencePlayerSubscriber>	subscribers				= new ArrayList<SequencePlayerSubscriber>();
+	
+	private SequencePlayerUpdateWorker		updateWorker 			= null;
+	private SequencePlayerSideChainWorker	sideChainWorker			= null;
 	
 	public SequencePlayer(Messenger msgr,WorkerUnion uni) {
 		super(msgr);
+		updateWorker = new SequencePlayerUpdateWorker(msgr,uni,this);
+		sideChainWorker = new SequencePlayerSideChainWorker(msgr,uni,this);
+	}
+
+	public void startWorkers() {
+		updateWorker.start();
+		sideChainWorker.start();
+	}
+	
+	public void stopWorkers() {
+		updateWorker.stop();
+		sideChainWorker.stop();
 	}
 
 	public void addSequencerSubscriber(SequencePlayerSubscriber sub) {
@@ -59,16 +77,21 @@ public class SequencePlayer extends Locker implements MetaEventListener {
 	}
 
 	public void setPatternMode(boolean patternMode) {
-		boolean checkUpdate = false;
+		boolean update = false;
 		lockMe(this);
 		if (!this.patternMode==patternMode) {
 			this.patternMode = patternMode;
-			updateSequence = true;
-			checkUpdate = true;
+			if (patternMode || fullSequence==null) {
+				update = true;
+			} else {
+				sequence = fullSequence;
+				sequenceEndTick = fullSequenceEndTick;
+				updateSequencerSequence();
+			}
 		}
 		unlockMe(this);
-		if (checkUpdate) {
-			checkUpdateSequence();
+		if (update) {
+			updateSequence();
 		}
 	}
 	
@@ -156,6 +179,10 @@ public class SequencePlayer extends Locker implements MetaEventListener {
 		lockMe(this);
 		selectedPattern = pattern;
 		compositionCopy = comp.copy();
+		
+		fullSequence = null;
+		fullSequenceEndTick = 0;
+
 		updateSequence = true;
 		unlockMe(this);
 	}
@@ -204,26 +231,39 @@ public class SequencePlayer extends Locker implements MetaEventListener {
 
 	protected void checkUpdateSequence() {
 		boolean update = false;
-		boolean pattern = true;
-		int	number = 0;
-		Composition comp = null;
 		lockMe(this);
 		if (updateSequence && compositionCopy!=null) {
 			updateSequence = false;
 			update = true;
+		}
+		unlockMe(this);
+		if (update) {
+			updateSequence();
+		}
+	}
+
+	protected void updateSequence() {
+		boolean pattern = true;
+		int	number = 0;
+		Composition comp = null;
+		lockMe(this);
+		if (compositionCopy!=null) {
 			pattern = patternMode;
 			number = selectedPattern;
 			comp = compositionCopy;
 		}
 		unlockMe(this);
-		if (update) {
+		if (comp!=null) {
 			Sequence seq = null;
-			int endTick = 0;
+			long endTick = 0;
 			CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor(getMessenger(),comp);
 			if (pattern) {
-				convertor.convertPatternInternal(number);
+				convertor.convertPatternInternal(number,true);
 			} else {
-				convertor.convertSequenceInternal();
+				if (comp.getSynthesizerConfiguration().getSideChainSource().length()>0) {
+					sideChainWorker.setComposition(comp);
+				}
+				convertor.convertSequenceInternal(false);
 			}
 			seq = convertor.getSequence();
 			endTick = convertor.getSequenceEndTick();
@@ -235,6 +275,18 @@ public class SequencePlayer extends Locker implements MetaEventListener {
 				unlockMe(this);
 			}
 		}
+	}
+	
+	protected void setFullSequenceAndEndTick(Sequence seq, long endTick) {
+		lockMe(this);
+		fullSequence = seq;
+		fullSequenceEndTick = endTick;
+		if (!patternMode) {
+			sequence = seq;
+			sequenceEndTick = endTick;
+			updateSequencerSequence();
+		}
+		unlockMe(this);
 	}
 	
 	protected void updateSequencerSequence() {

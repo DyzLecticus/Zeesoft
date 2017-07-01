@@ -169,7 +169,7 @@ public class ImportExportWorker extends Worker {
 								externalize = controller.showConfirmMessage("Externalize?","Do you want to externalize the MIDI file?");
 							}
 							CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor((Composition) actionObject);
-							convertor.convertSequence(externalize,false);
+							convertor.convertSequence(externalize,false,true);
 							Sequence s = convertor.getSequence();
 							if (s==null) {
 								err = "Failed to convert composition to MIDI file";

@@ -11,11 +11,19 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zmmt.composition.Control;
 
 public class SynthesizerConfiguration {
-	private List<InstrumentConfiguration>	instruments				= new ArrayList<InstrumentConfiguration>();
-	private EchoConfiguration				echo					= new EchoConfiguration();
-	private List<DrumConfiguration>			drums 					= new ArrayList<DrumConfiguration>();
-	private boolean							useInternalDrumKit		= true;
-	private boolean							useInternalSynthesizers	= true;
+	public static final String				SOURCE_KICK					= "Kick";
+	public static final String				SOURCE_MIDI					= "MIDI beat";
+
+	private List<InstrumentConfiguration>	instruments					= new ArrayList<InstrumentConfiguration>();
+	private EchoConfiguration				echo						= new EchoConfiguration();
+	private List<DrumConfiguration>			drums 						= new ArrayList<DrumConfiguration>();
+	private boolean							useInternalDrumKit			= true;
+	private boolean							useInternalSynthesizers		= true;
+	
+	private	String							sideChainSource				= "";
+	private double							sideChainAttack				= 0.5D;
+	private double							sideChainSustain			= 1.5D;
+	private double							sideChainRelease			= 2.0D;
 	
 	public SynthesizerConfiguration() {
 		initialize();
@@ -25,6 +33,10 @@ public class SynthesizerConfiguration {
 		SynthesizerConfiguration copy = new SynthesizerConfiguration();
 		copy.setUseInternalDrumKit(useInternalDrumKit);
 		copy.setUseInternalSynthesizers(useInternalSynthesizers);
+		copy.setSideChainSource(sideChainSource);
+		copy.setSideChainAttack(sideChainAttack);
+		copy.setSideChainSustain(sideChainSustain);
+		copy.setSideChainRelease(sideChainRelease);
 		copy.getInstruments().clear();
 		for (InstrumentConfiguration inst: instruments) {
 			copy.getInstruments().add(inst.copy());
@@ -42,6 +54,10 @@ public class SynthesizerConfiguration {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("useInternalDrumKit","" + useInternalDrumKit));
 		json.rootElement.children.add(new JsElem("useInternalSynthesizers","" + useInternalSynthesizers));
+		json.rootElement.children.add(new JsElem("sideChainSource",sideChainSource,true));
+		json.rootElement.children.add(new JsElem("sideChainAttack","" + sideChainAttack));
+		json.rootElement.children.add(new JsElem("sideChainSustain","" + sideChainSustain));
+		json.rootElement.children.add(new JsElem("sideChainRelease","" + sideChainRelease));
 		for (InstrumentConfiguration inst: instruments) {
 			JsElem instElem = new JsElem("instrument");
 			json.rootElement.children.add(instElem);
@@ -50,7 +66,9 @@ public class SynthesizerConfiguration {
 			instElem.children.add(new JsElem("volume","" + inst.getVolume()));
 			instElem.children.add(new JsElem("pan","" + inst.getPan()));
 			instElem.children.add(new JsElem("holdPercentage","" + inst.getHoldPercentage()));
-			instElem.children.add(new JsElem("sideChainPercentage","" + inst.getSideChainPercentage()));
+			if (!inst.getName().equals(Instrument.DRUMS)) {
+				instElem.children.add(new JsElem("sideChainPercentage","" + inst.getSideChainPercentage()));
+			}
 			instElem.children.add(new JsElem("l1MidiNum","" + inst.getLayer1().getMidiNum()));
 			instElem.children.add(new JsElem("l1Pressure","" + inst.getLayer1().getPressure()));
 			instElem.children.add(new JsElem("l1Modulation","" + inst.getLayer1().getModulation()));
@@ -139,6 +157,14 @@ public class SynthesizerConfiguration {
 					useInternalDrumKit = Boolean.parseBoolean(elem.value.toString());
 				} else if (elem.name.equals("useInternalSynthesizers")) {
 					useInternalSynthesizers = Boolean.parseBoolean(elem.value.toString());
+				} else if (elem.name.equals("sideChainSource")) {
+					sideChainSource = elem.value.toString();
+				} else if (elem.name.equals("sideChainAttack")) {
+					sideChainAttack = Double.parseDouble(elem.value.toString());
+				} else if (elem.name.equals("sideChainSustain")) {
+					sideChainSustain = Double.parseDouble(elem.value.toString());
+				} else if (elem.name.equals("sideChainRelease")) {
+					sideChainRelease = Double.parseDouble(elem.value.toString());
 				} else if (elem.name.equals("instrument")) {
 					InstrumentConfiguration inst = new InstrumentConfiguration();
 					for (JsElem val: elem.children) {
@@ -342,6 +368,38 @@ public class SynthesizerConfiguration {
 
 	public void setUseInternalSynthesizers(boolean useInternalSynthesizers) {
 		this.useInternalSynthesizers = useInternalSynthesizers;
+	}
+
+	public String getSideChainSource() {
+		return sideChainSource;
+	}
+
+	public void setSideChainSource(String sideChainSource) {
+		this.sideChainSource = sideChainSource;
+	}
+
+	public double getSideChainAttack() {
+		return sideChainAttack;
+	}
+
+	public void setSideChainAttack(double sideChainAttack) {
+		this.sideChainAttack = sideChainAttack;
+	}
+
+	public double getSideChainSustain() {
+		return sideChainSustain;
+	}
+
+	public void setSideChainSustain(double sideChainSustain) {
+		this.sideChainSustain = sideChainSustain;
+	}
+
+	public double getSideChainRelease() {
+		return sideChainRelease;
+	}
+
+	public void setSideChainRelease(double sideChainRelease) {
+		this.sideChainRelease = sideChainRelease;
 	}
 
 	public InstrumentConfiguration getInstrument(String instrument) {

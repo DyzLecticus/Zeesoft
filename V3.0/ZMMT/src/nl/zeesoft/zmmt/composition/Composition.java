@@ -10,9 +10,6 @@ import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 public class Composition {
 	public static final int				TRACKS							= 32;
 	public static final int				RESOLUTION						= 960;
-
-	public static final String			SOURCE_KICK						= "SOURCE_KICK";
-	public static final String			SOURCE_MIDI						= "SOURCE_MIDI";
 	
 	private String						composer						= "";
 	private String						name							= "";
@@ -21,11 +18,6 @@ public class Composition {
 	private int							beatsPerBar						= 4;
 	private int							stepsPerBeat					= 8;
 	private int							barsPerPattern					= 4;
-	
-	private	String						sideChainSource					= SOURCE_KICK;
-	private double						sideChainAttack					= 0.5D;
-	private double						sideChainSustain				= 1.5D;
-	private double						sideChainRelease				= 2.0D;
 	
 	private SynthesizerConfiguration	synthesizerConfiguration		= null;
 	
@@ -45,10 +37,6 @@ public class Composition {
 		copy.setBeatsPerBar(beatsPerBar);
 		copy.setStepsPerBeat(stepsPerBeat);
 		copy.setBarsPerPattern(barsPerPattern);
-		copy.setSideChainSource(sideChainSource);
-		copy.setSideChainAttack(sideChainAttack);
-		copy.setSideChainSustain(sideChainSustain);
-		copy.setSideChainRelease(sideChainRelease);
 		copy.setSynthesizerConfiguration(synthesizerConfiguration.copy());
 		for (Pattern pat: patterns) {
 			copy.getPatterns().add(pat.copy());
@@ -68,10 +56,6 @@ public class Composition {
 		json.rootElement.children.add(new JsElem("beatsPerBar","" + beatsPerBar));
 		json.rootElement.children.add(new JsElem("stepsPerBeat","" + stepsPerBeat));
 		json.rootElement.children.add(new JsElem("barsPerPattern","" + barsPerPattern));
-		json.rootElement.children.add(new JsElem("sideChainSource",sideChainSource,true));
-		json.rootElement.children.add(new JsElem("sideChainAttack","" + sideChainAttack));
-		json.rootElement.children.add(new JsElem("sideChainSustain","" + sideChainSustain));
-		json.rootElement.children.add(new JsElem("sideChainRelease","" + sideChainRelease));
 		JsFile conf = synthesizerConfiguration.toJson();
 		JsElem confElem = new JsElem("instruments");
 		for (JsElem conElem: conf.rootElement.children) {
@@ -113,14 +97,6 @@ public class Composition {
 				stepsPerBeat = Integer.parseInt(elem.value.toString());
 			} else if (elem.name.equals("barsPerPattern")) {
 				barsPerPattern = Integer.parseInt(elem.value.toString());
-			} else if (elem.name.equals("sideChainSource")) {
-				sideChainSource = elem.value.toString();
-			} else if (elem.name.equals("sideChainAttack")) {
-				sideChainAttack = Double.parseDouble(elem.value.toString());
-			} else if (elem.name.equals("sideChainSustain")) {
-				sideChainSustain = Double.parseDouble(elem.value.toString());
-			} else if (elem.name.equals("sideChainRelease")) {
-				sideChainRelease = Double.parseDouble(elem.value.toString());
 			} else if (elem.name.equals("instruments")) {
 				JsFile conf = new JsFile();
 				conf.rootElement = elem;
@@ -207,38 +183,6 @@ public class Composition {
 
 	public void setBarsPerPattern(int barsPerPattern) {
 		this.barsPerPattern = barsPerPattern;
-	}
-
-	public String getSideChainSource() {
-		return sideChainSource;
-	}
-
-	public void setSideChainSource(String sideChainSource) {
-		this.sideChainSource = sideChainSource;
-	}
-
-	public double getSideChainAttack() {
-		return sideChainAttack;
-	}
-
-	public void setSideChainAttack(double sideChainAttack) {
-		this.sideChainAttack = sideChainAttack;
-	}
-
-	public double getSideChainSustain() {
-		return sideChainSustain;
-	}
-
-	public void setSideChainSustain(double sideChainSustain) {
-		this.sideChainSustain = sideChainSustain;
-	}
-
-	public double getSideChainRelease() {
-		return sideChainRelease;
-	}
-
-	public void setSideChainRelease(double sideChainRelease) {
-		this.sideChainRelease = sideChainRelease;
 	}
 
 	public SynthesizerConfiguration getSynthesizerConfiguration() {

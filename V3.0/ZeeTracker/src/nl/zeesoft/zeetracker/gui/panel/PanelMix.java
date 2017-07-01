@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -32,7 +35,7 @@ import nl.zeesoft.zmmt.synthesizer.Instrument;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
-public class PanelMix extends PanelObject implements StateChangeSubscriber, CompositionChangePublisher, MetaEventListener, SequencePlayerSubscriber {
+public class PanelMix extends PanelObject implements ItemListener, StateChangeSubscriber, CompositionChangePublisher, MetaEventListener, SequencePlayerSubscriber {
 	private	static final String			TOGGLE_MUTE					= "TOGGLE_MUTE";
 
 	private	static final String			TOGGLE_DRUM_MUTE			= "TOGGLE_DRUM_MUTE";
@@ -53,6 +56,13 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 	private MixerStrip[]				strip						= new MixerStrip[16];
 
 	private JButton[]					muteDrumButton				= new JButton[DRUM_SHORTS.length];
+	
+	private JComboBox<String>			sideChainSource				= null;
+	private JSlider						sideChainAttack				= null;
+	private JSlider						sideChainSustain			= null;
+	private JSlider						sideChainRelease			= null;
+
+	private JSlider[]					sideChainPercentage			= new JSlider[Instrument.INSTRUMENTS.length];
 	
 	private SynthesizerConfiguration	synthConfigCopy				= null;
 	private String						selectedInstrument			= "";
@@ -82,7 +92,7 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		addComponent(getPanel(), row, 0.01,getMixPanel());
 
 		row++;
-		addComponent(getPanel(), row, 0.01,getDrumPanel(),false);
+		addComponent(getPanel(), row, 0.01,getSideChainPanel(),false);
 
 		row++;
 		addFiller(getPanel(),row);
@@ -107,6 +117,10 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 
 	@Override
 	public void setChangesInComposition(Composition composition) {
+		composition.getSynthesizerConfiguration().setSideChainSource(sideChainSource.getSelectedItem().toString());
+		composition.getSynthesizerConfiguration().setSideChainAttack(((double) sideChainAttack.getValue()) / 10);
+		composition.getSynthesizerConfiguration().setSideChainSustain(((double) sideChainSustain.getValue()) / 10);
+		composition.getSynthesizerConfiguration().setSideChainRelease(((double) sideChainRelease.getValue()) / 10);
 		for (int d = 0; d < Drum.DRUMS.length; d++) {
 			DrumConfiguration drum = composition.getSynthesizerConfiguration().getDrum(Drum.DRUMS[d]);
 			DrumConfiguration copy = synthConfigCopy.getDrum(Drum.DRUMS[d]);
@@ -118,6 +132,9 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 			inst.setMuted(copy.isMuted());
 			inst.setVolume(volumeSlider[i].getValue());
 			inst.setPan(panSlider[i].getValue());
+			if (!inst.getName().equals(Instrument.DRUMS)) {
+				inst.setSideChainPercentage(sideChainPercentage[i].getValue());
+			}
 		}
 	}
 	
@@ -278,6 +295,13 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		}
 	}
 
+	@Override
+	public void itemStateChanged(ItemEvent evt) {
+		if (evt.getSource()==sideChainSource) {
+			handlePropertyChanged(evt.getSource());
+		}
+	}
+
 	protected JPanel getPlayingPanel() {
 		JPanel r = new JPanel();
 		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
@@ -350,6 +374,12 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		
 		JPanel strips = new JPanel();
 		strips.setLayout(new BoxLayout(strips,BoxLayout.X_AXIS));
+		
+		if (Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+			strips.add(getDrumMutes());
+			strips.add(Box.createRigidArea(new Dimension(5,0)));
+		}
+		
 		int layers = 2;
 		if (Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
 			layers = 1;
@@ -428,11 +458,60 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 		
 		return r;
 	}
-	
-	protected JPanel getDrumPanel() {
+
+	protected JPanel getSideChainPanel() {
 		JPanel r = new JPanel();
 		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
-		r.setBorder(BorderFactory.createTitledBorder(Instrument.DRUMS));
+		r.setBorder(BorderFactory.createTitledBorder("Side chain compression"));
+		
+		JPanel source = new JPanel();
+		source.setLayout(new GridBagLayout());
+		int row = 0;
+		sideChainSource = new JComboBox<String>();
+		sideChainSource.addItem("");
+		sideChainSource.addItem(SynthesizerConfiguration.SOURCE_KICK);
+		sideChainSource.addItem(SynthesizerConfiguration.SOURCE_MIDI);
+		sideChainSource.addItemListener(this);
+		for (int l = 0; l < sideChainSource.getKeyListeners().length; l++) {
+			sideChainSource.removeKeyListener(sideChainSource.getKeyListeners()[l]);
+		}
+		sideChainSource.addFocusListener(this);
+		sideChainSource.addKeyListener(getController().getPlayerKeyListener());
+		addFunctionKeyOverridesToComponent(sideChainSource);
+		addLabelProperty(source,row,"Source",sideChainSource);
+
+		row++;
+		sideChainAttack = addLabelSliderToPanel(source,row,"Attack",1,40,5,10);
+		row++;
+		sideChainSustain = addLabelSliderToPanel(source,row,"Sustain",1,40,15,10);
+		row++;
+		sideChainRelease = addLabelSliderToPanel(source,row,"Release",1,80,20,10);
+		row++;
+		addFiller(source,row);
+		
+		JPanel destination = new JPanel();
+		destination.setLayout(new GridBagLayout());
+		row = 0;
+		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
+			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+				row++;
+				sideChainPercentage[i] = addLabelSliderToPanel(destination,row,Instrument.INSTRUMENTS[i],0,100,0);
+			}
+		}
+		
+		source.setAlignmentY(Component.TOP_ALIGNMENT);
+		destination.setAlignmentY(Component.TOP_ALIGNMENT);
+
+		r.add(source);
+		r.add(Box.createRigidArea(new Dimension(5,0)));
+		r.add(destination);
+		
+		return r;
+	}
+
+	protected JPanel getDrumMutes() {
+		JPanel r = new JPanel();
+		r.setLayout(new BoxLayout(r,BoxLayout.Y_AXIS));
 		
 		Color col = Instrument.getColorForInstrument(Instrument.DRUMS);
 		
@@ -451,30 +530,44 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 			muteDrumButton[d].setActionCommand(TOGGLE_DRUM_MUTE);
 			muteDrumButton[d].addActionListener(this);
 
-			label.setAlignmentX(Component.CENTER_ALIGNMENT);
-			muteDrumButton[d].setAlignmentX(Component.CENTER_ALIGNMENT);
+			label.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			muteDrumButton[d].setAlignmentX(Component.RIGHT_ALIGNMENT);
 
-			JPanel column = new JPanel();
-			column.setLayout(new BoxLayout(column,BoxLayout.Y_AXIS));
+			JPanel row = new JPanel();
+			row.setLayout(new BoxLayout(row,BoxLayout.X_AXIS));
+			row.setAlignmentX(Component.RIGHT_ALIGNMENT);
 			
-			column.add(label);
-			column.add(Box.createRigidArea(new Dimension(0,5)));
-			column.add(muteDrumButton[d]);
+			row.add(label);
+			row.add(Box.createRigidArea(new Dimension(5,0)));
+			row.add(muteDrumButton[d]);
 			
 			if (d>0) {
-				r.add(Box.createRigidArea(new Dimension(5,0)));
+				r.add(Box.createRigidArea(new Dimension(0,5)));
 			}
-			r.add(column);
+			r.add(row);
 		}
 		
 		return r;
 	}
-
+	
 	protected void updatedSynthConfig() {
+		if (synthConfigCopy.getSideChainSource().length()==0) {
+			sideChainSource.setSelectedIndex(0);
+		} else if (synthConfigCopy.getSideChainSource().equals(SynthesizerConfiguration.SOURCE_KICK)) {
+			sideChainSource.setSelectedIndex(1);
+		} else if (synthConfigCopy.getSideChainSource().equals(SynthesizerConfiguration.SOURCE_MIDI)) {
+			sideChainSource.setSelectedIndex(2);
+		}
+		sideChainAttack.setValue((int) (synthConfigCopy.getSideChainAttack() * 10));
+		sideChainSustain.setValue((int) (synthConfigCopy.getSideChainSustain() * 10));
+		sideChainRelease.setValue((int) (synthConfigCopy.getSideChainRelease() * 10));
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			InstrumentConfiguration inst = synthConfigCopy.getInstrument(Instrument.INSTRUMENTS[i]);
 			volumeSlider[i].setValue(inst.getVolume());
 			panSlider[i].setValue(inst.getPan());
+			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+				sideChainPercentage[i].setValue(inst.getSideChainPercentage());
+			}
 			boolean enabled = true;
 			if (Instrument.INSTRUMENTS[i].equals(Instrument.ECHO) && synthConfigCopy.getEcho().getInstrument().length()>0) {
 				enabled = false;
@@ -482,6 +575,9 @@ public class PanelMix extends PanelObject implements StateChangeSubscriber, Comp
 			muteButton[i].setEnabled(enabled);
 			volumeSlider[i].setEnabled(enabled);
 			panSlider[i].setEnabled(enabled);
+			if (!Instrument.INSTRUMENTS[i].equals(Instrument.DRUMS)) {
+				sideChainPercentage[i].setEnabled(enabled);
+			}
 		}
 		updatedMuteState();
 		updateLabels();

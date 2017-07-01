@@ -30,7 +30,6 @@ import nl.zeesoft.zeetracker.gui.state.StateManager;
 import nl.zeesoft.zmmt.composition.Composition;
 import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
-import nl.zeesoft.zmmt.sequencer.SequencePlayerUpdateWorker;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.MidiNote;
 
@@ -61,7 +60,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private boolean						initializedSoundFont		= false;
 
 	private SequencePlayerImpl			sequencePlayer				= null;
-	private SequencePlayerUpdateWorker	sequencePlayerWorker 		= null;
 	private Sequencer					sequencer					= null;
 	private List<MetaEventListener>		sequencerMetaListeners		= new ArrayList<MetaEventListener>();
 	
@@ -115,7 +113,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 		sequencePlayer = new SequencePlayerImpl(getMessenger(),getUnion());
 		stateManager.addSubscriber(sequencePlayer);
-		sequencePlayerWorker = new SequencePlayerUpdateWorker(getMessenger(),getUnion(),sequencePlayer);
 		
 		mainFrame = new FrameMain(this);
 		mainFrame.initialize();
@@ -163,7 +160,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		}
 		
 		player.start();
-		sequencePlayerWorker.start();
+		sequencePlayer.startWorkers();
 		
 		stateManager.start();
 		
@@ -180,7 +177,7 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void stop(Worker ignoreWorker) {
 		importExportWorker.stop();
 		player.stop();
-		sequencePlayerWorker.stop();
+		sequencePlayer.stopWorkers();
 		stopSequencer();
 		stopSynthesizer(stateManager.getComposition());
 		mainFrame.getFrame().setVisible(false);

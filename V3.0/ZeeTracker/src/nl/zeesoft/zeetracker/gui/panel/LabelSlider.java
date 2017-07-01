@@ -5,10 +5,12 @@ import javax.swing.JSlider;
 
 public class LabelSlider extends ValueComponent {
 	private JSlider	slider	= null;
+	private int		divider = 1;
 
-	public LabelSlider(JLabel label, JSlider value) {
+	public LabelSlider(JLabel label, JSlider value,int div) {
 		super(label,value);
 		slider = value;
+		divider = div;
 	}
 
 	@Override
@@ -18,6 +20,12 @@ public class LabelSlider extends ValueComponent {
 
 	@Override
 	protected String getStringValue() {
-		return "" + String.format("%03d",slider.getValue());
+		String r = "";
+		if (divider==1) {
+			r =  String.format("%03d",slider.getValue());
+		} else {
+			r = String.format("%.1f",((float)slider.getValue() / divider));
+		}
+		return r;
 	}
 }

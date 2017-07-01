@@ -5,12 +5,15 @@ import nl.zeesoft.zmmt.composition.Control;
 import nl.zeesoft.zmmt.composition.Note;
 import nl.zeesoft.zmmt.composition.Pattern;
 import nl.zeesoft.zmmt.synthesizer.Instrument;
+import nl.zeesoft.zmmt.synthesizer.SynthesizerConfiguration;
 
 public class MockComposition extends Composition {
 	public MockComposition() {
 		setComposer("Dyz Lecticus");
 		setName("ZeeTracker mock composition");
 
+		getSynthesizerConfiguration().setSideChainSource(SynthesizerConfiguration.SOURCE_KICK);
+		
 		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).setSideChainPercentage(10);
 
 		getSynthesizerConfiguration().getInstrument(Instrument.BASS1).setVolume(123);
