@@ -53,6 +53,7 @@ The two internal ZeeTracker sound fonts provide replacements for the following M
    * 093 Metal Pad  
    * 094 Halo Pad  
    * 095 Sweep Pad  
+  
 **Please note** that these internal sound fonts are not General MIDI compliant.
 
 **Requirements and download**  

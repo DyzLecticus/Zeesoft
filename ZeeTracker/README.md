@@ -64,6 +64,7 @@ The two internal ZeeTracker sound fonts provide replacements for the following M
    * 093 Metal Pad  
    * 094 Halo Pad  
    * 095 Sweep Pad  
+  
 **Please note** that these internal sound fonts are not General MIDI compliant.
   
 Demo composition
@@ -72,16 +73,19 @@ A recording of the ZeeTracker demo composition is available on [SoundCloud](http
   
 Screen shots
 ------------
+**Composition tab**  
 The composition tab is used to configure tempo, structure and internal sound font usage for the composition.
 <img alt="The composition tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Composition.bmp">
   
   
+**Instruments tab**  
 The instruments tab is used to configure the instruments.
 The currently selected instrument is indicated by the background color of the tab selector.
 <img alt="The instruments tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Instruments.bmp">
   
   
-The pattern tab is used to create composition event patterns.
+**Patterns tab**  
+The patterns tab is used to create composition event patterns.
 Notes can be added in the grid by selecting the desired position in the grid and then playing one or more notes on the keyboard.
 By holding notes down and scrolling down in the grid using the cursor at the same time, the duration of the notes being played can be customized.
 Volume, modulation and filter controls can be added using the space bar.
@@ -90,16 +94,19 @@ Further event customization can be done by selecting a group of notes or control
 <img alt="The patterns tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Patterns.bmp">
   
   
+**Sequence tab**  
 The pattern sequence tab is used to define pattern sequences.
 <img alt="The pattern sequence tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Sequence.bmp">
   
   
+**Mix tab**  
 The mix tab is used to balance the volumes and pan of the individual instruments and the composition as a whole.
 Side chain compression is achieved by generating a lot of volume control events over the pattern volume controls.
 This might take a few seconds for an entire composition so in that case the composition to MIDI conversion is done in several steps where side chain compression is added later.
 <img alt="The mix tab" src="https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/ZeeTracker/screenshots/ZeeTracker_Tab_Mix.bmp">
   
   
+**Settings tab**  
 The settings tab is used to configure default composition settings and custom sound font usage.
 The entire current composition instrument configuration can be saved as a default for new compositions.
 This includes internal sound font usage and mixer settings.
