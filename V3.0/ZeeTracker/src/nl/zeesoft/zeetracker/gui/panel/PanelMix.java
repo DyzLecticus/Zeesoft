@@ -57,6 +57,9 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 
 	private JButton[]					muteDrumButton				= new JButton[DRUM_SHORTS.length];
 	
+	private JLabel						masterVolumeLabel			= null;
+	private JSlider						masterVolume				= null;
+	
 	private JComboBox<String>			sideChainSource				= null;
 	private JSlider						sideChainAttack				= null;
 	private JSlider						sideChainSustain			= null;
@@ -117,6 +120,7 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 
 	@Override
 	public void setChangesInComposition(Composition composition) {
+		composition.getSynthesizerConfiguration().setMasterVolume(masterVolume.getValue());
 		composition.getSynthesizerConfiguration().setSideChainSource(sideChainSource.getSelectedItem().toString());
 		composition.getSynthesizerConfiguration().setSideChainAttack(((double) sideChainAttack.getValue()) / 10);
 		composition.getSynthesizerConfiguration().setSideChainSustain(((double) sideChainSustain.getValue()) / 10);
@@ -359,10 +363,22 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 	protected JPanel getMixPanel() {
 		JPanel r = new JPanel();
 		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
-		r.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+			r.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
-			r.add(getColumnForInstrument(i));
+			r.add(wrapColumn(getColumnForInstrument(i)));
+			r.add(Box.createRigidArea(new Dimension(5,0)));
 		}
+		r.add(wrapColumn(getMasterVolumeColumn()));
+		return r;
+	}
+	
+	protected JPanel wrapColumn(JPanel column) {
+		JPanel r = new JPanel();
+		r.setLayout(new BoxLayout(r,BoxLayout.Y_AXIS));
+		r.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+		column.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+		column.setAlignmentX(Component.CENTER_ALIGNMENT);
+		r.add(column);
 		return r;
 	}
 	
@@ -406,10 +422,10 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 		muteButton[i] = new JButton(" M ");
 		muteButton[i].setOpaque(true);
 		muteButton[i].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,2));
-		volumeLabel[i] = new JLabel();
+		volumeLabel[i] = new JLabel(" ");
 		volumeLabel[i].setFocusable(false);
-		volumeSlider[i] = new JSlider(JSlider.VERTICAL,0,127,110);
-		panLabel[i] = new JLabel();
+		volumeSlider[i] = new JSlider(JSlider.VERTICAL,0,127,100);
+		panLabel[i] = new JLabel(" ");
 		panLabel[i].setFocusable(false);
 		panSlider[i] = new JSlider(JSlider.HORIZONTAL,0,127,64);
 		panSlider[i].setPreferredSize(new Dimension(60,30));
@@ -459,6 +475,42 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 		return r;
 	}
 
+	protected JPanel getMasterVolumeColumn() {
+		JPanel r = new JPanel();
+		r.setLayout(new BoxLayout(r,BoxLayout.Y_AXIS));
+		
+		JLabel label = new JLabel("MST");
+		label.setOpaque(true);
+		label.setBackground(Color.BLACK);
+		label.setForeground(Color.WHITE);
+		label.setBorder(BorderFactory.createLineBorder(Color.BLACK,2,true));
+		label.setFocusable(false);
+		
+		masterVolumeLabel = new JLabel(" ");
+		masterVolumeLabel.setFocusable(false);
+		masterVolume = new JSlider(JSlider.VERTICAL,0,127,100);
+		masterVolume.setMinimumSize(new Dimension(20,300));
+
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		masterVolumeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		masterVolume.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		masterVolume.addFocusListener(this);
+		masterVolume.addKeyListener(getController().getPlayerKeyListener());
+		
+		addControlPageUpDownOverridesToComponent(masterVolume);
+		
+		masterVolume.addChangeListener(this);
+
+		r.add(label);
+		r.add(Box.createRigidArea(new Dimension(0,5)));
+		r.add(masterVolumeLabel);
+		r.add(Box.createRigidArea(new Dimension(0,5)));
+		r.add(masterVolume);
+		
+		return r;
+	}
+	
 	protected JPanel getSideChainPanel() {
 		JPanel r = new JPanel();
 		r.setLayout(new BoxLayout(r,BoxLayout.X_AXIS));
@@ -536,7 +588,7 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 			muteDrumButton[d].setActionCommand(TOGGLE_DRUM_MUTE);
 			muteDrumButton[d].addActionListener(this);
 
-			label.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			label.setAlignmentX(Component.LEFT_ALIGNMENT);
 			muteDrumButton[d].setAlignmentX(Component.RIGHT_ALIGNMENT);
 
 			JPanel row = new JPanel();
@@ -557,6 +609,7 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 	}
 	
 	protected void updatedSynthConfig() {
+		masterVolume.setValue(synthConfigCopy.getMasterVolume());
 		if (synthConfigCopy.getSideChainSource().length()==0) {
 			sideChainSource.setSelectedIndex(0);
 		} else if (synthConfigCopy.getSideChainSource().equals(SynthesizerConfiguration.SOURCE_KICK)) {
@@ -637,6 +690,7 @@ public class PanelMix extends PanelObject implements ItemListener, StateChangeSu
 	}
 	
 	protected void updateLabels() {
+		masterVolumeLabel.setText("" + masterVolume.getValue());
 		for (int i = 0; i < Instrument.INSTRUMENTS.length; i++) {
 			volumeLabel[i].setText("" + volumeSlider[i].getValue());
 			panLabel[i].setText("" + panSlider[i].getValue());

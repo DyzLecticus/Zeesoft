@@ -22,7 +22,7 @@ public class SequencePlayer extends Locker implements MetaEventListener {
 	private Sequencer						sequencer				= null;
 
 	private	boolean							playing					= false;
-	private	boolean							patternMode				= true;
+	private	boolean							patternMode				= false;
 	private int								selectedPattern			= 0;
 	private Composition						compositionCopy			= null;
 

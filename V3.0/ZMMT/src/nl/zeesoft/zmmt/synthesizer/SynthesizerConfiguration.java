@@ -14,6 +14,8 @@ public class SynthesizerConfiguration {
 	public static final String				SOURCE_KICK					= "Kick";
 	public static final String				SOURCE_MIDI					= "MIDI beat";
 
+	private int								masterVolume				= 120;
+	
 	private List<InstrumentConfiguration>	instruments					= new ArrayList<InstrumentConfiguration>();
 	private EchoConfiguration				echo						= new EchoConfiguration();
 	private List<DrumConfiguration>			drums 						= new ArrayList<DrumConfiguration>();
@@ -21,9 +23,9 @@ public class SynthesizerConfiguration {
 	private boolean							useInternalSynthesizers		= true;
 	
 	private	String							sideChainSource				= "";
-	private double							sideChainAttack				= 0.5D;
-	private double							sideChainSustain			= 0.5D;
-	private double							sideChainRelease			= 0.8D;
+	private double							sideChainAttack				= 0.2D;
+	private double							sideChainSustain			= 0.7D;
+	private double							sideChainRelease			= 0.5D;
 	
 	public SynthesizerConfiguration() {
 		initialize();
@@ -31,6 +33,7 @@ public class SynthesizerConfiguration {
 	
 	public SynthesizerConfiguration copy() {
 		SynthesizerConfiguration copy = new SynthesizerConfiguration();
+		copy.setMasterVolume(masterVolume);
 		copy.setUseInternalDrumKit(useInternalDrumKit);
 		copy.setUseInternalSynthesizers(useInternalSynthesizers);
 		copy.setSideChainSource(sideChainSource);
@@ -52,6 +55,7 @@ public class SynthesizerConfiguration {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("masterVolume","" + masterVolume));
 		json.rootElement.children.add(new JsElem("useInternalDrumKit","" + useInternalDrumKit));
 		json.rootElement.children.add(new JsElem("useInternalSynthesizers","" + useInternalSynthesizers));
 		json.rootElement.children.add(new JsElem("sideChainSource",sideChainSource,true));
@@ -153,7 +157,9 @@ public class SynthesizerConfiguration {
 		initialize();
 		if (json.rootElement!=null) {
 			for (JsElem elem: json.rootElement.children) {
-				if (elem.name.equals("useInternalDrumKit")) {
+				if (elem.name.equals("masterVolume")) {
+					masterVolume = Integer.parseInt(elem.value.toString());
+				} else if (elem.name.equals("useInternalDrumKit")) {
 					useInternalDrumKit = Boolean.parseBoolean(elem.value.toString());
 				} else if (elem.name.equals("useInternalSynthesizers")) {
 					useInternalSynthesizers = Boolean.parseBoolean(elem.value.toString());
@@ -338,6 +344,14 @@ public class SynthesizerConfiguration {
 		}
 	}
 
+	public int getMasterVolume() {
+		return masterVolume;
+	}
+
+	public void setMasterVolume(int masterVolume) {
+		this.masterVolume = masterVolume;
+	}
+
 	public List<InstrumentConfiguration> getInstruments() {
 		return instruments;
 	}
@@ -429,7 +443,7 @@ public class SynthesizerConfiguration {
 			echoInst = getInstrument(Instrument.ECHO);
 			channels = 2;
 		}
-		int volume = echoInst.getVolume();
+		int volume = (echoInst.getVolume() * masterVolume) / 127;
 		int layerMidiNum = echoInst.getLayer((echo.getLayer() - 1)).getMidiNum();
 		int layerPressure = echoInst.getLayer((echo.getLayer() - 1)).getPressure();
 		int layerModulation = echoInst.getLayer((echo.getLayer() - 1)).getModulation();
@@ -493,7 +507,7 @@ public class SynthesizerConfiguration {
 				if (val!=inst.getLayer1().getPressure()) {
 					synth.getChannels()[channel].setChannelPressure(inst.getLayer1().getPressure());
 				}
-				synth.getChannels()[channel].controlChange(Control.VOLUME,inst.getVolume());
+				synth.getChannels()[channel].controlChange(Control.VOLUME,((inst.getVolume() * masterVolume) / 127));
 				synth.getChannels()[channel].controlChange(Control.PAN,inst.getPan());
 				synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer1().getReverb());
 				if (configureControls) {
@@ -520,7 +534,7 @@ public class SynthesizerConfiguration {
 						if (val!=inst.getLayer2().getPressure()) {
 							synth.getChannels()[channel].setChannelPressure(inst.getLayer2().getPressure());
 						}
-						synth.getChannels()[channel].controlChange(Control.VOLUME,inst.getVolume());
+						synth.getChannels()[channel].controlChange(Control.VOLUME,((inst.getVolume() * masterVolume) / 127));
 						synth.getChannels()[channel].controlChange(Control.PAN,inst.getPan());
 						synth.getChannels()[channel].controlChange(Control.REVERB,inst.getLayer2().getReverb());
 						if (configureControls) {

@@ -4,7 +4,7 @@ Zeesoft MIDI Mod Tracker (ZMMT) is a library that contains all ZeeTracker applic
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.3.zip) to download the latest ZMMT release (version 0.9.3).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.4.zip) to download the latest ZMMT release (version 0.9.4).  
 All ZMMT releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -35,12 +35,13 @@ Class references;
 The output of this test shows the JSON structure of the *SynthesizerConfiguration*.  
 ~~~~
 {
+  "masterVolume": 120,
   "useInternalDrumKit": true,
   "useInternalSynthesizers": true,
   "sideChainSource": "",
-  "sideChainAttack": 0.5,
-  "sideChainSustain": 0.5,
-  "sideChainRelease": 0.8,
+  "sideChainAttack": 0.2,
+  "sideChainSustain": 0.7,
+  "sideChainRelease": 0.5,
   "instrument": {
     "name": "Bass 1",
     "muted": false,
@@ -577,12 +578,13 @@ The output of this test shows the JSON structure of the *Composition*.
   "stepsPerBeat": 8,
   "barsPerPattern": 4,
   "instruments": {
+    "masterVolume": 120,
     "useInternalDrumKit": true,
     "useInternalSynthesizers": true,
     "sideChainSource": "Kick",
-    "sideChainAttack": 0.5,
-    "sideChainSustain": 0.5,
-    "sideChainRelease": 0.8,
+    "sideChainAttack": 0.2,
+    "sideChainSustain": 0.7,
+    "sideChainRelease": 0.5,
     "instrument": {
       "name": "Bass 1",
       "muted": false,
@@ -2340,16 +2342,16 @@ Class references;
 **Test output**  
 The output of this test shows the time it takes to convert a simple composition, with and without side chain compression.  
 ~~~~
-Composition to sequence conversion with side chain compression took 228 ms
-Composition to sequence conversion without side chain compression took 10 ms
+Composition to sequence conversion with side chain compression took 26 ms
+Composition to sequence conversion without side chain compression took 8 ms
 ~~~~
 
 Test results
 ------------
 All 3 tests have been executed successfully (10 assertions).  
-Total test duration: 1090 ms (total sleep duration: 0 ms).  
+Total test duration: 677 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 326 Kb / 0 Mb
- * nl.zeesoft.zmmt.test.TestComposition: 334 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestComposition: 335 Kb / 0 Mb
  * nl.zeesoft.zmmt.test.TestCompositionToSequenceConvertor: 348 Kb / 0 Mb

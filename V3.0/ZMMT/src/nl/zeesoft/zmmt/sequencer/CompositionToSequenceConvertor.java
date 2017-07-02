@@ -258,7 +258,7 @@ public class CompositionToSequenceConvertor {
 			echoInst = composition.getSynthesizerConfiguration().getInstrument(Instrument.ECHO);
 			channels = 2;
 		}
-		int volume = echoInst.getVolume();
+		int volume = (echoInst.getVolume() * composition.getSynthesizerConfiguration().getMasterVolume()) / 127;
 		int layerMidiNum = echoInst.getLayer((echo.getLayer() - 1)).getMidiNum();
 		int layerPressure = echoInst.getLayer((echo.getLayer() - 1)).getPressure();
 		if (echo.getLayer()==2) {
@@ -294,7 +294,8 @@ public class CompositionToSequenceConvertor {
 				int channel = Instrument.getMidiChannelForInstrument(inst.getName(),layer);
 				createEventOnTrack(instTrack,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer1().getMidiNum(),0,tick);
 				createEventOnTrack(instTrack,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer1().getPressure(),0,tick);
-				createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
+				createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,
+					((inst.getVolume() * composition.getSynthesizerConfiguration().getMasterVolume()) / 127),tick);
 				createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 				createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer1().getReverb(),tick);
 				if (inst.getLayer2().getMidiNum()>=0) {
@@ -302,7 +303,8 @@ public class CompositionToSequenceConvertor {
 					if (channel>=0) {
 						createEventOnTrack(instTrack,ShortMessage.PROGRAM_CHANGE,channel,inst.getLayer2().getMidiNum(),0,tick);
 						createEventOnTrack(instTrack,ShortMessage.CHANNEL_PRESSURE,channel,inst.getLayer2().getPressure(),0,tick);
-						createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,inst.getVolume(),tick);
+						createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.VOLUME,
+							((inst.getVolume() * composition.getSynthesizerConfiguration().getMasterVolume()) / 127),tick);
 						createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.PAN,inst.getPan(),tick);
 						createEventOnTrack(instTrack,ShortMessage.CONTROL_CHANGE,channel,Control.REVERB,inst.getLayer2().getReverb(),tick);
 					}
