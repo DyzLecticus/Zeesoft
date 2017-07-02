@@ -4,7 +4,7 @@ Zeesoft MIDI Mod Tracker (ZMMT) is a library that contains all ZeeTracker applic
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.4.zip) to download the latest ZMMT release (version 0.9.4).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.5.zip) to download the latest ZMMT release (version 0.9.5).  
 All ZMMT releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -99,7 +99,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "pan": 64,
     "holdPercentage": 80,
     "sideChainPercentage": 20,
-    "l1MidiNum": 92,
+    "l1MidiNum": 93,
     "l1Pressure": 0,
     "l1Modulation": 0,
     "l1Reverb": 32,
@@ -340,7 +340,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "pan": 64,
     "holdPercentage": 20,
     "sideChainPercentage": 20,
-    "l1MidiNum": 89,
+    "l1MidiNum": 90,
     "l1Pressure": 0,
     "l1Modulation": 0,
     "l1Reverb": 127,
@@ -359,9 +359,9 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1ModToResonance": false,
     "l1ModToVibDepth": true,
     "l1BaseOctave": 4,
-    "l1BaseVelocity": 60,
-    "l1AccentVelocity": 80,
-    "l2MidiNum": 89,
+    "l1BaseVelocity": 56,
+    "l1AccentVelocity": 76,
+    "l2MidiNum": 90,
     "l2Pressure": 0,
     "l2Modulation": 0,
     "l2Reverb": 127,
@@ -380,8 +380,8 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l2ModToResonance": false,
     "l2ModToVibDepth": true,
     "l2BaseOctave": 5,
-    "l2BaseVelocity": 60,
-    "l2AccentVelocity": 80
+    "l2BaseVelocity": 56,
+    "l2AccentVelocity": 76
   },
   "instrument": {
     "name": "Echo",
@@ -642,7 +642,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "pan": 64,
       "holdPercentage": 80,
       "sideChainPercentage": 20,
-      "l1MidiNum": 92,
+      "l1MidiNum": 93,
       "l1Pressure": 0,
       "l1Modulation": 0,
       "l1Reverb": 32,
@@ -883,7 +883,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "pan": 64,
       "holdPercentage": 20,
       "sideChainPercentage": 20,
-      "l1MidiNum": 89,
+      "l1MidiNum": 90,
       "l1Pressure": 0,
       "l1Modulation": 0,
       "l1Reverb": 127,
@@ -902,9 +902,9 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1ModToResonance": false,
       "l1ModToVibDepth": true,
       "l1BaseOctave": 4,
-      "l1BaseVelocity": 60,
-      "l1AccentVelocity": 80,
-      "l2MidiNum": 89,
+      "l1BaseVelocity": 56,
+      "l1AccentVelocity": 76,
+      "l2MidiNum": 90,
       "l2Pressure": 0,
       "l2Modulation": 0,
       "l2Reverb": 127,
@@ -923,8 +923,8 @@ The output of this test shows the JSON structure of the *Composition*.
       "l2ModToResonance": false,
       "l2ModToVibDepth": true,
       "l2BaseOctave": 5,
-      "l2BaseVelocity": 60,
-      "l2AccentVelocity": 80
+      "l2BaseVelocity": 56,
+      "l2AccentVelocity": 76
     },
     "instrument": {
       "name": "Echo",
@@ -2342,14 +2342,14 @@ Class references;
 **Test output**  
 The output of this test shows the time it takes to convert a simple composition, with and without side chain compression.  
 ~~~~
-Composition to sequence conversion with side chain compression took 26 ms
-Composition to sequence conversion without side chain compression took 8 ms
+Composition to sequence conversion with side chain compression took 24 ms
+Composition to sequence conversion without side chain compression took 7 ms
 ~~~~
 
 Test results
 ------------
 All 3 tests have been executed successfully (10 assertions).  
-Total test duration: 677 ms (total sleep duration: 0 ms).  
+Total test duration: 649 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 326 Kb / 0 Mb

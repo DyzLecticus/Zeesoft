@@ -5,7 +5,7 @@ import nl.zeesoft.zeetracker.gui.Controller;
 import nl.zeesoft.zeetracker.gui.Settings;
 
 public class ZeeTracker {
-	public static final String	VERSION			= "1.0A";
+	public static final String	VERSION			= "1.0B";
 	public static final String	LICENSE_URL		= "http://www.dbad-license.org";
 	public static final String	WEBSITE_URL		= "https://github.com/DyzLecticus/Zeesoft/tree/master/ZeeTracker#zeetracker";
 	
@@ -47,8 +47,8 @@ public class ZeeTracker {
 		r.append(" * [MIDI](https://en.wikipedia.org/wiki/General_MIDI)  \n");
 		r.append(" * [Polyphone](http://polyphone-soundfonts.com)  \n");
 		r.append(" * [Reason](https://www.propellerheads.se)  \n");
-		r.append(" * [Audacity](http://www.audacityteam.org)  \n");
 		r.append(" * [Gervill](https://docs.oracle.com/javase/8/docs/technotes/guides/sound/enhancements_7.html)  \n");
+		r.append(" * [Audacity](http://www.audacityteam.org)  \n");
 		return r;
 	}
 
@@ -60,6 +60,32 @@ public class ZeeTracker {
 		r.append("ZeeTracker requires about 125 MB of working memory.\n");
 		r.append("Using a custom sound font will require more working memory, depending on the size of the sound font.\n");
 		r.append("The windows executable will require about 150 MB of free disk space.\n");
+		return r;
+	}
+
+	public static ZStringBuilder getSoundFonts() {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("The two internal ZeeTracker sound fonts provide replacements for the following MIDI instruments;  \n");
+		r.append(" * (ZeeTrackerDrumKit.sf2)[https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2]  \n");
+		r.append("   * 118 Synth Drum  \n");
+		r.append(" * (ZeeTrackerSynthesizers.sf2)[https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2]  \n");
+		r.append("   * 080 Square Wave  \n");
+		r.append("   * 081 Saw Wave  \n");
+		r.append("   * 082 Syn.Calliope  \n");
+		r.append("   * 083 Chiffer Lead  \n");
+		r.append("   * 084 Charang  \n");
+		r.append("   * 085 Solo Vox  \n");
+		r.append("   * 086 5th Saw Wave  \n");
+		r.append("   * 087 Bass & Lead  \n");
+		r.append("   * 088 Fantasia  \n");
+		r.append("   * 089 Warm Pad  \n");
+		r.append("   * 090 Polysynth  \n");
+		r.append("   * 091 Space Voice  \n");
+		r.append("   * 092 Bowed Glass  \n");
+		r.append("   * 093 Metal Pad  \n");
+		r.append("   * 094 Halo Pad  \n");
+		r.append("   * 095 Sweep Pad  \n");
+		r.append("**Please note** that these internal sound fonts are not General MIDI compliant.\n");
 		return r;
 	}
 }

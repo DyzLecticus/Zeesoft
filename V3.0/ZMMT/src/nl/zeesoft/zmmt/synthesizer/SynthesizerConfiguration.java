@@ -773,7 +773,7 @@ public class SynthesizerConfiguration {
 			instrument.setHoldPercentage(80);
 			instrument.setSideChainPercentage(20);
 			
-			instrument.getLayer1().setMidiNum(92);
+			instrument.getLayer1().setMidiNum(93);
 			instrument.getLayer1().setPressure(0);
 			instrument.getLayer1().setModulation(0);
 			instrument.getLayer1().setReverb(32);
@@ -983,7 +983,7 @@ public class SynthesizerConfiguration {
 			instrument.setHoldPercentage(20);
 			instrument.setSideChainPercentage(20);
 			
-			instrument.getLayer1().setMidiNum(89);
+			instrument.getLayer1().setMidiNum(90);
 			instrument.getLayer1().setPressure(0);
 			instrument.getLayer1().setModulation(0);
 			instrument.getLayer1().setReverb(127);
@@ -1002,10 +1002,10 @@ public class SynthesizerConfiguration {
 			instrument.getLayer1().setModToResonance(false);
 			instrument.getLayer1().setModToVibDepth(true);
 			instrument.getLayer1().setBaseOctave(4);
-			instrument.getLayer1().setBaseVelocity(60);
-			instrument.getLayer1().setAccentVelocity(80);
+			instrument.getLayer1().setBaseVelocity(56);
+			instrument.getLayer1().setAccentVelocity(76);
 			
-			instrument.getLayer2().setMidiNum(89);
+			instrument.getLayer2().setMidiNum(90);
 			instrument.getLayer2().setPressure(0);
 			instrument.getLayer2().setModulation(0);
 			instrument.getLayer2().setReverb(127);
@@ -1024,8 +1024,8 @@ public class SynthesizerConfiguration {
 			instrument.getLayer2().setModToResonance(false);
 			instrument.getLayer2().setModToVibDepth(true);
 			instrument.getLayer2().setBaseOctave(5);
-			instrument.getLayer2().setBaseVelocity(60);
-			instrument.getLayer2().setAccentVelocity(80);
+			instrument.getLayer2().setBaseVelocity(56);
+			instrument.getLayer2().setAccentVelocity(76);
 		}
 	}
 

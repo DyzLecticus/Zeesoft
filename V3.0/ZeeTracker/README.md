@@ -29,13 +29,36 @@ References;
  * [MIDI](https://en.wikipedia.org/wiki/General_MIDI)  
  * [Polyphone](http://polyphone-soundfonts.com)  
  * [Reason](https://www.propellerheads.se)  
- * [Audacity](http://www.audacityteam.org)  
  * [Gervill](https://docs.oracle.com/javase/8/docs/technotes/guides/sound/enhancements_7.html)  
+ * [Audacity](http://www.audacityteam.org)  
+
+**Internal sound fonts**  
+The two internal ZeeTracker sound fonts provide replacements for the following MIDI instruments;  
+ * (ZeeTrackerDrumKit.sf2)[https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2]  
+   * 118 Synth Drum  
+ * (ZeeTrackerSynthesizers.sf2)[https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2]  
+   * 080 Square Wave  
+   * 081 Saw Wave  
+   * 082 Syn.Calliope  
+   * 083 Chiffer Lead  
+   * 084 Charang  
+   * 085 Solo Vox  
+   * 086 5th Saw Wave  
+   * 087 Bass & Lead  
+   * 088 Fantasia  
+   * 089 Warm Pad  
+   * 090 Polysynth  
+   * 091 Space Voice  
+   * 092 Bowed Glass  
+   * 093 Metal Pad  
+   * 094 Halo Pad  
+   * 095 Sweep Pad  
+**Please note** that these internal sound fonts are not General MIDI compliant.
 
 **Requirements and download**  
-The most recent ZeeTracker version is 1.0A.
+The most recent ZeeTracker version is 1.0B.
 Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).
-Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0A.exe) (+- 40 MB).
+Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0B.exe) (+- 40 MB).
 ZeeTracker requires about 125 MB of working memory.
 Using a custom sound font will require more working memory, depending on the size of the sound font.
 The windows executable will require about 150 MB of free disk space.
@@ -119,14 +142,20 @@ The output of this test shows the JSON structure of the *Settings*.
     "Z": 48
   },
   "instruments": {
+    "masterVolume": 120,
     "useInternalDrumKit": true,
     "useInternalSynthesizers": true,
+    "sideChainSource": "",
+    "sideChainAttack": 0.2,
+    "sideChainSustain": 0.7,
+    "sideChainRelease": 0.5,
     "instrument": {
       "name": "Bass 1",
       "muted": false,
       "volume": 100,
       "pan": 64,
       "holdPercentage": 90,
+      "sideChainPercentage": 40,
       "l1MidiNum": 81,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -176,7 +205,8 @@ The output of this test shows the JSON structure of the *Settings*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 80,
-      "l1MidiNum": 92,
+      "sideChainPercentage": 20,
+      "l1MidiNum": 93,
       "l1Pressure": 0,
       "l1Modulation": 0,
       "l1Reverb": 32,
@@ -204,6 +234,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 100,
+      "sideChainPercentage": 0,
       "l1MidiNum": 84,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -232,6 +263,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 75,
+      "sideChainPercentage": 0,
       "l1MidiNum": 83,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -281,6 +313,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 80,
+      "sideChainPercentage": 0,
       "l1MidiNum": 81,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -308,14 +341,15 @@ The output of this test shows the JSON structure of the *Settings*.
       "muted": false,
       "volume": 100,
       "pan": 64,
-      "holdPercentage": 75,
-      "l1MidiNum": 83,
+      "holdPercentage": 10,
+      "sideChainPercentage": 0,
+      "l1MidiNum": 86,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 72,
-      "l1Chorus": 0,
-      "l1Filter": 48,
-      "l1Resonance": 80,
+      "l1Reverb": 0,
+      "l1Chorus": 64,
+      "l1Filter": 64,
+      "l1Resonance": 92,
       "l1Attack": 64,
       "l1Decay": 64,
       "l1Release": 64,
@@ -327,9 +361,9 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1ModToChorus": false,
       "l1ModToResonance": false,
       "l1ModToVibDepth": true,
-      "l1BaseOctave": 4,
-      "l1BaseVelocity": 72,
-      "l1AccentVelocity": 80
+      "l1BaseOctave": 3,
+      "l1BaseVelocity": 56,
+      "l1AccentVelocity": 64
     },
     "instrument": {
       "name": "Lead",
@@ -337,6 +371,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 75,
+      "sideChainPercentage": 0,
       "l1MidiNum": 80,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -411,7 +446,8 @@ The output of this test shows the JSON structure of the *Settings*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 20,
-      "l1MidiNum": 89,
+      "sideChainPercentage": 20,
+      "l1MidiNum": 90,
       "l1Pressure": 0,
       "l1Modulation": 0,
       "l1Reverb": 127,
@@ -430,9 +466,9 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1ModToResonance": false,
       "l1ModToVibDepth": true,
       "l1BaseOctave": 4,
-      "l1BaseVelocity": 60,
-      "l1AccentVelocity": 80,
-      "l2MidiNum": 89,
+      "l1BaseVelocity": 56,
+      "l1AccentVelocity": 76,
+      "l2MidiNum": 90,
       "l2Pressure": 0,
       "l2Modulation": 0,
       "l2Reverb": 127,
@@ -451,8 +487,8 @@ The output of this test shows the JSON structure of the *Settings*.
       "l2ModToResonance": false,
       "l2ModToVibDepth": true,
       "l2BaseOctave": 5,
-      "l2BaseVelocity": 60,
-      "l2AccentVelocity": 80
+      "l2BaseVelocity": 56,
+      "l2AccentVelocity": 76
     },
     "instrument": {
       "name": "Echo",
@@ -460,6 +496,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "volume": 100,
       "pan": 64,
       "holdPercentage": 90,
+      "sideChainPercentage": 0,
       "l1MidiNum": 0,
       "l1Pressure": 0,
       "l1Modulation": 0,
@@ -485,22 +522,22 @@ The output of this test shows the JSON structure of the *Settings*.
     "drum": {
       "name": "Kick",
       "muted": false,
-      "l1MidiNote": 40,
-      "l1BaseVelocity": 90,
-      "l1AccentVelocity": 116,
-      "l2MidiNote": 34,
-      "l2BaseVelocity": 100,
-      "l2AccentVelocity": 110
+      "l1MidiNote": 35,
+      "l1BaseVelocity": 96,
+      "l1AccentVelocity": 104,
+      "l2MidiNote": 40,
+      "l2BaseVelocity": 90,
+      "l2AccentVelocity": 116
     },
     "drum": {
       "name": "Snare",
       "muted": false,
-      "l1MidiNote": 54,
-      "l1BaseVelocity": 48,
-      "l1AccentVelocity": 58,
-      "l2MidiNote": 34,
-      "l2BaseVelocity": 100,
-      "l2AccentVelocity": 110
+      "l1MidiNote": 50,
+      "l1BaseVelocity": 78,
+      "l1AccentVelocity": 88,
+      "l2MidiNote": 54,
+      "l2BaseVelocity": 48,
+      "l2AccentVelocity": 58
     },
     "drum": {
       "name": "Hihat 1",
@@ -623,7 +660,7 @@ The output of this test shows the JSON structure of the *Settings*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 138 ms (total sleep duration: 0 ms).  
+Total test duration: 120 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zeetracker.test.TestSettings: 347 Kb / 0 Mb
+ * nl.zeesoft.zeetracker.test.TestSettings: 355 Kb / 0 Mb

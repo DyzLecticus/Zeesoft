@@ -10,7 +10,7 @@
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<!-- ZMMT version -->
-	<property name="versionZMMT" value="0.9.4"/>
+	<property name="versionZMMT" value="0.9.5"/>
 	<property name="releasesZMMT" location="../ZMMT/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -155,6 +155,7 @@
 	</target>
 
 	<target name="distZTexeConfirmed">
+		<antcall target="clean"/>
 		<antcall target="distZT"/>
 		<mkdir dir="${build}/ZT"/>
 		<mkdir dir="${build}/ZT/package"/>
@@ -172,7 +173,7 @@
 			<equals arg1="${_error}" arg2="1"/>
 		</condition>
 		<fail if="_abort" message="Failed to package exectuable"/>		
-		<copy file="${build}/ZT/packages/bundles/ZeeTracker-1.0A.exe" tofile="${dist}/ZeeTracker-1.0A.exe"/>
+		<copy file="${build}/ZT/packages/bundles/ZeeTracker-1.0B.exe" tofile="${dist}/ZeeTracker-1.0B.exe"/>
 		<delete dir="${build}/ZT"/>
 	</target>
 
