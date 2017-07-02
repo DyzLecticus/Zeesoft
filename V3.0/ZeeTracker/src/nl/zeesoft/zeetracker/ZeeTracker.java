@@ -66,9 +66,9 @@ public class ZeeTracker {
 	public static ZStringBuilder getSoundFonts() {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("The two internal ZeeTracker sound fonts provide replacements for the following MIDI instruments;  \n");
-		r.append(" * (ZeeTrackerDrumKit.sf2)[https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2]  \n");
+		r.append(" * [ZeeTrackerDrumKit.sf2](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2)  \n");
 		r.append("   * 118 Synth Drum  \n");
-		r.append(" * (ZeeTrackerSynthesizers.sf2)[https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2]  \n");
+		r.append(" * [ZeeTrackerSynthesizers.sf2](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2)  \n");
 		r.append("   * 080 Square Wave  \n");
 		r.append("   * 081 Saw Wave  \n");
 		r.append("   * 082 Syn.Calliope  \n");

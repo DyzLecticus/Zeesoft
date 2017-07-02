@@ -34,9 +34,9 @@ References;
 
 **Internal sound fonts**  
 The two internal ZeeTracker sound fonts provide replacements for the following MIDI instruments;  
- * (ZeeTrackerDrumKit.sf2)[https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2]  
+ * [ZeeTrackerDrumKit.sf2](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2)  
    * 118 Synth Drum  
- * (ZeeTrackerSynthesizers.sf2)[https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2]  
+ * [ZeeTrackerSynthesizers.sf2](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2)  
    * 080 Square Wave  
    * 081 Saw Wave  
    * 082 Syn.Calliope  
@@ -660,7 +660,7 @@ The output of this test shows the JSON structure of the *Settings*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 120 ms (total sleep duration: 0 ms).  
+Total test duration: 125 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zeetracker.test.TestSettings: 355 Kb / 0 Mb
