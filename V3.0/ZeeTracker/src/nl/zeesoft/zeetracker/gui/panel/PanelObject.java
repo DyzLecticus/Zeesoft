@@ -60,15 +60,23 @@ public abstract class PanelObject implements PropertyChangeListener, ChangeListe
 
 	public abstract void initialize();
 
-
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		handlePropertyChanged(evt.getSource());
+		if (evt.getNewValue()!=null && evt.getOldValue()!=null &&
+			evt.getNewValue().toString()!=evt.getOldValue().toString()
+			) {
+			handlePropertyChanged(evt.getSource());
+		}
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent evt) {
-		handlePropertyChanged(evt.getSource());
+		if (evt.getSource() instanceof JSlider) {
+			JSlider source = (JSlider) evt.getSource();
+			if (!source.getValueIsAdjusting()) {
+				handlePropertyChanged(evt.getSource());
+	        }
+		}
 	}
 	
 	@Override
