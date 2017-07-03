@@ -23,7 +23,7 @@ public class ZeeTracker {
 		r.append("This means that ZeeTracker is made for regular computer keyboard control.\n");
 		r.append("Part of this feature is that almost all interface components support playing notes in response to typing certain things on the keyboard.\n");
 		r.append("By default, typing \"q\", \"2\" and then \"w\" will play the corresponding notes C-3, C#3 and then D-3 on the currently selected instrument.\n");
-		r.append("This extends all the way up to C-5 when typing \"m\".\n");
+		r.append("This extends all the way up to B-4 when typing \"m\".\n");
 		r.append("In order to provide more control an accent velocity can be played by combining these keys with the Shift key.\n");
 		r.append("(Caps Lock is interpreted as a Shift lock).\n");
 		r.append("  \n");
