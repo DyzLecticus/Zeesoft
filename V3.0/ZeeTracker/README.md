@@ -605,12 +605,12 @@ The output of this test shows the JSON structure of the *Settings*.
     "drum": {
       "name": "Cymbal",
       "muted": false,
-      "l1MidiNote": 71,
-      "l1BaseVelocity": 44,
-      "l1AccentVelocity": 48,
-      "l2MidiNote": 34,
-      "l2BaseVelocity": 100,
-      "l2AccentVelocity": 110
+      "l1MidiNote": 70,
+      "l1BaseVelocity": 72,
+      "l1AccentVelocity": 76,
+      "l2MidiNote": 71,
+      "l2BaseVelocity": 44,
+      "l2AccentVelocity": 48
     },
     "drum": {
       "name": "FX 1",
@@ -663,7 +663,7 @@ The output of this test shows the JSON structure of the *Settings*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 119 ms (total sleep duration: 0 ms).  
+Total test duration: 115 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zeetracker.test.TestSettings: 355 Kb / 0 Mb
