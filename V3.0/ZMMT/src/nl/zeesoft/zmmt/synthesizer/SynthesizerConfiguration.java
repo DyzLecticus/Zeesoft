@@ -1072,9 +1072,9 @@ public class SynthesizerConfiguration {
 			drum.setLayer1MidiNote(70);
 			drum.setLayer1BaseVelocity(72);
 			drum.setLayer1AccentVelocity(76);
-			drum.setLayer1MidiNote(71);
-			drum.setLayer1BaseVelocity(44);
-			drum.setLayer1AccentVelocity(48);
+			drum.setLayer2MidiNote(71);
+			drum.setLayer2BaseVelocity(44);
+			drum.setLayer2AccentVelocity(48);
 		} else if (drum.getName().equals(Drum.FX1)) {
 			drum.setLayer1MidiNote(80);
 			drum.setLayer1BaseVelocity(58);

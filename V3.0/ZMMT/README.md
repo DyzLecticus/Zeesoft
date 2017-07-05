@@ -4,7 +4,7 @@ Zeesoft MIDI Mod Tracker (ZMMT) is a library that contains all ZeeTracker applic
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.5.zip) to download the latest ZMMT release (version 0.9.5).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.6.zip) to download the latest ZMMT release (version 0.9.6).  
 All ZMMT releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -495,12 +495,12 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
   "drum": {
     "name": "Cymbal",
     "muted": false,
-    "l1MidiNote": 71,
-    "l1BaseVelocity": 44,
-    "l1AccentVelocity": 48,
-    "l2MidiNote": 34,
-    "l2BaseVelocity": 100,
-    "l2AccentVelocity": 110
+    "l1MidiNote": 70,
+    "l1BaseVelocity": 72,
+    "l1AccentVelocity": 76,
+    "l2MidiNote": 71,
+    "l2BaseVelocity": 44,
+    "l2AccentVelocity": 48
   },
   "drum": {
     "name": "FX 1",
@@ -1038,12 +1038,12 @@ The output of this test shows the JSON structure of the *Composition*.
     "drum": {
       "name": "Cymbal",
       "muted": false,
-      "l1MidiNote": 71,
-      "l1BaseVelocity": 44,
-      "l1AccentVelocity": 48,
-      "l2MidiNote": 34,
-      "l2BaseVelocity": 100,
-      "l2AccentVelocity": 110
+      "l1MidiNote": 70,
+      "l1BaseVelocity": 72,
+      "l1AccentVelocity": 76,
+      "l2MidiNote": 71,
+      "l2BaseVelocity": 44,
+      "l2AccentVelocity": 48
     },
     "drum": {
       "name": "FX 1",
@@ -2342,14 +2342,14 @@ Class references;
 **Test output**  
 The output of this test shows the time it takes to convert a simple composition, with and without side chain compression.  
 ~~~~
-Composition to sequence conversion with side chain compression took 24 ms
-Composition to sequence conversion without side chain compression took 7 ms
+Composition to sequence conversion with side chain compression took 31 ms
+Composition to sequence conversion without side chain compression took 11 ms
 ~~~~
 
 Test results
 ------------
 All 3 tests have been executed successfully (10 assertions).  
-Total test duration: 649 ms (total sleep duration: 0 ms).  
+Total test duration: 538 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 326 Kb / 0 Mb

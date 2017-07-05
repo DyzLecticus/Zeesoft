@@ -756,17 +756,20 @@ public class CompositionToSequenceConvertor {
 		if (addSideChainCompression) {
 			// Apply side chain compression to volume controls
 			for (InstrumentLayerChannel il: instrumentLayers) {
-				if (channelHasNotes[il.channel]) {
+				if (channelHasNotes[il.channel] && instruments.get(il.instrument).getSideChainPercentage()>0) {
 					List<SeqControl> expressionControls = channelExpressionControlMap.get("" + il.channel);
 					boolean toEchoControls = false;
 					for (int s = 0; s < sideChainVelocityPerStep.length; s++) {
 						if (sideChainVelocityPerStep[s]>0) {
-							int maxTick = 0;
+							long maxTick = 0;
 							for (int sn = (s + 1); sn < sideChainVelocityPerStep.length; sn++) {
 								if (sideChainVelocityPerStep[sn]>0 || (sn - s) > 24) {
 									maxTick = (sn * ticksPerStep - 1);
 									break;
 								}
+							}
+							if (maxTick==0) {
+								maxTick = sequenceEndTick;
 							}
 							long fromTick = s * ticksPerStep;
 							long toTick = fromTick + (long) ((
@@ -794,7 +797,7 @@ public class CompositionToSequenceConvertor {
 									break;
 								}
 							}
-							if (fromExpression>0 && toExpression>0) {
+							if (fromExpression>0 || toExpression>0) {
 								for (SeqControl ctrl: removeControls) {
 									r.remove(ctrl);
 									if (echoControls.contains(ctrl)) {
