@@ -5,7 +5,7 @@ The interface is based on mod trackers like Scream Tracker and Impulse Tracker.
 This means that ZeeTracker is made for regular computer keyboard control.
 Part of this feature is that almost all interface components support playing notes in response to typing certain things on the keyboard.
 By default, typing "q", "2" and then "w" will play the corresponding notes C-3, C#3 and then D-3 on the currently selected instrument.
-This extends all the way up to C-5 when typing "m".
+This extends all the way up to B-4 when typing "m".
 In order to provide more control an accent velocity can be played by combining these keys with the Shift key.
 (Caps Lock is interpreted as a Shift lock).
   
@@ -53,6 +53,8 @@ The two internal ZeeTracker sound fonts provide replacements for the following M
    * 093 Metal Pad  
    * 094 Halo Pad  
    * 095 Sweep Pad  
+   * 096 Ice Rain  
+   * 097 Soundtrack  
   
 **Please note** that these internal sound fonts are not General MIDI compliant.
 
@@ -661,7 +663,7 @@ The output of this test shows the JSON structure of the *Settings*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 125 ms (total sleep duration: 0 ms).  
+Total test duration: 119 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zeetracker.test.TestSettings: 355 Kb / 0 Mb

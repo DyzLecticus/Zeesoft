@@ -341,13 +341,13 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		r.add(item);
 
 		item = new JMenuItem("Pattern up 1");
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP,evt));
 		item.setActionCommand(SEQUENCE_PATTERN_UP_1);
 		item.addActionListener(this);
 		r.add(item);
 
 		item = new JMenuItem("Pattern down 1");
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,evt));
 		item.setActionCommand(SEQUENCE_PATTERN_DOWN_1);
 		item.addActionListener(this);
 		r.add(item);
@@ -355,13 +355,13 @@ public class PanelSequence extends PanelObject implements StateChangeSubscriber,
 		evt = ActionEvent.ALT_MASK + ActionEvent.SHIFT_MASK;
 		
 		item = new JMenuItem("Pattern up 10");
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,evt));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP,evt));
 		item.setActionCommand(SEQUENCE_PATTERN_UP_10);
 		item.addActionListener(this);
 		r.add(item);
 
 		item = new JMenuItem("Pattern down 10");
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,evt));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,evt));
 		item.setActionCommand(SEQUENCE_PATTERN_DOWN_10);
 		item.addActionListener(this);
 		r.add(item);

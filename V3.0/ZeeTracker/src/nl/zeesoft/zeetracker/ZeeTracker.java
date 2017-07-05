@@ -85,6 +85,8 @@ public class ZeeTracker {
 		r.append("   * 093 Metal Pad  \n");
 		r.append("   * 094 Halo Pad  \n");
 		r.append("   * 095 Sweep Pad  \n");
+		r.append("   * 096 Ice Rain  \n");
+		r.append("   * 097 Soundtrack  \n");
 		r.append("  \n");
 		r.append("**Please note** that these internal sound fonts are not General MIDI compliant.\n");
 		return r;
