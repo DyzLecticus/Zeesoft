@@ -69,9 +69,11 @@ The two internal ZeeTracker sound fonts provide replacements for the following M
   
 **Please note** that these internal sound fonts are not General MIDI compliant.
   
-Demo composition
-----------------
-A recording of the ZeeTracker demo composition is available on [SoundCloud](https://soundcloud.com/dyz-lecticus/zeetracker-demo-composition).
+Demo compositions
+-----------------
+Recordings of the demo compositions included in the application are available on SoundCloud;
+ * [Demo 1](https://soundcloud.com/dyz-lecticus/zeetracker-demo-composition).
+ * [Demo 2](https://soundcloud.com/dyz-lecticus/zeetracker-demo-composition2).
   
 Screen shots
 ------------
