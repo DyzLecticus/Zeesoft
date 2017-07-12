@@ -19,7 +19,8 @@ public class ImportExportWorker extends Worker {
 	private static final String		INITIALIZE				= "INITIALIZE";
 	private static final String		LOAD_COMPOSITION		= "LOAD_COMPOSITION";
 	private static final String		SAVE_COMPOSITION		= "SAVE_COMPOSITION";
-	private static final String		LOAD_DEMO_COMPOSITION	= "LOAD_DEMO_COMPOSITION";
+	private static final String		LOAD_DEMO_COMPOSITION_1	= "LOAD_DEMO_COMPOSITION_1";
+	private static final String		LOAD_DEMO_COMPOSITION_2	= "LOAD_DEMO_COMPOSITION_2";
 	
 	private Controller				controller				= null;
 
@@ -98,8 +99,12 @@ public class ImportExportWorker extends Worker {
 		handleAction(SAVE_COMPOSITION,composition,file);
 	}
 
-	public void loadDemoComposition(Settings settings) {
-		handleAction(LOAD_DEMO_COMPOSITION,settings,null);
+	public void loadDemoComposition(Settings settings,int demo) {
+		String action = LOAD_DEMO_COMPOSITION_1;
+		if (demo==2) {
+			action = LOAD_DEMO_COMPOSITION_2;
+		}
+		handleAction(action,settings,null);
 	}
 	
 	@Override
@@ -193,10 +198,14 @@ public class ImportExportWorker extends Worker {
 					}
 				}
 			}
-		} else if (action.equals(LOAD_DEMO_COMPOSITION)) {
-			controller.setBusy(this,"Loading demo composition","");
+		} else if (action.equals(LOAD_DEMO_COMPOSITION_1) || action.equals(LOAD_DEMO_COMPOSITION_2)) {
+			int demo = 1;
+			if (action.equals(LOAD_DEMO_COMPOSITION_2)) {
+				demo = 2;
+			}
+			controller.setBusy(this,"Loading demo composition " + demo,"");
 			Settings settings = (Settings) actionObject;
-			Composition composition = settings.getNewComposition(true);
+			Composition composition = settings.getNewComposition(demo);
 			controller.loadedComposition(null,composition);
 			controller.setDone(this,true);
 		}

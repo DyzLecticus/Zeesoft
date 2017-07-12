@@ -37,7 +37,8 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	private static final String	SAVE				= "SAVE";
 	private static final String	SAVE_AS				= "SAVE_AS";
 	private static final String	NEW					= "NEW";
-	private static final String	DEMO				= "DEMO";
+	private static final String	DEMO_1				= "DEMO_1";
+	private static final String	DEMO_2				= "DEMO_2";
 	private static final String	LOAD_FILE_PREFIX	= "LOAD_FILE:";
 	
 	public static final String	EDIT_UNDO			= "EDIT_UNDO";
@@ -205,8 +206,10 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		if (evt.getActionCommand().equals(DEMO)) {
-			getController().newComposition(true);
+		if (evt.getActionCommand().equals(DEMO_1)) {
+			getController().newComposition(1);
+		} else if (evt.getActionCommand().equals(DEMO_2)) {
+			getController().newComposition(2);
 		} else if (evt.getActionCommand().equals(ABOUT)) {
 			getController().showAbout();
 		} else if (evt.getActionCommand().equals(LOAD)) {
@@ -218,7 +221,7 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		} else if (evt.getActionCommand().equals(SAVE_AS)) {
 			getController().saveCompositionAs();
 		} else if (evt.getActionCommand().equals(NEW)) {
-			getController().newComposition(false);
+			getController().newComposition(0);
 		} else if (evt.getActionCommand().equals(QUIT)) {
 			getController().closeProgram();
 		} else if (evt.getActionCommand().equals(TAB_COMPOSITION)) {
@@ -382,8 +385,13 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item.addActionListener(this);
 		fileMenu.add(item);
 
-		item = new JMenuItem("Demo",KeyEvent.VK_D);
-		item.setActionCommand(DEMO);
+		item = new JMenuItem("Demo 1",KeyEvent.VK_1);
+		item.setActionCommand(DEMO_1);
+		item.addActionListener(this);
+		fileMenu.add(item);
+
+		item = new JMenuItem("Demo 2",KeyEvent.VK_2);
+		item.setActionCommand(DEMO_2);
 		item.addActionListener(this);
 		fileMenu.add(item);
 

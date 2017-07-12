@@ -10,7 +10,7 @@
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<!-- ZMMT version -->
-	<property name="versionZMMT" value="0.9.6"/>
+	<property name="versionZMMT" value="0.9.7"/>
 	<property name="releasesZMMT" location="../ZMMT/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
@@ -136,7 +136,8 @@
 		<fail if="_abort" message="Failed to generate manifest"/>		
 
 		<mkdir dir="${build}/ZT/build/resources"/>
-		<copy file="resources/DemoComposition.ztc" tofile="${build}/ZT/build/resources/DemoComposition.ztc"/>
+		<copy file="resources/DemoComposition1.ztc" tofile="${build}/ZT/build/resources/DemoComposition1.ztc"/>
+		<copy file="resources/DemoComposition2.ztc" tofile="${build}/ZT/build/resources/DemoComposition2.ztc"/>
 		<copy file="resources/ZeeTrackerDrumKit.sf2" tofile="${build}/ZT/build/resources/ZeeTrackerDrumKit.sf2"/>
 		<copy file="resources/ZeeTrackerSynthesizers.sf2" tofile="${build}/ZT/build/resources/ZeeTrackerSynthesizers.sf2"/>
 		

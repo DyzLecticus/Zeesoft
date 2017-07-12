@@ -23,7 +23,8 @@ public class Settings {
 			
 	private static final String			WORK_DIR					= "ZeeTracker";
 	private static final String			SETTINGS_JSON				= "settings.json";
-	private static final String			DEMO_COMPOSITION			= RESOURCES + "DemoComposition.ztc";
+	private static final String			DEMO_COMPOSITION_1			= RESOURCES + "DemoComposition1.ztc";
+	private static final String			DEMO_COMPOSITION_2			= RESOURCES + "DemoComposition2.ztc";
 	
 	private	String						composer					= "";
 	
@@ -256,10 +257,10 @@ public class Settings {
 		}
 	}
 	
-	public Composition getNewComposition(boolean demo) {
+	public Composition getNewComposition(int demo) {
 		Composition composition = null;
-		if (demo) {
-			composition = getNewDemoComposition();
+		if (demo>0) {
+			composition = getNewDemoComposition(demo);
 		}
 		if (composition==null) {
 			composition = new Composition();
@@ -273,15 +274,19 @@ public class Settings {
 		return composition;
 	}
 	
-	public Composition getNewDemoComposition() {
+	public Composition getNewDemoComposition(int demo) {
 		Composition composition = new Composition();
+		String name = DEMO_COMPOSITION_1;
+		if (demo==2) {
+			name = DEMO_COMPOSITION_2;
+		}
 		String err = "";
 		ZStringBuilder sb = new ZStringBuilder();
-		InputStream is = getClass().getResourceAsStream("/" + DEMO_COMPOSITION);
+		InputStream is = getClass().getResourceAsStream("/" + name);
 		if (is!=null) {
 			err = sb.fromInputStream(is);
 		} else {
-			File file = new File(DEMO_COMPOSITION);
+			File file = new File(name);
 			if (file.exists()) {
 				err = sb.fromFile(file.getAbsolutePath());
 			}

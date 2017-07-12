@@ -62,7 +62,7 @@ The two internal ZeeTracker sound fonts provide replacements for the following M
 The most recent ZeeTracker version is 1.0B.
 Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).
 Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0B.exe) (+- 40 MB).
-ZeeTracker requires about 125 MB of working memory.
+ZeeTracker requires about 200 MB of working memory.
 Using a custom sound font will require more working memory, depending on the size of the sound font.
 The windows executable will require about 150 MB of free disk space.
 
@@ -159,15 +159,15 @@ The output of this test shows the JSON structure of the *Settings*.
       "pan": 64,
       "holdPercentage": 90,
       "sideChainPercentage": 40,
-      "l1MidiNum": 81,
+      "l1MidiNum": 87,
       "l1Pressure": 0,
       "l1Modulation": 0,
       "l1Reverb": 0,
       "l1Chorus": 0,
-      "l1Filter": 12,
-      "l1Resonance": 64,
+      "l1Filter": 16,
+      "l1Resonance": 76,
       "l1Attack": 28,
-      "l1Decay": 64,
+      "l1Decay": 48,
       "l1Release": 64,
       "l1VibRate": 64,
       "l1VibDepth": 64,
@@ -178,13 +178,13 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1ModToResonance": false,
       "l1ModToVibDepth": false,
       "l1BaseOctave": 2,
-      "l1BaseVelocity": 120,
+      "l1BaseVelocity": 116,
       "l1AccentVelocity": 124,
       "l2MidiNum": 85,
       "l2Pressure": 0,
       "l2Modulation": 0,
       "l2Reverb": 0,
-      "l2Chorus": 64,
+      "l2Chorus": 40,
       "l2Filter": 64,
       "l2Resonance": 80,
       "l2Attack": 64,
@@ -199,8 +199,8 @@ The output of this test shows the JSON structure of the *Settings*.
       "l2ModToResonance": false,
       "l2ModToVibDepth": false,
       "l2BaseOctave": 2,
-      "l2BaseVelocity": 56,
-      "l2AccentVelocity": 60
+      "l2BaseVelocity": 48,
+      "l2AccentVelocity": 56
     },
     "instrument": {
       "name": "Bass 2",
@@ -212,8 +212,8 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1MidiNum": 93,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 32,
-      "l1Chorus": 100,
+      "l1Reverb": 8,
+      "l1Chorus": 40,
       "l1Filter": 48,
       "l1Resonance": 80,
       "l1Attack": 64,
@@ -228,8 +228,8 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1ModToResonance": false,
       "l1ModToVibDepth": true,
       "l1BaseOctave": 3,
-      "l1BaseVelocity": 48,
-      "l1AccentVelocity": 56
+      "l1BaseVelocity": 60,
+      "l1AccentVelocity": 68
     },
     "instrument": {
       "name": "Bass 3",
@@ -242,7 +242,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1Pressure": 0,
       "l1Modulation": 0,
       "l1Reverb": 24,
-      "l1Chorus": 0,
+      "l1Chorus": 8,
       "l1Filter": 64,
       "l1Resonance": 64,
       "l1Attack": 64,
@@ -270,7 +270,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1MidiNum": 83,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 72,
+      "l1Reverb": 48,
       "l1Chorus": 0,
       "l1Filter": 48,
       "l1Resonance": 80,
@@ -291,7 +291,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "l2MidiNum": 82,
       "l2Pressure": 0,
       "l2Modulation": 0,
-      "l2Reverb": 88,
+      "l2Reverb": 40,
       "l2Chorus": 0,
       "l2Filter": 52,
       "l2Resonance": 72,
@@ -326,7 +326,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1Resonance": 64,
       "l1Attack": 64,
       "l1Decay": 64,
-      "l1Release": 64,
+      "l1Release": 66,
       "l1VibRate": 64,
       "l1VibDepth": 64,
       "l1VibDelay": 64,
@@ -399,7 +399,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "l2MidiNum": 84,
       "l2Pressure": 0,
       "l2Modulation": 0,
-      "l2Reverb": 127,
+      "l2Reverb": 100,
       "l2Chorus": 0,
       "l2Filter": 52,
       "l2Resonance": 64,
@@ -427,7 +427,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1MidiNum": 118,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 20,
+      "l1Reverb": 8,
       "l1Chorus": 0,
       "l1Filter": 64,
       "l1Resonance": 64,
@@ -453,12 +453,12 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1MidiNum": 90,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 127,
+      "l1Reverb": 72,
       "l1Chorus": 0,
       "l1Filter": 64,
       "l1Resonance": 64,
       "l1Attack": 64,
-      "l1Decay": 64,
+      "l1Decay": 52,
       "l1Release": 64,
       "l1VibRate": 64,
       "l1VibDepth": 64,
@@ -470,12 +470,12 @@ The output of this test shows the JSON structure of the *Settings*.
       "l1ModToVibDepth": true,
       "l1BaseOctave": 4,
       "l1BaseVelocity": 56,
-      "l1AccentVelocity": 76,
+      "l1AccentVelocity": 64,
       "l2MidiNum": 90,
       "l2Pressure": 0,
       "l2Modulation": 0,
-      "l2Reverb": 127,
-      "l2Chorus": 48,
+      "l2Reverb": 72,
+      "l2Chorus": 52,
       "l2Filter": 64,
       "l2Resonance": 64,
       "l2Attack": 80,
@@ -491,7 +491,7 @@ The output of this test shows the JSON structure of the *Settings*.
       "l2ModToVibDepth": true,
       "l2BaseOctave": 5,
       "l2BaseVelocity": 56,
-      "l2AccentVelocity": 76
+      "l2AccentVelocity": 64
     },
     "instrument": {
       "name": "Echo",
@@ -663,7 +663,7 @@ The output of this test shows the JSON structure of the *Settings*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 115 ms (total sleep duration: 0 ms).  
+Total test duration: 117 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zeetracker.test.TestSettings: 355 Kb / 0 Mb
+ * nl.zeesoft.zeetracker.test.TestSettings: 356 Kb / 0 Mb

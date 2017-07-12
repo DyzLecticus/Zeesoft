@@ -57,7 +57,7 @@ public class ZeeTracker {
 		r.append("The most recent ZeeTracker version is " + VERSION + ".\n");
 		r.append("Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).\n");
 		r.append("Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-" + VERSION + ".exe) (+- 40 MB).\n");
-		r.append("ZeeTracker requires about 125 MB of working memory.\n");
+		r.append("ZeeTracker requires about 200 MB of working memory.\n");
 		r.append("Using a custom sound font will require more working memory, depending on the size of the sound font.\n");
 		r.append("The windows executable will require about 150 MB of free disk space.\n");
 		return r;
