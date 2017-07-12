@@ -76,11 +76,16 @@ public class CompositionToSequenceConvertor {
 	private boolean										externalize					= false;
 	private boolean										addMarkers					= false;
 	private boolean										addSideChainCompression		= false;
+	
 	private SortedMap<String,InstrumentConfiguration>	instruments					= new TreeMap<String,InstrumentConfiguration>();
+	
 	private boolean[]									channelHasNotes				= new boolean[16];
 	private List<Pattern>								patterns					= null;
 	private int[][]										velocityPerStepChannel		= null;
+	
 	private int[]										sideChainVelocityPerStep	= null;
+	private long[]										channelSideChainTickFrom	= null;
+	private long[]										channelSideChainTickTo		= null;
 	
 	public CompositionToSequenceConvertor(Composition composition) {
 		this.composition = composition;
@@ -189,6 +194,12 @@ public class CompositionToSequenceConvertor {
 			velocityPerStepChannel = new int[steps][16];
 			if (addSideChainCompression) {
 				sideChainVelocityPerStep = new int[steps];
+				channelSideChainTickFrom = new long[16];
+				channelSideChainTickTo = new long[16];
+				for (int c = 0; c < 16; c++) {
+					channelSideChainTickFrom[c] = sequenceEndTick;
+					channelSideChainTickTo[c] = 0;
+				}
 			}
 			for (int s = 0; s < steps; s++) {
 				for (int c = 0; c < 16; c++) {
@@ -454,6 +465,16 @@ public class CompositionToSequenceConvertor {
 								sn.tickEnd = tickEnd;
 								r.add(sn);
 								channelHasNotes[sn.channel] = true;
+
+								if (addSideChainCompression) {
+									if (sn.tickStart<channelSideChainTickFrom[sn.channel]) {
+										channelSideChainTickFrom[sn.channel] = sn.tickStart;
+									}
+									long scTickEnd = tickEnd + (composition.getBarsPerPattern() * ticksPerStep);
+									if (scTickEnd>channelSideChainTickTo[sn.channel]) {
+										channelSideChainTickTo[sn.channel]=scTickEnd;
+									}
+								}
 								
 								int currentStep = (patternStartStep + (n.step - 1));
 								if (mnd!=null) {
@@ -780,123 +801,127 @@ public class CompositionToSequenceConvertor {
 							if (toTick>maxTick) {
 								toTick=maxTick;
 							}
-							int fromExpression = 127;
-							int toExpression = 127;
-							List<SeqControl> removeControls = new ArrayList<SeqControl>();
-							for (SeqControl ctrl: expressionControls) {
-								if (ctrl.tick<=fromTick) {
-									fromExpression = ctrl.value;
-								}
-								if (ctrl.tick<=toTick) {
-									toExpression = ctrl.value;
-								}
-								if (ctrl.tick>=fromTick && ctrl.tick<=toTick) {
-									removeControls.add(ctrl);
-								}
-								if (ctrl.tick>toTick) {
-									break;
-								}
-							}
-							if (fromExpression>0 || toExpression>0) {
-								for (SeqControl ctrl: removeControls) {
-									r.remove(ctrl);
-									if (echoControls.contains(ctrl)) {
-										echoControls.remove(ctrl);
-										toEchoControls = true;
+							if (toTick>=channelSideChainTickFrom[il.channel] &&
+								fromTick<=channelSideChainTickTo[il.channel]
+								) {
+								int fromExpression = 127;
+								int toExpression = 127;
+								List<SeqControl> removeControls = new ArrayList<SeqControl>();
+								for (SeqControl ctrl: expressionControls) {
+									if (ctrl.tick<=fromTick) {
+										fromExpression = ctrl.value;
+									}
+									if (ctrl.tick<=toTick) {
+										toExpression = ctrl.value;
+									}
+									if (ctrl.tick>=fromTick && ctrl.tick<=toTick) {
+										removeControls.add(ctrl);
+									}
+									if (ctrl.tick>toTick) {
+										break;
 									}
 								}
-								
-								int percentage = (instruments.get(il.instrument).getSideChainPercentage() * sideChainVelocityPerStep[s]) / 127;
-								
-								// Start
-								SeqControl sc = new SeqControl();
-								sc.instrument = il.instrument;
-								sc.channel = il.channel;
-								sc.control = Control.EXPRESSION;
-								sc.tick = fromTick;
-								sc.value = fromExpression;
-								r.add(sc);
-								if (toEchoControls) {
-									echoControls.add(sc);
-								}
-			
-								SeqControl nsc = null;
-								long nextTick = 0; 
-										
-								int value = (fromExpression * (100 - percentage)) / 100;
-								if (value<0) {
-									value = 0;
-								}
-								if (value!=fromExpression) {
-									// Attack
-									nextTick = fromTick + (long) (composition.getSynthesizerConfiguration().getSideChainAttack() * ticksPerStep);
-									nsc = new SeqControl();
-									nsc.instrument = il.instrument;
-									nsc.channel = il.channel;
-									nsc.control = Control.EXPRESSION;
-									nsc.tick = nextTick;
-									nsc.value = value;
-									List<SeqControl> slideControls = getSlideControls(sc,nsc);
-									for (SeqControl asc: slideControls) {
-										if (asc.tick<toTick) {
-											r.add(asc);
-											if (toEchoControls) {
-												echoControls.add(asc);
-											}
+								if (fromExpression>0 || toExpression>0) {
+									for (SeqControl ctrl: removeControls) {
+										r.remove(ctrl);
+										if (echoControls.contains(ctrl)) {
+											echoControls.remove(ctrl);
+											toEchoControls = true;
 										}
 									}
-									if (nsc.tick<=toTick) {
-										r.add(nsc);
-										if (toEchoControls) {
-											echoControls.add(nsc);
-										}
-									}
-									sc = nsc;
-								}
-								
-								if (value!=toExpression) {
-									// Sustain
-									nextTick = fromTick + (long) ((
-										composition.getSynthesizerConfiguration().getSideChainAttack() + 
-										composition.getSynthesizerConfiguration().getSideChainSustain()
-										) * ticksPerStep);
-									nsc = new SeqControl();
-									nsc.instrument = il.instrument;
-									nsc.channel = il.channel;
-									nsc.control = Control.EXPRESSION;
-									nsc.tick = nextTick;
-									nsc.value = value;
-									if (nsc.tick<=toTick) {
-										r.add(nsc);
-										if (toEchoControls) {
-											echoControls.add(nsc);
-										}
-									}
-									sc = nsc;
-								}
-			
-								// Release
-								nsc = new SeqControl();
-								nsc.instrument = il.instrument;
-								nsc.channel = il.channel;
-								nsc.control = Control.EXPRESSION;
-								nsc.tick = toTick;
-								nsc.value = toExpression;
-								if (value!=toExpression) {
-									List<SeqControl> slideControls = getSlideControls(sc,nsc);
-									for (SeqControl asc: slideControls) {
-										if (asc.tick<toTick) {
-											r.add(asc);
-											if (toEchoControls) {
-												echoControls.add(asc);
-											}
-										}
-									}
-								}
-								if (nsc.tick<=toTick) {
-									r.add(nsc);
+									
+									int percentage = (instruments.get(il.instrument).getSideChainPercentage() * sideChainVelocityPerStep[s]) / 127;
+									
+									// Start
+									SeqControl sc = new SeqControl();
+									sc.instrument = il.instrument;
+									sc.channel = il.channel;
+									sc.control = Control.EXPRESSION;
+									sc.tick = fromTick;
+									sc.value = fromExpression;
+									r.add(sc);
 									if (toEchoControls) {
-										echoControls.add(nsc);
+										echoControls.add(sc);
+									}
+				
+									SeqControl nsc = null;
+									long nextTick = 0; 
+											
+									int value = (fromExpression * (100 - percentage)) / 100;
+									if (value<0) {
+										value = 0;
+									}
+									if (value!=fromExpression) {
+										// Attack
+										nextTick = fromTick + (long) (composition.getSynthesizerConfiguration().getSideChainAttack() * ticksPerStep);
+										nsc = new SeqControl();
+										nsc.instrument = il.instrument;
+										nsc.channel = il.channel;
+										nsc.control = Control.EXPRESSION;
+										nsc.tick = nextTick;
+										nsc.value = value;
+										List<SeqControl> slideControls = getSlideControls(sc,nsc);
+										for (SeqControl asc: slideControls) {
+											if (asc.tick<toTick) {
+												r.add(asc);
+												if (toEchoControls) {
+													echoControls.add(asc);
+												}
+											}
+										}
+										if (nsc.tick<=toTick) {
+											r.add(nsc);
+											if (toEchoControls) {
+												echoControls.add(nsc);
+											}
+										}
+										sc = nsc;
+									}
+									
+									if (value!=toExpression) {
+										// Sustain
+										nextTick = fromTick + (long) ((
+											composition.getSynthesizerConfiguration().getSideChainAttack() + 
+											composition.getSynthesizerConfiguration().getSideChainSustain()
+											) * ticksPerStep);
+										nsc = new SeqControl();
+										nsc.instrument = il.instrument;
+										nsc.channel = il.channel;
+										nsc.control = Control.EXPRESSION;
+										nsc.tick = nextTick;
+										nsc.value = value;
+										if (nsc.tick<=toTick) {
+											r.add(nsc);
+											if (toEchoControls) {
+												echoControls.add(nsc);
+											}
+										}
+										sc = nsc;
+									}
+				
+									// Release
+									nsc = new SeqControl();
+									nsc.instrument = il.instrument;
+									nsc.channel = il.channel;
+									nsc.control = Control.EXPRESSION;
+									nsc.tick = toTick;
+									nsc.value = toExpression;
+									if (value!=toExpression) {
+										List<SeqControl> slideControls = getSlideControls(sc,nsc);
+										for (SeqControl asc: slideControls) {
+											if (asc.tick<toTick) {
+												r.add(asc);
+												if (toEchoControls) {
+													echoControls.add(asc);
+												}
+											}
+										}
+									}
+									if (nsc.tick<=toTick) {
+										r.add(nsc);
+										if (toEchoControls) {
+											echoControls.add(nsc);
+										}
 									}
 								}
 							}

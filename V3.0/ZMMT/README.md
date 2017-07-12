@@ -4,7 +4,7 @@ Zeesoft MIDI Mod Tracker (ZMMT) is a library that contains all ZeeTracker applic
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.6.zip) to download the latest ZMMT release (version 0.9.6).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-0.9.7.zip) to download the latest ZMMT release (version 0.9.7).  
 All ZMMT releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -102,8 +102,8 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1MidiNum": 93,
     "l1Pressure": 0,
     "l1Modulation": 0,
-    "l1Reverb": 32,
-    "l1Chorus": 100,
+    "l1Reverb": 8,
+    "l1Chorus": 40,
     "l1Filter": 48,
     "l1Resonance": 80,
     "l1Attack": 64,
@@ -118,8 +118,8 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1ModToResonance": false,
     "l1ModToVibDepth": true,
     "l1BaseOctave": 3,
-    "l1BaseVelocity": 48,
-    "l1AccentVelocity": 56
+    "l1BaseVelocity": 60,
+    "l1AccentVelocity": 68
   },
   "instrument": {
     "name": "Bass 3",
@@ -132,7 +132,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1Pressure": 0,
     "l1Modulation": 0,
     "l1Reverb": 24,
-    "l1Chorus": 0,
+    "l1Chorus": 8,
     "l1Filter": 64,
     "l1Resonance": 64,
     "l1Attack": 64,
@@ -160,7 +160,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1MidiNum": 83,
     "l1Pressure": 0,
     "l1Modulation": 0,
-    "l1Reverb": 72,
+    "l1Reverb": 48,
     "l1Chorus": 0,
     "l1Filter": 48,
     "l1Resonance": 80,
@@ -181,7 +181,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l2MidiNum": 82,
     "l2Pressure": 0,
     "l2Modulation": 0,
-    "l2Reverb": 88,
+    "l2Reverb": 40,
     "l2Chorus": 0,
     "l2Filter": 52,
     "l2Resonance": 72,
@@ -216,7 +216,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1Resonance": 64,
     "l1Attack": 64,
     "l1Decay": 64,
-    "l1Release": 64,
+    "l1Release": 66,
     "l1VibRate": 64,
     "l1VibDepth": 64,
     "l1VibDelay": 64,
@@ -289,7 +289,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l2MidiNum": 84,
     "l2Pressure": 0,
     "l2Modulation": 0,
-    "l2Reverb": 127,
+    "l2Reverb": 100,
     "l2Chorus": 0,
     "l2Filter": 52,
     "l2Resonance": 64,
@@ -317,7 +317,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1MidiNum": 118,
     "l1Pressure": 0,
     "l1Modulation": 0,
-    "l1Reverb": 20,
+    "l1Reverb": 8,
     "l1Chorus": 0,
     "l1Filter": 64,
     "l1Resonance": 64,
@@ -343,12 +343,12 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1MidiNum": 90,
     "l1Pressure": 0,
     "l1Modulation": 0,
-    "l1Reverb": 127,
+    "l1Reverb": 72,
     "l1Chorus": 0,
     "l1Filter": 64,
     "l1Resonance": 64,
     "l1Attack": 64,
-    "l1Decay": 64,
+    "l1Decay": 52,
     "l1Release": 64,
     "l1VibRate": 64,
     "l1VibDepth": 64,
@@ -360,12 +360,12 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l1ModToVibDepth": true,
     "l1BaseOctave": 4,
     "l1BaseVelocity": 56,
-    "l1AccentVelocity": 76,
+    "l1AccentVelocity": 64,
     "l2MidiNum": 90,
     "l2Pressure": 0,
     "l2Modulation": 0,
-    "l2Reverb": 127,
-    "l2Chorus": 48,
+    "l2Reverb": 72,
+    "l2Chorus": 52,
     "l2Filter": 64,
     "l2Resonance": 64,
     "l2Attack": 80,
@@ -381,7 +381,7 @@ The output of this test shows the JSON structure of the *SynthesizerConfiguratio
     "l2ModToVibDepth": true,
     "l2BaseOctave": 5,
     "l2BaseVelocity": 56,
-    "l2AccentVelocity": 76
+    "l2AccentVelocity": 64
   },
   "instrument": {
     "name": "Echo",
@@ -598,9 +598,9 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1Reverb": 123,
       "l1Chorus": 123,
       "l1Filter": 123,
-      "l1Resonance": 64,
+      "l1Resonance": 76,
       "l1Attack": 28,
-      "l1Decay": 64,
+      "l1Decay": 48,
       "l1Release": 64,
       "l1VibRate": 64,
       "l1VibDepth": 64,
@@ -617,7 +617,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "l2Pressure": 0,
       "l2Modulation": 0,
       "l2Reverb": 0,
-      "l2Chorus": 64,
+      "l2Chorus": 40,
       "l2Filter": 64,
       "l2Resonance": 80,
       "l2Attack": 64,
@@ -632,8 +632,8 @@ The output of this test shows the JSON structure of the *Composition*.
       "l2ModToResonance": false,
       "l2ModToVibDepth": false,
       "l2BaseOctave": 2,
-      "l2BaseVelocity": 56,
-      "l2AccentVelocity": 60
+      "l2BaseVelocity": 48,
+      "l2AccentVelocity": 56
     },
     "instrument": {
       "name": "Bass 2",
@@ -645,8 +645,8 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1MidiNum": 93,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 32,
-      "l1Chorus": 100,
+      "l1Reverb": 8,
+      "l1Chorus": 40,
       "l1Filter": 48,
       "l1Resonance": 80,
       "l1Attack": 64,
@@ -661,8 +661,8 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1ModToResonance": false,
       "l1ModToVibDepth": true,
       "l1BaseOctave": 3,
-      "l1BaseVelocity": 48,
-      "l1AccentVelocity": 56
+      "l1BaseVelocity": 60,
+      "l1AccentVelocity": 68
     },
     "instrument": {
       "name": "Bass 3",
@@ -675,7 +675,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1Pressure": 0,
       "l1Modulation": 0,
       "l1Reverb": 24,
-      "l1Chorus": 0,
+      "l1Chorus": 8,
       "l1Filter": 64,
       "l1Resonance": 64,
       "l1Attack": 64,
@@ -703,7 +703,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1MidiNum": 83,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 72,
+      "l1Reverb": 48,
       "l1Chorus": 0,
       "l1Filter": 48,
       "l1Resonance": 80,
@@ -724,7 +724,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "l2MidiNum": 82,
       "l2Pressure": 0,
       "l2Modulation": 0,
-      "l2Reverb": 88,
+      "l2Reverb": 40,
       "l2Chorus": 0,
       "l2Filter": 52,
       "l2Resonance": 72,
@@ -759,7 +759,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1Resonance": 64,
       "l1Attack": 64,
       "l1Decay": 64,
-      "l1Release": 64,
+      "l1Release": 66,
       "l1VibRate": 64,
       "l1VibDepth": 64,
       "l1VibDelay": 64,
@@ -832,7 +832,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "l2MidiNum": 84,
       "l2Pressure": 0,
       "l2Modulation": 0,
-      "l2Reverb": 127,
+      "l2Reverb": 100,
       "l2Chorus": 0,
       "l2Filter": 52,
       "l2Resonance": 64,
@@ -860,7 +860,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1MidiNum": 118,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 20,
+      "l1Reverb": 8,
       "l1Chorus": 0,
       "l1Filter": 64,
       "l1Resonance": 64,
@@ -886,12 +886,12 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1MidiNum": 90,
       "l1Pressure": 0,
       "l1Modulation": 0,
-      "l1Reverb": 127,
+      "l1Reverb": 72,
       "l1Chorus": 0,
       "l1Filter": 64,
       "l1Resonance": 64,
       "l1Attack": 64,
-      "l1Decay": 64,
+      "l1Decay": 52,
       "l1Release": 64,
       "l1VibRate": 64,
       "l1VibDepth": 64,
@@ -903,12 +903,12 @@ The output of this test shows the JSON structure of the *Composition*.
       "l1ModToVibDepth": true,
       "l1BaseOctave": 4,
       "l1BaseVelocity": 56,
-      "l1AccentVelocity": 76,
+      "l1AccentVelocity": 64,
       "l2MidiNum": 90,
       "l2Pressure": 0,
       "l2Modulation": 0,
-      "l2Reverb": 127,
-      "l2Chorus": 48,
+      "l2Reverb": 72,
+      "l2Chorus": 52,
       "l2Filter": 64,
       "l2Resonance": 64,
       "l2Attack": 80,
@@ -924,7 +924,7 @@ The output of this test shows the JSON structure of the *Composition*.
       "l2ModToVibDepth": true,
       "l2BaseOctave": 5,
       "l2BaseVelocity": 56,
-      "l2AccentVelocity": 76
+      "l2AccentVelocity": 64
     },
     "instrument": {
       "name": "Echo",
@@ -2342,14 +2342,14 @@ Class references;
 **Test output**  
 The output of this test shows the time it takes to convert a simple composition, with and without side chain compression.  
 ~~~~
-Composition to sequence conversion with side chain compression took 31 ms
-Composition to sequence conversion without side chain compression took 11 ms
+Composition to sequence conversion with side chain compression took 33 ms
+Composition to sequence conversion without side chain compression took 8 ms
 ~~~~
 
 Test results
 ------------
 All 3 tests have been executed successfully (10 assertions).  
-Total test duration: 538 ms (total sleep duration: 0 ms).  
+Total test duration: 661 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 326 Kb / 0 Mb
