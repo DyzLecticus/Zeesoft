@@ -154,12 +154,13 @@ public class ImportExportWorker extends Worker {
 						confirmed = controller.showConfirmMessage("Are you sure you want to overwrite the selected file?");
 					}
 					if (confirmed) {
-						controller.setBusy(this,"Saving composition",file.getAbsolutePath());
 						if (file.getName().endsWith(Settings.EXTENSION_COMPOSITION)) {
+							controller.setBusy(this,"Saving composition",file.getAbsolutePath());
 							err = ((Composition) actionObject).toJson().toFile(file.getAbsolutePath(),false);
 							if (err.length()==0) {
 								controller.savedComposition(file,(Composition) actionObject);
 							}
+							controller.setDone(this,false);
 						} else if (file.getName().endsWith(Settings.EXTENSION_MIDI)) {
 							Composition comp = (Composition) actionObject;
 							boolean externalize = false;
@@ -168,12 +169,14 @@ public class ImportExportWorker extends Worker {
 								) {
 								externalize = controller.showConfirmMessage("Externalize?","Do you want to externalize the MIDI file?");
 							}
+							controller.setBusy(this,"Generating MIDI","");
 							CompositionToSequenceConvertor convertor = new CompositionToSequenceConvertor((Composition) actionObject);
 							convertor.convertSequence(externalize,false,true);
 							Sequence s = convertor.getSequence();
 							if (s==null) {
 								err = "Failed to convert composition to MIDI file";
 							} else {
+								controller.setBusy(this,"Saving MIDI",file.getAbsolutePath());
 			                    try {
 			                        int[] fileTypes = MidiSystem.getMidiFileTypes(s);
 			                        if (fileTypes.length == 0) {
@@ -185,8 +188,8 @@ public class ImportExportWorker extends Worker {
 									err = "Failed to write MIDI file: " + file.getAbsolutePath();
 								}
 							}
+							controller.setDone(this,false);
 						}
-						controller.setDone(this,false);
 					}
 				}
 			}

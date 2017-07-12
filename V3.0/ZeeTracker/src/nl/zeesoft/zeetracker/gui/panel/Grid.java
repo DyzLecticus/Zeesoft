@@ -112,7 +112,9 @@ public class Grid extends JTable {
 				rowTo = rowTo - rowsPerPage;
 				showTo = true;
 			} else {
-				if ((rowTo - row)==0) {
+				if ((!select && row==(getRowCount() - 1)) ||
+					(select && (rowTo - row)==0)
+					) {
 					row = row + 1;
 				}
 				row = row - rowsPerPage;
