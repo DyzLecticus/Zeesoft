@@ -59,9 +59,9 @@ The two internal ZeeTracker sound fonts provide replacements for the following M
 **Please note** that these internal sound fonts are not General MIDI compliant.
 
 **Requirements and download**  
-The most recent ZeeTracker version is 1.0B.
+The most recent ZeeTracker version is 1.0.
 Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).
-Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0B.exe) (+- 40 MB).
+Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0.exe) (+- 40 MB).
 ZeeTracker requires about 200 MB of working memory.
 Using a custom sound font will require more working memory, depending on the size of the sound font.
 The windows executable will require about 150 MB of free disk space.
@@ -663,7 +663,7 @@ The output of this test shows the JSON structure of the *Settings*.
 Test results
 ------------
 All 1 tests have been executed successfully (1 assertions).  
-Total test duration: 117 ms (total sleep duration: 0 ms).  
+Total test duration: 115 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zeetracker.test.TestSettings: 356 Kb / 0 Mb

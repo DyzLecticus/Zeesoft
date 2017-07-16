@@ -15,7 +15,7 @@ Libraries;
  * [ZJMO](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZJMO/) Zeesoft JSON Machine Orchestration  
  * [ZSO](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSO/) Zeesoft Sample Orchestration  
  * [ZMMT](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZMMT/) Zeesoft MIDI Mod Tracker
- * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZMMT/) The default ZMMT interface
+ * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZeeTracker/) The default ZMMT interface
 
 Products;
  * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/blob/master/ZeeTracker/) A fast and fun way of composing music

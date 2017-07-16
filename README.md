@@ -40,7 +40,7 @@ The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0">V3.0</a> f
  
 Future development
 ------------------
-Future development will focus on improving version 3.0 architecture and its implementations.
+Future development will focus on improving the version 3.0 architecture and its implementations.
   
 License
 -------
