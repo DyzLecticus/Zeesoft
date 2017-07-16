@@ -119,26 +119,25 @@ Custom sound font changes require a program restart to take effect.
   
 Requirements and download
 -------------------------
-The most recent ZeeTracker version is 1.0B.
+The most recent ZeeTracker version is 1.0.
 Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).
-Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0B.exe) (+- 40 MB).
+Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.0.exe) (+- 40 MB).
 ZeeTracker requires about 200 MB of working memory.
 Using a custom sound font will require more working memory, depending on the size of the sound font.
 The windows executable will require about 150 MB of free disk space.
   
 Future development
 ------------------
-ZeeTracker 1.0 is currently in the beta release stage.
-A complete 1.0 release is planned for mid July 2017.
-The following features are on the wish list for a possible 1.1 release;
- * Programmable LFOs
- * Shuffle
+The following features are on the wish list for a possible 1.1 release;  
+ * [ZSC](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZSC/) integration  
+ * Programmable LFOs  
+ * Shuffle  
   
 Source code
 -----------
 ZeeTracker is open source.
 The application consists of the following libraries;
  * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZeeTracker/) (Interface logic)  
- * [Zeesoft MIDI Mod Tracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZMMT/) (Application logic) 
+ * [Zeesoft MIDI Mod Tracker](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZMMT/) (Application logic)  
  * [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/)  
   
