@@ -1024,7 +1024,7 @@ public class PanelPatterns extends PanelObject implements StateChangeSubscriber,
 					c.step = c.step - (mod * -1);
 				}
 				if (c.step<1 || c.step>notesGrid.getRowCount()) {
-					workingPattern.getNotes().remove(c);
+					workingPattern.getControls().remove(c);
 				}
 				changed = true;
 			}

@@ -1,3 +1,9 @@
 .metadata
 .recommenders
 RemoteSystemsTempFiles
+/Games/ZeeTrackerVisualizer/nbproject/private/
+/Games/ZeeTrackerVisualizer/build/
+/Games/ZeeTrackerVisualizer/dist/
+/Games/ZeeTrackerVisualizer/lib/
+*.dll
+*.log

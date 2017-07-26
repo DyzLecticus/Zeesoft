@@ -41,6 +41,14 @@
 		</unzip>
 	</target>
 	
+	<target name="copyVisualizer" description="Copy the Visualizer libaries">
+		<mkdir dir="${lib}"/>
+		<copy file="../../Games/ZeeTrackerVisualizer/dist/ZeeTrackerVisualizer.jar" tofile="${lib}/ZeeTrackerVisualizer.jar"/>
+		<copy todir="${lib}">
+            <fileset dir="../../Games/ZeeTrackerVisualizer/dist/lib/" />
+        </copy>		
+	</target>
+	
 	<target name="compile">
 		<mkdir dir="${build}"/>
 		<path id="libraries">
