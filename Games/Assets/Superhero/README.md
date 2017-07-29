@@ -3,6 +3,10 @@ Superhero
 This project is about learning how to use Blender to create game assets.
 The result of this project will be a complete low polygon superhero character that can be imported and used in JMonkeyEngine.
 
+Lessons learned
+---------------
+ * Include seams in modelling process and regularly check the texture unwrapping for model errors.
+
 Tutorials
 ---------
  * [Interface controls](https://www.youtube.com/watch?v=iO5QHmBv4BU)
@@ -21,7 +25,8 @@ Control cheat sheet
  * z = Toggle wire frame mode
  * x = Delete
  * Tab = Edit mode
-   * Ctrl+r = loop cut
+ * Ctrl+r = loop cut
  * t = Show/hide tool window
- * u = unwrap
  * Ctrl+e = edit
+ * a+a = select all
+ * u+u = unwrap
