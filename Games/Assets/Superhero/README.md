@@ -18,6 +18,7 @@ Control cheat sheet
  * Numpad1 = Front view
  * Numpad3 = Side view
  * Shift+c = Center cursor
+ * z = Toggle wire frame mode
+ * x = Delete
  * Tab = Edit mode
-   * z = Toggle wire frame mode
    * Ctrl+r = loop cut
