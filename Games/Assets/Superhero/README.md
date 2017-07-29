@@ -22,3 +22,6 @@ Control cheat sheet
  * x = Delete
  * Tab = Edit mode
    * Ctrl+r = loop cut
+ * t = Show/hide tool window
+ * u = unwrap
+ * Ctrl+e = edit
