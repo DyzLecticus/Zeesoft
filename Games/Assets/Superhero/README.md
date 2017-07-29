@@ -5,13 +5,13 @@ The result of this project will be a complete low polygon superhero character th
 
 Tutorials
 ---------
-[Interface controls](https://www.youtube.com/watch?v=iO5QHmBv4BU)
-[Character modelling](https://www.youtube.com/watch?v=DiIoWrOlIRw)
-[Character texturing](https://www.youtube.com/watch?v=JYBPXTful2g)
-[Character rigging part 1](https://www.youtube.com/watch?v=Q9f-WVs3ghI)
-[Character rigging part 2](https://www.youtube.com/watch?v=TPEmonfLo94)
-[Character walk cycle](https://www.youtube.com/watch?v=DuUWxUitJos)
-[Character run cycle](https://www.youtube.com/watch?v=_YdA-J27YPU)
+ * [Interface controls](https://www.youtube.com/watch?v=iO5QHmBv4BU)
+ * [Character modelling](https://www.youtube.com/watch?v=DiIoWrOlIRw)
+ * [Character texturing](https://www.youtube.com/watch?v=JYBPXTful2g)
+ * [Character rigging part 1](https://www.youtube.com/watch?v=Q9f-WVs3ghI)
+ * [Character rigging part 2](https://www.youtube.com/watch?v=TPEmonfLo94)
+ * [Character walk cycle](https://www.youtube.com/watch?v=DuUWxUitJos)
+ * [Character run cycle](https://www.youtube.com/watch?v=_YdA-J27YPU)
 
 Control cheat sheet
 -------------------
