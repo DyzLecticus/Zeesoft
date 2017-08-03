@@ -7,3 +7,5 @@ RemoteSystemsTempFiles
 /Games/ZeeTrackerVisualizer/lib/
 *.dll
 *.log
+/Games/Illuminator/nbproject/private/
+/Games/Illuminator/build/
