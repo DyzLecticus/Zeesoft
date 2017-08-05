@@ -14,7 +14,7 @@ Steps
    Create the texture image that is wrapped around the asset mesh  
  * Rigging  
    Create the skeleton that can be used to animate the asset mesh  
- * Animation
+ * Animation  
    Create named animations for specific actions like walking, running etc.  
  
 
@@ -24,7 +24,10 @@ Lessons learned
    It may be better to spread out arms and legs a little to limit the shading that the baking procedure adds.
    This can be corrected later by recreating the texture.
  * Include seams in modelling process and regularly check the texture unwrapping for model errors.
- * Follow the natural anatomy when placing bones during the rigging phase
+ * Follow the natural anatomy when placing bones during the rigging phase.
+ * Be sure to extrude control bones and IK pole target bones from the armature to ensure they belong to the same armature.
+ * After linking joints to IK pole targets, do not reposition the pole target.
+ * When weight painting the mesh, make sure that no two bones fully control the same vertices.
   
 Tutorials
 ---------
