@@ -43,7 +43,7 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
     private boolean             attacking           = false;
 
     // These can all be changed according to your whims.
-    private float               walkSpeed           = 0.035f;
+    private float               walkSpeed           = 0.04f;
     private float               mouselookSpeed      = FastMath.PI;
     private float               jumpSpeed           = 15;
     private float               fallSpeed           = 20;
@@ -78,15 +78,11 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 	animControl.addListener(this);
 	lowerChannel = animControl.createChannel();
         lowerChannel.addBone("Root");
-        lowerChannel.addBone("Leg.Pole.L");
-        lowerChannel.addBone("Leg.Pole.R");
         lowerChannel.addBone("Hip.L");
-        lowerChannel.addBone("Leg.Control.L");
         lowerChannel.addBone("Leg.Upper.L");
         lowerChannel.addBone("Leg.Lower.L");
         lowerChannel.addBone("Foot.L");
         lowerChannel.addBone("Hip.R");
-        lowerChannel.addBone("Leg.Control.R");
         lowerChannel.addBone("Leg.Upper.R");
         lowerChannel.addBone("Leg.Lower.R");
         lowerChannel.addBone("Foot.R");
@@ -143,7 +139,7 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 	if (attacking) {
 	    // Waiting for attack animation to finish
 	} else if (attack) {
-	    upperChannel.setAnim(attackAnim);
+	    upperChannel.setAnim(attackAnim,0.001f);
             upperChannel.setLoopMode(LoopMode.DontLoop);
 	    attack = false;
 	    attacking = true;
