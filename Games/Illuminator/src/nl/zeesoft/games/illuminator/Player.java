@@ -22,7 +22,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 public class Player extends Node implements ActionListener, AnalogListener, AnimEventListener {
-    // ThirdPersonCameraNode automatically sets itself up to follow a target
+    // PlayerCamera automatically sets itself up to follow a target
     // object. Check the "onAnalog" function here to see how we do mouselook.
     private PlayerCamera        camera              = null;
     private Camera              cam                 = null;
@@ -42,20 +42,14 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
     private boolean             attacking           = false;
 
     // These can all be changed according to your whims.
-    private float               walkSpeed           = 0.15f;
+    private float               walkSpeed           = 0.03f;
     private float               mouselookSpeed      = FastMath.PI;
     private float               jumpSpeed           = 15;
     private float               fallSpeed           = 20;
     private float               gravity             = 25;
     private float               stepSize            = 0.05f;
 
-    // Animation names. These are currently set up for the Ninja.mesh.xml from
-    // jme3-test-data.jar (to add that jar to your project, right-click on
-    // Libraries in the SDK project explorer, click "Add Library" and choose
-    // jme3-test-data.jar from the menu).
-    //
-    // Alternatively, use any model you like and change these animation names
-    // as needed.
+    // Animations
     private String              idleAnim            = "Idle";
     private String              walkAnim            = "Walk";
     private String              attackAnim          = "Jab";
@@ -67,9 +61,12 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 	camera = new PlayerCamera("CamNode", cam, this);
 
         this.model = model;
+	model.scale(0.2f);
+	model.setLocalTranslation(0f, -1.1f, 0f);
+	model.rotate(0f, FastMath.PI, 0f);
 	this.attachChild(this.model);
 
-	CapsuleCollisionShape playerShape = new CapsuleCollisionShape(.5f,1f); //Ninja-specific
+	CapsuleCollisionShape playerShape = new CapsuleCollisionShape(.5f,1f);
 	characterControl = new CharacterControl(playerShape, stepSize);
 	characterControl.setJumpSpeed(jumpSpeed);
 	characterControl.setFallSpeed(fallSpeed);
@@ -107,27 +104,26 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
         }
 
 	characterControl.setWalkDirection(walkDirection.normalize().multLocal(walkSpeed));
-
+        
 	handleAnimations();
     }
 
     private void handleAnimations() {
-	//if(attacking) {
+	if (attacking) {
 	    // Waiting for attack animation to finish
-	//} else 
-        if(attack) {
+	} else if (attack) {
 	    animChannel.setAnim(attackAnim);
 	    animChannel.setLoopMode(LoopMode.DontLoop);
 	    attack = false;
 	    attacking = true;
-	} else if(characterControl.onGround()) {
-	    if(left || right || up || down) {
+	} else if (characterControl.onGround()) {
+	    if (left || right || up || down) {
 		if(!animChannel.getAnimationName().equals(walkAnim)) {
 		    animChannel.setAnim(walkAnim,.3f);
 		    animChannel.setLoopMode(LoopMode.Loop);
 		}
 	    } else {
-		if(!animChannel.getAnimationName().equals(idleAnim)) {
+		if (!animChannel.getAnimationName().equals(idleAnim)) {
 		    animChannel.setAnim(idleAnim,.3f);
 		    animChannel.setLoopMode(LoopMode.Loop);
 		}
@@ -184,13 +180,13 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
     // It is assumed that we want horizontal movements to turn the character,
     // while vertical movements only make the camera rotate up or down.
     public void onAnalog(String binding, float value, float tpf) {
-	if (binding.equals("TurnLeft")) {
+        if (binding.equals("TurnLeft")) {
 	    Quaternion turn = new Quaternion();
-	    turn.fromAngleAxis(mouselookSpeed*value, Vector3f.UNIT_Y);
+	    turn.fromAngleAxis((mouselookSpeed*value), Vector3f.UNIT_Y);
 	    characterControl.setViewDirection(turn.mult(characterControl.getViewDirection()));
 	} else if (binding.equals("TurnRight")) {
 	    Quaternion turn = new Quaternion();
-	    turn.fromAngleAxis(-mouselookSpeed*value, Vector3f.UNIT_Y);
+	    turn.fromAngleAxis((-mouselookSpeed*value), Vector3f.UNIT_Y);
 	    characterControl.setViewDirection(turn.mult(characterControl.getViewDirection()));
 	} else if (binding.equals("MouselookDown")) {
 	    camera.verticalRotate(-mouselookSpeed*value);

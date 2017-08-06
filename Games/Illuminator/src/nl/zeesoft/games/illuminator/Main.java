@@ -6,8 +6,6 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.light.DirectionalLight;
-import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Node;
@@ -47,9 +45,6 @@ public class Main extends SimpleApplication {
 	bulletAppState.getPhysicsSpace().add(scene);
 
 	Node playerModel = (Node) assetManager.loadModel("Models/SuperHero/SuperHero.j3o");
-	playerModel.scale(0.2f);
-	playerModel.setLocalTranslation(0f, -1f, 0f);
-	playerModel.rotate(0f, FastMath.PI, 0f);
 
         player = new Player(playerModel, inputManager, cam);
 	player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,2f,5f));
