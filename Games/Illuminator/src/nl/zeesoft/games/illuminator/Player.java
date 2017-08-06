@@ -29,7 +29,8 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 
     private Spatial             model               = null;
     private CharacterControl    characterControl    = null;
-    private AnimChannel         animChannel         = null;
+    private AnimChannel         lowerChannel        = null;
+    private AnimChannel         upperChannel        = null;
     private AnimControl         animControl         = null;
     private InputManager        inputManager        = null;
     private final Vector3f      walkDirection       = new Vector3f();
@@ -42,7 +43,7 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
     private boolean             attacking           = false;
 
     // These can all be changed according to your whims.
-    private float               walkSpeed           = 0.03f;
+    private float               walkSpeed           = 0.035f;
     private float               mouselookSpeed      = FastMath.PI;
     private float               jumpSpeed           = 15;
     private float               fallSpeed           = 20;
@@ -62,7 +63,7 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 
         this.model = model;
 	model.scale(0.2f);
-	model.setLocalTranslation(0f, -1.1f, 0f);
+	model.setLocalTranslation(0f, -1.0f, 0f);
 	model.rotate(0f, FastMath.PI, 0f);
 	this.attachChild(this.model);
 
@@ -75,9 +76,39 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 
 	animControl = model.getChild("Meshes").getControl(AnimControl.class);
 	animControl.addListener(this);
-	animChannel = animControl.createChannel();
-	animChannel.setAnim(idleAnim);
-
+	lowerChannel = animControl.createChannel();
+        lowerChannel.addBone("Root");
+        lowerChannel.addBone("Leg.Pole.L");
+        lowerChannel.addBone("Leg.Pole.R");
+        lowerChannel.addBone("Hip.L");
+        lowerChannel.addBone("Leg.Control.L");
+        lowerChannel.addBone("Leg.Upper.L");
+        lowerChannel.addBone("Leg.Lower.L");
+        lowerChannel.addBone("Foot.L");
+        lowerChannel.addBone("Hip.R");
+        lowerChannel.addBone("Leg.Control.R");
+        lowerChannel.addBone("Leg.Upper.R");
+        lowerChannel.addBone("Leg.Lower.R");
+        lowerChannel.addBone("Foot.R");
+	lowerChannel.setAnim(idleAnim);
+        
+	upperChannel = animControl.createChannel();
+        upperChannel.addBone("Back");
+        upperChannel.addBone("Chest");
+        upperChannel.addBone("Neck");
+        upperChannel.addBone("Head");
+        upperChannel.addBone("Shoulder.L");
+        upperChannel.addBone("Arm.Upper.L");
+        upperChannel.addBone("Arm.Lower.L");
+        upperChannel.addBone("Hand.L");
+        upperChannel.addBone("Fingers.L");
+        upperChannel.addBone("Shoulder.R");
+        upperChannel.addBone("Arm.Upper.R");
+        upperChannel.addBone("Arm.Lower.R");
+        upperChannel.addBone("Hand.R");
+        upperChannel.addBone("Fingers.R");
+	upperChannel.setAnim(idleAnim);
+        
 	this.inputManager = inputManager;
 	setUpKeys();
     }
@@ -112,20 +143,22 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 	if (attacking) {
 	    // Waiting for attack animation to finish
 	} else if (attack) {
-	    animChannel.setAnim(attackAnim);
-	    animChannel.setLoopMode(LoopMode.DontLoop);
+	    upperChannel.setAnim(attackAnim);
+            upperChannel.setLoopMode(LoopMode.DontLoop);
 	    attack = false;
 	    attacking = true;
-	} else if (characterControl.onGround()) {
+	} else {
+	    upperChannel.setAnim(idleAnim);
+            upperChannel.setLoopMode(LoopMode.Loop);
+        }
+        if (characterControl.onGround()) {
 	    if (left || right || up || down) {
-		if(!animChannel.getAnimationName().equals(walkAnim)) {
-		    animChannel.setAnim(walkAnim,.3f);
-		    animChannel.setLoopMode(LoopMode.Loop);
+		if(!lowerChannel.getAnimationName().equals(walkAnim)) {
+		    lowerChannel.setAnim(walkAnim,.3f);
 		}
 	    } else {
-		if (!animChannel.getAnimationName().equals(idleAnim)) {
-		    animChannel.setAnim(idleAnim,.3f);
-		    animChannel.setLoopMode(LoopMode.Loop);
+		if (!lowerChannel.getAnimationName().equals(idleAnim)) {
+		    lowerChannel.setAnim(idleAnim,.3f);
 		}
 	    }
 	}
@@ -166,10 +199,7 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 	} else if (binding.equals("Jump")) {
 	    if(characterControl.onGround()) {
 		characterControl.jump();
-		if(!attacking) {
-		    animChannel.setAnim(jumpAnim,.3f);
-		    animChannel.setLoopMode(LoopMode.Loop);
-		}
+                lowerChannel.setAnim(jumpAnim,.3f);
 	    }
 	} else if (binding.equals("Attack")) {
 	    attack = value;
@@ -196,7 +226,7 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
     }
 
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
-	if(channel == animChannel && attacking && animName.equals(attackAnim)) {
+	if(channel == upperChannel && attacking && animName.equals(attackAnim)) {
 	    attacking = false;
 	}
     }
