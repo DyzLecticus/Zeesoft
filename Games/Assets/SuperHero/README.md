@@ -17,7 +17,6 @@ Steps
  * Animation  
    Create named animations for specific actions like walking, running etc.  
  
-
 Lessons learned
 ---------------
  * Think about the initial position of the creature with regard to baking the initial texture.  
@@ -25,9 +24,9 @@ Lessons learned
    This can be corrected later by recreating the texture.
  * Include seams in modelling process and regularly check the texture unwrapping for model errors.
  * Follow the natural anatomy when placing bones during the rigging phase.
- * Be sure to extrude control bones and IK pole target bones from the armature to ensure they belong to the same armature.
- * After linking joints to IK pole targets, do not reposition the pole target.
- * When weight painting the mesh, make sure that no two bones fully control the same vertices.
+ * Do not use inverse kinetics or postional constraints because the animations render differently in JMonkeyEngine compared to Blender.
+ * When weight painting the mesh, make sure that no two bones fully control the same vertices because this will mess up rendering in JMonkeyEngine.
+ * Check the rendering and game play of basic animations like "Idle", "Walk" and "Attack" before creating all other animations.
   
 Tutorials
 ---------
