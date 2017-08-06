@@ -27,6 +27,7 @@ public class Main extends SimpleApplication {
         Main app = new Main();
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(60);
+        settings.setTitle("Illuminator");
         app.setSettings(settings);
         app.start();
     }

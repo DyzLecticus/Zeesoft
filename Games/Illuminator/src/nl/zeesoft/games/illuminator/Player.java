@@ -44,8 +44,10 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
 
     // These can all be changed according to your whims.
     private float               walkSpeed           = 0.04f;
+    private float               walkSpeedAttackMult = 4.0f;
     private float               mouselookSpeed      = FastMath.PI;
     private float               jumpSpeed           = 15;
+    private float               jumpSpeedMult       = 4.0f;
     private float               fallSpeed           = 20;
     private float               gravity             = 25;
     private float               stepSize            = 0.05f;
@@ -130,11 +132,17 @@ public class Player extends Node implements ActionListener, AnalogListener, Anim
             walkDirection.addLocal(camDir.negate());
         }
 
-	characterControl.setWalkDirection(walkDirection.normalize().multLocal(walkSpeed));
-        
+        float walk = walkSpeed;
+        if (attacking && up) {
+            walk = walk * walkSpeedAttackMult;
+        } else if (up && !characterControl.onGround()) {
+            walk = walk * jumpSpeedMult;
+        }
+	characterControl.setWalkDirection(walkDirection.normalize().multLocal(walk));
+       
 	handleAnimations();
     }
-
+    
     private void handleAnimations() {
 	if (attacking) {
 	    // Waiting for attack animation to finish
