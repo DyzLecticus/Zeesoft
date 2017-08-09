@@ -35,36 +35,36 @@ public class PlayerCamera {
     public float            minVerticalAngle    = -5 * FastMath.DEG_TO_RAD;
     
     public PlayerCamera(String name, Camera cam, Node player) {
-	pivot = new Node("CamTrack");
-	player.attachChild(pivot);
+        pivot = new Node("CamTrack");
+        player.attachChild(pivot);
 
-	cameraNode = new CameraNode(name, cam);
+        cameraNode = new CameraNode(name, cam);
         cameraNode.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
-	pivot.attachChild(cameraNode);
-	cameraNode.setLocalTranslation(new Vector3f(0, 0, followDistance));
-	cameraNode.lookAt(pivot.getLocalTranslation(), Vector3f.UNIT_Y);
+        pivot.attachChild(cameraNode);
+        cameraNode.setLocalTranslation(new Vector3f(0, 0, followDistance));
+        cameraNode.lookAt(pivot.getLocalTranslation(), Vector3f.UNIT_Y);
 
-	pivot.getLocalRotation().fromAngleAxis(-verticalAngle, Vector3f.UNIT_X);
+        pivot.getLocalRotation().fromAngleAxis(-verticalAngle, Vector3f.UNIT_X);
         pivot.setLocalTranslation(new Vector3f(0, 0, -pivotDistance));
     }
 
     public void verticalRotate(float angle) {
-	verticalAngle += angle;
+        verticalAngle += angle;
 
-	if (verticalAngle > maxVerticalAngle) {
-	    verticalAngle = maxVerticalAngle;
-	} else if (verticalAngle < minVerticalAngle) {
-	    verticalAngle = minVerticalAngle;
-	}
+        if (verticalAngle > maxVerticalAngle) {
+            verticalAngle = maxVerticalAngle;
+        } else if (verticalAngle < minVerticalAngle) {
+            verticalAngle = minVerticalAngle;
+        }
 
-	pivot.getLocalRotation().fromAngleAxis(-verticalAngle, Vector3f.UNIT_X);
+        pivot.getLocalRotation().fromAngleAxis(-verticalAngle, Vector3f.UNIT_X);
     }
 
     public CameraNode getCameraNode() {
-	return cameraNode;
+        return cameraNode;
     }
 
     public Node getCameraTrack() {
-	return pivot;
+        return pivot;
     }
 }

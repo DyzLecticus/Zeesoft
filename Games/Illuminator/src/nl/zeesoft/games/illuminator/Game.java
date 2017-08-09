@@ -2,6 +2,7 @@ package nl.zeesoft.games.illuminator;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -46,11 +47,11 @@ public class Game extends SimpleApplication {
         gameModel.loadModels(assetManager);
         
         mouseInput.setCursorVisible(false);
-	flyCam.setEnabled(false);
+        flyCam.setEnabled(false);
 
-	bulletAppState = new BulletAppState();
+        bulletAppState = new BulletAppState();
         bulletAppState.setDebugEnabled(gameModel.isDebug());
-	stateManager.attach(bulletAppState);
+        stateManager.attach(bulletAppState);
 
         loadScene();
         loadPlayer();
@@ -62,7 +63,7 @@ public class Game extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-	player.update();
+        player.update();
     }
 
     @Override
@@ -72,21 +73,19 @@ public class Game extends SimpleApplication {
     
     private void loadScene() {
         sceneModel = assetManager.loadModel("Scenes/ManyLights/Main.scene");
-	sceneModel.scale(1f,.5f,1f); //Make scenery short enough to jump on. =P
-	CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) sceneModel);
-	scene = new RigidBodyControl(sceneShape, 0);
-	sceneModel.addControl(scene);
+        sceneModel.scale(1f,.5f,1f); //Make scenery short enough to jump on. =P
+        CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) sceneModel);
+        scene = new RigidBodyControl(sceneShape, 0);
+        sceneModel.addControl(scene);
         rootNode.attachChild(sceneModel);
-	bulletAppState.getPhysicsSpace().add(scene);
+        bulletAppState.getPhysicsSpace().add(scene);
     }
 
     private void loadPlayer() {
         player = new Player(gameModel.getPlayerModel(), inputManager, cam);
         player.initialize();
-	player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,2f,5f));
-	
-        rootNode.attachChild(player);
-	bulletAppState.getPhysicsSpace().add(player);
+        player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,2f,5f));
+        attachCharacter(player);
     }
     
     private void addLight() {
@@ -99,14 +98,16 @@ public class Game extends SimpleApplication {
     private void spawnOpponent() {
         Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager));
         opp.initialize();
-	opp.getCharacterControl().setPhysicsLocation(getNewSpawnLocation());
-	
-        rootNode.attachChild(opp);
-	bulletAppState.getPhysicsSpace().add(opp);
-        
+        opp.getCharacterControl().setPhysicsLocation(getNewSpawnLocation());
+        attachCharacter(opp);
         opponents.add(opp);
     }
-    
+
+    private void attachCharacter(Character character) {
+        rootNode.attachChild(character);
+        bulletAppState.getPhysicsSpace().add(character);
+    }
+
     private Vector3f getNewSpawnLocation() {
         Vector3f location = new Vector3f(0,5,0);
         return location;

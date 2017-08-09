@@ -9,6 +9,12 @@ public class Opponent extends Character {
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+        addRigidBody();
+    }
+    
+    @Override
     public Vector3f getDirection() {
         return new Vector3f();
     }

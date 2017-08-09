@@ -4,8 +4,10 @@ import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
 import com.jme3.animation.LoopMode;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
@@ -18,6 +20,8 @@ import nl.zeesoft.games.illuminator.model.CharacterModel;
 public abstract class Character extends Node implements AnimEventListener {
     private CharacterModel      characterModel      = null;
     private CharacterControl    characterControl    = null;
+    private RigidBodyControl    rigidControl        = null;
+
     private AnimChannel         lowerChannel        = null;
     private AnimChannel         upperChannel        = null;
     private AnimControl         animControl         = null;
@@ -36,20 +40,20 @@ public abstract class Character extends Node implements AnimEventListener {
 
     public void initialize() {
         characterModel.model.scale(characterModel.scale);
-	characterModel.model.rotate(0f,characterModel.rotY,0f);
-	characterModel.model.setLocalTranslation(characterModel.translation);
-	this.attachChild(characterModel.model);
+        characterModel.model.rotate(0f,characterModel.rotY,0f);
+        characterModel.model.setLocalTranslation(characterModel.translation);
+        this.attachChild(characterModel.model);
 
-	CapsuleCollisionShape playerShape = new CapsuleCollisionShape(characterModel.radius,characterModel.height);
-	characterControl = new CharacterControl(playerShape,characterModel.stepSize);
-	characterControl.setJumpSpeed(characterModel.jumpSpeed);
-	characterControl.setFallSpeed(characterModel.fallSpeed);
-	characterControl.setGravity(characterModel.gravity);
-	this.addControl(characterControl);
-
-	animControl = characterModel.model.getChild("Meshes").getControl(AnimControl.class);
-	animControl.addListener(this);
-	lowerChannel = animControl.createChannel();
+        CapsuleCollisionShape playerShape = new CapsuleCollisionShape(characterModel.radius,characterModel.height);
+        characterControl = new CharacterControl(playerShape,characterModel.stepSize);
+        characterControl.setJumpSpeed(characterModel.jumpSpeed);
+        characterControl.setFallSpeed(characterModel.fallSpeed);
+        characterControl.setGravity(characterModel.gravity);
+        this.addControl(characterControl);
+        
+        animControl = characterModel.model.getChild("Meshes").getControl(AnimControl.class);
+        animControl.addListener(this);
+        lowerChannel = animControl.createChannel();
         lowerChannel.addBone("Root");
         lowerChannel.addBone("Hip.L");
         lowerChannel.addBone("Leg.Upper.L");
@@ -59,9 +63,9 @@ public abstract class Character extends Node implements AnimEventListener {
         lowerChannel.addBone("Leg.Upper.R");
         lowerChannel.addBone("Leg.Lower.R");
         lowerChannel.addBone("Foot.R");
-	lowerChannel.setAnim(characterModel.idleAnim);
+        lowerChannel.setAnim(characterModel.idleAnim);
         
-	upperChannel = animControl.createChannel();
+        upperChannel = animControl.createChannel();
         upperChannel.addBone("Back");
         upperChannel.addBone("Chest");
         upperChannel.addBone("Neck");
@@ -76,7 +80,22 @@ public abstract class Character extends Node implements AnimEventListener {
         upperChannel.addBone("Arm.Lower.R");
         upperChannel.addBone("Hand.R");
         upperChannel.addBone("Fingers.R");
-	upperChannel.setAnim(characterModel.idleAnim);
+        upperChannel.setAnim(characterModel.idleAnim);
+    }
+    
+    protected void addCollideWithRigidBody() {
+        characterControl.addCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+    }
+    
+    protected void addRigidBody() {
+        CapsuleCollisionShape playerShape = new CapsuleCollisionShape(characterModel.radius,characterModel.height);
+        rigidControl = new RigidBodyControl(playerShape,80);
+        // Dont want these colliding with anything other than each other to save efficiency
+        rigidControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+        rigidControl.removeCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
+        rigidControl.addCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+        rigidControl.setKinematic(true);
+        this.addControl(rigidControl);
     }
     
     public void setLeft(boolean v) {
@@ -111,11 +130,11 @@ public abstract class Character extends Node implements AnimEventListener {
     
     // Make sure to call this from the main simpleUpdate() loop
     public void update() {
-	Vector3f goDir = getDirection();
-	Vector3f goLeft = getLeft();
-	walkDirection.set(0, 0, 0);
+        Vector3f goDir = getDirection();
+        Vector3f goLeft = getLeft();
+        walkDirection.set(0, 0, 0);
 
-	if (left) {
+        if (left) {
             walkDirection.addLocal(goLeft);
         }
         if (right) {
@@ -124,7 +143,7 @@ public abstract class Character extends Node implements AnimEventListener {
         if (up) {
             walkDirection.addLocal(goDir);
         }
-	if (down) {
+        if (down) {
             walkDirection.addLocal(goDir.negate());
         }
 
@@ -134,47 +153,49 @@ public abstract class Character extends Node implements AnimEventListener {
         } else if (up && !characterControl.onGround()) {
             walk = walk * characterModel.jumpSpeedMult;
         }
-	characterControl.setWalkDirection(walkDirection.normalize().multLocal(walk));
+        characterControl.setWalkDirection(walkDirection.normalize().multLocal(walk));
 
         handleAnimations();
     }
 
+    @Override
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
-	if(channel == upperChannel && attacking && animName.equals(characterModel.attackAnim)) {
-	    attacking = false;
-	}
+        if(channel == upperChannel && attacking && animName.equals(characterModel.attackAnim)) {
+            attacking = false;
+        }
     }
 
+    @Override
     public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
         // Not implemented
     }
 
     public CharacterControl getCharacterControl() {
-	return characterControl;
+        return characterControl;
     }
     
     private void handleAnimations() {
-	if (attacking) {
-	    // Waiting for attack animation to finish
-	} else if (attack) {
-	    upperChannel.setAnim(characterModel.attackAnim,0.001f);
+        if (attacking) {
+            // Waiting for attack animation to finish
+        } else if (attack) {
+            upperChannel.setAnim(characterModel.attackAnim,0.001f);
             upperChannel.setLoopMode(LoopMode.DontLoop);
-	    attack = false;
-	    attacking = true;
-	} else {
-	    upperChannel.setAnim(characterModel.idleAnim);
+            attack = false;
+            attacking = true;
+        } else {
+            upperChannel.setAnim(characterModel.idleAnim);
             upperChannel.setLoopMode(LoopMode.Loop);
         }
         if (characterControl.onGround()) {
-	    if (left || right || up || down) {
-		if(!lowerChannel.getAnimationName().equals(characterModel.walkAnim)) {
-		    lowerChannel.setAnim(characterModel.walkAnim,.3f);
-		}
-	    } else {
-		if (!lowerChannel.getAnimationName().equals(characterModel.idleAnim)) {
-		    lowerChannel.setAnim(characterModel.idleAnim,.3f);
-		}
-	    }
-	}
+            if (left || right || up || down) {
+                if(!lowerChannel.getAnimationName().equals(characterModel.walkAnim)) {
+                    lowerChannel.setAnim(characterModel.walkAnim,.3f);
+                }
+            } else {
+                if (!lowerChannel.getAnimationName().equals(characterModel.idleAnim)) {
+                    lowerChannel.setAnim(characterModel.idleAnim,.3f);
+                }
+            }
+        }
     }
 }
