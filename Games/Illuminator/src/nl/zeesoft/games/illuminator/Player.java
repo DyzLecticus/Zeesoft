@@ -1,5 +1,6 @@
 package nl.zeesoft.games.illuminator;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -24,9 +25,8 @@ public class Player extends Character implements ActionListener, AnalogListener 
     private PlayerCamera        camera              = null;
     private Camera              cam                 = null;
     
-    
-    public Player(CharacterModel characterModel, InputManager inputManager, Camera cam) {
-        super(characterModel);
+    public Player(CharacterModel characterModel,AssetManager assetManager, InputManager inputManager, Camera cam) {
+        super(characterModel,assetManager);
         this.inputManager = inputManager;
         this.cam = cam;
         camera = new PlayerCamera("CamNode", cam, this);
@@ -35,7 +35,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
     @Override
     public void initialize() {
         super.initialize();
-        super.addCollideWithRigidBody();
+        addCollideWithRigidBody();
         setUpKeys();
     }
 

@@ -4,12 +4,22 @@ import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
 import com.jme3.animation.LoopMode;
+import com.jme3.animation.SkeletonControl;
+import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.shape.Box;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
 
 /**
@@ -18,9 +28,15 @@ import nl.zeesoft.games.illuminator.model.CharacterModel;
  * Combines the character model with character control.
  */
 public abstract class Character extends Node implements AnimEventListener {
+    private AssetManager        assetManager        = null;
+    
     private CharacterModel      characterModel      = null;
     private CharacterControl    characterControl    = null;
     private RigidBodyControl    rigidControl        = null;
+
+    private RigidBodyControl    impactControl       = null;
+    private RigidBodyControl    fistControlLeft     = null;
+    private RigidBodyControl    fistControlRight    = null;
 
     private AnimChannel         lowerChannel        = null;
     private AnimChannel         upperChannel        = null;
@@ -34,7 +50,12 @@ public abstract class Character extends Node implements AnimEventListener {
     private boolean             attack              = false;
     private boolean             attacking           = false;
 
-    public Character(CharacterModel characterModel) {
+    private SkeletonControl     skeletonControl     = null;
+    private Geometry            punchCollisionLeft  = null;
+    private Geometry            punchCollisionRight = null;
+    
+    public Character(CharacterModel characterModel,AssetManager assetManager) {
+        this.assetManager = assetManager;
         this.characterModel = characterModel;
     }
 
@@ -49,8 +70,11 @@ public abstract class Character extends Node implements AnimEventListener {
         characterControl.setJumpSpeed(characterModel.jumpSpeed);
         characterControl.setFallSpeed(characterModel.fallSpeed);
         characterControl.setGravity(characterModel.gravity);
+        characterControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
+        characterControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
         this.addControl(characterControl);
         
+        // TODO: Create parameter for literal: Meshes
         animControl = characterModel.model.getChild("Meshes").getControl(AnimControl.class);
         animControl.addListener(this);
         lowerChannel = animControl.createChannel();
@@ -81,6 +105,33 @@ public abstract class Character extends Node implements AnimEventListener {
         upperChannel.addBone("Hand.R");
         upperChannel.addBone("Fingers.R");
         upperChannel.setAnim(characterModel.idleAnim);
+
+        skeletonControl = characterModel.model.getChild("Meshes").getControl(SkeletonControl.class);
+        
+        // Impact control
+        CapsuleCollisionShape impactShape = new CapsuleCollisionShape(characterModel.radius * 0.4f,characterModel.height * 1.3f);
+        impactControl = new RigidBodyControl(impactShape,1);
+        // Dont want these colliding with anything other than each other to save efficiency
+        impactControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
+        impactControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_03);
+        impactControl.setKinematic(true);
+        this.addControl(impactControl);
+
+        // Fist controls
+        punchCollisionLeft = getNewPunchCollision(true);
+        punchCollisionRight = getNewPunchCollision(false);
+        
+        Node handL = skeletonControl.getAttachmentsNode("Hand.L");
+        handL.attachChild(punchCollisionLeft);
+
+        Node handR = skeletonControl.getAttachmentsNode("Hand.R");
+        handR.attachChild(punchCollisionRight);
+
+        fistControlLeft = getNewFistControl();
+        fistControlRight = getNewFistControl();
+
+        punchCollisionLeft.addControl(fistControlLeft);
+        punchCollisionRight.addControl(fistControlRight);
     }
     
     protected void addCollideWithRigidBody() {
@@ -92,8 +143,7 @@ public abstract class Character extends Node implements AnimEventListener {
         rigidControl = new RigidBodyControl(playerShape,80);
         // Dont want these colliding with anything other than each other to save efficiency
         rigidControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
-        rigidControl.removeCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
-        rigidControl.addCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+        rigidControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_02);
         rigidControl.setKinematic(true);
         this.addControl(rigidControl);
     }
@@ -125,6 +175,27 @@ public abstract class Character extends Node implements AnimEventListener {
         }
     }
     
+    public boolean isFistAttack(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+        boolean r = false;
+        if (attacking && nodeA!=characterControl && nodeB!=characterControl &&
+            (nodeA==fistControlLeft||nodeA==fistControlRight||nodeB==fistControlLeft||nodeB==fistControlRight)
+            ) {
+            r = true;
+        }
+        return r;
+    }
+
+    public boolean isFistImpact(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+        boolean r = false;
+        if (!attacking && nodeA!=characterControl && nodeB!=characterControl &&
+            (nodeA!=fistControlLeft&&nodeA!=fistControlRight&&nodeB!=fistControlLeft&&nodeB!=fistControlRight) &&
+            (nodeA==impactControl||nodeB==impactControl)
+            ) {
+            r = true;
+        }
+        return r;
+    }
+
     public abstract Vector3f getDirection();
     public abstract Vector3f getLeft();
     
@@ -173,6 +244,32 @@ public abstract class Character extends Node implements AnimEventListener {
     public CharacterControl getCharacterControl() {
         return characterControl;
     }
+
+    public RigidBodyControl getRigidControl() {
+        return rigidControl;
+    }
+
+    public RigidBodyControl getImpactControl() {
+        return impactControl;
+    }
+    
+    public RigidBodyControl getFistControlLeft() {
+        return fistControlLeft;
+    }
+    
+    public RigidBodyControl getFistControlRight() {
+        return fistControlRight;
+    }
+    
+    public Geometry getPunchCollision(boolean left) {
+        Geometry geom = null;
+        if (left) {
+            geom = punchCollisionLeft;
+        } else {
+            geom = punchCollisionRight;
+        }
+        return geom;
+    }
     
     private void handleAnimations() {
         if (attacking) {
@@ -198,4 +295,31 @@ public abstract class Character extends Node implements AnimEventListener {
             }
         }
     }
+
+    private Geometry getNewPunchCollision(boolean left) {
+        Box b = new Box(0.01f,0.01f,0.01f);
+        String n = "Hand.Left";
+        if (!left) {
+            n = "Hand.Right";
+        }
+        Geometry item = new Geometry(n,b);
+        item.setMaterial(new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md"));
+        item.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);                
+        item.getMaterial().getAdditionalRenderState().setWireframe(true);
+        item.setLocalTranslation(new Vector3f(0f,0.5f,0f));
+        item.setShadowMode(ShadowMode.Off);
+        item.setQueueBucket(Bucket.Transparent);          
+        return item;
+    }
+
+    private RigidBodyControl getNewFistControl() {
+        BoxCollisionShape boxShape = new BoxCollisionShape(new Vector3f(0.1f,0.1f,0.1f));
+        RigidBodyControl fistControl = new RigidBodyControl(boxShape,1);
+        // Dont want these colliding with anything other than each other to save efficiency
+        fistControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
+        fistControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_03);
+        fistControl.setKinematic(true);
+        return fistControl;
+    }
+
 }

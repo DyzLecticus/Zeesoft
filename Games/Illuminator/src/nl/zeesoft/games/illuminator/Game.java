@@ -2,6 +2,7 @@ package nl.zeesoft.games.illuminator;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -20,7 +21,7 @@ import nl.zeesoft.games.illuminator.model.GameModel;
  * 
  * TODO: Move logic into AppStates or Controls.
  */
-public class Game extends SimpleApplication {
+public class Game extends SimpleApplication implements PhysicsCollisionGroupListener {
     private GameModel           gameModel       = null;
     
     private Spatial             sceneModel      = null;
@@ -53,6 +54,8 @@ public class Game extends SimpleApplication {
         bulletAppState.setDebugEnabled(gameModel.isDebug());
         stateManager.attach(bulletAppState);
 
+        bulletAppState.getPhysicsSpace().addCollisionGroupListener(this,PhysicsCollisionObject.COLLISION_GROUP_03);
+        
         loadScene();
         loadPlayer();
         addLight();
@@ -64,6 +67,7 @@ public class Game extends SimpleApplication {
     @Override
     public void simpleUpdate(float tpf) {
         player.update();
+        // TODO: update opponents
     }
 
     @Override
@@ -71,18 +75,80 @@ public class Game extends SimpleApplication {
         //TODO: add render code
     }
     
+    @Override
+    public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+        Character chA = getNodeSource(nodeA);
+        if (chA==null) {
+            //System.out.println("Unable to find source for node A: " + nodeA + " = " + scene);
+        }
+        Character chB = getNodeSource(nodeB);
+        if (chB==null) {
+            //System.out.println("Unable to find source for node B: " + nodeB + " = " + scene);
+        }
+        if (player.isFistAttack(nodeA,nodeB)) {
+            System.out.println("Attack!");
+            for (Opponent opponent: opponents) {
+                if (opponent.isFistImpact(nodeA, nodeB)) {
+                    System.out.println("Impact!");
+                }
+            }
+        }
+        return true;
+    }
+    
+    private Character getNodeSource(PhysicsCollisionObject node) {
+        Character ch = null;
+        if (node==player.getCharacterControl()) {
+            ch = player;
+            System.out.println("Bad1");
+        } else if (node==player.getRigidControl()) {
+            ch = player;
+            System.out.println("Bad2");
+        } else if (node==player.getImpactControl()) {
+            ch = player;
+        } else if (node==player.getFistControlLeft()) {
+            ch = player;
+        } else if (node==player.getFistControlRight()) {
+            ch = player;
+        } else {
+            for (Opponent opponent: opponents) {
+                if (node==opponent.getCharacterControl()) {
+                    ch = opponent;
+                    System.out.println("Bad1!");
+                    break;
+                } else if (node==opponent.getRigidControl()) {
+                    ch = opponent;
+                    System.out.println("Bad2!");
+                    break;
+                } else if (node==opponent.getImpactControl()) {
+                    ch = opponent;
+                    break;
+                } else if (node==opponent.getFistControlLeft()) {
+                    ch = opponent;
+                    break;
+                } else if (node==opponent.getFistControlRight()) {
+                    ch = opponent;
+                    break;
+                }
+            }
+        }
+        return ch;
+    }
+    
     private void loadScene() {
         sceneModel = assetManager.loadModel("Scenes/ManyLights/Main.scene");
         sceneModel.scale(1f,.5f,1f); //Make scenery short enough to jump on. =P
         CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) sceneModel);
         scene = new RigidBodyControl(sceneShape, 0);
+        scene.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
+        scene.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
         sceneModel.addControl(scene);
         rootNode.attachChild(sceneModel);
         bulletAppState.getPhysicsSpace().add(scene);
     }
 
     private void loadPlayer() {
-        player = new Player(gameModel.getPlayerModel(), inputManager, cam);
+        player = new Player(gameModel.getPlayerModel(), assetManager, inputManager, cam);
         player.initialize();
         player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,2f,5f));
         attachCharacter(player);
@@ -96,7 +162,7 @@ public class Game extends SimpleApplication {
     }
     
     private void spawnOpponent() {
-        Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager));
+        Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager),assetManager);
         opp.initialize();
         opp.getCharacterControl().setPhysicsLocation(getNewSpawnLocation());
         attachCharacter(opp);
@@ -106,6 +172,9 @@ public class Game extends SimpleApplication {
     private void attachCharacter(Character character) {
         rootNode.attachChild(character);
         bulletAppState.getPhysicsSpace().add(character);
+        bulletAppState.getPhysicsSpace().add(character.getImpactControl());
+        bulletAppState.getPhysicsSpace().add(character.getFistControlLeft());
+        bulletAppState.getPhysicsSpace().add(character.getFistControlRight());
     }
 
     private Vector3f getNewSpawnLocation() {
