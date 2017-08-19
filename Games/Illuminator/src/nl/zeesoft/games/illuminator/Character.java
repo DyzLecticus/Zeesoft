@@ -13,7 +13,6 @@ import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
@@ -40,7 +39,6 @@ public abstract class Character extends Node implements AnimEventListener {
 
     private AnimChannel         lowerChannel        = null;
     private AnimChannel         upperChannel        = null;
-    private AnimControl         animControl         = null;
     private final Vector3f      walkDirection       = new Vector3f();
 
     private boolean             left                = false;
@@ -48,7 +46,9 @@ public abstract class Character extends Node implements AnimEventListener {
     private boolean             up                  = false;
     private boolean             down                = false;
     private boolean             attack              = false;
-    private boolean             attacking           = false;
+    private boolean             attackNext          = false;
+    private int                 attacking           = -1;
+    private int                 impacting           = -1;
 
     private SkeletonControl     skeletonControl     = null;
     private Geometry            punchCollisionLeft  = null;
@@ -74,39 +74,11 @@ public abstract class Character extends Node implements AnimEventListener {
         characterControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
         this.addControl(characterControl);
         
-        // TODO: Create parameter for literal: Meshes
-        animControl = characterModel.model.getChild("Meshes").getControl(AnimControl.class);
-        animControl.addListener(this);
-        lowerChannel = animControl.createChannel();
-        lowerChannel.addBone("Root");
-        lowerChannel.addBone("Hip.L");
-        lowerChannel.addBone("Leg.Upper.L");
-        lowerChannel.addBone("Leg.Lower.L");
-        lowerChannel.addBone("Foot.L");
-        lowerChannel.addBone("Hip.R");
-        lowerChannel.addBone("Leg.Upper.R");
-        lowerChannel.addBone("Leg.Lower.R");
-        lowerChannel.addBone("Foot.R");
-        lowerChannel.setAnim(characterModel.idleAnim);
-        
-        upperChannel = animControl.createChannel();
-        upperChannel.addBone("Back");
-        upperChannel.addBone("Chest");
-        upperChannel.addBone("Neck");
-        upperChannel.addBone("Head");
-        upperChannel.addBone("Shoulder.L");
-        upperChannel.addBone("Arm.Upper.L");
-        upperChannel.addBone("Arm.Lower.L");
-        upperChannel.addBone("Hand.L");
-        upperChannel.addBone("Fingers.L");
-        upperChannel.addBone("Shoulder.R");
-        upperChannel.addBone("Arm.Upper.R");
-        upperChannel.addBone("Arm.Lower.R");
-        upperChannel.addBone("Hand.R");
-        upperChannel.addBone("Fingers.R");
-        upperChannel.setAnim(characterModel.idleAnim);
+        characterModel.addAnimEventListener(this);
+        lowerChannel = characterModel.getNewAnimChannel(true);
+        upperChannel = characterModel.getNewAnimChannel(false);
 
-        skeletonControl = characterModel.model.getChild("Meshes").getControl(SkeletonControl.class);
+        skeletonControl = characterModel.model.getChild(characterModel.animRoot).getControl(SkeletonControl.class);
         
         // Impact control
         CapsuleCollisionShape impactShape = new CapsuleCollisionShape(characterModel.radius * 0.4f,characterModel.height * 1.3f);
@@ -165,7 +137,13 @@ public abstract class Character extends Node implements AnimEventListener {
     }
     
     public void setAttack(boolean v) {
+        if (v && impacting>=0) {
+            v = false;
+        }
         attack = v;
+        if (attack && attacking>=0 && attacking<(characterModel.attacks.length - 1)) {
+            attackNext = true;
+        }
     }
     
     public void jump() {
@@ -175,27 +153,33 @@ public abstract class Character extends Node implements AnimEventListener {
         }
     }
     
-    public boolean isFistAttack(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
-        boolean r = false;
-        if (attacking && nodeA!=characterControl && nodeB!=characterControl &&
+    public int getFistAttack(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+        int r = -1;
+        if (attacking>=0 && 
+            nodeA!=impactControl && nodeB!=impactControl &&
             (nodeA==fistControlLeft||nodeA==fistControlRight||nodeB==fistControlLeft||nodeB==fistControlRight)
             ) {
-            r = true;
+            r = attacking;
         }
         return r;
     }
 
-    public boolean isFistImpact(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+    public boolean applyFistImpact(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB, int impact) {
         boolean r = false;
-        if (!attacking && nodeA!=characterControl && nodeB!=characterControl &&
+        if (attacking<0 && nodeA!=characterControl && nodeB!=characterControl &&
             (nodeA!=fistControlLeft&&nodeA!=fistControlRight&&nodeB!=fistControlLeft&&nodeB!=fistControlRight) &&
             (nodeA==impactControl||nodeB==impactControl)
             ) {
-            r = true;
+            if (impacting!=impact) {
+                r = true;
+                impacting = impact;
+                upperChannel.setAnim(characterModel.impacts[impacting],0.001f);
+                upperChannel.setLoopMode(LoopMode.DontLoop);
+            }
         }
         return r;
     }
-
+    
     public abstract Vector3f getDirection();
     public abstract Vector3f getLeft();
     
@@ -219,7 +203,7 @@ public abstract class Character extends Node implements AnimEventListener {
         }
 
         float walk = characterModel.walkSpeed;
-        if (attacking && up) {
+        if (attacking>=0 && up) {
             walk = walk * characterModel.walkSpeedAttackMult;
         } else if (up && !characterControl.onGround()) {
             walk = walk * characterModel.jumpSpeedMult;
@@ -231,8 +215,19 @@ public abstract class Character extends Node implements AnimEventListener {
 
     @Override
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
-        if(channel == upperChannel && attacking && animName.equals(characterModel.attackAnim)) {
-            attacking = false;
+        if(channel == upperChannel) {
+            if (attacking>=0 && characterModel.isAttackAnim(animName)) {
+                if (attackNext) {
+                    attacking++;
+                    upperChannel.setAnim(characterModel.attacks[attacking],0.001f);
+                    attackNext = false;
+                } else {
+                    attacking = -1;
+                }
+            }
+            if (impacting>=0 && characterModel.isImpactAnim(animName)) {
+                impacting = -1;
+            }
         }
     }
 
@@ -261,28 +256,24 @@ public abstract class Character extends Node implements AnimEventListener {
         return fistControlRight;
     }
     
-    public Geometry getPunchCollision(boolean left) {
-        Geometry geom = null;
-        if (left) {
-            geom = punchCollisionLeft;
-        } else {
-            geom = punchCollisionRight;
-        }
-        return geom;
-    }
-    
     private void handleAnimations() {
-        if (attacking) {
+        if (impacting>=0) {
+            if (!upperChannel.getAnimationName().equals(characterModel.impacts[impacting])) {
+                upperChannel.setAnim(characterModel.impacts[impacting],0.001f);
+                upperChannel.setLoopMode(LoopMode.DontLoop);
+            }
+        } else if (attacking>=0) {
             // Waiting for attack animation to finish
         } else if (attack) {
-            upperChannel.setAnim(characterModel.attackAnim,0.001f);
+            attacking = 0;
+            upperChannel.setAnim(characterModel.attacks[attacking],0.001f);
             upperChannel.setLoopMode(LoopMode.DontLoop);
             attack = false;
-            attacking = true;
         } else {
             upperChannel.setAnim(characterModel.idleAnim);
             upperChannel.setLoopMode(LoopMode.Loop);
         }
+        
         if (characterControl.onGround()) {
             if (left || right || up || down) {
                 if(!lowerChannel.getAnimationName().equals(characterModel.walkAnim)) {

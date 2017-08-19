@@ -67,7 +67,9 @@ public class Game extends SimpleApplication implements PhysicsCollisionGroupList
     @Override
     public void simpleUpdate(float tpf) {
         player.update();
-        // TODO: update opponents
+        for (Opponent opponent: opponents) {
+            opponent.update();
+        }
     }
 
     @Override
@@ -85,11 +87,12 @@ public class Game extends SimpleApplication implements PhysicsCollisionGroupList
         if (chB==null) {
             //System.out.println("Unable to find source for node B: " + nodeB + " = " + scene);
         }
-        if (player.isFistAttack(nodeA,nodeB)) {
-            System.out.println("Attack!");
+        int attacking = player.getFistAttack(nodeA,nodeB);
+        if (attacking>=0) {
             for (Opponent opponent: opponents) {
-                if (opponent.isFistImpact(nodeA, nodeB)) {
-                    System.out.println("Impact!");
+                if (opponent.applyFistImpact(nodeA,nodeB,attacking)) {
+                    System.out.println("Opponent impact: " + attacking);
+                    
                 }
             }
         }
