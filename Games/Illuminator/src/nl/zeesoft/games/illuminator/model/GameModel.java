@@ -13,7 +13,7 @@ public class GameModel {
     public static final String      DIFFICULTY_MEDIUM   = "Medium";
     public static final String      DIFFICULTY_HARD     = "Hard";
     
-    private boolean                 debug               = true;
+    private boolean                 debug               = false;
     private AppSettings             settings            = null;
     private String                  difficulty          = DIFFICULTY_MEDIUM;
     

@@ -2,7 +2,9 @@ package nl.zeesoft.games.illuminator;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionGroupListener;
+import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -21,7 +23,7 @@ import nl.zeesoft.games.illuminator.model.GameModel;
  * 
  * TODO: Move logic into AppStates or Controls.
  */
-public class Game extends SimpleApplication implements PhysicsCollisionGroupListener {
+public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsCollisionGroupListener {
     private GameModel           gameModel       = null;
     
     private Spatial             sceneModel      = null;
@@ -55,6 +57,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionGroupList
         stateManager.attach(bulletAppState);
 
         bulletAppState.getPhysicsSpace().addCollisionGroupListener(this,PhysicsCollisionObject.COLLISION_GROUP_03);
+        bulletAppState.getPhysicsSpace().addCollisionListener(this);
         
         loadScene();
         loadPlayer();
@@ -66,9 +69,35 @@ public class Game extends SimpleApplication implements PhysicsCollisionGroupList
 
     @Override
     public void simpleUpdate(float tpf) {
-        player.update();
+        // Listener follows camera
+        listener.setLocation(cam.getLocation());
+        listener.setRotation(cam.getRotation());
+        
+        player.update(tpf);
         for (Opponent opponent: opponents) {
-            opponent.update();
+            opponent.update(tpf);
+            
+            Vector3f opponentPos = opponent.getCharacterControl().getPhysicsLocation();
+            Vector3f playerPos = player.getCharacterControl().getPhysicsLocation();
+            playerPos.y = opponentPos.y;
+            
+            float distance = playerPos.distance(opponentPos);
+            //System.out.println("Opponent distance: " + distance);
+            if (distance > 0.1) {
+                Vector3f turn = opponentPos.subtract(playerPos);
+                turn.y = 0;
+                opponent.getCharacterControl().setViewDirection(turn);
+            }
+            if (distance < 1.8) {
+                if (!opponent.isAttack()) {
+                    opponent.setAttack(true);
+                }
+            }
+            if (distance > 1.7) {
+                opponent.setUp(true);
+            } else {
+                opponent.setUp(false);
+            }
         }
     }
 
@@ -78,7 +107,13 @@ public class Game extends SimpleApplication implements PhysicsCollisionGroupList
     }
     
     @Override
+    public void collision(PhysicsCollisionEvent event) {
+        handleCollision(event.getObjectA(),event.getObjectB());
+    }
+    
+    @Override
     public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+        /*
         Character chA = getNodeSource(nodeA);
         if (chA==null) {
             //System.out.println("Unable to find source for node A: " + nodeA + " = " + scene);
@@ -87,12 +122,25 @@ public class Game extends SimpleApplication implements PhysicsCollisionGroupList
         if (chB==null) {
             //System.out.println("Unable to find source for node B: " + nodeB + " = " + scene);
         }
+        */
+        //return handleCollision(nodeA,nodeB);
+        return true;
+    }
+    
+    private boolean handleCollision(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
         int attacking = player.getFistAttack(nodeA,nodeB);
         if (attacking>=0) {
             for (Opponent opponent: opponents) {
                 if (opponent.applyFistImpact(nodeA,nodeB,attacking)) {
                     System.out.println("Opponent impact: " + attacking);
-                    
+                }
+            }
+        }
+        for (Opponent opponent: opponents) {
+            attacking = opponent.getFistAttack(nodeA,nodeB);
+            if (attacking>=0) {
+                if (player.applyFistImpact(nodeA,nodeB,attacking)) {
+                    System.out.println("Player impact: " + attacking);
                 }
             }
         }

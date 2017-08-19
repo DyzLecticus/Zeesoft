@@ -37,7 +37,6 @@ public abstract class CharacterModel {
     
     public Node     model               = null;
     
-    
     public boolean isAttackAnim(String animName) {
         boolean r = false;
         for (int i = 0; i<attacks.length; i++) {
