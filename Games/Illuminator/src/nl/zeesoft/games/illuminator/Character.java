@@ -4,7 +4,6 @@ import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
 import com.jme3.animation.LoopMode;
-import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioData.DataType;
 import com.jme3.audio.AudioNode;
@@ -12,15 +11,10 @@ import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
 
 /**
@@ -35,9 +29,9 @@ public abstract class Character extends Node implements AnimEventListener {
     private CharacterControl    characterControl    = null;
     private RigidBodyControl    rigidControl        = null;
 
-    private RigidBodyControl    impactControl       = null;
-    private RigidBodyControl    fistControlLeft     = null;
-    private RigidBodyControl    fistControlRight    = null;
+    private GhostControl        impactControl       = null; 
+    private GhostControl        fistControlLeft     = null; 
+    private GhostControl        fistControlRight    = null;
 
     private AnimChannel         lowerChannel        = null;
     private AnimChannel         upperChannel        = null;
@@ -53,10 +47,6 @@ public abstract class Character extends Node implements AnimEventListener {
     private int                 attacking           = -1;
     private int                 impacting           = -1;
 
-    private SkeletonControl     skeletonControl     = null;
-    private Geometry            punchCollisionLeft  = null;
-    private Geometry            punchCollisionRight = null;
-    
     private AudioNode           attackAudio         = null;
     private AudioNode[]         impactAudio         = null;
 
@@ -90,7 +80,6 @@ public abstract class Character extends Node implements AnimEventListener {
         // Audio
         attackAudio = getNewAudioNode(characterModel.attackSounds[0],0.1f);
         this.attachChild(attackAudio);
-
         impactAudio = new AudioNode[characterModel.impactSounds.length];
         for (int i = 0; i < characterModel.impactSounds.length; i++) {
             impactAudio[i] = getNewAudioNode(characterModel.impactSounds[i]); 
@@ -103,43 +92,23 @@ public abstract class Character extends Node implements AnimEventListener {
         statusBar.setLocalTranslation(0.5f,2,0);
         setHealth(characterModel.maxHealth);
 
-        // TODO: Move impact fist control initialization to characterModel
-        skeletonControl = characterModel.model.getChild(characterModel.animRoot).getControl(SkeletonControl.class);
-        
         // Impact control
-        CapsuleCollisionShape impactShape = new CapsuleCollisionShape(characterModel.radius * 0.4f,characterModel.height * 1.3f);
-        impactControl = new RigidBodyControl(impactShape,1);
-        // Dont want these colliding with anything other than each other to save efficiency
+        CapsuleCollisionShape impactShape = new CapsuleCollisionShape(characterModel.radius * 0.4f,characterModel.height * 0.7f);
+        impactControl = new GhostControl(impactShape);
         impactControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
         impactControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_03);
-        impactControl.setKinematic(true);
-        this.addControl(impactControl);
+        characterModel.addImpactControl(impactControl);
         
         // Fist controls
-        punchCollisionLeft = getNewPunchCollision(true);
-        punchCollisionRight = getNewPunchCollision(false);
-        
-        Node handL = skeletonControl.getAttachmentsNode("Hand.L");
-        handL.attachChild(punchCollisionLeft);
-
-        Node handR = skeletonControl.getAttachmentsNode("Hand.R");
-        handR.attachChild(punchCollisionRight);
-
         fistControlLeft = getNewFistControl();
         fistControlRight = getNewFistControl();
-
-        punchCollisionLeft.addControl(fistControlLeft);
-        punchCollisionRight.addControl(fistControlRight);
-    }
-    
-    protected void addCollideWithRigidBody() {
-        characterControl.addCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+        characterModel.addFistControl(fistControlLeft,true);
+        characterModel.addFistControl(fistControlRight,false);
     }
     
     protected void addRigidBody() {
         CapsuleCollisionShape playerShape = new CapsuleCollisionShape(characterModel.radius,characterModel.height);
         rigidControl = new RigidBodyControl(playerShape,80);
-        // Dont want these colliding with anything other than each other to save efficiency
         rigidControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
         rigidControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_02);
         rigidControl.setKinematic(true);
@@ -217,9 +186,10 @@ public abstract class Character extends Node implements AnimEventListener {
             (nodeA==impactControl||nodeB==impactControl)
             ) {
             if (impacting!=impact) {
-                setHealth(health - characterModel.attackDamages[impact]);
                 r = true;
                 impacting = impact;
+                setHealth(health - characterModel.attackDamages[impacting]);
+                startShockWave(impacting);        
                 impactAudio[impacting].playInstance();
                 upperChannel.setAnim(characterModel.impacts[impacting],0.001f);
                 upperChannel.setLoopMode(LoopMode.DontLoop);
@@ -228,10 +198,17 @@ public abstract class Character extends Node implements AnimEventListener {
         return r;
     }
     
+    protected void startShockWave(int impacting) {
+        // Override to implement
+    }
+
+    protected void stopShockWave() {
+        // Override to implement
+    }
+    
     public abstract Vector3f getDirection();
     public abstract Vector3f getLeft();
     
-    // Make sure to call this from the main simpleUpdate() loop
     public void update(float tpf) {
         Vector3f goDir = getDirection();
         Vector3f goLeft = getLeft();
@@ -282,6 +259,7 @@ public abstract class Character extends Node implements AnimEventListener {
             }
             if (impacting>=0 && characterModel.isImpactAnim(animName)) {
                 impacting = -1;
+                stopShockWave();
             }
             if (attacking<0 && impacting<0) {
                 if (!upperChannel.getAnimationName().equals(characterModel.idleAnim)) {
@@ -298,6 +276,10 @@ public abstract class Character extends Node implements AnimEventListener {
         // Not implemented
     }
 
+    public AssetManager getAssetManager() {
+        return assetManager;
+    }
+    
     public CharacterModel getCharacterModel() {
         return characterModel;
     }
@@ -310,15 +292,15 @@ public abstract class Character extends Node implements AnimEventListener {
         return rigidControl;
     }
 
-    public RigidBodyControl getImpactControl() {
+    public GhostControl getImpactControl() {
         return impactControl;
     }
     
-    public RigidBodyControl getFistControlLeft() {
+    public GhostControl getFistControlLeft() {
         return fistControlLeft;
     }
     
-    public RigidBodyControl getFistControlRight() {
+    public GhostControl getFistControlRight() {
         return fistControlRight;
     }
     
@@ -352,29 +334,12 @@ public abstract class Character extends Node implements AnimEventListener {
         }
     }
 
-    private Geometry getNewPunchCollision(boolean left) {
-        Box b = new Box(0.01f,0.01f,0.01f);
-        String n = "Hand.Left";
-        if (!left) {
-            n = "Hand.Right";
-        }
-        Geometry item = new Geometry(n,b);
-        item.setMaterial(new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md"));
-        item.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);                
-        item.getMaterial().getAdditionalRenderState().setWireframe(true);
-        item.setLocalTranslation(new Vector3f(0f,0.5f,0f));
-        item.setShadowMode(ShadowMode.Off);
-        item.setQueueBucket(Bucket.Transparent);          
-        return item;
-    }
-
-    private RigidBodyControl getNewFistControl() {
-        BoxCollisionShape boxShape = new BoxCollisionShape(new Vector3f(0.1f,0.1f,0.1f));
-        RigidBodyControl fistControl = new RigidBodyControl(boxShape,1);
+    private GhostControl getNewFistControl() {
+        BoxCollisionShape boxShape = new BoxCollisionShape(new Vector3f(0.1f,0.2f,0.1f));
+        GhostControl fistControl = new GhostControl(boxShape);
         // Dont want these colliding with anything other than each other to save efficiency
         fistControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
         fistControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_03);
-        fistControl.setKinematic(true);
         return fistControl;
     }
 

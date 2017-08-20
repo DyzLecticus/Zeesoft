@@ -1,6 +1,7 @@
 package nl.zeesoft.games.illuminator;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -35,7 +36,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
     @Override
     public void initialize() {
         super.initialize();
-        addCollideWithRigidBody();
+        getCharacterControl().addCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
         setUpKeys();
     }
 

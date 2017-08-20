@@ -3,6 +3,9 @@ package nl.zeesoft.games.illuminator.model;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
+import com.jme3.animation.SkeletonControl;
+import com.jme3.bullet.control.GhostControl;
+import com.jme3.effect.ParticleEmitter;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -16,7 +19,7 @@ public abstract class CharacterModel {
     public float    rotY                = FastMath.PI;
     public float    radius              = 0.5f;
     public float    height              = 1.8f;
-    public Vector3f translation         = new Vector3f(0.0f,-1.5f,0.0f);
+    public Vector3f translation         = new Vector3f(0.0f,-1.4f,0.0f);
     
     public float    walkSpeed           = 0.05f;
     public float    walkSpeedAttackMult = 3.0f;
@@ -106,6 +109,31 @@ public abstract class CharacterModel {
                 r.addBone("Fingers.R");
             }
             r.setAnim(idleAnim);
+        }
+        return r;
+    }
+
+    public void addImpactControl(GhostControl impactControl) {
+        getBone("Chest").addControl(impactControl);
+    }
+
+    public void addFistControl(GhostControl fistControl,boolean left) {
+        String name = "Hand.L";
+        if (!left) {
+            name = "Hand.R";
+        }
+        getBone(name).addControl(fistControl);
+    }
+
+    public void attachParticleEmitterToHead(ParticleEmitter emitter) {
+        getBone("Head").attachChild(emitter);
+    }
+    
+    private Node getBone(String name) {
+        Node r = null;
+        if (model!=null) {
+            SkeletonControl skeletonControl = model.getChild(animRoot).getControl(SkeletonControl.class);
+            r = skeletonControl.getAttachmentsNode(name);
         }
         return r;
     }

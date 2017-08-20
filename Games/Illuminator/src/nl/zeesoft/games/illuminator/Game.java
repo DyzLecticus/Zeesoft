@@ -108,7 +108,9 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
     
     @Override
     public void collision(PhysicsCollisionEvent event) {
-        handleCollision(event.getObjectA(),event.getObjectB());
+        if (handleCollision(event.getObjectA(),event.getObjectB())) {
+            
+        }
     }
     
     @Override
@@ -146,8 +148,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
                 if (player.applyFistImpact(nodeA,nodeB,attacking)) {
                     //System.out.println("Player impact: " + attacking);
                     if (player.getHealth()==0) {
-                        removeOpponent(opponent);
-                        spawnOpponent();
+                        // TODO: End game
                     }
                 }
             }
@@ -252,5 +253,5 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
     private Vector3f getNewSpawnLocation() {
         Vector3f location = new Vector3f(0,5,0);
         return location;
-    }
+    }    
 }
