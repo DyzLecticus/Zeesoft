@@ -1,4 +1,4 @@
-package nl.zeesoft.games.illuminator;
+package nl.zeesoft.games.illuminator.controls;
 
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
@@ -53,6 +53,8 @@ public abstract class Character extends Node implements AnimEventListener {
     private CharacterStatusBar  statusBar           = null;
     private int                 health              = 0;
     
+    private DeathExplosion      death               = null;
+    
     public Character(CharacterModel characterModel,AssetManager assetManager) {
         this.assetManager = assetManager;
         this.characterModel = characterModel;
@@ -104,6 +106,10 @@ public abstract class Character extends Node implements AnimEventListener {
         fistControlRight = getNewFistControl();
         characterModel.addFistControl(fistControlLeft,true);
         characterModel.addFistControl(fistControlRight,false);
+        
+        // Death
+        death = new DeathExplosion(assetManager);
+        death.initialize();
     }
     
     protected void addRigidBody() {
@@ -129,6 +135,10 @@ public abstract class Character extends Node implements AnimEventListener {
 
     public int getHealth() {
         return health;
+    }
+    
+    public DeathExplosion getDeath() {
+        return death;
     }
     
     public void setLeft(boolean v) {

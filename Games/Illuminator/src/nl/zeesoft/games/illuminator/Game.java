@@ -1,5 +1,8 @@
 package nl.zeesoft.games.illuminator;
 
+import nl.zeesoft.games.illuminator.controls.Character;
+import nl.zeesoft.games.illuminator.controls.Opponent;
+import nl.zeesoft.games.illuminator.controls.Player;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
@@ -16,6 +19,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
+import nl.zeesoft.games.illuminator.controls.DeathExplosion;
 import nl.zeesoft.games.illuminator.model.GameModel;
 
 /**
@@ -24,14 +28,15 @@ import nl.zeesoft.games.illuminator.model.GameModel;
  * TODO: Move logic into AppStates or Controls.
  */
 public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsCollisionGroupListener {
-    private GameModel           gameModel       = null;
+    private GameModel               gameModel       = null;
     
-    private Spatial             sceneModel      = null;
-    private RigidBodyControl    scene           = null;
-    private BulletAppState      bulletAppState  = null;
+    private Spatial                 sceneModel      = null;
+    private RigidBodyControl        scene           = null;
+    private BulletAppState          bulletAppState  = null;
     
-    private Player              player          = null;
-    private List<Opponent>      opponents       = new ArrayList<Opponent>();
+    private Player                  player          = null;
+    private List<Opponent>          opponents       = new ArrayList<Opponent>();
+    private List<DeathExplosion>    deathExplosions = new ArrayList<DeathExplosion>();
 
     public Game(GameModel gameModel) {
         this.gameModel = gameModel;
@@ -99,6 +104,14 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
                 opponent.setUp(false);
             }
         }
+        List<DeathExplosion> explosions = new ArrayList<DeathExplosion>(deathExplosions);
+        for (DeathExplosion explosion: explosions) {
+            if (explosion.update(tpf)) {
+                explosion.stop();
+                deathExplosions.remove(explosion);
+                rootNode.detachChild(explosion);
+            }
+        }
     }
 
     @Override
@@ -108,9 +121,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
     
     @Override
     public void collision(PhysicsCollisionEvent event) {
-        if (handleCollision(event.getObjectA(),event.getObjectB())) {
-            
-        }
+        handleCollision(event.getObjectA(),event.getObjectB());
     }
     
     @Override
@@ -136,6 +147,13 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
                 if (opponent.applyFistImpact(nodeA,nodeB,attacking)) {
                     //System.out.println("Opponent impact: " + attacking);
                     if (opponent.getHealth()==0) {
+                        DeathExplosion explosion = opponent.getDeath();
+                        rootNode.attachChild(explosion);
+                        Vector3f trans = opponent.getCharacterControl().getPhysicsLocation();
+                        trans.y += (opponent.getCharacterModel().height * 0.7);
+                        explosion.setLocalTranslation(trans);
+                        explosion.start();
+                        deathExplosions.add(explosion);
                         removeOpponent(opponent);
                         spawnOpponent();
                     }

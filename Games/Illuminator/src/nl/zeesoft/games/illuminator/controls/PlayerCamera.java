@@ -1,4 +1,4 @@
-package nl.zeesoft.games.illuminator;
+package nl.zeesoft.games.illuminator.controls;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;

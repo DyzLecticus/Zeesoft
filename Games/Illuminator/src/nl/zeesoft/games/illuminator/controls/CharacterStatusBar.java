@@ -1,4 +1,4 @@
-package nl.zeesoft.games.illuminator;
+package nl.zeesoft.games.illuminator.controls;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -26,12 +26,12 @@ public class CharacterStatusBar extends Node {
         mat.setColor("Color", ColorRGBA.Black);
         g.setMaterial(mat);
 
-        Quad q2 = new Quad(0.9f,0.08f);
+        Quad q2 = new Quad(0.96f,0.06f);
         healthBar = new Geometry("HealthBar", q2);
         Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat2.setColor("Color", ColorRGBA.Green);
         healthBar.setMaterial(mat2);
-        healthBar.setLocalTranslation(0.05f,0.01f,0.01f);
+        healthBar.setLocalTranslation(0.02f,0.02f,0.01f);
         
         BillboardControl control = new BillboardControl();
         
