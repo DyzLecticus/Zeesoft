@@ -60,6 +60,9 @@ public abstract class Character extends Node implements AnimEventListener {
     private AudioNode           attackAudio         = null;
     private AudioNode[]         impactAudio         = null;
 
+    private CharacterStatusBar  statusBar           = null;
+    private int                 health              = 0;
+    
     public Character(CharacterModel characterModel,AssetManager assetManager) {
         this.assetManager = assetManager;
         this.characterModel = characterModel;
@@ -84,8 +87,23 @@ public abstract class Character extends Node implements AnimEventListener {
         lowerChannel = characterModel.getNewAnimChannel(true);
         upperChannel = characterModel.getNewAnimChannel(false);
 
-        // TODO: Move to characterModel
+        // Audio
+        attackAudio = getNewAudioNode(characterModel.attackSounds[0],0.1f);
+        this.attachChild(attackAudio);
+
+        impactAudio = new AudioNode[characterModel.impactSounds.length];
+        for (int i = 0; i < characterModel.impactSounds.length; i++) {
+            impactAudio[i] = getNewAudioNode(characterModel.impactSounds[i]); 
+            this.attachChild(impactAudio[i]);
+        }
         
+        // Status bar
+        statusBar = new CharacterStatusBar(assetManager,this);
+        statusBar.initialize();
+        statusBar.setLocalTranslation(0.5f,2,0);
+        setHealth(characterModel.maxHealth);
+
+        // TODO: Move impact fist control initialization to characterModel
         skeletonControl = characterModel.model.getChild(characterModel.animRoot).getControl(SkeletonControl.class);
         
         // Impact control
@@ -112,36 +130,6 @@ public abstract class Character extends Node implements AnimEventListener {
 
         punchCollisionLeft.addControl(fistControlLeft);
         punchCollisionRight.addControl(fistControlRight);
-        
-        // Audio
-        attackAudio = new AudioNode(assetManager,"Sounds/Swoosh01.wav",DataType.Buffer); 
-        attackAudio.setPositional(true);
-        attackAudio.setReverbEnabled(true);
-        attackAudio.setRefDistance(10f);
-        attackAudio.setMaxDistance(50f);
-        attackAudio.setVolume(0.1f);
-        attackAudio.setLooping(false);
-
-        impactAudio = new AudioNode[2];
-        impactAudio[0] = new AudioNode(assetManager,"Sounds/Impact01.wav",DataType.Buffer); 
-        impactAudio[1] = new AudioNode(assetManager,"Sounds/Impact02.wav",DataType.Buffer); 
-
-        impactAudio[0].setPositional(true);
-        impactAudio[0].setReverbEnabled(true);
-        impactAudio[0].setRefDistance(10f);
-        impactAudio[0].setMaxDistance(50f);
-        impactAudio[0].setVolume(2);
-        impactAudio[0].setLooping(false);
-
-        impactAudio[1].setPositional(true);
-        impactAudio[1].setReverbEnabled(true);
-        impactAudio[1].setRefDistance(10f);
-        impactAudio[1].setMaxDistance(50f);
-        impactAudio[1].setVolume(2);
-        impactAudio[1].setLooping(false);
-        
-        this.attachChild(impactAudio[0]);
-        this.attachChild(impactAudio[1]);
     }
     
     protected void addCollideWithRigidBody() {
@@ -160,6 +148,18 @@ public abstract class Character extends Node implements AnimEventListener {
     
     protected float getAttackDelay() {
         return 0.0f;
+    }
+    
+    public void setHealth(int health) {
+        if (health<0) {
+            health = 0;
+        }
+        this.health = health;
+        statusBar.setHealth(health);
+    }
+
+    public int getHealth() {
+        return health;
     }
     
     public void setLeft(boolean v) {
@@ -217,6 +217,7 @@ public abstract class Character extends Node implements AnimEventListener {
             (nodeA==impactControl||nodeB==impactControl)
             ) {
             if (impacting!=impact) {
+                setHealth(health - characterModel.attackDamages[impact]);
                 r = true;
                 impacting = impact;
                 impactAudio[impacting].playInstance();
@@ -377,4 +378,18 @@ public abstract class Character extends Node implements AnimEventListener {
         return fistControl;
     }
 
+    private AudioNode getNewAudioNode(String fileName) {
+        return getNewAudioNode(fileName,2.0f);
+    }
+    
+    private AudioNode getNewAudioNode(String fileName,float volume) {
+        AudioNode audio = new AudioNode(assetManager,fileName,DataType.Buffer); 
+        audio.setPositional(true);
+        audio.setReverbEnabled(true);
+        audio.setRefDistance(10f);
+        audio.setMaxDistance(50f);
+        audio.setVolume(volume);
+        audio.setLooping(false);
+        return audio;
+    }
 }

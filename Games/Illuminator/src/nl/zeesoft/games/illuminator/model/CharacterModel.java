@@ -34,8 +34,16 @@ public abstract class CharacterModel {
 
     public String[] attacks             = {"Attack.Jab","Attack.Hook"};
     public String[] impacts             = {"Impact.Jab","Impact.Hook"};
+
+    public String[] attackSounds        = {"Sounds/Swoosh01.wav"};
+    public String[] impactSounds        = {"Sounds/Impact01.wav","Sounds/Impact02.wav"};
     
     public Node     model               = null;
+    
+    public int      maxHealth           = 100;
+    public int      maxMana             = 100;
+
+    public int[]    attackDamages       = {10,20};
     
     public boolean isAttackAnim(String animName) {
         boolean r = false;

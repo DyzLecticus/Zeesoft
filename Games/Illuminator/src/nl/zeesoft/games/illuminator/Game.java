@@ -132,7 +132,11 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
         if (attacking>=0) {
             for (Opponent opponent: opponents) {
                 if (opponent.applyFistImpact(nodeA,nodeB,attacking)) {
-                    System.out.println("Opponent impact: " + attacking);
+                    //System.out.println("Opponent impact: " + attacking);
+                    if (opponent.getHealth()==0) {
+                        removeOpponent(opponent);
+                        spawnOpponent();
+                    }
                 }
             }
         }
@@ -140,7 +144,11 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
             attacking = opponent.getFistAttack(nodeA,nodeB);
             if (attacking>=0) {
                 if (player.applyFistImpact(nodeA,nodeB,attacking)) {
-                    System.out.println("Player impact: " + attacking);
+                    //System.out.println("Player impact: " + attacking);
+                    if (player.getHealth()==0) {
+                        removeOpponent(opponent);
+                        spawnOpponent();
+                    }
                 }
             }
         }
@@ -220,12 +228,25 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
         opponents.add(opp);
     }
 
+    private void removeOpponent(Opponent opp) {
+        detachCharacter(opp);
+        opponents.remove(opp);
+    }
+
     private void attachCharacter(Character character) {
         rootNode.attachChild(character);
         bulletAppState.getPhysicsSpace().add(character);
         bulletAppState.getPhysicsSpace().add(character.getImpactControl());
         bulletAppState.getPhysicsSpace().add(character.getFistControlLeft());
         bulletAppState.getPhysicsSpace().add(character.getFistControlRight());
+    }
+
+    private void detachCharacter(Character character) {
+        rootNode.detachChild(character);
+        bulletAppState.getPhysicsSpace().remove(character);
+        bulletAppState.getPhysicsSpace().remove(character.getImpactControl());
+        bulletAppState.getPhysicsSpace().remove(character.getFistControlLeft());
+        bulletAppState.getPhysicsSpace().remove(character.getFistControlRight());
     }
 
     private Vector3f getNewSpawnLocation() {
