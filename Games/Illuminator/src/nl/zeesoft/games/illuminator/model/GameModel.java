@@ -14,6 +14,7 @@ public class GameModel {
     public static final String      DIFFICULTY_HARD     = "Hard";
     
     private boolean                 debug               = false;
+    private boolean                 godMode             = false;
     private AppSettings             settings            = null;
     private String                  difficulty          = DIFFICULTY_MEDIUM;
     
@@ -30,9 +31,21 @@ public class GameModel {
     public void loadModels(AssetManager assetManager) {
         playerModel.model = (Node) assetManager.loadModel(playerModel.modelFile);
     }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
     
     public boolean isDebug() {
         return debug;
+    }
+
+    public void setGodMode(boolean godMode) {
+        this.godMode = godMode;
+    }
+    
+    public boolean isGodMode() {
+        return godMode;
     }
 
     public AppSettings getAppSettings() {

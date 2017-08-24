@@ -128,6 +128,8 @@ public abstract class Character extends Node implements AnimEventListener {
     public void setHealth(int health) {
         if (health<0) {
             health = 0;
+        } else if (health>100) {
+            health = 100;
         }
         this.health = health;
         statusBar.setHealth(health);

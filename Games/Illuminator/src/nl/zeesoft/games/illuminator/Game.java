@@ -20,14 +20,16 @@ import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
 import nl.zeesoft.games.illuminator.controls.DeathExplosion;
+import nl.zeesoft.games.illuminator.controls.PowerUp;
 import nl.zeesoft.games.illuminator.model.GameModel;
+import nl.zeesoft.zdk.ZIntegerGenerator;
 
 /**
  * Main entry point of the game.
  * 
  * TODO: Move logic into AppStates or Controls.
  */
-public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsCollisionGroupListener {
+public class Game extends SimpleApplication implements PhysicsCollisionListener {
     private GameModel               gameModel       = null;
     
     private Spatial                 sceneModel      = null;
@@ -37,6 +39,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
     private Player                  player          = null;
     private List<Opponent>          opponents       = new ArrayList<Opponent>();
     private List<DeathExplosion>    deathExplosions = new ArrayList<DeathExplosion>();
+    private List<PowerUp>           powerUps        = new ArrayList<PowerUp>();
 
     public Game(GameModel gameModel) {
         this.gameModel = gameModel;
@@ -61,7 +64,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
         bulletAppState.setDebugEnabled(gameModel.isDebug());
         stateManager.attach(bulletAppState);
 
-        bulletAppState.getPhysicsSpace().addCollisionGroupListener(this,PhysicsCollisionObject.COLLISION_GROUP_03);
         bulletAppState.getPhysicsSpace().addCollisionListener(this);
         
         loadScene();
@@ -79,15 +81,16 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
         listener.setRotation(cam.getRotation());
         
         player.update(tpf);
+        
         for (Opponent opponent: opponents) {
             opponent.update(tpf);
             
+            // TODO: Move to Opponent, implement Zeesoft Symbolic Cognition
             Vector3f opponentPos = opponent.getCharacterControl().getPhysicsLocation();
             Vector3f playerPos = player.getCharacterControl().getPhysicsLocation();
             playerPos.y = opponentPos.y;
             
             float distance = playerPos.distance(opponentPos);
-            //System.out.println("Opponent distance: " + distance);
             if (distance > 0.1) {
                 Vector3f turn = opponentPos.subtract(playerPos);
                 turn.y = 0;
@@ -104,12 +107,21 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
                 opponent.setUp(false);
             }
         }
+        
         List<DeathExplosion> explosions = new ArrayList<DeathExplosion>(deathExplosions);
         for (DeathExplosion explosion: explosions) {
             if (explosion.update(tpf)) {
-                explosion.stop();
                 deathExplosions.remove(explosion);
                 rootNode.detachChild(explosion);
+            }
+        }
+        
+        List<PowerUp> pups = new ArrayList<PowerUp>(powerUps);
+        for (PowerUp pup: pups) {
+            if (pup.update(tpf)) {
+                powerUps.remove(pup);
+                rootNode.detachChild(pup);
+                bulletAppState.getPhysicsSpace().remove(pup.getControl());
             }
         }
     }
@@ -123,40 +135,52 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
     public void collision(PhysicsCollisionEvent event) {
         handleCollision(event.getObjectA(),event.getObjectB());
     }
-    
-    @Override
-    public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
-        /*
-        Character chA = getNodeSource(nodeA);
-        if (chA==null) {
-            //System.out.println("Unable to find source for node A: " + nodeA + " = " + scene);
-        }
-        Character chB = getNodeSource(nodeB);
-        if (chB==null) {
-            //System.out.println("Unable to find source for node B: " + nodeB + " = " + scene);
-        }
-        */
-        //return handleCollision(nodeA,nodeB);
-        return true;
-    }
-    
+        
     private boolean handleCollision(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
         int attacking = player.getFistAttack(nodeA,nodeB);
         if (attacking>=0) {
             for (Opponent opponent: opponents) {
                 if (opponent.applyFistImpact(nodeA,nodeB,attacking)) {
-                    //System.out.println("Opponent impact: " + attacking);
                     if (opponent.getHealth()==0) {
+                        // Explode
                         DeathExplosion explosion = opponent.getDeath();
                         rootNode.attachChild(explosion);
-                        Vector3f trans = opponent.getCharacterControl().getPhysicsLocation();
-                        trans.y += (opponent.getCharacterModel().height * 0.7);
-                        explosion.setLocalTranslation(trans);
+                        explosion.setLocalTranslation(opponent.getCharacterControl().getPhysicsLocation());
                         explosion.start();
                         deathExplosions.add(explosion);
                         removeOpponent(opponent);
                         spawnOpponent();
+
+                        if (player.getHealth()<100) {
+                            ZIntegerGenerator generator = new ZIntegerGenerator(0,3);
+                            if (generator.getNewInteger()==0) {
+                                // Generate power up
+                                PowerUp pup = new PowerUp(assetManager,10f);
+                                pup.initialize();
+                                pup.setLocalTranslation(opponent.getCharacterControl().getPhysicsLocation());
+                                rootNode.attachChild(pup);
+                                powerUps.add(pup);
+                                bulletAppState.getPhysicsSpace().add(pup.getControl());
+                            }
+                        }
                     }
+                }
+            }
+        } else {
+            if (nodeA==player.getCharacterControl() || nodeB==player.getCharacterControl()) {
+                // Check powerup
+                PowerUp cpup = null;
+                for (PowerUp pup: powerUps) {
+                    if (nodeA==pup.getControl() || nodeB==pup.getControl()) {
+                        cpup = pup;
+                        break;
+                    }
+                }
+                if (cpup!=null) {
+                    player.setHealth(player.getHealth() + 50);
+                    powerUps.remove(cpup);
+                    rootNode.detachChild(cpup);
+                    bulletAppState.getPhysicsSpace().remove(cpup.getControl());
                 }
             }
         }
@@ -164,7 +188,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
             attacking = opponent.getFistAttack(nodeA,nodeB);
             if (attacking>=0) {
                 if (player.applyFistImpact(nodeA,nodeB,attacking)) {
-                    //System.out.println("Player impact: " + attacking);
                     if (player.getHealth()==0) {
                         // TODO: End game
                     }
@@ -172,45 +195,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
             }
         }
         return true;
-    }
-    
-    private Character getNodeSource(PhysicsCollisionObject node) {
-        Character ch = null;
-        if (node==player.getCharacterControl()) {
-            ch = player;
-            System.out.println("Bad1");
-        } else if (node==player.getRigidControl()) {
-            ch = player;
-            System.out.println("Bad2");
-        } else if (node==player.getImpactControl()) {
-            ch = player;
-        } else if (node==player.getFistControlLeft()) {
-            ch = player;
-        } else if (node==player.getFistControlRight()) {
-            ch = player;
-        } else {
-            for (Opponent opponent: opponents) {
-                if (node==opponent.getCharacterControl()) {
-                    ch = opponent;
-                    System.out.println("Bad1!");
-                    break;
-                } else if (node==opponent.getRigidControl()) {
-                    ch = opponent;
-                    System.out.println("Bad2!");
-                    break;
-                } else if (node==opponent.getImpactControl()) {
-                    ch = opponent;
-                    break;
-                } else if (node==opponent.getFistControlLeft()) {
-                    ch = opponent;
-                    break;
-                } else if (node==opponent.getFistControlRight()) {
-                    ch = opponent;
-                    break;
-                }
-            }
-        }
-        return ch;
     }
     
     private void loadScene() {

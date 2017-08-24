@@ -73,4 +73,18 @@
 
     -->
     
+    <target name="-post-clean" description="Post clean override">
+        <antcall target="copy-dependencies"/>
+    </target>
+    
+    <target name="copy-dependencies" description="Copy the dependencies">
+        <mkdir dir="lib"/>
+        <unzip src="../../V3.0/ZDK/releases/zdk-1.0.0.zip" dest="lib">
+            <patternset>
+                <include name="**/*.jar"/>
+                <include name="**/*.zip"/>
+            </patternset>
+        </unzip>
+    </target>
+    
 </project>
