@@ -10,7 +10,7 @@ public class Main {
         GameModel gameModel = new GameModel();
         gameModel.initialize();
         gameModel.setGodMode(true);
-        gameModel.setDebug(true);
+        //gameModel.setDebug(true);
         Game game = new Game(gameModel);
         game.start();
     }
