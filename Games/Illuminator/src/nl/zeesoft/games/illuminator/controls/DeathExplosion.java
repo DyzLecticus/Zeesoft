@@ -2,6 +2,7 @@ package nl.zeesoft.games.illuminator.controls;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
 import com.jme3.effect.ParticleMesh.Type;
 import com.jme3.effect.shapes.EmitterSphereShape;
 import com.jme3.material.Material;
@@ -10,20 +11,21 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
 public class DeathExplosion extends Node {
-    private AssetManager    assetManager    = null;
-    private ParticleEmitter e1             = null;
-    private ParticleEmitter e2             = null;
-    private float           time            = -1.0f;
+    private AssetManager        assetManager    = null;
+    private ParticleEmitter[]   emitters        = new ParticleEmitter[3];
+    private float               time            = -1.0f;
     
     public DeathExplosion(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
     
     public void initialize() {
-        e1 = getNewFlash(1,1.0f,true);
-        e2 = getNewFlame(1,1.0f,true);
-        this.attachChild(e1);
-        this.attachChild(e1);
+        emitters[0] = getNewFlash(1,1.0f,true);
+        emitters[1] = getNewFlame(1,1.0f,true);
+        emitters[2] = getNewShockwave(1,1.0f);
+        for (int i = 0; i < emitters.length; i++) {
+            this.attachChild(emitters[i]);
+        }
     }
 
     private ParticleEmitter getNewFlash(int countFactor, float countFactorF,boolean pointSprite){
@@ -36,7 +38,7 @@ public class DeathExplosion extends Node {
         flash.setStartColor(new ColorRGBA(0.0f,0.0f,1.0f, (float) (1f / countFactorF)));
         flash.setEndColor(new ColorRGBA(0.0f,0.0f,1.0f,0f));
         flash.setStartSize(0.3f);
-        flash.setEndSize(3.0f);
+        flash.setEndSize(5.0f);
         flash.setShape(new EmitterSphereShape(Vector3f.ZERO,0.05f));
         flash.setParticlesPerSec(0);
         flash.setGravity(0, 0, 0);
@@ -61,7 +63,7 @@ public class DeathExplosion extends Node {
         flame.setStartColor(new ColorRGBA(0.0f,0.0f,0.1f, (float) (1f / countFactorF)));
         flame.setEndColor(new ColorRGBA(0.0f,0.0f,0.1f,0f));
         flame.setStartSize(1.0f);
-        flame.setEndSize(2f);
+        flame.setEndSize(4f);
         flame.setShape(new EmitterSphereShape(Vector3f.ZERO, 1f));
         flame.setParticlesPerSec(0);
         flame.setGravity(0,-5,0);
@@ -78,15 +80,36 @@ public class DeathExplosion extends Node {
         return flame;
     }
 
+    private ParticleEmitter getNewShockwave(int countFactor, float countFactorF){
+        ParticleEmitter shockwave = new ParticleEmitter("Shockwave", ParticleMesh.Type.Triangle, 1 * countFactor);
+        shockwave.setFaceNormal(Vector3f.UNIT_Y);
+        shockwave.setStartColor(new ColorRGBA(0.0f,0.0f,1.0f,(float) (1.0f / countFactorF)));
+        shockwave.setEndColor(new ColorRGBA(0.0f,0.0f,1.0f,0f));
+        shockwave.setStartSize(0.1f);
+        shockwave.setEndSize(6.0f);
+        shockwave.setParticlesPerSec(0);
+        shockwave.setGravity(0, 0, 0);
+        shockwave.setLowLife(0.7f);
+        shockwave.setHighLife(0.7f);
+        shockwave.setImagesX(1);
+        shockwave.setImagesY(1);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
+        mat.setTexture("Texture",assetManager.loadTexture("Effects/Explosion/shockwave.png"));
+        shockwave.setMaterial(mat);
+        return shockwave;
+    }
+    
     public void start() {
-        e1.emitAllParticles();
-        e2.emitAllParticles();
+        for (int i = 0; i < emitters.length; i++) {
+            emitters[i].emitAllParticles();
+        }
         time = 0.0f;
     }
 
     public void stop() {
-        e1.killAllParticles();
-        e2.killAllParticles();
+        for (int i = 0; i < emitters.length; i++) {
+            emitters[i].killAllParticles();
+        }
         time = 0.0f;
     }
     

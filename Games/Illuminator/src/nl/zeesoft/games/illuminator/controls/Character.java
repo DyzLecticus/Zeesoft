@@ -104,8 +104,8 @@ public abstract class Character extends Node implements AnimEventListener {
         // Fist controls
         fistControlLeft = getNewFistControl();
         fistControlRight = getNewFistControl();
-        characterModel.addFistControl(fistControlLeft,true);
-        characterModel.addFistControl(fistControlRight,false);
+        characterModel.getFist(true).addControl(fistControlLeft);
+        characterModel.getFist(false).addControl(fistControlRight);
         
         // Death
         death = new DeathExplosion(assetManager);

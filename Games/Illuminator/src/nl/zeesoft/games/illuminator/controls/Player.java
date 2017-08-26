@@ -41,7 +41,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
     }
 
     @Override
-    public  Vector3f getDirection() {
+    public Vector3f getDirection() {
         Vector3f camDir = cam.getDirection().clone();
         camDir.y = 0;
         return camDir;

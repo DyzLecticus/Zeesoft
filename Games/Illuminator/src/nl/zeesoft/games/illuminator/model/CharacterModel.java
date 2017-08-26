@@ -117,12 +117,12 @@ public abstract class CharacterModel {
         getBone("Chest").addControl(impactControl);
     }
 
-    public void addFistControl(GhostControl fistControl,boolean left) {
+    public Node getFist(boolean left) {
         String name = "Hand.L";
         if (!left) {
             name = "Hand.R";
         }
-        getBone(name).addControl(fistControl);
+        return getBone(name);
     }
 
     public void attachParticleEmitterToHead(ParticleEmitter emitter) {

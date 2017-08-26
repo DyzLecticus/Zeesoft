@@ -19,6 +19,9 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
+import com.jme3.light.PointLight;
+import com.jme3.light.SpotLight;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -55,7 +58,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private RigidBodyControl        scene           = null;
     private BulletAppState          bulletAppState  = null;
 
-    private PlayerLight             light               = null;
+    private SpotLight               light           = null;
+    private PointLight              aura            = null;
 
     private Player                  player          = null;
     private List<Opponent>          opponents       = new ArrayList<Opponent>();
@@ -94,7 +98,9 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
 
         loadPlayer();
         addLight();
+        addAura();
         
+        // TODO: Level configuration and corresponding spawn control
         spawnOpponent();
     }
 
@@ -105,6 +111,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         
         stateManager.detach(bulletAppState);
 
+        removeAura();
         removeLight();
         
         unloadScene();
@@ -139,9 +146,13 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         Vector3f direction = cam.getDirection();
         direction.y = direction.y - (90f * FastMath.DEG_TO_RAD);
         
-        light.getSpot().setPosition(location);
-        light.getSpot().setDirection(direction);
-        
+        light.setPosition(location);
+        light.setDirection(direction);
+
+        location = player.getImpactControl().getPhysicsLocation();
+        location.y += 1f;
+        aura.setPosition(location);
+
         for (Opponent opponent: opponents) {
             opponent.update(tpf);
             
@@ -205,7 +216,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                         // Explode
                         DeathExplosion explosion = opponent.getDeath();
                         rootNode.attachChild(explosion);
-                        explosion.setLocalTranslation(opponent.getCharacterControl().getPhysicsLocation());
+                        explosion.setLocalTranslation(opponent.getImpactControl().getPhysicsLocation());
                         explosion.start();
                         deathExplosions.add(explosion);
                         removeOpponent(opponent);
@@ -283,15 +294,28 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
 
     private void addLight() {
-        light = new PlayerLight();
-        light.initialize();
-        rootNode.addLight(light.getSpot());
+        light = new SpotLight();
+        light.setSpotRange(10f);
+        light.setSpotInnerAngle(35f * FastMath.DEG_TO_RAD);
+        light.setSpotOuterAngle(35f * FastMath.DEG_TO_RAD);
+        rootNode.addLight(light);
     }
 
     private void removeLight() {
-        rootNode.removeLight(light.getSpot());
+        rootNode.removeLight(light);
     }
     
+    private void addAura() {
+        aura = new PointLight();
+        aura.setColor(ColorRGBA.Blue);
+        aura.setRadius(3f);
+        rootNode.addLight(aura);
+    }
+
+    private void removeAura() {
+        rootNode.removeLight(aura);
+    }
+
     private void spawnOpponent() {
         Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager),assetManager);
         opp.initialize();

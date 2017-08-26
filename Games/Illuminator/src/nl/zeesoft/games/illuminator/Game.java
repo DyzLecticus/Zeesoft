@@ -5,8 +5,6 @@ import nl.zeesoft.games.illuminator.model.GameModel;
 
 /**
  * Main entry point of the game.
- * 
- * TODO: Move logic into AppStates or Controls.
  */
 public class Game extends SimpleApplication {
     private GameModel               gameModel       = null;
