@@ -31,7 +31,6 @@ import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
 import nl.zeesoft.games.illuminator.controls.DeathExplosion;
-import nl.zeesoft.games.illuminator.controls.PlayerLight;
 import nl.zeesoft.games.illuminator.controls.PowerUp;
 import nl.zeesoft.games.illuminator.model.GameModel;
 import nl.zeesoft.zdk.ZIntegerGenerator;
@@ -97,8 +96,6 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         loadScene();
 
         loadPlayer();
-        addLight();
-        addAura();
         
         // TODO: Level configuration and corresponding spawn control
         spawnOpponent();
@@ -106,17 +103,6 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
 
     @Override
     public void cleanup() {
-        mouseInput.setCursorVisible(true);
-        flyCam.setEnabled(true);
-        
-        stateManager.detach(bulletAppState);
-
-        removeAura();
-        removeLight();
-        
-        unloadScene();
-
-        detachCharacter(player);
         for (Opponent opponent: opponents) {
             detachCharacter(opponent);
         }
@@ -130,6 +116,15 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             bulletAppState.getPhysicsSpace().remove(pup.getControl());
         }
         powerUps.clear();
+
+        unloadPlayer();
+
+        unloadScene();
+
+        stateManager.detach(bulletAppState);
+
+        mouseInput.setCursorVisible(true);
+        flyCam.setEnabled(true);
     }
 
     @Override
@@ -139,13 +134,13 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         listener.setRotation(cam.getRotation());
         
         player.update(tpf);
-        
+
         // Light follows player
         Vector3f location = player.getCharacterControl().getPhysicsLocation();
         location.y += 5f;
         Vector3f direction = cam.getDirection();
         direction.y = direction.y - (90f * FastMath.DEG_TO_RAD);
-        
+
         light.setPosition(location);
         light.setDirection(direction);
 
@@ -160,7 +155,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             Vector3f opponentPos = opponent.getCharacterControl().getPhysicsLocation();
             Vector3f playerPos = player.getCharacterControl().getPhysicsLocation();
             playerPos.y = opponentPos.y;
-            
+                        
             float distance = playerPos.distance(opponentPos);
             if (distance > 0.1) {
                 Vector3f turn = opponentPos.subtract(playerPos);
@@ -291,8 +286,16 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         player.initialize();
         player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,2f,5f));
         attachCharacter(player);
+        addLight();
+        addAura();
     }
 
+    private void unloadPlayer() {
+        removeAura();
+        removeLight();
+        detachCharacter(player);
+    }
+    
     private void addLight() {
         light = new SpotLight();
         light.setSpotRange(10f);
