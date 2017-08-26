@@ -2,6 +2,9 @@ package nl.zeesoft.games.illuminator.controls;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
+import com.jme3.effect.shapes.EmitterSphereShape;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -10,6 +13,8 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -26,6 +31,10 @@ public class Player extends Character implements ActionListener, AnalogListener 
     private PlayerCamera        camera              = null;
     private Camera              cam                 = null;
     
+    private ParticleEmitter     flameLeft           = null;
+    private ParticleEmitter     flameRight          = null;
+    private float               timeBurst           = 0.0f;
+    
     public Player(CharacterModel characterModel,AssetManager assetManager, InputManager inputManager, Camera cam) {
         super(characterModel,assetManager);
         this.inputManager = inputManager;
@@ -38,6 +47,24 @@ public class Player extends Character implements ActionListener, AnalogListener 
         super.initialize();
         getCharacterControl().addCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
         setUpKeys();
+        
+        flameLeft = getNewFlame(1,1.0f,false);
+        flameRight = getNewFlame(1,1.0f,false);
+        getCharacterModel().getFist(true).attachChild(flameLeft);
+        getCharacterModel().getFist(false).attachChild(flameRight);
+    }
+
+    @Override
+    public void update(float tpf) {
+        super.update(tpf);
+        if (getHealth()>0) {
+            timeBurst += tpf;
+            if (timeBurst>=0.1) {
+                timeBurst = 0.0f;
+                flameLeft.emitAllParticles();
+                flameRight.emitAllParticles();
+            }
+        }
     }
 
     @Override
@@ -116,5 +143,33 @@ public class Player extends Character implements ActionListener, AnalogListener 
         inputManager.addListener(this, "TurnRight");
         inputManager.addListener(this, "MouselookDown");
         inputManager.addListener(this, "MouselookUp");
+    }
+    
+    private ParticleEmitter getNewFlame(int countFactor, float countFactorF,boolean pointSprite){
+        ParticleMesh.Type type = ParticleMesh.Type.Point;
+        if (!pointSprite) {
+            type = ParticleMesh.Type.Triangle;
+        }
+        ParticleEmitter flame = new ParticleEmitter("Flame", type, 32 * countFactor);
+        flame.setSelectRandomImage(true);
+        flame.setRandomAngle(true);
+        flame.setStartColor(new ColorRGBA(0.0f,0.0f,0.1f, (float) (1f / countFactorF)));
+        flame.setEndColor(new ColorRGBA(0.0f,0.0f,0.1f,0f));
+        flame.setStartSize(0.3f);
+        flame.setEndSize(0.01f);
+        flame.setShape(new EmitterSphereShape(Vector3f.ZERO, 1f));
+        flame.setParticlesPerSec(0);
+        flame.setGravity(0,0,0);
+        flame.setLowLife(0.3f);
+        flame.setHighLife(0.8f);
+        flame.getParticleInfluencer().setInitialVelocity(new Vector3f(0,3f,0));
+        flame.getParticleInfluencer().setVelocityVariation(0.2f);
+        flame.setImagesX(2);
+        flame.setImagesY(2);
+        Material mat = new Material(getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
+        mat.setTexture("Texture",getAssetManager().loadTexture("Effects/Explosion/flame.png"));
+        mat.setBoolean("PointSprite",pointSprite);
+        flame.setMaterial(mat);
+        return flame;
     }
 }

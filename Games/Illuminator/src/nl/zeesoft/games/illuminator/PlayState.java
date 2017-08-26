@@ -305,7 +305,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     
     private void addLight() {
         light = new SpotLight();
-        light.setSpotRange(10f);
+        light.setSpotRange(20f);
         light.setSpotInnerAngle(35f * FastMath.DEG_TO_RAD);
         light.setSpotOuterAngle(35f * FastMath.DEG_TO_RAD);
         rootNode.addLight(light);
@@ -318,7 +318,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private void addAura() {
         aura = new PointLight();
         aura.setColor(ColorRGBA.Blue);
-        aura.setRadius(3f);
+        aura.setRadius(4f);
         rootNode.addLight(aura);
     }
 
