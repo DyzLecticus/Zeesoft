@@ -22,9 +22,9 @@ public abstract class CharacterModel {
     public Vector3f translation         = new Vector3f(0.0f,-1.4f,0.0f);
     
     public float    walkSpeed           = 0.05f;
-    public float    walkSpeedAttackMult = 2.0f;
+    public float    walkSpeedAttackMult = 1.5f;
     public float    jumpSpeed           = 15;
-    public float    jumpSpeedMult       = 4.0f;
+    public float    jumpSpeedMult       = 3.0f;
     public float    fallSpeed           = 20;
     public float    gravity             = 25;
     public float    stepSize            = 0.3f;

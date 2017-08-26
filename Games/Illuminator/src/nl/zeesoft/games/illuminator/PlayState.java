@@ -19,6 +19,7 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
+import com.jme3.light.DirectionalLight;
 import com.jme3.light.PointLight;
 import com.jme3.light.SpotLight;
 import com.jme3.math.ColorRGBA;
@@ -55,6 +56,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     
     private Spatial                 sceneModel      = null;
     private RigidBodyControl        scene           = null;
+    private float                   spawnHeight     = 110;
+
     private BulletAppState          bulletAppState  = null;
 
     private SpotLight               light           = null;
@@ -264,9 +267,13 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     private void loadScene() {
+        DirectionalLight sun = new DirectionalLight();
+        sun.setDirection(new Vector3f(-0.39f, -0.32f, -0.74f));
+        rootNode.addLight(sun); 
+        
         // TODO: Create custom scene
-        sceneModel = assetManager.loadModel("Scenes/ManyLights/Main.scene");
-        sceneModel.scale(1f,.5f,1f);
+        sceneModel = assetManager.loadModel("Scenes/PlayScene.j3o");
+        //sceneModel.scale(1f,.5f,1f);
         CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) sceneModel);
         scene = new RigidBodyControl(sceneShape, 0);
         scene.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
@@ -284,7 +291,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private void loadPlayer() {
         player = new Player(gameModel.getPlayerModel(), assetManager, inputManager, cam);
         player.initialize();
-        player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,2f,5f));
+        player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,spawnHeight,5f));
         attachCharacter(player);
         addLight();
         addAura();
@@ -349,7 +356,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
 
     private Vector3f getNewSpawnLocation() {
-        Vector3f location = new Vector3f(0,5,0);
+        Vector3f location = new Vector3f(0,spawnHeight,0);
         return location;
     }    
 }
