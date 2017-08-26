@@ -19,7 +19,7 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
-import com.jme3.light.DirectionalLight;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
@@ -28,6 +28,7 @@ import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
 import nl.zeesoft.games.illuminator.controls.DeathExplosion;
+import nl.zeesoft.games.illuminator.controls.PlayerLight;
 import nl.zeesoft.games.illuminator.controls.PowerUp;
 import nl.zeesoft.games.illuminator.model.GameModel;
 import nl.zeesoft.zdk.ZIntegerGenerator;
@@ -53,7 +54,9 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private Spatial                 sceneModel      = null;
     private RigidBodyControl        scene           = null;
     private BulletAppState          bulletAppState  = null;
-    
+
+    private PlayerLight             light               = null;
+
     private Player                  player          = null;
     private List<Opponent>          opponents       = new ArrayList<Opponent>();
     private List<DeathExplosion>    deathExplosions = new ArrayList<DeathExplosion>();
@@ -77,17 +80,16 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         
         gameModel.loadModels(assetManager);
         
-        
+        // Fly cam must be disabled before cursor is disabled
+        flyCam.setEnabled(false);
         mouseInput.setCursorVisible(false);
         
-        flyCam.setEnabled(false);
-
         bulletAppState = new BulletAppState();
         bulletAppState.setDebugEnabled(gameModel.isDebug());
         stateManager.attach(bulletAppState);
 
         bulletAppState.getPhysicsSpace().addCollisionListener(this);
-        
+                
         loadScene();
 
         loadPlayer();
@@ -103,6 +105,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         
         stateManager.detach(bulletAppState);
 
+        removeLight();
+        
         unloadScene();
 
         detachCharacter(player);
@@ -128,6 +132,15 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         listener.setRotation(cam.getRotation());
         
         player.update(tpf);
+        
+        // Light follows player
+        Vector3f location = player.getCharacterControl().getPhysicsLocation();
+        location.y += 5f;
+        Vector3f direction = cam.getDirection();
+        direction.y = direction.y - (90f * FastMath.DEG_TO_RAD);
+        
+        light.getSpot().setPosition(location);
+        light.getSpot().setDirection(direction);
         
         for (Opponent opponent: opponents) {
             opponent.update(tpf);
@@ -269,37 +282,14 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         attachCharacter(player);
     }
 
-    private void unloadPlayer() {
-        detachCharacter(player);
-    }
-
-    private void unloadOpponents() {
-        for (Opponent opponent: opponents) {
-            detachCharacter(opponent);
-        }
-    }
-
-    private void unloadDeathExplosions() {
-        for (DeathExplosion explosion: deathExplosions) {
-            rootNode.detachChild(explosion);
-        }
-    }
-
-    private void unloadPowerUps() {
-        for (DeathExplosion explosion: deathExplosions) {
-            rootNode.detachChild(explosion);
-        }
-    }
-    
     private void addLight() {
-        // TODO Make a spot light follow the player
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection(new Vector3f(-.1f, -.7f, -1f));
-        rootNode.addLight(sun);
+        light = new PlayerLight();
+        light.initialize();
+        rootNode.addLight(light.getSpot());
     }
 
     private void removeLight() {
-        // TODO: Finish
+        rootNode.removeLight(light.getSpot());
     }
     
     private void spawnOpponent() {
