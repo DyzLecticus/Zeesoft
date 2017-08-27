@@ -33,7 +33,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
     
     private ParticleEmitter     flameLeft           = null;
     private ParticleEmitter     flameRight          = null;
-    private float               timeBurst           = 0.0f;
+    private float               burst               = 0.0f;
     
     public Player(CharacterModel characterModel,AssetManager assetManager, InputManager inputManager, Camera cam) {
         super(characterModel,assetManager);
@@ -55,16 +55,17 @@ public class Player extends Character implements ActionListener, AnalogListener 
     }
 
     @Override
-    public void update(float tpf) {
-        super.update(tpf);
+    public boolean update(float tpf) {
+        boolean done = super.update(tpf);
         if (getHealth()>0) {
-            timeBurst += tpf;
-            if (timeBurst>=0.1) {
-                timeBurst = 0.0f;
+            burst += tpf;
+            if (burst>=0.1) {
+                burst = 0.0f;
                 flameLeft.emitAllParticles();
                 flameRight.emitAllParticles();
             }
         }
+        return done;
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.jme3.animation.LoopMode;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioData.DataType;
 import com.jme3.audio.AudioNode;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
@@ -15,6 +16,7 @@ import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import nl.zeesoft.games.illuminator.GameControlNode;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
 
 /**
@@ -22,7 +24,7 @@ import nl.zeesoft.games.illuminator.model.CharacterModel;
  * 
  * Combines the character model with character control.
  */
-public abstract class Character extends Node implements AnimEventListener {
+public abstract class Character extends GameControlNode implements AnimEventListener {
     private AssetManager        assetManager        = null;
     
     private CharacterModel      characterModel      = null;
@@ -47,8 +49,13 @@ public abstract class Character extends Node implements AnimEventListener {
     private int                 attacking           = -1;
     private int                 impacting           = -1;
 
+    private int                 selectedSpell       = 0;
+    private boolean             cast                = false;
+    private int                 casting             = -1;
+
     private AudioNode           attackAudio         = null;
     private AudioNode[]         impactAudio         = null;
+    private AudioNode[]         castAudio           = null;
 
     private CharacterStatusBar  statusBar           = null;
     private int                 health              = 0;
@@ -59,7 +66,8 @@ public abstract class Character extends Node implements AnimEventListener {
         this.assetManager = assetManager;
         this.characterModel = characterModel;
     }
-
+    
+    @Override
     public void initialize() {
         characterModel.model.scale(characterModel.scale);
         characterModel.model.rotate(0f,characterModel.rotY,0f);
@@ -80,11 +88,16 @@ public abstract class Character extends Node implements AnimEventListener {
         upperChannel = characterModel.getNewAnimChannel(false);
 
         // Audio
-        attackAudio = getNewAudioNode(characterModel.attackSounds[0],0.1f);
+        attackAudio = getNewAudioNode(characterModel.attackSounds.get(0),0.1f);
         this.attachChild(attackAudio);
-        impactAudio = new AudioNode[characterModel.impactSounds.length];
-        for (int i = 0; i < characterModel.impactSounds.length; i++) {
-            impactAudio[i] = getNewAudioNode(characterModel.impactSounds[i]); 
+        castAudio = new AudioNode[characterModel.spellSounds.size()];
+        for (int i = 0; i < characterModel.spellSounds.size(); i++) {
+            castAudio[i] = getNewAudioNode(characterModel.spellSounds.get(i)); 
+            this.attachChild(castAudio[i]);
+        }
+        impactAudio = new AudioNode[characterModel.impactSounds.size()];
+        for (int i = 0; i < characterModel.impactSounds.size(); i++) {
+            impactAudio[i] = getNewAudioNode(characterModel.impactSounds.get(i)); 
             this.attachChild(impactAudio[i]);
         }
         
@@ -112,6 +125,102 @@ public abstract class Character extends Node implements AnimEventListener {
         death.initialize();
     }
     
+    public abstract Vector3f getDirection();
+    public abstract Vector3f getLeft();
+    
+    @Override
+    public boolean update(float tpf) {
+        Vector3f goDir = getDirection();
+        Vector3f goLeft = getLeft();
+        walkDirection.set(0, 0, 0);
+
+        if (left) {
+            walkDirection.addLocal(goLeft);
+        }
+        if (right) {
+            walkDirection.addLocal(goLeft.negate());
+        }
+        if (up) {
+            walkDirection.addLocal(goDir);
+        }
+        if (down) {
+            walkDirection.addLocal(goDir.negate());
+        } else if (impacting>=0) {
+            walkDirection.addLocal(goDir.negate());
+        }
+
+        float walk = characterModel.walkSpeed;
+        if (attacking>=0 && up) {
+            walk = walk * characterModel.walkSpeedAttackMult;
+        } else if (up && !characterControl.onGround()) {
+            walk = walk * characterModel.jumpSpeedMult;
+        } else if (impacting>=0) {
+            walk = walk * 0.5f;
+        }
+        characterControl.setWalkDirection(walkDirection.normalize().multLocal(walk));
+
+        handleAnimations(tpf);
+        
+        return getHealth()>0;
+    }
+
+    @Override
+    public void attachToRootNode(Node rootNode,BulletAppState bulletAppState) {
+        super.attachToRootNode(rootNode,bulletAppState);
+        if (bulletAppState!=null) {
+            bulletAppState.getPhysicsSpace().add(getImpactControl());
+            bulletAppState.getPhysicsSpace().add(getFistControlLeft());
+            bulletAppState.getPhysicsSpace().add(getFistControlRight());
+        }
+    }
+
+    @Override
+    public void detachFromRootNode(Node rootNode,BulletAppState bulletAppState) {
+        super.detachFromRootNode(rootNode,bulletAppState);
+        if (bulletAppState!=null) {
+            bulletAppState.getPhysicsSpace().remove(getImpactControl());
+            bulletAppState.getPhysicsSpace().remove(getFistControlLeft());
+            bulletAppState.getPhysicsSpace().remove(getFistControlRight());
+        }
+    }
+    
+    @Override
+    public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
+        if(channel == upperChannel) {
+            if (attacking>=0 && characterModel.attacks.contains(animName)) {
+                if (attackNext) {
+                    attackNext = false;
+                    attackDelay = 0.0f;
+                    attacking++;
+                    upperChannel.setAnim(characterModel.attacks.get(attacking),0.001f);
+                    upperChannel.setLoopMode(LoopMode.DontLoop);
+                    attackAudio.playInstance();
+                } else {
+                    attacking = -1;
+                }
+            }
+            if (impacting>=0 && characterModel.impacts.contains(animName)) {
+                impacting = -1;
+                stopShockWave();
+            }
+            if (casting>=0 && characterModel.spells.contains(animName)) {
+                casting = -1;
+            }
+            if (attacking<0 && impacting<0 && casting<0) {
+                if (!upperChannel.getAnimationName().equals(characterModel.idleAnim)) {
+                    upperChannel.setAnim(characterModel.idleAnim,0.001f);
+                } else {
+                    upperChannel.setLoopMode(LoopMode.Loop);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
+        // Not implemented
+    }
+    
     protected void addRigidBody() {
         CapsuleCollisionShape playerShape = new CapsuleCollisionShape(characterModel.radius,characterModel.height);
         rigidControl = new RigidBodyControl(playerShape,80);
@@ -121,6 +230,14 @@ public abstract class Character extends Node implements AnimEventListener {
         this.addControl(rigidControl);
     }
     
+    protected void startShockWave(int impacting) {
+        // Override to implement
+    }
+
+    protected void stopShockWave() {
+        // Override to implement
+    }
+
     protected float getAttackDelay() {
         return 0.0f;
     }
@@ -164,15 +281,22 @@ public abstract class Character extends Node implements AnimEventListener {
             v = false;
         }
         attack = v;
-        if (attack && attacking>=0 && attacking<(characterModel.attacks.length - 1)) {
+        if (attack && attacking>=0 && attacking<(characterModel.attacks.size() - 1)) {
             attackNext = true;
         }
+    }
+
+    public void setCast(boolean v) {
+        if (v && impacting>=0) {
+            v = false;
+        }
+        cast = v;
     }
 
     public boolean isAttack() {
         return attack;
     }
-    
+
     public void jump() {
         if(characterControl.onGround()) {
             characterControl.jump();
@@ -183,8 +307,8 @@ public abstract class Character extends Node implements AnimEventListener {
     public int getFistAttack(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
         int r = -1;
         if (attacking>=0 && 
-            nodeA!=impactControl && nodeB!=impactControl &&
-            (nodeA==fistControlLeft||nodeA==fistControlRight||nodeB==fistControlLeft||nodeB==fistControlRight)
+            (nodeA!=impactControl&&nodeB!=impactControl) &&
+            (nodeA==fistControlLeft || nodeA==fistControlRight || nodeB==fistControlLeft ||nodeB==fistControlRight)
             ) {
             r = attacking;
         }
@@ -193,101 +317,32 @@ public abstract class Character extends Node implements AnimEventListener {
 
     public boolean applyFistImpact(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB, int impact) {
         boolean r = false;
-        if (attacking<0 && nodeA!=characterControl && nodeB!=characterControl &&
+        if (attacking<0 && casting<0 && 
+            (nodeA!=characterControl&&nodeB!=characterControl) &&
             (nodeA!=fistControlLeft&&nodeA!=fistControlRight&&nodeB!=fistControlLeft&&nodeB!=fistControlRight) &&
-            (nodeA==impactControl||nodeB==impactControl)
+            (nodeA==impactControl || nodeB==impactControl)
             ) {
             if (impacting!=impact) {
                 r = true;
                 impacting = impact;
-                setHealth(health - characterModel.attackDamages[impacting]);
+                if (!characterModel.godMode) {
+                    setHealth(health - characterModel.attackDamages.get(impacting));
+                }
                 startShockWave(impacting);        
                 impactAudio[impacting].playInstance();
-                upperChannel.setAnim(characterModel.impacts[impacting],0.001f);
+                upperChannel.setAnim(characterModel.impacts.get(impacting),0.001f);
                 upperChannel.setLoopMode(LoopMode.DontLoop);
             }
         }
         return r;
     }
-    
-    protected void startShockWave(int impacting) {
-        // Override to implement
-    }
 
-    protected void stopShockWave() {
-        // Override to implement
+    public boolean applySpellImpact(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+        boolean r = false;
+        // TODO: Implement
+        return r;
     }
     
-    public abstract Vector3f getDirection();
-    public abstract Vector3f getLeft();
-    
-    public void update(float tpf) {
-        Vector3f goDir = getDirection();
-        Vector3f goLeft = getLeft();
-        walkDirection.set(0, 0, 0);
-
-        if (left) {
-            walkDirection.addLocal(goLeft);
-        }
-        if (right) {
-            walkDirection.addLocal(goLeft.negate());
-        }
-        if (up) {
-            walkDirection.addLocal(goDir);
-        }
-        if (down) {
-            walkDirection.addLocal(goDir.negate());
-        } else if (impacting>=0) {
-            walkDirection.addLocal(goDir.negate());
-        }
-
-        float walk = characterModel.walkSpeed;
-        if (attacking>=0 && up) {
-            walk = walk * characterModel.walkSpeedAttackMult;
-        } else if (up && !characterControl.onGround()) {
-            walk = walk * characterModel.jumpSpeedMult;
-        } else if (impacting>=0) {
-            walk = walk * 0.5f;
-        }
-        characterControl.setWalkDirection(walkDirection.normalize().multLocal(walk));
-
-        handleAnimations(tpf);
-    }
-
-    @Override
-    public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
-        if(channel == upperChannel) {
-            if (attacking>=0 && characterModel.isAttackAnim(animName)) {
-                if (attackNext) {
-                    attackNext = false;
-                    attackDelay = 0.0f;
-                    attacking++;
-                    upperChannel.setAnim(characterModel.attacks[attacking],0.001f);
-                    upperChannel.setLoopMode(LoopMode.DontLoop);
-                    attackAudio.playInstance();
-                } else {
-                    attacking = -1;
-                }
-            }
-            if (impacting>=0 && characterModel.isImpactAnim(animName)) {
-                impacting = -1;
-                stopShockWave();
-            }
-            if (attacking<0 && impacting<0) {
-                if (!upperChannel.getAnimationName().equals(characterModel.idleAnim)) {
-                    upperChannel.setAnim(characterModel.idleAnim,0.001f);
-                } else {
-                    upperChannel.setLoopMode(LoopMode.Loop);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
-        // Not implemented
-    }
-
     public AssetManager getAssetManager() {
         return assetManager;
     }
@@ -321,16 +376,24 @@ public abstract class Character extends Node implements AnimEventListener {
             // Waiting for impact animation to finish
         } else if (attacking>=0) {
             // Waiting for attack animation to finish
+        } else if (casting>=0) {
+            // Waiting for spell casting animation to finish
         } else if (attack) {
             attackDelay = attackDelay + tpf;
             if (attackDelay>=getAttackDelay()) {
                 attackDelay = 0.0f;
                 attacking = 0;
-                upperChannel.setAnim(characterModel.attacks[attacking],0.001f);
+                upperChannel.setAnim(characterModel.attacks.get(attacking),0.001f);
                 upperChannel.setLoopMode(LoopMode.DontLoop);
                 attackAudio.playInstance();
                 attack = false;
             }
+        } else if (cast) {
+            casting = 0;
+            upperChannel.setAnim(characterModel.spells.get(casting),0.001f);
+            upperChannel.setLoopMode(LoopMode.DontLoop);
+            castAudio[casting].playInstance();
+            cast = false;
         }
         
         if (characterControl.onGround()) {

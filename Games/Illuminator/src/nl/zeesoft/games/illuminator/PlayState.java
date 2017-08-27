@@ -84,6 +84,9 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         this.rootNode = this.app.getRootNode();
         this.cam = this.app.getCamera();
         
+        if (gameModel.isGodMode()) {
+            gameModel.getPlayerModel().godMode = true;
+        }
         gameModel.loadModels(assetManager);
         
         // Fly cam must be disabled before cursor is disabled
@@ -107,16 +110,15 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     @Override
     public void cleanup() {
         for (Opponent opponent: opponents) {
-            detachCharacter(opponent);
+            opponent.detachFromRootNode(rootNode, bulletAppState);
         }
         opponents.clear();
         for (DeathExplosion explosion: deathExplosions) {
-            rootNode.detachChild(explosion);
+            explosion.detachFromRootNode(rootNode, bulletAppState);
         }
         deathExplosions.clear();
         for (PowerUp pup: powerUps) {
-            rootNode.detachChild(pup);
-            bulletAppState.getPhysicsSpace().remove(pup.getControl());
+            pup.detachFromRootNode(rootNode, bulletAppState);
         }
         powerUps.clear();
 
@@ -181,7 +183,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         for (DeathExplosion explosion: explosions) {
             if (explosion.update(tpf)) {
                 deathExplosions.remove(explosion);
-                rootNode.detachChild(explosion);
+                explosion.detachFromRootNode(rootNode, bulletAppState);
             }
         }
         
@@ -189,8 +191,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         for (PowerUp pup: pups) {
             if (pup.update(tpf)) {
                 powerUps.remove(pup);
-                rootNode.detachChild(pup);
-                bulletAppState.getPhysicsSpace().remove(pup.getControl());
+                pup.detachFromRootNode(rootNode, bulletAppState);
             }
         }
     }
@@ -213,7 +214,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                     if (opponent.getHealth()==0) {
                         // Explode
                         DeathExplosion explosion = opponent.getDeath();
-                        rootNode.attachChild(explosion);
+                        explosion.attachToRootNode(rootNode, bulletAppState);
                         explosion.setLocalTranslation(opponent.getImpactControl().getPhysicsLocation());
                         explosion.start();
                         deathExplosions.add(explosion);
@@ -227,9 +228,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                                 PowerUp pup = new PowerUp(assetManager,10f);
                                 pup.initialize();
                                 pup.setLocalTranslation(opponent.getCharacterControl().getPhysicsLocation());
-                                rootNode.attachChild(pup);
                                 powerUps.add(pup);
-                                bulletAppState.getPhysicsSpace().add(pup.getControl());
+                                pup.attachToRootNode(rootNode, bulletAppState);
                             }
                         }
                     }
@@ -248,8 +248,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                 if (cpup!=null) {
                     player.setHealth(player.getHealth() + 50);
                     powerUps.remove(cpup);
-                    rootNode.detachChild(cpup);
-                    bulletAppState.getPhysicsSpace().remove(cpup.getControl());
+                    cpup.detachFromRootNode(rootNode, bulletAppState);
                 }
             }
         }
@@ -292,7 +291,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         player = new Player(gameModel.getPlayerModel(), assetManager, inputManager, cam);
         player.initialize();
         player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,spawnHeight,5f));
-        attachCharacter(player);
+        player.attachToRootNode(rootNode, bulletAppState);
         addLight();
         addAura();
     }
@@ -300,7 +299,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private void unloadPlayer() {
         removeAura();
         removeLight();
-        detachCharacter(player);
+        player.detachFromRootNode(rootNode, bulletAppState);
     }
     
     private void addLight() {
@@ -330,31 +329,15 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager),assetManager);
         opp.initialize();
         opp.getCharacterControl().setPhysicsLocation(getNewSpawnLocation());
-        attachCharacter(opp);
+        opp.attachToRootNode(rootNode, bulletAppState);
         opponents.add(opp);
     }
 
     private void removeOpponent(Opponent opp) {
-        detachCharacter(opp);
+        opp.detachFromRootNode(rootNode,bulletAppState);
         opponents.remove(opp);
     }
-
-    private void attachCharacter(Character character) {
-        rootNode.attachChild(character);
-        bulletAppState.getPhysicsSpace().add(character);
-        bulletAppState.getPhysicsSpace().add(character.getImpactControl());
-        bulletAppState.getPhysicsSpace().add(character.getFistControlLeft());
-        bulletAppState.getPhysicsSpace().add(character.getFistControlRight());
-    }
-
-    private void detachCharacter(Character character) {
-        rootNode.detachChild(character);
-        bulletAppState.getPhysicsSpace().remove(character);
-        bulletAppState.getPhysicsSpace().remove(character.getImpactControl());
-        bulletAppState.getPhysicsSpace().remove(character.getFistControlLeft());
-        bulletAppState.getPhysicsSpace().remove(character.getFistControlRight());
-    }
-
+    
     private Vector3f getNewSpawnLocation() {
         Vector3f location = new Vector3f(0,spawnHeight,0);
         return location;

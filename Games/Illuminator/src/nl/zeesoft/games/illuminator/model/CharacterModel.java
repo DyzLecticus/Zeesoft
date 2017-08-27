@@ -9,65 +9,68 @@ import com.jme3.effect.ParticleEmitter;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract character model.
  */
 public abstract class CharacterModel {
-    public String   modelFile           = "Models/SuperHero/SuperHero.j3o";
-    public float    scale               = 0.2f;
-    public float    rotY                = FastMath.PI;
-    public float    radius              = 0.5f;
-    public float    height              = 1.8f;
-    public Vector3f translation         = new Vector3f(0.0f,-1.4f,0.0f);
+    public boolean          godMode             = false;
+    public String           modelFile           = "Models/SuperHero/SuperHero.j3o";
+    public float            scale               = 0.2f;
+    public float            rotY                = FastMath.PI;
+    public float            radius              = 0.5f;
+    public float            height              = 1.8f;
+    public Vector3f         translation         = new Vector3f(0.0f,-1.4f,0.0f);
     
-    public float    walkSpeed           = 0.05f;
-    public float    walkSpeedAttackMult = 1.5f;
-    public float    jumpSpeed           = 15;
-    public float    jumpSpeedMult       = 3.0f;
-    public float    fallSpeed           = 20;
-    public float    gravity             = 25;
-    public float    stepSize            = 0.3f;
+    public float            walkSpeed           = 0.05f;
+    public float            walkSpeedAttackMult = 1.5f;
+    public float            jumpSpeed           = 15;
+    public float            jumpSpeedMult       = 3.0f;
+    public float            fallSpeed           = 20;
+    public float            gravity             = 25;
+    public float            stepSize            = 0.3f;
 
-    public String   animRoot            = "Meshes";
+    public String           animRoot            = "Meshes";
     
-    public String   idleAnim            = "Idle";
-    public String   walkAnim            = "Walk";
-    public String   jumpAnim            = "Idle";
+    public String           idleAnim            = "Idle";
+    public String           walkAnim            = "Walk";
+    public String           jumpAnim            = "Idle";
 
-    public String[] attacks             = {"Attack.Jab","Attack.Hook"};
-    public String[] impacts             = {"Impact.Jab","Impact.Hook"};
+    public List<String>     attacks             = new ArrayList<String>();
+    public List<Integer>    attackDamages       = new ArrayList<Integer>();
+    public List<String>     attackSounds        = new ArrayList<String>();
 
-    public String[] attackSounds        = {"Sounds/Swoosh01.wav"};
-    public String[] impactSounds        = {"Sounds/Impact01.wav","Sounds/Impact02.wav"};
+    public List<String>     impacts             = new ArrayList<String>();
+    public List<String>     impactSounds        = new ArrayList<String>();
+
+    public List<String>     spells              = new ArrayList<String>();
+    public List<Integer>    spellDamages        = new ArrayList<Integer>();
+    public List<String>     spellSounds         = new ArrayList<String>();
+
+    public Node             model               = null;
     
-    public Node     model               = null;
-    
-    public int      maxHealth           = 100;
-    public int      maxMana             = 100;
+    public int              maxHealth           = 100;
+    public int              maxMana             = 100;
 
-    public int[]    attackDamages       = {10,20};
-    
-    public boolean isAttackAnim(String animName) {
-        boolean r = false;
-        for (int i = 0; i<attacks.length; i++) {
-            if (attacks[i].equals(animName)) {
-                r = true;
-                break;
-            }
-        }
-        return r;
-    }
+    public CharacterModel() {
+        attacks.add("Attack.Jab");
+        attacks.add("Attack.Hook");
+        attackDamages.add(10);
+        attackDamages.add(20);
+        attackDamages.add(30);
+        attackSounds.add("Sounds/Swoosh01.wav");
+        
+        impacts.add("Impact.Jab");
+        impacts.add("Impact.Hook");
+        
+        impactSounds.add("Sounds/Impact01.wav");
+        impactSounds.add("Sounds/Impact02.wav");
 
-    public boolean isImpactAnim(String animName) {
-        boolean r = false;
-        for (int i = 0; i<impacts.length; i++) {
-            if (impacts[i].equals(animName)) {
-                r = true;
-                break;
-            }
-        }
-        return r;
+        spells.add("Cast.BallOfKnowledge");
+        spellDamages.add(50);
+        spellSounds.add("Sounds/Swoosh01.wav");
     }
     
     public void addAnimEventListener(AnimEventListener listener) {

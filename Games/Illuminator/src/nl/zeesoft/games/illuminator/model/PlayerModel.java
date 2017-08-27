@@ -5,7 +5,9 @@ package nl.zeesoft.games.illuminator.model;
  */
 public class PlayerModel extends CharacterModel {
     public PlayerModel() {
-        this.attackDamages[0] = 5;
-        this.attackDamages[1] = 10;
+        attackDamages.clear();
+        attackDamages.add(5);
+        attackDamages.add(10);
+        attackDamages.add(20);
     }
 }

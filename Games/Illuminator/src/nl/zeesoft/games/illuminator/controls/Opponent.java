@@ -27,6 +27,18 @@ public class Opponent extends Character {
     }
     
     @Override
+    public boolean update(float tpf) {
+        if (upDo) {
+            //System.out.print(upDelayed);
+            upDelayed = upDelayed + tpf;
+        }
+        if (upDelayed>=getOpponentModel().upDelay) {
+            super.setUp(true);
+        }
+        return super.update(tpf);
+    }
+    
+    @Override
     protected void startShockWave(int impacting) {
         if (shockWave!=null) {
             shockWave.killAllParticles();
@@ -71,18 +83,6 @@ public class Opponent extends Character {
         return getOpponentModel().attackDelay;
     }
 
-    @Override
-    public void update(float tpf) {
-        if (upDo) {
-            //System.out.print(upDelayed);
-            upDelayed = upDelayed + tpf;
-        }
-        if (upDelayed>=getOpponentModel().upDelay) {
-            super.setUp(true);
-        }
-        super.update(tpf);
-    }
-    
     public OpponentModel getOpponentModel() {
         return (OpponentModel) getCharacterModel();
     }

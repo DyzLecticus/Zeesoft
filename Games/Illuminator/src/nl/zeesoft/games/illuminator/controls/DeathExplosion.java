@@ -8,17 +8,19 @@ import com.jme3.effect.shapes.EmitterSphereShape;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Node;
+import nl.zeesoft.games.illuminator.GameControlNode;
 
-public class DeathExplosion extends Node {
+public class DeathExplosion extends GameControlNode {
     private AssetManager        assetManager    = null;
     private ParticleEmitter[]   emitters        = new ParticleEmitter[3];
-    private float               time            = -1.0f;
+    private float               lifeTime        = 0.0f;
+    private float               lifeTimeMax     = 1.0f;
     
     public DeathExplosion(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
     
+    @Override
     public void initialize() {
         emitters[0] = getNewFlash(1,1.0f,true);
         emitters[1] = getNewFlame(1,1.0f,true);
@@ -26,6 +28,17 @@ public class DeathExplosion extends Node {
         for (int i = 0; i < emitters.length; i++) {
             this.attachChild(emitters[i]);
         }
+    }
+    
+    @Override
+    public boolean update(float tpf) {
+        boolean done = false;
+        lifeTime += tpf;
+        if (lifeTime>=lifeTimeMax) {
+            stop();
+            done = true;
+        }
+        return done;
     }
 
     private ParticleEmitter getNewFlash(int countFactor, float countFactorF,boolean pointSprite){
@@ -103,23 +116,13 @@ public class DeathExplosion extends Node {
         for (int i = 0; i < emitters.length; i++) {
             emitters[i].emitAllParticles();
         }
-        time = 0.0f;
+        lifeTime = 0.0f;
     }
 
     public void stop() {
         for (int i = 0; i < emitters.length; i++) {
             emitters[i].killAllParticles();
         }
-        time = 0.0f;
-    }
-    
-    public boolean update(float tpf) {
-        boolean done = false;
-        time = time + tpf;
-        if (time>=1.0f) {
-            stop();
-            done = true;
-        }
-        return done;
+        lifeTime = 0.0f;
     }
 }

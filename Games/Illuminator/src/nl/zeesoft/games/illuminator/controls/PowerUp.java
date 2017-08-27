@@ -3,16 +3,15 @@ package nl.zeesoft.games.illuminator.controls;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import nl.zeesoft.games.illuminator.GameControlNode;
 
-public class PowerUp extends Node {
+public class PowerUp extends GameControlNode {
     private static final float  SIZE            = 0.3f;
     
     private AssetManager        assetManager    = null;
@@ -26,6 +25,7 @@ public class PowerUp extends Node {
         this.lifeTimeMax = lifeTimeMax;
     }
     
+    @Override
     public void initialize() {
         Box b = new Box(SIZE * 0.5f,SIZE * 2.0f,SIZE * 0.5f);
         Geometry geom = new Geometry("Box", b);
@@ -40,11 +40,8 @@ public class PowerUp extends Node {
         control.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
         this.addControl(control);
     }
-    
-    public GhostControl getControl() {
-        return control;
-    }
-    
+
+    @Override
     public boolean update(float tpf) {
         boolean done = false;
         lifeTime += tpf;
@@ -52,5 +49,9 @@ public class PowerUp extends Node {
             done = true;
         }
         return done;
+    }
+    
+    public GhostControl getControl() {
+        return control;
     }
 }
