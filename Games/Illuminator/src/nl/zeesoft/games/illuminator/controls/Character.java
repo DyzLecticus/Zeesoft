@@ -412,7 +412,6 @@ public abstract class Character extends GameControlNode implements AnimEventList
     private GhostControl getNewFistControl() {
         BoxCollisionShape boxShape = new BoxCollisionShape(new Vector3f(0.1f,0.2f,0.1f));
         GhostControl fistControl = new GhostControl(boxShape);
-        // Dont want these colliding with anything other than each other to save efficiency
         fistControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
         fistControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_03);
         return fistControl;

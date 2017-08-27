@@ -43,10 +43,10 @@ public class BallOfKnowledge extends GameControlNode {
         geom.setMaterial(mat);
         attachChild(geom);
         
-        SphereCollisionShape sphereShape = new SphereCollisionShape((SIZE * 1.1f));
+        SphereCollisionShape sphereShape = new SphereCollisionShape(SIZE * 1.2f);
         control = new GhostControl(sphereShape);
-        control.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
-        control.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
+        control.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
+        control.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_03);
         this.addControl(control);
 
         flare = getNewFlame(1,1.0f,true);
