@@ -16,29 +16,40 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Node;
+import java.util.ArrayList;
+import java.util.List;
+import nl.zeesoft.games.illuminator.GameControlNode;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
 
 public class Player extends Character implements ActionListener, AnalogListener {
-    private static final float  MOUSE_LOOK_SPEED    = FastMath.PI;
+    private static final float      MOUSE_LOOK_SPEED    = FastMath.PI;
     
-    private InputManager        inputManager        = null;
+    private PlayerSpellProvider     spellProvider       = null;
+
+    private InputManager            inputManager        = null;
 
     // PlayerCamera automatically sets itself up to follow a target
     // object. Check the "onAnalog" function here to see how we do mouselook.
-    private PlayerCamera        camera              = null;
-    private Camera              cam                 = null;
+    private PlayerCamera            camera              = null;
+    private Camera                  cam                 = null;
     
-    private ParticleEmitter     flameLeft           = null;
-    private ParticleEmitter     flameRight          = null;
-    private float               burst               = 0.0f;
+    private ParticleEmitter         flameLeft           = null;
+    private ParticleEmitter         flameRight          = null;
+    private float                   burst               = 0.0f;
     
-    public Player(CharacterModel characterModel,AssetManager assetManager, InputManager inputManager, Camera cam) {
+    private Node                    spellLocation       = null;
+    private List<GameControlNode>   spellObjects        = new ArrayList<GameControlNode>();
+    
+    public Player(CharacterModel characterModel,AssetManager assetManager, InputManager inputManager, Camera cam,PlayerSpellProvider spellProvider) {
         super(characterModel,assetManager);
         this.inputManager = inputManager;
         this.cam = cam;
+        this.spellProvider = spellProvider;
         camera = new PlayerCamera("CamNode", cam, this);
     }
    
@@ -52,6 +63,10 @@ public class Player extends Character implements ActionListener, AnalogListener 
         flameRight = getNewFlame(1,1.0f,false);
         getCharacterModel().getFist(true).attachChild(flameLeft);
         getCharacterModel().getFist(false).attachChild(flameRight);
+
+        spellLocation = new Node("SpellLocation");
+        attachChild(spellLocation);
+        spellLocation.setLocalTranslation(new Vector3f(0,0.7f,-1f));
     }
 
     @Override
@@ -63,6 +78,12 @@ public class Player extends Character implements ActionListener, AnalogListener 
                 burst = 0.0f;
                 flameLeft.emitAllParticles();
                 flameRight.emitAllParticles();
+            }
+        }
+        if (spellObjects.size()>0) {
+            for (GameControlNode object: spellObjects) {
+                object.setLocalTranslation(spellLocation.getWorldTranslation());
+                object.setLocalRotation(getWorldRotation());
             }
         }
         return done;
@@ -96,6 +117,8 @@ public class Player extends Character implements ActionListener, AnalogListener 
             jump();
         } else if (binding.equals("Attack")) {
             setAttack(value);
+        } else if (binding.equals("Cast")) {
+            setCast(value);
         }
     }
 
@@ -119,6 +142,21 @@ public class Player extends Character implements ActionListener, AnalogListener 
         }
     }
 
+    @Override
+    public void startCast(int casting) {
+        String spellName = getCharacterModel().spells.get(casting);
+        List<GameControlNode> objects = spellProvider.initializeSpellObjects(spellName,spellLocation.getWorldTranslation());
+        for (GameControlNode object: objects) {
+            spellObjects.add(object);
+        }
+    }
+    
+    @Override
+    public void stopCast() {
+        spellProvider.releaseSpellObjects(spellObjects);
+        spellObjects.clear();
+    }
+    
     public PlayerCamera getCamera() {
         return camera;
     }
@@ -130,6 +168,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
         inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Attack", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addMapping("Cast", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
         inputManager.addMapping("TurnLeft", new MouseAxisTrigger(MouseInput.AXIS_X,true));
         inputManager.addMapping("TurnRight", new MouseAxisTrigger(MouseInput.AXIS_X,false));
         inputManager.addMapping("MouselookDown", new MouseAxisTrigger(MouseInput.AXIS_Y,true));
@@ -140,6 +179,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
         inputManager.addListener(this, "Down");
         inputManager.addListener(this, "Jump");
         inputManager.addListener(this, "Attack");
+        inputManager.addListener(this, "Cast");
         inputManager.addListener(this, "TurnLeft");
         inputManager.addListener(this, "TurnRight");
         inputManager.addListener(this, "MouselookDown");

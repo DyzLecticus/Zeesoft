@@ -205,6 +205,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
             }
             if (casting>=0 && characterModel.spells.contains(animName)) {
                 casting = -1;
+                stopCast();
             }
             if (attacking<0 && impacting<0 && casting<0) {
                 if (!upperChannel.getAnimationName().equals(characterModel.idleAnim)) {
@@ -235,6 +236,14 @@ public abstract class Character extends GameControlNode implements AnimEventList
     }
 
     protected void stopShockWave() {
+        // Override to implement
+    }
+
+    protected void startCast(int casting) {
+        // Override to implement
+    }
+
+    protected void stopCast() {
         // Override to implement
     }
 
@@ -389,10 +398,11 @@ public abstract class Character extends GameControlNode implements AnimEventList
                 attack = false;
             }
         } else if (cast) {
-            casting = 0;
+            casting = selectedSpell;
             upperChannel.setAnim(characterModel.spells.get(casting),0.001f);
             upperChannel.setLoopMode(LoopMode.DontLoop);
             castAudio[casting].playInstance();
+            startCast(casting);
             cast = false;
         }
         

@@ -16,7 +16,7 @@ import com.jme3.scene.shape.Sphere;
 import nl.zeesoft.games.illuminator.GameControlNode;
 
 public class BallOfKnowledge extends GameControlNode {
-    private static final float  SIZE            = 1.0f;
+    private static final float  SIZE            = 0.5f;
     
     private AssetManager        assetManager    = null;
     private ParticleEmitter     flare           = null;
@@ -28,6 +28,9 @@ public class BallOfKnowledge extends GameControlNode {
     private float               lifeTime        = 0.0f;
     private float               lifeTimeMax     = 10.0f;
     private float               burst           = 0.0f;
+    
+    private boolean             released        = false;
+    private float               speed           = 10.0f;
     
     public BallOfKnowledge(AssetManager assetManager,int lifeTimeMax) {
         this.assetManager = assetManager;
@@ -41,7 +44,7 @@ public class BallOfKnowledge extends GameControlNode {
         Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue); 
         geom.setMaterial(mat);
-        attachChild(geom);
+        this.attachChild(geom);
         
         SphereCollisionShape sphereShape = new SphereCollisionShape(SIZE * 1.2f);
         control = new GhostControl(sphereShape);
@@ -69,7 +72,17 @@ public class BallOfKnowledge extends GameControlNode {
             burst = 0.0f;
             flare.emitAllParticles();
         }
+        //if (released) 
+            if (speed < 100f) {
+                speed = speed + 0.5f;
+            }
+            this.move(getLocalRotation().getRotationColumn(2).mult(-speed * tpf));
+        //}
         return done;
+    }
+    
+    public void setReleased(boolean released) {
+        this.released = released;
     }
     
     public GhostControl getControl() {

@@ -2,7 +2,6 @@ package nl.zeesoft.games.illuminator;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
-import nl.zeesoft.games.illuminator.controls.Character;
 import nl.zeesoft.games.illuminator.controls.Opponent;
 import nl.zeesoft.games.illuminator.controls.Player;
 import com.jme3.app.state.AbstractAppState;
@@ -32,7 +31,9 @@ import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
 import nl.zeesoft.games.illuminator.controls.DeathExplosion;
+import nl.zeesoft.games.illuminator.controls.PlayerSpellProvider;
 import nl.zeesoft.games.illuminator.controls.PowerUp;
+import nl.zeesoft.games.illuminator.controls.spells.BallOfKnowledge;
 import nl.zeesoft.games.illuminator.model.GameModel;
 import nl.zeesoft.zdk.ZIntegerGenerator;
 
@@ -41,7 +42,7 @@ import nl.zeesoft.zdk.ZIntegerGenerator;
  * 
  * TODO: Move logic into AppStates or Controls.
  */
-public class PlayState extends AbstractAppState implements PhysicsCollisionListener {
+public class PlayState extends AbstractAppState implements PhysicsCollisionListener, PlayerSpellProvider {
     private GameModel               gameModel       = null;
     private MouseInput              mouseInput      = null;
     private FlyByCamera             flyCam          = null;
@@ -56,7 +57,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     
     private Spatial                 sceneModel      = null;
     private RigidBodyControl        scene           = null;
-    private float                   spawnHeight     = 110;
+    private float                   spawnHeight     = 10;
 
     private BulletAppState          bulletAppState  = null;
 
@@ -67,6 +68,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private List<Opponent>          opponents       = new ArrayList<Opponent>();
     private List<DeathExplosion>    deathExplosions = new ArrayList<DeathExplosion>();
     private List<PowerUp>           powerUps        = new ArrayList<PowerUp>();
+    private List<GameControlNode>   spellObjects    = new ArrayList<GameControlNode>();
+    
 
     public PlayState(GameModel gameModel,MouseInput mouseInput,FlyByCamera flyCam,Listener listener) {
         this.gameModel = gameModel;
@@ -104,7 +107,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         loadPlayer();
         
         // TODO: Level configuration and corresponding spawn control
-        spawnOpponent();
+        //spawnOpponent();
     }
 
     @Override
@@ -194,6 +197,14 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                 pup.detachFromRootNode(rootNode, bulletAppState);
             }
         }
+
+        List<GameControlNode> objs = new ArrayList<GameControlNode>(spellObjects);
+        for (GameControlNode obj: objs) {
+            if (obj.update(tpf)) {
+                spellObjects.remove(obj);
+                obj.detachFromRootNode(rootNode, bulletAppState);
+            }
+        }
     }
 
     @Override
@@ -204,6 +215,29 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     @Override
     public void collision(PhysicsCollisionEvent event) {
         handleCollision(event.getObjectA(),event.getObjectB());
+    }
+    
+    @Override
+    public List<GameControlNode> initializeSpellObjects(String spellName, Vector3f location) {
+        List<GameControlNode> objects = new ArrayList<GameControlNode>();
+        if (spellName.equals("Cast.BallOfKnowledge")) {
+            BallOfKnowledge bof = new BallOfKnowledge(assetManager,10);
+            objects.add(bof);
+            bof.initialize();
+            spellObjects.add(bof);
+            bof.setLocalTranslation(location);
+            bof.attachToRootNode(rootNode,bulletAppState);
+        }
+        return objects;
+    }
+    
+    @Override
+    public void releaseSpellObjects(List<GameControlNode> objects) {
+        for (GameControlNode object: objects) {
+            if (object instanceof BallOfKnowledge) {
+                ((BallOfKnowledge) object).setReleased(true);
+            }
+        }
     }
         
     private boolean handleCollision(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
@@ -288,7 +322,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
 
     private void loadPlayer() {
-        player = new Player(gameModel.getPlayerModel(), assetManager, inputManager, cam);
+        player = new Player(gameModel.getPlayerModel(), assetManager, inputManager, cam, this);
         player.initialize();
         player.getCharacterControl().setPhysicsLocation(new Vector3f(-5f,spawnHeight,5f));
         player.attachToRootNode(rootNode, bulletAppState);
@@ -341,5 +375,5 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private Vector3f getNewSpawnLocation() {
         Vector3f location = new Vector3f(0,spawnHeight,0);
         return location;
-    }    
+    }
 }
