@@ -3,6 +3,8 @@ package nl.zeesoft.games.illuminator.model;
 import com.jme3.asset.AssetManager;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The game model is designed to contain configurable game settings.
@@ -17,6 +19,7 @@ public class GameModel {
     private boolean                 godMode             = false;
     private AppSettings             settings            = null;
     private String                  difficulty          = DIFFICULTY_MEDIUM;
+    private List<Level>             levels              = new ArrayList<Level>();
     
     private PlayerModel             playerModel         = null;
     
@@ -24,6 +27,10 @@ public class GameModel {
         settings = new AppSettings(true);
         settings.setFrameRate(60);
         settings.setTitle("Illuminator");
+        
+        levels.add(new Level(2,1,10));
+        levels.add(new Level(3,1,20));
+        levels.add(new Level(4,2,30));
         
         playerModel = new PlayerModel();
     }
@@ -56,6 +63,10 @@ public class GameModel {
         return difficulty;
     }
     
+    public List<Level> getLevels() {
+        return levels;
+    }
+
     public PlayerModel getPlayerModel() {
         return playerModel;
     }

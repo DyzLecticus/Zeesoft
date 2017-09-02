@@ -66,6 +66,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private List<SceneFlame>        flames          = new ArrayList<SceneFlame>();
     
     private float                   playTime        = 0.0f;
+    private int                     level           = 0;
+    private int                     kills           = 0;
 
     public PlayState(GameModel gameModel,MouseInput mouseInput,FlyByCamera flyCam,Listener listener) {
         this.gameModel = gameModel;
@@ -76,14 +78,16 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     
     @Override
     public void initialize(AppStateManager stateManager,Application app) {
-        playTime = 0.0f;
-        
         this.stateManager = stateManager;
         this.app = (SimpleApplication) app;
         this.assetManager = this.app.getAssetManager();
         this.inputManager = this.app.getInputManager();
         this.rootNode = this.app.getRootNode();
         this.cam = this.app.getCamera();
+
+        playTime = 0.0f;
+        level = 0;
+        kills = 0;
         
         if (gameModel.isGodMode()) {
             gameModel.getPlayerModel().godMode = true;
@@ -234,12 +238,15 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private boolean handleCollision(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
         int attacking = player.getFistAttack(nodeA,nodeB);
         if (attacking>=0) {
+            List<Opponent> impactedOpponents = new ArrayList<Opponent>();
             for (Opponent opponent: opponents) {
                 if (opponent.applyFistImpact(nodeA,nodeB,attacking)) {
-                    // TODO: Points
                     player.setMana(player.getMana() + (attacking + 1));
-                    handleOpponentImpact(opponent);
+                    impactedOpponents.add(opponent);
                 }
+            }
+            for (Opponent opponent: impactedOpponents) {
+                handleOpponentImpact(opponent);
             }
         } else {
             if (nodeA==player.getCharacterControl() || nodeB==player.getCharacterControl()) {
@@ -275,6 +282,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             }
         }
         if (opponentImpact!=null) {
+            // Check spell objects
             for (GameControlNode object: spellObjects) {
                 if (object instanceof BallOfKnowledge) {
                     BallOfKnowledge bok = (BallOfKnowledge) object;
@@ -291,6 +299,14 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     
     private void handleOpponentImpact(Opponent opponent) {
         if (opponent.getHealth()==0) {
+            kills++;
+            if (kills>=gameModel.getLevels().get(level).goal &&
+                gameModel.getLevels().size() > (level + 1)
+                ) {
+                level++;
+                kills = 0;
+            }
+            
             // Explode
             DeathExplosion explosion = opponent.getDeath();
             explosion.attachToRootNode(rootNode, bulletAppState);
@@ -299,6 +315,9 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             deathExplosions.add(explosion);
             removeOpponent(opponent);
             spawnOpponent();
+            if (opponents.size()<gameModel.getLevels().get(level).opponents) {
+                spawnOpponent();
+            }
 
             if (player.getHealth()<100) {
                 ZIntegerGenerator generator = new ZIntegerGenerator(0,3);
