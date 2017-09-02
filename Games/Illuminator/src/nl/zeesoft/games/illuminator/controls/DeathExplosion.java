@@ -73,13 +73,13 @@ public class DeathExplosion extends GameControlNode {
         }
         ParticleEmitter flame = new ParticleEmitter("Flame", type, 32 * countFactor);
         flame.setSelectRandomImage(true);
-        flame.setStartColor(new ColorRGBA(0.0f,0.0f,0.1f, (float) (1f / countFactorF)));
+        flame.setStartColor(new ColorRGBA(0.0f,0.0f,0.5f, (float) (1f / countFactorF)));
         flame.setEndColor(new ColorRGBA(0.0f,0.0f,0.1f,0f));
-        flame.setStartSize(1.0f);
-        flame.setEndSize(4f);
+        flame.setStartSize(3.0f);
+        flame.setEndSize(1.0f);
         flame.setShape(new EmitterSphereShape(Vector3f.ZERO, 1f));
         flame.setParticlesPerSec(0);
-        flame.setGravity(0,-5,0);
+        flame.setGravity(0,0,0);
         flame.setLowLife(0.5f);
         flame.setHighLife(0.5f);
         flame.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 7, 0));
@@ -97,7 +97,7 @@ public class DeathExplosion extends GameControlNode {
         ParticleEmitter shockwave = new ParticleEmitter("Shockwave", ParticleMesh.Type.Triangle, 1 * countFactor);
         shockwave.setFaceNormal(Vector3f.UNIT_Y);
         shockwave.setStartColor(new ColorRGBA(0.0f,0.0f,1.0f,(float) (1.0f / countFactorF)));
-        shockwave.setEndColor(new ColorRGBA(0.0f,0.0f,1.0f,0f));
+        shockwave.setEndColor(new ColorRGBA(0.0f,0.0f,0.5f,0f));
         shockwave.setStartSize(0.1f);
         shockwave.setEndSize(6.0f);
         shockwave.setParticlesPerSec(0);

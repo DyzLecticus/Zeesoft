@@ -39,6 +39,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
     // object. Check the "onAnalog" function here to see how we do mouselook.
     private PlayerCamera            camera              = null;
     private Camera                  cam                 = null;
+    private float                   impactCorrect       = 0.0f;
     
     private SpotLight               light           = null;
     private PointLight              aura            = null;
@@ -71,15 +72,23 @@ public class Player extends Character implements ActionListener, AnalogListener 
 
         spellLocation = new Node("SpellLocation");
         attachChild(spellLocation);
-        spellLocation.setLocalTranslation(new Vector3f(0,0.7f,-1f));
+        spellLocation.setLocalTranslation(new Vector3f(0,0.7f,-1.3f));
     }
 
     @Override
     public boolean update(float tpf) {
+        if (impactCorrect>0.0f) {
+            impactCorrect = impactCorrect - tpf;
+            camera.verticalRotate(tpf * 0.1f);
+        }
+        if (impactCorrect<0.0f) {
+            impactCorrect = 0.0f;
+        }
+        
         boolean done = super.update(tpf);
         if (getHealth()>0) {
             burst += tpf;
-            if (burst>=0.1) {
+            if (burst>=0.05) {
                 burst = 0.0f;
                 flameLeft.emitAllParticles();
                 flameRight.emitAllParticles();
@@ -182,6 +191,12 @@ public class Player extends Character implements ActionListener, AnalogListener 
             camera.verticalRotate(MOUSE_LOOK_SPEED*value);
         }
     }
+    
+    @Override
+    protected void startShockWave(int impacting) {
+        impactCorrect += 0.5f;
+        camera.verticalRotate(impactCorrect * -0.1f);
+    }
 
     @Override
     protected void startCast(int casting) {
@@ -235,9 +250,9 @@ public class Player extends Character implements ActionListener, AnalogListener 
         ParticleEmitter flame = new ParticleEmitter("Flame", type, 32 * countFactor);
         flame.setSelectRandomImage(true);
         flame.setRandomAngle(true);
-        flame.setStartColor(new ColorRGBA(0.0f,0.0f,0.1f, (float) (1f / countFactorF)));
+        flame.setStartColor(new ColorRGBA(0.0f,0.0f,0.5f, (float) (1f / countFactorF)));
         flame.setEndColor(new ColorRGBA(0.0f,0.0f,0.1f,0f));
-        flame.setStartSize(0.3f);
+        flame.setStartSize(0.2f);
         flame.setEndSize(0.01f);
         flame.setShape(new EmitterSphereShape(Vector3f.ZERO, 1f));
         flame.setParticlesPerSec(0);

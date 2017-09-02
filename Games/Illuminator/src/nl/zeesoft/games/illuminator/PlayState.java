@@ -28,6 +28,7 @@ import java.util.List;
 import nl.zeesoft.games.illuminator.controls.DeathExplosion;
 import nl.zeesoft.games.illuminator.controls.PlayerSpellProvider;
 import nl.zeesoft.games.illuminator.controls.PowerUp;
+import nl.zeesoft.games.illuminator.controls.SceneFlame;
 import nl.zeesoft.games.illuminator.controls.spells.BallOfKnowledge;
 import nl.zeesoft.games.illuminator.model.GameModel;
 import nl.zeesoft.zdk.ZIntegerGenerator;
@@ -52,7 +53,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     
     private Spatial                 sceneModel      = null;
     private RigidBodyControl        scene           = null;
-    private float                   spawnHeight     = 20;
+    private float                   spawnHeight     = 10;
+    private float                   flameHeight     = 10;
 
     private BulletAppState          bulletAppState  = null;
 
@@ -61,6 +63,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private List<DeathExplosion>    deathExplosions = new ArrayList<DeathExplosion>();
     private List<PowerUp>           powerUps        = new ArrayList<PowerUp>();
     private List<GameControlNode>   spellObjects    = new ArrayList<GameControlNode>();
+    private List<SceneFlame>        flames          = new ArrayList<SceneFlame>();
     
     private float                   playTime        = 0.0f;
 
@@ -189,6 +192,10 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                 obj.detachFromRootNode(rootNode, bulletAppState);
             }
         }
+
+        for (SceneFlame f: flames) {
+            f.update(tpf);
+        }
     }
 
     @Override
@@ -316,9 +323,30 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         sceneModel.addControl(scene);
         rootNode.attachChild(sceneModel);
         bulletAppState.getPhysicsSpace().add(scene);
+
+        for (int i = 0; i < 4; i++) {
+            SceneFlame f = new SceneFlame(assetManager);
+            if (i==0) {
+                f.setLocalTranslation(-50,flameHeight,-50);
+            } else if (i==1) {
+                f.setLocalTranslation(50,flameHeight,-50);
+            } else if (i==2) {
+                f.setLocalTranslation(50,flameHeight,50);
+            } else if (i==3) {
+                f.setLocalTranslation(-50,flameHeight,50);
+            }
+            f.initialize();
+            flames.add(f);
+            f.attachToRootNode(rootNode, bulletAppState);
+        }
     }
 
     private void unloadScene() {
+        for (SceneFlame f: flames) {
+            f.detachFromRootNode(rootNode, bulletAppState);
+        }
+        flames.clear();
+
         rootNode.detachChild(sceneModel);
         bulletAppState.getPhysicsSpace().remove(scene);
     }

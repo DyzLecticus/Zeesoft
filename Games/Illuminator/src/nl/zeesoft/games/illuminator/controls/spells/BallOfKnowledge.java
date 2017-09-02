@@ -87,12 +87,12 @@ public class BallOfKnowledge extends GameControlNode {
             flare.emitAllParticles();
         }
         
-        //if (released) {
+        if (released) {
             if (speed < 100f) {
                 speed = speed + 0.5f;
             }
             this.move(getLocalRotation().getRotationColumn(2).mult(-speed * tpf));
-        //}
+        }
 
         glow.setPosition(control.getPhysicsLocation());
 
@@ -131,10 +131,10 @@ public class BallOfKnowledge extends GameControlNode {
         ParticleEmitter flame = new ParticleEmitter("Flame", type, 32 * countFactor);
         flame.setSelectRandomImage(true);
         flame.setRandomAngle(true);
-        flame.setStartColor(new ColorRGBA(0.0f,0.0f,0.1f, (float) (1f / countFactorF)));
+        flame.setStartColor(new ColorRGBA(0.0f,0.0f,0.5f, (float) (1f / countFactorF)));
         flame.setEndColor(new ColorRGBA(0.0f,0.0f,0.1f,0f));
-        flame.setStartSize(1.6f);
-        flame.setEndSize(0.1f);
+        flame.setStartSize(SIZE);
+        flame.setEndSize(0.01f);
         flame.setShape(new EmitterSphereShape(Vector3f.ZERO, 1f));
         flame.setParticlesPerSec(0);
         flame.setGravity(0,0,0);
