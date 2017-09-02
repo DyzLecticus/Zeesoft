@@ -1,6 +1,7 @@
 package nl.zeesoft.games.illuminator.controls;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
@@ -13,10 +14,11 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.light.PointLight;
+import com.jme3.light.SpotLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -38,6 +40,9 @@ public class Player extends Character implements ActionListener, AnalogListener 
     private PlayerCamera            camera              = null;
     private Camera                  cam                 = null;
     
+    private SpotLight               light           = null;
+    private PointLight              aura            = null;
+
     private ParticleEmitter         flameLeft           = null;
     private ParticleEmitter         flameRight          = null;
     private float                   burst               = 0.0f;
@@ -86,9 +91,45 @@ public class Player extends Character implements ActionListener, AnalogListener 
                 object.setLocalRotation(getWorldRotation());
             }
         }
+        
+        // Light follows player
+        Vector3f location = getCharacterControl().getPhysicsLocation();
+        location.y += 5f;
+        Vector3f direction = cam.getDirection();
+        direction.y = direction.y - (90f * FastMath.DEG_TO_RAD);
+        light.setPosition(location);
+        light.setDirection(direction);
+
+        location = getImpactControl().getPhysicsLocation();
+        location.y += 1f;
+        aura.setPosition(location);
+
+        
         return done;
     }
 
+    @Override
+    public void attachToRootNode(Node rootNode,BulletAppState bulletAppState) {
+        super.attachToRootNode(rootNode, bulletAppState);
+        light = new SpotLight();
+        light.setSpotRange(20f);
+        light.setSpotInnerAngle(35f * FastMath.DEG_TO_RAD);
+        light.setSpotOuterAngle(35f * FastMath.DEG_TO_RAD);
+        rootNode.addLight(light);
+        
+        aura = new PointLight();
+        aura.setColor(ColorRGBA.Blue);
+        aura.setRadius(4f);
+        rootNode.addLight(aura);
+    }
+    
+    @Override
+    public void detachFromRootNode(Node rootNode,BulletAppState bulletAppState) {
+        super.detachFromRootNode(rootNode, bulletAppState);
+        rootNode.removeLight(light);
+        rootNode.removeLight(aura);
+    }
+    
     @Override
     public Vector3f getDirection() {
         Vector3f camDir = cam.getDirection().clone();
@@ -143,7 +184,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
     }
 
     @Override
-    public void startCast(int casting) {
+    protected void startCast(int casting) {
         String spellName = getCharacterModel().spells.get(casting);
         List<GameControlNode> objects = spellProvider.initializeSpellObjects(spellName,spellLocation.getWorldTranslation());
         for (GameControlNode object: objects) {
@@ -152,7 +193,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
     }
     
     @Override
-    public void stopCast() {
+    protected void stopCast() {
         spellProvider.releaseSpellObjects(spellObjects);
         spellObjects.clear();
     }

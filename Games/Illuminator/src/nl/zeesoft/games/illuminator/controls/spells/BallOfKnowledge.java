@@ -1,6 +1,7 @@
 package nl.zeesoft.games.illuminator.controls.spells;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.GhostControl;
@@ -12,6 +13,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 import nl.zeesoft.games.illuminator.GameControlNode;
 
@@ -28,6 +30,8 @@ public class BallOfKnowledge extends GameControlNode {
     private float               lifeTime        = 0.0f;
     private float               lifeTimeMax     = 10.0f;
     private float               burst           = 0.0f;
+
+    private float               scale           = 0.2f;
     
     private boolean             released        = false;
     private float               speed           = 10.0f;
@@ -35,6 +39,7 @@ public class BallOfKnowledge extends GameControlNode {
     public BallOfKnowledge(AssetManager assetManager,int lifeTimeMax) {
         this.assetManager = assetManager;
         this.lifeTimeMax = lifeTimeMax;
+        this.setLocalScale(new Vector3f(scale,scale,scale));
     }
     
     @Override
@@ -57,7 +62,7 @@ public class BallOfKnowledge extends GameControlNode {
                 
         glow = new PointLight();
         glow.setColor(ColorRGBA.Blue);
-        glow.setRadius(SIZE * 4f);
+        glow.setRadius(SIZE * 30f);
     }
 
     @Override
@@ -67,18 +72,43 @@ public class BallOfKnowledge extends GameControlNode {
         if (lifeTime>=lifeTimeMax) {
            done = true; 
         }
+        
+        if (scale<1.0f) {
+            scale += (tpf * 3);
+        }
+        if (scale>1.0f) {
+            scale = 1.0f;
+        }
+        this.setLocalScale(new Vector3f(scale,scale,scale));
+        
         burst += tpf;
         if (burst>=0.1f) {
             burst = 0.0f;
             flare.emitAllParticles();
         }
-        //if (released) 
+        
+        //if (released) {
             if (speed < 100f) {
                 speed = speed + 0.5f;
             }
             this.move(getLocalRotation().getRotationColumn(2).mult(-speed * tpf));
         //}
+
+        glow.setPosition(control.getPhysicsLocation());
+
         return done;
+    }
+    
+    @Override
+    public void attachToRootNode(Node rootNode,BulletAppState bulletAppState) {
+        super.attachToRootNode(rootNode, bulletAppState);
+        rootNode.addLight(glow);
+    }
+    
+    @Override
+    public void detachFromRootNode(Node rootNode,BulletAppState bulletAppState) {
+        super.detachFromRootNode(rootNode, bulletAppState);
+        rootNode.removeLight(glow);
     }
     
     public void setReleased(boolean released) {

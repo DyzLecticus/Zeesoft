@@ -46,6 +46,7 @@ public abstract class CharacterModel {
     public List<String>     impactSounds        = new ArrayList<String>();
 
     public List<String>     spells              = new ArrayList<String>();
+    public List<Integer>    spellCost           = new ArrayList<Integer>();
     public List<Integer>    spellDamages        = new ArrayList<Integer>();
     public List<String>     spellSounds         = new ArrayList<String>();
 
@@ -64,11 +65,14 @@ public abstract class CharacterModel {
         
         impacts.add("Impact.Jab");
         impacts.add("Impact.Hook");
+        impacts.add("Impact.Uppercut");
         
         impactSounds.add("Sounds/Impact01.wav");
         impactSounds.add("Sounds/Impact02.wav");
+        impactSounds.add("Sounds/Impact02.wav");
 
         spells.add("Cast.BallOfKnowledge");
+        spellCost.add(10);
         spellDamages.add(50);
         spellSounds.add("Sounds/Swoosh01.wav");
     }

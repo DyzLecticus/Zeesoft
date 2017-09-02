@@ -17,6 +17,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import nl.zeesoft.games.illuminator.GameControlNode;
+import nl.zeesoft.games.illuminator.controls.spells.BallOfKnowledge;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
 
 /**
@@ -49,6 +50,8 @@ public abstract class Character extends GameControlNode implements AnimEventList
     private int                 attacking           = -1;
     private int                 impacting           = -1;
 
+    private GameControlNode     impactingObject     = null;
+
     private int                 selectedSpell       = 0;
     private boolean             cast                = false;
     private int                 casting             = -1;
@@ -59,6 +62,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
 
     private CharacterStatusBar  statusBar           = null;
     private int                 health              = 0;
+    private int                 mana                = 0;
     
     private DeathExplosion      death               = null;
     
@@ -106,6 +110,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
         statusBar.initialize();
         statusBar.setLocalTranslation(0.5f,2,0);
         setHealth(characterModel.maxHealth);
+        setMana(0);
 
         // Impact control
         CapsuleCollisionShape impactShape = new CapsuleCollisionShape(characterModel.radius * 0.4f,characterModel.height * 0.7f);
@@ -201,6 +206,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
             }
             if (impacting>=0 && characterModel.impacts.contains(animName)) {
                 impacting = -1;
+                impactingObject = null;
                 stopShockWave();
             }
             if (casting>=0 && characterModel.spells.contains(animName)) {
@@ -264,6 +270,20 @@ public abstract class Character extends GameControlNode implements AnimEventList
     public int getHealth() {
         return health;
     }
+
+    public void setMana(int mana) {
+        if (mana<0) {
+            mana = 0;
+        } else if (mana>100) {
+            mana = 100;
+        }
+        this.mana = mana;
+        statusBar.setMana(mana);
+    }
+
+    public int getMana() {
+        return mana;
+    }
     
     public DeathExplosion getDeath() {
         return death;
@@ -286,7 +306,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
     }
     
     public void setAttack(boolean v) {
-        if (v && impacting>=0) {
+        if (v && (impacting>=0 || casting>=0)) {
             v = false;
         }
         attack = v;
@@ -296,7 +316,10 @@ public abstract class Character extends GameControlNode implements AnimEventList
     }
 
     public void setCast(boolean v) {
-        if (v && impacting>=0) {
+        if (v && (impacting>=0 || attacking>=0 || casting>=0)) {
+            v = false;
+        }
+        if (mana<characterModel.spellCost.get(selectedSpell)) {
             v = false;
         }
         cast = v;
@@ -309,7 +332,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
     public void jump() {
         if(characterControl.onGround()) {
             characterControl.jump();
-            lowerChannel.setAnim(characterModel.jumpAnim,.3f);
+            lowerChannel.setAnim(characterModel.jumpAnim,0.3f);
         }
     }
     
@@ -337,7 +360,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
                 if (!characterModel.godMode) {
                     setHealth(health - characterModel.attackDamages.get(impacting));
                 }
-                startShockWave(impacting);        
+                startShockWave(impacting);
                 impactAudio[impacting].playInstance();
                 upperChannel.setAnim(characterModel.impacts.get(impacting),0.001f);
                 upperChannel.setLoopMode(LoopMode.DontLoop);
@@ -346,9 +369,20 @@ public abstract class Character extends GameControlNode implements AnimEventList
         return r;
     }
 
-    public boolean applySpellImpact(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+    public boolean applySpellImpact(GameControlNode spellObject) {
         boolean r = false;
-        // TODO: Implement
+        if (attacking<0 && casting<0 && impactingObject!=spellObject) {
+            impactingObject = spellObject;
+            if (spellObject instanceof BallOfKnowledge) {
+                setHealth(health - characterModel.spellDamages.get(0));
+                impacting = 2;
+                startShockWave(impacting);
+                impactAudio[impacting].playInstance();
+                upperChannel.setAnim(characterModel.impacts.get(impacting),0.001f);
+                upperChannel.setLoopMode(LoopMode.DontLoop);
+                r = true;
+            }
+        }
         return r;
     }
     
@@ -399,6 +433,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
             }
         } else if (cast) {
             casting = selectedSpell;
+            setMana(mana - characterModel.spellCost.get(selectedSpell));
             upperChannel.setAnim(characterModel.spells.get(casting),0.001f);
             upperChannel.setLoopMode(LoopMode.DontLoop);
             castAudio[casting].playInstance();
