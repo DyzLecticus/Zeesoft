@@ -2,7 +2,6 @@ package nl.zeesoft.games.illuminator.controls;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.effect.shapes.EmitterSphereShape;
@@ -25,13 +24,15 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.List;
+import nl.zeesoft.games.illuminator.CollisionCollector;
 import nl.zeesoft.games.illuminator.GameControlNode;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
+import nl.zeesoft.games.illuminator.SpellObjectProvider;
 
-public class Player extends Character implements ActionListener, AnalogListener {
+public class Player extends GameCharacter implements ActionListener, AnalogListener {
     private static final float      MOUSE_LOOK_SPEED    = FastMath.PI;
     
-    private PlayerSpellProvider     spellProvider       = null;
+    private SpellObjectProvider     spellProvider       = null;
 
     private InputManager            inputManager        = null;
 
@@ -51,8 +52,8 @@ public class Player extends Character implements ActionListener, AnalogListener 
     private Node                    spellLocation       = null;
     private List<GameControlNode>   spellObjects        = new ArrayList<GameControlNode>();
     
-    public Player(CharacterModel characterModel,AssetManager assetManager, InputManager inputManager, Camera cam,PlayerSpellProvider spellProvider) {
-        super(characterModel,assetManager);
+    public Player(CharacterModel characterModel,AssetManager assetManager,CollisionCollector collisionCollector, InputManager inputManager, Camera cam,SpellObjectProvider spellProvider) {
+        super(characterModel,assetManager,collisionCollector);
         this.inputManager = inputManager;
         this.cam = cam;
         this.spellProvider = spellProvider;
@@ -62,7 +63,7 @@ public class Player extends Character implements ActionListener, AnalogListener 
     @Override
     public void initialize() {
         super.initialize();
-        getCharacterControl().addCollideWithGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+        addRigidBody();
         setUpKeys();
         
         flameLeft = getNewFlame(1,1.0f,false);
@@ -109,10 +110,9 @@ public class Player extends Character implements ActionListener, AnalogListener 
         light.setPosition(location);
         light.setDirection(direction);
 
-        location = getImpactControl().getPhysicsLocation();
+        location = getCharacterControl().getPhysicsLocation();
         location.y += 1f;
         aura.setPosition(location);
-
         
         return done;
     }

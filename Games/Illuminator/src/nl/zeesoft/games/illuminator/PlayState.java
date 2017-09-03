@@ -15,18 +15,21 @@ import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
 import nl.zeesoft.games.illuminator.controls.DeathExplosion;
-import nl.zeesoft.games.illuminator.controls.PlayerSpellProvider;
+import nl.zeesoft.games.illuminator.controls.GameCharacter;
 import nl.zeesoft.games.illuminator.controls.PowerUp;
 import nl.zeesoft.games.illuminator.controls.SceneFlame;
 import nl.zeesoft.games.illuminator.controls.spells.BallOfKnowledge;
@@ -38,7 +41,7 @@ import nl.zeesoft.zdk.ZIntegerGenerator;
  * 
  * TODO: Move logic into AppStates or Controls.
  */
-public class PlayState extends AbstractAppState implements PhysicsCollisionListener, PlayerSpellProvider {
+public class PlayState extends AbstractAppState implements PhysicsCollisionListener, SpellObjectProvider, CollisionCollector {
     private GameModel               gameModel       = null;
     private MouseInput              mouseInput      = null;
     private FlyByCamera             flyCam          = null;
@@ -143,7 +146,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         listener.setLocation(cam.getLocation());
         listener.setRotation(cam.getRotation());
 
-        if (playTime>=5.0f && opponents.size()<=0) {
+        if (playTime>=2.0f && opponents.size()<=0) {
             spawnOpponent();
         }
         
@@ -161,12 +164,12 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                 turn.y = 0;
                 opponent.getCharacterControl().setViewDirection(turn);
             }
-            if (distance < 1.8) {
+            if (distance < 1.7) {
                 if (!opponent.isAttack()) {
                     opponent.setAttack(true);
                 }
             }
-            if (distance > 1.7) {
+            if (distance > 1.6) {
                 opponent.setUp(true);
             } else {
                 opponent.setUp(false);
@@ -213,6 +216,28 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     @Override
+    public CollisionResults getAttackCollisions(GameCharacter character,int attacking) {
+        CollisionResults results = new CollisionResults();
+        Ray ray = new Ray(character.getCharacterControl().getPhysicsLocation(),character.getCharacterControl().getViewDirection().negate());
+        
+        rootNode.collideWith(ray, results);
+        for (int i = 0; i < results.size(); i++) {
+            if (results.getCollision(i).getDistance() < 1.6f) {
+                GameCharacter impacted = getCharacterForGeometry(results.getCollision(i).getGeometry());
+                if (impacted!=null && impacted!=character && impacted.applyFistImpact(attacking)) {
+                    if (character==player && impacted instanceof Opponent) {
+                        player.setMana(player.getMana() + (attacking + 1));
+                        handleOpponentImpact((Opponent) impacted);
+                    } else if (impacted==player && player.getHealth()==0) {
+                        // TODO: player death
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
+    @Override
     public List<GameControlNode> initializeSpellObjects(String spellName, Vector3f location) {
         List<GameControlNode> objects = new ArrayList<GameControlNode>();
         if (spellName.equals("Cast.BallOfKnowledge")) {
@@ -234,50 +259,75 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             }
         }
     }
-        
-    private boolean handleCollision(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
-        int attacking = player.getFistAttack(nodeA,nodeB);
-        if (attacking>=0) {
-            List<Opponent> impactedOpponents = new ArrayList<Opponent>();
-            for (Opponent opponent: opponents) {
-                if (opponent.applyFistImpact(nodeA,nodeB,attacking)) {
-                    player.setMana(player.getMana() + (attacking + 1));
-                    impactedOpponents.add(opponent);
-                }
-            }
-            for (Opponent opponent: impactedOpponents) {
-                handleOpponentImpact(opponent);
-            }
+
+    private GameCharacter getCharacterForGeometry(Geometry geom) {
+        GameCharacter character = null;
+        if (player.getCharacterModel().model.getChild(geom.getName())==geom) {
+            character = player;
         } else {
-            if (nodeA==player.getCharacterControl() || nodeB==player.getCharacterControl()) {
-                // Check powerup
-                PowerUp cpup = null;
-                for (PowerUp pup: powerUps) {
-                    if (nodeA==pup.getControl() || nodeB==pup.getControl()) {
-                        cpup = pup;
-                        break;
-                    }
-                }
-                if (cpup!=null) {
-                    player.setHealth(player.getHealth() + 50);
-                    powerUps.remove(cpup);
-                    cpup.detachFromRootNode(rootNode, bulletAppState);
+            for (Opponent opponent: opponents) {
+                if (opponent.getCharacterModel().model.getChild(geom.getName())==geom) {
+                    character = opponent;
+                    break;
                 }
             }
         }
-        Opponent opponentImpact = null;
-        for (Opponent opponent: opponents) {
-            attacking = opponent.getFistAttack(nodeA,nodeB);
-            if (attacking>=0) {
-                if (player.applyFistImpact(nodeA,nodeB,attacking)) {
-                    if (player.getHealth()==0) {
-                        // TODO: End play state
-                    }
+        return character;
+    }
+    
+    private GameCharacter getCharacterForRigidBody(RigidBodyControl control) {
+        GameCharacter character = null;
+        if (player.getRigidControl()==control) {
+            character = player;
+        } else {
+            for (Opponent opponent: opponents) {
+                if (opponent.getRigidControl()==control) {
+                    character = opponent;
+                    break;
                 }
             }
-            if (nodeA==opponent.getImpactControl()) {
+        }
+        return character;
+    }
+    
+    private boolean handleCollision(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
+        if (nodeA instanceof RigidBodyControl && nodeB instanceof RigidBodyControl) {
+            RigidBodyControl cA = (RigidBodyControl) nodeA;
+            RigidBodyControl cB = (RigidBodyControl) nodeB;
+            GameCharacter charA = getCharacterForRigidBody(cA);
+            GameCharacter charB = getCharacterForRigidBody(cB);
+            
+            if (charA!=null && charB!=null) {
+                Vector3f posA = charA.getCharacterControl().getPhysicsLocation();
+                Vector3f posB = charB.getCharacterControl().getPhysicsLocation();
+                posA.y = posB.y;
+
+                charA.getCharacterControl().setWalkDirection(posB.subtract(posA).negate().normalize().multLocal(0.01f));
+                charB.getCharacterControl().setWalkDirection(posA.subtract(posB).negate().normalize().multLocal(0.01f));
+            }
+        }
+
+        if (nodeA==player.getCharacterControl() || nodeB==player.getCharacterControl()) {
+            // Check powerup
+            PowerUp cpup = null;
+            for (PowerUp pup: powerUps) {
+                if (nodeA==pup.getControl() || nodeB==pup.getControl()) {
+                    cpup = pup;
+                    break;
+                }
+            }
+            if (cpup!=null) {
+                player.setHealth(player.getHealth() + 50);
+                powerUps.remove(cpup);
+                cpup.detachFromRootNode(rootNode, bulletAppState);
+            }
+        }
+        
+        Opponent opponentImpact = null;
+        for (Opponent opponent: opponents) {
+            if (nodeA==opponent.getRigidControl()) {
                 opponentImpact = opponent;
-            } else if (nodeB==opponent.getImpactControl()) {
+            } else if (nodeB==opponent.getRigidControl()) {
                 opponentImpact = opponent;
             }
         }
@@ -310,7 +360,9 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             // Explode
             DeathExplosion explosion = opponent.getDeath();
             explosion.attachToRootNode(rootNode, bulletAppState);
-            explosion.setLocalTranslation(opponent.getImpactControl().getPhysicsLocation());
+            Vector3f location = opponent.getCharacterControl().getPhysicsLocation();
+            location.y += 0.5;
+            explosion.setLocalTranslation(location);
             explosion.start();
             deathExplosions.add(explosion);
             removeOpponent(opponent);
@@ -371,7 +423,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
 
     private void loadPlayer() {
-        player = new Player(gameModel.getPlayerModel(), assetManager, inputManager, cam, this);
+        player = new Player(gameModel.getPlayerModel(), assetManager, this, inputManager, cam, this);
         player.initialize();
         player.getCharacterControl().setPhysicsLocation(new Vector3f(0f,sceneModel.getLocalTranslation().getY() + spawnHeight,0f));
         player.attachToRootNode(rootNode, bulletAppState);
@@ -382,7 +434,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     private void spawnOpponent() {
-        Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager),assetManager);
+        Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager),assetManager,this);
         opp.initialize();
         opp.getCharacterControl().setPhysicsLocation(getNewSpawnLocation());
         opp.attachToRootNode(rootNode, bulletAppState);

@@ -39,6 +39,7 @@ public abstract class CharacterModel {
     public String           jumpAnim            = "Idle";
 
     public List<String>     attacks             = new ArrayList<String>();
+    public List<Float>      attackDelays        = new ArrayList<Float>();
     public List<Integer>    attackDamages       = new ArrayList<Integer>();
     public List<String>     attackSounds        = new ArrayList<String>();
 
@@ -58,6 +59,9 @@ public abstract class CharacterModel {
     public CharacterModel() {
         attacks.add("Attack.Jab");
         attacks.add("Attack.Hook");
+        attackDelays.add(0.05f);
+        attackDelays.add(0.10f);
+        attackDelays.add(0.20f);
         attackDamages.add(10);
         attackDamages.add(20);
         attackDamages.add(30);
@@ -118,10 +122,6 @@ public abstract class CharacterModel {
             r.setAnim(idleAnim);
         }
         return r;
-    }
-
-    public void addImpactControl(GhostControl impactControl) {
-        getBone("Chest").addControl(impactControl);
     }
 
     public Node getFist(boolean left) {

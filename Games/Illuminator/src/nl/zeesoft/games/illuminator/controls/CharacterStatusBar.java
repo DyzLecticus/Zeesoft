@@ -10,14 +10,14 @@ import com.jme3.scene.shape.Quad;
 
 public class CharacterStatusBar extends Node {
     private AssetManager    assetManager    = null;
-    private Character       character       = null;
+    private GameCharacter       character       = null;
     
     private boolean         showMana        = false;
     
     private Geometry        healthBar       = null;
     private Geometry        manaBar         = null;
 
-    public CharacterStatusBar(AssetManager assetManager,Character character) {
+    public CharacterStatusBar(AssetManager assetManager,GameCharacter character) {
         this.assetManager = assetManager;
         this.character = character;
         if (character instanceof Player) {

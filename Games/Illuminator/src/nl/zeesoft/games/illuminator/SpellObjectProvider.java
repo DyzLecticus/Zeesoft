@@ -1,10 +1,9 @@
-package nl.zeesoft.games.illuminator.controls;
+package nl.zeesoft.games.illuminator;
 
 import com.jme3.math.Vector3f;
 import java.util.List;
-import nl.zeesoft.games.illuminator.GameControlNode;
 
-public interface PlayerSpellProvider {
+public interface SpellObjectProvider {
 
     public List<GameControlNode> initializeSpellObjects(String spellName, Vector3f location);
     

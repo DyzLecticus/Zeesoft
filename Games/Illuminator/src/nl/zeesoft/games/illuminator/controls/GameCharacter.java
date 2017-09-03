@@ -16,6 +16,7 @@ import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import nl.zeesoft.games.illuminator.CollisionCollector;
 import nl.zeesoft.games.illuminator.GameControlNode;
 import nl.zeesoft.games.illuminator.controls.spells.BallOfKnowledge;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
@@ -25,16 +26,13 @@ import nl.zeesoft.games.illuminator.model.CharacterModel;
  * 
  * Combines the character model with character control.
  */
-public abstract class Character extends GameControlNode implements AnimEventListener {
+public abstract class GameCharacter extends GameControlNode implements AnimEventListener {
     private AssetManager        assetManager        = null;
-    
     private CharacterModel      characterModel      = null;
+    private CollisionCollector  collisionCollector  = null;
+    
     private CharacterControl    characterControl    = null;
     private RigidBodyControl    rigidControl        = null;
-
-    private GhostControl        impactControl       = null; 
-    private GhostControl        fistControlLeft     = null; 
-    private GhostControl        fistControlRight    = null;
 
     private AnimChannel         lowerChannel        = null;
     private AnimChannel         upperChannel        = null;
@@ -48,6 +46,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
     private boolean             attackNext          = false;
     private float               attackDelay         = 0.0f;
     private int                 attacking           = -1;
+    private float               attackTime          = 0.0f;
     private int                 impacting           = -1;
 
     private GameControlNode     impactingObject     = null;
@@ -66,9 +65,10 @@ public abstract class Character extends GameControlNode implements AnimEventList
     
     private DeathExplosion      death               = null;
     
-    public Character(CharacterModel characterModel,AssetManager assetManager) {
+    public GameCharacter(CharacterModel characterModel,AssetManager assetManager,CollisionCollector collisionCollector) {
         this.assetManager = assetManager;
         this.characterModel = characterModel;
+        this.collisionCollector = collisionCollector;
     }
     
     @Override
@@ -111,19 +111,6 @@ public abstract class Character extends GameControlNode implements AnimEventList
         statusBar.setLocalTranslation(0.5f,2,0);
         setHealth(characterModel.maxHealth);
         setMana(0);
-
-        // Impact control
-        CapsuleCollisionShape impactShape = new CapsuleCollisionShape(characterModel.radius * 0.4f,characterModel.height * 0.7f);
-        impactControl = new GhostControl(impactShape);
-        impactControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
-        impactControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_03);
-        characterModel.addImpactControl(impactControl);
-        
-        // Fist controls
-        fistControlLeft = getNewFistControl();
-        fistControlRight = getNewFistControl();
-        characterModel.getFist(true).addControl(fistControlLeft);
-        characterModel.getFist(false).addControl(fistControlRight);
         
         // Death
         death = new DeathExplosion(assetManager);
@@ -135,6 +122,14 @@ public abstract class Character extends GameControlNode implements AnimEventList
     
     @Override
     public boolean update(float tpf) {
+        if (attacking>=0) {
+            attackTime += tpf;
+            if (attackTime>characterModel.attackDelays.get(attacking)) {
+                // Cast ray, get stuff ... or something
+                collisionCollector.getAttackCollisions(this,attacking);
+            }
+        }
+        
         Vector3f goDir = getDirection();
         Vector3f goLeft = getLeft();
         walkDirection.set(0, 0, 0);
@@ -173,9 +168,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
     public void attachToRootNode(Node rootNode,BulletAppState bulletAppState) {
         super.attachToRootNode(rootNode,bulletAppState);
         if (bulletAppState!=null) {
-            bulletAppState.getPhysicsSpace().add(getImpactControl());
-            bulletAppState.getPhysicsSpace().add(getFistControlLeft());
-            bulletAppState.getPhysicsSpace().add(getFistControlRight());
+            bulletAppState.getPhysicsSpace().add(getRigidControl());
         }
     }
 
@@ -183,9 +176,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
     public void detachFromRootNode(Node rootNode,BulletAppState bulletAppState) {
         super.detachFromRootNode(rootNode,bulletAppState);
         if (bulletAppState!=null) {
-            bulletAppState.getPhysicsSpace().remove(getImpactControl());
-            bulletAppState.getPhysicsSpace().remove(getFistControlLeft());
-            bulletAppState.getPhysicsSpace().remove(getFistControlRight());
+            bulletAppState.getPhysicsSpace().remove(getRigidControl());
         }
     }
     
@@ -196,6 +187,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
                 if (attackNext) {
                     attackNext = false;
                     attackDelay = 0.0f;
+                    attackTime = 0.0f;
                     attacking++;
                     upperChannel.setAnim(characterModel.attacks.get(attacking),0.001f);
                     upperChannel.setLoopMode(LoopMode.DontLoop);
@@ -315,6 +307,10 @@ public abstract class Character extends GameControlNode implements AnimEventList
         }
     }
 
+    public boolean isAttack() {
+        return attack;
+    }
+
     public void setCast(boolean v) {
         if (v && (impacting>=0 || attacking>=0 || casting>=0)) {
             v = false;
@@ -325,46 +321,25 @@ public abstract class Character extends GameControlNode implements AnimEventList
         cast = v;
     }
 
-    public boolean isAttack() {
-        return attack;
-    }
-
     public void jump() {
         if(characterControl.onGround()) {
             characterControl.jump();
             lowerChannel.setAnim(characterModel.jumpAnim,0.3f);
         }
     }
-    
-    public int getFistAttack(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
-        int r = -1;
-        if (attacking>=0 && 
-            (nodeA!=impactControl&&nodeB!=impactControl) &&
-            (nodeA==fistControlLeft || nodeA==fistControlRight || nodeB==fistControlLeft ||nodeB==fistControlRight)
-            ) {
-            r = attacking;
-        }
-        return r;
-    }
 
-    public boolean applyFistImpact(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB, int impact) {
+    public boolean applyFistImpact(int impact) {
         boolean r = false;
-        if (attacking<0 && casting<0 && 
-            (nodeA!=characterControl&&nodeB!=characterControl) &&
-            (nodeA!=fistControlLeft&&nodeA!=fistControlRight&&nodeB!=fistControlLeft&&nodeB!=fistControlRight) &&
-            (nodeA==impactControl || nodeB==impactControl)
-            ) {
-            if (impacting!=impact) {
-                r = true;
-                impacting = impact;
-                if (!characterModel.godMode) {
-                    setHealth(health - characterModel.attackDamages.get(impacting));
-                }
-                startShockWave(impacting);
-                impactAudio[impacting].playInstance();
-                upperChannel.setAnim(characterModel.impacts.get(impacting),0.001f);
-                upperChannel.setLoopMode(LoopMode.DontLoop);
+        if (attacking<0 && casting<0 && impacting!=impact) {
+            r = true;
+            impacting = impact;
+            if (!characterModel.godMode) {
+                setHealth(health - characterModel.attackDamages.get(impacting));
             }
+            startShockWave(impacting);
+            impactAudio[impacting].playInstance();
+            upperChannel.setAnim(characterModel.impacts.get(impacting),0.001f);
+            upperChannel.setLoopMode(LoopMode.DontLoop);
         }
         return r;
     }
@@ -401,18 +376,6 @@ public abstract class Character extends GameControlNode implements AnimEventList
     public RigidBodyControl getRigidControl() {
         return rigidControl;
     }
-
-    public GhostControl getImpactControl() {
-        return impactControl;
-    }
-    
-    public GhostControl getFistControlLeft() {
-        return fistControlLeft;
-    }
-    
-    public GhostControl getFistControlRight() {
-        return fistControlRight;
-    }
     
     private void handleAnimations(float tpf) {
         if (impacting>=0) {
@@ -425,6 +388,7 @@ public abstract class Character extends GameControlNode implements AnimEventList
             attackDelay = attackDelay + tpf;
             if (attackDelay>=getAttackDelay()) {
                 attackDelay = 0.0f;
+                attackTime = 0.0f;
                 attacking = 0;
                 upperChannel.setAnim(characterModel.attacks.get(attacking),0.001f);
                 upperChannel.setLoopMode(LoopMode.DontLoop);
