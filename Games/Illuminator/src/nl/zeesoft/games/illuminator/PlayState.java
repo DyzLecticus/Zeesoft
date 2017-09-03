@@ -41,7 +41,7 @@ import nl.zeesoft.zdk.ZIntegerGenerator;
  * 
  * TODO: Move logic into AppStates or Controls.
  */
-public class PlayState extends AbstractAppState implements PhysicsCollisionListener, SpellObjectProvider, CollisionCollector {
+public class PlayState extends AbstractAppState implements PhysicsCollisionListener, SpellObjectProvider, AttackHandler {
     private GameModel               gameModel       = null;
     private MouseInput              mouseInput      = null;
     private FlyByCamera             flyCam          = null;
@@ -216,7 +216,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     @Override
-    public CollisionResults getAttackCollisions(GameCharacter character,int attacking) {
+    public List<GameCharacter> getAttackCollisions(GameCharacter character,int attacking) {
+        List<GameCharacter> list = new ArrayList<GameCharacter>();
         CollisionResults results = new CollisionResults();
         Ray ray = new Ray(character.getCharacterControl().getPhysicsLocation(),character.getCharacterControl().getViewDirection().negate());
         
@@ -225,6 +226,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             if (results.getCollision(i).getDistance() < 1.6f) {
                 GameCharacter impacted = getCharacterForGeometry(results.getCollision(i).getGeometry());
                 if (impacted!=null && impacted!=character && impacted.applyFistImpact(attacking)) {
+                    list.add(impacted);
                     if (character==player && impacted instanceof Opponent) {
                         player.setMana(player.getMana() + (attacking + 1));
                         handleOpponentImpact((Opponent) impacted);
@@ -234,7 +236,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                 }
             }
         }
-        return results;
+        return list;
     }
 
     @Override

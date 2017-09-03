@@ -14,10 +14,10 @@ import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import nl.zeesoft.games.illuminator.CollisionCollector;
 import nl.zeesoft.games.illuminator.GameControlNode;
 import nl.zeesoft.games.illuminator.controls.spells.BallOfKnowledge;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
+import nl.zeesoft.games.illuminator.AttackHandler;
 
 /**
  * Abstract character.
@@ -27,7 +27,7 @@ import nl.zeesoft.games.illuminator.model.CharacterModel;
 public abstract class GameCharacter extends GameControlNode implements AnimEventListener {
     private AssetManager        assetManager        = null;
     private CharacterModel      characterModel      = null;
-    private CollisionCollector  collisionCollector  = null;
+    private AttackHandler  collisionCollector  = null;
     
     private CharacterControl    characterControl    = null;
     private RigidBodyControl    rigidControl        = null;
@@ -63,7 +63,7 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
     
     private DeathExplosion      death               = null;
     
-    public GameCharacter(CharacterModel characterModel,AssetManager assetManager,CollisionCollector collisionCollector) {
+    public GameCharacter(CharacterModel characterModel,AssetManager assetManager,AttackHandler collisionCollector) {
         this.assetManager = assetManager;
         this.characterModel = characterModel;
         this.collisionCollector = collisionCollector;
@@ -131,7 +131,9 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
             if (attackTime>characterModel.attackDelays.get(attacking) &&
                 attackTime<(characterModel.attackDelays.get(attacking) + 0.2f)
                 ) {
-                collisionCollector.getAttackCollisions(this,attacking);
+                if (collisionCollector.getAttackCollisions(this,attacking).size()>0) {
+                    attackTime += 1.0f;
+                }
             }
         }
         

@@ -6,9 +6,9 @@ import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import nl.zeesoft.games.illuminator.CollisionCollector;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
 import nl.zeesoft.games.illuminator.model.OpponentModel;
+import nl.zeesoft.games.illuminator.AttackHandler;
 
 public class Opponent extends GameCharacter {
     private ParticleEmitter     shockWave       = null;
@@ -16,7 +16,7 @@ public class Opponent extends GameCharacter {
     private boolean             upDo            = false;
     private float               upDelayed       = 0.0f;
     
-    public Opponent(CharacterModel characterModel,AssetManager assetManager,CollisionCollector collisionCollector) {
+    public Opponent(CharacterModel characterModel,AssetManager assetManager,AttackHandler collisionCollector) {
         super(characterModel,assetManager,collisionCollector);
     }
 

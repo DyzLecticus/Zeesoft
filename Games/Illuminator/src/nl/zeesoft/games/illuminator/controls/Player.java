@@ -24,10 +24,10 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.List;
-import nl.zeesoft.games.illuminator.CollisionCollector;
 import nl.zeesoft.games.illuminator.GameControlNode;
 import nl.zeesoft.games.illuminator.model.CharacterModel;
 import nl.zeesoft.games.illuminator.SpellObjectProvider;
+import nl.zeesoft.games.illuminator.AttackHandler;
 
 public class Player extends GameCharacter implements ActionListener, AnalogListener {
     private static final float      MOUSE_LOOK_SPEED    = FastMath.PI;
@@ -42,8 +42,8 @@ public class Player extends GameCharacter implements ActionListener, AnalogListe
     private Camera                  cam                 = null;
     private float                   impactCorrect       = 0.0f;
     
-    private SpotLight               light           = null;
-    private PointLight              aura            = null;
+    private SpotLight               light               = null;
+    private PointLight              aura                = null;
 
     private ParticleEmitter         flameLeft           = null;
     private ParticleEmitter         flameRight          = null;
@@ -52,7 +52,7 @@ public class Player extends GameCharacter implements ActionListener, AnalogListe
     private Node                    spellLocation       = null;
     private List<GameControlNode>   spellObjects        = new ArrayList<GameControlNode>();
     
-    public Player(CharacterModel characterModel,AssetManager assetManager,CollisionCollector collisionCollector, InputManager inputManager, Camera cam,SpellObjectProvider spellProvider) {
+    public Player(CharacterModel characterModel,AssetManager assetManager,AttackHandler collisionCollector, InputManager inputManager, Camera cam,SpellObjectProvider spellProvider) {
         super(characterModel,assetManager,collisionCollector);
         this.inputManager = inputManager;
         this.cam = cam;
