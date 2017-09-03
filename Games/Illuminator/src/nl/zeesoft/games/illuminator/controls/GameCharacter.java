@@ -12,7 +12,6 @@ import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.GhostControl;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import nl.zeesoft.games.illuminator.GameControlNode;
@@ -53,6 +52,7 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
     private int                 selectedSpell       = 0;
     private boolean             cast                = false;
     private int                 casting             = -1;
+    private float               castTime          = 0.0f;
 
     private AudioNode           attackAudio         = null;
     private AudioNode[]         impactAudio         = null;
@@ -136,6 +136,13 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
                 }
             }
         }
+        if (casting>=0) {
+            castTime += tpf;
+            if (castTime>=characterModel.spellDelays.get(casting) && castTime<10) {
+                releaseCast();
+                castTime = 10;
+            }
+        }
         
         Vector3f goDir = getDirection();
         Vector3f goLeft = getLeft();
@@ -168,7 +175,7 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
 
         handleAnimations(tpf);
         
-        return getHealth()>0;
+        return getHealth()==0;
     }
 
     @Override
@@ -236,6 +243,10 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
     }
 
     protected void startCast(int casting) {
+        // Override to implement
+    }
+
+    protected void releaseCast() {
         // Override to implement
     }
 
@@ -398,6 +409,7 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
             if (!characterModel.godMode) {
                 setMana(mana - characterModel.spellCost.get(selectedSpell));
             }
+            castTime = 0.0f;
             upperChannel.setAnim(characterModel.spells.get(casting),0.001f);
             upperChannel.setLoopMode(LoopMode.DontLoop);
             castAudio[casting].playInstance();

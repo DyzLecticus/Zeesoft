@@ -28,9 +28,10 @@ public class GameModel {
         settings.setFrameRate(60);
         settings.setTitle("Illuminator");
         
+        levels.add(new Level(1,0,3));
         levels.add(new Level(2,1,10));
-        levels.add(new Level(3,1,20));
-        levels.add(new Level(4,2,30));
+        levels.add(new Level(3,1,10));
+        levels.add(new Level(3,2,10));
         
         playerModel = new PlayerModel();
     }
@@ -71,8 +72,11 @@ public class GameModel {
         return playerModel;
     }
     
-    public OpponentModel getNewOpponentModel(AssetManager assetManager) {
+    public OpponentModel getNewOpponentModel(AssetManager assetManager,boolean tough) {
         OpponentModel mod = new OpponentModel();
+        if (tough) {
+            mod = new OpponentModelTough();
+        }
         mod.model = (Node) assetManager.loadModel(mod.modelFile);
         return mod;
     }

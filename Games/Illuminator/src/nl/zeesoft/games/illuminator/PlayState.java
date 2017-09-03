@@ -58,7 +58,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     private Spatial                 sceneModel      = null;
     private RigidBodyControl        scene           = null;
     private float                   spawnHeight     = 20;
-    private float                   spawnWidth      = 20;
+    private float                   spawnWidth      = 15;
     private float                   flameHeight     = 10;
     private float                   flameWidth      = 15;
 
@@ -149,12 +149,17 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         listener.setLocation(cam.getLocation());
         listener.setRotation(cam.getRotation());
 
-        if (playTime>=2.0f && opponents.size()<=0) {
+        int size = opponents.size();
+        int max = gameModel.getLevels().get(level).opponents;
+        if (playTime>=2.0f && size<max) {
             spawnOpponent();
         }
         
-        for (Opponent opponent: opponents) {
-            opponent.update(tpf);
+        List<Opponent> opps = new ArrayList<Opponent>(opponents);
+        for (Opponent opponent: opps) {
+            if (opponent.update(tpf)) {
+                opponents.remove(opponent);
+            }
             
             // TODO: Move to Opponent, implement Zeesoft Symbolic Cognition
             Vector3f opponentPos = opponent.getCharacterControl().getPhysicsLocation();
@@ -372,11 +377,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             explosion.setLocalTranslation(location);
             explosion.start();
             deathExplosions.add(explosion);
-            removeOpponent(opponent);
-            spawnOpponent();
-            if (opponents.size()<gameModel.getLevels().get(level).opponents) {
-                spawnOpponent();
-            }
+            opponent.detachFromRootNode(rootNode,bulletAppState);
 
             if (player.getHealth()<100) {
                 ZIntegerGenerator generator = new ZIntegerGenerator(0,3);
@@ -441,7 +442,14 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     private void spawnOpponent() {
-        Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager),assetManager,this);
+        int base = gameModel.getLevels().get(level).opponents;
+        int guys = gameModel.getLevels().get(level).toughGuys;
+        ZIntegerGenerator generator = new ZIntegerGenerator(1,base);
+        boolean tough = false;
+        if (generator.getNewInteger()<=guys) {
+            tough = true;
+        }
+        Opponent opp = new Opponent(gameModel.getNewOpponentModel(assetManager,tough),assetManager,this);
         opp.initialize();
         opp.getCharacterControl().setPhysicsLocation(getNewSpawnLocation());
         opp.attachToRootNode(rootNode, bulletAppState);
@@ -454,19 +462,17 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     private Vector3f getNewSpawnLocation() {
-        ZIntegerGenerator generator = new ZIntegerGenerator(0,(int)spawnWidth);
-        int num = generator.getNewInteger();
+        ZIntegerGenerator generator = new ZIntegerGenerator(((int)spawnWidth / 2),(int)spawnWidth);
+        ZIntegerGenerator flip = new ZIntegerGenerator(0,1);
         
-        while (num==spawnWidth/2) {
-            num = generator.getNewInteger();
+        float x = (float) generator.getNewInteger();
+        if (flip.getNewInteger()==0) {
+            x = x * -1;
         }
-        float x = (float) num - spawnWidth/2;
-        
-        num = generator.getNewInteger();
-        while (num==spawnWidth/2) {
-            num = generator.getNewInteger();
+        float z = (float) generator.getNewInteger();
+        if (flip.getNewInteger()==0) {
+            z = z * -1;
         }
-        float z = (float) num - spawnWidth/2;
         
         Vector3f location = new Vector3f(x,0,z);
         location.setY(sceneModel.getLocalTranslation().getY() + spawnHeight);

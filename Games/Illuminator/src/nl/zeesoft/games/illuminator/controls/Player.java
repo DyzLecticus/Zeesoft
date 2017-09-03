@@ -208,9 +208,9 @@ public class Player extends GameCharacter implements ActionListener, AnalogListe
             spellObjects.add(object);
         }
     }
-    
+ 
     @Override
-    protected void stopCast() {
+    protected void releaseCast() {
         spellProvider.releaseSpellObjects(spellObjects);
         spellObjects.clear();
     }
