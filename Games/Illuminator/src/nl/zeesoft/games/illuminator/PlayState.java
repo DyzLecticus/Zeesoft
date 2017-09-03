@@ -13,6 +13,7 @@ import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
@@ -56,8 +57,10 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     
     private Spatial                 sceneModel      = null;
     private RigidBodyControl        scene           = null;
-    private float                   spawnHeight     = 10;
+    private float                   spawnHeight     = 20;
+    private float                   spawnWidth      = 20;
     private float                   flameHeight     = 10;
+    private float                   flameWidth      = 15;
 
     private BulletAppState          bulletAppState  = null;
 
@@ -229,9 +232,11 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
                     list.add(impacted);
                     if (character==player && impacted instanceof Opponent) {
                         player.setMana(player.getMana() + (attacking + 1));
-                        handleOpponentImpact((Opponent) impacted);
                     } else if (impacted==player && player.getHealth()==0) {
                         // TODO: player death
+                    }
+                    if (impacted instanceof Opponent) {
+                        handleOpponentImpact((Opponent) impacted);
                     }
                 }
             }
@@ -277,13 +282,13 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         return character;
     }
     
-    private GameCharacter getCharacterForRigidBody(RigidBodyControl control) {
+    private GameCharacter getCharacterForGhostControl(GhostControl control) {
         GameCharacter character = null;
-        if (player.getRigidControl()==control) {
+        if (player.getGhostControl()==control) {
             character = player;
         } else {
             for (Opponent opponent: opponents) {
-                if (opponent.getRigidControl()==control) {
+                if (opponent.getGhostControl()==control) {
                     character = opponent;
                     break;
                 }
@@ -293,11 +298,11 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     private boolean handleCollision(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB) {
-        if (nodeA instanceof RigidBodyControl && nodeB instanceof RigidBodyControl) {
-            RigidBodyControl cA = (RigidBodyControl) nodeA;
-            RigidBodyControl cB = (RigidBodyControl) nodeB;
-            GameCharacter charA = getCharacterForRigidBody(cA);
-            GameCharacter charB = getCharacterForRigidBody(cB);
+        if (nodeA instanceof GhostControl && nodeB instanceof GhostControl) {
+            GhostControl cA = (GhostControl) nodeA;
+            GhostControl cB = (GhostControl) nodeB;
+            GameCharacter charA = getCharacterForGhostControl(cA);
+            GameCharacter charB = getCharacterForGhostControl(cB);
             
             if (charA!=null && charB!=null) {
                 Vector3f posA = charA.getCharacterControl().getPhysicsLocation();
@@ -327,9 +332,9 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         
         Opponent opponentImpact = null;
         for (Opponent opponent: opponents) {
-            if (nodeA==opponent.getRigidControl()) {
+            if (nodeA==opponent.getGhostControl()) {
                 opponentImpact = opponent;
-            } else if (nodeB==opponent.getRigidControl()) {
+            } else if (nodeB==opponent.getGhostControl()) {
                 opponentImpact = opponent;
             }
         }
@@ -388,7 +393,7 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     private void loadScene() {
-        sceneModel = assetManager.loadModel("Scenes/PlayScene.j3o");
+        sceneModel = assetManager.loadModel("Scenes/PlaySceneSmall.j3o");
         CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) sceneModel);
         scene = new RigidBodyControl(sceneShape, 0);
         scene.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_01);
@@ -400,13 +405,13 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
         for (int i = 0; i < 4; i++) {
             SceneFlame f = new SceneFlame(assetManager);
             if (i==0) {
-                f.setLocalTranslation(-50,flameHeight,-50);
+                f.setLocalTranslation(-flameWidth,flameHeight,-flameWidth);
             } else if (i==1) {
-                f.setLocalTranslation(50,flameHeight,-50);
+                f.setLocalTranslation(flameWidth,flameHeight,-flameWidth);
             } else if (i==2) {
-                f.setLocalTranslation(50,flameHeight,50);
+                f.setLocalTranslation(-flameWidth,flameHeight,flameWidth);
             } else if (i==3) {
-                f.setLocalTranslation(-50,flameHeight,50);
+                f.setLocalTranslation(flameWidth,flameHeight,flameWidth);
             }
             f.initialize();
             flames.add(f);
@@ -449,19 +454,19 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     private Vector3f getNewSpawnLocation() {
-        ZIntegerGenerator generator = new ZIntegerGenerator(0,80);
+        ZIntegerGenerator generator = new ZIntegerGenerator(0,(int)spawnWidth);
         int num = generator.getNewInteger();
         
-        while (num==40) {
+        while (num==spawnWidth/2) {
             num = generator.getNewInteger();
         }
-        float x = (float) num - 40f;
+        float x = (float) num - spawnWidth/2;
         
         num = generator.getNewInteger();
-        while (num==40) {
+        while (num==spawnWidth/2) {
             num = generator.getNewInteger();
         }
-        float z = (float) num - 40f;
+        float z = (float) num - spawnWidth/2;
         
         Vector3f location = new Vector3f(x,0,z);
         location.setY(sceneModel.getLocalTranslation().getY() + spawnHeight);

@@ -34,7 +34,7 @@ public class SceneFlame extends GameControlNode {
                 
         glow = new PointLight();
         glow.setColor(new ColorRGBA(1.0f,0.9f,0.6f,1.0f));
-        glow.setRadius(SIZE * 100f);
+        glow.setRadius(SIZE * 25f);
     }
 
     @Override

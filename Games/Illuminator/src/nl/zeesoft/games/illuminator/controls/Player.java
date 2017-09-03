@@ -73,6 +73,15 @@ public class Player extends GameCharacter implements ActionListener, AnalogListe
         spellLocation = new Node("SpellLocation");
         attachChild(spellLocation);
         spellLocation.setLocalTranslation(new Vector3f(0,0.7f,-1.3f));
+
+        light = new SpotLight();
+        light.setSpotRange(10f);
+        light.setSpotInnerAngle(35f * FastMath.DEG_TO_RAD);
+        light.setSpotOuterAngle(35f * FastMath.DEG_TO_RAD);
+        
+        aura = new PointLight();
+        aura.setColor(ColorRGBA.Blue);
+        aura.setRadius(5f);
     }
 
     @Override
@@ -119,15 +128,7 @@ public class Player extends GameCharacter implements ActionListener, AnalogListe
     @Override
     public void attachToRootNode(Node rootNode,BulletAppState bulletAppState) {
         super.attachToRootNode(rootNode, bulletAppState);
-        light = new SpotLight();
-        light.setSpotRange(20f);
-        light.setSpotInnerAngle(35f * FastMath.DEG_TO_RAD);
-        light.setSpotOuterAngle(35f * FastMath.DEG_TO_RAD);
         rootNode.addLight(light);
-        
-        aura = new PointLight();
-        aura.setColor(ColorRGBA.Blue);
-        aura.setRadius(4f);
         rootNode.addLight(aura);
     }
     

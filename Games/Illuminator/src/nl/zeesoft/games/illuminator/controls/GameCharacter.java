@@ -11,6 +11,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -27,10 +28,10 @@ import nl.zeesoft.games.illuminator.AttackHandler;
 public abstract class GameCharacter extends GameControlNode implements AnimEventListener {
     private AssetManager        assetManager        = null;
     private CharacterModel      characterModel      = null;
-    private AttackHandler  collisionCollector  = null;
+    private AttackHandler       collisionCollector  = null;
     
     private CharacterControl    characterControl    = null;
-    private RigidBodyControl    rigidControl        = null;
+    private GhostControl        ghostControl        = null;
 
     private AnimChannel         lowerChannel        = null;
     private AnimChannel         upperChannel        = null;
@@ -85,11 +86,10 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
         characterControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
         this.addControl(characterControl);
         
-        rigidControl = new RigidBodyControl(playerShape,80);
-        rigidControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
-        rigidControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_02);
-        rigidControl.setKinematic(true);
-        this.addControl(rigidControl);
+        ghostControl = new GhostControl(playerShape);
+        ghostControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+        ghostControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_02);
+        this.addControl(ghostControl);
 
         characterModel.addAnimEventListener(this);
         lowerChannel = characterModel.getNewAnimChannel(true);
@@ -175,7 +175,7 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
     public void attachToRootNode(Node rootNode,BulletAppState bulletAppState) {
         super.attachToRootNode(rootNode,bulletAppState);
         if (bulletAppState!=null) {
-            bulletAppState.getPhysicsSpace().add(getRigidControl());
+            bulletAppState.getPhysicsSpace().add(getGhostControl());
         }
     }
 
@@ -183,7 +183,7 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
     public void detachFromRootNode(Node rootNode,BulletAppState bulletAppState) {
         super.detachFromRootNode(rootNode,bulletAppState);
         if (bulletAppState!=null) {
-            bulletAppState.getPhysicsSpace().remove(getRigidControl());
+            bulletAppState.getPhysicsSpace().remove(getGhostControl());
         }
     }
     
@@ -371,8 +371,8 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
         return characterControl;
     }
 
-    public RigidBodyControl getRigidControl() {
-        return rigidControl;
+    public GhostControl getGhostControl() {
+        return ghostControl;
     }
     
     private void handleAnimations(float tpf) {
