@@ -63,7 +63,6 @@ public class Player extends GameCharacter implements ActionListener, AnalogListe
     @Override
     public void initialize() {
         super.initialize();
-        addRigidBody();
         setUpKeys();
         
         flameLeft = getNewFlame(1,1.0f,false);
@@ -79,8 +78,8 @@ public class Player extends GameCharacter implements ActionListener, AnalogListe
     @Override
     public boolean update(float tpf) {
         if (impactCorrect>0.0f) {
-            impactCorrect = impactCorrect - tpf;
-            camera.verticalRotate(tpf * 0.1f);
+            impactCorrect = impactCorrect - (tpf * 2);
+            camera.verticalRotate((tpf * 2) * 0.1f);
         }
         if (impactCorrect<0.0f) {
             impactCorrect = 0.0f;
@@ -194,8 +193,10 @@ public class Player extends GameCharacter implements ActionListener, AnalogListe
     
     @Override
     protected void startShockWave(int impacting) {
-        impactCorrect += 0.5f;
-        camera.verticalRotate(impactCorrect * -0.1f);
+        if (impactCorrect<0.5f) {
+            impactCorrect += 0.5f;
+            camera.verticalRotate(impactCorrect * -0.1f);
+        }
     }
 
     @Override

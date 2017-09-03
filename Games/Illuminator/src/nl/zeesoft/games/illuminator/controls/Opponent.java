@@ -23,7 +23,6 @@ public class Opponent extends GameCharacter {
     @Override
     public void initialize() {
         super.initialize();
-        addRigidBody();
         addShockwave();
     }
     

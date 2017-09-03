@@ -9,10 +9,8 @@ import com.jme3.audio.AudioData.DataType;
 import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
-import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -87,6 +85,12 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
         characterControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01);
         this.addControl(characterControl);
         
+        rigidControl = new RigidBodyControl(playerShape,80);
+        rigidControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+        rigidControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_02);
+        rigidControl.setKinematic(true);
+        this.addControl(rigidControl);
+
         characterModel.addAnimEventListener(this);
         lowerChannel = characterModel.getNewAnimChannel(true);
         upperChannel = characterModel.getNewAnimChannel(false);
@@ -104,7 +108,7 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
             impactAudio[i] = getNewAudioNode(characterModel.impactSounds.get(i)); 
             this.attachChild(impactAudio[i]);
         }
-        
+
         // Status bar
         statusBar = new CharacterStatusBar(assetManager,this);
         statusBar.initialize();
@@ -124,8 +128,9 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
     public boolean update(float tpf) {
         if (attacking>=0) {
             attackTime += tpf;
-            if (attackTime>characterModel.attackDelays.get(attacking)) {
-                // Cast ray, get stuff ... or something
+            if (attackTime>characterModel.attackDelays.get(attacking) &&
+                attackTime<(characterModel.attackDelays.get(attacking) + 0.2f)
+                ) {
                 collisionCollector.getAttackCollisions(this,attacking);
             }
         }
@@ -218,15 +223,6 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
     @Override
     public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
         // Not implemented
-    }
-    
-    protected void addRigidBody() {
-        CapsuleCollisionShape playerShape = new CapsuleCollisionShape(characterModel.radius,characterModel.height);
-        rigidControl = new RigidBodyControl(playerShape,80);
-        rigidControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
-        rigidControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_02);
-        rigidControl.setKinematic(true);
-        this.addControl(rigidControl);
     }
     
     protected void startShockWave(int impacting) {
@@ -397,7 +393,9 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
             }
         } else if (cast) {
             casting = selectedSpell;
-            setMana(mana - characterModel.spellCost.get(selectedSpell));
+            if (!characterModel.godMode) {
+                setMana(mana - characterModel.spellCost.get(selectedSpell));
+            }
             upperChannel.setAnim(characterModel.spells.get(casting),0.001f);
             upperChannel.setLoopMode(LoopMode.DontLoop);
             castAudio[casting].playInstance();
@@ -416,14 +414,6 @@ public abstract class GameCharacter extends GameControlNode implements AnimEvent
                 }
             }
         }
-    }
-
-    private GhostControl getNewFistControl() {
-        BoxCollisionShape boxShape = new BoxCollisionShape(new Vector3f(0.1f,0.2f,0.1f));
-        GhostControl fistControl = new GhostControl(boxShape);
-        fistControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
-        fistControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_03);
-        return fistControl;
     }
 
     private AudioNode getNewAudioNode(String fileName) {

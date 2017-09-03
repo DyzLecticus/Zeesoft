@@ -447,19 +447,19 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
     }
     
     private Vector3f getNewSpawnLocation() {
-        ZIntegerGenerator generator = new ZIntegerGenerator(0,50);
+        ZIntegerGenerator generator = new ZIntegerGenerator(0,80);
         int num = generator.getNewInteger();
         
-        while (num==25) {
+        while (num==40) {
             num = generator.getNewInteger();
         }
-        float x = (float) num - 25f;
+        float x = (float) num - 40f;
         
         num = generator.getNewInteger();
-        while (num==25) {
+        while (num==40) {
             num = generator.getNewInteger();
         }
-        float z = (float) num - 25f;
+        float z = (float) num - 40f;
         
         Vector3f location = new Vector3f(x,0,z);
         location.setY(sceneModel.getLocalTranslation().getY() + spawnHeight);
