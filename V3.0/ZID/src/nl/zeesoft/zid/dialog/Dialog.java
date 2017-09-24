@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zid.session.SessionDialogController;
 import nl.zeesoft.zspr.Language;
 
 public class Dialog {
@@ -85,7 +86,7 @@ public class Dialog {
 		return isLanguageCode(Language.NLD);
 	}
 
-	protected boolean isLanguageCode(String languageCode) {
+	public boolean isLanguageCode(String languageCode) {
 		return language.getCode().equals(languageCode);
 	}
 
@@ -103,8 +104,23 @@ public class Dialog {
 		}
 		return r;
 	}
+
+	public SessionDialogController getNewDialogController()  {
+		SessionDialogController r = null;
+		try {
+			Class<?> clas = Class.forName(controllerClassName);
+			r = (SessionDialogController) clas.newInstance();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return r;
+	}
 	
-	protected List<String> getExpectedTypes() {
+	public List<String> getExpectedTypes() {
 		List<String> expectedTypes = new ArrayList<String>();
 		for (DialogVariable variable: getVariables()) {
 			if (!expectedTypes.contains(variable.getType())) {
