@@ -15,11 +15,15 @@ public class MockDialogs extends MockObject {
 		System.out.println("The dialogs created by this mock use the *HandshakeController*.");
 	}
 
+	protected String getControllerName() {
+		return HandshakeController.class.getName();
+	}
+	
 	@Override
 	protected Object initialzeMock() {
 		List<Dialog> dialogs = new ArrayList<Dialog>();
 		
-		Dialog dialog = new Dialog("Handshake",Language.ENG,HandshakeController.class.getName());
+		Dialog dialog = new Dialog("Handshake",Language.ENG,getControllerName());
 		dialogs.add(dialog);
 		
 		dialog.addExample("Hello. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");

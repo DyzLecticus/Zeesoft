@@ -1,17 +1,17 @@
 package nl.zeesoft.zid.session;
 
-import nl.zeesoft.zspr.pattern.PatternManager;
+import nl.zeesoft.zdk.ZStringSymbolParser;
 
 public abstract class SessionDialogController {
-	private PatternManager	patternManager = null;
+	private String			promptForDialogVariable	= "";
 
-	public SessionDialogController(PatternManager patternManager) {
-		this.patternManager = patternManager;
+	public abstract ZStringSymbolParser updatedSessionDialogVariables(Session session);
+
+	public String getPromptForDialogVariable() {
+		return promptForDialogVariable;
 	}
 	
-	public abstract void updatedSessionDialogVariables();
-
-	protected PatternManager getPatternManager() {
-		return patternManager;
+	public void setPromptForDialogVariable(String promptForDialogVariable) {
+		this.promptForDialogVariable = promptForDialogVariable;
 	}
 }

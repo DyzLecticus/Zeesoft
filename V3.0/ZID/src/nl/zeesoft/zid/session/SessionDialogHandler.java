@@ -3,6 +3,7 @@ package nl.zeesoft.zid.session;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -16,7 +17,7 @@ import nl.zeesoft.zsc.confabulator.confabulations.CorrectionConfabulation;
 import nl.zeesoft.zsc.confabulator.confabulations.ExtensionConfabulation;
 import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
-import nl.zeesoft.zspr.pattern.patterns.UniversalAlphabetic;
+import nl.zeesoft.zspr.pattern.PatternObject;
 
 public class SessionDialogHandler extends Locker {
 	private static final String				END_INPUT						= "[END_INPUT]";
@@ -137,6 +138,7 @@ public class SessionDialogHandler extends Locker {
 		lockMe(this);
 		ZStringSymbolParser prevOutput = session.getOutput();
 		
+		session.setPatternManager(patternManager);
 		session.setOutput(new ZStringSymbolParser());
 
 		// Correct input
@@ -147,12 +149,10 @@ public class SessionDialogHandler extends Locker {
 		ZStringSymbolParser sequence = new ZStringSymbolParser(input);
 		List<String> contextSymbols = confabulateContext(sequence);
 		if (contextSymbols.size()==0) {
-			lockMe(this);
 			if (prevOutput.length()>0) {
 				sequence.insert(0," ");
 				sequence.insert(0,prevOutput);
 			}
-			unlockMe(this);
 			contextSymbols = confabulateContext(sequence);
 		}
 
@@ -226,7 +226,100 @@ public class SessionDialogHandler extends Locker {
 		input.fromSymbols(correction.getOutput().toSymbols(),true,true);
 		session.addLogLine("--- Corrected input: " + input);
 
+		// Update variables
+		List<DialogVariable> updatedVariables = new ArrayList<DialogVariable>(); 
+		if (session.getDialog()!=null && session.getDialogController()!=null && correction.getCorrectionValues().size()>0) {
+			List<String> correctedKeys = new ArrayList<String>();
+			for (DialogVariable variable: session.getDialog().getVariables()) {
+				String macro = "{" + variable.getName() + "}";
+				if (correction.getCorrectionValues().contains(macro)) {
+					String value = correction.getCorrectionKeys().get(correction.getCorrectionValues().indexOf(macro));
+					correctedKeys.add(value);
+					PatternObject pattern = session.getPatternForDialogVariableValue(variable, value);
+					if (pattern!=null) {
+						if (value.contains(patternManager.getOrConcatenator())) {
+							for (String val: value.split("\\" + patternManager.getOrConcatenator())) {
+								if (val.startsWith(pattern.getValuePrefix())) {
+									value = val;
+									break;
+								}
+							}
+						}
+						session.getDialogVariables().put(variable.getName(),value);
+						updatedVariables.add(variable);
+					}
+				}
+			}
+			
+			if (updatedVariables.size()<session.getDialogVariables().size()) {
+				List<String> values = new ArrayList<String>(correction.getCorrectionKeys());
+				for (String value: values) {
+					if (value.contains(patternManager.getOrConcatenator()) || !correctedKeys.contains(value)) {
+						for (DialogVariable variable: session.getDialog().getVariables()) {
+							if (session.getDialogVariables().get(variable.getName()).equals("")) {
+								if (value.startsWith(variable.getType())) {
+									if (value.contains(patternManager.getOrConcatenator())) {
+										for (String val: value.split("\\" + patternManager.getOrConcatenator())) {
+											if (val.startsWith(variable.getType())) {
+												value = val;
+												break;
+											}
+										}
+									}
+									session.getDialogVariables().put(variable.getName(),value);
+									updatedVariables.add(variable);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 
+		// Notify controller
+		if (updatedVariables.size()>0) {
+			StringBuilder variables = new StringBuilder(); 
+			for (DialogVariable variable: updatedVariables) {
+				if (variables.length()>0) {
+					variables.append(", ");
+				}
+				variables.append(variable.getName());
+				variables.append(" = ");
+				variables.append(session.getDialogVariables().get(variable.getName()));
+			}
+			session.addLogLine("--- Updated variables: " + variables);
+			if (session.getPromptForDialogVariable().length()>0) {
+				session.getDialogController().setPromptForDialogVariable(session.getPromptForDialogVariable());
+			}
+			ZStringSymbolParser controllerOutput = session.getDialogController().updatedSessionDialogVariables(session);
+			List<String> symbols = null;
+			if (controllerOutput.length()>0) {
+				session.addLogLine("--- Controller output: " + controllerOutput);
+				symbols = controllerOutput.toSymbolsPunctuated();
+			} else if (session.getDialogController().getPromptForDialogVariable().length()>0) {
+				session.addLogLine("--- Controller requests prompt for: " + session.getDialogController().getPromptForDialogVariable());
+				DialogVariable variable = session.getDialog().getVariable(session.getDialogController().getPromptForDialogVariable());
+				if (variable.getExamples().size()>0) {
+					ZIntegerGenerator random = new ZIntegerGenerator(0,(variable.getExamples().size() - 1));
+					symbols = variable.getExamples().get(random.getNewInteger()).getQuestion().toSymbols();
+				}
+			}
+			if (symbols!=null) {
+				for (String symbol: symbols) {
+					symbol = session.translateSymbolToVariableValue(session,symbol);
+					if (session.getOutput().length()>0 && !ZStringSymbolParser.isLineEndSymbol(symbol)) {
+						session.getOutput().append(" ");
+					}
+					session.getOutput().append(symbol);
+				}
+				session.addLogLine("--- Translated controller output: " + session.getOutput());
+			}
+			if (session.getDialogController().getPromptForDialogVariable().length()>0) {
+				session.setPromptForDialogVariable(session.getDialogController().getPromptForDialogVariable());
+			}
+		}
+		
 		unlockMe(this);
 	}
 	
@@ -252,9 +345,7 @@ public class SessionDialogHandler extends Locker {
 		sequence.append(" .");
 		ContextConfabulation confab = new ContextConfabulation();
 		confab.setSequence(sequence);
-		lockMe(this);
 		contextConfabulator.confabulate(confab);
-		unlockMe(this);
 		return confab.getOutput().toSymbols();
 	}
 
@@ -264,9 +355,7 @@ public class SessionDialogHandler extends Locker {
 		if (context!=null && context.length()>0) {
 			confab.setContext(context);
 		}
-		lockMe(this);
 		correctionConfabulator.confabulate(confab);
-		unlockMe(this);
 		return confab;
 	}
 
@@ -277,13 +366,11 @@ public class SessionDialogHandler extends Locker {
 		if (context!=null && context.length()>0) {
 			confab.setContext(new ZStringSymbolParser(context));
 		}
-		lockMe(this);
 		extensionConfabulator.confabulate(confab);
-		unlockMe(this);
 		return confab.getOutput().toSymbols();
 	}
 
-	protected final Dialog getDialogNoLock(String name, String languageCode) {
+	protected Dialog getDialogNoLock(String name, String languageCode) {
 		Dialog r = null;
 		for (Dialog dialog: dialogs) {
 			if (dialog.getName().equals(name) && (languageCode==null || languageCode.length()==0 || dialog.isLanguageCode(languageCode))) {

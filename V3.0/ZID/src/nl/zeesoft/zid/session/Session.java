@@ -1,5 +1,6 @@
 package nl.zeesoft.zid.session;
 
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -7,6 +8,8 @@ import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.dialog.DialogVariable;
+import nl.zeesoft.zspr.pattern.PatternManager;
+import nl.zeesoft.zspr.pattern.PatternObject;
 
 public class Session {
 	private	long							id								= 0;
@@ -24,6 +27,8 @@ public class Session {
 	private SessionDialogController			dialogController				= null;
 	private SortedMap<String,String>		dialogVariables					= new TreeMap<String,String>();
 	private String							promptForDialogVariable			= "";
+
+	private PatternManager					patternManager					= null;
 
 	public Session(long id) {
 		this.id = id;
@@ -115,6 +120,14 @@ public class Session {
 	public SortedMap<String, String> getDialogVariables() {
 		return dialogVariables;
 	}
+
+	public PatternManager getPatternManager() {
+		return patternManager;
+	}
+
+	public void setPatternManager(PatternManager patternManager) {
+		this.patternManager = patternManager;
+	}
 	
 	public void clearDialog() {
 		dialog = null;
@@ -136,11 +149,59 @@ public class Session {
 		}
 	}
 
+	/*
 	public DialogVariable getDialogVariable() {
 		DialogVariable r = null;
 		if (dialog!=null && promptForDialogVariable.length()>0) {
 			r = dialog.getVariable(promptForDialogVariable);
 		}
 		return r;
+	}
+	*/
+	
+	public String translateSymbolToVariableValue(Session session,String symbol) {
+		if (symbol.startsWith("{") && symbol.endsWith("}") && symbol.length()>2) {
+			String name = symbol.substring(1,(symbol.length()-1));
+			DialogVariable variable = null;
+			String value = "";
+			if (session.getDialog()!=null) {
+				variable = session.getDialog().getVariable(name);
+				value = session.getDialogVariables().get(name);
+			}
+			if (variable!=null && value.length()>0) {
+				symbol = getPatternStringForDialogVariableValue(variable, value);
+			} else {
+				Object obj = session.getDialog().getVariable(name);
+				if (obj!=null) {
+					symbol = obj.toString();
+				}
+			}
+		}
+		return symbol;
+	}
+
+	public String getPatternStringForDialogVariableValue(DialogVariable variable,String value) {
+		String r = "";
+		PatternObject pattern = getPatternForDialogVariableValue(variable,value);
+		if (pattern!=null) {
+			r = pattern.getStringForValue(value);
+		}
+		return r;
+	}
+
+	public PatternObject getPatternForDialogVariableValue(DialogVariable variable,String value) {
+		PatternObject r = null;
+		List<PatternObject> patterns = patternManager.getPatternsForValues(value);
+		for (PatternObject pattern: patterns) {
+			if (pattern.getBaseValueType().equals(variable.getType())) {
+				r = pattern;
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public String getDialogVariableValueString(String name) {
+		return getPatternStringForDialogVariableValue(getDialog().getVariable(name),getDialogVariables().get(name));
 	}
 }
