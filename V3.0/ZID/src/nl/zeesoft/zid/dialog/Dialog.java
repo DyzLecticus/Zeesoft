@@ -90,21 +90,6 @@ public class Dialog {
 		return language.getCode().equals(languageCode);
 	}
 
-	protected DialogControllerObject getNewController()  {
-		DialogControllerObject r = null;
-		try {
-			Class<?> clas = Class.forName(controllerClassName);
-			r = (DialogControllerObject) clas.newInstance();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return r;
-	}
-
 	public SessionDialogController getNewDialogController()  {
 		SessionDialogController r = null;
 		try {

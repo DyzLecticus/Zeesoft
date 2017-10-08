@@ -5,10 +5,10 @@ import java.util.List;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zid.dialog.Dialog;
-import nl.zeesoft.zid.dialog.DialogControllerObject;
 import nl.zeesoft.zid.dialog.DialogExample;
 import nl.zeesoft.zid.dialog.DialogVariable;
 import nl.zeesoft.zid.dialog.DialogVariableExample;
+import nl.zeesoft.zid.session.SessionDialogController;
 import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternObject;
 
@@ -37,9 +37,9 @@ public class TestDialog extends TestObject {
 		System.out.println("dialog.addVariableExample(\"firstName\",\"What is your name?\",\"My name is {firstName} {preposition} {lastName}.\");");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("A *Dialog* requires a controller class name that refers to a class that extends the *DialogControllerObject*.  ");
-		System.out.println("This controller is instantiated by the *DialogHandler* when it detects that the input requires it.  ");
-		System.out.println("The dialog controller is then notified whenever the *DialogHandler* has updated dialog variable values.  ");
+		System.out.println("A *Dialog* requires a controller class name that refers to a class that extends the *SessionDialogController*.  ");
+		System.out.println("This controller is instantiated by the *SessionDialogHandler* when it detects that the input requires it.  ");
+		System.out.println("The dialog controller is then notified whenever the *SessionDialogHandler* has updated dialog variable values.  ");
 		System.out.println("Dialog controller can update dialog handler variables which can then be accessed by other dialog controllers.  ");
 		System.out.println();
 		getTester().describeMock(MockDialogs.class.getName());
@@ -48,8 +48,8 @@ public class TestDialog extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(TestDialog.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockDialogs.class));
 		System.out.println(" * " + getTester().getLinkForClass(Dialog.class));
-		System.out.println(" * " + getTester().getLinkForClass(DialogControllerObject.class));
-		System.out.println(" * " + getTester().getLinkForClass(HandshakeController.class));
+		System.out.println(" * " + getTester().getLinkForClass(SessionDialogController.class));
+		System.out.println(" * " + getTester().getLinkForClass(HandshakeDialogController.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the dialog structure of the mock dialogs.  ");
@@ -79,7 +79,7 @@ public class TestDialog extends TestObject {
 		assertEqual(dialogs.size(),2,"Number of dialogs does not match expectation");
 		if (dialogs.size()>0) {
 			assertEqual(dialogs.get(0).getLanguage().getCode(),Language.ENG,"Dialog language does not match expectation");
-			assertEqual(dialogs.get(0).getControllerClassName(),HandshakeController.class.getName(),"Dialog controller does not match expectation");
+			assertEqual(dialogs.get(0).getControllerClassName(),HandshakeDialogController.class.getName(),"Dialog controller does not match expectation");
 			assertEqual(dialogs.get(0).getExamples().size(),11,"Number of dialog examples does not match expectation");
 			assertEqual(dialogs.get(0).getVariables().size(),4,"Number of dialog variables does not match expectation");
 			if (dialogs.get(0).getVariables().size()>0) {

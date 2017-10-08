@@ -19,6 +19,7 @@ import nl.zeesoft.zsc.confabulator.confabulations.ExtensionConfabulation;
 import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObject;
+import nl.zeesoft.zspr.pattern.patterns.UniversalAlphabetic;
 
 public class SessionDialogHandler extends Locker {
 	private static final String				END_INPUT						= "[END_INPUT]";
@@ -44,12 +45,16 @@ public class SessionDialogHandler extends Locker {
 	}
 
 	public void initialize() {
+		initialize(true);
+	}
+
+	public void initialize(boolean updatePatternManager) {
 		lockMe(this);
-		contextConfabulator = new Confabulator();
+		contextConfabulator = new Confabulator(getMessenger());
 		contextConfabulator.setLog(true);
-		correctionConfabulator = new Confabulator();
+		correctionConfabulator = new Confabulator(getMessenger());
 		correctionConfabulator.setLog(true);
-		extensionConfabulator = new Confabulator();
+		extensionConfabulator = new Confabulator(getMessenger());
 		extensionConfabulator.setLog(true);
 		for (Dialog dialog: dialogs) {
 			ZStringSymbolParser dialogContext = new ZStringSymbolParser();
@@ -95,21 +100,15 @@ public class SessionDialogHandler extends Locker {
 				}
 			}
 		}
-		// TODO: externalize using getAllSequenceSymbols
-		/*
-		UniversalAlphabetic pattern = (UniversalAlphabetic) patternManager.getPatternByClassName(UniversalAlphabetic.class.getName());
-		if (pattern!=null) {
-			contextConfabulator.confabulate(new ContextConfabulation());
-			correctionConfabulator.confabulate(new ContextConfabulation());
-			extensionConfabulator.confabulate(new ContextConfabulation());
-			pattern.setKnownSymbols(contextConfabulator.getAllSequenceSymbols());
-			pattern.addKnownSymbols(correctionConfabulator.getAllSequenceSymbols());
-			pattern.addKnownSymbols(extensionConfabulator.getAllSequenceSymbols());
-		}
-		*/
 		unlockMe(this);
+		if (updatePatternManager) {
+			UniversalAlphabetic pattern = (UniversalAlphabetic) patternManager.getPatternByClassName(UniversalAlphabetic.class.getName());
+			if (pattern!=null) {
+				pattern.setKnownSymbols(getAllSequenceSymbols());
+			}
+		}
 	}
-	
+
 	public List<String> getAllSequenceSymbols() {
 		List<String> r = new ArrayList<String>();
 		lockMe(this);

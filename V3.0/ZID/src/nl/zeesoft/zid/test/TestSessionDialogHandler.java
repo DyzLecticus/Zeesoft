@@ -30,7 +30,6 @@ public class TestSessionDialogHandler extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
 		System.out.println("This test shows how to create a *SessionDialogHandler* and then use it to produce dialog output for input.  ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");

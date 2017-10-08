@@ -16,7 +16,7 @@ public class MockDialogs extends MockObject {
 	}
 
 	protected String getControllerName() {
-		return HandshakeController.class.getName();
+		return HandshakeDialogController.class.getName();
 	}
 	
 	@Override

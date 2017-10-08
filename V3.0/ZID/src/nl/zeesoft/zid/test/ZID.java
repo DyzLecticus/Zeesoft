@@ -32,7 +32,7 @@ public class ZID extends LibraryObject {
 	@Override
 	public void describe() {
 		System.out.println("Zeesoft Intelligent Dialogs");
-		System.out.println("==============================");
+		System.out.println("===========================");
 		System.out.println("Zeesoft Intelligent Dialogs (ZID) is an open source library for Java application development.");
 		System.out.println("It provides support for defining and handling written dialogs while translating the input into parameterized program calls.");
 		System.out.println();
@@ -47,7 +47,6 @@ public class ZID extends LibraryObject {
 	@Override
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestDialog(getTester()));
-		tests.add(new TestDialogHandler(getTester()));
 		tests.add(new TestSessionManager(getTester()));
 		tests.add(new TestSessionDialogHandler(getTester()));
 	}
