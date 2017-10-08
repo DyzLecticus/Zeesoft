@@ -3,15 +3,15 @@ package nl.zeesoft.zid.session;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
 public abstract class SessionDialogController {
-	private String	promptForDialogVariable	= "";
+	private boolean	completed	= false;
 
 	public abstract ZStringSymbolParser updatedSessionDialogVariables(Session session);
 
-	public String getPromptForDialogVariable() {
-		return promptForDialogVariable;
+	public boolean isCompleted() {
+		return completed;
 	}
-	
-	public void setPromptForDialogVariable(String promptForDialogVariable) {
-		this.promptForDialogVariable = promptForDialogVariable;
+
+	public void setCompleted(boolean completed) {
+		this.completed = completed;
 	}
 }

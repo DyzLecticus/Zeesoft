@@ -3,6 +3,7 @@ package nl.zeesoft.zid.session;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -138,6 +139,7 @@ public class SessionDialogHandler extends Locker {
 		lockMe(this);
 		ZStringSymbolParser prevOutput = session.getOutput();
 		
+		session.setLastActivity(new ZDate());
 		session.setPatternManager(patternManager);
 		session.setOutput(new ZStringSymbolParser());
 
@@ -213,7 +215,7 @@ public class SessionDialogHandler extends Locker {
 		// Correct input
 		sequence = new ZStringSymbolParser(input);
 		CorrectionConfabulation correction = correctInput(sequence,session.getDialog(),session.getPromptForDialogVariable());
-		if (!changedDialog && session.getPromptForDialogVariable().length()>0) {
+		if (!changedDialog) {
 			if (prevOutput.length()>0) {
 				sequence.insert(0," ");
 				sequence.insert(0,prevOutput);
@@ -289,17 +291,14 @@ public class SessionDialogHandler extends Locker {
 				variables.append(session.getDialogVariables().get(variable.getName()));
 			}
 			session.addLogLine("--- Updated variables: " + variables);
-			if (session.getPromptForDialogVariable().length()>0) {
-				session.getDialogController().setPromptForDialogVariable(session.getPromptForDialogVariable());
-			}
 			ZStringSymbolParser controllerOutput = session.getDialogController().updatedSessionDialogVariables(session);
 			List<String> symbols = null;
 			if (controllerOutput.length()>0) {
 				session.addLogLine("--- Controller output: " + controllerOutput);
 				symbols = controllerOutput.toSymbolsPunctuated();
-			} else if (session.getDialogController().getPromptForDialogVariable().length()>0) {
-				session.addLogLine("--- Controller requests prompt for: " + session.getDialogController().getPromptForDialogVariable());
-				DialogVariable variable = session.getDialog().getVariable(session.getDialogController().getPromptForDialogVariable());
+			} else if (session.getPromptForDialogVariable().length()>0) {
+				session.addLogLine("--- Controller requests prompt for: " + session.getPromptForDialogVariable());
+				DialogVariable variable = session.getDialog().getVariable(session.getPromptForDialogVariable());
 				if (variable.getExamples().size()>0) {
 					ZIntegerGenerator random = new ZIntegerGenerator(0,(variable.getExamples().size() - 1));
 					symbols = variable.getExamples().get(random.getNewInteger()).getQuestion().toSymbols();
@@ -315,8 +314,9 @@ public class SessionDialogHandler extends Locker {
 				}
 				session.addLogLine("--- Translated controller output: " + session.getOutput());
 			}
-			if (session.getDialogController().getPromptForDialogVariable().length()>0) {
-				session.setPromptForDialogVariable(session.getDialogController().getPromptForDialogVariable());
+			if (session.getDialogController().isCompleted()) {
+				session.addLogLine("--- Completed dialog: " + session.getDialog().getName());
+				session.clearDialog();
 			}
 		}
 		

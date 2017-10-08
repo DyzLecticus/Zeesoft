@@ -62,7 +62,8 @@ public class HandshakeDialogController extends SessionDialogController {
 				}
 			}
 			session.getVariables().put("fullName",name);
-			setPromptForDialogVariable("nextDialog");
+			session.setPromptForDialogVariable("nextDialog");
+			setCompleted(true);
 		} else {
 			if (fName.length()==0) {
 				if (promptFirstNameExplicitly) {
@@ -72,9 +73,9 @@ public class HandshakeDialogController extends SessionDialogController {
 						output.append("Wat is jouw voornaam?");
 					}
 				}
-				setPromptForDialogVariable("firstName");
+				session.setPromptForDialogVariable("firstName");
 			} else if (lName.length()==0) {
-				setPromptForDialogVariable("lastName");
+				session.setPromptForDialogVariable("lastName");
 			}
 		}
 		return output;

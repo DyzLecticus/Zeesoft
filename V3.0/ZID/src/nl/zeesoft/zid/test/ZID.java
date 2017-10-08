@@ -48,5 +48,7 @@ public class ZID extends LibraryObject {
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestDialog(getTester()));
 		tests.add(new TestDialogHandler(getTester()));
+		tests.add(new TestSessionManager(getTester()));
+		tests.add(new TestSessionDialogHandler(getTester()));
 	}
 }

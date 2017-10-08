@@ -11,13 +11,9 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zid.dialog.Dialog;
-import nl.zeesoft.zid.dialog.DialogHandler;
 import nl.zeesoft.zid.session.Session;
 import nl.zeesoft.zid.session.SessionDialogHandler;
 import nl.zeesoft.zid.session.SessionManager;
-import nl.zeesoft.zspr.pattern.PatternManager;
-import nl.zeesoft.zspr.pattern.patterns.UniversalAlphabetic;
 import nl.zeesoft.zspr.test.MockPatternManager;
 
 public class TestSessionDialogHandler extends TestObject {
@@ -39,49 +35,41 @@ public class TestSessionDialogHandler extends TestObject {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create dialog handler");
-		System.out.println("DialogHandler handler = new DialogHandler(dialogs,patternManager);");
-		System.out.println("// Initialize dialog handler");
+		System.out.println("// Create session dialog handler");
+		System.out.println("SessionDialogHandler handler = new DialogHandler(dialogs,patternManager);");
+		System.out.println("// Initialize session dialog handler");
 		System.out.println("handler.initialize();");
-		System.out.println("// Handle dialog input");
-		System.out.println("ZStringSymbolParser output = handler.handleInput(new ZStringSymbolParser(\"hello\"));");
+		System.out.println("// Handle session dialog input");
+		System.out.println("handler.handleSessionInput(session);");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("A *DialogHandler* requires a list of dialogs and a *PatternManager*.  ");
+		System.out.println("A *SessionDialogHandler* requires a list of dialogs and a *PatternManager*.  ");
+		System.out.println("Sessions can be obtained by implementing a *SessionManager*.  ");
 		System.out.println();
-		getTester().describeMock(MockSessionDialogs.class.getName());
+		getTester().describeMock(MockSessionDialogHandler.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestSessionDialogHandler.class));
-		System.out.println(" * " + getTester().getLinkForClass(MockDialogHandler.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockSessionDialogHandler.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockDialogs.class));
-		System.out.println(" * " + getTester().getLinkForClass(DialogHandler.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockPatternManager.class));
+		System.out.println(" * " + getTester().getLinkForClass(SessionManager.class));
+		System.out.println(" * " + getTester().getLinkForClass(SessionDialogHandler.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
 		System.out.println(" * The mock initialization duration.  ");
-		System.out.println(" * The scripted dialog handler input with corresponding output.  ");
+		System.out.println(" * The scripted session dialog handler input with corresponding output.  ");
 		System.out.println(" * The average time spent thinking per response.  ");
-		System.out.println(" * The dialog handler log.  ");
+		System.out.println(" * The session dialog handler log.  ");
 	}
 
 	@Override
 	protected void test(String[] args) {
+		SessionDialogHandler handler = (SessionDialogHandler) getTester().getMockedObject(MockSessionDialogHandler.class.getName());
+		
 		ZDKFactory factory = new ZDKFactory();
 		Messenger messenger = factory.getMessenger();
-		
-		@SuppressWarnings("unchecked")
-		List<Dialog> dialogs = (List<Dialog>) getTester().getMockedObject(MockSessionDialogs.class.getName());
-		
-		PatternManager patternManager = (PatternManager) getTester().getMockedObject(MockPatternManager.class.getName());
-		
-		SessionDialogHandler handler = new SessionDialogHandler(dialogs,patternManager);
-		handler.initialize();
-		UniversalAlphabetic pattern = (UniversalAlphabetic) patternManager.getPatternByClassName(UniversalAlphabetic.class.getName());
-		if (pattern!=null) {
-			pattern.setKnownSymbols(handler.getAllSequenceSymbols());
-		}
-		
 		SessionManager sessionManager = new SessionManager(messenger);
 		
 		Session session = sessionManager.openSession();
@@ -96,9 +84,9 @@ public class TestSessionDialogHandler extends TestObject {
 		// Handshake prompt sequence
 		addScriptLine("hallo?","Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
 		addScriptLine("gekke henkie","Wat kan ik voor je doen Gekke Henkie?");
-		addScriptLine("gekke","Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
+		addScriptLine("gek","Hallo. Mijn naam is Dyz Lecticus. Wat is jouw naam?");
 		addScriptLine("van henkie","Wat is jouw voornaam?");
-		addScriptLine("gekke","Wat kan ik voor je doen Gekke van Henkie?");
+		addScriptLine("gekkie","Wat kan ik voor je doen Gekkie van Henkie?");
 
 		// Handshake context switch
 		addScriptLine("what is your name?","My name is Dyz Lecticus. What is your name?");
@@ -107,6 +95,8 @@ public class TestSessionDialogHandler extends TestObject {
 		testScript(handler,session);
 
 		System.out.println(session.getLog());
+		
+		sessionManager.closeSession(session.getId());
 	}
 	
 	private void addScriptLine(String key,String value) {

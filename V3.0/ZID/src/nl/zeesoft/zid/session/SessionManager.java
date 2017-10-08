@@ -13,6 +13,10 @@ import nl.zeesoft.zdk.thread.Locker;
 public class SessionManager extends Locker {
 	private	long						uid			= 0;
 	private SortedMap<Long,Session>		sessions	= new TreeMap<Long,Session>();
+
+	public SessionManager() {
+		super(null);
+	}
 	
 	public SessionManager(Messenger msgr) {
 		super(msgr);
