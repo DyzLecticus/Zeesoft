@@ -64,7 +64,7 @@ public class MockDialogs extends MockObject {
 		dialog.addVariable("nextDialog",PatternObject.TYPE_ALPHABETIC);
 		dialog.addVariableExample("nextDialog","What can I do for you {fullName}?","{nextDialog}.");
 
-		dialog = new Dialog("Handdruk",Language.NLD,HandshakeController.class.getName());
+		dialog = new Dialog("Handdruk",Language.NLD,getControllerName());
 		dialogs.add(dialog);
 
 		dialog.addExample("Hallo. Mijn naam is {firstName} {preposition} {lastName}.","Hallo {fullName}.");

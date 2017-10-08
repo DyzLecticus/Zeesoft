@@ -159,19 +159,19 @@ public class Session {
 	}
 	*/
 	
-	public String translateSymbolToVariableValue(Session session,String symbol) {
+	public String translateSymbolToVariableValue(String symbol) {
 		if (symbol.startsWith("{") && symbol.endsWith("}") && symbol.length()>2) {
 			String name = symbol.substring(1,(symbol.length()-1));
 			DialogVariable variable = null;
 			String value = "";
-			if (session.getDialog()!=null) {
-				variable = session.getDialog().getVariable(name);
-				value = session.getDialogVariables().get(name);
+			if (getDialog()!=null) {
+				variable = getDialog().getVariable(name);
+				value = getDialogVariables().get(name);
 			}
 			if (variable!=null && value.length()>0) {
 				symbol = getPatternStringForDialogVariableValue(variable, value);
 			} else {
-				Object obj = session.getDialog().getVariable(name);
+				Object obj = getVariables().get(name);
 				if (obj!=null) {
 					symbol = obj.toString();
 				}

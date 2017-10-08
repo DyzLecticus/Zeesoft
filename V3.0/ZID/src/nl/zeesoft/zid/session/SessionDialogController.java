@@ -3,7 +3,7 @@ package nl.zeesoft.zid.session;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
 public abstract class SessionDialogController {
-	private String			promptForDialogVariable	= "";
+	private String	promptForDialogVariable	= "";
 
 	public abstract ZStringSymbolParser updatedSessionDialogVariables(Session session);
 

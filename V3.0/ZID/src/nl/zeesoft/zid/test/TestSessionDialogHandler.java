@@ -1,6 +1,10 @@
 package nl.zeesoft.zid.test;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringSymbolParser;
@@ -17,6 +21,9 @@ import nl.zeesoft.zspr.pattern.patterns.UniversalAlphabetic;
 import nl.zeesoft.zspr.test.MockPatternManager;
 
 public class TestSessionDialogHandler extends TestObject {
+	private List<String>				keys	= new ArrayList<String>();
+	private SortedMap<String,String>	script	= new TreeMap<String,String>();
+	
 	public TestSessionDialogHandler(Tester tester) {
 		super(tester);
 	}
@@ -79,22 +86,10 @@ public class TestSessionDialogHandler extends TestObject {
 		
 		Session session = sessionManager.openSession();
 		
-		System.out.println("Starting dialog");
-		
-		// Known user handshake
-		session.setInput(new ZStringSymbolParser("hello"));
-		handler.handleSessionInput(session);
-		System.out.println("Handled dialog input ");
-		assertEqual(session.getOutput().toString(),"Hello. My name is Dyz Lecticus. What is your name?","Output does not match expectation");
-		session.setInput(new ZStringSymbolParser("hello"));
-
-		System.out.println("Stopping dialog");
-
-		/*
 		// Known user handshake
 		addScriptLine("hello","Hello. My name is Dyz Lecticus. What is your name?");
 		addScriptLine("my name is andre van der zee","Nice to interact with you again Andre van der Zee.");
-				
+
 		// Extended handshake
 		addScriptLine("hallo,ik heet karel de grote.","Wat kan ik voor je doen Karel de Grote?");
 		
@@ -109,9 +104,29 @@ public class TestSessionDialogHandler extends TestObject {
 		addScriptLine("what is your name?","My name is Dyz Lecticus. What is your name?");
 		addScriptLine("hoe heet jij?","Mijn naam is Dyz Lecticus. Wat is jouw naam?");
 		
-		testScript(handler);
-		*/
+		testScript(handler,session);
 
 		System.out.println(session.getLog());
+	}
+	
+	private void addScriptLine(String key,String value) {
+		keys.add(key);
+		script.put(key, value);
+	}
+	
+	private void testScript(SessionDialogHandler handler, Session session) {
+		Date started = new Date();
+		for (String key: keys) {
+			String value = script.get(key);
+			session.setInput(new ZStringSymbolParser(key));
+			handler.handleSessionInput(session);
+			System.out.println("<<< " + key);
+			System.out.println(">>> " + session.getOutput());
+			assertEqual(session.getOutput().toString(),value,"Output does not match expectation");
+		}
+		System.out.println();
+		long time = ((new Date()).getTime() - started.getTime()) / 10; 
+		System.out.println("Average time spent thinking per response: " + time + " ms");
+		System.out.println();
 	}
 }

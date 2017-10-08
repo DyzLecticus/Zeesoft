@@ -307,7 +307,7 @@ public class SessionDialogHandler extends Locker {
 			}
 			if (symbols!=null) {
 				for (String symbol: symbols) {
-					symbol = session.translateSymbolToVariableValue(session,symbol);
+					symbol = session.translateSymbolToVariableValue(symbol);
 					if (session.getOutput().length()>0 && !ZStringSymbolParser.isLineEndSymbol(symbol)) {
 						session.getOutput().append(" ");
 					}
@@ -320,6 +320,45 @@ public class SessionDialogHandler extends Locker {
 			}
 		}
 		
+		if (session.getOutput().length()==0) {
+			// Extend input to output
+			if (input.length()>0) {
+				input.append(" ");
+			}
+			input.append(END_INPUT);
+			List<String> extensionSymbols = confabulateExtension(input,context);
+			for (String symbol: extensionSymbols) {
+				if (symbol.equals(END_INPUT)) {
+					session.setOutput(new ZStringSymbolParser());
+				} else if (symbol.equals(END_OUTPUT)) {
+					break;
+				} else {
+					symbol = session.translateSymbolToVariableValue(symbol);
+					if (symbol.length()>0) {
+						if (session.getOutput().length()>0 && !ZStringSymbolParser.isLineEndSymbol(symbol)) {
+							session.getOutput().append(" ");
+						}
+						session.getOutput().append(symbol);
+					}
+				}
+			}
+			if (session.getOutput().length()>0) {
+				session.addLogLine("--- Extended input to output: " + session.getOutput());
+			} else {
+				session.addLogLine("--- Failed to extend input");
+			}
+		}
+		
+		if (session.getOutput().length()>0) {
+			session.setOutput(patternManager.translateValues(session.getOutput()));
+			session.addLogLine("--- Translated output: " + session.getOutput());
+		} else {
+			session.addLogLine("--- Failed to confabulate output");
+		}
+		
+		session.setOutput(getSafeText(session.getOutput(),true));
+		session.addLogLine(">>> " + session.getOutput());
+
 		unlockMe(this);
 	}
 	
