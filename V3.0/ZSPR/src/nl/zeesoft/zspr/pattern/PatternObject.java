@@ -33,6 +33,7 @@ public abstract class PatternObject extends Locker {
 	private List<String> 			patternStrings		= new ArrayList<String>();
 
 	/**
+	 * @param msgr The optional messenger
 	 * @param baseValueType The base value type specifies the primary data type this pattern will recognize
 	 * @param typeSpecifier The type specifier is a string that is used to make this pattern unique among the other patterns in the pattern manager
 	 */
