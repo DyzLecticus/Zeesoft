@@ -2,6 +2,9 @@ package nl.zeesoft.zid.dialog;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
+/**
+ * Dialog initialization input / output example.
+ */
 public class DialogExample {
 	private ZStringSymbolParser	input	= null; 
 	private ZStringSymbolParser	output	= null;

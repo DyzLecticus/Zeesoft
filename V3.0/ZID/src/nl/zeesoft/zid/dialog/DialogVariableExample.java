@@ -2,6 +2,9 @@ package nl.zeesoft.zid.dialog;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
+/**
+ * Dialog variable question & answer example.
+ */
 public class DialogVariableExample {
 	private ZStringSymbolParser	question	= null; 
 	private ZStringSymbolParser	answer		= null;

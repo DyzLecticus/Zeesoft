@@ -12,7 +12,7 @@ public class MockDialogs extends MockObject {
 	@Override
 	protected void describe() {
 		System.out.println("This test uses the *MockDialogs*.");
-		System.out.println("The dialogs created by this mock use the *HandshakeController*.");
+		System.out.println("The dialogs created by this mock use the *HandshakeDialogController*.");
 	}
 
 	protected String getControllerName() {

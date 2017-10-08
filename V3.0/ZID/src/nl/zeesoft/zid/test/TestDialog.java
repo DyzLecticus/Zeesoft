@@ -9,6 +9,7 @@ import nl.zeesoft.zid.dialog.DialogExample;
 import nl.zeesoft.zid.dialog.DialogVariable;
 import nl.zeesoft.zid.dialog.DialogVariableExample;
 import nl.zeesoft.zid.session.SessionDialogController;
+import nl.zeesoft.zid.session.SessionDialogHandler;
 import nl.zeesoft.zspr.Language;
 import nl.zeesoft.zspr.pattern.PatternObject;
 
@@ -39,8 +40,8 @@ public class TestDialog extends TestObject {
 		System.out.println();
 		System.out.println("A *Dialog* requires a controller class name that refers to a class that extends the *SessionDialogController*.  ");
 		System.out.println("This controller is instantiated by the *SessionDialogHandler* when it detects that the input requires it.  ");
-		System.out.println("The dialog controller is then notified whenever the *SessionDialogHandler* has updated dialog variable values.  ");
-		System.out.println("Dialog controller can update dialog handler variables which can then be accessed by other dialog controllers.  ");
+		System.out.println("The session dialog controller is then notified whenever the *SessionDialogHandler* has updated session dialog variable values.  ");
+		System.out.println("Session dialog controllers can use session variables to share objects with other controllers.  ");
 		System.out.println();
 		getTester().describeMock(MockDialogs.class.getName());
 		System.out.println();
@@ -49,6 +50,7 @@ public class TestDialog extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(MockDialogs.class));
 		System.out.println(" * " + getTester().getLinkForClass(Dialog.class));
 		System.out.println(" * " + getTester().getLinkForClass(SessionDialogController.class));
+		System.out.println(" * " + getTester().getLinkForClass(SessionDialogHandler.class));
 		System.out.println(" * " + getTester().getLinkForClass(HandshakeDialogController.class));
 		System.out.println();
 		System.out.println("**Test output**  ");

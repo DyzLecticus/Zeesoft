@@ -11,6 +11,9 @@ import nl.zeesoft.zid.dialog.DialogVariable;
 import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObject;
 
+/**
+ * Sessions are used to maintain dialog states.
+ */
 public class Session {
 	private	long							id								= 0;
 	private	ZDate							start							= new ZDate();

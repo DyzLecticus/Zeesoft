@@ -5,6 +5,11 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
+/**
+ * Typed dialog variable.
+ * 
+ * Use PatternObject.TYPES i.e. PatternObject.TYPE_ALPHABETIC
+ */
 public class DialogVariable {
 	private String						name		= "";
 	private String						type		= "";

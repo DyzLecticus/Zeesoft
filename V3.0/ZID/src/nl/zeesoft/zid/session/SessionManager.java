@@ -10,6 +10,9 @@ import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
+/**
+ * Session managers can be used to manage multiple sessions.
+ */
 public class SessionManager extends Locker {
 	private	long						uid			= 0;
 	private SortedMap<Long,Session>		sessions	= new TreeMap<Long,Session>();

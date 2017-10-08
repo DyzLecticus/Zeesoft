@@ -21,6 +21,9 @@ import nl.zeesoft.zspr.pattern.PatternManager;
 import nl.zeesoft.zspr.pattern.PatternObject;
 import nl.zeesoft.zspr.pattern.patterns.UniversalAlphabetic;
 
+/**
+ * Session dialog handlers are used to handle session input.
+ */
 public class SessionDialogHandler extends Locker {
 	private static final String				END_INPUT						= "[END_INPUT]";
 	private static final String				END_OUTPUT						= "[END_OUTPUT]";
@@ -44,10 +47,18 @@ public class SessionDialogHandler extends Locker {
 		this.patternManager = patternManager;
 	}
 
+	/**
+	 * Initializes the three confabulators and pattern manager.
+	 */
 	public void initialize() {
 		initialize(true);
 	}
 
+	/**
+	 * Initializes the three confabulators and optionally the pattern manager.
+	 * 
+	 * @param updatePatternManager True if the pattern manager is to be updated
+	 */
 	public void initialize(boolean updatePatternManager) {
 		lockMe(this);
 		contextConfabulator = new Confabulator(getMessenger());
@@ -109,6 +120,11 @@ public class SessionDialogHandler extends Locker {
 		}
 	}
 
+	/**
+	 * Returns a list of all symbols in all three confabulators.
+	 * 
+	 * @return A list of all symbols in all three confabulators
+	 */
 	public List<String> getAllSequenceSymbols() {
 		List<String> r = new ArrayList<String>();
 		lockMe(this);
@@ -134,6 +150,12 @@ public class SessionDialogHandler extends Locker {
 		return r;
 	}
 	
+	/**
+	 * Handles session input.
+	 * Updates the session lastActivity, output and log.
+	 * 
+	 * @param session The session
+	 */
 	public void handleSessionInput(Session session) {
 		lockMe(this);
 		ZStringSymbolParser prevOutput = session.getOutput();
