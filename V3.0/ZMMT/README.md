@@ -4,7 +4,7 @@ Zeesoft MIDI Mod Tracker (ZMMT) is a library that contains all ZeeTracker applic
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-1.0.0.zip) to download the latest ZMMT release (version 1.0.0).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/zmmt-1.0.1.zip) to download the latest ZMMT release (version 1.0.1).  
 All ZMMT releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZMMT/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -2342,16 +2342,16 @@ Class references;
 **Test output**  
 The output of this test shows the time it takes to convert a simple composition, with and without side chain compression.  
 ~~~~
-Composition to sequence conversion with side chain compression took 22 ms
-Composition to sequence conversion without side chain compression took 10 ms
+Composition to sequence conversion with side chain compression took 9 ms
+Composition to sequence conversion without side chain compression took 4 ms
 ~~~~
 
 Test results
 ------------
 All 3 tests have been executed successfully (10 assertions).  
-Total test duration: 526 ms (total sleep duration: 0 ms).  
+Total test duration: 400 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 326 Kb / 0 Mb
- * nl.zeesoft.zmmt.test.TestComposition: 335 Kb / 0 Mb
- * nl.zeesoft.zmmt.test.TestCompositionToSequenceConvertor: 348 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 539 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestComposition: 422 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestCompositionToSequenceConvertor: 463 Kb / 0 Mb

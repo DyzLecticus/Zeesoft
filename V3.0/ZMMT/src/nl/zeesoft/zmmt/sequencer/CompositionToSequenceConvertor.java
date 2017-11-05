@@ -745,7 +745,7 @@ public class CompositionToSequenceConvertor {
 					int c = 0;
 					for (SeqControl sc: list) {
 						r.add(sc);
-						if ((echo.getInstrument().equals(sc.instrument) && echo.getLayer()==il.layer) || 
+						if ((echo.getInstrument().equals(sc.instrument) && (echo.getLayer()-1)==il.layer) || 
 							(sc.instrument.equals(Instrument.ECHO) && echo.getInstrument().length()==0)
 							) {
 							echoControls.add(sc);
@@ -758,7 +758,7 @@ public class CompositionToSequenceConvertor {
 							List<SeqControl> slideControls = getSlideControls(sc,nsc);
 							for (SeqControl asc: slideControls) {
 								r.add(asc);
-								if ((echo.getInstrument().equals(sc.instrument) && echo.getLayer()==il.layer) || 
+								if ((echo.getInstrument().equals(sc.instrument) && (echo.getLayer()-1)==il.layer) || 
 									(sc.instrument.equals(Instrument.ECHO) && echo.getInstrument().length()==0)
 									) {
 									echoControls.add(asc);
