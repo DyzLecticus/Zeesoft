@@ -3,28 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/zdk.jar"/>
 	<classpathentry kind="lib" path="lib/zmmt.jar"/>
-	<classpathentry kind="lib" path="lib/assets.jar"/>
-	<classpathentry kind="lib" path="lib/j-ogg-all-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/jinput-2.0.5.jar"/>
-	<classpathentry kind="lib" path="lib/jinput-platform-2.0.5-natives-linux.jar"/>
-	<classpathentry kind="lib" path="lib/jinput-platform-2.0.5-natives-osx.jar"/>
-	<classpathentry kind="lib" path="lib/jinput-platform-2.0.5-natives-windows.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-bullet-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-bullet-native-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-core-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-desktop-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-effects-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-jogg-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-lwjgl-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-networking-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-plugins-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-terrain-3.1.0-stable.jar"/>
-	<classpathentry kind="lib" path="lib/jutils-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/lwjgl-2.9.3.jar"/>
-	<classpathentry kind="lib" path="lib/lwjgl-platform-2.9.3-natives-linux.jar"/>
-	<classpathentry kind="lib" path="lib/lwjgl-platform-2.9.3-natives-osx.jar"/>
-	<classpathentry kind="lib" path="lib/lwjgl-platform-2.9.3-natives-windows.jar"/>
-	<classpathentry kind="lib" path="lib/ZeeTrackerVisualizer.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

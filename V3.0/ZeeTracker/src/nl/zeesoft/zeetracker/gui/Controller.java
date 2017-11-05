@@ -18,9 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
-import com.jme3.system.AppSettings;
-import com.jme3.system.JmeContext;
-
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.Worker;
@@ -35,7 +32,6 @@ import nl.zeesoft.zmmt.player.InstrumentPlayer;
 import nl.zeesoft.zmmt.sequencer.SequencePlayerSubscriber;
 import nl.zeesoft.zmmt.synthesizer.InstrumentConfiguration;
 import nl.zeesoft.zmmt.synthesizer.MidiNote;
-import nl.zeesoft.ztv.Visualizer;
 
 public class Controller extends Locker implements StateChangeSubscriber {
 	private Settings					settings					= null;
@@ -50,9 +46,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	private WindowBusy					busyWindow					= null;
 	private DialogAbout					aboutDialog					= null;
 	
-	private FrameVisualizer				visualizerFrame				= null;
-	private Visualizer					visualizer					= null;
-
 	private InstrumentPlayer			player						= null;
 	private InstrumentPlayerKeyListener	playerKeyListener			= null;
 	
@@ -126,10 +119,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 
 		busyWindow = new WindowBusy(getMessenger(),mainFrame.getFrame());
 		
-		visualizer = new Visualizer(getMessenger(),union);
-		addSequencerMetaListener(visualizer.getSpListener());
-		addSequencerSubscriber(visualizer.getSpListener());
-		
 		importExportWorker = new ImportExportWorker(getMessenger(),getUnion(),this);
 		
 		aboutDialog = new DialogAbout(this,mainFrame.getFrame());
@@ -197,9 +186,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		stopSequencer();
 		stopSynthesizer(stateManager.getComposition());
 
-		hideVisualizer();
-		//visualizer.stop();
-		
 		mainFrame.getFrame().setVisible(false);
 		
 		stateManager.stop();
@@ -243,8 +229,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 	public void windowClosing(WindowEvent e) {
 		if (e.getWindow()==mainFrame.getFrame()) {
 			closeProgram();
-		} else if (e.getWindow()==visualizerFrame.getFrame()) {
-			hideVisualizer();
 		}
 	}
 	
@@ -473,22 +457,6 @@ public class Controller extends Locker implements StateChangeSubscriber {
 		sequencePlayer.startContinue();
 	}
 
-	protected void showVisualizer() {
-		if (visualizerFrame==null) {
-	        AppSettings settings = new AppSettings(true);
-	        settings.setUseInput(false);
-	        visualizer.setSettings(settings);
-	        visualizer.start(JmeContext.Type.Canvas);
-			visualizerFrame = new FrameVisualizer(this,visualizer);
-			visualizerFrame.initialize();
-		}
-		visualizerFrame.getFrame().setVisible(true);
-	}
-
-	private void hideVisualizer() {
-		visualizerFrame.getFrame().setVisible(false);
-	}
-	
 	protected void loadComposition(String fileName) {
 		File file = null;
 		if (fileName.length()>0) {

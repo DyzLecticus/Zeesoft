@@ -5,7 +5,7 @@ import nl.zeesoft.zeetracker.gui.Controller;
 import nl.zeesoft.zeetracker.gui.Settings;
 
 public class ZeeTracker {
-	public static final String	VERSION			= "1.0";
+	public static final String	VERSION			= "1.1";
 	public static final String	LICENSE_URL		= "http://www.dbad-license.org";
 	public static final String	WEBSITE_URL		= "https://github.com/DyzLecticus/Zeesoft/tree/master/ZeeTracker#zeetracker";
 	
@@ -56,7 +56,7 @@ public class ZeeTracker {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("The most recent ZeeTracker version is " + VERSION + ".\n");
 		r.append("Users with Java 1.7 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).\n");
-		r.append("Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-" + VERSION + ".exe) (+- 40 MB).\n");
+		r.append("Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-" + VERSION + ".exe) (+- 50 MB).\n");
 		r.append("ZeeTracker requires about 200 MB of working memory.\n");
 		r.append("Using a custom sound font will require more working memory, depending on the size of the sound font.\n");
 		r.append("The windows executable will require about 150 MB of free disk space.\n");

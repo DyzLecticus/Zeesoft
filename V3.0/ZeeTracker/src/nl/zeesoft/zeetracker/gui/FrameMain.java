@@ -69,8 +69,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 	public static final String	TAB_MIX				= "Mix";
 	public static final String	TAB_SETTINGS		= "Settings";
 
-	public static final String	VISUALIZER			= "Visualizer";
-
 	private static final String	ABOUT				= "ABOUT";
 	
 	private JTabbedPane			tabs				= null;
@@ -238,8 +236,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_MIX);
 		} else if (evt.getActionCommand().equals(TAB_SETTINGS)) {
 			getController().getStateManager().setSelectedTab(getFrame().getJMenuBar(),TAB_SETTINGS);
-		} else if (evt.getActionCommand().equals(VISUALIZER)) {
-			getController().showVisualizer();
 		} else if (evt.getActionCommand().equals(PLAY_PATTERN)) {
 			getController().startSequencer(true);
 		} else if (evt.getActionCommand().equals(PLAY_SEQUENCE)) {
@@ -440,12 +436,6 @@ public class FrameMain extends FrameObject implements ActionListener, ChangeList
 		item = new JMenuItem("Mix",KeyEvent.VK_M);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9,evt));
 		item.setActionCommand(TAB_MIX);
-		item.addActionListener(this);
-		showMenu.add(item);
-
-		item = new JMenuItem("Visualizer",KeyEvent.VK_V);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11,evt));
-		item.setActionCommand(VISUALIZER);
 		item.addActionListener(this);
 		showMenu.add(item);
 

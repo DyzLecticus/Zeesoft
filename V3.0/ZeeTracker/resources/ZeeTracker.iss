@@ -3,8 +3,8 @@
 [Setup]
 AppId={{ZeeTracker}}
 AppName=ZeeTracker
-AppVersion=1.0
-AppVerName=ZeeTracker 1.0
+AppVersion=1.1
+AppVerName=ZeeTracker 1.1
 AppPublisher=Zeesoft
 AppComments=ZeeTracker
 AppCopyright=
@@ -23,7 +23,7 @@ DefaultGroupName=Unknown
 LicenseFile=
 ;WinXP or above
 MinVersion=0,5.1 
-OutputBaseFilename=ZeeTracker-1.0
+OutputBaseFilename=ZeeTracker-1.1
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=lowest
