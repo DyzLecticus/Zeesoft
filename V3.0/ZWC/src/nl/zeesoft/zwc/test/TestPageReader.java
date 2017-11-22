@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zwc.http.PageReader;
+import nl.zeesoft.zwc.page.PageReader;
 
 public class TestPageReader extends TestObject {
 	public TestPageReader(Tester tester) {
@@ -35,7 +35,7 @@ public class TestPageReader extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(PageReader.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows a substring of the page that is found when accessing; http://www.w3.org/TR/html401/.");
+		System.out.println("The output of this test shows a substring of the page at; http://www.w3.org/TR/html401/.");
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class TestPageReader extends TestObject {
 		factory.getWorkerUnion(messenger).stopWorkers();
 		messenger.whileWorking();
 		
-		assertEqual(page.length(),54146,"Page size does not match expectation");
+		assertEqual(page.length(),54146,"Page length does not match expectation");
 		
 		System.out.println(page.substring(0,1000));
 	}

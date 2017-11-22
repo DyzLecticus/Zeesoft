@@ -42,5 +42,6 @@ public class ZWC extends LibraryObject {
 	@Override
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestPageReader(getTester()));
+		tests.add(new TestPageParser(getTester()));
 	}
 }

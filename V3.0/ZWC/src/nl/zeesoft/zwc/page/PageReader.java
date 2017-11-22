@@ -1,4 +1,4 @@
-package nl.zeesoft.zwc.http;
+package nl.zeesoft.zwc.page;
 
 import java.io.BufferedReader;
 import java.io.IOException;
