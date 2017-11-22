@@ -1,13 +1,13 @@
 <!DOCTYPE project>
-<project name="ZIDS" default="dist" basedir=".">
-	<description>ZIDS build file</description>
+<project name="ZWC" default="dist" basedir=".">
+	<description>ZWC build file</description>
 
 	<!-- Release version -->
 	<property name="version" value="0.9.0"/>
 
-	<!-- ZID version -->
-	<property name="versionZID" value="0.9.7"/>
-	<property name="releasesZID" location="../ZID/releases"/>
+	<!-- ZDK version -->
+	<property name="versionZDK" value="1.0.0"/>
+	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
 	
@@ -17,9 +17,9 @@
 	<property name="build" location="build"/>
 	<property name="dist" location="dist"/>
 
-	<target name="copyZID" description="Copy the ZID release">
+	<target name="copyZDK" description="Copy the ZDK release">
 		<mkdir dir="${lib}"/>
-		<unzip src="${releasesZID}/zid-${versionZID}.zip" dest="${lib}">
+		<unzip src="${releasesZDK}/zdk-${versionZDK}.zip" dest="${lib}">
 		    <patternset>
 		        <include name="**/*.jar"/>
 		        <include name="**/*.zip"/>
@@ -38,7 +38,7 @@
 		</javac>
 	</target>
 
-	<target name="dist" depends="compile" description="Generate the ZIDS distribution">
+	<target name="dist" depends="compile" description="Generate the ZWC distribution">
 		<!-- Copy sources to build directory -->
 		<copy todir="${build}">
             <fileset dir="${src}" />
@@ -48,20 +48,17 @@
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
 		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
-		<copy file="${lib}/zsc.jar" tofile="${dist}/zsc.jar"/>
-		<copy file="${lib}/zspr.jar" tofile="${dist}/zspr.jar"/>
-		<copy file="${lib}/zid.jar" tofile="${dist}/zid.jar"/>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zids nl/zeesoft/zids/dialog nl/zeesoft/zids/dialog/model nl/zeesoft/zids/dialog/pattern nl/zeesoft/zids/test zdk.jar zsc.jar zspr.jar zid.jar"/>  
-			<attribute name="Main-Class" value="nl.zeesoft.zids.test.ZIDS"/>
+			<attribute name="Class-path" value="nl/zeesoft/zwc nl/zeesoft/zwc/http nl/zeesoft/zwc/test zdk.jar"/>  
+			<attribute name="Main-Class" value="nl.zeesoft.zwc.test.ZWC"/>
 		</manifest>		
 		<!-- Build jar file -->
-		<jar jarfile="${dist}/zids.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<jar jarfile="${dist}/zwc.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Run tests and generate README.md -->
 		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="_error" logError="true"> 
-			<arg line="/c java -jar zids.jar ${version}"/>
+			<arg line="/c java -jar zwc.jar ${version}"/>
 		</exec>
 		<condition property="_abort">
 			<equals arg1="${_error}" arg2="1"/>
@@ -69,14 +66,14 @@
 		<fail if="_abort" message="One or more tests failed"/>		
 		<!-- Rebuild jar file (include README.md) -->
 		<copy file="${dist}/README.md" tofile="${build}/README.md"/>
-		<jar jarfile="${dist}/zids.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<jar jarfile="${dist}/zwc.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Remove sources from build directory -->
 		<delete>
             <fileset dir="${build}" includes="**/*.java"/>
 		</delete>
 	</target>
 
-	<target name="release" description="Release the ZIDS">
+	<target name="release" description="Release the ZWC">
 		<antcall target="failIfReleaseExists"/>
 		<input message="Are you sure you want to release version ${version} (y/n)?" validargs="y,n" addproperty="_release"/>
 		<condition property="_abort">
@@ -95,39 +92,18 @@
 		<mkdir dir="${releases}/${version}"/>
 		<copy file="${dist}/zdk.jar" tofile="${releases}/${version}/zdk.jar"/>
 		<copy file="${lib}/zdk-javadoc.zip" tofile="${releases}/${version}/zdk-javadoc.zip"/>
-		<copy file="${dist}/zsc.jar" tofile="${releases}/${version}/zsc.jar"/>
-		<copy file="${lib}/zsc-javadoc.zip" tofile="${releases}/${version}/zsc-javadoc.zip"/>
-		<copy file="${dist}/zspr.jar" tofile="${releases}/${version}/zspr.jar"/>
-		<copy file="${lib}/zspr-javadoc.zip" tofile="${releases}/${version}/zspr-javadoc.zip"/>
-		<copy file="${dist}/zid.jar" tofile="${releases}/${version}/zid.jar"/>
-		<copy file="${dist}/zid-javadoc.zip" tofile="${releases}/${version}/zid-javadoc.zip"/>
-		<copy file="${dist}/zids.jar" tofile="${releases}/${version}/zids.jar"/>
-		<copy file="${dist}/zids-javadoc.zip" tofile="${releases}/${version}/zids-javadoc.zip"/>
+		<copy file="${dist}/zwc.jar" tofile="${releases}/${version}/zwc.jar"/>
+		<copy file="${dist}/zwc-javadoc.zip" tofile="${releases}/${version}/zwc-javadoc.zip"/>
 		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
-		<zip destfile="${releases}/zids-${version}.zip" basedir="${releases}/${version}"/>
+		<zip destfile="${releases}/zwc-${version}.zip" basedir="${releases}/${version}"/>
 		<delete dir="${releases}/${version}"/>
 		<copy file="${dist}/README.md" tofile="README.md"/>
 	</target>
 	
-	<target name="javadoc" description="Generate the ZIDS documentation">
+	<target name="javadoc" description="Generate the ZWC documentation">
 		<mkdir dir="${dist}"/>
 		<mkdir dir="${dist}/src"/>
 		<unzip src="${lib}/zdk.jar" dest="${dist}/src">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		<unzip src="${lib}/zsc.jar" dest="${dist}/src">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		<unzip src="${lib}/zspr.jar" dest="${dist}/src">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		<unzip src="${lib}/zid.jar" dest="${dist}/src">
 		    <patternset>
 		        <include name="**/*.java"/>
 		    </patternset>
@@ -136,8 +112,8 @@
             <fileset dir="${src}" />
         </copy>		
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zids,nl.zeesoft.zids.dialog"/>
-		<zip destfile="${dist}/zid-javadoc.zip" basedir="${dist}/javadoc"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zwc,nl.zeesoft.zwc.http"/>
+		<zip destfile="${dist}/zwc-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>
 	</target>
@@ -149,7 +125,7 @@
 
 	<target name="failIfReleaseExists">
 		<condition property="_released">
-			<available file="${releases}/zid-${version}.zip"/>
+			<available file="${releases}/zwc-${version}.zip"/>
 		</condition>
 		<fail if="_released" message="Version ${version} has already been released"/>		
 	</target>
