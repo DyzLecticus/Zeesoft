@@ -9,7 +9,7 @@ public class PageParser {
 	private ZStringBuilder page = null;
 
 	public PageParser() {
-	
+		// Page can be set after creating the object
 	}
 	
 	public PageParser(ZStringBuilder page) {

@@ -2,13 +2,10 @@ package nl.zeesoft.zwc.test;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zwc.page.PageParser;
-import nl.zeesoft.zwc.page.PageReader;
 
 public class TestPageParser extends TestObject {
 	public TestPageParser(Tester tester) {
@@ -39,30 +36,25 @@ public class TestPageParser extends TestObject {
 		System.out.println();
 		System.out.println("A *PageParser* can parse an HTML web page in order to obtain a list of HTML elements for a specified tag name.");
 		System.out.println();
+		getTester().describeMock(MockPage.class.getName());
+		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestPageParser.class));
 		System.out.println(" * " + getTester().getLinkForClass(PageParser.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows a subset of the meta and anchor tags for the page at; http://www.w3.org/TR/html401/.");
+		System.out.println("The output of this test shows a subset of the meta and anchor tags for the page.");
 	}
 
 	@Override
 	protected void test(String[] args) {
-		ZDKFactory factory = new ZDKFactory();
-		Messenger messenger = factory.getMessenger();
-		messenger.start();
-		PageReader reader = new PageReader(messenger);
-		ZStringBuilder page = reader.getPageAtUrl("http://www.w3.org/TR/html401/");
-		messenger.stop();
-		factory.getWorkerUnion(messenger).stopWorkers();
-		messenger.whileWorking();
+		ZStringBuilder page = (ZStringBuilder) getTester().getMockedObject(MockPage.class.getName());
 		
 		PageParser parser = new PageParser(page);
 		List<ZStringBuilder> tags = null;
 		
 		tags = parser.getTags("meta",true);
-		assertEqual(tags.size(),1,"Meta tags array size does not match expectation");
+		assertEqual(tags.size(),1,"Meta tags list size does not match expectation");
 		if (tags.size()>0) {
 			System.out.println(tags.get(0));
 		}
@@ -70,7 +62,7 @@ public class TestPageParser extends TestObject {
 		System.out.println("");
 
 		tags = parser.getTags("a",false);
-		assertEqual(tags.size(),467,"Anchor tags array size does not match expectation");
+		assertEqual(tags.size(),467,"Anchor tags list size does not match expectation");
 		if (tags.size()>2) {
 			System.out.println(tags.get(0));
 			System.out.println(tags.get(1));
