@@ -19,9 +19,10 @@ public class Crawler extends Locker {
 	private Messenger							messenger		= null;
 	private WorkerUnion							union			= null;
 	
-	private	String								baseUrl			= "";
+	private	String								startUrl		= "";
 	private int									delayMs			= 200;
 
+	private	String								baseUrl			= "";
 	private PageReader							pageReader		= null;
 	private RobotsParser						robotsParser	= null;
 	private List<String>						disallowedUrls	= new ArrayList<String>();
@@ -33,16 +34,16 @@ public class Crawler extends Locker {
 	private List<String>						crawledUrls		= new ArrayList<String>();
 	private SortedMap<String,ZStringBuilder>	pages			= new TreeMap<String,ZStringBuilder>();
 	
-	public Crawler(Messenger msgr, WorkerUnion uni, String baseUrl) {
+	public Crawler(Messenger msgr, WorkerUnion uni, String startUrl) {
 		super(msgr);
 		messenger = msgr;
 		union = uni;
-		this.baseUrl = baseUrl;
+		this.startUrl = startUrl;
 	}
 	
-	public Crawler(String baseUrl) {
+	public Crawler(String startUrl) {
 		super(null);
-		this.baseUrl = baseUrl;
+		this.startUrl = startUrl;
 	}
 	
 	public void setDelayMs(int delayMs) {
@@ -52,8 +53,26 @@ public class Crawler extends Locker {
 	public String initialize() {
 		String err = "";
 		lockMe(this);
-		if (baseUrl.length()==0) {
-			err = "Base URL is empty";
+		if (startUrl.length()==0) {
+			err = "Start URL is empty";
+		} else {
+			try {
+				URI url = new URI(startUrl).normalize();
+				baseUrl = url.getScheme() + "://" + url.getHost();
+				if (url.getPort()>0 && url.getPort()!=80) {
+					baseUrl += ":" + url.getPort();
+				}
+				if (url.getPath().endsWith("/")) {
+					baseUrl += url.getPath();
+				} else {
+					String[] p = url.getPath().split("/");
+					for (int i = 0; i < (p.length - 1); i++) {
+						baseUrl += p[i] + "/";
+					}
+				}
+			} catch (URISyntaxException e) {
+				err = e.toString();
+			}
 		}
 		if (err.length()>0 && messenger!=null) {
 			messenger.error(this,err);
@@ -77,7 +96,7 @@ public class Crawler extends Locker {
 			disallowedUrls = robotsParser.getDisallowedUrls();
 			crawlIndex = -1;
 			crawlUrls.clear();
-			crawlUrls.add(baseUrl);
+			crawlUrls.add(startUrl);
 			crawledUrls.clear();
 			pages.clear();
 			done = false;
@@ -140,12 +159,7 @@ public class Crawler extends Locker {
 							}
 						}
 						if (crawl) {
-							for(String crawled: crawlUrls) {
-								if (url.equals(crawled)) {
-									crawl = false;
-									break;
-								}
-							}
+							crawl = !crawlUrls.contains(url);
 						}
 						if (crawl) {
 							crawlUrls.add(url);
@@ -174,27 +188,43 @@ public class Crawler extends Locker {
 		}
 		return r;
 	}
+
+	private String getUrlFromTag(String tag) {
+		tag = tag.toLowerCase();
+		StringBuilder url = new StringBuilder();
+		boolean start = false;
+		for (int i = 0; i<(tag.length() - 6); i++) {
+			if (tag.substring(i,(i + 6)).equals("href=\"")) {
+				i = i + 6;
+				start = true;
+			}
+			if (start) {
+				if (tag.substring(i,(i + 1)).equals("\"")) {
+					break;
+				}
+				url.append(tag.substring(i,(i + 1)));
+			}
+		}
+		return url.toString();
+	}
+	
+	private String getBaseUrl(String pageUrl,ZStringBuilder page) {
+		String url = pageUrl;
+		PageParser parser = new PageParser(page);
+		List<ZStringBuilder> tags = parser.getTags("base",true);
+		if (tags.size()>0) {
+			url = getUrlFromTag(tags.get(0).toString());
+		}
+		return url;
+	}
 	
 	private List<String> getUrlsFromPage(String pageUrl,ZStringBuilder page) {
 		List<String> r = new ArrayList<String>();
 		PageParser parser = new PageParser(page);
 		List<ZStringBuilder> tags = parser.getTags("a",false);
+		pageUrl = getBaseUrl(pageUrl,page);
 		for (ZStringBuilder tag: tags) {
-			StringBuilder url = new StringBuilder();
-			boolean start = false;
-			for (int i = 0; i<(tag.length() - 6); i++) {
-				if (tag.substring(i,(i + 6)).equals("href=\"")) {
-					i = i + 6;
-					start = true;
-				}
-				if (start) {
-					if (tag.substring(i,(i + 1)).equals("\"")) {
-						break;
-					}
-					url.append(tag.substring(i,(i + 1)));
-				}
-			}
-			String add = url.toString();
+			String add = getUrlFromTag(tag.toString());
 			if (!add.startsWith("mailto") && !add.startsWith("#")) {
 				add = getFullUrl(pageUrl,add);
 				if (add.length()>0 && !r.contains(add)) {

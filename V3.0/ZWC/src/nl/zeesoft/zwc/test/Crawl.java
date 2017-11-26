@@ -12,7 +12,7 @@ import nl.zeesoft.zwc.page.PageTextParser;
 
 public class Crawl {
 	public static void main(String[] args) {
-		String baseUrl = JOptionPane.showInputDialog(new JFrame(), "Enter the base URL to crawl");
+		String baseUrl = JOptionPane.showInputDialog(new JFrame(), "Enter the start URL to crawl");
 		
 		Crawler crawler = new Crawler(baseUrl);
 		String err = crawler.initialize();

@@ -49,24 +49,25 @@ public class TestPageParser extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		ZStringBuilder page = (ZStringBuilder) getTester().getMockedObject(MockPage.class.getName());
-		
-		PageParser parser = new PageParser(page);
-		List<ZStringBuilder> tags = null;
-		
-		tags = parser.getTags("meta",true);
-		assertEqual(tags.size(),1,"Meta tags list size does not match expectation");
-		if (tags.size()>0) {
-			System.out.println(tags.get(0));
-		}
-		
-		System.out.println("");
-
-		tags = parser.getTags("a",false);
-		assertEqual(tags.size(),467,"Anchor tags list size does not match expectation");
-		if (tags.size()>2) {
-			System.out.println(tags.get(0));
-			System.out.println(tags.get(1));
-			System.out.println(tags.get(2));
+		if (page!=null) {
+			PageParser parser = new PageParser(page);
+			List<ZStringBuilder> tags = null;
+			
+			tags = parser.getTags("meta",true);
+			assertEqual(tags.size(),1,"Meta tags list size does not match expectation");
+			if (tags.size()>0) {
+				System.out.println(tags.get(0));
+			}
+			
+			System.out.println("");
+	
+			tags = parser.getTags("a",false);
+			assertEqual(tags.size(),467,"Anchor tags list size does not match expectation");
+			if (tags.size()>2) {
+				System.out.println(tags.get(0));
+				System.out.println(tags.get(1));
+				System.out.println(tags.get(2));
+			}
 		}
 	}
 }

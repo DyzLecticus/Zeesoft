@@ -46,11 +46,12 @@ public class TestPageTextParser extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		ZStringBuilder page = (ZStringBuilder) getTester().getMockedObject(MockPage.class.getName());
-		
-		PageTextParser parser = new PageTextParser(page);
-		
-		ZStringSymbolParser text = parser.getText();
-		assertEqual(text.length(),2958,"Text length does not match expectation");
-		System.out.println(text.substring(0,150));
+		if (page!=null) {
+			PageTextParser parser = new PageTextParser(page);
+			
+			ZStringSymbolParser text = parser.getText();
+			assertEqual(text.length(),2958,"Text length does not match expectation");
+			System.out.println(text.substring(0,150));
+		}
 	}
 }

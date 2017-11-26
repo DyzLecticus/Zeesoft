@@ -41,9 +41,10 @@ public class TestPageReader extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		ZStringBuilder page = (ZStringBuilder) getTester().getMockedObject(MockPage.class.getName());
-		
-		assertEqual(page.length(),54146,"Page length does not match expectation");
-		
-		System.out.println(page.substring(0,1000));
+		if (page!=null) {
+			assertEqual(page.length(),54146,"Page length does not match expectation");
+			
+			System.out.println(page.substring(0,1000));
+		}
 	}
 }

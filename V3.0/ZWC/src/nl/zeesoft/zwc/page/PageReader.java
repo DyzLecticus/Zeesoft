@@ -8,6 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -16,7 +19,10 @@ import nl.zeesoft.zdk.messenger.Messenger;
  * A PageReader can be used to read a web page at a specified URL
  */
 public class PageReader {
-	private Messenger messenger = null;
+	private Messenger					messenger	= null;
+	
+	private String						method		= "GET";
+	private SortedMap<String,String> 	properties	= new TreeMap<String,String>();
 
 	public PageReader() {
 		// Messenger is optional
@@ -26,6 +32,18 @@ public class PageReader {
 		messenger = msgr;
 	}
 	
+	public void setMethod(String method) {
+		this.method = method;
+	}
+	
+	public void setProperties(TreeMap<String,String> properties) {
+		this.properties = properties; 
+	}
+
+	public void addProperty(String key, String value) {
+		properties.put(key,value); 
+	}
+
 	public ZStringBuilder getPageAtUrl(String strUrl) {
 		boolean error = false;
 		
@@ -44,6 +62,10 @@ public class PageReader {
 		if (!error) {
 			try {
 				con = (HttpURLConnection) url.openConnection();
+				con.setRequestMethod(method);
+				for (Entry<String,String> entry: properties.entrySet()) {
+					con.addRequestProperty(entry.getKey(),entry.getValue());
+				}
 			} catch (IOException e) {
 				if (messenger!=null) {
 					messenger.error(this,"HTTP connection error",e);
