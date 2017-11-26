@@ -8,20 +8,28 @@ import nl.zeesoft.zdk.ZStringBuilder;
 public class RobotsParser {
 	private	String			baseUrl			= "";
 	private PageReader 		pageReader		= null;
+	private boolean			secure			= false;
 
 	public RobotsParser(PageReader pageReader,String baseUrl) {
 		this.pageReader = pageReader;
 		StringBuilder url = new StringBuilder();
 		if (baseUrl.startsWith("http://")) {
 			baseUrl = baseUrl.substring(7);
+		} else if (baseUrl.startsWith("https://")) {
+			baseUrl = baseUrl.substring(8);
+			secure = true;
 		}
 		for (int i = 0; i < baseUrl.length(); i++) {
-			if (baseUrl.substring(i,i+1).equals("/")) {
+			if (baseUrl.substring(i,(i + 1)).equals("/")) {
 				break;
 			}
 			url.append(baseUrl.substring(i,(i + 1)));
 		}
-		this.baseUrl = "http://" + url.toString();
+		if (secure) {
+			this.baseUrl = "https://" + url.toString();
+		} else {
+			this.baseUrl = "http://" + url.toString();
+		}
 	}
 	
 	public List<String> getDisallowedUrls() {
