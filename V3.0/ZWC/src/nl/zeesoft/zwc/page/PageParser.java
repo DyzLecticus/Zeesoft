@@ -23,6 +23,7 @@ public class PageParser {
 	public List<ZStringBuilder> getTags(String tagName,boolean single) {
 		List<ZStringBuilder> r = new ArrayList<ZStringBuilder>();
 		if (page!=null) {
+			tagName = tagName.toLowerCase();
 			String searchStart = "<" + tagName;
 			String searchEnd = "</" + tagName + ">";
 			if (single) {
@@ -30,6 +31,10 @@ public class PageParser {
 			}
 			
 			ZStringBuilder work = new ZStringBuilder(page);
+			work.replace("<" + tagName.toUpperCase(),"<" + tagName.toLowerCase());
+			if (!single) {
+				work.replace("</" + tagName.toUpperCase() + ">","</" + tagName.toLowerCase() + ">");
+			}
 			work.replace("\n","");
 			work.replace(searchStart,searchStart + " ");
 			work.replace("  "," ");

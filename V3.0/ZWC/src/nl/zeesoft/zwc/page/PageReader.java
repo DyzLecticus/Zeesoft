@@ -106,6 +106,15 @@ public class PageReader {
 				}
 			}
 		}
+		if (inputStreamReader!=null) {
+			try {
+				inputStreamReader.close();
+			} catch (IOException e) {
+				if (messenger!=null) {
+					messenger.error(this,"Error closing input stream reader",e);
+				}
+			}
+		}
 		if (inputStream!=null) {
 			try {
 				inputStream.close();

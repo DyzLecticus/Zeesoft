@@ -44,5 +44,6 @@ public class ZWC extends LibraryObject {
 		tests.add(new TestPageReader(getTester()));
 		tests.add(new TestPageParser(getTester()));
 		tests.add(new TestRobotsParser(getTester()));
+		tests.add(new TestCrawler(getTester()));
 	}
 }

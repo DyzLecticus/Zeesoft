@@ -1,10 +1,11 @@
 package nl.zeesoft.zwc;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -15,22 +16,22 @@ import nl.zeesoft.zwc.page.PageReader;
 import nl.zeesoft.zwc.page.RobotsParser;
 
 public class Crawler extends Locker {
-	private Messenger		messenger		= null;
-	private WorkerUnion		union			= null;
+	private Messenger							messenger		= null;
+	private WorkerUnion							union			= null;
 	
-	private	String			baseUrl			= "";
-	private String			outputDir		= System.getProperty("user.home") + "/ZWC/";
-	private int				delayMs			= 200;
+	private	String								baseUrl			= "";
+	private int									delayMs			= 200;
 
-	private PageReader		pageReader		= null;
-	private RobotsParser	robotsParser	= null;
-	private List<String>	disallowedUrls	= new ArrayList<String>();
-	private CrawlerWorker	worker			= null;
-	private boolean			done			= false;
+	private PageReader							pageReader		= null;
+	private RobotsParser						robotsParser	= null;
+	private List<String>						disallowedUrls	= new ArrayList<String>();
+	private CrawlerWorker						worker			= null;
+	private boolean								done			= false;
 
-	private	int				crawlIndex		= -1;
-	private List<String>	crawlUrls		= new ArrayList<String>();
-	private List<String>	crawledUrls		= new ArrayList<String>();
+	private	int									crawlIndex		= -1;
+	private List<String>						crawlUrls		= new ArrayList<String>();
+	private List<String>						crawledUrls		= new ArrayList<String>();
+	private SortedMap<String,ZStringBuilder>	pages			= new TreeMap<String,ZStringBuilder>();
 	
 	public Crawler(Messenger msgr, WorkerUnion uni, String baseUrl) {
 		super(msgr);
@@ -43,10 +44,6 @@ public class Crawler extends Locker {
 		super(null);
 		this.baseUrl = baseUrl;
 	}
-
-	public void setOutputDir(String outputDir) {
-		this.outputDir = outputDir;
-	}
 	
 	public void setDelayMs(int delayMs) {
 		this.delayMs = delayMs;
@@ -54,19 +51,11 @@ public class Crawler extends Locker {
 	
 	public String initialize() {
 		String err = "";
+		lockMe(this);
 		if (baseUrl.length()==0) {
 			err = "Base URL is empty";
 		} else if (!baseUrl.endsWith("/")) {
 			baseUrl += "/";
-		}
-		if (err.length()==0) {
-			File dir = new File(outputDir);
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
-			if (!dir.exists()) {
-				err = "Failed to create output directory";
-			}
 		}
 		if (err.length()>0 && messenger!=null) {
 			messenger.error(this,err);
@@ -77,6 +66,10 @@ public class Crawler extends Locker {
 			worker = new CrawlerWorker(messenger,union,this);
 			worker.setSleep(delayMs);
 		}
+		if (err.length()==0 && messenger!=null && messenger.isError()) {
+			err = "An error occured while initializing the crawler";
+		}
+		unlockMe(this);
 		return err;
 	}
 	
@@ -88,6 +81,7 @@ public class Crawler extends Locker {
 			crawlUrls.clear();
 			crawlUrls.add(baseUrl);
 			crawledUrls.clear();
+			pages.clear();
 			done = false;
 			worker.start();
 		} else {
@@ -97,11 +91,9 @@ public class Crawler extends Locker {
 	}
 
 	public boolean isDone() {
-		System.out.println("DONE?");
 		lockMe(this);
 		boolean r = done;
 		unlockMe(this);
-		System.out.println("DONE:" + r);
 		return r;
 	}
 
@@ -111,53 +103,69 @@ public class Crawler extends Locker {
 		unlockMe(this);
 		return r;
 	}
-	
+
+	public TreeMap<String,ZStringBuilder> getPages() {
+		lockMe(this);
+		TreeMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>(pages);
+		unlockMe(this);
+		return r;
+	}
+
 	protected boolean parseNextUrl() {
 		boolean r = false;
 		lockMe(this);
 		crawlIndex++;
-		System.out.println("----> To do: " + (crawlUrls.size() - crawlIndex));
 		if (crawlIndex<crawlUrls.size()) {
 			String pageUrl = crawlUrls.get(crawlIndex);
-			System.out.println("----> Reading page: " + pageUrl);
 			ZStringBuilder page = pageReader.getPageAtUrl(pageUrl);
+			crawledUrls.add(pageUrl);
 			if (page!=null) {
-				System.out.println("----> Get URLs from page: " + pageUrl);
-				
-				List<String> pageUrls = getUrlsFromPage(pageUrl,page);
-		
-				System.out.println("----> Got URLs: " + pageUrls.size());
-				for (String url: pageUrls) {
-					boolean crawl = url.startsWith(baseUrl);
-					if (crawl) {
-						for(String dis: disallowedUrls) {
-							if (url.matches(dis)) {
-								crawl = false;
-								break;
+				pages.put(pageUrl,page);
+				if (canFollow(page)) {
+					List<String> pageUrls = getUrlsFromPage(pageUrl,page);
+					for (String url: pageUrls) {
+						boolean crawl = url.startsWith(baseUrl);
+						if (crawl) {
+							for(String dis: disallowedUrls) {
+								if (url.matches(dis)) {
+									crawl = false;
+									break;
+								}
 							}
 						}
-					}
-					if (crawl) {
-						for(String crawled: crawlUrls) {
-							if (url.equals(crawled)) {
-								crawl = false;
-								break;
+						if (crawl) {
+							for(String crawled: crawlUrls) {
+								if (url.equals(crawled)) {
+									crawl = false;
+									break;
+								}
 							}
 						}
-					}
-					if (crawl) {
-						System.out.println("----> " + url);
-						crawlUrls.add(url);
+						if (crawl) {
+							crawlUrls.add(url);
+						}
 					}
 				}
 			}
-			crawledUrls.add(pageUrl);
 		} else {
-			System.out.println("----> DONE!!!!");
 			done = true;
 		}
 		r = done;
 		unlockMe(this);
+		return r;
+	}
+
+	private boolean canFollow(ZStringBuilder page) {
+		boolean r = true;
+		PageParser parser = new PageParser(page);
+		List<ZStringBuilder> tags = parser.getTags("meta",true);
+		for (ZStringBuilder tag: tags) {
+			String t = tag.toString().toLowerCase();
+			if (t.contains("name=\"robots\"") && t.contains("nofollow")) {
+				r = false;
+				break;
+			}
+		}
 		return r;
 	}
 	
@@ -193,9 +201,7 @@ public class Crawler extends Locker {
 	
 	private String getFullUrl(String pageUrl,String url) {
 		String r = "";
-		
 		boolean err = false;
-		
 		if (url.startsWith("http")) {
 			pageUrl = "";
 		} else {
@@ -209,7 +215,6 @@ public class Crawler extends Locker {
 					pageUrl += elems[i];
 				}
 			}
-			
 			try {
 				URI pUri = new URI(pageUrl).normalize();
 				pageUrl = pUri.getScheme() + "://" + pUri.getHost();
@@ -221,7 +226,6 @@ public class Crawler extends Locker {
 				err = true;
 			}
 		}
-		
 		if (!err) {
 			try {
 				URI uri = new URI(pageUrl + url).normalize();
@@ -234,11 +238,14 @@ public class Crawler extends Locker {
 				err = true;
 			}
 		}
-
 		if (err) {
 			r = "";
+		} else if (!r.endsWith(".htm") && !r.endsWith(".html")) {
+			String[] split = r.split("/");
+			if (split[(split.length - 1)].contains(".")) {
+				r = "";
+			}
 		}
-		
 		return r;
 	}
 }
