@@ -33,7 +33,7 @@ public class TestCrawler extends TestObject {
 		System.out.println("TreeMap<String,ZStringBuilder> pages = crawler.getPages();");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("A *Crawler* can crawl a web site in order to obtain all text from the site.");
+		System.out.println("A *Crawler* can crawl a web site in order to obtain all page data from the site.");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestCrawler.class));

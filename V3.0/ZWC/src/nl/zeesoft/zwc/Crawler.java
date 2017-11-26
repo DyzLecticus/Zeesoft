@@ -26,10 +26,10 @@ public class Crawler extends Locker {
 	private RobotsParser						robotsParser	= null;
 	private List<String>						disallowedUrls	= new ArrayList<String>();
 	private CrawlerWorker						worker			= null;
-	private boolean								done			= false;
-
 	private	int									crawlIndex		= -1;
 	private List<String>						crawlUrls		= new ArrayList<String>();
+	
+	private boolean								done			= false;
 	private List<String>						crawledUrls		= new ArrayList<String>();
 	private SortedMap<String,ZStringBuilder>	pages			= new TreeMap<String,ZStringBuilder>();
 	
@@ -161,7 +161,7 @@ public class Crawler extends Locker {
 		List<ZStringBuilder> tags = parser.getTags("meta",true);
 		for (ZStringBuilder tag: tags) {
 			String t = tag.toString().toLowerCase();
-			if (t.contains("name=\"robots\"") && t.contains("nofollow")) {
+			if (t.contains("=\"robots\"") && t.contains("nofollow")) {
 				r = false;
 				break;
 			}

@@ -20,6 +20,10 @@ public class PageParser {
 		this.page = page;
 	}
 
+	public ZStringBuilder getPage() {
+		return page;
+	}
+
 	public List<ZStringBuilder> getTags(String tagName,boolean single) {
 		List<ZStringBuilder> r = new ArrayList<ZStringBuilder>();
 		if (page!=null) {
