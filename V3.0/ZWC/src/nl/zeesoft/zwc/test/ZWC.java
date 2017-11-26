@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
+import nl.zeesoft.zwc.Crawl;
 
 /**
  * Documents and tests the ZSC.

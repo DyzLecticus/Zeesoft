@@ -1,4 +1,4 @@
-package nl.zeesoft.zwc.test;
+package nl.zeesoft.zwc;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -7,7 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zwc.Crawler;
 import nl.zeesoft.zwc.page.PageTextParser;
 
 public class Crawl {
