@@ -41,31 +41,37 @@ public class PageReader {
 			error = true;
 		}
 		HttpURLConnection con = null;
-		try {
-			con = (HttpURLConnection) url.openConnection();
-		} catch (IOException e) {
-			if (messenger!=null) {
-				messenger.error(this,"HTTP connection error",e);
+		if (!error) {
+			try {
+				con = (HttpURLConnection) url.openConnection();
+			} catch (IOException e) {
+				if (messenger!=null) {
+					messenger.error(this,"HTTP connection error",e);
+				}
+				error = true;
 			}
-			error = true;
 		}
 		InputStream inputStream = null;
-		try {
-			inputStream = con.getInputStream();
-		} catch (IOException e) {
-			if (messenger!=null) {
-				messenger.error(this,"Input stream error",e);
+		if (!error) {
+			try {
+				inputStream = con.getInputStream();
+			} catch (IOException e) {
+				if (messenger!=null) {
+					messenger.error(this,"Input stream error",e);
+				}
+				error = true;
 			}
-			error = true;
 		}
 		InputStreamReader inputStreamReader = null;
-		try {
-			inputStreamReader = new InputStreamReader(inputStream,"UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			if (messenger!=null) {
-				messenger.error(this,"Input stream reader error",e);
+		if (!error) {
+			try {
+				inputStreamReader = new InputStreamReader(inputStream,"UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				if (messenger!=null) {
+					messenger.error(this,"Input stream reader error",e);
+				}
+				error = true;
 			}
-			error = true;
 		}
 		BufferedReader reader = null;
 				
@@ -91,21 +97,27 @@ public class PageReader {
 		}
 
 		// Close stuff
-		try {
-			reader.close();
-		} catch (IOException e) {
-			if (messenger!=null) {
-				messenger.error(this,"Error closing reader",e);
+		if (reader!=null) {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				if (messenger!=null) {
+					messenger.error(this,"Error closing reader",e);
+				}
 			}
 		}
-		try {
-			inputStream.close();
-		} catch (IOException e) {
-			if (messenger!=null) {
-				messenger.error(this,"Error closing input stream",e);
+		if (inputStream!=null) {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				if (messenger!=null) {
+					messenger.error(this,"Error closing input stream",e);
+				}
 			}
 		}
-		con.disconnect();
+		if (con!=null) {
+			con.disconnect();
+		}
 		
 		return r;
 	}

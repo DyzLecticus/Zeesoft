@@ -60,6 +60,6 @@ public class TestCrawler extends TestObject {
 			sleep(1000);
 		}
 		
-		assertEqual(crawler.getCrawledUrls().size(),1,"Crawled URL list size does not match expectation");
+		assertEqual(crawler.getCrawledUrls().size(),54,"Crawled URL list size does not match expectation");
 	}
 }

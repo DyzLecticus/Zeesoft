@@ -22,10 +22,6 @@ public class Crawler extends Locker {
 	private String			outputDir		= System.getProperty("user.home") + "/ZWC/";
 	private int				delayMs			= 200;
 
-	private	String			protocol		= "";
-	private	String			domain			= "";
-	private	int				port			= 80;
-
 	private PageReader		pageReader		= null;
 	private RobotsParser	robotsParser	= null;
 	private List<String>	disallowedUrls	= new ArrayList<String>();
@@ -72,19 +68,10 @@ public class Crawler extends Locker {
 				err = "Failed to create output directory";
 			}
 		}
-		URI url = null;
-		try {
-			url = new URI(baseUrl);
-		} catch (URISyntaxException e) {
-			err = e.toString();
-		}
 		if (err.length()>0 && messenger!=null) {
 			messenger.error(this,err);
 		}
 		if (err.length()==0) {
-			protocol = url.getScheme();
-			domain = url.getHost();
-			port = url.getPort();
 			pageReader = new PageReader(messenger);
 			robotsParser = new RobotsParser(pageReader,baseUrl);
 			worker = new CrawlerWorker(messenger,union,this);
@@ -134,36 +121,36 @@ public class Crawler extends Locker {
 			String pageUrl = crawlUrls.get(crawlIndex);
 			System.out.println("----> Reading page: " + pageUrl);
 			ZStringBuilder page = pageReader.getPageAtUrl(pageUrl);
-			if (page!=null)
-			System.out.println("----> Get URLs from page: " + pageUrl);
-			
-			List<String> pageUrls = getUrlsFromPage(pageUrl,page);
-	
-			System.out.println("----> Got URLs: " + pageUrls.size());
-			for (String url: pageUrls) {
-				boolean crawl = url.startsWith(baseUrl);
-				if (crawl) {
-					for(String dis: disallowedUrls) {
-						if (url.matches(dis)) {
-							crawl = false;
-							break;
+			if (page!=null) {
+				System.out.println("----> Get URLs from page: " + pageUrl);
+				
+				List<String> pageUrls = getUrlsFromPage(pageUrl,page);
+		
+				System.out.println("----> Got URLs: " + pageUrls.size());
+				for (String url: pageUrls) {
+					boolean crawl = url.startsWith(baseUrl);
+					if (crawl) {
+						for(String dis: disallowedUrls) {
+							if (url.matches(dis)) {
+								crawl = false;
+								break;
+							}
 						}
 					}
-				}
-				if (crawl) {
-					for(String crawled: crawlUrls) {
-						if (url.equals(crawled)) {
-							crawl = false;
-							break;
+					if (crawl) {
+						for(String crawled: crawlUrls) {
+							if (url.equals(crawled)) {
+								crawl = false;
+								break;
+							}
 						}
 					}
-				}
-				if (crawl) {
-					System.out.println("----> " + url);
-					crawlUrls.add(url);
+					if (crawl) {
+						System.out.println("----> " + url);
+						crawlUrls.add(url);
+					}
 				}
 			}
-			
 			crawledUrls.add(pageUrl);
 		} else {
 			System.out.println("----> DONE!!!!");
@@ -205,32 +192,53 @@ public class Crawler extends Locker {
 	}
 	
 	private String getFullUrl(String pageUrl,String url) {
-		if (url.startsWith("./")) {
-			url = url.substring(2);
-		}
-		if (url.contains("#")) {
-			url = url.split("#")[0];
-		}
-		if (url.contains("?")) {
-			url = url.split("?")[0];
-		}
 		String r = "";
+		
+		boolean err = false;
+		
 		if (url.startsWith("http")) {
-			r = url;
-		} else if (url.startsWith("/")) {
-			r = protocol + "://" + domain;
-			if (port!=80) {
-				r += ":" + port;
-			}
-			r += url;
+			pageUrl = "";
 		} else {
-			r = pageUrl + url;
+			String[] elems = pageUrl.split("/");
+			pageUrl = "";
+			for (int i = 0; i<elems.length; i++) {
+				if (i<(elems.length - 1) || !elems[i].contains(".")) {
+					if (pageUrl.length()>0) {
+						pageUrl += "/";
+					}
+					pageUrl += elems[i];
+				}
+			}
+			
+			try {
+				URI pUri = new URI(pageUrl).normalize();
+				pageUrl = pUri.getScheme() + "://" + pUri.getHost();
+				if (pUri.getPort()>0 && pUri.getPort()!=80) {
+					pageUrl += ":" + pUri.getPort();
+				}
+				pageUrl += pUri.getPath() + "/";
+			} catch (URISyntaxException e) {
+				err = true;
+			}
 		}
-		r = r.trim();
-		String[] split = r.split("/");
-		if (!split[(split.length - 1)].contains(".")) {
-			r += "/";
-		}		
+		
+		if (!err) {
+			try {
+				URI uri = new URI(pageUrl + url).normalize();
+				r = uri.getScheme() + "://" + uri.getHost();
+				if (uri.getPort()>0 && uri.getPort()!=80) {
+					r += ":" + uri.getPort();
+				}
+				r += uri.getPath();
+			} catch (URISyntaxException e) {
+				err = true;
+			}
+		}
+
+		if (err) {
+			r = "";
+		}
+		
 		return r;
 	}
 }

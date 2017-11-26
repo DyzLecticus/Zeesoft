@@ -1,5 +1,7 @@
 package nl.zeesoft.zwc.page;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,28 +10,19 @@ import nl.zeesoft.zdk.ZStringBuilder;
 public class RobotsParser {
 	private	String			baseUrl			= "";
 	private PageReader 		pageReader		= null;
-	private boolean			secure			= false;
 
 	public RobotsParser(PageReader pageReader,String baseUrl) {
 		this.pageReader = pageReader;
-		StringBuilder url = new StringBuilder();
-		if (baseUrl.startsWith("http://")) {
-			baseUrl = baseUrl.substring(7);
-		} else if (baseUrl.startsWith("https://")) {
-			baseUrl = baseUrl.substring(8);
-			secure = true;
-		}
-		for (int i = 0; i < baseUrl.length(); i++) {
-			if (baseUrl.substring(i,(i + 1)).equals("/")) {
-				break;
+		try {
+			URI uri = new URI(baseUrl).normalize();
+			baseUrl = uri.getScheme() + "://" + uri.getHost();
+			if (uri.getPort()>0 && uri.getPort()!=80) {
+				baseUrl += ":" + uri.getPort();
 			}
-			url.append(baseUrl.substring(i,(i + 1)));
+		} catch (URISyntaxException e) {
+			// Ignore
 		}
-		if (secure) {
-			this.baseUrl = "https://" + url.toString();
-		} else {
-			this.baseUrl = "http://" + url.toString();
-		}
+		this.baseUrl = baseUrl;
 	}
 	
 	public List<String> getDisallowedUrls() {
