@@ -22,7 +22,11 @@ public class ZWC extends LibraryObject {
 	}
 
 	public static void main(String[] args) {
-		(new ZWC(new Tester())).describeAndTest(args);
+		if (args!=null && args.length==1 && args[0]=="CRAWL") {
+			Crawl.main(args);
+		} else {
+			(new ZWC(new Tester())).describeAndTest(args);
+		}
 	}
 
 	@Override

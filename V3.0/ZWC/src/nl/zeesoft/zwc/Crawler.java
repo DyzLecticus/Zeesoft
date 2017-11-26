@@ -54,8 +54,6 @@ public class Crawler extends Locker {
 		lockMe(this);
 		if (baseUrl.length()==0) {
 			err = "Base URL is empty";
-		} else if (!baseUrl.endsWith("/")) {
-			baseUrl += "/";
 		}
 		if (err.length()>0 && messenger!=null) {
 			messenger.error(this,err);
@@ -97,6 +95,14 @@ public class Crawler extends Locker {
 		return r;
 	}
 
+	public int getRemaining() {
+		int remaining = 0;
+		lockMe(this);
+		remaining = crawlUrls.size() - crawledUrls.size();
+		unlockMe(this);
+		return remaining;
+	}
+	
 	public List<String> getCrawledUrls() {
 		lockMe(this);
 		List<String> r = new ArrayList<String>(crawledUrls);
@@ -221,7 +227,9 @@ public class Crawler extends Locker {
 				if (pUri.getPort()>0 && pUri.getPort()!=80) {
 					pageUrl += ":" + pUri.getPort();
 				}
-				pageUrl += pUri.getPath() + "/";
+				if (!url.startsWith("/")) {
+					pageUrl += pUri.getPath() + "/";
+				}
 			} catch (URISyntaxException e) {
 				err = true;
 			}

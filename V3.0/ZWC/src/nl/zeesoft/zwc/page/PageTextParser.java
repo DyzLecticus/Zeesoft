@@ -47,6 +47,8 @@ public class PageTextParser extends PageParser {
 		work.replace("? <","?\n<");
 		work.replace("! <","!\n<");
 
+		work.replace("\t"," ");
+
 		List<ZStringBuilder> lines = work.split("\n");
 		work = new ZStringBuilder();
 		for (ZStringBuilder line: lines) {
