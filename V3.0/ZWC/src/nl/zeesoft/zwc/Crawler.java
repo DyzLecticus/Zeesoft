@@ -193,8 +193,8 @@ public class Crawler extends Locker {
 		tag = tag.toLowerCase();
 		StringBuilder url = new StringBuilder();
 		boolean start = false;
-		for (int i = 0; i<(tag.length() - 6); i++) {
-			if (tag.substring(i,(i + 6)).equals("href=\"")) {
+		for (int i = 0; i<tag.length(); i++) {
+			if (!start && (i + 6)<tag.length() && tag.substring(i,(i + 6)).equals("href=\"")) {
 				i = i + 6;
 				start = true;
 			}
@@ -225,7 +225,7 @@ public class Crawler extends Locker {
 		pageUrl = getBaseUrl(pageUrl,page);
 		for (ZStringBuilder tag: tags) {
 			String add = getUrlFromTag(tag.toString());
-			if (!add.startsWith("mailto") && !add.startsWith("#")) {
+			if (add.length()>0 && !add.startsWith("mailto") && !add.startsWith("#")) {
 				add = getFullUrl(pageUrl,add);
 				if (add.length()>0 && !r.contains(add)) {
 					r.add(add);
