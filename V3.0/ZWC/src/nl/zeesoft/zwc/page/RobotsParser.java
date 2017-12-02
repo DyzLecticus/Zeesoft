@@ -37,7 +37,7 @@ public class RobotsParser {
 				}
 				if (start && rule.toString().trim().startsWith("Disallow: ")) {
 					String url = baseUrl + rule.toString().trim().substring(10);
-					if (!r.contains(url)) {
+					if (url.length()>0 && !r.contains(url)) {
 						r.add(url);
 					}
 				}

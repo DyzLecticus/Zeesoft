@@ -55,7 +55,7 @@ public class TestCrawler extends TestObject {
 		}
 		
 		List<String> crawledUrls = crawler.getCrawledUrls();
-		assertEqual(crawledUrls.size(),41,"Crawled URL list size does not match expectation");
+		assertEqual(crawledUrls.size(),34,"Crawled URL list size does not match expectation");
 		if (crawledUrls.size()>4) {
 			System.out.println(crawledUrls.get(0));
 			System.out.println(crawledUrls.get(1));

@@ -9,9 +9,21 @@ import javax.swing.JOptionPane;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zwc.page.PageTextParser;
 
+/**
+ * Crawler demo implementation
+ */
 public class Crawl {
 	public static void main(String[] args) {
-		String baseUrl = JOptionPane.showInputDialog(new JFrame(), "Enter the start URL to crawl");
+		boolean showRemaining = false;
+		
+		JFrame frame = new JFrame();
+		String baseUrl = "";
+		if (args!=null && args.length>1) {
+			baseUrl = args[1];
+		} else {
+			showRemaining = true;
+			baseUrl = JOptionPane.showInputDialog(frame, "Enter the start URL to crawl");
+		}
 		
 		Crawler crawler = new Crawler(baseUrl);
 		String err = crawler.initialize();
@@ -27,7 +39,9 @@ public class Crawl {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Remaining: " + crawler.getRemaining() + "\t");
+			if (showRemaining) {
+				System.out.println("Remaining: " + crawler.getRemaining() + "\t");
+			}
 		}
 		
 		List<String> crawledUrls = crawler.getCrawledUrls();
@@ -41,5 +55,7 @@ public class Crawl {
 				System.out.println(url + "\t");
 			}
 		}
+		frame.setVisible(false);
+		frame.dispose();
 	}
 }

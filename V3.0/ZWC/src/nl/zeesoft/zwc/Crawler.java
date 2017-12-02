@@ -15,6 +15,9 @@ import nl.zeesoft.zwc.page.PageParser;
 import nl.zeesoft.zwc.page.PageReader;
 import nl.zeesoft.zwc.page.RobotsParser;
 
+/**
+ * Web crawler.
+ */
 public class Crawler extends Locker {
 	private Messenger							messenger		= null;
 	private WorkerUnion							union			= null;
