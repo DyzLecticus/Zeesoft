@@ -68,6 +68,17 @@ public class PageTextParser extends PageParser {
 		for (ZStringBuilder line: lines) {
 			if (line.length()>1 && !line.containsOneOfCharacters("<>")) {
 
+				line.replace("à","&#224;");
+				line.replace("á","&#225;");
+				line.replace("ç","&#231;");
+				line.replace("è","&#232;");
+				line.replace("é","&#233;");
+				line.replace("ë","&#235;");
+				line.replace("ï","&#239;");
+				line.replace("ó","&#243;");
+				line.replace("ö","&#246;");
+				line.replace("ú","&#250;");
+				line.replace("ü","&#252;");
 				line = removeInvalidAsciiFromLine(line);
 				for (Entry<String,String> entry: replacements.entrySet()) {
 					line.replace(entry.getKey(),entry.getValue());
@@ -99,25 +110,7 @@ public class PageTextParser extends PageParser {
 		for (int i = 0; i<line.length(); i++) {
 			char ch = line.getStringBuilder().charAt(i);
 			int chi = (int) ch;
-			if (
-				(chi < 32 || chi > 126) &&
-				chi!=129 &&
-				chi!=130 &&
-				chi!=132 &&
-				chi!=133 &&
-				chi!=135 &&
-				chi!=137 &&
-				chi!=138 &&
-				chi!=139 &&
-				chi!=141 &&
-				chi!=148 &&
-				chi!=149 &&
-				chi!=151 &&
-				chi!=160 &&
-				chi!=161 &&
-				chi!=162 &&
-				chi!=163
-				) {
+			if (chi < 32 || chi > 126) {
 				r.append(" ");
 			} else {
 				r.append(line.substring(i,(i + 1)));
@@ -130,6 +123,7 @@ public class PageTextParser extends PageParser {
 		replacements.put("&#39;","'");
 		replacements.put("&#224;","à");
 		replacements.put("&#225;","á");
+		replacements.put("&#231;","ç");
 		replacements.put("&#232;","è");
 		replacements.put("&#233;","é");
 		replacements.put("&#235;","ë");

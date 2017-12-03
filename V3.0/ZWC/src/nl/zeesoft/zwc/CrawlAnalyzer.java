@@ -51,11 +51,13 @@ public class CrawlAnalyzer {
 					List<String> urls = symbolUrls.get(symbol);
 					Integer count = symbolCounts.get(symbol);
 					if (urls==null) {
-						urls = new ArrayList<String>();
 						count = 0;
+						urls = new ArrayList<String>();
 						symbolUrls.put(symbol,urls);
 					}
-					urls.add(url);
+					if (!urls.contains(url)) {
+						urls.add(url);
+					}
 					count++;
 					symbolCounts.put(symbol,count);
 				}
