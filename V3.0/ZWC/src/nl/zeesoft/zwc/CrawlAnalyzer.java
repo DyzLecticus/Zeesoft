@@ -14,21 +14,6 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
  */
 public class CrawlAnalyzer {
 	public static void main(String[] args) {
-		/*
-		List<String> lineEndSymbols = new ArrayList<String>();
-		lineEndSymbols.add(".");
-		lineEndSymbols.add("?");
-		lineEndSymbols.add("!");
-		List<String> punctuationSymbols = new ArrayList<String>();
-		punctuationSymbols.add("(");
-		punctuationSymbols.add(")");
-		punctuationSymbols.add(":");
-		punctuationSymbols.add(";");
-		punctuationSymbols.add(",");
-		punctuationSymbols.add("\"");
-		punctuationSymbols.add("'");
-		*/
-		
 		String inputFile = "";
 		String outputFile = "";
 		if (args!=null && args.length>=3) {
@@ -58,7 +43,9 @@ public class CrawlAnalyzer {
 			String url = lineUrl.get(0).toString();
 			if (lineUrl.size()>1 && lineUrl.get(1).length()>0) {
 				ZStringSymbolParser symbols = new ZStringSymbolParser(lineUrl.get(1));
-				//List<String> lineSymbols = symbols.toSymbolsPunctuated(lineEndSymbols,punctuationSymbols);
+				symbols.replace(" '"," ' ");
+				symbols.replace("' "," ' ");
+				symbols.replace("  "," ");
 				List<String> lineSymbols = symbols.toSymbolsPunctuated();
 				for (String symbol: lineSymbols) {
 					List<String> urls = symbolUrls.get(symbol);

@@ -67,7 +67,8 @@ public class PageTextParser extends PageParser {
 		work = new ZStringBuilder();
 		for (ZStringBuilder line: lines) {
 			if (line.length()>1 && !line.containsOneOfCharacters("<>")) {
-				
+
+				line = removeInvalidAsciiFromLine(line);
 				for (Entry<String,String> entry: replacements.entrySet()) {
 					line.replace(entry.getKey(),entry.getValue());
 				}
@@ -85,7 +86,7 @@ public class PageTextParser extends PageParser {
 					if (work.length()>0) {
 						work.append(" ");
 					}
-					work.append(removeInvalidAsciiFromLine(line));
+					work.append(line);
 				}
 			}
 		}
@@ -98,7 +99,7 @@ public class PageTextParser extends PageParser {
 		for (int i = 0; i<line.length(); i++) {
 			char ch = line.getStringBuilder().charAt(i);
 			int chi = (int) ch;
-			if (chi < 32 || chi == 127 || chi > 166) {
+			if (chi < 32 || chi > 126) {
 				r.append(" ");
 			} else {
 				r.append(line.substring(i,(i + 1)));
