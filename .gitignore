@@ -11,3 +11,4 @@ RemoteSystemsTempFiles
 /Games/Illuminator/build/
 /Games/Illuminator/dist/
 /Games/Test/
+*.txt

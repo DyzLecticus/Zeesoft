@@ -38,8 +38,8 @@ public class ZWC extends LibraryObject {
 		System.out.println("It provides support for crawling web sites in order to extract data.");
 		System.out.println("  ");
 		System.out.println("A demo implementation of the crawler is included within this library.");
-		System.out.println("To start this demo, run the zwc.jar file with the parameter 'CRAWL' and a parameter that specifies the URL to start.");
-		System.out.println("Example: 'java -jar zwc.jar crawl " + MockPage.TEST_URL + "'.");
+		System.out.println("To start this demo, run the zwc.jar file with the parameter 'crawl', a parameter that specifies the URL to start and an optional parameter that specifies the full output file name (default 'data.txt').");
+		System.out.println("Example: 'java -jar zwc.jar crawl " + MockPage.TEST_URL + " C:\\temp\\output.txt'.");
 		System.out.println("The demo will output a tab separated list of crawled URLs and the text that is found on those URLs.");
 		System.out.println("  ");
 		describeDependencies();

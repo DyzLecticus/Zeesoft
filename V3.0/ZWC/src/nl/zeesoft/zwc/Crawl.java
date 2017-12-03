@@ -14,17 +14,22 @@ import nl.zeesoft.zwc.page.PageTextParser;
  */
 public class Crawl {
 	public static void main(String[] args) {
-		boolean showRemaining = false;
-		
-		JFrame frame = new JFrame();
 		String baseUrl = "";
+		String outputFile = "data.txt";
+		
 		if (args!=null && args.length>1) {
 			baseUrl = args[1];
+			if (args.length>2) {
+				outputFile = args[2];
+			}
 		} else {
-			showRemaining = true;
+			JFrame frame = new JFrame();
 			baseUrl = JOptionPane.showInputDialog(frame, "Enter the start URL to crawl");
+			outputFile = JOptionPane.showInputDialog(frame, "Enter the full output file name");
+			frame.setVisible(false);
+			frame.dispose();
 		}
-		
+
 		Crawler crawler = new Crawler(baseUrl);
 		String err = crawler.initialize();
 		if (err.length()>0) {
@@ -39,23 +44,30 @@ public class Crawl {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if (showRemaining) {
-				System.out.println("Remaining: " + crawler.getRemaining() + "\t");
-			}
+			System.out.println("Remaining: " + crawler.getRemaining());
 		}
 		
 		List<String> crawledUrls = crawler.getCrawledUrls();
 		TreeMap<String,ZStringBuilder> pages = crawler.getPages();
+		ZStringBuilder output = new ZStringBuilder();
 		for (String url: crawledUrls) {
 			ZStringBuilder page = pages.get(url);
 			if (page!=null) {
 				PageTextParser parser = new PageTextParser(page);
-				System.out.println(url + "\t" + parser.getText());
+				output.append(url);
+				output.append("\t");
+				output.append(parser.getText());
+				output.append("\n");
 			} else {
-				System.out.println(url + "\t");
+				output.append(url);
+				output.append("\t");
+				output.append("\n");
 			}
 		}
-		frame.setVisible(false);
-		frame.dispose();
+		
+		err = output.toFile(outputFile);
+		if (err.length()>0) {
+			System.err.println("ERROR: " + err);
+		}
 	}
 }
