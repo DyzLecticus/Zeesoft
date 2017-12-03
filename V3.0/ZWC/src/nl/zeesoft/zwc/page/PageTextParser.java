@@ -99,7 +99,25 @@ public class PageTextParser extends PageParser {
 		for (int i = 0; i<line.length(); i++) {
 			char ch = line.getStringBuilder().charAt(i);
 			int chi = (int) ch;
-			if (chi < 32 || chi > 126) {
+			if (
+				(chi < 32 || chi > 126) &&
+				chi!=129 &&
+				chi!=130 &&
+				chi!=132 &&
+				chi!=133 &&
+				chi!=135 &&
+				chi!=137 &&
+				chi!=138 &&
+				chi!=139 &&
+				chi!=141 &&
+				chi!=148 &&
+				chi!=149 &&
+				chi!=151 &&
+				chi!=160 &&
+				chi!=161 &&
+				chi!=162 &&
+				chi!=163
+				) {
 				r.append(" ");
 			} else {
 				r.append(line.substring(i,(i + 1)));
