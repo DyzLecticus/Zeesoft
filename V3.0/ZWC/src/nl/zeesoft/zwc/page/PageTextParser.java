@@ -8,6 +8,9 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
+/**
+ * A page text parser can be used to parse all text from an HTML page.
+ */
 public class PageTextParser extends PageParser {
 	private static final String 		CAPITALS		= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
@@ -63,6 +66,7 @@ public class PageTextParser extends PageParser {
 		for (Entry<String,String> entry: replacements.entrySet()) {
 			work.replace(entry.getKey(),entry.getValue());
 		}
+		work.replace("  "," ");
 		
 		List<ZStringBuilder> lines = work.split("\n");
 		work = new ZStringBuilder();
@@ -72,6 +76,7 @@ public class PageTextParser extends PageParser {
 				for (int i = 0; i < CAPITALS.length(); i++) {
 					if (line.startsWith(CAPITALS.substring(i,(i + 1)))) {
 						add = true;
+						break;
 					}
 				}
 				if (add) {
@@ -101,14 +106,17 @@ public class PageTextParser extends PageParser {
 		replacements.put("&#822;","-");
 		replacements.put("&#8220;","\"");
 		replacements.put("&#8221;","\"");
-		replacements.put("&#8364;","euro");
+		replacements.put("&#8332;","2");
+		replacements.put("&#8364;","EURO ");
 		
 		replacements.put("&lsquo;","'");
 		replacements.put("&rsquo;","'");
 		replacements.put("&amp;","&");
 		replacements.put("&hellip;","...");
+		replacements.put("&minus;","-");
+		replacements.put("&plus;","+");
 		replacements.put("&ndash;","-");
-		replacements.put("&euro;","euro");
+		replacements.put("&euro;","EURO ");
 	}
 }
 

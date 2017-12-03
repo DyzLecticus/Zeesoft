@@ -7,6 +7,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
+/**
+ * A robots parser can be used to parse the robots.txt file for a specified URL.
+ */
 public class RobotsParser {
 	private	String			baseUrl			= "";
 	private PageReader 		pageReader		= null;

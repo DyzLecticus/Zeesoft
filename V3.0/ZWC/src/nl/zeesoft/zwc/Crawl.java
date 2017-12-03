@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zwc.page.PageTextParser;
 
 /**
- * Crawler demo implementation
+ * Crawler demo implementation.
  */
 public class Crawl {
 	public static void main(String[] args) {
@@ -47,13 +47,15 @@ public class Crawl {
 			System.out.println("Remaining: " + crawler.getRemaining());
 		}
 		
+		System.out.println("Parsing text ...");
 		List<String> crawledUrls = crawler.getCrawledUrls();
 		TreeMap<String,ZStringBuilder> pages = crawler.getPages();
 		ZStringBuilder output = new ZStringBuilder();
+		PageTextParser parser = new PageTextParser();
 		for (String url: crawledUrls) {
 			ZStringBuilder page = pages.get(url);
 			if (page!=null) {
-				PageTextParser parser = new PageTextParser(page);
+				parser.setPage(page);
 				output.append(url);
 				output.append("\t");
 				output.append(parser.getText());
@@ -65,9 +67,11 @@ public class Crawl {
 			}
 		}
 		
+		System.out.println("Writing output ...");
 		err = output.toFile(outputFile);
 		if (err.length()>0) {
 			System.err.println("ERROR: " + err);
 		}
+		System.out.println("Done");
 	}
 }

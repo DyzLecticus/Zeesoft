@@ -4,10 +4,13 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * Used to call the crawler with a certain delay.
+ */
 public class CrawlerWorker extends Worker {
 	private Crawler crawler	= null;
 	
-	public CrawlerWorker(Messenger msgr, WorkerUnion union, Crawler crawler) {
+	protected CrawlerWorker(Messenger msgr, WorkerUnion union, Crawler crawler) {
 		super(msgr, union);
 		this.crawler = crawler;
 	}

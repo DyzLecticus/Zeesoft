@@ -51,7 +51,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zwc nl/zeesoft/zwc/http nl/zeesoft/zwc/test zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zwc nl/zeesoft/zwc/page nl/zeesoft/zwc/test zdk.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zwc.test.ZWC"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -112,7 +112,7 @@
             <fileset dir="${src}" />
         </copy>		
 		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zwc,nl.zeesoft.zwc.http"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zwc,nl.zeesoft.zwc.page"/>
 		<zip destfile="${dist}/zwc-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>

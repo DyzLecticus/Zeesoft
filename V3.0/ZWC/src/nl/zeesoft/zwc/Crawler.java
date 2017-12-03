@@ -49,10 +49,20 @@ public class Crawler extends Locker {
 		this.startUrl = startUrl;
 	}
 	
+	/**
+	 * Sets the pause milliseconds between page reads in order to prevent denial of service.
+	 * 
+	 * @param delayMs The number of milliseconds to pause between page reads
+	 */
 	public void setDelayMs(int delayMs) {
 		this.delayMs = delayMs;
 	}
 	
+	/**
+	 * Initializes the crawler.
+	 * 
+	 * @return An error message if applicable
+	 */
 	public String initialize() {
 		String err = "";
 		lockMe(this);
@@ -93,6 +103,9 @@ public class Crawler extends Locker {
 		return err;
 	}
 	
+	/**
+	 * Starts the crawler.
+	 */
 	public void start() {
 		lockMe(this);
 		if (worker!=null) {
@@ -110,6 +123,11 @@ public class Crawler extends Locker {
 		unlockMe(this);
 	}
 
+	/**
+	 * Returns true if the crawler is done.
+	 * 
+	 * @return True if the crawler is done
+	 */
 	public boolean isDone() {
 		lockMe(this);
 		boolean r = done;
@@ -117,6 +135,11 @@ public class Crawler extends Locker {
 		return r;
 	}
 
+	/**
+	 * Returns the remaining number of URLs to crawl.
+	 * 
+	 * @return The remaining number of URLs to crawl
+	 */
 	public int getRemaining() {
 		int remaining = 0;
 		lockMe(this);
@@ -125,6 +148,11 @@ public class Crawler extends Locker {
 		return remaining;
 	}
 	
+	/**
+	 * Returns a list of crawled URLs.
+	 * 
+	 * @return A list of crawled URLs
+	 */
 	public List<String> getCrawledUrls() {
 		lockMe(this);
 		List<String> r = new ArrayList<String>(crawledUrls);
@@ -132,6 +160,11 @@ public class Crawler extends Locker {
 		return r;
 	}
 
+	/**
+	 * Returns a map of URLs and corresponding pages that have been crawled.
+	 * 
+	 * @return A map of URLs and corresponding pages that have been crawled
+	 */
 	public TreeMap<String,ZStringBuilder> getPages() {
 		lockMe(this);
 		TreeMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>(pages);

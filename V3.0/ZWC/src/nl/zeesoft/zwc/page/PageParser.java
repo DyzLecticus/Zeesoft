@@ -5,6 +5,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
+/**
+ * A page parser can be used to parse tags from an HTML page.
+ */
 public class PageParser {
 	private ZStringBuilder page = null;
 
