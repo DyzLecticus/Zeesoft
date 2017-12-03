@@ -63,15 +63,16 @@ public class PageTextParser extends PageParser {
 		work.replace("? <","?\n<");
 		work.replace("! <","!\n<");
 
-		for (Entry<String,String> entry: replacements.entrySet()) {
-			work.replace(entry.getKey(),entry.getValue());
-		}
-		work.replace("  "," ");
-		
 		List<ZStringBuilder> lines = work.split("\n");
 		work = new ZStringBuilder();
 		for (ZStringBuilder line: lines) {
 			if (line.length()>1 && !line.containsOneOfCharacters("<>")) {
+				
+				for (Entry<String,String> entry: replacements.entrySet()) {
+					line.replace(entry.getKey(),entry.getValue());
+				}
+				line.replace("  "," ");
+				
 				boolean add = false;
 				for (int i = 0; i < CAPITALS.length(); i++) {
 					if (line.startsWith(CAPITALS.substring(i,(i + 1)))) {
@@ -79,16 +80,31 @@ public class PageTextParser extends PageParser {
 						break;
 					}
 				}
+				
 				if (add) {
 					if (work.length()>0) {
 						work.append(" ");
 					}
-					work.append(line);
+					work.append(removeInvalidAsciiFromLine(line));
 				}
 			}
 		}
 
 		return new ZStringSymbolParser(work);
+	}
+	
+	private ZStringBuilder removeInvalidAsciiFromLine(ZStringBuilder line) {
+		ZStringBuilder r = new ZStringBuilder();
+		for (int i = 0; i<line.length(); i++) {
+			char ch = line.getStringBuilder().charAt(i);
+			int chi = (int) ch;
+			if (chi < 32 || chi == 127 || chi > 166) {
+				r.append(" ");
+			} else {
+				r.append(line.substring(i,(i + 1)));
+			}
+		}
+		return r;
 	}
 	
 	private void initializeReplacements() {
@@ -109,6 +125,11 @@ public class PageTextParser extends PageParser {
 		replacements.put("&#8332;","2");
 		replacements.put("&#8364;","EURO ");
 		
+		replacements.put("&lt;","<");
+		replacements.put("&gt;",">");
+		replacements.put("&bull;","* ");
+		replacements.put("&ldquo;","'");
+		replacements.put("&rdquo;","'");
 		replacements.put("&lsquo;","'");
 		replacements.put("&rsquo;","'");
 		replacements.put("&amp;","&");

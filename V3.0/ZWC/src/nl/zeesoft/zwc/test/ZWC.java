@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
 import nl.zeesoft.zwc.Crawl;
+import nl.zeesoft.zwc.CrawlAnalyzer;
 
 /**
  * Documents and tests the ZSC.
@@ -25,6 +26,8 @@ public class ZWC extends LibraryObject {
 	public static void main(String[] args) {
 		if (args!=null && args.length>=1 && args[0].toUpperCase().equals("CRAWL")) {
 			Crawl.main(args);
+		} else if (args!=null && args.length>=1 && args[0].toUpperCase().equals("ANALYZE")) {
+			CrawlAnalyzer.main(args);
 		} else {
 			(new ZWC(new Tester())).describeAndTest(args);
 		}
