@@ -261,7 +261,11 @@ public class Crawler extends Locker {
 		pageUrl = getBaseUrl(pageUrl,page);
 		for (ZStringBuilder tag: tags) {
 			String add = getUrlFromTag(tag.toString());
-			if (add.length()>0 && !add.startsWith("mailto") && !add.startsWith("#")) {
+			if (add.length()>0 &&
+				!add.startsWith("javascript:") &&
+				!add.startsWith("mailto:") &&
+				!add.startsWith("#")
+				) {
 				add = getFullUrl(pageUrl,add);
 				if (add.length()>0 && !r.contains(add)) {
 					r.add(add);

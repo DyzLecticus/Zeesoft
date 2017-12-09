@@ -49,6 +49,17 @@ public class PageTextParser extends PageParser {
 		work.replaceStartEnd("<a ",">","");
 		work.replace("</a>","");
 
+		work.replace("<b>","");
+		work.replace("</b>","");
+		work.replace("<em>","");
+		work.replace("</em>","");
+		work.replace("<strong>","");
+		work.replace("</strong>","");
+		work.replace("<big>","");
+		work.replace("</big>","");
+		work.replace("<small>","");
+		work.replace("</small>","");
+
 		work.replace("    "," ");
 		work.replace("   "," ");
 		work.replace("  "," ");

@@ -43,9 +43,28 @@ public class CrawlAnalyzer {
 			String url = lineUrl.get(0).toString();
 			if (lineUrl.size()>1 && lineUrl.get(1).length()>0) {
 				ZStringSymbolParser symbols = new ZStringSymbolParser(lineUrl.get(1));
+				
+				if (symbols.startsWith("'")) {
+					symbols.insert(1," ");
+				}
+				if (symbols.endsWith("'")) {
+					symbols.insert(symbols.length() - 2," ");
+				}
+				symbols.replace("*"," * ");
+				symbols.replace("'.","' .");
+				symbols.replace("'!","' !");
+				symbols.replace("'?","' ?");
+				symbols.replace("('","( '");
+				symbols.replace("')","' )");
+				symbols.replace(",'",", '");
+				symbols.replace("',","' ,");
+				symbols.replace(":'",": '");
+				symbols.replace("':","' :");
 				symbols.replace(" '"," ' ");
 				symbols.replace("' "," ' ");
+				symbols.replace("   "," ");
 				symbols.replace("  "," ");
+				
 				List<String> lineSymbols = symbols.toSymbolsPunctuated();
 				for (String symbol: lineSymbols) {
 					List<String> urls = symbolUrls.get(symbol);

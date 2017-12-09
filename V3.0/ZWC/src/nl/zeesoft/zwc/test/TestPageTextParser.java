@@ -50,7 +50,7 @@ public class TestPageTextParser extends TestObject {
 			PageTextParser parser = new PageTextParser(page);
 			
 			ZStringSymbolParser text = parser.getText();
-			assertEqual(text.length(),2958,"Text length does not match expectation");
+			assertEqual(text.length(),3124,"Text length does not match expectation");
 			System.out.println(text.substring(0,150));
 		}
 	}
