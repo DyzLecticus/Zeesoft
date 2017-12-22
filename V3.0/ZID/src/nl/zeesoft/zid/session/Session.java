@@ -19,6 +19,7 @@ public class Session {
 	private	ZDate							start							= new ZDate();
 	private	ZDate							lastActivity					= new ZDate();
 	private	ZDate							end								= null;
+	private	String							externalId						= "";
 
 	private ZStringSymbolParser				input							= new ZStringSymbolParser();
 	private ZStringSymbolParser				output							= new ZStringSymbolParser();
@@ -59,6 +60,14 @@ public class Session {
 
 	public void setEnd(ZDate end) {
 		this.end = end;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 	
 	public ZStringSymbolParser getInput() {
@@ -151,16 +160,6 @@ public class Session {
 			dialogVariables.put(dv.getName(),"");
 		}
 	}
-
-	/*
-	public DialogVariable getDialogVariable() {
-		DialogVariable r = null;
-		if (dialog!=null && promptForDialogVariable.length()>0) {
-			r = dialog.getVariable(promptForDialogVariable);
-		}
-		return r;
-	}
-	*/
 	
 	public String translateSymbolToVariableValue(String symbol) {
 		if (symbol.startsWith("{") && symbol.endsWith("}") && symbol.length()>2) {

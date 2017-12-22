@@ -38,6 +38,19 @@ public class SessionManager extends Locker {
 		unlockMe(this);
 		return r;
 	}
+
+	public Session getSession(String externalId) {
+		lockMe(this);
+		Session r = null;
+		for (Entry<Long,Session> entry: sessions.entrySet()) {
+			if (entry.getValue().getExternalId().equals(externalId)) {
+				r = entry.getValue();
+				break;
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
 	
 	public Session openSession() {
 		lockMe(this);
