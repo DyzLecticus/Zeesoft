@@ -62,5 +62,10 @@ public class TestDialogQnATsv extends TestObject {
 			assertEqual(d.getVariables().get(0).getExamples().size(),10,"Number of variable examples does not match expectation");
 		}
 		System.out.println(tsv);
+		// Test split dialogs
+		List<Dialog> split = io.fromQnATsv(tsv,Language.ENG,HandshakeDialogController.class.getName(),true);
+		assertEqual(d.getVariables().size(),4,"Number of dialogs does not match expectation");
+		tsv = io.toQnATsv(split);
+		assertEqual(tsv.length(),1678,"TSV length does not match expectation");
 	}
 }

@@ -1,5 +1,6 @@
 package nl.zeesoft.zid.dialog.io;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -26,6 +27,7 @@ public class DialogQnATsv {
 			r.append(example.getInput());
 			r.append("\t");
 			r.append(example.getOutput());
+			r.append("\t");
 			r.append("\n");
 		}
 		for (DialogVariable variable: dialog.getVariables()) {
@@ -52,7 +54,7 @@ public class DialogQnATsv {
 	}
 
 	public Dialog fromQnATsv(ZStringBuilder tsv,String name, String languageCode,String controllerClassName) {
-		Dialog r = new Dialog("QnA",languageCode,controllerClassName);
+		Dialog r = new Dialog(name,languageCode,controllerClassName);
 		int l = 0;
 		List<ZStringBuilder> lines = tsv.split("\n");
 		for (ZStringBuilder line: lines) {
@@ -83,5 +85,67 @@ public class DialogQnATsv {
 		}
 		return r;
 	}
-	
+
+	public ZStringBuilder toQnATsv(List<Dialog> dialogs) {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("Question");
+		r.append("\t");
+		r.append("Answer");
+		r.append("\t");
+		r.append("Variable");
+		r.append("\n");
+		for (Dialog dialog: dialogs) {
+			for (DialogExample example: dialog.getExamples()) {
+				r.append(example.getInput());
+				r.append("\t");
+				r.append(example.getOutput());
+				r.append("\t");
+				r.append(dialog.getName());
+				r.append("\n");
+			}
+		}
+		return r;
+	}
+
+	public List<Dialog> fromQnATsv(ZStringBuilder tsv,String languageCode,String controllerClassName,boolean split) {
+		return fromQnATsv(tsv,"QnA",languageCode,controllerClassName,split);
+	}
+		
+	public List<Dialog> fromQnATsv(ZStringBuilder tsv,String name,String languageCode,String controllerClassName,boolean split) {
+		List<Dialog> r = new ArrayList<Dialog>();
+		int l = 0;
+		List<ZStringBuilder> lines = tsv.split("\n");
+		for (ZStringBuilder line: lines) {
+			if (l>1) {
+				List<ZStringBuilder> cells = line.split("\t");
+				if (cells.size()>=2) {
+					String n = "";
+					String i = cells.get(0).toString();
+					String o = cells.get(1).toString();
+					if (cells.size()>2) {
+						n = cells.get(2).toString();
+					} else {
+						n = name;
+					}
+					if (i.length()>0 && o.length()>0) {
+						Dialog d = null;
+						for (Dialog dia: r) {
+							if (dia.getName().equals(n)) {
+								d = dia;
+								break;
+							}
+						}
+						if (d==null) {
+							d = new Dialog(n,languageCode,controllerClassName);
+							r.add(d);
+						}
+						d.addExample(i,o);
+					}
+				}
+			}
+			l++;
+		}
+		return r;
+	}
+
 }

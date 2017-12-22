@@ -121,11 +121,14 @@ public class CrawlConverter extends CrawlAnalyzer {
 		output.append("Variable");
 		output.append("\n");
 		for (Entry<String,String> entry: qna.entrySet()) {
+			String variable = qnaV.get(entry.getKey());
 			output.append(entry.getKey());
 			output.append("\t");
 			output.append(entry.getValue());
 			output.append("\t");
-			output.append(qnaV.get(entry.getKey()));
+			if (variable!=null) {
+				output.append(variable);
+			}
 			output.append("\n");
 		}
 		
