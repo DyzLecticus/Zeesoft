@@ -11,7 +11,7 @@ The demo will output a tab separated list of crawled URLs and the text that is f
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZWC/releases/zwc-0.9.0.zip) to download the latest ZWC release (version 0.9.0).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZWC/releases/zwc-0.9.1.zip) to download the latest ZWC release (version 0.9.1).  
 All ZWC releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZWC/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -197,11 +197,11 @@ http://www.w3.org/TR/html401/index/list.html
 Test results
 ------------
 All 5 tests have been executed successfully (7 assertions).  
-Total test duration: 11309 ms (total sleep duration: 9000 ms).  
+Total test duration: 12634 ms (total sleep duration: 10000 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zwc.test.TestPageReader: 874 Kb / 0 Mb
  * nl.zeesoft.zwc.test.TestPageParser: 773 Kb / 0 Mb
- * nl.zeesoft.zwc.test.TestPageTextParser: 787 Kb / 0 Mb
- * nl.zeesoft.zwc.test.TestRobotsParser: 786 Kb / 0 Mb
- * nl.zeesoft.zwc.test.TestCrawler: 768 Kb / 0 Mb
+ * nl.zeesoft.zwc.test.TestPageTextParser: 788 Kb / 0 Mb
+ * nl.zeesoft.zwc.test.TestRobotsParser: 787 Kb / 0 Mb
+ * nl.zeesoft.zwc.test.TestCrawler: 767 Kb / 0 Mb
