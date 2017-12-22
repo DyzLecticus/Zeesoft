@@ -84,6 +84,7 @@ public class PageTextParser extends PageParser {
 				line.replace("ç","&#231;");
 				line.replace("è","&#232;");
 				line.replace("é","&#233;");
+				line.replace("ê","&#234;");
 				line.replace("ë","&#235;");
 				line.replace("ï","&#239;");
 				line.replace("ó","&#243;");
@@ -137,6 +138,7 @@ public class PageTextParser extends PageParser {
 		replacements.put("&#231;","ç");
 		replacements.put("&#232;","è");
 		replacements.put("&#233;","é");
+		replacements.put("&#234;","ê");
 		replacements.put("&#235;","ë");
 		replacements.put("&#239;","ï");
 		replacements.put("&#243;","ó");

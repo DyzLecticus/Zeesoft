@@ -7,10 +7,10 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
 import nl.zeesoft.zwc.Crawl;
-import nl.zeesoft.zwc.CrawlAnalyzer;
+import nl.zeesoft.zwc.output.CrawlAnalyzer;
 
 /**
- * Documents and tests the ZSC.
+ * Documents and tests the ZWC.
  */
 public class ZWC extends LibraryObject {
 	public ZWC(Tester tester) {
