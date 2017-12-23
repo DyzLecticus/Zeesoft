@@ -2,6 +2,7 @@ package nl.zeesoft.zids;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,21 +17,30 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zid.dialog.Dialog;
+import nl.zeesoft.zid.session.SessionDialogHandler;
+import nl.zeesoft.zid.session.SessionManager;
+import nl.zeesoft.zids.dialog.Dialogs;
+import nl.zeesoft.zspr.pattern.PatternManager;
 
 /**
  * Servlet implementation class ZIDSServlet
  */
 @WebServlet("/ZIDSServlet")
 public class ZIDSServlet extends HttpServlet {
-	private static final long	serialVersionUID	= 1L;
+	private static final long		serialVersionUID	= 1L;
     
-	private String				installDir			= "";
-	private boolean				debug				= false;
+	private String					installDir			= "";
+	private boolean					debug				= false;
+	private String					key					= "";
 	
-	private Messenger			messenger			= null;
-	private WorkerUnion			union				= null;
+	private Messenger				messenger			= null;
+	private WorkerUnion				union				= null;
 	
-	private String				key					= "";
+	private PatternManager			patternManager		= null;
+	private Dialogs					dialogs				= null;
+	private SessionDialogHandler	dialogHandler		= null;
+	private SessionManager			sessionManager		= null;
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -43,21 +53,42 @@ public class ZIDSServlet extends HttpServlet {
 			debug = Boolean.parseBoolean(dbg);
 		}
 		
-		System.out.println("installDir: " + installDir);
 		initializeConfiguration();
+		System.out.println("installDir: " + installDir);
 		System.out.println("debug: " + debug);
 		System.out.println("key: " + key);
 		
+		// Messenger
 		ZDKFactory factory = new ZDKFactory();
 		messenger = factory.getMessenger();
-		if (debug) {
-			messenger.setPrintDebugMessages(debug);
-		}
+		messenger.setPrintDebugMessages(debug);
 		messenger.start();
+
+		// Union
 		union = factory.getWorkerUnion(messenger);
+
+		// Pattern manager
+		messenger.debug(this,"Initializing pattern manager ...");
+		patternManager = getNewPatternManager();
+		messenger.debug(this,"Initialized pattern manager");
 		
+		// Dialogs
 		messenger.debug(this,"Initializing dialogs ...");
+		dialogs = getNewDialogs();
+		for (Dialog dialog: dialogs.getDialogs()) {
+			messenger.debug(this,"- " + dialog.getName() + " " + dialog.getLanguage().getCode());
+		}
 		messenger.debug(this,"Initialized dialogs");
+		
+		// Dialog handler
+		messenger.debug(this,"Initializing dialog handler ...");
+		dialogHandler = getNewDialogHandler(dialogs.getDialogs(), patternManager);
+		messenger.debug(this,"Initialized dialog handler");
+
+		// Session manager
+		messenger.debug(this,"Initializing session manager ...");
+		sessionManager = getNewSessionManager();
+		messenger.debug(this,"Initialized session manager");
 	}
 
 	@Override
@@ -74,11 +105,52 @@ public class ZIDSServlet extends HttpServlet {
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
 		super.destroy();
 		messenger.stop();
 		union.stopWorkers();
 		messenger.whileWorking();
+	}
+
+	public String getInstallDir() {
+		return installDir;
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public Messenger getMessenger() {
+		return messenger;
+	}
+
+	public WorkerUnion getUnion() {
+		return union;
+	}
+
+	protected PatternManager getNewPatternManager() {
+		PatternManager manager = new PatternManager();
+		manager.initializePatterns();
+		return manager;
+	}
+
+	protected Dialogs getNewDialogs() {
+		Dialogs dialogs = new Dialogs();
+		dialogs.initialize(getInstallDir());
+		return dialogs;
+	}
+
+	protected SessionDialogHandler getNewDialogHandler(List<Dialog> dialogs, PatternManager patternManager) {
+		SessionDialogHandler handler = new SessionDialogHandler(getMessenger(),dialogs,patternManager);
+		handler.initialize();
+		return handler;
+	}
+
+	protected SessionManager getNewSessionManager() {
+		return new SessionManager(getMessenger());
 	}
 
 	private void initializeConfiguration() {
