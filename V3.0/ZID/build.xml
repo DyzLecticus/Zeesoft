@@ -10,7 +10,7 @@
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<!-- ZSC version -->
-	<property name="versionZSC" value="1.0.0"/>
+	<property name="versionZSC" value="1.0.1"/>
 	<property name="releasesZSC" location="../ZSC/releases"/>
 
 	<!-- ZSPR version -->
