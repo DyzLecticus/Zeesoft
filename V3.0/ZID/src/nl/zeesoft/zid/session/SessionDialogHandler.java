@@ -31,7 +31,6 @@ public class SessionDialogHandler extends Locker {
 	private List<Dialog>					dialogs							= null;
 	private PatternManager					patternManager					= null;
 
-	private Confabulator					contextConfabulator				= null;
 	private Confabulator					correctionConfabulator			= null;
 	private Confabulator					extensionConfabulator			= null;
 
@@ -61,8 +60,6 @@ public class SessionDialogHandler extends Locker {
 	 */
 	public void initialize(boolean updatePatternManager) {
 		lockMe(this);
-		contextConfabulator = new Confabulator(getMessenger());
-		contextConfabulator.setLog(true);
 		correctionConfabulator = new Confabulator(getMessenger());
 		correctionConfabulator.setLog(true);
 		extensionConfabulator = new Confabulator(getMessenger());
@@ -73,17 +70,9 @@ public class SessionDialogHandler extends Locker {
 			dialogContext.append(" ");
 			dialogContext.append(dialog.getLanguage().getCode());
 			for (DialogExample example: dialog.getExamples()) {
-				ZStringSymbolParser sequence = new ZStringSymbolParser();
-				sequence.append(example.getOutput());
-				sequence.append(" ");
-				sequence.append(example.getInput());
-				sequence.removeLineEndSymbols();
-				sequence.removePunctuationSymbols();
-				contextConfabulator.learnSequence(getSafeText(sequence),dialogContext);
-
 				correctionConfabulator.learnSequence(getSafeText(example.getInput()),dialogContext);
 
-				sequence = new ZStringSymbolParser();
+				ZStringSymbolParser sequence = new ZStringSymbolParser();
 				sequence.append(example.getInput());
 				sequence.append(" ");
 				sequence.append(END_INPUT);
@@ -128,14 +117,8 @@ public class SessionDialogHandler extends Locker {
 	public List<String> getAllSequenceSymbols() {
 		List<String> r = new ArrayList<String>();
 		lockMe(this);
-		contextConfabulator.confabulate(new ContextConfabulation());
 		correctionConfabulator.confabulate(new ContextConfabulation());
 		extensionConfabulator.confabulate(new ContextConfabulation());
-		for (String symbol: contextConfabulator.getAllSequenceSymbols()) {
-			if (!r.contains(symbol)) {
-				r.add(symbol);
-			}
-		}
 		for (String symbol: correctionConfabulator.getAllSequenceSymbols()) {
 			if (!r.contains(symbol)) {
 				r.add(symbol);
@@ -405,7 +388,7 @@ public class SessionDialogHandler extends Locker {
 		sequence.append(" .");
 		ContextConfabulation confab = new ContextConfabulation();
 		confab.setSequence(sequence);
-		contextConfabulator.confabulate(confab);
+		extensionConfabulator.confabulate(confab);
 		return confab.getOutput().toSymbols();
 	}
 

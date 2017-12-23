@@ -178,15 +178,17 @@ public class Dialog {
 	 */
 	public SessionDialogController getNewDialogController()  {
 		SessionDialogController r = null;
-		try {
-			Class<?> clas = Class.forName(controllerClassName);
-			r = (SessionDialogController) clas.newInstance();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		if (controllerClassName.length()>0) {
+			try {
+				Class<?> clas = Class.forName(controllerClassName);
+				r = (SessionDialogController) clas.newInstance();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
 		return r;
 	}
