@@ -96,7 +96,7 @@ public class ConfabulatorTrainer extends ConfabulatorObject {
 							lnk.setDistance(distance);
 							lnk.setSymbolTo(symbolTo);
 							lnk.setCount(2);
-							getLinksNoLock().add(lnk);
+							addLinkNoLock(lnk);
 						}
 					}
 				}
@@ -111,7 +111,7 @@ public class ConfabulatorTrainer extends ConfabulatorObject {
 			for (Link lnk: links) {
 				if (lnk.getCount()==1) {
 					lnk.setCount(0);
-					getLinksNoLock().remove(lnk);
+					removeLinkNoLock(lnk);
 				} else {
 					lnk.setCount((lnk.getCount() / 2));
 				}
@@ -123,10 +123,13 @@ public class ConfabulatorTrainer extends ConfabulatorObject {
 
 	private Link getLinkNoLock(String symbolFrom,String symbolContext,int distance,String symbolTo) {
 		Link r = null;
-		for (Link lnk: getLinksNoLock()) {
-			if (lnk.getSymbolFrom().equals(symbolFrom) && lnk.getSymbolContext().equals(symbolContext) && lnk.getDistance()==distance && lnk.getSymbolTo().equals(symbolTo)) {
-				r = lnk;
-				break;
+		List<Link> lnks = getLinksFromDistanceNoLock(symbolFrom,distance);
+		if (lnks!=null) {
+			for (Link lnk: lnks) {
+				if (lnk.getSymbolContext().equals(symbolContext) && lnk.getSymbolTo().equals(symbolTo)) {
+					r = lnk;
+					break;
+				}
 			}
 		}
 		return r;

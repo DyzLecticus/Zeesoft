@@ -2,6 +2,8 @@ package nl.zeesoft.zsc.confabulator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -12,9 +14,10 @@ import nl.zeesoft.zdk.thread.Locker;
  * Can be used for thread safe initialization of other confabulators.
  */
 public class ConfabulatorObject extends Locker {
-	private int					maxLinkDistance		= 8;
-	private int					maxLinkCount		= 1000;
-	private List<Link>			links				= new ArrayList<Link>();
+	private int								maxLinkDistance		= 8;
+	private int								maxLinkCount		= 1000;
+	private List<Link>						links				= new ArrayList<Link>();
+	private SortedMap<String,List<Link>>	linksFromDistance	= new TreeMap<String,List<Link>>();
 	
 	protected ConfabulatorObject(Messenger msgr) {
 		super(msgr);
@@ -42,8 +45,11 @@ public class ConfabulatorObject extends Locker {
 		this.maxLinkDistance = maxLinkDistance;
 		this.maxLinkCount = maxLinkCount;
 		this.links.clear();
+		this.linksFromDistance.clear();
 		if (links!=null) {
-			this.links = links;
+			for (Link link: links) {
+				addLinkNoLock(link);
+			}
 		}
 		unlockMe(this);
 	}
@@ -123,6 +129,7 @@ public class ConfabulatorObject extends Locker {
 	public final void clearLinks() {
 		lockMe(this);
 		links.clear();
+		linksFromDistance.clear();
 		unlockMe(this);
 	}
 	
@@ -134,7 +141,31 @@ public class ConfabulatorObject extends Locker {
 		return maxLinkCount;
 	}
 
+	protected final void addLinkNoLock(Link link) {
+		links.add(link);
+		List<Link> lnks = getLinksFromDistanceNoLock(link.getSymbolFrom(),link.getDistance());
+		if (lnks==null) {
+			String key = link.getSymbolFrom() + "[" + link.getDistance() + "]";
+			lnks = new ArrayList<Link>();
+			linksFromDistance.put(key,lnks);
+		}
+		lnks.add(link);
+	}
+
+	protected final void removeLinkNoLock(Link link) {
+		links.remove(link);
+		List<Link> lnks = getLinksFromDistanceNoLock(link.getSymbolFrom(),link.getDistance());
+		if (lnks!=null) {
+			lnks.remove(link);
+		}
+	}
+
 	protected final List<Link> getLinksNoLock() {
 		return links;
+	}
+
+	protected final List<Link> getLinksFromDistanceNoLock(String symbolFrom, int distance) {
+		String key = symbolFrom + "[" + distance + "]";
+		return linksFromDistance.get(key);
 	}
 }

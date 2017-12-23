@@ -278,7 +278,7 @@ public final class Confabulator extends ConfabulatorTrainer {
 		for (Link lnk: lnks) {
 			if (context) {
 				long level = modules.get(num).getSymbolLevel(lnk.getSymbolContext());
-				 modules.get(num).setSymbolLevel(lnk.getSymbolContext(),level + getAddLevelForLink(confab,lnk,true));
+				modules.get(num).setSymbolLevel(lnk.getSymbolContext(),level + getAddLevelForLink(confab,lnk,true));
 			} else if (forward) {
 				long level =  modules.get(num).getSymbolLevel(lnk.getSymbolTo());
 				modules.get(num).setSymbolLevel(lnk.getSymbolTo(),level + getAddLevelForLink(confab,lnk,false));
@@ -517,9 +517,12 @@ public final class Confabulator extends ConfabulatorTrainer {
 	
 	private List<Link> getLinksBySymbolFromDistanceToNoLock(String symbolFrom, int distance, String symbolTo) {
 		List<Link> r = new ArrayList<Link>();
-		for (Link lnk: getLinksNoLock()) {
-			if (lnk.getSymbolFrom().equals(symbolFrom) && lnk.getDistance()==distance && (symbolTo==null || symbolTo.length()==0 || lnk.getSymbolTo().equals(symbolTo)) && lnk.getCount()>1 && lnk.getSymbolContext().length()>0) {
-				r.add(lnk);
+		List<Link> lnks = this.getLinksFromDistanceNoLock(symbolFrom, distance);
+		if (lnks!=null) {
+			for (Link lnk: lnks) {
+				if ((symbolTo==null || symbolTo.length()==0 || lnk.getSymbolTo().equals(symbolTo)) && lnk.getCount()>1 && lnk.getSymbolContext().length()>0) {
+					r.add(lnk);
+				}
 			}
 		}
 		return r;
@@ -550,14 +553,28 @@ public final class Confabulator extends ConfabulatorTrainer {
 
 	private List<Link> getLinksBySymbolFromToDistanceNoLock(String symbolFrom, String symbolTo, int distance, List<String> context) {
 		List<Link> r = new ArrayList<Link>();
-		for (Link lnk: getLinksNoLock()) {
-			if (lnk.getDistance()==distance &&
-				lnk.getCount()>1 &&
-				(symbolFrom==null || symbolFrom.length()==0 || lnk.getSymbolFrom().equals(symbolFrom)) &&
-				(symbolTo==null || symbolTo.length()==0 || lnk.getSymbolTo().equals(symbolTo)) &&
-				(context==null || context.size()==0 || context.contains(lnk.getSymbolContext())) 
-				) {
-				r.add(lnk);
+		if (symbolFrom!=null && symbolFrom.length()>0) {
+			List<Link> lnks = this.getLinksFromDistanceNoLock(symbolFrom, distance);
+			if (lnks!=null) {
+				for (Link lnk: lnks) {
+					if (lnk.getCount()>1 &&
+						(symbolTo==null || symbolTo.length()==0 || lnk.getSymbolTo().equals(symbolTo)) &&
+						(context==null || context.size()==0 || context.contains(lnk.getSymbolContext())) 
+						) {
+						r.add(lnk);
+					}
+				}
+			}
+		} else {
+			for (Link lnk: getLinksNoLock()) {
+				if (lnk.getDistance()==distance &&
+					lnk.getCount()>1 &&
+					(symbolFrom==null || symbolFrom.length()==0 || lnk.getSymbolFrom().equals(symbolFrom)) &&
+					(symbolTo==null || symbolTo.length()==0 || lnk.getSymbolTo().equals(symbolTo)) &&
+					(context==null || context.size()==0 || context.contains(lnk.getSymbolContext())) 
+					) {
+					r.add(lnk);
+				}
 			}
 		}
 		return r;
