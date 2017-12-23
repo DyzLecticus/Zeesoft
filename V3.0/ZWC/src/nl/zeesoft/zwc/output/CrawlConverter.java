@@ -55,8 +55,8 @@ public class CrawlConverter extends CrawlAnalyzer {
 				String[] urlElem = url.split("/");
 				if (urlElem.length>3) {
 					int max = urlElem.length;
-					if (max > 7) {
-						max = 7;
+					if (max > 6) {
+						max = 6;
 					}
 					for (int i = 3; i< max; i++) {
 						if (urlElem[i].length()>0) {
@@ -96,7 +96,10 @@ public class CrawlConverter extends CrawlAnalyzer {
 						if (question.length()>0) {
 							String qnaAnswer = qna.get(question);
 							if (qnaAnswer!=null && qnaAnswer.length()>0 && !qnaAnswer.contains(answer)) {
-								answer = qnaAnswer + " " + answer;
+								String[] spl = qnaAnswer.split("\\. ");
+								if (spl.length<3) {
+									answer = qnaAnswer + " " + answer;
+								}
 							}
 							qna.put(question,answer);
 							qnaV.put(question,variable);
