@@ -20,11 +20,11 @@ public class Dialogs {
 		String fileName = installDir + "dialogs.json";
 		File file = new File(fileName);
 		if (file.exists()) {
-			DialogJson io = new DialogJson();
 			JsFile json = new JsFile();
 			err = json.fromFile(fileName);
-			if (err.length()==0) {
-				for (JsElem dElem: json.rootElement.children) {
+			if (err.length()==0 && json.rootElement.children.size()==1) {
+				DialogJson io = new DialogJson();
+				for (JsElem dElem: json.rootElement.children.get(0).children) {
 					JsFile dJson = new JsFile();
 					dJson.rootElement = dElem;
 					Dialog dialog = io.fromJson(dJson);
@@ -35,14 +35,30 @@ public class Dialogs {
 			}
 		}
 		if (err.length()==0) {
-			err = fromQnATsv(installDir,Language.ENG,"");
-		}
-		if (err.length()==0) {
-			err = fromQnATsv(installDir,Language.NLD,"");
+			for (Language language: Language.getLanguages()) {
+				err = fromQnATsv(installDir,language.getCode(),"");
+				if (err.length()>0) {
+					break;
+				}
+			}
 		}
 		return err;
 	}
-	
+
+	public JsFile getDialogsJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		JsElem dialogsElem = new JsElem("dialogs",true);
+		json.rootElement.children.add(dialogsElem);
+		DialogJson io = new DialogJson();
+		for (Dialog dialog: dialogs) {
+			JsFile dj = io.toJson(dialog);
+			dj.rootElement.name = null;
+			dialogsElem.children.add(dj.rootElement);
+		}
+		return json;
+	}
+
 	public List<Dialog> getDialogs() {
 		return dialogs;
 	}
@@ -52,10 +68,10 @@ public class Dialogs {
 		String fileName = installDir + "dialogs-" + languageCode + ".txt";
 		File file = new File(fileName);
 		if (file.exists()) {
-			DialogQnATsv io = new DialogQnATsv();
 			ZStringBuilder tsv = new ZStringBuilder();
 			err = tsv.fromFile(fileName);
 			if (err.length()==0) {
+				DialogQnATsv io = new DialogQnATsv();
 				List<Dialog> addDialogs = io.fromQnATsv(tsv,languageCode,controllerClassName,true);
 				if (addDialogs.size()>0) {
 					List<Dialog> testDialogs = new ArrayList<Dialog>(dialogs);

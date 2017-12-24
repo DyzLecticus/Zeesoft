@@ -2,6 +2,7 @@ package nl.zeesoft.zids;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -21,6 +22,8 @@ import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.session.SessionDialogHandler;
 import nl.zeesoft.zid.session.SessionManager;
 import nl.zeesoft.zids.dialog.Dialogs;
+import nl.zeesoft.zids.handler.DialogHandler;
+import nl.zeesoft.zids.handler.HandlerObject;
 import nl.zeesoft.zspr.pattern.PatternManager;
 
 /**
@@ -41,6 +44,8 @@ public class ZIDSServlet extends HttpServlet {
 	private Dialogs					dialogs				= null;
 	private SessionDialogHandler	dialogHandler		= null;
 	private SessionManager			sessionManager		= null;
+	
+	private List<HandlerObject>		handlers			= null;
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -82,27 +87,39 @@ public class ZIDSServlet extends HttpServlet {
 		
 		// Dialog handler
 		messenger.debug(this,"Initializing dialog handler ...");
-		dialogHandler = getNewDialogHandler(dialogs.getDialogs(), patternManager);
+		dialogHandler = getNewDialogHandler();
 		messenger.debug(this,"Initialized dialog handler");
 
 		// Session manager
 		messenger.debug(this,"Initializing session manager ...");
 		sessionManager = getNewSessionManager();
 		messenger.debug(this,"Initialized session manager");
+		
+		handlers = getNewHandlers();
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		HandlerObject handler = getHandlerForRequest(request);
+		if (handler!=null) {
+			handler.doGet(request, response);
+		} else {
+			// TODO Auto-generated method stub
+			response.getWriter().append("Served at: ").append(request.getContextPath());
+		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		HandlerObject handler = getHandlerForRequest(request);
+		if (handler!=null) {
+			handler.doPost(request, response);
+		} else {
+			// TODO Auto-generated method stub
+			doGet(request, response);
+		}
 	}
-
+	
 	@Override
 	public void destroy() {
 		super.destroy();
@@ -131,6 +148,22 @@ public class ZIDSServlet extends HttpServlet {
 		return union;
 	}
 
+	public PatternManager getPatternManager() {
+		return patternManager;
+	}
+	
+	public Dialogs getDialogs() {
+		return dialogs;
+	}
+
+	public SessionDialogHandler getDialogHandler() {
+		return dialogHandler;
+	}
+
+	public SessionManager getSessionManager() {
+		return sessionManager;
+	}
+
 	protected PatternManager getNewPatternManager() {
 		PatternManager manager = new PatternManager();
 		manager.initializePatterns();
@@ -139,12 +172,15 @@ public class ZIDSServlet extends HttpServlet {
 
 	protected Dialogs getNewDialogs() {
 		Dialogs dialogs = new Dialogs();
-		dialogs.initialize(getInstallDir());
+		String err = dialogs.initialize(getInstallDir());
+		if (err.length()>0) {
+			getMessenger().error(this,"Error while importing dialogs: " + err);
+		}
 		return dialogs;
 	}
 
-	protected SessionDialogHandler getNewDialogHandler(List<Dialog> dialogs, PatternManager patternManager) {
-		SessionDialogHandler handler = new SessionDialogHandler(getMessenger(),dialogs,patternManager);
+	protected SessionDialogHandler getNewDialogHandler() {
+		SessionDialogHandler handler = new SessionDialogHandler(getMessenger(),getDialogs().getDialogs(),getPatternManager());
 		handler.initialize();
 		return handler;
 	}
@@ -153,6 +189,12 @@ public class ZIDSServlet extends HttpServlet {
 		return new SessionManager(getMessenger());
 	}
 
+	protected List<HandlerObject> getNewHandlers() {
+		List<HandlerObject> handlers = new ArrayList<HandlerObject>();
+		handlers.add(new DialogHandler(getMessenger(),getDialogs()));
+		return handlers;
+	}
+	
 	private void initializeConfiguration() {
 		String fileName = installDir + "config.json";
 		File config = new File(fileName);
@@ -171,5 +213,16 @@ public class ZIDSServlet extends HttpServlet {
 			encode.append(file.rootElement.getChildByName("key").value.toString());
 			key = encode.decompress().toString();
 		}
+	}
+	
+	private HandlerObject getHandlerForRequest(HttpServletRequest request) {
+		HandlerObject r = null;
+		for (HandlerObject handler: handlers) {
+			if (request.getServletPath().equals(handler.getPath())) {
+				r = handler; 
+				break;
+			}
+		}
+		return r;
 	}
 }
