@@ -34,10 +34,13 @@ public class Language {
 		return r;
 	}
 	
-	public static void clearLanguages() {
-		languages.clear();
+	public static List<Language> getLanguages() {
+		if (languages.size()==0) {
+			initializeDefaultConfiguration();
+		}
+		return new ArrayList<Language>(languages);
 	}
-
+	
 	public static Language addLanguage(String code,String name) {
 		Language r = getLanguage(code);
 		if (r==null) {
@@ -54,7 +57,7 @@ public class Language {
 		return name;
 	}
 	
-	public static void initializeDefaultConfiguration() {
+	private static void initializeDefaultConfiguration() {
 		addNewLanguage(ENG,"English");
 		addNewLanguage(NLD,"Nederlands");
 	}

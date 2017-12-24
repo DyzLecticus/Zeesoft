@@ -5,7 +5,7 @@ It provides support for sequential symbolic pattern recognition.
 This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/zspr-1.0.0.zip) to download the latest ZSPR release (version 1.0.0).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/zspr-1.0.1.zip) to download the latest ZSPR release (version 1.0.1).  
 All ZSPR releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSPR/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -49,7 +49,7 @@ Class references;
 The output of this test shows some test strings and their corresponding pattern values.  
 Please note how some test strings trigger multiple patterns that translate to different value types.  
 ~~~~
-Initializing pattern manager took 378 ms
+Initializing pattern manager took 417 ms
 
 ==> Test English order
 first = ORDER_ENG:1 (1)
@@ -116,7 +116,7 @@ the fifth of january = DATE_ENG:2017-01-05
 the 12th of august = DATE_ENG:2017-08-12
 october 2nd = DATE_ENG:2017-10-02
 now = DATE_ENG:2017-01-01 (1)
-now = TIME_ENG:19:00:00 (2)
+now = TIME_ENG:14:05:00 (2)
 now = ALPHABETIC_UNI:now (3)
 today = DATE_ENG:2017-01-01 (1)
 today = ALPHABETIC_UNI:today (2)
@@ -187,7 +187,7 @@ String: Ik wil een kamer boeken voor vijf personen op dertig december tweeduizen
 Test results
 ------------
 All 2 tests have been executed successfully (112 assertions).  
-Total test duration: 889 ms (total sleep duration: 0 ms).  
+Total test duration: 988 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zspr.test.TestPatternManager: 35647 Kb / 34 Mb
