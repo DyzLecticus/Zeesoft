@@ -49,7 +49,7 @@ public class TestJson extends TestObject {
 		testJson.append("        \"qwerObjectArray\": [{asdfasdf:\"asdf\",\"qwer\":[\"qwerqwer\",\"qwerqwerqwer\",\"qwerqwerqwerqwer\"]},{asdf:\"asdfasdf\"}]\n");
 		testJson.append("    }\n");
 		testJson.append("}\n");
-		System.out.println("input:");
+		System.out.println("Input:");
 		System.out.println(testJson);
 		JsFile json = new JsFile();
 		json.fromStringBuilder(testJson);
@@ -58,6 +58,9 @@ public class TestJson extends TestObject {
 		assertEqual(json.rootElement.children.size(),3,"Number of root element children does not match expectation");
 		if (json.rootElement.children.size()==3) {
 			assertEqual(json.rootElement.children.get(2).children.size(),6,"Number of third root element children does not match expectation");
+			if (json.rootElement.children.get(2).children.size()==6) {
+				assertEqual(json.rootElement.children.get(2).children.get(5).children.size(),2,"Number of object array element children does not match expectation");
+			}
 		}
 	}
 }

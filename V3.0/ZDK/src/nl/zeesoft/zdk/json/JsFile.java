@@ -35,6 +35,8 @@ public class JsFile {
 	
 	public void fromStringBuilder(ZStringBuilder str) {
 		ZStringBuilder work = new ZStringBuilder(str);
+		work.replace("\r","");
+		work.replace("\t","  ");
 		if (rootElement!=null) {
 			rootElement.children.clear();
 			rootElement = null;

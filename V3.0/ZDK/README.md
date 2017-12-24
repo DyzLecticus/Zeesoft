@@ -11,7 +11,7 @@ It provides support for;
  * Self documenting and testing libraries  
 
 **Release downloads**  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-1.0.0.zip) to download the latest ZDK release (version 1.0.0).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/zdk-1.0.1.zip) to download the latest ZDK release (version 1.0.1).  
 All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/).  
 *All jar files in the release include source code and build scripts.*  
 
@@ -39,11 +39,11 @@ Class references;
 **Test output**  
 The output of this test shows 100 randomly generated integers within the range 0 - 9.
 ~~~~
-4 8 0 8 5 3 2 2 9 1 1 0 9 3 0 6 3 7 1 6
-2 0 0 4 6 5 2 6 3 7 0 9 6 3 1 1 0 4 6 2
-4 0 0 3 1 5 8 3 3 8 8 3 2 3 2 3 1 9 8 8
-3 0 9 0 5 4 5 4 0 2 6 7 1 3 6 1 9 2 1 2
-5 1 6 1 2 3 5 0 0 9 8 4 7 9 4 9 3 8 6 8
+9 1 7 0 0 2 5 8 2 4 4 5 0 4 6 6 1 7 4 1
+8 1 0 3 5 6 0 7 8 1 3 1 1 2 8 2 2 5 0 0
+6 0 8 2 1 5 2 5 2 1 6 4 5 2 7 6 3 1 1 9
+8 2 9 1 8 9 4 4 9 0 3 2 4 9 6 8 6 9 2 1
+9 4 8 5 4 6 8 2 5 5 1 5 3 9 2 4 3 1 2 5
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
@@ -72,9 +72,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 9281558252473472131224466908433989371202208788499135594626898468
+Key: 9684577085443685401491529831284772330103724161964241374343529641
 Input text: Hello, my name is Dyz Lecticus. How are you feeling today?
-Encoded text: QIkDyHtCAGKFsGeDwFZCVFJHWEMFCGQDoCwC~BcDnDyDnEjGsGoIRCAIIFYEoDGI:HxIiE:F2CUDlBMC5DYCaIaGYIFIZFSJfIlCUEpEXG~IGFUGyDRG0
+Encoded text: mUASWUXRVSpSIR8OeUuQSRCQjQASQT#RCQpMYOrRGUtN2RCPRVXUNQjOLP5UaQeStSiPaQ~OnNlOBN0PeTmPMRxN8SQPKUpSEQlPzQlNtQdTEQUQZRuP0
 Decoded text: Hello, my name is Dyz Lecticus. How are you feeling today?
 ~~~~
 
@@ -120,7 +120,7 @@ Class references;
 **Test output**  
 The output of this test shows the string input and the resulting JSON structure.  
 ~~~~
-input:
+Input:
 {
     "qwerValue" : "qwerqwer",
     "qwerObject1" : {"qwerName":"name1" ,"qwerNumber": 1234},
@@ -218,29 +218,29 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2017-07-16 13:02:46:695 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2017-07-16 13:02:46:995 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2017-07-16 13:02:46:995 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+2017-12-24 14:03:20:010 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2017-12-24 14:03:20:310 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2017-12-24 14:03:20:310 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
 java.lang.NumberFormatException: For input string: "A"
-	at java.lang.NumberFormatException.forInputString(Unknown Source)
-	at java.lang.Integer.parseInt(Unknown Source)
-	at java.lang.Integer.parseInt(Unknown Source)
+	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
+	at java.lang.Integer.parseInt(Integer.java:580)
+	at java.lang.Integer.parseInt(Integer.java:615)
 	at nl.zeesoft.zdk.test.impl.TestMessenger.test(TestMessenger.java:83)
-	at nl.zeesoft.zdk.test.Tester.test(Tester.java:67)
-	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:37)
+	at nl.zeesoft.zdk.test.Tester.test(Tester.java:69)
+	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:39)
 	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:38)
 
-2017-07-16 13:02:47:308 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2017-12-24 14:03:20:621 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
-All 5 tests have been executed successfully (110 assertions).  
-Total test duration: 798 ms (total sleep duration: 600 ms).  
+All 5 tests have been executed successfully (111 assertions).  
+Total test duration: 736 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 230 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 267 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 276 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestJson: 207 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 274 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 403 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 383 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 372 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestJson: 379 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 643 Kb / 0 Mb

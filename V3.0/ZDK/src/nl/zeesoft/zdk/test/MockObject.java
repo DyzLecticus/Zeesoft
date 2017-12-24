@@ -15,6 +15,8 @@ public abstract class MockObject {
 	
 	/**
 	 * Initialize and return the mock object.
+	 * 
+	 * @return The mock object
 	 */
 	protected abstract Object initialzeMock();
 

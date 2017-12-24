@@ -24,6 +24,8 @@ public final class Tester {
 
 	/**
 	 * Use this method to add (or remove) tests.
+	 * 
+	 * @return The list of tests
 	 */
 	public List<TestObject> getTests() {
 		return tests;

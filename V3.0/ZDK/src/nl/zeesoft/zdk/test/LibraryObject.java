@@ -26,6 +26,8 @@ public abstract class LibraryObject {
 	 * Call this method from the main method.
 	 * 
 	 * Make sure to pass the version number as the first argument.
+	 * 
+	 * @param args The arguments
 	 */
 	public void describeAndTest(String[] args) {
 		if (args!=null && args.length>=1 && args[0]!=null && args[0].length()>0) {

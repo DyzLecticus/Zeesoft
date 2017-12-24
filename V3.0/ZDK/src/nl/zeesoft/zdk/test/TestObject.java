@@ -27,6 +27,8 @@ public abstract class TestObject {
 	 * Execute the test code and print the results to System.out.
 	 * 
 	 * Use the assertEqual methods to check variables in order to ensure assertion statistics and failures are fed back to the Tester.
+	 * 
+	 * @param args The arguments
 	 */
 	protected abstract void test(String[] args);
 	
