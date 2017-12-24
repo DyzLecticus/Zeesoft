@@ -6,7 +6,7 @@
 	<property name="version" value="1.0.1"/>
 	
 	<!-- ZDK version -->
-	<property name="versionZDK" value="1.0.0"/>
+	<property name="versionZDK" value="1.0.1"/>
 	<property name="releasesZDK" location="../ZDK/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
