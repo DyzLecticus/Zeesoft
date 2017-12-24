@@ -19,20 +19,18 @@ public class DialogJson {
 		dElem.children.add(new JsElem("name",dialog.getName(),true));
 		dElem.children.add(new JsElem("languageCode",dialog.getLanguage().getCode(),true));
 		dElem.children.add(new JsElem("controllerClassName",dialog.getControllerClassName(),true));
-
 		JsElem exElem = new JsElem("examples",true);
 		dElem.children.add(exElem);
 		for (DialogExample example: dialog.getExamples()) {
-			JsElem oElem = new JsElem("example");
+			JsElem oElem = new JsElem();
 			exElem.children.add(oElem);
 			oElem.children.add(new JsElem("input",example.getInput(),true));
-			oElem.children.add(new JsElem("output",example.getInput(),true));
+			oElem.children.add(new JsElem("output",example.getOutput(),true));
 		}
-		
 		JsElem vElem = new JsElem("variables",true);
 		dElem.children.add(vElem);
 		for (DialogVariable variable: dialog.getVariables()) {
-			JsElem oElem = new JsElem("variable");
+			JsElem oElem = new JsElem();
 			vElem.children.add(oElem);
 			oElem.children.add(new JsElem("name",variable.getName(),true));
 			oElem.children.add(new JsElem("type",variable.getType(),true));
@@ -40,7 +38,7 @@ public class DialogJson {
 			JsElem vexElem = new JsElem("examples",true);
 			oElem.children.add(vexElem);
 			for (DialogVariableExample example: variable.getExamples()) {
-				JsElem obElem = new JsElem("example");
+				JsElem obElem = new JsElem();
 				vexElem.children.add(obElem);
 				obElem.children.add(new JsElem("question",example.getQuestion(),true));
 				obElem.children.add(new JsElem("answer",example.getAnswer(),true));
@@ -70,7 +68,7 @@ public class DialogJson {
 					vElem = cElem;
 				}
 			}
-			if (name.length()>0 && languageCode.length()>0 && controllerClassName.length()>0) {
+			if (name.length()>0 && languageCode.length()>0) {
 				dialog = new Dialog(name,languageCode,controllerClassName);
 				if (exElem!=null) {
 					for (JsElem oElem: exElem.children) {		
