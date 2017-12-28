@@ -22,8 +22,13 @@ import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.session.SessionDialogHandler;
 import nl.zeesoft.zid.session.SessionManager;
 import nl.zeesoft.zids.dialog.Dialogs;
+import nl.zeesoft.zids.handler.ChatHandler;
 import nl.zeesoft.zids.handler.DialogHandler;
 import nl.zeesoft.zids.handler.HandlerObject;
+import nl.zeesoft.zids.handler.IndexHandler;
+import nl.zeesoft.zids.handler.SessionHandler;
+import nl.zeesoft.zids.handler.ZIDSJavaScriptHandler;
+import nl.zeesoft.zids.handler.ZIDSStyleSheetHandler;
 import nl.zeesoft.zspr.pattern.PatternManager;
 
 /**
@@ -191,7 +196,12 @@ public class ZIDSServlet extends HttpServlet {
 
 	protected List<HandlerObject> getNewHandlers() {
 		List<HandlerObject> handlers = new ArrayList<HandlerObject>();
+		handlers.add(new IndexHandler(getMessenger()));
 		handlers.add(new DialogHandler(getMessenger(),getDialogs()));
+		handlers.add(new ChatHandler(getMessenger()));
+		handlers.add(new ZIDSJavaScriptHandler(getMessenger()));
+		handlers.add(new ZIDSStyleSheetHandler(getMessenger()));
+		handlers.add(new SessionHandler(getMessenger(),getKey(),getSessionManager(),getDialogHandler()));
 		return handlers;
 	}
 	
@@ -216,9 +226,13 @@ public class ZIDSServlet extends HttpServlet {
 	}
 	
 	private HandlerObject getHandlerForRequest(HttpServletRequest request) {
+		String path = request.getServletPath();
+		if (path.equals("/")) {
+			path = "/index.html";
+		}
 		HandlerObject r = null;
 		for (HandlerObject handler: handlers) {
-			if (request.getServletPath().equals(handler.getPath())) {
+			if (path.equals(handler.getPath())) {
 				r = handler; 
 				break;
 			}
