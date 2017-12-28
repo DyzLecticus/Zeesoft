@@ -34,6 +34,8 @@ public class SessionDialogHandler extends Locker {
 	private Confabulator					correctionConfabulator			= null;
 	private Confabulator					extensionConfabulator			= null;
 
+	private int								maxOutputSymbols				= 32;
+	
 	public SessionDialogHandler(List<Dialog> dialogs, PatternManager patternManager) {
 		super(null);
 		this.dialogs = dialogs;
@@ -44,6 +46,14 @@ public class SessionDialogHandler extends Locker {
 		super(msgr);
 		this.dialogs = dialogs;
 		this.patternManager = patternManager;
+	}
+
+	public int getMaxOutputSymbols() {
+		return maxOutputSymbols;
+	}
+
+	public void setMaxOutputSymbols(int maxOutputSymbols) {
+		this.maxOutputSymbols = maxOutputSymbols;
 	}
 
 	/**
@@ -148,7 +158,17 @@ public class SessionDialogHandler extends Locker {
 		session.setOutput(new ZStringSymbolParser());
 
 		// Correct input
-		ZStringSymbolParser input = getSafeText(session.getInput());
+		ZStringSymbolParser input = new ZStringSymbolParser(session.getInput().trim());
+		if (!ZStringSymbolParser.endsWithLineEndSymbol(input)) {
+			List<String> extensionSymbols = confabulateExtension(input,"",1);
+			for (String symbol: extensionSymbols) {
+				if (ZStringSymbolParser.isLineEndSymbol(symbol)) {
+					input.append(symbol);
+					break;
+				}
+			}
+		}
+		input = getSafeText(input);
 		session.addLogLine("<<< " + input);
 
 		// Determine context
@@ -204,7 +224,11 @@ public class SessionDialogHandler extends Locker {
 		
 		if (context.length()>0) {
 			if (changedDialog) {
-				session.addLogLine("--- Selected dialog: " + session.getDialog().getName() + " (controller: " + session.getDialog().getControllerClassName() + ")");
+				if (session.getDialog().getControllerClassName().length()>0) {
+					session.addLogLine("--- Selected dialog: " + session.getDialog().getName() + " (controller: " + session.getDialog().getControllerClassName() + ")");
+				} else {
+					session.addLogLine("--- Selected dialog: " + session.getDialog().getName());
+				}
 			} else {
 				session.addLogLine("--- Continuing dialog: " + session.getDialog().getName());
 			}
@@ -330,7 +354,7 @@ public class SessionDialogHandler extends Locker {
 				input.append(" ");
 			}
 			input.append(END_INPUT);
-			List<String> extensionSymbols = confabulateExtension(input,context);
+			List<String> extensionSymbols = confabulateExtension(input,context,maxOutputSymbols);
 			for (String symbol: extensionSymbols) {
 				if (symbol.equals(END_INPUT)) {
 					session.setOutput(new ZStringSymbolParser());
@@ -401,11 +425,14 @@ public class SessionDialogHandler extends Locker {
 		correctionConfabulator.confabulate(confab);
 		return confab;
 	}
-
-	protected List<String> confabulateExtension(ZStringSymbolParser sequence,String context) {
+	
+	protected List<String> confabulateExtension(ZStringSymbolParser sequence,String context,int maxOutputSymbols) {
 		ExtensionConfabulation confab = new ExtensionConfabulation();
 		confab.setSequence(sequence);
 		confab.setForceMaxDepth(true);
+		if (maxOutputSymbols>0) {
+			confab.setMaxOutputSymbols(maxOutputSymbols);
+		}
 		if (context!=null && context.length()>0) {
 			confab.setContext(new ZStringSymbolParser(context));
 		}

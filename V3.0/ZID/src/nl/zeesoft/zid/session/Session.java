@@ -5,6 +5,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZDate;
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zid.dialog.Dialog;
 import nl.zeesoft.zid.dialog.DialogVariable;
@@ -24,7 +25,7 @@ public class Session {
 	private ZStringSymbolParser				input							= new ZStringSymbolParser();
 	private ZStringSymbolParser				output							= new ZStringSymbolParser();
 
-	private StringBuilder					log								= new StringBuilder();
+	private ZStringBuilder					log								= new ZStringBuilder();
 	private SortedMap<String,Object>		variables						= new TreeMap<String,Object>(); 
 
 	private Dialog							dialog							= null;
@@ -93,11 +94,11 @@ public class Session {
 		log.append("\n");
 	}
 	
-	public StringBuilder getLog() {
+	public ZStringBuilder getLog() {
 		return log;
 	}
 	
-	public void setLog(StringBuilder log) {
+	public void setLog(ZStringBuilder log) {
 		this.log = log;
 	}
 	
