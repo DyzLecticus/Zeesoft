@@ -18,6 +18,7 @@ public class ConfabulatorObject extends Locker {
 	private int								maxLinkCount		= 1000;
 	private List<Link>						links				= new ArrayList<Link>();
 	private SortedMap<String,List<Link>>	linksFromDistance	= new TreeMap<String,List<Link>>();
+	private SortedMap<String,List<Link>>	linksToDistance		= new TreeMap<String,List<Link>>();
 	
 	protected ConfabulatorObject(Messenger msgr) {
 		super(msgr);
@@ -46,6 +47,7 @@ public class ConfabulatorObject extends Locker {
 		this.maxLinkCount = maxLinkCount;
 		this.links.clear();
 		this.linksFromDistance.clear();
+		this.linksToDistance.clear();
 		if (links!=null) {
 			for (Link link: links) {
 				addLinkNoLock(link);
@@ -130,6 +132,7 @@ public class ConfabulatorObject extends Locker {
 		lockMe(this);
 		links.clear();
 		linksFromDistance.clear();
+		linksToDistance.clear();
 		unlockMe(this);
 	}
 	
@@ -150,11 +153,22 @@ public class ConfabulatorObject extends Locker {
 			linksFromDistance.put(key,lnks);
 		}
 		lnks.add(link);
+		lnks = getLinksToDistanceNoLock(link.getDistance(),link.getSymbolTo());
+		if (lnks==null) {
+			String key = "[" + link.getDistance() + "]" + link.getSymbolTo() ;
+			lnks = new ArrayList<Link>();
+			linksToDistance.put(key,lnks);
+		}
+		lnks.add(link);
 	}
 
 	protected final void removeLinkNoLock(Link link) {
 		links.remove(link);
 		List<Link> lnks = getLinksFromDistanceNoLock(link.getSymbolFrom(),link.getDistance());
+		if (lnks!=null) {
+			lnks.remove(link);
+		}
+		lnks = getLinksToDistanceNoLock(link.getDistance(),link.getSymbolTo());
 		if (lnks!=null) {
 			lnks.remove(link);
 		}
@@ -167,5 +181,10 @@ public class ConfabulatorObject extends Locker {
 	protected final List<Link> getLinksFromDistanceNoLock(String symbolFrom, int distance) {
 		String key = symbolFrom + "[" + distance + "]";
 		return linksFromDistance.get(key);
+	}
+
+	protected final List<Link> getLinksToDistanceNoLock(int distance, String symbolTo) {
+		String key = "[" + distance + "]" + symbolTo;
+		return linksToDistance.get(key);
 	}
 }

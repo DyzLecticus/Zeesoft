@@ -565,6 +565,18 @@ public final class Confabulator extends ConfabulatorTrainer {
 					}
 				}
 			}
+		} else if (symbolTo!=null && symbolTo.length()>0) {
+			List<Link> lnks = this.getLinksToDistanceNoLock(distance, symbolTo);
+			if (lnks!=null) {
+				for (Link lnk: lnks) {
+					if (lnk.getCount()>1 &&
+						(symbolFrom==null || symbolFrom.length()==0 || lnk.getSymbolFrom().equals(symbolFrom)) &&
+						(context==null || context.size()==0 || context.contains(lnk.getSymbolContext())) 
+						) {
+						r.add(lnk);
+					}
+				}
+			}
 		} else {
 			for (Link lnk: getLinksNoLock()) {
 				if (lnk.getDistance()==distance &&
