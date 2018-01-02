@@ -35,6 +35,7 @@ public class SessionDialogHandler extends Locker {
 	private Confabulator					extensionConfabulator			= null;
 
 	private int								maxOutputSymbols				= 32;
+	private boolean							forceMaxDepth					= true;
 	
 	public SessionDialogHandler(List<Dialog> dialogs, PatternManager patternManager) {
 		super(null);
@@ -56,15 +57,23 @@ public class SessionDialogHandler extends Locker {
 		this.maxOutputSymbols = maxOutputSymbols;
 	}
 
+	public boolean isForceMaxDepth() {
+		return forceMaxDepth;
+	}
+
+	public void setForceMaxDepth(boolean forceMaxDepth) {
+		this.forceMaxDepth = forceMaxDepth;
+	}
+
 	/**
-	 * Initializes the three confabulators and pattern manager.
+	 * Initializes the confabulators and pattern manager.
 	 */
 	public void initialize() {
 		initialize(true);
 	}
 
 	/**
-	 * Initializes the three confabulators and optionally the pattern manager.
+	 * Initializes the confabulators and optionally the pattern manager.
 	 * 
 	 * @param updatePatternManager True if the pattern manager is to be updated
 	 */
@@ -120,9 +129,9 @@ public class SessionDialogHandler extends Locker {
 	}
 
 	/**
-	 * Returns a list of all symbols in all three confabulators.
+	 * Returns a list of all symbols in all confabulators.
 	 * 
-	 * @return A list of all symbols in all three confabulators
+	 * @return A list of all symbols in all confabulators
 	 */
 	public List<String> getAllSequenceSymbols() {
 		List<String> r = new ArrayList<String>();
@@ -429,7 +438,7 @@ public class SessionDialogHandler extends Locker {
 	protected List<String> confabulateExtension(ZStringSymbolParser sequence,String context,int maxOutputSymbols) {
 		ExtensionConfabulation confab = new ExtensionConfabulation();
 		confab.setSequence(sequence);
-		confab.setForceMaxDepth(true);
+		confab.setForceMaxDepth(forceMaxDepth);
 		if (maxOutputSymbols>0) {
 			confab.setMaxOutputSymbols(maxOutputSymbols);
 		}
