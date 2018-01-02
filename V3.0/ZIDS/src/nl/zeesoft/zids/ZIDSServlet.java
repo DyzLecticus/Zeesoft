@@ -186,6 +186,7 @@ public class ZIDSServlet extends HttpServlet {
 
 	protected SessionDialogHandler getNewDialogHandler() {
 		SessionDialogHandler handler = new SessionDialogHandler(getMessenger(),getDialogs().getDialogs(),getPatternManager());
+		handler.setMaxOutputSymbols(48);
 		handler.initialize();
 		return handler;
 	}

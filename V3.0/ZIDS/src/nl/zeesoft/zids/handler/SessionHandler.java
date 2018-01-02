@@ -65,7 +65,7 @@ public class SessionHandler extends HandlerObject {
 					} else {
 						if (actionElem.value.toString().equals("input")) {
 							JsElem inputElem = json.rootElement.getChildByName("input");
-							if (inputElem==null || inputElem.value.length()==0) {
+							if (inputElem==null || inputElem.value==null || inputElem.value.length()==0) {
 								res = getErrorJson("Missing mandatory 'input' attribute.");
 							} else {
 								session.setInput(new ZStringSymbolParser(inputElem.value));
