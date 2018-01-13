@@ -128,7 +128,7 @@ The windows executable will require about 150 MB of free disk space.
   
 Future development
 ------------------
-The following features are on the wish list for a possible 1.1 release;  
+The following features are on the wish list for a possible 1.2 release;  
  * [ZSC](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZSC/) integration  
  * Programmable LFOs  
  * Shuffle  
