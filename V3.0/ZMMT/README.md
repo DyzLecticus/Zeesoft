@@ -2349,9 +2349,9 @@ Composition to sequence conversion without side chain compression took 4 ms
 Test results
 ------------
 All 3 tests have been executed successfully (10 assertions).  
-Total test duration: 400 ms (total sleep duration: 0 ms).  
+Total test duration: 318 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 539 Kb / 0 Mb
- * nl.zeesoft.zmmt.test.TestComposition: 422 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestSynthesizerConfiguration: 540 Kb / 0 Mb
+ * nl.zeesoft.zmmt.test.TestComposition: 423 Kb / 0 Mb
  * nl.zeesoft.zmmt.test.TestCompositionToSequenceConvertor: 463 Kb / 0 Mb

@@ -204,8 +204,10 @@ public class SequencePlayer extends Locker implements MetaEventListener {
 			startSequenceTick = 0;
 			for (int i = 0; i < selectedRow; i++) {
 				Pattern ptn = compositionCopy.getPattern(compositionCopy.getSequence().get(i));
-				int steps = compositionCopy.getStepsForPattern(ptn);
-				startSequenceTick = startSequenceTick + (steps * compositionCopy.getTicksPerStep());
+				if (ptn!=null) {
+					int steps = compositionCopy.getStepsForPattern(ptn);
+					startSequenceTick = startSequenceTick + (steps * compositionCopy.getTicksPerStep());
+				}
 			}
 			if (startSequenceTick>0) {
 				startSequenceTick--;
