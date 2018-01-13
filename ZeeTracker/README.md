@@ -121,7 +121,7 @@ Requirements and download
 -------------------------
 The most recent ZeeTracker version is 1.1.
 Users with Java 1.8 installed can download the executable jar file [here](https://dyz.home.xs4all.nl/ZeeTracker.jar) (+- 8 MB).
-Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.1.exe) (+- 40 MB).
+Windows users without Java can download a standard executable [here](https://dyz.home.xs4all.nl/ZeeTracker-1.1.exe) (+- 50 MB).
 ZeeTracker requires about 200 MB of working memory.
 Using a custom sound font will require more working memory, depending on the size of the sound font.
 The windows executable will require about 150 MB of free disk space.
