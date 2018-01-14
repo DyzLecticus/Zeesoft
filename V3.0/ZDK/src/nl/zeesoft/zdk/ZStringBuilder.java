@@ -171,6 +171,22 @@ public class ZStringBuilder {
 		return sb;
 	}
 
+	public StringBuilder toCase(boolean lower) {
+		if (sb!=null) {
+			int length = sb.length();
+			StringBuilder nsb = new StringBuilder();
+			for (int i = 0; i < length; i++) {
+				if (lower) {
+					nsb.append(sb.substring(i,(i + 1)).toLowerCase());
+				} else {
+					nsb.append(sb.substring(i,(i + 1)).toUpperCase());
+				}
+			}
+			sb = nsb;
+		}
+		return sb;
+	}
+
 	public StringBuilder replaceStartEnd(String searchStart, String searchEnd, String replace) {
 		if (sb!=null) {
 			int length = sb.length();

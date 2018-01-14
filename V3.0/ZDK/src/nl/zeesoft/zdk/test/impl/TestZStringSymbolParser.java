@@ -50,7 +50,7 @@ public class TestZStringSymbolParser extends TestObject {
 			System.out.print(symbol);
 		}
 		System.out.println();
-		assertEqual(symbols.size(),14,"Total parsed symbols does not match expectation");
+		assertEqual(symbols.size(),25,"Total parsed symbols does not match expectation");
 		parser.fromSymbols(symbols,true,true);
 		assertEqual(parser.toString(),TestZStringEncoder.getTestText(),"Merged string does not match expectation");
 	}

@@ -66,8 +66,29 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	 */
 	public List<String> toSymbolsPunctuated(List<String> lineEnds,List<String> punctuations) {
 		if (getStringBuilder()!=null) {
+			if (punctuations.contains("'")) {
+				if (startsWith("'")) {
+					insert(1," ");
+				}
+				if (endsWith("'")) {
+					insert(length() - 2," ");
+				}
+				replace("'.","' .");
+				replace("'!","' !");
+				replace("'?","' ?");
+				replace("('","( '");
+				replace("')","' )");
+				replace(",'",", '");
+				replace("',","' ,");
+				replace(":'",": '");
+				replace("':","' :");
+				replace(" '"," ' ");
+				replace("' "," ' ");
+			}
 			for (String symbol: punctuations) {
-				replace(symbol," " + symbol + " ");
+				if (!symbol.equals("'")) {
+					replace(symbol," " + symbol + " ");
+				}
 			}
 		}
 		return toSymbols(lineEnds);
@@ -76,7 +97,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	/**
 	 * Parses symbols (words and line endings) from a text.
 	 * 
-	 * Uses the configured line ending and punctuation symbols.
+	 * Uses the configured line ending symbols.
 	 * 
 	 * @return A list of symbols
 	 */
@@ -102,8 +123,8 @@ public class ZStringSymbolParser extends ZStringBuilder {
 			List<ZStringBuilder> syms = split(" ");
 			for (ZStringBuilder sym: syms) {
 				if (sym.length()>1 && endsWithLineEndSymbol(sym,lineEnds)) {
-					ZStringSymbolParser symbol = new ZStringSymbolParser(sym.getStringBuilder().substring(0,sym.length() - 1));
-					String lineEnd = sym.getStringBuilder().substring(sym.length() - 1);
+					ZStringSymbolParser symbol = new ZStringSymbolParser(sym.substring(0,sym.length() - 1));
+					String lineEnd = sym.substring(sym.length() - 1);
 					symbol.removeLineEndSymbols();
 					symbols.add(symbol.toString());
 					symbols.add(lineEnd);
@@ -129,10 +150,41 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		if (getStringBuilder()!=null) {
 			StringBuilder r = new StringBuilder();
 			boolean upperCaseFirstNext = correctCase;
+			boolean inDoubleQuote = false;
+			boolean inQuote = false;
+			boolean inRoundBracket = false;
+			boolean appendSpace = false;
+			String pSymbol = "";
 			for (String symbol: symbols) {
 				if (r.length()>0 && !isLineEndSymbol(symbol) && 
 					(!correctPunctuation || (!symbol.equals(",") && !symbol.equals(":") && !symbol.equals(";")))
 					) {
+					appendSpace = true;
+				} else {
+					appendSpace = false;
+				}
+				if (pSymbol.equals("\"") && !inDoubleQuote) {
+					inDoubleQuote = true;
+					appendSpace = false;
+				} else if (symbol.equals("\"") && inDoubleQuote) {
+					inDoubleQuote = false;
+					appendSpace = false;
+				}
+				if (pSymbol.equals("'") && !inQuote) {
+					inQuote = true;
+					appendSpace = false;
+				} else if (symbol.equals("'") && inQuote) {
+					inQuote = false;
+					appendSpace = false;
+				}
+				if (pSymbol.equals("(") && !inRoundBracket) {
+					inRoundBracket = true;
+					appendSpace = false;
+				} else if (symbol.equals(")") && inRoundBracket) {
+					inRoundBracket = false;
+					appendSpace = false;
+				}
+				if (appendSpace) {
 					r.append(" ");
 				}
 				if (upperCaseFirstNext) {
@@ -143,6 +195,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 				if (correctCase && isLineEndSymbol(symbol)) {
 					upperCaseFirstNext = true;
 				}
+				pSymbol = symbol;
 			}
 			setStringBuilder(r);
 		}
@@ -164,6 +217,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		punctuationSymbols.add(";");
 		punctuationSymbols.add(",");
 		punctuationSymbols.add("\"");
+		punctuationSymbols.add("'");
 	}
 
 	/**
@@ -223,20 +277,8 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		}
 	}
 
-	
 	public static boolean isLineEndSymbol(String symbol) {
-		return isLineEndSymbol(symbol,lineEndSymbols);
-	}
-
-	public static boolean isLineEndSymbol(String symbol,List<String> lineEnds) {
-		boolean r = false;
-		for (String lineEnd: lineEnds) {
-			if (symbol.equals(lineEnd)) {
-				r = true;
-				break;
-			}
-		}
-		return r;
+		return lineEndSymbols.contains(symbol);
 	}
 
 	public static boolean endsWithLineEndSymbol(ZStringBuilder symbol) {
@@ -246,10 +288,14 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	public static boolean endsWithLineEndSymbol(ZStringBuilder symbol,List<String> lineEnds) {
 		boolean r = false;
 		if (symbol.length()>1) {
-			r = isLineEndSymbol(symbol.substring(symbol.length() - 1),lineEnds);
+			r = lineEnds.contains(symbol.substring(symbol.length() - 1));
 		} else {
-			r = isLineEndSymbol(symbol.toString(),lineEnds);
+			r = lineEnds.contains(symbol.toString());
 		}
 		return r;
+	}
+
+	public static boolean isPunctuationSymbol(String symbol) {
+		return punctuationSymbols.contains(symbol);
 	}
 }
