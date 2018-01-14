@@ -21,23 +21,52 @@ public class Analyzer {
 	 * @return An error message if applicable
 	 */
 	public String initialize(String fileName) {
+		knownSymbols.clear();
+		totalSymbols = 0;
 		ZStringSymbolParser parser = new ZStringSymbolParser();
 		String err = parser.fromFile(fileName);
 		if (err.length()==0) {
-			initialize(parser);
+			addSequence(parser);
+			calculateProb();
 		}
 		return err;
 	}
 
 	/**
-	 * Initializes the known symbols based on an symbol parser.
+	 * Initializes the known symbols based on an input file.
 	 * 
-	 * @param parser The symbol parser
+	 * @param sequence The symbol parser containing the sequence
 	 */
-	public void initialize(ZStringSymbolParser parser) {
-		if (parser.length()>0) {
-			List<String> symbols = parser.toSymbolsPunctuated();
-			parser.toCase(true);
+	public void initialize(ZStringSymbolParser sequence) {
+		if (sequence.length()>0) {
+			addSequence(sequence);
+			calculateProb();
+		}
+	}
+
+	/**
+	 * Adds a sequence the known symbols.
+	 * 
+	 * Symbol probabilities must be recalculated after calling this method.
+	 * 
+	 * @param sequence The symbol parser containing the sequence
+	 */
+	public void addSequence(ZStringSymbolParser sequence) {
+		if (sequence.length()>0) {
+			sequence.toCase(true);
+			addSymbols(sequence.toSymbolsPunctuated());
+		}
+	}
+
+	/**
+	 * Adds a list of symbols to the known symbols.
+	 * 
+	 * Symbol probabilities must be recalculated after calling this method.
+	 * 
+	 * @param symbols The list of symbols
+	 */
+	public void addSymbols(List<String> symbols) {
+		if (symbols.size()>0) {
 			for (String symbol: symbols) {
 				AnalyzerSymbol count = knownSymbols.get(symbol);
 				if (count==null) {
@@ -46,13 +75,19 @@ public class Analyzer {
 				}
 				count.count++;
 			}
-			totalSymbols = symbols.size();
-			for (Entry<String,AnalyzerSymbol> entry: knownSymbols.entrySet()) {
-				entry.getValue().prob = (symbols.size() / entry.getValue().count);
-			}
+			totalSymbols += symbols.size();
 		}
 	}
 
+	/**
+	 * Calculates the known word probabilities.
+	 */
+	public void calculateProb() {
+		for (Entry<String,AnalyzerSymbol> entry: knownSymbols.entrySet()) {
+			entry.getValue().prob = ((double)entry.getValue().count / (double)totalSymbols);
+		}
+	}
+	
 	public SortedMap<String,AnalyzerSymbol> getKnownSymbols() {
 		return knownSymbols;
 	}

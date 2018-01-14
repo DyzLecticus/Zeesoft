@@ -9,7 +9,9 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsmc.SpellingChecker;
 
-public class TestSpellingChecker extends TestObject {	
+public class TestSpellingChecker extends TestObject {
+	public static final String TEST_SEQUENCE = "I am the kind of stuff that a nice pizza is made of. We are the coolest kelvin. It was a rainy day with a cold wind. The fun we have is amazing. It is nice to meet you. There are not enough mice to rule the world. Why is there a mouse in the hat?"; 
+
 	public TestSpellingChecker(Tester tester) {
 		super(tester);
 	}
@@ -52,9 +54,10 @@ public class TestSpellingChecker extends TestObject {
 			assertEqual(err.length(),0,"Reading the file produced an unexpected error");
 			System.out.println("Initializing the SpellingChecker took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		} else {
-			sc.initialize(new ZStringSymbolParser("I am the kind of stuff that a nice pizza is made of. We are the coolest kelvin. It was a rainy day with a cold wind. The fun we have is amazing. It is nice to meet you. There are not enough mice to rule the world. Why is there a mouse in the hat? "));
-			assertEqual(sc.getTotalSymbols(),63,"The total number of symbols not match expectation");
+			sc.initialize(new ZStringSymbolParser(TEST_SEQUENCE));
+			assertEqual(sc.getTotalSymbols(),63,"The total number of symbols does not match expectation");
 			System.out.println("Initializing the SpellingChecker took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+			assertEqual("" + sc.getKnownSymbols().get("the").prob,"0.07936507936507936","The probability of the word 'the' does not match expectation");
 			List<ZStringBuilder> variations = null;
 			variations = testVariations(sc,"a",1,78);
 			variations = testVariations(sc,"an",1,133);
@@ -69,7 +72,7 @@ public class TestSpellingChecker extends TestObject {
 			testCorrection(sc,"pizza","pizza");
 			testCorrection(sc,"piza","pizza");
 			testCorrection(sc,"stuf","stuff");
-			testCorrection(sc,"stu","stuff");
+			testCorrection(sc,"staf","stuff");
 			testCorrection(sc,"coolset","coolest");
 			testCorrection(sc,"klevin","kelvin");
 			testCorrection(sc,"klevni","kelvin");
@@ -78,7 +81,6 @@ public class TestSpellingChecker extends TestObject {
 			testCorrection(sc,"rny","rainy");
 			testCorrection(sc,"amzaingg","amazing");
 			System.out.println("Average correction time: " + (((new Date()).getTime() - started.getTime()) / 11) + " ms");
-			
 			ZStringSymbolParser sentence = new ZStringSymbolParser("I am a mouse in the hat.");
 			ZStringSymbolParser corrected = sc.correct(sentence);
 			assertEqual(corrected,sentence,"The corrected sentence does not match the original");
