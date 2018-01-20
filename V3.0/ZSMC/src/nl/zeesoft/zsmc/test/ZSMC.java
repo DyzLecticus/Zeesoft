@@ -44,5 +44,6 @@ public class ZSMC extends LibraryObject {
 	@Override
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestSpellingChecker(getTester()));
+		tests.add(new TestKnowledgeBases(getTester()));
 	}
 }

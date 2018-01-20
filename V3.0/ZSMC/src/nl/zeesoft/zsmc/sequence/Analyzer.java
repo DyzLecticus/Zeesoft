@@ -80,7 +80,7 @@ public class Analyzer {
 	}
 
 	/**
-	 * Calculates the known word probabilities.
+	 * Calculates the known symbol probabilities.
 	 */
 	public void calculateProb() {
 		for (Entry<String,AnalyzerSymbol> entry: knownSymbols.entrySet()) {
