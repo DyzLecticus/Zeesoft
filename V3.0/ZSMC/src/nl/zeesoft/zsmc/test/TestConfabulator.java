@@ -58,19 +58,32 @@ public class TestConfabulator extends TestObject {
 		WorkerUnion uni = factory.getWorkerUnion(msgr);
 		Confabulator conf = new Confabulator(msgr,uni,kbs);
 		conf.intitializeModules();
+
+		msgr.start();
 		
 		ZStringSymbolParser starter = new ZStringSymbolParser("i am the");
 		conf.setConclusions(starter);
+		List<String> conclusions = conf.getConclusions();
+		ZStringBuilder result = getPrintConclusions(conclusions);
+		System.out.println("Initial conclusions " + result);
 		conf.startConfabulation(100);
-		List<String> conclusions = null; 
 		while(conf.getFinalConclusions()==null) {
+			sleep(1);
 			conclusions = conf.getConclusions();
-			ZStringBuilder result = getPrintConclusions(conclusions);
+			result = getPrintConclusions(conclusions);
 			System.out.println("Conclusions " + result);
+			System.out.println("Active module symbols;");
+			System.out.println(conf.getActiveSymbolsList());
 		}
 		conclusions = conf.getFinalConclusions();
-		ZStringBuilder result = getPrintConclusions(conclusions);
+		result = getPrintConclusions(conclusions);
 		System.out.println("Final conclusions " + result);
+		System.out.println("Active module symbols;");
+		System.out.println(conf.getActiveSymbolsList());
+		
+		msgr.stop();
+		uni.stopWorkers();
+		msgr.whileWorking();
 	}
 	
 	private ZStringBuilder getPrintConclusions(List<String> conclusions) {

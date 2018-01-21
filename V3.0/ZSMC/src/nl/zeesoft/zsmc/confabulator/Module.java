@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
@@ -23,7 +24,7 @@ public class Module extends Locker {
 	private List<ModuleSymbol>				syms		= new ArrayList<ModuleSymbol>();
 	private boolean							locked		= false;
 	
-	public Module(Messenger msgr, WorkerUnion uni, KnowledgeBases kbs,List<Module> mods,int B, double p0) {
+	protected Module(Messenger msgr, WorkerUnion uni, KnowledgeBases kbs,List<Module> mods,int B, double p0) {
 		super(msgr);
 		this.kbs = kbs;
 		this.modules = mods;
@@ -44,7 +45,7 @@ public class Module extends Locker {
 		List<ModuleSymbol> sms = getActiveSymbols();
 		if (sms.size()>0) {
 			sym = sms.get((sms.size() - 1));
-			if (sms.size()>1 && syms.get((sms.size() - 2)).excitation==sym.excitation) {
+			if (sms.size()>1 && sms.get((sms.size() - 2)).excitation==sym.excitation) {
 				sym = null;
 			}
 		}
@@ -57,12 +58,11 @@ public class Module extends Locker {
 
 	protected void setConclusion(String symbol) {
 		lockMe(this);
-		List<ModuleSymbol> sms = getActiveSymbols();
-		for (ModuleSymbol sym: sms) {
-			if (sym.symbol.equals(symbol)) {
-				sym.excitation = 1.0D;
+		for (Entry<String,ModuleSymbol> entry: symbols.entrySet()) {
+			if (entry.getValue().symbol.equals(symbol)) {
+				entry.getValue().excitation = 1.0D;
 			} else {
-				sym.excitation = 0.0D;
+				entry.getValue().excitation = 0.0D;
 			}
 		}
 		unlockMe(this);
@@ -75,25 +75,23 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 
-	protected boolean isWorking() {
-		return worker.isWorking();
+	protected boolean isDone() {
+		return worker.isDone();
 	}
 
 	protected boolean confabulate() {
 		boolean done = false;
 		
-		SortedMap<Module,List<KnowledgeLink>> fireLinksForward = new TreeMap<Module,List<KnowledgeLink>>();
-		SortedMap<Module,List<KnowledgeLink>> fireLinksBackward = new TreeMap<Module,List<KnowledgeLink>>();
-		
-		List<Boolean> locks = new ArrayList<Boolean>();
-		for (Module mod: modules) {
-			locks.add(mod.isLocked());
-		}
-		
+		//System.out.println("Confabulate ...");
+
+		SortedMap<Integer,List<KnowledgeLink>> fireLinksForward = new TreeMap<Integer,List<KnowledgeLink>>();
+		SortedMap<Integer,List<KnowledgeLink>> fireLinksBackward = new TreeMap<Integer,List<KnowledgeLink>>();
+	
 		lockMe(this);
 		if (symIndex<0) {
 			syms.clear();
 			syms = getActiveSymbols();
+			//System.out.println("Confabulate symbols: " + syms.size());
 			symIndex = (syms.size() - 1);
 		}
 		if (symIndex>=0) {
@@ -101,17 +99,22 @@ public class Module extends Locker {
 			int m = 0;
 			boolean forward = false;
 			for (Module mod: modules) {
-				if (this!=mod && !locks.get(m)) {
+				if (this!=mod) {
 					if (forward) {
-						int distance = (modules.indexOf(mod) - m); 
+						int distance = (m - modules.indexOf(this)); 
 						List<KnowledgeLink> links = kbs.getKnowledgeBases().get(distance - 1).getLinksBySource().get(sym.symbol);
-						fireLinksForward.put(mod,links);
+						if (links!=null) {
+							fireLinksForward.put(m,links);
+						}
 					} else {
-						int distance = (m - modules.indexOf(mod)); 
+						int distance = (modules.indexOf(this) - m); 
 						List<KnowledgeLink> links = kbs.getKnowledgeBases().get(distance - 1).getLinksByTarget().get(sym.symbol);
-						fireLinksBackward.put(mod,links);
+						if (links!=null) {
+							fireLinksBackward.put(m,links);
+						}
 					}
-				} else {
+				}
+				if (this==mod) {
 					forward = true;
 				}
 				m++;
@@ -119,14 +122,16 @@ public class Module extends Locker {
 			symIndex--;
 		}
 		unlockMe(this);
+
+		//System.out.println("Confabulated forward: " + fireLinksForward.size() + ", backward: " + fireLinksBackward.size());
 		
 		// Fire links forward
-		for (Entry<Module,List<KnowledgeLink>> entry: fireLinksForward.entrySet()) {
-			entry.getKey().fireLinks(entry.getValue(),true);
+		for (Entry<Integer,List<KnowledgeLink>> entry: fireLinksForward.entrySet()) {
+			modules.get(entry.getKey()).fireLinks(entry.getValue(),true);
 		}
 		// Fire links backward
-		for (Entry<Module,List<KnowledgeLink>> entry: fireLinksBackward.entrySet()) {
-			entry.getKey().fireLinks(entry.getValue(),false);
+		for (Entry<Integer,List<KnowledgeLink>> entry: fireLinksBackward.entrySet()) {
+			modules.get(entry.getKey()).fireLinks(entry.getValue(),false);
 		}
 		
 		return done;
@@ -160,13 +165,31 @@ public class Module extends Locker {
 				}
 				prob = kbs.getKnownSymbols().get(symbol).prob;
 				excite = ((link.prob * prob) / prob) / p0;
-				System.out.println("Excite 1 = " + excite);
+				//System.out.println("Excite 1 = " + excite);
 				excite = (Math.log(excite) / Math.log(2.0)) + B;
-				System.out.println("Excite 2 = " + excite);
+				//System.out.println("Excite 2 = " + excite);
 				symbols.get(symbol).excitation += excite;
 			}
 			unlockMe(this);
 		}
+	}
+	
+	protected ZStringBuilder getActiveSymbolsList() {
+		ZStringBuilder r = new ZStringBuilder();
+		List<ModuleSymbol> sms = getActiveSymbols();
+		lockMe(this);
+		for (int i = (sms.size() - 1); i>=0; i--) {
+			ModuleSymbol sym = sms.get(i);
+			if (r.length()>0) {
+				r.append(", ");
+			}
+			r.append(sym.symbol);
+			r.append("(");
+			r.append("" + sym.excitation);
+			r.append(")");
+		}
+		unlockMe(this);
+		return r;
 	}
 	
 	private List<ModuleSymbol> getActiveSymbols() {

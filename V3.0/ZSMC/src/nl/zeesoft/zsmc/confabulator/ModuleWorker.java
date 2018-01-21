@@ -10,6 +10,7 @@ public class ModuleWorker extends Worker {
 	private int		confMs		= 0;
 	private Date	started		= null;
 	private Module	module		= null;
+	private boolean	done		= true;
 
 	public ModuleWorker(Messenger msgr, WorkerUnion union,Module mod) {
 		super(msgr, union);
@@ -20,7 +21,18 @@ public class ModuleWorker extends Worker {
 	protected void startConfabulation(int confMs) {
 		this.confMs = confMs;
 		started	= new Date();
+		lockMe(this);
+		done = false;
+		unlockMe(this);
 		super.start();
+	}
+
+	public boolean isDone() {
+		boolean r = false;
+		lockMe(this);
+		r = done;
+		unlockMe(this);
+		return r;
 	}
 	
 	@Override
@@ -28,8 +40,20 @@ public class ModuleWorker extends Worker {
 		Date d = new Date();
 		if (d.getTime()>(started.getTime() + confMs)) {
 			stop();
+			lockMe(this);
+			done = true;
+			unlockMe(this);
 		} else {
-			module.confabulate();
+			try {
+				if (module.confabulate()) {
+					stop();
+					lockMe(this);
+					done = true;
+					unlockMe(this);
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

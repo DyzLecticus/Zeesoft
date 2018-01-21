@@ -3,6 +3,7 @@ package nl.zeesoft.zsmc.confabulator;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
@@ -34,6 +35,7 @@ public class Confabulator {
 	}
 
 	public void setConclusions(ZStringSymbolParser conclusions) {
+		conclusions.toCase(true);
 		String[] conc = new String[modules.size()];
 		List<String> list = conclusions.toSymbolsPunctuated();
 		int start = 0;
@@ -47,6 +49,7 @@ public class Confabulator {
 			if (conc[i]==null) {
 				conc[i]="";
 			}
+			System.out.println("Conclusion " + i + ": " + conc[i]);
 		}
 		setConclusions(conc);
 	}
@@ -81,7 +84,7 @@ public class Confabulator {
 		List<String> r = null;
 		boolean done = true;
 		for (Module module: modules) {
-			if (module.isWorking()) {
+			if (!module.isDone()) {
 				done = false;
 				break;
 			}
@@ -104,4 +107,21 @@ public class Confabulator {
 		}
 		return r;
 	}
+	
+	public ZStringBuilder getActiveSymbolsList() {
+		ZStringBuilder r = new ZStringBuilder();
+		int m = 0;
+		for (Module mod: modules) {
+			m++;
+			if (r.length()>0) {
+				r.append("\n");
+			}
+			r.append("Module ");
+			r.append("" + m);
+			r.append(": ");
+			r.append(mod.getActiveSymbolsList());
+		}
+		return r;
+	}
+	
 }
