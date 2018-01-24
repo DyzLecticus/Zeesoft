@@ -11,7 +11,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 /**
  * Crawler demo output converter.
  */
-public class CrawlConverter extends CrawlAnalyzer {
+public class CrawlConverter {
 	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
 	public static void main(String[] args) {
@@ -47,7 +47,7 @@ public class CrawlConverter extends CrawlAnalyzer {
 			url = url.replace(".html","");
 			url = url.replace(".htm","");
 			if (lineUrl.size()>1 && lineUrl.get(1).length()>0) {
-				ZStringSymbolParser symbols = getSymbolParserForLine(lineUrl.get(1));
+				ZStringSymbolParser symbols = new ZStringSymbolParser(lineUrl.get(1));
 				List<String> lineSymbols = symbols.toSymbolsPunctuated();
 				String question = "";
 				String answer = "";

@@ -42,7 +42,7 @@ public class CrawlAnalyzer {
 			List<ZStringBuilder> lineUrl = line.split("\t");
 			String url = lineUrl.get(0).toString();
 			if (lineUrl.size()>1 && lineUrl.get(1).length()>0) {
-				ZStringSymbolParser symbols = getSymbolParserForLine(lineUrl.get(1));
+				ZStringSymbolParser symbols = new ZStringSymbolParser(lineUrl.get(1));
 				List<String> lineSymbols = symbols.toSymbolsPunctuated();
 				for (String symbol: lineSymbols) {
 					List<String> urls = symbolUrls.get(symbol);
@@ -82,32 +82,5 @@ public class CrawlAnalyzer {
 			System.err.println("ERROR: " + err);
 		}
 		System.out.println("Done");
-	}
-	
-	protected static ZStringSymbolParser getSymbolParserForLine(ZStringBuilder line) {
-		ZStringSymbolParser symbols = new ZStringSymbolParser(line);
-		
-		if (symbols.startsWith("'")) {
-			symbols.insert(1," ");
-		}
-		if (symbols.endsWith("'")) {
-			symbols.insert(symbols.length() - 2," ");
-		}
-		symbols.replace("*"," * ");
-		symbols.replace("'.","' .");
-		symbols.replace("'!","' !");
-		symbols.replace("'?","' ?");
-		symbols.replace("('","( '");
-		symbols.replace("')","' )");
-		symbols.replace(",'",", '");
-		symbols.replace("',","' ,");
-		symbols.replace(":'",": '");
-		symbols.replace("':","' :");
-		symbols.replace(" '"," ' ");
-		symbols.replace("' "," ' ");
-		symbols.replace("   "," ");
-		symbols.replace("  "," ");
-		
-		return symbols;
 	}
 }
