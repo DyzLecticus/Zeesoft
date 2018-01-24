@@ -66,17 +66,19 @@ public class Confabulator {
 		}
 	}
 	
-	public void startConfabulation(int confMs) {
+	public void startConfabulation(int confMs,int contMs) {
 		int[] confMss = new int[modules.size()];
+		int[] contMss = new int[modules.size()];
 		for (int i = 0; i<modules.size(); i++) {
 			confMss[i] = confMs;
+			contMss[i] = contMs;
 		}
-		startConfabulation(confMss);
+		startConfabulation(confMss,contMss);
 	}
 
-	public void startConfabulation(int[] confMss) {
+	public void startConfabulation(int[] confMss,int[] contMss) {
 		for (int i = 0; i<modules.size(); i++) {
-			modules.get(i).startConfabulation(confMss[i]);
+			modules.get(i).startConfabulation(confMss[i],contMss[i]);
 		}
 	}
 

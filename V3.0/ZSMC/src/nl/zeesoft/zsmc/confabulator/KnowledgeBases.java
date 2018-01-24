@@ -11,6 +11,7 @@ public class KnowledgeBases extends Analyzer {
 	
 	public KnowledgeBases() {
 		// modules is optional
+		initializeModules();
 	}
 
 	public KnowledgeBases(int modules) {
@@ -18,16 +19,25 @@ public class KnowledgeBases extends Analyzer {
 			modules = 2;
 		}
 		this.modules = modules;
+		initializeModules();
 	}
+	
+	public void initializeModules() {
+		for (int i = 1; i<modules; i++) {
+			knowledgeBases.add(new KnowledgeBase());
+		}
+	}
+	/*
+	@Override
+	public void addSequence(ZStringSymbolParser sequence) {
+		System.out.println("Adding sequence: " + sequence);
+		super.addSequence(sequence);
+	}
+	*/
 	
 	@Override
 	public void addSymbols(List<String> symbols) {
 		super.addSymbols(symbols);
-		if (symbols.size()>0) {
-			for (int i = 1; i<modules; i++) {
-				knowledgeBases.add(new KnowledgeBase());
-			}
-		}
 		int s = 0;
 		for (String symbol: symbols) {
 			for (int i = 1; i<modules; i++) {

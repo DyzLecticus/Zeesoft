@@ -7,10 +7,12 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class ModuleWorker extends Worker {
-	private int		confMs		= 0;
-	private Date	started		= null;
-	private Module	module		= null;
-	private boolean	done		= true;
+	private int		confMs				= 0;
+	private int		contMs				= 0;
+	private Date	started				= null;
+	private Date	previousContraction	= null;
+	private Module	module				= null;
+	private boolean	done				= true;
 
 	public ModuleWorker(Messenger msgr, WorkerUnion union,Module mod) {
 		super(msgr, union);
@@ -18,9 +20,11 @@ public class ModuleWorker extends Worker {
 		setSleep(0);
 	}
 
-	protected void startConfabulation(int confMs) {
+	protected void startConfabulation(int confMs,int contMs) {
 		this.confMs = confMs;
+		this.contMs = contMs;
 		started	= new Date();
+		previousContraction = new Date();
 		lockMe(this);
 		done = false;
 		unlockMe(this);
@@ -44,15 +48,15 @@ public class ModuleWorker extends Worker {
 			done = true;
 			unlockMe(this);
 		} else {
-			try {
-				if (module.confabulate()) {
-					stop();
-					lockMe(this);
-					done = true;
-					unlockMe(this);
-				}
-			} catch(Exception e) {
-				e.printStackTrace();
+			if (d.getTime()>(previousContraction.getTime() + contMs)) {
+				previousContraction = d;
+				module.contract();
+			}
+			if (module.confabulate()) {
+				stop();
+				lockMe(this);
+				done = true;
+				unlockMe(this);
 			}
 		}
 	}

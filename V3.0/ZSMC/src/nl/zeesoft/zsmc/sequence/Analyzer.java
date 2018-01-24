@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
 /**
@@ -33,7 +34,7 @@ public class Analyzer {
 	}
 
 	/**
-	 * Initializes the known symbols based on an input file.
+	 * Initializes the known symbols based on a space separated input sequence.
 	 * 
 	 * @param sequence The symbol parser containing the sequence
 	 */
@@ -54,7 +55,30 @@ public class Analyzer {
 	public void addSequence(ZStringSymbolParser sequence) {
 		if (sequence.length()>0) {
 			sequence.toCase(true);
-			addSymbols(sequence.toSymbolsPunctuated());
+			
+			if (sequence.containsOneOfCharacters("\n")) {
+				List<ZStringBuilder> lines = sequence.split("\n");
+				int l = 0;
+				for (ZStringBuilder line: lines) {
+					if (l>0) {
+						if (line.containsOneOfCharacters("\t")) {
+							List<ZStringBuilder> sequences = line.split("\t");
+							if (sequences.size()>1) {
+								ZStringSymbolParser seq = new ZStringSymbolParser();
+								seq.append(sequences.get(0));
+								seq.append(" ");
+								seq.append(sequences.get(1));
+								addSymbols(seq.toSymbolsPunctuated());
+							}
+						} else {
+							addSymbols((new ZStringSymbolParser(line)).toSymbolsPunctuated());
+						}
+					}
+					l++;
+				}
+			} else {
+				addSymbols(sequence.toSymbolsPunctuated());
+			}
 		}
 	}
 

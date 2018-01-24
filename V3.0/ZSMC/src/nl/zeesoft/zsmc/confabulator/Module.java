@@ -68,10 +68,10 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 
-	protected void startConfabulation(int confMs) {
+	protected void startConfabulation(int confMs,int contMs) {
 		lockMe(this);
 		symIndex = -1;
-		worker.startConfabulation(confMs);
+		worker.startConfabulation(confMs,contMs);
 		unlockMe(this);
 	}
 
@@ -81,8 +81,6 @@ public class Module extends Locker {
 
 	protected boolean confabulate() {
 		boolean done = false;
-		
-		//System.out.println("Confabulate ...");
 
 		SortedMap<Integer,List<KnowledgeLink>> fireLinksForward = new TreeMap<Integer,List<KnowledgeLink>>();
 		SortedMap<Integer,List<KnowledgeLink>> fireLinksBackward = new TreeMap<Integer,List<KnowledgeLink>>();
@@ -91,7 +89,6 @@ public class Module extends Locker {
 		if (symIndex<0) {
 			syms.clear();
 			syms = getActiveSymbols();
-			//System.out.println("Confabulate symbols: " + syms.size());
 			symIndex = (syms.size() - 1);
 		}
 		if (symIndex>=0) {
@@ -122,8 +119,6 @@ public class Module extends Locker {
 			symIndex--;
 		}
 		unlockMe(this);
-
-		//System.out.println("Confabulated forward: " + fireLinksForward.size() + ", backward: " + fireLinksBackward.size());
 		
 		// Fire links forward
 		for (Entry<Integer,List<KnowledgeLink>> entry: fireLinksForward.entrySet()) {
@@ -136,7 +131,27 @@ public class Module extends Locker {
 		
 		return done;
 	}
-	
+
+	protected void contract() {
+		// TODO: Contract
+		lockMe(this);
+		if (syms.size()>1) {
+			//double min = (syms.get(syms.size()-1).excitation / 2D);
+			double min = (syms.get(syms.size()-1).excitation - (double) B);
+			System.out.println("Contract!" + syms.get(syms.size()-1).excitation + " / " + min);
+			List<ModuleSymbol> test = new ArrayList<ModuleSymbol>(syms);
+			for (ModuleSymbol sym: test) {
+				if (sym.excitation<min) {
+					sym.excitation = 0;
+					syms.remove(sym);
+					symIndex--;
+				}
+			}
+			System.out.println("syms: " + syms.size() + " test:" + test.size());
+		}
+		unlockMe(this);
+	}
+
 	protected boolean isLocked() {
 		boolean r = false;
 		lockMe(this);
@@ -178,15 +193,24 @@ public class Module extends Locker {
 		ZStringBuilder r = new ZStringBuilder();
 		List<ModuleSymbol> sms = getActiveSymbols();
 		lockMe(this);
+		int added = 0;
 		for (int i = (sms.size() - 1); i>=0; i--) {
 			ModuleSymbol sym = sms.get(i);
-			if (r.length()>0) {
-				r.append(", ");
+			if (added<=3) {
+				if (r.length()>0) {
+					r.append(", ");
+				}
+				r.append(sym.symbol);
+				r.append("(");
+				r.append("" + sym.excitation);
+			} else {
+				r.append(" [, ... ");
+				r.append("" + ((sms.size() - 1) - added));
+				r.append("]");
+				break;
 			}
-			r.append(sym.symbol);
-			r.append("(");
-			r.append("" + sym.excitation);
 			r.append(")");
+			added++;
 		}
 		unlockMe(this);
 		return r;

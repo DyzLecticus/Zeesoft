@@ -46,7 +46,7 @@ public class TestSpellingChecker extends TestObject {
 	protected void test(String[] args) {
 		Date started = new Date();
 		SpellingChecker sc = new SpellingChecker();
-		if (args!=null && args.length>0 && args[1].length()>0) {
+		if (args!=null && args.length>1 && args[1].length()>0) {
 			String err = sc.initialize(args[1]);
 			assertEqual(err.length(),0,"Reading the file produced an unexpected error");
 			System.out.println("Initializing the SpellingChecker took: " + ((new Date()).getTime() - started.getTime()) + " ms");

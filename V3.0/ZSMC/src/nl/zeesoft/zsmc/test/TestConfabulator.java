@@ -50,8 +50,8 @@ public class TestConfabulator extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		KnowledgeBases kbs = (KnowledgeBases) getTester().getMockedObject(MockKnowledgeBases.class.getName());
-		assertEqual(kbs.getKnowledgeBases().size(),7,"The total number of forward knowledge bases not match expectation");
+		KnowledgeBases kbs = (KnowledgeBases) getTester().getMockedObject(MockNLQnAKnowledgeBases.class.getName());
+		assertEqual(kbs.getKnowledgeBases().size(),7,"The total number of forward knowledge bases does not match expectation");
 		
 		ZDKFactory factory = new ZDKFactory();
 		Messenger msgr = factory.getMessenger();
@@ -61,12 +61,12 @@ public class TestConfabulator extends TestObject {
 
 		msgr.start();
 		
-		ZStringSymbolParser starter = new ZStringSymbolParser("i am the");
+		ZStringSymbolParser starter = new ZStringSymbolParser("hoe kan dat?");
 		conf.setConclusions(starter);
 		List<String> conclusions = conf.getConclusions();
 		ZStringBuilder result = getPrintConclusions(conclusions);
 		System.out.println("Initial conclusions " + result);
-		conf.startConfabulation(100);
+		conf.startConfabulation(1000,5);
 		while(conf.getFinalConclusions()==null) {
 			sleep(1);
 			conclusions = conf.getConclusions();
