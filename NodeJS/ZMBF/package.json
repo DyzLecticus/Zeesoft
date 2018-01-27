@@ -1,0 +1,19 @@
+{
+  "name": "zmbf",
+  "version": "0.9.0",
+  "description": "Zeesoft multi bot framework; chatbot decomposition and routing",
+  "main": "app.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "keywords": [
+    "zeesoft",
+    "chatbot",
+    "framework"
+  ],
+  "author": "Dyz Lecticus",
+  "license": "ISC",
+  "devDependencies": {
+    "jasmine": "^2.9.0"
+  }
+}
