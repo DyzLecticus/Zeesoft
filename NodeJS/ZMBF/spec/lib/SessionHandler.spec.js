@@ -34,4 +34,15 @@ describe("Session handler", function() {
 		expect(session.io.length).toBe(3);
 		expect(session.getOutput()).toBe("Hallo!");
 	});
+
+	it("should not handle unknown intents", function() {
+		session.addInputOutput();
+		session.setInput("Goedemorgen.");
+		sh.intentRecognizer.getIntent = function(session) {
+			return "";
+		};
+		sh.handleSessionInput(session);
+		expect(session.getIntent()).toBe("");
+		expect(session.getOutput()).toBe("");
+	});
 });
