@@ -29,6 +29,12 @@ describe("Session manager", function() {
 		expect(session).not.toBe(null);
 	});
 
+	it("should not remove an unknown session", function() {
+		var session = new Object();
+		sm.removeSession(session);
+		expect(sm.sessions.length).toBe(1);
+	});
+
 	it("should remove a session", function() {
 		var session = sm.getSessionByExternalId("externalId");
 		sm.removeSession(session);
