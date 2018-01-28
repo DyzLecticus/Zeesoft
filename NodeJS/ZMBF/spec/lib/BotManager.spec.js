@@ -16,11 +16,22 @@ describe("Bot manager", function() {
 		bm.addBot(b2);
 		expect(bm.bots.length).toBe(2);
 	});
+
+	it("should return a null using an unknown name", function() {
+		var b = bm.getBot("BotName");
+		expect(b).toBe(null);
+	});
 	
 	it("should return a bot using the name", function() {
 		var b = bm.getBot("DutchGreeter");
 		expect(b).not.toBe(null);
 	});
+	
+	it("should return a null using an unknown intent", function() {
+		var b = bm.getBotByIntent("BotIntent");
+		expect(b).toBe(null);
+	});
+	
 	it("should return a bot using the intent", function() {
 		var b1 = bm.getBot("DutchGreeter");
 		var b2 = bm.getBotByIntent("DutchWelcome");

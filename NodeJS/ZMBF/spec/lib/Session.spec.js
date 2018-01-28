@@ -3,6 +3,12 @@ var session = require("../../lib/Session");
 describe("Session", function() {
 	var sess = new session.Session(1);
 
+	it("should return nulls if there is no input/output", function() {
+		expect(sess.getInput()).toBe(null);
+		expect(sess.getIntent()).toBe(null);
+		expect(sess.getOutput()).toBe(null);
+	});
+
 	it("should create an input/output", function() {
 		sess.addInputOutput();
 		expect(sess.io.length).toBe(1);

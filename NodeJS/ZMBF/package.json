@@ -5,7 +5,8 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "coverage": "istanbul cover node_modules/jasmine/bin/jasmine.js"
   },
   "keywords": [
     "zeesoft",
@@ -15,6 +16,7 @@
   "author": "Dyz Lecticus",
   "license": "ISC",
   "devDependencies": {
+    "istanbul": "^0.4.5",
     "jasmine": "^2.9.0"
   }
 }
