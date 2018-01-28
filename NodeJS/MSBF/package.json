@@ -1,0 +1,16 @@
+{
+  "name": "msbf",
+  "version": "0.9.0",
+  "description": "Microsoft bot framework extended with Zeesoft multi bot framework",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Dyz Lecticus",
+  "license": "ISC",
+  "dependencies": {
+    "botbuilder": "^3.14.0",
+    "zmbf": "file:../ZMBF"
+  }
+}

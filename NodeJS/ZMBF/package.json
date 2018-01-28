@@ -2,6 +2,7 @@
   "name": "zmbf",
   "version": "0.9.0",
   "description": "Zeesoft multi bot framework; chatbot decomposition and routing",
+  "private": true,
   "main": "app.js",
   "scripts": {
     "test": "jasmine"

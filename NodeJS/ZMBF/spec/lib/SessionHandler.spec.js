@@ -27,8 +27,11 @@ describe("Session handler", function() {
 	});
 
 	it("should handle external session input", function() {
-		sh.handleExternalSessionInput("externalId","Goedemorgen");
+		sh.handleExternalSessionInput("externalId","Goedemorgen.");
 		expect(session.io.length).toBe(2);
+		expect(session.getOutput()).toBe("Hallo!");
+		sh.handleExternalSessionInput("externalId","Goedemorgen.");
+		expect(session.io.length).toBe(3);
 		expect(session.getOutput()).toBe("Hallo!");
 	});
 });
