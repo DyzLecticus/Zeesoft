@@ -3,14 +3,22 @@ package nl.zeesoft.zsmc.confabulator;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsmc.sequence.Analyzer;
 
 public class KnowledgeBases extends Analyzer {
-	private int 				modules			= 8;
+	public static final int		DEFAULT_B		= 30;
+	public static final double	DEFAULT_p0		= 0.0001D;
+	public static final int		DEFAULT_MODULES	= 8;
+	
+	private int					B				= DEFAULT_B;
+	private double				p0				= DEFAULT_p0;
+	private int 				modules			= DEFAULT_MODULES;
 	private List<KnowledgeBase>	knowledgeBases	= new ArrayList<KnowledgeBase>();
+	private KnowledgeBase		context			= new KnowledgeBase();
+	private String				contextSymbol	= "";
 	
 	public KnowledgeBases() {
-		// modules is optional
 		initializeModules();
 	}
 
@@ -22,18 +30,36 @@ public class KnowledgeBases extends Analyzer {
 		initializeModules();
 	}
 	
+	public KnowledgeBases(int B, double p0) {
+		this.B = B;
+		this.p0 = p0;
+		initializeModules();
+	}
+
+	public KnowledgeBases(int modules,int B, double p0) {
+		if (modules<=0) {
+			modules = 2;
+		}
+		this.modules = modules;
+		this.B = B;
+		this.p0 = p0;
+		initializeModules();
+	}
+
 	public void initializeModules() {
 		for (int i = 1; i<modules; i++) {
 			knowledgeBases.add(new KnowledgeBase());
 		}
 	}
-	/*
-	@Override
-	public void addSequence(ZStringSymbolParser sequence) {
-		System.out.println("Adding sequence: " + sequence);
-		super.addSequence(sequence);
+	
+	public void setContextSymbol(String contextSymbol) {
+		this.contextSymbol = contextSymbol;
 	}
-	*/
+
+	@Override
+	public void handleContextSymbol(ZStringBuilder context) {
+		this.contextSymbol = context.toString();
+	}
 	
 	@Override
 	public void addSymbols(List<String> symbols) {
@@ -48,20 +74,33 @@ public class KnowledgeBases extends Analyzer {
 					break;
 				}
 			}
+			if (contextSymbol.length()>0) {
+				context.learnLink(contextSymbol,symbol);
+			}
 			s++;
 		}
+		contextSymbol = "";
 	}
 
 	@Override
 	public void calculateProb() {
 		super.calculateProb();
 		for (int i = 1; i<modules; i++) {
-			knowledgeBases.get(i - 1).calculateProb();
+			knowledgeBases.get(i - 1).calculateProb(this,B,p0);
 		}
+		context.calculateProb(this,B,p0);
 	}
 
 	public int getModules() {
 		return modules;
+	}
+
+	public int getB() {
+		return B;
+	}
+
+	public double getP0() {
+		return p0;
 	}
 
 	public List<KnowledgeBase> getKnowledgeBases() {
@@ -70,5 +109,13 @@ public class KnowledgeBases extends Analyzer {
 
 	public void setKnowledgeBases(List<KnowledgeBase> knowledgeBases) {
 		this.knowledgeBases = knowledgeBases;
+	}
+
+	public KnowledgeBase getContext() {
+		return context;
+	}
+
+	public void setContext(KnowledgeBase context) {
+		this.context = context;
 	}
 }

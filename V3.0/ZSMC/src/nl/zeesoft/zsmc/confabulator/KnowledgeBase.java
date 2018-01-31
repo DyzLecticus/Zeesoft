@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zsmc.sequence.AnalyzerSymbol;
+
 public class KnowledgeBase {
 	private SortedMap<String,List<KnowledgeLink>> 	linksBySource 	= new TreeMap<String,List<KnowledgeLink>>();
 	private SortedMap<String,List<KnowledgeLink>> 	linksByTarget 	= new TreeMap<String,List<KnowledgeLink>>();
@@ -30,13 +32,6 @@ public class KnowledgeBase {
 				break;
 			}
 		}
-		for (KnowledgeLink link: listT) {
-			if (link.source.equals(source)) {
-				r = link;
-				r.count++;
-				break;
-			}
-		}
 		if (r==null) {
 			r = new KnowledgeLink();
 			r.source = source;
@@ -48,15 +43,29 @@ public class KnowledgeBase {
 		return r;
 	}
 
-	public void calculateProb() {
+	public void calculateProb(KnowledgeBases bases, int B, double p0) {
 		for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
 			for (KnowledgeLink link: entry.getValue()) {
+				double prob = p0;
+				AnalyzerSymbol s = bases.getKnownSymbols().get(link.source);
+				if (s!=null) {
+					prob = s.prob;
+				}
 				link.prob = ((double)link.count / (double)totalCount);
+				link.sourceWeight = (link.prob / prob) / p0;
+				link.sourceWeight = (Math.log(link.sourceWeight) / Math.log(2.0)) + B;
 			}
 		}
 		for (Entry<String,List<KnowledgeLink>> entry: linksByTarget.entrySet()) {
 			for (KnowledgeLink link: entry.getValue()) {
+				double prob = p0;
+				AnalyzerSymbol s = bases.getKnownSymbols().get(link.source);
+				if (s!=null) {
+					prob = s.prob;
+				}
 				link.prob = ((double)link.count / (double)totalCount);
+				link.targetWeight = (link.prob / prob) / p0;
+				link.targetWeight = (Math.log(link.targetWeight) / Math.log(2.0)) + B;
 			}
 		}
 	}

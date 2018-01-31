@@ -82,6 +82,7 @@ public class Module extends Locker {
 	protected boolean confabulate() {
 		boolean done = false;
 
+		SortedMap<Integer,Boolean> moduleLocks = getModuleLocks();
 		SortedMap<Integer,List<KnowledgeLink>> fireLinksForward = new TreeMap<Integer,List<KnowledgeLink>>();
 		SortedMap<Integer,List<KnowledgeLink>> fireLinksBackward = new TreeMap<Integer,List<KnowledgeLink>>();
 	
@@ -96,7 +97,7 @@ public class Module extends Locker {
 			int m = 0;
 			boolean forward = false;
 			for (Module mod: modules) {
-				if (this!=mod) {
+				if (this!=mod && !moduleLocks.get(m)) {
 					if (forward) {
 						int distance = (m - modules.indexOf(this)); 
 						List<KnowledgeLink> links = kbs.getKnowledgeBases().get(distance - 1).getLinksBySource().get(sym.symbol);
@@ -167,26 +168,24 @@ public class Module extends Locker {
 	}
 
 	protected void fireLinks(List<KnowledgeLink> links,boolean forward) {
-		if (!isLocked()) {
-			lockMe(this);
-			double excite = 0D;
-			double prob = 0D;
-			String symbol = "";
-			for (KnowledgeLink link: links) {
-				if (forward) {
-					symbol = link.target;
-				} else {
-					symbol = link.source;
-				}
-				prob = kbs.getKnownSymbols().get(symbol).prob;
-				excite = ((link.prob * prob) / prob) / p0;
-				//System.out.println("Excite 1 = " + excite);
-				excite = (Math.log(excite) / Math.log(2.0)) + B;
-				//System.out.println("Excite 2 = " + excite);
-				symbols.get(symbol).excitation += excite;
+		lockMe(this);
+		double excite = 0D;
+		double prob = 0D;
+		String symbol = "";
+		for (KnowledgeLink link: links) {
+			if (forward) {
+				symbol = link.target;
+			} else {
+				symbol = link.source;
 			}
-			unlockMe(this);
+			prob = kbs.getKnownSymbols().get(symbol).prob;
+			excite = ((link.prob * prob) / prob) / p0;
+			//System.out.println("Excite 1 = " + excite);
+			excite = (Math.log(excite) / Math.log(2.0)) + B;
+			//System.out.println("Excite 2 = " + excite);
+			symbols.get(symbol).excitation += excite;
 		}
+		unlockMe(this);
 	}
 	
 	protected ZStringBuilder getActiveSymbolsList() {
@@ -228,5 +227,16 @@ public class Module extends Locker {
 			r.add(entry.getValue());
 		}
 		return r;
+	}
+
+	private SortedMap<Integer,Boolean> getModuleLocks() {
+		SortedMap<Integer,Boolean> moduleLocks = new TreeMap<Integer,Boolean>();
+		int m = 0;
+		for (Module mod: modules) {
+			moduleLocks.put(m,mod.isLocked());
+			m++;
+		}
+		return moduleLocks;
+		
 	}
 }

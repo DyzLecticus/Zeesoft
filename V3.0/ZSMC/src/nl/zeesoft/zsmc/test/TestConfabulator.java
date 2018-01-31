@@ -66,7 +66,7 @@ public class TestConfabulator extends TestObject {
 		List<String> conclusions = conf.getConclusions();
 		ZStringBuilder result = getPrintConclusions(conclusions);
 		System.out.println("Initial conclusions " + result);
-		conf.startConfabulation(1000,5);
+		conf.startConfabulation(1000,10);
 		while(conf.getFinalConclusions()==null) {
 			sleep(1);
 			conclusions = conf.getConclusions();

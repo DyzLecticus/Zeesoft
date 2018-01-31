@@ -68,6 +68,9 @@ public class Analyzer {
 								seq.append(sequences.get(0));
 								seq.append(" ");
 								seq.append(sequences.get(1));
+								if (sequences.size()>2) {
+									handleContextSymbol(sequences.get(2));
+								}
 								addSymbols(seq.toSymbolsPunctuated());
 							}
 						} else {
@@ -82,6 +85,10 @@ public class Analyzer {
 		}
 	}
 
+	protected void handleContextSymbol(ZStringBuilder contextSymbol) {
+		// Override to implement
+	}
+	
 	/**
 	 * Adds a list of symbols to the known symbols.
 	 * 
