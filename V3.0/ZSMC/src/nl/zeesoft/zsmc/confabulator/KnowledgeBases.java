@@ -17,7 +17,9 @@ public class KnowledgeBases extends Analyzer {
 	private List<KnowledgeBase>	knowledgeBases	= new ArrayList<KnowledgeBase>();
 	private KnowledgeBase		context			= new KnowledgeBase();
 	private String				contextSymbol	= "";
-	
+
+	private List<String>		contextSymbols	= new ArrayList<String>();
+
 	public KnowledgeBases() {
 		initializeModules();
 	}
@@ -58,7 +60,11 @@ public class KnowledgeBases extends Analyzer {
 
 	@Override
 	public void handleContextSymbol(ZStringBuilder context) {
-		this.contextSymbol = context.toString();
+		String s = context.toString();
+		this.contextSymbol = s;
+		if (!contextSymbols.contains(s)) {
+			contextSymbols.add(s);
+		}
 	}
 	
 	@Override
@@ -86,9 +92,9 @@ public class KnowledgeBases extends Analyzer {
 	public void calculateProb() {
 		super.calculateProb();
 		for (int i = 1; i<modules; i++) {
-			knowledgeBases.get(i - 1).calculateProb(this,B,p0);
+			knowledgeBases.get(i - 1).calculateProb(this,contextSymbols,B,p0);
 		}
-		context.calculateProb(this,B,p0);
+		context.calculateProb(this,contextSymbols,B,p0);
 	}
 
 	public int getModules() {

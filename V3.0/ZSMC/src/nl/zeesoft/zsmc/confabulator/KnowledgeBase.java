@@ -43,10 +43,10 @@ public class KnowledgeBase {
 		return r;
 	}
 
-	public void calculateProb(KnowledgeBases bases, int B, double p0) {
+	public void calculateProb(KnowledgeBases bases, List<String> contextSymbols, int B, double p0) {
 		for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
 			for (KnowledgeLink link: entry.getValue()) {
-				double prob = p0;
+				double prob = 1.0D / (double)contextSymbols.size();
 				AnalyzerSymbol s = bases.getKnownSymbols().get(link.source);
 				if (s!=null) {
 					prob = s.prob;
@@ -59,7 +59,7 @@ public class KnowledgeBase {
 		for (Entry<String,List<KnowledgeLink>> entry: linksByTarget.entrySet()) {
 			for (KnowledgeLink link: entry.getValue()) {
 				double prob = p0;
-				AnalyzerSymbol s = bases.getKnownSymbols().get(link.source);
+				AnalyzerSymbol s = bases.getKnownSymbols().get(link.target);
 				if (s!=null) {
 					prob = s.prob;
 				}
