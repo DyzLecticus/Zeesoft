@@ -122,7 +122,7 @@ public class Analyzer {
 		return knownSymbols;
 	}
 
-	public void setKnownSymbols(TreeMap<String,AnalyzerSymbol> knownSymbols) {
+	public void setKnownSymbols(SortedMap<String,AnalyzerSymbol> knownSymbols) {
 		this.knownSymbols = knownSymbols;
 	}
 	

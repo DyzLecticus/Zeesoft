@@ -1,10 +1,6 @@
 package nl.zeesoft.zsmc.test;
 
-import java.util.List;
-
 import nl.zeesoft.zdk.ZDKFactory;
-import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -61,6 +57,7 @@ public class TestConfabulator extends TestObject {
 
 		msgr.start();
 		
+		/*
 		ZStringSymbolParser starter = new ZStringSymbolParser("hoe kan dat?");
 		conf.setConclusions(starter);
 		List<String> conclusions = conf.getConclusions();
@@ -84,8 +81,10 @@ public class TestConfabulator extends TestObject {
 		msgr.stop();
 		uni.stopWorkers();
 		msgr.whileWorking();
+		*/
 	}
 	
+	/*
 	private ZStringBuilder getPrintConclusions(List<String> conclusions) {
 		ZStringBuilder r = new ZStringBuilder();
 		for (String symbol: conclusions) {
@@ -100,4 +99,5 @@ public class TestConfabulator extends TestObject {
 		}
 		return r;
 	}
+	*/
 }
