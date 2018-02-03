@@ -54,8 +54,6 @@ public class Analyzer {
 	 */
 	public void addSequence(ZStringSymbolParser sequence) {
 		if (sequence.length()>0) {
-			sequence.toCase(true);
-			
 			if (sequence.containsOneOfCharacters("\n")) {
 				List<ZStringBuilder> lines = sequence.split("\n");
 				int l = 0;
@@ -102,6 +100,7 @@ public class Analyzer {
 				AnalyzerSymbol count = knownSymbols.get(symbol);
 				if (count==null) {
 					count = new AnalyzerSymbol();
+					count.symbol = symbol;
 					knownSymbols.put(symbol,count);
 				}
 				count.count++;

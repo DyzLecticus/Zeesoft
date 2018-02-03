@@ -1,5 +1,6 @@
 package nl.zeesoft.zsmc.test;
 
+import java.io.File;
 import java.util.List;
 
 import nl.zeesoft.zdk.test.LibraryObject;
@@ -45,5 +46,11 @@ public class ZSMC extends LibraryObject {
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestSpellingChecker(getTester()));
 		tests.add(new TestKnowledgeBases(getTester()));
+		File f = new File(MockNLQnAKnowledgeBases.QNA_FILE_NAME);
+		if (f.exists()) {
+			tests.add(new TestNLQnAKnowledgeBases(getTester()));
+		} else {
+			System.out.println("NL QnA input file not found: " + MockNLQnAKnowledgeBases.QNA_FILE_NAME);
+		}
 	}
 }

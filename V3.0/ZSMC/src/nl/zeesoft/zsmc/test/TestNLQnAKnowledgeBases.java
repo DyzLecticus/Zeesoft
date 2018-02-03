@@ -1,15 +1,9 @@
 package nl.zeesoft.zsmc.test;
 
-import java.util.List;
-import java.util.Map.Entry;
-
-import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsmc.confabulator.KnowledgeBase;
 import nl.zeesoft.zsmc.confabulator.KnowledgeBases;
-import nl.zeesoft.zsmc.confabulator.KnowledgeLink;
 
-public class TestNLQnAKnowledgeBases extends TestObject {
+public class TestNLQnAKnowledgeBases extends TestKnowledgeBases {
 	public TestNLQnAKnowledgeBases(Tester tester) {
 		super(tester);
 	}
@@ -20,66 +14,33 @@ public class TestNLQnAKnowledgeBases extends TestObject {
 
 	@Override
 	protected void describe() {
-		/*
-		System.out.println("This test shows how to use the *SpellingChecker* to correct word spelling.");
+		System.out.println("This test shows how a *KnowledgeBases* instance can be used to learn text symbol knowledge links.");
+		System.out.println("Knowledge bases can be initialized using an input file name.");
+		System.out.println("The formatting of the file determines how it will be parsed.");
+		System.out.println("Question and Answer (and optional Context symbol) (tab separated values) formatting will assume the first line is a header so it will not be parsed.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the SpellingChecker");
-		System.out.println("SpellChecker checker = new SpellingChecker();");
-		System.out.println("// Initialize the SpellingChecker");
-		System.out.println("checker.initialize(new ZStringSymbolParser(\"Some text containing correctly spelled words.\"));");
-		System.out.println("// Use SpellingChecker to correct a word");
-		System.out.println("String correction = checker.correct(\"contaning\");");
+		System.out.println("// Create the KnowledgeBases");
+		System.out.println("KnowledgeBases kbs = new KnowledgeBases();");
+		System.out.println("// Initialize the KnowledgeBases");
+		System.out.println("String err = kbs.initialize(\"path/filename.txt\");");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("This encoding mechanism can be used to encode and decode passwords and other sensitive data.");
-		System.out.println("The minimum key length is 64. Longer keys provide stronger encoding.");
+		getTester().describeMock(MockNLQnAKnowledgeBases.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestKnowledgeBases.class));
-		System.out.println(" * " + getTester().getLinkForClass(SpellingChecker.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestNLQnAKnowledgeBases.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockNLQnAKnowledgeBases.class));
+		System.out.println(" * " + getTester().getLinkForClass(KnowledgeBases.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the number of generated variations and corrections for certain words.");
-		*/
+		System.out.println("The output of this test shows a summary of the content of the knowledge bases.");
 	}
 	
 	@Override
 	protected void test(String[] args) {
 		KnowledgeBases kbs = (KnowledgeBases) getTester().getMockedObject(MockNLQnAKnowledgeBases.class.getName());
-		assertEqual(kbs.getKnowledgeBases().size(),7,"The total number knowledge bases does not match expectation");
-		
-		int links = 0;
-		int kbi = 0;
-		for (KnowledgeBase kb: kbs.getKnowledgeBases()) {
-			kbi++;
-			int show = 0;
-			for (Entry<String,List<KnowledgeLink>> entry: kb.getLinksBySource().entrySet()) {
-				for (KnowledgeLink link: entry.getValue()) {
-					if (show<3) {
-						System.out.println("Knowledge base: " + kbi + ", s -> t: " + link.source + " -> " + link.target + ", count: " + link.count + ", prob: " + link.prob + ", sourceWeight: " + link.sourceWeight  + ", targetWeight: " + link.targetWeight);
-					} else if (show==3) {
-						System.out.println("... ");
-					}
-					show++;
-					links++;
-				}
-			}
-			System.out.println();
-		}
-		int show = 0;
-		for (Entry<String,List<KnowledgeLink>> entry: kbs.getContext().getLinksBySource().entrySet()) {
-			for (KnowledgeLink link: entry.getValue()) {
-				if (show<3) {
-					System.out.println("Context knowledge base: s -> t: " + link.source + " -> " + link.target + ", count: " + link.count + ", prob: " + link.prob + ", sourceWeight: " + link.sourceWeight  + ", targetWeight: " + link.targetWeight);
-				} else if (show==3) {
-					System.out.println("... ");
-				}
-				links++;
-				show++;
-			}
-		}
-		assertEqual(links,661315,"The total number of knowledge links not match expectation");
+		testKnowledgeBases(kbs,7,707285);
 	}
 }

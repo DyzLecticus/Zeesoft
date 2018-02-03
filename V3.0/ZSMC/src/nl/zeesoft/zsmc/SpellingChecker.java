@@ -24,26 +24,11 @@ public class SpellingChecker extends Analyzer {
 		ZStringBuilder r = new ZStringBuilder(symbol);
 		if (!getKnownSymbols().containsKey(symbol)) {
 			double highest = 0D;
-			List<ZStringBuilder> variations = generateVariations(symbol);
-			for (ZStringBuilder var: variations) {
-				if (getKnownSymbols().containsKey(var.toString())) {
-					AnalyzerSymbol count = getKnownSymbols().get(var.toString());
-					if (count.prob>highest) {
-						highest = count.prob;
-						r = var;
-					}
-				}
-			}
-			if (highest==0D) {
-				variations = addVariations(variations);
-				for (ZStringBuilder var: variations) {
-					if (getKnownSymbols().containsKey(var.toString())) {
-						AnalyzerSymbol count = getKnownSymbols().get(var.toString());
-						if (count.prob>highest) {
-							highest = count.prob;
-							r = var;
-						}
-					}
+			List<AnalyzerSymbol> cors = getCorrections(symbol);
+			for (AnalyzerSymbol s: cors) {
+				if (s.prob>highest) {
+					highest = s.prob;
+					r = new ZStringBuilder(s.symbol);
 				}
 			}
 		}
@@ -71,6 +56,44 @@ public class SpellingChecker extends Analyzer {
 	}
 
 	/**
+	 * Returns the analyzer symbol corrections list.
+	 * 
+	 * @param symbol The symbol to correct
+	 * @return a list of possible analyzer symbol corrections.
+	 */
+	public List<AnalyzerSymbol> getCorrections(String symbol) {
+		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
+		if (getKnownSymbols().containsKey(symbol)) {
+			AnalyzerSymbol s = new AnalyzerSymbol();
+			s.symbol = symbol;
+			s.prob = 1.0D;
+			r.add(s);
+		} else {
+			List<String> added = new ArrayList<String>();
+			List<ZStringBuilder> variations = generateVariations(symbol);
+			for (ZStringBuilder var: variations) {
+				AnalyzerSymbol s = getKnownSymbols().get(var.toString());
+				if (s!=null && !added.contains(s.symbol)) {
+					added.add(s.symbol);
+					r.add(s);
+				}
+			}
+			if (r.size()==0) {
+				variations = addVariations(variations);
+				for (ZStringBuilder var: variations) {
+					AnalyzerSymbol s = getKnownSymbols().get(var.toString());
+					if (s!=null && !added.contains(s.symbol)) {
+						added.add(s.symbol);
+						r.add(s);
+					}
+				}
+			}
+		}
+		return r;
+	}
+
+	
+	/**
 	 * Generates primary variations for a certain symbol.
 	 * 
 	 * @param symbol The symbol
@@ -83,6 +106,7 @@ public class SpellingChecker extends Analyzer {
 		addDeletes(r,sym,true);
 		addSwitches(r,sym,true);
 		addReplacements(r,sym,true);
+		addCases(r,sym,true);
 		return r;
 	}
 
@@ -95,12 +119,13 @@ public class SpellingChecker extends Analyzer {
 	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations) {
 		List<ZStringBuilder> currentVariations = new ArrayList<ZStringBuilder>(variations);
 		int i = 0;
-		for (ZStringBuilder symbol: currentVariations) {
-			addAdditions(variations,symbol,false);
-			addDeletes(variations,symbol,false);
-			addSwitches(variations,symbol,false);
-			addReplacements(variations,symbol,false);
-			if (!getKnownSymbols().containsKey(symbol.toString())) {
+		for (ZStringBuilder sym: currentVariations) {
+			addAdditions(variations,sym,false);
+			addDeletes(variations,sym,false);
+			addSwitches(variations,sym,false);
+			addReplacements(variations,sym,false);
+			addCases(variations,sym,false);
+			if (!getKnownSymbols().containsKey(sym.toString())) {
 				variations.remove(i);
 			} else {
 				i++;
@@ -109,6 +134,27 @@ public class SpellingChecker extends Analyzer {
 		return variations;
 	}
 
+	private void addCases(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
+		ZStringBuilder var = null;
+		var = new ZStringBuilder(symbol);
+		var.toCase(true);
+		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+			variations.add(var);
+		}
+		var = new ZStringBuilder(symbol);
+		var.toCase(false);
+		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+			variations.add(var);
+		}
+		var = new ZStringBuilder(symbol.substring(0,1).toUpperCase());
+		if (symbol.length()>1) {
+			var.append(symbol.substring(1));
+		}
+		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+			variations.add(var);
+		}
+	}
+	
 	private void addAdditions(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
 		for (int i = 0; i<symbol.length(); i++) {
 			for (int i2 = 0; i2<ALPHABET.length(); i2++) {
@@ -116,7 +162,7 @@ public class SpellingChecker extends Analyzer {
 				if (i==0) {
 					var.append(ALPHABET.substring(i2,i2+1));
 					var.append(symbol);
-					if (!variations.contains(var)) {
+					if (force || getKnownSymbols().containsKey(var.toString())) {
 						variations.add(var);
 					}
 				}

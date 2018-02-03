@@ -41,13 +41,17 @@ public class TestKnowledgeBases extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(KnowledgeBases.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the content of the knowledge bases.");
+		System.out.println("The output of this test shows a summary of the content of the knowledge bases.");
 	}
 	
 	@Override
 	protected void test(String[] args) {
 		KnowledgeBases kbs = (KnowledgeBases) getTester().getMockedObject(MockKnowledgeBases.class.getName());
-		assertEqual(kbs.getKnowledgeBases().size(),7,"The total number of knowledge bases not match expectation");
+		testKnowledgeBases(kbs,7,408);
+	}
+	
+	protected void testKnowledgeBases(KnowledgeBases kbs,int bases,int totalLinks) {
+		assertEqual(kbs.getKnowledgeBases().size(),bases,"The total number of knowledge bases not match expectation");
 		int kbi = 0;
 		int links = 0;
 		List<KnowledgeBase> list = kbs.getKnowledgeBases();
@@ -56,12 +60,13 @@ public class TestKnowledgeBases extends TestObject {
 			int kblS = 0;
 			int kblT = 0;
 			int show = 0;
+			System.out.println("Knowledge base: " + kbi);
 			for (Entry<String,List<KnowledgeLink>> entry: kb.getLinksBySource().entrySet()) {
 				for (KnowledgeLink link: entry.getValue()) {
 					if (show<3) {
-						System.out.println("Knowledge base: " + kbi + ", s -> t: " + link.source + " -> " + link.target + ", count: " + link.count + ", prob: " + link.prob + ", sourceWeight: " + link.sourceWeight  + ", targetWeight: " + link.targetWeight);
+						System.out.println("  s:" + link.source + " -> t:" + link.target + ", count: " + link.count + ", prob: " + link.prob + ", sourceWeight: " + link.sourceWeight  + ", targetWeight: " + link.targetWeight);
 					} else if (show==3) {
-						System.out.println("... ");
+						System.out.println("  ...");
 					}
 					links++;
 					kblS++;
@@ -71,22 +76,29 @@ public class TestKnowledgeBases extends TestObject {
 			for (Entry<String,List<KnowledgeLink>> entry: kb.getLinksByTarget().entrySet()) {
 				kblT += entry.getValue().size();
 			}
-			System.out.println("Knowledge base: " + kbi + ", total links: " + kblS);
+			System.out.println("  total links: " + kblS);
+			System.out.println();
 			assertEqual(kblT,kblS,"The number of knowledge base target knowledge links not match expectation");
+		}
+		if (kbs.getContext().getLinksBySource().size()>0) {
+			System.out.println("Context knowledge base:");
+			int show = 0;
+			int kblS = 0;
+			for (Entry<String,List<KnowledgeLink>> entry: kbs.getContext().getLinksBySource().entrySet()) {
+				for (KnowledgeLink link: entry.getValue()) {
+					if (show<3) {
+						System.out.println("  s:" + link.source + " -> t:" + link.target + ", count: " + link.count + ", prob: " + link.prob + ", sourceWeight: " + link.sourceWeight  + ", targetWeight: " + link.targetWeight);
+					} else if (show==3) {
+						System.out.println("  ...");
+					}
+					links++;
+					show++;
+					kblS++;
+				}
+			}
+			System.out.println("  total links: " + kblS);
 			System.out.println();
 		}
-		int show = 0;
-		for (Entry<String,List<KnowledgeLink>> entry: kbs.getContext().getLinksBySource().entrySet()) {
-			for (KnowledgeLink link: entry.getValue()) {
-				if (show<3) {
-					System.out.println("Context knowledge base: s -> t: " + link.source + " -> " + link.target + ", count: " + link.count + ", prob: " + link.prob + ", sourceWeight: " + link.sourceWeight  + ", targetWeight: " + link.targetWeight);
-				} else if (show==3) {
-					System.out.println("... ");
-				}
-				links++;
-				show++;
-			}
-		}
-		assertEqual(links,407,"The total number of knowledge links not match expectation");
+		assertEqual(links,totalLinks,"The total number of knowledge links not match expectation");
 	}
 }
