@@ -14,10 +14,10 @@ public class Confabulation {
 	public ZStringSymbolParser	outputSymbols	= new ZStringSymbolParser();
 	public ZStringBuilder		log				= new ZStringBuilder();
 		
-	protected void appendLog(String line) {
+	protected void appendLog(ZStringBuilder append) {
 		log.append((new ZDate()).getDateTimeString());
 		log.append(" ");
-		log.append(line);
+		log.append(append);
 		log.append("\n");
 	}
 }

@@ -1,10 +1,12 @@
 package nl.zeesoft.zsmc.test;
 
 import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zsmc.confabulator.Confabulation;
 import nl.zeesoft.zsmc.confabulator.Confabulator;
 import nl.zeesoft.zsmc.confabulator.KnowledgeBases;
 
@@ -56,6 +58,14 @@ public class TestConfabulator extends TestObject {
 		conf.intitializeModules();
 
 		msgr.start();
+		
+		Confabulation confab = new Confabulation();
+		
+		confab.inputSymbols = new ZStringSymbolParser("hoe an dat?");
+				
+		conf.confabulate(confab);
+		
+		System.out.println(confab.log);
 		
 		/*
 		ZStringSymbolParser starter = new ZStringSymbolParser("hoe kan dat?");

@@ -6,9 +6,6 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.messenger.Messenger;
-import nl.zeesoft.zdk.thread.Locker;
-
 public class Module {
 	private SortedMap<String,ModuleSymbol>	symbols		= new TreeMap<String,ModuleSymbol>();
 	private boolean							locked		= false;
@@ -57,11 +54,11 @@ public class Module {
 
 	protected void setConclusions(List<ModuleSymbol> syms) {
 		for (Entry<String,ModuleSymbol> entry: symbols.entrySet()) {
+			entry.getValue().excitation = 0.0D;
 			for (ModuleSymbol sym: syms) {
 				if (entry.getValue().symbol.equals(sym.symbol)) {
 					entry.getValue().excitation = sym.excitation;
-				} else {
-					entry.getValue().excitation = 0.0D;
+					break;
 				}
 			}
 		}
