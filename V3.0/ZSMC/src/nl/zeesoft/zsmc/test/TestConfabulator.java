@@ -55,13 +55,13 @@ public class TestConfabulator extends TestObject {
 		Messenger msgr = factory.getMessenger();
 		WorkerUnion uni = factory.getWorkerUnion(msgr);
 		Confabulator conf = new Confabulator(msgr,uni,kbs);
-		conf.intitializeModules();
 
 		msgr.start();
 		
 		Confabulation confab = new Confabulation();
 		
-		confab.inputSymbols = new ZStringSymbolParser("hoe an dat?");
+		confab.inputSymbols = new ZStringSymbolParser("Hoe an dat?");
+		confab.contextSymbols = new ZStringSymbolParser("nlPriveBetalen");
 				
 		conf.confabulate(confab);
 		
@@ -88,10 +88,11 @@ public class TestConfabulator extends TestObject {
 		System.out.println("Active module symbols;");
 		System.out.println(conf.getActiveSymbolsList());
 		
+		*/
+
 		msgr.stop();
 		uni.stopWorkers();
 		msgr.whileWorking();
-		*/
 	}
 	
 	/*

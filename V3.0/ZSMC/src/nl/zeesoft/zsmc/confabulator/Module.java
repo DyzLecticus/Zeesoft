@@ -26,22 +26,6 @@ public class Module {
 		}
 	}
 
-	protected String getConclusion() {
-		String r = null;
-		ModuleSymbol sym = null;
-		List<ModuleSymbol> sms = getActiveSymbols();
-		if (sms.size()>0) {
-			sym = sms.get(0);
-			if (sms.size()>1 && sms.get(1).excitation==sym.excitation) {
-				sym = null;
-			}
-		}
-		if (sym!=null) {
-			r = sym.symbol;
-		}
-		return r;
-	}
-
 	protected void setConclusion(String symbol) {
 		for (Entry<String,ModuleSymbol> entry: symbols.entrySet()) {
 			if (entry.getValue().symbol.equals(symbol)) {
@@ -74,15 +58,55 @@ public class Module {
 	
 	protected List<ModuleSymbol> getActiveSymbols() {
 		List<ModuleSymbol> r = new ArrayList<ModuleSymbol>();
-		SortedMap<Double,ModuleSymbol> map = new TreeMap<Double,ModuleSymbol>();
+		SortedMap<Double,List<ModuleSymbol>> map = new TreeMap<Double,List<ModuleSymbol>>();
 		for (Entry<String,ModuleSymbol> entry: symbols.entrySet()) {
 			if (entry.getValue().excitation>0D) {
-				map.put(entry.getValue().excitation,entry.getValue());
+				List<ModuleSymbol> syms = map.get(entry.getValue().excitation);
+				if (syms==null) {
+					syms = new ArrayList<ModuleSymbol>();
+					map.put(entry.getValue().excitation,syms);
+				}
+				syms.add(entry.getValue());
 			}
 		}
-		for (Entry<Double,ModuleSymbol> entry: map.entrySet()) {
-			r.add(0,entry.getValue());
+		for (Entry<Double,List<ModuleSymbol>> entry: map.entrySet()) {
+			for (ModuleSymbol sym: entry.getValue()) {
+				r.add(0,sym);
+			}
 		}
 		return r;
+	}
+
+	protected void fireLink(FireLink fl) {
+		String symbol = "";
+		double excitation = 0D;
+		if (fl.forward) {
+			symbol = fl.target;
+			excitation = fl.excitation * fl.targetWeight;
+		} else {
+			symbol = fl.source;
+			excitation = fl.excitation * fl.sourceWeight;
+		}
+		symbols.get(symbol).excitation += excitation;
+	}
+	
+	protected void normalize(List<ModuleSymbol> activeSymbols, int B, double p0) {
+		if (activeSymbols.size()>1) {
+			List<ModuleSymbol> test = new ArrayList<ModuleSymbol>(activeSymbols); 
+			double max = activeSymbols.get(0).excitation;
+			double min = activeSymbols.get(activeSymbols.size() - 1).excitation;
+			for (ModuleSymbol ms: test) {
+				if (ms.excitation > (max - B)) {
+					ms.excitation = (ms.excitation - min) / (max - min);
+					if (ms.excitation<p0) {
+						ms.excitation = 0D;
+						activeSymbols.remove(ms);
+					}
+				} else {
+					ms.excitation = 0D;
+					activeSymbols.remove(ms);
+				}
+			}
+		}
 	}
 }
