@@ -11,14 +11,16 @@ import nl.zeesoft.zsmc.SpellingChecker;
 import nl.zeesoft.zsmc.sequence.AnalyzerSymbol;
 
 public class Confabulator extends Locker {
-	private KnowledgeBases		kbs					= null;
+	private KnowledgeBases				kbs					= null;
 	
-	private List<Module>		prefix				= new ArrayList<Module>();
-	private List<Module>		modules				= new ArrayList<Module>();
-	private Module				context				= null;
+	private List<Module>				prefix				= new ArrayList<Module>();
+	private List<Module>				modules				= new ArrayList<Module>();
+	private Module						context				= null;
 	
-	private SpellingChecker		sc					= null;
-	private List<Module>		allSequenceModules	= new ArrayList<Module>();
+	private List<KnowledgeBaseWorker>	kbws				= new ArrayList<KnowledgeBaseWorker>();
+	
+	private SpellingChecker				sc					= null;
+	private List<Module>				allSequenceModules	= new ArrayList<Module>();
 	
 	public Confabulator(Messenger msgr, WorkerUnion uni,KnowledgeBases kbs) {
 		super(msgr);
@@ -27,8 +29,37 @@ public class Confabulator extends Locker {
 		sc.setKnownSymbols(kbs.getKnownSymbols());
 		sc.setTotalSymbols(kbs.getTotalSymbols());
 		intitializeModules();
+		intitializeWorkers(uni);
+	}
+
+	public void confabulate(Confabulation confab) {
+		initializeConclusions(confab);
+		int firedLinks = confabulateSymbols(confab);
+		logModuleStates(confab,"Fired links; " + firedLinks);
+	}
+
+	private int confabulateSymbols(Confabulation confab) {
+		int firedLinks = 0;
+		for (KnowledgeBaseWorker kbw: kbws) {
+			kbw.setMaxMs(confab.confMsPerSymbol);
+			kbw.start();
+		}
+		for (KnowledgeBaseWorker kbw: kbws) {
+			while (!kbw.isDone()) {
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					getMessenger().error(this,"Knowledge base worker was interrupted",e);
+				}
+			}
+		}
+		for (KnowledgeBaseWorker kbw: kbws) {
+			firedLinks += kbw.getFiredLinks();
+		}
+		return firedLinks;
 	}
 	
+	/*
 	public void confabulate(Confabulation confab) {
 		initializeConclusions(confab);
 		if (confab.contextSymbols.length()==0 && confab.inputSymbols.length()>0) {
@@ -60,12 +91,14 @@ public class Confabulator extends Locker {
 		}
 	}
 	
+	/*
 	private void confabulateSequenceModule(Confabulation confab,Module mod) {
 		List<FireLink> contextLinks = getContextFireLinksForModule(mod);
 		List<FireLink> fireLinks = new ArrayList<FireLink>();
 		addSequentialFireLinks(mod,fireLinks,contextLinks);
 		fireLinksAndContractModules(confab,fireLinks);
 	}
+	*/
 	
 	private void initializeConclusions(Confabulation confab) {
 		// Set context
@@ -112,6 +145,7 @@ public class Confabulator extends Locker {
 		logModuleStates(confab,"Initial module states;");
 	}
 	
+	/*
 	private List<FireLink> confabulateContext(Confabulation confab) {
 		List<FireLink> fireLinks = new ArrayList<FireLink>();
 		List<ModuleSymbol> activeSymbols = null;
@@ -252,6 +286,7 @@ public class Confabulator extends Locker {
 			}
 		}
 	}
+	*/
 
 	private void logModuleStates(Confabulation confab,String message) {
 		logModuleStates(confab,message,null);
@@ -261,16 +296,16 @@ public class Confabulator extends Locker {
 		ZStringBuilder append = new ZStringBuilder(message);
 		append.append("\n");
 		if (mods==null || mods.contains(context)) {
-			append.append(logModuleState(confab,context,"Context"));
+			append.append(logModuleState(confab,context,context.getName()));
 		}
 		for (int i = 0; i<prefix.size(); i++) {
 			if (mods==null || mods.contains(prefix.get(i))) {
-				append.append(logModuleState(confab,prefix.get(i),"Prefix " + (i + 1)));
+				append.append(logModuleState(confab,prefix.get(i),prefix.get(i).getName()));
 			}
 		}
 		for (int i = 0; i<modules.size(); i++) {
 			if (mods==null || mods.contains(modules.get(i))) {
-				append.append(logModuleState(confab,modules.get(i),"Module " + (i + 1)));
+				append.append(logModuleState(confab,modules.get(i),modules.get(i).getName()));
 			}
 		}
 		confab.appendLog(append);
@@ -311,16 +346,35 @@ public class Confabulator extends Locker {
 		allSequenceModules.clear();
 		prefix.clear();
 		for (int i = 0; i<(kbs.getModules() - 1); i++) {
-			Module add = new Module(kbs,false);
+			Module add = new Module(getMessenger(),kbs,"Prefix " + (i+1),false);
 			prefix.add(add);
 			allSequenceModules.add(add);
 		}
 		modules.clear();
 		for (int i = 0; i<kbs.getModules(); i++) {
-			Module add = new Module(kbs,false);
+			Module add = new Module(getMessenger(),kbs,"Module " + (i+1),false);
 			modules.add(add);
 			allSequenceModules.add(add);
 		}
-		context = new Module(kbs,true);
+		context = new Module(getMessenger(),kbs,"Context",true);
+	}
+
+	private void intitializeWorkers(WorkerUnion uni) {
+		int s = 0;
+		for (Module sMod: allSequenceModules) {
+			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getContext(),context,sMod,true));
+			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getContext(),context,sMod,false));
+			int m = s + (kbs.getModules() - 1);
+			int kb = 0;
+			for (int i = (s + 1); i < m; i++) {
+				if (i<allSequenceModules.size()) {
+					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getKnowledgeBases().get(kb),sMod,allSequenceModules.get(i),true));
+					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getKnowledgeBases().get(kb),sMod,allSequenceModules.get(i),false));
+				} else {
+					break;
+				}
+			}
+			s++;
+		}
 	}
 }

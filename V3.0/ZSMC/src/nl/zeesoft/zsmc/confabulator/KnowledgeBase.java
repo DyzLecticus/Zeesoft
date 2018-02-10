@@ -45,6 +45,23 @@ public class KnowledgeBase {
 
 	public void calculateProb(KnowledgeBases bases, List<String> contextSymbols, int B, double p0) {
 		for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
+			List<KnowledgeLink> test = new ArrayList<KnowledgeLink>(entry.getValue());
+			for (KnowledgeLink link: test) {
+				if (link.count<=3) {
+					entry.getValue().remove(link);
+					totalCount = totalCount - link.count;
+				}
+			}
+		}
+		for (Entry<String,List<KnowledgeLink>> entry: linksByTarget.entrySet()) {
+			List<KnowledgeLink> test = new ArrayList<KnowledgeLink>(entry.getValue());
+			for (KnowledgeLink link: test) {
+				if (link.count<=3) {
+					entry.getValue().remove(link);
+				}
+			}
+		}
+		for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
 			for (KnowledgeLink link: entry.getValue()) {
 				double prob = 1.0D / (double)contextSymbols.size();
 				AnalyzerSymbol s = bases.getKnownSymbols().get(link.source);
