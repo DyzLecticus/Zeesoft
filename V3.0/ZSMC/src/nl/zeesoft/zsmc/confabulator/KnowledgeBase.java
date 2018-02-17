@@ -51,6 +51,7 @@ public class KnowledgeBase {
 			for (KnowledgeLink link: test) {
 				if (link.count<=3) {
 					entry.getValue().remove(link);
+					linksByST.remove(link.source + "[]" + link.target);
 					totalCount = totalCount - link.count;
 				}
 			}

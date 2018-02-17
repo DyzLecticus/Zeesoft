@@ -34,16 +34,38 @@ public class Confabulator extends Locker {
 
 	public void confabulate(Confabulation confab) {
 		initializeConclusions(confab);
-		int firedLinks = confabulateSymbols(confab);
+		int firedLinks = 0;
+		for (Module pMod: prefix) {
+			if (!pMod.isLocked()) {
+				firedLinks += confabulateSymbols(confab,pMod);
+			}
+		}
 		logModuleStates(confab,"Fired links; " + firedLinks);
 	}
 
-	private int confabulateSymbols(Confabulation confab) {
+	private int confabulateSymbols(Confabulation confab,Module cMod) {
 		int firedLinks = 0;
+
+		// Prepare
 		for (KnowledgeBaseWorker kbw: kbws) {
-			kbw.setMaxMs(confab.confMsPerSymbol);
-			kbw.start();
+			if ((kbw.isForward() && kbw.getTargetModule()==cMod) ||
+				(!kbw.isForward() && kbw.getSourceModule()==cMod)
+				) {
+				kbw.setActiveSymbols();
+				kbw.setMaxMs(confab.confMsPerSymbol);
+			}
 		}
+
+		// Start
+		for (KnowledgeBaseWorker kbw: kbws) {
+			if ((kbw.isForward() && kbw.getTargetModule()==cMod) ||
+				(!kbw.isForward() && kbw.getSourceModule()==cMod)
+				) {
+				kbw.start();
+			}
+		}
+
+		// Wait
 		for (KnowledgeBaseWorker kbw: kbws) {
 			while (!kbw.isDone()) {
 				try {
@@ -53,9 +75,19 @@ public class Confabulator extends Locker {
 				}
 			}
 		}
+		
+		// Contract
+		cMod.contract();
+		
+		// Get results
 		for (KnowledgeBaseWorker kbw: kbws) {
-			firedLinks += kbw.getFiredLinks();
+			if ((kbw.isForward() && kbw.getTargetModule()==cMod) ||
+				(!kbw.isForward() && kbw.getSourceModule()==cMod)
+				) {
+				firedLinks += kbw.getFiredLinks();
+			}
 		}
+		
 		return firedLinks;
 	}
 	

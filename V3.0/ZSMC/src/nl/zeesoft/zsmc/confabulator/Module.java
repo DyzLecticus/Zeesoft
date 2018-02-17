@@ -122,11 +122,17 @@ public class Module extends Locker {
 			for (FireLink fl: fireLinks) {
 				fireLinkNoLock(fl);
 			}
-			normalizeNoLock();
+			//normalizeNoLock();
 			firedLinks = fireLinks.size();
 		}
 		unlockMe(this);
 		return firedLinks;
+	}
+	
+	protected void contract() {
+		lockMe(this);
+		normalizeNoLock();
+		unlockMe(this);
 	}
 
 	private void fireLinkNoLock(FireLink fl) {

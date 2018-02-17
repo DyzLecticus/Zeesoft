@@ -9,17 +9,19 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class KnowledgeBaseWorker extends Worker {
-	private KnowledgeBase		kb	 			= null;
-	private Module				sourceModule	= null;
-	private Module				targetModule	= null;
-	private boolean				forward			= true;
+	private KnowledgeBase		kb	 				= null;
+	private Module				sourceModule		= null;
+	private Module				targetModule		= null;
+	private boolean				forward				= true;
 	
-	private int					maxMs			= 100;
+	private int					maxMs				= 100;
 	
 	private	long				stopTime			= 0;
-	private boolean				done			= true;
-	private int					firedLinks		= 0;
-	private double				control			= 0D;
+	private boolean				done				= true;
+	private int					firedLinks			= 0;
+
+	private List<ModuleSymbol>	activeSourceSymbols	= new ArrayList<ModuleSymbol>();
+	private List<ModuleSymbol>	activeTargetSymbols	= new ArrayList<ModuleSymbol>();
 	
 	public KnowledgeBaseWorker(Messenger msgr, WorkerUnion union, KnowledgeBase kb, Module sourceModule, Module targetModule, boolean forward) {
 		super(msgr, union);
@@ -27,6 +29,24 @@ public class KnowledgeBaseWorker extends Worker {
 		this.kb = kb;
 		this.sourceModule = sourceModule;
 		this.targetModule = targetModule;
+		this.forward = forward;
+	}
+
+	public Module getSourceModule() {
+		return sourceModule;
+	}
+
+	public Module getTargetModule() {
+		return targetModule;
+	}
+
+	public boolean isForward() {
+		return forward;
+	}
+	
+	public void setActiveSymbols() {
+		activeSourceSymbols	= sourceModule.getActiveSymbols();
+		activeTargetSymbols = targetModule.getActiveSymbols();
 	}
 	
 	public void setMaxMs(int maxMs) {
@@ -35,21 +55,25 @@ public class KnowledgeBaseWorker extends Worker {
 	
 	@Override
 	public void start() {
+		lockMe(this);
+		firedLinks = 0;
+		unlockMe(this);
 		if ((forward && targetModule.isLocked()) ||
-			(!forward && sourceModule.isLocked())
+			(!forward && sourceModule.isLocked()) ||
+			activeSourceSymbols.size() == 0 ||
+			activeTargetSymbols.size() == 0
 			) {
+			System.out.println("Not start worker from: " + sourceModule.getName() + " to: " + targetModule.getName() + " forward: " + forward);
 			return;
 		}
-		stopTime = (new Date()).getTime() + maxMs;
 		lockMe(this);
+		stopTime = (new Date()).getTime() + maxMs;
 		done = false;
-		firedLinks = 0;
-		control = 0D;
 		unlockMe(this);
 		super.start();
 		System.out.println("Started worker from: " + sourceModule.getName() + " to: " + targetModule.getName() + " forward: " + forward);
 	}
-	
+
 	public boolean isDone() {
 		boolean r = false;
 		lockMe(this);
@@ -68,21 +92,21 @@ public class KnowledgeBaseWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		boolean stop = false;
-		List<ModuleSymbol> activeSourceSymbols = sourceModule.getActiveSymbols();
-		List<ModuleSymbol> activeTargetSymbols = targetModule.getActiveSymbols();
+		boolean stop = true;
+		//List<ModuleSymbol> activeSourceSymbols = sourceModule.getActiveSymbols();
+		//List<ModuleSymbol> activeTargetSymbols = targetModule.getActiveSymbols();
 		List<FireLink> fireLinks = new ArrayList<FireLink>();
 		if (forward) {
 			for (ModuleSymbol source: activeSourceSymbols) {
-				for (KnowledgeLink kl: kb.getLinksBySource().get(source.symbol)) {
-					if (activeTargetSymbols.size()>0) {
-						for (ModuleSymbol target: activeTargetSymbols) {
-							if (kl.target.equals(target.symbol)) {
-								fireLinks.add(new FireLink(kl,targetModule,true,source.excitation));
-								break;
-							}
+				if (activeTargetSymbols.size()>0) {
+					for (ModuleSymbol target: activeTargetSymbols) {
+						KnowledgeLink kl = kb.getLink(source.symbol,target.symbol);
+						if (kl!=null) {
+							fireLinks.add(new FireLink(kl,targetModule,true,source.excitation));
 						}
-					} else if (sourceModule.isContext()) {
+					}
+				} else if (sourceModule.isContext()) {
+					for (KnowledgeLink kl: kb.getLinksBySource().get(source.symbol)) {
 						fireLinks.add(new FireLink(kl,targetModule,true,source.excitation));
 					}
 				}
@@ -93,15 +117,15 @@ public class KnowledgeBaseWorker extends Worker {
 			}
 		} else {
 			for (ModuleSymbol target: activeTargetSymbols) {
-				for (KnowledgeLink kl: kb.getLinksByTarget().get(target.symbol)) {
-					if (activeSourceSymbols.size()>0) {
-						for (ModuleSymbol source: activeSourceSymbols) {
-							if (kl.source.equals(source.symbol)) {
-								fireLinks.add(new FireLink(kl,sourceModule,false,target.excitation));
-								break;
-							}
+				if (activeSourceSymbols.size()>0) {
+					for (ModuleSymbol source: activeSourceSymbols) {
+						KnowledgeLink kl = kb.getLink(source.symbol,target.symbol);
+						if (kl!=null) {
+							fireLinks.add(new FireLink(kl,sourceModule,false,target.excitation));
 						}
-					} else {
+					}
+				} else {
+					for (KnowledgeLink kl: kb.getLinksByTarget().get(target.symbol)) {
 						fireLinks.add(new FireLink(kl,sourceModule,false,target.excitation));
 					}
 				}
@@ -124,9 +148,9 @@ public class KnowledgeBaseWorker extends Worker {
 				firedLinks += addLinks;
 				unlockMe(this);
 			}
-			if (forward && sourceModule.isContext()) {
+			//if (forward && sourceModule.isContext()) {
 				stop = true;
-			}
+			//}
 		}
 		if ((forward && targetModule.isLocked()) ||
 			(!forward && sourceModule.isLocked())
