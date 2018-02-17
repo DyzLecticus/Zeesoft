@@ -9,35 +9,37 @@ import java.util.TreeMap;
 import nl.zeesoft.zsmc.sequence.AnalyzerSymbol;
 
 public class KnowledgeBase {
-	private SortedMap<String,List<KnowledgeLink>> 	linksBySource 	= new TreeMap<String,List<KnowledgeLink>>();
-	private SortedMap<String,List<KnowledgeLink>> 	linksByTarget 	= new TreeMap<String,List<KnowledgeLink>>();
+	private SortedMap<String,List<KnowledgeLink>> 	linksBySource	= new TreeMap<String,List<KnowledgeLink>>();
+	private SortedMap<String,List<KnowledgeLink>> 	linksByTarget	= new TreeMap<String,List<KnowledgeLink>>();
+	private SortedMap<String,KnowledgeLink> 		linksByST		= new TreeMap<String,KnowledgeLink>();
 	private int										totalCount		= 0;
+
+	public KnowledgeLink getLink(String source,String target) {
+		return linksByST.get(source + "[]" + target);
+	}
 	
 	public KnowledgeLink learnLink(String source,String target) {
-		KnowledgeLink r = null;
-		List<KnowledgeLink> listS = linksBySource.get(source);
-		if (listS==null) {
-			listS = new ArrayList<KnowledgeLink>();
-			linksBySource.put(source,listS);
-		}
-		List<KnowledgeLink> listT = linksByTarget.get(target);
-		if (listT==null) {
-			listT = new ArrayList<KnowledgeLink>();
-			linksByTarget.put(target,listT);
-		}
-		for (KnowledgeLink link: listS) {
-			if (link.target.equals(target)) {
-				r = link;
-				r.count++;
-				break;
-			}
-		}
+		KnowledgeLink r = getLink(source,target);
 		if (r==null) {
 			r = new KnowledgeLink();
 			r.source = source;
 			r.target = target;
+			
+			List<KnowledgeLink> listS = linksBySource.get(source);
+			if (listS==null) {
+				listS = new ArrayList<KnowledgeLink>();
+				linksBySource.put(source,listS);
+			}
+			List<KnowledgeLink> listT = linksByTarget.get(target);
+			if (listT==null) {
+				listT = new ArrayList<KnowledgeLink>();
+				linksByTarget.put(target,listT);
+			}
 			listS.add(r);
 			listT.add(r);
+			linksByST.put(source + "[]" + target,r);
+		} else {
+			r.count++;
 		}
 		totalCount++;
 		return r;
