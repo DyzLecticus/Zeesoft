@@ -14,6 +14,14 @@ public class KnowledgeBase {
 	private SortedMap<String,KnowledgeLink> 		linksByST		= new TreeMap<String,KnowledgeLink>();
 	private int										totalCount		= 0;
 
+	public KnowledgeLink getLink(String source,String target,int minCount) {
+		KnowledgeLink kl = getLink(source,target);
+		if (kl!=null && kl.count<minCount) {
+			kl = null;
+		}
+		return kl;
+	}
+
 	public KnowledgeLink getLink(String source,String target) {
 		return linksByST.get(source + "[]" + target);
 	}
@@ -45,27 +53,7 @@ public class KnowledgeBase {
 		return r;
 	}
 
-	public void calculateProb(KnowledgeBases bases, List<String> contextSymbols, int B, double p0,int minCount) {
-		if (minCount>1) {
-			for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
-				List<KnowledgeLink> test = new ArrayList<KnowledgeLink>(entry.getValue());
-				for (KnowledgeLink link: test) {
-					if (link.count<=minCount) {
-						entry.getValue().remove(link);
-						linksByST.remove(link.source + "[]" + link.target);
-						totalCount = totalCount - link.count;
-					}
-				}
-			}
-			for (Entry<String,List<KnowledgeLink>> entry: linksByTarget.entrySet()) {
-				List<KnowledgeLink> test = new ArrayList<KnowledgeLink>(entry.getValue());
-				for (KnowledgeLink link: test) {
-					if (link.count<=minCount) {
-						entry.getValue().remove(link);
-					}
-				}
-			}
-		}
+	public void calculateProb(KnowledgeBases bases, List<String> contextSymbols, int B, double p0) {
 		for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
 			for (KnowledgeLink link: entry.getValue()) {
 				double prob = 1.0D / (double)contextSymbols.size();

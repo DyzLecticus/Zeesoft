@@ -91,6 +91,9 @@ public class Module extends Locker {
 	}
 	
 	protected void contract(int maxActiveSymbols) {
+		if (maxActiveSymbols<=0) {
+			maxActiveSymbols = 1;
+		}
 		lockMe(this);
 		normalizeNoLock();
 		if (activeSymbols.size()>maxActiveSymbols) {
@@ -99,9 +102,7 @@ public class Module extends Locker {
 			for (int i = 0; i<maxActiveSymbols; i++) {
 				conclusions.add(activeSymbols.get(i));
 			}
-			if (activeSymbols.get(0).excitation!=activeSymbols.get(1).excitation) {
-				setConclusionsNoLock(conclusions);
-			}
+			setConclusionsNoLock(conclusions);
 		}
 		if (activeSymbols.size()==1) {
 			locked = true;

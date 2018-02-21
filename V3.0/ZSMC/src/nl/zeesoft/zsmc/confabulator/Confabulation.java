@@ -12,7 +12,7 @@ public class Confabulation {
 	public int					confSequenceSymbols	= 4;
 	public int					confContextSymbols	= 1;
 
-	// Optional
+	// Calculated if zero
 	public int					contextMs			= 0;
 	public int					prefixMs			= 0;
 	public int					symbolMs			= 0;

@@ -45,7 +45,7 @@ public class Confabulator extends Locker {
 		List<Module> logMods = new ArrayList<Module>();
 		
 		if (!context.isLocked()) {
-			System.out.println("===> Confabulate context");
+			//System.out.println("===> Confabulate context");
 			long stop = confab.startTime + confab.getContextMs();
 			int firedLinks = confabulateSymbols(confab,stop,context,true);
 			logMods.add(context);
@@ -70,17 +70,18 @@ public class Confabulator extends Locker {
 					names.append(pMod.getName());
 				}
 			}
-			if (forwardModules.size()>0 || backwardModules.size()>0) {
-				System.out.println("===> Confabulate prefixes: " + names);
-				firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules);
-			}
 			if (logMods.size()>0) {
+				//System.out.println("===> Confabulate prefixes: " + names);
+				firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules);
 				logModuleStates(confab,"Confabulated prefix(es). Fired links; " + firedLinks,logMods);
 				logMods.clear();
 			}
 		}
 		
 		// TODO: Modules
+		for (int i = 0; i<confab.confSequenceSymbols; i++) {
+			// ...
+		}
 	}
 	
 	private int confabulateSymbols(Confabulation confab,long stopTime,Module cMod,boolean backwardOnly) {
@@ -188,149 +189,6 @@ public class Confabulator extends Locker {
 		logModuleStates(confab,"Initial module states;");
 	}
 	
-	/*
-	private List<FireLink> confabulateContext(Confabulation confab) {
-		List<FireLink> fireLinks = new ArrayList<FireLink>();
-		List<ModuleSymbol> activeSymbols = null;
-		for (Module mod: prefix) {
-			activeSymbols = mod.getActiveSymbols();
-			if (activeSymbols.size()>0) {
-				for (ModuleSymbol ms: activeSymbols) {
-					List<KnowledgeLink> kls = kbs.getContext().getLinksByTarget().get(ms.symbol);
-					for (KnowledgeLink kl: kls) {
-						fireLinks.add(new FireLink(kl, context, false, ms.excitation));
-					}
-				}
-			}
-		}
-		fireLinksAndContractModules(confab,fireLinks);
-		return fireLinks;
-	}
-
-	private void fireLinksAndContractModules(Confabulation confab, List<FireLink> fireLinks) {
-		List<Module> mods = fireLinks(fireLinks);
-		logModuleStates(confab,"Fired links; " + fireLinks.size(),mods);
-		contractModules(mods);
-		logModuleStates(confab,"Contracted modules; " + mods.size(),mods);
-	}
-	
-	private List<FireLink> getContextFireLinksForModule(Module mod) {
-		List<FireLink> fireLinks = new ArrayList<FireLink>();
-		List<ModuleSymbol> activeSymbols = context.getActiveSymbols();
-		List<ModuleSymbol> confabulatedSymbols = mod.getActiveSymbols();
-		if (activeSymbols.size()>0) {
-			boolean add = false;
-			for (ModuleSymbol ms: activeSymbols) {
-				List<KnowledgeLink> kls = kbs.getContext().getLinksBySource().get(ms.symbol);
-				for (KnowledgeLink kl: kls) {
-					add = true;
-					if (confabulatedSymbols.size()>0) {
-						add = false;
-						for (ModuleSymbol cms: confabulatedSymbols) {
-							if (cms.symbol.equals(kl.target)) {
-								add = true;
-								break;
-							}
-						}
-					}
-					if (add) {
-						fireLinks.add(new FireLink(kl, mod, true, ms.excitation));
-					}
-				}
-			}
-		}
-		return fireLinks;
-	}
-
-	private void addSequentialFireLinks(Module cMod, List<FireLink> fireLinks, List<FireLink> contextLinks) {
-		boolean forward = true;
-		int distance = 0;
-		List<ModuleSymbol> confabulatedSymbols = cMod.getActiveSymbols();
-		for (Module mod: allSequenceModules) {
-			if (mod!=cMod) {
-				if (forward) {
-					distance = allSequenceModules.indexOf(cMod) - allSequenceModules.indexOf(mod);
-				} else {
-					distance = allSequenceModules.indexOf(mod) - allSequenceModules.indexOf(cMod);
-				}
-				if (distance>0 && distance<kbs.getModules()) {
-					List<ModuleSymbol> activeSymbols = mod.getActiveSymbols();
-					if (activeSymbols.size()>0) {
-						KnowledgeBase kb = kbs.getKnowledgeBases().get(distance - 1);
-						List<KnowledgeLink> kls = null;
-						String symbol = "";
-						boolean add = true;
-						for (ModuleSymbol ms: activeSymbols) {
-							if (forward) {
-								kls = kb.getLinksBySource().get(ms.symbol);
-							} else {
-								kls = kb.getLinksByTarget().get(ms.symbol);
-							}
-							if (kls!=null) {
-								for (KnowledgeLink kl: kls) {
-									if (forward) {
-										symbol = kl.target;
-									} else {
-										symbol = kl.source;
-									}
-									add = true;
-									if (confabulatedSymbols.size()>0) {
-										add = false;
-										for (ModuleSymbol cms: confabulatedSymbols) {
-											if (cms.symbol.equals(symbol)) {
-												add = true;
-												break;
-											}
-										}
-									}
-									if (add && contextLinks.size()>0) {
-										add = false;
-										for (FireLink ckl: contextLinks) {
-											if (ckl.target.equals(symbol)) {
-												add = true;
-												break;
-											}
-										}
-									}
-									if (add) {
-										fireLinks.add(new FireLink(kl, cMod, forward, ms.excitation));
-									}
-								}
-							}
-						}
-					}
-				}
-			} else {
-				forward = false;
-			}
-		}
-	}
-
-	private List<Module> fireLinks(List<FireLink> links) {
-		List<Module> mods = new ArrayList<Module>();
-		for (FireLink fl: links) {
-			fl.module.fireLink(fl);
-			if (!mods.contains(fl.module)) {
-				mods.add(fl.module);
-			}
-		}
-		return mods;
-	}
-
-	private void contractModules(List<Module> mods) {
-		List<ModuleSymbol> activeSymbols = null;
-		for (Module mod: mods) {
-			activeSymbols = mod.getActiveSymbols();
-			if (activeSymbols.size()>1) {
-				mod.normalize(activeSymbols,kbs.getB(),kbs.getP0());
-			}
-			if (activeSymbols.size()==1) {
-				mod.setLocked(true);
-			}
-		}
-	}
-	*/
-
 	private void logModuleStates(Confabulation confab,String message) {
 		logModuleStates(confab,message,null);
 	}
@@ -405,14 +263,14 @@ public class Confabulator extends Locker {
 	private void intitializeWorkers(WorkerUnion uni) {
 		int s = 0;
 		for (Module sMod: allSequenceModules) {
-			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getContext(),context,sMod,true));
-			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getContext(),context,sMod,false));
+			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getContext(),kbs.getMinCount(),context,sMod,true));
+			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getContext(),kbs.getMinCount(),context,sMod,false));
 			int m = s + (kbs.getModules() - 1);
 			int kb = 0;
 			for (int i = (s + 1); i < m; i++) {
 				if (i<allSequenceModules.size()) {
-					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getKnowledgeBases().get(kb),sMod,allSequenceModules.get(i),true));
-					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getKnowledgeBases().get(kb),sMod,allSequenceModules.get(i),false));
+					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getKnowledgeBases().get(kb),kbs.getMinCount(),sMod,allSequenceModules.get(i),true));
+					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getKnowledgeBases().get(kb),kbs.getMinCount(),sMod,allSequenceModules.get(i),false));
 				} else {
 					break;
 				}
