@@ -14,8 +14,6 @@ public class KnowledgeBaseWorker extends Worker {
 	private Module				targetModule		= null;
 	private boolean				forward				= true;
 	
-	private int					maxMs				= 100;
-	
 	private	long				stopTime			= 0;
 	private boolean				done				= true;
 	private int					firedLinks			= 0;
@@ -45,12 +43,16 @@ public class KnowledgeBaseWorker extends Worker {
 	}
 	
 	public void setActiveSymbols() {
+		lockMe(this);
 		activeSourceSymbols	= sourceModule.getActiveSymbols();
 		activeTargetSymbols = targetModule.getActiveSymbols();
+		unlockMe(this);
 	}
 	
-	public void setMaxMs(int maxMs) {
-		this.maxMs = maxMs;
+	public void setStopTime(long stopTime) {
+		lockMe(this);
+		this.stopTime = stopTime;
+		unlockMe(this);
 	}
 	
 	@Override
@@ -60,14 +62,14 @@ public class KnowledgeBaseWorker extends Worker {
 		unlockMe(this);
 		if ((forward && targetModule.isLocked()) ||
 			(!forward && sourceModule.isLocked()) ||
-			activeSourceSymbols.size() == 0 ||
+			(activeSourceSymbols.size() == 0 && !sourceModule.isContext()) ||
 			activeTargetSymbols.size() == 0
 			) {
 			System.out.println("Not start worker from: " + sourceModule.getName() + " to: " + targetModule.getName() + " forward: " + forward);
 			return;
 		}
 		lockMe(this);
-		stopTime = (new Date()).getTime() + maxMs;
+		//stopTime = (new Date()).getTime() + maxMs;
 		done = false;
 		unlockMe(this);
 		super.start();
@@ -129,7 +131,7 @@ public class KnowledgeBaseWorker extends Worker {
 						fireLinks.add(new FireLink(kl,sourceModule,false,target.excitation));
 					}
 				}
-				if (stopTime <= (new Date()).getTime()) {
+				if ((new Date()).getTime() >= stopTime) {
 					stop = true;
 					break;
 				}
@@ -139,9 +141,23 @@ public class KnowledgeBaseWorker extends Worker {
 			System.out.println("stopTime <= (new Date()).getTime() : " + stopTime + " <= " + (new Date()).getTime() + " : " + (stopTime <= (new Date()).getTime()));
 			int addLinks = 0;
 			if (forward) {
-				addLinks = targetModule.fireLinks(fireLinks);
+				for (FireLink fireLink: fireLinks) {
+					targetModule.fireLink(fireLink);
+					addLinks++;
+					if ((new Date()).getTime() >= stopTime) {
+						stop = true;
+						break;
+					}
+				}
 			} else if (!forward) {
-				addLinks = sourceModule.fireLinks(fireLinks);
+				for (FireLink fireLink: fireLinks) {
+					sourceModule.fireLink(fireLink);
+					addLinks++;
+					if ((new Date()).getTime() >= stopTime) {
+						stop = true;
+						break;
+					}
+				}
 			}
 			if (addLinks>0) {
 				lockMe(this);

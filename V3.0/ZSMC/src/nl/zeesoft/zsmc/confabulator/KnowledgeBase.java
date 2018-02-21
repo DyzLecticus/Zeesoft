@@ -45,22 +45,24 @@ public class KnowledgeBase {
 		return r;
 	}
 
-	public void calculateProb(KnowledgeBases bases, List<String> contextSymbols, int B, double p0) {
-		for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
-			List<KnowledgeLink> test = new ArrayList<KnowledgeLink>(entry.getValue());
-			for (KnowledgeLink link: test) {
-				if (link.count<=3) {
-					entry.getValue().remove(link);
-					linksByST.remove(link.source + "[]" + link.target);
-					totalCount = totalCount - link.count;
+	public void calculateProb(KnowledgeBases bases, List<String> contextSymbols, int B, double p0,int minCount) {
+		if (minCount>1) {
+			for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
+				List<KnowledgeLink> test = new ArrayList<KnowledgeLink>(entry.getValue());
+				for (KnowledgeLink link: test) {
+					if (link.count<=minCount) {
+						entry.getValue().remove(link);
+						linksByST.remove(link.source + "[]" + link.target);
+						totalCount = totalCount - link.count;
+					}
 				}
 			}
-		}
-		for (Entry<String,List<KnowledgeLink>> entry: linksByTarget.entrySet()) {
-			List<KnowledgeLink> test = new ArrayList<KnowledgeLink>(entry.getValue());
-			for (KnowledgeLink link: test) {
-				if (link.count<=3) {
-					entry.getValue().remove(link);
+			for (Entry<String,List<KnowledgeLink>> entry: linksByTarget.entrySet()) {
+				List<KnowledgeLink> test = new ArrayList<KnowledgeLink>(entry.getValue());
+				for (KnowledgeLink link: test) {
+					if (link.count<=minCount) {
+						entry.getValue().remove(link);
+					}
 				}
 			}
 		}

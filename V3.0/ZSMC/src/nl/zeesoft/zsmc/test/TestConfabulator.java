@@ -61,7 +61,7 @@ public class TestConfabulator extends TestObject {
 		Confabulation confab = new Confabulation();
 		
 		confab.inputSymbols = new ZStringSymbolParser("Hoe an dat?");
-		confab.contextSymbols = new ZStringSymbolParser("nlPriveBetalen");
+		//confab.contextSymbols = new ZStringSymbolParser("nlPriveBetalen");
 				
 		conf.confabulate(confab);
 		

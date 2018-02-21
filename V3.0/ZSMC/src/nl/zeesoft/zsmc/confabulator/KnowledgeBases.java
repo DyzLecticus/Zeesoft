@@ -14,6 +14,9 @@ public class KnowledgeBases extends Analyzer {
 	private int					B				= DEFAULT_B;
 	private double				p0				= DEFAULT_p0;
 	private int 				modules			= DEFAULT_MODULES;
+
+	private int					minCount		= 3;
+	
 	private List<KnowledgeBase>	knowledgeBases	= new ArrayList<KnowledgeBase>();
 	private KnowledgeBase		context			= new KnowledgeBase();
 	private String				contextSymbol	= "";
@@ -92,9 +95,9 @@ public class KnowledgeBases extends Analyzer {
 	public void calculateProb() {
 		super.calculateProb();
 		for (int i = 1; i<modules; i++) {
-			knowledgeBases.get(i - 1).calculateProb(this,contextSymbols,B,p0);
+			knowledgeBases.get(i - 1).calculateProb(this,contextSymbols,B,p0,minCount);
 		}
-		context.calculateProb(this,contextSymbols,B,p0);
+		context.calculateProb(this,contextSymbols,B,p0,minCount);
 	}
 
 	public int getModules() {
@@ -107,6 +110,14 @@ public class KnowledgeBases extends Analyzer {
 
 	public double getP0() {
 		return p0;
+	}
+
+	public int getMinCount() {
+		return minCount;
+	}
+
+	public void setMinCount(int minCount) {
+		this.minCount = minCount;
 	}
 
 	public List<KnowledgeBase> getKnowledgeBases() {

@@ -50,15 +50,7 @@ public class Module extends Locker {
 
 	protected void setConclusion(String symbol) {
 		lockMe(this);
-		activeSymbols.clear();
-		for (Entry<String,ModuleSymbol> entry: symbols.entrySet()) {
-			if (entry.getValue().symbol.equals(symbol)) {
-				entry.getValue().excitation = 1.0D;
-				activeSymbols.put(entry.getKey(),entry.getValue().getCopy());
-			} else {
-				entry.getValue().excitation = 0.0D;
-			}
-		}
+		setConclusionNoLock(symbol);
 		unlockMe(this);
 	}
 
@@ -93,9 +85,56 @@ public class Module extends Locker {
 	}
 	
 	protected List<ModuleSymbol> getActiveSymbols() {
-		List<ModuleSymbol> r = new ArrayList<ModuleSymbol>();
-
+		List<ModuleSymbol> r = null;
 		lockMe(this);
+		r = getActiveSymbolsNoLock();
+		unlockMe(this);
+		return r;
+	}
+
+	/*
+	protected int fireLinks(List<FireLink> fireLinks) {
+		int firedLinks = 0;
+		lockMe(this);
+		if (!locked) {
+			for (FireLink fl: fireLinks) {
+				fireLinkNoLock(fl);
+			}
+			//normalizeNoLock();
+			firedLinks = fireLinks.size();
+		}
+		unlockMe(this);
+		return firedLinks;
+	}
+	*/
+
+	protected void fireLink(FireLink fireLink) {
+		lockMe(this);
+		if (!locked) {
+			fireLinkNoLock(fireLink);
+		}
+		unlockMe(this);
+	}
+	
+	protected void contract(boolean force) {
+		lockMe(this);
+		normalizeNoLock();
+		if (force) {
+			if (activeSymbols.size()>1) {
+				List<ModuleSymbol> activeSymbols = getActiveSymbolsNoLock();
+				if (activeSymbols.get(0).excitation!=activeSymbols.get(1).excitation) {
+					setConclusionNoLock(activeSymbols.get(0).symbol);
+				}
+			}
+		}
+		if (activeSymbols.size()==1) {
+			locked = true;
+		}
+		unlockMe(this);
+	}
+
+	private List<ModuleSymbol> getActiveSymbolsNoLock() {
+		List<ModuleSymbol> r = new ArrayList<ModuleSymbol>();
 		SortedMap<Double,List<ModuleSymbol>> map = new TreeMap<Double,List<ModuleSymbol>>();
 		for (Entry<String,ModuleSymbol> entry: activeSymbols.entrySet()) {
 			List<ModuleSymbol> syms = map.get(entry.getValue().excitation);
@@ -110,29 +149,20 @@ public class Module extends Locker {
 				r.add(0,sym);
 			}
 		}
-		unlockMe(this);
-		
 		return r;
 	}
 
-	protected int fireLinks(List<FireLink> fireLinks) {
-		int firedLinks = 0;
-		lockMe(this);
-		if (!locked) {
-			for (FireLink fl: fireLinks) {
-				fireLinkNoLock(fl);
+
+	private void setConclusionNoLock(String symbol) {
+		activeSymbols.clear();
+		for (Entry<String,ModuleSymbol> entry: symbols.entrySet()) {
+			if (entry.getValue().symbol.equals(symbol)) {
+				entry.getValue().excitation = 1.0D;
+				activeSymbols.put(entry.getKey(),entry.getValue().getCopy());
+			} else {
+				entry.getValue().excitation = 0.0D;
 			}
-			//normalizeNoLock();
-			firedLinks = fireLinks.size();
 		}
-		unlockMe(this);
-		return firedLinks;
-	}
-	
-	protected void contract() {
-		lockMe(this);
-		normalizeNoLock();
-		unlockMe(this);
 	}
 
 	private void fireLinkNoLock(FireLink fl) {
@@ -184,9 +214,6 @@ public class Module extends Locker {
 					activeSymbols.remove(sym);
 					
 				}
-			}
-			if (activeSymbols.size()==1) {
-				locked = true;
 			}
 		}
 	}

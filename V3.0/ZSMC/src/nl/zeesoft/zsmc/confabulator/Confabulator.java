@@ -1,6 +1,7 @@
 package nl.zeesoft.zsmc.confabulator;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -33,40 +34,63 @@ public class Confabulator extends Locker {
 	}
 
 	public void confabulate(Confabulation confab) {
+		if (confab.confMs < 10) {
+			confab.confMs = 10;
+		}
+		confab.startTime = (new Date()).getTime();
+		confab.stopTime = confab.startTime + confab.confMs;
+
 		initializeConclusions(confab);
-		int firedLinks = 0;
-		for (Module pMod: prefix) {
-			if (!pMod.isLocked()) {
-				firedLinks += confabulateSymbols(confab,pMod);
+
+		if (!context.isLocked()) {
+			System.out.println("===> Confabulate context");
+			long stop = confab.startTime + confab.getContextMs();
+			int firedLinks = confabulateSymbols(confab,context,stop);
+			logModuleStates(confab,"Confabulated context. Fired links; " + firedLinks);
+		}
+
+		if ((new Date()).getTime()<confab.stopTime) {
+			long stop = confab.startTime + confab.getContextMs() + confab.getPrefixMs();
+			int firedLinks = 0;
+			boolean log = false;
+			for (Module pMod: prefix) {
+				if (!pMod.isLocked()) {
+					System.out.println("===> Confabulate prefix: " + pMod.getName());
+					firedLinks = confabulateSymbols(confab,pMod,stop);
+					log = true;
+				}
+			}
+			if (log) {
+				logModuleStates(confab,"Confabulated prefix. Fired links; " + firedLinks);
 			}
 		}
-		logModuleStates(confab,"Fired links; " + firedLinks);
+		
+		// TODO: Modules
 	}
 
-	private int confabulateSymbols(Confabulation confab,Module cMod) {
+	private int confabulateSymbols(Confabulation confab,Module cMod,long stopTime) {
 		int firedLinks = 0;
 
+		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
+		
 		// Prepare
 		for (KnowledgeBaseWorker kbw: kbws) {
 			if ((kbw.isForward() && kbw.getTargetModule()==cMod) ||
 				(!kbw.isForward() && kbw.getSourceModule()==cMod)
 				) {
+				workers.add(kbw);
 				kbw.setActiveSymbols();
-				kbw.setMaxMs(confab.confMsPerSymbol);
+				kbw.setStopTime(stopTime);
 			}
 		}
 
 		// Start
-		for (KnowledgeBaseWorker kbw: kbws) {
-			if ((kbw.isForward() && kbw.getTargetModule()==cMod) ||
-				(!kbw.isForward() && kbw.getSourceModule()==cMod)
-				) {
-				kbw.start();
-			}
+		for (KnowledgeBaseWorker kbw: workers) {
+			kbw.start();
 		}
 
 		// Wait
-		for (KnowledgeBaseWorker kbw: kbws) {
+		for (KnowledgeBaseWorker kbw: workers) {
 			while (!kbw.isDone()) {
 				try {
 					Thread.sleep(1);
@@ -77,15 +101,11 @@ public class Confabulator extends Locker {
 		}
 		
 		// Contract
-		cMod.contract();
+		cMod.contract(true);
 		
 		// Get results
-		for (KnowledgeBaseWorker kbw: kbws) {
-			if ((kbw.isForward() && kbw.getTargetModule()==cMod) ||
-				(!kbw.isForward() && kbw.getSourceModule()==cMod)
-				) {
-				firedLinks += kbw.getFiredLinks();
-			}
+		for (KnowledgeBaseWorker kbw: workers) {
+			firedLinks += kbw.getFiredLinks();
 		}
 		
 		return firedLinks;
