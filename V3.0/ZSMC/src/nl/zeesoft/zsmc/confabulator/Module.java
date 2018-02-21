@@ -56,17 +56,7 @@ public class Module extends Locker {
 
 	protected void setConclusions(List<ModuleSymbol> syms) {
 		lockMe(this);
-		activeSymbols.clear();
-		for (Entry<String,ModuleSymbol> entry: symbols.entrySet()) {
-			entry.getValue().excitation = 0.0D;
-			for (ModuleSymbol sym: syms) {
-				if (entry.getKey().equals(sym.symbol)) {
-					entry.getValue().excitation = sym.excitation;
-					activeSymbols.put(entry.getKey(),entry.getValue().getCopy());
-					break;
-				}
-			}
-		}
+		setConclusionsNoLock(syms);
 		unlockMe(this);
 	}
 
@@ -92,22 +82,6 @@ public class Module extends Locker {
 		return r;
 	}
 
-	/*
-	protected int fireLinks(List<FireLink> fireLinks) {
-		int firedLinks = 0;
-		lockMe(this);
-		if (!locked) {
-			for (FireLink fl: fireLinks) {
-				fireLinkNoLock(fl);
-			}
-			//normalizeNoLock();
-			firedLinks = fireLinks.size();
-		}
-		unlockMe(this);
-		return firedLinks;
-	}
-	*/
-
 	protected void fireLink(FireLink fireLink) {
 		lockMe(this);
 		if (!locked) {
@@ -116,15 +90,17 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 	
-	protected void contract(boolean force) {
+	protected void contract(int maxActiveSymbols) {
 		lockMe(this);
 		normalizeNoLock();
-		if (force) {
-			if (activeSymbols.size()>1) {
-				List<ModuleSymbol> activeSymbols = getActiveSymbolsNoLock();
-				if (activeSymbols.get(0).excitation!=activeSymbols.get(1).excitation) {
-					setConclusionNoLock(activeSymbols.get(0).symbol);
-				}
+		if (activeSymbols.size()>maxActiveSymbols) {
+			List<ModuleSymbol> activeSymbols = getActiveSymbolsNoLock();
+			List<ModuleSymbol> conclusions = new ArrayList<ModuleSymbol>();
+			for (int i = 0; i<maxActiveSymbols; i++) {
+				conclusions.add(activeSymbols.get(i));
+			}
+			if (activeSymbols.get(0).excitation!=activeSymbols.get(1).excitation) {
+				setConclusionsNoLock(conclusions);
 			}
 		}
 		if (activeSymbols.size()==1) {
@@ -152,17 +128,31 @@ public class Module extends Locker {
 		return r;
 	}
 
-
-	private void setConclusionNoLock(String symbol) {
+	private void setConclusionsNoLock(List<ModuleSymbol> syms) {
 		activeSymbols.clear();
+		int set = 0;
 		for (Entry<String,ModuleSymbol> entry: symbols.entrySet()) {
-			if (entry.getValue().symbol.equals(symbol)) {
-				entry.getValue().excitation = 1.0D;
-				activeSymbols.put(entry.getKey(),entry.getValue().getCopy());
-			} else {
-				entry.getValue().excitation = 0.0D;
+			entry.getValue().excitation = 0.0D;
+			if (set<syms.size()) {
+				for (ModuleSymbol sym: syms) {
+					if (entry.getKey().equals(sym.symbol)) {
+						set++;
+						entry.getValue().excitation = sym.excitation;
+						activeSymbols.put(entry.getKey(),entry.getValue().getCopy());
+						break;
+					}
+				}
 			}
 		}
+	}
+
+	private void setConclusionNoLock(String symbol) {
+		ModuleSymbol sym = new ModuleSymbol();
+		sym.symbol = symbol;
+		sym.excitation = 1.0D;
+		List<ModuleSymbol> syms = new ArrayList<ModuleSymbol>();
+		syms.add(sym);
+		setConclusionsNoLock(syms);
 	}
 
 	private void fireLinkNoLock(FireLink fl) {

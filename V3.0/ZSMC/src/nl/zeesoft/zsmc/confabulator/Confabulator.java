@@ -42,41 +42,66 @@ public class Confabulator extends Locker {
 
 		initializeConclusions(confab);
 
+		List<Module> logMods = new ArrayList<Module>();
+		
 		if (!context.isLocked()) {
 			System.out.println("===> Confabulate context");
 			long stop = confab.startTime + confab.getContextMs();
-			int firedLinks = confabulateSymbols(confab,context,stop);
-			logModuleStates(confab,"Confabulated context. Fired links; " + firedLinks);
+			int firedLinks = confabulateSymbols(confab,stop,context,true);
+			logMods.add(context);
+			logModuleStates(confab,"Confabulated context. Fired links; " + firedLinks,logMods);
+			logMods.clear();
 		}
 
 		if ((new Date()).getTime()<confab.stopTime) {
 			long stop = confab.startTime + confab.getContextMs() + confab.getPrefixMs();
 			int firedLinks = 0;
-			boolean log = false;
+			List<Module> forwardModules = new ArrayList<Module>();
+			List<Module> backwardModules = new ArrayList<Module>();
+			StringBuilder names = new StringBuilder();
 			for (Module pMod: prefix) {
 				if (!pMod.isLocked()) {
-					System.out.println("===> Confabulate prefix: " + pMod.getName());
-					firedLinks = confabulateSymbols(confab,pMod,stop);
-					log = true;
+					forwardModules.add(pMod);
+					backwardModules.add(pMod);
+					logMods.add(pMod);
+					if (names.length()>0) {
+						names.append(", ");
+					}
+					names.append(pMod.getName());
 				}
 			}
-			if (log) {
-				logModuleStates(confab,"Confabulated prefix. Fired links; " + firedLinks);
+			if (forwardModules.size()>0 || backwardModules.size()>0) {
+				System.out.println("===> Confabulate prefixes: " + names);
+				firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules);
+			}
+			if (logMods.size()>0) {
+				logModuleStates(confab,"Confabulated prefix(es). Fired links; " + firedLinks,logMods);
+				logMods.clear();
 			}
 		}
 		
 		// TODO: Modules
 	}
+	
+	private int confabulateSymbols(Confabulation confab,long stopTime,Module cMod,boolean backwardOnly) {
+		List<Module> forwardModules = new ArrayList<Module>();
+		List<Module> backwardModules = new ArrayList<Module>();
+		if (!backwardOnly) {
+			forwardModules.add(cMod);
+		}
+		backwardModules.add(cMod);
+		return confabulateSymbols(confab,stopTime,forwardModules,backwardModules);
+	}
 
-	private int confabulateSymbols(Confabulation confab,Module cMod,long stopTime) {
+	private int confabulateSymbols(Confabulation confab,long stopTime,List<Module> forwardModules,List<Module> backwardModules) {
 		int firedLinks = 0;
 
 		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
 		
 		// Prepare
 		for (KnowledgeBaseWorker kbw: kbws) {
-			if ((kbw.isForward() && kbw.getTargetModule()==cMod) ||
-				(!kbw.isForward() && kbw.getSourceModule()==cMod)
+			if ((kbw.isForward() && forwardModules.contains(kbw.getTargetModule())) ||
+				(!kbw.isForward() && backwardModules.contains(kbw.getSourceModule()))
 				) {
 				workers.add(kbw);
 				kbw.setActiveSymbols();
@@ -101,7 +126,14 @@ public class Confabulator extends Locker {
 		}
 		
 		// Contract
-		cMod.contract(true);
+		for (Module mod: forwardModules) {
+			mod.contract(1);
+		}
+		for (Module mod: backwardModules) {
+			if (!forwardModules.contains(mod)) {
+				mod.contract(1);
+			}
+		}
 		
 		// Get results
 		for (KnowledgeBaseWorker kbw: workers) {
@@ -110,47 +142,6 @@ public class Confabulator extends Locker {
 		
 		return firedLinks;
 	}
-	
-	/*
-	public void confabulate(Confabulation confab) {
-		initializeConclusions(confab);
-		if (confab.contextSymbols.length()==0 && confab.inputSymbols.length()>0) {
-			confabulateContext(confab);
-		}
-		
-		Module cMod = null; 
-		for (Module pm: prefix) {
-			if (!pm.isLocked()) {
-				cMod = pm;
-				break;
-			}
-		}
-		if (cMod!=null) {
-			confabulateSequenceModule(confab,cMod);
-			int index = (allSequenceModules.indexOf(cMod) + 1);
-			while(!cMod.isLocked()) {
-				if (index==allSequenceModules.size()) {
-					break;
-				}
-				Module mod = allSequenceModules.get(index);
-				if (!mod.isLocked()) {
-					confabulateSequenceModule(confab,mod);
-					confabulateSequenceModule(confab,cMod);
-					//break;
-				}
-				index++;
-			}
-		}
-	}
-	
-	/*
-	private void confabulateSequenceModule(Confabulation confab,Module mod) {
-		List<FireLink> contextLinks = getContextFireLinksForModule(mod);
-		List<FireLink> fireLinks = new ArrayList<FireLink>();
-		addSequentialFireLinks(mod,fireLinks,contextLinks);
-		fireLinksAndContractModules(confab,fireLinks);
-	}
-	*/
 	
 	private void initializeConclusions(Confabulation confab) {
 		// Set context
