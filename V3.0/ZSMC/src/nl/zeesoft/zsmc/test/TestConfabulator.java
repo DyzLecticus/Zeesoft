@@ -34,9 +34,6 @@ public class TestConfabulator extends TestObject {
 		System.out.println("String correction = checker.correct(\"contaning\");");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("This encoding mechanism can be used to encode and decode passwords and other sensitive data.");
-		System.out.println("The minimum key length is 64. Longer keys provide stronger encoding.");
-		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestKnowledgeBases.class));
 		System.out.println(" * " + getTester().getLinkForClass(SpellingChecker.class));

@@ -67,7 +67,7 @@ public class KnowledgeBase {
 			link.sourceWeight = (Math.log(link.sourceWeight) / Math.log(2.0)) + B;
 
 			double tProb = 1.0D / (double)contextSymbols.size();
-			AnalyzerSymbol ts = bases.getKnownSymbols().get(link.source);
+			AnalyzerSymbol ts = bases.getKnownSymbols().get(link.target);
 			if (ts!=null) {
 				tProb = ts.prob;
 			}
