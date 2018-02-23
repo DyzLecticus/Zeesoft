@@ -54,29 +54,25 @@ public class KnowledgeBase {
 	}
 
 	public void calculateProb(KnowledgeBases bases, List<String> contextSymbols, int B, double p0) {
-		for (Entry<String,List<KnowledgeLink>> entry: linksBySource.entrySet()) {
-			for (KnowledgeLink link: entry.getValue()) {
-				double prob = 1.0D / (double)contextSymbols.size();
-				AnalyzerSymbol s = bases.getKnownSymbols().get(link.source);
-				if (s!=null) {
-					prob = s.prob;
-				}
-				link.prob = ((double)link.count / (double)totalCount);
-				link.sourceWeight = (link.prob / prob) / p0;
-				link.sourceWeight = (Math.log(link.sourceWeight) / Math.log(2.0)) + B;
+		for (Entry<String,KnowledgeLink> entry: linksByST.entrySet()) {
+			KnowledgeLink link = entry.getValue();
+			link.prob = ((double)link.count / (double)totalCount);
+
+			double sProb = 1.0D / (double)contextSymbols.size();
+			AnalyzerSymbol ss = bases.getKnownSymbols().get(link.source);
+			if (ss!=null) {
+				sProb = ss.prob;
 			}
-		}
-		for (Entry<String,List<KnowledgeLink>> entry: linksByTarget.entrySet()) {
-			for (KnowledgeLink link: entry.getValue()) {
-				double prob = p0;
-				AnalyzerSymbol s = bases.getKnownSymbols().get(link.target);
-				if (s!=null) {
-					prob = s.prob;
-				}
-				link.prob = ((double)link.count / (double)totalCount);
-				link.targetWeight = (link.prob / prob) / p0;
-				link.targetWeight = (Math.log(link.targetWeight) / Math.log(2.0)) + B;
+			link.sourceWeight = (link.prob / sProb) / p0;
+			link.sourceWeight = (Math.log(link.sourceWeight) / Math.log(2.0)) + B;
+
+			double tProb = 1.0D / (double)contextSymbols.size();
+			AnalyzerSymbol ts = bases.getKnownSymbols().get(link.source);
+			if (ts!=null) {
+				tProb = ts.prob;
 			}
+			link.targetWeight = (link.prob / tProb) / p0;
+			link.targetWeight = (Math.log(link.targetWeight) / Math.log(2.0)) + B;
 		}
 	}
 
@@ -94,6 +90,14 @@ public class KnowledgeBase {
 
 	public void setLinksByTarget(SortedMap<String, List<KnowledgeLink>> linksByTarget) {
 		this.linksByTarget = linksByTarget;
+	}
+
+	public SortedMap<String, KnowledgeLink> getLinksByST() {
+		return linksByST;
+	}
+
+	public void setLinksByST(SortedMap<String, KnowledgeLink> linksByST) {
+		this.linksByST = linksByST;
 	}
 
 	public int getTotalCount() {
