@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zsmc.sequence.Analyzer;
 import nl.zeesoft.zsmc.sequence.AnalyzerSymbol;
 
 public class KnowledgeBase {
@@ -53,29 +54,16 @@ public class KnowledgeBase {
 		return r;
 	}
 
-	public void calculateProb(KnowledgeBases bases, List<String> contextSymbols, int B, double p0) {
+	public void calculateProb(KnowledgeBases bases, Analyzer contextAnalyzer, int B, double p0) {
 		for (Entry<String,KnowledgeLink> entry: linksByST.entrySet()) {
 			KnowledgeLink link = entry.getValue();
 			link.prob = ((double)link.count / (double)totalCount);
 
-			double sProb = 1.0D / (double)contextSymbols.size();
-			AnalyzerSymbol ss = bases.getKnownSymbols().get(link.source);
-			if (ss!=null) {
-				sProb = ss.prob;
-			}
-			link.sourceWeight = (link.prob / sProb) / p0;
-			link.sourceWeight = (Math.log(link.sourceWeight) / Math.log(2.0)) + B;
-
-			double tProb = 1.0D / (double)contextSymbols.size();
-			AnalyzerSymbol ts = bases.getKnownSymbols().get(link.target);
-			if (ts!=null) {
-				tProb = ts.prob;
-			}
-			link.targetWeight = (link.prob / tProb) / p0;
-			link.targetWeight = (Math.log(link.targetWeight) / Math.log(2.0)) + B;
+			calculateProb(bases,link,true,contextAnalyzer,B,p0);
+			calculateProb(bases,link,false,contextAnalyzer,B,p0);
 		}
 	}
-
+	
 	public SortedMap<String, List<KnowledgeLink>> getLinksBySource() {
 		return linksBySource;
 	}
@@ -106,5 +94,29 @@ public class KnowledgeBase {
 
 	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;
+	}
+
+	private void calculateProb(KnowledgeBases bases, KnowledgeLink link, boolean forward, Analyzer contextAnalyzer, int B, double p0) {
+		double prob = 1.0D;
+		AnalyzerSymbol as = null;
+		String sym = link.target;
+		if (!forward) {
+			sym = link.source;
+		}
+		if (contextAnalyzer!=null) {
+			as = contextAnalyzer.getKnownSymbols().get(sym);
+		} else {
+			as = bases.getKnownSymbols().get(sym);
+		}
+		if (as!=null) {
+			prob = as.prob;
+		}
+		if (forward) {
+			link.targetWeight = (link.prob / prob) / p0;
+			link.targetWeight = (Math.log(link.targetWeight) / Math.log(2.0)) + B;
+		} else {
+			link.sourceWeight = (link.prob / prob) / p0;
+			link.sourceWeight = (Math.log(link.sourceWeight) / Math.log(2.0)) + B;
+		}
 	}
 }

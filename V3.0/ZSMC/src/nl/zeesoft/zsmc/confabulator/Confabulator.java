@@ -23,6 +23,9 @@ public class Confabulator extends Locker {
 	private SpellingChecker				sc					= null;
 	private List<Module>				allSequenceModules	= new ArrayList<Module>();
 	
+	private boolean						confabulating		= false;
+	private List<KnowledgeBaseWorker>	activeWorkers		= new ArrayList<KnowledgeBaseWorker>();
+
 	public Confabulator(Messenger msgr, WorkerUnion uni,KnowledgeBases kbs) {
 		super(msgr);
 		this.kbs = kbs;
@@ -33,7 +36,23 @@ public class Confabulator extends Locker {
 		intitializeWorkers(uni);
 	}
 
-	public void confabulate(Confabulation confab) {
+	public boolean isConfabulating() {
+		boolean r = false;
+		lockMe(this);
+		r = confabulating;
+		unlockMe(this);
+		return r;
+	}
+	
+	public synchronized boolean confabulate(Confabulation confab) {
+		if (isConfabulating()) {
+			return false;
+		}
+		
+		lockMe(this);
+		confabulating = true;
+		unlockMe(this);
+		
 		if (confab.confMs < 10) {
 			confab.confMs = 10;
 		}
@@ -73,7 +92,7 @@ public class Confabulator extends Locker {
 			if (logMods.size()>0) {
 				//System.out.println("===> Confabulate prefixes: " + names);
 				firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules);
-				logModuleStates(confab,"Confabulated prefix(es). Fired links; " + firedLinks,logMods);
+				logModuleStates(confab,"Confabulated prefix(es); " + names + ". Fired links; " + firedLinks,logMods);
 				logMods.clear();
 			}
 		}
@@ -82,6 +101,61 @@ public class Confabulator extends Locker {
 		for (int i = 0; i<confab.confSequenceSymbols; i++) {
 			// ...
 		}
+		
+		lockMe(this);
+		confabulating = false;
+		unlockMe(this);
+		return true;
+	} 
+
+	protected synchronized void workerIsDone(KnowledgeBaseWorker kbw) {
+		boolean done = false;
+		lockMe(this);
+		activeWorkers.remove(kbw);
+		done = activeWorkers.size()==0;
+		unlockMe(this);
+		if (done) {
+			notify();
+		}
+	}
+
+	private synchronized boolean workersAreDone() {
+		boolean r = false;
+		lockMe(this);
+		r = activeWorkers.size()==0;
+		unlockMe(this);
+		return r;
+	}
+
+	private void waitForActiveWorkers() {
+		while(!workersAreDone()) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				getMessenger().error(this,"Waiting for active workers was interrupted",e);
+			}
+		}
+	}
+
+	private List<KnowledgeBaseWorker> activateWorkers(long stopTime,List<Module> forwardModules,List<Module> backwardModules) {
+		List<KnowledgeBaseWorker> workers = null;
+		lockMe(this);
+		activeWorkers.clear();
+		for (KnowledgeBaseWorker kbw: kbws) {
+			if ((kbw.isForward() && forwardModules.contains(kbw.getTargetModule())) ||
+				(!kbw.isForward() && backwardModules.contains(kbw.getSourceModule()))
+				) {
+				if (kbw.prepare(stopTime)) {
+					activeWorkers.add(kbw);
+				}
+			}
+		}
+		workers = new ArrayList<KnowledgeBaseWorker>(activeWorkers); 
+		unlockMe(this);
+		for (KnowledgeBaseWorker kbw: workers) {
+			kbw.start();
+		}
+		return workers;
 	}
 	
 	private int confabulateSymbols(Confabulation confab,long stopTime,Module cMod,boolean backwardOnly) {
@@ -96,43 +170,25 @@ public class Confabulator extends Locker {
 
 	private int confabulateSymbols(Confabulation confab,long stopTime,List<Module> forwardModules,List<Module> backwardModules) {
 		int firedLinks = 0;
-
-		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
 		
-		// Prepare
-		for (KnowledgeBaseWorker kbw: kbws) {
-			if ((kbw.isForward() && forwardModules.contains(kbw.getTargetModule())) ||
-				(!kbw.isForward() && backwardModules.contains(kbw.getSourceModule()))
-				) {
-				workers.add(kbw);
-				kbw.setActiveSymbols();
-				kbw.setStopTime(stopTime);
-			}
-		}
-
-		// Start
-		for (KnowledgeBaseWorker kbw: workers) {
-			kbw.start();
-		}
-
-		// Wait
-		for (KnowledgeBaseWorker kbw: workers) {
-			while (!kbw.isDone()) {
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					getMessenger().error(this,"Knowledge base worker was interrupted",e);
-				}
-			}
-		}
+		List<KnowledgeBaseWorker> workers = activateWorkers(stopTime,forwardModules,backwardModules);
+		waitForActiveWorkers();
 		
 		// Contract
 		for (Module mod: forwardModules) {
-			mod.contract(1);
+			if (mod.isContext()) {
+				mod.contract(confab.confContextSymbols);
+			} else {
+				mod.contract(1);
+			}
 		}
 		for (Module mod: backwardModules) {
 			if (!forwardModules.contains(mod)) {
-				mod.contract(1);
+				if (mod.isContext()) {
+					mod.contract(confab.confContextSymbols);
+				} else {
+					mod.contract(1);
+				}
 			}
 		}
 		
@@ -263,14 +319,14 @@ public class Confabulator extends Locker {
 	private void intitializeWorkers(WorkerUnion uni) {
 		int s = 0;
 		for (Module sMod: allSequenceModules) {
-			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getContext(),kbs.getMinCount(),context,sMod,true));
-			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getContext(),kbs.getMinCount(),context,sMod,false));
+			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,this,kbs.getContext(),kbs.getMinCount(),context,sMod,true));
+			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,this,kbs.getContext(),kbs.getMinCount(),context,sMod,false));
 			int m = s + (kbs.getModules() - 1);
 			int kb = 0;
 			for (int i = (s + 1); i < m; i++) {
 				if (i<allSequenceModules.size()) {
-					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getKnowledgeBases().get(kb),kbs.getMinCount(),sMod,allSequenceModules.get(i),true));
-					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,kbs.getKnowledgeBases().get(kb),kbs.getMinCount(),sMod,allSequenceModules.get(i),false));
+					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,this,kbs.getKnowledgeBases().get(kb),kbs.getMinCount(),sMod,allSequenceModules.get(i),true));
+					kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,this,kbs.getKnowledgeBases().get(kb),kbs.getMinCount(),sMod,allSequenceModules.get(i),false));
 				} else {
 					break;
 				}

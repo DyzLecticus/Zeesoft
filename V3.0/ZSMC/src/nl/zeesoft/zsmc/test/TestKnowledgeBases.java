@@ -47,14 +47,18 @@ public class TestKnowledgeBases extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		KnowledgeBases kbs = (KnowledgeBases) getTester().getMockedObject(MockKnowledgeBases.class.getName());
-		testKnowledgeBases(kbs,7,408);
+		KnowledgeLink kl = testKnowledgeBases(kbs,7,408);
+		assertEqual("" + kl.prob,"0.016129032258064516","The link probability does not match expectation");
+		assertEqual("" + kl.sourceWeight,"40.72583349194134","The link source weight does not match expectation");
+		assertEqual("" + kl.targetWeight,"43.31079599266249","The link target weight does not match expectation");
 	}
 	
-	protected void testKnowledgeBases(KnowledgeBases kbs,int bases,int totalLinks) {
-		assertEqual(kbs.getKnowledgeBases().size(),bases,"The total number of knowledge bases not match expectation");
+	protected KnowledgeLink testKnowledgeBases(KnowledgeBases kbs,int bases,int totalLinks) {
+		assertEqual(kbs.getKnowledgeBases().size(),bases,"The total number of knowledge bases does not match expectation");
 		int kbi = 0;
 		int links = 0;
 		List<KnowledgeBase> list = kbs.getKnowledgeBases();
+		KnowledgeLink kl = null;
 		for (KnowledgeBase kb: list) {
 			kbi++;
 			int kblS = 0;
@@ -63,6 +67,9 @@ public class TestKnowledgeBases extends TestObject {
 			System.out.println("Knowledge base: " + kbi);
 			for (Entry<String,List<KnowledgeLink>> entry: kb.getLinksBySource().entrySet()) {
 				for (KnowledgeLink link: entry.getValue()) {
+					if (kl==null) {
+						kl = link;
+					}
 					if (show<3) {
 						System.out.println("  s:" + link.source + " -> t:" + link.target + ", count: " + link.count + ", prob: " + link.prob + ", sourceWeight: " + link.sourceWeight  + ", targetWeight: " + link.targetWeight);
 					} else if (show==3) {
@@ -86,6 +93,9 @@ public class TestKnowledgeBases extends TestObject {
 			int kblS = 0;
 			for (Entry<String,List<KnowledgeLink>> entry: kbs.getContext().getLinksBySource().entrySet()) {
 				for (KnowledgeLink link: entry.getValue()) {
+					if (kl==null) {
+						kl = link;
+					}
 					if (show<3) {
 						System.out.println("  s:" + link.source + " -> t:" + link.target + ", count: " + link.count + ", prob: " + link.prob + ", sourceWeight: " + link.sourceWeight  + ", targetWeight: " + link.targetWeight);
 					} else if (show==3) {
@@ -100,5 +110,6 @@ public class TestKnowledgeBases extends TestObject {
 			System.out.println();
 		}
 		assertEqual(links,totalLinks,"The total number of knowledge links not match expectation");
+		return kl;
 	}
 }

@@ -18,8 +18,10 @@ public class KnowledgeBases extends Analyzer {
 	private int					minCount		= 3;
 	
 	private List<KnowledgeBase>	knowledgeBases	= new ArrayList<KnowledgeBase>();
+
 	private KnowledgeBase		context			= new KnowledgeBase();
-	private String				contextSymbol	= "";
+	private Analyzer			contextAnalyzer	= new Analyzer();
+	//private String				contextSymbol	= "";
 
 	private List<String>		contextSymbols	= new ArrayList<String>();
 
@@ -58,16 +60,18 @@ public class KnowledgeBases extends Analyzer {
 	}
 	
 	public void setContextSymbol(String contextSymbol) {
-		this.contextSymbol = contextSymbol;
+		contextSymbols.clear();
+		contextSymbols.add(contextSymbol);
+		contextAnalyzer.addSymbols(contextSymbols);
 	}
 
 	@Override
 	public void handleContextSymbol(ZStringBuilder context) {
-		String s = context.toString();
-		this.contextSymbol = s;
-		if (!contextSymbols.contains(s)) {
-			contextSymbols.add(s);
+		contextSymbols.clear();
+		for (ZStringBuilder cs: context.split(" ")) {
+			contextSymbols.add(cs.toString());
 		}
+		contextAnalyzer.addSymbols(contextSymbols);
 	}
 	
 	@Override
@@ -83,21 +87,22 @@ public class KnowledgeBases extends Analyzer {
 					break;
 				}
 			}
-			if (contextSymbol.length()>0) {
+			for (String contextSymbol: contextSymbols) {
 				context.learnLink(contextSymbol,symbol);
 			}
 			s++;
 		}
-		contextSymbol = "";
+		contextSymbols.clear();
 	}
 
 	@Override
 	public void calculateProb() {
 		super.calculateProb();
+		contextAnalyzer.calculateProb();
 		for (int i = 1; i<modules; i++) {
-			knowledgeBases.get(i - 1).calculateProb(this,contextSymbols,B,p0);
+			knowledgeBases.get(i - 1).calculateProb(this,null,B,p0);
 		}
-		context.calculateProb(this,contextSymbols,B,p0);
+		context.calculateProb(this,contextAnalyzer,B,p0);
 	}
 
 	public int getModules() {
