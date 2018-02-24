@@ -29,14 +29,16 @@ public class Confabulator extends Locker {
 	public Confabulator(Messenger msgr, WorkerUnion uni,KnowledgeBases kbs) {
 		super(msgr);
 		this.kbs = kbs;
-		sc = new SpellingChecker();
-		sc.setKnownSymbols(kbs.getKnownSymbols());
-		sc.setTotalSymbols(kbs.getTotalSymbols());
-		intitializeModules();
-		intitializeWorkers(uni);
+		initialize(uni,0);
 	}
 
-	public boolean isConfabulating() {
+	public Confabulator(Messenger msgr, WorkerUnion uni,KnowledgeBases kbs, int prefixes) {
+		super(msgr);
+		this.kbs = kbs;
+		initialize(uni,prefixes);
+	}
+	
+	public synchronized boolean isConfabulating() {
 		boolean r = false;
 		lockMe(this);
 		r = confabulating;
@@ -45,67 +47,68 @@ public class Confabulator extends Locker {
 	}
 	
 	public synchronized boolean confabulate(Confabulation confab) {
-		if (isConfabulating()) {
-			return false;
-		}
-		
+		boolean r = false;
 		lockMe(this);
-		confabulating = true;
+		if (!confabulating) {
+			confabulating = true;
+			r = true;
+		}
 		unlockMe(this);
-		
-		if (confab.confMs < 10) {
-			confab.confMs = 10;
-		}
-		confab.startTime = (new Date()).getTime();
-		confab.stopTime = confab.startTime + confab.confMs;
-
-		initializeConclusions(confab);
-
-		List<Module> logMods = new ArrayList<Module>();
-		
-		if (!context.isLocked()) {
-			//System.out.println("===> Confabulate context");
-			long stop = confab.startTime + confab.getContextMs();
-			int firedLinks = confabulateSymbols(confab,stop,context,true);
-			logMods.add(context);
-			logModuleStates(confab,"Confabulated context. Fired links; " + firedLinks,logMods);
-			logMods.clear();
-		}
-
-		if ((new Date()).getTime()<confab.stopTime) {
-			long stop = confab.startTime + confab.getContextMs() + confab.getPrefixMs();
-			int firedLinks = 0;
-			List<Module> forwardModules = new ArrayList<Module>();
-			List<Module> backwardModules = new ArrayList<Module>();
-			StringBuilder names = new StringBuilder();
-			for (Module pMod: prefix) {
-				if (!pMod.isLocked()) {
-					forwardModules.add(pMod);
-					backwardModules.add(pMod);
-					logMods.add(pMod);
-					if (names.length()>0) {
-						names.append(", ");
-					}
-					names.append(pMod.getName());
-				}
+		if (r) {
+			if (confab.confMs < 10) {
+				confab.confMs = 10;
 			}
-			if (logMods.size()>0) {
-				//System.out.println("===> Confabulate prefixes: " + names);
-				firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules);
-				logModuleStates(confab,"Confabulated prefix(es); " + names + ". Fired links; " + firedLinks,logMods);
+			confab.startTime = (new Date()).getTime();
+			confab.stopTime = confab.startTime + confab.confMs;
+	
+			initializeConclusions(confab);
+	
+			List<Module> logMods = new ArrayList<Module>();
+			
+			if (!context.isLocked()) {
+				//System.out.println("===> Confabulate context");
+				long stop = confab.startTime + confab.getContextMs();
+				int firedLinks = confabulateSymbols(confab,stop,context,true);
+				logMods.add(context);
+				logModuleStates(confab,"Confabulated context. Fired links; " + firedLinks,logMods);
 				logMods.clear();
 			}
+	
+			if ((new Date()).getTime()<confab.stopTime) {
+				long stop = confab.startTime + confab.getContextMs() + confab.getPrefixMs();
+				int firedLinks = 0;
+				List<Module> forwardModules = new ArrayList<Module>();
+				List<Module> backwardModules = new ArrayList<Module>();
+				StringBuilder names = new StringBuilder();
+				for (Module pMod: prefix) {
+					if (!pMod.isLocked()) {
+						forwardModules.add(pMod);
+						backwardModules.add(pMod);
+						logMods.add(pMod);
+						if (names.length()>0) {
+							names.append(", ");
+						}
+						names.append(pMod.getName());
+					}
+				}
+				if (logMods.size()>0) {
+					//System.out.println("===> Confabulate prefixes: " + names);
+					firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules);
+					logModuleStates(confab,"Confabulated prefix(es); " + names + ". Fired links; " + firedLinks,logMods);
+					logMods.clear();
+				}
+			}
+			
+			// TODO: Modules
+			for (int i = 0; i<confab.confSequenceSymbols; i++) {
+				// ...
+			}
+			
+			lockMe(this);
+			confabulating = false;
+			unlockMe(this);
 		}
-		
-		// TODO: Modules
-		for (int i = 0; i<confab.confSequenceSymbols; i++) {
-			// ...
-		}
-		
-		lockMe(this);
-		confabulating = false;
-		unlockMe(this);
-		return true;
+		return r;
 	} 
 
 	protected synchronized void workerIsDone(KnowledgeBaseWorker kbw) {
@@ -299,10 +302,10 @@ public class Confabulator extends Locker {
 		return append;
 	}
 
-	private void intitializeModules() {
+	private void intitializeModules(int prefixes) {
 		allSequenceModules.clear();
 		prefix.clear();
-		for (int i = 0; i<(kbs.getModules() - 1); i++) {
+		for (int i = 0; i<prefixes; i++) {
 			Module add = new Module(getMessenger(),kbs,"Prefix " + (i+1),false);
 			prefix.add(add);
 			allSequenceModules.add(add);
@@ -317,10 +320,12 @@ public class Confabulator extends Locker {
 	}
 
 	private void intitializeWorkers(WorkerUnion uni) {
-		int s = 0;
 		for (Module sMod: allSequenceModules) {
 			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,this,kbs.getContext(),kbs.getMinCount(),context,sMod,true));
 			kbws.add(new KnowledgeBaseWorker(getMessenger(),uni,this,kbs.getContext(),kbs.getMinCount(),context,sMod,false));
+		}
+		int s = 0;
+		for (Module sMod: allSequenceModules) {
 			int m = s + (kbs.getModules() - 1);
 			int kb = 0;
 			for (int i = (s + 1); i < m; i++) {
@@ -333,5 +338,16 @@ public class Confabulator extends Locker {
 			}
 			s++;
 		}
+	}
+
+	private void initialize(WorkerUnion uni, int prefixes) {
+		if (prefixes<=0) {
+			prefixes = (kbs.getModules() - 1);
+		}
+		sc = new SpellingChecker();
+		sc.setKnownSymbols(kbs.getKnownSymbols());
+		sc.setTotalSymbols(kbs.getTotalSymbols());
+		intitializeModules(prefixes);
+		intitializeWorkers(uni);
 	}
 }
