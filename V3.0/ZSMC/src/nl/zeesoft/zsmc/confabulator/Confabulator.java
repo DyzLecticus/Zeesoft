@@ -38,7 +38,7 @@ public class Confabulator extends Locker {
 		initialize(uni,prefixes);
 	}
 	
-	public synchronized boolean isConfabulating() {
+	public boolean isConfabulating() {
 		boolean r = false;
 		lockMe(this);
 		r = confabulating;
