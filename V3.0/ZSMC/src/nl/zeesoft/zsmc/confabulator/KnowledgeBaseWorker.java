@@ -54,7 +54,7 @@ public class KnowledgeBaseWorker extends Worker {
 		if ((forward && targetModule.isLocked()) ||
 			(!forward && sourceModule.isLocked()) ||
 			(activeSourceSymbols.size() == 0 && !sourceModule.isContext()) ||
-			activeTargetSymbols.size() == 0
+			(activeTargetSymbols.size() == 0 && !sourceModule.isContext())
 			) {
 			//System.out.println("Not start worker source: " + sourceModule.getName() + " target: " + targetModule.getName() + " forward: " + forward);
 			start = false;

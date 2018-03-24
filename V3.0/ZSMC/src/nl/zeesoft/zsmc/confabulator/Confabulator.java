@@ -63,6 +63,9 @@ public class Confabulator extends Locker {
 	
 			initializeConclusions(confab);
 	
+			
+			
+			/*
 			List<Module> logMods = new ArrayList<Module>();
 			
 			if (!context.isLocked()) {
@@ -79,29 +82,69 @@ public class Confabulator extends Locker {
 				int firedLinks = 0;
 				List<Module> forwardModules = new ArrayList<Module>();
 				List<Module> backwardModules = new ArrayList<Module>();
+				List<Module> contractModules = new ArrayList<Module>();
 				StringBuilder names = new StringBuilder();
-				for (Module pMod: prefix) {
-					if (!pMod.isLocked()) {
-						forwardModules.add(pMod);
-						backwardModules.add(pMod);
-						logMods.add(pMod);
-						if (names.length()>0) {
-							names.append(", ");
-						}
-						names.append(pMod.getName());
-					}
-				}
+				addUnlockedPrefixModules(names,logMods,forwardModules,backwardModules);
+				addUnlockedPrefixModules(contractModules);
+				addUnlockedSequenceModules(names,logMods,forwardModules,backwardModules);
 				if (logMods.size()>0) {
 					//System.out.println("===> Confabulate prefixes: " + names);
-					firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules);
+					firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules,contractModules,false);
 					logModuleStates(confab,"Confabulated prefix(es); " + names + ". Fired links; " + firedLinks,logMods);
 					logMods.clear();
 				}
 			}
 			
-			// TODO: Modules
-			for (int i = 0; i<confab.confSequenceSymbols; i++) {
-				// ...
+			if ((new Date()).getTime()<confab.stopTime) {
+				for (int i = 0; i<confab.confSequenceSymbols; i++) {
+					long stop = confab.startTime + confab.getContextMs() + confab.getPrefixMs() + (confab.getSymbolMs() * (i + 1));
+					while(!modules.get(0).isLocked()) {
+						int firedLinks = 0;
+						StringBuilder names = new StringBuilder();
+						List<Module> forwardModules = new ArrayList<Module>();
+						List<Module> backwardModules = new ArrayList<Module>();
+						List<Module> contractModules = new ArrayList<Module>();
+						addUnlockedSequenceModules(names,logMods,forwardModules,backwardModules,true);
+						addUnlockedSequenceModules(contractModules);
+						if (logMods.size()>0) {
+							firedLinks = confabulateSymbols(confab,stop,forwardModules,backwardModules,contractModules,true);
+							logModuleStates(confab,"Confabulated modules; " + names + ". Fired links; " + firedLinks,logMods);
+							logMods.clear();
+						}
+						if ((new Date()).getTime()>=stop) {
+							break;
+						}
+					}
+					
+					// TODO: remove break;
+					break;
+				}
+			}
+			*/
+			long stopContext = confab.startTime + confab.getContextMs();
+			long stopPrefix = confab.startTime + confab.getContextMs() + confab.getPrefixMs();
+			while ((new Date()).getTime()<confab.stopTime) {
+				List<Module> logMods = null;
+				if (!context.isLocked() && ((new Date()).getTime()<stopContext)) {
+					//System.out.println("===> Confabulate context");
+					logMods = runConfabulationCycle(confab,stopContext);
+				} else {
+					if ((new Date()).getTime()<stopPrefix) {
+						for (Module mod: prefix) {
+							if (!mod.isLocked()) {
+								logMods = runConfabulationCycle(confab,stopPrefix);
+								break;
+							}
+						}
+					}
+					if (logMods==null || logMods.size()==0) {
+						for (Module mod: modules) {
+							if (!mod.isLocked()) {
+								logMods = runConfabulationCycle(confab,confab.stopTime);
+							}
+						}
+					}
+				}
 			}
 			
 			lockMe(this);
@@ -109,7 +152,7 @@ public class Confabulator extends Locker {
 			unlockMe(this);
 		}
 		return r;
-	} 
+	}
 
 	protected synchronized void workerIsDone(KnowledgeBaseWorker kbw) {
 		boolean done = false;
@@ -140,13 +183,19 @@ public class Confabulator extends Locker {
 		}
 	}
 
-	private List<KnowledgeBaseWorker> activateWorkers(long stopTime,List<Module> forwardModules,List<Module> backwardModules) {
+	/*
+	private List<KnowledgeBaseWorker> activateWorkers(long stopTime,List<Module> forwardModules,List<Module> backwardModules,boolean skipContext) {
 		List<KnowledgeBaseWorker> workers = null;
 		lockMe(this);
 		activeWorkers.clear();
 		for (KnowledgeBaseWorker kbw: kbws) {
-			if ((kbw.isForward() && forwardModules.contains(kbw.getTargetModule())) ||
-				(!kbw.isForward() && backwardModules.contains(kbw.getSourceModule()))
+			if (
+				(
+					(kbw.isForward() && forwardModules.contains(kbw.getTargetModule())) ||
+					(!kbw.isForward() && backwardModules.contains(kbw.getSourceModule()))
+				) && (
+					(!skipContext || !kbw.getSourceModule().isContext())
+				)
 				) {
 				if (kbw.prepare(stopTime)) {
 					activeWorkers.add(kbw);
@@ -160,38 +209,225 @@ public class Confabulator extends Locker {
 		}
 		return workers;
 	}
+	*/
+
+	private List<Module> runConfabulationCycle(Confabulation confab,long stopTime) {
+		int firedLinks = 0;
+		List<Module> logMods = new ArrayList<Module>();
+		
+		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
+		addWorkersToConfabulationCycle(workers);
+		
+		workers = activateWorkers(workers,stopTime,logMods);
+		waitForActiveWorkers();
+		
+		if (logMods.size()>0) {
+			// Contract
+			for (Module mod: logMods) {
+				if (mod.isContext()) {
+					mod.contract(confab.confContextSymbols);
+				} else {
+					mod.contract(kbs.getB());
+				}
+			}
+			
+			// Get results
+			for (KnowledgeBaseWorker kbw: workers) {
+				firedLinks += kbw.getFiredLinks();
+			}
+			logModuleStates(confab,"Confabulated modules. Fired links; " + firedLinks,logMods);
+		}
+
+		return logMods;
+	}
+
+	private List<KnowledgeBaseWorker> activateWorkers(List<KnowledgeBaseWorker> workers,long stopTime,List<Module> logMods) {
+		lockMe(this);
+		activeWorkers.clear();
+		for (KnowledgeBaseWorker kbw: workers) {
+			if (kbw.prepare(stopTime)) {
+				activeWorkers.add(kbw);
+			}
+		}
+		workers = new ArrayList<KnowledgeBaseWorker>(activeWorkers); 
+		unlockMe(this);
+		for (KnowledgeBaseWorker kbw: workers) {
+			kbw.start();
+			if (kbw.isForward()) {
+				if (!logMods.contains(kbw.getTargetModule())) {
+					logMods.add(kbw.getTargetModule());
+				}
+			} else {
+				if (!logMods.contains(kbw.getSourceModule())) {
+					logMods.add(kbw.getSourceModule());
+				}
+			}
+		}
+		return workers;
+	}
 	
+	private void addWorkersToConfabulationCycle(List<KnowledgeBaseWorker> workers) {
+		if (!context.isLocked()) {
+			addWorkers(workers,getToContextWorkers());
+		}
+		for (Module mod: allSequenceModules) {
+			if (!mod.isLocked()) {
+				if (prefix.contains(mod)) {
+					if (context.getActiveSymbolsSize()>0) {
+						addWorkers(workers,getFromContextWorkers(mod));
+					}
+					addWorkers(workers,getWorkersByTarget(mod,true,null));
+					addWorkers(workers,getWorkersBySource(mod,false,null));
+				}
+			}
+		}
+		for (Module mod: allSequenceModules) {
+			if (!mod.isLocked()) {
+				if (modules.contains(mod)) {
+					if (context.getActiveSymbolsSize()>0 && mod.getActiveSymbolsSize()==0) {
+						addWorkers(workers,getFromContextWorkers(mod));
+					} 
+					addWorkers(workers,getWorkersByTarget(mod,true,null));
+					addWorkers(workers,getWorkersBySource(mod,false,null));
+				}
+			}
+		}
+	}
+	
+	private void addWorkers(List<KnowledgeBaseWorker> workers,List<KnowledgeBaseWorker> addWorkers) {
+		for (KnowledgeBaseWorker worker: addWorkers) {
+			if (!workers.contains(worker)) {
+				workers.add(worker);
+			}
+		}
+	}
+	
+	private List<KnowledgeBaseWorker> getToContextWorkers() {
+		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
+		workers = getWorkersBySource(context,false,null);
+		return workers;
+	}
+	
+	private List<KnowledgeBaseWorker> getFromContextWorkers() {
+		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
+		workers = getWorkersBySource(context,true,null);
+		return workers;
+	}
+	
+	private List<KnowledgeBaseWorker> getFromContextWorkers(Module target) {
+		return getWorkersBySource(context,target,true);
+	}
+
+	private List<KnowledgeBaseWorker> getWorkersByTarget(Module mod,boolean forward,List<Module> sources) {
+		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
+		for (KnowledgeBaseWorker worker: kbws) {
+			if (worker.isForward()==forward && worker.getTargetModule()==mod) {
+				if (sources == null || sources.size() == 0 || sources.contains(worker.getSourceModule())) {
+					workers.add(worker);
+				}
+			}
+		}
+		return workers;
+	}
+
+	private List<KnowledgeBaseWorker> getWorkersBySource(Module mod,Module target,boolean forward) {
+		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
+		List<Module> targets = null;
+		if (target!=null) {
+			targets = new ArrayList<Module>();
+			targets.add(target);
+		}
+		workers = getWorkersBySource(mod,forward,targets);
+		return workers;
+	}
+
+	private List<KnowledgeBaseWorker> getWorkersBySource(Module mod,boolean forward,List<Module> targets) {
+		List<KnowledgeBaseWorker> workers = new ArrayList<KnowledgeBaseWorker>();
+		for (KnowledgeBaseWorker worker: kbws) {
+			if (worker.isForward()==forward && worker.getSourceModule()==mod) {
+				if (targets == null || targets.size() == 0 || targets.contains(worker.getTargetModule())) {
+					workers.add(worker);
+				}
+			}
+		}
+		return workers;
+	}
+	
+	/*
+	private void addUnlockedPrefixModules(StringBuilder names, List<Module> logMods,List<Module> forwardModules,List<Module> backwardModules) {
+		for (Module mod: prefix) {
+			if (!mod.isLocked()) {
+				forwardModules.add(mod);
+				backwardModules.add(mod);
+				logMods.add(mod);
+				if (names.length()>0) {
+					names.append(", ");
+				}
+				names.append(mod.getName());
+			}
+		}
+	}
+
+	private void addUnlockedPrefixModules(List<Module> contractModules) {
+		for (Module mod: prefix) {
+			if (!mod.isLocked() && !contractModules.contains(mod)) {
+				contractModules.add(mod);
+			}
+		}
+	}
+
+	private void addUnlockedSequenceModules(StringBuilder names, List<Module> logMods,List<Module> forwardModules,List<Module> backwardModules) {
+		addUnlockedSequenceModules(names,logMods,forwardModules,backwardModules,false);
+	}
+
+	private void addUnlockedSequenceModules(StringBuilder names, List<Module> logMods,List<Module> forwardModules,List<Module> backwardModules,boolean forwardOnly) {
+		for (Module mod: modules) {
+			if (!mod.isLocked()) {
+				forwardModules.add(mod);
+				if (!forwardOnly) {
+					backwardModules.add(mod);
+				}
+				logMods.add(mod);
+				if (names.length()>0) {
+					names.append(", ");
+				}
+				names.append(mod.getName());
+			}
+		}
+	}
+
+	private void addUnlockedSequenceModules(List<Module> contractModules) {
+		for (Module mod: modules) {
+			if (!mod.isLocked()) {
+				contractModules.add(mod);
+			}
+		}
+	}
+
 	private int confabulateSymbols(Confabulation confab,long stopTime,Module cMod,boolean backwardOnly) {
 		List<Module> forwardModules = new ArrayList<Module>();
 		List<Module> backwardModules = new ArrayList<Module>();
+		List<Module> contractModules = new ArrayList<Module>();
 		if (!backwardOnly) {
 			forwardModules.add(cMod);
 		}
 		backwardModules.add(cMod);
-		return confabulateSymbols(confab,stopTime,forwardModules,backwardModules);
+		contractModules.add(cMod);
+		return confabulateSymbols(confab,stopTime,forwardModules,backwardModules,contractModules,false);
 	}
 
-	private int confabulateSymbols(Confabulation confab,long stopTime,List<Module> forwardModules,List<Module> backwardModules) {
+	private int confabulateSymbols(Confabulation confab,long stopTime,List<Module> forwardModules,List<Module> backwardModules,List<Module> contractModules, boolean skipContext) {
 		int firedLinks = 0;
 		
-		List<KnowledgeBaseWorker> workers = activateWorkers(stopTime,forwardModules,backwardModules);
+		List<KnowledgeBaseWorker> workers = activateWorkers(stopTime,forwardModules,backwardModules,skipContext);
 		waitForActiveWorkers();
 		
 		// Contract
-		for (Module mod: forwardModules) {
+		for (Module mod: contractModules) {
 			if (mod.isContext()) {
 				mod.contract(confab.confContextSymbols);
 			} else {
-				mod.contract(1);
-			}
-		}
-		for (Module mod: backwardModules) {
-			if (!forwardModules.contains(mod)) {
-				if (mod.isContext()) {
-					mod.contract(confab.confContextSymbols);
-				} else {
-					mod.contract(1);
-				}
+				mod.contract(kbs.getB());
 			}
 		}
 		
@@ -202,6 +438,7 @@ public class Confabulator extends Locker {
 		
 		return firedLinks;
 	}
+	*/
 	
 	private void initializeConclusions(Confabulation confab) {
 		// Set context
@@ -214,7 +451,7 @@ public class Confabulator extends Locker {
 			conclusions.add(sym);
 		}
 		context.setConclusions(conclusions);
-		if (conclusions.size()==1) {
+		if (conclusions.size()>0 && conclusions.size()<=confab.confContextSymbols) {
 			context.setLocked(true);
 		}
 		

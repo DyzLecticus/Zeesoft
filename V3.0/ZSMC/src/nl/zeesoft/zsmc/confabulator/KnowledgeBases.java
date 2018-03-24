@@ -21,7 +21,6 @@ public class KnowledgeBases extends Analyzer {
 
 	private KnowledgeBase		context			= new KnowledgeBase();
 	private Analyzer			contextAnalyzer	= new Analyzer();
-	//private String				contextSymbol	= "";
 
 	private List<String>		contextSymbols	= new ArrayList<String>();
 

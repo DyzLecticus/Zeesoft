@@ -73,7 +73,15 @@ public class Module extends Locker {
 		this.locked = locked;
 		unlockMe(this);
 	}
-	
+
+	protected int getActiveSymbolsSize() {
+		int r = 0;
+		lockMe(this);
+		r = activeSymbols.size();
+		unlockMe(this);
+		return r;
+	}
+
 	protected List<ModuleSymbol> getActiveSymbols() {
 		List<ModuleSymbol> r = null;
 		lockMe(this);
