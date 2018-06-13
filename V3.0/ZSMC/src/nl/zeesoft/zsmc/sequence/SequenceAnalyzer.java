@@ -29,7 +29,10 @@ public class SequenceAnalyzer extends Analyzer {
 		for (String symbol: symbols) {
 			if (symbols.size()>(i + 1)) {
 				String to = symbols.get(i + 1);
-				addOrUpdateLink(symbol,to);
+				addOrUpdateLink(symbol,context,to);
+				if (context.length()>0) {
+					addOrUpdateLink(symbol,"",to);
+				}
 			}
 			i++;
 		}
@@ -43,12 +46,12 @@ public class SequenceAnalyzer extends Analyzer {
 		}
 	}
 	
-	public String getLinkId(String from, String to) {
-		return from + "[]" + to;
+	public String getLinkId(String from, String context, String to) {
+		return from + "[]" + context + "[]" + to;
 	}
 	
-	private void addOrUpdateLink(String from, String to) {
-		String linkId = getLinkId(from,to);
+	private void addOrUpdateLink(String from, String context, String to) {
+		String linkId = getLinkId(from,context,to);
 		SequenceAnalyzerSymbolLink link = null;
 		link = knownLinks.get(linkId);
 		if (link==null) {

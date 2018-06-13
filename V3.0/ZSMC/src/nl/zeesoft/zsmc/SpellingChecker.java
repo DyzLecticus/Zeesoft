@@ -10,7 +10,7 @@ import nl.zeesoft.zsmc.sequence.SequenceAnalyzer;
 import nl.zeesoft.zsmc.sequence.SequenceAnalyzerSymbolLink;
 
 /**
- * A SpellingChecker can be used to correct spelling of words and sentences
+ * A SpellingChecker can be used to correct the spelling of words and sentences
  */
 public class SpellingChecker extends SequenceAnalyzer {
 	private static final String		ALPHABET	= "abcdefghijklmnopqrstuvwxyz";
@@ -104,8 +104,8 @@ public class SpellingChecker extends SequenceAnalyzer {
 		if (r.size()>1 && (before.length()>0 || after.length()>0)) {
 			if (before.length()>0) {
 				for (AnalyzerSymbol as: r) {
-					SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(before,as.symbol));
-					if (link!=null && (context.length()==0 || link.context.equals(context))) {
+					SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(before,context,as.symbol));
+					if (link!=null) {
 						as.prob += 1.0D;
 						as.prob += link.prob;
 					}
@@ -115,8 +115,8 @@ public class SpellingChecker extends SequenceAnalyzer {
 				List<AnalyzerSymbol> afters = getCorrections(after);
 				for (AnalyzerSymbol af: afters) {
 					for (AnalyzerSymbol as: r) {
-						SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(as.symbol,af.symbol));
-						if (link!=null && (context.length()==0 || link.context.equals(context))) {
+						SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(as.symbol,context,af.symbol));
+						if (link!=null) {
 							as.prob += 1.0D;
 							as.prob += link.prob;
 						}
