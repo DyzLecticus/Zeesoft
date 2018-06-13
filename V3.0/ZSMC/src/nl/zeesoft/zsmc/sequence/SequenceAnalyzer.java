@@ -1,0 +1,112 @@
+package nl.zeesoft.zsmc.sequence;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
+import nl.zeesoft.zdk.ZStringBuilder;
+
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+public class SequenceAnalyzer extends Analyzer {
+	private SortedMap<String,SequenceAnalyzerSymbolLink>		knownLinks			= new TreeMap<String,SequenceAnalyzerSymbolLink>();		
+	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolFrom	= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();
+	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolTo		= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();
+	private int													totalLinks			= 0;
+	
+	private String												context				= "";
+
+	@Override
+	protected void handleContextSymbol(ZStringBuilder contextSymbol) {
+		context = contextSymbol.toString();
+	}
+
+	@Override
+	public void addSymbols(List<String> symbols) {
+		super.addSymbols(symbols);
+		int i = 0;
+		for (String symbol: symbols) {
+			if (symbols.size()>(i + 1)) {
+				String to = symbols.get(i + 1);
+				addOrUpdateLink(symbol,to);
+			}
+			i++;
+		}
+	}
+	
+	@Override
+	public void calculateProb() {
+		super.calculateProb();
+		for (Entry<String,SequenceAnalyzerSymbolLink> entry: knownLinks.entrySet()) {
+			entry.getValue().prob = ((double)entry.getValue().count / (double)totalLinks);
+		}
+	}
+	
+	public String getLinkId(String from, String to) {
+		return from + "[]" + to;
+	}
+	
+	private void addOrUpdateLink(String from, String to) {
+		String linkId = getLinkId(from,to);
+		SequenceAnalyzerSymbolLink link = null;
+		link = knownLinks.get(linkId);
+		if (link==null) {
+			link = new SequenceAnalyzerSymbolLink();
+			link.context = context;
+			link.symbolFrom = from;
+			link.symbolTo = to;
+			knownLinks.put(linkId,link);
+			
+			List<SequenceAnalyzerSymbolLink> list = null; 
+
+			list = linksBySymbolFrom.get(from);
+			if (list==null) {
+				list = new ArrayList<SequenceAnalyzerSymbolLink>();
+				linksBySymbolFrom.put(from,list);
+			}
+			list.add(link);
+			
+			list = linksBySymbolTo.get(to);
+			if (list==null) {
+				list = new ArrayList<SequenceAnalyzerSymbolLink>();
+				linksBySymbolTo.put(to,list);
+			}
+			list.add(link);
+		}
+		link.count++;
+		totalLinks++;
+	}
+	
+	public SortedMap<String, SequenceAnalyzerSymbolLink> getKnownLinks() {
+		return knownLinks;
+	}
+
+	public void setKnownLinks(SortedMap<String, SequenceAnalyzerSymbolLink> knownLinks) {
+		this.knownLinks = knownLinks;
+	}
+
+	public SortedMap<String, List<SequenceAnalyzerSymbolLink>> getLinksBySymbolFrom() {
+		return linksBySymbolFrom;
+	}
+
+	public void setLinksBySymbolFrom(SortedMap<String, List<SequenceAnalyzerSymbolLink>> linksBySymbolFrom) {
+		this.linksBySymbolFrom = linksBySymbolFrom;
+	}
+
+	public SortedMap<String, List<SequenceAnalyzerSymbolLink>> getLinksBySymbolTo() {
+		return linksBySymbolTo;
+	}
+
+	public void setLinksBySymbolTo(SortedMap<String, List<SequenceAnalyzerSymbolLink>> linksBySymbolTo) {
+		this.linksBySymbolTo = linksBySymbolTo;
+	}
+
+	public int getTotalLinks() {
+		return totalLinks;
+	}
+
+	public void setTotalLinks(int totalLinks) {
+		this.totalLinks = totalLinks;
+	}
+}

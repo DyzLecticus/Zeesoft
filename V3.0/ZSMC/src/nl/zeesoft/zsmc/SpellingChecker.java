@@ -5,15 +5,16 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zsmc.sequence.Analyzer;
 import nl.zeesoft.zsmc.sequence.AnalyzerSymbol;
+import nl.zeesoft.zsmc.sequence.SequenceAnalyzer;
+import nl.zeesoft.zsmc.sequence.SequenceAnalyzerSymbolLink;
 
 /**
  * A SpellingChecker can be used to correct spelling of words and sentences
  */
-public class SpellingChecker extends Analyzer {
+public class SpellingChecker extends SequenceAnalyzer {
 	private static final String		ALPHABET	= "abcdefghijklmnopqrstuvwxyz";
-
+	
 	/**
 	 * Returns the correction for a certain symbol.
 	 * 
@@ -21,10 +22,23 @@ public class SpellingChecker extends Analyzer {
 	 * @return The corrected symbol
 	 */
 	public String correct(String symbol) {
+		return correct("",symbol,"","");
+	}
+	
+	/**
+	 * Returns the correction for a certain symbol.
+	 * 
+	 * @param before The optional symbol before the symbol to correct
+	 * @param symbol The symbol to correct
+	 * @param after The optional symbol after the symbol to correct
+	 * @param context The optional context symbol to limit symbol link usage
+	 * @return The corrected symbol
+	 */
+	public String correct(String before,String symbol,String after,String context) {
 		ZStringBuilder r = new ZStringBuilder(symbol);
 		if (!getKnownSymbols().containsKey(symbol)) {
 			double highest = 0D;
-			List<AnalyzerSymbol> cors = getCorrections(symbol);
+			List<AnalyzerSymbol> cors = getCorrections(before,symbol,after,context);
 			for (AnalyzerSymbol s: cors) {
 				if (s.prob>highest) {
 					highest = s.prob;
@@ -39,17 +53,37 @@ public class SpellingChecker extends Analyzer {
 	 * Returns the correction for a certain symbol sequence.
 	 * 
 	 * @param sequence The sequence to correct
+	 * @param context The optional context symbol to limit symbol link usage
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence) {
+		return correct(sequence,"");
+	}
+	
+	/**
+	 * Returns the correction for a certain symbol sequence.
+	 * 
+	 * @param sequence The sequence to correct
+	 * @param context The optional context symbol to limit symbol link usage
+	 * @return The corrected sequence
+	 */
+	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context) {
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		List<String> corrected = new ArrayList<String>();
+		String before = "";
+		String after = "";
+		int i = 0;
 		for (String symbol: symbols) {
+			if (symbols.size()>(i + 1)) {
+				after = symbols.get(i + 1);
+			}
 			if (symbol.length()== 1 && (ZStringSymbolParser.isLineEndSymbol(symbol) || ZStringSymbolParser.isPunctuationSymbol(symbol))) {
 				corrected.add(symbol);
 			} else {
-				corrected.add(correct(symbol));
+				corrected.add(correct(before,symbol,after,context));
 			}
+			i++;
+			before = symbol;
 		}
 		sequence.fromSymbols(corrected,true,true);
 		return sequence;
@@ -57,9 +91,47 @@ public class SpellingChecker extends Analyzer {
 
 	/**
 	 * Returns the analyzer symbol corrections list.
+	 * Uses the sequence analyzer symbol links to boost known symbol sequence combinations.
+	 * 
+	 * @param before The optional symbol before the symbol to correct
+	 * @param symbol The symbol to correct
+	 * @param after The optional symbol after the symbol to correct
+	 * @param context The optional context symbol to limit symbol link usage
+	 * @return a list of possible analyzer symbol corrections
+	 */
+	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context) {
+		List<AnalyzerSymbol> r = getCorrections(symbol);
+		if (r.size()>1 && (before.length()>0 || after.length()>0)) {
+			if (before.length()>0) {
+				for (AnalyzerSymbol as: r) {
+					SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(before,as.symbol));
+					if (link!=null && (context.length()==0 || link.context.equals(context))) {
+						as.prob += 1.0D;
+						as.prob += link.prob;
+					}
+				}
+			}
+			if (after.length()>0) {
+				List<AnalyzerSymbol> afters = getCorrections(after);
+				for (AnalyzerSymbol af: afters) {
+					for (AnalyzerSymbol as: r) {
+						SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(as.symbol,af.symbol));
+						if (link!=null && (context.length()==0 || link.context.equals(context))) {
+							as.prob += 1.0D;
+							as.prob += link.prob;
+						}
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
+	/**
+	 * Returns the analyzer symbol corrections list.
 	 * 
 	 * @param symbol The symbol to correct
-	 * @return a list of possible analyzer symbol corrections.
+	 * @return a list of possible analyzer symbol corrections
 	 */
 	public List<AnalyzerSymbol> getCorrections(String symbol) {
 		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
@@ -75,7 +147,7 @@ public class SpellingChecker extends Analyzer {
 				AnalyzerSymbol s = getKnownSymbols().get(var.toString());
 				if (s!=null && !added.contains(s.symbol)) {
 					added.add(s.symbol);
-					r.add(s);
+					r.add(s.copy());
 				}
 			}
 			if (r.size()==0) {
@@ -84,7 +156,7 @@ public class SpellingChecker extends Analyzer {
 					AnalyzerSymbol s = getKnownSymbols().get(var.toString());
 					if (s!=null && !added.contains(s.symbol)) {
 						added.add(s.symbol);
-						r.add(s);
+						r.add(s.copy());
 					}
 				}
 			}
