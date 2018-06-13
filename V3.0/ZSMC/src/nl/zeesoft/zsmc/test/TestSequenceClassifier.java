@@ -20,16 +20,16 @@ public class TestSequenceClassifier extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use the *SequenceClassifier* to classify a sequence, returning the context.");
+		System.out.println("This test shows how to use the *SequenceClassifier* to classify a sequence.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the SequenceClassifier");
 		System.out.println("SequenceClassifier classifier = new SequenceClassifier();");
 		System.out.println("// Initialize the SequenceClassifier");
-		System.out.println("classifier.initialize(\"Tab separated file name.\");");
+		System.out.println("classifier.initialize(\"tab-separated-file-name.tsv\");");
 		System.out.println("// Use SequenceClassifier to correct a word");
-		System.out.println("String context = classifier.classify(\"some sequence\");");
+		System.out.println("String context = classifier.classify(new ZStringSymbolParser(\"some sequence\"));");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");

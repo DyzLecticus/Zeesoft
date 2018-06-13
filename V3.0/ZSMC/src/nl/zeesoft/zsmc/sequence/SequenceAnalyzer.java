@@ -9,6 +9,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+/**
+ * A SequenceAnalyzer can be used to learn context sensitive sequence symbol pair links.
+ */
 public class SequenceAnalyzer extends Analyzer {
 	private SortedMap<String,SequenceAnalyzerSymbolLink>		knownLinks			= new TreeMap<String,SequenceAnalyzerSymbolLink>();		
 	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolFrom	= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();

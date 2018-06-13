@@ -10,7 +10,7 @@ import nl.zeesoft.zsmc.sequence.SequenceAnalyzer;
 import nl.zeesoft.zsmc.sequence.SequenceAnalyzerSymbolLink;
 
 /**
- * A SpellingChecker can be used to correct the spelling of words and sentences
+ * A SpellingChecker can be used to correct the spelling of words and sentences.
  */
 public class SpellingChecker extends SequenceAnalyzer {
 	private static final String		ALPHABET	= "abcdefghijklmnopqrstuvwxyz";

@@ -9,6 +9,9 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsmc.sequence.AnalyzerSymbol;
 import nl.zeesoft.zsmc.sequence.SequenceAnalyzerSymbolLink;
 
+/**
+ * A SequenceClassifier can be used to obtain the context of symbol sequences.
+ */
 public class SequenceClassifier extends SpellingChecker {
 	/**
 	 * Returns the context or an empty string for a certain sequence.
