@@ -67,7 +67,7 @@ public class TestSequenceMatcher extends TestObject {
 			testSequenceMatch(sm,sequence,context,new ZStringSymbolParser("Wat kost een buitenlandse betaling? Bekijk het overzicht met de tarieven."));
 			
 			sequence = new ZStringSymbolParser("geld over?");
-			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Houdt u iets van het geld over? Denk dan nu alvast aan de toekomst van uw kind en vul zijn of haar spaarpot."));
+			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Alle rekeningen betaald en geld over? Sparen ligt voor de hand , maar er is meer mogelijk. Bekijk onze video met de voor- en nadelen van beleggen , hypotheek aflossen , pensioen aanvullen en schenken."));
 
 			sequence = new ZStringSymbolParser("Waar kan ik mijn transacties zien?");
 			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Waar kan ik mijn transacties inzien? Via Mijn ICS Business kunt u online uw transacties , uw limiet , het openstaande saldo en overzichten tot 6 maanden terug bekijken. Ik wil een extra creditcard aanvragen."));
