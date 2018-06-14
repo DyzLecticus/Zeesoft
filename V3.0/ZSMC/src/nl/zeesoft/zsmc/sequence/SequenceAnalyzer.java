@@ -17,8 +17,18 @@ public class SequenceAnalyzer extends Analyzer {
 	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolFrom	= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();
 	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolTo		= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();
 	private int													totalLinks			= 0;
-	
+	private double												maxLinkProb			= 0.0D;
+
 	private String												context				= "";
+
+	/**
+	 * Sets the context used to associate additional sequences.
+	 * 
+	 * @param context The context to set
+	 */
+	public void setContext(String context) {
+		this.context = context;
+	}
 
 	@Override
 	protected void handleContextSymbol(ZStringBuilder contextSymbol) {
@@ -46,6 +56,9 @@ public class SequenceAnalyzer extends Analyzer {
 		super.calculateProb();
 		for (Entry<String,SequenceAnalyzerSymbolLink> entry: knownLinks.entrySet()) {
 			entry.getValue().prob = ((double)entry.getValue().count / (double)totalLinks);
+			if (entry.getValue().prob>maxLinkProb) {
+				maxLinkProb = entry.getValue().prob;
+			}
 		}
 	}
 	
@@ -114,5 +127,13 @@ public class SequenceAnalyzer extends Analyzer {
 
 	public void setTotalLinks(int totalLinks) {
 		this.totalLinks = totalLinks;
+	}
+
+	public double getMaxLinkProb() {
+		return maxLinkProb;
+	}
+
+	public void setMaxLinkProb(double maxLinkProb) {
+		this.maxLinkProb = maxLinkProb;
 	}
 }

@@ -14,6 +14,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 public class Analyzer {
 	private SortedMap<String,AnalyzerSymbol> 		knownSymbols	= new TreeMap<String,AnalyzerSymbol>();
 	private int										totalSymbols	= 0;
+	private double									maxSymbolProb	= 0.0D;
 	
 	/**
 	 * Initializes the known symbols based on an input file.
@@ -115,6 +116,9 @@ public class Analyzer {
 	public void calculateProb() {
 		for (Entry<String,AnalyzerSymbol> entry: knownSymbols.entrySet()) {
 			entry.getValue().prob = ((double)entry.getValue().count / (double)totalSymbols);
+			if (entry.getValue().prob>maxSymbolProb) {
+				maxSymbolProb = entry.getValue().prob;
+			}
 		}
 	}
 	
@@ -132,5 +136,13 @@ public class Analyzer {
 	
 	public void setTotalSymbols(int totalSymbols) {
 		this.totalSymbols = totalSymbols;
+	}
+	
+	public double getMaxSymbolProb() {
+		return maxSymbolProb;
+	}
+
+	public void setMaxSymbolProb(double maxSymbolProb) {
+		this.maxSymbolProb = maxSymbolProb;
 	}
 }

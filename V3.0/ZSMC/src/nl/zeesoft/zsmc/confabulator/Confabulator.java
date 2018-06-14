@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zsmc.SpellingChecker;
+import nl.zeesoft.zsmc.SymbolCorrector;
 import nl.zeesoft.zsmc.sequence.AnalyzerSymbol;
 
 public class Confabulator extends Locker {
@@ -20,7 +20,7 @@ public class Confabulator extends Locker {
 	
 	private List<KnowledgeBaseWorker>	kbws				= new ArrayList<KnowledgeBaseWorker>();
 	
-	private SpellingChecker				sc					= null;
+	private SymbolCorrector				sc					= null;
 	private List<Module>				allSequenceModules	= new ArrayList<Module>();
 	
 	private boolean						confabulating		= false;
@@ -595,7 +595,7 @@ public class Confabulator extends Locker {
 		if (prefixes<=0) {
 			prefixes = (kbs.getModules() - 1);
 		}
-		sc = new SpellingChecker();
+		sc = new SymbolCorrector();
 		sc.setKnownSymbols(kbs.getKnownSymbols());
 		sc.setTotalSymbols(kbs.getTotalSymbols());
 		intitializeModules(prefixes);

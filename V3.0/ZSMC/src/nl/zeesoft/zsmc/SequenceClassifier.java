@@ -12,7 +12,7 @@ import nl.zeesoft.zsmc.sequence.SequenceAnalyzerSymbolLink;
 /**
  * A SequenceClassifier can be used to obtain the context of symbol sequences.
  */
-public class SequenceClassifier extends SpellingChecker {
+public class SequenceClassifier extends SymbolCorrector {
 	/**
 	 * Returns the context or an empty string for a certain sequence.
 	 * 
@@ -58,7 +58,7 @@ public class SequenceClassifier extends SpellingChecker {
 						list.put(link.context,as);
 						r.add(as);
 					}
-					as.prob += (1.0D - link.prob);
+					as.prob += (getMaxLinkProb() - link.prob);
 					as.count++;
 				}
 			}

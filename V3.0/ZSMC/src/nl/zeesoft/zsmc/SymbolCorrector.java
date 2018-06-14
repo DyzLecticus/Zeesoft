@@ -10,9 +10,9 @@ import nl.zeesoft.zsmc.sequence.SequenceAnalyzer;
 import nl.zeesoft.zsmc.sequence.SequenceAnalyzerSymbolLink;
 
 /**
- * A SpellingChecker can be used to correct the spelling of words and sentences.
+ * A SymbolCorrector can be used to correct the spelling of symbols and sequences.
  */
-public class SpellingChecker extends SequenceAnalyzer {
+public class SymbolCorrector extends SequenceAnalyzer {
 	private static final String		ALPHABET	= "abcdefghijklmnopqrstuvwxyz";
 	
 	/**
@@ -53,7 +53,6 @@ public class SpellingChecker extends SequenceAnalyzer {
 	 * Returns the correction for a certain symbol sequence.
 	 * 
 	 * @param sequence The sequence to correct
-	 * @param context The optional context symbol to limit symbol link usage
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence) {

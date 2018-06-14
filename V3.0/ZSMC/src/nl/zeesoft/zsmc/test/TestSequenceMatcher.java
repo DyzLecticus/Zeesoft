@@ -51,20 +51,23 @@ public class TestSequenceMatcher extends TestObject {
 		if (err.length()==0) {
 			System.out.println("Initializing the SequenceMatcher took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 
-			assertEqual(sm.getContextSequences().size(),82,"The total number of sequences does not match expectation");
-			assertEqual(sm.getContextSequences().get("").size(),6362,"The total number of context sequences does not match expectation");
+			assertEqual(sm.getKnownSequences().size(),82,"The total number of sequences does not match expectation");
+			assertEqual(sm.getKnownSequences().get("").size(),6362,"The total number of context sequences does not match expectation");
 
-			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat kost dat?");
+			ZStringSymbolParser sequence = null;
+			String context = "";
+					
+			sequence = new ZStringSymbolParser("Wat kost dat?");
 			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Zorg thuis : wat kost dat? De meeste mensen oriënteren zich pas op deze mogelijkheden als de zorg acuut nodig is. Soms kan men dan niet meer zelf beslissen en moeten anderen dat doen."));
 			
-			String context = sm.classify(sequence);
-			testSequenceMatch(sm,sequence,context,new ZStringSymbolParser("Hoe kan dat? In onze systemen is dan niet vastgelegd dat deze rekening ook bij u hoort. Ga langs bij een van onze bankkantoren om de persoonsgegevens te laten aanpassen."));
+			context = sm.classify(sequence);
+			testSequenceMatch(sm,sequence,context,new ZStringSymbolParser("Wat kost een buitenlandse betaling? Bekijk het overzicht met de tarieven."));
 
 			sequence = new ZStringSymbolParser("Wat kost");
 			testSequenceMatch(sm,sequence,context,new ZStringSymbolParser("Wat kost een buitenlandse betaling? Bekijk het overzicht met de tarieven."));
 			
 			sequence = new ZStringSymbolParser("geld over?");
-			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Alle rekeningen betaald en geld over? Sparen ligt voor de hand , maar er is meer mogelijk. Bekijk onze video met de voor- en nadelen van beleggen , hypotheek aflossen , pensioen aanvullen en schenken."));
+			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Houdt u iets van het geld over? Denk dan nu alvast aan de toekomst van uw kind en vul zijn of haar spaarpot."));
 
 			sequence = new ZStringSymbolParser("Waar kan ik mijn transacties zien?");
 			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Waar kan ik mijn transacties inzien? Via Mijn ICS Business kunt u online uw transacties , uw limiet , het openstaande saldo en overzichten tot 6 maanden terug bekijken. Ik wil een extra creditcard aanvragen."));

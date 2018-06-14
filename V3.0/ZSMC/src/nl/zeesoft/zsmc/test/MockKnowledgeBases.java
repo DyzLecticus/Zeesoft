@@ -17,7 +17,7 @@ public class MockKnowledgeBases extends MockObject {
 		Date started = new Date();
 		KnowledgeBases kbs = new KnowledgeBases();
 		kbs.setMinCount(0);
-		kbs.initialize(new ZStringSymbolParser(TestSpellingChecker.TEST_SEQUENCE));
+		kbs.initialize(new ZStringSymbolParser(TestSymbolCorrector.TEST_SEQUENCE));
 		System.out.println("Initializing mock knowledge bases took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		return kbs;
 	}

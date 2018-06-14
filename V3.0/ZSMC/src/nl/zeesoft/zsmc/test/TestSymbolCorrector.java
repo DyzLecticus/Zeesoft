@@ -7,39 +7,39 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsmc.SpellingChecker;
+import nl.zeesoft.zsmc.SymbolCorrector;
 
-public class TestSpellingChecker extends TestObject {
+public class TestSymbolCorrector extends TestObject {
 	public static final String TEST_SEQUENCE = 
 		"I am the kind of stuff that a nice pizza is made of. I am a friendly person. We are the coolest kelvin. It was a rainy day with a cold wind. " +
 		"The fun we have is amazing. It is nice to meet you. There are not enough mice to rule the world. Why is there a mouse in the hat? " +
 		"What is an apple? Is it an exception? What is an integer? This is not an argument. If it rings, it's probably not an anaconda. What is the green bit of an orange?"; 
 
-	public TestSpellingChecker(Tester tester) {
+	public TestSymbolCorrector(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestSpellingChecker(new Tester())).test(args);
+		(new TestSymbolCorrector(new Tester())).test(args);
 	}
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use the *SpellingChecker* to correct word spelling.");
+		System.out.println("This test shows how to use the *SymbolCorrector* to correct word spelling.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the SpellingChecker");
-		System.out.println("SpellChecker checker = new SpellingChecker();");
-		System.out.println("// Initialize the SpellingChecker");
+		System.out.println("// Create the SymbolCorrector");
+		System.out.println("SpellChecker checker = new SymbolCorrector();");
+		System.out.println("// Initialize the SymbolCorrector");
 		System.out.println("checker.initialize(new ZStringSymbolParser(\"Some text containing correctly spelled words.\"));");
-		System.out.println("// Use SpellingChecker to correct a word");
+		System.out.println("// Use SymbolCorrector to correct a word");
 		System.out.println("String correction = checker.correct(\"contaning\");");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestSpellingChecker.class));
-		System.out.println(" * " + getTester().getLinkForClass(SpellingChecker.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestSymbolCorrector.class));
+		System.out.println(" * " + getTester().getLinkForClass(SymbolCorrector.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the number of generated variations and corrections for certain words.");
@@ -48,16 +48,16 @@ public class TestSpellingChecker extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Date started = new Date();
-		SpellingChecker sc = new SpellingChecker();
+		SymbolCorrector sc = new SymbolCorrector();
 		if (args!=null && args.length>1 && args[1].length()>0) {
 			String err = sc.initialize(args[1]);
 			assertEqual(err.length(),0,"Reading the file produced an unexpected error");
-			System.out.println("Initializing the SpellingChecker took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		} else {
 			sc.initialize(new ZStringSymbolParser(TEST_SEQUENCE));
 			assertEqual(sc.getTotalSymbols(),109,"The total number of symbols does not match expectation");
 			assertEqual(sc.getTotalLinks(),108,"The total number of links does not match expectation");
-			System.out.println("Initializing the SpellingChecker took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			assertEqual("" + sc.getKnownSymbols().get("the").prob,"0.045871559633027525","The probability of the word 'the' does not match expectation");
 			List<ZStringBuilder> variations = null;
 			variations = testVariations(sc,"a",1,80);
@@ -101,11 +101,11 @@ public class TestSpellingChecker extends TestObject {
 		assertEqual(contains,true,"The the variations for '" + test + "' do not contain the value '" + expected + "'");
 	}
 
-	private List<ZStringBuilder> testVariations(SpellingChecker sc,String test, int num, int expected) {
+	private List<ZStringBuilder> testVariations(SymbolCorrector sc,String test, int num, int expected) {
 		return testVariations(sc,test,num,expected,false);
 	}
 	
-	private List<ZStringBuilder> testVariations(SpellingChecker sc,String test, int num, int expected, boolean debug) {
+	private List<ZStringBuilder> testVariations(SymbolCorrector sc,String test, int num, int expected, boolean debug) {
 		List<ZStringBuilder> variations = sc.generateVariations(test);
 		String single = "Single";
 		if (num==2) {
@@ -122,7 +122,7 @@ public class TestSpellingChecker extends TestObject {
 		return variations;
 	}
 	
-	private String testCorrection(SpellingChecker sc, String test, String expected) {
+	private String testCorrection(SymbolCorrector sc, String test, String expected) {
 		String correction = sc.correct(test);
 		System.out.println("Correction for '" + test + "'; " + correction);
 		assertEqual(correction,expected,"The correction does not match expectation");

@@ -22,21 +22,21 @@ public class TestConfabulator extends TestObject {
 	@Override
 	protected void describe() {
 		/*
-		System.out.println("This test shows how to use the *SpellingChecker* to correct word spelling.");
+		System.out.println("This test shows how to use the *SymbolCorrector* to correct word spelling.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the SpellingChecker");
-		System.out.println("SpellChecker checker = new SpellingChecker();");
-		System.out.println("// Initialize the SpellingChecker");
+		System.out.println("// Create the SymbolCorrector");
+		System.out.println("SpellChecker checker = new SymbolCorrector();");
+		System.out.println("// Initialize the SymbolCorrector");
 		System.out.println("checker.initialize(new ZStringSymbolParser(\"Some text containing correctly spelled words.\"));");
-		System.out.println("// Use SpellingChecker to correct a word");
+		System.out.println("// Use SymbolCorrector to correct a word");
 		System.out.println("String correction = checker.correct(\"contaning\");");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestKnowledgeBases.class));
-		System.out.println(" * " + getTester().getLinkForClass(SpellingChecker.class));
+		System.out.println(" * " + getTester().getLinkForClass(SymbolCorrector.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the number of generated variations and corrections for certain words.");

@@ -45,7 +45,7 @@ public class ZSMC extends LibraryObject {
 	@Override
 	public void addTests(List<TestObject> tests) {
 		File f = new File(TestSequenceClassifier.QNA_FILE_NAME);
-		tests.add(new TestSpellingChecker(getTester()));
+		tests.add(new TestSymbolCorrector(getTester()));
 		if (f.exists()) {
 			tests.add(new TestSequenceClassifier(getTester()));
 			tests.add(new TestSequenceMatcher(getTester()));
