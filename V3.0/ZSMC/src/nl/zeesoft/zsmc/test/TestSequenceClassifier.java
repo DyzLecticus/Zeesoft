@@ -52,7 +52,7 @@ public class TestSequenceClassifier extends TestObject {
 		if (err.length()==0) {
 			System.out.println("Initializing the SequenceClassifier took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 
-			assertEqual(sc.getTotalLinks(),421672,"The total number of links does not match expectation");
+			assertEqual(sc.getLinkContextCounts().get(""),210836,"The total number of links does not match expectation");
 			
 			started = new Date();
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat kost dat?");
@@ -64,6 +64,15 @@ public class TestSequenceClassifier extends TestObject {
 			String context = sc.classify(corrected);
 			System.out.println("Classifying the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			assertEqual(context,"nlPriveBetalen","The classification did not produce the expected output");
+
+			context = sc.classify(corrected,true);
+			assertEqual(context,"nlPrivatebankingUwvermogen","The classification did not produce the expected output");
+
+			context = sc.classify(new ZStringSymbolParser("Waar kan ik mijn transacties zien?"));
+			assertEqual(context,"nlGrootzakelijkProducten","The classification did not produce the expected output");
+			
+			context = sc.classify(new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering"));
+			assertEqual(context,"nlPriveVerzekeren","The classification did not produce the expected output");
 		}
 		
 	}

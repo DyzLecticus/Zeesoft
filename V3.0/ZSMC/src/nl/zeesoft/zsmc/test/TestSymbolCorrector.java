@@ -55,8 +55,8 @@ public class TestSymbolCorrector extends TestObject {
 			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		} else {
 			sc.initialize(new ZStringSymbolParser(TEST_SEQUENCE));
-			assertEqual(sc.getTotalSymbols(),109,"The total number of symbols does not match expectation");
-			assertEqual(sc.getTotalLinks(),108,"The total number of links does not match expectation");
+			assertEqual(sc.getSymbolCount(),109,"The total number of symbols does not match expectation");
+			assertEqual(sc.getLinkContextCounts().get(""),108,"The total number of links does not match expectation");
 			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			assertEqual("" + sc.getKnownSymbols().get("the").prob,"0.045871559633027525","The probability of the word 'the' does not match expectation");
 			List<ZStringBuilder> variations = null;

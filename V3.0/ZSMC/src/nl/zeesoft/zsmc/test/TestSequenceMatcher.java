@@ -56,38 +56,64 @@ public class TestSequenceMatcher extends TestObject {
 
 			ZStringSymbolParser sequence = null;
 			String context = "";
+
+			sequence = new ZStringSymbolParser("Heb");
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Heb je je al voor 1 mei ingeschreven voor je opleiding en bedenk je je voor 1 september? Dan kun je je nog kosteloos uitschrijven via Studielink. Studentenreisproduct Heb je een studentenreisproduct en lopen je studies in elkaar over , dan hoef je niets te regelen."));
 			
 			sequence = new ZStringSymbolParser("Wat kost dat?");
-			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Zorg thuis : wat kost dat? De meeste mensen oriënteren zich pas op deze mogelijkheden als de zorg acuut nodig is. Soms kan men dan niet meer zelf beslissen en moeten anderen dat doen."));
-			
-			context = sm.classify(sequence);
-			testSequenceMatch(sm,sequence,context,new ZStringSymbolParser("Wat kost een buitenlandse betaling? Bekijk het overzicht met de tarieven."));
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Zorg thuis : wat kost dat? De meeste mensen oriënteren zich pas op deze mogelijkheden als de zorg acuut nodig is. Soms kan men dan niet meer zelf beslissen en moeten anderen dat doen."));
 
-			sequence = new ZStringSymbolParser("Wat kost");
-			testSequenceMatch(sm,sequence,context,new ZStringSymbolParser("Wat kost een buitenlandse betaling? Bekijk het overzicht met de tarieven."));
-			
+			context = sm.classify(sequence);
+			testSequenceMatch(sm,sequence,context,false,new ZStringSymbolParser("Wat kost een buitenlandse betaling? Bekijk het overzicht met de tarieven."));
+
 			sequence = new ZStringSymbolParser("geld over?");
-			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Alle rekeningen betaald en geld over? Sparen ligt voor de hand , maar er is meer mogelijk. Bekijk onze video met de voor- en nadelen van beleggen , hypotheek aflossen , pensioen aanvullen en schenken."));
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Alle rekeningen betaald en geld over? Sparen ligt voor de hand , maar er is meer mogelijk. Bekijk onze video met de voor- en nadelen van beleggen , hypotheek aflossen , pensioen aanvullen en schenken."));
 
 			sequence = new ZStringSymbolParser("Waar kan ik mijn transacties zien?");
-			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Waar kan ik mijn transacties inzien? Via Mijn ICS Business kunt u online uw transacties , uw limiet , het openstaande saldo en overzichten tot 6 maanden terug bekijken. Ik wil een extra creditcard aanvragen."));
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Waar kan ik mijn transacties inzien? Via Mijn ICS Business kunt u online uw transacties , uw limiet , het openstaande saldo en overzichten tot 6 maanden terug bekijken. Ik wil een extra creditcard aanvragen."));
 			
 			sequence = new ZStringSymbolParser("overboeken");
-			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Hoeveel kan ik overboeken vanaf mijn betaalrekening? U kunt beide paslezers gebruiken. Dit is het bedrag dat u per dag maximaal kunt overboeken met uw identificatiecode en vingerafdruk."));
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Hoeveel kan ik overboeken vanaf mijn betaalrekening? U kunt beide paslezers gebruiken. Dit is het bedrag dat u per dag maximaal kunt overboeken met uw identificatiecode en vingerafdruk."));
+
+			sequence = new ZStringSymbolParser("Hypotheek berekenen");
+			testSequenceMatch(sm,sequence,"",false,null);
+			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Of bent u gewoon nieuwsgierig naar hoeveel u kunt lenen? U kunt ook uw hypotheek berekenen als u geen vast contract heeft of als u zzp'er bent."));
+			
+			sequence = new ZStringSymbolParser("Fraude");
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("En belangrijker : hoe kunt voorkomen slachtoffer te worden van CEO Fraude? Criminelen kunnen veel informatie over bedrijven op internet vinden. Check daarom regelmatig wat voor informatie u over uw bedrijf en de medewerkers online heeft staan. Maak het criminelen zo moeilijk mogelijk om online namen , functies en emailadressen te stelen."));
+			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Wat is CEO Fraude? Bij CEO fraude doen criminelen zich voor als een hooggeplaatste manager of bestuurder ( bijvoorbeeld de CEO of de CFO ) uit uw organisatie , om vervolgens geld te stelen. Bij deze vorm van fraude gaat het vaak om zeer grote bedragen. Bij de meest recente CEO fraude slachtoffers zien we veel overeenkomsten en lijkt het alsof dezelfde daders erachter zitten."));
+			
+			sequence = new ZStringSymbolParser("Heeft de abn amro rechtsbijstandverzekering");
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering."));
+			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering."));
 		}
 	}
 	
-	private void testSequenceMatch(SequenceMatcher sm, ZStringSymbolParser sequence, String context, ZStringSymbolParser expectedMatch) {
+	private void testSequenceMatch(SequenceMatcher sm, ZStringSymbolParser sequence, String context, boolean caseInsensitive, ZStringSymbolParser expectedMatch) {
 		System.out.println();
 		Date started = new Date();
-		ZStringSymbolParser match = sm.match(sequence,context);
+		ZStringSymbolParser match = sm.match(sequence,context,caseInsensitive);
 		String input = sequence.toString();
-		if (context.length()>0) {
-			input += " (" + context + ")";
+		if (context.length()>0 || caseInsensitive) {
+			input += " (";
+			if (context.length()>0) {
+				input += context;
+			}
+			if (caseInsensitive) {
+				if (context.length()>0) {
+					input += " ";
+				}
+				input += "case insensitive";
+			}
+			input += ")";
 		}
 		System.out.println(input + " -> " + match);
 		System.out.println("Matching the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-		if (match!=null) {
+		if (expectedMatch==null) {
+			if (match!=null) {
+				assertEqual(match.toString(),"null","The match sequence does not match expectation");
+			}
+		} else {
 			assertEqual(match,expectedMatch,"The match sequence does not match expectation");
 		}
 	}

@@ -595,9 +595,10 @@ public class Confabulator extends Locker {
 		if (prefixes<=0) {
 			prefixes = (kbs.getModules() - 1);
 		}
+		// TODO: Copy link data
 		sc = new SymbolCorrector();
 		sc.setKnownSymbols(kbs.getKnownSymbols());
-		sc.setTotalSymbols(kbs.getTotalSymbols());
+		sc.setSymbolCount(kbs.getSymbolCount());
 		intitializeModules(prefixes);
 		intitializeWorkers(uni);
 	}

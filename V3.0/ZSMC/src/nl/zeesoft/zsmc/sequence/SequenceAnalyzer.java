@@ -3,11 +3,10 @@ package nl.zeesoft.zsmc.sequence;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
-import nl.zeesoft.zdk.ZStringBuilder;
-
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import nl.zeesoft.zdk.ZStringBuilder;
 
 /**
  * A SequenceAnalyzer can be used to learn context sensitive sequence symbol pair links.
@@ -16,8 +15,10 @@ public class SequenceAnalyzer extends Analyzer {
 	private SortedMap<String,SequenceAnalyzerSymbolLink>		knownLinks			= new TreeMap<String,SequenceAnalyzerSymbolLink>();		
 	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolFrom	= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();
 	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolTo		= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();
-	private int													totalLinks			= 0;
-	private double												maxLinkProb			= 0.0D;
+	private int													linkCount			= 0;
+	private SortedMap<String,Integer>							linkContextCounts	= new TreeMap<String,Integer>();
+	private double												linkMaxProb			= 0.0D;
+	private SortedMap<String,Double>							linkContextMaxProbs	= new TreeMap<String,Double>();
 
 	private String												context				= "";
 
@@ -64,9 +65,18 @@ public class SequenceAnalyzer extends Analyzer {
 	public void calculateProb() {
 		super.calculateProb();
 		for (Entry<String,SequenceAnalyzerSymbolLink> entry: knownLinks.entrySet()) {
-			entry.getValue().prob = ((double)entry.getValue().count / (double)totalLinks);
-			if (entry.getValue().prob>maxLinkProb) {
-				maxLinkProb = entry.getValue().prob;
+			entry.getValue().prob = ((double)entry.getValue().count / (double)linkCount);
+			entry.getValue().probContext = ((double)entry.getValue().count / (double)linkContextCounts.get(entry.getValue().context));
+			if (entry.getValue().prob>linkMaxProb) {
+				linkMaxProb = entry.getValue().prob;
+			}
+			Double maxProb = linkContextMaxProbs.get(entry.getValue().context);
+			if (maxProb==null){
+				maxProb = new Double(0);
+			}
+			if (entry.getValue().probContext>maxProb) {
+				maxProb = entry.getValue().probContext;
+				linkContextMaxProbs.put(entry.getValue().context,maxProb);
 			}
 		}
 	}
@@ -105,7 +115,15 @@ public class SequenceAnalyzer extends Analyzer {
 			list.add(link);
 		}
 		link.count++;
-		totalLinks++;
+		if (link.context.length()==0) {
+			linkCount++;
+		}
+		Integer count = linkContextCounts.get(context);
+		if (count==null){
+			count = new Integer(0);
+		}
+		count++;
+		linkContextCounts.put(context,count);
 	}
 	
 	public SortedMap<String, SequenceAnalyzerSymbolLink> getKnownLinks() {
@@ -132,19 +150,35 @@ public class SequenceAnalyzer extends Analyzer {
 		this.linksBySymbolTo = linksBySymbolTo;
 	}
 
-	public int getTotalLinks() {
-		return totalLinks;
+	public int getLinkCount() {
+		return linkCount;
 	}
 
-	public void setTotalLinks(int totalLinks) {
-		this.totalLinks = totalLinks;
+	public void setLinkCount(int linkCount) {
+		this.linkCount = linkCount;
 	}
 
-	public double getMaxLinkProb() {
-		return maxLinkProb;
+	public double getLinkMaxProb() {
+		return linkMaxProb;
 	}
 
-	public void setMaxLinkProb(double maxLinkProb) {
-		this.maxLinkProb = maxLinkProb;
+	public void setLinkMaxProb(double linkMaxProb) {
+		this.linkMaxProb = linkMaxProb;
+	}
+
+	public SortedMap<String, Integer> getLinkContextCounts() {
+		return linkContextCounts;
+	}
+
+	public void setLinkContextCounts(SortedMap<String, Integer> contextCounts) {
+		this.linkContextCounts = contextCounts;
+	}
+
+	public SortedMap<String, Double> getLinkContextMaxProbs() {
+		return linkContextMaxProbs;
+	}
+
+	public void setLinkContextMaxProbs(SortedMap<String, Double> contextMaxProbs) {
+		this.linkContextMaxProbs = contextMaxProbs;
 	}
 }

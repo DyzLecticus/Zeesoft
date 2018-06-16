@@ -205,27 +205,6 @@ public class SymbolCorrector extends SequenceAnalyzer {
 		return variations;
 	}
 
-	private void addCases(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
-		ZStringBuilder var = null;
-		var = new ZStringBuilder(symbol);
-		var.toCase(true);
-		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
-			variations.add(var);
-		}
-		var = new ZStringBuilder(symbol);
-		var.toCase(false);
-		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
-			variations.add(var);
-		}
-		var = new ZStringBuilder(symbol.substring(0,1).toUpperCase());
-		if (symbol.length()>1) {
-			var.append(symbol.substring(1));
-		}
-		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
-			variations.add(var);
-		}
-	}
-	
 	private void addAdditions(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
 		for (int i = 0; i<symbol.length(); i++) {
 			for (int i2 = 0; i2<ALPHABET.length(); i2++) {
@@ -300,4 +279,24 @@ public class SymbolCorrector extends SequenceAnalyzer {
 		}
 	}
 
+	private void addCases(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
+		ZStringBuilder var = null;
+		var = new ZStringBuilder(symbol);
+		var.toCase(true);
+		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+			variations.add(var);
+		}
+		var = new ZStringBuilder(symbol);
+		var.toCase(false);
+		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+			variations.add(var);
+		}
+		var = new ZStringBuilder(symbol.substring(0,1).toUpperCase());
+		if (symbol.length()>1) {
+			var.append(symbol.substring(1));
+		}
+		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+			variations.add(var);
+		}
+	}
 }

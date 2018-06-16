@@ -29,15 +29,38 @@ public class SequenceMatcher extends SequenceClassifier {
 	public void setForceUnique(boolean forceUnique) {
 		this.forceUnique = forceUnique;
 	}
-	
+
 	/**
-	 * Returns the match or null for a certain input sequence.
+	 * Returns the match or null for a certain input sequence (case sensitive).
 	 *  
 	 * @param sequence The sequence
 	 * @return The match or null
 	 */
 	public ZStringSymbolParser match(ZStringSymbolParser sequence) {
-		return match(sequence,"");
+		return match(sequence,"",false);
+	}
+
+	/**
+	 * Returns the match or null for a certain input sequence.
+	 *  
+	 * @param sequence The sequence
+	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
+	 * @return The match or null
+	 */
+	public ZStringSymbolParser match(ZStringSymbolParser sequence,boolean caseInsensitive) {
+		return match(sequence,"",caseInsensitive);
+	}
+
+
+	/**
+	 * Returns the match or null for a certain input sequence (case sensitive).
+	 *  
+	 * @param sequence The sequence
+	 * @param context The optional context symbol
+	 * @return The match or null
+	 */
+	public ZStringSymbolParser match(ZStringSymbolParser sequence,String context) {
+		return match(sequence,context,false);
 	}
 
 	/**
@@ -45,12 +68,13 @@ public class SequenceMatcher extends SequenceClassifier {
 	 * 
 	 * @param sequence The sequence
 	 * @param context The optional context symbol
+	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
 	 * @return The match or null
 	 */
-	public ZStringSymbolParser match(ZStringSymbolParser sequence,String context) {
+	public ZStringSymbolParser match(ZStringSymbolParser sequence,String context, boolean caseInsensitive) {
 		ZStringSymbolParser r = null;
 		double highest = 0D;
-		List<SequenceMatcherResult> list = getMatches(sequence,context);
+		List<SequenceMatcherResult> list = getMatches(sequence,context,caseInsensitive);
 		for (SequenceMatcherResult s: list) {
 			if (s.prob>highest) {
 				highest = s.prob;
@@ -65,17 +89,41 @@ public class SequenceMatcher extends SequenceClassifier {
 	 * 
 	 * @param sequence The sequence
 	 * @param context The optional context symbol
+	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
 	 * @return A list of matching results for a certain input sequence
 	 */
-	public List<SequenceMatcherResult> getMatches(ZStringSymbolParser sequence,String context) {
+	public List<SequenceMatcherResult> getMatches(ZStringSymbolParser sequence,String context, boolean caseInsensitive) {
 		List<SequenceMatcherResult> r = new ArrayList<SequenceMatcherResult>();
-		SequenceMatcherSequence match = getSequenceMatcherSequenceForSequence(sequence,context);
+		SequenceMatcherSequence match = getSequenceMatcherSequenceForSequence(sequence,context,caseInsensitive);
 		SortedMap<String,AnalyzerSymbol> matchSymbols = new TreeMap<String,AnalyzerSymbol>();
 		for (String symbol: match.symbols) {
 			if (!matchSymbols.containsKey(symbol)) {
 				AnalyzerSymbol as = getKnownSymbols().get(symbol);
 				if (as!=null) {
 					matchSymbols.put(symbol,as);
+				}
+			}
+			if (caseInsensitive) {
+				String cased = symbol.toLowerCase();
+				if (!matchSymbols.containsKey(cased)) {
+					AnalyzerSymbol as = getKnownSymbols().get(cased);
+					if (as!=null) {
+						matchSymbols.put(cased,as);
+					}
+				}
+				cased = symbol.toUpperCase();
+				if (!matchSymbols.containsKey(cased)) {
+					AnalyzerSymbol as = getKnownSymbols().get(cased);
+					if (as!=null) {
+						matchSymbols.put(cased,as);
+					}
+				}
+				cased = upperCaseFirst(symbol);
+				if (!matchSymbols.containsKey(cased)) {
+					AnalyzerSymbol as = getKnownSymbols().get(cased);
+					if (as!=null) {
+						matchSymbols.put(cased,as);
+					}
 				}
 			}
 		}
@@ -106,21 +154,21 @@ public class SequenceMatcher extends SequenceClassifier {
 				for (SequenceAnalyzerSymbolLink link: match.links) {
 					boolean found = false;
 					for (SequenceAnalyzerSymbolLink comp: seq.links) {
-						if (link.symbolFrom.equals(comp.symbolFrom) &&
-							link.context.equals(comp.context) &&
-							link.symbolTo.equals(comp.symbolTo)
+						if (link.context.equals(comp.context) &&
+							(link.symbolFrom.equals(comp.symbolFrom) && link.symbolTo.equals(comp.symbolTo)) ||
+							(caseInsensitive && link.symbolFrom.equalsIgnoreCase(comp.symbolFrom) && link.symbolTo.equalsIgnoreCase(comp.symbolTo))
 							) {
 							found = true;
 							break;
 						}
 					}
 					if (found) {
-						prob += (getMaxLinkProb() - link.prob);
+						prob += (getLinkContextMaxProbs().get(link.context) - link.probContext);
 						if (conseq==0) {
-							prob += (getMaxSymbolProb() - link.asFrom.prob);
+							prob += (getSymbolMaxProb() - link.asFrom.prob);
 						}
-						prob += (getMaxSymbolProb() - link.asTo.prob);
-						if (pSymbolTo.length()==0 || pSymbolTo.equals(link.symbolFrom)) {
+						prob += (getSymbolMaxProb() - link.asTo.prob);
+						if (pSymbolTo.length()==0 || pSymbolTo.equals(link.symbolFrom) || (caseInsensitive && pSymbolTo.equalsIgnoreCase(link.symbolFrom))) {
 							conseq++;
 						}
 						prob = (prob * (double)conseq);
@@ -132,9 +180,11 @@ public class SequenceMatcher extends SequenceClassifier {
 				}
 				for (String symbol: unlinkedSymbols) {
 					for (String comp: seq.symbols) {
-						if (symbol.equals(comp)) {
+						if (symbol.equals(comp) || (caseInsensitive && symbol.equalsIgnoreCase(comp))) {
 							AnalyzerSymbol as = matchSymbols.get(symbol);
-							prob += (getMaxSymbolProb() - as.prob);
+							if (as!=null) {
+								prob += (getSymbolMaxProb() - as.prob);
+							}
 						}
 					}
 				}
@@ -184,33 +234,65 @@ public class SequenceMatcher extends SequenceClassifier {
 			}
 		}
 		if (!forceUnique || !found) {
-			list.add(getSequenceMatcherSequenceForSequence(sequence,context));
+			list.add(getSequenceMatcherSequenceForSequence(sequence,context,false));
 		}
 	}
-	
-	private List<SequenceAnalyzerSymbolLink> parseSequenceLinks(ZStringSymbolParser sequence,String context)  {
-		List<SequenceAnalyzerSymbolLink> r = new ArrayList<SequenceAnalyzerSymbolLink>();
-		List<String> symbols = sequence.toSymbolsPunctuated();
+
+	private void addSequenceLinks(List<SequenceAnalyzerSymbolLink> list,List<String> symbols,String context,int mod)  {
 		int i = 0;
 		for (String symbol: symbols) {
 			if (symbols.size()>(i + 1)) {
 				String to = symbols.get(i + 1);
-				SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(symbol,context,to));
-				if (link!=null) {
-					r.add(link.copy());
+				SequenceAnalyzerSymbolLink link = null;
+				if (mod==0) {
+					link = getKnownLinks().get(getLinkId(symbol,context,to));
+				} else if (mod==1) {
+					link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,to.toLowerCase()));
+				} else if (mod==2) {
+					link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,to.toUpperCase()));
+				} else if (mod==3) {
+					link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,to.toUpperCase()));
+				} else if (mod==4) {
+					link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,to.toLowerCase()));
+				} else if (mod==5) {
+					link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to));
+				} else if (mod==7) {
+					link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to.toLowerCase()));
+				} else if (mod==8) {
+					link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to.toUpperCase()));
+				} else if (mod==9) {
+					link = getKnownLinks().get(getLinkId(symbol,context,upperCaseFirst(to)));
+				} else if (mod==10) {
+					link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,upperCaseFirst(to)));
+				} else if (mod==11) {
+					link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,upperCaseFirst(to)));
+				}
+				if (link!=null && !list.contains(link)) {
+					list.add(link);
 				}
 			}
 			i++;
 		}
-		return r;
 	}
 
-	private SequenceMatcherSequence getSequenceMatcherSequenceForSequence(ZStringSymbolParser sequence,String context) {
+	private SequenceMatcherSequence getSequenceMatcherSequenceForSequence(ZStringSymbolParser sequence,String context,boolean caseInsensitive) {
+		List<SequenceAnalyzerSymbolLink> addLinks = new ArrayList<SequenceAnalyzerSymbolLink>();
+		List<String> symbols = sequence.toSymbolsPunctuated();
+		addSequenceLinks(addLinks,symbols,context,0);
+		if (caseInsensitive) {
+			for (int mod = 1; mod <= 11; mod++) {
+				addSequenceLinks(addLinks,symbols,context,mod);
+			}
+		}
+		List<SequenceAnalyzerSymbolLink> links = new ArrayList<SequenceAnalyzerSymbolLink>();
+		for (SequenceAnalyzerSymbolLink link: addLinks) {
+			links.add(link.copy());
+		}
 		SequenceMatcherSequence seq = new SequenceMatcherSequence();
 		seq.context = context;
 		seq.sequence = sequence;
-		seq.symbols = sequence.toSymbolsPunctuated();
-		seq.links = parseSequenceLinks(sequence,context);
+		seq.symbols = symbols;
+		seq.links = links;
 		return seq;
 	}
 }

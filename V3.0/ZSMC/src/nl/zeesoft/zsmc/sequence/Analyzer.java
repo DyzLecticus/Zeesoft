@@ -13,8 +13,8 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
  */
 public class Analyzer {
 	private SortedMap<String,AnalyzerSymbol> 		knownSymbols	= new TreeMap<String,AnalyzerSymbol>();
-	private int										totalSymbols	= 0;
-	private double									maxSymbolProb	= 0.0D;
+	private int										symbolCount		= 0;
+	private double									symbolMaxProb	= 0.0D;
 	
 	/**
 	 * Initializes the known symbols based on an input file.
@@ -24,7 +24,7 @@ public class Analyzer {
 	 */
 	public String initialize(String fileName) {
 		knownSymbols.clear();
-		totalSymbols = 0;
+		symbolCount = 0;
 		ZStringSymbolParser parser = new ZStringSymbolParser();
 		String err = parser.fromFile(fileName);
 		if (err.length()==0) {
@@ -106,7 +106,7 @@ public class Analyzer {
 				}
 				count.count++;
 			}
-			totalSymbols += symbols.size();
+			symbolCount += symbols.size();
 		}
 	}
 
@@ -115,9 +115,9 @@ public class Analyzer {
 	 */
 	public void calculateProb() {
 		for (Entry<String,AnalyzerSymbol> entry: knownSymbols.entrySet()) {
-			entry.getValue().prob = ((double)entry.getValue().count / (double)totalSymbols);
-			if (entry.getValue().prob>maxSymbolProb) {
-				maxSymbolProb = entry.getValue().prob;
+			entry.getValue().prob = ((double)entry.getValue().count / (double)symbolCount);
+			if (entry.getValue().prob>symbolMaxProb) {
+				symbolMaxProb = entry.getValue().prob;
 			}
 		}
 	}
@@ -130,19 +130,19 @@ public class Analyzer {
 		this.knownSymbols = knownSymbols;
 	}
 	
-	public int getTotalSymbols() {
-		return totalSymbols;
+	public int getSymbolCount() {
+		return symbolCount;
 	}
 	
-	public void setTotalSymbols(int totalSymbols) {
-		this.totalSymbols = totalSymbols;
+	public void setSymbolCount(int symbolCount) {
+		this.symbolCount = symbolCount;
 	}
 	
-	public double getMaxSymbolProb() {
-		return maxSymbolProb;
+	public double getSymbolMaxProb() {
+		return symbolMaxProb;
 	}
 
-	public void setMaxSymbolProb(double maxSymbolProb) {
-		this.maxSymbolProb = maxSymbolProb;
+	public void setSymbolMaxProb(double maxSymbolProb) {
+		this.symbolMaxProb = maxSymbolProb;
 	}
 }
