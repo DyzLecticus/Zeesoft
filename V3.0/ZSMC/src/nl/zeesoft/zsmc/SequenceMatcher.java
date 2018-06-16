@@ -102,6 +102,7 @@ public class SequenceMatcher extends SequenceClassifier {
 			for (SequenceMatcherSequence seq: list) {
 				int conseq = 0;
 				double prob = 0D;
+				String pSymbolTo = "";
 				for (SequenceAnalyzerSymbolLink link: match.links) {
 					boolean found = false;
 					for (SequenceAnalyzerSymbolLink comp: seq.links) {
@@ -119,10 +120,14 @@ public class SequenceMatcher extends SequenceClassifier {
 							prob += (getMaxSymbolProb() - link.asFrom.prob);
 						}
 						prob += (getMaxSymbolProb() - link.asTo.prob);
-						conseq++;
+						if (pSymbolTo.length()==0 || pSymbolTo.equals(link.symbolFrom)) {
+							conseq++;
+						}
 						prob = (prob * (double)conseq);
+						pSymbolTo = link.symbolTo;
 					} else {
 						conseq = 0;
+						pSymbolTo = "";
 					}
 				}
 				for (String symbol: unlinkedSymbols) {
