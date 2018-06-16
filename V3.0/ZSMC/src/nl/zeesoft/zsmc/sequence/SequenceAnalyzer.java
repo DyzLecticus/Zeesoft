@@ -22,6 +22,15 @@ public class SequenceAnalyzer extends Analyzer {
 	private String												context				= "";
 
 	/**
+	 * Returns the context used to associate additional sequences.
+	 * 
+	 * @return The context used to associate additional sequences
+	 */
+	public String getContext() {
+		return context;
+	}
+	
+	/**
 	 * Sets the context used to associate additional sequences.
 	 * 
 	 * @param context The context to set
@@ -75,6 +84,8 @@ public class SequenceAnalyzer extends Analyzer {
 			link.context = context;
 			link.symbolFrom = from;
 			link.symbolTo = to;
+			link.asFrom = getKnownSymbols().get(from);
+			link.asTo = getKnownSymbols().get(to);
 			knownLinks.put(linkId,link);
 			
 			List<SequenceAnalyzerSymbolLink> list = null; 

@@ -56,7 +56,7 @@ public class TestSequenceMatcher extends TestObject {
 
 			ZStringSymbolParser sequence = null;
 			String context = "";
-					
+			
 			sequence = new ZStringSymbolParser("Wat kost dat?");
 			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Zorg thuis : wat kost dat? De meeste mensen oriënteren zich pas op deze mogelijkheden als de zorg acuut nodig is. Soms kan men dan niet meer zelf beslissen en moeten anderen dat doen."));
 			
@@ -71,6 +71,9 @@ public class TestSequenceMatcher extends TestObject {
 
 			sequence = new ZStringSymbolParser("Waar kan ik mijn transacties zien?");
 			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Waar kan ik mijn transacties inzien? Via Mijn ICS Business kunt u online uw transacties , uw limiet , het openstaande saldo en overzichten tot 6 maanden terug bekijken. Ik wil een extra creditcard aanvragen."));
+			
+			sequence = new ZStringSymbolParser("overboeken");
+			testSequenceMatch(sm,sequence,"",new ZStringSymbolParser("Hoeveel kan ik overboeken vanaf mijn betaalrekening? U kunt beide paslezers gebruiken. Dit is het bedrag dat u per dag maximaal kunt overboeken met uw identificatiecode en vingerafdruk."));
 		}
 	}
 	
@@ -84,6 +87,8 @@ public class TestSequenceMatcher extends TestObject {
 		}
 		System.out.println(input + " -> " + match);
 		System.out.println("Matching the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-		assertEqual(match,expectedMatch,"The match sequence does not match expectation");
+		if (match!=null) {
+			assertEqual(match,expectedMatch,"The match sequence does not match expectation");
+		}
 	}
 }
