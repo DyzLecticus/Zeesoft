@@ -86,44 +86,46 @@ public class SequenceAnalyzer extends Analyzer {
 	}
 	
 	private void addOrUpdateLink(String from, String context, String to) {
-		String linkId = getLinkId(from,context,to);
-		SequenceAnalyzerSymbolLink link = null;
-		link = knownLinks.get(linkId);
-		if (link==null) {
-			link = new SequenceAnalyzerSymbolLink();
-			link.context = context;
-			link.symbolFrom = from;
-			link.symbolTo = to;
-			link.asFrom = getKnownSymbols().get(from);
-			link.asTo = getKnownSymbols().get(to);
-			knownLinks.put(linkId,link);
-			
-			List<SequenceAnalyzerSymbolLink> list = null; 
-
-			list = linksBySymbolFrom.get(from);
-			if (list==null) {
-				list = new ArrayList<SequenceAnalyzerSymbolLink>();
-				linksBySymbolFrom.put(from,list);
+		if (!from.equals(getIoSeparator()) && !to.equals(getIoSeparator())) {
+			String linkId = getLinkId(from,context,to);
+			SequenceAnalyzerSymbolLink link = null;
+			link = knownLinks.get(linkId);
+			if (link==null) {
+				link = new SequenceAnalyzerSymbolLink();
+				link.context = context;
+				link.symbolFrom = from;
+				link.symbolTo = to;
+				link.asFrom = getKnownSymbols().get(from);
+				link.asTo = getKnownSymbols().get(to);
+				knownLinks.put(linkId,link);
+				
+				List<SequenceAnalyzerSymbolLink> list = null; 
+	
+				list = linksBySymbolFrom.get(from);
+				if (list==null) {
+					list = new ArrayList<SequenceAnalyzerSymbolLink>();
+					linksBySymbolFrom.put(from,list);
+				}
+				list.add(link);
+				
+				list = linksBySymbolTo.get(to);
+				if (list==null) {
+					list = new ArrayList<SequenceAnalyzerSymbolLink>();
+					linksBySymbolTo.put(to,list);
+				}
+				list.add(link);
 			}
-			list.add(link);
-			
-			list = linksBySymbolTo.get(to);
-			if (list==null) {
-				list = new ArrayList<SequenceAnalyzerSymbolLink>();
-				linksBySymbolTo.put(to,list);
+			link.count++;
+			if (link.context.length()==0) {
+				linkCount++;
 			}
-			list.add(link);
+			Integer count = linkContextCounts.get(context);
+			if (count==null){
+				count = new Integer(0);
+			}
+			count++;
+			linkContextCounts.put(context,count);
 		}
-		link.count++;
-		if (link.context.length()==0) {
-			linkCount++;
-		}
-		Integer count = linkContextCounts.get(context);
-		if (count==null){
-			count = new Integer(0);
-		}
-		count++;
-		linkContextCounts.put(context,count);
 	}
 	
 	public SortedMap<String, SequenceAnalyzerSymbolLink> getKnownLinks() {

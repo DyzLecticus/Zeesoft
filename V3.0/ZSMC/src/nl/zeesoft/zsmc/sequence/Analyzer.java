@@ -12,9 +12,27 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
  * An Analyzer can be used to parse sequences into a list of AnalyzerSymbols in order to obtain statistical information about the set of symbols.
  */
 public class Analyzer {
+	private String									ioSeparator		= "[OUTPUT]";	
+
 	private SortedMap<String,AnalyzerSymbol> 		knownSymbols	= new TreeMap<String,AnalyzerSymbol>();
 	private int										symbolCount		= 0;
 	private double									symbolMaxProb	= 0.0D;
+	
+	/**
+	 * Returns the input/output separator symbol.
+	 * 
+	 * @return The input/output separator symbol
+	 */
+	public String getIoSeparator() {
+		return ioSeparator;
+	}
+
+	/**
+	 * Sets the input/output separator symbol.
+	 */
+	public void setIoSeparator(String ioSeparator) {
+		this.ioSeparator = ioSeparator;
+	}
 	
 	/**
 	 * Initializes the known symbols based on an input file.
@@ -66,6 +84,8 @@ public class Analyzer {
 								ZStringSymbolParser seq = new ZStringSymbolParser();
 								seq.append(sequences.get(0));
 								seq.append(" ");
+								seq.append(ioSeparator);
+								seq.append(" ");
 								seq.append(sequences.get(1));
 								if (sequences.size()>2) {
 									handleContextSymbol(sequences.get(2));
@@ -96,8 +116,9 @@ public class Analyzer {
 	 * @param symbols The list of symbols
 	 */
 	public void addSymbols(List<String> symbols) {
-		if (symbols.size()>0) {
-			for (String symbol: symbols) {
+		int size = symbols.size();
+		for (String symbol: symbols) {
+			if (!symbol.equals(ioSeparator)) {
 				AnalyzerSymbol count = knownSymbols.get(symbol);
 				if (count==null) {
 					count = new AnalyzerSymbol();
@@ -105,9 +126,11 @@ public class Analyzer {
 					knownSymbols.put(symbol,count);
 				}
 				count.count++;
+			} else {
+				size--;
 			}
-			symbolCount += symbols.size();
 		}
+		symbolCount += size;
 	}
 
 	/**

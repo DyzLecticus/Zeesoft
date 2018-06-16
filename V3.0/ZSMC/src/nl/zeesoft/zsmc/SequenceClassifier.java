@@ -60,7 +60,12 @@ public class SequenceClassifier extends SymbolCorrector {
 			if (symbols.size()>(i + 1)) {
 				to = symbols.get(i + 1);
 			}
-			List<SequenceAnalyzerSymbolLink> links = new ArrayList<SequenceAnalyzerSymbolLink>(getLinksBySymbolFrom().get(symbol));
+			List<SequenceAnalyzerSymbolLink> links = getLinksBySymbolFrom().get(symbol);
+			if (links!=null) {
+				links = new ArrayList<SequenceAnalyzerSymbolLink>(links);
+			} else {
+				links = new ArrayList<SequenceAnalyzerSymbolLink>();
+			}
 			if (caseInsensitive) {
 				String cased = symbol.toLowerCase(); 
 				if (!cased.equals(symbol)) {

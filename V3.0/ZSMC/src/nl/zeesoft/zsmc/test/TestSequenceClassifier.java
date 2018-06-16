@@ -52,7 +52,7 @@ public class TestSequenceClassifier extends TestObject {
 		if (err.length()==0) {
 			System.out.println("Initializing the SequenceClassifier took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 
-			assertEqual(sc.getLinkContextCounts().get(""),210836,"The total number of links does not match expectation");
+			assertEqual(sc.getLinkContextCounts().get(""),204474,"The total number of links does not match expectation");
 			
 			started = new Date();
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat kost dat?");
