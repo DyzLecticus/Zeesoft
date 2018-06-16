@@ -115,7 +115,9 @@ public class SequenceMatcher extends SequenceClassifier {
 					}
 					if (found) {
 						prob += (getMaxLinkProb() - link.prob);
-						prob += (getMaxSymbolProb() - link.asFrom.prob);
+						if (conseq==0) {
+							prob += (getMaxSymbolProb() - link.asFrom.prob);
+						}
 						prob += (getMaxSymbolProb() - link.asTo.prob);
 						conseq++;
 						prob = (prob * (double)conseq);
