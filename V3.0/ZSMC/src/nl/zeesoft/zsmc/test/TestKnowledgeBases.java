@@ -47,10 +47,10 @@ public class TestKnowledgeBases extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		KnowledgeBases kbs = (KnowledgeBases) getTester().getMockedObject(MockKnowledgeBases.class.getName());
-		KnowledgeLink kl = testKnowledgeBases(kbs,7,695);
-		assertEqual("" + kl.prob,"0.009259259259259259","The link probability does not match expectation");
-		assertEqual("" + kl.sourceWeight,"43.30100920216291","The link source weight does not match expectation");
-		assertEqual("" + kl.targetWeight,"43.30100920216291","The link target weight does not match expectation");
+		KnowledgeLink kl = testKnowledgeBases(kbs,7,703);
+		assertEqual("" + kl.prob,"0.009174311926605505","The link probability does not match expectation");
+		assertEqual("" + kl.sourceWeight,"42.30088776829719","The link source weight does not match expectation");
+		assertEqual("" + kl.targetWeight,"43.30088776829719","The link target weight does not match expectation");
 	}
 	
 	protected KnowledgeLink testKnowledgeBases(KnowledgeBases kbs,int bases,int totalLinks) {

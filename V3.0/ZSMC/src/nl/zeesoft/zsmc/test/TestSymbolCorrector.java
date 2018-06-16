@@ -11,9 +11,11 @@ import nl.zeesoft.zsmc.SymbolCorrector;
 
 public class TestSymbolCorrector extends TestObject {
 	public static final String TEST_SEQUENCE = 
-		"I am the kind of stuff that a nice pizza is made of. I am a friendly person. We are the coolest kelvin. It was a rainy day with a cold wind. " +
-		"The fun we have is amazing. It is nice to meet you. There are not enough mice to rule the world. Why is there a mouse in the hat? " +
-		"What is an apple? Is it an exception? What is an integer? This is not an argument. If it rings, it's probably not an anaconda. What is the green bit of an orange?"; 
+		"I am the kind of stuff that a nice pizza is made of. I am a friendly person. We are the coolest kelvin. " + 
+		"It was a rainy day with a cold wind. The fun we have is amazing. It is nice to meet you. " + 
+		"There are not enough mice to rule the world. Why is there a mouse in the hat? " +
+		"What is an apple? Is it an exception? What is an integer? This is not an argument. " + 
+		"If it rings, it's antidisestablishmentarianism, not an anaconda. What is the green bit of an orange?"; 
 
 	public TestSymbolCorrector(Tester tester) {
 		super(tester);
@@ -55,10 +57,10 @@ public class TestSymbolCorrector extends TestObject {
 			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		} else {
 			sc.initialize(new ZStringSymbolParser(TEST_SEQUENCE));
-			assertEqual(sc.getSymbolCount(),109,"The total number of symbols does not match expectation");
-			assertEqual(sc.getLinkContextCounts().get(""),108,"The total number of links does not match expectation");
+			assertEqual(sc.getSymbolCount(),110,"The total number of symbols does not match expectation");
+			assertEqual(sc.getLinkContextCounts().get(""),109,"The total number of links does not match expectation");
 			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual("" + sc.getKnownSymbols().get("the").prob,"0.045871559633027525","The probability of the word 'the' does not match expectation");
+			assertEqual("" + sc.getKnownSymbols().get("the").prob,"0.045454545454545456","The probability of the word 'the' does not match expectation");
 			List<ZStringBuilder> variations = null;
 			variations = testVariations(sc,"a",1,80);
 			variations = testVariations(sc,"an",1,135);
@@ -70,7 +72,7 @@ public class TestSymbolCorrector extends TestObject {
 			variations = testVariations(sc,"pizza",2,348);
 			System.out.println();
 			started = new Date();
-			testCorrection(sc,"pizza","pizza");
+			testCorrection(sc,"pizzas","pizza");
 			testCorrection(sc,"piza","pizza");
 			testCorrection(sc,"stuf","stuff");
 			testCorrection(sc,"staf","stuff");
@@ -81,7 +83,8 @@ public class TestSymbolCorrector extends TestObject {
 			testCorrection(sc,"maus","mouse");
 			testCorrection(sc,"excpton","exception");
 			testCorrection(sc,"amzaingg","amazing");
-			System.out.println("Average correction time: " + (((new Date()).getTime() - started.getTime()) / 11) + " ms");
+			testCorrection(sc,"antidisestablishmantarianims","antidisestablishmentarianism");
+			System.out.println("Average correction time: " + (((new Date()).getTime() - started.getTime()) / 12) + " ms");
 			ZStringSymbolParser sentence = new ZStringSymbolParser("I am a mouse in the hat.");
 			ZStringSymbolParser corrected = sc.correct(sentence);
 			assertEqual(corrected,sentence,"The corrected sentence does not match the original");
