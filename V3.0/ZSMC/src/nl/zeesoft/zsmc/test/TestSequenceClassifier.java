@@ -39,8 +39,7 @@ public class TestSequenceClassifier extends TestObject {
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
 		System.out.println(" * The time it takes to initialize the classifier  ");
-		System.out.println(" * The time it takes to correct the spelling of the input sequence  ");
-		System.out.println(" * The time it takes to classify the input sequence  ");
+		System.out.println(" * The classification results including the time it takes for a set of input sequences  ");
 	}
 	
 	@Override
@@ -56,24 +55,21 @@ public class TestSequenceClassifier extends TestObject {
 			
 			started = new Date();
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat kost dat?");
-			ZStringSymbolParser corrected = sc.correct(sequence);
-			System.out.println("Correcting the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(corrected,sequence,"The corrected sequence does not equal the original sequence");
-			
-			started = new Date();
-			String context = sc.classify(corrected);
-			System.out.println("Classifying the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(context,"nlPriveBetalen","The classification did not produce the expected output");
-
-			context = sc.classify(corrected,true);
-			assertEqual(context,"nlPrivatebankingUwvermogen","The classification did not produce the expected output");
-
-			context = sc.classify(new ZStringSymbolParser("Waar kan ik mijn transacties zien?"));
-			assertEqual(context,"nlGrootzakelijkProducten","The classification did not produce the expected output");
-			
-			context = sc.classify(new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering"));
-			assertEqual(context,"nlPriveVerzekeren","The classification did not produce the expected output");
+			testClassification(sc,sequence,false,"nlPriveBetalen");
+			testClassification(sc,sequence,true,"nlPrivatebankingUwvermogen");
+			sequence = new ZStringSymbolParser("Waar kan ik mijn transacties zien?");
+			testClassification(sc,sequence,false,"nlGrootzakelijkProducten");
+			sequence = new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering");
+			testClassification(sc,sequence,false,"nlPriveVerzekeren");
 		}
-		
+	}
+	
+	private void testClassification(SequenceClassifier sc,ZStringSymbolParser sequence,boolean caseInsensitvie, String expectedContext) {
+		System.out.println();
+		Date started = new Date();
+		String context = sc.classify(sequence,caseInsensitvie);
+		System.out.println("Classified sequence: '" + sequence + "' -> " + context);
+		System.out.println("Classifying the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+		assertEqual(context,expectedContext,"The classifier did not return the expected context");
 	}
 }
