@@ -243,32 +243,34 @@ public class SequenceMatcher extends SequenceClassifier {
 		for (String symbol: symbols) {
 			if (symbols.size()>(i + 1)) {
 				String to = symbols.get(i + 1);
-				SequenceAnalyzerSymbolLink link = null;
-				if (mod==0) {
-					link = getKnownLinks().get(getLinkId(symbol,context,to));
-				} else if (mod==1) {
-					link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,to.toLowerCase()));
-				} else if (mod==2) {
-					link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,to.toUpperCase()));
-				} else if (mod==3) {
-					link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,to.toUpperCase()));
-				} else if (mod==4) {
-					link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,to.toLowerCase()));
-				} else if (mod==5) {
-					link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to));
-				} else if (mod==7) {
-					link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to.toLowerCase()));
-				} else if (mod==8) {
-					link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to.toUpperCase()));
-				} else if (mod==9) {
-					link = getKnownLinks().get(getLinkId(symbol,context,upperCaseFirst(to)));
-				} else if (mod==10) {
-					link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,upperCaseFirst(to)));
-				} else if (mod==11) {
-					link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,upperCaseFirst(to)));
-				}
-				if (link!=null && !list.contains(link)) {
-					list.add(link);
+				if (!symbol.equals(getIoSeparator()) && !to.equals(getIoSeparator())) {
+					SequenceAnalyzerSymbolLink link = null;
+					if (mod==0) {
+						link = getKnownLinks().get(getLinkId(symbol,context,to));
+					} else if (mod==1) {
+						link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,to.toLowerCase()));
+					} else if (mod==2) {
+						link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,to.toUpperCase()));
+					} else if (mod==3) {
+						link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,to.toUpperCase()));
+					} else if (mod==4) {
+						link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,to.toLowerCase()));
+					} else if (mod==5) {
+						link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to));
+					} else if (mod==7) {
+						link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to.toLowerCase()));
+					} else if (mod==8) {
+						link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to.toUpperCase()));
+					} else if (mod==9) {
+						link = getKnownLinks().get(getLinkId(symbol,context,upperCaseFirst(to)));
+					} else if (mod==10) {
+						link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,upperCaseFirst(to)));
+					} else if (mod==11) {
+						link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,upperCaseFirst(to)));
+					}
+					if (link!=null && !list.contains(link)) {
+						list.add(link);
+					}
 				}
 			}
 			i++;
@@ -277,16 +279,22 @@ public class SequenceMatcher extends SequenceClassifier {
 
 	private SequenceMatcherSequence getSequenceMatcherSequenceForSequence(ZStringSymbolParser sequence,String context,boolean caseInsensitive) {
 		List<SequenceAnalyzerSymbolLink> addLinks = new ArrayList<SequenceAnalyzerSymbolLink>();
-		List<String> symbols = sequence.toSymbolsPunctuated();
-		addSequenceLinks(addLinks,symbols,context,0);
+		List<String> syms = sequence.toSymbolsPunctuated();
+		addSequenceLinks(addLinks,syms,context,0);
 		if (caseInsensitive) {
 			for (int mod = 1; mod <= 11; mod++) {
-				addSequenceLinks(addLinks,symbols,context,mod);
+				addSequenceLinks(addLinks,syms,context,mod);
 			}
 		}
 		List<SequenceAnalyzerSymbolLink> links = new ArrayList<SequenceAnalyzerSymbolLink>();
 		for (SequenceAnalyzerSymbolLink link: addLinks) {
 			links.add(link.copy());
+		}
+		List<String> symbols = new ArrayList<String>();
+		for (String sym: syms) {
+			if (!sym.equals(getIoSeparator())) {
+				symbols.add(sym);
+			}
 		}
 		SequenceMatcherSequence seq = new SequenceMatcherSequence();
 		seq.context = context;
