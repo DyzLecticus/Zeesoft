@@ -140,7 +140,7 @@ public class SequenceMatcher extends SequenceClassifier {
 				}
 				if (prob>0D) {
 					SequenceMatcherResult res = new SequenceMatcherResult();
-					res.result = seq;
+					res.result = seq.copy();
 					res.prob = prob;
 					r.add(res);
 				}
@@ -197,7 +197,7 @@ public class SequenceMatcher extends SequenceClassifier {
 				String to = symbols.get(i + 1);
 				SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(symbol,context,to));
 				if (link!=null) {
-					r.add(link);
+					r.add(link.copy());
 				}
 			}
 			i++;
