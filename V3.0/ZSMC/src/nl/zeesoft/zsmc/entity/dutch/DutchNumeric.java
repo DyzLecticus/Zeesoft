@@ -129,7 +129,11 @@ public class DutchNumeric extends EntityObject {
 					}
 				}
 				
-				addEntityValue(strMill + strCent + strDec + strNum);
+				// TODO: Fix dutch numeric
+				if (i>1900 && i<3000) {
+					System.out.println(i + " = " + strMill + strCent + strDec + strNum);
+				}
+				addEntityValue(strMill + strCent + strDec + strNum,i);
 			}
 		}
 	}

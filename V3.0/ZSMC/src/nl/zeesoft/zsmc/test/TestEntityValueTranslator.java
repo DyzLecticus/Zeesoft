@@ -85,6 +85,12 @@ public class TestEntityValueTranslator extends TestObject {
 			"ENG_DUR:33:41 / NLD_DUR:33:41",
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten"
 			);
+
+		testTranslation(t,
+			"gisteren vandaag 1 oktober 1979",
+			"ENG_DUR:33:41 / NLD_DUR:33:41",
+			"gisteren vandaag 1 oktober 1979"
+			);
 	}
 	
 	private void testTranslation(EntityValueTranslator t,String seq,String expTran,String expRetran) {

@@ -116,7 +116,10 @@ public class EnglishNumeric extends EntityObject {
 					strMill = getExternalValueForInternalValue("" + mill) + "thousand";
 				}
 				
-				addEntityValue(strMill + strCent + strDec + strNum);
+				//if (i>1900 && i<3000) {
+				//	System.out.println(i + " = " + strMill + strCent + strDec + strNum);
+				//}
+				addEntityValue(strMill + strCent + strDec + strNum,i);
 			}
 		}
 	}

@@ -10,6 +10,7 @@ import nl.zeesoft.zsmc.entity.EntityObject;
 import nl.zeesoft.zsmc.entity.UniversalAlphabetic;
 import nl.zeesoft.zsmc.entity.UniversalNumeric;
 import nl.zeesoft.zsmc.entity.UniversalTime;
+import nl.zeesoft.zsmc.entity.dutch.DutchDate;
 import nl.zeesoft.zsmc.entity.dutch.DutchDuration;
 import nl.zeesoft.zsmc.entity.dutch.DutchMonth;
 import nl.zeesoft.zsmc.entity.dutch.DutchNumeric;
@@ -130,6 +131,7 @@ public class EntityValueTranslator {
 	}
 
 	public void addDefaultEntities() {
+		entities.add(new DutchDate());
 		entities.add(new EnglishDuration());
 		entities.add(new DutchDuration());
 		entities.add(new EnglishMonth());
