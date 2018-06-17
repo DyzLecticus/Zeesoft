@@ -32,11 +32,11 @@ public class TestSymbolCorrector extends TestObject {
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the SymbolCorrector");
-		System.out.println("SpellChecker checker = new SymbolCorrector();");
+		System.out.println("SymbolCorrector corrector = new SymbolCorrector();");
 		System.out.println("// Initialize the SymbolCorrector");
-		System.out.println("checker.initialize(new ZStringSymbolParser(\"Some text containing correctly spelled words.\"));");
+		System.out.println("corrector.initialize(new ZStringSymbolParser(\"Some text containing correctly spelled words and complete meaningfull sentences.\"));");
 		System.out.println("// Use SymbolCorrector to correct a word");
-		System.out.println("String correction = checker.correct(\"contaning\");");
+		System.out.println("String correction = corrector.correct(\"contaning\");");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");

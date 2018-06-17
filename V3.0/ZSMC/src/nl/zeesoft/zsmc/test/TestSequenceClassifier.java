@@ -64,11 +64,15 @@ public class TestSequenceClassifier extends TestObject {
 		}
 	}
 	
-	private void testClassification(SequenceClassifier sc,ZStringSymbolParser sequence,boolean caseInsensitvie, String expectedContext) {
+	private void testClassification(SequenceClassifier sc,ZStringSymbolParser sequence,boolean caseInsensitive, String expectedContext) {
 		System.out.println();
 		Date started = new Date();
-		String context = sc.classify(sequence,caseInsensitvie);
-		System.out.println("Classified sequence: '" + sequence + "' -> " + context);
+		String context = sc.classify(sequence,caseInsensitive);
+		String ci = "";
+		if (caseInsensitive) {
+			ci = " (case insensitive)";
+		}
+		System.out.println("Classified sequence" + ci + ": '" + sequence + "' -> " + context);
 		System.out.println("Classifying the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		assertEqual(context,expectedContext,"The classifier did not return the expected context");
 	}

@@ -79,11 +79,11 @@ public class DutchTime extends EntityObject {
 			}
 			String HN = eoNumeric.getExternalValueForInternalValue("" + hn);
 			
-			String period = " ' s ochtends";
+			String period = " sochtends";
 			if (h>=17) {
-				period = " ' s avonds";
+				period = " savonds";
 			} else if (h>=12) {
-				period = " ' s middags";
+				period = " smiddags";
 			}
 			
 			for (int m = 0; m<60; m++) {

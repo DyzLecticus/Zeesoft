@@ -87,9 +87,9 @@ public class TestEntityValueTranslator extends TestObject {
 			"ENG_TIM:12:00:00 UNI_ABC:OR ENG_TIM:08:55:00 UNI_ABC:OR ENG_TIM:01:10:00",
 			"twelve o'clock OR fiftyfive past eight OR ten past one in the morning");
 		testTranslation(t,
-			"twaalf uur OF vijf minuten voor negen OF tien over een 's ochtends",
+			"twaalf uur OF vijf minuten voor negen OF tien over een sochtends",
 			"NLD_TIM:12:00:00|NLD_DUR:12:00 UNI_ABC:OF NLD_TIM:08:55:00 UNI_ABC:OF NLD_TIM:01:10:00",
-			"twaalf uur OF acht uur vijfenvijftig OF een uur tien ' s ochtends");
+			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
 	}
 	
 	private void testTranslation(EntityValueTranslator t,String seq,String expTran,String expRetran) {

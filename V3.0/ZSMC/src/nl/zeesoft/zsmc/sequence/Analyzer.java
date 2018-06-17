@@ -29,6 +29,8 @@ public class Analyzer {
 
 	/**
 	 * Sets the input/output separator symbol.
+	 * 
+	 * @param ioSeparator The input/output separator
 	 */
 	public void setIoSeparator(String ioSeparator) {
 		this.ioSeparator = ioSeparator;
