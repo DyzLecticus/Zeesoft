@@ -55,6 +55,24 @@ public class TestEntityValueTranslator extends TestObject {
 			"UNI_ABC:Eat ENG_NUM:3|UNI_ABC:three UNI_ABC:donuts UNI_ABC:at UNI_TIM:09:00:00 UNI_ABC:or UNI_ABC:count UNI_ABC:to UNI_NUM:110",
 			"Eat three donuts at 09:00:00 or count to 110"
 			);
+
+		testTranslation(t,
+			"Eet drie donuts om 9:00 of tel tot 110",
+			"UNI_ABC:Eet NLD_NUM:3|UNI_ABC:drie UNI_ABC:donuts UNI_ABC:om UNI_TIM:09:00:00 UNI_ABC:of UNI_ABC:tel UNI_ABC:tot UNI_NUM:110",
+			"Eet drie donuts om 09:00:00 of tel tot 110"
+			);
+
+		testTranslation(t,
+			"I finished twohundredandtwentyfourth or 225th",
+			"UNI_ABC:I UNI_ABC:finished ENG_ORD:224|UNI_ABC:twohundredandtwentyfourth UNI_ABC:or ENG_OR2:225",
+			"I finished twohundredandtwentyfourth or 225th"
+			);
+
+		testTranslation(t,
+			"I ben tweehonderdvierentwintigste geworden",
+			"UNI_ABC:I UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste UNI_ABC:geworden",
+			"I ben tweehonderdvierentwintigste geworden"
+			);
 	}
 	
 	private void testTranslation(EntityValueTranslator t,String seq,String expTran,String expRetran) {

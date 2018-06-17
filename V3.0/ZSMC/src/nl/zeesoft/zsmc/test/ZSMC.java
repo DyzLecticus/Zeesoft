@@ -36,6 +36,7 @@ public class ZSMC extends LibraryObject {
 		System.out.println(" * Context sensitive symbolic corrections; word spelling corrections  ");
 		System.out.println(" * Sequence context classification; sentence context classification  ");
 		System.out.println(" * Context sensitive sequence matching; find matching sentences  ");
+		System.out.println(" * Symbolic entity value translation; find variable values  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();

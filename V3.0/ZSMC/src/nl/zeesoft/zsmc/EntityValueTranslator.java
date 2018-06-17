@@ -7,7 +7,10 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsmc.entity.DutchNumeric;
+import nl.zeesoft.zsmc.entity.DutchOrder;
 import nl.zeesoft.zsmc.entity.EnglishNumeric;
+import nl.zeesoft.zsmc.entity.EnglishOrder;
+import nl.zeesoft.zsmc.entity.EnglishOrder2;
 import nl.zeesoft.zsmc.entity.EntityObject;
 import nl.zeesoft.zsmc.entity.UniversalAlphabetic;
 import nl.zeesoft.zsmc.entity.UniversalNumeric;
@@ -59,20 +62,6 @@ public class EntityValueTranslator {
 		return r;
 	}
 
-	private ZStringBuilder getInternalValuesForExternalValue(String str) {
-		ZStringBuilder r = new ZStringBuilder();
-		for (EntityObject eo: entities) {
-			String iv = eo.getInternalValueForExternalValue(str);
-			if (iv.length()>0) {
-				if (r.length()>0) {
-					r.append(getOrConcatenator());
-				}
-				r.append(iv);
-			}
-		}
-		return r;
-	}
-	
 	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		List<String> symbols = sequence.toSymbolsPunctuated();
@@ -90,36 +79,47 @@ public class EntityValueTranslator {
 		return r;
 	}
 
-	private String getExternalValueForInternalValues(String str) {
-		String r = "";
-		if (str.contains(getOrConcatenator())) {
-			str = str.split("\\" + getOrConcatenator())[0];
-		}
-		if (str.contains(getValueConcatenator())) {
-			String prefix = str.split(getValueConcatenator())[0] + getValueConcatenator();
-			for (EntityObject eo: entities) {
-				if (eo.getInternalValuePrefix().equals(prefix)) {
-					r = eo.getExternalValueForInternalValue(str);
-				}
+	public EntityObject getEntityObject(String language,String type) {
+		EntityObject r = null;
+		for (EntityObject eo: entities) {
+			if (eo.getLanguage().equals(language) && eo.getType().equals(type)) {
+				r = eo;
+				break;
 			}
 		}
 		return r;
 	}
-	
+
+	public EntityObject getEntityObject(String prefix) {
+		EntityObject r = null;
+		for (EntityObject eo: entities) {
+			if (eo.getInternalValuePrefix().equals(prefix)) {
+				r = eo;
+				break;
+			}
+		}
+		return r;
+	}
+
 	public List<EntityObject> getEntities() {
 		return entities;
 	}
 	
 	public void initialize() {
 		for (EntityObject eo: entities) {
-			eo.initialize(this);
-			if (eo.getMaximumSymbols()>maximumSymbols) {
-				maximumSymbols = eo.getMaximumSymbols();
+			if (!eo.isInitialized()) {
+				eo.initialize(this);
+				if (eo.getMaximumSymbols()>maximumSymbols) {
+					maximumSymbols = eo.getMaximumSymbols();
+				}
 			}
 		}
 	}
 
 	public void addDefaultEntities() {
+		entities.add(new EnglishOrder());
+		entities.add(new EnglishOrder2());
+		entities.add(new DutchOrder());
 		entities.add(new EnglishNumeric());
 		entities.add(new DutchNumeric());
 		entities.add(new UniversalTime());
@@ -176,5 +176,34 @@ public class EntityValueTranslator {
 	 */
 	public Date getCurrentDate() {
 		return new Date();
+	}
+
+	private ZStringBuilder getInternalValuesForExternalValue(String str) {
+		ZStringBuilder r = new ZStringBuilder();
+		for (EntityObject eo: entities) {
+			String iv = eo.getInternalValueForExternalValue(str);
+			if (iv.length()>0) {
+				if (r.length()>0) {
+					r.append(getOrConcatenator());
+				}
+				r.append(iv);
+			}
+		}
+		return r;
+	}
+	
+	private String getExternalValueForInternalValues(String str) {
+		String r = "";
+		if (str.contains(getOrConcatenator())) {
+			str = str.split("\\" + getOrConcatenator())[0];
+		}
+		if (str.contains(getValueConcatenator())) {
+			String prefix = str.split(getValueConcatenator())[0] + getValueConcatenator();
+			EntityObject eo = getEntityObject(prefix);
+			if (eo!=null) {
+				r = eo.getExternalValueForInternalValue(str);
+			}
+		}
+		return r;
 	}
 }

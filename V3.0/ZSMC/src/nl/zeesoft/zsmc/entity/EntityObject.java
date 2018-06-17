@@ -15,7 +15,10 @@ public abstract class EntityObject {
 	public static final String					TYPE_ALPHABETIC		= "ABC";
 	public static final String					TYPE_NUMERIC		= "NUM";
 	public static final String					TYPE_TIME			= "TIM";
+	public static final String					TYPE_ORDER			= "ORD";
+	public static final String					TYPE_ORDER2			= "OR2";
 	
+	private boolean								initialized			= false;
 	private String								internalValuePrefix	= "";
 	private SortedMap<String,EntityValue>		externalValues		= new TreeMap<String,EntityValue>();
 	private SortedMap<String,List<EntityValue>>	internalValues		= new TreeMap<String,List<EntityValue>>();
@@ -37,7 +40,12 @@ public abstract class EntityObject {
 		return 1;
 	}
 
+	public boolean isInitialized() {
+		return initialized;
+	}
+
 	public void initialize(EntityValueTranslator translator) {
+		initialized = true;
 		internalValuePrefix = getLanguage() + "_" + getType() + translator.getValueConcatenator();
 	}
 
@@ -64,6 +72,9 @@ public abstract class EntityObject {
 
 	public String getExternalValueForInternalValue(String str) {
 		String r = "";
+		if (!str.startsWith(internalValuePrefix)) {
+			str = internalValuePrefix + str;
+		}
 		List<EntityValue> evl = internalValues.get(str);
 		if (evl!=null) {
 			r = evl.get(0).externalValue;
