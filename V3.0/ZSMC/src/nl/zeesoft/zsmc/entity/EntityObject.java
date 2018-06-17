@@ -17,6 +17,7 @@ public abstract class EntityObject {
 	public static final String					TYPE_TIME			= "TIM";
 	public static final String					TYPE_ORDER			= "ORD";
 	public static final String					TYPE_ORDER2			= "OR2";
+	public static final String					TYPE_MONTH			= "MNT";
 	
 	private boolean								initialized			= false;
 	private String								internalValuePrefix	= "";

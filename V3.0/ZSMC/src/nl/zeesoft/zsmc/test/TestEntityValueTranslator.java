@@ -69,9 +69,15 @@ public class TestEntityValueTranslator extends TestObject {
 			);
 
 		testTranslation(t,
-			"I ben tweehonderdvierentwintigste geworden",
-			"UNI_ABC:I UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste UNI_ABC:geworden",
-			"I ben tweehonderdvierentwintigste geworden"
+			"Ik ben tweehonderdvierentwintigste geworden",
+			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste UNI_ABC:geworden",
+			"Ik ben tweehonderdvierentwintigste geworden"
+			);
+
+		testTranslation(t,
+			"februari march october december",
+			"NLD_MNT:2|UNI_ABC:februari ENG_MNT:3|UNI_ABC:march ENG_MNT:10|UNI_ABC:october ENG_MNT:12|NLD_MNT:12|UNI_ABC:december",
+			"februari march october december"
 			);
 	}
 	

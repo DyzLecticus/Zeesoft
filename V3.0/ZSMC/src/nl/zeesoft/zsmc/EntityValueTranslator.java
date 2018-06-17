@@ -10,8 +10,10 @@ import nl.zeesoft.zsmc.entity.EntityObject;
 import nl.zeesoft.zsmc.entity.UniversalAlphabetic;
 import nl.zeesoft.zsmc.entity.UniversalNumeric;
 import nl.zeesoft.zsmc.entity.UniversalTime;
+import nl.zeesoft.zsmc.entity.dutch.DutchMonth;
 import nl.zeesoft.zsmc.entity.dutch.DutchNumeric;
 import nl.zeesoft.zsmc.entity.dutch.DutchOrder;
+import nl.zeesoft.zsmc.entity.english.EnglishMonth;
 import nl.zeesoft.zsmc.entity.english.EnglishNumeric;
 import nl.zeesoft.zsmc.entity.english.EnglishOrder;
 import nl.zeesoft.zsmc.entity.english.EnglishOrder2;
@@ -29,27 +31,35 @@ public class EntityValueTranslator {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		for (int i = 0; i<symbols.size(); i++) {
-			ZStringBuilder test = new ZStringBuilder();
 			int testNum = maximumSymbols;
 			boolean translated = false;
 			for (int t = testNum; t>0; t--) {
-				for (int s = 0; s<testNum; s++) {
-					int idx = i + s;
-					if (idx<symbols.size()) {
+				int from = i;
+				int to = i + (testNum - 1);
+				if (to>=symbols.size()) {
+					to = (symbols.size() - 1);
+				}
+				if (to>=from) {
+					ZStringBuilder test = new ZStringBuilder();
+					for (int s = from; s<=to; s++) {
 						if (test.length()>0) {
 							test.append(" ");
 						}
-						test.append(symbols.get(idx));
-						ZStringBuilder ivs = getInternalValuesForExternalValue(test.toString());
-						if (ivs.length()>0) {
-							if (r.length()>0) {
-								r.append(" ");
-							}
-							r.append(ivs);
-							translated = true;
-							i = idx;
-						}
+						test.append(symbols.get(s));
 					}
+					String raw = test.toString();
+					ZStringBuilder ivs = getInternalValuesForExternalValue(test.toCase(true).toString(),raw);
+					if (ivs.length()>0) {
+						if (r.length()>0) {
+							r.append(" ");
+						}
+						r.append(ivs);
+						translated = true;
+						i = to;
+					}
+				}
+				if (translated) {
+					break;
 				}
 			}
 			if (!translated) {
@@ -117,6 +127,8 @@ public class EntityValueTranslator {
 	}
 
 	public void addDefaultEntities() {
+		entities.add(new EnglishMonth());
+		entities.add(new DutchMonth());
 		entities.add(new EnglishOrder());
 		entities.add(new EnglishOrder2());
 		entities.add(new DutchOrder());
@@ -178,10 +190,15 @@ public class EntityValueTranslator {
 		return new Date();
 	}
 
-	private ZStringBuilder getInternalValuesForExternalValue(String str) {
+	private ZStringBuilder getInternalValuesForExternalValue(String str, String raw) {
 		ZStringBuilder r = new ZStringBuilder();
 		for (EntityObject eo: entities) {
-			String iv = eo.getInternalValueForExternalValue(str);
+			String iv = "";
+			if (eo instanceof UniversalAlphabetic) {
+				iv = eo.getInternalValueForExternalValue(raw);
+			} else {
+				iv = eo.getInternalValueForExternalValue(str);
+			}
 			if (iv.length()>0) {
 				if (r.length()>0) {
 					r.append(getOrConcatenator());
