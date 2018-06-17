@@ -1,4 +1,4 @@
-package nl.zeesoft.zsmc.pattern;
+package nl.zeesoft.zsmc.entity;
 
 public class UniversalNumeric extends EntityObject {
 	@Override
@@ -15,15 +15,27 @@ public class UniversalNumeric extends EntityObject {
 	}
 	@Override
 	public String getInternalValueForExternalValue(String str) {
-		return getInternalValuePrefix() + str;
+		String r = "";
+		if (externalValuesContains(str)) {
+			r = getInternalValuePrefix() + str;
+		}
+		return r;
 	}
 	@Override
 	public String getExternalValueForInternalValue(String str) {
-		return str.substring(getInternalValuePrefix().length());
+		String r = "";
+		if (internalValuesContains(str)) {
+			r = str.substring(getInternalValuePrefix().length());
+		}
+		return r;
 	}
 	@Override
 	public Object getTypeValueForInternalValue(String str) {
-		return str.substring(getInternalValuePrefix().length());
+		Integer r = null;
+		if (internalValuesContains(str)) {
+			r = Integer.parseInt(str.substring(getInternalValuePrefix().length()));
+		}
+		return r;
 	}
 
 	/**

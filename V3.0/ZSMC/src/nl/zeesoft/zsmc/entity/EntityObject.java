@@ -1,14 +1,16 @@
-package nl.zeesoft.zsmc.pattern;
+package nl.zeesoft.zsmc.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zsmc.EntityValueTranslator;
+
 public abstract class EntityObject {
 	public static final String					LANG_UNI			= "UNI";
 	public static final String					LANG_ENG			= "ENG";
-	public static final String					LANG_NED			= "NED";
+	public static final String					LANG_NLD			= "NLD";
 
 	public static final String					TYPE_ALPHABETIC		= "ABC";
 	public static final String					TYPE_NUMERIC		= "NUM";
@@ -26,8 +28,17 @@ public abstract class EntityObject {
 		return TYPE_ALPHABETIC;
 	}
 
-	public void initialize(String valueConcatenator) {
-		internalValuePrefix = getLanguage() + "_" + getType() + valueConcatenator;
+	/**
+	 * Returns the maximum symbol sequence length this entity contains.
+	 * 
+	 * @return The maximum symbol sequence length
+	 */
+	public int getMaximumSymbols() {
+		return 1;
+	}
+
+	public void initialize(EntityValueTranslator translator) {
+		internalValuePrefix = getLanguage() + "_" + getType() + translator.getValueConcatenator();
 	}
 
 	public final String getInternalValuePrefix() {
@@ -89,5 +100,14 @@ public abstract class EntityObject {
 
 	public void addEntityValue(String externalValue, String internalValue, Object typeValue) {
 		addEntityValue(getEntityValue(externalValue,internalValue,typeValue));
+	}
+
+	public void addEntityValue(String externalValue, Object typeValue) {
+		addEntityValue(getEntityValue(externalValue,"" + typeValue,typeValue));
+	}
+
+	public void addEntityValue(String externalValue) {
+		Integer idx = new Integer(externalValues.size());
+		addEntityValue(getEntityValue(externalValue,"" + idx,idx));
 	}
 }

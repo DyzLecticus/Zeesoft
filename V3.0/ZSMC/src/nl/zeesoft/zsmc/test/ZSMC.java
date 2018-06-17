@@ -33,8 +33,9 @@ public class ZSMC extends LibraryObject {
 		System.out.println("The Zeesoft Symbolic Multithreaded Confabulation (ZSMC) is an open source library for Java application development.  ");
 		System.out.println();
 		System.out.println("It provides support for;  ");
-		System.out.println(" * Basic spelling checking  ");
-		System.out.println(" * Symbolic Multithreaded Confabulation  ");
+		System.out.println(" * Context sensitive symbolic corrections; word spelling corrections  ");
+		System.out.println(" * Sequence context classification; sentence context classification  ");
+		System.out.println(" * Context sensitive sequence matching; find matching sentences  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -50,9 +51,11 @@ public class ZSMC extends LibraryObject {
 			tests.add(new TestSequenceClassifier(getTester()));
 			tests.add(new TestSequenceMatcher(getTester()));
 		}
-		tests.add(new TestKnowledgeBases(getTester()));
+		tests.add(new TestEntityValueTranslator(getTester()));
+		
+		//tests.add(new TestKnowledgeBases(getTester()));
 		if (f.exists()) {
-			tests.add(new TestNLQnAKnowledgeBases(getTester()));
+			//tests.add(new TestNLQnAKnowledgeBases(getTester()));
 		} else {
 			System.out.println("NL QnA input file not found: " + TestSequenceClassifier.QNA_FILE_NAME);
 		}

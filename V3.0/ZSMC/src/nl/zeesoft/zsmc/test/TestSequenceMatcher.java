@@ -8,8 +8,6 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsmc.SequenceMatcher;
 
 public class TestSequenceMatcher extends TestObject {
-	public static final String QNA_FILE_NAME = "resources/nl-qna.txt";
-	
 	public TestSequenceMatcher(Tester tester) {
 		super(tester);
 	}
@@ -28,7 +26,7 @@ public class TestSequenceMatcher extends TestObject {
 		System.out.println("SequenceMatcher matcher = new SequenceMatcher();");
 		System.out.println("// Initialize the SequenceMatcher");
 		System.out.println("matcher.initialize(\"tab-separated-file-name.tsv\");");
-		System.out.println("// Use SequenceMatcher to correct a word");
+		System.out.println("// Use SequenceMatcher to find a matching sequence");
 		System.out.println("ZStringSymbolParserString match = matcher.match(new ZStringSymbolParser(\"some sequence\"),\"optionalContextSymbol\");");
 		System.out.println("~~~~");
 		System.out.println();
@@ -39,14 +37,14 @@ public class TestSequenceMatcher extends TestObject {
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
 		System.out.println(" * The time it takes to initialize the classifier  ");
-		System.out.println(" * The matches found for a set of input sequences and how long it took to find them  ");
+		System.out.println(" * The matches found for a set of input sequences and how long it takes to find them  ");
 	}
 	
 	@Override
 	protected void test(String[] args) {
 		Date started = new Date();
 		SequenceMatcher sm = new SequenceMatcher();
-		String err = sm.initialize(QNA_FILE_NAME);
+		String err = sm.initialize(TestSequenceClassifier.QNA_FILE_NAME);
 		assertEqual(err.length(),0,"Reading the file produced an unexpected error");
 		if (err.length()==0) {
 			System.out.println("Initializing the SequenceMatcher took: " + ((new Date()).getTime() - started.getTime()) + " ms");

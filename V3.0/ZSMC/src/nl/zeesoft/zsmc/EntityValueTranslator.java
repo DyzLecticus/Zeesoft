@@ -1,41 +1,180 @@
 package nl.zeesoft.zsmc;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import nl.zeesoft.zsmc.pattern.EntityObject;
-import nl.zeesoft.zsmc.pattern.UniversalAlphabetic;
-import nl.zeesoft.zsmc.pattern.UniversalNumeric;
-import nl.zeesoft.zsmc.pattern.UniversalTime;
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsmc.entity.DutchNumeric;
+import nl.zeesoft.zsmc.entity.EnglishNumeric;
+import nl.zeesoft.zsmc.entity.EntityObject;
+import nl.zeesoft.zsmc.entity.UniversalAlphabetic;
+import nl.zeesoft.zsmc.entity.UniversalNumeric;
+import nl.zeesoft.zsmc.entity.UniversalTime;
 
 public class EntityValueTranslator {
 	private List<EntityObject>					entities			= new ArrayList<EntityObject>();
+	
+	private int									maximumSymbols		= 1;
 
 	public EntityValueTranslator() {
 		addDefaultEntities();
 	}
 	
-	public String getValueConcatenator() {
-		return ":";
+	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence) {
+		ZStringSymbolParser r = new ZStringSymbolParser();
+		List<String> symbols = sequence.toSymbolsPunctuated();
+		for (int i = 0; i<symbols.size(); i++) {
+			ZStringBuilder test = new ZStringBuilder();
+			int testNum = maximumSymbols;
+			boolean translated = false;
+			for (int t = testNum; t>0; t--) {
+				for (int s = 0; s<testNum; s++) {
+					int idx = i + s;
+					if (idx<symbols.size()) {
+						if (test.length()>0) {
+							test.append(" ");
+						}
+						test.append(symbols.get(idx));
+						ZStringBuilder ivs = getInternalValuesForExternalValue(test.toString());
+						if (ivs.length()>0) {
+							if (r.length()>0) {
+								r.append(" ");
+							}
+							r.append(ivs);
+							translated = true;
+							i = idx;
+						}
+					}
+				}
+			}
+			if (!translated) {
+				if (r.length()>0) {
+					r.append(" ");
+				}
+				r.append(symbols.get(i));
+			}
+		}
+		return r;
 	}
 
-	public String getOrConcatenator() {
-		return "|";
+	private ZStringBuilder getInternalValuesForExternalValue(String str) {
+		ZStringBuilder r = new ZStringBuilder();
+		for (EntityObject eo: entities) {
+			String iv = eo.getInternalValueForExternalValue(str);
+			if (iv.length()>0) {
+				if (r.length()>0) {
+					r.append(getOrConcatenator());
+				}
+				r.append(iv);
+			}
+		}
+		return r;
+	}
+	
+	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence) {
+		ZStringSymbolParser r = new ZStringSymbolParser();
+		List<String> symbols = sequence.toSymbolsPunctuated();
+		for (int i = 0; i<symbols.size(); i++) {
+			String sym = symbols.get(i);
+			String ext = getExternalValueForInternalValues(sym);
+			if (ext.length()>0) {
+				sym = ext;
+			}
+			if (r.length()>0) {
+				r.append(" ");
+			}
+			r.append(sym);
+		}
+		return r;
 	}
 
+	private String getExternalValueForInternalValues(String str) {
+		String r = "";
+		if (str.contains(getOrConcatenator())) {
+			str = str.split("\\" + getOrConcatenator())[0];
+		}
+		if (str.contains(getValueConcatenator())) {
+			String prefix = str.split(getValueConcatenator())[0] + getValueConcatenator();
+			for (EntityObject eo: entities) {
+				if (eo.getInternalValuePrefix().equals(prefix)) {
+					r = eo.getExternalValueForInternalValue(str);
+				}
+			}
+		}
+		return r;
+	}
+	
 	public List<EntityObject> getEntities() {
 		return entities;
 	}
 	
 	public void initialize() {
 		for (EntityObject eo: entities) {
-			eo.initialize(getValueConcatenator());
+			eo.initialize(this);
+			if (eo.getMaximumSymbols()>maximumSymbols) {
+				maximumSymbols = eo.getMaximumSymbols();
+			}
 		}
 	}
 
 	public void addDefaultEntities() {
+		entities.add(new EnglishNumeric());
+		entities.add(new DutchNumeric());
 		entities.add(new UniversalTime());
 		entities.add(new UniversalNumeric());
 		entities.add(new UniversalAlphabetic());
+	}
+
+	/**
+	 * Specifies the value concatenator.
+	 * 
+	 * @return The value concatenator
+	 */
+	public String getValueConcatenator() {
+		return ":";
+	}
+
+	/**
+	 * Specifies the or concatenator.
+	 * 
+	 * @return The or concatenator
+	 */
+	public String getOrConcatenator() {
+		return "|";
+	}
+
+	/**
+	 * Specifies the maximum number string pattern to generate (starting at zero).
+	 * 
+	 * In order to support current and future dates, this should be at least 9999.
+	 * 
+	 * @return The maximum number string pattern to generate
+	 */
+	public int getMaximumNumber() {
+		return 99999;
+	}
+
+	/**
+	 * Specifies the maximum order string pattern to generate (starting at zero).
+	 * 
+	 * In order to support current and future dates, this should be at least 99.
+	 * 
+	 * @return The maximum order string pattern to generate
+	 */
+	public int getMaximumOrder() {
+		return 999;
+	}
+
+	/**
+	 * Specifies the current date (default = new Date()).
+	 * 
+	 * Used to translate patterns like 'now', 'today', 'tomorrow'.
+	 * 
+	 * @return The current date
+	 */
+	public Date getCurrentDate() {
+		return new Date();
 	}
 }

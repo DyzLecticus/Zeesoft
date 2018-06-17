@@ -1,4 +1,6 @@
-package nl.zeesoft.zsmc.pattern;
+package nl.zeesoft.zsmc.entity;
+
+import nl.zeesoft.zsmc.EntityValueTranslator;
 
 public class UniversalTime extends EntityObject {
 	@Override
@@ -14,8 +16,8 @@ public class UniversalTime extends EntityObject {
 		return super.getInternalValueForExternalValue(correctTimeString(str));
 	}
 	@Override
-	public void initialize(String valueConcatenator) {
-		super.initialize(valueConcatenator);
+	public void initialize(EntityValueTranslator translator) {
+		super.initialize(translator);
 		for (int h = 0; h<24; h++) {
 			for (int m = 0; m<60; m++) {
 				for (int s = 0; s<60; s++) {

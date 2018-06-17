@@ -1,4 +1,4 @@
-package nl.zeesoft.zsmc.pattern;
+package nl.zeesoft.zsmc.entity;
 
 public class EntityValue {
 	public String	externalValue	= "";

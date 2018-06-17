@@ -28,7 +28,7 @@ public class TestSequenceClassifier extends TestObject {
 		System.out.println("SequenceClassifier classifier = new SequenceClassifier();");
 		System.out.println("// Initialize the SequenceClassifier");
 		System.out.println("classifier.initialize(\"tab-separated-file-name.tsv\");");
-		System.out.println("// Use SequenceClassifier to correct a word");
+		System.out.println("// Use SequenceClassifier to classify a sequence");
 		System.out.println("String context = classifier.classify(new ZStringSymbolParser(\"some sequence\"));");
 		System.out.println("~~~~");
 		System.out.println();
@@ -39,7 +39,7 @@ public class TestSequenceClassifier extends TestObject {
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
 		System.out.println(" * The time it takes to initialize the classifier  ");
-		System.out.println(" * The classification results including the time it takes for a set of input sequences  ");
+		System.out.println(" * The classification results including the time it takes, for a set of input sequences  ");
 	}
 	
 	@Override
