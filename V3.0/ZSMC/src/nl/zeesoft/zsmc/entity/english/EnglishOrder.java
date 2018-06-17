@@ -1,6 +1,7 @@
-package nl.zeesoft.zsmc.entity;
+package nl.zeesoft.zsmc.entity.english;
 
 import nl.zeesoft.zsmc.EntityValueTranslator;
+import nl.zeesoft.zsmc.entity.EntityObject;
 
 public class EnglishOrder extends EntityObject {
 	@Override

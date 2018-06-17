@@ -1,11 +1,12 @@
-package nl.zeesoft.zsmc.entity;
+package nl.zeesoft.zsmc.entity.english;
 
 import nl.zeesoft.zsmc.EntityValueTranslator;
+import nl.zeesoft.zsmc.entity.EntityObject;
 
-public class DutchNumeric extends EntityObject {
+public class EnglishNumeric extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return LANG_NLD;
+		return LANG_ENG;
 	}
 	@Override
 	public String getType() {
@@ -16,47 +17,47 @@ public class DutchNumeric extends EntityObject {
 		super.initialize(translator);
 		for (int i = 0; i<=translator.getMaximumNumber(); i++) {
 			if (i==0) {
-				addEntityValue("nul");
+				addEntityValue("zero");
 			} else if (i==1) {
-				addEntityValue("een");
+				addEntityValue("one");
 			} else if (i==2) {
-				addEntityValue("twee");
+				addEntityValue("two");
 			} else if (i==3) {
-				addEntityValue("drie");
+				addEntityValue("three");
 			} else if (i==4) {
-				addEntityValue("vier");
+				addEntityValue("four");
 			} else if (i==5) {
-				addEntityValue("vijf");
+				addEntityValue("five");
 			} else if (i==6) {
-				addEntityValue("zes");
+				addEntityValue("six");
 			} else if (i==7) {
-				addEntityValue("zeven");
+				addEntityValue("seven");
 			} else if (i==8) {
-				addEntityValue("acht");
+				addEntityValue("eight");
 			} else if (i==9) {
-				addEntityValue("negen");
+				addEntityValue("nine");
 			} else if (i==10) {
-				addEntityValue("tien");
+				addEntityValue("ten");
 			} else if (i==11) {
-				addEntityValue("elf");
+				addEntityValue("eleven");
 			} else if (i==12) {
-				addEntityValue("twaalf");
+				addEntityValue("twelve");
 			} else if (i==13) {
-				addEntityValue("dertien");
+				addEntityValue("thirteen");
 			} else if (i==14) {
-				addEntityValue("veertien");
+				addEntityValue("fourteen");
 			} else if (i==15) {
-				addEntityValue("vijftien");
+				addEntityValue("fifteen");
 			} else if (i==16) {
-				addEntityValue("zestien");
+				addEntityValue("sixteen");
 			} else if (i==17) {
-				addEntityValue("zeventien");
+				addEntityValue("seventeen");
 			} else if (i==18) {
-				addEntityValue("achttien");
+				addEntityValue("eighteen");
 			} else if (i==19) {
-				addEntityValue("negentien");
+				addEntityValue("nineteen");
 			} else if (i==20) {
-				addEntityValue("twintig");
+				addEntityValue("twenty");
 			} else if (i>20) {
 				int num = i % 10;
 				int dec = ((i - num) / 10);
@@ -82,50 +83,37 @@ public class DutchNumeric extends EntityObject {
 				if (dec<=1) {
 					strNum = "";
 					if (dec>0||num>0) {
-						strDec = getExternalValueForInternalValue("" + (dec * 10) + num);
+						strDec = getExternalValueForInternalValue("" +(dec * 10) + num);
 					}
 				} else if (dec==2) {
-					strDec = "twintig";
+					strDec = "twenty";
 				} else if (dec==3) {
-					strDec = "dertig";
+					strDec = "thirty";
 				} else if (dec==4) {
-					strDec = "veertig";
+					strDec = "fourty";
 				} else if (dec==5) {
-					strDec = "vijftig";
+					strDec = "fifty";
 				} else if (dec==6) {
-					strDec = "zestig";
+					strDec = "sixty";
 				} else if (dec==7) {
-					strDec = "zeventig";
+					strDec = "seventy";
 				} else if (dec==8) {
-					strDec = "tachtig";
+					strDec = "eighty";
 				} else if (dec==9) {
-					strDec = "negentig";
-				}
-				if (dec>1 && num>0) {
-					strDec = strNum + "en" + strDec;
-					strNum = "";
+					strDec = "ninety";
 				}
 				
 				String strCent = "";
 				if (cent>0) {
-					if (cent==1) {
-						strCent = "honderd";
-					} else {
-						strCent = getExternalValueForInternalValue("" + cent) + "honderd";
-					}
-					if (dec==0 && num==0) {
-						strDec = "";
-						strNum = "";
+					strCent = getExternalValueForInternalValue("" + cent) + "hundred";
+					if (num>0 || dec>0) {
+						strCent += "and";
 					}
 				}
 				
 				String strMill = "";
 				if (mill>0) {
-					if (mill==1) {
-						strMill = "duizend";
-					} else {
-						strMill = getExternalValueForInternalValue("" + mill) + "duizend";
-					}
+					strMill = getExternalValueForInternalValue("" + mill) + "thousand";
 				}
 				
 				addEntityValue(strMill + strCent + strDec + strNum);

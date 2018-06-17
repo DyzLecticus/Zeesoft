@@ -6,15 +6,15 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zsmc.entity.DutchNumeric;
-import nl.zeesoft.zsmc.entity.DutchOrder;
-import nl.zeesoft.zsmc.entity.EnglishNumeric;
-import nl.zeesoft.zsmc.entity.EnglishOrder;
-import nl.zeesoft.zsmc.entity.EnglishOrder2;
 import nl.zeesoft.zsmc.entity.EntityObject;
 import nl.zeesoft.zsmc.entity.UniversalAlphabetic;
 import nl.zeesoft.zsmc.entity.UniversalNumeric;
 import nl.zeesoft.zsmc.entity.UniversalTime;
+import nl.zeesoft.zsmc.entity.dutch.DutchNumeric;
+import nl.zeesoft.zsmc.entity.dutch.DutchOrder;
+import nl.zeesoft.zsmc.entity.english.EnglishNumeric;
+import nl.zeesoft.zsmc.entity.english.EnglishOrder;
+import nl.zeesoft.zsmc.entity.english.EnglishOrder2;
 
 public class EntityValueTranslator {
 	private List<EntityObject>					entities			= new ArrayList<EntityObject>();
