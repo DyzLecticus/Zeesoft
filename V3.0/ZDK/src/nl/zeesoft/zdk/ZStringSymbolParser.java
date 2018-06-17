@@ -7,8 +7,8 @@ import java.util.List;
  * The Zeesoft StringSymbolParser can be used to parse symbols (words and punctuation) from the StringBuilder value and merge them back together.
  */
 public class ZStringSymbolParser extends ZStringBuilder {
-	private static List<String>	lineEndSymbols		= new ArrayList<String>();
-	private static List<String>	punctuationSymbols	= new ArrayList<String>();
+	private List<String>	lineEndSymbols		= new ArrayList<String>();
+	private List<String>	punctuationSymbols	= new ArrayList<String>();
 	
 	public ZStringSymbolParser() {
 		super();
@@ -87,7 +87,12 @@ public class ZStringSymbolParser extends ZStringBuilder {
 			}
 			for (String symbol: punctuations) {
 				if (!symbol.equals("'")) {
-					replace(symbol," " + symbol + " ");
+					if (symbol.equals(":") || symbol.equals(";")) {
+						replace(symbol + " "," " + symbol + " ");
+						replace(" " + symbol," " + symbol + " ");
+					} else {
+						replace(symbol," " + symbol + " ");
+					}
 				}
 			}
 		}
@@ -205,7 +210,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	/**
 	 * Initializes the default global configuration for the parser.
 	 */
-	public static void initializeDefaultConfiguration() {
+	public void initializeDefaultConfiguration() {
 		lineEndSymbols.clear();
 		lineEndSymbols.add(".");
 		lineEndSymbols.add("?");
@@ -223,17 +228,21 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	/**
 	 * Initializes a specific global configuration for the parser.
 	 * 
-	 * @param lineEndSyms A list of line end symbols
+	 * @param lineEndings A list of line end symbols
 	 * @param punctuations A list of punctuation symbols
 	 */
-	public static void initializeConfiguration(List<String> lineEndSyms,List<String> punctuations) {
-		lineEndSymbols.clear();
-		for (String symbol: lineEndSyms) {
-			lineEndSymbols.add(symbol);
+	public void initializeConfiguration(List<String> lineEndings,List<String> punctuations) {
+		if (lineEndings!=null) {
+			lineEndSymbols.clear();
+			for (String symbol: lineEndings) {
+				lineEndSymbols.add(symbol);
+			}
 		}
-		punctuationSymbols.clear();
-		for (String symbol: punctuations) {
-			punctuationSymbols.add(symbol);
+		if (punctuations!=null) {
+			punctuationSymbols.clear();
+			for (String symbol: punctuations) {
+				punctuationSymbols.add(symbol);
+			}
 		}
 	}
 
@@ -277,12 +286,22 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		}
 	}
 
+	public List<String> getLineEndSymbols() {
+		return lineEndSymbols;
+	}
+
+	public List<String> getPunctuationSymbols() {
+		return punctuationSymbols;
+	}
+
 	public static boolean isLineEndSymbol(String symbol) {
-		return lineEndSymbols.contains(symbol);
+		ZStringSymbolParser parser = new ZStringSymbolParser();
+		return parser.getLineEndSymbols().contains(symbol);
 	}
 
 	public static boolean endsWithLineEndSymbol(ZStringBuilder symbol) {
-		return endsWithLineEndSymbol(symbol,lineEndSymbols);
+		ZStringSymbolParser parser = new ZStringSymbolParser();
+		return endsWithLineEndSymbol(symbol,parser.getLineEndSymbols());
 	}
 
 	public static boolean endsWithLineEndSymbol(ZStringBuilder symbol,List<String> lineEnds) {
@@ -296,6 +315,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	}
 
 	public static boolean isPunctuationSymbol(String symbol) {
-		return punctuationSymbols.contains(symbol);
+		ZStringSymbolParser parser = new ZStringSymbolParser();
+		return parser.getPunctuationSymbols().contains(symbol);
 	}
 }

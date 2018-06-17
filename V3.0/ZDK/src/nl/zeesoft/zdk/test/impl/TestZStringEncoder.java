@@ -55,6 +55,6 @@ public class TestZStringEncoder extends TestObject {
 	}
 	
 	public static final String getTestText() {
-		return "Hello, my name is 'Dyz Lecticus'. How are you feeling today? (Don't you know how to [respond]!)";
+		return "Hello, my name is 'Dyz Lecticus'. How are you feeling today? (Don't you know how to: [re;spond]!)";
 	}
 }
