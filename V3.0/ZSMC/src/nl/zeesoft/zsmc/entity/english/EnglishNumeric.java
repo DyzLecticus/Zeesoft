@@ -60,31 +60,33 @@ public class EnglishNumeric extends EntityObject {
 				addEntityValue("twenty");
 			} else if (i>20) {
 				int num = i % 10;
-				int dec = ((i - num) / 10);
-				
-				int cent = 0;
+				int dec = ((i - num) % 100) / 10;
+				int cent = ((i - num - dec) % 1000) / 100;
 				int mill = 0;
 				
-				if (dec>=100) {
-					mill = (dec - (dec % 100)) / 100;
-					dec = dec % 100;
-				}
-				if (dec>=10) {
-					cent = (dec - (dec % 10)) / 10;
-					dec = dec % 10;
-				}
-
-				String strNum = getExternalValueForInternalValue("" + num);
-				if (num==0) {
-					strNum = "";
+				if (i>999) {
+					String sVal = "" + i;
+					int l = sVal.length() - 3;
+					mill = Integer.parseInt(sVal.substring(0,l));
 				}
 				
+				String strNum = "";
 				String strDec = "";
-				if (dec<=1) {
-					strNum = "";
-					if (dec>0||num>0) {
-						strDec = getExternalValueForInternalValue("" +(dec * 10) + num);
-					}
+				String strCent = "";
+				String strMill = "";
+				
+				if (mill>0) {
+					strMill = getExternalValueForInternalValue("" + mill);
+					strMill += "thousand";
+				}
+				if (cent>0) {
+					strCent = getExternalValueForInternalValue("" + cent);
+					strCent += "hundred";
+					strCent += "and";
+				}
+				if (dec==1) {
+					strDec = getExternalValueForInternalValue("" + ((dec * 10) + num));
+					num = 0;
 				} else if (dec==2) {
 					strDec = "twenty";
 				} else if (dec==3) {
@@ -102,23 +104,21 @@ public class EnglishNumeric extends EntityObject {
 				} else if (dec==9) {
 					strDec = "ninety";
 				}
-				
-				String strCent = "";
-				if (cent>0) {
-					strCent = getExternalValueForInternalValue("" + cent) + "hundred";
-					if (num>0 || dec>0) {
-						strCent += "and";
-					}
+				if (num>0) {
+					strNum = getExternalValueForInternalValue("" + num);
 				}
 				
-				String strMill = "";
-				if (mill>0) {
-					strMill = getExternalValueForInternalValue("" + mill) + "thousand";
+				/*
+				 * TODO: Remove debugging statements
+				if (
+					(i>97 && i<400)
+					|| 
+					(i>1994 && i<2300)
+					) {
+					System.out.println(i + " = " + mill + " " + cent + " " + dec + " " + num);
+					System.out.println(i + " = " + strMill + " " + strCent + " " + strDec + " " + strNum);
 				}
-				
-				//if (i>1900 && i<3000) {
-				//	System.out.println(i + " = " + strMill + strCent + strDec + strNum);
-				//}
+				 */
 				addEntityValue(strMill + strCent + strDec + strNum,i);
 			}
 		}

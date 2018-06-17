@@ -15,11 +15,14 @@ import nl.zeesoft.zsmc.entity.dutch.DutchDuration;
 import nl.zeesoft.zsmc.entity.dutch.DutchMonth;
 import nl.zeesoft.zsmc.entity.dutch.DutchNumeric;
 import nl.zeesoft.zsmc.entity.dutch.DutchOrder;
+import nl.zeesoft.zsmc.entity.dutch.DutchTime;
+import nl.zeesoft.zsmc.entity.english.EnglishDate;
 import nl.zeesoft.zsmc.entity.english.EnglishDuration;
 import nl.zeesoft.zsmc.entity.english.EnglishMonth;
 import nl.zeesoft.zsmc.entity.english.EnglishNumeric;
 import nl.zeesoft.zsmc.entity.english.EnglishOrder;
 import nl.zeesoft.zsmc.entity.english.EnglishOrder2;
+import nl.zeesoft.zsmc.entity.english.EnglishTime;
 
 public class EntityValueTranslator {
 	private List<EntityObject>					entities			= new ArrayList<EntityObject>();
@@ -131,7 +134,10 @@ public class EntityValueTranslator {
 	}
 
 	public void addDefaultEntities() {
+		entities.add(new EnglishDate());
 		entities.add(new DutchDate());
+		entities.add(new EnglishTime());
+		entities.add(new DutchTime());
 		entities.add(new EnglishDuration());
 		entities.add(new DutchDuration());
 		entities.add(new EnglishMonth());

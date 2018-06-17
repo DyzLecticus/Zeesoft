@@ -1,4 +1,4 @@
-package nl.zeesoft.zsmc.entity.dutch;
+package nl.zeesoft.zsmc.entity.english;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -6,11 +6,11 @@ import java.util.Date;
 import nl.zeesoft.zsmc.EntityValueTranslator;
 import nl.zeesoft.zsmc.entity.EntityObject;
 
-public class DutchDate extends EntityObject {
+public class EnglishDate extends EntityObject {
 	private	Date	currentDate	= null;
 	@Override
 	public String getLanguage() {
-		return LANG_NLD;
+		return LANG_ENG;
 	}
 	@Override
 	public String getType() {
@@ -18,17 +18,17 @@ public class DutchDate extends EntityObject {
 	}
 	@Override
 	public int getMaximumSymbols() {
-		return 3;
+		return 4;
 	}
 	@Override
 	public boolean externalValuesContains(String str) {
 		boolean r = false;
-		if (str.equals("nu") || 
-			str.equals("nu direct") || 
-			str.equals("gisteren") ||
-			str.equals("vandaag") ||
-			str.equals("morgen") ||
-			str.equals("overmorgen")
+		if (str.equals("now") || 
+			str.equals("right now") || 
+			str.equals("yesterday") ||
+			str.equals("today") ||
+			str.equals("tomorrow") ||
+			str.equals("the day after tomorrow")
 			) {
 			r = true;
 		} else {
@@ -38,21 +38,21 @@ public class DutchDate extends EntityObject {
 	}
 	@Override
 	public String getInternalValueForExternalValue(String str) {
-		if (str.equals("nu") || str.equals("nu direct") || str.equals("vandaag")) {
+		if (str.equals("now") || str.equals("right now") || str.equals("today")) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(currentDate);
 			str = getInternalValuePrefix() + getValueFromCalendar(cal);
-		} else if (str.equals("gisteren")) {
+		} else if (str.equals("yesterday")) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(currentDate);
 			cal.set(Calendar.DATE, cal.get(Calendar.DATE) - 1);
 			str = getInternalValuePrefix() + getValueFromCalendar(cal);
-		} else if (str.equals("morgen")) {
+		} else if (str.equals("tomorrow")) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(currentDate);
 			cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 1);
 			str = getInternalValuePrefix() + getValueFromCalendar(cal);
-		} else if (str.equals("overmorgen")) {
+		} else if (str.equals("the day after tomorrow")) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(currentDate);
 			cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 2);
@@ -66,12 +66,22 @@ public class DutchDate extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 
-		DutchNumeric eoNumeric = (DutchNumeric) translator.getEntityObject(LANG_NLD,TYPE_NUMERIC);
+		EnglishNumeric eoNumeric = (EnglishNumeric) translator.getEntityObject(LANG_ENG,TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize(translator);
 		}
 		
-		DutchMonth eoMonth = (DutchMonth) translator.getEntityObject(LANG_NLD,TYPE_MONTH);
+		EnglishOrder eoOrder = (EnglishOrder) translator.getEntityObject(LANG_ENG,TYPE_ORDER);
+		if (!eoOrder.isInitialized()) {
+			eoOrder.initialize(translator);
+		}
+
+		EnglishOrder2 eoOrder2 = (EnglishOrder2) translator.getEntityObject(LANG_ENG,TYPE_ORDER2);
+		if (!eoOrder2.isInitialized()) {
+			eoOrder2.initialize(translator);
+		}
+		
+		EnglishMonth eoMonth = (EnglishMonth) translator.getEntityObject(LANG_ENG,TYPE_MONTH);
 		if (!eoMonth.isInitialized()) {
 			eoMonth.initialize(translator);
 		}
@@ -90,12 +100,18 @@ public class DutchDate extends EntityObject {
 			
 			String Y = eoNumeric.getExternalValueForInternalValue("" + year);
 			String M = eoMonth.getExternalValueForInternalValue("" + (month + 1));
-			String D = eoNumeric.getExternalValueForInternalValue("" + date);
-			
-			addEntityValue(D + " " + M + " " + Y,value,cal.getTime());
-			addEntityValue(D + " " + M,value,cal.getTime());
-			addEntityValue(D + " " + M + " " + year,value,cal.getTime());
-			addEntityValue(date + " " + M,value,cal.getTime());
+			String DO = eoOrder.getExternalValueForInternalValue("" + date);
+			String DO2 = eoOrder2.getExternalValueForInternalValue("" + date);
+
+			addEntityValue(M + " " + DO + " " + Y,value,cal.getTime());
+			addEntityValue("the " + DO + " of " + M + " " + Y,value,cal.getTime());
+			addEntityValue(M + " " + DO,value,cal.getTime());
+			addEntityValue("the " + DO + " of " + M,value,cal.getTime());
+
+			addEntityValue(M + " " + DO2 + " " + year,value,cal.getTime());
+			addEntityValue("the " + DO2 + " of " + M + " " + year,value,cal.getTime());
+			addEntityValue(M + " " + DO2,value,cal.getTime());
+			addEntityValue("the " + DO2 + " of " + M,value,cal.getTime());
 			
 			cal.add(Calendar.DATE,1);
 		}

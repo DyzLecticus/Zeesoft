@@ -60,31 +60,36 @@ public class DutchNumeric extends EntityObject {
 				addEntityValue("twintig");
 			} else if (i>20) {
 				int num = i % 10;
-				int dec = ((i - num) / 10);
-				
-				int cent = 0;
+				int dec = ((i - num) % 100) / 10;
+				int cent = ((i - num - dec) % 1000) / 100;
 				int mill = 0;
 				
-				if (dec>=100) {
-					mill = (dec - (dec % 100)) / 100;
-					dec = dec % 100;
-				}
-				if (dec>=10) {
-					cent = (dec - (dec % 10)) / 10;
-					dec = dec % 10;
-				}
-
-				String strNum = getExternalValueForInternalValue("" + num);
-				if (num==0) {
-					strNum = "";
+				if (i>999) {
+					String sVal = "" + i;
+					int l = sVal.length() - 3;
+					mill = Integer.parseInt(sVal.substring(0,l));
 				}
 				
+				String strNum = "";
 				String strDec = "";
-				if (dec<=1) {
-					strNum = "";
-					if (dec>0||num>0) {
-						strDec = getExternalValueForInternalValue("" + (dec * 10) + num);
+				String strCent = "";
+				String strMill = "";
+				
+				if (mill>0) {
+					if (mill>1) {
+						strMill = getExternalValueForInternalValue("" + mill);
+					} 
+					strMill += "duizend";
+				}
+				if (cent>0) {
+					if (cent>1) {
+						strCent = getExternalValueForInternalValue("" + cent);
 					}
+					strCent += "honderd";
+				}
+				if (dec==1) {
+					strDec = getExternalValueForInternalValue("" + ((dec * 10) + num));
+					num = 0;
 				} else if (dec==2) {
 					strDec = "twintig";
 				} else if (dec==3) {
@@ -102,37 +107,26 @@ public class DutchNumeric extends EntityObject {
 				} else if (dec==9) {
 					strDec = "negentig";
 				}
-				if (dec>1 && num>0) {
+				if (num>0) {
+					strNum = getExternalValueForInternalValue("" + num);
+				}
+				
+				if (dec>0 && num>0) {
 					strDec = strNum + "en" + strDec;
 					strNum = "";
 				}
 				
-				String strCent = "";
-				if (cent>0) {
-					if (cent==1) {
-						strCent = "honderd";
-					} else {
-						strCent = getExternalValueForInternalValue("" + cent) + "honderd";
-					}
-					if (dec==0 && num==0) {
-						strDec = "";
-						strNum = "";
-					}
+				/*
+				 * TODO: Remove debugging statements
+				if (
+					(i>97 && i<400)
+					|| 
+					(i>1994 && i<2300)
+					) {
+					System.out.println(i + " = " + mill + " " + cent + " " + dec + " " + num);
+					System.out.println(i + " = " + strMill + " " + strCent + " " + strDec + " " + strNum);
 				}
-				
-				String strMill = "";
-				if (mill>0) {
-					if (mill==1) {
-						strMill = "duizend";
-					} else {
-						strMill = getExternalValueForInternalValue("" + mill) + "duizend";
-					}
-				}
-				
-				// TODO: Fix dutch numeric
-				if (i>1900 && i<3000) {
-					System.out.println(i + " = " + strMill + strCent + strDec + strNum);
-				}
+				*/
 				addEntityValue(strMill + strCent + strDec + strNum,i);
 			}
 		}

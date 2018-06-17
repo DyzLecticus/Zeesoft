@@ -53,44 +53,43 @@ public class TestEntityValueTranslator extends TestObject {
 		testTranslation(t,
 			"Eat three donuts at 9:00 or count to 110",
 			"UNI_ABC:Eat ENG_NUM:3|UNI_ABC:three UNI_ABC:donuts UNI_ABC:at UNI_TIM:09:00:00 UNI_ABC:or UNI_ABC:count UNI_ABC:to UNI_NUM:110",
-			"Eat three donuts at 09:00:00 or count to 110"
-			);
-
+			"Eat three donuts at 09:00:00 or count to 110");
 		testTranslation(t,
 			"Eet drie donuts om 9:00 of tel tot 110",
 			"UNI_ABC:Eet NLD_NUM:3|UNI_ABC:drie UNI_ABC:donuts UNI_ABC:om UNI_TIM:09:00:00 UNI_ABC:of UNI_ABC:tel UNI_ABC:tot UNI_NUM:110",
-			"Eet drie donuts om 09:00:00 of tel tot 110"
-			);
-
+			"Eet drie donuts om 09:00:00 of tel tot 110");
 		testTranslation(t,
 			"I finished twohundredandtwentyfourth or 225th",
 			"UNI_ABC:I UNI_ABC:finished ENG_ORD:224|UNI_ABC:twohundredandtwentyfourth UNI_ABC:or ENG_OR2:225",
-			"I finished twohundredandtwentyfourth or 225th"
-			);
-
+			"I finished twohundredandtwentyfourth or 225th");
 		testTranslation(t,
 			"Ik ben tweehonderdvierentwintigste geworden",
 			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste UNI_ABC:geworden",
-			"Ik ben tweehonderdvierentwintigste geworden"
-			);
-
+			"Ik ben tweehonderdvierentwintigste geworden");
 		testTranslation(t,
 			"februari march october december",
 			"NLD_MNT:2|UNI_ABC:februari ENG_MNT:3|UNI_ABC:march ENG_MNT:10|UNI_ABC:october ENG_MNT:12|NLD_MNT:12|UNI_ABC:december",
-			"februari march october december"
-			);
-
+			"februari march october december");
 		testTranslation(t,
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten",
 			"ENG_DUR:33:41 / NLD_DUR:33:41",
-			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten"
-			);
-
+			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten");
 		testTranslation(t,
-			"gisteren vandaag 1 oktober 1979",
-			"ENG_DUR:33:41 / NLD_DUR:33:41",
-			"gisteren vandaag 1 oktober 1979"
-			);
+			"yesterday OR today OR the 1st of october",
+			"ENG_DAT:2018-06-16|UNI_ABC:yesterday UNI_ABC:OR ENG_DAT:2018-06-17|UNI_ABC:today UNI_ABC:OR ENG_DAT:2018-10-01",
+			"june sixteenth twothousandeighteen OR june seventeenth twothousandeighteen OR october first twothousandeighteen");
+		testTranslation(t,
+			"gisteren OF vandaag OF 1 oktober",
+			"NLD_DAT:2018-06-16|UNI_ABC:gisteren UNI_ABC:OF NLD_DAT:2018-06-17|UNI_ABC:vandaag UNI_ABC:OF NLD_DAT:2018-10-01",
+			"zestien juni tweeduizendachttien OF zeventien juni tweeduizendachttien OF een oktober tweeduizendachttien");
+		testTranslation(t,
+			"twelve o'clock OR five minutes to nine OR ten past one in the morning",
+			"ENG_TIM:12:00:00 UNI_ABC:OR ENG_TIM:08:55:00 UNI_ABC:OR ENG_TIM:01:10:00",
+			"twelve o'clock OR fiftyfive past eight OR ten past one in the morning");
+		testTranslation(t,
+			"twaalf uur OF vijf minuten voor negen OF tien over een 's ochtends",
+			"NLD_TIM:12:00:00|NLD_DUR:12:00 UNI_ABC:OF NLD_TIM:08:55:00 UNI_ABC:OF NLD_TIM:01:10:00",
+			"twaalf uur OF acht uur vijfenvijftig OF een uur tien ' s ochtends");
 	}
 	
 	private void testTranslation(EntityValueTranslator t,String seq,String expTran,String expRetran) {
