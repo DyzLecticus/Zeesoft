@@ -10,9 +10,11 @@ import nl.zeesoft.zsmc.entity.EntityObject;
 import nl.zeesoft.zsmc.entity.UniversalAlphabetic;
 import nl.zeesoft.zsmc.entity.UniversalNumeric;
 import nl.zeesoft.zsmc.entity.UniversalTime;
+import nl.zeesoft.zsmc.entity.dutch.DutchDuration;
 import nl.zeesoft.zsmc.entity.dutch.DutchMonth;
 import nl.zeesoft.zsmc.entity.dutch.DutchNumeric;
 import nl.zeesoft.zsmc.entity.dutch.DutchOrder;
+import nl.zeesoft.zsmc.entity.english.EnglishDuration;
 import nl.zeesoft.zsmc.entity.english.EnglishMonth;
 import nl.zeesoft.zsmc.entity.english.EnglishNumeric;
 import nl.zeesoft.zsmc.entity.english.EnglishOrder;
@@ -32,10 +34,13 @@ public class EntityValueTranslator {
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		for (int i = 0; i<symbols.size(); i++) {
 			int testNum = maximumSymbols;
+			if ((i + testNum - 1) >= symbols.size()) {
+				testNum = symbols.size() - i;
+			}
 			boolean translated = false;
 			for (int t = testNum; t>0; t--) {
 				int from = i;
-				int to = i + (testNum - 1);
+				int to = i + (t - 1);
 				if (to>=symbols.size()) {
 					to = (symbols.size() - 1);
 				}
@@ -56,10 +61,8 @@ public class EntityValueTranslator {
 						r.append(ivs);
 						translated = true;
 						i = to;
+						break;
 					}
-				}
-				if (translated) {
-					break;
 				}
 			}
 			if (!translated) {
@@ -127,6 +130,8 @@ public class EntityValueTranslator {
 	}
 
 	public void addDefaultEntities() {
+		entities.add(new EnglishDuration());
+		entities.add(new DutchDuration());
 		entities.add(new EnglishMonth());
 		entities.add(new DutchMonth());
 		entities.add(new EnglishOrder());

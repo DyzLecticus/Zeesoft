@@ -79,6 +79,12 @@ public class TestEntityValueTranslator extends TestObject {
 			"NLD_MNT:2|UNI_ABC:februari ENG_MNT:3|UNI_ABC:march ENG_MNT:10|UNI_ABC:october ENG_MNT:12|NLD_MNT:12|UNI_ABC:december",
 			"februari march october december"
 			);
+
+		testTranslation(t,
+			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten",
+			"ENG_DUR:33:41 / NLD_DUR:33:41",
+			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten"
+			);
 	}
 	
 	private void testTranslation(EntityValueTranslator t,String seq,String expTran,String expRetran) {

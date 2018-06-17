@@ -22,7 +22,7 @@ public class UniversalTime extends EntityObject {
 			for (int m = 0; m<60; m++) {
 				for (int s = 0; s<60; s++) {
 					String val = String.format("%02d",h) + ":" + String.format("%02d",m) + ":" + String.format("%02d",s);
-					Long typeVal = (long)(h * m * s * 1000);
+					Long typeVal = ((long)h * 3600000l) + ((long)m * 60000l) + ((long)s * 1000l);
 					addEntityValue(val,val,typeVal);
 				}
 			}
