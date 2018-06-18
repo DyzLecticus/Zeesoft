@@ -21,22 +21,6 @@ public class EnglishDate extends EntityObject {
 		return 4;
 	}
 	@Override
-	public boolean externalValuesContains(String str) {
-		boolean r = false;
-		if (str.equals("now") || 
-			str.equals("right now") || 
-			str.equals("yesterday") ||
-			str.equals("today") ||
-			str.equals("tomorrow") ||
-			str.equals("the day after tomorrow")
-			) {
-			r = true;
-		} else {
-			r = super.externalValuesContains(str);
-		}
-		return r;
-	}
-	@Override
 	public String getInternalValueForExternalValue(String str) {
 		if (str.equals("now") || str.equals("right now") || str.equals("today")) {
 			Calendar cal = Calendar.getInstance();

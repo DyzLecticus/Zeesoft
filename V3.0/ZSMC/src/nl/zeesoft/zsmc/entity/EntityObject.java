@@ -55,14 +55,6 @@ public abstract class EntityObject {
 	public final String getInternalValuePrefix() {
 		return internalValuePrefix;
 	}
-	
-	public boolean externalValuesContains(String str) {
-		return externalValues.containsKey(str);
-	}
-
-	public boolean internalValuesContains(String str) {
-		return externalValues.containsKey(str);
-	}
 
 	public String getInternalValueForExternalValue(String str) {
 		String r = "";

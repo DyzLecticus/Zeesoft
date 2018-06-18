@@ -182,7 +182,7 @@ public class EntityValueTranslator {
 	}
 
 	/**
-	 * Specifies the maximum order string pattern to generate (starting at zero).
+	 * Specifies the maximum order string pattern to generate (starting at first).
 	 * 
 	 * In order to support current and future dates, this should be at least 99.
 	 * 

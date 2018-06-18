@@ -2,17 +2,9 @@ package nl.zeesoft.zsmc.entity;
 
 public class UniversalAlphabetic extends EntityObject {
 	@Override
-	public boolean externalValuesContains(String str) {
-		return isAlphabetic(str);
-	}
-	@Override
-	public boolean internalValuesContains(String str) {
-		return str.startsWith(getInternalValuePrefix()) && isAlphabetic(str.substring(getInternalValuePrefix().length()));
-	}
-	@Override
 	public String getInternalValueForExternalValue(String str) {
 		String r = "";
-		if (externalValuesContains(str)) {
+		if (isAlphabetic(str)) {
 			r = getInternalValuePrefix() + str;
 		}
 		return r;
@@ -20,7 +12,7 @@ public class UniversalAlphabetic extends EntityObject {
 	@Override
 	public String getExternalValueForInternalValue(String str) {
 		String r = "";
-		if (internalValuesContains(str)) {
+		if (str.startsWith(getInternalValuePrefix()) && isAlphabetic(str.substring(getInternalValuePrefix().length()))) {
 			r = str.substring(getInternalValuePrefix().length());
 		}
 		return r;
@@ -28,7 +20,7 @@ public class UniversalAlphabetic extends EntityObject {
 	@Override
 	public Object getTypeValueForInternalValue(String str) {
 		String r = "";
-		if (internalValuesContains(str)) {
+		if (str.startsWith(getInternalValuePrefix()) && isAlphabetic(str.substring(getInternalValuePrefix().length()))) {
 			r = str.substring(getInternalValuePrefix().length());
 		}
 		return r;

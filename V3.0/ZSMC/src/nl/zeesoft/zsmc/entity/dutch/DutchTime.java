@@ -20,18 +20,6 @@ public class DutchTime extends EntityObject {
 		return 8;
 	}
 	@Override
-	public boolean externalValuesContains(String str) {
-		boolean r = false;
-		if (str.equals("nu") || 
-			str.equals("nu direct") 
-			) {
-			r = true;
-		} else {
-			r = super.externalValuesContains(str);
-		}
-		return r;
-	}
-	@Override
 	public String getInternalValueForExternalValue(String str) {
 		if (str.equals("nu") || str.equals("nu direct")) {
 			Calendar cal = Calendar.getInstance();

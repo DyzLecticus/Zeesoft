@@ -46,7 +46,7 @@ public class TestEntityValueTranslator extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Date started = new Date();
-		EntityValueTranslator t = new EntityValueTranslator();
+		MockEntityValueTranslator t = new MockEntityValueTranslator();
 		t.initialize();
 		System.out.println("Initializing the EntityValueTranslator took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 
@@ -76,12 +76,12 @@ public class TestEntityValueTranslator extends TestObject {
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten");
 		testTranslation(t,
 			"yesterday OR today OR the 1st of october",
-			"ENG_DAT:2018-06-16|UNI_ABC:yesterday UNI_ABC:OR ENG_DAT:2018-06-17|UNI_ABC:today UNI_ABC:OR ENG_DAT:2018-10-01",
-			"june sixteenth twothousandeighteen OR june seventeenth twothousandeighteen OR october first twothousandeighteen");
+			"ENG_DAT:2018-07-15|UNI_ABC:yesterday UNI_ABC:OR ENG_DAT:2018-07-16|UNI_ABC:today UNI_ABC:OR ENG_DAT:2018-10-01",
+			"july fifteenth twothousandeighteen OR july sixteenth twothousandeighteen OR october first twothousandeighteen");
 		testTranslation(t,
 			"gisteren OF vandaag OF 1 oktober",
-			"NLD_DAT:2018-06-16|UNI_ABC:gisteren UNI_ABC:OF NLD_DAT:2018-06-17|UNI_ABC:vandaag UNI_ABC:OF NLD_DAT:2018-10-01",
-			"zestien juni tweeduizendachttien OF zeventien juni tweeduizendachttien OF een oktober tweeduizendachttien");
+			"NLD_DAT:2018-07-15|UNI_ABC:gisteren UNI_ABC:OF NLD_DAT:2018-07-16|UNI_ABC:vandaag UNI_ABC:OF NLD_DAT:2018-10-01",
+			"vijftien juli tweeduizendachttien OF zestien juli tweeduizendachttien OF een oktober tweeduizendachttien");
 		testTranslation(t,
 			"twelve o'clock OR five minutes to nine OR ten past one in the morning",
 			"ENG_TIM:12:00:00 UNI_ABC:OR ENG_TIM:08:55:00 UNI_ABC:OR ENG_TIM:01:10:00",
@@ -92,7 +92,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
 	}
 	
-	private void testTranslation(EntityValueTranslator t,String seq,String expTran,String expRetran) {
+	private void testTranslation(MockEntityValueTranslator t,String seq,String expTran,String expRetran) {
 		System.out.println();
 		
 		Date started = new Date();

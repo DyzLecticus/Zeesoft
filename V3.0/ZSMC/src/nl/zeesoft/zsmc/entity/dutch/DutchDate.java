@@ -21,22 +21,6 @@ public class DutchDate extends EntityObject {
 		return 3;
 	}
 	@Override
-	public boolean externalValuesContains(String str) {
-		boolean r = false;
-		if (str.equals("nu") || 
-			str.equals("nu direct") || 
-			str.equals("gisteren") ||
-			str.equals("vandaag") ||
-			str.equals("morgen") ||
-			str.equals("overmorgen")
-			) {
-			r = true;
-		} else {
-			r = super.externalValuesContains(str);
-		}
-		return r;
-	}
-	@Override
 	public String getInternalValueForExternalValue(String str) {
 		if (str.equals("nu") || str.equals("nu direct") || str.equals("vandaag")) {
 			Calendar cal = Calendar.getInstance();

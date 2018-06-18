@@ -8,10 +8,6 @@ public class UniversalTime extends EntityObject {
 		return TYPE_TIME;
 	}
 	@Override
-	public boolean externalValuesContains(String str) {
-		return super.externalValuesContains(correctTimeString(str));
-	}
-	@Override
 	public String getInternalValueForExternalValue(String str) {
 		return super.getInternalValueForExternalValue(correctTimeString(str));
 	}
