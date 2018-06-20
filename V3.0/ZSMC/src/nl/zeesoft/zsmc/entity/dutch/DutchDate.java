@@ -64,6 +64,10 @@ public class DutchDate extends EntityObject {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(currentDate);
+		cal.set(Calendar.HOUR_OF_DAY,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MILLISECOND,0);
 		cal.add(Calendar.DATE,-1);
 		for (int day = 0; day<366; day++) {
 			int year = cal.get(Calendar.YEAR);

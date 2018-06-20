@@ -57,7 +57,7 @@ public class EntityValueTranslator {
 						test.append(symbols.get(s));
 					}
 					String raw = test.toString();
-					ZStringBuilder ivs = getInternalValuesForExternalValue(test.toCase(true).toString(),raw);
+					ZStringBuilder ivs = getInternalValuesForExternalValue(test.toCase(true).toString(),raw,((to + 1) - from));
 					if (ivs.length()>0) {
 						if (r.length()>0) {
 							r.append(" ");
@@ -203,20 +203,22 @@ public class EntityValueTranslator {
 		return new Date();
 	}
 
-	private ZStringBuilder getInternalValuesForExternalValue(String str, String raw) {
+	private ZStringBuilder getInternalValuesForExternalValue(String str, String raw, int numSymbols) {
 		ZStringBuilder r = new ZStringBuilder();
 		for (EntityObject eo: entities) {
-			String iv = "";
-			if (eo instanceof UniversalAlphabetic) {
-				iv = eo.getInternalValueForExternalValue(raw);
-			} else {
-				iv = eo.getInternalValueForExternalValue(str);
-			}
-			if (iv.length()>0) {
-				if (r.length()>0) {
-					r.append(getOrConcatenator());
+			if (eo.getMaximumSymbols()>=numSymbols) {
+				String iv = "";
+				if (eo instanceof UniversalAlphabetic) {
+					iv = eo.getInternalValueForExternalValue(raw);
+				} else {
+					iv = eo.getInternalValueForExternalValue(str);
 				}
-				r.append(iv);
+				if (iv.length()>0) {
+					if (r.length()>0) {
+						r.append(getOrConcatenator());
+					}
+					r.append(iv);
+				}
 			}
 		}
 		return r;
