@@ -1,11 +1,13 @@
 package nl.zeesoft.zsmc.test;
 
 import java.util.Date;
+import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsmc.SequenceClassifier;
+import nl.zeesoft.zsmc.sequence.AnalyzerSymbol;
 
 public class TestSequenceClassifier extends TestObject {
 	public static final String QNA_FILE_NAME = "resources/nl-qna.txt";
@@ -61,6 +63,28 @@ public class TestSequenceClassifier extends TestObject {
 			testClassification(sc,sequence,false,"nlGrootzakelijkProducten");
 			sequence = new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering");
 			testClassification(sc,sequence,false,"nlPriveVerzekeren");
+			
+			List<AnalyzerSymbol> contexts = null;
+			double t = 0D;
+			sequence = new ZStringSymbolParser("Wat kost dat?");
+			
+			System.out.println();
+			t = 0.6D;
+			contexts = sc.getContexts(sequence,true,t);
+			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
+			for (AnalyzerSymbol context: contexts) {
+				System.out.println("'" + context.symbol + "': " + context.prob);
+			}
+			assertEqual(contexts.size(),7,"The classifier did not return the expected number of contexts");
+			
+			System.out.println();
+			t = 0.9D;
+			contexts = sc.getContexts(sequence,true,t);
+			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
+			for (AnalyzerSymbol context: contexts) {
+				System.out.println("'" + context.symbol + "': " + context.prob);
+			}
+			assertEqual(contexts.size(),1,"The classifier did not return the expected number of contexts");
 		}
 	}
 	

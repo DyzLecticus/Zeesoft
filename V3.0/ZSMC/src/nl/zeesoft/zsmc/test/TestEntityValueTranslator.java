@@ -101,12 +101,12 @@ public class TestEntityValueTranslator extends TestObject {
 		ZStringSymbolParser expectedRetranslation = new ZStringSymbolParser(expRetran);
 		ZStringSymbolParser translation = t.translateToInternalValues(sequence);
 
-		System.out.println("Sequence: " + sequence);
-		System.out.println("Translation: " + translation);
+		System.out.println("Sequence: '" + sequence + "'");
+		System.out.println("Translation: '" + translation + "'");
 		System.out.println("Translating the sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		started = new Date();
 		ZStringSymbolParser retranslation = t.translateToExternalValues(translation);
-		System.out.println("Retranslation: " + retranslation);
+		System.out.println("Retranslation: '" + retranslation + "'");
 		System.out.println("Retranslating the sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		
 		assertEqual(translation,expectedTranslation,"The translation does not match expectation");

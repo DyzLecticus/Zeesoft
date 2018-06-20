@@ -17,7 +17,8 @@ public class Analyzer {
 	private SortedMap<String,AnalyzerSymbol> 		knownSymbols	= new TreeMap<String,AnalyzerSymbol>();
 	private int										symbolCount		= 0;
 	private double									symbolMaxProb	= 0.0D;
-	
+	private double									symbolMinProb	= 1.0D;
+
 	/**
 	 * Returns the input/output separator symbol.
 	 * 
@@ -144,6 +145,9 @@ public class Analyzer {
 			if (entry.getValue().prob>symbolMaxProb) {
 				symbolMaxProb = entry.getValue().prob;
 			}
+			if (entry.getValue().prob>symbolMinProb) {
+				symbolMinProb = entry.getValue().prob;
+			}
 		}
 	}
 	
@@ -169,5 +173,13 @@ public class Analyzer {
 
 	public void setSymbolMaxProb(double maxSymbolProb) {
 		this.symbolMaxProb = maxSymbolProb;
+	}
+	
+	public double getSymbolMinProb() {
+		return symbolMinProb;
+	}
+
+	public void setSymbolMinProb(double symbolMinProb) {
+		this.symbolMinProb = symbolMinProb;
 	}
 }

@@ -13,8 +13,25 @@ import nl.zeesoft.zsmc.sequence.SequenceAnalyzerSymbolLink;
  * A SymbolCorrector can be used to correct the spelling of symbols and sequences.
  */
 public class SymbolCorrector extends SequenceAnalyzer {
-	private static final String		ALPHABET	= "abcdefghijklmnopqrstuvwxyz";
-	
+	private static final String		ALPHABET		= "abcdefghijklmnopqrstuvwxyz";
+
+	public double getSymbolBandwidth() {
+		return ((getSymbolMaxProb() - getSymbolMaxProb()) / 2D);
+	}
+
+	public double getLinkBandwidth() {
+		return ((getLinkMaxProb() - getLinkMinProb()) / 2D);
+	}
+
+	public double getLinkContextBandwidth(String context) {
+		double r = getLinkBandwidth();
+		Double maxProb = getLinkContextMaxProbs().get(context);
+		if (maxProb!=null) {
+			r = (maxProb - getLinkContextMinProbs().get(context) / 2D);
+		}
+		return r;
+	}
+
 	/**
 	 * Returns the correction for a certain symbol.
 	 * 
@@ -22,7 +39,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected symbol
 	 */
 	public String correct(String symbol) {
-		return correct("",symbol,"","");
+		return correct("",symbol,"","",getLinkBandwidth());
 	}
 	
 	/**
@@ -32,13 +49,14 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param symbol The symbol to correct
 	 * @param after The optional symbol after the symbol to correct
 	 * @param context The optional context symbol to limit symbol link usage
+	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
 	 * @return The corrected symbol
 	 */
-	public String correct(String before,String symbol,String after,String context) {
+	public String correct(String before,String symbol,String after,String context,double bandwidth) {
 		ZStringBuilder r = new ZStringBuilder(symbol);
 		if (!getKnownSymbols().containsKey(symbol)) {
 			double highest = 0D;
-			List<AnalyzerSymbol> cors = getCorrections(before,symbol,after,context);
+			List<AnalyzerSymbol> cors = getCorrections(before,symbol,after,context,bandwidth);
 			for (AnalyzerSymbol s: cors) {
 				if (s.prob>highest) {
 					highest = s.prob;
@@ -56,7 +74,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence) {
-		return correct(sequence,"");
+		return correct(sequence,"",getLinkBandwidth());
 	}
 	
 	/**
@@ -67,6 +85,18 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context) {
+		return correct(sequence,context,getLinkContextBandwidth(context));
+	}
+
+	/**
+	 * Returns the correction for a certain symbol sequence.
+	 * 
+	 * @param sequence The sequence to correct
+	 * @param context The optional context symbol to limit symbol link usage
+	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
+	 * @return The corrected sequence
+	 */
+	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context,double bandwidth) {
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		List<String> corrected = new ArrayList<String>();
 		String before = "";
@@ -79,7 +109,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 			if (symbol.length()== 1 && (ZStringSymbolParser.isLineEndSymbol(symbol) || ZStringSymbolParser.isPunctuationSymbol(symbol))) {
 				corrected.add(symbol);
 			} else {
-				corrected.add(correct(before,symbol,after,context));
+				corrected.add(correct(before,symbol,after,context,bandwidth));
 			}
 			i++;
 			before = symbol;
@@ -96,16 +126,17 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param symbol The symbol to correct
 	 * @param after The optional symbol after the symbol to correct
 	 * @param context The optional context symbol to limit symbol link usage
+	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
 	 * @return a list of possible analyzer symbol corrections
 	 */
-	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context) {
+	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context, double bandwidth) {
 		List<AnalyzerSymbol> r = getCorrections(symbol);
 		if (r.size()>1 && (before.length()>0 || after.length()>0)) {
 			if (before.length()>0) {
 				for (AnalyzerSymbol as: r) {
 					SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(before,context,as.symbol));
 					if (link!=null) {
-						as.prob += 1.0D;
+						as.prob += bandwidth;
 						as.prob += link.prob;
 					}
 				}
@@ -116,7 +147,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 					for (AnalyzerSymbol as: r) {
 						SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(as.symbol,context,af.symbol));
 						if (link!=null) {
-							as.prob += 1.0D;
+							as.prob += bandwidth;
 							as.prob += link.prob;
 						}
 					}

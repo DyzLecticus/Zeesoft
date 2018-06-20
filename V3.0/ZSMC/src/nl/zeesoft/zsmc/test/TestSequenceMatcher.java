@@ -1,11 +1,13 @@
 package nl.zeesoft.zsmc.test;
 
 import java.util.Date;
+import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsmc.SequenceMatcher;
+import nl.zeesoft.zsmc.sequence.SequenceMatcherResult;
 
 public class TestSequenceMatcher extends TestObject {
 	public TestSequenceMatcher(Tester tester) {
@@ -84,6 +86,36 @@ public class TestSequenceMatcher extends TestObject {
 			sequence = new ZStringSymbolParser("Heeft de abn amro rechtsbijstandverzekering");
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? [OUTPUT] U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering."));
 			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? [OUTPUT] U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering."));
+			
+			sequence = new ZStringSymbolParser("Wat kost dat?");
+			List<SequenceMatcherResult> matches = null;
+			double t = 0D;
+			
+			System.out.println();
+			t = 0.7D;
+			matches = sm.getMatches(sequence,"",false,t);
+			System.out.println("Matches for sequence: '" + sequence + "', threshold: " + t);
+			for (SequenceMatcherResult match: matches) {
+				String seq = match.result.sequence.toString();
+				if (seq.length()>60) {
+					seq = seq.substring(0,60) + "[ ...]";
+				}
+				System.out.println("'" + seq + "': " + match.prob);
+			}
+			assertEqual(matches.size(),15,"The matcher did not return the expected number of sequences");
+			
+			System.out.println();
+			t = 0.9D;
+			matches = sm.getMatches(sequence,"",false,t);
+			System.out.println("Matches for sequence: '" + sequence + "', threshold: " + t);
+			for (SequenceMatcherResult match: matches) {
+				String seq = match.result.sequence.toString();
+				if (seq.length()>60) {
+					seq = seq.substring(0,60) + "[ ...]";
+				}
+				System.out.println("'" + seq + "': " + match.prob);
+			}
+			assertEqual(matches.size(),1,"The matcher did not return the expected number of sequences");
 		}
 	}
 	
@@ -91,9 +123,9 @@ public class TestSequenceMatcher extends TestObject {
 		System.out.println();
 		Date started = new Date();
 		ZStringSymbolParser match = sm.match(sequence,context,caseInsensitive);
-		String input = sequence.toString();
+		String input = "'" + sequence.toString();
 		if (context.length()>0 || caseInsensitive) {
-			input += " (";
+			input += "' (";
 			if (context.length()>0) {
 				input += context;
 			}
@@ -104,8 +136,10 @@ public class TestSequenceMatcher extends TestObject {
 				input += "case insensitive";
 			}
 			input += ")";
+		} else {
+			input += "'";
 		}
-		System.out.println(input + " -> " + match);
+		System.out.println(input + " -> '" + match + "'");
 		System.out.println("Matching the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		if (expectedMatch==null) {
 			if (match!=null) {

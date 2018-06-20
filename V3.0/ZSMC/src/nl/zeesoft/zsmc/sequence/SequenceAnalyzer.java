@@ -18,7 +18,9 @@ public class SequenceAnalyzer extends Analyzer {
 	private int													linkCount			= 0;
 	private SortedMap<String,Integer>							linkContextCounts	= new TreeMap<String,Integer>();
 	private double												linkMaxProb			= 0.0D;
+	private double												linkMinProb			= 1.0D;
 	private SortedMap<String,Double>							linkContextMaxProbs	= new TreeMap<String,Double>();
+	private SortedMap<String,Double>							linkContextMinProbs	= new TreeMap<String,Double>();
 
 	private String												context				= "";
 
@@ -70,13 +72,24 @@ public class SequenceAnalyzer extends Analyzer {
 			if (entry.getValue().prob>linkMaxProb) {
 				linkMaxProb = entry.getValue().prob;
 			}
+			if (entry.getValue().prob<linkMinProb) {
+				linkMinProb = entry.getValue().prob;
+			}
 			Double maxProb = linkContextMaxProbs.get(entry.getValue().context);
+			Double minProb = linkContextMinProbs.get(entry.getValue().context);
 			if (maxProb==null){
 				maxProb = new Double(0);
+			}
+			if (minProb==null){
+				minProb = new Double(1);
 			}
 			if (entry.getValue().probContext>maxProb) {
 				maxProb = entry.getValue().probContext;
 				linkContextMaxProbs.put(entry.getValue().context,maxProb);
+			}
+			if (entry.getValue().probContext<minProb) {
+				minProb = entry.getValue().probContext;
+				linkContextMinProbs.put(entry.getValue().context,minProb);
 			}
 		}
 	}
@@ -168,6 +181,14 @@ public class SequenceAnalyzer extends Analyzer {
 		this.linkMaxProb = linkMaxProb;
 	}
 
+	public double getLinkMinProb() {
+		return linkMinProb;
+	}
+
+	public void setLinkMinProb(double linkMinProb) {
+		this.linkMinProb = linkMinProb;
+	}
+
 	public SortedMap<String, Integer> getLinkContextCounts() {
 		return linkContextCounts;
 	}
@@ -182,5 +203,13 @@ public class SequenceAnalyzer extends Analyzer {
 
 	public void setLinkContextMaxProbs(SortedMap<String, Double> contextMaxProbs) {
 		this.linkContextMaxProbs = contextMaxProbs;
+	}
+
+	public SortedMap<String, Double> getLinkContextMinProbs() {
+		return linkContextMinProbs;
+	}
+
+	public void setLinkContextMinProbs(SortedMap<String, Double> contextMinProbs) {
+		this.linkContextMinProbs = contextMinProbs;
 	}
 }

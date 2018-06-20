@@ -20,7 +20,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @return The context or an empty string
 	 */
 	public String classify(ZStringSymbolParser sequence) {
-		return classify(sequence,false);
+		return classify(sequence,false,getLinkBandwidth(),0D);
 	}
 
 	/**
@@ -33,7 +33,29 @@ public class SequenceClassifier extends SymbolCorrector {
 	public String classify(ZStringSymbolParser sequence, boolean caseInsensitive) {
 		String r = "";
 		double highest = 0D;
-		List<AnalyzerSymbol> list = getContexts(sequence,caseInsensitive);
+		List<AnalyzerSymbol> list = getContexts(sequence,caseInsensitive,getLinkBandwidth(),0D);
+		for (AnalyzerSymbol s: list) {
+			if (s.prob>highest) {
+				highest = s.prob;
+				r = s.symbol;
+			}
+		}
+		return r;
+	}
+
+	/**
+	 * Returns the context or an empty string for a certain sequence.
+	 * 
+	 * @param sequence The sequence
+	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
+	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
+	 * @param threshold If > 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
+	 * @return The context or an empty string
+	 */
+	public String classify(ZStringSymbolParser sequence, boolean caseInsensitive,double bandwidth, double threshold) {
+		String r = "";
+		double highest = 0D;
+		List<AnalyzerSymbol> list = getContexts(sequence,caseInsensitive,bandwidth,threshold);
 		for (AnalyzerSymbol s: list) {
 			if (s.prob>highest) {
 				highest = s.prob;
@@ -48,13 +70,28 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * 
 	 * @param sequence The sequence
 	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
+	 * @param threshold If > 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
 	 * @return A list of all contexts with calculated probabilities
 	 */
-	public List<AnalyzerSymbol> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive) {
+	public List<AnalyzerSymbol> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive, double threshold) {
+		return getContexts(sequence,caseInsensitive,getLinkBandwidth(),threshold);
+	}
+
+	/**
+	 * Returns a list of all contexts with calculated probabilities for a certain sequence.
+	 * 
+	 * @param sequence The sequence
+	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
+	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
+	 * @param threshold If > 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
+	 * @return A list of all contexts with calculated probabilities
+	 */
+	public List<AnalyzerSymbol> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive,double bandwidth, double threshold) {
 		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
 		SortedMap<String,AnalyzerSymbol> list = new TreeMap<String,AnalyzerSymbol>();
 		List<String> symbols = sequence.toSymbolsPunctuated(); 
 		int i = 0;
+		double highest = 0D;
 		for (String symbol: symbols) {
 			String to = "";
 			if (symbols.size()>(i + 1)) {
@@ -109,11 +146,26 @@ public class SequenceClassifier extends SymbolCorrector {
 						list.put(link.context,as);
 						r.add(as);
 					}
+					as.prob += bandwidth;
 					as.prob += (getLinkMaxProb() - link.prob);
+					if (as.prob>highest) {
+						highest = as.prob;
+					}
 					as.count++;
 				}
 			}
 			i++;
+		}
+		if (r.size()>0 && threshold>0D) {
+			List<AnalyzerSymbol> test = new ArrayList<AnalyzerSymbol>(r);
+			if (threshold>0D) {
+				for (AnalyzerSymbol s: test) {
+					s.prob = s.prob / highest ;
+					if (s.prob<threshold) {
+						r.remove(s);
+					}
+				}
+			}
 		}
 		return r;
 	}
