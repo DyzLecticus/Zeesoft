@@ -44,7 +44,7 @@ public class EnglishMonth extends EntityObject {
 			} else if (i==12) {
 				name = "december";
 			}
-			addEntityValue(name,value);
+			addEntityValue(name,value,i);
 		}
 	}
 }

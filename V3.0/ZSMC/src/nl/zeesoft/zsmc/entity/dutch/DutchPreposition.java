@@ -3,48 +3,44 @@ package nl.zeesoft.zsmc.entity.dutch;
 import nl.zeesoft.zsmc.EntityValueTranslator;
 import nl.zeesoft.zsmc.entity.EntityObject;
 
-public class DutchMonth extends EntityObject {
+public class DutchPreposition extends EntityObject {
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
 	}
 	@Override
 	public String getType() {
-		return TYPE_MONTH;
+		return TYPE_PREPOSITION;
+	}
+	@Override
+	public int getMaximumSymbols() {
+		return 2;
 	}
 	@Override
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 		
-		for (int i = 1; i<=12; i++) {
+		for (int i = 1; i<=8; i++) {
 			String value = "" + i;
 			String name = "";
 			if (i==1) {
-				name = "januari";
+				name = "van";
 			} else if (i==2) {
-				name = "februari";
+				name = "van de";
 			} else if (i==3) {
-				name = "maart";
+				name = "van der";
 			} else if (i==4) {
-				name = "april";
+				name = "van den";
 			} else if (i==5) {
-				name = "mei";
+				name = "de";
 			} else if (i==6) {
-				name = "juni";
+				name = "der";
 			} else if (i==7) {
-				name = "juli";
+				name = "den";
 			} else if (i==8) {
-				name = "augustus";
-			} else if (i==9) {
-				name = "september";
-			} else if (i==10) {
-				name = "oktober";
-			} else if (i==11) {
-				name = "november";
-			} else if (i==12) {
-				name = "december";
+				name = "ten";
 			}
-			addEntityValue(name,value,i);
+			addEntityValue(name,value,name);
 		}
 	}
 }

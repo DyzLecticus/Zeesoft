@@ -20,6 +20,7 @@ public abstract class EntityObject {
 	public static final String					TYPE_MONTH			= "MNT";
 	public static final String					TYPE_DURATION		= "DUR";
 	public static final String					TYPE_DATE			= "DAT";
+	public static final String					TYPE_PREPOSITION	= "PRE";
 	
 	private boolean								initialized			= false;
 	private String								internalValuePrefix	= "";

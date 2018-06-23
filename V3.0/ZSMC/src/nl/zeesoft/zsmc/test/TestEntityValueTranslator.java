@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsmc.EntityValueTranslator;
+import nl.zeesoft.zsmc.entity.EntityObject;
 
 public class TestEntityValueTranslator extends TestObject {
 	public static final String QNA_FILE_NAME = "resources/nl-qna.txt";
@@ -50,64 +51,74 @@ public class TestEntityValueTranslator extends TestObject {
 		t.initialize();
 		System.out.println("Initializing the EntityValueTranslator took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 
-		testTranslation(t,
+		testTranslation(t,"",
 			"Eat three donuts at 9:00 or count to 110",
 			"UNI_ABC:Eat ENG_NUM:3|UNI_ABC:three UNI_ABC:donuts UNI_ABC:at UNI_TIM:09:00:00 UNI_ABC:or UNI_ABC:count UNI_ABC:to UNI_NUM:110",
 			"Eat three donuts at 09:00:00 or count to 110");
-		testTranslation(t,
+		testTranslation(t,EntityObject.LANG_NLD,
 			"Eet drie donuts om 9:00 of tel tot 110",
 			"UNI_ABC:Eet NLD_NUM:3|UNI_ABC:drie UNI_ABC:donuts UNI_ABC:om UNI_TIM:09:00:00 UNI_ABC:of UNI_ABC:tel UNI_ABC:tot UNI_NUM:110",
 			"Eet drie donuts om 09:00:00 of tel tot 110");
-		testTranslation(t,
+		testTranslation(t,"",
 			"I finished twohundredandtwentyfourth or 225th",
 			"UNI_ABC:I UNI_ABC:finished ENG_ORD:224|UNI_ABC:twohundredandtwentyfourth UNI_ABC:or ENG_OR2:225",
 			"I finished twohundredandtwentyfourth or 225th");
-		testTranslation(t,
+		testTranslation(t,"",
 			"Ik ben tweehonderdvierentwintigste geworden",
 			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste UNI_ABC:geworden",
 			"Ik ben tweehonderdvierentwintigste geworden");
-		testTranslation(t,
+		testTranslation(t,"",
 			"februari march october december",
 			"NLD_MNT:2|UNI_ABC:februari ENG_MNT:3|UNI_ABC:march ENG_MNT:10|UNI_ABC:october ENG_MNT:12|NLD_MNT:12|UNI_ABC:december",
 			"februari march october december");
-		testTranslation(t,
+		testTranslation(t,"",
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten",
 			"ENG_DUR:33:41 / NLD_DUR:33:41",
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten");
-		testTranslation(t,
+		testTranslation(t,"",
 			"yesterday OR today OR the 1st of october",
 			"ENG_DAT:2018-07-15|UNI_ABC:yesterday UNI_ABC:OR ENG_DAT:2018-07-16|UNI_ABC:today UNI_ABC:OR ENG_DAT:2018-10-01",
 			"july fifteenth twothousandeighteen OR july sixteenth twothousandeighteen OR october first twothousandeighteen");
-		testTranslation(t,
+		testTranslation(t,EntityObject.LANG_NLD,
 			"gisteren OF vandaag OF 1 oktober",
 			"NLD_DAT:2018-07-15|UNI_ABC:gisteren UNI_ABC:OF NLD_DAT:2018-07-16|UNI_ABC:vandaag UNI_ABC:OF NLD_DAT:2018-10-01",
 			"vijftien juli tweeduizendachttien OF zestien juli tweeduizendachttien OF een oktober tweeduizendachttien");
-		testTranslation(t,
+		testTranslation(t,"",
 			"twelve o'clock OR five minutes to nine OR ten past one in the morning",
 			"ENG_TIM:12:00:00 UNI_ABC:OR ENG_TIM:08:55:00 UNI_ABC:OR ENG_TIM:01:10:00",
 			"twelve o'clock OR fiftyfive past eight OR ten past one in the morning");
-		testTranslation(t,
+		testTranslation(t,EntityObject.LANG_NLD,
 			"twaalf uur OF vijf minuten voor negen OF tien over een sochtends",
 			"NLD_TIM:12:00:00|NLD_DUR:12:00 UNI_ABC:OF NLD_TIM:08:55:00 UNI_ABC:OF NLD_TIM:01:10:00",
 			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
+		testTranslation(t,EntityObject.LANG_ENG,
+			"My name is Andrew from the Sea",
+			"My name is Andrew ENG_PRE:4 Sea",
+			"My name is Andrew from the Sea");
+		testTranslation(t,EntityObject.LANG_NLD,
+			"Mijn naam is Andre van der Zee",
+			"Mijn naam is Andre NLD_PRE:3 Zee",
+			"Mijn naam is Andre van der Zee");
 	}
 	
-	private void testTranslation(MockEntityValueTranslator t,String seq,String expTran,String expRetran) {
+	private void testTranslation(MockEntityValueTranslator t,String language,String seq,String expTran,String expRetran) {
 		System.out.println();
 		
-		Date started = new Date();
 		ZStringSymbolParser sequence = new ZStringSymbolParser(seq);
 		ZStringSymbolParser expectedTranslation = new ZStringSymbolParser(expTran);
 		ZStringSymbolParser expectedRetranslation = new ZStringSymbolParser(expRetran);
-		ZStringSymbolParser translation = t.translateToInternalValues(sequence);
 
 		System.out.println("Sequence: '" + sequence + "'");
-		System.out.println("Translation: '" + translation + "'");
+
+		Date started = new Date();
+		ZStringSymbolParser translation = t.translateToInternalValues(sequence,language);
 		System.out.println("Translating the sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+		System.out.println("Translation: '" + translation + "'");
+		
 		started = new Date();
 		ZStringSymbolParser retranslation = t.translateToExternalValues(translation);
-		System.out.println("Retranslation: '" + retranslation + "'");
 		System.out.println("Retranslating the sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+		System.out.println("Retranslation: '" + retranslation + "'");
 		
 		assertEqual(translation,expectedTranslation,"The translation does not match expectation");
 		assertEqual(retranslation,expectedRetranslation,"The retranslation does not match expectation");

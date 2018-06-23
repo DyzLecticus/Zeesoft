@@ -15,6 +15,7 @@ import nl.zeesoft.zsmc.entity.dutch.DutchDuration;
 import nl.zeesoft.zsmc.entity.dutch.DutchMonth;
 import nl.zeesoft.zsmc.entity.dutch.DutchNumeric;
 import nl.zeesoft.zsmc.entity.dutch.DutchOrder;
+import nl.zeesoft.zsmc.entity.dutch.DutchPreposition;
 import nl.zeesoft.zsmc.entity.dutch.DutchTime;
 import nl.zeesoft.zsmc.entity.english.EnglishDate;
 import nl.zeesoft.zsmc.entity.english.EnglishDuration;
@@ -22,6 +23,7 @@ import nl.zeesoft.zsmc.entity.english.EnglishMonth;
 import nl.zeesoft.zsmc.entity.english.EnglishNumeric;
 import nl.zeesoft.zsmc.entity.english.EnglishOrder;
 import nl.zeesoft.zsmc.entity.english.EnglishOrder2;
+import nl.zeesoft.zsmc.entity.english.EnglishPreposition;
 import nl.zeesoft.zsmc.entity.english.EnglishTime;
 
 public class EntityValueTranslator {
@@ -32,8 +34,25 @@ public class EntityValueTranslator {
 	public EntityValueTranslator() {
 		addDefaultEntities();
 	}
-	
+
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence) {
+		return translateToInternalValues(sequence,null,null);
+	}
+
+	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,String language) {
+		List<String> languages = null;
+		if (language.length()>0) {
+			languages = new ArrayList<String>();
+			languages.add(language);
+		}
+		return translateToInternalValues(sequence,languages,null);
+	}
+
+	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> types) {
+		return translateToInternalValues(sequence,null,types);
+	}
+
+	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> languages,List<String> types) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		for (int i = 0; i<symbols.size(); i++) {
@@ -57,7 +76,9 @@ public class EntityValueTranslator {
 						test.append(symbols.get(s));
 					}
 					String raw = test.toString();
-					ZStringBuilder ivs = getInternalValuesForExternalValue(test.toCase(true).toString(),raw,((to + 1) - from));
+					ZStringBuilder ivs = getInternalValuesForExternalValue(
+						test.toCase(true).toString(),raw,((to + 1) - from),languages,types
+						);
 					if (ivs.length()>0) {
 						if (r.length()>0) {
 							r.append(" ");
@@ -147,6 +168,8 @@ public class EntityValueTranslator {
 		entities.add(new DutchOrder());
 		entities.add(new EnglishNumeric());
 		entities.add(new DutchNumeric());
+		entities.add(new EnglishPreposition());
+		entities.add(new DutchPreposition());
 		entities.add(new UniversalTime());
 		entities.add(new UniversalNumeric());
 		entities.add(new UniversalAlphabetic());
@@ -203,21 +226,25 @@ public class EntityValueTranslator {
 		return new Date();
 	}
 
-	private ZStringBuilder getInternalValuesForExternalValue(String str, String raw, int numSymbols) {
+	private ZStringBuilder getInternalValuesForExternalValue(String str, String raw, int numSymbols,List<String> languages,List<String> types) {
 		ZStringBuilder r = new ZStringBuilder();
 		for (EntityObject eo: entities) {
 			if (eo.getMaximumSymbols()>=numSymbols) {
-				String iv = "";
-				if (eo instanceof UniversalAlphabetic) {
-					iv = eo.getInternalValueForExternalValue(raw);
-				} else {
-					iv = eo.getInternalValueForExternalValue(str);
-				}
-				if (iv.length()>0) {
-					if (r.length()>0) {
-						r.append(getOrConcatenator());
+				if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
+					(types==null || types.size()==0 || types.contains(eo.getType()))
+					) {
+					String iv = "";
+					if (eo instanceof UniversalAlphabetic) {
+						iv = eo.getInternalValueForExternalValue(raw);
+					} else {
+						iv = eo.getInternalValueForExternalValue(str);
 					}
-					r.append(iv);
+					if (iv.length()>0) {
+						if (r.length()>0) {
+							r.append(getOrConcatenator());
+						}
+						r.append(iv);
+					}
 				}
 			}
 		}
