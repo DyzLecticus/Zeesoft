@@ -47,7 +47,7 @@ public class EntityValueTranslator {
 		}
 		return translateToInternalValues(sequence,languages,null);
 	}
-
+	
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> types) {
 		return translateToInternalValues(sequence,null,types);
 	}

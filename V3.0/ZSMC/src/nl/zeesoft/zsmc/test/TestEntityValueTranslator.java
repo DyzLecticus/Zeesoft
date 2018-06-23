@@ -1,6 +1,8 @@
 package nl.zeesoft.zsmc.test;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
@@ -93,16 +95,24 @@ public class TestEntityValueTranslator extends TestObject {
 			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
 		testTranslation(t,EntityObject.LANG_ENG,
 			"My name is Andrew from the Sea",
-			"My name is Andrew ENG_PRE:4 Sea",
+			"UNI_ABC:My UNI_ABC:name UNI_ABC:is UNI_ABC:Andrew ENG_PRE:4 UNI_ABC:Sea",
 			"My name is Andrew from the Sea");
 		testTranslation(t,EntityObject.LANG_NLD,
 			"Mijn naam is Andre van der Zee",
-			"Mijn naam is Andre NLD_PRE:3 Zee",
+			"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:Andre NLD_PRE:3 UNI_ABC:Zee",
 			"Mijn naam is Andre van der Zee");
 	}
 	
 	private void testTranslation(MockEntityValueTranslator t,String language,String seq,String expTran,String expRetran) {
 		System.out.println();
+
+		List<String> languages = new ArrayList<String>();
+		List<String> types = new ArrayList<String>();
+		
+		if (language.length()>0) {
+			languages.add(language);
+			languages.add(EntityObject.LANG_UNI);
+		}
 		
 		ZStringSymbolParser sequence = new ZStringSymbolParser(seq);
 		ZStringSymbolParser expectedTranslation = new ZStringSymbolParser(expTran);
@@ -111,7 +121,7 @@ public class TestEntityValueTranslator extends TestObject {
 		System.out.println("Sequence: '" + sequence + "'");
 
 		Date started = new Date();
-		ZStringSymbolParser translation = t.translateToInternalValues(sequence,language);
+		ZStringSymbolParser translation = t.translateToInternalValues(sequence,languages,types);
 		System.out.println("Translating the sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		System.out.println("Translation: '" + translation + "'");
 		
