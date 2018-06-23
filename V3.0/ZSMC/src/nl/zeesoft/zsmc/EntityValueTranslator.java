@@ -10,6 +10,8 @@ import nl.zeesoft.zsmc.entity.EntityObject;
 import nl.zeesoft.zsmc.entity.UniversalAlphabetic;
 import nl.zeesoft.zsmc.entity.UniversalNumeric;
 import nl.zeesoft.zsmc.entity.UniversalTime;
+import nl.zeesoft.zsmc.entity.complex.ComplexObject;
+import nl.zeesoft.zsmc.entity.complex.dutch.DutchName;
 import nl.zeesoft.zsmc.entity.dutch.DutchDate;
 import nl.zeesoft.zsmc.entity.dutch.DutchDuration;
 import nl.zeesoft.zsmc.entity.dutch.DutchMonth;
@@ -36,24 +38,64 @@ public class EntityValueTranslator {
 	}
 
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence) {
-		return translateToInternalValues(sequence,null,null);
+		return translateToInternalValues(sequence,"","",true);
 	}
 
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,String language) {
+		return translateToInternalValues(sequence,language,"",true);
+	}
+
+	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,String language,String type) {
+		return translateToInternalValues(sequence,language,type,true);
+	}
+
+	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,String language,String type,boolean doComplex) {
 		List<String> languages = null;
+		List<String> types = null;
 		if (language.length()>0) {
 			languages = new ArrayList<String>();
 			languages.add(language);
 		}
-		return translateToInternalValues(sequence,languages,null);
+		if (type.length()>0) {
+			types = new ArrayList<String>();
+			types.add(type);
+		}
+		return translateToInternalValues(sequence,languages,types,doComplex);
 	}
 	
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> types) {
-		return translateToInternalValues(sequence,null,types);
+		return translateToInternalValues(sequence,null,types,true);
+	}
+
+	public ZStringSymbolParser translateToInternalValuesComplex(ZStringSymbolParser sequence,List<String> languages,List<String> types) {
+		ZStringSymbolParser r = new ZStringSymbolParser();
+		for (EntityObject eo: entities) {
+			if (eo instanceof ComplexObject) {
+				if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
+					(types==null || types.size()==0 || types.contains(eo.getType()))
+					) {
+					ComplexObject co = (ComplexObject) eo;
+					ZStringSymbolParser t = co.translate(sequence);
+					if (t.length()>0) {
+						System.out.println("Complex translation: " + t);
+					}
+				}
+			}
+		}
+		return r;
 	}
 
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> languages,List<String> types) {
+		return translateToInternalValues(sequence,languages,types,true);
+	}
+
+	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> languages,List<String> types,boolean doComplex) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
+		
+		if (doComplex) {
+			translateToInternalValuesComplex(sequence,languages,types);
+		}
+		
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		for (int i = 0; i<symbols.size(); i++) {
 			int testNum = maximumSymbols;
@@ -155,6 +197,9 @@ public class EntityValueTranslator {
 	}
 
 	public void addDefaultEntities() {
+		// Complex entities
+		entities.add(new DutchName());
+		// Regular entities
 		entities.add(new EnglishDate());
 		entities.add(new DutchDate());
 		entities.add(new EnglishTime());
@@ -229,21 +274,23 @@ public class EntityValueTranslator {
 	private ZStringBuilder getInternalValuesForExternalValue(String str, String raw, int numSymbols,List<String> languages,List<String> types) {
 		ZStringBuilder r = new ZStringBuilder();
 		for (EntityObject eo: entities) {
-			if (eo.getMaximumSymbols()>=numSymbols) {
-				if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
-					(types==null || types.size()==0 || types.contains(eo.getType()))
-					) {
-					String iv = "";
-					if (eo instanceof UniversalAlphabetic) {
-						iv = eo.getInternalValueForExternalValue(raw);
-					} else {
-						iv = eo.getInternalValueForExternalValue(str);
-					}
-					if (iv.length()>0) {
-						if (r.length()>0) {
-							r.append(getOrConcatenator());
+			if (!(eo instanceof ComplexObject)) {
+				if (eo.getMaximumSymbols()>=numSymbols) {
+					if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
+						(types==null || types.size()==0 || types.contains(eo.getType()))
+						) {
+						String iv = "";
+						if (eo instanceof UniversalAlphabetic) {
+							iv = eo.getInternalValueForExternalValue(raw);
+						} else {
+							iv = eo.getInternalValueForExternalValue(str);
 						}
-						r.append(iv);
+						if (iv.length()>0) {
+							if (r.length()>0) {
+								r.append(getOrConcatenator());
+							}
+							r.append(iv);
+						}
 					}
 				}
 			}

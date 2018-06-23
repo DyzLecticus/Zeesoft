@@ -2,13 +2,16 @@ package nl.zeesoft.zsmc.entity.complex.dutch;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsmc.EntityValueTranslator;
+import nl.zeesoft.zsmc.entity.EntityObject;
 import nl.zeesoft.zsmc.entity.complex.ComplexObject;
+import nl.zeesoft.zsmc.entity.complex.ComplexVariable;
 
 public class DutchName extends ComplexObject {
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
 	}
+	
 	@Override
 	public String getType() {
 		return TYPE_NAME;
@@ -16,19 +19,32 @@ public class DutchName extends ComplexObject {
 	
 	@Override
 	public ZStringSymbolParser translate(ZStringSymbolParser sequence) {
-		ZStringSymbolParser s = new ZStringSymbolParser();
-		ZStringSymbolParser t = correctAndMatch(sequence);
-		if (t.length()>0) {
-			
-		}
-		return s;
-	}
+		ZStringSymbolParser ret = new ZStringSymbolParser();
+		sequence = getTranslator().translateToInternalValues(sequence,EntityObject.LANG_NLD,EntityObject.TYPE_PREPOSITION,false);
+		ZStringSymbolParser match = getSequenceMatcher().match(sequence);
+		
+		System.out.println("Sequence: " + sequence);
+		System.out.println("Match:    " + match);
 
+		parseVariableValuesFromSequence(ret,sequence,match);
+		return ret;
+	}
+	
+	@Override
+	public String getInternalValueForVariable(ComplexVariable var, String value) {
+		String r = super.getInternalValueForVariable(var, value);
+		if (var.name.equals("firstName") || var.name.equals("lastName")) {
+			r = value.substring(0,1).toUpperCase() + value.substring(1);
+			r = getInternalValuePrefix() + var.name + ":" + r;
+		}
+		return r;
+	}
+	
 	@Override
 	public void initialize(EntityValueTranslator translator) {
-		addVariable("{firstName}",TYPE_ALPHABETIC);
-		addVariable("{preposition}",TYPE_ALPHABETIC);
-		addVariable("{lastName}",TYPE_ALPHABETIC);
+		addVariable("firstName",TYPE_ALPHABETIC);
+		addVariable("preposition",TYPE_PREPOSITION);
+		addVariable("lastName",TYPE_ALPHABETIC);
 		
 		addPatterns("{firstName} {preposition} {lastName}");
 		addPatterns("{firstName} {lastName}");
