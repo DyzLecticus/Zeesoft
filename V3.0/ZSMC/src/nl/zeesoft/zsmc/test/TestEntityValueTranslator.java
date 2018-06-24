@@ -67,7 +67,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"I finished twohundredandtwentyfourth or 225th");
 		testTranslation(t,"",
 			"Ik ben tweehonderdvierentwintigste geworden",
-			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste UNI_ABC:geworden",
+			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste|NLD_NAM:firstName:Tweehonderdvierentwintigste UNI_ABC:geworden|NLD_NAM:lastName:Geworden",
 			"Ik ben tweehonderdvierentwintigste geworden");
 		testTranslation(t,"",
 			"februari march october december",
@@ -99,7 +99,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"My name is Andrew from the Sea");
 		testTranslation(t,EntityObject.LANG_NLD,
 			"Mijn naam is Andre van der Zee",
-			"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:Andre NLD_PRE:3 UNI_ABC:Zee",
+			"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:Andre|NLD_NAM:firstName:Andre NLD_PRE:3|NLD_NAM:preposition:NLD_PRE:3 UNI_ABC:Zee|NLD_NAM:lastName:Zee",
 			"Mijn naam is Andre van der Zee");
 	}
 	

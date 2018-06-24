@@ -9,6 +9,7 @@ public class UniversalAlphabetic extends EntityObject {
 		}
 		return r;
 	}
+	
 	@Override
 	public String getExternalValueForInternalValue(String str) {
 		String r = "";
@@ -17,6 +18,7 @@ public class UniversalAlphabetic extends EntityObject {
 		}
 		return r;
 	}
+	
 	@Override
 	public Object getTypeValueForInternalValue(String str) {
 		String r = "";

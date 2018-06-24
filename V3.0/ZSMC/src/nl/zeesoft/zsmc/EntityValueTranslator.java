@@ -67,34 +67,12 @@ public class EntityValueTranslator {
 		return translateToInternalValues(sequence,null,types,true);
 	}
 
-	public ZStringSymbolParser translateToInternalValuesComplex(ZStringSymbolParser sequence,List<String> languages,List<String> types) {
-		ZStringSymbolParser r = new ZStringSymbolParser();
-		for (EntityObject eo: entities) {
-			if (eo instanceof ComplexObject) {
-				if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
-					(types==null || types.size()==0 || types.contains(eo.getType()))
-					) {
-					ComplexObject co = (ComplexObject) eo;
-					ZStringSymbolParser t = co.translate(sequence);
-					if (t.length()>0) {
-						System.out.println("Complex translation: " + t);
-					}
-				}
-			}
-		}
-		return r;
-	}
-
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> languages,List<String> types) {
 		return translateToInternalValues(sequence,languages,types,true);
 	}
 
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> languages,List<String> types,boolean doComplex) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
-		
-		if (doComplex) {
-			translateToInternalValuesComplex(sequence,languages,types);
-		}
 		
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		for (int i = 0; i<symbols.size(); i++) {
@@ -139,15 +117,27 @@ public class EntityValueTranslator {
 				r.append(symbols.get(i));
 			}
 		}
+
+		if (doComplex) {
+			ZStringSymbolParser complex = translateToInternalValuesComplex(r,languages,types);
+			if (complex.length()>0) {
+				r = complex;
+			}
+		}
+		
 		return r;
 	}
 
 	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence) {
+		return translateToExternalValues(sequence,"");
+	}
+
+	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence,String type) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		for (int i = 0; i<symbols.size(); i++) {
 			String sym = symbols.get(i);
-			String ext = getExternalValueForInternalValues(sym);
+			String ext = getExternalValueForInternalValues(sym,type);
 			if (ext.length()>0) {
 				sym = ext;
 			}
@@ -159,6 +149,33 @@ public class EntityValueTranslator {
 		return r;
 	}
 
+	public String getInternalValueFromInternalValues(String str,String type) {
+		String r = "";
+		String[] values = str.split("\\" + getOrConcatenator());
+		for (int v = 0; v < values.length; v++) {
+			if (values[v].contains(getValueConcatenator())) {
+				String prefix = values[v].split(getValueConcatenator())[0] + getValueConcatenator();
+				EntityObject eo = getEntityObject(prefix);
+				if (eo!=null && (type.length()==0 || eo.getType().equals(type))) {
+					r = values[v];
+					break;
+				}
+			}
+		}
+		return r;
+	}
+
+	public String getExternalValueForInternalValues(String str,String type) {
+		String r = "";
+		String value = getInternalValueFromInternalValues(str,type);
+		String prefix = value.split(getValueConcatenator())[0] + getValueConcatenator();
+		EntityObject eo = getEntityObject(prefix);
+		if (eo!=null && (type.length()==0 || eo.getType().equals(type))) {
+			r = eo.getExternalValueForInternalValue(value);
+		}
+		return r;
+	}
+	
 	public EntityObject getEntityObject(String language,String type) {
 		EntityObject r = null;
 		for (EntityObject eo: entities) {
@@ -287,6 +304,9 @@ public class EntityValueTranslator {
 						}
 						if (iv.length()>0) {
 							if (r.length()>0) {
+								//if (eo instanceof UniversalAlphabetic) {
+								//	break;
+								//}
 								r.append(getOrConcatenator());
 							}
 							r.append(iv);
@@ -297,17 +317,21 @@ public class EntityValueTranslator {
 		}
 		return r;
 	}
-	
-	private String getExternalValueForInternalValues(String str) {
-		String r = "";
-		if (str.contains(getOrConcatenator())) {
-			str = str.split("\\" + getOrConcatenator())[0];
-		}
-		if (str.contains(getValueConcatenator())) {
-			String prefix = str.split(getValueConcatenator())[0] + getValueConcatenator();
-			EntityObject eo = getEntityObject(prefix);
-			if (eo!=null) {
-				r = eo.getExternalValueForInternalValue(str);
+
+	private ZStringSymbolParser translateToInternalValuesComplex(ZStringSymbolParser entityValueSequence,List<String> languages,List<String> types) {
+		ZStringSymbolParser r = new ZStringSymbolParser();
+		for (EntityObject eo: entities) {
+			if (eo instanceof ComplexObject) {
+				if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
+					(types==null || types.size()==0 || types.contains(eo.getType()))
+					) {
+					ComplexObject co = (ComplexObject) eo;
+					ZStringSymbolParser t = co.translateToInternalValues(entityValueSequence);
+					if (t.length()>0) {
+						r = t;
+						entityValueSequence = t;
+					}
+				}
 			}
 		}
 		return r;

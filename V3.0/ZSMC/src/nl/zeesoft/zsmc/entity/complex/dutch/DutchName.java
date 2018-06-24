@@ -2,7 +2,6 @@ package nl.zeesoft.zsmc.entity.complex.dutch;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsmc.EntityValueTranslator;
-import nl.zeesoft.zsmc.entity.EntityObject;
 import nl.zeesoft.zsmc.entity.complex.ComplexObject;
 import nl.zeesoft.zsmc.entity.complex.ComplexVariable;
 
@@ -15,19 +14,6 @@ public class DutchName extends ComplexObject {
 	@Override
 	public String getType() {
 		return TYPE_NAME;
-	}
-	
-	@Override
-	public ZStringSymbolParser translate(ZStringSymbolParser sequence) {
-		ZStringSymbolParser ret = new ZStringSymbolParser();
-		sequence = getTranslator().translateToInternalValues(sequence,EntityObject.LANG_NLD,EntityObject.TYPE_PREPOSITION,false);
-		ZStringSymbolParser match = getSequenceMatcher().match(sequence);
-		
-		System.out.println("Sequence: " + sequence);
-		System.out.println("Match:    " + match);
-
-		parseVariableValuesFromSequence(ret,sequence,match);
-		return ret;
 	}
 	
 	@Override
@@ -48,8 +34,7 @@ public class DutchName extends ComplexObject {
 		
 		addPatterns("{firstName} {preposition} {lastName}");
 		addPatterns("{firstName} {lastName}");
-		addPatterns("{lastName} , {firstName} {preposition}");
-		addPatterns("{lastName} , {firstName} ");
+		addPatterns("{firstName}");
 		
 		super.initialize(translator);
 	}
