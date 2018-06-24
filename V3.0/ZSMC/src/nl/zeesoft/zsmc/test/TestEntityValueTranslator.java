@@ -67,7 +67,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"I finished twohundredandtwentyfourth or 225th");
 		testTranslation(t,"",
 			"Ik ben tweehonderdvierentwintigste geworden",
-			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste|NLD_NAM:firstName:Tweehonderdvierentwintigste UNI_ABC:geworden|NLD_NAM:lastName:Geworden",
+			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste|NLD_NAM:firstName:UNI_ABC:tweehonderdvierentwintigste UNI_ABC:geworden|NLD_NAM:lastName:UNI_ABC:geworden",
 			"Ik ben tweehonderdvierentwintigste geworden");
 		testTranslation(t,"",
 			"februari march october december",
@@ -95,12 +95,20 @@ public class TestEntityValueTranslator extends TestObject {
 			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
 		testTranslation(t,EntityObject.LANG_ENG,
 			"My name is Andrew from the Sea",
-			"UNI_ABC:My UNI_ABC:name UNI_ABC:is UNI_ABC:Andrew ENG_PRE:4 UNI_ABC:Sea",
+			"UNI_ABC:My UNI_ABC:name UNI_ABC:is UNI_ABC:Andrew|ENG_NAM:firstName:UNI_ABC:Andrew ENG_PRE:4|ENG_NAM:preposition:ENG_PRE:4 UNI_ABC:Sea|ENG_NAM:lastName:UNI_ABC:Sea",
 			"My name is Andrew from the Sea");
 		testTranslation(t,EntityObject.LANG_NLD,
 			"Mijn naam is Andre van der Zee",
-			"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:Andre|NLD_NAM:firstName:Andre NLD_PRE:3|NLD_NAM:preposition:NLD_PRE:3 UNI_ABC:Zee|NLD_NAM:lastName:Zee",
+			"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:Andre|NLD_NAM:firstName:UNI_ABC:Andre NLD_PRE:3|NLD_NAM:preposition:NLD_PRE:3 UNI_ABC:Zee|NLD_NAM:lastName:UNI_ABC:Zee",
 			"Mijn naam is Andre van der Zee");
+		testTranslation(t,EntityObject.LANG_NLD,
+			"Hoe heet jij? gekke henkie",
+			"UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:henkie",
+			"Hoe heet jij? gekke henkie");
+		testTranslation(t,EntityObject.LANG_NLD,
+			"gekste der henkies is mijn naam",
+			"UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:henkies UNI_ABC:is UNI_ABC:mijn UNI_ABC:naam",
+			"gekste der henkies is mijn naam");
 	}
 	
 	private void testTranslation(MockEntityValueTranslator t,String language,String seq,String expTran,String expRetran) {

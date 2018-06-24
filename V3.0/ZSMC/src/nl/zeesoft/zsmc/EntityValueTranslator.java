@@ -12,6 +12,7 @@ import nl.zeesoft.zsmc.entity.UniversalNumeric;
 import nl.zeesoft.zsmc.entity.UniversalTime;
 import nl.zeesoft.zsmc.entity.complex.ComplexObject;
 import nl.zeesoft.zsmc.entity.complex.dutch.DutchName;
+import nl.zeesoft.zsmc.entity.complex.english.EnglishName;
 import nl.zeesoft.zsmc.entity.dutch.DutchDate;
 import nl.zeesoft.zsmc.entity.dutch.DutchDuration;
 import nl.zeesoft.zsmc.entity.dutch.DutchMonth;
@@ -129,23 +130,24 @@ public class EntityValueTranslator {
 	}
 
 	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence) {
-		return translateToExternalValues(sequence,"");
+		return translateToExternalValues(sequence,"",false);
 	}
 
-	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence,String type) {
+	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence,String type,boolean singleOnly) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		List<String> symbols = sequence.toSymbolsPunctuated();
+		List<String> newSymbols = new ArrayList<String>();
 		for (int i = 0; i<symbols.size(); i++) {
 			String sym = symbols.get(i);
-			String ext = getExternalValueForInternalValues(sym,type);
-			if (ext.length()>0) {
-				sym = ext;
+			if (!singleOnly || !sym.contains(getOrConcatenator())) {
+				String ext = getExternalValueForInternalValues(sym,type);
+				if (ext.length()>0) {
+					sym = ext;
+				}
 			}
-			if (r.length()>0) {
-				r.append(" ");
-			}
-			r.append(sym);
+			newSymbols.add(sym);
 		}
+		r.fromSymbols(newSymbols,false,false);
 		return r;
 	}
 
@@ -215,6 +217,7 @@ public class EntityValueTranslator {
 
 	public void addDefaultEntities() {
 		// Complex entities
+		entities.add(new EnglishName());
 		entities.add(new DutchName());
 		// Regular entities
 		entities.add(new EnglishDate());
@@ -304,9 +307,6 @@ public class EntityValueTranslator {
 						}
 						if (iv.length()>0) {
 							if (r.length()>0) {
-								//if (eo instanceof UniversalAlphabetic) {
-								//	break;
-								//}
 								r.append(getOrConcatenator());
 							}
 							r.append(iv);

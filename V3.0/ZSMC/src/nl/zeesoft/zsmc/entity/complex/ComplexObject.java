@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsmc.EntityValueTranslator;
 import nl.zeesoft.zsmc.SequenceMatcher;
 import nl.zeesoft.zsmc.entity.EntityObject;
+import nl.zeesoft.zsmc.entity.UniversalAlphabetic;
 import nl.zeesoft.zsmc.sequence.SequenceMatcherResult;
 
 public abstract class ComplexObject extends EntityObject {
@@ -20,6 +21,8 @@ public abstract class ComplexObject extends EntityObject {
 	private List<ComplexVariable>				variables			= new ArrayList<ComplexVariable>();
 
 	private SequenceMatcher						sequenceMatcher		= new SequenceMatcher();
+	
+	private UniversalAlphabetic					ua					= null;
 
 	public double getMatchThreshold() {
 		return 0.7D;
@@ -27,10 +30,10 @@ public abstract class ComplexObject extends EntityObject {
 	
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser entityValueSequence) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
-		ZStringSymbolParser matchSequence = getTranslator().translateToExternalValues(entityValueSequence,TYPE_ALPHABETIC);
+		ZStringSymbolParser matchSequence = getTranslator().translateToExternalValues(entityValueSequence,TYPE_ALPHABETIC,true);
 		List<SequenceMatcherResult> matches = getSequenceMatcher().getMatches(matchSequence,"",true,getMatchThreshold());
 		for (SequenceMatcherResult match: matches) {
-			ZStringSymbolParser parsed = parseVariableValuesFromSequence(matchSequence,match.result.sequence);
+			ZStringSymbolParser parsed = parseVariableValuesFromSequence(matchSequence,match);
 			if (parsed.length()>0) {
 				parsed = getTranslator().translateToInternalValues(parsed,LANG_UNI,TYPE_ALPHABETIC,false);
 				List<String> mergedSyms = new ArrayList<String>();
@@ -52,64 +55,65 @@ public abstract class ComplexObject extends EntityObject {
 		return r;
 	}
 
-	public ZStringSymbolParser parseVariableValuesFromSequence(ZStringSymbolParser matchSequence,ZStringSymbolParser match) {
+	public ZStringSymbolParser parseVariableValuesFromSequence(ZStringSymbolParser matchSequence,SequenceMatcherResult match) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		SortedMap<String,String> values = new TreeMap<String,String>();
 		SortedMap<String,String> replaces = new TreeMap<String,String>();
 		int matchVars = 0;
-		if (match!=null && match.length()>0) {
-			List<String> iSymbols = matchSequence.toSymbolsPunctuated();
-			List<String> mSymbols = match.toSymbolsPunctuated();
-			int iStart = -1;
-			int mStart = -1;
-			int i = 0;
-			int m = 0;
-			int seq = 0;
-			for (String iSym: iSymbols) {
-				for (String mSym: mSymbols) {
-					if (iSym.equalsIgnoreCase(mSym)) {
-						mStart = m;
-						iStart = i;
-						break;
-					}
-					m++;
-				}
-				i++;
-				if (iStart>=0) {
+		List<String> iSymbols = matchSequence.toSymbolsPunctuated();
+		List<String> mSymbols = match.result.symbols;
+		int iStart = -1;
+		int mStart = -1;
+		int i = 0;
+		int m = 0;
+		for (String iSym: iSymbols) {
+			for (String mSym: mSymbols) {
+				if (mSym.startsWith("{") && mSym.endsWith("}")) {
+					mStart = 0;
+					iStart = 0;
+					break;
+				} else if (iSym.equalsIgnoreCase(mSym)) {
+					mStart = m;
+					iStart = i;
 					break;
 				}
+				m++;
 			}
 			if (iStart>=0) {
-				i = iStart;
-				for (m = mStart; m < mSymbols.size(); m++) {
-					String mSym = mSymbols.get(m);
-					String iSym = iSymbols.get(i);
-					if (iSym.equalsIgnoreCase(mSym)) {
-						seq++;
-						i++;
-					} else {
-						if (seq>0 && mSym.startsWith("{") && mSym.endsWith("}")) {
-							String name = mSym.substring(1,mSym.length()-1);
-							ComplexVariable var = getVariableByName(name);
-							if (var!=null) {
-								matchVars++;
-								String value = getTranslator().getInternalValueFromInternalValues(iSym,var.entityValueType);
-								if (var.entityValueType.equals(TYPE_ALPHABETIC) && !iSym.contains(getTranslator().getValueConcatenator())) {
-									value = iSym;
-								}
-								if (value.length()>0) {
-									values.put(var.name,value);
-									replaces.put(var.name,iSym);
-								}
+				break;
+			}
+			i++;
+		}
+		if (iStart>=0) {
+			i = iStart;
+			for (m = mStart; m < mSymbols.size(); m++) {
+				String mSym = mSymbols.get(m);
+				String iSym = iSymbols.get(i);
+				if (iSym.equalsIgnoreCase(mSym)) {
+					i++;
+				} else {
+					if (mSym.startsWith("{") && mSym.endsWith("}")) {
+						String name = mSym.substring(1,mSym.length()-1);
+						ComplexVariable var = getVariableByName(name);
+						if (var!=null) {
+							matchVars++;
+							String value = getTranslator().getInternalValueFromInternalValues(iSym,var.entityValueType);
+							if (value.length()==0 &&
+								var.entityValueType.equals(TYPE_ALPHABETIC) &&
+								UniversalAlphabetic.isAlphabetic(iSym)
+								) {
+								value = ua.getInternalValuePrefix() + iSym;
 							}
-							i++;
-						} else {
-							seq = 0;
+							if (value.length()>0) {
+								values.put(var.name,value);
+								replaces.put(var.name,iSym);
+							}
 						}
+						i++;
 					}
-					if (i>=iSymbols.size()) {
-						break;
-					}
+				}
+				if (i>=iSymbols.size()) {
+					break;
 				}
 			}
 		}
@@ -161,6 +165,7 @@ public abstract class ComplexObject extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 		this.translator = translator;
+		this.ua = (UniversalAlphabetic) translator.getEntityObject(LANG_UNI,TYPE_ALPHABETIC);
 		for (ComplexPattern pattern: patterns) {
 			sequenceMatcher.setContext(pattern.context);
 			sequenceMatcher.addSequence(pattern.pattern);

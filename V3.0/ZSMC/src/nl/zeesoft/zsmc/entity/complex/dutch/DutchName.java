@@ -32,14 +32,18 @@ public class DutchName extends ComplexObject {
 		addVariable("preposition",TYPE_PREPOSITION);
 		addVariable("lastName",TYPE_ALPHABETIC);
 		
-		addPatterns("{firstName} {preposition} {lastName}");
-		addPatterns("{firstName} {lastName}");
-		addPatterns("{firstName}");
+		addGenericPatterns("{firstName} {preposition} {lastName}");
+		addGenericPatterns("{firstName} {lastName}");
+		addGenericPatterns("{firstName}");
+		
+		addSpecificPatterns("voornaam", "{firstName}");
+		addSpecificPatterns("achternaam", "{preposition} {lastName}");
+		addSpecificPatterns("achternaam", "{lastName}");
 		
 		super.initialize(translator);
 	}
 	
-	private void addPatterns(String variables) {
+	private void addGenericPatterns(String variables) {
 		addPattern(new ZStringSymbolParser("Mijn naam is " + variables + "."),"");
 		addPattern(new ZStringSymbolParser("Ik heet " + variables + "."),"");
 		addPattern(new ZStringSymbolParser("Ik ben " + variables + "."),"");
@@ -59,5 +63,21 @@ public class DutchName extends ComplexObject {
 		addPattern(new ZStringSymbolParser("Wat is je naam? Mijn naam is " + variables + "."),"");
 		addPattern(new ZStringSymbolParser("Wat is jouw naam? Mijn naam is " + variables + "."),"");
 		addPattern(new ZStringSymbolParser("Wat is uw naam? Mijn naam is " + variables + "."),"");
+
+		addPattern(new ZStringSymbolParser(variables + " is mijn naam."),"");
+		addPattern(new ZStringSymbolParser(variables + " heet ik."),"");
+		addPattern(new ZStringSymbolParser(variables + " ben ik."),"");
+	}
+	
+	private void addSpecificPatterns(String name, String variables) {
+		addPattern(new ZStringSymbolParser("Wat is je " + name + "? " + variables + "."),"");
+		addPattern(new ZStringSymbolParser("Wat is jouw " + name + "? " + variables + "."),"");
+		addPattern(new ZStringSymbolParser("Wat is uw " + name + "? " + variables + "."),"");
+		
+		addPattern(new ZStringSymbolParser("Wat is je " + name + "? Mijn " + name + " is " + variables + "."),"");
+		addPattern(new ZStringSymbolParser("Wat is jouw " + name + "? Mijn " + name + " is " + variables + "."),"");
+		addPattern(new ZStringSymbolParser("Wat is uw " + name + "? Mijn " + name + " is " + variables + "."),"");
+		
+		addPattern(new ZStringSymbolParser(variables + " is mijn " + name + "."),"");
 	}
 }
