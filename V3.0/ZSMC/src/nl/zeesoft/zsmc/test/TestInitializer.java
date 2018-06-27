@@ -4,11 +4,9 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsmc.EntityValueTranslator;
 import nl.zeesoft.zsmc.SequenceClassifier;
-import nl.zeesoft.zsmc.TsvToJson;
 import nl.zeesoft.zsmc.initialize.InitializeClass;
 import nl.zeesoft.zsmc.initialize.Initializer;
 import nl.zeesoft.zsmc.initialize.InitializerListener;
-import nl.zeesoft.zsmc.sequence.Analyzer;
 
 public class TestInitializer extends TestObject implements InitializerListener {
 	public TestInitializer(Tester tester) {
@@ -37,11 +35,10 @@ public class TestInitializer extends TestObject implements InitializerListener {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestInitializer.class));
-		System.out.println(" * " + getTester().getLinkForClass(TsvToJson.class));
-		System.out.println(" * " + getTester().getLinkForClass(Analyzer.class));
+		System.out.println(" * " + getTester().getLinkForClass(Initializer.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the input TSV data and the converted JSON.  ");
+		System.out.println("The output of this test the time it takes to initialize two objects simultaneously.  ");
 	}
 	
 	@Override
