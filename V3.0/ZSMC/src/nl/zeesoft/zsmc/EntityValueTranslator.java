@@ -28,14 +28,20 @@ import nl.zeesoft.zsmc.entity.english.EnglishOrder;
 import nl.zeesoft.zsmc.entity.english.EnglishOrder2;
 import nl.zeesoft.zsmc.entity.english.EnglishPreposition;
 import nl.zeesoft.zsmc.entity.english.EnglishTime;
+import nl.zeesoft.zsmc.initialize.Initializable;
 
-public class EntityValueTranslator {
+public class EntityValueTranslator implements Initializable {
 	private List<EntityObject>					entities			= new ArrayList<EntityObject>();
 	
 	private int									maximumSymbols		= 1;
 
 	public EntityValueTranslator() {
 		addDefaultEntities();
+	}
+
+	@Override
+	public void initialize(ZStringBuilder data) {
+		initialize();
 	}
 
 	/**

@@ -11,8 +11,6 @@ import nl.zeesoft.zsmc.EntityValueTranslator;
 import nl.zeesoft.zsmc.entity.EntityObject;
 
 public class TestEntityValueTranslator extends TestObject {
-	public static final String QNA_FILE_NAME = "resources/nl-qna.txt";
-	
 	public TestEntityValueTranslator(Tester tester) {
 		super(tester);
 	}

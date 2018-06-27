@@ -9,17 +9,23 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsmc.initialize.Initializable;
 
 /**
  * An Analyzer can be used to parse sequences into a list of AnalyzerSymbols in order to obtain statistical information about the set of symbols.
  */
-public class Analyzer {
+public class Analyzer implements Initializable {
 	private String									ioSeparator		= "[OUTPUT]";	
 
 	private SortedMap<String,AnalyzerSymbol> 		knownSymbols	= new TreeMap<String,AnalyzerSymbol>();
 	private int										symbolCount		= 0;
 	private double									symbolMaxProb	= 0.0D;
 	private double									symbolMinProb	= 1.0D;
+
+	@Override
+	public void initialize(ZStringBuilder data) {
+		this.initialize(new ZStringSymbolParser(data));
+	}
 
 	/**
 	 * Returns the input/output separator symbol.

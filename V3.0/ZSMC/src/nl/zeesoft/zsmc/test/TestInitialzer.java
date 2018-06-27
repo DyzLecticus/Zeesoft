@@ -5,16 +5,21 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zsmc.EntityValueTranslator;
+import nl.zeesoft.zsmc.SequenceClassifier;
 import nl.zeesoft.zsmc.TsvToJson;
+import nl.zeesoft.zsmc.initialize.InitializeClass;
+import nl.zeesoft.zsmc.initialize.Initializer;
+import nl.zeesoft.zsmc.initialize.InitializerListener;
 import nl.zeesoft.zsmc.sequence.Analyzer;
 
-public class TestTsvToJson extends TestObject {
-	public TestTsvToJson(Tester tester) {
+public class TestInitialzer extends TestObject implements InitializerListener {
+	public TestInitialzer(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestTsvToJson(new Tester())).test(args);
+		(new TestInitialzer(new Tester())).test(args);
 	}
 
 	@Override
@@ -31,7 +36,7 @@ public class TestTsvToJson extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestTsvToJson.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestInitialzer.class));
 		System.out.println(" * " + getTester().getLinkForClass(TsvToJson.class));
 		System.out.println(" * " + getTester().getLinkForClass(Analyzer.class));
 		System.out.println();
@@ -41,17 +46,21 @@ public class TestTsvToJson extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		TsvToJson convertor = new TsvToJson();
-		ZStringBuilder tsv = new ZStringBuilder();
-		tsv.append("Question\tAnswer\tContext\n");
-		tsv.append("What is that?\tIt is a plant!\tcontextWhatQuestions\n");
-		tsv.append("Why is that?\tBecause it can!\tcontextWhyQuestions\n");
-		System.out.println(tsv);
-		JsFile json = convertor.parseTsv(tsv);
-		System.out.println(json.toStringBuilderReadFormat());
-		assertEqual(json.rootElement.children.size(),2,"The number of children does not match expectation");
-		Analyzer analyzer = new Analyzer();
-		analyzer.addSequence(new ZStringSymbolParser(json.toStringBuilder()));
-		assertEqual(analyzer.getKnownSymbols().size(),12,"The number of known symbols does not match expectation");
+		Initializer init = new Initializer(null,null);
+		init.addListener(this);
+		init.addClass("Classifier",SequenceClassifier.class.getName(),TestSequenceClassifier.QNA_FILE_NAME);
+		init.addClass("Translator",EntityValueTranslator.class.getName(),"");
+		init.start();
+		while (!init.isDone()) {
+			sleep(100);
+		}
+	}
+
+	@Override
+	public void initializedClass(InitializeClass cls, boolean done) {
+		System.out.println("Initializing " + cls.className + " took " + cls.ms + " ms");
+		if (done) {
+			System.out.println("Initialized all classes");
+		}
 	}
 }
