@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
 /**
  * An Analyzer can be used to parse sequences into a list of AnalyzerSymbols in order to obtain statistical information about the set of symbols.
@@ -70,13 +72,41 @@ public class Analyzer {
 	/**
 	 * Adds a sequence the known symbols.
 	 * 
+	 * This method accepts a lot of different formats including but not limited to TSV and JSON.
+	 * 
 	 * Symbol probabilities must be recalculated after calling this method.
 	 * 
 	 * @param sequence The symbol parser containing the sequence
 	 */
 	public void addSequence(ZStringSymbolParser sequence) {
 		if (sequence.length()>0) {
-			if (sequence.containsOneOfCharacters("\n")) {
+			if (sequence.startsWith("{") && sequence.endsWith("}")) {
+				JsFile json = new JsFile();
+				json.fromStringBuilder(sequence);
+				if (json.rootElement!=null) {
+					for (JsElem seqElem: json.rootElement.children) {
+						ZStringBuilder input = seqElem.getChildValueByName("input");
+						ZStringBuilder output = seqElem.getChildValueByName("output");
+						ZStringBuilder context = seqElem.getChildValueByName("context");
+						ZStringSymbolParser seq = new ZStringSymbolParser();
+						if (input!=null) {
+							seq.append(input);
+							seq.append(" ");
+							if (output!=null) {
+								seq.append(ioSeparator);
+								seq.append(" ");
+								seq.append(output);
+							}
+							if (context!=null) {
+								handleContextSymbol(context);
+							} else {
+								handleContextSymbol(new ZStringBuilder());
+							}
+							addSymbols(seq.toSymbolsPunctuated());
+						}
+					}
+				}
+			} else if (sequence.containsOneOfCharacters("\n")) {
 				List<ZStringBuilder> lines = sequence.split("\n");
 				int l = 0;
 				for (ZStringBuilder line: lines) {
@@ -92,6 +122,8 @@ public class Analyzer {
 								seq.append(sequences.get(1));
 								if (sequences.size()>2) {
 									handleContextSymbol(sequences.get(2));
+								} else {
+									handleContextSymbol(new ZStringBuilder());
 								}
 								addSymbols(seq.toSymbolsPunctuated());
 							}

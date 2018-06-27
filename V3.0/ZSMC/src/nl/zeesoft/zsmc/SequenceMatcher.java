@@ -102,7 +102,7 @@ public class SequenceMatcher extends SequenceClassifier {
 	 * @param sequence The sequence
 	 * @param context The optional context symbol
 	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
-	 * @param threshold If > 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
+	 * @param threshold If greater than 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
 	 * @return A list of matching results for a certain input sequence
 	 */
 	public List<SequenceMatcherResult> getMatches(ZStringSymbolParser sequence,String context, boolean caseInsensitive, double threshold) {
@@ -116,7 +116,7 @@ public class SequenceMatcher extends SequenceClassifier {
 	 * @param context The optional context symbol
 	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
-	 * @param threshold If > 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
+	 * @param threshold If greater than 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
 	 * @return A list of matching results for a certain input sequence
 	 */
 	public List<SequenceMatcherResult> getMatches(ZStringSymbolParser sequence,String context, boolean caseInsensitive, double bandwidth, double threshold) {

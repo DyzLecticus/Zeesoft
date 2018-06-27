@@ -15,14 +15,30 @@ import nl.zeesoft.zsmc.sequence.SequenceAnalyzerSymbolLink;
 public class SymbolCorrector extends SequenceAnalyzer {
 	private static final String		ALPHABET		= "abcdefghijklmnopqrstuvwxyz";
 
+	/**
+	 * Returns the symbol bandwidth.
+	 * 
+	 * @return The symbol bandwidth
+	 */
 	public double getSymbolBandwidth() {
 		return ((getSymbolMaxProb() - getSymbolMaxProb()) / 2D);
 	}
 
+	/**
+	 * Returns the link bandwidth.
+	 * 
+	 * @return The link bandwidth
+	 */
 	public double getLinkBandwidth() {
 		return ((getLinkMaxProb() - getLinkMinProb()) / 2D);
 	}
 
+	/**
+	 * Returns the link context bandwidth.
+	 * 
+	 * @param context The context symbol
+	 * @return The link context bandwidth
+	 */
 	public double getLinkContextBandwidth(String context) {
 		double r = getLinkBandwidth();
 		Double maxProb = getLinkContextMaxProbs().get(context);
