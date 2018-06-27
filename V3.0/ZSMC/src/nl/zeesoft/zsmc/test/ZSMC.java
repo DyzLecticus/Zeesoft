@@ -54,6 +54,9 @@ public class ZSMC extends LibraryObject {
 			tests.add(new TestSequenceMatcher(getTester()));
 		}
 		tests.add(new TestEntityValueTranslator(getTester()));
+		if (f.exists()) {
+			tests.add(new TestInitializer(getTester()));
+		}
 		
 		//tests.add(new TestKnowledgeBases(getTester()));
 		if (f.exists()) {

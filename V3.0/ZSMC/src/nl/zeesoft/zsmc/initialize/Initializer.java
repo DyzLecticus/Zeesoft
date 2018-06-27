@@ -18,6 +18,10 @@ public class Initializer extends Locker {
 	
 	private int							initialized	= 0;
 
+	public Initializer() {
+		super(null);
+	}
+
 	public Initializer(Messenger msgr,WorkerUnion uni) {
 		super(msgr);
 		union = uni;
@@ -31,7 +35,19 @@ public class Initializer extends Locker {
 	public void addListener(InitializerListener l) {
 		listeners.add(l);
 	}
-	
+
+	/**
+	 * Adds a class to the initializer.
+	 * 
+	 * @param uniqueName The unique name of the class
+	 * @param obj The object to initialize
+	 * @param fileName The optional name of the file to use for initialization
+	 */
+	public void addClass(String uniqueName,Initializable obj,String fileName) {
+		addClass(uniqueName,obj.getClass().getName(),fileName,obj);
+	}
+
+
 	/**
 	 * Adds a class to the initializer.
 	 * 
@@ -40,27 +56,7 @@ public class Initializer extends Locker {
 	 * @param fileName The optional name of the file to use for initialization
 	 */
 	public void addClass(String uniqueName,String className,String fileName) {
-		Initializable obj = null;
-		try {
-			Class<?> clas = Class.forName(className);
-			obj = (Initializable) clas.newInstance();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		if (obj!=null) {
-			InitializeClass cls = new InitializeClass();
-			cls.name = uniqueName;
-			cls.className = className;
-			cls.obj = obj;
-			cls.fileName = fileName;
-			classes.add(cls);
-			InitializeWorker worker = new InitializeWorker(getMessenger(),union,this,cls);
-			workers.add(worker);
-		}
+		addClass(uniqueName,className,fileName,null);
 	}
 
 	/**
@@ -112,5 +108,30 @@ public class Initializer extends Locker {
 			l.initializedClass(cls,done);
 		}
 		return done;
+	}
+
+	private void addClass(String uniqueName,String className,String fileName, Initializable obj) {
+		if (obj==null) {
+			try {
+				Class<?> clas = Class.forName(className);
+				obj = (Initializable) clas.newInstance();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		if (obj!=null) {
+			InitializeClass cls = new InitializeClass();
+			cls.name = uniqueName;
+			cls.className = className;
+			cls.obj = obj;
+			cls.fileName = fileName;
+			classes.add(cls);
+			InitializeWorker worker = new InitializeWorker(getMessenger(),union,this,cls);
+			workers.add(worker);
+		}
 	}
 }
