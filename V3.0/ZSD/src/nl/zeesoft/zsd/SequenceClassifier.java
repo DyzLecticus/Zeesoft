@@ -49,7 +49,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @param sequence The sequence
 	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
-	 * @param threshold If greater than 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
+	 * @param threshold If greater than 0D then normalize result probabilities to 1.0D and return everything greater than threshold 
 	 * @return The context or an empty string
 	 */
 	public String classify(ZStringSymbolParser sequence, boolean caseInsensitive,double bandwidth, double threshold) {
@@ -70,7 +70,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * 
 	 * @param sequence The sequence
 	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
-	 * @param threshold If greater than 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
+	 * @param threshold If greater than 0D then normalize result probabilities to 1.0D and return everything greater than threshold 
 	 * @return A list of all contexts with calculated probabilities
 	 */
 	public List<AnalyzerSymbol> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive, double threshold) {
@@ -83,7 +83,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @param sequence The sequence
 	 * @param caseInsensitive Indicates the case differences will be ignored as much as possible
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
-	 * @param threshold If greater than 0D then normalize result probabilities to 1.0 and return everything greater than threshold 
+	 * @param threshold If greater than 0D then normalize result probabilities to 1.0D and return everything greater than threshold 
 	 * @return A list of all contexts with calculated probabilities
 	 */
 	public List<AnalyzerSymbol> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive,double bandwidth, double threshold) {

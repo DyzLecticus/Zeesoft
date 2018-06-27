@@ -13,7 +13,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 public class Initializer extends Locker {
 	private WorkerUnion					union		= null;
 	private List<InitializeClass>		classes		= new ArrayList<InitializeClass>();
-	private List<InitializeWorker>		workers		= new ArrayList<InitializeWorker>();
+	private List<InitializerWorker>		workers		= new ArrayList<InitializerWorker>();
 	private List<InitializerListener>	listeners	= new ArrayList<InitializerListener>();
 	
 	private int							initialized	= 0;
@@ -63,7 +63,7 @@ public class Initializer extends Locker {
 	 * Starts the initialization of classes.
 	 */
 	public void start() {
-		for (InitializeWorker worker: workers) {
+		for (InitializerWorker worker: workers) {
 			worker.start();
 		}
 	}
@@ -130,7 +130,7 @@ public class Initializer extends Locker {
 			cls.obj = obj;
 			cls.fileName = fileName;
 			classes.add(cls);
-			InitializeWorker worker = new InitializeWorker(getMessenger(),union,this,cls);
+			InitializerWorker worker = new InitializerWorker(getMessenger(),union,this,cls);
 			workers.add(worker);
 		}
 	}

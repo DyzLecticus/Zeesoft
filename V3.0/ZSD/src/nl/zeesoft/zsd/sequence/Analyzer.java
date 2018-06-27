@@ -24,7 +24,9 @@ public class Analyzer implements Initializable {
 
 	@Override
 	public void initialize(ZStringBuilder data) {
-		this.initialize(new ZStringSymbolParser(data));
+		if (data!=null && data.length()>0) {
+			this.initialize(data);
+		}
 	}
 
 	/**

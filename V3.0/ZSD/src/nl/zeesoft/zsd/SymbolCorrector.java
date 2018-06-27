@@ -13,7 +13,7 @@ import nl.zeesoft.zsd.sequence.SequenceAnalyzerSymbolLink;
  * A SymbolCorrector can be used to correct the spelling of symbols and sequences.
  */
 public class SymbolCorrector extends SequenceAnalyzer {
-	private static final String		ALPHABET		= "abcdefghijklmnopqrstuvwxyz";
+	private static final String		ALPHABET	= "abcdefghijklmnopqrstuvwxyz";
 
 	/**
 	 * Returns the symbol bandwidth.

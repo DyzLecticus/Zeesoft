@@ -7,12 +7,12 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class InitializeWorker extends Worker {
+public class InitializerWorker extends Worker {
 	private Initializer		init	= null;
 	private InitializeClass cls		= null;
 	private Date			started	= null;
 	
-	public InitializeWorker(Messenger msgr, WorkerUnion union,Initializer init, InitializeClass cls) {
+	public InitializerWorker(Messenger msgr, WorkerUnion union,Initializer init, InitializeClass cls) {
 		super(msgr, union);
 		setSleep(0);
 		this.init = init;
