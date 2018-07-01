@@ -1,20 +1,21 @@
 package nl.zeesoft.zsd.test;
 
-import java.util.Calendar;
 import java.util.Date;
 
-import nl.zeesoft.zsd.EntityValueTranslator;
+import nl.zeesoft.zdk.test.MockObject;
 
-public class MockEntityValueTranslator extends EntityValueTranslator {
-	public Date getCurrentDate() {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR,2018);
-		cal.set(Calendar.MONTH,6);
-		cal.set(Calendar.DATE,16);
-		cal.set(Calendar.HOUR_OF_DAY,9);
-		cal.set(Calendar.MINUTE,54);
-		cal.set(Calendar.SECOND,12);
-		cal.set(Calendar.MILLISECOND,764);
-		return cal.getTime();
+public class MockEntityValueTranslator extends MockObject {
+	@Override
+	protected void describe() {
+		System.out.println("This test uses the *MockEntityValueTranslator*.");
+	}
+
+	@Override
+	protected Object initialzeMock() {
+		Date started = new Date();
+		FixedDateEntityValueTranslator t = new FixedDateEntityValueTranslator();
+		t.initialize();
+		System.out.println("Initializing the EntityValueTranslator took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+		return t;
 	}
 }

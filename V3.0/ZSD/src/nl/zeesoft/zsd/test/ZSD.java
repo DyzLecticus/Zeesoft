@@ -54,6 +54,7 @@ public class ZSD extends LibraryObject {
 			tests.add(new TestSequenceMatcher(getTester()));
 		}
 		tests.add(new TestEntityValueTranslator(getTester()));
+		tests.add(new TestEntityToJson(getTester()));
 		if (f.exists()) {
 			tests.add(new TestInitializer(getTester()));
 		}

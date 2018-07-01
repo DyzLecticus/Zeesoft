@@ -45,6 +45,57 @@ public class EntityValueTranslator implements Initializable {
 	}
 
 	/**
+	 * Specifies the value concatenator.
+	 * 
+	 * @return The value concatenator
+	 */
+	public String getValueConcatenator() {
+		return ":";
+	}
+
+	/**
+	 * Specifies the or concatenator.
+	 * 
+	 * @return The or concatenator
+	 */
+	public String getOrConcatenator() {
+		return "|";
+	}
+
+	/**
+	 * Specifies the maximum number string pattern to generate (starting at zero).
+	 * 
+	 * In order to support current and future dates, this should be at least 9999.
+	 * 
+	 * @return The maximum number string pattern to generate
+	 */
+	public int getMaximumNumber() {
+		return 99999;
+	}
+
+	/**
+	 * Specifies the maximum order string pattern to generate (starting at first).
+	 * 
+	 * In order to support current and future dates, this should be at least 99.
+	 * 
+	 * @return The maximum order string pattern to generate
+	 */
+	public int getMaximumOrder() {
+		return 999;
+	}
+
+	/**
+	 * Specifies the current date (default = new Date()).
+	 * 
+	 * Used to translate patterns like 'now', 'today', 'tomorrow'.
+	 * 
+	 * @return The current date
+	 */
+	public Date getCurrentDate() {
+		return new Date();
+	}
+
+	/**
 	 * Translates a sequence to internal entity values.
 	 * 
 	 * @param sequence The sequence
@@ -309,7 +360,62 @@ public class EntityValueTranslator implements Initializable {
 	public List<EntityObject> getEntities() {
 		return entities;
 	}
+
+	/**
+	 * Returns a list of entities excluding the complex objects.
+	 *  
+	 * @param languages An optional list languages to filter the list
+	 * @param types An optional list types to filter the list
+	 * @return The list of entities
+	 */
+	public List<EntityObject> getEntityObjects(List<String> languages,List<String> types) {
+		List<EntityObject> r = new ArrayList<EntityObject>();
+		List<EntityObject> list = getEntities(languages,types);
+		for (EntityObject eo: list) {
+			if (!(eo instanceof ComplexObject)) {
+				r.add(eo);
+			}
+		}
+		return r;
+	}
 	
+	/**
+	 * Returns a list of complex entities.
+	 *  
+	 * @param languages An optional list languages to filter the list
+	 * @param types An optional list types to filter the list
+	 * @return The list of entities
+	 */
+	public List<EntityObject> getComplexObjects(List<String> languages,List<String> types) {
+		List<EntityObject> r = new ArrayList<EntityObject>();
+		List<EntityObject> list = getEntities(languages,types);
+		for (EntityObject eo: list) {
+			if (eo instanceof ComplexObject) {
+				r.add(eo);
+			}
+		}
+		return r;
+	}
+	
+	/**
+	 * Returns a list of entities.
+	 *  
+	 * @param languages An optional list languages to filter the list
+	 * @param types An optional list typess to filter the list
+	 * @return The list of entities
+	 */
+	public List<EntityObject> getEntities(List<String> languages,List<String> types) {
+		List<EntityObject> r = new ArrayList<EntityObject>();
+		for (EntityObject eo: entities) {
+			if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
+				(types==null || types.size()==0 || types.contains(eo.getType()))
+				) {
+				r.add(eo);
+			}
+		}
+		return r;
+	}
+
 	/**
 	 * Initializes the entities.
 	 */
@@ -352,79 +458,23 @@ public class EntityValueTranslator implements Initializable {
 		entities.add(new UniversalNumeric());
 		entities.add(new UniversalAlphabetic());
 	}
-
-	/**
-	 * Specifies the value concatenator.
-	 * 
-	 * @return The value concatenator
-	 */
-	public String getValueConcatenator() {
-		return ":";
-	}
-
-	/**
-	 * Specifies the or concatenator.
-	 * 
-	 * @return The or concatenator
-	 */
-	public String getOrConcatenator() {
-		return "|";
-	}
-
-	/**
-	 * Specifies the maximum number string pattern to generate (starting at zero).
-	 * 
-	 * In order to support current and future dates, this should be at least 9999.
-	 * 
-	 * @return The maximum number string pattern to generate
-	 */
-	public int getMaximumNumber() {
-		return 99999;
-	}
-
-	/**
-	 * Specifies the maximum order string pattern to generate (starting at first).
-	 * 
-	 * In order to support current and future dates, this should be at least 99.
-	 * 
-	 * @return The maximum order string pattern to generate
-	 */
-	public int getMaximumOrder() {
-		return 999;
-	}
-
-	/**
-	 * Specifies the current date (default = new Date()).
-	 * 
-	 * Used to translate patterns like 'now', 'today', 'tomorrow'.
-	 * 
-	 * @return The current date
-	 */
-	public Date getCurrentDate() {
-		return new Date();
-	}
-
+	
 	private ZStringBuilder getInternalValuesForExternalValue(String str, String raw, int numSymbols,List<String> languages,List<String> types) {
 		ZStringBuilder r = new ZStringBuilder();
-		for (EntityObject eo: entities) {
-			if (!(eo instanceof ComplexObject)) {
-				if (eo.getMaximumSymbols()>=numSymbols) {
-					if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
-						(types==null || types.size()==0 || types.contains(eo.getType()))
-						) {
-						String iv = "";
-						if (eo instanceof UniversalAlphabetic) {
-							iv = eo.getInternalValueForExternalValue(raw);
-						} else {
-							iv = eo.getInternalValueForExternalValue(str);
-						}
-						if (iv.length()>0) {
-							if (r.length()>0) {
-								r.append(getOrConcatenator());
-							}
-							r.append(iv);
-						}
+		List<EntityObject> list = getEntityObjects(languages,types);
+		for (EntityObject eo: list) {
+			if (eo.getMaximumSymbols()>=numSymbols) {
+				String iv = "";
+				if (eo instanceof UniversalAlphabetic) {
+					iv = eo.getInternalValueForExternalValue(raw);
+				} else {
+					iv = eo.getInternalValueForExternalValue(str);
+				}
+				if (iv.length()>0) {
+					if (r.length()>0) {
+						r.append(getOrConcatenator());
 					}
+					r.append(iv);
 				}
 			}
 		}
@@ -433,18 +483,13 @@ public class EntityValueTranslator implements Initializable {
 
 	private ZStringSymbolParser translateToInternalValuesComplex(ZStringSymbolParser entityValueSequence,List<String> languages,List<String> types) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
-		for (EntityObject eo: entities) {
-			if (eo instanceof ComplexObject) {
-				if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
-					(types==null || types.size()==0 || types.contains(eo.getType()))
-					) {
-					ComplexObject co = (ComplexObject) eo;
-					ZStringSymbolParser t = co.translateToInternalValues(entityValueSequence);
-					if (t.length()>0) {
-						r = t;
-						entityValueSequence = t;
-					}
-				}
+		List<EntityObject> list = getComplexObjects(languages,types);
+		for (EntityObject eo: list) {
+			ComplexObject co = (ComplexObject) eo;
+			ZStringSymbolParser t = co.translateToInternalValues(entityValueSequence);
+			if (t.length()>0) {
+				r = t;
+				entityValueSequence = t;
 			}
 		}
 		return r;

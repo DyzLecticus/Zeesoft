@@ -29,32 +29,32 @@ public class TsvToJson {
 						List<ZStringBuilder> sequences = line.split("\t");
 						if (sequences.size()>1) {
 							if (sequences.size()>2) {
-								addSequenceElem(r.rootElement,sequences.get(0),sequences.get(1),sequences.get(2));
+								addSequenceElement(r.rootElement,sequences.get(0),sequences.get(1),sequences.get(2));
 							} else {
-								addSequenceElem(r.rootElement,sequences.get(0),sequences.get(1),null);
+								addSequenceElement(r.rootElement,sequences.get(0),sequences.get(1),null);
 							}
 						}
 					} else {
-						addSequenceElem(r.rootElement,line,null,null);
+						addSequenceElement(r.rootElement,line,null,null);
 					}
 				}
 				l++;
 			}
 		} else {
-			addSequenceElem(r.rootElement,tsv,null,null);
+			addSequenceElement(r.rootElement,tsv,null,null);
 		}
 		return r;
 	}
 	
-	private void addSequenceElem(JsElem parent,ZStringBuilder input, ZStringBuilder output, ZStringBuilder context) {
-		JsElem seq = new JsElem("sequence");
-		parent.children.add(seq);
-		seq.children.add(new JsElem("input",input,true));
+	public static void addSequenceElement(JsElem parent,ZStringBuilder input,ZStringBuilder output,ZStringBuilder context) {
+		JsElem seqElem = new JsElem("sequence");
+		parent.children.add(seqElem);
+		seqElem.children.add(new JsElem("input",input,true));
 		if (output!=null && output.length()>0) {
-			seq.children.add(new JsElem("output",output,true));
+			seqElem.children.add(new JsElem("output",output,true));
 		}
 		if (context!=null && context.length()>0) {
-			seq.children.add(new JsElem("context",context,true));
+			seqElem.children.add(new JsElem("context",context,true));
 		}
 	}
 }

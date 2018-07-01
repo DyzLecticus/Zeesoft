@@ -117,4 +117,8 @@ public abstract class EntityObject {
 		Integer idx = new Integer(externalValues.size());
 		addEntityValue(getEntityValue(externalValue,"" + idx,idx));
 	}
+
+	public SortedMap<String, EntityValue> getExternalValues() {
+		return externalValues;
+	}
 }
