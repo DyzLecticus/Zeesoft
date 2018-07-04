@@ -114,7 +114,10 @@ public class Initializer extends Locker {
 		if (obj==null) {
 			try {
 				Class<?> clas = Class.forName(className);
-				obj = (Initializable) clas.newInstance();
+				Object o = (Initializable) clas.newInstance();
+				if (o instanceof Initializable) {
+					obj = (Initializable) o;
+				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {

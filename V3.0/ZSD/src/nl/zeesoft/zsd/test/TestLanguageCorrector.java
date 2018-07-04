@@ -39,7 +39,7 @@ public class TestLanguageCorrector extends TestObject {
 			assertEqual(err.length(),0,"Reading " + LANGUAGE_FILE_NAME_NLD + " produced an unexpected error");
 		}
 		if (err.length()==0) {
-			System.out.println("Sequenctially initializing the language SymbolCorrectors took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+			System.out.println("Sequentially initializing the language SymbolCorrector instances took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 
 			assertEqual(scEng.getLinkContextCounts().get(""),204556,"The total number of english links does not match expectation");
 			assertEqual(scNld.getLinkContextCounts().get(""),197595,"The total number of dutch links does not match expectation");
