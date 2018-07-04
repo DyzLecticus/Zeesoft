@@ -1,4 +1,4 @@
-package nl.zeesoft.zsd;
+package nl.zeesoft.zsd.util;
 
 import java.util.List;
 

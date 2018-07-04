@@ -10,8 +10,8 @@ public class SequenceIntepreter {
 	private SequenceClassifier						languageClassifier					= null;
 	private SortedMap<String,SequenceClassifier>	languageMasterContextClassifiers	= new TreeMap<String,SequenceClassifier>();
 	private SortedMap<String,SequenceClassifier>	languageContextClassifiers			= new TreeMap<String,SequenceClassifier>();
-	private EntityValueTranslator					translator							= null;
 	private SortedMap<String,SymbolCorrector>		languageCorrectors					= new TreeMap<String,SymbolCorrector>();
+	private EntityValueTranslator					translator							= null;
 
 	public void setLanguageClassifier(SequenceClassifier sc) {
 		languageClassifier = sc;

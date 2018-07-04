@@ -5,8 +5,8 @@ import java.util.Date;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsd.EntityToJson;
 import nl.zeesoft.zsd.EntityValueTranslator;
+import nl.zeesoft.zsd.util.EntityToJson;
 
 public class TestEntityToJson extends TestObject {
 	public TestEntityToJson(Tester tester) {

@@ -48,7 +48,10 @@
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
 		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
-		<copy file="resources/nl-qna.txt" tofile="${dist}/resources/nl-qna.txt"/>
+		<copy file="resources/nl-qna.txt" tofile="${dist}/resources/nl-qna.txt" failonerror="false"/>
+		<copy file="resources/LanguageClassifier.json" tofile="${dist}/resources/LanguageClassifier.json" failonerror="false"/>
+		<copy file="resources/LanguageCorrectorENG.json" tofile="${dist}/resources/LanguageCorrectorENG.json" failonerror="false"/>
+		<copy file="resources/LanguageCorrectorNLD.json" tofile="${dist}/resources/LanguageCorrectorNLD.json" failonerror="false"/>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>

@@ -5,8 +5,8 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsd.TsvToJson;
 import nl.zeesoft.zsd.sequence.Analyzer;
+import nl.zeesoft.zsd.util.TsvToJson;
 
 public class TestTsvToJson extends TestObject {
 	public TestTsvToJson(Tester tester) {

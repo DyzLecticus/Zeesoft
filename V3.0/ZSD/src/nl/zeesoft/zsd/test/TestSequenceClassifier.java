@@ -55,7 +55,6 @@ public class TestSequenceClassifier extends TestObject {
 
 			assertEqual(sc.getLinkContextCounts().get(""),204474,"The total number of links does not match expectation");
 			
-			started = new Date();
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat kost dat?");
 			testClassification(sc,sequence,false,"nlPriveBetalen");
 			testClassification(sc,sequence,true,"nlPrivatebankingUwvermogen");

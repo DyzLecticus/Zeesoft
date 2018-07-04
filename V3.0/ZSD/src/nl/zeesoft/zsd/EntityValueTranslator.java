@@ -401,7 +401,7 @@ public class EntityValueTranslator implements Initializable {
 	 * Returns a list of entities.
 	 *  
 	 * @param languages An optional list languages to filter the list
-	 * @param types An optional list typess to filter the list
+	 * @param types An optional list types to filter the list
 	 * @return The list of entities
 	 */
 	public List<EntityObject> getEntities(List<String> languages,List<String> types) {

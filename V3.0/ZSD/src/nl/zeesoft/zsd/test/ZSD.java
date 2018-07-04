@@ -46,20 +46,32 @@ public class ZSD extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		File f = new File(TestSequenceClassifier.QNA_FILE_NAME);
+		File qna = new File(TestSequenceClassifier.QNA_FILE_NAME);
 		tests.add(new TestTsvToJson(getTester()));
 		tests.add(new TestSymbolCorrector(getTester()));
-		if (f.exists()) {
+		if (qna.exists()) {
 			tests.add(new TestSequenceClassifier(getTester()));
 			tests.add(new TestSequenceMatcher(getTester()));
 		}
 		tests.add(new TestEntityValueTranslator(getTester()));
 		tests.add(new TestEntityToJson(getTester()));
-		if (f.exists()) {
+		if (qna.exists()) {
 			tests.add(new TestInitializer(getTester()));
 		}
-		if (!f.exists()) {
+		File langClas = new File(TestLanguageClassifier.LANGUAGE_FILE_NAME);
+		if (langClas.exists()) {
+			tests.add(new TestLanguageClassifier(getTester()));
+		}
+		File langCorrEng = new File(TestLanguageCorrector.LANGUAGE_FILE_NAME_ENG);
+		File langCorrNld = new File(TestLanguageCorrector.LANGUAGE_FILE_NAME_NLD);
+		if (langCorrEng.exists() && langCorrNld.exists()) {
+			tests.add(new TestLanguageCorrector(getTester()));
+		}
+		if (!qna.exists()) {
 			System.out.println("Some tests were skipped because the NL QnA input file was not found: " + TestSequenceClassifier.QNA_FILE_NAME);
+		}
+		if (!langClas.exists() || !langCorrEng.exists() || !langCorrNld.exists()) {
+			System.out.println("Some tests were skipped because the required JSON files were not found");
 		}
 	}
 }
