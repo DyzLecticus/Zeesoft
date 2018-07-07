@@ -2,11 +2,12 @@ package nl.zeesoft.zsd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zsd.sequence.AnalyzerSymbol;
+import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 import nl.zeesoft.zsd.sequence.SequenceAnalyzerSymbolLink;
 
 /**
@@ -31,16 +32,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @return The context or an empty string
 	 */
 	public String classify(ZStringSymbolParser sequence, boolean caseInsensitive) {
-		String r = "";
-		double highest = 0D;
-		List<AnalyzerSymbol> list = getContexts(sequence,caseInsensitive,getLinkBandwidth(),0D);
-		for (AnalyzerSymbol s: list) {
-			if (s.prob>highest) {
-				highest = s.prob;
-				r = s.symbol;
-			}
-		}
-		return r;
+		return classify(sequence,caseInsensitive,getLinkBandwidth(),0D);
 	}
 
 	/**
@@ -54,13 +46,9 @@ public class SequenceClassifier extends SymbolCorrector {
 	 */
 	public String classify(ZStringSymbolParser sequence, boolean caseInsensitive,double bandwidth, double threshold) {
 		String r = "";
-		double highest = 0D;
-		List<AnalyzerSymbol> list = getContexts(sequence,caseInsensitive,bandwidth,threshold);
-		for (AnalyzerSymbol s: list) {
-			if (s.prob>highest) {
-				highest = s.prob;
-				r = s.symbol;
-			}
+		List<SequenceClassifierResult> list = getContexts(sequence,caseInsensitive,bandwidth,threshold);
+		if (list.size()>0) {
+			r = list.get(0).symbol;
 		}
 		return r;
 	}
@@ -73,7 +61,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @param threshold If greater than 0D then normalize result probabilities to 1.0D and return everything greater than threshold 
 	 * @return A list of all contexts with calculated probabilities
 	 */
-	public List<AnalyzerSymbol> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive, double threshold) {
+	public List<SequenceClassifierResult> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive, double threshold) {
 		return getContexts(sequence,caseInsensitive,getLinkBandwidth(),threshold);
 	}
 
@@ -86,9 +74,9 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @param threshold If greater than 0D then normalize result probabilities to 1.0D and return everything greater than threshold 
 	 * @return A list of all contexts with calculated probabilities
 	 */
-	public List<AnalyzerSymbol> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive,double bandwidth, double threshold) {
-		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
-		SortedMap<String,AnalyzerSymbol> list = new TreeMap<String,AnalyzerSymbol>();
+	public List<SequenceClassifierResult> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive,double bandwidth, double threshold) {
+		List<SequenceClassifierResult> r = new ArrayList<SequenceClassifierResult>();
+		SortedMap<String,SequenceClassifierResult> list = new TreeMap<String,SequenceClassifierResult>();
 		List<String> symbols = sequence.toSymbolsPunctuated(); 
 		int i = 0;
 		double highest = 0D;
@@ -139,31 +127,39 @@ public class SequenceClassifier extends SymbolCorrector {
 						(caseInsensitive && link.symbolTo.equalsIgnoreCase(to)) 
 					)
 					) {
-					AnalyzerSymbol as = list.get(link.context);
-					if (as==null) {
-						as = new AnalyzerSymbol();
-						as.symbol = link.context;
-						list.put(link.context,as);
-						r.add(as);
+					SequenceClassifierResult res = list.get(link.context);
+					if (res==null) {
+						res = new SequenceClassifierResult();
+						res.symbol = link.context;
+						list.put(link.context,res);
+						r.add(res);
 					}
-					as.prob += bandwidth;
-					as.prob += (getLinkMaxProb() - link.prob);
-					if (as.prob>highest) {
-						highest = as.prob;
+					res.prob += bandwidth;
+					res.prob += (getLinkMaxProb() - link.prob);
+					if (res.prob>highest) {
+						highest = res.prob;
 					}
-					as.count++;
 				}
 			}
 			i++;
 		}
-		if (r.size()>0 && threshold>0D) {
-			List<AnalyzerSymbol> test = new ArrayList<AnalyzerSymbol>(r);
-			if (threshold>0D) {
-				for (AnalyzerSymbol s: test) {
-					s.prob = s.prob / highest ;
-					if (s.prob<threshold) {
-						r.remove(s);
+		if (r.size()>0) {
+			SortedMap<Double,List<SequenceClassifierResult>> sort = new TreeMap<Double,List<SequenceClassifierResult>>();
+			for (SequenceClassifierResult res: r) {
+				res.probThreshold = res.prob / highest ;
+				if (threshold==0D || res.probThreshold>=threshold) {
+					List<SequenceClassifierResult> l = sort.get(res.prob);
+					if (l==null) {
+						l = new ArrayList<SequenceClassifierResult>();
+						sort.put(res.prob,l);
 					}
+					l.add(0,res);
+				}
+			}
+			r.clear();
+			for (Entry<Double,List<SequenceClassifierResult>> entry: sort.entrySet()) {
+				for (SequenceClassifierResult res: entry.getValue()) {
+					r.add(0,res);
 				}
 			}
 		}

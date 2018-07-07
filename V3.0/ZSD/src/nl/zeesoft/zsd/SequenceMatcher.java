@@ -2,6 +2,7 @@ package nl.zeesoft.zsd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -73,13 +74,9 @@ public class SequenceMatcher extends SequenceClassifier {
 	 */
 	public ZStringSymbolParser match(ZStringSymbolParser sequence,String context, boolean caseInsensitive) {
 		ZStringSymbolParser r = null;
-		double highest = 0D;
 		List<SequenceMatcherResult> list = getMatches(sequence,context,caseInsensitive);
-		for (SequenceMatcherResult s: list) {
-			if (s.prob>highest) {
-				highest = s.prob;
-				r = s.result.sequence;
-			}
+		if (list.size()>0) {
+			r = list.get(0).result.sequence;
 		}
 		return r;
 	}
@@ -235,14 +232,23 @@ public class SequenceMatcher extends SequenceClassifier {
 				}
 			}
 		}
-		if (r.size()>0 && threshold>0D) {
-			List<SequenceMatcherResult> test = new ArrayList<SequenceMatcherResult>(r);
-			if (threshold>0D) {
-				for (SequenceMatcherResult s: test) {
-					s.prob = s.prob / highest ;
-					if (s.prob<threshold) {
-						r.remove(s);
+		if (r.size()>0) {
+			SortedMap<Double,List<SequenceMatcherResult>> sort = new TreeMap<Double,List<SequenceMatcherResult>>();
+			for (SequenceMatcherResult res: r) {
+				res.probThreshold = res.prob / highest ;
+				if (threshold==0D || res.probThreshold>=threshold) {
+					List<SequenceMatcherResult> l = sort.get(res.prob);
+					if (l==null) {
+						l = new ArrayList<SequenceMatcherResult>();
+						sort.put(res.prob,l);
 					}
+					l.add(0,res);
+				}
+			}
+			r.clear();
+			for (Entry<Double,List<SequenceMatcherResult>> entry: sort.entrySet()) {
+				for (SequenceMatcherResult res: entry.getValue()) {
+					r.add(0,res);
 				}
 			}
 		}

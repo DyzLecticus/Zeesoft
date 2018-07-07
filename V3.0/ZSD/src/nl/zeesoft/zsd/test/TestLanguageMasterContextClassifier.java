@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.SequenceClassifier;
 import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
-import nl.zeesoft.zsd.sequence.AnalyzerSymbol;
+import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestLanguageMasterContextClassifier extends TestSequenceClassifier {
 	public TestLanguageMasterContextClassifier(Tester tester) {
@@ -44,10 +44,10 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 		testClassification(sc,sequence,false,expectedContext);
 		testClassification(sc,sequence,true,expectedContext);
 		System.out.println();
-		List<AnalyzerSymbol> contexts = sc.getContexts(sequence,true,threshold);
+		List<SequenceClassifierResult> contexts = sc.getContexts(sequence,true,threshold);
 		System.out.println("Context probabilities for '" + sequence + "', threshold: " + threshold);
-		for (AnalyzerSymbol context: contexts) {
-			System.out.println("'" + context.symbol + "': " + context.prob);
+		for (SequenceClassifierResult context: contexts) {
+			System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probThreshold);
 		}
 		assertEqual(contexts.size(),expectedContexts,"The classifier did not return the expected number of contexts");
 	}

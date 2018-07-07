@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.SequenceClassifier;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
-import nl.zeesoft.zsd.sequence.AnalyzerSymbol;
+import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestLanguageClassifier extends TestSequenceClassifier {
 	public TestLanguageClassifier(Tester tester) {
@@ -40,7 +40,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			sequence = new ZStringSymbolParser("twothousand");
 			testClassification(sc,sequence,true,"ENG");
 
-			List<AnalyzerSymbol> contexts = null;
+			List<SequenceClassifierResult> contexts = null;
 			double t = 0D;
 			sequence = new ZStringSymbolParser("wat is your name?");
 
@@ -48,8 +48,8 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			t = 0.3D;
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
-			for (AnalyzerSymbol context: contexts) {
-				System.out.println("'" + context.symbol + "': " + context.prob);
+			for (SequenceClassifierResult context: contexts) {
+				System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probThreshold);
 			}
 			assertEqual(contexts.size(),2,"The classifier did not return the expected number of contexts");
 
@@ -57,8 +57,8 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			t = 0.7D;
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
-			for (AnalyzerSymbol context: contexts) {
-				System.out.println("'" + context.symbol + "': " + context.prob);
+			for (SequenceClassifierResult context: contexts) {
+				System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probThreshold);
 			}
 			assertEqual(contexts.size(),1,"The classifier did not return the expected number of contexts");
 		}
