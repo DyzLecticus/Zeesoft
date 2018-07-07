@@ -98,6 +98,11 @@ public class Initializer extends Locker {
 		return r;
 	}
 	
+	/**
+	 * Returns true if the initialization is done.
+	 * 
+	 * @return True if the initialization is done
+	 */
 	public boolean isDone() {
 		boolean r = false;
 		lockMe(this);
@@ -107,7 +112,16 @@ public class Initializer extends Locker {
 		unlockMe(this);
 		return r;
 	}
-	
+
+	/**
+	 * Returns a copy of the list of classes.
+	 * 
+	 * @return A copy of the list of classes
+	 */
+	public List<InitializeClass> getClasses() {
+		return new ArrayList<InitializeClass>(classes);
+	}
+
 	protected boolean initializedClass(String name) {
 		boolean done = false;
 		InitializeClass cls = getClassByName(name);

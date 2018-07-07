@@ -35,7 +35,7 @@ public class LanguageCorrectorJsonGenerator {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		DialogToJson dc = new DialogToJson();
-		dc.addJsonForDialogs(json.rootElement,ds.getDialogs(),false,false);
+		dc.addJsonForDialogs(json.rootElement,ds.getDialogs(language),false,false);
 		List<String> languages = new ArrayList<String>();
 		languages.add(language);
 		EntityToJson ec = new EntityToJson();

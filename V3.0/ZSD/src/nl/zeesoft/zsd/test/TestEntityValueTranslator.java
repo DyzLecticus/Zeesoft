@@ -38,6 +38,7 @@ public class TestEntityValueTranslator extends TestObject {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestEntityValueTranslator.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockEntityValueTranslator.class));
 		System.out.println(" * " + getTester().getLinkForClass(EntityValueTranslator.class));
 		System.out.println();
 		System.out.println("**Test output**  ");

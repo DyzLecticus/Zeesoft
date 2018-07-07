@@ -82,6 +82,17 @@ public class ZSD extends LibraryObject {
 		if (langContEng.exists() && langContNld.exists()) {
 			tests.add(new TestLanguageMasterContextClassifier(getTester()));
 		}
+
+		if (langClas.exists() ||
+			langCorrEng.exists() ||
+			langCorrNld.exists() ||
+			langMastEng.exists() ||
+			langMastNld.exists() ||
+			langContEng.exists() ||
+			langContNld.exists()
+			) {
+			tests.add(new TestInterpreterConfiguration(getTester()));
+		}
 		
 		// Missing file warnings
 		if (!qna.exists()) {

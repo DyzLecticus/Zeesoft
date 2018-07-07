@@ -10,6 +10,7 @@ import nl.zeesoft.zsd.initialize.InitializerListener;
 
 public class TestInitializer extends TestObject implements InitializerListener {
 	private int initialized = 0;
+	private int errors = 0;
 	
 	public TestInitializer(Tester tester) {
 		super(tester);
@@ -54,15 +55,17 @@ public class TestInitializer extends TestObject implements InitializerListener {
 			sleep(100);
 		}
 		assertEqual(getInitialized(),2,"The number of initialized classes does not match expectation");
+		assertEqual(getErrors(),0,"The number of errors does not match expectation");
 	}
 
 	@Override
 	public void initializedClass(InitializeClass cls, boolean done) {
 		System.out.println("Initializing " + cls.name + " took " + cls.ms + " ms");
+		initialized++;
 		if (cls.error.length()>0) {
 			System.err.println(cls.error);
+			errors++;
 		}
-		initialized++;
 		if (done) {
 			System.out.println("Initialized all classes");
 		}
@@ -70,5 +73,9 @@ public class TestInitializer extends TestObject implements InitializerListener {
 	
 	protected int getInitialized() {
 		return initialized;
+	}
+
+	protected int getErrors() {
+		return errors;
 	}
 }

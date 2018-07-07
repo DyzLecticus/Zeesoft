@@ -41,8 +41,8 @@ public class TestLanguageCorrector extends TestObject {
 		if (err.length()==0) {
 			System.out.println("Sequentially initializing the language SymbolCorrector instances took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 
-			assertEqual(scEng.getLinkContextCounts().get(""),204896,"The total number of english links does not match expectation");
-			assertEqual(scNld.getLinkContextCounts().get(""),197935,"The total number of dutch links does not match expectation");
+			assertEqual(scEng.getLinkContextCounts().get(""),204712,"The total number of english links does not match expectation");
+			assertEqual(scNld.getLinkContextCounts().get(""),197779,"The total number of dutch links does not match expectation");
 			
 			System.out.println();
 			
@@ -50,10 +50,12 @@ public class TestLanguageCorrector extends TestObject {
 			ZStringSymbolParser corrected = new ZStringSymbolParser(sequence); 
 			scEng.correct(corrected);
 			System.out.println("'" + sequence + "' (ENG) => '" + corrected + "'");
+			assertEqual(corrected.toString(),"What is your name?","The correction does not match expectation");
 
 			corrected = new ZStringSymbolParser(sequence); 
 			scNld.correct(corrected);
 			System.out.println("'" + sequence + "' (NLD) => '" + corrected + "'");
+			assertEqual(corrected.toString(),"Wat is jouw naam?","The correction does not match expectation");
 		}
 	}
 }

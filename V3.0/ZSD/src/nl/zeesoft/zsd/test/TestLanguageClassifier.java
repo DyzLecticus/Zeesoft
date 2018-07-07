@@ -40,9 +40,9 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			testClassification(sc,sequence,false,"NLD");
 			testClassification(sc,sequence,true,"NLD");
 			sequence = new ZStringSymbolParser("what is name?");
-			testClassification(sc,sequence,false,"ENG");
+			testClassification(sc,sequence,true,"ENG");
 			sequence = new ZStringSymbolParser("twothousand");
-			testClassification(sc,sequence,false,"ENG");
+			testClassification(sc,sequence,true,"ENG");
 
 			List<AnalyzerSymbol> contexts = null;
 			double t = 0D;

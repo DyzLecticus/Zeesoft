@@ -61,7 +61,7 @@ public class EntityToJson {
 					cntxt = eo.getType();
 				}
 				TsvToJson.addSequenceElement(parent,
-					new ZStringBuilder(entry.getValue().externalValue + "."),
+					new ZStringBuilder(upperCaseFirst(entry.getValue().externalValue) + "."),
 					null,
 					new ZStringBuilder(cntxt)
 					);
@@ -92,5 +92,13 @@ public class EntityToJson {
 				}
 			}
 		}
+	}
+	
+	private String upperCaseFirst(String str) {
+		String r = str.substring(0,1).toUpperCase();
+		if (str.length()>1) {
+			r += str.substring(1).toLowerCase();
+		}
+		return r;
 	}
 }
