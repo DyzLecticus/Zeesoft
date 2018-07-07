@@ -5,12 +5,13 @@ import java.util.Date;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.SequenceClassifier;
+import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.util.LanguageContextJsonGenerator;
 
 public class TestLanguageContextClassifier extends TestLanguageMasterContextClassifier {
-	public static final String LANGUAGE_FILE_NAME_ENG	= "resources/" + LanguageContextJsonGenerator.FILE_NAME_PREFIX + EntityObject.LANG_ENG + "Generic.json";
-	public static final String LANGUAGE_FILE_NAME_NLD	= "resources/" + LanguageContextJsonGenerator.FILE_NAME_PREFIX + EntityObject.LANG_NLD + "Generic.json";
+	public static final String LANGUAGE_FILE_NAME_ENG	= "resources/" + LanguageContextJsonGenerator.FILE_NAME_PREFIX + EntityObject.LANG_ENG + Generic.MASTER_CONTEXT_GENERIC + ".json";
+	public static final String LANGUAGE_FILE_NAME_NLD	= "resources/" + LanguageContextJsonGenerator.FILE_NAME_PREFIX + EntityObject.LANG_NLD + Generic.MASTER_CONTEXT_GENERIC + ".json";
 	
 	public TestLanguageContextClassifier(Tester tester) {
 		super(tester);
