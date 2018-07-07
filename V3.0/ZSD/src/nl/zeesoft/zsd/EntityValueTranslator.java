@@ -434,7 +434,7 @@ public class EntityValueTranslator implements Initializable {
 	 * Adds all default entities to the list of entities.
 	 * This method is called by the constructor.
 	 */
-	public void addDefaultEntities() {
+	protected void addDefaultEntities() {
 		// Complex entities
 		entities.add(new EnglishName());
 		entities.add(new DutchName());

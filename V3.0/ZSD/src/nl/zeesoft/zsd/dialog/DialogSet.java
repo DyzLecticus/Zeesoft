@@ -14,8 +14,9 @@ import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericQnA;
 import nl.zeesoft.zsd.initialize.Initializable;
 
 public class DialogSet implements Initializable {
-	private DialogIdentity							identity		= new DialogIdentity();
-	private SortedMap<String,List<DialogObject>>	languageDialogs	= new TreeMap<String,List<DialogObject>>();
+	private DialogIdentity							identity				= new DialogIdentity();
+	private SortedMap<String,List<DialogObject>>	languageDialogs			= new TreeMap<String,List<DialogObject>>();
+	private SortedMap<String,List<String>>			languageMasterContexts	= new TreeMap<String,List<String>>();
 	
 	public void setIdentity(DialogIdentity identity) {
 		this.identity = identity;
@@ -28,7 +29,7 @@ public class DialogSet implements Initializable {
 	}
 	
 	public void initialize() {
-		for (DialogObject dialog: getDialogSet()) {
+		for (DialogObject dialog: getDefaultDialogs()) {
 			addDialog(dialog);
 		}
 	}
@@ -42,6 +43,14 @@ public class DialogSet implements Initializable {
 			languageDialogs.put(dialog.getLanguage(),dialogs);
 		}
 		dialogs.add(dialog);
+		List<String> masterContexts = languageMasterContexts.get(dialog.getLanguage());  
+		if (masterContexts==null) {
+			masterContexts = new ArrayList<String>();
+			languageMasterContexts.put(dialog.getLanguage(),masterContexts);
+		}
+		if (!masterContexts.contains(dialog.getMasterContext())) {
+			masterContexts.add(dialog.getMasterContext());
+		}
 	}
 
 	public List<DialogObject> getDialogs() {
@@ -82,7 +91,11 @@ public class DialogSet implements Initializable {
 		return r;
 	}
 
-	public List<DialogObject> getDialogSet() {
+	public SortedMap<String, List<String>> getLanguageMasterContexts() {
+		return languageMasterContexts;
+	}
+
+	protected List<DialogObject> getDefaultDialogs() {
 		List<DialogObject> r = new ArrayList<DialogObject>();
 		r.add(new EnglishGenericHandshake());
 		r.add(new EnglishGenericQnA());

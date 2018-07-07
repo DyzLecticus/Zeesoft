@@ -24,7 +24,7 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 
 	@Override
 	protected void describe() {
-		System.out.println("This test uses two JSON datasets to test language specific *SequenceClassifier* instances intended to be used as language specific master context classifiers.");
+		System.out.println("This test uses two JSON datasets to test language specific *SequenceClassifier* instances intended to be used as master context classifiers.");
 	}
 	
 	@Override
@@ -45,33 +45,20 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 			assertEqual(scEng.getLinkContextCounts().get(""),156,"The total number of english links does not match expectation");
 			assertEqual(scNld.getLinkContextCounts().get(""),184,"The total number of dutch links does not match expectation");
 
-			ZStringSymbolParser sequence = null;
-			List<AnalyzerSymbol> contexts = null;
-			double t = 0D;
-
-			sequence = new ZStringSymbolParser("Who are you?");
-			testClassification(scEng,sequence,false,"Generic");
-			testClassification(scEng,sequence,true,"Generic");
-			System.out.println();
-			t = 0.01D;
-			contexts = scEng.getContexts(sequence,true,t);
-			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
-			for (AnalyzerSymbol context: contexts) {
-				System.out.println("'" + context.symbol + "': " + context.prob);
-			}
-			assertEqual(contexts.size(),1,"The classifier did not return the expected number of contexts");
-
-			sequence = new ZStringSymbolParser("Wie ben jij?");
-			testClassification(scNld,sequence,false,"Generic");
-			testClassification(scNld,sequence,true,"Generic");
-			System.out.println();
-			t = 0.01D;
-			contexts = scNld.getContexts(sequence,true,t);
-			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
-			for (AnalyzerSymbol context: contexts) {
-				System.out.println("'" + context.symbol + "': " + context.prob);
-			}
-			assertEqual(contexts.size(),1,"The classifier did not return the expected number of contexts");
+			testSequenceClassification(scEng,new ZStringSymbolParser("Who are you?"),0.01D,"Generic",1);
+			testSequenceClassification(scNld,new ZStringSymbolParser("Wie ben jij?"),0.01D,"Generic",1);
 		}
+	}
+	
+	protected void testSequenceClassification(SequenceClassifier sc, ZStringSymbolParser sequence, double threshold, String expectedContext, int expectedContexts) {
+		testClassification(sc,sequence,false,expectedContext);
+		testClassification(sc,sequence,true,expectedContext);
+		System.out.println();
+		List<AnalyzerSymbol> contexts = sc.getContexts(sequence,true,threshold);
+		System.out.println("Context probabilities for '" + sequence + "', threshold: " + threshold);
+		for (AnalyzerSymbol context: contexts) {
+			System.out.println("'" + context.symbol + "': " + context.prob);
+		}
+		assertEqual(contexts.size(),expectedContexts,"The classifier did not return the expected number of contexts");
 	}
 }

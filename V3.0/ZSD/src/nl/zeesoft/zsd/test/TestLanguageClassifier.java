@@ -22,7 +22,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test uses a large JSON dataset to test a *SequenceClassifier* instance intended to be used a language classifier.");
+		System.out.println("This test uses a large JSON dataset to test a *SequenceClassifier* instance intended to be used as a language classifier.");
 	}
 	
 	@Override

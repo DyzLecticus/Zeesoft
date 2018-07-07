@@ -23,7 +23,7 @@ public class TestLanguageCorrector extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test uses two large JSON datasets to test language specific *SymbolCorrector* instances intended to be used as language correctors.");
+		System.out.println("This test uses two large JSON datasets to test language specific *SymbolCorrector* instances.");
 	}
 	
 	@Override
