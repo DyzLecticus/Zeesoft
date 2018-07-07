@@ -36,8 +36,6 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 
 			assertEqual(sc.getLinkContextCounts().get(""),488891,"The total number of links does not match expectation");
 			
-			System.out.println();
-
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wie ben jij?");
 			testClassification(sc,sequence,false,"NLD");
 			testClassification(sc,sequence,true,"NLD");

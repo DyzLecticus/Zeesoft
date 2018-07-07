@@ -2,6 +2,7 @@ package nl.zeesoft.zsd.test;
 
 import java.util.Date;
 
+import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -52,5 +53,22 @@ public class TestEntityToJson extends TestObject {
 		JsFile json = convertor.getJsonForEntities(t.getEntities(),"");
 		System.out.println("Converting " + json.rootElement.children.size() + " entity values took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		assertEqual(json.rootElement.children.size(),332223,"The number of children does not match expectation");
+		showJsonSample(json);
+	}
+	
+	protected void showJsonSample(JsFile json) {
+		JsFile sample = new JsFile();
+		sample.rootElement = new JsElem();
+		int i = 0;
+		for (JsElem elem: json.rootElement.children) {
+			sample.rootElement.children.add(elem);
+			i++;
+			if (i>=10) {
+				break;
+			}
+		}
+		System.out.println("");
+		System.out.println("Sample JSON;");
+		System.out.println("" + sample.toStringBuilderReadFormat());
 	}
 }

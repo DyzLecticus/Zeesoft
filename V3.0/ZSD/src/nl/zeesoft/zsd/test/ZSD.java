@@ -58,6 +58,7 @@ public class ZSD extends LibraryObject {
 		if (qna.exists()) {
 			tests.add(new TestInitializer(getTester()));
 		}
+		tests.add(new TestDialogToJson(getTester()));
 		File langClas = new File(TestLanguageClassifier.LANGUAGE_FILE_NAME);
 		if (langClas.exists()) {
 			tests.add(new TestLanguageClassifier(getTester()));
@@ -67,10 +68,19 @@ public class ZSD extends LibraryObject {
 		if (langCorrEng.exists() && langCorrNld.exists()) {
 			tests.add(new TestLanguageCorrector(getTester()));
 		}
+		File langMastEng = new File(TestLanguageMasterContextClassifier.LANGUAGE_FILE_NAME_ENG);
+		File langMastNld = new File(TestLanguageMasterContextClassifier.LANGUAGE_FILE_NAME_NLD);
+		if (langMastEng.exists() && langMastNld.exists()) {
+			tests.add(new TestLanguageMasterContextClassifier(getTester()));
+		}
 		if (!qna.exists()) {
 			System.out.println("Some tests were skipped because the NL QnA input file was not found: " + TestSequenceClassifier.QNA_FILE_NAME);
 		}
-		if (!langClas.exists() || !langCorrEng.exists() || !langCorrNld.exists()) {
+		if (!langClas.exists() ||
+			!langCorrEng.exists() ||
+			!langCorrNld.exists() ||
+			!langMastEng.exists() ||
+			!langMastNld.exists()) {
 			System.out.println("Some tests were skipped because the required JSON files were not found");
 		}
 	}
