@@ -7,4 +7,8 @@ public abstract class GenericHandshake extends Generic {
 	public static final String	VARIABLE_LASTNAME			= "lastName";
 	public static final String	VARIABLE_PREPOSITION		= "preposition";
 	public static final String	VARIABLE_FULLNAME			= "fullName";
+
+	public GenericHandshake() {
+		setContext(CONTEXT_GENERIC_HANDSHAKE);
+	}
 }

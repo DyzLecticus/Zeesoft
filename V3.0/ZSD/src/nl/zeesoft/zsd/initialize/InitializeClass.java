@@ -6,4 +6,5 @@ public class InitializeClass {
 	public String			fileName	= "";
 	public long				ms			= 0;
 	public Initializable	obj			= null;
+	public String 			error		= "";
 }

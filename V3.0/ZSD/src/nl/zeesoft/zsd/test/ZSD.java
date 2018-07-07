@@ -83,6 +83,7 @@ public class ZSD extends LibraryObject {
 			tests.add(new TestLanguageMasterContextClassifier(getTester()));
 		}
 		
+		// Missing file warnings
 		if (!qna.exists()) {
 			System.out.println("Some tests were skipped because the NL QnA input file was not found: " + TestSequenceClassifier.QNA_FILE_NAME);
 		}

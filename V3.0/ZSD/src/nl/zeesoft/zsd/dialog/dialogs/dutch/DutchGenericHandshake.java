@@ -5,12 +5,12 @@ import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.entity.complex.ComplexObject;
 
 public class DutchGenericHandshake extends GenericHandshake {
+	public DutchGenericHandshake() {
+		setLanguage(EntityObject.LANG_NLD);
+	}
+	
 	@Override
 	public void initialize() {
-		setLanguage(EntityObject.LANG_NLD);
-		setMasterContext(MASTER_CONTEXT_GENERIC);
-		setContext(CONTEXT_GENERIC_HANDSHAKE);
-		
 		addExample("Hallo. Mijn naam is {firstName} {preposition} {lastName}.","Hallo {fullName}.");
 		addExample("Hallo. Ik heet {firstName} {preposition} {lastName}.","Hallo {fullName}.");
 		addExample("Hallo, mijn naam is {firstName} {lastName}.","Hallo {fullName}.");

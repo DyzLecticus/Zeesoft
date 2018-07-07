@@ -4,12 +4,12 @@ import nl.zeesoft.zsd.dialog.dialogs.GenericQnA;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public class DutchGenericQnA extends GenericQnA {
+	public DutchGenericQnA() {
+		setLanguage(EntityObject.LANG_NLD);
+	}
+	
 	@Override
 	public void initialize() {
-		setLanguage(EntityObject.LANG_NLD);
-		setMasterContext(MASTER_CONTEXT_GENERIC);
-		setContext(CONTEXT_GENERIC_QNA);
-
 		addExample("Wat ben jij?","Ik ben een kunstmatig intelligente persoonlijk assistent.");
 
 		addExample("Wie heeft jouw software geschreven?","Mijn software is geschreven door André van der Zee.");

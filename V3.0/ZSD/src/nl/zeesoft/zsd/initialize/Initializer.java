@@ -39,6 +39,19 @@ public class Initializer extends Locker {
 	/**
 	 * Adds a class to the initializer.
 	 * 
+	 * @param cls The class to add
+	 */
+	public void addClass(InitializeClass cls) {
+		if (cls.obj!=null) {
+			classes.add(cls);
+			InitializerWorker worker = new InitializerWorker(getMessenger(),union,this,cls);
+			workers.add(worker);
+		}
+	}
+
+	/**
+	 * Adds a class to the initializer.
+	 * 
 	 * @param uniqueName The unique name of the class
 	 * @param obj The object to initialize
 	 * @param fileName The optional name of the file to use for initialization
@@ -132,9 +145,7 @@ public class Initializer extends Locker {
 			cls.className = className;
 			cls.obj = obj;
 			cls.fileName = fileName;
-			classes.add(cls);
-			InitializerWorker worker = new InitializerWorker(getMessenger(),union,this,cls);
-			workers.add(worker);
+			addClass(cls);
 		}
 	}
 }

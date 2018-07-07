@@ -1,26 +1,24 @@
 package nl.zeesoft.zsd.test;
 
-import nl.zeesoft.zdk.test.TestObject;
-import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsd.EntityValueTranslator;
-import nl.zeesoft.zsd.SequenceClassifier;
-import nl.zeesoft.zsd.initialize.InitializeClass;
-import nl.zeesoft.zsd.initialize.Initializer;
-import nl.zeesoft.zsd.initialize.InitializerListener;
+import java.util.List;
 
-public class TestInitializer extends TestObject implements InitializerListener {
-	private int initialized = 0;
-	
-	public TestInitializer(Tester tester) {
+import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zsd.dialog.DialogSet;
+import nl.zeesoft.zsd.initialize.InitializeClass;
+import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
+
+public class TestInterpreterConfiguration extends TestInitializer {
+	public TestInterpreterConfiguration(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestInitializer(new Tester())).test(args);
+		(new TestInterpreterConfiguration(new Tester())).test(args);
 	}
 
 	@Override
 	protected void describe() {
+		/*
 		System.out.println("This test shows how to use an *Initializer* instance to instantiate and initialize multiple classes simultaneously.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
@@ -36,39 +34,34 @@ public class TestInitializer extends TestObject implements InitializerListener {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestInitializer.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestInterpreterConfiguration.class));
 		System.out.println(" * " + getTester().getLinkForClass(Initializer.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test the time it takes to initialize two objects simultaneously.  ");
+		*/
 	}
 	
 	@Override
 	protected void test(String[] args) {
-		Initializer init = new Initializer();
-		init.addListener(this);
-		init.addClass("Classifier",SequenceClassifier.class.getName(),TestSequenceClassifier.QNA_FILE_NAME);
-		init.addClass("Translator",EntityValueTranslator.class.getName(),"");
-		init.start();
-		while (!init.isDone()) {
+		DialogSet ds = new DialogSet();
+		ds.initialize();
+		InterpreterConfiguration config = new InterpreterConfiguration(ds);
+		config.setBaseDir("resources/");
+		config.addListener(this);
+		List<InitializeClass> clss = config.getInitializeClasses();
+		for (InitializeClass cls: clss) {
+			if (cls.fileName.length()>0) {
+				System.out.println(cls.obj.getClass().getName() + "(" + cls.name + ") <= " + cls.fileName);
+			} else {
+				System.out.println(cls.obj.getClass().getName() + "(" + cls.name + ")");
+			}
+		}
+		System.out.println();
+		config.initialize();
+		while (!config.isDone()) {
 			sleep(100);
 		}
-		assertEqual(getInitialized(),2,"The number of initialized classes does not match expectation");
-	}
-
-	@Override
-	public void initializedClass(InitializeClass cls, boolean done) {
-		System.out.println("Initializing " + cls.name + " took " + cls.ms + " ms");
-		if (cls.error.length()>0) {
-			System.err.println(cls.error);
-		}
-		initialized++;
-		if (done) {
-			System.out.println("Initialized all classes");
-		}
-	}
-	
-	protected int getInitialized() {
-		return initialized;
+		assertEqual(getInitialized(),8,"The number of initialized classes does not match expectation");
 	}
 }

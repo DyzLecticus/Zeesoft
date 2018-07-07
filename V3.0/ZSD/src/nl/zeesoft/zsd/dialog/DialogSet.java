@@ -15,13 +15,20 @@ import nl.zeesoft.zsd.initialize.Initializable;
 
 public class DialogSet implements Initializable {
 	private DialogIdentity							identity				= new DialogIdentity();
+	private List<String>							languages				= new ArrayList<String>();
 	private SortedMap<String,List<DialogObject>>	languageDialogs			= new TreeMap<String,List<DialogObject>>();
 	private SortedMap<String,List<String>>			languageMasterContexts	= new TreeMap<String,List<String>>();
+
+	public DialogSet() {
+		for (DialogObject dialog: getDefaultDialogs()) {
+			addDialog(dialog);
+		}
+	}
 	
 	public void setIdentity(DialogIdentity identity) {
 		this.identity = identity;
 	}
-	
+
 	@Override
 	public void initialize(ZStringBuilder data) {
 		// TODO: Read identity and dialogs from JSON?
@@ -29,20 +36,22 @@ public class DialogSet implements Initializable {
 	}
 	
 	public void initialize() {
-		for (DialogObject dialog: getDefaultDialogs()) {
-			addDialog(dialog);
+		for (DialogObject dialog: getDialogs()) {
+			dialog.setIdentity(identity);
+			dialog.initialize();
 		}
 	}
 	
 	public void addDialog(DialogObject dialog) {
-		dialog.setIdentity(identity);
-		dialog.initialize();
 		List<DialogObject> dialogs = languageDialogs.get(dialog.getLanguage());
 		if (dialogs==null) {
 			dialogs = new ArrayList<DialogObject>();
 			languageDialogs.put(dialog.getLanguage(),dialogs);
 		}
 		dialogs.add(dialog);
+		if (!languages.contains(dialog.getLanguage())) {
+			languages.add(dialog.getLanguage());
+		}
 		List<String> masterContexts = languageMasterContexts.get(dialog.getLanguage());  
 		if (masterContexts==null) {
 			masterContexts = new ArrayList<String>();
@@ -91,10 +100,18 @@ public class DialogSet implements Initializable {
 		return r;
 	}
 
+	public DialogIdentity getIdentity() {
+		return identity;
+	}
+
+	public List<String> getLanguages() {
+		return languages;
+	}
+
 	public SortedMap<String, List<String>> getLanguageMasterContexts() {
 		return languageMasterContexts;
 	}
-
+	
 	protected List<DialogObject> getDefaultDialogs() {
 		List<DialogObject> r = new ArrayList<DialogObject>();
 		r.add(new EnglishGenericHandshake());

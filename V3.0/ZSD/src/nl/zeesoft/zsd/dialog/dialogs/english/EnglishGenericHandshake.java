@@ -5,12 +5,12 @@ import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.entity.complex.ComplexObject;
 
 public class EnglishGenericHandshake extends GenericHandshake {
+	public EnglishGenericHandshake() {
+		setLanguage(EntityObject.LANG_ENG);
+	}
+	
 	@Override
 	public void initialize() {
-		setLanguage(EntityObject.LANG_ENG);
-		setMasterContext(MASTER_CONTEXT_GENERIC);
-		setContext(CONTEXT_GENERIC_HANDSHAKE);
-		
 		addExample("Hello. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");
 		addExample("Hello, my name is {firstName} {lastName}.","Hello {fullName}.");
 		addExample("Hello. My name is {firstName}.","Hello {firstName}. What is your lastname?");

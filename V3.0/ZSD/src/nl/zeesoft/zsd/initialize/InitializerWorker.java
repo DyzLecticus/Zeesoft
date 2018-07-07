@@ -30,7 +30,7 @@ public class InitializerWorker extends Worker {
 		ZStringBuilder data = null;
 		if (cls.fileName.length()>0) {
 			data = new ZStringBuilder();
-			data.fromFile(cls.fileName);
+			cls.error = data.fromFile(cls.fileName);
 		}
 		cls.obj.initialize(data);
 		cls.ms = (new Date()).getTime() - started.getTime();
