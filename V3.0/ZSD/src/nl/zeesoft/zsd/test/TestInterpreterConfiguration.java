@@ -2,6 +2,7 @@ package nl.zeesoft.zsd.test;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
@@ -21,21 +22,20 @@ public class TestInterpreterConfiguration extends TestInitializer {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the Initializer");
-		System.out.println("Initializer init = new Initializer();");
+		System.out.println("// Create a DialogSet");
+		System.out.println("DialogSet ds = new DialogSet();");
+		System.out.println("// Initialize the DialogSet");
+		System.out.println("ds.initialize();");
+		System.out.println("// Create the InterpreterConfiguration");
+		System.out.println("InterpreterConfiguration config = new InterpreterConfiguration(ds);");
 		System.out.println("// Add a listener");
-		System.out.println("init.addListener(this);");
-		System.out.println("// Add a class to initialize");
-		System.out.println("init.addClass(\"uniqueName\",SequenceClassifier.class.getName(),\"" + TestSequenceClassifier.QNA_FILE_NAME + "\");");
+		System.out.println("config.addListener(this);");
 		System.out.println("// Start the initialization");
-		System.out.println("init.start();");
+		System.out.println("config.initialize();");
 		System.out.println("~~~~");
-		System.out.println();
-		getTester().describeMock(MockEntityValueTranslator.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestInterpreterConfiguration.class));
-		System.out.println(" * " + getTester().getLinkForClass(MockInterpreterConfiguration.class));
 		System.out.println(" * " + getTester().getLinkForClass(InterpreterConfiguration.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
@@ -62,5 +62,35 @@ public class TestInterpreterConfiguration extends TestInitializer {
 		}
 		assertEqual(getInitialized(),8,"The number of initialized classes does not match expectation");
 		assertEqual(getErrors(),0,"The number of errors does not match expectation");
+	}
+	
+	protected static InterpreterConfiguration getConfig(Tester tester) {
+		InterpreterConfiguration config = (InterpreterConfiguration) tester.getMockedObject(MockInterpreterConfiguration.class.getName());
+		TestInterpreterConfiguration tst = null;
+		for (TestObject test: tester.getTests()) {
+			if (test instanceof TestInterpreterConfiguration) {
+				tst = (TestInterpreterConfiguration) test;
+				break;
+			}
+		}
+		if (tst==null || tst.getInitialized()==0) {
+			System.out.println("Initializing the interpreter configuration ...");
+			config.initialize();
+			while (!config.isDone()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		for (InitializeClass cls: config.getClasses()) {
+			if (cls.error.length()>0) {
+				config = null;
+				break;
+			}
+		}
+		return config;
 	}
 }

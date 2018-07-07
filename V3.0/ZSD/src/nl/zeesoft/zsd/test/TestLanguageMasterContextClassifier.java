@@ -1,19 +1,15 @@
 package nl.zeesoft.zsd.test;
 
-import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.SequenceClassifier;
 import nl.zeesoft.zsd.entity.EntityObject;
+import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.AnalyzerSymbol;
-import nl.zeesoft.zsd.util.LanguageMasterContextJsonGenerator;
 
 public class TestLanguageMasterContextClassifier extends TestSequenceClassifier {
-	public static final String LANGUAGE_FILE_NAME_ENG = "resources/" + LanguageMasterContextJsonGenerator.FILE_NAME_PREFIX + EntityObject.LANG_ENG + ".json";
-	public static final String LANGUAGE_FILE_NAME_NLD = "resources/" + LanguageMasterContextJsonGenerator.FILE_NAME_PREFIX + EntityObject.LANG_NLD + ".json";
-	
 	public TestLanguageMasterContextClassifier(Tester tester) {
 		super(tester);
 	}
@@ -29,19 +25,13 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 	
 	@Override
 	protected void test(String[] args) {
-		Date started = new Date();
-		SequenceClassifier scEng = new SequenceClassifier();
-		SequenceClassifier scNld = new SequenceClassifier();
-		String err = "";
-		err = scEng.initialize(LANGUAGE_FILE_NAME_ENG);
-		assertEqual(err.length(),0,"Reading " + LANGUAGE_FILE_NAME_ENG + " produced an unexpected error");
-		if (err.length()==0) {
-			err = scNld.initialize(LANGUAGE_FILE_NAME_NLD);
-			assertEqual(err.length(),0,"Reading " + LANGUAGE_FILE_NAME_NLD + " produced an unexpected error");
-		}
-		if (err.length()==0) {
-			System.out.println("Sequentially initializing the master context SequenceClassifier instances took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-
+		InterpreterConfiguration config = TestInterpreterConfiguration.getConfig(getTester());
+		if (config==null) {
+			System.out.println("This test has been skipped due to configuration initialization failure");
+		} else {
+			SequenceClassifier scEng = config.getLanguageMasterContextClassifiers().get(EntityObject.LANG_ENG);
+			SequenceClassifier scNld = config.getLanguageMasterContextClassifiers().get(EntityObject.LANG_NLD);
+			
 			assertEqual(scEng.getLinkContextCounts().get(""),156,"The total number of english links does not match expectation");
 			assertEqual(scNld.getLinkContextCounts().get(""),184,"The total number of dutch links does not match expectation");
 

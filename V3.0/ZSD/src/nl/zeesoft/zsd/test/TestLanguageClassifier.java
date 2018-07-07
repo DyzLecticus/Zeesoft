@@ -1,17 +1,14 @@
 package nl.zeesoft.zsd.test;
 
-import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.SequenceClassifier;
+import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.AnalyzerSymbol;
-import nl.zeesoft.zsd.util.LanguageClassifierJsonGenerator;
 
 public class TestLanguageClassifier extends TestSequenceClassifier {
-	public static final String LANGUAGE_FILE_NAME = "resources/" + LanguageClassifierJsonGenerator.FILE_NAME;
-	
 	public TestLanguageClassifier(Tester tester) {
 		super(tester);
 	}
@@ -27,13 +24,12 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 	
 	@Override
 	protected void test(String[] args) {
-		Date started = new Date();
-		SequenceClassifier sc = new SequenceClassifier();
-		String err = sc.initialize(LANGUAGE_FILE_NAME);
-		assertEqual(err.length(),0,"Reading the file produced an unexpected error");
-		if (err.length()==0) {
-			System.out.println("Initializing the language SequenceClassifier took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-
+		InterpreterConfiguration config = TestInterpreterConfiguration.getConfig(getTester());
+		if (config==null) {
+			System.out.println("This test has been skipped due to configuration initialization failure");
+		} else {
+			SequenceClassifier sc = config.getLanguageClassifier();
+			
 			assertEqual(sc.getLinkContextCounts().get(""),488891,"The total number of links does not match expectation");
 			
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wie ben jij?");

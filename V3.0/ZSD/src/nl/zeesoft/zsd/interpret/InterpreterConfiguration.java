@@ -65,7 +65,7 @@ public class InterpreterConfiguration extends Initializer {
 			
 			for (String masterContext: dialogSet.getLanguageMasterContexts().get(language)) {
 				sc = new SequenceClassifier();
-				languageContextClassifiers.put(language,sc);
+				languageContextClassifiers.put(language + masterContext,sc);
 				r.add(getInitializeClassForSequenceClassifier(sc,LanguageContextJsonGenerator.FILE_NAME_PREFIX + language + masterContext + ".json"));
 			}
 		}

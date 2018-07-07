@@ -49,64 +49,29 @@ public class ZSD extends LibraryObject {
 		File qna = new File(TestSequenceClassifier.QNA_FILE_NAME);
 		tests.add(new TestTsvToJson(getTester()));
 		tests.add(new TestSymbolCorrector(getTester()));
+
 		if (qna.exists()) {
 			tests.add(new TestSequenceClassifier(getTester()));
 			tests.add(new TestSequenceMatcher(getTester()));
 		}
+		
 		tests.add(new TestEntityValueTranslator(getTester()));
+
 		tests.add(new TestEntityToJson(getTester()));
+		tests.add(new TestDialogToJson(getTester()));
+		
 		if (qna.exists()) {
 			tests.add(new TestInitializer(getTester()));
 		}
-		tests.add(new TestDialogToJson(getTester()));
 		
-		File langClas = new File(TestLanguageClassifier.LANGUAGE_FILE_NAME);
-		if (langClas.exists()) {
-			tests.add(new TestLanguageClassifier(getTester()));
-		}
+		tests.add(new TestInterpreterConfiguration(getTester()));
+		tests.add(new TestLanguageClassifier(getTester()));
+		tests.add(new TestLanguageCorrector(getTester()));
+		tests.add(new TestLanguageMasterContextClassifier(getTester()));
+		tests.add(new TestLanguageContextClassifier(getTester()));
 		
-		File langCorrEng = new File(TestLanguageCorrector.LANGUAGE_FILE_NAME_ENG);
-		File langCorrNld = new File(TestLanguageCorrector.LANGUAGE_FILE_NAME_NLD);
-		if (langCorrEng.exists() && langCorrNld.exists()) {
-			tests.add(new TestLanguageCorrector(getTester()));
-		}
-		
-		File langMastEng = new File(TestLanguageMasterContextClassifier.LANGUAGE_FILE_NAME_ENG);
-		File langMastNld = new File(TestLanguageMasterContextClassifier.LANGUAGE_FILE_NAME_NLD);
-		if (langMastEng.exists() && langMastNld.exists()) {
-			tests.add(new TestLanguageMasterContextClassifier(getTester()));
-		}
-		
-		File langContEng = new File(TestLanguageContextClassifier.LANGUAGE_FILE_NAME_ENG);
-		File langContNld = new File(TestLanguageContextClassifier.LANGUAGE_FILE_NAME_NLD);
-		if (langContEng.exists() && langContNld.exists()) {
-			tests.add(new TestLanguageMasterContextClassifier(getTester()));
-		}
-
-		if (langClas.exists() ||
-			langCorrEng.exists() ||
-			langCorrNld.exists() ||
-			langMastEng.exists() ||
-			langMastNld.exists() ||
-			langContEng.exists() ||
-			langContNld.exists()
-			) {
-			tests.add(new TestInterpreterConfiguration(getTester()));
-		}
-		
-		// Missing file warnings
 		if (!qna.exists()) {
 			System.out.println("Some tests were skipped because the NL QnA input file was not found: " + TestSequenceClassifier.QNA_FILE_NAME);
-		}
-		if (!langClas.exists() ||
-			!langCorrEng.exists() ||
-			!langCorrNld.exists() ||
-			!langMastEng.exists() ||
-			!langMastNld.exists() ||
-			!langContEng.exists() ||
-			!langContNld.exists()
-			) {
-			System.out.println("Some tests were skipped because the required JSON files were not found");
 		}
 	}
 }
