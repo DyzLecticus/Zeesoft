@@ -3,6 +3,7 @@ package nl.zeesoft.zsd.util;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
@@ -45,6 +46,13 @@ public class TsvToJson {
 		}
 		return r;
 	}
+
+	public static void checkAddSequenceElement(JsElem parent,ZStringBuilder input,ZStringBuilder output,ZStringBuilder context) {
+		ZStringSymbolParser seq = new ZStringSymbolParser(input);
+		if (checkSequence(seq)) {
+			addSequenceElement(parent,input,output,context);
+		}
+	}
 	
 	public static void addSequenceElement(JsElem parent,ZStringBuilder input,ZStringBuilder output,ZStringBuilder context) {
 		JsElem seqElem = new JsElem("sequence");
@@ -56,5 +64,20 @@ public class TsvToJson {
 		if (context!=null && context.length()>0) {
 			seqElem.children.add(new JsElem("context",context,true));
 		}
+	}
+
+	public static boolean checkSequence(ZStringSymbolParser sequence) {
+		boolean r = false;
+		List<String> symbols = sequence.toSymbolsPunctuated();
+		for (String symbol: symbols) {
+			if (!(symbol.startsWith("{") && symbol.endsWith("}")) &&
+				!ZStringSymbolParser.isLineEndSymbol(symbol) &&
+				!ZStringSymbolParser.isPunctuationSymbol(symbol)
+				) {
+				r = true;
+				break;
+			}
+		}
+		return r;
 	}
 }

@@ -1,4 +1,4 @@
-package nl.zeesoft.zsd.dialog.english;
+package nl.zeesoft.zsd.dialog.dialogs;
 
 import nl.zeesoft.zsd.dialog.DialogHandler;
 

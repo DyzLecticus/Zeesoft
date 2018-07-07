@@ -4,13 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.SequenceClassifier;
 import nl.zeesoft.zsd.sequence.AnalyzerSymbol;
 import nl.zeesoft.zsd.util.LanguageClassifierJsonGenerator;
 
-public class TestLanguageClassifier extends TestObject {
+public class TestLanguageClassifier extends TestSequenceClassifier {
 	public static final String LANGUAGE_FILE_NAME = "resources/" + LanguageClassifierJsonGenerator.FILE_NAME;
 	
 	public TestLanguageClassifier(Tester tester) {
@@ -35,8 +34,10 @@ public class TestLanguageClassifier extends TestObject {
 		if (err.length()==0) {
 			System.out.println("Initializing the language SequenceClassifier took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 
-			assertEqual(sc.getLinkContextCounts().get(""),488551,"The total number of links does not match expectation");
+			assertEqual(sc.getLinkContextCounts().get(""),488891,"The total number of links does not match expectation");
 			
+			System.out.println();
+
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wie ben jij?");
 			testClassification(sc,sequence,false,"NLD");
 			testClassification(sc,sequence,true,"NLD");
@@ -67,18 +68,5 @@ public class TestLanguageClassifier extends TestObject {
 			}
 			assertEqual(contexts.size(),1,"The classifier did not return the expected number of contexts");
 		}
-	}
-	
-	private void testClassification(SequenceClassifier sc,ZStringSymbolParser sequence,boolean caseInsensitive, String expectedContext) {
-		System.out.println();
-		Date started = new Date();
-		String context = sc.classify(sequence,caseInsensitive);
-		String ci = "";
-		if (caseInsensitive) {
-			ci = " (case insensitive)";
-		}
-		System.out.println("Classified sequence" + ci + ": '" + sequence + "' -> " + context);
-		System.out.println("Classifying the input sequence took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-		assertEqual(context,expectedContext,"The classifier did not return the expected context");
 	}
 }

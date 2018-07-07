@@ -6,13 +6,17 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public abstract class DialogObject {
-	private String								language			= "";
-	private String								masterContext		= "";
-	private String								context				= "";
-	private String								handlerClassName	= "";
+	public static final String					VARIABLE_NEXT_DIALOG	= "nextDialog";
 
-	private List<DialogIO>						examples			= new ArrayList<DialogIO>();
-	private SortedMap<String,DialogVariable>	variables			= new TreeMap<String,DialogVariable>();
+	private DialogIdentity						identity				= null;
+	
+	private String								language				= "";
+	private String								masterContext			= "";
+	private String								context					= "";
+	private String								handlerClassName		= "";
+
+	private List<DialogIO>						examples				= new ArrayList<DialogIO>();
+	private SortedMap<String,DialogVariable>	variables				= new TreeMap<String,DialogVariable>();
 
 	public abstract void initialize();
 	
@@ -25,9 +29,14 @@ public abstract class DialogObject {
 	}
 	
 	public DialogVariable addVariable(String name, String type) {
+		return addVariable(name,type,"");
+	}
+	
+	public DialogVariable addVariable(String name, String type,String complexName) {
 		DialogVariable r = new DialogVariable();
 		r.name = name;
 		r.type = type;
+		r.complexName = complexName;
 		variables.put(name,r);
 		return r;
 	}
@@ -60,6 +69,14 @@ public abstract class DialogObject {
 			e.printStackTrace();
 		}
 		return r;
+	}
+	
+	public DialogIdentity getIdentity() {
+		return identity;
+	}
+
+	public void setIdentity(DialogIdentity identity) {
+		this.identity = identity;
 	}
 
 	public String getLanguage() {

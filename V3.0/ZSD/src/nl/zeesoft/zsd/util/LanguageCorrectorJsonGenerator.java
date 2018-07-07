@@ -3,8 +3,10 @@ package nl.zeesoft.zsd.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.EntityValueTranslator;
+import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public class LanguageCorrectorJsonGenerator {
@@ -15,23 +17,32 @@ public class LanguageCorrectorJsonGenerator {
 			LanguageCorrectorJsonGenerator generator = new LanguageCorrectorJsonGenerator();
 			EntityValueTranslator t = new EntityValueTranslator();
 			t.initialize();
+			DialogSet ds = new DialogSet();
+			ds.initialize();
 			String err = "";
-			err = generator.generateEntityValueTranslator(t,EntityObject.LANG_ENG,args[0],true);
+			err = generator.generateEntityValueTranslator(t,ds,EntityObject.LANG_ENG,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
-			err = generator.generateEntityValueTranslator(t,EntityObject.LANG_NLD,args[0],true);
+			err = generator.generateEntityValueTranslator(t,ds,EntityObject.LANG_NLD,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	public String generateEntityValueTranslator(EntityValueTranslator t,String language,String directory,boolean readFormat) {
-		EntityToJson convertor = new EntityToJson();
+	public String generateEntityValueTranslator(EntityValueTranslator t,DialogSet ds,String language,String directory,boolean readFormat) {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		DialogToJson dc = new DialogToJson();
+		dc.addJsonForDialogs(json.rootElement,ds.getDialogs(),false,false);
 		List<String> languages = new ArrayList<String>();
 		languages.add(language);
-		JsFile json = convertor.getJsonForEntities(t.getEntities(languages,null),"");
+		EntityToJson ec = new EntityToJson();
+		ec.addJsonForEntities(json.rootElement,t.getEntities(languages,null),"",false);
+		if (!directory.endsWith("/") && !directory.endsWith("\\")) {
+			directory += "/";
+		}
 		String fileName = directory + FILE_NAME_PREFIX + language + ".json";
 		return json.toFile(fileName,readFormat);
 	}

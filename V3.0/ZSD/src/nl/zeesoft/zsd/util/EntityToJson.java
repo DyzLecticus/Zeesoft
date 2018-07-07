@@ -20,8 +20,8 @@ public class EntityToJson {
 	/**
 	 * Returns the JSON for the specified entities.
 	 * 
-	 * @param entities The list of entities.
-	 * @param context The optional context symbol.
+	 * @param entities The list of entities
+	 * @param context The optional context symbol
 	 * @return The JSON file
 	 */
 	public JsFile getJsonForEntities(List<EntityObject> entities,String context) {
@@ -31,14 +31,27 @@ public class EntityToJson {
 	/**
 	 * Returns the JSON for the specified entities.
 	 * 
-	 * @param entities The list of entities.
-	 * @param context The optional context symbol.
-	 * @param languageContext Indicates the entity language is to be used for context.
+	 * @param entities The list of entities
+	 * @param context The optional context symbol
+	 * @param languageContext Indicates the entity language is to be used for context
 	 * @return The JSON file
 	 */
 	public JsFile getJsonForEntities(List<EntityObject> entities,String context,boolean languageContext) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		addJsonForEntities(json.rootElement,entities,context,languageContext);
+		return json;
+	}
+	
+	/**
+	 * Adds the JSON for the specified entities.
+	 * 
+	 * @param parent The parent element to add JSON to
+	 * @param entities The list of entities
+	 * @param context The optional context symbol
+	 * @param languageContext Indicates the entity language is to be used for context
+	 */
+	public void addJsonForEntities(JsElem parent,List<EntityObject> entities,String context,boolean languageContext) {
 		String cntxt = context;
 		for (EntityObject eo: entities) {
 			for (Entry<String,EntityValue> entry: eo.getExternalValues().entrySet()) {
@@ -47,7 +60,7 @@ public class EntityToJson {
 				} else if (context.length()==0) {
 					cntxt = eo.getType();
 				}
-				TsvToJson.addSequenceElement(json.rootElement,
+				TsvToJson.addSequenceElement(parent,
 					new ZStringBuilder(entry.getValue().externalValue + "."),
 					null,
 					new ZStringBuilder(cntxt)
@@ -71,15 +84,13 @@ public class EntityToJson {
 					if (!ptn.containsOneOfCharacters(" ") && !ZStringSymbolParser.endsWithLineEndSymbol(ptn)) {
 						ptn.append(".");
 					}
-					TsvToJson.addSequenceElement(json.rootElement,
-						new ZStringBuilder(ptn),
+					TsvToJson.checkAddSequenceElement(parent,
+						ptn,
 						null,
 						new ZStringBuilder(cntxt)
 						);
 				}
 			}
 		}
-		return json;
 	}
-
 }

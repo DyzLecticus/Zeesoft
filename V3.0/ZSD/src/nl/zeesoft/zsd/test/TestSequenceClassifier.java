@@ -87,7 +87,7 @@ public class TestSequenceClassifier extends TestObject {
 		}
 	}
 	
-	private void testClassification(SequenceClassifier sc,ZStringSymbolParser sequence,boolean caseInsensitive, String expectedContext) {
+	protected void testClassification(SequenceClassifier sc,ZStringSymbolParser sequence,boolean caseInsensitive, String expectedContext) {
 		System.out.println();
 		Date started = new Date();
 		String context = sc.classify(sequence,caseInsensitive);

@@ -6,5 +6,6 @@ import java.util.List;
 public class DialogVariable {
 	public String					name		= "";
 	public String					type		= "";
+	public String					complexName	= "";
 	public List<DialogVariableQA>	examples	= new ArrayList<DialogVariableQA>();
 }
