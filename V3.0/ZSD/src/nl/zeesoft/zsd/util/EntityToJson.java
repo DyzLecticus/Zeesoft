@@ -60,11 +60,26 @@ public class EntityToJson {
 				} else if (context.length()==0) {
 					cntxt = eo.getType();
 				}
-				TsvToJson.addSequenceElement(parent,
-					new ZStringBuilder(upperCaseFirst(entry.getValue().externalValue) + "."),
-					null,
-					new ZStringBuilder(cntxt)
-					);
+				ZStringBuilder input = null;
+				if (eo.getToJsonPrefixes().size()==0 && eo.getToJsonSuffixes().size()==0) {
+					input = new ZStringBuilder(upperCaseFirst(entry.getValue().externalValue));
+					input.append(".");
+					TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
+				}
+				for (String prefix: eo.getToJsonPrefixes()) {
+					input = new ZStringBuilder(upperCaseFirst(prefix));
+					input.append(" ");
+					input.append(entry.getValue().externalValue);
+					input.append(".");
+					TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
+				}
+				for (String suffix: eo.getToJsonSuffixes()) {
+					input = new ZStringBuilder(upperCaseFirst(entry.getValue().externalValue));
+					input.append(" ");
+					input.append(suffix);
+					input.append(".");
+					TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
+				}
 			}
 			if (eo instanceof ComplexObject) {
 				ComplexObject co = (ComplexObject) eo;

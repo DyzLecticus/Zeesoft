@@ -51,6 +51,8 @@ public class DutchDate extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 
+		getToJsonPrefixes().add("op");
+		
 		DutchNumeric eoNumeric = (DutchNumeric) translator.getEntityObject(BaseConfiguration.LANG_NLD,BaseConfiguration.TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize(translator);

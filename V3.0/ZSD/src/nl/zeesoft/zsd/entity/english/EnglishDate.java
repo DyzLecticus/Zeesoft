@@ -51,6 +51,8 @@ public class EnglishDate extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 
+		getToJsonPrefixes().add("on");
+
 		EnglishNumeric eoNumeric = (EnglishNumeric) translator.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize(translator);

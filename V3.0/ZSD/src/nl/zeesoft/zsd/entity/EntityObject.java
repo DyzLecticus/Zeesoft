@@ -13,6 +13,9 @@ public abstract class EntityObject {
 	private String								internalValuePrefix	= "";
 	private SortedMap<String,EntityValue>		externalValues		= new TreeMap<String,EntityValue>();
 	private SortedMap<String,List<EntityValue>>	internalValues		= new TreeMap<String,List<EntityValue>>();
+
+	private List<String>						toJsonPrefixes		= new ArrayList<String>();			
+	private List<String>						toJsonSuffixes		= new ArrayList<String>();			
 	
 	public String getLanguage() {
 		return BaseConfiguration.LANG_UNI;
@@ -107,5 +110,13 @@ public abstract class EntityObject {
 
 	public SortedMap<String, EntityValue> getExternalValues() {
 		return externalValues;
+	}
+
+	public List<String> getToJsonPrefixes() {
+		return toJsonPrefixes;
+	}
+
+	public List<String> getToJsonSuffixes() {
+		return toJsonSuffixes;
 	}
 }

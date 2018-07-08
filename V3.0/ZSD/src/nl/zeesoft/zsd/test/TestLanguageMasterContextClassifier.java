@@ -32,8 +32,8 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 			SequenceClassifier scEng = config.getLanguageMasterContextClassifiers().get(BaseConfiguration.LANG_ENG);
 			SequenceClassifier scNld = config.getLanguageMasterContextClassifiers().get(BaseConfiguration.LANG_NLD);
 			
-			assertEqual(scEng.getLinkContextCounts().get(""),156,"The total number of english links does not match expectation");
-			assertEqual(scNld.getLinkContextCounts().get(""),184,"The total number of dutch links does not match expectation");
+			assertEqual(scEng.getKnownLinks().size(),176,"The total number of english links does not match expectation");
+			assertEqual(scNld.getKnownLinks().size(),198,"The total number of dutch links does not match expectation");
 
 			testSequenceClassification(scEng,new ZStringSymbolParser("Who are you?"),0.01D,"Generic",1);
 			System.out.println();
