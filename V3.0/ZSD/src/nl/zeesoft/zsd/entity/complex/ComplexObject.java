@@ -167,8 +167,12 @@ public abstract class ComplexObject extends EntityObject {
 		this.translator = translator;
 		this.ua = (UniversalAlphabetic) translator.getEntityObject(LANG_UNI,TYPE_ALPHABETIC);
 		for (ComplexPattern pattern: patterns) {
-			sequenceMatcher.setContext(pattern.context);
-			sequenceMatcher.addSequence(pattern.pattern);
+			List<String> contextSymbols = new ArrayList<String>();
+			contextSymbols.add(pattern.context);
+			if (!contextSymbols.contains("")) {
+				contextSymbols.add("");
+			}
+			sequenceMatcher.addSymbols(pattern.pattern.toSymbolsPunctuated(),contextSymbols);
 		}
 		sequenceMatcher.calculateProb();
 	}

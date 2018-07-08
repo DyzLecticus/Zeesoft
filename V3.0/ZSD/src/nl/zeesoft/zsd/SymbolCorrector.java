@@ -18,20 +18,26 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	/**
 	 * Returns the symbol bandwidth.
 	 * 
+	 * @param context The optional context symbol
 	 * @return The symbol bandwidth
 	 */
-	public double getSymbolBandwidth() {
-		return ((getSymbolMaxProb() - getSymbolMaxProb()) / 2D);
+	public double getSymbolContextBandwidth(String context) {
+		double r = 1D;
+		Double maxProb = getSymbolContextMaxProbs().get(context);
+		if (maxProb!=null) {
+			r = (maxProb - getSymbolContextMinProbs().get(context) / 2D);
+		}
+		return r;
 	}
 
 	/**
 	 * Returns the link context bandwidth.
 	 * 
-	 * @param context The context symbol
+	 * @param context The optional context symbol
 	 * @return The link context bandwidth
 	 */
 	public double getLinkContextBandwidth(String context) {
-		double r = getSymbolBandwidth();
+		double r = getSymbolContextBandwidth(context);
 		Double maxProb = getLinkContextMaxProbs().get(context);
 		if (maxProb!=null) {
 			r = (maxProb - getLinkContextMinProbs().get(context) / 2D);
@@ -61,7 +67,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 */
 	public String correct(String before,String symbol,String after,String context,double bandwidth) {
 		ZStringBuilder r = new ZStringBuilder(symbol);
-		if (!getKnownSymbols().containsKey(symbol)) {
+		if (!knownSymbolsContains(symbol,context)) {
 			double highest = 0D;
 			List<AnalyzerSymbol> cors = getCorrections(before,symbol,after,context,bandwidth);
 			for (AnalyzerSymbol s: cors) {
@@ -137,7 +143,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return a list of possible analyzer symbol corrections
 	 */
 	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context, double bandwidth) {
-		List<AnalyzerSymbol> r = getCorrections(symbol);
+		List<AnalyzerSymbol> r = getCorrections(symbol,context);
 		if (r.size()>1 && (before.length()>0 || after.length()>0)) {
 			if (before.length()>0) {
 				for (AnalyzerSymbol as: r) {
@@ -149,7 +155,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				}
 			}
 			if (after.length()>0) {
-				List<AnalyzerSymbol> afters = getCorrections(after);
+				List<AnalyzerSymbol> afters = getCorrections(after,context);
 				for (AnalyzerSymbol af: afters) {
 					for (AnalyzerSymbol as: r) {
 						SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(as.symbol,context,af.symbol));
@@ -170,27 +176,27 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param symbol The symbol to correct
 	 * @return a list of possible analyzer symbol corrections
 	 */
-	public List<AnalyzerSymbol> getCorrections(String symbol) {
+	public List<AnalyzerSymbol> getCorrections(String symbol,String context) {
 		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
-		if (getKnownSymbols().containsKey(symbol)) {
+		if (knownSymbolsContains(symbol,context)) {
 			AnalyzerSymbol s = new AnalyzerSymbol();
 			s.symbol = symbol;
 			s.prob = 1.0D;
 			r.add(s);
 		} else {
 			List<String> added = new ArrayList<String>();
-			List<ZStringBuilder> variations = generateVariations(symbol);
+			List<ZStringBuilder> variations = generateVariations(symbol,context);
 			for (ZStringBuilder var: variations) {
-				AnalyzerSymbol s = getKnownSymbols().get(var.toString());
+				AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
 				if (s!=null && !added.contains(s.symbol)) {
 					added.add(s.symbol);
 					r.add(s.copy());
 				}
 			}
 			if (r.size()==0) {
-				variations = addVariations(variations);
+				variations = addVariations(variations,context);
 				for (ZStringBuilder var: variations) {
-					AnalyzerSymbol s = getKnownSymbols().get(var.toString());
+					AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
 					if (s!=null && !added.contains(s.symbol)) {
 						added.add(s.symbol);
 						r.add(s.copy());
@@ -208,14 +214,14 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param symbol The symbol
 	 * @return The list of primary variations
 	 */
-	public List<ZStringBuilder> generateVariations(String symbol) {
+	public List<ZStringBuilder> generateVariations(String symbol,String context) {
 		List<ZStringBuilder> r = new ArrayList<ZStringBuilder>();
 		ZStringBuilder sym = new ZStringBuilder(symbol);
-		addAdditions(r,sym,true);
-		addDeletes(r,sym,true);
-		addSwitches(r,sym,true);
-		addReplacements(r,sym,true);
-		addCases(r,sym,true);
+		addAdditions(r,sym,context,true);
+		addDeletes(r,sym,context,true);
+		addSwitches(r,sym,context,true);
+		addReplacements(r,sym,context,true);
+		addCases(r,sym,context,true);
 		return r;
 	}
 
@@ -225,16 +231,16 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param variations The primary variations
 	 * @return The list of primary and secondary variations
 	 */
-	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations) {
+	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations,String context) {
 		List<ZStringBuilder> currentVariations = new ArrayList<ZStringBuilder>(variations);
 		int i = 0;
 		for (ZStringBuilder sym: currentVariations) {
-			addAdditions(variations,sym,false);
-			addDeletes(variations,sym,false);
-			addSwitches(variations,sym,false);
-			addReplacements(variations,sym,false);
-			addCases(variations,sym,false);
-			if (!getKnownSymbols().containsKey(sym.toString())) {
+			addAdditions(variations,sym,context,false);
+			addDeletes(variations,sym,context,false);
+			addSwitches(variations,sym,context,false);
+			addReplacements(variations,sym,context,false);
+			addCases(variations,sym,context,false);
+			if (!knownSymbolsContains(sym.toString(),context)) {
 				variations.remove(i);
 			} else {
 				i++;
@@ -243,14 +249,14 @@ public class SymbolCorrector extends SequenceAnalyzer {
 		return variations;
 	}
 
-	private void addAdditions(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
+	private void addAdditions(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force) {
 		for (int i = 0; i<symbol.length(); i++) {
 			for (int i2 = 0; i2<ALPHABET.length(); i2++) {
 				ZStringBuilder var = new ZStringBuilder();
 				if (i==0) {
 					var.append(ALPHABET.substring(i2,i2+1));
 					var.append(symbol);
-					if (force || getKnownSymbols().containsKey(var.toString())) {
+					if (force || knownSymbolsContains(var.toString(),context)) {
 						variations.add(var);
 					}
 				}
@@ -260,14 +266,14 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				if (symbol.length()>1) {
 					var.append(symbol.substring(i+1));
 				}
-				if (force || getKnownSymbols().containsKey(var.toString())) {
+				if (force || knownSymbolsContains(var.toString(),context)) {
 					variations.add(var);
 				}
 			}
 		}
 	}
 
-	private void addDeletes(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
+	private void addDeletes(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force) {
 		if (symbol.length()>1) {
 			for (int i = 0; i<symbol.length(); i++) {
 				ZStringBuilder var = new ZStringBuilder();
@@ -277,14 +283,14 @@ public class SymbolCorrector extends SequenceAnalyzer {
 					var.append(symbol.substring(0,i));
 					var.append(symbol.substring(i+1));
 				}
-				if (var.length()>0 && (force || getKnownSymbols().containsKey(var.toString()))) {
+				if (var.length()>0 && (force || knownSymbolsContains(var.toString(),context))) {
 					variations.add(var);
 				}
 			}
 		}
 	}
 
-	private void addSwitches(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
+	private void addSwitches(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force) {
 		if (symbol.length()>1) {
 			for (int i = 0; i<(symbol.length() - 1); i++) {
 				ZStringBuilder var = new ZStringBuilder();
@@ -294,14 +300,14 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				var.append(symbol.substring(i+1,i+2));
 				var.append(symbol.substring(i,i+1));
 				var.append(symbol.substring(i+2));
-				if (var.length()>0 && (force || getKnownSymbols().containsKey(var.toString()))) {
+				if (var.length()>0 && (force || knownSymbolsContains(var.toString(),context))) {
 					variations.add(var);
 				}
 			}
 		}
 	}
 	
-	private void addReplacements(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
+	private void addReplacements(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force) {
 		for (int i = 0; i<symbol.length(); i++) {
 			for (int i2 = 0; i2<ALPHABET.length(); i2++) {
 				ZStringBuilder var = new ZStringBuilder();
@@ -310,30 +316,30 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				if (symbol.length()>1) {
 					var.append(symbol.substring(i+1));
 				}
-				if (force || getKnownSymbols().containsKey(var.toString())) {
+				if (force || knownSymbolsContains(var.toString(),context)) {
 					variations.add(var);
 				}
 			}
 		}
 	}
 
-	private void addCases(List<ZStringBuilder> variations,ZStringBuilder symbol, boolean force) {
+	private void addCases(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force) {
 		ZStringBuilder var = null;
 		var = new ZStringBuilder(symbol);
 		var.toCase(true);
-		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+		if (!var.equals(symbol) && (force || knownSymbolsContains(var.toString(),context))) {
 			variations.add(var);
 		}
 		var = new ZStringBuilder(symbol);
 		var.toCase(false);
-		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+		if (!var.equals(symbol) && (force || knownSymbolsContains(var.toString(),context))) {
 			variations.add(var);
 		}
 		var = new ZStringBuilder(symbol.substring(0,1).toUpperCase());
 		if (symbol.length()>1) {
 			var.append(symbol.substring(1));
 		}
-		if (!var.equals(symbol) && (force || getKnownSymbols().containsKey(var.toString()))) {
+		if (!var.equals(symbol) && (force || knownSymbolsContains(var.toString(),context))) {
 			variations.add(var);
 		}
 	}

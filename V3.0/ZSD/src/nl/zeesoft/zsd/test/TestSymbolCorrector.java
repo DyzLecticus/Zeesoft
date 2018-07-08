@@ -57,10 +57,10 @@ public class TestSymbolCorrector extends TestObject {
 			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		} else {
 			sc.initialize(new ZStringSymbolParser(TEST_SEQUENCE));
-			assertEqual(sc.getSymbolCount(),110,"The total number of symbols does not match expectation");
+			assertEqual(sc.getSymbolContextCounts().get(""),110,"The total number of symbols does not match expectation");
 			assertEqual(sc.getLinkContextCounts().get(""),109,"The total number of links does not match expectation");
 			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual("" + sc.getKnownSymbols().get("the").prob,"0.045454545454545456","The probability of the word 'the' does not match expectation");
+			assertEqual("" + sc.getKnownSymbol("the","").prob,"0.045454545454545456","The probability of the word 'the' does not match expectation");
 			List<ZStringBuilder> variations = null;
 			variations = testVariations(sc,"a",1,80);
 			variations = testVariations(sc,"an",1,135);
@@ -109,10 +109,10 @@ public class TestSymbolCorrector extends TestObject {
 	}
 	
 	private List<ZStringBuilder> testVariations(SymbolCorrector sc,String test, int num, int expected, boolean debug) {
-		List<ZStringBuilder> variations = sc.generateVariations(test);
+		List<ZStringBuilder> variations = sc.generateVariations(test,"");
 		String single = "Single";
 		if (num==2) {
-			variations = sc.addVariations(variations);
+			variations = sc.addVariations(variations,"");
 			single = "Double";
 		}
 		System.out.println(single + " variations for '" + test + "'; " + variations.size());

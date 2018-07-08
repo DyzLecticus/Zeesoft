@@ -123,7 +123,7 @@ public class SequenceMatcher extends SequenceClassifier {
 		double highest = 0D;
 		for (String symbol: match.symbols) {
 			if (!matchSymbols.containsKey(symbol)) {
-				AnalyzerSymbol as = getKnownSymbols().get(symbol);
+				AnalyzerSymbol as = getKnownSymbol(symbol,context);
 				if (as!=null) {
 					matchSymbols.put(symbol,as);
 				}
@@ -131,21 +131,21 @@ public class SequenceMatcher extends SequenceClassifier {
 			if (caseInsensitive) {
 				String cased = symbol.toLowerCase();
 				if (!matchSymbols.containsKey(cased)) {
-					AnalyzerSymbol as = getKnownSymbols().get(cased);
+					AnalyzerSymbol as = getKnownSymbol(cased,context);
 					if (as!=null) {
 						matchSymbols.put(cased,as);
 					}
 				}
 				cased = symbol.toUpperCase();
 				if (!matchSymbols.containsKey(cased)) {
-					AnalyzerSymbol as = getKnownSymbols().get(cased);
+					AnalyzerSymbol as = getKnownSymbol(cased,context);
 					if (as!=null) {
 						matchSymbols.put(cased,as);
 					}
 				}
 				cased = upperCaseFirst(symbol);
 				if (!matchSymbols.containsKey(cased)) {
-					AnalyzerSymbol as = getKnownSymbols().get(cased);
+					AnalyzerSymbol as = getKnownSymbol(cased,context);
 					if (as!=null) {
 						matchSymbols.put(cased,as);
 					}
@@ -195,9 +195,9 @@ public class SequenceMatcher extends SequenceClassifier {
 						prob += ((bandwidth + (getLinkContextMaxProbs().get(link.context) - link.prob)) * (double)conseq);
 						if (foundCase) {
 							if (conseq==1) {
-								prob += (getSymbolMaxProb() - link.asFrom.prob);
+								prob += (getSymbolContextMaxProbs().get(link.context) - link.asFrom.prob);
 							}
-							prob += (getSymbolMaxProb() - link.asTo.prob);
+							prob += (getSymbolContextMaxProbs().get(link.context) - link.asTo.prob);
 						}
 						if (pSymbolTo.length()==0 || pSymbolTo.equals(link.symbolFrom) || (caseInsensitive && pSymbolTo.equalsIgnoreCase(link.symbolFrom))) {
 							conseq++;
@@ -216,7 +216,7 @@ public class SequenceMatcher extends SequenceClassifier {
 							AnalyzerSymbol as = matchSymbols.get(symbol);
 							if (as!=null) {
 								prob += bandwidth;
-								prob += (getSymbolMaxProb() - as.prob);
+								prob += (getSymbolContextMaxProbs().get(as.context) - as.prob);
 							}
 						}
 					}
@@ -256,13 +256,12 @@ public class SequenceMatcher extends SequenceClassifier {
 	}
 
 	@Override
-	public void addSymbols(List<String> symbols) {
-		super.addSymbols(symbols);
+	public void addSymbols(List<String> symbols,List<String> contextSymbols) {
+		super.addSymbols(symbols,contextSymbols);
 		ZStringSymbolParser sequence = new ZStringSymbolParser();
 		sequence.fromSymbols(symbols,true,true);
-		addSequence(sequence,getContext());
-		if (getContext().length()>0) {
-			addSequence(sequence,"");
+		for (String context: contextSymbols) {
+			addSequence(sequence,context);
 		}
 	}
 

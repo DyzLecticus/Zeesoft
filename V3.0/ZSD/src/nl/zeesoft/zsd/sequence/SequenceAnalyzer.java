@@ -6,8 +6,6 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.ZStringBuilder;
-
 /**
  * A SequenceAnalyzer can be used to learn context sensitive sequence symbol pair links.
  */
@@ -19,44 +17,18 @@ public class SequenceAnalyzer extends Analyzer {
 	private SortedMap<String,Double>							linkContextMaxProbs	= new TreeMap<String,Double>();
 	private SortedMap<String,Double>							linkContextMinProbs	= new TreeMap<String,Double>();
 
-	private String												context				= "";
-
-	/**
-	 * Returns the context used to associate additional sequences.
-	 * 
-	 * @return The context used to associate additional sequences
-	 */
-	public String getContext() {
-		return context;
-	}
-	
-	/**
-	 * Sets the context used to associate additional sequences.
-	 * 
-	 * @param context The context to set
-	 */
-	public void setContext(String context) {
-		this.context = context;
-	}
-
 	@Override
-	protected void handleContextSymbol(ZStringBuilder contextSymbol) {
-		context = contextSymbol.toString();
-	}
-
-	@Override
-	public void addSymbols(List<String> symbols) {
-		super.addSymbols(symbols);
-		int i = 0;
-		for (String symbol: symbols) {
-			if (symbols.size()>(i + 1)) {
-				String to = symbols.get(i + 1);
-				addOrUpdateLink(symbol,context,to);
-				if (context.length()>0) {
-					addOrUpdateLink(symbol,"",to);
+	public void addSymbols(List<String> symbols,List<String> contextSymbols) {
+		super.addSymbols(symbols,contextSymbols);
+		for (String context: contextSymbols) {
+			int i = 0;
+			for (String symbol: symbols) {
+				if (symbols.size()>(i + 1)) {
+					String to = symbols.get(i + 1);
+					addOrUpdateLink(symbol,context,to);
 				}
+				i++;
 			}
-			i++;
 		}
 	}
 	
@@ -100,8 +72,8 @@ public class SequenceAnalyzer extends Analyzer {
 				link.context = context;
 				link.symbolFrom = from;
 				link.symbolTo = to;
-				link.asFrom = getKnownSymbols().get(from);
-				link.asTo = getKnownSymbols().get(to);
+				link.asFrom = getKnownSymbol(from,context);
+				link.asTo = getKnownSymbol(to,context);
 				knownLinks.put(linkId,link);
 				
 				List<SequenceAnalyzerSymbolLink> list = null; 

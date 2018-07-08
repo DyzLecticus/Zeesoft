@@ -52,6 +52,6 @@ public class TestTsvToJson extends TestObject {
 		assertEqual(json.rootElement.children.size(),2,"The number of children does not match expectation");
 		Analyzer analyzer = new Analyzer();
 		analyzer.addSequence(new ZStringSymbolParser(json.toStringBuilder()));
-		assertEqual(analyzer.getKnownSymbols().size(),12,"The number of known symbols does not match expectation");
+		assertEqual(analyzer.getKnownSymbols().size(),28,"The number of known symbols does not match expectation");
 	}
 }

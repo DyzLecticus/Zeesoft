@@ -1,5 +1,6 @@
 package nl.zeesoft.zsd.sequence;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -15,13 +16,13 @@ import nl.zeesoft.zsd.initialize.Initializable;
  * An Analyzer can be used to parse sequences into a list of AnalyzerSymbols in order to obtain statistical information about the set of symbols.
  */
 public class Analyzer implements Initializable {
-	private String									ioSeparator		= "[OUTPUT]";	
+	private String									ioSeparator				= "[OUTPUT]";	
 
-	private SortedMap<String,AnalyzerSymbol> 		knownSymbols	= new TreeMap<String,AnalyzerSymbol>();
-	private int										symbolCount		= 0;
-	private double									symbolMaxProb	= 0.0D;
-	private double									symbolMinProb	= 1.0D;
-
+	private SortedMap<String,AnalyzerSymbol>		knownSymbols			= new TreeMap<String,AnalyzerSymbol>();		
+	private SortedMap<String,Integer>				symbolContextCounts		= new TreeMap<String,Integer>();
+	private SortedMap<String,Double>				symbolContextMaxProbs	= new TreeMap<String,Double>();
+	private SortedMap<String,Double>				symbolContextMinProbs	= new TreeMap<String,Double>();
+	
 	@Override
 	public void initialize(ZStringBuilder data) {
 		if (data!=null && data.length()>0) {
@@ -93,7 +94,7 @@ public class Analyzer implements Initializable {
 					for (JsElem seqElem: json.rootElement.children) {
 						ZStringBuilder input = seqElem.getChildValueByName("input");
 						ZStringBuilder output = seqElem.getChildValueByName("output");
-						ZStringBuilder context = seqElem.getChildValueByName("context");
+						ZStringSymbolParser context = new ZStringSymbolParser(seqElem.getChildValueByName("context"));
 						ZStringSymbolParser seq = new ZStringSymbolParser();
 						if (input!=null) {
 							seq.append(input);
@@ -103,12 +104,7 @@ public class Analyzer implements Initializable {
 								seq.append(" ");
 								seq.append(output);
 							}
-							if (context!=null) {
-								handleContextSymbol(context);
-							} else {
-								handleContextSymbol(new ZStringBuilder());
-							}
-							addSymbols(seq.toSymbolsPunctuated());
+							addSymbols(seq.toSymbolsPunctuated(),getContextSymbols(context));
 						}
 					}
 				}
@@ -126,27 +122,26 @@ public class Analyzer implements Initializable {
 								seq.append(ioSeparator);
 								seq.append(" ");
 								seq.append(sequences.get(1));
+								ZStringSymbolParser context = null;
 								if (sequences.size()>2) {
-									handleContextSymbol(sequences.get(2));
-								} else {
-									handleContextSymbol(new ZStringBuilder());
+									context = new ZStringSymbolParser(sequences.get(2));
 								}
-								addSymbols(seq.toSymbolsPunctuated());
+								addSymbols(seq.toSymbolsPunctuated(),getContextSymbols(context));
 							}
 						} else {
-							addSymbols((new ZStringSymbolParser(line)).toSymbolsPunctuated());
+							addSymbols((new ZStringSymbolParser(line)).toSymbolsPunctuated(),getContextSymbols(null));
 						}
 					}
 					l++;
 				}
 			} else {
-				addSymbols(sequence.toSymbolsPunctuated());
+				addSymbols(sequence.toSymbolsPunctuated(),getContextSymbols(null));
 			}
 		}
 	}
-
-	protected void handleContextSymbol(ZStringBuilder contextSymbol) {
-		// Override to implement
+	
+	public String getSymbolId(String symbol,String context) {
+		return context + "[]" + symbol;
 	}
 	
 	/**
@@ -156,39 +151,68 @@ public class Analyzer implements Initializable {
 	 * 
 	 * @param symbols The list of symbols
 	 */
-	public void addSymbols(List<String> symbols) {
+	public void addSymbols(List<String> symbols,List<String> contextSymbols) {
 		int size = symbols.size();
-		for (String symbol: symbols) {
-			if (!symbol.equals(ioSeparator)) {
-				AnalyzerSymbol count = knownSymbols.get(symbol);
-				if (count==null) {
-					count = new AnalyzerSymbol();
-					count.symbol = symbol;
-					knownSymbols.put(symbol,count);
+		for (String context: contextSymbols) {
+			for (String symbol: symbols) {
+				if (!symbol.equals(ioSeparator)) {
+					String id = getSymbolId(symbol,context);
+					AnalyzerSymbol as = knownSymbols.get(id);
+					if (as==null) {
+						as = new AnalyzerSymbol();
+						as.symbol = symbol;
+						as.context = context;
+						knownSymbols.put(id,as);
+					}
+					as.count++;
+				} else {
+					size--;
 				}
-				count.count++;
-			} else {
-				size--;
 			}
+			Integer count = symbolContextCounts.get(context);
+			if (count==null) {
+				count = new Integer(0);
+			}
+			count += size;
+			symbolContextCounts.put(context,count);
 		}
-		symbolCount += size;
 	}
 
 	/**
 	 * Calculates the known symbol probabilities.
 	 */
 	public void calculateProb() {
+		symbolContextMaxProbs.clear();
+		symbolContextMinProbs.clear();
 		for (Entry<String,AnalyzerSymbol> entry: knownSymbols.entrySet()) {
-			entry.getValue().prob = ((double)entry.getValue().count / (double)symbolCount);
-			if (entry.getValue().prob>symbolMaxProb) {
-				symbolMaxProb = entry.getValue().prob;
+			entry.getValue().prob = ((double)entry.getValue().count / (double)symbolContextCounts.get(entry.getValue().context));
+			Double maxProb = symbolContextMaxProbs.get(entry.getValue().context);
+			Double minProb = symbolContextMinProbs.get(entry.getValue().context);
+			if (maxProb==null){
+				maxProb = new Double(0);
 			}
-			if (entry.getValue().prob>symbolMinProb) {
-				symbolMinProb = entry.getValue().prob;
+			if (minProb==null){
+				minProb = new Double(1);
+			}
+			if (entry.getValue().prob>maxProb) {
+				maxProb = entry.getValue().prob;
+				symbolContextMaxProbs.put(entry.getValue().context,maxProb);
+			}
+			if (entry.getValue().prob<minProb) {
+				minProb = entry.getValue().prob;
+				symbolContextMinProbs.put(entry.getValue().context,minProb);
 			}
 		}
 	}
-	
+
+	public boolean knownSymbolsContains(String symbol,String context) {
+		return knownSymbols.containsKey(getSymbolId(symbol,context));
+	}
+
+	public AnalyzerSymbol getKnownSymbol(String symbol,String context) {
+		return knownSymbols.get(getSymbolId(symbol,context));
+	}
+
 	public SortedMap<String,AnalyzerSymbol> getKnownSymbols() {
 		return knownSymbols;
 	}
@@ -196,28 +220,39 @@ public class Analyzer implements Initializable {
 	public void setKnownSymbols(SortedMap<String,AnalyzerSymbol> knownSymbols) {
 		this.knownSymbols = knownSymbols;
 	}
-	
-	public int getSymbolCount() {
-		return symbolCount;
-	}
-	
-	public void setSymbolCount(int symbolCount) {
-		this.symbolCount = symbolCount;
-	}
-	
-	public double getSymbolMaxProb() {
-		return symbolMaxProb;
+
+	public SortedMap<String, Integer> getSymbolContextCounts() {
+		return symbolContextCounts;
 	}
 
-	public void setSymbolMaxProb(double maxSymbolProb) {
-		this.symbolMaxProb = maxSymbolProb;
-	}
-	
-	public double getSymbolMinProb() {
-		return symbolMinProb;
+	public void setSymbolContextCounts(SortedMap<String, Integer> symbolContextCounts) {
+		this.symbolContextCounts = symbolContextCounts;
 	}
 
-	public void setSymbolMinProb(double symbolMinProb) {
-		this.symbolMinProb = symbolMinProb;
+	public SortedMap<String, Double> getSymbolContextMaxProbs() {
+		return symbolContextMaxProbs;
+	}
+
+	public void setSymbolContextMaxProbs(SortedMap<String, Double> symbolContextMaxProbs) {
+		this.symbolContextMaxProbs = symbolContextMaxProbs;
+	}
+
+	public SortedMap<String, Double> getSymbolContextMinProbs() {
+		return symbolContextMinProbs;
+	}
+
+	public void setSymbolContextMinProbs(SortedMap<String, Double> symbolContextMinProbs) {
+		this.symbolContextMinProbs = symbolContextMinProbs;
+	}
+	
+	private List<String> getContextSymbols(ZStringSymbolParser context) {
+		List<String> r = new ArrayList<String>();
+		if (context!=null && context.trim().length()>0) {
+			r = context.toSymbolsPunctuated();
+		}
+		if (!r.contains("")) {
+			r.add("");
+		}
+		return r;
 	}
 }
