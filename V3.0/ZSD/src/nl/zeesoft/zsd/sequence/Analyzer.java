@@ -152,6 +152,7 @@ public class Analyzer implements Initializable {
 	 * Symbol probabilities must be recalculated after calling this method.
 	 * 
 	 * @param symbols The list of symbols
+	 * @param contextSymbols The list of context symbols
 	 */
 	public void addSymbols(List<String> symbols,List<String> contextSymbols) {
 		int size = symbols.size();

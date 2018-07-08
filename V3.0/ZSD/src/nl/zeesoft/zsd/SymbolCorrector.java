@@ -201,6 +201,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * Returns the analyzer symbol corrections list.
 	 * 
 	 * @param symbol The symbol to correct
+	 * @param context The optional context symbol
 	 * @return a list of possible analyzer symbol corrections
 	 */
 	public List<AnalyzerSymbol> getCorrections(String symbol,String context) {
@@ -239,6 +240,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * Generates primary variations for a certain symbol.
 	 * 
 	 * @param symbol The symbol
+	 * @param context The optional context symbol
 	 * @return The list of primary variations
 	 */
 	public List<ZStringBuilder> generateVariations(String symbol,String context) {
@@ -256,6 +258,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * Adds secondary variations to a list of primary variations.
 	 * 
 	 * @param variations The primary variations
+	 * @param context The optional context symbol
 	 * @return The list of primary and secondary variations
 	 */
 	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations,String context) {
