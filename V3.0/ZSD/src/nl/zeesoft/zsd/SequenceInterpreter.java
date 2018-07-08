@@ -20,23 +20,34 @@ public class SequenceInterpreter {
 	public InterpreterResponse interpretRequest(InterpreterRequest request) {
 		InterpreterResponse r = new InterpreterResponse(request);
 		
-		ZStringSymbolParser sequence = buildSequence(r);
-		String language = request.language;
-		String masterContext = request.masterContext;
-
-		if (request.checkLanguage) {
-			List<SequenceClassifierResult> contexts = configuration.getLanguageClassifier().getContexts(request.input,true,0.0D);
-			if (request.prompt.length()>0 && contexts.size()==0) {
-				contexts = configuration.getLanguageClassifier().getContexts(sequence,true,0.0D);
+		if (r.correctedInput.length()>0) {
+			ZStringSymbolParser sequence = buildSequence(r);
+			String language = request.language;
+			String masterContext = request.masterContext;
+	
+			if (request.checkLanguage) {
+				List<SequenceClassifierResult> contexts = configuration.getLanguageClassifier().getContexts(r.correctedInput,true,0.0D);
+				if (request.prompt.length()>0 && contexts.size()==0) {
+					contexts = configuration.getLanguageClassifier().getContexts(sequence,true,0.0D);
+				}
+				if (contexts.size()>0) {
+					r.responseLanguages = contexts;
+					language = contexts.get(0).symbol;
+				}
 			}
-			if (contexts.size()>0) {
-				r.responseLanguages = contexts;
-				language = contexts.get(0).symbol;
+			if (language.length()==0) {
+				language = configuration.getDialogSet().getIdentity().primaryLanguage;
 			}
-		}
-		if (language.length()>0) {
 			if (request.correctInput) {
-				ZStringSymbolParser correction = configuration.getLanguageClassifier().correct(r.correctedInput,language);
+				long stopAfterMs = r.numInputSymbols * configuration.getMaxMsPerSymbol();
+				long maxCorrect = configuration.getMaxMsPerSequence();
+				if (request.translateEntiyValues) {
+					maxCorrect = (maxCorrect / 3) * 2;
+				}
+				if (stopAfterMs	> maxCorrect) {
+					stopAfterMs = maxCorrect;
+				}
+				ZStringSymbolParser correction = configuration.getLanguageClassifier().correct(r.correctedInput,language,stopAfterMs);
 				if (!correction.equals(r.correctedInput)) {
 					r.correctedInput = correction;
 					sequence = buildSequence(r);
@@ -63,11 +74,8 @@ public class SequenceInterpreter {
 					}
 				}
 			}
-		}
-		
-		if (request.translateEntiyValues) {
-			List<String> languages = new ArrayList<String>(); 
-			if (language.length()>0) {
+			if (request.translateEntiyValues) {
+				List<String> languages = new ArrayList<String>(); 
 				languages.add(language);
 				languages.add(EntityObject.LANG_UNI);
 				ZStringSymbolParser translated = configuration.getEntityValueTranslator().translateToInternalValues(sequence, languages, request.translateEntityTypes,true);

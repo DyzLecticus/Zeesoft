@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.SequenceInterpreter;
+import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.interpret.InterpreterRequest;
 import nl.zeesoft.zsd.interpret.InterpreterResponse;
@@ -22,8 +23,7 @@ public class TestSequenceInterpreter extends TestInitializer {
 
 	@Override
 	protected void describe() {
-		/*
-		System.out.println("This test uses a lot of JSON files to initialize an *InterpreterConfiguration* instance.");
+		System.out.println("This test show how to use a *SequenceInterpreter* to process an *InterpreterRequest*.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -35,17 +35,26 @@ public class TestSequenceInterpreter extends TestInitializer {
 		System.out.println("InterpreterConfiguration config = new InterpreterConfiguration(ds);");
 		System.out.println("// Add a listener");
 		System.out.println("config.addListener(this);");
-		System.out.println("// Start the initialization");
+		System.out.println("// Start the initialization (and wait until it's done)");
 		System.out.println("config.initialize();");
+		System.out.println("// Create the sequence interpreter");
+		System.out.println("SequenceInterpreter interpreter = new SequenceInterpreter(config);");
+		System.out.println("// Create the interpreter request");
+		System.out.println("InterpreterRequest request = new InterpreterRequest(\"The optional output that prompted the input\",\"The input sequence\");");
+		System.out.println("// Use the interpreter to process the request");
+		System.out.println("InterpreterResponse response = interpreter.interpretRequest(request);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestSequenceInterpreter.class));
+		System.out.println(" * " + getTester().getLinkForClass(DialogSet.class));
 		System.out.println(" * " + getTester().getLinkForClass(InterpreterConfiguration.class));
+		System.out.println(" * " + getTester().getLinkForClass(InterpreterRequest.class));
+		System.out.println(" * " + getTester().getLinkForClass(InterpreterResponse.class));
+		System.out.println(" * " + getTester().getLinkForClass(SequenceInterpreter.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test the time it takes to initialize all objects simultaneously.  ");
-		*/
+		System.out.println("The output of this test shows several sequence interpreter requests and the corresponding responses.  ");
 	}
 	
 	@Override
@@ -55,19 +64,21 @@ public class TestSequenceInterpreter extends TestInitializer {
 			System.out.println("This test has been skipped due to configuration initialization failure");
 		} else {
 			SequenceInterpreter interpreter = new SequenceInterpreter(config);
-			testRequestResponse(interpreter,
+			testRequestResponse(interpreter,"",
 				"hallo",
 				"UNI_ABC:Hallo .");
-			testRequestResponse(interpreter,
+			testRequestResponse(interpreter,"",
 				"mijn naam si gekste der henkies",
-				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:si|NLD_NAM:firstName:UNI_ABC:si UNI_ABC:gekste|NLD_NAM:lastName:UNI_ABC:gekste NLD_PRE:6|UNI_ABC:der UNI_ABC:henkies.");
+				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:henkies.");
+			testRequestResponse(interpreter,"",
+				"wruio wwtiop wtwrpoi weptiwpipw ipwop eopipwqwrqqiop qwerqwer qrqpoqe qp qwpgsjkdbvhsdfkljjv",
+				"UNI_ABC:Wruio UNI_ABC:wwtiop UNI_ABC:wtwrpoi UNI_ABC:weptiwpipw UNI_ABC:ipwop UNI_ABC:eopipwqwrqqiop UNI_ABC:qwerqwer UNI_ABC:qrqpoqe UNI_ABC:qp UNI_ABC:qwpgsjkdbvhsdfkljjv .");
 		}
 	}
 
-	protected void testRequestResponse(SequenceInterpreter si,String input, String expectedTranslation) {
+	protected void testRequestResponse(SequenceInterpreter si,String prompt,String input, String expectedTranslation) {
 		Date started = new Date();	
-		InterpreterRequest request = new InterpreterRequest();
-		request.input.append(input);
+		InterpreterRequest request = new InterpreterRequest(prompt,input);
 		request.setAllActions(true);
 		InterpreterResponse response = si.interpretRequest(request);
 		showRequestResponse(response);

@@ -41,7 +41,7 @@ public class TestInitializer extends TestObject implements InitializerListener {
 		System.out.println(" * " + getTester().getLinkForClass(Initializer.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test the time it takes to initialize two objects simultaneously.  ");
+		System.out.println("The output of this test shows the time it takes to initialize two objects simultaneously.  ");
 	}
 	
 	@Override

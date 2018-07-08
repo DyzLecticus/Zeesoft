@@ -17,7 +17,7 @@ import nl.zeesoft.zsd.util.LanguageMasterContextJsonGenerator;
 
 public class InterpreterConfiguration extends Initializer {
 	private DialogSet								dialogSet							= null;
-	
+
 	private String									baseDir								= "base/";
 	private String									overrideDir							= "override/";
 	
@@ -26,6 +26,9 @@ public class InterpreterConfiguration extends Initializer {
 	private SortedMap<String,SequenceClassifier>	languageContextClassifiers			= new TreeMap<String,SequenceClassifier>();
 	private EntityValueTranslator					entityValueTranslator				= null;
 
+	private long									maxMsPerSymbol						= 50;
+	private long									maxMsPerSequence					= 2000;
+	
 	public InterpreterConfiguration(DialogSet dialogSet) {
 		this.dialogSet = dialogSet;
 	}
@@ -120,6 +123,22 @@ public class InterpreterConfiguration extends Initializer {
 
 	public void setLanguageContextClassifiers(SortedMap<String, SequenceClassifier> languageContextClassifiers) {
 		this.languageContextClassifiers = languageContextClassifiers;
+	}
+
+	public long getMaxMsPerSymbol() {
+		return maxMsPerSymbol;
+	}
+
+	public void setMaxMsPerSymbol(long maxMsPerSymbol) {
+		this.maxMsPerSymbol = maxMsPerSymbol;
+	}
+
+	public long getMaxMsPerSequence() {
+		return maxMsPerSequence;
+	}
+
+	public void setMaxMsPerSequence(long maxMsPerSequence) {
+		this.maxMsPerSequence = maxMsPerSequence;
 	}
 
 	private InitializeClass getInitializeClassForSequenceClassifier(SequenceClassifier sc,String fileName) {

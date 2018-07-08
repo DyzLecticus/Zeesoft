@@ -20,6 +20,28 @@ public class InterpreterRequest {
 	public boolean				translateEntiyValues	= false;
 	public List<String>			translateEntityTypes	= new ArrayList<String>();
 
+	public InterpreterRequest() {
+		
+	}
+	
+	public InterpreterRequest(ZStringSymbolParser input) {
+		this.input = input;
+	}
+	
+	public InterpreterRequest(ZStringSymbolParser prompt,ZStringSymbolParser input) {
+		this.prompt = prompt;
+		this.input = input;
+	}
+
+	public InterpreterRequest(String input) {
+		this.input.append(input);
+	}
+	
+	public InterpreterRequest(String prompt,String input) {
+		this.prompt.append(prompt);
+		this.input.append(input);
+	}
+	
 	public void setAllActions(boolean value) {
 		checkLanguage = value;
 		correctInput = value;

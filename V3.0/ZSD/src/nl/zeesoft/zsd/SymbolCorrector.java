@@ -1,10 +1,12 @@
 package nl.zeesoft.zsd;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsd.entity.UniversalNumeric;
 import nl.zeesoft.zsd.sequence.AnalyzerSymbol;
 import nl.zeesoft.zsd.sequence.SequenceAnalyzer;
 import nl.zeesoft.zsd.sequence.SequenceAnalyzerSymbolLink;
@@ -87,7 +89,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence) {
-		return correct(sequence,"",getLinkContextBandwidth(""));
+		return correct(sequence,"",getLinkContextBandwidth(""),0);
 	}
 	
 	/**
@@ -98,7 +100,19 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context) {
-		return correct(sequence,context,getLinkContextBandwidth(context));
+		return correct(sequence,context,getLinkContextBandwidth(context),0);
+	}
+
+	/**
+	 * Returns the correction for a certain symbol sequence.
+	 * 
+	 * @param sequence The sequence to correct
+	 * @param context The optional context symbol to limit symbol link usage
+	 * @param stopAfterMs The optional amount of milliseconds after which the function will stop correcting
+	 * @return The corrected sequence
+	 */
+	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context,long stopAfterMs) {
+		return correct(sequence,context,getLinkContextBandwidth(context),stopAfterMs);
 	}
 
 	/**
@@ -107,9 +121,12 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param sequence The sequence to correct
 	 * @param context The optional context symbol to limit symbol link usage
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
+	 * @param stopAfterMs The optional amount of milliseconds after which the function will stop correcting
 	 * @return The corrected sequence
 	 */
-	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context,double bandwidth) {
+	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context,double bandwidth,long stopAfterMs) {
+		Date started = new Date();
+		ZStringSymbolParser r = new ZStringSymbolParser();
 		List<String> symbols = sequence.toSymbolsPunctuated();
 		List<String> corrected = new ArrayList<String>();
 		String before = "";
@@ -119,16 +136,26 @@ public class SymbolCorrector extends SequenceAnalyzer {
 			if (symbols.size()>(i + 1)) {
 				after = symbols.get(i + 1);
 			}
-			if (symbol.length()== 1 && (ZStringSymbolParser.isLineEndSymbol(symbol) || ZStringSymbolParser.isPunctuationSymbol(symbol))) {
+			if (UniversalNumeric.isNumeric(symbol)) {
+				corrected.add(symbol);
+			} else if (symbol.length()== 1 && (ZStringSymbolParser.isLineEndSymbol(symbol) || ZStringSymbolParser.isPunctuationSymbol(symbol))) {
 				corrected.add(symbol);
 			} else {
 				corrected.add(correct(before,symbol,after,context,bandwidth));
 			}
 			i++;
 			before = symbol;
+			if (stopAfterMs>0 && ((new Date()).getTime() - started.getTime())>=stopAfterMs) {
+				break;
+			}
 		}
-		sequence.fromSymbols(corrected,true,true);
-		return sequence;
+		if (i<symbols.size()) {
+			for (int a = i; a < symbols.size(); a++) {
+				corrected.add(symbols.get(a));
+			}
+		}
+		r.fromSymbols(corrected,true,true);
+		return r;
 	}
 
 	/**

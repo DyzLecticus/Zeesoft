@@ -8,6 +8,7 @@ import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class InterpreterResponse {
 	public InterpreterRequest				request					= null;
+	public int								numInputSymbols			= 0;
 	
 	public List<SequenceClassifierResult>	responseLanguages		= new ArrayList<SequenceClassifierResult>();
 	public ZStringSymbolParser				correctedInput			= new ZStringSymbolParser();
@@ -23,10 +24,13 @@ public class InterpreterResponse {
 		correctedInput = new ZStringSymbolParser(request.input);
 		correctedInput.trim();
 		if (correctedInput.length()>0) {
-			correctedInput.fromSymbols(correctedInput.toSymbolsPunctuated(),true,true);
+			List<String> symbols = correctedInput.toSymbolsPunctuated();
+			numInputSymbols = symbols.size();
+			correctedInput.fromSymbols(symbols,true,true);
 			String end = correctedInput.substring(correctedInput.length() - 1,correctedInput.length());
 			if (!ZStringSymbolParser.isLineEndSymbol(end)) {
 				correctedInput.append(".");
+				numInputSymbols++;
 			}
 		}
 		if (request.masterContext.length()>0) {

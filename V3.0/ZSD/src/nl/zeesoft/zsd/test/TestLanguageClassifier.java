@@ -34,13 +34,12 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			assertEqual(sc.getLinkContextCounts().get(""),488891,"The total number of links does not match expectation");
 			
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat is your name?");
-			ZStringSymbolParser corrected = new ZStringSymbolParser(sequence); 
-			sc.correct(corrected,EntityObject.LANG_ENG);
+			ZStringSymbolParser corrected = null; 
+			corrected = sc.correct(sequence,EntityObject.LANG_ENG);
 			System.out.println("'" + sequence + "' (ENG) => '" + corrected + "'");
 			assertEqual(corrected.toString(),"What is your name?","The correction does not match expectation");
 
-			corrected = new ZStringSymbolParser(sequence); 
-			sc.correct(corrected,EntityObject.LANG_NLD);
+			corrected = sc.correct(sequence,EntityObject.LANG_NLD);
 			System.out.println("'" + sequence + "' (NLD) => '" + corrected + "'");
 			assertEqual(corrected.toString(),"Wat is jouw naam?","The correction does not match expectation");
 			

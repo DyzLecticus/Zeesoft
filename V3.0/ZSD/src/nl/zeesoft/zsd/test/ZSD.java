@@ -68,7 +68,8 @@ public class ZSD extends LibraryObject {
 		tests.add(new TestLanguageClassifier(getTester()));
 		tests.add(new TestLanguageMasterContextClassifier(getTester()));
 		tests.add(new TestLanguageContextClassifier(getTester()));
-		
+		tests.add(new TestSequenceInterpreter(getTester()));
+
 		if (!qna.exists()) {
 			System.out.println("Some tests were skipped because the NL QnA input file was not found: " + TestSequenceClassifier.QNA_FILE_NAME);
 		}

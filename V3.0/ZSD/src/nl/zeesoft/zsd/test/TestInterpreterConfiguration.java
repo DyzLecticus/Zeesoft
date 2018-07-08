@@ -4,6 +4,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 
@@ -36,10 +37,11 @@ public class TestInterpreterConfiguration extends TestInitializer {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestInterpreterConfiguration.class));
+		System.out.println(" * " + getTester().getLinkForClass(DialogSet.class));
 		System.out.println(" * " + getTester().getLinkForClass(InterpreterConfiguration.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test the time it takes to initialize all objects simultaneously.  ");
+		System.out.println("The output of this test shows the time it takes to initialize all objects simultaneously.  ");
 	}
 	
 	@Override
