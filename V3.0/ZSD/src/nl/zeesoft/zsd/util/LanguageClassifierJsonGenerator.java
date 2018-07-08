@@ -1,5 +1,6 @@
 package nl.zeesoft.zsd.util;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.EntityValueTranslator;
@@ -15,14 +16,14 @@ public class LanguageClassifierJsonGenerator {
 			t.initialize();
 			DialogSet ds = new DialogSet();
 			ds.initialize();
-			String err = generator.generateEntityValueTranslator(t,ds,args[0],true);
+			ZStringBuilder err = generator.generateEntityValueTranslator(t,ds,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	public String generateEntityValueTranslator(EntityValueTranslator t,DialogSet ds,String directory,boolean readFormat) {
+	public ZStringBuilder generateEntityValueTranslator(EntityValueTranslator t,DialogSet ds,String directory,boolean readFormat) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		DialogToJson dc = new DialogToJson();

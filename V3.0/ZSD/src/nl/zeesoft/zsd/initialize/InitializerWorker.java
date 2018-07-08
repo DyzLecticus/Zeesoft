@@ -33,12 +33,12 @@ public class InitializerWorker extends Worker {
 		if (cls.fileNames.size()>0) {
 			for (String fileName: cls.fileNames) {
 				ZStringBuilder content = new ZStringBuilder();
-				String err = content.fromFile(fileName);
+				ZStringBuilder err = content.fromFile(fileName);
 				if (err.length()>0) {
 					if (cls.errors.length()>0) {
 						cls.errors.append("\n");
 					}
-					cls.errors.append(err);
+					cls.errors.append(err.getStringBuilder());
 				} else {
 					if (data==null) {
 						data = new ArrayList<ZStringBuilder>();

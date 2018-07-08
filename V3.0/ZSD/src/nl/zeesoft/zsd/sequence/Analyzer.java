@@ -56,9 +56,9 @@ public class Analyzer implements Initializable {
 	 * @param fileName The full name of the file
 	 * @return An error message if applicable
 	 */
-	public String initialize(String fileName) {
+	public ZStringBuilder initialize(String fileName) {
 		ZStringSymbolParser parser = new ZStringSymbolParser();
-		String err = parser.fromFile(fileName);
+		ZStringBuilder err = parser.fromFile(fileName);
 		if (err.length()==0) {
 			addSequence(parser);
 			calculateProb();

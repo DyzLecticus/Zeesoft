@@ -52,7 +52,7 @@ public class TestSymbolCorrector extends TestObject {
 		Date started = new Date();
 		SymbolCorrector sc = new SymbolCorrector();
 		if (args!=null && args.length>1 && args[1].length()>0) {
-			String err = sc.initialize(args[1]);
+			ZStringBuilder err = sc.initialize(args[1]);
 			assertEqual(err.length(),0,"Reading the file produced an unexpected error");
 			System.out.println("Initializing the SymbolCorrector took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		} else {

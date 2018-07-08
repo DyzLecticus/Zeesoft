@@ -3,6 +3,7 @@ package nl.zeesoft.zsd.test;
 import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -46,7 +47,7 @@ public class TestSequenceMatcher extends TestObject {
 	protected void test(String[] args) {
 		Date started = new Date();
 		SequenceMatcher sm = new SequenceMatcher();
-		String err = sm.initialize(TestSequenceClassifier.QNA_FILE_NAME);
+		ZStringBuilder err = sm.initialize(TestSequenceClassifier.QNA_FILE_NAME);
 		assertEqual(err.length(),0,"Reading the file produced an unexpected error");
 		if (err.length()==0) {
 			System.out.println("Initializing the SequenceMatcher took: " + ((new Date()).getTime() - started.getTime()) + " ms");

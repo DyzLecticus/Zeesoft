@@ -31,7 +31,7 @@ public class InterpreterResponse {
 			List<String> symbols = correctedInput.toSymbolsPunctuated();
 			numInputSymbols = symbols.size();
 			correctedInput.fromSymbols(symbols,true,true);
-			String end = correctedInput.substring(correctedInput.length() - 1,correctedInput.length());
+			String end = correctedInput.substring(correctedInput.length() - 1,correctedInput.length()).toString();
 			if (!ZStringSymbolParser.isLineEndSymbol(end)) {
 				correctedInput.append(".");
 				numInputSymbols++;
@@ -67,11 +67,11 @@ public class InterpreterResponse {
 				debugLog.append("\n");
 			}
 			ZDate ts = new ZDate();
-			debugLog.append(ts.getDateTimeString());
+			debugLog.append(ts.getTimeString(true).getStringBuilder());
 			debugLog.append(": ");
-			debugLog.append(line);
+			debugLog.append(line.getStringBuilder());
 			if (value.length()>0) {
-				debugLog.append(value);
+				debugLog.append(value.getStringBuilder());
 			}
 		}
 	}

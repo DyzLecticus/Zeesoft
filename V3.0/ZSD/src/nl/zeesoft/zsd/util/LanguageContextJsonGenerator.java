@@ -1,5 +1,6 @@
 package nl.zeesoft.zsd.util;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.DialogSet;
@@ -13,15 +14,15 @@ public class LanguageContextJsonGenerator {
 			DialogSet ds = new DialogSet();
 			ds.initialize();
 			BaseConfiguration base = new BaseConfiguration();
-			String err = generator.generateLanguageDialogs(base,ds,args[0],true);
+			ZStringBuilder err = generator.generateLanguageDialogs(base,ds,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	public String generateLanguageDialogs(BaseConfiguration base,DialogSet ds,String directory,boolean readFormat) {
-		String err = "";
+	public ZStringBuilder generateLanguageDialogs(BaseConfiguration base,DialogSet ds,String directory,boolean readFormat) {
+		ZStringBuilder err = new ZStringBuilder();
 		for (String language: base.getSupportedLanguages()) {
 			err = generateLanguageDialogs(base,ds,language,directory,readFormat);
 			if (err.length()>0) {
@@ -31,8 +32,8 @@ public class LanguageContextJsonGenerator {
 		return err;
 	}
 	
-	private String generateLanguageDialogs(BaseConfiguration base,DialogSet ds,String language,String directory,boolean readFormat) {
-		String err = "";
+	private ZStringBuilder generateLanguageDialogs(BaseConfiguration base,DialogSet ds,String language,String directory,boolean readFormat) {
+		ZStringBuilder err = new ZStringBuilder();
 		if (!directory.endsWith("/") && !directory.endsWith("\\")) {
 			directory += "/";
 		}

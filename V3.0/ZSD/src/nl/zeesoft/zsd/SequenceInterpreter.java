@@ -91,9 +91,10 @@ public class SequenceInterpreter {
 				languages.add(language);
 				languages.add(BaseConfiguration.LANG_UNI);
 				r.addDebugLogLine("Translate sequence: ",sequence);
-				ZStringSymbolParser translated = configuration.getEntityValueTranslator().translateToInternalValues(sequence, languages, request.translateEntityTypes,true);
+				ZStringSymbolParser translated = configuration.getEntityValueTranslator().translateToInternalValues(sequence,languages,request.translateEntityTypes,true);
 				if (request.prompt.length()>0) {
-					r.entityValueTranslation = new ZStringSymbolParser(translated.split(configuration.getLanguageClassifier().getIoSeparator()).get(1));
+					ZStringSymbolParser translatedPrompt = configuration.getEntityValueTranslator().translateToInternalValues(request.prompt,languages,request.translateEntityTypes,true);
+					r.entityValueTranslation = new ZStringSymbolParser(translated.substring(translatedPrompt.length()));
 				} else {
 					r.entityValueTranslation = translated;
 				}
@@ -108,8 +109,6 @@ public class SequenceInterpreter {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		if (response.request.prompt.length()>0) {
 			r.append(response.request.prompt);
-			r.append(" ");
-			r.append(configuration.getLanguageClassifier().getIoSeparator());
 			r.append(" ");
 		}
 		r.append(response.correctedInput);

@@ -365,7 +365,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 		if (!var.equals(symbol) && (force || knownSymbolsContains(var.toString(),context))) {
 			variations.add(var);
 		}
-		var = new ZStringBuilder(symbol.substring(0,1).toUpperCase());
+		var = new ZStringBuilder(symbol.substring(0,1).toCase(false));
 		if (symbol.length()>1) {
 			var.append(symbol.substring(1));
 		}

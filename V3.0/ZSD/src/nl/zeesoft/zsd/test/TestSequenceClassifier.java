@@ -3,6 +3,7 @@ package nl.zeesoft.zsd.test;
 import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -48,7 +49,7 @@ public class TestSequenceClassifier extends TestObject {
 	protected void test(String[] args) {
 		Date started = new Date();
 		SequenceClassifier sc = new SequenceClassifier();
-		String err = sc.initialize(QNA_FILE_NAME);
+		ZStringBuilder err = sc.initialize(QNA_FILE_NAME);
 		assertEqual(err.length(),0,"Reading the file produced an unexpected error");
 		if (err.length()==0) {
 			System.out.println("Initializing the SequenceClassifier took: " + ((new Date()).getTime() - started.getTime()) + " ms");
