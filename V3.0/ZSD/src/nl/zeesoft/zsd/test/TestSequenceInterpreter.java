@@ -43,7 +43,6 @@ public class TestSequenceInterpreter extends TestInitializer {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestSequenceInterpreter.class));
-		System.out.println(" * " + getTester().getLinkForClass(DialogSet.class));
 		System.out.println(" * " + getTester().getLinkForClass(InterpreterConfiguration.class));
 		System.out.println(" * " + getTester().getLinkForClass(InterpreterRequest.class));
 		System.out.println(" * " + getTester().getLinkForClass(InterpreterResponse.class));

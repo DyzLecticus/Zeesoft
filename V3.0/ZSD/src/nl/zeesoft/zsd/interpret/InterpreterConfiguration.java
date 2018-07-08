@@ -23,7 +23,7 @@ public class InterpreterConfiguration extends Initializer {
 	private SortedMap<String,SequenceClassifier>	languageContextClassifiers			= new TreeMap<String,SequenceClassifier>();
 	private EntityValueTranslator					entityValueTranslator				= null;
 
-	private long									maxMsPerSymbol						= 50;
+	private long									maxMsPerSymbol						= 100;
 	private long									maxMsPerSequence					= 2000;
 
 	public InterpreterConfiguration() {
