@@ -27,6 +27,7 @@ public class BaseConfiguration {
 	public static final String					TYPE_NAME				= "NAM";
 
 	private List<String>						languages				= new ArrayList<String>();
+	private SortedMap<String,List<String>>		masterContexts			= new TreeMap<String,List<String>>();
 
 	private String								name					= "Dyz Lecticus";
 	private String								primaryLanguage			= BaseConfiguration.LANG_ENG;
@@ -49,6 +50,10 @@ public class BaseConfiguration {
 
 	public List<String> getLanguages() {
 		return languages;
+	}
+
+	public SortedMap<String, List<String>> getMasterContexts() {
+		return masterContexts;
 	}
 
 	public String getName() {
@@ -105,6 +110,7 @@ public class BaseConfiguration {
 		languages.add(LANG_UNI);
 		supportedLanguages = getInitialSupportedLanguages();
 		for (String language: supportedLanguages) {
+			masterContexts.put(language,getMasterContextsForLanguage(language));
 			supportedMasterContexts.put(language,getSupportedMasterContextsForLanguage(language));
 		}
 	}
@@ -116,6 +122,12 @@ public class BaseConfiguration {
 		return r;
 	}
 	
+	protected List<String> getMasterContextsForLanguage(String language) {
+		List<String> r = new ArrayList<String>();
+		r.add(Generic.MASTER_CONTEXT_GENERIC);
+		return r;
+	}
+
 	protected List<String> getSupportedMasterContextsForLanguage(String language) {
 		List<String> r = new ArrayList<String>();
 		r.add(Generic.MASTER_CONTEXT_GENERIC);

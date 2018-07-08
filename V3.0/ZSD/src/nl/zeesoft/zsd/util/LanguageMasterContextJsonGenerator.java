@@ -13,18 +13,26 @@ public class LanguageMasterContextJsonGenerator {
 			DialogSet ds = new DialogSet();
 			ds.initialize();
 			String err = "";
-			err = generator.generateLanguageDialogs(ds,BaseConfiguration.LANG_ENG,args[0],true);
-			if (err.length()>0) {
-				System.err.println(err);
-			}
-			err = generator.generateLanguageDialogs(ds,BaseConfiguration.LANG_NLD,args[0],true);
+			BaseConfiguration base = new BaseConfiguration();
+			err = generator.generateLanguageDialogs(ds,base,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	public String generateLanguageDialogs(DialogSet ds,String language,String directory,boolean readFormat) {
+	public String generateLanguageDialogs(DialogSet ds,BaseConfiguration base,String directory,boolean readFormat) {
+		String err = "";
+		for (String language: base.getSupportedLanguages()) {
+			err = generateLanguageDialogs(ds,language,directory,readFormat);
+			if (err.length()>0) {
+				break;
+			}
+		}
+		return err;
+	}
+	
+	private String generateLanguageDialogs(DialogSet ds,String language,String directory,boolean readFormat) {
 		DialogToJson convertor = new DialogToJson();
 		JsFile json = convertor.getJsonForDialogs(ds.getDialogs(language),false,true);
 		if (!directory.endsWith("/") && !directory.endsWith("\\")) {

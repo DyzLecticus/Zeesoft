@@ -1,7 +1,5 @@
 package nl.zeesoft.zsd.util;
 
-import java.util.List;
-
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.DialogSet;
@@ -14,26 +12,32 @@ public class LanguageContextJsonGenerator {
 			LanguageContextJsonGenerator generator = new LanguageContextJsonGenerator();
 			DialogSet ds = new DialogSet();
 			ds.initialize();
-			String err = "";
-			err = generator.generateLanguageDialogs(ds,BaseConfiguration.LANG_ENG,args[0],true);
-			if (err.length()>0) {
-				System.err.println(err);
-			}
-			err = generator.generateLanguageDialogs(ds,BaseConfiguration.LANG_NLD,args[0],true);
+			BaseConfiguration base = new BaseConfiguration();
+			String err = generator.generateLanguageDialogs(base,ds,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	public String generateLanguageDialogs(DialogSet ds,String language,String directory,boolean readFormat) {
+	public String generateLanguageDialogs(BaseConfiguration base,DialogSet ds,String directory,boolean readFormat) {
+		String err = "";
+		for (String language: base.getSupportedLanguages()) {
+			err = generateLanguageDialogs(base,ds,language,directory,readFormat);
+			if (err.length()>0) {
+				break;
+			}
+		}
+		return err;
+	}
+	
+	private String generateLanguageDialogs(BaseConfiguration base,DialogSet ds,String language,String directory,boolean readFormat) {
 		String err = "";
 		if (!directory.endsWith("/") && !directory.endsWith("\\")) {
 			directory += "/";
 		}
 		DialogToJson convertor = new DialogToJson();
-		List<String> masterContexts = ds.getLanguageMasterContexts().get(language);
-		for (String masterContext: masterContexts) {
+		for (String masterContext: base.getSupportedMasterContexts().get(language)) {
 			JsFile json = convertor.getJsonForDialogs(ds.getDialogs(language,masterContext),false,false);
 			String fileName = directory + FILE_NAME_PREFIX + language + masterContext + ".json";
 			err = json.toFile(fileName,readFormat);
