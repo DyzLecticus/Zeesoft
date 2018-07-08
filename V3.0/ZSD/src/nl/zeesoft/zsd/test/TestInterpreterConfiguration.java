@@ -60,7 +60,7 @@ public class TestInterpreterConfiguration extends TestInitializer {
 		while (!config.isDone()) {
 			sleep(100);
 		}
-		assertEqual(getInitialized(),8,"The number of initialized classes does not match expectation");
+		assertEqual(getInitialized(),clss.size(),"The number of initialized classes does not match expectation");
 		assertEqual(getErrors(),0,"The number of errors does not match expectation");
 	}
 	

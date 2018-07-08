@@ -36,7 +36,7 @@ public class SequenceInterpreter {
 		}
 		if (language.length()>0) {
 			if (request.correctInput) {
-				ZStringSymbolParser correction = configuration.getLanguageCorrectors().get(language).correct(r.correctedInput,language);
+				ZStringSymbolParser correction = configuration.getLanguageClassifier().correct(r.correctedInput,language);
 				if (!correction.equals(r.correctedInput)) {
 					r.correctedInput = correction;
 					sequence = buildSequence(r);

@@ -5,6 +5,7 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.SequenceClassifier;
+import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
@@ -32,12 +33,27 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			
 			assertEqual(sc.getLinkContextCounts().get(""),488891,"The total number of links does not match expectation");
 			
-			ZStringSymbolParser sequence = new ZStringSymbolParser("Wie ben jij?");
+			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat is your name?");
+			ZStringSymbolParser corrected = new ZStringSymbolParser(sequence); 
+			sc.correct(corrected,EntityObject.LANG_ENG);
+			System.out.println("'" + sequence + "' (ENG) => '" + corrected + "'");
+			assertEqual(corrected.toString(),"What is your name?","The correction does not match expectation");
+
+			corrected = new ZStringSymbolParser(sequence); 
+			sc.correct(corrected,EntityObject.LANG_NLD);
+			System.out.println("'" + sequence + "' (NLD) => '" + corrected + "'");
+			assertEqual(corrected.toString(),"Wat is jouw naam?","The correction does not match expectation");
+			
+			sequence = new ZStringSymbolParser("Wie ben jij?");
+			System.out.println();
 			testClassification(sc,sequence,false,"NLD");
+			System.out.println();
 			testClassification(sc,sequence,true,"NLD");
 			sequence = new ZStringSymbolParser("what is name?");
+			System.out.println();
 			testClassification(sc,sequence,true,"ENG");
 			sequence = new ZStringSymbolParser("twothousand");
+			System.out.println();
 			testClassification(sc,sequence,true,"ENG");
 
 			List<SequenceClassifierResult> contexts = null;

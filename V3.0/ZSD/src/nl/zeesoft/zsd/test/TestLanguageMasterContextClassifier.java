@@ -36,12 +36,14 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 			assertEqual(scNld.getLinkContextCounts().get(""),184,"The total number of dutch links does not match expectation");
 
 			testSequenceClassification(scEng,new ZStringSymbolParser("Who are you?"),0.01D,"Generic",1);
+			System.out.println();
 			testSequenceClassification(scNld,new ZStringSymbolParser("Wie ben jij?"),0.01D,"Generic",1);
 		}
 	}
 	
 	protected void testSequenceClassification(SequenceClassifier sc, ZStringSymbolParser sequence, double threshold, String expectedContext, int expectedContexts) {
 		testClassification(sc,sequence,false,expectedContext);
+		System.out.println();
 		testClassification(sc,sequence,true,expectedContext);
 		System.out.println();
 		List<SequenceClassifierResult> contexts = sc.getContexts(sequence,true,threshold);

@@ -66,7 +66,6 @@ public class ZSD extends LibraryObject {
 		
 		tests.add(new TestInterpreterConfiguration(getTester()));
 		tests.add(new TestLanguageClassifier(getTester()));
-		tests.add(new TestLanguageCorrector(getTester()));
 		tests.add(new TestLanguageMasterContextClassifier(getTester()));
 		tests.add(new TestLanguageContextClassifier(getTester()));
 		

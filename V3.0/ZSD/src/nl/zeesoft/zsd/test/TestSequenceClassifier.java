@@ -56,11 +56,15 @@ public class TestSequenceClassifier extends TestObject {
 			assertEqual(sc.getLinkContextCounts().get(""),204474,"The total number of links does not match expectation");
 			
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat kost dat?");
+			System.out.println();
 			testClassification(sc,sequence,false,"nlPrivatebankingBetalen");
+			System.out.println();
 			testClassification(sc,sequence,true,"nlPriveKinderenengeldzaken");
 			sequence = new ZStringSymbolParser("Waar kan ik mijn transacties zien?");
+			System.out.println();
 			testClassification(sc,sequence,false,"nlGrootzakelijkProducten");
 			sequence = new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering");
+			System.out.println();
 			testClassification(sc,sequence,false,"nlPriveVerzekeren");
 			
 			List<SequenceClassifierResult> contexts = null;
@@ -88,7 +92,6 @@ public class TestSequenceClassifier extends TestObject {
 	}
 	
 	protected void testClassification(SequenceClassifier sc,ZStringSymbolParser sequence,boolean caseInsensitive, String expectedContext) {
-		System.out.println();
 		Date started = new Date();
 		String context = sc.classify(sequence,caseInsensitive);
 		String ci = "";

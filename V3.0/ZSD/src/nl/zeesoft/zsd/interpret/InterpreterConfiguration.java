@@ -8,13 +8,11 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequenceClassifier;
-import nl.zeesoft.zsd.SymbolCorrector;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.Initializer;
 import nl.zeesoft.zsd.util.LanguageClassifierJsonGenerator;
 import nl.zeesoft.zsd.util.LanguageContextJsonGenerator;
-import nl.zeesoft.zsd.util.LanguageCorrectorJsonGenerator;
 import nl.zeesoft.zsd.util.LanguageMasterContextJsonGenerator;
 
 public class InterpreterConfiguration extends Initializer {
@@ -24,7 +22,6 @@ public class InterpreterConfiguration extends Initializer {
 	private String									overrideDir							= "override/";
 	
 	private SequenceClassifier						languageClassifier					= null;
-	private SortedMap<String,SymbolCorrector>		languageCorrectors					= new TreeMap<String,SymbolCorrector>();
 	private SortedMap<String,SequenceClassifier>	languageMasterContextClassifiers	= new TreeMap<String,SequenceClassifier>();
 	private SortedMap<String,SequenceClassifier>	languageContextClassifiers			= new TreeMap<String,SequenceClassifier>();
 	private EntityValueTranslator					entityValueTranslator				= null;
@@ -56,10 +53,6 @@ public class InterpreterConfiguration extends Initializer {
 		
 		for (String language: dialogSet.getLanguages()) {
 			SequenceClassifier sc = new SequenceClassifier();
-			languageCorrectors.put(language,sc);
-			r.add(getInitializeClassForSequenceClassifier(sc,LanguageCorrectorJsonGenerator.FILE_NAME_PREFIX + language + ".json"));
-
-			sc = new SequenceClassifier();
 			languageMasterContextClassifiers.put(language,sc);
 			r.add(getInitializeClassForSequenceClassifier(sc,LanguageMasterContextJsonGenerator.FILE_NAME_PREFIX + language + ".json"));
 			
@@ -110,14 +103,6 @@ public class InterpreterConfiguration extends Initializer {
 
 	public void setLanguageClassifier(SequenceClassifier languageClassifier) {
 		this.languageClassifier = languageClassifier;
-	}
-
-	public SortedMap<String, SymbolCorrector> getLanguageCorrectors() {
-		return languageCorrectors;
-	}
-
-	public void setLanguageCorrectors(SortedMap<String, SymbolCorrector> languageCorrectors) {
-		this.languageCorrectors = languageCorrectors;
 	}
 
 	public SortedMap<String, SequenceClassifier> getLanguageMasterContextClassifiers() {
