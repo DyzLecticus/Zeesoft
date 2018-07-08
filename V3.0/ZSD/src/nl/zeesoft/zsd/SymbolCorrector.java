@@ -25,22 +25,13 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	}
 
 	/**
-	 * Returns the link bandwidth.
-	 * 
-	 * @return The link bandwidth
-	 */
-	public double getLinkBandwidth() {
-		return ((getLinkMaxProb() - getLinkMinProb()) / 2D);
-	}
-
-	/**
 	 * Returns the link context bandwidth.
 	 * 
 	 * @param context The context symbol
 	 * @return The link context bandwidth
 	 */
 	public double getLinkContextBandwidth(String context) {
-		double r = getLinkBandwidth();
+		double r = getSymbolBandwidth();
 		Double maxProb = getLinkContextMaxProbs().get(context);
 		if (maxProb!=null) {
 			r = (maxProb - getLinkContextMinProbs().get(context) / 2D);
@@ -55,7 +46,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected symbol
 	 */
 	public String correct(String symbol) {
-		return correct("",symbol,"","",getLinkBandwidth());
+		return correct("",symbol,"","",getLinkContextBandwidth(""));
 	}
 	
 	/**
@@ -90,7 +81,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence) {
-		return correct(sequence,"",getLinkBandwidth());
+		return correct(sequence,"",getLinkContextBandwidth(""));
 	}
 	
 	/**

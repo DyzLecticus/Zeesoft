@@ -8,7 +8,6 @@ public class SequenceAnalyzerSymbolLink {
 	public String			context		= "";
 	public int				count		= 0;
 	public double			prob		= 0D;
-	public double			probContext	= 0D;
 	
 	public SequenceAnalyzerSymbolLink copy() {
 		SequenceAnalyzerSymbolLink r = new SequenceAnalyzerSymbolLink();
@@ -19,7 +18,6 @@ public class SequenceAnalyzerSymbolLink {
 		r.context = context;
 		r.count = count;
 		r.prob = prob;
-		r.probContext = probContext;
 		return r;
 	}
 }

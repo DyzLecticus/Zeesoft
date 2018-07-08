@@ -56,8 +56,8 @@ public class TestSequenceClassifier extends TestObject {
 			assertEqual(sc.getLinkContextCounts().get(""),204474,"The total number of links does not match expectation");
 			
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat kost dat?");
-			testClassification(sc,sequence,false,"nlPriveBetalen");
-			testClassification(sc,sequence,true,"nlPrivatebankingUwvermogen");
+			testClassification(sc,sequence,false,"nlPrivatebankingBetalen");
+			testClassification(sc,sequence,true,"nlPriveKinderenengeldzaken");
 			sequence = new ZStringSymbolParser("Waar kan ik mijn transacties zien?");
 			testClassification(sc,sequence,false,"nlGrootzakelijkProducten");
 			sequence = new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering");
@@ -68,16 +68,16 @@ public class TestSequenceClassifier extends TestObject {
 			sequence = new ZStringSymbolParser("Wat kost dat?");
 			
 			System.out.println();
-			t = 0.6D;
+			t = 0.5D;
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
 			for (SequenceClassifierResult context: contexts) {
 				System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probThreshold);
 			}
-			assertEqual(contexts.size(),7,"The classifier did not return the expected number of contexts");
+			assertEqual(contexts.size(),5,"The classifier did not return the expected number of contexts");
 			
 			System.out.println();
-			t = 0.9D;
+			t = 0.7D;
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
 			for (SequenceClassifierResult context: contexts) {

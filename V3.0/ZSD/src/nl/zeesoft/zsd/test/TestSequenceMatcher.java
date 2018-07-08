@@ -64,7 +64,7 @@ public class TestSequenceMatcher extends TestObject {
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Zorg thuis : wat kost dat? [OUTPUT] De meeste mensen oriënteren zich pas op deze mogelijkheden als de zorg acuut nodig is. Soms kan men dan niet meer zelf beslissen en moeten anderen dat doen."));
 
 			context = sm.classify(sequence);
-			testSequenceMatch(sm,sequence,context,false,new ZStringSymbolParser("Wat kost een buitenlandse betaling? [OUTPUT] Bekijk het overzicht met de tarieven."));
+			testSequenceMatch(sm,sequence,context,false,new ZStringSymbolParser("Wat kost de Betaalpas? [OUTPUT] Als u een betaalpakket heeft bij ABN AMRO , betaalt u niets voor uw Betaalpas."));
 
 			sequence = new ZStringSymbolParser("geld over?");
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Alle rekeningen betaald en geld over? [OUTPUT] Sparen ligt voor de hand , maar er is meer mogelijk. Bekijk onze video met de voor- en nadelen van beleggen , hypotheek aflossen , pensioen aanvullen en schenken."));

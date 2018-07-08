@@ -15,10 +15,7 @@ public class SequenceAnalyzer extends Analyzer {
 	private SortedMap<String,SequenceAnalyzerSymbolLink>		knownLinks			= new TreeMap<String,SequenceAnalyzerSymbolLink>();		
 	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolFrom	= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();
 	private SortedMap<String,List<SequenceAnalyzerSymbolLink>>	linksBySymbolTo		= new TreeMap<String,List<SequenceAnalyzerSymbolLink>>();
-	private int													linkCount			= 0;
 	private SortedMap<String,Integer>							linkContextCounts	= new TreeMap<String,Integer>();
-	private double												linkMaxProb			= 0.0D;
-	private double												linkMinProb			= 1.0D;
 	private SortedMap<String,Double>							linkContextMaxProbs	= new TreeMap<String,Double>();
 	private SortedMap<String,Double>							linkContextMinProbs	= new TreeMap<String,Double>();
 
@@ -66,15 +63,10 @@ public class SequenceAnalyzer extends Analyzer {
 	@Override
 	public void calculateProb() {
 		super.calculateProb();
+		linkContextMaxProbs.clear();
+		linkContextMinProbs.clear();
 		for (Entry<String,SequenceAnalyzerSymbolLink> entry: knownLinks.entrySet()) {
-			entry.getValue().prob = ((double)entry.getValue().count / (double)linkCount);
-			entry.getValue().probContext = ((double)entry.getValue().count / (double)linkContextCounts.get(entry.getValue().context));
-			if (entry.getValue().prob>linkMaxProb) {
-				linkMaxProb = entry.getValue().prob;
-			}
-			if (entry.getValue().prob<linkMinProb) {
-				linkMinProb = entry.getValue().prob;
-			}
+			entry.getValue().prob = ((double)entry.getValue().count / (double)linkContextCounts.get(entry.getValue().context));
 			Double maxProb = linkContextMaxProbs.get(entry.getValue().context);
 			Double minProb = linkContextMinProbs.get(entry.getValue().context);
 			if (maxProb==null){
@@ -83,12 +75,12 @@ public class SequenceAnalyzer extends Analyzer {
 			if (minProb==null){
 				minProb = new Double(1);
 			}
-			if (entry.getValue().probContext>maxProb) {
-				maxProb = entry.getValue().probContext;
+			if (entry.getValue().prob>maxProb) {
+				maxProb = entry.getValue().prob;
 				linkContextMaxProbs.put(entry.getValue().context,maxProb);
 			}
-			if (entry.getValue().probContext<minProb) {
-				minProb = entry.getValue().probContext;
+			if (entry.getValue().prob<minProb) {
+				minProb = entry.getValue().prob;
 				linkContextMinProbs.put(entry.getValue().context,minProb);
 			}
 		}
@@ -129,9 +121,6 @@ public class SequenceAnalyzer extends Analyzer {
 				list.add(link);
 			}
 			link.count++;
-			if (link.context.length()==0) {
-				linkCount++;
-			}
 			Integer count = linkContextCounts.get(context);
 			if (count==null){
 				count = new Integer(0);
@@ -163,30 +152,6 @@ public class SequenceAnalyzer extends Analyzer {
 
 	public void setLinksBySymbolTo(SortedMap<String, List<SequenceAnalyzerSymbolLink>> linksBySymbolTo) {
 		this.linksBySymbolTo = linksBySymbolTo;
-	}
-
-	public int getLinkCount() {
-		return linkCount;
-	}
-
-	public void setLinkCount(int linkCount) {
-		this.linkCount = linkCount;
-	}
-
-	public double getLinkMaxProb() {
-		return linkMaxProb;
-	}
-
-	public void setLinkMaxProb(double linkMaxProb) {
-		this.linkMaxProb = linkMaxProb;
-	}
-
-	public double getLinkMinProb() {
-		return linkMinProb;
-	}
-
-	public void setLinkMinProb(double linkMinProb) {
-		this.linkMinProb = linkMinProb;
 	}
 
 	public SortedMap<String, Integer> getLinkContextCounts() {

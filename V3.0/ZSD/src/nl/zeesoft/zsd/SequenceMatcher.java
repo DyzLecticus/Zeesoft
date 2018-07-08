@@ -192,7 +192,7 @@ public class SequenceMatcher extends SequenceClassifier {
 						}
 					}
 					if (found) {
-						prob += ((bandwidth + (getLinkContextMaxProbs().get(link.context) - link.probContext)) * (double)conseq);
+						prob += ((bandwidth + (getLinkContextMaxProbs().get(link.context) - link.prob)) * (double)conseq);
 						if (foundCase) {
 							if (conseq==1) {
 								prob += (getSymbolMaxProb() - link.asFrom.prob);

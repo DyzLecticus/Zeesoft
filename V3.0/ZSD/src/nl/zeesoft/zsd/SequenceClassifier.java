@@ -21,7 +21,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @return The context or an empty string
 	 */
 	public String classify(ZStringSymbolParser sequence) {
-		return classify(sequence,false,getLinkBandwidth(),0D);
+		return classify(sequence,false,getLinkContextBandwidth(""),0D);
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @return The context or an empty string
 	 */
 	public String classify(ZStringSymbolParser sequence, boolean caseInsensitive) {
-		return classify(sequence,caseInsensitive,getLinkBandwidth(),0D);
+		return classify(sequence,caseInsensitive,getLinkContextBandwidth(""),0D);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class SequenceClassifier extends SymbolCorrector {
 	 * @return A list of all contexts with calculated probabilities
 	 */
 	public List<SequenceClassifierResult> getContexts(ZStringSymbolParser sequence, boolean caseInsensitive, double threshold) {
-		return getContexts(sequence,caseInsensitive,getLinkBandwidth(),threshold);
+		return getContexts(sequence,caseInsensitive,getLinkContextBandwidth(""),threshold);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class SequenceClassifier extends SymbolCorrector {
 						r.add(res);
 					}
 					res.prob += bandwidth;
-					res.prob += (getLinkMaxProb() - link.prob);
+					res.prob += (getLinkContextMaxProbs().get(link.context) - link.prob);
 					if (res.prob>highest) {
 						highest = res.prob;
 					}
