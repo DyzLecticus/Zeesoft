@@ -14,7 +14,6 @@ import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericQnA;
 import nl.zeesoft.zsd.initialize.Initializable;
 
 public class DialogSet implements Initializable {
-	private DialogIdentity							identity				= new DialogIdentity();
 	private List<String>							languages				= new ArrayList<String>();
 	private SortedMap<String,List<DialogObject>>	languageDialogs			= new TreeMap<String,List<DialogObject>>();
 	private SortedMap<String,List<String>>			languageMasterContexts	= new TreeMap<String,List<String>>();
@@ -23,10 +22,6 @@ public class DialogSet implements Initializable {
 		for (DialogObject dialog: getDefaultDialogs()) {
 			addDialog(dialog);
 		}
-	}
-	
-	public void setIdentity(DialogIdentity identity) {
-		this.identity = identity;
 	}
 
 	@Override
@@ -37,7 +32,6 @@ public class DialogSet implements Initializable {
 	
 	public void initialize() {
 		for (DialogObject dialog: getDialogs()) {
-			dialog.setIdentity(identity);
 			dialog.initialize();
 		}
 	}
@@ -98,10 +92,6 @@ public class DialogSet implements Initializable {
 			}
 		}
 		return r;
-	}
-
-	public DialogIdentity getIdentity() {
-		return identity;
 	}
 
 	public List<String> getLanguages() {

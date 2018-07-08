@@ -3,8 +3,8 @@ package nl.zeesoft.zsd.util;
 import java.util.List;
 
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.DialogSet;
-import nl.zeesoft.zsd.entity.EntityObject;
 
 public class LanguageContextJsonGenerator {
 	public static final String FILE_NAME_PREFIX	= "LanguageContext";
@@ -15,11 +15,11 @@ public class LanguageContextJsonGenerator {
 			DialogSet ds = new DialogSet();
 			ds.initialize();
 			String err = "";
-			err = generator.generateLanguageDialogs(ds,EntityObject.LANG_ENG,args[0],true);
+			err = generator.generateLanguageDialogs(ds,BaseConfiguration.LANG_ENG,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
-			err = generator.generateLanguageDialogs(ds,EntityObject.LANG_NLD,args[0],true);
+			err = generator.generateLanguageDialogs(ds,BaseConfiguration.LANG_NLD,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}

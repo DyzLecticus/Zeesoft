@@ -27,12 +27,8 @@ public class TestSequenceInterpreter extends TestInitializer {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create a DialogSet");
-		System.out.println("DialogSet ds = new DialogSet();");
-		System.out.println("// Initialize the DialogSet");
-		System.out.println("ds.initialize();");
 		System.out.println("// Create the InterpreterConfiguration");
-		System.out.println("InterpreterConfiguration config = new InterpreterConfiguration(ds);");
+		System.out.println("InterpreterConfiguration config = new InterpreterConfiguration();");
 		System.out.println("// Add a listener");
 		System.out.println("config.addListener(this);");
 		System.out.println("// Start the initialization (and wait until it's done)");
@@ -71,8 +67,8 @@ public class TestSequenceInterpreter extends TestInitializer {
 				"mijn naam si gekste der henkies",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:henkies.");
 			testRequestResponse(interpreter,"",
-				"wruio wwtiop wtwrpoi weptiwpipw ipwop eopipwqwrqqiop qwerqwer qrqpoqe qp qwpgsjkdbvhsdfkljjv",
-				"UNI_ABC:Wruio UNI_ABC:wwtiop UNI_ABC:wtwrpoi UNI_ABC:weptiwpipw UNI_ABC:ipwop UNI_ABC:eopipwqwrqqiop UNI_ABC:qwerqwer UNI_ABC:qrqpoqe UNI_ABC:qp UNI_ABC:qwpgsjkdbvhsdfkljjv .");
+				"wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv",
+				"UNI_ABC:Wruio UNI_ABC:wwtiop UNI_ABC:wtwrpoi UNI_ABC:weptiwpipw UNI_ABC:ipwopkm UNI_ABC:eopipwqwrqqiop UNI_ABC:qwerqwer UNI_ABC:qrqpoqe UNI_ABC:qpxnxc UNI_ABC:qwpgsjkdbvhsdfkljjv .");
 		}
 	}
 

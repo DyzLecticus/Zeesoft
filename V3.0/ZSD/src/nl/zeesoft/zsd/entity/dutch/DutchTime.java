@@ -3,17 +3,18 @@ package nl.zeesoft.zsd.entity.dutch;
 import java.util.Calendar;
 import java.util.Date;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public class DutchTime extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return LANG_NLD;
+		return BaseConfiguration.LANG_NLD;
 	}
 	@Override
 	public String getType() {
-		return TYPE_TIME;
+		return BaseConfiguration.TYPE_TIME;
 	}
 	@Override
 	public int getMaximumSymbols() {
@@ -40,7 +41,7 @@ public class DutchTime extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 
-		DutchNumeric eoNumeric = (DutchNumeric) translator.getEntityObject(LANG_NLD,TYPE_NUMERIC);
+		DutchNumeric eoNumeric = (DutchNumeric) translator.getEntityObject(BaseConfiguration.LANG_NLD,BaseConfiguration.TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize(translator);
 		}

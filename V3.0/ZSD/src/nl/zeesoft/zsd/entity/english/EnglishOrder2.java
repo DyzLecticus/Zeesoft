@@ -1,22 +1,23 @@
 package nl.zeesoft.zsd.entity.english;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public class EnglishOrder2 extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return LANG_ENG;
+		return BaseConfiguration.LANG_ENG;
 	}
 	@Override
 	public String getType() {
-		return TYPE_ORDER2;
+		return BaseConfiguration.TYPE_ORDER2;
 	}
 	@Override
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 		
-		EnglishOrder eo = (EnglishOrder) translator.getEntityObject(LANG_ENG,TYPE_ORDER);
+		EnglishOrder eo = (EnglishOrder) translator.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_ORDER);
 		if (!eo.isInitialized()) {
 			eo.initialize(translator);
 		}

@@ -5,9 +5,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.DialogSet;
-import nl.zeesoft.zsd.entity.EntityObject;
 
 public class LanguageCorrectorJsonGenerator {
 	public static final String FILE_NAME_PREFIX = "LanguageCorrector";
@@ -20,11 +20,11 @@ public class LanguageCorrectorJsonGenerator {
 			DialogSet ds = new DialogSet();
 			ds.initialize();
 			String err = "";
-			err = generator.generateEntityValueTranslator(t,ds,EntityObject.LANG_ENG,args[0],true);
+			err = generator.generateEntityValueTranslator(t,ds,BaseConfiguration.LANG_ENG,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
-			err = generator.generateEntityValueTranslator(t,ds,EntityObject.LANG_NLD,args[0],true);
+			err = generator.generateEntityValueTranslator(t,ds,BaseConfiguration.LANG_NLD,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}

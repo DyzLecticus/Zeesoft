@@ -1,22 +1,23 @@
 package nl.zeesoft.zsd.entity.dutch;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public class DutchOrder extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return LANG_NLD;
+		return BaseConfiguration.LANG_NLD;
 	}
 	@Override
 	public String getType() {
-		return TYPE_ORDER;
+		return BaseConfiguration.TYPE_ORDER;
 	}
 	@Override
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 		
-		DutchNumeric eo = (DutchNumeric) translator.getEntityObject(LANG_NLD,TYPE_NUMERIC);
+		DutchNumeric eo = (DutchNumeric) translator.getEntityObject(BaseConfiguration.LANG_NLD,BaseConfiguration.TYPE_NUMERIC);
 		if (!eo.isInitialized()) {
 			eo.initialize(translator);
 		}

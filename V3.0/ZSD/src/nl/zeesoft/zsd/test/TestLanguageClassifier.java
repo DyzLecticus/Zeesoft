@@ -4,8 +4,8 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.SequenceClassifier;
-import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
@@ -35,11 +35,11 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat is your name?");
 			ZStringSymbolParser corrected = null; 
-			corrected = sc.correct(sequence,EntityObject.LANG_ENG);
+			corrected = sc.correct(sequence,BaseConfiguration.LANG_ENG);
 			System.out.println("'" + sequence + "' (ENG) => '" + corrected + "'");
 			assertEqual(corrected.toString(),"What is your name?","The correction does not match expectation");
 
-			corrected = sc.correct(sequence,EntityObject.LANG_NLD);
+			corrected = sc.correct(sequence,BaseConfiguration.LANG_NLD);
 			System.out.println("'" + sequence + "' (NLD) => '" + corrected + "'");
 			assertEqual(corrected.toString(),"Wat is jouw naam?","The correction does not match expectation");
 			

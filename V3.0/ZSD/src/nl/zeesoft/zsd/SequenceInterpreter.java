@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.interpret.InterpreterRequest;
 import nl.zeesoft.zsd.interpret.InterpreterResponse;
@@ -36,7 +35,7 @@ public class SequenceInterpreter {
 				}
 			}
 			if (language.length()==0) {
-				language = configuration.getDialogSet().getIdentity().primaryLanguage;
+				language = configuration.getBase().getPrimaryLanguage();
 			}
 			if (request.correctInput) {
 				long stopAfterMs = r.numInputSymbols * configuration.getMaxMsPerSymbol();
@@ -77,7 +76,7 @@ public class SequenceInterpreter {
 			if (request.translateEntiyValues) {
 				List<String> languages = new ArrayList<String>(); 
 				languages.add(language);
-				languages.add(EntityObject.LANG_UNI);
+				languages.add(BaseConfiguration.LANG_UNI);
 				ZStringSymbolParser translated = configuration.getEntityValueTranslator().translateToInternalValues(sequence, languages, request.translateEntityTypes,true);
 				if (request.prompt.length()>0) {
 					r.entityValueTranslation = new ZStringSymbolParser(translated.split(configuration.getLanguageClassifier().getIoSeparator()).get(1));

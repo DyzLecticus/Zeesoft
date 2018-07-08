@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequenceClassifier;
-import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.Initializer;
 import nl.zeesoft.zsd.util.LanguageClassifierJsonGenerator;
@@ -16,10 +16,7 @@ import nl.zeesoft.zsd.util.LanguageContextJsonGenerator;
 import nl.zeesoft.zsd.util.LanguageMasterContextJsonGenerator;
 
 public class InterpreterConfiguration extends Initializer {
-	private DialogSet								dialogSet							= null;
-
-	private String									baseDir								= "base/";
-	private String									overrideDir							= "override/";
+	private BaseConfiguration						base								= new BaseConfiguration();
 	
 	private SequenceClassifier						languageClassifier					= null;
 	private SortedMap<String,SequenceClassifier>	languageMasterContextClassifiers	= new TreeMap<String,SequenceClassifier>();
@@ -28,9 +25,13 @@ public class InterpreterConfiguration extends Initializer {
 
 	private long									maxMsPerSymbol						= 50;
 	private long									maxMsPerSequence					= 2000;
-	
-	public InterpreterConfiguration(DialogSet dialogSet) {
-		this.dialogSet = dialogSet;
+
+	public InterpreterConfiguration() {
+		
+	}
+
+	public InterpreterConfiguration(BaseConfiguration base) {
+		this.base = base;
 	}
 	
 	public void initialize() {
@@ -54,12 +55,12 @@ public class InterpreterConfiguration extends Initializer {
 		languageClassifier = new SequenceClassifier();
 		r.add(getInitializeClassForSequenceClassifier(languageClassifier,LanguageClassifierJsonGenerator.FILE_NAME));
 		
-		for (String language: dialogSet.getLanguages()) {
+		for (String language: base.getSupportedLanguages()) {
 			SequenceClassifier sc = new SequenceClassifier();
 			languageMasterContextClassifiers.put(language,sc);
 			r.add(getInitializeClassForSequenceClassifier(sc,LanguageMasterContextJsonGenerator.FILE_NAME_PREFIX + language + ".json"));
 			
-			for (String masterContext: dialogSet.getLanguageMasterContexts().get(language)) {
+			for (String masterContext: base.getSupportedMasterContexts().get(language)) {
 				sc = new SequenceClassifier();
 				languageContextClassifiers.put(language + masterContext,sc);
 				r.add(getInitializeClassForSequenceClassifier(sc,LanguageContextJsonGenerator.FILE_NAME_PREFIX + language + masterContext + ".json"));
@@ -67,37 +68,17 @@ public class InterpreterConfiguration extends Initializer {
 		}
 		return r;
 	}
-	
+
+	public BaseConfiguration getBase() {
+		return base;
+	}
+
 	public EntityValueTranslator getEntityValueTranslator() {
 		return entityValueTranslator;
 	}
 
 	public void setEntityValueTranslator(EntityValueTranslator entityValueTranslator) {
 		this.entityValueTranslator = entityValueTranslator;
-	}
-
-	public DialogSet getDialogSet() {
-		return dialogSet;
-	}
-
-	public void setDialogSet(DialogSet dialogSet) {
-		this.dialogSet = dialogSet;
-	}
-
-	public String getBaseDir() {
-		return baseDir;
-	}
-
-	public void setBaseDir(String baseDir) {
-		this.baseDir = baseDir;
-	}
-
-	public String getOverrideDir() {
-		return overrideDir;
-	}
-
-	public void setOverrideDir(String overrideDir) {
-		this.overrideDir = overrideDir;
 	}
 
 	public SequenceClassifier getLanguageClassifier() {
@@ -142,10 +123,10 @@ public class InterpreterConfiguration extends Initializer {
 	}
 
 	private InitializeClass getInitializeClassForSequenceClassifier(SequenceClassifier sc,String fileName) {
-		String dir = overrideDir;
-		File file = new File(overrideDir + fileName);
+		String dir = base.getOverrideDir();
+		File file = new File(base.getOverrideDir() + fileName);
 		if (!file.exists()) {
-			dir = baseDir;
+			dir = base.getBaseDir();
 		}
 		InitializeClass r = new InitializeClass();
 		r.name = fileName.split("\\.")[0];

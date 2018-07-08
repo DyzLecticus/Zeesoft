@@ -8,8 +8,6 @@ import java.util.TreeMap;
 public abstract class DialogObject {
 	public static final String					VARIABLE_NEXT_DIALOG	= "nextDialog";
 
-	private DialogIdentity						identity				= null;
-	
 	private String								language				= "";
 	private String								masterContext			= "";
 	private String								context					= "";
@@ -29,14 +27,15 @@ public abstract class DialogObject {
 	}
 	
 	public DialogVariable addVariable(String name, String type) {
-		return addVariable(name,type,"");
+		return addVariable("","",name,type);
 	}
 	
-	public DialogVariable addVariable(String name, String type,String complexName) {
+	public DialogVariable addVariable(String complexName,String complexType,String name, String type) {
 		DialogVariable r = new DialogVariable();
+		r.complexName = complexName;
+		r.complexType = complexName;
 		r.name = name;
 		r.type = type;
-		r.complexName = complexName;
 		variables.put(name,r);
 		return r;
 	}
@@ -71,14 +70,6 @@ public abstract class DialogObject {
 		return r;
 	}
 	
-	public DialogIdentity getIdentity() {
-		return identity;
-	}
-
-	public void setIdentity(DialogIdentity identity) {
-		this.identity = identity;
-	}
-
 	public String getLanguage() {
 		return language;
 	}

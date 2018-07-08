@@ -1,12 +1,11 @@
 package nl.zeesoft.zsd.dialog.dialogs.english;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.dialogs.GenericHandshake;
-import nl.zeesoft.zsd.entity.EntityObject;
-import nl.zeesoft.zsd.entity.complex.ComplexObject;
 
 public class EnglishGenericHandshake extends GenericHandshake {
 	public EnglishGenericHandshake() {
-		setLanguage(EntityObject.LANG_ENG);
+		setLanguage(BaseConfiguration.LANG_ENG);
 	}
 	
 	@Override
@@ -18,13 +17,13 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		addExample("Hi, my name is {firstName} {lastName}.","Hello {fullName}.");
 		addExample("Hi. My name is {firstName}.","Hello {firstName}. What is your lastname?");
 		
-		addExample("Hello.","Hello. My name is " + getIdentity().name + ". What is your name?");
-		addExample("Hello!","Hello. My name is " + getIdentity().name + ". What is your name?");
-		addExample("Hi.","Hi. My name is " + getIdentity().name + ". What is your name?");
-		addExample("Hi!","Hi. My name is " + getIdentity().name + ". What is your name?");
-		addExample("What is your name?","My name is " + getIdentity().name + ". What is your name?");
+		addExample("Hello.","Hello. My name is {self.name}. What is your name?");
+		addExample("Hello!","Hello. My name is {self.name}. What is your name?");
+		addExample("Hi.","Hi. My name is {self.name}. What is your name?");
+		addExample("Hi!","Hi. My name is {self.name}. What is your name?");
+		addExample("What is your name?","My name is {self.name}. What is your name?");
 		
-		addVariable(VARIABLE_FIRSTNAME,ComplexObject.TYPE_NAME,VARIABLE_FIRSTNAME);
+		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","My name is {firstName} {preposition} {lastName}.");
 		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","My name is {firstName} {lastName}.");
 		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","My name is {firstName}.");
@@ -34,7 +33,7 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		addVariableQA(VARIABLE_FIRSTNAME,"What is your firstname?","{firstName}.");
 		addVariableQA(VARIABLE_FIRSTNAME,"What is your firstname?","My firstname is {firstName}.");
 
-		addVariable(VARIABLE_LASTNAME,ComplexObject.TYPE_NAME,VARIABLE_LASTNAME);
+		addVariable(VARIABLE_LASTNAME,BaseConfiguration.TYPE_NAME,VARIABLE_LASTNAME,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","My lastname is {preposition} {lastName}.");
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","My lastname is {lastName}, {preposition}.");
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","My lastname is {lastName}.");
@@ -42,9 +41,9 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{lastName}, {preposition}.");
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{lastName}.");
 
-		addVariable(VARIABLE_PREPOSITION,EntityObject.TYPE_PREPOSITION,VARIABLE_PREPOSITION);
+		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION);
 
-		addVariable(VARIABLE_NEXT_DIALOG,EntityObject.TYPE_ALPHABETIC);
+		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_NEXT_DIALOG,"What can I do for you {fullName}?","{nextDialog}.");
 	}
 }

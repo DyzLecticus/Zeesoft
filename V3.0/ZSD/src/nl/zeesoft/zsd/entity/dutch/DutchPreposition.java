@@ -1,16 +1,17 @@
 package nl.zeesoft.zsd.entity.dutch;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public class DutchPreposition extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return LANG_NLD;
+		return BaseConfiguration.LANG_NLD;
 	}
 	@Override
 	public String getType() {
-		return TYPE_PREPOSITION;
+		return BaseConfiguration.TYPE_PREPOSITION;
 	}
 	@Override
 	public int getMaximumSymbols() {

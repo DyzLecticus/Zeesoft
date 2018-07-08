@@ -1,6 +1,7 @@
 package nl.zeesoft.zsd.entity.complex.dutch;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.complex.ComplexObject;
 import nl.zeesoft.zsd.entity.complex.ComplexVariable;
@@ -8,12 +9,12 @@ import nl.zeesoft.zsd.entity.complex.ComplexVariable;
 public class DutchName extends ComplexObject {
 	@Override
 	public String getLanguage() {
-		return LANG_NLD;
+		return BaseConfiguration.LANG_NLD;
 	}
 	
 	@Override
 	public String getType() {
-		return TYPE_NAME;
+		return BaseConfiguration.TYPE_NAME;
 	}
 	
 	@Override
@@ -28,9 +29,9 @@ public class DutchName extends ComplexObject {
 	
 	@Override
 	public void initialize(EntityValueTranslator translator) {
-		addVariable("firstName",TYPE_ALPHABETIC);
-		addVariable("preposition",TYPE_PREPOSITION);
-		addVariable("lastName",TYPE_ALPHABETIC);
+		addVariable("firstName",BaseConfiguration.TYPE_ALPHABETIC);
+		addVariable("preposition",BaseConfiguration.TYPE_PREPOSITION);
+		addVariable("lastName",BaseConfiguration.TYPE_ALPHABETIC);
 		
 		addGenericPatterns("{firstName} {preposition} {lastName}");
 		addGenericPatterns("{firstName} {lastName}");

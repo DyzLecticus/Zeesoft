@@ -1,9 +1,11 @@
 package nl.zeesoft.zsd.entity;
 
+import nl.zeesoft.zsd.BaseConfiguration;
+
 public class UniversalNumeric extends EntityObject {
 	@Override
 	public String getType() {
-		return TYPE_NUMERIC;
+		return BaseConfiguration.TYPE_NUMERIC;
 	}
 	@Override
 	public String getInternalValueForExternalValue(String str) {

@@ -7,8 +7,8 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
-import nl.zeesoft.zsd.entity.EntityObject;
 
 public class TestEntityValueTranslator extends TestObject {
 	public TestEntityValueTranslator(Tester tester) {
@@ -55,7 +55,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"Eat three donuts at 9:00 or count to 110",
 			"UNI_ABC:Eat ENG_NUM:3|UNI_ABC:three UNI_ABC:donuts UNI_ABC:at UNI_TIM:09:00:00 UNI_ABC:or UNI_ABC:count UNI_ABC:to UNI_NUM:110",
 			"Eat three donuts at 09:00:00 or count to 110");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Eet drie donuts om 9:00 of tel tot 110",
 			"UNI_ABC:Eet NLD_NUM:3|UNI_ABC:drie UNI_ABC:donuts UNI_ABC:om UNI_TIM:09:00:00 UNI_ABC:of UNI_ABC:tel UNI_ABC:tot UNI_NUM:110",
 			"Eet drie donuts om 09:00:00 of tel tot 110");
@@ -79,7 +79,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"yesterday OR today OR the 1st of october",
 			"ENG_DAT:2018-07-15|UNI_ABC:yesterday UNI_ABC:OR ENG_DAT:2018-07-16|UNI_ABC:today UNI_ABC:OR ENG_DAT:2018-10-01",
 			"july fifteenth twothousandeighteen OR july sixteenth twothousandeighteen OR october first twothousandeighteen");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"gisteren OF vandaag OF 1 oktober",
 			"NLD_DAT:2018-07-15|UNI_ABC:gisteren UNI_ABC:OF NLD_DAT:2018-07-16|UNI_ABC:vandaag UNI_ABC:OF NLD_DAT:2018-10-01",
 			"vijftien juli tweeduizendachttien OF zestien juli tweeduizendachttien OF een oktober tweeduizendachttien");
@@ -87,23 +87,23 @@ public class TestEntityValueTranslator extends TestObject {
 			"twelve o'clock OR five minutes to nine OR ten past one in the morning",
 			"ENG_TIM:12:00:00 UNI_ABC:OR ENG_TIM:08:55:00 UNI_ABC:OR ENG_TIM:01:10:00",
 			"twelve o'clock OR fiftyfive past eight OR ten past one in the morning");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"twaalf uur OF vijf minuten voor negen OF tien over een sochtends",
 			"NLD_TIM:12:00:00|NLD_DUR:12:00 UNI_ABC:OF NLD_TIM:08:55:00 UNI_ABC:OF NLD_TIM:01:10:00",
 			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
-		testTranslation(t,EntityObject.LANG_ENG,
+		testTranslation(t,BaseConfiguration.LANG_ENG,
 			"My name is Andrew from the Sea",
 			"UNI_ABC:My UNI_ABC:name UNI_ABC:is UNI_ABC:Andrew|ENG_NAM:firstName:UNI_ABC:Andrew ENG_PRE:4|ENG_NAM:preposition:ENG_PRE:4 UNI_ABC:Sea|ENG_NAM:lastName:UNI_ABC:Sea",
 			"My name is Andrew from the Sea");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Mijn naam is Andre van der Zee",
 			"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:Andre|NLD_NAM:firstName:UNI_ABC:Andre NLD_PRE:3|NLD_NAM:preposition:NLD_PRE:3 UNI_ABC:Zee|NLD_NAM:lastName:UNI_ABC:Zee",
 			"Mijn naam is Andre van der Zee");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Hoe heet jij? gekke henkie",
 			"UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:henkie",
 			"Hoe heet jij? gekke henkie");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"gekste der henkies is mijn naam",
 			"UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:henkies UNI_ABC:is UNI_ABC:mijn UNI_ABC:naam",
 			"gekste der henkies is mijn naam");
@@ -117,7 +117,7 @@ public class TestEntityValueTranslator extends TestObject {
 		
 		if (language.length()>0) {
 			languages.add(language);
-			languages.add(EntityObject.LANG_UNI);
+			languages.add(BaseConfiguration.LANG_UNI);
 		}
 		
 		ZStringSymbolParser sequence = new ZStringSymbolParser(seq);

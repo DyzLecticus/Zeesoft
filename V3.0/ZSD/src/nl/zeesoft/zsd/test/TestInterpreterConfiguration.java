@@ -4,7 +4,6 @@ import java.util.List;
 
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 
@@ -23,12 +22,8 @@ public class TestInterpreterConfiguration extends TestInitializer {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create a DialogSet");
-		System.out.println("DialogSet ds = new DialogSet();");
-		System.out.println("// Initialize the DialogSet");
-		System.out.println("ds.initialize();");
 		System.out.println("// Create the InterpreterConfiguration");
-		System.out.println("InterpreterConfiguration config = new InterpreterConfiguration(ds);");
+		System.out.println("InterpreterConfiguration config = new InterpreterConfiguration();");
 		System.out.println("// Add a listener");
 		System.out.println("config.addListener(this);");
 		System.out.println("// Start the initialization");
@@ -37,7 +32,6 @@ public class TestInterpreterConfiguration extends TestInitializer {
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestInterpreterConfiguration.class));
-		System.out.println(" * " + getTester().getLinkForClass(DialogSet.class));
 		System.out.println(" * " + getTester().getLinkForClass(InterpreterConfiguration.class));
 		System.out.println();
 		System.out.println("**Test output**  ");

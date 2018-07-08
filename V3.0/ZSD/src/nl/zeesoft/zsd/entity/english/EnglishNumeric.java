@@ -1,16 +1,17 @@
 package nl.zeesoft.zsd.entity.english;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public class EnglishNumeric extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return LANG_ENG;
+		return BaseConfiguration.LANG_ENG;
 	}
 	@Override
 	public String getType() {
-		return TYPE_NUMERIC;
+		return BaseConfiguration.TYPE_NUMERIC;
 	}
 	@Override
 	public void initialize(EntityValueTranslator translator) {

@@ -1,11 +1,11 @@
 package nl.zeesoft.zsd.dialog.dialogs.dutch;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.dialogs.GenericQnA;
-import nl.zeesoft.zsd.entity.EntityObject;
 
 public class DutchGenericQnA extends GenericQnA {
 	public DutchGenericQnA() {
-		setLanguage(EntityObject.LANG_NLD);
+		setLanguage(BaseConfiguration.LANG_NLD);
 	}
 	
 	@Override

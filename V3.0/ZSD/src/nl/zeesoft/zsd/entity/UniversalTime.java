@@ -1,11 +1,12 @@
 package nl.zeesoft.zsd.entity;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 
 public class UniversalTime extends EntityObject {
 	@Override
 	public String getType() {
-		return TYPE_TIME;
+		return BaseConfiguration.TYPE_TIME;
 	}
 	@Override
 	public String getInternalValueForExternalValue(String str) {

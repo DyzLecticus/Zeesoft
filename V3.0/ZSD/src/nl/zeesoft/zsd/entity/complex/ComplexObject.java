@@ -6,6 +6,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequenceMatcher;
 import nl.zeesoft.zsd.entity.EntityObject;
@@ -13,8 +14,6 @@ import nl.zeesoft.zsd.entity.UniversalAlphabetic;
 import nl.zeesoft.zsd.sequence.SequenceMatcherResult;
 
 public abstract class ComplexObject extends EntityObject {
-	public static final String					TYPE_NAME			= "NAM";
-
 	private EntityValueTranslator				translator			= null;
 	
 	private List<ComplexPattern>				patterns 			= new ArrayList<ComplexPattern>();
@@ -30,12 +29,12 @@ public abstract class ComplexObject extends EntityObject {
 	
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser entityValueSequence) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
-		ZStringSymbolParser matchSequence = getTranslator().translateToExternalValues(entityValueSequence,TYPE_ALPHABETIC,true);
+		ZStringSymbolParser matchSequence = getTranslator().translateToExternalValues(entityValueSequence,BaseConfiguration.TYPE_ALPHABETIC,true);
 		List<SequenceMatcherResult> matches = getSequenceMatcher().getMatches(matchSequence,"",true,getMatchThreshold());
 		for (SequenceMatcherResult match: matches) {
 			ZStringSymbolParser parsed = parseVariableValuesFromSequence(matchSequence,match);
 			if (parsed.length()>0) {
-				parsed = getTranslator().translateToInternalValues(parsed,LANG_UNI,TYPE_ALPHABETIC,false);
+				parsed = getTranslator().translateToInternalValues(parsed,BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_ALPHABETIC,false);
 				List<String> mergedSyms = new ArrayList<String>();
 				List<String> parsedSyms = parsed.toSymbolsPunctuated();
 				int i = 0;
@@ -99,7 +98,7 @@ public abstract class ComplexObject extends EntityObject {
 							matchVars++;
 							String value = getTranslator().getInternalValueFromInternalValues(iSym,var.entityValueType);
 							if (value.length()==0 &&
-								var.entityValueType.equals(TYPE_ALPHABETIC) &&
+								var.entityValueType.equals(BaseConfiguration.TYPE_ALPHABETIC) &&
 								UniversalAlphabetic.isAlphabetic(iSym)
 								) {
 								value = ua.getInternalValuePrefix() + iSym;
@@ -150,7 +149,7 @@ public abstract class ComplexObject extends EntityObject {
 				ComplexVariable var = getVariableByName(name);
 				if (var!=null) {
 					String value = str.substring(name.length() + 1);
-					if (var.entityValueType.equals(TYPE_ALPHABETIC)) {
+					if (var.entityValueType.equals(BaseConfiguration.TYPE_ALPHABETIC)) {
 						r = value;
 					} else {
 						r = getTranslator().getExternalValueForInternalValues(value,var.entityValueType);
@@ -165,7 +164,7 @@ public abstract class ComplexObject extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 		this.translator = translator;
-		this.ua = (UniversalAlphabetic) translator.getEntityObject(LANG_UNI,TYPE_ALPHABETIC);
+		this.ua = (UniversalAlphabetic) translator.getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_ALPHABETIC);
 		for (ComplexPattern pattern: patterns) {
 			List<String> contextSymbols = new ArrayList<String>();
 			contextSymbols.add(pattern.context);

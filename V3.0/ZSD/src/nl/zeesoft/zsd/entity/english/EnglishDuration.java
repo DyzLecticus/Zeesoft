@@ -1,16 +1,17 @@
 package nl.zeesoft.zsd.entity.english;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public class EnglishDuration extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return LANG_ENG;
+		return BaseConfiguration.LANG_ENG;
 	}
 	@Override
 	public String getType() {
-		return TYPE_DURATION;
+		return BaseConfiguration.TYPE_DURATION;
 	}
 	@Override
 	public int getMaximumSymbols() {
@@ -20,7 +21,7 @@ public class EnglishDuration extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 
-		EnglishNumeric eo = (EnglishNumeric) translator.getEntityObject(LANG_ENG,TYPE_NUMERIC);
+		EnglishNumeric eo = (EnglishNumeric) translator.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_NUMERIC);
 		if (!eo.isInitialized()) {
 			eo.initialize(translator);
 		}

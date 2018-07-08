@@ -4,8 +4,8 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.SequenceClassifier;
-import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
@@ -29,8 +29,8 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 		if (config==null) {
 			System.out.println("This test has been skipped due to configuration initialization failure");
 		} else {
-			SequenceClassifier scEng = config.getLanguageMasterContextClassifiers().get(EntityObject.LANG_ENG);
-			SequenceClassifier scNld = config.getLanguageMasterContextClassifiers().get(EntityObject.LANG_NLD);
+			SequenceClassifier scEng = config.getLanguageMasterContextClassifiers().get(BaseConfiguration.LANG_ENG);
+			SequenceClassifier scNld = config.getLanguageMasterContextClassifiers().get(BaseConfiguration.LANG_NLD);
 			
 			assertEqual(scEng.getLinkContextCounts().get(""),156,"The total number of english links does not match expectation");
 			assertEqual(scNld.getLinkContextCounts().get(""),184,"The total number of dutch links does not match expectation");

@@ -5,34 +5,21 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 
 public abstract class EntityObject {
-	public static final String					LANG_UNI			= "UNI";
-	public static final String					LANG_ENG			= "ENG";
-	public static final String					LANG_NLD			= "NLD";
-
-	public static final String					TYPE_ALPHABETIC		= "ABC";
-	public static final String					TYPE_NUMERIC		= "NUM";
-	public static final String					TYPE_TIME			= "TIM";
-	public static final String					TYPE_ORDER			= "ORD";
-	public static final String					TYPE_ORDER2			= "OR2";
-	public static final String					TYPE_MONTH			= "MNT";
-	public static final String					TYPE_DURATION		= "DUR";
-	public static final String					TYPE_DATE			= "DAT";
-	public static final String					TYPE_PREPOSITION	= "PRE";
-	
 	private boolean								initialized			= false;
 	private String								internalValuePrefix	= "";
 	private SortedMap<String,EntityValue>		externalValues		= new TreeMap<String,EntityValue>();
 	private SortedMap<String,List<EntityValue>>	internalValues		= new TreeMap<String,List<EntityValue>>();
 	
 	public String getLanguage() {
-		return LANG_UNI;
+		return BaseConfiguration.LANG_UNI;
 	}
 
 	public String getType() {
-		return TYPE_ALPHABETIC;
+		return BaseConfiguration.TYPE_ALPHABETIC;
 	}
 
 	/**
