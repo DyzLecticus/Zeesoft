@@ -48,7 +48,7 @@ public class TestSequenceInterpreter extends TestInitializer {
 		System.out.println(" * " + getTester().getLinkForClass(SequenceInterpreter.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows several sequence interpreter requests and the corresponding responses.  ");
+		System.out.println("The output of this test shows several sequence interpreter requests and the debug log of corresponding responses.  ");
 	}
 	
 	@Override
@@ -83,15 +83,8 @@ public class TestSequenceInterpreter extends TestInitializer {
 	protected void showRequestResponse(InterpreterResponse response) {
 		System.out.println();
 		System.out.println("Request prompt: '" + response.request.prompt + "', input: '" + response.request.input + "'");
-		System.out.println("Response;");
-		System.out.println("- Languages;");
-		showResults(response.responseLanguages);
-		System.out.println("- Master contexts;");
-		showResults(response.responseMasterContexts);
-		System.out.println("- Contexts;");
-		showResults(response.responseContexts);
-		System.out.println("- Corrected input: '" + response.correctedInput + "'");
-		System.out.println("- Translation: '" + response.entityValueTranslation + "'");
+		System.out.println("Response debug log;");
+		System.out.println(response.debugLog);
 	}
 
 	protected void showResults(List<SequenceClassifierResult> results) {

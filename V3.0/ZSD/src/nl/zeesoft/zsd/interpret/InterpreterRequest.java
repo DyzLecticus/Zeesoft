@@ -12,14 +12,15 @@ public class InterpreterRequest {
 	public String				masterContext			= "";
 	public String				context					= "";
 	
-	public boolean				checkLanguage			= false;
+	public boolean				appendDebugLog			= false;
+	public boolean				classifyLanguage		= false;
 	public boolean				correctInput			= false;
-	public boolean				checkMasterContext		= false;
-	public boolean				checkContext			= false;
-	
+	public boolean				classifyMasterContext	= false;
+	public boolean				classifyContext			= false;
 	public boolean				translateEntiyValues	= false;
-	public List<String>			translateEntityTypes	= new ArrayList<String>();
 
+	public List<String>			translateEntityTypes	= new ArrayList<String>();
+		
 	public InterpreterRequest() {
 		
 	}
@@ -43,10 +44,11 @@ public class InterpreterRequest {
 	}
 	
 	public void setAllActions(boolean value) {
-		checkLanguage = value;
+		appendDebugLog = value;
+		classifyLanguage = value;
 		correctInput = value;
-		checkMasterContext = value;
-		checkContext = value;
+		classifyMasterContext = value;
+		classifyContext = value;
 		translateEntiyValues = value;
 	}
 }
