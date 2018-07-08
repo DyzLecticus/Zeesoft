@@ -54,8 +54,6 @@ public class Analyzer implements Initializable {
 	 * @return An error message if applicable
 	 */
 	public String initialize(String fileName) {
-		knownSymbols.clear();
-		symbolCount = 0;
 		ZStringSymbolParser parser = new ZStringSymbolParser();
 		String err = parser.fromFile(fileName);
 		if (err.length()==0) {
