@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.build.ManifestWriter;
 import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
@@ -29,7 +30,7 @@ public class ZDK extends LibraryObject {
 			if (args.length>5) {
 				jars = args[5];
 			}
-			String err = mw.writeManifest(args[1],args[2],args[3],args[4],jars);
+			ZStringBuilder err = mw.writeManifest(args[1],args[2],args[3],args[4],jars);
 			if (err.length()>0) {
 				System.err.println(err);
 				System.exit(1);

@@ -129,7 +129,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 			for (ZStringBuilder sym: syms) {
 				if (sym.length()>1 && endsWithLineEndSymbol(sym,lineEnds)) {
 					ZStringSymbolParser symbol = new ZStringSymbolParser(sym.substring(0,sym.length() - 1));
-					String lineEnd = sym.substring(sym.length() - 1);
+					String lineEnd = sym.substring(sym.length() - 1).toString();
 					symbol.removeLineEndSymbols();
 					symbols.add(symbol.toString());
 					symbols.add(lineEnd);
@@ -307,7 +307,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	public static boolean endsWithLineEndSymbol(ZStringBuilder symbol,List<String> lineEnds) {
 		boolean r = false;
 		if (symbol.length()>1) {
-			r = lineEnds.contains(symbol.substring(symbol.length() - 1));
+			r = lineEnds.contains(symbol.substring(symbol.length() - 1).toString());
 		} else {
 			r = lineEnds.contains(symbol.toString());
 		}

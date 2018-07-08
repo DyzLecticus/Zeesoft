@@ -6,8 +6,8 @@ import nl.zeesoft.zdk.ZStringBuilder;
  * This class can be used to write a manifest file for a certain source directory.
  */
 public class ManifestWriter {
-	public String writeManifest(String builtBy,String mainClass,String sourceDir,String fileName,String jars) {
-		String err = "";
+	public ZStringBuilder writeManifest(String builtBy,String mainClass,String sourceDir,String fileName,String jars) {
+		ZStringBuilder err = new ZStringBuilder();
 		ZStringBuilder manifest = new ZStringBuilder();
 		manifest.append("Manifest-Version: 1.0\n");
 		

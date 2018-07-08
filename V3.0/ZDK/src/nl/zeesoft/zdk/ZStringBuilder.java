@@ -89,18 +89,17 @@ public class ZStringBuilder {
 		}
 	}
 
-	public String substring(int start) {
-		String r = null;
-		if (sb!=null) {
-			r = substring(start,sb.length());
-		}
-		return r;
+	public ZStringBuilder substring(int start) {
+		return substring(start,sb.length());
 	}
 
-	public String substring(int start, int end) {
-		String r = null;
+	public ZStringBuilder substring(int start, int end) {
+		ZStringBuilder r = null;
 		if (sb!=null) {
-			r = sb.substring(start,end);
+			r = new ZStringBuilder();
+			for (int i = start; i<end; i++) {
+				r.append(sb.substring(i,i+1));
+			}
 		}
 		return r;
 	}
@@ -346,13 +345,14 @@ public class ZStringBuilder {
 		return contains;
 	}
 	
-	public String fromFile(String fileName) {
-		String error = "";
+	public ZStringBuilder fromFile(String fileName) {
+		ZStringBuilder error = new ZStringBuilder();
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(fileName);
 		} catch (FileNotFoundException e) {
-			error = "File not found: " + fileName;
+			error.append("File not found: ");
+			error.append(fileName);
 		}
 		if (fis!=null) {
 			error = fromInputStream(fis);
@@ -360,8 +360,8 @@ public class ZStringBuilder {
 		return error;
 	}
 
-	public String fromInputStream(InputStream is) {
-		String error = "";
+	public ZStringBuilder fromInputStream(InputStream is) {
+		ZStringBuilder error = new ZStringBuilder();
 		sb = new StringBuilder();
 		InputStreamReader isr = null;
 		try {
@@ -378,7 +378,7 @@ public class ZStringBuilder {
 			}
 			in.close();
 		} catch (IOException e) {
-			error = "" + e;
+			error.append("" + e);
 		} finally {
 			if (is!=null) {
 				try {
@@ -398,8 +398,8 @@ public class ZStringBuilder {
 		return error;
 	}
 
-	public String toFile(String fileName) {
-		String error = "";
+	public ZStringBuilder toFile(String fileName) {
+		ZStringBuilder error = new ZStringBuilder();
 		if (sb!=null) {
 			char[] chars = new char[sb.length()];
 			sb.getChars(0, sb.length(), chars, 0);
@@ -416,7 +416,7 @@ public class ZStringBuilder {
 				wtr.write(chars);
 				wtr.close();
 			} catch (IOException e) {
-				error = "" + e;
+				error.append("" + e);
 			} finally {
 				if (fos!=null) {
 					try {
@@ -434,7 +434,7 @@ public class ZStringBuilder {
 				}
 			}
 		} else {
-			error = "Inner string builder value is null; nothing to write";
+			error.append("Inner string builder value is null; nothing to write");
 		}
 		return error;
 	}

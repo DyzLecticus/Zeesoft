@@ -8,8 +8,8 @@ import nl.zeesoft.zdk.ZStringBuilder;
 public class JsFile {
 	public JsElem rootElement = null;
 	
-	public String fromFile(String fileName) {
-		String error = "";
+	public ZStringBuilder fromFile(String fileName) {
+		ZStringBuilder error = new ZStringBuilder();
 		ZStringBuilder json = new ZStringBuilder();
 		error = json.fromFile(fileName);
 		if (error.length()==0) {
@@ -17,13 +17,13 @@ public class JsFile {
 			if (json.startsWith("{") && json.endsWith("}")) {
 				fromStringBuilder(json);
 			} else {
-				error = "JSON must start with '{' and end with '}'";
+				error.append("JSON must start with '{' and end with '}'");
 			}
 		}
 		return error;
 	}
 
-	public String toFile(String fileName,boolean readFormat) {
+	public ZStringBuilder toFile(String fileName,boolean readFormat) {
 		ZStringBuilder json = null;
 		if (rootElement==null) {
 			json = new ZStringBuilder("{}");
@@ -79,7 +79,7 @@ public class JsFile {
 		}
 		String pC = "";
 		for (int i = 0; i < cElemStr.length(); i++) {
-			String c = cElemStr.substring(i,(i+1));
+			String c = cElemStr.substring(i,(i+1)).toString();
 			boolean skip = false;
 			if (c.equals("\"") && !pC.equals("\\") && objectLevel==0 && arrayLevel==0) {
 				if (inQuote) {
