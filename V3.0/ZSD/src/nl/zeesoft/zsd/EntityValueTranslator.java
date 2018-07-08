@@ -229,7 +229,7 @@ public class EntityValueTranslator implements Initializable {
 				r.append(symbols.get(i));
 			}
 		}
-
+		
 		if (doComplex) {
 			ZStringSymbolParser complex = translateToInternalValuesComplex(r,languages,types);
 			if (complex.length()>0) {

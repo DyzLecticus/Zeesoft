@@ -42,7 +42,7 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{lastName}, {preposition}.");
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{lastName}.");
 
-		addVariable(VARIABLE_PREPOSITION,EntityObject.TYPE_PREPOSITION,VARIABLE_PREPOSITION);
+		addVariable(VARIABLE_PREPOSITION,EntityObject.TYPE_PREPOSITION);
 
 		addVariable(VARIABLE_NEXT_DIALOG,EntityObject.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_NEXT_DIALOG,"What can I do for you {fullName}?","{nextDialog}.");

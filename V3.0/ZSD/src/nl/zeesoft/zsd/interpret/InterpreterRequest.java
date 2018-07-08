@@ -12,11 +12,19 @@ public class InterpreterRequest {
 	public String				masterContext			= "";
 	public String				context					= "";
 	
-	public boolean				checkLanguage			= true;
-	public boolean				checkMasterContext		= true;
-	public boolean				checkContext			= true;
-	public boolean				correctInput			= true;
+	public boolean				checkLanguage			= false;
+	public boolean				correctInput			= false;
+	public boolean				checkMasterContext		= false;
+	public boolean				checkContext			= false;
 	
-	public boolean				translateEntiyValues	= true;
-	public List<String>			translateEntityTypes	= new ArrayList<String>();				
+	public boolean				translateEntiyValues	= false;
+	public List<String>			translateEntityTypes	= new ArrayList<String>();
+
+	public void setAllActions(boolean value) {
+		checkLanguage = value;
+		correctInput = value;
+		checkMasterContext = value;
+		checkContext = value;
+		translateEntiyValues = value;
+	}
 }

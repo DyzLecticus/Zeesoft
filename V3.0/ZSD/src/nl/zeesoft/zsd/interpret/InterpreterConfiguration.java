@@ -24,10 +24,10 @@ public class InterpreterConfiguration extends Initializer {
 	private String									overrideDir							= "override/";
 	
 	private SequenceClassifier						languageClassifier					= null;
+	private SortedMap<String,SymbolCorrector>		languageCorrectors					= new TreeMap<String,SymbolCorrector>();
 	private SortedMap<String,SequenceClassifier>	languageMasterContextClassifiers	= new TreeMap<String,SequenceClassifier>();
 	private SortedMap<String,SequenceClassifier>	languageContextClassifiers			= new TreeMap<String,SequenceClassifier>();
 	private EntityValueTranslator					entityValueTranslator				= null;
-	private SortedMap<String,SymbolCorrector>		languageCorrectors					= new TreeMap<String,SymbolCorrector>();
 
 	public InterpreterConfiguration(DialogSet dialogSet) {
 		this.dialogSet = dialogSet;
