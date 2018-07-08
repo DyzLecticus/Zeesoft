@@ -1,6 +1,8 @@
 package nl.zeesoft.zsd.initialize;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -27,10 +29,23 @@ public class InitializerWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		ZStringBuilder data = null;
-		if (cls.fileName.length()>0) {
-			data = new ZStringBuilder();
-			cls.error = data.fromFile(cls.fileName);
+		List<ZStringBuilder> data = null;
+		if (cls.fileNames.size()>0) {
+			for (String fileName: cls.fileNames) {
+				ZStringBuilder content = new ZStringBuilder();
+				String err = content.fromFile(fileName);
+				if (err.length()>0) {
+					if (cls.errors.length()>0) {
+						cls.errors.append("\n");
+					}
+					cls.errors.append(err);
+				} else {
+					if (data==null) {
+						data = new ArrayList<ZStringBuilder>();
+					}
+					data.add(content);
+				}
+			}
 		}
 		cls.obj.initialize(data);
 		cls.ms = (new Date()).getTime() - started.getTime();

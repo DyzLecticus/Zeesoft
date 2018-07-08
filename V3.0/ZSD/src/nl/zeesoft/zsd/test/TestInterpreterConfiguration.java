@@ -2,6 +2,7 @@ package nl.zeesoft.zsd.test;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.initialize.InitializeClass;
@@ -45,8 +46,15 @@ public class TestInterpreterConfiguration extends TestInitializer {
 		List<InitializeClass> clss = config.getInitializeClasses();
 		System.out.println("Classes:");
 		for (InitializeClass cls: clss) {
-			if (cls.fileName.length()>0) {
-				System.out.println("- " + cls.obj.getClass().getName() + " (" + cls.name + ") <= " + cls.fileName);
+			if (cls.fileNames.size()>0) {
+				ZStringBuilder files = new ZStringBuilder();
+				for (String fileName: cls.fileNames) {
+					if (files.length()>0) {
+						files.append(", ");
+					}
+					files.append(fileName);
+				}
+				System.out.println("- " + cls.obj.getClass().getName() + " (" + cls.name + ") <= " + files);
 			} else {
 				System.out.println("- " + cls.obj.getClass().getName() + " (" + cls.name + ")");
 			}
@@ -82,7 +90,7 @@ public class TestInterpreterConfiguration extends TestInitializer {
 			}
 		}
 		for (InitializeClass cls: config.getClasses()) {
-			if (cls.error.length()>0) {
+			if (cls.errors.length()>0) {
 				config = null;
 				break;
 			}

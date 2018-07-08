@@ -1,5 +1,7 @@
 package nl.zeesoft.zsd.initialize;
 
+import java.util.List;
+
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public interface Initializable {
@@ -8,5 +10,5 @@ public interface Initializable {
 	 * 
 	 * @param data The optional data to use for initialization
 	 */
-	public void initialize(ZStringBuilder data);
+	public void initialize(List<ZStringBuilder> data);
 }

@@ -158,7 +158,9 @@ public class Initializer extends Locker {
 			cls.name = uniqueName;
 			cls.className = className;
 			cls.obj = obj;
-			cls.fileName = fileName;
+			if (fileName.length()>0) {
+				cls.fileNames.add(fileName);
+			}
 			addClass(cls);
 		}
 	}

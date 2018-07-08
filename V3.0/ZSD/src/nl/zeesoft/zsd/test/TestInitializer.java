@@ -62,8 +62,8 @@ public class TestInitializer extends TestObject implements InitializerListener {
 	public void initializedClass(InitializeClass cls, boolean done) {
 		System.out.println("Initializing " + cls.name + " took " + cls.ms + " ms");
 		initialized++;
-		if (cls.error.length()>0) {
-			System.err.println(cls.error);
+		if (cls.errors.length()>0) {
+			System.err.println(cls.errors);
 			errors++;
 		}
 		if (done) {

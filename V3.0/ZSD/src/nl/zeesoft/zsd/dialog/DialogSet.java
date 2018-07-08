@@ -25,7 +25,7 @@ public class DialogSet implements Initializable {
 	}
 
 	@Override
-	public void initialize(ZStringBuilder data) {
+	public void initialize(List<ZStringBuilder> data) {
 		// TODO: Read identity and dialogs from JSON?
 		initialize();
 	}

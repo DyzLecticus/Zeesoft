@@ -40,7 +40,7 @@ public class EntityValueTranslator implements Initializable {
 	}
 
 	@Override
-	public void initialize(ZStringBuilder data) {
+	public void initialize(List<ZStringBuilder> data) {
 		initialize();
 	}
 

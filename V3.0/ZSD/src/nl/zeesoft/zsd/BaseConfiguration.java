@@ -34,6 +34,7 @@ public class BaseConfiguration {
 	private SortedMap<String,List<String>>		supportedMasterContexts	= new TreeMap<String,List<String>>();
 
 	private String								baseDir					= "base/";
+	private String								extendDir				= "extend/";
 	private String								overrideDir				= "override/";
 	
 	public BaseConfiguration() {
@@ -80,6 +81,14 @@ public class BaseConfiguration {
 
 	public void setBaseDir(String baseDir) {
 		this.baseDir = baseDir;
+	}
+
+	public String getExtendDir() {
+		return extendDir;
+	}
+
+	public void setExtendDir(String extendDir) {
+		this.extendDir = extendDir;
 	}
 
 	public String getOverrideDir() {

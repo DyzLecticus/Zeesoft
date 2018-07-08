@@ -24,9 +24,11 @@ public class Analyzer implements Initializable {
 	private SortedMap<String,Double>				symbolContextMinProbs	= new TreeMap<String,Double>();
 	
 	@Override
-	public void initialize(ZStringBuilder data) {
-		if (data!=null && data.length()>0) {
-			initialize(new ZStringSymbolParser(data));
+	public void initialize(List<ZStringBuilder> data) {
+		if (data!=null && data.size()>0) {
+			for (ZStringBuilder content: data) {
+				initialize(new ZStringSymbolParser(content));
+			}
 		}
 	}
 
