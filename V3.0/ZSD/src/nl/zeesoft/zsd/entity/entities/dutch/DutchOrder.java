@@ -1,13 +1,13 @@
-package nl.zeesoft.zsd.entity.english;
+package nl.zeesoft.zsd.entity.entities.dutch;
 
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
-public class EnglishOrder extends EntityObject {
+public class DutchOrder extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return BaseConfiguration.LANG_ENG;
+		return BaseConfiguration.LANG_NLD;
 	}
 	@Override
 	public String getType() {
@@ -17,7 +17,7 @@ public class EnglishOrder extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 		
-		EnglishNumeric eo = (EnglishNumeric) translator.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_NUMERIC);
+		DutchNumeric eo = (DutchNumeric) translator.getEntityObject(BaseConfiguration.LANG_NLD,BaseConfiguration.TYPE_NUMERIC);
 		if (!eo.isInitialized()) {
 			eo.initialize(translator);
 		}
@@ -30,45 +30,45 @@ public class EnglishOrder extends EntityObject {
 		for (int i = 1; i<=max; i++) {
 			String value = "" + i;
 			if (i==1) {
-				addEntityValue("first",value,i);
+				addEntityValue("eerste",value,i);
 			} else if (i==2) {
-				addEntityValue("second",value,i);
+				addEntityValue("tweede",value,i);
 			} else if (i==3) {
-				addEntityValue("third",value,i);
+				addEntityValue("derde",value,i);
 			} else if (i==4) {
-				addEntityValue("fourth",value,i);
+				addEntityValue("vierde",value,i);
 			} else if (i==5) {
-				addEntityValue("fifth",value,i);
+				addEntityValue("vijfde",value,i);
 			} else if (i==6) {
-				addEntityValue("sixth",value,i);
+				addEntityValue("zesde",value,i);
 			} else if (i==7) {
-				addEntityValue("seventh",value,i);
+				addEntityValue("zevende",value,i);
 			} else if (i==8) {
-				addEntityValue("eighth",value,i);
+				addEntityValue("achtste",value,i);
 			} else if (i==9) {
-				addEntityValue("ninth",value,i);
+				addEntityValue("negende",value,i);
 			} else if (i==10) {
-				addEntityValue("tenth",value,i);
+				addEntityValue("tiende",value,i);
 			} else if (i==11) {
-				addEntityValue("eleventh",value,i);
+				addEntityValue("elfde",value,i);
 			} else if (i==12) {
-				addEntityValue("twelfth",value,i);
+				addEntityValue("twaalfde",value,i);
 			} else if (i==13) {
-				addEntityValue("thirteenth",value,i);
+				addEntityValue("dertiende",value,i);
 			} else if (i==14) {
-				addEntityValue("fourteenth",value,i);
+				addEntityValue("veertiende",value,i);
 			} else if (i==15) {
-				addEntityValue("fifteenth",value,i);
+				addEntityValue("vijftiende",value,i);
 			} else if (i==16) {
-				addEntityValue("sixteenth",value,i);
+				addEntityValue("zestiende",value,i);
 			} else if (i==17) {
-				addEntityValue("seventeenth",value,i);
+				addEntityValue("zeventiende",value,i);
 			} else if (i==18) {
-				addEntityValue("eighteenth",value,i);
+				addEntityValue("achttiende",value,i);
 			} else if (i==19) {
-				addEntityValue("nineteenth",value,i);
+				addEntityValue("negentiende",value,i);
 			} else if (i==20) {
-				addEntityValue("twentieth",value,i);
+				addEntityValue("twintigste",value,i);
 			} else if (i>20) {
 				int num = i % 10;
 				int dec = ((i - num) / 10);
@@ -87,7 +87,7 @@ public class EnglishOrder extends EntityObject {
 
 				String strNum = "";
 				if (num>0) {
-					strNum = getExternalValueForInternalValue("" + num);
+					strNum = eo.getExternalValueForInternalValue("" + num);
 				}
 				
 				String strDec = "";
@@ -97,62 +97,34 @@ public class EnglishOrder extends EntityObject {
 						strDec = getExternalValueForInternalValue("" + ((dec * 10) + num));
 					}
 				} else if (dec==2) {
-					if (num==0) {
-						strDec = "twentieth";
-					} else {
-						strDec = "twenty";
-					}
+					strDec = "twintigste";
 				} else if (dec==3) {
-					if (num==0) {
-						strDec = "thirtieth";
-					} else {
-						strDec = "thirty";
-					}
+					strDec = "dertigste";
 				} else if (dec==4) {
-					if (num==0) {
-						strDec = "fourtieth";
-					} else {
-						strDec = "fourty";
-					}
+					strDec = "veertigste";
 				} else if (dec==5) {
-					if (num==0) {
-						strDec = "fiftieth";
-					} else {
-						strDec = "fifty";
-					}
+					strDec = "vijftigste";
 				} else if (dec==6) {
-					if (num==0) {
-						strDec = "sixtieth";
-					} else {
-						strDec = "sixty";
-					}
+					strDec = "zestigste";
 				} else if (dec==7) {
-					if (num==0) {
-						strDec = "seventieth";
-					} else {
-						strDec = "seventy";
-					}
+					strDec = "zeventigste";
 				} else if (dec==8) {
-					if (num==0) {
-						strDec = "eightieth";
-					} else {
-						strDec = "eighty";
-					}
+					strDec = "tachtigste";
 				} else if (dec==9) {
-					if (num==0) {
-						strDec = "ninetieth";
-					} else {
-						strDec = "ninety";
-					}
+					strDec = "negentigste";
 				}
-				
+				if (dec>1 && num>0) {
+					strDec = strNum + "en" + strDec;
+					strNum = "";
+				}
+
 				String strCent = "";
 				if (cent>0) {
 					strCent = eo.getExternalValueForInternalValue("" + cent);
 					if (num==0 && dec==0) {
-						strCent += "hundredth";
+						strCent += "honderdste";
 					} else {
-						strCent += "hundredand";
+						strCent += "honderd";
 					}
 				}
 				
@@ -160,9 +132,9 @@ public class EnglishOrder extends EntityObject {
 				if (mill>0) {
 					strMill = eo.getExternalValueForInternalValue("" + mill);
 					if (num==0 && dec==0 && cent==0) {
-						strMill += "thousandth";
+						strMill += "duizendste";
 					} else  {
-						strMill += "thousand";
+						strMill += "duizend";
 					}
 				}
 

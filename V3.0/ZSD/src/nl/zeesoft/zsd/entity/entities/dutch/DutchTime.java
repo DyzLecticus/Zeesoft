@@ -1,4 +1,4 @@
-package nl.zeesoft.zsd.entity.english;
+package nl.zeesoft.zsd.entity.entities.dutch;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -7,10 +7,10 @@ import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
-public class EnglishTime extends EntityObject {
+public class DutchTime extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return BaseConfiguration.LANG_ENG;
+		return BaseConfiguration.LANG_NLD;
 	}
 	@Override
 	public String getType() {
@@ -22,7 +22,7 @@ public class EnglishTime extends EntityObject {
 	}
 	@Override
 	public String getInternalValueForExternalValue(String str) {
-		if (str.equals("now") || str.equals("right now")) {
+		if (str.equals("nu") || str.equals("nu direct")) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(new Date());
 			int minute = cal.get(Calendar.MINUTE);
@@ -41,21 +41,21 @@ public class EnglishTime extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 
-		getToJsonPrefixes().add("at");
-		
-		EnglishNumeric eoNumeric = (EnglishNumeric) translator.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_NUMERIC);
+		getToJsonPrefixes().add("om");
+
+		DutchNumeric eoNumeric = (DutchNumeric) translator.getEntityObject(BaseConfiguration.LANG_NLD,BaseConfiguration.TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize(translator);
 		}
 		
-		addEntityValue("midnight","00:00:00",0L);
+		addEntityValue("middernacht","00:00:00",0l);
 
 		for (int h = 0; h<24; h++) {
 			String HH = String.format("%02d",h);
 
 			String H = "";
 			if (h==0) {
-				H = "midnight";
+				H = "middernacht";
 			} else {
 				if (h>12) {
 					H = eoNumeric.getExternalValueForInternalValue("" + (h % 12));
@@ -70,59 +70,54 @@ public class EnglishTime extends EntityObject {
 			}
 			String HN = eoNumeric.getExternalValueForInternalValue("" + hn);
 			
-			String period = " in the morning";
+			String period = " sochtends";
 			if (h>=17) {
-				period = " in the evening";
+				period = " savonds";
 			} else if (h>=12) {
-				period = " in the afternoon";
+				period = " smiddags";
 			}
-
+			
 			for (int m = 0; m<60; m++) {
 				String M = eoNumeric.getExternalValueForInternalValue("" + m);
 				String MM = String.format("%02d",m);
-				String value = HH + ":" + MM + ":" + "00";
-				String minutes = "minutes";
+				String value = HH + ":" + MM + ":00";
+				String minutes = "minuten";
 				
 				Long typeVal = ((long)h * 3600000l) + ((long)m * 60000l);
 				
 				if (m==0) {
 					if (h>0) {
-						addPatternStringAndValue(H + " o'clock",value,typeVal,period,(h>=7 && h<19));
-						addPatternStringAndValue(H + " oclock",value,typeVal,period,(h>=7 && h<19));
+						addPatternStringAndValue(H + " uur",value,typeVal,period,(h>=7 && h<19));
 						if (h<12) {
-							addPatternStringAndValue((h % 12) + " o'clock",value,typeVal,period,(h>=7 && h<19));
-							addPatternStringAndValue((h % 12) + " oclock",value,typeVal,period,(h>=7 && h<19));
+							addPatternStringAndValue((h % 12) + " uur",value,typeVal,period,(h>=7 && h<19));
 						} else {
-							addPatternStringAndValue(h + " o'clock",value,typeVal,period,(h>=7 && h<19));
-							addPatternStringAndValue(h + " oclock",value,typeVal,period,(h>=7 && h<19));
+							addPatternStringAndValue(h + " uur",value,typeVal,period,(h>=7 && h<19));
 						}
 					}
 				} else { 
 					if (m==1) {
-						minutes = "minute";
+						minutes = "minuut";
 					}
 					if (m == 15) {
-						addPatternStringAndValue("a quarter past " + H,value,typeVal,period,(h>=7 && h<19));
+						addPatternStringAndValue("kwart over " + H,value,typeVal,period,(h>=7 && h<19));
 					}
 					if (m == 30) {
-						addPatternStringAndValue("half past " + H,value,typeVal,period,(h>=7 && h<19));
+						addPatternStringAndValue("half " + HN,value,typeVal,period,(h>=7 && h<19));
 					}
 					if (m == 45) {
-						addPatternStringAndValue("a quarter to " + HN,value,typeVal,period,(h>=7 && h<19));
+						addPatternStringAndValue("Kwart voor " + HN,value,typeVal,period,(h>=7 && h<19));
 					}
-					addPatternStringAndValue(M + " past " + H,value,typeVal,period,(h>=7 && h<19));
-					addPatternStringAndValue(M + " " + minutes + " past " + H,value,typeVal,period,(h>=7 && h<19));
-					if (m % 15 == 0) {
-						addPatternStringAndValue(H + " " + M,value,typeVal,period,(h>=7 && h<19));
-					}
-					if (m >= 45) {
+					addPatternStringAndValue(H + " uur " + M,value,typeVal,period,(h>=7 && h<19));
+					addPatternStringAndValue(M + " over " + H,value,typeVal,period,(h>=7 && h<19));
+					addPatternStringAndValue(M + " " + minutes + " over " + H,value,typeVal,period,(h>=7 && h<19));
+					if (m > 45) {
 						int pm = (60 - m);
-						minutes = "minutes";
+						minutes = "minuten";
 						if (pm==1) {
-							minutes = "minute";
+							minutes = "minuut";
 						}
-						addPatternStringAndValue(eoNumeric.getExternalValueForInternalValue("" + pm) + " to " + HN,value,typeVal,period,(h>=7 && h<19));
-						addPatternStringAndValue(eoNumeric.getExternalValueForInternalValue("" + pm) + " " + minutes + " to " + HN,value,typeVal,period,(h>=7 && h<19));
+						addPatternStringAndValue(eoNumeric.getExternalValueForInternalValue("" + pm) + " voor " + HN,value,typeVal,period,(h>=7 && h<19));
+						addPatternStringAndValue(eoNumeric.getExternalValueForInternalValue("" + pm) + " " + minutes + " voor " + HN,value,typeVal,period,(h>=7 && h<19));
 					}
 				}
 			}

@@ -1,4 +1,4 @@
-package nl.zeesoft.zsd.entity.english;
+package nl.zeesoft.zsd.entity.entities.english;
 
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;

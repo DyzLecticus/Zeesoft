@@ -1,13 +1,13 @@
-package nl.zeesoft.zsd.entity.dutch;
+package nl.zeesoft.zsd.entity.entities.english;
 
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
 
-public class DutchMonth extends EntityObject {
+public class EnglishMonth extends EntityObject {
 	@Override
 	public String getLanguage() {
-		return BaseConfiguration.LANG_NLD;
+		return BaseConfiguration.LANG_ENG;
 	}
 	@Override
 	public String getType() {
@@ -21,25 +21,25 @@ public class DutchMonth extends EntityObject {
 			String value = "" + i;
 			String name = "";
 			if (i==1) {
-				name = "januari";
+				name = "january";
 			} else if (i==2) {
-				name = "februari";
+				name = "february";
 			} else if (i==3) {
-				name = "maart";
+				name = "march";
 			} else if (i==4) {
 				name = "april";
 			} else if (i==5) {
-				name = "mei";
+				name = "may";
 			} else if (i==6) {
-				name = "juni";
+				name = "june";
 			} else if (i==7) {
-				name = "juli";
+				name = "july";
 			} else if (i==8) {
-				name = "augustus";
+				name = "august";
 			} else if (i==9) {
 				name = "september";
 			} else if (i==10) {
-				name = "oktober";
+				name = "october";
 			} else if (i==11) {
 				name = "november";
 			} else if (i==12) {
