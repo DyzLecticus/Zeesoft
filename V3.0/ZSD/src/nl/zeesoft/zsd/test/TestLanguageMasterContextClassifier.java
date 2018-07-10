@@ -49,7 +49,7 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 		List<SequenceClassifierResult> contexts = sc.getContexts(sequence,true,threshold);
 		System.out.println("Context probabilities for '" + sequence + "', threshold: " + threshold);
 		for (SequenceClassifierResult context: contexts) {
-			System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probThreshold);
+			System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probNormalized);
 		}
 		assertEqual(contexts.size(),expectedContexts,"The classifier did not return the expected number of contexts");
 	}

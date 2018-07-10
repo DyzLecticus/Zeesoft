@@ -80,7 +80,7 @@ public class InterpreterResponse {
 		SequenceClassifierResult r = new SequenceClassifierResult();
 		r.symbol = symbol;
 		r.prob = 1.0;
-		r.probThreshold = 1.0;
+		r.probNormalized = 1.0;
 		return r;
 	}
 }

@@ -174,8 +174,8 @@ public class SymbolCorrector extends SequenceAnalyzer {
 		if (r.size()>1 && (before.length()>0 || after.length()>0)) {
 			if (before.length()>0) {
 				for (AnalyzerSymbol as: r) {
-					SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(before,context,as.symbol));
-					if (link!=null) {
+					List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(before,as.symbol,context,true);
+					for (SequenceAnalyzerSymbolLink link: links) {
 						as.prob += bandwidth;
 						as.prob += link.prob;
 					}
@@ -185,8 +185,8 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				List<AnalyzerSymbol> afters = getCorrections(after,context);
 				for (AnalyzerSymbol af: afters) {
 					for (AnalyzerSymbol as: r) {
-						SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(as.symbol,context,af.symbol));
-						if (link!=null) {
+						List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(as.symbol,af.symbol,context,true);
+						for (SequenceAnalyzerSymbolLink link: links) {
 							as.prob += bandwidth;
 							as.prob += link.prob;
 						}

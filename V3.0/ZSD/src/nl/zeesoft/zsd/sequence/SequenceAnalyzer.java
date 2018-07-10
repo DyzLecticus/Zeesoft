@@ -102,6 +102,43 @@ public class SequenceAnalyzer extends Analyzer {
 		}
 	}
 	
+	public List<SequenceAnalyzerSymbolLink> getLinksByFromTo(String from,String to,String context,boolean caseInsensitive) {
+		List<SequenceAnalyzerSymbolLink> r = new ArrayList<SequenceAnalyzerSymbolLink>();
+		List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(from,to,caseInsensitive);
+		for (SequenceAnalyzerSymbolLink link: links) {
+			if (link.context.equals(context)) {
+				r.add(link);
+			}
+		}
+		return r;
+	}
+	
+	public List<SequenceAnalyzerSymbolLink> getLinksByFromTo(String from,String to,boolean caseInsensitive) {
+		List<SequenceAnalyzerSymbolLink> r = new ArrayList<SequenceAnalyzerSymbolLink>();
+		if (caseInsensitive) {
+			for (String cased: getCaseVariations(from)) {
+				List<SequenceAnalyzerSymbolLink> add = getLinksBySymbolFrom().get(cased);
+				if (add!=null) {
+					for (SequenceAnalyzerSymbolLink link: add) {
+						if (to.length()==0 || link.symbolTo.equalsIgnoreCase(to)) {
+							r.add(link);
+						}
+					}
+				}
+			}
+		} else {
+			List<SequenceAnalyzerSymbolLink> add = getLinksBySymbolFrom().get(from);
+			if (add!=null) {
+				for (SequenceAnalyzerSymbolLink link: add) {
+					if (to.length()==0 || link.symbolTo.equals(to)) {
+						r.add(link);
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
 	public SortedMap<String, SequenceAnalyzerSymbolLink> getKnownLinks() {
 		return knownLinks;
 	}

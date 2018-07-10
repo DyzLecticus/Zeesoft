@@ -64,7 +64,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
 			for (SequenceClassifierResult context: contexts) {
-				System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probThreshold);
+				System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probNormalized);
 			}
 			assertEqual(contexts.size(),2,"The classifier did not return the expected number of contexts");
 
@@ -73,7 +73,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
 			for (SequenceClassifierResult context: contexts) {
-				System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probThreshold);
+				System.out.println("'" + context.symbol + "': " + context.prob + " / " + context.probNormalized);
 			}
 			assertEqual(contexts.size(),1,"The classifier did not return the expected number of contexts");
 		}

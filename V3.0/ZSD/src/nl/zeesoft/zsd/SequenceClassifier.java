@@ -7,8 +7,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
+import nl.zeesoft.zsd.sequence.AnalyzerSymbol;
 import nl.zeesoft.zsd.sequence.SequenceAnalyzerSymbolLink;
+import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 /**
  * A SequenceClassifier can be used to obtain the context of symbol sequences.
@@ -80,74 +81,39 @@ public class SequenceClassifier extends SymbolCorrector {
 		List<String> symbols = sequence.toSymbolsPunctuated(); 
 		int i = 0;
 		double highest = 0D;
-		for (String symbol: symbols) {
-			String to = "";
-			if (symbols.size()>(i + 1)) {
-				to = symbols.get(i + 1);
-			}
-			List<SequenceAnalyzerSymbolLink> links = getLinksBySymbolFrom().get(symbol);
-			if (links!=null) {
-				links = new ArrayList<SequenceAnalyzerSymbolLink>(links);
-			} else {
-				links = new ArrayList<SequenceAnalyzerSymbolLink>();
-			}
-			if (caseInsensitive) {
-				String cased = symbol.toLowerCase(); 
-				if (!cased.equals(symbol)) {
-					List<SequenceAnalyzerSymbolLink> linksAdd = getLinksBySymbolFrom().get(cased);
-					if (linksAdd!=null) {
-						for (SequenceAnalyzerSymbolLink link: linksAdd) {
-							links.add(link);
-						}
-					}
-				}
-				cased = symbol.toUpperCase(); 
-				if (!cased.equals(symbol)) {
-					List<SequenceAnalyzerSymbolLink> linksAdd = getLinksBySymbolFrom().get(cased);
-					if (linksAdd!=null) {
-						for (SequenceAnalyzerSymbolLink link: linksAdd) {
-							links.add(link);
-						}
-					}
-				}
-				cased = upperCaseFirst(symbol); 
-				if (!cased.equals(symbol)) {
-					List<SequenceAnalyzerSymbolLink> linksAdd = getLinksBySymbolFrom().get(cased);
-					if (linksAdd!=null) {
-						for (SequenceAnalyzerSymbolLink link: linksAdd) {
-							links.add(link);
-						}
-					}
-				}
-			}
-			for (SequenceAnalyzerSymbolLink link: links) {
-				if (link.context.length()>0 && (
-						symbols.size()==1 ||
-						link.symbolTo.equals(to) || 
-						(caseInsensitive && link.symbolTo.equalsIgnoreCase(to)) 
-					)
-					) {
-					SequenceClassifierResult res = list.get(link.context);
-					if (res==null) {
-						res = new SequenceClassifierResult();
-						res.symbol = link.context;
-						list.put(link.context,res);
-						r.add(res);
-					}
-					res.prob += bandwidth;
-					res.prob += (getLinkContextMaxProbs().get(link.context) - link.prob);
+		if (symbols.size()==1) {
+			List<AnalyzerSymbol> asl = getKnownSymbols(symbols.get(0),caseInsensitive);
+			for (AnalyzerSymbol as: asl) {
+				if (as.context.length()>0) {
+					SequenceClassifierResult res = addOrUpdateResult(r,list,as.context,bandwidth,as.prob,false);
 					if (res.prob>highest) {
 						highest = res.prob;
 					}
 				}
 			}
-			i++;
+		} else {
+			for (String symbol: symbols) {
+				String to = "";
+				if (symbols.size()>(i + 1)) {
+					to = symbols.get(i + 1);
+					List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(symbol,to,caseInsensitive);
+					for (SequenceAnalyzerSymbolLink link: links) {
+						if (link.context.length()>0) {
+							SequenceClassifierResult res = addOrUpdateResult(r,list,link.context,bandwidth,link.prob,true);
+							if (res.prob>highest) {
+								highest = res.prob;
+							}
+						}
+					}
+				}
+				i++;
+			}
 		}
 		if (r.size()>0) {
 			SortedMap<Double,List<SequenceClassifierResult>> sort = new TreeMap<Double,List<SequenceClassifierResult>>();
 			for (SequenceClassifierResult res: r) {
-				res.probThreshold = res.prob / highest ;
-				if (threshold==0D || res.probThreshold>=threshold) {
+				res.probNormalized = res.prob / highest ;
+				if (threshold==0D || res.probNormalized>=threshold) {
 					List<SequenceClassifierResult> l = sort.get(res.prob);
 					if (l==null) {
 						l = new ArrayList<SequenceClassifierResult>();
@@ -166,17 +132,20 @@ public class SequenceClassifier extends SymbolCorrector {
 		return r;
 	}
 	
-	/**
-	 * Returns the string with the first character converted to upper case.
-	 * 
-	 * @param str The string
-	 * @return The string with the first character converted to upper case
-	 */
-	public String upperCaseFirst(String str) {
-		String r = str.substring(0,1).toUpperCase();
-		if (str.length()>1) {
-			r += str.substring(1).toLowerCase();
+	private SequenceClassifierResult addOrUpdateResult(List<SequenceClassifierResult> r,SortedMap<String,SequenceClassifierResult> list,String context,double bandwidth,double prob,boolean link) {
+		SequenceClassifierResult res = list.get(context);
+		if (res==null) {
+			res = new SequenceClassifierResult();
+			res.symbol = context;
+			list.put(context,res);
+			r.add(res);
 		}
-		return r;
+		res.prob += bandwidth;
+		if (link) {
+			res.prob += (getLinkContextMaxProbs().get(context) - prob);
+		} else {
+			res.prob += (getSymbolContextMaxProbs().get(context) - prob);
+		}
+		return res;
 	}
 }

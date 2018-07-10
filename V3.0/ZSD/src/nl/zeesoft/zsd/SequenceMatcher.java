@@ -122,33 +122,10 @@ public class SequenceMatcher extends SequenceClassifier {
 		SortedMap<String,AnalyzerSymbol> matchSymbols = new TreeMap<String,AnalyzerSymbol>();
 		double highest = 0D;
 		for (String symbol: match.symbols) {
-			if (!matchSymbols.containsKey(symbol)) {
-				AnalyzerSymbol as = getKnownSymbol(symbol,context);
-				if (as!=null) {
+			List<AnalyzerSymbol> asl = getKnownSymbols(symbol, context, caseInsensitive);
+			for (AnalyzerSymbol as: asl) {
+				if (!matchSymbols.containsKey(symbol)) {
 					matchSymbols.put(symbol,as);
-				}
-			}
-			if (caseInsensitive) {
-				String cased = symbol.toLowerCase();
-				if (!matchSymbols.containsKey(cased)) {
-					AnalyzerSymbol as = getKnownSymbol(cased,context);
-					if (as!=null) {
-						matchSymbols.put(cased,as);
-					}
-				}
-				cased = symbol.toUpperCase();
-				if (!matchSymbols.containsKey(cased)) {
-					AnalyzerSymbol as = getKnownSymbol(cased,context);
-					if (as!=null) {
-						matchSymbols.put(cased,as);
-					}
-				}
-				cased = upperCaseFirst(symbol);
-				if (!matchSymbols.containsKey(cased)) {
-					AnalyzerSymbol as = getKnownSymbol(cased,context);
-					if (as!=null) {
-						matchSymbols.put(cased,as);
-					}
 				}
 			}
 		}
@@ -235,8 +212,8 @@ public class SequenceMatcher extends SequenceClassifier {
 		if (r.size()>0) {
 			SortedMap<Double,List<SequenceMatcherResult>> sort = new TreeMap<Double,List<SequenceMatcherResult>>();
 			for (SequenceMatcherResult res: r) {
-				res.probThreshold = res.prob / highest ;
-				if (threshold==0D || res.probThreshold>=threshold) {
+				res.probNormalized = res.prob / highest ;
+				if (threshold==0D || res.probNormalized>=threshold) {
 					List<SequenceMatcherResult> l = sort.get(res.prob);
 					if (l==null) {
 						l = new ArrayList<SequenceMatcherResult>();

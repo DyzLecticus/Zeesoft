@@ -19,6 +19,7 @@ public class Analyzer implements Initializable {
 	private String									ioSeparator				= "[OUTPUT]";	
 
 	private SortedMap<String,AnalyzerSymbol>		knownSymbols			= new TreeMap<String,AnalyzerSymbol>();		
+	private SortedMap<String,List<String>>			symbolContexts			= new TreeMap<String,List<String>>();		
 	private SortedMap<String,Integer>				symbolContextCounts		= new TreeMap<String,Integer>();
 	private SortedMap<String,Double>				symbolContextMaxProbs	= new TreeMap<String,Double>();
 	private SortedMap<String,Double>				symbolContextMinProbs	= new TreeMap<String,Double>();
@@ -166,6 +167,12 @@ public class Analyzer implements Initializable {
 						as.symbol = symbol;
 						as.context = context;
 						knownSymbols.put(id,as);
+						List<String> contexts = symbolContexts.get(symbol);
+						if (contexts==null) {
+							contexts = new ArrayList<String>();
+						}
+						contexts.add(context);
+						symbolContexts.put(symbol,contexts);
 					}
 					as.count++;
 				} else {
@@ -207,6 +214,74 @@ public class Analyzer implements Initializable {
 			}
 		}
 	}
+	
+	public List<String> getCaseVariations(String symbol) {
+		List<String> r = new ArrayList<String>();
+		r.add(symbol);
+		String cased = symbol.toLowerCase();
+		if (!r.contains(cased)) {
+			r.add(cased);
+		}
+		cased = symbol.toUpperCase();
+		if (!r.contains(cased)) {
+			r.add(cased);
+		}
+		cased = upperCaseFirst(symbol);
+		if (!r.contains(cased)) {
+			r.add(cased);
+		}
+		return r;
+	}
+	
+	/**
+	 * Returns the string with the first character converted to upper case.
+	 * 
+	 * @param str The string
+	 * @return The string with the first character converted to upper case
+	 */
+	public String upperCaseFirst(String str) {
+		String r = str.substring(0,1).toUpperCase();
+		if (str.length()>1) {
+			r += str.substring(1).toLowerCase();
+		}
+		return r;
+	}
+
+	public List<AnalyzerSymbol> getKnownSymbols(String symbol,String context,boolean caseInsensitive) {
+		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
+		List<AnalyzerSymbol> asl = getKnownSymbols(symbol,caseInsensitive);
+		for (AnalyzerSymbol as: asl) {
+			if (as.context.equals(context)) {
+				r.add(as);
+			}
+		}
+		return r;
+	}
+
+	public List<AnalyzerSymbol> getKnownSymbols(String symbol,boolean caseInsensitive) {
+		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
+		if (caseInsensitive) {
+			for (String cased: getCaseVariations(symbol)) {
+				List<String> contexts = symbolContexts.get(cased);
+				if (contexts!=null) {
+					for (String c: contexts) {
+						AnalyzerSymbol as = knownSymbols.get(getSymbolId(cased,c));
+						if (as!=null) {
+							r.add(as);
+						}
+					}
+				}
+			}
+		} else {
+			List<String> contexts = symbolContexts.get(symbol);
+			if (contexts!=null) {
+				for (String c: contexts) {
+					r.add(knownSymbols.get(getSymbolId(symbol,c)));
+				}
+			}
+		}
+		return r;
+	}
 
 	public boolean knownSymbolsContains(String symbol,String context) {
 		return knownSymbols.containsKey(getSymbolId(symbol,context));
@@ -222,6 +297,14 @@ public class Analyzer implements Initializable {
 
 	public void setKnownSymbols(SortedMap<String,AnalyzerSymbol> knownSymbols) {
 		this.knownSymbols = knownSymbols;
+	}
+
+	public SortedMap<String, List<String>> getSymbolContexts() {
+		return symbolContexts;
+	}
+
+	public void setSymbolContexts(SortedMap<String, List<String>> symbolContexts) {
+		this.symbolContexts = symbolContexts;
 	}
 
 	public SortedMap<String, Integer> getSymbolContextCounts() {

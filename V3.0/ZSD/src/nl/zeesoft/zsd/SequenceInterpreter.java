@@ -10,7 +10,7 @@ import nl.zeesoft.zsd.interpret.InterpreterResponse;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class SequenceInterpreter {
-	private InterpreterConfiguration				configuration						= null;
+	private InterpreterConfiguration	configuration	= null;
 	
 	public SequenceInterpreter(InterpreterConfiguration c) {
 		configuration = c;

@@ -94,7 +94,7 @@ public class TestSequenceInterpreter extends TestInitializer {
 
 	protected void showResults(List<SequenceClassifierResult> results) {
 		for (SequenceClassifierResult res: results) {
-			System.out.println("  - " + res.symbol + ": " + res.prob + " / " + res.probThreshold);
+			System.out.println("  - " + res.symbol + ": " + res.prob + " / " + res.probNormalized);
 		}
 	}
 }

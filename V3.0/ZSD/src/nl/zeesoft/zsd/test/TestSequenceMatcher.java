@@ -101,7 +101,7 @@ public class TestSequenceMatcher extends TestObject {
 				if (seq.length()>60) {
 					seq = seq.substring(0,60) + "[ ...]";
 				}
-				System.out.println("'" + seq + "': " + match.prob + " / " + match.probThreshold);
+				System.out.println("'" + seq + "': " + match.prob + " / " + match.probNormalized);
 			}
 			assertEqual(matches.size(),15,"The matcher did not return the expected number of sequences");
 			
@@ -114,7 +114,7 @@ public class TestSequenceMatcher extends TestObject {
 				if (seq.length()>60) {
 					seq = seq.substring(0,60) + "[ ...]";
 				}
-				System.out.println("'" + seq + "': " + match.prob + " / " + match.probThreshold);
+				System.out.println("'" + seq + "': " + match.prob + " / " + match.probNormalized);
 			}
 			assertEqual(matches.size(),1,"The matcher did not return the expected number of sequences");
 		}
@@ -146,8 +146,10 @@ public class TestSequenceMatcher extends TestObject {
 			if (match!=null) {
 				assertEqual(match.toString(),"null","The match sequence does not match expectation");
 			}
-		} else {
+		} else if (match!=null) {
 			assertEqual(match,expectedMatch,"The match sequence does not match expectation");
+		} else {
+			assertEqual("null",expectedMatch.toString(),"The match sequence does not match expectation");
 		}
 	}
 }
