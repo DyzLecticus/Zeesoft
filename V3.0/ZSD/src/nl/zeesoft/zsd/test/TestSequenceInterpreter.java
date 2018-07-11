@@ -64,6 +64,7 @@ public class TestSequenceInterpreter extends TestInitializer {
 			System.out.println();
 			testRequestResponse(interpreter,"",
 				"mijn naam si gekste der henkies",
+				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:si UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.");
 			System.out.println();
 			testRequestResponse(interpreter,"What is your name?",
@@ -75,8 +76,12 @@ public class TestSequenceInterpreter extends TestInitializer {
 				"UNI_ABC:Wruio UNI_ABC:wwtiop UNI_ABC:wtwrpoi UNI_ABC:weptiwpipw UNI_ABC:ipwopkm UNI_ABC:eopipwqwrqqiop UNI_ABC:qwerqwer UNI_ABC:qrqpoqe UNI_ABC:qpxnxc UNI_ABC:qwpgsjkdbvhsdfkljjv .");
 		}
 	}
-
+	
 	protected void testRequestResponse(SequenceInterpreter si,String prompt,String input, String expectedTranslation) {
+		testRequestResponse(si,prompt,input,expectedTranslation,expectedTranslation);
+	}
+
+	protected void testRequestResponse(SequenceInterpreter si,String prompt,String input, String expectedTranslation, String expectedTranslationCorrected) {
 		Date started = new Date();	
 		InterpreterRequest request = new InterpreterRequest(prompt,input);
 		request.setAllActions(true);
@@ -84,6 +89,9 @@ public class TestSequenceInterpreter extends TestInitializer {
 		showRequestResponse(response);
 		System.out.println("Interpreting the request took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		assertEqual(response.entityValueTranslation,new ZStringSymbolParser(expectedTranslation),"Translation does not match expectation");
+		if (expectedTranslationCorrected!=null) {
+			assertEqual(response.entityValueTranslationCorrected,new ZStringSymbolParser(expectedTranslationCorrected),"Corrected translation does not match expectation");
+		}
 	}
 	
 	protected void showRequestResponse(InterpreterResponse response) {

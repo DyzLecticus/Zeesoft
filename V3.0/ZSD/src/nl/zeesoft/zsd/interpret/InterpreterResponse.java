@@ -9,16 +9,17 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class InterpreterResponse {
-	public InterpreterRequest				request					= null;
-	public int								numInputSymbols			= 0;
+	public InterpreterRequest				request							= null;
+	public int								numInputSymbols					= 0;
 	
-	public List<SequenceClassifierResult>	responseLanguages		= new ArrayList<SequenceClassifierResult>();
-	public ZStringSymbolParser				correctedInput			= new ZStringSymbolParser();
-	public List<SequenceClassifierResult>	responseMasterContexts	= new ArrayList<SequenceClassifierResult>();
-	public List<SequenceClassifierResult>	responseContexts		= new ArrayList<SequenceClassifierResult>();
-	public ZStringSymbolParser				entityValueTranslation	= new ZStringSymbolParser();
+	public List<SequenceClassifierResult>	responseLanguages				= new ArrayList<SequenceClassifierResult>();
+	public ZStringSymbolParser				correctedInput					= new ZStringSymbolParser();
+	public List<SequenceClassifierResult>	responseMasterContexts			= new ArrayList<SequenceClassifierResult>();
+	public List<SequenceClassifierResult>	responseContexts				= new ArrayList<SequenceClassifierResult>();
+	public ZStringSymbolParser				entityValueTranslation			= new ZStringSymbolParser();
+	public ZStringSymbolParser				entityValueTranslationCorrected	= new ZStringSymbolParser();
 	
-	public ZStringBuilder					debugLog				= new ZStringBuilder();
+	public ZStringBuilder					debugLog						= new ZStringBuilder();
 	
 	public InterpreterResponse(InterpreterRequest r) {
 		this.request = r;
