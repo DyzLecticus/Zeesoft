@@ -70,6 +70,7 @@ public class TestSymbolCorrector extends TestObject {
 			variations = testVariations(sc,"stfu",2,5);
 			testVariationsContains(variations,"stfu","stuff");
 			variations = testVariations(sc,"pizza",2,306);
+
 			System.out.println();
 			started = new Date();
 			testCorrection(sc,"pizzas","pizza");
@@ -109,10 +110,10 @@ public class TestSymbolCorrector extends TestObject {
 	}
 	
 	private List<ZStringBuilder> testVariations(SymbolCorrector sc,String test, int num, int expected, boolean debug) {
-		List<ZStringBuilder> variations = sc.generateVariations(test,"");
+		List<ZStringBuilder> variations = sc.generateVariations(test,"",null,0);
 		String single = "Single";
 		if (num==2) {
-			variations = sc.addVariations(variations,"");
+			variations = sc.addVariations(variations,"",null,0);
 			single = "Double";
 		}
 		System.out.println(single + " variations for '" + test + "'; " + variations.size());

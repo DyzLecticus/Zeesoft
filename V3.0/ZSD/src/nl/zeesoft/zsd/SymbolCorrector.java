@@ -15,7 +15,10 @@ import nl.zeesoft.zsd.sequence.SequenceAnalyzerSymbolLink;
  * A SymbolCorrector can be used to correct the spelling of symbols and sequences.
  */
 public class SymbolCorrector extends SequenceAnalyzer {
-	private static final String		ALPHABET	= "abcdefghijklmnopqrstuvwxyz";
+	private static final int		MAX_SYMBOL_LENGTH		= 40;
+	private static final int		MAX_SECONDARY_LENGTH	= 32;
+	
+	private static final String		ALPHABET				= "abcdefghijklmnopqrstuvwxyz";
 
 	/**
 	 * Returns the symbol bandwidth.
@@ -54,7 +57,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected symbol
 	 */
 	public String correct(String symbol) {
-		return correct("",symbol,"","",getLinkContextBandwidth(""));
+		return correct("",symbol,"","",getLinkContextBandwidth(""),null,0);
 	}
 	
 	/**
@@ -65,13 +68,15 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param after The optional symbol after the symbol to correct
 	 * @param context The optional context symbol to limit symbol link usage
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
+	 * @param started The optional correction start time
+	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
 	 * @return The corrected symbol
 	 */
-	public String correct(String before,String symbol,String after,String context,double bandwidth) {
+	public String correct(String before,String symbol,String after,String context,double bandwidth,Date started,long stopAfterMs) {
 		ZStringBuilder r = new ZStringBuilder(symbol);
 		if (!knownSymbolsContains(symbol,context)) {
 			double highest = 0D;
-			List<AnalyzerSymbol> cors = getCorrections(before,symbol,after,context,bandwidth);
+			List<AnalyzerSymbol> cors = getCorrections(before,symbol,after,context,bandwidth,started,stopAfterMs);
 			for (AnalyzerSymbol s: cors) {
 				if (s.prob>highest) {
 					highest = s.prob;
@@ -140,8 +145,8 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				corrected.add(symbol);
 			} else if (symbol.length()== 1 && (ZStringSymbolParser.isLineEndSymbol(symbol) || ZStringSymbolParser.isPunctuationSymbol(symbol))) {
 				corrected.add(symbol);
-			} else if (symbol.length()<48) {
-				corrected.add(correct(before,symbol,after,context,bandwidth));
+			} else if (symbol.length()<=MAX_SYMBOL_LENGTH) {
+				corrected.add(correct(before,symbol,after,context,bandwidth,started,stopAfterMs));
 			}
 			i++;
 			before = symbol;
@@ -167,10 +172,12 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param after The optional symbol after the symbol to correct
 	 * @param context The optional context symbol to limit symbol link usage
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
+	 * @param started The optional correction start time
+	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
 	 * @return a list of possible analyzer symbol corrections
 	 */
-	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context, double bandwidth) {
-		List<AnalyzerSymbol> r = getCorrections(symbol,context);
+	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context, double bandwidth,Date started,long stopAfterMs) {
+		List<AnalyzerSymbol> r = getCorrections(symbol,context,started,stopAfterMs);
 		if (r.size()>1 && (before.length()>0 || after.length()>0)) {
 			if (before.length()>0) {
 				for (AnalyzerSymbol as: r) {
@@ -182,7 +189,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				}
 			}
 			if (after.length()>0) {
-				List<AnalyzerSymbol> afters = getCorrections(after,context);
+				List<AnalyzerSymbol> afters = getCorrections(after,context,started,stopAfterMs);
 				for (AnalyzerSymbol af: afters) {
 					for (AnalyzerSymbol as: r) {
 						SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(as.symbol,context,af.symbol));
@@ -202,9 +209,11 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * 
 	 * @param symbol The symbol to correct
 	 * @param context The optional context symbol
+	 * @param started The optional correction start time
+	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
 	 * @return a list of possible analyzer symbol corrections
 	 */
-	public List<AnalyzerSymbol> getCorrections(String symbol,String context) {
+	public List<AnalyzerSymbol> getCorrections(String symbol,String context,Date started,long stopAfterMs) {
 		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
 		if (knownSymbolsContains(symbol,context)) {
 			AnalyzerSymbol s = new AnalyzerSymbol();
@@ -213,7 +222,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 			r.add(s);
 		} else {
 			List<String> added = new ArrayList<String>();
-			List<ZStringBuilder> variations = generateVariations(symbol,context);
+			List<ZStringBuilder> variations = generateVariations(symbol,context,started,stopAfterMs);
 			for (ZStringBuilder var: variations) {
 				AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
 				if (s!=null && !added.contains(s.symbol)) {
@@ -221,8 +230,10 @@ public class SymbolCorrector extends SequenceAnalyzer {
 					r.add(s.copy());
 				}
 			}
-			if (r.size()==0 && symbol.length()<=32) {
-				variations = addVariations(variations,context);
+			if (r.size()==0 && symbol.length()<=MAX_SECONDARY_LENGTH &&
+				(started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs)
+				) {
+				variations = addVariations(variations,context,started,stopAfterMs);
 				for (ZStringBuilder var: variations) {
 					AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
 					if (s!=null && !added.contains(s.symbol)) {
@@ -241,16 +252,26 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * 
 	 * @param symbol The symbol
 	 * @param context The optional context symbol
+	 * @param started The correction start time
+	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
 	 * @return The list of primary variations
 	 */
-	public List<ZStringBuilder> generateVariations(String symbol,String context) {
+	public List<ZStringBuilder> generateVariations(String symbol,String context,Date started,long stopAfterMs) {
 		List<ZStringBuilder> r = new ArrayList<ZStringBuilder>();
 		ZStringBuilder sym = new ZStringBuilder(symbol);
 		addAdditions(r,sym,context,true);
-		addDeletes(r,sym,context,true);
-		addSwitches(r,sym,context,true);
-		addReplacements(r,sym,context,true);
-		addCases(r,sym,context,true);
+		if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
+			addDeletes(r,sym,context,true);
+		}
+		if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
+			addSwitches(r,sym,context,true);
+		}
+		if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
+			addReplacements(r,sym,context,true);
+		}
+		if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
+			addCases(r,sym,context,true);
+		}
 		return r;
 	}
 
@@ -259,19 +280,21 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * 
 	 * @param variations The primary variations
 	 * @param context The optional context symbol
+	 * @param started The correction start time
+	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
 	 * @return The list of primary and secondary variations
 	 */
-	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations,String context) {
+	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations,String context,Date started,long stopAfterMs) {
 		List<ZStringBuilder> currentVariations = new ArrayList<ZStringBuilder>(variations);
 		int i = 0;
 		for (ZStringBuilder sym: currentVariations) {
-			if (sym.length()<=24) {
+			if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
 				addAdditions(variations,sym,context,false);
+				addDeletes(variations,sym,context,false);
+				addSwitches(variations,sym,context,false);
+				addReplacements(variations,sym,context,false);
+				addCases(variations,sym,context,false);
 			}
-			addDeletes(variations,sym,context,false);
-			addSwitches(variations,sym,context,false);
-			addReplacements(variations,sym,context,false);
-			addCases(variations,sym,context,false);
 			if (!knownSymbolsContains(sym.toString(),context)) {
 				variations.remove(i);
 			} else {
