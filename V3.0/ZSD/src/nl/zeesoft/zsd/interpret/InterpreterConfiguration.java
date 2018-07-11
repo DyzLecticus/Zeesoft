@@ -128,17 +128,14 @@ public class InterpreterConfiguration extends Initializer {
 		File file = new File(base.getOverrideDir() + fileName);
 		if (!file.exists()) {
 			dir = base.getBaseDir();
-			extend = base.getExtendDir() + fileName;
-			file = new File(extend);
-			if (!file.exists()) {
-				extend ="";
-			}
 		}
 		InitializeClass r = new InitializeClass();
 		r.name = fileName.split("\\.")[0];
 		r.obj = sc;
 		r.fileNames.add(dir + fileName);
-		if (extend.length()>0) {
+		extend = base.getExtendDir() + fileName;
+		file = new File(extend);
+		if (file.exists()) {
 			r.fileNames.add(extend);
 		}
 		return r;

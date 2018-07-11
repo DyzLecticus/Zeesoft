@@ -104,9 +104,16 @@ public class SequenceAnalyzer extends Analyzer {
 	
 	public List<SequenceAnalyzerSymbolLink> getLinksByFromTo(String from,String to,String context,boolean caseInsensitive) {
 		List<SequenceAnalyzerSymbolLink> r = new ArrayList<SequenceAnalyzerSymbolLink>();
-		List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(from,to,caseInsensitive);
-		for (SequenceAnalyzerSymbolLink link: links) {
-			if (link.context.equals(context)) {
+		if (caseInsensitive) {
+			List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(from,to,caseInsensitive);
+			for (SequenceAnalyzerSymbolLink link: links) {
+				if (link.context.equals(context)) {
+					r.add(link);
+				}
+			}
+		} else {
+			SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(from,context,to));
+			if (link!=null) {
 				r.add(link);
 			}
 		}
