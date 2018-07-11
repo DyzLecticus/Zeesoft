@@ -18,8 +18,8 @@ import nl.zeesoft.zsd.initialize.Initializable;
 public class Analyzer implements Initializable {
 	private String									ioSeparator				= "[OUTPUT]";	
 
-	private SortedMap<String,AnalyzerSymbol>		knownSymbols			= new TreeMap<String,AnalyzerSymbol>();		
-	private SortedMap<String,List<String>>			symbolContexts			= new TreeMap<String,List<String>>();		
+	private SortedMap<String,AnalyzerSymbol>		knownSymbols			= new TreeMap<String,AnalyzerSymbol>();
+	private List<String>							knownContexts			= new ArrayList<String>();
 	private SortedMap<String,Integer>				symbolContextCounts		= new TreeMap<String,Integer>();
 	private SortedMap<String,Double>				symbolContextMaxProbs	= new TreeMap<String,Double>();
 	private SortedMap<String,Double>				symbolContextMinProbs	= new TreeMap<String,Double>();
@@ -167,12 +167,9 @@ public class Analyzer implements Initializable {
 						as.symbol = symbol;
 						as.context = context;
 						knownSymbols.put(id,as);
-						List<String> contexts = symbolContexts.get(symbol);
-						if (contexts==null) {
-							contexts = new ArrayList<String>();
+						if (!knownContexts.contains(context)) {
+							knownContexts.add(context);
 						}
-						contexts.add(context);
-						symbolContexts.put(symbol,contexts);
 					}
 					as.count++;
 				} else {
@@ -262,21 +259,18 @@ public class Analyzer implements Initializable {
 		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
 		if (caseInsensitive) {
 			for (String cased: getCaseVariations(symbol)) {
-				List<String> contexts = symbolContexts.get(cased);
-				if (contexts!=null) {
-					for (String c: contexts) {
-						AnalyzerSymbol as = knownSymbols.get(getSymbolId(cased,c));
-						if (as!=null) {
-							r.add(as);
-						}
+				for (String c: knownContexts) {
+					AnalyzerSymbol as = knownSymbols.get(getSymbolId(cased,c));
+					if (as!=null) {
+						r.add(as);
 					}
 				}
 			}
 		} else {
-			List<String> contexts = symbolContexts.get(symbol);
-			if (contexts!=null) {
-				for (String c: contexts) {
-					r.add(knownSymbols.get(getSymbolId(symbol,c)));
+			for (String c: knownContexts) {
+				AnalyzerSymbol as = knownSymbols.get(getSymbolId(symbol,c));
+				if (as!=null) {
+					r.add(as);
 				}
 			}
 		}
@@ -299,14 +293,14 @@ public class Analyzer implements Initializable {
 		this.knownSymbols = knownSymbols;
 	}
 
-	public SortedMap<String, List<String>> getSymbolContexts() {
-		return symbolContexts;
+	public List<String> getKnownContexts() {
+		return knownContexts;
 	}
 
-	public void setSymbolContexts(SortedMap<String, List<String>> symbolContexts) {
-		this.symbolContexts = symbolContexts;
+	public void setKnownContexts(List<String> knownContexts) {
+		this.knownContexts = knownContexts;
 	}
-
+	
 	public SortedMap<String, Integer> getSymbolContextCounts() {
 		return symbolContextCounts;
 	}
