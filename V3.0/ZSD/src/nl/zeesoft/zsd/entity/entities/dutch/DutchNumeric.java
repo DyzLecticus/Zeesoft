@@ -117,17 +117,6 @@ public class DutchNumeric extends EntityObject {
 					strNum = "";
 				}
 				
-				/*
-				 * TODO: Remove debugging statements
-				if (
-					(i>97 && i<400)
-					|| 
-					(i>1994 && i<2300)
-					) {
-					System.out.println(i + " = " + mill + " " + cent + " " + dec + " " + num);
-					System.out.println(i + " = " + strMill + " " + strCent + " " + strDec + " " + strNum);
-				}
-				*/
 				addEntityValue(strMill + strCent + strDec + strNum,i);
 			}
 		}

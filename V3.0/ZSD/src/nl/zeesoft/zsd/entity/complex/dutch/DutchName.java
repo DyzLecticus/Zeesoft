@@ -18,11 +18,13 @@ public class DutchName extends ComplexObject {
 	}
 	
 	@Override
-	public String getInternalValueForVariable(ComplexVariable var, String value) {
-		String r = super.getInternalValueForVariable(var, value);
+	public String getInternalValueForVariable(ComplexVariable var,String prefix,String value) {
+		String r = "";
 		if (var.name.equals("firstName") || var.name.equals("lastName")) {
 			r = value.substring(0,1).toUpperCase() + value.substring(1);
-			r = getInternalValuePrefix() + var.name + ":" + r;
+			r = super.getInternalValueForVariable(var,prefix,r);
+		} else {
+			r = super.getInternalValueForVariable(var,prefix,value);
 		}
 		return r;
 	}

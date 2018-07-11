@@ -65,7 +65,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"I finished twohundredandtwentyfourth or 225th");
 		testTranslation(t,"",
 			"Ik ben tweehonderdvierentwintigste geworden",
-			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste|NLD_NAM:firstName:UNI_ABC:tweehonderdvierentwintigste UNI_ABC:geworden|NLD_NAM:lastName:UNI_ABC:geworden",
+			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste|NLD_NAM:firstName:UNI_ABC:Tweehonderdvierentwintigste UNI_ABC:geworden|NLD_NAM:lastName:UNI_ABC:Geworden",
 			"Ik ben tweehonderdvierentwintigste geworden");
 		testTranslation(t,"",
 			"februari march october december",
@@ -101,11 +101,11 @@ public class TestEntityValueTranslator extends TestObject {
 			"Mijn naam is Andre van der Zee");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Hoe heet jij? gekke henkie",
-			"UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:henkie",
+			"UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie",
 			"Hoe heet jij? gekke henkie");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"gekste der henkies is mijn naam",
-			"UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:henkies UNI_ABC:is UNI_ABC:mijn UNI_ABC:naam",
+			"UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies UNI_ABC:is UNI_ABC:mijn UNI_ABC:naam",
 			"gekste der henkies is mijn naam");
 	}
 	

@@ -130,24 +130,7 @@ public class SequenceMatcher extends SequenceClassifier {
 			}
 		}
 		if (matchSymbols.size()>0) {
-			List<String> unlinkedSymbols = new ArrayList<String>();
-			int i = 0;
-			String from = "";
-			for (String symbol: match.symbols) {
-				if (from.length()>0 && match.symbols.size()>(i + 1)) {
-					String to = match.symbols.get(i + 1);
-					SequenceAnalyzerSymbolLink linkFrom = getKnownLinks().get(getLinkId(from,context,symbol));
-					SequenceAnalyzerSymbolLink linkTo = getKnownLinks().get(getLinkId(symbol,context,to));
-					if (linkFrom==null && linkTo==null) {
-						unlinkedSymbols.add(symbol);
-					}
-				}
-				i++;
-				from = symbol;
-			}
-			if (match.symbols.size()==1) {
-				unlinkedSymbols.add(match.symbols.get(0));
-			}
+			List<String> unlinkedSymbols = getUnlinkedSymbolsForSequenceSymbols(match.symbols,context,caseInsensitive);
 			List<SequenceMatcherSequence> list = knownSequences.get(context);
 			for (SequenceMatcherSequence seq: list) {
 				int conseq = 1;
@@ -270,38 +253,23 @@ public class SequenceMatcher extends SequenceClassifier {
 		}
 	}
 
-	private void addSequenceLinks(List<SequenceAnalyzerSymbolLink> list,List<String> symbols,String context,int mod)  {
+	private void addSequenceLinks(List<SequenceAnalyzerSymbolLink> list,List<String> symbols,String context,boolean caseInsensitive)  {
 		int i = 0;
+		int pos = 0;
 		for (String symbol: symbols) {
 			if (symbols.size()>(i + 1)) {
 				String to = symbols.get(i + 1);
 				if (!symbol.equals(getIoSeparator()) && !to.equals(getIoSeparator())) {
-					SequenceAnalyzerSymbolLink link = null;
-					if (mod==0) {
-						link = getKnownLinks().get(getLinkId(symbol,context,to));
-					} else if (mod==1) {
-						link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,to.toLowerCase()));
-					} else if (mod==2) {
-						link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,to.toUpperCase()));
-					} else if (mod==3) {
-						link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,to.toUpperCase()));
-					} else if (mod==4) {
-						link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,to.toLowerCase()));
-					} else if (mod==5) {
-						link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to));
-					} else if (mod==7) {
-						link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to.toLowerCase()));
-					} else if (mod==8) {
-						link = getKnownLinks().get(getLinkId(upperCaseFirst(symbol),context,to.toUpperCase()));
-					} else if (mod==9) {
-						link = getKnownLinks().get(getLinkId(symbol,context,upperCaseFirst(to)));
-					} else if (mod==10) {
-						link = getKnownLinks().get(getLinkId(symbol.toLowerCase(),context,upperCaseFirst(to)));
-					} else if (mod==11) {
-						link = getKnownLinks().get(getLinkId(symbol.toUpperCase(),context,upperCaseFirst(to)));
-					}
-					if (link!=null && !list.contains(link)) {
-						list.add(link);
+					int l = 0;
+					List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(symbol,to,context,caseInsensitive);
+					for (SequenceAnalyzerSymbolLink link: links) {
+						if (l==0 && link.symbolFrom.equals(symbol) && link.symbolTo.equals(to)) {
+							list.add(pos,link);
+							pos++;
+						} else {
+							list.add(link);
+						}
+						l++;
 					}
 				}
 			}
@@ -312,12 +280,7 @@ public class SequenceMatcher extends SequenceClassifier {
 	private SequenceMatcherSequence getSequenceMatcherSequenceForSequence(ZStringSymbolParser sequence,String context,boolean caseInsensitive) {
 		List<SequenceAnalyzerSymbolLink> addLinks = new ArrayList<SequenceAnalyzerSymbolLink>();
 		List<String> syms = sequence.toSymbolsPunctuated();
-		addSequenceLinks(addLinks,syms,context,0);
-		if (caseInsensitive) {
-			for (int mod = 1; mod <= 11; mod++) {
-				addSequenceLinks(addLinks,syms,context,mod);
-			}
-		}
+		addSequenceLinks(addLinks,syms,context,caseInsensitive);
 		List<SequenceAnalyzerSymbolLink> links = new ArrayList<SequenceAnalyzerSymbolLink>();
 		for (SequenceAnalyzerSymbolLink link: addLinks) {
 			links.add(link.copy());

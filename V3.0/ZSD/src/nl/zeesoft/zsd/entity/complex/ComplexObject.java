@@ -88,6 +88,7 @@ public abstract class ComplexObject extends EntityObject {
 			for (m = mStart; m < mSymbols.size(); m++) {
 				String mSym = mSymbols.get(m);
 				String iSym = iSymbols.get(i);
+				/*
 				if (iSym.equalsIgnoreCase(mSym)) {
 					i++;
 				} else {
@@ -111,6 +112,26 @@ public abstract class ComplexObject extends EntityObject {
 						i++;
 					}
 				}
+				*/
+				if (mSym.startsWith("{") && mSym.endsWith("}")) {
+					String name = mSym.substring(1,mSym.length()-1);
+					ComplexVariable var = getVariableByName(name);
+					if (var!=null) {
+						matchVars++;
+						String value = getTranslator().getInternalValueFromInternalValues(iSym,var.entityValueType);
+						if (value.length()==0 &&
+							var.entityValueType.equals(BaseConfiguration.TYPE_ALPHABETIC) &&
+							UniversalAlphabetic.isAlphabetic(iSym)
+							) {
+							value = ua.getInternalValuePrefix() + iSym;
+						}
+						if (value.length()>0) {
+							values.put(var.name,value);
+							replaces.put(var.name,iSym);
+						}
+					}
+				}
+				i++;
 				if (i>=iSymbols.size()) {
 					break;
 				}
@@ -125,7 +146,8 @@ public abstract class ComplexObject extends EntityObject {
 					if (r.length()==0) {
 						r = matchSequence;
 					}
-					String value = getInternalValueForVariable(var,val);
+					String[] split = val.split(getTranslator().getValueConcatenator());
+					String value = getInternalValueForVariable(var,split[0],split[1]);
 					r.replace(replace,value);
 				}
 			}
@@ -134,8 +156,8 @@ public abstract class ComplexObject extends EntityObject {
 		return r;
 	}
 
-	public String getInternalValueForVariable(ComplexVariable var, String value) {
-		return getInternalValuePrefix() + var.name + ":" + value;
+	public String getInternalValueForVariable(ComplexVariable var,String prefix, String value) {
+		return getInternalValuePrefix() + var.name + getTranslator().getValueConcatenator() + prefix + getTranslator().getValueConcatenator() + value;
 	}
 
 	@Override

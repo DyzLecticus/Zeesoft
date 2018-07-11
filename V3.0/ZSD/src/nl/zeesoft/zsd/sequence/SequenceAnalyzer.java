@@ -138,7 +138,36 @@ public class SequenceAnalyzer extends Analyzer {
 		}
 		return r;
 	}
-	
+
+	public List<String> getUnlinkedSymbolsForSequenceSymbols(List<String> symbols,String context,boolean caseInsensitive) {
+		List<String> r = new ArrayList<String>();
+		int i = 0;
+		String from = "";
+		for (String symbol: symbols) {
+			if (from.length()>0 && symbols.size()>(i + 1)) {
+				String to = symbols.get(i + 1);
+				List<SequenceAnalyzerSymbolLink> linksFrom = null;
+				List<SequenceAnalyzerSymbolLink> linksTo = null;
+				if (context==null) {
+					linksFrom = getLinksByFromTo(from,symbol,caseInsensitive);
+					linksTo = getLinksByFromTo(symbol,to,caseInsensitive);
+				} else {
+					linksFrom = getLinksByFromTo(from,symbol,context,caseInsensitive);
+					linksTo = getLinksByFromTo(symbol,to,context,caseInsensitive);
+				}
+				if (linksFrom.size()==0 && linksTo.size()==0) {
+					r.add(symbol);
+				}
+			}
+			i++;
+			from = symbol;
+		}
+		if (symbols.size()==1) {
+			r.add(symbols.get(0));
+		}
+		return r;
+	}
+
 	public SortedMap<String, SequenceAnalyzerSymbolLink> getKnownLinks() {
 		return knownLinks;
 	}

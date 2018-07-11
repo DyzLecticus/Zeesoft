@@ -81,8 +81,25 @@ public class SequenceClassifier extends SymbolCorrector {
 		List<String> symbols = sequence.toSymbolsPunctuated(); 
 		int i = 0;
 		double highest = 0D;
-		if (symbols.size()==1) {
-			List<AnalyzerSymbol> asl = getKnownSymbols(symbols.get(0),caseInsensitive);
+		for (String symbol: symbols) {
+			String to = "";
+			if (symbols.size()>(i + 1)) {
+				to = symbols.get(i + 1);
+				List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(symbol,to,caseInsensitive);
+				for (SequenceAnalyzerSymbolLink link: links) {
+					if (link.context.length()>0) {
+						SequenceClassifierResult res = addOrUpdateResult(r,list,link.context,bandwidth,link.prob,true);
+						if (res.prob>highest) {
+							highest = res.prob;
+						}
+					}
+				}
+			}
+			i++;
+		}
+		List<String> unlinkedSymbols = getUnlinkedSymbolsForSequenceSymbols(symbols,null,caseInsensitive);
+		for (String symbol: unlinkedSymbols) {
+			List<AnalyzerSymbol> asl = getKnownSymbols(symbol,caseInsensitive);
 			for (AnalyzerSymbol as: asl) {
 				if (as.context.length()>0) {
 					SequenceClassifierResult res = addOrUpdateResult(r,list,as.context,bandwidth,as.prob,false);
@@ -90,23 +107,6 @@ public class SequenceClassifier extends SymbolCorrector {
 						highest = res.prob;
 					}
 				}
-			}
-		} else {
-			for (String symbol: symbols) {
-				String to = "";
-				if (symbols.size()>(i + 1)) {
-					to = symbols.get(i + 1);
-					List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(symbol,to,caseInsensitive);
-					for (SequenceAnalyzerSymbolLink link: links) {
-						if (link.context.length()>0) {
-							SequenceClassifierResult res = addOrUpdateResult(r,list,link.context,bandwidth,link.prob,true);
-							if (res.prob>highest) {
-								highest = res.prob;
-							}
-						}
-					}
-				}
-				i++;
 			}
 		}
 		if (r.size()>0) {

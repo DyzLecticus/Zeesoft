@@ -140,7 +140,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				corrected.add(symbol);
 			} else if (symbol.length()== 1 && (ZStringSymbolParser.isLineEndSymbol(symbol) || ZStringSymbolParser.isPunctuationSymbol(symbol))) {
 				corrected.add(symbol);
-			} else {
+			} else if (symbol.length()<48) {
 				corrected.add(correct(before,symbol,after,context,bandwidth));
 			}
 			i++;
@@ -221,7 +221,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 					r.add(s.copy());
 				}
 			}
-			if (r.size()==0) {
+			if (r.size()==0 && symbol.length()<=32) {
 				variations = addVariations(variations,context);
 				for (ZStringBuilder var: variations) {
 					AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
@@ -265,7 +265,9 @@ public class SymbolCorrector extends SequenceAnalyzer {
 		List<ZStringBuilder> currentVariations = new ArrayList<ZStringBuilder>(variations);
 		int i = 0;
 		for (ZStringBuilder sym: currentVariations) {
-			addAdditions(variations,sym,context,false);
+			if (sym.length()<=24) {
+				addAdditions(variations,sym,context,false);
+			}
 			addDeletes(variations,sym,context,false);
 			addSwitches(variations,sym,context,false);
 			addReplacements(variations,sym,context,false);
@@ -330,7 +332,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				var.append(symbol.substring(i+1,i+2));
 				var.append(symbol.substring(i,i+1));
 				var.append(symbol.substring(i+2));
-				if (var.length()>0 && (force || knownSymbolsContains(var.toString(),context))) {
+				if (!symbol.equals(var) && var.length()>0 && (force || knownSymbolsContains(var.toString(),context))) {
 					variations.add(var);
 				}
 			}
@@ -346,7 +348,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				if (symbol.length()>1) {
 					var.append(symbol.substring(i+1));
 				}
-				if (force || knownSymbolsContains(var.toString(),context)) {
+				if (!symbol.equals(var) && (force || knownSymbolsContains(var.toString(),context))) {
 					variations.add(var);
 				}
 			}
