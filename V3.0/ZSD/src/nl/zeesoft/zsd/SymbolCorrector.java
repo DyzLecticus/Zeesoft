@@ -287,13 +287,18 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations,String context,Date started,long stopAfterMs) {
 		List<ZStringBuilder> currentVariations = new ArrayList<ZStringBuilder>(variations);
 		int i = 0;
+		boolean timedOut = false;
 		for (ZStringBuilder sym: currentVariations) {
-			if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
-				addAdditions(variations,sym,context,false);
-				addDeletes(variations,sym,context,false);
-				addSwitches(variations,sym,context,false);
-				addReplacements(variations,sym,context,false);
-				addCases(variations,sym,context,false);
+			if (!timedOut) {
+				if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
+					addAdditions(variations,sym,context,false);
+					addDeletes(variations,sym,context,false);
+					addSwitches(variations,sym,context,false);
+					addReplacements(variations,sym,context,false);
+					addCases(variations,sym,context,false);
+				} else {
+					timedOut = true;
+				}
 			}
 			if (!knownSymbolsContains(sym.toString(),context)) {
 				variations.remove(i);
