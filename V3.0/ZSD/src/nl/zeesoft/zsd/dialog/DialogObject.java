@@ -33,7 +33,7 @@ public abstract class DialogObject {
 	public DialogVariable addVariable(String complexName,String complexType,String name, String type) {
 		DialogVariable r = new DialogVariable();
 		r.complexName = complexName;
-		r.complexType = complexName;
+		r.complexType = complexType;
 		r.name = name;
 		r.type = type;
 		variables.put(name,r);

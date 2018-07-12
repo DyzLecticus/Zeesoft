@@ -171,12 +171,14 @@ public class SequenceMatcher extends SequenceClassifier {
 					}
 				}
 				for (String symbol: unlinkedSymbols) {
-					for (String comp: seq.symbols) {
-						if (symbol.equals(comp) || (caseInsensitive && symbol.equalsIgnoreCase(comp))) {
-							AnalyzerSymbol as = matchSymbols.get(symbol);
-							if (as!=null) {
-								prob += bandwidth;
-								prob += (getSymbolContextMaxProbs().get(as.context) - as.prob);
+					if (!ZStringSymbolParser.isLineEndSymbol(symbol)) {
+						for (String comp: seq.symbols) {
+							if (symbol.equals(comp) || (caseInsensitive && symbol.equalsIgnoreCase(comp))) {
+								AnalyzerSymbol as = matchSymbols.get(symbol);
+								if (as!=null) {
+									prob += bandwidth;
+									prob += (getSymbolContextMaxProbs().get(as.context) - as.prob);
+								}
 							}
 						}
 					}

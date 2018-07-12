@@ -6,6 +6,7 @@ public class LanguageJsonGenerator {
 			LanguageClassifierJsonGenerator.main(args);
 			LanguageMasterContextJsonGenerator.main(args);
 			LanguageContextJsonGenerator.main(args);
+			LanguageDialogSetJsonGenerator.main(args);
 		}
 	}
 }

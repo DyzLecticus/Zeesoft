@@ -99,12 +99,14 @@ public class SequenceClassifier extends SymbolCorrector {
 		}
 		List<String> unlinkedSymbols = getUnlinkedSymbolsForSequenceSymbols(symbols,null,caseInsensitive);
 		for (String symbol: unlinkedSymbols) {
-			List<AnalyzerSymbol> asl = getKnownSymbols(symbol,caseInsensitive);
-			for (AnalyzerSymbol as: asl) {
-				if (as.context.length()>0) {
-					SequenceClassifierResult res = addOrUpdateResult(r,list,as.context,bandwidth,as.prob,false);
-					if (res.prob>highest) {
-						highest = res.prob;
+			if (!ZStringSymbolParser.isLineEndSymbol(symbol)) {
+				List<AnalyzerSymbol> asl = getKnownSymbols(symbol,caseInsensitive);
+				for (AnalyzerSymbol as: asl) {
+					if (as.context.length()>0) {
+						SequenceClassifierResult res = addOrUpdateResult(r,list,as.context,bandwidth,as.prob,false);
+						if (res.prob>highest) {
+							highest = res.prob;
+						}
 					}
 				}
 			}
