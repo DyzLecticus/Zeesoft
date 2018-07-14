@@ -54,6 +54,8 @@
 		<copy file="resources/LanguageContextNLDGeneric.json" tofile="${dist}/resources/LanguageContextNLDGeneric.json" failonerror="false"/>
 		<copy file="resources/LanguageMasterContextENG.json" tofile="${dist}/resources/LanguageMasterContextENG.json" failonerror="false"/>
 		<copy file="resources/LanguageMasterContextNLD.json" tofile="${dist}/resources/LanguageMasterContextNLD.json" failonerror="false"/>
+		<copy file="resources/DialogSetENG.json" tofile="${dist}/resources/DialogSetENG.json" failonerror="false"/>
+		<copy file="resources/DialogSetNLD.json" tofile="${dist}/resources/DialogSetNLD.json" failonerror="false"/>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
