@@ -17,7 +17,6 @@ import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericQnA;
 import nl.zeesoft.zsd.initialize.Initializable;
 
 public class DialogSet implements Initializable {
-	private List<String>					languages				= new ArrayList<String>();
 	private SortedMap<String,List<DialogInstance>>	languageDialogs			= new TreeMap<String,List<DialogInstance>>();
 
 	public DialogSet() {
@@ -56,9 +55,6 @@ public class DialogSet implements Initializable {
 			languageDialogs.put(dialog.getLanguage(),dialogs);
 		}
 		dialogs.add(dialog);
-		if (!languages.contains(dialog.getLanguage())) {
-			languages.add(dialog.getLanguage());
-		}
 	}
 
 	public List<DialogInstance> getDialogs() {
@@ -79,37 +75,13 @@ public class DialogSet implements Initializable {
 		return getDialogs(language,masterContext,"");
 	}
 
-	public List<DialogInstance> getDialogs(String language,String masterContext,String context) {
-		List<DialogInstance> r = new ArrayList<DialogInstance>();
-		List<DialogInstance> dialogs = languageDialogs.get(language);
-		if (dialogs!=null) {
-			if (masterContext.length()>0 || context.length()>0) {
-				for (DialogInstance dialog: dialogs) {
-					if (
-						(masterContext.length()==0 || dialog.getMasterContext().equals(masterContext)) &&
-						(context.length()==0 || dialog.getContext().equals(context))
-						) {
-						r.add(dialog);
-					}
-				}
-			} else {
-				r = new ArrayList<DialogInstance>(dialogs);
-			}
-		}
-		return r;
-	}
-
 	public DialogInstance getDialog(String language,String masterContext,String context) {
 		DialogInstance r = null;
 		List<DialogInstance> dialogs = getDialogs(language,masterContext,context);
-		if (dialogs.size()>0) {
+		if (dialogs.size()>0 && dialogs.get(0).getMasterContext().equals(masterContext) && dialogs.get(0).getContext().equals(context)) {
 			r = dialogs.get(0);
 		}
 		return r;
-	}
-	
-	public List<String> getLanguages() {
-		return languages;
 	}
 	
 	protected List<DialogInstance> getDefaultDialogs() {
@@ -198,5 +170,25 @@ public class DialogSet implements Initializable {
 				}
 			}
 		}
+	}
+
+	private List<DialogInstance> getDialogs(String language,String masterContext,String context) {
+		List<DialogInstance> r = new ArrayList<DialogInstance>();
+		List<DialogInstance> dialogs = languageDialogs.get(language);
+		if (dialogs!=null) {
+			if (masterContext.length()>0 || context.length()>0) {
+				for (DialogInstance dialog: dialogs) {
+					if (
+						(masterContext.length()==0 || dialog.getMasterContext().equals(masterContext)) &&
+						(context.length()==0 || dialog.getContext().equals(context))
+						) {
+						r.add(dialog);
+					}
+				}
+			} else {
+				r = new ArrayList<DialogInstance>(dialogs);
+			}
+		}
+		return r;
 	}
 }

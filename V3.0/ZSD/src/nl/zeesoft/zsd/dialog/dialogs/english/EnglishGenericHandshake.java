@@ -10,18 +10,19 @@ public class EnglishGenericHandshake extends GenericHandshake {
 	
 	@Override
 	public void initialize() {
+		addExample("Hello.","Hello. My name is {selfName}. What is your name?");
+		addExample("Hello!","Hello. My name is {selfName}. What is your name?");
+		addExample("Hi.","Hi. My name is {selfName}. What is your name?");
+		addExample("Hi!","Hi. My name is {selfName}. What is your name?");
+		addExample("What is your name?","My name is {selfName}. What is your name?");
+		addExample("Who are you?","My name is {selfName}. What is your name?");
+		
 		addExample("Hello. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");
 		addExample("Hello, my name is {firstName} {lastName}.","Hello {fullName}.");
 		addExample("Hello. My name is {firstName}.","Hello {firstName}. What is your lastname?");
 		addExample("Hi. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");
 		addExample("Hi, my name is {firstName} {lastName}.","Hello {fullName}.");
 		addExample("Hi. My name is {firstName}.","Hello {firstName}. What is your lastname?");
-		
-		addExample("Hello.","Hello. My name is {self.name}. What is your name?");
-		addExample("Hello!","Hello. My name is {self.name}. What is your name?");
-		addExample("Hi.","Hi. My name is {self.name}. What is your name?");
-		addExample("Hi!","Hi. My name is {self.name}. What is your name?");
-		addExample("What is your name?","My name is {self.name}. What is your name?");
 		
 		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","My name is {firstName} {preposition} {lastName}.");

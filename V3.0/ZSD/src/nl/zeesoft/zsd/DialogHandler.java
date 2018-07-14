@@ -50,7 +50,7 @@ public class DialogHandler extends SequenceInterpreter {
 		} else {
 			r.addDebugLogLine("Selected dialog: ",dialogId);
 			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.correctedInput,"",true);
-			if (matches.size()>0) {
+			if (matches.size()==0) {
 				r.addDebugLogLine("Failed to find matches for sequence: ",r.correctedInput);
 			} else {
 				r.addDebugLogLine("Found matches for sequence: ","" + matches.size());
@@ -62,7 +62,7 @@ public class DialogHandler extends SequenceInterpreter {
 					str.append(" / ");
 					str.append("" + match.probNormalized);
 					str.append(")");
-					r.addDebugLogLine(" -",str);
+					r.addDebugLogLine(" - ",str);
 				}
 			}
 			

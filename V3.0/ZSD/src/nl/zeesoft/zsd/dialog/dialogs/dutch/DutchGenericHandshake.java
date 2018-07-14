@@ -10,21 +10,22 @@ public class DutchGenericHandshake extends GenericHandshake {
 	
 	@Override
 	public void initialize() {
+		addExample("Hallo.","Hallo. Mijn naam is {selfName}. Wat is jouw naam?");
+		addExample("Hallo!","Hallo. Mijn naam is {selfName}. Wat is jouw naam?");
+		addExample("Hoi.","Hoi. Mijn naam is {selfName}. Wat is jouw naam?");
+		addExample("Hoi!","Hoi. Mijn naam is {selfName}. Wat is jouw naam?");
+		addExample("Hoe heet jij?","Mijn naam is {selfName}. Wat is jouw naam?");
+		addExample("Wat is jouw naam?","Mijn naam is {selfName}. Wat is jouw naam?");
+		addExample("Wie ben jij?","Mijn naam is {selfName}. Wat is jouw naam?");
+		
 		addExample("Hallo. Mijn naam is {firstName} {preposition} {lastName}.","Hallo {fullName}.");
 		addExample("Hallo. Ik heet {firstName} {preposition} {lastName}.","Hallo {fullName}.");
 		addExample("Hallo, mijn naam is {firstName} {lastName}.","Hallo {fullName}.");
 		addExample("Hallo, ik heet {firstName}.","Hallo {firstName}. Wat is je achternaam?");
 		addExample("Hoi. Mijn naam is {firstName} {preposition} {lastName}.","Hallo {fullName}.");
-		addExample("Hoi. Ik heet is {firstName} {preposition} {lastName}.","Hallo {fullName}.");
+		addExample("Hoi. Ik heet {firstName} {preposition} {lastName}.","Hallo {fullName}.");
 		addExample("Hoi, mijn naam is {firstName} {lastName}.","Hallo {fullName}.");
 		addExample("Hoi, ik heet {firstName}.","Hallo {firstName}. Wat is je achternaam?");
-		
-		addExample("Hallo.","Hallo. Mijn naam is {self.name}. Wat is jouw naam?");
-		addExample("Hallo!","Hallo. Mijn naam is {self.name}. Wat is jouw naam?");
-		addExample("Hoi.","Hoi. Mijn naam is {self.name}. Wat is jouw naam?");
-		addExample("Hoi!","Hoi. Mijn naam is {self.name}. Wat is jouw naam?");
-		addExample("Hoe heet jij?","Mijn naam is {self.name}. Wat is jouw naam?");
-		addExample("Wat is jouw naam?","Mijn naam is {self.name}. Wat is jouw naam?");
 		
 		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_FIRSTNAME,"Wat is jouw naam?","Mijn naam is {firstName} {preposition} {lastName}.");
