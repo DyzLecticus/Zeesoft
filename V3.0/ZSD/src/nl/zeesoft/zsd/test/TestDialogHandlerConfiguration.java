@@ -39,7 +39,7 @@ public class TestDialogHandlerConfiguration extends TestInitializer {
 		System.out.println(" * " + getTester().getLinkForClass(DialogHandlerConfiguration.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the time it takes to initialize all objects simultaneously.  ");
+		System.out.println("The output of this test shows the time it takes to initialize all remaining objects simultaneously.  ");
 	}
 	
 	@Override
@@ -97,6 +97,7 @@ public class TestDialogHandlerConfiguration extends TestInitializer {
 		}
 		for (InitializeClass cls: config.getClasses()) {
 			if (cls.errors.length()>0) {
+				System.err.println(cls.errors);
 				config = null;
 				break;
 			}

@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsd.SequenceMatcher;
+
 public class DialogInstance {
 	public static final String					VARIABLE_NEXT_DIALOG	= "nextDialog";
 
@@ -16,8 +19,10 @@ public class DialogInstance {
 	private List<DialogIO>						examples				= new ArrayList<DialogIO>();
 	private SortedMap<String,DialogVariable>	variables				= new TreeMap<String,DialogVariable>();
 
+	private SequenceMatcher						matcher					= null;
+	
 	public void initialize() {
-		// Override to extend
+		// Override to implement
 	}
 	
 	public DialogIO addExample(String input, String output) {
@@ -52,6 +57,20 @@ public class DialogInstance {
 			var.examples.add(r);
 		}
 		return r;
+	}
+
+	public void initializeMatcher() {
+		matcher = new SequenceMatcher();
+		for (DialogIO example: examples) {
+			ZStringSymbolParser sequence = new ZStringSymbolParser();
+			sequence.append(example.input);
+			sequence.append(" ");
+			sequence.append(matcher.getIoSeparator());
+			sequence.append(" ");
+			sequence.append(example.output);
+			matcher.addSequence(sequence);
+		}
+		matcher.calculateProb();
 	}
 
 	public DialogInstanceHandler getNewHandler() {
@@ -110,5 +129,12 @@ public class DialogInstance {
 
 	public SortedMap<String, DialogVariable> getVariables() {
 		return variables;
+	}
+
+	public SequenceMatcher getMatcher() {
+		if (matcher==null) {
+			initializeMatcher();
+		}
+		return matcher;
 	}
 }

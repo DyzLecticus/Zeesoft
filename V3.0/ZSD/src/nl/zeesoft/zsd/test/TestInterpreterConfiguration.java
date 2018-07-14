@@ -92,6 +92,7 @@ public class TestInterpreterConfiguration extends TestInitializer {
 		}
 		for (InitializeClass cls: config.getClasses()) {
 			if (cls.errors.length()>0) {
+				System.err.println(cls.errors);
 				config = null;
 				break;
 			}

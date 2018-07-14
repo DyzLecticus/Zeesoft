@@ -39,6 +39,26 @@ public class InterpreterConfiguration extends Initializer {
 	}
 
 	public void initialize(List<String> classNames) {
+		if (entityValueTranslator==null) {
+			entityValueTranslator = new EntityValueTranslator();
+		}
+		if (languageClassifier==null) {
+			languageClassifier = new SequenceClassifier();
+		}
+		for (String language: base.getSupportedLanguages()) {
+			SequenceClassifier sc =	languageMasterContextClassifiers.get(language);
+			if (sc==null) {
+				sc = new SequenceClassifier();
+				languageMasterContextClassifiers.put(language,sc);
+			}
+			for (String masterContext: base.getSupportedMasterContexts().get(language)) {
+				sc = languageContextClassifiers.get(language + masterContext);
+				if (sc==null) {
+					sc = new SequenceClassifier();
+					languageContextClassifiers.put(language + masterContext,sc);
+				}
+			}
+		}
 		for (InitializeClass cls: getInitializeClasses()) {
 			if (classNames==null || classNames.size()==0 || classNames.contains(cls.name)) {
 				addClass(cls);
@@ -49,26 +69,16 @@ public class InterpreterConfiguration extends Initializer {
 	
 	public List<InitializeClass> getInitializeClasses() {
 		List<InitializeClass> r = new ArrayList<InitializeClass>();
-		
-		if (entityValueTranslator==null) {
-			entityValueTranslator = new EntityValueTranslator();
-		}
 		InitializeClass c = new InitializeClass();
 		c.name = "EntityValueTranslator";
 		c.obj = entityValueTranslator;
 		r.add(c);
-		
-		languageClassifier = new SequenceClassifier();
 		r.add(getInitializeClassForSequenceClassifier(languageClassifier,LanguageClassifierJsonGenerator.FILE_NAME));
-		
 		for (String language: base.getSupportedLanguages()) {
-			SequenceClassifier sc = new SequenceClassifier();
-			languageMasterContextClassifiers.put(language,sc);
+			SequenceClassifier sc =	languageMasterContextClassifiers.get(language);
 			r.add(getInitializeClassForSequenceClassifier(sc,LanguageMasterContextJsonGenerator.FILE_NAME_PREFIX + language + ".json"));
-			
 			for (String masterContext: base.getSupportedMasterContexts().get(language)) {
-				sc = new SequenceClassifier();
-				languageContextClassifiers.put(language + masterContext,sc);
+				sc = languageContextClassifiers.get(language + masterContext);
 				r.add(getInitializeClassForSequenceClassifier(sc,LanguageContextJsonGenerator.FILE_NAME_PREFIX + language + masterContext + ".json"));
 			}
 		}

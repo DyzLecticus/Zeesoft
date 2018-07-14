@@ -1,9 +1,13 @@
 package nl.zeesoft.zsd;
 
+import java.util.List;
+
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;
+import nl.zeesoft.zsd.sequence.SequenceMatcherResult;
 
 public class DialogHandler extends SequenceInterpreter {
 	public DialogHandler(DialogHandlerConfiguration c) {
@@ -18,6 +22,7 @@ public class DialogHandler extends SequenceInterpreter {
 			request.classifyContext = true;
 		}
 		request.translateEntiyValues = true;
+
 		DialogResponse r = new DialogResponse(request);
 		buildInterpreterResponse(r);
 		
@@ -44,8 +49,22 @@ public class DialogHandler extends SequenceInterpreter {
 			r.addDebugLogLine("Dialog not found: ",dialogId);
 		} else {
 			r.addDebugLogLine("Selected dialog: ",dialogId);
-			
-			// TODO: finish
+			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.correctedInput,"",true);
+			if (matches.size()>0) {
+				r.addDebugLogLine("Failed to find matches for sequence: ",r.correctedInput);
+			} else {
+				r.addDebugLogLine("Found matches for sequence: ","" + matches.size());
+				for (SequenceMatcherResult match: matches) {
+					ZStringBuilder str = new ZStringBuilder();
+					str.append(match.result.sequence);
+					str.append(" (");
+					str.append("" + match.prob);
+					str.append(" / ");
+					str.append("" + match.probNormalized);
+					str.append(")");
+					r.addDebugLogLine(" -",str);
+				}
+			}
 			
 		}
 		
@@ -56,5 +75,4 @@ public class DialogHandler extends SequenceInterpreter {
 	protected DialogHandlerConfiguration getConfiguration() {
 		return (DialogHandlerConfiguration) super.getConfiguration();
 	}
-
 }

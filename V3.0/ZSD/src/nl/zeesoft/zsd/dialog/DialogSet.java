@@ -36,12 +36,16 @@ public class DialogSet implements Initializable {
 				json.fromStringBuilder(dat);
 				fromJson(json);
 			}
+			for (DialogInstance d: getDialogs()) {
+				d.initializeMatcher();
+			}
 		}
 	}
 	
 	public void initialize() {
 		for (DialogInstance dialog: getDialogs()) {
 			dialog.initialize();
+			dialog.initializeMatcher();
 		}
 	}
 	
