@@ -49,7 +49,10 @@ public class TestTsvToJson extends TestObject {
 		System.out.println(tsv);
 		JsFile json = convertor.parseTsv(tsv);
 		System.out.println(json.toStringBuilderReadFormat());
-		assertEqual(json.rootElement.children.size(),2,"The number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
+		if (json.rootElement.children.size()>0) {
+			assertEqual(json.rootElement.children.get(0).children.size(),2,"The number of sequence elements does not match expectation");
+		}
 		Analyzer analyzer = new Analyzer();
 		analyzer.addSequence(new ZStringSymbolParser(json.toStringBuilder()));
 		assertEqual(analyzer.getKnownSymbols().size(),28,"The number of known symbols does not match expectation");

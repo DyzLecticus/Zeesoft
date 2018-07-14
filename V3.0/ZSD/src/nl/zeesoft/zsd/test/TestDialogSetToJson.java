@@ -56,12 +56,12 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		DialogSetToJson convertor = new DialogSetToJson();
 		Date started = new Date();
 		JsFile json = convertor.toJson(ds,BaseConfiguration.LANG_ENG);
-		System.out.println("Converting " + json.rootElement.children.size() + " dialogs took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
 		if (json.rootElement.children.size()>0) {
+			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " dialogs took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			assertEqual(json.rootElement.children.get(0).children.size(),2,"The number of dialog elements does not match expectation");
+			showJsonSample(json);
 		}
-		showJsonSample(json);
 
 		ds = new DialogSet();
 		List<ZStringBuilder> data = new ArrayList<ZStringBuilder>();

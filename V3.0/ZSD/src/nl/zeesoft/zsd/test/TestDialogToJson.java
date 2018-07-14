@@ -47,8 +47,11 @@ public class TestDialogToJson extends TestEntityToJson {
 		DialogToJson convertor = new DialogToJson();
 		Date started = new Date();
 		JsFile json = convertor.getJsonForDialogs(ds.getDialogs());
-		System.out.println("Converting " + json.rootElement.children.size() + " dialog examples took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-		assertEqual(json.rootElement.children.size(),71,"The number of children does not match expectation");
-		showJsonSample(json);
+		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
+		if (json.rootElement.children.size()>0) {
+			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " dialog examples took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+			assertEqual(json.rootElement.children.get(0).children.size(),71,"The number of sequence elements does not match expectation");
+			showJsonSample(json);
+		}
 	}
 }

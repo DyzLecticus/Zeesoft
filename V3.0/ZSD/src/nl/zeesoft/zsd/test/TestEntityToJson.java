@@ -51,16 +51,19 @@ public class TestEntityToJson extends TestObject {
 		EntityToJson convertor = new EntityToJson();
 		Date started = new Date();
 		JsFile json = convertor.getJsonForEntities(t.getEntities(),"");
-		System.out.println("Converting " + json.rootElement.children.size() + " entity values took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-		assertEqual(json.rootElement.children.size(),332223,"The number of children does not match expectation");
-		showJsonSample(json);
+		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
+		if (json.rootElement.children.size()>0) {
+			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " entity values took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+			assertEqual(json.rootElement.children.get(0).children.size(),332223,"The number of sequence elements does not match expectation");
+			showJsonSample(json);
+		}
 	}
 	
 	protected void showJsonSample(JsFile json) {
 		JsFile sample = new JsFile();
 		sample.rootElement = new JsElem();
 		int i = 0;
-		for (JsElem elem: json.rootElement.children) {
+		for (JsElem elem: json.rootElement.children.get(0).children) {
 			sample.rootElement.children.add(elem);
 			i++;
 			if (i>=10) {

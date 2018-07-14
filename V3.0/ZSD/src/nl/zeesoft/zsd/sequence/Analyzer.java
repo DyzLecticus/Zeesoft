@@ -93,8 +93,8 @@ public class Analyzer implements Initializable {
 			if (sequence.startsWith("{") && sequence.endsWith("}")) {
 				JsFile json = new JsFile();
 				json.fromStringBuilder(sequence);
-				if (json.rootElement!=null) {
-					for (JsElem seqElem: json.rootElement.children) {
+				if (json.rootElement!=null && json.rootElement.children.size()>0) {
+					for (JsElem seqElem: json.rootElement.children.get(0).children) {
 						ZStringBuilder input = seqElem.getChildValueByName("input");
 						ZStringBuilder output = seqElem.getChildValueByName("output");
 						ZStringSymbolParser context = new ZStringSymbolParser(seqElem.getChildValueByName("context"));

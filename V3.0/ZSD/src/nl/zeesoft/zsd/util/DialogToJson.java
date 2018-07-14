@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zsd.dialog.DialogIO;
 import nl.zeesoft.zsd.dialog.Dialog;
+import nl.zeesoft.zsd.dialog.DialogIO;
 import nl.zeesoft.zsd.dialog.DialogVariable;
 import nl.zeesoft.zsd.dialog.DialogVariableQA;
 
@@ -23,7 +23,9 @@ public class DialogToJson {
 	public JsFile getJsonForDialogs(List<Dialog> dialogs,boolean languageContext,boolean masterContext) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		addJsonForDialogs(json.rootElement,dialogs,languageContext,masterContext);
+		JsElem seqsElem = new JsElem("sequences",true);
+		json.rootElement.children.add(seqsElem);
+		addJsonForDialogs(seqsElem,dialogs,languageContext,masterContext);
 		return json;
 	}
 

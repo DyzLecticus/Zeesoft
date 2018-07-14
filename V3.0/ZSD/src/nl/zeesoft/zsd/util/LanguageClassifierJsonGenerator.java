@@ -26,10 +26,12 @@ public class LanguageClassifierJsonGenerator {
 	public ZStringBuilder generateEntityValueTranslator(EntityValueTranslator t,DialogSet ds,String directory,boolean readFormat) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		JsElem seqsElem = new JsElem("sequences",true);
+		json.rootElement.children.add(seqsElem);
 		DialogToJson dc = new DialogToJson();
-		dc.addJsonForDialogs(json.rootElement,ds.getDialogs(),true,false);
+		dc.addJsonForDialogs(seqsElem,ds.getDialogs(),true,false);
 		EntityToJson ec = new EntityToJson();
-		ec.addJsonForEntities(json.rootElement,t.getEntities(),"",true);
+		ec.addJsonForEntities(seqsElem,t.getEntities(),"",true);
 		if (!directory.endsWith("/") && !directory.endsWith("\\")) {
 			directory += "/";
 		}

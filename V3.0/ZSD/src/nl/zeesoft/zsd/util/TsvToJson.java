@@ -21,6 +21,8 @@ public class TsvToJson {
 	public JsFile parseTsv(ZStringBuilder tsv) {
 		JsFile r = new JsFile();
 		r.rootElement = new JsElem();
+		JsElem seqsElem = new JsElem("sequences",true);
+		r.rootElement.children.add(seqsElem);
 		if (tsv.containsOneOfCharacters("\n")) {
 			List<ZStringBuilder> lines = tsv.split("\n");
 			int l = 0;
@@ -30,19 +32,19 @@ public class TsvToJson {
 						List<ZStringBuilder> sequences = line.split("\t");
 						if (sequences.size()>1) {
 							if (sequences.size()>2) {
-								addSequenceElement(r.rootElement,sequences.get(0),sequences.get(1),sequences.get(2));
+								addSequenceElement(seqsElem,sequences.get(0),sequences.get(1),sequences.get(2));
 							} else {
-								addSequenceElement(r.rootElement,sequences.get(0),sequences.get(1),null);
+								addSequenceElement(seqsElem,sequences.get(0),sequences.get(1),null);
 							}
 						}
 					} else {
-						addSequenceElement(r.rootElement,line,null,null);
+						addSequenceElement(seqsElem,line,null,null);
 					}
 				}
 				l++;
 			}
 		} else {
-			addSequenceElement(r.rootElement,tsv,null,null);
+			addSequenceElement(seqsElem,tsv,null,null);
 		}
 		return r;
 	}
@@ -55,7 +57,7 @@ public class TsvToJson {
 	}
 	
 	public static void addSequenceElement(JsElem parent,ZStringBuilder input,ZStringBuilder output,ZStringBuilder context) {
-		JsElem seqElem = new JsElem("sequence");
+		JsElem seqElem = new JsElem();
 		parent.children.add(seqElem);
 		seqElem.children.add(new JsElem("input",input,true));
 		if (output!=null && output.length()>0) {

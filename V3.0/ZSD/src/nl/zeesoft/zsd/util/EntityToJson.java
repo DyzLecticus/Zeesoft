@@ -39,7 +39,9 @@ public class EntityToJson {
 	public JsFile getJsonForEntities(List<EntityObject> entities,String context,boolean languageContext) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		addJsonForEntities(json.rootElement,entities,context,languageContext);
+		JsElem seqsElem = new JsElem("sequences",true);
+		json.rootElement.children.add(seqsElem);
+		addJsonForEntities(seqsElem,entities,context,languageContext);
 		return json;
 	}
 	
