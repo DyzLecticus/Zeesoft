@@ -18,8 +18,8 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	private static final int		MAX_SYMBOL_LENGTH		= 40;
 	private static final int		MAX_SECONDARY_LENGTH	= 32;
 	
-	private static final String		ALPHABET				= "abcdefghijklmnopqrstuvwxyz";
-
+	public static final String		ALPHABET				= "abcdefghijklmnopqrstuvwxyz";
+	
 	/**
 	 * Returns the symbol bandwidth.
 	 * 
@@ -57,7 +57,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected symbol
 	 */
 	public String correct(String symbol) {
-		return correct("",symbol,"","",getLinkContextBandwidth(""),null,0);
+		return correct("",symbol,"","",getLinkContextBandwidth(""),null,0,null);
 	}
 	
 	/**
@@ -70,13 +70,14 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
 	 * @param started The optional correction start time
 	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
+	 * @param alphabet The optional lower cased alphabet to use
 	 * @return The corrected symbol
 	 */
-	public String correct(String before,String symbol,String after,String context,double bandwidth,Date started,long stopAfterMs) {
+	public String correct(String before,String symbol,String after,String context,double bandwidth,Date started,long stopAfterMs,String alphabet) {
 		ZStringBuilder r = new ZStringBuilder(symbol);
 		if (!knownSymbolsContains(symbol,context)) {
 			double highest = 0D;
-			List<AnalyzerSymbol> cors = getCorrections(before,symbol,after,context,bandwidth,started,stopAfterMs);
+			List<AnalyzerSymbol> cors = getCorrections(before,symbol,after,context,bandwidth,started,stopAfterMs,alphabet);
 			for (AnalyzerSymbol s: cors) {
 				if (s.prob>highest) {
 					highest = s.prob;
@@ -94,7 +95,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence) {
-		return correct(sequence,"",getLinkContextBandwidth(""),0);
+		return correct(sequence,"",getLinkContextBandwidth(""),0,null);
 	}
 	
 	/**
@@ -105,7 +106,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The corrected sequence
 	 */
 	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context) {
-		return correct(sequence,context,getLinkContextBandwidth(context),0);
+		return correct(sequence,context,getLinkContextBandwidth(context),0,null);
 	}
 
 	/**
@@ -114,10 +115,11 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param sequence The sequence to correct
 	 * @param context The optional context symbol to limit symbol link usage
 	 * @param stopAfterMs The optional amount of milliseconds after which the function will stop correcting
+	 * @param alphabet The optional lower cased alphabet to use
 	 * @return The corrected sequence
 	 */
-	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context,long stopAfterMs) {
-		return correct(sequence,context,getLinkContextBandwidth(context),stopAfterMs);
+	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context,long stopAfterMs,String alphabet) {
+		return correct(sequence,context,getLinkContextBandwidth(context),stopAfterMs,alphabet);
 	}
 
 	/**
@@ -127,9 +129,10 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param context The optional context symbol to limit symbol link usage
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
 	 * @param stopAfterMs The optional amount of milliseconds after which the function will stop correcting
+	 * @param alphabet The optional lower cased alphabet to use
 	 * @return The corrected sequence
 	 */
-	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context,double bandwidth,long stopAfterMs) {
+	public ZStringSymbolParser correct(ZStringSymbolParser sequence,String context,double bandwidth,long stopAfterMs,String alphabet) {
 		Date started = new Date();
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		List<String> symbols = sequence.toSymbolsPunctuated();
@@ -146,7 +149,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 			} else if (symbol.length()== 1 && (ZStringSymbolParser.isLineEndSymbol(symbol) || ZStringSymbolParser.isPunctuationSymbol(symbol))) {
 				corrected.add(symbol);
 			} else if (symbol.length()<=MAX_SYMBOL_LENGTH) {
-				corrected.add(correct(before,symbol,after,context,bandwidth,started,stopAfterMs));
+				corrected.add(correct(before,symbol,after,context,bandwidth,started,stopAfterMs,alphabet));
 			}
 			i++;
 			before = symbol;
@@ -174,10 +177,11 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param bandwidth The bandwidth used as a minimal symbol link probability addition
 	 * @param started The optional correction start time
 	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
+	 * @param alphabet The optional lower cased alphabet to use
 	 * @return a list of possible analyzer symbol corrections
 	 */
-	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context, double bandwidth,Date started,long stopAfterMs) {
-		List<AnalyzerSymbol> r = getCorrections(symbol,context,started,stopAfterMs);
+	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context, double bandwidth,Date started,long stopAfterMs,String alphabet) {
+		List<AnalyzerSymbol> r = getCorrections(symbol,context,started,stopAfterMs,alphabet);
 		if (r.size()>1 && (before.length()>0 || after.length()>0)) {
 			if (before.length()>0) {
 				for (AnalyzerSymbol as: r) {
@@ -189,7 +193,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				}
 			}
 			if (after.length()>0) {
-				List<AnalyzerSymbol> afters = getCorrections(after,context,started,stopAfterMs);
+				List<AnalyzerSymbol> afters = getCorrections(after,context,started,stopAfterMs,alphabet);
 				for (AnalyzerSymbol af: afters) {
 					for (AnalyzerSymbol as: r) {
 						SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(as.symbol,context,af.symbol));
@@ -211,9 +215,13 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param context The optional context symbol
 	 * @param started The optional correction start time
 	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
+	 * @param alphabet The optional lower cased alphabet to use
 	 * @return a list of possible analyzer symbol corrections
 	 */
-	public List<AnalyzerSymbol> getCorrections(String symbol,String context,Date started,long stopAfterMs) {
+	public List<AnalyzerSymbol> getCorrections(String symbol,String context,Date started,long stopAfterMs,String alphabet) {
+		if (alphabet==null || alphabet.length()==0) {
+			alphabet = ALPHABET;
+		}
 		List<AnalyzerSymbol> r = new ArrayList<AnalyzerSymbol>();
 		if (knownSymbolsContains(symbol,context)) {
 			AnalyzerSymbol s = new AnalyzerSymbol();
@@ -222,7 +230,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 			r.add(s);
 		} else {
 			List<String> added = new ArrayList<String>();
-			List<ZStringBuilder> variations = generateVariations(symbol,context,started,stopAfterMs);
+			List<ZStringBuilder> variations = generateVariations(symbol,context,started,stopAfterMs,alphabet);
 			for (ZStringBuilder var: variations) {
 				AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
 				if (s!=null && !added.contains(s.symbol)) {
@@ -233,7 +241,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 			if (r.size()==0 && symbol.length()<=MAX_SECONDARY_LENGTH &&
 				(started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs)
 				) {
-				variations = addVariations(variations,context,started,stopAfterMs);
+				variations = addVariations(variations,context,started,stopAfterMs,alphabet);
 				for (ZStringBuilder var: variations) {
 					AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
 					if (s!=null && !added.contains(s.symbol)) {
@@ -254,12 +262,16 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param context The optional context symbol
 	 * @param started The correction start time
 	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
+	 * @param alphabet The optional lower cased alphabet to use
 	 * @return The list of primary variations
 	 */
-	public List<ZStringBuilder> generateVariations(String symbol,String context,Date started,long stopAfterMs) {
+	public List<ZStringBuilder> generateVariations(String symbol,String context,Date started,long stopAfterMs,String alphabet) {
+		if (alphabet==null || alphabet.length()==0) {
+			alphabet = ALPHABET;
+		}
 		List<ZStringBuilder> r = new ArrayList<ZStringBuilder>();
 		ZStringBuilder sym = new ZStringBuilder(symbol);
-		addAdditions(r,sym,context,true);
+		addAdditions(r,sym,context,true,alphabet);
 		if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
 			addDeletes(r,sym,context,true);
 		}
@@ -267,7 +279,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 			addSwitches(r,sym,context,true);
 		}
 		if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
-			addReplacements(r,sym,context,true);
+			addReplacements(r,sym,context,true,alphabet);
 		}
 		if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
 			addCases(r,sym,context,true);
@@ -282,19 +294,23 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @param context The optional context symbol
 	 * @param started The correction start time
 	 * @param stopAfterMs The optional amount of milliseconds relative to the start time after which the function will stop correcting
+	 * @param alphabet The optional lower cased alphabet to use
 	 * @return The list of primary and secondary variations
 	 */
-	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations,String context,Date started,long stopAfterMs) {
+	public List<ZStringBuilder> addVariations(List<ZStringBuilder> variations,String context,Date started,long stopAfterMs,String alphabet) {
+		if (alphabet==null || alphabet.length()==0) {
+			alphabet = ALPHABET;
+		}
 		List<ZStringBuilder> currentVariations = new ArrayList<ZStringBuilder>(variations);
 		int i = 0;
 		boolean timedOut = false;
 		for (ZStringBuilder sym: currentVariations) {
 			if (!timedOut) {
 				if (started==null || stopAfterMs==0 || ((new Date()).getTime() - started.getTime())<stopAfterMs) {
-					addAdditions(variations,sym,context,false);
+					addAdditions(variations,sym,context,false,alphabet);
 					addDeletes(variations,sym,context,false);
 					addSwitches(variations,sym,context,false);
-					addReplacements(variations,sym,context,false);
+					addReplacements(variations,sym,context,false,alphabet);
 					addCases(variations,sym,context,false);
 				} else {
 					timedOut = true;
@@ -309,12 +325,12 @@ public class SymbolCorrector extends SequenceAnalyzer {
 		return variations;
 	}
 
-	private void addAdditions(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force) {
+	private void addAdditions(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force,String alphabet) {
 		for (int i = 0; i<symbol.length(); i++) {
-			for (int i2 = 0; i2<ALPHABET.length(); i2++) {
+			for (int i2 = 0; i2<alphabet.length(); i2++) {
 				ZStringBuilder var = new ZStringBuilder();
 				if (i==0) {
-					var.append(ALPHABET.substring(i2,i2+1));
+					var.append(alphabet.substring(i2,i2+1));
 					var.append(symbol);
 					if (force || knownSymbolsContains(var.toString(),context)) {
 						variations.add(var);
@@ -322,7 +338,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				}
 				var = new ZStringBuilder();
 				var.append(symbol.substring(0,i+1));
-				var.append(ALPHABET.substring(i2,i2+1));
+				var.append(alphabet.substring(i2,i2+1));
 				if (symbol.length()>1) {
 					var.append(symbol.substring(i+1));
 				}
@@ -367,12 +383,12 @@ public class SymbolCorrector extends SequenceAnalyzer {
 		}
 	}
 	
-	private void addReplacements(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force) {
+	private void addReplacements(List<ZStringBuilder> variations,ZStringBuilder symbol,String context,boolean force,String alphabet) {
 		for (int i = 0; i<symbol.length(); i++) {
-			for (int i2 = 0; i2<ALPHABET.length(); i2++) {
+			for (int i2 = 0; i2<alphabet.length(); i2++) {
 				ZStringBuilder var = new ZStringBuilder();
 				var.append(symbol.substring(0,i));
-				var.append(ALPHABET.substring(i2,i2+1));
+				var.append(alphabet.substring(i2,i2+1));
 				if (symbol.length()>1) {
 					var.append(symbol.substring(i+1));
 				}

@@ -7,6 +7,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericHandshake;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericQnA;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericHandshake;
@@ -14,72 +17,70 @@ import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericQnA;
 import nl.zeesoft.zsd.initialize.Initializable;
 
 public class DialogSet implements Initializable {
-	private List<String>							languages				= new ArrayList<String>();
-	private SortedMap<String,List<DialogObject>>	languageDialogs			= new TreeMap<String,List<DialogObject>>();
-	private SortedMap<String,List<String>>			languageMasterContexts	= new TreeMap<String,List<String>>();
+	private List<String>					languages				= new ArrayList<String>();
+	private SortedMap<String,List<Dialog>>	languageDialogs			= new TreeMap<String,List<Dialog>>();
 
 	public DialogSet() {
-		for (DialogObject dialog: getDefaultDialogs()) {
+		for (Dialog dialog: getDefaultDialogs()) {
 			addDialog(dialog);
 		}
 	}
 
 	@Override
 	public void initialize(List<ZStringBuilder> data) {
-		// TODO: Read identity and dialogs from JSON?
-		initialize();
+		if (data==null || data.size()==0) {
+			initialize();
+		} else {
+			for (ZStringBuilder dat: data) {
+				JsFile json = new JsFile();
+				json.fromStringBuilder(dat);
+				fromJson(json);
+			}
+		}
 	}
 	
 	public void initialize() {
-		for (DialogObject dialog: getDialogs()) {
+		for (Dialog dialog: getDialogs()) {
 			dialog.initialize();
 		}
 	}
 	
-	public void addDialog(DialogObject dialog) {
-		List<DialogObject> dialogs = languageDialogs.get(dialog.getLanguage());
+	public void addDialog(Dialog dialog) {
+		List<Dialog> dialogs = languageDialogs.get(dialog.getLanguage());
 		if (dialogs==null) {
-			dialogs = new ArrayList<DialogObject>();
+			dialogs = new ArrayList<Dialog>();
 			languageDialogs.put(dialog.getLanguage(),dialogs);
 		}
 		dialogs.add(dialog);
 		if (!languages.contains(dialog.getLanguage())) {
 			languages.add(dialog.getLanguage());
 		}
-		List<String> masterContexts = languageMasterContexts.get(dialog.getLanguage());  
-		if (masterContexts==null) {
-			masterContexts = new ArrayList<String>();
-			languageMasterContexts.put(dialog.getLanguage(),masterContexts);
-		}
-		if (!masterContexts.contains(dialog.getMasterContext())) {
-			masterContexts.add(dialog.getMasterContext());
-		}
 	}
 
-	public List<DialogObject> getDialogs() {
-		List<DialogObject> r = new ArrayList<DialogObject>();
-		for (Entry<String,List<DialogObject>> entry: languageDialogs.entrySet()) {
-			for (DialogObject dialog: entry.getValue()) {
+	public List<Dialog> getDialogs() {
+		List<Dialog> r = new ArrayList<Dialog>();
+		for (Entry<String,List<Dialog>> entry: languageDialogs.entrySet()) {
+			for (Dialog dialog: entry.getValue()) {
 				r.add(dialog);
 			}
 		}
 		return r;
 	}
 
-	public List<DialogObject> getDialogs(String language) {
+	public List<Dialog> getDialogs(String language) {
 		return getDialogs(language,"","");
 	}
 
-	public List<DialogObject> getDialogs(String language,String masterContext) {
+	public List<Dialog> getDialogs(String language,String masterContext) {
 		return getDialogs(language,masterContext,"");
 	}
 
-	public List<DialogObject> getDialogs(String language,String masterContext,String context) {
-		List<DialogObject> r = new ArrayList<DialogObject>();
-		List<DialogObject> dialogs = languageDialogs.get(language);
+	public List<Dialog> getDialogs(String language,String masterContext,String context) {
+		List<Dialog> r = new ArrayList<Dialog>();
+		List<Dialog> dialogs = languageDialogs.get(language);
 		if (dialogs!=null) {
 			if (masterContext.length()>0 || context.length()>0) {
-				for (DialogObject dialog: dialogs) {
+				for (Dialog dialog: dialogs) {
 					if (
 						(masterContext.length()==0 || dialog.getMasterContext().equals(masterContext)) &&
 						(context.length()==0 || dialog.getContext().equals(context))
@@ -88,26 +89,110 @@ public class DialogSet implements Initializable {
 					}
 				}
 			} else {
-				r = new ArrayList<DialogObject>(dialogs);
+				r = new ArrayList<Dialog>(dialogs);
 			}
 		}
 		return r;
 	}
 
+	public Dialog getDialog(String language,String masterContext,String context) {
+		Dialog r = null;
+		List<Dialog> dialogs = getDialogs(language,masterContext,context);
+		if (dialogs.size()>0) {
+			r = dialogs.get(0);
+		}
+		return r;
+	}
+	
 	public List<String> getLanguages() {
 		return languages;
 	}
-
-	public SortedMap<String, List<String>> getLanguageMasterContexts() {
-		return languageMasterContexts;
-	}
 	
-	protected List<DialogObject> getDefaultDialogs() {
-		List<DialogObject> r = new ArrayList<DialogObject>();
+	protected List<Dialog> getDefaultDialogs() {
+		List<Dialog> r = new ArrayList<Dialog>();
 		r.add(new EnglishGenericHandshake());
 		r.add(new EnglishGenericQnA());
 		r.add(new DutchGenericHandshake());
 		r.add(new DutchGenericQnA());
 		return r;
+	}
+	
+	public void fromJson(JsFile json) {
+		JsElem dialogsElem = json.rootElement.getChildByName("dialogs");
+		if (dialogsElem!=null) {
+			for (JsElem dialogElem: dialogsElem.children) {
+				String language = dialogElem.getChildValueByName("language").toString();
+				String masterContext = dialogElem.getChildValueByName("masterContext").toString();
+				String context = dialogElem.getChildValueByName("context").toString();
+				String handler = dialogElem.getChildValueByName("handler").toString();
+				Dialog d = getDialog(language,masterContext,context);
+				if (d==null) {
+					d = new Dialog();
+					d.setLanguage(language);
+					d.setMasterContext(masterContext);
+					d.setContext(context);
+					addDialog(d);
+				}
+				d.setHandlerClassName(handler);
+				JsElem exsElem = dialogElem.getChildByName("examples");
+				if (exsElem!=null) {
+					for (JsElem exElem: exsElem.children) {
+						ZStringSymbolParser input = new ZStringSymbolParser(exElem.getChildValueByName("input"));
+						ZStringSymbolParser output = new ZStringSymbolParser(exElem.getChildValueByName("output"));
+						boolean found = false;
+						for (DialogIO example: d.getExamples()) {
+							if (example.input.equals(input) && example.output.equals(output)) {
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							DialogIO example = new DialogIO();
+							example.input = input;
+							example.output = output;
+							d.getExamples().add(example);
+						}
+					}
+				}
+				JsElem varsElem = dialogElem.getChildByName("variables");
+				if (varsElem!=null) {
+					for (JsElem varElem: varsElem.children) {
+						String name = varElem.getChildValueByName("name").toString();
+						String type = varElem.getChildValueByName("name").toString();
+						String complexName = varElem.getChildValueByName("name").toString();
+						String complexType = varElem.getChildValueByName("type").toString();
+						DialogVariable variable = d.getVariables().get(name);
+						if (variable==null) {
+							variable = new DialogVariable();
+							variable.name = name;
+							variable.type = type;
+							variable.complexName = complexName;
+							variable.complexType = complexType;
+							d.getVariables().put(name,variable);
+						}
+						JsElem vexsElem = varElem.getChildByName("examples");
+						if (vexsElem!=null) {
+							for (JsElem exElem: vexsElem.children) {
+								ZStringSymbolParser question = new ZStringSymbolParser(exElem.getChildValueByName("question"));
+								ZStringSymbolParser answer = new ZStringSymbolParser(exElem.getChildValueByName("answer"));
+								boolean found = false;
+								for (DialogVariableQA example: variable.examples) {
+									if (example.question.equals(question) && example.answer.equals(answer)) {
+										found = true;
+										break;
+									}
+								}
+								if (!found) {
+									DialogVariableQA example = new DialogVariableQA();
+									example.question = question;
+									example.answer = answer;
+									variable.examples.add(example);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }

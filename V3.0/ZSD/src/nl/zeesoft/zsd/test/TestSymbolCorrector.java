@@ -110,10 +110,10 @@ public class TestSymbolCorrector extends TestObject {
 	}
 	
 	private List<ZStringBuilder> testVariations(SymbolCorrector sc,String test, int num, int expected, boolean debug) {
-		List<ZStringBuilder> variations = sc.generateVariations(test,"",null,0);
+		List<ZStringBuilder> variations = sc.generateVariations(test,"",null,0,null);
 		String single = "Single";
 		if (num==2) {
-			variations = sc.addVariations(variations,"",null,0);
+			variations = sc.addVariations(variations,"",null,0,null);
 			single = "Double";
 		}
 		System.out.println(single + " variations for '" + test + "'; " + variations.size());

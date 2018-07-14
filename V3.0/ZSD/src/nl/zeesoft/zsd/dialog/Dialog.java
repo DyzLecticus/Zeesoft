@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public abstract class DialogObject {
+public class Dialog {
 	public static final String					VARIABLE_NEXT_DIALOG	= "nextDialog";
 
 	private String								language				= "";
@@ -16,7 +16,9 @@ public abstract class DialogObject {
 	private List<DialogIO>						examples				= new ArrayList<DialogIO>();
 	private SortedMap<String,DialogVariable>	variables				= new TreeMap<String,DialogVariable>();
 
-	public abstract void initialize();
+	public void initialize() {
+		// Override to extend
+	}
 	
 	public DialogIO addExample(String input, String output) {
 		DialogIO r = new DialogIO();

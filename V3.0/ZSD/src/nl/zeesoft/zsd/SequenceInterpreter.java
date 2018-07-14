@@ -71,7 +71,8 @@ public class SequenceInterpreter {
 				}
 				r.addDebugLogLine("Correction time limit: ","" + stopAfterMs);
 				r.addDebugLogLine("Correcting sequence: ",r.correctedInput);
-				ZStringSymbolParser correction = configuration.getLanguageClassifier().correct(r.correctedInput,language,stopAfterMs);
+				String alphabet = configuration.getBase().getSupportedAlphabets().get(language);
+				ZStringSymbolParser correction = configuration.getLanguageClassifier().correct(r.correctedInput,language,stopAfterMs,alphabet);
 				if (!correction.equals(r.correctedInput)) {
 					corrected = true;
 					r.correctedInput = correction;

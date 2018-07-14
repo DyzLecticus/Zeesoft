@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
 
 public class BaseConfiguration {
@@ -27,11 +29,11 @@ public class BaseConfiguration {
 	public static final String					TYPE_NAME				= "NAM";
 
 	private List<String>						languages				= new ArrayList<String>();
-	private SortedMap<String,List<String>>		masterContexts			= new TreeMap<String,List<String>>();
 
 	private String								name					= "Dyz Lecticus";
 	private String								primaryLanguage			= BaseConfiguration.LANG_ENG;
 	private List<String>						supportedLanguages		= new ArrayList<String>();
+	private SortedMap<String,String>			supportedAlphabets		= new TreeMap<String,String>();
 	private SortedMap<String,List<String>>		supportedMasterContexts	= new TreeMap<String,List<String>>();
 
 	private String								baseDir					= "base/";
@@ -48,12 +50,38 @@ public class BaseConfiguration {
 		initialize();
 	}
 
-	public List<String> getLanguages() {
-		return languages;
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("name",name,true));
+		json.rootElement.children.add(new JsElem("primaryLanguage",primaryLanguage,true));
+		json.rootElement.children.add(new JsElem("baseDir",baseDir,true));
+		json.rootElement.children.add(new JsElem("extendDir",extendDir,true));
+		json.rootElement.children.add(new JsElem("overrideDir",overrideDir,true));
+		JsElem langsElem = new JsElem("supportedLanguages",true);
+		json.rootElement.children.add(langsElem);
+		for (String language: supportedLanguages) {
+			JsElem langElem = new JsElem();
+			langsElem.children.add(langElem);
+			langElem.children.add(new JsElem("code",language,true));
+			List<String> smcs = supportedMasterContexts.get(language);
+			JsElem smcsElem = new JsElem("supportedMasterContexts",true);
+			langElem.children.add(smcsElem);
+			for (String mc: smcs) {
+				smcsElem.children.add(new JsElem(null,mc,true));
+			}
+		}
+		return json;
 	}
 
-	public SortedMap<String, List<String>> getMasterContexts() {
-		return masterContexts;
+	public void fromJson(JsElem parent) {
+		// TODO: implement
+		supportedLanguages.clear();
+		supportedMasterContexts.clear();
+	}
+
+	public List<String> getLanguages() {
+		return languages;
 	}
 
 	public String getName() {
@@ -74,6 +102,10 @@ public class BaseConfiguration {
 
 	public List<String> getSupportedLanguages() {
 		return supportedLanguages;
+	}
+
+	public SortedMap<String, String> getSupportedAlphabets() {
+		return supportedAlphabets;
 	}
 
 	public SortedMap<String,List<String>> getSupportedMasterContexts() {
@@ -108,29 +140,25 @@ public class BaseConfiguration {
 		languages.add(LANG_ENG);
 		languages.add(LANG_NLD);
 		languages.add(LANG_UNI);
-		supportedLanguages = getInitialSupportedLanguages();
+		initializeSupportedLanguages();
 		for (String language: supportedLanguages) {
-			masterContexts.put(language,getMasterContextsForLanguage(language));
-			supportedMasterContexts.put(language,getSupportedMasterContextsForLanguage(language));
+			initializeSupportedAlphabetsForLanguage(language);
+			initializeSupportedMasterContextsForLanguage(language);
 		}
 	}
 
-	protected List<String> getInitialSupportedLanguages() {
-		List<String> r = new ArrayList<String>();
-		r.add(LANG_ENG);
-		r.add(LANG_NLD);
-		return r;
-	}
-	
-	protected List<String> getMasterContextsForLanguage(String language) {
-		List<String> r = new ArrayList<String>();
-		r.add(Generic.MASTER_CONTEXT_GENERIC);
-		return r;
+	protected void initializeSupportedLanguages() {
+		supportedLanguages.add(LANG_ENG);
+		supportedLanguages.add(LANG_NLD);
 	}
 
-	protected List<String> getSupportedMasterContextsForLanguage(String language) {
-		List<String> r = new ArrayList<String>();
-		r.add(Generic.MASTER_CONTEXT_GENERIC);
-		return r;
+	protected void initializeSupportedAlphabetsForLanguage(String language) {
+		supportedAlphabets.put(language,SymbolCorrector.ALPHABET);
+	}
+
+	protected void initializeSupportedMasterContextsForLanguage(String language) {
+		List<String> mcs = new ArrayList<String>();
+		mcs.add(Generic.MASTER_CONTEXT_GENERIC);
+		supportedMasterContexts.put(language,mcs);
 	}
 }

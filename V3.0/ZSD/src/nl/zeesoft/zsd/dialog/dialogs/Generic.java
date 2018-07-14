@@ -1,8 +1,8 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
-import nl.zeesoft.zsd.dialog.DialogObject;
+import nl.zeesoft.zsd.dialog.Dialog;
 
-public abstract class Generic extends DialogObject {
+public abstract class Generic extends Dialog {
 	public static final String	MASTER_CONTEXT_GENERIC		= "Generic";
 
 	public Generic() {

@@ -18,7 +18,7 @@ public class TestDialogToJson extends TestEntityToJson {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use an *DialogToJson* instance to convert a list of dialogs into a JSON file.");
+		System.out.println("This test shows how to use a *DialogToJson* instance to convert a list of dialogs into a JSON file.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
