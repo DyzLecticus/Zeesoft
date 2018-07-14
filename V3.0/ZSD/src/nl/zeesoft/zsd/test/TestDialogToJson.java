@@ -22,9 +22,9 @@ public class TestDialogToJson extends TestEntityToJson {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the list of dialogs");
+		System.out.println("// Create dialog set");
 		System.out.println("DialogSet ds = new DialogSet();");
-		System.out.println("// Initialize the EntityValueTranslator");
+		System.out.println("// Initialize the dialog set");
 		System.out.println("ds.initialize();");
 		System.out.println("// Create the DialogToJson instance");
 		System.out.println("DialogToJson convertor = new DialogToJson();");

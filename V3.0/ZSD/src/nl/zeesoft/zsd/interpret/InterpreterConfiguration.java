@@ -27,16 +27,22 @@ public class InterpreterConfiguration extends Initializer {
 	private long									maxMsPerSequence					= 2000;
 
 	public InterpreterConfiguration() {
-		
+
 	}
 
 	public InterpreterConfiguration(BaseConfiguration base) {
 		this.base = base;
 	}
-	
+
 	public void initialize() {
+		initialize(null);
+	}
+
+	public void initialize(List<String> classNames) {
 		for (InitializeClass cls: getInitializeClasses()) {
-			addClass(cls);
+			if (classNames==null || classNames.size()==0 || classNames.contains(cls.name)) {
+				addClass(cls);
+			}
 		}
 		start();
 	}
@@ -93,8 +99,7 @@ public class InterpreterConfiguration extends Initializer {
 		return languageMasterContextClassifiers;
 	}
 
-	public void setLanguageMasterContextClassifiers(
-			SortedMap<String, SequenceClassifier> languageMasterContextClassifiers) {
+	public void setLanguageMasterContextClassifiers(SortedMap<String, SequenceClassifier> languageMasterContextClassifiers) {
 		this.languageMasterContextClassifiers = languageMasterContextClassifiers;
 	}
 

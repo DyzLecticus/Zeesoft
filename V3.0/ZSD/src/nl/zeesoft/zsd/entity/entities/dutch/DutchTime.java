@@ -42,6 +42,8 @@ public class DutchTime extends EntityObject {
 		super.initialize(translator);
 
 		getToJsonPrefixes().add("om");
+		getToJsonExtras().add("nu");
+		getToJsonExtras().add("nu direct");
 
 		DutchNumeric eoNumeric = (DutchNumeric) translator.getEntityObject(BaseConfiguration.LANG_NLD,BaseConfiguration.TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {

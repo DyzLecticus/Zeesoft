@@ -73,6 +73,23 @@ public class Initializer extends Locker {
 	}
 
 	/**
+	 * Removes a class from the initializer.
+	 * 
+	 * @param uniqueName The unique name of the class
+	 */
+	public void removeClass(String uniqueName) {
+		int i = 0;
+		for (InitializeClass cls: getClasses()) {
+			if (cls.name.equals(uniqueName)) {
+				classes.remove(cls);
+				workers.remove(i);
+			} else {
+				i++;
+			}
+		}
+	}
+
+	/**
 	 * Starts the initialization of classes.
 	 */
 	public void start() {

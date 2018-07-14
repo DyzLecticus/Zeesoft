@@ -28,8 +28,6 @@ public class BaseConfiguration {
 	// Complex entities
 	public static final String					TYPE_NAME				= "NAM";
 
-	private List<String>						languages				= new ArrayList<String>();
-
 	private String								name					= "Dyz Lecticus";
 	private String								primaryLanguage			= BaseConfiguration.LANG_ENG;
 	private List<String>						supportedLanguages		= new ArrayList<String>();
@@ -64,24 +62,44 @@ public class BaseConfiguration {
 			JsElem langElem = new JsElem();
 			langsElem.children.add(langElem);
 			langElem.children.add(new JsElem("code",language,true));
+			langElem.children.add(new JsElem("alphabet",supportedAlphabets.get(language),true));
 			List<String> smcs = supportedMasterContexts.get(language);
-			JsElem smcsElem = new JsElem("supportedMasterContexts",true);
-			langElem.children.add(smcsElem);
-			for (String mc: smcs) {
-				smcsElem.children.add(new JsElem(null,mc,true));
+			if (smcs!=null) {
+				JsElem smcsElem = new JsElem("supportedMasterContexts",true);
+				langElem.children.add(smcsElem);
+				for (String mc: smcs) {
+					smcsElem.children.add(new JsElem(null,mc,true));
+				}
 			}
 		}
 		return json;
 	}
 
-	public void fromJson(JsElem parent) {
-		// TODO: implement
+	public void fromJson(JsFile json) {
 		supportedLanguages.clear();
+		supportedAlphabets.clear();
 		supportedMasterContexts.clear();
-	}
-
-	public List<String> getLanguages() {
-		return languages;
+		name = json.rootElement.getChildValueByName("name").toString();
+		primaryLanguage = json.rootElement.getChildValueByName("primaryLanguage").toString();
+		baseDir = json.rootElement.getChildValueByName("baseDir").toString();
+		extendDir = json.rootElement.getChildValueByName("extendDir").toString();
+		overrideDir = json.rootElement.getChildValueByName("overrideDir").toString();
+		JsElem langsElem = json.rootElement.getChildByName("supportedLanguages");
+		if (langsElem!=null) {
+			for (JsElem langElem: langsElem.children) {
+				String language = langElem.getChildValueByName("code").toString();
+				supportedLanguages.add(language);
+				supportedAlphabets.put(language,langElem.getChildValueByName("alphabet").toString());
+				JsElem mcsElem = langElem.getChildByName("supportedMasterContexts");
+				if (mcsElem!=null) {
+					List<String> mcs = new ArrayList<String>();
+					for (JsElem mcElem: mcsElem.children) {
+						mcs.add(mcElem.value.toString());
+					}
+					supportedMasterContexts.put(language,mcs);
+				}
+			}
+		}
 	}
 
 	public String getName() {
@@ -137,9 +155,6 @@ public class BaseConfiguration {
 	}
 
 	protected void initialize() {
-		languages.add(LANG_ENG);
-		languages.add(LANG_NLD);
-		languages.add(LANG_UNI);
 		initializeSupportedLanguages();
 		for (String language: supportedLanguages) {
 			initializeSupportedAlphabetsForLanguage(language);

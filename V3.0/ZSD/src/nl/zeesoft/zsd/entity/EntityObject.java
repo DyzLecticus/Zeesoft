@@ -16,6 +16,7 @@ public abstract class EntityObject {
 
 	private List<String>						toJsonPrefixes		= new ArrayList<String>();			
 	private List<String>						toJsonSuffixes		= new ArrayList<String>();			
+	private List<String>						toJsonExtras		= new ArrayList<String>();			
 	
 	public String getLanguage() {
 		return BaseConfiguration.LANG_UNI;
@@ -118,5 +119,9 @@ public abstract class EntityObject {
 
 	public List<String> getToJsonSuffixes() {
 		return toJsonSuffixes;
+	}
+
+	public List<String> getToJsonExtras() {
+		return toJsonExtras;
 	}
 }

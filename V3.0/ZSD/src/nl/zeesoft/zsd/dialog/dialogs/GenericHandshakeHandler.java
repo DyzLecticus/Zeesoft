@@ -1,7 +1,7 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
-import nl.zeesoft.zsd.dialog.DialogHandler;
+import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
 
-public class GenericHandshakeHandler extends DialogHandler {
+public class GenericHandshakeHandler extends DialogInstanceHandler {
 	
 }

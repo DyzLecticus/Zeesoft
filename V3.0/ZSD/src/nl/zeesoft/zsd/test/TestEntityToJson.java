@@ -24,9 +24,9 @@ public class TestEntityToJson extends TestObject {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the EntityValueTranslator");
+		System.out.println("// Create the translator");
 		System.out.println("EntityValueTranslator translator = new EntityValueTranslator();");
-		System.out.println("// Initialize the EntityValueTranslator");
+		System.out.println("// Initialize the translator");
 		System.out.println("translator.initialize();");
 		System.out.println("// Create the EntityToJson instance");
 		System.out.println("EntityToJson convertor = new EntityToJson();");
@@ -54,7 +54,7 @@ public class TestEntityToJson extends TestObject {
 		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
 		if (json.rootElement.children.size()>0) {
 			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " entity values took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(json.rootElement.children.get(0).children.size(),332223,"The number of sequence elements does not match expectation");
+			assertEqual(json.rootElement.children.get(0).children.size(),332239,"The number of sequence elements does not match expectation");
 			showJsonSample(json);
 		}
 	}

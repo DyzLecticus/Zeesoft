@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class Dialog {
+public class DialogInstance {
 	public static final String					VARIABLE_NEXT_DIALOG	= "nextDialog";
 
 	private String								language				= "";
@@ -54,13 +54,13 @@ public class Dialog {
 		return r;
 	}
 
-	public DialogHandler getNewDialogHandler() {
-		DialogHandler r = null;
+	public DialogInstanceHandler getNewHandler() {
+		DialogInstanceHandler r = null;
 		try {
 			Class<?> clas = Class.forName(handlerClassName);
-			Object o = (DialogHandler) clas.newInstance();
-			if (o instanceof DialogHandler) {
-				r = (DialogHandler) o;
+			Object o = (DialogInstanceHandler) clas.newInstance();
+			if (o instanceof DialogInstanceHandler) {
+				r = (DialogInstanceHandler) o;
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

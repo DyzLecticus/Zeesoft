@@ -42,6 +42,8 @@ public class EnglishTime extends EntityObject {
 		super.initialize(translator);
 
 		getToJsonPrefixes().add("at");
+		getToJsonExtras().add("now");
+		getToJsonExtras().add("right now");
 		
 		EnglishNumeric eoNumeric = (EnglishNumeric) translator.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {

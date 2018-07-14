@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zsd.dialog.Dialog;
+import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogIO;
 import nl.zeesoft.zsd.dialog.DialogVariable;
 import nl.zeesoft.zsd.dialog.DialogVariableQA;
@@ -16,11 +16,11 @@ import nl.zeesoft.zsd.dialog.DialogVariableQA;
  */
 public class DialogToJson {
 	
-	public JsFile getJsonForDialogs(List<Dialog> dialogs) {
+	public JsFile getJsonForDialogs(List<DialogInstance> dialogs) {
 		return getJsonForDialogs(dialogs,true,false);
 	}
 	
-	public JsFile getJsonForDialogs(List<Dialog> dialogs,boolean languageContext,boolean masterContext) {
+	public JsFile getJsonForDialogs(List<DialogInstance> dialogs,boolean languageContext,boolean masterContext) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		JsElem seqsElem = new JsElem("sequences",true);
@@ -29,9 +29,9 @@ public class DialogToJson {
 		return json;
 	}
 
-	public void addJsonForDialogs(JsElem parent,List<Dialog> dialogs,boolean languageContext,boolean masterContext) {
+	public void addJsonForDialogs(JsElem parent,List<DialogInstance> dialogs,boolean languageContext,boolean masterContext) {
 		String cntxt = "";
-		for (Dialog dialog: dialogs) {
+		for (DialogInstance dialog: dialogs) {
 			for (DialogIO example: dialog.getExamples()) {
 				if (languageContext) {
 					cntxt = dialog.getLanguage();

@@ -56,6 +56,16 @@ public class EntityToJson {
 	public void addJsonForEntities(JsElem parent,List<EntityObject> entities,String context,boolean languageContext) {
 		String cntxt = context;
 		for (EntityObject eo: entities) {
+			for (String extra: eo.getToJsonExtras()) {
+				if (languageContext) {
+					cntxt = eo.getLanguage();
+				} else if (context.length()==0) {
+					cntxt = eo.getType();
+				}
+				ZStringBuilder input = new ZStringBuilder(upperCaseFirst(extra));
+				input.append(".");
+				TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
+			}
 			for (Entry<String,EntityValue> entry: eo.getExternalValues().entrySet()) {
 				if (languageContext) {
 					cntxt = eo.getLanguage();

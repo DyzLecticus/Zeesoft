@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.BaseConfiguration;
-import nl.zeesoft.zsd.dialog.Dialog;
+import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.dialog.DialogVariable;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
@@ -30,9 +30,9 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the list of dialogs");
+		System.out.println("// Create the dialog set");
 		System.out.println("DialogSet ds = new DialogSet();");
-		System.out.println("// Initialize the EntityValueTranslator");
+		System.out.println("// Initialize the dialog set");
 		System.out.println("ds.initialize();");
 		System.out.println("// Create the DialogToJson instance");
 		System.out.println("DialogSetToJson convertor = new DialogSetToJson();");
@@ -72,7 +72,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 	
 	protected void testDialogSetContent(DialogSet ds, String suffix) {
 		assertEqual(ds.getDialogs().size(),4,"The number of dialogs does not match expectation" + suffix);
-		Dialog d = ds.getDialog(BaseConfiguration.LANG_ENG,Generic.MASTER_CONTEXT_GENERIC,GenericHandshake.CONTEXT_GENERIC_HANDSHAKE);
+		DialogInstance d = ds.getDialog(BaseConfiguration.LANG_ENG,Generic.MASTER_CONTEXT_GENERIC,GenericHandshake.CONTEXT_GENERIC_HANDSHAKE);
 		assertEqual(d!=null,true,"The expected dialog was not found" + suffix);
 		if (d!=null) {
 			assertEqual(d.getExamples().size(),11,"The number of dialog examples does not match expectation" + suffix);

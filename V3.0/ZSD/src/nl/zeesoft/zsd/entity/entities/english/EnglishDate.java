@@ -52,6 +52,12 @@ public class EnglishDate extends EntityObject {
 		super.initialize(translator);
 
 		getToJsonPrefixes().add("on");
+		getToJsonExtras().add("now");
+		getToJsonExtras().add("right now");
+		getToJsonExtras().add("yesterday");
+		getToJsonExtras().add("today");
+		getToJsonExtras().add("tomorrow");
+		getToJsonExtras().add("the day after tomorrow");
 
 		EnglishNumeric eoNumeric = (EnglishNumeric) translator.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {

@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.DialogIO;
-import nl.zeesoft.zsd.dialog.Dialog;
+import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.dialog.DialogVariable;
 import nl.zeesoft.zsd.dialog.DialogVariableQA;
@@ -16,7 +16,7 @@ public class DialogSetToJson {
 		json.rootElement = new JsElem();
 		JsElem dialogsElem = new JsElem("dialogs",true);
 		json.rootElement.children.add(dialogsElem);
-		for (Dialog dialog: ds.getDialogs()) {
+		for (DialogInstance dialog: ds.getDialogs()) {
 			if (language.length()==0 || dialog.getLanguage().equals(language)) {
 				JsElem dialogElem = new JsElem();
 				dialogsElem.children.add(dialogElem);

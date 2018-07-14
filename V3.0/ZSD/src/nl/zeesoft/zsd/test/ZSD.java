@@ -57,6 +57,7 @@ public class ZSD extends LibraryObject {
 		
 		tests.add(new TestEntityValueTranslator(getTester()));
 
+		tests.add(new TestBaseConfigurationToJson(getTester()));
 		tests.add(new TestEntityToJson(getTester()));
 		tests.add(new TestDialogToJson(getTester()));
 		tests.add(new TestDialogSetToJson(getTester()));
@@ -71,6 +72,8 @@ public class ZSD extends LibraryObject {
 		tests.add(new TestLanguageContextClassifier(getTester()));
 		tests.add(new TestSequenceInterpreter(getTester()));
 
+		tests.add(new TestDialogHandlerConfiguration(getTester()));
+		
 		if (!qna.exists()) {
 			System.out.println("Some tests were skipped because the NL QnA input file was not found: " + TestSequenceClassifier.QNA_FILE_NAME);
 		}

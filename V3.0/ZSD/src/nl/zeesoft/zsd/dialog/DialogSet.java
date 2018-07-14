@@ -18,10 +18,10 @@ import nl.zeesoft.zsd.initialize.Initializable;
 
 public class DialogSet implements Initializable {
 	private List<String>					languages				= new ArrayList<String>();
-	private SortedMap<String,List<Dialog>>	languageDialogs			= new TreeMap<String,List<Dialog>>();
+	private SortedMap<String,List<DialogInstance>>	languageDialogs			= new TreeMap<String,List<DialogInstance>>();
 
 	public DialogSet() {
-		for (Dialog dialog: getDefaultDialogs()) {
+		for (DialogInstance dialog: getDefaultDialogs()) {
 			addDialog(dialog);
 		}
 	}
@@ -40,15 +40,15 @@ public class DialogSet implements Initializable {
 	}
 	
 	public void initialize() {
-		for (Dialog dialog: getDialogs()) {
+		for (DialogInstance dialog: getDialogs()) {
 			dialog.initialize();
 		}
 	}
 	
-	public void addDialog(Dialog dialog) {
-		List<Dialog> dialogs = languageDialogs.get(dialog.getLanguage());
+	public void addDialog(DialogInstance dialog) {
+		List<DialogInstance> dialogs = languageDialogs.get(dialog.getLanguage());
 		if (dialogs==null) {
-			dialogs = new ArrayList<Dialog>();
+			dialogs = new ArrayList<DialogInstance>();
 			languageDialogs.put(dialog.getLanguage(),dialogs);
 		}
 		dialogs.add(dialog);
@@ -57,30 +57,30 @@ public class DialogSet implements Initializable {
 		}
 	}
 
-	public List<Dialog> getDialogs() {
-		List<Dialog> r = new ArrayList<Dialog>();
-		for (Entry<String,List<Dialog>> entry: languageDialogs.entrySet()) {
-			for (Dialog dialog: entry.getValue()) {
+	public List<DialogInstance> getDialogs() {
+		List<DialogInstance> r = new ArrayList<DialogInstance>();
+		for (Entry<String,List<DialogInstance>> entry: languageDialogs.entrySet()) {
+			for (DialogInstance dialog: entry.getValue()) {
 				r.add(dialog);
 			}
 		}
 		return r;
 	}
 
-	public List<Dialog> getDialogs(String language) {
+	public List<DialogInstance> getDialogs(String language) {
 		return getDialogs(language,"","");
 	}
 
-	public List<Dialog> getDialogs(String language,String masterContext) {
+	public List<DialogInstance> getDialogs(String language,String masterContext) {
 		return getDialogs(language,masterContext,"");
 	}
 
-	public List<Dialog> getDialogs(String language,String masterContext,String context) {
-		List<Dialog> r = new ArrayList<Dialog>();
-		List<Dialog> dialogs = languageDialogs.get(language);
+	public List<DialogInstance> getDialogs(String language,String masterContext,String context) {
+		List<DialogInstance> r = new ArrayList<DialogInstance>();
+		List<DialogInstance> dialogs = languageDialogs.get(language);
 		if (dialogs!=null) {
 			if (masterContext.length()>0 || context.length()>0) {
-				for (Dialog dialog: dialogs) {
+				for (DialogInstance dialog: dialogs) {
 					if (
 						(masterContext.length()==0 || dialog.getMasterContext().equals(masterContext)) &&
 						(context.length()==0 || dialog.getContext().equals(context))
@@ -89,15 +89,15 @@ public class DialogSet implements Initializable {
 					}
 				}
 			} else {
-				r = new ArrayList<Dialog>(dialogs);
+				r = new ArrayList<DialogInstance>(dialogs);
 			}
 		}
 		return r;
 	}
 
-	public Dialog getDialog(String language,String masterContext,String context) {
-		Dialog r = null;
-		List<Dialog> dialogs = getDialogs(language,masterContext,context);
+	public DialogInstance getDialog(String language,String masterContext,String context) {
+		DialogInstance r = null;
+		List<DialogInstance> dialogs = getDialogs(language,masterContext,context);
 		if (dialogs.size()>0) {
 			r = dialogs.get(0);
 		}
@@ -108,8 +108,8 @@ public class DialogSet implements Initializable {
 		return languages;
 	}
 	
-	protected List<Dialog> getDefaultDialogs() {
-		List<Dialog> r = new ArrayList<Dialog>();
+	protected List<DialogInstance> getDefaultDialogs() {
+		List<DialogInstance> r = new ArrayList<DialogInstance>();
 		r.add(new EnglishGenericHandshake());
 		r.add(new EnglishGenericQnA());
 		r.add(new DutchGenericHandshake());
@@ -125,9 +125,9 @@ public class DialogSet implements Initializable {
 				String masterContext = dialogElem.getChildValueByName("masterContext").toString();
 				String context = dialogElem.getChildValueByName("context").toString();
 				String handler = dialogElem.getChildValueByName("handler").toString();
-				Dialog d = getDialog(language,masterContext,context);
+				DialogInstance d = getDialog(language,masterContext,context);
 				if (d==null) {
-					d = new Dialog();
+					d = new DialogInstance();
 					d.setLanguage(language);
 					d.setMasterContext(masterContext);
 					d.setContext(context);
