@@ -71,7 +71,7 @@ public class InterpreterResponse {
 			debugLog.append(ts.getTimeString(true).getStringBuilder());
 			debugLog.append(": ");
 			debugLog.append(line.getStringBuilder());
-			if (value.length()>0) {
+			if (value!=null && value.length()>0) {
 				debugLog.append(value.getStringBuilder());
 			}
 		}

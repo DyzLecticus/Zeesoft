@@ -35,9 +35,9 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 			assertEqual(scEng.getKnownLinks().size(),178,"The total number of english links does not match expectation");
 			assertEqual(scNld.getKnownLinks().size(),202,"The total number of dutch links does not match expectation");
 
-			testSequenceClassification(scEng,new ZStringSymbolParser("Who are you?"),0.01D,"Generic",1);
+			testSequenceClassification(scEng,new ZStringSymbolParser("Who are you?"),0D,"Generic",1);
 			System.out.println();
-			testSequenceClassification(scNld,new ZStringSymbolParser("Wie ben jij?"),0.01D,"Generic",1);
+			testSequenceClassification(scNld,new ZStringSymbolParser("Wie ben jij?"),0D,"Generic",1);
 		}
 	}
 	

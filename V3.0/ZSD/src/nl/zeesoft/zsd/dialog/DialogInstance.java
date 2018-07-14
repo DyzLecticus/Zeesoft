@@ -17,6 +17,7 @@ public class DialogInstance {
 	private String								handlerClassName		= "";
 
 	private List<DialogIO>						examples				= new ArrayList<DialogIO>();
+	// TODO: make regular list
 	private SortedMap<String,DialogVariable>	variables				= new TreeMap<String,DialogVariable>();
 
 	private SequenceMatcher						matcher					= null;

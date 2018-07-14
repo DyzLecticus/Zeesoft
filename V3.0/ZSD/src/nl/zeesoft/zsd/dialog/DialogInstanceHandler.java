@@ -52,8 +52,13 @@ public abstract class DialogInstanceHandler {
 					r.addDebugLogLine(" - ",str);
 				}
 				List<ZStringBuilder> split = matches.get(0).result.sequence.split(dialog.getMatcher().getIoSeparator());
-				r.output = new ZStringSymbolParser(split.get(1).substring(1));
-				r.addDebugLogLine("Selected match output: ",r.output);
+				ZStringSymbolParser output = new ZStringSymbolParser(split.get(1).substring(1));
+				DialogResponseOutput dro = new DialogResponseOutput(dialog.getContext(),output);
+				r.contextOutputs.put(dialog.getContext(),dro);
+				r.addDebugLogLine("Selected match output: ",dro.output);
+				if (dro.prompt.length()>0) {
+					r.addDebugLogLine("Selected match prompt: ",dro.prompt);
+				}
 			}
 		}
 	}

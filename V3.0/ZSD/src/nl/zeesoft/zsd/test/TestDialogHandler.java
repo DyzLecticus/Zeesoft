@@ -9,6 +9,7 @@ import nl.zeesoft.zsd.DialogHandler;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;
+import nl.zeesoft.zsd.dialog.DialogResponseOutput;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestDialogHandler extends TestInitializer {
@@ -61,41 +62,41 @@ public class TestDialogHandler extends TestInitializer {
 			testRequestResponse(handler,"",
 				"hallo",
 				"UNI_ABC:Hallo .",
-				"Hallo. Mijn naam is {selfName}. Wat is jouw naam?");
+				"Hallo. Mijn naam is Dyz Lecticus.","Wat is jouw naam?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Wie ben jij?",
 				"UNI_ABC:Wie UNI_ABC:ben UNI_ABC:jij ?",
-				"Mijn naam is {selfName}. Wat is jouw naam?");
+				"Mijn naam is Dyz Lecticus.","Wat is jouw naam?");
 			System.out.println();
 			testRequestResponse(handler,"What is your name?",
 				"albert einstein",
 				"UNI_ABC:Albert|ENG_NAM:firstName:UNI_ABC:Albert UNI_ABC:einstein|ENG_NAM:lastName:UNI_ABC:Einstein.",
-				"");
+				"","");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"mijn naam si gekste der henkies",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:si UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.",
-				"Hallo. Mijn naam is {selfName}. Wat is jouw naam?");
+				"Hallo. Mijn naam is Dyz Lecticus.","Wat is jouw naam?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Who created you?",
 				"UNI_ABC:Who UNI_ABC:created UNI_ABC:you ?",
-				"My software was written by André van der Zee.");
+				"My software was written by André van der Zee.","");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Why were you created?",
 				"UNI_ABC:Why UNI_ABC:were UNI_ABC:you UNI_ABC:created ?",
-				"My goal is to understand and help people.");
+				"My goal is to understand and help people.","");
 		}
 	}
 	
-	protected void testRequestResponse(DialogHandler si,String prompt,String input, String expectedTranslation, String expectedOutput) {
-		testRequestResponse(si,prompt,input,expectedTranslation,expectedTranslation,expectedOutput);
+	protected void testRequestResponse(DialogHandler si,String prompt,String input, String expectedTranslation, String expectedOutput, String expectedPrompt) {
+		testRequestResponse(si,prompt,input,expectedTranslation,expectedTranslation,expectedOutput,expectedPrompt);
 	}
 
-	protected void testRequestResponse(DialogHandler si,String prompt,String input, String expectedTranslation, String expectedTranslationCorrected, String expectedOutput) {
+	protected void testRequestResponse(DialogHandler si,String prompt,String input, String expectedTranslation, String expectedTranslationCorrected, String expectedOutput, String expectedPrompt) {
 		Date started = new Date();	
 		DialogRequest request = new DialogRequest(prompt,input);
 		request.setAllActions(true);
@@ -106,7 +107,15 @@ public class TestDialogHandler extends TestInitializer {
 		if (expectedTranslationCorrected!=null) {
 			assertEqual(response.entityValueTranslationCorrected,new ZStringSymbolParser(expectedTranslationCorrected),"Corrected translation does not match expectation");
 		}
-		assertEqual(response.output,new ZStringSymbolParser(expectedOutput),"Output does not match expectation");
+		if (response.contextOutputs.size()>0) {
+			DialogResponseOutput dro = response.contextOutputs.get(response.responseContexts.get(0).symbol);
+			assertEqual(dro.output,new ZStringSymbolParser(expectedOutput),"Output does not match expectation");
+			if (expectedPrompt.length()>0) {
+				assertEqual(dro.prompt,new ZStringSymbolParser(expectedPrompt),"Prompt does not match expectation");
+			}
+		} else if (expectedOutput.length()>0) {
+			assertEqual(response.contextOutputs.size()>0,true,"Number of outputs does not match expectation");
+		}
 	}
 	
 	protected void showRequestResponse(DialogResponse response) {

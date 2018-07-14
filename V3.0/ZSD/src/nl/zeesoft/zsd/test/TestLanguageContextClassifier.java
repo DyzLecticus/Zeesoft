@@ -33,12 +33,15 @@ public class TestLanguageContextClassifier extends TestLanguageMasterContextClas
 			assertEqual(scEng.getKnownLinks().size(),182,"The total number of english links does not match expectation");
 			assertEqual(scNld.getKnownLinks().size(),206,"The total number of dutch links does not match expectation");
 
-			testSequenceClassification(scEng,new ZStringSymbolParser("What is your goal?"),0.01D,"QuestionAndAnswer",2);
-			testSequenceClassification(scNld,new ZStringSymbolParser("Wat is jouw doel?"),0.01D,"QuestionAndAnswer",2);
-			testSequenceClassification(scEng,new ZStringSymbolParser("What is your name?"),0.01D,"Handshake",2);
-			testSequenceClassification(scNld,new ZStringSymbolParser("Wat is jouw naam?"),0.01D,"Handshake",2);
-			
-			testSequenceClassification(scNld,new ZStringSymbolParser("Wat ben jij?"),0.01D,"Handshake",2);
+			testSequenceClassification(scEng,new ZStringSymbolParser("What is your goal?"),0D,"QuestionAndAnswer",2);
+			System.out.println("");
+			testSequenceClassification(scNld,new ZStringSymbolParser("Wat is jouw doel?"),0D,"QuestionAndAnswer",2);
+			System.out.println("");
+			testSequenceClassification(scEng,new ZStringSymbolParser("What is your name?"),0D,"Handshake",2);
+			System.out.println("");
+			testSequenceClassification(scNld,new ZStringSymbolParser("Wat is jouw naam?"),0D,"Handshake",2);
+			System.out.println("");
+			testSequenceClassification(scNld,new ZStringSymbolParser("Wat ben jij?"),0D,"Handshake",2);
 		}
 	}
 }
