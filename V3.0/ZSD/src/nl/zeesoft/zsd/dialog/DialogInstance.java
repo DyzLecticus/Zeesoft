@@ -32,12 +32,20 @@ public class DialogInstance {
 		examples.add(r);
 		return r;
 	}
-	
+
 	public DialogVariable addVariable(String name, String type) {
-		return addVariable("","",name,type);
+		return addVariable("","",name,type,"");
+	}
+	
+	public DialogVariable addVariable(String name, String type,String initialValue) {
+		return addVariable("","",name,type,initialValue);
 	}
 	
 	public DialogVariable addVariable(String complexName,String complexType,String name, String type) {
+		return addVariable("","",name,type,"");
+	}
+	
+	public DialogVariable addVariable(String complexName,String complexType,String name, String type,String initialValue) {
 		DialogVariable r = new DialogVariable();
 		r.complexName = complexName;
 		r.complexType = complexType;
@@ -75,20 +83,26 @@ public class DialogInstance {
 
 	public DialogInstanceHandler getNewHandler() {
 		DialogInstanceHandler r = null;
-		try {
-			Class<?> clas = Class.forName(handlerClassName);
-			Object o = (DialogInstanceHandler) clas.newInstance();
-			if (o instanceof DialogInstanceHandler) {
-				r = (DialogInstanceHandler) o;
+		if (handlerClassName.length()>0) {
+			try {
+				Class<?> clas = Class.forName(handlerClassName);
+				Object o = (DialogInstanceHandler) clas.newInstance();
+				if (o instanceof DialogInstanceHandler) {
+					r = (DialogInstanceHandler) o;
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
 		}
 		return r;
+	}
+	
+	public String getId() {
+		return language + "/" + masterContext + "/" + context;
 	}
 	
 	public String getLanguage() {

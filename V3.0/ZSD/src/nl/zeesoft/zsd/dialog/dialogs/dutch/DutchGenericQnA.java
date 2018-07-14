@@ -11,6 +11,7 @@ public class DutchGenericQnA extends GenericQnA {
 	@Override
 	public void initialize() {
 		addExample("Wat ben jij?","Ik ben een kunstmatig intelligente persoonlijk assistent.");
+		addExample("Wat ben je?","Ik ben een kunstmatig intelligente persoonlijk assistent.");
 
 		addExample("Wie heeft jouw software geschreven?","Mijn software is geschreven door André van der Zee.");
 		addExample("Wie heeft jou geprogrammeerd?","Mijn software is geschreven door André van der Zee.");

@@ -1,13 +1,11 @@
 package nl.zeesoft.zsd;
 
-import java.util.List;
-
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogInstance;
+import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;
-import nl.zeesoft.zsd.sequence.SequenceMatcherResult;
+import nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler;
 
 public class DialogHandler extends SequenceInterpreter {
 	public DialogHandler(DialogHandlerConfiguration c) {
@@ -48,24 +46,18 @@ public class DialogHandler extends SequenceInterpreter {
 		if (dialog==null) {
 			r.addDebugLogLine("Dialog not found: ",dialogId);
 		} else {
-			r.addDebugLogLine("Selected dialog: ",dialogId);
-			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.correctedInput,"",true);
-			if (matches.size()==0) {
-				r.addDebugLogLine("Failed to find matches for sequence: ",r.correctedInput);
+			if (r.getRequest().getDialogId().equals(dialogId)) {
+				r.addDebugLogLine("Continuing dialog: ",dialogId);
 			} else {
-				r.addDebugLogLine("Found matches for sequence: ","" + matches.size());
-				for (SequenceMatcherResult match: matches) {
-					ZStringBuilder str = new ZStringBuilder();
-					str.append(match.result.sequence);
-					str.append(" (");
-					str.append("" + match.prob);
-					str.append(" / ");
-					str.append("" + match.probNormalized);
-					str.append(")");
-					r.addDebugLogLine(" - ",str);
-				}
+				r.addDebugLogLine("Selected dialog: ",dialogId);
 			}
-			
+			DialogInstanceHandler handler = dialog.getNewHandler();
+			if (handler==null) {
+				handler = new GenericQnAHandler();
+			}
+			handler.setDialog(dialog);
+			r.addDebugLogLine("Initialized handler: ",handler.getClass().getName());
+			handler.handleDialogIO(r);
 		}
 		
 		return r;

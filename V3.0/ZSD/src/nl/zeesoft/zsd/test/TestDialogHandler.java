@@ -60,28 +60,42 @@ public class TestDialogHandler extends TestInitializer {
 			DialogHandler handler = new DialogHandler(config);
 			testRequestResponse(handler,"",
 				"hallo",
-				"UNI_ABC:Hallo .");
+				"UNI_ABC:Hallo .",
+				"Hallo. Mijn naam is {selfName}. Wat is jouw naam?");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Wie ben jij?",
+				"UNI_ABC:Wie UNI_ABC:ben UNI_ABC:jij ?",
+				"Mijn naam is {selfName}. Wat is jouw naam?");
+			System.out.println();
+			testRequestResponse(handler,"What is your name?",
+				"albert einstein",
+				"UNI_ABC:Albert|ENG_NAM:firstName:UNI_ABC:Albert UNI_ABC:einstein|ENG_NAM:lastName:UNI_ABC:Einstein.",
+				"");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"mijn naam si gekste der henkies",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:si UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.",
-				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.");
-			System.out.println();
-			testRequestResponse(handler,"What is your name?",
-				"albert einstein",
-				"UNI_ABC:Albert|ENG_NAM:firstName:UNI_ABC:Albert UNI_ABC:einstein|ENG_NAM:lastName:UNI_ABC:Einstein.");
+				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.",
+				"Hallo. Mijn naam is {selfName}. Wat is jouw naam?");
 			System.out.println();
 			testRequestResponse(handler,"",
-				"wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv",
-				"UNI_ABC:Wruio UNI_ABC:wwtiop UNI_ABC:wtwrpoi UNI_ABC:weptiwpipw UNI_ABC:ipwopkm UNI_ABC:eopipwqwrqqiop UNI_ABC:qwerqwer UNI_ABC:qrqpoqe UNI_ABC:qpxnxc UNI_ABC:qwpgsjkdbvhsdfkljjv .");
+				"Who created you?",
+				"UNI_ABC:Who UNI_ABC:created UNI_ABC:you ?",
+				"My software was written by André van der Zee.");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Why were you created?",
+				"UNI_ABC:Why UNI_ABC:were UNI_ABC:you UNI_ABC:created ?",
+				"My goal is to understand and help people.");
 		}
 	}
 	
-	protected void testRequestResponse(DialogHandler si,String prompt,String input, String expectedTranslation) {
-		testRequestResponse(si,prompt,input,expectedTranslation,expectedTranslation);
+	protected void testRequestResponse(DialogHandler si,String prompt,String input, String expectedTranslation, String expectedOutput) {
+		testRequestResponse(si,prompt,input,expectedTranslation,expectedTranslation,expectedOutput);
 	}
 
-	protected void testRequestResponse(DialogHandler si,String prompt,String input, String expectedTranslation, String expectedTranslationCorrected) {
+	protected void testRequestResponse(DialogHandler si,String prompt,String input, String expectedTranslation, String expectedTranslationCorrected, String expectedOutput) {
 		Date started = new Date();	
 		DialogRequest request = new DialogRequest(prompt,input);
 		request.setAllActions(true);
@@ -92,6 +106,7 @@ public class TestDialogHandler extends TestInitializer {
 		if (expectedTranslationCorrected!=null) {
 			assertEqual(response.entityValueTranslationCorrected,new ZStringSymbolParser(expectedTranslationCorrected),"Corrected translation does not match expectation");
 		}
+		assertEqual(response.output,new ZStringSymbolParser(expectedOutput),"Output does not match expectation");
 	}
 	
 	protected void showRequestResponse(DialogResponse response) {

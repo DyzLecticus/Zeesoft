@@ -131,15 +131,7 @@ public class SequenceInterpreter {
 		return configuration;
 	}
 	
-	private ZStringSymbolParser translateEntityValues(InterpreterResponse response,ZStringSymbolParser translatedPrompt,ZStringSymbolParser sequence,List<String> translateLanguages) {
-		ZStringSymbolParser translated = getConfiguration().getEntityValueTranslator().translateToInternalValues(sequence,translateLanguages,response.request.translateEntityTypes,true);
-		if (translatedPrompt!=null) {
-			translated = new ZStringSymbolParser(translated.substring(translatedPrompt.length()));
-		}
-		return translated;
-	}
-	
-	private ZStringSymbolParser buildSequence(InterpreterResponse response) {
+	protected ZStringSymbolParser buildSequence(InterpreterResponse response) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		if (response.request.prompt.length()>0) {
 			r.append(response.request.prompt);
@@ -147,5 +139,13 @@ public class SequenceInterpreter {
 		}
 		r.append(response.correctedInput);
 		return r;
+	}
+
+	private ZStringSymbolParser translateEntityValues(InterpreterResponse response,ZStringSymbolParser translatedPrompt,ZStringSymbolParser sequence,List<String> translateLanguages) {
+		ZStringSymbolParser translated = getConfiguration().getEntityValueTranslator().translateToInternalValues(sequence,translateLanguages,response.request.translateEntityTypes,true);
+		if (translatedPrompt!=null) {
+			translated = new ZStringSymbolParser(translated.substring(translatedPrompt.length()));
+		}
+		return translated;
 	}
 }

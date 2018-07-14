@@ -39,26 +39,6 @@ public class InterpreterConfiguration extends Initializer {
 	}
 
 	public void initialize(List<String> classNames) {
-		if (entityValueTranslator==null) {
-			entityValueTranslator = new EntityValueTranslator();
-		}
-		if (languageClassifier==null) {
-			languageClassifier = new SequenceClassifier();
-		}
-		for (String language: base.getSupportedLanguages()) {
-			SequenceClassifier sc =	languageMasterContextClassifiers.get(language);
-			if (sc==null) {
-				sc = new SequenceClassifier();
-				languageMasterContextClassifiers.put(language,sc);
-			}
-			for (String masterContext: base.getSupportedMasterContexts().get(language)) {
-				sc = languageContextClassifiers.get(language + masterContext);
-				if (sc==null) {
-					sc = new SequenceClassifier();
-					languageContextClassifiers.put(language + masterContext,sc);
-				}
-			}
-		}
 		for (InitializeClass cls: getInitializeClasses()) {
 			if (classNames==null || classNames.size()==0 || classNames.contains(cls.name)) {
 				addClass(cls);
@@ -68,6 +48,7 @@ public class InterpreterConfiguration extends Initializer {
 	}
 	
 	public List<InitializeClass> getInitializeClasses() {
+		checkInitializedClasses();
 		List<InitializeClass> r = new ArrayList<InitializeClass>();
 		InitializeClass c = new InitializeClass();
 		c.name = "EntityValueTranslator";
@@ -154,5 +135,28 @@ public class InterpreterConfiguration extends Initializer {
 			r.fileNames.add(extend);
 		}
 		return r;
+	}
+	
+	private void checkInitializedClasses() {
+		if (entityValueTranslator==null) {
+			entityValueTranslator = new EntityValueTranslator();
+		}
+		if (languageClassifier==null) {
+			languageClassifier = new SequenceClassifier();
+		}
+		for (String language: base.getSupportedLanguages()) {
+			SequenceClassifier sc =	languageMasterContextClassifiers.get(language);
+			if (sc==null) {
+				sc = new SequenceClassifier();
+				languageMasterContextClassifiers.put(language,sc);
+			}
+			for (String masterContext: base.getSupportedMasterContexts().get(language)) {
+				sc = languageContextClassifiers.get(language + masterContext);
+				if (sc==null) {
+					sc = new SequenceClassifier();
+					languageContextClassifiers.put(language + masterContext,sc);
+				}
+			}
+		}
 	}
 }

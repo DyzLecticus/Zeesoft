@@ -46,6 +46,9 @@ public class DialogSetToJson {
 							varElem.children.add(new JsElem("complexName",entry.getValue().complexName,true));
 							varElem.children.add(new JsElem("complexType",entry.getValue().complexType,true));
 						}
+						if (entry.getValue().initialValue.length()>0) {
+							varElem.children.add(new JsElem("initialValue",entry.getValue().initialValue,true));
+						}
 						if (entry.getValue().examples.size()>0) {
 							JsElem exsElem = new JsElem("examples",true);
 							varElem.children.add(exsElem);

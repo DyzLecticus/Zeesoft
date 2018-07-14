@@ -75,7 +75,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		DialogInstance d = ds.getDialog(BaseConfiguration.LANG_ENG,Generic.MASTER_CONTEXT_GENERIC,GenericHandshake.CONTEXT_GENERIC_HANDSHAKE);
 		assertEqual(d!=null,true,"The expected dialog was not found" + suffix);
 		if (d!=null) {
-			assertEqual(d.getExamples().size(),11,"The number of dialog examples does not match expectation" + suffix);
+			assertEqual(d.getExamples().size(),12,"The number of dialog examples does not match expectation" + suffix);
 			DialogVariable dv = d.getVariables().get("firstName");
 			assertEqual(dv!=null,true,"The expected dialog variable was not found" + suffix);
 			if (dv!=null) {

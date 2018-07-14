@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DialogVariable {
-	public String					name		= "";
-	public String					type		= "";
-	public String					complexName	= "";
-	public String					complexType	= "";
-	public List<DialogVariableQA>	examples	= new ArrayList<DialogVariableQA>();
+	public String					name			= "";
+	public String					type			= "";
+	public String					complexName		= "";
+	public String					complexType		= "";
+	public String					initialValue	= "";
+	public List<DialogVariableQA>	examples		= new ArrayList<DialogVariableQA>();
 }

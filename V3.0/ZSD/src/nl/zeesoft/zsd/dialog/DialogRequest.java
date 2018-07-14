@@ -7,8 +7,8 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.interpret.InterpreterRequest;
 
 public class DialogRequest extends InterpreterRequest {
-	public SortedMap<String,String> dialogVariableValues = new TreeMap<String,String>();
-
+	public SortedMap<String,DialogVariableValue>	dialogVariableValues	= new TreeMap<String,DialogVariableValue>();
+	
 	public DialogRequest() {
 		
 	}
@@ -29,5 +29,9 @@ public class DialogRequest extends InterpreterRequest {
 	public DialogRequest(String prompt,String input) {
 		this.prompt.append(prompt);
 		this.input.append(input);
+	}
+	
+	public String getDialogId() {
+		return language + "/" + masterContext + "/" + context;
 	}
 }

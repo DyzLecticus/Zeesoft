@@ -30,13 +30,15 @@ public class TestLanguageContextClassifier extends TestLanguageMasterContextClas
 			SequenceClassifier scEng = config.getLanguageContextClassifiers().get(BaseConfiguration.LANG_ENG + Generic.MASTER_CONTEXT_GENERIC);
 			SequenceClassifier scNld = config.getLanguageContextClassifiers().get(BaseConfiguration.LANG_NLD + Generic.MASTER_CONTEXT_GENERIC);
 			
-			assertEqual(scEng.getKnownLinks().size(),178,"The total number of english links does not match expectation");
-			assertEqual(scNld.getKnownLinks().size(),201,"The total number of dutch links does not match expectation");
+			assertEqual(scEng.getKnownLinks().size(),182,"The total number of english links does not match expectation");
+			assertEqual(scNld.getKnownLinks().size(),206,"The total number of dutch links does not match expectation");
 
 			testSequenceClassification(scEng,new ZStringSymbolParser("What is your goal?"),0.01D,"QuestionAndAnswer",2);
 			testSequenceClassification(scNld,new ZStringSymbolParser("Wat is jouw doel?"),0.01D,"QuestionAndAnswer",2);
 			testSequenceClassification(scEng,new ZStringSymbolParser("What is your name?"),0.01D,"Handshake",2);
 			testSequenceClassification(scNld,new ZStringSymbolParser("Wat is jouw naam?"),0.01D,"Handshake",2);
+			
+			testSequenceClassification(scNld,new ZStringSymbolParser("Wat ben jij?"),0.01D,"Handshake",2);
 		}
 	}
 }
