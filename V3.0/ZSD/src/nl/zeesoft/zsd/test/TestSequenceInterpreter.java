@@ -37,7 +37,7 @@ public class TestSequenceInterpreter extends TestInitializer {
 		System.out.println("// Create the interpreter request");
 		System.out.println("InterpreterRequest request = new InterpreterRequest(\"The optional output that prompted the input\",\"The input sequence\");");
 		System.out.println("// Use the interpreter to process the request");
-		System.out.println("InterpreterResponse response = interpreter.interpretRequest(request);");
+		System.out.println("InterpreterResponse response = interpreter.handleInterpreterRequest(request);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
@@ -85,7 +85,7 @@ public class TestSequenceInterpreter extends TestInitializer {
 		Date started = new Date();	
 		InterpreterRequest request = new InterpreterRequest(prompt,input);
 		request.setAllActions(true);
-		InterpreterResponse response = si.interpretRequest(request);
+		InterpreterResponse response = si.handleInterpreterRequest(request);
 		showRequestResponse(response);
 		System.out.println("Interpreting the request took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		assertEqual(response.entityValueTranslation,new ZStringSymbolParser(expectedTranslation),"Translation does not match expectation");

@@ -15,23 +15,27 @@ public class SequenceInterpreter {
 	public SequenceInterpreter(InterpreterConfiguration c) {
 		configuration = c;
 	}
-	
-	public InterpreterResponse interpretRequest(InterpreterRequest request) {
+
+	public InterpreterResponse handleInterpreterRequest(InterpreterRequest request) {
 		InterpreterResponse r = new InterpreterResponse(request);
-		
+		buildInterpreterResponse(r);
+		return r;
+	}
+	
+	protected void buildInterpreterResponse(InterpreterResponse r) {
 		if (r.correctedInput.length()>0) {
 			ZStringSymbolParser sequence = buildSequence(r);
-			String language = request.language;
-			String masterContext = request.masterContext;
+			String language = r.request.language;
+			String masterContext = r.request.masterContext;
 
 			ZStringSymbolParser translatedPrompt = null;
 			List<String> translateLanguages = new ArrayList<String>();
 
 			// Classify language
-			if (request.classifyLanguage) {
+			if (r.request.classifyLanguage) {
 				r.addDebugLogLine("Classify language for sequence: ",r.correctedInput);
 				List<SequenceClassifierResult> contexts = configuration.getLanguageClassifier().getContexts(r.correctedInput,true,0.0D);
-				if (request.prompt.length()>0 && contexts.size()==0) {
+				if (r.request.prompt.length()>0 && contexts.size()==0) {
 					r.addDebugLogLine("Classify language for sequence: ",sequence);
 					contexts = configuration.getLanguageClassifier().getContexts(sequence,true,0.0D);
 				}
@@ -49,9 +53,9 @@ public class SequenceInterpreter {
 			// Translate raw input
 			translateLanguages.add(language);
 			translateLanguages.add(BaseConfiguration.LANG_UNI);
-			if (request.translateEntiyValues) {
-				if (request.translateEntiyValues && request.prompt.length()>0) {
-					translatedPrompt = configuration.getEntityValueTranslator().translateToInternalValues(request.prompt,translateLanguages,request.translateEntityTypes,true);
+			if (r.request.translateEntiyValues) {
+				if (r.request.translateEntiyValues && r.request.prompt.length()>0) {
+					translatedPrompt = configuration.getEntityValueTranslator().translateToInternalValues(r.request.prompt,translateLanguages,r.request.translateEntityTypes,true);
 				}
 				r.addDebugLogLine("Translate sequence: ",sequence);
 				r.entityValueTranslation = translateEntityValues(r,translatedPrompt,sequence,translateLanguages);
@@ -60,10 +64,10 @@ public class SequenceInterpreter {
 			
 			// Correct input
 			boolean corrected = false;
-			if (request.correctInput) {
+			if (r.request.correctInput) {
 				long stopAfterMs = r.numInputSymbols * configuration.getMaxMsPerSymbol();
 				long maxCorrect = configuration.getMaxMsPerSequence();
-				if (request.translateEntiyValues) {
+				if (r.request.translateEntiyValues) {
 					maxCorrect = (maxCorrect / 3) * 2;
 				}
 				if (stopAfterMs	> maxCorrect) {
@@ -82,10 +86,10 @@ public class SequenceInterpreter {
 			}
 			
 			// Classify master context
-			if (request.classifyMasterContext) {
+			if (r.request.classifyMasterContext) {
 				r.addDebugLogLine("Classify master context for sequence: ",r.correctedInput);
 				List<SequenceClassifierResult> contexts = configuration.getLanguageMasterContextClassifiers().get(language).getContexts(r.correctedInput,true,0.0D);
-				if (request.prompt.length()>0 && contexts.size()==0) {
+				if (r.request.prompt.length()>0 && contexts.size()==0) {
 					r.addDebugLogLine("Classify master context for sequence: ",sequence);
 					contexts = configuration.getLanguageMasterContextClassifiers().get(language).getContexts(sequence,true,0.0D);
 				}
@@ -97,10 +101,10 @@ public class SequenceInterpreter {
 			}
 			
 			// Classify context
-			if (masterContext.length()>0 && request.classifyContext) {
+			if (masterContext.length()>0 && r.request.classifyContext) {
 				r.addDebugLogLine("Classify context for sequence: ",r.correctedInput);
 				List<SequenceClassifierResult> contexts = configuration.getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,0.0D);
-				if (request.prompt.length()>0 && contexts.size()==0) {
+				if (r.request.prompt.length()>0 && contexts.size()==0) {
 					r.addDebugLogLine("Classify context for sequence: ",sequence);
 					contexts = configuration.getLanguageContextClassifiers().get(language + masterContext).getContexts(sequence,true,0.0D);
 				}
@@ -111,7 +115,7 @@ public class SequenceInterpreter {
 			}
 			
 			// Translate corrected input
-			if (request.translateEntiyValues && request.correctInput) {
+			if (r.request.translateEntiyValues && r.request.correctInput) {
 				if (!corrected) {
 					r.entityValueTranslationCorrected = r.entityValueTranslation;
 				} else {
@@ -121,8 +125,10 @@ public class SequenceInterpreter {
 				}
 			}
 		}
-		
-		return r;
+	}
+	
+	protected InterpreterConfiguration getConfiguration() {
+		return configuration;
 	}
 	
 	private ZStringSymbolParser translateEntityValues(InterpreterResponse response,ZStringSymbolParser translatedPrompt,ZStringSymbolParser sequence,List<String> translateLanguages) {
