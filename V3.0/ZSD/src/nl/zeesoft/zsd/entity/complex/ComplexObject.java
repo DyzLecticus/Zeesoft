@@ -88,31 +88,6 @@ public abstract class ComplexObject extends EntityObject {
 			for (m = mStart; m < mSymbols.size(); m++) {
 				String mSym = mSymbols.get(m);
 				String iSym = iSymbols.get(i);
-				/*
-				if (iSym.equalsIgnoreCase(mSym)) {
-					i++;
-				} else {
-					if (mSym.startsWith("{") && mSym.endsWith("}")) {
-						String name = mSym.substring(1,mSym.length()-1);
-						ComplexVariable var = getVariableByName(name);
-						if (var!=null) {
-							matchVars++;
-							String value = getTranslator().getInternalValueFromInternalValues(iSym,var.entityValueType);
-							if (value.length()==0 &&
-								var.entityValueType.equals(BaseConfiguration.TYPE_ALPHABETIC) &&
-								UniversalAlphabetic.isAlphabetic(iSym)
-								) {
-								value = ua.getInternalValuePrefix() + iSym;
-							}
-							if (value.length()>0) {
-								values.put(var.name,value);
-								replaces.put(var.name,iSym);
-							}
-						}
-						i++;
-					}
-				}
-				*/
 				if (mSym.startsWith("{") && mSym.endsWith("}")) {
 					String name = mSym.substring(1,mSym.length()-1);
 					ComplexVariable var = getVariableByName(name);

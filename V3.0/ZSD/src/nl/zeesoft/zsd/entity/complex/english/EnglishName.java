@@ -3,6 +3,7 @@ package nl.zeesoft.zsd.entity.complex.english;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
+import nl.zeesoft.zsd.dialog.dialogs.GenericHandshake;
 import nl.zeesoft.zsd.entity.complex.ComplexObject;
 import nl.zeesoft.zsd.entity.complex.ComplexVariable;
 
@@ -20,7 +21,7 @@ public class EnglishName extends ComplexObject {
 	@Override
 	public String getInternalValueForVariable(ComplexVariable var,String prefix,String value) {
 		String r = "";
-		if (var.name.equals("firstName") || var.name.equals("lastName")) {
+		if (var.name.equals(GenericHandshake.VARIABLE_FIRSTNAME) || var.name.equals(GenericHandshake.VARIABLE_LASTNAME)) {
 			r = value.substring(0,1).toUpperCase() + value.substring(1);
 			r = super.getInternalValueForVariable(var,prefix,r);
 		} else {
@@ -31,9 +32,9 @@ public class EnglishName extends ComplexObject {
 	
 	@Override
 	public void initialize(EntityValueTranslator translator) {
-		addVariable("firstName",BaseConfiguration.TYPE_ALPHABETIC);
-		addVariable("preposition",BaseConfiguration.TYPE_PREPOSITION);
-		addVariable("lastName",BaseConfiguration.TYPE_ALPHABETIC);
+		addVariable(GenericHandshake.VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC);
+		addVariable(GenericHandshake.VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION);
+		addVariable(GenericHandshake.VARIABLE_LASTNAME,BaseConfiguration.TYPE_ALPHABETIC);
 		
 		addGenericPatterns("{firstName} {preposition} {lastName}");
 		addGenericPatterns("{firstName} {lastName}");
