@@ -12,16 +12,18 @@ public class DutchGenericHandshake extends GenericHandshake {
 	}
 	
 	@Override
-		addExample("Hallo!","Hallo. Mijn naam is {selfName}. Wat is jouw naam?");
-		addExample("Hoi.","Hoi. Mijn naam is {selfName}. Wat is jouw naam?");
-		addExample("Hoi!","Hoi. Mijn naam is {selfName}. Wat is jouw naam?");
-		addExample("Hoe heet jij?","Mijn naam is {selfName}. Wat is jouw naam?");
-		addExample("Wat is jouw naam?","Mijn naam is {selfName}. Wat is jouw naam?");
-		addExample("Wie ben jij?","Mijn naam is {selfName}. Wat is jouw naam?");
+	public void initialize(EntityValueTranslator t) {
+		addExample("Hallo.","Hallo. " + EXAMPLE_OUTPUT);
+		addExample("Hallo!","Hallo. " + EXAMPLE_OUTPUT);
+		addExample("Hoi.","Hoi. " + EXAMPLE_OUTPUT);
+		addExample("Hoi!","Hoi. " + EXAMPLE_OUTPUT);
+		addExample("Goedemorgen.","Goedemorgen. " + EXAMPLE_OUTPUT);
+		addExample("Goedemorgen!","Goedemorgen. " + EXAMPLE_OUTPUT);
+		addExample("Goedemiddag.","Goedemiddag. " + EXAMPLE_OUTPUT);
+		addExample("Goedemiddag!","Goedemiddag. " + EXAMPLE_OUTPUT);
+		addExample("Goedenavond.","Goedenavond. " + EXAMPLE_OUTPUT);
+		addExample("Goedenavond!","Goedenavond. " + EXAMPLE_OUTPUT);
 		
-		addExample("Hallo, mijn naam is {firstName} {lastName}.","Hallo {fullName}.");
-		addExample("Hallo, ik heet {firstName}.","Hallo {firstName}. Wat is je achternaam?");
-		addExample("Hoi. Mijn naam is {firstName} {preposition} {lastName}.","Hallo {fullName}.");
 		addExample("Wie bent u?",EXAMPLE_OUTPUT);
 		addExample("Hoe heet u?",EXAMPLE_OUTPUT);
 		addExample("Wat is uw naam?",EXAMPLE_OUTPUT);
