@@ -128,7 +128,7 @@ public abstract class DialogInstanceHandler {
 		ZStringSymbolParser output = new ZStringSymbolParser();
 		DialogVariable variable = dialog.getVariable(promptVariable);
 		if (variable!=null) {
-			output = variable.getQuestion(r.getRequest().randomizeOutput);
+			output = variable.getPrompt(r.getRequest().randomizeOutput);
 		}
 		return output;
 	}

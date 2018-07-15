@@ -36,7 +36,7 @@ public class TestDialogHandler extends TestInitializer {
 		System.out.println("// Create the dialog handler");
 		System.out.println("DialogHandler handler = new DialogHandler(config);");
 		System.out.println("// Create the handler request");
-		System.out.println("DialogRequest request = new DialogRequest(\"The optional output that prompted the input\",\"The input sequence\");");
+		System.out.println("DialogRequest request = new DialogRequest(\"The optional question that prompted the input\",\"The input sequence\");");
 		System.out.println("// Use the handler to process the request");
 		System.out.println("DialogResponse response = interpreter.handleDialogRequest(request);");
 		System.out.println("~~~~");

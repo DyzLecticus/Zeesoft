@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.BaseConfiguration;
+import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.dialog.DialogVariable;
@@ -40,6 +41,8 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		System.out.println("JsFile json = convertor.getJsonForDialogs(ds,\"Optional language code\"));");
 		System.out.println("~~~~");
 		System.out.println();
+		getTester().describeMock(MockEntityValueTranslator.class.getName());
+		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestDialogSetToJson.class));
 		System.out.println(" * " + getTester().getLinkForClass(DialogSetToJson.class));
@@ -50,8 +53,9 @@ public class TestDialogSetToJson extends TestEntityToJson {
 	
 	@Override
 	protected void test(String[] args) {
+		EntityValueTranslator t = (EntityValueTranslator) getTester().getMockedObject(MockEntityValueTranslator.class.getName());
 		DialogSet ds = new DialogSet();
-		ds.initialize();
+		ds.initialize(t);
 		testDialogSetContent(ds," (before)");
 		DialogSetToJson convertor = new DialogSetToJson();
 		Date started = new Date();
@@ -75,11 +79,11 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		DialogInstance d = ds.getDialog(BaseConfiguration.LANG_ENG,Generic.MASTER_CONTEXT_GENERIC,GenericHandshake.CONTEXT_GENERIC_HANDSHAKE);
 		assertEqual(d!=null,true,"The expected dialog was not found" + suffix);
 		if (d!=null) {
-			assertEqual(d.getExamples().size(),12,"The number of dialog examples does not match expectation" + suffix);
+			assertEqual(d.getExamples().size(),51,"The number of dialog examples does not match expectation" + suffix);
 			DialogVariable dv = d.getVariable("firstName");
 			assertEqual(dv!=null,true,"The expected dialog variable was not found" + suffix);
 			if (dv!=null) {
-				assertEqual(dv.examples.size(),8,"The number of dialog variable examples does not match expectation" + suffix);
+				assertEqual(dv.prompts.size(),2,"The number of dialog variable prompts does not match expectation" + suffix);
 			}
 		}
 	}

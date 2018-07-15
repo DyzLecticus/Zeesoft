@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.DialogIO;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogVariable;
-import nl.zeesoft.zsd.dialog.DialogVariableQA;
+import nl.zeesoft.zsd.dialog.DialogVariablePrompt;
 
 /**
  * An DialogToJson instance can be used to translate a set of dialog objects into a JSON file.
@@ -46,7 +46,7 @@ public class DialogToJson {
 					);
 			}
 			for (DialogVariable variable: dialog.getVariables()) {
-				for (DialogVariableQA example: variable.examples) {
+				for (DialogVariablePrompt prompt: variable.prompts) {
 					if (languageContext) {
 						cntxt = dialog.getLanguage();
 					} else if (masterContext) {
@@ -55,7 +55,7 @@ public class DialogToJson {
 						cntxt = dialog.getContext();
 					}
 					TsvToJson.checkAddSequenceElement(parent,
-						new ZStringBuilder(example.answer),
+						new ZStringBuilder(prompt.prompt),
 						null,
 						new ZStringBuilder(cntxt)
 						);

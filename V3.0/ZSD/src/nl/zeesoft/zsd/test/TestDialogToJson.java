@@ -4,6 +4,7 @@ import java.util.Date;
 
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.util.DialogToJson;
 
@@ -32,6 +33,8 @@ public class TestDialogToJson extends TestEntityToJson {
 		System.out.println("JsFile json = convertor.getJsonForDialogs(ds.getDialogs());");
 		System.out.println("~~~~");
 		System.out.println();
+		getTester().describeMock(MockEntityValueTranslator.class.getName());
+		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestDialogToJson.class));
 		System.out.println(" * " + getTester().getLinkForClass(DialogToJson.class));
@@ -42,15 +45,16 @@ public class TestDialogToJson extends TestEntityToJson {
 	
 	@Override
 	protected void test(String[] args) {
+		EntityValueTranslator t = (EntityValueTranslator) getTester().getMockedObject(MockEntityValueTranslator.class.getName());
 		DialogSet ds = new DialogSet();
-		ds.initialize();
+		ds.initialize(t);
 		DialogToJson convertor = new DialogToJson();
 		Date started = new Date();
 		JsFile json = convertor.getJsonForDialogs(ds.getDialogs());
 		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
 		if (json.rootElement.children.size()>0) {
 			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " dialog examples took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(json.rootElement.children.get(0).children.size(),74,"The number of sequence elements does not match expectation");
+			assertEqual(json.rootElement.children.get(0).children.size(),191,"The number of sequence elements does not match expectation");
 			showJsonSample(json);
 		}
 	}

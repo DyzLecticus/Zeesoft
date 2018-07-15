@@ -35,7 +35,7 @@ public class TestSequenceInterpreter extends TestInitializer {
 		System.out.println("// Create the sequence interpreter");
 		System.out.println("SequenceInterpreter interpreter = new SequenceInterpreter(config);");
 		System.out.println("// Create the interpreter request");
-		System.out.println("InterpreterRequest request = new InterpreterRequest(\"The optional output that prompted the input\",\"The input sequence\");");
+		System.out.println("InterpreterRequest request = new InterpreterRequest(\"The optional question that prompted the input\",\"The input sequence\");");
 		System.out.println("// Use the interpreter to process the request");
 		System.out.println("InterpreterResponse response = interpreter.handleInterpreterRequest(request);");
 		System.out.println("~~~~");

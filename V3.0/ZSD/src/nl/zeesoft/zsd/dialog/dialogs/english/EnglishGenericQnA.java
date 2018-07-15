@@ -1,6 +1,7 @@
 package nl.zeesoft.zsd.dialog.dialogs.english;
 
 import nl.zeesoft.zsd.BaseConfiguration;
+import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericQnA;
 
 public class EnglishGenericQnA extends GenericQnA {
@@ -9,7 +10,7 @@ public class EnglishGenericQnA extends GenericQnA {
 	}
 	
 	@Override
-	public void initialize() {
+	public void initialize(EntityValueTranslator t) {
 		addExample("What are you?","I am an artificially intelligent personal assistant.");
 		
 		addExample("Who wrote your software?","My software was written by André van der Zee.");

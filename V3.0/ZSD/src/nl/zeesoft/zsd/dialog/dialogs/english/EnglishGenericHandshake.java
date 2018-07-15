@@ -1,49 +1,43 @@
 package nl.zeesoft.zsd.dialog.dialogs.english;
 
 import nl.zeesoft.zsd.BaseConfiguration;
+import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericHandshake;
 
 public class EnglishGenericHandshake extends GenericHandshake {
+	private static final String EXAMPLE_OUTPUT = "Mijn naam is {selfName}. Wat is jouw naam?";
+	
 	public EnglishGenericHandshake() {
 		setLanguage(BaseConfiguration.LANG_ENG);
 	}
 	
 	@Override
-	public void initialize() {
-		addExample("Hello.","Hello. My name is {selfName}. What is your name?");
-		addExample("Hello!","Hello. My name is {selfName}. What is your name?");
-		addExample("Hi.","Hi. My name is {selfName}. What is your name?");
-		addExample("Hi!","Hi. My name is {selfName}. What is your name?");
-		addExample("What is your name?","My name is {selfName}. What is your name?");
-		addExample("Who are you?","My name is {selfName}. What is your name?");
+	public void initialize(EntityValueTranslator t) {
+		addExample("Hello.","Hello. " + EXAMPLE_OUTPUT);
+		addExample("Hello!","Hello. " + EXAMPLE_OUTPUT);
+		addExample("Hi.","Hi. " + EXAMPLE_OUTPUT);
+		addExample("Hi!","Hi. " + EXAMPLE_OUTPUT);
+		addExample("Good morning.","Good morning. " + EXAMPLE_OUTPUT);
+		addExample("Good morning!","Good morning. " + EXAMPLE_OUTPUT);
+		addExample("Good afternoon.","Good afternoon. " + EXAMPLE_OUTPUT);
+		addExample("Good afternoon!","Good afternoon. " + EXAMPLE_OUTPUT);
+		addExample("Good evening.","Good evening. " + EXAMPLE_OUTPUT);
+		addExample("Good evening!","Good evening. " + EXAMPLE_OUTPUT);
 		
-		addExample("Hello. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");
-		addExample("Hello, my name is {firstName} {lastName}.","Hello {fullName}.");
-		addExample("Hello. My name is {firstName}.","Hello {firstName}. What is your lastname?");
-		addExample("Hi. My name is {firstName} {preposition} {lastName}.","Hello {fullName}.");
-		addExample("Hi, my name is {firstName} {lastName}.","Hello {fullName}.");
-		addExample("Hi. My name is {firstName}.","Hello {firstName}. What is your lastname?");
+		addExample("What is your name?",EXAMPLE_OUTPUT);
+		addExample("Who are you?",EXAMPLE_OUTPUT);
+	
+		addComplexPatterns(t,BaseConfiguration.TYPE_NAME);
 		
 		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME);
-		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","My name is {firstName} {preposition} {lastName}.");
-		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","My name is {firstName} {lastName}.");
-		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","My name is {firstName}.");
-		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","{firstName} {preposition} {lastName}.");
-		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","{firstName} {lastName}.");
-		addVariableQA(VARIABLE_FIRSTNAME,"What is your name?","{firstName}.");
-		addVariableQA(VARIABLE_FIRSTNAME,"What is your firstname?","{firstName}.");
-		addVariableQA(VARIABLE_FIRSTNAME,"What is your firstname?","My firstname is {firstName}.");
+		addVariablePrompt(VARIABLE_FIRSTNAME,"What is your name?");
+		addVariablePrompt(VARIABLE_FIRSTNAME,"What is your firstname?");
 
 		addVariable(VARIABLE_LASTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_LASTNAME,BaseConfiguration.TYPE_NAME);
-		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","My lastname is {preposition} {lastName}.");
-		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","My lastname is {lastName}, {preposition}.");
-		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","My lastname is {lastName}.");
-		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{preposition} {lastName}.");
-		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{lastName}, {preposition}.");
-		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{lastName}.");
+		addVariablePrompt(VARIABLE_LASTNAME,"What is your lastname?");
 
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
-		addVariableQA(VARIABLE_NEXT_DIALOG,"What can I do for you {fullName}?","{nextDialog}.");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"What can I do for you {fullName}?");
 
 		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
 	}

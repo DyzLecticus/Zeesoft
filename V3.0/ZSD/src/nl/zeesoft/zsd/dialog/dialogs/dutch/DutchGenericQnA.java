@@ -1,6 +1,7 @@
 package nl.zeesoft.zsd.dialog.dialogs.dutch;
 
 import nl.zeesoft.zsd.BaseConfiguration;
+import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericQnA;
 
 public class DutchGenericQnA extends GenericQnA {
@@ -9,7 +10,7 @@ public class DutchGenericQnA extends GenericQnA {
 	}
 	
 	@Override
-	public void initialize() {
+	public void initialize(EntityValueTranslator t) {
 		addExample("Wat ben jij?","Ik ben een kunstmatig intelligente persoonlijk assistent.");
 		addExample("Wat ben je?","Ik ben een kunstmatig intelligente persoonlijk assistent.");
 

@@ -15,7 +15,7 @@ public class LanguageClassifierJsonGenerator {
 			EntityValueTranslator t = new EntityValueTranslator();
 			t.initialize();
 			DialogSet ds = new DialogSet();
-			ds.initialize();
+			ds.initialize(t);
 			ZStringBuilder err = generator.generateEntityValueTranslator(t,ds,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);

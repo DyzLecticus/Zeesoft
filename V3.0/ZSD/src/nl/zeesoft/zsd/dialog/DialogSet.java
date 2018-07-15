@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericHandshake;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericQnA;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericHandshake;
@@ -17,6 +18,7 @@ import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericQnA;
 import nl.zeesoft.zsd.initialize.Initializable;
 
 public class DialogSet implements Initializable {
+	private EntityValueTranslator					translator				= null;
 	private SortedMap<String,List<DialogInstance>>	languageDialogs			= new TreeMap<String,List<DialogInstance>>();
 
 	public DialogSet() {
@@ -25,10 +27,16 @@ public class DialogSet implements Initializable {
 		}
 	}
 
+	public void setTranslator(EntityValueTranslator translator) {
+		this.translator = translator;
+	}
+	
 	@Override
 	public void initialize(List<ZStringBuilder> data) {
 		if (data==null || data.size()==0) {
-			initialize();
+			if (translator!=null) {
+				initialize(translator);
+			}
 		} else {
 			for (ZStringBuilder dat: data) {
 				JsFile json = new JsFile();
@@ -41,9 +49,9 @@ public class DialogSet implements Initializable {
 		}
 	}
 	
-	public void initialize() {
+	public void initialize(EntityValueTranslator t) {
 		for (DialogInstance dialog: getDialogs()) {
-			dialog.initialize();
+			dialog.initialize(t);
 			dialog.initializeMatcher();
 		}
 	}
@@ -114,7 +122,10 @@ public class DialogSet implements Initializable {
 				if (exsElem!=null) {
 					for (JsElem exElem: exsElem.children) {
 						ZStringSymbolParser input = new ZStringSymbolParser(exElem.getChildValueByName("input"));
-						ZStringSymbolParser output = new ZStringSymbolParser(exElem.getChildValueByName("output"));
+						ZStringSymbolParser output = new ZStringSymbolParser();
+						if (exElem.getChildByName("output")!=null) {
+							output.append(exElem.getChildValueByName("output"));
+						}
 						boolean found = false;
 						for (DialogIO example: d.getExamples()) {
 							if (example.input.equals(input) && example.output.equals(output)) {
@@ -154,23 +165,21 @@ public class DialogSet implements Initializable {
 						if (initialValue!=null) {
 							variable.initialValue = initialValue.toString();
 						}
-						JsElem vexsElem = varElem.getChildByName("examples");
-						if (vexsElem!=null) {
-							for (JsElem exElem: vexsElem.children) {
-								ZStringSymbolParser question = new ZStringSymbolParser(exElem.getChildValueByName("question"));
-								ZStringSymbolParser answer = new ZStringSymbolParser(exElem.getChildValueByName("answer"));
+						JsElem prsElem = varElem.getChildByName("prompts");
+						if (prsElem!=null) {
+							for (JsElem prElem: prsElem.children) {
+								ZStringSymbolParser prompt = new ZStringSymbolParser(prElem.value);
 								boolean found = false;
-								for (DialogVariableQA example: variable.examples) {
-									if (example.question.equals(question) && example.answer.equals(answer)) {
+								for (DialogVariablePrompt pr: variable.prompts) {
+									if (pr.prompt.equals(prompt)) {
 										found = true;
 										break;
 									}
 								}
 								if (!found) {
-									DialogVariableQA example = new DialogVariableQA();
-									example.question = question;
-									example.answer = answer;
-									variable.examples.add(example);
+									DialogVariablePrompt example = new DialogVariablePrompt();
+									example.prompt = prompt;
+									variable.prompts.add(example);
 								}
 							}
 						}

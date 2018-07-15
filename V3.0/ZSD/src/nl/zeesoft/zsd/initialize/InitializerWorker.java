@@ -17,6 +17,7 @@ public class InitializerWorker extends Worker {
 	public InitializerWorker(Messenger msgr, WorkerUnion union,Initializer init, InitializeClass cls) {
 		super(msgr, union);
 		setSleep(0);
+		setStopOnException(true);
 		this.init = init;
 		this.cls = cls;
 	}
@@ -47,7 +48,14 @@ public class InitializerWorker extends Worker {
 				}
 			}
 		}
-		cls.obj.initialize(data);
+		try {
+			cls.obj.initialize(data);
+		} catch(Exception e) {
+			if (cls.errors.length()>0) {
+				cls.errors.append("\n");
+			}
+			cls.errors.append("An exception occured while initializing the object: " + e);
+		}
 		cls.ms = (new Date()).getTime() - started.getTime();
 		init.initializedClass(cls.name);
 		stop();

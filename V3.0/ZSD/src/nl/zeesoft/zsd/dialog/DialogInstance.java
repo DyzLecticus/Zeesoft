@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequenceMatcher;
+import nl.zeesoft.zsd.entity.EntityObject;
+import nl.zeesoft.zsd.entity.complex.ComplexObject;
+import nl.zeesoft.zsd.entity.complex.ComplexPattern;
 
 public class DialogInstance {
 	public static final String					VARIABLE_NEXT_DIALOG	= "nextDialog";
@@ -19,18 +23,32 @@ public class DialogInstance {
 
 	private SequenceMatcher						matcher					= null;
 	
-	public void initialize() {
+	public void initialize(EntityValueTranslator t) {
 		// Override to implement
 	}
 	
 	public DialogIO addExample(String input, String output) {
+		return addExample(new ZStringSymbolParser(input),output);
+	}
+
+	public DialogIO addExample(ZStringSymbolParser input, String output) {
 		DialogIO r = new DialogIO();
 		r.input.append(input);
 		r.output.append(output);
 		examples.add(r);
 		return r;
 	}
-
+	
+	protected void addComplexPatterns(EntityValueTranslator t, String type) {
+		EntityObject eo = t.getEntityObject(getLanguage(),type);
+		if (eo!=null && eo instanceof ComplexObject) {
+			ComplexObject co = (ComplexObject) eo;
+			for (ComplexPattern pattern: co.getPatterns()) {
+				addExample(pattern.pattern,"");
+			}
+		}
+	}
+	
 	public DialogVariable addVariable(String name, String type) {
 		return addVariable(name,type,"","","");
 	}
@@ -54,14 +72,13 @@ public class DialogInstance {
 		return r;
 	}
 
-	public DialogVariableQA addVariableQA(String name, String question, String answer) {
-		DialogVariableQA r = null;
+	public DialogVariablePrompt addVariablePrompt(String name, String prompt) {
+		DialogVariablePrompt r = null;
 		DialogVariable var = getVariable(name);
 		if (var!=null) {
-			r = new DialogVariableQA();
-			r.question.append(question);
-			r.answer.append(answer);
-			var.examples.add(r);
+			r = new DialogVariablePrompt();
+			r.prompt.append(prompt);
+			var.prompts.add(r);
 		}
 		return r;
 	}

@@ -3,6 +3,7 @@ package nl.zeesoft.zsd.util;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.BaseConfiguration;
+import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.DialogSet;
 
 public class LanguageContextJsonGenerator {
@@ -11,8 +12,10 @@ public class LanguageContextJsonGenerator {
 	public static void main(String[] args) {
 		if (args!=null && args.length>0 && args[0].length()>0) {
 			LanguageContextJsonGenerator generator = new LanguageContextJsonGenerator();
+			EntityValueTranslator t = new EntityValueTranslator();
+			t.initialize();
 			DialogSet ds = new DialogSet();
-			ds.initialize();
+			ds.initialize(t);
 			BaseConfiguration base = new BaseConfiguration();
 			ZStringBuilder err = generator.generateLanguageDialogs(base,ds,args[0],true);
 			if (err.length()>0) {

@@ -6,7 +6,7 @@ import nl.zeesoft.zsd.dialog.DialogIO;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.dialog.DialogVariable;
-import nl.zeesoft.zsd.dialog.DialogVariableQA;
+import nl.zeesoft.zsd.dialog.DialogVariablePrompt;
 
 public class DialogSetToJson {
 	public JsFile toJson(DialogSet ds,String language) {
@@ -29,7 +29,9 @@ public class DialogSetToJson {
 						JsElem exElem = new JsElem();
 						exsElem.children.add(exElem);
 						exElem.children.add(new JsElem("input",example.input,true));
-						exElem.children.add(new JsElem("output",example.output,true));
+						if (example.output.length()>0) {
+							exElem.children.add(new JsElem("output",example.output,true));
+						}
 					}
 				}
 				if (dialog.getVariables().size()>0) {
@@ -47,14 +49,11 @@ public class DialogSetToJson {
 						if (variable.initialValue.length()>0) {
 							varElem.children.add(new JsElem("initialValue",variable.initialValue,true));
 						}
-						if (variable.examples.size()>0) {
-							JsElem exsElem = new JsElem("examples",true);
-							varElem.children.add(exsElem);
-							for (DialogVariableQA example: variable.examples) {
-								JsElem exElem = new JsElem();
-								exsElem.children.add(exElem);
-								exElem.children.add(new JsElem("question",example.question,true));
-								exElem.children.add(new JsElem("answer",example.answer,true));
+						if (variable.prompts.size()>0) {
+							JsElem prsElem = new JsElem("prompts",true);
+							varElem.children.add(prsElem);
+							for (DialogVariablePrompt example: variable.prompts) {
+								prsElem.children.add(new JsElem(null,example.prompt,true));
 							}
 						}
 					}
