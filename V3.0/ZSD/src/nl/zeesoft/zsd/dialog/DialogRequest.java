@@ -9,6 +9,8 @@ import nl.zeesoft.zsd.interpret.InterpreterRequest;
 public class DialogRequest extends InterpreterRequest {
 	public SortedMap<String,DialogVariableValue>	dialogVariableValues	= new TreeMap<String,DialogVariableValue>();
 	
+	public double									matchThreshold			= 0.7D;
+
 	public DialogRequest() {
 		
 	}

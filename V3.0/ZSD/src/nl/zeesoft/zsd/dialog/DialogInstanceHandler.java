@@ -1,7 +1,6 @@
 package nl.zeesoft.zsd.dialog;
 
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -19,24 +18,24 @@ public abstract class DialogInstanceHandler {
 	
 	public void handleDialogIO(DialogResponse r) {
 		String promptVariable = "";
-		for (Entry<String,DialogVariable> entry: dialog.getVariables().entrySet()) {
-			DialogVariableValue dvv = r.getRequest().dialogVariableValues.get(entry.getKey());
+		for (DialogVariable variable: dialog.getVariables()) {
+			DialogVariableValue dvv = r.getRequest().dialogVariableValues.get(variable.name);
 			if (dvv==null) {
 				dvv = new DialogVariableValue();
-				dvv.name = entry.getKey();
-				values.put(entry.getKey(),dvv);
+				dvv.name = variable.name;
+				values.put(variable.name,dvv);
 			} else {
-				values.put(entry.getKey(),dvv.copy());
+				values.put(variable.name,dvv.copy());
 			}
 			if (dvv.internalValue.length()==0) {
-				dvv.internalValue = entry.getValue().initialValue;
+				dvv.internalValue = variable.initialValue;
 			}
 			if (dvv.internalValue.length()==0) {
 				promptVariable = dvv.name;
 			}
 		}
 		if (promptVariable.length()==0 || !r.getRequest().getDialogId().equals(dialog.getId())) {
-			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.correctedInput,"",true);
+			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.correctedInput,"",true,r.getRequest().matchThreshold);
 			if (matches.size()==0) {
 				r.addDebugLogLine("Failed to find matches for sequence: ",r.correctedInput);
 			} else {

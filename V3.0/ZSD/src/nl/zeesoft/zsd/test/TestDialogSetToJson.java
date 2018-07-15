@@ -52,7 +52,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 	protected void test(String[] args) {
 		DialogSet ds = new DialogSet();
 		ds.initialize();
-		testDialogSetContent(ds,"before");
+		testDialogSetContent(ds," (before)");
 		DialogSetToJson convertor = new DialogSetToJson();
 		Date started = new Date();
 		JsFile json = convertor.toJson(ds,BaseConfiguration.LANG_ENG);
@@ -67,7 +67,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		List<ZStringBuilder> data = new ArrayList<ZStringBuilder>();
 		data.add(json.toStringBuilder());
 		ds.initialize(data);
-		testDialogSetContent(ds,"after");
+		testDialogSetContent(ds," (after)");
 	}
 	
 	protected void testDialogSetContent(DialogSet ds, String suffix) {
@@ -76,7 +76,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		assertEqual(d!=null,true,"The expected dialog was not found" + suffix);
 		if (d!=null) {
 			assertEqual(d.getExamples().size(),12,"The number of dialog examples does not match expectation" + suffix);
-			DialogVariable dv = d.getVariables().get("firstName");
+			DialogVariable dv = d.getVariable("firstName");
 			assertEqual(dv!=null,true,"The expected dialog variable was not found" + suffix);
 			if (dv!=null) {
 				assertEqual(dv.examples.size(),8,"The number of dialog variable examples does not match expectation" + suffix);

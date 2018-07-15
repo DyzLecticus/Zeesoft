@@ -6,20 +6,22 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
 public class InterpreterRequest {
-	public ZStringSymbolParser	prompt					= new ZStringSymbolParser();
-	public ZStringSymbolParser	input					= new ZStringSymbolParser();
-	public String				language				= "";
-	public String				masterContext			= "";
-	public String				context					= "";
+	public ZStringSymbolParser	prompt						= new ZStringSymbolParser();
+	public ZStringSymbolParser	input						= new ZStringSymbolParser();
+	public String				language					= "";
+	public String				masterContext				= "";
+	public String				context						= "";
 	
-	public boolean				appendDebugLog			= false;
-	public boolean				classifyLanguage		= false;
-	public boolean				correctInput			= false;
-	public boolean				classifyMasterContext	= false;
-	public boolean				classifyContext			= false;
-	public boolean				translateEntiyValues	= false;
+	public boolean				appendDebugLog				= false;
+	public boolean				classifyLanguage			= false;
+	public boolean				correctInput				= false;
+	public boolean				classifyMasterContext		= false;
+	public boolean				classifyContext				= false;
+	public boolean				translateEntiyValues		= false;
 
-	public List<String>			translateEntityTypes	= new ArrayList<String>();
+	public List<String>			translateEntityTypes		= new ArrayList<String>();
+	
+	public double				classifyContextThreshold	= 0.7D;
 		
 	public InterpreterRequest() {
 		

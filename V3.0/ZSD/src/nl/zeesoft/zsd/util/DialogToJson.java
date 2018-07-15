@@ -1,13 +1,12 @@
 package nl.zeesoft.zsd.util;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogIO;
+import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogVariable;
 import nl.zeesoft.zsd.dialog.DialogVariableQA;
 
@@ -46,8 +45,8 @@ public class DialogToJson {
 					new ZStringBuilder(cntxt)
 					);
 			}
-			for (Entry<String,DialogVariable> entry: dialog.getVariables().entrySet()) {
-				for (DialogVariableQA example: entry.getValue().examples) {
+			for (DialogVariable variable: dialog.getVariables()) {
+				for (DialogVariableQA example: variable.examples) {
 					if (languageContext) {
 						cntxt = dialog.getLanguage();
 					} else if (masterContext) {

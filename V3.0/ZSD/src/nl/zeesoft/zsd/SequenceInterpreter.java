@@ -65,8 +65,8 @@ public class SequenceInterpreter {
 			// Correct input
 			boolean corrected = false;
 			if (r.request.correctInput) {
-				long stopAfterMs = r.numInputSymbols * getConfiguration().getMaxMsPerSymbol();
-				long maxCorrect = getConfiguration().getMaxMsPerSequence();
+				long stopAfterMs = r.numInputSymbols * getConfiguration().getMaxMsInterpretPerSymbol();
+				long maxCorrect = getConfiguration().getMaxMsInterpretPerSequence();
 				if (r.request.translateEntiyValues) {
 					maxCorrect = (maxCorrect / 3) * 2;
 				}
@@ -103,7 +103,7 @@ public class SequenceInterpreter {
 			// Classify context
 			if (masterContext.length()>0 && r.request.classifyContext) {
 				r.addDebugLogLine("Classify context for sequence: ",r.correctedInput);
-				List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,0.0D);
+				List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);
 				if (r.request.prompt.length()>0 && contexts.size()==0) {
 					r.addDebugLogLine("Classify context for sequence: ",sequence);
 					contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(sequence,true,0.0D);

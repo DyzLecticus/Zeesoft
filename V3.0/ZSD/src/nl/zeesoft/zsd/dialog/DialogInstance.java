@@ -2,8 +2,6 @@ package nl.zeesoft.zsd.dialog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.SequenceMatcher;
@@ -17,8 +15,7 @@ public class DialogInstance {
 	private String								handlerClassName		= "";
 
 	private List<DialogIO>						examples				= new ArrayList<DialogIO>();
-	// TODO: make regular list
-	private SortedMap<String,DialogVariable>	variables				= new TreeMap<String,DialogVariable>();
+	private List<DialogVariable>				variables				= new ArrayList<DialogVariable>();
 
 	private SequenceMatcher						matcher					= null;
 	
@@ -35,30 +32,31 @@ public class DialogInstance {
 	}
 
 	public DialogVariable addVariable(String name, String type) {
-		return addVariable("","",name,type,"");
+		return addVariable(name,type,"","","");
 	}
 	
 	public DialogVariable addVariable(String name, String type,String initialValue) {
-		return addVariable("","",name,type,initialValue);
+		return addVariable(name,type,"","",initialValue);
 	}
 	
-	public DialogVariable addVariable(String complexName,String complexType,String name, String type) {
-		return addVariable("","",name,type,"");
+	public DialogVariable addVariable(String name, String type,String complexName,String complexType) {
+		return addVariable(name,type,complexName,complexType,"");
 	}
 	
-	public DialogVariable addVariable(String complexName,String complexType,String name, String type,String initialValue) {
+	public DialogVariable addVariable(String name, String type,String complexName,String complexType,String initialValue) {
 		DialogVariable r = new DialogVariable();
 		r.complexName = complexName;
 		r.complexType = complexType;
 		r.name = name;
 		r.type = type;
-		variables.put(name,r);
+		r.initialValue = initialValue;
+		variables.add(r);
 		return r;
 	}
 
 	public DialogVariableQA addVariableQA(String name, String question, String answer) {
 		DialogVariableQA r = null;
-		DialogVariable var = variables.get(name);
+		DialogVariable var = getVariable(name);
 		if (var!=null) {
 			r = new DialogVariableQA();
 			r.question.append(question);
@@ -97,6 +95,17 @@ public class DialogInstance {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
+			}
+		}
+		return r;
+	}
+	
+	public DialogVariable getVariable(String name) {
+		DialogVariable r = null;
+		for (DialogVariable variable: variables) {
+			if (variable.name.equals(name)) {
+				r = variable;
+				break;
 			}
 		}
 		return r;
@@ -142,7 +151,7 @@ public class DialogInstance {
 		return examples;
 	}
 
-	public SortedMap<String, DialogVariable> getVariables() {
+	public List<DialogVariable> getVariables() {
 		return variables;
 	}
 

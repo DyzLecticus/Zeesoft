@@ -1,7 +1,5 @@
 package nl.zeesoft.zsd.util;
 
-import java.util.Map.Entry;
-
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.DialogIO;
@@ -37,22 +35,22 @@ public class DialogSetToJson {
 				if (dialog.getVariables().size()>0) {
 					JsElem varsElem = new JsElem("variables",true);
 					dialogElem.children.add(varsElem);
-					for (Entry<String,DialogVariable> entry: dialog.getVariables().entrySet()) {
+					for (DialogVariable variable: dialog.getVariables()) {
 						JsElem varElem = new JsElem();
 						varsElem.children.add(varElem);
-						varElem.children.add(new JsElem("name",entry.getValue().name,true));
-						varElem.children.add(new JsElem("type",entry.getValue().type,true));
-						if (entry.getValue().complexName.length()>0 && entry.getValue().complexType.length()>0) {
-							varElem.children.add(new JsElem("complexName",entry.getValue().complexName,true));
-							varElem.children.add(new JsElem("complexType",entry.getValue().complexType,true));
+						varElem.children.add(new JsElem("name",variable.name,true));
+						varElem.children.add(new JsElem("type",variable.type,true));
+						if (variable.complexName.length()>0 && variable.complexType.length()>0) {
+							varElem.children.add(new JsElem("complexName",variable.complexName,true));
+							varElem.children.add(new JsElem("complexType",variable.complexType,true));
 						}
-						if (entry.getValue().initialValue.length()>0) {
-							varElem.children.add(new JsElem("initialValue",entry.getValue().initialValue,true));
+						if (variable.initialValue.length()>0) {
+							varElem.children.add(new JsElem("initialValue",variable.initialValue,true));
 						}
-						if (entry.getValue().examples.size()>0) {
+						if (variable.examples.size()>0) {
 							JsElem exsElem = new JsElem("examples",true);
 							varElem.children.add(exsElem);
-							for (DialogVariableQA example: entry.getValue().examples) {
+							for (DialogVariableQA example: variable.examples) {
 								JsElem exElem = new JsElem();
 								exsElem.children.add(exElem);
 								exElem.children.add(new JsElem("question",example.question,true));

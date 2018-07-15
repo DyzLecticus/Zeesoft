@@ -23,8 +23,8 @@ public class InterpreterConfiguration extends Initializer {
 	private SortedMap<String,SequenceClassifier>	languageContextClassifiers			= new TreeMap<String,SequenceClassifier>();
 	private EntityValueTranslator					entityValueTranslator				= null;
 
-	private long									maxMsPerSymbol						= 100;
-	private long									maxMsPerSequence					= 2000;
+	private long									maxMsInterpretPerSymbol				= 100;
+	private long									maxMsInterpretPerSequence			= 2000;
 
 	public InterpreterConfiguration() {
 
@@ -102,20 +102,20 @@ public class InterpreterConfiguration extends Initializer {
 		this.languageContextClassifiers = languageContextClassifiers;
 	}
 
-	public long getMaxMsPerSymbol() {
-		return maxMsPerSymbol;
+	public long getMaxMsInterpretPerSymbol() {
+		return maxMsInterpretPerSymbol;
 	}
 
-	public void setMaxMsPerSymbol(long maxMsPerSymbol) {
-		this.maxMsPerSymbol = maxMsPerSymbol;
+	public void setMaxMsInterpretPerSymbol(long maxMsPerSymbol) {
+		this.maxMsInterpretPerSymbol = maxMsPerSymbol;
 	}
 
-	public long getMaxMsPerSequence() {
-		return maxMsPerSequence;
+	public long getMaxMsInterpretPerSequence() {
+		return maxMsInterpretPerSequence;
 	}
 
-	public void setMaxMsPerSequence(long maxMsPerSequence) {
-		this.maxMsPerSequence = maxMsPerSequence;
+	public void setMaxMsInterpretPerSequence(long maxMsPerSequence) {
+		this.maxMsInterpretPerSequence = maxMsPerSequence;
 	}
 
 	private InitializeClass getInitializeClassForSequenceClassifier(SequenceClassifier sc,String fileName) {

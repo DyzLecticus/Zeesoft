@@ -134,15 +134,15 @@ public class DialogSet implements Initializable {
 				if (varsElem!=null) {
 					for (JsElem varElem: varsElem.children) {
 						String name = varElem.getChildValueByName("name").toString();
-						String type = varElem.getChildValueByName("name").toString();
+						String type = varElem.getChildValueByName("type").toString();
 						ZStringBuilder complexName = varElem.getChildValueByName("complexName");
 						ZStringBuilder complexType = varElem.getChildValueByName("complexType");
 						ZStringBuilder initialValue = varElem.getChildValueByName("initialValue");
-						DialogVariable variable = d.getVariables().get(name);
+						DialogVariable variable = d.getVariable(name);
 						if (variable==null) {
 							variable = new DialogVariable();
 							variable.name = name;
-							d.getVariables().put(name,variable);
+							d.getVariables().add(variable);
 						}
 						variable.type = type;
 						if (complexName!=null) {

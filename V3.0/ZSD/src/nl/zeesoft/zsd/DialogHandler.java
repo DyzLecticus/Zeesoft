@@ -1,6 +1,7 @@
 package nl.zeesoft.zsd;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -30,6 +31,8 @@ public class DialogHandler extends SequenceInterpreter {
 		DialogResponse r = new DialogResponse(request);
 		buildInterpreterResponse(r);
 		
+		Date started = new Date();
+
 		String language = request.language;
 		String masterContext = request.masterContext;
 		
@@ -69,6 +72,10 @@ public class DialogHandler extends SequenceInterpreter {
 				handler.setDialog(dialog);
 				r.addDebugLogLine("Initialized handler: ",handler.getClass().getName());
 				handler.handleDialogIO(r);
+			}
+			if ((new Date()).getTime()>=(started.getTime() + getConfiguration().getMaxMsDialogPerSequence())) {
+				r.addDebugLogLine("Context output processing timed out");
+				break;
 			}
 		}
 		

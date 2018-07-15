@@ -27,7 +27,7 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addExample("Hoi, mijn naam is {firstName} {lastName}.","Hallo {fullName}.");
 		addExample("Hoi, ik heet {firstName}.","Hallo {firstName}. Wat is je achternaam?");
 		
-		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC);
+		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME);
 		addVariableQA(VARIABLE_FIRSTNAME,"Wat is jouw naam?","Mijn naam is {firstName} {preposition} {lastName}.");
 		addVariableQA(VARIABLE_FIRSTNAME,"Wat is jouw naam?","Mijn naam is {firstName} {lastName}.");
 		addVariableQA(VARIABLE_FIRSTNAME,"Wat is jouw naam?","Mijn naam is {firstName}.");
@@ -39,7 +39,7 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addVariableQA(VARIABLE_FIRSTNAME,"Wat is jouw voornaam?","{firstName}.");
 		addVariableQA(VARIABLE_FIRSTNAME,"Wat is jouw voornaam?","Mijn voornaam is {firstName}.");
 
-		addVariable(VARIABLE_LASTNAME,BaseConfiguration.TYPE_NAME,VARIABLE_LASTNAME,BaseConfiguration.TYPE_ALPHABETIC);
+		addVariable(VARIABLE_LASTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_LASTNAME,BaseConfiguration.TYPE_NAME);
 		addVariableQA(VARIABLE_LASTNAME,"Wat is jouw achternaam?","Mijn achternaam is {preposition} {lastName}.");
 		addVariableQA(VARIABLE_LASTNAME,"Wat is jouw achternaam?","Mijn achternaam is {lastName}, {preposition}.");
 		addVariableQA(VARIABLE_LASTNAME,"Wat is jouw achternaam?","Mijn achternaam is {lastName}.");
@@ -47,7 +47,7 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addVariableQA(VARIABLE_LASTNAME,"Wat is jouw achternaam?","{lastName}, {preposition}.");
 		addVariableQA(VARIABLE_LASTNAME,"Wat is jouw achternaam?","{lastName}.");
 
-		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION);
+		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
 
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_NEXT_DIALOG,"Wat kan ik voor je doen {fullName}?","{nextDialog}.");

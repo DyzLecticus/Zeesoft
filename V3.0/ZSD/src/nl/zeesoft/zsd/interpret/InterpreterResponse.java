@@ -50,6 +50,10 @@ public class InterpreterResponse {
 		addDebugLogLine(line,new ZStringBuilder());
 	}
 	
+	public void addDebugLogLine(String line) {
+		addDebugLogLine(line,new ZStringBuilder());
+	}
+	
 	public void addDebugLogLine(ZStringBuilder line,String value) {
 		addDebugLogLine(line,new ZStringBuilder(value));
 	}

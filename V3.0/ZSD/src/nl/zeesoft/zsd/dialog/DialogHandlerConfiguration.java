@@ -3,12 +3,23 @@ package nl.zeesoft.zsd.dialog;
 import java.io.File;
 import java.util.List;
 
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.util.LanguageDialogSetJsonGenerator;
 
 public class DialogHandlerConfiguration extends InterpreterConfiguration {
 	private DialogSet					dialogSet					= null;
+
+	private long						maxMsDialogPerSequence		= 1000;
+	
+	public DialogHandlerConfiguration() {
+		
+	}
+	
+	public DialogHandlerConfiguration(BaseConfiguration base) {
+		super(base);
+	}
 	
 	@Override
 	public List<InitializeClass> getInitializeClasses() {
@@ -47,5 +58,15 @@ public class DialogHandlerConfiguration extends InterpreterConfiguration {
 
 	public void setDialogSet(DialogSet dialogSet) {
 		this.dialogSet = dialogSet;
+	}
+
+
+	public long getMaxMsDialogPerSequence() {
+		return maxMsDialogPerSequence;
+	}
+
+
+	public void setMaxMsDialogPerSequence(long maxMsDialogPerSequence) {
+		this.maxMsDialogPerSequence = maxMsDialogPerSequence;
 	}
 }
