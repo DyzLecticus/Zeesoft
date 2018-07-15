@@ -12,11 +12,20 @@ import nl.zeesoft.zsd.dialog.DialogResponse;
 import nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
+/**
+ * A DialogHandler can be used to interpret sequences and provide dialog oriented output using several methods.
+ */
 public class DialogHandler extends SequenceInterpreter {
 	public DialogHandler(DialogHandlerConfiguration c) {
 		super(c);
 	}
 
+	/**
+	 * Handles a dialog request.
+	 * 
+	 * @param request The dialog request
+	 * @return  The dialog response
+	 */
 	public DialogResponse handleDialogRequest(DialogRequest request) {
 		if (request.masterContext.length()==0) {
 			request.classifyMasterContext = true;

@@ -9,6 +9,9 @@ import nl.zeesoft.zsd.interpret.InterpreterRequest;
 import nl.zeesoft.zsd.interpret.InterpreterResponse;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
+/**
+ * A SequenceInterpreter can be used to interpret the meaning of a sequence using several methods. 
+ */
 public class SequenceInterpreter {
 	private InterpreterConfiguration	configuration	= null;
 	
@@ -16,6 +19,12 @@ public class SequenceInterpreter {
 		configuration = c;
 	}
 
+	/**
+	 * Handles an interpretation request.
+	 * 
+	 * @param request The interpretation request
+	 * @return  The interpretation response
+	 */
 	public InterpreterResponse handleInterpreterRequest(InterpreterRequest request) {
 		InterpreterResponse r = new InterpreterResponse(request);
 		buildInterpreterResponse(r);

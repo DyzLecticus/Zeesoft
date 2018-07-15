@@ -9,6 +9,9 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
 
+/**
+ * A BaseConfiguration instance is used to initialize sequence interpreter and dialog handler configurations.
+ */
 public class BaseConfiguration {
 	public static final String					LANG_UNI					= "UNI";
 	public static final String					LANG_ENG					= "ENG";
@@ -56,6 +59,11 @@ public class BaseConfiguration {
 		initialize();
 	}
 
+	/**
+	 * Converts the configuration to JSON.
+	 * 
+	 * @return The JSON
+	 */
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
@@ -86,6 +94,11 @@ public class BaseConfiguration {
 		return json;
 	}
 
+	/**
+	 * Initializes the configuration using the supplied JSON.
+	 * 
+	 * @param json The JSON
+	 */
 	public void fromJson(JsFile json) {
 		supportedLanguages.clear();
 		supportedAlphabets.clear();
@@ -116,86 +129,197 @@ public class BaseConfiguration {
 		}
 	}
 
+	/**
+	 * Returns the name of the agent.
+	 * 
+	 * @return The name of the agent
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Sets the name of the agent.
+	 * 
+	 * @param name The name of the agent
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Returns the primary language of the agent.
+	 * 
+	 * @return The primary language
+	 */
 	public String getPrimaryLanguage() {
 		return primaryLanguage;
 	}
 
+	/**
+	 * Sets the primary language of the agent.
+	 * 
+	 * @param primaryLanguage The primary language
+	 */
 	public void setPrimaryLanguage(String primaryLanguage) {
 		this.primaryLanguage = primaryLanguage;
 	}
 
+	/**
+	 * Returns the list of languages the agent supports
+	 * 
+	 * @return The list of languages
+	 */
 	public List<String> getSupportedLanguages() {
 		return supportedLanguages;
 	}
 
+	/**
+	 * Returns the supported alphabets per language
+	 * 
+	 * @return The supported alphabets
+	 */
 	public SortedMap<String, String> getSupportedAlphabets() {
 		return supportedAlphabets;
 	}
 
+	/**
+	 * Returns the supported master contexts per language
+	 * 
+	 * @return The supported master contexts
+	 */
 	public SortedMap<String,List<String>> getSupportedMasterContexts() {
 		return supportedMasterContexts;
 	}
 
+	/**
+	 * Returns the base directory for data files.
+	 * 
+	 * @return The base directory
+	 */
 	public String getBaseDir() {
 		return baseDir;
 	}
 
+	/**
+	 * Sets the base directory for data files.
+	 * 
+	 * @param baseDir The base directory
+	 */
 	public void setBaseDir(String baseDir) {
 		this.baseDir = baseDir;
 	}
 
+	/**
+	 * Returns the extension directory for data files.
+	 * 
+	 * @return The extension directory
+	 */
 	public String getExtendDir() {
 		return extendDir;
 	}
 
+	/**
+	 * Sets the extension directory for data files.
+	 * 
+	 * @param extendDir The extension directory
+	 */
 	public void setExtendDir(String extendDir) {
 		this.extendDir = extendDir;
 	}
 
+	/**
+	 * Returns the override directory for data files.
+	 * 
+	 * @return The override directory
+	 */
 	public String getOverrideDir() {
 		return overrideDir;
 	}
 
+	/**
+	 * Sets the override directory for data files.
+	 * 
+	 * @param overrideDir The override directory
+	 */
 	public void setOverrideDir(String overrideDir) {
 		this.overrideDir = overrideDir;
 	}
 
+	/**
+	 * Indicates data files are written in a readable format.
+	 * 
+	 * @return True if data files are written in a readable format
+	 */
 	public boolean isGenerateReadFormat() {
 		return generateReadFormat;
 	}
 
+	/**
+	 * Indicates data files will be written in a readable format.
+	 * 
+	 * @param generateReadFormat If true, data files will be written in a readable format
+	 */
 	public void setGenerateReadFormat(boolean generateReadFormat) {
 		this.generateReadFormat = generateReadFormat;
 	}
 
+	/**
+	 * Returns the maximum number of milliseconds interpretation should take per symbol.
+	 * This is used as an indication and not strictly enforced.
+	 * 
+	 * @return The maximum number of milliseconds
+	 */
 	public long getMaxMsInterpretPerSymbol() {
 		return maxMsInterpretPerSymbol;
 	}
 
+	/**
+	 * Sets the maximum number of milliseconds interpretation should take per symbol.
+	 * This is used as an indication and not strictly enforced.
+	 * 
+	 * @param maxMsPerSymbol The maximum number of milliseconds
+	 */
 	public void setMaxMsInterpretPerSymbol(long maxMsPerSymbol) {
 		this.maxMsInterpretPerSymbol = maxMsPerSymbol;
 	}
 
+	/**
+	 * Returns the maximum number of milliseconds interpretation should take per sequence.
+	 * This is used as an indication and not strictly enforced.
+	 * 
+	 * @return The maximum number of milliseconds
+	 */
 	public long getMaxMsInterpretPerSequence() {
 		return maxMsInterpretPerSequence;
 	}
 
+	/**
+	 * Sets the maximum number of milliseconds interpretation should take per sequence.
+	 * This is used as an indication and not strictly enforced.
+	 * 
+	 * @param maxMsPerSequence The maximum number of milliseconds
+	 */
 	public void setMaxMsInterpretPerSequence(long maxMsPerSequence) {
 		this.maxMsInterpretPerSequence = maxMsPerSequence;
 	}
 
+	/**
+	 * Returns the maximum number of milliseconds dialog handling can take after interpretation.
+	 * This is used as an indication and not strictly enforced.
+	 * 
+	 * @return The maximum number of milliseconds
+	 */
 	public long getMaxMsDialogPerSequence() {
 		return maxMsDialogPerSequence;
 	}
 
+	/**
+	 * Sets the maximum number of milliseconds dialog handling can take after interpretation.
+	 * This is used as an indication and not strictly enforced.
+	 * 
+	 * @param maxMsDialogPerSequence The maximum number of milliseconds
+	 */
 	public void setMaxMsDialogPerSequence(long maxMsDialogPerSequence) {
 		this.maxMsDialogPerSequence = maxMsDialogPerSequence;
 	}

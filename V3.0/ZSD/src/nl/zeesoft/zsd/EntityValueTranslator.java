@@ -280,6 +280,16 @@ public class EntityValueTranslator implements Initializable {
 		return r;
 	}
 
+	/**
+	 * Returns all values of specific types from a list of internal entity values.
+	 * Obtained values are removed from the list.
+	 * 
+	 * @param internalValues The list of internal values
+	 * @param type The entity type
+	 * @param complexName The optional complex entity name
+	 * @param complexType The optional complex entity type
+	 * @return The list of obtained values
+	 */
 	public List<String> getTypeValuesFromInternalValues(List<String> internalValues,String type,String complexName,String complexType) {
 		List<String> r = new ArrayList<String>();
 		List<String> vals = new ArrayList<String>(internalValues);

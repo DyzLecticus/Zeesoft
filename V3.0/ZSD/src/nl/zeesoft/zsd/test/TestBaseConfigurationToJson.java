@@ -41,9 +41,9 @@ public class TestBaseConfigurationToJson extends TestEntityToJson {
 		bc.setBaseDir("testBase/");
 		bc.setOverrideDir("testOverride/");
 		bc.setExtendDir("testExtend/");
-		bc.setMaxMsInterpretPerSymbol(1);
-		bc.setMaxMsInterpretPerSequence(2);
-		bc.setMaxMsDialogPerSequence(3);
+		bc.setMaxMsInterpretPerSymbol(111);
+		bc.setMaxMsInterpretPerSequence(2222);
+		bc.setMaxMsDialogPerSequence(1111);
 		JsFile json = bc.toJson();
 		System.out.println(json.toStringBuilderReadFormat());
 		assertEqual(json.rootElement.children.size(),9,"The number of children does not match expectation");
