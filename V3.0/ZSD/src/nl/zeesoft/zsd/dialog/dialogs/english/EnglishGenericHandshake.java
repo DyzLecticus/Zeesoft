@@ -42,9 +42,9 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{lastName}, {preposition}.");
 		addVariableQA(VARIABLE_LASTNAME,"What is your lastname?","{lastName}.");
 
-		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
-
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_NEXT_DIALOG,"What can I do for you {fullName}?","{nextDialog}.");
+
+		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
 	}
 }

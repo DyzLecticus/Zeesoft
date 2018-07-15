@@ -239,7 +239,7 @@ public class EntityValueTranslator implements Initializable {
 		
 		return r;
 	}
-
+	
 	/**
 	 * Translates a sequence containing internal entity values to external values.
 	 * 
@@ -273,6 +273,30 @@ public class EntityValueTranslator implements Initializable {
 			newSymbols.add(sym);
 		}
 		r.fromSymbols(newSymbols,false,false);
+		return r;
+	}
+
+	public List<String> getTypeValuesFromInternalValues(List<String> internalValues,String type,String complexName,String complexType) {
+		List<String> r = new ArrayList<String>();
+		List<String> vals = new ArrayList<String>(internalValues);
+		for (String val: vals) {
+			String v = "";
+			if (complexType.length()>0) {
+				v = getInternalValueFromInternalValues(val,complexType);
+				String[] str = v.split(getValueConcatenator());
+				if (str.length==4 && str[1].equals(complexName)) {
+					v = str[2] + getValueConcatenator() + str[3];
+				} else {
+					v = "";
+				}
+			} else {
+				v = getInternalValueFromInternalValues(val,type);
+			}
+			if (v.length()>0) {
+				internalValues.remove(val);
+				r.add(v);
+			}
+		}
 		return r;
 	}
 

@@ -107,6 +107,17 @@ public class TestEntityValueTranslator extends TestObject {
 			"gekste der henkies is mijn naam",
 			"UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies UNI_ABC:is UNI_ABC:mijn UNI_ABC:naam",
 			"gekste der henkies is mijn naam");
+		
+		System.out.println();
+		ZStringSymbolParser sequence = new ZStringSymbolParser("UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie");
+		List<String> iValues = sequence.toSymbols();
+		int size = iValues.size();
+		List<String> values = t.getTypeValuesFromInternalValues(iValues,"ABC","lastName","NAM");
+		assertEqual(iValues.size(),(size - 1),"The number of internal values does not match expectation");
+		assertEqual(values.size(),1,"The number of type values does not match expectation");
+		if (values.size()>0) {
+			assertEqual(values.get(0),"UNI_ABC:Henkie","The value does not match expectation");
+		}
 	}
 	
 	private void testTranslation(EntityValueTranslator t,String language,String seq,String expTran,String expRetran) {

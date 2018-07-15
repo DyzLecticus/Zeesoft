@@ -47,9 +47,9 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addVariableQA(VARIABLE_LASTNAME,"Wat is jouw achternaam?","{lastName}, {preposition}.");
 		addVariableQA(VARIABLE_LASTNAME,"Wat is jouw achternaam?","{lastName}.");
 
-		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
-
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariableQA(VARIABLE_NEXT_DIALOG,"Wat kan ik voor je doen {fullName}?","{nextDialog}.");
+
+		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
 	}
 }

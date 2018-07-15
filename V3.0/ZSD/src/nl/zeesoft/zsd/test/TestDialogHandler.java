@@ -72,13 +72,13 @@ public class TestDialogHandler extends TestInitializer {
 			testRequestResponse(handler,"What is your name?",
 				"albert einstein",
 				"UNI_ABC:Albert|ENG_NAM:firstName:UNI_ABC:Albert UNI_ABC:einstein|ENG_NAM:lastName:UNI_ABC:Einstein.",
-				"","");
+				"","What can I do for you Albert Einstein?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"mijn naam si gekste der henkies",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:si UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies.",
-				"Hallo. Mijn naam is Dyz Lecticus.","Wat is jouw naam?");
+				"","Wat kan ik voor je doen Gekste der Henkies?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Who created you?",
@@ -100,6 +100,7 @@ public class TestDialogHandler extends TestInitializer {
 		Date started = new Date();	
 		DialogRequest request = new DialogRequest(prompt,input);
 		request.setAllActions(true);
+		request.randomizeOutput = false;
 		DialogResponse response = si.handleDialogRequest(request);
 		showRequestResponse(response);
 		System.out.println("Handling the request took: " + ((new Date()).getTime() - started.getTime()) + " ms");

@@ -3,14 +3,12 @@ package nl.zeesoft.zsd;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map.Entry;
 
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;
-import nl.zeesoft.zsd.dialog.DialogResponseOutput;
 import nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
@@ -69,19 +67,15 @@ public class DialogHandler extends SequenceInterpreter {
 				if (handler==null) {
 					handler = new GenericQnAHandler();
 				}
+				handler.setConfig(getConfiguration());
 				handler.setDialog(dialog);
-				r.addDebugLogLine("Initialized handler: ",handler.getClass().getName());
+				r.addDebugLogLine("    Initialized handler: ",handler.getClass().getName());
 				handler.handleDialogIO(r);
 			}
 			if ((new Date()).getTime()>=(started.getTime() + getConfiguration().getMaxMsDialogPerSequence())) {
 				r.addDebugLogLine("Context output processing timed out");
 				break;
 			}
-		}
-		
-		for (Entry<String,DialogResponseOutput> entry: r.contextOutputs.entrySet()) {
-			entry.getValue().output.replace("{selfName}",getConfiguration().getBase().getName());
-			entry.getValue().prompt.replace("{selfName}",getConfiguration().getBase().getName());
 		}
 		
 		return r;

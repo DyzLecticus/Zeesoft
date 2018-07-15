@@ -10,5 +10,6 @@ public abstract class GenericHandshake extends Generic {
 
 	public GenericHandshake() {
 		setContext(CONTEXT_GENERIC_HANDSHAKE);
+		setHandlerClassName(GenericHandshakeHandler.class.getName());
 	}
 }

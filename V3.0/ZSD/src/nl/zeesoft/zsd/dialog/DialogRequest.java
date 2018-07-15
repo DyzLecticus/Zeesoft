@@ -10,6 +10,7 @@ public class DialogRequest extends InterpreterRequest {
 	public SortedMap<String,DialogVariableValue>	dialogVariableValues	= new TreeMap<String,DialogVariableValue>();
 	
 	public double									matchThreshold			= 0.7D;
+	public boolean									randomizeOutput			= true;
 
 	public DialogRequest() {
 		
@@ -35,5 +36,11 @@ public class DialogRequest extends InterpreterRequest {
 	
 	public String getDialogId() {
 		return language + "/" + masterContext + "/" + context;
+	}
+	
+	@Override
+	public void setAllActions(boolean value) {
+		super.setAllActions(value);
+		appendDebugLog = value;
 	}
 }
