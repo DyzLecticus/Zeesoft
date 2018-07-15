@@ -10,34 +10,38 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
 
 public class BaseConfiguration {
-	public static final String					LANG_UNI				= "UNI";
-	public static final String					LANG_ENG				= "ENG";
-	public static final String					LANG_NLD				= "NLD";
+	public static final String					LANG_UNI					= "UNI";
+	public static final String					LANG_ENG					= "ENG";
+	public static final String					LANG_NLD					= "NLD";
 
 	// Entities
-	public static final String					TYPE_ALPHABETIC			= "ABC";
-	public static final String					TYPE_NUMERIC			= "NUM";
-	public static final String					TYPE_TIME				= "TIM";
-	public static final String					TYPE_ORDER				= "ORD";
-	public static final String					TYPE_ORDER2				= "OR2";
-	public static final String					TYPE_MONTH				= "MNT";
-	public static final String					TYPE_DURATION			= "DUR";
-	public static final String					TYPE_DATE				= "DAT";
-	public static final String					TYPE_PREPOSITION		= "PRE";
+	public static final String					TYPE_ALPHABETIC				= "ABC";
+	public static final String					TYPE_NUMERIC				= "NUM";
+	public static final String					TYPE_TIME					= "TIM";
+	public static final String					TYPE_ORDER					= "ORD";
+	public static final String					TYPE_ORDER2					= "OR2";
+	public static final String					TYPE_MONTH					= "MNT";
+	public static final String					TYPE_DURATION				= "DUR";
+	public static final String					TYPE_DATE					= "DAT";
+	public static final String					TYPE_PREPOSITION			= "PRE";
 
 	// Complex entities
-	public static final String					TYPE_NAME				= "NAM";
+	public static final String					TYPE_NAME					= "NAM";
 
-	private String								name					= "Dyz Lecticus";
-	private String								primaryLanguage			= BaseConfiguration.LANG_ENG;
-	private List<String>						supportedLanguages		= new ArrayList<String>();
-	private SortedMap<String,String>			supportedAlphabets		= new TreeMap<String,String>();
-	private SortedMap<String,List<String>>		supportedMasterContexts	= new TreeMap<String,List<String>>();
+	private String								name						= "Dyz Lecticus";
+	private String								primaryLanguage				= BaseConfiguration.LANG_ENG;
+	private List<String>						supportedLanguages			= new ArrayList<String>();
+	private SortedMap<String,String>			supportedAlphabets			= new TreeMap<String,String>();
+	private SortedMap<String,List<String>>		supportedMasterContexts		= new TreeMap<String,List<String>>();
 
-	private String								baseDir					= "base/";
-	private String								extendDir				= "extend/";
-	private String								overrideDir				= "override/";
-	
+	private String								baseDir						= "base/";
+	private String								extendDir					= "extend/";
+	private String								overrideDir					= "override/";
+
+	private long								maxMsInterpretPerSymbol		= 100;
+	private long								maxMsInterpretPerSequence	= 2000;
+	private long								maxMsDialogPerSequence		= 1000;
+
 	public BaseConfiguration() {
 		initialize();
 	}
@@ -56,6 +60,9 @@ public class BaseConfiguration {
 		json.rootElement.children.add(new JsElem("baseDir",baseDir,true));
 		json.rootElement.children.add(new JsElem("extendDir",extendDir,true));
 		json.rootElement.children.add(new JsElem("overrideDir",overrideDir,true));
+		json.rootElement.children.add(new JsElem("maxMsInterpretPerSymbol","" + maxMsInterpretPerSymbol,true));
+		json.rootElement.children.add(new JsElem("maxMsInterpretPerSequence","" + maxMsInterpretPerSequence,true));
+		json.rootElement.children.add(new JsElem("maxMsDialogPerSequence","" + maxMsDialogPerSequence,true));
 		JsElem langsElem = new JsElem("supportedLanguages",true);
 		json.rootElement.children.add(langsElem);
 		for (String language: supportedLanguages) {
@@ -84,6 +91,9 @@ public class BaseConfiguration {
 		baseDir = json.rootElement.getChildValueByName("baseDir").toString();
 		extendDir = json.rootElement.getChildValueByName("extendDir").toString();
 		overrideDir = json.rootElement.getChildValueByName("overrideDir").toString();
+		maxMsInterpretPerSymbol = Long.parseLong(json.rootElement.getChildValueByName("maxMsInterpretPerSymbol").toString());
+		maxMsInterpretPerSequence = Long.parseLong(json.rootElement.getChildValueByName("maxMsInterpretPerSequence").toString());
+		maxMsDialogPerSequence = Long.parseLong(json.rootElement.getChildValueByName("maxMsDialogPerSequence").toString());
 		JsElem langsElem = json.rootElement.getChildByName("supportedLanguages");
 		if (langsElem!=null) {
 			for (JsElem langElem: langsElem.children) {
@@ -152,6 +162,30 @@ public class BaseConfiguration {
 
 	public void setOverrideDir(String overrideDir) {
 		this.overrideDir = overrideDir;
+	}
+
+	public long getMaxMsInterpretPerSymbol() {
+		return maxMsInterpretPerSymbol;
+	}
+
+	public void setMaxMsInterpretPerSymbol(long maxMsPerSymbol) {
+		this.maxMsInterpretPerSymbol = maxMsPerSymbol;
+	}
+
+	public long getMaxMsInterpretPerSequence() {
+		return maxMsInterpretPerSequence;
+	}
+
+	public void setMaxMsInterpretPerSequence(long maxMsPerSequence) {
+		this.maxMsInterpretPerSequence = maxMsPerSequence;
+	}
+
+	public long getMaxMsDialogPerSequence() {
+		return maxMsDialogPerSequence;
+	}
+
+	public void setMaxMsDialogPerSequence(long maxMsDialogPerSequence) {
+		this.maxMsDialogPerSequence = maxMsDialogPerSequence;
 	}
 
 	protected void initialize() {

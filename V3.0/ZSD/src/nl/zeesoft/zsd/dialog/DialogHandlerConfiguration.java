@@ -10,8 +10,6 @@ import nl.zeesoft.zsd.util.LanguageDialogSetJsonGenerator;
 
 public class DialogHandlerConfiguration extends InterpreterConfiguration {
 	private DialogSet					dialogSet					= null;
-
-	private long						maxMsDialogPerSequence		= 1000;
 	
 	public DialogHandlerConfiguration() {
 		
@@ -58,15 +56,5 @@ public class DialogHandlerConfiguration extends InterpreterConfiguration {
 
 	public void setDialogSet(DialogSet dialogSet) {
 		this.dialogSet = dialogSet;
-	}
-
-
-	public long getMaxMsDialogPerSequence() {
-		return maxMsDialogPerSequence;
-	}
-
-
-	public void setMaxMsDialogPerSequence(long maxMsDialogPerSequence) {
-		this.maxMsDialogPerSequence = maxMsDialogPerSequence;
 	}
 }

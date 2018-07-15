@@ -72,7 +72,7 @@ public class DialogHandler extends SequenceInterpreter {
 				r.addDebugLogLine("    Initialized handler: ",handler.getClass().getName());
 				handler.handleDialogIO(r);
 			}
-			if ((new Date()).getTime()>=(started.getTime() + getConfiguration().getMaxMsDialogPerSequence())) {
+			if ((new Date()).getTime()>=(started.getTime() + getConfiguration().getBase().getMaxMsDialogPerSequence())) {
 				r.addDebugLogLine("Context output processing timed out");
 				break;
 			}

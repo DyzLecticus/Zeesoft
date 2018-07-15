@@ -65,8 +65,8 @@ public class SequenceInterpreter {
 			// Correct input
 			boolean corrected = false;
 			if (r.request.correctInput) {
-				long stopAfterMs = r.numInputSymbols * getConfiguration().getMaxMsInterpretPerSymbol();
-				long maxCorrect = getConfiguration().getMaxMsInterpretPerSequence();
+				long stopAfterMs = r.numInputSymbols * getConfiguration().getBase().getMaxMsInterpretPerSymbol();
+				long maxCorrect = getConfiguration().getBase().getMaxMsInterpretPerSequence();
 				if (r.request.translateEntiyValues) {
 					maxCorrect = (maxCorrect / 3) * 2;
 				}
