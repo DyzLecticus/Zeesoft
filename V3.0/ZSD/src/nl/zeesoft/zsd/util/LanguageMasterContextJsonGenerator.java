@@ -17,14 +17,14 @@ public class LanguageMasterContextJsonGenerator {
 			DialogSet ds = new DialogSet();
 			ds.initialize(t);
 			BaseConfiguration base = new BaseConfiguration();
-			ZStringBuilder err = generator.generateLanguageDialogs(ds,base,args[0],true);
+			ZStringBuilder err = generator.generate(base,ds,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	public ZStringBuilder generateLanguageDialogs(DialogSet ds,BaseConfiguration base,String directory,boolean readFormat) {
+	public ZStringBuilder generate(BaseConfiguration base,DialogSet ds,String directory,boolean readFormat) {
 		ZStringBuilder err = new ZStringBuilder();
 		for (String language: base.getSupportedLanguages()) {
 			err = generateLanguageDialogs(ds,language,directory,readFormat);

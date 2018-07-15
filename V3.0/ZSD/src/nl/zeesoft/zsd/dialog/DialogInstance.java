@@ -86,13 +86,15 @@ public class DialogInstance {
 	public void initializeMatcher() {
 		matcher = new SequenceMatcher();
 		for (DialogIO example: examples) {
-			ZStringSymbolParser sequence = new ZStringSymbolParser();
-			sequence.append(example.input);
-			sequence.append(" ");
-			sequence.append(matcher.getIoSeparator());
-			sequence.append(" ");
-			sequence.append(example.output);
-			matcher.addSequence(sequence);
+			if (example.output.length()>0) {
+				ZStringSymbolParser sequence = new ZStringSymbolParser();
+				sequence.append(example.input);
+				sequence.append(" ");
+				sequence.append(matcher.getIoSeparator());
+				sequence.append(" ");
+				sequence.append(example.output);
+				matcher.addSequence(sequence);
+			}
 		}
 		matcher.calculateProb();
 	}

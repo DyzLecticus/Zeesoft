@@ -38,6 +38,7 @@ public class EnglishGenericHandshake extends GenericHandshake {
 
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"What can I do for you {fullName}?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"How can I help you {fullName}?");
 
 		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
 	}

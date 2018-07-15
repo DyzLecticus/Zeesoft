@@ -17,14 +17,14 @@ public class LanguageDialogSetJsonGenerator {
 			DialogSet ds = new DialogSet();
 			ds.initialize(t);
 			BaseConfiguration base = new BaseConfiguration();
-			ZStringBuilder err = generator.generateLanguageDialogSet(base,ds,args[0],true);
+			ZStringBuilder err = generator.generate(base,ds,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	public ZStringBuilder generateLanguageDialogSet(BaseConfiguration base,DialogSet ds,String directory,boolean readFormat) {
+	public ZStringBuilder generate(BaseConfiguration base,DialogSet ds,String directory,boolean readFormat) {
 		ZStringBuilder err = new ZStringBuilder();
 		if (!directory.endsWith("/") && !directory.endsWith("\\")) {
 			directory += "/";
@@ -33,7 +33,7 @@ public class LanguageDialogSetJsonGenerator {
 			DialogSetToJson convertor = new DialogSetToJson();
 			JsFile json = convertor.toJson(ds, language);
 			String fileName = directory + FILE_NAME_PREFIX + language + ".json";
-			err = json.toFile(fileName,readFormat);
+			err = json.toFile(fileName,base.isGenerateReadFormat());
 			if (err.length()>0) {
 				break;
 			}

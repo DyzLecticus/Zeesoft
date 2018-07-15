@@ -44,6 +44,7 @@ public class DutchGenericHandshake extends GenericHandshake {
 
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Wat kan ik voor je doen {fullName}?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Hoe kan ik je helpen {fullName}?");
 
 		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
 	}

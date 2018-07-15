@@ -38,6 +38,8 @@ public class BaseConfiguration {
 	private String								extendDir					= "extend/";
 	private String								overrideDir					= "override/";
 
+	private boolean								generateReadFormat			= true;
+	
 	private long								maxMsInterpretPerSymbol		= 100;
 	private long								maxMsInterpretPerSequence	= 2000;
 	private long								maxMsDialogPerSequence		= 1000;
@@ -162,6 +164,14 @@ public class BaseConfiguration {
 
 	public void setOverrideDir(String overrideDir) {
 		this.overrideDir = overrideDir;
+	}
+
+	public boolean isGenerateReadFormat() {
+		return generateReadFormat;
+	}
+
+	public void setGenerateReadFormat(boolean generateReadFormat) {
+		this.generateReadFormat = generateReadFormat;
 	}
 
 	public long getMaxMsInterpretPerSymbol() {

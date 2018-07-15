@@ -16,14 +16,14 @@ public class LanguageClassifierJsonGenerator {
 			t.initialize();
 			DialogSet ds = new DialogSet();
 			ds.initialize(t);
-			ZStringBuilder err = generator.generateEntityValueTranslator(t,ds,args[0],true);
+			ZStringBuilder err = generator.generate(t,ds,args[0],true);
 			if (err.length()>0) {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	public ZStringBuilder generateEntityValueTranslator(EntityValueTranslator t,DialogSet ds,String directory,boolean readFormat) {
+	public ZStringBuilder generate(EntityValueTranslator t,DialogSet ds,String directory,boolean readFormat) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		JsElem seqsElem = new JsElem("sequences",true);
