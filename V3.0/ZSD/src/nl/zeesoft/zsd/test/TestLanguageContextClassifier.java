@@ -41,6 +41,8 @@ public class TestLanguageContextClassifier extends TestLanguageMasterContextClas
 			System.out.println("");
 			testSequenceClassification(scNld,new ZStringSymbolParser("Wat is jouw naam?"),0D,"Handshake",2);
 			System.out.println("");
+			testSequenceClassification(scEng,new ZStringSymbolParser("What are you?"),0D,"QuestionAndAnswer",2);
+			System.out.println("");
 			testSequenceClassification(scNld,new ZStringSymbolParser("Wat ben jij?"),0D,"QuestionAndAnswer",2);
 		}
 	}
