@@ -24,6 +24,7 @@ public class BaseConfiguration {
 	public static final String					TYPE_DURATION				= "DUR";
 	public static final String					TYPE_DATE					= "DAT";
 	public static final String					TYPE_PREPOSITION			= "PRE";
+	public static final String					TYPE_COUNTRY				= "CNT";
 
 	// Complex entities
 	public static final String					TYPE_NAME					= "NAM";
@@ -212,7 +213,11 @@ public class BaseConfiguration {
 	}
 
 	protected void initializeSupportedAlphabetsForLanguage(String language) {
-		supportedAlphabets.put(language,SymbolCorrector.ALPHABET);
+		if (language.equals(LANG_NLD)) {
+			supportedAlphabets.put(language,"ΰαηθικλοσφϊό" + SymbolCorrector.ALPHABET);
+		} else {
+			supportedAlphabets.put(language,SymbolCorrector.ALPHABET);
+		}
 	}
 
 	protected void initializeSupportedMasterContextsForLanguage(String language) {

@@ -236,7 +236,7 @@ public class Analyzer implements Initializable {
 	 * @param str The string
 	 * @return The string with the first character converted to upper case
 	 */
-	public String upperCaseFirst(String str) {
+	public static String upperCaseFirst(String str) {
 		String r = str.substring(0,1).toUpperCase();
 		if (str.length()>1) {
 			r += str.substring(1).toLowerCase();

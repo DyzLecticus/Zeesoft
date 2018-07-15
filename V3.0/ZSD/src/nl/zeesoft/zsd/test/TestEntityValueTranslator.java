@@ -107,7 +107,15 @@ public class TestEntityValueTranslator extends TestObject {
 			"gekste der henkies is mijn naam",
 			"UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies UNI_ABC:is UNI_ABC:mijn UNI_ABC:naam",
 			"gekste der henkies is mijn naam");
-		
+		testTranslation(t,BaseConfiguration.LANG_ENG,
+			"to Germany or France",
+			"UNI_ABC:to ENG_CNT:DE|UNI_ABC:Germany UNI_ABC:or ENG_CNT:FR|UNI_ABC:France",
+			"to Germany or France");
+		testTranslation(t,BaseConfiguration.LANG_NLD,
+			"naar Duitsland of Frankrijk",
+			"UNI_ABC:naar NLD_CNT:DE|UNI_ABC:Duitsland UNI_ABC:of NLD_CNT:FR|UNI_ABC:Frankrijk",
+			"naar Duitsland of Frankrijk");
+
 		System.out.println();
 		ZStringSymbolParser sequence = new ZStringSymbolParser("UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie");
 		List<String> iValues = sequence.toSymbols();
