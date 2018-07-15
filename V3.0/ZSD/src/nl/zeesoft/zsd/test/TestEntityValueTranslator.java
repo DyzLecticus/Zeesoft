@@ -115,6 +115,14 @@ public class TestEntityValueTranslator extends TestObject {
 			"naar Duitsland of Frankrijk",
 			"UNI_ABC:naar NLD_CNT:DE|UNI_ABC:Duitsland UNI_ABC:of NLD_CNT:FR|UNI_ABC:Frankrijk",
 			"naar Duitsland of Frankrijk");
+		testTranslation(t,BaseConfiguration.LANG_ENG,
+			"You asshole",
+			"UNI_ABC:You ENG_PRF:1|UNI_ABC:asshole",
+			"You asshole");
+		testTranslation(t,BaseConfiguration.LANG_NLD,
+			"Jij klootzak",
+			"UNI_ABC:Jij NLD_PRF:2|UNI_ABC:klootzak",
+			"Jij klootzak");
 
 		System.out.println();
 		ZStringSymbolParser sequence = new ZStringSymbolParser("UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie");

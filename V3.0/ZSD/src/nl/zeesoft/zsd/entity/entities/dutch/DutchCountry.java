@@ -265,6 +265,7 @@ public class DutchCountry extends EntityObject {
 		addCountry("Turkije","TR");
 		addCountry("Turkmenistan","TM");
 		addCountry("Turks en Caicoseilanden","TC");
+		addCountry("Caicoseilanden","TC");
 		addCountry("Tuvalu","TV");
 		addCountry("Uruguay","UY");
 		addCountry("Vanuatu","VU");
@@ -274,6 +275,7 @@ public class DutchCountry extends EntityObject {
 		addCountry("Verenigde Arabische Emiraten","AE");
 		addCountry("Verenigde Staten","US");
 		addCountry("Verenigd Koninkrijk","GB");
+		addCountry("Engeland","GB");
 		addCountry("Vietnam","VN");
 		addCountry("Wallis en Futuna","WF");
 		addCountry("Westelijke Sahara","EH");

@@ -13,19 +13,19 @@ public class EnglishGenericHandshake extends GenericHandshake {
 	
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		addExample("Hello.","Hello. " + EXAMPLE_OUTPUT);
-		addExample("Hello!","Hello. " + EXAMPLE_OUTPUT);
-		addExample("Hi.","Hi. " + EXAMPLE_OUTPUT);
-		addExample("Hi!","Hi. " + EXAMPLE_OUTPUT);
-		addExample("Good morning.","Good morning. " + EXAMPLE_OUTPUT);
-		addExample("Good morning!","Good morning. " + EXAMPLE_OUTPUT);
-		addExample("Good afternoon.","Good afternoon. " + EXAMPLE_OUTPUT);
-		addExample("Good afternoon!","Good afternoon. " + EXAMPLE_OUTPUT);
-		addExample("Good evening.","Good evening. " + EXAMPLE_OUTPUT);
-		addExample("Good evening!","Good evening. " + EXAMPLE_OUTPUT);
+		addExample("Hello.","Hello. " + getOutput());
+		addExample("Hello!","Hello. " + getOutput());
+		addExample("Hi.","Hi. " + getOutput());
+		addExample("Hi!","Hi. " + getOutput());
+		addExample("Good morning.","Good morning. " + getOutput());
+		addExample("Good morning!","Good morning. " + getOutput());
+		addExample("Good afternoon.","Good afternoon. " + getOutput());
+		addExample("Good afternoon!","Good afternoon. " + getOutput());
+		addExample("Good evening.","Good evening. " + getOutput());
+		addExample("Good evening!","Good evening. " + getOutput());
 		
-		addExample("What is your name?",EXAMPLE_OUTPUT);
-		addExample("Who are you?",EXAMPLE_OUTPUT);
+		addExample("What is your name?",getOutput());
+		addExample("Who are you?",getOutput());
 	
 		addComplexPatterns(t,BaseConfiguration.TYPE_NAME);
 		
@@ -41,5 +41,9 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"How can I help you {fullName}?");
 
 		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
+	}
+	
+	protected String getOutput() {
+		return EXAMPLE_OUTPUT;
 	}
 }

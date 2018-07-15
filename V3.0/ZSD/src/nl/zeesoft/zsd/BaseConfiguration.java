@@ -25,6 +25,7 @@ public class BaseConfiguration {
 	public static final String					TYPE_DATE					= "DAT";
 	public static final String					TYPE_PREPOSITION			= "PRE";
 	public static final String					TYPE_COUNTRY				= "CNT";
+	public static final String					TYPE_PROFANITY				= "PRF";
 
 	// Complex entities
 	public static final String					TYPE_NAME					= "NAM";

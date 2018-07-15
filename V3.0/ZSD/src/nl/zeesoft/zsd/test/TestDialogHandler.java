@@ -86,9 +86,14 @@ public class TestDialogHandler extends TestInitializer {
 				"My software was written by André van der Zee.","");
 			System.out.println();
 			testRequestResponse(handler,"",
-				"Why were you created?",
-				"UNI_ABC:Why UNI_ABC:were UNI_ABC:you UNI_ABC:created ?",
-				"My goal is to understand and help people.","");
+				"You asshole!",
+				"UNI_ABC:You ENG_PRF:1|UNI_ABC:asshole !",
+				"I do not appreciate that kind of language.","");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Jij klootzak!",
+				"UNI_ABC:Jij NLD_PRF:2|UNI_ABC:klootzak !",
+				"Van zulk taalgebruik ben ik niet gediend.","");
 		}
 	}
 	

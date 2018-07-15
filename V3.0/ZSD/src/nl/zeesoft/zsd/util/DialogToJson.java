@@ -1,5 +1,6 @@
 package nl.zeesoft.zsd.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -30,6 +31,7 @@ public class DialogToJson {
 
 	public void addJsonForDialogs(JsElem parent,List<DialogInstance> dialogs,boolean languageContext,boolean masterContext) {
 		String cntxt = "";
+		List<ZStringBuilder> added = new ArrayList<ZStringBuilder>();
 		for (DialogInstance dialog: dialogs) {
 			for (DialogIO example: dialog.getExamples()) {
 				if (languageContext) {
@@ -39,11 +41,21 @@ public class DialogToJson {
 				} else {
 					cntxt = dialog.getContext();
 				}
-				TsvToJson.checkAddSequenceElement(parent,
-					new ZStringBuilder(example.input),
-					null,
-					new ZStringBuilder(cntxt)
-					);
+				boolean found = false;
+				for (ZStringBuilder sb: added) {
+					if (sb.equals(example.input)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					added.add(example.input);
+					TsvToJson.checkAddSequenceElement(parent,
+						example.input,
+						null,
+						new ZStringBuilder(cntxt)
+						);
+				}
 			}
 			for (DialogVariable variable: dialog.getVariables()) {
 				for (DialogVariablePrompt prompt: variable.prompts) {

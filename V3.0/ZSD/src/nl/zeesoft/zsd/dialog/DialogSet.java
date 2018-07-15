@@ -12,8 +12,10 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericHandshake;
+import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericProfanity;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericQnA;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericHandshake;
+import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericProfanity;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericQnA;
 import nl.zeesoft.zsd.initialize.Initializable;
 
@@ -96,8 +98,10 @@ public class DialogSet implements Initializable {
 		List<DialogInstance> r = new ArrayList<DialogInstance>();
 		r.add(new EnglishGenericHandshake());
 		r.add(new EnglishGenericQnA());
+		r.add(new EnglishGenericProfanity());
 		r.add(new DutchGenericHandshake());
 		r.add(new DutchGenericQnA());
+		r.add(new DutchGenericProfanity());
 		return r;
 	}
 	

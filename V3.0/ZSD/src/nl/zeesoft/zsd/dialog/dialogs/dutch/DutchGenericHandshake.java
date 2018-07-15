@@ -13,25 +13,25 @@ public class DutchGenericHandshake extends GenericHandshake {
 	
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		addExample("Hallo.","Hallo. " + EXAMPLE_OUTPUT);
-		addExample("Hallo!","Hallo. " + EXAMPLE_OUTPUT);
-		addExample("Hoi.","Hoi. " + EXAMPLE_OUTPUT);
-		addExample("Hoi!","Hoi. " + EXAMPLE_OUTPUT);
-		addExample("Goedemorgen.","Goedemorgen. " + EXAMPLE_OUTPUT);
-		addExample("Goedemorgen!","Goedemorgen. " + EXAMPLE_OUTPUT);
-		addExample("Goedemiddag.","Goedemiddag. " + EXAMPLE_OUTPUT);
-		addExample("Goedemiddag!","Goedemiddag. " + EXAMPLE_OUTPUT);
-		addExample("Goedenavond.","Goedenavond. " + EXAMPLE_OUTPUT);
-		addExample("Goedenavond!","Goedenavond. " + EXAMPLE_OUTPUT);
+		addExample("Hallo.","Hallo. " + getOutput());
+		addExample("Hallo!","Hallo. " + getOutput());
+		addExample("Hoi.","Hoi. " + getOutput());
+		addExample("Hoi!","Hoi. " + getOutput());
+		addExample("Goedemorgen.","Goedemorgen. " + getOutput());
+		addExample("Goedemorgen!","Goedemorgen. " + getOutput());
+		addExample("Goedemiddag.","Goedemiddag. " + getOutput());
+		addExample("Goedemiddag!","Goedemiddag. " + getOutput());
+		addExample("Goedenavond.","Goedenavond. " + getOutput());
+		addExample("Goedenavond!","Goedenavond. " + getOutput());
 		
-		addExample("Wie bent u?",EXAMPLE_OUTPUT);
-		addExample("Hoe heet u?",EXAMPLE_OUTPUT);
-		addExample("Wat is uw naam?",EXAMPLE_OUTPUT);
-		addExample("Wie ben jij?",EXAMPLE_OUTPUT);
-		addExample("Hoe heet jij?",EXAMPLE_OUTPUT);
-		addExample("Hoe heet je?",EXAMPLE_OUTPUT);
-		addExample("Wat is jouw naam?",EXAMPLE_OUTPUT);
-		addExample("Wat is je naam?",EXAMPLE_OUTPUT);
+		addExample("Wie bent u?",getOutput());
+		addExample("Hoe heet u?",getOutput());
+		addExample("Wat is uw naam?",getOutput());
+		addExample("Wie ben jij?",getOutput());
+		addExample("Hoe heet jij?",getOutput());
+		addExample("Hoe heet je?",getOutput());
+		addExample("Wat is jouw naam?",getOutput());
+		addExample("Wat is je naam?",getOutput());
 
 		addComplexPatterns(t,BaseConfiguration.TYPE_NAME);
 		
@@ -47,5 +47,9 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Hoe kan ik je helpen {fullName}?");
 
 		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
+	}
+	
+	protected String getOutput() {
+		return EXAMPLE_OUTPUT;
 	}
 }

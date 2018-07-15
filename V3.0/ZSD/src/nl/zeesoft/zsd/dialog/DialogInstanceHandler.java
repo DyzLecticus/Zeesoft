@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.sequence.SequenceMatcherResult;
@@ -93,7 +94,11 @@ public abstract class DialogInstanceHandler {
 					r.addDebugLogLine("    Failed to find matches for sequence: ",r.correctedInput);
 				} else {
 					r.addDebugLogLine("    Found matches for sequence: ","" + matches.size());
+					List<SequenceMatcherResult> options = new ArrayList<SequenceMatcherResult>();
 					for (SequenceMatcherResult match: matches) {
+						if (match.probNormalized==1D) {
+							options.add(match);
+						}
 						ZStringBuilder str = new ZStringBuilder();
 						str.append(match.result.sequence);
 						str.append(" (");
@@ -103,7 +108,8 @@ public abstract class DialogInstanceHandler {
 						str.append(")");
 						r.addDebugLogLine("    - ",str);
 					}
-					List<ZStringBuilder> split = matches.get(0).result.sequence.split(dialog.getMatcher().getIoSeparator());
+					SequenceMatcherResult sel = getOption(r.getRequest().randomizeOutput,options);
+					List<ZStringBuilder> split = sel.result.sequence.split(dialog.getMatcher().getIoSeparator());
 					output = new ZStringSymbolParser(split.get(1).substring(1));
 				}
 			}
@@ -143,5 +149,18 @@ public abstract class DialogInstanceHandler {
 
 	protected SortedMap<String, DialogVariableValue> getValues() {
 		return values;
+	}
+	
+	private SequenceMatcherResult getOption(boolean random,List<SequenceMatcherResult> options) {
+		SequenceMatcherResult r = null;
+		int num = 0;
+		if (random && options.size()>1) {
+			ZIntegerGenerator generator = new ZIntegerGenerator(0,(options.size() - 1));
+			num = generator.getNewInteger();
+		}
+		if (num<options.size()) {
+			r = options.get(num);
+		}
+		return r;
 	}
 }

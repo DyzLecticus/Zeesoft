@@ -20,6 +20,7 @@ import nl.zeesoft.zsd.entity.entities.dutch.DutchMonth;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchNumeric;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchOrder;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchPreposition;
+import nl.zeesoft.zsd.entity.entities.dutch.DutchProfanity;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchTime;
 import nl.zeesoft.zsd.entity.entities.english.EnglishCountry;
 import nl.zeesoft.zsd.entity.entities.english.EnglishDate;
@@ -29,6 +30,7 @@ import nl.zeesoft.zsd.entity.entities.english.EnglishNumeric;
 import nl.zeesoft.zsd.entity.entities.english.EnglishOrder;
 import nl.zeesoft.zsd.entity.entities.english.EnglishOrder2;
 import nl.zeesoft.zsd.entity.entities.english.EnglishPreposition;
+import nl.zeesoft.zsd.entity.entities.english.EnglishProfanity;
 import nl.zeesoft.zsd.entity.entities.english.EnglishTime;
 import nl.zeesoft.zsd.initialize.Initializable;
 
@@ -465,6 +467,8 @@ public class EntityValueTranslator implements Initializable {
 		entities.add(new EnglishName());
 		entities.add(new DutchName());
 		// Regular entities
+		entities.add(new EnglishProfanity());
+		entities.add(new DutchProfanity());
 		entities.add(new EnglishCountry());
 		entities.add(new DutchCountry());
 		entities.add(new EnglishDate());
