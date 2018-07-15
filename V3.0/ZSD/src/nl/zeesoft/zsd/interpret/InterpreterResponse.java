@@ -23,9 +23,6 @@ public class InterpreterResponse {
 	
 	public InterpreterResponse(InterpreterRequest r) {
 		this.request = r;
-		if (request.language.length()>0) {
-			responseLanguages.add(getResultForSymbol(request.language));
-		}
 		correctedInput = new ZStringSymbolParser(request.input);
 		correctedInput.trim();
 		if (correctedInput.length()>0) {
