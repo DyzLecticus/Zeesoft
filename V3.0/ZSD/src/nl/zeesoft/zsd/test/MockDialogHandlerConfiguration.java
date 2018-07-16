@@ -19,6 +19,7 @@ public class MockDialogHandlerConfiguration extends MockObject {
 		InterpreterConfiguration iConfig = TestInterpreterConfiguration.getConfig(getTester());
 		if (iConfig!=null) {
 			config.setEntityValueTranslator(iConfig.getEntityValueTranslator());
+			config.setLanguagePreprocessor(iConfig.getLanguagePreprocessor());
 			config.setLanguageClassifier(iConfig.getLanguageClassifier());
 			for (String language: config.getBase().getSupportedLanguages()) {
 				config.getLanguageMasterContextClassifiers().put(language,iConfig.getLanguageMasterContextClassifiers().get(language));

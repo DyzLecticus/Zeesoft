@@ -32,6 +32,8 @@ public class SequenceInterpreter {
 	}
 	
 	protected void buildInterpreterResponse(InterpreterResponse r) {
+		// Preprocess
+		r.correctedInput = getConfiguration().getLanguagePreprocessor().process(r.request.input);
 		if (r.correctedInput.length()>0) {
 			ZStringSymbolParser sequence = buildSequence(r);
 			String language = r.request.language;
@@ -39,7 +41,7 @@ public class SequenceInterpreter {
 
 			ZStringSymbolParser translatedPrompt = null;
 			List<String> translateLanguages = new ArrayList<String>();
-
+			
 			// Classify language
 			if (r.request.classifyLanguage) {
 				r.addDebugLogLine("Classify language for sequence: ",r.correctedInput);
@@ -74,7 +76,9 @@ public class SequenceInterpreter {
 			// Correct input
 			boolean corrected = false;
 			if (r.request.correctInput) {
-				long stopAfterMs = r.numInputSymbols * getConfiguration().getBase().getMaxMsInterpretPerSymbol();
+				List<String> symbols = r.correctedInput.toSymbolsPunctuated();
+				int numInputSymbols = symbols.size();
+				long stopAfterMs = numInputSymbols * getConfiguration().getBase().getMaxMsInterpretPerSymbol();
 				long maxCorrect = getConfiguration().getBase().getMaxMsInterpretPerSequence();
 				if (r.request.translateEntiyValues) {
 					maxCorrect = (maxCorrect / 3) * 2;

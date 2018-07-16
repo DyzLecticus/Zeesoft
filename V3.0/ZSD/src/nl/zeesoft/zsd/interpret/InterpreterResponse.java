@@ -10,7 +10,6 @@ import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class InterpreterResponse {
 	public InterpreterRequest				request							= null;
-	public int								numInputSymbols					= 0;
 	
 	public List<SequenceClassifierResult>	responseLanguages				= new ArrayList<SequenceClassifierResult>();
 	public ZStringSymbolParser				correctedInput					= new ZStringSymbolParser();
@@ -23,24 +22,6 @@ public class InterpreterResponse {
 	
 	public InterpreterResponse(InterpreterRequest r) {
 		this.request = r;
-		correctedInput = new ZStringSymbolParser(request.input);
-		correctedInput.trim();
-		if (correctedInput.length()>0) {
-			List<String> symbols = correctedInput.toSymbolsPunctuated();
-			numInputSymbols = symbols.size();
-			correctedInput.fromSymbols(symbols,true,true);
-			String end = correctedInput.substring(correctedInput.length() - 1,correctedInput.length()).toString();
-			if (!ZStringSymbolParser.isLineEndSymbol(end)) {
-				correctedInput.append(".");
-				numInputSymbols++;
-			}
-		}
-		if (request.masterContext.length()>0) {
-			responseMasterContexts.add(getResultForSymbol(request.masterContext));
-		}
-		if (request.context.length()>0) {
-			responseContexts.add(getResultForSymbol(request.context));
-		}
 	}
 
 	public void addDebugLogLine(ZStringBuilder line) {
@@ -76,13 +57,5 @@ public class InterpreterResponse {
 				debugLog.append(value.getStringBuilder());
 			}
 		}
-	}
-	
-	private SequenceClassifierResult getResultForSymbol(String symbol) {
-		SequenceClassifierResult r = new SequenceClassifierResult();
-		r.symbol = symbol;
-		r.prob = 1.0;
-		r.probNormalized = 1.0;
-		return r;
 	}
 }

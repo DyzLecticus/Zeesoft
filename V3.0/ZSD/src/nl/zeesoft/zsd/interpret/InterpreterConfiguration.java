@@ -9,15 +9,18 @@ import java.util.TreeMap;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequenceClassifier;
+import nl.zeesoft.zsd.SequencePreprocessor;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.Initializer;
 import nl.zeesoft.zsd.util.LanguageClassifierJsonGenerator;
 import nl.zeesoft.zsd.util.LanguageContextJsonGenerator;
 import nl.zeesoft.zsd.util.LanguageMasterContextJsonGenerator;
+import nl.zeesoft.zsd.util.LanguagePreprocessorJsonGenerator;
 
 public class InterpreterConfiguration extends Initializer {
 	private BaseConfiguration						base								= new BaseConfiguration();
 	
+	private SequencePreprocessor					languagePreprocessor				= null;
 	private SequenceClassifier						languageClassifier					= null;
 	private SortedMap<String,SequenceClassifier>	languageMasterContextClassifiers	= new TreeMap<String,SequenceClassifier>();
 	private SortedMap<String,SequenceClassifier>	languageContextClassifiers			= new TreeMap<String,SequenceClassifier>();
@@ -47,10 +50,7 @@ public class InterpreterConfiguration extends Initializer {
 	public List<InitializeClass> getInitializeClasses() {
 		checkInitializedClasses();
 		List<InitializeClass> r = new ArrayList<InitializeClass>();
-		InitializeClass c = new InitializeClass();
-		c.name = "EntityValueTranslator";
-		c.obj = entityValueTranslator;
-		r.add(c);
+		r.add(getInitializeClassForSequencePreprocessor(languagePreprocessor,LanguagePreprocessorJsonGenerator.FILE_NAME));
 		r.add(getInitializeClassForSequenceClassifier(languageClassifier,LanguageClassifierJsonGenerator.FILE_NAME));
 		for (String language: base.getSupportedLanguages()) {
 			SequenceClassifier sc =	languageMasterContextClassifiers.get(language);
@@ -60,6 +60,10 @@ public class InterpreterConfiguration extends Initializer {
 				r.add(getInitializeClassForSequenceClassifier(sc,LanguageContextJsonGenerator.FILE_NAME_PREFIX + language + masterContext + ".json"));
 			}
 		}
+		InitializeClass c = new InitializeClass();
+		c.name = "EntityValueTranslator";
+		c.obj = entityValueTranslator;
+		r.add(c);
 		return r;
 	}
 
@@ -73,6 +77,14 @@ public class InterpreterConfiguration extends Initializer {
 
 	public void setEntityValueTranslator(EntityValueTranslator entityValueTranslator) {
 		this.entityValueTranslator = entityValueTranslator;
+	}
+
+	public SequencePreprocessor getLanguagePreprocessor() {
+		return languagePreprocessor;
+	}
+
+	public void setLanguagePreprocessor(SequencePreprocessor languagePreprocessor) {
+		this.languagePreprocessor = languagePreprocessor;
 	}
 
 	public SequenceClassifier getLanguageClassifier() {
@@ -99,31 +111,50 @@ public class InterpreterConfiguration extends Initializer {
 		this.languageContextClassifiers = languageContextClassifiers;
 	}
 
+	private InitializeClass getInitializeClassForSequencePreprocessor(SequencePreprocessor sp,String fileName) {
+		InitializeClass r = new InitializeClass();
+		r.name = fileName.split("\\.")[0];
+		r.obj = sp;
+		r.fileNames.add(getBaseDirForFileName(fileName) + fileName);
+		addExtensionForFileName(r.fileNames,fileName);
+		return r;
+	}
+
 	private InitializeClass getInitializeClassForSequenceClassifier(SequenceClassifier sc,String fileName) {
+		InitializeClass r = new InitializeClass();
+		r.name = fileName.split("\\.")[0];
+		r.obj = sc;
+		r.fileNames.add(getBaseDirForFileName(fileName) + fileName);
+		addExtensionForFileName(r.fileNames,fileName);
+		return r;
+	}
+	
+	private String getBaseDirForFileName(String fileName) {
 		String dir = base.getOverrideDir();
-		String extend = "";
 		File file = new File(base.getOverrideDir() + fileName);
 		if (!file.exists()) {
 			dir = base.getBaseDir();
 		}
-		InitializeClass r = new InitializeClass();
-		r.name = fileName.split("\\.")[0];
-		r.obj = sc;
-		r.fileNames.add(dir + fileName);
-		extend = base.getExtendDir() + fileName;
-		file = new File(extend);
-		if (file.exists()) {
-			r.fileNames.add(extend);
-		}
-		return r;
+		return dir;
 	}
-	
+
+	private void addExtensionForFileName(List<String> fileNames,String fileName) {
+		String extend = base.getExtendDir() + fileName;
+		File file = new File(extend);
+		if (file.exists()) {
+			fileNames.add(extend);
+		}
+	}
+
 	private void checkInitializedClasses() {
 		if (entityValueTranslator==null) {
 			entityValueTranslator = new EntityValueTranslator();
 		}
 		if (languageClassifier==null) {
 			languageClassifier = new SequenceClassifier();
+		}
+		if (languagePreprocessor==null) {
+			languagePreprocessor = new SequencePreprocessor();
 		}
 		for (String language: base.getSupportedLanguages()) {
 			SequenceClassifier sc =	languageMasterContextClassifiers.get(language);

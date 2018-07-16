@@ -1,8 +1,6 @@
-package nl.zeesoft.zsd.sequence.english;
+package nl.zeesoft.zsd.preprocess;
 
-import nl.zeesoft.zsd.sequence.SequencePreprocessor;
-
-public class EnglishPreprocessor extends SequencePreprocessor {
+public class EnglishPreprocessor extends PreprocessorInstance {
 	@Override
 	public void initialize() {
 		addReplacement("won't","will not");
@@ -19,18 +17,14 @@ public class EnglishPreprocessor extends SequencePreprocessor {
 		addReplacement("hadn't","had not");
 		addReplacement("isn't","is not");
 		addReplacement("mustn't","must not");
+		addReplacement("'ve","  have");
+		addReplacement("'d have"," would have");
 	}
 	@Override
 	public void addReplacement(String key, String value) {
-		if (value.endsWith(" not")) {
-			if (key.endsWith("n't")) {
-				super.addReplacement(key.replace("n't","nt"),value);
-			}
-			if (key.endsWith("ouldn't")) {
-				super.addReplacement(key.replace("ouldn't","ould've"),value.replace(" not"," have"));
-			}
+		if (value.endsWith(" not") && key.endsWith("n't")) {
+			super.addReplacement(key.replace("n't","nt"),value);
 		}
 		super.addReplacement(key, value);
 	}
-	
 }

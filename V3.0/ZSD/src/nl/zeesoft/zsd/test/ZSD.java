@@ -48,6 +48,7 @@ public class ZSD extends LibraryObject {
 	public void addTests(List<TestObject> tests) {
 		File qna = new File(TestSequenceClassifier.QNA_FILE_NAME);
 		tests.add(new TestTsvToJson(getTester()));
+		tests.add(new TestSequencePreprocessor(getTester()));
 		tests.add(new TestSymbolCorrector(getTester()));
 
 		if (qna.exists()) {
