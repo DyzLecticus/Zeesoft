@@ -1,6 +1,6 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
-public abstract class RoomBooking extends Generic {
+public abstract class RoomBooking extends Room {
 	public static final String	CONTEXT_ROOM_BOOKING		= "Booking";
 
 	public static final String	VARIABLE_BOOK_DATE			= "bookDate";

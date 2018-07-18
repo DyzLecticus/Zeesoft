@@ -10,7 +10,7 @@ import nl.zeesoft.zsd.dialog.DialogVariableValue;
 public class RoomBookingHandler extends DialogInstanceHandler {
 	@Override
 	protected ZStringSymbolParser updatedValues(DialogResponse r,List<DialogVariableValue> updatedValues,String promptVariable) {
-		/*
+		/* TODO: Implement demo
 		ZStringSymbolParser fullName = new ZStringSymbolParser();
 		String firstName = getValues().get(GenericHandshake.VARIABLE_FIRSTNAME).externalValue;
 		String preposition = getValues().get(GenericHandshake.VARIABLE_PREPOSITION).externalValue;

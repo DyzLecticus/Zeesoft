@@ -104,6 +104,11 @@ public class TestDialogHandler extends TestInitializer {
 				"Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?",
 				"UNI_ABC:Can UNI_ABC:I UNI_ABC:book UNI_ABC:a|ENG_NAM:firstName:UNI_ABC:A UNI_ABC:room|ENG_NAM:lastName:UNI_ABC:Room UNI_ABC:for UNI_NUM:12 UNI_ABC:people UNI_ABC:on ENG_DAT:2018-10-01 UNI_ABC:at ENG_TIM:12:00:00 UNI_ABC:for ENG_DUR:02:00 ?",
 				"","Do I understand correctly that you want a room on october first twothousandeighteen, for 12 people, from twelve o'clock, for two hours?");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"What does it cost to book a room?",
+				"UNI_ABC:What UNI_ABC:does UNI_ABC:it UNI_ABC:cost UNI_ABC:to UNI_ABC:book UNI_ABC:a UNI_ABC:room ?",
+				"There are no costs attached to booking a room.","");
 		}
 	}
 	

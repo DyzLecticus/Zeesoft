@@ -57,7 +57,14 @@ public class DialogHandler extends SequenceInterpreter {
 			processContexts.add(r.request.context);
 		} else {
 			for (SequenceClassifierResult res: r.responseContexts) {
-				processContexts.add(res.symbol);
+				if (r.request.context.equals(res.symbol)) {
+					processContexts.add(0,res.symbol);
+				} else {
+					processContexts.add(res.symbol);
+				}
+			}
+			if (processContexts.size()==0 && r.request.context.length()>0) {
+				processContexts.add(r.request.context);
 			}
 		}
 		
@@ -70,7 +77,7 @@ public class DialogHandler extends SequenceInterpreter {
 				if (r.getRequest().getDialogId().equals(dialogId)) {
 					r.addDebugLogLine("Continuing dialog: ",dialogId);
 				} else {
-					r.addDebugLogLine("Selected dialog: ",dialogId);
+					r.addDebugLogLine("Handling dialog: ",dialogId);
 				}
 				DialogInstanceHandler handler = dialog.getNewHandler();
 				if (handler==null) {
