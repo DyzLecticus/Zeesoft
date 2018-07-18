@@ -90,20 +90,20 @@ public class DutchRoomBooking extends RoomBooking {
 
 		addVariable(VARIABLE_BOOK_CONFIRMATION,BaseConfiguration.TYPE_CONFIRMATION);
 		addVariablePrompt(VARIABLE_BOOK_CONFIRMATION,
-			"Begrijp ik goed dat u een kamer wilt boeken op " + VARIABLE_BOOK_DATE +
-			", voor " + VARIABLE_BOOK_PEOPLE +
-			" personen, vanaf " + VARIABLE_BOOK_TIME +
-			", voor " + VARIABLE_BOOK_DURATION + "?");
+			"Begrijp ik goed dat u een kamer wilt boeken op {" + VARIABLE_BOOK_DATE +
+			"}, voor {" + VARIABLE_BOOK_PEOPLE +
+			"} personen, vanaf {" + VARIABLE_BOOK_TIME +
+			"}, voor {" + VARIABLE_BOOK_DURATION + "}?");
 		addVariablePrompt(VARIABLE_BOOK_CONFIRMATION,
-			"Begrijp ik goed dat u een kamer wilt boeken op " + VARIABLE_BOOK_DATE +
-			", voor " + VARIABLE_BOOK_PEOPLE +
-			" personen, vanaf " + VARIABLE_BOOK_TIME +
-			", voor een duur van " + VARIABLE_BOOK_DURATION + "?");
+			"Begrijp ik goed dat u een kamer wilt boeken op {" + VARIABLE_BOOK_DATE +
+			"}, voor {" + VARIABLE_BOOK_PEOPLE +
+			"} personen, vanaf {" + VARIABLE_BOOK_TIME +
+			"}, voor een duur van {" + VARIABLE_BOOK_DURATION + "}?");
 		addVariablePrompt(VARIABLE_BOOK_CONFIRMATION,
-			"U wilt een kamer op " + VARIABLE_BOOK_DATE +
-			", voor " + VARIABLE_BOOK_PEOPLE +
-			" personen, vanaf " + VARIABLE_BOOK_TIME +
-			", voor een duur van " + VARIABLE_BOOK_DURATION + ". Klopt dat?");
+			"U wilt een kamer op {" + VARIABLE_BOOK_DATE +
+			"}, voor {" + VARIABLE_BOOK_PEOPLE +
+			"} personen, vanaf {" + VARIABLE_BOOK_TIME +
+			"}, voor een duur van {" + VARIABLE_BOOK_DURATION + "}. Klopt dat?");
 		
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Kan ik nog iets anders voor u doen?");
