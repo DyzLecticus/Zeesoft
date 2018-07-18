@@ -14,9 +14,13 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericHandshake;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericProfanity;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericQnA;
+import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchRoomBooking;
+import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchRoomQnA;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericHandshake;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericProfanity;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericQnA;
+import nl.zeesoft.zsd.dialog.dialogs.english.EnglishRoomBooking;
+import nl.zeesoft.zsd.dialog.dialogs.english.EnglishRoomQnA;
 import nl.zeesoft.zsd.initialize.Initializable;
 
 public class DialogSet implements Initializable {
@@ -99,9 +103,13 @@ public class DialogSet implements Initializable {
 		r.add(new EnglishGenericHandshake());
 		r.add(new EnglishGenericQnA());
 		r.add(new EnglishGenericProfanity());
+		r.add(new EnglishRoomBooking());
+		r.add(new EnglishRoomQnA());
 		r.add(new DutchGenericHandshake());
 		r.add(new DutchGenericQnA());
 		r.add(new DutchGenericProfanity());
+		r.add(new DutchRoomBooking());
+		r.add(new DutchRoomQnA());
 		return r;
 	}
 	

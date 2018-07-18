@@ -13,6 +13,7 @@ import nl.zeesoft.zsd.entity.UniversalTime;
 import nl.zeesoft.zsd.entity.complex.ComplexObject;
 import nl.zeesoft.zsd.entity.complex.dutch.DutchName;
 import nl.zeesoft.zsd.entity.complex.english.EnglishName;
+import nl.zeesoft.zsd.entity.entities.dutch.DutchConfirmation;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchCountry;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchDate;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchDuration;
@@ -22,6 +23,7 @@ import nl.zeesoft.zsd.entity.entities.dutch.DutchOrder;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchPreposition;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchProfanity;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchTime;
+import nl.zeesoft.zsd.entity.entities.english.EnglishConfirmation;
 import nl.zeesoft.zsd.entity.entities.english.EnglishCountry;
 import nl.zeesoft.zsd.entity.entities.english.EnglishDate;
 import nl.zeesoft.zsd.entity.entities.english.EnglishDuration;
@@ -477,6 +479,8 @@ public class EntityValueTranslator implements Initializable {
 		entities.add(new EnglishName());
 		entities.add(new DutchName());
 		// Regular entities
+		entities.add(new EnglishConfirmation());
+		entities.add(new DutchConfirmation());
 		entities.add(new EnglishProfanity());
 		entities.add(new DutchProfanity());
 		entities.add(new EnglishCountry());

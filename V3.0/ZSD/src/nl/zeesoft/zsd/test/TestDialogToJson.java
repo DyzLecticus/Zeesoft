@@ -54,7 +54,7 @@ public class TestDialogToJson extends TestEntityToJson {
 		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
 		if (json.rootElement.children.size()>0) {
 			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " dialog examples took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(json.rootElement.children.get(0).children.size(),299,"The number of sequence elements does not match expectation");
+			assertEqual(json.rootElement.children.get(0).children.size(),1141,"The number of sequence elements does not match expectation");
 			showJsonSample(json);
 		}
 	}

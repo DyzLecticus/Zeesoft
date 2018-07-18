@@ -3,6 +3,7 @@ package nl.zeesoft.zsd.preprocess;
 public class EnglishPreprocessor extends PreprocessorInstance {
 	@Override
 	public void initialize() {
+		addReplacement("oclock","o'clock");
 		addReplacement("won't","will not");
 		addReplacement("wouldn't","would not");
 		addReplacement("can't","can not");

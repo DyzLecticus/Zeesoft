@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
+import nl.zeesoft.zsd.dialog.dialogs.Room;
 
 /**
  * A BaseConfiguration instance is used to initialize sequence interpreter and dialog handler configurations.
@@ -29,6 +30,7 @@ public class BaseConfiguration {
 	public static final String					TYPE_PREPOSITION			= "PRE";
 	public static final String					TYPE_COUNTRY				= "CNT";
 	public static final String					TYPE_PROFANITY				= "PRF";
+	public static final String					TYPE_CONFIRMATION			= "CNF";
 
 	// Complex entities
 	public static final String					TYPE_NAME					= "NAM";
@@ -348,6 +350,7 @@ public class BaseConfiguration {
 	protected void initializeSupportedMasterContextsForLanguage(String language) {
 		List<String> mcs = new ArrayList<String>();
 		mcs.add(Generic.MASTER_CONTEXT_GENERIC);
+		mcs.add(Room.MASTER_CONTEXT_ROOM);
 		supportedMasterContexts.put(language,mcs);
 	}
 }

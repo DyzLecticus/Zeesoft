@@ -2,8 +2,6 @@ package nl.zeesoft.zsd.entity.complex;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.BaseConfiguration;
@@ -24,7 +22,7 @@ public abstract class ComplexObject extends EntityObject {
 	private UniversalAlphabetic					ua					= null;
 
 	public double getMatchThreshold() {
-		return 0.7D;
+		return 0D;
 	}
 	
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser entityValueSequence) {
@@ -32,64 +30,64 @@ public abstract class ComplexObject extends EntityObject {
 		ZStringSymbolParser matchSequence = getTranslator().translateToExternalValues(entityValueSequence,BaseConfiguration.TYPE_ALPHABETIC,true);
 		List<SequenceMatcherResult> matches = getSequenceMatcher().getMatches(matchSequence,"",true,getMatchThreshold());
 		for (SequenceMatcherResult match: matches) {
-			ZStringSymbolParser parsed = parseVariableValuesFromSequence(matchSequence,match);
-			if (parsed.length()>0) {
-				parsed = getTranslator().translateToInternalValues(parsed,BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_ALPHABETIC,false);
-				List<String> mergedSyms = new ArrayList<String>();
-				List<String> parsedSyms = parsed.toSymbolsPunctuated();
+			List<ComplexVariableReplacement> replacements = getMatchOverlayReplacements(matchSequence.toSymbolsPunctuated(),match.result.symbols);
+			if (replacements.size()>0) {
+				List<String> evSymbols = entityValueSequence.toSymbolsPunctuated();
 				int i = 0;
-				for (String sym: entityValueSequence.toSymbolsPunctuated()) {
-					String parse = parsedSyms.get(i);
-					if (parse.startsWith(getInternalValuePrefix())) {
-						mergedSyms.add(sym + getTranslator().getOrConcatenator() + parse);
-					} else {
-						mergedSyms.add(sym);
+				for (String symbol: evSymbols) {
+					for(ComplexVariableReplacement rep: replacements) {
+						if (rep.index==i) {
+							symbol = symbol + getTranslator().getOrConcatenator() + rep.value;
+						}
 					}
 					i++;
+					if (r.length()>0) {
+						r.append(" ");
+					}
+					r.append(symbol);
 				}
-				r.fromSymbols(mergedSyms,false,false);
 				break;
 			}
 		}
 		return r;
 	}
 
-	public ZStringSymbolParser parseVariableValuesFromSequence(ZStringSymbolParser matchSequence,SequenceMatcherResult match) {
-		ZStringSymbolParser r = new ZStringSymbolParser();
-		SortedMap<String,String> values = new TreeMap<String,String>();
-		SortedMap<String,String> replaces = new TreeMap<String,String>();
-		int matchVars = 0;
-		List<String> iSymbols = matchSequence.toSymbolsPunctuated();
-		List<String> mSymbols = match.result.symbols;
+	private List<ComplexVariableReplacement> getMatchOverlayReplacements(List<String> matchSymbols,List<String> overlaySymbols) {
+		List<ComplexVariableReplacement> r = new ArrayList<ComplexVariableReplacement>();
 		int iStart = -1;
-		int mStart = -1;
-		int i = 0;
-		int m = 0;
-		for (String iSym: iSymbols) {
-			for (String mSym: mSymbols) {
-				if (mSym.startsWith("{") && mSym.endsWith("}")) {
-					mStart = 0;
-					iStart = 0;
-					break;
-				} else if (iSym.equalsIgnoreCase(mSym)) {
-					mStart = m;
-					iStart = i;
+		int oStart = -1;
+		String first = overlaySymbols.get(0);
+		if (first.startsWith("{") && first.endsWith("}")) {
+			iStart = 0;
+			oStart = 0;
+		} else {
+			int i = 0;
+			for (String iSym: matchSymbols) {
+				int o = 0;
+				for (String oSym: overlaySymbols) {
+					if (oSym.startsWith("{") && oSym.endsWith("}")) {
+						break;
+					} else if (iSym.equalsIgnoreCase(oSym)) {
+						oStart = o;
+						iStart = i;
+						break;
+					}
+					o++;
+				}
+				if (iStart>=0) {
 					break;
 				}
-				m++;
+				i++;
 			}
-			if (iStart>=0) {
-				break;
-			}
-			i++;
 		}
 		if (iStart>=0) {
-			i = iStart;
-			for (m = mStart; m < mSymbols.size(); m++) {
-				String mSym = mSymbols.get(m);
-				String iSym = iSymbols.get(i);
-				if (mSym.startsWith("{") && mSym.endsWith("}")) {
-					String name = mSym.substring(1,mSym.length()-1);
+			int matchVars = 0;
+			int i = iStart;
+			for (int o = oStart; o < overlaySymbols.size(); o++) {
+				String oSym = overlaySymbols.get(o);
+				String iSym = matchSymbols.get(i);
+				if (oSym.startsWith("{") && oSym.endsWith("}")) {
+					String name = oSym.substring(1,oSym.length()-1);
 					ComplexVariable var = getVariableByName(name);
 					if (var!=null) {
 						matchVars++;
@@ -101,36 +99,29 @@ public abstract class ComplexObject extends EntityObject {
 							value = ua.getInternalValuePrefix() + iSym;
 						}
 						if (value.length()>0) {
-							values.put(var.name,value);
-							replaces.put(var.name,iSym);
+							String[] split = value.split(getTranslator().getValueConcatenator());
+							value = getInternalValueForVariable(var,split[0],split[1]);
+							ComplexVariableReplacement rep = new ComplexVariableReplacement();
+							rep.variable = var;
+							rep.value = value;
+							rep.index = i;
+							r.add(rep);
 						}
 					}
 				}
 				i++;
-				if (i>=iSymbols.size()) {
+				if (i>=matchSymbols.size()) {
 					break;
 				}
 			}
-		}
-		
-		if (matchVars==values.size()) {
-			for (ComplexVariable var: getVariables()) {
-				String val = values.get(var.name);
-				if (val!=null) {
-					String replace = replaces.get(var.name);
-					if (r.length()==0) {
-						r = matchSequence;
-					}
-					String[] split = val.split(getTranslator().getValueConcatenator());
-					String value = getInternalValueForVariable(var,split[0],split[1]);
-					r.replace(replace,value);
-				}
+			if (r.size()!=matchVars) {
+				r.clear();
 			}
 		}
 		
 		return r;
 	}
-
+	
 	public String getInternalValueForVariable(ComplexVariable var,String prefix, String value) {
 		return getInternalValuePrefix() + var.name + getTranslator().getValueConcatenator() + prefix + getTranslator().getValueConcatenator() + value;
 	}

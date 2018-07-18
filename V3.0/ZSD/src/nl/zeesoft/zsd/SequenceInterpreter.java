@@ -157,7 +157,7 @@ public class SequenceInterpreter {
 	private ZStringSymbolParser translateEntityValues(InterpreterResponse response,ZStringSymbolParser translatedPrompt,ZStringSymbolParser sequence,List<String> translateLanguages) {
 		ZStringSymbolParser translated = getConfiguration().getEntityValueTranslator().translateToInternalValues(sequence,translateLanguages,response.request.translateEntityTypes,true);
 		if (translatedPrompt!=null) {
-			translated = new ZStringSymbolParser(translated.substring(translatedPrompt.length()));
+			translated = new ZStringSymbolParser(translated.substring(translatedPrompt.length() + 1));
 		}
 		return translated;
 	}

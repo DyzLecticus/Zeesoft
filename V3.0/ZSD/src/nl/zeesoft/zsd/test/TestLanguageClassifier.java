@@ -31,7 +31,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 		} else {
 			SequenceClassifier sc = config.getLanguageClassifier();
 			
-			assertEqual(sc.getKnownLinks().size(),589980,"The total number of links does not match expectation");
+			assertEqual(sc.getKnownLinks().size(),590591,"The total number of links does not match expectation");
 			
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat is your name?");
 			ZStringSymbolParser corrected = null; 
@@ -41,7 +41,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 
 			corrected = sc.correct(sequence,BaseConfiguration.LANG_NLD);
 			System.out.println("'" + sequence + "' (NLD) => '" + corrected + "'");
-			assertEqual(corrected.toString(),"Wat is jouw naam?","The correction does not match expectation");
+			assertEqual(corrected.toString(),"Wat is jouw kamer?","The correction does not match expectation");
 			
 			sequence = new ZStringSymbolParser("Wie ben jij?");
 			System.out.println();

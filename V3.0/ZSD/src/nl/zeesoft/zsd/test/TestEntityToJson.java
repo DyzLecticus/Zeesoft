@@ -54,7 +54,7 @@ public class TestEntityToJson extends TestObject {
 		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
 		if (json.rootElement.children.size()>0) {
 			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " entity values took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(json.rootElement.children.get(0).children.size(),332824,"The number of sequence elements does not match expectation");
+			assertEqual(json.rootElement.children.get(0).children.size(),332851,"The number of sequence elements does not match expectation");
 			showJsonSample(json);
 		}
 	}

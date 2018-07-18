@@ -101,7 +101,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"Mijn naam is Andre van der Zee");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Hoe heet jij? gekke henkie",
-			"UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie",
+			"UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij ? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie",
 			"Hoe heet jij? gekke henkie");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"gekste der henkies is mijn naam",
@@ -123,7 +123,11 @@ public class TestEntityValueTranslator extends TestObject {
 			"Jij klootzak",
 			"UNI_ABC:Jij NLD_PRF:2|UNI_ABC:klootzak",
 			"Jij klootzak");
-
+		testTranslation(t,"",
+			"Can I book a room for 5 people?",
+			"UNI_ABC:Can UNI_ABC:I UNI_ABC:book UNI_ABC:a|ENG_NAM:firstName:UNI_ABC:A UNI_ABC:room|ENG_NAM:lastName:UNI_ABC:Room UNI_ABC:for UNI_NUM:5 UNI_ABC:people ?",
+			"Can I book a room for 5 people?");
+		
 		System.out.println();
 		ZStringSymbolParser sequence = new ZStringSymbolParser("UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie");
 		List<String> iValues = sequence.toSymbols();
