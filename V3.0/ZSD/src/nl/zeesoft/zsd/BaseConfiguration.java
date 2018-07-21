@@ -21,6 +21,7 @@ public class BaseConfiguration {
 	// Entities
 	public static final String					TYPE_ALPHABETIC				= "ABC";
 	public static final String					TYPE_NUMERIC				= "NUM";
+	public static final String					TYPE_MATHEMATIC				= "MTH";
 	public static final String					TYPE_TIME					= "TIM";
 	public static final String					TYPE_ORDER					= "ORD";
 	public static final String					TYPE_ORDER2					= "OR2";

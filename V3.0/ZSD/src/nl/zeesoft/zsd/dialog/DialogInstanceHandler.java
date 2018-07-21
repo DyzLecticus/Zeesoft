@@ -47,19 +47,11 @@ public abstract class DialogInstanceHandler {
 		for (DialogVariable variable: dialog.getVariables()) {
 			// TODO: Solution for 'next dialog' variable type?
 			if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
-				List<String> vals = config.getEntityValueTranslator().getTypeValuesFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
-				List<String> valsCor = config.getEntityValueTranslator().getTypeValuesFromInternalValues(iValsCor,variable.type,variable.complexName,variable.complexType);
+				String val = config.getEntityValueTranslator().getTypeValueFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
+				String valCor = config.getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,variable.type,variable.complexName,variable.complexType);
 				String valSel = "";
-				if (vals.size()>0 || valsCor.size()>0) {
-					if (vals.size()==valsCor.size()) {
-						if (vals.get(0).equals(valsCor.get(0))) {
-							valSel = vals.get(vals.size() - 1);
-						}
-					} else if (vals.size()>0) {
-						valSel = vals.get(vals.size() - 1);
-					} else if (valsCor.size()>0) {
-						valSel = valsCor.get(valsCor.size() - 1);
-					}
+				if (val.length()>0 && val.equals(valCor)) {
+					valSel = val;
 				}
 				if (valSel.length()>0) {
 					DialogVariableValue dvv = values.get(variable.name);

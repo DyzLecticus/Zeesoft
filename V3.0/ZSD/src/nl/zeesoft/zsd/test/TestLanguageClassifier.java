@@ -31,7 +31,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 		} else {
 			SequenceClassifier sc = config.getLanguageClassifier();
 			
-			assertEqual(sc.getKnownLinks().size(),590577,"The total number of links does not match expectation");
+			assertEqual(sc.getKnownLinks().size(),590923,"The total number of links does not match expectation");
 			
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat is your name?");
 			ZStringSymbolParser corrected = null; 

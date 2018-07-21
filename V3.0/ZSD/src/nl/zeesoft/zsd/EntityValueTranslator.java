@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.entity.UniversalAlphabetic;
+import nl.zeesoft.zsd.entity.UniversalMathematic;
 import nl.zeesoft.zsd.entity.UniversalNumeric;
 import nl.zeesoft.zsd.entity.UniversalTime;
 import nl.zeesoft.zsd.entity.complex.ComplexObject;
@@ -17,6 +18,7 @@ import nl.zeesoft.zsd.entity.entities.dutch.DutchConfirmation;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchCountry;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchDate;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchDuration;
+import nl.zeesoft.zsd.entity.entities.dutch.DutchMathematic;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchMonth;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchNumeric;
 import nl.zeesoft.zsd.entity.entities.dutch.DutchOrder;
@@ -27,6 +29,7 @@ import nl.zeesoft.zsd.entity.entities.english.EnglishConfirmation;
 import nl.zeesoft.zsd.entity.entities.english.EnglishCountry;
 import nl.zeesoft.zsd.entity.entities.english.EnglishDate;
 import nl.zeesoft.zsd.entity.entities.english.EnglishDuration;
+import nl.zeesoft.zsd.entity.entities.english.EnglishMathematic;
 import nl.zeesoft.zsd.entity.entities.english.EnglishMonth;
 import nl.zeesoft.zsd.entity.entities.english.EnglishNumeric;
 import nl.zeesoft.zsd.entity.entities.english.EnglishOrder;
@@ -283,17 +286,17 @@ public class EntityValueTranslator implements Initializable {
 	}
 
 	/**
-	 * Returns all values of specific types from a list of internal entity values.
-	 * Obtained values are removed from the list.
+	 * Returns the first value of a specific type from a list of internal entity values.
+	 * The value is removed from the input list.
 	 * 
 	 * @param internalValues The list of internal values
 	 * @param type The entity type
 	 * @param complexName The optional complex entity name
 	 * @param complexType The optional complex entity type
-	 * @return The list of obtained values
+	 * @return The first value or "";
 	 */
-	public List<String> getTypeValuesFromInternalValues(List<String> internalValues,String type,String complexName,String complexType) {
-		List<String> r = new ArrayList<String>();
+	public String getTypeValueFromInternalValues(List<String> internalValues,String type,String complexName,String complexType) {
+		String r = "";
 		List<String> vals = new ArrayList<String>(internalValues);
 		for (String val: vals) {
 			String v = "";
@@ -310,7 +313,8 @@ public class EntityValueTranslator implements Initializable {
 			}
 			if (v.length()>0) {
 				internalValues.remove(val);
-				r.add(v);
+				r = v;
+				break;
 			}
 		}
 		return r;
@@ -479,6 +483,8 @@ public class EntityValueTranslator implements Initializable {
 		entities.add(new EnglishName());
 		entities.add(new DutchName());
 		// Regular entities
+		entities.add(new EnglishMathematic());
+		entities.add(new DutchMathematic());
 		entities.add(new EnglishConfirmation());
 		entities.add(new DutchConfirmation());
 		entities.add(new EnglishProfanity());
@@ -501,6 +507,7 @@ public class EntityValueTranslator implements Initializable {
 		entities.add(new EnglishPreposition());
 		entities.add(new DutchPreposition());
 		entities.add(new UniversalTime());
+		entities.add(new UniversalMathematic());
 		entities.add(new UniversalNumeric());
 		entities.add(new UniversalAlphabetic());
 	}

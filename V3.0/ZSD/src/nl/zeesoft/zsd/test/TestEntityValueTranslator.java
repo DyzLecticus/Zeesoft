@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
+import nl.zeesoft.zsd.entity.UniversalMathematic;
 
 public class TestEntityValueTranslator extends TestObject {
 	public TestEntityValueTranslator(Tester tester) {
@@ -73,7 +74,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"februari march october december");
 		testTranslation(t,"",
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten",
-			"ENG_DUR:33:41 / NLD_DUR:33:41",
+			"ENG_DUR:33:41 UNI_MTH:D NLD_DUR:33:41",
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten");
 		testTranslation(t,"",
 			"yesterday OR today OR the 1st of october",
@@ -127,17 +128,52 @@ public class TestEntityValueTranslator extends TestObject {
 			"Can I book a room for 5 people?",
 			"UNI_ABC:Can UNI_ABC:I UNI_ABC:book UNI_ABC:a|ENG_NAM:firstName:UNI_ABC:A UNI_ABC:room|ENG_NAM:lastName:UNI_ABC:Room UNI_ABC:for UNI_NUM:5 UNI_ABC:people ?",
 			"Can I book a room for 5 people?");
+		testTranslation(t,"",
+			"ten times five",
+			"ENG_NUM:10|NLD_PRE:8|UNI_ABC:ten ENG_MTH:M|UNI_ABC:times ENG_NUM:5|UNI_ABC:five",
+			"ten multiplied by five");
+		testTranslation(t,"",
+			"tien keer vijf",
+			"NLD_NUM:10|UNI_ABC:tien NLD_MTH:M|UNI_ABC:keer NLD_NUM:5|UNI_ABC:vijf",
+			"tien vermenigvuldigd met vijf");
 		
-		System.out.println();
-		ZStringSymbolParser sequence = new ZStringSymbolParser("UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie");
-		List<String> iValues = sequence.toSymbols();
-		int size = iValues.size();
-		List<String> values = t.getTypeValuesFromInternalValues(iValues,"ABC","lastName","NAM");
-		assertEqual(iValues.size(),(size - 1),"The number of internal values does not match expectation");
-		assertEqual(values.size(),1,"The number of type values does not match expectation");
-		if (values.size()>0) {
-			assertEqual(values.get(0),"UNI_ABC:Henkie","The value does not match expectation");
-		}
+		UniversalMathematic math = (UniversalMathematic) t.getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
+		
+		ZStringSymbolParser expression = new ZStringSymbolParser("10 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.DIVISION + " 5");
+		float result = math.calculate(expression);
+		assertEqual("" + result,"6.0","The calculation did not produce the expected result");
+
+		expression = new ZStringSymbolParser("10 " + UniversalMathematic.SUBTRACTION + " 3 " + UniversalMathematic.ADDITION + " 5");
+		result = math.calculate(expression);
+		assertEqual("" + result,"12.0","The calculation did not produce the expected result");
+
+		expression = new ZStringSymbolParser("2 " + UniversalMathematic.ADDITION + " 2");
+		result = math.calculate(expression);
+		assertEqual("" + result,"4.0","The calculation did not produce the expected result");
+
+		expression = new ZStringSymbolParser("10 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.ADDITION + " 25 " + UniversalMathematic.DIVISION + " 5 " + UniversalMathematic.SUBTRACTION + " 2");
+		result = math.calculate(expression);
+		assertEqual("" + result,"33.0","The calculation did not produce the expected result");
+
+		expression = new ZStringSymbolParser("10 " + UniversalMathematic.SUBTRACTION + " 20");
+		result = math.calculate(expression);
+		assertEqual("" + result,"-10.0","The calculation did not produce the expected result");
+
+		expression = new ZStringSymbolParser("10");
+		result = math.calculate(expression);
+		assertEqual("" + result,"10.0","The calculation did not produce the expected result");
+
+		expression = new ZStringSymbolParser("10 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.ADDITION + " 25 " + UniversalMathematic.DIVISION + " 5 " + UniversalMathematic.SUBTRACTION + " 2");
+		expression.append(" EQ ");
+		expression.append("33 ");
+		boolean r = math.evaluate(expression);
+		assertEqual(r,true,"The evaluation did not produce the expected result");
+
+		expression = new ZStringSymbolParser("10 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.ADDITION + " 25 " + UniversalMathematic.DIVISION + " 5 " + UniversalMathematic.SUBTRACTION + " 2");
+		expression.append(" LT ");
+		expression.append("11 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.ADDITION + " 25 " + UniversalMathematic.DIVISION + " 5 " + UniversalMathematic.SUBTRACTION + " 2");
+		r = math.evaluate(expression);
+		assertEqual(r,true,"The evaluation did not produce the expected result");
 	}
 	
 	private void testTranslation(EntityValueTranslator t,String language,String seq,String expTran,String expRetran) {
