@@ -3,6 +3,8 @@ package nl.zeesoft.zsd.dialog;
 import java.io.File;
 import java.util.List;
 
+import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
@@ -18,6 +20,15 @@ public class DialogHandlerConfiguration extends InterpreterConfiguration {
 	public DialogHandlerConfiguration(BaseConfiguration base) {
 		super(base);
 	}
+
+	public DialogHandlerConfiguration(Messenger msgr, WorkerUnion uni) {
+		super(msgr,uni);
+	}
+
+	public DialogHandlerConfiguration(Messenger msgr, WorkerUnion uni, BaseConfiguration base) {
+		super(msgr,uni,base);
+	}
+
 	
 	@Override
 	public List<InitializeClass> getInitializeClasses() {

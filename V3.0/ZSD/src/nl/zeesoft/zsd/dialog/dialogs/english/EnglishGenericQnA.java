@@ -5,7 +5,11 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericQnA;
 
 public class EnglishGenericQnA extends GenericQnA {
-	private static final String 		SUPPORT	= "I can help with general questions, booking rooms and questions about room bookings.";
+	private static final String 		SUPPORT	= "I can help with " + 
+			"general questions" + 
+			", executing simple mathematical calculations" + 
+			", booking rooms" + 
+			" and questions about room bookings.";
 	private static final String 		SELF	= "I am an artificially intelligent personal assistant.";
 	private static final String 		GOAL	= "My goal is to understand and help people.";
 	private static final String 		CREATOR	= "My software was written by André van der Zee.";

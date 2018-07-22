@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequenceClassifier;
@@ -27,10 +29,19 @@ public class InterpreterConfiguration extends Initializer {
 	private EntityValueTranslator					entityValueTranslator				= null;
 
 	public InterpreterConfiguration() {
-
+		
 	}
 
 	public InterpreterConfiguration(BaseConfiguration base) {
+		this.base = base;
+	}
+
+	public InterpreterConfiguration(Messenger msgr, WorkerUnion uni) {
+		super(msgr,uni);
+	}
+
+	public InterpreterConfiguration(Messenger msgr, WorkerUnion uni, BaseConfiguration base) {
+		super(msgr,uni);
 		this.base = base;
 	}
 
