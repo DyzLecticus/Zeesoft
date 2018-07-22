@@ -33,7 +33,7 @@ public class DialogHandler extends SequenceInterpreter {
 		if (request.context.length()==0) {
 			request.classifyContext = true;
 		}
-		request.translateEntiyValues = true;
+		request.translateEntityValues = true;
 
 		DialogResponse r = new DialogResponse(request);
 		buildInterpreterResponse(r);

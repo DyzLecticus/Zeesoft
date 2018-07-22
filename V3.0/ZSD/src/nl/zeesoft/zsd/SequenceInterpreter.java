@@ -64,8 +64,8 @@ public class SequenceInterpreter {
 			// Translate raw input
 			translateLanguages.add(language);
 			translateLanguages.add(BaseConfiguration.LANG_UNI);
-			if (r.request.translateEntiyValues) {
-				if (r.request.translateEntiyValues && r.request.prompt.length()>0) {
+			if (r.request.translateEntityValues) {
+				if (r.request.translateEntityValues && r.request.prompt.length()>0) {
 					translatedPrompt = getConfiguration().getEntityValueTranslator().translateToInternalValues(r.request.prompt,translateLanguages,r.request.translateEntityTypes,true);
 				}
 				r.addDebugLogLine("Translate sequence: ",sequence);
@@ -80,7 +80,7 @@ public class SequenceInterpreter {
 				int numInputSymbols = symbols.size();
 				long stopAfterMs = numInputSymbols * getConfiguration().getBase().getMaxMsInterpretPerSymbol();
 				long maxCorrect = getConfiguration().getBase().getMaxMsInterpretPerSequence();
-				if (r.request.translateEntiyValues) {
+				if (r.request.translateEntityValues) {
 					maxCorrect = (maxCorrect / 3) * 2;
 				}
 				if (stopAfterMs	> maxCorrect) {
@@ -128,7 +128,7 @@ public class SequenceInterpreter {
 			}
 			
 			// Translate corrected input
-			if (r.request.translateEntiyValues && r.request.correctInput) {
+			if (r.request.translateEntityValues && r.request.correctInput) {
 				if (!corrected) {
 					r.entityValueTranslationCorrected = r.entityValueTranslation;
 				} else {

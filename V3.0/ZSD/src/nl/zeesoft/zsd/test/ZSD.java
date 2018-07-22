@@ -62,6 +62,7 @@ public class ZSD extends LibraryObject {
 		tests.add(new TestEntityToJson(getTester()));
 		tests.add(new TestDialogToJson(getTester()));
 		tests.add(new TestDialogSetToJson(getTester()));
+		tests.add(new TestRequestResponseToJson(getTester()));
 		
 		if (qna.exists()) {
 			tests.add(new TestInitializer(getTester()));

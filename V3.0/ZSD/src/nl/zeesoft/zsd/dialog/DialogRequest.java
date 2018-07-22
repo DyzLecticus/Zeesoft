@@ -1,9 +1,12 @@
 package nl.zeesoft.zsd.dialog;
 
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.interpret.InterpreterRequest;
 
 public class DialogRequest extends InterpreterRequest {
@@ -39,8 +42,37 @@ public class DialogRequest extends InterpreterRequest {
 	}
 	
 	@Override
-	public void setAllActions(boolean value) {
-		super.setAllActions(value);
-		appendDebugLog = value;
+	public JsFile toJson() {
+		JsFile json = super.toJson();
+		json.rootElement.children.add(new JsElem("matchThreshold","" + matchThreshold));
+		json.rootElement.children.add(new JsElem("randomizeOutput","" + randomizeOutput));
+		JsElem valsElem = new JsElem("dialogVariableValues",true);
+		json.rootElement.children.add(valsElem);
+		for (Entry<String,DialogVariableValue> entry: dialogVariableValues.entrySet()) {
+			JsElem valElem = new JsElem();
+			valsElem.children.add(valElem);
+			valElem.children.add(new JsElem("name",entry.getValue().name,true));
+			valElem.children.add(new JsElem("externalValue",entry.getValue().externalValue,true));
+			valElem.children.add(new JsElem("internalValue",entry.getValue().internalValue,true));
+		}
+		return json;
+	}
+	
+	@Override
+	public void fromJson(JsFile json) {
+		super.fromJson(json);
+		matchThreshold = getChildJsonDouble(json.rootElement,"matchThreshold",matchThreshold);
+		randomizeOutput = getChildJsonBoolean(json.rootElement,"randomizeOutput",randomizeOutput);
+		JsElem valsElem = json.rootElement.getChildByName("dialogVariableValues");
+		if (valsElem!=null) {
+			dialogVariableValues.clear();
+			for (JsElem val: valsElem.children) {
+				DialogVariableValue dvv = new DialogVariableValue();
+				dvv.name = getChildJsonString(val,"name","");
+				dvv.externalValue = getChildJsonString(val,"externalValue","");
+				dvv.internalValue = getChildJsonString(val,"internalValue","");
+				dialogVariableValues.put(dvv.name,dvv);
+			}
+		}
 	}
 }

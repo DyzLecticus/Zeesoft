@@ -75,9 +75,9 @@ public class BaseConfiguration {
 		json.rootElement.children.add(new JsElem("baseDir",baseDir,true));
 		json.rootElement.children.add(new JsElem("extendDir",extendDir,true));
 		json.rootElement.children.add(new JsElem("overrideDir",overrideDir,true));
-		json.rootElement.children.add(new JsElem("maxMsInterpretPerSymbol","" + maxMsInterpretPerSymbol,true));
-		json.rootElement.children.add(new JsElem("maxMsInterpretPerSequence","" + maxMsInterpretPerSequence,true));
-		json.rootElement.children.add(new JsElem("maxMsDialogPerSequence","" + maxMsDialogPerSequence,true));
+		json.rootElement.children.add(new JsElem("maxMsInterpretPerSymbol","" + maxMsInterpretPerSymbol));
+		json.rootElement.children.add(new JsElem("maxMsInterpretPerSequence","" + maxMsInterpretPerSequence));
+		json.rootElement.children.add(new JsElem("maxMsDialogPerSequence","" + maxMsDialogPerSequence));
 		JsElem langsElem = new JsElem("supportedLanguages",true);
 		json.rootElement.children.add(langsElem);
 		for (String language: supportedLanguages) {
