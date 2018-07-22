@@ -8,6 +8,7 @@ import nl.zeesoft.zsd.entity.entities.dutch.DutchMathematic;
 public class DutchGenericMath extends GenericMath {
 	public DutchGenericMath() {
 		setLanguage(BaseConfiguration.LANG_NLD);
+		setHandlerClassName(DutchGenericMathHandler.class.getName());
 	}
 	
 	@Override
@@ -25,6 +26,12 @@ public class DutchGenericMath extends GenericMath {
 				}
 			}
 		}
+
+		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. Kan ik nog meer voor je doen?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. Is er nog iets waar ik je mee kan helpen?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Dat is {exact} {result}. Kan ik nog meer voor je doen?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Dat is {exact} {result}. Is er nog iets waar ik je mee kan helpen?");
 
 		addVariable(VARIABLE_NUMBER1,BaseConfiguration.TYPE_NUMERIC);
 		addVariable(VARIABLE_NUMBER2,BaseConfiguration.TYPE_NUMERIC);

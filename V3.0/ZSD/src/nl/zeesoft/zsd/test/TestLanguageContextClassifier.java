@@ -8,6 +8,9 @@ import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 
 public class TestLanguageContextClassifier extends TestLanguageMasterContextClassifier {
+	private static final int	EXPECTED_ENGLISH_LINKS	= 529;
+	private static final int	EXPECTED_DUTCH_LINKS	= 648;
+	
 	public TestLanguageContextClassifier(Tester tester) {
 		super(tester);
 	}
@@ -30,8 +33,8 @@ public class TestLanguageContextClassifier extends TestLanguageMasterContextClas
 			SequenceClassifier scEng = config.getLanguageContextClassifiers().get(BaseConfiguration.LANG_ENG + Generic.MASTER_CONTEXT_GENERIC);
 			SequenceClassifier scNld = config.getLanguageContextClassifiers().get(BaseConfiguration.LANG_NLD + Generic.MASTER_CONTEXT_GENERIC);
 			
-			assertEqual(scEng.getKnownLinks().size(),491,"The total number of english links does not match expectation");
-			assertEqual(scNld.getKnownLinks().size(),607,"The total number of dutch links does not match expectation");
+			assertEqual(scEng.getKnownLinks().size(),EXPECTED_ENGLISH_LINKS,"The total number of english links does not match expectation");
+			assertEqual(scNld.getKnownLinks().size(),EXPECTED_DUTCH_LINKS,"The total number of dutch links does not match expectation");
 
 			testSequenceClassification(scEng,new ZStringSymbolParser("What is your goal?"),0D,"QuestionAndAnswer",2);
 			System.out.println("");
@@ -41,7 +44,7 @@ public class TestLanguageContextClassifier extends TestLanguageMasterContextClas
 			System.out.println("");
 			testSequenceClassification(scNld,new ZStringSymbolParser("Wat is jouw naam?"),0D,"Handshake",2);
 			System.out.println("");
-			testSequenceClassification(scEng,new ZStringSymbolParser("What are you?"),0D,"QuestionAndAnswer",2);
+			testSequenceClassification(scEng,new ZStringSymbolParser("What are you?"),0D,"QuestionAndAnswer",3);
 			System.out.println("");
 			testSequenceClassification(scNld,new ZStringSymbolParser("Wat ben jij?"),0D,"QuestionAndAnswer",2);
 		}

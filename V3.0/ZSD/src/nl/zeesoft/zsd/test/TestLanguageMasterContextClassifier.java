@@ -10,6 +10,9 @@ import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestLanguageMasterContextClassifier extends TestSequenceClassifier {
+	private static final int	EXPECTED_ENGLISH_LINKS	= 768;
+	private static final int	EXPECTED_DUTCH_LINKS	= 905;
+	
 	public TestLanguageMasterContextClassifier(Tester tester) {
 		super(tester);
 	}
@@ -32,8 +35,8 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 			SequenceClassifier scEng = config.getLanguageMasterContextClassifiers().get(BaseConfiguration.LANG_ENG);
 			SequenceClassifier scNld = config.getLanguageMasterContextClassifiers().get(BaseConfiguration.LANG_NLD);
 			
-			assertEqual(scEng.getKnownLinks().size(),745,"The total number of english links does not match expectation");
-			assertEqual(scNld.getKnownLinks().size(),872,"The total number of dutch links does not match expectation");
+			assertEqual(scEng.getKnownLinks().size(),EXPECTED_ENGLISH_LINKS,"The total number of english links does not match expectation");
+			assertEqual(scNld.getKnownLinks().size(),EXPECTED_DUTCH_LINKS,"The total number of dutch links does not match expectation");
 
 			testSequenceClassification(scEng,new ZStringSymbolParser("Who are you?"),0D,"Generic",2);
 			System.out.println();

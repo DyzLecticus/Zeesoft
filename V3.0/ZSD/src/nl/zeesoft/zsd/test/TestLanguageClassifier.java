@@ -10,6 +10,8 @@ import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestLanguageClassifier extends TestSequenceClassifier {
+	private static final int	EXPECTED_LINKS	= 590959;
+	
 	public TestLanguageClassifier(Tester tester) {
 		super(tester);
 	}
@@ -31,7 +33,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 		} else {
 			SequenceClassifier sc = config.getLanguageClassifier();
 			
-			assertEqual(sc.getKnownLinks().size(),590923,"The total number of links does not match expectation");
+			assertEqual(sc.getKnownLinks().size(),EXPECTED_LINKS,"The total number of links does not match expectation");
 			
 			ZStringSymbolParser sequence = new ZStringSymbolParser("Wat is your name?");
 			ZStringSymbolParser corrected = null; 

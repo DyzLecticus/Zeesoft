@@ -112,6 +112,7 @@ public abstract class DialogInstanceHandler {
 			for (Entry<String,DialogVariableValue> entry: values.entrySet()) {
 				output.replace("{" + entry.getKey() + "}",entry.getValue().externalValue);
 			}
+			output.replace(0,1,output.substring(0,1).toString().toUpperCase());
 			DialogResponseOutput dro = new DialogResponseOutput(dialog.getContext(),output);
 			r.contextOutputs.put(dialog.getContext(),dro);
 			r.addDebugLogLine("    Set dialog output: ",dro.output);

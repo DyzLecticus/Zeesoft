@@ -14,6 +14,9 @@ public abstract class GenericMath extends Generic {
 	public static final String	VARIABLE_OPERATOR3			= "operator3";
 	public static final String	VARIABLE_OPERATOR4			= "operator4";
 
+	public static final String	VARIABLE_EXACT				= "exact";
+	public static final String	VARIABLE_RESULT				= "result";
+
 	public GenericMath() {
 		setContext(CONTEXT_GENERIC_MATH);
 		setHandlerClassName(GenericMathHandler.class.getName());

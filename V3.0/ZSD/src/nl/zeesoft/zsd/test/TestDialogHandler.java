@@ -113,12 +113,12 @@ public class TestDialogHandler extends TestInitializer {
 			testRequestResponse(handler,"",
 				"How much is ten times fourty divided by twenty plus three times six?",
 				"UNI_ABC:How UNI_ABC:much UNI_ABC:is ENG_NUM:10|UNI_ABC:ten ENG_MTH:M|UNI_ABC:times ENG_NUM:40|UNI_ABC:fourty ENG_MTH:D ENG_NUM:20|UNI_ABC:twenty ENG_MTH:A|UNI_ABC:plus ENG_NUM:3|UNI_ABC:three|ENG_NAM:firstName:UNI_ABC:Three ENG_MTH:M|UNI_ABC:times|ENG_NAM:lastName:UNI_ABC:Times ENG_NUM:6|UNI_ABC:six ?",
-				"38.0","");
+				"Exactly thirtyeight.","What else can I do for you?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?",
 				"UNI_ABC:Hoeveel UNI_ABC:is NLD_NUM:10|UNI_ABC:tien NLD_MTH:M|UNI_ABC:keer NLD_NUM:40|UNI_ABC:veertig NLD_MTH:D NLD_NUM:20|UNI_ABC:twintig NLD_MTH:A|UNI_ABC:plus NLD_NUM:3|UNI_ABC:drie|NLD_NAM:firstName:UNI_ABC:Drie NLD_MTH:M|UNI_ABC:keer|NLD_NAM:lastName:UNI_ABC:Keer NLD_NUM:6|UNI_ABC:zes ?",
-				"38.0","");
+				"Precies achtendertig.","Kan ik nog meer voor je doen?");
 		}
 	}
 	

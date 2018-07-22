@@ -8,6 +8,7 @@ import nl.zeesoft.zsd.entity.entities.english.EnglishMathematic;
 public class EnglishGenericMath extends GenericMath {
 	public EnglishGenericMath() {
 		setLanguage(BaseConfiguration.LANG_ENG);
+		setHandlerClassName(EnglishGenericMathHandler.class.getName());
 	}
 	
 	@Override
@@ -25,6 +26,12 @@ public class EnglishGenericMath extends GenericMath {
 				}
 			}
 		}
+
+		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. What else can I do for you?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. Is there anything else I can help you with?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"That is {exact} {result}. What else can I do for you?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"That is {exact} {result}. Is there anything else I can help you with?");
 
 		addVariable(VARIABLE_NUMBER1,BaseConfiguration.TYPE_NUMERIC);
 		addVariable(VARIABLE_NUMBER2,BaseConfiguration.TYPE_NUMERIC);
