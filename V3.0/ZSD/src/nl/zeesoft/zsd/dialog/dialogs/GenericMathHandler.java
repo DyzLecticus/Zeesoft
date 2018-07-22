@@ -35,8 +35,10 @@ public class GenericMathHandler extends DialogInstanceHandler {
 			}
 		}
 		
+		r.addDebugLogLine("    Calculate expression: ",expression);
 		UniversalMathematic math = (UniversalMathematic) getConfig().getEntityValueTranslator().getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
 		float f = math.calculate(expression);
+		r.addDebugLogLine("    Calculated expression: ","" + f);
 		
 		String exact = getExactly();
 		String result = "";
@@ -64,15 +66,8 @@ public class GenericMathHandler extends DialogInstanceHandler {
 			}
 		}
 
-		DialogVariableValue dvv = new DialogVariableValue();
-		dvv.name = GenericMath.VARIABLE_EXACT;
-		dvv.externalValue = exact;
-		getValues().put(dvv.name,dvv);
-
-		dvv = new DialogVariableValue();
-		dvv.name = GenericMath.VARIABLE_RESULT;
-		dvv.externalValue = result;
-		getValues().put(dvv.name,dvv);
+		setDialogVariableValue(r,GenericMath.VARIABLE_EXACT,exact);
+		setDialogVariableValue(r,GenericMath.VARIABLE_RESULT,result);
 		
 		return super.updatedValues(r, updatedValues, promptVariable);
 	}

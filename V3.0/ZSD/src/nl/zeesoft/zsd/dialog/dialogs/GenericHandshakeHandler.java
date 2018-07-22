@@ -22,10 +22,7 @@ public class GenericHandshakeHandler extends DialogInstanceHandler {
 			}
 			fullName.append(" ");
 			fullName.append(lastName);
-			DialogVariableValue dvv = new DialogVariableValue();
-			dvv.name = GenericHandshake.VARIABLE_FULLNAME;
-			dvv.externalValue = fullName.toString();
-			getValues().put(dvv.name,dvv);
+			setDialogVariableValue(r,GenericHandshake.VARIABLE_FULLNAME,fullName.toString());
 		}
 		return super.updatedValues(r,updatedValues,promptVariable);
 	}	

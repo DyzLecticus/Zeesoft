@@ -37,6 +37,7 @@ public class ZSD extends LibraryObject {
 		System.out.println(" * Sequence context classification; sentence context classification  ");
 		System.out.println(" * Context sensitive sequence matching; find matching sentences  ");
 		System.out.println(" * Symbolic entity value translation; find variable values  ");
+		System.out.println(" * Dialog response generation; create a smart and scalable chatbot  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();

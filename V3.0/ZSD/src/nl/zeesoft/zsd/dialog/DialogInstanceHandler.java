@@ -54,15 +54,9 @@ public abstract class DialogInstanceHandler {
 					valSel = val;
 				}
 				if (valSel.length()>0) {
-					DialogVariableValue dvv = values.get(variable.name);
-					if (!dvv.internalValue.equals(valSel)) {
-						dvv.internalValue = valSel;
-						dvv.externalValue = getConfig().getEntityValueTranslator().getExternalValueForInternalValues(valSel,variable.type); 
-						updatedValues.add(dvv);
-						ZStringBuilder line = new ZStringBuilder("    Updated variable ");
-						line.append(dvv.name);
-						line.append(": ");
-						r.addDebugLogLine(line,dvv.internalValue);
+					String extVal = getConfig().getEntityValueTranslator().getExternalValueForInternalValues(valSel,variable.type);
+					if (setDialogVariableValue(r,variable.name,extVal,valSel)) {
+						updatedValues.add(values.get(variable.name));
 					}
 				}
 			}
@@ -132,6 +126,38 @@ public abstract class DialogInstanceHandler {
 		return output;
 	}
 
+	protected boolean setDialogVariableValue(DialogResponse r,String name,String extVal) {
+		return setDialogVariableValue(r,name,extVal,"");
+	}
+
+	protected boolean setDialogVariableValue(DialogResponse r,String name,String extVal,String intVal) {
+		boolean changed = false;
+		DialogVariableValue dvv = values.get(name);
+		if (dvv==null) {
+			dvv = new DialogVariableValue();
+			dvv.name = name;
+			getValues().put(dvv.name,dvv);
+			changed = true;
+		} else if (!dvv.externalValue.equals(extVal) || !dvv.internalValue.equals(intVal)) {
+			changed = true;
+		}
+		if (changed) {
+			dvv.externalValue = extVal;
+			dvv.internalValue = intVal;
+			ZStringBuilder line = new ZStringBuilder("    Updated variable ");
+			line.append(dvv.name);
+			line.append(": ");
+			ZStringBuilder value = new ZStringBuilder();
+			if (dvv.internalValue.length()>0) {
+				value.append(dvv.internalValue);
+				value.append(" = ");
+			}
+			value.append(dvv.externalValue);
+			r.addDebugLogLine(line,value);
+		}
+		return changed;
+	}
+	
 	protected DialogHandlerConfiguration getConfig() {
 		return config;
 	}

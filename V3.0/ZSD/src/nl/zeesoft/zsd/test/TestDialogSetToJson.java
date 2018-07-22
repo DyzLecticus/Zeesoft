@@ -48,7 +48,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		System.out.println(" * " + getTester().getLinkForClass(DialogSetToJson.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the converted JSON.  ");
+		System.out.println("The output of this test shows a sample of the converted JSON.  ");
 	}
 	
 	@Override
@@ -64,7 +64,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		if (json.rootElement.children.size()>0) {
 			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " dialogs took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			assertEqual(json.rootElement.children.get(0).children.size(),6,"The number of dialog elements does not match expectation");
-			showJsonSample(json);
+			showJsonSample(json,1);
 		}
 
 		ds = new DialogSet();
