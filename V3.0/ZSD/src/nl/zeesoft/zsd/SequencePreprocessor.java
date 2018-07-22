@@ -96,9 +96,9 @@ public class SequencePreprocessor implements Initializable {
 					processors.put(code,sp);
 				}
 				for (JsElem repElem: langElem.getChildByName("replacements").children) {
-					String key = repElem.getChildValueByName("key").toString();
-					String value = repElem.getChildValueByName("value").toString();
-					if (sp.getReplacement(key)==null) {
+					String key = repElem.getChildString("key");
+					String value = repElem.getChildString("value");
+					if (key.length()>0 && value.length()>0 && sp.getReplacement(key)==null) {
 						sp.addReplacement(key, value);
 					}
 				}

@@ -106,14 +106,14 @@ public class BaseConfiguration {
 		supportedLanguages.clear();
 		supportedAlphabets.clear();
 		supportedMasterContexts.clear();
-		name = json.rootElement.getChildValueByName("name").toString();
-		primaryLanguage = json.rootElement.getChildValueByName("primaryLanguage").toString();
-		baseDir = json.rootElement.getChildValueByName("baseDir").toString();
-		extendDir = json.rootElement.getChildValueByName("extendDir").toString();
-		overrideDir = json.rootElement.getChildValueByName("overrideDir").toString();
-		maxMsInterpretPerSymbol = Long.parseLong(json.rootElement.getChildValueByName("maxMsInterpretPerSymbol").toString());
-		maxMsInterpretPerSequence = Long.parseLong(json.rootElement.getChildValueByName("maxMsInterpretPerSequence").toString());
-		maxMsDialogPerSequence = Long.parseLong(json.rootElement.getChildValueByName("maxMsDialogPerSequence").toString());
+		name = json.rootElement.getChildString("name",name);
+		primaryLanguage = json.rootElement.getChildString("primaryLanguage",primaryLanguage);
+		baseDir = json.rootElement.getChildString("baseDir",baseDir);
+		extendDir = json.rootElement.getChildString("extendDir",extendDir);
+		overrideDir = json.rootElement.getChildString("overrideDir",overrideDir);
+		maxMsInterpretPerSymbol = json.rootElement.getChildLong("maxMsInterpretPerSymbol",maxMsInterpretPerSymbol);
+		maxMsInterpretPerSequence = json.rootElement.getChildLong("maxMsInterpretPerSequence",maxMsInterpretPerSequence);
+		maxMsDialogPerSequence = json.rootElement.getChildLong("maxMsDialogPerSequence",maxMsDialogPerSequence);
 		JsElem langsElem = json.rootElement.getChildByName("supportedLanguages");
 		if (langsElem!=null) {
 			for (JsElem langElem: langsElem.children) {

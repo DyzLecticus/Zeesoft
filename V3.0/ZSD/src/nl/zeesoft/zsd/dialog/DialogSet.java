@@ -121,81 +121,72 @@ public class DialogSet implements Initializable {
 		JsElem dialogsElem = json.rootElement.getChildByName("dialogs");
 		if (dialogsElem!=null) {
 			for (JsElem dialogElem: dialogsElem.children) {
-				String language = dialogElem.getChildValueByName("language").toString();
-				String masterContext = dialogElem.getChildValueByName("masterContext").toString();
-				String context = dialogElem.getChildValueByName("context").toString();
-				String handler = dialogElem.getChildValueByName("handler").toString();
-				DialogInstance d = getDialog(language,masterContext,context);
-				if (d==null) {
-					d = new DialogInstance();
-					d.setLanguage(language);
-					d.setMasterContext(masterContext);
-					d.setContext(context);
-					addDialog(d);
-				}
-				d.setHandlerClassName(handler);
-				JsElem exsElem = dialogElem.getChildByName("examples");
-				if (exsElem!=null) {
-					for (JsElem exElem: exsElem.children) {
-						ZStringSymbolParser input = new ZStringSymbolParser(exElem.getChildValueByName("input"));
-						ZStringSymbolParser output = new ZStringSymbolParser();
-						if (exElem.getChildByName("output")!=null) {
-							output.append(exElem.getChildValueByName("output"));
-						}
-						boolean found = false;
-						for (DialogIO example: d.getExamples()) {
-							if (example.input.equals(input) && example.output.equals(output)) {
-								found = true;
-								break;
+				String language = dialogElem.getChildString("language");
+				String masterContext = dialogElem.getChildString("masterContext");
+				String context = dialogElem.getChildString("context");
+				if (language.length()>0 && masterContext.length()>0 && context.length()>0) {
+					String handler = dialogElem.getChildString("handler");
+					DialogInstance d = getDialog(language,masterContext,context);
+					if (d==null) {
+						d = new DialogInstance();
+						d.setLanguage(language);
+						d.setMasterContext(masterContext);
+						d.setContext(context);
+						addDialog(d);
+					}
+					d.setHandlerClassName(handler);
+					JsElem exsElem = dialogElem.getChildByName("examples");
+					if (exsElem!=null) {
+						for (JsElem exElem: exsElem.children) {
+							ZStringSymbolParser input = exElem.getChildZStringSymbolParser("input");
+							ZStringSymbolParser output = exElem.getChildZStringSymbolParser("output");
+							boolean found = false;
+							for (DialogIO example: d.getExamples()) {
+								if (example.input.equals(input) && example.output.equals(output)) {
+									found = true;
+									break;
+								}
+							}
+							if (!found) {
+								DialogIO example = new DialogIO();
+								example.input = input;
+								example.output = output;
+								d.getExamples().add(example);
 							}
 						}
-						if (!found) {
-							DialogIO example = new DialogIO();
-							example.input = input;
-							example.output = output;
-							d.getExamples().add(example);
-						}
 					}
-				}
-				JsElem varsElem = dialogElem.getChildByName("variables");
-				if (varsElem!=null) {
-					for (JsElem varElem: varsElem.children) {
-						String name = varElem.getChildValueByName("name").toString();
-						String type = varElem.getChildValueByName("type").toString();
-						ZStringBuilder complexName = varElem.getChildValueByName("complexName");
-						ZStringBuilder complexType = varElem.getChildValueByName("complexType");
-						ZStringBuilder initialValue = varElem.getChildValueByName("initialValue");
-						DialogVariable variable = d.getVariable(name);
-						if (variable==null) {
-							variable = new DialogVariable();
-							variable.name = name;
-							d.getVariables().add(variable);
-						}
-						variable.type = type;
-						if (complexName!=null) {
-							variable.complexName = complexName.toString();
-						}
-						if (complexType!=null) {
-							variable.complexType = complexType.toString();
-						}
-						if (initialValue!=null) {
-							variable.initialValue = initialValue.toString();
-						}
-						JsElem prsElem = varElem.getChildByName("prompts");
-						if (prsElem!=null) {
-							for (JsElem prElem: prsElem.children) {
-								ZStringSymbolParser prompt = new ZStringSymbolParser(prElem.value);
-								boolean found = false;
-								for (DialogVariablePrompt pr: variable.prompts) {
-									if (pr.prompt.equals(prompt)) {
-										found = true;
-										break;
-									}
+					JsElem varsElem = dialogElem.getChildByName("variables");
+					if (varsElem!=null) {
+						for (JsElem varElem: varsElem.children) {
+							String name = varElem.getChildString("name");
+							if (name.length()>0) {
+								DialogVariable variable = d.getVariable(name);
+								if (variable==null) {
+									variable = new DialogVariable();
+									variable.name = name;
+									d.getVariables().add(variable);
 								}
-								if (!found) {
-									DialogVariablePrompt example = new DialogVariablePrompt();
-									example.prompt = prompt;
-									variable.prompts.add(example);
+								variable.type = varElem.getChildString("type");
+								variable.complexName = varElem.getChildString("complexName");
+								variable.complexType = varElem.getChildString("complexType");
+								variable.initialValue = varElem.getChildString("initialValue");
+								JsElem prsElem = varElem.getChildByName("prompts");
+								if (prsElem!=null) {
+									for (JsElem prElem: prsElem.children) {
+										ZStringSymbolParser prompt = new ZStringSymbolParser(prElem.value);
+										boolean found = false;
+										for (DialogVariablePrompt pr: variable.prompts) {
+											if (pr.prompt.equals(prompt)) {
+												found = true;
+												break;
+											}
+										}
+										if (!found) {
+											DialogVariablePrompt example = new DialogVariablePrompt();
+											example.prompt = prompt;
+											variable.prompts.add(example);
+										}
+									}
 								}
 							}
 						}

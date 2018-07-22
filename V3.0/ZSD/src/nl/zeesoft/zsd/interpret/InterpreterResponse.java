@@ -6,6 +6,8 @@ import java.util.List;
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class InterpreterResponse {
@@ -55,6 +57,55 @@ public class InterpreterResponse {
 			debugLog.append(line.getStringBuilder());
 			if (value!=null && value.length()>0) {
 				debugLog.append(value.getStringBuilder());
+			}
+		}
+	}
+	
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		addResultsToJson(json.rootElement,"responseLanguages",responseLanguages);
+		json.rootElement.children.add(new JsElem("correctedInput",correctedInput,true));
+		addResultsToJson(json.rootElement,"responseMasterContexts",responseMasterContexts);
+		addResultsToJson(json.rootElement,"responseContexts",responseContexts);
+		json.rootElement.children.add(new JsElem("entityValueTranslation",entityValueTranslation,true));
+		json.rootElement.children.add(new JsElem("entityValueTranslationCorrected",entityValueTranslationCorrected,true));
+		json.rootElement.children.add(new JsElem("debugLog",debugLog,true));
+		return json;
+	}
+	
+	public void fromJson(JsFile json) {
+		getResultsFromJson(responseLanguages,json.rootElement,"responseLanguages");
+		correctedInput = json.rootElement.getChildZStringSymbolParser("correctedInput");
+		getResultsFromJson(responseMasterContexts,json.rootElement,"responseMasterContexts");
+		getResultsFromJson(responseContexts,json.rootElement,"responseContexts");
+		entityValueTranslation = json.rootElement.getChildZStringSymbolParser("entityValueTranslation");
+		entityValueTranslationCorrected = json.rootElement.getChildZStringSymbolParser("entityValueTranslationCorrected");
+		debugLog = json.rootElement.getChildZStringBuilder("debugLog");
+	}
+	
+	private void addResultsToJson(JsElem parent,String name, List<SequenceClassifierResult> results) {
+		JsElem rsElem = new JsElem(name,true);
+		parent.children.add(rsElem);
+		for (SequenceClassifierResult res: results) {
+			JsElem resElem = new JsElem();
+			rsElem.children.add(resElem);
+			resElem.children.add(new JsElem("symbol",res.symbol,true));
+			resElem.children.add(new JsElem("prob","" + res.prob));
+			resElem.children.add(new JsElem("probNormalized","" + res.probNormalized));
+		}
+	}
+
+	private void getResultsFromJson(List<SequenceClassifierResult> results,JsElem parent,String name) {
+		results.clear();
+		JsElem rsElem = parent.getChildByName(name);
+		if (rsElem!=null) {
+			for (JsElem resElem: rsElem.children) {
+				SequenceClassifierResult res = new SequenceClassifierResult();
+				res.symbol = resElem.getChildString("symbol");
+				res.prob = resElem.getChildDouble("prob");
+				res.probNormalized = resElem.getChildDouble("probNormalized");
+				results.add(res);
 			}
 		}
 	}

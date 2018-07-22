@@ -61,16 +61,16 @@ public class DialogRequest extends InterpreterRequest {
 	@Override
 	public void fromJson(JsFile json) {
 		super.fromJson(json);
-		matchThreshold = getChildJsonDouble(json.rootElement,"matchThreshold",matchThreshold);
-		randomizeOutput = getChildJsonBoolean(json.rootElement,"randomizeOutput",randomizeOutput);
+		matchThreshold = json.rootElement.getChildDouble("matchThreshold",matchThreshold);
+		randomizeOutput = json.rootElement.getChildBoolean("randomizeOutput",randomizeOutput);
 		JsElem valsElem = json.rootElement.getChildByName("dialogVariableValues");
 		if (valsElem!=null) {
 			dialogVariableValues.clear();
 			for (JsElem val: valsElem.children) {
 				DialogVariableValue dvv = new DialogVariableValue();
-				dvv.name = getChildJsonString(val,"name","");
-				dvv.externalValue = getChildJsonString(val,"externalValue","");
-				dvv.internalValue = getChildJsonString(val,"internalValue","");
+				dvv.name = val.getChildString("name","");
+				dvv.externalValue = val.getChildString("externalValue","");
+				dvv.internalValue = val.getChildString("internalValue","");
 				dialogVariableValues.put(dvv.name,dvv);
 			}
 		}
