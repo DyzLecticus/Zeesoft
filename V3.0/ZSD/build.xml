@@ -49,13 +49,11 @@
 		<!-- Copy dependencies -->
 		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
 		<copy file="resources/nl-qna.txt" tofile="${dist}/resources/nl-qna.txt" failonerror="false"/>
-		<copy file="resources/LanguageClassifier.json" tofile="${dist}/resources/LanguageClassifier.json" failonerror="false"/>
-		<copy file="resources/LanguageContextENGGeneric.json" tofile="${dist}/resources/LanguageContextENGGeneric.json" failonerror="false"/>
-		<copy file="resources/LanguageContextNLDGeneric.json" tofile="${dist}/resources/LanguageContextNLDGeneric.json" failonerror="false"/>
-		<copy file="resources/LanguageMasterContextENG.json" tofile="${dist}/resources/LanguageMasterContextENG.json" failonerror="false"/>
-		<copy file="resources/LanguageMasterContextNLD.json" tofile="${dist}/resources/LanguageMasterContextNLD.json" failonerror="false"/>
-		<copy file="resources/DialogSetENG.json" tofile="${dist}/resources/DialogSetENG.json" failonerror="false"/>
-		<copy file="resources/DialogSetNLD.json" tofile="${dist}/resources/DialogSetNLD.json" failonerror="false"/>
+		<copy todir="${dist}/resources/">
+            <fileset dir="resources/">
+				<include name="**/*.json" />
+			</fileset>
+        </copy>		
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
