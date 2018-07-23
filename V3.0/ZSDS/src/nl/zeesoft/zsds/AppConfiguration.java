@@ -11,9 +11,11 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequencePreprocessor;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogSet;
+import nl.zeesoft.zsd.initialize.InitializeClass;
+import nl.zeesoft.zsd.initialize.InitializerListener;
 import nl.zeesoft.zsd.util.LanguageJsonGenerator;
 
-public class AppConfiguration {
+public class AppConfiguration implements InitializerListener {
 	private Messenger					messenger				= null;
 	private WorkerUnion					union					= null;
 	private String						installDir				= "";
@@ -59,8 +61,15 @@ public class AppConfiguration {
 		dialogHandlerConfig.setLanguagePreprocessor(getNewSequencePreprocessor());
 		dialogHandlerConfig.setEntityValueTranslator(getNewEntityValueTranslator());
 		dialogHandlerConfig.setDialogSet(getNewDialogSet());
+		dialogHandlerConfig.addListener(this);
 		dialogHandlerConfig.initialize();
-		debug(this,"Initialized.");
+	}
+
+	@Override
+	public void initializedClass(InitializeClass cls, boolean done) {
+		if (done) {
+			debug(this,"Initialized.");
+		}
 	}
 
 	public boolean isInitialized() {
