@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.zeesoft.zsds.handler.HandlerObject;
+
 /**
  * Servlet implementation class ZIDSServlet
  */
@@ -27,23 +29,41 @@ public class ZSDSServlet extends HttpServlet {
 		if (installDir==null || installDir.length()==0) {
 			installDir = config.getServletContext().getRealPath("");
 		}
+		if (!installDir.endsWith("/")) {
+			installDir += "/";
+		}
+		
 		String dbg = config.getInitParameter("debug");
 		if (dbg!=null && dbg.length()>0) {
 			debug = Boolean.parseBoolean(dbg);
 		}
-
+		
+		System.out.println("installDir: " + installDir + ", debug: " + debug);
+		
 		configuration = new AppConfiguration(installDir,debug);
 		configuration.initialize();
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		HandlerObject handler = configuration.getHandlerForRequest(request);
+		if (handler!=null) {
+			handler.doGet(request, response);
+		} else {
+			// TODO handle 404 not found
+			response.getWriter().append("Not found: ").append(request.getContextPath());
+		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		HandlerObject handler = configuration.getHandlerForRequest(request);
+		if (handler!=null) {
+			handler.doPost(request, response);
+		} else {
+			// TODO handle 404 not found
+			response.getWriter().append("Not found: ").append(request.getContextPath());
+		}
 	}
 	
 	@Override
