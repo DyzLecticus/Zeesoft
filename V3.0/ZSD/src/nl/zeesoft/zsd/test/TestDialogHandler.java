@@ -139,7 +139,7 @@ public class TestDialogHandler extends TestInitializer {
 			assertEqual(response.entityValueTranslationCorrected,new ZStringSymbolParser(expectedTranslationCorrected),"Corrected translation does not match expectation");
 		}
 		if (response.contextOutputs.size()>0) {
-			DialogResponseOutput dro = response.contextOutputs.get(response.responseContexts.get(0).symbol);
+			DialogResponseOutput dro = response.contextOutputs.get(0);
 			assertEqual(dro.output,new ZStringSymbolParser(expectedOutput),"Output does not match expectation");
 			if (expectedPrompt.length()>0) {
 				assertEqual(dro.prompt,new ZStringSymbolParser(expectedPrompt),"Prompt does not match expectation");

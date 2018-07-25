@@ -19,9 +19,9 @@ public class DutchGenericProfanity extends GenericProfanity {
 		EntityObject eo = t.getEntityObject(getLanguage(),BaseConfiguration.TYPE_PROFANITY);
 		for (String input: eo.getExternalValues().keySet()) {
 			addExample(Analyzer.upperCaseFirst(input) + "!",getOutput1());
-			addExample(Analyzer.upperCaseFirst(input) + "!",getOutput2());
+			addExample(Analyzer.upperCaseFirst(input) + ".",getOutput2());
 			addExample(input + ".",getOutput1());
-			addExample(input + ".",getOutput2());
+			addExample(input + "!",getOutput2());
 		}
 	}
 	

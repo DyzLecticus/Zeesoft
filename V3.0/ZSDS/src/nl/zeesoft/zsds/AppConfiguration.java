@@ -94,9 +94,12 @@ public class AppConfiguration {
 				baseConfig.fromJson(json);
 				debug = baseConfig.isDebug();
 				messenger.setPrintDebugMessages(debug);
+				if (debug && baseConfig.isGenerateReadFormat()) {
+					stateManager.generate();
+				}
 			}
 		}
-
+		
 		messenger.setPrintDebugMessages(debug);
 		messenger.start();
 		

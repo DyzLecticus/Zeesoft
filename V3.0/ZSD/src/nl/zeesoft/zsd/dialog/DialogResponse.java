@@ -1,14 +1,14 @@
 package nl.zeesoft.zsd.dialog;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.interpret.InterpreterResponse;
 
 public class DialogResponse extends InterpreterResponse {
-	public SortedMap<String,DialogResponseOutput>	contextOutputs	= new TreeMap<String,DialogResponseOutput>();
+	public List<DialogResponseOutput>	contextOutputs	= new ArrayList<DialogResponseOutput>();
 	
 	public DialogResponse() {
 		super(null);
@@ -27,7 +27,7 @@ public class DialogResponse extends InterpreterResponse {
 		JsFile json = super.toJson();
 		JsElem coElem = new JsElem("contextOutputs",true);
 		json.rootElement.children.add(coElem);
-		for (DialogResponseOutput output: contextOutputs.values()) {
+		for (DialogResponseOutput output: contextOutputs) {
 			JsElem oElem = new JsElem();
 			coElem.children.add(oElem);
 			oElem.children.add(new JsElem("context",output.context,true));
@@ -59,7 +59,7 @@ public class DialogResponse extends InterpreterResponse {
 				output.output = oElem.getChildZStringSymbolParser("output");
 				output.prompt = oElem.getChildZStringSymbolParser("prompt");
 				output.promptVariable = oElem.getChildString("promptVariable");
-				contextOutputs.put(output.context,output);
+				contextOutputs.add(output);
 				JsElem dvElem = oElem.getChildByName("dialogVariableValues");
 				if (dvElem!=null) {
 					for (JsElem dElem: dvElem.children) {

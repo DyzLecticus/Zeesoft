@@ -23,7 +23,6 @@ public class TestHtml extends HtmlResource {
 		script.append("    ZSDS.test.refreshRequest();\n");
 		script.append("};\n");
 		script.append("ZSDS.test.sendRequest = function() {\n");
-		script.append("    ZSDS.test.refreshRequest();\n");
 		script.append("    var elem = window.document.getElementById(\"request\");\n");
 		script.append("    if (elem!=null && elem.value.length>0) {\n");
 		script.append("        elemResponse = window.document.getElementById(\"response\");\n");
@@ -31,6 +30,7 @@ public class TestHtml extends HtmlResource {
 		script.append("            elemResponse.value = \"Sending request ...\";\n");
 		script.append("        }\n");
 		script.append("        ZSDS.test.request = JSON.parse(elem.value);\n");
+		script.append("        ZSDS.test.refreshRequest();\n");
 		script.append("        ZSDS.xhr.postJSON(\"dialogRequestHandler.json\",ZSDS.test.request,ZSDS.test.sendRequestCallback,ZSDS.test.sendRequestCallback);\n");
 		script.append("    }\n");
 		script.append("};\n");
@@ -81,11 +81,15 @@ public class TestHtml extends HtmlResource {
 		script.append("        }\n");
 		script.append("        if (typeof(object.responseMasterContexts)!==\"undefined\" && typeof(object.responseMasterContexts[0])!==\"undefined\") {\n");
 		script.append("            ZSDS.test.request.masterContext = object.responseMasterContexts[0].symbol;\n");
+		//script.append("            ZSDS.test.request.classifyMasterContext = false;\n");
 		script.append("        }\n");
 		script.append("        if (typeof(object.responseContexts)!==\"undefined\" && typeof(object.responseContexts[0])!==\"undefined\") {\n");
 		script.append("            ZSDS.test.request.context = object.responseContexts[0].symbol;\n");
+		//script.append("            ZSDS.test.request.classifyContext = false;\n");
 		script.append("        }\n");
-		script.append("        if (oriMasterContext!=ZSDS.test.request.masterContext || oriContext!=ZSDS.test.request.context) {\n");
+		script.append("        if ((oriMasterContext.length>0 && oriMasterContext!=ZSDS.test.request.masterContext) ||\n");
+		script.append("            (oriContext.length>0 && oriContext!=ZSDS.test.request.context)\n");
+		script.append("            ) {\n");
 		script.append("            ZSDS.test.request.dialogVariableValues = [];\n");
 		script.append("        } else if (\n");
 		script.append("            typeof(object.contextOutputs)!==\"undefined\" &&\n");
@@ -95,13 +99,19 @@ public class TestHtml extends HtmlResource {
 		script.append("            ) {\n");
 		script.append("            ZSDS.test.request.dialogVariableValues = object.contextOutputs[0].dialogVariableValues;\n");
 		script.append("        }\n");
+		/*
 		script.append("        if (\n");
 		script.append("            typeof(object.contextOutputs)!==\"undefined\" &&\n");
 		script.append("            typeof(object.contextOutputs[0])!==\"undefined\" &&\n");
-		script.append("            object.contextOutputs[0].promptVariable==\"nextDialog\"\n");
+		script.append("            (object.contextOutputs[0].promptVariable==\"nextDialog\" || typeof(object.contextOutputs[0].dialogVariableValues[0])===\"undefined\")\n");
 		script.append("            ) {\n");
 		script.append("            ZSDS.test.request.dialogVariableValues = [];\n");
+		script.append("            ZSDS.test.request.masterContext = \"\";\n");
+		script.append("            ZSDS.test.request.context = \"\";\n");
+		script.append("            ZSDS.test.request.classifyMasterContext = true;\n");
+		script.append("            ZSDS.test.request.classifyContext = true;\n");
 		script.append("        }\n");
+		*/
 		script.append("        ZSDS.test.refreshRequest();\n");
 		script.append("        var response = JSON.stringify(object,null,2);\n");
 		script.append("        response = response.replace(/\\\\n/g,\"\\n\");\n");

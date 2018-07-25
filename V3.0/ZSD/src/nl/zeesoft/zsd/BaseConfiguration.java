@@ -80,6 +80,7 @@ public class BaseConfiguration {
 		json.rootElement.children.add(new JsElem("baseDir",baseDir,true));
 		json.rootElement.children.add(new JsElem("extendDir",extendDir,true));
 		json.rootElement.children.add(new JsElem("overrideDir",overrideDir,true));
+		json.rootElement.children.add(new JsElem("generateReadFormat","" + generateReadFormat));
 		json.rootElement.children.add(new JsElem("maxMsInterpretPerSymbol","" + maxMsInterpretPerSymbol));
 		json.rootElement.children.add(new JsElem("maxMsInterpretPerSequence","" + maxMsInterpretPerSequence));
 		json.rootElement.children.add(new JsElem("maxMsDialogPerSequence","" + maxMsDialogPerSequence));
@@ -118,6 +119,7 @@ public class BaseConfiguration {
 		baseDir = json.rootElement.getChildString("baseDir",baseDir);
 		extendDir = json.rootElement.getChildString("extendDir",extendDir);
 		overrideDir = json.rootElement.getChildString("overrideDir",overrideDir);
+		generateReadFormat = json.rootElement.getChildBoolean("generateReadFormat",generateReadFormat);
 		maxMsInterpretPerSymbol = json.rootElement.getChildLong("maxMsInterpretPerSymbol",maxMsInterpretPerSymbol);
 		maxMsInterpretPerSequence = json.rootElement.getChildLong("maxMsInterpretPerSequence",maxMsInterpretPerSequence);
 		maxMsDialogPerSequence = json.rootElement.getChildLong("maxMsDialogPerSequence",maxMsDialogPerSequence);

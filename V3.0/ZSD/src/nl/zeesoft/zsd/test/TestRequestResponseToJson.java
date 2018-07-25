@@ -102,7 +102,7 @@ public class TestRequestResponseToJson extends TestObject {
 		output.output = new ZStringSymbolParser("Test output!");
 		output.prompt = new ZStringSymbolParser("Test prompt!");
 		output.promptVariable = "testPromptVar";
-		res.contextOutputs.put(output.context,output);
+		res.contextOutputs.add(output);
 		dvv = new DialogVariableValue();
 		dvv.name = "testVariable";
 		dvv.externalValue = "testExtVal";

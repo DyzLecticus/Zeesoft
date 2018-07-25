@@ -42,7 +42,7 @@ public class DialogToJson {
 					cntxt = dialog.getContext();
 				}
 				boolean found = false;
-				ZStringBuilder find = example.input;
+				ZStringBuilder find = new ZStringBuilder(example.input);
 				if (languageContext && example.output.length()>0) {
 					find.append(" ");
 					find.append(example.output);

@@ -10,8 +10,8 @@ import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestLanguageMasterContextClassifier extends TestSequenceClassifier {
-	private static final int	EXPECTED_ENGLISH_LINKS	= 933;
-	private static final int	EXPECTED_DUTCH_LINKS	= 1091;
+	private static final int	EXPECTED_ENGLISH_LINKS	= 768;
+	private static final int	EXPECTED_DUTCH_LINKS	= 905;
 	
 	public TestLanguageMasterContextClassifier(Tester tester) {
 		super(tester);

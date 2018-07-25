@@ -50,7 +50,7 @@ public class GenericMathHandler extends DialogInstanceHandler {
 			int i1 = Integer.parseInt(str[0]);
 			int i2 = Integer.parseInt(str[1]);
 			if (i2>0) {
-				result = getAbout();
+				exact = getAbout();
 				if (i2>=5) {
 					i1++;
 				}

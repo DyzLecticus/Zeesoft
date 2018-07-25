@@ -50,6 +50,9 @@ public class SequenceInterpreter {
 					r.addDebugLogLine("Classify language for sequence: ",sequence);
 					contexts = getConfiguration().getLanguageClassifier().getContexts(sequence,true,0.0D);
 				}
+				if (contexts.size()>0 && contexts.get(0).symbol.equals(BaseConfiguration.LANG_UNI)) {
+					contexts.remove(0);
+				}
 				if (contexts.size()>0) {
 					r.addDebugLogLine("Classified language: ",contexts.get(0).symbol);
 					r.responseLanguages = contexts;

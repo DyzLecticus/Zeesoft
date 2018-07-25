@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceMatcherResult;
 
 public abstract class DialogInstanceHandler {
@@ -49,8 +50,8 @@ public abstract class DialogInstanceHandler {
 				String val = config.getEntityValueTranslator().getTypeValueFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
 				String valCor = config.getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,variable.type,variable.complexName,variable.complexType);
 				String valSel = val;
-				if (valCor.length()>0 && !val.equals(valCor)) {
-					valSel = "";
+				if (!variable.type.equals(BaseConfiguration.TYPE_ALPHABETIC) && valCor.length()>0) {
+					valSel = valCor;
 				}
 				if (valSel.length()>0) {
 					String extVal = getConfig().getEntityValueTranslator().getExternalValueForInternalValues(valSel,variable.type);
@@ -103,7 +104,7 @@ public abstract class DialogInstanceHandler {
 			dro.getOutputFromPrompt();
 			replaceVariablesAndCorrectCase(dro,dro.output);
 			replaceVariablesAndCorrectCase(dro,dro.prompt);
-			r.contextOutputs.put(dialog.getContext(),dro);
+			r.contextOutputs.add(dro);
 			r.addDebugLogLine("    Set dialog output: ",dro.output);
 			if (dro.prompt.length()>0) {
 				r.addDebugLogLine("    Set dialog prompt: ",dro.prompt);
