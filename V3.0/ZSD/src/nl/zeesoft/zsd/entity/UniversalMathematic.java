@@ -120,9 +120,6 @@ public class UniversalMathematic extends EntityObject {
 			} else if (f1!=null) {
 				r = f1;
 			}
-			if (r>0F) {
-				r =  (Math.round(10F * r) / 10F);
-			}
 		} else {
 			r = RESULT_INFINITY;
 		}

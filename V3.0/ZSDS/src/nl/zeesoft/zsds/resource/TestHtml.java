@@ -110,7 +110,7 @@ public class TestHtml extends HtmlResource {
 		html.append("<a href=\"index.html\">Index</a>");
 		
 		html.append("<div>\n");
-		html.append("<table>\n");
+		html.append("<table style=\"width: 100%;\">\n");
 		html.append("<tbody>\n");
 		
 		html.append("<tr>\n");
@@ -118,7 +118,7 @@ public class TestHtml extends HtmlResource {
 		html.append("Output");
 		html.append("</td>\n");
 		html.append("<td>");
-		html.append("<input type=\"text\" id=\"output\" style=\"width: 300px;\" DISABLED/>");
+		html.append("<input type=\"text\" id=\"output\" style=\"width: 100%;\" DISABLED/>");
 		html.append("</td>\n");
 		html.append("</tr>\n");
 
@@ -127,7 +127,7 @@ public class TestHtml extends HtmlResource {
 		html.append("Prompt");
 		html.append("</td>\n");
 		html.append("<td>");
-		html.append("<input type=\"text\" id=\"prompt\" onchange=\"ZSDS.test.refreshRequest();\" style=\"width: 300px;\"/>");
+		html.append("<input type=\"text\" id=\"prompt\" onchange=\"ZSDS.test.refreshRequest();\" style=\"width: 100%;\"/>");
 		html.append("</td>\n");
 		html.append("</tr>\n");
 		
@@ -136,7 +136,7 @@ public class TestHtml extends HtmlResource {
 		html.append("Input");
 		html.append("</td>\n");
 		html.append("<td>");
-		html.append("<input type=\"text\" id=\"input\" value=\"hello\" onchange=\"ZSDS.test.refreshRequest();\" style=\"width: 300px;\"/>");
+		html.append("<input type=\"text\" id=\"input\" value=\"hello\" onchange=\"ZSDS.test.refreshRequest();\" style=\"width: 400px;\"/>");
 		html.append("<input type=\"button\" value=\"send\" onclick=\"ZSDS.test.sendRequest();\" />\n");
 		html.append("</td>\n");
 		html.append("</tr>\n");
@@ -145,9 +145,14 @@ public class TestHtml extends HtmlResource {
 		html.append("</table>\n");
 		html.append("</div>\n");
 		
+		html.append("<br />\n");
 		html.append("<div>\n");
 		html.append("Request<br />\n");
 		html.append("<textarea id=\"request\"></textarea>\n");
+		html.append("</div>\n");
+
+		html.append("<br />\n");
+		html.append("<div>\n");
 		html.append("Response<br />\n");
 		html.append("<textarea id=\"response\"></textarea>\n");
 		html.append("</div>\n");

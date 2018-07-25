@@ -165,7 +165,7 @@ public class TestEntityValueTranslator extends TestObject {
 
 		expression = new ZStringSymbolParser("10 D 3");
 		result = math.calculate(expression);
-		assertEqual("" + result,"3.3","The calculation did not produce the expected result");
+		assertEqual("" + result,"3.3333333","The calculation did not produce the expected result");
 
 		expression = new ZStringSymbolParser("10 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.ADDITION + " 25 " + UniversalMathematic.DIVISION + " 5 " + UniversalMathematic.SUBTRACTION + " 2");
 		expression.append(" EQ ");

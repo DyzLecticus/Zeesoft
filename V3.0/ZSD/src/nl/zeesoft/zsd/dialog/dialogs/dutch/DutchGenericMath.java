@@ -1,9 +1,12 @@
 package nl.zeesoft.zsd.dialog.dialogs.dutch;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericMath;
-import nl.zeesoft.zsd.entity.entities.dutch.DutchMathematic;
+import nl.zeesoft.zsd.entity.EntityObject;
 
 public class DutchGenericMath extends GenericMath {
 	public DutchGenericMath() {
@@ -13,17 +16,19 @@ public class DutchGenericMath extends GenericMath {
 	
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		DutchMathematic math = (DutchMathematic) t.getEntityObject(BaseConfiguration.LANG_NLD,BaseConfiguration.TYPE_MATHEMATIC);
-		for (String op1: math.getExternalValues().keySet()) {
+		List<String> ops = new ArrayList<String>();
+		EntityObject math = t.getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
+		for (String op: math.getExternalValues().keySet()) {
+			ops.add(op);
+		}
+		math = t.getEntityObject(BaseConfiguration.LANG_NLD,BaseConfiguration.TYPE_MATHEMATIC);
+		for (String op: math.getExternalValues().keySet()) {
+			ops.add(op);
+		}
+		for (String op1: ops) {
 			addExample("Hoeveel is {number1} " + op1 + " {number2}?","");
-			for (String op2: math.getExternalValues().keySet()) {
+			for (String op2: ops) {
 				addExample("Hoeveel is {number1} " + op1 + " {number2} " + op2 + " {number3}?","");
-				for (String op3: math.getExternalValues().keySet()) {
-					addExample("Hoeveel is {number1} " + op1 + " {number2} " + op2 + " {number3} " + op3 + " {number4}?","");
-					for (String op4: math.getExternalValues().keySet()) {
-						addExample("Hoeveel is {number1} " + op1 + " {number2} " + op2 + " {number3} " + op3 + " {number4} " + op4 + " {number5}?","");
-					}
-				}
 			}
 		}
 

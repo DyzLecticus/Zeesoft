@@ -23,6 +23,7 @@ public class DutchMathematic extends EntityObject {
 		super.initialize(translator);
 		addSymbol("vermenigvuldigd met",UniversalMathematic.MULTIPLICATION);
 		addSymbol("keer",UniversalMathematic.MULTIPLICATION);
+		addSymbol("maal",UniversalMathematic.MULTIPLICATION);
 		addSymbol("gedeeld door",UniversalMathematic.DIVISION);
 		addSymbol("plus",UniversalMathematic.ADDITION);
 		addSymbol("min",UniversalMathematic.SUBTRACTION);
