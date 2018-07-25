@@ -1,5 +1,6 @@
 package nl.zeesoft.zsds.handler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -25,7 +26,46 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 			if (getConfiguration().isInitialized()) {
 				out.println(buildResponse());
 			} else {
-				out.println(setErrorResponse(response,503,"Application is not yet initialized. Please try again in a few minutes."));
+				out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is waking up. Please wait."));
+			}
+		} catch (IOException e) {
+			getConfiguration().getMessenger().error(this,"I/O exception",e);
+		}
+	}
+
+	@Override
+	public void doPost(HttpServletRequest request, HttpServletResponse response) {
+		response.setContentType("application/json");
+		PrintWriter out;
+		ZStringBuilder js = new ZStringBuilder();
+		
+		String line = null;
+		try {
+			BufferedReader reader = request.getReader();
+			while ((line = reader.readLine()) != null) {
+				js.append(line);
+			}
+		} catch (IOException e) {
+			getConfiguration().getMessenger().error(this,"I/O exception while reading JSON POST request",e);
+		}
+		
+		JsFile json = new JsFile();
+		try {
+			json.fromStringBuilder(js);
+		} catch(Exception e) {
+			getConfiguration().getMessenger().error(this,"Exception while parsing JSON POST request",e);
+		}
+		
+		try {
+			out = response.getWriter();
+			if (getConfiguration().isInitialized()) {
+				if (json.rootElement!=null) {
+					out.println(buildPostResponse(json));
+				} else {
+					out.println(setErrorResponse(response,400,"Invalid request"));
+				}
+			} else {
+				out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is waking up. Please wait."));
 			}
 		} catch (IOException e) {
 			getConfiguration().getMessenger().error(this,"I/O exception",e);
@@ -34,7 +74,12 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 
 	@Override
 	protected ZStringBuilder buildResponse() {
-		return getConfiguration().getBaseConfig().toJson().toStringBuilderReadFormat();
+		return new ZStringBuilder();
+	}
+	
+	protected ZStringBuilder buildPostResponse(JsFile json) {
+		ZStringBuilder r = new ZStringBuilder();
+		return r;
 	}
 	
 	protected ZStringBuilder setErrorResponse(HttpServletResponse response, int status,String error) {

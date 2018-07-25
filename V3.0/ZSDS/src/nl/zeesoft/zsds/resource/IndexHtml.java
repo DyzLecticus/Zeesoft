@@ -7,9 +7,11 @@ public class IndexHtml extends HtmlResource {
 		setTitle("ZSDS - Welcome");
 		
 		ZStringBuilder html = new ZStringBuilder();
-		html.append("<a href=\"config.json\">Configuration</a>");
+		html.append("<a href=\"config.json\">Configuration JSON</a>");
 		html.append("<br />");
-		html.append("<a href=\"dialogs.json\">Dialogs</a>");
+		html.append("<a href=\"dialogs.json\">Dialogs JSON</a>");
+		html.append("<br />");
+		html.append("<a href=\"test.html\">Test</a>");
 
 		getBodyElements().add(html);
 	}

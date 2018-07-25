@@ -17,10 +17,14 @@ import nl.zeesoft.zsd.SequencePreprocessor;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.util.LanguageJsonGenerator;
+import nl.zeesoft.zsds.handler.BaseJavaScriptHandler;
+import nl.zeesoft.zsds.handler.BaseStyleSheetHandler;
 import nl.zeesoft.zsds.handler.HandlerObject;
 import nl.zeesoft.zsds.handler.HtmlIndexHandler;
 import nl.zeesoft.zsds.handler.HtmlNotFoundHandler;
+import nl.zeesoft.zsds.handler.HtmlTestHandler;
 import nl.zeesoft.zsds.handler.JsonConfigHandler;
+import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 import nl.zeesoft.zsds.handler.JsonDialogsHandler;
 import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
 
@@ -194,11 +198,15 @@ public class AppConfiguration {
 	
 	protected List<HandlerObject> getDefaultHandlers() {
 		List<HandlerObject> r = new ArrayList<HandlerObject>();
-		r.add(new HtmlIndexHandler(this));
+		r.add(new BaseStyleSheetHandler(this));
+		r.add(new BaseJavaScriptHandler(this));
 		r.add(new HtmlNotFoundHandler(this));
+		r.add(new HtmlIndexHandler(this));
+		r.add(new HtmlTestHandler(this));
 		r.add(new JsonNotFoundHandler(this));
 		r.add(new JsonConfigHandler(this));
 		r.add(new JsonDialogsHandler(this));
+		r.add(new JsonDialogRequestHandler(this));
 		return r;
 	}
 }
