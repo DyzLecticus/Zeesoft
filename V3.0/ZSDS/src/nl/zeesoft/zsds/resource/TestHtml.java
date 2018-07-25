@@ -86,7 +86,7 @@ public class TestHtml extends HtmlResource {
 		script.append("        if (\n");
 		script.append("            typeof(object.contextOutputs)!==\"undefined\" &&\n");
 		script.append("            typeof(object.contextOutputs[0])!==\"undefined\" &&\n");
-		script.append("            typeof(object.contextOutputs[0].dialogVariableValues)!==\"undefined\" &&\n");
+		script.append("            typeof(object.contextOutputs[0].dialogVariableValues)!==\"undefined\"\n");
 		script.append("            ) {\n");
 		script.append("            ZSDS.test.request.dialogVariableValues = object.contextOutputs[0].dialogVariableValues;\n");
 		script.append("        }\n");
