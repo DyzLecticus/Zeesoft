@@ -38,7 +38,7 @@ public class ZSDSServlet extends HttpServlet {
 			debug = Boolean.parseBoolean(dbg);
 		}
 		
-		System.out.println("installDir: " + installDir + ", debug: " + debug);
+		System.out.println("Installation: " + installDir);
 		
 		configuration = new AppConfiguration(installDir,debug);
 		configuration.initialize();
@@ -50,8 +50,7 @@ public class ZSDSServlet extends HttpServlet {
 		if (handler!=null) {
 			handler.doGet(request, response);
 		} else {
-			// TODO handle 404 not found
-			response.getWriter().append("Not found: ").append(request.getContextPath());
+			configuration.getMessenger().error(this,"Failed to handle request for path: " + request.getServletPath());
 		}
 	}
 
@@ -61,8 +60,7 @@ public class ZSDSServlet extends HttpServlet {
 		if (handler!=null) {
 			handler.doPost(request, response);
 		} else {
-			// TODO handle 404 not found
-			response.getWriter().append("Not found: ").append(request.getContextPath());
+			configuration.getMessenger().error(this,"Failed to handle request for path: " + request.getServletPath());
 		}
 	}
 	

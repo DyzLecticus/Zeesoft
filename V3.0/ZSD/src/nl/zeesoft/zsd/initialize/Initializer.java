@@ -16,7 +16,7 @@ public class Initializer extends Locker {
 	private List<InitializerWorker>		workers		= new ArrayList<InitializerWorker>();
 	private List<InitializerListener>	listeners	= new ArrayList<InitializerListener>();
 	
-	private int							initialized	= 0;
+	private int							initialized	= -1;
 
 	public Initializer() {
 		super(null);
@@ -93,6 +93,7 @@ public class Initializer extends Locker {
 	 * Starts the initialization of classes.
 	 */
 	public void start() {
+		initialized = 0;
 		for (InitializerWorker worker: workers) {
 			worker.start();
 		}

@@ -8,16 +8,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsds.AppConfiguration;
-import nl.zeesoft.zsds.resource.IndexHtml;
 
-public class IndexHandler extends HandlerObject {
-	public IndexHandler(AppConfiguration config) {
-		super(config,"/index.html");
+public class JsonNotFoundHandler extends JsonBaseHandlerObject {
+	public JsonNotFoundHandler(AppConfiguration config) {
+		super(config,"/404.json");
 	}
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		response.setContentType("text/html");
+		response.setContentType("application/json");
+		response.setStatus(404);
 		PrintWriter out;
 		try {
 			out = response.getWriter();
@@ -29,7 +29,6 @@ public class IndexHandler extends HandlerObject {
 
 	@Override
 	protected ZStringBuilder buildResponse() {
-		IndexHtml index = new IndexHtml();
-		return index.toStringBuilder();
+		return getErrorResponse("404","Resource not found");
 	}
 }

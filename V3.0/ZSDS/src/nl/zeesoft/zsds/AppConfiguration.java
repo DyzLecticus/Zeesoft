@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
@@ -15,14 +16,15 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequencePreprocessor;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogSet;
-import nl.zeesoft.zsd.initialize.InitializeClass;
-import nl.zeesoft.zsd.initialize.InitializerListener;
 import nl.zeesoft.zsd.util.LanguageJsonGenerator;
 import nl.zeesoft.zsds.handler.HandlerObject;
-import nl.zeesoft.zsds.handler.IndexHandler;
+import nl.zeesoft.zsds.handler.HtmlIndexHandler;
+import nl.zeesoft.zsds.handler.HtmlNotFoundHandler;
 import nl.zeesoft.zsds.handler.JsonConfigHandler;
+import nl.zeesoft.zsds.handler.JsonDialogsHandler;
+import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
 
-public class AppConfiguration implements InitializerListener {
+public class AppConfiguration {
 	private Messenger					messenger				= null;
 	private WorkerUnion					union					= null;
 	private String						installDir				= "";
@@ -31,12 +33,23 @@ public class AppConfiguration implements InitializerListener {
 	private BaseConfiguration			baseConfig				= null;
 	private AppStateManager				stateManager			= null;
 	
-	//private DialogHandlerConfiguration	dialogHandlerConfig		= null;
-	
 	private List<HandlerObject>			handlers				= null;
+	private HandlerObject				notFoundHtmlHandler		= null;
+	private HandlerObject				notFoundJsonHandler		= null;
 
 	public AppConfiguration(String installDir,boolean debug) {
 		handlers = getDefaultHandlers();
+		for (HandlerObject handler: handlers) {
+			if (handler instanceof HtmlNotFoundHandler) {
+				notFoundHtmlHandler = handler;
+			}
+			if (handler instanceof JsonNotFoundHandler) {
+				notFoundJsonHandler = handler;
+			}
+			if (notFoundHtmlHandler!=null && notFoundJsonHandler!=null) {
+				break;
+			}
+		}
 		ZDKFactory factory = new ZDKFactory();
 		messenger = factory.getMessenger();
 		messenger.setPrintDebugMessages(debug);
@@ -48,43 +61,41 @@ public class AppConfiguration implements InitializerListener {
 	}
 
 	public void initialize() {
-		messenger.setPrintDebugMessages(debug);
-		messenger.start();
-		
 		baseConfig = getNewBaseConfiguration();
 		String fileName = installDir + "config.json";
 		File file = new File(fileName);
 		if (!file.exists()) {
 			debug(this,"Installing ...");
-			baseConfig.setBaseDir(installDir + "data/" + baseConfig.getBaseDir());
-			baseConfig.setOverrideDir(installDir + "data/" + baseConfig.getOverrideDir());
-			baseConfig.setExtendDir(installDir + "data/" + baseConfig.getExtendDir());
+			baseConfig.setDebug(debug);
+			baseConfig.setDataDir(installDir + "data/");
 			baseConfig.setGenerateReadFormat(debug);
 			baseConfig.toJson().toFile(fileName,true);
 			
-			File dir = new File(baseConfig.getBaseDir());
+			File dir = new File(baseConfig.getFullBaseDir());
 			dir.mkdirs();
-			dir = new File(baseConfig.getOverrideDir());
+			dir = new File(baseConfig.getFullOverrideDir());
 			dir.mkdirs();
-			dir = new File(baseConfig.getExtendDir());
+			dir = new File(baseConfig.getFullExtendDir());
 			dir.mkdirs();
 			stateManager.generate();
 			
 			debug(this,"Installed");
 		} else {
 			JsFile json = new JsFile();
-			json.fromFile(fileName);
-			baseConfig.fromJson(json);
+			ZStringBuilder err = json.fromFile(fileName);
+			if (err.length()>0) {
+				messenger.error(this,err.toString());
+			} else {
+				baseConfig.fromJson(json);
+				debug = baseConfig.isDebug();
+				messenger.setPrintDebugMessages(debug);
+			}
 		}
+
+		messenger.setPrintDebugMessages(debug);
+		messenger.start();
 		
 		stateManager.load();
-	}
-
-	@Override
-	public void initializedClass(InitializeClass cls, boolean done) {
-		if (done) {
-			debug(this,"Initialized.");
-		}
 	}
 
 	public boolean isInitialized() {
@@ -117,6 +128,13 @@ public class AppConfiguration implements InitializerListener {
 			if (path.equals(handler.getPath())) {
 				r = handler; 
 				break;
+			}
+		}
+		if (r==null) {
+			if (!path.endsWith(".json")) {
+				r = notFoundHtmlHandler;
+			} else {
+				r = notFoundJsonHandler;
 			}
 		}
 		return r;
@@ -176,8 +194,11 @@ public class AppConfiguration implements InitializerListener {
 	
 	protected List<HandlerObject> getDefaultHandlers() {
 		List<HandlerObject> r = new ArrayList<HandlerObject>();
-		r.add(new IndexHandler(this));
+		r.add(new HtmlIndexHandler(this));
+		r.add(new HtmlNotFoundHandler(this));
+		r.add(new JsonNotFoundHandler(this));
 		r.add(new JsonConfigHandler(this));
+		r.add(new JsonDialogsHandler(this));
 		return r;
 	}
 }

@@ -141,16 +141,16 @@ public class InterpreterConfiguration extends Initializer {
 	}
 	
 	private String getBaseDirForFileName(String fileName) {
-		String dir = base.getOverrideDir();
-		File file = new File(base.getOverrideDir() + fileName);
+		String dir = base.getFullOverrideDir();
+		File file = new File(dir + fileName);
 		if (!file.exists()) {
-			dir = base.getBaseDir();
+			dir = base.getFullBaseDir();
 		}
 		return dir;
 	}
 
 	private void addExtensionForFileName(List<String> fileNames,String fileName) {
-		String extend = base.getExtendDir() + fileName;
+		String extend = base.getFullExtendDir() + fileName;
 		File file = new File(extend);
 		if (file.exists()) {
 			fileNames.add(extend);

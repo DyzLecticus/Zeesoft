@@ -69,7 +69,7 @@ public class AppStateManager extends Locker implements InitializerListener {
 			sp.initialize();
 			t.initialize();
 			ds.initialize(t);
-			generator.generate(configuration.getBaseConfig(),sp,t,ds,configuration.getBaseConfig().getBaseDir());
+			generator.generate(configuration.getBaseConfig(),sp,t,ds,configuration.getBaseConfig().getFullBaseDir());
 			lockMe(this);
 			writing = false;
 			unlockMe(this);

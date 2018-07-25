@@ -42,6 +42,9 @@ public class BaseConfiguration {
 	private SortedMap<String,String>			supportedAlphabets			= new TreeMap<String,String>();
 	private SortedMap<String,List<String>>		supportedMasterContexts		= new TreeMap<String,List<String>>();
 
+	private boolean								debug						= false;
+	
+	private String								dataDir						= "";
 	private String								baseDir						= "base/";
 	private String								extendDir					= "extend/";
 	private String								overrideDir					= "override/";
@@ -72,6 +75,8 @@ public class BaseConfiguration {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("name",name,true));
 		json.rootElement.children.add(new JsElem("primaryLanguage",primaryLanguage,true));
+		json.rootElement.children.add(new JsElem("debug","" + debug));
+		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
 		json.rootElement.children.add(new JsElem("baseDir",baseDir,true));
 		json.rootElement.children.add(new JsElem("extendDir",extendDir,true));
 		json.rootElement.children.add(new JsElem("overrideDir",overrideDir,true));
@@ -108,6 +113,8 @@ public class BaseConfiguration {
 		supportedMasterContexts.clear();
 		name = json.rootElement.getChildString("name",name);
 		primaryLanguage = json.rootElement.getChildString("primaryLanguage",primaryLanguage);
+		debug = json.rootElement.getChildBoolean("debug",debug);
+		dataDir = json.rootElement.getChildString("dataDir",dataDir);
 		baseDir = json.rootElement.getChildString("baseDir",baseDir);
 		extendDir = json.rootElement.getChildString("extendDir",extendDir);
 		overrideDir = json.rootElement.getChildString("overrideDir",overrideDir);
@@ -132,6 +139,18 @@ public class BaseConfiguration {
 		}
 	}
 
+	public String getFullBaseDir() {
+		return dataDir + baseDir;
+	}
+
+	public String getFullOverrideDir() {
+		return dataDir + overrideDir;
+	}
+
+	public String getFullExtendDir() {
+		return dataDir + extendDir;
+	}
+	
 	/**
 	 * Returns the name of the agent.
 	 * 
@@ -196,12 +215,42 @@ public class BaseConfiguration {
 	}
 
 	/**
-	 * Returns the base directory for data files.
+	 * Indicates the application is in debug mode.
 	 * 
-	 * @return The base directory
+	 * @return True if the application is in debug mode
 	 */
-	public String getBaseDir() {
-		return baseDir;
+	public boolean isDebug() {
+		return debug;
+	}
+
+	/**
+	 * Sets the application debug mode.
+	 * 
+	 * @param debug Indicates the application is in debug mode
+	 */
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	/**
+	 * Returns the directory for data files.
+	 * 
+	 * @return The data directory
+	 */
+	public String getDataDir() {
+		return dataDir;
+	}
+
+	/**
+	 * Sets the directory for data files.
+	 * 
+	 * @param dataDir The data directory
+	 */
+	public void setDataDir(String dataDir) {
+		if (!dataDir.endsWith("/") && !dataDir.endsWith("\\")) {
+			dataDir += "/";
+		}
+		this.dataDir = dataDir;
 	}
 
 	/**
@@ -210,16 +259,10 @@ public class BaseConfiguration {
 	 * @param baseDir The base directory
 	 */
 	public void setBaseDir(String baseDir) {
+		if (!baseDir.endsWith("/") && !baseDir.endsWith("\\")) {
+			baseDir += "/";
+		}
 		this.baseDir = baseDir;
-	}
-
-	/**
-	 * Returns the extension directory for data files.
-	 * 
-	 * @return The extension directory
-	 */
-	public String getExtendDir() {
-		return extendDir;
 	}
 
 	/**
@@ -228,16 +271,10 @@ public class BaseConfiguration {
 	 * @param extendDir The extension directory
 	 */
 	public void setExtendDir(String extendDir) {
+		if (!extendDir.endsWith("/") && !extendDir.endsWith("\\")) {
+			extendDir += "/";
+		}
 		this.extendDir = extendDir;
-	}
-
-	/**
-	 * Returns the override directory for data files.
-	 * 
-	 * @return The override directory
-	 */
-	public String getOverrideDir() {
-		return overrideDir;
 	}
 
 	/**
@@ -246,6 +283,9 @@ public class BaseConfiguration {
 	 * @param overrideDir The override directory
 	 */
 	public void setOverrideDir(String overrideDir) {
+		if (!overrideDir.endsWith("/") && !overrideDir.endsWith("\\")) {
+			overrideDir += "/";
+		}
 		this.overrideDir = overrideDir;
 	}
 

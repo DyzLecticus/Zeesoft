@@ -42,14 +42,14 @@ public class DialogHandlerConfiguration extends InterpreterConfiguration {
 		c.obj = dialogSet;
 		for (String language: getBase().getSupportedLanguages()) {
 			String fileName = LanguageDialogSetJsonGenerator.FILE_NAME_PREFIX + language + ".json";
-			String override = getBase().getOverrideDir() + fileName;
+			String override = getBase().getFullOverrideDir() + fileName;
 			File test = new File(override);
 			if (test.exists()) {
 				c.fileNames.add(override);
 			} else {
-				c.fileNames.add(getBase().getBaseDir() + fileName);
+				c.fileNames.add(getBase().getFullBaseDir() + fileName);
 			}
-			String extend = getBase().getExtendDir() + fileName;
+			String extend = getBase().getFullExtendDir() + fileName;
 			test = new File(extend);
 			if (test.exists()) {
 				c.fileNames.add(extend);

@@ -8,10 +8,8 @@ public class IndexHtml extends HtmlResource {
 		
 		ZStringBuilder html = new ZStringBuilder();
 		html.append("<a href=\"config.json\">Configuration</a>");
-		/*
 		html.append("<br />");
-		html.append("<a href=\"chat.html\">Chat</a>");
-		*/
+		html.append("<a href=\"dialogs.json\">Dialogs</a>");
 
 		getBodyElements().add(html);
 	}
