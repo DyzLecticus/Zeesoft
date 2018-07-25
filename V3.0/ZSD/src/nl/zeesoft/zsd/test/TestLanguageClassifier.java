@@ -10,7 +10,7 @@ import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestLanguageClassifier extends TestSequenceClassifier {
-	private static final int	EXPECTED_LINKS	= 590959;
+	private static final int	EXPECTED_LINKS	= 591303;
 	
 	public TestLanguageClassifier(Tester tester) {
 		super(tester);

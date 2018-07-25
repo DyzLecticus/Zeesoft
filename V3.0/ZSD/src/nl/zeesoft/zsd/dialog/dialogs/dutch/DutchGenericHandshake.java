@@ -5,7 +5,7 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericHandshake;
 
 public class DutchGenericHandshake extends GenericHandshake {
-	private static final String EXAMPLE_OUTPUT = "Mijn naam is {selfName}. Wat is jouw naam?";
+	private static final String EXAMPLE_OUTPUT = "Mijn naam is {selfName}.";
 	
 	public DutchGenericHandshake() {
 		setLanguage(BaseConfiguration.LANG_NLD);

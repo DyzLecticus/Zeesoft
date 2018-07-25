@@ -8,8 +8,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.interpret.InterpreterResponse;
 
 public class DialogResponse extends InterpreterResponse {
-	public SortedMap<String,DialogResponseOutput>	contextOutputs					= new TreeMap<String,DialogResponseOutput>();
-	public SortedMap<String,DialogVariableValue>	responseDialogVariableValues	= new TreeMap<String,DialogVariableValue>();
+	public SortedMap<String,DialogResponseOutput>	contextOutputs	= new TreeMap<String,DialogResponseOutput>();
 	
 	public DialogResponse() {
 		super(null);
@@ -34,15 +33,16 @@ public class DialogResponse extends InterpreterResponse {
 			oElem.children.add(new JsElem("context",output.context,true));
 			oElem.children.add(new JsElem("output",output.output,true));
 			oElem.children.add(new JsElem("prompt",output.prompt,true));
-		}
-		JsElem dvElem = new JsElem("responseDialogVariableValues",true);
-		json.rootElement.children.add(dvElem);
-		for (DialogVariableValue dvv: responseDialogVariableValues.values()) {
-			JsElem dElem = new JsElem();
-			dvElem.children.add(dElem);
-			dElem.children.add(new JsElem("name",dvv.name,true));
-			dElem.children.add(new JsElem("externalValue",dvv.externalValue,true));
-			dElem.children.add(new JsElem("internalValue",dvv.internalValue,true));
+			oElem.children.add(new JsElem("promptVariable",output.promptVariable,true));
+			JsElem dvElem = new JsElem("dialogVariableValues",true);
+			oElem.children.add(dvElem);
+			for (DialogVariableValue dvv: output.values.values()) {
+				JsElem dElem = new JsElem();
+				dvElem.children.add(dElem);
+				dElem.children.add(new JsElem("name",dvv.name,true));
+				dElem.children.add(new JsElem("externalValue",dvv.externalValue,true));
+				dElem.children.add(new JsElem("internalValue",dvv.internalValue,true));
+			}
 		}
 		return json;
 	}
@@ -58,18 +58,18 @@ public class DialogResponse extends InterpreterResponse {
 				output.context = oElem.getChildString("context");
 				output.output = oElem.getChildZStringSymbolParser("output");
 				output.prompt = oElem.getChildZStringSymbolParser("prompt");
+				output.promptVariable = oElem.getChildString("promptVariable");
 				contextOutputs.put(output.context,output);
-			}
-		}
-		JsElem dvElem = json.rootElement.getChildByName("responseDialogVariableValues");
-		if (dvElem!=null) {
-			responseDialogVariableValues.clear();
-			for (JsElem dElem: dvElem.children) {
-				DialogVariableValue dvv = new DialogVariableValue();
-				dvv.name = dElem.getChildString("name");
-				dvv.externalValue = dElem.getChildString("externalValue");
-				dvv.internalValue = dElem.getChildString("internalValue");
-				responseDialogVariableValues.put(dvv.name,dvv);
+				JsElem dvElem = oElem.getChildByName("dialogVariableValues");
+				if (dvElem!=null) {
+					for (JsElem dElem: dvElem.children) {
+						DialogVariableValue dvv = new DialogVariableValue();
+						dvv.name = dElem.getChildString("name");
+						dvv.externalValue = dElem.getChildString("externalValue");
+						dvv.internalValue = dElem.getChildString("internalValue");
+						output.values.put(dvv.name,dvv);
+					}
+				}
 			}
 		}
 	}

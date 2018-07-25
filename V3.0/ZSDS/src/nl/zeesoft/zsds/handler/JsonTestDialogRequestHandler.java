@@ -7,18 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsds.AppConfiguration;
 
-public class JsonNotFoundHandler extends JsonBaseHandlerObject {
-	public JsonNotFoundHandler(AppConfiguration config) {
-		super(config,"/404.json");
+public class JsonTestDialogRequestHandler extends HandlerObject {
+	public JsonTestDialogRequestHandler(AppConfiguration config) {
+		super(config,"/testDialogRequest.json");
 	}
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("application/json");
-		response.setStatus(404);
 		PrintWriter out;
 		try {
 			out = response.getWriter();
@@ -30,11 +29,9 @@ public class JsonNotFoundHandler extends JsonBaseHandlerObject {
 
 	@Override
 	protected ZStringBuilder buildResponse() {
-		return getErrorResponse("404","Resource not found");
-	}
-
-	@Override
-	protected ZStringBuilder buildPostResponse(JsFile json) {
-		return getCachedResponse();
+		DialogRequest request = new DialogRequest();
+		request.setAllActions(true);
+		request.appendDebugLog = getConfiguration().isDebug();
+		return request.toJson().toStringBuilderReadFormat();
 	}
 }

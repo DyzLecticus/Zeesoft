@@ -42,19 +42,32 @@ public class DialogToJson {
 					cntxt = dialog.getContext();
 				}
 				boolean found = false;
+				ZStringBuilder find = example.input;
+				if (languageContext && example.output.length()>0) {
+					find.append(" ");
+					find.append(example.output);
+				}
 				for (ZStringBuilder sb: added) {
-					if (sb.equals(example.input)) {
+					if (sb.equals(find)) {
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
-					added.add(example.input);
-					TsvToJson.checkAddSequenceElement(parent,
-						example.input,
-						null,
-						new ZStringBuilder(cntxt)
-						);
+					added.add(find);
+					if (languageContext && example.output.length()>0) {
+						TsvToJson.checkAddSequenceElement(parent,
+							example.input,
+							example.output,
+							new ZStringBuilder(cntxt)
+							);
+					} else {
+						TsvToJson.checkAddSequenceElement(parent,
+							example.input,
+							null,
+							new ZStringBuilder(cntxt)
+							);
+					}
 				}
 			}
 			for (DialogVariable variable: dialog.getVariables()) {

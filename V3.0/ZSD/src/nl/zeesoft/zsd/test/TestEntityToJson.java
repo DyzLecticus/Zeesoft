@@ -10,6 +10,8 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.util.EntityToJson;
 
 public class TestEntityToJson extends TestObject {
+	private static final int	SEQUENCE_ELEMENTS	= 332872;
+	
 	public TestEntityToJson(Tester tester) {
 		super(tester);
 	}
@@ -54,7 +56,7 @@ public class TestEntityToJson extends TestObject {
 		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
 		if (json.rootElement.children.size()>0) {
 			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " entity values took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(json.rootElement.children.get(0).children.size(),332871,"The number of sequence elements does not match expectation");
+			assertEqual(json.rootElement.children.get(0).children.size(),SEQUENCE_ELEMENTS,"The number of sequence elements does not match expectation");
 			showJsonSample(json,10);
 		}
 	}

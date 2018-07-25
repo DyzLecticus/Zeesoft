@@ -9,10 +9,13 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.RoomBooking;
 
 public class EnglishRoomBooking extends RoomBooking {
-	private List<ZStringBuilder>	phrases		= new ArrayList<ZStringBuilder>();
-	private List<String>			vars		= new ArrayList<String>();
-	private List<String>			rooms		= new ArrayList<String>();
-	private List<String>			books		= new ArrayList<String>();
+	private static final String		EXAMPLE_OUTPUT_1	= "Okay.";
+	private static final String		EXAMPLE_OUTPUT_2	= "Okay.";
+	
+	private List<ZStringBuilder>	phrases				= new ArrayList<ZStringBuilder>();
+	private List<String>			vars				= new ArrayList<String>();
+	private List<String>			rooms				= new ArrayList<String>();
+	private List<String>			books				= new ArrayList<String>();
 	
 	public EnglishRoomBooking() {
 		setLanguage(BaseConfiguration.LANG_ENG);
@@ -49,14 +52,14 @@ public class EnglishRoomBooking extends RoomBooking {
 						ZStringBuilder inputVar = new ZStringBuilder(input);
 						inputVar.replace("."," " + var + ".");
 						inputVar.replace("?"," " + var + "?");
-						addExample(inputVar.toString(),"");
+						addExample(inputVar.toString(),getOutput1());
 						int i = 0;
 						for (String var2: vars) {
 							if (!var2.equals(var)) {
 								ZStringBuilder inputVar2 = new ZStringBuilder(inputVar);
 								inputVar2.replace("."," " + var2 + ".");
 								inputVar2.replace("?"," " + var2 + "?");
-								addExample(inputVar2.toString(),"");
+								addExample(inputVar2.toString(),getOutput2());
 							}
 							i++;
 							if (i==4) {
@@ -108,5 +111,13 @@ public class EnglishRoomBooking extends RoomBooking {
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Is there anything else I can do for you?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Is there anything else I can help you with?");
+	}
+	
+	protected String getOutput1() {
+		return EXAMPLE_OUTPUT_1;
+	}
+	
+	protected String getOutput2() {
+		return EXAMPLE_OUTPUT_2;
 	}
 }

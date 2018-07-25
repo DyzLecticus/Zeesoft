@@ -78,7 +78,7 @@ public class TestDialogHandler extends TestInitializer {
 				"mijn naam si gekste der henkies",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:si UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies .",
 				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies .",
-				"","Wat kan ik voor je doen Gekste der Henkies?");
+				"Hallo. Mijn naam is Dyz Lecticus.","Wat kan ik voor je doen Gekste der Henkies?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Who created you?",
@@ -98,12 +98,12 @@ public class TestDialogHandler extends TestInitializer {
 			testRequestResponse(handler,"",
 				"Can I book a room for 5 people?",
 				"UNI_ABC:Can UNI_ABC:I UNI_ABC:book UNI_ABC:a|ENG_NAM:firstName:UNI_ABC:A UNI_ABC:room|ENG_NAM:lastName:UNI_ABC:Room UNI_ABC:for UNI_NUM:5 UNI_ABC:people ?",
-				"","On what date?");
+				"Okay.","On what date?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?",
 				"UNI_ABC:Can UNI_ABC:I UNI_ABC:book UNI_ABC:a|ENG_NAM:firstName:UNI_ABC:A UNI_ABC:room|ENG_NAM:lastName:UNI_ABC:Room UNI_ABC:for UNI_NUM:12 UNI_ABC:people UNI_ABC:on ENG_DAT:2018-10-01 UNI_ABC:at ENG_TIM:12:00:00 UNI_ABC:for ENG_DUR:02:00 ?",
-				"","Do I understand correctly that you want a room on october first twothousandeighteen, for 12 people, from twelve o'clock, for two hours?");
+				"Okay.","Do I understand correctly that you want a room on october first twothousandeighteen, for 12 people, from twelve o'clock, for two hours?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"What does it cost to book a room?",

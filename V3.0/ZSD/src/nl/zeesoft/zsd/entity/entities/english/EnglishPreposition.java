@@ -21,7 +21,7 @@ public class EnglishPreposition extends EntityObject {
 	public void initialize(EntityValueTranslator translator) {
 		super.initialize(translator);
 		
-		for (int i = 1; i<=4; i++) {
+		for (int i = 1; i<=5; i++) {
 			String value = "" + i;
 			String name = "";
 			if (i==1) {
@@ -32,6 +32,8 @@ public class EnglishPreposition extends EntityObject {
 				name = "from";
 			} else if (i==4) {
 				name = "from the";
+			} else if (i==5) {
+				name = "the";
 			}
 			addEntityValue(name,value,name);
 		}

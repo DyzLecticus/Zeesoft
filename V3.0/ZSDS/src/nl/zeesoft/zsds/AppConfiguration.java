@@ -27,6 +27,7 @@ import nl.zeesoft.zsds.handler.JsonConfigHandler;
 import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 import nl.zeesoft.zsds.handler.JsonDialogsHandler;
 import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
+import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
 
 public class AppConfiguration {
 	private Messenger					messenger				= null;
@@ -206,6 +207,7 @@ public class AppConfiguration {
 		r.add(new JsonNotFoundHandler(this));
 		r.add(new JsonConfigHandler(this));
 		r.add(new JsonDialogsHandler(this));
+		r.add(new JsonTestDialogRequestHandler(this));
 		r.add(new JsonDialogRequestHandler(this));
 		return r;
 	}

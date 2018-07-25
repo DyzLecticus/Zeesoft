@@ -9,6 +9,8 @@ import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.util.DialogToJson;
 
 public class TestDialogToJson extends TestEntityToJson {
+	private static final int	SEQUENCE_ELEMENTS	= 2865;
+	
 	public TestDialogToJson(Tester tester) {
 		super(tester);
 	}
@@ -54,7 +56,7 @@ public class TestDialogToJson extends TestEntityToJson {
 		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
 		if (json.rootElement.children.size()>0) {
 			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " dialog examples took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(json.rootElement.children.get(0).children.size(),2747,"The number of sequence elements does not match expectation");
+			assertEqual(json.rootElement.children.get(0).children.size(),SEQUENCE_ELEMENTS,"The number of sequence elements does not match expectation");
 			showJsonSample(json,10);
 		}
 	}

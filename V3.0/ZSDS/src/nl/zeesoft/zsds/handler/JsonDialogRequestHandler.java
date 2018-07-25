@@ -36,6 +36,8 @@ public class JsonDialogRequestHandler extends JsonBaseHandlerObject {
 		request.fromJson(json);
 		DialogHandler handler = new DialogHandler(getConfiguration().getDialogHandlerConfig());
 		DialogResponse response = handler.handleDialogRequest(request);
+		response.debugLog.replace("\n","<NEWLINE>");
+		response.debugLog.replace("\\\"","<QUOTE>");
 		ZStringBuilder r = null;
 		if (getConfiguration().isDebug()) {
 			r = response.toJson().toStringBuilderReadFormat();

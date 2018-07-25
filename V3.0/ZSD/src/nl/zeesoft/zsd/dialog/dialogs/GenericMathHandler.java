@@ -6,20 +6,21 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
 import nl.zeesoft.zsd.dialog.DialogResponse;
+import nl.zeesoft.zsd.dialog.DialogResponseOutput;
 import nl.zeesoft.zsd.dialog.DialogVariableValue;
 import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.entity.UniversalMathematic;
 
 public class GenericMathHandler extends DialogInstanceHandler {
 	@Override
-	protected ZStringSymbolParser updatedValues(DialogResponse r,List<DialogVariableValue> updatedValues,String promptVariable) {
+	protected void setPrompt(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
 		ZStringSymbolParser expression = new ZStringSymbolParser();
 		
 		for (int i = 1; i <= 5; i++) {
-			String numVal = getValues().get("number" + i).internalValue;
+			String numVal = dro.values.get("number" + i).internalValue;
 			String opVal = "";
 			if (i < 5) {
-				opVal = getValues().get("operator" + i).internalValue;
+				opVal = dro.values.get("operator" + i).internalValue;
 			}
 			if (numVal.length()>0) {
 				if (expression.length()>0) {
@@ -66,10 +67,10 @@ public class GenericMathHandler extends DialogInstanceHandler {
 			}
 		}
 
-		setDialogVariableValue(r,GenericMath.VARIABLE_EXACT,exact);
-		setDialogVariableValue(r,GenericMath.VARIABLE_RESULT,result);
+		dro.setDialogVariableValue(r,GenericMath.VARIABLE_EXACT,exact);
+		dro.setDialogVariableValue(r,GenericMath.VARIABLE_RESULT,result);
 		
-		return super.updatedValues(r, updatedValues, promptVariable);
+		super.setPrompt(r, dro, updatedValues, promptVariable);
 	}
 	
 	protected EntityObject getNumericEntity() {
