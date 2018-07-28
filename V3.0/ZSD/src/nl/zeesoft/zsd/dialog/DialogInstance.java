@@ -44,11 +44,15 @@ public class DialogInstance {
 		if (eo!=null && eo instanceof ComplexObject) {
 			ComplexObject co = (ComplexObject) eo;
 			for (ComplexPattern pattern: co.getPatterns()) {
-				addExample(pattern.pattern,"");
+				addComplexPattern(t,pattern);
 			}
 		}
 	}
-	
+
+	protected void addComplexPattern(EntityValueTranslator t,ComplexPattern pattern) {
+		addExample(pattern.pattern,"");
+	}
+
 	public DialogVariable addVariable(String name, String type) {
 		return addVariable(name,type,"","","");
 	}

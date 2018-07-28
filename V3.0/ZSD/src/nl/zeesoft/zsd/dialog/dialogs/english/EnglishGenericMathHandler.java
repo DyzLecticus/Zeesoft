@@ -21,6 +21,11 @@ public class EnglishGenericMathHandler extends GenericMathHandler {
 	}
 
 	@Override
+	protected String getMinus() {
+		return "minus";
+	}
+	
+	@Override
 	protected String getInfinity() {
 		return "infinity";
 	}

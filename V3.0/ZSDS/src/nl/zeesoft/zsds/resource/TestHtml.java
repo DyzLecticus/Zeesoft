@@ -1,6 +1,7 @@
 package nl.zeesoft.zsds.resource;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zsd.dialog.dialogs.Generic;
 
 public class TestHtml extends HtmlResource {
 	public TestHtml() {
@@ -89,6 +90,16 @@ public class TestHtml extends HtmlResource {
 		script.append("            typeof(object.contextOutputs[0].dialogVariableValues)!==\"undefined\"\n");
 		script.append("            ) {\n");
 		script.append("            ZSDS.test.request.dialogVariableValues = object.contextOutputs[0].dialogVariableValues;\n");
+		script.append("        }\n");
+		script.append("        if (\n");
+		script.append("            typeof(object.contextOutputs)!==\"undefined\" &&\n");
+		script.append("            typeof(object.contextOutputs[0])!==\"undefined\" &&\n");
+		script.append("            typeof(object.contextOutputs[0].promptVariable)!==\"undefined\" &&\n");
+		script.append("            object.contextOutputs[0].promptVariable===\"" + Generic.VARIABLE_NEXT_DIALOG + "\"\n");
+		script.append("            ) {\n");
+		script.append("            ZSDS.test.request.masterContext = \"\";\n");
+		script.append("            ZSDS.test.request.context = \"\";\n");
+		script.append("            ZSDS.test.request.dialogVariableValues = [];\n");
 		script.append("        }\n");
 		script.append("        ZSDS.test.refreshRequest();\n");
 		script.append("        var response = JSON.stringify(object,null,2);\n");

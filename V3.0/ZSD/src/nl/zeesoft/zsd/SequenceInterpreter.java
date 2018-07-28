@@ -138,7 +138,6 @@ public class SequenceInterpreter {
 					List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + res.symbol).getContexts(r.correctedInput,true,0D);
 					for (SequenceClassifierResult resC: contexts) {
 						if (resC.symbol.equals(GenericProfanity.CONTEXT_GENERIC_PROFANITY)) {
-							r.addDebugLogLine("Detected profanity");
 							r.responseMasterContexts.clear();
 							r.responseMasterContexts.add(res);
 							res.probNormalized = 1.0D;

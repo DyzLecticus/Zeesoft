@@ -37,11 +37,13 @@ public class DialogResponse extends InterpreterResponse {
 			JsElem dvElem = new JsElem("dialogVariableValues",true);
 			oElem.children.add(dvElem);
 			for (DialogVariableValue dvv: output.values.values()) {
-				JsElem dElem = new JsElem();
-				dvElem.children.add(dElem);
-				dElem.children.add(new JsElem("name",dvv.name,true));
-				dElem.children.add(new JsElem("externalValue",dvv.externalValue,true));
-				dElem.children.add(new JsElem("internalValue",dvv.internalValue,true));
+				if (dvv.externalValue.length()>0 || dvv.internalValue.length()>0) {
+					JsElem dElem = new JsElem();
+					dvElem.children.add(dElem);
+					dElem.children.add(new JsElem("name",dvv.name,true));
+					dElem.children.add(new JsElem("externalValue",dvv.externalValue,true));
+					dElem.children.add(new JsElem("internalValue",dvv.internalValue,true));
+				}
 			}
 		}
 		return json;

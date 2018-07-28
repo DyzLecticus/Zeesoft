@@ -226,6 +226,35 @@ public class ZStringBuilder {
 		return sb;
 	}
 	
+	public boolean contains(String search) {
+		boolean contains = false;
+		if (sb!=null) {
+			int length = sb.length();
+			int sLength = search.length();
+			if (length>=sLength) {
+				boolean found = true;
+				for (int i = 0; i < length; i++) {
+					found = true;
+					for (int si = 0; si < sLength; si++) {
+						if ((i + si) >= length) {
+							found = false;
+							break;
+						}
+						if (!sb.substring(i + si,i + si + 1).equals(search.substring(si,si+1))) {
+							found = false;
+							break;
+						}
+					}
+					if (found) {
+						contains = true;
+						break;
+					}
+				}
+			}
+		}
+		return contains;
+	}
+	
 	public StringBuilder replace(String search, String replace) {
 		if (sb!=null) {
 			int length = sb.length();

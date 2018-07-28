@@ -21,6 +21,11 @@ public class DutchGenericMathHandler extends GenericMathHandler {
 	}
 
 	@Override
+	protected String getMinus() {
+		return "min";
+	}
+
+	@Override
 	protected String getInfinity() {
 		return "oneindig";
 	}

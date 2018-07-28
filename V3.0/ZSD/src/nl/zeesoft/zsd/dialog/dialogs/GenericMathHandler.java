@@ -36,41 +36,57 @@ public class GenericMathHandler extends DialogInstanceHandler {
 			}
 		}
 		
-		r.addDebugLogLine("    Calculate expression: ",expression);
-		UniversalMathematic math = (UniversalMathematic) getConfig().getEntityValueTranslator().getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
-		float f = math.calculate(expression);
-		r.addDebugLogLine("    Calculated expression: ","" + f);
-		
-		String exact = getExactly();
-		String result = "";
-		if (f == UniversalMathematic.RESULT_INFINITY) {
-			result = getInfinity();
-		} else {
-			String[] str = ("" + f).split("\\.");
-			int i1 = Integer.parseInt(str[0]);
-			int i2 = Integer.parseInt(str[1]);
-			if (i2>0) {
-				exact = getAbout();
-				if (i2>=5) {
-					i1++;
+		if (expression.length()>0) {
+			r.addDebugLogLine("    Calculate expression: ",expression);
+			UniversalMathematic math = (UniversalMathematic) getConfig().getEntityValueTranslator().getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
+			float f = math.calculate(expression);
+			r.addDebugLogLine("    Calculated expression: ","" + f);
+			
+			String exact = getExactly();
+			String result = "";
+			if (f == UniversalMathematic.RESULT_INFINITY) {
+				result = getInfinity();
+			} else {
+				boolean minus = false;
+				String[] str = ("" + f).split("\\.");
+				int i1 = Integer.parseInt(str[0]);
+				int i2 = Integer.parseInt(str[1]);
+				if (i1<0) {
+					minus = true;
+					i1 = (i1 * -1);
+				}
+				if (i2>0) {
+					exact = getAbout();
+					if (i2>=5) {
+						i1++;
+					}
+				}
+				String eVal = "";
+				EntityObject eo = getNumericEntity();
+				if (eo!=null) {
+					eVal = eo.getExternalValueForInternalValue(eo.getInternalValuePrefix() + i1);
+				}
+				if (eVal.length()>0) {
+					result = eVal;
+					if (minus) {
+						result = getMinus() + " " + result;
+					}
+				} else {
+					if (minus) {
+						result = "-" + i1;
+					} else {
+						result = "" + i1;
+					}
 				}
 			}
-			String eVal = "";
-			EntityObject eo = getNumericEntity();
-			if (eo!=null) {
-				eVal = eo.getExternalValueForInternalValue(eo.getInternalValuePrefix() + i1);
-			}
-			if (eVal.length()>0) {
-				result = eVal;
-			} else {
-				result = "" + i1;
-			}
+	
+			dro.setDialogVariableValue(r,GenericMath.VARIABLE_EXACT,exact);
+			dro.setDialogVariableValue(r,GenericMath.VARIABLE_RESULT,result);
+			
+			super.setPrompt(r, dro, updatedValues, promptVariable);
+		} else {
+			dro.output = new ZStringSymbolParser();
 		}
-
-		dro.setDialogVariableValue(r,GenericMath.VARIABLE_EXACT,exact);
-		dro.setDialogVariableValue(r,GenericMath.VARIABLE_RESULT,result);
-		
-		super.setPrompt(r, dro, updatedValues, promptVariable);
 	}
 	
 	protected EntityObject getNumericEntity() {
@@ -83,6 +99,10 @@ public class GenericMathHandler extends DialogInstanceHandler {
 	
 	protected String getAbout() {
 		return "+-";
+	}
+
+	protected String getMinus() {
+		return "-";
 	}
 
 	protected String getInfinity() {
