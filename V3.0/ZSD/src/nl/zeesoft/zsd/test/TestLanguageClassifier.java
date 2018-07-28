@@ -10,7 +10,7 @@ import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestLanguageClassifier extends TestSequenceClassifier {
-	private static final int	EXPECTED_LINKS	= 591401;
+	private static final int	EXPECTED_LINKS	= 594635;
 	
 	public TestLanguageClassifier(Tester tester) {
 		super(tester);
@@ -47,15 +47,15 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			
 			sequence = new ZStringSymbolParser("Wie ben jij?");
 			System.out.println();
-			testClassification(sc,sequence,false,"NLD");
+			testClassification(sc,sequence,false,BaseConfiguration.LANG_NLD);
 			System.out.println();
-			testClassification(sc,sequence,true,"NLD");
+			testClassification(sc,sequence,true,BaseConfiguration.LANG_NLD);
 			sequence = new ZStringSymbolParser("what is name?");
 			System.out.println();
-			testClassification(sc,sequence,true,"ENG");
+			testClassification(sc,sequence,true,BaseConfiguration.LANG_ENG);
 			sequence = new ZStringSymbolParser("twothousand");
 			System.out.println();
-			testClassification(sc,sequence,true,"ENG");
+			testClassification(sc,sequence,true,BaseConfiguration.LANG_ENG);
 
 			List<SequenceClassifierResult> contexts = null;
 			double t = 0D;

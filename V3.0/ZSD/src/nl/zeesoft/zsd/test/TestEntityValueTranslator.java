@@ -54,87 +54,87 @@ public class TestEntityValueTranslator extends TestObject {
 
 		testTranslation(t,"",
 			"Eat three donuts at 9:00 or count to 110",
-			"UNI_ABC:Eat ENG_NUM:3|UNI_ABC:three UNI_ABC:donuts UNI_ABC:at UNI_TIM:09:00:00 UNI_ABC:or UNI_ABC:count UNI_ABC:to UNI_NUM:110",
+			"UN_ABC:Eat EN_NUM:3|UN_ABC:three UN_ABC:donuts UN_ABC:at UN_TIM:09:00:00 UN_ABC:or UN_ABC:count UN_ABC:to UN_NUM:110",
 			"Eat three donuts at 09:00:00 or count to 110");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Eet drie donuts om 9:00 of tel tot 110",
-			"UNI_ABC:Eet NLD_NUM:3|UNI_ABC:drie UNI_ABC:donuts UNI_ABC:om UNI_TIM:09:00:00 UNI_ABC:of UNI_ABC:tel UNI_ABC:tot UNI_NUM:110",
+			"UN_ABC:Eet NL_NUM:3|UN_ABC:drie UN_ABC:donuts UN_ABC:om UN_TIM:09:00:00 UN_ABC:of UN_ABC:tel UN_ABC:tot UN_NUM:110",
 			"Eet drie donuts om 09:00:00 of tel tot 110");
 		testTranslation(t,"",
 			"I finished twohundredandtwentyfourth or 225th",
-			"UNI_ABC:I UNI_ABC:finished ENG_ORD:224|UNI_ABC:twohundredandtwentyfourth UNI_ABC:or ENG_OR2:225",
+			"UN_ABC:I UN_ABC:finished EN_ORD:224|UN_ABC:twohundredandtwentyfourth UN_ABC:or EN_OR2:225",
 			"I finished twohundredandtwentyfourth or 225th");
 		testTranslation(t,"",
 			"Ik ben tweehonderdvierentwintigste geworden",
-			"UNI_ABC:Ik UNI_ABC:ben NLD_ORD:224|UNI_ABC:tweehonderdvierentwintigste|NLD_NAM:firstName:UNI_ABC:Tweehonderdvierentwintigste UNI_ABC:geworden|NLD_NAM:lastName:UNI_ABC:Geworden",
+			"UN_ABC:Ik UN_ABC:ben NL_ORD:224|UN_ABC:tweehonderdvierentwintigste|NL_NAM:firstName:UN_ABC:Tweehonderdvierentwintigste UN_ABC:geworden|NL_NAM:lastName:UN_ABC:Geworden",
 			"Ik ben tweehonderdvierentwintigste geworden");
 		testTranslation(t,"",
 			"februari march october december",
-			"NLD_MNT:2|UNI_ABC:februari ENG_MNT:3|UNI_ABC:march ENG_MNT:10|UNI_ABC:october ENG_MNT:12|NLD_MNT:12|UNI_ABC:december",
+			"NL_MNT:2|UN_ABC:februari EN_MNT:3|UN_ABC:march EN_MNT:10|UN_ABC:october EN_MNT:12|NL_MNT:12|UN_ABC:december",
 			"februari march october december");
 		testTranslation(t,"",
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten",
-			"ENG_DUR:33:41 UNI_MTH:D NLD_DUR:33:41",
+			"EN_DUR:33:41 UN_MTH:D NL_DUR:33:41",
 			"thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten");
 		testTranslation(t,"",
 			"yesterday OR today OR the 1st of october",
-			"ENG_DAT:2018-07-15|UNI_ABC:yesterday UNI_ABC:OR ENG_DAT:2018-07-16|UNI_ABC:today UNI_ABC:OR ENG_DAT:2018-10-01",
+			"EN_DAT:2018-07-15|UN_ABC:yesterday UN_ABC:OR EN_DAT:2018-07-16|UN_ABC:today UN_ABC:OR EN_DAT:2018-10-01",
 			"july fifteenth twothousandeighteen OR july sixteenth twothousandeighteen OR october first twothousandeighteen");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"gisteren OF vandaag OF 1 oktober",
-			"NLD_DAT:2018-07-15|UNI_ABC:gisteren UNI_ABC:OF NLD_DAT:2018-07-16|UNI_ABC:vandaag UNI_ABC:OF NLD_DAT:2018-10-01",
+			"NL_DAT:2018-07-15|UN_ABC:gisteren UN_ABC:OF NL_DAT:2018-07-16|UN_ABC:vandaag UN_ABC:OF NL_DAT:2018-10-01",
 			"vijftien juli tweeduizendachttien OF zestien juli tweeduizendachttien OF een oktober tweeduizendachttien");
 		testTranslation(t,"",
 			"twelve o'clock OR five minutes to nine OR ten past one in the morning",
-			"ENG_TIM:12:00:00 UNI_ABC:OR ENG_TIM:08:55:00 UNI_ABC:OR ENG_TIM:01:10:00",
+			"EN_TIM:12:00:00 UN_ABC:OR EN_TIM:08:55:00 UN_ABC:OR EN_TIM:01:10:00",
 			"twelve o'clock OR fiftyfive past eight OR ten past one in the morning");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"twaalf uur OF vijf minuten voor negen OF tien over een sochtends",
-			"NLD_TIM:12:00:00|NLD_DUR:12:00 UNI_ABC:OF NLD_TIM:08:55:00 UNI_ABC:OF NLD_TIM:01:10:00",
+			"NL_TIM:12:00:00|NL_DUR:12:00 UN_ABC:OF NL_TIM:08:55:00 UN_ABC:OF NL_TIM:01:10:00",
 			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
 		testTranslation(t,BaseConfiguration.LANG_ENG,
 			"My name is Andrew from the Sea",
-			"UNI_ABC:My UNI_ABC:name UNI_ABC:is UNI_ABC:Andrew|ENG_NAM:firstName:UNI_ABC:Andrew ENG_PRE:4|ENG_NAM:preposition:ENG_PRE:4 UNI_ABC:Sea|ENG_NAM:lastName:UNI_ABC:Sea",
+			"UN_ABC:My UN_ABC:name UN_ABC:is UN_ABC:Andrew|EN_NAM:firstName:UN_ABC:Andrew EN_PRE:4|EN_NAM:preposition:EN_PRE:4 UN_ABC:Sea|EN_NAM:lastName:UN_ABC:Sea",
 			"My name is Andrew from the Sea");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Mijn naam is Andre van der Zee",
-			"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:Andre|NLD_NAM:firstName:UNI_ABC:Andre NLD_PRE:3|NLD_NAM:preposition:NLD_PRE:3 UNI_ABC:Zee|NLD_NAM:lastName:UNI_ABC:Zee",
+			"UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:Andre|NL_NAM:firstName:UN_ABC:Andre NL_PRE:3|NL_NAM:preposition:NL_PRE:3 UN_ABC:Zee|NL_NAM:lastName:UN_ABC:Zee",
 			"Mijn naam is Andre van der Zee");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Hoe heet jij? gekke henkie",
-			"UNI_ABC:Hoe UNI_ABC:heet UNI_ABC:jij ? UNI_ABC:gekke|NLD_NAM:firstName:UNI_ABC:Gekke UNI_ABC:henkie|NLD_NAM:lastName:UNI_ABC:Henkie",
+			"UN_ABC:Hoe UN_ABC:heet UN_ABC:jij ? UN_ABC:gekke|NL_NAM:firstName:UN_ABC:Gekke UN_ABC:henkie|NL_NAM:lastName:UN_ABC:Henkie",
 			"Hoe heet jij? gekke henkie");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"gekste der henkies is mijn naam",
-			"UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies UNI_ABC:is UNI_ABC:mijn UNI_ABC:naam",
+			"UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies UN_ABC:is UN_ABC:mijn UN_ABC:naam",
 			"gekste der henkies is mijn naam");
 		testTranslation(t,BaseConfiguration.LANG_ENG,
 			"to Germany or France",
-			"UNI_ABC:to ENG_CNT:DE|UNI_ABC:Germany UNI_ABC:or ENG_CNT:FR|UNI_ABC:France",
+			"UN_ABC:to EN_CNT:DE|UN_ABC:Germany UN_ABC:or EN_CNT:FR|UN_ABC:France",
 			"to Germany or France");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"naar Duitsland of Frankrijk",
-			"UNI_ABC:naar NLD_CNT:DE|UNI_ABC:Duitsland UNI_ABC:of NLD_CNT:FR|UNI_ABC:Frankrijk",
+			"UN_ABC:naar NL_CNT:DE|UN_ABC:Duitsland UN_ABC:of NL_CNT:FR|UN_ABC:Frankrijk",
 			"naar Duitsland of Frankrijk");
 		testTranslation(t,BaseConfiguration.LANG_ENG,
 			"You asshole",
-			"UNI_ABC:You ENG_PRF:1|UNI_ABC:asshole",
+			"UN_ABC:You EN_PRF:1|UN_ABC:asshole",
 			"You asshole");
 		testTranslation(t,BaseConfiguration.LANG_NLD,
 			"Jij klootzak",
-			"UNI_ABC:Jij NLD_PRF:2|UNI_ABC:klootzak",
+			"UN_ABC:Jij NL_PRF:2|UN_ABC:klootzak",
 			"Jij klootzak");
 		testTranslation(t,"",
 			"Can I book a room for 5 people?",
-			"UNI_ABC:Can UNI_ABC:I UNI_ABC:book UNI_ABC:a|ENG_NAM:firstName:UNI_ABC:A UNI_ABC:room|ENG_NAM:lastName:UNI_ABC:Room UNI_ABC:for UNI_NUM:5 UNI_ABC:people ?",
+			"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a|EN_NAM:firstName:UN_ABC:A UN_ABC:room|EN_NAM:lastName:UN_ABC:Room UN_ABC:for UN_NUM:5 UN_ABC:people ?",
 			"Can I book a room for 5 people?");
 		testTranslation(t,"",
 			"ten times five",
-			"ENG_NUM:10|NLD_PRE:8|UNI_ABC:ten ENG_MTH:M|UNI_ABC:times ENG_NUM:5|UNI_ABC:five",
+			"EN_NUM:10|NL_PRE:8|UN_ABC:ten EN_MTH:M|UN_ABC:times EN_NUM:5|UN_ABC:five",
 			"ten multiplied by five");
 		testTranslation(t,"",
 			"tien keer vijf",
-			"NLD_NUM:10|UNI_ABC:tien NLD_MTH:M|UNI_ABC:keer NLD_NUM:5|UNI_ABC:vijf",
+			"NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:5|UN_ABC:vijf",
 			"tien vermenigvuldigd met vijf");
 		
 		UniversalMathematic math = (UniversalMathematic) t.getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);

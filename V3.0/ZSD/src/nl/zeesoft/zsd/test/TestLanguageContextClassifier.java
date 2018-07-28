@@ -8,8 +8,8 @@ import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 
 public class TestLanguageContextClassifier extends TestLanguageMasterContextClassifier {
-	private static final int	EXPECTED_ENGLISH_LINKS	= 673;
-	private static final int	EXPECTED_DUTCH_LINKS	= 812;
+	private static final int	EXPECTED_ENGLISH_LINKS	= 1576;
+	private static final int	EXPECTED_DUTCH_LINKS	= 2429;
 	
 	public TestLanguageContextClassifier(Tester tester) {
 		super(tester);
@@ -46,7 +46,7 @@ public class TestLanguageContextClassifier extends TestLanguageMasterContextClas
 			System.out.println("");
 			testSequenceClassification(scEng,new ZStringSymbolParser("What are you?"),0D,"QuestionAndAnswer",3);
 			System.out.println("");
-			testSequenceClassification(scNld,new ZStringSymbolParser("Wat ben jij?"),0D,"QuestionAndAnswer",2);
+			testSequenceClassification(scNld,new ZStringSymbolParser("Wat ben jij?"),0D,"QuestionAndAnswer",3);
 		}
 	}
 }

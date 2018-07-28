@@ -61,64 +61,79 @@ public class TestDialogHandler extends TestInitializer {
 			DialogHandler handler = new DialogHandler(config);
 			testRequestResponse(handler,"",
 				"hallo",
-				"UNI_ABC:Hallo .",
+				"UN_ABC:Hallo .",
 				"Hallo. Mijn naam is Dyz Lecticus.","Wat is jouw naam?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Wie ben jij?",
-				"UNI_ABC:Wie UNI_ABC:ben UNI_ABC:jij ?",
+				"UN_ABC:Wie UN_ABC:ben UN_ABC:jij ?",
 				"Mijn naam is Dyz Lecticus.","Wat is jouw naam?");
 			System.out.println();
 			testRequestResponse(handler,"What is your name?",
 				"albert einstein",
-				"UNI_ABC:Albert|ENG_NAM:firstName:UNI_ABC:Albert UNI_ABC:einstein|ENG_NAM:lastName:UNI_ABC:Einstein .",
+				"UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .",
 				"","What can I do for you Albert Einstein?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"mijn naam si gekste der henkies",
-				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:si UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies .",
-				"UNI_ABC:Mijn UNI_ABC:naam UNI_ABC:is UNI_ABC:gekste|NLD_NAM:firstName:UNI_ABC:Gekste NLD_PRE:6|UNI_ABC:der|NLD_NAM:preposition:NLD_PRE:6 UNI_ABC:henkies|NLD_NAM:lastName:UNI_ABC:Henkies .",
+				"UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
+				"UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
 				"Hallo. Mijn naam is Dyz Lecticus.","Wat kan ik voor je doen Gekste der Henkies?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Who created you?",
-				"UNI_ABC:Who UNI_ABC:created UNI_ABC:you ?",
+				"UN_ABC:Who UN_ABC:created UN_ABC:you ?",
 				"My software was written by André van der Zee.","");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"You asshole!",
-				"UNI_ABC:You ENG_PRF:1|UNI_ABC:asshole !",
+				"UN_ABC:You EN_PRF:1|UN_ABC:asshole !",
 				"I do not appreciate that kind of language.","");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Jij klootzak!",
-				"UNI_ABC:Jij NLD_PRF:2|UNI_ABC:klootzak !",
+				"UN_ABC:Jij NL_PRF:2|UN_ABC:klootzak !",
 				"Van zulk taalgebruik ben ik niet gediend.","");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Can I book a room for 5 people?",
-				"UNI_ABC:Can UNI_ABC:I UNI_ABC:book UNI_ABC:a|ENG_NAM:firstName:UNI_ABC:A UNI_ABC:room|ENG_NAM:lastName:UNI_ABC:Room UNI_ABC:for UNI_NUM:5 UNI_ABC:people ?",
+				"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a|EN_NAM:firstName:UN_ABC:A UN_ABC:room|EN_NAM:lastName:UN_ABC:Room UN_ABC:for UN_NUM:5 UN_ABC:people ?",
 				"Okay.","On what date?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?",
-				"UNI_ABC:Can UNI_ABC:I UNI_ABC:book UNI_ABC:a|ENG_NAM:firstName:UNI_ABC:A UNI_ABC:room|ENG_NAM:lastName:UNI_ABC:Room UNI_ABC:for UNI_NUM:12 UNI_ABC:people UNI_ABC:on ENG_DAT:2018-10-01 UNI_ABC:at ENG_TIM:12:00:00 UNI_ABC:for ENG_DUR:02:00 ?",
+				"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a|EN_NAM:firstName:UN_ABC:A UN_ABC:room|EN_NAM:lastName:UN_ABC:Room UN_ABC:for UN_NUM:12 UN_ABC:people UN_ABC:on EN_DAT:2018-10-01 UN_ABC:at EN_TIM:12:00:00 UN_ABC:for EN_DUR:02:00 ?",
 				"Okay.","Do I understand correctly that you want a room on october first twothousandeighteen, for 12 people, from twelve o'clock, for two hours?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"What does it cost to book a room?",
-				"UNI_ABC:What UNI_ABC:does UNI_ABC:it UNI_ABC:cost UNI_ABC:to UNI_ABC:book UNI_ABC:a UNI_ABC:room ?",
+				"UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room ?",
 				"There are no costs attached to booking a room.","");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"How much is ten times fourty divided by twenty plus three times six?",
-				"UNI_ABC:How UNI_ABC:much UNI_ABC:is ENG_NUM:10|UNI_ABC:ten ENG_MTH:M|UNI_ABC:times ENG_NUM:40|UNI_ABC:fourty ENG_MTH:D ENG_NUM:20|UNI_ABC:twenty ENG_MTH:A|UNI_ABC:plus ENG_NUM:3|UNI_ABC:three|ENG_NAM:firstName:UNI_ABC:Three ENG_MTH:M|UNI_ABC:times|ENG_NAM:lastName:UNI_ABC:Times ENG_NUM:6|UNI_ABC:six ?",
+				"UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M|UN_ABC:times EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three|EN_NAM:firstName:UN_ABC:Three EN_MTH:M|UN_ABC:times|EN_NAM:lastName:UN_ABC:Times EN_NUM:6|UN_ABC:six ?",
 				"Exactly thirtyeight.","What else can I do for you?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?",
-				"UNI_ABC:Hoeveel UNI_ABC:is NLD_NUM:10|UNI_ABC:tien NLD_MTH:M|UNI_ABC:keer NLD_NUM:40|UNI_ABC:veertig NLD_MTH:D NLD_NUM:20|UNI_ABC:twintig NLD_MTH:A|UNI_ABC:plus NLD_NUM:3|UNI_ABC:drie|NLD_NAM:firstName:UNI_ABC:Drie NLD_MTH:M|UNI_ABC:keer|NLD_NAM:lastName:UNI_ABC:Keer NLD_NUM:6|UNI_ABC:zes ?",
+				"UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie|NL_NAM:firstName:UN_ABC:Drie NL_MTH:M|UN_ABC:keer|NL_NAM:lastName:UN_ABC:Keer NL_NUM:6|UN_ABC:zes ?",
 				"Precies achtendertig.","Kan ik nog meer voor je doen?");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"What languages do you speak?",
+				"UN_ABC:What UN_ABC:languages UN_ABC:do UN_ABC:you UN_ABC:speak ?",
+				"I speak English and Dutch.","");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Spreek je duits?",
+				"UN_ABC:Spreek UN_ABC:je NL_LNG:DE|UN_ABC:duits ?",
+				"Nee, ik spreek Engels en Nederlands.","");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Spreek je engels?",
+				"UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:engels ?",
+				"Ja, ik spreek Engels en Nederlands.","");
 		}
 	}
 	

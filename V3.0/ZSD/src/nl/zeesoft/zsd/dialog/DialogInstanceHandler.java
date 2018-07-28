@@ -47,8 +47,8 @@ public abstract class DialogInstanceHandler {
 		for (DialogVariable variable: dialog.getVariables()) {
 			// TODO: Solution for 'next dialog' variable type?
 			if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
-				String val = config.getEntityValueTranslator().getTypeValueFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
-				String valCor = config.getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,variable.type,variable.complexName,variable.complexType);
+				String val = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
+				String valCor = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,variable.type,variable.complexName,variable.complexType);
 				String valSel = val;
 				if (!variable.type.equals(BaseConfiguration.TYPE_ALPHABETIC) && valCor.length()>0) {
 					valSel = valCor;
@@ -69,7 +69,11 @@ public abstract class DialogInstanceHandler {
 				break;
 			}
 		}
-
+		
+		buildDialogResponseOutput(r,dro,updatedValues,promptVariable);
+	}
+	
+	public void buildDialogResponseOutput(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
 		if (promptVariable.length()==0 || !r.getRequest().getDialogId().equals(dialog.getId())) {
 			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.correctedInput,"",true,r.getRequest().matchThreshold);
 			if (matches.size()==0) {

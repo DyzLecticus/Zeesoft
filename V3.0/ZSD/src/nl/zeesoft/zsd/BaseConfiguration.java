@@ -14,9 +14,9 @@ import nl.zeesoft.zsd.dialog.dialogs.Room;
  * A BaseConfiguration instance is used to initialize sequence interpreter and dialog handler configurations.
  */
 public class BaseConfiguration {
-	public static final String					LANG_UNI					= "UNI";
-	public static final String					LANG_ENG					= "ENG";
-	public static final String					LANG_NLD					= "NLD";
+	public static final String					LANG_UNI					= "UN";
+	public static final String					LANG_ENG					= "EN";
+	public static final String					LANG_NLD					= "NL";
 
 	// Entities
 	public static final String					TYPE_ALPHABETIC				= "ABC";
@@ -30,6 +30,7 @@ public class BaseConfiguration {
 	public static final String					TYPE_DATE					= "DAT";
 	public static final String					TYPE_PREPOSITION			= "PRE";
 	public static final String					TYPE_COUNTRY				= "CNT";
+	public static final String					TYPE_LANGUAGE				= "LNG";
 	public static final String					TYPE_PROFANITY				= "PRF";
 	public static final String					TYPE_CONFIRMATION			= "CNF";
 
