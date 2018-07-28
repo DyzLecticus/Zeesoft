@@ -46,7 +46,8 @@ public abstract class DialogInstanceHandler {
 		List<String> iValsCor = r.entityValueTranslationCorrected.toSymbols();
 		for (DialogVariable variable: dialog.getVariables()) {
 			// TODO: Solution for 'next dialog' variable type?
-			if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
+			DialogVariableValue dvv = r.getRequest().dialogVariableValues.get(variable.name);
+			if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG) && (dvv==null || dvv.internalValue.length()==0)) {
 				String val = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
 				String valCor = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,variable.type,variable.complexName,variable.complexType);
 				String valSel = val;

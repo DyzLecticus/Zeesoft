@@ -324,23 +324,8 @@ public class EntityValueTranslator implements Initializable {
 				v = getInternalValueFromInternalValues(val,type);
 			}
 			if (v.length()>0) {
-				if (val.contains(getOrConcatenator())) {
-					String[] split = val.split(getOrConcatenatorSplitter());
-					ZStringBuilder nVal = new ZStringBuilder();
-					for (int iv = 0; iv < split.length; iv++) {
-						if (!split[iv].equals(v)) {
-							if (nVal.length()>0) {
-								nVal.append(getOrConcatenator());
-							}
-							nVal.append(split[iv]);
-						}
-					}
-					internalValues.remove(i);
-					internalValues.add(i,nVal.toString());
-				} else {
-					internalValues.remove(i);
-					i--;
-				}
+				internalValues.remove(i);
+				i--;
 				r = v;
 				break;
 			}
