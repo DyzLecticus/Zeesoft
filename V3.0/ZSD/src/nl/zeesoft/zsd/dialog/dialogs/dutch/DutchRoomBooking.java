@@ -19,6 +19,7 @@ public class DutchRoomBooking extends RoomBooking {
 	
 	public DutchRoomBooking() {
 		setLanguage(BaseConfiguration.LANG_NLD);
+		setHandlerClassName(DutchRoomBookingHandler.class.getName());
 
 		books.add("boeken");
 		books.add("reserveren");

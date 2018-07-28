@@ -7,10 +7,13 @@ import nl.zeesoft.zsd.dialog.DialogResponse;
 import nl.zeesoft.zsd.dialog.DialogResponseOutput;
 import nl.zeesoft.zsd.dialog.DialogVariableValue;
 
-public class RoomBookingHandler extends DialogInstanceHandler {
+public abstract class RoomBookingHandler extends DialogInstanceHandler {
 	@Override
 	protected void setPrompt(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
-		// TODO: Implement demo; extend entity value translator with type specific object getters
+		if (promptVariable.equals(Generic.VARIABLE_NEXT_DIALOG)) {
+			dro.output.append(getSuccesResponse());
+		}
 		super.setPrompt(r,dro,updatedValues,promptVariable);
-	}	
+	}
+	protected abstract String getSuccesResponse();
 }

@@ -134,10 +134,11 @@ public class SequenceInterpreter {
 			boolean profanity = false;
 			for (SequenceClassifierResult res: r.responseMasterContexts) {
 				if (res.symbol.equals(Generic.MASTER_CONTEXT_GENERIC)) {
-					r.addDebugLogLine("Classify context for sequence: ",r.correctedInput);
+					r.addDebugLogLine("Checking profanity for sequence: ",r.correctedInput);
 					List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + res.symbol).getContexts(r.correctedInput,true,0D);
 					for (SequenceClassifierResult resC: contexts) {
-						if (res.symbol.equals(GenericProfanity.CONTEXT_GENERIC_PROFANITY)) {
+						if (resC.symbol.equals(GenericProfanity.CONTEXT_GENERIC_PROFANITY)) {
+							r.addDebugLogLine("Detected profanity");
 							r.responseMasterContexts.clear();
 							r.responseMasterContexts.add(res);
 							res.probNormalized = 1.0D;

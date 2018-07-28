@@ -16,7 +16,7 @@ public class DutchLanguage extends EntityObject {
 	}
 	@Override
 	public int getMaximumSymbols() {
-		return 3;
+		return 2;
 	}
 	@Override
 	public String getExternalValueForInternalValue(String str) {

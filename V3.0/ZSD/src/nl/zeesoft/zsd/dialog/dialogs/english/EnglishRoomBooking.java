@@ -19,7 +19,8 @@ public class EnglishRoomBooking extends RoomBooking {
 	
 	public EnglishRoomBooking() {
 		setLanguage(BaseConfiguration.LANG_ENG);
-
+		setHandlerClassName(EnglishRoomBookingHandler.class.getName());
+		
 		books.add("book");
 		books.add("reserve");
 		

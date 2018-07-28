@@ -10,6 +10,6 @@ public abstract class GenericLanguage extends Generic {
 
 	public GenericLanguage() {
 		setContext(CONTEXT_GENERIC_LANGUAGE);
-		setHandlerClassName(GenericMathHandler.class.getName());
+		setHandlerClassName(GenericLanguageHandler.class.getName());
 	}
 }

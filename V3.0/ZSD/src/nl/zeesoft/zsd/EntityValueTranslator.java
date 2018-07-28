@@ -74,6 +74,15 @@ public class EntityValueTranslator implements Initializable {
 	}
 
 	/**
+	 * Specifies the or concatenator splitter.
+	 * 
+	 * @return The or concatenator splitter
+	 */
+	protected String getOrConcatenatorSplitter() {
+		return "\\" + getOrConcatenator();
+	}
+
+	/**
 	 * Specifies the maximum number string pattern to generate (starting at zero).
 	 * 
 	 * In order to support current and future dates, this should be at least 9999.
@@ -300,6 +309,7 @@ public class EntityValueTranslator implements Initializable {
 	public String getTypeValueFromInternalValues(List<String> internalValues,String type,String complexName,String complexType) {
 		String r = "";
 		List<String> vals = new ArrayList<String>(internalValues);
+		int i = 0;
 		for (String val: vals) {
 			String v = "";
 			if (complexType.length()>0) {
@@ -314,10 +324,27 @@ public class EntityValueTranslator implements Initializable {
 				v = getInternalValueFromInternalValues(val,type);
 			}
 			if (v.length()>0) {
-				internalValues.remove(val);
+				if (val.contains(getOrConcatenator())) {
+					String[] split = val.split(getOrConcatenatorSplitter());
+					ZStringBuilder nVal = new ZStringBuilder();
+					for (int iv = 0; iv < split.length; iv++) {
+						if (!split[iv].equals(v)) {
+							if (nVal.length()>0) {
+								nVal.append(getOrConcatenator());
+							}
+							nVal.append(split[iv]);
+						}
+					}
+					internalValues.remove(i);
+					internalValues.add(i,nVal.toString());
+				} else {
+					internalValues.remove(i);
+					i--;
+				}
 				r = v;
 				break;
 			}
+			i++;
 		}
 		return r;
 	}
@@ -331,7 +358,7 @@ public class EntityValueTranslator implements Initializable {
 	 */
 	public String getInternalValueFromInternalValues(String str,String type) {
 		String r = "";
-		String[] values = str.split("\\" + getOrConcatenator());
+		String[] values = str.split(getOrConcatenatorSplitter());
 		for (int v = 0; v < values.length; v++) {
 			if (values[v].contains(getValueConcatenator())) {
 				String prefix = values[v].split(getValueConcatenator())[0] + getValueConcatenator();
