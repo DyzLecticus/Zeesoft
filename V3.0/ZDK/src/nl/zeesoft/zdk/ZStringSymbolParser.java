@@ -65,38 +65,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	 * @return A list of symbols
 	 */
 	public List<String> toSymbolsPunctuated(List<String> lineEnds,List<String> punctuations) {
-		if (getStringBuilder()!=null) {
-			if (punctuations.contains("'")) {
-				if (startsWith("'")) {
-					insert(1," ");
-				}
-				if (endsWith("'")) {
-					insert(length() - 2," ");
-				}
-				replace("'.","' .");
-				replace("'!","' !");
-				replace("'?","' ?");
-				replace("('","( '");
-				replace("')","' )");
-				replace(",'",", '");
-				replace("',","' ,");
-				replace(":'",": '");
-				replace("':","' :");
-				replace(" '"," ' ");
-				replace("' "," ' ");
-			}
-			for (String symbol: punctuations) {
-				if (!symbol.equals("'")) {
-					if (symbol.equals(":") || symbol.equals(";")) {
-						replace(symbol + " "," " + symbol + " ");
-						replace(" " + symbol," " + symbol + " ");
-					} else {
-						replace(symbol," " + symbol + " ");
-					}
-				}
-			}
-		}
-		return toSymbols(lineEnds);
+		return toSymbolsPunctuated(lineEnds, punctuations, false);
 	}
 
 	/**
@@ -117,28 +86,7 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	 * @return A list of symbols
 	 */
 	public List<String> toSymbols(List<String> lineEnds) {
-		List<String> symbols = new ArrayList<String>();
-		if (getStringBuilder()!=null) {
-			replace("     "," ");
-			replace("    "," ");
-			replace("   "," ");
-			replace("  "," ");
-			trim();
-			
-			List<ZStringBuilder> syms = split(" ");
-			for (ZStringBuilder sym: syms) {
-				if (sym.length()>1 && endsWithLineEndSymbol(sym,lineEnds)) {
-					ZStringSymbolParser symbol = new ZStringSymbolParser(sym.substring(0,sym.length() - 1));
-					String lineEnd = sym.substring(sym.length() - 1).toString();
-					symbol.removeLineEndSymbols();
-					symbols.add(symbol.toString());
-					symbols.add(lineEnd);
-				} else {
-					symbols.add(sym.toString());
-				}
-			}
-		}
-		return symbols;
+		return toSymbols(lineEnds, false);
 	}
 	
 	/**
@@ -317,5 +265,79 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	public static boolean isPunctuationSymbol(String symbol) {
 		ZStringSymbolParser parser = new ZStringSymbolParser();
 		return parser.getPunctuationSymbols().contains(symbol);
+	}
+
+	protected List<String> toSymbolsPunctuated(List<String> lineEnds,List<String> punctuations,boolean isCopy) {
+		List<String> symbols = new ArrayList<String>();
+		if (getStringBuilder()!=null) {
+			if (isCopy) {
+				if (punctuations.contains("'")) {
+					if (startsWith("'")) {
+						insert(1," ");
+					}
+					if (endsWith("'")) {
+						insert(length() - 2," ");
+					}
+					replace("'.","' .");
+					replace("'!","' !");
+					replace("'?","' ?");
+					replace("('","( '");
+					replace("')","' )");
+					replace(",'",", '");
+					replace("',","' ,");
+					replace(":'",": '");
+					replace("':","' :");
+					replace(" '"," ' ");
+					replace("' "," ' ");
+				}
+				for (String symbol: punctuations) {
+					if (!symbol.equals("'")) {
+						if (symbol.equals(":") || symbol.equals(";")) {
+							replace(symbol + " "," " + symbol + " ");
+							replace(" " + symbol," " + symbol + " ");
+						} else {
+							replace(symbol," " + symbol + " ");
+						}
+					}
+				}
+				symbols = toSymbols(lineEnds,isCopy);
+			} else {
+				symbols = copy().toSymbolsPunctuated(lineEnds, punctuations, true);
+			}
+		}
+		return symbols;
+	}
+
+	protected List<String> toSymbols(List<String> lineEnds,boolean isCopy) {
+		List<String> symbols = new ArrayList<String>();
+		if (getStringBuilder()!=null) {
+			if (isCopy) {
+				replace("     "," ");
+				replace("    "," ");
+				replace("   "," ");
+				replace("  "," ");
+				trim();
+				
+				List<ZStringBuilder> syms = split(" ");
+				for (ZStringBuilder sym: syms) {
+					if (sym.length()>1 && endsWithLineEndSymbol(sym,lineEnds)) {
+						ZStringSymbolParser symbol = new ZStringSymbolParser(sym.substring(0,sym.length() - 1));
+						String lineEnd = sym.substring(sym.length() - 1).toString();
+						symbol.removeLineEndSymbols();
+						symbols.add(symbol.toString());
+						symbols.add(lineEnd);
+					} else {
+						symbols.add(sym.toString());
+					}
+				}
+			} else {
+				symbols = copy().toSymbols(lineEnds,true);
+			}
+		}
+		return symbols;
+	}
+	
+	protected ZStringSymbolParser copy() {
+		return new ZStringSymbolParser(this);
 	}
 }

@@ -37,9 +37,9 @@ public class TestZStringSymbolParser extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		ZStringSymbolParser parser = new ZStringSymbolParser(TestZStringEncoder.getTestText());
-		System.out.println("Input text: " + parser);
-		List<String> symbols = parser.toSymbolsPunctuated();
+		ZStringSymbolParser splitter = new ZStringSymbolParser(TestZStringEncoder.getTestText());
+		System.out.println("Input text: " + splitter);
+		List<String> symbols = splitter.toSymbolsPunctuated();
 		System.out.print("Parsed symbols: ");
 		int i = 0;
 		for (String symbol: symbols) {
@@ -51,7 +51,9 @@ public class TestZStringSymbolParser extends TestObject {
 		}
 		System.out.println();
 		assertEqual(symbols.size(),26,"Total parsed symbols does not match expectation");
+		ZStringSymbolParser parser = new ZStringSymbolParser();
 		parser.fromSymbols(symbols,true,true);
 		assertEqual(parser.toString(),TestZStringEncoder.getTestText(),"Merged string does not match expectation");
+		assertEqual(splitter,parser,"The splitter does not equal the parser");
 	}
 }
