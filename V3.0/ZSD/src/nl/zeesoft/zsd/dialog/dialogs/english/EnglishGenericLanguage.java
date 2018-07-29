@@ -3,8 +3,6 @@ package nl.zeesoft.zsd.dialog.dialogs.english;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericLanguage;
-import nl.zeesoft.zsd.entity.EntityObject;
-import nl.zeesoft.zsd.sequence.Analyzer;
 
 public class EnglishGenericLanguage extends GenericLanguage {
 	public static final String	EXAMPLE_OUTPUT_DEFAULT		= "I speak {languages}.";
@@ -17,19 +15,14 @@ public class EnglishGenericLanguage extends GenericLanguage {
 	
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		EntityObject lang = t.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_LANGUAGE);
-		
 		addExample("Which languages can you speak?",getOutputDefault());
 		addExample("What languages do you know?",getOutputDefault());
 
 		addExample("How many languages can you speak?",getOutputDefault());
 		addExample("How many languages do you know?",getOutputDefault());
 
-		for (String l: lang.getExternalValues().keySet()) {
-			l = Analyzer.upperCaseFirst(l);
-			addExample("Do you speak " + l + "?",getOutputConfirmation());
-			addExample("Can you speak " + l + "?",getOutputConfirmation());
-		}
+		addExample("Do you speak {language}?",getOutputConfirmation());
+		addExample("Can you speak {language}?",getOutputConfirmation());
 
 		addVariable(VARIABLE_LANGUAGE,BaseConfiguration.TYPE_LANGUAGE);
 	}

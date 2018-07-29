@@ -132,6 +132,26 @@ public class SequenceInterpreter {
 				}
 				if (contexts.size()>0) {
 					r.addDebugLogLine("Classified master context: ",contexts.get(0).symbol);
+					if (r.request.masterContext.length()>0 && !r.request.masterContext.equals(contexts.get(0).symbol)) {
+						SequenceClassifierResult resMC = null;
+						SequenceClassifierResult resGeneric = null;
+						for (SequenceClassifierResult res: contexts) {
+							if (r.request.checkProfanity && res.symbol.equals(Generic.MASTER_CONTEXT_GENERIC)) {
+								resGeneric = res;
+							}
+							if (res.probNormalized>=r.request.classifyMasterContextThreshold && res.symbol.equals(r.request.masterContext)) {
+								resMC = res;
+							}
+						}
+						if (resMC!=null) {
+							r.addDebugLogLine("Selected master context: ",resMC.symbol);
+							contexts.clear();
+							contexts.add(resMC);
+							if (resGeneric!=null && resMC!=resGeneric) {
+								contexts.add(resGeneric);
+							}
+						}
+					}
 					r.responseMasterContexts = contexts;
 					masterContext = contexts.get(0).symbol;
 				}

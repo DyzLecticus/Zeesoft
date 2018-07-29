@@ -1,6 +1,6 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
-public abstract class SupportRequest extends Room {
+public abstract class SupportRequest extends Support {
 	public static final String	CONTEXT_SUPPORT_REQUEST			= "Request";
 
 	public static final String	VARIABLE_SUPPORT_CONFIRMATION	= "supportConfirmation";

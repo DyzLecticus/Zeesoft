@@ -8,21 +8,22 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class InterpreterRequest {
-	public ZStringSymbolParser	prompt						= new ZStringSymbolParser();
-	public ZStringSymbolParser	input						= new ZStringSymbolParser();
-	public String				language					= "";
-	public String				masterContext				= "";
-	public String				context						= "";
+	public ZStringSymbolParser	prompt							= new ZStringSymbolParser();
+	public ZStringSymbolParser	input							= new ZStringSymbolParser();
+	public String				language						= "";
+	public String				masterContext					= "";
+	public String				context							= "";
 	
-	public boolean				appendDebugLog				= false;
-	public boolean				classifyLanguage			= false;
-	public boolean				correctInput				= false;
-	public boolean				classifyMasterContext		= false;
-	public boolean				classifyContext				= false;
-	public double				classifyContextThreshold	= 0.7D;
-	public boolean				translateEntityValues		= false;
-	public List<String>			translateEntityTypes		= new ArrayList<String>();
-	public boolean				checkProfanity				= false;
+	public boolean				appendDebugLog					= false;
+	public boolean				classifyLanguage				= false;
+	public boolean				correctInput					= false;
+	public boolean				classifyMasterContext			= false;
+	public double				classifyMasterContextThreshold	= 0.7D;
+	public boolean				classifyContext					= false;
+	public double				classifyContextThreshold		= 0.7D;
+	public boolean				translateEntityValues			= false;
+	public List<String>			translateEntityTypes			= new ArrayList<String>();
+	public boolean				checkProfanity					= false;
 		
 	public InterpreterRequest() {
 		
@@ -68,6 +69,7 @@ public class InterpreterRequest {
 		json.rootElement.children.add(new JsElem("classifyLanguage","" + classifyLanguage));
 		json.rootElement.children.add(new JsElem("correctInput","" + correctInput));
 		json.rootElement.children.add(new JsElem("classifyMasterContext","" + classifyMasterContext));
+		json.rootElement.children.add(new JsElem("classifyMasterContextThreshold","" + classifyMasterContextThreshold));
 		json.rootElement.children.add(new JsElem("classifyContext","" + classifyContext));
 		json.rootElement.children.add(new JsElem("classifyContextThreshold","" + classifyContextThreshold));
 		json.rootElement.children.add(new JsElem("checkProfanity","" + checkProfanity));
@@ -90,6 +92,7 @@ public class InterpreterRequest {
 		classifyLanguage = json.rootElement.getChildBoolean("classifyLanguage",classifyLanguage);
 		correctInput = json.rootElement.getChildBoolean("correctInput",correctInput);
 		classifyMasterContext = json.rootElement.getChildBoolean("classifyMasterContext",classifyMasterContext);
+		classifyMasterContextThreshold = json.rootElement.getChildDouble("classifyMasterContextThreshold",classifyMasterContextThreshold);
 		classifyContext = json.rootElement.getChildBoolean("classifyContext",classifyContext);
 		classifyContextThreshold = json.rootElement.getChildDouble("classifyContextThreshold",classifyContextThreshold);
 		checkProfanity = json.rootElement.getChildBoolean("checkProfanity",checkProfanity);

@@ -60,6 +60,7 @@ public class TestRequestResponseToJson extends TestObject {
 		req.language = BaseConfiguration.LANG_ENG;
 		req.masterContext = Generic.MASTER_CONTEXT_GENERIC;
 		req.context = GenericHandshake.CONTEXT_GENERIC_HANDSHAKE;
+		req.classifyMasterContextThreshold = 0.8;
 		req.classifyContextThreshold = 0.8;
 		req.translateEntityTypes.add(BaseConfiguration.TYPE_NAME);
 		req.matchThreshold = 0.8;
@@ -72,7 +73,7 @@ public class TestRequestResponseToJson extends TestObject {
 		JsFile json = req.toJson();
 		ZStringBuilder txtOri = json.toStringBuilderReadFormat();
 		System.out.println(txtOri);
-		assertEqual(json.rootElement.children.size(),17,"The number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),18,"The number of children does not match expectation");
 		req = new DialogRequest();
 		req.fromJson(json);
 		json = req.toJson();
