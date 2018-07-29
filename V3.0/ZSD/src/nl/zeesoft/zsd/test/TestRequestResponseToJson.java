@@ -72,7 +72,7 @@ public class TestRequestResponseToJson extends TestObject {
 		JsFile json = req.toJson();
 		ZStringBuilder txtOri = json.toStringBuilderReadFormat();
 		System.out.println(txtOri);
-		assertEqual(json.rootElement.children.size(),16,"The number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),17,"The number of children does not match expectation");
 		req = new DialogRequest();
 		req.fromJson(json);
 		json = req.toJson();

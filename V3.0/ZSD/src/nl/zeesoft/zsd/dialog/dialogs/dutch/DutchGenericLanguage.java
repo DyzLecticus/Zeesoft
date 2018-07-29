@@ -4,6 +4,7 @@ import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericLanguage;
 import nl.zeesoft.zsd.entity.EntityObject;
+import nl.zeesoft.zsd.sequence.Analyzer;
 
 public class DutchGenericLanguage extends GenericLanguage {
 	public static final String	EXAMPLE_OUTPUT_DEFAULT		= "Ik spreek {languages}.";
@@ -27,6 +28,7 @@ public class DutchGenericLanguage extends GenericLanguage {
 		addExample("Hoeveel talen spreekt u?",getOutputDefault());
 
 		for (String l: lang.getExternalValues().keySet()) {
+			l = Analyzer.upperCaseFirst(l);
 			addExample("Spreek je " + l + "?",getOutputConfirmation());
 			addExample("Spreek jij " + l + "?",getOutputConfirmation());
 			addExample("Spreekt u " + l + "?",getOutputConfirmation());

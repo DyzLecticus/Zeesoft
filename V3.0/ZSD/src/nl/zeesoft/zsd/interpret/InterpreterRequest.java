@@ -22,6 +22,7 @@ public class InterpreterRequest {
 	public double				classifyContextThreshold	= 0.7D;
 	public boolean				translateEntityValues		= false;
 	public List<String>			translateEntityTypes		= new ArrayList<String>();
+	public boolean				checkProfanity				= false;
 		
 	public InterpreterRequest() {
 		
@@ -52,6 +53,7 @@ public class InterpreterRequest {
 		classifyMasterContext = value;
 		classifyContext = value;
 		translateEntityValues = value;
+		checkProfanity = value;
 	}
 	
 	public JsFile toJson() {
@@ -68,6 +70,7 @@ public class InterpreterRequest {
 		json.rootElement.children.add(new JsElem("classifyMasterContext","" + classifyMasterContext));
 		json.rootElement.children.add(new JsElem("classifyContext","" + classifyContext));
 		json.rootElement.children.add(new JsElem("classifyContextThreshold","" + classifyContextThreshold));
+		json.rootElement.children.add(new JsElem("checkProfanity","" + checkProfanity));
 		json.rootElement.children.add(new JsElem("translateEntityValues","" + translateEntityValues));
 		JsElem typesElem = new JsElem("translateEntityTypes",true);
 		json.rootElement.children.add(typesElem);
@@ -89,6 +92,7 @@ public class InterpreterRequest {
 		classifyMasterContext = json.rootElement.getChildBoolean("classifyMasterContext",classifyMasterContext);
 		classifyContext = json.rootElement.getChildBoolean("classifyContext",classifyContext);
 		classifyContextThreshold = json.rootElement.getChildDouble("classifyContextThreshold",classifyContextThreshold);
+		checkProfanity = json.rootElement.getChildBoolean("checkProfanity",checkProfanity);
 		translateEntityValues = json.rootElement.getChildBoolean("translateEntityValues",translateEntityValues);
 		JsElem typesElem = json.rootElement.getChildByName("translateEntityTypes");
 		if (typesElem!=null) {

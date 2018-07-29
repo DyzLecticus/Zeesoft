@@ -113,11 +113,13 @@ public class TestDialogHandler extends TestInitializer {
 			testRequestResponse(handler,"",
 				"How much is ten times fourty divided by twenty plus three times six?",
 				"UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M|UN_ABC:times EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three|EN_NAM:firstName:UN_ABC:Three EN_MTH:M|UN_ABC:times|EN_NAM:lastName:UN_ABC:Times EN_NUM:6|UN_ABC:six ?",
+				"UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three|EN_NAM:firstName:UN_ABC:Three EN_MTH:M EN_NUM:6|UN_ABC:six ?",
 				"Exactly thirtyeight.","What else can I do for you?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?",
 				"UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie|NL_NAM:firstName:UN_ABC:Drie NL_MTH:M|UN_ABC:keer|NL_NAM:lastName:UN_ABC:Keer NL_NUM:6|UN_ABC:zes ?",
+				"UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie|NL_NAM:firstName:UN_ABC:Drie NL_MTH:M NL_NUM:6|UN_ABC:zes ?",
 				"Precies achtendertig.","Kan ik nog meer voor je doen?");
 			System.out.println();
 			testRequestResponse(handler,"",
@@ -128,11 +130,13 @@ public class TestDialogHandler extends TestInitializer {
 			testRequestResponse(handler,"",
 				"Spreek je duits?",
 				"UN_ABC:Spreek UN_ABC:je NL_LNG:DE|UN_ABC:duits ?",
+				"UN_ABC:Spreek UN_ABC:je NL_LNG:DE|UN_ABC:Duits ?",
 				"Nee, ik spreek Engels en Nederlands.","");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Spreek je engels?",
 				"UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:engels ?",
+				"UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:Engels ?",
 				"Ja, ik spreek Engels en Nederlands.","");
 		}
 	}

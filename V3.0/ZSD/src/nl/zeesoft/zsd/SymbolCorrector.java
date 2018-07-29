@@ -19,6 +19,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	private static final int		MAX_SECONDARY_LENGTH	= 32;
 	
 	public static final String		ALPHABET				= "abcdefghijklmnopqrstuvwxyz";
+	public static final String		PLACEHOLDER				= "[]";
 	
 	/**
 	 * Returns the symbol bandwidth.
@@ -144,7 +145,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 			if (symbols.size()>(i + 1)) {
 				after = symbols.get(i + 1);
 			}
-			if (UniversalNumeric.isNumeric(symbol)) {
+			if (symbol.equals(PLACEHOLDER) || UniversalNumeric.isNumeric(symbol)) {
 				corrected.add(symbol);
 			} else if (symbol.length()== 1 && (ZStringSymbolParser.isLineEndSymbol(symbol) || ZStringSymbolParser.isPunctuationSymbol(symbol))) {
 				corrected.add(symbol);
@@ -183,7 +184,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	public List<AnalyzerSymbol> getCorrections(String before,String symbol,String after,String context, double bandwidth,Date started,long stopAfterMs,String alphabet) {
 		List<AnalyzerSymbol> r = getCorrections(symbol,context,started,stopAfterMs,alphabet);
 		if (r.size()>1 && (before.length()>0 || after.length()>0)) {
-			if (before.length()>0) {
+			if (before.length()>0 && !before.equals(PLACEHOLDER)) {
 				for (AnalyzerSymbol as: r) {
 					SequenceAnalyzerSymbolLink link = getKnownLinks().get(getLinkId(before,context,as.symbol));
 					if (link!=null) {
@@ -192,7 +193,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 					}
 				}
 			}
-			if (after.length()>0) {
+			if (after.length()>0 && !after.equals(PLACEHOLDER)) {
 				List<AnalyzerSymbol> afters = getCorrections(after,context,started,stopAfterMs,alphabet);
 				for (AnalyzerSymbol af: afters) {
 					for (AnalyzerSymbol as: r) {

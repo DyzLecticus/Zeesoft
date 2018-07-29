@@ -358,7 +358,7 @@ public class EntityValueTranslator implements Initializable {
 	}
 
 	/**
-	 * Returns the external value of the from a concatenated set of internal values.
+	 * Returns the external value from a concatenated set of internal values.
 	 * 
 	 * @param str A concatenated set of internal values
 	 * @param type The optional entity type to limit value selection 
@@ -371,6 +371,70 @@ public class EntityValueTranslator implements Initializable {
 		EntityObject eo = getEntityObject(prefix);
 		if (eo!=null && (type.length()==0 || eo.getType().equals(type))) {
 			r = eo.getExternalValueForInternalValue(value);
+		}
+		return r;
+	}
+	
+	/**
+	 * Returns the type value for an internal value.
+	 * 
+	 * @param value The internal value
+	 * @return The type value or null
+	 */
+	public Object getTypeValueForInternalValue(String value) {
+		Object r = null;
+		String prefix = value.split(getValueConcatenator())[0] + getValueConcatenator();
+		EntityObject eo = getEntityObject(prefix);
+		if (eo!=null) {
+			r = eo.getTypeValueForInternalValue(value);
+		}
+		return r;
+	}
+	
+	/**
+	 * Returns the boolean type value for an internal value.
+	 * 
+	 * @param value The internal value
+	 * @param def The default type value
+	 * @return The boolean type value or the default type value
+	 */
+	public boolean getBooleanTypeValueForInternalValue(String value, boolean def) {
+		boolean r = def;
+		Object o = getTypeValueForInternalValue(value);
+		if (o!=null && o instanceof Boolean) {
+			r = (Boolean) o;
+		}
+		return r;
+	}
+
+	/**
+	 * Returns the long type value for an internal value.
+	 * 
+	 * @param value The internal value
+	 * @param def The default type value
+	 * @return The long type value or the default type value
+	 */
+	public long getLongTypeValueForInternalValue(String value, long def) {
+		long r = def;
+		Object o = getTypeValueForInternalValue(value);
+		if (o!=null && o instanceof Long) {
+			r = (Long) o;
+		}
+		return r;
+	}
+	
+	/**
+	 * Returns the integer type value for an internal value.
+	 * 
+	 * @param value The internal value
+	 * @param def The default type value
+	 * @return The integer type value or the default type value
+	 */
+	public int getIntegerTypeValueForInternalValue(String value, int def) {
+		int r = def;
+		Object o = getTypeValueForInternalValue(value);
+		if (o!=null && o instanceof Integer) {
+			r = (Integer) o;
 		}
 		return r;
 	}
@@ -473,7 +537,7 @@ public class EntityValueTranslator implements Initializable {
 		}
 		return r;
 	}
-
+	
 	/**
 	 * Initializes the entities.
 	 */

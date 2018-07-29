@@ -81,7 +81,11 @@ public class SequenceInterpreter {
 			// Correct input
 			boolean corrected = false;
 			if (r.request.correctInput) {
-				List<String> symbols = r.correctedInput.toSymbolsPunctuated();
+				ZStringSymbolParser correctionInput = new ZStringSymbolParser(r.correctedInput);
+				if (r.request.translateEntityValues) {
+					correctionInput = getInputForCorrectionFromEntityValues(r.entityValueTranslation);
+				}
+				List<String> symbols = correctionInput.toSymbolsPunctuated();
 				int numInputSymbols = symbols.size();
 				long stopAfterMs = numInputSymbols * getConfiguration().getBase().getMaxMsInterpretPerSymbol();
 				long maxCorrect = getConfiguration().getBase().getMaxMsInterpretPerSequence();
@@ -92,11 +96,14 @@ public class SequenceInterpreter {
 					stopAfterMs = maxCorrect;
 				}
 				r.addDebugLogLine("Correction time limit: ","" + stopAfterMs);
-				r.addDebugLogLine("Correcting sequence: ",r.correctedInput);
+				r.addDebugLogLine("Correcting sequence: ",correctionInput);
 				String alphabet = getConfiguration().getBase().getSupportedAlphabets().get(language);
-				ZStringSymbolParser correction = getConfiguration().getLanguageClassifier().correct(r.correctedInput,language,stopAfterMs,alphabet);
-				if (!correction.equals(r.correctedInput)) {
+				ZStringSymbolParser correction = getConfiguration().getLanguageClassifier().correct(correctionInput,language,stopAfterMs,alphabet);
+				if (!correction.equals(correctionInput)) {
 					corrected = true;
+					if (r.request.translateEntityValues) {
+						correction = mergeCorrectionWithEntityValues(r.entityValueTranslation,correction);
+					}
 					r.correctedInput = correction;
 					r.addDebugLogLine("Corrected sequence: ",r.correctedInput);
 					sequence = buildSequence(r);
@@ -132,23 +139,25 @@ public class SequenceInterpreter {
 			
 			// Check profanity
 			boolean profanity = false;
-			for (SequenceClassifierResult res: r.responseMasterContexts) {
-				if (res.symbol.equals(Generic.MASTER_CONTEXT_GENERIC)) {
-					r.addDebugLogLine("Checking profanity for sequence: ",r.correctedInput);
-					List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + res.symbol).getContexts(r.correctedInput,true,0D);
-					for (SequenceClassifierResult resC: contexts) {
-						if (resC.symbol.equals(GenericProfanity.CONTEXT_GENERIC_PROFANITY)) {
-							r.responseMasterContexts.clear();
-							r.responseMasterContexts.add(res);
-							res.probNormalized = 1.0D;
-							r.responseContexts.clear();
-							r.responseContexts.add(resC);
-							resC.probNormalized = 1.0D;
-							profanity = true;
-							break;
+			if (r.request.checkProfanity) {
+				for (SequenceClassifierResult res: r.responseMasterContexts) {
+					if (res.symbol.equals(Generic.MASTER_CONTEXT_GENERIC)) {
+						r.addDebugLogLine("Checking profanity for sequence: ",r.correctedInput);
+						List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + res.symbol).getContexts(r.correctedInput,true,0D);
+						for (SequenceClassifierResult resC: contexts) {
+							if (resC.symbol.equals(GenericProfanity.CONTEXT_GENERIC_PROFANITY)) {
+								r.responseMasterContexts.clear();
+								r.responseMasterContexts.add(res);
+								res.probNormalized = 1.0D;
+								r.responseContexts.clear();
+								r.responseContexts.add(resC);
+								resC.probNormalized = 1.0D;
+								profanity = true;
+								break;
+							}
 						}
+						break;
 					}
-					break;
 				}
 			}
 			if (!profanity) {
@@ -184,6 +193,42 @@ public class SequenceInterpreter {
 		return r;
 	}
 
+	private ZStringSymbolParser getInputForCorrectionFromEntityValues(ZStringSymbolParser entityValueSequence) {
+		ZStringSymbolParser r = new ZStringSymbolParser();
+		ZStringSymbolParser alphabetics = getConfiguration().getEntityValueTranslator().translateToExternalValues(entityValueSequence,BaseConfiguration.TYPE_ALPHABETIC,true);
+		List<String> symbols = alphabetics.toSymbolsPunctuated();
+		for (String symbol: symbols) {
+			if (symbol.contains(getConfiguration().getEntityValueTranslator().getValueConcatenator())) {
+				symbol = SymbolCorrector.PLACEHOLDER;
+			}
+			if (r.length()>0) {
+				r.append(" ");
+			} 
+			r.append(symbol);
+		}
+		return r;
+		
+	}
+
+	private ZStringSymbolParser mergeCorrectionWithEntityValues(ZStringSymbolParser entityValueSequence,ZStringSymbolParser correction) {
+		ZStringSymbolParser r = new ZStringSymbolParser();
+		List<String> symbols = correction.toSymbolsPunctuated();
+		List<String> values = entityValueSequence.toSymbolsPunctuated();
+		int i = 0;
+		for (String symbol: symbols) {
+			if (symbol.equals(SymbolCorrector.PLACEHOLDER)) {
+				symbol = getConfiguration().getEntityValueTranslator().getExternalValueForInternalValues(values.get(i),"");
+			}
+			if (r.length()>0) {
+				r.append(" ");
+			} 
+			r.append(symbol);
+			i++;
+		}
+		return r;
+		
+	}
+	
 	private ZStringSymbolParser translateEntityValues(InterpreterResponse response,ZStringSymbolParser translatedPrompt,ZStringSymbolParser sequence,List<String> translateLanguages) {
 		ZStringSymbolParser translated = getConfiguration().getEntityValueTranslator().translateToInternalValues(sequence,translateLanguages,response.request.translateEntityTypes,true);
 		if (translatedPrompt!=null) {

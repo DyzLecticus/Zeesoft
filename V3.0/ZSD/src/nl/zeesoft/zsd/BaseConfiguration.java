@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.dialog.dialogs.Room;
+import nl.zeesoft.zsd.dialog.dialogs.Support;
 
 /**
  * A BaseConfiguration instance is used to initialize sequence interpreter and dialog handler configurations.
@@ -395,6 +396,7 @@ public class BaseConfiguration {
 		List<String> mcs = new ArrayList<String>();
 		mcs.add(Generic.MASTER_CONTEXT_GENERIC);
 		mcs.add(Room.MASTER_CONTEXT_ROOM);
+		mcs.add(Support.MASTER_CONTEXT_SUPPORT);
 		supportedMasterContexts.put(language,mcs);
 	}
 }
