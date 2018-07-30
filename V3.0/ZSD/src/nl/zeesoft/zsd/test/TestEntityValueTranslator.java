@@ -62,7 +62,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"Eet drie donuts om 09:00:00 of tel tot 110");
 		testTranslation(t,"",
 			"I finished twohundredandtwentyfourth or 225th",
-			"UN_ABC:I UN_ABC:finished EN_ORD:224|UN_ABC:twohundredandtwentyfourth UN_ABC:or EN_OR2:225",
+			"UN_ABC:I UN_ABC:finished EN_ORD:224|UN_ABC:twohundredandtwentyfourth|EN_NAM:firstName:UN_ABC:Twohundredandtwentyfourth UN_ABC:or|EN_NAM:lastName:UN_ABC:Or EN_OR2:225",
 			"I finished twohundredandtwentyfourth or 225th");
 		testTranslation(t,"",
 			"Ik ben tweehonderdvierentwintigste geworden",
@@ -108,6 +108,14 @@ public class TestEntityValueTranslator extends TestObject {
 			"gekste der henkies is mijn naam",
 			"UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies UN_ABC:is UN_ABC:mijn UN_ABC:naam",
 			"gekste der henkies is mijn naam");
+		testTranslation(t,BaseConfiguration.LANG_NLD,
+			"Mijn naam si gekste der henkies.",
+			"UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
+			"Mijn naam si gekste der henkies.");
+		testTranslation(t,BaseConfiguration.LANG_NLD,
+			"Mijn naam is {firstName} {preposition} {lastName}.",
+			"UN_ABC:Mijn|NL_NAM:firstName:UN_ABC:Mijn UN_ABC:naam|NL_NAM:lastName:UN_ABC:Naam UN_ABC:is {firstName} {preposition} {lastName} .",
+			"Mijn naam is {firstName} {preposition} {lastName}.");
 		testTranslation(t,BaseConfiguration.LANG_ENG,
 			"to Germany or France",
 			"UN_ABC:to EN_CNT:DE|UN_ABC:Germany UN_ABC:or EN_CNT:FR|UN_ABC:France",

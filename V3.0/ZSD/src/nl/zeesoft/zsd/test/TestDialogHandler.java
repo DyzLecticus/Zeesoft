@@ -78,7 +78,12 @@ public class TestDialogHandler extends TestInitializer {
 				"mijn naam si gekste der henkies",
 				"UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
 				"UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
-				"Hallo. Mijn naam is Dyz Lecticus.","Wat kan ik voor je doen Gekste der Henkies?");
+				"","Wat kan ik voor je doen Gekste der Henkies?");
+			System.out.println();
+			testRequestResponse(handler,"What is your firstname?",
+				"mijn naam is jan de lange",
+				"UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:jan|NL_NAM:firstName:UN_ABC:Jan NL_PRE:5|UN_ABC:de|NL_NAM:preposition:NL_PRE:5 UN_ABC:lange|NL_NAM:lastName:UN_ABC:Lange .",
+				"","Wat kan ik voor je doen Jan de Lange?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Who created you?",
@@ -107,7 +112,7 @@ public class TestDialogHandler extends TestInitializer {
 			System.out.println();
 			testRequestResponse(handler,"",
 				"What does it cost to book a room?",
-				"UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room ?",
+				"UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book|EN_NAM:firstName:UN_ABC:Book UN_ABC:a|EN_NAM:lastName:UN_ABC:A UN_ABC:room ?",
 				"There are no costs attached to booking a room.","");
 			System.out.println();
 			testRequestResponse(handler,"",

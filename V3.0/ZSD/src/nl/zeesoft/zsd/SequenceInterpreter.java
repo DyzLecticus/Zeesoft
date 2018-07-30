@@ -227,33 +227,43 @@ public class SequenceInterpreter {
 			r.append(symbol);
 		}
 		return r;
-		
 	}
 
 	private ZStringSymbolParser mergeCorrectionWithEntityValues(ZStringSymbolParser entityValueSequence,ZStringSymbolParser correction) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		List<String> symbols = correction.toSymbolsPunctuated();
 		List<String> values = entityValueSequence.toSymbolsPunctuated();
+		List<String> merged = new ArrayList<String>();
 		int i = 0;
 		for (String symbol: symbols) {
 			if (symbol.equals(SymbolCorrector.PLACEHOLDER)) {
 				symbol = getConfiguration().getEntityValueTranslator().getExternalValueForInternalValues(values.get(i),"");
 			}
-			if (r.length()>0) {
-				r.append(" ");
-			} 
-			r.append(symbol);
+			merged.add(symbol);
 			i++;
 		}
+		r.fromSymbols(merged,true,true);
 		return r;
-		
 	}
 	
 	private ZStringSymbolParser translateEntityValues(InterpreterResponse response,ZStringSymbolParser translatedPrompt,ZStringSymbolParser sequence,List<String> translateLanguages) {
+		ZStringSymbolParser r = new ZStringSymbolParser();
 		ZStringSymbolParser translated = getConfiguration().getEntityValueTranslator().translateToInternalValues(sequence,translateLanguages,response.request.translateEntityTypes,true);
-		if (translatedPrompt!=null) {
-			translated = new ZStringSymbolParser(translated.substring(translatedPrompt.length() + 1));
+		if (translatedPrompt==null) {
+			r = translated;
+		} else {
+			List<String> promptSymbols = translatedPrompt.toSymbols();
+			List<String> symbols = translated.toSymbols();
+			for (int i = 0; i < promptSymbols.size(); i++) {
+				symbols.remove(0);
+			}
+			for (String symbol: symbols) {
+				if (r.length()>0) {
+					r.append(" ");
+				}
+				r.append(symbol);
+			}
 		}
-		return translated;
+		return r;
 	}
 }

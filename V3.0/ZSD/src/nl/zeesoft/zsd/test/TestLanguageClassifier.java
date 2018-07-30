@@ -43,7 +43,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 
 			corrected = sc.correct(sequence,BaseConfiguration.LANG_NLD);
 			System.out.println("'" + sequence + "' (NLD) => '" + corrected + "'");
-			assertEqual(corrected.toString(),"Wat is jouw kamer?","The correction does not match expectation");
+			assertEqual(corrected.toString(),"Wat is jouw naam?","The correction does not match expectation");
 			
 			sequence = new ZStringSymbolParser("Wie ben jij?");
 			System.out.println();
@@ -62,7 +62,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			sequence = new ZStringSymbolParser("wat is your name?");
 
 			System.out.println();
-			t = 0.3D;
+			t = 0.1D;
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
 			for (SequenceClassifierResult context: contexts) {
@@ -71,7 +71,7 @@ public class TestLanguageClassifier extends TestSequenceClassifier {
 			assertEqual(contexts.size(),2,"The classifier did not return the expected number of contexts");
 
 			System.out.println();
-			t = 0.7D;
+			t = 0.6D;
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
 			for (SequenceClassifierResult context: contexts) {

@@ -77,11 +77,11 @@ public class TestSequenceMatcher extends TestObject {
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Hoeveel kan ik overboeken vanaf mijn betaalrekening? [OUTPUT] U kunt beide paslezers gebruiken. Dit is het bedrag dat u per dag maximaal kunt overboeken met uw identificatiecode en vingerafdruk."));
 
 			sequence = new ZStringSymbolParser("Hypotheek berekenen");
-			testSequenceMatch(sm,sequence,"",false,null);
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Had u voor deze datum al een Bankspaar Hypotheek of een Kapitaalverzekering Eigen Woning die is gekoppeld aan een hypotheek? [OUTPUT] Dan kunt u deze Bankspaar Hypotheek of verzekering wel fiscaal geruisloos voortzetten in een nieuwe Bankspaar Hypotheek."));
 			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Of bent u gewoon nieuwsgierig naar hoeveel u kunt lenen? [OUTPUT] U kunt ook uw hypotheek berekenen als u geen vast contract heeft of als u zzp'er bent."));
 			
 			sequence = new ZStringSymbolParser("Fraude");
-			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("En belangrijker: hoe kunt voorkomen slachtoffer te worden van CEO Fraude? [OUTPUT] Criminelen kunnen veel informatie over bedrijven op internet vinden. Check daarom regelmatig wat voor informatie u over uw bedrijf en de medewerkers online heeft staan. Maak het criminelen zo moeilijk mogelijk om online namen, functies en emailadressen te stelen."));
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Fraude herkennen: wat doen criminelen? [OUTPUT] Maar het is belangrijk dat u ook zelf weet, wat u wel of juist niet moet doen."));
 			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Wat is CEO Fraude? [OUTPUT] Bij CEO fraude doen criminelen zich voor als een hooggeplaatste manager of bestuurder (bijvoorbeeld de CEO of de CFO) uit uw organisatie, om vervolgens geld te stelen. Bij deze vorm van fraude gaat het vaak om zeer grote bedragen. Bij de meest recente CEO fraude slachtoffers zien we veel overeenkomsten en lijkt het alsof dezelfde daders erachter zitten."));
 			
 			sequence = new ZStringSymbolParser("Heeft de abn amro rechtsbijstandverzekering");
@@ -93,7 +93,7 @@ public class TestSequenceMatcher extends TestObject {
 			double t = 0D;
 			
 			System.out.println();
-			t = 0.7D;
+			t = 0.165D;
 			matches = sm.getMatches(sequence,"",false,t);
 			System.out.println("Matches for sequence: '" + sequence + "', threshold: " + t);
 			for (SequenceMatcherResult match: matches) {
@@ -106,7 +106,7 @@ public class TestSequenceMatcher extends TestObject {
 			assertEqual(matches.size(),15,"The matcher did not return the expected number of sequences");
 			
 			System.out.println();
-			t = 0.9D;
+			t = 0.3D;
 			matches = sm.getMatches(sequence,"",false,t);
 			System.out.println("Matches for sequence: '" + sequence + "', threshold: " + t);
 			for (SequenceMatcherResult match: matches) {

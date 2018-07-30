@@ -82,18 +82,29 @@ public abstract class DialogInstanceHandler {
 			} else {
 				r.addDebugLogLine("    Found matches for sequence: ","" + matches.size());
 				List<SequenceMatcherResult> options = new ArrayList<SequenceMatcherResult>();
+				double highest = matches.get(0).probNormalized;
+				int added = 0;
 				for (SequenceMatcherResult match: matches) {
-					if (match.probNormalized==1D) {
+					if (match.probNormalized==highest) {
 						options.add(match);
 					}
-					ZStringBuilder str = new ZStringBuilder();
-					str.append(match.result.sequence);
-					str.append(" (");
-					str.append("" + match.prob);
-					str.append(" / ");
-					str.append("" + match.probNormalized);
-					str.append(")");
-					r.addDebugLogLine("    - ",str);
+					if (added==10) {
+						ZStringBuilder val = new ZStringBuilder();
+						val.append("[... ");
+						val.append("" + (matches.size() - 10));
+						val.append("]");
+						r.addDebugLogLine("    - ",val);
+					} else if (added<10) {
+						ZStringBuilder str = new ZStringBuilder();
+						str.append(match.result.sequence);
+						str.append(" (");
+						str.append("" + match.prob);
+						str.append(" / ");
+						str.append("" + match.probNormalized);
+						str.append(")");
+						r.addDebugLogLine("    - ",str);
+					}
+					added++;
 				}
 				SequenceMatcherResult sel = getOption(r.getRequest().randomizeOutput,options);
 				List<ZStringBuilder> split = sel.result.sequence.split(dialog.getMatcher().getIoSeparator());

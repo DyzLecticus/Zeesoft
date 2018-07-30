@@ -151,18 +151,22 @@ public class SequenceAnalyzer extends Analyzer {
 		int i = 0;
 		String from = "";
 		for (String symbol: symbols) {
-			if (from.length()>0 && symbols.size()>(i + 1)) {
+			if (symbols.size()>(i + 1)) {
 				String to = symbols.get(i + 1);
 				List<SequenceAnalyzerSymbolLink> linksFrom = null;
 				List<SequenceAnalyzerSymbolLink> linksTo = null;
 				if (context==null) {
-					linksFrom = getLinksByFromTo(from,symbol,caseInsensitive);
+					if (from.length()>0) {
+						linksFrom = getLinksByFromTo(from,symbol,caseInsensitive);
+					}
 					linksTo = getLinksByFromTo(symbol,to,caseInsensitive);
 				} else {
-					linksFrom = getLinksByFromTo(from,symbol,context,caseInsensitive);
+					if (from.length()>0) {
+						linksFrom = getLinksByFromTo(from,symbol,context,caseInsensitive);
+					}
 					linksTo = getLinksByFromTo(symbol,to,context,caseInsensitive);
 				}
-				if (linksFrom.size()==0 && linksTo.size()==0) {
+				if ((linksFrom==null || linksFrom.size()==0) && linksTo.size()==0) {
 					r.add(symbol);
 				}
 			}

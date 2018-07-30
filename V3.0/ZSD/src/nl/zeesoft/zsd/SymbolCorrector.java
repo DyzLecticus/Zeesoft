@@ -28,12 +28,22 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The symbol bandwidth
 	 */
 	public double getSymbolContextBandwidth(String context) {
-		double r = 1D;
+		double r = 1.0D;
 		Double maxProb = getSymbolContextMaxProbs().get(context);
 		if (maxProb!=null) {
 			r = (maxProb - getSymbolContextMinProbs().get(context) / 2D);
 		}
 		return r;
+	}
+
+	/**
+	 * Returns the symbol context bandwidth factor.
+	 * 
+	 * @param context The optional context symbol
+	 * @return The symbol context bandwidth factor
+	 */
+	public double getSymbolContextBandwidthFactor(String context) {
+		return getLinkContextBandwidth(context) / getSymbolContextBandwidth(context);
 	}
 
 	/**
@@ -43,7 +53,7 @@ public class SymbolCorrector extends SequenceAnalyzer {
 	 * @return The link context bandwidth
 	 */
 	public double getLinkContextBandwidth(String context) {
-		double r = getSymbolContextBandwidth(context);
+		double r = 1.0D;
 		Double maxProb = getLinkContextMaxProbs().get(context);
 		if (maxProb!=null) {
 			r = (maxProb - getLinkContextMinProbs().get(context) / 2D);
@@ -236,7 +246,9 @@ public class SymbolCorrector extends SequenceAnalyzer {
 				AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
 				if (s!=null && !added.contains(s.symbol)) {
 					added.add(s.symbol);
-					r.add(s.copy());
+					s = s.copy();
+					s.prob = (s.prob * getSymbolContextBandwidthFactor(context));
+					r.add(s);
 				}
 			}
 			if (r.size()==0 && symbol.length()<=MAX_SECONDARY_LENGTH &&
@@ -247,7 +259,9 @@ public class SymbolCorrector extends SequenceAnalyzer {
 					AnalyzerSymbol s = getKnownSymbol(var.toString(),context);
 					if (s!=null && !added.contains(s.symbol)) {
 						added.add(s.symbol);
-						r.add(s.copy());
+						s = s.copy();
+						s.prob = (s.prob * getSymbolContextBandwidthFactor(context));
+						r.add(s);
 					}
 				}
 			}

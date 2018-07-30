@@ -120,7 +120,11 @@ public class SequenceMatcher extends SequenceClassifier {
 		List<SequenceMatcherResult> r = new ArrayList<SequenceMatcherResult>();
 		SequenceMatcherSequence match = getSequenceMatcherSequenceForSequence(sequence,context,caseInsensitive);
 		SortedMap<String,AnalyzerSymbol> matchSymbols = new TreeMap<String,AnalyzerSymbol>();
-		double highest = 0D;
+		int s = match.symbols.size();
+		if (s==0) {
+			s = 1;
+		}
+		double max = s * ((bandwidth * 3.0D) * 2.0D);
 		for (String symbol: match.symbols) {
 			List<AnalyzerSymbol> asl = getKnownSymbols(symbol, context, caseInsensitive);
 			for (AnalyzerSymbol as: asl) {
@@ -133,51 +137,81 @@ public class SequenceMatcher extends SequenceClassifier {
 			List<String> unlinkedSymbols = getUnlinkedSymbolsForSequenceSymbols(match.symbols,context,caseInsensitive);
 			List<SequenceMatcherSequence> list = knownSequences.get(context);
 			for (SequenceMatcherSequence seq: list) {
-				int conseq = 1;
 				double prob = 0D;
-				String pSymbolTo = "";
-				for (SequenceAnalyzerSymbolLink link: match.links) {
-					boolean found = false;
-					boolean foundCase = false;
-					for (SequenceAnalyzerSymbolLink comp: seq.links) {
-						if (link.context.equals(comp.context) &&
-							(link.symbolFrom.equals(comp.symbolFrom) && link.symbolTo.equals(comp.symbolTo)) ||
-							(caseInsensitive && link.symbolFrom.equalsIgnoreCase(comp.symbolFrom) && link.symbolTo.equalsIgnoreCase(comp.symbolTo))
-							) {
-							found = true;
-							if (link.symbolFrom.equals(comp.symbolFrom) && link.symbolTo.equals(comp.symbolTo)) {
-								foundCase = true;
+				int found = 0;
+				if (match.links.size()>0) {
+					int mStart = 0;
+					int sStart = 0;
+					boolean breaker = false;
+					for (SequenceAnalyzerSymbolLink link: match.links) {
+						sStart = 0;
+						for (SequenceAnalyzerSymbolLink comp: seq.links) {
+							if (link.context.equals(comp.context) &&
+								(link.symbolFrom.equals(comp.symbolFrom) && link.symbolTo.equals(comp.symbolTo)) ||
+								(caseInsensitive && link.symbolFrom.equalsIgnoreCase(comp.symbolFrom) && link.symbolTo.equalsIgnoreCase(comp.symbolTo))
+								) {
+								breaker = true;
+								break;
 							}
+							sStart++;
+						}
+						if (breaker) {
 							break;
 						}
+						mStart++;
 					}
-					if (found) {
-						prob += ((bandwidth + (getLinkContextMaxProbs().get(link.context) - link.prob)) * (double)conseq);
-						if (foundCase) {
-							if (conseq==1) {
-								prob += (getSymbolContextMaxProbs().get(link.context) - link.asFrom.prob);
+					if (mStart<match.links.size() && sStart<seq.links.size()) {
+						for (int i = mStart; i < match.links.size(); i++) {
+							SequenceAnalyzerSymbolLink link = match.links.get(i);
+							int num = (i - mStart);
+							for (int c = (num + sStart); c < seq.links.size(); c++) {
+								SequenceAnalyzerSymbolLink comp = seq.links.get(c);
+								boolean equals = false;
+								boolean equalsCase = false;
+								if (link.context.equals(comp.context) &&
+									(link.symbolFrom.equals(comp.symbolFrom) && link.symbolTo.equals(comp.symbolTo)) ||
+									(caseInsensitive && link.symbolFrom.equalsIgnoreCase(comp.symbolFrom) && link.symbolTo.equalsIgnoreCase(comp.symbolTo))
+									) {
+									equals = true;
+									if (link.symbolFrom.equals(comp.symbolFrom) && link.symbolTo.equals(comp.symbolTo)) {
+										equalsCase = true;
+									}
+								}
+								if (equals) {
+									double factor = 1.0D;
+									if (equalsCase) {
+										factor += 0.25D;
+									}
+									if (found==num) {
+										factor += 0.25D;
+									}
+									if (c==(num + sStart)) {
+										factor += 0.50D;
+									}
+									found++;
+									prob += ((bandwidth + (getLinkContextMaxProbs().get(link.context) - link.prob)) * factor);
+									break;
+								}
 							}
-							prob += (getSymbolContextMaxProbs().get(link.context) - link.asTo.prob);
 						}
-						if (pSymbolTo.length()==0 || pSymbolTo.equals(link.symbolFrom) || (caseInsensitive && pSymbolTo.equalsIgnoreCase(link.symbolFrom))) {
-							conseq++;
-						} else {
-							conseq = 1;
-						}
-						pSymbolTo = link.symbolTo;
-					} else {
-						conseq = 0;
-						pSymbolTo = "";
 					}
 				}
-				for (String symbol: unlinkedSymbols) {
-					if (!ZStringSymbolParser.isLineEndSymbol(symbol)) {
-						for (String comp: seq.symbols) {
+				for (int i = 0; i < match.symbols.size(); i++) {
+					String symbol = match.symbols.get(i);
+					if (unlinkedSymbols.contains(symbol)) {
+						for (int c = 0; c < seq.symbols.size(); c++) {
+							String comp = seq.symbols.get(c);
 							if (symbol.equals(comp) || (caseInsensitive && symbol.equalsIgnoreCase(comp))) {
 								AnalyzerSymbol as = matchSymbols.get(symbol);
 								if (as!=null) {
-									prob += bandwidth;
-									prob += (getSymbolContextMaxProbs().get(as.context) - as.prob);
+									double factor = 1.0D;
+									if (symbol.equals(comp)) {
+										factor += 0.5D;
+									}
+									if (c==i) {
+										factor += 0.5D;
+									}
+									prob += ((bandwidth + ((getSymbolContextMaxProbs().get(as.context) - as.prob) * getSymbolContextBandwidthFactor(context))) * factor);
 								}
 							}
 						}
@@ -187,9 +221,6 @@ public class SequenceMatcher extends SequenceClassifier {
 					SequenceMatcherResult res = new SequenceMatcherResult();
 					res.result = seq.copy();
 					res.prob = prob;
-					if (res.prob>highest) {
-						highest = res.prob;
-					}
 					r.add(res);
 				}
 			}
@@ -197,7 +228,10 @@ public class SequenceMatcher extends SequenceClassifier {
 		if (r.size()>0) {
 			SortedMap<Double,List<SequenceMatcherResult>> sort = new TreeMap<Double,List<SequenceMatcherResult>>();
 			for (SequenceMatcherResult res: r) {
-				res.probNormalized = res.prob / highest ;
+				res.probNormalized = res.prob / max;
+				if (res.probNormalized > 1.0D) {
+					res.probNormalized = 1.0D;
+				}
 				if (threshold==0D || res.probNormalized>=threshold) {
 					List<SequenceMatcherResult> l = sort.get(res.prob);
 					if (l==null) {

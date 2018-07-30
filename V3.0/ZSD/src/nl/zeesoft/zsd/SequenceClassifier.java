@@ -80,7 +80,7 @@ public class SequenceClassifier extends SymbolCorrector {
 		SortedMap<String,SequenceClassifierResult> list = new TreeMap<String,SequenceClassifierResult>();
 		List<String> symbols = sequence.toSymbolsPunctuated(); 
 		int i = 0;
-		double highest = 0D;
+		double max = symbols.size() * (bandwidth * 3.0D);
 		for (String symbol: symbols) {
 			String to = "";
 			if (symbols.size()>(i + 1)) {
@@ -88,10 +88,7 @@ public class SequenceClassifier extends SymbolCorrector {
 				List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(symbol,to,caseInsensitive);
 				for (SequenceAnalyzerSymbolLink link: links) {
 					if (link.context.length()>0) {
-						SequenceClassifierResult res = addOrUpdateResult(r,list,link.context,bandwidth,link.prob,true);
-						if (res.prob>highest) {
-							highest = res.prob;
-						}
+						addOrUpdateResult(r,list,link.context,bandwidth,link.prob,true);
 					}
 				}
 			}
@@ -103,10 +100,7 @@ public class SequenceClassifier extends SymbolCorrector {
 				List<AnalyzerSymbol> asl = getKnownSymbols(symbol,caseInsensitive);
 				for (AnalyzerSymbol as: asl) {
 					if (as.context.length()>0) {
-						SequenceClassifierResult res = addOrUpdateResult(r,list,as.context,bandwidth,as.prob,false);
-						if (res.prob>highest) {
-							highest = res.prob;
-						}
+						addOrUpdateResult(r,list,as.context,bandwidth,as.prob,false);
 					}
 				}
 			}
@@ -114,7 +108,10 @@ public class SequenceClassifier extends SymbolCorrector {
 		if (r.size()>0) {
 			SortedMap<Double,List<SequenceClassifierResult>> sort = new TreeMap<Double,List<SequenceClassifierResult>>();
 			for (SequenceClassifierResult res: r) {
-				res.probNormalized = res.prob / highest ;
+				res.probNormalized = res.prob / max;
+				if (res.probNormalized > 1.0D) {
+					res.probNormalized = 1.0D;
+				}
 				if (threshold==0D || res.probNormalized>=threshold) {
 					List<SequenceClassifierResult> l = sort.get(res.prob);
 					if (l==null) {
@@ -146,7 +143,7 @@ public class SequenceClassifier extends SymbolCorrector {
 		if (link) {
 			res.prob += (getLinkContextMaxProbs().get(context) - prob);
 		} else {
-			res.prob += (getSymbolContextMaxProbs().get(context) - prob);
+			res.prob += ((getSymbolContextMaxProbs().get(context) - prob) * getSymbolContextBandwidthFactor(context));
 		}
 		return res;
 	}
