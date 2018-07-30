@@ -3,6 +3,7 @@ package nl.zeesoft.zsd;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.dialog.dialogs.GenericProfanity;
@@ -153,7 +154,17 @@ public class SequenceInterpreter {
 						}
 					}
 					r.responseMasterContexts = contexts;
-					masterContext = contexts.get(0).symbol;
+					if (contexts.get(0).probNormalized>=r.request.classifyMasterContextThreshold) {
+						masterContext = contexts.get(0).symbol;
+					} else {
+						ZStringBuilder val = new ZStringBuilder();
+						val.append(contexts.get(0).symbol);
+						val.append(" ");
+						val.append("" + contexts.get(0).probNormalized);
+						val.append(" < ");
+						val.append("" + contexts.get(0).probNormalized);
+						r.addDebugLogLine("Rejected master context: ",val);
+					}
 				}
 			}
 			
