@@ -9,7 +9,7 @@ import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.util.DialogToJson;
 
 public class TestDialogToJson extends TestEntityToJson {
-	private static final int	SEQUENCE_ELEMENTS	= 1878;
+	private static final int	SEQUENCE_ELEMENTS	= 2194;
 	
 	public TestDialogToJson(Tester tester) {
 		super(tester);
@@ -27,12 +27,16 @@ public class TestDialogToJson extends TestEntityToJson {
 		System.out.println("~~~~");
 		System.out.println("// Create dialog set");
 		System.out.println("DialogSet ds = new DialogSet();");
+		System.out.println("// Create an entity value translator");
+		System.out.println("EntityValueTranslator t = new EntityValueTranslator();");
+		System.out.println("// Initialize entity value translator");
+		System.out.println("t.initialize();");
 		System.out.println("// Initialize the dialog set");
-		System.out.println("ds.initialize();");
+		System.out.println("ds.initialize(t);");
 		System.out.println("// Create the DialogToJson instance");
 		System.out.println("DialogToJson convertor = new DialogToJson();");
 		System.out.println("// Convert the dialogs to JSON");
-		System.out.println("JsFile json = convertor.getJsonForDialogs(ds.getDialogs());");
+		System.out.println("JsFile json = convertor.getJsonForDialogs(ds.getDialogs(),t);");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockEntityValueTranslator.class.getName());

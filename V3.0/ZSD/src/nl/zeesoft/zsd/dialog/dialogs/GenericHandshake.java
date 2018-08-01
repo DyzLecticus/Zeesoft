@@ -1,11 +1,5 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
-import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zsd.BaseConfiguration;
-import nl.zeesoft.zsd.EntityValueTranslator;
-import nl.zeesoft.zsd.entity.EntityObject;
-import nl.zeesoft.zsd.entity.complex.ComplexPattern;
-
 public abstract class GenericHandshake extends Generic {
 	public static final String	CONTEXT_GENERIC_HANDSHAKE	= "Handshake";
 
@@ -15,13 +9,14 @@ public abstract class GenericHandshake extends Generic {
 
 	public static final String	VARIABLE_FULLNAME			= "fullName";
 
-	private int					counter						= 0;
+	//private int					counter						= 0;
 	
 	public GenericHandshake() {
 		setContext(CONTEXT_GENERIC_HANDSHAKE);
 		setHandlerClassName(GenericHandshakeHandler.class.getName());
 	}
 
+	/*
 	@Override
 	protected void addComplexPattern(EntityValueTranslator t,ComplexPattern pattern) {
 		if (pattern.pattern.contains("{preposition}")) {
@@ -44,4 +39,5 @@ public abstract class GenericHandshake extends Generic {
 			addExample(pattern.pattern,"");
 		}
 	}
+	*/
 }

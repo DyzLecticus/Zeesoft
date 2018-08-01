@@ -3,7 +3,6 @@ package nl.zeesoft.zsd;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.dialog.dialogs.GenericProfanity;
@@ -82,9 +81,11 @@ public class SequenceInterpreter {
 			// Correct input
 			boolean corrected = false;
 			if (r.request.correctInput) {
-				ZStringSymbolParser correctionInput = new ZStringSymbolParser(r.correctedInput);
+				ZStringSymbolParser correctionInput = null;
 				if (r.request.translateEntityValues) {
 					correctionInput = getInputForCorrectionFromEntityValues(r.entityValueTranslation);
+				} else {
+					correctionInput = new ZStringSymbolParser(r.correctedInput);
 				}
 				List<String> symbols = correctionInput.toSymbolsPunctuated();
 				int numInputSymbols = symbols.size();
@@ -127,43 +128,15 @@ public class SequenceInterpreter {
 			if (r.request.classifyMasterContext) {
 				r.addDebugLogLine("Classify master context for sequence: ",r.correctedInput);
 				List<SequenceClassifierResult> contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(r.correctedInput,true,0.0D);
-				if (r.request.prompt.length()>0 && contexts.size()==0) {
+				if (r.request.prompt.length()>0 && (contexts.size()==0 || contexts.get(0).probNormalized<r.request.classifyMasterContextThreshold)) {
 					r.addDebugLogLine("Classify master context for sequence: ",sequence);
 					contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(sequence,true,0D);
 				}
 				if (contexts.size()>0) {
-					r.addDebugLogLine("Classified master context: ",contexts.get(0).symbol);
-					if (r.request.masterContext.length()>0 && !r.request.masterContext.equals(contexts.get(0).symbol)) {
-						SequenceClassifierResult resMC = null;
-						SequenceClassifierResult resGeneric = null;
-						for (SequenceClassifierResult res: contexts) {
-							if (r.request.checkProfanity && res.symbol.equals(Generic.MASTER_CONTEXT_GENERIC)) {
-								resGeneric = res;
-							}
-							if (res.probNormalized>=r.request.classifyMasterContextThreshold && res.symbol.equals(r.request.masterContext)) {
-								resMC = res;
-							}
-						}
-						if (resMC!=null) {
-							r.addDebugLogLine("Selected master context: ",resMC.symbol);
-							contexts.clear();
-							contexts.add(resMC);
-							if (resGeneric!=null && resMC!=resGeneric) {
-								contexts.add(resGeneric);
-							}
-						}
-					}
 					r.responseMasterContexts = contexts;
 					if (contexts.get(0).probNormalized>=r.request.classifyMasterContextThreshold) {
+						r.addDebugLogLine("Classified master context: ",contexts.get(0).symbol);
 						masterContext = contexts.get(0).symbol;
-					} else {
-						ZStringBuilder val = new ZStringBuilder();
-						val.append(contexts.get(0).symbol);
-						val.append(" ");
-						val.append("" + contexts.get(0).probNormalized);
-						val.append(" < ");
-						val.append("" + contexts.get(0).probNormalized);
-						r.addDebugLogLine("Rejected master context: ",val);
 					}
 				}
 			}
@@ -190,9 +163,13 @@ public class SequenceInterpreter {
 						break;
 					}
 				}
+				if (r.responseMasterContexts.size()>0 && r.responseMasterContexts.get(0).probNormalized<r.request.classifyMasterContextThreshold) {
+					r.responseMasterContexts.clear();
+				}
 			}
+			
+			// Classify context
 			if (!profanity) {
-				// Classify context
 				if (masterContext.length()>0 && r.request.classifyContext) {
 					r.addDebugLogLine("Classify context for sequence: ",r.correctedInput);
 					List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);

@@ -15,7 +15,7 @@ public class DutchConfirmation extends EntityObject {
 	}
 	@Override
 	public int getMaximumSymbols() {
-		return 3;
+		return 4;
 	}
 	@Override
 	public void initialize(EntityValueTranslator translator) {
@@ -35,6 +35,7 @@ public class DutchConfirmation extends EntityObject {
 		addConfirmation("dat klopt niet",false);
 		addConfirmation("incorrect",false);
 		addConfirmation("dat is incorrect",false);
+		addConfirmation("dat is niet correct",false);
 	}
 	private void addConfirmation(String str,boolean value) {
 		addEntityValue(str,"" + value,value);

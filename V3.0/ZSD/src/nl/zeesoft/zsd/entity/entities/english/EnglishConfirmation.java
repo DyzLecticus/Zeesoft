@@ -31,6 +31,7 @@ public class EnglishConfirmation extends EntityObject {
 		addConfirmation("nope",false);
 		addConfirmation("incorrect",false);
 		addConfirmation("that is incorrect",false);
+		addConfirmation("that is not correct",false);
 		addConfirmation("I do not confirm",false);
 	}
 	private void addConfirmation(String str,boolean value) {
