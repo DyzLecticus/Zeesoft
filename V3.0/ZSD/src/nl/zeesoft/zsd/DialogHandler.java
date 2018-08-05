@@ -57,11 +57,7 @@ public class DialogHandler extends SequenceInterpreter {
 			processContexts.add(r.request.context);
 		} else {
 			for (SequenceClassifierResult res: r.responseContexts) {
-				if (r.request.context.equals(res.symbol)) {
-					processContexts.add(0,res.symbol);
-				} else {
-					processContexts.add(res.symbol);
-				}
+				processContexts.add(res.symbol);
 			}
 			if (processContexts.size()==0 && r.request.context.length()>0) {
 				processContexts.add(r.request.context);

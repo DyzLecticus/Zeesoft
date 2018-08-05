@@ -23,6 +23,9 @@ public class EnglishGenericQnA extends GenericQnA {
 		addExample("Who is André van der Zee?","André van der Zee is a software engineer from Leiden, The Netherlands.");
 		
 		addExample("What is the answer to the ultimate question of life, the universe, and everything?","Fourtytwo.");
+		addExample("What is the answer to the question?","Fourtytwo.");
+		addExample("What is the answer?","Fourtytwo.");
+		addExample("What is the question?","I do not know.");
 		
 		addExample("How can you help me?",SUPPORT);
 		addExample("What can you do for me?",SUPPORT);
@@ -33,6 +36,7 @@ public class EnglishGenericQnA extends GenericQnA {
 		addExample("What are you?",SELF);
 		addExample("Can you describe yourself?",SELF);
 		addExample("How would you describe yourself?",SELF);
+		
 		addExample("Are you a robot?","Yes. " + SELF);
 		addExample("Are you a human?","No. I am better. " + SELF);
 		addExample("Are you human?","No. I am better. " + SELF);

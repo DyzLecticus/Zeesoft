@@ -65,6 +65,21 @@ public class TestDialogHandler extends TestInitializer {
 				"I am an artificially intelligent personal assistant.","");
 			System.out.println();
 			testRequestResponse(handler,"",
+				"wat ben jij?",
+				"UN_ABC:Wat UN_ABC:ben UN_ABC:jij ?",
+				"Ik ben een kunstmatig intelligente persoonlijk assistent.","");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"What is the answer?",
+				"UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer ?",
+				"Fourtytwo.","");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Wat is het antwoord?",
+				"UN_ABC:Wat UN_ABC:is UN_ABC:het UN_ABC:antwoord ?",
+				"Tweeenveertig.","");
+			System.out.println();
+			testRequestResponse(handler,"",
 				"hallo",
 				"UN_ABC:Hallo .",
 				"Hallo. Mijn naam is Dyz Lecticus.","Wat is jouw naam?");
@@ -81,7 +96,7 @@ public class TestDialogHandler extends TestInitializer {
 			System.out.println();
 			testRequestResponse(handler,"",
 				"mijn naam si gekste der henkies",
-				"UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
+				"UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste NL_PRE:6|UN_ABC:der UN_ABC:henkies .",
 				"UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
 				"Hallo. Mijn naam is Dyz Lecticus.","Wat kan ik voor je doen Gekste der Henkies?");
 			System.out.println();
@@ -117,7 +132,7 @@ public class TestDialogHandler extends TestInitializer {
 			System.out.println();
 			testRequestResponse(handler,"",
 				"What does it cost to book a room?",
-				"UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book|EN_NAM:firstName:UN_ABC:Book UN_ABC:a|EN_NAM:lastName:UN_ABC:A UN_ABC:room ?",
+				"UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room ?",
 				"There are no costs attached to booking a room.","");
 			System.out.println();
 			testRequestResponse(handler,"",
@@ -128,8 +143,8 @@ public class TestDialogHandler extends TestInitializer {
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?",
-				"UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie|NL_NAM:firstName:UN_ABC:Drie NL_MTH:M|UN_ABC:keer|NL_NAM:lastName:UN_ABC:Keer NL_NUM:6|UN_ABC:zes ?",
-				"UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie|NL_NAM:firstName:UN_ABC:Drie NL_MTH:M NL_NUM:6|UN_ABC:zes ?",
+				"UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie NL_MTH:M|UN_ABC:keer NL_NUM:6|UN_ABC:zes ?",
+				"UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie NL_MTH:M NL_NUM:6|UN_ABC:zes ?",
 				"Precies achtendertig.","Kan ik nog meer voor je doen?");
 			System.out.println();
 			testRequestResponse(handler,"",

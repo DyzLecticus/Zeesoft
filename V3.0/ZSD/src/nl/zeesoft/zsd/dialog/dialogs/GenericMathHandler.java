@@ -49,22 +49,22 @@ public class GenericMathHandler extends DialogInstanceHandler {
 			} else {
 				boolean minus = false;
 				String[] str = ("" + f).split("\\.");
-				int i1 = Integer.parseInt(str[0]);
-				int i2 = Integer.parseInt(str[1]);
-				if (i1<0) {
+				int i = Integer.parseInt(str[0]);
+				float d = Float.parseFloat("0." + str[1]);
+				if (i<0) {
 					minus = true;
-					i1 = (i1 * -1);
+					i = (i * -1);
 				}
-				if (i2>0) {
+				if (d>0) {
 					exact = getAbout();
-					if (i2>=5) {
-						i1++;
+					if (d>=0.5F) {
+						i++;
 					}
 				}
 				String eVal = "";
 				EntityObject eo = getNumericEntity();
 				if (eo!=null) {
-					eVal = eo.getExternalValueForInternalValue(eo.getInternalValuePrefix() + i1);
+					eVal = eo.getExternalValueForInternalValue(eo.getInternalValuePrefix() + i);
 				}
 				if (eVal.length()>0) {
 					result = eVal;
@@ -73,9 +73,9 @@ public class GenericMathHandler extends DialogInstanceHandler {
 					}
 				} else {
 					if (minus) {
-						result = "-" + i1;
+						result = "-" + i;
 					} else {
-						result = "" + i1;
+						result = "" + i;
 					}
 				}
 			}

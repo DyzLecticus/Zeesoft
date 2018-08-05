@@ -72,7 +72,7 @@ public class SequenceInterpreter {
 			translateLanguages.add(language);
 			translateLanguages.add(BaseConfiguration.LANG_UNI);
 			if (r.request.translateEntityValues) {
-				if (r.request.translateEntityValues && r.request.prompt.length()>0) {
+				if (r.request.prompt.length()>0) {
 					translatedPrompt = getConfiguration().getEntityValueTranslator().translateToInternalValues(r.request.prompt,translateLanguages,r.request.translateEntityTypes,true);
 				}
 				r.addDebugLogLine("Translate sequence: ",r.correctedInput);
@@ -125,7 +125,6 @@ public class SequenceInterpreter {
 				}
 			}
 			
-			
 			if (r.request.translateEntityValues) {
 				if (r.request.correctInput) {
 					r.classificationSequence = getInputForClassifierFromEntityValues(r.entityValueTranslationCorrected);
@@ -137,58 +136,76 @@ public class SequenceInterpreter {
 				r.classificationSequence = r.correctedInput;
 			}
 			
-			// Classify master context
-			if (r.request.classifyMasterContext) {
-				r.addDebugLogLine("Classify master context for sequence: ",r.classificationSequence);
-				List<SequenceClassifierResult> contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(r.classificationSequence,true,0.0D);
-				if (r.request.prompt.length()>0 && (contexts.size()==0 || contexts.get(0).probNormalized<r.request.classifyMasterContextThreshold)) {
-					r.addDebugLogLine("Classify master context for sequence: ",promptAndInput);
-					contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(promptAndInput,true,0D);
+			// Check profanity
+			boolean profanity = false;
+			if (r.request.checkProfanity) {
+				r.addDebugLogLine("Checking profanity for sequence: ",r.classificationSequence);
+				List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + Generic.MASTER_CONTEXT_GENERIC).getContexts(r.classificationSequence,true,0D);
+				for (SequenceClassifierResult resC: contexts) {
+					if (resC.symbol.equals(GenericProfanity.CONTEXT_GENERIC_PROFANITY)) {
+						SequenceClassifierResult res = new SequenceClassifierResult();
+						res.symbol = Generic.MASTER_CONTEXT_GENERIC;
+						res.probNormalized = 1.0D;
+						r.responseMasterContexts.clear();
+						r.responseMasterContexts.add(res);
+						r.responseContexts.clear();
+						r.responseContexts.add(resC);
+						resC.probNormalized = 1.0D;
+						profanity = true;
+						break;
+					}
 				}
-				if (contexts.size()>0) {
-					r.responseMasterContexts = contexts;
-					if (contexts.get(0).probNormalized>=r.request.classifyMasterContextThreshold) {
+			}
+			
+			if (!profanity) {
+				// Classify master context
+				if (r.request.classifyMasterContext) {
+					List<SequenceClassifierResult> contexts = null;
+					if (!r.classificationSequence.equals(r.correctedInput)) {
+						r.addDebugLogLine("Classify master context for input sequence: ",r.correctedInput);
+						List<SequenceClassifierResult> contextsRaw = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(r.correctedInput,true,r.request.classifyMasterContextThreshold);
+						r.addDebugLogLine("Classify master context for classification sequence: ",r.classificationSequence);
+						contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(r.classificationSequence,true,r.request.classifyMasterContextThreshold);
+						if (contextsRaw.size()>0 && contexts.size()>0 && contextsRaw.get(0).probNormalized>=contexts.get(0).probNormalized) {
+							r.addDebugLogLine("Selected input sequence master context classification.");
+							contexts = contextsRaw;
+							r.classificationSequence = r.correctedInput;
+						}
+					} else {
+						r.addDebugLogLine("Classify master context for input sequence: ",r.correctedInput);
+						contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(r.correctedInput,true,r.request.classifyMasterContextThreshold);
+					}
+					if (r.request.prompt.length()>0 && contexts.size()==0) {
+						r.addDebugLogLine("Classify master context for sequence: ",promptAndInput);
+						contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(promptAndInput,true,r.request.classifyMasterContextThreshold);
+					}
+					if (contexts.size()>0) {
+						r.responseMasterContexts = contexts;
 						r.addDebugLogLine("Classified master context: ",contexts.get(0).symbol);
 						masterContext = contexts.get(0).symbol;
 					}
 				}
-			}
-			
-			// Check profanity
-			boolean profanity = false;
-			if (r.request.checkProfanity) {
-				for (SequenceClassifierResult res: r.responseMasterContexts) {
-					if (res.symbol.equals(Generic.MASTER_CONTEXT_GENERIC)) {
-						r.addDebugLogLine("Checking profanity for sequence: ",r.classificationSequence);
-						List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + res.symbol).getContexts(r.classificationSequence,true,0D);
-						for (SequenceClassifierResult resC: contexts) {
-							if (resC.symbol.equals(GenericProfanity.CONTEXT_GENERIC_PROFANITY)) {
-								r.responseMasterContexts.clear();
-								r.responseMasterContexts.add(res);
-								res.probNormalized = 1.0D;
-								r.responseContexts.clear();
-								r.responseContexts.add(resC);
-								resC.probNormalized = 1.0D;
-								profanity = true;
-								break;
-							}
-						}
-						break;
-					}
-				}
-				if (r.responseMasterContexts.size()>0 && r.responseMasterContexts.get(0).probNormalized<r.request.classifyMasterContextThreshold) {
-					r.responseMasterContexts.clear();
-				}
-			}
-			
-			// Classify context
-			if (!profanity) {
+				
+				// Classify context
 				if (masterContext.length()>0 && r.request.classifyContext) {
-					r.addDebugLogLine("Classify context for sequence: ",r.classificationSequence);
-					List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.classificationSequence,true,r.request.classifyContextThreshold);
+					List<SequenceClassifierResult> contexts = null;
+					if (!r.classificationSequence.equals(r.correctedInput)) {
+						r.addDebugLogLine("Classify context for input sequence: ",r.correctedInput);
+						List<SequenceClassifierResult> contextsRaw = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);
+						r.addDebugLogLine("Classify context for classification sequence: ",r.classificationSequence);
+						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.classificationSequence,true,r.request.classifyContextThreshold);
+						if (contextsRaw.size()>0 && contexts.size()>0 && contextsRaw.get(0).probNormalized>=contexts.get(0).probNormalized) {
+							r.addDebugLogLine("Selected input sequence context classification.");
+							contexts = contextsRaw;
+							r.classificationSequence = r.correctedInput;
+						}
+					} else {
+						r.addDebugLogLine("Classify context for input sequence: ",r.correctedInput);
+						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);
+					}
 					if (r.request.prompt.length()>0 && contexts.size()==0) {
 						r.addDebugLogLine("Classify context for sequence: ",promptAndInput);
-						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(promptAndInput,true,0.0D);
+						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(promptAndInput,true,r.request.classifyContextThreshold);
 					}
 					if (contexts.size()>0) {
 						r.addDebugLogLine("Classified context: ",contexts.get(0).symbol);

@@ -23,6 +23,9 @@ public class DutchGenericQnA extends GenericQnA {
 		addExample("Wie is André van der Zee?","André van der Zee is een software ingenieur uit Leiden, Nederland.");
 		
 		addExample("Wat is het antwoord op de ultieme vraag van het leven, het universum en alles?","Tweeenveertig.");
+		addExample("Wat is het antwoord op de vraag?","Tweeenveertig.");
+		addExample("Wat is het antwoord?","Tweeenveertig.");
+		addExample("Wat is de vraag?","Dat weet ik niet.");
 
 		addExample("Wat kan je?",SUPPORT);
 		addExample("Wat kan jij?",SUPPORT);
@@ -52,13 +55,13 @@ public class DutchGenericQnA extends GenericQnA {
 		addExample("Hoe kunt u mij helpen?",SUPPORT);
 
 		addExample("Wat ben jij?",SELF);
-		addExample("Wat ben je?",SELF);
 		addExample("Wat bent u?",SELF);
 		addExample("Kun jij jezelf beschrijven?",SELF);
 		addExample("Kun je jezelf beschrijven?",SELF);
 		addExample("Kunt u zichzelf beschrijven?",SELF);
 		addExample("Hoe zou jij jezelf beschrijven?",SELF);
 		addExample("Hoe zou u zichzelf beschrijven?",SELF);
+		
 		addExample("Ben jij een robot?","Ja. " + SELF);
 		addExample("Ben jij een mens?","Nee. Ik ben beter. " + SELF);
 		addExample("Ben jij een menselijk?","Nee. Ik ben beter. " + SELF);

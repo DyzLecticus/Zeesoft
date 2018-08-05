@@ -51,7 +51,7 @@ public abstract class DialogInstanceHandler {
 				String val = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
 				String valCor = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,variable.type,variable.complexName,variable.complexType);
 				String valSel = val;
-				if (!variable.type.equals(BaseConfiguration.TYPE_ALPHABETIC) && valCor.length()>0) {
+				if (valSel.length()==0 || (!variable.type.equals(BaseConfiguration.TYPE_ALPHABETIC) && valCor.length()>0)) {
 					valSel = valCor;
 				}
 				if (valSel.length()>0) {

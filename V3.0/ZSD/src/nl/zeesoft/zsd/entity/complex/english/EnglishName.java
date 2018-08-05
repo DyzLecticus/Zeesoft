@@ -20,7 +20,7 @@ public class EnglishName extends ComplexObject {
 	
 	@Override
 	public double getMatchThreshold() {
-		return 0.1D;
+		return 0.3D;
 	}
 	
 	@Override

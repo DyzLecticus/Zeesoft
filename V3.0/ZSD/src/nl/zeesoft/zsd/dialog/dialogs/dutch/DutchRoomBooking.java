@@ -42,6 +42,11 @@ public class DutchRoomBooking extends RoomBooking {
 		phrases.add(new ZStringBuilder("Kan ik een {room} {book}?"));
 		phrases.add(new ZStringBuilder("Mag ik een {room} {book}?"));
 		
+		addExample("Kamer boeken",getOutput1());
+		addExample("Kamer reserveren",getOutput2());
+		addExample("Ruimte boeken",getOutput2());
+		addExample("Ruimte reserveren",getOutput1());
+		
 		for (String book: books) {
 			for (String room: rooms) {
 				for (ZStringBuilder phrase: phrases) {

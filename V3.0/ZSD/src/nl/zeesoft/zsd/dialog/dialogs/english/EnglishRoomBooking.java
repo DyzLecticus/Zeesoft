@@ -41,6 +41,11 @@ public class EnglishRoomBooking extends RoomBooking {
 		phrases.add(new ZStringBuilder("I need a {room}."));
 		phrases.add(new ZStringBuilder("Can I {book} a {room}?"));
 		phrases.add(new ZStringBuilder("May I {book} a {room}?"));
+
+		addExample("Book a room",getOutput1());
+		addExample("Reserve a room",getOutput2());
+		addExample("Book a space",getOutput2());
+		addExample("Reserve a space",getOutput1());
 		
 		for (String book: books) {
 			for (String room: rooms) {
