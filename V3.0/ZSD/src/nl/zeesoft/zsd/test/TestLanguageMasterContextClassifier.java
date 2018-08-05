@@ -10,8 +10,8 @@ import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestLanguageMasterContextClassifier extends TestSequenceClassifier {
-	private static final int	EXPECTED_ENGLISH_LINKS	= 1109;
-	private static final int	EXPECTED_DUTCH_LINKS	= 1319;
+	private static final int	EXPECTED_ENGLISH_LINKS	= 809;
+	private static final int	EXPECTED_DUTCH_LINKS	= 971;
 	
 	public TestLanguageMasterContextClassifier(Tester tester) {
 		super(tester);
@@ -43,10 +43,14 @@ public class TestLanguageMasterContextClassifier extends TestSequenceClassifier 
 			testSequenceClassification(scNld,new ZStringSymbolParser("Wie ben jij?"),0D,"Generic",1);
 		}
 	}
-	
+
 	protected void testSequenceClassification(SequenceClassifier sc, ZStringSymbolParser sequence, double threshold, String expectedContext, int expectedContexts) {
+		testSequenceClassification(sc,sequence,threshold,expectedContext,expectedContext,expectedContexts);
+	}
+	
+	protected void testSequenceClassification(SequenceClassifier sc, ZStringSymbolParser sequence, double threshold, String expectedContext, String expectedCaseInsensitiveContext, int expectedContexts) {
 		testClassification(sc,sequence,false,expectedContext);
-		testClassification(sc,sequence,true,expectedContext);
+		testClassification(sc,sequence,true,expectedCaseInsensitiveContext);
 		List<SequenceClassifierResult> contexts = sc.getContexts(sequence,true,threshold);
 		System.out.println("Context probabilities for '" + sequence + "', threshold: " + threshold);
 		for (SequenceClassifierResult context: contexts) {

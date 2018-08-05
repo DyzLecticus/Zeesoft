@@ -80,7 +80,7 @@ public class SequenceClassifier extends SymbolCorrector {
 		SortedMap<String,SequenceClassifierResult> list = new TreeMap<String,SequenceClassifierResult>();
 		List<String> symbols = sequence.toSymbolsPunctuated(); 
 		int i = 0;
-		double max = symbols.size() * (bandwidth * 3.0D);
+		double max = symbols.size() * (bandwidth * 2.0D);
 		for (String symbol: symbols) {
 			String to = "";
 			if (symbols.size()>(i + 1)) {
@@ -88,7 +88,10 @@ public class SequenceClassifier extends SymbolCorrector {
 				List<SequenceAnalyzerSymbolLink> links = getLinksByFromTo(symbol,to,caseInsensitive);
 				for (SequenceAnalyzerSymbolLink link: links) {
 					if (link.context.length()>0) {
-						addOrUpdateResult(r,list,link.context,bandwidth,link.prob,true);
+						SequenceClassifierResult res = addOrUpdateResult(r,list,link.context,bandwidth,link.prob,true);
+						if (res.prob>max) {
+							max = res.prob;
+						}
 					}
 				}
 			}
@@ -100,7 +103,10 @@ public class SequenceClassifier extends SymbolCorrector {
 				List<AnalyzerSymbol> asl = getKnownSymbols(symbol,caseInsensitive);
 				for (AnalyzerSymbol as: asl) {
 					if (as.context.length()>0) {
-						addOrUpdateResult(r,list,as.context,bandwidth,as.prob,false);
+						SequenceClassifierResult res = addOrUpdateResult(r,list,as.context,bandwidth,as.prob,false);
+						if (res.prob>max) {
+							max = res.prob;
+						}
 					}
 				}
 			}

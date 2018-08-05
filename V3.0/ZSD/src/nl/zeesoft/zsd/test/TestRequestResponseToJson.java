@@ -96,6 +96,7 @@ public class TestRequestResponseToJson extends TestObject {
 		scr.probNormalized = 0.5D;
 		res.responseLanguages.add(scr);
 		res.correctedInput = new ZStringSymbolParser("Test corrected input.");
+		res.classificationSequence = new ZStringSymbolParser("Test classification sequence.");
 		res.entityValueTranslation = new ZStringSymbolParser("Test entity value translation.");
 		res.entityValueTranslationCorrected = new ZStringSymbolParser("Test corrected entity value translation.");
 		DialogResponseOutput output = new DialogResponseOutput();
@@ -112,7 +113,7 @@ public class TestRequestResponseToJson extends TestObject {
 		json = res.toJson();
 		txtOri = json.toStringBuilderReadFormat();
 		System.out.println(txtOri);
-		assertEqual(json.rootElement.children.size(),8,"The number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),9,"The number of children does not match expectation");
 		res = new DialogResponse();
 		res.fromJson(json);
 		json = res.toJson();

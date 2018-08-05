@@ -26,8 +26,6 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		
 		addExample("What is your name?",getOutput());
 		addExample("Who are you?",getOutput());
-	
-		addComplexPatterns(t,BaseConfiguration.TYPE_NAME);
 		
 		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME);
 		addVariablePrompt(VARIABLE_FIRSTNAME,"What is your name?");
@@ -41,6 +39,8 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"How can I help you {fullName}?");
 
 		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
+		
+		addComplexPatterns(t,BaseConfiguration.TYPE_NAME);
 	}
 	
 	protected String getOutput() {

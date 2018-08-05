@@ -33,6 +33,9 @@ public class EnglishGenericQnA extends GenericQnA {
 		addExample("What are you?",SELF);
 		addExample("Can you describe yourself?",SELF);
 		addExample("How would you describe yourself?",SELF);
+		addExample("Are you a robot?","Yes. " + SELF);
+		addExample("Are you a human?","No. I am better. " + SELF);
+		addExample("Are you human?","No. I am better. " + SELF);
 		
 		addExample("Who wrote your software?",CREATOR);
 		addExample("Who programmed you?",CREATOR);
@@ -42,6 +45,7 @@ public class EnglishGenericQnA extends GenericQnA {
 
 		addExample("What is your goal?",GOAL);
 		addExample("What are your goals?",GOAL);
+		addExample("What are your priorities?",GOAL);
 		addExample("Why do you exist?",GOAL);
 		addExample("What is your purpose?",GOAL);
 		addExample("What is the purpose of your existence?",GOAL);

@@ -33,8 +33,6 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addExample("Wat is jouw naam?",getOutput());
 		addExample("Wat is je naam?",getOutput());
 
-		addComplexPatterns(t,BaseConfiguration.TYPE_NAME);
-		
 		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME);
 		addVariablePrompt(VARIABLE_FIRSTNAME,"Wat is jouw naam?");
 		addVariablePrompt(VARIABLE_FIRSTNAME,"Wat is jouw voornaam?");
@@ -47,6 +45,8 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Hoe kan ik je helpen {fullName}?");
 
 		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
+		
+		addComplexPatterns(t,BaseConfiguration.TYPE_NAME);
 	}
 	
 	protected String getOutput() {

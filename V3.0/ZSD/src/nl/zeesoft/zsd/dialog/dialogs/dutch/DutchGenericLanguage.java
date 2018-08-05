@@ -23,9 +23,9 @@ public class DutchGenericLanguage extends GenericLanguage {
 		addExample("Hoeveel talen spreek jij?",getOutputDefault());
 		addExample("Hoeveel talen spreekt u?",getOutputDefault());
 
-		addExample("Spreek je {language}?",getOutputConfirmation());
-		addExample("Spreek jij {language}?",getOutputConfirmation());
-		addExample("Spreekt u {language}?",getOutputConfirmation());
+		addExample("Spreek je [" + BaseConfiguration.TYPE_LANGUAGE + "]?",getOutputConfirmation());
+		addExample("Spreek jij [" + BaseConfiguration.TYPE_LANGUAGE + "]?",getOutputConfirmation());
+		addExample("Spreekt u [" + BaseConfiguration.TYPE_LANGUAGE + "]?",getOutputConfirmation());
 
 		addVariable(VARIABLE_LANGUAGE,BaseConfiguration.TYPE_LANGUAGE);
 	}

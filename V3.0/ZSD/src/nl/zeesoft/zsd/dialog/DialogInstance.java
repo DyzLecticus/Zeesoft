@@ -38,7 +38,14 @@ public class DialogInstance {
 		examples.add(r);
 		return r;
 	}
-	
+
+	/**
+	 * Adds complex patterns as dialog examples.
+	 * Must be called after adding variables.
+	 * 
+	 * @param t The entity value translator
+	 * @param type The complex entity type
+	 */
 	protected void addComplexPatterns(EntityValueTranslator t, String type) {
 		EntityObject eo = t.getEntityObject(getLanguage(),type);
 		if (eo!=null && eo instanceof ComplexObject) {
@@ -50,7 +57,11 @@ public class DialogInstance {
 	}
 
 	protected void addComplexPattern(EntityValueTranslator t,ComplexPattern pattern) {
-		addExample(pattern.pattern,"");
+		ZStringSymbolParser ptn = new ZStringSymbolParser(pattern.pattern);
+		for (DialogVariable var: variables) {
+			ptn.replace("{" + var.name + "}","[" + var.type + "]");
+		}
+		addExample(ptn,"");
 	}
 
 	public DialogVariable addVariable(String name, String type) {

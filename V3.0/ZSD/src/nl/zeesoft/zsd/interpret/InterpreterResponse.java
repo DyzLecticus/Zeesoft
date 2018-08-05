@@ -15,6 +15,7 @@ public class InterpreterResponse {
 	
 	public List<SequenceClassifierResult>	responseLanguages				= new ArrayList<SequenceClassifierResult>();
 	public ZStringSymbolParser				correctedInput					= new ZStringSymbolParser();
+	public ZStringSymbolParser				classificationSequence			= new ZStringSymbolParser();
 	public List<SequenceClassifierResult>	responseMasterContexts			= new ArrayList<SequenceClassifierResult>();
 	public List<SequenceClassifierResult>	responseContexts				= new ArrayList<SequenceClassifierResult>();
 	public ZStringSymbolParser				entityValueTranslation			= new ZStringSymbolParser();
@@ -66,6 +67,7 @@ public class InterpreterResponse {
 		json.rootElement = new JsElem();
 		addResultsToJson(json.rootElement,"responseLanguages",responseLanguages);
 		json.rootElement.children.add(new JsElem("correctedInput",correctedInput,true));
+		json.rootElement.children.add(new JsElem("classificationSequence",classificationSequence,true));
 		addResultsToJson(json.rootElement,"responseMasterContexts",responseMasterContexts);
 		addResultsToJson(json.rootElement,"responseContexts",responseContexts);
 		json.rootElement.children.add(new JsElem("entityValueTranslation",entityValueTranslation,true));
@@ -77,6 +79,7 @@ public class InterpreterResponse {
 	public void fromJson(JsFile json) {
 		getResultsFromJson(responseLanguages,json.rootElement,"responseLanguages");
 		correctedInput = json.rootElement.getChildZStringSymbolParser("correctedInput");
+		classificationSequence = json.rootElement.getChildZStringSymbolParser("classificationSequence");
 		getResultsFromJson(responseMasterContexts,json.rootElement,"responseMasterContexts");
 		getResultsFromJson(responseContexts,json.rootElement,"responseContexts");
 		entityValueTranslation = json.rootElement.getChildZStringSymbolParser("entityValueTranslation");

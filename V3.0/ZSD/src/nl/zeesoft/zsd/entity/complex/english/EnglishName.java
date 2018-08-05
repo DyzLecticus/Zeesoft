@@ -19,6 +19,11 @@ public class EnglishName extends ComplexObject {
 	}
 	
 	@Override
+	public double getMatchThreshold() {
+		return 0.1D;
+	}
+	
+	@Override
 	public String getInternalValueForVariable(ComplexVariable var,String prefix,String value) {
 		String r = "";
 		if (var.name.equals(GenericHandshake.VARIABLE_FIRSTNAME) || var.name.equals(GenericHandshake.VARIABLE_LASTNAME)) {

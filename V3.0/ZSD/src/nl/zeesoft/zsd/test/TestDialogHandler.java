@@ -60,6 +60,11 @@ public class TestDialogHandler extends TestInitializer {
 		} else {
 			DialogHandler handler = new DialogHandler(config);
 			testRequestResponse(handler,"",
+				"what are you?",
+				"UN_ABC:What UN_ABC:are UN_ABC:you ?",
+				"I am an artificially intelligent personal assistant.","");
+			System.out.println();
+			testRequestResponse(handler,"",
 				"hallo",
 				"UN_ABC:Hallo .",
 				"Hallo. Mijn naam is Dyz Lecticus.","Wat is jouw naam?");
@@ -78,12 +83,12 @@ public class TestDialogHandler extends TestInitializer {
 				"mijn naam si gekste der henkies",
 				"UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
 				"UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
-				"","Wat kan ik voor je doen Gekste der Henkies?");
+				"Hallo. Mijn naam is Dyz Lecticus.","Wat kan ik voor je doen Gekste der Henkies?");
 			System.out.println();
 			testRequestResponse(handler,"What is your firstname?",
 				"mijn naam is jan de lange",
 				"UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:jan|NL_NAM:firstName:UN_ABC:Jan NL_PRE:5|UN_ABC:de|NL_NAM:preposition:NL_PRE:5 UN_ABC:lange|NL_NAM:lastName:UN_ABC:Lange .",
-				"","Wat kan ik voor je doen Jan de Lange?");
+				"Hallo. Mijn naam is Dyz Lecticus.","Wat kan ik voor je doen Jan de Lange?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Who created you?",
@@ -102,12 +107,12 @@ public class TestDialogHandler extends TestInitializer {
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Can I book a room for 5 people?",
-				"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a|EN_NAM:firstName:UN_ABC:A UN_ABC:room|EN_NAM:lastName:UN_ABC:Room UN_ABC:for UN_NUM:5 UN_ABC:people ?",
+				"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:5 UN_ABC:people ?",
 				"Okay.","On what date?");
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?",
-				"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a|EN_NAM:firstName:UN_ABC:A UN_ABC:room|EN_NAM:lastName:UN_ABC:Room UN_ABC:for UN_NUM:12 UN_ABC:people UN_ABC:on EN_DAT:2018-10-01 UN_ABC:at EN_TIM:12:00:00 UN_ABC:for EN_DUR:02:00 ?",
+				"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:12 UN_ABC:people UN_ABC:on EN_DAT:2018-10-01 UN_ABC:at EN_TIM:12:00:00 UN_ABC:for EN_DUR:02:00 ?",
 				"Okay.","Do I understand correctly that you want a room on october first twothousandeighteen, for 12 people, from twelve o'clock, for two hours?");
 			System.out.println();
 			testRequestResponse(handler,"",
@@ -117,8 +122,8 @@ public class TestDialogHandler extends TestInitializer {
 			System.out.println();
 			testRequestResponse(handler,"",
 				"How much is ten times fourty divided by twenty plus three times six?",
-				"UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M|UN_ABC:times EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three|EN_NAM:firstName:UN_ABC:Three EN_MTH:M|UN_ABC:times|EN_NAM:lastName:UN_ABC:Times EN_NUM:6|UN_ABC:six ?",
-				"UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three|EN_NAM:firstName:UN_ABC:Three EN_MTH:M EN_NUM:6|UN_ABC:six ?",
+				"UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M|UN_ABC:times EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three EN_MTH:M|UN_ABC:times EN_NUM:6|UN_ABC:six ?",
+				"UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three EN_MTH:M EN_NUM:6|UN_ABC:six ?",
 				"Exactly thirtyeight.","What else can I do for you?");
 			System.out.println();
 			testRequestResponse(handler,"",

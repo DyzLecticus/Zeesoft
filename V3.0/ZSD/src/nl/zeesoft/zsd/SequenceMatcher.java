@@ -124,7 +124,7 @@ public class SequenceMatcher extends SequenceClassifier {
 		if (s==0) {
 			s = 1;
 		}
-		double max = s * ((bandwidth * 3.0D) * 2.0D);
+		double max = s * ((bandwidth * 2.0D) * 1.5D);
 		for (String symbol: match.symbols) {
 			List<AnalyzerSymbol> asl = getKnownSymbols(symbol, context, caseInsensitive);
 			for (AnalyzerSymbol as: asl) {
@@ -222,6 +222,9 @@ public class SequenceMatcher extends SequenceClassifier {
 					res.result = seq.copy();
 					res.prob = prob;
 					r.add(res);
+					if (prob>max) {
+						max = prob;
+					}
 				}
 			}
 		}

@@ -134,7 +134,7 @@ public class TestEntityValueTranslator extends TestObject {
 			"Jij klootzak");
 		testTranslation(t,"",
 			"Can I book a room for 5 people?",
-			"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a|EN_NAM:firstName:UN_ABC:A UN_ABC:room|EN_NAM:lastName:UN_ABC:Room UN_ABC:for UN_NUM:5 UN_ABC:people ?",
+			"UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:5 UN_ABC:people ?",
 			"Can I book a room for 5 people?");
 		testTranslation(t,"",
 			"ten times five",

@@ -53,11 +53,15 @@ public class DutchGenericQnA extends GenericQnA {
 
 		addExample("Wat ben jij?",SELF);
 		addExample("Wat ben je?",SELF);
+		addExample("Wat bent u?",SELF);
 		addExample("Kun jij jezelf beschrijven?",SELF);
 		addExample("Kun je jezelf beschrijven?",SELF);
 		addExample("Kunt u zichzelf beschrijven?",SELF);
 		addExample("Hoe zou jij jezelf beschrijven?",SELF);
 		addExample("Hoe zou u zichzelf beschrijven?",SELF);
+		addExample("Ben jij een robot?","Ja. " + SELF);
+		addExample("Ben jij een mens?","Nee. Ik ben beter. " + SELF);
+		addExample("Ben jij een menselijk?","Nee. Ik ben beter. " + SELF);
 
 		addExample("Wat is je doel?",GOAL);
 		addExample("Wat zijn je doelen?",GOAL);

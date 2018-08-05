@@ -73,7 +73,7 @@ public class TestSequenceClassifier extends TestObject {
 			sequence = new ZStringSymbolParser("Wat kost dat?");
 			
 			System.out.println();
-			t = 0.3D;
+			t = 0.4D;
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
 			for (SequenceClassifierResult context: contexts) {
@@ -82,7 +82,7 @@ public class TestSequenceClassifier extends TestObject {
 			assertEqual(contexts.size(),7,"The classifier did not return the expected number of contexts");
 			
 			System.out.println();
-			t = 0.7D;
+			t = 0.75D;
 			contexts = sc.getContexts(sequence,true,t);
 			System.out.println("Context probabilities for '" + sequence + "', threshold: " + t);
 			for (SequenceClassifierResult context: contexts) {

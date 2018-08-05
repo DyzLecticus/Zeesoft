@@ -20,28 +20,28 @@ public class EnglishRoomBooking extends RoomBooking {
 	public EnglishRoomBooking() {
 		setLanguage(BaseConfiguration.LANG_ENG);
 		setHandlerClassName(EnglishRoomBookingHandler.class.getName());
-		
+	}
+	
+	@Override
+	public void initialize(EntityValueTranslator t) {
 		books.add("book");
 		books.add("reserve");
 		
 		rooms.add("room");
 		rooms.add("space");
 
-		vars.add("for {" + VARIABLE_BOOK_PEOPLE + "} people");
-		vars.add("on {" + VARIABLE_BOOK_DATE + "}");
-		vars.add("from {" + VARIABLE_BOOK_TIME + "}");
-		vars.add("for a duration of {" + VARIABLE_BOOK_DURATION + "}");
-		vars.add("at {" + VARIABLE_BOOK_TIME + "}");
+		vars.add("for [" + BaseConfiguration.TYPE_NUMERIC + "] people");
+		vars.add("on [" + BaseConfiguration.TYPE_DATE + "]");
+		vars.add("from [" + BaseConfiguration.TYPE_TIME + "]");
+		vars.add("for a duration of [" + BaseConfiguration.TYPE_DURATION + "]");
+		vars.add("at [" + BaseConfiguration.TYPE_TIME + "]");
 
 		phrases.add(new ZStringBuilder("I want to {book} a {room}."));
 		phrases.add(new ZStringBuilder("I would like to {book} a {room}."));
 		phrases.add(new ZStringBuilder("I need a {room}."));
 		phrases.add(new ZStringBuilder("Can I {book} a {room}?"));
 		phrases.add(new ZStringBuilder("May I {book} a {room}?"));
-	}
-	
-	@Override
-	public void initialize(EntityValueTranslator t) {
+		
 		for (String book: books) {
 			for (String room: rooms) {
 				for (ZStringBuilder phrase: phrases) {

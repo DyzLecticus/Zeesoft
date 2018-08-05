@@ -21,8 +21,8 @@ public class EnglishGenericLanguage extends GenericLanguage {
 		addExample("How many languages can you speak?",getOutputDefault());
 		addExample("How many languages do you know?",getOutputDefault());
 
-		addExample("Do you speak {language}?",getOutputConfirmation());
-		addExample("Can you speak {language}?",getOutputConfirmation());
+		addExample("Do you speak [" + BaseConfiguration.TYPE_LANGUAGE + "]?",getOutputConfirmation());
+		addExample("Can you speak [" + BaseConfiguration.TYPE_LANGUAGE + "]?",getOutputConfirmation());
 
 		addVariable(VARIABLE_LANGUAGE,BaseConfiguration.TYPE_LANGUAGE);
 	}

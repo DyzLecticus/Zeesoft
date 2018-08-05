@@ -18,9 +18,9 @@ public class InterpreterRequest {
 	public boolean				classifyLanguage				= false;
 	public boolean				correctInput					= false;
 	public boolean				classifyMasterContext			= false;
-	public double				classifyMasterContextThreshold	= 0.25D;
+	public double				classifyMasterContextThreshold	= 0.5D;
 	public boolean				classifyContext					= false;
-	public double				classifyContextThreshold		= 0.1D;
+	public double				classifyContextThreshold		= 0.25D;
 	public boolean				translateEntityValues			= false;
 	public List<String>			translateEntityTypes			= new ArrayList<String>();
 	public boolean				checkProfanity					= false;

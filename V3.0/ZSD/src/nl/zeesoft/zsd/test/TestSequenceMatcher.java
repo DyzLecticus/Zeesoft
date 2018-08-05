@@ -93,7 +93,7 @@ public class TestSequenceMatcher extends TestObject {
 			double t = 0D;
 			
 			System.out.println();
-			t = 0.165D;
+			t = 0.33D;
 			matches = sm.getMatches(sequence,"",false,t);
 			System.out.println("Matches for sequence: '" + sequence + "', threshold: " + t);
 			for (SequenceMatcherResult match: matches) {
@@ -106,7 +106,7 @@ public class TestSequenceMatcher extends TestObject {
 			assertEqual(matches.size(),15,"The matcher did not return the expected number of sequences");
 			
 			System.out.println();
-			t = 0.3D;
+			t = 0.5D;
 			matches = sm.getMatches(sequence,"",false,t);
 			System.out.println("Matches for sequence: '" + sequence + "', threshold: " + t);
 			for (SequenceMatcherResult match: matches) {
@@ -117,6 +117,20 @@ public class TestSequenceMatcher extends TestObject {
 				System.out.println("'" + seq + "': " + match.prob + " / " + match.probNormalized);
 			}
 			assertEqual(matches.size(),1,"The matcher did not return the expected number of sequences");
+			
+			System.out.println();
+			sequence = new ZStringSymbolParser("Wat kost de Betaalpas?");
+			t = 0.25D;
+			matches = sm.getMatches(sequence,"",false,t);
+			System.out.println("Matches for sequence: '" + sequence + "', threshold: " + t);
+			for (SequenceMatcherResult match: matches) {
+				String seq = match.result.sequence.toString();
+				if (seq.length()>60) {
+					seq = seq.substring(0,60) + "[ ...]";
+				}
+				System.out.println("'" + seq + "': " + match.prob + " / " + match.probNormalized);
+			}
+			assertEqual(matches.size(),4,"The matcher did not return the expected number of sequences");
 		}
 	}
 	

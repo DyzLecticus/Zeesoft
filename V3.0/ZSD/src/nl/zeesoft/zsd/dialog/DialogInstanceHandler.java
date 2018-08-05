@@ -76,9 +76,9 @@ public abstract class DialogInstanceHandler {
 	
 	public void buildDialogResponseOutput(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
 		if (promptVariable.length()==0 || !r.getRequest().getDialogId().equals(dialog.getId())) {
-			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.correctedInput,"",true,r.getRequest().matchThreshold);
+			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.classificationSequence,"",true,r.getRequest().matchThreshold);
 			if (matches.size()==0) {
-				r.addDebugLogLine("    Failed to find matches for sequence: ",r.correctedInput);
+				r.addDebugLogLine("    Failed to find matches for sequence: ",r.classificationSequence);
 			} else {
 				r.addDebugLogLine("    Found matches for sequence: ","" + matches.size());
 				List<SequenceMatcherResult> options = new ArrayList<SequenceMatcherResult>();

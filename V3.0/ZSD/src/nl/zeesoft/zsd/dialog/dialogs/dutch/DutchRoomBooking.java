@@ -20,28 +20,28 @@ public class DutchRoomBooking extends RoomBooking {
 	public DutchRoomBooking() {
 		setLanguage(BaseConfiguration.LANG_NLD);
 		setHandlerClassName(DutchRoomBookingHandler.class.getName());
-
+	}
+	
+	@Override
+	public void initialize(EntityValueTranslator t) {
 		books.add("boeken");
 		books.add("reserveren");
 		
 		rooms.add("kamer");
 		rooms.add("ruimte");
 
-		vars.add("voor {" + VARIABLE_BOOK_PEOPLE + "} personen");
-		vars.add("op {" + VARIABLE_BOOK_DATE + "}");
-		vars.add("van {" + VARIABLE_BOOK_TIME + "}");
-		vars.add("voor een duur van {" + VARIABLE_BOOK_DURATION + "}");
-		vars.add("om {" + VARIABLE_BOOK_TIME + "}");
+		vars.add("voor [" + BaseConfiguration.TYPE_NUMERIC + "] personen");
+		vars.add("op [" + BaseConfiguration.TYPE_DATE + "]");
+		vars.add("van [" + BaseConfiguration.TYPE_TIME + "]");
+		vars.add("voor een duur van [" + BaseConfiguration.TYPE_DURATION + "]");
+		vars.add("om [" + BaseConfiguration.TYPE_TIME + "]");
 
 		phrases.add(new ZStringBuilder("Ik wil een {room} {book}."));
 		phrases.add(new ZStringBuilder("Ik wil graag een {room} {book}."));
 		phrases.add(new ZStringBuilder("Ik heb een {room} nodig."));
 		phrases.add(new ZStringBuilder("Kan ik een {room} {book}?"));
 		phrases.add(new ZStringBuilder("Mag ik een {room} {book}?"));
-	}
-	
-	@Override
-	public void initialize(EntityValueTranslator t) {
+		
 		for (String book: books) {
 			for (String room: rooms) {
 				for (ZStringBuilder phrase: phrases) {

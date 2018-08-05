@@ -1,12 +1,8 @@
 package nl.zeesoft.zsd.dialog.dialogs.english;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.GenericMath;
-import nl.zeesoft.zsd.entity.EntityObject;
 
 public class EnglishGenericMath extends GenericMath {
 	public EnglishGenericMath() {
@@ -16,22 +12,11 @@ public class EnglishGenericMath extends GenericMath {
 	
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		List<String> ops = new ArrayList<String>();
-		EntityObject math = t.getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
-		for (String op: math.getExternalValues().keySet()) {
-			ops.add(op);
-		}
-		math = t.getEntityObject(BaseConfiguration.LANG_ENG,BaseConfiguration.TYPE_MATHEMATIC);
-		for (String op: math.getExternalValues().keySet()) {
-			ops.add(op);
-		}
-		for (String op1: ops) {
-			addExample("How much is {number1} " + op1 + " {number2}?","");
-			for (String op2: ops) {
-				addExample("How much is {number1} " + op1 + " {number2} " + op2 + " {number3}?","");
-			}
-		}
-
+		addExample("How much is [NUM] [MTH] [NUM]?","");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM]?","");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","");
+		
 		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. What else can I do for you?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. Is there anything else I can help you with?");
