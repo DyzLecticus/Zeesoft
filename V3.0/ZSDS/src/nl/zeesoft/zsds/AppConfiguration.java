@@ -82,7 +82,7 @@ public class AppConfiguration {
 			dir.mkdirs();
 			dir = new File(baseConfig.getFullExtendDir());
 			dir.mkdirs();
-			stateManager.generate();
+			stateManager.generate(true,false);
 			
 			debug(this,"Installed");
 		} else {
@@ -95,15 +95,13 @@ public class AppConfiguration {
 				debug = baseConfig.isDebug();
 				messenger.setPrintDebugMessages(debug);
 				if (debug && baseConfig.isGenerateReadFormat()) {
-					stateManager.generate();
+					stateManager.generate(true,false);
 				}
 			}
 		}
 		
 		messenger.setPrintDebugMessages(debug);
 		messenger.start();
-		
-		stateManager.load();
 	}
 
 	public boolean isInitialized() {

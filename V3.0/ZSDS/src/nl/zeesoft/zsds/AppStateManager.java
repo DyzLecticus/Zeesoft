@@ -15,6 +15,7 @@ import nl.zeesoft.zsd.util.LanguageJsonGenerator;
 
 public class AppStateManager extends Locker implements InitializerListener {
 	private AppConfiguration			configuration				= null;
+	private DataGenerator				generator					= null;
 
 	private DialogHandlerConfiguration	dialogHandlerConfig			= null;
 	private DialogHandlerConfiguration	dialogHandlerConfigLoad		= null;
@@ -27,6 +28,7 @@ public class AppStateManager extends Locker implements InitializerListener {
 		super(configuration.getMessenger());
 		this.configuration = configuration;
 		dialogHandlerConfig = configuration.buildNewDialogHandlerConfiguration();
+		generator = new DataGenerator(configuration.getMessenger(),configuration.getUnion(),this);
 	}
 
 	public boolean load() {
@@ -37,28 +39,18 @@ public class AppStateManager extends Locker implements InitializerListener {
 		return load(true);
 	}
 
-	@Override
-	public void initializedClass(InitializeClass cls, boolean done) {
-		if (cls.errors.length()>0) {
-			configuration.getMessenger().error(this,cls.errors.toString());
+	public boolean generate(boolean load,boolean reload) {
+		boolean r = false;
+		lockMe(this);
+		if (!generator.isWorking()) {
+			generator.generate(load, reload);
+			r = true;
 		}
-		if (done) {
-			boolean reloaded = false;
-			lockMe(this);
-			reading = false;
-			reloaded = reload;
-			dialogHandlerConfig = dialogHandlerConfigLoad;
-			lastModifiedHeader = getLastModifiedDateString();
-			unlockMe(this);
-			if (reloaded) {
-				configuration.debug(this,"Reloaded data ...");
-			} else {
-				configuration.debug(this,"Loaded data ...");
-			}
-		}
+		unlockMe(this);
+		return r;
 	}
-	
-	public boolean generate() {
+
+	protected boolean generate() {
 		boolean r = false;
 		lockMe(this);
 		if (!reading && !writing) {
@@ -82,6 +74,27 @@ public class AppStateManager extends Locker implements InitializerListener {
 			configuration.debug(this,"Generated data");
 		}
 		return r;
+	}
+
+	@Override
+	public void initializedClass(InitializeClass cls, boolean done) {
+		if (cls.errors.length()>0) {
+			configuration.getMessenger().error(this,cls.errors.toString());
+		}
+		if (done) {
+			boolean reloaded = false;
+			lockMe(this);
+			reading = false;
+			reloaded = reload;
+			dialogHandlerConfig = dialogHandlerConfigLoad;
+			lastModifiedHeader = getLastModifiedDateString();
+			unlockMe(this);
+			if (reloaded) {
+				configuration.debug(this,"Reloaded data ...");
+			} else {
+				configuration.debug(this,"Loaded data ...");
+			}
+		}
 	}
 
 	public boolean isInitialized() {
