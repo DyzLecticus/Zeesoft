@@ -17,6 +17,7 @@ public class BaseStyleSheetHandler extends HandlerObject {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		setDefaultHeadersAndStatus(response);
 		response.setContentType("text/css");
 		PrintWriter out;
 		try {

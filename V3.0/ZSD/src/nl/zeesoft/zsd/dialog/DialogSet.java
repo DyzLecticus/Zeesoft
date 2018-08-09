@@ -12,6 +12,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericCancel;
+import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericClassification;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericHandshake;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguage;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericMath;
@@ -22,6 +23,7 @@ import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchRoomBooking;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchRoomQnA;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchSupportRequest;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericCancel;
+import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericClassification;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericHandshake;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericLanguage;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericMath;
@@ -110,6 +112,7 @@ public class DialogSet implements Initializable {
 	
 	protected List<DialogInstance> getDefaultDialogs() {
 		List<DialogInstance> r = new ArrayList<DialogInstance>();
+		r.add(new EnglishGenericClassification());
 		r.add(new EnglishGenericCancel());
 		r.add(new EnglishGenericThanks());
 		r.add(new EnglishGenericHandshake());
@@ -120,6 +123,7 @@ public class DialogSet implements Initializable {
 		r.add(new EnglishRoomBooking());
 		r.add(new EnglishRoomQnA());
 		r.add(new EnglishSupportRequest());
+		r.add(new DutchGenericClassification());
 		r.add(new DutchGenericCancel());
 		r.add(new DutchGenericThanks());
 		r.add(new DutchGenericHandshake());

@@ -40,7 +40,7 @@ public abstract class DialogInstanceHandler {
 				dvv.internalValue = variable.initialValue;
 			}
 		}
-
+		
 		List<DialogVariableValue> updatedValues = new ArrayList<DialogVariableValue>();
 		List<String> iVals = r.entityValueTranslation.toSymbols();
 		List<String> iValsCor = r.entityValueTranslationCorrected.toSymbols();
@@ -76,11 +76,10 @@ public abstract class DialogInstanceHandler {
 	
 	public void buildDialogResponseOutput(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
 		if (promptVariable.length()==0 || !r.getRequest().getDialogId().equals(dialog.getId())) {
+			r.addDebugLogLine("    Find matches for sequence: ",r.classificationSequence);
 			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.classificationSequence,"",true,r.getRequest().matchThreshold);
-			if (matches.size()==0) {
-				r.addDebugLogLine("    Failed to find matches for sequence: ",r.classificationSequence);
-			} else {
-				r.addDebugLogLine("    Found matches for sequence: ","" + matches.size());
+			r.addDebugLogLine("    Found matches for sequence: ","" + matches.size());
+			if (matches.size()>0) {
 				List<SequenceMatcherResult> options = new ArrayList<SequenceMatcherResult>();
 				double highest = matches.get(0).probNormalized;
 				int added = 0;
@@ -127,7 +126,7 @@ public abstract class DialogInstanceHandler {
 			}
 		}
 	}
-	
+
 	protected void replaceVariablesAndCorrectCase(DialogResponseOutput dro, ZStringSymbolParser output) {
 		if (output.length()>0) {
 			output.replace("{selfName}",getConfig().getBase().getName());
@@ -139,10 +138,11 @@ public abstract class DialogInstanceHandler {
 	}
 	
 	protected void setPrompt(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
-		dro.promptVariable = promptVariable;
+		dro.promptVariableName = promptVariable;
 		r.addDebugLogLine("    Prompt variable: ",promptVariable);
 		DialogVariable variable = dialog.getVariable(promptVariable);
 		if (variable!=null) {
+			dro.promptVariableType = variable.type;
 			dro.prompt = new ZStringSymbolParser(variable.getPrompt(r.getRequest().randomizeOutput));
 		}
 	}

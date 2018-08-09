@@ -58,6 +58,7 @@ public class TestRequestResponseToJson extends TestObject {
 		req.prompt.append("test prompt?");
 		req.input.append("test input.");
 		req.language = BaseConfiguration.LANG_ENG;
+		req.minLanguageChangeDifference = 0.2D;
 		req.masterContext = Generic.MASTER_CONTEXT_GENERIC;
 		req.context = GenericHandshake.CONTEXT_GENERIC_HANDSHAKE;
 		req.classifyMasterContextThreshold = 0.8;
@@ -73,7 +74,7 @@ public class TestRequestResponseToJson extends TestObject {
 		JsFile json = req.toJson();
 		ZStringBuilder txtOri = json.toStringBuilderReadFormat();
 		System.out.println(txtOri);
-		assertEqual(json.rootElement.children.size(),18,"The number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),19,"The number of children does not match expectation");
 		req = new DialogRequest();
 		req.fromJson(json);
 		json = req.toJson();
@@ -103,7 +104,8 @@ public class TestRequestResponseToJson extends TestObject {
 		output.context = "testContext";
 		output.output = new ZStringSymbolParser("Test output!");
 		output.prompt = new ZStringSymbolParser("Test prompt!");
-		output.promptVariable = "testPromptVar";
+		output.promptVariableName = "testPromptVarName";
+		output.promptVariableType = "testPromptVarType";
 		res.contextOutputs.add(output);
 		dvv = new DialogVariableValue();
 		dvv.name = "testVariable";

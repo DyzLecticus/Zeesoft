@@ -40,7 +40,7 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addVariable(VARIABLE_LASTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_LASTNAME,BaseConfiguration.TYPE_NAME);
 		addVariablePrompt(VARIABLE_LASTNAME,"Wat is jouw achternaam?");
 
-		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Wat kan ik voor je doen {fullName}?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Hoe kan ik je helpen {fullName}?");
 

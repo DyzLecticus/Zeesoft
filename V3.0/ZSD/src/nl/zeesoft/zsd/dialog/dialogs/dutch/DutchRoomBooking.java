@@ -42,10 +42,10 @@ public class DutchRoomBooking extends RoomBooking {
 		phrases.add(new ZStringBuilder("Kan ik een {room} {book}?"));
 		phrases.add(new ZStringBuilder("Mag ik een {room} {book}?"));
 		
-		addExample("Kamer boeken",getOutput1());
-		addExample("Kamer reserveren",getOutput2());
-		addExample("Ruimte boeken",getOutput2());
-		addExample("Ruimte reserveren",getOutput1());
+		addExample("Kamer boeken.",getOutput1());
+		addExample("Kamer reserveren.",getOutput2());
+		addExample("Ruimte boeken.",getOutput2());
+		addExample("Ruimte reserveren.",getOutput1());
 		
 		for (String book: books) {
 			for (String room: rooms) {
@@ -114,7 +114,7 @@ public class DutchRoomBooking extends RoomBooking {
 			"} personen, vanaf {" + VARIABLE_BOOK_TIME +
 			"}, voor een duur van {" + VARIABLE_BOOK_DURATION + "}. Klopt dat?");
 		
-		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Kan ik nog iets anders voor u doen?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Kan ik u nog ergens anders mee helpen?");
 	}

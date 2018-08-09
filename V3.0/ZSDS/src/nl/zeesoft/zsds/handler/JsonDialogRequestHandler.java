@@ -20,7 +20,7 @@ public class JsonDialogRequestHandler extends JsonBaseHandlerObject {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		response.setContentType("application/json");
+		setDefaultHeadersAndStatus(response);
 		PrintWriter out;
 		try {
 			out = response.getWriter();

@@ -17,6 +17,7 @@ public class JsonTestDialogRequestHandler extends HandlerObject {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		setDefaultHeadersAndStatus(response);
 		response.setContentType("application/json");
 		PrintWriter out;
 		try {

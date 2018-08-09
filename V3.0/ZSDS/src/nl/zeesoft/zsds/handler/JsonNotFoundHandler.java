@@ -17,7 +17,7 @@ public class JsonNotFoundHandler extends JsonBaseHandlerObject {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		response.setContentType("application/json");
+		setDefaultHeadersAndStatus(response);
 		response.setStatus(404);
 		PrintWriter out;
 		try {

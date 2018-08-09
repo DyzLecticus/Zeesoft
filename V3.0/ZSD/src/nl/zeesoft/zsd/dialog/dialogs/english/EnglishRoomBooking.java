@@ -42,10 +42,10 @@ public class EnglishRoomBooking extends RoomBooking {
 		phrases.add(new ZStringBuilder("Can I {book} a {room}?"));
 		phrases.add(new ZStringBuilder("May I {book} a {room}?"));
 
-		addExample("Book a room",getOutput1());
-		addExample("Reserve a room",getOutput2());
-		addExample("Book a space",getOutput2());
-		addExample("Reserve a space",getOutput1());
+		addExample("Book a room.",getOutput1());
+		addExample("Reserve a room.",getOutput2());
+		addExample("Book a space.",getOutput2());
+		addExample("Reserve a space.",getOutput1());
 		
 		for (String book: books) {
 			for (String room: rooms) {
@@ -114,7 +114,7 @@ public class EnglishRoomBooking extends RoomBooking {
 			"} people, from {" + VARIABLE_BOOK_TIME +
 			"}, for a duration of {" + VARIABLE_BOOK_DURATION + "}. Is that correct?");
 		
-		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Is there anything else I can do for you?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Is there anything else I can help you with?");
 	}

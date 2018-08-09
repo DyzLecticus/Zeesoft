@@ -17,6 +17,7 @@ public class BaseJavaScriptHandler extends HandlerObject {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		setDefaultHeadersAndStatus(response);
 		response.setContentType("text/javascript");
 		PrintWriter out;
 		try {

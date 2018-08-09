@@ -9,16 +9,20 @@ import nl.zeesoft.zsd.dialog.dialogs.GenericThanks;
 import nl.zeesoft.zsd.sequence.Analyzer;
 
 public class DutchGenericThanks extends GenericThanks {
-	public static final String	EXAMPLE_OUTPUT_1	= "Graag gedaan. Kan ik iets anders voor u doen?";
-	public static final String	EXAMPLE_OUTPUT_2	= "Graag gedaan. Kan ik u ergens anders mee van dienst zijn?";
-	public static final String	EXAMPLE_OUTPUT_3	= "Graag gedaan. Kan ik u ergens anders mee helpen?";
+	public static final String	EXAMPLE_OUTPUT_1	= "Graag gedaan.";
+	public static final String	EXAMPLE_OUTPUT_2	= "Heel graag gedaan.";
 	
 	public DutchGenericThanks() {
 		setLanguage(BaseConfiguration.LANG_NLD);
+		setHandlerClassName(DutchGenericThanksHandler.class.getName());
 	}
 	
 	@Override
 	public void initialize(EntityValueTranslator t) {
+		addExample("Kan ik iets anders voor u doen? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
+		addExample("Kan ik u ergens anders mee van dienst zijn? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
+		addExample("Kan ik u ergens anders mee helpen? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
+		
 		for (String thanks: getThanks()) {
 			for (String answer: getAnswers()) {
 				addExample(Analyzer.upperCaseFirst(thanks) + ".",answer);
@@ -34,6 +38,19 @@ public class DutchGenericThanks extends GenericThanks {
 				addExample("Prima! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 			}
 		}
+		
+		addVariable(VARIABLE_THANKS_ELSE,BaseConfiguration.TYPE_CONFIRMATION);
+		addVariablePrompt(VARIABLE_THANKS_ELSE,"Kan ik iets anders voor u doen?");
+		addVariablePrompt(VARIABLE_THANKS_ELSE,"Kan ik u ergens anders mee van dienst zijn?");
+		addVariablePrompt(VARIABLE_THANKS_ELSE,"Kan ik u ergens anders mee helpen?");
+
+		addVariable(VARIABLE_THANKS_HELPFUL,BaseConfiguration.TYPE_CONFIRMATION);
+		addVariablePrompt(VARIABLE_THANKS_HELPFUL,"Was ik behulpzaam?");
+		addVariablePrompt(VARIABLE_THANKS_HELPFUL,"Heb ik u kunnen helpen?");
+		
+		addNextDialogVariable();
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Wat kan ik voor u doen?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Hoe kan ik u van dienst zijn?");
 	}
 		
 	protected List<String> getThanks() {
@@ -51,7 +68,6 @@ public class DutchGenericThanks extends GenericThanks {
 		List<String> answers = new ArrayList<String>();
 		answers.add(getOutput1());
 		answers.add(getOutput2());
-		answers.add(getOutput3());
 		return answers;
 	}
 	
@@ -61,9 +77,5 @@ public class DutchGenericThanks extends GenericThanks {
 	
 	protected String getOutput2() {
 		return EXAMPLE_OUTPUT_2;
-	}
-
-	protected String getOutput3() {
-		return EXAMPLE_OUTPUT_3;
 	}
 }

@@ -168,6 +168,10 @@ public class AppConfiguration {
 		return stateManager.getDialogHandlerConfig();
 	}
 	
+	public String getLastModifiedHeader() {
+		return stateManager.getLastModifiedHeader();
+	}
+	
 	protected BaseConfiguration getNewBaseConfiguration() {
 		return new BaseConfiguration();
 	}

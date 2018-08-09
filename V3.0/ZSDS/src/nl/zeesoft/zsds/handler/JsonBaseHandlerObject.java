@@ -19,7 +19,7 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		response.setContentType("application/json");
+		setDefaultHeadersAndStatus(response);
 		PrintWriter out;
 		try {
 			out = response.getWriter();
@@ -34,7 +34,14 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 	}
 
 	@Override
+	public void setDefaultHeadersAndStatus(HttpServletResponse response) {
+		super.setDefaultHeadersAndStatus(response);
+		response.setContentType("application/json");
+	}
+
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
+		super.doPost(request, response);
 		response.setContentType("application/json");
 		PrintWriter out;
 		ZStringBuilder js = new ZStringBuilder();

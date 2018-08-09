@@ -83,7 +83,6 @@ public class EnglishNumeric extends EntityObject {
 				if (cent>0) {
 					strCent = getExternalValueForInternalValue("" + cent);
 					strCent += "hundred";
-					strCent += "and";
 				}
 				if (dec==1) {
 					strDec = getExternalValueForInternalValue("" + ((dec * 10) + num));
@@ -109,6 +108,9 @@ public class EnglishNumeric extends EntityObject {
 					strNum = getExternalValueForInternalValue("" + num);
 				}
 				
+				if (strCent.length()>0 && (strDec.length()>0 || strNum.length()>0)) {
+					strCent += "and";
+				}
 				addEntityValue(strMill + strCent + strDec + strNum,i);
 			}
 		}

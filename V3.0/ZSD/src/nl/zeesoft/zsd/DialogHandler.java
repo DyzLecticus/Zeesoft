@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;
+import nl.zeesoft.zsd.dialog.dialogs.Generic;
+import nl.zeesoft.zsd.dialog.dialogs.GenericClassification;
 import nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
@@ -41,12 +44,14 @@ public class DialogHandler extends SequenceInterpreter {
 		Date started = new Date();
 
 		String language = request.language;
+		boolean selectedPrimaryLanguage = false;
 		String masterContext = request.masterContext;
 		
 		if (r.responseLanguages.size()>0) {
 			language = r.responseLanguages.get(0).symbol;
 		}
 		if (language.length()==0) {
+			selectedPrimaryLanguage = true;
 			language = getConfiguration().getBase().getPrimaryLanguage();
 		}
 		if (r.responseMasterContexts.size()>0) {
@@ -64,6 +69,20 @@ public class DialogHandler extends SequenceInterpreter {
 			}
 		}
 		
+		if (masterContext.length()==0 || processContexts.size()==0) {
+			masterContext = Generic.MASTER_CONTEXT_GENERIC;
+			processContexts.clear();
+			processContexts.add(GenericClassification.CONTEXT_GENERIC_CLASSIFICATION);
+			DialogInstance dialog = getConfiguration().getDialogSet().getDialog(language,masterContext,processContexts.get(0));
+			if (dialog!=null) {
+				if (selectedPrimaryLanguage) {
+					r.classificationSequence = new ZStringSymbolParser(GenericClassification.TRIGGER_INPUT_LANGUAGE);
+				} else {
+					r.classificationSequence = new ZStringSymbolParser(GenericClassification.TRIGGER_INPUT_CONTEXT);
+				}
+			}
+		}
+		
 		for (String processContext: processContexts) {
 			DialogInstance dialog = getConfiguration().getDialogSet().getDialog(language,masterContext,processContext);
 			String dialogId = language + "/" + masterContext + "/" + processContext;
@@ -75,18 +94,24 @@ public class DialogHandler extends SequenceInterpreter {
 				} else {
 					r.addDebugLogLine("Handling dialog: ",dialogId);
 				}
-				DialogInstanceHandler handler = dialog.getNewHandler();
-				if (handler==null) {
-					handler = new GenericQnAHandler();
-				}
-				handler.setConfig(getConfiguration());
-				handler.setDialog(dialog);
-				r.addDebugLogLine("    Initialized handler: ",handler.getClass().getName());
-				handler.handleDialogIO(r);
+				handleDialog(r,dialog);
 			}
 			if ((new Date()).getTime()>=(started.getTime() + getConfiguration().getBase().getMaxMsDialogPerSequence())) {
 				r.addDebugLogLine("Context output processing timed out");
 				break;
+			}
+		}
+		
+		if (r.contextOutputs.size()==0) {
+			masterContext = Generic.MASTER_CONTEXT_GENERIC;
+			DialogInstance dialog = getConfiguration().getDialogSet().getDialog(language,masterContext,GenericClassification.CONTEXT_GENERIC_CLASSIFICATION);
+			if (dialog!=null) {
+				if (selectedPrimaryLanguage) {
+					r.classificationSequence = new ZStringSymbolParser(GenericClassification.TRIGGER_INPUT_LANGUAGE);
+				} else {
+					r.classificationSequence = new ZStringSymbolParser(GenericClassification.TRIGGER_INPUT_CONTEXT);
+				}
+				handleDialog(r,dialog);
 			}
 		}
 		
@@ -96,5 +121,16 @@ public class DialogHandler extends SequenceInterpreter {
 	@Override
 	protected DialogHandlerConfiguration getConfiguration() {
 		return (DialogHandlerConfiguration) super.getConfiguration();
+	}
+	
+	protected void handleDialog(DialogResponse r,DialogInstance dialog) {
+		DialogInstanceHandler handler = dialog.getNewHandler();
+		if (handler==null) {
+			handler = new GenericQnAHandler();
+		}
+		handler.setConfig(getConfiguration());
+		handler.setDialog(dialog);
+		r.addDebugLogLine("    Initialized handler: ",handler.getClass().getName());
+		handler.handleDialogIO(r);
 	}
 }

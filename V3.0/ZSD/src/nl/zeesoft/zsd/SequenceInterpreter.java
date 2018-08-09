@@ -59,6 +59,19 @@ public class SequenceInterpreter {
 				}
 				if (contexts.size()>0) {
 					r.addDebugLogLine("Classified language: ",contexts.get(0).symbol);
+					if (r.request.language.length()>0 && !contexts.get(0).symbol.equals(r.request.language)) {
+						List<SequenceClassifierResult> contextsTest = new ArrayList<SequenceClassifierResult>(contexts);
+						for (SequenceClassifierResult context: contextsTest) {
+							if (context.symbol.equals(r.request.language) &&
+								(contexts.get(0).probNormalized - context.probNormalized)<r.request.minLanguageChangeDifference
+								) {
+								contexts.clear();
+								contexts.add(context);
+								r.addDebugLogLine("Selected language: ",context.symbol);
+								break;
+							}
+						}
+					}
 					r.responseLanguages = contexts;
 					language = contexts.get(0).symbol;
 				}
@@ -125,15 +138,17 @@ public class SequenceInterpreter {
 				}
 			}
 			
+			ZStringSymbolParser promptAndInputClassification = null;
 			if (r.request.translateEntityValues) {
 				if (r.request.correctInput) {
 					r.classificationSequence = getInputForClassifierFromEntityValues(r.entityValueTranslationCorrected);
 				} else {
 					r.classificationSequence = getInputForClassifierFromEntityValues(r.entityValueTranslation);
 				}
-				promptAndInput = getAddPromptToInput(r.request.prompt,r.classificationSequence);
+				promptAndInputClassification = getAddPromptToInput(r.request.prompt,r.classificationSequence);
 			} else {
 				r.classificationSequence = r.correctedInput;
+				promptAndInputClassification = promptAndInput;
 			}
 			
 			// Check profanity
@@ -164,8 +179,8 @@ public class SequenceInterpreter {
 					if (!r.classificationSequence.equals(r.correctedInput)) {
 						r.addDebugLogLine("Classify master context for input sequence: ",r.correctedInput);
 						List<SequenceClassifierResult> contextsRaw = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(r.correctedInput,true,r.request.classifyMasterContextThreshold);
-						r.addDebugLogLine("Classify master context for classification sequence: ",r.classificationSequence);
-						contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(r.classificationSequence,true,r.request.classifyMasterContextThreshold);
+						r.addDebugLogLine("Classify master context for classification sequence: ",promptAndInputClassification);
+						contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(promptAndInputClassification,true,r.request.classifyMasterContextThreshold);
 						if (contextsRaw.size()>0 && contexts.size()>0 && contextsRaw.get(0).probNormalized>=contexts.get(0).probNormalized) {
 							r.addDebugLogLine("Selected input sequence master context classification.");
 							contexts = contextsRaw;
@@ -176,7 +191,7 @@ public class SequenceInterpreter {
 						contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(r.correctedInput,true,r.request.classifyMasterContextThreshold);
 					}
 					if (r.request.prompt.length()>0 && contexts.size()==0) {
-						r.addDebugLogLine("Classify master context for sequence: ",promptAndInput);
+						r.addDebugLogLine("Classify master context for input sequence: ",promptAndInput);
 						contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(promptAndInput,true,r.request.classifyMasterContextThreshold);
 					}
 					if (contexts.size()>0) {
@@ -192,8 +207,8 @@ public class SequenceInterpreter {
 					if (!r.classificationSequence.equals(r.correctedInput)) {
 						r.addDebugLogLine("Classify context for input sequence: ",r.correctedInput);
 						List<SequenceClassifierResult> contextsRaw = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);
-						r.addDebugLogLine("Classify context for classification sequence: ",r.classificationSequence);
-						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.classificationSequence,true,r.request.classifyContextThreshold);
+						r.addDebugLogLine("Classify context for classification sequence: ",promptAndInputClassification);
+						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(promptAndInputClassification,true,r.request.classifyContextThreshold);
 						if (contextsRaw.size()>0 && contexts.size()>0 && contextsRaw.get(0).probNormalized>=contexts.get(0).probNormalized) {
 							r.addDebugLogLine("Selected input sequence context classification.");
 							contexts = contextsRaw;
@@ -235,6 +250,7 @@ public class SequenceInterpreter {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		ZStringSymbolParser alphabetics = getConfiguration().getEntityValueTranslator().translateToExternalValues(entityValueSequence,BaseConfiguration.TYPE_ALPHABETIC,true);
 		List<String> symbols = alphabetics.toSymbolsPunctuated();
+		List<String> symbolsNew = new ArrayList<String>();
 		String valConCat = getConfiguration().getEntityValueTranslator().getValueConcatenator();
 		for (String symbol: symbols) {
 			if (symbol.contains(valConCat)) {
@@ -245,11 +261,9 @@ public class SequenceInterpreter {
 					symbol = "[" + eo.getType() + "]";
 				}
 			}
-			if (r.length()>0) {
-				r.append(" ");
-			} 
-			r.append(symbol);
+			symbolsNew.add(symbol);
 		}
+		r.fromSymbols(symbolsNew,true,true);
 		return r;
 	}
 

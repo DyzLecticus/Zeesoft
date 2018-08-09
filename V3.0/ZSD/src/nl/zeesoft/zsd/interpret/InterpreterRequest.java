@@ -16,6 +16,7 @@ public class InterpreterRequest {
 	
 	public boolean				appendDebugLog					= false;
 	public boolean				classifyLanguage				= false;
+	public double				minLanguageChangeDifference		= 0.1D;
 	public boolean				correctInput					= false;
 	public boolean				classifyMasterContext			= false;
 	public double				classifyMasterContextThreshold	= 0.25D;
@@ -67,6 +68,7 @@ public class InterpreterRequest {
 		json.rootElement.children.add(new JsElem("context",context,true));
 		json.rootElement.children.add(new JsElem("appendDebugLog","" + appendDebugLog));
 		json.rootElement.children.add(new JsElem("classifyLanguage","" + classifyLanguage));
+		json.rootElement.children.add(new JsElem("minLanguageChangeDifference","" + minLanguageChangeDifference));
 		json.rootElement.children.add(new JsElem("correctInput","" + correctInput));
 		json.rootElement.children.add(new JsElem("classifyMasterContext","" + classifyMasterContext));
 		json.rootElement.children.add(new JsElem("classifyMasterContextThreshold","" + classifyMasterContextThreshold));
@@ -90,6 +92,7 @@ public class InterpreterRequest {
 		context = json.rootElement.getChildString("context",masterContext);
 		appendDebugLog = json.rootElement.getChildBoolean("appendDebugLog",appendDebugLog);
 		classifyLanguage = json.rootElement.getChildBoolean("classifyLanguage",classifyLanguage);
+		minLanguageChangeDifference = json.rootElement.getChildDouble("minLanguageChangeDifference",minLanguageChangeDifference);
 		correctInput = json.rootElement.getChildBoolean("correctInput",correctInput);
 		classifyMasterContext = json.rootElement.getChildBoolean("classifyMasterContext",classifyMasterContext);
 		classifyMasterContextThreshold = json.rootElement.getChildDouble("classifyMasterContextThreshold",classifyMasterContextThreshold);

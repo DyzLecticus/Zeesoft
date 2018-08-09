@@ -35,7 +35,7 @@ public class EnglishSupportRequest extends SupportRequest {
 		addVariablePrompt(VARIABLE_SUPPORT_CONFIRMATION,"Shall I connect you to a human?");
 		addVariablePrompt(VARIABLE_SUPPORT_CONFIRMATION,"Do you want to be connected to a human?");
 		
-		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Is there something else I can try to help you with?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Is there another way I can be of service to you?");
 	}

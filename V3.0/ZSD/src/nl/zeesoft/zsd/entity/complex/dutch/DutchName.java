@@ -72,6 +72,10 @@ public class DutchName extends ComplexObject {
 		addPattern(new ZStringSymbolParser("Wat is je naam? Mijn naam is " + variables + "."),"");
 		addPattern(new ZStringSymbolParser("Wat is jouw naam? Mijn naam is " + variables + "."),"");
 		addPattern(new ZStringSymbolParser("Wat is uw naam? Mijn naam is " + variables + "."),"");
+		addPattern(new ZStringSymbolParser("Wie ben jij? Mijn naam is " + variables + "."),"");
+		addPattern(new ZStringSymbolParser("Wie bent u? Mijn naam is " + variables + "."),"");
+		addPattern(new ZStringSymbolParser("Wie ben jij? Ik heet " + variables + "."),"");
+		addPattern(new ZStringSymbolParser("Wie bent u? Ik heet " + variables + "."),"");
 
 		addPattern(new ZStringSymbolParser(variables + " is mijn naam."),"");
 		addPattern(new ZStringSymbolParser(variables + " heet ik."),"");

@@ -24,14 +24,16 @@ public abstract class SupportRequestHandler extends DialogInstanceHandler {
 				confirmed = getConfig().getEntityValueTranslator().getBooleanTypeValueForInternalValue(confirmation,false);
 			}
 			if (confirmed) {
-				dro.output.append(getConnectResponse());
+				dro.appendOutput(getConnectResponse());
 				promptVariable = "";
 			} else {
-				dro.output.append(getOkayResponse());
+				dro.appendOutput(getOkayResponse());
 			}
 		}
 		super.setPrompt(r,dro,updatedValues,promptVariable);
 	}
+	
 	protected abstract String getConnectResponse();
+	
 	protected abstract String getOkayResponse();
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequenceMatcher;
 import nl.zeesoft.zsd.entity.EntityObject;
@@ -62,6 +63,10 @@ public class DialogInstance {
 			ptn.replace("{" + var.name + "}","[" + var.type + "]");
 		}
 		addExample(ptn,"");
+	}
+
+	public DialogVariable addNextDialogVariable() {
+		return addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
 	}
 
 	public DialogVariable addVariable(String name, String type) {

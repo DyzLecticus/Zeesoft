@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
@@ -12,7 +13,8 @@ public class DialogResponseOutput {
 	public String									context							= "";
 	public ZStringSymbolParser						output							= new ZStringSymbolParser();
 	public ZStringSymbolParser						prompt							= new ZStringSymbolParser();
-	public String									promptVariable					= "";
+	public String									promptVariableName				= "";
+	public String									promptVariableType				= "";
 	public SortedMap<String,DialogVariableValue>	values							= new TreeMap<String,DialogVariableValue>();
 
 	public DialogResponseOutput() {
@@ -21,6 +23,20 @@ public class DialogResponseOutput {
 
 	public DialogResponseOutput(String context) {
 		this.context = context;
+	}
+
+	public void appendOutput(String add) {
+		if (output.length()>0) {
+			output.append(" ");
+		}
+		output.append(add);
+	}
+
+	public void appendOutput(ZStringBuilder add) {
+		if (output.length()>0) {
+			output.append(" ");
+		}
+		output.append(add);
 	}
 	
 	public void getOutputFromPrompt() {
@@ -35,6 +51,13 @@ public class DialogResponseOutput {
 				}
 				output.append(remaining);
 			}
+		}
+	}
+
+	public void clearDialogVariableValues() {
+		for (Entry<String,DialogVariableValue> entry: values.entrySet()) {
+			entry.getValue().internalValue = "";
+			entry.getValue().externalValue = "";
 		}
 	}
 

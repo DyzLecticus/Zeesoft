@@ -24,6 +24,11 @@ public abstract class HandlerObject {
 		// Override to implement
 	}
 	
+	protected void setDefaultHeadersAndStatus(HttpServletResponse response) {
+		response.setHeader("Last-Modified",getConfiguration().getLastModifiedHeader());
+		response.setStatus(200);
+	}
+	
 	protected abstract ZStringBuilder buildResponse();
 	
 	protected ZStringBuilder getCachedResponse() {

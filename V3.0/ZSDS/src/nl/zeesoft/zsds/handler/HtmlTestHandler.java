@@ -17,6 +17,7 @@ public class HtmlTestHandler extends HandlerObject {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		setDefaultHeadersAndStatus(response);
 		response.setContentType("text/html");
 		PrintWriter out;
 		try {

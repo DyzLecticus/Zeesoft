@@ -34,7 +34,7 @@ public class EnglishGenericHandshake extends GenericHandshake {
 		addVariable(VARIABLE_LASTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_LASTNAME,BaseConfiguration.TYPE_NAME);
 		addVariablePrompt(VARIABLE_LASTNAME,"What is your lastname?");
 
-		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"What can I do for you {fullName}?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"How can I help you {fullName}?");
 

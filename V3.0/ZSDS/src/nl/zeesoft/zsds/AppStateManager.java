@@ -1,5 +1,9 @@
 package nl.zeesoft.zsds;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequencePreprocessor;
@@ -17,6 +21,7 @@ public class AppStateManager extends Locker implements InitializerListener {
 	private boolean						reload						= false;
 	private boolean						reading						= false;
 	private boolean						writing						= false;
+	private String						lastModifiedHeader			= getLastModifiedDateString();
 
 	public AppStateManager(AppConfiguration configuration) {
 		super(configuration.getMessenger());
@@ -43,6 +48,7 @@ public class AppStateManager extends Locker implements InitializerListener {
 			reading = false;
 			reloaded = reload;
 			dialogHandlerConfig = dialogHandlerConfigLoad;
+			lastModifiedHeader = getLastModifiedDateString();
 			unlockMe(this);
 			if (reloaded) {
 				configuration.debug(this,"Reloaded data ...");
@@ -94,6 +100,14 @@ public class AppStateManager extends Locker implements InitializerListener {
 		return r;
 	}
 
+	public String getLastModifiedHeader() {
+		String r = "";
+		lockMe(this);
+		r = lastModifiedHeader;
+		unlockMe(this);
+		return r;
+	}
+
 	private boolean load(boolean re) {
 		boolean r = false;
 		lockMe(this);
@@ -115,5 +129,12 @@ public class AppStateManager extends Locker implements InitializerListener {
 			config.initialize();
 		}
 		return r;
+	}
+	
+	private String getLastModifiedDateString() {
+		Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return dateFormat.format(date);
 	}
 }

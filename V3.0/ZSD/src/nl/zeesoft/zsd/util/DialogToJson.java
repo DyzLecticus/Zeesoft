@@ -71,19 +71,25 @@ public class DialogToJson {
 				}
 			}
 			for (DialogVariable variable: dialog.getVariables()) {
-				for (DialogVariablePrompt prompt: variable.prompts) {
-					if (languageContext) {
-						cntxt = dialog.getLanguage();
-					} else if (masterContext) {
-						cntxt = dialog.getMasterContext();
-					} else {
-						cntxt = dialog.getContext();
+				if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
+					for (DialogVariablePrompt prompt: variable.prompts) {
+						if (languageContext) {
+							cntxt = dialog.getLanguage();
+						} else if (masterContext) {
+							cntxt = dialog.getMasterContext();
+						} else {
+							cntxt = dialog.getContext();
+						}
+						ZStringBuilder pr = new ZStringBuilder(prompt.prompt);
+						pr.append(" [");
+						pr.append(variable.type);
+						pr.append("].");
+						TsvToJson.checkAddSequenceElement(parent,
+							pr,
+							null,
+							new ZStringBuilder(cntxt)
+							);
 					}
-					TsvToJson.checkAddSequenceElement(parent,
-						new ZStringBuilder(prompt.prompt),
-						null,
-						new ZStringBuilder(cntxt)
-						);
 				}
 			}
 		}

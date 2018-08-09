@@ -33,7 +33,10 @@ public class DialogResponse extends InterpreterResponse {
 			oElem.children.add(new JsElem("context",output.context,true));
 			oElem.children.add(new JsElem("output",output.output,true));
 			oElem.children.add(new JsElem("prompt",output.prompt,true));
-			oElem.children.add(new JsElem("promptVariable",output.promptVariable,true));
+			if (output.promptVariableName.length()>0) {
+				oElem.children.add(new JsElem("promptVariableName",output.promptVariableName,true));
+				oElem.children.add(new JsElem("promptVariableType",output.promptVariableType,true));
+			}
 			JsElem dvElem = new JsElem("dialogVariableValues",true);
 			oElem.children.add(dvElem);
 			for (DialogVariableValue dvv: output.values.values()) {
@@ -60,7 +63,8 @@ public class DialogResponse extends InterpreterResponse {
 				output.context = oElem.getChildString("context");
 				output.output = oElem.getChildZStringSymbolParser("output");
 				output.prompt = oElem.getChildZStringSymbolParser("prompt");
-				output.promptVariable = oElem.getChildString("promptVariable");
+				output.promptVariableName = oElem.getChildString("promptVariableName");
+				output.promptVariableType = oElem.getChildString("promptVariableType");
 				contextOutputs.add(output);
 				JsElem dvElem = oElem.getChildByName("dialogVariableValues");
 				if (dvElem!=null) {

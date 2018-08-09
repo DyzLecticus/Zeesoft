@@ -17,7 +17,7 @@ public class DutchGenericMath extends GenericMath {
 		addExample("Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","");
 		addExample("Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","");
 		
-		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. Kan ik nog meer voor je doen?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. Is er nog iets waar ik je mee kan helpen?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Dat is {exact} {result}. Kan ik nog meer voor je doen?");

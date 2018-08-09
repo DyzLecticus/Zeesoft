@@ -47,7 +47,7 @@ public class DutchSupportRequest extends SupportRequest {
 		addVariablePrompt(VARIABLE_SUPPORT_CONFIRMATION,"Zal ik u doorverbinden met een mens?");
 		addVariablePrompt(VARIABLE_SUPPORT_CONFIRMATION,"Wilt u doorverbonden worden met een mens?");
 		
-		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Kan ik u ergens anders mee proberen te helpen?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Kan ik u op een andere manier van dienst zijn?");
 	}

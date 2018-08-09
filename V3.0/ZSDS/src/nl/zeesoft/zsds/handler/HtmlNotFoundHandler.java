@@ -17,6 +17,7 @@ public class HtmlNotFoundHandler extends HandlerObject {
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		setDefaultHeadersAndStatus(response);
 		response.setContentType("text/html");
 		response.setStatus(404);
 		PrintWriter out;

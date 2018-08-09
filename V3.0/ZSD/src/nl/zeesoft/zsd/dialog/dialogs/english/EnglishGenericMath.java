@@ -17,7 +17,7 @@ public class EnglishGenericMath extends GenericMath {
 		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","");
 		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","");
 		
-		addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. What else can I do for you?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. Is there anything else I can help you with?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"That is {exact} {result}. What else can I do for you?");
