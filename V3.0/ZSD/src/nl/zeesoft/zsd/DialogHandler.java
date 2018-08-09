@@ -111,6 +111,7 @@ public class DialogHandler extends SequenceInterpreter {
 				} else {
 					r.classificationSequence = new ZStringSymbolParser(GenericClassification.TRIGGER_INPUT_CONTEXT);
 				}
+				r.addDebugLogLine("Handling dialog: ",dialog.getId());
 				handleDialog(r,dialog);
 			}
 		}
