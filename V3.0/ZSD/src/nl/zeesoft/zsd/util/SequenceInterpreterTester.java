@@ -1,6 +1,7 @@
 package nl.zeesoft.zsd.util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -25,6 +26,7 @@ public class SequenceInterpreterTester extends Locker {
 	
 	private boolean								testing			= false;
 	private SequenceInterpreterTestWorker		worker			= null;
+	private Date								started			= null;
 	private JsFile								summary			= null;
 	
 	public SequenceInterpreterTester(DialogHandlerConfiguration configuration) {
@@ -42,9 +44,28 @@ public class SequenceInterpreterTester extends Locker {
 	public void initialize() {
 		for (DialogInstance dialog: configuration.getDialogSet().getDialogs()) {
 			for (DialogIO example: dialog.getExamples()) {
+				boolean found = false;
+				for (String language: configuration.getBase().getSupportedLanguages()) {
+					if (!language.equals(dialog.getLanguage())) {
+						DialogInstance test = configuration.getDialogSet().getDialog(language,dialog.getMasterContext(),dialog.getContext());
+						if (test!=null) {
+							for (DialogIO testExample: test.getExamples()) {
+								if (testExample.input.equals(example.input)) {
+									found = true;
+									break;
+								}
+							}
+						}
+					}
+					if (found) {
+						break;
+					}
+				}
 				SequenceInterpreterTest test = new SequenceInterpreterTest();
 				test.input = example.input;
-				test.expectedLanguage = dialog.getLanguage();
+				if (!found) {
+					test.expectedLanguage = dialog.getLanguage();
+				}
 				test.expectedMasterContext = dialog.getMasterContext();
 				test.expectedContext = dialog.getContext();
 				tests.add(test);
@@ -58,6 +79,7 @@ public class SequenceInterpreterTester extends Locker {
 		if (tests.size()>0 && !testing && !worker.isWorking()) {
 			testing = true;
 			r = testing;
+			started = new Date();
 			worker.start();
 		}
 		unlockMe(this);
@@ -102,6 +124,9 @@ public class SequenceInterpreterTester extends Locker {
 		if (test!=null) {
 			InterpreterRequest request = new InterpreterRequest();
 			request.setAllActions(true);
+			if (test.expectedLanguage.length()==0) {
+				request.classifyLanguage = false;
+			}
 			request.input = test.input;
 			DialogHandler handler = new DialogHandler(configuration);
 			InterpreterResponse response = handler.handleInterpreterRequest(request);
@@ -129,8 +154,8 @@ public class SequenceInterpreterTester extends Locker {
 		json.rootElement.children.add(totalsElem);
 		JsElem errsElem = new JsElem("errors",true);
 		json.rootElement.children.add(errsElem);
+		int totalSuccess = 0;
 		if (results.size()>0) {
-			int totalSuccess = 0;
 			for (SequenceInterpreterTestResult result: results) {
 				if (result.success) {
 					totalSuccess++;
@@ -138,13 +163,13 @@ public class SequenceInterpreterTester extends Locker {
 					JsElem errElem = new JsElem();
 					errsElem.children.add(errElem);
 					errElem.children.add(new JsElem("input",result.test.input,true));
-					if (result.response.responseLanguages.size()==0) {
+					if (result.response.request.classifyLanguage && result.response.responseLanguages.size()==0) {
 						errElem.children.add(new JsElem("error","Failed to classify language",true));
 					} else if (result.response.responseMasterContexts.size()==0) {
 						errElem.children.add(new JsElem("error","Failed to classify master context",true));
 					} else if (result.response.responseContexts.size()==0) {
 						errElem.children.add(new JsElem("error","Failed to classify context",true));
-					} else if (result.response.responseLanguages.size()>0 && !result.response.responseLanguages.get(0).symbol.equals(result.test.expectedLanguage)) {
+					} else if (result.test.expectedLanguage.length()>0 && result.response.responseLanguages.size()>0 && !result.response.responseLanguages.get(0).symbol.equals(result.test.expectedLanguage)) {
 						SequenceClassifierResult res = result.response.responseLanguages.get(0);
 						SequenceClassifierResult found = getResultBySymbol(result.response.responseLanguages,result.test.expectedLanguage);
 						ZStringBuilder err = getMismatchError("language",res.symbol,res.probNormalized,result.test.expectedLanguage,found);
@@ -162,8 +187,11 @@ public class SequenceInterpreterTester extends Locker {
 					}
 				}
 			}
+		}
+		totalsElem.children.add(new JsElem("tests","" + tests.size()));
+		totalsElem.children.add(new JsElem("durationMs","" + ((new Date()).getTime() - started.getTime())));
+		if (results.size()>0) {
 			int successPercentage = (totalSuccess * 100) / results.size();
-			totalsElem.children.add(new JsElem("tests","" + tests.size()));
 			totalsElem.children.add(new JsElem("successful","" + totalSuccess));
 			totalsElem.children.add(new JsElem("successPercentage","" + successPercentage));
 		}

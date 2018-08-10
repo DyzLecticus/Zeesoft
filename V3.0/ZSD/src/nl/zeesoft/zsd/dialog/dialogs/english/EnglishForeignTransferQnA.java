@@ -15,11 +15,11 @@ public class EnglishForeignTransferQnA extends ForeignTransferQnA {
 		addExample("What does money transfer to a foreign country cost?",getCostOutput());
 		addExample("What does it cost to transfer money to a foreign country?",getCostOutput());
 		addExample("What are the costs of transferring money to a foreign country?",getCostOutput());
-		addExample("How much does ot cost to transfer money to a foreign country?",getCostOutput());
+		addExample("How much does it cost to transfer money to a foreign country?",getCostOutput());
 		addExample("Are there any costs attached to transfer money to a foreign country?",getCostOutput());
 		addExample("What does a transfer abroad cost?",getCostOutput());
 		addExample("What does it cost to transfer money abroad?",getCostOutput());
-		addExample("How much does ot cost to transfer abroad?",getCostOutput());
+		addExample("How much does it cost to transfer abroad?",getCostOutput());
 		addExample("Are there any costs attached to transferring money abroad?",getCostOutput());
 
 		addExample("How long does foreign transfer take?",getDurationOutput());

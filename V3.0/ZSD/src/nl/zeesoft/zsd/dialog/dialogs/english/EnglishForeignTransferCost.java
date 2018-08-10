@@ -15,7 +15,7 @@ public class EnglishForeignTransferCost extends ForeignTransferCost {
 		addExample("What does money transfer to [" + BaseConfiguration.TYPE_COUNTRY + "] cost?",getCountryOutput());
 		addExample("What does it cost to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("What are the costs of transferring money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
-		addExample("How much does ot cost to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
+		addExample("How much does it cost to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Are there any costs attached to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 
 		addVariable(VARIABLE_TRANSFER_TO_COUNTRY,BaseConfiguration.TYPE_COUNTRY);
