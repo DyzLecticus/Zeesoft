@@ -171,7 +171,7 @@ public class JsElem {
 		return getChildLong(name,0L);
 	}
 
-	public long getChildInt(String name) {
+	public int getChildInt(String name) {
 		return getChildInt(name,0);
 	}
 }
