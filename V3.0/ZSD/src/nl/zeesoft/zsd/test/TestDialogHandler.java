@@ -23,7 +23,7 @@ public class TestDialogHandler extends TestInitializer {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test show how to use a *DialogHandler* to process an *DialogRequest*.");
+		System.out.println("This test show how to use a *DialogHandler* to process a *DialogRequest*.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
