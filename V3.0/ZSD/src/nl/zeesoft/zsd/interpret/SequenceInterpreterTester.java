@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -178,6 +179,8 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 	private JsFile createSummary() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		ZDate timeStamp = new ZDate();
+		json.rootElement.children.add(new JsElem("timeStamp",timeStamp.getDateTimeString(),true));
 		JsElem totalsElem = new JsElem("totals");
 		json.rootElement.children.add(totalsElem);
 		JsElem errsElem = new JsElem("errors",true);

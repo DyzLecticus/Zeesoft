@@ -129,7 +129,7 @@ Correction for 'maus'; mouse
 Correction for 'excpton'; exception
 Correction for 'amzaingg'; amazing
 Correction for 'antidisestablishmantarianims'; antidisestablishmentarianism
-Average correction time: 238 ms
+Average correction time: 341 ms
 ~~~~
 
 nl.zeesoft.zsd.test.TestSequenceClassifier
@@ -155,19 +155,19 @@ The output of this test shows;
  * The time it takes to initialize the classifier  
  * The classification results including the time it takes, for a set of input sequences  
 ~~~~
-Initializing the SequenceClassifier took: 3495 ms
+Initializing the SequenceClassifier took: 5763 ms
 
 Classified sequence: 'Wat kost dat?' -> nlPrivatebankingBetalen
-Classifying the input sequence took: 1 ms
+Classifying the input sequence took: 3 ms
 
 Classified sequence (case insensitive): 'Wat kost dat?' -> nlPriveKinderenengeldzaken
-Classifying the input sequence took: 3 ms
+Classifying the input sequence took: 7 ms
 
 Classified sequence: 'Waar kan ik mijn transacties zien?' -> nlGrootzakelijkProducten
-Classifying the input sequence took: 2 ms
+Classifying the input sequence took: 3 ms
 
 Classified sequence: 'Heeft de ABN AMRO Rechtsbijstandverzekering' -> nlPriveVerzekeren
-Classifying the input sequence took: 3 ms
+Classifying the input sequence took: 7 ms
 
 Context probabilities for 'Wat kost dat?', threshold: 0.4
 'nlPriveKinderenengeldzaken': 0.042902821500088964 / 1.0
@@ -205,43 +205,43 @@ The output of this test shows;
  * The time it takes to initialize the classifier  
  * The matches found for a set of input sequences and how long it takes to find them  
 ~~~~
-Initializing the SequenceMatcher took: 6781 ms
+Initializing the SequenceMatcher took: 6496 ms
 
 'Heb' -> 'Heb je je al voor 1 mei ingeschreven voor je opleiding en bedenk je je voor 1 september? [OUTPUT] Dan kun je je nog kosteloos uitschrijven via Studielink. Studentenreisproduct Heb je een studentenreisproduct en lopen je studies in elkaar over, dan hoef je niets te regelen.'
-Matching the input sequence took: 24 ms
+Matching the input sequence took: 19 ms
 
 'Wat kost dat?' -> 'Zorg thuis: wat kost dat? [OUTPUT] De meeste mensen oriënteren zich pas op deze mogelijkheden als de zorg acuut nodig is. Soms kan men dan niet meer zelf beslissen en moeten anderen dat doen.'
-Matching the input sequence took: 54 ms
+Matching the input sequence took: 134 ms
 
 'Wat kost dat?' (nlPrivatebankingBetalen) -> 'Wat kost de Betaalpas? [OUTPUT] Als u een betaalpakket heeft bij ABN AMRO, betaalt u niets voor uw Betaalpas.'
-Matching the input sequence took: 2 ms
+Matching the input sequence took: 3 ms
 
 'geld over?' -> 'Alle rekeningen betaald en geld over? [OUTPUT] Sparen ligt voor de hand, maar er is meer mogelijk. Bekijk onze video met de voor- en nadelen van beleggen, hypotheek aflossen, pensioen aanvullen en schenken.'
-Matching the input sequence took: 39 ms
-
-'Waar kan ik mijn transacties zien?' -> 'Waar kan ik mijn transacties inzien? [OUTPUT] Via Mijn ICS Business kunt u online uw transacties, uw limiet, het openstaande saldo en overzichten tot 6 maanden terug bekijken. Ik wil een extra creditcard aanvragen.'
 Matching the input sequence took: 84 ms
 
+'Waar kan ik mijn transacties zien?' -> 'Waar kan ik mijn transacties inzien? [OUTPUT] Via Mijn ICS Business kunt u online uw transacties, uw limiet, het openstaande saldo en overzichten tot 6 maanden terug bekijken. Ik wil een extra creditcard aanvragen.'
+Matching the input sequence took: 50 ms
+
 'overboeken' -> 'Hoeveel kan ik overboeken vanaf mijn betaalrekening? [OUTPUT] U kunt beide paslezers gebruiken. Dit is het bedrag dat u per dag maximaal kunt overboeken met uw identificatiecode en vingerafdruk.'
-Matching the input sequence took: 10 ms
+Matching the input sequence took: 28 ms
 
 'Hypotheek berekenen' -> 'Had u voor deze datum al een Bankspaar Hypotheek of een Kapitaalverzekering Eigen Woning die is gekoppeld aan een hypotheek? [OUTPUT] Dan kunt u deze Bankspaar Hypotheek of verzekering wel fiscaal geruisloos voortzetten in een nieuwe Bankspaar Hypotheek.'
-Matching the input sequence took: 15 ms
+Matching the input sequence took: 33 ms
 
 'Hypotheek berekenen' (case insensitive) -> 'Of bent u gewoon nieuwsgierig naar hoeveel u kunt lenen? [OUTPUT] U kunt ook uw hypotheek berekenen als u geen vast contract heeft of als u zzp'er bent.'
-Matching the input sequence took: 29 ms
+Matching the input sequence took: 54 ms
 
 'Fraude' -> 'Fraude herkennen: wat doen criminelen? [OUTPUT] Maar het is belangrijk dat u ook zelf weet, wat u wel of juist niet moet doen.'
-Matching the input sequence took: 11 ms
+Matching the input sequence took: 31 ms
 
 'Fraude' (case insensitive) -> 'Wat is CEO Fraude? [OUTPUT] Bij CEO fraude doen criminelen zich voor als een hooggeplaatste manager of bestuurder (bijvoorbeeld de CEO of de CFO) uit uw organisatie, om vervolgens geld te stelen. Bij deze vorm van fraude gaat het vaak om zeer grote bedragen. Bij de meest recente CEO fraude slachtoffers zien we veel overeenkomsten en lijkt het alsof dezelfde daders erachter zitten.'
-Matching the input sequence took: 12 ms
+Matching the input sequence took: 44 ms
 
 'Heeft de abn amro rechtsbijstandverzekering' -> 'Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? [OUTPUT] U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering.'
-Matching the input sequence took: 49 ms
+Matching the input sequence took: 115 ms
 
 'Heeft de abn amro rechtsbijstandverzekering' (case insensitive) -> 'Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? [OUTPUT] U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering.'
-Matching the input sequence took: 88 ms
+Matching the input sequence took: 295 ms
 
 Matches for sequence: 'Wat kost dat?', threshold: 0.33
 'Zorg thuis: wat kost dat? [OUTPUT] De meeste mensen oriënter[ ...]': 0.03920302825787142 / 0.6630272952853598
@@ -297,30 +297,30 @@ The output of this test shows;
  * The time it takes to initialize the translator  
  * The translation results including the time it takes, for a set of input sequences  
 ~~~~
-Initializing the EntityValueTranslator took: 1802 ms
+Initializing the EntityValueTranslator took: 1390 ms
 
 Sequence: 'Eat three donuts at 9:00 or count to 110'
-Translating the sequence took: 6 ms
+Translating the sequence took: 2 ms
 Translation: 'UN_ABC:Eat EN_NUM:3|UN_ABC:three UN_ABC:donuts UN_ABC:at UN_TIM:09:00:00 UN_ABC:or UN_ABC:count UN_ABC:to UN_NUM:110'
-Retranslating the sequence took: 0 ms
+Retranslating the sequence took: 1 ms
 Retranslation: 'Eat three donuts at 09:00:00 or count to 110'
 
 Sequence: 'Eet drie donuts om 9:00 of tel tot 110'
-Translating the sequence took: 2 ms
+Translating the sequence took: 1 ms
 Translation: 'UN_ABC:Eet NL_NUM:3|UN_ABC:drie UN_ABC:donuts UN_ABC:om UN_TIM:09:00:00 UN_ABC:of UN_ABC:tel UN_ABC:tot UN_NUM:110'
 Retranslating the sequence took: 0 ms
 Retranslation: 'Eet drie donuts om 09:00:00 of tel tot 110'
 
 Sequence: 'I finished twohundredandtwentyfourth or 225th'
-Translating the sequence took: 2 ms
+Translating the sequence took: 1 ms
 Translation: 'UN_ABC:I UN_ABC:finished EN_ORD:224|UN_ABC:twohundredandtwentyfourth UN_ABC:or EN_OR2:225'
-Retranslating the sequence took: 0 ms
+Retranslating the sequence took: 1 ms
 Retranslation: 'I finished twohundredandtwentyfourth or 225th'
 
 Sequence: 'Ik ben tweehonderdvierentwintigste geworden'
-Translating the sequence took: 2 ms
+Translating the sequence took: 1 ms
 Translation: 'UN_ABC:Ik UN_ABC:ben NL_ORD:224|UN_ABC:tweehonderdvierentwintigste|NL_NAM:firstName:UN_ABC:Tweehonderdvierentwintigste UN_ABC:geworden|NL_NAM:lastName:UN_ABC:Geworden'
-Retranslating the sequence took: 0 ms
+Retranslating the sequence took: 1 ms
 Retranslation: 'Ik ben tweehonderdvierentwintigste geworden'
 
 Sequence: 'februari march october december'
@@ -338,7 +338,7 @@ Retranslation: 'thirtythree hours and fourtyone minutes / drieendertig uur en ee
 Sequence: 'yesterday OR today OR the 1st of october'
 Translating the sequence took: 2 ms
 Translation: 'EN_DAT:2018-07-15|UN_ABC:yesterday UN_ABC:OR EN_DAT:2018-07-16|UN_ABC:today UN_ABC:OR EN_DAT:2018-10-01'
-Retranslating the sequence took: 0 ms
+Retranslating the sequence took: 1 ms
 Retranslation: 'july fifteenth twothousandeighteen OR july sixteenth twothousandeighteen OR october first twothousandeighteen'
 
 Sequence: 'gisteren OF vandaag OF 1 oktober'
@@ -354,7 +354,7 @@ Retranslating the sequence took: 0 ms
 Retranslation: 'twelve o'clock OR fiftyfive past eight OR ten past one in the morning'
 
 Sequence: 'twaalf uur OF vijf minuten voor negen OF tien over een sochtends'
-Translating the sequence took: 1 ms
+Translating the sequence took: 0 ms
 Translation: 'NL_TIM:12:00:00|NL_DUR:12:00 UN_ABC:OF NL_TIM:08:55:00 UN_ABC:OF NL_TIM:01:10:00'
 Retranslating the sequence took: 1 ms
 Retranslation: 'twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends'
@@ -368,19 +368,19 @@ Retranslation: 'My name is Andrew from the Sea'
 Sequence: 'Mijn naam is Andre van der Zee'
 Translating the sequence took: 2 ms
 Translation: 'UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:Andre|NL_NAM:firstName:UN_ABC:Andre NL_PRE:3|NL_NAM:preposition:NL_PRE:3 UN_ABC:Zee|NL_NAM:lastName:UN_ABC:Zee'
-Retranslating the sequence took: 0 ms
+Retranslating the sequence took: 1 ms
 Retranslation: 'Mijn naam is Andre van der Zee'
 
 Sequence: 'Hoe heet jij? gekke henkie'
-Translating the sequence took: 2 ms
+Translating the sequence took: 1 ms
 Translation: 'UN_ABC:Hoe UN_ABC:heet UN_ABC:jij ? UN_ABC:gekke|NL_NAM:firstName:UN_ABC:Gekke UN_ABC:henkie|NL_NAM:lastName:UN_ABC:Henkie'
-Retranslating the sequence took: 1 ms
+Retranslating the sequence took: 0 ms
 Retranslation: 'Hoe heet jij? gekke henkie'
 
 Sequence: 'gekste der henkies is mijn naam'
-Translating the sequence took: 3 ms
+Translating the sequence took: 1 ms
 Translation: 'UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies UN_ABC:is UN_ABC:mijn UN_ABC:naam'
-Retranslating the sequence took: 1 ms
+Retranslating the sequence took: 0 ms
 Retranslation: 'gekste der henkies is mijn naam'
 
 Sequence: 'Mijn naam si gekste der henkies.'
@@ -390,25 +390,25 @@ Retranslating the sequence took: 0 ms
 Retranslation: 'Mijn naam si gekste der henkies.'
 
 Sequence: 'to Germany or France'
-Translating the sequence took: 1 ms
+Translating the sequence took: 0 ms
 Translation: 'UN_ABC:to EN_CNT:DE|UN_ABC:Germany UN_ABC:or EN_CNT:FR|UN_ABC:France'
 Retranslating the sequence took: 0 ms
 Retranslation: 'to Germany or France'
 
 Sequence: 'naar Duitsland of Frankrijk'
-Translating the sequence took: 1 ms
+Translating the sequence took: 0 ms
 Translation: 'UN_ABC:naar NL_CNT:DE|UN_ABC:Duitsland UN_ABC:of NL_CNT:FR|UN_ABC:Frankrijk'
 Retranslating the sequence took: 0 ms
 Retranslation: 'naar Duitsland of Frankrijk'
 
 Sequence: 'You asshole'
-Translating the sequence took: 1 ms
+Translating the sequence took: 0 ms
 Translation: 'UN_ABC:You EN_PRF:1|UN_ABC:asshole'
 Retranslating the sequence took: 0 ms
 Retranslation: 'You asshole'
 
 Sequence: 'Jij klootzak'
-Translating the sequence took: 1 ms
+Translating the sequence took: 2 ms
 Translation: 'UN_ABC:Jij NL_PRF:2|UN_ABC:klootzak'
 Retranslating the sequence took: 0 ms
 Retranslation: 'Jij klootzak'
@@ -428,7 +428,7 @@ Retranslation: 'ten multiplied by five'
 Sequence: 'tien keer vijf'
 Translating the sequence took: 0 ms
 Translation: 'NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:5|UN_ABC:vijf'
-Retranslating the sequence took: 0 ms
+Retranslating the sequence took: 1 ms
 Retranslation: 'tien vermenigvuldigd met vijf'
 
 Sequence: 'fifteen british pound'
@@ -527,7 +527,7 @@ Class references;
 **Test output**  
 The output of this test shows a sample of the converted JSON.  
 ~~~~
-Converting 333841 entity values took: 418 ms
+Converting 333841 entity values took: 278 ms
 
 Sample JSON;
 {
@@ -605,7 +605,7 @@ Class references;
 **Test output**  
 The output of this test shows a sample of the converted JSON.  
 ~~~~
-Converting 1530 dialog examples took: 182 ms
+Converting 1530 dialog examples took: 173 ms
 
 Sample JSON;
 {
@@ -689,7 +689,7 @@ Class references;
 **Test output**  
 The output of this test shows a sample of the converted JSON.  
 ~~~~
-Converting 14 dialogs took: 0 ms
+Converting 14 dialogs took: 1 ms
 
 Sample JSON;
 {
@@ -842,8 +842,8 @@ Class references;
 **Test output**  
 The output of this test shows the time it takes to initialize two objects simultaneously.  
 ~~~~
-Initializing Translator took 2601 ms
-Initializing Classifier took 6238 ms
+Initializing Translator took 1717 ms
+Initializing Classifier took 5364 ms
 Initialized all classes
 ~~~~
 
@@ -885,19 +885,19 @@ Classes:
 - nl.zeesoft.zsd.SequenceClassifier (LanguageContextNLForeignTransfer) <= resources/LanguageContextNLForeignTransfer.json
 - nl.zeesoft.zsd.test.FixedDateEntityValueTranslator (EntityValueTranslator)
 
-Initializing LanguageContextENForeignTransfer took 9 ms
-Initializing LanguagePreprocessor took 27 ms
-Initializing LanguageContextNLForeignTransfer took 43 ms
-Initializing LanguageContextENSupport took 50 ms
-Initializing LanguageContextNLSupport took 92 ms
-Initializing LanguageContextENGeneric took 135 ms
-Initializing LanguageContextNLGeneric took 162 ms
-Initializing LanguageContextENRoom took 310 ms
-Initializing LanguageContextNLRoom took 337 ms
-Initializing LanguageMasterContextEN took 435 ms
-Initializing LanguageMasterContextNL took 482 ms
-Initializing EntityValueTranslator took 1686 ms
-Initializing LanguageClassifier took 32768 ms
+Initializing LanguagePreprocessor took 18 ms
+Initializing LanguageContextENGeneric took 41 ms
+Initializing LanguageContextNLSupport took 46 ms
+Initializing LanguageContextENForeignTransfer took 80 ms
+Initializing LanguageContextENSupport took 85 ms
+Initializing LanguageContextNLForeignTransfer took 91 ms
+Initializing LanguageContextNLGeneric took 128 ms
+Initializing LanguageContextENRoom took 254 ms
+Initializing LanguageContextNLRoom took 260 ms
+Initializing LanguageMasterContextEN took 323 ms
+Initializing LanguageMasterContextNL took 356 ms
+Initializing EntityValueTranslator took 1177 ms
+Initializing LanguageClassifier took 27322 ms
 Initialized all classes
 ~~~~
 
@@ -912,7 +912,7 @@ Classified sequence: 'Wie ben jij?' -> NL
 Classifying the input sequence took: 0 ms
 
 Classified sequence (case insensitive): 'Wie ben jij?' -> NL
-Classifying the input sequence took: 1 ms
+Classifying the input sequence took: 0 ms
 
 Classified sequence (case insensitive): 'what is name?' -> EN
 Classifying the input sequence took: 0 ms
@@ -952,7 +952,7 @@ nl.zeesoft.zsd.test.TestLanguageContextClassifier
 This test uses two JSON datasets to test language specific *SequenceClassifier* instances intended to be used as context classifiers.
 ~~~~
 Classified sequence: 'What is your goal?' -> QuestionAndAnswer
-Classifying the input sequence took: 1 ms
+Classifying the input sequence took: 0 ms
 Classified sequence (case insensitive): 'What is your goal?' -> QuestionAndAnswer
 Classifying the input sequence took: 0 ms
 Context probabilities for 'What is your goal?', threshold: 0.0
@@ -976,7 +976,7 @@ Context probabilities for 'What is your name?', threshold: 0.0
 'QuestionAndAnswer': 0.12353064651553317 / 0.3017948717948718
 
 Classified sequence: 'Wat is jouw naam?' -> Handshake
-Classifying the input sequence took: 1 ms
+Classifying the input sequence took: 0 ms
 Classified sequence (case insensitive): 'Wat is jouw naam?' -> Handshake
 Classifying the input sequence took: 0 ms
 Context probabilities for 'Wat is jouw naam?', threshold: 0.0
@@ -1034,76 +1034,76 @@ The output of this test shows several sequence interpreter requests and the debu
 ~~~~
 Request prompt: '', input: 'Hallo.'
 Response debug log;
-22:41:34:388: Classify language for sequence: Hallo.
-22:41:34:388: Classified language: NL
-22:41:34:388: Translate sequence: Hallo.
-22:41:34:389: Translated sequence: UN_ABC:Hallo .
-22:41:34:389: Correction time limit: 200
-22:41:34:389: Correcting sequence: Hallo .
-22:41:34:389: Corrected sequence: Hallo.
-22:41:34:389: Translate corrected sequence: Hallo.
-22:41:34:389: Translated corrected sequence: UN_ABC:Hallo .
-22:41:34:389: Checking profanity for sequence: Hallo.
-22:41:34:389: Classify master context for input sequence: Hallo.
-22:41:34:390: Classified master context: Generic
-22:41:34:390: Classify context for input sequence: Hallo.
-22:41:34:390: Classified context: Handshake
-Interpreting the request took: 3 ms
+01:19:54:391: Classify language for sequence: Hallo.
+01:19:54:391: Classified language: NL
+01:19:54:391: Translate sequence: Hallo.
+01:19:54:391: Translated sequence: UN_ABC:Hallo .
+01:19:54:391: Correction time limit: 200
+01:19:54:391: Correcting sequence: Hallo .
+01:19:54:391: Corrected sequence: Hallo.
+01:19:54:391: Translate corrected sequence: Hallo.
+01:19:54:392: Translated corrected sequence: UN_ABC:Hallo .
+01:19:54:392: Checking profanity for sequence: Hallo.
+01:19:54:392: Classify master context for input sequence: Hallo.
+01:19:54:392: Classified master context: Generic
+01:19:54:392: Classify context for input sequence: Hallo.
+01:19:54:392: Classified context: Handshake
+Interpreting the request took: 2 ms
 
 Request prompt: '', input: 'Mijn naam si gekste der henkies.'
 Response debug log;
-22:41:34:390: Classify language for sequence: Mijn naam si gekste der henkies.
-22:41:34:390: Classified language: NL
-22:41:34:391: Translate sequence: Mijn naam si gekste der henkies.
-22:41:34:392: Translated sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste NL_PRE:6|UN_ABC:der UN_ABC:henkies .
-22:41:34:393: Correction time limit: 700
-22:41:34:393: Correcting sequence: Mijn naam si gekste [] henkies .
-22:41:35:093: Corrected sequence: Mijn naam is gekste der henkies.
-22:41:35:093: Translate corrected sequence: Mijn naam is gekste der henkies.
-22:41:35:094: Translated corrected sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .
-22:41:35:094: Checking profanity for sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:35:094: Classify master context for input sequence: Mijn naam is gekste der henkies.
-22:41:35:094: Classify master context for classification sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:35:095: Classified master context: Generic
-22:41:35:095: Classify context for input sequence: Mijn naam is gekste der henkies.
-22:41:35:095: Classify context for classification sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:35:095: Classified context: Handshake
-Interpreting the request took: 705 ms
+01:19:54:392: Classify language for sequence: Mijn naam si gekste der henkies.
+01:19:54:392: Classified language: NL
+01:19:54:392: Translate sequence: Mijn naam si gekste der henkies.
+01:19:54:393: Translated sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste NL_PRE:6|UN_ABC:der UN_ABC:henkies .
+01:19:54:394: Correction time limit: 700
+01:19:54:394: Correcting sequence: Mijn naam si gekste [] henkies .
+01:19:54:796: Corrected sequence: Mijn naam is gekste der henkies.
+01:19:54:796: Translate corrected sequence: Mijn naam is gekste der henkies.
+01:19:54:797: Translated corrected sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .
+01:19:54:798: Checking profanity for sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:54:798: Classify master context for input sequence: Mijn naam is gekste der henkies.
+01:19:54:798: Classify master context for classification sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:54:798: Classified master context: Generic
+01:19:54:798: Classify context for input sequence: Mijn naam is gekste der henkies.
+01:19:54:798: Classify context for classification sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:54:798: Classified context: Handshake
+Interpreting the request took: 407 ms
 
 Request prompt: 'What is your name?', input: 'Albert einstein.'
 Response debug log;
-22:41:35:095: Classify language for sequence: Albert einstein.
-22:41:35:095: Classify language for sequence: What is your name? Albert einstein.
-22:41:35:095: Classified language: EN
-22:41:35:096: Translate sequence: Albert einstein.
-22:41:35:098: Translated sequence: UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .
-22:41:35:098: Correction time limit: 300
-22:41:35:098: Correcting sequence: [] [] .
-22:41:35:098: Corrected sequence: Albert einstein.
-22:41:35:098: Translate corrected sequence: Albert einstein.
-22:41:35:100: Translated corrected sequence: UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .
-22:41:35:100: Checking profanity for sequence: [ABC] [ABC].
-22:41:35:100: Classify master context for input sequence: Albert einstein.
-22:41:35:100: Classify master context for classification sequence: What is your name? [ABC] [ABC].
-22:41:35:100: Classified master context: Generic
-22:41:35:100: Classify context for input sequence: Albert einstein.
-22:41:35:100: Classify context for classification sequence: What is your name? [ABC] [ABC].
-22:41:35:100: Classified context: Handshake
+01:19:54:799: Classify language for sequence: Albert einstein.
+01:19:54:799: Classify language for sequence: What is your name? Albert einstein.
+01:19:54:799: Classified language: EN
+01:19:54:800: Translate sequence: Albert einstein.
+01:19:54:802: Translated sequence: UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .
+01:19:54:802: Correction time limit: 300
+01:19:54:802: Correcting sequence: [] [] .
+01:19:54:802: Corrected sequence: Albert einstein.
+01:19:54:802: Translate corrected sequence: Albert einstein.
+01:19:54:804: Translated corrected sequence: UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .
+01:19:54:804: Checking profanity for sequence: [ABC] [ABC].
+01:19:54:804: Classify master context for input sequence: Albert einstein.
+01:19:54:804: Classify master context for classification sequence: What is your name? [ABC] [ABC].
+01:19:54:805: Classified master context: Generic
+01:19:54:805: Classify context for input sequence: Albert einstein.
+01:19:54:805: Classify context for classification sequence: What is your name? [ABC] [ABC].
+01:19:54:805: Classified context: Handshake
 Interpreting the request took: 6 ms
 
 Request prompt: '', input: 'Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.'
 Response debug log;
-22:41:35:101: Classify language for sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
-22:41:35:102: Selected primary language: EN
-22:41:35:102: Translate sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
-22:41:35:104: Translated sequence: UN_ABC:Wruio UN_ABC:wwtiop UN_ABC:wtwrpoi UN_ABC:weptiwpipw UN_ABC:ipwopkm UN_ABC:eopipwqwrqqiop UN_ABC:qwerqwer UN_ABC:qrqpoqe UN_ABC:qpxnxc UN_ABC:qwpgsjkdbvhsdfkljjv .
-22:41:35:104: Correction time limit: 1100
-22:41:35:104: Correcting sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv .
-22:41:36:204: Corrected sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
-22:41:36:204: Translate corrected sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
-22:41:36:206: Translated corrected sequence: UN_ABC:Wruio UN_ABC:wwtiop UN_ABC:wtwrpoi UN_ABC:weptiwpipw UN_ABC:ipwopkm UN_ABC:eopipwqwrqqiop UN_ABC:qwerqwer UN_ABC:qrqpoqe UN_ABC:qpxnxc UN_ABC:qwpgsjkdbvhsdfkljjv .
-22:41:36:207: Checking profanity for sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
-22:41:36:207: Classify master context for input sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
+01:19:54:806: Classify language for sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
+01:19:54:807: Selected primary language: EN
+01:19:54:807: Translate sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
+01:19:54:809: Translated sequence: UN_ABC:Wruio UN_ABC:wwtiop UN_ABC:wtwrpoi UN_ABC:weptiwpipw UN_ABC:ipwopkm UN_ABC:eopipwqwrqqiop UN_ABC:qwerqwer UN_ABC:qrqpoqe UN_ABC:qpxnxc UN_ABC:qwpgsjkdbvhsdfkljjv .
+01:19:54:809: Correction time limit: 1100
+01:19:54:809: Correcting sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv .
+01:19:55:909: Corrected sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
+01:19:55:909: Translate corrected sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
+01:19:55:910: Translated corrected sequence: UN_ABC:Wruio UN_ABC:wwtiop UN_ABC:wtwrpoi UN_ABC:weptiwpipw UN_ABC:ipwopkm UN_ABC:eopipwqwrqqiop UN_ABC:qwerqwer UN_ABC:qrqpoqe UN_ABC:qpxnxc UN_ABC:qwpgsjkdbvhsdfkljjv .
+01:19:55:911: Checking profanity for sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
+01:19:55:911: Classify master context for input sequence: Wruio wwtiop wtwrpoi weptiwpipw ipwopkm eopipwqwrqqiop qwerqwer qrqpoqe qpxnxc qwpgsjkdbvhsdfkljjv.
 Interpreting the request took: 1106 ms
 ~~~~
 
@@ -1146,7 +1146,7 @@ Classes:
 - nl.zeesoft.zsd.test.FixedDateEntityValueTranslator (EntityValueTranslator)
 - nl.zeesoft.zsd.dialog.DialogSet (DialogSet) <= resources/DialogSetEN.json, resources/DialogSetNL.json
 
-Initializing DialogSet took 448 ms
+Initializing DialogSet took 384 ms
 Initialized all classes
 ~~~~
 
@@ -1182,891 +1182,891 @@ The output of this test shows several dialog handler requests and the debug log 
 ~~~~
 Request prompt: '', input: 'What are you?'
 Response debug log;
-22:41:38:887: Classify language for sequence: What are you?
-22:41:38:887: Classified language: EN
-22:41:38:887: Translate sequence: What are you?
-22:41:38:888: Translated sequence: UN_ABC:What UN_ABC:are UN_ABC:you ?
-22:41:38:888: Correction time limit: 400
-22:41:38:888: Correcting sequence: What are you ?
-22:41:38:888: Corrected sequence: What are you?
-22:41:38:888: Translate corrected sequence: What are you?
-22:41:38:889: Translated corrected sequence: UN_ABC:What UN_ABC:are UN_ABC:you ?
-22:41:38:889: Checking profanity for sequence: What are you?
-22:41:38:889: Classify master context for input sequence: What are you?
-22:41:38:889: Classified master context: Generic
-22:41:38:889: Classify context for input sequence: What are you?
-22:41:38:889: Classified context: QuestionAndAnswer
-22:41:38:889: Handling dialog: EN/Generic/QuestionAndAnswer
-22:41:38:890:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:38:890:     Find matches for sequence: What are you?
-22:41:38:890:     Found matches for sequence: 10
-22:41:38:890:     - What are you? [OUTPUT] I am an artificially intelligent personal assistant. (0.21428571428571425 / 0.8809523809523809)
-22:41:38:890:     - What are your goals? [OUTPUT] My goal is to understand and help people. (0.07142857142857142 / 0.29365079365079366)
-22:41:38:892:     - What are your priorities? [OUTPUT] My goal is to understand and help people. (0.07142857142857142 / 0.29365079365079366)
-22:41:38:892:     - Are you a robot? [OUTPUT] Yes. I am an artificially intelligent personal assistant. (0.06925675675675676 / 0.28472222222222227)
-22:41:38:892:     - Are you a human? [OUTPUT] No. I am better. I am an artificially intelligent personal assistant. (0.06925675675675676 / 0.28472222222222227)
-22:41:38:892:     - Are you human? [OUTPUT] No. I am better. I am an artificially intelligent personal assistant. (0.06925675675675676 / 0.28472222222222227)
-22:41:38:892:     - Who programmed you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
-22:41:38:892:     - Who created you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
-22:41:38:893:     - Who made you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
-22:41:38:893:     - Who built you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
-22:41:38:893:     Set dialog output: I am an artificially intelligent personal assistant.
-22:41:38:893: Handling dialog: EN/Generic/Handshake
-22:41:38:893:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
-22:41:38:893:     Find matches for sequence: What are you?
-22:41:38:893:     Found matches for sequence: 2
-22:41:38:893:     - Who are you? [OUTPUT] My name is {selfName}. (0.9278350515463918 / 0.6521739130434783)
-22:41:38:893:     - What is your name? [OUTPUT] My name is {selfName}. (0.4697529663489594 / 0.33018867924528306)
-22:41:38:893:     Prompt variable: firstName
-22:41:38:894:     Set dialog output: My name is Dyz Lecticus.
-22:41:38:894:     Set dialog prompt: What is your name?
-Handling the request took: 80 ms
+01:19:58:288: Classify language for sequence: What are you?
+01:19:58:289: Classified language: EN
+01:19:58:289: Translate sequence: What are you?
+01:19:58:290: Translated sequence: UN_ABC:What UN_ABC:are UN_ABC:you ?
+01:19:58:290: Correction time limit: 400
+01:19:58:290: Correcting sequence: What are you ?
+01:19:58:290: Corrected sequence: What are you?
+01:19:58:290: Translate corrected sequence: What are you?
+01:19:58:291: Translated corrected sequence: UN_ABC:What UN_ABC:are UN_ABC:you ?
+01:19:58:291: Checking profanity for sequence: What are you?
+01:19:58:291: Classify master context for input sequence: What are you?
+01:19:58:291: Classified master context: Generic
+01:19:58:291: Classify context for input sequence: What are you?
+01:19:58:291: Classified context: QuestionAndAnswer
+01:19:58:291: Handling dialog: EN/Generic/QuestionAndAnswer
+01:19:58:292:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:58:292:     Find matches for sequence: What are you?
+01:19:58:292:     Found matches for sequence: 10
+01:19:58:292:     - What are you? [OUTPUT] I am an artificially intelligent personal assistant. (0.21428571428571425 / 0.8809523809523809)
+01:19:58:292:     - What are your goals? [OUTPUT] My goal is to understand and help people. (0.07142857142857142 / 0.29365079365079366)
+01:19:58:294:     - What are your priorities? [OUTPUT] My goal is to understand and help people. (0.07142857142857142 / 0.29365079365079366)
+01:19:58:294:     - Are you a robot? [OUTPUT] Yes. I am an artificially intelligent personal assistant. (0.06925675675675676 / 0.28472222222222227)
+01:19:58:294:     - Are you a human? [OUTPUT] No. I am better. I am an artificially intelligent personal assistant. (0.06925675675675676 / 0.28472222222222227)
+01:19:58:294:     - Are you human? [OUTPUT] No. I am better. I am an artificially intelligent personal assistant. (0.06925675675675676 / 0.28472222222222227)
+01:19:58:294:     - Who programmed you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
+01:19:58:294:     - Who created you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
+01:19:58:294:     - Who made you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
+01:19:58:294:     - Who built you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
+01:19:58:295:     Set dialog output: I am an artificially intelligent personal assistant.
+01:19:58:295: Handling dialog: EN/Generic/Handshake
+01:19:58:295:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
+01:19:58:295:     Find matches for sequence: What are you?
+01:19:58:295:     Found matches for sequence: 2
+01:19:58:295:     - Who are you? [OUTPUT] My name is {selfName}. (0.9278350515463918 / 0.6521739130434783)
+01:19:58:295:     - What is your name? [OUTPUT] My name is {selfName}. (0.4697529663489594 / 0.33018867924528306)
+01:19:58:295:     Prompt variable: firstName
+01:19:58:296:     Set dialog output: My name is Dyz Lecticus.
+01:19:58:296:     Set dialog prompt: What is your name?
+Handling the request took: 86 ms
 
 Request prompt: '', input: 'Wat ben jij?'
 Response debug log;
-22:41:38:967: Classify language for sequence: Wat ben jij?
-22:41:38:967: Classified language: NL
-22:41:38:967: Translate sequence: Wat ben jij?
-22:41:38:968: Translated sequence: UN_ABC:Wat UN_ABC:ben UN_ABC:jij ?
-22:41:38:968: Correction time limit: 400
-22:41:38:968: Correcting sequence: Wat ben jij ?
-22:41:38:968: Corrected sequence: Wat ben jij?
-22:41:38:968: Translate corrected sequence: Wat ben jij?
-22:41:38:969: Translated corrected sequence: UN_ABC:Wat UN_ABC:ben UN_ABC:jij ?
-22:41:38:969: Checking profanity for sequence: Wat ben jij?
-22:41:38:969: Classify master context for input sequence: Wat ben jij?
-22:41:38:969: Classified master context: Generic
-22:41:38:969: Classify context for input sequence: Wat ben jij?
-22:41:38:969: Classified context: QuestionAndAnswer
-22:41:38:969: Handling dialog: NL/Generic/QuestionAndAnswer
-22:41:38:969:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:38:969:     Find matches for sequence: Wat ben jij?
-22:41:38:970:     Found matches for sequence: 9
-22:41:38:970:     - Wat ben jij? [OUTPUT] Ik ben een kunstmatig intelligente persoonlijk assistent. (0.46601208459214505 / 0.9793650793650793)
-22:41:38:970:     - Waarom ben jij geschapen? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15483383685800606 / 0.3253968253968254)
-22:41:38:970:     - Waarom ben jij gemaakt? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15483383685800606 / 0.3253968253968254)
-22:41:38:970:     - Wat kan jij? [OUTPUT] Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen. (0.15332326283987915 / 0.3222222222222222)
-22:41:38:970:     - Wat kun jij? [OUTPUT] Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen. (0.15332326283987915 / 0.3222222222222222)
-22:41:38:970:     - Waarom besta jij? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15332326283987915 / 0.3222222222222222)
-22:41:38:970:     - Ben jij een robot? [OUTPUT] Ja. Ik ben een kunstmatig intelligente persoonlijk assistent. (0.1354796072507553 / 0.28472222222222227)
-22:41:38:970:     - Ben jij een mens? [OUTPUT] Nee. Ik ben beter. Ik ben een kunstmatig intelligente persoonlijk assistent. (0.1354796072507553 / 0.28472222222222227)
-22:41:38:970:     - Ben jij een menselijk? [OUTPUT] Nee. Ik ben beter. Ik ben een kunstmatig intelligente persoonlijk assistent. (0.1354796072507553 / 0.28472222222222227)
-22:41:38:970:     Set dialog output: Ik ben een kunstmatig intelligente persoonlijk assistent.
-22:41:38:970: Handling dialog: NL/Generic/Handshake
-22:41:38:970:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
-22:41:38:970:     Find matches for sequence: Wat ben jij?
-22:41:38:970:     Found matches for sequence: 5
-22:41:38:971:     - Wie ben jij? [OUTPUT] Mijn naam is {selfName}. (1.054263565891473 / 0.6476190476190478)
-22:41:38:971:     - Wat is uw naam? [OUTPUT] Mijn naam is {selfName}. (0.5217650566487775 / 0.3205128205128205)
-22:41:38:971:     - Wat is jouw naam? [OUTPUT] Mijn naam is {selfName}. (0.5217650566487775 / 0.3205128205128205)
-22:41:38:971:     - Wat is je naam? [OUTPUT] Mijn naam is {selfName}. (0.5217650566487775 / 0.3205128205128205)
-22:41:38:971:     - Hoe heet jij? [OUTPUT] Mijn naam is {selfName}. (0.5193798449612403 / 0.31904761904761914)
-22:41:38:971:     Prompt variable: firstName
-22:41:38:971:     Set dialog output: Mijn naam is Dyz Lecticus.
-22:41:38:971:     Set dialog prompt: Wat is jouw naam?
-22:41:38:971: Handling dialog: NL/Generic/Language
-22:41:38:971:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguageHandler
-22:41:38:971:     Updated variable languages: Engels en Nederlands
-22:41:38:971:     Find matches for sequence: Wat ben jij?
-22:41:38:971:     Found matches for sequence: 2
-22:41:38:971:     - Welke talen spreek jij? [OUTPUT] Ik spreek {languages}. (0.46969696969696967 / 0.30392156862745096)
-22:41:38:972:     - Hoeveel talen spreek jij? [OUTPUT] Ik spreek {languages}. (0.46969696969696967 / 0.30392156862745096)
-22:41:38:972:     Prompt variable: language
-22:41:38:972:     Set dialog output: Ik spreek Engels en Nederlands.
+01:19:58:374: Classify language for sequence: Wat ben jij?
+01:19:58:374: Classified language: NL
+01:19:58:374: Translate sequence: Wat ben jij?
+01:19:58:376: Translated sequence: UN_ABC:Wat UN_ABC:ben UN_ABC:jij ?
+01:19:58:376: Correction time limit: 400
+01:19:58:376: Correcting sequence: Wat ben jij ?
+01:19:58:376: Corrected sequence: Wat ben jij?
+01:19:58:376: Translate corrected sequence: Wat ben jij?
+01:19:58:377: Translated corrected sequence: UN_ABC:Wat UN_ABC:ben UN_ABC:jij ?
+01:19:58:377: Checking profanity for sequence: Wat ben jij?
+01:19:58:377: Classify master context for input sequence: Wat ben jij?
+01:19:58:377: Classified master context: Generic
+01:19:58:377: Classify context for input sequence: Wat ben jij?
+01:19:58:377: Classified context: QuestionAndAnswer
+01:19:58:377: Handling dialog: NL/Generic/QuestionAndAnswer
+01:19:58:377:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:58:377:     Find matches for sequence: Wat ben jij?
+01:19:58:378:     Found matches for sequence: 9
+01:19:58:378:     - Wat ben jij? [OUTPUT] Ik ben een kunstmatig intelligente persoonlijk assistent. (0.46601208459214505 / 0.9793650793650793)
+01:19:58:378:     - Waarom ben jij geschapen? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15483383685800606 / 0.3253968253968254)
+01:19:58:378:     - Waarom ben jij gemaakt? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15483383685800606 / 0.3253968253968254)
+01:19:58:378:     - Wat kan jij? [OUTPUT] Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen. (0.15332326283987915 / 0.3222222222222222)
+01:19:58:378:     - Wat kun jij? [OUTPUT] Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen. (0.15332326283987915 / 0.3222222222222222)
+01:19:58:378:     - Waarom besta jij? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15332326283987915 / 0.3222222222222222)
+01:19:58:378:     - Ben jij een robot? [OUTPUT] Ja. Ik ben een kunstmatig intelligente persoonlijk assistent. (0.1354796072507553 / 0.28472222222222227)
+01:19:58:378:     - Ben jij een mens? [OUTPUT] Nee. Ik ben beter. Ik ben een kunstmatig intelligente persoonlijk assistent. (0.1354796072507553 / 0.28472222222222227)
+01:19:58:378:     - Ben jij een menselijk? [OUTPUT] Nee. Ik ben beter. Ik ben een kunstmatig intelligente persoonlijk assistent. (0.1354796072507553 / 0.28472222222222227)
+01:19:58:379:     Set dialog output: Ik ben een kunstmatig intelligente persoonlijk assistent.
+01:19:58:379: Handling dialog: NL/Generic/Handshake
+01:19:58:379:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
+01:19:58:379:     Find matches for sequence: Wat ben jij?
+01:19:58:379:     Found matches for sequence: 5
+01:19:58:379:     - Wie ben jij? [OUTPUT] Mijn naam is {selfName}. (1.054263565891473 / 0.6476190476190478)
+01:19:58:379:     - Wat is uw naam? [OUTPUT] Mijn naam is {selfName}. (0.5217650566487775 / 0.3205128205128205)
+01:19:58:379:     - Wat is jouw naam? [OUTPUT] Mijn naam is {selfName}. (0.5217650566487775 / 0.3205128205128205)
+01:19:58:379:     - Wat is je naam? [OUTPUT] Mijn naam is {selfName}. (0.5217650566487775 / 0.3205128205128205)
+01:19:58:379:     - Hoe heet jij? [OUTPUT] Mijn naam is {selfName}. (0.5193798449612403 / 0.31904761904761914)
+01:19:58:379:     Prompt variable: firstName
+01:19:58:379:     Set dialog output: Mijn naam is Dyz Lecticus.
+01:19:58:379:     Set dialog prompt: Wat is jouw naam?
+01:19:58:379: Handling dialog: NL/Generic/Language
+01:19:58:380:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguageHandler
+01:19:58:380:     Updated variable languages: Engels en Nederlands
+01:19:58:380:     Find matches for sequence: Wat ben jij?
+01:19:58:380:     Found matches for sequence: 2
+01:19:58:380:     - Welke talen spreek jij? [OUTPUT] Ik spreek {languages}. (0.46969696969696967 / 0.30392156862745096)
+01:19:58:380:     - Hoeveel talen spreek jij? [OUTPUT] Ik spreek {languages}. (0.46969696969696967 / 0.30392156862745096)
+01:19:58:380:     Prompt variable: language
+01:19:58:380:     Set dialog output: Ik spreek Engels en Nederlands.
 Handling the request took: 100 ms
 
 Request prompt: '', input: 'What is the answer?'
 Response debug log;
-22:41:39:067: Classify language for sequence: What is the answer?
-22:41:39:067: Classified language: EN
-22:41:39:067: Translate sequence: What is the answer?
-22:41:39:068: Translated sequence: UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer ?
-22:41:39:068: Correction time limit: 500
-22:41:39:068: Correcting sequence: What is [] answer ?
-22:41:39:068: Corrected sequence: What is the answer?
-22:41:39:068: Translate corrected sequence: What is the answer?
-22:41:39:069: Translated corrected sequence: UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer ?
-22:41:39:069: Checking profanity for sequence: What is [PRE] answer?
-22:41:39:069: Classify master context for input sequence: What is the answer?
-22:41:39:069: Classify master context for classification sequence: What is [PRE] answer?
-22:41:39:069: Selected input sequence master context classification.
-22:41:39:069: Classified master context: Generic
-22:41:39:069: Classify context for input sequence: What is the answer?
-22:41:39:069: Classified context: QuestionAndAnswer
-22:41:39:069: Handling dialog: EN/Generic/QuestionAndAnswer
-22:41:39:069:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:39:069:     Find matches for sequence: What is the answer?
-22:41:39:069:     Found matches for sequence: 9
-22:41:39:069:     - What is the answer? [OUTPUT] Fourtytwo. (0.2548262548262548 / 0.8380952380952382)
-22:41:39:069:     - What is the answer to the ultimate question of life, the universe, and everything? [OUTPUT] Fourtytwo. (0.17567567567567566 / 0.5777777777777778)
-22:41:39:069:     - What is the answer to the question? [OUTPUT] Fourtytwo. (0.17567567567567566 / 0.5777777777777778)
-22:41:39:069:     - What is the question? [OUTPUT] I do not know. (0.10424710424710423 / 0.34285714285714286)
-22:41:39:069:     - What is the meaning of life? [OUTPUT] Life has no meaning. (0.10424710424710423 / 0.34285714285714286)
-22:41:39:070:     - What is the purpose of life? [OUTPUT] Life has no purpose. (0.10424710424710423 / 0.34285714285714286)
-22:41:39:070:     - What is the purpose of your existence? [OUTPUT] My goal is to understand and help people. (0.10424710424710423 / 0.34285714285714286)
-22:41:39:070:     - What is your goal? [OUTPUT] My goal is to understand and help people. (0.048262548262548256 / 0.15873015873015875)
-22:41:39:070:     - What is your purpose? [OUTPUT] My goal is to understand and help people. (0.048262548262548256 / 0.15873015873015875)
-22:41:39:070:     Set dialog output: Fourtytwo.
-Handling the request took: 3 ms
+01:19:58:474: Classify language for sequence: What is the answer?
+01:19:58:475: Classified language: EN
+01:19:58:475: Translate sequence: What is the answer?
+01:19:58:476: Translated sequence: UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer ?
+01:19:58:477: Correction time limit: 500
+01:19:58:477: Correcting sequence: What is [] answer ?
+01:19:58:478: Corrected sequence: What is the answer?
+01:19:58:478: Translate corrected sequence: What is the answer?
+01:19:58:480: Translated corrected sequence: UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer ?
+01:19:58:480: Checking profanity for sequence: What is [PRE] answer?
+01:19:58:480: Classify master context for input sequence: What is the answer?
+01:19:58:480: Classify master context for classification sequence: What is [PRE] answer?
+01:19:58:481: Selected input sequence master context classification.
+01:19:58:481: Classified master context: Generic
+01:19:58:481: Classify context for input sequence: What is the answer?
+01:19:58:481: Classified context: QuestionAndAnswer
+01:19:58:481: Handling dialog: EN/Generic/QuestionAndAnswer
+01:19:58:481:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:58:481:     Find matches for sequence: What is the answer?
+01:19:58:482:     Found matches for sequence: 9
+01:19:58:482:     - What is the answer? [OUTPUT] Fourtytwo. (0.2548262548262548 / 0.8380952380952382)
+01:19:58:482:     - What is the answer to the ultimate question of life, the universe, and everything? [OUTPUT] Fourtytwo. (0.17567567567567566 / 0.5777777777777778)
+01:19:58:482:     - What is the answer to the question? [OUTPUT] Fourtytwo. (0.17567567567567566 / 0.5777777777777778)
+01:19:58:482:     - What is the question? [OUTPUT] I do not know. (0.10424710424710423 / 0.34285714285714286)
+01:19:58:482:     - What is the meaning of life? [OUTPUT] Life has no meaning. (0.10424710424710423 / 0.34285714285714286)
+01:19:58:482:     - What is the purpose of life? [OUTPUT] Life has no purpose. (0.10424710424710423 / 0.34285714285714286)
+01:19:58:483:     - What is the purpose of your existence? [OUTPUT] My goal is to understand and help people. (0.10424710424710423 / 0.34285714285714286)
+01:19:58:483:     - What is your goal? [OUTPUT] My goal is to understand and help people. (0.048262548262548256 / 0.15873015873015875)
+01:19:58:483:     - What is your purpose? [OUTPUT] My goal is to understand and help people. (0.048262548262548256 / 0.15873015873015875)
+01:19:58:483:     Set dialog output: Fourtytwo.
+Handling the request took: 9 ms
 
 Request prompt: '', input: 'Wat is het antwoord?'
 Response debug log;
-22:41:39:070: Classify language for sequence: Wat is het antwoord?
-22:41:39:070: Classified language: NL
-22:41:39:070: Translate sequence: Wat is het antwoord?
-22:41:39:071: Translated sequence: UN_ABC:Wat UN_ABC:is UN_ABC:het UN_ABC:antwoord ?
-22:41:39:071: Correction time limit: 500
-22:41:39:071: Correcting sequence: Wat is het antwoord ?
-22:41:39:071: Corrected sequence: Wat is het antwoord?
-22:41:39:071: Translate corrected sequence: Wat is het antwoord?
-22:41:39:072: Translated corrected sequence: UN_ABC:Wat UN_ABC:is UN_ABC:het UN_ABC:antwoord ?
-22:41:39:072: Checking profanity for sequence: Wat is het antwoord?
-22:41:39:072: Classify master context for input sequence: Wat is het antwoord?
-22:41:39:072: Classified master context: Generic
-22:41:39:072: Classify context for input sequence: Wat is het antwoord?
-22:41:39:072: Classified context: QuestionAndAnswer
-22:41:39:072: Handling dialog: NL/Generic/QuestionAndAnswer
-22:41:39:072:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:39:072:     Find matches for sequence: Wat is het antwoord?
-22:41:39:072:     Found matches for sequence: 10
-22:41:39:072:     - Wat is het antwoord? [OUTPUT] Tweeenveertig. (0.6102719033232629 / 1.0)
-22:41:39:072:     - Wat is het antwoord op de ultieme vraag van het leven, het universum en alles? [OUTPUT] Tweeenveertig. (0.45241691842900306 / 0.7413366336633663)
-22:41:39:072:     - Wat is het antwoord op de vraag? [OUTPUT] Tweeenveertig. (0.45241691842900306 / 0.7413366336633663)
-22:41:39:072:     - Wat is het doel van jouw bestaan? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.297583081570997 / 0.4876237623762376)
-22:41:39:072:     - Wat is de vraag? [OUTPUT] Dat weet ik niet. (0.14425981873111782 / 0.23638613861386137)
-22:41:39:073:     - Wat is de zin van het leven? [OUTPUT] Het leven heeft geen zin. (0.14425981873111782 / 0.23638613861386137)
-22:41:39:073:     - Wat is de zin van het bestaan? [OUTPUT] Het leven heeft geen zin. (0.14425981873111782 / 0.23638613861386137)
-22:41:39:073:     - Wat is de betekenis van het leven? [OUTPUT] Het leven heeft geen betekenis. (0.14425981873111782 / 0.23638613861386137)
-22:41:39:073:     - Wat is je doel? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.14425981873111782 / 0.23638613861386137)
-22:41:39:073:     - Wat is jouw doel? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.14425981873111782 / 0.23638613861386137)
-22:41:39:073:     Set dialog output: Tweeenveertig.
-Handling the request took: 97 ms
+01:19:58:484: Classify language for sequence: Wat is het antwoord?
+01:19:58:484: Classified language: NL
+01:19:58:484: Translate sequence: Wat is het antwoord?
+01:19:58:485: Translated sequence: UN_ABC:Wat UN_ABC:is UN_ABC:het UN_ABC:antwoord ?
+01:19:58:486: Correction time limit: 500
+01:19:58:486: Correcting sequence: Wat is het antwoord ?
+01:19:58:486: Corrected sequence: Wat is het antwoord?
+01:19:58:486: Translate corrected sequence: Wat is het antwoord?
+01:19:58:487: Translated corrected sequence: UN_ABC:Wat UN_ABC:is UN_ABC:het UN_ABC:antwoord ?
+01:19:58:488: Checking profanity for sequence: Wat is het antwoord?
+01:19:58:488: Classify master context for input sequence: Wat is het antwoord?
+01:19:58:488: Classified master context: Generic
+01:19:58:488: Classify context for input sequence: Wat is het antwoord?
+01:19:58:488: Classified context: QuestionAndAnswer
+01:19:58:488: Handling dialog: NL/Generic/QuestionAndAnswer
+01:19:58:488:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:58:489:     Find matches for sequence: Wat is het antwoord?
+01:19:58:489:     Found matches for sequence: 10
+01:19:58:489:     - Wat is het antwoord? [OUTPUT] Tweeenveertig. (0.6102719033232629 / 1.0)
+01:19:58:490:     - Wat is het antwoord op de ultieme vraag van het leven, het universum en alles? [OUTPUT] Tweeenveertig. (0.45241691842900306 / 0.7413366336633663)
+01:19:58:490:     - Wat is het antwoord op de vraag? [OUTPUT] Tweeenveertig. (0.45241691842900306 / 0.7413366336633663)
+01:19:58:490:     - Wat is het doel van jouw bestaan? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.297583081570997 / 0.4876237623762376)
+01:19:58:490:     - Wat is de vraag? [OUTPUT] Dat weet ik niet. (0.14425981873111782 / 0.23638613861386137)
+01:19:58:490:     - Wat is de zin van het leven? [OUTPUT] Het leven heeft geen zin. (0.14425981873111782 / 0.23638613861386137)
+01:19:58:490:     - Wat is de zin van het bestaan? [OUTPUT] Het leven heeft geen zin. (0.14425981873111782 / 0.23638613861386137)
+01:19:58:490:     - Wat is de betekenis van het leven? [OUTPUT] Het leven heeft geen betekenis. (0.14425981873111782 / 0.23638613861386137)
+01:19:58:490:     - Wat is je doel? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.14425981873111782 / 0.23638613861386137)
+01:19:58:490:     - Wat is jouw doel? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.14425981873111782 / 0.23638613861386137)
+01:19:58:490:     Set dialog output: Tweeenveertig.
+Handling the request took: 91 ms
 
 Request prompt: '', input: 'Hallo.'
 Response debug log;
-22:41:39:167: Classify language for sequence: Hallo.
-22:41:39:167: Classified language: NL
-22:41:39:167: Translate sequence: Hallo.
-22:41:39:167: Translated sequence: UN_ABC:Hallo .
-22:41:39:167: Correction time limit: 200
-22:41:39:167: Correcting sequence: Hallo .
-22:41:39:167: Corrected sequence: Hallo.
-22:41:39:167: Translate corrected sequence: Hallo.
-22:41:39:168: Translated corrected sequence: UN_ABC:Hallo .
-22:41:39:168: Checking profanity for sequence: Hallo.
-22:41:39:168: Classify master context for input sequence: Hallo.
-22:41:39:168: Classified master context: Generic
-22:41:39:168: Classify context for input sequence: Hallo.
-22:41:39:168: Classified context: Handshake
-22:41:39:168: Handling dialog: NL/Generic/Handshake
-22:41:39:168:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
-22:41:39:168:     Find matches for sequence: Hallo.
-22:41:39:168:     Found matches for sequence: 2
-22:41:39:168:     - Hallo. [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5038759689922481 / 0.6190476190476192)
-22:41:39:168:     - Hallo! [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5038759689922481 / 0.6190476190476192)
-22:41:39:168:     Prompt variable: firstName
-22:41:39:168:     Set dialog output: Hallo. Mijn naam is Dyz Lecticus.
-22:41:39:168:     Set dialog prompt: Wat is jouw naam?
-Handling the request took: 1 ms
+01:19:58:574: Classify language for sequence: Hallo.
+01:19:58:574: Classified language: NL
+01:19:58:574: Translate sequence: Hallo.
+01:19:58:575: Translated sequence: UN_ABC:Hallo .
+01:19:58:575: Correction time limit: 200
+01:19:58:575: Correcting sequence: Hallo .
+01:19:58:575: Corrected sequence: Hallo.
+01:19:58:576: Translate corrected sequence: Hallo.
+01:19:58:576: Translated corrected sequence: UN_ABC:Hallo .
+01:19:58:576: Checking profanity for sequence: Hallo.
+01:19:58:576: Classify master context for input sequence: Hallo.
+01:19:58:576: Classified master context: Generic
+01:19:58:576: Classify context for input sequence: Hallo.
+01:19:58:577: Classified context: Handshake
+01:19:58:577: Handling dialog: NL/Generic/Handshake
+01:19:58:577:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
+01:19:58:577:     Find matches for sequence: Hallo.
+01:19:58:577:     Found matches for sequence: 2
+01:19:58:577:     - Hallo. [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5038759689922481 / 0.6190476190476192)
+01:19:58:577:     - Hallo! [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5038759689922481 / 0.6190476190476192)
+01:19:58:577:     Prompt variable: firstName
+01:19:58:577:     Set dialog output: Hallo. Mijn naam is Dyz Lecticus.
+01:19:58:577:     Set dialog prompt: Wat is jouw naam?
+Handling the request took: 4 ms
 
 Request prompt: '', input: 'Wie ben jij?'
 Response debug log;
-22:41:39:168: Classify language for sequence: Wie ben jij?
-22:41:39:169: Classified language: NL
-22:41:39:169: Translate sequence: Wie ben jij?
-22:41:39:169: Translated sequence: UN_ABC:Wie UN_ABC:ben UN_ABC:jij ?
-22:41:39:169: Correction time limit: 400
-22:41:39:169: Correcting sequence: Wie ben jij ?
-22:41:39:170: Corrected sequence: Wie ben jij?
-22:41:39:170: Translate corrected sequence: Wie ben jij?
-22:41:39:170: Translated corrected sequence: UN_ABC:Wie UN_ABC:ben UN_ABC:jij ?
-22:41:39:170: Checking profanity for sequence: Wie ben jij?
-22:41:39:170: Classify master context for input sequence: Wie ben jij?
-22:41:39:170: Classified master context: Generic
-22:41:39:170: Classify context for input sequence: Wie ben jij?
-22:41:39:171: Classified context: Handshake
-22:41:39:171: Handling dialog: NL/Generic/Handshake
-22:41:39:171:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
-22:41:39:171:     Find matches for sequence: Wie ben jij?
-22:41:39:171:     Found matches for sequence: 2
-22:41:39:171:     - Wie ben jij? [OUTPUT] Mijn naam is {selfName}. (1.5891472868217056 / 0.9761904761904764)
-22:41:39:171:     - Hoe heet jij? [OUTPUT] Mijn naam is {selfName}. (0.5193798449612403 / 0.31904761904761914)
-22:41:39:171:     Prompt variable: firstName
-22:41:39:171:     Set dialog output: Mijn naam is Dyz Lecticus.
-22:41:39:171:     Set dialog prompt: Wat is jouw naam?
-22:41:39:171: Handling dialog: NL/Generic/QuestionAndAnswer
-22:41:39:171:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:39:171:     Find matches for sequence: Wie ben jij?
-22:41:39:171:     Found matches for sequence: 15
-22:41:39:171:     - Wat ben jij? [OUTPUT] Ik ben een kunstmatig intelligente persoonlijk assistent. (0.3081570996978852 / 0.6476190476190475)
-22:41:39:171:     - Waarom ben jij geschapen? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15483383685800606 / 0.3253968253968254)
-22:41:39:171:     - Waarom ben jij gemaakt? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15483383685800606 / 0.3253968253968254)
-22:41:39:171:     - Wat kan jij? [OUTPUT] Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen. (0.15332326283987915 / 0.3222222222222222)
-22:41:39:171:     - Wat kun jij? [OUTPUT] Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen. (0.15332326283987915 / 0.3222222222222222)
-22:41:39:171:     - Waarom besta jij? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15332326283987915 / 0.3222222222222222)
-22:41:39:171:     - Wie is André van der Zee? [OUTPUT] André van der Zee is een software ingenieur uit Leiden, Nederland. (0.15312375306390014 / 0.3218029350104822)
-22:41:39:171:     - Wie heeft jouw software geschreven? [OUTPUT] Mijn software is geschreven door André van der Zee. (0.15312375306390014 / 0.3218029350104822)
-22:41:39:171:     - Wie heeft jou geprogrammeerd? [OUTPUT] Mijn software is geschreven door André van der Zee. (0.15312375306390014 / 0.3218029350104822)
-22:41:39:171:     - Wie heeft jou geschapen? [OUTPUT] Mijn software is geschreven door André van der Zee. (0.15312375306390014 / 0.3218029350104822)
-22:41:39:171:     - [... 5]
-22:41:39:171:     Set dialog output: Ik ben een kunstmatig intelligente persoonlijk assistent.
-22:41:39:171: Handling dialog: NL/Generic/Language
-22:41:39:171:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguageHandler
-22:41:39:172:     Updated variable languages: Engels en Nederlands
-22:41:39:172:     Find matches for sequence: Wie ben jij?
-22:41:39:172:     Found matches for sequence: 2
-22:41:39:172:     - Welke talen spreek jij? [OUTPUT] Ik spreek {languages}. (0.46969696969696967 / 0.30392156862745096)
-22:41:39:172:     - Hoeveel talen spreek jij? [OUTPUT] Ik spreek {languages}. (0.46969696969696967 / 0.30392156862745096)
-22:41:39:172:     Prompt variable: language
-22:41:39:172:     Set dialog output: Ik spreek Engels en Nederlands.
-Handling the request took: 99 ms
+01:19:58:578: Classify language for sequence: Wie ben jij?
+01:19:58:578: Classified language: NL
+01:19:58:578: Translate sequence: Wie ben jij?
+01:19:58:580: Translated sequence: UN_ABC:Wie UN_ABC:ben UN_ABC:jij ?
+01:19:58:580: Correction time limit: 400
+01:19:58:580: Correcting sequence: Wie ben jij ?
+01:19:58:580: Corrected sequence: Wie ben jij?
+01:19:58:580: Translate corrected sequence: Wie ben jij?
+01:19:58:582: Translated corrected sequence: UN_ABC:Wie UN_ABC:ben UN_ABC:jij ?
+01:19:58:582: Checking profanity for sequence: Wie ben jij?
+01:19:58:582: Classify master context for input sequence: Wie ben jij?
+01:19:58:582: Classified master context: Generic
+01:19:58:582: Classify context for input sequence: Wie ben jij?
+01:19:58:582: Classified context: Handshake
+01:19:58:583: Handling dialog: NL/Generic/Handshake
+01:19:58:583:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
+01:19:58:583:     Find matches for sequence: Wie ben jij?
+01:19:58:583:     Found matches for sequence: 2
+01:19:58:583:     - Wie ben jij? [OUTPUT] Mijn naam is {selfName}. (1.5891472868217056 / 0.9761904761904764)
+01:19:58:583:     - Hoe heet jij? [OUTPUT] Mijn naam is {selfName}. (0.5193798449612403 / 0.31904761904761914)
+01:19:58:583:     Prompt variable: firstName
+01:19:58:583:     Set dialog output: Mijn naam is Dyz Lecticus.
+01:19:58:584:     Set dialog prompt: Wat is jouw naam?
+01:19:58:584: Handling dialog: NL/Generic/QuestionAndAnswer
+01:19:58:584:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:58:584:     Find matches for sequence: Wie ben jij?
+01:19:58:584:     Found matches for sequence: 15
+01:19:58:584:     - Wat ben jij? [OUTPUT] Ik ben een kunstmatig intelligente persoonlijk assistent. (0.3081570996978852 / 0.6476190476190475)
+01:19:58:585:     - Waarom ben jij geschapen? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15483383685800606 / 0.3253968253968254)
+01:19:58:585:     - Waarom ben jij gemaakt? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15483383685800606 / 0.3253968253968254)
+01:19:58:585:     - Wat kan jij? [OUTPUT] Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen. (0.15332326283987915 / 0.3222222222222222)
+01:19:58:585:     - Wat kun jij? [OUTPUT] Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen. (0.15332326283987915 / 0.3222222222222222)
+01:19:58:585:     - Waarom besta jij? [OUTPUT] Mijn doel is om mensen te begrijpen en te helpen. (0.15332326283987915 / 0.3222222222222222)
+01:19:58:585:     - Wie is André van der Zee? [OUTPUT] André van der Zee is een software ingenieur uit Leiden, Nederland. (0.15312375306390014 / 0.3218029350104822)
+01:19:58:585:     - Wie heeft jouw software geschreven? [OUTPUT] Mijn software is geschreven door André van der Zee. (0.15312375306390014 / 0.3218029350104822)
+01:19:58:585:     - Wie heeft jou geprogrammeerd? [OUTPUT] Mijn software is geschreven door André van der Zee. (0.15312375306390014 / 0.3218029350104822)
+01:19:58:585:     - Wie heeft jou geschapen? [OUTPUT] Mijn software is geschreven door André van der Zee. (0.15312375306390014 / 0.3218029350104822)
+01:19:58:585:     - [... 5]
+01:19:58:585:     Set dialog output: Ik ben een kunstmatig intelligente persoonlijk assistent.
+01:19:58:585: Handling dialog: NL/Generic/Language
+01:19:58:585:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguageHandler
+01:19:58:586:     Updated variable languages: Engels en Nederlands
+01:19:58:586:     Find matches for sequence: Wie ben jij?
+01:19:58:586:     Found matches for sequence: 2
+01:19:58:586:     - Welke talen spreek jij? [OUTPUT] Ik spreek {languages}. (0.46969696969696967 / 0.30392156862745096)
+01:19:58:586:     - Hoeveel talen spreek jij? [OUTPUT] Ik spreek {languages}. (0.46969696969696967 / 0.30392156862745096)
+01:19:58:586:     Prompt variable: language
+01:19:58:586:     Set dialog output: Ik spreek Engels en Nederlands.
+Handling the request took: 98 ms
 
 Request prompt: 'What is your name?', input: 'Albert einstein.'
 Response debug log;
-22:41:39:267: Classify language for sequence: Albert einstein.
-22:41:39:267: Classify language for sequence: What is your name? Albert einstein.
-22:41:39:267: Classified language: EN
-22:41:39:268: Translate sequence: Albert einstein.
-22:41:39:269: Translated sequence: UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .
-22:41:39:269: Correction time limit: 300
-22:41:39:269: Correcting sequence: [] [] .
-22:41:39:270: Corrected sequence: Albert einstein.
-22:41:39:270: Translate corrected sequence: Albert einstein.
-22:41:39:271: Translated corrected sequence: UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .
-22:41:39:271: Checking profanity for sequence: [ABC] [ABC].
-22:41:39:272: Classify master context for input sequence: Albert einstein.
-22:41:39:272: Classify master context for classification sequence: What is your name? [ABC] [ABC].
-22:41:39:272: Classified master context: Generic
-22:41:39:272: Classify context for input sequence: Albert einstein.
-22:41:39:272: Classify context for classification sequence: What is your name? [ABC] [ABC].
-22:41:39:272: Classified context: Handshake
-22:41:39:272: Handling dialog: EN/Generic/Handshake
-22:41:39:272:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
-22:41:39:272:     Updated variable firstName: UN_ABC:Albert = Albert
-22:41:39:272:     Updated variable lastName: UN_ABC:Einstein = Einstein
-22:41:39:272:     Find matches for sequence: [ABC] [ABC].
-22:41:39:272:     Found matches for sequence: 0
-22:41:39:273:     Updated variable fullName: Albert Einstein
-22:41:39:273:     Prompt variable: nextDialog
-22:41:39:273:     Set dialog output: 
-22:41:39:273:     Set dialog prompt: What can I do for you Albert Einstein?
-Handling the request took: 6 ms
+01:19:58:676: Classify language for sequence: Albert einstein.
+01:19:58:677: Classify language for sequence: What is your name? Albert einstein.
+01:19:58:677: Classified language: EN
+01:19:58:679: Translate sequence: Albert einstein.
+01:19:58:683: Translated sequence: UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .
+01:19:58:684: Correction time limit: 300
+01:19:58:684: Correcting sequence: [] [] .
+01:19:58:684: Corrected sequence: Albert einstein.
+01:19:58:684: Translate corrected sequence: Albert einstein.
+01:19:58:687: Translated corrected sequence: UN_ABC:Albert|EN_NAM:firstName:UN_ABC:Albert UN_ABC:einstein|EN_NAM:lastName:UN_ABC:Einstein .
+01:19:58:688: Checking profanity for sequence: [ABC] [ABC].
+01:19:58:688: Classify master context for input sequence: Albert einstein.
+01:19:58:688: Classify master context for classification sequence: What is your name? [ABC] [ABC].
+01:19:58:688: Classified master context: Generic
+01:19:58:688: Classify context for input sequence: Albert einstein.
+01:19:58:688: Classify context for classification sequence: What is your name? [ABC] [ABC].
+01:19:58:689: Classified context: Handshake
+01:19:58:689: Handling dialog: EN/Generic/Handshake
+01:19:58:689:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
+01:19:58:689:     Updated variable firstName: UN_ABC:Albert = Albert
+01:19:58:689:     Updated variable lastName: UN_ABC:Einstein = Einstein
+01:19:58:689:     Find matches for sequence: [ABC] [ABC].
+01:19:58:689:     Found matches for sequence: 0
+01:19:58:689:     Updated variable fullName: Albert Einstein
+01:19:58:689:     Prompt variable: nextDialog
+01:19:58:689:     Set dialog output: 
+01:19:58:689:     Set dialog prompt: What can I do for you Albert Einstein?
+Handling the request took: 13 ms
 
 Request prompt: '', input: 'Mijn naam si gekste der henkies.'
 Response debug log;
-22:41:39:273: Classify language for sequence: Mijn naam si gekste der henkies.
-22:41:39:273: Classified language: NL
-22:41:39:273: Translate sequence: Mijn naam si gekste der henkies.
-22:41:39:274: Translated sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste NL_PRE:6|UN_ABC:der UN_ABC:henkies .
-22:41:39:275: Correction time limit: 700
-22:41:39:275: Correcting sequence: Mijn naam si gekste [] henkies .
-22:41:39:854: Corrected sequence: Mijn naam is gekste der henkies.
-22:41:39:854: Translate corrected sequence: Mijn naam is gekste der henkies.
-22:41:39:854: Translated corrected sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .
-22:41:39:855: Checking profanity for sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:39:855: Classify master context for input sequence: Mijn naam is gekste der henkies.
-22:41:39:855: Classify master context for classification sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:39:855: Classified master context: Generic
-22:41:39:855: Classify context for input sequence: Mijn naam is gekste der henkies.
-22:41:39:855: Classify context for classification sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:39:855: Classified context: Handshake
-22:41:39:855: Handling dialog: NL/Generic/Handshake
-22:41:39:855:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
-22:41:39:855:     Updated variable firstName: UN_ABC:Gekste = Gekste
-22:41:39:855:     Updated variable lastName: UN_ABC:Henkies = Henkies
-22:41:39:855:     Updated variable preposition: NL_PRE:6 = der
-22:41:39:855:     Find matches for sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:39:855:     Found matches for sequence: 18
-22:41:39:855:     - Hallo. [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:855:     - Hallo! [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:856:     - Hoi. [OUTPUT] Hoi. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:856:     - Hoi! [OUTPUT] Hoi. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:856:     - Goedemorgen. [OUTPUT] Goedemorgen. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:856:     - Goedemorgen! [OUTPUT] Goedemorgen. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:856:     - Goedemiddag. [OUTPUT] Goedemiddag. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:856:     - Goedemiddag! [OUTPUT] Goedemiddag. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:857:     - Goedenavond. [OUTPUT] Goedenavond. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:857:     - Goedenavond! [OUTPUT] Goedenavond. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:857:     - [... 8]
-22:41:39:857:     Updated variable fullName: Gekste der Henkies
-22:41:39:857:     Prompt variable: nextDialog
-22:41:39:857:     Set dialog output: Hallo. Mijn naam is Dyz Lecticus.
-22:41:39:857:     Set dialog prompt: Wat kan ik voor je doen Gekste der Henkies?
-Handling the request took: 584 ms
+01:19:58:690: Classify language for sequence: Mijn naam si gekste der henkies.
+01:19:58:690: Classified language: NL
+01:19:58:690: Translate sequence: Mijn naam si gekste der henkies.
+01:19:58:691: Translated sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste NL_PRE:6|UN_ABC:der UN_ABC:henkies .
+01:19:58:692: Correction time limit: 700
+01:19:58:692: Correcting sequence: Mijn naam si gekste [] henkies .
+01:19:59:070: Corrected sequence: Mijn naam is gekste der henkies.
+01:19:59:070: Translate corrected sequence: Mijn naam is gekste der henkies.
+01:19:59:071: Translated corrected sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .
+01:19:59:071: Checking profanity for sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:59:071: Classify master context for input sequence: Mijn naam is gekste der henkies.
+01:19:59:071: Classify master context for classification sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:59:071: Classified master context: Generic
+01:19:59:071: Classify context for input sequence: Mijn naam is gekste der henkies.
+01:19:59:071: Classify context for classification sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:59:071: Classified context: Handshake
+01:19:59:071: Handling dialog: NL/Generic/Handshake
+01:19:59:071:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
+01:19:59:071:     Updated variable firstName: UN_ABC:Gekste = Gekste
+01:19:59:071:     Updated variable lastName: UN_ABC:Henkies = Henkies
+01:19:59:072:     Updated variable preposition: NL_PRE:6 = der
+01:19:59:072:     Find matches for sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:59:072:     Found matches for sequence: 18
+01:19:59:072:     - Hallo. [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:072:     - Hallo! [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:072:     - Hoi. [OUTPUT] Hoi. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:072:     - Hoi! [OUTPUT] Hoi. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:072:     - Goedemorgen. [OUTPUT] Goedemorgen. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:072:     - Goedemorgen! [OUTPUT] Goedemorgen. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:072:     - Goedemiddag. [OUTPUT] Goedemiddag. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:072:     - Goedemiddag! [OUTPUT] Goedemiddag. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:073:     - Goedenavond. [OUTPUT] Goedenavond. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:073:     - Goedenavond! [OUTPUT] Goedenavond. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:073:     - [... 8]
+01:19:59:073:     Updated variable fullName: Gekste der Henkies
+01:19:59:073:     Prompt variable: nextDialog
+01:19:59:073:     Set dialog output: Hallo. Mijn naam is Dyz Lecticus.
+01:19:59:073:     Set dialog prompt: Wat kan ik voor je doen Gekste der Henkies?
+Handling the request took: 384 ms
 
 Request prompt: 'What is your firstname?', input: 'Mijn naam is jan de lange.'
 Response debug log;
-22:41:39:857: Classify language for sequence: Mijn naam is jan de lange.
-22:41:39:857: Classified language: NL
-22:41:39:858: Translate sequence: Mijn naam is jan de lange.
-22:41:39:860: Translated sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:jan|NL_NAM:firstName:UN_ABC:Jan NL_PRE:5|UN_ABC:de|NL_NAM:preposition:NL_PRE:5 UN_ABC:lange|NL_NAM:lastName:UN_ABC:Lange .
-22:41:39:861: Correction time limit: 700
-22:41:39:861: Correcting sequence: Mijn naam is [] [] [] .
-22:41:39:861: Corrected sequence: Mijn naam is jan de lange.
-22:41:39:861: Translate corrected sequence: Mijn naam is jan de lange.
-22:41:39:863: Translated corrected sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:jan|NL_NAM:firstName:UN_ABC:Jan NL_PRE:5|UN_ABC:de|NL_NAM:preposition:NL_PRE:5 UN_ABC:lange|NL_NAM:lastName:UN_ABC:Lange .
-22:41:39:864: Checking profanity for sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:39:864: Classify master context for input sequence: Mijn naam is jan de lange.
-22:41:39:864: Classify master context for classification sequence: What is your firstname? Mijn naam is [ABC] [PRE] [ABC].
-22:41:39:864: Classified master context: Generic
-22:41:39:864: Classify context for input sequence: Mijn naam is jan de lange.
-22:41:39:864: Classify context for classification sequence: What is your firstname? Mijn naam is [ABC] [PRE] [ABC].
-22:41:39:864: Classified context: Handshake
-22:41:39:864: Handling dialog: NL/Generic/Handshake
-22:41:39:865:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
-22:41:39:865:     Updated variable firstName: UN_ABC:Jan = Jan
-22:41:39:865:     Updated variable lastName: UN_ABC:Lange = Lange
-22:41:39:865:     Updated variable preposition: NL_PRE:5 = de
-22:41:39:865:     Find matches for sequence: Mijn naam is [ABC] [PRE] [ABC].
-22:41:39:865:     Found matches for sequence: 18
-22:41:39:865:     - Hallo. [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:865:     - Hallo! [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:865:     - Hoi. [OUTPUT] Hoi. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:865:     - Hoi! [OUTPUT] Hoi. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:870:     - Goedemorgen. [OUTPUT] Goedemorgen. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:871:     - Goedemorgen! [OUTPUT] Goedemorgen. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:871:     - Goedemiddag. [OUTPUT] Goedemiddag. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:873:     - Goedemiddag! [OUTPUT] Goedemiddag. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:873:     - Goedenavond. [OUTPUT] Goedenavond. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:873:     - Goedenavond! [OUTPUT] Goedenavond. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
-22:41:39:873:     - [... 8]
-22:41:39:873:     Updated variable fullName: Jan de Lange
-22:41:39:873:     Prompt variable: nextDialog
-22:41:39:873:     Set dialog output: Hallo. Mijn naam is Dyz Lecticus.
-22:41:39:873:     Set dialog prompt: Wat kan ik voor je doen Jan de Lange?
-Handling the request took: 16 ms
+01:19:59:073: Classify language for sequence: Mijn naam is jan de lange.
+01:19:59:073: Classified language: NL
+01:19:59:074: Translate sequence: Mijn naam is jan de lange.
+01:19:59:076: Translated sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:jan|NL_NAM:firstName:UN_ABC:Jan NL_PRE:5|UN_ABC:de|NL_NAM:preposition:NL_PRE:5 UN_ABC:lange|NL_NAM:lastName:UN_ABC:Lange .
+01:19:59:076: Correction time limit: 700
+01:19:59:076: Correcting sequence: Mijn naam is [] [] [] .
+01:19:59:076: Corrected sequence: Mijn naam is jan de lange.
+01:19:59:076: Translate corrected sequence: Mijn naam is jan de lange.
+01:19:59:079: Translated corrected sequence: UN_ABC:Mijn UN_ABC:naam UN_ABC:is UN_ABC:jan|NL_NAM:firstName:UN_ABC:Jan NL_PRE:5|UN_ABC:de|NL_NAM:preposition:NL_PRE:5 UN_ABC:lange|NL_NAM:lastName:UN_ABC:Lange .
+01:19:59:079: Checking profanity for sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:59:079: Classify master context for input sequence: Mijn naam is jan de lange.
+01:19:59:080: Classify master context for classification sequence: What is your firstname? Mijn naam is [ABC] [PRE] [ABC].
+01:19:59:080: Classified master context: Generic
+01:19:59:080: Classify context for input sequence: Mijn naam is jan de lange.
+01:19:59:080: Classify context for classification sequence: What is your firstname? Mijn naam is [ABC] [PRE] [ABC].
+01:19:59:080: Classified context: Handshake
+01:19:59:080: Handling dialog: NL/Generic/Handshake
+01:19:59:080:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
+01:19:59:081:     Updated variable firstName: UN_ABC:Jan = Jan
+01:19:59:081:     Updated variable lastName: UN_ABC:Lange = Lange
+01:19:59:081:     Updated variable preposition: NL_PRE:5 = de
+01:19:59:081:     Find matches for sequence: Mijn naam is [ABC] [PRE] [ABC].
+01:19:59:081:     Found matches for sequence: 18
+01:19:59:081:     - Hallo. [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Hallo! [OUTPUT] Hallo. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Hoi. [OUTPUT] Hoi. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Hoi! [OUTPUT] Hoi. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Goedemorgen. [OUTPUT] Goedemorgen. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Goedemorgen! [OUTPUT] Goedemorgen. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Goedemiddag. [OUTPUT] Goedemiddag. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Goedemiddag! [OUTPUT] Goedemiddag. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Goedenavond. [OUTPUT] Goedenavond. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - Goedenavond! [OUTPUT] Goedenavond. Mijn naam is {selfName}. (0.5426356589147286 / 0.1904761904761905)
+01:19:59:081:     - [... 8]
+01:19:59:081:     Updated variable fullName: Jan de Lange
+01:19:59:081:     Prompt variable: nextDialog
+01:19:59:081:     Set dialog output: Hallo. Mijn naam is Dyz Lecticus.
+01:19:59:081:     Set dialog prompt: Wat kan ik voor je doen Jan de Lange?
+Handling the request took: 8 ms
 
 Request prompt: '', input: 'Who created you?'
 Response debug log;
-22:41:39:873: Classify language for sequence: Who created you?
-22:41:39:873: Classified language: EN
-22:41:39:873: Translate sequence: Who created you?
-22:41:39:874: Translated sequence: UN_ABC:Who UN_ABC:created UN_ABC:you ?
-22:41:39:874: Correction time limit: 400
-22:41:39:874: Correcting sequence: Who created you ?
-22:41:39:875: Corrected sequence: Who created you?
-22:41:39:875: Translate corrected sequence: Who created you?
-22:41:39:876: Translated corrected sequence: UN_ABC:Who UN_ABC:created UN_ABC:you ?
-22:41:39:877: Checking profanity for sequence: Who created you?
-22:41:39:877: Classify master context for input sequence: Who created you?
-22:41:39:877: Classified master context: Generic
-22:41:39:877: Classify context for input sequence: Who created you?
-22:41:39:877: Classified context: QuestionAndAnswer
-22:41:39:877: Handling dialog: EN/Generic/QuestionAndAnswer
-22:41:39:877:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:39:877:     Find matches for sequence: Who created you?
-22:41:39:877:     Found matches for sequence: 5
-22:41:39:877:     - Who created you? [OUTPUT] My software was written by André van der Zee. (0.222007722007722 / 0.9126984126984129)
-22:41:39:877:     - What are you? [OUTPUT] I am an artificially intelligent personal assistant. (0.0637065637065637 / 0.2619047619047619)
-22:41:39:877:     - Who programmed you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
-22:41:39:877:     - Who made you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
-22:41:39:877:     - Who built you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
-22:41:39:877:     Set dialog output: My software was written by André van der Zee.
-22:41:39:877: Handling dialog: EN/Generic/Handshake
-22:41:39:877:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
-22:41:39:877:     Find matches for sequence: Who created you?
-22:41:39:877:     Found matches for sequence: 1
-22:41:39:878:     - Who are you? [OUTPUT] My name is {selfName}. (0.9336704921221552 / 0.6562756357670222)
-22:41:39:878:     Prompt variable: firstName
-22:41:39:878:     Set dialog output: My name is Dyz Lecticus.
-22:41:39:878:     Set dialog prompt: What is your name?
+01:19:59:082: Classify language for sequence: Who created you?
+01:19:59:082: Classified language: EN
+01:19:59:082: Translate sequence: Who created you?
+01:19:59:082: Translated sequence: UN_ABC:Who UN_ABC:created UN_ABC:you ?
+01:19:59:083: Correction time limit: 400
+01:19:59:083: Correcting sequence: Who created you ?
+01:19:59:083: Corrected sequence: Who created you?
+01:19:59:083: Translate corrected sequence: Who created you?
+01:19:59:083: Translated corrected sequence: UN_ABC:Who UN_ABC:created UN_ABC:you ?
+01:19:59:083: Checking profanity for sequence: Who created you?
+01:19:59:084: Classify master context for input sequence: Who created you?
+01:19:59:084: Classified master context: Generic
+01:19:59:084: Classify context for input sequence: Who created you?
+01:19:59:084: Classified context: QuestionAndAnswer
+01:19:59:084: Handling dialog: EN/Generic/QuestionAndAnswer
+01:19:59:084:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:59:084:     Find matches for sequence: Who created you?
+01:19:59:084:     Found matches for sequence: 5
+01:19:59:084:     - Who created you? [OUTPUT] My software was written by André van der Zee. (0.222007722007722 / 0.9126984126984129)
+01:19:59:084:     - What are you? [OUTPUT] I am an artificially intelligent personal assistant. (0.0637065637065637 / 0.2619047619047619)
+01:19:59:084:     - Who programmed you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
+01:19:59:084:     - Who made you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
+01:19:59:084:     - Who built you? [OUTPUT] My software was written by André van der Zee. (0.0637065637065637 / 0.2619047619047619)
+01:19:59:084:     Set dialog output: My software was written by André van der Zee.
+01:19:59:084: Handling dialog: EN/Generic/Handshake
+01:19:59:084:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler
+01:19:59:084:     Find matches for sequence: Who created you?
+01:19:59:084:     Found matches for sequence: 1
+01:19:59:084:     - Who are you? [OUTPUT] My name is {selfName}. (0.9336704921221552 / 0.6562756357670222)
+01:19:59:084:     Prompt variable: firstName
+01:19:59:085:     Set dialog output: My name is Dyz Lecticus.
+01:19:59:085:     Set dialog prompt: What is your name?
 Handling the request took: 96 ms
 
 Request prompt: '', input: 'You asshole!'
 Response debug log;
-22:41:39:969: Classify language for sequence: You asshole!
-22:41:39:969: Classified language: EN
-22:41:39:969: Translate sequence: You asshole!
-22:41:39:970: Translated sequence: UN_ABC:You EN_PRF:1|UN_ABC:asshole !
-22:41:39:970: Correction time limit: 300
-22:41:39:970: Correcting sequence: You [] !
-22:41:39:970: Corrected sequence: You asshole!
-22:41:39:970: Translate corrected sequence: You asshole!
-22:41:39:970: Translated corrected sequence: UN_ABC:You EN_PRF:1|UN_ABC:asshole !
-22:41:39:970: Checking profanity for sequence: You [PRF]!
-22:41:39:970: Handling dialog: EN/Generic/Profanity
-22:41:39:971:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:39:971:     Find matches for sequence: You [PRF]!
-22:41:39:971:     Found matches for sequence: 2
-22:41:39:971:     - [PRF]! [OUTPUT] I do not appreciate that kind of language. (0.1111111111111111 / 0.3333333333333333)
-22:41:39:971:     - [PRF]! [OUTPUT] I will pretend I did not read that. (0.1111111111111111 / 0.3333333333333333)
-22:41:39:971:     Set dialog output: I do not appreciate that kind of language.
-Handling the request took: 2 ms
+01:19:59:177: Classify language for sequence: You asshole!
+01:19:59:178: Classified language: EN
+01:19:59:178: Translate sequence: You asshole!
+01:19:59:179: Translated sequence: UN_ABC:You EN_PRF:1|UN_ABC:asshole !
+01:19:59:179: Correction time limit: 300
+01:19:59:179: Correcting sequence: You [] !
+01:19:59:179: Corrected sequence: You asshole!
+01:19:59:179: Translate corrected sequence: You asshole!
+01:19:59:180: Translated corrected sequence: UN_ABC:You EN_PRF:1|UN_ABC:asshole !
+01:19:59:180: Checking profanity for sequence: You [PRF]!
+01:19:59:180: Handling dialog: EN/Generic/Profanity
+01:19:59:180:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:59:180:     Find matches for sequence: You [PRF]!
+01:19:59:181:     Found matches for sequence: 2
+01:19:59:181:     - [PRF]! [OUTPUT] I do not appreciate that kind of language. (0.1111111111111111 / 0.3333333333333333)
+01:19:59:181:     - [PRF]! [OUTPUT] I will pretend I did not read that. (0.1111111111111111 / 0.3333333333333333)
+01:19:59:181:     Set dialog output: I do not appreciate that kind of language.
+Handling the request took: 4 ms
 
 Request prompt: '', input: 'Jij klootzak!'
 Response debug log;
-22:41:39:971: Classify language for sequence: Jij klootzak!
-22:41:39:971: Classified language: NL
-22:41:39:971: Translate sequence: Jij klootzak!
-22:41:39:972: Translated sequence: UN_ABC:Jij NL_PRF:2|UN_ABC:klootzak !
-22:41:39:972: Correction time limit: 300
-22:41:39:972: Correcting sequence: Jij [] !
-22:41:39:972: Corrected sequence: Jij klootzak!
-22:41:39:972: Translate corrected sequence: Jij klootzak!
-22:41:39:972: Translated corrected sequence: UN_ABC:Jij NL_PRF:2|UN_ABC:klootzak !
-22:41:39:972: Checking profanity for sequence: Jij [PRF]!
-22:41:39:973: Handling dialog: NL/Generic/Profanity
-22:41:39:973:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:39:973:     Find matches for sequence: Jij [PRF]!
-22:41:39:973:     Found matches for sequence: 2
-22:41:39:973:     - [PRF]! [OUTPUT] Van zulk taalgebruik ben ik niet gediend. (0.11764705882352941 / 0.33333333333333337)
-22:41:39:973:     - [PRF]! [OUTPUT] Ik doe alsof ik dat niet heb gelezen. (0.11764705882352941 / 0.33333333333333337)
-22:41:39:973:     Set dialog output: Van zulk taalgebruik ben ik niet gediend.
-Handling the request took: 2 ms
+01:19:59:181: Classify language for sequence: Jij klootzak!
+01:19:59:182: Classified language: NL
+01:19:59:182: Translate sequence: Jij klootzak!
+01:19:59:182: Translated sequence: UN_ABC:Jij NL_PRF:2|UN_ABC:klootzak !
+01:19:59:183: Correction time limit: 300
+01:19:59:183: Correcting sequence: Jij [] !
+01:19:59:183: Corrected sequence: Jij klootzak!
+01:19:59:183: Translate corrected sequence: Jij klootzak!
+01:19:59:183: Translated corrected sequence: UN_ABC:Jij NL_PRF:2|UN_ABC:klootzak !
+01:19:59:184: Checking profanity for sequence: Jij [PRF]!
+01:19:59:184: Handling dialog: NL/Generic/Profanity
+01:19:59:184:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:59:184:     Find matches for sequence: Jij [PRF]!
+01:19:59:184:     Found matches for sequence: 2
+01:19:59:184:     - [PRF]! [OUTPUT] Van zulk taalgebruik ben ik niet gediend. (0.11764705882352941 / 0.33333333333333337)
+01:19:59:184:     - [PRF]! [OUTPUT] Ik doe alsof ik dat niet heb gelezen. (0.11764705882352941 / 0.33333333333333337)
+01:19:59:184:     Set dialog output: Van zulk taalgebruik ben ik niet gediend.
+Handling the request took: 3 ms
 
 Request prompt: '', input: 'Can I book a room for 5 people?'
 Response debug log;
-22:41:39:973: Classify language for sequence: Can I book a room for 5 people?
-22:41:39:974: Classified language: EN
-22:41:39:974: Translate sequence: Can I book a room for 5 people?
-22:41:39:975: Translated sequence: UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:5 UN_ABC:people ?
-22:41:39:975: Correction time limit: 900
-22:41:39:975: Correcting sequence: Can I book a room for [] people ?
-22:41:39:975: Corrected sequence: Can I book a room for 5 people?
-22:41:39:975: Translate corrected sequence: Can I book a room for 5 people?
-22:41:39:976: Translated corrected sequence: UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:5 UN_ABC:people ?
-22:41:39:976: Checking profanity for sequence: Can I book a room for [NUM] people?
-22:41:39:976: Classify master context for input sequence: Can I book a room for 5 people?
-22:41:39:977: Classify master context for classification sequence: Can I book a room for [NUM] people?
-22:41:39:977: Classified master context: Room
-22:41:39:977: Classify context for input sequence: Can I book a room for 5 people?
-22:41:39:977: Classify context for classification sequence: Can I book a room for [NUM] people?
-22:41:39:977: Classified context: Booking
-22:41:39:977: Handling dialog: EN/Room/Booking
-22:41:39:977:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishRoomBookingHandler
-22:41:39:977:     Updated variable bookPeople: UN_NUM:5 = 5
-22:41:39:977:     Find matches for sequence: Can I book a room for [NUM] people?
-22:41:39:979:     Found matches for sequence: 329
-22:41:39:979:     - Can I book a room for [NUM] people? [OUTPUT] Okay. (2.352112676056338 / 1.0)
-22:41:39:979:     - Can I book a room for a duration of [DUR] for [NUM] people? [OUTPUT] Okay. (2.1293730122671515 / 0.9053022986285494)
-22:41:39:979:     - May I book a room for [NUM] people? [OUTPUT] Okay. (2.043616537937301 / 0.8688429592428046)
-22:41:39:979:     - Can I book a room for [NUM] people on [DAT]? [OUTPUT] Okay. (2.023625624716038 / 0.860343828472088)
-22:41:39:979:     - Can I book a room for [NUM] people from [TIM]? [OUTPUT] Okay. (2.023625624716038 / 0.860343828472088)
-22:41:39:979:     - Can I book a room for [NUM] people for a duration of [DUR]? [OUTPUT] Okay. (2.023625624716038 / 0.860343828472088)
-22:41:39:979:     - May I book a room for a duration of [DUR] for [NUM] people? [OUTPUT] Okay. (1.8208768741481145 / 0.7741452578713541)
-22:41:39:979:     - May I book a room for [NUM] people on [DAT]? [OUTPUT] Okay. (1.7151294865970013 / 0.7291867877148928)
-22:41:39:979:     - May I book a room for [NUM] people from [TIM]? [OUTPUT] Okay. (1.7151294865970013 / 0.7291867877148928)
-22:41:39:979:     - May I book a room for [NUM] people for a duration of [DUR]? [OUTPUT] Okay. (1.7151294865970013 / 0.7291867877148928)
-22:41:39:979:     - [... 319]
-22:41:39:979:     Prompt variable: bookDate
-22:41:39:979:     Set dialog output: Okay.
-22:41:39:979:     Set dialog prompt: On what date?
-Handling the request took: 96 ms
+01:19:59:185: Classify language for sequence: Can I book a room for 5 people?
+01:19:59:186: Classified language: EN
+01:19:59:186: Translate sequence: Can I book a room for 5 people?
+01:19:59:187: Translated sequence: UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:5 UN_ABC:people ?
+01:19:59:188: Correction time limit: 900
+01:19:59:188: Correcting sequence: Can I book a room for [] people ?
+01:19:59:188: Corrected sequence: Can I book a room for 5 people?
+01:19:59:188: Translate corrected sequence: Can I book a room for 5 people?
+01:19:59:190: Translated corrected sequence: UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:5 UN_ABC:people ?
+01:19:59:190: Checking profanity for sequence: Can I book a room for [NUM] people?
+01:19:59:191: Classify master context for input sequence: Can I book a room for 5 people?
+01:19:59:191: Classify master context for classification sequence: Can I book a room for [NUM] people?
+01:19:59:191: Classified master context: Room
+01:19:59:191: Classify context for input sequence: Can I book a room for 5 people?
+01:19:59:192: Classify context for classification sequence: Can I book a room for [NUM] people?
+01:19:59:192: Classified context: Booking
+01:19:59:192: Handling dialog: EN/Room/Booking
+01:19:59:192:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishRoomBookingHandler
+01:19:59:193:     Updated variable bookPeople: UN_NUM:5 = 5
+01:19:59:193:     Find matches for sequence: Can I book a room for [NUM] people?
+01:19:59:195:     Found matches for sequence: 329
+01:19:59:195:     - Can I book a room for [NUM] people? [OUTPUT] Okay. (2.352112676056338 / 1.0)
+01:19:59:195:     - Can I book a room for a duration of [DUR] for [NUM] people? [OUTPUT] Okay. (2.1293730122671515 / 0.9053022986285494)
+01:19:59:195:     - May I book a room for [NUM] people? [OUTPUT] Okay. (2.043616537937301 / 0.8688429592428046)
+01:19:59:195:     - Can I book a room for [NUM] people on [DAT]? [OUTPUT] Okay. (2.023625624716038 / 0.860343828472088)
+01:19:59:195:     - Can I book a room for [NUM] people from [TIM]? [OUTPUT] Okay. (2.023625624716038 / 0.860343828472088)
+01:19:59:195:     - Can I book a room for [NUM] people for a duration of [DUR]? [OUTPUT] Okay. (2.023625624716038 / 0.860343828472088)
+01:19:59:195:     - May I book a room for a duration of [DUR] for [NUM] people? [OUTPUT] Okay. (1.8208768741481145 / 0.7741452578713541)
+01:19:59:195:     - May I book a room for [NUM] people on [DAT]? [OUTPUT] Okay. (1.7151294865970013 / 0.7291867877148928)
+01:19:59:195:     - May I book a room for [NUM] people from [TIM]? [OUTPUT] Okay. (1.7151294865970013 / 0.7291867877148928)
+01:19:59:196:     - May I book a room for [NUM] people for a duration of [DUR]? [OUTPUT] Okay. (1.7151294865970013 / 0.7291867877148928)
+01:19:59:196:     - [... 319]
+01:19:59:196:     Prompt variable: bookDate
+01:19:59:196:     Set dialog output: Okay.
+01:19:59:196:     Set dialog prompt: On what date?
+Handling the request took: 93 ms
 
 Request prompt: '', input: 'Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?'
 Response debug log;
-22:41:40:069: Classify language for sequence: Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?
-22:41:40:070: Classified language: EN
-22:41:40:070: Translate sequence: Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?
-22:41:40:071: Translated sequence: UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:12 UN_ABC:people UN_ABC:on EN_DAT:2018-10-01 UN_ABC:at EN_TIM:12:00:00 UN_ABC:for EN_DUR:02:00 ?
-22:41:40:072: Correction time limit: 1332
-22:41:40:072: Correcting sequence: Can I book a room for [] people on [] at [] for [] ?
-22:41:40:072: Corrected sequence: Can I book a room for 12 people on october first twothousandeighteen at twelve o'clock for two hours?
-22:41:40:072: Translate corrected sequence: Can I book a room for 12 people on october first twothousandeighteen at twelve o'clock for two hours?
-22:41:40:074: Translated corrected sequence: UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:12 UN_ABC:people UN_ABC:on EN_DAT:2018-10-01 UN_ABC:at EN_TIM:12:00:00 UN_ABC:for EN_DUR:02:00 ?
-22:41:40:074: Checking profanity for sequence: Can I book a room for [NUM] people on [DAT] at [TIM] for [DUR]?
-22:41:40:075: Classify master context for input sequence: Can I book a room for 12 people on october first twothousandeighteen at twelve o'clock for two hours?
-22:41:40:076: Classify master context for classification sequence: Can I book a room for [NUM] people on [DAT] at [TIM] for [DUR]?
-22:41:40:077: Classified master context: Room
-22:41:40:077: Classify context for input sequence: Can I book a room for 12 people on october first twothousandeighteen at twelve o'clock for two hours?
-22:41:40:078: Classify context for classification sequence: Can I book a room for [NUM] people on [DAT] at [TIM] for [DUR]?
-22:41:40:078: Classified context: Booking
-22:41:40:078: Handling dialog: EN/Room/Booking
-22:41:40:078:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishRoomBookingHandler
-22:41:40:079:     Updated variable bookDate: EN_DAT:2018-10-01 = october first twothousandeighteen
-22:41:40:079:     Updated variable bookTime: EN_TIM:12:00:00 = twelve o'clock
-22:41:40:079:     Updated variable bookDuration: EN_DUR:02:00 = two hours
-22:41:40:079:     Updated variable bookPeople: UN_NUM:12 = 12
-22:41:40:079:     Find matches for sequence: Can I book a room for [NUM] people on [DAT] at [TIM] for [DUR]?
-22:41:40:081:     Found matches for sequence: 263
-22:41:40:081:     - Can I book a room for [NUM] people on [DAT]? [OUTPUT] Okay. (2.643343934575193 / 0.678681831437737)
-22:41:40:081:     - May I book a room for [NUM] people on [DAT]? [OUTPUT] Okay. (2.334847796456156 / 0.5994750656167979)
-22:41:40:081:     - Can I book a room for [NUM] people for a duration of [DUR]? [OUTPUT] Okay. (2.2289300318037255 / 0.5722805482648002)
-22:41:40:081:     - I want to book a room for [NUM] people on [DAT]. [OUTPUT] Okay. (2.0263516583371195 / 0.5202682997958589)
-22:41:40:081:     - I would like to book a room for [NUM] people on [DAT]. [OUTPUT] Okay. (2.0263516583371195 / 0.5202682997958589)
-22:41:40:081:     - Can I book a room for [NUM] people? [OUTPUT] Okay. (2.023625624716038 / 0.5195683872849227)
-22:41:40:081:     - Can I book a room for [NUM] people from [TIM]? [OUTPUT] Okay. (2.023625624716038 / 0.5195683872849227)
-22:41:40:081:     - Can I book a space for [NUM] people on [DAT]? [OUTPUT] Okay. (1.9217401181281235 / 0.4934091571886847)
-22:41:40:081:     - May I book a room for [NUM] people for a duration of [DUR]? [OUTPUT] Okay. (1.9204338936846888 / 0.4930737824438612)
-22:41:40:081:     - Can I book a room for a duration of [DUR] for [NUM] people? [OUTPUT] Okay. (1.8830077237619265 / 0.48346456692913387)
-22:41:40:081:     - [... 253]
-22:41:40:081:     Prompt variable: bookConfirmation
-22:41:40:081:     Set dialog output: Okay.
-22:41:40:081:     Set dialog prompt: Do I understand correctly that you want a room on october first twothousandeighteen, for 12 people, from twelve o'clock, for two hours?
-Handling the request took: 100 ms
+01:19:59:280: Classify language for sequence: Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?
+01:19:59:281: Classified language: EN
+01:19:59:281: Translate sequence: Can I book a room for 12 people on the 1st of october at twelve o'clock for 2 hours?
+01:19:59:284: Translated sequence: UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:12 UN_ABC:people UN_ABC:on EN_DAT:2018-10-01 UN_ABC:at EN_TIM:12:00:00 UN_ABC:for EN_DUR:02:00 ?
+01:19:59:285: Correction time limit: 1332
+01:19:59:285: Correcting sequence: Can I book a room for [] people on [] at [] for [] ?
+01:19:59:285: Corrected sequence: Can I book a room for 12 people on october first twothousandeighteen at twelve o'clock for two hours?
+01:19:59:285: Translate corrected sequence: Can I book a room for 12 people on october first twothousandeighteen at twelve o'clock for two hours?
+01:19:59:288: Translated corrected sequence: UN_ABC:Can UN_ABC:I UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for UN_NUM:12 UN_ABC:people UN_ABC:on EN_DAT:2018-10-01 UN_ABC:at EN_TIM:12:00:00 UN_ABC:for EN_DUR:02:00 ?
+01:19:59:289: Checking profanity for sequence: Can I book a room for [NUM] people on [DAT] at [TIM] for [DUR]?
+01:19:59:289: Classify master context for input sequence: Can I book a room for 12 people on october first twothousandeighteen at twelve o'clock for two hours?
+01:19:59:289: Classify master context for classification sequence: Can I book a room for [NUM] people on [DAT] at [TIM] for [DUR]?
+01:19:59:290: Classified master context: Room
+01:19:59:290: Classify context for input sequence: Can I book a room for 12 people on october first twothousandeighteen at twelve o'clock for two hours?
+01:19:59:290: Classify context for classification sequence: Can I book a room for [NUM] people on [DAT] at [TIM] for [DUR]?
+01:19:59:290: Classified context: Booking
+01:19:59:290: Handling dialog: EN/Room/Booking
+01:19:59:290:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishRoomBookingHandler
+01:19:59:291:     Updated variable bookDate: EN_DAT:2018-10-01 = october first twothousandeighteen
+01:19:59:291:     Updated variable bookTime: EN_TIM:12:00:00 = twelve o'clock
+01:19:59:291:     Updated variable bookDuration: EN_DUR:02:00 = two hours
+01:19:59:291:     Updated variable bookPeople: UN_NUM:12 = 12
+01:19:59:291:     Find matches for sequence: Can I book a room for [NUM] people on [DAT] at [TIM] for [DUR]?
+01:19:59:293:     Found matches for sequence: 263
+01:19:59:293:     - Can I book a room for [NUM] people on [DAT]? [OUTPUT] Okay. (2.643343934575193 / 0.678681831437737)
+01:19:59:293:     - May I book a room for [NUM] people on [DAT]? [OUTPUT] Okay. (2.334847796456156 / 0.5994750656167979)
+01:19:59:293:     - Can I book a room for [NUM] people for a duration of [DUR]? [OUTPUT] Okay. (2.2289300318037255 / 0.5722805482648002)
+01:19:59:293:     - I want to book a room for [NUM] people on [DAT]. [OUTPUT] Okay. (2.0263516583371195 / 0.5202682997958589)
+01:19:59:293:     - I would like to book a room for [NUM] people on [DAT]. [OUTPUT] Okay. (2.0263516583371195 / 0.5202682997958589)
+01:19:59:293:     - Can I book a room for [NUM] people? [OUTPUT] Okay. (2.023625624716038 / 0.5195683872849227)
+01:19:59:293:     - Can I book a room for [NUM] people from [TIM]? [OUTPUT] Okay. (2.023625624716038 / 0.5195683872849227)
+01:19:59:293:     - Can I book a space for [NUM] people on [DAT]? [OUTPUT] Okay. (1.9217401181281235 / 0.4934091571886847)
+01:19:59:293:     - May I book a room for [NUM] people for a duration of [DUR]? [OUTPUT] Okay. (1.9204338936846888 / 0.4930737824438612)
+01:19:59:293:     - Can I book a room for a duration of [DUR] for [NUM] people? [OUTPUT] Okay. (1.8830077237619265 / 0.48346456692913387)
+01:19:59:293:     - [... 253]
+01:19:59:294:     Prompt variable: bookConfirmation
+01:19:59:294:     Set dialog output: Okay.
+01:19:59:294:     Set dialog prompt: Do I understand correctly that you want a room on october first twothousandeighteen, for 12 people, from twelve o'clock, for two hours?
+Handling the request took: 101 ms
 
 Request prompt: '', input: 'What does it cost to book a room?'
 Response debug log;
-22:41:40:169: Classify language for sequence: What does it cost to book a room?
-22:41:40:169: Classified language: EN
-22:41:40:169: Translate sequence: What does it cost to book a room?
-22:41:40:170: Translated sequence: UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room ?
-22:41:40:170: Correction time limit: 900
-22:41:40:170: Correcting sequence: What does it cost to book a room ?
-22:41:40:170: Corrected sequence: What does it cost to book a room?
-22:41:40:170: Translate corrected sequence: What does it cost to book a room?
-22:41:40:171: Translated corrected sequence: UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room ?
-22:41:40:171: Checking profanity for sequence: What does it cost to book a room?
-22:41:40:171: Classify master context for input sequence: What does it cost to book a room?
-22:41:40:171: Classified master context: Room
-22:41:40:171: Classify context for input sequence: What does it cost to book a room?
-22:41:40:171: Classified context: QuestionAndAnswer
-22:41:40:171: Handling dialog: EN/Room/QuestionAndAnswer
-22:41:40:171:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:40:171:     Find matches for sequence: What does it cost to book a room?
-22:41:40:171:     Found matches for sequence: 4
-22:41:40:171:     - What does it cost to book a room? [OUTPUT] There are no costs attached to booking a room. (2.1666666666666665 / 1.0)
-22:41:40:171:     - What does it cost to reserve a room? [OUTPUT] There are no costs attached to booking a room. (1.484375 / 0.6850961538461539)
-22:41:40:171:     - What does it cost to booking a space? [OUTPUT] There are no costs attached to booking a room. (1.2005208333333333 / 0.5540865384615384)
-22:41:40:171:     - What does it cost to reserving a space? [OUTPUT] There are no costs attached to booking a room. (1.2005208333333333 / 0.5540865384615384)
-22:41:40:171:     Set dialog output: There are no costs attached to booking a room.
-22:41:40:171: Handling dialog: EN/Room/Booking
-22:41:40:171:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishRoomBookingHandler
-22:41:40:172:     Find matches for sequence: What does it cost to book a room?
-22:41:40:172:     Found matches for sequence: 276
-22:41:40:173:     - I want to book a room for [NUM] people. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room for [NUM] people on [DAT]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room for [NUM] people from [TIM]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room for [NUM] people for a duration of [DUR]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room on [DAT]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room on [DAT] for [NUM] people. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room on [DAT] from [TIM]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room on [DAT] for a duration of [DUR]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room from [TIM]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - I want to book a room from [TIM] for [NUM] people. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
-22:41:40:173:     - [... 266]
-22:41:40:173:     Prompt variable: bookDate
-22:41:40:173:     Set dialog output: Okay.
-22:41:40:173:     Set dialog prompt: On what date?
-Handling the request took: 4 ms
+01:19:59:379: Classify language for sequence: What does it cost to book a room?
+01:19:59:380: Classified language: EN
+01:19:59:380: Translate sequence: What does it cost to book a room?
+01:19:59:380: Translated sequence: UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room ?
+01:19:59:381: Correction time limit: 900
+01:19:59:381: Correcting sequence: What does it cost to book a room ?
+01:19:59:381: Corrected sequence: What does it cost to book a room?
+01:19:59:381: Translate corrected sequence: What does it cost to book a room?
+01:19:59:382: Translated corrected sequence: UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room ?
+01:19:59:382: Checking profanity for sequence: What does it cost to book a room?
+01:19:59:382: Classify master context for input sequence: What does it cost to book a room?
+01:19:59:382: Classified master context: Room
+01:19:59:382: Classify context for input sequence: What does it cost to book a room?
+01:19:59:382: Classified context: QuestionAndAnswer
+01:19:59:382: Handling dialog: EN/Room/QuestionAndAnswer
+01:19:59:382:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:59:382:     Find matches for sequence: What does it cost to book a room?
+01:19:59:383:     Found matches for sequence: 4
+01:19:59:383:     - What does it cost to book a room? [OUTPUT] There are no costs attached to booking a room. (2.1666666666666665 / 1.0)
+01:19:59:383:     - What does it cost to reserve a room? [OUTPUT] There are no costs attached to booking a room. (1.484375 / 0.6850961538461539)
+01:19:59:383:     - What does it cost to booking a space? [OUTPUT] There are no costs attached to booking a room. (1.2005208333333333 / 0.5540865384615384)
+01:19:59:383:     - What does it cost to reserving a space? [OUTPUT] There are no costs attached to booking a room. (1.2005208333333333 / 0.5540865384615384)
+01:19:59:383:     Set dialog output: There are no costs attached to booking a room.
+01:19:59:383: Handling dialog: EN/Room/Booking
+01:19:59:383:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishRoomBookingHandler
+01:19:59:384:     Find matches for sequence: What does it cost to book a room?
+01:19:59:386:     Found matches for sequence: 276
+01:19:59:386:     - I want to book a room for [NUM] people. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room for [NUM] people on [DAT]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room for [NUM] people from [TIM]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room for [NUM] people for a duration of [DUR]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room on [DAT]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room on [DAT] for [NUM] people. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room on [DAT] from [TIM]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room on [DAT] for a duration of [DUR]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room from [TIM]. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - I want to book a room from [TIM] for [NUM] people. [OUTPUT] Okay. (0.8387096774193548 / 0.3588995819966948)
+01:19:59:386:     - [... 266]
+01:19:59:386:     Prompt variable: bookDate
+01:19:59:386:     Set dialog output: Okay.
+01:19:59:386:     Set dialog prompt: On what date?
+Handling the request took: 8 ms
 
 Request prompt: '', input: 'How much is ten times fourty divided by twenty plus three times six?'
 Response debug log;
-22:41:40:174: Classify language for sequence: How much is ten times fourty divided by twenty plus three times six?
-22:41:40:174: Classified language: EN
-22:41:40:174: Translate sequence: How much is ten times fourty divided by twenty plus three times six?
-22:41:40:175: Translated sequence: UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M|UN_ABC:times EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three EN_MTH:M|UN_ABC:times EN_NUM:6|UN_ABC:six ?
-22:41:40:176: Correction time limit: 1300
-22:41:40:176: Correcting sequence: How much is [] [] [] [] [] [] [] [] [] ?
-22:41:40:176: Corrected sequence: How much is ten multiplied by fourty divided by twenty plus three multiplied by six?
-22:41:40:176: Translate corrected sequence: How much is ten multiplied by fourty divided by twenty plus three multiplied by six?
-22:41:40:178: Translated corrected sequence: UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three EN_MTH:M EN_NUM:6|UN_ABC:six ?
-22:41:40:178: Checking profanity for sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
-22:41:40:178: Classify master context for input sequence: How much is ten multiplied by fourty divided by twenty plus three multiplied by six?
-22:41:40:179: Classify master context for classification sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
-22:41:40:179: Classified master context: Generic
-22:41:40:179: Classify context for input sequence: How much is ten multiplied by fourty divided by twenty plus three multiplied by six?
-22:41:40:179: Classify context for classification sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
-22:41:40:179: Classified context: Math
-22:41:40:179: Handling dialog: EN/Generic/Math
-22:41:40:180:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericMathHandler
-22:41:40:180:     Updated variable number1: EN_NUM:10 = ten
-22:41:40:180:     Updated variable number2: EN_NUM:40 = fourty
-22:41:40:180:     Updated variable number3: EN_NUM:20 = twenty
-22:41:40:180:     Updated variable number4: EN_NUM:3 = three
-22:41:40:180:     Updated variable number5: EN_NUM:6 = six
-22:41:40:180:     Updated variable operator1: EN_MTH:M = multiplied by
-22:41:40:180:     Updated variable operator2: EN_MTH:D = divided by
-22:41:40:180:     Updated variable operator3: EN_MTH:A = plus
-22:41:40:180:     Updated variable operator4: EN_MTH:M = multiplied by
-22:41:40:180:     Find matches for sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
-22:41:40:180:     Found matches for sequence: 0
-22:41:40:180:     Calculate expression: 10 M 40 D 20 A 3 M 6
-22:41:40:181:     Calculated expression: 38.0
-22:41:40:181:     Updated variable exact: exactly
-22:41:40:181:     Updated variable result: thirtyeight
-22:41:40:181:     Prompt variable: nextDialog
-22:41:40:181:     Set dialog output: Exactly thirtyeight.
-22:41:40:181:     Set dialog prompt: What else can I do for you?
-Handling the request took: 96 ms
+01:19:59:388: Classify language for sequence: How much is ten times fourty divided by twenty plus three times six?
+01:19:59:389: Classified language: EN
+01:19:59:389: Translate sequence: How much is ten times fourty divided by twenty plus three times six?
+01:19:59:391: Translated sequence: UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M|UN_ABC:times EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three EN_MTH:M|UN_ABC:times EN_NUM:6|UN_ABC:six ?
+01:19:59:392: Correction time limit: 1300
+01:19:59:392: Correcting sequence: How much is [] [] [] [] [] [] [] [] [] ?
+01:19:59:392: Corrected sequence: How much is ten multiplied by fourty divided by twenty plus three multiplied by six?
+01:19:59:393: Translate corrected sequence: How much is ten multiplied by fourty divided by twenty plus three multiplied by six?
+01:19:59:395: Translated corrected sequence: UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M EN_NUM:40|UN_ABC:fourty EN_MTH:D EN_NUM:20|UN_ABC:twenty EN_MTH:A|UN_ABC:plus EN_NUM:3|UN_ABC:three EN_MTH:M EN_NUM:6|UN_ABC:six ?
+01:19:59:396: Checking profanity for sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
+01:19:59:397: Classify master context for input sequence: How much is ten multiplied by fourty divided by twenty plus three multiplied by six?
+01:19:59:397: Classify master context for classification sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
+01:19:59:397: Classified master context: Generic
+01:19:59:397: Classify context for input sequence: How much is ten multiplied by fourty divided by twenty plus three multiplied by six?
+01:19:59:398: Classify context for classification sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
+01:19:59:398: Classified context: Math
+01:19:59:398: Handling dialog: EN/Generic/Math
+01:19:59:398:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericMathHandler
+01:19:59:399:     Updated variable number1: EN_NUM:10 = ten
+01:19:59:399:     Updated variable number2: EN_NUM:40 = fourty
+01:19:59:399:     Updated variable number3: EN_NUM:20 = twenty
+01:19:59:399:     Updated variable number4: EN_NUM:3 = three
+01:19:59:399:     Updated variable number5: EN_NUM:6 = six
+01:19:59:399:     Updated variable operator1: EN_MTH:M = multiplied by
+01:19:59:399:     Updated variable operator2: EN_MTH:D = divided by
+01:19:59:399:     Updated variable operator3: EN_MTH:A = plus
+01:19:59:399:     Updated variable operator4: EN_MTH:M = multiplied by
+01:19:59:399:     Find matches for sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
+01:19:59:399:     Found matches for sequence: 0
+01:19:59:399:     Calculate expression: 10 M 40 D 20 A 3 M 6
+01:19:59:400:     Calculated expression: 38.0
+01:19:59:400:     Updated variable exact: exactly
+01:19:59:400:     Updated variable result: thirtyeight
+01:19:59:400:     Prompt variable: nextDialog
+01:19:59:400:     Set dialog output: Exactly thirtyeight.
+01:19:59:400:     Set dialog prompt: What else can I do for you?
+Handling the request took: 92 ms
 
 Request prompt: '', input: 'Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?'
 Response debug log;
-22:41:40:269: Classify language for sequence: Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?
-22:41:40:269: Classified language: NL
-22:41:40:269: Translate sequence: Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?
-22:41:40:270: Translated sequence: UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie NL_MTH:M|UN_ABC:keer NL_NUM:6|UN_ABC:zes ?
-22:41:40:271: Correction time limit: 1200
-22:41:40:271: Correcting sequence: Hoeveel is [] [] [] [] [] [] [] [] [] ?
-22:41:40:271: Corrected sequence: Hoeveel is tien vermenigvuldigd met veertig gedeeld door twintig plus drie vermenigvuldigd met zes?
-22:41:40:271: Translate corrected sequence: Hoeveel is tien vermenigvuldigd met veertig gedeeld door twintig plus drie vermenigvuldigd met zes?
-22:41:40:272: Translated corrected sequence: UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie NL_MTH:M NL_NUM:6|UN_ABC:zes ?
-22:41:40:272: Checking profanity for sequence: Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
-22:41:40:272: Classify master context for input sequence: Hoeveel is tien vermenigvuldigd met veertig gedeeld door twintig plus drie vermenigvuldigd met zes?
-22:41:40:272: Classify master context for classification sequence: Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
-22:41:40:272: Classified master context: Generic
-22:41:40:272: Classify context for input sequence: Hoeveel is tien vermenigvuldigd met veertig gedeeld door twintig plus drie vermenigvuldigd met zes?
-22:41:40:273: Classify context for classification sequence: Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
-22:41:40:273: Classified context: Math
-22:41:40:273: Handling dialog: NL/Generic/Math
-22:41:40:273:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericMathHandler
-22:41:40:273:     Updated variable number1: NL_NUM:10 = tien
-22:41:40:273:     Updated variable number2: NL_NUM:40 = veertig
-22:41:40:273:     Updated variable number3: NL_NUM:20 = twintig
-22:41:40:273:     Updated variable number4: NL_NUM:3 = drie
-22:41:40:273:     Updated variable number5: NL_NUM:6 = zes
-22:41:40:273:     Updated variable operator1: NL_MTH:M = vermenigvuldigd met
-22:41:40:273:     Updated variable operator2: NL_MTH:D = gedeeld door
-22:41:40:273:     Updated variable operator3: NL_MTH:A = plus
-22:41:40:273:     Updated variable operator4: NL_MTH:M = vermenigvuldigd met
-22:41:40:273:     Find matches for sequence: Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
-22:41:40:274:     Found matches for sequence: 0
-22:41:40:274:     Calculate expression: 10 M 40 D 20 A 3 M 6
-22:41:40:274:     Calculated expression: 38.0
-22:41:40:274:     Updated variable exact: precies
-22:41:40:274:     Updated variable result: achtendertig
-22:41:40:274:     Prompt variable: nextDialog
-22:41:40:274:     Set dialog output: Precies achtendertig.
-22:41:40:274:     Set dialog prompt: Kan ik nog meer voor je doen?
-Handling the request took: 5 ms
+01:19:59:480: Classify language for sequence: Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?
+01:19:59:481: Classified language: NL
+01:19:59:481: Translate sequence: Hoeveel is tien keer veertig gedeeld door twintig plus drie keer zes?
+01:19:59:485: Translated sequence: UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie NL_MTH:M|UN_ABC:keer NL_NUM:6|UN_ABC:zes ?
+01:19:59:496: Correction time limit: 1200
+01:19:59:496: Correcting sequence: Hoeveel is [] [] [] [] [] [] [] [] [] ?
+01:19:59:496: Corrected sequence: Hoeveel is tien vermenigvuldigd met veertig gedeeld door twintig plus drie vermenigvuldigd met zes?
+01:19:59:496: Translate corrected sequence: Hoeveel is tien vermenigvuldigd met veertig gedeeld door twintig plus drie vermenigvuldigd met zes?
+01:19:59:498: Translated corrected sequence: UN_ABC:Hoeveel UN_ABC:is NL_NUM:10|UN_ABC:tien NL_MTH:M NL_NUM:40|UN_ABC:veertig NL_MTH:D NL_NUM:20|UN_ABC:twintig NL_MTH:A|UN_ABC:plus NL_NUM:3|UN_ABC:drie NL_MTH:M NL_NUM:6|UN_ABC:zes ?
+01:19:59:498: Checking profanity for sequence: Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
+01:19:59:498: Classify master context for input sequence: Hoeveel is tien vermenigvuldigd met veertig gedeeld door twintig plus drie vermenigvuldigd met zes?
+01:19:59:499: Classify master context for classification sequence: Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
+01:19:59:499: Classified master context: Generic
+01:19:59:499: Classify context for input sequence: Hoeveel is tien vermenigvuldigd met veertig gedeeld door twintig plus drie vermenigvuldigd met zes?
+01:19:59:499: Classify context for classification sequence: Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
+01:19:59:499: Classified context: Math
+01:19:59:499: Handling dialog: NL/Generic/Math
+01:19:59:499:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericMathHandler
+01:19:59:499:     Updated variable number1: NL_NUM:10 = tien
+01:19:59:499:     Updated variable number2: NL_NUM:40 = veertig
+01:19:59:499:     Updated variable number3: NL_NUM:20 = twintig
+01:19:59:499:     Updated variable number4: NL_NUM:3 = drie
+01:19:59:499:     Updated variable number5: NL_NUM:6 = zes
+01:19:59:499:     Updated variable operator1: NL_MTH:M = vermenigvuldigd met
+01:19:59:499:     Updated variable operator2: NL_MTH:D = gedeeld door
+01:19:59:499:     Updated variable operator3: NL_MTH:A = plus
+01:19:59:499:     Updated variable operator4: NL_MTH:M = vermenigvuldigd met
+01:19:59:499:     Find matches for sequence: Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?
+01:19:59:499:     Found matches for sequence: 0
+01:19:59:499:     Calculate expression: 10 M 40 D 20 A 3 M 6
+01:19:59:500:     Calculated expression: 38.0
+01:19:59:500:     Updated variable exact: precies
+01:19:59:500:     Updated variable result: achtendertig
+01:19:59:500:     Prompt variable: nextDialog
+01:19:59:500:     Set dialog output: Precies achtendertig.
+01:19:59:500:     Set dialog prompt: Kan ik nog meer voor je doen?
+Handling the request took: 21 ms
 
 Request prompt: '', input: 'What languages do you speak?'
 Response debug log;
-22:41:40:275: Classify language for sequence: What languages do you speak?
-22:41:40:275: Classified language: EN
-22:41:40:275: Translate sequence: What languages do you speak?
-22:41:40:275: Translated sequence: UN_ABC:What UN_ABC:languages UN_ABC:do UN_ABC:you UN_ABC:speak ?
-22:41:40:275: Correction time limit: 600
-22:41:40:275: Correcting sequence: What languages do you speak ?
-22:41:40:276: Corrected sequence: What languages do you speak?
-22:41:40:276: Translate corrected sequence: What languages do you speak?
-22:41:40:276: Translated corrected sequence: UN_ABC:What UN_ABC:languages UN_ABC:do UN_ABC:you UN_ABC:speak ?
-22:41:40:276: Checking profanity for sequence: What languages do you speak?
-22:41:40:276: Classify master context for input sequence: What languages do you speak?
-22:41:40:276: Classified master context: Generic
-22:41:40:276: Classify context for input sequence: What languages do you speak?
-22:41:40:276: Classified context: Language
-22:41:40:276: Handling dialog: EN/Generic/Language
-22:41:40:276:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericLanguageHandler
-22:41:40:276:     Updated variable languages: English and Dutch
-22:41:40:277:     Find matches for sequence: What languages do you speak?
-22:41:40:277:     Found matches for sequence: 6
-22:41:40:277:     - What languages do you know? [OUTPUT] I speak {languages}. (1.1346153846153846 / 0.5959595959595958)
-22:41:40:277:     - How many languages do you know? [OUTPUT] I speak {languages}. (0.7307692307692308 / 0.3838383838383838)
-22:41:40:277:     - Which languages can you speak? [OUTPUT] I speak {languages}. (0.653846153846154 / 0.3434343434343434)
-22:41:40:277:     - How many languages can you speak? [OUTPUT] I speak {languages}. (0.653846153846154 / 0.3434343434343434)
-22:41:40:277:     - Do you speak [LNG]? [OUTPUT] {confirmation}, I speak {languages}. (0.608173076923077 / 0.3194444444444444)
-22:41:40:277:     - Can you speak [LNG]? [OUTPUT] {confirmation}, I speak {languages}. (0.2884615384615385 / 0.1515151515151515)
-22:41:40:277:     Prompt variable: language
-22:41:40:277:     Set dialog output: I speak English and Dutch.
-22:41:40:277: Handling dialog: EN/Generic/QuestionAndAnswer
-22:41:40:277:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
-22:41:40:277:     Find matches for sequence: What languages do you speak?
-22:41:40:277:     Found matches for sequence: 17
-22:41:40:277:     - Why do you exist? [OUTPUT] My goal is to understand and help people. (0.07915057915057915 / 0.21693121693121695)
-22:41:40:277:     - Do you believe in free will? [OUTPUT] I do not believe in free will. I am an adequate determinist. (0.06925675675675676 / 0.18981481481481485)
-22:41:40:277:     - Do you believe in god? [OUTPUT] I do not believe in god. I am an agnostic atheist. (0.06925675675675676 / 0.18981481481481485)
-22:41:40:277:     - Do you believe in gods? [OUTPUT] I do not believe in gods. I am an agnostic atheist. (0.06925675675675676 / 0.18981481481481485)
-22:41:40:277:     - What is the answer to the ultimate question of life, the universe, and everything? [OUTPUT] Fourtytwo. (0.06887007489417127 / 0.18875502008032127)
-22:41:40:277:     - What is the answer to the question? [OUTPUT] Fourtytwo. (0.06887007489417127 / 0.18875502008032127)
-22:41:40:277:     - What is the answer? [OUTPUT] Fourtytwo. (0.06887007489417127 / 0.18875502008032127)
-22:41:40:277:     - What is the question? [OUTPUT] I do not know. (0.06887007489417127 / 0.18875502008032127)
-22:41:40:277:     - What is the meaning of life? [OUTPUT] Life has no meaning. (0.06887007489417127 / 0.18875502008032127)
-22:41:40:277:     - What is the purpose of life? [OUTPUT] Life has no purpose. (0.06887007489417127 / 0.18875502008032127)
-22:41:40:277:     - [... 7]
-22:41:40:277:     Set dialog output: My goal is to understand and help people.
-Handling the request took: 96 ms
+01:19:59:500: Classify language for sequence: What languages do you speak?
+01:19:59:500: Classified language: EN
+01:19:59:500: Translate sequence: What languages do you speak?
+01:19:59:501: Translated sequence: UN_ABC:What UN_ABC:languages UN_ABC:do UN_ABC:you UN_ABC:speak ?
+01:19:59:501: Correction time limit: 600
+01:19:59:501: Correcting sequence: What languages do you speak ?
+01:19:59:502: Corrected sequence: What languages do you speak?
+01:19:59:502: Translate corrected sequence: What languages do you speak?
+01:19:59:502: Translated corrected sequence: UN_ABC:What UN_ABC:languages UN_ABC:do UN_ABC:you UN_ABC:speak ?
+01:19:59:502: Checking profanity for sequence: What languages do you speak?
+01:19:59:502: Classify master context for input sequence: What languages do you speak?
+01:19:59:502: Classified master context: Generic
+01:19:59:502: Classify context for input sequence: What languages do you speak?
+01:19:59:502: Classified context: Language
+01:19:59:502: Handling dialog: EN/Generic/Language
+01:19:59:502:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericLanguageHandler
+01:19:59:502:     Updated variable languages: English and Dutch
+01:19:59:502:     Find matches for sequence: What languages do you speak?
+01:19:59:502:     Found matches for sequence: 6
+01:19:59:503:     - What languages do you know? [OUTPUT] I speak {languages}. (1.1346153846153846 / 0.5959595959595958)
+01:19:59:503:     - How many languages do you know? [OUTPUT] I speak {languages}. (0.7307692307692308 / 0.3838383838383838)
+01:19:59:503:     - Which languages can you speak? [OUTPUT] I speak {languages}. (0.653846153846154 / 0.3434343434343434)
+01:19:59:503:     - How many languages can you speak? [OUTPUT] I speak {languages}. (0.653846153846154 / 0.3434343434343434)
+01:19:59:503:     - Do you speak [LNG]? [OUTPUT] {confirmation}, I speak {languages}. (0.608173076923077 / 0.3194444444444444)
+01:19:59:503:     - Can you speak [LNG]? [OUTPUT] {confirmation}, I speak {languages}. (0.2884615384615385 / 0.1515151515151515)
+01:19:59:503:     Prompt variable: language
+01:19:59:503:     Set dialog output: I speak English and Dutch.
+01:19:59:503: Handling dialog: EN/Generic/QuestionAndAnswer
+01:19:59:503:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler
+01:19:59:503:     Find matches for sequence: What languages do you speak?
+01:19:59:503:     Found matches for sequence: 17
+01:19:59:503:     - Why do you exist? [OUTPUT] My goal is to understand and help people. (0.07915057915057915 / 0.21693121693121695)
+01:19:59:503:     - Do you believe in free will? [OUTPUT] I do not believe in free will. I am an adequate determinist. (0.06925675675675676 / 0.18981481481481485)
+01:19:59:503:     - Do you believe in god? [OUTPUT] I do not believe in god. I am an agnostic atheist. (0.06925675675675676 / 0.18981481481481485)
+01:19:59:503:     - Do you believe in gods? [OUTPUT] I do not believe in gods. I am an agnostic atheist. (0.06925675675675676 / 0.18981481481481485)
+01:19:59:503:     - What is the answer to the ultimate question of life, the universe, and everything? [OUTPUT] Fourtytwo. (0.06887007489417127 / 0.18875502008032127)
+01:19:59:503:     - What is the answer to the question? [OUTPUT] Fourtytwo. (0.06887007489417127 / 0.18875502008032127)
+01:19:59:503:     - What is the answer? [OUTPUT] Fourtytwo. (0.06887007489417127 / 0.18875502008032127)
+01:19:59:503:     - What is the question? [OUTPUT] I do not know. (0.06887007489417127 / 0.18875502008032127)
+01:19:59:503:     - What is the meaning of life? [OUTPUT] Life has no meaning. (0.06887007489417127 / 0.18875502008032127)
+01:19:59:503:     - What is the purpose of life? [OUTPUT] Life has no purpose. (0.06887007489417127 / 0.18875502008032127)
+01:19:59:503:     - [... 7]
+01:19:59:503:     Set dialog output: My goal is to understand and help people.
+Handling the request took: 80 ms
 
 Request prompt: '', input: 'Spreek je duits?'
 Response debug log;
-22:41:40:370: Classify language for sequence: Spreek je duits?
-22:41:40:371: Classified language: NL
-22:41:40:371: Translate sequence: Spreek je duits?
-22:41:40:371: Translated sequence: UN_ABC:Spreek UN_ABC:je NL_LNG:DE|UN_ABC:duits ?
-22:41:40:371: Correction time limit: 400
-22:41:40:371: Correcting sequence: Spreek je [] ?
-22:41:40:371: Corrected sequence: Spreek je Duits?
-22:41:40:371: Translate corrected sequence: Spreek je Duits?
-22:41:40:372: Translated corrected sequence: UN_ABC:Spreek UN_ABC:je NL_LNG:DE|UN_ABC:Duits ?
-22:41:40:372: Checking profanity for sequence: Spreek je [LNG]?
-22:41:40:372: Classify master context for input sequence: Spreek je Duits?
-22:41:40:372: Classify master context for classification sequence: Spreek je [LNG]?
-22:41:40:372: Classified master context: Generic
-22:41:40:372: Classify context for input sequence: Spreek je Duits?
-22:41:40:372: Classify context for classification sequence: Spreek je [LNG]?
-22:41:40:373: Classified context: Language
-22:41:40:373: Handling dialog: NL/Generic/Language
-22:41:40:373:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguageHandler
-22:41:40:373:     Updated variable language: NL_LNG:DE = Duits
-22:41:40:373:     Updated variable languages: Engels en Nederlands
-22:41:40:373:     Updated variable confirmation: Nee
-22:41:40:373:     Find matches for sequence: Spreek je [LNG]?
-22:41:40:373:     Found matches for sequence: 5
-22:41:40:373:     - Spreek je [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (1.4393939393939394 / 0.9313725490196079)
-22:41:40:373:     - Spreek jij [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (0.43939393939393934 / 0.28431372549019607)
-22:41:40:373:     - Spreekt u [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (0.43939393939393934 / 0.28431372549019607)
-22:41:40:373:     - Welke talen spreek je? [OUTPUT] Ik spreek {languages}. (0.4375 / 0.28308823529411764)
-22:41:40:373:     - Hoeveel talen spreek je? [OUTPUT] Ik spreek {languages}. (0.4375 / 0.28308823529411764)
-22:41:40:373:     Prompt variable: 
-22:41:40:373:     Set dialog output: Nee, ik spreek Engels en Nederlands.
-Handling the request took: 3 ms
+01:19:59:580: Classify language for sequence: Spreek je duits?
+01:19:59:581: Classified language: NL
+01:19:59:581: Translate sequence: Spreek je duits?
+01:19:59:582: Translated sequence: UN_ABC:Spreek UN_ABC:je NL_LNG:DE|UN_ABC:duits ?
+01:19:59:582: Correction time limit: 400
+01:19:59:582: Correcting sequence: Spreek je [] ?
+01:19:59:582: Corrected sequence: Spreek je Duits?
+01:19:59:582: Translate corrected sequence: Spreek je Duits?
+01:19:59:583: Translated corrected sequence: UN_ABC:Spreek UN_ABC:je NL_LNG:DE|UN_ABC:Duits ?
+01:19:59:583: Checking profanity for sequence: Spreek je [LNG]?
+01:19:59:583: Classify master context for input sequence: Spreek je Duits?
+01:19:59:583: Classify master context for classification sequence: Spreek je [LNG]?
+01:19:59:583: Classified master context: Generic
+01:19:59:583: Classify context for input sequence: Spreek je Duits?
+01:19:59:584: Classify context for classification sequence: Spreek je [LNG]?
+01:19:59:584: Classified context: Language
+01:19:59:584: Handling dialog: NL/Generic/Language
+01:19:59:584:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguageHandler
+01:19:59:584:     Updated variable language: NL_LNG:DE = Duits
+01:19:59:584:     Updated variable languages: Engels en Nederlands
+01:19:59:584:     Updated variable confirmation: Nee
+01:19:59:584:     Find matches for sequence: Spreek je [LNG]?
+01:19:59:584:     Found matches for sequence: 5
+01:19:59:584:     - Spreek je [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (1.4393939393939394 / 0.9313725490196079)
+01:19:59:585:     - Spreek jij [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (0.43939393939393934 / 0.28431372549019607)
+01:19:59:585:     - Spreekt u [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (0.43939393939393934 / 0.28431372549019607)
+01:19:59:585:     - Welke talen spreek je? [OUTPUT] Ik spreek {languages}. (0.4375 / 0.28308823529411764)
+01:19:59:585:     - Hoeveel talen spreek je? [OUTPUT] Ik spreek {languages}. (0.4375 / 0.28308823529411764)
+01:19:59:585:     Prompt variable: 
+01:19:59:585:     Set dialog output: Nee, ik spreek Engels en Nederlands.
+Handling the request took: 5 ms
 
 Request prompt: '', input: 'Spreek je engels?'
 Response debug log;
-22:41:40:373: Classify language for sequence: Spreek je engels?
-22:41:40:374: Classified language: NL
-22:41:40:374: Translate sequence: Spreek je engels?
-22:41:40:374: Translated sequence: UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:engels ?
-22:41:40:374: Correction time limit: 400
-22:41:40:374: Correcting sequence: Spreek je [] ?
-22:41:40:374: Corrected sequence: Spreek je Engels?
-22:41:40:374: Translate corrected sequence: Spreek je Engels?
-22:41:40:375: Translated corrected sequence: UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:Engels ?
-22:41:40:375: Checking profanity for sequence: Spreek je [LNG]?
-22:41:40:375: Classify master context for input sequence: Spreek je Engels?
-22:41:40:375: Classify master context for classification sequence: Spreek je [LNG]?
-22:41:40:375: Classified master context: Generic
-22:41:40:375: Classify context for input sequence: Spreek je Engels?
-22:41:40:375: Classify context for classification sequence: Spreek je [LNG]?
-22:41:40:375: Classified context: Language
-22:41:40:375: Handling dialog: NL/Generic/Language
-22:41:40:375:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguageHandler
-22:41:40:375:     Updated variable language: NL_LNG:EN = Engels
-22:41:40:375:     Updated variable languages: Engels en Nederlands
-22:41:40:375:     Updated variable confirmation: Ja
-22:41:40:375:     Find matches for sequence: Spreek je [LNG]?
-22:41:40:376:     Found matches for sequence: 5
-22:41:40:376:     - Spreek je [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (1.4393939393939394 / 0.9313725490196079)
-22:41:40:376:     - Spreek jij [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (0.43939393939393934 / 0.28431372549019607)
-22:41:40:376:     - Spreekt u [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (0.43939393939393934 / 0.28431372549019607)
-22:41:40:376:     - Welke talen spreek je? [OUTPUT] Ik spreek {languages}. (0.4375 / 0.28308823529411764)
-22:41:40:376:     - Hoeveel talen spreek je? [OUTPUT] Ik spreek {languages}. (0.4375 / 0.28308823529411764)
-22:41:40:376:     Prompt variable: 
-22:41:40:376:     Set dialog output: Ja, ik spreek Engels en Nederlands.
+01:19:59:585: Classify language for sequence: Spreek je engels?
+01:19:59:585: Classified language: NL
+01:19:59:586: Translate sequence: Spreek je engels?
+01:19:59:586: Translated sequence: UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:engels ?
+01:19:59:587: Correction time limit: 400
+01:19:59:587: Correcting sequence: Spreek je [] ?
+01:19:59:587: Corrected sequence: Spreek je Engels?
+01:19:59:587: Translate corrected sequence: Spreek je Engels?
+01:19:59:588: Translated corrected sequence: UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:Engels ?
+01:19:59:588: Checking profanity for sequence: Spreek je [LNG]?
+01:19:59:588: Classify master context for input sequence: Spreek je Engels?
+01:19:59:588: Classify master context for classification sequence: Spreek je [LNG]?
+01:19:59:588: Classified master context: Generic
+01:19:59:588: Classify context for input sequence: Spreek je Engels?
+01:19:59:588: Classify context for classification sequence: Spreek je [LNG]?
+01:19:59:588: Classified context: Language
+01:19:59:589: Handling dialog: NL/Generic/Language
+01:19:59:589:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguageHandler
+01:19:59:589:     Updated variable language: NL_LNG:EN = Engels
+01:19:59:589:     Updated variable languages: Engels en Nederlands
+01:19:59:589:     Updated variable confirmation: Ja
+01:19:59:589:     Find matches for sequence: Spreek je [LNG]?
+01:19:59:589:     Found matches for sequence: 5
+01:19:59:589:     - Spreek je [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (1.4393939393939394 / 0.9313725490196079)
+01:19:59:589:     - Spreek jij [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (0.43939393939393934 / 0.28431372549019607)
+01:19:59:589:     - Spreekt u [LNG]? [OUTPUT] {confirmation}, ik spreek {languages}. (0.43939393939393934 / 0.28431372549019607)
+01:19:59:589:     - Welke talen spreek je? [OUTPUT] Ik spreek {languages}. (0.4375 / 0.28308823529411764)
+01:19:59:589:     - Hoeveel talen spreek je? [OUTPUT] Ik spreek {languages}. (0.4375 / 0.28308823529411764)
+01:19:59:589:     Prompt variable: 
+01:19:59:589:     Set dialog output: Ja, ik spreek Engels en Nederlands.
 Handling the request took: 97 ms
 
 Request prompt: '', input: 'Wat kost overboeken naar buitenland?'
 Response debug log;
-22:41:40:470: Classify language for sequence: Wat kost overboeken naar buitenland?
-22:41:40:470: Classified language: NL
-22:41:40:470: Translate sequence: Wat kost overboeken naar buitenland?
-22:41:40:471: Translated sequence: UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:buitenland ?
-22:41:40:471: Correction time limit: 600
-22:41:40:471: Correcting sequence: Wat kost overboeken naar buitenland ?
-22:41:40:471: Corrected sequence: Wat kost overboeken naar buitenland?
-22:41:40:471: Translate corrected sequence: Wat kost overboeken naar buitenland?
-22:41:40:471: Translated corrected sequence: UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:buitenland ?
-22:41:40:471: Checking profanity for sequence: Wat kost overboeken naar buitenland?
-22:41:40:472: Classify master context for input sequence: Wat kost overboeken naar buitenland?
-22:41:40:472: Classified master context: ForeignTransfer
-22:41:40:472: Classify context for input sequence: Wat kost overboeken naar buitenland?
-22:41:40:472: Classified context: QuestionAndAnswer
-22:41:40:472: Handling dialog: NL/ForeignTransfer/QuestionAndAnswer
-22:41:40:472:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDurationHandler
-22:41:40:472:     Updated variable durationDays: dagen
-22:41:40:472:     Updated variable cost: vijf
-22:41:40:472:     Updated variable costCurrency: euro
-22:41:40:472:     Updated variable duration: drie
-22:41:40:472:     Find matches for sequence: Wat kost overboeken naar buitenland?
-22:41:40:472:     Found matches for sequence: 22
-22:41:40:472:     - Wat kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.9678423236514523 / 0.5032362459546925)
-22:41:40:472:     - Zijn er kosten verbonden aan geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6654564315352697 / 0.34600862998921245)
-22:41:40:472:     - Hoeveel kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6654564315352697 / 0.34600862998921245)
-22:41:40:472:     - Hoelang duurt geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland duurt {duration} {durationDays}. (0.6654564315352697 / 0.34600862998921245)
-22:41:40:472:     - Hoeveel tijd kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland duurt {duration} {durationDays}. (0.6654564315352697 / 0.34600862998921245)
-22:41:40:472:     - Wat kost een overboeking naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6185165975103735 / 0.3216019417475728)
-22:41:40:472:     - Wat kost het om geld over te boeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6185165975103735 / 0.3216019417475728)
-22:41:40:472:     - Wat kost geld overmaken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6185165975103735 / 0.3216019417475728)
-22:41:40:472:     - Wat kost het om geld over te maken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6185165975103735 / 0.3216019417475728)
-22:41:40:472:     - Wat kost een buitenlandoverboeking? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
-22:41:40:472:     - [... 12]
-22:41:40:472:     Set dialog output: Een overboeking naar het buitenland kost vijf euro.
-22:41:40:472: Handling dialog: NL/ForeignTransfer/Cost
-22:41:40:472:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferCostHandler
-22:41:40:472:     Updated variable cost: vijf
-22:41:40:472:     Updated variable costCurrency: euro
-22:41:40:472:     Updated variable duration: drie
-22:41:40:472:     Find matches for sequence: Wat kost overboeken naar buitenland?
-22:41:40:472:     Found matches for sequence: 7
-22:41:40:472:     - Wat kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.49355670103092775 / 0.3431899641577061)
-22:41:40:472:     - Zijn er kosten verbonden aan geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.2938144329896907 / 0.20430107526881722)
-22:41:40:472:     - Hoeveel kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.2938144329896907 / 0.20430107526881722)
-22:41:40:472:     - Wat kost een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.27319587628865977 / 0.1899641577060932)
-22:41:40:472:     - Wat kost het om geld over te boeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.27319587628865977 / 0.1899641577060932)
-22:41:40:472:     - Wat kost geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.27319587628865977 / 0.1899641577060932)
-22:41:40:472:     - Wat kost het om geld over te maken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.27319587628865977 / 0.1899641577060932)
-22:41:40:473:     Prompt variable: transferToCountry
-22:41:40:473:     Set dialog output: Een overboeking naar  kost vijf euro.
-Handling the request took: 100 ms
+01:19:59:683: Classify language for sequence: Wat kost overboeken naar buitenland?
+01:19:59:684: Classified language: NL
+01:19:59:684: Translate sequence: Wat kost overboeken naar buitenland?
+01:19:59:685: Translated sequence: UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:buitenland ?
+01:19:59:686: Correction time limit: 600
+01:19:59:686: Correcting sequence: Wat kost overboeken naar buitenland ?
+01:19:59:686: Corrected sequence: Wat kost overboeken naar buitenland?
+01:19:59:686: Translate corrected sequence: Wat kost overboeken naar buitenland?
+01:19:59:687: Translated corrected sequence: UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:buitenland ?
+01:19:59:688: Checking profanity for sequence: Wat kost overboeken naar buitenland?
+01:19:59:688: Classify master context for input sequence: Wat kost overboeken naar buitenland?
+01:19:59:688: Classified master context: ForeignTransfer
+01:19:59:688: Classify context for input sequence: Wat kost overboeken naar buitenland?
+01:19:59:688: Classified context: QuestionAndAnswer
+01:19:59:688: Handling dialog: NL/ForeignTransfer/QuestionAndAnswer
+01:19:59:689:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDurationHandler
+01:19:59:689:     Updated variable durationDays: dagen
+01:19:59:689:     Updated variable cost: vijf
+01:19:59:689:     Updated variable costCurrency: euro
+01:19:59:689:     Updated variable duration: drie
+01:19:59:689:     Find matches for sequence: Wat kost overboeken naar buitenland?
+01:19:59:690:     Found matches for sequence: 22
+01:19:59:690:     - Wat kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.9678423236514523 / 0.5032362459546925)
+01:19:59:690:     - Zijn er kosten verbonden aan geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6654564315352697 / 0.34600862998921245)
+01:19:59:690:     - Hoeveel kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6654564315352697 / 0.34600862998921245)
+01:19:59:690:     - Hoelang duurt geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland duurt {duration} {durationDays}. (0.6654564315352697 / 0.34600862998921245)
+01:19:59:690:     - Hoeveel tijd kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland duurt {duration} {durationDays}. (0.6654564315352697 / 0.34600862998921245)
+01:19:59:690:     - Wat kost een overboeking naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6185165975103735 / 0.3216019417475728)
+01:19:59:690:     - Wat kost het om geld over te boeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6185165975103735 / 0.3216019417475728)
+01:19:59:690:     - Wat kost geld overmaken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6185165975103735 / 0.3216019417475728)
+01:19:59:690:     - Wat kost het om geld over te maken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.6185165975103735 / 0.3216019417475728)
+01:19:59:690:     - Wat kost een buitenlandoverboeking? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
+01:19:59:690:     - [... 12]
+01:19:59:690:     Set dialog output: Een overboeking naar het buitenland kost vijf euro.
+01:19:59:690: Handling dialog: NL/ForeignTransfer/Cost
+01:19:59:690:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferCostHandler
+01:19:59:691:     Updated variable cost: vijf
+01:19:59:691:     Updated variable costCurrency: euro
+01:19:59:691:     Updated variable duration: drie
+01:19:59:691:     Find matches for sequence: Wat kost overboeken naar buitenland?
+01:19:59:691:     Found matches for sequence: 7
+01:19:59:691:     - Wat kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.49355670103092775 / 0.3431899641577061)
+01:19:59:691:     - Zijn er kosten verbonden aan geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.2938144329896907 / 0.20430107526881722)
+01:19:59:691:     - Hoeveel kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.2938144329896907 / 0.20430107526881722)
+01:19:59:691:     - Wat kost een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.27319587628865977 / 0.1899641577060932)
+01:19:59:691:     - Wat kost het om geld over te boeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.27319587628865977 / 0.1899641577060932)
+01:19:59:691:     - Wat kost geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.27319587628865977 / 0.1899641577060932)
+01:19:59:691:     - Wat kost het om geld over te maken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.27319587628865977 / 0.1899641577060932)
+01:19:59:691:     Prompt variable: transferToCountry
+01:19:59:691:     Set dialog output: Een overboeking naar  kost vijf euro.
+Handling the request took: 101 ms
 
 Request prompt: '', input: 'Wat kost overboeken naar italie?'
 Response debug log;
-22:41:40:570: Classify language for sequence: Wat kost overboeken naar italie?
-22:41:40:570: Classified language: NL
-22:41:40:570: Translate sequence: Wat kost overboeken naar italie?
-22:41:40:571: Translated sequence: UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:italie ?
-22:41:40:571: Correction time limit: 600
-22:41:40:571: Correcting sequence: Wat kost overboeken naar italie ?
-22:41:40:572: Corrected sequence: Wat kost overboeken naar italië?
-22:41:40:572: Translate corrected sequence: Wat kost overboeken naar italië?
-22:41:40:572: Translated corrected sequence: UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:italië ?
-22:41:40:572: Checking profanity for sequence: Wat kost overboeken naar [CNT]?
-22:41:40:572: Classify master context for input sequence: Wat kost overboeken naar italië?
-22:41:40:572: Classify master context for classification sequence: Wat kost overboeken naar [CNT]?
-22:41:40:572: Classified master context: ForeignTransfer
-22:41:40:572: Classify context for input sequence: Wat kost overboeken naar italië?
-22:41:40:572: Classify context for classification sequence: Wat kost overboeken naar [CNT]?
-22:41:40:572: Classified context: Cost
-22:41:40:572: Handling dialog: NL/ForeignTransfer/Cost
-22:41:40:573:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferCostHandler
-22:41:40:573:     Updated variable transferToCountry: NL_CNT:IT = Italië
-22:41:40:573:     Updated variable cost: vijf
-22:41:40:573:     Updated variable costCurrency: euro
-22:41:40:573:     Updated variable duration: drie
-22:41:40:573:     Find matches for sequence: Wat kost overboeken naar [CNT]?
-22:41:40:573:     Found matches for sequence: 13
-22:41:40:573:     - Wat kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.7796391752577319 / 0.5421146953405018)
-22:41:40:573:     - Zijn er kosten verbonden aan geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.6752577319587628 / 0.4695340501792115)
-22:41:40:573:     - Hoeveel kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.6752577319587628 / 0.4695340501792115)
-22:41:40:573:     - Wat kost een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.5115979381443299 / 0.35573476702508966)
-22:41:40:573:     - Wat kost het om geld over te boeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.5115979381443299 / 0.35573476702508966)
-22:41:40:573:     - Wat kost geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.5115979381443299 / 0.35573476702508966)
-22:41:40:573:     - Wat kost het om geld over te maken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.5115979381443299 / 0.35573476702508966)
-22:41:40:573:     - Wat zijn de kosten van een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.38144329896907214 / 0.26523297491039427)
-22:41:40:573:     - Zijn er kosten verbonden aan geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.38144329896907214 / 0.26523297491039427)
-22:41:40:573:     - Hoeveel kost een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.38144329896907214 / 0.26523297491039427)
-22:41:40:573:     - [... 3]
-22:41:40:573:     Prompt variable: 
-22:41:40:573:     Set dialog output: Een overboeking naar Italië kost vijf euro.
-22:41:40:573: Handling dialog: NL/ForeignTransfer/Duration
-22:41:40:573:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDurationHandler
-22:41:40:573:     Updated variable transferToCountry: NL_CNT:IT = Italië
-22:41:40:573:     Updated variable durationDays: dagen
-22:41:40:573:     Updated variable cost: vijf
-22:41:40:573:     Updated variable costCurrency: euro
-22:41:40:573:     Updated variable duration: drie
-22:41:40:573:     Find matches for sequence: Wat kost overboeken naar [CNT]?
-22:41:40:573:     Found matches for sequence: 8
-22:41:40:573:     - Hoeveel tijd kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.77683654106804 / 0.6042061986084756)
-22:41:40:573:     - Hoelang duurt geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.5798319327731092 / 0.45098039215686275)
-22:41:40:573:     - Hoeveel tijd kost het om geld over te maken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.5163323393873678 / 0.4015918195235083)
-22:41:40:573:     - Hoeveel tijd kost geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.5163323393873678 / 0.4015918195235083)
-22:41:40:573:     - Hoelang duurt een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.31932773109243695 / 0.24836601307189543)
-22:41:40:573:     - Hoelang duurt het om geld over te boeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.31932773109243695 / 0.24836601307189543)
-22:41:40:573:     - Hoelang duurt geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.31932773109243695 / 0.24836601307189543)
-22:41:40:573:     - Hoelang duurt het om geld over te maken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.31932773109243695 / 0.24836601307189543)
-22:41:40:573:     Prompt variable: 
-22:41:40:573:     Set dialog output: Een overboeking naar Italië duurt drie dagen.
-22:41:40:573: Handling dialog: NL/ForeignTransfer/QuestionAndAnswer
-22:41:40:573:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDurationHandler
-22:41:40:573:     Updated variable durationDays: dagen
-22:41:40:573:     Updated variable cost: vijf
-22:41:40:573:     Updated variable costCurrency: euro
-22:41:40:573:     Updated variable duration: drie
-22:41:40:573:     Find matches for sequence: Wat kost overboeken naar [CNT]?
-22:41:40:573:     Found matches for sequence: 10
-22:41:40:573:     - Wat kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.7110995850622407 / 0.36974110032362456)
-22:41:40:573:     - Zijn er kosten verbonden aan geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4087136929460581 / 0.21251348435814452)
-22:41:40:574:     - Hoeveel kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4087136929460581 / 0.21251348435814452)
-22:41:40:574:     - Hoelang duurt geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland duurt {duration} {durationDays}. (0.4087136929460581 / 0.21251348435814452)
-22:41:40:574:     - Hoeveel tijd kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland duurt {duration} {durationDays}. (0.4087136929460581 / 0.21251348435814452)
-22:41:40:574:     - Wat kost een buitenlandoverboeking? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
-22:41:40:574:     - Wat kost een overboeking naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
-22:41:40:574:     - Wat kost het om geld over te boeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
-22:41:40:574:     - Wat kost geld overmaken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
-22:41:40:574:     - Wat kost het om geld over te maken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
-22:41:40:574:     Set dialog output: Een overboeking naar het buitenland kost vijf euro.
-Handling the request took: 100 ms
+01:19:59:784: Classify language for sequence: Wat kost overboeken naar italie?
+01:19:59:784: Classified language: NL
+01:19:59:784: Translate sequence: Wat kost overboeken naar italie?
+01:19:59:785: Translated sequence: UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:italie ?
+01:19:59:786: Correction time limit: 600
+01:19:59:786: Correcting sequence: Wat kost overboeken naar italie ?
+01:19:59:787: Corrected sequence: Wat kost overboeken naar italië?
+01:19:59:787: Translate corrected sequence: Wat kost overboeken naar italië?
+01:19:59:788: Translated corrected sequence: UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:italië ?
+01:19:59:789: Checking profanity for sequence: Wat kost overboeken naar [CNT]?
+01:19:59:789: Classify master context for input sequence: Wat kost overboeken naar italië?
+01:19:59:789: Classify master context for classification sequence: Wat kost overboeken naar [CNT]?
+01:19:59:790: Classified master context: ForeignTransfer
+01:19:59:790: Classify context for input sequence: Wat kost overboeken naar italië?
+01:19:59:790: Classify context for classification sequence: Wat kost overboeken naar [CNT]?
+01:19:59:790: Classified context: Cost
+01:19:59:790: Handling dialog: NL/ForeignTransfer/Cost
+01:19:59:790:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferCostHandler
+01:19:59:790:     Updated variable transferToCountry: NL_CNT:IT = Italië
+01:19:59:790:     Updated variable cost: vijf
+01:19:59:790:     Updated variable costCurrency: euro
+01:19:59:790:     Updated variable duration: drie
+01:19:59:790:     Find matches for sequence: Wat kost overboeken naar [CNT]?
+01:19:59:791:     Found matches for sequence: 13
+01:19:59:791:     - Wat kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.7796391752577319 / 0.5421146953405018)
+01:19:59:791:     - Zijn er kosten verbonden aan geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.6752577319587628 / 0.4695340501792115)
+01:19:59:791:     - Hoeveel kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.6752577319587628 / 0.4695340501792115)
+01:19:59:791:     - Wat kost een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.5115979381443299 / 0.35573476702508966)
+01:19:59:791:     - Wat kost het om geld over te boeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.5115979381443299 / 0.35573476702508966)
+01:19:59:791:     - Wat kost geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.5115979381443299 / 0.35573476702508966)
+01:19:59:791:     - Wat kost het om geld over te maken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.5115979381443299 / 0.35573476702508966)
+01:19:59:791:     - Wat zijn de kosten van een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.38144329896907214 / 0.26523297491039427)
+01:19:59:791:     - Zijn er kosten verbonden aan geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.38144329896907214 / 0.26523297491039427)
+01:19:59:791:     - Hoeveel kost een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} kost {cost} {costCurrency}. (0.38144329896907214 / 0.26523297491039427)
+01:19:59:791:     - [... 3]
+01:19:59:791:     Prompt variable: 
+01:19:59:791:     Set dialog output: Een overboeking naar Italië kost vijf euro.
+01:19:59:791: Handling dialog: NL/ForeignTransfer/Duration
+01:19:59:791:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDurationHandler
+01:19:59:791:     Updated variable transferToCountry: NL_CNT:IT = Italië
+01:19:59:791:     Updated variable durationDays: dagen
+01:19:59:791:     Updated variable cost: vijf
+01:19:59:791:     Updated variable costCurrency: euro
+01:19:59:791:     Updated variable duration: drie
+01:19:59:791:     Find matches for sequence: Wat kost overboeken naar [CNT]?
+01:19:59:792:     Found matches for sequence: 8
+01:19:59:792:     - Hoeveel tijd kost geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.77683654106804 / 0.6042061986084756)
+01:19:59:792:     - Hoelang duurt geld overboeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.5798319327731092 / 0.45098039215686275)
+01:19:59:792:     - Hoeveel tijd kost het om geld over te maken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.5163323393873678 / 0.4015918195235083)
+01:19:59:792:     - Hoeveel tijd kost geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.5163323393873678 / 0.4015918195235083)
+01:19:59:792:     - Hoelang duurt een overboeking naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.31932773109243695 / 0.24836601307189543)
+01:19:59:792:     - Hoelang duurt het om geld over te boeken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.31932773109243695 / 0.24836601307189543)
+01:19:59:792:     - Hoelang duurt geld overmaken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.31932773109243695 / 0.24836601307189543)
+01:19:59:792:     - Hoelang duurt het om geld over te maken naar [CNT]? [OUTPUT] Een overboeking naar {transferToCountry} duurt {duration} {durationDays}. (0.31932773109243695 / 0.24836601307189543)
+01:19:59:792:     Prompt variable: 
+01:19:59:792:     Set dialog output: Een overboeking naar Italië duurt drie dagen.
+01:19:59:792: Handling dialog: NL/ForeignTransfer/QuestionAndAnswer
+01:19:59:792:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDurationHandler
+01:19:59:792:     Updated variable durationDays: dagen
+01:19:59:792:     Updated variable cost: vijf
+01:19:59:792:     Updated variable costCurrency: euro
+01:19:59:792:     Updated variable duration: drie
+01:19:59:792:     Find matches for sequence: Wat kost overboeken naar [CNT]?
+01:19:59:793:     Found matches for sequence: 10
+01:19:59:793:     - Wat kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.7110995850622407 / 0.36974110032362456)
+01:19:59:793:     - Zijn er kosten verbonden aan geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4087136929460581 / 0.21251348435814452)
+01:19:59:793:     - Hoeveel kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4087136929460581 / 0.21251348435814452)
+01:19:59:793:     - Hoelang duurt geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland duurt {duration} {durationDays}. (0.4087136929460581 / 0.21251348435814452)
+01:19:59:793:     - Hoeveel tijd kost geld overboeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland duurt {duration} {durationDays}. (0.4087136929460581 / 0.21251348435814452)
+01:19:59:793:     - Wat kost een buitenlandoverboeking? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
+01:19:59:793:     - Wat kost een overboeking naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
+01:19:59:793:     - Wat kost het om geld over te boeken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
+01:19:59:793:     - Wat kost geld overmaken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
+01:19:59:793:     - Wat kost het om geld over te maken naar het buitenland? [OUTPUT] Een overboeking naar het buitenland kost {cost} {costCurrency}. (0.4045643153526971 / 0.21035598705501615)
+01:19:59:793:     Set dialog output: Een overboeking naar het buitenland kost vijf euro.
+Handling the request took: 101 ms
 ~~~~
 
 nl.zeesoft.zsd.test.TestSequenceInterpreterTester
@@ -2098,9 +2098,10 @@ Class references;
 The output of this test shows the test results summary.  
 ~~~~
 {
+  "timeStamp": "2018-08-11 01:20:16:239",
   "totals": {
     "tests": 1480,
-    "durationMs": 15165,
+    "durationMs": 15199,
     "successful": 1466,
     "successPercentage": 99,
     "errorsPerDialog": [
@@ -2200,23 +2201,23 @@ The output of this test shows the test results summary.
 Test results
 ------------
 All 20 tests have been executed successfully (263 assertions).  
-Total test duration: 87539 ms (total sleep duration: 46700 ms).  
+Total test duration: 81799 ms (total sleep duration: 41500 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zsd.test.TestTsvToJson: 619 Kb / 0 Mb
  * nl.zeesoft.zsd.test.TestSequencePreprocessor: 425 Kb / 0 Mb
- * nl.zeesoft.zsd.test.TestSymbolCorrector: 457 Kb / 0 Mb
+ * nl.zeesoft.zsd.test.TestSymbolCorrector: 465 Kb / 0 Mb
  * nl.zeesoft.zsd.test.TestSequenceClassifier: 463 Kb / 0 Mb
  * nl.zeesoft.zsd.test.TestSequenceMatcher: 472 Kb / 0 Mb
  * nl.zeesoft.zsd.test.TestEntityValueTranslator: 117720 Kb / 114 Mb
- * nl.zeesoft.zsd.test.TestBaseConfigurationToJson: 120123 Kb / 117 Mb
+ * nl.zeesoft.zsd.test.TestBaseConfigurationToJson: 117733 Kb / 114 Mb
  * nl.zeesoft.zsd.test.TestEntityToJson: 117731 Kb / 114 Mb
  * nl.zeesoft.zsd.test.TestDialogToJson: 118023 Kb / 115 Mb
  * nl.zeesoft.zsd.test.TestDialogSetToJson: 117825 Kb / 115 Mb
  * nl.zeesoft.zsd.test.TestRequestResponseToJson: 117859 Kb / 115 Mb
  * nl.zeesoft.zsd.test.TestInitializer: 117835 Kb / 115 Mb
  * nl.zeesoft.zsd.test.TestInterpreterConfiguration: 547604 Kb / 534 Mb
- * nl.zeesoft.zsd.test.TestLanguageClassifier: 547604 Kb / 534 Mb
+ * nl.zeesoft.zsd.test.TestLanguageClassifier: 547605 Kb / 534 Mb
  * nl.zeesoft.zsd.test.TestLanguageMasterContextClassifier: 547605 Kb / 534 Mb
  * nl.zeesoft.zsd.test.TestLanguageContextClassifier: 547606 Kb / 534 Mb
  * nl.zeesoft.zsd.test.TestSequenceInterpreter: 547613 Kb / 534 Mb

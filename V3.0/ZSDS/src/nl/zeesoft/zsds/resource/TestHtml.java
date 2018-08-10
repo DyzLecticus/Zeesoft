@@ -117,8 +117,9 @@ public class TestHtml extends HtmlResource {
 		getHeadElements().add(script);
 		
 		ZStringBuilder html = new ZStringBuilder();
-		html.append("<div>\n");
 		html.append("<a href=\"index.html\">Index</a>");
+		html.append("<hr />");
+		html.append("<div>\n");
 		
 		html.append("<div>\n");
 		html.append("<table style=\"width: 100%;\">\n");

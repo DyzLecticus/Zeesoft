@@ -192,7 +192,7 @@ public class AppConfiguration {
 		r.setLanguagePreprocessor(getNewSequencePreprocessor());
 		r.setEntityValueTranslator(getNewEntityValueTranslator());
 		r.setDialogSet(getNewDialogSet());
-		return new DialogHandlerConfiguration(messenger,union,baseConfig);
+		return r;
 	}
 
 	protected DialogHandlerConfiguration getNewDialogHandlerConfiguration() {

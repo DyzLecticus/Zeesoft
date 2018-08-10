@@ -27,12 +27,18 @@ public class SelfTestHtml extends HtmlResource {
 		script.append("ZSDS.selfTest.reload = function() {\n");
 		script.append("    elem = window.document.getElementById(\"reloadCheck\");\n");
 		script.append("    if (elem.checked) {\n");
+		script.append("        elem.checked = false;\n");
+		script.append("        elem = window.document.getElementById(\"summary\");\n");
 		script.append("        elem.value = \"Sending request ...\";\n");
 		script.append("        ZSDS.xhr.postJSON(\"reload.json\",\"\",ZSDS.selfTest.reloadCallback,ZSDS.selfTest.reloadCallback);\n");
 		script.append("    }\n");
 		script.append("};\n");
 		script.append("ZSDS.selfTest.reloadCallback = function(xhr) {\n");
-		script.append("    alert(\"Callback\");\n");
+		script.append("    var response = xhr.responseText;\n");
+		script.append("    var object = ZSDS.xhr.parseResponseJSON(response);\n");
+		script.append("    if (object.error) {\n");
+		script.append("        alert(object.error);\n");
+		script.append("    }\n");
 		script.append("    ZSDS.selfTest.refresh();\n");
 		script.append("};\n");
 		script.append("ZSDS.selfTest.onload = function() {\n");
@@ -42,8 +48,9 @@ public class SelfTestHtml extends HtmlResource {
 		getHeadElements().add(script);
 		
 		ZStringBuilder html = new ZStringBuilder();
-		html.append("<div>\n");
 		html.append("<a href=\"index.html\">Index</a>");
+		html.append("<hr />");
+		html.append("<div>\n");
 		
 		html.append("<div>\n");
 		html.append("<table style=\"width: 100%;\">\n");

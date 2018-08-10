@@ -55,6 +55,9 @@ public class InitializerWorker extends Worker {
 				cls.errors.append("\n");
 			}
 			cls.errors.append("An exception occured while initializing the object: " + e);
+			if (getMessenger()!=null) {
+				getMessenger().error(this,"An exception occured while initializing the object",e);
+			}
 		}
 		cls.ms = (new Date()).getTime() - started.getTime();
 		init.initializedClass(cls.name);

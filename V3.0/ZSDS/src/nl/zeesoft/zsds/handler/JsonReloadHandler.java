@@ -44,7 +44,8 @@ public class JsonReloadHandler extends JsonBaseHandlerObject {
 					if (getConfiguration().reload()) {
 						out.println("{\"response\": \"" + getConfiguration().getBaseConfig().getName() + " is reloading.\"}");
 					} else {
-						out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is already reloading."));
+						// TODO: Fix reload error in this case.
+						out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is already reloading. Please wait."));
 					}
 				}
 			} else {
