@@ -290,10 +290,14 @@ public class EnglishCountry extends EntityObject {
 		addCountry("United Arab Emirates","AE");
 		addCountry("the United Kingdom","GB");
 		addCountry("United Kingdom","GB");
+		addCountry("Great Britain","GB");
+		addCountry("the UK","GB");
 		addCountry("UK","GB");
 		addCountry("the United States","US");
 		addCountry("United States","US");
+		addCountry("the US","US");
 		addCountry("US","US");
+		addCountry("the USA","US");
 		addCountry("USA","US");
 		addCountry("America","US");
 		addCountry("the United States Minor Outlying Islands","UM");

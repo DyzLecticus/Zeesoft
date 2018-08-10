@@ -301,10 +301,12 @@ public class DutchCountry extends EntityObject {
 		addCountry("de Verenigde Staten","US");
 		addCountry("Verenigde Staten","US");
 		addCountry("Amerika","US");
+		addCountry("de VS","US");
 		addCountry("VS","US");
 		addCountry("het Verenigd Koninkrijk","GB");
 		addCountry("Verenigd Koninkrijk","GB");
 		addCountry("Engeland","GB");
+		addCountry("Groot Brittannie","GB");
 		addCountry("Vietnam","VN");
 		addCountry("Wallis en Futuna","WF");
 		addCountry("Westelijke Sahara","EH");
