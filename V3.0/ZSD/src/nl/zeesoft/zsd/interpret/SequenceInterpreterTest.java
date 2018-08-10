@@ -1,4 +1,4 @@
-package nl.zeesoft.zsd.util;
+package nl.zeesoft.zsd.interpret;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 

@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
-import nl.zeesoft.zsd.util.SequenceInterpreterTester;
+import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 
 public class TestSequenceInterpreterTester extends TestObject {
 	public TestSequenceInterpreterTester(Tester tester) {

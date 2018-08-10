@@ -1,6 +1,4 @@
-package nl.zeesoft.zsd.util;
-
-import nl.zeesoft.zsd.interpret.InterpreterResponse;
+package nl.zeesoft.zsd.interpret;
 
 public class SequenceInterpreterTestResult {
 	public SequenceInterpreterTest	test					= null;

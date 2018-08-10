@@ -28,7 +28,6 @@ public class DialogHandlerConfiguration extends InterpreterConfiguration {
 	public DialogHandlerConfiguration(Messenger msgr, WorkerUnion uni, BaseConfiguration base) {
 		super(msgr,uni,base);
 	}
-
 	
 	@Override
 	public List<InitializeClass> getInitializeClasses() {
@@ -59,7 +58,6 @@ public class DialogHandlerConfiguration extends InterpreterConfiguration {
 		
 		return r;
 	}
-
 
 	public DialogSet getDialogSet() {
 		return dialogSet;

@@ -1,4 +1,4 @@
-package nl.zeesoft.zsd.util;
+package nl.zeesoft.zsd.interpret;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,21 +14,21 @@ import nl.zeesoft.zsd.DialogHandler;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogIO;
 import nl.zeesoft.zsd.dialog.DialogInstance;
-import nl.zeesoft.zsd.interpret.InterpreterRequest;
-import nl.zeesoft.zsd.interpret.InterpreterResponse;
+import nl.zeesoft.zsd.initialize.Initializable;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
-public class SequenceInterpreterTester extends Locker {
-	private DialogHandlerConfiguration			configuration	= null;
+public class SequenceInterpreterTester extends Locker implements Initializable {
+	private DialogHandlerConfiguration			configuration		= null;
 	
-	private List<SequenceInterpreterTest>		tests			= new ArrayList<SequenceInterpreterTest>();
-	private List<SequenceInterpreterTestResult>	results			= new ArrayList<SequenceInterpreterTestResult>();
+	private List<SequenceInterpreterTest>		tests				= new ArrayList<SequenceInterpreterTest>();
+	private List<SequenceInterpreterTestResult>	results				= new ArrayList<SequenceInterpreterTestResult>();
 	
-	private boolean								testing			= false;
-	private SequenceInterpreterTestWorker		worker			= null;
-	private Date								started			= null;
-	private JsFile								summary			= null;
-	
+	private boolean								testing				= false;
+	private SequenceInterpreterTestWorker		worker				= null;
+	private Date								started				= null;
+	private JsFile								summary				= null;
+	private JsFile								baseLineSummary		= null;
+
 	public SequenceInterpreterTester(DialogHandlerConfiguration configuration) {
 		super(null);
 		this.configuration = configuration;
@@ -39,6 +39,18 @@ public class SequenceInterpreterTester extends Locker {
 		super(msgr);
 		this.configuration = configuration;
 		worker = new SequenceInterpreterTestWorker(msgr,uni,this);
+	}
+	
+	@Override
+	public void initialize(List<ZStringBuilder> data) {
+		if (data!=null && data.size()>0) {
+			baseLineSummary = new JsFile();
+			baseLineSummary.fromStringBuilder(data.get(0));
+			if (baseLineSummary.rootElement==null || baseLineSummary.rootElement.children.size()==0) {
+				baseLineSummary = null;
+			}
+		}
+		initialize();
 	}
 	
 	public void initialize() {
@@ -77,6 +89,8 @@ public class SequenceInterpreterTester extends Locker {
 		boolean r = false;
 		lockMe(this);
 		if (tests.size()>0 && !testing && !worker.isWorking()) {
+			results.clear();
+			summary = null;
 			testing = true;
 			r = testing;
 			started = new Date();
@@ -111,7 +125,7 @@ public class SequenceInterpreterTester extends Locker {
 		unlockMe(this);
 		return r;
 	}
-
+	
 	protected boolean test() {
 		boolean done = false;
 		lockMe(this);
@@ -123,10 +137,11 @@ public class SequenceInterpreterTester extends Locker {
 		unlockMe(this);
 		if (test!=null) {
 			InterpreterRequest request = new InterpreterRequest();
-			request.setAllActions(true);
-			if (test.expectedLanguage.length()==0) {
-				request.classifyLanguage = false;
+			if (test.expectedLanguage.length()>0) {
+				request.classifyLanguage = true;
 			}
+			request.classifyMasterContext = true;
+			request.classifyContext = true;
 			request.input = test.input;
 			DialogHandler handler = new DialogHandler(configuration);
 			InterpreterResponse response = handler.handleInterpreterRequest(request);
@@ -188,12 +203,20 @@ public class SequenceInterpreterTester extends Locker {
 				}
 			}
 		}
+		int successPercentage = 0;
+		if (results.size()>0) {
+			successPercentage = (totalSuccess * 100) / results.size();
+		}
 		totalsElem.children.add(new JsElem("tests","" + tests.size()));
 		totalsElem.children.add(new JsElem("durationMs","" + ((new Date()).getTime() - started.getTime())));
-		if (results.size()>0) {
-			int successPercentage = (totalSuccess * 100) / results.size();
-			totalsElem.children.add(new JsElem("successful","" + totalSuccess));
-			totalsElem.children.add(new JsElem("successPercentage","" + successPercentage));
+		totalsElem.children.add(new JsElem("successful","" + totalSuccess));
+		totalsElem.children.add(new JsElem("successPercentage","" + successPercentage));
+		if (baseLineSummary!=null) {
+			int previousPercentage = baseLineSummary.rootElement.getChildByName("totals").getChildInt("successPercentage",-1);
+			if (previousPercentage>=0) {
+				int difference = (successPercentage - previousPercentage);
+				totalsElem.children.add(new JsElem("baseLineDifference","" + difference));
+			}
 		}
 		return json;
 	}
@@ -210,11 +233,13 @@ public class SequenceInterpreterTester extends Locker {
 		err.append("" + prob);
 		err.append(") <> ");
 		err.append(expected);
+		err.append(" (");
 		if (expectedFound!=null) {
-			err.append(" (");
 			err.append("" + expectedFound.probNormalized);
-			err.append(")");
+		} else {
+			err.append("?");
 		}
+		err.append(")");
 		return err;
 	}
 	

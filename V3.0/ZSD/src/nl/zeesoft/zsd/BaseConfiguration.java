@@ -59,6 +59,8 @@ public class BaseConfiguration {
 	private long								maxMsInterpretPerSequence	= 2000;
 	private long								maxMsDialogPerSequence		= 1000;
 
+	private String								selfTestBaseLineFileName	= "selfTestBaseLineSummary.json";
+	
 	public BaseConfiguration() {
 		initialize();
 	}
@@ -88,6 +90,7 @@ public class BaseConfiguration {
 		json.rootElement.children.add(new JsElem("maxMsInterpretPerSymbol","" + maxMsInterpretPerSymbol));
 		json.rootElement.children.add(new JsElem("maxMsInterpretPerSequence","" + maxMsInterpretPerSequence));
 		json.rootElement.children.add(new JsElem("maxMsDialogPerSequence","" + maxMsDialogPerSequence));
+		json.rootElement.children.add(new JsElem("selfTestBaseLineFileName","" + selfTestBaseLineFileName));
 		JsElem langsElem = new JsElem("supportedLanguages",true);
 		json.rootElement.children.add(langsElem);
 		for (String language: supportedLanguages) {
@@ -127,6 +130,7 @@ public class BaseConfiguration {
 		maxMsInterpretPerSymbol = json.rootElement.getChildLong("maxMsInterpretPerSymbol",maxMsInterpretPerSymbol);
 		maxMsInterpretPerSequence = json.rootElement.getChildLong("maxMsInterpretPerSequence",maxMsInterpretPerSequence);
 		maxMsDialogPerSequence = json.rootElement.getChildLong("maxMsDialogPerSequence",maxMsDialogPerSequence);
+		selfTestBaseLineFileName = json.rootElement.getChildString("selfTestBaseLineFileName",selfTestBaseLineFileName);
 		JsElem langsElem = json.rootElement.getChildByName("supportedLanguages");
 		if (langsElem!=null) {
 			for (JsElem langElem: langsElem.children) {
@@ -371,6 +375,14 @@ public class BaseConfiguration {
 	 */
 	public void setMaxMsDialogPerSequence(long maxMsDialogPerSequence) {
 		this.maxMsDialogPerSequence = maxMsDialogPerSequence;
+	}
+
+	public String getSelfTestBaseLineFileName() {
+		return selfTestBaseLineFileName;
+	}
+
+	public void setSelfTestBaseLineFileName(String selfTestBaseLineFileName) {
+		this.selfTestBaseLineFileName = selfTestBaseLineFileName;
 	}
 
 	protected void initialize() {
