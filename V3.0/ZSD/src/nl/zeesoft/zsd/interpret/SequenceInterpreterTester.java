@@ -3,6 +3,9 @@ package nl.zeesoft.zsd.interpret;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
@@ -29,6 +32,8 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 	private JsFile								summary				= null;
 	private JsFile								baseLineSummary		= null;
 
+	private List<TesterListener>				listeners			= new ArrayList<TesterListener>();
+
 	public SequenceInterpreterTester(DialogHandlerConfiguration configuration) {
 		super(null);
 		this.configuration = configuration;
@@ -39,6 +44,10 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 		super(msgr);
 		this.configuration = configuration;
 		worker = new SequenceInterpreterTestWorker(msgr,uni,this);
+	}
+	
+	public void addListener(TesterListener listener) {
+		listeners.add(listener);
 	}
 	
 	@Override
@@ -74,6 +83,7 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 					}
 				}
 				SequenceInterpreterTest test = new SequenceInterpreterTest();
+				test.dialogId = dialog.getId();
 				test.input = example.input;
 				if (!found) {
 					test.expectedLanguage = dialog.getLanguage();
@@ -158,6 +168,9 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 			testing = false;
 			summary = createSummary();
 			unlockMe(this);
+			for (TesterListener listener: listeners) {
+				listener.testingIsDone();
+			}
 		}
 		return done;
 	}
@@ -165,11 +178,12 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 	private JsFile createSummary() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		JsElem totalsElem = new JsElem("totals",true);
+		JsElem totalsElem = new JsElem("totals");
 		json.rootElement.children.add(totalsElem);
 		JsElem errsElem = new JsElem("errors",true);
 		json.rootElement.children.add(errsElem);
 		int totalSuccess = 0;
+		SortedMap<String,Integer> dialogIdErrors = new TreeMap<String,Integer>(); 
 		if (results.size()>0) {
 			for (SequenceInterpreterTestResult result: results) {
 				if (result.success) {
@@ -177,6 +191,7 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 				} else {
 					JsElem errElem = new JsElem();
 					errsElem.children.add(errElem);
+					errElem.children.add(new JsElem("dialog",result.test.dialogId,true));
 					errElem.children.add(new JsElem("input",result.test.input,true));
 					if (result.response.request.classifyLanguage && result.response.responseLanguages.size()==0) {
 						errElem.children.add(new JsElem("error","Failed to classify language",true));
@@ -200,6 +215,12 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 						ZStringBuilder err = getMismatchError("context",res.symbol,res.probNormalized,result.test.expectedContext,found);
 						errElem.children.add(new JsElem("error",err,true));
 					}
+					Integer errs = dialogIdErrors.get(result.test.dialogId);
+					if (errs==null) {
+						errs = new Integer(0);
+					}
+					errs++;
+					dialogIdErrors.put(result.test.dialogId,errs);
 				}
 			}
 		}
@@ -216,6 +237,27 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 			if (previousPercentage>=0) {
 				int difference = (successPercentage - previousPercentage);
 				totalsElem.children.add(new JsElem("baseLineDifference","" + difference));
+			}
+		}
+		if (dialogIdErrors.size()>0) {
+			JsElem dialogsElem = new JsElem("errorsPerDialog",true);
+			totalsElem.children.add(dialogsElem);
+			SortedMap<Integer,List<String>> errorDialogIds = new TreeMap<Integer,List<String>>();
+			for (Entry<String,Integer> entry: dialogIdErrors.entrySet()) {
+				List<String> dialogIds = errorDialogIds.get(entry.getValue());
+				if (dialogIds==null) {
+					dialogIds = new ArrayList<String>();
+				}
+				dialogIds.add(entry.getKey());
+				errorDialogIds.put(entry.getValue(),dialogIds);
+			}
+			for (Entry<Integer,List<String>> entry: errorDialogIds.entrySet()) {
+				for (String dialogId: entry.getValue()) {
+					JsElem dialogElem = new JsElem();
+					dialogsElem.children.add(0,dialogElem);
+					dialogElem.children.add(new JsElem("id",dialogId,true));
+					dialogElem.children.add(new JsElem("errors","" + entry.getKey()));
+				}
 			}
 		}
 		return json;

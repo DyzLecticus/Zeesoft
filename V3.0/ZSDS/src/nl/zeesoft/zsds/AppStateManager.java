@@ -1,5 +1,6 @@
 package nl.zeesoft.zsds;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -11,19 +12,25 @@ import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.InitializerListener;
+import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
+import nl.zeesoft.zsd.interpret.SequenceInterpreterTesterInitializer;
+import nl.zeesoft.zsd.interpret.TesterListener;
 import nl.zeesoft.zsd.util.LanguageJsonGenerator;
 
-public class AppStateManager extends Locker implements InitializerListener {
-	private AppConfiguration			configuration				= null;
-	private DataGenerator				generator					= null;
+public class AppStateManager extends Locker implements InitializerListener, TesterListener {
+	private AppConfiguration						configuration				= null;
+	private DataGenerator							generator					= null;
 
-	private DialogHandlerConfiguration	dialogHandlerConfig			= null;
-	private DialogHandlerConfiguration	dialogHandlerConfigLoad		= null;
-	private boolean						reload						= false;
-	private boolean						reading						= false;
-	private boolean						writing						= false;
-	private String						lastModifiedHeader			= getLastModifiedDateString();
+	private DialogHandlerConfiguration				dialogHandlerConfig			= null;
+	private DialogHandlerConfiguration				dialogHandlerConfigLoad		= null;
+	private boolean									reload						= false;
+	private boolean									reading						= false;
+	private boolean									writing						= false;
+	private String									lastModifiedHeader			= getLastModifiedDateString();
 
+	private SequenceInterpreterTester				tester						= null;
+	private SequenceInterpreterTesterInitializer	testerInitializer			= null;
+	
 	public AppStateManager(AppConfiguration configuration) {
 		super(configuration.getMessenger());
 		this.configuration = configuration;
@@ -78,22 +85,48 @@ public class AppStateManager extends Locker implements InitializerListener {
 
 	@Override
 	public void initializedClass(InitializeClass cls, boolean done) {
-		if (cls.errors.length()>0) {
-			configuration.getMessenger().error(this,cls.errors.toString());
-		}
-		if (done) {
-			boolean reloaded = false;
-			lockMe(this);
-			reading = false;
-			reloaded = reload;
-			dialogHandlerConfig = dialogHandlerConfigLoad;
-			lastModifiedHeader = getLastModifiedDateString();
-			unlockMe(this);
-			if (reloaded) {
-				configuration.debug(this,"Reloaded data ...");
-			} else {
-				configuration.debug(this,"Loaded data ...");
+		if (cls.obj instanceof SequenceInterpreterTester) {
+			if (cls.errors.length()>0) {
+				configuration.getMessenger().warn(this,cls.errors.toString());
 			}
+			configuration.debug(this,"Initialized tester");
+			lockMe(this);
+			tester = testerInitializer.getTester();
+			tester.start();
+			unlockMe(this);
+			configuration.debug(this,"Testing ...");
+		} else {
+			if (cls.errors.length()>0) {
+				configuration.getMessenger().error(this,cls.errors.toString());
+			}
+			if (done) {
+				boolean reloaded = false;
+				lockMe(this);
+				reading = false;
+				reloaded = reload;
+				dialogHandlerConfig = dialogHandlerConfigLoad;
+				lastModifiedHeader = getLastModifiedDateString();
+				testerInitializer = configuration.getNewSequenceInterpreterTesterInitializer(dialogHandlerConfig);
+				testerInitializer.addListener(this);
+				testerInitializer.getTester().addListener(this);
+				testerInitializer.start();
+				unlockMe(this);
+				if (reloaded) {
+					configuration.debug(this,"Reloaded data");
+				} else {
+					configuration.debug(this,"Loaded data");
+				}
+				configuration.debug(this,"Initializing tester ...");
+			}
+		}
+	}
+
+	@Override
+	public void testingIsDone() {
+		configuration.debug(this,"Tested");
+		File test = new File(testerInitializer.getFileName());
+		if (!test.exists()) {
+			tester.getSummary().toFile(testerInitializer.getFileName(),true);
 		}
 	}
 
@@ -113,6 +146,14 @@ public class AppStateManager extends Locker implements InitializerListener {
 		return r;
 	}
 
+	public SequenceInterpreterTester getTester() {
+		SequenceInterpreterTester r = null;
+		lockMe(this);
+		r = tester;
+		unlockMe(this);
+		return r;
+	}
+	
 	public String getLastModifiedHeader() {
 		String r = "";
 		lockMe(this);

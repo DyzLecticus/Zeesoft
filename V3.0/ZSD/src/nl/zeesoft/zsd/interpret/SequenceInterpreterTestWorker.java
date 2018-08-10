@@ -10,7 +10,7 @@ public class SequenceInterpreterTestWorker extends Worker {
 	public SequenceInterpreterTestWorker(Messenger msgr, WorkerUnion union,SequenceInterpreterTester tester) {
 		super(msgr, union);
 		this.tester = tester;
-		setSleep(0);
+		setSleep(10);
 	}
 
 	@Override

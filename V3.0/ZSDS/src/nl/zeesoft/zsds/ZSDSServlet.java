@@ -29,8 +29,11 @@ public class ZSDSServlet extends HttpServlet {
 		if (installDir==null || installDir.length()==0) {
 			installDir = config.getServletContext().getRealPath("");
 		}
-		if (!installDir.endsWith("/")) {
-			installDir += "/";
+		if (installDir.length()>0) {
+			if (!installDir.endsWith("/")) {
+				installDir += "/";
+			}
+			installDir = installDir.replaceAll("\\\\","/");
 		}
 		
 		String dbg = config.getInitParameter("debug");

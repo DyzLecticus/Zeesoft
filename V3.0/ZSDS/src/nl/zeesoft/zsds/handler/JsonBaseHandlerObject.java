@@ -41,8 +41,8 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
-		super.doPost(request, response);
 		response.setContentType("application/json");
+		response.setStatus(200);
 		PrintWriter out;
 		ZStringBuilder js = new ZStringBuilder();
 		

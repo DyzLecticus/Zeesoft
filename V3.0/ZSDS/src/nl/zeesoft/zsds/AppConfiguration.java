@@ -16,17 +16,21 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequencePreprocessor;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogSet;
+import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
+import nl.zeesoft.zsd.interpret.SequenceInterpreterTesterInitializer;
 import nl.zeesoft.zsd.util.LanguageJsonGenerator;
 import nl.zeesoft.zsds.handler.BaseJavaScriptHandler;
 import nl.zeesoft.zsds.handler.BaseStyleSheetHandler;
 import nl.zeesoft.zsds.handler.HandlerObject;
 import nl.zeesoft.zsds.handler.HtmlIndexHandler;
 import nl.zeesoft.zsds.handler.HtmlNotFoundHandler;
+import nl.zeesoft.zsds.handler.HtmlSelfTestHandler;
 import nl.zeesoft.zsds.handler.HtmlTestHandler;
 import nl.zeesoft.zsds.handler.JsonConfigHandler;
 import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 import nl.zeesoft.zsds.handler.JsonDialogsHandler;
 import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
+import nl.zeesoft.zsds.handler.JsonSelfTestHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
 
 public class AppConfiguration {
@@ -166,6 +170,10 @@ public class AppConfiguration {
 		return stateManager.getDialogHandlerConfig();
 	}
 	
+	public SequenceInterpreterTester getTester() {
+		return stateManager.getTester();
+	}
+	
 	public String getLastModifiedHeader() {
 		return stateManager.getLastModifiedHeader();
 	}
@@ -185,7 +193,11 @@ public class AppConfiguration {
 	protected DialogHandlerConfiguration getNewDialogHandlerConfiguration() {
 		return new DialogHandlerConfiguration(messenger,union,baseConfig);
 	}
-	
+
+	protected SequenceInterpreterTesterInitializer getNewSequenceInterpreterTesterInitializer(DialogHandlerConfiguration configuration) {
+		return new SequenceInterpreterTesterInitializer(messenger,union,configuration);
+	}
+
 	protected SequencePreprocessor getNewSequencePreprocessor() {
 		return new SequencePreprocessor();
 	}
@@ -209,11 +221,13 @@ public class AppConfiguration {
 		r.add(new HtmlNotFoundHandler(this));
 		r.add(new HtmlIndexHandler(this));
 		r.add(new HtmlTestHandler(this));
+		r.add(new HtmlSelfTestHandler(this));
 		r.add(new JsonNotFoundHandler(this));
 		r.add(new JsonConfigHandler(this));
 		r.add(new JsonDialogsHandler(this));
 		r.add(new JsonTestDialogRequestHandler(this));
 		r.add(new JsonDialogRequestHandler(this));
+		r.add(new JsonSelfTestHandler(this));
 		return r;
 	}
 }

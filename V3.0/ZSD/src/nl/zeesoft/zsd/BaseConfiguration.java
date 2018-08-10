@@ -90,7 +90,7 @@ public class BaseConfiguration {
 		json.rootElement.children.add(new JsElem("maxMsInterpretPerSymbol","" + maxMsInterpretPerSymbol));
 		json.rootElement.children.add(new JsElem("maxMsInterpretPerSequence","" + maxMsInterpretPerSequence));
 		json.rootElement.children.add(new JsElem("maxMsDialogPerSequence","" + maxMsDialogPerSequence));
-		json.rootElement.children.add(new JsElem("selfTestBaseLineFileName","" + selfTestBaseLineFileName));
+		json.rootElement.children.add(new JsElem("selfTestBaseLineFileName",selfTestBaseLineFileName,true));
 		JsElem langsElem = new JsElem("supportedLanguages",true);
 		json.rootElement.children.add(langsElem);
 		for (String language: supportedLanguages) {

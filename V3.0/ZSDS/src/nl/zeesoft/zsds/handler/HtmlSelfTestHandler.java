@@ -8,16 +8,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsds.AppConfiguration;
+import nl.zeesoft.zsds.resource.SelfTestHtml;
 
-public class JsonConfigHandler extends HandlerObject {
-	public JsonConfigHandler(AppConfiguration config) {
-		super(config,"/config.json");
+public class HtmlSelfTestHandler extends HandlerObject {
+	public HtmlSelfTestHandler(AppConfiguration config) {
+		super(config,"/selfTest.html");
 	}
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		setDefaultHeadersAndStatus(response);
-		response.setContentType("application/json");
+		response.setContentType("text/html");
 		PrintWriter out;
 		try {
 			out = response.getWriter();
@@ -29,6 +30,7 @@ public class JsonConfigHandler extends HandlerObject {
 
 	@Override
 	protected ZStringBuilder buildResponse() {
-		return getConfiguration().getBaseConfig().toJson().toStringBuilderReadFormat();
+		SelfTestHtml html = new SelfTestHtml();
+		return html.toStringBuilder();
 	}
 }
