@@ -18,8 +18,14 @@ public class DutchGenericCancel extends GenericCancel {
 	@Override
 	public void initialize(EntityValueTranslator t) {
 		for (String answer: getAnswers()) {
+			addExample("Stop.",answer);
 			addExample("Niets.",answer);
 			addExample("Laat maar zitten.",answer);
+			addExample("Ik wil geen actie ondernemen.",answer);
+			addExample("Ik wil helemaal geen actie ondernemen.",answer);
+			addExample("Dat wil ik helemaal niet.",answer);
+			addExample("Dat wil ik niet.",answer);
+			addExample("Ik wil dat niet doen.",answer);
 		}
 	}
 

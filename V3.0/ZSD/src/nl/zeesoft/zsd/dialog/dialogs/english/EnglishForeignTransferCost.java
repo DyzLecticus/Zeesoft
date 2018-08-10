@@ -12,16 +12,6 @@ public class EnglishForeignTransferCost extends ForeignTransferCost {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		addExample("What does money transfer to a foreign country cost?",getDefaultOutput());
-		addExample("What does it cost to transfer money to a foreign country?",getDefaultOutput());
-		addExample("What are the costs of transferring money to a foreign country?",getDefaultOutput());
-		addExample("How much does ot cost to transfer money to a foreign country?",getDefaultOutput());
-		addExample("Are there any costs attached to transfer money to a foreign country?",getDefaultOutput());
-		addExample("What does a transfer abroad cost?",getDefaultOutput());
-		addExample("What does it cost to transfer money abroad?",getDefaultOutput());
-		addExample("How much does ot cost to transfer abroad?",getDefaultOutput());
-		addExample("Are there any costs attached to transferring money abroad?",getDefaultOutput());
-
 		addExample("What does money transfer to [" + BaseConfiguration.TYPE_COUNTRY + "] cost?",getCountryOutput());
 		addExample("What does it cost to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("What are the costs of transferring money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
@@ -29,10 +19,6 @@ public class EnglishForeignTransferCost extends ForeignTransferCost {
 		addExample("Are there any costs attached to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 
 		addVariable(VARIABLE_TRANSFER_TO_COUNTRY,BaseConfiguration.TYPE_COUNTRY);
-	}
-	
-	protected String getDefaultOutput() {
-		return "A foreign transfer costs {cost} {costCurrency}.";
 	}
 	
 	protected String getCountryOutput() {

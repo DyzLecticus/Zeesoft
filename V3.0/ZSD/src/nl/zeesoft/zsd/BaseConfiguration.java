@@ -33,6 +33,7 @@ public class BaseConfiguration {
 	public static final String					TYPE_PREPOSITION			= "PRE";
 	public static final String					TYPE_COUNTRY				= "CNT";
 	public static final String					TYPE_LANGUAGE				= "LNG";
+	public static final String					TYPE_CURRENCY				= "CUR";
 	public static final String					TYPE_PROFANITY				= "PRF";
 	public static final String					TYPE_CONFIRMATION			= "CNF";
 

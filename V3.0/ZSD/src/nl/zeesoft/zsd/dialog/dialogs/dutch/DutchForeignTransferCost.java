@@ -12,20 +12,6 @@ public class DutchForeignTransferCost extends ForeignTransferCost {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		addExample("Wat kost een overboeking naar het buitenland?",getDefaultOutput());
-		addExample("Wat zijn de kosten van een overboeking naar het buitenland?",getDefaultOutput());
-		addExample("Wat kost geld overboeken naar het buitenland?",getDefaultOutput());
-		addExample("Wat kost het om geld over te boeken naar het buitenland?",getDefaultOutput());
-		addExample("Wat kost geld overmaken naar het buitenland?",getDefaultOutput());
-		addExample("Wat kost het om geld over te maken naar het buitenland?",getDefaultOutput());
-		addExample("Zijn er kosten verbonden aan geld overmaken naar het buitenland?",getDefaultOutput());
-		addExample("Zijn er kosten verbonden aan geld overboeken naar het buitenland?",getDefaultOutput());
-		addExample("Hoeveel kost een overboeking naar het buitenland?",getDefaultOutput());
-		addExample("Hoeveel kost geld overboeken naar het buitenland?",getDefaultOutput());
-		addExample("Hoeveel kost het om geld over te boeken naar het buitenland?",getDefaultOutput());
-		addExample("Hoeveel kost geld overmaken naar het buitenland?",getDefaultOutput());
-		addExample("Hoeveel kost het om geld over te maken naar het buitenland?",getDefaultOutput());
-
 		addExample("Wat kost een overboeking naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Wat zijn de kosten van een overboeking naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Wat kost geld overboeken naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
@@ -41,10 +27,6 @@ public class DutchForeignTransferCost extends ForeignTransferCost {
 		addExample("Hoeveel kost het om geld over te maken naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 
 		addVariable(VARIABLE_TRANSFER_TO_COUNTRY,BaseConfiguration.TYPE_COUNTRY);
-	}
-	
-	protected String getDefaultOutput() {
-		return "Een overboeking naar het buitenland kost {cost} {costCurrency}.";
 	}
 	
 	protected String getCountryOutput() {

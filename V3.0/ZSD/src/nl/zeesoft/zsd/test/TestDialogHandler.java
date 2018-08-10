@@ -163,6 +163,17 @@ public class TestDialogHandler extends TestInitializer {
 				"UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:engels ?",
 				"UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:Engels ?",
 				"Ja, ik spreek Engels en Nederlands.","");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Wat kost overboeken naar buitenland?",
+				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:buitenland ?",
+				"Een overboeking naar het buitenland kost vijf euro.","");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Wat kost overboeken naar italie?",
+				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:italie ?",
+				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:italië ?",
+				"Een overboeking naar Italië kost vijf euro.","");
 		}
 	}
 	

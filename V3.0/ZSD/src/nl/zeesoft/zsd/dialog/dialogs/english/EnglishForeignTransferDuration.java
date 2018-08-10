@@ -12,23 +12,10 @@ public class EnglishForeignTransferDuration extends ForeignTransferDuration {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		addExample("How long does foreign transfer take?",getDefaultOutput());
-		addExample("How long does it take to transfer money to a foreign country?",getDefaultOutput());
-		addExample("How much time does it take to transfer money to a foreign country?",getDefaultOutput());
-		addExample("How much time does foreign transfer take?",getDefaultOutput());
-		addExample("How long does transfer abroad take?",getDefaultOutput());
-		addExample("How long does it take to transfer money abroad?",getDefaultOutput());
-		addExample("How much time does it take to transfer money abroad?",getDefaultOutput());
-		addExample("How much time does transfer abroad take?",getDefaultOutput());
-
 		addExample("How long does it take to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("How much time does it take to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 
 		addVariable(VARIABLE_TRANSFER_TO_COUNTRY,BaseConfiguration.TYPE_COUNTRY);
-	}
-	
-	protected String getDefaultOutput() {
-		return "A foreign transfer takes {duration} {durationDays}.";
 	}
 	
 	protected String getCountryOutput() {

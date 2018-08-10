@@ -13,6 +13,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferCost;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDuration;
+import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferQnA;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericCancel;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericClassification;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericHandshake;
@@ -26,6 +27,7 @@ import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchRoomQnA;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchSupportRequest;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishForeignTransferCost;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishForeignTransferDuration;
+import nl.zeesoft.zsd.dialog.dialogs.english.EnglishForeignTransferQnA;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericCancel;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericClassification;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericHandshake;
@@ -129,6 +131,7 @@ public class DialogSet implements Initializable {
 		r.add(new EnglishRoomQnA());
 		r.add(new EnglishForeignTransferCost());
 		r.add(new EnglishForeignTransferDuration());
+		r.add(new EnglishForeignTransferQnA());
 		r.add(new DutchGenericClassification());
 		r.add(new DutchGenericCancel());
 		r.add(new DutchGenericThanks());
@@ -142,6 +145,7 @@ public class DialogSet implements Initializable {
 		r.add(new DutchRoomQnA());
 		r.add(new DutchForeignTransferCost());
 		r.add(new DutchForeignTransferDuration());
+		r.add(new DutchForeignTransferQnA());
 		return r;
 	}
 	

@@ -8,8 +8,8 @@ import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.interpret.InterpreterConfiguration;
 
 public class TestLanguageContextClassifier extends TestLanguageMasterContextClassifier {
-	private static final int	EXPECTED_ENGLISH_LINKS	= 475;
-	private static final int	EXPECTED_DUTCH_LINKS	= 601;
+	private static final int	EXPECTED_ENGLISH_LINKS	= 499;
+	private static final int	EXPECTED_DUTCH_LINKS	= 637;
 	
 	public TestLanguageContextClassifier(Tester tester) {
 		super(tester);

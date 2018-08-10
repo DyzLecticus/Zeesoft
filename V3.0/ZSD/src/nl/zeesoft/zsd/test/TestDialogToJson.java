@@ -9,7 +9,7 @@ import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.util.DialogToJson;
 
 public class TestDialogToJson extends TestEntityToJson {
-	private static final int	SEQUENCE_ELEMENTS	= 1493;
+	private static final int	SEQUENCE_ELEMENTS	= 1530;
 	
 	public TestDialogToJson(Tester tester) {
 		super(tester);

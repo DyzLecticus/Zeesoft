@@ -140,6 +140,14 @@ public class TestEntityValueTranslator extends TestObject {
 			"tien keer vijf",
 			"NL_NUM:10|UN_ABC:tien NL_MTH:M|UN_ABC:keer NL_NUM:5|UN_ABC:vijf",
 			"tien vermenigvuldigd met vijf");
+		testTranslation(t,"",
+			"fifteen british pound",
+			"EN_NUM:15|UN_ABC:fifteen EN_CUR:GBP",
+			"fifteen british pound sterling");
+		testTranslation(t,"",
+			"vijftien euro",
+			"NL_NUM:15|UN_ABC:vijftien EN_CUR:EUR|NL_CUR:EUR|UN_ABC:euro",
+			"vijftien euro");
 		
 		UniversalMathematic math = (UniversalMathematic) t.getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
 		

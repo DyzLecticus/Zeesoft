@@ -19,8 +19,13 @@ public class EnglishGenericCancel extends GenericCancel {
 	@Override
 	public void initialize(EntityValueTranslator t) {
 		for (String answer: getAnswers()) {
+			addExample("Stop.",answer);
+			addExample("Abort.",answer);
+			addExample("Cancel.",answer);
 			addExample("Nothing.",answer);
 			addExample("Nevermind.",answer);
+			addExample("Leave it.",answer);
+			addExample("I do not want to do this.",answer);
 		}
 	}
 

@@ -12,15 +12,6 @@ public class DutchForeignTransferDuration extends ForeignTransferDuration {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		addExample("Hoelang duurt een overboeking naar het buitenland?",getDefaultOutput());
-		addExample("Hoelang duurt geld overboeken naar het buitenland?",getDefaultOutput());
-		addExample("Hoelang duurt het om geld over te boeken naar het buitenland?",getDefaultOutput());
-		addExample("Hoelang duurt geld overmaken naar het buitenland?",getDefaultOutput());
-		addExample("Hoelang duurt het om geld over te maken naar het buitenland?",getDefaultOutput());
-		addExample("Hoeveel tijd kost geld overboeken naar het buitenland?",getDefaultOutput());
-		addExample("Hoeveel tijd kost het om geld over te maken naar het buitenland?",getDefaultOutput());
-		addExample("Hoeveel tijd kost geld overmaken naar het buitenland?",getDefaultOutput());
-
 		addExample("Hoelang duurt een overboeking naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Hoelang duurt geld overboeken naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Hoelang duurt het om geld over te boeken naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
@@ -31,10 +22,6 @@ public class DutchForeignTransferDuration extends ForeignTransferDuration {
 		addExample("Hoeveel tijd kost geld overmaken naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		
 		addVariable(VARIABLE_TRANSFER_TO_COUNTRY,BaseConfiguration.TYPE_COUNTRY);
-	}
-	
-	protected String getDefaultOutput() {
-		return "Een overboeking naar het buitenland duurt {duration} {durationDays}.";
 	}
 	
 	protected String getCountryOutput() {
