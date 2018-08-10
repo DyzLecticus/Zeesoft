@@ -24,6 +24,17 @@ public class SelfTestHtml extends HtmlResource {
 		script.append("    elem = window.document.getElementById(\"summary\");\n");
 		script.append("    elem.value = JSON.stringify(object,null,2);\n");
 		script.append("};\n");
+		script.append("ZSDS.selfTest.reload = function() {\n");
+		script.append("    elem = window.document.getElementById(\"reloadCheck\");\n");
+		script.append("    if (elem.checked) {\n");
+		script.append("        elem.value = \"Sending request ...\";\n");
+		script.append("        ZSDS.xhr.postJSON(\"reload.json\",\"\",ZSDS.selfTest.reloadCallback,ZSDS.selfTest.reloadCallback);\n");
+		script.append("    }\n");
+		script.append("};\n");
+		script.append("ZSDS.selfTest.reloadCallback = function(xhr) {\n");
+		script.append("    alert(\"Callback\");\n");
+		script.append("    ZSDS.selfTest.refresh();\n");
+		script.append("};\n");
 		script.append("ZSDS.selfTest.onload = function() {\n");
 		script.append("    ZSDS.selfTest.refresh();\n");
 		script.append("};\n");
@@ -41,6 +52,13 @@ public class SelfTestHtml extends HtmlResource {
 		html.append("<tr>\n");
 		html.append("<td>");
 		html.append("<input type=\"button\" value=\"Refresh\" onclick=\"ZSDS.selfTest.refresh();\"/>");
+		html.append("</td>\n");
+		html.append("</tr>\n");
+		
+		html.append("<tr>\n");
+		html.append("<td>");
+		html.append("<input type=\"button\" value=\"Reload\" onclick=\"ZSDS.selfTest.reload();\"/>");
+		html.append("<input type=\"checkbox\" id=\"reloadCheck\"/>");
 		html.append("</td>\n");
 		html.append("</tr>\n");
 		

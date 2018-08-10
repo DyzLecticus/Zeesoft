@@ -30,6 +30,7 @@ import nl.zeesoft.zsds.handler.JsonConfigHandler;
 import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 import nl.zeesoft.zsds.handler.JsonDialogsHandler;
 import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
+import nl.zeesoft.zsds.handler.JsonReloadHandler;
 import nl.zeesoft.zsds.handler.JsonSelfTestHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
 
@@ -112,6 +113,10 @@ public class AppConfiguration {
 		return stateManager.isInitialized();
 	}
 
+	public boolean reload() {
+		return stateManager.reload();
+	}
+	
 	public void destroy() {
 		messenger.stop();
 		union.stopWorkers();
@@ -228,6 +233,7 @@ public class AppConfiguration {
 		r.add(new JsonTestDialogRequestHandler(this));
 		r.add(new JsonDialogRequestHandler(this));
 		r.add(new JsonSelfTestHandler(this));
+		r.add(new JsonReloadHandler(this));
 		return r;
 	}
 }
