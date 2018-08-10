@@ -9,7 +9,8 @@ public class EnglishGenericQnA extends GenericQnA {
 			"general questions" + 
 			", executing simple mathematical calculations" + 
 			", booking rooms" + 
-			" and questions about room bookings.";
+			", questions about room bookings" +
+			" and questions about foreign transfers.";
 	private static final String 		SELF	= "I am an artificially intelligent personal assistant.";
 	private static final String 		GOAL	= "My goal is to understand and help people.";
 	private static final String 		CREATOR	= "My software was written by André van der Zee.";
@@ -26,6 +27,12 @@ public class EnglishGenericQnA extends GenericQnA {
 		addExample("What is the answer to the question?","Fourtytwo.");
 		addExample("What is the answer?","Fourtytwo.");
 		addExample("What is the question?","I do not know.");
+		
+		addExample("What is the meaning of life?","Life has no meaning.");
+		addExample("What is the purpose of life?","Life has no purpose.");
+		addExample("Do you believe in free will?","I do not believe in free will. I am an adequate determinist.");
+		addExample("Do you believe in god?","I do not believe in god. I am an agnostic atheist.");
+		addExample("Do you believe in gods?","I do not believe in gods. I am an agnostic atheist.");
 		
 		addExample("How can you help me?",SUPPORT);
 		addExample("What can you do for me?",SUPPORT);

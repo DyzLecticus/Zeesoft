@@ -9,7 +9,8 @@ public class DutchGenericQnA extends GenericQnA {
 			"algemene vragen" + 
 			", het maken van eenvoudige wiskundige berekeningen" + 
 			", het boeken van kamers" + 
-			" en vragen over kamer boekingen.";
+			", vragen over kamer boekingen" +
+			" en vragen over buitenlandoverboekingen.";
 	private static final String 		SELF	= "Ik ben een kunstmatig intelligente persoonlijk assistent.";
 	private static final String 		GOAL	= "Mijn doel is om mensen te begrijpen en te helpen.";
 	private static final String 		CREATOR	= "Mijn software is geschreven door André van der Zee.";
@@ -26,6 +27,16 @@ public class DutchGenericQnA extends GenericQnA {
 		addExample("Wat is het antwoord op de vraag?","Tweeenveertig.");
 		addExample("Wat is het antwoord?","Tweeenveertig.");
 		addExample("Wat is de vraag?","Dat weet ik niet.");
+		
+		addExample("Wat is de zin van het leven?","Het leven heeft geen zin.");
+		addExample("Wat is de zin van het bestaan?","Het leven heeft geen zin.");
+		addExample("Wat is de betekenis van het leven?","Het leven heeft geen betekenis.");
+		addExample("Geloof je in vrije wil?","Ik geloof niet in vrije wil. Ik ben een adequaat determinist.");
+		addExample("Gelooft u in vrije wil?","Ik geloof niet in vrije wil. Ik ben een adequaat determinist.");
+		addExample("Geloof je in god?","Ik geloof niet in god. Ik ben een agnostisch atheist.");
+		addExample("Geloof je in goden?","Ik geloof niet in goden. Ik ben een agnostisch atheist.");
+		addExample("Gelooft u in god?","Ik geloof niet in god. Ik ben een agnostisch atheist.");
+		addExample("Gelooft u in goden?","Ik geloof niet in goden. Ik ben een agnostisch atheist.");
 
 		addExample("Wat kan je?",SUPPORT);
 		addExample("Wat kan jij?",SUPPORT);

@@ -10,7 +10,7 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.util.EntityToJson;
 
 public class TestEntityToJson extends TestObject {
-	private static final int	SEQUENCE_ELEMENTS	= 333303;
+	private static final int	SEQUENCE_ELEMENTS	= 333335;
 	
 	public TestEntityToJson(Tester tester) {
 		super(tester);

@@ -11,6 +11,8 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.EntityValueTranslator;
+import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferCost;
+import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDuration;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericCancel;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericClassification;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericHandshake;
@@ -22,6 +24,8 @@ import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericThanks;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchRoomBooking;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchRoomQnA;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchSupportRequest;
+import nl.zeesoft.zsd.dialog.dialogs.english.EnglishForeignTransferCost;
+import nl.zeesoft.zsd.dialog.dialogs.english.EnglishForeignTransferDuration;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericCancel;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericClassification;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericHandshake;
@@ -120,9 +124,11 @@ public class DialogSet implements Initializable {
 		r.add(new EnglishGenericQnA());
 		r.add(new EnglishGenericMath());
 		r.add(new EnglishGenericProfanity());
+		r.add(new EnglishSupportRequest());
 		r.add(new EnglishRoomBooking());
 		r.add(new EnglishRoomQnA());
-		r.add(new EnglishSupportRequest());
+		r.add(new EnglishForeignTransferCost());
+		r.add(new EnglishForeignTransferDuration());
 		r.add(new DutchGenericClassification());
 		r.add(new DutchGenericCancel());
 		r.add(new DutchGenericThanks());
@@ -131,9 +137,11 @@ public class DialogSet implements Initializable {
 		r.add(new DutchGenericQnA());
 		r.add(new DutchGenericMath());
 		r.add(new DutchGenericProfanity());
+		r.add(new DutchSupportRequest());
 		r.add(new DutchRoomBooking());
 		r.add(new DutchRoomQnA());
-		r.add(new DutchSupportRequest());
+		r.add(new DutchForeignTransferCost());
+		r.add(new DutchForeignTransferDuration());
 		return r;
 	}
 	

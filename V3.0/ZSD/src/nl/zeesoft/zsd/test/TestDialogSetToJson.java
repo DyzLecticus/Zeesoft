@@ -17,6 +17,8 @@ import nl.zeesoft.zsd.dialog.dialogs.GenericHandshake;
 import nl.zeesoft.zsd.util.DialogSetToJson;
 
 public class TestDialogSetToJson extends TestEntityToJson {
+	private static final int 	TOTAL_DIALOGS	= 26;
+	
 	public TestDialogSetToJson(Tester tester) {
 		super(tester);
 	}
@@ -63,7 +65,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 		assertEqual(json.rootElement.children.size(),1,"The number of children does not match expectation");
 		if (json.rootElement.children.size()>0) {
 			System.out.println("Converting " + json.rootElement.children.get(0).children.size() + " dialogs took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			assertEqual(json.rootElement.children.get(0).children.size(),11,"The number of dialog elements does not match expectation");
+			assertEqual(json.rootElement.children.get(0).children.size(),TOTAL_DIALOGS / 2,"The number of dialog elements does not match expectation");
 			showJsonSample(json,1);
 		}
 
@@ -75,7 +77,7 @@ public class TestDialogSetToJson extends TestEntityToJson {
 	}
 	
 	protected void testDialogSetContent(DialogSet ds, String suffix) {
-		assertEqual(ds.getDialogs().size(),22,"The number of dialogs does not match expectation" + suffix);
+		assertEqual(ds.getDialogs().size(),TOTAL_DIALOGS,"The number of dialogs does not match expectation" + suffix);
 		DialogInstance d = ds.getDialog(BaseConfiguration.LANG_ENG,Generic.MASTER_CONTEXT_GENERIC,GenericHandshake.CONTEXT_GENERIC_HANDSHAKE);
 		assertEqual(d!=null,true,"The expected dialog was not found" + suffix);
 		if (d!=null) {

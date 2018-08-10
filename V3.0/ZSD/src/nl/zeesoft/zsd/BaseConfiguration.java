@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsd.dialog.dialogs.ForeignTransfer;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.dialog.dialogs.Room;
 import nl.zeesoft.zsd.dialog.dialogs.Support;
@@ -395,8 +396,9 @@ public class BaseConfiguration {
 	protected void initializeSupportedMasterContextsForLanguage(String language) {
 		List<String> mcs = new ArrayList<String>();
 		mcs.add(Generic.MASTER_CONTEXT_GENERIC);
-		mcs.add(Room.MASTER_CONTEXT_ROOM);
 		mcs.add(Support.MASTER_CONTEXT_SUPPORT);
+		mcs.add(Room.MASTER_CONTEXT_ROOM);
+		mcs.add(ForeignTransfer.MASTER_CONTEXT_FOREIGN_TRANSFER);
 		supportedMasterContexts.put(language,mcs);
 	}
 }

@@ -1,5 +1,6 @@
 package nl.zeesoft.zsd.entity.entities.english;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.entity.EntityObject;
@@ -22,7 +23,19 @@ public class EnglishCountry extends EntityObject {
 	public String getExternalValueForInternalValue(String str) {
 		String v = super.getExternalValueForInternalValue(str);
 		if (v!=null && v.length()>0) {
-			v = Analyzer.upperCaseFirst(v);
+			String[] split = v.split(" ");
+			ZStringBuilder val = new ZStringBuilder();
+			for (int i = 0; i<split.length; i++) {
+				if (val.length()>0) {
+					val.append(" ");
+				}
+				if (!split[i].equals("the") && !split[i].equals("and")) {
+					val.append(Analyzer.upperCaseFirst(split[i]));
+				} else {
+					val.append(split[i]);
+				}
+			}
+			v = val.toString();
 		}
 		return v;
 	}
@@ -33,6 +46,7 @@ public class EnglishCountry extends EntityObject {
 		getToJsonPrefixes().add("to");
 		
 		addCountry("Afghanistan","AF");
+		addCountry("the Aland Islands","AX");
 		addCountry("Aland Islands","AX");
 		addCountry("Albania","AL");
 		addCountry("Algeria","DZ");
@@ -72,17 +86,20 @@ public class EnglishCountry extends EntityObject {
 		addCountry("Cameroon","CM");
 		addCountry("Canada","CA");
 		addCountry("Cape Verde","CV");
+		addCountry("the Cayman Islands","KY");
 		addCountry("Cayman Islands","KY");
 		addCountry("Central African Republic","CF");
 		addCountry("Chad","TD");
 		addCountry("Chile","CL");
 		addCountry("China","CN");
 		addCountry("Christmas Island","CX");
+		addCountry("the Cocos Islands","CC");
 		addCountry("Cocos Islands","CC");
 		addCountry("Colombia","CO");
 		addCountry("Comoros","KM");
 		addCountry("Congo","CG");
 		addCountry("Congo","CD");
+		addCountry("the Cook Islands","CK");
 		addCountry("Cook Islands","CK");
 		addCountry("Costa Rica","CR");
 		addCountry("Cote d Ivoire","CI");
@@ -101,7 +118,9 @@ public class EnglishCountry extends EntityObject {
 		addCountry("Eritrea","ER");
 		addCountry("Estonia","EE");
 		addCountry("Ethiopia","ET");
+		addCountry("the Falkland Islands","FK");
 		addCountry("Falkland Islands","FK");
+		addCountry("the Faroe Islands","FO");
 		addCountry("Faroe Islands","FO");
 		addCountry("Fiji","FJ");
 		addCountry("Finland","FI");
@@ -126,6 +145,7 @@ public class EnglishCountry extends EntityObject {
 		addCountry("Guinea-Bissau","GW");
 		addCountry("Guyana","GY");
 		addCountry("Haiti","HT");
+		addCountry("the Heard Island and Mcdonald Islands","HM");
 		addCountry("Heard Island and Mcdonald Islands","HM");
 		addCountry("Holy See","VA");
 		addCountry("Vatican","VA");
@@ -170,6 +190,7 @@ public class EnglishCountry extends EntityObject {
 		addCountry("Maldives","MV");
 		addCountry("Mali","ML");
 		addCountry("Malta","MT");
+		addCountry("the Marshall Islands","MH");
 		addCountry("Marshall Islands","MH");
 		addCountry("Martinique","MQ");
 		addCountry("Mauritania","MR");
@@ -187,8 +208,9 @@ public class EnglishCountry extends EntityObject {
 		addCountry("Namibia","NA");
 		addCountry("Nauru","NR");
 		addCountry("Nepal","NP");
+		addCountry("the Netherlands","NL");
 		addCountry("Netherlands","NL");
-		addCountry("The Netherlands","NL");
+		addCountry("the Netherlands Antilles","AN");
 		addCountry("Netherlands Antilles","AN");
 		addCountry("New Caledonia","NC");
 		addCountry("New Zealand","NZ");
@@ -197,6 +219,7 @@ public class EnglishCountry extends EntityObject {
 		addCountry("Nigeria","NG");
 		addCountry("Niue","NU");
 		addCountry("Norfolk Island","NF");
+		addCountry("the Northern Mariana Islands","MP");
 		addCountry("Northern Mariana Islands","MP");
 		addCountry("Norway","NO");
 		addCountry("Oman","OM");
@@ -233,6 +256,7 @@ public class EnglishCountry extends EntityObject {
 		addCountry("Singapore","SG");
 		addCountry("Slovakia","SK");
 		addCountry("Slovenia","SI");
+		addCountry("the Solomon Islands","SB");
 		addCountry("Solomon Islands","SB");
 		addCountry("Somalia","SO");
 		addCountry("South Africa","ZA");
@@ -262,20 +286,26 @@ public class EnglishCountry extends EntityObject {
 		addCountry("Tuvalu","TV");
 		addCountry("Uganda","UG");
 		addCountry("Ukraine","UA");
+		addCountry("the United Arab Emirates","AE");
 		addCountry("United Arab Emirates","AE");
+		addCountry("the United Kingdom","GB");
 		addCountry("United Kingdom","GB");
-		addCountry("UK","US");
+		addCountry("UK","GB");
+		addCountry("the United States","US");
 		addCountry("United States","US");
 		addCountry("US","US");
 		addCountry("USA","US");
+		addCountry("America","US");
+		addCountry("the United States Minor Outlying Islands","UM");
 		addCountry("United States Minor Outlying Islands","UM");
 		addCountry("Uruguay","UY");
 		addCountry("Uzbekistan","UZ");
 		addCountry("Vanuatu","VU");
 		addCountry("Venezuela","VE");
 		addCountry("Vietnam","VN");
+		addCountry("the Virgin Islands, British","VG");
 		addCountry("Virgin Islands, British","VG");
-		addCountry("British Virgin Islands, British","VG");
+		addCountry("British Virgin Islands","VG");
 		addCountry("U.S. Virgin Islands","VI");
 		addCountry("US Virgin Islands","VI");
 		addCountry("Wallis and Futuna","WF");
