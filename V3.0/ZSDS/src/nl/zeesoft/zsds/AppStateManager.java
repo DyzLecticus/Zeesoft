@@ -164,14 +164,15 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 
 	private boolean load(boolean re) {
 		boolean r = false;
+		DialogHandlerConfiguration config = null;
 		lockMe(this);
 		if (!reading && !writing) {
 			reading = true;
 			reload = re;
 			r = true;
+			dialogHandlerConfigLoad = configuration.buildNewDialogHandlerConfiguration();
+			config = dialogHandlerConfigLoad;
 		}
-		dialogHandlerConfigLoad = configuration.buildNewDialogHandlerConfiguration();
-		DialogHandlerConfiguration config = dialogHandlerConfigLoad;
 		unlockMe(this);
 		if (r) {
 			if (re) {
