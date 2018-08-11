@@ -1,5 +1,5 @@
 package nl.zeesoft.zsd.interpret;
 
 public interface TesterListener {
-	public void testingIsDone();
+	public void testingIsDone(Object tester);
 }

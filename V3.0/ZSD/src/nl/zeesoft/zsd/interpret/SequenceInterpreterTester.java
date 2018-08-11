@@ -19,7 +19,6 @@ import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogIO;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.initialize.Initializable;
-import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class SequenceInterpreterTester extends Locker implements Initializable {
 	private DialogHandlerConfiguration			configuration		= null;
@@ -66,32 +65,24 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 	public void initialize() {
 		for (DialogInstance dialog: configuration.getDialogSet().getDialogs()) {
 			for (DialogIO example: dialog.getExamples()) {
-				boolean found = false;
+				boolean languageUnique = true;
 				for (String language: configuration.getBase().getSupportedLanguages()) {
 					if (!language.equals(dialog.getLanguage())) {
 						DialogInstance test = configuration.getDialogSet().getDialog(language,dialog.getMasterContext(),dialog.getContext());
 						if (test!=null) {
 							for (DialogIO testExample: test.getExamples()) {
 								if (testExample.input.equals(example.input)) {
-									found = true;
+									languageUnique = false;
 									break;
 								}
 							}
 						}
 					}
-					if (found) {
+					if (!languageUnique) {
 						break;
 					}
 				}
-				SequenceInterpreterTest test = new SequenceInterpreterTest();
-				test.dialogId = dialog.getId();
-				test.input = example.input;
-				if (!found) {
-					test.expectedLanguage = dialog.getLanguage();
-				}
-				test.expectedMasterContext = dialog.getMasterContext();
-				test.expectedContext = dialog.getContext();
-				tests.add(test);
+				tests.add(getTestForDialogExample(dialog,example,languageUnique));
 			}
 		}
 	}
@@ -137,6 +128,50 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 		return r;
 	}
 	
+	protected DialogHandlerConfiguration getConfiguration() {
+		return configuration;
+	}
+
+	protected SequenceInterpreterTest getNewSequenceInterpreterTest() {
+		return new SequenceInterpreterTest();
+	}
+
+	protected SequenceInterpreterTestResult getNewSequenceInterpreterTestResult() {
+		return new SequenceInterpreterTestResult();
+	}
+
+	protected DialogHandler getNewDialogHandler() {
+		return new DialogHandler(getConfiguration());
+	}
+	
+	protected SequenceInterpreterTest getTestForDialogExample(DialogInstance dialog,DialogIO example,boolean languageUnique) {
+		SequenceInterpreterTest test = getNewSequenceInterpreterTest();
+		test.dialogId = dialog.getId();
+		test.languageUnique = languageUnique;
+		test.input = example.input;
+		test.expectedLanguage = dialog.getLanguage();
+		test.expectedMasterContext = dialog.getMasterContext();
+		test.expectedContext = dialog.getContext();
+		return test;
+	}
+
+	protected InterpreterRequest getRequestForTest(SequenceInterpreterTest test) {
+		InterpreterRequest request = new InterpreterRequest();
+		if (test.languageUnique) {
+			request.classifyLanguage = true;
+		} else {
+			request.language = test.expectedLanguage;
+		}
+		request.classifyMasterContext = true;
+		request.classifyContext = true;
+		request.input = test.input;
+		return request;
+	}
+
+	protected InterpreterResponse getResponseForTest(DialogHandler handler,SequenceInterpreterTest test,InterpreterRequest request) {
+		return handler.handleInterpreterRequest(request);
+	}
+	
 	protected boolean test() {
 		boolean done = false;
 		lockMe(this);
@@ -147,19 +182,15 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 		}
 		unlockMe(this);
 		if (test!=null) {
-			InterpreterRequest request = new InterpreterRequest();
-			if (test.expectedLanguage.length()>0) {
-				request.classifyLanguage = true;
-			}
-			request.classifyMasterContext = true;
-			request.classifyContext = true;
-			request.input = test.input;
-			DialogHandler handler = new DialogHandler(configuration);
-			InterpreterResponse response = handler.handleInterpreterRequest(request);
-			SequenceInterpreterTestResult result = new SequenceInterpreterTestResult();
+			SequenceInterpreterTestResult result = getNewSequenceInterpreterTestResult();
 			result.test = test;
+			InterpreterRequest request = getRequestForTest(test);
+			DialogHandler handler = getNewDialogHandler();
+			Date start = new Date();
+			InterpreterResponse response = getResponseForTest(handler,test,request);
+			result.time = ((new Date()).getTime() - start.getTime());
 			result.response = response;
-			result.determineResult();
+			result.determineError();
 			lockMe(this);
 			results.add(result);
 			unlockMe(this);
@@ -167,15 +198,24 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 			done = true;
 			lockMe(this);
 			testing = false;
+			beforeCreateSummary(results);
 			summary = createSummary();
 			unlockMe(this);
 			for (TesterListener listener: listeners) {
-				listener.testingIsDone();
+				listener.testingIsDone(this);
 			}
 		}
 		return done;
 	}
 	
+	protected void addTotalsToParent(JsElem parent) {
+		// Override to extend
+	}
+
+	protected void beforeCreateSummary(List<SequenceInterpreterTestResult> results) {
+		// Override to extend
+	}
+
 	private JsFile createSummary() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
@@ -186,38 +226,17 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 		JsElem errsElem = new JsElem("errors",true);
 		json.rootElement.children.add(errsElem);
 		int totalSuccess = 0;
+		long totalTime = 0;
 		SortedMap<String,Integer> dialogIdErrors = new TreeMap<String,Integer>(); 
 		if (results.size()>0) {
 			for (SequenceInterpreterTestResult result: results) {
-				if (result.success) {
+				totalTime = totalTime + result.time;
+				if (result.error.length()==0) {
 					totalSuccess++;
 				} else {
 					JsElem errElem = new JsElem();
 					errsElem.children.add(errElem);
-					errElem.children.add(new JsElem("dialog",result.test.dialogId,true));
-					errElem.children.add(new JsElem("input",result.test.input,true));
-					if (result.response.request.classifyLanguage && result.response.responseLanguages.size()==0) {
-						errElem.children.add(new JsElem("error","Failed to classify language",true));
-					} else if (result.response.responseMasterContexts.size()==0) {
-						errElem.children.add(new JsElem("error","Failed to classify master context",true));
-					} else if (result.response.responseContexts.size()==0) {
-						errElem.children.add(new JsElem("error","Failed to classify context",true));
-					} else if (result.test.expectedLanguage.length()>0 && result.response.responseLanguages.size()>0 && !result.response.responseLanguages.get(0).symbol.equals(result.test.expectedLanguage)) {
-						SequenceClassifierResult res = result.response.responseLanguages.get(0);
-						SequenceClassifierResult found = getResultBySymbol(result.response.responseLanguages,result.test.expectedLanguage);
-						ZStringBuilder err = getMismatchError("language",res.symbol,res.probNormalized,result.test.expectedLanguage,found);
-						errElem.children.add(new JsElem("error",err,true));
-					} else if (result.response.responseMasterContexts.size()>0 && !result.response.responseMasterContexts.get(0).symbol.equals(result.test.expectedMasterContext)) {
-						SequenceClassifierResult res = result.response.responseMasterContexts.get(0);
-						SequenceClassifierResult found = getResultBySymbol(result.response.responseMasterContexts,result.test.expectedMasterContext);
-						ZStringBuilder err = getMismatchError("master context",res.symbol,res.probNormalized,result.test.expectedMasterContext,found);
-						errElem.children.add(new JsElem("error",err,true));
-					} else if (result.response.responseContexts.size()>0 && !result.response.responseContexts.get(0).symbol.equals(result.test.expectedContext)) {
-						SequenceClassifierResult res = result.response.responseContexts.get(0);
-						SequenceClassifierResult found = getResultBySymbol(result.response.responseContexts,result.test.expectedContext);
-						ZStringBuilder err = getMismatchError("context",res.symbol,res.probNormalized,result.test.expectedContext,found);
-						errElem.children.add(new JsElem("error",err,true));
-					}
+					result.addErrorJsonToParent(errElem);
 					Integer errs = dialogIdErrors.get(result.test.dialogId);
 					if (errs==null) {
 						errs = new Integer(0);
@@ -227,21 +246,25 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 				}
 			}
 		}
-		int successPercentage = 0;
+		float successPercentage = 0.0F;
+		long averageRequestMs = 0;
 		if (results.size()>0) {
-			successPercentage = (totalSuccess * 100) / results.size();
+			successPercentage = ((float)totalSuccess * 100F) / (float)results.size();
+			averageRequestMs = (totalTime / results.size());
 		}
 		totalsElem.children.add(new JsElem("tests","" + tests.size()));
-		totalsElem.children.add(new JsElem("durationMs","" + ((new Date()).getTime() - started.getTime())));
 		totalsElem.children.add(new JsElem("successful","" + totalSuccess));
 		totalsElem.children.add(new JsElem("successPercentage","" + successPercentage));
 		if (baseLineSummary!=null) {
-			int previousPercentage = baseLineSummary.rootElement.getChildByName("totals").getChildInt("successPercentage",-1);
+			float previousPercentage = baseLineSummary.rootElement.getChildByName("totals").getChildFloat("successPercentage",-1F);
 			if (previousPercentage>=0) {
-				int difference = (successPercentage - previousPercentage);
+				float difference = (successPercentage - previousPercentage);
 				totalsElem.children.add(new JsElem("baseLineDifference","" + difference));
 			}
 		}
+		totalsElem.children.add(new JsElem("durationMs","" + ((new Date()).getTime() - started.getTime())));
+		totalsElem.children.add(new JsElem("averageRequestMs","" + averageRequestMs));
+		addTotalsToParent(totalsElem);
 		if (dialogIdErrors.size()>0) {
 			JsElem dialogsElem = new JsElem("errorsPerDialog",true);
 			totalsElem.children.add(dialogsElem);
@@ -264,38 +287,5 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 			}
 		}
 		return json;
-	}
-	
-	private ZStringBuilder getMismatchError(String property, String symbol, double prob, String expected,SequenceClassifierResult expectedFound) {
-		ZStringBuilder err = new ZStringBuilder();
-		err.append("Response ");
-		err.append(property);
-		err.append(" does not match expected ");
-		err.append(property);
-		err.append(": ");
-		err.append(symbol);
-		err.append(" (");
-		err.append("" + prob);
-		err.append(") <> ");
-		err.append(expected);
-		err.append(" (");
-		if (expectedFound!=null) {
-			err.append("" + expectedFound.probNormalized);
-		} else {
-			err.append("?");
-		}
-		err.append(")");
-		return err;
-	}
-	
-	private SequenceClassifierResult getResultBySymbol(List<SequenceClassifierResult> results,String symbol) {
-		SequenceClassifierResult r = null;
-		for (SequenceClassifierResult res: results) {
-			if (res.symbol.equals(symbol)) {
-				r = res;
-				break;
-			}
-		}
-		return r;
 	}
 }

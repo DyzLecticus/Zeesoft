@@ -15,6 +15,7 @@ import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequencePreprocessor;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
+import nl.zeesoft.zsd.dialog.DialogHandlerTesterInitializer;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsd.interpret.SequenceInterpreterTesterInitializer;
@@ -217,7 +218,7 @@ public class AppConfiguration {
 	}
 
 	protected SequenceInterpreterTesterInitializer getNewSequenceInterpreterTesterInitializer(DialogHandlerConfiguration configuration) {
-		return new SequenceInterpreterTesterInitializer(messenger,union,configuration);
+		return new DialogHandlerTesterInitializer(messenger,union,configuration);
 	}
 
 	protected SequencePreprocessor getNewSequencePreprocessor() {

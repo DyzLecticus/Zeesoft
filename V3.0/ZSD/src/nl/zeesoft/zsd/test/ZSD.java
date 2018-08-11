@@ -78,6 +78,7 @@ public class ZSD extends LibraryObject {
 		tests.add(new TestDialogHandlerConfiguration(getTester()));
 		tests.add(new TestDialogHandler(getTester()));
 		tests.add(new TestSequenceInterpreterTester(getTester()));
+		tests.add(new TestDialogHandlerTester(getTester()));
 		
 		if (!qna.exists()) {
 			System.out.println("Some tests were skipped because the NL QnA input file was not found: " + TestSequenceClassifier.QNA_FILE_NAME);

@@ -12,15 +12,13 @@ public class SequenceInterpreterTesterInitializer extends Initializer {
 	public SequenceInterpreterTesterInitializer(DialogHandlerConfiguration configuration) {
 		super(null,null);
 		this.configuration = configuration;
-		this.tester = new SequenceInterpreterTester(configuration);
-		addClass("tester",tester,getFileName());
+		initializeTester();
 	}
 	
 	public SequenceInterpreterTesterInitializer(Messenger msgr, WorkerUnion uni,DialogHandlerConfiguration configuration) {
 		super(msgr,uni);
 		this.configuration = configuration;
-		this.tester = new SequenceInterpreterTester(msgr,uni,configuration);
-		addClass("tester",tester,getFileName());
+		initializeTester();
 	}
 	
 	public String getFileName() {
@@ -29,5 +27,14 @@ public class SequenceInterpreterTesterInitializer extends Initializer {
 	
 	public SequenceInterpreterTester getTester() {
 		return tester;
+	}
+	
+	protected void initializeTester() {
+		this.tester = getNewTester(configuration);
+		addClass("tester",tester,getFileName());
+	}
+	
+	protected SequenceInterpreterTester getNewTester(DialogHandlerConfiguration configuration) {
+		return new SequenceInterpreterTester(configuration);
 	}
 }

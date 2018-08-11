@@ -145,7 +145,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	}
 
 	@Override
-	public void testingIsDone() {
+	public void testingIsDone(Object tester) {
 		configuration.debug(this,"Tested");
 		boolean rebase = false;
 		lockMe(this);
