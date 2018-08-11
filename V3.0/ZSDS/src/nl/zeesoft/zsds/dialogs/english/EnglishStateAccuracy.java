@@ -5,7 +5,7 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsds.dialogs.StateAccuracy;
 
 public class EnglishStateAccuracy extends StateAccuracy {
-	private static final String EXAMPLE_OUTPUT_ACCURACY = "My current test results indicate that I am {exactly} {percentage} percent accurate.";
+	private static final String EXAMPLE_OUTPUT_ACCURACY = "My current test results indicate that I am {exact} {percentage} percent accurate.";
 	
 	public EnglishStateAccuracy() {
 		setLanguage(BaseConfiguration.LANG_ENG);

@@ -11,8 +11,9 @@ public class DataGenerator extends Worker {
 	
 	public DataGenerator(Messenger msgr, WorkerUnion union,AppStateManager manager) {
 		super(msgr, union);
-		super.setSleep(1);
 		this.manager = manager;
+		setSleep(1);
+		setStopOnException(true);
 	}
 
 	public void generate(boolean load,boolean reload) {

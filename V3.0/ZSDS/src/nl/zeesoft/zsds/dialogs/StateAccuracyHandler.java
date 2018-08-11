@@ -31,15 +31,23 @@ public abstract class StateAccuracyHandler extends DialogInstanceHandler {
 		JsFile json = sendGetJsonRequest(SELF_TEST_SUMMARY_URL);
 		if (json.rootElement!=null) {
 			if (json.rootElement.getChildByName("totals")!=null) {
+				String exact = getExactly();
 				float successPercentage = json.rootElement.getChildByName("totals").getChildFloat("successPercentage");
-				String[] val = ("" + successPercentage).split("\\.");
-				String exactly = getExactly();
-				if (val.length>1 && Integer.parseInt(val[1])>0) {
-					exactly = getAbout();
+				String[] str = ("" + successPercentage).split("\\.");
+				int i = Integer.parseInt(str[0]);
+				float d = 0F;
+				if (str.length>1) {
+					d = Float.parseFloat("0." + str[1]);
+					if (d>0) {
+						exact = getAbout();
+						if (d>=0.5F) {
+							i++;
+						}
+					}
 				}
-				String percentage = getExternalValueForNumber(Integer.parseInt(val[0]));
-				dro.setDialogVariableValue(r,"exactly",exactly);
-				dro.setDialogVariableValue(r,"percentage",percentage);
+				String percentage = getExternalValueForNumber(i);
+				dro.setDialogVariableValue(r,StateAccuracy.VARIABLE_EXACT,exact);
+				dro.setDialogVariableValue(r,StateAccuracy.VARIABLE_PERCENTAGE,percentage);
 			} else if (json.rootElement.getChildByName("error")!=null) {
 				dro.output = new ZStringSymbolParser(getBusyResponse());
 			}

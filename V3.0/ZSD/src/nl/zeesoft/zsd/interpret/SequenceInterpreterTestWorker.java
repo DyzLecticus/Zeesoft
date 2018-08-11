@@ -11,6 +11,7 @@ public class SequenceInterpreterTestWorker extends Worker {
 		super(msgr, union);
 		this.tester = tester;
 		setSleep(10);
+		setStopOnException(true);
 	}
 
 	@Override
