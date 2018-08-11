@@ -65,24 +65,32 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 	public void initialize() {
 		for (DialogInstance dialog: configuration.getDialogSet().getDialogs()) {
 			for (DialogIO example: dialog.getExamples()) {
-				boolean languageUnique = true;
-				for (String language: configuration.getBase().getSupportedLanguages()) {
-					if (!language.equals(dialog.getLanguage())) {
-						DialogInstance test = configuration.getDialogSet().getDialog(language,dialog.getMasterContext(),dialog.getContext());
-						if (test!=null) {
-							for (DialogIO testExample: test.getExamples()) {
-								if (testExample.input.equals(example.input)) {
-									languageUnique = false;
-									break;
+				boolean found = false;
+				for (SequenceInterpreterTest test: tests) {
+					if (test.dialogId.equals(dialog.getId()) && test.input.equals(example.input)) {
+						found = true;
+					}
+				}
+				if (!found) {
+					boolean languageUnique = true;
+					for (String language: configuration.getBase().getSupportedLanguages()) {
+						if (!language.equals(dialog.getLanguage())) {
+							DialogInstance test = configuration.getDialogSet().getDialog(language,dialog.getMasterContext(),dialog.getContext());
+							if (test!=null) {
+								for (DialogIO testExample: test.getExamples()) {
+									if (testExample.input.equals(example.input)) {
+										languageUnique = false;
+										break;
+									}
 								}
 							}
 						}
+						if (!languageUnique) {
+							break;
+						}
 					}
-					if (!languageUnique) {
-						break;
-					}
+					tests.add(getTestForDialogExample(dialog,example,languageUnique));
 				}
-				tests.add(getTestForDialogExample(dialog,example,languageUnique));
 			}
 		}
 	}

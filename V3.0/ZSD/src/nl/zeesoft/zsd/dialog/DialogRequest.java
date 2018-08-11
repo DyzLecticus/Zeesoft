@@ -1,5 +1,7 @@
 package nl.zeesoft.zsd.dialog;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -10,10 +12,11 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.interpret.InterpreterRequest;
 
 public class DialogRequest extends InterpreterRequest {
-	public SortedMap<String,DialogVariableValue>	dialogVariableValues		= new TreeMap<String,DialogVariableValue>();
+	public SortedMap<String,DialogVariableValue>	dialogVariableValues	= new TreeMap<String,DialogVariableValue>();
 	
-	public double									matchThreshold				= 0.1D;
-	public boolean									randomizeOutput				= true;
+	public double									matchThreshold			= 0.1D;
+	public boolean									randomizeOutput			= true;
+	public List<String>								filterContexts			= new ArrayList<String>();
 
 	public DialogRequest() {
 		
@@ -46,6 +49,11 @@ public class DialogRequest extends InterpreterRequest {
 		JsFile json = super.toJson();
 		json.rootElement.children.add(new JsElem("matchThreshold","" + matchThreshold));
 		json.rootElement.children.add(new JsElem("randomizeOutput","" + randomizeOutput));
+		JsElem filtsElem = new JsElem("filterContexts",true);
+		json.rootElement.children.add(filtsElem);
+		for (String context: filterContexts) {
+			filtsElem.children.add(new JsElem(null,context,true));
+		}
 		JsElem valsElem = new JsElem("dialogVariableValues",true);
 		json.rootElement.children.add(valsElem);
 		for (Entry<String,DialogVariableValue> entry: dialogVariableValues.entrySet()) {
@@ -63,6 +71,14 @@ public class DialogRequest extends InterpreterRequest {
 		super.fromJson(json);
 		matchThreshold = json.rootElement.getChildDouble("matchThreshold",matchThreshold);
 		randomizeOutput = json.rootElement.getChildBoolean("randomizeOutput",randomizeOutput);
+		JsElem filtsElem = json.rootElement.getChildByName("filterContexts");
+		if (filtsElem!=null) {
+			for (JsElem filtElem: filtsElem.children) {
+				if (filtElem.value.length()>0) {
+					filterContexts.add(filtElem.value.toString());
+				}
+			}
+		}
 		JsElem valsElem = json.rootElement.getChildByName("dialogVariableValues");
 		if (valsElem!=null) {
 			dialogVariableValues.clear();

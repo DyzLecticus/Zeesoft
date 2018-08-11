@@ -45,7 +45,6 @@ public abstract class DialogInstanceHandler {
 		List<String> iVals = r.entityValueTranslation.toSymbols();
 		List<String> iValsCor = r.entityValueTranslationCorrected.toSymbols();
 		for (DialogVariable variable: dialog.getVariables()) {
-			// TODO: Solution for 'next dialog' variable type?
 			DialogVariableValue dvv = r.getRequest().dialogVariableValues.get(variable.name);
 			if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG) && (dvv==null || dvv.internalValue.length()==0)) {
 				String val = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
@@ -77,7 +76,23 @@ public abstract class DialogInstanceHandler {
 	public void buildDialogResponseOutput(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
 		if (promptVariable.length()==0 || !r.getRequest().getDialogId().equals(dialog.getId())) {
 			r.addDebugLogLine("    Find matches for sequence: ",r.classificationSequence);
-			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.classificationSequence,"",true,r.getRequest().matchThreshold);
+			DialogRequest req = (DialogRequest) r.request;
+			String context = "";
+			if (req.filterContexts.size()>0) {
+				for (String matcherContext: dialog.getMatcher().getKnownContexts()) {
+					for (String filterContext: req.filterContexts) {
+						if (matcherContext.equals(filterContext)) {
+							context = filterContext;
+							r.addDebugLogLine("    Selected filter context: ",context);
+							break;
+						}
+					}
+					if (context.length()>0) {
+						break;
+					}
+				}
+			}
+			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(r.classificationSequence,context,true,r.getRequest().matchThreshold);
 			r.addDebugLogLine("    Found matches for sequence: ","" + matches.size());
 			if (matches.size()>0) {
 				List<SequenceMatcherResult> options = new ArrayList<SequenceMatcherResult>();
@@ -127,6 +142,11 @@ public abstract class DialogInstanceHandler {
 		}
 	}
 
+	protected List<String> getRequestFilterContexts(DialogResponse r) {
+		DialogRequest req = (DialogRequest) r.request;
+		return req.filterContexts;
+	}
+	
 	protected void replaceVariablesAndCorrectCase(DialogResponseOutput dro, ZStringSymbolParser output) {
 		if (output.length()>0) {
 			output.replace("{selfName}",getConfig().getBase().getName());

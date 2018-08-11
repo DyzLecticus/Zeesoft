@@ -16,6 +16,7 @@ import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferDuration;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchForeignTransferQnA;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericCancel;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericClassification;
+import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericGoodbye;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericHandshake;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericLanguage;
 import nl.zeesoft.zsd.dialog.dialogs.dutch.DutchGenericMath;
@@ -30,6 +31,7 @@ import nl.zeesoft.zsd.dialog.dialogs.english.EnglishForeignTransferDuration;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishForeignTransferQnA;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericCancel;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericClassification;
+import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericGoodbye;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericHandshake;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericLanguage;
 import nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericMath;
@@ -126,6 +128,7 @@ public class DialogSet implements Initializable {
 		r.add(new EnglishGenericQnA());
 		r.add(new EnglishGenericMath());
 		r.add(new EnglishGenericProfanity());
+		r.add(new EnglishGenericGoodbye());
 		r.add(new EnglishSupportRequest());
 		r.add(new EnglishRoomBooking());
 		r.add(new EnglishRoomQnA());
@@ -140,6 +143,7 @@ public class DialogSet implements Initializable {
 		r.add(new DutchGenericQnA());
 		r.add(new DutchGenericMath());
 		r.add(new DutchGenericProfanity());
+		r.add(new DutchGenericGoodbye());
 		r.add(new DutchSupportRequest());
 		r.add(new DutchRoomBooking());
 		r.add(new DutchRoomQnA());
@@ -149,7 +153,7 @@ public class DialogSet implements Initializable {
 		return r;
 	}
 	
-	public void fromJson(JsFile json) {
+	private void fromJson(JsFile json) {
 		JsElem dialogsElem = json.rootElement.getChildByName("dialogs");
 		if (dialogsElem!=null) {
 			for (JsElem dialogElem: dialogsElem.children) {

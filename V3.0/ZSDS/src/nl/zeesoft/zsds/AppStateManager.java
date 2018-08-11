@@ -49,11 +49,8 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 
 	public boolean rebase() {
 		boolean r = writeBaseLine(true);
-		SequenceInterpreterTester tester = getTester();
-		if (tester!=null && !tester.isTesting()) {
-			if (tester.start()) {
-				configuration.debug(this,"Testing ...");
-			}
+		if (r) {
+			reload();
 		}
 		return r;
 	}

@@ -30,6 +30,7 @@ import nl.zeesoft.zsds.handler.HtmlTestHandler;
 import nl.zeesoft.zsds.handler.JsonConfigHandler;
 import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 import nl.zeesoft.zsds.handler.JsonDialogsHandler;
+import nl.zeesoft.zsds.handler.JsonGenerateHandler;
 import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
 import nl.zeesoft.zsds.handler.JsonRebaseHandler;
 import nl.zeesoft.zsds.handler.JsonReloadHandler;
@@ -102,9 +103,7 @@ public class AppConfiguration {
 				baseConfig.fromJson(json);
 				debug = baseConfig.isDebug();
 				messenger.setPrintDebugMessages(debug);
-				if (debug && baseConfig.isGenerateReadFormat()) {
-					stateManager.generate(true,false);
-				}
+				stateManager.load();
 			}
 		}
 		
@@ -116,6 +115,10 @@ public class AppConfiguration {
 		return stateManager.isInitialized();
 	}
 
+	public boolean generate() {
+		return stateManager.generate(true,true);
+	}
+	
 	public boolean reload() {
 		return stateManager.reload();
 	}
@@ -252,6 +255,7 @@ public class AppConfiguration {
 		r.add(new JsonTestDialogRequestHandler(this));
 		r.add(new JsonDialogRequestHandler(this));
 		r.add(new JsonStateHandler(this));
+		r.add(new JsonGenerateHandler(this));
 		r.add(new JsonReloadHandler(this));
 		r.add(new JsonRebaseHandler(this));
 		r.add(new JsonSelfTestHandler(this));

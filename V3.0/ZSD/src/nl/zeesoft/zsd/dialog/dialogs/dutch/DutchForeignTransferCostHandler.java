@@ -1,6 +1,6 @@
 package nl.zeesoft.zsd.dialog.dialogs.dutch;
 
-import nl.zeesoft.zsd.dialog.dialogs.ForeignTransferHandler;
+import nl.zeesoft.zsd.dialog.dialogs.ForeignTransferCostHandler;
 
-public class DutchForeignTransferCostHandler extends ForeignTransferHandler {
+public class DutchForeignTransferCostHandler extends ForeignTransferCostHandler {
 }

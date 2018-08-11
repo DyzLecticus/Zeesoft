@@ -66,6 +66,7 @@ public class TestRequestResponseToJson extends TestObject {
 		req.translateEntityTypes.add(BaseConfiguration.TYPE_NAME);
 		req.matchThreshold = 0.8;
 		req.randomizeOutput = false;
+		req.filterContexts.add("testFilterContext");
 		DialogVariableValue dvv = new DialogVariableValue();
 		dvv.name = "testVariable";
 		dvv.externalValue = "testExtVal";
@@ -74,7 +75,7 @@ public class TestRequestResponseToJson extends TestObject {
 		JsFile json = req.toJson();
 		ZStringBuilder txtOri = json.toStringBuilderReadFormat();
 		System.out.println(txtOri);
-		assertEqual(json.rootElement.children.size(),19,"The number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),20,"The number of children does not match expectation");
 		req = new DialogRequest();
 		req.fromJson(json);
 		json = req.toJson();

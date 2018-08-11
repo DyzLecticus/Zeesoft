@@ -8,7 +8,7 @@ public class BaseStyleSheet {
 		
 		script.append("textarea {\n");
 		script.append("    width: 100%;\n");
-		script.append("    height: 200px;\n");
+		script.append("    height: 400px;\n");
 		script.append("    white-space: pre;\n");
 		script.append("    overflow-wrap: normal;\n");
 		script.append("    overflow-x: scroll;\n");

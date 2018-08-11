@@ -7,16 +7,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsds.AppConfiguration;
 
-public class JsonStateHandler extends JsonBaseHandlerObject {
-	public JsonStateHandler(AppConfiguration config) {
-		super(config,"/state.json");
+public class JsonGenerateHandler extends JsonBaseHandlerObject {
+	public JsonGenerateHandler(AppConfiguration config) {
+		super(config,"/generate.json");
 	}
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		setDefaultHeadersAndStatus(response);
+		PrintWriter out;
+		try {
+			out = response.getWriter();
+			out.println(setErrorResponse(response,405,"GET is not supported for this resource"));
+		} catch (IOException e) {
+			getConfiguration().getMessenger().error(this,"I/O exception",e);
+		}
+	}
+	
+	@Override
+	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		setDefaultHeadersAndStatus(response);
 		PrintWriter out;
 		try {
@@ -32,8 +43,11 @@ public class JsonStateHandler extends JsonBaseHandlerObject {
 				err = checkTesting(response);
 			}
 			if (err.length()==0) {
-				SequenceInterpreterTester tester = getConfiguration().getTester();
-				out.println(tester.getSummary().toStringBuilderReadFormat());
+				if (getConfiguration().generate()) {
+					out.println(getResponse(200,getConfiguration().getBaseConfig().getName() + " is regenerating its memory."));
+				} else {
+					out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is already regenerating its memory. Please wait."));
+				}
 			} else {
 				out.println(err);
 			}

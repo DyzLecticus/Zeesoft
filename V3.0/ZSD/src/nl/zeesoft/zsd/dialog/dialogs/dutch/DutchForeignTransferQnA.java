@@ -7,7 +7,7 @@ import nl.zeesoft.zsd.dialog.dialogs.ForeignTransferQnA;
 public class DutchForeignTransferQnA extends ForeignTransferQnA {
 	public DutchForeignTransferQnA() {
 		setLanguage(BaseConfiguration.LANG_NLD);
-		setHandlerClassName(DutchForeignTransferDurationHandler.class.getName());
+		setHandlerClassName(DutchForeignTransferQnAHandler.class.getName());
 	}
 
 	@Override

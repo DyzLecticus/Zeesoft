@@ -37,22 +37,22 @@ public class StateHtml extends HtmlResource {
 		script.append("    }\n");
 		script.append("    setTimeout(function(){ ZSDS.state.autoRefresh(); }, 1000);\n");
 		script.append("};\n");
-		script.append("ZSDS.state.reload = function() {\n");
-		script.append("    elem = window.document.getElementById(\"reloadCheck\");\n");
-		script.append("    if (elem.checked) {\n");
-		script.append("        elem.checked = false;\n");
-		script.append("        elem = window.document.getElementById(\"summary\");\n");
-		script.append("        elem.value = \"Sending request ...\";\n");
-		script.append("        ZSDS.xhr.postJSON(\"reload.json\",\"\",ZSDS.state.reloadCallback,ZSDS.state.reloadCallback);\n");
-		script.append("    }\n");
-		script.append("};\n");
-		script.append("ZSDS.state.reloadCallback = function(xhr) {\n");
+		script.append("ZSDS.state.defaultCallback = function(xhr) {\n");
 		script.append("    var response = xhr.responseText;\n");
 		script.append("    var object = ZSDS.xhr.parseResponseJSON(response);\n");
 		script.append("    if (object.error) {\n");
 		script.append("        alert(object.error);\n");
 		script.append("    }\n");
 		script.append("    ZSDS.state.refresh();\n");
+		script.append("};\n");
+		script.append("ZSDS.state.reload = function() {\n");
+		script.append("    elem = window.document.getElementById(\"reloadCheck\");\n");
+		script.append("    if (elem.checked) {\n");
+		script.append("        elem.checked = false;\n");
+		script.append("        elem = window.document.getElementById(\"summary\");\n");
+		script.append("        elem.value = \"Sending request ...\";\n");
+		script.append("        ZSDS.xhr.postJSON(\"reload.json\",\"\",ZSDS.state.defaultCallback,ZSDS.state.defaultCallback);\n");
+		script.append("    }\n");
 		script.append("};\n");
 		script.append("ZSDS.state.rebase = function() {\n");
 		script.append("    elem = window.document.getElementById(\"rebaseCheck\");\n");
@@ -60,16 +60,17 @@ public class StateHtml extends HtmlResource {
 		script.append("        elem.checked = false;\n");
 		script.append("        elem = window.document.getElementById(\"summary\");\n");
 		script.append("        elem.value = \"Sending request ...\";\n");
-		script.append("        ZSDS.xhr.postJSON(\"rebase.json\",\"\",ZSDS.state.rebaseCallback,ZSDS.state.rebaseCallback);\n");
+		script.append("        ZSDS.xhr.postJSON(\"rebase.json\",\"\",ZSDS.state.defaultCallback,ZSDS.state.defaultCallback);\n");
 		script.append("    }\n");
 		script.append("};\n");
-		script.append("ZSDS.state.rebaseCallback = function(xhr) {\n");
-		script.append("    var response = xhr.responseText;\n");
-		script.append("    var object = ZSDS.xhr.parseResponseJSON(response);\n");
-		script.append("    if (object.error) {\n");
-		script.append("        alert(object.error);\n");
+		script.append("ZSDS.state.generate = function() {\n");
+		script.append("    elem = window.document.getElementById(\"generateCheck\");\n");
+		script.append("    if (elem.checked) {\n");
+		script.append("        elem.checked = false;\n");
+		script.append("        elem = window.document.getElementById(\"summary\");\n");
+		script.append("        elem.value = \"Sending request ...\";\n");
+		script.append("        ZSDS.xhr.postJSON(\"generate.json\",\"\",ZSDS.state.defaultCallback,ZSDS.state.defaultCallback);\n");
 		script.append("    }\n");
-		script.append("    ZSDS.state.refresh();\n");
 		script.append("};\n");
 		script.append("ZSDS.state.onload = function() {\n");
 		script.append("    ZSDS.state.autoRefresh();\n");
@@ -94,6 +95,13 @@ public class StateHtml extends HtmlResource {
 		
 		html.append("<tr>\n");
 		html.append("<td>");
+		html.append("<input type=\"button\" value=\"Generate\" onclick=\"ZSDS.state.generate();\"/>");
+		html.append("<input type=\"checkbox\" id=\"generateCheck\"/>");
+		html.append("</td>\n");
+		html.append("</tr>\n");
+		
+		html.append("<tr>\n");
+		html.append("<td>");
 		html.append("<input type=\"button\" value=\"Reload\" onclick=\"ZSDS.state.reload();\"/>");
 		html.append("<input type=\"checkbox\" id=\"reloadCheck\"/>");
 		html.append("</td>\n");
@@ -112,7 +120,7 @@ public class StateHtml extends HtmlResource {
 		
 		html.append("<br />\n");
 		html.append("<div>\n");
-		html.append("Summary<br />\n");
+		html.append("State<br />\n");
 		html.append("<textarea id=\"summary\"></textarea>\n");
 		html.append("</div>\n");
 		

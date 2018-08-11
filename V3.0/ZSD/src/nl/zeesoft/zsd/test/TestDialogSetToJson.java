@@ -17,7 +17,7 @@ import nl.zeesoft.zsd.dialog.dialogs.GenericHandshake;
 import nl.zeesoft.zsd.util.DialogSetToJson;
 
 public class TestDialogSetToJson extends TestEntityToJson {
-	private static final int 	TOTAL_DIALOGS	= 28;
+	private static final int 	TOTAL_DIALOGS	= 30;
 	
 	public TestDialogSetToJson(Tester tester) {
 		super(tester);

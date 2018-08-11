@@ -29,13 +29,20 @@ public class DialogInstance {
 	}
 	
 	public DialogIO addExample(String input, String output) {
-		return addExample(new ZStringSymbolParser(input),output);
+		return addExample(new ZStringSymbolParser(input),output,"");
 	}
 
-	public DialogIO addExample(ZStringSymbolParser input, String output) {
+	public DialogIO addExample(String input, String output,String filterContext) {
+		return addExample(new ZStringSymbolParser(input),output,filterContext);
+	}
+
+	public DialogIO addExample(ZStringSymbolParser input, String output,String filterContext) {
 		DialogIO r = new DialogIO();
 		r.input.append(input);
 		r.output.append(output);
+		if (filterContext.length()>0) {
+			r.filterContexts.add(filterContext);
+		}
 		examples.add(r);
 		return r;
 	}
@@ -62,7 +69,7 @@ public class DialogInstance {
 		for (DialogVariable var: variables) {
 			ptn.replace("{" + var.name + "}","[" + var.type + "]");
 		}
-		addExample(ptn,"");
+		addExample(ptn,"","");
 	}
 
 	public DialogVariable addNextDialogVariable() {
@@ -107,13 +114,20 @@ public class DialogInstance {
 		matcher = new SequenceMatcher();
 		for (DialogIO example: examples) {
 			if (example.output.length()>0) {
+				List<String> contexts = null;
+				if (example.filterContexts.size()>0) {
+					contexts = example.filterContexts;
+				} else {
+					contexts = new ArrayList<String>();
+				}
+				contexts.add("");
 				ZStringSymbolParser sequence = new ZStringSymbolParser();
 				sequence.append(example.input);
 				sequence.append(" ");
 				sequence.append(matcher.getIoSeparator());
 				sequence.append(" ");
 				sequence.append(example.output);
-				matcher.addSequence(sequence);
+				matcher.addSymbols(sequence.toSymbolsPunctuated(),contexts);
 			}
 		}
 		matcher.calculateProb();

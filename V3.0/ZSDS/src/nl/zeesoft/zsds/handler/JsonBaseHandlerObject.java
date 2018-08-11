@@ -99,6 +99,14 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 		return err;
 	}
 
+	protected ZStringBuilder checkGenerating(HttpServletResponse response) {
+		ZStringBuilder err = new ZStringBuilder();
+		if (getConfiguration().isGenerating()) {
+			err = setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " regenerating its memory. Please wait.");
+		}
+		return err;
+	}
+
 	protected ZStringBuilder checkReloading(HttpServletResponse response) {
 		ZStringBuilder err = new ZStringBuilder();
 		if (getConfiguration().isReloading()) {

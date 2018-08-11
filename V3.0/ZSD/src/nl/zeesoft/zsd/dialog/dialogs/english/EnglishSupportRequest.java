@@ -22,6 +22,7 @@ public class EnglishSupportRequest extends SupportRequest {
 		addExample("Can you put me throug to a human?","");
 		addExample("Can you connect me to a human?","");
 		
+		addExample("Sigh.",getOutputLearning());
 		addExample("You do not understand me.",getOutputLearning());
 		addExample("You misunderstand me.",getOutputLearning());
 		addExample("You do not understand anything.",getOutputLearning());

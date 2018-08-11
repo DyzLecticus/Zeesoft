@@ -24,6 +24,7 @@ public class DutchSupportRequest extends SupportRequest {
 		addExample("Kan je me doorverbinden met een mens?","");
 		addExample("Kunt u mij doorverbinden met een mens?","");
 		
+		addExample("Zucht.",getOutputLearning());
 		addExample("Je begrijpt mij niet.",getOutputLearning());
 		addExample("Jij begrijpt me niet.",getOutputLearning());
 		addExample("U begrijpt me niet.",getOutputLearning());
