@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequencePreprocessor;
@@ -46,6 +47,28 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		return load(true);
 	}
 
+	public boolean rebase() {
+		boolean r = false;
+		lockMe(this);
+		SequenceInterpreterTesterInitializer ti = testerInitializer;
+		SequenceInterpreterTester t = tester;
+		if (ti!=null && t!=null) {
+			r = true;
+		}
+		unlockMe(this);
+		if (r) {
+			configuration.debug(this,"Rebasing ...");
+			ZStringBuilder err = t.getSummary().toFile(ti.getFileName(),true);
+			if (err.length()>0) {
+				configuration.getMessenger().error(this,err.toString());
+				r = false;
+			} else {
+				configuration.debug(this,"Rebased");
+			}
+		}
+		return r;
+	}
+	
 	public boolean generate(boolean load,boolean reload) {
 		boolean r = false;
 		lockMe(this);
@@ -124,9 +147,15 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	@Override
 	public void testingIsDone() {
 		configuration.debug(this,"Tested");
+		boolean rebase = false;
+		lockMe(this);
 		File test = new File(testerInitializer.getFileName());
 		if (!test.exists()) {
-			tester.getSummary().toFile(testerInitializer.getFileName(),true);
+			rebase = true;
+		}
+		unlockMe(this);
+		if (rebase) {
+			rebase();
 		}
 	}
 
@@ -138,6 +167,34 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		return r;
 	}
 
+	public boolean isReloading() {
+		boolean r = false;
+		lockMe(this);
+		if (reading) {
+			r = reload;
+		}
+		unlockMe(this);
+		return r;
+	}
+
+	public boolean isGenerating() {
+		boolean r = false;
+		lockMe(this);
+		r = writing;
+		unlockMe(this);
+		return r;
+	}
+
+	public boolean isBusy() {
+		boolean r = false;
+		lockMe(this);
+		if (reading || writing) {
+			r = true; 
+		}
+		unlockMe(this);
+		return r;
+	}
+	
 	public DialogHandlerConfiguration getDialogHandlerConfig() {
 		DialogHandlerConfiguration r = null;
 		lockMe(this);

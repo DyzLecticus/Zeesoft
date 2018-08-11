@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsds.AppConfiguration;
 
@@ -20,19 +21,18 @@ public class JsonSelfTestHandler extends JsonBaseHandlerObject {
 		PrintWriter out;
 		try {
 			out = response.getWriter();
-			if (getConfiguration().isInitialized()) {
+			ZStringBuilder err = checkInitialized(response);
+			if (err.length()==0) {
+				err = checkReloading(response);
+			}
+			if (err.length()==0) {
+				err = checkTesting(response);
+			}
+			if (err.length()==0) {
 				SequenceInterpreterTester tester = getConfiguration().getTester();
-				if (tester==null || tester.isTesting()) {
-					String percentage = "";
-					if (tester!=null) {
-						percentage = " (" + tester.getDonePercentage() + "%)";
-					}
-					out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is testing itself" + percentage + ". Please wait."));
-				} else {
-					out.println(tester.getSummary().toStringBuilderReadFormat());
-				}
+				out.println(tester.getSummary().toStringBuilderReadFormat());
 			} else {
-				out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is waking up. Please wait."));
+				out.println(err);
 			}
 		} catch (IOException e) {
 			getConfiguration().getMessenger().error(this,"I/O exception",e);

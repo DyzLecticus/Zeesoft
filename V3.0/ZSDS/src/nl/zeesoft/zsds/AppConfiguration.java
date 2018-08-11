@@ -30,6 +30,7 @@ import nl.zeesoft.zsds.handler.JsonConfigHandler;
 import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 import nl.zeesoft.zsds.handler.JsonDialogsHandler;
 import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
+import nl.zeesoft.zsds.handler.JsonRebaseHandler;
 import nl.zeesoft.zsds.handler.JsonReloadHandler;
 import nl.zeesoft.zsds.handler.JsonSelfTestHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
@@ -115,6 +116,22 @@ public class AppConfiguration {
 
 	public boolean reload() {
 		return stateManager.reload();
+	}
+
+	public boolean rebase() {
+		return stateManager.rebase();
+	}
+
+	public boolean isReloading() {
+		return stateManager.isReloading();
+	}
+
+	public boolean isGenerating() {
+		return stateManager.isGenerating();
+	}
+
+	public boolean isBusy() {
+		return stateManager.isBusy();
 	}
 	
 	public void destroy() {
@@ -234,6 +251,7 @@ public class AppConfiguration {
 		r.add(new JsonDialogRequestHandler(this));
 		r.add(new JsonSelfTestHandler(this));
 		r.add(new JsonReloadHandler(this));
+		r.add(new JsonRebaseHandler(this));
 		return r;
 	}
 }

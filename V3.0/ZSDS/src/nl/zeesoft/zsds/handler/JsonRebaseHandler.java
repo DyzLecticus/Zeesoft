@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsds.AppConfiguration;
 
-public class JsonReloadHandler extends JsonBaseHandlerObject {
-	public JsonReloadHandler(AppConfiguration config) {
-		super(config,"/reload.json");
+public class JsonRebaseHandler extends JsonBaseHandlerObject {
+	public JsonRebaseHandler(AppConfiguration config) {
+		super(config,"/rebase.json");
 	}
 	
 	@Override
@@ -37,10 +37,10 @@ public class JsonReloadHandler extends JsonBaseHandlerObject {
 				err = checkTesting(response);
 			}
 			if (err.length()==0) {
-				if (getConfiguration().reload()) {
-					out.println(getResponse(200,getConfiguration().getBaseConfig().getName() + " is refreshing its memory."));
+				if (getConfiguration().rebase()) {
+					out.println(getResponse(200,getConfiguration().getBaseConfig().getName() + " has been rebased."));
 				} else {
-					out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is already refreshing its memory. Please wait."));
+					out.println(setErrorResponse(response,503,"Failed to rebase. Please try again later."));
 				}
 			} else {
 				out.println(err);
