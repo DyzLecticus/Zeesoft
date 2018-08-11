@@ -48,22 +48,11 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	}
 
 	public boolean rebase() {
-		boolean r = false;
-		lockMe(this);
-		SequenceInterpreterTesterInitializer ti = testerInitializer;
-		SequenceInterpreterTester t = tester;
-		if (ti!=null && t!=null) {
-			r = true;
-		}
-		unlockMe(this);
-		if (r) {
-			configuration.debug(this,"Rebasing ...");
-			ZStringBuilder err = t.getSummary().toFile(ti.getFileName(),true);
-			if (err.length()>0) {
-				configuration.getMessenger().error(this,err.toString());
-				r = false;
-			} else {
-				configuration.debug(this,"Rebased");
+		boolean r = writeBaseLine(true);
+		SequenceInterpreterTester tester = getTester();
+		if (tester!=null && !tester.isTesting()) {
+			if (tester.start()) {
+				configuration.debug(this,"Testing ...");
 			}
 		}
 		return r;
@@ -74,6 +63,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		lockMe(this);
 		if (!generator.isWorking()) {
 			generator.generate(load, reload);
+			lastModifiedHeader = getLastModifiedDateString();
 			r = true;
 		}
 		unlockMe(this);
@@ -86,6 +76,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		if (!reading && !writing) {
 			writing = true;
 			r = true;
+			lastModifiedHeader = getLastModifiedDateString();
 		}
 		unlockMe(this);
 		if (r) {
@@ -100,6 +91,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 			generator.generate(configuration.getBaseConfig(),sp,t,ds,configuration.getBaseConfig().getFullBaseDir());
 			lockMe(this);
 			writing = false;
+			lastModifiedHeader = getLastModifiedDateString();
 			unlockMe(this);
 			configuration.debug(this,"Generated data");
 		}
@@ -113,11 +105,17 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 				configuration.getMessenger().warn(this,cls.errors.toString());
 			}
 			configuration.debug(this,"Initialized tester");
+			boolean testing = false;
 			lockMe(this);
 			tester = testerInitializer.getTester();
-			tester.start();
+			if (tester.start()) {
+				testing = true;
+			}
+			lastModifiedHeader = getLastModifiedDateString();
 			unlockMe(this);
-			configuration.debug(this,"Testing ...");
+			if (testing) {
+				configuration.debug(this,"Testing ...");
+			}
 		} else {
 			if (cls.errors.length()>0) {
 				configuration.getMessenger().error(this,cls.errors.toString());
@@ -147,15 +145,15 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	@Override
 	public void testingIsDone(Object tester) {
 		configuration.debug(this,"Tested");
-		boolean rebase = false;
+		boolean writeBaseLine = false;
 		lockMe(this);
 		File test = new File(testerInitializer.getFileName());
 		if (!test.exists()) {
-			rebase = true;
+			writeBaseLine = true;
 		}
 		unlockMe(this);
-		if (rebase) {
-			rebase();
+		if (writeBaseLine) {
+			writeBaseLine(false);
 		}
 	}
 
@@ -229,6 +227,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 			r = true;
 			dialogHandlerConfigLoad = configuration.buildNewDialogHandlerConfiguration();
 			config = dialogHandlerConfigLoad;
+			lastModifiedHeader = getLastModifiedDateString();
 		}
 		unlockMe(this);
 		if (r) {
@@ -239,6 +238,32 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 			}
 			config.addListener(this);
 			config.initialize();
+		}
+		return r;
+	}
+	
+	private boolean writeBaseLine(boolean rebase) {
+		boolean r = false;
+		lockMe(this);
+		SequenceInterpreterTesterInitializer ti = testerInitializer;
+		SequenceInterpreterTester t = tester;
+		if (ti!=null && t!=null) {
+			r = true;
+		}
+		unlockMe(this);
+		if (r) {
+			if (rebase) {
+				configuration.debug(this,"Rebasing ...");
+			}
+			ZStringBuilder err = t.getSummary().toFile(ti.getFileName(),true);
+			if (err.length()>0) {
+				configuration.getMessenger().error(this,err.toString());
+				r = false;
+			} else {
+				if (rebase) {
+					configuration.debug(this,"Rebased");
+				}
+			}
 		}
 		return r;
 	}

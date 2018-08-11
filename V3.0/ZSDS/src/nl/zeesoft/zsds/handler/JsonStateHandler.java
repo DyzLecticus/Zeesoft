@@ -10,9 +10,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsds.AppConfiguration;
 
-public class JsonRebaseHandler extends JsonBaseHandlerObject {
-	public JsonRebaseHandler(AppConfiguration config) {
-		super(config,"/rebase.json");
+public class JsonStateHandler extends JsonBaseHandlerObject {
+	public JsonStateHandler(AppConfiguration config) {
+		super(config,"/state.json");
 	}
 	
 	@Override
@@ -21,28 +21,16 @@ public class JsonRebaseHandler extends JsonBaseHandlerObject {
 		PrintWriter out;
 		try {
 			out = response.getWriter();
-			out.println(setErrorResponse(response,405,"GET is not supported for this resource"));
-		} catch (IOException e) {
-			getConfiguration().getMessenger().error(this,"I/O exception",e);
-		}
-	}
-	
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) {
-		setDefaultHeadersAndStatus(response);
-		PrintWriter out;
-		try {
-			out = response.getWriter();
 			ZStringBuilder err = checkInitialized(response);
+			if (err.length()==0) {
+				err = checkReloading(response);
+			}
 			if (err.length()==0) {
 				err = checkTesting(response);
 			}
 			if (err.length()==0) {
-				if (getConfiguration().rebase()) {
-					out.println(getResponse(200,getConfiguration().getBaseConfig().getName() + " has been rebased."));
-				} else {
-					out.println(setErrorResponse(response,503,"Failed to rebase. Please try again later."));
-				}
+				SequenceInterpreterTester tester = getConfiguration().getTester();
+				out.println(tester.getSummary().toStringBuilderReadFormat());
 			} else {
 				out.println(err);
 			}

@@ -12,7 +12,7 @@ import nl.zeesoft.zsds.AppConfiguration;
 
 public class JsonSelfTestHandler extends JsonBaseHandlerObject {
 	public JsonSelfTestHandler(AppConfiguration config) {
-		super(config,"/selfTest.json");
+		super(config,"/selfTestSummary.json");
 	}
 	
 	@Override
@@ -22,12 +22,6 @@ public class JsonSelfTestHandler extends JsonBaseHandlerObject {
 		try {
 			out = response.getWriter();
 			ZStringBuilder err = checkInitialized(response);
-			if (err.length()==0) {
-				err = checkReloading(response);
-			}
-			if (err.length()==0) {
-				err = checkTesting(response);
-			}
 			if (err.length()==0) {
 				SequenceInterpreterTester tester = getConfiguration().getTester();
 				out.println(tester.getSummary().toStringBuilderReadFormat());

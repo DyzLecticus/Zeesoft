@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsds.AppConfiguration;
-import nl.zeesoft.zsds.resource.SelfTestHtml;
+import nl.zeesoft.zsds.resource.StateHtml;
 
-public class HtmlSelfTestHandler extends HandlerObject {
-	public HtmlSelfTestHandler(AppConfiguration config) {
-		super(config,"/selfTest.html");
+public class HtmlStateHandler extends HandlerObject {
+	public HtmlStateHandler(AppConfiguration config) {
+		super(config,"/state.html");
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class HtmlSelfTestHandler extends HandlerObject {
 
 	@Override
 	protected ZStringBuilder buildResponse() {
-		SelfTestHtml html = new SelfTestHtml();
+		StateHtml html = new StateHtml();
 		return html.toStringBuilder();
 	}
 }

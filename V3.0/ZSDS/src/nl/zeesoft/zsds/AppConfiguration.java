@@ -25,7 +25,7 @@ import nl.zeesoft.zsds.handler.BaseStyleSheetHandler;
 import nl.zeesoft.zsds.handler.HandlerObject;
 import nl.zeesoft.zsds.handler.HtmlIndexHandler;
 import nl.zeesoft.zsds.handler.HtmlNotFoundHandler;
-import nl.zeesoft.zsds.handler.HtmlSelfTestHandler;
+import nl.zeesoft.zsds.handler.HtmlStateHandler;
 import nl.zeesoft.zsds.handler.HtmlTestHandler;
 import nl.zeesoft.zsds.handler.JsonConfigHandler;
 import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
@@ -34,6 +34,7 @@ import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
 import nl.zeesoft.zsds.handler.JsonRebaseHandler;
 import nl.zeesoft.zsds.handler.JsonReloadHandler;
 import nl.zeesoft.zsds.handler.JsonSelfTestHandler;
+import nl.zeesoft.zsds.handler.JsonStateHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
 
 public class AppConfiguration {
@@ -244,15 +245,16 @@ public class AppConfiguration {
 		r.add(new HtmlNotFoundHandler(this));
 		r.add(new HtmlIndexHandler(this));
 		r.add(new HtmlTestHandler(this));
-		r.add(new HtmlSelfTestHandler(this));
+		r.add(new HtmlStateHandler(this));
 		r.add(new JsonNotFoundHandler(this));
 		r.add(new JsonConfigHandler(this));
 		r.add(new JsonDialogsHandler(this));
 		r.add(new JsonTestDialogRequestHandler(this));
 		r.add(new JsonDialogRequestHandler(this));
-		r.add(new JsonSelfTestHandler(this));
+		r.add(new JsonStateHandler(this));
 		r.add(new JsonReloadHandler(this));
 		r.add(new JsonRebaseHandler(this));
+		r.add(new JsonSelfTestHandler(this));
 		return r;
 	}
 }
