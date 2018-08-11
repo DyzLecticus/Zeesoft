@@ -17,78 +17,80 @@ import nl.zeesoft.zsd.dialog.DialogVariablePrompt;
 public class DialogToJson {
 	
 	public JsFile getJsonForDialogs(List<DialogInstance> dialogs) {
-		return getJsonForDialogs(dialogs,true,false);
+		return getJsonForDialogs(dialogs,true,null);
 	}
 	
-	public JsFile getJsonForDialogs(List<DialogInstance> dialogs,boolean languageContext,boolean masterContext) {
+	public JsFile getJsonForDialogs(List<DialogInstance> dialogs,boolean languageContext,List<String> masterContexts) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		JsElem seqsElem = new JsElem("sequences",true);
 		json.rootElement.children.add(seqsElem);
-		addJsonForDialogs(seqsElem,dialogs,languageContext,masterContext);
+		addJsonForDialogs(seqsElem,dialogs,languageContext,masterContexts);
 		return json;
 	}
 
-	public void addJsonForDialogs(JsElem parent,List<DialogInstance> dialogs,boolean languageContext,boolean masterContext) {
+	public void addJsonForDialogs(JsElem parent,List<DialogInstance> dialogs,boolean languageContext,List<String> masterContexts) {
 		String cntxt = "";
 		List<ZStringBuilder> added = new ArrayList<ZStringBuilder>();
 		for (DialogInstance dialog: dialogs) {
-			for (DialogIO example: dialog.getExamples()) {
-				if (languageContext) {
-					cntxt = dialog.getLanguage();
-				} else if (masterContext) {
-					cntxt = dialog.getMasterContext();
-				} else {
-					cntxt = dialog.getContext();
-				}
-				boolean found = false;
-				ZStringBuilder find = new ZStringBuilder(example.input);
-				if (languageContext && example.output.length()>0) {
-					find.append(" ");
-					find.append(example.output);
-				}
-				for (ZStringBuilder sb: added) {
-					if (sb.equals(find)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					added.add(find);
-					if (languageContext && example.output.length()>0) {
-						TsvToJson.checkAddSequenceElement(parent,
-							example.input,
-							example.output,
-							new ZStringBuilder(cntxt)
-							);
+			if (masterContexts==null || masterContexts.size()==0 || masterContexts.contains(dialog.getMasterContext())) {
+				for (DialogIO example: dialog.getExamples()) {
+					if (languageContext) {
+						cntxt = dialog.getLanguage();
+					} else if (masterContexts!=null) {
+						cntxt = dialog.getMasterContext();
 					} else {
-						TsvToJson.checkAddSequenceElement(parent,
-							example.input,
-							null,
-							new ZStringBuilder(cntxt)
-							);
+						cntxt = dialog.getContext();
+					}
+					boolean found = false;
+					ZStringBuilder find = new ZStringBuilder(example.input);
+					if (languageContext && example.output.length()>0) {
+						find.append(" ");
+						find.append(example.output);
+					}
+					for (ZStringBuilder sb: added) {
+						if (sb.equals(find)) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						added.add(find);
+						if (languageContext && example.output.length()>0) {
+							TsvToJson.checkAddSequenceElement(parent,
+								example.input,
+								example.output,
+								new ZStringBuilder(cntxt)
+								);
+						} else {
+							TsvToJson.checkAddSequenceElement(parent,
+								example.input,
+								null,
+								new ZStringBuilder(cntxt)
+								);
+						}
 					}
 				}
-			}
-			for (DialogVariable variable: dialog.getVariables()) {
-				if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
-					for (DialogVariablePrompt prompt: variable.prompts) {
-						if (languageContext) {
-							cntxt = dialog.getLanguage();
-						} else if (masterContext) {
-							cntxt = dialog.getMasterContext();
-						} else {
-							cntxt = dialog.getContext();
+				for (DialogVariable variable: dialog.getVariables()) {
+					if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
+						for (DialogVariablePrompt prompt: variable.prompts) {
+							if (languageContext) {
+								cntxt = dialog.getLanguage();
+							} else if (masterContexts!=null) {
+								cntxt = dialog.getMasterContext();
+							} else {
+								cntxt = dialog.getContext();
+							}
+							ZStringBuilder pr = new ZStringBuilder(prompt.prompt);
+							pr.append(" [");
+							pr.append(variable.type);
+							pr.append("].");
+							TsvToJson.checkAddSequenceElement(parent,
+								pr,
+								null,
+								new ZStringBuilder(cntxt)
+								);
 						}
-						ZStringBuilder pr = new ZStringBuilder(prompt.prompt);
-						pr.append(" [");
-						pr.append(variable.type);
-						pr.append("].");
-						TsvToJson.checkAddSequenceElement(parent,
-							pr,
-							null,
-							new ZStringBuilder(cntxt)
-							);
 					}
 				}
 			}

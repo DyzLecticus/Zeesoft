@@ -27,7 +27,7 @@ public class LanguageMasterContextJsonGenerator {
 	public ZStringBuilder generate(BaseConfiguration base,DialogSet ds,String directory,boolean readFormat) {
 		ZStringBuilder err = new ZStringBuilder();
 		for (String language: base.getSupportedLanguages()) {
-			err = generateLanguageDialogs(ds,language,directory,readFormat);
+			err = generateLanguageDialogs(base,ds,language,directory,readFormat);
 			if (err.length()>0) {
 				break;
 			}
@@ -35,9 +35,9 @@ public class LanguageMasterContextJsonGenerator {
 		return err;
 	}
 	
-	private ZStringBuilder generateLanguageDialogs(DialogSet ds,String language,String directory,boolean readFormat) {
+	private ZStringBuilder generateLanguageDialogs(BaseConfiguration base,DialogSet ds,String language,String directory,boolean readFormat) {
 		DialogToJson convertor = new DialogToJson();
-		JsFile json = convertor.getJsonForDialogs(ds.getDialogs(language),false,true);
+		JsFile json = convertor.getJsonForDialogs(ds.getDialogs(language),false,base.getSupportedMasterContexts().get(language));
 		if (!directory.endsWith("/") && !directory.endsWith("\\")) {
 			directory += "/";
 		}

@@ -42,7 +42,7 @@ public class LanguageContextJsonGenerator {
 		}
 		DialogToJson convertor = new DialogToJson();
 		for (String masterContext: base.getSupportedMasterContexts().get(language)) {
-			JsFile json = convertor.getJsonForDialogs(ds.getDialogs(language,masterContext),false,false);
+			JsFile json = convertor.getJsonForDialogs(ds.getDialogs(language,masterContext),false,null);
 			String fileName = directory + FILE_NAME_PREFIX + language + masterContext + ".json";
 			err = json.toFile(fileName,readFormat);
 			if (err.length()>0) {

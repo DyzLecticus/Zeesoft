@@ -29,7 +29,7 @@ public class LanguageClassifierJsonGenerator {
 		JsElem seqsElem = new JsElem("sequences",true);
 		json.rootElement.children.add(seqsElem);
 		DialogToJson dc = new DialogToJson();
-		dc.addJsonForDialogs(seqsElem,ds.getDialogs(),true,false);
+		dc.addJsonForDialogs(seqsElem,ds.getDialogs(),true,null);
 		EntityToJson ec = new EntityToJson();
 		ec.addJsonForEntities(seqsElem,t.getEntities(),"",true);
 		if (!directory.endsWith("/") && !directory.endsWith("\\")) {
