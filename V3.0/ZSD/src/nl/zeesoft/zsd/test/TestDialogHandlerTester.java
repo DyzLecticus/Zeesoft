@@ -15,7 +15,6 @@ public class TestDialogHandlerTester extends TestSequenceInterpreterTester {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
 		System.out.println("This test show how to use a *DialogHandlerTester* to test dialog handling for a *DialogHandlerConfiguration*.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");

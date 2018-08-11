@@ -24,7 +24,9 @@ public class JsonSelfTestHandler extends JsonBaseHandlerObject {
 			ZStringBuilder err = checkInitialized(response);
 			if (err.length()==0) {
 				SequenceInterpreterTester tester = getConfiguration().getTester();
-				out.println(tester.getSummary().toStringBuilderReadFormat());
+				if (tester!=null && tester.getSummary()!=null) {
+					out.println(tester.getSummary().toStringBuilderReadFormat());
+				}
 			} else {
 				out.println(err);
 			}

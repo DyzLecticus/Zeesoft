@@ -20,6 +20,7 @@ import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsd.interpret.SequenceInterpreterTesterInitializer;
 import nl.zeesoft.zsd.util.LanguageJsonGenerator;
+import nl.zeesoft.zsds.dialogs.State;
 import nl.zeesoft.zsds.handler.BaseJavaScriptHandler;
 import nl.zeesoft.zsds.handler.BaseStyleSheetHandler;
 import nl.zeesoft.zsds.handler.HandlerObject;
@@ -102,6 +103,14 @@ public class AppConfiguration {
 			} else {
 				baseConfig.fromJson(json);
 				debug = baseConfig.isDebug();
+				if (debug) {
+					if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_ENG)) {
+						baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_ENG).add(State.MASTER_CONTEXT_STATE);
+					}
+					if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_NLD)) {
+						baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_NLD).add(State.MASTER_CONTEXT_STATE);
+					}
+				}
 				messenger.setPrintDebugMessages(debug);
 				stateManager.load();
 			}
@@ -234,7 +243,7 @@ public class AppConfiguration {
 	}
 
 	protected DialogSet getNewDialogSet() {
-		return new DialogSet();
+		return new AppDialogSet();
 	}
 
 	protected LanguageJsonGenerator getNewLanguageJsonGenerator() {

@@ -22,10 +22,10 @@ public abstract class ForeignTransferHandler extends DialogInstanceHandler {
 	}
 	
 	private String getExternalValueForNumber(int num) {
-		return super.getConfig().getEntityValueTranslator().getEntityObject(getDialog().getLanguage(),BaseConfiguration.TYPE_NUMERIC).getExternalValueForInternalValue("" + num);
+		return getConfig().getEntityValueTranslator().getEntityObject(getDialog().getLanguage(),BaseConfiguration.TYPE_NUMERIC).getExternalValueForInternalValue("" + num);
 	}
 
 	private String getExternalValueForCurrency(String code) {
-		return super.getConfig().getEntityValueTranslator().getEntityObject(getDialog().getLanguage(),BaseConfiguration.TYPE_CURRENCY).getExternalValueForInternalValue(code);
+		return getConfig().getEntityValueTranslator().getEntityObject(getDialog().getLanguage(),BaseConfiguration.TYPE_CURRENCY).getExternalValueForInternalValue(code);
 	}
 }
