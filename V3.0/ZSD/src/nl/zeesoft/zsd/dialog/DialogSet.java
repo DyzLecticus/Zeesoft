@@ -162,6 +162,7 @@ public class DialogSet implements Initializable {
 				String context = dialogElem.getChildString("context");
 				if (language.length()>0 && masterContext.length()>0 && context.length()>0) {
 					String handler = dialogElem.getChildString("handler");
+					String defaultFilterContext = dialogElem.getChildString("defaultFilterContext");
 					DialogInstance d = getDialog(language,masterContext,context);
 					if (d==null) {
 						d = new DialogInstance();
@@ -171,11 +172,21 @@ public class DialogSet implements Initializable {
 						addDialog(d);
 					}
 					d.setHandlerClassName(handler);
+					d.setDefaultFilterContext(defaultFilterContext);
 					JsElem exsElem = dialogElem.getChildByName("examples");
 					if (exsElem!=null) {
 						for (JsElem exElem: exsElem.children) {
 							ZStringSymbolParser input = exElem.getChildZStringSymbolParser("input");
 							ZStringSymbolParser output = exElem.getChildZStringSymbolParser("output");
+							List<String> filterContexts = new ArrayList<String>();
+							JsElem filtsElem = exElem.getChildByName("filterContexts");
+							if (filtsElem!=null) {
+								for (JsElem filtElem: filtsElem.children) {
+									if (filtElem.value!=null && filtElem.value!=null) {
+										filterContexts.add(filtElem.value.toString());
+									}
+								}
+							}
 							boolean found = false;
 							for (DialogIO example: d.getExamples()) {
 								if (example.input.equals(input) && example.output.equals(output)) {
@@ -187,6 +198,7 @@ public class DialogSet implements Initializable {
 								DialogIO example = new DialogIO();
 								example.input = input;
 								example.output = output;
+								example.filterContexts = filterContexts;
 								d.getExamples().add(example);
 							}
 						}

@@ -18,6 +18,7 @@ public class DialogInstance {
 	private String								masterContext			= "";
 	private String								context					= "";
 	private String								handlerClassName		= "";
+	private String								defaultFilterContext	= "";
 
 	private List<DialogIO>						examples				= new ArrayList<DialogIO>();
 	private List<DialogVariable>				variables				= new ArrayList<DialogVariable>();
@@ -116,7 +117,7 @@ public class DialogInstance {
 			if (example.output.length()>0) {
 				List<String> contexts = null;
 				if (example.filterContexts.size()>0) {
-					contexts = example.filterContexts;
+					contexts = new ArrayList<String>(example.filterContexts);
 				} else {
 					contexts = new ArrayList<String>();
 				}
@@ -198,6 +199,14 @@ public class DialogInstance {
 
 	public void setHandlerClassName(String handlerClassName) {
 		this.handlerClassName = handlerClassName;
+	}
+
+	public String getDefaultFilterContext() {
+		return defaultFilterContext;
+	}
+
+	public void setDefaultFilterContext(String defaultFilterContext) {
+		this.defaultFilterContext = defaultFilterContext;
 	}
 
 	public List<DialogIO> getExamples() {

@@ -8,21 +8,27 @@ public abstract class SupportRequestHandler extends DialogInstanceHandler {
 	protected void setPrompt(String promptVariable) {
 		boolean confirmed = false;
 		if (promptVariable.equals(SupportRequest.VARIABLE_SUPPORT_CONFIRMATION)) {
-			if (getResponseOutput().output.length()==0) {
+			if (!getResponse().getRequest().filterContexts.contains(SupportRequest.FILTER_CONTEXT_TRANSFER)) {
 				promptVariable = DialogInstance.VARIABLE_NEXT_DIALOG;
-				confirmed = true;
 			}
-		}
-		if (promptVariable.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
-			if (!confirmed) {
-				String confirmation = getResponseOutput().values.get(SupportRequest.VARIABLE_SUPPORT_CONFIRMATION).internalValue;
-				confirmed = getConfig().getEntityValueTranslator().getBooleanTypeValueForInternalValue(confirmation,false);
+		} else {
+			if (promptVariable.equals(SupportRequest.VARIABLE_SUPPORT_CONFIRMATION)) {
+				if (getResponseOutput().output.length()==0) {
+					promptVariable = DialogInstance.VARIABLE_NEXT_DIALOG;
+					confirmed = true;
+				}
 			}
-			if (confirmed) {
-				getResponseOutput().appendOutput(getConnectResponse());
-				promptVariable = "";
-			} else {
-				getResponseOutput().appendOutput(getOkayResponse());
+			if (promptVariable.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
+				if (!confirmed) {
+					String confirmation = getResponseOutput().values.get(SupportRequest.VARIABLE_SUPPORT_CONFIRMATION).internalValue;
+					confirmed = getConfig().getEntityValueTranslator().getBooleanTypeValueForInternalValue(confirmation,false);
+				}
+				if (confirmed) {
+					getResponseOutput().appendOutput(getConnectResponse());
+					promptVariable = "";
+				} else {
+					getResponseOutput().appendOutput(getOkayResponse());
+				}
 			}
 		}
 		super.setPrompt(promptVariable);

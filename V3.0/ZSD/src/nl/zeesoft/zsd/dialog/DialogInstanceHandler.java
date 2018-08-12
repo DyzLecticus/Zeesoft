@@ -108,7 +108,6 @@ public abstract class DialogInstanceHandler {
 					for (String filterContext: req.filterContexts) {
 						if (matcherContext.equals(filterContext)) {
 							context = filterContext;
-							response.addDebugLogLine("    Selected filter context: ",context);
 							break;
 						}
 					}
@@ -116,6 +115,12 @@ public abstract class DialogInstanceHandler {
 						break;
 					}
 				}
+			}
+			if (context.length()==0) {
+				context = dialog.getDefaultFilterContext();
+			}
+			if (context.length()>0) {
+				response.addDebugLogLine("    Selected filter context: ",context);
 			}
 			List<SequenceMatcherResult> matches = dialog.getMatcher().getMatches(response.classificationSequence,context,true,response.getRequest().matchThreshold);
 			response.addDebugLogLine("    Found matches for sequence: ","" + matches.size());
@@ -184,6 +189,7 @@ public abstract class DialogInstanceHandler {
 	protected void replaceVariablesAndCorrectCase(DialogResponseOutput responseOutput, ZStringSymbolParser output) {
 		if (output.length()>0) {
 			output.replace("{selfName}",getConfig().getBase().getName());
+			output.replace("{selfEmail}",getConfig().getBase().getEmail());
 			for (Entry<String,DialogVariableValue> entry: responseOutput.values.entrySet()) {
 				output.replace("{" + entry.getKey() + "}",entry.getValue().externalValue);
 			}

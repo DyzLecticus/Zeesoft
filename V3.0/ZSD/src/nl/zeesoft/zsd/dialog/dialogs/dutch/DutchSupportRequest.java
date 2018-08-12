@@ -5,6 +5,7 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.dialog.dialogs.SupportRequest;
 
 public class DutchSupportRequest extends SupportRequest {
+	private static final String		EXAMPLE_OUTPUT_CONTACT		= "Helaas kan ik u op dit moment niet doorverbinden met een mens. U kunt een e-mail sturen naar {selfEmail}.";
 	private static final String		EXAMPLE_OUTPUT_LEARNING		= "Ik ben nog aan het leren.";
 	private static final String		EXAMPLE_OUTPUT_NO_WORRIES	= "Geen zorgen.";
 	
@@ -15,34 +16,8 @@ public class DutchSupportRequest extends SupportRequest {
 	
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		addExample("Ik wil graag met een mens praten.","");
-		addExample("Ik wil graag met een mens spreken.","");
-		addExample("Ik wil worden doorverbonden met een mens.","");
-		addExample("Ik wil doorverbonden worden met een mens.","");
-		addExample("Kun je me doorverbinden met een mens?","");
-		addExample("Kunt u me doorverbinden met een mens?","");
-		addExample("Kan je me doorverbinden met een mens?","");
-		addExample("Kunt u mij doorverbinden met een mens?","");
-		
-		addExample("Zucht.",getOutputLearning());
-		addExample("Je begrijpt mij niet.",getOutputLearning());
-		addExample("Jij begrijpt me niet.",getOutputLearning());
-		addExample("U begrijpt me niet.",getOutputLearning());
-		addExample("Je begrijpt het niet.",getOutputLearning());
-		addExample("Jij begrijpt het niet.",getOutputLearning());
-		addExample("U begrijpt het niet.",getOutputLearning());
-		addExample("Je begrijpt mij verkeerd.",getOutputLearning());
-		addExample("jij begrijpt me verkeerd.",getOutputLearning());
-		addExample("U begrijpt me verkeerd.",getOutputLearning());
-		addExample("Je begrijpt er niks van.",getOutputLearning());
-		addExample("jij begrijpt er niks van.",getOutputLearning());
-		addExample("U begrijpt er niks van.",getOutputLearning());
-		addExample("Je kan me niet helpen.",getOutputLearning());
-		addExample("jij kan mij niet helpen.",getOutputLearning());
-		addExample("U kunt mij niet helpen.",getOutputLearning());
-		
-		addExample("Help.",getOutputNoWorries());
-		addExample("Help!",getOutputNoWorries());
+		addExamplesForFilterContext(FILTER_CONTEXT_NO_TRANSFER,getOutputContact());
+		addExamplesForFilterContext(FILTER_CONTEXT_TRANSFER,"");
 
 		addVariable(VARIABLE_SUPPORT_CONFIRMATION,BaseConfiguration.TYPE_CONFIRMATION);
 		addVariablePrompt(VARIABLE_SUPPORT_CONFIRMATION,"Zal ik u doorverbinden met een mens?");
@@ -51,6 +26,46 @@ public class DutchSupportRequest extends SupportRequest {
 		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Kan ik u ergens anders mee proberen te helpen?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Kan ik u op een andere manier van dienst zijn?");
+	}
+	
+	protected void addExamplesForFilterContext(String filterContext,String outputContact) {
+		addExample("Ik wil graag met een mens praten.",outputContact,filterContext);
+		addExample("Ik wil graag met een mens spreken.",outputContact,filterContext);
+		addExample("Ik wil worden doorverbonden met een mens.",outputContact,filterContext);
+		addExample("Ik wil doorverbonden worden met een mens.",outputContact,filterContext);
+		addExample("Kun je me doorverbinden met een mens?",outputContact,filterContext);
+		addExample("Kunt u me doorverbinden met een mens?",outputContact,filterContext);
+		addExample("Kan je mij doorverbinden met een mens?",outputContact,filterContext);
+		addExample("Kunt u mij doorverbinden met een mens?","",filterContext);
+		
+		String append = "";
+		if (outputContact.length()>0) {
+			append = " " + outputContact;
+		}
+		
+		addExample("Zucht.",getOutputLearning() + append,filterContext);
+		addExample("Je begrijpt mij niet.",getOutputLearning() + append,filterContext);
+		addExample("Jij begrijpt me niet.",getOutputLearning() + append,filterContext);
+		addExample("U begrijpt me niet.",getOutputLearning() + append,filterContext);
+		addExample("Je begrijpt het niet.",getOutputLearning() + append,filterContext);
+		addExample("Jij begrijpt het niet.",getOutputLearning() + append,filterContext);
+		addExample("U begrijpt het niet.",getOutputLearning() + append,filterContext);
+		addExample("Je begrijpt mij verkeerd.",getOutputLearning() + append,filterContext);
+		addExample("jij begrijpt me verkeerd.",getOutputLearning() + append,filterContext);
+		addExample("U begrijpt me verkeerd.",getOutputLearning() + append,filterContext);
+		addExample("Je begrijpt er niks van.",getOutputLearning() + append,filterContext);
+		addExample("jij begrijpt er niks van.",getOutputLearning() + append,filterContext);
+		addExample("U begrijpt er niks van.",getOutputLearning() + append,filterContext);
+		addExample("Je kan me niet helpen.",getOutputLearning() + append,filterContext);
+		addExample("jij kan mij niet helpen.",getOutputLearning() + append,filterContext);
+		addExample("U kunt mij niet helpen.",getOutputLearning() + append,filterContext);
+		
+		addExample("Help.",getOutputNoWorries() + append,filterContext);
+		addExample("Help!",getOutputNoWorries() + append,filterContext);
+	}
+	
+	protected String getOutputContact() {
+		return EXAMPLE_OUTPUT_CONTACT;
 	}
 	
 	protected String getOutputLearning() {

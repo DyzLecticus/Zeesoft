@@ -10,9 +10,12 @@ import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;
 import nl.zeesoft.zsd.dialog.DialogResponseOutput;
+import nl.zeesoft.zsd.dialog.dialogs.SupportRequest;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 
 public class TestDialogHandler extends TestInitializer {
+	private String filterContext = "";
+	
 	public TestDialogHandler(Tester tester) {
 		super(tester);
 	}
@@ -174,6 +177,17 @@ public class TestDialogHandler extends TestInitializer {
 				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:italie ?",
 				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:italië ?",
 				"Een overboeking naar Italië kost vijf euro.","");
+			System.out.println();
+			testRequestResponse(handler,"",
+				"Je begrijpt me niet.",
+				"UN_ABC:Je UN_ABC:begrijpt UN_ABC:me UN_ABC:niet .",
+				"Ik ben nog aan het leren. Helaas kan ik u op dit moment niet doorverbinden met een mens. U kunt een e-mail sturen naar dyz.lecticus@zeesoft.nl.","Kan ik u ergens anders mee proberen te helpen?");
+			System.out.println();
+			filterContext = SupportRequest.FILTER_CONTEXT_TRANSFER;
+			testRequestResponse(handler,"",
+				"Je begrijpt me niet.",
+				"UN_ABC:Je UN_ABC:begrijpt UN_ABC:me UN_ABC:niet .",
+				"Ik ben nog aan het leren.","Zal ik u doorverbinden met een mens?");
 		}
 	}
 	
@@ -186,6 +200,9 @@ public class TestDialogHandler extends TestInitializer {
 		DialogRequest request = new DialogRequest(prompt,input);
 		request.setAllActions(true);
 		request.randomizeOutput = false;
+		if (filterContext.length()>0) {
+			request.filterContexts.add(filterContext);
+		}
 		DialogResponse response = si.handleDialogRequest(request);
 		showRequestResponse(response);
 		System.out.println("Handling the request took: " + ((new Date()).getTime() - started.getTime()) + " ms");
@@ -196,9 +213,7 @@ public class TestDialogHandler extends TestInitializer {
 		if (response.contextOutputs.size()>0) {
 			DialogResponseOutput dro = response.contextOutputs.get(0);
 			assertEqual(dro.output,new ZStringSymbolParser(expectedOutput),"Output does not match expectation");
-			if (expectedPrompt.length()>0) {
-				assertEqual(dro.prompt,new ZStringSymbolParser(expectedPrompt),"Prompt does not match expectation");
-			}
+			assertEqual(dro.prompt,new ZStringSymbolParser(expectedPrompt),"Prompt does not match expectation");
 		} else if (expectedOutput.length()>0) {
 			assertEqual(response.contextOutputs.size()>0,true,"Number of outputs does not match expectation");
 		}

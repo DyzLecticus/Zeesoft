@@ -38,6 +38,7 @@ public class TestBaseConfigurationToJson extends TestEntityToJson {
 	protected void test(String[] args) {
 		BaseConfiguration bc = new BaseConfiguration();
 		bc.setName("Test");
+		bc.setEmail("test@email.com");
 		bc.setDebug(true);
 		bc.setDataDir("testData");
 		bc.setBaseDir("testBase/");
@@ -51,7 +52,7 @@ public class TestBaseConfigurationToJson extends TestEntityToJson {
 		bc.getParameters().put("test2","test2Val");
 		JsFile json = bc.toJson();
 		System.out.println(json.toStringBuilderReadFormat());
-		assertEqual(json.rootElement.children.size(),14,"The number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),15,"The number of children does not match expectation");
 		
 		BaseConfiguration bcTest = new BaseConfiguration();
 		bcTest.fromJson(json);

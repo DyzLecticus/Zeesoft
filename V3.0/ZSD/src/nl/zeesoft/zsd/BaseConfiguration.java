@@ -42,6 +42,7 @@ public class BaseConfiguration {
 	public static final String					TYPE_NAME					= "NAM";
 
 	private String								name						= "Dyz Lecticus";
+	private String								email						= "dyz.lecticus@zeesoft.nl";
 	private String								primaryLanguage				= BaseConfiguration.LANG_ENG;
 	private List<String>						supportedLanguages			= new ArrayList<String>();
 	private SortedMap<String,String>			supportedAlphabets			= new TreeMap<String,String>();
@@ -83,6 +84,7 @@ public class BaseConfiguration {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("name",name,true));
+		json.rootElement.children.add(new JsElem("email",email,true));
 		json.rootElement.children.add(new JsElem("primaryLanguage",primaryLanguage,true));
 		json.rootElement.children.add(new JsElem("debug","" + debug));
 		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
@@ -131,6 +133,7 @@ public class BaseConfiguration {
 		supportedAlphabets.clear();
 		supportedMasterContexts.clear();
 		name = json.rootElement.getChildString("name",name);
+		email = json.rootElement.getChildString("email",email);
 		primaryLanguage = json.rootElement.getChildString("primaryLanguage",primaryLanguage);
 		debug = json.rootElement.getChildBoolean("debug",debug);
 		dataDir = json.rootElement.getChildString("dataDir",dataDir);
@@ -200,6 +203,24 @@ public class BaseConfiguration {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Returns the e-mail address of the agent.
+	 * 
+	 * @return The e-mail address
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * Sets the e-mail address of the agent.
+	 * 
+	 * @param email The e-mail address
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	/**

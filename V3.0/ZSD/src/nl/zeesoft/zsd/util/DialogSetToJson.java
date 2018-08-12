@@ -22,6 +22,7 @@ public class DialogSetToJson {
 				dialogElem.children.add(new JsElem("masterContext",dialog.getMasterContext(),true));
 				dialogElem.children.add(new JsElem("context",dialog.getContext(),true));
 				dialogElem.children.add(new JsElem("handler",dialog.getHandlerClassName(),true));
+				dialogElem.children.add(new JsElem("defaultFilterContext",dialog.getDefaultFilterContext(),true));
 				if (dialog.getExamples().size()>0) {
 					JsElem exsElem = new JsElem("examples",true);
 					dialogElem.children.add(exsElem);
@@ -31,6 +32,13 @@ public class DialogSetToJson {
 						exElem.children.add(new JsElem("input",example.input,true));
 						if (example.output.length()>0) {
 							exElem.children.add(new JsElem("output",example.output,true));
+						}
+						if (example.filterContexts.size()>0) {
+							JsElem filtsElem = new JsElem("filterContexts",true);
+							exElem.children.add(filtsElem);
+							for (String context: example.filterContexts) {
+								filtsElem.children.add(new JsElem(null,context,true));
+							}
 						}
 					}
 				}
