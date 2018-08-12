@@ -2,6 +2,7 @@ package nl.zeesoft.zsd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -61,6 +62,8 @@ public class BaseConfiguration {
 
 	private String								selfTestBaseLineFileName	= "selfTestBaseLineSummary.json";
 	
+	private SortedMap<String,String>			parameters					= new TreeMap<String,String>();
+	
 	public BaseConfiguration() {
 		initialize();
 	}
@@ -91,6 +94,14 @@ public class BaseConfiguration {
 		json.rootElement.children.add(new JsElem("maxMsInterpretPerSequence","" + maxMsInterpretPerSequence));
 		json.rootElement.children.add(new JsElem("maxMsDialogPerSequence","" + maxMsDialogPerSequence));
 		json.rootElement.children.add(new JsElem("selfTestBaseLineFileName",selfTestBaseLineFileName,true));
+		JsElem paramsElem = new JsElem("parameters",true);
+		json.rootElement.children.add(paramsElem);
+		for (Entry<String,String> entry: parameters.entrySet()) {
+			JsElem pElem = new JsElem();
+			paramsElem.children.add(pElem);
+			pElem.children.add(new JsElem("key",entry.getKey(),true));
+			pElem.children.add(new JsElem("value",entry.getValue(),true));
+		}
 		JsElem langsElem = new JsElem("supportedLanguages",true);
 		json.rootElement.children.add(langsElem);
 		for (String language: supportedLanguages) {
@@ -131,6 +142,14 @@ public class BaseConfiguration {
 		maxMsInterpretPerSequence = json.rootElement.getChildLong("maxMsInterpretPerSequence",maxMsInterpretPerSequence);
 		maxMsDialogPerSequence = json.rootElement.getChildLong("maxMsDialogPerSequence",maxMsDialogPerSequence);
 		selfTestBaseLineFileName = json.rootElement.getChildString("selfTestBaseLineFileName",selfTestBaseLineFileName);
+		JsElem paramsElem = json.rootElement.getChildByName("parameters");
+		if (paramsElem!=null) {
+			for (JsElem pElem: paramsElem.children) {
+				String key = pElem.getChildString("key");
+				String value = pElem.getChildString("value");
+				parameters.put(key,value);
+			}
+		}
 		JsElem langsElem = json.rootElement.getChildByName("supportedLanguages");
 		if (langsElem!=null) {
 			for (JsElem langElem: langsElem.children) {
@@ -160,7 +179,11 @@ public class BaseConfiguration {
 	public String getFullExtendDir() {
 		return dataDir + extendDir;
 	}
-	
+
+	public String getFullSelfTestBaseLineFileName() {
+		return dataDir + selfTestBaseLineFileName;
+	}
+
 	/**
 	 * Returns the name of the agent.
 	 * 
@@ -383,6 +406,11 @@ public class BaseConfiguration {
 
 	public void setSelfTestBaseLineFileName(String selfTestBaseLineFileName) {
 		this.selfTestBaseLineFileName = selfTestBaseLineFileName;
+	}
+	
+
+	public SortedMap<String,String> getParameters() {
+		return parameters;
 	}
 
 	protected void initialize() {

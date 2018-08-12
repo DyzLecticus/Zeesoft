@@ -53,6 +53,7 @@ public class EnglishGenericQnA extends GenericQnA {
 		addExample("Who created you?",CREATOR);
 		addExample("Who made you?",CREATOR);
 		addExample("Who built you?",CREATOR);
+		addExample("Who is your creator?",CREATOR);
 
 		addExample("What is your goal?",GOAL);
 		addExample("What are your goals?",GOAL);

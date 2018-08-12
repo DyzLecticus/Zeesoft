@@ -21,17 +21,13 @@ public class SequenceInterpreterTesterInitializer extends Initializer {
 		initializeTester();
 	}
 	
-	public String getFileName() {
-		return configuration.getBase().getDataDir() + configuration.getBase().getSelfTestBaseLineFileName();
-	}
-	
 	public SequenceInterpreterTester getTester() {
 		return tester;
 	}
 	
 	protected void initializeTester() {
 		this.tester = getNewTester(configuration);
-		addClass("tester",tester,getFileName());
+		addClass("tester",tester,configuration.getBase().getFullSelfTestBaseLineFileName());
 	}
 	
 	protected SequenceInterpreterTester getNewTester(DialogHandlerConfiguration configuration) {

@@ -23,6 +23,12 @@ public class DutchGenericThanks extends GenericThanks {
 		addExample("Kan ik u ergens anders mee van dienst zijn? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		addExample("Kan ik u ergens anders mee helpen? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		
+		addExample("Fijn.","");
+		addExample("Uitstekend.","");
+		addExample("Perfect.","");
+		addExample("Geweldig.","");
+		addExample("Prima.","");
+		addExample("Cool.","");
 		for (String thanks: getThanks()) {
 			for (String answer: getAnswers()) {
 				addExample(Analyzer.upperCaseFirst(thanks) + ".",answer);
@@ -31,11 +37,13 @@ public class DutchGenericThanks extends GenericThanks {
 				addExample("Perfect, " + thanks + ".",answer);
 				addExample("Geweldig, " + thanks + ".",answer);
 				addExample("Prima, " + thanks + ".",answer);
+				addExample("Cool, " + thanks + ".",answer);
 				addExample("Fijn! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 				addExample("Uitstekend! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 				addExample("Perfect! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 				addExample("Geweldig! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 				addExample("Prima! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
+				addExample("Cool! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 			}
 		}
 		

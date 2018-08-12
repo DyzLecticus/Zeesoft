@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zsd.dialog.dialogs.Generic;
 import nl.zeesoft.zsd.dialog.dialogs.GenericProfanity;
 import nl.zeesoft.zsd.entity.EntityObject;
@@ -16,9 +17,15 @@ import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
  * A SequenceInterpreter can be used to interpret the meaning of a sequence using several methods. 
  */
 public class SequenceInterpreter {
+	private Messenger					messenger		= null;
 	private InterpreterConfiguration	configuration	= null;
 	
 	public SequenceInterpreter(InterpreterConfiguration c) {
+		configuration = c;
+	}
+
+	public SequenceInterpreter(Messenger msgr,InterpreterConfiguration c) {
+		messenger = msgr;
 		configuration = c;
 	}
 
@@ -32,6 +39,10 @@ public class SequenceInterpreter {
 		InterpreterResponse r = new InterpreterResponse(request);
 		buildInterpreterResponse(r);
 		return r;
+	}
+
+	public Messenger getMessenger() {
+		return messenger;
 	}
 	
 	protected void buildInterpreterResponse(InterpreterResponse r) {

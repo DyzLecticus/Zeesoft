@@ -92,5 +92,6 @@ public class DutchGenericQnA extends GenericQnA {
 		addExample("Wie heeft jou geschapen?",CREATOR);
 		addExample("Wie heeft jou gemaakt?",CREATOR);
 		addExample("Wie heeft jou gebouwd?",CREATOR);
+		addExample("Wie is jouw schepper?",CREATOR);
 	}
 }

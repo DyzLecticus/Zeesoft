@@ -88,6 +88,8 @@ public class DialogHandlerTester extends SequenceInterpreterTester {
 		} else {
 			if (test.languageUnique) {
 				request.classifyLanguage = true;
+			} else {
+				request.language = test.expectedLanguage;
 			}
 			request.classifyMasterContext = true;
 			request.classifyContext = true;

@@ -15,11 +15,21 @@ public class DutchStateAccuracyHandler extends StateAccuracyHandler {
 
 	@Override
 	protected String getBusyResponse() {
-		return "Ik kan op dit moment mijn test resultaten overzicht niet verkrijgen.";
+		return "Ik kan op dit moment mijn test resultaten niet verkrijgen.";
 	}
 
 	@Override
 	protected String getJsonRequestFailedResponse() {
-		return "Het is me niet gelukt mijn test resultaten overzicht te verkrijgen.";
+		return "Het is me niet gelukt mijn test resultaten te verkrijgen.";
+	}
+
+	@Override
+	protected String getAccuracyIncreasedResponse() {
+		return "Mijn nauwkeurigheid is toegenomen ten opzichte van mijn vorige base line.";
+	}
+
+	@Override
+	protected String getAccuracyDecreasedResponse() {
+		return "Mijn nauwkeurigheid is afgenomen ten opzichte van mijn vorige base line.";
 	}
 }

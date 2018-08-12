@@ -50,11 +50,14 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	public boolean rebase() {
 		boolean r = writeBaseLine(true);
 		if (r) {
-			reload();
+			lockMe(this);
+			initializeTester();
+			unlockMe(this);
+			configuration.debug(this,"Initializing tester ...");
 		}
 		return r;
 	}
-	
+		
 	public boolean generate(boolean load,boolean reload) {
 		boolean r = false;
 		lockMe(this);
@@ -124,10 +127,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 				reloaded = reload;
 				dialogHandlerConfig = dialogHandlerConfigLoad;
 				lastModifiedHeader = getLastModifiedDateString();
-				testerInitializer = configuration.getNewSequenceInterpreterTesterInitializer(dialogHandlerConfig);
-				testerInitializer.addListener(this);
-				testerInitializer.getTester().addListener(this);
-				testerInitializer.start();
+				initializeTester();
 				unlockMe(this);
 				if (reloaded) {
 					configuration.debug(this,"Reloaded data");
@@ -144,7 +144,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		configuration.debug(this,"Tested");
 		boolean writeBaseLine = false;
 		lockMe(this);
-		File test = new File(testerInitializer.getFileName());
+		File test = new File(configuration.getBaseConfig().getFullSelfTestBaseLineFileName());
 		if (!test.exists()) {
 			writeBaseLine = true;
 		}
@@ -242,9 +242,8 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	private boolean writeBaseLine(boolean rebase) {
 		boolean r = false;
 		lockMe(this);
-		SequenceInterpreterTesterInitializer ti = testerInitializer;
 		SequenceInterpreterTester t = tester;
-		if (ti!=null && t!=null) {
+		if (t!=null) {
 			r = true;
 		}
 		unlockMe(this);
@@ -252,17 +251,23 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 			if (rebase) {
 				configuration.debug(this,"Rebasing ...");
 			}
-			ZStringBuilder err = t.getSummary().toFile(ti.getFileName(),true);
+			ZStringBuilder err = t.getSummary().toFile(configuration.getBaseConfig().getFullSelfTestBaseLineFileName(),true);
 			if (err.length()>0) {
 				configuration.getMessenger().error(this,err.toString());
 				r = false;
-			} else {
-				if (rebase) {
-					configuration.debug(this,"Rebased");
-				}
+			} else if (rebase) {
+				configuration.debug(this,"Rebased");
 			}
 		}
 		return r;
+	}
+
+	private void initializeTester() {
+		lastModifiedHeader = getLastModifiedDateString();
+		testerInitializer = configuration.getNewSequenceInterpreterTesterInitializer(dialogHandlerConfig);
+		testerInitializer.addListener(this);
+		testerInitializer.getTester().addListener(this);
+		testerInitializer.start();
 	}
 	
 	private String getLastModifiedDateString() {

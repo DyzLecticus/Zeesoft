@@ -23,6 +23,12 @@ public class EnglishGenericThanks extends GenericThanks {
 		addExample("Is there another way I can be of service to you? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		addExample("Is there anything else I can help you with? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		
+		addExample("Nice.","");
+		addExample("Excellent.","");
+		addExample("Perfect.","");
+		addExample("Great.","");
+		addExample("Awesome.","");
+		addExample("Cool.","");
 		for (String thanks: getThanks()) {
 			for (String answer: getAnswers()) {
 				addExample(Analyzer.upperCaseFirst(thanks) + "." + ".",answer);
@@ -30,10 +36,14 @@ public class EnglishGenericThanks extends GenericThanks {
 				addExample("Excellent, " + thanks + ".",answer);
 				addExample("Perfect, " + thanks + ".",answer);
 				addExample("Great, " + thanks + ".",answer);
+				addExample("Awesome, " + thanks + ".",answer);
+				addExample("Cool, " + thanks + ".",answer);
 				addExample("Nice! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 				addExample("Excellent! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 				addExample("Perfect! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 				addExample("Great! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
+				addExample("Awesome! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
+				addExample("Cool! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 			}
 		}
 		

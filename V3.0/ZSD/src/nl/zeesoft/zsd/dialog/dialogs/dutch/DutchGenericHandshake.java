@@ -34,15 +34,15 @@ public class DutchGenericHandshake extends GenericHandshake {
 		addExample("Wat is je naam?",getOutput());
 
 		addVariable(VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_FIRSTNAME,BaseConfiguration.TYPE_NAME);
-		addVariablePrompt(VARIABLE_FIRSTNAME,"Wat is jouw naam?");
-		addVariablePrompt(VARIABLE_FIRSTNAME,"Wat is jouw voornaam?");
+		addVariablePrompt(VARIABLE_FIRSTNAME,"Wat is uw naam?");
+		addVariablePrompt(VARIABLE_FIRSTNAME,"Wat is uw voornaam?");
 
 		addVariable(VARIABLE_LASTNAME,BaseConfiguration.TYPE_ALPHABETIC,VARIABLE_LASTNAME,BaseConfiguration.TYPE_NAME);
-		addVariablePrompt(VARIABLE_LASTNAME,"Wat is jouw achternaam?");
+		addVariablePrompt(VARIABLE_LASTNAME,"Wat is uw achternaam?");
 
 		addNextDialogVariable();
-		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Wat kan ik voor je doen {fullName}?");
-		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Hoe kan ik je helpen {fullName}?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Wat kan ik voor u doen {fullName}?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Hoe kan ik u helpen {fullName}?");
 
 		addVariable(VARIABLE_PREPOSITION,BaseConfiguration.TYPE_PREPOSITION,VARIABLE_PREPOSITION,BaseConfiguration.TYPE_NAME);
 		

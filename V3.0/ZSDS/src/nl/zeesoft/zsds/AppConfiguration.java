@@ -40,17 +40,19 @@ import nl.zeesoft.zsds.handler.JsonStateHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
 
 public class AppConfiguration {
-	private Messenger					messenger				= null;
-	private WorkerUnion					union					= null;
-	private String						installDir				= "";
-	private boolean						debug					= false;
+	public static final String			PARAMETER_SELF_TEST_SUMMARY_URL		= "selfTestSummaryUrl"; 
 	
-	private BaseConfiguration			baseConfig				= null;
-	private AppStateManager				stateManager			= null;
+	private Messenger					messenger							= null;
+	private WorkerUnion					union								= null;
+	private String						installDir							= "";
+	private boolean						debug								= false;
 	
-	private List<HandlerObject>			handlers				= null;
-	private HandlerObject				notFoundHtmlHandler		= null;
-	private HandlerObject				notFoundJsonHandler		= null;
+	private BaseConfiguration			baseConfig							= null;
+	private AppStateManager				stateManager						= null;
+	
+	private List<HandlerObject>			handlers							= null;
+	private HandlerObject				notFoundHtmlHandler					= null;
+	private HandlerObject				notFoundJsonHandler					= null;
 
 	public AppConfiguration(String installDir,boolean debug) {
 		handlers = getDefaultHandlers();
@@ -84,6 +86,7 @@ public class AppConfiguration {
 			baseConfig.setDebug(debug);
 			baseConfig.setDataDir(installDir + "data/");
 			baseConfig.setGenerateReadFormat(debug);
+			baseConfig.getParameters().put(PARAMETER_SELF_TEST_SUMMARY_URL,"http://localhost:8080/ZSDS/selfTestSummary.json");
 			baseConfig.toJson().toFile(fileName,true);
 			
 			File dir = new File(baseConfig.getFullBaseDir());
@@ -105,17 +108,23 @@ public class AppConfiguration {
 				debug = baseConfig.isDebug();
 				if (debug) {
 					if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_ENG)) {
-						baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_ENG).add(State.MASTER_CONTEXT_STATE);
+						List<String> mcs = baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_ENG);
+						if (!mcs.contains(State.MASTER_CONTEXT_STATE)) {
+							mcs.add(State.MASTER_CONTEXT_STATE);
+						}
 					}
 					if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_NLD)) {
-						baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_NLD).add(State.MASTER_CONTEXT_STATE);
+						List<String> mcs = baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_NLD);
+						if (!mcs.contains(State.MASTER_CONTEXT_STATE)) {
+							mcs.add(State.MASTER_CONTEXT_STATE);
+						}
 					}
 				}
 				messenger.setPrintDebugMessages(debug);
 				stateManager.load();
 			}
 		}
-		
+				
 		messenger.setPrintDebugMessages(debug);
 		messenger.start();
 	}

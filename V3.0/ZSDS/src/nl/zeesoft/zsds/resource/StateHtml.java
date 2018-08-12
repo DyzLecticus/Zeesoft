@@ -43,7 +43,7 @@ public class StateHtml extends HtmlResource {
 		script.append("    if (object.error) {\n");
 		script.append("        alert(object.error);\n");
 		script.append("    }\n");
-		script.append("    ZSDS.state.refresh();\n");
+		script.append("    setTimeout(function(){ ZSDS.state.refresh(); }, 200);\n");
 		script.append("};\n");
 		script.append("ZSDS.state.reload = function() {\n");
 		script.append("    elem = window.document.getElementById(\"reloadCheck\");\n");

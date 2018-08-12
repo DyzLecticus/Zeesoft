@@ -1,26 +1,21 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
-import java.util.List;
-
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
-import nl.zeesoft.zsd.dialog.DialogResponse;
-import nl.zeesoft.zsd.dialog.DialogResponseOutput;
-import nl.zeesoft.zsd.dialog.DialogVariableValue;
 import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.entity.UniversalMathematic;
 
 public class GenericMathHandler extends DialogInstanceHandler {
 	@Override
-	protected void setPrompt(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
+	protected void setPrompt(String promptVariable) {
 		ZStringSymbolParser expression = new ZStringSymbolParser();
 		
 		for (int i = 1; i <= 5; i++) {
-			String numVal = dro.values.get("number" + i).internalValue;
+			String numVal = getResponseOutput().values.get("number" + i).internalValue;
 			String opVal = "";
 			if (i < 5) {
-				opVal = dro.values.get("operator" + i).internalValue;
+				opVal = getResponseOutput().values.get("operator" + i).internalValue;
 			}
 			if (numVal.length()>0) {
 				if (expression.length()>0) {
@@ -37,10 +32,10 @@ public class GenericMathHandler extends DialogInstanceHandler {
 		}
 		
 		if (expression.length()>0) {
-			r.addDebugLogLine("    Calculate expression: ",expression);
+			getResponse().addDebugLogLine("    Calculate expression: ",expression);
 			UniversalMathematic math = (UniversalMathematic) getConfig().getEntityValueTranslator().getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
 			float f = math.calculate(expression);
-			r.addDebugLogLine("    Calculated expression: ","" + f);
+			getResponse().addDebugLogLine("    Calculated expression: ","" + f);
 			
 			String exact = getExactly();
 			String result = "";
@@ -61,11 +56,7 @@ public class GenericMathHandler extends DialogInstanceHandler {
 						i++;
 					}
 				}
-				String eVal = "";
-				EntityObject eo = getNumericEntity();
-				if (eo!=null) {
-					eVal = eo.getExternalValueForInternalValue(eo.getInternalValuePrefix() + i);
-				}
+				String eVal = getExternalValueForNumber(i);
 				if (eVal.length()>0) {
 					result = eVal;
 					if (minus) {
@@ -80,12 +71,12 @@ public class GenericMathHandler extends DialogInstanceHandler {
 				}
 			}
 	
-			dro.setDialogVariableValue(r,GenericMath.VARIABLE_EXACT,exact);
-			dro.setDialogVariableValue(r,GenericMath.VARIABLE_RESULT,result);
+			setDialogVariableValue(GenericMath.VARIABLE_EXACT,exact);
+			setDialogVariableValue(GenericMath.VARIABLE_RESULT,result);
 			
-			super.setPrompt(r, dro, updatedValues, promptVariable);
+			super.setPrompt(promptVariable);
 		} else {
-			dro.output = new ZStringSymbolParser();
+			getResponseOutput().output = new ZStringSymbolParser();
 		}
 	}
 	

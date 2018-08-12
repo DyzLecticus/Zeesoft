@@ -1,19 +1,14 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
-import java.util.List;
-
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
-import nl.zeesoft.zsd.dialog.DialogResponse;
-import nl.zeesoft.zsd.dialog.DialogResponseOutput;
-import nl.zeesoft.zsd.dialog.DialogVariableValue;
 import nl.zeesoft.zsd.entity.EntityObject;
 
 public abstract class GenericLanguageHandler extends DialogInstanceHandler {
 	@Override
-	public void buildDialogResponseOutput(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
-		String language = dro.values.get(GenericLanguage.VARIABLE_LANGUAGE).externalValue;
+	protected void buildDialogResponseOutput(String promptVariable) {
+		String language = getResponseOutput().values.get(GenericLanguage.VARIABLE_LANGUAGE).externalValue;
 		boolean confirm = false;
 
 		EntityObject lang = getLanguageEntity();
@@ -36,19 +31,21 @@ public abstract class GenericLanguageHandler extends DialogInstanceHandler {
 				confirm = true;
 			}
 		}
-		dro.setDialogVariableValue(r,GenericLanguage.VARIABLE_LANGUAGES,languages.toString());
+		setDialogVariableValue(GenericLanguage.VARIABLE_LANGUAGES,languages.toString());
 		if (language.length()>0) {
 			if (confirm) {
-				dro.setDialogVariableValue(r,GenericLanguage.VARIABLE_CONFIRMATION,getYes());
+				setDialogVariableValue(GenericLanguage.VARIABLE_CONFIRMATION,getYes());
 			} else {
-				dro.setDialogVariableValue(r,GenericLanguage.VARIABLE_CONFIRMATION,getNo());
+				setDialogVariableValue(GenericLanguage.VARIABLE_CONFIRMATION,getNo());
 			}
 		}
-		super.buildDialogResponseOutput(r,dro,updatedValues,promptVariable);
+		super.buildDialogResponseOutput(promptVariable);
 	}
+	
 	protected EntityObject getLanguageEntity() {
 		return getConfig().getEntityValueTranslator().getEntityObject(getDialog().getLanguage(),BaseConfiguration.TYPE_LANGUAGE);
 	}
+	
 	protected abstract String getAnd();
 	protected abstract String getYes();
 	protected abstract String getNo();

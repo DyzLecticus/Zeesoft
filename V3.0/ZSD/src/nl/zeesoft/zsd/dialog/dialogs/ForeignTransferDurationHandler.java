@@ -1,21 +1,17 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
-import java.util.List;
-
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.zsd.dialog.DialogResponse;
-import nl.zeesoft.zsd.dialog.DialogResponseOutput;
 import nl.zeesoft.zsd.dialog.DialogVariableValue;
 
 public abstract class ForeignTransferDurationHandler extends ForeignTransferHandler {
 	@Override
-	public void buildDialogResponseOutput(DialogResponse r,DialogResponseOutput dro,List<DialogVariableValue> updatedValues,String promptVariable) {
-		DialogVariableValue dvv = dro.values.get(ForeignTransfer.VARIABLE_TRANSFER_TO_COUNTRY);
+	protected void setPrompt(String promptVariable) {
+		DialogVariableValue dvv = getResponseOutput().values.get(ForeignTransfer.VARIABLE_TRANSFER_TO_COUNTRY);
 		if (dvv==null || dvv.externalValue.length()==0) {
-			dro.output = new ZStringSymbolParser();
+			getResponseOutput().output = new ZStringSymbolParser();
 		} else {
-			dro.setDialogVariableValue(r,"durationDays",getDays());
-			super.buildDialogResponseOutput(r,dro,updatedValues,promptVariable);
+			setDialogVariableValue("durationDays",getDays());
+			super.setPrompt(promptVariable);
 		}
 	}
 	protected abstract String getDays();

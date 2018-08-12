@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
@@ -23,6 +24,10 @@ public class DialogHandler extends SequenceInterpreter {
 		super(c);
 	}
 
+	public DialogHandler(Messenger msgr,DialogHandlerConfiguration c) {
+		super(msgr,c);
+	}
+	
 	/**
 	 * Handles a dialog request.
 	 * 
@@ -129,6 +134,7 @@ public class DialogHandler extends SequenceInterpreter {
 		if (handler==null) {
 			handler = new GenericQnAHandler();
 		}
+		handler.setMessenger(getMessenger());
 		handler.setConfig(getConfiguration());
 		handler.setDialog(dialog);
 		r.addDebugLogLine("    Initialized handler: ",handler.getClass().getName());
