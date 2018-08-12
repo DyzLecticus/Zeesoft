@@ -12,6 +12,7 @@ public class EnglishForeignTransferQnA extends ForeignTransferQnA {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
+		addExample("Money transfer to a foreign country. How much does that cost?",getCostOutput());
 		addExample("What does money transfer to a foreign country cost?",getCostOutput());
 		addExample("What does it cost to transfer money to a foreign country?",getCostOutput());
 		addExample("What are the costs of transferring money to a foreign country?",getCostOutput());
@@ -22,6 +23,7 @@ public class EnglishForeignTransferQnA extends ForeignTransferQnA {
 		addExample("How much does it cost to transfer abroad?",getCostOutput());
 		addExample("Are there any costs attached to transferring money abroad?",getCostOutput());
 
+		addExample("Foreign transfer. How long does that take?",getDurationOutput());
 		addExample("How long does foreign transfer take?",getDurationOutput());
 		addExample("How long does it take to transfer money to a foreign country?",getDurationOutput());
 		addExample("How much time does it take to transfer money to a foreign country?",getDurationOutput());

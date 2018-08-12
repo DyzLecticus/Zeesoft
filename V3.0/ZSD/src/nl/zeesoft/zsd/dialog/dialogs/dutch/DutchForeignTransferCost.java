@@ -12,6 +12,7 @@ public class DutchForeignTransferCost extends ForeignTransferCost {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
+		addExample("Een overboeking naar [" + BaseConfiguration.TYPE_COUNTRY + "]. Wat kost dat?",getCountryOutput());
 		addExample("Wat kost een overboeking naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Wat zijn de kosten van een overboeking naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Wat kost geld overboeken naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());

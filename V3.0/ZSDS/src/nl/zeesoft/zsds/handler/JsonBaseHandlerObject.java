@@ -78,6 +78,7 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 	@Override
 	public void setDefaultHeadersAndStatus(HttpServletResponse response) {
 		super.setDefaultHeadersAndStatus(response);
+		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 	}
 	

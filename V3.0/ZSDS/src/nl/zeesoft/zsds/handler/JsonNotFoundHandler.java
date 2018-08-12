@@ -18,6 +18,7 @@ public class JsonNotFoundHandler extends JsonBaseHandlerObject {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		setDefaultHeadersAndStatus(response);
+		response.setCharacterEncoding("UTF-8");
 		response.setStatus(404);
 		PrintWriter out;
 		try {

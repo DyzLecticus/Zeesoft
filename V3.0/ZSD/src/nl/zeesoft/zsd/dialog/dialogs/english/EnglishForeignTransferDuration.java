@@ -12,6 +12,7 @@ public class EnglishForeignTransferDuration extends ForeignTransferDuration {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
+		addExample("Money transfer to [" + BaseConfiguration.TYPE_COUNTRY + "]. How long does that take?",getCountryOutput());
 		addExample("How long does it take to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("How much time does it take to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 

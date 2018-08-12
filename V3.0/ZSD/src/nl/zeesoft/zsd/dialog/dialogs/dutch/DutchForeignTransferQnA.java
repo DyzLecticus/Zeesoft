@@ -12,6 +12,7 @@ public class DutchForeignTransferQnA extends ForeignTransferQnA {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
+		addExample("Een buitenlandoverboeking. Wat kost dat?",getCostOutput());
 		addExample("Wat kost een buitenlandoverboeking?",getCostOutput());
 		addExample("Wat kost een overboeking naar het buitenland?",getCostOutput());
 		addExample("Wat zijn de kosten van een overboeking naar het buitenland?",getCostOutput());
@@ -32,6 +33,7 @@ public class DutchForeignTransferQnA extends ForeignTransferQnA {
 		addExample("Hoeveel kost geld overmaken naar het buitenland?",getCostOutput());
 		addExample("Hoeveel kost het om geld over te maken naar het buitenland?",getCostOutput());
 
+		addExample("Een buitenlandoverboeking. Hoe lang duurt dat?",getDurationOutput());
 		addExample("Hoelang duurt een buitenlandoverboeking?",getDurationOutput());
 		addExample("Hoelang duren buitenlandoverboekingen?",getDurationOutput());
 		addExample("Hoelang duurt een overboeking naar het buitenland?",getDurationOutput());

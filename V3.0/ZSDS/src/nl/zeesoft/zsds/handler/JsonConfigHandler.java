@@ -17,6 +17,7 @@ public class JsonConfigHandler extends HandlerObject {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		setDefaultHeadersAndStatus(response);
+		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 		PrintWriter out;
 		try {

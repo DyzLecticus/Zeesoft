@@ -12,6 +12,7 @@ public class DutchForeignTransferDuration extends ForeignTransferDuration {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
+		addExample("Een overboeking naar [" + BaseConfiguration.TYPE_COUNTRY + "]. Hoe lang duurt dat?",getCountryOutput());
 		addExample("Hoelang duurt een overboeking naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Hoelang duurt geld overboeken naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("Hoelang duurt het om geld over te boeken naar [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());

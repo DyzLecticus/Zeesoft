@@ -12,6 +12,7 @@ public class EnglishForeignTransferCost extends ForeignTransferCost {
 
 	@Override
 	public void initialize(EntityValueTranslator t) {
+		addExample("Money transfer to [" + BaseConfiguration.TYPE_COUNTRY + "]. How much does that cost?",getCountryOutput());
 		addExample("What does money transfer to [" + BaseConfiguration.TYPE_COUNTRY + "] cost?",getCountryOutput());
 		addExample("What does it cost to transfer money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
 		addExample("What are the costs of transferring money to [" + BaseConfiguration.TYPE_COUNTRY + "]?",getCountryOutput());
