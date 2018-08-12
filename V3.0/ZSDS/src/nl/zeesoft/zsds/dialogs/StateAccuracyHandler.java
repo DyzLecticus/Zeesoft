@@ -52,6 +52,7 @@ public abstract class StateAccuracyHandler extends DialogInstanceHandler {
 				dro.output = new ZStringSymbolParser(getBusyResponse());
 			}
 		} else {
+			// TODO: Fix no output handling (when no summary is available)
 			dro.output = new ZStringSymbolParser(getJsonRequestFailedResponse());
 		}
 		super.buildDialogResponseOutput(r,dro,updatedValues,promptVariable);
