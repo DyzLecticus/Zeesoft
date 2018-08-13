@@ -9,8 +9,11 @@ import nl.zeesoft.zsd.dialog.dialogs.GenericThanks;
 import nl.zeesoft.zsd.sequence.Analyzer;
 
 public class DutchGenericThanks extends GenericThanks {
-	public static final String	EXAMPLE_OUTPUT_1	= "Graag gedaan.";
-	public static final String	EXAMPLE_OUTPUT_2	= "Heel graag gedaan.";
+	public static final String	EXAMPLE_OUTPUT_THANKS_1	= "Bedankt.";
+	public static final String	EXAMPLE_OUTPUT_THANKS_2	= "Dankuwel.";
+
+	public static final String	EXAMPLE_OUTPUT_1		= "Graag gedaan.";
+	public static final String	EXAMPLE_OUTPUT_2		= "Heel graag gedaan.";
 	
 	public DutchGenericThanks() {
 		setLanguage(BaseConfiguration.LANG_NLD);
@@ -23,27 +26,15 @@ public class DutchGenericThanks extends GenericThanks {
 		addExample("Kan ik u ergens anders mee van dienst zijn? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		addExample("Kan ik u ergens anders mee helpen? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		
-		addExample("Fijn.","");
-		addExample("Uitstekend.","");
-		addExample("Perfect.","");
-		addExample("Geweldig.","");
-		addExample("Prima.","");
-		addExample("Cool.","");
+		addComplimentExamples(".",EXAMPLE_OUTPUT_THANKS_1);
+		addComplimentExamples(".",EXAMPLE_OUTPUT_THANKS_2);
+		addComplimentExamples("!",EXAMPLE_OUTPUT_THANKS_1);
+		addComplimentExamples("!",EXAMPLE_OUTPUT_THANKS_2);
+		
 		for (String thanks: getThanks()) {
 			for (String answer: getAnswers()) {
+				addComplimentExamples(", " + thanks + ".",answer);
 				addExample(Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Fijn, " + thanks + ".",answer);
-				addExample("Uitstekend, " + thanks + ".",answer);
-				addExample("Perfect, " + thanks + ".",answer);
-				addExample("Geweldig, " + thanks + ".",answer);
-				addExample("Prima, " + thanks + ".",answer);
-				addExample("Cool, " + thanks + ".",answer);
-				addExample("Fijn! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Uitstekend! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Perfect! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Geweldig! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Prima! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Cool! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
 			}
 		}
 		
@@ -59,6 +50,15 @@ public class DutchGenericThanks extends GenericThanks {
 		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Wat kan ik voor u doen?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Hoe kan ik u van dienst zijn?");
+	}
+	
+	protected void addComplimentExamples(String append,String output) {
+		addExample("Fijn" + append,output);
+		addExample("Uitstekend" + append,output);
+		addExample("Perfect" + append,output);
+		addExample("Geweldig" + append,output);
+		addExample("Prima" + append,output);
+		addExample("Cool" + append,output);
 	}
 		
 	protected List<String> getThanks() {

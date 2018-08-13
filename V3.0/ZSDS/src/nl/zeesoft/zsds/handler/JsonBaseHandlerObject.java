@@ -15,12 +15,14 @@ import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsds.AppConfiguration;
 
 public abstract class JsonBaseHandlerObject extends HandlerObject {
-	private boolean	allowGet		= true;
-	private boolean	allowPost		= true;
-	private boolean checkGenerating	= false;
-	private boolean checkReloading	= false;
-	private boolean checkTesting	= false;
-	private boolean checkJson		= false;
+	private boolean	allowGet			= true;
+	private boolean	allowPost			= true;
+	private boolean useGetCache			= false;
+	private boolean checkInitialized	= true;
+	private boolean checkGenerating		= false;
+	private boolean checkReloading		= false;
+	private boolean checkTesting		= false;
+	private boolean checkJson			= false;
 	
 	public JsonBaseHandlerObject(AppConfiguration config,String path) {
 		super(config,path);
@@ -35,7 +37,10 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 			if (!allowGet) {
 				out.println(setErrorResponse(response,405,"GET is not supported for this resource"));
 			} else {
-				ZStringBuilder err = checkInitialized(response);
+				ZStringBuilder err = new ZStringBuilder(); 
+				if (err.length()==0 && checkInitialized) {
+					err = checkInitialized(response);
+				}
 				if (err.length()==0 && checkGenerating) {
 					err = checkGenerating(response);
 				}
@@ -46,7 +51,12 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 					err = checkTesting(response);
 				}
 				if (err.length()==0) {
-					ZStringBuilder res = buildResponse();
+					ZStringBuilder res = null;
+					if (useGetCache) {
+						res = getCachedResponse();
+					} else {
+						res = buildResponse();
+					}
 					if (res==null) {
 						out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is busy. Please wait."));
 					} else {
@@ -98,7 +108,10 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 			if (!allowPost) {
 				out.println(setErrorResponse(response,405,"POST is not supported for this resource"));
 			} else {
-				ZStringBuilder err = checkInitialized(response);
+				ZStringBuilder err = new ZStringBuilder(); 
+				if (err.length()==0 && checkInitialized) {
+					err = checkInitialized(response);
+				}
 				if (err.length()==0 && checkGenerating) {
 					err = checkGenerating(response);
 				}
@@ -208,6 +221,14 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 
 	protected void setAllowPost(boolean allowPost) {
 		this.allowPost = allowPost;
+	}
+
+	public void setUseGetCache(boolean useGetCache) {
+		this.useGetCache = useGetCache;
+	}
+
+	protected void setCheckInitialized(boolean checkInitialized) {
+		this.checkInitialized = checkInitialized;
 	}
 
 	protected void setCheckGenerating(boolean checkGenerating) {

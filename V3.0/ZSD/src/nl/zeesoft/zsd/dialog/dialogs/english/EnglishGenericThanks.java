@@ -9,8 +9,11 @@ import nl.zeesoft.zsd.dialog.dialogs.GenericThanks;
 import nl.zeesoft.zsd.sequence.Analyzer;
 
 public class EnglishGenericThanks extends GenericThanks {
-	public static final String	EXAMPLE_OUTPUT_1	= "You're welcome.";
-	public static final String	EXAMPLE_OUTPUT_2	= "You are very welcome.";
+	public static final String	EXAMPLE_OUTPUT_THANKS_1	= "Thanks.";
+	public static final String	EXAMPLE_OUTPUT_THANKS_2	= "Thank you.";
+
+	public static final String	EXAMPLE_OUTPUT_1		= "You're welcome.";
+	public static final String	EXAMPLE_OUTPUT_2		= "You are very welcome.";
 	
 	public EnglishGenericThanks() {
 		setLanguage(BaseConfiguration.LANG_ENG);
@@ -23,27 +26,15 @@ public class EnglishGenericThanks extends GenericThanks {
 		addExample("Is there another way I can be of service to you? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		addExample("Is there anything else I can help you with? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		
-		addExample("Nice.","");
-		addExample("Excellent.","");
-		addExample("Perfect.","");
-		addExample("Great.","");
-		addExample("Awesome.","");
-		addExample("Cool.","");
+		addComplimentExamples(".",EXAMPLE_OUTPUT_THANKS_1);
+		addComplimentExamples(".",EXAMPLE_OUTPUT_THANKS_2);
+		addComplimentExamples("!",EXAMPLE_OUTPUT_THANKS_1);
+		addComplimentExamples("!",EXAMPLE_OUTPUT_THANKS_2);
+		
 		for (String thanks: getThanks()) {
 			for (String answer: getAnswers()) {
-				addExample(Analyzer.upperCaseFirst(thanks) + "." + ".",answer);
-				addExample("Nice, " + thanks + ".",answer);
-				addExample("Excellent, " + thanks + ".",answer);
-				addExample("Perfect, " + thanks + ".",answer);
-				addExample("Great, " + thanks + ".",answer);
-				addExample("Awesome, " + thanks + ".",answer);
-				addExample("Cool, " + thanks + ".",answer);
-				addExample("Nice! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Excellent! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Perfect! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Great! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Awesome! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
-				addExample("Cool! " + Analyzer.upperCaseFirst(thanks) + ".",answer);
+				addComplimentExamples(", " + thanks + ".",answer);
+				addExample(Analyzer.upperCaseFirst(thanks) + ".",answer);
 			}
 		}
 		
@@ -59,6 +50,15 @@ public class EnglishGenericThanks extends GenericThanks {
 		addNextDialogVariable();
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"What can I do for you?");
 		addVariablePrompt(VARIABLE_NEXT_DIALOG,"How may I help you?");
+	}
+	
+	protected void addComplimentExamples(String append,String output) {
+		addExample("Nice" + append,output);
+		addExample("Excellent" + append,output);
+		addExample("Perfect" + append,output);
+		addExample("Great" + append,output);
+		addExample("Awesome" + append,output);
+		addExample("Cool" + append,output);
 	}
 		
 	protected List<String> getThanks() {

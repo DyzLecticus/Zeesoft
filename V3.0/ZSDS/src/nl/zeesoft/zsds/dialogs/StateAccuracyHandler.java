@@ -70,8 +70,10 @@ public abstract class StateAccuracyHandler extends DialogInstanceHandler {
 			float diff = Float.parseFloat(difference.externalValue);
 			if (diff>0F) {
 				getResponseOutput().appendOutput(getAccuracyIncreasedResponse());
+			} else if (diff==0F) {
+				getResponseOutput().appendOutput(getAccuracyUnchangedResponse());
 			} else if (diff<0F) {
-				getResponseOutput().appendOutput(getAccuracyIncreasedResponse());
+				getResponseOutput().appendOutput(getAccuracyDecreasedResponse());
 			}
 		}
 		super.setPrompt(promptVariable);
@@ -86,6 +88,8 @@ public abstract class StateAccuracyHandler extends DialogInstanceHandler {
 	}
 
 	protected abstract String getAccuracyIncreasedResponse();
+	
+	protected abstract String getAccuracyUnchangedResponse();
 	
 	protected abstract String getAccuracyDecreasedResponse();
 	

@@ -29,6 +29,11 @@ public class EnglishStateAccuracyHandler extends StateAccuracyHandler {
 	}
 
 	@Override
+	protected String getAccuracyUnchangedResponse() {
+		return "My accuracy has not changed compared to my base line.";
+	}
+
+	@Override
 	protected String getAccuracyDecreasedResponse() {
 		return "My accuracy has decreased compared to my base line.";
 	}
