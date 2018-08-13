@@ -17,18 +17,28 @@ import nl.zeesoft.zsd.sequence.SequenceMatcherSequence;
  */
 public class SequenceMatcher extends SequenceClassifier {
 	private boolean												forceUnique		= false;
+	private boolean												matchInputOnly	= true;
 	
 	private SortedMap<String,List<SequenceMatcherSequence>>		knownSequences	= new TreeMap<String,List<SequenceMatcherSequence>>();
 
 	/**
-	 * Indicates sequence will be forced to be unique upon addition (default false)
+	 * Indicates sequence will be forced to be unique upon addition (default false).
 	 * 
 	 * When set to true, a check to see if the sequence already exists is done when adding new sequences.
 	 * 
-	 * @param forceUnique Indicates sequence will be forced to be unique upon addition
+	 * @param forceUnique Indicates the sequence will be forced to be unique upon addition
 	 */
 	public void setForceUnique(boolean forceUnique) {
 		this.forceUnique = forceUnique;
+	}
+
+	/**
+	 * Indicates only the input sequence will be used to for matching (default true).
+	 * 
+	 * @param matchInputOnly Indicates only the input sequence will be used to for matching
+	 */
+	public void setMatchInputOnly(boolean matchInputOnly) {
+		this.matchInputOnly = matchInputOnly;
 	}
 
 	/**
@@ -310,6 +320,8 @@ public class SequenceMatcher extends SequenceClassifier {
 						}
 						l++;
 					}
+				} else if (matchInputOnly) {
+					break;
 				}
 			}
 			i++;

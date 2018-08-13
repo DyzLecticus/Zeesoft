@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zsd.dialog.DialogHandlerConfiguration;
@@ -94,10 +95,14 @@ public class DialogHandler extends SequenceInterpreter {
 			if (dialog==null) {
 				r.addDebugLogLine("Dialog not found: ",dialogId);
 			} else {
+				ZStringBuilder str = new ZStringBuilder(dialogId);
+				if (r.request.isTestRequest) {
+					str.append(" (TEST)");
+				}
 				if (r.getRequest().getDialogId().equals(dialogId)) {
-					r.addDebugLogLine("Continuing dialog: ",dialogId);
+					r.addDebugLogLine("Continuing dialog: ",str);
 				} else {
-					r.addDebugLogLine("Handling dialog: ",dialogId);
+					r.addDebugLogLine("Handling dialog: ",str);
 				}
 				handleDialog(r,dialog);
 			}

@@ -58,6 +58,7 @@ public class TestRequestResponseToJson extends TestObject {
 		req.prompt.append("test prompt?");
 		req.input.append("test input.");
 		req.language = BaseConfiguration.LANG_ENG;
+		req.isTestRequest = true;
 		req.minLanguageChangeDifference = 0.2D;
 		req.masterContext = Generic.MASTER_CONTEXT_GENERIC;
 		req.context = GenericHandshake.CONTEXT_GENERIC_HANDSHAKE;
@@ -75,7 +76,7 @@ public class TestRequestResponseToJson extends TestObject {
 		JsFile json = req.toJson();
 		ZStringBuilder txtOri = json.toStringBuilderReadFormat();
 		System.out.println(txtOri);
-		assertEqual(json.rootElement.children.size(),20,"The number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),21,"The number of children does not match expectation");
 		req = new DialogRequest();
 		req.fromJson(json);
 		json = req.toJson();

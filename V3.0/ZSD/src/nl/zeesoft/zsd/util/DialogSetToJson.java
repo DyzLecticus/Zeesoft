@@ -57,6 +57,9 @@ public class DialogSetToJson {
 						if (variable.initialValue.length()>0) {
 							varElem.children.add(new JsElem("initialValue",variable.initialValue,true));
 						}
+						if (!variable.overwrite) {
+							varElem.children.add(new JsElem("overwrite","" + variable.overwrite));
+						}
 						if (variable.prompts.size()>0) {
 							JsElem prsElem = new JsElem("prompts",true);
 							varElem.children.add(prsElem);

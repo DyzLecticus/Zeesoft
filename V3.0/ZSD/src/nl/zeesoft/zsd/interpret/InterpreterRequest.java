@@ -13,7 +13,9 @@ public class InterpreterRequest {
 	public String				language						= "";
 	public String				masterContext					= "";
 	public String				context							= "";
-	
+
+	public boolean				isTestRequest					= false;
+
 	public boolean				appendDebugLog					= false;
 	public boolean				classifyLanguage				= false;
 	public double				minLanguageChangeDifference		= 0.1D;
@@ -66,6 +68,7 @@ public class InterpreterRequest {
 		json.rootElement.children.add(new JsElem("language",language,true));
 		json.rootElement.children.add(new JsElem("masterContext",masterContext,true));
 		json.rootElement.children.add(new JsElem("context",context,true));
+		json.rootElement.children.add(new JsElem("isTestRequest","" + isTestRequest));
 		json.rootElement.children.add(new JsElem("appendDebugLog","" + appendDebugLog));
 		json.rootElement.children.add(new JsElem("classifyLanguage","" + classifyLanguage));
 		json.rootElement.children.add(new JsElem("minLanguageChangeDifference","" + minLanguageChangeDifference));
@@ -90,6 +93,7 @@ public class InterpreterRequest {
 		language = json.rootElement.getChildString("language",language);
 		masterContext = json.rootElement.getChildString("masterContext",masterContext);
 		context = json.rootElement.getChildString("context",masterContext);
+		isTestRequest = json.rootElement.getChildBoolean("isTestRequest",isTestRequest);
 		appendDebugLog = json.rootElement.getChildBoolean("appendDebugLog",appendDebugLog);
 		classifyLanguage = json.rootElement.getChildBoolean("classifyLanguage",classifyLanguage);
 		minLanguageChangeDifference = json.rootElement.getChildDouble("minLanguageChangeDifference",minLanguageChangeDifference);

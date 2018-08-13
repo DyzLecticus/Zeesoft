@@ -78,24 +78,29 @@ public class DialogInstance {
 	}
 
 	public DialogVariable addVariable(String name, String type) {
-		return addVariable(name,type,"","","");
+		return addVariable(name,type,"","","",true);
+	}
+
+	public DialogVariable addVariable(String name, String type,boolean overwrite) {
+		return addVariable(name,type,"","","",overwrite);
 	}
 	
 	public DialogVariable addVariable(String name, String type,String initialValue) {
-		return addVariable(name,type,"","",initialValue);
+		return addVariable(name,type,"","",initialValue,true);
 	}
 	
 	public DialogVariable addVariable(String name, String type,String complexName,String complexType) {
-		return addVariable(name,type,complexName,complexType,"");
+		return addVariable(name,type,complexName,complexType,"",true);
 	}
 	
-	public DialogVariable addVariable(String name, String type,String complexName,String complexType,String initialValue) {
+	public DialogVariable addVariable(String name, String type,String complexName,String complexType,String initialValue,boolean overwrite) {
 		DialogVariable r = new DialogVariable();
 		r.complexName = complexName;
 		r.complexType = complexType;
 		r.name = name;
 		r.type = type;
 		r.initialValue = initialValue;
+		r.overwrite = overwrite;
 		variables.add(r);
 		return r;
 	}

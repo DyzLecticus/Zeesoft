@@ -42,9 +42,7 @@ public class DialogHandlerTester extends SequenceInterpreterTester {
 	@Override
 	protected SequenceInterpreterTest getTestForDialogExample(DialogInstance dialog,DialogIO example,boolean languageUnique) {
 		DialogHandlerTest test = (DialogHandlerTest) super.getTestForDialogExample(dialog,example,languageUnique);
-		if (dialog.getHandlerClassName().length()==0 && example.output.length()>0 &&
-			!(example.output.contains("{") && example.output.contains("}"))
-			) {
+		if (example.output.length()>0) {
 			List<String> dialogInput = dialogInputs.get(dialog.getId());
 			if (dialogInput==null) {
 				dialogInput = new ArrayList<String>();
@@ -53,16 +51,11 @@ public class DialogHandlerTester extends SequenceInterpreterTester {
 			if (!dialogInput.contains(example.input.toString())) {
 				dialogInput.add(example.input.toString());
 				test.expectedOutput = example.output;
-				for (DialogVariable variable: dialog.getVariables()) {
-					if (variable.initialValue.length()==0) {
-						for (DialogVariablePrompt prompt: variable.prompts) {
-							if (!(prompt.prompt.contains("{") && prompt.prompt.contains("}"))) {
-								test.expectedPrompt = prompt.prompt;
-							}
-							break;
-						}
+				if (dialog.getVariables().size()>0) {
+					for (DialogVariablePrompt prompt: dialog.getVariables().get(0).prompts) {
+						test.expectedPrompt = prompt.prompt;
+						break;
 					}
-					break;
 				}
 			}
 		}
@@ -94,6 +87,7 @@ public class DialogHandlerTester extends SequenceInterpreterTester {
 			request.classifyMasterContext = true;
 			request.classifyContext = true;
 		}
+		request.isTestRequest = true;
 		request.appendDebugLog = false;
 		request.randomizeOutput = false;
 		request.input = test.input;

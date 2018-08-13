@@ -167,6 +167,7 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 
 	protected InterpreterRequest getRequestForTest(SequenceInterpreterTest test) {
 		InterpreterRequest request = new InterpreterRequest();
+		request.isTestRequest = true;
 		if (test.languageUnique) {
 			request.classifyLanguage = true;
 		} else {

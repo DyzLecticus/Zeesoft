@@ -215,9 +215,10 @@ public class DialogSet implements Initializable {
 									d.getVariables().add(variable);
 								}
 								variable.type = varElem.getChildString("type");
-								variable.complexName = varElem.getChildString("complexName");
-								variable.complexType = varElem.getChildString("complexType");
-								variable.initialValue = varElem.getChildString("initialValue");
+								variable.complexName = varElem.getChildString("complexName","");
+								variable.complexType = varElem.getChildString("complexType","");
+								variable.initialValue = varElem.getChildString("initialValue","");
+								variable.overwrite = varElem.getChildBoolean("overwrite",true);
 								JsElem prsElem = varElem.getChildByName("prompts");
 								if (prsElem!=null) {
 									for (JsElem prElem: prsElem.children) {

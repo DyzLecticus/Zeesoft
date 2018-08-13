@@ -78,7 +78,6 @@ public class TestSequenceMatcher extends TestObject {
 
 			sequence = new ZStringSymbolParser("Hypotheek berekenen");
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Had u voor deze datum al een Bankspaar Hypotheek of een Kapitaalverzekering Eigen Woning die is gekoppeld aan een hypotheek? [OUTPUT] Dan kunt u deze Bankspaar Hypotheek of verzekering wel fiscaal geruisloos voortzetten in een nieuwe Bankspaar Hypotheek."));
-			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Of bent u gewoon nieuwsgierig naar hoeveel u kunt lenen? [OUTPUT] U kunt ook uw hypotheek berekenen als u geen vast contract heeft of als u zzp'er bent."));
 			
 			sequence = new ZStringSymbolParser("Fraude");
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Fraude herkennen: wat doen criminelen? [OUTPUT] Maar het is belangrijk dat u ook zelf weet, wat u wel of juist niet moet doen."));
@@ -86,7 +85,7 @@ public class TestSequenceMatcher extends TestObject {
 			
 			sequence = new ZStringSymbolParser("Heeft de abn amro rechtsbijstandverzekering");
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? [OUTPUT] U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering."));
-			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? [OUTPUT] U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering."));
+			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Geldt mijn ABN AMRO Rechtsbijstandverzekering ook in het buitenland? [OUTPUT] Dit is afhankelijk van welke modules u heeft afgesloten. Bekijk uw polisblad voor uw dekkingen of bekijk de modules."));
 			
 			sequence = new ZStringSymbolParser("Wat kost dat?");
 			List<SequenceMatcherResult> matches = null;
