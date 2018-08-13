@@ -1,9 +1,5 @@
 package nl.zeesoft.zsds.handler;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -16,33 +12,22 @@ import nl.zeesoft.zsds.AppConfiguration;
 public class JsonDialogRequestHandler extends JsonBaseHandlerObject {
 	public JsonDialogRequestHandler(AppConfiguration config) {
 		super(config,"/dialogRequestHandler.json");
+		setAllowGet(false);
 	}
 	
 	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		setDefaultHeadersAndStatus(response);
-		PrintWriter out;
-		try {
-			out = response.getWriter();
-			out.println(setErrorResponse(response,405,"GET is not supported for this resource"));
-		} catch (IOException e) {
-			getConfiguration().getMessenger().error(this,"I/O exception",e);
-		}
-	}
-	
-	@Override
-	protected ZStringBuilder buildPostResponse(JsFile json) {
-		DialogRequest request = new DialogRequest();
-		request.fromJson(json);
+	protected ZStringBuilder buildPostResponse(HttpServletResponse response,JsFile json) {
+		DialogRequest req = new DialogRequest();
+		req.fromJson(json);
 		DialogHandler handler = new DialogHandler(getConfiguration().getDialogHandlerConfig());
-		DialogResponse response = handler.handleDialogRequest(request);
-		response.debugLog.replace("\n","<NEWLINE>");
-		response.debugLog.replace("\\\"","<QUOTE>");
+		DialogResponse res = handler.handleDialogRequest(req);
+		res.debugLog.replace("\n","<NEWLINE>");
+		res.debugLog.replace("\\\"","<QUOTE>");
 		ZStringBuilder r = null;
 		if (getConfiguration().isDebug()) {
-			r = response.toJson().toStringBuilderReadFormat();
+			r = res.toJson().toStringBuilderReadFormat();
 		} else {
-			r = response.toJson().toStringBuilder();
+			r = res.toJson().toStringBuilder();
 		}
 		return r;
 	}

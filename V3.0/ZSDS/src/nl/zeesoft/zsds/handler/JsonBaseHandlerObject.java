@@ -3,6 +3,7 @@ package nl.zeesoft.zsds.handler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,13 @@ import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsds.AppConfiguration;
 
 public abstract class JsonBaseHandlerObject extends HandlerObject {
+	private boolean	allowGet		= true;
+	private boolean	allowPost		= true;
+	private boolean checkGenerating	= false;
+	private boolean checkReloading	= false;
+	private boolean checkTesting	= false;
+	private boolean checkJson		= false;
+	
 	public JsonBaseHandlerObject(AppConfiguration config,String path) {
 		super(config,path);
 	}
@@ -24,11 +32,29 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 		PrintWriter out;
 		try {
 			out = response.getWriter();
-			ZStringBuilder err = checkInitialized(response);
-			if (err.length()>0) {
-				out.println(err);
+			if (!allowGet) {
+				out.println(setErrorResponse(response,405,"GET is not supported for this resource"));
 			} else {
-				out.println(buildResponse());
+				ZStringBuilder err = checkInitialized(response);
+				if (err.length()==0 && checkGenerating) {
+					err = checkGenerating(response);
+				}
+				if (err.length()==0 && checkReloading) {
+					err = checkReloading(response);
+				}
+				if (err.length()==0 && checkTesting) {
+					err = checkTesting(response);
+				}
+				if (err.length()==0) {
+					ZStringBuilder res = buildResponse();
+					if (res==null) {
+						out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is busy. Please wait."));
+					} else {
+						out.println(res);
+					}
+				} else {
+					out.println(err);
+				}
 			}
 		} catch (IOException e) {
 			getConfiguration().getMessenger().error(this,"I/O exception",e);
@@ -37,37 +63,58 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			getConfiguration().getMessenger().error(this,"Unsupported encoding",e);
+		}
 		setDefaultHeadersAndStatus(response);
+
 		PrintWriter out;
 		ZStringBuilder js = new ZStringBuilder();
-		
-		String line = null;
-		try {
-			BufferedReader reader = request.getReader();
-			while ((line = reader.readLine()) != null) {
-				js.append(line);
-			}
-		} catch (IOException e) {
-			getConfiguration().getMessenger().error(this,"I/O exception while reading JSON POST request",e);
-		}
-		
 		JsFile json = new JsFile();
-		try {
-			json.fromStringBuilder(js);
-		} catch(Exception e) {
-			getConfiguration().getMessenger().error(this,"Exception while parsing JSON POST request",e);
+		
+		if (allowPost) {
+			String line = null;
+			try {
+				BufferedReader reader = request.getReader();
+				while ((line = reader.readLine()) != null) {
+					js.append(line);
+				}
+			} catch (IOException e) {
+				getConfiguration().getMessenger().error(this,"I/O exception while reading JSON POST request",e);
+			}
+			if (js.length()>0) {
+				try {
+					json.fromStringBuilder(js);
+				} catch(Exception e) {
+					getConfiguration().getMessenger().error(this,"Exception while parsing JSON POST request",e);
+				}
+			}
 		}
 		
 		try {
 			out = response.getWriter();
-			ZStringBuilder err = checkInitialized(response);
-			if (err.length()>0) {
-				out.println(err);
+			if (!allowPost) {
+				out.println(setErrorResponse(response,405,"POST is not supported for this resource"));
 			} else {
-				if (json.rootElement!=null) {
-					out.println(buildPostResponse(json));
-				} else {
+				ZStringBuilder err = checkInitialized(response);
+				if (err.length()==0 && checkGenerating) {
+					err = checkGenerating(response);
+				}
+				if (err.length()==0 && checkReloading) {
+					err = checkReloading(response);
+				}
+				if (err.length()==0 && checkTesting) {
+					err = checkTesting(response);
+				}
+				if (err.length()==0 && checkJson && json.rootElement==null) {
 					out.println(setErrorResponse(response,400,"Invalid request"));
+				}
+				if (err.length()>0) {
+					out.println(err);
+				} else {
+					out.println(buildPostResponse(response,json));
 				}
 			}
 		} catch (IOException e) {
@@ -87,9 +134,8 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 		return new ZStringBuilder();
 	}
 	
-	protected ZStringBuilder buildPostResponse(JsFile json) {
-		ZStringBuilder r = new ZStringBuilder();
-		return r;
+	protected ZStringBuilder buildPostResponse(HttpServletResponse response, JsFile json) {
+		return new ZStringBuilder();
 	}
 
 	protected ZStringBuilder checkInitialized(HttpServletResponse response) {
@@ -154,5 +200,29 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 			r = json.toStringBuilder();
 		}
 		return r;
+	}
+
+	protected void setAllowGet(boolean allowGet) {
+		this.allowGet = allowGet;
+	}
+
+	protected void setAllowPost(boolean allowPost) {
+		this.allowPost = allowPost;
+	}
+
+	protected void setCheckGenerating(boolean checkGenerating) {
+		this.checkGenerating = checkGenerating;
+	}
+
+	protected void setCheckReloading(boolean checkReloading) {
+		this.checkReloading = checkReloading;
+	}
+
+	protected void setCheckTesting(boolean checkTesting) {
+		this.checkTesting = checkTesting;
+	}
+
+	protected void setCheckJson(boolean checkJson) {
+		this.checkJson = checkJson;
 	}
 }

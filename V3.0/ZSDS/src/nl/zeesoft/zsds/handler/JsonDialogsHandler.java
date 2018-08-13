@@ -7,6 +7,7 @@ import nl.zeesoft.zsds.AppConfiguration;
 public class JsonDialogsHandler extends JsonBaseHandlerObject {
 	public JsonDialogsHandler(AppConfiguration config) {
 		super(config,"/dialogs.json");
+		setAllowPost(false);
 	}
 	
 	@Override

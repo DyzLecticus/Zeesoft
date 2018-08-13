@@ -35,7 +35,7 @@ public class JsonNotFoundHandler extends JsonBaseHandlerObject {
 	}
 
 	@Override
-	protected ZStringBuilder buildPostResponse(JsFile json) {
+	protected ZStringBuilder buildPostResponse(HttpServletResponse response,JsFile json) {
 		return getCachedResponse();
 	}
 }
