@@ -43,7 +43,6 @@ public abstract class StateAccuracyHandler extends DialogInstanceHandler {
 				getResponseOutput().output = new ZStringSymbolParser(getBusyResponse());
 			}
 		} else {
-			// TODO: Fix no output handling (when no summary is available)
 			getResponseOutput().output = new ZStringSymbolParser(getJsonRequestFailedResponse());
 			setDialogVariableValue(StateAccuracy.VARIABLE_RESPONSE_CODE,"500");
 		}
