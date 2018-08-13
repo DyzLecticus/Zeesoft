@@ -304,12 +304,13 @@ public class EntityValueTranslator implements Initializable {
 	 * The value is removed from the input list.
 	 * 
 	 * @param internalValues The list of internal values
+	 * @param internalValuesCorrected The list of corrected internal values
 	 * @param type The entity type
 	 * @param complexName The optional complex entity name
 	 * @param complexType The optional complex entity type
 	 * @return The first value or "";
 	 */
-	public String getTypeValueFromInternalValues(List<String> internalValues,String type,String complexName,String complexType) {
+	public String getTypeValueFromInternalValues(List<String> internalValues,List<String> internalValuesCorrected,String type,String complexName,String complexType) {
 		String r = "";
 		List<String> vals = new ArrayList<String>(internalValues);
 		int i = 0;
@@ -327,8 +328,11 @@ public class EntityValueTranslator implements Initializable {
 				v = getInternalValueFromInternalValues(val,type);
 			}
 			if (v.length()>0) {
-				internalValues.remove(i);
-				i--;
+				if (internalValuesCorrected!=null && internalValuesCorrected.size()==internalValues.size()) {
+					internalValuesCorrected.remove(i);
+					internalValues.remove(i);
+					i--;
+				}
 				r = v;
 				break;
 			}
@@ -336,7 +340,7 @@ public class EntityValueTranslator implements Initializable {
 		}
 		return r;
 	}
-
+	
 	/**
 	 * Returns a specific type of internal entity value from a concatenated set of internal values.
 	 * 

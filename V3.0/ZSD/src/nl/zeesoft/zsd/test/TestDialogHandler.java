@@ -134,6 +134,12 @@ public class TestDialogHandler extends TestInitializer {
 				"Okay.","Do I understand correctly that you want a room on october first twothousandeighteen, for 12 people, from twelve o'clock, for two hours?");
 			System.out.println();
 			testRequestResponse(handler,"",
+				"Ik wil morgen een kamer boeken om 1 uur.",
+				"UN_ABC:Ik UN_ABC:wil NL_DAT:2018-07-17|UN_ABC:morgen NL_NUM:1|UN_ABC:een UN_ABC:kamer UN_ABC:boeken UN_ABC:om NL_DUR:01:00 .",
+				"UN_ABC:Ik UN_ABC:wil NL_DAT:2018-07-17 NL_NUM:1|UN_ABC:een UN_ABC:kamer UN_ABC:boeken UN_ABC:om NL_TIM:13:00:00|NL_DUR:01:00 .",
+				"Okee.","Hoe lang?");
+			System.out.println();
+			testRequestResponse(handler,"",
 				"What does it cost to book a room?",
 				"UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room ?",
 				"There are no costs attached to booking a room.","");

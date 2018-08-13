@@ -64,14 +64,25 @@ public class TestTestCaseSet extends TestObject {
 		tc.io.add(tcIO);
 
 		JsFile json = tcs.toJson();
-		ZStringBuilder ori = json.toStringBuilderReadFormat();
+		ZStringBuilder oriJs = json.toStringBuilderReadFormat();
 		
-		System.out.println(ori);
 		assertEqual(json.rootElement.children.size(),1,"Number of children expectation");
 		JsElem tcsElem = json.rootElement.children.get(0);
 		assertEqual(tcsElem.children.size(),1,"Number of test cases does not match expectation");
 		if (tcsElem.children.size()>0) {
 			assertEqual(tcsElem.children.get(0).getChildByName("io").children.size(),2,"Number of test case input and output combinations does not match expectation");
+		}
+		
+		tcs = new TestCaseSet();
+		tcs.fromJson(json);
+		json = tcs.toJson();
+		ZStringBuilder newJs = json.toStringBuilderReadFormat();
+		
+		System.out.println(oriJs);
+		if (!newJs.equals(oriJs)) {
+			System.err.println();
+			System.err.println(newJs);
+			assertEqual(true,false,"Parsed test cases set does not match original");
 		}
 	}
 }

@@ -87,7 +87,7 @@ public class DutchRoomBooking extends RoomBooking {
 		addVariablePrompt(VARIABLE_BOOK_TIME,"Vanaf welk tijdstip heeft u een kamer nodig?");
 		addVariablePrompt(VARIABLE_BOOK_TIME,"Vanaf welk tijdstip wilt u een kamer boeken?");
 
-		addVariable(VARIABLE_BOOK_DURATION,BaseConfiguration.TYPE_DURATION,false);
+		addVariable(VARIABLE_BOOK_DURATION,BaseConfiguration.TYPE_DURATION);
 		addVariablePrompt(VARIABLE_BOOK_DURATION,"Hoe lang?");
 		addVariablePrompt(VARIABLE_BOOK_DURATION,"Hoe lang heeft u een kamer nodig?");
 		addVariablePrompt(VARIABLE_BOOK_DURATION,"Hoe lang wilt u een kamer gebruiken?");

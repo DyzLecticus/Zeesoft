@@ -38,7 +38,7 @@ public class EnglishGenericThanks extends GenericThanks {
 			}
 		}
 		
-		addVariable(VARIABLE_THANKS_ELSE,BaseConfiguration.TYPE_CONFIRMATION);
+		addVariable(VARIABLE_THANKS_ELSE,BaseConfiguration.TYPE_CONFIRMATION,false);
 		addVariablePrompt(VARIABLE_THANKS_ELSE,"Is there anything else I can do for you?");
 		addVariablePrompt(VARIABLE_THANKS_ELSE,"Is there another way I can be of service to you?");
 		addVariablePrompt(VARIABLE_THANKS_ELSE,"Is there anything else I can help you with?");

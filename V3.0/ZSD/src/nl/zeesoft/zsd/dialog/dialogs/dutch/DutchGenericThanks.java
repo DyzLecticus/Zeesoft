@@ -38,7 +38,7 @@ public class DutchGenericThanks extends GenericThanks {
 			}
 		}
 		
-		addVariable(VARIABLE_THANKS_ELSE,BaseConfiguration.TYPE_CONFIRMATION);
+		addVariable(VARIABLE_THANKS_ELSE,BaseConfiguration.TYPE_CONFIRMATION,false);
 		addVariablePrompt(VARIABLE_THANKS_ELSE,"Kan ik iets anders voor u doen?");
 		addVariablePrompt(VARIABLE_THANKS_ELSE,"Kan ik u ergens anders mee van dienst zijn?");
 		addVariablePrompt(VARIABLE_THANKS_ELSE,"Kan ik u ergens anders mee helpen?");

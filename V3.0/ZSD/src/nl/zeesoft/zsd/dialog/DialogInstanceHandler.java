@@ -73,22 +73,17 @@ public abstract class DialogInstanceHandler {
 		String promptVariable = "";
 		initializeDialogVariableValues();
 		
-		List<String> iVals = response.entityValueTranslation.toSymbols();
 		List<String> iValsCor = response.entityValueTranslationCorrected.toSymbols();
+		List<String> iVals = response.entityValueTranslation.toSymbols();
 		for (DialogVariable variable: dialog.getVariables()) {
 			DialogVariableValue dvv = response.getRequest().dialogVariableValues.get(variable.name);
 			if ((!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) &&
 				(variable.overwrite || dvv==null || dvv.internalValue.length()==0)
 				) {
-				String val = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iVals,variable.type,variable.complexName,variable.complexType);
-				String valCor = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,variable.type,variable.complexName,variable.complexType);
-				String valSel = val;
-				if (valSel.length()==0 || (!variable.type.equals(BaseConfiguration.TYPE_ALPHABETIC) && valCor.length()>0)) {
-					valSel = valCor;
-				}
-				if (valSel.length()>0) {
-					String extVal = getConfig().getEntityValueTranslator().getExternalValueForInternalValues(valSel,variable.type);
-					setDialogVariableValue(variable.name,extVal,valSel);
+				String val = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,iVals,variable.type,variable.complexName,variable.complexType);
+				if (val.length()>0) {
+					String extVal = getConfig().getEntityValueTranslator().getExternalValueForInternalValues(val,variable.type);
+					setDialogVariableValue(variable.name,extVal,val);
 				}
 			}
 		}
