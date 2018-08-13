@@ -109,7 +109,7 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 					err = checkTesting(response);
 				}
 				if (err.length()==0 && checkJson && json.rootElement==null) {
-					out.println(setErrorResponse(response,400,"Invalid request"));
+					err = setErrorResponse(response,400,"Invalid request");
 				}
 				if (err.length()>0) {
 					out.println(err);
