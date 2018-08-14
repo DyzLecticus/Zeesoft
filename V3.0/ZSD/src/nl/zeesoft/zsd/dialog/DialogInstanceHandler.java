@@ -203,7 +203,7 @@ public abstract class DialogInstanceHandler {
 		}
 		for (Entry<String,DialogVariableValue> entry: response.getRequest().dialogVariableValues.entrySet()) {
 			if (entry.getValue().session && !responseOutput.values.containsKey(entry.getKey())) {
-				setDialogVariableValue(entry.getKey(),entry.getValue().externalValue,entry.getValue().internalValue,true);
+				getResponseOutput().values.put(entry.getKey(),entry.getValue().copy());
 			}
 		}
 	}

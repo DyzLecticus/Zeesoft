@@ -11,6 +11,7 @@ public class DialogVariableValue {
 		r.name = name;
 		r.internalValue = internalValue;
 		r.externalValue = externalValue;
+		r.session = session;
 		return r;
 	}
 }
