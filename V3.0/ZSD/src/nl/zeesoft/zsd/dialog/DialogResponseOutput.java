@@ -2,9 +2,9 @@ package nl.zeesoft.zsd.dialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
@@ -61,11 +61,11 @@ public class DialogResponseOutput {
 		}
 	}
 
-	public boolean setDialogVariableValue(DialogResponse r,String name,String extVal) {
-		return setDialogVariableValue(r,name,extVal,"");
+	public boolean setDialogVariableValue(DialogResponse r,String name,String extVal,boolean session) {
+		return setDialogVariableValue(r,name,extVal,"",session);
 	}
 	
-	public boolean setDialogVariableValue(DialogResponse r,String name,String extVal,String intVal) {
+	public boolean setDialogVariableValue(DialogResponse r,String name,String extVal,String intVal,boolean session) {
 		boolean changed = false;
 		DialogVariableValue dvv = values.get(name);
 		if (dvv==null) {
@@ -79,7 +79,12 @@ public class DialogResponseOutput {
 		if (changed) {
 			dvv.externalValue = extVal;
 			dvv.internalValue = intVal;
-			ZStringBuilder line = new ZStringBuilder("    Updated variable ");
+			dvv.session = session;
+			ZStringBuilder line = new ZStringBuilder("    Updated");
+			if (session) {
+				line.append(" session");
+			}
+			line.append(" variable ");
 			line.append(dvv.name);
 			line.append(": ");
 			ZStringBuilder value = new ZStringBuilder();

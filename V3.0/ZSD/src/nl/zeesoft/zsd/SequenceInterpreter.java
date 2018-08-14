@@ -165,21 +165,27 @@ public class SequenceInterpreter {
 			// Check profanity
 			boolean profanity = false;
 			if (r.request.checkProfanity) {
-				r.addDebugLogLine("Checking profanity for sequence: ",r.classificationSequence);
-				List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + Generic.MASTER_CONTEXT_GENERIC).getContexts(r.classificationSequence,true,0D);
-				for (SequenceClassifierResult resC: contexts) {
-					if (resC.symbol.equals(GenericProfanity.CONTEXT_GENERIC_PROFANITY)) {
-						SequenceClassifierResult res = new SequenceClassifierResult();
-						res.symbol = Generic.MASTER_CONTEXT_GENERIC;
-						res.probNormalized = 1.0D;
-						r.responseMasterContexts.clear();
-						r.responseMasterContexts.add(res);
-						r.responseContexts.clear();
-						r.responseContexts.add(resC);
-						resC.probNormalized = 1.0D;
-						profanity = true;
-						break;
+				String pmc = getProfanityMasterContext(language);
+				String pc = getProfanityContext(language);
+				if (pmc.length()>0 && pc.length()>0) {
+					r.addDebugLogLine("Checking profanity for sequence: ",r.classificationSequence);
+					List<SequenceClassifierResult> contexts = getConfiguration().getLanguageContextClassifiers().get(language + pmc).getContexts(r.classificationSequence,true,0D);
+					for (SequenceClassifierResult resC: contexts) {
+						if (resC.symbol.equals(pc)) {
+							SequenceClassifierResult res = new SequenceClassifierResult();
+							res.symbol = Generic.MASTER_CONTEXT_GENERIC;
+							res.probNormalized = 1.0D;
+							r.responseMasterContexts.clear();
+							r.responseMasterContexts.add(res);
+							r.responseContexts.clear();
+							r.responseContexts.add(resC);
+							resC.probNormalized = 1.0D;
+							profanity = true;
+							break;
+						}
 					}
+				} else {
+					r.addDebugLogLine("Unable to check profanity for language: ",language);
 				}
 			}
 			
@@ -245,6 +251,14 @@ public class SequenceInterpreter {
 	
 	protected InterpreterConfiguration getConfiguration() {
 		return configuration;
+	}
+	
+	protected String getProfanityMasterContext(String language) {
+		return Generic.MASTER_CONTEXT_GENERIC;
+	}
+	
+	protected String getProfanityContext(String language) {
+		return GenericProfanity.CONTEXT_GENERIC_PROFANITY;
 	}
 	
 	private ZStringSymbolParser getAddPromptToInput(ZStringSymbolParser prompt, ZStringSymbolParser input) {

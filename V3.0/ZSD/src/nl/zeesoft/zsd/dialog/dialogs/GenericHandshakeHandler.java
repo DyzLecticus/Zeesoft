@@ -1,7 +1,9 @@
 package nl.zeesoft.zsd.dialog.dialogs;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
+import nl.zeesoft.zsd.dialog.DialogVariableValue;
 
 public class GenericHandshakeHandler extends DialogInstanceHandler {
 	@Override
@@ -18,7 +20,13 @@ public class GenericHandshakeHandler extends DialogInstanceHandler {
 			}
 			fullName.append(" ");
 			fullName.append(lastName);
-			setDialogVariableValue(GenericHandshake.VARIABLE_FULLNAME,fullName.toString());
+			setDialogVariableValue(GenericHandshake.VARIABLE_FULLNAME,fullName.toString(),true);
+		}
+		if (firstName.length()==0 && lastName.length()==0 && !promptVariable.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
+			DialogVariableValue full = getResponseOutput().values.get(GenericHandshake.VARIABLE_FULLNAME);
+			if (full!=null) {
+				promptVariable = DialogInstance.VARIABLE_NEXT_DIALOG;
+			}
 		}
 		super.setPrompt(promptVariable);
 	}	

@@ -55,9 +55,7 @@ public abstract class DialogInstanceHandler {
 		}
 		initializeDialogVariableValues();
 		buildDialogResponseOutputMatch(promptVariable);
-		if (variable!=null) {
-			setPrompt(variable);
-		}
+		setPrompt(variable);
 		finalizeResponse();
 	}
 	
@@ -100,11 +98,19 @@ public abstract class DialogInstanceHandler {
 	}
 
 	protected void setDialogVariableValue(String name,String extVal) {
-		setDialogVariableValue(name,extVal,"");
+		setDialogVariableValue(name,extVal,"",false);
+	}
+
+	protected void setDialogVariableValue(String name,String extVal,boolean session) {
+		setDialogVariableValue(name,extVal,"",session);
 	}
 
 	protected void setDialogVariableValue(String name,String extVal,String intVal) {
-		if (responseOutput.setDialogVariableValue(response,name,extVal,intVal)) {
+		setDialogVariableValue(name,extVal,intVal,false);
+	}
+
+	protected void setDialogVariableValue(String name,String extVal,String intVal,boolean session) {
+		if (responseOutput.setDialogVariableValue(response,name,extVal,intVal,session)) {
 			DialogVariableValue val = responseOutput.values.get(name);
 			if (!updatedValues.contains(val)) {
 				updatedValues.add(val);
@@ -113,12 +119,7 @@ public abstract class DialogInstanceHandler {
 	}
 
 	protected void setPrompt(String promptVariable) {
-		responseOutput.promptVariableName = promptVariable;
-		response.addDebugLogLine("    Prompt variable: ",promptVariable);
-		DialogVariable variable = dialog.getVariable(promptVariable);
-		if (variable!=null) {
-			setPrompt(variable);
-		}
+		setPrompt(dialog.getVariable(promptVariable));
 	}
 
 	protected boolean checkResponseOutput() {
@@ -180,6 +181,10 @@ public abstract class DialogInstanceHandler {
 		}
 		return r;
 	}
+	
+	protected String getValueConcatenator() {
+		return getConfig().getEntityValueTranslator().getValueConcatenator();
+	}
 
 	private void initializeDialogVariableValues() {
 		for (DialogVariable variable: dialog.getVariables()) {
@@ -187,12 +192,18 @@ public abstract class DialogInstanceHandler {
 			if (dvv==null) {
 				dvv = new DialogVariableValue();
 				dvv.name = variable.name;
+				dvv.session = variable.session;
 				responseOutput.values.put(variable.name,dvv);
 			} else {
 				responseOutput.values.put(variable.name,dvv.copy());
 			}
 			if (dvv.internalValue.length()==0) {
 				dvv.internalValue = variable.initialValue;
+			}
+		}
+		for (Entry<String,DialogVariableValue> entry: response.getRequest().dialogVariableValues.entrySet()) {
+			if (entry.getValue().session && !responseOutput.values.containsKey(entry.getKey())) {
+				setDialogVariableValue(entry.getKey(),entry.getValue().externalValue,entry.getValue().internalValue,true);
 			}
 		}
 	}
@@ -257,8 +268,14 @@ public abstract class DialogInstanceHandler {
 	}
 	
 	private void setPrompt(DialogVariable variable) {
-		responseOutput.promptVariableType = variable.type;
-		responseOutput.prompt = new ZStringSymbolParser(variable.getPrompt(response.getRequest().randomizeOutput));
+		responseOutput.promptVariableName = "";
+		responseOutput.promptVariableType = "";
+		if (variable!=null) {
+			responseOutput.promptVariableName = variable.name;
+			responseOutput.promptVariableType = variable.type;
+			responseOutput.prompt = new ZStringSymbolParser(variable.getPrompt(response.getRequest().randomizeOutput));
+		}
+		response.addDebugLogLine("    Set prompt variable: ",responseOutput.promptVariableName);
 	}
 
 	private void finalizeResponse() {

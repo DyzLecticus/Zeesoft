@@ -17,18 +17,22 @@ public class GenericMathHandler extends DialogInstanceHandler {
 			if (i < 5) {
 				opVal = getResponseOutput().values.get("operator" + i).internalValue;
 			}
-			if (numVal.length()>0) {
+			if (numVal.length()>0 && numVal.contains(getValueConcatenator())) {
 				if (expression.length()>0) {
 					expression.append(" ");
 				}
-				numVal = numVal.split(":")[1];
+				numVal = numVal.split(getValueConcatenator())[1];
 				expression.append(numVal);
-				if (opVal.length()>0) {
-					opVal = opVal.split(":")[1];
+				if (opVal.length()>0 && opVal.contains(getValueConcatenator())) {
+					opVal = opVal.split(getValueConcatenator())[1];
 					expression.append(" ");
 					expression.append(opVal);
 				}
 			}
+		}
+		
+		if (expression.length()>0 && expression.toSymbols().size()<=2) {
+			expression = new ZStringSymbolParser();
 		}
 		
 		if (expression.length()>0) {

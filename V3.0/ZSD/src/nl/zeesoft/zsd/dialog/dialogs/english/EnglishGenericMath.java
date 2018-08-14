@@ -12,16 +12,18 @@ public class EnglishGenericMath extends GenericMath {
 	
 	@Override
 	public void initialize(EntityValueTranslator t) {
-		addExample("How much is [NUM] [MTH] [NUM]?","");
-		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM]?","");
-		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","");
-		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","");
+		addExample("How much is [NUM] [MTH] [NUM]?","{exact} {result}.");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM]?","{exact} {result}.");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","{exact} {result}.");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","{exact} {result}.");
+		addExample("How much is [NUM] [MTH] [NUM]?","That is {exact} {result}.");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM]?","That is {exact} {result}. ");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","That is {exact} {result}. ");
+		addExample("How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]?","That is {exact} {result}. ");
 		
 		addNextDialogVariable();
-		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. What else can I do for you?");
-		addVariablePrompt(VARIABLE_NEXT_DIALOG,"{exact} {result}. Is there anything else I can help you with?");
-		addVariablePrompt(VARIABLE_NEXT_DIALOG,"That is {exact} {result}. What else can I do for you?");
-		addVariablePrompt(VARIABLE_NEXT_DIALOG,"That is {exact} {result}. Is there anything else I can help you with?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"What else can I do for you?");
+		addVariablePrompt(VARIABLE_NEXT_DIALOG,"Is there anything else I can help you with?");
 
 		addVariable(VARIABLE_NUMBER1,BaseConfiguration.TYPE_NUMERIC);
 		addVariable(VARIABLE_NUMBER2,BaseConfiguration.TYPE_NUMERIC);

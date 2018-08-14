@@ -51,7 +51,7 @@ public class TestSequenceInterpreterTester extends TestObject {
 			System.out.println("This test has been skipped due to configuration initialization failure");
 		} else {
 			SequenceInterpreterTester tester = new SequenceInterpreterTester(config);
-			testTester(tester,24);
+			testTester(tester,23);
 		}
 	}
 	

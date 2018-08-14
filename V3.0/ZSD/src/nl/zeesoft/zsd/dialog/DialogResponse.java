@@ -46,6 +46,9 @@ public class DialogResponse extends InterpreterResponse {
 					dElem.children.add(new JsElem("name",dvv.name,true));
 					dElem.children.add(new JsElem("externalValue",dvv.externalValue,true));
 					dElem.children.add(new JsElem("internalValue",dvv.internalValue,true));
+					if (dvv.session) {
+						dElem.children.add(new JsElem("session","" + dvv.session));
+					}
 				}
 			}
 		}
@@ -73,6 +76,7 @@ public class DialogResponse extends InterpreterResponse {
 						dvv.name = dElem.getChildString("name");
 						dvv.externalValue = dElem.getChildString("externalValue");
 						dvv.internalValue = dElem.getChildString("internalValue");
+						dvv.session = dElem.getChildBoolean("session",dvv.session);
 						output.values.put(dvv.name,dvv);
 					}
 				}

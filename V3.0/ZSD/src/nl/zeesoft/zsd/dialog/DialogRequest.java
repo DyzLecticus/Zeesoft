@@ -62,6 +62,9 @@ public class DialogRequest extends InterpreterRequest {
 			valElem.children.add(new JsElem("name",entry.getValue().name,true));
 			valElem.children.add(new JsElem("externalValue",entry.getValue().externalValue,true));
 			valElem.children.add(new JsElem("internalValue",entry.getValue().internalValue,true));
+			if (entry.getValue().session) {
+				valElem.children.add(new JsElem("session","" + entry.getValue().session));
+			}
 		}
 		return json;
 	}
@@ -87,6 +90,7 @@ public class DialogRequest extends InterpreterRequest {
 				dvv.name = val.getChildString("name","");
 				dvv.externalValue = val.getChildString("externalValue","");
 				dvv.internalValue = val.getChildString("internalValue","");
+				dvv.session = val.getChildBoolean("session",dvv.session);
 				dialogVariableValues.put(dvv.name,dvv);
 			}
 		}

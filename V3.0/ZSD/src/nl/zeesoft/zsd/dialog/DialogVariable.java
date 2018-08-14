@@ -13,6 +13,7 @@ public class DialogVariable {
 	public String						complexType		= "";
 	public String						initialValue	= "";
 	public boolean						overwrite		= true;
+	public boolean						session			= false;
 	public List<DialogVariablePrompt>	prompts			= new ArrayList<DialogVariablePrompt>();
 	
 	public ZStringSymbolParser getPrompt(boolean random) {
