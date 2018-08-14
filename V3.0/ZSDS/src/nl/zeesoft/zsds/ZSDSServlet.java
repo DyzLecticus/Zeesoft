@@ -43,7 +43,8 @@ public class ZSDSServlet extends HttpServlet {
 		
 		System.out.println("Installation: " + installDir);
 		
-		configuration = new AppConfiguration(installDir,debug);
+		configuration = getNewAppConfiguration(installDir,debug);
+		configuration.setStateManager(getNewAppStateManager());
 		configuration.initialize();
 	}
 
@@ -75,5 +76,13 @@ public class ZSDSServlet extends HttpServlet {
 
 	public AppConfiguration getConfiguration() {
 		return configuration;
+	}
+	
+	protected AppConfiguration getNewAppConfiguration(String installDir,boolean debug) {
+		return new AppConfiguration(installDir,debug);
+	}
+	
+	protected AppStateManager getNewAppStateManager() {
+		return new AppStateManager(getConfiguration());
 	}
 }

@@ -74,9 +74,12 @@ public class AppConfiguration {
 		union = factory.getWorkerUnion(messenger);
 		this.installDir = installDir;
 		this.debug = debug;
-		stateManager = new AppStateManager(this);
 	}
 
+	public void setStateManager(AppStateManager stateManager) {
+		this.stateManager = stateManager;
+	}
+	
 	public void initialize() {
 		baseConfig = getNewBaseConfiguration();
 		String fileName = installDir + "config.json";
