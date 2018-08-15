@@ -37,12 +37,16 @@ public class BaseConfiguration {
 	public static final String					TYPE_CURRENCY				= "CUR";
 	public static final String					TYPE_PROFANITY				= "PRF";
 	public static final String					TYPE_CONFIRMATION			= "CNF";
+	public static final String					TYPE_SMILEY					= "SML";
+	public static final String					TYPE_FROWNY					= "FRN";
 
 	// Complex entities
 	public static final String					TYPE_NAME					= "NAM";
 
 	private String								name						= "Dyz Lecticus";
 	private String								email						= "dyz.lecticus@zeesoft.nl";
+	private String								smiley						= ":-)";
+	private String								frowny						= ":-(";
 	private String								primaryLanguage				= BaseConfiguration.LANG_ENG;
 	private List<String>						supportedLanguages			= new ArrayList<String>();
 	private SortedMap<String,String>			supportedAlphabets			= new TreeMap<String,String>();
@@ -85,6 +89,8 @@ public class BaseConfiguration {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("name",name,true));
 		json.rootElement.children.add(new JsElem("email",email,true));
+		json.rootElement.children.add(new JsElem("smiley",smiley,true));
+		json.rootElement.children.add(new JsElem("frowny",frowny,true));
 		json.rootElement.children.add(new JsElem("primaryLanguage",primaryLanguage,true));
 		json.rootElement.children.add(new JsElem("debug","" + debug));
 		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
@@ -134,6 +140,8 @@ public class BaseConfiguration {
 		supportedMasterContexts.clear();
 		name = json.rootElement.getChildString("name",name);
 		email = json.rootElement.getChildString("email",email);
+		smiley = json.rootElement.getChildString("smiley",smiley);
+		frowny = json.rootElement.getChildString("frowny",frowny);
 		primaryLanguage = json.rootElement.getChildString("primaryLanguage",primaryLanguage);
 		debug = json.rootElement.getChildBoolean("debug",debug);
 		dataDir = json.rootElement.getChildString("dataDir",dataDir);
@@ -221,6 +229,22 @@ public class BaseConfiguration {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getSmiley() {
+		return smiley;
+	}
+
+	public void setSmiley(String smiley) {
+		this.smiley = smiley;
+	}
+
+	public String getFrowny() {
+		return frowny;
+	}
+
+	public void setFrowny(String frowny) {
+		this.frowny = frowny;
 	}
 
 	/**

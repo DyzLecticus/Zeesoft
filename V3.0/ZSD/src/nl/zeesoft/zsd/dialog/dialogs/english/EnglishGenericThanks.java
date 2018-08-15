@@ -26,6 +26,8 @@ public class EnglishGenericThanks extends GenericThanks {
 		addExample("Is there another way I can be of service to you? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		addExample("Is there anything else I can help you with? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		
+		addExample("[" + BaseConfiguration.TYPE_SMILEY + "].","{smiley}.");
+
 		addComplimentExamples(".",EXAMPLE_OUTPUT_THANKS_1);
 		addComplimentExamples(".",EXAMPLE_OUTPUT_THANKS_2);
 		addComplimentExamples("!",EXAMPLE_OUTPUT_THANKS_1);
@@ -53,12 +55,12 @@ public class EnglishGenericThanks extends GenericThanks {
 	}
 	
 	protected void addComplimentExamples(String append,String output) {
-		addExample("Nice" + append,output);
+		addExample("Nice" + append,"{smiley}.");
+		addExample("Cool" + append,"{smiley}.");
 		addExample("Excellent" + append,output);
 		addExample("Perfect" + append,output);
 		addExample("Great" + append,output);
 		addExample("Awesome" + append,output);
-		addExample("Cool" + append,output);
 	}
 		
 	protected List<String> getThanks() {

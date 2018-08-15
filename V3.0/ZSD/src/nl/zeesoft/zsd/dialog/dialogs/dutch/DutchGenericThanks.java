@@ -26,6 +26,8 @@ public class DutchGenericThanks extends GenericThanks {
 		addExample("Kan ik u ergens anders mee van dienst zijn? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		addExample("Kan ik u ergens anders mee helpen? [" + BaseConfiguration.TYPE_CONFIRMATION + "].","");
 		
+		addExample("[" + BaseConfiguration.TYPE_SMILEY + "].","{smiley}.");
+
 		addComplimentExamples(".",EXAMPLE_OUTPUT_THANKS_1);
 		addComplimentExamples(".",EXAMPLE_OUTPUT_THANKS_2);
 		addComplimentExamples("!",EXAMPLE_OUTPUT_THANKS_1);
@@ -53,12 +55,12 @@ public class DutchGenericThanks extends GenericThanks {
 	}
 	
 	protected void addComplimentExamples(String append,String output) {
-		addExample("Fijn" + append,output);
+		addExample("Fijn" + append,"{smiley}.");
+		addExample("Prima" + append,"{smiley}.");
+		addExample("Cool" + append,"{smiley}.");
 		addExample("Uitstekend" + append,output);
 		addExample("Perfect" + append,output);
 		addExample("Geweldig" + append,output);
-		addExample("Prima" + append,output);
-		addExample("Cool" + append,output);
 	}
 		
 	protected List<String> getThanks() {

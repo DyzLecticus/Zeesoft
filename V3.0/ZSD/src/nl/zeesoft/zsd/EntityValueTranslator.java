@@ -9,8 +9,10 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.entity.UniversalAlphabetic;
 import nl.zeesoft.zsd.entity.UniversalCurrency;
+import nl.zeesoft.zsd.entity.UniversalFrowny;
 import nl.zeesoft.zsd.entity.UniversalMathematic;
 import nl.zeesoft.zsd.entity.UniversalNumeric;
+import nl.zeesoft.zsd.entity.UniversalSmiley;
 import nl.zeesoft.zsd.entity.UniversalTime;
 import nl.zeesoft.zsd.entity.complex.ComplexObject;
 import nl.zeesoft.zsd.entity.complex.dutch.DutchName;
@@ -595,9 +597,11 @@ public class EntityValueTranslator implements Initializable {
 		entities.add(new DutchNumeric());
 		entities.add(new EnglishPreposition());
 		entities.add(new DutchPreposition());
-		entities.add(new UniversalCurrency());
-		entities.add(new UniversalTime());
 		entities.add(new UniversalMathematic());
+		entities.add(new UniversalCurrency());
+		entities.add(new UniversalSmiley());
+		entities.add(new UniversalFrowny());
+		entities.add(new UniversalTime());
 		entities.add(new UniversalNumeric());
 		entities.add(new UniversalAlphabetic());
 	}

@@ -148,6 +148,10 @@ public class TestEntityValueTranslator extends TestObject {
 			"vijftien euro",
 			"NL_NUM:15|UN_ABC:vijftien EN_CUR:EUR|NL_CUR:EUR|UN_ABC:euro",
 			"vijftien euro");
+		testTranslation(t,"",
+			":-) ]0: {;",
+			"UN_SML:7 UN_FRN:28 UN_SML:42",
+			":-) ]0: {;");
 		
 		UniversalMathematic math = (UniversalMathematic) t.getEntityObject(BaseConfiguration.LANG_UNI,BaseConfiguration.TYPE_MATHEMATIC);
 		

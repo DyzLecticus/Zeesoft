@@ -43,6 +43,7 @@ public class DutchSupportRequest extends SupportRequest {
 			append = " " + outputContact;
 		}
 		
+		addExample("[" + BaseConfiguration.TYPE_FROWNY + "].",getOutputLearning() + append,filterContext);
 		addExample("Zucht.",getOutputLearning() + append,filterContext);
 		addExample("Je begrijpt mij niet.",getOutputLearning() + append,filterContext);
 		addExample("Jij begrijpt me niet.",getOutputLearning() + append,filterContext);

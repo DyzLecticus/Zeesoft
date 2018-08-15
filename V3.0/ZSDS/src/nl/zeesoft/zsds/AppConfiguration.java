@@ -156,6 +156,10 @@ public class AppConfiguration {
 		return stateManager.isGenerating();
 	}
 
+	public boolean isTesting() {
+		return stateManager.isTesting();
+	}
+
 	public boolean isBusy() {
 		return stateManager.isBusy();
 	}

@@ -41,6 +41,7 @@ public class EnglishSupportRequest extends SupportRequest {
 			append = " " + outputContact;
 		}
 		
+		addExample("[" + BaseConfiguration.TYPE_FROWNY + "].",getOutputLearning() + append,filterContext);
 		addExample("Sigh.",getOutputLearning() + append,filterContext);
 		addExample("You do not understand me.",getOutputLearning() + append,filterContext);
 		addExample("You misunderstand me.",getOutputLearning() + append,filterContext);

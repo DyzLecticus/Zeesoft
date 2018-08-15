@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.entity.EntityObject;
 import nl.zeesoft.zsd.entity.EntityValue;
 import nl.zeesoft.zsd.entity.complex.ComplexObject;
@@ -56,66 +57,68 @@ public class EntityToJson {
 	public void addJsonForEntities(JsElem parent,List<EntityObject> entities,String context,boolean languageContext) {
 		String cntxt = context;
 		for (EntityObject eo: entities) {
-			for (String extra: eo.getToJsonExtras()) {
-				if (languageContext) {
-					cntxt = eo.getLanguage();
-				} else if (context.length()==0) {
-					cntxt = eo.getType();
-				}
-				ZStringBuilder input = new ZStringBuilder(upperCaseFirst(extra));
-				input.append(".");
-				TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
-			}
-			for (Entry<String,EntityValue> entry: eo.getExternalValues().entrySet()) {
-				if (languageContext) {
-					cntxt = eo.getLanguage();
-				} else if (context.length()==0) {
-					cntxt = eo.getType();
-				}
-				ZStringBuilder input = null;
-				if (eo.getToJsonPrefixes().size()==0 && eo.getToJsonSuffixes().size()==0) {
-					input = new ZStringBuilder(upperCaseFirst(entry.getValue().externalValue));
-					input.append(".");
-					TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
-				}
-				for (String prefix: eo.getToJsonPrefixes()) {
-					input = new ZStringBuilder(upperCaseFirst(prefix));
-					input.append(" ");
-					input.append(entry.getValue().externalValue);
-					input.append(".");
-					TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
-				}
-				for (String suffix: eo.getToJsonSuffixes()) {
-					input = new ZStringBuilder(upperCaseFirst(entry.getValue().externalValue));
-					input.append(" ");
-					input.append(suffix);
-					input.append(".");
-					TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
-				}
-			}
-			if (eo instanceof ComplexObject) {
-				ComplexObject co = (ComplexObject) eo;
-				for (ComplexPattern pattern: co.getPatterns()) {
+			if (!eo.getLanguage().equals(BaseConfiguration.LANG_UNI)) {
+				for (String extra: eo.getToJsonExtras()) {
 					if (languageContext) {
 						cntxt = eo.getLanguage();
 					} else if (context.length()==0) {
-						if (context.length()==0) {
-							if (pattern.context.length()>0) {
-								cntxt = pattern.context;
-							} else {
-								cntxt = eo.getType();
+						cntxt = eo.getType();
+					}
+					ZStringBuilder input = new ZStringBuilder(upperCaseFirst(extra));
+					input.append(".");
+					TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
+				}
+				for (Entry<String,EntityValue> entry: eo.getExternalValues().entrySet()) {
+					if (languageContext) {
+						cntxt = eo.getLanguage();
+					} else if (context.length()==0) {
+						cntxt = eo.getType();
+					}
+					ZStringBuilder input = null;
+					if (eo.getToJsonPrefixes().size()==0 && eo.getToJsonSuffixes().size()==0) {
+						input = new ZStringBuilder(upperCaseFirst(entry.getValue().externalValue));
+						input.append(".");
+						TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
+					}
+					for (String prefix: eo.getToJsonPrefixes()) {
+						input = new ZStringBuilder(upperCaseFirst(prefix));
+						input.append(" ");
+						input.append(entry.getValue().externalValue);
+						input.append(".");
+						TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
+					}
+					for (String suffix: eo.getToJsonSuffixes()) {
+						input = new ZStringBuilder(upperCaseFirst(entry.getValue().externalValue));
+						input.append(" ");
+						input.append(suffix);
+						input.append(".");
+						TsvToJson.addSequenceElement(parent,input,null,new ZStringBuilder(cntxt));
+					}
+				}
+				if (eo instanceof ComplexObject) {
+					ComplexObject co = (ComplexObject) eo;
+					for (ComplexPattern pattern: co.getPatterns()) {
+						if (languageContext) {
+							cntxt = eo.getLanguage();
+						} else if (context.length()==0) {
+							if (context.length()==0) {
+								if (pattern.context.length()>0) {
+									cntxt = pattern.context;
+								} else {
+									cntxt = eo.getType();
+								}
 							}
 						}
+						ZStringSymbolParser ptn = new ZStringSymbolParser(pattern.pattern);
+						if (!ptn.containsOneOfCharacters(" ") && !ZStringSymbolParser.endsWithLineEndSymbol(ptn)) {
+							ptn.append(".");
+						}
+						TsvToJson.checkAddSequenceElement(parent,
+							ptn,
+							null,
+							new ZStringBuilder(cntxt)
+							);
 					}
-					ZStringSymbolParser ptn = new ZStringSymbolParser(pattern.pattern);
-					if (!ptn.containsOneOfCharacters(" ") && !ZStringSymbolParser.endsWithLineEndSymbol(ptn)) {
-						ptn.append(".");
-					}
-					TsvToJson.checkAddSequenceElement(parent,
-						ptn,
-						null,
-						new ZStringBuilder(cntxt)
-						);
 				}
 			}
 		}

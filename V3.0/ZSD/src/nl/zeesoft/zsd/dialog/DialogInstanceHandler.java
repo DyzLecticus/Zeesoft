@@ -130,6 +130,8 @@ public abstract class DialogInstanceHandler {
 		if (output.length()>0) {
 			output.replace("{selfName}",getConfig().getBase().getName());
 			output.replace("{selfEmail}",getConfig().getBase().getEmail());
+			output.replace("{smiley}",getConfig().getBase().getSmiley());
+			output.replace("{frowny}",getConfig().getBase().getFrowny());
 			for (Entry<String,DialogVariableValue> entry: responseOutput.values.entrySet()) {
 				output.replace("{" + entry.getKey() + "}",entry.getValue().externalValue);
 			}

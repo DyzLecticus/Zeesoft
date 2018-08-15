@@ -178,7 +178,7 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 	protected ZStringBuilder checkTesting(HttpServletResponse response) {
 		ZStringBuilder err = new ZStringBuilder();
 		SequenceInterpreterTester tester = getConfiguration().getTester();
-		if (tester==null || tester.isTesting()) {
+		if (tester==null || getConfiguration().isTesting()) {
 			String percentage = "";
 			if (tester!=null) {
 				percentage = " (" + tester.getDonePercentage() + "%)";

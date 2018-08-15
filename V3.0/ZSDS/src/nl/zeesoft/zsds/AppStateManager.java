@@ -57,7 +57,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		}
 		return r;
 	}
-		
+	
 	public boolean generate(boolean load,boolean reload) {
 		boolean r = false;
 		lockMe(this);
@@ -180,6 +180,18 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		return r;
 	}
 
+	public boolean isTesting() {
+		boolean r = false;
+		lockMe(this);
+		if ((tester!=null && tester.isTesting()) ||
+			(testerInitializer!=null && !testerInitializer.isDone())
+			) {
+			r = true;
+		}
+		unlockMe(this);
+		return r;
+	}
+	
 	public boolean isBusy() {
 		boolean r = false;
 		lockMe(this);
