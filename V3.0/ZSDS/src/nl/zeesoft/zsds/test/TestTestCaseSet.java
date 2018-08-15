@@ -51,8 +51,10 @@ public class TestTestCaseSet extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
+		String name = "TC001";
 		TestCaseSet tcs = new TestCaseSet();
 		TestCase tc = new TestCase();
+		tc.name = name;
 		tcs.getTestCases().add(tc);
 		TestCaseIO tcIO = new TestCaseIO();
 		tcIO.request = new DialogRequest("What is your name?");
@@ -84,5 +86,7 @@ public class TestTestCaseSet extends TestObject {
 			System.err.println(newJs);
 			assertEqual(true,false,"Parsed test cases set does not match original");
 		}
+		TestCase testCase = tcs.getTestCase(name);
+		assertEqual(testCase!=null,true,"The test case named '" + name + "' not found");
 	}
 }
