@@ -9,7 +9,8 @@ import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.InitializerListener;
 
 public class AppTester implements InitializerListener {
-	public static final String		ENV_NAME_SELF	= "Self";
+	public static final String		ENVIRONMENT_NAME_SELF		= "Self";
+	public static final String		GENERIC_TEST_CASES_FILE		= "GenericTestCases.json";
 	
 	private TestConfiguration		configuration	= null;
 	private SetTesterInitializer	initializer		= null;
@@ -22,13 +23,12 @@ public class AppTester implements InitializerListener {
 		File file = new File(configuration.getBase().getDataDir() + "testConfig.json");
 		if (file.exists()) {
 			// TODO: Load configuration JSON
-		} else {
-			TestEnvironment self = new TestEnvironment();
-			self.name = "Self";
-			self.url = selfUrl;
-			self.fileName = "GenericTestCases.json";
-			configuration.getEnvironments().add(self);
+		} else if (selfUrl.length()>0) {
+			addSelfEnvironmentToConfiguration(selfUrl);
 			// TODO: Write configuration JSON
+		}
+		if (selfUrl.length()>0 && configuration.getBase().isDebug() && configuration.getEnvironment(ENVIRONMENT_NAME_SELF)==null) {
+			addSelfEnvironmentToConfiguration(selfUrl);
 		}
 		initializer = new SetTesterInitializer(configuration);
 		initializer.addListener(this);
@@ -48,5 +48,13 @@ public class AppTester implements InitializerListener {
 	
 	public boolean isInitialized() {
 		return initializer.isDone();
+	}
+	
+	protected void addSelfEnvironmentToConfiguration(String selfUrl) {
+		TestEnvironment self = new TestEnvironment();
+		self.name = ENVIRONMENT_NAME_SELF;
+		self.url = selfUrl;
+		self.fileName = GENERIC_TEST_CASES_FILE;
+		configuration.getEnvironments().add(self);
 	}
 }

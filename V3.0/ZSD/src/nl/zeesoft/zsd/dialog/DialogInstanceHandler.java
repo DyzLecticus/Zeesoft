@@ -3,6 +3,8 @@ package nl.zeesoft.zsd.dialog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -18,7 +20,7 @@ public abstract class DialogInstanceHandler {
 	private DialogInstance							dialog			= null;
 	private DialogResponse							response		= null;
 	private DialogResponseOutput					responseOutput	= null;
-	private List<DialogVariableValue> 				updatedValues	= new ArrayList<DialogVariableValue>();
+	private SortedMap<String,DialogVariableValue> 	updatedValues	= new TreeMap<String,DialogVariableValue>();
 	
 	public void setMessenger(Messenger messenger) {
 		this.messenger = messenger;
@@ -112,9 +114,7 @@ public abstract class DialogInstanceHandler {
 	protected void setDialogVariableValue(String name,String extVal,String intVal,boolean session) {
 		if (responseOutput.setDialogVariableValue(response,name,extVal,intVal,session)) {
 			DialogVariableValue val = responseOutput.values.get(name);
-			if (!updatedValues.contains(val)) {
-				updatedValues.add(val);
-			}
+			updatedValues.put(name,val);
 		}
 	}
 
@@ -289,6 +289,12 @@ public abstract class DialogInstanceHandler {
 			response.addDebugLogLine("    Set dialog output: ",responseOutput.output);
 			if (responseOutput.prompt.length()>0) {
 				response.addDebugLogLine("    Set dialog prompt: ",responseOutput.prompt);
+			}
+			List<String> keys = new ArrayList<String>(responseOutput.values.keySet());
+			for (String name: keys) {
+				 if (dialog.getVariable(name)==null && !updatedValues.containsKey(name)) {
+					 responseOutput.values.remove(name);
+				 }
 			}
 		}
 	}

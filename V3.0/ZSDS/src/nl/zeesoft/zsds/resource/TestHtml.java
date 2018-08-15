@@ -91,8 +91,8 @@ public class TestHtml extends HtmlResource {
 		script.append("            typeof(object.contextOutputs[0].dialogVariableValues)!==\"undefined\"\n");
 		script.append("            ) {\n");
 		script.append("            ZSDS.test.request.dialogVariableValues = object.contextOutputs[0].dialogVariableValues;\n");
-		script.append("            values = object.contextOutputs[0].dialogVariableValues;\n");
-		script.append("            for (var num in values) {\n");
+		script.append("            for (var num in object.contextOutputs[0].dialogVariableValues) {\n");
+		script.append("            	   values[num] = object.contextOutputs[0].dialogVariableValues[num];\n");
 		script.append("                if (values[num].session) {\n");
 		script.append("                    ZSDS.test.sessionVariableValues[values[num].name] = values[num];\n");
 		script.append("                }\n");
@@ -177,7 +177,7 @@ public class TestHtml extends HtmlResource {
 		html.append("Input");
 		html.append("</td>\n");
 		html.append("<td>");
-		html.append("<input type=\"text\" id=\"input\" value=\"hello\" onchange=\"ZSDS.test.refreshRequest();\" style=\"width: 400px;\"/>");
+		html.append("<input type=\"text\" id=\"input\" onchange=\"ZSDS.test.refreshRequest();\" style=\"width: 400px;\"/>");
 		html.append("<input type=\"button\" value=\"send\" onclick=\"ZSDS.test.sendRequest();\" />\n");
 		html.append("</td>\n");
 		html.append("</tr>\n");
