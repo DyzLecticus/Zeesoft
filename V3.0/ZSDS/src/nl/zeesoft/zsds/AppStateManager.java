@@ -29,6 +29,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	private boolean									writing						= false;
 	private String									lastModifiedHeader			= getLastModifiedDateString();
 
+	private boolean									testing						= false;
 	private SequenceInterpreterTester				tester						= null;
 	private SequenceInterpreterTesterInitializer	testerInitializer			= null;
 	
@@ -51,6 +52,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		boolean r = writeBaseLine(true);
 		if (r) {
 			lockMe(this);
+			testing = true;
 			initializeTester();
 			unlockMe(this);
 			configuration.debug(this,"Initializing tester ...");
@@ -127,6 +129,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 				reloaded = reload;
 				dialogHandlerConfig = dialogHandlerConfigLoad;
 				lastModifiedHeader = getLastModifiedDateString();
+				testing = true;
 				initializeTester();
 				unlockMe(this);
 				if (reloaded) {
@@ -144,6 +147,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		configuration.debug(this,"Tested");
 		boolean writeBaseLine = false;
 		lockMe(this);
+		testing = false;
 		File test = new File(configuration.getBaseConfig().getFullSelfTestBaseLineFileName());
 		if (!test.exists()) {
 			writeBaseLine = true;
@@ -183,9 +187,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	public boolean isTesting() {
 		boolean r = false;
 		lockMe(this);
-		if ((tester!=null && tester.isTesting()) ||
-			(testerInitializer!=null && !testerInitializer.isDone())
-			) {
+		if (testing || (tester!=null && tester.isTesting())) {
 			r = true;
 		}
 		unlockMe(this);
