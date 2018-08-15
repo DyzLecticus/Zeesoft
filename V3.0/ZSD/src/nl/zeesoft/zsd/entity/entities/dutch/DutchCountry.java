@@ -89,6 +89,7 @@ public class DutchCountry extends EntityObject {
 		addCountry("Burundi","BI");
 		addCountry("Cambodja","KH");
 		addCountry("Canada","CA");
+		addCountry("de Centraal-Afrikaanse Republiek","CF");
 		addCountry("Centraal-Afrikaanse Republiek","CF");
 		addCountry("Chili","CL");
 		addCountry("China","CN");
@@ -218,6 +219,7 @@ public class DutchCountry extends EntityObject {
 		addCountry("Niger","NE");
 		addCountry("Nigeria","NG");
 		addCountry("Niue","NU");
+		addCountry("de Noordelijke Marianen","MP");
 		addCountry("Noordelijke Marianen","MP");
 		addCountry("Noord-Korea","KP");
 		addCountry("Noorwegen","NO");
@@ -294,7 +296,7 @@ public class DutchCountry extends EntityObject {
 		addCountry("Uruguay","UY");
 		addCountry("Vanuatu","VU");
 		addCountry("Vaticaanstad","VA");
-		addCountry("Het Vaticaan","VA");
+		addCountry("het Vaticaan","VA");
 		addCountry("Venezuela","VE");
 		addCountry("de Verenigde Arabische Emiraten","AE");
 		addCountry("Verenigde Arabische Emiraten","AE");
@@ -321,10 +323,31 @@ public class DutchCountry extends EntityObject {
 		addCountry("Zwitserland","CH");
 	}
 	private void addCountry(String name,String code) {
-		addEntityValue(name.toLowerCase(),code,code);
+		name = name.toLowerCase();
+		addEntityValue(name,code,code);
+		if (name.contains("ç")) {
+			name = name.replace("ç","c");
+			addEntityValue(name,code,code);
+		}
+		if (name.contains("é")) {
+			name = name.replace("é","e");
+			addEntityValue(name,code,code);
+		}
+		if (name.contains("ë")) {
+			name = name.replace("ë","e");
+			addEntityValue(name,code,code);
+		}
+		if (name.contains("ï")) {
+			name = name.replace("ï","i");
+			addEntityValue(name,code,code);
+		}
+		if (name.contains("ö")) {
+			name = name.replace("ö","o");
+			addEntityValue(name,code,code);
+		}
 		if (name.contains("-")) {
 			name = name.replaceAll("-"," ");
-			addEntityValue(name.toLowerCase(),code,code);
+			addEntityValue(name,code,code);
 		}
 	}
 }

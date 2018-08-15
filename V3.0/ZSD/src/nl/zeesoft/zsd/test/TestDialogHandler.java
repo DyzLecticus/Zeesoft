@@ -180,8 +180,8 @@ public class TestDialogHandler extends TestInitializer {
 			System.out.println();
 			testRequestResponse(handler,"",
 				"Wat kost overboeken naar italie?",
-				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:italie ?",
-				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:italië ?",
+				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:italie ?",
+				"UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:Italië ?",
 				"Een overboeking naar Italië kost vijf euro.","");
 			System.out.println();
 			testRequestResponse(handler,"",
