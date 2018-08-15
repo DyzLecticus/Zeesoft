@@ -318,7 +318,9 @@ public class SequenceInterpreter {
 			if (symbol.equals(SymbolCorrector.PLACEHOLDER)) {
 				symbol = getConfiguration().getEntityValueTranslator().getExternalValueForInternalValues(values.get(i),"");
 			}
-			merged.add(symbol);
+			if (symbol.length()>0) {
+				merged.add(symbol);
+			}
 			i++;
 		}
 		r.fromSymbols(merged,true,true);

@@ -79,7 +79,8 @@ public class ZSD extends LibraryObject {
 
 		tests.add(new TestDialogHandlerConfiguration(getTester()));
 		tests.add(new TestDialogHandler(getTester()));
-		tests.add(new TestSequenceInterpreterTester(getTester()));
+		// Covered by dialog handler tester test
+		//tests.add(new TestSequenceInterpreterTester(getTester()));
 		tests.add(new TestDialogHandlerTester(getTester()));
 		
 		if (!qna.exists()) {

@@ -256,6 +256,10 @@ public class ZStringBuilder {
 	}
 	
 	public StringBuilder replace(String search, String replace) {
+		return replace(search,replace,false,false);
+	}
+	
+	public StringBuilder replace(String search, String replace, boolean prefixAlphabetic,boolean suffixAlphabetic) {
 		if (sb!=null) {
 			int length = sb.length();
 			int sLength = search.length();
@@ -263,15 +267,26 @@ public class ZStringBuilder {
 				boolean found = true;
 				for (int i = 0; i < length; i++) {
 					found = true;
-					for (int si = 0; si < sLength; si++) {
-						if ((i + si) >= length) {
-							found = false;
-							break;
+					if ((i==0 && prefixAlphabetic) ||
+						(i>0 && prefixAlphabetic && !Character.isAlphabetic(sb.substring(i - 1,i).toCharArray()[0]))
+						) {
+						found = false;
+					} else {
+						for (int si = 0; si < sLength; si++) {
+							if ((i + si) >= length) {
+								found = false;
+								break;
+							}
+							if (!sb.substring(i + si,i + si + 1).equals(search.substring(si,si+1))) {
+								found = false;
+								break;
+							}
 						}
-						if (!sb.substring(i + si,i + si + 1).equals(search.substring(si,si+1))) {
-							found = false;
-							break;
-						}
+					}
+					if ((found && i==(length - 1) && suffixAlphabetic) ||
+						(found && i<(length - 1) && suffixAlphabetic && !Character.isAlphabetic(sb.substring(i + 1,i + 2).toCharArray()[0]))
+						) {
+						found = false;
 					}
 					if (found) {
 						sb.replace(i, i + sLength, replace);

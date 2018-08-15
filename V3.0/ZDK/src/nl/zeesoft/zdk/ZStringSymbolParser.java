@@ -140,12 +140,12 @@ public class ZStringSymbolParser extends ZStringBuilder {
 				if (appendSpace) {
 					r.append(" ");
 				}
-				if (upperCaseFirstNext) {
-					String sym = symbol.substring(0,1).toUpperCase();
+				if (upperCaseFirstNext && symbol.length()>0) {
 					if (symbol.length()>1) {
-						sym += symbol.substring(1);
+						symbol = symbol.substring(0,1).toUpperCase() + symbol.substring(1);
+					} else {
+						symbol = symbol.substring(0,1).toUpperCase();
 					}
-					symbol = sym;
 					upperCaseFirstNext = false;
 				}
 				r.append(symbol);
@@ -275,18 +275,40 @@ public class ZStringSymbolParser extends ZStringBuilder {
 		List<String> symbols = new ArrayList<String>();
 		if (getStringBuilder()!=null) {
 			if (isCopy) {
-				if (punctuations.contains("'")) {
+				boolean containsOpen = contains("(");
+				boolean containsClose = contains(")");
+				
+				if (containsClose) {
+					replace(".)",". )");
+					replace("!)","! )");
+					replace("?)","? )");
+					replace("])","] )");
+				}
+				if (containsOpen) {
+					replace("([","( [");
+					replace(".(",". (");
+					replace("!(","! (");
+					replace("?(","? (");
+				}
+				
+				if (punctuations.contains("'") && contains("'")) {
 					if (startsWith("'")) {
 						insert(1," ");
 					}
 					if (endsWith("'")) {
 						insert(length() - 2," ");
 					}
+					
+					if (containsClose) {
+						replace("')","' )");
+					}
+					if (containsOpen) {
+						replace("('","( '");
+					}
+					
 					replace("'.","' .");
 					replace("'!","' !");
 					replace("'?","' ?");
-					replace("('","( '");
-					replace("')","' )");
 					replace(",'",", '");
 					replace("',","' ,");
 					replace(":'",": '");
@@ -294,16 +316,29 @@ public class ZStringSymbolParser extends ZStringBuilder {
 					replace(" '"," ' ");
 					replace("' "," ' ");
 				}
+				
 				for (String symbol: punctuations) {
 					if (!symbol.equals("'")) {
-						if (symbol.equals(":") || symbol.equals(";")) {
-							replace(symbol + " "," " + symbol + " ");
+						boolean contains = false;
+						if (
+							(symbol.equals("(") && containsOpen) ||
+							(symbol.equals(")") && containsClose)
+							) {
+							contains = true;
 						} else {
-							replace(symbol," " + symbol + " ");
+							contains = contains(symbol);
+						}
+						if (contains) {
+							if (symbol.equals(":") || symbol.equals(";")) {
+								replace(symbol + " "," " + symbol + " ",true,false);
+								replace(" " + symbol," " + symbol + " ",false,true);
+							} else {
+								replace(symbol," " + symbol + " ",true,false);
+								replace(symbol," " + symbol + " ",false,true);
+							}
 						}
 					}
 				}
-				repairSmileys();
 				symbols = toSymbols(lineEnds,isCopy);
 			} else {
 				symbols = copy().toSymbolsPunctuated(lineEnds, punctuations, true);
@@ -343,26 +378,5 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	
 	protected ZStringSymbolParser copy() {
 		return new ZStringSymbolParser(this);
-	}
-
-	private void repairSmileys() {
-		repairSmileys(":");
-		repairSmileys(";");
-		repairSmileys("=");
-		repairSmileys("|");
-	}
-	
-	private void repairSmileys(String eyes) {
-		repairSmileys(eyes,"");
-		repairSmileys(eyes,"-");
-		repairSmileys(eyes,"o");
-		repairSmileys(eyes,"O");
-	}
-	
-	private void repairSmileys(String eyes,String nose) {
-		replace("( " + nose + eyes,"(" + nose + eyes);
-		replace(eyes + nose + " )",eyes + nose + ")");
-		replace(") " + nose + eyes,")" + nose + eyes);
-		replace(eyes + nose + " (",eyes + nose + "(");
 	}
 }

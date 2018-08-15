@@ -49,7 +49,7 @@ public class TestDialogHandlerTester extends TestSequenceInterpreterTester {
 			System.out.println("This test has been skipped due to configuration initialization failure");
 		} else {
 			DialogHandlerTester tester = new DialogHandlerTester(config);
-			testTester(tester,27);
+			testTester(tester,24);
 		}
 	}
 }
