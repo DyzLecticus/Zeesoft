@@ -39,11 +39,11 @@ Class references;
 **Test output**  
 The output of this test shows 100 randomly generated integers within the range 0 - 9.
 ~~~~
-9 0 3 1 4 5 1 0 0 0 9 4 0 0 6 0 8 9 0 1
-2 1 8 8 3 4 5 1 6 2 1 7 2 3 0 5 6 9 0 6
-5 0 0 1 3 0 2 4 0 1 7 1 3 1 9 0 5 2 1 6
-5 1 6 4 3 4 8 7 6 2 4 4 2 5 8 8 6 7 8 9
-2 0 1 8 5 3 9 5 1 5 1 0 0 4 6 0 0 1 4 7
+6 7 8 1 3 3 3 5 9 8 8 7 7 7 7 2 5 5 8 5
+0 6 7 6 6 8 8 9 1 2 1 6 3 7 3 2 3 3 1 2
+1 0 9 2 4 6 6 4 1 5 1 6 8 2 5 3 3 1 3 6
+8 6 2 7 4 8 7 1 5 5 7 1 2 7 4 6 6 7 5 2
+2 8 6 6 7 0 3 9 9 4 3 2 0 9 9 3 2 0 0 7
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
@@ -72,10 +72,10 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 3624113911882006604065581971548501545253339604693506016478313157
-Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? (Don't you know how to: [re;spond]!)
-Encoded text: fpGsQpaqUo6nPp2u8oinOu0t#pWnmn3sKs0m5pSnfsxsjqNtqpluBt0o6rRrDuMqam2nCryrdrLoVrDqwqSp~vGswosqfs6u~qTrroDs4n7n7sIrTtetAqkngoanOn7nOqJrYpZp5o8o0qPtTovpPuvuooZn#ogsvrsobqInRr3r#sctKo:v#tfogrArktGq6m0
-Decoded text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? (Don't you know how to: [re;spond]!)
+Key: 3191808492772311790455656097903185857880511231591033279844703902
+Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
+Encoded text: 1wuwb:wwo#Luu#Uys:5v6#w#TwpwPusvj#T#ptZx~zEzZyVyFzHvK~0#U:vvExuvK#sx0#Azm#H#9#~vVyNugvVwExau#z1:MvnuBxDxbw6zN~D:rx#yH#HuWwi#at7tpvyv#:zwn#GuK:Ixs:iwc#wzRwyx4vDw2z1:wvLyex:zdzDyBy~vI~6#j#tvBx:wJ:vzu:qx0zV#0
+Decoded text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringSymbolParser
@@ -97,8 +97,8 @@ Class references;
 **Test output**  
 The output of this test shows the input text and the parsed symbols separated by spaces.
 ~~~~
-Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? (Don't you know how to: [re;spond]!)
-Parsed symbols: Hello , my name is ' Dyz Lecticus ' . How are you feeling today ? ( Don't you know how to : [re;spond] ! )
+Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
+Parsed symbols: Hello , my name is ' Dyz Lecticus ' . How are you feeling today ? :-) ( Don't you know how to : [re;spond] ! ) .
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestJson
@@ -218,9 +218,9 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2018-08-10 19:09:35:091 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2018-08-10 19:09:35:391 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2018-08-10 19:09:35:391 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+2018-08-15 18:09:57:788 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2018-08-15 18:09:58:089 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2018-08-15 18:09:58:089 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
 java.lang.NumberFormatException: For input string: "A"
 	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
 	at java.lang.Integer.parseInt(Integer.java:580)
@@ -230,17 +230,17 @@ java.lang.NumberFormatException: For input string: "A"
 	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:39)
 	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:39)
 
-2018-08-10 19:09:35:702 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2018-08-15 18:09:58:399 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
 All 5 tests have been executed successfully (112 assertions).  
-Total test duration: 746 ms (total sleep duration: 600 ms).  
+Total test duration: 772 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 453 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 454 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 400 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 394 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 395 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestJson: 412 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 672 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 673 Kb / 0 Mb

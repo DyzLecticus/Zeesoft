@@ -141,7 +141,11 @@ public class ZStringSymbolParser extends ZStringBuilder {
 					r.append(" ");
 				}
 				if (upperCaseFirstNext) {
-					symbol = symbol.substring(0,1).toUpperCase() + symbol.substring(1);
+					String sym = symbol.substring(0,1).toUpperCase();
+					if (symbol.length()>1) {
+						sym += symbol.substring(1);
+					}
+					symbol = sym;
 					upperCaseFirstNext = false;
 				}
 				r.append(symbol);
@@ -294,12 +298,12 @@ public class ZStringSymbolParser extends ZStringBuilder {
 					if (!symbol.equals("'")) {
 						if (symbol.equals(":") || symbol.equals(";")) {
 							replace(symbol + " "," " + symbol + " ");
-							replace(" " + symbol," " + symbol + " ");
 						} else {
 							replace(symbol," " + symbol + " ");
 						}
 					}
 				}
+				repairSmileys();
 				symbols = toSymbols(lineEnds,isCopy);
 			} else {
 				symbols = copy().toSymbolsPunctuated(lineEnds, punctuations, true);
@@ -339,5 +343,26 @@ public class ZStringSymbolParser extends ZStringBuilder {
 	
 	protected ZStringSymbolParser copy() {
 		return new ZStringSymbolParser(this);
+	}
+
+	private void repairSmileys() {
+		repairSmileys(":");
+		repairSmileys(";");
+		repairSmileys("=");
+		repairSmileys("|");
+	}
+	
+	private void repairSmileys(String eyes) {
+		repairSmileys(eyes,"");
+		repairSmileys(eyes,"-");
+		repairSmileys(eyes,"o");
+		repairSmileys(eyes,"O");
+	}
+	
+	private void repairSmileys(String eyes,String nose) {
+		replace("( " + nose + eyes,"(" + nose + eyes);
+		replace(eyes + nose + " )",eyes + nose + ")");
+		replace(") " + nose + eyes,")" + nose + eyes);
+		replace(eyes + nose + " (",eyes + nose + "(");
 	}
 }
