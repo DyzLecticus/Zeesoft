@@ -17,6 +17,7 @@ public class JsonTestDialogRequestHandler extends JsonBaseHandlerObject {
 		DialogRequest request = new DialogRequest();
 		request.setAllActions(true);
 		request.appendDebugLog = getConfiguration().isDebug();
+		request.randomizeOutput = false;
 		return request.toJson().toStringBuilderReadFormat();
 	}
 }

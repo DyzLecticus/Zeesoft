@@ -141,23 +141,26 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 
 	protected JsFile buildSummary(List<TestCaseTester> testers) {
 		int successful = 0;
+		int responses = 0;
 		for (TestCaseTester test: testers) {
 			if (test.getError().length()==0) {
 				successful++;
+				responses+=test.getResponses().size();
 			}
 		}
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("testCases","" + testers.size()));
 		json.rootElement.children.add(new JsElem("successful","" + successful));
+		json.rootElement.children.add(new JsElem("responses","" + responses));
 		JsElem errsElem = new JsElem("errors",true);
 		json.rootElement.children.add(errsElem);
 		for (TestCaseTester test: testers) {
 			if (test.getError().length()>0) {
 				JsElem tcElem = new JsElem();
 				errsElem.children.add(tcElem);
-				tcElem.children.add(new JsElem("testCase",test.getTestCase().name));
-				tcElem.children.add(new JsElem("error",test.getError()));
+				tcElem.children.add(new JsElem("testCase",test.getTestCase().name,true));
+				tcElem.children.add(new JsElem("error",test.getError(),true));
 				
 				if (test.getErrorTestCaseIO()!=null && test.getErrorDialogResponse()!=null) {
 					JsElem reqElem = new JsElem("request");

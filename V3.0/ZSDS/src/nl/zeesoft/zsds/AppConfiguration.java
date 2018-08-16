@@ -38,6 +38,7 @@ import nl.zeesoft.zsds.handler.JsonReloadHandler;
 import nl.zeesoft.zsds.handler.JsonSelfTestHandler;
 import nl.zeesoft.zsds.handler.JsonStateHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
+import nl.zeesoft.zsds.handler.TestJavaScriptHandler;
 
 public class AppConfiguration {
 	public static final String			PARAMETER_SELF_TEST_SUMMARY_URL		= "selfTestSummaryUrl"; 
@@ -270,6 +271,7 @@ public class AppConfiguration {
 		List<HandlerObject> r = new ArrayList<HandlerObject>();
 		r.add(new BaseStyleSheetHandler(this));
 		r.add(new BaseJavaScriptHandler(this));
+		r.add(new TestJavaScriptHandler(this));
 		r.add(new HtmlNotFoundHandler(this));
 		r.add(new HtmlIndexHandler(this));
 		r.add(new HtmlTestHandler(this));

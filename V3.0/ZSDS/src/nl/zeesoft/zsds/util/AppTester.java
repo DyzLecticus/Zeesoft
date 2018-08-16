@@ -12,7 +12,7 @@ import nl.zeesoft.zsd.initialize.InitializerListener;
 
 public class AppTester implements InitializerListener {
 	public static final String		ENVIRONMENT_NAME_SELF		= "Self";
-	public static final String		GENERIC_TEST_CASES_FILE		= "GenericTestCases.json";
+	public static final String		SELF_TEST_CASES_FILE		= "SelfTestCases.json";
 	
 	private TestConfiguration		configuration	= null;
 	private SetTesterInitializer	initializer		= null;
@@ -84,7 +84,7 @@ public class AppTester implements InitializerListener {
 		TestEnvironment self = new TestEnvironment();
 		self.name = ENVIRONMENT_NAME_SELF;
 		self.url = selfUrl;
-		self.fileName = GENERIC_TEST_CASES_FILE;
+		self.fileName = SELF_TEST_CASES_FILE;
 		configuration.getEnvironments().add(self);
 	}
 

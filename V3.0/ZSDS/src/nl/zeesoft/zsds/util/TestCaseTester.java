@@ -94,14 +94,19 @@ public class TestCaseTester {
 				DialogResponse response = new DialogResponse();
 				response.fromJson(json);
 				responses.add(response);
-				error = compareResponses(response,tcIO.expectedResponse);
-				if (error.length()>0) {
-					errorTestCaseIO = tcIO;
-					errorDialogResponse = response;
+				if (error.length()==0) {
+					error = compareResponses(response,tcIO.expectedResponse);
+					if (error.length()>0) {
+						errorTestCaseIO = tcIO;
+						errorDialogResponse = response;
+						done = true;
+					}
 				}
 			}
 		} else {
 			done = true;
+		}
+		if (done) {
 			for (TesterListener listener: listeners) {
 				listener.testingIsDone(this);
 			}
@@ -129,10 +134,10 @@ public class TestCaseTester {
 				} else {
 					DialogResponseOutput out = response.contextOutputs.get(0);
 					DialogResponseOutput exp = expectedResponse.contextOutputs.get(0);
-					if (!out.output.equals(exp.output)) {
-						err = "Context output does not match expectation:\n- " + out.output + "\n- " + out.output;
-					} else if (!out.prompt.equals(exp.prompt)) {
-						err = "Context output does not match expectation:\n- " + out.prompt + "\n- " + out.prompt;
+					if (out.output.length()>0 && exp.output.length()>0 && !out.output.equals(exp.output)) {
+						err = "Context output does not match expectation: '" + out.output + "' <> '" + exp.output + "'";
+					} else if (out.prompt.length()>0 && exp.prompt.length()>0 && !out.prompt.equals(exp.prompt)) {
+						err = "Context prompt does not match expectation: '" + out.prompt + "' <> '" + exp.prompt + "'";
 					}
 				}
 			}
