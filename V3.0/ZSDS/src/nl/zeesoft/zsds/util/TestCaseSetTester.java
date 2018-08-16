@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zsd.initialize.Initializable;
@@ -20,6 +21,7 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 	
 	private boolean					testing			= false;
 	private int						done			= 0;
+	private JsFile					summary			= null;
 	
 	public TestCaseSetTester(TestConfiguration configuration,String environmentName) {
 		super(configuration.getMessenger());
@@ -37,9 +39,7 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 			JsFile json = new JsFile();
 			json.fromStringBuilder(data.get(0));
 			if (json.rootElement==null) {
-				if (getMessenger()!=null) {
-					getMessenger().error(this,"Failed to parse test cases set JSON for environment: " + environment.name);
-				}
+				configuration.error(this,"Failed to parse test cases set JSON for environment: " + environment.name);
 			} else {
 				TestCaseSet tcs = new TestCaseSet();
 				tcs.fromJson(json);
@@ -50,16 +50,17 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 	
 	@Override
 	public void testingIsDone(Object tester) {
-		// TODO Auto-generated method stub
 		boolean r = false;
 		lockMe(this);
 		done++;
 		if (done==testers.size()) {
 			testing = false;
 			r = true;
+			summary = buildSummary(testers);
 		}
 		unlockMe(this);
 		if (r) {
+			configuration.debug(this,"Tested");
 			for (TesterListener listener: listeners) {
 				listener.testingIsDone(this);
 			}
@@ -99,6 +100,26 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 			}
 		}
 		unlockMe(this);
+		if (r) {
+			configuration.debug(this,"Testing environment: " + environment.name + " ...");
+		}
+		return r;
+	}
+
+	public boolean stop() {
+		boolean r = false;
+		lockMe(this);
+		if (testing) {
+			r = true;
+			testing = true;
+			for (TestCaseTester tester: testers) {
+				tester.stop();
+			}
+		}
+		unlockMe(this);
+		if (r) {
+			configuration.debug(this,"Testing stopped");
+		}
 		return r;
 	}
 
@@ -108,5 +129,51 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 
 	public List<TestCaseTester> getTesters() {
 		return testers;
+	}
+
+	public JsFile getSummary() {
+		JsFile r = null;
+		lockMe(this);
+		r = summary;
+		unlockMe(this);
+		return r;
+	}
+
+	protected JsFile buildSummary(List<TestCaseTester> testers) {
+		int successful = 0;
+		for (TestCaseTester test: testers) {
+			if (test.getError().length()==0) {
+				successful++;
+			}
+		}
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("testCases","" + testers.size()));
+		json.rootElement.children.add(new JsElem("successful","" + successful));
+		JsElem errsElem = new JsElem("errors",true);
+		json.rootElement.children.add(errsElem);
+		for (TestCaseTester test: testers) {
+			if (test.getError().length()>0) {
+				JsElem tcElem = new JsElem();
+				errsElem.children.add(tcElem);
+				tcElem.children.add(new JsElem("testCase",test.getTestCase().name));
+				tcElem.children.add(new JsElem("error",test.getError()));
+				
+				if (test.getErrorTestCaseIO()!=null && test.getErrorDialogResponse()!=null) {
+					JsElem reqElem = new JsElem("request");
+					reqElem.children = test.getErrorTestCaseIO().request.toJson().rootElement.children; 
+					tcElem.children.add(reqElem);
+					
+					JsElem expElem = new JsElem("expectedResponse");
+					expElem.children = test.getErrorTestCaseIO().expectedResponse.toJson().rootElement.children; 
+					tcElem.children.add(expElem);
+					
+					JsElem resElem = new JsElem("response");
+					resElem.children = test.getErrorDialogResponse().toJson().rootElement.children; 
+					tcElem.children.add(resElem);
+				}
+			}
+		}
+		return json;
 	}
 }

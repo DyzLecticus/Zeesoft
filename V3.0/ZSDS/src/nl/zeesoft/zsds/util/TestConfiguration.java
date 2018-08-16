@@ -3,6 +3,8 @@ package nl.zeesoft.zsds.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsd.BaseConfiguration;
@@ -14,7 +16,14 @@ public class TestConfiguration {
 	
 	private String						testCaseDir		= "testCases/";
 	private int							defaultSleep	= 10;
+	private boolean						retryIfBusy		= true;
 	private List<TestEnvironment>		environments	= new ArrayList<TestEnvironment>();
+	
+	public TestConfiguration() {
+		messenger = null;
+		union = null;
+		base = new BaseConfiguration();
+	}
 	
 	public TestConfiguration(Messenger msgr,WorkerUnion uni,BaseConfiguration config) {
 		messenger = msgr;
@@ -22,6 +31,41 @@ public class TestConfiguration {
 		base = config;
 	}
 
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("testCaseDir",testCaseDir,true));
+		json.rootElement.children.add(new JsElem("defaultSleep","" + defaultSleep));
+		json.rootElement.children.add(new JsElem("retryIfBusy","" + retryIfBusy));
+		JsElem envsElem = new JsElem("environments",true);
+		json.rootElement.children.add(envsElem);
+		for (TestEnvironment env: environments) {
+			JsFile envJs = env.toJson();
+			JsElem envElem = new JsElem();
+			envsElem.children.add(envElem);
+			envElem.children = envJs.rootElement.children;
+		}
+		return json;
+	}
+
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			testCaseDir = json.rootElement.getChildString("testCaseDir",testCaseDir);
+			defaultSleep = json.rootElement.getChildInt("defaultSleep",defaultSleep);
+			retryIfBusy = json.rootElement.getChildBoolean("retryIfBusy",retryIfBusy);
+			JsElem envsElem = json.rootElement.getChildByName("environments");
+			if (envsElem!=null) {
+				for (JsElem envElem: envsElem.children) {
+					JsFile envJs = new JsFile();
+					envJs.rootElement = envElem;
+					TestEnvironment env = new TestEnvironment();
+					env.fromJson(envJs);
+					environments.add(env);
+				}
+			}
+		}
+	}
+	
 	public Messenger getMessenger() {
 		return messenger;
 	}
@@ -51,6 +95,14 @@ public class TestConfiguration {
 
 	public void setDefaultSleep(int defaultSleep) {
 		this.defaultSleep = defaultSleep;
+	}
+
+	public boolean isRetryIfBusy() {
+		return retryIfBusy;
+	}
+
+	public void setRetryIfBusy(boolean retryIfBusy) {
+		this.retryIfBusy = retryIfBusy;
 	}
 
 	public List<TestEnvironment> getEnvironments() {

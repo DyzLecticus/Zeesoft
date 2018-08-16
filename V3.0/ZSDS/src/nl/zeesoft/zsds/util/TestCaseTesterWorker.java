@@ -9,6 +9,7 @@ public class TestCaseTesterWorker extends Worker {
 	
 	public TestCaseTesterWorker(Messenger msgr, WorkerUnion uni,TestCaseTester tester,int sleep) {
 		super(msgr,uni);
+		this.tester = tester;
 		setSleep(sleep);
 		setStopOnException(true);
 	}

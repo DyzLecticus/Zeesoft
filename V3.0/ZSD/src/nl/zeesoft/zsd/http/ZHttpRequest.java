@@ -19,11 +19,13 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 
 public class ZHttpRequest {
-	private Messenger		messenger	= null;
-	private String			method		= "";
-	private String			url			= "";
-	private int				timeoutMs	= 3000;
-	private String			encoding	= "UTF-8";
+	private Messenger		messenger		= null;
+	private String			method			= "";
+	private String			url				= "";
+	private int				timeoutMs		= 3000;
+	private String			encoding		= "UTF-8";
+	
+	private int				responseCode	= 200;
 	
 	public ZHttpRequest(String method,String url) {
 		this.method = method;
@@ -65,7 +67,9 @@ public class ZHttpRequest {
 			headers.put("Content-Type","application/json");
 		}
 		ZStringBuilder json = sendRequest(body,headers);
-		r.fromStringBuilder(json);
+		if (json!=null) {
+			r.fromStringBuilder(json);
+		}
 		return r;
 	}
 
@@ -97,6 +101,9 @@ public class ZHttpRequest {
 			try {
 				con = (HttpURLConnection) conUrl.openConnection();
 				con.setRequestMethod(method);
+				if (body!=null) {
+					con.setDoOutput(true);
+				}
 				con.setConnectTimeout(timeoutMs);
 				con.setReadTimeout(timeoutMs);
 				if (headers!=null) {
@@ -180,8 +187,18 @@ public class ZHttpRequest {
 				logError("I/O exception",e);
 				error = true;
 			}
+			r.trim();
 		}
 
+		if (con!=null) {
+			try {
+				responseCode = con.getResponseCode();
+			} catch (IOException e) {
+				logError("Failed to obtain response code",e);
+				error = true;
+			}
+		}
+		
 		// Close stuff
 		if (outputStreamWriter!=null) {
 			try {
@@ -227,11 +244,13 @@ public class ZHttpRequest {
 			con.disconnect();
 		}
 		
-		r.trim();
-		
 		return r;
 	}
 
+	public int getResponseCode() {
+		return responseCode;
+	}
+	
 	protected void logError(String msg,Exception e) {
 		if (messenger!=null) {
 			messenger.error(this,msg,e);

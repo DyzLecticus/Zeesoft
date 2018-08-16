@@ -1,0 +1,81 @@
+{
+  "testCases": [
+    {
+      "name": "GenericHandshake",
+      "io": [
+        {
+          "request": {
+            "prompt": "",
+            "input": "What is your name?",
+            "language": "",
+            "masterContext": "",
+            "context": "",
+            "isTestRequest": false,
+            "appendDebugLog": false,
+            "classifyLanguage": false,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": false,
+            "classifyMasterContext": false,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": false,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": false,
+            "translateEntityValues": false,
+            "translateEntityTypes": [],
+            "matchThreshold": 0.1,
+            "randomizeOutput": true,
+            "filterContexts": [],
+            "dialogVariableValues": []
+          },
+          "expectedResponse": {
+            "responseLanguages": [],
+            "correctedInput": "",
+            "classificationSequence": "",
+            "responseMasterContexts": [],
+            "responseContexts": [],
+            "entityValueTranslation": "",
+            "entityValueTranslationCorrected": "",
+            "debugLog": "",
+            "contextOutputs": []
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "What is your goal?",
+            "language": "",
+            "masterContext": "",
+            "context": "",
+            "isTestRequest": false,
+            "appendDebugLog": false,
+            "classifyLanguage": false,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": false,
+            "classifyMasterContext": false,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": false,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": false,
+            "translateEntityValues": false,
+            "translateEntityTypes": [],
+            "matchThreshold": 0.1,
+            "randomizeOutput": true,
+            "filterContexts": [],
+            "dialogVariableValues": []
+          },
+          "expectedResponse": {
+            "responseLanguages": [],
+            "correctedInput": "",
+            "classificationSequence": "",
+            "responseMasterContexts": [],
+            "responseContexts": [],
+            "entityValueTranslation": "",
+            "entityValueTranslationCorrected": "",
+            "debugLog": "",
+            "contextOutputs": []
+          }
+        }
+      ]
+    }
+  ]
+}

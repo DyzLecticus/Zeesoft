@@ -2,6 +2,8 @@ package nl.zeesoft.zsds.util;
 
 import java.io.File;
 
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsd.BaseConfiguration;
@@ -20,12 +22,36 @@ public class AppTester implements InitializerListener {
 	}
 
 	public void initialize(String selfUrl) {
+		initialize(selfUrl,true);
+	}
+
+	public void initialize(String selfUrl,boolean write) {
 		File file = new File(configuration.getBase().getDataDir() + "testConfig.json");
 		if (file.exists()) {
-			// TODO: Load configuration JSON
+			JsFile json = new JsFile();
+			ZStringBuilder err = json.fromFile(file.getAbsolutePath());
+			if (err.length()>0) {
+				configuration.error(this,err.toString());
+			} else {
+				configuration.fromJson(json);
+			}
 		} else if (selfUrl.length()>0) {
 			addSelfEnvironmentToConfiguration(selfUrl);
-			// TODO: Write configuration JSON
+			if (write) {
+				File dir = new File(configuration.getBase().getDataDir());
+				if (!dir.exists()) {
+					if (!dir.mkdirs()) {
+						configuration.error(this,"Unable to create directory: " + dir.getAbsolutePath());
+						write = false;
+					}
+				}
+				if (write) {
+					ZStringBuilder err = configuration.toJson().toStringBuilderReadFormat().toFile(file.getAbsolutePath());
+					if (err.length()>0) {
+						configuration.error(this,err.toString());
+					}
+				}
+			}
 		}
 		if (selfUrl.length()>0 && configuration.getBase().isDebug() && configuration.getEnvironment(ENVIRONMENT_NAME_SELF)==null) {
 			addSelfEnvironmentToConfiguration(selfUrl);
@@ -33,7 +59,7 @@ public class AppTester implements InitializerListener {
 		initializer = new SetTesterInitializer(configuration);
 		initializer.addListener(this);
 		initializer.start();
-		configuration.error(this,"Initializing application tester ...");
+		configuration.debug(this,"Initializing application tester ...");
 	}
 	
 	@Override
@@ -50,11 +76,19 @@ public class AppTester implements InitializerListener {
 		return initializer.isDone();
 	}
 	
+	public TestCaseSetTester getTester(String environmentName) {
+		return initializer.getTester(environmentName);
+	}
+	
 	protected void addSelfEnvironmentToConfiguration(String selfUrl) {
 		TestEnvironment self = new TestEnvironment();
 		self.name = ENVIRONMENT_NAME_SELF;
 		self.url = selfUrl;
 		self.fileName = GENERIC_TEST_CASES_FILE;
 		configuration.getEnvironments().add(self);
+	}
+
+	public TestConfiguration getConfiguration() {
+		return configuration;
 	}
 }
