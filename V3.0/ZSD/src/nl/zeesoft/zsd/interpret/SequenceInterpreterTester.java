@@ -111,7 +111,24 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 		unlockMe(this);
 		return r;
 	}
-	
+
+	public boolean stop() {
+		boolean r = false;
+		lockMe(this);
+		if (tests.size()>0 && testing && worker.isWorking()) {
+			worker.stop();
+			testing = false;
+			r = testing;
+		}
+		unlockMe(this);
+		if (r) {
+			for (TesterListener listener: listeners) {
+				listener.testingIsDone(this);
+			}
+		}
+		return r;
+	}
+
 	public boolean isTesting() {
 		boolean r = false;
 		lockMe(this);

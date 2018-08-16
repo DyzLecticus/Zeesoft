@@ -166,6 +166,10 @@ public class AppConfiguration {
 	}
 	
 	public void destroy() {
+		SequenceInterpreterTester tester = stateManager.getTester();
+		if (tester!=null && tester.isTesting()) {
+			tester.stop();
+		}
 		messenger.stop();
 		union.stopWorkers();
 		messenger.whileWorking();

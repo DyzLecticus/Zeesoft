@@ -65,41 +65,46 @@ public class TestCaseTester {
 			DialogRequest request = tcIO.request;
 			request.randomizeOutput = false;
 			request.appendDebugLog = true;
-			ZHttpRequest http = new ZHttpRequest(configuration.getMessenger(),"POST",environment.url);
+			ZHttpRequest http;
+			if (retrying) {
+				http = new ZHttpRequest(null,"POST",environment.url);
+			} else {
+				http = new ZHttpRequest(configuration.getMessenger(),"POST",environment.url);
+			}
 			JsFile json = http.sendJsonRequest(request.toJson().toStringBuilder());
-			if (json.rootElement==null) {
-				if (configuration.isRetryIfBusy() && http.getResponseCode()==503 && !retrying) {
-					if (retrying) {
-						configuration.debug(this,"Retrying ...");
-					} else {
-						retrying = true;
-						if (sleep<1000) {
-							worker.setSleep(1000);
-						}
-					}
+			if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
+				if (retrying) {
+					configuration.debug(this,"Retrying ...");
 				} else {
+					retrying = true;
+					if (sleep<1000) {
+						worker.setSleep(1000);
+					}
+				}
+			} else {
+				if (json.rootElement==null) {
 					error = "Failed to obtain dialog response from " + environment.url;
 					errorTestCaseIO = tcIO;
 					done = true;
 					configuration.error(this,error);
-				}
-			} else {
-				if (retrying) {
-					configuration.debug(this,"Continuing ...");
-					retrying = false;
-					if (sleep<1000) {
-						worker.setSleep(sleep);
+				} else {
+					if (retrying) {
+						configuration.debug(this,"Continuing ...");
+						retrying = false;
+						if (sleep<1000) {
+							worker.setSleep(sleep);
+						}
 					}
-				}
-				DialogResponse response = new DialogResponse();
-				response.fromJson(json);
-				responses.add(response);
-				if (error.length()==0) {
-					error = compareResponses(response,tcIO.expectedResponse);
-					if (error.length()>0) {
-						errorTestCaseIO = tcIO;
-						errorDialogResponse = response;
-						done = true;
+					DialogResponse response = new DialogResponse();
+					response.fromJson(json);
+					responses.add(response);
+					if (error.length()==0) {
+						error = compareResponses(response,tcIO.expectedResponse);
+						if (error.length()>0) {
+							errorTestCaseIO = tcIO;
+							errorDialogResponse = response;
+							done = true;
+						}
 					}
 				}
 			}

@@ -10,14 +10,15 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsd.BaseConfiguration;
 
 public class TestConfiguration {
-	private Messenger					messenger		= null;
-	private WorkerUnion					union			= null;
-	private BaseConfiguration			base			= null;
+	private Messenger					messenger			= null;
+	private WorkerUnion					union				= null;
+	private BaseConfiguration			base				= null;
 	
-	private String						testCaseDir		= "testCases/";
-	private int							defaultSleep	= 10;
-	private boolean						retryIfBusy		= true;
-	private List<TestEnvironment>		environments	= new ArrayList<TestEnvironment>();
+	private String						testCaseDir			= "testCases/";
+	private int							defaultSleep		= 10;
+	private boolean						selfTestAfterInit	= true;
+	private boolean						retryIfBusy			= true;
+	private List<TestEnvironment>		environments		= new ArrayList<TestEnvironment>();
 	
 	public TestConfiguration() {
 		messenger = null;
@@ -37,6 +38,7 @@ public class TestConfiguration {
 		json.rootElement.children.add(new JsElem("testCaseDir",testCaseDir,true));
 		json.rootElement.children.add(new JsElem("defaultSleep","" + defaultSleep));
 		json.rootElement.children.add(new JsElem("retryIfBusy","" + retryIfBusy));
+		json.rootElement.children.add(new JsElem("selfTestAfterInit","" + selfTestAfterInit));
 		JsElem envsElem = new JsElem("environments",true);
 		json.rootElement.children.add(envsElem);
 		for (TestEnvironment env: environments) {
@@ -53,6 +55,7 @@ public class TestConfiguration {
 			testCaseDir = json.rootElement.getChildString("testCaseDir",testCaseDir);
 			defaultSleep = json.rootElement.getChildInt("defaultSleep",defaultSleep);
 			retryIfBusy = json.rootElement.getChildBoolean("retryIfBusy",retryIfBusy);
+			selfTestAfterInit = json.rootElement.getChildBoolean("selfTestAfterInit",selfTestAfterInit);
 			JsElem envsElem = json.rootElement.getChildByName("environments");
 			if (envsElem!=null) {
 				for (JsElem envElem: envsElem.children) {

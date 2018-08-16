@@ -119,6 +119,9 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		unlockMe(this);
 		if (r) {
 			configuration.debug(this,"Testing stopped");
+			for (TesterListener listener: listeners) {
+				listener.testingIsDone(this);
+			}
 		}
 		return r;
 	}

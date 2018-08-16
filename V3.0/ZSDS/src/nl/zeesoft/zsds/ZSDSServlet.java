@@ -70,8 +70,8 @@ public class ZSDSServlet extends HttpServlet {
 	
 	@Override
 	public void destroy() {
-		super.destroy();
 		configuration.destroy();
+		super.destroy();
 	}
 
 	public AppConfiguration getConfiguration() {
