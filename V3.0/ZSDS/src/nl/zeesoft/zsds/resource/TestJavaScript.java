@@ -142,7 +142,6 @@ public class TestJavaScript {
 		script.append("};\n");
 		script.append("ZSDS.test.addTestCaseIO = function(request) {\n");
 		script.append("    if (!ZSDS.test.request.randomizeOutput) {\n");
-		script.append("        request.debugLog = \"\";\n");
 		script.append("        var obj = {};\n");
 		script.append("        obj.request = request;\n");
 		script.append("        ZSDS.test.testCase.io[ZSDS.test.testCase.io.length] = obj;\n");

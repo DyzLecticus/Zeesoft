@@ -17,8 +17,6 @@ import nl.zeesoft.zsds.util.TestCaseSetTester;
 public class JsonAppTesterHandler extends HandlerObject {
 	public static final String	PATH	= "/appTester.json";
 	
-	private TestCaseSetTester	tester	= null;
-	
 	public JsonAppTesterHandler(AppConfiguration config) {
 		super(config,PATH);
 	}
@@ -30,10 +28,11 @@ public class JsonAppTesterHandler extends HandlerObject {
 		try {
 			out = response.getWriter();
 			String environmentName = request.getParameter("environment");
-			ZStringBuilder err = checkRequest(environmentName,request,response);
+			ZStringBuilder err = checkRequest(environmentName,response);
 			if (err.length()>0) {
 				out.println(err.toString());
 			} else {
+				TestCaseSetTester tester = getTester(environmentName);
 				JsFile summary = tester.getSummary();
 				if (summary==null) {
 					if (tester.isTesting()) {
@@ -86,9 +85,8 @@ public class JsonAppTesterHandler extends HandlerObject {
 		} else if (!action.equals("test") && !action.equals("reload")) {
 			err = setErrorResponse(response,400,"Action not supported: " + action);
 		} else if (action.equals("test")){
-			err = checkRequest(environmentName,request,response);
+			err = checkRequest(environmentName,response);
 		}
-		
 		
 		try {
 			out = response.getWriter();
@@ -96,6 +94,7 @@ public class JsonAppTesterHandler extends HandlerObject {
 				out.println(err.toString());
 			} else {
 				if (action.equals("test")) {
+					TestCaseSetTester tester = getTester(environmentName);
 					if (tester.isTesting()) {
 						out.println(setErrorResponse(response,503,"Environment is already being tested"));
 					} else if (!tester.start()) {
@@ -122,8 +121,17 @@ public class JsonAppTesterHandler extends HandlerObject {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 	}
-
-	protected ZStringBuilder checkRequest(String environmentName,HttpServletRequest request, HttpServletResponse response) {
+	
+	protected TestCaseSetTester getTester(String environmentName) {
+		TestCaseSetTester r = null;
+		AppTester appTester = getConfiguration().getAppTester();
+		if (appTester.isInitialized()) {
+			r = appTester.getTester(environmentName);
+		}
+		return r;
+	}
+		
+	protected ZStringBuilder checkRequest(String environmentName, HttpServletResponse response) {
 		ZStringBuilder err = new ZStringBuilder();
 		AppTester appTester = getConfiguration().getAppTester();
 		if (environmentName==null || environmentName.length()==0) {
@@ -132,8 +140,6 @@ public class JsonAppTesterHandler extends HandlerObject {
 			err = setErrorResponse(response,400,"Environment not found: " + environmentName);
 		} else if (!appTester.isInitialized()) {
 			err = setErrorResponse(response,503,"Application tester is initializing. Please wait.");
-		} else {
-			tester = appTester.getTester(environmentName);
 		}
 		return err;
 	}

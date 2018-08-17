@@ -6,7 +6,7 @@
         {
           "request": {
             "prompt": "",
-            "input": "Hello",
+            "input": "hello",
             "language": "",
             "masterContext": "",
             "context": "",
@@ -31,8 +31,8 @@
             "responseLanguages": [
               {
                 "symbol": "EN",
-                "prob": 0.08138027771167516,
-                "probNormalized": 0.7336234381210512
+                "prob": 0.08137409995996345,
+                "probNormalized": 0.733731195884132
               }
             ],
             "correctedInput": "Hello.",
@@ -53,7 +53,7 @@
             ],
             "entityValueTranslation": "UN_ABC:Hello .",
             "entityValueTranslationCorrected": "UN_ABC:Hello .",
-            "debugLog": "16:33:26:528: Classify language for sequence: Hello.<NEWLINE>16:33:26:529: Classified language: EN<NEWLINE>16:33:26:529: Translate sequence: Hello.<NEWLINE>16:33:26:529: Translated sequence: UN_ABC:Hello .<NEWLINE>16:33:26:529: Correction time limit: 200<NEWLINE>16:33:26:529: Correcting sequence: Hello .<NEWLINE>16:33:26:529: Corrected sequence: Hello.<NEWLINE>16:33:26:529: Translate corrected sequence: Hello.<NEWLINE>16:33:26:529: Translated corrected sequence: UN_ABC:Hello .<NEWLINE>16:33:26:529: Checking profanity for sequence: Hello.<NEWLINE>16:33:26:529: Classify master context for input sequence: Hello.<NEWLINE>16:33:26:529: Classified master context: Generic<NEWLINE>16:33:26:529: Classify context for input sequence: Hello.<NEWLINE>16:33:26:529: Classified context: Handshake<NEWLINE>16:33:26:529: Handling dialog: EN/Generic/Handshake<NEWLINE>16:33:26:529:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler<NEWLINE>16:33:26:529:     Find matches for sequence: Hello.<NEWLINE>16:33:26:529:     Found matches for sequence: 1<NEWLINE>16:33:26:529:     - Hello. [OUTPUT] Hello. My name is {selfName}. (0.4226804123711341 / 0.5942028985507247)<NEWLINE>16:33:26:530:     Set prompt variable: firstName<NEWLINE>16:33:26:530:     Set dialog output: Hello. My name is Dyz Lecticus.<NEWLINE>16:33:26:530:     Set dialog prompt: What is your name?",
+            "debugLog": "",
             "contextOutputs": [
               {
                 "context": "Handshake",
@@ -69,7 +69,7 @@
         {
           "request": {
             "prompt": "What is your name?",
-            "input": "my name is Craziest of Crazy",
+            "input": "andrew of the ocean",
             "language": "EN",
             "masterContext": "Generic",
             "context": "Handshake",
@@ -94,57 +94,57 @@
             "responseLanguages": [
               {
                 "symbol": "EN",
-                "prob": 0.40597050241744703,
-                "probNormalized": 1
+                "prob": 0.1627682466463573,
+                "probNormalized": 0.5870572593616618
               }
             ],
-            "correctedInput": "My name is Craziest of Crazy.",
-            "classificationSequence": "My name is [ABC] [PRE] [ABC].",
+            "correctedInput": "Andrew of the ocean.",
+            "classificationSequence": "[ABC] [PRE] [ABC].",
             "responseMasterContexts": [
               {
                 "symbol": "Generic",
-                "prob": 0.7323143679449524,
-                "probNormalized": 0.8242266847041396
+                "prob": 0.45479164292776886,
+                "probNormalized": 0.6824963421714196
               }
             ],
             "responseContexts": [
               {
                 "symbol": "Handshake",
-                "prob": 1.2863145863448413,
+                "prob": 0.7835916226846408,
                 "probNormalized": 1
               }
             ],
-            "entityValueTranslation": "UN_ABC:My UN_ABC:name UN_ABC:is UN_ABC:Craziest|EN_NAM:firstName:UN_ABC:Craziest EN_PRE:1|UN_ABC:of|EN_NAM:preposition:EN_PRE:1 UN_ABC:Crazy|EN_NAM:lastName:UN_ABC:Crazy .",
-            "entityValueTranslationCorrected": "UN_ABC:My UN_ABC:name UN_ABC:is UN_ABC:Craziest|EN_NAM:firstName:UN_ABC:Craziest EN_PRE:1|UN_ABC:of|EN_NAM:preposition:EN_PRE:1 UN_ABC:Crazy|EN_NAM:lastName:UN_ABC:Crazy .",
-            "debugLog": "16:33:40:561: Classify language for sequence: My name is Craziest of Crazy.<NEWLINE>16:33:40:562: Classified language: EN<NEWLINE>16:33:40:562: Translate sequence: My name is Craziest of Crazy.<NEWLINE>16:33:40:564: Translated sequence: UN_ABC:My UN_ABC:name UN_ABC:is UN_ABC:Craziest|EN_NAM:firstName:UN_ABC:Craziest EN_PRE:1|UN_ABC:of|EN_NAM:preposition:EN_PRE:1 UN_ABC:Crazy|EN_NAM:lastName:UN_ABC:Crazy .<NEWLINE>16:33:40:564: Correction time limit: 700<NEWLINE>16:33:40:564: Correcting sequence: My name is [] [] [] .<NEWLINE>16:33:40:564: Corrected sequence: My name is Craziest of Crazy.<NEWLINE>16:33:40:564: Translate corrected sequence: My name is Craziest of Crazy.<NEWLINE>16:33:40:566: Translated corrected sequence: UN_ABC:My UN_ABC:name UN_ABC:is UN_ABC:Craziest|EN_NAM:firstName:UN_ABC:Craziest EN_PRE:1|UN_ABC:of|EN_NAM:preposition:EN_PRE:1 UN_ABC:Crazy|EN_NAM:lastName:UN_ABC:Crazy .<NEWLINE>16:33:40:567: Checking profanity for sequence: My name is [ABC] [PRE] [ABC].<NEWLINE>16:33:40:567: Classify master context for input sequence: My name is Craziest of Crazy.<NEWLINE>16:33:40:568: Classify master context for classification sequence: What is your name? My name is [ABC] [PRE] [ABC].<NEWLINE>16:33:40:568: Classified master context: Generic<NEWLINE>16:33:40:568: Classify context for input sequence: My name is Craziest of Crazy.<NEWLINE>16:33:40:569: Classify context for classification sequence: What is your name? My name is [ABC] [PRE] [ABC].<NEWLINE>16:33:40:569: Classified context: Handshake<NEWLINE>16:33:40:569: Continuing dialog: EN/Generic/Handshake<NEWLINE>16:33:40:569:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericHandshakeHandler<NEWLINE>16:33:40:569:     Updated variable firstName: UN_ABC:Craziest = Craziest<NEWLINE>16:33:40:569:     Updated variable lastName: UN_ABC:Crazy = Crazy<NEWLINE>16:33:40:569:     Updated variable preposition: EN_PRE:1 = of<NEWLINE>16:33:40:570:     Updated session variable fullName: Craziest of Crazy<NEWLINE>16:33:40:570:     Set prompt variable: nextDialog<NEWLINE>16:33:40:570:     Set dialog output: <NEWLINE>16:33:40:570:     Set dialog prompt: What can I do for you Craziest of Crazy?",
+            "entityValueTranslation": "UN_ABC:Andrew|EN_NAM:firstName:UN_ABC:Andrew EN_PRE:2|EN_NAM:preposition:EN_PRE:2 UN_ABC:ocean|EN_NAM:lastName:UN_ABC:Ocean .",
+            "entityValueTranslationCorrected": "UN_ABC:Andrew|EN_NAM:firstName:UN_ABC:Andrew EN_PRE:2|EN_NAM:preposition:EN_PRE:2 UN_ABC:ocean|EN_NAM:lastName:UN_ABC:Ocean .",
+            "debugLog": "",
             "contextOutputs": [
               {
                 "context": "Handshake",
                 "output": "",
-                "prompt": "What can I do for you Craziest of Crazy?",
+                "prompt": "What can I do for you Andrew of the Ocean?",
                 "promptVariableName": "nextDialog",
                 "promptVariableType": "ABC",
                 "dialogVariableValues": [
                   {
                     "name": "firstName",
-                    "externalValue": "Craziest",
-                    "internalValue": "UN_ABC:Craziest"
+                    "externalValue": "Andrew",
+                    "internalValue": "UN_ABC:Andrew"
                   },
                   {
                     "name": "fullName",
-                    "externalValue": "Craziest of Crazy",
+                    "externalValue": "Andrew of the Ocean",
                     "internalValue": "",
                     "session": true
                   },
                   {
                     "name": "lastName",
-                    "externalValue": "Crazy",
-                    "internalValue": "UN_ABC:Crazy"
+                    "externalValue": "Ocean",
+                    "internalValue": "UN_ABC:Ocean"
                   },
                   {
                     "name": "preposition",
-                    "externalValue": "of",
-                    "internalValue": "EN_PRE:1"
+                    "externalValue": "of the",
+                    "internalValue": "EN_PRE:2"
                   }
                 ]
               }
@@ -153,7 +153,7 @@
         },
         {
           "request": {
-            "prompt": "What can I do for you Craziest of Crazy?",
+            "prompt": "What can I do for you Andrew of the Ocean?",
             "input": "what can you do",
             "language": "EN",
             "masterContext": "",
@@ -176,7 +176,7 @@
             "dialogVariableValues": [
               {
                 "name": "fullName",
-                "externalValue": "Craziest of Crazy",
+                "externalValue": "Andrew of the Ocean",
                 "internalValue": "",
                 "session": true
               }
@@ -186,7 +186,7 @@
             "responseLanguages": [
               {
                 "symbol": "EN",
-                "prob": 0.4068833783285653,
+                "prob": 0.4068524895700067,
                 "probNormalized": 1
               }
             ],
@@ -218,7 +218,7 @@
             ],
             "entityValueTranslation": "UN_ABC:What UN_ABC:can UN_ABC:you UN_ABC:do .",
             "entityValueTranslationCorrected": "UN_ABC:What UN_ABC:can UN_ABC:you UN_ABC:do .",
-            "debugLog": "16:33:48:089: Classify language for sequence: What can you do.<NEWLINE>16:33:48:089: Classified language: EN<NEWLINE>16:33:48:090: Translate sequence: What can you do.<NEWLINE>16:33:48:091: Translated sequence: UN_ABC:What UN_ABC:can UN_ABC:you UN_ABC:do .<NEWLINE>16:33:48:091: Correction time limit: 500<NEWLINE>16:33:48:091: Correcting sequence: What can you do .<NEWLINE>16:33:48:091: Corrected sequence: What can you do.<NEWLINE>16:33:48:091: Translate corrected sequence: What can you do.<NEWLINE>16:33:48:092: Translated corrected sequence: UN_ABC:What UN_ABC:can UN_ABC:you UN_ABC:do .<NEWLINE>16:33:48:092: Checking profanity for sequence: What can you do.<NEWLINE>16:33:48:092: Classify master context for input sequence: What can you do.<NEWLINE>16:33:48:092: Classified master context: Generic<NEWLINE>16:33:48:092: Classify context for input sequence: What can you do.<NEWLINE>16:33:48:092: Classified context: QuestionAndAnswer<NEWLINE>16:33:48:092: Handling dialog: EN/Generic/QuestionAndAnswer<NEWLINE>16:33:48:092:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler<NEWLINE>16:33:48:092:     Find matches for sequence: What can you do.<NEWLINE>16:33:48:092:     Found matches for sequence: 6<NEWLINE>16:33:48:092:     - What can you do for me? [OUTPUT] I can help with general questions, executing simple mathematical calculations, booking rooms, questions about room bookings and questions about foreign transfers. (0.21657250470809794 / 0.7301587301587301)<NEWLINE>16:33:48:092:     - How can you help me? [OUTPUT] I can help with general questions, executing simple mathematical calculations, booking rooms, questions about room bookings and questions about foreign transfers. (0.06214689265536724 / 0.20952380952380953)<NEWLINE>16:33:48:092:     - How can you assist me? [OUTPUT] I can help with general questions, executing simple mathematical calculations, booking rooms, questions about room bookings and questions about foreign transfers. (0.06214689265536724 / 0.20952380952380953)<NEWLINE>16:33:48:092:     - How can you support me? [OUTPUT] I can help with general questions, executing simple mathematical calculations, booking rooms, questions about room bookings and questions about foreign transfers. (0.06214689265536724 / 0.20952380952380953)<NEWLINE>16:33:48:092:     - How can you be of service to me? [OUTPUT] I can help with general questions, executing simple mathematical calculations, booking rooms, questions about room bookings and questions about foreign transfers. (0.06214689265536724 / 0.20952380952380953)<NEWLINE>16:33:48:092:     - Can you describe yourself? [OUTPUT] I am an artificially intelligent personal assistant. (0.05437853107344634 / 0.18333333333333335)<NEWLINE>16:33:48:092:     Set dialog output: I can help with general questions, executing simple mathematical calculations, booking rooms, questions about room bookings and questions about foreign transfers.<NEWLINE>16:33:48:092: Handling dialog: EN/Generic/Language<NEWLINE>16:33:48:092:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericLanguageHandler<NEWLINE>16:33:48:093:     Updated variable languages: English and Dutch<NEWLINE>16:33:48:093:     Find matches for sequence: What can you do.<NEWLINE>16:33:48:093:     Found matches for sequence: 6<NEWLINE>16:33:48:093:     - What languages do you know? [OUTPUT] I speak {languages}. (0.7323684210526316 / 0.44385964912280695)<NEWLINE>16:33:48:093:     - How many languages do you know? [OUTPUT] I speak {languages}. (0.4052631578947368 / 0.24561403508771926)<NEWLINE>16:33:48:093:     - Which languages can you speak? [OUTPUT] I speak {languages}. (0.38 / 0.2303030303030303)<NEWLINE>16:33:48:093:     - How many languages can you speak? [OUTPUT] I speak {languages}. (0.38 / 0.2303030303030303)<NEWLINE>16:33:48:093:     - Can you speak [LNG]? [OUTPUT] {confirmation}, I speak {languages}. (0.3325 / 0.2015151515151515)<NEWLINE>16:33:48:093:     - Do you speak [LNG]? [OUTPUT] {confirmation}, I speak {languages}. (0.2026315789473684 / 0.12280701754385963)<NEWLINE>16:33:48:093:     Set prompt variable: language<NEWLINE>16:33:48:093:     Set dialog output: I speak English and Dutch.",
+            "debugLog": "",
             "contextOutputs": [
               {
                 "context": "QuestionAndAnswer",
@@ -246,7 +246,7 @@
         {
           "request": {
             "prompt": "",
-            "input": "what is the answer to the question",
+            "input": "how much is ten times twenty divided by three",
             "language": "EN",
             "masterContext": "Generic",
             "context": "QuestionAndAnswer",
@@ -268,7 +268,7 @@
             "dialogVariableValues": {
               "0": {
                 "name": "fullName",
-                "externalValue": "Craziest of Crazy",
+                "externalValue": "Andrew of the Ocean",
                 "internalValue": "",
                 "session": true
               }
@@ -278,79 +278,16 @@
             "responseLanguages": [
               {
                 "symbol": "EN",
-                "prob": 0.5693962930920209,
+                "prob": 0.8126247875083829,
                 "probNormalized": 1
+              },
+              {
+                "symbol": "NL",
+                "prob": 0.08372089063330554,
+                "probNormalized": 0.10302527306606667
               }
             ],
-            "correctedInput": "What is the answer to the question.",
-            "classificationSequence": "What is the answer to the question.",
-            "responseMasterContexts": [
-              {
-                "symbol": "Generic",
-                "prob": 0.4175531230587707,
-                "probNormalized": 0.7049399302495872
-              }
-            ],
-            "responseContexts": [
-              {
-                "symbol": "QuestionAndAnswer",
-                "prob": 0.4160665800968008,
-                "probNormalized": 0.6305008944543827
-              }
-            ],
-            "entityValueTranslation": "UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer UN_ABC:to EN_PRE:5|UN_ABC:the UN_ABC:question .",
-            "entityValueTranslationCorrected": "UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer UN_ABC:to EN_PRE:5|UN_ABC:the UN_ABC:question .",
-            "debugLog": "16:33:59:273: Classify language for sequence: What is the answer to the question.<NEWLINE>16:33:59:273: Classified language: EN<NEWLINE>16:33:59:273: Translate sequence: What is the answer to the question.<NEWLINE>16:33:59:274: Translated sequence: UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer UN_ABC:to EN_PRE:5|UN_ABC:the UN_ABC:question .<NEWLINE>16:33:59:274: Correction time limit: 800<NEWLINE>16:33:59:274: Correcting sequence: What is [] answer to [] question .<NEWLINE>16:33:59:275: Corrected sequence: What is the answer to the question.<NEWLINE>16:33:59:275: Translate corrected sequence: What is the answer to the question.<NEWLINE>16:33:59:275: Translated corrected sequence: UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer UN_ABC:to EN_PRE:5|UN_ABC:the UN_ABC:question .<NEWLINE>16:33:59:276: Checking profanity for sequence: What is [PRE] answer to [PRE] question.<NEWLINE>16:33:59:276: Classify master context for input sequence: What is the answer to the question.<NEWLINE>16:33:59:276: Classify master context for classification sequence: What is [PRE] answer to [PRE] question.<NEWLINE>16:33:59:276: Selected input sequence master context classification.<NEWLINE>16:33:59:276: Classified master context: Generic<NEWLINE>16:33:59:276: Classify context for input sequence: What is the answer to the question.<NEWLINE>16:33:59:276: Classified context: QuestionAndAnswer<NEWLINE>16:33:59:276: Continuing dialog: EN/Generic/QuestionAndAnswer<NEWLINE>16:33:59:276:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler<NEWLINE>16:33:59:276:     Find matches for sequence: What is the answer to the question.<NEWLINE>16:33:59:276:     Found matches for sequence: 7<NEWLINE>16:33:59:276:     - What is the answer to the question? [OUTPUT] Fourtytwo. (0.391713747645951 / 0.8253968253968252)<NEWLINE>16:33:59:276:     - What is the answer to the ultimate question of life, the universe, and everything? [OUTPUT] Fourtytwo. (0.3182674199623352 / 0.6706349206349205)<NEWLINE>16:33:59:276:     - What is the answer? [OUTPUT] Fourtytwo. (0.1713747645951036 / 0.3611111111111111)<NEWLINE>16:33:59:276:     - What is the question? [OUTPUT] I do not know. (0.1016949152542373 / 0.21428571428571427)<NEWLINE>16:33:59:276:     - What is the meaning of life? [OUTPUT] Life has no meaning. (0.1016949152542373 / 0.21428571428571427)<NEWLINE>16:33:59:276:     - What is the purpose of life? [OUTPUT] Life has no purpose. (0.1016949152542373 / 0.21428571428571427)<NEWLINE>16:33:59:276:     - What is the purpose of your existence? [OUTPUT] My goal is to understand and help people. (0.1016949152542373 / 0.21428571428571427)<NEWLINE>16:33:59:276:     Set dialog output: Fourtytwo.",
-            "contextOutputs": [
-              {
-                "context": "QuestionAndAnswer",
-                "output": "Fourtytwo.",
-                "prompt": "",
-                "dialogVariableValues": []
-              }
-            ]
-          }
-        },
-        {
-          "request": {
-            "prompt": "",
-            "input": "how much is twenty times five divided by three",
-            "language": "EN",
-            "masterContext": "Generic",
-            "context": "QuestionAndAnswer",
-            "isTestRequest": false,
-            "appendDebugLog": true,
-            "classifyLanguage": true,
-            "minLanguageChangeDifference": 0.1,
-            "correctInput": true,
-            "classifyMasterContext": true,
-            "classifyMasterContextThreshold": 0.25,
-            "classifyContext": true,
-            "classifyContextThreshold": 0.25,
-            "checkProfanity": true,
-            "translateEntityValues": true,
-            "translateEntityTypes": {},
-            "matchThreshold": 0.1,
-            "randomizeOutput": false,
-            "filterContexts": {},
-            "dialogVariableValues": {
-              "0": {
-                "name": "fullName",
-                "externalValue": "Craziest of Crazy",
-                "internalValue": "",
-                "session": true
-              }
-            }
-          },
-          "expectedResponse": {
-            "responseLanguages": [
-              {
-                "symbol": "EN",
-                "prob": 0.8126865650254999,
-                "probNormalized": 1
-              }
-            ],
-            "correctedInput": "How much is twenty multiplied by five divided by three.",
+            "correctedInput": "How much is ten multiplied by twenty divided by three.",
             "classificationSequence": "How much is [NUM] [MTH] [NUM] [MTH] [NUM].",
             "responseMasterContexts": [
               {
@@ -366,13 +303,13 @@
                 "probNormalized": 1
               }
             ],
-            "entityValueTranslation": "UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:20|UN_ABC:twenty EN_MTH:M|UN_ABC:times EN_NUM:5|UN_ABC:five EN_MTH:D EN_NUM:3|UN_ABC:three .",
-            "entityValueTranslationCorrected": "UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:20|UN_ABC:twenty EN_MTH:M EN_NUM:5|UN_ABC:five EN_MTH:D EN_NUM:3|UN_ABC:three .",
-            "debugLog": "16:34:19:239: Classify language for sequence: How much is twenty times five divided by three.<NEWLINE>16:34:19:239: Classified language: EN<NEWLINE>16:34:19:239: Translate sequence: How much is twenty times five divided by three.<NEWLINE>16:34:19:240: Translated sequence: UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:20|UN_ABC:twenty EN_MTH:M|UN_ABC:times EN_NUM:5|UN_ABC:five EN_MTH:D EN_NUM:3|UN_ABC:three .<NEWLINE>16:34:19:241: Correction time limit: 900<NEWLINE>16:34:19:241: Correcting sequence: How much is [] [] [] [] [] .<NEWLINE>16:34:19:241: Corrected sequence: How much is twenty multiplied by five divided by three.<NEWLINE>16:34:19:241: Translate corrected sequence: How much is twenty multiplied by five divided by three.<NEWLINE>16:34:19:242: Translated corrected sequence: UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:20|UN_ABC:twenty EN_MTH:M EN_NUM:5|UN_ABC:five EN_MTH:D EN_NUM:3|UN_ABC:three .<NEWLINE>16:34:19:242: Checking profanity for sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM].<NEWLINE>16:34:19:242: Classify master context for input sequence: How much is twenty multiplied by five divided by three.<NEWLINE>16:34:19:243: Classify master context for classification sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM].<NEWLINE>16:34:19:243: Classified master context: Generic<NEWLINE>16:34:19:243: Classify context for input sequence: How much is twenty multiplied by five divided by three.<NEWLINE>16:34:19:243: Classify context for classification sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM].<NEWLINE>16:34:19:243: Classified context: Math<NEWLINE>16:34:19:243: Handling dialog: EN/Generic/Math<NEWLINE>16:34:19:243:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericMathHandler<NEWLINE>16:34:19:243:     Updated variable number1: EN_NUM:20 = twenty<NEWLINE>16:34:19:243:     Updated variable number2: EN_NUM:5 = five<NEWLINE>16:34:19:243:     Updated variable number3: EN_NUM:3 = three<NEWLINE>16:34:19:243:     Updated variable operator1: EN_MTH:M = multiplied by<NEWLINE>16:34:19:243:     Updated variable operator2: EN_MTH:D = divided by<NEWLINE>16:34:19:243:     Find matches for sequence: How much is [NUM] [MTH] [NUM] [MTH] [NUM].<NEWLINE>16:34:19:243:     Found matches for sequence: 8<NEWLINE>16:34:19:243:     - How much is [NUM] [MTH] [NUM] [MTH] [NUM]? [OUTPUT] {exact} {result}. (3.375 / 0.6666666666666666)<NEWLINE>16:34:19:243:     - How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]? [OUTPUT] {exact} {result}. (3.375 / 0.6666666666666666)<NEWLINE>16:34:19:243:     - How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]? [OUTPUT] {exact} {result}. (3.375 / 0.6666666666666666)<NEWLINE>16:34:19:243:     - How much is [NUM] [MTH] [NUM] [MTH] [NUM]? [OUTPUT] That is {exact} {result}. (3.375 / 0.6666666666666666)<NEWLINE>16:34:19:243:     - How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]? [OUTPUT] That is {exact} {result}. (3.375 / 0.6666666666666666)<NEWLINE>16:34:19:243:     - How much is [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM] [MTH] [NUM]? [OUTPUT] That is {exact} {result}. (3.375 / 0.6666666666666666)<NEWLINE>16:34:19:243:     - How much is [NUM] [MTH] [NUM]? [OUTPUT] {exact} {result}. (2.625 / 0.5185185185185185)<NEWLINE>16:34:19:243:     - How much is [NUM] [MTH] [NUM]? [OUTPUT] That is {exact} {result}. (2.625 / 0.5185185185185185)<NEWLINE>16:34:19:244:     Calculate expression: 20 M 5 D 3<NEWLINE>16:34:19:244:     Calculated expression: 33.333332<NEWLINE>16:34:19:245:     Updated variable exact: about<NEWLINE>16:34:19:245:     Updated variable result: thirtythree<NEWLINE>16:34:19:245:     Set prompt variable: nextDialog<NEWLINE>16:34:19:245:     Set dialog output: About thirtythree.<NEWLINE>16:34:19:245:     Set dialog prompt: Is there anything else I can help you with?",
+            "entityValueTranslation": "UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M|UN_ABC:times EN_NUM:20|UN_ABC:twenty EN_MTH:D EN_NUM:3|UN_ABC:three .",
+            "entityValueTranslationCorrected": "UN_ABC:How UN_ABC:much UN_ABC:is EN_NUM:10|UN_ABC:ten EN_MTH:M EN_NUM:20|UN_ABC:twenty EN_MTH:D EN_NUM:3|UN_ABC:three .",
+            "debugLog": "",
             "contextOutputs": [
               {
                 "context": "Math",
-                "output": "About thirtythree.",
+                "output": "About sixtyseven.",
                 "prompt": "What else can I do for you?",
                 "promptVariableName": "nextDialog",
                 "promptVariableType": "ABC",
@@ -384,13 +321,13 @@
                   },
                   {
                     "name": "number1",
-                    "externalValue": "twenty",
-                    "internalValue": "EN_NUM:20"
+                    "externalValue": "ten",
+                    "internalValue": "EN_NUM:10"
                   },
                   {
                     "name": "number2",
-                    "externalValue": "five",
-                    "internalValue": "EN_NUM:5"
+                    "externalValue": "twenty",
+                    "internalValue": "EN_NUM:20"
                   },
                   {
                     "name": "number3",
@@ -409,7 +346,7 @@
                   },
                   {
                     "name": "result",
-                    "externalValue": "thirtythree",
+                    "externalValue": "sixtyseven",
                     "internalValue": ""
                   }
                 ]
@@ -419,8 +356,8 @@
         },
         {
           "request": {
-            "prompt": "Is there anything else I can help you with?",
-            "input": "no, thanks",
+            "prompt": "What else can I do for you?",
+            "input": "What is the answer to the question",
             "language": "EN",
             "masterContext": "",
             "context": "",
@@ -442,7 +379,7 @@
             "dialogVariableValues": [
               {
                 "name": "fullName",
-                "externalValue": "Craziest of Crazy",
+                "externalValue": "Andrew of the Ocean",
                 "internalValue": "",
                 "session": true
               }
@@ -452,29 +389,262 @@
             "responseLanguages": [
               {
                 "symbol": "EN",
-                "prob": 0.40677916729405206,
+                "prob": 0.5693530488300388,
                 "probNormalized": 1
               }
             ],
-            "correctedInput": "[], thanks.",
-            "classificationSequence": "[], thanks.",
+            "correctedInput": "What is the answer to the question.",
+            "classificationSequence": "What is the answer to the question.",
             "responseMasterContexts": [
               {
                 "symbol": "Generic",
-                "prob": 0.14891364677255134,
-                "probNormalized": 0.6704148205147299
+                "prob": 0.4175531230587707,
+                "probNormalized": 0.7049399302495872
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "QuestionAndAnswer",
+                "prob": 0.4160665800968008,
+                "probNormalized": 0.6305008944543827
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer UN_ABC:to EN_PRE:5|UN_ABC:the UN_ABC:question .",
+            "entityValueTranslationCorrected": "UN_ABC:What UN_ABC:is EN_PRE:5|UN_ABC:the UN_ABC:answer UN_ABC:to EN_PRE:5|UN_ABC:the UN_ABC:question .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "QuestionAndAnswer",
+                "output": "Fourtytwo.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "what languages do you speak",
+            "language": "EN",
+            "masterContext": "Generic",
+            "context": "QuestionAndAnswer",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {
+              "0": {
+                "name": "fullName",
+                "externalValue": "Andrew of the Ocean",
+                "internalValue": "",
+                "session": true
+              }
+            }
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "EN",
+                "prob": 0.40684348445510143,
+                "probNormalized": 1
+              }
+            ],
+            "correctedInput": "What languages do you speak.",
+            "classificationSequence": "What languages do you speak.",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.37672574129686065,
+                "probNormalized": 0.8480167053479455
+              },
+              {
+                "symbol": "Support",
+                "prob": 0.11148836026930839,
+                "probNormalized": 0.25096238880507726
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Language",
+                "prob": 0.5395516074450085,
+                "probNormalized": 1
+              },
+              {
+                "symbol": "QuestionAndAnswer",
+                "prob": 0.16388265848187936,
+                "probNormalized": 0.3037386159554392
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:What UN_ABC:languages UN_ABC:do UN_ABC:you UN_ABC:speak .",
+            "entityValueTranslationCorrected": "UN_ABC:What UN_ABC:languages UN_ABC:do UN_ABC:you UN_ABC:speak .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Language",
+                "output": "I speak English and Dutch.",
+                "prompt": "",
+                "promptVariableName": "language",
+                "promptVariableType": "LNG",
+                "dialogVariableValues": [
+                  {
+                    "name": "languages",
+                    "externalValue": "English and Dutch",
+                    "internalValue": ""
+                  }
+                ]
+              },
+              {
+                "context": "QuestionAndAnswer",
+                "output": "My goal is to understand and help people.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "asshole",
+            "language": "EN",
+            "masterContext": "Generic",
+            "context": "Language",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {
+              "0": {
+                "name": "languages",
+                "externalValue": "English and Dutch",
+                "internalValue": ""
+              },
+              "1": {
+                "name": "fullName",
+                "externalValue": "Andrew of the Ocean",
+                "internalValue": "",
+                "session": true
+              }
+            }
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "EN",
+                "prob": 0.08138310507486872,
+                "probNormalized": 0.7338123928956107
+              }
+            ],
+            "correctedInput": "Asshole.",
+            "classificationSequence": "[PRF].",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0,
+                "probNormalized": 1
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Profanity",
+                "prob": 0.041243654822335024,
+                "probNormalized": 1
+              }
+            ],
+            "entityValueTranslation": "EN_PRF:1|UN_ABC:Asshole .",
+            "entityValueTranslationCorrected": "EN_PRF:1|UN_ABC:Asshole .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Profanity",
+                "output": "I do not appreciate that kind of language.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "cool",
+            "language": "EN",
+            "masterContext": "Generic",
+            "context": "Profanity",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {
+              "0": {
+                "name": "fullName",
+                "externalValue": "Andrew of the Ocean",
+                "internalValue": "",
+                "session": true
+              }
+            }
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "EN",
+                "prob": 0.08138310507486872,
+                "probNormalized": 0.7338123928956107
+              }
+            ],
+            "correctedInput": "Cool.",
+            "classificationSequence": "Cool.",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.07762941221876299,
+                "probNormalized": 0.5242357861814753
               }
             ],
             "responseContexts": [
               {
                 "symbol": "Thanks",
-                "prob": 0.16119101334837374,
-                "probNormalized": 0.6513770180436846
+                "prob": 0.09216958074826095,
+                "probNormalized": 0.5586894586894587
               }
             ],
-            "entityValueTranslation": "EN_CNF:false|UN_ABC:No , UN_ABC:thanks .",
-            "entityValueTranslationCorrected": "[], UN_ABC:thanks .",
-            "debugLog": "16:34:37:302: Classify language for sequence: No, thanks.<NEWLINE>16:34:37:303: Classified language: EN<NEWLINE>16:34:37:304: Translate sequence: No, thanks.<NEWLINE>16:34:37:305: Translated sequence: EN_CNF:false|UN_ABC:No , UN_ABC:thanks .<NEWLINE>16:34:37:305: Correction time limit: 400<NEWLINE>16:34:37:305: Correcting sequence: [] , thanks .<NEWLINE>16:34:37:305: Corrected sequence: [], thanks.<NEWLINE>16:34:37:305: Translate corrected sequence: [], thanks.<NEWLINE>16:34:37:306: Translated corrected sequence: [], UN_ABC:thanks .<NEWLINE>16:34:37:306: Checking profanity for sequence: [], thanks.<NEWLINE>16:34:37:306: Classify master context for input sequence: [], thanks.<NEWLINE>16:34:37:306: Classified master context: Generic<NEWLINE>16:34:37:306: Classify context for input sequence: [], thanks.<NEWLINE>16:34:37:306: Classified context: Thanks<NEWLINE>16:34:37:306: Handling dialog: EN/Generic/Thanks<NEWLINE>16:34:37:306:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericThanksHandler<NEWLINE>16:34:37:306:     Find matches for sequence: [], thanks.<NEWLINE>16:34:37:306:     Found matches for sequence: 12<NEWLINE>16:34:37:306:     - Nice, thanks. [OUTPUT] {smiley}. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:306:     - Cool, thanks. [OUTPUT] {smiley}. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:306:     - Excellent, thanks. [OUTPUT] You're welcome. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:306:     - Perfect, thanks. [OUTPUT] You're welcome. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:306:     - Great, thanks. [OUTPUT] You're welcome. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:307:     - Awesome, thanks. [OUTPUT] You're welcome. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:307:     - Excellent, thanks. [OUTPUT] You are very welcome. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:307:     - Perfect, thanks. [OUTPUT] You are very welcome. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:307:     - Great, thanks. [OUTPUT] You are very welcome. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:307:     - Awesome, thanks. [OUTPUT] You are very welcome. (0.3677248677248677 / 0.3909985935302391)<NEWLINE>16:34:37:307:     - [... 2]<NEWLINE>16:34:37:307:     Set prompt variable: thanksAnythingElse<NEWLINE>16:34:37:307:     Set dialog output: You are very welcome.<NEWLINE>16:34:37:307:     Set dialog prompt: Is there another way I can be of service to you?",
+            "entityValueTranslation": "UN_ABC:Cool .",
+            "entityValueTranslationCorrected": "UN_ABC:Cool .",
+            "debugLog": "",
             "contextOutputs": [
               {
                 "context": "Thanks",
@@ -489,7 +659,7 @@
         },
         {
           "request": {
-            "prompt": "Is there another way I can be of service to you?",
+            "prompt": "Is there anything else I can do for you?",
             "input": "no",
             "language": "EN",
             "masterContext": "Generic",
@@ -512,7 +682,7 @@
             "dialogVariableValues": {
               "0": {
                 "name": "fullName",
-                "externalValue": "Craziest of Crazy",
+                "externalValue": "Andrew of the Ocean",
                 "internalValue": "",
                 "session": true
               }
@@ -522,8 +692,8 @@
             "responseLanguages": [
               {
                 "symbol": "EN",
-                "prob": 0.08138027771167516,
-                "probNormalized": 0.7336234381210512
+                "prob": 0.08137409995996345,
+                "probNormalized": 0.733731195884132
               }
             ],
             "correctedInput": "No.",
@@ -531,25 +701,20 @@
             "responseMasterContexts": [
               {
                 "symbol": "Generic",
-                "prob": 0.936847333463208,
-                "probNormalized": 0.903797532317632
+                "prob": 0.781588509025682,
+                "probNormalized": 0.879685192310079
               }
             ],
             "responseContexts": [
               {
                 "symbol": "Thanks",
-                "prob": 1.0222786238014665,
-                "probNormalized": 0.8852258852258854
-              },
-              {
-                "symbol": "QuestionAndAnswer",
-                "prob": 0.3277653169637587,
-                "probNormalized": 0.2838231535905955
+                "prob": 0.8240505734160557,
+                "probNormalized": 0.8325023741690409
               }
             ],
             "entityValueTranslation": "EN_CNF:false|UN_ABC:No .",
             "entityValueTranslationCorrected": "EN_CNF:false|UN_ABC:No .",
-            "debugLog": "16:34:39:858: Classify language for sequence: No.<NEWLINE>16:34:39:858: Classified language: EN<NEWLINE>16:34:39:860: Translate sequence: No.<NEWLINE>16:34:39:861: Translated sequence: EN_CNF:false|UN_ABC:No .<NEWLINE>16:34:39:861: Correction time limit: 200<NEWLINE>16:34:39:861: Correcting sequence: [] .<NEWLINE>16:34:39:861: Corrected sequence: No.<NEWLINE>16:34:39:861: Translate corrected sequence: No.<NEWLINE>16:34:39:863: Translated corrected sequence: EN_CNF:false|UN_ABC:No .<NEWLINE>16:34:39:863: Checking profanity for sequence: [CNF].<NEWLINE>16:34:39:863: Classify master context for input sequence: No.<NEWLINE>16:34:39:863: Classify master context for classification sequence: Is there another way I can be of service to you? [CNF].<NEWLINE>16:34:39:863: Classified master context: Generic<NEWLINE>16:34:39:863: Classify context for input sequence: No.<NEWLINE>16:34:39:863: Classify context for classification sequence: Is there another way I can be of service to you? [CNF].<NEWLINE>16:34:39:863: Classified context: Thanks<NEWLINE>16:34:39:863: Continuing dialog: EN/Generic/Thanks<NEWLINE>16:34:39:863:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericThanksHandler<NEWLINE>16:34:39:863:     Updated variable thanksAnythingElse: EN_CNF:false = no<NEWLINE>16:34:39:863:     Set prompt variable: thanksHelpful<NEWLINE>16:34:39:863:     Set dialog output: <NEWLINE>16:34:39:863:     Set dialog prompt: Was I helpful to you?<NEWLINE>16:34:39:863: Handling dialog: EN/Generic/QuestionAndAnswer<NEWLINE>16:34:39:863:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler<NEWLINE>16:34:39:863:     Find matches for sequence: [CNF].<NEWLINE>16:34:39:863:     Found matches for sequence: 0",
+            "debugLog": "",
             "contextOutputs": [
               {
                 "context": "Thanks",
@@ -598,7 +763,7 @@
               },
               "1": {
                 "name": "fullName",
-                "externalValue": "Craziest of Crazy",
+                "externalValue": "Andrew of the Ocean",
                 "internalValue": "",
                 "session": true
               }
@@ -608,8 +773,8 @@
             "responseLanguages": [
               {
                 "symbol": "EN",
-                "prob": 0.0813847802691278,
-                "probNormalized": 0.7336640275829162
+                "prob": 0.08137860251741609,
+                "probNormalized": 0.7337717943898715
               }
             ],
             "correctedInput": "Yes.",
@@ -640,7 +805,7 @@
             ],
             "entityValueTranslation": "EN_CNF:true|UN_ABC:Yes .",
             "entityValueTranslationCorrected": "EN_CNF:true|UN_ABC:Yes .",
-            "debugLog": "16:34:41:985: Classify language for sequence: Yes.<NEWLINE>16:34:41:985: Classified language: EN<NEWLINE>16:34:41:985: Translate sequence: Yes.<NEWLINE>16:34:41:985: Translated sequence: EN_CNF:true|UN_ABC:Yes .<NEWLINE>16:34:41:986: Correction time limit: 200<NEWLINE>16:34:41:986: Correcting sequence: [] .<NEWLINE>16:34:41:986: Corrected sequence: Yes.<NEWLINE>16:34:41:986: Translate corrected sequence: Yes.<NEWLINE>16:34:41:986: Translated corrected sequence: EN_CNF:true|UN_ABC:Yes .<NEWLINE>16:34:41:986: Checking profanity for sequence: [CNF].<NEWLINE>16:34:41:986: Classify master context for input sequence: Yes.<NEWLINE>16:34:41:986: Classify master context for classification sequence: Was I helpful to you? [CNF].<NEWLINE>16:34:41:986: Classified master context: Generic<NEWLINE>16:34:41:986: Classify context for input sequence: Yes.<NEWLINE>16:34:41:986: Classify context for classification sequence: Was I helpful to you? [CNF].<NEWLINE>16:34:41:986: Classified context: Thanks<NEWLINE>16:34:41:986: Continuing dialog: EN/Generic/Thanks<NEWLINE>16:34:41:986:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.english.EnglishGenericThanksHandler<NEWLINE>16:34:41:986:     Updated variable thanksHelpful: EN_CNF:true = yes<NEWLINE>16:34:41:986:     Set dialog output: Excellent!",
+            "debugLog": "",
             "contextOutputs": [
               {
                 "context": "Thanks",
@@ -697,7 +862,7 @@
               },
               "2": {
                 "name": "fullName",
-                "externalValue": "Craziest of Crazy",
+                "externalValue": "Andrew of the Ocean",
                 "internalValue": "",
                 "session": true
               }
@@ -707,8 +872,8 @@
             "responseLanguages": [
               {
                 "symbol": "EN",
-                "prob": 0.08134875980950673,
-                "probNormalized": 0.7333393118879964
+                "prob": 0.08134258205779502,
+                "probNormalized": 0.7334470063439568
               }
             ],
             "correctedInput": "Bye.",
@@ -729,11 +894,1031 @@
             ],
             "entityValueTranslation": "UN_ABC:Bye .",
             "entityValueTranslationCorrected": "UN_ABC:Bye .",
-            "debugLog": "16:35:16:714: Classify language for sequence: Bye.<NEWLINE>16:35:16:715: Classified language: EN<NEWLINE>16:35:16:715: Translate sequence: Bye.<NEWLINE>16:35:16:715: Translated sequence: UN_ABC:Bye .<NEWLINE>16:35:16:716: Correction time limit: 200<NEWLINE>16:35:16:716: Correcting sequence: Bye .<NEWLINE>16:35:16:716: Corrected sequence: Bye.<NEWLINE>16:35:16:716: Translate corrected sequence: Bye.<NEWLINE>16:35:16:716: Translated corrected sequence: UN_ABC:Bye .<NEWLINE>16:35:16:716: Checking profanity for sequence: Bye.<NEWLINE>16:35:16:716: Classify master context for input sequence: Bye.<NEWLINE>16:35:16:716: Classified master context: Generic<NEWLINE>16:35:16:716: Classify context for input sequence: Bye.<NEWLINE>16:35:16:716: Classified context: Goodbye<NEWLINE>16:35:16:716: Handling dialog: EN/Generic/Goodbye<NEWLINE>16:35:16:716:     Initialized handler: nl.zeesoft.zsd.dialog.dialogs.GenericQnAHandler<NEWLINE>16:35:16:716:     Find matches for sequence: Bye.<NEWLINE>16:35:16:716:     Found matches for sequence: 3<NEWLINE>16:35:16:716:     - Bye. [OUTPUT] Goodbye. (0.35802469135802467 / 0.42028985507246375)<NEWLINE>16:35:16:716:     - Bye. [OUTPUT] Bye. (0.35802469135802467 / 0.42028985507246375)<NEWLINE>16:35:16:716:     - Bye. [OUTPUT] Talk to you later. (0.35802469135802467 / 0.42028985507246375)<NEWLINE>16:35:16:716:     Set dialog output: Goodbye.",
+            "debugLog": "",
             "contextOutputs": [
               {
                 "context": "Goodbye",
                 "output": "Goodbye.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "DutchGeneric",
+      "io": [
+        {
+          "request": {
+            "prompt": "",
+            "input": "hallo",
+            "language": "",
+            "masterContext": "",
+            "context": "",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {}
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.08370963813990578,
+                "probNormalized": 0.7547901965077367
+              }
+            ],
+            "correctedInput": "Hallo.",
+            "classificationSequence": "Hallo.",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.09427011617220248,
+                "probNormalized": 0.6888627165207515
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Handshake",
+                "prob": 0.1773210900715436,
+                "probNormalized": 0.7337058277810575
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:Hallo .",
+            "entityValueTranslationCorrected": "UN_ABC:Hallo .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Handshake",
+                "output": "Hallo. Mijn naam is Dyz Lecticus.",
+                "prompt": "Wat is uw naam?",
+                "promptVariableName": "firstName",
+                "promptVariableType": "ABC",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "Wat is uw naam?",
+            "input": "gekste der henkies",
+            "language": "NL",
+            "masterContext": "Generic",
+            "context": "Handshake",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {}
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.16743819341118177,
+                "probNormalized": 0.7548754821786675
+              },
+              {
+                "symbol": "EN",
+                "prob": 0.08138213462199798,
+                "probNormalized": 0.36690182127471127
+              }
+            ],
+            "correctedInput": "Gekste der henkies.",
+            "classificationSequence": "[ABC] [PRE] [ABC].",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.5667513780028006,
+                "probNormalized": 0.920319679225982
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Handshake",
+                "prob": 1.0678644952202359,
+                "probNormalized": 0.981895364201175
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:Gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
+            "entityValueTranslationCorrected": "UN_ABC:Gekste|NL_NAM:firstName:UN_ABC:Gekste NL_PRE:6|UN_ABC:der|NL_NAM:preposition:NL_PRE:6 UN_ABC:henkies|NL_NAM:lastName:UN_ABC:Henkies .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Handshake",
+                "output": "",
+                "prompt": "Wat kan ik voor u doen Gekste der Henkies?",
+                "promptVariableName": "nextDialog",
+                "promptVariableType": "ABC",
+                "dialogVariableValues": [
+                  {
+                    "name": "firstName",
+                    "externalValue": "Gekste",
+                    "internalValue": "UN_ABC:Gekste"
+                  },
+                  {
+                    "name": "fullName",
+                    "externalValue": "Gekste der Henkies",
+                    "internalValue": "",
+                    "session": true
+                  },
+                  {
+                    "name": "lastName",
+                    "externalValue": "Henkies",
+                    "internalValue": "UN_ABC:Henkies"
+                  },
+                  {
+                    "name": "preposition",
+                    "externalValue": "der",
+                    "internalValue": "NL_PRE:6"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "Wat kan ik voor u doen Gekste der Henkies?",
+            "input": "wat kun je",
+            "language": "NL",
+            "masterContext": "",
+            "context": "",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": [
+              {
+                "name": "fullName",
+                "externalValue": "Gekste der Henkies",
+                "internalValue": "",
+                "session": true
+              }
+            ]
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.25109677956349785,
+                "probNormalized": 1
+              }
+            ],
+            "correctedInput": "Wat kun je.",
+            "classificationSequence": "Wat kun je.",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.2748508695006885,
+                "probNormalized": 1
+              },
+              {
+                "symbol": "Support",
+                "prob": 0.0967122290520867,
+                "probNormalized": 0.3518716503527177
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "QuestionAndAnswer",
+                "prob": 0.23205269565616893,
+                "probNormalized": 0.4800850679593195
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:Wat UN_ABC:kun UN_ABC:je .",
+            "entityValueTranslationCorrected": "UN_ABC:Wat UN_ABC:kun UN_ABC:je .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "QuestionAndAnswer",
+                "output": "Ik kan helpen met algemene vragen, het maken van eenvoudige wiskundige berekeningen, het boeken van kamers, vragen over kamer boekingen en vragen over buitenlandoverboekingen.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "hoeveel is drie keer twintig gedeeld door zeven",
+            "language": "NL",
+            "masterContext": "Generic",
+            "context": "QuestionAndAnswer",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {
+              "0": {
+                "name": "fullName",
+                "externalValue": "Gekste der Henkies",
+                "internalValue": "",
+                "session": true
+              }
+            }
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.8357953377874817,
+                "probNormalized": 1
+              }
+            ],
+            "correctedInput": "Hoeveel is drie vermenigvuldigd met twintig gedeeld door zeven.",
+            "classificationSequence": "Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM].",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.5352299589724335,
+                "probNormalized": 0.9777752973899481
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Math",
+                "prob": 0.7375180897250361,
+                "probNormalized": 0.7629116766467064
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:Hoeveel UN_ABC:is NL_NUM:3|UN_ABC:drie NL_MTH:M|UN_ABC:keer NL_NUM:20|UN_ABC:twintig NL_MTH:D NL_NUM:7|UN_ABC:zeven .",
+            "entityValueTranslationCorrected": "UN_ABC:Hoeveel UN_ABC:is NL_NUM:3|UN_ABC:drie NL_MTH:M NL_NUM:20|UN_ABC:twintig NL_MTH:D NL_NUM:7|UN_ABC:zeven .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Math",
+                "output": "Ongeveer negen.",
+                "prompt": "Kan ik nog meer voor je doen?",
+                "promptVariableName": "nextDialog",
+                "promptVariableType": "ABC",
+                "dialogVariableValues": [
+                  {
+                    "name": "exact",
+                    "externalValue": "ongeveer",
+                    "internalValue": ""
+                  },
+                  {
+                    "name": "number1",
+                    "externalValue": "drie",
+                    "internalValue": "NL_NUM:3"
+                  },
+                  {
+                    "name": "number2",
+                    "externalValue": "twintig",
+                    "internalValue": "NL_NUM:20"
+                  },
+                  {
+                    "name": "number3",
+                    "externalValue": "zeven",
+                    "internalValue": "NL_NUM:7"
+                  },
+                  {
+                    "name": "operator1",
+                    "externalValue": "vermenigvuldigd met",
+                    "internalValue": "NL_MTH:M"
+                  },
+                  {
+                    "name": "operator2",
+                    "externalValue": "gedeeld door",
+                    "internalValue": "NL_MTH:D"
+                  },
+                  {
+                    "name": "result",
+                    "externalValue": "negen",
+                    "internalValue": ""
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "Kan ik nog meer voor je doen?",
+            "input": "spreek je engels",
+            "language": "NL",
+            "masterContext": "",
+            "context": "",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": [
+              {
+                "name": "fullName",
+                "externalValue": "Gekste der Henkies",
+                "internalValue": "",
+                "session": true
+              }
+            ]
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.2511518678884455,
+                "probNormalized": 1
+              }
+            ],
+            "correctedInput": "Spreek je Engels.",
+            "classificationSequence": "Spreek je Engels.",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.6333056173003951,
+                "probNormalized": 0.7712953755222702
+              },
+              {
+                "symbol": "Room",
+                "prob": 0.20605280083274763,
+                "probNormalized": 0.25094925428448506
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Language",
+                "prob": 0.27235451475683026,
+                "probNormalized": 0.5634639811286518
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:engels .",
+            "entityValueTranslationCorrected": "UN_ABC:Spreek UN_ABC:je NL_LNG:EN|UN_ABC:Engels .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Language",
+                "output": "Ja, ik spreek Engels en Nederlands.",
+                "prompt": "",
+                "dialogVariableValues": [
+                  {
+                    "name": "confirmation",
+                    "externalValue": "Ja",
+                    "internalValue": ""
+                  },
+                  {
+                    "name": "language",
+                    "externalValue": "Engels",
+                    "internalValue": "NL_LNG:EN"
+                  },
+                  {
+                    "name": "languages",
+                    "externalValue": "Engels en Nederlands",
+                    "internalValue": ""
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "uitstekend",
+            "language": "NL",
+            "masterContext": "Generic",
+            "context": "Language",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {
+              "0": {
+                "name": "confirmation",
+                "externalValue": "Ja",
+                "internalValue": ""
+              },
+              "1": {
+                "name": "language",
+                "externalValue": "Engels",
+                "internalValue": "NL_LNG:EN"
+              },
+              "2": {
+                "name": "languages",
+                "externalValue": "Engels en Nederlands",
+                "internalValue": ""
+              },
+              "3": {
+                "name": "fullName",
+                "externalValue": "Gekste der Henkies",
+                "internalValue": "",
+                "session": true
+              }
+            }
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.08371422883365141,
+                "probNormalized": 0.7548315897177824
+              }
+            ],
+            "correctedInput": "Uitstekend.",
+            "classificationSequence": "Uitstekend.",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.09427011617220248,
+                "probNormalized": 0.6888627165207515
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Thanks",
+                "prob": 0.11326521007612392,
+                "probNormalized": 0.46866024049462046
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:Uitstekend .",
+            "entityValueTranslationCorrected": "UN_ABC:Uitstekend .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Thanks",
+                "output": "Bedankt.",
+                "prompt": "Kan ik iets anders voor u doen?",
+                "promptVariableName": "thanksAnythingElse",
+                "promptVariableType": "CNF",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "Kan ik iets anders voor u doen?",
+            "input": "nee",
+            "language": "NL",
+            "masterContext": "Generic",
+            "context": "Thanks",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {
+              "0": {
+                "name": "fullName",
+                "externalValue": "Gekste der Henkies",
+                "internalValue": "",
+                "session": true
+              }
+            }
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.0837004567524145,
+                "probNormalized": 0.7547074100876452
+              }
+            ],
+            "correctedInput": "Nee.",
+            "classificationSequence": "[CNF].",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.8259997865049596,
+                "probNormalized": 1
+              },
+              {
+                "symbol": "Room",
+                "prob": 0.23134720722275265,
+                "probNormalized": 0.28008143706870503
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Thanks",
+                "prob": 0.9177608744249527,
+                "probNormalized": 0.7594883403923859
+              }
+            ],
+            "entityValueTranslation": "NL_CNF:false|UN_ABC:Nee .",
+            "entityValueTranslationCorrected": "NL_CNF:false|UN_ABC:Nee .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Thanks",
+                "output": "",
+                "prompt": "Was ik behulpzaam?",
+                "promptVariableName": "thanksHelpful",
+                "promptVariableType": "CNF",
+                "dialogVariableValues": [
+                  {
+                    "name": "thanksAnythingElse",
+                    "externalValue": "nee",
+                    "internalValue": "NL_CNF:false"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "Was ik behulpzaam?",
+            "input": "ja",
+            "language": "NL",
+            "masterContext": "Generic",
+            "context": "Thanks",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {
+              "0": {
+                "name": "thanksAnythingElse",
+                "externalValue": "nee",
+                "internalValue": "NL_CNF:false"
+              },
+              "1": {
+                "name": "fullName",
+                "externalValue": "Gekste der Henkies",
+                "internalValue": "",
+                "session": true
+              }
+            }
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.08370963813990578,
+                "probNormalized": 0.7547901965077367
+              }
+            ],
+            "correctedInput": "Ja.",
+            "classificationSequence": "[CNF].",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.4612203348407519,
+                "probNormalized": 1
+              },
+              {
+                "symbol": "Support",
+                "prob": 0.17953556921528452,
+                "probNormalized": 0.38926204170350326
+              },
+              {
+                "symbol": "Room",
+                "prob": 0.16768829092298126,
+                "probNormalized": 0.36357523347464704
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Thanks",
+                "prob": 0.5094154812749285,
+                "probNormalized": 0.7026069811596319
+              }
+            ],
+            "entityValueTranslation": "NL_CNF:true|UN_ABC:Ja .",
+            "entityValueTranslationCorrected": "NL_CNF:true|UN_ABC:Ja .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Thanks",
+                "output": "Uitstekend!",
+                "prompt": "",
+                "dialogVariableValues": [
+                  {
+                    "name": "thanksAnythingElse",
+                    "externalValue": "nee",
+                    "internalValue": "NL_CNF:false"
+                  },
+                  {
+                    "name": "thanksHelpful",
+                    "externalValue": "ja",
+                    "internalValue": "NL_CNF:true"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "daag",
+            "language": "NL",
+            "masterContext": "Generic",
+            "context": "Thanks",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {
+              "0": {
+                "name": "thanksAnythingElse",
+                "externalValue": "nee",
+                "internalValue": "NL_CNF:false"
+              },
+              "1": {
+                "name": "thanksHelpful",
+                "externalValue": "ja",
+                "internalValue": "NL_CNF:true"
+              },
+              "2": {
+                "name": "fullName",
+                "externalValue": "Gekste der Henkies",
+                "internalValue": "",
+                "session": true
+              }
+            }
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.08370963813990578,
+                "probNormalized": 0.7547901965077367
+              }
+            ],
+            "correctedInput": "Daag.",
+            "classificationSequence": "Daag.",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0.09427011617220248,
+                "probNormalized": 0.6888627165207515
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Goodbye",
+                "prob": 0.06041968162083937,
+                "probNormalized": 0.25
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:Daag .",
+            "entityValueTranslationCorrected": "UN_ABC:Daag .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Goodbye",
+                "output": "Dag.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "NonsenseAndProfanity",
+      "io": [
+        {
+          "request": {
+            "prompt": "",
+            "input": "qwerqwerqwe sdfasdfasdfasdf cvxcvbxcvb asdfasdf qwerqwerqwer asfadfasdf xczvxcvzxc sdfafasdfasdfasd weqrqwerqwerqwerqwerqwerasdfasdfasdfszxcvzxcv qwerqwers asdfasdfxvzxcv  sdfasdfasd qwerqwerqwer qwerqwerqwerqwerqwerqqwer asdfsdfasdfa czxzxcvzxcvz",
+            "language": "",
+            "masterContext": "",
+            "context": "",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {}
+          },
+          "expectedResponse": {
+            "responseLanguages": [],
+            "correctedInput": "Qwerqwerqwe sdfasdfasdfasdf cvxcvbxcvb asdfasdf qwerqwerqwer asfadfasdf xczvxcvzxc sdfafasdfasdfasd weqrqwerqwerqwerqwerqwerasdfasdfasdfszxcvzxcv qwerqwers asdfasdfxvzxcv sdfasdfasd qwerqwerqwer qwerqwerqwerqwerqwerqqwer asdfsdfasdfa czxzxcvzxcvz.",
+            "classificationSequence": "[FAILED_TO_CLASSIFY_LANGUAGE].",
+            "responseMasterContexts": [],
+            "responseContexts": [],
+            "entityValueTranslation": "UN_ABC:Qwerqwerqwe UN_ABC:sdfasdfasdfasdf UN_ABC:cvxcvbxcvb UN_ABC:asdfasdf UN_ABC:qwerqwerqwer UN_ABC:asfadfasdf UN_ABC:xczvxcvzxc UN_ABC:sdfafasdfasdfasd UN_ABC:weqrqwerqwerqwerqwerqwerasdfasdfasdfszxcvzxcv UN_ABC:qwerqwers UN_ABC:asdfasdfxvzxcv UN_ABC:sdfasdfasd UN_ABC:qwerqwerqwer UN_ABC:qwerqwerqwerqwerqwerqqwer UN_ABC:asdfsdfasdfa UN_ABC:czxzxcvzxcvz .",
+            "entityValueTranslationCorrected": "UN_ABC:Qwerqwerqwe UN_ABC:sdfasdfasdfasdf UN_ABC:cvxcvbxcvb UN_ABC:asdfasdf UN_ABC:qwerqwerqwer UN_ABC:asfadfasdf UN_ABC:xczvxcvzxc UN_ABC:sdfafasdfasdfasd UN_ABC:weqrqwerqwerqwerqwerqwerasdfasdfasdfszxcvzxcv UN_ABC:qwerqwers UN_ABC:asdfasdfxvzxcv UN_ABC:sdfasdfasd UN_ABC:qwerqwerqwer UN_ABC:qwerqwerqwerqwerqwerqqwer UN_ABC:asdfsdfasdfa UN_ABC:czxzxcvzxcvz .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Classification",
+                "output": "I do not understand what language you are speaking.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "eikel",
+            "language": "",
+            "masterContext": "",
+            "context": "",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {}
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "NL",
+                "prob": 0.08371881952739706,
+                "probNormalized": 0.7548729829278281
+              }
+            ],
+            "correctedInput": "Eikel.",
+            "classificationSequence": "[PRF].",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0,
+                "probNormalized": 1
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Profanity",
+                "prob": 0.06041968162083937,
+                "probNormalized": 1
+              }
+            ],
+            "entityValueTranslation": "NL_PRF:1|UN_ABC:Eikel .",
+            "entityValueTranslationCorrected": "NL_PRF:1|UN_ABC:Eikel .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Profanity",
+                "output": "Van zulk taalgebruik ben ik niet gediend.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "qwerqwerqwerqwerqwer qasdfasdfasdf qwerqwerqwer asdfasdfsdfadfasdf qwerqqwerqwerq asdfsdfsdfasdf zxcvxczvzxcxzxvxcv zxcvzxcvzxcvzxcvzxcvzxasd fasdfasdfasdfasdf qwerqwerqwerqwerqwera sdfasdfas dasfzxczvxcv",
+            "language": "NL",
+            "masterContext": "Generic",
+            "context": "Profanity",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {}
+          },
+          "expectedResponse": {
+            "responseLanguages": [],
+            "correctedInput": "Qwerqwerqwerqwerqwer qasdfasdfasdf qwerqwerqwer asdfasdfsdfadfasdf qwerqqwerqwerq asdfsdfsdfasdf zxcvxczvzxcxzxvxcv zxcvzxcvzxcvzxcvzxcvzxasd fasdfasdfasdfasdf qwerqwerqwerqwerqwera sdfasdfas dasfzxczvxcv.",
+            "classificationSequence": "[FAILED_TO_CLASSIFY_CONTEXT].",
+            "responseMasterContexts": [],
+            "responseContexts": [],
+            "entityValueTranslation": "UN_ABC:Qwerqwerqwerqwerqwer UN_ABC:qasdfasdfasdf UN_ABC:qwerqwerqwer UN_ABC:asdfasdfsdfadfasdf UN_ABC:qwerqqwerqwerq UN_ABC:asdfsdfsdfasdf UN_ABC:zxcvxczvzxcxzxvxcv UN_ABC:zxcvzxcvzxcvzxcvzxcvzxasd UN_ABC:fasdfasdfasdfasdf UN_ABC:qwerqwerqwerqwerqwera UN_ABC:sdfasdfas UN_ABC:dasfzxczvxcv .",
+            "entityValueTranslationCorrected": "UN_ABC:Qwerqwerqwerqwerqwer UN_ABC:qasdfasdfasdf UN_ABC:qwerqwerqwer UN_ABC:asdfasdfsdfadfasdf UN_ABC:qwerqqwerqwerq UN_ABC:asdfsdfsdfasdf UN_ABC:zxcvxczvzxcxzxvxcv UN_ABC:zxcvzxcvzxcvzxcvzxcvzxasd UN_ABC:fasdfasdfasdfasdf UN_ABC:qwerqwerqwerqwerqwera UN_ABC:sdfasdfas UN_ABC:dasfzxczvxcv .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Classification",
+                "output": "Ik begrijp niet wat u bedoelt.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "stupid bitch",
+            "language": "NL",
+            "masterContext": "Generic",
+            "context": "Profanity",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {}
+          },
+          "expectedResponse": {
+            "responseLanguages": [
+              {
+                "symbol": "EN",
+                "prob": 0.08138310507486872,
+                "probNormalized": 0.4892082619304072
+              }
+            ],
+            "correctedInput": "Stupid bitch.",
+            "classificationSequence": "Stupid [PRF].",
+            "responseMasterContexts": [
+              {
+                "symbol": "Generic",
+                "prob": 0,
+                "probNormalized": 1
+              }
+            ],
+            "responseContexts": [
+              {
+                "symbol": "Profanity",
+                "prob": 0.041243654822335024,
+                "probNormalized": 1
+              }
+            ],
+            "entityValueTranslation": "UN_ABC:Stupid EN_PRF:5|UN_ABC:bitch .",
+            "entityValueTranslationCorrected": "UN_ABC:Stupid EN_PRF:5|UN_ABC:bitch .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Profanity",
+                "output": "I do not appreciate that kind of language.",
+                "prompt": "",
+                "dialogVariableValues": []
+              }
+            ]
+          }
+        },
+        {
+          "request": {
+            "prompt": "",
+            "input": "qweryqwouieryoquiweyroui qwerqwoieuryoqwuieryoqwuiery qweroiuqyweoriuqywoeiury",
+            "language": "EN",
+            "masterContext": "Generic",
+            "context": "Profanity",
+            "isTestRequest": false,
+            "appendDebugLog": true,
+            "classifyLanguage": true,
+            "minLanguageChangeDifference": 0.1,
+            "correctInput": true,
+            "classifyMasterContext": true,
+            "classifyMasterContextThreshold": 0.25,
+            "classifyContext": true,
+            "classifyContextThreshold": 0.25,
+            "checkProfanity": true,
+            "translateEntityValues": true,
+            "translateEntityTypes": {},
+            "matchThreshold": 0.1,
+            "randomizeOutput": false,
+            "filterContexts": {},
+            "dialogVariableValues": {}
+          },
+          "expectedResponse": {
+            "responseLanguages": [],
+            "correctedInput": "Qweryqwouieryoquiweyroui qwerqwoieuryoqwuieryoqwuiery qweroiuqyweoriuqywoeiury.",
+            "classificationSequence": "[FAILED_TO_CLASSIFY_CONTEXT].",
+            "responseMasterContexts": [],
+            "responseContexts": [],
+            "entityValueTranslation": "UN_ABC:Qweryqwouieryoquiweyroui UN_ABC:qwerqwoieuryoqwuieryoqwuiery UN_ABC:qweroiuqyweoriuqywoeiury .",
+            "entityValueTranslationCorrected": "UN_ABC:Qweryqwouieryoquiweyroui UN_ABC:qwerqwoieuryoqwuieryoqwuiery UN_ABC:qweroiuqyweoriuqywoeiury .",
+            "debugLog": "",
+            "contextOutputs": [
+              {
+                "context": "Classification",
+                "output": "I do not understand what you mean.",
                 "prompt": "",
                 "dialogVariableValues": []
               }
