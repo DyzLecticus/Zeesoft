@@ -117,9 +117,11 @@ public class JsonAppTesterHandler extends HandlerObject {
 
 	@Override
 	public void setDefaultHeadersAndStatus(HttpServletResponse response) {
-		super.setDefaultHeadersAndStatus(response);
+		response.setStatus(200);
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
+		response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
+		response.setHeader("Pragma", "no-cache");
 	}
 	
 	protected TestCaseSetTester getTester(String environmentName) {
