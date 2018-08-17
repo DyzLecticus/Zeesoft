@@ -24,39 +24,67 @@ public class EnvironmentHtml extends HtmlResource {
 		html.append("<div>\n");
 		
 		html.append("<div>\n");
-		html.append("<table style=\"width: 100%;\">\n");
-		html.append("<tbody>\n");
-		
-		html.append("<tr>\n");
-		html.append("<td>");
-		html.append("Environment");
-		html.append("</td>\n");
-		html.append("<td width=\"90%\">");
-		html.append("<select id=\"selector\" onchange=\"ZDSD.environment.selectedEnvironment();\">");
-		html.append("</select>");
-		html.append("</td>\n");
-		html.append("</tr>\n");
+			html.append("<table style=\"width: 100%;\">\n");
+			html.append("<tbody>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("Environment");
+			html.append("</td>\n");
+			html.append("<td width=\"90%\">");
+			html.append("<select id=\"selector\" onchange=\"ZDSD.environment.selectedEnvironment();\">");
+			html.append("</select>");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+	
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("URL");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("<input type=\"text\" id=\"url\" style=\"width: 100%;\" DISABLED />");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+	
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("Test cases file");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("<input type=\"text\" id=\"fileName\" style=\"width: 100%;\" DISABLED />");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+	
+			html.append("</tbody>\n");
+			html.append("</table>\n");
+		html.append("</div>\n");
 
-		html.append("<tr>\n");
-		html.append("<td>");
-		html.append("URL");
-		html.append("</td>\n");
-		html.append("<td>");
-		html.append("<input type=\"text\" id=\"url\" style=\"width: 100%;\" DISABLED />");
-		html.append("</td>\n");
-		html.append("</tr>\n");
-
-		html.append("<tr>\n");
-		html.append("<td>");
-		html.append("Test cases file");
-		html.append("</td>\n");
-		html.append("<td>");
-		html.append("<input type=\"text\" id=\"fileName\" style=\"width: 100%;\" DISABLED />");
-		html.append("</td>\n");
-		html.append("</tr>\n");
-
-		html.append("</tbody>\n");
-		html.append("</table>\n");
+		html.append("<div>\n");
+			html.append("<table style=\"width: 100%;\">\n");
+			html.append("<tbody>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<input type=\"button\" value=\"Refresh\" onclick=\"ZSDS.environment.getSummary();\"/>");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<input type=\"button\" value=\"Test\" onclick=\"ZSDS.environment.test();\"/>");
+			html.append("<input type=\"checkbox\" id=\"testCheck\"/>");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<input type=\"button\" value=\"Reload\" onclick=\"ZSDS.environment.reload();\"/>");
+			html.append("<input type=\"checkbox\" id=\"reloadCheck\"/>");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
+			html.append("</tbody>\n");
+			html.append("</table>\n");
 		html.append("</div>\n");
 		
 		html.append("<br />\n");

@@ -110,7 +110,8 @@ public class AppTester implements InitializerListener {
 		return initializer.isDone();
 	}
 
-	public boolean renitialize() {
+	public boolean reinitialize() {
+		configuration.debug(this,"Initializing application tester ...");
 		return initializer.start();
 	}
 

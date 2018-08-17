@@ -1,8 +1,10 @@
 package nl.zeesoft.zsds.util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;
@@ -23,6 +25,8 @@ public class TestCaseTester {
 	private String						error					= "";
 	private TestCaseIO					errorTestCaseIO			= null;
 	private DialogResponse				errorDialogResponse		= null;
+	private long						totalTime				= 0;
+	private ZStringBuilder				log						= new ZStringBuilder();
 	
 	private boolean						retrying				= false;
 	private int							retries					= 0;
@@ -46,8 +50,10 @@ public class TestCaseTester {
 			error = "";
 			errorTestCaseIO = null;
 			errorDialogResponse = null;
-			r = true;
+			log = new ZStringBuilder();
+			totalTime = 0;
 			worker.start();
+			r = true;
 		}
 		return r;
 	}
@@ -58,6 +64,34 @@ public class TestCaseTester {
 		}
 	}
 	
+	public TestCase getTestCase() {
+		return testCase;
+	}
+	
+	public List<DialogResponse> getResponses() {
+		return responses;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public TestCaseIO getErrorTestCaseIO() {
+		return errorTestCaseIO;
+	}
+
+	public DialogResponse getErrorDialogResponse() {
+		return errorDialogResponse;
+	}
+
+	public long getTotalTime() {
+		return totalTime;
+	}
+
+	public ZStringBuilder getLog() {
+		return log;
+	}
+	
 	protected boolean test() {
 		boolean done = false;
 		int index = responses.size();
@@ -66,8 +100,10 @@ public class TestCaseTester {
 			DialogRequest request = tcIO.request;
 			request.randomizeOutput = false;
 			request.appendDebugLog = true;
+			Date started = new Date();
 			ZHttpRequest http = new ZHttpRequest(null,"POST",environment.url);
 			JsFile json = http.sendJsonRequest(request.toJson().toStringBuilder());
+			long time = (new Date()).getTime() - started.getTime();
 			if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
 				if (retrying) {
 					retries++;
@@ -102,6 +138,17 @@ public class TestCaseTester {
 					}
 					DialogResponse response = new DialogResponse();
 					response.fromJson(json);
+					totalTime += time;
+					appendLog(tcIO.request.input,false);
+					if (response.contextOutputs.size()>0) {
+						DialogResponseOutput dro = response.contextOutputs.get(0);
+						if (dro.output.length()>0) {
+							appendLog(dro.output,true);
+						}
+						if (dro.prompt.length()>0) {
+							appendLog(dro.prompt,true);
+						}
+					}
 					responses.add(response);
 					if (error.length()==0) {
 						error = compareResponses(response,tcIO.expectedResponse);
@@ -122,6 +169,18 @@ public class TestCaseTester {
 			}
 		}
 		return done;
+	}
+	
+	protected void appendLog(ZStringBuilder msg,boolean output) {
+		if (log.length()>0) {
+			log.append("\n");
+		}
+		if (output) {
+			log.append(">>> ");
+		} else {
+			log.append("<<< ");
+		}
+		log.append(msg.getStringBuilder());
 	}
 	
 	protected String compareResponses(DialogResponse response, DialogResponse expectedResponse) {
@@ -166,25 +225,5 @@ public class TestCaseTester {
 			err = "Classified " + name + " does not match expectation: " + str + " <> " + exp;
 		}
 		return err;
-	}
-	
-	public TestCase getTestCase() {
-		return testCase;
-	}
-	
-	public List<DialogResponse> getResponses() {
-		return responses;
-	}
-
-	public String getError() {
-		return error;
-	}
-
-	public TestCaseIO getErrorTestCaseIO() {
-		return errorTestCaseIO;
-	}
-
-	public DialogResponse getErrorDialogResponse() {
-		return errorDialogResponse;
 	}
 }

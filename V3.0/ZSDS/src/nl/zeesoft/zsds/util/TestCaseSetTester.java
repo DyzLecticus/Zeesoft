@@ -3,6 +3,7 @@ package nl.zeesoft.zsds.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -70,7 +71,6 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 	public void initialize(TestCaseSet tcs) {
 		lockMe(this);
 		if (!testing) {
-			summary = null;
 			testers.clear();
 			testCaseSet = tcs;
 			for (TestCase tc: testCaseSet.getTestCases()) {
@@ -151,12 +151,14 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 	protected JsFile createSummary(List<TestCaseTester> testers) {
 		int successful = 0;
 		int responses = 0;
+		long totalTime = 0;
 		List<String> coveredDialogs = new ArrayList<String>();
 		
 		for (TestCaseTester test: testers) {
+			responses += test.getResponses().size();
+			totalTime += test.getTotalTime();
 			if (test.getError().length()==0) {
 				successful++;
-				responses += test.getResponses().size();
 				for (TestCaseIO io: test.getTestCase().io) {
 					String language = "";
 					String masterContext = "";
@@ -182,11 +184,21 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		ZDate timeStamp = new ZDate();
+		json.rootElement.children.add(new JsElem("timeStamp",timeStamp.getDateTimeString(),true));
 		json.rootElement.children.add(new JsElem("testCases","" + testers.size()));
 		json.rootElement.children.add(new JsElem("successful","" + successful));
 		json.rootElement.children.add(new JsElem("responses","" + responses));
+		json.rootElement.children.add(new JsElem("averageResponseMs","" + (totalTime / responses)));
 		JsElem errsElem = new JsElem("errors",true);
 		json.rootElement.children.add(errsElem);
+		JsElem covElem = new JsElem("coveredDialogs",true);
+		json.rootElement.children.add(covElem);
+		for (String dialogId: coveredDialogs) {
+			covElem.children.add(new JsElem(null,dialogId,true));
+		}
+		JsElem logsElem = new JsElem("logs",true);
+		json.rootElement.children.add(logsElem);
 		for (TestCaseTester test: testers) {
 			if (test.getError().length()>0) {
 				JsElem tcElem = new JsElem();
@@ -208,11 +220,17 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 					tcElem.children.add(resElem);
 				}
 			}
-		}
-		JsElem covElem = new JsElem("coveredDialogs",true);
-		json.rootElement.children.add(covElem);
-		for (String dialogId: coveredDialogs) {
-			covElem.children.add(new JsElem(null,dialogId,true));
+			if (test.getLog().length()>0) {
+				JsElem logElem = new JsElem();
+				logsElem.children.add(logElem);
+				logElem.children.add(new JsElem("testCase",test.getTestCase().name,true));
+				JsElem linesElem = new JsElem("log",true);
+				logElem.children.add(linesElem);
+				List<ZStringBuilder> logLines = test.getLog().split("\n");
+				for (ZStringBuilder line: logLines) {
+					linesElem.children.add(new JsElem(null,line,true));
+				}
+			}
 		}
 		return json;
 	}
@@ -222,6 +240,7 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		if (!testing && testers.size()>0 && (checkNoSummary==false || summary==null)) {
 			r = true;
 			done = 0;
+			summary = null;
 			testing = true;
 			for (TestCaseTester tester: testers) {
 				if (!tester.start()) {

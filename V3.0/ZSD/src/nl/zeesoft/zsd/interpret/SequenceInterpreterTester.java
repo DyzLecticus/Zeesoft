@@ -234,14 +234,6 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 	}
 	
 	protected JsFile createSummary(List<SequenceInterpreterTestResult> results) {
-		JsFile json = new JsFile();
-		json.rootElement = new JsElem();
-		ZDate timeStamp = new ZDate();
-		json.rootElement.children.add(new JsElem("timeStamp",timeStamp.getDateTimeString(),true));
-		JsElem totalsElem = new JsElem("totals");
-		json.rootElement.children.add(totalsElem);
-		JsElem errsElem = new JsElem("errors",true);
-		json.rootElement.children.add(errsElem);
 		int totalSuccess = 0;
 		long totalTime = 0;
 		SortedMap<String,Integer> dialogIdErrors = new TreeMap<String,Integer>(); 
@@ -251,9 +243,6 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 				if (result.error.length()==0) {
 					totalSuccess++;
 				} else {
-					JsElem errElem = new JsElem();
-					errsElem.children.add(errElem);
-					result.addErrorJsonToParent(errElem);
 					Integer errs = dialogIdErrors.get(result.test.dialogId);
 					if (errs==null) {
 						errs = new Integer(0);
@@ -269,6 +258,15 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 			successPercentage = ((float)totalSuccess * 100F) / (float)results.size();
 			averageRequestMs = (totalTime / results.size());
 		}
+
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		ZDate timeStamp = new ZDate();
+		json.rootElement.children.add(new JsElem("timeStamp",timeStamp.getDateTimeString(),true));
+		JsElem totalsElem = new JsElem("totals");
+		json.rootElement.children.add(totalsElem);
+		JsElem errsElem = new JsElem("errors",true);
+		json.rootElement.children.add(errsElem);
 		totalsElem.children.add(new JsElem("tests","" + tests.size()));
 		totalsElem.children.add(new JsElem("successful","" + totalSuccess));
 		totalsElem.children.add(new JsElem("successPercentage","" + successPercentage));
@@ -302,6 +300,23 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 				}
 			}
 		}
+		for (SequenceInterpreterTestResult result: results) {
+			totalTime = totalTime + result.time;
+			if (result.error.length()==0) {
+				totalSuccess++;
+			} else {
+				JsElem errElem = new JsElem();
+				errsElem.children.add(errElem);
+				result.addErrorJsonToParent(errElem);
+				Integer errs = dialogIdErrors.get(result.test.dialogId);
+				if (errs==null) {
+					errs = new Integer(0);
+				}
+				errs++;
+				dialogIdErrors.put(result.test.dialogId,errs);
+			}
+		}
+		
 		return json;
 	}
 	

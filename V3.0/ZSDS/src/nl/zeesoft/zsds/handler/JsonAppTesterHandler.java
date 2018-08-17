@@ -1,5 +1,6 @@
 package nl.zeesoft.zsds.handler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -28,7 +29,8 @@ public class JsonAppTesterHandler extends HandlerObject {
 		PrintWriter out;
 		try {
 			out = response.getWriter();
-			ZStringBuilder err = checkRequest(request,response);
+			String environmentName = request.getParameter("environment");
+			ZStringBuilder err = checkRequest(environmentName,request,response);
 			if (err.length()>0) {
 				out.println(err.toString());
 			} else {
@@ -50,7 +52,68 @@ public class JsonAppTesterHandler extends HandlerObject {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
-		// TODO: Finish API
+		setDefaultHeadersAndStatus(response);
+		PrintWriter out;
+		
+		ZStringBuilder js = new ZStringBuilder();
+		JsFile json = new JsFile();
+		String line = null;
+		try {
+			BufferedReader reader = request.getReader();
+			while ((line = reader.readLine()) != null) {
+				js.append(line);
+			}
+		} catch (IOException e) {
+			getConfiguration().getMessenger().error(this,"I/O exception while reading JSON POST request",e);
+		}
+		if (js.length()>0) {
+			try {
+				json.fromStringBuilder(js);
+			} catch(Exception e) {
+				getConfiguration().getMessenger().error(this,"Exception while parsing JSON POST request",e);
+			}
+		}
+
+		ZStringBuilder err = new ZStringBuilder();
+		String action = "";
+		String environmentName = "";
+		if (json.rootElement!=null) {
+			action = json.rootElement.getChildString("action");
+			environmentName = json.rootElement.getChildString("environmentName");
+		}
+		if (action.length()==0) {
+			err = setErrorResponse(response,400,"Required action element not found");
+		} else if (!action.equals("test") && !action.equals("reload")) {
+			err = setErrorResponse(response,400,"Action not supported: " + action);
+		} else if (action.equals("test")){
+			err = checkRequest(environmentName,request,response);
+		}
+		
+		
+		try {
+			out = response.getWriter();
+			if (err.length()>0) {
+				out.println(err.toString());
+			} else {
+				if (action.equals("test")) {
+					if (tester.isTesting()) {
+						out.println(setErrorResponse(response,503,"Environment is already being tested"));
+					} else if (!tester.start()) {
+						out.println(setErrorResponse(response,500,"Failed to start tester"));
+					} else {
+						out.println(getResponse(200,"Started testing environment"));
+					}
+				} else if (action.equals("reload")) {
+					if (!getConfiguration().getAppTester().reinitialize()) {
+						out.println(setErrorResponse(response,503,"Failed to reload environment test cases"));
+					} else {
+						out.println(getResponse(200,"Reloading environment test cases"));
+					}
+				}
+			}
+		} catch (IOException e) {
+			getConfiguration().getMessenger().error(this,"I/O exception",e);
+		}
 	}
 
 	@Override
@@ -60,10 +123,9 @@ public class JsonAppTesterHandler extends HandlerObject {
 		response.setContentType("application/json");
 	}
 
-	protected ZStringBuilder checkRequest(HttpServletRequest request, HttpServletResponse response) {
+	protected ZStringBuilder checkRequest(String environmentName,HttpServletRequest request, HttpServletResponse response) {
 		ZStringBuilder err = new ZStringBuilder();
 		AppTester appTester = getConfiguration().getAppTester();
-		String environmentName = request.getParameter("environment");
 		if (environmentName==null || environmentName.length()==0) {
 			err = setErrorResponse(response,400,"Missing environment parameter");
 		} else if (appTester.getConfiguration().getEnvironment(environmentName)==null) {

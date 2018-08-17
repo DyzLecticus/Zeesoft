@@ -42,7 +42,6 @@ public class EnvironmentJavaScript {
 		script.append("    if (elem!=null) {\n");
 		script.append("        var sel = elem.options[elem.selectedIndex].value;\n");
 		script.append("        ZSDS.environment.name = sel;\n");
-		script.append("        console.log(\"Selected: \" + sel);\n");
 		script.append("    }\n");
 		script.append("};\n");
 		script.append("ZSDS.environment.refreshEnvironment = function() {\n");
@@ -54,7 +53,6 @@ public class EnvironmentJavaScript {
 		script.append("                break;\n");
 		script.append("            }\n");
 		script.append("        }\n");
-		script.append("        console.log(\"Refresh: \" + ZSDS.environment.name);\n");
 		script.append("        var elemUrl = window.document.getElementById(\"url\");\n");
 		script.append("        elemUrl.value = environment.url;\n");
 		script.append("        var elemFileName = window.document.getElementById(\"fileName\");\n");
@@ -73,6 +71,42 @@ public class EnvironmentJavaScript {
 		script.append("    var object = ZSDS.xhr.parseResponseJSON(response);\n");
 		script.append("    elem = window.document.getElementById(\"summary\");\n");
 		script.append("    elem.value = JSON.stringify(object,null,2);\n");
+		script.append("};\n");
+		script.append("ZSDS.environment.defaultCallback = function(xhr) {\n");
+		script.append("    var response = xhr.responseText;\n");
+		script.append("    var object = ZSDS.xhr.parseResponseJSON(response);\n");
+		script.append("    if (object.error) {\n");
+		script.append("        alert(object.error);\n");
+		script.append("    }\n");
+		script.append("};\n");
+		script.append("ZSDS.environment.test = function(xhr) {\n");
+		script.append("    elem = window.document.getElementById(\"testCheck\");\n");
+		script.append("    if (elem.checked) {\n");
+		script.append("        elem.checked = false;\n");
+		script.append("        if (ZSDS.environment.name==\"\") {\n");
+		script.append("            alert(\"No environment selected\");\n");
+		script.append("        } else {\n");
+		script.append("            var url = \"appTester.json\";\n");
+		script.append("            var body = {};\n");
+		script.append("            body.action = \"test\";\n");
+		script.append("            body.environmentName = ZSDS.environment.name;\n");
+		script.append("            ZSDS.xhr.postJSON(url,body,ZSDS.environment.defaultCallback,ZSDS.environment.defaultCallback);\n");
+		script.append("        }\n");
+		script.append("    }\n");
+		script.append("};\n");
+		script.append("ZSDS.environment.reload = function(xhr) {\n");
+		script.append("    elem = window.document.getElementById(\"reloadCheck\");\n");
+		script.append("    if (elem.checked) {\n");
+		script.append("        elem.checked = false;\n");
+		script.append("        if (ZSDS.environment.name==\"\") {\n");
+		script.append("            alert(\"No environment selected\");\n");
+		script.append("        } else {\n");
+		script.append("            var url = \"appTester.json\";\n");
+		script.append("            var body = {};\n");
+		script.append("            body.action = \"reload\";\n");
+		script.append("            ZSDS.xhr.postJSON(url,body,ZSDS.environment.defaultCallback,ZSDS.environment.defaultCallback);\n");
+		script.append("        }\n");
+		script.append("    }\n");
 		script.append("};\n");
 		
 		
