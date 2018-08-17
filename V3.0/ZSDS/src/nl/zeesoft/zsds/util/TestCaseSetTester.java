@@ -56,7 +56,7 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		if (done==testers.size()) {
 			testing = false;
 			r = true;
-			summary = buildSummary(testers);
+			summary = createSummary(testers);
 		}
 		unlockMe(this);
 		if (r) {
@@ -148,15 +148,38 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		return r;
 	}
 
-	protected JsFile buildSummary(List<TestCaseTester> testers) {
+	protected JsFile createSummary(List<TestCaseTester> testers) {
 		int successful = 0;
 		int responses = 0;
+		List<String> coveredDialogs = new ArrayList<String>();
+		
 		for (TestCaseTester test: testers) {
 			if (test.getError().length()==0) {
 				successful++;
-				responses+=test.getResponses().size();
+				responses += test.getResponses().size();
+				for (TestCaseIO io: test.getTestCase().io) {
+					String language = "";
+					String masterContext = "";
+					String context = "";
+					if (io.expectedResponse.responseLanguages.size()>0) {
+						language = io.expectedResponse.responseLanguages.get(0).symbol;
+					}
+					if (io.expectedResponse.responseMasterContexts.size()>0) {
+						masterContext = io.expectedResponse.responseMasterContexts.get(0).symbol;
+					}
+					if (io.expectedResponse.responseContexts.size()>0) {
+						context = io.expectedResponse.responseContexts.get(0).symbol;
+					}
+					if (language.length()>0 && masterContext.length()>0 && context.length()>0) {
+						String dialogId = language + "/" + masterContext + "/" + context;
+						if (!coveredDialogs.contains(dialogId)) {
+							coveredDialogs.add(dialogId);
+						}
+					}
+				}
 			}
 		}
+		
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("testCases","" + testers.size()));
@@ -185,6 +208,11 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 					tcElem.children.add(resElem);
 				}
 			}
+		}
+		JsElem covElem = new JsElem("coveredDialogs",true);
+		json.rootElement.children.add(covElem);
+		for (String dialogId: coveredDialogs) {
+			covElem.children.add(new JsElem(null,dialogId,true));
 		}
 		return json;
 	}

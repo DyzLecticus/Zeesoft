@@ -23,11 +23,14 @@ import nl.zeesoft.zsd.util.LanguageJsonGenerator;
 import nl.zeesoft.zsds.dialogs.State;
 import nl.zeesoft.zsds.handler.BaseJavaScriptHandler;
 import nl.zeesoft.zsds.handler.BaseStyleSheetHandler;
+import nl.zeesoft.zsds.handler.EnvironmentJavaScriptHandler;
 import nl.zeesoft.zsds.handler.HandlerObject;
+import nl.zeesoft.zsds.handler.HtmlEnvironmentHandler;
 import nl.zeesoft.zsds.handler.HtmlIndexHandler;
 import nl.zeesoft.zsds.handler.HtmlNotFoundHandler;
 import nl.zeesoft.zsds.handler.HtmlStateHandler;
 import nl.zeesoft.zsds.handler.HtmlTestHandler;
+import nl.zeesoft.zsds.handler.JsonAppTesterHandler;
 import nl.zeesoft.zsds.handler.JsonConfigHandler;
 import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 import nl.zeesoft.zsds.handler.JsonDialogsHandler;
@@ -37,6 +40,7 @@ import nl.zeesoft.zsds.handler.JsonRebaseHandler;
 import nl.zeesoft.zsds.handler.JsonReloadHandler;
 import nl.zeesoft.zsds.handler.JsonSelfTestSummaryHandler;
 import nl.zeesoft.zsds.handler.JsonStateHandler;
+import nl.zeesoft.zsds.handler.JsonTestConfigHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
 import nl.zeesoft.zsds.handler.TestJavaScriptHandler;
 import nl.zeesoft.zsds.util.AppTester;
@@ -282,6 +286,7 @@ public class AppConfiguration {
 	
 	protected List<HandlerObject> getDefaultHandlers() {
 		List<HandlerObject> r = new ArrayList<HandlerObject>();
+		// Main application
 		r.add(new BaseStyleSheetHandler(this));
 		r.add(new BaseJavaScriptHandler(this));
 		r.add(new TestJavaScriptHandler(this));
@@ -299,6 +304,11 @@ public class AppConfiguration {
 		r.add(new JsonReloadHandler(this));
 		r.add(new JsonRebaseHandler(this));
 		r.add(new JsonSelfTestSummaryHandler(this));
+		// Test application
+		r.add(new EnvironmentJavaScriptHandler(this));
+		r.add(new HtmlEnvironmentHandler(this));
+		r.add(new JsonTestConfigHandler(this));
+		r.add(new JsonAppTesterHandler(this));
 		return r;
 	}
 	

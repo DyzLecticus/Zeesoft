@@ -25,6 +25,7 @@ public class TestCaseTester {
 	private DialogResponse				errorDialogResponse		= null;
 	
 	private boolean						retrying				= false;
+	private int							retries					= 0;
 	
 	public TestCaseTester(TestConfiguration configuration,String environmentName,TestCase testCase,int sleep) {
 		this.configuration = configuration;
@@ -69,9 +70,17 @@ public class TestCaseTester {
 			JsFile json = http.sendJsonRequest(request.toJson().toStringBuilder());
 			if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
 				if (retrying) {
-					configuration.debug(this,"Retrying ...");
+					retries++;
+					if (retries>=60) {
+						error = "Cancelled test case after 60 retries";
+						errorTestCaseIO = tcIO;
+						done = true;
+					} else {
+						configuration.debug(this,"Retrying ...");
+					}
 				} else {
 					retrying = true;
+					retries = 1;
 					if (sleep<1000) {
 						worker.setSleep(1000);
 					}
@@ -86,6 +95,7 @@ public class TestCaseTester {
 					if (retrying) {
 						configuration.debug(this,"Continuing ...");
 						retrying = false;
+						retries = 0;
 						if (sleep<1000) {
 							worker.setSleep(sleep);
 						}
