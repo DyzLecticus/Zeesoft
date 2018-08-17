@@ -31,6 +31,6 @@ public class SequenceInterpreterTesterInitializer extends Initializer {
 	}
 	
 	protected SequenceInterpreterTester getNewTester(DialogHandlerConfiguration configuration) {
-		return new SequenceInterpreterTester(configuration);
+		return new SequenceInterpreterTester(getMessenger(),getUnion(),configuration);
 	}
 }

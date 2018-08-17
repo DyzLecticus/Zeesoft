@@ -1,6 +1,7 @@
 package nl.zeesoft.zsds.util;
 
 import java.io.File;
+import java.io.InputStream;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
@@ -9,6 +10,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.InitializerListener;
+import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 
 public class AppTester implements InitializerListener {
 	public static final String		ENVIRONMENT_NAME_SELF		= "Self";
@@ -36,13 +38,21 @@ public class AppTester implements InitializerListener {
 				configuration.fromJson(json);
 			}
 		} else if (selfUrl.length()>0) {
-			addSelfEnvironmentToConfiguration(selfUrl);
 			if (write) {
 				File dir = new File(configuration.getBase().getDataDir());
 				if (!dir.exists()) {
 					if (!dir.mkdirs()) {
 						configuration.error(this,"Unable to create directory: " + dir.getAbsolutePath());
 						write = false;
+					}
+				}
+				if (write) {
+					dir = new File(configuration.getFullTestCaseDir());
+					if (!dir.exists()) {
+						if (!dir.mkdirs()) {
+							configuration.error(this,"Unable to create directory: " + dir.getAbsolutePath());
+							write = false;
+						}
 					}
 				}
 				if (write) {
@@ -53,9 +63,33 @@ public class AppTester implements InitializerListener {
 				}
 			}
 		}
-		if (selfUrl.length()>0 && configuration.getBase().isDebug() && configuration.getEnvironment(ENVIRONMENT_NAME_SELF)==null) {
+		if (selfUrl.length()>0) {
+			configuration.removeEnvironment(ENVIRONMENT_NAME_SELF);
 			addSelfEnvironmentToConfiguration(selfUrl);
 		}
+
+		File selfTestCases = new File(configuration.getFullTestCaseDir() + SELF_TEST_CASES_FILE);
+		if (!selfTestCases.exists()) {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			InputStream input = classLoader.getResourceAsStream(SELF_TEST_CASES_FILE);
+			if (input==null) {
+				configuration.error(this,"Failed to load self test cases file from WAR: " + SELF_TEST_CASES_FILE);
+			} else {
+				ZStringBuilder content = new ZStringBuilder();
+				ZStringBuilder err = content.fromInputStream(input);
+				if (err.length()==0) {
+					if (content.length()>0) {
+						err = content.toFile(selfTestCases.getAbsolutePath());
+					} else {
+						configuration.error(this,"Self test cases file is empty: " + SELF_TEST_CASES_FILE);
+					}
+				}
+				if (err.length()>0) {
+					configuration.error(this,err.toString());
+				}
+			}
+		}
+		
 		initializer = new SetTesterInitializer(configuration);
 		initializer.addListener(this);
 		initializer.start();
@@ -75,15 +109,41 @@ public class AppTester implements InitializerListener {
 	public boolean isInitialized() {
 		return initializer.isDone();
 	}
+
+	public boolean renitialize() {
+		return initializer.start();
+	}
+
+	public void stopAllTesters() {
+		for (TestEnvironment env: configuration.getEnvironments()) {
+			TestCaseSetTester tester = getTester(env.name);
+			if (tester.isTesting()) {
+				tester.stop();
+			}
+		}
+	}
+	
+	public TestCaseSetTester getSelfTester() {
+		return initializer.getTester(ENVIRONMENT_NAME_SELF);
+	}
 	
 	public TestCaseSetTester getTester(String environmentName) {
 		return initializer.getTester(environmentName);
 	}
 	
+	public boolean startSelfTesterIfNoSummary() {
+		boolean r = false;
+		TestCaseSetTester selfTester = getSelfTester();
+		if (selfTester!=null) {
+			r = selfTester.startIfNoSummary();
+		}
+		return r;
+	}
+	
 	protected void addSelfEnvironmentToConfiguration(String selfUrl) {
 		TestEnvironment self = new TestEnvironment();
 		self.name = ENVIRONMENT_NAME_SELF;
-		self.url = selfUrl;
+		self.url = selfUrl + JsonDialogRequestHandler.PATH;
 		self.fileName = SELF_TEST_CASES_FILE;
 		configuration.getEnvironments().add(self);
 	}

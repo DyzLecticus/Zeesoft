@@ -35,13 +35,15 @@ import nl.zeesoft.zsds.handler.JsonGenerateHandler;
 import nl.zeesoft.zsds.handler.JsonNotFoundHandler;
 import nl.zeesoft.zsds.handler.JsonRebaseHandler;
 import nl.zeesoft.zsds.handler.JsonReloadHandler;
-import nl.zeesoft.zsds.handler.JsonSelfTestHandler;
+import nl.zeesoft.zsds.handler.JsonSelfTestSummaryHandler;
 import nl.zeesoft.zsds.handler.JsonStateHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
 import nl.zeesoft.zsds.handler.TestJavaScriptHandler;
+import nl.zeesoft.zsds.util.AppTester;
 
 public class AppConfiguration {
-	public static final String			PARAMETER_SELF_TEST_SUMMARY_URL		= "selfTestSummaryUrl"; 
+	public static final String			PARAMETER_SELF_PORT_NUMBER			= "selfPortNumber"; 
+	public static final String			PARAMETER_SELF_URL					= "selfUrl"; 
 	
 	private Messenger					messenger							= null;
 	private WorkerUnion					union								= null;
@@ -50,6 +52,7 @@ public class AppConfiguration {
 	
 	private BaseConfiguration			baseConfig							= null;
 	private AppStateManager				stateManager						= null;
+	private AppTester					appTester							= null;
 	
 	private List<HandlerObject>			handlers							= null;
 	private HandlerObject				notFoundHtmlHandler					= null;
@@ -80,8 +83,12 @@ public class AppConfiguration {
 	public void setStateManager(AppStateManager stateManager) {
 		this.stateManager = stateManager;
 	}
+
+	public void setAppTester(AppTester appTester) {
+		this.appTester = appTester;
+	}
 	
-	public void initialize() {
+	public void initialize(String contextPath) {
 		baseConfig = getNewBaseConfiguration();
 		String fileName = installDir + "config.json";
 		File file = new File(fileName);
@@ -90,7 +97,7 @@ public class AppConfiguration {
 			baseConfig.setDebug(debug);
 			baseConfig.setDataDir(installDir + "data/");
 			baseConfig.setGenerateReadFormat(debug);
-			baseConfig.getParameters().put(PARAMETER_SELF_TEST_SUMMARY_URL,"http://localhost:8080/ZSDS/selfTestSummary.json");
+			baseConfig.getParameters().put(PARAMETER_SELF_PORT_NUMBER,"8080");
 			baseConfig.toJson().toFile(fileName,true);
 			
 			File dir = new File(baseConfig.getFullBaseDir());
@@ -99,6 +106,7 @@ public class AppConfiguration {
 			dir.mkdirs();
 			dir = new File(baseConfig.getFullExtendDir());
 			dir.mkdirs();
+			addStateMasterContext();
 			stateManager.generate(true,false);
 			
 			debug(this,"Installed");
@@ -110,29 +118,21 @@ public class AppConfiguration {
 			} else {
 				baseConfig.fromJson(json);
 				debug = baseConfig.isDebug();
-				if (debug) {
-					if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_ENG)) {
-						List<String> mcs = baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_ENG);
-						if (!mcs.contains(State.MASTER_CONTEXT_STATE)) {
-							mcs.add(State.MASTER_CONTEXT_STATE);
-						}
-					}
-					if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_NLD)) {
-						List<String> mcs = baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_NLD);
-						if (!mcs.contains(State.MASTER_CONTEXT_STATE)) {
-							mcs.add(State.MASTER_CONTEXT_STATE);
-						}
-					}
-				}
-				messenger.setPrintDebugMessages(debug);
+				addStateMasterContext();
 				stateManager.load();
 			}
 		}
-				
+		
+		String selfUrl = "http://localhost:" + baseConfig.getParameters().get(PARAMETER_SELF_PORT_NUMBER) + contextPath; 
+		baseConfig.getParameters().put(PARAMETER_SELF_URL,selfUrl);
+		
 		messenger.setPrintDebugMessages(debug);
 		messenger.start();
+		
+		appTester = getNewAppTester();
+		appTester.initialize(selfUrl);
 	}
-
+	
 	public boolean isInitialized() {
 		return stateManager.isInitialized();
 	}
@@ -170,6 +170,7 @@ public class AppConfiguration {
 		if (tester!=null && tester.isTesting()) {
 			tester.stop();
 		}
+		appTester.stopAllTesters();
 		messenger.stop();
 		union.stopWorkers();
 		messenger.whileWorking();
@@ -222,6 +223,10 @@ public class AppConfiguration {
 	public BaseConfiguration getBaseConfig() {
 		return baseConfig;
 	}
+	
+	public AppTester getAppTester() {
+		return appTester;
+	}
 
 	public DialogHandlerConfiguration getDialogHandlerConfig() {
 		return stateManager.getDialogHandlerConfig();
@@ -237,6 +242,10 @@ public class AppConfiguration {
 	
 	protected BaseConfiguration getNewBaseConfiguration() {
 		return new BaseConfiguration();
+	}
+
+	protected AppTester getNewAppTester() {
+		return new AppTester(messenger,union,baseConfig);
 	}
 
 	protected DialogHandlerConfiguration buildNewDialogHandlerConfiguration() {
@@ -289,7 +298,24 @@ public class AppConfiguration {
 		r.add(new JsonGenerateHandler(this));
 		r.add(new JsonReloadHandler(this));
 		r.add(new JsonRebaseHandler(this));
-		r.add(new JsonSelfTestHandler(this));
+		r.add(new JsonSelfTestSummaryHandler(this));
 		return r;
+	}
+	
+	private void addStateMasterContext() {
+		if (debug) {
+			if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_ENG)) {
+				List<String> mcs = baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_ENG);
+				if (!mcs.contains(State.MASTER_CONTEXT_STATE)) {
+					mcs.add(State.MASTER_CONTEXT_STATE);
+				}
+			}
+			if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_NLD)) {
+				List<String> mcs = baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_NLD);
+				if (!mcs.contains(State.MASTER_CONTEXT_STATE)) {
+					mcs.add(State.MASTER_CONTEXT_STATE);
+				}
+			}
+		}
 	}
 }

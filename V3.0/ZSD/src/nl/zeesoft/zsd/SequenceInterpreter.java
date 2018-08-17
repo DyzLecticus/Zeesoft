@@ -212,14 +212,23 @@ public class SequenceInterpreter {
 						contexts = getConfiguration().getLanguageMasterContextClassifiers().get(language).getContexts(promptAndInput,true,r.request.classifyMasterContextThreshold);
 					}
 					if (contexts.size()>0) {
-						r.responseMasterContexts = contexts;
-						r.addDebugLogLine("Classified master context: ",contexts.get(0).symbol);
-						masterContext = contexts.get(0).symbol;
+						for (SequenceClassifierResult context: contexts) {
+							if (configuration.getBase().getSupportedMasterContexts().get(language).contains(context.symbol)) {
+								r.responseMasterContexts = contexts;
+								r.addDebugLogLine("Classified master context: ",contexts.get(0).symbol);
+								masterContext = context.symbol;
+								break;
+							} else {
+								r.addDebugLogLine("Classified unsupported master context: ",context.symbol);
+							}
+						}
 					}
 				}
-				
+
 				// Classify context
-				if (masterContext.length()>0 && r.request.classifyContext) {
+				if (masterContext.length()>0 && r.request.classifyContext &&
+					configuration.getBase().getSupportedMasterContexts().get(language).contains(masterContext)
+					) {
 					List<SequenceClassifierResult> contexts = null;
 					if (!r.classificationSequence.equals(r.correctedInput)) {
 						r.addDebugLogLine("Classify context for input sequence: ",r.correctedInput);
@@ -243,6 +252,8 @@ public class SequenceInterpreter {
 						r.addDebugLogLine("Classified context: ",contexts.get(0).symbol);
 						r.responseContexts = contexts;
 					}
+				} else if (!configuration.getBase().getSupportedMasterContexts().get(language).contains(masterContext)) {
+					r.addDebugLogLine("Master context is not supported: ",masterContext);
 				}
 			}
 			

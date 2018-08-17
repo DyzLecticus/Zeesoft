@@ -16,6 +16,6 @@ public class DialogHandlerTesterInitializer extends SequenceInterpreterTesterIni
 
 	@Override
 	protected SequenceInterpreterTester getNewTester(DialogHandlerConfiguration configuration) {
-		return new DialogHandlerTester(configuration);
+		return new DialogHandlerTester(getMessenger(),getUnion(),configuration);
 	}
 }

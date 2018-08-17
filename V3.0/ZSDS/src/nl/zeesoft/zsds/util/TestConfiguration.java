@@ -100,6 +100,14 @@ public class TestConfiguration {
 		this.defaultSleep = defaultSleep;
 	}
 
+	public boolean isSelfTestAfterInit() {
+		return selfTestAfterInit;
+	}
+
+	public void setSelfTestAfterInit(boolean selfTestAfterInit) {
+		this.selfTestAfterInit = selfTestAfterInit;
+	}
+
 	public boolean isRetryIfBusy() {
 		return retryIfBusy;
 	}
@@ -125,8 +133,12 @@ public class TestConfiguration {
 	}
 
 	public void error(Object source, String msg) {
+		error(source,msg,null);
+	}
+
+	public void error(Object source, String msg,Exception e) {
 		if (messenger!=null) {
-			messenger.error(source,msg);
+			messenger.error(source,msg,e);
 		}
 	}
 
@@ -139,6 +151,13 @@ public class TestConfiguration {
 			}
 		}
 		return r;
+	}
+
+	public void removeEnvironment(String name) {
+		TestEnvironment r = getEnvironment(name);
+		if (r!=null) {
+			environments.remove(r);
+		}
 	}
 
 	public String getFullTestCaseDir() {

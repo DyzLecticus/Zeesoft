@@ -22,10 +22,13 @@ public class ZHttpRequest {
 	private Messenger		messenger		= null;
 	private String			method			= "";
 	private String			url				= "";
+	
 	private int				timeoutMs		= 3000;
 	private String			encoding		= "UTF-8";
 	
 	private int				responseCode	= 200;
+	private String			error			= "";
+	private Exception		exception		= null;
 	
 	public ZHttpRequest(String method,String url) {
 		this.method = method;
@@ -252,8 +255,20 @@ public class ZHttpRequest {
 	}
 	
 	protected void logError(String msg,Exception e) {
+		if (error.length()==0) {
+			error = msg;
+			exception = e;
+		}
 		if (messenger!=null) {
 			messenger.error(this,msg,e);
 		}
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public Exception getException() {
+		return exception;
 	}
 }

@@ -5,13 +5,15 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsds.AppConfiguration;
 
-public class JsonSelfTestHandler extends JsonBaseHandlerObject {
-	public JsonSelfTestHandler(AppConfiguration config) {
-		super(config,"/selfTestSummary.json");
+public class JsonSelfTestSummaryHandler extends JsonBaseHandlerObject {
+	public static final String	PATH	= "/selfTestSummary.json";
+	
+	public JsonSelfTestSummaryHandler(AppConfiguration config) {
+		super(config,PATH);
 		setAllowPost(false);
 	}
 
-	public JsonSelfTestHandler(AppConfiguration config, String path) {
+	public JsonSelfTestSummaryHandler(AppConfiguration config, String path) {
 		super(config,path);
 		setAllowPost(false);
 	}

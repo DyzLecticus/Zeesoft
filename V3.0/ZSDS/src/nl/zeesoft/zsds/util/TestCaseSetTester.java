@@ -60,7 +60,7 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		}
 		unlockMe(this);
 		if (r) {
-			configuration.debug(this,"Tested");
+			configuration.debug(this,"Tested environment: " + environment.name);
 			for (TesterListener listener: listeners) {
 				listener.testingIsDone(this);
 			}
@@ -68,14 +68,20 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 	}
 	
 	public void initialize(TestCaseSet tcs) {
-		testCaseSet = tcs;
-		for (TestCase tc: testCaseSet.getTestCases()) {
-			if (tc.io.size()>0) {
-				TestCaseTester tct = new TestCaseTester(configuration,environment.name,tc,configuration.getDefaultSleep());
-				tct.addListener(this);
-				testers.add(tct);
+		lockMe(this);
+		if (!testing) {
+			summary = null;
+			testers.clear();
+			testCaseSet = tcs;
+			for (TestCase tc: testCaseSet.getTestCases()) {
+				if (tc.io.size()>0) {
+					TestCaseTester tct = new TestCaseTester(configuration,environment.name,tc,configuration.getDefaultSleep());
+					tct.addListener(this);
+					testers.add(tct);
+				}
 			}
 		}
+		unlockMe(this);
 	}
 
 	public boolean isTesting() {
@@ -86,19 +92,19 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		return r;
 	}
 
-	public boolean start() {
-		boolean r = false;
+	public boolean startIfNoSummary() {
 		lockMe(this);
-		if (!testing && testers.size()>0) {
-			r = true;
-			done = 0;
-			testing = true;
-			for (TestCaseTester tester: testers) {
-				if (!tester.start()) {
-					done++;
-				}
-			}
+		boolean r = startNoLock(true);
+		unlockMe(this);
+		if (r) {
+			configuration.debug(this,"Testing environment: " + environment.name + " ...");
 		}
+		return r;
+	}
+
+	public boolean start() {
+		lockMe(this);
+		boolean r = startNoLock(false);
 		unlockMe(this);
 		if (r) {
 			configuration.debug(this,"Testing environment: " + environment.name + " ...");
@@ -111,14 +117,14 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		lockMe(this);
 		if (testing) {
 			r = true;
-			testing = true;
+			testing = false;
 			for (TestCaseTester tester: testers) {
 				tester.stop();
 			}
 		}
 		unlockMe(this);
 		if (r) {
-			configuration.debug(this,"Testing stopped");
+			configuration.debug(this,"Stopped testing environment: " + environment.name + " ...");
 			for (TesterListener listener: listeners) {
 				listener.testingIsDone(this);
 			}
@@ -181,5 +187,20 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 			}
 		}
 		return json;
+	}
+	
+	private boolean startNoLock(boolean checkNoSummary) {
+		boolean r = false;
+		if (!testing && testers.size()>0 && (checkNoSummary==false || summary==null)) {
+			r = true;
+			done = 0;
+			testing = true;
+			for (TestCaseTester tester: testers) {
+				if (!tester.start()) {
+					done++;
+				}
+			}
+		}
+		return r;
 	}
 }

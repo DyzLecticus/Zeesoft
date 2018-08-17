@@ -46,7 +46,7 @@
 		<!-- Copy sources to build directory -->
 		<copy todir="${build}">
             <fileset dir="${src}" />
-        </copy>		
+        </copy>
 		<copy file="build.xml" tofile="${build}/build.xml"/>
 		<!-- Create distribution directory -->
 		<mkdir dir="${dist}"/>
@@ -82,21 +82,34 @@
 		<mkdir dir="${dist}/war"/>
 		<mkdir dir="${dist}/war/WEB-INF"/>
 		<mkdir dir="${dist}/war/WEB-INF/lib"/>
+
+		<!-- Copy sources to build directory -->
+		<copy todir="${build}">
+            <fileset dir="${src}" />
+        </copy>
 		
 		<copy todir="${dist}/war/WEB-INF/classes">
 	        <fileset dir="${build}">
 				<exclude name="**/zeesoft/zsds/test/**" />
 	        </fileset>
 	    </copy>		
+		
+		<!-- Remove sources from build directory -->
+		<delete>
+            <fileset dir="${build}" includes="**/*.java"/>
+		</delete>
 
 		<copy todir="${dist}/war">
 	        <fileset dir="WebContent" />
 	    </copy>
-		
-		<copy file="build.xml" tofile="${dist}/war/build.xml"/>
-		<copy file="${dist}/README.md" tofile="${dist}/war/README.md"/>
 
 		<war destfile="zsds.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/mymanifest" />
+
+		<!-- Remove sources from war directory -->
+		<delete>
+            <fileset dir="${dist}/war/WEB-INF/classes" includes="**/*.java"/>
+		</delete>
+
 	</target>
 	
 	<!--

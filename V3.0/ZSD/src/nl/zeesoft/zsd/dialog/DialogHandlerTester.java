@@ -6,6 +6,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsd.DialogHandler;
@@ -17,9 +18,6 @@ import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 
 public class DialogHandlerTester extends SequenceInterpreterTester {
 	private SortedMap<String,List<String>> 	dialogInputs			= new TreeMap<String,List<String>>();
-	private int								outputTests				= 0;
-	private int								succesfulOutputTests	= 0;
-	private long							totalOutputTime			= 0;
 	
 	public DialogHandlerTester(DialogHandlerConfiguration configuration) {
 		super(null,null,configuration);
@@ -100,10 +98,12 @@ public class DialogHandlerTester extends SequenceInterpreterTester {
 	}
 
 	@Override
-	protected void beforeCreateSummary(List<SequenceInterpreterTestResult> results) {
-		outputTests = 0;
-		totalOutputTime = 0;
-		succesfulOutputTests = 0;
+	protected JsFile createSummary(List<SequenceInterpreterTestResult> results) {
+		JsFile json = super.createSummary(results);
+
+		int outputTests = 0;
+		long totalOutputTime = 0;
+		int succesfulOutputTests = 0;
 		for (SequenceInterpreterTestResult result: results) {
 			DialogHandlerTestResult res = (DialogHandlerTestResult) result;
 			DialogHandlerTest tst = (DialogHandlerTest) result.test;
@@ -115,19 +115,19 @@ public class DialogHandlerTester extends SequenceInterpreterTester {
 				}
 			}
 		}
-	}
-
-	@Override
-	protected void addTotalsToParent(JsElem parent) {
 		float successPercentageOutputTests = 0.0F;
 		long averageOutputTestRequestMs = 0;
 		if (outputTests>0) {
 			successPercentageOutputTests = ((float)succesfulOutputTests * 100F) / (float)outputTests;
 			averageOutputTestRequestMs = (totalOutputTime / outputTests);
 		}
+		
+		JsElem parent = json.rootElement.getChildByName("totals");
 		parent.children.add(new JsElem("outputTests","" + outputTests));
 		parent.children.add(new JsElem("succesfulOutputTests","" + succesfulOutputTests));
 		parent.children.add(new JsElem("successPercentageOutputTests","" + successPercentageOutputTests));
 		parent.children.add(new JsElem("averageOutputTestRequestMs","" + averageOutputTestRequestMs));
+		
+		return json;
 	}
 }

@@ -65,12 +65,7 @@ public class TestCaseTester {
 			DialogRequest request = tcIO.request;
 			request.randomizeOutput = false;
 			request.appendDebugLog = true;
-			ZHttpRequest http;
-			if (retrying) {
-				http = new ZHttpRequest(null,"POST",environment.url);
-			} else {
-				http = new ZHttpRequest(configuration.getMessenger(),"POST",environment.url);
-			}
+			ZHttpRequest http = new ZHttpRequest(null,"POST",environment.url);
 			JsFile json = http.sendJsonRequest(request.toJson().toStringBuilder());
 			if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
 				if (retrying) {
@@ -86,7 +81,7 @@ public class TestCaseTester {
 					error = "Failed to obtain dialog response from " + environment.url;
 					errorTestCaseIO = tcIO;
 					done = true;
-					configuration.error(this,error);
+					configuration.error(this,error,http.getException());
 				} else {
 					if (retrying) {
 						configuration.debug(this,"Continuing ...");

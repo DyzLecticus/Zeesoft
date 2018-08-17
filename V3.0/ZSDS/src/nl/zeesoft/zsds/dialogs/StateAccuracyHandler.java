@@ -7,11 +7,12 @@ import nl.zeesoft.zsd.dialog.DialogInstanceHandler;
 import nl.zeesoft.zsd.dialog.DialogVariableValue;
 import nl.zeesoft.zsd.http.ZHttpRequest;
 import nl.zeesoft.zsds.AppConfiguration;
+import nl.zeesoft.zsds.handler.JsonSelfTestSummaryHandler;
 
 public abstract class StateAccuracyHandler extends DialogInstanceHandler {
 	@Override
 	protected String initializeVariables() {
-		String url = getConfig().getBase().getParameters().get(AppConfiguration.PARAMETER_SELF_TEST_SUMMARY_URL);
+		String url = getConfig().getBase().getParameters().get(AppConfiguration.PARAMETER_SELF_URL) + JsonSelfTestSummaryHandler.PATH;
 		ZHttpRequest http = new ZHttpRequest(getMessenger(),"GET",url);
 		http.setTimeoutMs(1000);
 		JsFile json = http.sendJsonRequest();

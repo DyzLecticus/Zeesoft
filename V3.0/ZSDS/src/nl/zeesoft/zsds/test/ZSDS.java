@@ -43,6 +43,7 @@ public class ZSDS extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
+		tests.add(new TestTestConfiguration(getTester()));
 		tests.add(new TestTestCaseSet(getTester()));
 	}
 }

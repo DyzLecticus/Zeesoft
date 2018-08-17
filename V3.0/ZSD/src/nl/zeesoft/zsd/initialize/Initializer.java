@@ -11,12 +11,13 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * An Initializer can be used to initialize a set of objects using a separate thread for each object.
  */
 public class Initializer extends Locker {
-	private WorkerUnion					union		= null;
-	private List<InitializeClass>		classes		= new ArrayList<InitializeClass>();
-	private List<InitializerWorker>		workers		= new ArrayList<InitializerWorker>();
-	private List<InitializerListener>	listeners	= new ArrayList<InitializerListener>();
-	
-	private int							initialized	= -1;
+	private WorkerUnion					union			= null;
+	private List<InitializeClass>		classes			= new ArrayList<InitializeClass>();
+	private List<InitializerWorker>		workers			= new ArrayList<InitializerWorker>();
+	private List<InitializerListener>	listeners		= new ArrayList<InitializerListener>();
+
+	private boolean						initializing	= false;
+	private int							initialized		= -1;
 
 	public Initializer() {
 		super(null);
@@ -91,14 +92,13 @@ public class Initializer extends Locker {
 
 	/**
 	 * Starts the initialization of classes.
+	 * 
+	 * @return True if the initialization has started
 	 */
-	public void start() {
-		initialized = 0;
-		for (InitializerWorker worker: workers) {
-			worker.start();
-		}
+	public boolean start() {
+		return startIfNotWorking();
 	}
-	
+		
 	/**
 	 * Returns a specific class using the unique name.
 	 * 
@@ -124,7 +124,7 @@ public class Initializer extends Locker {
 	public boolean isDone() {
 		boolean r = false;
 		lockMe(this);
-		if (initialized==workers.size()) {
+		if (!isWorkingNoLock() && initialized==workers.size()) {
 			r = true;
 		}
 		unlockMe(this);
@@ -140,12 +140,17 @@ public class Initializer extends Locker {
 		return new ArrayList<InitializeClass>(classes);
 	}
 
+	public WorkerUnion getUnion() {
+		return union;
+	}
+	
 	protected boolean initializedClass(String name) {
 		boolean done = false;
 		InitializeClass cls = getClassByName(name);
 		lockMe(this);
 		initialized++;
 		if (initialized==workers.size()) {
+			initializing = false;;
 			done = true;
 		}
 		unlockMe(this);
@@ -181,5 +186,31 @@ public class Initializer extends Locker {
 			}
 			addClass(cls);
 		}
+	}
+	
+	private boolean startIfNotWorking() {
+		boolean r = false;
+		lockMe(this);
+		if (!initializing && !isWorkingNoLock()) {
+			initializing = true;
+			initialized = 0;
+			for (InitializerWorker worker: workers) {
+				worker.start();
+			}
+			r = initializing;
+		}
+		unlockMe(this);
+		return r;
+	}
+	
+	private boolean isWorkingNoLock() {
+		boolean r = false;
+		for (InitializerWorker worker: workers) {
+			if (worker.isWorking()) {
+				r = true;
+				break;
+			}
+		}
+		return r;
 	}
 }

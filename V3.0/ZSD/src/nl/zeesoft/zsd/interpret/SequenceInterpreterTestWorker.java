@@ -20,4 +20,10 @@ public class SequenceInterpreterTestWorker extends Worker {
 			stop();
 		}
 	}
+
+	@Override
+	protected void setCaughtException(Exception caughtException) {
+		super.setCaughtException(caughtException);
+		tester.handleTestException(caughtException);
+	}
 }

@@ -199,7 +199,11 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 	protected InterpreterResponse getResponseForTest(DialogHandler handler,SequenceInterpreterTest test,InterpreterRequest request) {
 		return handler.handleInterpreterRequest(request);
 	}
-	
+
+	protected void handleTestException(Exception e) {
+		handleTestingDone();
+	}
+
 	protected boolean test() {
 		boolean done = false;
 		lockMe(this);
@@ -224,27 +228,12 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 			unlockMe(this);
 		} else {
 			done = true;
-			lockMe(this);
-			testing = false;
-			beforeCreateSummary(results);
-			summary = createSummary();
-			unlockMe(this);
-			for (TesterListener listener: listeners) {
-				listener.testingIsDone(this);
-			}
+			handleTestingDone();
 		}
 		return done;
 	}
 	
-	protected void addTotalsToParent(JsElem parent) {
-		// Override to extend
-	}
-
-	protected void beforeCreateSummary(List<SequenceInterpreterTestResult> results) {
-		// Override to extend
-	}
-
-	private JsFile createSummary() {
+	protected JsFile createSummary(List<SequenceInterpreterTestResult> results) {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		ZDate timeStamp = new ZDate();
@@ -292,7 +281,6 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 		}
 		totalsElem.children.add(new JsElem("durationMs","" + ((new Date()).getTime() - started.getTime())));
 		totalsElem.children.add(new JsElem("averageRequestMs","" + averageRequestMs));
-		addTotalsToParent(totalsElem);
 		if (dialogIdErrors.size()>0) {
 			JsElem dialogsElem = new JsElem("errorsPerDialog",true);
 			totalsElem.children.add(dialogsElem);
@@ -315,5 +303,15 @@ public class SequenceInterpreterTester extends Locker implements Initializable {
 			}
 		}
 		return json;
+	}
+	
+	private void handleTestingDone() {
+		lockMe(this);
+		testing = false;
+		summary = createSummary(results);
+		unlockMe(this);
+		for (TesterListener listener: listeners) {
+			listener.testingIsDone(this);
+		}
 	}
 }

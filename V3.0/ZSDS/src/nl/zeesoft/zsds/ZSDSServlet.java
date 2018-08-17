@@ -45,7 +45,7 @@ public class ZSDSServlet extends HttpServlet {
 		
 		configuration = getNewAppConfiguration(installDir,debug);
 		configuration.setStateManager(getNewAppStateManager());
-		configuration.initialize();
+		configuration.initialize(config.getServletContext().getContextPath());
 	}
 
 	@Override

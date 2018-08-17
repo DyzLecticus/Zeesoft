@@ -10,8 +10,10 @@ import nl.zeesoft.zsd.dialog.DialogResponse;
 import nl.zeesoft.zsds.AppConfiguration;
 
 public class JsonDialogRequestHandler extends JsonBaseHandlerObject {
+	public static final String	PATH	= "/dialogRequestHandler.json";
+	
 	public JsonDialogRequestHandler(AppConfiguration config) {
-		super(config,"/dialogRequestHandler.json");
+		super(config,PATH);
 		setAllowGet(false);
 	}
 	

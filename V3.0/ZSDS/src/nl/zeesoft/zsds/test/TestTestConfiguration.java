@@ -51,6 +51,8 @@ public class TestTestConfiguration extends TestObject {
 		TestConfiguration tco = new TestConfiguration();
 		tco.setTestCaseDir("tests/");
 		tco.setDefaultSleep(20);
+		tco.setSelfTestAfterInit(false);
+		tco.setRetryIfBusy(false);
 		TestEnvironment env = new TestEnvironment();
 		env.name = "env";
 		env.url = "http://env.url";
@@ -60,7 +62,7 @@ public class TestTestConfiguration extends TestObject {
 		JsFile json = tco.toJson();
 		ZStringBuilder oriJs = json.toStringBuilderReadFormat();
 		
-		assertEqual(json.rootElement.children.size(),3,"Number of children expectation");
+		assertEqual(json.rootElement.children.size(),5,"Number of children expectation");
 		JsElem envsElem = json.rootElement.getChildByName("environments");
 		assertEqual(envsElem.children.size(),1,"Number of environments does not match expectation");
 		
