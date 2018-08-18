@@ -12,6 +12,7 @@ import nl.zeesoft.zsd.dialog.DialogResponseOutput;
 import nl.zeesoft.zsd.http.ZHttpRequest;
 import nl.zeesoft.zsd.interpret.TesterListener;
 import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
+import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 
 public class TestCaseTester {
 	private TestConfiguration			configuration			= null;
@@ -101,7 +102,7 @@ public class TestCaseTester {
 			request.randomizeOutput = false;
 			request.appendDebugLog = true;
 			Date started = new Date();
-			ZHttpRequest http = new ZHttpRequest(null,"POST",environment.url);
+			ZHttpRequest http = new ZHttpRequest(null,"POST",environment.url + JsonDialogRequestHandler.PATH);
 			JsFile json = http.sendJsonRequest(request.toJson().toStringBuilder());
 			long time = (new Date()).getTime() - started.getTime();
 			if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
@@ -131,7 +132,6 @@ public class TestCaseTester {
 					if (retrying) {
 						configuration.debug(this,"Continuing ...");
 						retrying = false;
-						retries = 0;
 						if (sleep<1000) {
 							worker.setSleep(sleep);
 						}

@@ -10,7 +10,6 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.InitializerListener;
 import nl.zeesoft.zsds.AppBaseConfiguration;
-import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 
 public class AppTester implements InitializerListener {
 	public static final String		ENVIRONMENT_NAME_SELF		= "Self";
@@ -167,7 +166,7 @@ public class AppTester implements InitializerListener {
 	protected void addSelfEnvironmentToConfiguration(String selfUrl) {
 		TestEnvironment self = new TestEnvironment();
 		self.name = ENVIRONMENT_NAME_SELF;
-		self.url = selfUrl + JsonDialogRequestHandler.PATH;
+		self.url = selfUrl;
 		self.directory = self.name + "/";
 		configuration.getEnvironments().add(self);
 	}

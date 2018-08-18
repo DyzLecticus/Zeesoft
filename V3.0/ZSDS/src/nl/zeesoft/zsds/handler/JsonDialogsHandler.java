@@ -5,8 +5,10 @@ import nl.zeesoft.zsd.util.DialogSetToJson;
 import nl.zeesoft.zsds.AppConfiguration;
 
 public class JsonDialogsHandler extends JsonBaseHandlerObject {
+	public static final String	PATH	= "/dialogs.json";
+	
 	public JsonDialogsHandler(AppConfiguration config) {
-		super(config,"/dialogs.json");
+		super(config,PATH);
 		setAllowPost(false);
 	}
 	

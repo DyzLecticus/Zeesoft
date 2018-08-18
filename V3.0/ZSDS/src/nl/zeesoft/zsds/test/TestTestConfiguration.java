@@ -54,7 +54,7 @@ public class TestTestConfiguration extends TestObject {
 		tco.setRetryIfBusy(false);
 		TestEnvironment env = new TestEnvironment();
 		env.name = "env";
-		env.url = "http://env.url";
+		env.url = "http://env:9090";
 		env.directory = "dir/";
 		tco.getEnvironments().add(env);
 		

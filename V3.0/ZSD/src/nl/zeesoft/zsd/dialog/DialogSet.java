@@ -153,7 +153,7 @@ public class DialogSet implements Initializable {
 		return r;
 	}
 	
-	private void fromJson(JsFile json) {
+	public void fromJson(JsFile json) {
 		JsElem dialogsElem = json.rootElement.getChildByName("dialogs");
 		if (dialogsElem!=null) {
 			for (JsElem dialogElem: dialogsElem.children) {

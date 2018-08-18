@@ -8,8 +8,12 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zsd.dialog.DialogInstance;
+import nl.zeesoft.zsd.dialog.DialogSet;
+import nl.zeesoft.zsd.http.ZHttpRequest;
 import nl.zeesoft.zsd.initialize.Initializable;
 import nl.zeesoft.zsd.interpret.TesterListener;
+import nl.zeesoft.zsds.handler.JsonDialogsHandler;
 
 public class TestCaseSetTester extends Locker implements Initializable, TesterListener {
 	private TestConfiguration		configuration	= null;
@@ -21,13 +25,19 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 	private List<TestCaseTester>	testers			= new ArrayList<TestCaseTester>();
 	
 	private boolean					testing			= false;
+	private DialogSet				dialogSet		= null;
 	private int						done			= 0;
 	private JsFile					summary			= null;
+	
+	private	TestCaseSetTesterWorker	worker			= null;
+	private boolean					retrying		= false;
+	private int						retries			= 0;
 	
 	public TestCaseSetTester(TestConfiguration configuration,String environmentName) {
 		super(configuration.getMessenger());
 		this.configuration = configuration;
 		environment = configuration.getEnvironment(environmentName);
+		worker = new TestCaseSetTesterWorker(configuration.getMessenger(),configuration.getUnion(),this);
 	}
 
 	public void addListener(TesterListener listener) {
@@ -70,7 +80,7 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		if (done==testers.size()) {
 			testing = false;
 			r = true;
-			summary = createSummary(testers);
+			summary = createSummary(testers,dialogSet);
 		}
 		unlockMe(this);
 		if (r) {
@@ -152,7 +162,7 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 	public List<TestCaseTester> getTesters() {
 		return testers;
 	}
-
+	
 	public JsFile getSummary() {
 		JsFile r = null;
 		lockMe(this);
@@ -161,11 +171,63 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		return r;
 	}
 
-	protected JsFile createSummary(List<TestCaseTester> testers) {
+	protected boolean getDialogs() {
+		boolean r = false;
+		boolean stop = false;
+		
+		ZHttpRequest http = new ZHttpRequest(null,"GET",environment.url + JsonDialogsHandler.PATH);
+		JsFile json = http.sendJsonRequest();
+		if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
+			if (retrying) {
+				retries++;
+				if (retries>=configuration.getMaxRetries()) {
+					configuration.error(this,"Cancelled test cases for environment: " + environment.name);
+					r = true;
+					stop = true;
+				} else if ((retries % 10) == 1){
+					configuration.debug(this,"Retrying ...");
+				}
+			} else {
+				retrying = true;
+				retries = 0;
+			}
+		} else {
+			if (json.rootElement==null) {
+				configuration.error(this,"Failed to obtain dialogs from environment: " + environment.url);
+				r = true;
+				stop = true;
+			} else {
+				if (retrying) {
+					configuration.debug(this,"Continuing ...");
+					retrying = false;
+				}
+				dialogSet = new DialogSet();
+				dialogSet.fromJson(json);
+			}
+			r = true;
+		}
+		
+		if (stop) {
+			stop();
+		} else if (r) {
+			lockMe(this);
+			for (TestCaseTester tester: testers) {
+				if (!tester.start()) {
+					done++;
+				}
+			}
+			unlockMe(this);
+		}
+
+		return r;
+	}
+	
+	protected JsFile createSummary(List<TestCaseTester> testers, DialogSet dialogSet) {
 		int successful = 0;
 		int responses = 0;
 		long totalTime = 0;
 		List<String> coveredDialogs = new ArrayList<String>();
+		List<String> notCoveredDialogs = new ArrayList<String>();
 		
 		for (TestCaseTester test: testers) {
 			responses += test.getResponses().size();
@@ -194,6 +256,15 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 				}
 			}
 		}
+		int dialogCoveragePercentage = 0;
+		if (dialogSet!=null && dialogSet.getDialogs().size()>0) {
+			for (DialogInstance dialog: dialogSet.getDialogs()) {
+				if (!coveredDialogs.contains(dialog.getId())) {
+					notCoveredDialogs.add(dialog.getId());
+				}
+			}
+			dialogCoveragePercentage = (coveredDialogs.size() * 100) / dialogSet.getDialogs().size();
+		}
 		
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
@@ -203,13 +274,24 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		json.rootElement.children.add(new JsElem("successful","" + successful));
 		json.rootElement.children.add(new JsElem("responses","" + responses));
 		json.rootElement.children.add(new JsElem("averageResponseMs","" + (totalTime / responses)));
+		if (dialogSet!=null && dialogSet.getDialogs().size()>0) {
+			json.rootElement.children.add(new JsElem("dialogCoveragePercentage","" + dialogCoveragePercentage));
+			JsElem covElem = new JsElem("notCoveredDialogs",true);
+			json.rootElement.children.add(covElem);
+			for (String dialogId: notCoveredDialogs) {
+				covElem.children.add(new JsElem(null,dialogId,true));
+			}
+		} else {
+			JsElem covElem = new JsElem("coveredDialogs",true);
+			json.rootElement.children.add(covElem);
+			for (String dialogId: coveredDialogs) {
+				covElem.children.add(new JsElem(null,dialogId,true));
+			}
+		}
+		
 		JsElem errsElem = new JsElem("errors",true);
 		json.rootElement.children.add(errsElem);
-		JsElem covElem = new JsElem("coveredDialogs",true);
-		json.rootElement.children.add(covElem);
-		for (String dialogId: coveredDialogs) {
-			covElem.children.add(new JsElem(null,dialogId,true));
-		}
+		
 		JsElem logsElem = new JsElem("logs",true);
 		json.rootElement.children.add(logsElem);
 		for (TestCaseTester test: testers) {
@@ -253,13 +335,10 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		if (!testing && testers.size()>0 && (checkNoSummary==false || summary==null)) {
 			r = true;
 			done = 0;
+			dialogSet = null;
 			summary = null;
 			testing = true;
-			for (TestCaseTester tester: testers) {
-				if (!tester.start()) {
-					done++;
-				}
-			}
+			worker.start();
 		}
 		return r;
 	}
