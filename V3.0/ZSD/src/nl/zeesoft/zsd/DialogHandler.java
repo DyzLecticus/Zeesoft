@@ -53,21 +53,21 @@ public class DialogHandler extends SequenceInterpreter {
 		boolean selectedPrimaryLanguage = false;
 		String masterContext = request.masterContext;
 		
-		if (r.responseLanguages.size()>0) {
-			language = r.responseLanguages.get(0).symbol;
+		if (r.classifiedLanguages.size()>0) {
+			language = r.classifiedLanguages.get(0).symbol;
 		}
 		if (language.length()==0) {
 			selectedPrimaryLanguage = true;
 			language = getConfiguration().getBase().getPrimaryLanguage();
 		}
-		if (r.responseMasterContexts.size()>0) {
-			masterContext = r.responseMasterContexts.get(0).symbol;
+		if (r.classifiedMasterContexts.size()>0) {
+			masterContext = r.classifiedMasterContexts.get(0).symbol;
 		}
 		List<String> processContexts = new ArrayList<String>();
 		if (!r.request.classifyContext && r.request.context.length()>0) {
 			processContexts.add(r.request.context);
 		} else {
-			for (SequenceClassifierResult res: r.responseContexts) {
+			for (SequenceClassifierResult res: r.classifiedContexts) {
 				processContexts.add(res.symbol);
 			}
 			if (processContexts.size()==0 && r.request.context.length()>0) {

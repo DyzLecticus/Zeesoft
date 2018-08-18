@@ -13,25 +13,25 @@ public class SequenceInterpreterTestResult {
 	public long						time					= 0;
 
 	public void determineError() {
-		if (response.request.classifyLanguage && response.responseLanguages.size()==0) {
+		if (response.request.classifyLanguage && response.classifiedLanguages.size()==0) {
 			error = "Failed to classify language";
-		} else if (response.responseMasterContexts.size()==0) {
+		} else if (response.classifiedMasterContexts.size()==0) {
 			error = "Failed to classify master context";
-		} else if (response.responseContexts.size()==0) {
+		} else if (response.classifiedContexts.size()==0) {
 			error = "Failed to classify context";
-		} else if (response.request.classifyLanguage && response.responseLanguages.size()>0 && !response.responseLanguages.get(0).symbol.equals(test.expectedLanguage)) {
-			SequenceClassifierResult res = response.responseLanguages.get(0);
-			SequenceClassifierResult found = getResultBySymbol(response.responseLanguages,test.expectedLanguage);
+		} else if (response.request.classifyLanguage && response.classifiedLanguages.size()>0 && !response.classifiedLanguages.get(0).symbol.equals(test.expectedLanguage)) {
+			SequenceClassifierResult res = response.classifiedLanguages.get(0);
+			SequenceClassifierResult found = getResultBySymbol(response.classifiedLanguages,test.expectedLanguage);
 			ZStringBuilder err = getMismatchError("language",res.symbol,res.probNormalized,test.expectedLanguage,found);
 			error = err.toString();
-		} else if (response.responseMasterContexts.size()>0 && !response.responseMasterContexts.get(0).symbol.equals(test.expectedMasterContext)) {
-			SequenceClassifierResult res = response.responseMasterContexts.get(0);
-			SequenceClassifierResult found = getResultBySymbol(response.responseMasterContexts,test.expectedMasterContext);
+		} else if (response.classifiedMasterContexts.size()>0 && !response.classifiedMasterContexts.get(0).symbol.equals(test.expectedMasterContext)) {
+			SequenceClassifierResult res = response.classifiedMasterContexts.get(0);
+			SequenceClassifierResult found = getResultBySymbol(response.classifiedMasterContexts,test.expectedMasterContext);
 			ZStringBuilder err = getMismatchError("master context",res.symbol,res.probNormalized,test.expectedMasterContext,found);
 			error = err.toString();
-		} else if (response.responseContexts.size()>0 && !response.responseContexts.get(0).symbol.equals(test.expectedContext)) {
-			SequenceClassifierResult res = response.responseContexts.get(0);
-			SequenceClassifierResult found = getResultBySymbol(response.responseContexts,test.expectedContext);
+		} else if (response.classifiedContexts.size()>0 && !response.classifiedContexts.get(0).symbol.equals(test.expectedContext)) {
+			SequenceClassifierResult res = response.classifiedContexts.get(0);
+			SequenceClassifierResult found = getResultBySymbol(response.classifiedContexts,test.expectedContext);
 			ZStringBuilder err = getMismatchError("context",res.symbol,res.probNormalized,test.expectedContext,found);
 			error = err.toString();
 		}

@@ -92,12 +92,12 @@ public class TestRequestResponseToJson extends TestObject {
 		scr.symbol = BaseConfiguration.LANG_ENG;
 		scr.prob = 0.4D;
 		scr.probNormalized = 1.0D;
-		res.responseLanguages.add(scr);
+		res.classifiedLanguages.add(scr);
 		scr = new SequenceClassifierResult();
 		scr.symbol = BaseConfiguration.LANG_NLD;
 		scr.prob = 0.2D;
 		scr.probNormalized = 0.5D;
-		res.responseLanguages.add(scr);
+		res.classifiedLanguages.add(scr);
 		res.correctedInput = new ZStringSymbolParser("Test corrected input.");
 		res.classificationSequence = new ZStringSymbolParser("Test classification sequence.");
 		res.entityValueTranslation = new ZStringSymbolParser("Test entity value translation.");

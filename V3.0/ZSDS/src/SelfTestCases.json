@@ -28,7 +28,7 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.08137409995996345,
@@ -37,14 +37,14 @@
             ],
             "correctedInput": "Hello.",
             "classificationSequence": "Hello.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.07762941221876299,
                 "probNormalized": 0.5242357861814753
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Handshake",
                 "prob": 0.1472039197229973,
@@ -91,7 +91,7 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.1627682466463573,
@@ -100,14 +100,14 @@
             ],
             "correctedInput": "Andrew of the ocean.",
             "classificationSequence": "[ABC] [PRE] [ABC].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.45479164292776886,
                 "probNormalized": 0.6824963421714196
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Handshake",
                 "prob": 0.7835916226846408,
@@ -183,7 +183,7 @@
             ]
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.4068524895700067,
@@ -192,7 +192,7 @@
             ],
             "correctedInput": "What can you do.",
             "classificationSequence": "What can you do.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.3016344001440875,
@@ -204,7 +204,7 @@
                 "probNormalized": 0.5448369141133017
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "QuestionAndAnswer",
                 "prob": 0.32776531696375866,
@@ -275,7 +275,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.8126247875083829,
@@ -289,14 +289,14 @@
             ],
             "correctedInput": "How much is ten multiplied by twenty divided by three.",
             "classificationSequence": "How much is [NUM] [MTH] [NUM] [MTH] [NUM].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.48629928654656934,
                 "probNormalized": 0.7297792064339172
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Math",
                 "prob": 0.7887055837563453,
@@ -386,7 +386,7 @@
             ]
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.5693530488300388,
@@ -395,14 +395,14 @@
             ],
             "correctedInput": "What is the answer to the question.",
             "classificationSequence": "What is the answer to the question.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.4175531230587707,
                 "probNormalized": 0.7049399302495872
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "QuestionAndAnswer",
                 "prob": 0.4160665800968008,
@@ -454,7 +454,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.40684348445510143,
@@ -463,7 +463,7 @@
             ],
             "correctedInput": "What languages do you speak.",
             "classificationSequence": "What languages do you speak.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.37672574129686065,
@@ -475,7 +475,7 @@
                 "probNormalized": 0.25096238880507726
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Language",
                 "prob": 0.5395516074450085,
@@ -551,7 +551,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.08138310507486872,
@@ -560,14 +560,14 @@
             ],
             "correctedInput": "Asshole.",
             "classificationSequence": "[PRF].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0,
                 "probNormalized": 1
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Profanity",
                 "prob": 0.041243654822335024,
@@ -619,7 +619,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.08138310507486872,
@@ -628,14 +628,14 @@
             ],
             "correctedInput": "Cool.",
             "classificationSequence": "Cool.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.07762941221876299,
                 "probNormalized": 0.5242357861814753
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Thanks",
                 "prob": 0.09216958074826095,
@@ -689,7 +689,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.08137409995996345,
@@ -698,14 +698,14 @@
             ],
             "correctedInput": "No.",
             "classificationSequence": "[CNF].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.781588509025682,
                 "probNormalized": 0.879685192310079
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Thanks",
                 "prob": 0.8240505734160557,
@@ -770,7 +770,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.08137860251741609,
@@ -779,7 +779,7 @@
             ],
             "correctedInput": "Yes.",
             "classificationSequence": "[CNF].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.49518253527753375,
@@ -796,7 +796,7 @@
                 "probNormalized": 0.2812562840106762
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Thanks",
                 "prob": 0.5433352133859748,
@@ -869,7 +869,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.08134258205779502,
@@ -878,14 +878,14 @@
             ],
             "correctedInput": "Bye.",
             "classificationSequence": "Bye.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.07762941221876299,
                 "probNormalized": 0.5242357861814753
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Goodbye",
                 "prob": 0.11816673174541195,
@@ -935,7 +935,7 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.08370963813990578,
@@ -944,14 +944,14 @@
             ],
             "correctedInput": "Hallo.",
             "classificationSequence": "Hallo.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.09427011617220248,
                 "probNormalized": 0.6888627165207515
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Handshake",
                 "prob": 0.1773210900715436,
@@ -998,7 +998,7 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.16743819341118177,
@@ -1012,14 +1012,14 @@
             ],
             "correctedInput": "Gekste der henkies.",
             "classificationSequence": "[ABC] [PRE] [ABC].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.5667513780028006,
                 "probNormalized": 0.920319679225982
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Handshake",
                 "prob": 1.0678644952202359,
@@ -1095,7 +1095,7 @@
             ]
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.25109677956349785,
@@ -1104,7 +1104,7 @@
             ],
             "correctedInput": "Wat kun je.",
             "classificationSequence": "Wat kun je.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.2748508695006885,
@@ -1116,7 +1116,7 @@
                 "probNormalized": 0.3518716503527177
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "QuestionAndAnswer",
                 "prob": 0.23205269565616893,
@@ -1168,7 +1168,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.8357953377874817,
@@ -1177,14 +1177,14 @@
             ],
             "correctedInput": "Hoeveel is drie vermenigvuldigd met twintig gedeeld door zeven.",
             "classificationSequence": "Hoeveel is [NUM] [MTH] [NUM] [MTH] [NUM].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.5352299589724335,
                 "probNormalized": 0.9777752973899481
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Math",
                 "prob": 0.7375180897250361,
@@ -1274,7 +1274,7 @@
             ]
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.2511518678884455,
@@ -1283,7 +1283,7 @@
             ],
             "correctedInput": "Spreek je Engels.",
             "classificationSequence": "Spreek je Engels.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.6333056173003951,
@@ -1295,7 +1295,7 @@
                 "probNormalized": 0.25094925428448506
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Language",
                 "prob": 0.27235451475683026,
@@ -1378,7 +1378,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.08371422883365141,
@@ -1387,14 +1387,14 @@
             ],
             "correctedInput": "Uitstekend.",
             "classificationSequence": "Uitstekend.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.09427011617220248,
                 "probNormalized": 0.6888627165207515
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Thanks",
                 "prob": 0.11326521007612392,
@@ -1448,7 +1448,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.0837004567524145,
@@ -1457,7 +1457,7 @@
             ],
             "correctedInput": "Nee.",
             "classificationSequence": "[CNF].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.8259997865049596,
@@ -1469,7 +1469,7 @@
                 "probNormalized": 0.28008143706870503
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Thanks",
                 "prob": 0.9177608744249527,
@@ -1534,7 +1534,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.08370963813990578,
@@ -1543,7 +1543,7 @@
             ],
             "correctedInput": "Ja.",
             "classificationSequence": "[CNF].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.4612203348407519,
@@ -1560,7 +1560,7 @@
                 "probNormalized": 0.36357523347464704
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Thanks",
                 "prob": 0.5094154812749285,
@@ -1633,7 +1633,7 @@
             }
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.08370963813990578,
@@ -1642,14 +1642,14 @@
             ],
             "correctedInput": "Daag.",
             "classificationSequence": "Daag.",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0.09427011617220248,
                 "probNormalized": 0.6888627165207515
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Goodbye",
                 "prob": 0.06041968162083937,
@@ -1699,11 +1699,11 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [],
+            "classifiedLanguages": [],
             "correctedInput": "Qwerqwerqwe sdfasdfasdfasdf cvxcvbxcvb asdfasdf qwerqwerqwer asfadfasdf xczvxcvzxc sdfafasdfasdfasd weqrqwerqwerqwerqwerqwerasdfasdfasdfszxcvzxcv qwerqwers asdfasdfxvzxcv sdfasdfasd qwerqwerqwer qwerqwerqwerqwerqwerqqwer asdfsdfasdfa czxzxcvzxcvz.",
             "classificationSequence": "[FAILED_TO_CLASSIFY_LANGUAGE].",
-            "responseMasterContexts": [],
-            "responseContexts": [],
+            "classifiedMasterContexts": [],
+            "classifiedContexts": [],
             "entityValueTranslation": "UN_ABC:Qwerqwerqwe UN_ABC:sdfasdfasdfasdf UN_ABC:cvxcvbxcvb UN_ABC:asdfasdf UN_ABC:qwerqwerqwer UN_ABC:asfadfasdf UN_ABC:xczvxcvzxc UN_ABC:sdfafasdfasdfasd UN_ABC:weqrqwerqwerqwerqwerqwerasdfasdfasdfszxcvzxcv UN_ABC:qwerqwers UN_ABC:asdfasdfxvzxcv UN_ABC:sdfasdfasd UN_ABC:qwerqwerqwer UN_ABC:qwerqwerqwerqwerqwerqqwer UN_ABC:asdfsdfasdfa UN_ABC:czxzxcvzxcvz .",
             "entityValueTranslationCorrected": "UN_ABC:Qwerqwerqwe UN_ABC:sdfasdfasdfasdf UN_ABC:cvxcvbxcvb UN_ABC:asdfasdf UN_ABC:qwerqwerqwer UN_ABC:asfadfasdf UN_ABC:xczvxcvzxc UN_ABC:sdfafasdfasdfasd UN_ABC:weqrqwerqwerqwerqwerqwerasdfasdfasdfszxcvzxcv UN_ABC:qwerqwers UN_ABC:asdfasdfxvzxcv UN_ABC:sdfasdfasd UN_ABC:qwerqwerqwer UN_ABC:qwerqwerqwerqwerqwerqqwer UN_ABC:asdfsdfasdfa UN_ABC:czxzxcvzxcvz .",
             "debugLog": "",
@@ -1742,7 +1742,7 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "NL",
                 "prob": 0.08371881952739706,
@@ -1751,14 +1751,14 @@
             ],
             "correctedInput": "Eikel.",
             "classificationSequence": "[PRF].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0,
                 "probNormalized": 1
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Profanity",
                 "prob": 0.06041968162083937,
@@ -1803,11 +1803,11 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [],
+            "classifiedLanguages": [],
             "correctedInput": "Qwerqwerqwerqwerqwer qasdfasdfasdf qwerqwerqwer asdfasdfsdfadfasdf qwerqqwerqwerq asdfsdfsdfasdf zxcvxczvzxcxzxvxcv zxcvzxcvzxcvzxcvzxcvzxasd fasdfasdfasdfasdf qwerqwerqwerqwerqwera sdfasdfas dasfzxczvxcv.",
             "classificationSequence": "[FAILED_TO_CLASSIFY_CONTEXT].",
-            "responseMasterContexts": [],
-            "responseContexts": [],
+            "classifiedMasterContexts": [],
+            "classifiedContexts": [],
             "entityValueTranslation": "UN_ABC:Qwerqwerqwerqwerqwer UN_ABC:qasdfasdfasdf UN_ABC:qwerqwerqwer UN_ABC:asdfasdfsdfadfasdf UN_ABC:qwerqqwerqwerq UN_ABC:asdfsdfsdfasdf UN_ABC:zxcvxczvzxcxzxvxcv UN_ABC:zxcvzxcvzxcvzxcvzxcvzxasd UN_ABC:fasdfasdfasdfasdf UN_ABC:qwerqwerqwerqwerqwera UN_ABC:sdfasdfas UN_ABC:dasfzxczvxcv .",
             "entityValueTranslationCorrected": "UN_ABC:Qwerqwerqwerqwerqwer UN_ABC:qasdfasdfasdf UN_ABC:qwerqwerqwer UN_ABC:asdfasdfsdfadfasdf UN_ABC:qwerqqwerqwerq UN_ABC:asdfsdfsdfasdf UN_ABC:zxcvxczvzxcxzxvxcv UN_ABC:zxcvzxcvzxcvzxcvzxcvzxasd UN_ABC:fasdfasdfasdfasdf UN_ABC:qwerqwerqwerqwerqwera UN_ABC:sdfasdfas UN_ABC:dasfzxczvxcv .",
             "debugLog": "",
@@ -1846,7 +1846,7 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [
+            "classifiedLanguages": [
               {
                 "symbol": "EN",
                 "prob": 0.08138310507486872,
@@ -1855,14 +1855,14 @@
             ],
             "correctedInput": "Stupid bitch.",
             "classificationSequence": "Stupid [PRF].",
-            "responseMasterContexts": [
+            "classifiedMasterContexts": [
               {
                 "symbol": "Generic",
                 "prob": 0,
                 "probNormalized": 1
               }
             ],
-            "responseContexts": [
+            "classifiedContexts": [
               {
                 "symbol": "Profanity",
                 "prob": 0.041243654822335024,
@@ -1907,11 +1907,11 @@
             "dialogVariableValues": {}
           },
           "expectedResponse": {
-            "responseLanguages": [],
+            "classifiedLanguages": [],
             "correctedInput": "Qweryqwouieryoquiweyroui qwerqwoieuryoqwuieryoqwuiery qweroiuqyweoriuqywoeiury.",
             "classificationSequence": "[FAILED_TO_CLASSIFY_CONTEXT].",
-            "responseMasterContexts": [],
-            "responseContexts": [],
+            "classifiedMasterContexts": [],
+            "classifiedContexts": [],
             "entityValueTranslation": "UN_ABC:Qweryqwouieryoquiweyroui UN_ABC:qwerqwoieuryoqwuieryoqwuiery UN_ABC:qweroiuqyweoriuqywoeiury .",
             "entityValueTranslationCorrected": "UN_ABC:Qweryqwouieryoquiweyroui UN_ABC:qwerqwoieuryoqwuieryoqwuiery UN_ABC:qweroiuqyweoriuqywoeiury .",
             "debugLog": "",

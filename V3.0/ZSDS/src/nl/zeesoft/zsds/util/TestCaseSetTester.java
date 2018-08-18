@@ -163,14 +163,14 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 					String language = "";
 					String masterContext = "";
 					String context = "";
-					if (io.expectedResponse.responseLanguages.size()>0) {
-						language = io.expectedResponse.responseLanguages.get(0).symbol;
+					if (io.expectedResponse.classifiedLanguages.size()>0) {
+						language = io.expectedResponse.classifiedLanguages.get(0).symbol;
 					}
-					if (io.expectedResponse.responseMasterContexts.size()>0) {
-						masterContext = io.expectedResponse.responseMasterContexts.get(0).symbol;
+					if (io.expectedResponse.classifiedMasterContexts.size()>0) {
+						masterContext = io.expectedResponse.classifiedMasterContexts.get(0).symbol;
 					}
-					if (io.expectedResponse.responseContexts.size()>0) {
-						context = io.expectedResponse.responseContexts.get(0).symbol;
+					if (io.expectedResponse.classifiedContexts.size()>0) {
+						context = io.expectedResponse.classifiedContexts.get(0).symbol;
 					}
 					if (language.length()>0 && masterContext.length()>0 && context.length()>0) {
 						String dialogId = language + "/" + masterContext + "/" + context;

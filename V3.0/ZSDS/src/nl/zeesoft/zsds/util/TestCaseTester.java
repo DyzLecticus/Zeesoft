@@ -187,13 +187,13 @@ public class TestCaseTester {
 		String err = "";
 		
 		if (err.length()==0) {
-			checkClassification(response.responseLanguages,expectedResponse.responseLanguages,"language","languages");
+			checkClassification(response.classifiedLanguages,expectedResponse.classifiedLanguages,"language","languages");
 		}
 		if (err.length()==0) {
-			checkClassification(response.responseMasterContexts,expectedResponse.responseMasterContexts,"master context","master contexts");
+			checkClassification(response.classifiedMasterContexts,expectedResponse.classifiedMasterContexts,"master context","master contexts");
 		}
 		if (err.length()==0) {
-			checkClassification(response.responseContexts,expectedResponse.responseContexts,"context","contexts");
+			checkClassification(response.classifiedContexts,expectedResponse.classifiedContexts,"context","contexts");
 		}
 		
 		if (err.length()==0) {

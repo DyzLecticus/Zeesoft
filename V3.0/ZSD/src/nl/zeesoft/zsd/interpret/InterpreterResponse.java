@@ -13,11 +13,11 @@ import nl.zeesoft.zsd.sequence.SequenceClassifierResult;
 public class InterpreterResponse {
 	public InterpreterRequest				request							= null;
 	
-	public List<SequenceClassifierResult>	responseLanguages				= new ArrayList<SequenceClassifierResult>();
+	public List<SequenceClassifierResult>	classifiedLanguages				= new ArrayList<SequenceClassifierResult>();
 	public ZStringSymbolParser				correctedInput					= new ZStringSymbolParser();
 	public ZStringSymbolParser				classificationSequence			= new ZStringSymbolParser();
-	public List<SequenceClassifierResult>	responseMasterContexts			= new ArrayList<SequenceClassifierResult>();
-	public List<SequenceClassifierResult>	responseContexts				= new ArrayList<SequenceClassifierResult>();
+	public List<SequenceClassifierResult>	classifiedMasterContexts		= new ArrayList<SequenceClassifierResult>();
+	public List<SequenceClassifierResult>	classifiedContexts				= new ArrayList<SequenceClassifierResult>();
 	public ZStringSymbolParser				entityValueTranslation			= new ZStringSymbolParser();
 	public ZStringSymbolParser				entityValueTranslationCorrected	= new ZStringSymbolParser();
 	
@@ -65,11 +65,11 @@ public class InterpreterResponse {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		addResultsToJson(json.rootElement,"responseLanguages",responseLanguages);
+		addResultsToJson(json.rootElement,"classifiedLanguages",classifiedLanguages);
 		json.rootElement.children.add(new JsElem("correctedInput",correctedInput,true));
 		json.rootElement.children.add(new JsElem("classificationSequence",classificationSequence,true));
-		addResultsToJson(json.rootElement,"responseMasterContexts",responseMasterContexts);
-		addResultsToJson(json.rootElement,"responseContexts",responseContexts);
+		addResultsToJson(json.rootElement,"classifiedMasterContexts",classifiedMasterContexts);
+		addResultsToJson(json.rootElement,"classifiedContexts",classifiedContexts);
 		json.rootElement.children.add(new JsElem("entityValueTranslation",entityValueTranslation,true));
 		json.rootElement.children.add(new JsElem("entityValueTranslationCorrected",entityValueTranslationCorrected,true));
 		json.rootElement.children.add(new JsElem("debugLog",debugLog,true));
@@ -77,11 +77,11 @@ public class InterpreterResponse {
 	}
 	
 	public void fromJson(JsFile json) {
-		getResultsFromJson(responseLanguages,json.rootElement,"responseLanguages");
+		getResultsFromJson(classifiedLanguages,json.rootElement,"classifiedLanguages");
 		correctedInput = json.rootElement.getChildZStringSymbolParser("correctedInput");
 		classificationSequence = json.rootElement.getChildZStringSymbolParser("classificationSequence");
-		getResultsFromJson(responseMasterContexts,json.rootElement,"responseMasterContexts");
-		getResultsFromJson(responseContexts,json.rootElement,"responseContexts");
+		getResultsFromJson(classifiedMasterContexts,json.rootElement,"classifiedMasterContexts");
+		getResultsFromJson(classifiedContexts,json.rootElement,"classifiedContexts");
 		entityValueTranslation = json.rootElement.getChildZStringSymbolParser("entityValueTranslation");
 		entityValueTranslationCorrected = json.rootElement.getChildZStringSymbolParser("entityValueTranslationCorrected");
 		debugLog = json.rootElement.getChildZStringBuilder("debugLog");
