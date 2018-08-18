@@ -31,8 +31,8 @@ public class DialogToJson {
 
 	public void addJsonForDialogs(JsElem parent,List<DialogInstance> dialogs,boolean languageContext,List<String> masterContexts) {
 		String cntxt = "";
-		List<ZStringBuilder> added = new ArrayList<ZStringBuilder>();
 		for (DialogInstance dialog: dialogs) {
+			List<ZStringBuilder> added = new ArrayList<ZStringBuilder>();
 			if (masterContexts==null || masterContexts.size()==0 || masterContexts.contains(dialog.getMasterContext())) {
 				for (DialogIO example: dialog.getExamples()) {
 					if (languageContext) {
