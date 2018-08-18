@@ -1,0 +1,969 @@
+{
+  "name": "Room",
+  "io": [
+    {
+      "request": {
+        "prompt": "",
+        "input": "wat kost het boeken van een kamer",
+        "language": "",
+        "masterContext": "",
+        "context": "",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {}
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.5842876502316148,
+            "probNormalized": 1
+          },
+          {
+            "symbol": "EN",
+            "prob": 0.08136921926222734,
+            "probNormalized": 0.13926226102840294
+          }
+        ],
+        "correctedInput": "Wat kost het boeken van een kamer.",
+        "classificationSequence": "Wat kost het boeken van een kamer.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.47224682505400345,
+            "probNormalized": 0.8627156833581116
+          },
+          {
+            "symbol": "Generic",
+            "prob": 0.1741158669793739,
+            "probNormalized": 0.31808046384943545
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.6451035977202564,
+            "probNormalized": 0.8027574615839242
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Wat UN_ABC:kost UN_ABC:het UN_ABC:boeken NL_PRE:1|UN_ABC:van NL_NUM:1|UN_ABC:een UN_ABC:kamer .",
+        "entityValueTranslationCorrected": "UN_ABC:Wat UN_ABC:kost UN_ABC:het UN_ABC:boeken NL_PRE:1|UN_ABC:van NL_NUM:1|UN_ABC:een UN_ABC:kamer .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "QuestionAndAnswer",
+            "output": "Er zijn geen kosten verbonden aan het boeken van een kamer.",
+            "prompt": "",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "ik wil graag morgen een kamer boeken",
+        "language": "NL",
+        "masterContext": "Room",
+        "context": "QuestionAndAnswer",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {}
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.5832981587521591,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "Ik wil graag negentien augustus tweeduizendachttien een kamer boeken.",
+        "classificationSequence": "Ik wil graag [DAT] [NUM] kamer boeken.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.4796283929308075,
+            "probNormalized": 0.8762005688824622
+          },
+          {
+            "symbol": "Generic",
+            "prob": 0.18280718102524654,
+            "probNormalized": 0.33395803578548294
+          },
+          {
+            "symbol": "Support",
+            "prob": 0.16564668032639562,
+            "probNormalized": 0.3026086813764119
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 0.5888012243831909,
+            "probNormalized": 0.7326956134390121
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Ik UN_ABC:wil UN_ABC:graag NL_DAT:2018-08-19|UN_ABC:morgen NL_NUM:1|UN_ABC:een UN_ABC:kamer UN_ABC:boeken .",
+        "entityValueTranslationCorrected": "UN_ABC:Ik UN_ABC:wil UN_ABC:graag NL_DAT:2018-08-19 NL_NUM:1|UN_ABC:een UN_ABC:kamer UN_ABC:boeken .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "Okee.",
+            "prompt": "Vanaf welk tijdstip?",
+            "promptVariableName": "bookTime",
+            "promptVariableType": "TIM",
+            "dialogVariableValues": [
+              {
+                "name": "bookDate",
+                "externalValue": "negentien augustus tweeduizendachttien",
+                "internalValue": "NL_DAT:2018-08-19"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Vanaf welk tijdstip?",
+        "input": "elf uur",
+        "language": "NL",
+        "masterContext": "Room",
+        "context": "Booking",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {
+          "0": {
+            "name": "bookDate",
+            "externalValue": "negentien augustus tweeduizendachttien",
+            "internalValue": "NL_DAT:2018-08-19"
+          }
+        }
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.24856161751489214,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "Elf uur.",
+        "classificationSequence": "[TIM].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.405447276820633,
+            "probNormalized": 0.9875788279374127
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 0.484308610591171,
+            "probNormalized": 0.8035553818752644
+          }
+        ],
+        "entityValueTranslation": "NL_TIM:11:00:00|NL_DUR:11:00 .",
+        "entityValueTranslationCorrected": "NL_TIM:11:00:00|NL_DUR:11:00 .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "",
+            "prompt": "Hoe lang?",
+            "promptVariableName": "bookDuration",
+            "promptVariableType": "DUR",
+            "dialogVariableValues": [
+              {
+                "name": "bookDate",
+                "externalValue": "negentien augustus tweeduizendachttien",
+                "internalValue": "NL_DAT:2018-08-19"
+              },
+              {
+                "name": "bookTime",
+                "externalValue": "elf uur",
+                "internalValue": "NL_TIM:11:00:00"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Hoe lang?",
+        "input": "drie uur",
+        "language": "NL",
+        "masterContext": "Room",
+        "context": "Booking",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {
+          "0": {
+            "name": "bookDate",
+            "externalValue": "negentien augustus tweeduizendachttien",
+            "internalValue": "NL_DAT:2018-08-19"
+          },
+          "1": {
+            "name": "bookTime",
+            "externalValue": "elf uur",
+            "internalValue": "NL_TIM:11:00:00"
+          }
+        }
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.24856161751489214,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "Drie uur.",
+        "classificationSequence": "[TIM].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.3216031313591423,
+            "probNormalized": 0.9400239045211433
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 0.384649685675734,
+            "probNormalized": 0.7658438895416152
+          }
+        ],
+        "entityValueTranslation": "NL_TIM:15:00:00|NL_DUR:03:00 .",
+        "entityValueTranslationCorrected": "NL_TIM:15:00:00|NL_DUR:03:00 .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "",
+            "prompt": "Voor hoeveel personen?",
+            "promptVariableName": "bookPeople",
+            "promptVariableType": "NUM",
+            "dialogVariableValues": [
+              {
+                "name": "bookDate",
+                "externalValue": "negentien augustus tweeduizendachttien",
+                "internalValue": "NL_DAT:2018-08-19"
+              },
+              {
+                "name": "bookDuration",
+                "externalValue": "drie uur",
+                "internalValue": "NL_DUR:03:00"
+              },
+              {
+                "name": "bookTime",
+                "externalValue": "elf uur",
+                "internalValue": "NL_TIM:11:00:00"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Voor hoeveel personen?",
+        "input": "voor vijftien personen",
+        "language": "NL",
+        "masterContext": "Room",
+        "context": "Booking",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {
+          "0": {
+            "name": "bookDate",
+            "externalValue": "negentien augustus tweeduizendachttien",
+            "internalValue": "NL_DAT:2018-08-19"
+          },
+          "1": {
+            "name": "bookDuration",
+            "externalValue": "drie uur",
+            "internalValue": "NL_DUR:03:00"
+          },
+          "2": {
+            "name": "bookTime",
+            "externalValue": "elf uur",
+            "internalValue": "NL_TIM:11:00:00"
+          }
+        }
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.41762610324806715,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "Voor vijftien personen.",
+        "classificationSequence": "Voor [NUM] personen.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.5007062160456803,
+            "probNormalized": 0.9147062138281312
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 0.6100793179093853,
+            "probNormalized": 0.7591737611455147
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Voor NL_NUM:15|UN_ABC:vijftien UN_ABC:personen .",
+        "entityValueTranslationCorrected": "UN_ABC:Voor NL_NUM:15|UN_ABC:vijftien UN_ABC:personen .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "",
+            "prompt": "Begrijp ik goed dat u een kamer wilt boeken op negentien augustus tweeduizendachttien, voor vijftien personen, vanaf elf uur, voor drie uur?",
+            "promptVariableName": "bookConfirmation",
+            "promptVariableType": "CNF",
+            "dialogVariableValues": [
+              {
+                "name": "bookDate",
+                "externalValue": "negentien augustus tweeduizendachttien",
+                "internalValue": "NL_DAT:2018-08-19"
+              },
+              {
+                "name": "bookDuration",
+                "externalValue": "drie uur",
+                "internalValue": "NL_DUR:03:00"
+              },
+              {
+                "name": "bookPeople",
+                "externalValue": "vijftien",
+                "internalValue": "NL_NUM:15"
+              },
+              {
+                "name": "bookTime",
+                "externalValue": "elf uur",
+                "internalValue": "NL_TIM:11:00:00"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Begrijp ik goed dat u een kamer wilt boeken op negentien augustus tweeduizendachttien, voor vijftien personen, vanaf elf uur, voor drie uur?",
+        "input": "ja",
+        "language": "NL",
+        "masterContext": "Room",
+        "context": "Booking",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {
+          "0": {
+            "name": "bookDate",
+            "externalValue": "negentien augustus tweeduizendachttien",
+            "internalValue": "NL_DAT:2018-08-19"
+          },
+          "1": {
+            "name": "bookDuration",
+            "externalValue": "drie uur",
+            "internalValue": "NL_DUR:03:00"
+          },
+          "2": {
+            "name": "bookPeople",
+            "externalValue": "vijftien",
+            "internalValue": "NL_NUM:15"
+          },
+          "3": {
+            "name": "bookTime",
+            "externalValue": "elf uur",
+            "internalValue": "NL_TIM:11:00:00"
+          }
+        }
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.08370771802319318,
+            "probNormalized": 0.7547831773071423
+          }
+        ],
+        "correctedInput": "Ja.",
+        "classificationSequence": "[CNF].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 1.4861948855812936,
+            "probNormalized": 0.7757224571651097
+          },
+          {
+            "symbol": "Generic",
+            "prob": 0.6201882474536475,
+            "probNormalized": 0.3237085229448201
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 1.7862452239580753,
+            "probNormalized": 0.6350792500918149
+          }
+        ],
+        "entityValueTranslation": "NL_CNF:true|UN_ABC:Ja .",
+        "entityValueTranslationCorrected": "NL_CNF:true|UN_ABC:Ja .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "Kamer 1 is geboekt.",
+            "prompt": "Kan ik nog iets anders voor u doen?",
+            "promptVariableName": "nextDialog",
+            "promptVariableType": "NXD",
+            "dialogVariableValues": [
+              {
+                "name": "bookConfirmation",
+                "externalValue": "ja",
+                "internalValue": "NL_CNF:true"
+              },
+              {
+                "name": "bookDate",
+                "externalValue": "negentien augustus tweeduizendachttien",
+                "internalValue": "NL_DAT:2018-08-19"
+              },
+              {
+                "name": "bookDuration",
+                "externalValue": "drie uur",
+                "internalValue": "NL_DUR:03:00"
+              },
+              {
+                "name": "bookPeople",
+                "externalValue": "vijftien",
+                "internalValue": "NL_NUM:15"
+              },
+              {
+                "name": "bookTime",
+                "externalValue": "elf uur",
+                "internalValue": "NL_TIM:11:00:00"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Kan ik nog iets anders voor u doen?",
+        "input": "what does it cost to book a room",
+        "language": "NL",
+        "masterContext": "",
+        "context": "",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": []
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.7300311716166558,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "What does it cost to book a room.",
+        "classificationSequence": "What does it cost to book a room.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.6415444466839689,
+            "probNormalized": 0.9627523834507593
+          },
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.24731774187307567,
+            "probNormalized": 0.3711445819361234
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.43906071019473086,
+            "probNormalized": 0.5206465634338495
+          },
+          {
+            "symbol": "Booking",
+            "prob": 0.35910412779374723,
+            "probNormalized": 0.4258325231784044
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room .",
+        "entityValueTranslationCorrected": "UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "QuestionAndAnswer",
+            "output": "There are no costs attached to booking a room.",
+            "prompt": "",
+            "dialogVariableValues": []
+          },
+          {
+            "context": "Booking",
+            "output": "Okay.",
+            "prompt": "On what date?",
+            "promptVariableName": "bookDate",
+            "promptVariableType": "DAT",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "I want to book a room for fifteen people",
+        "language": "EN",
+        "masterContext": "Room",
+        "context": "QuestionAndAnswer",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {}
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.8100598726288962,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "I want to book a room for fifteen people.",
+        "classificationSequence": "I want to book a room for [NUM] people.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.5958613999683148,
+            "probNormalized": 0.8047771084168633
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 0.6942157095823697,
+            "probNormalized": 0.7408928049699373
+          },
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.25166093928980526,
+            "probNormalized": 0.26858190709046453
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:I UN_ABC:want UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for EN_NUM:15|UN_ABC:fifteen UN_ABC:people .",
+        "entityValueTranslationCorrected": "UN_ABC:I UN_ABC:want UN_ABC:to UN_ABC:book UN_ABC:a UN_ABC:room UN_ABC:for EN_NUM:15|UN_ABC:fifteen UN_ABC:people .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "Okay.",
+            "prompt": "On what date?",
+            "promptVariableName": "bookDate",
+            "promptVariableType": "DAT",
+            "dialogVariableValues": [
+              {
+                "name": "bookPeople",
+                "externalValue": "fifteen",
+                "internalValue": "EN_NUM:15"
+              }
+            ]
+          },
+          {
+            "context": "QuestionAndAnswer",
+            "output": "There are no costs attached to booking a room.",
+            "prompt": "",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "On what date?",
+        "input": "now",
+        "language": "EN",
+        "masterContext": "Room",
+        "context": "Booking",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {
+          "0": {
+            "name": "bookPeople",
+            "externalValue": "fifteen",
+            "internalValue": "EN_NUM:15"
+          }
+        }
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.16268891039247574,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "August eighteenth twothousandeighteen.",
+        "classificationSequence": "[DAT].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.40549083744120207,
+            "probNormalized": 0.9127674759678893
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 0.45600606117366804,
+            "probNormalized": 0.811111025681769
+          }
+        ],
+        "entityValueTranslation": "EN_DAT:2018-08-18|20:50:00|UN_ABC:Now .",
+        "entityValueTranslationCorrected": "EN_DAT:2018-08-18 .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "",
+            "prompt": "From what time?",
+            "promptVariableName": "bookTime",
+            "promptVariableType": "TIM",
+            "dialogVariableValues": [
+              {
+                "name": "bookDate",
+                "externalValue": "august eighteenth twothousandeighteen",
+                "internalValue": "EN_DAT:2018-08-18"
+              },
+              {
+                "name": "bookPeople",
+                "externalValue": "fifteen",
+                "internalValue": "EN_NUM:15"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "From what time?",
+        "input": "eight oclock",
+        "language": "EN",
+        "masterContext": "Room",
+        "context": "Booking",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {
+          "0": {
+            "name": "bookDate",
+            "externalValue": "august eighteenth twothousandeighteen",
+            "internalValue": "EN_DAT:2018-08-18"
+          },
+          "1": {
+            "name": "bookPeople",
+            "externalValue": "fifteen",
+            "internalValue": "EN_NUM:15"
+          }
+        }
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.16265288993285465,
+            "probNormalized": 0.977748670898688
+          }
+        ],
+        "correctedInput": "Eight o'clock.",
+        "classificationSequence": "[TIM].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.4031998866966431,
+            "probNormalized": 0.9076105028982301
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 0.4536766877751122,
+            "probNormalized": 0.8069677025828708
+          }
+        ],
+        "entityValueTranslation": "EN_TIM:08:00:00 .",
+        "entityValueTranslationCorrected": "EN_TIM:08:00:00 .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "",
+            "prompt": "For how long?",
+            "promptVariableName": "bookDuration",
+            "promptVariableType": "DUR",
+            "dialogVariableValues": [
+              {
+                "name": "bookDate",
+                "externalValue": "august eighteenth twothousandeighteen",
+                "internalValue": "EN_DAT:2018-08-18"
+              },
+              {
+                "name": "bookPeople",
+                "externalValue": "fifteen",
+                "internalValue": "EN_NUM:15"
+              },
+              {
+                "name": "bookTime",
+                "externalValue": "eight o'clock",
+                "internalValue": "EN_TIM:08:00:00"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "For how long?",
+        "input": "one hour",
+        "language": "EN",
+        "masterContext": "Room",
+        "context": "Booking",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {
+          "0": {
+            "name": "bookDate",
+            "externalValue": "august eighteenth twothousandeighteen",
+            "internalValue": "EN_DAT:2018-08-18"
+          },
+          "1": {
+            "name": "bookPeople",
+            "externalValue": "fifteen",
+            "internalValue": "EN_NUM:15"
+          },
+          "2": {
+            "name": "bookTime",
+            "externalValue": "eight o'clock",
+            "internalValue": "EN_TIM:08:00:00"
+          }
+        }
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.1624817927496546,
+            "probNormalized": 0.9767201613927247
+          }
+        ],
+        "correctedInput": "One hour.",
+        "classificationSequence": "[DUR].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Room",
+            "prob": 0.40549083744120207,
+            "probNormalized": 0.9127674759678893
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Booking",
+            "prob": 0.45600606117366804,
+            "probNormalized": 0.811111025681769
+          }
+        ],
+        "entityValueTranslation": "EN_DUR:01:00 .",
+        "entityValueTranslationCorrected": "EN_DUR:01:00 .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Booking",
+            "output": "",
+            "prompt": "Do I understand correctly that you want a room on august eighteenth twothousandeighteen, for fifteen people, from eight o'clock, for one hour?",
+            "promptVariableName": "bookConfirmation",
+            "promptVariableType": "CNF",
+            "dialogVariableValues": [
+              {
+                "name": "bookDate",
+                "externalValue": "august eighteenth twothousandeighteen",
+                "internalValue": "EN_DAT:2018-08-18"
+              },
+              {
+                "name": "bookDuration",
+                "externalValue": "one hour",
+                "internalValue": "EN_DUR:01:00"
+              },
+              {
+                "name": "bookPeople",
+                "externalValue": "fifteen",
+                "internalValue": "EN_NUM:15"
+              },
+              {
+                "name": "bookTime",
+                "externalValue": "eight o'clock",
+                "internalValue": "EN_TIM:08:00:00"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

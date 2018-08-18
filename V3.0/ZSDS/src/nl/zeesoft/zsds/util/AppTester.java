@@ -14,10 +14,11 @@ import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 
 public class AppTester implements InitializerListener {
 	public static final String		ENVIRONMENT_NAME_SELF		= "Self";
-	public static final String		SELF_TEST_CASES_FILE		= "SelfTestCases.json";
+	public static final String		GENERIC_TEST_CASES_FILE		= "GenericTestCases.json";
+	public static final String		ROOM_TEST_CASE_FILE			= "RoomTestCase.json";
 	
-	private TestConfiguration		configuration	= null;
-	private SetTesterInitializer	initializer		= null;
+	private TestConfiguration		configuration				= null;
+	private SetTesterInitializer	initializer					= null;
 	
 	public AppTester(Messenger msgr,WorkerUnion uni,AppBaseConfiguration base) {
 		configuration = new TestConfiguration(msgr,uni,base);
@@ -70,34 +71,18 @@ public class AppTester implements InitializerListener {
 		
 		for (TestEnvironment env: configuration.getEnvironments()) {
 			File dir = new File(configuration.getFullEnvironmentDirectory(env.name));
+			boolean copyFiles = false;
 			if (!dir.exists()) {
 				if (!dir.mkdirs()) {
 					configuration.error(this,"Unable to create directory: " + dir.getAbsolutePath());
 					break;
+				} else {
+					copyFiles = env.name.equals(ENVIRONMENT_NAME_SELF);
 				}
 			}
-			if (env.name.equals(ENVIRONMENT_NAME_SELF)) {
-				File selfTestCases = new File(dir.getAbsolutePath() + "/" + SELF_TEST_CASES_FILE);
-				if (!selfTestCases.exists()) {
-					ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-					InputStream input = classLoader.getResourceAsStream(SELF_TEST_CASES_FILE);
-					if (input==null) {
-						configuration.error(this,"Failed to load self test cases file from WAR: " + SELF_TEST_CASES_FILE);
-					} else {
-						ZStringBuilder content = new ZStringBuilder();
-						ZStringBuilder err = content.fromInputStream(input);
-						if (err.length()==0) {
-							if (content.length()>0) {
-								err = content.toFile(selfTestCases.getAbsolutePath());
-							} else {
-								configuration.error(this,"Self test cases file is empty: " + SELF_TEST_CASES_FILE);
-							}
-						}
-						if (err.length()>0) {
-							configuration.error(this,err.toString());
-						}
-					}
-				}
+			if (copyFiles) {
+				copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",GENERIC_TEST_CASES_FILE);
+				copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",ROOM_TEST_CASE_FILE);
 			}
 		}
 		
@@ -106,6 +91,30 @@ public class AppTester implements InitializerListener {
 			initializer.addListener(this);
 			initializer.start();
 			configuration.debug(this,"Initializing application tester ...");
+		}
+	}
+	
+	protected void copyTestCaseFileFromWar(String directory,String name) {
+		File selfTestCases = new File(directory + name);
+		if (!selfTestCases.exists()) {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			InputStream input = classLoader.getResourceAsStream(name);
+			if (input==null) {
+				configuration.error(this,"Failed to load self test case file from WAR: " + name);
+			} else {
+				ZStringBuilder content = new ZStringBuilder();
+				ZStringBuilder err = content.fromInputStream(input);
+				if (err.length()==0) {
+					if (content.length()>0) {
+						err = content.toFile(selfTestCases.getAbsolutePath());
+					} else {
+						configuration.error(this,"Self test case file is empty: " + name);
+					}
+				}
+				if (err.length()>0) {
+					configuration.error(this,err.toString());
+				}
+			}
 		}
 	}
 	
