@@ -107,6 +107,14 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		unlockMe(this);
 	}
 
+	public boolean isWaiting() {
+		boolean r = false;
+		lockMe(this);
+		r = retrying;
+		unlockMe(this);
+		return r;
+	}
+
 	public boolean isTesting() {
 		boolean r = false;
 		lockMe(this);
@@ -178,6 +186,7 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		ZHttpRequest http = new ZHttpRequest(null,"GET",environment.url + JsonDialogsHandler.PATH);
 		JsFile json = http.sendJsonRequest();
 		if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
+			lockMe(this);
 			if (retrying) {
 				retries++;
 				if (retries>=configuration.getMaxRetries()) {
@@ -191,16 +200,19 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 				retrying = true;
 				retries = 0;
 			}
+			unlockMe(this);
 		} else {
 			if (json.rootElement==null) {
 				configuration.error(this,"Failed to obtain dialogs from environment: " + environment.url);
 				r = true;
 				stop = true;
 			} else {
+				lockMe(this);
 				if (retrying) {
 					configuration.debug(this,"Continuing ...");
 					retrying = false;
 				}
+				unlockMe(this);
 				dialogSet = new DialogSet();
 				dialogSet.fromJson(json);
 			}

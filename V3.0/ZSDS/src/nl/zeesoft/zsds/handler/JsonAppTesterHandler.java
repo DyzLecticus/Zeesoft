@@ -35,10 +35,12 @@ public class JsonAppTesterHandler extends HandlerObject {
 				TestCaseSetTester tester = getTester(environmentName);
 				JsFile summary = tester.getSummary();
 				if (summary==null) {
-					if (tester.isTesting()) {
-						out.println(getResponse(200,"The summary for this environment is not yet available. Please wait"));
+					if (tester.isWaiting()) {
+						out.println(setErrorResponse(response,503,"The environment tester is waiting to start. Please wait."));
+					} else if (tester.isTesting()) {
+						out.println(setErrorResponse(response,503,"The environment tester is testing. Please wait."));
 					} else {
-						out.println(getResponse(200,"The summary for this environment is not available"));
+						out.println(getResponse(200,"The environment tester has not been started yet."));
 					}
 				} else {
 					out.println(summary.toStringBuilderReadFormat());
@@ -95,10 +97,12 @@ public class JsonAppTesterHandler extends HandlerObject {
 			} else {
 				if (action.equals("test")) {
 					TestCaseSetTester tester = getTester(environmentName);
-					if (tester.isTesting()) {
-						out.println(setErrorResponse(response,503,"Environment is already being tested"));
+					if (tester.isWaiting()) {
+						out.println(setErrorResponse(response,503,"The environment tester is waiting to start"));
+					} else if (tester.isTesting()) {
+						out.println(setErrorResponse(response,503,"The environment tester is already testing"));
 					} else if (!tester.start()) {
-						out.println(setErrorResponse(response,500,"Failed to start tester"));
+						out.println(setErrorResponse(response,500,"Failed to start environment tester"));
 					} else {
 						out.println(getResponse(200,"Started testing environment"));
 					}

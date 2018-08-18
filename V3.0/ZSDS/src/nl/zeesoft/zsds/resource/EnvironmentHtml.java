@@ -31,26 +31,20 @@ public class EnvironmentHtml extends HtmlResource {
 			html.append("<td>");
 			html.append("Environment");
 			html.append("</td>\n");
-			html.append("<td width=\"90%\">");
-			html.append("<select id=\"selector\" onchange=\"ZDSD.environment.selectedEnvironment();\">");
+			html.append("<td width=\"5%\">");
+			html.append("<select id=\"selector\" onchange=\"ZDSD.environment.selectedEnvironment();\">&nbsp;");
+			html.append("</td>\n");
+			html.append("<td width=\"85%\">");
+			html.append("<input type=\"text\" id=\"url\" style=\"width: 100%;\" DISABLED />");
 			html.append("</select>");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 	
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("URL");
+			html.append("Directory");
 			html.append("</td>\n");
-			html.append("<td>");
-			html.append("<input type=\"text\" id=\"url\" style=\"width: 100%;\" DISABLED />");
-			html.append("</td>\n");
-			html.append("</tr>\n");
-	
-			html.append("<tr>\n");
-			html.append("<td>");
-			html.append("Test cases directory");
-			html.append("</td>\n");
-			html.append("<td>");
+			html.append("<td colspan=\"2\">");
 			html.append("<input type=\"text\" id=\"directory\" style=\"width: 100%;\" DISABLED />");
 			html.append("</td>\n");
 			html.append("</tr>\n");
@@ -59,6 +53,7 @@ public class EnvironmentHtml extends HtmlResource {
 			html.append("</table>\n");
 		html.append("</div>\n");
 
+		html.append("<br />\n");
 		html.append("<div>\n");
 			html.append("<table style=\"width: 100%;\">\n");
 			html.append("<tbody>\n");
