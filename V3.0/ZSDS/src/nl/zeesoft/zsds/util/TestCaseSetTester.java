@@ -37,13 +37,26 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 	@Override
 	public void initialize(List<ZStringBuilder> data) {
 		if (data!=null && data.size()>0) {
-			JsFile json = new JsFile();
-			json.fromStringBuilder(data.get(0));
-			if (json.rootElement==null) {
-				configuration.error(this,"Failed to parse test cases set JSON for environment: " + environment.name);
-			} else {
-				TestCaseSet tcs = new TestCaseSet();
-				tcs.fromJson(json);
+			TestCaseSet tcs = new TestCaseSet();
+			boolean init = true;
+			for (ZStringBuilder str: data) {
+				JsFile json = new JsFile();
+				json.fromStringBuilder(str);
+				if (json.rootElement==null) {
+					configuration.error(this,"Failed to parse test cases set JSON for environment: " + environment.name);
+					init = false;
+					break;
+				} else {
+					if (json.rootElement.getChildByName("testCases")!=null) {
+						tcs.fromJson(json);
+					} else if (json.rootElement.getChildByName("name")!=null) {
+						TestCase tc = new TestCase();
+						tc.fromJson(json);
+						tcs.getTestCases().add(tc);
+					}
+				}
+			}
+			if (init) {
 				initialize(tcs);
 			}
 		}

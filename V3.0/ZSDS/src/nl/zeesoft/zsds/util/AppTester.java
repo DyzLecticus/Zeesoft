@@ -67,25 +67,36 @@ public class AppTester implements InitializerListener {
 			configuration.removeEnvironment(ENVIRONMENT_NAME_SELF);
 			addSelfEnvironmentToConfiguration(selfUrl);
 		}
-
-		File selfTestCases = new File(configuration.getFullTestCaseDir() + SELF_TEST_CASES_FILE);
-		if (!selfTestCases.exists()) {
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			InputStream input = classLoader.getResourceAsStream(SELF_TEST_CASES_FILE);
-			if (input==null) {
-				configuration.error(this,"Failed to load self test cases file from WAR: " + SELF_TEST_CASES_FILE);
-			} else {
-				ZStringBuilder content = new ZStringBuilder();
-				ZStringBuilder err = content.fromInputStream(input);
-				if (err.length()==0) {
-					if (content.length()>0) {
-						err = content.toFile(selfTestCases.getAbsolutePath());
-					} else {
-						configuration.error(this,"Self test cases file is empty: " + SELF_TEST_CASES_FILE);
-					}
+		
+		for (TestEnvironment env: configuration.getEnvironments()) {
+			File dir = new File(configuration.getFullEnvironmentDirectory(env.name));
+			if (!dir.exists()) {
+				if (!dir.mkdirs()) {
+					configuration.error(this,"Unable to create directory: " + dir.getAbsolutePath());
+					break;
 				}
-				if (err.length()>0) {
-					configuration.error(this,err.toString());
+			}
+			if (env.name.equals(ENVIRONMENT_NAME_SELF)) {
+				File selfTestCases = new File(dir.getAbsolutePath() + "/" + SELF_TEST_CASES_FILE);
+				if (!selfTestCases.exists()) {
+					ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+					InputStream input = classLoader.getResourceAsStream(SELF_TEST_CASES_FILE);
+					if (input==null) {
+						configuration.error(this,"Failed to load self test cases file from WAR: " + SELF_TEST_CASES_FILE);
+					} else {
+						ZStringBuilder content = new ZStringBuilder();
+						ZStringBuilder err = content.fromInputStream(input);
+						if (err.length()==0) {
+							if (content.length()>0) {
+								err = content.toFile(selfTestCases.getAbsolutePath());
+							} else {
+								configuration.error(this,"Self test cases file is empty: " + SELF_TEST_CASES_FILE);
+							}
+						}
+						if (err.length()>0) {
+							configuration.error(this,err.toString());
+						}
+					}
 				}
 			}
 		}
@@ -147,7 +158,7 @@ public class AppTester implements InitializerListener {
 		TestEnvironment self = new TestEnvironment();
 		self.name = ENVIRONMENT_NAME_SELF;
 		self.url = selfUrl + JsonDialogRequestHandler.PATH;
-		self.fileName = SELF_TEST_CASES_FILE;
+		self.directory = self.name + "/";
 		configuration.getEnvironments().add(self);
 	}
 

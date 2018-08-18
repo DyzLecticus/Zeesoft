@@ -1,8 +1,10 @@
 package nl.zeesoft.zsds.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.Initializer;
 
 public class SetTesterInitializer extends Initializer {
@@ -18,7 +20,23 @@ public class SetTesterInitializer extends Initializer {
 	protected void initializeClasses() {
 		for (TestEnvironment env: configuration.getEnvironments()) {
 			TestCaseSetTester tester = new TestCaseSetTester(configuration,env.name);
-			addClass(env.name + "Tester",tester,configuration.getFullEnvironmentFileName(env.name));
+			
+			InitializeClass cls = new InitializeClass();
+			cls.name = env.name + "Tester";
+			cls.obj = tester;
+			File dir = new File(configuration.getFullEnvironmentDirectory(env.name));
+			if (dir.exists()) {
+				File[] files = dir.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].getName().endsWith(".json")) {
+						cls.fileNames.add(files[i].getAbsolutePath());
+					}
+				}
+			} else {
+				configuration.warn(this,"Directory not found: " + dir.getAbsolutePath());
+			}
+			addClass(cls);
+			
 			testers.add(tester);
 		}
 	}

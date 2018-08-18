@@ -6,14 +6,14 @@ import nl.zeesoft.zdk.json.JsFile;
 public class TestEnvironment {
 	public String	name		= "";
 	public String	url			= "";
-	public String	fileName	= "";
+	public String	directory	= "";
 	
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("name",name,true));
 		json.rootElement.children.add(new JsElem("url",url,true));
-		json.rootElement.children.add(new JsElem("fileName",fileName,true));
+		json.rootElement.children.add(new JsElem("directory",directory,true));
 		return json;
 	}
 
@@ -21,7 +21,7 @@ public class TestEnvironment {
 		if (json.rootElement!=null) {
 			name = json.rootElement.getChildString("name");
 			url = json.rootElement.getChildString("url");
-			fileName = json.rootElement.getChildString("fileName");
+			directory = json.rootElement.getChildString("directory");
 		}
 	}
 }

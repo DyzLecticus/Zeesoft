@@ -48,10 +48,10 @@ public class EnvironmentHtml extends HtmlResource {
 	
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("Test cases file");
+			html.append("Test cases directory");
 			html.append("</td>\n");
 			html.append("<td>");
-			html.append("<input type=\"text\" id=\"fileName\" style=\"width: 100%;\" DISABLED />");
+			html.append("<input type=\"text\" id=\"directory\" style=\"width: 100%;\" DISABLED />");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 	

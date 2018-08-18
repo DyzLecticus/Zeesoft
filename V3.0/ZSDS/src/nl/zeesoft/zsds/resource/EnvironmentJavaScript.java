@@ -55,8 +55,8 @@ public class EnvironmentJavaScript {
 		script.append("        }\n");
 		script.append("        var elemUrl = window.document.getElementById(\"url\");\n");
 		script.append("        elemUrl.value = environment.url;\n");
-		script.append("        var elemFileName = window.document.getElementById(\"fileName\");\n");
-		script.append("        elemFileName.value = environment.fileName;\n");
+		script.append("        var elemDir = window.document.getElementById(\"directory\");\n");
+		script.append("        elemDir.value = ZSDS.environment.config.testCaseDir + environment.directory;\n");
 		script.append("        ZSDS.environment.getSummary();\n");
 		script.append("    }\n");
 		script.append("};\n");

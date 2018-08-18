@@ -55,7 +55,7 @@ public class TestTestConfiguration extends TestObject {
 		TestEnvironment env = new TestEnvironment();
 		env.name = "env";
 		env.url = "http://env.url";
-		env.fileName = "fileName.json";
+		env.directory = "dir/";
 		tco.getEnvironments().add(env);
 		
 		JsFile json = tco.toJson();

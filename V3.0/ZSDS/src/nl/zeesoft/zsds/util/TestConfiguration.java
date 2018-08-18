@@ -164,11 +164,11 @@ public class TestConfiguration {
 		return base.getDataDir() + testCaseDir;
 	}
 	
-	public String getFullEnvironmentFileName(String name) {
+	public String getFullEnvironmentDirectory(String name) {
 		String r = "";
 		TestEnvironment env = getEnvironment(name);
 		if (env!=null) {
-			r = getFullTestCaseDir() + env.fileName;
+			r = getFullTestCaseDir() + env.directory;
 		}
 		return r;
 	}

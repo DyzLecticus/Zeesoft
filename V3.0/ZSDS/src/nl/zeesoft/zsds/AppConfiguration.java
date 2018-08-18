@@ -87,10 +87,6 @@ public class AppConfiguration {
 	public void setStateManager(AppStateManager stateManager) {
 		this.stateManager = stateManager;
 	}
-
-	public void setAppTester(AppTester appTester) {
-		this.appTester = appTester;
-	}
 	
 	public void initialize(String contextPath) {
 		base = getNewAppBaseConfiguration();
