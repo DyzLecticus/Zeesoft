@@ -1,7 +1,7 @@
 package nl.zeesoft.zsds.resource;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zsd.dialog.DialogInstance;
+import nl.zeesoft.zsd.BaseConfiguration;
 
 public class TestJavaScript {
 	public ZStringBuilder toStringBuilder() {
@@ -105,7 +105,7 @@ public class TestJavaScript {
 		script.append("            typeof(object.contextOutputs)!==\"undefined\" &&\n");
 		script.append("            typeof(object.contextOutputs[0])!==\"undefined\" &&\n");
 		script.append("            typeof(object.contextOutputs[0].promptVariableName)!==\"undefined\" &&\n");
-		script.append("            object.contextOutputs[0].promptVariableName===\"" + DialogInstance.VARIABLE_NEXT_DIALOG + "\"\n");
+		script.append("            object.contextOutputs[0].promptVariableType===\"" + BaseConfiguration.TYPE_NEXT_DIALOG + "\"\n");
 		script.append("            ) {\n");
 		script.append("            ZSDS.test.request.masterContext = \"\";\n");
 		script.append("            ZSDS.test.request.context = \"\";\n");

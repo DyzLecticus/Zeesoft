@@ -74,7 +74,7 @@ public class DialogInstance {
 	}
 
 	public DialogVariable addNextDialogVariable() {
-		return addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_ALPHABETIC);
+		return addVariable(VARIABLE_NEXT_DIALOG,BaseConfiguration.TYPE_NEXT_DIALOG);
 	}
 
 	public DialogVariable addVariable(String name, String type) {

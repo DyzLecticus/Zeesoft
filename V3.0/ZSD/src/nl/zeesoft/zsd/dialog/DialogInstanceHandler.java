@@ -77,7 +77,7 @@ public abstract class DialogInstanceHandler {
 		List<String> iVals = response.entityValueTranslation.toSymbols();
 		for (DialogVariable variable: dialog.getVariables()) {
 			DialogVariableValue dvv = response.getRequest().dialogVariableValues.get(variable.name);
-			if ((!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) &&
+			if ((!variable.type.equals(BaseConfiguration.TYPE_NEXT_DIALOG)) &&
 				(variable.overwrite || dvv==null || dvv.internalValue.length()==0)
 				) {
 				String val = getConfig().getEntityValueTranslator().getTypeValueFromInternalValues(iValsCor,iVals,variable.type,variable.complexName,variable.complexType);

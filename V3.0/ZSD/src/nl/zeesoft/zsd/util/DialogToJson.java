@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.dialog.DialogIO;
 import nl.zeesoft.zsd.dialog.DialogInstance;
 import nl.zeesoft.zsd.dialog.DialogVariable;
@@ -72,7 +73,7 @@ public class DialogToJson {
 					}
 				}
 				for (DialogVariable variable: dialog.getVariables()) {
-					if (!variable.name.equals(DialogInstance.VARIABLE_NEXT_DIALOG)) {
+					if (!variable.type.equals(BaseConfiguration.TYPE_NEXT_DIALOG)) {
 						for (DialogVariablePrompt prompt: variable.prompts) {
 							if (languageContext) {
 								cntxt = dialog.getLanguage();

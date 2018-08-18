@@ -53,9 +53,6 @@ public class SequenceInterpreter {
 			
 			String language = r.request.language;
 			String masterContext = r.request.masterContext;
-
-			ZStringSymbolParser translatedPrompt = null;
-			List<String> translateLanguages = new ArrayList<String>();
 			
 			// Classify language
 			if (r.request.classifyLanguage) {
@@ -93,8 +90,11 @@ public class SequenceInterpreter {
 			}
 
 			// Translate raw input
-			translateLanguages.add(language);
-			translateLanguages.add(BaseConfiguration.LANG_UNI);
+			List<String> translateLanguages = new ArrayList<String>(getConfiguration().getBase().getSupportedLanguages());
+			ZStringSymbolParser translatedPrompt = null;
+			if (!translateLanguages.contains(BaseConfiguration.LANG_UNI)) {
+				translateLanguages.add(BaseConfiguration.LANG_UNI);
+			}
 			if (r.request.translateEntityValues) {
 				if (r.request.prompt.length()>0) {
 					translatedPrompt = getConfiguration().getEntityValueTranslator().translateToInternalValues(r.request.prompt,translateLanguages,r.request.translateEntityTypes,true);
@@ -201,7 +201,6 @@ public class SequenceInterpreter {
 						if (contextsRaw.size()>0 && contexts.size()>0 && contextsRaw.get(0).probNormalized>=contexts.get(0).probNormalized) {
 							r.addDebugLogLine("Selected input sequence master context classification.");
 							contexts = contextsRaw;
-							r.classificationSequence = r.correctedInput;
 						}
 					} else {
 						r.addDebugLogLine("Classify master context for input sequence: ",r.correctedInput);

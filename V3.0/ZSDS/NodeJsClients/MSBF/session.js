@@ -6,7 +6,6 @@ function MsbfSessionHandler(config) {
 };
 
 MsbfSessionHandler.prototype.handleSessionInput = function(session) {
-	//var conversationId = session.message.address.conversation ? session.message.address.conversation.id : null;
 	this.sendSessionDialogRequest(session);
 };
 
@@ -45,15 +44,7 @@ MsbfSessionHandler.prototype.handleSessionDialogResponse = function(that, sessio
 
 MsbfSessionHandler.prototype.updateSessionWorkingRequest = function(that, session, body) {
 	var workingRequest = that.getWorkingRequest(session);
-	if (body.classifiedLanguages && body.classifiedLanguages.length>0) {
-		workingRequest.language = body.classifiedLanguages[0].symbol;
-	}
-	if (body.classifiedMasterContexts && body.classifiedMasterContexts.length>0) {
-		workingRequest.masterContext = body.classifiedMasterContexts[0].symbol;
-	}
-	if (body.classifiedContexts && body.classifiedContexts.length>0) {
-		workingRequest.context = body.classifiedContexts[0].symbol;
-	}
+	var nextDialog = false;
 	if (body.contextOutputs && body.contextOutputs.length>0) {
 		var copyValues = true;
 		out = body.contextOutputs[0];
@@ -64,11 +55,11 @@ MsbfSessionHandler.prototype.updateSessionWorkingRequest = function(that, sessio
 			session.send(out.prompt);
 			workingRequest.prompt = out.prompt;
 		}
-		if (out.promptVariableName && out.promptVariableName=="nextDialog") {
-			copyValues = false;
+		if (out.promptVariableType && out.promptVariableType=="NXD") {
+			nextDialog = true;
 		}
 		if (out.dialogVariableValues) {
-			if (copyValues) {
+			if (!nextDialog) {
 				workingRequest.dialogVariableValues = out.dialogVariableValues;
 			}
 			if (out.dialogVariableValues.length>0) {
@@ -80,6 +71,19 @@ MsbfSessionHandler.prototype.updateSessionWorkingRequest = function(that, sessio
 				}
 			}
 		}
+	}
+	if (body.classifiedLanguages && body.classifiedLanguages.length>0) {
+		workingRequest.language = body.classifiedLanguages[0].symbol;
+	}
+	if (!nextDialog) {
+		if (body.classifiedMasterContexts && body.classifiedMasterContexts.length>0) {
+			workingRequest.masterContext = body.classifiedMasterContexts[0].symbol;
+		}
+		if (body.classifiedContexts && body.classifiedContexts.length>0) {
+			workingRequest.context = body.classifiedContexts[0].symbol;
+		}
+	} else {
+		workingRequest.dialogVariableValues = [];
 	}
 	that.addWorkingVariableValuesToWorkingRequest(session);
 }

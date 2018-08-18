@@ -21,6 +21,9 @@ public class BaseConfiguration {
 	public static final String					LANG_ENG					= "EN";
 	public static final String					LANG_NLD					= "NL";
 
+	// Next dialog indicator
+	public static final String					TYPE_NEXT_DIALOG			= "NXD";
+
 	// Entities
 	public static final String					TYPE_ALPHABETIC				= "ABC";
 	public static final String					TYPE_NUMERIC				= "NUM";
@@ -53,6 +56,7 @@ public class BaseConfiguration {
 	private SortedMap<String,List<String>>		supportedMasterContexts		= new TreeMap<String,List<String>>();
 
 	private boolean								debug						= false;
+	private boolean								selfTest					= false;
 	
 	private String								dataDir						= "";
 	private String								baseDir						= "base/";
@@ -93,6 +97,7 @@ public class BaseConfiguration {
 		json.rootElement.children.add(new JsElem("frowny",frowny,true));
 		json.rootElement.children.add(new JsElem("primaryLanguage",primaryLanguage,true));
 		json.rootElement.children.add(new JsElem("debug","" + debug));
+		json.rootElement.children.add(new JsElem("selfTest","" + selfTest));
 		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
 		json.rootElement.children.add(new JsElem("baseDir",baseDir,true));
 		json.rootElement.children.add(new JsElem("extendDir",extendDir,true));
@@ -144,6 +149,7 @@ public class BaseConfiguration {
 		frowny = json.rootElement.getChildString("frowny",frowny);
 		primaryLanguage = json.rootElement.getChildString("primaryLanguage",primaryLanguage);
 		debug = json.rootElement.getChildBoolean("debug",debug);
+		selfTest = json.rootElement.getChildBoolean("selfTest",selfTest);
 		dataDir = json.rootElement.getChildString("dataDir",dataDir);
 		baseDir = json.rootElement.getChildString("baseDir",baseDir);
 		extendDir = json.rootElement.getChildString("extendDir",extendDir);
@@ -308,6 +314,14 @@ public class BaseConfiguration {
 	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public boolean isSelfTest() {
+		return selfTest;
+	}
+
+	public void setSelfTest(boolean selfTest) {
+		this.selfTest = selfTest;
 	}
 
 	/**
