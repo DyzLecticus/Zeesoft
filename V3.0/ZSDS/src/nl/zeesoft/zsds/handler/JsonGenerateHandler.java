@@ -19,9 +19,9 @@ public class JsonGenerateHandler extends JsonBaseHandlerObject {
 	protected ZStringBuilder buildPostResponse(HttpServletResponse response,JsFile json) {
 		ZStringBuilder r = new ZStringBuilder();
 		if (getConfiguration().generate()) {
-			r = getResponse(200,getConfiguration().getBaseConfig().getName() + " is regenerating its memory.");
+			r = getResponse(200,getConfiguration().getBase().getName() + " is regenerating its memory.");
 		} else {
-			r = setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is already regenerating its memory. Please wait.");
+			r = setErrorResponse(response,503,getConfiguration().getBase().getName() + " is already regenerating its memory. Please wait.");
 		}
 		return r;
 	}

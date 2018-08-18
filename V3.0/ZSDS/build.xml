@@ -78,7 +78,37 @@
 		</delete>
 	</target>
 
-	<target name="war" depends="dist" description="Generate the ZSDS war file">
+	<target name="war" description="Generate the ZSDS war files">
+		<input message="Are you sure you want to generate the war files (y/n)?" validargs="y,n" addproperty="_release"/>
+		<condition property="_abort">
+			<equals arg1="n" arg2="${_release}"/>
+		</condition>
+		<fail if="_abort" message="Aborted release"/>
+		<antcall target="dist"/>
+		<antcall target="makeWar"/>
+	</target>
+	
+	<target name="makeWar">
+		<antcall target="devWar"/>
+		<antcall target="prodWar"/>
+		<copy file="${dist}/README.md" tofile="README.md"/>
+	</target>
+
+	<target name="devWar">
+		<antcall target="prepareWar"/>
+		<copy file="WebContent/WEB-INF/web.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
+		<war destfile="zsds-dev.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/mymanifest" />
+		<antcall target="finishWar"/>
+	</target>
+	
+	<target name="prodWar">
+		<antcall target="prepareWar"/>
+		<copy file="WebContent/WEB-INF/web-prod.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
+		<war destfile="zsds.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/mymanifest" />
+		<antcall target="finishWar"/>
+	</target>
+	
+	<target name="prepareWar">
 		<mkdir dir="${dist}/war"/>
 		<mkdir dir="${dist}/war/WEB-INF"/>
 		<mkdir dir="${dist}/war/WEB-INF/lib"/>
@@ -98,18 +128,17 @@
 		<delete>
             <fileset dir="${build}" includes="**/*.java"/>
 		</delete>
-
-		<copy todir="${dist}/war">
-	        <fileset dir="WebContent" />
-	    </copy>
-
-		<war destfile="zsds.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/mymanifest" />
-
+	</target>
+	
+	<target name="finishWar">
+		<delete>
+            <fileset dir="${dist}/war/WEB-INF/" includes="**/*.xml"/>
+		</delete>
+            	
 		<!-- Remove sources from war directory -->
 		<delete>
             <fileset dir="${dist}/war/WEB-INF/classes" includes="**/*.java"/>
 		</delete>
-
 	</target>
 	
 	<!--

@@ -51,7 +51,6 @@ public class TestTestConfiguration extends TestObject {
 		TestConfiguration tco = new TestConfiguration();
 		tco.setTestCaseDir("tests/");
 		tco.setDefaultSleep(20);
-		tco.setSelfTestAfterInit(false);
 		tco.setRetryIfBusy(false);
 		TestEnvironment env = new TestEnvironment();
 		env.name = "env";

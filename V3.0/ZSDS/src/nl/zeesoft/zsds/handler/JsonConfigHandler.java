@@ -13,6 +13,6 @@ public class JsonConfigHandler extends JsonBaseHandlerObject {
 
 	@Override
 	protected ZStringBuilder buildResponse() {
-		return getConfiguration().getBaseConfig().toJson().toStringBuilderReadFormat();
+		return getConfiguration().getBase().toJson().toStringBuilderReadFormat();
 	}
 }

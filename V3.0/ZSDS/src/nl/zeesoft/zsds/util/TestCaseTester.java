@@ -107,8 +107,8 @@ public class TestCaseTester {
 			if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
 				if (retrying) {
 					retries++;
-					if (retries>=60) {
-						error = "Cancelled test case after 60 retries";
+					if (retries>=configuration.getMaxRetries()) {
+						error = "Cancelled test case after " + configuration.getMaxRetries() + " retries";
 						errorTestCaseIO = tcIO;
 						done = true;
 					} else {

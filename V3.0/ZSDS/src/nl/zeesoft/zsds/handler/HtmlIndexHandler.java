@@ -30,7 +30,7 @@ public class HtmlIndexHandler extends HandlerObject {
 
 	@Override
 	protected ZStringBuilder buildResponse() {
-		IndexHtml index = new IndexHtml();
+		IndexHtml index = new IndexHtml(getConfiguration().getBase().isSelfTest());
 		return index.toStringBuilder();
 	}
 }

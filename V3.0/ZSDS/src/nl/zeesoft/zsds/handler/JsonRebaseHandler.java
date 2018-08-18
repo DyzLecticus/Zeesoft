@@ -16,8 +16,10 @@ public class JsonRebaseHandler extends JsonBaseHandlerObject {
 	@Override
 	protected ZStringBuilder buildPostResponse(HttpServletResponse response,JsFile json) {
 		ZStringBuilder r = new ZStringBuilder();
-		if (getConfiguration().rebase()) {
-			r = getResponse(200,getConfiguration().getBaseConfig().getName() + " has been rebased.");
+		if (!getConfiguration().getBase().isSelfTest()) {
+			r = getResponse(400,getConfiguration().getBase().getName() + " does not support self testing.");
+		} else if (getConfiguration().rebase()) {
+			r = getResponse(200,getConfiguration().getBase().getName() + " has been rebased.");
 		} else {
 			r = setErrorResponse(response,503,"Failed to rebase. Please try again later.");
 		}

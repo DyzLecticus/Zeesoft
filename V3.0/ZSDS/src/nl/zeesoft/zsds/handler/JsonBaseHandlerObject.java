@@ -58,7 +58,7 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 						res = buildResponse();
 					}
 					if (res==null) {
-						out.println(setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is busy. Please wait."));
+						out.println(setErrorResponse(response,503,getConfiguration().getBase().getName() + " is busy. Please wait."));
 					} else {
 						out.println(res);
 					}
@@ -156,7 +156,7 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 	protected ZStringBuilder checkInitialized(HttpServletResponse response) {
 		ZStringBuilder err = new ZStringBuilder();
 		if (!getConfiguration().isInitialized()) {
-			err = setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is waking up. Please wait.");
+			err = setErrorResponse(response,503,getConfiguration().getBase().getName() + " is waking up. Please wait.");
 		}
 		return err;
 	}
@@ -164,7 +164,7 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 	protected ZStringBuilder checkGenerating(HttpServletResponse response) {
 		ZStringBuilder err = new ZStringBuilder();
 		if (getConfiguration().isGenerating()) {
-			err = setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " regenerating its memory. Please wait.");
+			err = setErrorResponse(response,503,getConfiguration().getBase().getName() + " regenerating its memory. Please wait.");
 		}
 		return err;
 	}
@@ -172,7 +172,7 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 	protected ZStringBuilder checkReloading(HttpServletResponse response) {
 		ZStringBuilder err = new ZStringBuilder();
 		if (getConfiguration().isReloading()) {
-			err = setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " refreshing its memory. Please wait.");
+			err = setErrorResponse(response,503,getConfiguration().getBase().getName() + " refreshing its memory. Please wait.");
 		}
 		return err;
 	}
@@ -180,12 +180,14 @@ public abstract class JsonBaseHandlerObject extends HandlerObject {
 	protected ZStringBuilder checkTesting(HttpServletResponse response) {
 		ZStringBuilder err = new ZStringBuilder();
 		SequenceInterpreterTester tester = getConfiguration().getTester();
-		if (tester==null || getConfiguration().isTesting()) {
+		if (getConfiguration().getBase().isSelfTest() && 
+			(tester==null || getConfiguration().isTesting())
+			) {
 			String percentage = "";
 			if (tester!=null) {
 				percentage = " (" + tester.getDonePercentage() + "%)";
 			}
-			err = setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is testing itself" + percentage + ". Please wait.");
+			err = setErrorResponse(response,503,getConfiguration().getBase().getName() + " is testing itself" + percentage + ". Please wait.");
 		}
 		return err;
 	}

@@ -3,7 +3,7 @@ package nl.zeesoft.zsds.resource;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class StateHtml extends HtmlResource {
-	public StateHtml() {
+	public StateHtml(boolean selfTest) {
 		setTitle("ZSDS - State manager");
 		
 		getScriptFiles().add("zsds.js");
@@ -107,12 +107,14 @@ public class StateHtml extends HtmlResource {
 		html.append("</td>\n");
 		html.append("</tr>\n");
 
-		html.append("<tr>\n");
-		html.append("<td>");
-		html.append("<input type=\"button\" value=\"Rebase\" onclick=\"ZSDS.state.rebase();\"/>");
-		html.append("<input type=\"checkbox\" id=\"rebaseCheck\"/>");
-		html.append("</td>\n");
-		html.append("</tr>\n");
+		if (selfTest) {
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<input type=\"button\" value=\"Rebase\" onclick=\"ZSDS.state.rebase();\"/>");
+			html.append("<input type=\"checkbox\" id=\"rebaseCheck\"/>");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+		}
 		
 		html.append("</tbody>\n");
 		html.append("</table>\n");

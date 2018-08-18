@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zsd.BaseConfiguration;
+import nl.zeesoft.zsds.AppBaseConfiguration;
 import nl.zeesoft.zsds.util.AppTester;
 import nl.zeesoft.zsds.util.TestCaseSetTester;
 
@@ -56,8 +56,10 @@ public class TestAppTester extends TestObject {
 		messenger.setPrintDebugMessages(true);
 		messenger.start();
 
-		AppTester appTester = new AppTester(messenger,union,new BaseConfiguration());
-		appTester.getConfiguration().setTestCaseDir("resources/");
+		AppBaseConfiguration base = new AppBaseConfiguration();
+		base.setSelfTest(true);
+		AppTester appTester = new AppTester(messenger,union,base);
+		appTester.getConfiguration().setTestCaseDir("src/");
 		appTester.initialize("http://localhost:8080/ZSDS/dialogRequestHandler.json",false);
 		
 		while (!appTester.isInitialized()) {

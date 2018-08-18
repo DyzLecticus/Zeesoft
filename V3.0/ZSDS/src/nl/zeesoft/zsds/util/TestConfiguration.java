@@ -7,26 +7,26 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zsd.BaseConfiguration;
+import nl.zeesoft.zsds.AppBaseConfiguration;
 
 public class TestConfiguration {
 	private Messenger					messenger			= null;
 	private WorkerUnion					union				= null;
-	private BaseConfiguration			base				= null;
+	private AppBaseConfiguration		base				= null;
 	
 	private String						testCaseDir			= "testCases/";
 	private int							defaultSleep		= 10;
-	private boolean						selfTestAfterInit	= true;
 	private boolean						retryIfBusy			= true;
+	private int							maxRetries			= 60;
 	private List<TestEnvironment>		environments		= new ArrayList<TestEnvironment>();
 	
 	public TestConfiguration() {
 		messenger = null;
 		union = null;
-		base = new BaseConfiguration();
+		base = new AppBaseConfiguration();
 	}
 	
-	public TestConfiguration(Messenger msgr,WorkerUnion uni,BaseConfiguration config) {
+	public TestConfiguration(Messenger msgr,WorkerUnion uni,AppBaseConfiguration config) {
 		messenger = msgr;
 		union = uni;
 		base = config;
@@ -38,7 +38,7 @@ public class TestConfiguration {
 		json.rootElement.children.add(new JsElem("testCaseDir",testCaseDir,true));
 		json.rootElement.children.add(new JsElem("defaultSleep","" + defaultSleep));
 		json.rootElement.children.add(new JsElem("retryIfBusy","" + retryIfBusy));
-		json.rootElement.children.add(new JsElem("selfTestAfterInit","" + selfTestAfterInit));
+		json.rootElement.children.add(new JsElem("maxRetries","" + maxRetries));
 		JsElem envsElem = new JsElem("environments",true);
 		json.rootElement.children.add(envsElem);
 		for (TestEnvironment env: environments) {
@@ -55,7 +55,7 @@ public class TestConfiguration {
 			testCaseDir = json.rootElement.getChildString("testCaseDir",testCaseDir);
 			defaultSleep = json.rootElement.getChildInt("defaultSleep",defaultSleep);
 			retryIfBusy = json.rootElement.getChildBoolean("retryIfBusy",retryIfBusy);
-			selfTestAfterInit = json.rootElement.getChildBoolean("selfTestAfterInit",selfTestAfterInit);
+			maxRetries = json.rootElement.getChildInt("maxRetries",maxRetries);
 			JsElem envsElem = json.rootElement.getChildByName("environments");
 			if (envsElem!=null) {
 				for (JsElem envElem: envsElem.children) {
@@ -77,7 +77,7 @@ public class TestConfiguration {
 		return union;
 	}
 
-	public BaseConfiguration getBase() {
+	public AppBaseConfiguration getBase() {
 		return base;
 	}
 
@@ -100,12 +100,12 @@ public class TestConfiguration {
 		this.defaultSleep = defaultSleep;
 	}
 
-	public boolean isSelfTestAfterInit() {
-		return selfTestAfterInit;
+	public int getMaxRetries() {
+		return maxRetries;
 	}
 
-	public void setSelfTestAfterInit(boolean selfTestAfterInit) {
-		this.selfTestAfterInit = selfTestAfterInit;
+	public void setMaxRetries(int maxRetries) {
+		this.maxRetries = maxRetries;
 	}
 
 	public boolean isRetryIfBusy() {

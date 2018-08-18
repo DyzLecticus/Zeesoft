@@ -55,9 +55,6 @@ public class BaseConfiguration {
 	private SortedMap<String,String>			supportedAlphabets			= new TreeMap<String,String>();
 	private SortedMap<String,List<String>>		supportedMasterContexts		= new TreeMap<String,List<String>>();
 
-	private boolean								debug						= false;
-	private boolean								selfTest					= false;
-	
 	private String								dataDir						= "";
 	private String								baseDir						= "base/";
 	private String								extendDir					= "extend/";
@@ -96,8 +93,6 @@ public class BaseConfiguration {
 		json.rootElement.children.add(new JsElem("smiley",smiley,true));
 		json.rootElement.children.add(new JsElem("frowny",frowny,true));
 		json.rootElement.children.add(new JsElem("primaryLanguage",primaryLanguage,true));
-		json.rootElement.children.add(new JsElem("debug","" + debug));
-		json.rootElement.children.add(new JsElem("selfTest","" + selfTest));
 		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
 		json.rootElement.children.add(new JsElem("baseDir",baseDir,true));
 		json.rootElement.children.add(new JsElem("extendDir",extendDir,true));
@@ -148,8 +143,6 @@ public class BaseConfiguration {
 		smiley = json.rootElement.getChildString("smiley",smiley);
 		frowny = json.rootElement.getChildString("frowny",frowny);
 		primaryLanguage = json.rootElement.getChildString("primaryLanguage",primaryLanguage);
-		debug = json.rootElement.getChildBoolean("debug",debug);
-		selfTest = json.rootElement.getChildBoolean("selfTest",selfTest);
 		dataDir = json.rootElement.getChildString("dataDir",dataDir);
 		baseDir = json.rootElement.getChildString("baseDir",baseDir);
 		extendDir = json.rootElement.getChildString("extendDir",extendDir);
@@ -296,32 +289,6 @@ public class BaseConfiguration {
 	 */
 	public SortedMap<String,List<String>> getSupportedMasterContexts() {
 		return supportedMasterContexts;
-	}
-
-	/**
-	 * Indicates the application is in debug mode.
-	 * 
-	 * @return True if the application is in debug mode
-	 */
-	public boolean isDebug() {
-		return debug;
-	}
-
-	/**
-	 * Sets the application debug mode.
-	 * 
-	 * @param debug Indicates the application is in debug mode
-	 */
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
-
-	public boolean isSelfTest() {
-		return selfTest;
-	}
-
-	public void setSelfTest(boolean selfTest) {
-		this.selfTest = selfTest;
 	}
 
 	/**

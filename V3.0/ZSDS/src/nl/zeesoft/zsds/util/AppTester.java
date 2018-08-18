@@ -7,9 +7,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zsd.BaseConfiguration;
 import nl.zeesoft.zsd.initialize.InitializeClass;
 import nl.zeesoft.zsd.initialize.InitializerListener;
+import nl.zeesoft.zsds.AppBaseConfiguration;
 import nl.zeesoft.zsds.handler.JsonDialogRequestHandler;
 
 public class AppTester implements InitializerListener {
@@ -19,7 +19,7 @@ public class AppTester implements InitializerListener {
 	private TestConfiguration		configuration	= null;
 	private SetTesterInitializer	initializer		= null;
 	
-	public AppTester(Messenger msgr,WorkerUnion uni,BaseConfiguration base) {
+	public AppTester(Messenger msgr,WorkerUnion uni,AppBaseConfiguration base) {
 		configuration = new TestConfiguration(msgr,uni,base);
 	}
 
@@ -63,7 +63,7 @@ public class AppTester implements InitializerListener {
 				}
 			}
 		}
-		if (selfUrl.length()>0) {
+		if (selfUrl.length()>0 && configuration.getBase().isSelfTest()) {
 			configuration.removeEnvironment(ENVIRONMENT_NAME_SELF);
 			addSelfEnvironmentToConfiguration(selfUrl);
 		}
@@ -91,9 +91,11 @@ public class AppTester implements InitializerListener {
 		}
 		
 		initializer = new SetTesterInitializer(configuration);
-		initializer.addListener(this);
-		initializer.start();
-		configuration.debug(this,"Initializing application tester ...");
+		if (configuration.getEnvironments().size()>0) {
+			initializer.addListener(this);
+			initializer.start();
+			configuration.debug(this,"Initializing application tester ...");
+		}
 	}
 	
 	@Override

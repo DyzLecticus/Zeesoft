@@ -54,7 +54,7 @@ public class AppConfiguration {
 	private String						installDir							= "";
 	private boolean						debug								= false;
 	
-	private BaseConfiguration			baseConfig							= null;
+	private AppBaseConfiguration		base								= null;
 	private AppStateManager				stateManager						= null;
 	private AppTester					appTester							= null;
 	
@@ -93,23 +93,26 @@ public class AppConfiguration {
 	}
 	
 	public void initialize(String contextPath) {
-		baseConfig = getNewBaseConfiguration();
+		base = getNewAppBaseConfiguration();
 		String fileName = installDir + "config.json";
 		File file = new File(fileName);
 		if (!file.exists()) {
 			debug(this,"Installing ...");
-			baseConfig.setDebug(debug);
-			baseConfig.setDataDir(installDir + "data/");
-			baseConfig.setGenerateReadFormat(debug);
-			baseConfig.getParameters().put(PARAMETER_SELF_PORT_NUMBER,"8080");
-			baseConfig.toJson().toFile(fileName,true);
+			base.setDebug(debug);
+			base.setSelfTest(debug);
+			base.setDataDir(installDir + "data/");
+			base.setGenerateReadFormat(debug);
+			base.getParameters().put(PARAMETER_SELF_PORT_NUMBER,"8080");
+			base.toJson().toFile(fileName,true);
 			
-			File dir = new File(baseConfig.getFullBaseDir());
+			File dir = new File(base.getFullBaseDir());
 			dir.mkdirs();
-			dir = new File(baseConfig.getFullOverrideDir());
+			dir = new File(base.getFullOverrideDir());
 			dir.mkdirs();
-			dir = new File(baseConfig.getFullExtendDir());
+			dir = new File(base.getFullExtendDir());
 			dir.mkdirs();
+			
+			messenger.setPrintDebugMessages(debug);
 			addStateMasterContext();
 			stateManager.generate(true,false);
 			
@@ -120,17 +123,21 @@ public class AppConfiguration {
 			if (err.length()>0) {
 				messenger.error(this,err.toString());
 			} else {
-				baseConfig.fromJson(json);
-				debug = baseConfig.isDebug();
+				base.fromJson(json);
+				debug = base.isDebug();
+				messenger.setPrintDebugMessages(debug);
 				addStateMasterContext();
 				stateManager.load();
 			}
 		}
+
+		String port = "80";
+		if (base.getParameters().containsKey(PARAMETER_SELF_PORT_NUMBER)) {
+			port = base.getParameters().get(PARAMETER_SELF_PORT_NUMBER);
+		}
+		String selfUrl = "http://localhost:" + port + contextPath; 
+		base.getParameters().put(PARAMETER_SELF_URL,selfUrl);
 		
-		String selfUrl = "http://localhost:" + baseConfig.getParameters().get(PARAMETER_SELF_PORT_NUMBER) + contextPath; 
-		baseConfig.getParameters().put(PARAMETER_SELF_URL,selfUrl);
-		
-		messenger.setPrintDebugMessages(debug);
 		messenger.start();
 		
 		appTester = getNewAppTester();
@@ -224,8 +231,8 @@ public class AppConfiguration {
 		return debug;
 	}
 
-	public BaseConfiguration getBaseConfig() {
-		return baseConfig;
+	public AppBaseConfiguration getBase() {
+		return base;
 	}
 	
 	public AppTester getAppTester() {
@@ -244,12 +251,12 @@ public class AppConfiguration {
 		return stateManager.getLastModifiedHeader();
 	}
 	
-	protected BaseConfiguration getNewBaseConfiguration() {
-		return new BaseConfiguration();
+	protected AppBaseConfiguration getNewAppBaseConfiguration() {
+		return new AppBaseConfiguration();
 	}
 
 	protected AppTester getNewAppTester() {
-		return new AppTester(messenger,union,baseConfig);
+		return new AppTester(messenger,union,base);
 	}
 
 	protected DialogHandlerConfiguration buildNewDialogHandlerConfiguration() {
@@ -261,7 +268,7 @@ public class AppConfiguration {
 	}
 
 	protected DialogHandlerConfiguration getNewDialogHandlerConfiguration() {
-		return new DialogHandlerConfiguration(messenger,union,baseConfig);
+		return new DialogHandlerConfiguration(messenger,union,base);
 	}
 
 	protected SequenceInterpreterTesterInitializer getNewSequenceInterpreterTesterInitializer(DialogHandlerConfiguration configuration) {
@@ -313,15 +320,15 @@ public class AppConfiguration {
 	}
 	
 	private void addStateMasterContext() {
-		if (debug) {
-			if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_ENG)) {
-				List<String> mcs = baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_ENG);
+		if (debug && base.isSelfTest()) {
+			if (base.getSupportedLanguages().contains(BaseConfiguration.LANG_ENG)) {
+				List<String> mcs = base.getSupportedMasterContexts().get(BaseConfiguration.LANG_ENG);
 				if (!mcs.contains(State.MASTER_CONTEXT_STATE)) {
 					mcs.add(State.MASTER_CONTEXT_STATE);
 				}
 			}
-			if (baseConfig.getSupportedLanguages().contains(BaseConfiguration.LANG_NLD)) {
-				List<String> mcs = baseConfig.getSupportedMasterContexts().get(BaseConfiguration.LANG_NLD);
+			if (base.getSupportedLanguages().contains(BaseConfiguration.LANG_NLD)) {
+				List<String> mcs = base.getSupportedMasterContexts().get(BaseConfiguration.LANG_NLD);
 				if (!mcs.contains(State.MASTER_CONTEXT_STATE)) {
 					mcs.add(State.MASTER_CONTEXT_STATE);
 				}

@@ -49,13 +49,16 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	}
 
 	public boolean rebase() {
-		boolean r = writeBaseLine(true);
-		if (r) {
-			lockMe(this);
-			testing = true;
-			initializeTester();
-			unlockMe(this);
-			configuration.debug(this,"Initializing tester ...");
+		boolean r = false;
+		if (configuration.getBase().isSelfTest()) {
+			r = writeBaseLine(true);
+			if (r) {
+				lockMe(this);
+				testing = true;
+				initializeTester();
+				unlockMe(this);
+				configuration.debug(this,"Initializing tester ...");
+			}
 		}
 		return r;
 	}
@@ -90,7 +93,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 			sp.initialize();
 			t.initialize();
 			ds.initialize(t);
-			generator.generate(configuration.getBaseConfig(),sp,t,ds,configuration.getBaseConfig().getFullBaseDir());
+			generator.generate(configuration.getBase(),sp,t,ds,configuration.getBase().getFullBaseDir());
 			lockMe(this);
 			writing = false;
 			lastModifiedHeader = getLastModifiedDateString();
@@ -124,26 +127,32 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 			}
 			if (done) {
 				boolean reloaded = false;
+				boolean testInit = false;
 				lockMe(this);
 				reading = false;
 				reloaded = reload;
 				dialogHandlerConfig = dialogHandlerConfigLoad;
 				lastModifiedHeader = getLastModifiedDateString();
-				testing = true;
-				initializeTester();
+				if (configuration.getBase().isSelfTest()) {
+					testing = true;
+					initializeTester();
+					testInit = true;
+				}
 				unlockMe(this);
 				if (reloaded) {
 					configuration.debug(this,"Reloaded data");
 				} else {
 					configuration.debug(this,"Loaded data");
-					if (configuration.getAppTester().getConfiguration().isSelfTestAfterInit() &&
+					if (configuration.getBase().isSelfTest() &&
 						configuration.getAppTester().getSelfTester()!=null) {
 						if (!configuration.getAppTester().startSelfTesterIfNoSummary()) {
 							configuration.debug(this,"Failed to start self test case tester");
 						}
 					}
 				}
-				configuration.debug(this,"Initializing tester ...");
+				if (testInit) {
+					configuration.debug(this,"Initializing tester ...");
+				}
 			}
 		}
 	}
@@ -154,7 +163,7 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 		boolean writeBaseLine = false;
 		lockMe(this);
 		testing = false;
-		File test = new File(configuration.getBaseConfig().getFullSelfTestBaseLineFileName());
+		File test = new File(configuration.getBase().getFullSelfTestBaseLineFileName());
 		if (!test.exists()) {
 			writeBaseLine = true;
 		}
@@ -261,22 +270,24 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 	
 	private boolean writeBaseLine(boolean rebase) {
 		boolean r = false;
-		lockMe(this);
-		SequenceInterpreterTester t = tester;
-		if (t!=null) {
-			r = true;
-		}
-		unlockMe(this);
-		if (r) {
-			if (rebase) {
-				configuration.debug(this,"Rebasing ...");
+		if (configuration.getBase().isSelfTest()) {
+			lockMe(this);
+			SequenceInterpreterTester t = tester;
+			if (t!=null) {
+				r = true;
 			}
-			ZStringBuilder err = t.getSummary().toFile(configuration.getBaseConfig().getFullSelfTestBaseLineFileName(),true);
-			if (err.length()>0) {
-				configuration.getMessenger().error(this,err.toString());
-				r = false;
-			} else if (rebase) {
-				configuration.debug(this,"Rebased");
+			unlockMe(this);
+			if (r) {
+				if (rebase) {
+					configuration.debug(this,"Rebasing ...");
+				}
+				ZStringBuilder err = t.getSummary().toFile(configuration.getBase().getFullSelfTestBaseLineFileName(),true);
+				if (err.length()>0) {
+					configuration.getMessenger().error(this,err.toString());
+					r = false;
+				} else if (rebase) {
+					configuration.debug(this,"Rebased");
+				}
 			}
 		}
 		return r;

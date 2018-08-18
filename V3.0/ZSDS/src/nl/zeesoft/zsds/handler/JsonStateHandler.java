@@ -19,4 +19,9 @@ public class JsonStateHandler extends JsonSelfTestSummaryHandler {
 		}
 		return r;
 	}
+
+	@Override
+	protected String getOkResponse() {
+		return getConfiguration().getBase().getName() + " is ready to chat";
+	}
 }

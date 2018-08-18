@@ -17,9 +17,9 @@ public class JsonReloadHandler extends JsonBaseHandlerObject {
 	protected ZStringBuilder buildPostResponse(HttpServletResponse response,JsFile json) {
 		ZStringBuilder r = new ZStringBuilder();
 		if (getConfiguration().reload()) {
-			r = getResponse(200,getConfiguration().getBaseConfig().getName() + " is refreshing its memory.");
+			r = getResponse(200,getConfiguration().getBase().getName() + " is refreshing its memory.");
 		} else {
-			r = setErrorResponse(response,503,getConfiguration().getBaseConfig().getName() + " is already refreshing its memory. Please wait.");
+			r = setErrorResponse(response,503,getConfiguration().getBase().getName() + " is already refreshing its memory. Please wait.");
 		}
 		return r;
 	}

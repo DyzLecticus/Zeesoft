@@ -30,7 +30,7 @@ public class HtmlStateHandler extends HandlerObject {
 
 	@Override
 	protected ZStringBuilder buildResponse() {
-		StateHtml html = new StateHtml();
+		StateHtml html = new StateHtml(getConfiguration().getBase().isSelfTest());
 		return html.toStringBuilder();
 	}
 }
