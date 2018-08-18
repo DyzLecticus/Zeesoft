@@ -1,4 +1,4 @@
-package nl.zeesoft.zsds.util;
+package nl.zeesoft.zsds.tester;
 
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;

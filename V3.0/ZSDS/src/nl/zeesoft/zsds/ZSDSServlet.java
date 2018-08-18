@@ -11,9 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zsds.handler.HandlerObject;
 
-/**
- * Servlet implementation class ZIDSServlet
- */
 @WebServlet("/ZSDSServlet")
 public class ZSDSServlet extends HttpServlet {
 	private static final long			serialVersionUID	= 1L;

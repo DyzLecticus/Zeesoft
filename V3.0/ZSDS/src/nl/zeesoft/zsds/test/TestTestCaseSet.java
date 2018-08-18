@@ -7,9 +7,9 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsd.dialog.DialogRequest;
 import nl.zeesoft.zsd.dialog.DialogResponse;
-import nl.zeesoft.zsds.util.TestCase;
-import nl.zeesoft.zsds.util.TestCaseIO;
-import nl.zeesoft.zsds.util.TestCaseSet;
+import nl.zeesoft.zsds.tester.TestCase;
+import nl.zeesoft.zsds.tester.TestCaseIO;
+import nl.zeesoft.zsds.tester.TestCaseSet;
 
 public class TestTestCaseSet extends TestObject {
 	public TestTestCaseSet(Tester tester) {

@@ -5,8 +5,8 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsds.util.TestConfiguration;
-import nl.zeesoft.zsds.util.TestEnvironment;
+import nl.zeesoft.zsds.tester.TestConfiguration;
+import nl.zeesoft.zsds.tester.TestEnvironment;
 
 public class TestTestConfiguration extends TestObject {
 	public TestTestConfiguration(Tester tester) {

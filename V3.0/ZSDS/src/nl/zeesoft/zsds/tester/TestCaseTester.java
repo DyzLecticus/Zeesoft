@@ -1,4 +1,4 @@
-package nl.zeesoft.zsds.util;
+package nl.zeesoft.zsds.tester;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -111,12 +111,12 @@ public class TestCaseTester {
 						error = "Cancelled test case after " + configuration.getMaxRetries() + " retries";
 						errorTestCaseIO = tcIO;
 						done = true;
-					} else {
+					} else if ((retries % 10) == 1){
 						configuration.debug(this,"Retrying ...");
 					}
 				} else {
 					retrying = true;
-					retries = 1;
+					retries = 0;
 					if (sleep<1000) {
 						worker.setSleep(1000);
 					}

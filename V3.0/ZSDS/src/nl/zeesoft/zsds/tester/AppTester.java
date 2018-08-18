@@ -1,4 +1,4 @@
-package nl.zeesoft.zsds.util;
+package nl.zeesoft.zsds.tester;
 
 import java.io.File;
 import java.io.InputStream;
@@ -69,20 +69,22 @@ public class AppTester implements InitializerListener {
 			addSelfEnvironmentToConfiguration(selfUrl);
 		}
 		
-		for (TestEnvironment env: configuration.getEnvironments()) {
-			File dir = new File(configuration.getFullEnvironmentDirectory(env.name));
-			boolean copyFiles = false;
-			if (!dir.exists()) {
-				if (!dir.mkdirs()) {
-					configuration.error(this,"Unable to create directory: " + dir.getAbsolutePath());
-					break;
-				} else {
-					copyFiles = env.name.equals(ENVIRONMENT_NAME_SELF);
+		if (write) {
+			for (TestEnvironment env: configuration.getEnvironments()) {
+				File dir = new File(configuration.getFullEnvironmentDirectory(env.name));
+				boolean copyFiles = false;
+				if (!dir.exists()) {
+					if (!dir.mkdirs()) {
+						configuration.error(this,"Unable to create directory: " + dir.getAbsolutePath());
+						break;
+					} else {
+						copyFiles = env.name.equals(ENVIRONMENT_NAME_SELF);
+					}
 				}
-			}
-			if (copyFiles) {
-				copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",GENERIC_TEST_CASES_FILE);
-				copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",ROOM_TEST_CASE_FILE);
+				if (copyFiles) {
+					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",GENERIC_TEST_CASES_FILE);
+					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",ROOM_TEST_CASE_FILE);
+				}
 			}
 		}
 		
@@ -125,6 +127,14 @@ public class AppTester implements InitializerListener {
 		}
 		if (done) {
 			configuration.debug(this,"Initialized application tester");
+			if (configuration.getBase().isSelfTest()) {
+				TestCaseSetTester selfTester = getSelfTester();
+				if (selfTester!=null && !selfTester.isTesting()) {
+					if (!selfTester.startIfNoSummary()) {
+						configuration.debug(this,"Failed to start self test case tester");
+					}
+				}
+			}
 		}
 	}
 	
@@ -152,15 +162,6 @@ public class AppTester implements InitializerListener {
 	
 	public TestCaseSetTester getTester(String environmentName) {
 		return initializer.getTester(environmentName);
-	}
-	
-	public boolean startSelfTesterIfNoSummary() {
-		boolean r = false;
-		TestCaseSetTester selfTester = getSelfTester();
-		if (selfTester!=null) {
-			r = selfTester.startIfNoSummary();
-		}
-		return r;
 	}
 	
 	protected void addSelfEnvironmentToConfiguration(String selfUrl) {

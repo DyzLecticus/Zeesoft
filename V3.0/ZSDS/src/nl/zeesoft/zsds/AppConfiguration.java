@@ -43,7 +43,7 @@ import nl.zeesoft.zsds.handler.JsonStateHandler;
 import nl.zeesoft.zsds.handler.JsonTestConfigHandler;
 import nl.zeesoft.zsds.handler.JsonTestDialogRequestHandler;
 import nl.zeesoft.zsds.handler.TestJavaScriptHandler;
-import nl.zeesoft.zsds.util.AppTester;
+import nl.zeesoft.zsds.tester.AppTester;
 
 public class AppConfiguration {
 	public static final String			PARAMETER_SELF_PORT_NUMBER			= "selfPortNumber"; 

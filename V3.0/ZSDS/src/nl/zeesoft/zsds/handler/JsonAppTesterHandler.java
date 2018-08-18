@@ -11,8 +11,8 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsds.AppConfiguration;
-import nl.zeesoft.zsds.util.AppTester;
-import nl.zeesoft.zsds.util.TestCaseSetTester;
+import nl.zeesoft.zsds.tester.AppTester;
+import nl.zeesoft.zsds.tester.TestCaseSetTester;
 
 public class JsonAppTesterHandler extends HandlerObject {
 	public static final String	PATH	= "/appTester.json";

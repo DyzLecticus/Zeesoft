@@ -1,4 +1,4 @@
-package nl.zeesoft.zsds.util;
+package nl.zeesoft.zsds.tester;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;

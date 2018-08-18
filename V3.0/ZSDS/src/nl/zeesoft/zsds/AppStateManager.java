@@ -143,12 +143,6 @@ public class AppStateManager extends Locker implements InitializerListener, Test
 					configuration.debug(this,"Reloaded data");
 				} else {
 					configuration.debug(this,"Loaded data");
-					if (configuration.getBase().isSelfTest() &&
-						configuration.getAppTester().getSelfTester()!=null) {
-						if (!configuration.getAppTester().startSelfTesterIfNoSummary()) {
-							configuration.debug(this,"Failed to start self test case tester");
-						}
-					}
 				}
 				if (testInit) {
 					configuration.debug(this,"Initializing tester ...");

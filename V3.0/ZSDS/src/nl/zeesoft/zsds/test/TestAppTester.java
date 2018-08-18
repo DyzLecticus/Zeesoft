@@ -7,8 +7,8 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsds.AppBaseConfiguration;
-import nl.zeesoft.zsds.util.AppTester;
-import nl.zeesoft.zsds.util.TestCaseSetTester;
+import nl.zeesoft.zsds.tester.AppTester;
+import nl.zeesoft.zsds.tester.TestCaseSetTester;
 
 public class TestAppTester extends TestObject {
 	public TestAppTester(Tester tester) {

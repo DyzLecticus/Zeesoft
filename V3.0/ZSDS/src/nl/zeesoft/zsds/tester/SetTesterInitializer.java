@@ -1,4 +1,4 @@
-package nl.zeesoft.zsds.util;
+package nl.zeesoft.zsds.tester;
 
 import java.io.File;
 import java.util.ArrayList;
