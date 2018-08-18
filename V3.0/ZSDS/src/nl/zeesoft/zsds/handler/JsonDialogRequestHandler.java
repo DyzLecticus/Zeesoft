@@ -15,6 +15,7 @@ public class JsonDialogRequestHandler extends JsonBaseHandlerObject {
 	public JsonDialogRequestHandler(AppConfiguration config) {
 		super(config,PATH);
 		setAllowGet(false);
+		setCheckJson(true);
 	}
 	
 	@Override

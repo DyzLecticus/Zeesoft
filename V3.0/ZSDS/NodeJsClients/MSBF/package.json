@@ -20,6 +20,9 @@
   "license": "ISC",
   "dependencies": {
     "botbuilder": "^3.14.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
     "istanbul": "^0.4.5",
     "jasmine": "^2.9.0"
   }
