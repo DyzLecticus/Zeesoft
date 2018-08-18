@@ -96,27 +96,35 @@ public class AppConfiguration {
 		base = getNewAppBaseConfiguration();
 		String fileName = installDir + "config.json";
 		File file = new File(fileName);
+		String port = "80";
+		if (debug) {
+			port = "8080";
+		}
 		if (!file.exists()) {
 			debug(this,"Installing ...");
 			base.setDebug(debug);
 			base.setSelfTest(debug);
-			base.setDataDir(installDir + "data/");
 			base.setGenerateReadFormat(debug);
-			base.getParameters().put(PARAMETER_SELF_PORT_NUMBER,"8080");
-			base.toJson().toFile(fileName,true);
-			
+			base.setDataDir(installDir + "data/");
+			base.getParameters().put(PARAMETER_SELF_PORT_NUMBER,port);
+			ZStringBuilder err = base.toJson().toFile(fileName,true);
+			if (err.length()>0) {
+				messenger.error(this,err.toString());
+			}
 			File dir = new File(base.getFullBaseDir());
 			dir.mkdirs();
 			dir = new File(base.getFullOverrideDir());
 			dir.mkdirs();
 			dir = new File(base.getFullExtendDir());
 			dir.mkdirs();
-			
+				
 			messenger.setPrintDebugMessages(debug);
 			addStateMasterContext();
 			stateManager.generate(true,false);
 			
-			debug(this,"Installed");
+			if (err.length()==0) {
+				debug(this,"Installed");
+			}
 		} else {
 			JsFile json = new JsFile();
 			ZStringBuilder err = json.fromFile(fileName);
@@ -131,7 +139,9 @@ public class AppConfiguration {
 			}
 		}
 
-		String port = "80";
+		if (debug) {
+			port = "8080";
+		}
 		if (base.getParameters().containsKey(PARAMETER_SELF_PORT_NUMBER)) {
 			port = base.getParameters().get(PARAMETER_SELF_PORT_NUMBER);
 		}
