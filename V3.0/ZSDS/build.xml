@@ -89,6 +89,10 @@
 	</target>
 	
 	<target name="makeWar">
+		<manifest file="${dist}/warmanifest">
+			<attribute name="Built-By" value="${version} ${creator}"/>
+			<attribute name="Class-path" value="nl/zeesoft/zsds nl/zeesoft/zsds/dialogs nl/zeesoft/zsds/dialogs/dutch nl/zeesoft/zsds/dialogs/english nl/zeesoft/zsds/handler nl/zeesoft/zsds/resource zdk.jar zsd.jar"/>  
+		</manifest>		
 		<antcall target="devWar"/>
 		<antcall target="prodWar"/>
 		<copy file="${dist}/README.md" tofile="README.md"/>
@@ -97,14 +101,14 @@
 	<target name="devWar">
 		<antcall target="prepareWar"/>
 		<copy file="WebContent/WEB-INF/web.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
-		<war destfile="zsds-dev.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/mymanifest" />
+		<war destfile="zsds-dev.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
 		<antcall target="finishWar"/>
 	</target>
 	
 	<target name="prodWar">
 		<antcall target="prepareWar"/>
 		<copy file="WebContent/WEB-INF/web-prod.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
-		<war destfile="zsds.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/mymanifest" />
+		<war destfile="zsds.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
 		<antcall target="finishWar"/>
 	</target>
 	
@@ -112,7 +116,11 @@
 		<mkdir dir="${dist}/war"/>
 		<mkdir dir="${dist}/war/WEB-INF"/>
 		<mkdir dir="${dist}/war/WEB-INF/lib"/>
-
+		<mkdir dir="${dist}/war/META-INF"/>
+		
+		<copy file="${dist}/zdk.jar" tofile="${dist}/war/WEB-INF/lib/zdk.jar"/>
+		<copy file="${dist}/zsd.jar" tofile="${dist}/war/WEB-INF/lib/zsd.jar"/>
+	
 		<!-- Copy sources to build directory -->
 		<copy todir="${build}">
             <fileset dir="${src}" />
@@ -140,85 +148,4 @@
             <fileset dir="${dist}/war/WEB-INF/classes" includes="**/*.java"/>
 		</delete>
 	</target>
-	
-	<!--
-	<target name="release" description="Release the ZSDS">
-		<antcall target="failIfReleaseExists"/>
-		<input message="Are you sure you want to release version ${version} (y/n)?" validargs="y,n" addproperty="_release"/>
-		<condition property="_abort">
-			<equals arg1="n" arg2="${_release}"/>
-		</condition>
-		<fail if="_abort" message="Aborted release"/>		
-		<antcall target="releaseConfirmed"/>
-	</target>
-
-	<target name="releaseConfirmed">
-		<antcall target="failIfReleaseExists"/>
-		<antcall target="clean"/>
-		<antcall target="dist"/>
-		<antcall target="javadoc"/>
-		<mkdir dir="${releases}"/>
-		<mkdir dir="${releases}/${version}"/>
-		<copy file="${dist}/zdk.jar" tofile="${releases}/${version}/zdk.jar"/>
-		<copy file="${lib}/zdk-javadoc.zip" tofile="${releases}/${version}/zdk-javadoc.zip"/>
-		<copy file="${dist}/zsd.jar" tofile="${releases}/${version}/zsd.jar"/>
-		<copy file="${dist}/zsd-javadoc.zip" tofile="${releases}/${version}/zsd-javadoc.zip"/>
-		<copy file="${dist}/zsds.jar" tofile="${releases}/${version}/zsds.jar"/>
-		<copy file="${dist}/zsds-javadoc.zip" tofile="${releases}/${version}/zsds-javadoc.zip"/>
-		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
-		<zip destfile="${releases}/zsds-${version}.zip" basedir="${releases}/${version}"/>
-		<delete dir="${releases}/${version}"/>
-		<copy file="${dist}/README.md" tofile="README.md"/>
-	</target>
-	
-	<target name="javadoc" description="Generate the ZSDS documentation">
-		<mkdir dir="${dist}"/>
-		<mkdir dir="${dist}/src"/>
-		<unzip src="${lib}/zdk.jar" dest="${dist}/src">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		<unzip src="${lib}/zsc.jar" dest="${dist}/src">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		<unzip src="${lib}/zspr.jar" dest="${dist}/src">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		<unzip src="${lib}/zsd.jar" dest="${dist}/src">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		<unzip src="${lib}/zdm.jar" dest="${dist}/src">
-		    <patternset>
-		        <include name="**/*.java"/>
-		    </patternset>
-		</unzip>
-		<copy todir="${dist}/src">
-            <fileset dir="${src}" />
-        </copy>		
-		<mkdir dir="${dist}/javadoc"/>
-		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zsds,nl.zeesoft.zsds.dialog"/>
-		<zip destfile="${dist}/zsd-javadoc.zip" basedir="${dist}/javadoc"/>
-		<delete dir="${dist}/javadoc"/>
-		<delete dir="${dist}/src"/>
-	</target>
-
-	<target name="clean" description="Clean up">
-		<delete dir="${build}"/>
-		<delete dir="${dist}"/>
-	</target>
-
-	<target name="failIfReleaseExists">
-		<condition property="_released">
-			<available file="${releases}/zsds-${version}.zip"/>
-		</condition>
-		<fail if="_released" message="Version ${version} has already been released"/>		
-	</target>
-	-->
 </project>
