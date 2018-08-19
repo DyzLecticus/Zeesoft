@@ -7,6 +7,7 @@ public class TestHtml extends HtmlResource {
 		setTitle("ZSDS - Test");
 		
 		getScriptFiles().add("zsds.js");
+		getScriptFiles().add("apiClient.js");
 		getScriptFiles().add("test.js");
 		getStyleFiles().add("zsds.css");
 		

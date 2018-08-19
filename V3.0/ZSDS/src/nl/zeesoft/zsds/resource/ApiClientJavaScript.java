@@ -1,0 +1,112 @@
+package nl.zeesoft.zsds.resource;
+
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zsd.BaseConfiguration;
+import nl.zeesoft.zsd.dialog.DialogRequest;
+
+public class ApiClientJavaScript {
+	public ZStringBuilder toStringBuilder() {
+		
+		DialogRequest request = new DialogRequest();
+		request.setAllActions(true);
+		request.appendDebugLog = false;
+		request.randomizeOutput = true;
+		JsFile json = request.toJson();
+		ZStringBuilder req = json.toStringBuilder();
+		
+		ZStringBuilder script = new ZStringBuilder();
+		
+		script.append("var ZSDS = ZSDS || {};\n");
+		script.append("ZSDS.api = {};\n");
+		script.append("\n");
+		script.append("ZSDS.api.Client = function(workingRequest,workingVariableValues) {\n");
+		script.append("    var that = this;\n");
+		script.append("\n");
+		script.append("    this.processRequestResponse = function(json) {\n");
+		script.append("        that.response.output = \"\";\n");
+		script.append("        that.response.prompt = \"\";\n");
+		script.append("        var nextDialog = false;\n");
+		script.append("        if (json.contextOutputs && json.contextOutputs.length>0) {\n");
+		script.append("            var copyValues = true;\n");
+		script.append("            out = json.contextOutputs[0];\n");
+		script.append("            if (out.output.length>0) {\n");
+		script.append("                that.response.output = out.output;\n");
+		script.append("            }\n");
+		script.append("            if (out.prompt.length>0) {\n");
+		script.append("                that.response.prompt = out.prompt;\n");
+		script.append("                that.workingRequest.prompt = out.prompt;\n");
+		script.append("            }\n");
+		script.append("            if (out.promptVariableType && out.promptVariableType==\"" + BaseConfiguration.TYPE_NEXT_DIALOG + "\") {\n");
+		script.append("                nextDialog = true;\n");
+		script.append("            }\n");
+		script.append("            if (out.dialogVariableValues) {\n");
+		script.append("                if (!nextDialog) {\n");
+		script.append("                    that.workingRequest.dialogVariableValues = out.dialogVariableValues;\n");
+		script.append("                }\n");
+		script.append("                if (out.dialogVariableValues.length>0) {\n");
+		script.append("                    for (var i = 0; i < out.dialogVariableValues.length; i++) {\n");
+		script.append("                        var value = out.dialogVariableValues[i];\n");
+		script.append("                        if (value.session) {\n");
+		script.append("                            that.workingVariableValues = that.workingVariableValues || {};\n");
+		script.append("                            that.workingVariableValues[value.name] = value;\n");
+		script.append("                        }\n");
+		script.append("                    }\n");
+		script.append("                }\n");
+		script.append("            }\n");
+		script.append("        }\n");
+		script.append("        if (json.classifiedLanguages && json.classifiedLanguages.length>0) {\n");
+		script.append("            that.workingRequest.language = json.classifiedLanguages[0].symbol;\n");
+		script.append("        }\n");
+		script.append("        if (!nextDialog) {\n");
+		script.append("            if (json.classifiedMasterContexts && json.classifiedMasterContexts.length>0) {\n");
+		script.append("                that.workingRequest.masterContext = json.classifiedMasterContexts[0].symbol;\n");
+		script.append("            }\n");
+		script.append("            if (json.classifiedContexts && json.classifiedContexts.length>0) {\n");
+		script.append("                that.workingRequest.context = json.classifiedContexts[0].symbol;\n");
+		script.append("            }\n");
+		script.append("        } else {\n");
+		script.append("            that.workingRequest.dialogVariableValues = [];\n");
+		script.append("        }\n");
+		script.append("        that.workingVariableValues = that.workingVariableValues || {};\n");
+		script.append("        var vars = that.workingRequest.dialogVariableValues;\n");
+		script.append("        for (name in that.workingVariableValues) {\n");
+		script.append("            var found = false;\n");
+		script.append("            for (var i = 0; i < vars.length; i++) {\n");
+		script.append("                if (vars.name==name) {\n");
+		script.append("                    found = true;\n");
+		script.append("                    break;\n");
+		script.append("                }\n");
+		script.append("            }\n");
+		script.append("            if (!found) {\n");
+		script.append("                vars[vars.length] = that.workingVariableValues[name];\n");
+		script.append("            }\n");
+		script.append("        }\n");
+		script.append("    }\n");
+		script.append("\n");
+		script.append("    this.getNewRequest = function() {\n");
+		script.append("        var r = " + req + ";\n");
+		script.append("        return r;\n");
+		script.append("    }\n");
+		script.append("\n");
+		script.append("    this.workingRequest = that.getNewRequest();\n");
+		script.append("    this.workingVariableValues = {};\n");
+		script.append("    this.response = {};\n");
+		script.append("    this.response.output = \"\";\n");
+		script.append("    this.response.prompt = \"\";\n");
+		script.append("\n");
+		script.append("    if (workingRequest) {\n");
+		script.append("        this.workingRequest = workingRequest;\n");
+		script.append("    }\n");
+		script.append("    if (workingVariableValues) {\n");
+		script.append("        this.workingVariableValues = workingVariableValues;\n");
+		script.append("    }\n");
+		script.append("};\n");
+		script.append("\n");
+		script.append("var exports = exports || {};\n");
+		script.append("exports.Client = ZSDS.api.Client;\n");
+		script.append("\n");
+		
+		return script;
+	}
+}

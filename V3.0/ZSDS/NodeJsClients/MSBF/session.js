@@ -1,5 +1,6 @@
 var request = require('request');
 var dr = require('./dialogRequest');
+var zsdsApiClient = require('./zsdsApiClient');
 
 function MsbfSessionHandler(config) {
 	this.config = config;
@@ -43,49 +44,23 @@ MsbfSessionHandler.prototype.handleSessionDialogResponse = function(that, sessio
 };
 
 MsbfSessionHandler.prototype.updateSessionWorkingRequest = function(that, session, body) {
-	var workingRequest = that.getWorkingRequest(session);
-	var nextDialog = false;
-	if (body.contextOutputs && body.contextOutputs.length>0) {
-		var copyValues = true;
-		out = body.contextOutputs[0];
-		if (out.output.length>0) {
-			session.send(out.output);
-		}
-		if (out.prompt.length>0) {
-			session.send(out.prompt);
-			workingRequest.prompt = out.prompt;
-		}
-		if (out.promptVariableType && out.promptVariableType=="NXD") {
-			nextDialog = true;
-		}
-		if (out.dialogVariableValues) {
-			if (!nextDialog) {
-				workingRequest.dialogVariableValues = out.dialogVariableValues;
-			}
-			if (out.dialogVariableValues.length>0) {
-				for (var i = 0; i < out.dialogVariableValues.length; i++) {
-					var value = out.dialogVariableValues[i];
-					if (value.session) {
-						that.setWorkingVariableValue(session,value);
-					}
-				}
-			}
-		}
+	var workingRequest = null;
+	var workingVariableValues = null;
+	if (session.conversationData.workingRequest) {
+		workingRequest = session.conversationData.workingRequest;
 	}
-	if (body.classifiedLanguages && body.classifiedLanguages.length>0) {
-		workingRequest.language = body.classifiedLanguages[0].symbol;
+	session.conversationData.workingVariableValues = session.conversationData.workingVariableValues || {};
+	workingVariableValues = session.conversationData.workingVariableValues;
+	
+	var client = new zsdsApiClient.Client(workingRequest,workingVariableValues);
+	
+	client.processRequestResponse(body);
+	if (client.response.output.length>0) {
+		session.send(client.response.output);
 	}
-	if (!nextDialog) {
-		if (body.classifiedMasterContexts && body.classifiedMasterContexts.length>0) {
-			workingRequest.masterContext = body.classifiedMasterContexts[0].symbol;
-		}
-		if (body.classifiedContexts && body.classifiedContexts.length>0) {
-			workingRequest.context = body.classifiedContexts[0].symbol;
-		}
-	} else {
-		workingRequest.dialogVariableValues = [];
+	if (client.response.prompt.length>0) {
+		session.send(client.response.prompt);
 	}
-	that.addWorkingVariableValuesToWorkingRequest(session);
 }
 
 MsbfSessionHandler.prototype.getWorkingRequest = function(session) {

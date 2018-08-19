@@ -21,6 +21,7 @@ import nl.zeesoft.zsd.interpret.SequenceInterpreterTester;
 import nl.zeesoft.zsd.interpret.SequenceInterpreterTesterInitializer;
 import nl.zeesoft.zsd.util.LanguageJsonGenerator;
 import nl.zeesoft.zsds.dialogs.State;
+import nl.zeesoft.zsds.handler.ApiClientJavaScriptHandler;
 import nl.zeesoft.zsds.handler.BaseJavaScriptHandler;
 import nl.zeesoft.zsds.handler.BaseStyleSheetHandler;
 import nl.zeesoft.zsds.handler.EnvironmentJavaScriptHandler;
@@ -302,6 +303,7 @@ public class AppConfiguration {
 		// Main application
 		r.add(new BaseStyleSheetHandler(this));
 		r.add(new BaseJavaScriptHandler(this));
+		r.add(new ApiClientJavaScriptHandler(this));
 		r.add(new TestJavaScriptHandler(this));
 		r.add(new HtmlNotFoundHandler(this));
 		r.add(new HtmlIndexHandler(this));
