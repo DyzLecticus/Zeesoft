@@ -46,6 +46,10 @@ public class TestCaseSet {
 				tcJs.rootElement = tcElem;
 				TestCase tc = new TestCase();
 				tc.fromJson(tcJs);
+				TestCase existing = getTestCase(tc.name);
+				if (existing!=null) {
+					testCases.remove(existing);
+				}
 				testCases.add(tc);
 			}
 		}

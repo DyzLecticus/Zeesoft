@@ -73,20 +73,16 @@ public class AppTester implements InitializerListener {
 		if (write) {
 			for (TestEnvironment env: configuration.getEnvironments()) {
 				File dir = new File(configuration.getFullEnvironmentDirectory(env.name));
-				boolean copyFiles = false;
+				boolean copyFiles = env.name.equals(ENVIRONMENT_NAME_SELF);
 				if (!dir.exists()) {
 					if (!dir.mkdirs()) {
+						copyFiles = false;
 						configuration.error(this,"Unable to create directory: " + dir.getAbsolutePath());
 						break;
-					} else {
-						copyFiles = env.name.equals(ENVIRONMENT_NAME_SELF);
 					}
 				}
 				if (copyFiles) {
-					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",GENERIC_TEST_CASES_FILE);
-					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",ROOM_TEST_CASE_FILE);
-					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",SUPPORT_TEST_CASE_FILE);
-					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",FOREIGN_TRANSFER_TEST_CASES_FILE);
+					copySelfTestCaseFileFromWar(configuration.getBase().isDebug());
 				}
 			}
 		}
@@ -99,9 +95,20 @@ public class AppTester implements InitializerListener {
 		}
 	}
 	
-	protected void copyTestCaseFileFromWar(String directory,String name) {
+	protected void copySelfTestCaseFileFromWar(boolean force) {
+		copyTestCaseFileFromWar(configuration.getFullEnvironmentDirectory(ENVIRONMENT_NAME_SELF),force);
+	}
+	
+	protected void copyTestCaseFileFromWar(String directory,boolean force) {
+		copyTestCaseFileFromWar(directory,GENERIC_TEST_CASES_FILE,force);
+		copyTestCaseFileFromWar(directory,ROOM_TEST_CASE_FILE,force);
+		copyTestCaseFileFromWar(directory,SUPPORT_TEST_CASE_FILE,force);
+		copyTestCaseFileFromWar(directory,FOREIGN_TRANSFER_TEST_CASES_FILE,force);
+	}
+	
+	protected void copyTestCaseFileFromWar(String directory,String name, boolean force) {
 		File selfTestCases = new File(directory + name);
-		if (!selfTestCases.exists()) {
+		if (force || !selfTestCases.exists()) {
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			InputStream input = classLoader.getResourceAsStream(name);
 			if (input==null) {
@@ -172,7 +179,7 @@ public class AppTester implements InitializerListener {
 		self.name = ENVIRONMENT_NAME_SELF;
 		self.url = selfUrl;
 		self.directory = self.name + "/";
-		configuration.getEnvironments().add(self);
+		configuration.getEnvironments().add(0,self);
 	}
 
 	public TestConfiguration getConfiguration() {

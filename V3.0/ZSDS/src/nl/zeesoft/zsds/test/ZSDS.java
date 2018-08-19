@@ -43,12 +43,12 @@ public class ZSDS extends LibraryObject {
 		System.out.println(" * Automated self and DTAP environment integration testing  ");
 		System.out.println(" * Highly configurable, extendable and scalable architecture  ");
 		System.out.println();
-		System.out.println("Out-of-the-box Universal, English and Dutch entities include;  ");
+		System.out.println("Supported universal, English and Dutch entities include;  ");
 		System.out.println(" * Names of people  ");
 		System.out.println(" * Country and language names  ");
 		System.out.println(" * Currency codes and names  ");
 		System.out.println(" * Typed smiley and frowny emoticons  ");
-		System.out.println(" * Month, date, time and duration  ");
+		System.out.println(" * Months, dates, time and durations  ");
 		System.out.println(" * Confirmation booleans  ");
 		System.out.println(" * Integer numbers  ");
 		System.out.println(" * Profanity  ");
@@ -58,8 +58,9 @@ public class ZSDS extends LibraryObject {
 		System.out.println("**Downloads**  ");
 		System.out.println("Click [here](" + getBaseReleaseUrl() + "zsds-dev.war) to download the latest ZSDS development WAR.  ");
 		System.out.println("Click [here](" + getBaseReleaseUrl() + "zsds.war) to download the latest ZSDS production WAR.  ");
-		System.out.println("The only difference between the war files is the initial configuration.  ");
+		System.out.println("The only difference between the WAR files is the initial configuration.  ");
 		System.out.println("In the development WAR, debugging and automated self testing are enabled by default.  ");
+		System.out.println("Both WAR files contain the full source code, documentation and build scripts.  ");
 		System.out.println();
 		describeTesting(ZSDS.class);
 		System.out.println();

@@ -288,7 +288,9 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		json.rootElement.children.add(new JsElem("testCases","" + testers.size()));
 		json.rootElement.children.add(new JsElem("successful","" + successful));
 		json.rootElement.children.add(new JsElem("responses","" + responses));
-		json.rootElement.children.add(new JsElem("averageResponseMs","" + (totalTime / responses)));
+		if (responses>0) {
+			json.rootElement.children.add(new JsElem("averageResponseMs","" + (totalTime / responses)));
+		}
 		if (dialogSet!=null && dialogSet.getDialogs().size()>0) {
 			json.rootElement.children.add(new JsElem("dialogCoveragePercentage","" + dialogCoveragePercentage));
 			JsElem covElem = new JsElem("notCoveredDialogs",true);
@@ -334,12 +336,18 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 				JsElem logElem = new JsElem();
 				logsElem.children.add(logElem);
 				logElem.children.add(new JsElem("testCase",test.getTestCase().name,true));
+				if (test.getResponses().size()>0) {
+					totalTime = test.getTotalTime();
+					responses = test.getResponses().size();
+					logElem.children.add(new JsElem("averageResponseMs","" + (totalTime / responses)));
+				}
 				JsElem linesElem = new JsElem("log",true);
 				logElem.children.add(linesElem);
 				List<ZStringBuilder> logLines = test.getLog().split("\n");
 				for (ZStringBuilder line: logLines) {
 					linesElem.children.add(new JsElem(null,line,true));
 				}
+
 			}
 		}
 		return json;
