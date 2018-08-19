@@ -124,16 +124,6 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 		return r;
 	}
 
-	public boolean startIfNoSummary() {
-		lockMe(this);
-		boolean r = startNoLock(true);
-		unlockMe(this);
-		if (r) {
-			configuration.debug(this,"Testing environment: " + environment.name + " ...");
-		}
-		return r;
-	}
-
 	public boolean start() {
 		lockMe(this);
 		boolean r = startNoLock(false);

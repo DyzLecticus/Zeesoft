@@ -59,7 +59,7 @@ public class TestSequenceMatcher extends TestObject {
 			String context = "";
 
 			sequence = new ZStringSymbolParser("Heb");
-			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Heb je je al voor 1 mei ingeschreven voor je opleiding en bedenk je je voor 1 september? [OUTPUT] Dan kun je je nog kosteloos uitschrijven via Studielink. Studentenreisproduct Heb je een studentenreisproduct en lopen je studies in elkaar over, dan hoef je niets te regelen."));
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Heb ik een pensioengat? [OUTPUT] Het pensioen dat u later krijgt, is vaak minder dan het inkomen dat u nu verdient. Terwijl uw vaste lasten misschien gelijk blijven. Als u na uw pensioen minder dan 70% van uw laatstverdiende salaris ontvangt, heeft u een 'pensioengat'."));
 			
 			sequence = new ZStringSymbolParser("Wat kost dat?");
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Zorg thuis: wat kost dat? [OUTPUT] De meeste mensen oriënteren zich pas op deze mogelijkheden als de zorg acuut nodig is. Soms kan men dan niet meer zelf beslissen en moeten anderen dat doen."));
@@ -74,14 +74,13 @@ public class TestSequenceMatcher extends TestObject {
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Waar kan ik mijn transacties inzien? [OUTPUT] Via Mijn ICS Business kunt u online uw transacties, uw limiet, het openstaande saldo en overzichten tot 6 maanden terug bekijken. Ik wil een extra creditcard aanvragen."));
 			
 			sequence = new ZStringSymbolParser("overboeken");
-			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Hoeveel kan ik overboeken vanaf mijn betaalrekening? [OUTPUT] U kunt beide paslezers gebruiken. Dit is het bedrag dat u per dag maximaal kunt overboeken met uw identificatiecode en vingerafdruk."));
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Doet de bank of verzekeraar langer over het overboeken? [OUTPUT] Dan krijgt u een rentevergoeding."));
 
 			sequence = new ZStringSymbolParser("Hypotheek berekenen");
-			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Had u voor deze datum al een Bankspaar Hypotheek of een Kapitaalverzekering Eigen Woning die is gekoppeld aan een hypotheek? [OUTPUT] Dan kunt u deze Bankspaar Hypotheek of verzekering wel fiscaal geruisloos voortzetten in een nieuwe Bankspaar Hypotheek."));
+			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Uw Aflossingsvrije Hypotheek wijzigen naar een Annuïteiten Hypotheek of een Lineaire Hypotheek? [OUTPUT] U betaalt dan elke maand een deel van uw hypotheek terug. Zo weet u zeker dat u aan het einde van de looptijd uw lening helemaal heeft terugbetaald. Uw einddatum en rentecontract wijzigen hier niet door."));
 			
 			sequence = new ZStringSymbolParser("Fraude");
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Fraude herkennen: wat doen criminelen? [OUTPUT] Maar het is belangrijk dat u ook zelf weet, wat u wel of juist niet moet doen."));
-			testSequenceMatch(sm,sequence,"",true,new ZStringSymbolParser("Wat is CEO Fraude? [OUTPUT] Bij CEO fraude doen criminelen zich voor als een hooggeplaatste manager of bestuurder (bijvoorbeeld de CEO of de CFO) uit uw organisatie, om vervolgens geld te stelen. Bij deze vorm van fraude gaat het vaak om zeer grote bedragen. Bij de meest recente CEO fraude slachtoffers zien we veel overeenkomsten en lijkt het alsof dezelfde daders erachter zitten."));
 			
 			sequence = new ZStringSymbolParser("Heeft de abn amro rechtsbijstandverzekering");
 			testSequenceMatch(sm,sequence,"",false,new ZStringSymbolParser("Heeft de ABN AMRO Rechtsbijstandverzekering een eigen risico? [OUTPUT] U heeft geen eigen risico bij de ABN AMRO Rechtsbijstandverzekering."));

@@ -18,8 +18,8 @@ public class AppTester implements InitializerListener {
 	public static final String		SUPPORT_TEST_CASE_FILE				= "SupportTestCase.json";
 	public static final String		FOREIGN_TRANSFER_TEST_CASES_FILE	= "ForeignTransferTestCases.json";
 	
-	private TestConfiguration		configuration				= null;
-	private SetTesterInitializer	initializer					= null;
+	private TestConfiguration		configuration						= null;
+	private SetTesterInitializer	initializer							= null;
 	
 	public AppTester(Messenger msgr,WorkerUnion uni,AppBaseConfiguration base) {
 		configuration = new TestConfiguration(msgr,uni,base);
@@ -140,7 +140,7 @@ public class AppTester implements InitializerListener {
 			if (configuration.getBase().isSelfTest()) {
 				TestCaseSetTester selfTester = getSelfTester();
 				if (selfTester!=null && !selfTester.isTesting()) {
-					if (!selfTester.startIfNoSummary()) {
+					if (!selfTester.start()) {
 						configuration.debug(this,"Failed to start self test case tester");
 					}
 				}

@@ -74,6 +74,12 @@
 		<jar jarfile="${dist}/zsds.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Remove sources from build directory -->
 		<delete>
+            <fileset dir="${build}" includes="**/*.xml"/>
+		</delete>
+		<delete>
+            <fileset dir="${build}" includes="**/*.md"/>
+		</delete>
+		<delete>
             <fileset dir="${build}" includes="**/*.java"/>
 		</delete>
 	</target>
@@ -118,8 +124,12 @@
 		<mkdir dir="${dist}/war/WEB-INF/lib"/>
 		<mkdir dir="${dist}/war/META-INF"/>
 		
-		<copy file="${dist}/zdk.jar" tofile="${dist}/war/WEB-INF/lib/zdk.jar"/>
-		<copy file="${dist}/zsd.jar" tofile="${dist}/war/WEB-INF/lib/zsd.jar"/>
+		<copy file="build.xml" tofile="${dist}/war/build.xml"/>
+		<copy file="${dist}/README.md" tofile="${dist}/war/README.xml"/>
+		
+		<copy todir="${dist}/war/WEB-INF/lib">
+	        <fileset dir="WebContent/WEB-INF/lib" includes="**/*.*"/>
+	    </copy>		
 	
 		<!-- Copy sources to build directory -->
 		<copy todir="${build}">

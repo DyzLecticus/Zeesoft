@@ -209,8 +209,8 @@ public class SequenceMatcher extends SequenceClassifier {
 				for (int i = 0; i < match.symbols.size(); i++) {
 					String symbol = match.symbols.get(i);
 					if (unlinkedSymbols.contains(symbol)) {
-						for (int c = 0; c < seq.symbols.size(); c++) {
-							String comp = seq.symbols.get(c);
+						for (int c = 0; c < seq.symbolsMatch.size(); c++) {
+							String comp = seq.symbolsMatch.get(c);
 							if (symbol.equals(comp) || (caseInsensitive && symbol.equalsIgnoreCase(comp))) {
 								AnalyzerSymbol as = matchSymbols.get(symbol);
 								if (as!=null) {
@@ -336,15 +336,23 @@ public class SequenceMatcher extends SequenceClassifier {
 		for (SequenceAnalyzerSymbolLink link: addLinks) {
 			links.add(link.copy());
 		}
+		List<String> symbolsMatch = new ArrayList<String>();
 		List<String> symbols = new ArrayList<String>();
+		boolean addMatch = true;
 		for (String sym: syms) {
 			if (!sym.equals(getIoSeparator())) {
 				symbols.add(sym);
+			} else if (matchInputOnly) {
+				addMatch = false;
+			}
+			if (addMatch && !sym.equals(getIoSeparator())) {
+				symbolsMatch.add(sym);
 			}
 		}
 		SequenceMatcherSequence seq = new SequenceMatcherSequence();
 		seq.context = context;
 		seq.sequence = sequence;
+		seq.symbolsMatch = symbolsMatch;
 		seq.symbols = symbols;
 		seq.links = links;
 		return seq;
