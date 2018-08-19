@@ -13,6 +13,11 @@ import nl.zeesoft.zsds.handler.HandlerObject;
 
 @WebServlet("/ZSDSServlet")
 public class ZSDSServlet extends HttpServlet {
+	public static final String			DESCRIPTION			= ""
+		+ "Zeesoft Smart Dialog Server (ZSDS) is a JSON REST API for natural language understanding and processing. "
+		+ "It is designed to provide a fast and professional open source artificial intelligence for chatbots. "
+		+ "";
+	
 	private static final long			serialVersionUID	= 1L;
     
 	private AppConfiguration			configuration		= null;

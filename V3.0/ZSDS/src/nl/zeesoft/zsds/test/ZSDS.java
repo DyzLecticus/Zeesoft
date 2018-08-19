@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
 import nl.zeesoft.zsd.test.ZSD;
+import nl.zeesoft.zsds.ZSDSServlet;
 
 /**
  * Documents and tests the ZSD.
@@ -17,7 +18,7 @@ public class ZSDS extends LibraryObject {
 		setNameAbbreviated("ZSDS");
 		setNameFull("Zeesoft Smart Dialog Server");
 		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZSDS/");
-		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSDS/releases/");
+		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZSDS/");
 		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSDS/");
 		getDependencies().add(new ZDK(null));
 		getDependencies().add(new ZSD(null));
@@ -31,11 +32,20 @@ public class ZSDS extends LibraryObject {
 	public void describe() {
 		System.out.println("Zeesoft Smart Dialog Server");
 		System.out.println("===========================");
-		System.out.println("Zeesoft Smart Dialog Server (ZSDS) is an open source application server exposes the Zeesoft Smart Dialogs (ZSD) API.  ");
+		System.out.println(ZSDSServlet.DESCRIPTION);
+		System.out.println();
+		System.out.println("Features include;  ");
+		System.out.println(" * Out-of-the-box support for basic English and Dutch entities and dialogs  ");
+		System.out.println(" * Three level hierarchical intent classification (including language classification)  ");
+		System.out.println(" * Input preprocessing and spelling correction  ");
+		System.out.println(" * Automated self and DTAP environment testing  ");
+		System.out.println(" * Highly configurable, extendable and scalable  ");
 		System.out.println();
 		describeDependencies();
 		System.out.println();
-		describeRelease();
+		System.out.println("**Downloads**");
+		System.out.println("Click [here](" + getBaseReleaseUrl() + "zsds-dev.war) to download the latest ZSDS development WAR.");
+		System.out.println("Click [here](" + getBaseReleaseUrl() + "zsds.war) to download the latest ZSDS production WAR.");
 		System.out.println();
 		describeTesting(ZSDS.class);
 		System.out.println();

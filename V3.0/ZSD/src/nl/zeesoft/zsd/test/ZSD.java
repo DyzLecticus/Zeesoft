@@ -30,7 +30,7 @@ public class ZSD extends LibraryObject {
 	public void describe() {
 		System.out.println("Zeesoft Smart Dialogs");
 		System.out.println("=====================");
-		System.out.println("Zeesoft Smart Dialogs (ZSD) is an open source library for Java application development.  ");
+		System.out.println("Zeesoft Smart Dialogs (ZSD) is an open source library for Java based natural language understanding and processing application development.  ");
 		System.out.println();
 		System.out.println("It provides support for;  ");
 		System.out.println(" * Context sensitive symbolic corrections; word spelling corrections  ");
