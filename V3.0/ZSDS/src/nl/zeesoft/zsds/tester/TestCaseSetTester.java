@@ -257,7 +257,9 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 					if (response.classifiedMasterContexts.size()>0) {
 						masterContext = response.classifiedMasterContexts.get(0).symbol;
 					}
-					if (response.classifiedContexts.size()>0) {
+					if (response.contextOutputs.size()>0) {
+						context = response.contextOutputs.get(0).context;
+					} else if (response.classifiedContexts.size()>0) {
 						context = response.classifiedContexts.get(0).symbol;
 					}
 					if (language.length()>0 && masterContext.length()>0 && context.length()>0) {

@@ -37,6 +37,7 @@ public class ZSDS extends LibraryObject {
 		System.out.println("Features include;  ");
 		System.out.println(" * A web based administration interface  ");
 		System.out.println(" * Out-of-the-box support for basic English and Dutch entities and dialogs  ");
+		System.out.println(" * Request specific contextual behavior and response randomization   ");
 		System.out.println(" * Three level hierarchical intent classification (including language classification)  ");
 		System.out.println(" * Input preprocessing and spelling correction  ");
 		System.out.println(" * Automated self and DTAP environment integration testing  ");

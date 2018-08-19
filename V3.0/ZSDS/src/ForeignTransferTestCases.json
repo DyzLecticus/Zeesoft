@@ -1,0 +1,1051 @@
+{"testCases": [
+{
+  "name": "ForeignTransferEnglish",
+  "io": [
+    {
+      "request": {
+        "prompt": "",
+        "input": "what does it cost to transfer money to a foreign country",
+        "language": "",
+        "masterContext": "",
+        "context": "",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {}
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.9758948268098645,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "What does it cost to transfer money to a foreign country.",
+        "classificationSequence": "What does it cost to transfer money to a foreign country.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.6362306603799659,
+            "probNormalized": 0.7160835712997009
+          },
+          {
+            "symbol": "Room",
+            "prob": 0.3322735405142446,
+            "probNormalized": 0.3739769840669697
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Cost",
+            "prob": 0.7970506592643998,
+            "probNormalized": 0.6445286195286196
+          },
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.7429302567661348,
+            "probNormalized": 0.6007645903479238
+          },
+          {
+            "symbol": "Duration",
+            "prob": 0.33513912829352377,
+            "probNormalized": 0.27100756670649145
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:transfer UN_ABC:money UN_ABC:to UN_ABC:a UN_ABC:foreign UN_ABC:country .",
+        "entityValueTranslationCorrected": "UN_ABC:What UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:transfer UN_ABC:money UN_ABC:to UN_ABC:a UN_ABC:foreign UN_ABC:country .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "QuestionAndAnswer",
+            "output": "A foreign transfer costs five euro.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "five",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "three",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "days",
+                "internalValue": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "how long does it take",
+        "language": "EN",
+        "masterContext": "ForeignTransfer",
+        "context": "Cost",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": [
+          {
+            "name": "cost",
+            "externalValue": "five",
+            "internalValue": ""
+          },
+          {
+            "name": "costCurrency",
+            "externalValue": "euro",
+            "internalValue": ""
+          },
+          {
+            "name": "duration",
+            "externalValue": "three",
+            "internalValue": ""
+          },
+          {
+            "name": "durationDays",
+            "externalValue": "days",
+            "internalValue": ""
+          }
+        ]
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.40676054771953674,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "How long does it take.",
+        "classificationSequence": "How long does it take.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.23968415408681618,
+            "probNormalized": 0.5395335237064273
+          },
+          {
+            "symbol": "Room",
+            "prob": 0.1663658653315782,
+            "probNormalized": 0.37449268137393565
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Duration",
+            "prob": 0.33513912829352377,
+            "probNormalized": 0.5420151334129829
+          },
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.2856523247744621,
+            "probNormalized": 0.4619809203142536
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:How UN_ABC:long UN_ABC:does UN_ABC:it UN_ABC:take .",
+        "entityValueTranslationCorrected": "UN_ABC:How UN_ABC:long UN_ABC:does UN_ABC:it UN_ABC:take .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "QuestionAndAnswer",
+            "output": "A foreign transfer takes three days.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "five",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "three",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "days",
+                "internalValue": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "how much does it cost to transfer money to italy",
+        "language": "EN",
+        "masterContext": "ForeignTransfer",
+        "context": "Duration",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": [
+          {
+            "name": "cost",
+            "externalValue": "five",
+            "internalValue": ""
+          },
+          {
+            "name": "costCurrency",
+            "externalValue": "euro",
+            "internalValue": ""
+          },
+          {
+            "name": "duration",
+            "externalValue": "three",
+            "internalValue": ""
+          },
+          {
+            "name": "durationDays",
+            "externalValue": "days",
+            "internalValue": ""
+          }
+        ]
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.8134220391751154,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "How much does it cost to transfer money to Italy.",
+        "classificationSequence": "How much does it cost to transfer money to [CNT].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.5648592401788723,
+            "probNormalized": 0.6935502206597224
+          },
+          {
+            "symbol": "Room",
+            "prob": 0.24920515538568347,
+            "probNormalized": 0.3059811687820661
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Cost",
+            "prob": 1.115267175572519,
+            "probNormalized": 0.9838383838383838
+          },
+          {
+            "symbol": "Duration",
+            "prob": 0.6187515390297955,
+            "probNormalized": 0.5458346909959814
+          },
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.5428955586398334,
+            "probNormalized": 0.47891796755433125
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:How UN_ABC:much UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:transfer UN_ABC:money UN_ABC:to EN_CNT:IT|UN_ABC:italy .",
+        "entityValueTranslationCorrected": "UN_ABC:How UN_ABC:much UN_ABC:does UN_ABC:it UN_ABC:cost UN_ABC:to UN_ABC:transfer UN_ABC:money UN_ABC:to EN_CNT:IT|UN_ABC:Italy .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Cost",
+            "output": "A foreign transfer to Italy costs five euro.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "five",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "three",
+                "internalValue": ""
+              },
+              {
+                "name": "transferToCountry",
+                "externalValue": "Italy",
+                "internalValue": "EN_CNT:IT"
+              }
+            ]
+          },
+          {
+            "context": "Duration",
+            "output": "A foreign transfer to Italy takes three days.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "five",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "three",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "days",
+                "internalValue": ""
+              },
+              {
+                "name": "transferToCountry",
+                "externalValue": "Italy",
+                "internalValue": "EN_CNT:IT"
+              }
+            ]
+          },
+          {
+            "context": "QuestionAndAnswer",
+            "output": "A foreign transfer costs five euro.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "five",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "three",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "days",
+                "internalValue": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "how long does it take",
+        "language": "EN",
+        "masterContext": "ForeignTransfer",
+        "context": "Cost",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": [
+          {
+            "name": "cost",
+            "externalValue": "five",
+            "internalValue": ""
+          },
+          {
+            "name": "costCurrency",
+            "externalValue": "euro",
+            "internalValue": ""
+          },
+          {
+            "name": "duration",
+            "externalValue": "three",
+            "internalValue": ""
+          },
+          {
+            "name": "transferToCountry",
+            "externalValue": "Italy",
+            "internalValue": "EN_CNT:IT"
+          }
+        ]
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.40676054771953674,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "How long does it take.",
+        "classificationSequence": "How long does it take.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.23968415408681618,
+            "probNormalized": 0.5395335237064273
+          },
+          {
+            "symbol": "Room",
+            "prob": 0.1663658653315782,
+            "probNormalized": 0.37449268137393565
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Duration",
+            "prob": 0.33513912829352377,
+            "probNormalized": 0.5420151334129829
+          },
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.2856523247744621,
+            "probNormalized": 0.4619809203142536
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:How UN_ABC:long UN_ABC:does UN_ABC:it UN_ABC:take .",
+        "entityValueTranslationCorrected": "UN_ABC:How UN_ABC:long UN_ABC:does UN_ABC:it UN_ABC:take .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Duration",
+            "output": "A foreign transfer to Italy takes three days.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "five",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "three",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "days",
+                "internalValue": ""
+              },
+              {
+                "name": "transferToCountry",
+                "externalValue": "Italy",
+                "internalValue": "EN_CNT:IT"
+              }
+            ]
+          },
+          {
+            "context": "QuestionAndAnswer",
+            "output": "A foreign transfer takes three days.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "five",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "three",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "days",
+                "internalValue": ""
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+},
+{
+  "name": "ForeignTransferDutch",
+  "io": [
+    {
+      "request": {
+        "prompt": "",
+        "input": "wat kost overboeken naar het buitenland",
+        "language": "",
+        "masterContext": "",
+        "context": "",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {}
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.4179785409050844,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "Wat kost overboeken naar het buitenland.",
+        "classificationSequence": "Wat kost overboeken naar het buitenland.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.1996396138827654,
+            "probNormalized": 0.41680921750194394
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.3307598154599378,
+            "probNormalized": 0.4515133988818199
+          },
+          {
+            "symbol": "Cost",
+            "prob": 0.27582233396186884,
+            "probNormalized": 0.3765193765193765
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:het UN_ABC:buitenland .",
+        "entityValueTranslationCorrected": "UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar UN_ABC:het UN_ABC:buitenland .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "QuestionAndAnswer",
+            "output": "Een overboeking naar het buitenland kost vijf euro.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "vijf",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "drie",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "dagen",
+                "internalValue": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "hoe lang duurt dat",
+        "language": "NL",
+        "masterContext": "ForeignTransfer",
+        "context": "QuestionAndAnswer",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": [
+          {
+            "name": "cost",
+            "externalValue": "vijf",
+            "internalValue": ""
+          },
+          {
+            "name": "costCurrency",
+            "externalValue": "euro",
+            "internalValue": ""
+          },
+          {
+            "name": "duration",
+            "externalValue": "drie",
+            "internalValue": ""
+          },
+          {
+            "name": "durationDays",
+            "externalValue": "dagen",
+            "internalValue": ""
+          }
+        ]
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.2511231540695795,
+            "probNormalized": 0.9057398127685706
+          }
+        ],
+        "correctedInput": "Hoe lang duurt dat.",
+        "classificationSequence": "Hoe lang duurt dat.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.24914831506323684,
+            "probNormalized": 0.7282434438396833
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Duration",
+            "prob": 0.49031007751937977,
+            "probNormalized": 0.937037037037037
+          },
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.3998917239431315,
+            "probNormalized": 0.7642375168690958
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Hoe UN_ABC:lang UN_ABC:duurt UN_ABC:dat .",
+        "entityValueTranslationCorrected": "UN_ABC:Hoe UN_ABC:lang UN_ABC:duurt UN_ABC:dat .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "QuestionAndAnswer",
+            "output": "Een overboeking naar het buitenland duurt drie dagen.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "vijf",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "drie",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "dagen",
+                "internalValue": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "wat kost overboeken naar italie",
+        "language": "NL",
+        "masterContext": "ForeignTransfer",
+        "context": "Duration",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": [
+          {
+            "name": "cost",
+            "externalValue": "vijf",
+            "internalValue": ""
+          },
+          {
+            "name": "costCurrency",
+            "externalValue": "euro",
+            "internalValue": ""
+          },
+          {
+            "name": "duration",
+            "externalValue": "drie",
+            "internalValue": ""
+          },
+          {
+            "name": "durationDays",
+            "externalValue": "dagen",
+            "internalValue": ""
+          }
+        ]
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.3347528324486335,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "Wat kost overboeken naar Italië.",
+        "classificationSequence": "Wat kost overboeken naar [CNT].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.23917449760369563,
+            "probNormalized": 0.5825755493246835
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Cost",
+            "prob": 0.49759061386968356,
+            "probNormalized": 0.792459125792459
+          },
+          {
+            "symbol": "Duration",
+            "prob": 0.3653100775193798,
+            "probNormalized": 0.58179012345679
+          },
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.22610865266924018,
+            "probNormalized": 0.36009896536212327
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:italie .",
+        "entityValueTranslationCorrected": "UN_ABC:Wat UN_ABC:kost UN_ABC:overboeken UN_ABC:naar NL_CNT:IT|UN_ABC:Italië .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Cost",
+            "output": "Een overboeking naar Italië kost vijf euro.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "vijf",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "drie",
+                "internalValue": ""
+              },
+              {
+                "name": "transferToCountry",
+                "externalValue": "Italië",
+                "internalValue": "NL_CNT:IT"
+              }
+            ]
+          },
+          {
+            "context": "Duration",
+            "output": "Een overboeking naar Italië duurt drie dagen.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "vijf",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "drie",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "dagen",
+                "internalValue": ""
+              },
+              {
+                "name": "transferToCountry",
+                "externalValue": "Italië",
+                "internalValue": "NL_CNT:IT"
+              }
+            ]
+          },
+          {
+            "context": "QuestionAndAnswer",
+            "output": "Een overboeking naar het buitenland kost vijf euro.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "vijf",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "drie",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "dagen",
+                "internalValue": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "hoe lang duurt dat",
+        "language": "NL",
+        "masterContext": "ForeignTransfer",
+        "context": "Cost",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": [
+          {
+            "name": "cost",
+            "externalValue": "vijf",
+            "internalValue": ""
+          },
+          {
+            "name": "costCurrency",
+            "externalValue": "euro",
+            "internalValue": ""
+          },
+          {
+            "name": "duration",
+            "externalValue": "drie",
+            "internalValue": ""
+          },
+          {
+            "name": "transferToCountry",
+            "externalValue": "Italië",
+            "internalValue": "NL_CNT:IT"
+          }
+        ]
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.2511231540695795,
+            "probNormalized": 0.9057398127685706
+          }
+        ],
+        "correctedInput": "Hoe lang duurt dat.",
+        "classificationSequence": "Hoe lang duurt dat.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "ForeignTransfer",
+            "prob": 0.24914831506323684,
+            "probNormalized": 0.7282434438396833
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Duration",
+            "prob": 0.49031007751937977,
+            "probNormalized": 0.937037037037037
+          },
+          {
+            "symbol": "QuestionAndAnswer",
+            "prob": 0.3998917239431315,
+            "probNormalized": 0.7642375168690958
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Hoe UN_ABC:lang UN_ABC:duurt UN_ABC:dat .",
+        "entityValueTranslationCorrected": "UN_ABC:Hoe UN_ABC:lang UN_ABC:duurt UN_ABC:dat .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Duration",
+            "output": "Een overboeking naar Italië duurt drie dagen.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "vijf",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "drie",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "dagen",
+                "internalValue": ""
+              },
+              {
+                "name": "transferToCountry",
+                "externalValue": "Italië",
+                "internalValue": "NL_CNT:IT"
+              }
+            ]
+          },
+          {
+            "context": "QuestionAndAnswer",
+            "output": "Een overboeking naar het buitenland duurt drie dagen.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "cost",
+                "externalValue": "vijf",
+                "internalValue": ""
+              },
+              {
+                "name": "costCurrency",
+                "externalValue": "euro",
+                "internalValue": ""
+              },
+              {
+                "name": "duration",
+                "externalValue": "drie",
+                "internalValue": ""
+              },
+              {
+                "name": "durationDays",
+                "externalValue": "dagen",
+                "internalValue": ""
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+]}

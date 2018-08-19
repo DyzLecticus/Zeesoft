@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsd.dialog.DialogRequest;
@@ -103,6 +104,7 @@ public class TestCaseTester {
 			request.appendDebugLog = true;
 			Date started = new Date();
 			ZHttpRequest http = new ZHttpRequest(null,"POST",environment.url + JsonDialogRequestHandler.PATH);
+			ZDate timeStamp = new ZDate();
 			JsFile json = http.sendJsonRequest(request.toJson().toStringBuilder());
 			long time = (new Date()).getTime() - started.getTime();
 			if (configuration.isRetryIfBusy() && http.getResponseCode()==503) {
@@ -139,14 +141,15 @@ public class TestCaseTester {
 					DialogResponse response = new DialogResponse();
 					response.fromJson(json);
 					totalTime += time;
-					appendLog(tcIO.request.input,false);
+					appendLog(timeStamp,tcIO.request.input,false);
 					if (response.contextOutputs.size()>0) {
 						DialogResponseOutput dro = response.contextOutputs.get(0);
+						timeStamp = new ZDate();
 						if (dro.output.length()>0) {
-							appendLog(dro.output,true);
+							appendLog(timeStamp,dro.output,true);
 						}
 						if (dro.prompt.length()>0) {
-							appendLog(dro.prompt,true);
+							appendLog(timeStamp,dro.prompt,true);
 						}
 					}
 					responses.add(response);
@@ -171,14 +174,15 @@ public class TestCaseTester {
 		return done;
 	}
 	
-	protected void appendLog(ZStringBuilder msg,boolean output) {
+	protected void appendLog(ZDate timeStamp,ZStringBuilder msg,boolean output) {
 		if (log.length()>0) {
 			log.append("\n");
 		}
+		log.append(timeStamp.getTimeString(true));
 		if (output) {
-			log.append(">>> ");
+			log.append(" >>> ");
 		} else {
-			log.append("<<< ");
+			log.append(" <<< ");
 		}
 		log.append(msg.getStringBuilder());
 	}

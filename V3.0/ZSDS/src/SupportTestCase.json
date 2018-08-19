@@ -1,0 +1,614 @@
+{
+  "name": "Support",
+  "io": [
+    {
+      "request": {
+        "prompt": "",
+        "input": "help",
+        "language": "",
+        "masterContext": "",
+        "context": "",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": {}
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.08371230859049549,
+            "probNormalized": 0.7548245699416077
+          },
+          {
+            "symbol": "EN",
+            "prob": 0.08137822437713262,
+            "probNormalized": 0.7337783923576442
+          }
+        ],
+        "correctedInput": "Help.",
+        "classificationSequence": "Help.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Support",
+            "prob": 0.0967122290520867,
+            "probNormalized": 0.7067080378250592
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Request",
+            "prob": 0.1284722222222222,
+            "probNormalized": 0.48684210526315785
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Help .",
+        "entityValueTranslationCorrected": "UN_ABC:Help .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Request",
+            "output": "Geen zorgen. Helaas kan ik u op dit moment niet doorverbinden met een mens. U kunt een e-mail sturen naar dyz.lecticus@zeesoft.nl.",
+            "prompt": "Kan ik u ergens anders mee proberen te helpen?",
+            "promptVariableName": "nextDialog",
+            "promptVariableType": "NXD",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Kan ik u ergens anders mee proberen te helpen?",
+        "input": "no thanks",
+        "language": "NL",
+        "masterContext": "",
+        "context": "",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": []
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.32544920949109085,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "No thanks.",
+        "classificationSequence": "[FAILED_TO_CLASSIFY_CONTEXT].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Generic",
+            "prob": 1,
+            "probNormalized": 1
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Classification",
+            "prob": 1,
+            "probNormalized": 1
+          }
+        ],
+        "entityValueTranslation": "EN_CNF:false|UN_ABC:No UN_ABC:thanks .",
+        "entityValueTranslationCorrected": "EN_CNF:false|UN_ABC:No UN_ABC:thanks .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Classification",
+            "output": "I do not understand what you mean.",
+            "prompt": "",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "help",
+        "language": "EN",
+        "masterContext": "Generic",
+        "context": "Classification",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": {},
+        "dialogVariableValues": []
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.08137822437713262,
+            "probNormalized": 0.7337783923576442
+          }
+        ],
+        "correctedInput": "Help.",
+        "classificationSequence": "Help.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Support",
+            "prob": 0.11148836026930839,
+            "probNormalized": 0.7528871664152318
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Request",
+            "prob": 0.15425531914893617,
+            "probNormalized": 0.48333333333333334
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Help .",
+        "entityValueTranslationCorrected": "UN_ABC:Help .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Request",
+            "output": "Don't worry. Sadly I cannot transfer you to a human right now. You can send an e-mail to dyz.lecticus@zeesoft.nl.",
+            "prompt": "Is there something else I can try to help you with?",
+            "promptVariableName": "nextDialog",
+            "promptVariableType": "NXD",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Is there something else I can try to help you with?",
+        "input": "nee dank je",
+        "language": "EN",
+        "masterContext": "Generic",
+        "context": "Classification",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": [
+          "supportTransferToHuman"
+        ],
+        "dialogVariableValues": []
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.25110965961904735,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "Nee dank je.",
+        "classificationSequence": "[FAILED_TO_CLASSIFY_CONTEXT].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Generic",
+            "prob": 0.18492228733716906,
+            "probNormalized": 0.6756439599990421
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Classification",
+            "prob": 1,
+            "probNormalized": 1
+          }
+        ],
+        "entityValueTranslation": "NL_CNF:false|UN_ABC:Nee UN_ABC:dank UN_ABC:je .",
+        "entityValueTranslationCorrected": "NL_CNF:false|UN_ABC:Nee UN_ABC:dank UN_ABC:je .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Classification",
+            "output": "Ik begrijp niet wat u bedoelt.",
+            "prompt": "",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "help",
+        "language": "NL",
+        "masterContext": "Generic",
+        "context": "Classification",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": [
+          "supportTransferToHuman"
+        ],
+        "dialogVariableValues": []
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.08371230859049549,
+            "probNormalized": 0.7548245699416077
+          },
+          {
+            "symbol": "EN",
+            "prob": 0.08137822437713262,
+            "probNormalized": 0.7337783923576442
+          }
+        ],
+        "correctedInput": "Help.",
+        "classificationSequence": "Help.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Support",
+            "prob": 0.0967122290520867,
+            "probNormalized": 0.7067080378250592
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Request",
+            "prob": 0.1284722222222222,
+            "probNormalized": 0.48684210526315785
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Help .",
+        "entityValueTranslationCorrected": "UN_ABC:Help .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Request",
+            "output": "Geen zorgen.",
+            "prompt": "Zal ik u doorverbinden met een mens?",
+            "promptVariableName": "supportConfirmation",
+            "promptVariableType": "CNF",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Zal ik u doorverbinden met een mens?",
+        "input": "ja",
+        "language": "NL",
+        "masterContext": "Support",
+        "context": "Request",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": [
+          "supportTransferToHuman"
+        ],
+        "dialogVariableValues": []
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "NL",
+            "prob": 0.08370771802319318,
+            "probNormalized": 0.7547831773071423
+          }
+        ],
+        "correctedInput": "Ja.",
+        "classificationSequence": "[CNF].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Support",
+            "prob": 0.6690211725798915,
+            "probNormalized": 0.9777515103756239
+          },
+          {
+            "symbol": "Generic",
+            "prob": 0.4568788008320689,
+            "probNormalized": 0.6677127060860165
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Request",
+            "prob": 0.954861111111111,
+            "probNormalized": 0.7236842105263157
+          }
+        ],
+        "entityValueTranslation": "NL_CNF:true|UN_ABC:Ja .",
+        "entityValueTranslationCorrected": "NL_CNF:true|UN_ABC:Ja .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Request",
+            "output": "U wordt doorverbonden met een mens. Bedankt voor het gesprek.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "supportConfirmation",
+                "externalValue": "ja",
+                "internalValue": "NL_CNF:true"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "",
+        "input": "thanks",
+        "language": "NL",
+        "masterContext": "Support",
+        "context": "Request",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": [
+          "supportTransferToHuman"
+        ],
+        "dialogVariableValues": [
+          {
+            "name": "supportConfirmation",
+            "externalValue": "ja",
+            "internalValue": "NL_CNF:true"
+          }
+        ]
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.16268440783502308,
+            "probNormalized": 1
+          }
+        ],
+        "correctedInput": "Thanks.",
+        "classificationSequence": "Thanks.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Generic",
+            "prob": 0.14891364677255134,
+            "probNormalized": 1
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Thanks",
+            "prob": 0.16119101334837377,
+            "probNormalized": 0.9770655270655272
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Thanks .",
+        "entityValueTranslationCorrected": "UN_ABC:Thanks .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Thanks",
+            "output": "You're welcome.",
+            "prompt": "Is there anything else I can do for you?",
+            "promptVariableName": "thanksAnythingElse",
+            "promptVariableType": "CNF",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Is there anything else I can do for you?",
+        "input": "help",
+        "language": "EN",
+        "masterContext": "Generic",
+        "context": "Thanks",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": [
+          "supportTransferToHuman"
+        ],
+        "dialogVariableValues": []
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.08137822437713262,
+            "probNormalized": 0.7337783923576442
+          }
+        ],
+        "correctedInput": "Help.",
+        "classificationSequence": "Help.",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Support",
+            "prob": 0.11148836026930839,
+            "probNormalized": 0.7528871664152318
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Request",
+            "prob": 0.15425531914893617,
+            "probNormalized": 0.48333333333333334
+          }
+        ],
+        "entityValueTranslation": "UN_ABC:Help .",
+        "entityValueTranslationCorrected": "UN_ABC:Help .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Request",
+            "output": "Don't worry.",
+            "prompt": "Shall I transfer you to a human?",
+            "promptVariableName": "supportConfirmation",
+            "promptVariableType": "CNF",
+            "dialogVariableValues": []
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "prompt": "Shall I transfer you to a human?",
+        "input": "yes",
+        "language": "EN",
+        "masterContext": "Support",
+        "context": "Request",
+        "isTestRequest": false,
+        "appendDebugLog": true,
+        "classifyLanguage": true,
+        "minLanguageChangeDifference": 0.1,
+        "correctInput": true,
+        "classifyMasterContext": true,
+        "classifyMasterContextThreshold": 0.25,
+        "classifyContext": true,
+        "classifyContextThreshold": 0.25,
+        "checkProfanity": true,
+        "translateEntityValues": true,
+        "translateEntityTypes": {},
+        "matchThreshold": 0.1,
+        "randomizeOutput": false,
+        "filterContexts": [
+          "supportTransferToHuman"
+        ],
+        "dialogVariableValues": []
+      },
+      "expectedResponse": {
+        "classifiedLanguages": [
+          {
+            "symbol": "EN",
+            "prob": 0.08137822437713262,
+            "probNormalized": 0.7337783923576442
+          }
+        ],
+        "correctedInput": "Yes.",
+        "classificationSequence": "[CNF].",
+        "classifiedMasterContexts": [
+          {
+            "symbol": "Support",
+            "prob": 0.8012675828493073,
+            "probNormalized": 1
+          },
+          {
+            "symbol": "Generic",
+            "prob": 0.29148211588012807,
+            "probNormalized": 0.3637762491820994
+          }
+        ],
+        "classifiedContexts": [
+          {
+            "symbol": "Request",
+            "prob": 1.1861702127659575,
+            "probNormalized": 0.7433333333333334
+          }
+        ],
+        "entityValueTranslation": "EN_CNF:true|UN_ABC:Yes .",
+        "entityValueTranslationCorrected": "EN_CNF:true|UN_ABC:Yes .",
+        "debugLog": "",
+        "contextOutputs": [
+          {
+            "context": "Request",
+            "output": "You are beeing connected to a human. Thank you for the conversation.",
+            "prompt": "",
+            "dialogVariableValues": [
+              {
+                "name": "supportConfirmation",
+                "externalValue": "yes",
+                "internalValue": "EN_CNF:true"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

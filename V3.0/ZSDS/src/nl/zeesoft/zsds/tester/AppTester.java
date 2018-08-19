@@ -12,9 +12,11 @@ import nl.zeesoft.zsd.initialize.InitializerListener;
 import nl.zeesoft.zsds.AppBaseConfiguration;
 
 public class AppTester implements InitializerListener {
-	public static final String		ENVIRONMENT_NAME_SELF		= "Self";
-	public static final String		GENERIC_TEST_CASES_FILE		= "GenericTestCases.json";
-	public static final String		ROOM_TEST_CASE_FILE			= "RoomTestCase.json";
+	public static final String		ENVIRONMENT_NAME_SELF				= "Self";
+	public static final String		GENERIC_TEST_CASES_FILE				= "GenericTestCases.json";
+	public static final String		ROOM_TEST_CASE_FILE					= "RoomTestCase.json";
+	public static final String		SUPPORT_TEST_CASE_FILE				= "SupportTestCase.json";
+	public static final String		FOREIGN_TRANSFER_TEST_CASES_FILE	= "ForeignTransferTestCases.json";
 	
 	private TestConfiguration		configuration				= null;
 	private SetTesterInitializer	initializer					= null;
@@ -83,6 +85,8 @@ public class AppTester implements InitializerListener {
 				if (copyFiles) {
 					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",GENERIC_TEST_CASES_FILE);
 					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",ROOM_TEST_CASE_FILE);
+					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",SUPPORT_TEST_CASE_FILE);
+					copyTestCaseFileFromWar(dir.getAbsolutePath() + "/",FOREIGN_TRANSFER_TEST_CASES_FILE);
 				}
 			}
 		}

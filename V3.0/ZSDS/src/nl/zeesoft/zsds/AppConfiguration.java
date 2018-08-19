@@ -298,12 +298,16 @@ public class AppConfiguration {
 		return new LanguageJsonGenerator();
 	}
 	
+	protected HandlerObject getNewApiClientHandler() {
+		return new ApiClientJavaScriptHandler(this);
+	}
+	
 	protected List<HandlerObject> getDefaultHandlers() {
 		List<HandlerObject> r = new ArrayList<HandlerObject>();
 		// Main application
 		r.add(new BaseStyleSheetHandler(this));
 		r.add(new BaseJavaScriptHandler(this));
-		r.add(new ApiClientJavaScriptHandler(this));
+		r.add(getNewApiClientHandler());
 		r.add(new TestJavaScriptHandler(this));
 		r.add(new HtmlNotFoundHandler(this));
 		r.add(new HtmlIndexHandler(this));
