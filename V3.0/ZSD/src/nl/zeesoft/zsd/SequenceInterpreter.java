@@ -225,34 +225,34 @@ public class SequenceInterpreter {
 				}
 
 				// Classify context
-				if (masterContext.length()>0 && r.request.classifyContext &&
-					configuration.getBase().getSupportedMasterContexts().get(language).contains(masterContext)
-					) {
-					List<SequenceClassifierResult> contexts = null;
-					if (!r.classificationSequence.equals(r.correctedInput)) {
-						r.addDebugLogLine("Classify context for input sequence: ",r.correctedInput);
-						List<SequenceClassifierResult> contextsRaw = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);
-						r.addDebugLogLine("Classify context for classification sequence: ",promptAndInputClassification);
-						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(promptAndInputClassification,true,r.request.classifyContextThreshold);
-						if (contextsRaw.size()>0 && contexts.size()>0 && contextsRaw.get(0).probNormalized>=contexts.get(0).probNormalized) {
-							r.addDebugLogLine("Selected input sequence context classification.");
-							contexts = contextsRaw;
-							r.classificationSequence = r.correctedInput;
+				if (masterContext.length()>0 && r.request.classifyContext) {
+					if (configuration.getBase().getSupportedMasterContexts().get(language).contains(masterContext)) {
+						List<SequenceClassifierResult> contexts = null;
+						if (!r.classificationSequence.equals(r.correctedInput)) {
+							r.addDebugLogLine("Classify context for input sequence: ",r.correctedInput);
+							List<SequenceClassifierResult> contextsRaw = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);
+							r.addDebugLogLine("Classify context for classification sequence: ",promptAndInputClassification);
+							contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(promptAndInputClassification,true,r.request.classifyContextThreshold);
+							if (contextsRaw.size()>0 && contexts.size()>0 && contextsRaw.get(0).probNormalized>=contexts.get(0).probNormalized) {
+								r.addDebugLogLine("Selected input sequence context classification.");
+								contexts = contextsRaw;
+								r.classificationSequence = r.correctedInput;
+							}
+						} else {
+							r.addDebugLogLine("Classify context for input sequence: ",r.correctedInput);
+							contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);
+						}
+						if (r.request.prompt.length()>0 && contexts.size()==0) {
+							r.addDebugLogLine("Classify context for sequence: ",promptAndInput);
+							contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(promptAndInput,true,r.request.classifyContextThreshold);
+						}
+						if (contexts.size()>0) {
+							r.addDebugLogLine("Classified context: ",contexts.get(0).symbol);
+							r.classifiedContexts = contexts;
 						}
 					} else {
-						r.addDebugLogLine("Classify context for input sequence: ",r.correctedInput);
-						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(r.correctedInput,true,r.request.classifyContextThreshold);
+						r.addDebugLogLine("Master context is not supported: ",masterContext);
 					}
-					if (r.request.prompt.length()>0 && contexts.size()==0) {
-						r.addDebugLogLine("Classify context for sequence: ",promptAndInput);
-						contexts = getConfiguration().getLanguageContextClassifiers().get(language + masterContext).getContexts(promptAndInput,true,r.request.classifyContextThreshold);
-					}
-					if (contexts.size()>0) {
-						r.addDebugLogLine("Classified context: ",contexts.get(0).symbol);
-						r.classifiedContexts = contexts;
-					}
-				} else if (!configuration.getBase().getSupportedMasterContexts().get(language).contains(masterContext)) {
-					r.addDebugLogLine("Master context is not supported: ",masterContext);
 				}
 			}
 			

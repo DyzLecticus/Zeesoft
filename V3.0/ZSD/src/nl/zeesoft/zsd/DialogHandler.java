@@ -134,6 +134,10 @@ public class DialogHandler extends SequenceInterpreter {
 	}
 	
 	protected void handleDialog(DialogResponse r,DialogInstance dialog) {
+		boolean log = false;
+		if (r.contextOutputs.size()==0) {
+			log = true;
+		}
 		DialogInstanceHandler handler = dialog.getNewHandler();
 		if (handler==null) {
 			handler = new GenericQnAHandler();
@@ -143,9 +147,28 @@ public class DialogHandler extends SequenceInterpreter {
 		handler.setDialog(dialog);
 		r.addDebugLogLine("    Initialized handler: ",handler.getClass().getName());
 		handler.handleDialogIO(r);
+		if (log && r.contextOutputs.size()>0) {
+			logClassification(r,dialog);
+		}
 	}
 	
 	protected DialogInstance getGenericClassificationDialog(String language) {
 		return getConfiguration().getDialogSet().getDialog(language,Generic.MASTER_CONTEXT_GENERIC,GenericClassification.CONTEXT_GENERIC_CLASSIFICATION);
+	}
+	
+	protected void logClassification(DialogResponse r,DialogInstance dialog) {
+		addResultToListIfEmpty(r.classifiedLanguages,dialog.getLanguage());
+		addResultToListIfEmpty(r.classifiedMasterContexts,dialog.getMasterContext());
+		addResultToListIfEmpty(r.classifiedContexts,dialog.getContext());
+	}
+	
+	protected void addResultToListIfEmpty(List<SequenceClassifierResult> results,String symbol) {
+		if (results.size()==0) {
+			SequenceClassifierResult res = new SequenceClassifierResult();
+			res.symbol = symbol;
+			res.prob = 1.0D;
+			res.probNormalized = 1.0D;
+			results.add(res);
+		}
 	}
 }

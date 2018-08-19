@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zsd.dialog.DialogInstance;
+import nl.zeesoft.zsd.dialog.DialogResponse;
 import nl.zeesoft.zsd.dialog.DialogSet;
 import nl.zeesoft.zsd.http.ZHttpRequest;
 import nl.zeesoft.zsd.initialize.Initializable;
@@ -246,18 +247,18 @@ public class TestCaseSetTester extends Locker implements Initializable, TesterLi
 			totalTime += test.getTotalTime();
 			if (test.getError().length()==0) {
 				successful++;
-				for (TestCaseIO io: test.getTestCase().io) {
+				for (DialogResponse response: test.getResponses()) {
 					String language = "";
 					String masterContext = "";
 					String context = "";
-					if (io.expectedResponse.classifiedLanguages.size()>0) {
-						language = io.expectedResponse.classifiedLanguages.get(0).symbol;
+					if (response.classifiedLanguages.size()>0) {
+						language = response.classifiedLanguages.get(0).symbol;
 					}
-					if (io.expectedResponse.classifiedMasterContexts.size()>0) {
-						masterContext = io.expectedResponse.classifiedMasterContexts.get(0).symbol;
+					if (response.classifiedMasterContexts.size()>0) {
+						masterContext = response.classifiedMasterContexts.get(0).symbol;
 					}
-					if (io.expectedResponse.classifiedContexts.size()>0) {
-						context = io.expectedResponse.classifiedContexts.get(0).symbol;
+					if (response.classifiedContexts.size()>0) {
+						context = response.classifiedContexts.get(0).symbol;
 					}
 					if (language.length()>0 && masterContext.length()>0 && context.length()>0) {
 						String dialogId = language + "/" + masterContext + "/" + context;
