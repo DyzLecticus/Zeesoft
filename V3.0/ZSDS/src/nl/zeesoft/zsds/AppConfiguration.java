@@ -93,7 +93,7 @@ public class AppConfiguration {
 		base = getNewAppBaseConfiguration();
 		String fileName = installDir + "config.json";
 		File file = new File(fileName);
-		String port = "80";
+		String port = "";
 		if (debug) {
 			port = "8080";
 		}
@@ -142,7 +142,10 @@ public class AppConfiguration {
 		if (base.getParameters().containsKey(PARAMETER_SELF_PORT_NUMBER)) {
 			port = base.getParameters().get(PARAMETER_SELF_PORT_NUMBER);
 		}
-		String selfUrl = "http://localhost:" + port + contextPath; 
+		if (port.length()>0) {
+			port = ":" + port;
+		}
+		String selfUrl = "http://localhost" + port + contextPath;
 		base.getParameters().put(PARAMETER_SELF_URL,selfUrl);
 		
 		messenger.start();
