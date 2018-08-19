@@ -5,6 +5,9 @@ import nl.zeesoft.zsd.EntityValueTranslator;
 import nl.zeesoft.zsd.SequencePreprocessor;
 import nl.zeesoft.zsd.dialog.DialogSet;
 
+/**
+ * TODO: Add support for database data sources
+ */
 public class LanguageJsonGenerator {
 	public static void main(String[] args) {
 		if (args!=null && args.length>0 && args[0].length()>0) {

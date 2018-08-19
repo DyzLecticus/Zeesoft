@@ -18,6 +18,9 @@ import nl.zeesoft.zsd.interpret.SequenceInterpreterTesterInitializer;
 import nl.zeesoft.zsd.interpret.TesterListener;
 import nl.zeesoft.zsd.util.LanguageJsonGenerator;
 
+/**
+ * TODO: Daily entity value translator initialization
+ */
 public class AppStateManager extends Locker implements InitializerListener, TesterListener {
 	private AppConfiguration						configuration				= null;
 	private DataGenerator							generator					= null;

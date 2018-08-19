@@ -9,6 +9,8 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 
 /**
  * An Initializer can be used to initialize a set of objects using a separate thread for each object.
+ * 
+ * TODO: Add support for database data sources
  */
 public class Initializer extends Locker {
 	private WorkerUnion					union			= null;
