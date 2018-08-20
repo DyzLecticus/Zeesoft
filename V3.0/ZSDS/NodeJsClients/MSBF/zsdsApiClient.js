@@ -4,12 +4,13 @@ ZSDS.api = {};
 ZSDS.api.Client = function(workingRequest,workingVariableValues) {
     var that = this;
 
-    this.processRequestResponse = function(body) {
-        console.log(body.contextOutputs + " " + body.contextOutputs.length>0);
+    this.processRequestResponse = function(json) {
+        that.response.output = "";
+        that.response.prompt = "";
         var nextDialog = false;
-        if (body.contextOutputs && body.contextOutputs.length>0) {
+        if (json.contextOutputs && json.contextOutputs.length>0) {
             var copyValues = true;
-            out = body.contextOutputs[0];
+            out = json.contextOutputs[0];
             if (out.output.length>0) {
                 that.response.output = out.output;
             }
@@ -35,15 +36,15 @@ ZSDS.api.Client = function(workingRequest,workingVariableValues) {
                 }
             }
         }
-        if (body.classifiedLanguages && body.classifiedLanguages.length>0) {
-            that.workingRequest.language = body.classifiedLanguages[0].symbol;
+        if (json.classifiedLanguages && json.classifiedLanguages.length>0) {
+            that.workingRequest.language = json.classifiedLanguages[0].symbol;
         }
         if (!nextDialog) {
-            if (body.classifiedMasterContexts && body.classifiedMasterContexts.length>0) {
-                that.workingRequest.masterContext = body.classifiedMasterContexts[0].symbol;
+            if (json.classifiedMasterContexts && json.classifiedMasterContexts.length>0) {
+                that.workingRequest.masterContext = json.classifiedMasterContexts[0].symbol;
             }
-            if (body.classifiedContexts && body.classifiedContexts.length>0) {
-                that.workingRequest.context = body.classifiedContexts[0].symbol;
+            if (json.classifiedContexts && json.classifiedContexts.length>0) {
+                that.workingRequest.context = json.classifiedContexts[0].symbol;
             }
         } else {
             that.workingRequest.dialogVariableValues = [];
@@ -85,5 +86,3 @@ ZSDS.api.Client = function(workingRequest,workingVariableValues) {
 
 var exports = exports || {};
 exports.Client = ZSDS.api.Client;
-
-

@@ -93,17 +93,21 @@ public class AppConfiguration {
 		base = getNewAppBaseConfiguration();
 		String fileName = installDir + "config.json";
 		File file = new File(fileName);
+		
+		String selfUrl = "";
 		String port = "";
 		if (debug) {
-			port = "8080";
+			port = ":8080";
 		}
+		selfUrl = "http://127.0.0.1" + port + contextPath;
+		
 		if (!file.exists()) {
 			debug(this,"Installing ...");
 			base.setDebug(debug);
 			base.setSelfTest(debug);
 			base.setGenerateReadFormat(debug);
 			base.setDataDir(installDir + "data/");
-			base.getParameters().put(PARAMETER_SELF_PORT_NUMBER,port);
+			base.getParameters().put(PARAMETER_SELF_URL,selfUrl);
 			ZStringBuilder err = base.toJson().toFile(fileName,true);
 			if (err.length()>0) {
 				messenger.error(this,err.toString());
@@ -136,17 +140,9 @@ public class AppConfiguration {
 			}
 		}
 
-		if (debug) {
-			port = "8080";
+		if (base.getParameters().containsKey(PARAMETER_SELF_URL)) {
+			selfUrl = base.getParameters().get(PARAMETER_SELF_URL);
 		}
-		if (base.getParameters().containsKey(PARAMETER_SELF_PORT_NUMBER)) {
-			port = base.getParameters().get(PARAMETER_SELF_PORT_NUMBER);
-		}
-		if (port.length()>0) {
-			port = ":" + port;
-		}
-		String selfUrl = "http://localhost" + port + contextPath;
-		base.getParameters().put(PARAMETER_SELF_URL,selfUrl);
 		
 		messenger.start();
 		
