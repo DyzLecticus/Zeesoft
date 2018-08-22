@@ -26,6 +26,7 @@ import nl.zeesoft.zsds.handler.BaseJavaScriptHandler;
 import nl.zeesoft.zsds.handler.BaseStyleSheetHandler;
 import nl.zeesoft.zsds.handler.EnvironmentJavaScriptHandler;
 import nl.zeesoft.zsds.handler.HandlerObject;
+import nl.zeesoft.zsds.handler.HtmlChatHandler;
 import nl.zeesoft.zsds.handler.HtmlEnvironmentHandler;
 import nl.zeesoft.zsds.handler.HtmlIndexHandler;
 import nl.zeesoft.zsds.handler.HtmlNotFoundHandler;
@@ -312,6 +313,7 @@ public class AppConfiguration {
 		r.add(new HtmlIndexHandler(this));
 		r.add(new HtmlTestHandler(this));
 		r.add(new HtmlStateHandler(this));
+		r.add(new HtmlChatHandler(this));
 		r.add(new JsonNotFoundHandler(this));
 		r.add(new JsonConfigHandler(this));
 		r.add(new JsonDialogsHandler(this));

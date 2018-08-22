@@ -90,6 +90,9 @@
 			<equals arg1="n" arg2="${_release}"/>
 		</condition>
 		<fail if="_abort" message="Aborted release"/>
+		<delete>
+            <fileset dir="${build}" includes="**/*.class"/>
+		</delete>
 		<antcall target="dist"/>
 		<antcall target="makeWar"/>
 	</target>
@@ -149,6 +152,10 @@
 	</target>
 	
 	<target name="finishWar">
+		<delete>
+            <fileset dir="${dist}/war" includes="**/*.md"/>
+		</delete>
+		
 		<delete>
             <fileset dir="${dist}/war/WEB-INF/" includes="**/*.xml"/>
 		</delete>

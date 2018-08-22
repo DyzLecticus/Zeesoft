@@ -7,7 +7,6 @@ public class TestJavaScript {
 		ZStringBuilder script = new ZStringBuilder();
 		
 		script.append("var ZSDS = ZSDS || {};\n");
-		
 		script.append("ZSDS.test = {};\n");
 		script.append("ZSDS.test.client = new ZSDS.api.Client();\n");
 		script.append("ZSDS.test.testCase = {};\n");
