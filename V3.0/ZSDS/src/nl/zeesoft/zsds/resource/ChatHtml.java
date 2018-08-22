@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 
 public class ChatHtml extends HtmlResource {
 	public ChatHtml() {
-		setTitle("ZSDS - Test");
+		setTitle("ZSDS - Chat");
 		
 		getScriptFiles().add("zsds.js");
 		getScriptFiles().add("apiClient.js");
