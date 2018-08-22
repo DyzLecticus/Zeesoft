@@ -1,0 +1,99 @@
+<!DOCTYPE project>
+<project name="ZDK" default="dist" basedir=".">
+	<description>ZDK build file</description>
+
+	<!-- Release version -->
+	<property name="version" value="0.9.0"/>
+
+	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
+	
+	<property name="releases" location="releases"/>
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+
+	<target name="compile">
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}" debug="on" includeantruntime="false">
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile" description="Generate the ZDK distribution">
+		<!-- Copy sources to build directory -->
+		<copy todir="${build}">
+            <fileset dir="${src}" />
+        </copy>		
+		<copy file="build.xml" tofile="${build}/build.xml"/>
+		<!-- Create distribution directory -->
+		<mkdir dir="${dist}"/>
+		<!-- Generate manifest -->
+		<manifest file="${dist}/mymanifest">
+			<attribute name="Built-By" value="${version} ${creator}"/>
+			<attribute name="Class-path" value="nl/zeesoft/zdk nl/zeesoft/zdk/build nl/zeesoft/zdk/image nl/zeesoft/zdk/json nl/zeesoft/zdk/json nl/zeesoft/zdk/messenger nl/zeesoft/zdk/messenger/messages nl/zeesoft/zdk/test nl/zeesoft/zdk/test/impl nl/zeesoft/zdk/thread"/>  
+			<attribute name="Main-Class" value="nl.zeesoft.zdk.test.impl.ZDK"/>
+		</manifest>		
+		<!-- Build jar file -->
+		<jar jarfile="${dist}/zdk.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<!-- Run tests and generate README.md -->
+		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="_error" logError="true"> 
+			<arg line="/c java -jar zdk.jar ${version}"/>
+		</exec>
+		<condition property="_abort">
+			<equals arg1="${_error}" arg2="1"/>
+		</condition>
+		<fail if="_abort" message="One or more tests failed"/>		
+		<!-- Rebuild jar file (include README.md) -->
+		<copy file="${dist}/README.md" tofile="${build}/README.md"/>
+		<jar jarfile="${dist}/zdk.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<!-- Remove sources from build directory -->
+		<delete>
+            <fileset dir="${build}" includes="**/*.java"/>
+		</delete>
+	</target>
+
+	<target name="release" description="Release the ZDK">
+		<antcall target="failIfReleaseExists"/>
+		<input message="Are you sure you want to release version ${version} (y/n)?" validargs="y,n" addproperty="_release"/>
+		<condition property="_abort">
+			<equals arg1="n" arg2="${_release}"/>
+		</condition>
+		<fail if="_abort" message="Aborted release"/>		
+		<antcall target="releaseConfirmed"/>
+	</target>
+	
+	<target name="releaseConfirmed">
+		<antcall target="failIfReleaseExists"/>
+		<antcall target="clean"/>
+		<antcall target="dist"/>
+		<antcall target="javadoc"/>
+		<mkdir dir="${releases}"/>
+		<mkdir dir="${releases}/${version}"/>
+		<copy file="${dist}/zdk.jar" tofile="${releases}/${version}/zdk.jar"/>
+		<copy file="${dist}/zdk-javadoc.zip" tofile="${releases}/${version}/zdk-javadoc.zip"/>
+		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
+		<zip destfile="${releases}/zdk-${version}.zip" basedir="${releases}/${version}"/>
+		<delete dir="${releases}/${version}"/>
+		<copy file="${dist}/README.md" tofile="README.md"/>
+	</target>
+	
+	<target name="javadoc" description="Generate the ZDK documentation">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/javadoc"/>
+		<javadoc sourcepath="${src}" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="nl.zeesoft.zdk,nl.zeesoft.zdk.build,nl.zeesoft.zdk.image,nl.zeesoft.zdk.json,nl.zeesoft.zdk.messenger,nl.zeesoft.zdk.messenger.messages,nl.zeesoft.zdk.test,nl.zeesoft.zdk.thread"/>
+		<zip destfile="${dist}/zdk-javadoc.zip" basedir="${dist}/javadoc"/>
+		<delete dir="${dist}/javadoc"/>
+	</target>
+
+	<target name="clean" description="Clean up">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="failIfReleaseExists">
+		<condition property="_released">
+			<available file="${releases}/zdk-${version}.zip"/>
+		</condition>
+		<fail if="_released" message="Version ${version} has already been released"/>		
+	</target>
+</project>
+
