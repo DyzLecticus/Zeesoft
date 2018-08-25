@@ -52,11 +52,10 @@
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
 		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
-		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/dialogs nl/zeesoft/zodb/dialogs/dutch nl/zeesoft/zodb/dialogs/english nl/zeesoft/zodb/handler nl/zeesoft/zodb/resource zdk.jar zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/test zdk.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zodb.test.ZODB"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -100,7 +99,7 @@
 	<target name="makeWar">
 		<manifest file="${dist}/warmanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/test zdk.jar"/>  
 		</manifest>		
 		<antcall target="devWar"/>
 		<antcall target="prodWar"/>
