@@ -1,0 +1,168 @@
+<!DOCTYPE project>
+<project name="ZODB" default="dist" basedir=".">
+	<description>ZODB build file</description>
+
+	<!-- Release version -->
+	<property name="version" value="0.9.0"/>
+	
+	<!-- ZDK version -->
+	<property name="versionZDK" value="0.9.0"/>
+	<property name="releasesZDK" location="../ZDK/releases"/>
+
+	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
+	
+	<property name="releases" location="releases"/>
+	<property name="src" location="src"/>
+	<property name="lib" location="WebContent/WEB-INF/lib"/>
+	<property name="build" location="build/build"/>
+	<property name="dist" location="dist"/>
+
+	<target name="copyZDK" description="Copy the ZDK release">
+		<mkdir dir="${lib}"/>
+		<unzip src="${releasesZDK}/zdk-${versionZDK}.zip" dest="${lib}">
+		    <patternset>
+		        <include name="**/*.jar"/>
+		        <include name="**/*.zip"/>
+		    </patternset>
+		</unzip>
+	</target>
+	
+	<target name="compile">
+		<mkdir dir="build"/>
+		<mkdir dir="${build}"/>
+		<path id="libraries">
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="C:/Zeesoft/tomcat/lib">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		<javac srcdir="${src}" destdir="${build}" classpathref="libraries" debug="on" includeantruntime="false">
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile" description="Generate the ZODB distribution">
+		<!-- Copy sources to build directory -->
+		<copy todir="${build}">
+            <fileset dir="${src}" />
+        </copy>
+		<copy file="build.xml" tofile="${build}/build.xml"/>
+		<!-- Create distribution directory -->
+		<mkdir dir="${dist}"/>
+		<!-- Copy dependencies -->
+		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
+		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
+		<!-- Generate manifest -->
+		<manifest file="${dist}/mymanifest">
+			<attribute name="Built-By" value="${version} ${creator}"/>
+			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/dialogs nl/zeesoft/zodb/dialogs/dutch nl/zeesoft/zodb/dialogs/english nl/zeesoft/zodb/handler nl/zeesoft/zodb/resource zdk.jar zdk.jar"/>  
+			<attribute name="Main-Class" value="nl.zeesoft.zodb.test.ZODB"/>
+		</manifest>		
+		<!-- Build jar file -->
+		<jar jarfile="${dist}/zodb.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<!-- Run tests and generate README.md -->
+		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="_error" logError="true"> 
+			<arg line="/c java -jar zodb.jar ${version}"/>
+		</exec>
+		<condition property="_abort">
+			<equals arg1="${_error}" arg2="1"/>
+		</condition>
+		<fail if="_abort" message="One or more tests failed"/>		
+		<!-- Rebuild jar file (include README.md) -->
+		<copy file="${dist}/README.md" tofile="${build}/README.md"/>
+		<jar jarfile="${dist}/zodb.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<!-- Remove sources from build directory -->
+		<delete>
+            <fileset dir="${build}" includes="**/*.xml"/>
+		</delete>
+		<delete>
+            <fileset dir="${build}" includes="**/*.md"/>
+		</delete>
+		<delete>
+            <fileset dir="${build}" includes="**/*.java"/>
+		</delete>
+	</target>
+
+	<target name="war" description="Generate the ZODB war files">
+		<input message="Are you sure you want to generate the war files (y/n)?" validargs="y,n" addproperty="_release"/>
+		<condition property="_abort">
+			<equals arg1="n" arg2="${_release}"/>
+		</condition>
+		<fail if="_abort" message="Aborted release"/>
+		<delete>
+            <fileset dir="${build}" includes="**/*.class"/>
+		</delete>
+		<antcall target="dist"/>
+		<antcall target="makeWar"/>
+	</target>
+	
+	<target name="makeWar">
+		<manifest file="${dist}/warmanifest">
+			<attribute name="Built-By" value="${version} ${creator}"/>
+			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app zdk.jar"/>  
+		</manifest>		
+		<antcall target="devWar"/>
+		<antcall target="prodWar"/>
+		<copy file="${dist}/README.md" tofile="README.md"/>
+	</target>
+
+	<target name="devWar">
+		<antcall target="prepareWar"/>
+		<copy file="WebContent/WEB-INF/web.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
+		<war destfile="zodb-dev.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
+		<antcall target="finishWar"/>
+	</target>
+	
+	<target name="prodWar">
+		<antcall target="prepareWar"/>
+		<copy file="WebContent/WEB-INF/web-prod.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
+		<war destfile="zodb.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
+		<antcall target="finishWar"/>
+	</target>
+	
+	<target name="prepareWar">
+		<mkdir dir="${dist}/war"/>
+		<mkdir dir="${dist}/war/WEB-INF"/>
+		<mkdir dir="${dist}/war/WEB-INF/lib"/>
+		<mkdir dir="${dist}/war/META-INF"/>
+		
+		<copy file="build.xml" tofile="${dist}/war/build.xml"/>
+		<copy file="${dist}/README.md" tofile="${dist}/war/README.xml"/>
+		
+		<copy todir="${dist}/war/WEB-INF/lib">
+	        <fileset dir="WebContent/WEB-INF/lib" includes="**/*.*"/>
+	    </copy>		
+	
+		<!-- Copy sources to build directory -->
+		<copy todir="${build}">
+            <fileset dir="${src}" />
+        </copy>
+		
+		<copy todir="${dist}/war/WEB-INF/classes">
+	        <fileset dir="${build}">
+				<exclude name="**/zeesoft/zodb/test/**" />
+	        </fileset>
+	    </copy>		
+		
+		<!-- Remove sources from build directory -->
+		<delete>
+            <fileset dir="${build}" includes="**/*.java"/>
+		</delete>
+	</target>
+	
+	<target name="finishWar">
+		<delete>
+            <fileset dir="${dist}/war" includes="**/*.md"/>
+		</delete>
+		
+		<delete>
+            <fileset dir="${dist}/war/WEB-INF/" includes="**/*.xml"/>
+		</delete>
+            	
+		<!-- Remove sources from war directory -->
+		<delete>
+            <fileset dir="${dist}/war/WEB-INF/classes" includes="**/*.java"/>
+		</delete>
+	</target>
+</project>
