@@ -226,7 +226,7 @@ public class Index extends Locker {
 	}
 
 	private IndexElement removeObjectNoLock(long id) {
-		IndexElement r = new IndexElement();
+		IndexElement r = null;
 		if (elementsById.containsKey(id)) {
 			r = elementsById.remove(id);
 			elementsByName.remove(r.name);

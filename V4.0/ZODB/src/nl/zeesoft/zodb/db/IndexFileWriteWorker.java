@@ -18,23 +18,37 @@ public class IndexFileWriteWorker extends Worker {
 	}
 	
 	@Override
+	public void stop() {
+		super.stop();
+		waitForStop(10,false);
+		SortedMap<Integer,List<IndexElement>> files = index.getChangedFiles();
+		if (files.size()>0) {
+			writeChangedFiles(files);
+		}
+	}
+	
+	@Override
 	public void whileWorking() {
 		SortedMap<Integer,List<IndexElement>> files = index.getChangedFiles();
 		if (files.size()>0) {
-			for (int num: files.keySet()) {
-				String fileName = index.getDirectory() + num + ".txt";
-				ZStringBuilder content = new ZStringBuilder();
-				for (IndexElement elem: files.get(num)) {
-					if (content.length()>0) {
-						content.append("\n");
-					}
-					content.append(elem.toStringBuilder());
-				}
-				content.toFile(fileName);
-			}
+			writeChangedFiles(files);
 			setSleep(1);
 		} else {
 			setSleep(100);
+		}
+	}
+	
+	private void writeChangedFiles(SortedMap<Integer,List<IndexElement>> files) {
+		for (int num: files.keySet()) {
+			String fileName = index.getDirectory() + num + ".txt";
+			ZStringBuilder content = new ZStringBuilder();
+			for (IndexElement elem: files.get(num)) {
+				if (content.length()>0) {
+					content.append("\n");
+				}
+				content.append(elem.toStringBuilder());
+			}
+			content.toFile(fileName);
 		}
 	}
 }

@@ -7,15 +7,17 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 
 public class Database {
-	public static final String	INDEX_DIR		= "ZODB/Index/";
-	public static final String	OBJECT_DIR		= "ZODB/Objects/";
+	public static final String		INDEX_DIR		= "ZODB/Index/";
+	public static final String		OBJECT_DIR		= "ZODB/Objects/";
 	
-	private Config				configuration	= null;
-	private Index				index			= null;
+	private Config					configuration	= null;
+	private Index					index			= null;
+	private IndexFileWriteWorker	indexWriter		= null;
 	
 	public Database(Config config) {
 		configuration = config;
 		index = new Index(config.getMessenger(),config.getFullDataDir() + INDEX_DIR);
+		indexWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
 	}
 	
 	public void install() {
@@ -25,11 +27,17 @@ public class Database {
 		dir.mkdirs();
 	}
 
-	public void initialize() {
+	public void open() {
 		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index);
 		reader.start();
+		indexWriter.start();
 	}
-	
+
+	public void close() {
+		index.setOpen(false);
+		indexWriter.stop();
+	}
+
 	public boolean isOpen() {
 		return index.isOpen();
 	}

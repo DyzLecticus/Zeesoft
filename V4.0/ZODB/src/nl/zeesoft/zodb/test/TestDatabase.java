@@ -56,37 +56,59 @@ public class TestDatabase extends TestObject {
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
+		
 		Database db = new Database(config);
 		db.install();
-		db.initialize();
+		db.open();
 
 		sleep(1000);
 		
 		assertEqual(db.isOpen(),true,"Failed to initialize database within one second");
 		if (db.isOpen()) {
 			
-			Date started = new Date();
-			addTestObjects(db);
-			System.out.println("Adding 250 objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-			
 			IndexElement element = null;
 			
 			element = db.getObjectById(1L);
+			if (element==null) {
+				Date started = new Date();
+				addTestObjects(db);
+				System.out.println("Adding 250 objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+			}
+			
+			element = db.getObjectById(1L);
 			if (element!=null) {
-				assertEqual(element.name,"testObject1","Object name does not match expectation");
+				assertEqual(element.name,"testObject1","Name of object found by id does not match expectation");
 			} else {
 				assertEqual(false,true,"Object with id 1 not found");
 			}
 			
 			element = db.getObjectByName("testObject2");
 			if (element!=null) {
-				assertEqual(element.name,"testObject2","Object name does not match expectation");
+				assertEqual(element.name,"testObject2","Name of object found by name does not match expectation");
 			} else {
 				assertEqual(false,true,"Object with name 'testObject2' not found");
 			}
+			
+			sleep(1000);
+			
+			element = db.getObjectByName("testObject125");
+			if (element!=null) {
+				element = db.removeObject(element.id);
+				if (element!=null) {
+					assertEqual(element.name,"testObject125","Removed object name does not match expectation");
+					element = addTestObject(db,"testObject125");
+					assertEqual(element!=null,true,"Failed to add object with name 'testObject125'");
+				}
+			} else {
+				element = addTestObject(db,"testObject125");
+				assertEqual(element!=null,true,"Failed to add object with name 'testObject125'");
+			}
 		}
-		
+				
 		sleep(1000);
+		
+		db.close();
+		
 		config.destroy();
 	}
 	
