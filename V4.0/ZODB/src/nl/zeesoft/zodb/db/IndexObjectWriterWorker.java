@@ -20,7 +20,7 @@ public class IndexObjectWriterWorker extends Worker {
 		super(msgr, union);
 		this.union = union;
 		this.index = index;
-		setSleep(0);
+		setSleep(100);
 	}
 	
 	@Override
@@ -43,6 +43,9 @@ public class IndexObjectWriterWorker extends Worker {
 			List<IndexElement> elements = index.getChangedElements();
 			if (elements.size()>0) {
 				writeChangedElements(elements);
+				setSleep(1);
+			} else {
+				setSleep(100);
 			}
 		}
 	}

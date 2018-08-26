@@ -88,10 +88,11 @@ public class Index extends Locker {
 
 	protected void setObjectName(long id, String name) {
 		lockMe(this);
-		if (open) {
+		if (open && elementsByName.get(name)==null) {
 			IndexElement element = elementsById.get(id);
 			if (element!=null && !element.name.equals(name)) {
 				element.name = name;
+				element.updateModified();
 				if (!changedFileNums.contains(element.fileNum)) {
 					changedFileNums.add(element.fileNum);
 				}
