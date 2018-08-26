@@ -90,7 +90,7 @@ public class Index extends Locker {
 		lockMe(this);
 		if (open && elementsByName.get(name)==null) {
 			IndexElement element = elementsById.get(id);
-			if (element!=null && !element.name.equals(name)) {
+			if (element!=null && !element.removed && !element.name.equals(name)) {
 				element.name = name;
 				element.updateModified();
 				if (!changedFileNums.contains(element.fileNum)) {
@@ -165,16 +165,22 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected List<IndexElement> getChangedElements() {
+	protected List<IndexElement> getChangedElements(int max) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
-		for (IndexElement elem: changedElements) {
+		int added = 0;
+		List<IndexElement> list = new ArrayList<IndexElement>(changedElements);
+		for (IndexElement elem: list) {
 			if (!(elem.added && elem.removed)) {
 				r.add(elem.copy());
+				added++;
 			}
 			elem.added = false;
+			changedElements.remove(elem);
+			if (max>0 && added>=max) {
+				break;
+			}
 		}
-		changedElements.clear();
 		unlockMe(this);
 		return r;
 	}

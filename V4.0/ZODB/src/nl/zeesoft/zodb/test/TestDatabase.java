@@ -110,11 +110,14 @@ public class TestDatabase extends TestObject {
 			Date started = new Date();
 			List<IndexElement> elements = db.getObjectsByNameStartsWith("testObject");
 			assertEqual(elements.size(),250,"Number of objects does not match expectation");
+			for (IndexElement elem: elements) {
+				assertEqual(elem.obj!=null,true,"Failed to read object id " + elem.id);
+			}
+			long ms = ((new Date()).getTime() - started.getTime());
 			if (!added) {
-				for (IndexElement elem: elements) {
-					assertEqual(elem.obj!=null,true,"Failed to read object id " + elem.id);
-				}
-				System.out.println("Reading 250 objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+				System.out.println("Reading 250 objects took: " + ms + " ms");
+			} else {
+				System.out.println("Reading 250 cached objects took: " + ms + " ms");
 			}
 		}
 				

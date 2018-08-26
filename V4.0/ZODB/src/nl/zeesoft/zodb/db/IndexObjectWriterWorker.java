@@ -27,7 +27,7 @@ public class IndexObjectWriterWorker extends Worker {
 	public void stop() {
 		super.stop();
 		waitForStop(10,false);
-		List<IndexElement> elements = index.getChangedElements();
+		List<IndexElement> elements = index.getChangedElements(0);
 		if (elements.size()>0) {
 			writeChangedElements(elements);
 		}
@@ -40,7 +40,7 @@ public class IndexObjectWriterWorker extends Worker {
 		w = writing;
 		unlockMe(this);
 		if (!w) {
-			List<IndexElement> elements = index.getChangedElements();
+			List<IndexElement> elements = index.getChangedElements(1000);
 			if (elements.size()>0) {
 				writeChangedElements(elements);
 				setSleep(1);

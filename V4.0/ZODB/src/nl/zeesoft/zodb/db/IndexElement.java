@@ -27,6 +27,8 @@ public class IndexElement {
 		r.modified = this.modified;
 		r.fileNum = this.fileNum;
 		r.obj = this.obj;
+		r.removed = this.removed;
+		r.added = this.added;
 		return r;
 	}
 	
