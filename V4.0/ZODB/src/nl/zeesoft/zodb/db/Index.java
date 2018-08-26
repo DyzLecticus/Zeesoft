@@ -11,6 +11,8 @@ import nl.zeesoft.zdk.thread.Locker;
 
 public class Index extends Locker {
 	private int										blockSize			= 100;
+	
+	private Database								db					= null;
 	private String									directory			= "";
 	
 	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
@@ -22,8 +24,9 @@ public class Index extends Locker {
 	
 	private boolean									open				= false;
 	
-	public Index(Messenger msgr,String directory) {
+	public Index(Messenger msgr,Database db,String directory) {
 		super(msgr);
+		this.db = db;
 		this.directory = directory;
 	}
 
@@ -109,6 +112,10 @@ public class Index extends Locker {
 		lockMe(this);
 		this.open = open;
 		unlockMe(this);
+		db.stateChanged(open);
+		if (!open) {
+			db = null;
+		}
 	}
 	
 	protected boolean isOpen() {

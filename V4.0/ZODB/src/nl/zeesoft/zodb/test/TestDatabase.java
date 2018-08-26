@@ -59,7 +59,7 @@ public class TestDatabase extends TestObject {
 		
 		Database db = new Database(config);
 		db.install();
-		db.open();
+		db.start();
 
 		sleep(1000);
 		
@@ -107,7 +107,7 @@ public class TestDatabase extends TestObject {
 				
 		sleep(1000);
 		
-		db.close();
+		db.stop();
 		
 		config.destroy();
 	}

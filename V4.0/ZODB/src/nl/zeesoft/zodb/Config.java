@@ -61,10 +61,12 @@ public class Config {
 				fromJson(json);
 				messenger.setPrintDebugMessages(debug);
 			}
-		} else if (write) {
+		} else {
 			selfTest = debug;
 			messenger.setPrintDebugMessages(debug);
-			install(cfg.getAbsolutePath());
+			if (write) {
+				install(cfg.getAbsolutePath());
+			}
 		}
 		
 		messenger.start();
@@ -106,6 +108,10 @@ public class Config {
 		messenger.stop();
 		union.stopWorkers();
 		messenger.whileWorking();
+		for (AppObject app: applications) {
+			app.configuration = null;
+		}
+		applications.clear();
 	}
 	
 	public JsFile toJson() {
