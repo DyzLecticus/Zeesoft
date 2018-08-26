@@ -30,31 +30,40 @@ public class Index extends Locker {
 	protected IndexElement addObject(String name,JsFile obj) {
 		IndexElement r = null;
 		lockMe(this);
-		if (open) {
+		if (name.length()>0 && open) {
 			r = addObjectNoLock(name,obj);
+			if (r!=null) {
+				r = r.copy();
+			}
 		}
 		unlockMe(this);
-		return r.copy();
+		return r;
 	}
 	
 	protected IndexElement getObjectById(long id) {
 		IndexElement r = null;
 		lockMe(this);
-		if (open) {
+		if (id>0 && open) {
 			r = elementsById.get(id);
+			if (r!=null) {
+				r = r.copy();
+			}
 		}
 		unlockMe(this);
-		return r.copy();
+		return r;
 	}
 	
 	protected IndexElement getObjectByName(String name) {
 		IndexElement r = null;
 		lockMe(this);
-		if (open) {
+		if (name.length()>0 && open) {
 			r = elementsByName.get(name);
+			if (r!=null) {
+				r = r.copy();
+			}
 		}
 		unlockMe(this);
-		return r.copy();
+		return r;
 	}
 
 	protected List<IndexElement> getObjectsByNameStartsWith(String start) {
@@ -69,7 +78,7 @@ public class Index extends Locker {
 	
 	protected void setObject(long id, JsFile obj) {
 		lockMe(this);
-		if (open) {
+		if (id>0 && open) {
 			setObjectNoLock(id,obj);
 		}
 		unlockMe(this);
@@ -82,11 +91,14 @@ public class Index extends Locker {
 	protected IndexElement removeObject(long id) {
 		IndexElement r = null;
 		lockMe(this);
-		if (open) {
+		if (id>0 && open) {
 			r = removeObjectNoLock(id);
+			if (r!=null) {
+				r = r.copy();
+			}
 		}
 		unlockMe(this);
-		return r.copy();
+		return r;
 	}
 	
 	protected String getDirectory() {
@@ -136,7 +148,10 @@ public class Index extends Locker {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		for (IndexElement elem: changedElements) {
-			r.add(elem.copy());
+			if (!(elem.added && elem.removed)) {
+				r.add(elem.copy());
+			}
+			elem.added = false;
 		}
 		changedElements.clear();
 		unlockMe(this);
@@ -151,6 +166,7 @@ public class Index extends Locker {
 			r.name = name;
 			r.obj = obj;
 			r.fileNum = getFileNumForNewObject();
+			r.added = true;
 			
 			elementsById.put(r.id,r);
 			elementsByName.put(r.name,r);
@@ -170,7 +186,7 @@ public class Index extends Locker {
 	}
 		
 	private long getNewUid() {
-		long r = 0;
+		long r = 1;
 		if (elementsById.size()>0) {
 			r = (elementsById.lastKey() + 1L);
 		}

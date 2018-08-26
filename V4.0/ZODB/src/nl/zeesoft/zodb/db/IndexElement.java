@@ -12,6 +12,8 @@ public class IndexElement {
 	public long		modified	= 0L;
 	public int		fileNum		= 0;
 	public JsFile	obj			= null;
+	
+	public boolean	added		= false;
 	public boolean	removed		= false;
 	
 	public IndexElement() {

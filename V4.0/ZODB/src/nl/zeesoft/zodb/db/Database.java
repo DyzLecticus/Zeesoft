@@ -1,5 +1,6 @@
 package nl.zeesoft.zodb.db;
 
+import java.io.File;
 import java.util.List;
 
 import nl.zeesoft.zdk.json.JsFile;
@@ -14,12 +15,23 @@ public class Database {
 	
 	public Database(Config config) {
 		configuration = config;
-		index = new Index(config.getMessenger(),config.getDataDir() + INDEX_DIR);
+		index = new Index(config.getMessenger(),config.getFullDataDir() + INDEX_DIR);
+	}
+	
+	public void install() {
+		File dir = new File(configuration.getFullDataDir() + INDEX_DIR);
+		dir.mkdirs();
+		dir = new File(configuration.getFullDataDir() + OBJECT_DIR);
+		dir.mkdirs();
 	}
 
 	public void initialize() {
 		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index);
 		reader.start();
+	}
+	
+	public boolean isOpen() {
+		return index.isOpen();
 	}
 	
 	public IndexElement addObject(String name,JsFile obj) {
