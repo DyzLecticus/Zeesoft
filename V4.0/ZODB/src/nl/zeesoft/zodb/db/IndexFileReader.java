@@ -55,7 +55,7 @@ public class IndexFileReader extends Locker {
 	
 	private List<String> getFileNames() {
 		List<String> r = new ArrayList<String>();
-		File dir = new File(index.getDirectory());
+		File dir = new File(index.getFileDirectory());
 		if (dir.exists()) {
 			for (File file: dir.listFiles()) {
 				r.add(file.getName());

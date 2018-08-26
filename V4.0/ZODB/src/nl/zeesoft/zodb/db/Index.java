@@ -13,7 +13,6 @@ public class Index extends Locker {
 	private int										blockSize			= 100;
 	
 	private Database								db					= null;
-	private String									directory			= "";
 	
 	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
 	private SortedMap<String,IndexElement>			elementsByName		= new TreeMap<String,IndexElement>();
@@ -24,10 +23,9 @@ public class Index extends Locker {
 	
 	private boolean									open				= false;
 	
-	public Index(Messenger msgr,Database db,String directory) {
+	public Index(Messenger msgr,Database db) {
 		super(msgr);
 		this.db = db;
-		this.directory = directory;
 	}
 
 	protected IndexElement addObject(String name,JsFile obj) {
@@ -104,8 +102,12 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected String getDirectory() {
-		return directory;
+	protected String getFileDirectory() {
+		return db.getFullIndexDir();
+	}
+	
+	protected String getObjectDirectory() {
+		return db.getFullObjectDir();
 	}
 	
 	protected void setOpen(boolean open) {

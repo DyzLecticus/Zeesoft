@@ -14,23 +14,33 @@ public class Database {
 	private Config							configuration	= null;
 	private Index							index			= null;
 	private IndexFileWriteWorker			indexWriter		= null;
+	private IndexObjectWriterWorker			objectWriter	= null;
 	
 	private List<DatabaseStateListener>		listeners		= new ArrayList<DatabaseStateListener>();
 	
 	public Database(Config config) {
 		configuration = config;
-		index = new Index(config.getMessenger(),this,config.getFullDataDir() + INDEX_DIR);
+		index = new Index(config.getMessenger(),this);
 		indexWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
+		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
 	
 	public void addListener(DatabaseStateListener listener) {
 		listeners.add(listener);
 	}
 	
+	public String getFullIndexDir() {
+		return configuration.getFullDataDir() + INDEX_DIR;
+	}
+	
+	public String getFullObjectDir() {
+		return configuration.getFullDataDir() + OBJECT_DIR;
+	}
+	
 	public void install() {
-		File dir = new File(configuration.getFullDataDir() + INDEX_DIR);
+		File dir = new File(getFullIndexDir());
 		dir.mkdirs();
-		dir = new File(configuration.getFullDataDir() + OBJECT_DIR);
+		dir = new File(getFullObjectDir());
 		dir.mkdirs();
 	}
 
@@ -39,6 +49,7 @@ public class Database {
 		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index);
 		reader.start();
 		indexWriter.start();
+		objectWriter.start();
 		configuration.debug(this,"Started database");
 	}
 
@@ -46,6 +57,7 @@ public class Database {
 		index.setOpen(false);
 		configuration.debug(this,"Stopping database ...");
 		indexWriter.stop();
+		objectWriter.stop();
 		for (DatabaseStateListener listener: listeners) {
 			listener.databaseStateChanged(false);
 		}

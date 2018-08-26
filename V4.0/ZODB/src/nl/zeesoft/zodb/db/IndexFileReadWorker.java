@@ -30,7 +30,7 @@ public class IndexFileReadWorker extends Worker {
 		if (done<fileNames.size()) {
 			String fileName = fileNames.get(done);
 			ZStringBuilder content = new ZStringBuilder();
-			ZStringBuilder err = content.fromFile(index.getDirectory() + fileName);
+			ZStringBuilder err = content.fromFile(index.getFileDirectory() + fileName);
 			if (err.length()>0) {
 				getMessenger().error(this,err.toString());
 			} else {

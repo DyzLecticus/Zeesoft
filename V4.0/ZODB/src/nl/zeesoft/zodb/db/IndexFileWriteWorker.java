@@ -40,7 +40,7 @@ public class IndexFileWriteWorker extends Worker {
 	
 	private void writeChangedFiles(SortedMap<Integer,List<IndexElement>> files) {
 		for (int num: files.keySet()) {
-			String fileName = index.getDirectory() + num + ".txt";
+			String fileName = index.getFileDirectory() + num + ".txt";
 			ZStringBuilder content = new ZStringBuilder();
 			for (IndexElement elem: files.get(num)) {
 				if (content.length()>0) {

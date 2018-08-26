@@ -113,7 +113,7 @@ public class TestDatabase extends TestObject {
 	}
 	
 	private void addTestObjects(Database db) {
-		for (int i = 1; i < 250; i++) {
+		for (int i = 1; i <= 250; i++) {
 			IndexElement element = addTestObject(db,"testObject" + i);
 			assertEqual((int) element.id,i,"Object id does not match expectation");
 		}
