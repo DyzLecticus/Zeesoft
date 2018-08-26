@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.thread.Locker;
 
 public class Index extends Locker {
 	private int										blockSize			= 100;
+	private String									directory			= "";
 	
 	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
 	private SortedMap<String,IndexElement>			elementsByName		= new TreeMap<String,IndexElement>();
@@ -19,62 +20,103 @@ public class Index extends Locker {
 	private List<Integer>							changedFileNums		= new ArrayList<Integer>();
 	private List<IndexElement>						changedElements		= new ArrayList<IndexElement>();
 	
-	public Index(Messenger msgr) {
+	private boolean									open				= false;
+	
+	public Index(Messenger msgr,String directory) {
 		super(msgr);
+		this.directory = directory;
 	}
 
-	public IndexElement addObject(String name,JsFile obj) {
+	protected IndexElement addObject(String name,JsFile obj) {
 		IndexElement r = null;
 		lockMe(this);
-		r = addObjectNoLock(name,obj);
+		if (open) {
+			r = addObjectNoLock(name,obj);
+		}
 		unlockMe(this);
 		return r.copy();
 	}
 	
-	public IndexElement getObjectById(long id) {
+	protected IndexElement getObjectById(long id) {
 		IndexElement r = null;
 		lockMe(this);
-		r = elementsById.get(id);
+		if (open) {
+			r = elementsById.get(id);
+		}
 		unlockMe(this);
 		return r.copy();
 	}
 	
-	public IndexElement getObjectByName(String name) {
+	protected IndexElement getObjectByName(String name) {
 		IndexElement r = null;
 		lockMe(this);
-		r = elementsByName.get(name);
+		if (open) {
+			r = elementsByName.get(name);
+		}
 		unlockMe(this);
 		return r.copy();
 	}
 
-	public List<IndexElement> getObjectsByNameStartsWith(String start) {
+	protected List<IndexElement> getObjectsByNameStartsWith(String start) {
 		// TODO: Implement
 		return null;
 	}
 	
-	public List<IndexElement> getObjectsByNameMatches(String match) {
+	protected List<IndexElement> getObjectsByNameMatches(String match) {
 		// TODO: Implement
 		return null;
 	}
 	
-	public void setObject(long id, JsFile obj) {
+	protected void setObject(long id, JsFile obj) {
 		lockMe(this);
-		setObjectNoLock(id,obj);
+		if (open) {
+			setObjectNoLock(id,obj);
+		}
 		unlockMe(this);
 	}
 
-	public void setObjectName(long id, String name) {
+	protected void setObjectName(long id, String name) {
 		// TODO: Implement
 	}
 
-	public IndexElement removeObject(long id) {
+	protected IndexElement removeObject(long id) {
 		IndexElement r = null;
 		lockMe(this);
-		r = removeObjectNoLock(id);
+		if (open) {
+			r = removeObjectNoLock(id);
+		}
 		unlockMe(this);
 		return r.copy();
 	}
 	
+	protected String getDirectory() {
+		return directory;
+	}
+	
+	protected void setOpen(boolean open) {
+		lockMe(this);
+		this.open = open;
+		unlockMe(this);
+	}
+	
+	protected boolean isOpen() {
+		boolean r = false;
+		lockMe(this);
+		r = open;
+		unlockMe(this);
+		return r;
+	}
+	
+	protected void addFileElements(Integer fileNum,List<IndexElement> elements) {
+		lockMe(this);
+		for (IndexElement elem: elements) {
+			elementsById.put(elem.id,elem);
+			elementsByName.put(elem.name,elem);
+			elementsByFileNum.put(fileNum,elements);
+		}
+		unlockMe(this);
+	}
+
 	protected SortedMap<Integer,List<IndexElement>> getChangedFiles() {
 		SortedMap<Integer,List<IndexElement>> r = new TreeMap<Integer,List<IndexElement>>();
 		lockMe(this);
@@ -157,10 +199,12 @@ public class Index extends Locker {
 	private void setObjectNoLock(long id, JsFile obj) {
 		if (elementsById.containsKey(id)) {
 			IndexElement element = elementsById.get(id);
-			element.obj = obj;
-			element.updateModified();
-			if (!changedElements.contains(element)) {
-				changedElements.add(element);
+			if (!element.removed) {
+				element.obj = obj;
+				element.updateModified();
+				if (!changedElements.contains(element)) {
+					changedElements.add(element);
+				}
 			}
 		}
 	}
@@ -171,6 +215,7 @@ public class Index extends Locker {
 			r = elementsById.remove(id);
 			elementsByName.remove(r.name);
 			elementsByFileNum.get(r.fileNum).remove(r);
+			r.removed = true;
 			if (!changedFileNums.contains(r.fileNum)) {
 				changedFileNums.add(r.fileNum);
 			}
