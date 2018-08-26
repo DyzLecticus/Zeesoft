@@ -46,12 +46,14 @@ public class Index extends Locker {
 		unlockMe(this);
 		return r.copy();
 	}
-	
+
 	public List<IndexElement> getObjectsByNameStartsWith(String start) {
+		// TODO: Implement
 		return null;
 	}
 	
 	public List<IndexElement> getObjectsByNameMatches(String match) {
+		// TODO: Implement
 		return null;
 	}
 	
@@ -59,6 +61,10 @@ public class Index extends Locker {
 		lockMe(this);
 		setObjectNoLock(id,obj);
 		unlockMe(this);
+	}
+
+	public void setObjectName(long id, String name) {
+		// TODO: Implement
 	}
 
 	public IndexElement removeObject(long id) {
@@ -71,6 +77,7 @@ public class Index extends Locker {
 	
 	protected SortedMap<Integer,List<IndexElement>> getChangedFiles() {
 		SortedMap<Integer,List<IndexElement>> r = new TreeMap<Integer,List<IndexElement>>();
+		lockMe(this);
 		for (Integer num: changedFileNums) {
 			List<IndexElement> list = new ArrayList<IndexElement>();
 			for (IndexElement elem: elementsByFileNum.get(num)) {
@@ -79,15 +86,18 @@ public class Index extends Locker {
 			r.put(num,list);
 		}
 		changedFileNums.clear();
+		unlockMe(this);
 		return r;
 	}
 	
 	protected List<IndexElement> getChangedElements() {
 		List<IndexElement> r = new ArrayList<IndexElement>();
+		lockMe(this);
 		for (IndexElement elem: changedElements) {
 			r.add(elem.copy());
 		}
 		changedElements.clear();
+		unlockMe(this);
 		return r;
 	}
 	
