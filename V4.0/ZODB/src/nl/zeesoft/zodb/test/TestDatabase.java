@@ -2,6 +2,7 @@ package nl.zeesoft.zodb.test;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -66,6 +67,7 @@ public class TestDatabase extends TestObject {
 		assertEqual(db.isOpen(),true,"Failed to initialize database within one second");
 		if (db.isOpen()) {
 			
+			boolean added = false;
 			IndexElement element = null;
 			
 			element = db.getObjectById(1L);
@@ -73,6 +75,7 @@ public class TestDatabase extends TestObject {
 				Date started = new Date();
 				addTestObjects(db);
 				System.out.println("Adding 250 objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+				added = true;
 			}
 			
 			element = db.getObjectById(1L);
@@ -102,6 +105,16 @@ public class TestDatabase extends TestObject {
 			} else {
 				element = addTestObject(db,"testObject125");
 				assertEqual(element!=null,true,"Failed to add object with name 'testObject125'");
+			}
+			
+			Date started = new Date();
+			List<IndexElement> elements = db.getObjectsByNameStartsWith("testObject");
+			assertEqual(elements.size(),250,"Number of objects does not match expectation");
+			if (!added) {
+				for (IndexElement elem: elements) {
+					assertEqual(elem.obj!=null,true,"Failed to read object id " + elem.id);
+				}
+				System.out.println("Reading 250 objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			}
 		}
 				

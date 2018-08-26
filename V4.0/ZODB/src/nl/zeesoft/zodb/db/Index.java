@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -47,6 +48,7 @@ public class Index extends Locker {
 		if (id>0 && open) {
 			r = elementsById.get(id);
 			if (r!=null) {
+				readObjectNoLock(r);
 				r = r.copy();
 			}
 		}
@@ -60,6 +62,7 @@ public class Index extends Locker {
 		if (name.length()>0 && open) {
 			r = elementsByName.get(name);
 			if (r!=null) {
+				readObjectNoLock(r);
 				r = r.copy();
 			}
 		}
@@ -67,14 +70,12 @@ public class Index extends Locker {
 		return r;
 	}
 
-	protected List<IndexElement> getObjectsByNameStartsWith(String start) {
-		// TODO: Implement
-		return null;
+	protected List<IndexElement> getObjectsByNameStartsWith(String startsWith) {
+		return getObjectsByName(startsWith,null,null);
 	}
 	
-	protected List<IndexElement> getObjectsByNameMatches(String match) {
-		// TODO: Implement
-		return null;
+	protected List<IndexElement> getObjectsByNameMatches(String regex) {
+		return getObjectsByName(null,regex,null);
 	}
 	
 	protected void setObject(long id, JsFile obj) {
@@ -86,7 +87,17 @@ public class Index extends Locker {
 	}
 
 	protected void setObjectName(long id, String name) {
-		// TODO: Implement
+		lockMe(this);
+		if (open) {
+			IndexElement element = elementsById.get(id);
+			if (element!=null && !element.name.equals(name)) {
+				element.name = name;
+				if (!changedFileNums.contains(element.fileNum)) {
+					changedFileNums.add(element.fileNum);
+				}
+			}
+		}
+		unlockMe(this);
 	}
 
 	protected IndexElement removeObject(long id) {
@@ -165,6 +176,51 @@ public class Index extends Locker {
 		changedElements.clear();
 		unlockMe(this);
 		return r;
+	}
+	
+	private List<IndexElement> getObjectsByName(String startsWith,String regex,String endsWith) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
+		List<IndexElement> read = new ArrayList<IndexElement>();
+		lockMe(this);
+		if (open) {
+			for (String name: elementsByName.keySet()) {
+				if (
+					(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
+					(regex==null || regex.length()==0 || name.matches(regex)) &&
+					(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
+					) {
+					IndexElement element = elementsByName.get(name);
+					if (element.obj==null) {
+						read.add(element);
+					} else {
+						r.add(element.copy());
+					}
+				}
+			}
+		}
+		unlockMe(this);
+		if (read.size()>0) {
+			for (IndexElement element: read) {
+				lockMe(this);
+				readObjectNoLock(element);
+				r.add(element.copy());
+				unlockMe(this);
+			}
+		}
+		return r;
+	}
+	
+	private void readObjectNoLock(IndexElement element) {
+		if (element.obj==null) {
+			String fileName = getObjectDirectory() + element.id + ".json";
+			JsFile obj = new JsFile();
+			ZStringBuilder err = obj.fromFile(fileName);
+			if (err.length()>0) {
+				getMessenger().error(this,"Failed to read object: " + err);
+			} else {
+				element.obj = obj;
+			}
+		}
 	}
 	
 	private IndexElement addObjectNoLock(String name,JsFile obj) {
