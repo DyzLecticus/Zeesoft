@@ -7,20 +7,20 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class IndexElement {
-	public long		id			= 0L;
-	public String	name		= "";
-	public long		modified	= 0L;
-	public int		fileNum		= 0;
-	public JsFile	obj			= null;
+	public long			id			= 0L;
+	public String		name		= "";
+	public long			modified	= 0L;
+	public int			fileNum		= 0;
+	public JsFile		obj			= null;
 	
-	public boolean	added		= false;
-	public boolean	removed		= false;
+	protected boolean	added		= false;
+	protected boolean	removed		= false;
 	
-	public IndexElement() {
+	protected IndexElement() {
 		updateModified();
 	}
 	
-	public IndexElement copy() {
+	protected IndexElement copy() {
 		IndexElement r = new IndexElement();
 		r.id = this.id;
 		r.name = this.name;
@@ -32,11 +32,11 @@ public class IndexElement {
 		return r;
 	}
 	
-	public void updateModified() {
+	protected void updateModified() {
 		this.modified = (new Date()).getTime();
 	}
 	
-	public ZStringBuilder toStringBuilder() {
+	protected ZStringBuilder toStringBuilder() {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("" + id);
 		r.append("\t");
@@ -46,7 +46,7 @@ public class IndexElement {
 		return r;
 	}
 	
-	public void fromStringBuilder(ZStringBuilder str) {
+	protected void fromStringBuilder(ZStringBuilder str) {
 		List<ZStringBuilder> split = str.split("\t");
 		id = Long.parseLong(split.get(0).toString());
 		name = split.get(1).toString();

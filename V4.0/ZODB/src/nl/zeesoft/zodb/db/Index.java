@@ -70,6 +70,30 @@ public class Index extends Locker {
 		return r;
 	}
 
+	protected SortedMap<String,Long> listObjects(int start, int max) {
+		SortedMap<String,Long> r = new TreeMap<String,Long>();
+		if (start<0) {
+			start = 0;
+		}
+		if (max<1) {
+			max = 1;
+		}
+		lockMe(this);
+		if (start<=(elementsByName.size() - 1)) {
+			int end = start + max;
+			if (end>elementsByName.size()) {
+				end = elementsByName.size();
+			}
+			List<String> names = new ArrayList<String>(elementsByName.keySet());
+			for (int i = start; i < end; i++) {
+				IndexElement element = elementsByName.get(names.get(i));
+				r.put(element.name,element.id);
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+	
 	protected List<IndexElement> getObjectsByNameStartsWith(String startsWith) {
 		return getObjectsByName(startsWith,null,null);
 	}

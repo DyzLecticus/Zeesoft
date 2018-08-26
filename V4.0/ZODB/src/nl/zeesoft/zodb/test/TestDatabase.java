@@ -3,6 +3,7 @@ package nl.zeesoft.zodb.test;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -80,16 +81,16 @@ public class TestDatabase extends TestObject {
 			
 			element = db.getObjectById(1L);
 			if (element!=null) {
-				assertEqual(element.name,"testObject1","Name of object found by id does not match expectation");
+				assertEqual(element.name,"testObject001","Name of object found by id does not match expectation");
 			} else {
 				assertEqual(false,true,"Object with id 1 not found");
 			}
 			
-			element = db.getObjectByName("testObject2");
+			element = db.getObjectByName("testObject002");
 			if (element!=null) {
-				assertEqual(element.name,"testObject2","Name of object found by name does not match expectation");
+				assertEqual(element.name,"testObject002","Name of object found by name does not match expectation");
 			} else {
-				assertEqual(false,true,"Object with name 'testObject2' not found");
+				assertEqual(false,true,"Object with name 'testObject002' not found");
 			}
 			
 			sleep(1000);
@@ -119,6 +120,15 @@ public class TestDatabase extends TestObject {
 			} else {
 				System.out.println("Reading 250 cached objects took: " + ms + " ms");
 			}
+
+			SortedMap<String,Long> list = db.listObjects(100,100);
+			assertEqual(list.size(),100,"List size does not match expectation");
+
+			list = db.listObjects(200,100);
+			assertEqual(list.size(),50,"List size does not match expectation");
+			System.out.println("Obtained list size: " + list.size() + " (start: " + 200 + ", max: " + 100 + ")");
+			System.out.println("First list object: " + list.firstKey());
+			System.out.println("Last list object: " + list.lastKey());
 		}
 				
 		sleep(1000);
@@ -130,7 +140,7 @@ public class TestDatabase extends TestObject {
 	
 	private void addTestObjects(Database db) {
 		for (int i = 1; i <= 250; i++) {
-			IndexElement element = addTestObject(db,"testObject" + i);
+			IndexElement element = addTestObject(db,"testObject" + String.format("%03d",i));
 			assertEqual((int) element.id,i,"Object id does not match expectation");
 		}
 	}

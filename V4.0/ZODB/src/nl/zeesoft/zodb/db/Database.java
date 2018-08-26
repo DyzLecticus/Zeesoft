@@ -3,17 +3,18 @@ package nl.zeesoft.zodb.db;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 
 public class Database {
-	public static final String				INDEX_DIR		= "ZODB/Index/";
-	public static final String				OBJECT_DIR		= "ZODB/Objects/";
+	private static final String				INDEX_DIR		= "ZODB/Index/";
+	private static final String				OBJECT_DIR		= "ZODB/Objects/";
 	
 	private Config							configuration	= null;
 	private Index							index			= null;
-	private IndexFileWriteWorker			indexWriter		= null;
+	private IndexFileWriteWorker			fileWriter		= null;
 	private IndexObjectWriterWorker			objectWriter	= null;
 	
 	private List<DatabaseStateListener>		listeners		= new ArrayList<DatabaseStateListener>();
@@ -21,7 +22,7 @@ public class Database {
 	public Database(Config config) {
 		configuration = config;
 		index = new Index(config.getMessenger(),this);
-		indexWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
+		fileWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
 	
@@ -48,7 +49,7 @@ public class Database {
 		configuration.debug(this,"Starting database ...");
 		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index);
 		reader.start();
-		indexWriter.start();
+		fileWriter.start();
 		objectWriter.start();
 		configuration.debug(this,"Started database");
 	}
@@ -56,7 +57,7 @@ public class Database {
 	public void stop() {
 		index.setOpen(false);
 		configuration.debug(this,"Stopping database ...");
-		indexWriter.stop();
+		fileWriter.stop();
 		objectWriter.stop();
 		for (DatabaseStateListener listener: listeners) {
 			listener.databaseStateChanged(false);
@@ -79,7 +80,11 @@ public class Database {
 	public IndexElement getObjectByName(String name) {
 		return index.getObjectByName(name);
 	}
-
+	
+	public SortedMap<String,Long> listObjects(int start, int max) {
+		return index.listObjects(start,max);
+	}
+	
 	public List<IndexElement> getObjectsByNameStartsWith(String start) {
 		return index.getObjectsByNameStartsWith(start);
 	}
