@@ -2,6 +2,7 @@ package nl.zeesoft.zodb.app;
 
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.app.handler.HtmlNotFoundHandler;
+import nl.zeesoft.zodb.app.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.app.handler.JsonNotFoundHandler;
 
 public class AppZODB extends AppObject {
@@ -21,6 +22,7 @@ public class AppZODB extends AppObject {
 	public void initialize(boolean write) {
 		handlers.add(new HtmlNotFoundHandler(configuration,this));
 		handlers.add(new JsonNotFoundHandler(configuration,this));
+		handlers.add(new HtmlZODBIndexHandler(configuration,this));
 		super.initialize(write);
 	}
 }

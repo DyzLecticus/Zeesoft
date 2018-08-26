@@ -15,6 +15,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.app.AppObject;
 import nl.zeesoft.zodb.app.AppZODB;
 import nl.zeesoft.zodb.app.handler.HandlerObject;
+import nl.zeesoft.zodb.app.handler.HtmlAppIndexHandler;
 
 public class Config {
 	private Messenger			messenger			= null;
@@ -30,6 +31,7 @@ public class Config {
 	
 	private HandlerObject		notFoundHtmlHandler	= null;
 	private HandlerObject		notFoundJsonHandler	= null;
+	private HandlerObject		appIndexHtmlHandler	= null;
 	
 	public Config() {
 		ZDKFactory factory = new ZDKFactory();
@@ -76,21 +78,25 @@ public class Config {
 				notFoundJsonHandler = app.notFoundJsonHandler;
 			}
 		}
+		appIndexHtmlHandler = getNewHtmlAppIndexHandler();
 	}
 	
 	public HandlerObject getHandlerForRequest(HttpServletRequest request) {
 		HandlerObject r = null;
-		String[] elems = request.getServletPath().split("/");
-		String name = elems[(elems.length - 2)];
-		AppObject app = getApplication(name);
-		if (app!=null) {
-			r = app.getHandlerForRequest(request);
-		}
-		if (r==null) {
-			if (request.getServletPath().endsWith(".json")) {
-				r = notFoundJsonHandler;
-			} else {
-				r = notFoundHtmlHandler;
+		if (request.getServletPath().equals("/") || request.getServletPath().equals("/index.html")) {
+			r = appIndexHtmlHandler;
+		} else {
+			String name = getApplicationNameFromPath(request.getServletPath());
+			AppObject app = getApplication(name);
+			if (app!=null) {
+				r = app.getHandlerForRequest(request);
+			}
+			if (r==null) {
+				if (request.getServletPath().endsWith(".json")) {
+					r = notFoundJsonHandler;
+				} else {
+					r = notFoundHtmlHandler;
+				}
 			}
 		}
 		return r;
@@ -223,6 +229,10 @@ public class Config {
 		return new ArrayList<AppObject>(applications);
 	}
 	
+	protected HandlerObject getNewHtmlAppIndexHandler() {
+		return new HtmlAppIndexHandler(this);
+	}
+	
 	protected void install(String fileName) {
 		debug(this,"Installing ...");
 		JsFile json = toJson();
@@ -247,5 +257,17 @@ public class Config {
 	
 	protected void addApplication(AppObject app) {
 		applications.add(app);
+	}
+	
+	private String getApplicationNameFromPath(String path) {
+		String r = "";
+		String[] elems = path.split("/");
+		String lastElem = elems[(elems.length - 1)];
+		if (elems.length==2 && !lastElem.contains(".")) {
+			r = lastElem;
+		} else if (elems.length>=3) {
+			r = elems[1];
+		}
+		return r;
 	}
 }

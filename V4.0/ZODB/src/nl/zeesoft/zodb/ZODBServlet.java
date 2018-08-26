@@ -40,8 +40,9 @@ public class ZODBServlet extends HttpServlet {
 		
 		String servletUrl = config.getInitParameter("baseUrl");
 		if (servletUrl==null || servletUrl.length()==0) {
-			servletUrl = "http://127.0.0.1:8080" + config.getServletContext().getContextPath();
+			servletUrl = "http://127.0.0.1:8080";
 		}
+		servletUrl += config.getServletContext().getContextPath();
 		
 		System.out.println("Installation directory: " + installDir);
 		System.out.println("Servlet URL: " + servletUrl);
