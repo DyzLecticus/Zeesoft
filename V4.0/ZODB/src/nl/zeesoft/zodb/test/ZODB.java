@@ -40,7 +40,8 @@ public class ZODB extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		//tests.add(new TestTestConfiguration(getTester()));
-		//tests.add(new TestTestCaseSet(getTester()));
+		tests.add(new TestConfig(getTester()));
+		tests.add(new TestDatabaseRequest(getTester()));
+		tests.add(new TestDatabaseResponse(getTester()));
 	}
 }

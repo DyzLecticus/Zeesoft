@@ -1,0 +1,64 @@
+package nl.zeesoft.zodb.db;
+
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
+
+public class DatabaseRequest {
+	public static final String	TYPE_LIST	= "LIST";
+	public static final String	TYPE_GET	= "GET";
+	public static final String	TYPE_ADD	= "ADD";
+	public static final String	TYPE_SET	= "SET";
+	public static final String	TYPE_REMOVE	= "REMOVE";
+	
+	public String				type		= "";
+	public int					start		= 0;
+	public int					max			= 10;
+	public long					id			= 0L;
+	public String				name		= "";
+	public String				regex		= "";
+	public String				startsWith	= "";
+	public JsFile				obj			= null;
+	
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("type",type,true));
+		if (id>0) {
+			json.rootElement.children.add(new JsElem("id","" + id));
+		}
+		if (name.length()>0) {
+			json.rootElement.children.add(new JsElem("name",name,true));
+		} else if (regex.length()>0) {
+			json.rootElement.children.add(new JsElem("regex",regex,true));
+		} else if (startsWith.length()>0) {
+			json.rootElement.children.add(new JsElem("startsWith",startsWith,true));
+		}
+		if (type.equals(TYPE_LIST)) {
+			json.rootElement.children.add(new JsElem("start","" + start));
+			json.rootElement.children.add(new JsElem("max","" + max));
+		}
+		if (obj!=null && obj.rootElement!=null) {
+			JsElem objElem = new JsElem("object");
+			json.rootElement.children.add(objElem);
+			objElem.children.add(obj.rootElement);
+		}
+		return json;
+	}
+	
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			type = json.rootElement.getChildString("type",type);
+			id = json.rootElement.getChildLong("id",id);
+			name = json.rootElement.getChildString("name",name);
+			regex = json.rootElement.getChildString("regex",regex);
+			startsWith = json.rootElement.getChildString("startsWith",startsWith);
+			start = json.rootElement.getChildInt("start",start);
+			max = json.rootElement.getChildInt("max",max);
+			JsElem objElem = json.rootElement.getChildByName("object");
+			if (objElem!=null && objElem.children.size()>0) {
+				obj = new JsFile();
+				obj.rootElement = objElem.children.get(0);
+			}
+		}
+	}
+}

@@ -69,29 +69,17 @@ public class Index extends Locker {
 		unlockMe(this);
 		return r;
 	}
-
+	
 	protected SortedMap<String,Long> listObjects(int start, int max) {
-		SortedMap<String,Long> r = new TreeMap<String,Long>();
-		if (start<0) {
-			start = 0;
-		}
-		if (max<1) {
-			max = 1;
-		}
-		lockMe(this);
-		if (start<=(elementsByName.size() - 1)) {
-			int end = start + max;
-			if (end>elementsByName.size()) {
-				end = elementsByName.size();
-			}
-			List<String> names = new ArrayList<String>(elementsByName.keySet());
-			for (int i = start; i < end; i++) {
-				IndexElement element = elementsByName.get(names.get(i));
-				r.put(element.name,element.id);
-			}
-		}
-		unlockMe(this);
-		return r;
+		return listObjects(start,max,null,null,null);
+	}
+
+	protected SortedMap<String,Long> listObjectsThatStartWith(String startWith,int start, int max) {
+		return listObjects(start,max,startWith,null,null);
+	}
+
+	protected SortedMap<String,Long> listObjectsThatMatch(String regex,int start, int max) {
+		return listObjects(start,max,null,regex,null);
 	}
 	
 	protected List<IndexElement> getObjectsByNameStartsWith(String startsWith) {
@@ -203,6 +191,40 @@ public class Index extends Locker {
 			changedElements.remove(elem);
 			if (max>0 && added>=max) {
 				break;
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+
+	private SortedMap<String,Long> listObjects(int start, int max,String startsWith,String regex,String endsWith) {
+		SortedMap<String,Long> r = new TreeMap<String,Long>();
+		if (start<0) {
+			start = 0;
+		}
+		if (max<1) {
+			max = 1;
+		}
+		lockMe(this);
+		
+		List<IndexElement> elements = null;
+		if (
+			(startsWith!=null && startsWith.length()>0) ||
+			(regex!=null && regex.length()>0) ||
+			(endsWith!=null && endsWith.length()>0)
+			) {
+			elements = getObjectsByName(startsWith,regex,endsWith);
+		} else {
+			elements = new ArrayList<IndexElement>(elementsByName.values());
+		}
+		if (start<=(elements.size() - 1)) {
+			int end = start + max;
+			if (end>elements.size()) {
+				end = elements.size();
+			}
+			for (int i = start; i < end; i++) {
+				IndexElement element = elements.get(i);
+				r.put(element.name,element.id);
 			}
 		}
 		unlockMe(this);
