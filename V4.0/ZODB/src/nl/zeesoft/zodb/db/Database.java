@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 
@@ -69,8 +70,8 @@ public class Database {
 		return index.isOpen();
 	}
 	
-	public IndexElement addObject(String name,JsFile obj) {
-		return index.addObject(name, obj);
+	public IndexElement addObject(String name,JsFile obj,List<ZStringBuilder> errors) {
+		return index.addObject(name, obj, errors);
 	}
 	
 	public IndexElement getObjectById(long id) {
@@ -85,6 +86,14 @@ public class Database {
 		return index.listObjects(start,max);
 	}
 	
+	protected SortedMap<String,Long> listObjectsThatStartWith(String startWith,int start, int max) {
+		return index.listObjectsThatStartWith(startWith,start,max);
+	}
+
+	protected SortedMap<String,Long> listObjectsThatMatch(String regex,int start, int max) {
+		return index.listObjectsThatStartWith(regex,start,max);
+	}
+	
 	public List<IndexElement> getObjectsByNameStartsWith(String start) {
 		return index.getObjectsByNameStartsWith(start);
 	}
@@ -93,16 +102,16 @@ public class Database {
 		return index.getObjectsByNameMatches(match);
 	}
 	
-	public void setObject(long id, JsFile obj) {
-		index.setObject(id, obj);
+	public void setObject(long id, JsFile obj,List<ZStringBuilder> errors) {
+		index.setObject(id,obj,errors);
 	}
 
-	public void setObjectName(long id, String name) {
-		index.setObjectName(id, name);
+	public void setObjectName(long id, String name,List<ZStringBuilder> errors) {
+		index.setObjectName(id,name,errors);
 	}
 
-	public IndexElement removeObject(long id) {
-		return index.removeObject(id);
+	public IndexElement removeObject(long id,List<ZStringBuilder> errors) {
+		return index.removeObject(id,errors);
 	}
 
 	protected void stateChanged(boolean open) {

@@ -29,11 +29,11 @@ public class Index extends Locker {
 		this.db = db;
 	}
 
-	protected IndexElement addObject(String name,JsFile obj) {
+	protected IndexElement addObject(String name,JsFile obj,List<ZStringBuilder> errors) {
 		IndexElement r = null;
 		lockMe(this);
 		if (name.length()>0 && open) {
-			r = addObjectNoLock(name,obj);
+			r = addObjectNoLock(name,obj,errors);
 			if (r!=null) {
 				r = r.copy();
 			}
@@ -90,34 +90,40 @@ public class Index extends Locker {
 		return getObjectsByName(null,regex,null);
 	}
 	
-	protected void setObject(long id, JsFile obj) {
+	protected void setObject(long id, JsFile obj, List<ZStringBuilder> errors) {
 		lockMe(this);
 		if (id>0 && open) {
-			setObjectNoLock(id,obj);
+			setObjectNoLock(id,obj,errors);
 		}
 		unlockMe(this);
 	}
 
-	protected void setObjectName(long id, String name) {
+	protected void setObjectName(long id, String name, List<ZStringBuilder> errors) {
 		lockMe(this);
-		if (open && elementsByName.get(name)==null) {
-			IndexElement element = elementsById.get(id);
-			if (element!=null && !element.removed && !element.name.equals(name)) {
-				element.name = name;
-				element.updateModified();
-				if (!changedFileNums.contains(element.fileNum)) {
-					changedFileNums.add(element.fileNum);
+		if (open) {
+			if (elementsByName.get(name)==null) {
+				IndexElement element = elementsById.get(id);
+				if (element!=null && !element.removed && !element.name.equals(name)) {
+					element.name = name;
+					element.updateModified();
+					if (!changedFileNums.contains(element.fileNum)) {
+						changedFileNums.add(element.fileNum);
+					}
+				} else if (errors!=null) {
+					errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
 				}
+			} else if (errors!=null) {
+				errors.add(new ZStringBuilder("Object named '" + name + "' already exists"));
 			}
 		}
 		unlockMe(this);
 	}
 
-	protected IndexElement removeObject(long id) {
+	protected IndexElement removeObject(long id,List<ZStringBuilder> errors) {
 		IndexElement r = null;
 		lockMe(this);
 		if (id>0 && open) {
-			r = removeObjectNoLock(id);
+			r = removeObjectNoLock(id,errors);
 			if (r!=null) {
 				r = r.copy();
 			}
@@ -276,7 +282,7 @@ public class Index extends Locker {
 		}
 	}
 	
-	private IndexElement addObjectNoLock(String name,JsFile obj) {
+	private IndexElement addObjectNoLock(String name,JsFile obj,List<ZStringBuilder> errors) {
 		IndexElement r = null;
 		if (!elementsByName.containsKey(name)) {
 			r = new IndexElement();
@@ -299,6 +305,8 @@ public class Index extends Locker {
 				changedFileNums.add(r.fileNum);
 			}
 			changedElements.add(r);
+		} else if (errors!=null) {
+			errors.add(new ZStringBuilder("Object named '" + name + "' already exists"));
 		}
 		return r;
 	}
@@ -330,7 +338,7 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private void setObjectNoLock(long id, JsFile obj) {
+	private void setObjectNoLock(long id, JsFile obj,List<ZStringBuilder> errors) {
 		if (elementsById.containsKey(id)) {
 			IndexElement element = elementsById.get(id);
 			if (!element.removed) {
@@ -340,10 +348,12 @@ public class Index extends Locker {
 					changedElements.add(element);
 				}
 			}
+		} else if (errors!=null) {
+			errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
 		}
 	}
 
-	private IndexElement removeObjectNoLock(long id) {
+	private IndexElement removeObjectNoLock(long id, List<ZStringBuilder> errors) {
 		IndexElement r = null;
 		if (elementsById.containsKey(id)) {
 			r = elementsById.remove(id);
@@ -356,6 +366,8 @@ public class Index extends Locker {
 			if (!changedElements.contains(r)) {
 				changedElements.add(r);
 			}
+		} else if (errors!=null) {
+			errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
 		}
 		return r;
 	}

@@ -97,7 +97,7 @@ public class TestDatabase extends TestObject {
 			
 			element = db.getObjectByName("testObject125");
 			if (element!=null) {
-				element = db.removeObject(element.id);
+				element = db.removeObject(element.id,null);
 				if (element!=null) {
 					assertEqual(element.name,"testObject125","Removed object name does not match expectation");
 					element = addTestObject(db,"testObject125");
@@ -146,7 +146,7 @@ public class TestDatabase extends TestObject {
 	}
 
 	private IndexElement addTestObject(Database db,String name) {
-		return db.addObject(name,getTestObject(name));
+		return db.addObject(name,getTestObject(name),null);
 	}
 	
 	private JsFile getTestObject(String data) {
