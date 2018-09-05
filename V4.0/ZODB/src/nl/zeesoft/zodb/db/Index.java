@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.PatternSyntaxException;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
@@ -265,13 +266,17 @@ public class Index extends Locker {
 	private List<IndexElement> listObjectsByNameNoLock(String startsWith,String regex,String endsWith) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		for (String name: elementsByName.keySet()) {
-			if (
-				(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
-				(regex==null || regex.length()==0 || name.matches(regex)) &&
-				(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
-				) {
-				IndexElement element = elementsByName.get(name);
-				r.add(element.copy());
+			try {
+				if (
+					(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
+					(regex==null || regex.length()==0 || name.matches(regex)) &&
+					(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
+					) {
+					IndexElement element = elementsByName.get(name);
+					r.add(element.copy());
+				}
+			} catch(PatternSyntaxException e) {
+				// Ignore
 			}
 		}
 		return r;

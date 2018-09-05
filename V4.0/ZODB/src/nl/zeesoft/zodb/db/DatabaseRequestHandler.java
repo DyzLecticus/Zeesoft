@@ -3,6 +3,7 @@ package nl.zeesoft.zodb.db;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.regex.PatternSyntaxException;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
@@ -97,6 +98,13 @@ public class DatabaseRequestHandler {
 				response.errors.add(new ZStringBuilder("Request id is mandatory"));
 			} else if (response.request.obj==null || response.request.obj.rootElement==null) {
 				response.errors.add(new ZStringBuilder("Request object is mandatory"));
+			}
+		}
+		if (response.request.regex.length()>0) {
+			try {
+				"test".matches(response.request.regex);
+			} catch(PatternSyntaxException e) {
+				response.errors.add(new ZStringBuilder("Invalid regular expression syntax"));
 			}
 		}
 		if (response.errors.size()>0) {

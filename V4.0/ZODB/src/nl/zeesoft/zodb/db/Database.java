@@ -91,15 +91,15 @@ public class Database {
 	}
 
 	protected SortedMap<String,Long> listObjectsThatMatch(String regex,int start, int max) {
-		return index.listObjectsThatStartWith(regex,start,max);
+		return index.listObjectsThatMatch(regex,start,max);
 	}
 	
 	public List<IndexElement> getObjectsByNameStartsWith(String start) {
 		return index.getObjectsByNameStartsWith(start);
 	}
 	
-	public List<IndexElement> getObjectsByNameMatches(String match) {
-		return index.getObjectsByNameMatches(match);
+	public List<IndexElement> getObjectsByNameMatches(String regex) {
+		return index.getObjectsByNameMatches(regex);
 	}
 	
 	public void setObject(long id, JsFile obj,List<ZStringBuilder> errors) {

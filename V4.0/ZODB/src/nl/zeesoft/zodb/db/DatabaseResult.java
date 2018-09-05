@@ -16,7 +16,7 @@ public class DatabaseResult {
 		if (obj!=null && obj.rootElement!=null) {
 			JsElem objElem = new JsElem("object");
 			json.rootElement.children.add(objElem);
-			objElem.children.add(obj.rootElement);
+			objElem.children = obj.rootElement.children;
 		}
 		return json;
 	}

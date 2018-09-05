@@ -12,7 +12,7 @@ import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 
 public class JsonZODBRequestHandler extends JsonHandlerObject {
-	public final static String	PATH	= "/requestHandler.json"; 
+	public final static String	PATH	= "/request.json"; 
 	
 	public JsonZODBRequestHandler(Config config, AppObject app) {
 		super(config,app,PATH);
@@ -34,7 +34,12 @@ public class JsonZODBRequestHandler extends JsonHandlerObject {
 				DatabaseRequest req = new DatabaseRequest();
 				req.fromJson(json);
 				DatabaseResponse res = zodb.handleRequest(req);
-				r = res.toJson().toStringBuilder();
+				json = res.toJson();
+				if (getConfiguration().isDebug()) {
+					r = json.toStringBuilderReadFormat();
+				} else {
+					r = json.toStringBuilder();
+				}
 			}
 		}
 		return r;
