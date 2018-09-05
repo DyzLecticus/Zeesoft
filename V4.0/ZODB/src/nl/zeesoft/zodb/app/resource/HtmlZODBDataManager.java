@@ -63,7 +63,9 @@ public class HtmlZODBDataManager extends HtmlResource {
 		html.append("<tbody>\n");
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<input type=\"button\" value=\"Add\" onclick=\"ZODB.dm.add();\" />");
+			html.append("<input type=\"button\" value=\"New\" onclick=\"ZODB.dm.new();\" />");
+			html.append("<input type=\"button\" value=\"Remove\" onclick=\"ZODB.dm.remove();\" />");
+			html.append("<input type=\"checkbox\" id=\"removeCheck\" />");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
@@ -85,7 +87,6 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("Name&nbsp;");
 			html.append("<input type=\"text\" id=\"saveName\" />");
 			html.append("<input type=\"button\" value=\"Save\" onclick=\"ZODB.dm.save();\" />");
-			html.append("<input type=\"button\" value=\"Remove\" onclick=\"ZODB.dm.remove();\" />");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 		html.append("</tbody>\n");
