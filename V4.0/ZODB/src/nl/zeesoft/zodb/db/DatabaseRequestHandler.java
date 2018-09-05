@@ -66,6 +66,9 @@ public class DatabaseRequestHandler {
 					database.removeObject(request.id,response.errors);
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
 					database.setObject(request.id,request.obj,response.errors);
+					if (request.name.length()>0) {
+						database.setObjectName(request.id,request.name,response.errors);
+					}
 				}
 			}
 		}

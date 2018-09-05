@@ -13,7 +13,7 @@ public class DatabaseResult {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("name",name,true));
 		json.rootElement.children.add(new JsElem("id","" + id));
-		if (obj!=null && obj.rootElement!=null) {
+		if (obj!=null && obj.rootElement!=null && obj.rootElement.children.size()>0) {
 			JsElem objElem = new JsElem("object");
 			json.rootElement.children.add(objElem);
 			objElem.children = obj.rootElement.children;
@@ -28,7 +28,8 @@ public class DatabaseResult {
 			JsElem objElem = json.rootElement.getChildByName("object");
 			if (objElem!=null && objElem.children.size()>0) {
 				obj = new JsFile();
-				obj.rootElement = objElem.children.get(0);
+				obj.rootElement = new JsElem();
+				obj.rootElement.children = objElem.children;
 			}
 		}
 	}

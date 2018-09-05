@@ -54,6 +54,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Config config = new Config();
+		
 		config.initialize(true,"dist/","",false);
 		
 		File dir = new File("dist/");
@@ -61,10 +62,9 @@ public class TestDatabaseRequestHandler extends TestObject {
 			dir.mkdirs();
 		}
 		
-		Database db = new Database(config);
+		Database db = config.getZODB().getDatabase();
 		db.install();
-		db.start();
-
+		
 		sleep(1000);
 		
 		assertEqual(db.isOpen(),true,"Failed to initialize database within one second");
@@ -105,9 +105,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 		}
 				
 		sleep(1000);
-		
-		db.stop();
-		
+
 		config.destroy();
 	}
 	

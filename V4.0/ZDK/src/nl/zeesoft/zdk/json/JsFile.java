@@ -233,12 +233,16 @@ public class JsFile {
 			if (elem.array) {
 				s.append("[]");
 			} else {
-				ZStringBuilder value = elem.value;
-				if (value!=null && elem.cData) {
-					value.replace("\n","<NEWLINE>");
-					value.replace("\"","<QUOTE>");
+				if (elem.value!=null) {
+					ZStringBuilder value = new ZStringBuilder(elem.value);
+					if (elem.cData) {
+						value.replace("\n","<NEWLINE>");
+						value.replace("\"","<QUOTE>");
+					}
+					s.append(value);
+				} else {
+					s.append("null");
 				}
-				s.append(value);
 			}
 			if (elem.cData) {
 				s.append("\"");

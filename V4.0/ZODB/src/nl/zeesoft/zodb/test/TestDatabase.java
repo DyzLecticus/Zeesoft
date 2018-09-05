@@ -59,9 +59,8 @@ public class TestDatabase extends TestObject {
 			dir.mkdirs();
 		}
 		
-		Database db = new Database(config);
+		Database db = config.getZODB().getDatabase();
 		db.install();
-		db.start();
 
 		sleep(1000);
 		
@@ -132,8 +131,6 @@ public class TestDatabase extends TestObject {
 		}
 				
 		sleep(1000);
-		
-		db.stop();
 		
 		config.destroy();
 	}

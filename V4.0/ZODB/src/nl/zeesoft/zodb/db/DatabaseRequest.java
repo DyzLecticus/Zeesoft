@@ -45,10 +45,10 @@ public class DatabaseRequest {
 			json.rootElement.children.add(new JsElem("start","" + start));
 			json.rootElement.children.add(new JsElem("max","" + max));
 		}
-		if (obj!=null && obj.rootElement!=null) {
+		if (obj!=null && obj.rootElement!=null && obj.rootElement.children.size()>0) {
 			JsElem objElem = new JsElem("object");
 			json.rootElement.children.add(objElem);
-			objElem.children.add(obj.rootElement);
+			objElem.children = obj.rootElement.children;
 		}
 		return json;
 	}
@@ -65,7 +65,8 @@ public class DatabaseRequest {
 			JsElem objElem = json.rootElement.getChildByName("object");
 			if (objElem!=null && objElem.children.size()>0) {
 				obj = new JsFile();
-				obj.rootElement = objElem.children.get(0);
+				obj.rootElement = new JsElem();
+				obj.rootElement.children = objElem.children;
 			}
 		}
 	}

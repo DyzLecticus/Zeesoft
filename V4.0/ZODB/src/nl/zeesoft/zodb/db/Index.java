@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.regex.PatternSyntaxException;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -102,19 +103,23 @@ public class Index extends Locker {
 	protected void setObjectName(long id, String name, List<ZStringBuilder> errors) {
 		lockMe(this);
 		if (open) {
-			if (elementsByName.get(name)==null) {
-				IndexElement element = elementsById.get(id);
-				if (element!=null && !element.removed && !element.name.equals(name)) {
-					element.name = name;
-					element.updateModified();
-					if (!changedFileNums.contains(element.fileNum)) {
-						changedFileNums.add(element.fileNum);
+			IndexElement element = elementsById.get(id);
+			if (element!=null && !element.removed) {
+				if (!element.name.equals(name)) {
+					if (elementsByName.get(name)==null) {
+						elementsByName.remove(element.name);
+						element.name = name;
+						elementsByName.put(element.name,element);
+						element.updateModified();
+						if (!changedFileNums.contains(element.fileNum)) {
+							changedFileNums.add(element.fileNum);
+						}
+					} else if (errors!=null) {
+						errors.add(new ZStringBuilder("Object named '" + name + "' already exists"));
 					}
-				} else if (errors!=null) {
-					errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
 				}
 			} else if (errors!=null) {
-				errors.add(new ZStringBuilder("Object named '" + name + "' already exists"));
+				errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
 			}
 		}
 		unlockMe(this);
@@ -256,7 +261,6 @@ public class Index extends Locker {
 			for (IndexElement element: read) {
 				lockMe(this);
 				readObjectNoLock(element);
-				r.add(element.copy());
 				unlockMe(this);
 			}
 		}
@@ -290,6 +294,9 @@ public class Index extends Locker {
 			if (err.length()>0) {
 				getMessenger().error(this,"Failed to read object: " + err);
 			} else {
+				if (obj.rootElement==null) {
+					obj.rootElement = new JsElem();
+				}
 				element.obj = obj;
 			}
 		}

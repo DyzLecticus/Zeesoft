@@ -59,8 +59,37 @@ public class HtmlZODBDataManager extends HtmlResource {
 		html.append("</div>\n");
 
 		html.append("<div>\n");
-		html.append("<textarea id=\"object\" style=\"width: 100%; height: 200px;\" >\n");
-		html.append("</textarea>\n");
+		html.append("<table style=\"width: 100%;\">\n");
+		html.append("<tbody>\n");
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<input type=\"button\" value=\"Add\" onclick=\"ZODB.dm.add();\" />");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<textarea id=\"object\" style=\"width: 100%; height: 200px;\" >\n");
+			html.append("</textarea>\n");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+		html.append("</tbody>\n");
+		html.append("</table>\n");
+		html.append("</div>\n");
+
+		html.append("<div>\n");
+		html.append("<table style=\"width: 100%;\">\n");
+		html.append("<tbody>\n");
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("Name&nbsp;");
+			html.append("<input type=\"text\" id=\"saveName\" />");
+			html.append("<input type=\"button\" value=\"Save\" onclick=\"ZODB.dm.save();\" />");
+			html.append("<input type=\"button\" value=\"Remove\" onclick=\"ZODB.dm.remove();\" />");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+		html.append("</tbody>\n");
+		html.append("</table>\n");
 		html.append("</div>\n");
 
 		getBodyElements().add(html);
