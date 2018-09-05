@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
@@ -16,6 +17,7 @@ public abstract class AppObject {
 	public Config				configuration			= null;
 	
 	public String				name					= "";
+	public ZStringBuilder		desc					= new ZStringBuilder();
 	public String				url						= "";
 	
 	public List<HandlerObject>	handlers				= new ArrayList<HandlerObject>();

@@ -21,6 +21,7 @@ public class HtmlAppIndex extends HtmlResource {
 			html.append("<a href=\"" + getConfiguration().getApplicationUrl(app.name) + "/index.html\">" + app.name + "</a>");
 			html.append("</td>\n");
 			html.append("<td>");
+			html.append(app.desc);
 			html.append("</td>\n");
 			html.append("</tr>\n");
 		}

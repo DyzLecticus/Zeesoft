@@ -23,7 +23,9 @@ public class IndexFileWriteWorker extends Worker {
 		waitForStop(10,false);
 		SortedMap<Integer,List<IndexElement>> files = index.getChangedFiles();
 		if (files.size()>0) {
+			getMessenger().debug(this,"Remaining files: " + files.size());
 			writeChangedFiles(files);
+			getMessenger().debug(this,"Done");
 		}
 	}
 	

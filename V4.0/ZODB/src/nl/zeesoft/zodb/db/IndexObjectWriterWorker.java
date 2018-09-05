@@ -29,7 +29,9 @@ public class IndexObjectWriterWorker extends Worker {
 		waitForStop(10,false);
 		List<IndexElement> elements = index.getChangedElements(0);
 		if (elements.size()>0) {
+			getMessenger().debug(this,"Remaining objects: " + elements.size());
 			writeChangedElements(elements);
+			getMessenger().debug(this,"Done");
 		}
 	}
 	

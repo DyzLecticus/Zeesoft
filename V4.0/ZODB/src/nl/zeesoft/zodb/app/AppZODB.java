@@ -15,12 +15,14 @@ import nl.zeesoft.zodb.db.DatabaseResponse;
 
 public class AppZODB extends AppObject {
 	public static final String	NAME		= "ZODB";
+	public static final String	DESC		= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
 	private Database			database	= null;
 	
 	public AppZODB(Config config) {
 		super(config);
 		name = NAME;
+		desc.append(DESC);
 	}
 	
 	@Override

@@ -17,10 +17,6 @@ public class HtmlZODBIndex extends HtmlResource {
 		html.append("<hr />");
 		
 		html.append("<div>\n");
-		html.append("Zeesoft Object Database provides a simple JSON API to store JSON objects.\n");
-		html.append("</div>\n");
-		
-		html.append("<div>\n");
 		html.append("<table style=\"width: 100%;\">\n");
 		html.append("<tbody>\n");
 			html.append("<tr>\n");
@@ -28,6 +24,7 @@ public class HtmlZODBIndex extends HtmlResource {
 			html.append("<a href=\"" + getConfiguration().getApplicationUrl(AppZODB.NAME) + "/dataManager.html\">Data manager</a>");
 			html.append("</td>\n");
 			html.append("<td>");
+			html.append("View, add, update and remove objects.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 		html.append("</tbody>\n");

@@ -8,6 +8,8 @@ public class JavaScriptZODBDataManager {
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder script = new ZStringBuilder();
 		
+		String path = "../ZODB" + JsonZODBRequestHandler.PATH;
+		
 		script.append("var ZODB = ZODB || {};\n");
 		script.append("ZODB.dm = ZODB.dm || {};\n");
 		script.append("ZODB.dm.next = function() {\n");
@@ -46,7 +48,7 @@ public class JavaScriptZODBDataManager {
 		script.append("    if (elem!=null) {\n");
 		script.append("        request.max = parseInt(elem.value,10);\n");
 		script.append("    }\n");
-		script.append("    ZODB.xhr.postJSON(\"../ZODB" + JsonZODBRequestHandler.PATH + "\",request,ZODB.dm.listCallback,ZODB.dm.listCallback);\n");
+		script.append("    ZODB.xhr.postJSON(\"" + path + "\",request,ZODB.dm.listCallback,ZODB.dm.listCallback);\n");
 		script.append("};\n");
 		script.append("ZODB.dm.listCallback = function(xhr) {\n");
 		script.append("    var response = xhr.responseText;\n");
@@ -109,7 +111,7 @@ public class JavaScriptZODBDataManager {
 		script.append("    var request = {};\n");
 		script.append("    request.type = \"" + DatabaseRequest.TYPE_GET + "\";\n");
 		script.append("    request.id = id;\n");
-		script.append("    ZODB.xhr.postJSON(\"../ZODB" + JsonZODBRequestHandler.PATH + "\",request,ZODB.dm.selectCallback,ZODB.dm.selectCallback);\n");
+		script.append("    ZODB.xhr.postJSON(\"" + path + "\",request,ZODB.dm.selectCallback,ZODB.dm.selectCallback);\n");
 		script.append("};\n");
 		script.append("ZODB.dm.selectCallback = function(xhr) {\n");
 		script.append("    var response = xhr.responseText;\n");
@@ -182,7 +184,7 @@ public class JavaScriptZODBDataManager {
 		script.append("        }\n");
 		script.append("        request.name = name;\n");
 		script.append("        request.object = obj;\n");
-		script.append("        ZODB.xhr.postJSON(\"../ZODB" + JsonZODBRequestHandler.PATH + "\",request,ZODB.dm.defaultCallback,ZODB.dm.defaultCallback);\n");
+		script.append("        ZODB.xhr.postJSON(\"" + path + "\",request,ZODB.dm.defaultCallback,ZODB.dm.defaultCallback);\n");
 		script.append("    } else {\n");
 		script.append("        if (name.length==0) {\n");
 		script.append("            alert(\"Name is mandatory\");\n");
@@ -200,7 +202,7 @@ public class JavaScriptZODBDataManager {
 		script.append("            var request = {};\n");
 		script.append("            request.type = \"" + DatabaseRequest.TYPE_REMOVE + "\";\n");
 		script.append("            request.id = id;\n");
-		script.append("            ZODB.xhr.postJSON(\"../ZODB" + JsonZODBRequestHandler.PATH + "\",request,ZODB.dm.defaultCallback,ZODB.dm.defaultCallback);\n");
+		script.append("            ZODB.xhr.postJSON(\"" + path + "\",request,ZODB.dm.defaultCallback,ZODB.dm.defaultCallback);\n");
 		script.append("        }\n");
 		script.append("    } else {\n");
 		script.append("        alert(\"No object selected\");\n");
