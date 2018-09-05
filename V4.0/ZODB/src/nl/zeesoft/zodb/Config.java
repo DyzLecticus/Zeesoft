@@ -167,15 +167,6 @@ public class Config {
 		return r;
 	}
 
-	public AppZODB getZODB() {
-		AppZODB r = null;
-		AppObject app = getApplication(AppZODB.NAME);
-		if (app!=null && app instanceof AppZODB) {
-			r = (AppZODB) app;
-		}
-		return r;
-	}
-
 	public String getApplicationUrl(String name) {
 		String r = "";
 		AppObject app = getApplication(name);
@@ -189,14 +180,23 @@ public class Config {
 		return r;
 	}
 
-	public void debug(Object source,String message) {
-		if (debug) {
-			messenger.debug(source,message);
+	public AppZODB getZODB() {
+		AppZODB r = null;
+		AppObject app = getApplication(AppZODB.NAME);
+		if (app!=null && app instanceof AppZODB) {
+			r = (AppZODB) app;
 		}
+		return r;
 	}
 
 	public String getFullDataDir() {
 		return installDir + dataDir;
+	}
+
+	public void debug(Object source,String message) {
+		if (debug) {
+			messenger.debug(source,message);
+		}
 	}
 	
 	public void warn(Object source,String message) {

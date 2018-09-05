@@ -9,7 +9,7 @@ import nl.zeesoft.zodb.app.AppObject;
 
 public class HtmlNotFoundHandler extends HandlerObject {
 	public HtmlNotFoundHandler(Config config, AppObject app) {
-		super(config,app,"404.html");
+		super(config,app,"/404.html");
 		setAllowPost(true);
 	}
 

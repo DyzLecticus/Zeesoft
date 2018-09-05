@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zodb.app.handler.HandlerObject;
 
-//import nl.zeesoft.zsds.handler.HandlerObject;
-
 @WebServlet("/ZODBServlet")
 public class ZODBServlet extends HttpServlet {
 	private static final long			serialVersionUID	= 1L;

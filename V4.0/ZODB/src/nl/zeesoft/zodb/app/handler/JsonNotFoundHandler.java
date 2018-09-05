@@ -9,7 +9,7 @@ import nl.zeesoft.zodb.app.AppObject;
 
 public class JsonNotFoundHandler extends JsonHandlerObject {
 	public JsonNotFoundHandler(Config config, AppObject app) {
-		super(config, app,"404.json");
+		super(config, app,"/404.json");
 		setAllowPost(true);
 	}
 
