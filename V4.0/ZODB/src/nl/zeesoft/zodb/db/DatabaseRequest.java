@@ -19,6 +19,14 @@ public class DatabaseRequest {
 	public String				startsWith	= "";
 	public JsFile				obj			= null;
 	
+	public DatabaseRequest() {
+		
+	}
+	
+	public DatabaseRequest(String type) {
+		this.type = type;
+	}
+	
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();

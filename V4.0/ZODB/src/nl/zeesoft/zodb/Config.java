@@ -105,13 +105,16 @@ public class Config {
 	}
 	
 	public void destroy() {
-		messenger.stop();
-		union.stopWorkers();
-		messenger.whileWorking();
 		for (AppObject app: applications) {
+			debug(this,"Destroying " + app.name + " ...");
+			app.destroy();
+			debug(this,"Destroyed " + app.name);
 			app.configuration = null;
 		}
 		applications.clear();
+		messenger.stop();
+		union.stopWorkers();
+		messenger.whileWorking();
 	}
 	
 	public JsFile toJson() {
@@ -160,6 +163,15 @@ public class Config {
 				r = app;
 				break;
 			}
+		}
+		return r;
+	}
+
+	public AppZODB getZODB() {
+		AppZODB r = null;
+		AppObject app = getApplication(AppZODB.NAME);
+		if (app!=null && app instanceof AppZODB) {
+			r = (AppZODB) app;
 		}
 		return r;
 	}

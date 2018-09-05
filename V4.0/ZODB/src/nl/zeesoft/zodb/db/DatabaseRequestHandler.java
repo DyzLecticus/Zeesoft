@@ -18,7 +18,7 @@ public class DatabaseRequestHandler {
 		response.request = request;
 		if (!database.isOpen()) {
 			response.statusCode = 503;
-			response.errors.add(new ZStringBuilder("Database is not open for business right now. Please try again later."));
+			response.errors.add(new ZStringBuilder("Database is not open for business right now. Please try again at another time."));
 		} else {
 			checkRequest(response);
 			if (response.errors.size()==0) {

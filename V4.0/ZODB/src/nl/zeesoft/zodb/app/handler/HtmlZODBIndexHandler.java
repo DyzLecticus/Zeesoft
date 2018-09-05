@@ -11,7 +11,6 @@ import nl.zeesoft.zodb.app.resource.HtmlZODBIndex;
 public class HtmlZODBIndexHandler extends HandlerObject {
 	public HtmlZODBIndexHandler(Config config,AppObject app) {
 		super(config,app,"/index.html");
-		setAllowPost(true);
 	}
 
 	@Override

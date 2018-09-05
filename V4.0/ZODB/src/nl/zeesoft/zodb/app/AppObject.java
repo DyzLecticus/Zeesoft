@@ -41,6 +41,10 @@ public abstract class AppObject {
 		}
 	}
 	
+	public void destroy() {
+		// Override to implement
+	}
+	
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();

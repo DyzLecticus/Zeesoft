@@ -211,19 +211,20 @@ public class Index extends Locker {
 		if (max<1) {
 			max = 1;
 		}
-		lockMe(this);
-		
 		List<IndexElement> elements = null;
-		if (
-			(startsWith!=null && startsWith.length()>0) ||
-			(regex!=null && regex.length()>0) ||
-			(endsWith!=null && endsWith.length()>0)
-			) {
-			elements = getObjectsByName(startsWith,regex,endsWith);
-		} else {
-			elements = new ArrayList<IndexElement>(elementsByName.values());
+		lockMe(this);
+		if (open) {
+			if (
+				(startsWith!=null && startsWith.length()>0) ||
+				(regex!=null && regex.length()>0) ||
+				(endsWith!=null && endsWith.length()>0)
+				) {
+				elements = listObjectsByNameNoLock(startsWith,regex,endsWith);
+			} else {
+				elements = new ArrayList<IndexElement>(elementsByName.values());
+			}
 		}
-		if (start<=(elements.size() - 1)) {
+		if (elements!=null && start<=(elements.size() - 1)) {
 			int end = start + max;
 			if (end>elements.size()) {
 				end = elements.size();
@@ -242,18 +243,10 @@ public class Index extends Locker {
 		List<IndexElement> read = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			for (String name: elementsByName.keySet()) {
-				if (
-					(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
-					(regex==null || regex.length()==0 || name.matches(regex)) &&
-					(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
-					) {
-					IndexElement element = elementsByName.get(name);
-					if (element.obj==null) {
-						read.add(element);
-					} else {
-						r.add(element.copy());
-					}
+			r = listObjectsByNameNoLock(startsWith,regex,endsWith);
+			for (IndexElement element: r) {
+				if (element.obj==null) {
+					read.add(element);
 				}
 			}
 		}
@@ -264,6 +257,21 @@ public class Index extends Locker {
 				readObjectNoLock(element);
 				r.add(element.copy());
 				unlockMe(this);
+			}
+		}
+		return r;
+	}
+
+	private List<IndexElement> listObjectsByNameNoLock(String startsWith,String regex,String endsWith) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
+		for (String name: elementsByName.keySet()) {
+			if (
+				(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
+				(regex==null || regex.length()==0 || name.matches(regex)) &&
+				(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
+				) {
+				IndexElement element = elementsByName.get(name);
+				r.add(element.copy());
 			}
 		}
 		return r;
