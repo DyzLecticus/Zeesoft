@@ -16,6 +16,9 @@ import nl.zeesoft.zodb.app.AppObject;
 import nl.zeesoft.zodb.app.AppZODB;
 import nl.zeesoft.zodb.app.handler.HandlerObject;
 import nl.zeesoft.zodb.app.handler.HtmlAppIndexHandler;
+import nl.zeesoft.zodb.db.Client;
+import nl.zeesoft.zodb.db.ClientListener;
+import nl.zeesoft.zodb.db.DatabaseRequest;
 
 public class Config {
 	private Messenger			messenger			= null;
@@ -187,6 +190,12 @@ public class Config {
 			r = (AppZODB) app;
 		}
 		return r;
+	}
+
+	public void handleDatabaseRequest(DatabaseRequest request,ClientListener listener) {
+		Client client = new Client(this);
+		client.addListener(listener);
+		client.handleRequest(request);
 	}
 
 	public String getFullDataDir() {

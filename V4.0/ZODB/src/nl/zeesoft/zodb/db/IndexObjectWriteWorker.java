@@ -27,5 +27,6 @@ public class IndexObjectWriteWorker extends Worker {
 		}
 		stop();
 		objectWriter.writtenObject();
+		objectWriter = null;
 	}
 }

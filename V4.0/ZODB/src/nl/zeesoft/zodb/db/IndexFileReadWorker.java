@@ -52,6 +52,8 @@ public class IndexFileReadWorker extends Worker {
 			done++;
 		} else {
 			reader.workerIsDone();
+			reader = null;
+			index = null;
 			stop();
 		}
 	}

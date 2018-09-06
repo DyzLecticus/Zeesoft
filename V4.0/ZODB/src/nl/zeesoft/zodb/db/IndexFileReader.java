@@ -49,6 +49,8 @@ public class IndexFileReader extends Locker {
 		done++;
 		if (done>=workers.size()) {
 			index.setOpen(true);
+			index = null;
+			workers.clear();
 		}
 		unlockMe(this);
 	}
