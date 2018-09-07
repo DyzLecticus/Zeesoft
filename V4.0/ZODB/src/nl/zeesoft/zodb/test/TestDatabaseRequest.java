@@ -18,40 +18,33 @@ public class TestDatabaseRequest extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
-		/*
-		System.out.println("This test shows how to convert a *TestConfiguration* to and from JSON.");
+		System.out.println("This test shows how to convert a *DatabaseRequest* to and from JSON.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the test configuration");
-		System.out.println("TestConfiguration tco = new TestConfiguration();");
-		System.out.println("// Initialize the test configuration");
-		System.out.println("tco.initialize();");
-		System.out.println("// Convert the test configuration to JSON");
-		System.out.println("JsFile json = tco.toJson();");
-		System.out.println("// Convert the test configuration from JSON");
-		System.out.println("tco.fromJson(json);");
+		System.out.println("// Create the database request");
+		System.out.println("DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);");
+		System.out.println("// Convert the database request to JSON");
+		System.out.println("JsFile json = request.toJson();");
+		System.out.println("// Convert the database request from JSON");
+		System.out.println("request.fromJson(json);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestTestConfiguration.class));
-		System.out.println(" * " + getTester().getLinkForClass(TestConfiguration.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestDatabaseRequest.class));
+		System.out.println(" * " + getTester().getLinkForClass(DatabaseRequest.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the converted JSON.  ");
-		*/
 	}
 	
 	@Override
 	protected void test(String[] args) {
-		DatabaseRequest request = new DatabaseRequest();
-		request.type = DatabaseRequest.TYPE_LIST;
+		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 		request.startsWith = "testObject";
 		testRequest(request,4);
 		
-		request = new DatabaseRequest();
-		request.type = DatabaseRequest.TYPE_GET;
+		request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 		request.id = 1;
 		System.out.println();
 		testRequest(request,2);
@@ -60,8 +53,7 @@ public class TestDatabaseRequest extends TestObject {
 		obj.rootElement = new JsElem();
 		obj.rootElement.children.add(new JsElem("data","addObjectData",true));
 		
-		request = new DatabaseRequest();
-		request.type = DatabaseRequest.TYPE_ADD;
+		request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 		request.obj = obj;
 		System.out.println();
 		testRequest(request,2);
@@ -70,15 +62,13 @@ public class TestDatabaseRequest extends TestObject {
 		obj.rootElement = new JsElem();
 		obj.rootElement.children.add(new JsElem("data","setObjectData",true));
 
-		request = new DatabaseRequest();
-		request.type = DatabaseRequest.TYPE_SET;
+		request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
 		request.id = 1;
 		request.obj = obj;
 		System.out.println();
 		testRequest(request,3);
 		
-		request = new DatabaseRequest();
-		request.type = DatabaseRequest.TYPE_REMOVE;
+		request = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
 		request.id = 1;
 		System.out.println();
 		testRequest(request,2);

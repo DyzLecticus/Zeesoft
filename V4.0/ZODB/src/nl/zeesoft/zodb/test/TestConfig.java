@@ -18,39 +18,33 @@ public class TestConfig extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
-		/*
-		System.out.println("This test shows how to convert a *TestConfiguration* to and from JSON.");
+		System.out.println("This test shows how to convert a *Config* instance to and from JSON.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the test configuration");
-		System.out.println("TestConfiguration tco = new TestConfiguration();");
-		System.out.println("// Initialize the test configuration");
-		System.out.println("tco.initialize();");
+		System.out.println("Config config = new Config();");
 		System.out.println("// Convert the test configuration to JSON");
-		System.out.println("JsFile json = tco.toJson();");
+		System.out.println("JsFile json = config.toJson();");
 		System.out.println("// Convert the test configuration from JSON");
-		System.out.println("tco.fromJson(json);");
+		System.out.println("config.fromJson(json);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestTestConfiguration.class));
-		System.out.println(" * " + getTester().getLinkForClass(TestConfiguration.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(Config.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the converted JSON.  ");
-		*/
 	}
 	
 	@Override
 	protected void test(String[] args) {
 		Config config = new Config();
 		config.getApplication(AppZODB.NAME).url = "http://test.domain";
-		config.setSelfTest(false);
+		config.setDebug(true);
+		config.setSelfTest(true);
 		config.setDataDir("dir/");
-		config.initialize(true,"installDir/","http://url.domain",false);
-		config.destroy();
 		String fullDataDir = config.getFullDataDir();
 		
 		JsFile json = config.toJson();
@@ -59,8 +53,6 @@ public class TestConfig extends TestObject {
 		System.out.println(oriStr);
 		
 		config = new Config();
-		config.initialize(false,"installDir/","http://different.domain",false);
-		config.destroy();
 		config.fromJson(json);
 		
 		json = config.toJson();

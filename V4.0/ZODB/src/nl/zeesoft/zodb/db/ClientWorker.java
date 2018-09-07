@@ -15,7 +15,6 @@ public class ClientWorker extends Worker {
 
 	@Override
 	public void whileWorking() {
-		// TODO Auto-generated method stub
 		if (client.handleRequest()) {
 			client = null;
 			stop();

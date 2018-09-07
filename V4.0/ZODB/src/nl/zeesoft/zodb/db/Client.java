@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.http.ZHttpRequest;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.app.AppZODB;
 import nl.zeesoft.zodb.app.handler.JsonZODBRequestHandler;
 
 public class Client extends Locker {
@@ -23,7 +24,7 @@ public class Client extends Locker {
 	public Client(Config config) {
 		super(config.getMessenger());
 		this.configuration = config;
-		url = configuration.getZODB().url + JsonZODBRequestHandler.PATH;
+		url = configuration.getApplicationUrl(AppZODB.NAME) + JsonZODBRequestHandler.PATH;
 	}
 	
 	public void setMaxRetries(int maxRetries) {
