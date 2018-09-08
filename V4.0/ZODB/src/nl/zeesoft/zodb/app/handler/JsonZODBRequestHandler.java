@@ -34,6 +34,7 @@ public class JsonZODBRequestHandler extends JsonHandlerObject {
 				DatabaseRequest req = new DatabaseRequest();
 				req.fromJson(json);
 				DatabaseResponse res = zodb.handleRequest(req);
+				response.setStatus(res.statusCode);
 				json = res.toJson();
 				if (getConfiguration().isDebug()) {
 					r = json.toStringBuilderReadFormat();

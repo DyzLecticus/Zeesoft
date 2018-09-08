@@ -32,12 +32,10 @@ public class ZODB extends LibraryObject {
 		System.out.println("=======================");
 		System.out.println(AppZODB.DESC);
 		System.out.println();
-		// TODO: Describe features
 		describeDependencies();
 		System.out.println();
 		describeRelease();
 		System.out.println();
-		// TODO: Describe downloads
 		describeTesting(ZODB.class);
 		System.out.println();
 	}

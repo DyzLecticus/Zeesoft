@@ -4,11 +4,11 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.db.ClientListener;
+import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 
-public class TestClient extends TestObject implements ClientListener {
+public class TestClient extends TestObject implements DatabaseClientListener {
 	public TestClient(Tester tester) {
 		super(tester);
 	}

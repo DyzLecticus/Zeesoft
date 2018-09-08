@@ -16,8 +16,9 @@ import nl.zeesoft.zodb.app.AppObject;
 import nl.zeesoft.zodb.app.AppZODB;
 import nl.zeesoft.zodb.app.handler.HandlerObject;
 import nl.zeesoft.zodb.app.handler.HtmlAppIndexHandler;
-import nl.zeesoft.zodb.db.Client;
-import nl.zeesoft.zodb.db.ClientListener;
+import nl.zeesoft.zodb.app.handler.JsonZODBRequestHandler;
+import nl.zeesoft.zodb.db.DatabaseClient;
+import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 
 public class Config {
@@ -194,10 +195,9 @@ public class Config {
 		return r;
 	}
 
-	public void handleDatabaseRequest(DatabaseRequest request,ClientListener listener) {
-		Client client = new Client(this);
-		client.addListener(listener);
-		client.handleRequest(request);
+	public void handleDatabaseRequest(DatabaseRequest request,DatabaseClientListener listener) {
+		DatabaseClient client = new DatabaseClient(this);
+		client.handleRequest(request,getApplicationUrl(AppZODB.NAME) + JsonZODBRequestHandler.PATH,listener);
 	}
 
 	public String getFullDataDir() {

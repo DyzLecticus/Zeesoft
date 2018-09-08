@@ -8,7 +8,10 @@ import java.util.regex.PatternSyntaxException;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class DatabaseRequestHandler {
-	private Database	database	= null;
+	public static final String	RESPONSE_CLOSED		=
+		"Database is not open for business right now. Please try again at another time.";
+	
+	private Database			database			= null;
 	
 	public DatabaseRequestHandler(Database database) {
 		this.database = database;
@@ -19,7 +22,7 @@ public class DatabaseRequestHandler {
 		response.request = request;
 		if (!database.isOpen()) {
 			response.statusCode = 503;
-			response.errors.add(new ZStringBuilder("Database is not open for business right now. Please try again at another time."));
+			response.errors.add(new ZStringBuilder(RESPONSE_CLOSED));
 		} else {
 			checkRequest(response);
 			if (response.errors.size()==0) {

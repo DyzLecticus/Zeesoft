@@ -34,12 +34,10 @@ public class ZEVT extends LibraryObject {
 		System.out.println("===============================");
 		System.out.println(AppZEVT.DESC);
 		System.out.println();
-		// TODO: Describe features
 		describeDependencies();
 		System.out.println();
 		describeRelease();
 		System.out.println();
-		// TODO: Describe downloads
 		describeTesting(ZEVT.class);
 		System.out.println();
 	}
