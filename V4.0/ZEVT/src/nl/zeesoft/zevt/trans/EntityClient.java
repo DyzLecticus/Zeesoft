@@ -1,4 +1,4 @@
-package nl.zeesoft.zodb.db;
+package nl.zeesoft.zevt.trans;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsClient;
@@ -6,15 +6,15 @@ import nl.zeesoft.zdk.json.JsClientRequest;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 
-public class DatabaseClient extends JsClient {
-	private DatabaseRequest				request			= null;
-	private DatabaseClientListener		listener		= null;
+public class EntityClient extends JsClient {
+	private EntityRequestResponse		request			= null;
+	private EntityClientListener		listener		= null;
 	
-	public DatabaseClient(Config config) {
+	public EntityClient(Config config) {
 		super(config.getMessenger(),config.getUnion());
 	}
 
-	public void handleRequest(DatabaseRequest request,String url,DatabaseClientListener listener) {
+	public void handleRequest(EntityRequestResponse request,String url,EntityClientListener listener) {
 		lockMe(this);
 		if (this.request==null) {
 			this.request = request;
@@ -26,12 +26,11 @@ public class DatabaseClient extends JsClient {
 	
 	@Override
 	protected void requestIsDone(JsClientRequest request,JsFile response, ZStringBuilder err, Exception ex) {
-		DatabaseResponse res = null;
+		EntityRequestResponse res = null;
 		lockMe(this);
 		if (response!=null && response.rootElement!=null) {
-			res = new DatabaseResponse();
+			res = new EntityRequestResponse();
 			res.fromJson(response);	
-			res.request = this.request;
 		}
 		listener.handledRequest(res, err, ex);
 		this.request = null;

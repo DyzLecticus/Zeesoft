@@ -51,11 +51,13 @@
 		<!-- Create distribution directory -->
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
-		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
+		<copy todir="${dist}">
+            <fileset dir="${lib}/" includes="**/*.jar"/>
+        </copy>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zevt nl/zeesoft/zevt/app nl/zeesoft/zevt/app/handler nl/zeesoft/zevt/app/resource nl/zeesoft/zevt/db nl/zeesoft/zevt/test zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zevt nl/zeesoft/zevt/app nl/zeesoft/zevt/app/handler nl/zeesoft/zevt/app/resource nl/zeesoft/zevt/trans nl/zeesoft/zevt/trans/entities/dutch nl/zeesoft/zevt/trans/entities/english nl/zeesoft/zevt/test zodb.jar zdk.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zevt.test.ZEVT"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -100,7 +102,7 @@
 	<target name="makeWar">
 		<manifest file="${dist}/warmanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zevt nl/zeesoft/zevt/app nl/zeesoft/zevt/app/handler nl/zeesoft/zevt/app/resource nl/zeesoft/zevt/db nl/zeesoft/zevt/test zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zevt nl/zeesoft/zevt/app nl/zeesoft/zevt/app/handler nl/zeesoft/zevt/app/resource nl/zeesoft/zevt/trans nl/zeesoft/zevt/trans/entities/dutch nl/zeesoft/zevt/trans/entities/english nl/zeesoft/zevt/test zodb.jar zdk.jar"/>  
 		</manifest>		
 		<antcall target="devWar"/>
 		<antcall target="prodWar"/>
@@ -196,6 +198,7 @@
 	</target>
 
 	<target name="clean" description="Clean up">
+		<delete dir="${build}"/>
 		<delete dir="${dist}"/>
 	</target>
 

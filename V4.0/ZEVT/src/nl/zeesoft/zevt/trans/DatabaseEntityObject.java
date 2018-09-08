@@ -3,11 +3,11 @@ package nl.zeesoft.zevt.trans;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zodb.db.ClientListener;
+import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 
-public abstract class DatabaseEntityObject extends EntityObject implements ClientListener {
+public abstract class DatabaseEntityObject extends EntityObject implements DatabaseClientListener {
 	protected DatabaseEntityObject(EntityValueTranslator t) {
 		super(t);
 	}
@@ -22,10 +22,10 @@ public abstract class DatabaseEntityObject extends EntityObject implements Clien
 	}
 
 	@Override
-	public void handledRequest(DatabaseResponse res, ZStringBuilder err, Exception e) {
+	public void handledRequest(DatabaseResponse res, ZStringBuilder err, Exception ex) {
 		if (err.length()>0) {
 			if (getTranslator().logDatabaseRequestFailures()) {
-				getTranslator().getConfiguration().error(this,err.toString(),e);
+				getTranslator().getConfiguration().error(this,err.toString(),ex);
 			}
 			if (!isInitialized()) {
 				initializeEntityValues();

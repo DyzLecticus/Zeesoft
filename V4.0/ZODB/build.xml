@@ -51,7 +51,9 @@
 		<!-- Create distribution directory -->
 		<mkdir dir="${dist}"/>
 		<!-- Copy dependencies -->
-		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
+		<copy todir="${dist}">
+            <fileset dir="${lib}/" includes="**/*.jar"/>
+        </copy>
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
@@ -196,6 +198,7 @@
 	</target>
 
 	<target name="clean" description="Clean up">
+		<delete dir="${build}"/>
 		<delete dir="${dist}"/>
 	</target>
 
