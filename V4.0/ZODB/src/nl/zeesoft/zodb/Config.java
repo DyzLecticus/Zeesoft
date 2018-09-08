@@ -42,6 +42,7 @@ public class Config {
 		messenger.setPrintDebugMessages(debug);
 		messenger.start();
 		union = factory.getWorkerUnion(messenger);
+		addApplication(new AppZODB(this));
 		addApplications();
 	}
 	
@@ -108,7 +109,8 @@ public class Config {
 	}
 	
 	public void destroy() {
-		for (AppObject app: applications) {
+		for (int i = applications.size() - 1; i >= 0; i--) {
+			AppObject app = applications.get(i);
 			debug(this,"Destroying " + app.name + " ...");
 			app.destroy();
 			debug(this,"Destroyed " + app.name);
@@ -279,7 +281,7 @@ public class Config {
 	}
 	
 	protected void addApplications() {
-		addApplication(new AppZODB(this));
+		// Override to extend
 	}
 	
 	protected void addApplication(AppObject app) {

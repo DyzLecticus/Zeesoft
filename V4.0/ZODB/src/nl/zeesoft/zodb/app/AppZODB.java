@@ -33,8 +33,7 @@ public class AppZODB extends AppObject {
 	
 	@Override
 	public void initialize(boolean write) {
-		handlers.add(new HtmlNotFoundHandler(configuration,this));
-		handlers.add(new JsonNotFoundHandler(configuration,this));
+		addDefaultNotFoundHandlers();
 		handlers.add(new HtmlZODBIndexHandler(configuration,this));
 		handlers.add(new JavaScriptZODBHandler(configuration,this));
 		handlers.add(new JavaScriptZODBDataManagerHandler(configuration,this));
@@ -65,5 +64,10 @@ public class AppZODB extends AppObject {
 	
 	protected DatabaseRequestHandler getNewDatabaseRequestHandler(Database db) {
 		return new DatabaseRequestHandler(db);
+	}
+	
+	protected void addDefaultNotFoundHandlers() {
+		handlers.add(new HtmlNotFoundHandler(configuration,this));
+		handlers.add(new JsonNotFoundHandler(configuration,this));
 	}
 }
