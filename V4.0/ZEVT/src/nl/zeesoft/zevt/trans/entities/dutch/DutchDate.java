@@ -8,6 +8,9 @@ import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class DutchDate extends EntityObject {
 	private	Date	currentDate	= null;
+	public DutchDate(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
@@ -47,20 +50,18 @@ public class DutchDate extends EntityObject {
 		return str;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-		
-		DutchNumeric eoNumeric = (DutchNumeric) translator.getEntityObject(LANG_NLD,TYPE_NUMERIC);
+	public void initializeEntityValues() {
+		DutchNumeric eoNumeric = (DutchNumeric) getTranslator().getEntityObject(LANG_NLD,TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
-			eoNumeric.initialize(translator);
+			eoNumeric.initialize();
 		}
 		
-		DutchMonth eoMonth = (DutchMonth) translator.getEntityObject(LANG_NLD,TYPE_MONTH);
+		DutchMonth eoMonth = (DutchMonth) getTranslator().getEntityObject(LANG_NLD,TYPE_MONTH);
 		if (!eoMonth.isInitialized()) {
-			eoMonth.initialize(translator);
+			eoMonth.initialize();
 		}
 
-		currentDate = translator.getCurrentDate();
+		currentDate = getTranslator().getCurrentDate();
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(currentDate);

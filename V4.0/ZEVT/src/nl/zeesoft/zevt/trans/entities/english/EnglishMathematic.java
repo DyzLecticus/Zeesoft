@@ -5,6 +5,9 @@ import nl.zeesoft.zevt.trans.EntityValueTranslator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
 
 public class EnglishMathematic extends EntityObject {
+	public EnglishMathematic(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -18,8 +21,7 @@ public class EnglishMathematic extends EntityObject {
 		return 2;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
+	public void initializeEntityValues() {
 		addSymbol("multiplied by",UniversalMathematic.MULTIPLICATION);
 		addSymbol("times",UniversalMathematic.MULTIPLICATION);
 		addSymbol("divided by",UniversalMathematic.DIVISION);

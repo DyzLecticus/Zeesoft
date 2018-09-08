@@ -50,8 +50,13 @@ public class TestEntityValueTranslator extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
+		Date started = new Date();
 		EntityValueTranslator t = (EntityValueTranslator) getTester().getMockedObject(MockEntityValueTranslator.class.getName());
-
+		while(!t.isInitialized()) {
+			sleep(100);
+		}
+		System.out.println("Initializing the EntityValueTranslator took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+		
 		testTranslation(t,"",
 			"Eat three donuts at 9:00 or count to 110",
 			"UN_ABC:Eat EN_NUM:3|UN_ABC:three UN_ABC:donuts UN_ABC:at UN_TIM:09:00:00 UN_ABC:or UN_ABC:count UN_ABC:to UN_NUM:110",
@@ -92,10 +97,6 @@ public class TestEntityValueTranslator extends TestObject {
 			"twaalf uur OF vijf minuten voor negen OF tien over een sochtends",
 			"NL_TIM:12:00:00|NL_DUR:12:00 UN_ABC:OF NL_TIM:08:55:00 UN_ABC:OF NL_TIM:01:10:00",
 			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
-		testTranslation(t,EntityObject.LANG_NLD,
-			"Mijn naam si gekste der henkies.",
-			"UN_ABC:Mijn UN_ABC:naam UN_ABC:si UN_ABC:gekste NL_PRE:6|UN_ABC:der UN_ABC:henkies .",
-			"Mijn naam si gekste der henkies.");
 		testTranslation(t,EntityObject.LANG_ENG,
 			"to Germany or France",
 			"UN_ABC:to EN_CNT:DE|UN_ABC:Germany UN_ABC:or EN_CNT:FR|UN_ABC:France",

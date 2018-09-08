@@ -5,6 +5,9 @@ import nl.zeesoft.zevt.trans.EntityValueTranslator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
 
 public class DutchMathematic extends EntityObject {
+	public DutchMathematic(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
@@ -18,8 +21,7 @@ public class DutchMathematic extends EntityObject {
 		return 2;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
+	public void initializeEntityValues() {
 		addSymbol("vermenigvuldigd met",UniversalMathematic.MULTIPLICATION);
 		addSymbol("keer",UniversalMathematic.MULTIPLICATION);
 		addSymbol("maal",UniversalMathematic.MULTIPLICATION);

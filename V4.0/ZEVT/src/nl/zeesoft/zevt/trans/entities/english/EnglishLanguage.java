@@ -4,6 +4,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class EnglishLanguage extends EntityObject {
+	public EnglishLanguage(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -25,9 +28,7 @@ public class EnglishLanguage extends EntityObject {
 		return v;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-		
+	public void initializeEntityValues() {
 		addLanguage("Abkhaz","AB");
 		addLanguage("Afar","AA");
 		addLanguage("Afrikaans","AF");

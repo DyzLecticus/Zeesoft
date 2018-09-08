@@ -29,11 +29,18 @@ public abstract class EntityObject {
 	public static final String					TYPE_SMILEY					= "SML";
 	public static final String					TYPE_FROWNY					= "FRN";
 	
+	private EntityValueTranslator				translator					= null;
+	
 	private boolean								initialized					= false;
 	private String								internalValuePrefix			= "";
 	private SortedMap<String,EntityValue>		externalValues				= new TreeMap<String,EntityValue>();
 	private SortedMap<String,List<EntityValue>>	internalValues				= new TreeMap<String,List<EntityValue>>();
-
+	
+	public EntityObject(EntityValueTranslator t) {
+		translator = t;
+		internalValuePrefix = getLanguage() + "_" + getType() + EntityValueTranslator.VALUE_CONCATENATOR;
+	}
+	
 	public String getLanguage() {
 		return LANG_UNI;
 	}
@@ -54,11 +61,13 @@ public abstract class EntityObject {
 	public boolean isInitialized() {
 		return initialized;
 	}
-
-	public void initialize(EntityValueTranslator translator) {
-		initialized = true;
-		internalValuePrefix = getLanguage() + "_" + getType() + EntityValueTranslator.VALUE_CONCATENATOR;
+	
+	public void initialize() {
+		initializeEntityValues();
+		initialized();
 	}
+	
+	public abstract void initializeEntityValues();
 
 	public final String getInternalValuePrefix() {
 		return internalValuePrefix;
@@ -137,8 +146,21 @@ public abstract class EntityObject {
 		return r;
 	}
 	
+	protected EntityValueTranslator getTranslator() {
+		return translator;
+	}
+	
+	/**
+	 * Must be called after initialization
+	 */
+	protected void initialized() {
+		initialized = true;
+		translator.initializedEntity(this);
+	}
+	
 	protected void clear() {
 		externalValues.clear();
 		internalValues.clear();
+		initialized = false;
 	}
 }

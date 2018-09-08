@@ -4,6 +4,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class EnglishCurrency extends EntityObject {
+	public EnglishCurrency(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -17,8 +20,7 @@ public class EnglishCurrency extends EntityObject {
 		return 4;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
+	public void initializeEntityValues() {
 		addCurrency("US Dollar","USD");
 		addCurrency("Dollar","USD");
 		addCurrency("Canadian Dollar","CAD");

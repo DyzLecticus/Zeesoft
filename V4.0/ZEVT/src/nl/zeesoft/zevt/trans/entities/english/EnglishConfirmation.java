@@ -4,6 +4,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class EnglishConfirmation extends EntityObject {
+	public EnglishConfirmation(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -17,9 +20,7 @@ public class EnglishConfirmation extends EntityObject {
 		return 4;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-
+	public void initializeEntityValues() {
 		addConfirmation("yes",true);
 		addConfirmation("yep",true);
 		addConfirmation("correct",true);

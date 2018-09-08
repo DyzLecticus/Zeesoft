@@ -3,14 +3,17 @@ package nl.zeesoft.zevt.trans;
 public class UniversalSmiley extends EntityObject {
 	private int counter = 0;
 	
+	public UniversalSmiley(EntityValueTranslator t) {
+		super(t);
+	}
+
 	@Override
 	public String getType() {
 		return TYPE_SMILEY;
 	}
 	
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
+	public void initializeEntityValues() {
 		addExpressions();
 	}
 	

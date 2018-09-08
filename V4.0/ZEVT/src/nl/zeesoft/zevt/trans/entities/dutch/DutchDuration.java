@@ -4,6 +4,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class DutchDuration extends EntityObject {
+	public DutchDuration(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
@@ -17,12 +20,10 @@ public class DutchDuration extends EntityObject {
 		return 5;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-
-		DutchNumeric eo = (DutchNumeric) translator.getEntityObject(LANG_NLD,TYPE_NUMERIC);
+	public void initializeEntityValues() {
+		DutchNumeric eo = (DutchNumeric) getTranslator().getEntityObject(LANG_NLD,TYPE_NUMERIC);
 		if (!eo.isInitialized()) {
-			eo.initialize(translator);
+			eo.initialize();
 		}
 		
 		for (int h = 0; h<100; h++) {

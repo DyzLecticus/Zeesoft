@@ -7,6 +7,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class DutchTime extends EntityObject {
+	public DutchTime(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
@@ -37,12 +40,10 @@ public class DutchTime extends EntityObject {
 		return str;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-
-		DutchNumeric eoNumeric = (DutchNumeric) translator.getEntityObject(LANG_NLD,TYPE_NUMERIC);
+	public void initializeEntityValues() {
+		DutchNumeric eoNumeric = (DutchNumeric) getTranslator().getEntityObject(LANG_NLD,TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
-			eoNumeric.initialize(translator);
+			eoNumeric.initialize();
 		}
 		
 		addEntityValue("middernacht","00:00:00",0l);
@@ -118,7 +119,6 @@ public class DutchTime extends EntityObject {
 					}
 				}
 			}
-			
 		}
 	}
 	private void addPatternStringAndValue(String str,String val,Long typeVal,String period,boolean addWithoutPeriod) {

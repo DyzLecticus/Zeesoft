@@ -4,6 +4,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class EnglishNumeric extends EntityObject {
+	public EnglishNumeric(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -13,9 +16,8 @@ public class EnglishNumeric extends EntityObject {
 		return TYPE_NUMERIC;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-		for (int i = 0; i<=translator.getMaximumNumber(); i++) {
+	public void initializeEntityValues() {
+		for (int i = 0; i<=getTranslator().getMaximumNumber(); i++) {
 			if (i==0) {
 				addEntityValue("zero");
 			} else if (i==1) {

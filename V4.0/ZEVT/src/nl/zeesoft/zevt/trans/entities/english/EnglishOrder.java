@@ -4,6 +4,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class EnglishOrder extends EntityObject {
+	public EnglishOrder(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -13,17 +16,15 @@ public class EnglishOrder extends EntityObject {
 		return TYPE_ORDER;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-		
-		EnglishNumeric eo = (EnglishNumeric) translator.getEntityObject(LANG_ENG,TYPE_NUMERIC);
+	public void initializeEntityValues() {
+		EnglishNumeric eo = (EnglishNumeric) getTranslator().getEntityObject(LANG_ENG,TYPE_NUMERIC);
 		if (!eo.isInitialized()) {
-			eo.initialize(translator);
+			eo.initialize();
 		}
 		
-		int max = translator.getMaximumOrder();
-		if (translator.getMaximumOrder()>translator.getMaximumNumber()) {
-			max = translator.getMaximumNumber();
+		int max = getTranslator().getMaximumOrder();
+		if (getTranslator().getMaximumOrder()>getTranslator().getMaximumNumber()) {
+			max = getTranslator().getMaximumNumber();
 		}
 
 		for (int i = 1; i<=max; i++) {

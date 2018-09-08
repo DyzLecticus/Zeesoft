@@ -1,10 +1,15 @@
 package nl.zeesoft.zevt.trans;
 
 public class UniversalNumeric extends EntityObject {
+	public UniversalNumeric(EntityValueTranslator t) {
+		super(t);
+	}
+
 	@Override
 	public String getType() {
 		return TYPE_NUMERIC;
 	}
+	
 	@Override
 	public String getInternalValueForExternalValue(String str) {
 		String r = "";
@@ -13,6 +18,7 @@ public class UniversalNumeric extends EntityObject {
 		}
 		return r;
 	}
+	
 	@Override
 	public String getExternalValueForInternalValue(String str) {
 		String r = "";
@@ -21,6 +27,7 @@ public class UniversalNumeric extends EntityObject {
 		}
 		return r;
 	}
+	
 	@Override
 	public Object getTypeValueForInternalValue(String str) {
 		Integer r = null;
@@ -45,5 +52,10 @@ public class UniversalNumeric extends EntityObject {
 	        }
 	    }
 	    return r;
+	}
+
+	@Override
+	public void initializeEntityValues() {
+		// Ignore
 	}
 }

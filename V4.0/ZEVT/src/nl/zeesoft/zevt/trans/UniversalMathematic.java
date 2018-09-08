@@ -21,14 +21,17 @@ public class UniversalMathematic extends EntityObject {
 	public static final String	LESS_THAN			= "LT";
 	public static final String	LESS_OR_EQUALS		= "LE";
 	
+	public UniversalMathematic(EntityValueTranslator t) {
+		super(t);
+	}
+	
 	@Override
 	public String getType() {
 		return TYPE_MATHEMATIC;
 	}
 	
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
+	public void initializeEntityValues() {
 		addSymbol("*",MULTIPLICATION);
 		addSymbol("/",DIVISION);
 		addSymbol("+",ADDITION);

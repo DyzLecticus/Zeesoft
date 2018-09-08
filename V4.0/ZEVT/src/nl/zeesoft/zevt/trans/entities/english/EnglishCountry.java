@@ -5,6 +5,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class EnglishCountry extends EntityObject {
+	public EnglishCountry(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -38,9 +41,7 @@ public class EnglishCountry extends EntityObject {
 		return v;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-		
+	public void initializeEntityValues() {
 		addCountry("Afghanistan","AF");
 		addCountry("the Aland Islands","AX");
 		addCountry("Aland Islands","AX");

@@ -23,4 +23,9 @@ public class FixedDateEntityValueTranslator extends EntityValueTranslator {
 		cal.set(Calendar.MILLISECOND,764);
 		return cal.getTime();
 	}
+	
+	@Override
+	protected boolean logDatabaseRequestFailures() {
+		return false;
+	}
 }

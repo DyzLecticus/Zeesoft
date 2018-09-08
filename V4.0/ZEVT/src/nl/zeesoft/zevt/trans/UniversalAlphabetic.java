@@ -1,6 +1,10 @@
 package nl.zeesoft.zevt.trans;
 
 public class UniversalAlphabetic extends EntityObject {
+	public UniversalAlphabetic(EntityValueTranslator t) {
+		super(t);
+	}
+
 	@Override
 	public String getInternalValueForExternalValue(String str) {
 		String r = "";
@@ -43,5 +47,10 @@ public class UniversalAlphabetic extends EntityObject {
 	        }
 	    }
 	    return r;
+	}
+
+	@Override
+	public void initializeEntityValues() {
+		// Ignore
 	}
 }

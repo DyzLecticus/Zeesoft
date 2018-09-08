@@ -1,6 +1,9 @@
 package nl.zeesoft.zevt.trans;
 
 public class UniversalTime extends EntityObject {
+	public UniversalTime(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getType() {
 		return TYPE_TIME;
@@ -10,8 +13,7 @@ public class UniversalTime extends EntityObject {
 		return super.getInternalValueForExternalValue(correctTimeString(str));
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
+	public void initializeEntityValues() {
 		for (int h = 0; h<24; h++) {
 			for (int m = 0; m<60; m++) {
 				for (int s = 0; s<60; s++) {
@@ -22,7 +24,6 @@ public class UniversalTime extends EntityObject {
 			}
 		}
 	}
-
 	private String correctTimeString(String str) {
 		String[] split = str.split(":");
 		String r = "";

@@ -4,6 +4,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class DutchMonth extends EntityObject {
+	public DutchMonth(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
@@ -13,9 +16,7 @@ public class DutchMonth extends EntityObject {
 		return TYPE_MONTH;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-		
+	public void initializeEntityValues() {
 		for (int i = 1; i<=12; i++) {
 			String value = "" + i;
 			String name = "";

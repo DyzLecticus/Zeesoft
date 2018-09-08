@@ -1,6 +1,10 @@
 package nl.zeesoft.zevt.trans;
 
 public class UniversalFrowny extends UniversalSmiley {
+	public UniversalFrowny(EntityValueTranslator t) {
+		super(t);
+	}
+
 	@Override
 	public String getType() {
 		return TYPE_FROWNY;

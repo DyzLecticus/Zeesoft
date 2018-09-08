@@ -8,6 +8,9 @@ import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class EnglishDate extends EntityObject {
 	private	Date	currentDate	= null;
+	public EnglishDate(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -47,30 +50,28 @@ public class EnglishDate extends EntityObject {
 		return str;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-
-		EnglishNumeric eoNumeric = (EnglishNumeric) translator.getEntityObject(LANG_ENG,TYPE_NUMERIC);
+	public void initializeEntityValues() {
+		EnglishNumeric eoNumeric = (EnglishNumeric) getTranslator().getEntityObject(LANG_ENG,TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
-			eoNumeric.initialize(translator);
+			eoNumeric.initialize();
 		}
 		
-		EnglishOrder eoOrder = (EnglishOrder) translator.getEntityObject(LANG_ENG,TYPE_ORDER);
+		EnglishOrder eoOrder = (EnglishOrder) getTranslator().getEntityObject(LANG_ENG,TYPE_ORDER);
 		if (!eoOrder.isInitialized()) {
-			eoOrder.initialize(translator);
+			eoOrder.initialize();
 		}
 
-		EnglishOrder2 eoOrder2 = (EnglishOrder2) translator.getEntityObject(LANG_ENG,TYPE_ORDER2);
+		EnglishOrder2 eoOrder2 = (EnglishOrder2) getTranslator().getEntityObject(LANG_ENG,TYPE_ORDER2);
 		if (!eoOrder2.isInitialized()) {
-			eoOrder2.initialize(translator);
+			eoOrder2.initialize();
 		}
 		
-		EnglishMonth eoMonth = (EnglishMonth) translator.getEntityObject(LANG_ENG,TYPE_MONTH);
+		EnglishMonth eoMonth = (EnglishMonth) getTranslator().getEntityObject(LANG_ENG,TYPE_MONTH);
 		if (!eoMonth.isInitialized()) {
-			eoMonth.initialize(translator);
+			eoMonth.initialize();
 		}
 
-		currentDate = translator.getCurrentDate();
+		currentDate = getTranslator().getCurrentDate();
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(currentDate);

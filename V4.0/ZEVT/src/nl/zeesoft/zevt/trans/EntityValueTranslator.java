@@ -48,7 +48,7 @@ public class EntityValueTranslator extends Locker {
 	
 	private boolean					initializing				= false;
 	private boolean					initialized					= false;
-	
+	private int						todo						= 0;
 
 	public EntityValueTranslator(Config config) {
 		super(config.getMessenger());
@@ -57,7 +57,11 @@ public class EntityValueTranslator extends Locker {
 	}
 	
 	public void install() {
-		// ...
+		for (EntityObject eo: entities) {
+			if (eo instanceof DatabaseEntityObject) {
+				((DatabaseEntityObject) eo).install();
+			}
+		}
 	}
 	
 	public boolean initialize() {
@@ -65,9 +69,15 @@ public class EntityValueTranslator extends Locker {
 		lockMe(this);
 		if (!initialized && !initializing) {
 			configuration.debug(this,"Initializing entity value translator ...");
+			initializing = true;
+			todo = 0;
+			for (EntityObject eo: entities) {
+				if (!eo.isInitialized()) {
+					todo++;
+				}
+			}
 			EntityValueTranslatorInitWorker worker = new EntityValueTranslatorInitWorker(configuration,this);
 			worker.start();
-			initializing = true;
 			r = true;
 		}
 		unlockMe(this);
@@ -85,22 +95,6 @@ public class EntityValueTranslator extends Locker {
 			initialized = false;
 		}
 		unlockMe(this);
-	}
-	
-	protected void initializeEntities() {
-		for (EntityObject eo: entities) {
-			if (!eo.isInitialized()) {
-				eo.initialize(this);
-				if (eo.getMaximumSymbols()>maximumSymbols) {
-					maximumSymbols = eo.getMaximumSymbols();
-				}
-			}
-		}
-		lockMe(this);
-		initialized = true;
-		initializing = false;
-		unlockMe(this);
-		configuration.debug(this,"Initialized entity value translator");
 	}
 	
 	public boolean isInitialized() {
@@ -518,45 +512,79 @@ public class EntityValueTranslator extends Locker {
 		return r;
 	}
 
+	protected boolean logDatabaseRequestFailures() {
+		return true;
+	}
+	
+	protected Config getConfiguration() {
+		return configuration;
+	}
+	
+	protected void initializeEntities() {
+		for (EntityObject eo: entities) {
+			if (!eo.isInitialized()) {
+				eo.initialize();
+				if (eo.getMaximumSymbols()>maximumSymbols) {
+					maximumSymbols = eo.getMaximumSymbols();
+				}
+			}
+		}
+	}
+	
+	protected void initializedEntity(EntityObject eo) {
+		boolean done = false;
+		lockMe(this);
+		todo--;
+		if (todo==0) {
+			initialized = true;
+			initializing = false;
+			done = true;
+		}
+		unlockMe(this);
+		if (done) {
+			configuration.debug(this,"Initialized entity value translator");
+		}
+	}
+	
 	/**
 	 * Adds all default entities to the list of entities.
 	 * This method is called by the constructor.
 	 */
 	protected void addDefaultEntities() {
-		entities.add(new EnglishMathematic());
-		entities.add(new DutchMathematic());
-		entities.add(new EnglishConfirmation());
-		entities.add(new DutchConfirmation());
-		entities.add(new EnglishProfanity());
-		entities.add(new DutchProfanity());
-		entities.add(new EnglishCurrency());
-		entities.add(new DutchCurrency());
-		entities.add(new EnglishLanguage());
-		entities.add(new DutchLanguage());
-		entities.add(new EnglishCountry());
-		entities.add(new DutchCountry());
-		entities.add(new EnglishDate());
-		entities.add(new DutchDate());
-		entities.add(new EnglishTime());
-		entities.add(new DutchTime());
-		entities.add(new EnglishDuration());
-		entities.add(new DutchDuration());
-		entities.add(new EnglishMonth());
-		entities.add(new DutchMonth());
-		entities.add(new EnglishOrder());
-		entities.add(new EnglishOrder2());
-		entities.add(new DutchOrder());
-		entities.add(new EnglishNumeric());
-		entities.add(new DutchNumeric());
-		entities.add(new EnglishPreposition());
-		entities.add(new DutchPreposition());
-		entities.add(new UniversalMathematic());
-		entities.add(new UniversalCurrency());
-		entities.add(new UniversalSmiley());
-		entities.add(new UniversalFrowny());
-		entities.add(new UniversalTime());
-		entities.add(new UniversalNumeric());
-		entities.add(new UniversalAlphabetic());
+		entities.add(new EnglishMathematic(this));
+		entities.add(new DutchMathematic(this));
+		entities.add(new EnglishConfirmation(this));
+		entities.add(new DutchConfirmation(this));
+		entities.add(new EnglishProfanity(this));
+		entities.add(new DutchProfanity(this));
+		entities.add(new EnglishCurrency(this));
+		entities.add(new DutchCurrency(this));
+		entities.add(new EnglishLanguage(this));
+		entities.add(new DutchLanguage(this));
+		entities.add(new EnglishCountry(this));
+		entities.add(new DutchCountry(this));
+		entities.add(new EnglishDate(this));
+		entities.add(new DutchDate(this));
+		entities.add(new EnglishTime(this));
+		entities.add(new DutchTime(this));
+		entities.add(new EnglishDuration(this));
+		entities.add(new DutchDuration(this));
+		entities.add(new EnglishMonth(this));
+		entities.add(new DutchMonth(this));
+		entities.add(new EnglishOrder(this));
+		entities.add(new EnglishOrder2(this));
+		entities.add(new DutchOrder(this));
+		entities.add(new EnglishNumeric(this));
+		entities.add(new DutchNumeric(this));
+		entities.add(new EnglishPreposition(this));
+		entities.add(new DutchPreposition(this));
+		entities.add(new UniversalMathematic(this));
+		entities.add(new UniversalCurrency(this));
+		entities.add(new UniversalSmiley(this));
+		entities.add(new UniversalFrowny(this));
+		entities.add(new UniversalTime(this));
+		entities.add(new UniversalNumeric(this));
+		entities.add(new UniversalAlphabetic(this));
 	}
 	
 	private ZStringBuilder getInternalValuesForExternalValue(String str, String raw, int numSymbols,List<String> languages,List<String> types) {

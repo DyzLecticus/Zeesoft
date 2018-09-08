@@ -1,10 +1,13 @@
 package nl.zeesoft.zevt.trans.entities.dutch;
 
-import nl.zeesoft.zevt.trans.EntityObject;
+import nl.zeesoft.zevt.trans.DatabaseEntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
-public class DutchProfanity extends EntityObject {
+public class DutchProfanity extends DatabaseEntityObject {
 	private int counter = 1; 
+	public DutchProfanity(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
@@ -14,8 +17,7 @@ public class DutchProfanity extends EntityObject {
 		return TYPE_PROFANITY;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
+	public void initializeEntityValues() {
 		addProfanity("eikel");
 		addProfanity("klootzak");
 		addProfanity("flikker");

@@ -4,6 +4,9 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
 public class DutchPreposition extends EntityObject {
+	public DutchPreposition(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_NLD;
@@ -17,9 +20,7 @@ public class DutchPreposition extends EntityObject {
 		return 2;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
-		
+	public void initializeEntityValues() {
 		for (int i = 1; i<=8; i++) {
 			String value = "" + i;
 			String name = "";

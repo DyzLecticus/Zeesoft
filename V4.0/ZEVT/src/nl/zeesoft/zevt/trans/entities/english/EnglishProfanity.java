@@ -1,10 +1,13 @@
 package nl.zeesoft.zevt.trans.entities.english;
 
-import nl.zeesoft.zevt.trans.EntityObject;
+import nl.zeesoft.zevt.trans.DatabaseEntityObject;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 
-public class EnglishProfanity extends EntityObject {
+public class EnglishProfanity extends DatabaseEntityObject {
 	private int counter = 1; 
+	public EnglishProfanity(EntityValueTranslator t) {
+		super(t);
+	}
 	@Override
 	public String getLanguage() {
 		return LANG_ENG;
@@ -14,8 +17,7 @@ public class EnglishProfanity extends EntityObject {
 		return TYPE_PROFANITY;
 	}
 	@Override
-	public void initialize(EntityValueTranslator translator) {
-		super.initialize(translator);
+	public void initializeEntityValues() {
 		addProfanity("asshole");
 		addProfanity("faggot");
 		addProfanity("faggy");
