@@ -179,6 +179,8 @@ public class TestEntityValueTranslator extends TestObject {
 		expression.append("11 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.ADDITION + " 25 " + UniversalMathematic.DIVISION + " 5 " + UniversalMathematic.SUBTRACTION + " 2");
 		r = math.evaluate(expression);
 		assertEqual(r,true,"The evaluation did not produce the expected result");
+		
+		t.destroy();
 	}
 	
 	private void testTranslation(EntityValueTranslator t,String language,String seq,String expTran,String expRetran) {

@@ -37,31 +37,36 @@ import nl.zeesoft.zevt.trans.entities.english.EnglishTime;
 import nl.zeesoft.zodb.Config;
 
 public class EntityValueTranslator extends Locker {
-	public static final String		VALUE_CONCATENATOR			= ":";
-	public static final String		OR_CONCATENATOR				= "|";
-	public static final String		OR_CONCATENATOR_SPLITTER	= "\\|";
+	public static final String					VALUE_CONCATENATOR			= ":";
+	public static final String					OR_CONCATENATOR				= "|";
+	public static final String					OR_CONCATENATOR_SPLITTER	= "\\|";
 	
-	private Config					configuration				= null;
-	private List<EntityObject>		entities					= new ArrayList<EntityObject>();
+	private Config								configuration				= null;
+	private List<EntityObject>					entities					= new ArrayList<EntityObject>();
 	
-	private int						maximumSymbols				= 1;
+	private int									maximumSymbols				= 1;
 	
-	private boolean					initializing				= false;
-	private boolean					initialized					= false;
-	private int						todo						= 0;
+	private boolean								initializing				= false;
+	private boolean								initialized					= false;
+	private int									todo						= 0;
+	
+	private EntityValueTranslatorRefreshWorker	refreshWorker				= null;
 
 	public EntityValueTranslator(Config config) {
 		super(config.getMessenger());
 		configuration = config;
 		addDefaultEntities();
+		refreshWorker = new EntityValueTranslatorRefreshWorker(config,this);
 	}
 	
 	public void install() {
+		lockMe(this);
 		for (EntityObject eo: entities) {
 			if (eo instanceof DatabaseEntityObject) {
 				((DatabaseEntityObject) eo).install();
 			}
 		}
+		unlockMe(this);
 	}
 	
 	public boolean initialize() {
@@ -78,6 +83,7 @@ public class EntityValueTranslator extends Locker {
 			}
 			EntityValueTranslatorInitWorker worker = new EntityValueTranslatorInitWorker(configuration,this);
 			worker.start();
+			refreshWorker.start();
 			r = true;
 		}
 		unlockMe(this);
@@ -86,6 +92,7 @@ public class EntityValueTranslator extends Locker {
 	
 	public void destroy() {
 		lockMe(this);
+		refreshWorker.stop();
 		if (initialized) {
 			for (EntityObject eo: entities) {
 				eo.clear();
@@ -204,12 +211,7 @@ public class EntityValueTranslator extends Locker {
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> languages,List<String> types) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		
-		boolean doIt = false;
-		lockMe(this);
-		doIt = initialized;
-		unlockMe(this);
-		
-		if (doIt) {
+		if (isInitialized()) {
 			List<String> symbols = sequence.toSymbolsPunctuated();
 			for (int i = 0; i<symbols.size(); i++) {
 				int testNum = maximumSymbols;
@@ -279,12 +281,7 @@ public class EntityValueTranslator extends Locker {
 	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence,String type,boolean singleOnly) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		
-		boolean doIt = false;
-		lockMe(this);
-		doIt = initialized;
-		unlockMe(this);
-
-		if (doIt) {
+		if (isInitialized()) {
 			List<String> symbols = sequence.toSymbolsPunctuated();
 			List<String> newSymbols = new ArrayList<String>();
 			for (int i = 0; i<symbols.size(); i++) {
@@ -302,48 +299,6 @@ public class EntityValueTranslator extends Locker {
 		return r;
 	}
 
-	/**
-	 * Returns the first value of a specific type from a list of internal entity values.
-	 * The value is removed from the input list.
-	 * 
-	 * @param internalValues The list of internal values
-	 * @param internalValuesCorrected The list of corrected internal values
-	 * @param type The entity type
-	 * @param complexName The optional complex entity name
-	 * @param complexType The optional complex entity type
-	 * @return The first value or "";
-	 */
-	public String getTypeValueFromInternalValues(List<String> internalValues,List<String> internalValuesCorrected,String type,String complexName,String complexType) {
-		String r = "";
-		List<String> vals = new ArrayList<String>(internalValues);
-		int i = 0;
-		for (String val: vals) {
-			String v = "";
-			if (complexType.length()>0) {
-				v = getInternalValueFromInternalValues(val,complexType);
-				String[] str = v.split(VALUE_CONCATENATOR);
-				if (str.length==4 && str[1].equals(complexName)) {
-					v = str[2] + VALUE_CONCATENATOR + str[3];
-				} else {
-					v = "";
-				}
-			} else {
-				v = getInternalValueFromInternalValues(val,type);
-			}
-			if (v.length()>0) {
-				if (internalValuesCorrected!=null && internalValuesCorrected.size()==internalValues.size()) {
-					internalValuesCorrected.remove(i);
-					internalValues.remove(i);
-					i--;
-				}
-				r = v;
-				break;
-			}
-			i++;
-		}
-		return r;
-	}
-	
 	/**
 	 * Returns a specific type of internal entity value from a concatenated set of internal values.
 	 * 
@@ -386,70 +341,6 @@ public class EntityValueTranslator extends Locker {
 	}
 	
 	/**
-	 * Returns the type value for an internal value.
-	 * 
-	 * @param value The internal value
-	 * @return The type value or null
-	 */
-	public Object getTypeValueForInternalValue(String value) {
-		Object r = null;
-		String prefix = value.split(VALUE_CONCATENATOR)[0] + VALUE_CONCATENATOR;
-		EntityObject eo = getEntityObject(prefix);
-		if (eo!=null) {
-			r = eo.getTypeValueForInternalValue(value);
-		}
-		return r;
-	}
-	
-	/**
-	 * Returns the boolean type value for an internal value.
-	 * 
-	 * @param value The internal value
-	 * @param def The default type value
-	 * @return The boolean type value or the default type value
-	 */
-	public boolean getBooleanTypeValueForInternalValue(String value, boolean def) {
-		boolean r = def;
-		Object o = getTypeValueForInternalValue(value);
-		if (o!=null && o instanceof Boolean) {
-			r = (Boolean) o;
-		}
-		return r;
-	}
-
-	/**
-	 * Returns the long type value for an internal value.
-	 * 
-	 * @param value The internal value
-	 * @param def The default type value
-	 * @return The long type value or the default type value
-	 */
-	public long getLongTypeValueForInternalValue(String value, long def) {
-		long r = def;
-		Object o = getTypeValueForInternalValue(value);
-		if (o!=null && o instanceof Long) {
-			r = (Long) o;
-		}
-		return r;
-	}
-	
-	/**
-	 * Returns the integer type value for an internal value.
-	 * 
-	 * @param value The internal value
-	 * @param def The default type value
-	 * @return The integer type value or the default type value
-	 */
-	public int getIntegerTypeValueForInternalValue(String value, int def) {
-		int r = def;
-		Object o = getTypeValueForInternalValue(value);
-		if (o!=null && o instanceof Integer) {
-			r = (Integer) o;
-		}
-		return r;
-	}
-	
-	/**
 	 * Returns a specific entity object.
 	 * 
 	 * @param language The entity language
@@ -458,12 +349,14 @@ public class EntityValueTranslator extends Locker {
 	 */
 	public EntityObject getEntityObject(String language,String type) {
 		EntityObject r = null;
+		lockMe(this);
 		for (EntityObject eo: entities) {
 			if (eo.getLanguage().equals(language) && eo.getType().equals(type)) {
 				r = eo;
 				break;
 			}
 		}
+		unlockMe(this);
 		return r;
 	}
 
@@ -475,24 +368,46 @@ public class EntityValueTranslator extends Locker {
 	 */
 	public EntityObject getEntityObject(String prefix) {
 		EntityObject r = null;
+		lockMe(this);
 		for (EntityObject eo: entities) {
 			if (eo.getInternalValuePrefix().equals(prefix)) {
 				r = eo;
 				break;
 			}
 		}
+		unlockMe(this);
 		return r;
 	}
 
 	/**
-	 * Returns the list of entities.
+	 * Adds an entity to the list of entities
 	 * 
-	 * @return The list of entities
+	 * @param eo The entity
 	 */
-	public List<EntityObject> getEntities() {
-		return entities;
+	public void addEntity(EntityObject eo) {
+		lockMe(this);
+		entities.add(eo);
+		unlockMe(this);
 	}
 
+	/**
+	 * Replaces an entity to the list of entities
+	 * 
+	 * @param eo The entity
+	 */
+	public void replaceEntity(EntityObject eo) {
+		EntityObject curr = getEntityObject(eo.getInternalValuePrefix());
+		if (curr!=null) {
+			lockMe(this);
+			int index = entities.indexOf(curr);
+			if (index>=0) {
+				entities.add(entities.indexOf(curr),eo);
+				entities.remove(curr);
+			}
+			unlockMe(this);
+		}
+	}
+	
 	/**
 	 * Returns a list of entities.
 	 *  
@@ -502,6 +417,7 @@ public class EntityValueTranslator extends Locker {
 	 */
 	public List<EntityObject> getEntities(List<String> languages,List<String> types) {
 		List<EntityObject> r = new ArrayList<EntityObject>();
+		lockMe(this);
 		for (EntityObject eo: entities) {
 			if ((languages==null || languages.size()==0 || languages.contains(eo.getLanguage())) &&
 				(types==null || types.size()==0 || types.contains(eo.getType()))
@@ -509,6 +425,7 @@ public class EntityValueTranslator extends Locker {
 				r.add(eo);
 			}
 		}
+		unlockMe(this);
 		return r;
 	}
 
@@ -536,20 +453,44 @@ public class EntityValueTranslator extends Locker {
 		lockMe(this);
 		todo--;
 		if (todo==0) {
-			initialized = true;
-			initializing = false;
 			done = true;
 		}
 		unlockMe(this);
-		if (done) {
-			configuration.debug(this,"Initialized entity value translator");
+		if (isInitialized()) {
+			replaceEntity(eo);
+			if (done) {
+				configuration.debug(this,"Replaced entities");
+			}
+		} else {
+			if (done) {
+				lockMe(this);
+				initialized = true;
+				initializing = false;
+				unlockMe(this);
+				configuration.debug(this,"Initialized entity value translator");
+			}
 		}
 	}
 	
-	/**
-	 * Adds all default entities to the list of entities.
-	 * This method is called by the constructor.
-	 */
+	protected void refreshEntities() {
+		if (isInitialized()) {
+			List<EntityObject> refresh = getRefreshEntities();
+			lockMe(this);
+			todo = refresh.size();
+			unlockMe(this);
+			for (EntityObject eo: refresh) {
+				eo.initialize();
+			}
+		}
+	}
+	
+	protected List<EntityObject> getRefreshEntities() {
+		List<EntityObject> r = new ArrayList<EntityObject>();
+		r.add(new EnglishDate(this));
+		r.add(new DutchDate(this));
+		return r;
+	}
+	
 	protected void addDefaultEntities() {
 		entities.add(new EnglishMathematic(this));
 		entities.add(new DutchMathematic(this));
