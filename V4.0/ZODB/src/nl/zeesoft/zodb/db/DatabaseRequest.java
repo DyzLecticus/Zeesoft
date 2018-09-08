@@ -15,7 +15,7 @@ public class DatabaseRequest {
 	public int					max			= 10;
 	public long					id			= 0L;
 	public String				name		= "";
-	public String				regex		= "";
+	public String				contains		= "";
 	public String				startsWith	= "";
 	public JsFile				obj			= null;
 	
@@ -36,8 +36,8 @@ public class DatabaseRequest {
 		}
 		if (name.length()>0) {
 			json.rootElement.children.add(new JsElem("name",name,true));
-		} else if (regex.length()>0) {
-			json.rootElement.children.add(new JsElem("regex",regex,true));
+		} else if (contains.length()>0) {
+			json.rootElement.children.add(new JsElem("contains",contains,true));
 		} else if (startsWith.length()>0) {
 			json.rootElement.children.add(new JsElem("startsWith",startsWith,true));
 		}
@@ -58,7 +58,7 @@ public class DatabaseRequest {
 			type = json.rootElement.getChildString("type",type);
 			id = json.rootElement.getChildLong("id",id);
 			name = json.rootElement.getChildString("name",name);
-			regex = json.rootElement.getChildString("regex",regex);
+			contains = json.rootElement.getChildString("contains",contains);
 			startsWith = json.rootElement.getChildString("startsWith",startsWith);
 			start = json.rootElement.getChildInt("start",start);
 			max = json.rootElement.getChildInt("max",max);

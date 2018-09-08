@@ -3,7 +3,6 @@ package nl.zeesoft.zodb.db;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
-import java.util.regex.PatternSyntaxException;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
@@ -44,8 +43,8 @@ public class DatabaseRequestHandler {
 						for (IndexElement element: elements) {
 							response.results.add(element.toResult());
 						}
-					} else if (request.regex.length()>0) {
-						List<IndexElement> elements = database.getObjectsByNameStartsWith(request.regex);
+					} else if (request.contains.length()>0) {
+						List<IndexElement> elements = database.getObjectsByNameContains(request.contains);
 						for (IndexElement element: elements) {
 							response.results.add(element.toResult());
 						}
@@ -54,8 +53,8 @@ public class DatabaseRequestHandler {
 					SortedMap<String,Long> list = null;
 					if (request.startsWith.length()>0) {
 						list = database.listObjectsThatStartWith(request.startsWith,request.start,request.max);
-					} else if (request.regex.length()>0) {
-						list = database.listObjectsThatMatch(request.regex,request.start,request.max);
+					} else if (request.contains.length()>0) {
+						list = database.listObjectsThatMatch(request.contains,request.start,request.max);
 					} else {
 						list = database.listObjects(request.start,request.max);
 					}
@@ -88,8 +87,8 @@ public class DatabaseRequestHandler {
 				response.errors.add(new ZStringBuilder("Request object is mandatory"));
 			}
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_GET)) {
-			if (response.request.id<=0 && response.request.name.length()==0 && response.request.startsWith.length()==0 && response.request.regex.length()==0) {
-				response.errors.add(new ZStringBuilder("Request id, name, startsWith or regex is mandatory"));
+			if (response.request.id<=0 && response.request.name.length()==0 && response.request.startsWith.length()==0 && response.request.contains.length()==0) {
+				response.errors.add(new ZStringBuilder("Request id, name, startsWith or contains is mandatory"));
 			}
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
 			if (response.request.max<=0) {
@@ -104,13 +103,6 @@ public class DatabaseRequestHandler {
 				response.errors.add(new ZStringBuilder("Request id is mandatory"));
 			} else if (response.request.obj==null || response.request.obj.rootElement==null) {
 				response.errors.add(new ZStringBuilder("Request object is mandatory"));
-			}
-		}
-		if (response.request.regex.length()>0) {
-			try {
-				"test".matches(response.request.regex);
-			} catch(PatternSyntaxException e) {
-				response.errors.add(new ZStringBuilder("Invalid regular expression syntax"));
 			}
 		}
 		if (response.errors.size()>0) {

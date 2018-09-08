@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.regex.PatternSyntaxException;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
@@ -80,16 +79,16 @@ public class Index extends Locker {
 		return listObjects(start,max,startWith,null,null);
 	}
 
-	protected SortedMap<String,Long> listObjectsThatMatch(String regex,int start, int max) {
-		return listObjects(start,max,null,regex,null);
+	protected SortedMap<String,Long> listObjectsThatMatch(String contains,int start, int max) {
+		return listObjects(start,max,null,contains,null);
 	}
 	
 	protected List<IndexElement> getObjectsByNameStartsWith(String startsWith) {
 		return getObjectsByName(startsWith,null,null);
 	}
 	
-	protected List<IndexElement> getObjectsByNameMatches(String regex) {
-		return getObjectsByName(null,regex,null);
+	protected List<IndexElement> getObjectsByNameContains(String contains) {
+		return getObjectsByName(null,contains,null);
 	}
 	
 	protected void setObject(long id, JsFile obj, List<ZStringBuilder> errors) {
@@ -209,7 +208,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private SortedMap<String,Long> listObjects(int start, int max,String startsWith,String regex,String endsWith) {
+	private SortedMap<String,Long> listObjects(int start, int max,String startsWith,String contains,String endsWith) {
 		SortedMap<String,Long> r = new TreeMap<String,Long>();
 		if (start<0) {
 			start = 0;
@@ -222,10 +221,10 @@ public class Index extends Locker {
 		if (open) {
 			if (
 				(startsWith!=null && startsWith.length()>0) ||
-				(regex!=null && regex.length()>0) ||
+				(contains!=null && contains.length()>0) ||
 				(endsWith!=null && endsWith.length()>0)
 				) {
-				elements = listObjectsByNameNoLock(startsWith,regex,endsWith);
+				elements = listObjectsByNameNoLock(startsWith,contains,endsWith);
 			} else {
 				elements = new ArrayList<IndexElement>(elementsByName.values());
 			}
@@ -244,12 +243,12 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private List<IndexElement> getObjectsByName(String startsWith,String regex,String endsWith) {
+	private List<IndexElement> getObjectsByName(String startsWith,String contains,String endsWith) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		List<IndexElement> read = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			r = listObjectsByNameNoLock(startsWith,regex,endsWith);
+			r = listObjectsByNameNoLock(startsWith,contains,endsWith);
 			for (IndexElement element: r) {
 				if (element.obj==null) {
 					read.add(element);
@@ -267,20 +266,16 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjectsByNameNoLock(String startsWith,String regex,String endsWith) {
+	private List<IndexElement> listObjectsByNameNoLock(String startsWith,String contains,String endsWith) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		for (String name: elementsByName.keySet()) {
-			try {
-				if (
-					(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
-					(regex==null || regex.length()==0 || name.matches(regex)) &&
-					(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
-					) {
-					IndexElement element = elementsByName.get(name);
-					r.add(element.copy());
-				}
-			} catch(PatternSyntaxException e) {
-				// Ignore
+			if (
+				(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
+				(contains==null || contains.length()==0 || name.contains(contains)) &&
+				(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
+				) {
+				IndexElement element = elementsByName.get(name);
+				r.add(element.copy());
 			}
 		}
 		return r;

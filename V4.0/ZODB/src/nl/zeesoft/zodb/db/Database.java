@@ -90,16 +90,16 @@ public class Database {
 		return index.listObjectsThatStartWith(startWith,start,max);
 	}
 
-	protected SortedMap<String,Long> listObjectsThatMatch(String regex,int start, int max) {
-		return index.listObjectsThatMatch(regex,start,max);
+	protected SortedMap<String,Long> listObjectsThatMatch(String contains,int start, int max) {
+		return index.listObjectsThatMatch(contains,start,max);
 	}
 	
 	public List<IndexElement> getObjectsByNameStartsWith(String start) {
 		return index.getObjectsByNameStartsWith(start);
 	}
 	
-	public List<IndexElement> getObjectsByNameMatches(String regex) {
-		return index.getObjectsByNameMatches(regex);
+	public List<IndexElement> getObjectsByNameContains(String contains) {
+		return index.getObjectsByNameContains(contains);
 	}
 	
 	public void setObject(long id, JsFile obj,List<ZStringBuilder> errors) {

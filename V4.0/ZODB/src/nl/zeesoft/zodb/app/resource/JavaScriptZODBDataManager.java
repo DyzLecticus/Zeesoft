@@ -38,7 +38,7 @@ public class JavaScriptZODBDataManager {
 		script.append("    request.max = 10;\n");
 		script.append("    var elem = window.document.getElementById(\"name\");\n");
 		script.append("    if (elem!=null && elem.value.length>0) {\n");
-		script.append("        request.startsWith = elem.value;\n");
+		script.append("        request.contains = elem.value;\n");
 		script.append("    }\n");
 		script.append("    elem = window.document.getElementById(\"start\");\n");
 		script.append("    if (elem!=null) {\n");
