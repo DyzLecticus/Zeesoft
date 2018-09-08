@@ -4,8 +4,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zodb.Config;
 
 public class FixedDateEntityValueTranslator extends EntityValueTranslator {
+	public FixedDateEntityValueTranslator(Config config) {
+		super(config);
+	}
+
 	@Override
 	public Date getCurrentDate() {
 		Calendar cal = Calendar.getInstance();

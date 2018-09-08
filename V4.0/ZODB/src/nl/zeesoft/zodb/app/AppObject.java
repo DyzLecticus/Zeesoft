@@ -26,6 +26,7 @@ public abstract class AppObject {
 	
 	public AppObject(Config config) {
 		configuration = config;
+		addDefaultNotFoundHandlers();
 	}
 	
 	public void install() {
@@ -83,5 +84,10 @@ public abstract class AppObject {
 			}
 		}
 		return r;
+	}
+	
+	private void addDefaultNotFoundHandlers() {
+		handlers.add(new HtmlNotFoundHandler(configuration,this));
+		handlers.add(new JsonNotFoundHandler(configuration,this));
 	}
 }

@@ -9,8 +9,6 @@ import nl.zeesoft.zevt.trans.EntityRequestHandler;
 import nl.zeesoft.zevt.trans.EntityRequestResponse;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
 import nl.zeesoft.zodb.app.AppObject;
-import nl.zeesoft.zodb.app.handler.HtmlNotFoundHandler;
-import nl.zeesoft.zodb.app.handler.JsonNotFoundHandler;
 
 public class AppZEVT extends AppObject {
 	public static final String		NAME					= "ZEVT";
@@ -33,8 +31,6 @@ public class AppZEVT extends AppObject {
 	
 	@Override
 	public void initialize(boolean write) {
-		handlers.add(new HtmlNotFoundHandler(configuration,this));
-		handlers.add(new JsonNotFoundHandler(configuration,this));
 		handlers.add(new HtmlZEVTIndexHandler(configuration,this));
 		handlers.add(new HtmlZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JavaScriptZEVTEntityTranslatorHandler(configuration,this));
@@ -59,6 +55,6 @@ public class AppZEVT extends AppObject {
 	}
 	
 	protected EntityValueTranslator getNewEntityValueTranslator() {
-		return new EntityValueTranslator();
+		return new EntityValueTranslator(configuration);
 	}
 }

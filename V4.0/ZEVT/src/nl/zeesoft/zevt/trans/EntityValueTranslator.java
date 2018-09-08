@@ -6,6 +6,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zevt.trans.entities.dutch.DutchConfirmation;
 import nl.zeesoft.zevt.trans.entities.dutch.DutchCountry;
 import nl.zeesoft.zevt.trans.entities.dutch.DutchCurrency;
@@ -33,17 +34,25 @@ import nl.zeesoft.zevt.trans.entities.english.EnglishOrder2;
 import nl.zeesoft.zevt.trans.entities.english.EnglishPreposition;
 import nl.zeesoft.zevt.trans.entities.english.EnglishProfanity;
 import nl.zeesoft.zevt.trans.entities.english.EnglishTime;
+import nl.zeesoft.zodb.Config;
 
-public class EntityValueTranslator {
+public class EntityValueTranslator extends Locker {
 	public static final String		VALUE_CONCATENATOR			= ":";
 	public static final String		OR_CONCATENATOR				= "|";
 	public static final String		OR_CONCATENATOR_SPLITTER	= "\\|";
 	
+	private Config					configuration				= null;
 	private List<EntityObject>		entities					= new ArrayList<EntityObject>();
 	
 	private int						maximumSymbols				= 1;
+	
+	private boolean					initializing				= false;
+	private boolean					initialized					= false;
+	
 
-	public EntityValueTranslator() {
+	public EntityValueTranslator(Config config) {
+		super(config.getMessenger());
+		configuration = config;
 		addDefaultEntities();
 	}
 	
@@ -51,7 +60,34 @@ public class EntityValueTranslator {
 		// ...
 	}
 	
-	public void initialize() {
+	public boolean initialize() {
+		boolean r = false;
+		lockMe(this);
+		if (!initialized && !initializing) {
+			configuration.debug(this,"Initializing entity value translator ...");
+			EntityValueTranslatorInitWorker worker = new EntityValueTranslatorInitWorker(configuration,this);
+			worker.start();
+			initializing = true;
+			r = true;
+		}
+		unlockMe(this);
+		return r;
+	}
+	
+	public void destroy() {
+		lockMe(this);
+		if (initialized) {
+			for (EntityObject eo: entities) {
+				eo.clear();
+			}
+			entities.clear();
+			addDefaultEntities();
+			initialized = false;
+		}
+		unlockMe(this);
+	}
+	
+	protected void initializeEntities() {
 		for (EntityObject eo: entities) {
 			if (!eo.isInitialized()) {
 				eo.initialize(this);
@@ -60,16 +96,21 @@ public class EntityValueTranslator {
 				}
 			}
 		}
+		lockMe(this);
+		initialized = true;
+		initializing = false;
+		unlockMe(this);
+		configuration.debug(this,"Initialized entity value translator");
 	}
 	
-	public void destroy() {
-		for (EntityObject eo: entities) {
-			eo.clear();
-		}
-		entities.clear();
+	public boolean isInitialized() {
+		boolean r = false;
+		lockMe(this);
+		r = initialized;
+		unlockMe(this);
+		return r;
 	}
 	
-
 	/**
 	 * Specifies the maximum number string pattern to generate (starting at zero).
 	 * 
@@ -169,47 +210,54 @@ public class EntityValueTranslator {
 	public ZStringSymbolParser translateToInternalValues(ZStringSymbolParser sequence,List<String> languages,List<String> types) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
 		
-		List<String> symbols = sequence.toSymbolsPunctuated();
-		for (int i = 0; i<symbols.size(); i++) {
-			int testNum = maximumSymbols;
-			if ((i + testNum - 1) >= symbols.size()) {
-				testNum = symbols.size() - i;
-			}
-			boolean translated = false;
-			for (int t = testNum; t>0; t--) {
-				int from = i;
-				int to = i + (t - 1);
-				if (to>=symbols.size()) {
-					to = (symbols.size() - 1);
+		boolean doIt = false;
+		lockMe(this);
+		doIt = initialized;
+		unlockMe(this);
+		
+		if (doIt) {
+			List<String> symbols = sequence.toSymbolsPunctuated();
+			for (int i = 0; i<symbols.size(); i++) {
+				int testNum = maximumSymbols;
+				if ((i + testNum - 1) >= symbols.size()) {
+					testNum = symbols.size() - i;
 				}
-				if (to>=from) {
-					ZStringBuilder test = new ZStringBuilder();
-					for (int s = from; s<=to; s++) {
-						if (test.length()>0) {
-							test.append(" ");
-						}
-						test.append(symbols.get(s));
+				boolean translated = false;
+				for (int t = testNum; t>0; t--) {
+					int from = i;
+					int to = i + (t - 1);
+					if (to>=symbols.size()) {
+						to = (symbols.size() - 1);
 					}
-					String raw = test.toString();
-					ZStringBuilder ivs = getInternalValuesForExternalValue(
-						test.toCase(true).toString(),raw,((to + 1) - from),languages,types
-						);
-					if (ivs.length()>0) {
-						if (r.length()>0) {
-							r.append(" ");
+					if (to>=from) {
+						ZStringBuilder test = new ZStringBuilder();
+						for (int s = from; s<=to; s++) {
+							if (test.length()>0) {
+								test.append(" ");
+							}
+							test.append(symbols.get(s));
 						}
-						r.append(ivs);
-						translated = true;
-						i = to;
-						break;
+						String raw = test.toString();
+						ZStringBuilder ivs = getInternalValuesForExternalValue(
+							test.toCase(true).toString(),raw,((to + 1) - from),languages,types
+							);
+						if (ivs.length()>0) {
+							if (r.length()>0) {
+								r.append(" ");
+							}
+							r.append(ivs);
+							translated = true;
+							i = to;
+							break;
+						}
 					}
 				}
-			}
-			if (!translated) {
-				if (r.length()>0) {
-					r.append(" ");
+				if (!translated) {
+					if (r.length()>0) {
+						r.append(" ");
+					}
+					r.append(symbols.get(i));
 				}
-				r.append(symbols.get(i));
 			}
 		}
 		
@@ -236,19 +284,27 @@ public class EntityValueTranslator {
 	 */
 	public ZStringSymbolParser translateToExternalValues(ZStringSymbolParser sequence,String type,boolean singleOnly) {
 		ZStringSymbolParser r = new ZStringSymbolParser();
-		List<String> symbols = sequence.toSymbolsPunctuated();
-		List<String> newSymbols = new ArrayList<String>();
-		for (int i = 0; i<symbols.size(); i++) {
-			String sym = symbols.get(i);
-			if (!singleOnly || !sym.contains(OR_CONCATENATOR)) {
-				String ext = getExternalValueForInternalValues(sym,type);
-				if (ext.length()>0) {
-					sym = ext;
+		
+		boolean doIt = false;
+		lockMe(this);
+		doIt = initialized;
+		unlockMe(this);
+
+		if (doIt) {
+			List<String> symbols = sequence.toSymbolsPunctuated();
+			List<String> newSymbols = new ArrayList<String>();
+			for (int i = 0; i<symbols.size(); i++) {
+				String sym = symbols.get(i);
+				if (!singleOnly || !sym.contains(OR_CONCATENATOR)) {
+					String ext = getExternalValueForInternalValues(sym,type);
+					if (ext.length()>0) {
+						sym = ext;
+					}
 				}
+				newSymbols.add(sym);
 			}
-			newSymbols.add(sym);
+			r.fromSymbols(newSymbols,false,false);
 		}
-		r.fromSymbols(newSymbols,false,false);
 		return r;
 	}
 

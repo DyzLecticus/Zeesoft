@@ -31,6 +31,8 @@ public class JsonZEVTRequestHandler extends JsonHandlerObject {
 			AppZEVT zevt = ((ZEVTConfig) getConfiguration()).getZEVT();
 			if (zevt==null) {
 				r = setResponse(response,405,"ZEVT application not found");
+			} else if (!zevt.getEntityValueTranslator().isInitialized()) {
+				r = setResponse(response,503,"Entity value translation is not available right now. Please try again later.");
 			} else {
 				EntityRequestResponse req = new EntityRequestResponse();
 				req.fromJson(json);

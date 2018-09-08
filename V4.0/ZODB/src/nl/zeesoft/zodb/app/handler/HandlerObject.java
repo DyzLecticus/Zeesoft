@@ -72,6 +72,9 @@ public abstract class HandlerObject {
 		response.setStatus(code);
 		if (path.endsWith(".json")) {
 			String elemName = "response";
+			if (code!=200) {
+				elemName = "error";
+			}
 			JsFile json = new JsFile();
 			json.rootElement = new JsElem();
 			json.rootElement.children.add(new JsElem("code","" + code));

@@ -190,6 +190,9 @@
 		<zip destfile="${releases}/zodb-${version}.zip" basedir="${releases}/${version}"/>
 		<delete dir="${releases}/${version}"/>
 		<copy file="${dist}/README.md" tofile="README.md"/>
+		<antcall target="clean"/>
+		<antcall target="dist"/>
+		<antcall target="makeWar"/>
 	</target>
 
 	<target name="clean" description="Clean up">
