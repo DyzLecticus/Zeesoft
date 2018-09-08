@@ -59,7 +59,7 @@ public abstract class DatabaseEntityObject extends EntityObject implements Datab
 			JsElem evElem = new JsElem();
 			evsElem.children.add(evElem);
 			evElem.children.add(new JsElem("ev",ev.externalValue,true));
-			evElem.children.add(new JsElem("iv",ev.internalValue,true));
+			evElem.children.add(new JsElem("iv",ev.internalValue.substring(getInternalValuePrefix().length()),true));
 		}
 		return json;
 	}
@@ -72,7 +72,7 @@ public abstract class DatabaseEntityObject extends EntityObject implements Datab
 					EntityValue ev = new EntityValue();
 					ev.externalValue = evElem.getChildString("ev");
 					ev.internalValue = evElem.getChildString("iv");
-					addEntityValue(ev.externalValue,ev.internalValue,ev.internalValue);
+					addEntityValue(ev.externalValue,ev.internalValue,ev.externalValue);
 				}
 			}
 		}
