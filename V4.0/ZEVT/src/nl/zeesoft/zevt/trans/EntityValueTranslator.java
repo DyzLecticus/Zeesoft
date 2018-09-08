@@ -458,9 +458,7 @@ public class EntityValueTranslator extends Locker {
 		unlockMe(this);
 		if (isInitialized()) {
 			replaceEntity(eo);
-			if (done) {
-				configuration.debug(this,"Replaced entities");
-			}
+			configuration.debug(this,"Replaced entity: " + eo.getName());
 		} else {
 			if (done) {
 				lockMe(this);

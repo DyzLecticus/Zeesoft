@@ -36,7 +36,7 @@ public abstract class DatabaseEntityObject extends EntityObject implements Datab
 				if (res.results.size()==0) {
 					initializeEntityValues();
 					DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-					request.name = getName();
+					request.name = getObjectName();
 					request.obj = toJson();
 					getTranslator().getConfiguration().handleDatabaseRequest(request,this);
 				} else if (res.results.get(0).obj!=null){
@@ -78,14 +78,13 @@ public abstract class DatabaseEntityObject extends EntityObject implements Datab
 		}
 	}
 	
-	private String getName() {
-		String[] split = (getClass().getName()).split("\\.");
-		return "ZEVT/" + split[(split.length - 1)];
+	private String getObjectName() {
+		return "ZEVT/Entities/" + getName();
 	}
 	
 	private void getData() {
 		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-		request.name = getName(); 
+		request.name = getObjectName(); 
 		getTranslator().getConfiguration().handleDatabaseRequest(request,this);
 	}
 }

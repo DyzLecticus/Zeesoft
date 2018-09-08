@@ -49,6 +49,11 @@ public abstract class EntityObject {
 		return TYPE_ALPHABETIC;
 	}
 
+	public String getName() {
+		String[] split = (getClass().getName()).split("\\.");
+		return split[(split.length - 1)];
+	}
+	
 	/**
 	 * Returns the maximum symbol sequence length this entity contains.
 	 * 
