@@ -5,9 +5,9 @@
 	<!-- Release version -->
 	<property name="version" value="0.9.0"/>
 	
-	<!-- ZDK version -->
-	<property name="versionZDK" value="0.9.0"/>
-	<property name="releasesZDK" location="../ZDK/releases"/>
+	<!-- ZODB version -->
+	<property name="versionZODB" value="0.9.0"/>
+	<property name="releasesZODB" location="../ZODB/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
 	
@@ -17,9 +17,9 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
-	<target name="copyZDK" description="Copy the ZDK release">
+	<target name="copyZODB" description="Copy the ZODB release">
 		<mkdir dir="${lib}"/>
-		<unzip src="${releasesZDK}/zdk-${versionZDK}.zip" dest="${lib}">
+		<unzip src="${releasesZODB}/zdk-${versionZODB}.zip" dest="${lib}">
 		    <patternset>
 		        <include name="**/*.jar"/>
 		        <include name="**/*.zip"/>
@@ -55,7 +55,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/test zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/db nl/zeesoft/zodb/test zdk.jar"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zodb.test.ZODB"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -90,8 +90,9 @@
 		</condition>
 		<fail if="_abort" message="Aborted release"/>
 		<delete>
-            <fileset dir="${build}" includes="**/*.class"/>
+            <fileset dir="build/" includes="**/*.class"/>
 		</delete>
+		<antcall target="clean"/>
 		<antcall target="dist"/>
 		<antcall target="makeWar"/>
 	</target>
@@ -99,7 +100,7 @@
 	<target name="makeWar">
 		<manifest file="${dist}/warmanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/test zdk.jar"/>  
+			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/db nl/zeesoft/zodb/test zdk.jar"/>  
 		</manifest>		
 		<antcall target="devWar"/>
 		<antcall target="prodWar"/>
@@ -109,14 +110,14 @@
 	<target name="devWar">
 		<antcall target="prepareWar"/>
 		<copy file="WebContent/WEB-INF/web.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
-		<war destfile="zodb-dev.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
+		<war destfile="${releases}/zodb-dev.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
 		<antcall target="finishWar"/>
 	</target>
 	
 	<target name="prodWar">
 		<antcall target="prepareWar"/>
 		<copy file="WebContent/WEB-INF/web-prod.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
-		<war destfile="zodb.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
+		<war destfile="${releases}/zodb.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
 		<antcall target="finishWar"/>
 	</target>
 	
@@ -127,7 +128,7 @@
 		<mkdir dir="${dist}/war/META-INF"/>
 		
 		<copy file="build.xml" tofile="${dist}/war/build.xml"/>
-		<copy file="${dist}/README.md" tofile="${dist}/war/README.xml"/>
+		<copy file="${dist}/README.md" tofile="${dist}/war/README.md"/>
 		
 		<copy todir="${dist}/war/WEB-INF/lib">
 	        <fileset dir="WebContent/WEB-INF/lib" includes="**/*.*"/>
@@ -158,10 +159,47 @@
 		<delete>
             <fileset dir="${dist}/war/WEB-INF/" includes="**/*.xml"/>
 		</delete>
-            	
+		
 		<!-- Remove sources from war directory -->
 		<delete>
             <fileset dir="${dist}/war/WEB-INF/classes" includes="**/*.java"/>
 		</delete>
+	</target>
+
+	<target name="release" description="Release the ZODB">
+		<antcall target="failIfReleaseExists"/>
+		<input message="Are you sure you want to release version ${version} (y/n)?" validargs="y,n" addproperty="_release"/>
+		<condition property="_abort">
+			<equals arg1="n" arg2="${_release}"/>
+		</condition>
+		<fail if="_abort" message="Aborted release"/>		
+		<antcall target="releaseConfirmed"/>
+	</target>
+	
+	<target name="releaseConfirmed">
+		<antcall target="failIfReleaseExists"/>
+		<antcall target="clean"/>
+		<antcall target="dist"/>
+		<mkdir dir="${releases}"/>
+		<mkdir dir="${releases}/${version}"/>
+		<copy todir="${releases}/${version}/">
+	        <fileset dir="WebContent/WEB-INF/lib" includes="**/*.*"/>
+	    </copy>		
+		<copy file="${dist}/zodb.jar" tofile="${releases}/${version}/zodb.jar"/>
+		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
+		<zip destfile="${releases}/zodb-${version}.zip" basedir="${releases}/${version}"/>
+		<delete dir="${releases}/${version}"/>
+		<copy file="${dist}/README.md" tofile="README.md"/>
+	</target>
+
+	<target name="clean" description="Clean up">
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="failIfReleaseExists">
+		<condition property="_released">
+			<available file="${releases}/zodb-${version}.zip"/>
+		</condition>
+		<fail if="_released" message="Version ${version} has already been released"/>		
 	</target>
 </project>

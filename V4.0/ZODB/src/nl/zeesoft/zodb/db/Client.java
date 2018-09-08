@@ -77,7 +77,7 @@ public class Client extends Locker {
 		if (http.getResponseCode()==503) {
 			lockMe(this);
 			retryCount++;
-			if (retryCount>=maxRetries) {
+			if (retryCount>maxRetries) {
 				err.append("Server at " + url + " is not ready");
 				done = true;
 			}

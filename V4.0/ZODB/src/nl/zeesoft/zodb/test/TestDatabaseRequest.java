@@ -54,9 +54,10 @@ public class TestDatabaseRequest extends TestObject {
 		obj.rootElement.children.add(new JsElem("data","addObjectData",true));
 		
 		request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
+		request.name = "objectName";
 		request.obj = obj;
 		System.out.println();
-		testRequest(request,2);
+		testRequest(request,3);
 
 		obj = new JsFile();
 		obj.rootElement = new JsElem();

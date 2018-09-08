@@ -17,7 +17,7 @@ public class ZODB extends LibraryObject {
 		setNameAbbreviated("ZODB");
 		setNameFull("Zeesoft Object Database");
 		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V4.0/ZODB/");
-		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V4.0/ZODB/");
+		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V4.0/ZODB/releases/");
 		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZODB/");
 		getDependencies().add(new ZDK(null));
 	}
@@ -34,6 +34,8 @@ public class ZODB extends LibraryObject {
 		System.out.println();
 		// TODO: Describe features
 		describeDependencies();
+		System.out.println();
+		describeRelease();
 		System.out.println();
 		// TODO: Describe downloads
 		describeTesting(ZODB.class);
