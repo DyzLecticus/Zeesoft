@@ -28,6 +28,24 @@ public class HtmlZEVTIndex extends HtmlResource {
 			html.append("Translate sequences to entity values and back.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<a href=\"" + getConfiguration().getApplicationUrl(AppZEVT.NAME) + "/languages.json\">Languages JSON</a>");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("Returns the supported language codes as a JSON file.");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<a href=\"" + getConfiguration().getApplicationUrl(AppZEVT.NAME) + "/types.json\">Types JSON</a>");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("Returns the supported entity types as a JSON file.");
+			html.append("</td>\n");
+			html.append("</tr>\n");
 		html.append("</tbody>\n");
 		html.append("</table>\n");
 		html.append("</div>\n");

@@ -33,7 +33,7 @@ public abstract class AppObject {
 		// Override to implement
 	}
 	
-	public void initialize(boolean write) {
+	public void initialize() {
 		for (HandlerObject handler: handlers) {
 			if (handler instanceof HtmlNotFoundHandler) {
 				notFoundHtmlHandler = handler;
@@ -70,8 +70,9 @@ public abstract class AppObject {
 		if (path.equals("/")) {
 			path = "/index.html";
 		}
+		path = path.toLowerCase();
 		for (HandlerObject handler: handlers) {
-			if (path.equals(handler.getPath())) {
+			if (path.equalsIgnoreCase(handler.getPath())) {
 				r = handler; 
 				break;
 			}

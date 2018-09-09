@@ -4,7 +4,11 @@ import nl.zeesoft.zevt.ZEVTConfig;
 import nl.zeesoft.zevt.app.handler.HtmlZEVTEntityTranslatorHandler;
 import nl.zeesoft.zevt.app.handler.HtmlZEVTIndexHandler;
 import nl.zeesoft.zevt.app.handler.JavaScriptZEVTEntityTranslatorHandler;
+import nl.zeesoft.zevt.app.handler.JsonZEVTLanguagesHandler;
 import nl.zeesoft.zevt.app.handler.JsonZEVTRequestHandler;
+import nl.zeesoft.zevt.app.handler.JsonZEVTTypesHandler;
+import nl.zeesoft.zevt.trans.EntityClient;
+import nl.zeesoft.zevt.trans.EntityClientListener;
 import nl.zeesoft.zevt.trans.EntityRequestHandler;
 import nl.zeesoft.zevt.trans.EntityRequestResponse;
 import nl.zeesoft.zevt.trans.EntityValueTranslator;
@@ -30,14 +34,16 @@ public class AppZEVT extends AppObject {
 	}
 	
 	@Override
-	public void initialize(boolean write) {
+	public void initialize() {
+		entityValueTranslator = getNewEntityValueTranslator();
 		handlers.add(new HtmlZEVTIndexHandler(configuration,this));
 		handlers.add(new HtmlZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JavaScriptZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JsonZEVTRequestHandler(configuration,this));
-		entityValueTranslator = getNewEntityValueTranslator();
+		handlers.add(new JsonZEVTLanguagesHandler(configuration,this));
+		handlers.add(new JsonZEVTTypesHandler(configuration,this));
 		entityValueTranslator.initialize();
-		super.initialize(write);
+		super.initialize();
 	}
 	
 	@Override
@@ -52,6 +58,11 @@ public class AppZEVT extends AppObject {
 	public void handleRequest(EntityRequestResponse request) {
 		EntityRequestHandler handler = new EntityRequestHandler(entityValueTranslator);
 		handler.handleRequest(request);
+	}
+
+	public void handleRequest(EntityRequestResponse request,EntityClientListener listener) {
+		EntityClient client = new EntityClient(configuration);
+		client.handleRequest(request,configuration.getApplicationUrl(AppZEVT.NAME) + JsonZEVTRequestHandler.PATH,listener);
 	}
 	
 	protected EntityValueTranslator getNewEntityValueTranslator() {

@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zevt.ZEVTConfig;
 import nl.zeesoft.zevt.app.AppZEVT;
 import nl.zeesoft.zevt.trans.EntityRequestResponse;
 import nl.zeesoft.zodb.Config;
@@ -28,20 +27,23 @@ public class JsonZEVTRequestHandler extends JsonHandlerObject {
 		if (json.rootElement==null) {
 			r = setResponse(response,400,"Failed to parse JSON");
 		} else {
-			AppZEVT zevt = ((ZEVTConfig) getConfiguration()).getZEVT();
-			if (zevt==null) {
+			AppObject app = getConfiguration().getApplication(AppZEVT.NAME);
+			if (app==null) {
 				r = setResponse(response,405,"ZEVT application not found");
-			} else if (!zevt.getEntityValueTranslator().isInitialized()) {
-				r = setResponse(response,503,"Entity value translation is not available right now. Please try again later.");
 			} else {
-				EntityRequestResponse req = new EntityRequestResponse();
-				req.fromJson(json);
-				zevt.handleRequest(req);
-				json = req.toJson();
-				if (getConfiguration().isDebug()) {
-					r = json.toStringBuilderReadFormat();
+				AppZEVT zevt = (AppZEVT) app;
+				if (!zevt.getEntityValueTranslator().isInitialized()) {
+					r = setResponse(response,503,"Entity value translation is not available right now. Please try again later.");
 				} else {
-					r = json.toStringBuilder();
+					EntityRequestResponse req = new EntityRequestResponse();
+					req.fromJson(json);
+					zevt.handleRequest(req);
+					json = req.toJson();
+					if (getConfiguration().isDebug()) {
+						r = json.toStringBuilderReadFormat();
+					} else {
+						r = json.toStringBuilder();
+					}
 				}
 			}
 		}

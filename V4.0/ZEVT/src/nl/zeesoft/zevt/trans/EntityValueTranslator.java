@@ -41,6 +41,10 @@ public class EntityValueTranslator extends Locker {
 	public static final String					OR_CONCATENATOR				= "|";
 	public static final String					OR_CONCATENATOR_SPLITTER	= "\\|";
 	
+	private List<String>						languages					= new ArrayList<String>();
+	private List<String>						types						= new ArrayList<String>();
+	private List<String>						typeNames					= new ArrayList<String>();
+	
 	private Config								configuration				= null;
 	private List<EntityObject>					entities					= new ArrayList<EntityObject>();
 	
@@ -57,8 +61,15 @@ public class EntityValueTranslator extends Locker {
 		configuration = config;
 		addDefaultEntities();
 		refreshWorker = new EntityValueTranslatorRefreshWorker(config,this);
+		for (int i = 0; i < EntityObject.LANGUAGES.length; i++) {
+			languages.add(EntityObject.LANGUAGES[i]);
+		}
+		for (int i = 0; i < EntityObject.TYPES.length; i++) {
+			types.add(EntityObject.TYPES[i]);
+			typeNames.add(EntityObject.TYPE_NAMES[i]);
+		}
 	}
-	
+
 	public void install() {
 		lockMe(this);
 		for (EntityObject eo: entities) {
@@ -143,6 +154,33 @@ public class EntityValueTranslator extends Locker {
 	 */
 	public Date getCurrentDate() {
 		return new Date();
+	}
+	
+	/**
+	 * Returns the supported languages
+	 * 
+	 * @return The supported languages
+	 */
+	public List<String> getLanguages() {
+		return new ArrayList<String>(languages);
+	}
+
+	/**
+	 * Returns the supported types
+	 * 
+	 * @return The supported types
+	 */
+	public List<String> getTypes() {
+		return new ArrayList<String>(types);
+	}
+	
+	/**
+	 * Returns the supported type names
+	 * 
+	 * @return The supported type names
+	 */
+	public List<String> getTypeNames() {
+		return new ArrayList<String>(typeNames);
 	}
 
 	/**
@@ -383,10 +421,21 @@ public class EntityValueTranslator extends Locker {
 	 * Adds an entity to the list of entities
 	 * 
 	 * @param eo The entity
+	 * @param typeName The optional type name for non default types
 	 */
-	public void addEntity(EntityObject eo) {
+	public void addEntity(EntityObject eo,String typeName) {
 		lockMe(this);
 		entities.add(eo);
+		if (!languages.contains(eo.getLanguage())) {
+			languages.add(eo.getLanguage());
+		}
+		if (!types.contains(eo.getType())) {
+			types.add(eo.getType());
+			if (typeName.length()==0) {
+				typeName = eo.getType();
+			}
+			typeNames.add(typeName);
+		}
 		unlockMe(this);
 	}
 

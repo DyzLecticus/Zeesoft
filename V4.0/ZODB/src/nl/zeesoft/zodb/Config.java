@@ -78,7 +78,7 @@ public class Config {
 
 		for (AppObject app: applications) {
 			debug(this,"Initializing " + app.name + " ...");
-			app.initialize(write);
+			app.initialize();
 			debug(this,"Initialized " + app.name);
 			if (app.name.equals(AppZODB.NAME)) {
 				notFoundHtmlHandler = app.notFoundHtmlHandler;
@@ -90,16 +90,17 @@ public class Config {
 	
 	public HandlerObject getHandlerForRequest(HttpServletRequest request) {
 		HandlerObject r = null;
-		if (request.getServletPath().equals("/") || request.getServletPath().equals("/index.html")) {
+		String path = request.getServletPath().toLowerCase();
+		if (path.equals("/") || path.equals("/index.html")) {
 			r = appIndexHtmlHandler;
 		} else {
-			String name = getApplicationNameFromPath(request.getServletPath());
+			String name = getApplicationNameFromPath(path);
 			AppObject app = getApplication(name);
 			if (app!=null) {
 				r = app.getHandlerForRequest(request);
 			}
 			if (r==null) {
-				if (request.getServletPath().endsWith(".json")) {
+				if (path.endsWith(".json")) {
 					r = notFoundJsonHandler;
 				} else {
 					r = notFoundHtmlHandler;
@@ -165,7 +166,7 @@ public class Config {
 	public AppObject getApplication(String name) {
 		AppObject r = null;
 		for (AppObject app: applications) {
-			if (app.name.equals(name)) {
+			if (app.name.equalsIgnoreCase(name)) {
 				r = app;
 				break;
 			}

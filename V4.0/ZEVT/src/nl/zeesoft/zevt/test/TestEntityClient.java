@@ -5,6 +5,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.ZEVTConfig;
+import nl.zeesoft.zevt.app.AppZEVT;
 import nl.zeesoft.zevt.trans.EntityClientListener;
 import nl.zeesoft.zevt.trans.EntityRequestResponse;
 
@@ -27,12 +28,13 @@ public class TestEntityClient extends TestObject implements EntityClientListener
 		ZEVTConfig config = new ZEVTConfig();
 		config.setDebug(true);
 		config.getZODB().url = "http://127.0.0.1:8080/ZEVT/ZODB";
-		config.getZEVT().url = "http://127.0.0.1:8080/ZEVT/ZEVT";
 		
 		EntityRequestResponse request = new EntityRequestResponse();
 		request.sequence = new ZStringSymbolParser("1 oktober");
-				
-		config.handleEntityRequest(request,this);
+
+		AppZEVT app = (AppZEVT) config.getApplication(AppZEVT.NAME);
+		app.url = "http://127.0.0.1:8080/ZEVT/ZEVT";
+		app.handleRequest(request,this);
 	}
 
 	@Override

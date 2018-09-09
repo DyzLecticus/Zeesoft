@@ -30,7 +30,7 @@ public class AppZODB extends AppObject {
 	}
 	
 	@Override
-	public void initialize(boolean write) {
+	public void initialize() {
 		handlers.add(new HtmlZODBIndexHandler(configuration,this));
 		handlers.add(new JavaScriptZODBHandler(configuration,this));
 		handlers.add(new JavaScriptZODBDataManagerHandler(configuration,this));
@@ -38,7 +38,7 @@ public class AppZODB extends AppObject {
 		handlers.add(new JsonZODBRequestHandler(configuration,this));
 		database = getNewDatabase();
 		database.start();
-		super.initialize(write);
+		super.initialize();
 	}
 	
 	@Override
