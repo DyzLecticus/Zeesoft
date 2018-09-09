@@ -90,8 +90,8 @@ public class Database {
 		return index.listObjectsThatStartWith(startWith,start,max);
 	}
 
-	protected SortedMap<String,Long> listObjectsThatMatch(String contains,int start, int max) {
-		return index.listObjectsThatMatch(contains,start,max);
+	protected SortedMap<String,Long> listObjectsThatContain(String contains,int start, int max) {
+		return index.listObjectsThatContain(contains,start,max);
 	}
 	
 	public List<IndexElement> getObjectsByNameStartsWith(String start) {
@@ -112,6 +112,14 @@ public class Database {
 
 	public IndexElement removeObject(long id,List<ZStringBuilder> errors) {
 		return index.removeObject(id,errors);
+	}
+	
+	public List<IndexElement> removeObjectsThatStartWith(String startsWith,List<ZStringBuilder> errors) {
+		return index.removeObjectsThatStartWith(startsWith,errors);
+	}
+	
+	public List<IndexElement> removeObjectsThatContain(String contains,List<ZStringBuilder> errors) {
+		return index.removeObjectsThatContain(contains,errors);
 	}
 
 	protected void stateChanged(boolean open) {

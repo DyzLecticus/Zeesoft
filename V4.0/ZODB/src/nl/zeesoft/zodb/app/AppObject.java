@@ -19,6 +19,7 @@ public abstract class AppObject {
 	public String				name					= "";
 	public ZStringBuilder		desc					= new ZStringBuilder();
 	public String				url						= "";
+	public boolean				selfTest				= true;
 	
 	public List<HandlerObject>	handlers				= new ArrayList<HandlerObject>();
 	public HandlerObject		notFoundHtmlHandler		= null;
@@ -53,6 +54,7 @@ public abstract class AppObject {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("name",name,true));
 		json.rootElement.children.add(new JsElem("url",url,true));
+		json.rootElement.children.add(new JsElem("selfTest","" + selfTest));
 		return json;
 	}
 	
@@ -60,6 +62,7 @@ public abstract class AppObject {
 		if (json.rootElement!=null) {
 			name = json.rootElement.getChildString("name",name);
 			url = json.rootElement.getChildString("url",url);
+			selfTest = json.rootElement.getChildBoolean("selfTest",selfTest);
 		}
 	}
 	

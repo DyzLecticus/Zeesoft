@@ -79,7 +79,7 @@ public class Index extends Locker {
 		return listObjects(start,max,startWith,null,null);
 	}
 
-	protected SortedMap<String,Long> listObjectsThatMatch(String contains,int start, int max) {
+	protected SortedMap<String,Long> listObjectsThatContain(String contains,int start, int max) {
 		return listObjects(start,max,null,contains,null);
 	}
 	
@@ -131,6 +131,34 @@ public class Index extends Locker {
 			r = removeObjectNoLock(id,errors);
 			if (r!=null) {
 				r = r.copy();
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+
+	protected List<IndexElement> removeObjectsThatStartWith(String startsWith,List<ZStringBuilder> errors) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
+		lockMe(this);
+		if (startsWith.length()>0 && open) {
+			List<IndexElement> elements = listObjectsByNameNoLock(startsWith,"","");
+			for (IndexElement element: elements) {
+				removeObjectNoLock(element.id,errors);
+				r.add(element.copy());
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+	
+	protected List<IndexElement> removeObjectsThatContain(String contains,List<ZStringBuilder> errors) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
+		lockMe(this);
+		if (contains.length()>0 && open) {
+			List<IndexElement> elements = listObjectsByNameNoLock("",contains,"");
+			for (IndexElement element: elements) {
+				removeObjectNoLock(element.id,errors);
+				r.add(element.copy());
 			}
 		}
 		unlockMe(this);

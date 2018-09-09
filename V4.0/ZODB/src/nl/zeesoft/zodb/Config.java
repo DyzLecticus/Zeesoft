@@ -29,7 +29,6 @@ public class Config {
 	private String				installDir			= "";
 	private String				dataDir				= "data/";
 	private String				servletUrl			= "http://127.0.0.1";
-	private boolean				selfTest			= false;
 	
 	private List<AppObject>		applications		= new ArrayList<AppObject>();
 	
@@ -67,7 +66,6 @@ public class Config {
 				messenger.setPrintDebugMessages(debug);
 			}
 		} else {
-			selfTest = debug;
 			messenger.setPrintDebugMessages(debug);
 			if (write) {
 				install(cfg.getAbsolutePath());
@@ -128,7 +126,6 @@ public class Config {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("debug","" + debug));
-		json.rootElement.children.add(new JsElem("selfTest","" + selfTest));
 		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
 		json.rootElement.children.add(new JsElem("servletUrl",servletUrl,true));
 		JsElem appsElem = new JsElem("applications",true);
@@ -145,7 +142,6 @@ public class Config {
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			debug = json.rootElement.getChildBoolean("debug",debug);
-			selfTest = json.rootElement.getChildBoolean("selfTest",selfTest);
 			dataDir = json.rootElement.getChildString("dataDir",dataDir);
 			servletUrl = json.rootElement.getChildString("servletUrl",servletUrl);
 			JsElem appsElem = json.rootElement.getChildByName("applications");
@@ -245,14 +241,6 @@ public class Config {
 	
 	public void setDebug(boolean debug) {
 		this.debug = debug;
-	}
-	
-	public boolean isSelfTest() {
-		return selfTest;
-	}
-	
-	public void setSelfTest(boolean selfTest) {
-		this.selfTest = selfTest;
 	}
 
 	public List<AppObject> getApplications() {

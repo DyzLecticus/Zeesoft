@@ -54,7 +54,7 @@ public class DatabaseRequestHandler {
 					if (request.startsWith.length()>0) {
 						list = database.listObjectsThatStartWith(request.startsWith,request.start,request.max);
 					} else if (request.contains.length()>0) {
-						list = database.listObjectsThatMatch(request.contains,request.start,request.max);
+						list = database.listObjectsThatContain(request.contains,request.start,request.max);
 					} else {
 						list = database.listObjects(request.start,request.max);
 					}
@@ -65,7 +65,13 @@ public class DatabaseRequestHandler {
 						response.results.add(res);
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
-					database.removeObject(request.id,response.errors);
+					if (response.request.id>0) {
+						database.removeObject(request.id,response.errors);
+					} else if (response.request.startsWith.length()>0) {
+						database.removeObjectsThatStartWith(response.request.startsWith,response.errors);
+					} else if (response.request.contains.length()>0) {
+						database.removeObjectsThatContain(response.request.contains,response.errors);
+					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
 					database.setObject(request.id,request.obj,response.errors);
 					if (request.name.length()>0) {
@@ -95,8 +101,8 @@ public class DatabaseRequestHandler {
 				response.errors.add(new ZStringBuilder("Request max is mandatory"));
 			}
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
-			if (response.request.id<=0) {
-				response.errors.add(new ZStringBuilder("Request id is mandatory"));
+			if (response.request.id<=0 && response.request.startsWith.length()==0 && response.request.contains.length()==0) {
+				response.errors.add(new ZStringBuilder("Request id, startsWith or contains is mandatory"));
 			}
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
 			if (response.request.id<=0) {

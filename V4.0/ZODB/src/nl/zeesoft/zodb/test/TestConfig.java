@@ -42,13 +42,13 @@ public class TestConfig extends TestObject {
 	protected void test(String[] args) {
 		Config config = new Config();
 		config.getApplication(AppZODB.NAME).url = "http://test.domain";
+		config.getApplication(AppZODB.NAME).selfTest = true;
 		config.setDebug(true);
-		config.setSelfTest(true);
 		config.setDataDir("dir/");
 		String fullDataDir = config.getFullDataDir();
 		
 		JsFile json = config.toJson();
-		assertEqual(json.rootElement.children.size(),5,"Number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),4,"Number of children does not match expectation");
 		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
 		System.out.println(oriStr);
 		

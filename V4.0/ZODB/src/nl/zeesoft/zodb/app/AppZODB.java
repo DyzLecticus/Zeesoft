@@ -6,16 +6,19 @@ import nl.zeesoft.zodb.app.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.app.handler.JavaScriptZODBDataManagerHandler;
 import nl.zeesoft.zodb.app.handler.JavaScriptZODBHandler;
 import nl.zeesoft.zodb.app.handler.JsonZODBRequestHandler;
+import nl.zeesoft.zodb.app.handler.JsonZODBTestResultsHandler;
 import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseResponse;
+import nl.zeesoft.zodb.db.DatabaseStateListener;
 
-public class AppZODB extends AppObject {
+public class AppZODB extends AppObject implements DatabaseStateListener {
 	public static final String	NAME		= "ZODB";
 	public static final String	DESC		= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
 	private Database			database	= null;
+	private Tester				tester		= null; 
 	
 	public AppZODB(Config config) {
 		super(config);
@@ -36,7 +39,10 @@ public class AppZODB extends AppObject {
 		handlers.add(new JavaScriptZODBDataManagerHandler(configuration,this));
 		handlers.add(new HtmlZODBDataManagerHandler(configuration,this));
 		handlers.add(new JsonZODBRequestHandler(configuration,this));
+		handlers.add(new JsonZODBTestResultsHandler(configuration,this));
 		database = getNewDatabase();
+		database.addListener(this);
+		tester = getNewTester();
 		database.start();
 		super.initialize();
 	}
@@ -45,9 +51,20 @@ public class AppZODB extends AppObject {
 	public void destroy() {
 		database.stop();
 	}
+
+	@Override
+	public void databaseStateChanged(boolean open) {
+		if (open && selfTest) {
+			tester.start();
+		}
+	}
 	
 	public Database getDatabase() {
 		return database;
+	}
+	
+	public Tester getTester() {
+		return tester;
 	}
 	
 	public DatabaseResponse handleRequest(DatabaseRequest request) {
@@ -61,5 +78,9 @@ public class AppZODB extends AppObject {
 	
 	protected DatabaseRequestHandler getNewDatabaseRequestHandler(Database db) {
 		return new DatabaseRequestHandler(db);
+	}
+	
+	protected Tester getNewTester() {
+		return new Tester(configuration,configuration.getApplicationUrl(NAME) + JsonZODBRequestHandler.PATH);
 	}
 }

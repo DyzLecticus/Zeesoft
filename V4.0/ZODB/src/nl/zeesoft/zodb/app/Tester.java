@@ -14,6 +14,7 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
+import nl.zeesoft.zodb.db.DatabaseResult;
 
 public class Tester extends Locker implements JsClientListener {
 	private Config					configuration	= null;
@@ -48,6 +49,9 @@ public class Tester extends Locker implements JsClientListener {
 			}
 		}
 		unlockMe(this);
+		if (r) {
+			configuration.debug(this,"Testing " + url + " ...");
+		}
 		return r;
 	}
 
@@ -64,11 +68,11 @@ public class Tester extends Locker implements JsClientListener {
 		lockMe(this);
 		int i = requests.size() - todo;
 		handledRequestNoLock(requests.get(i),response,err);
-		unlockMe(this);
 		if (err.length()>0) {
 			configuration.error(this,err.toString(),ex);
+			todo = 0;
+			testing = false;
 		} else {
-			lockMe(this);
 			todo--;
 			if (todo>0) {
 				i++;
@@ -76,16 +80,17 @@ public class Tester extends Locker implements JsClientListener {
 			} else {
 				createResultsNoLock(requests);
 				testing = false;
+				configuration.debug(this,"Tested " + url);
 			}
-			unlockMe(this);
 		}
+		unlockMe(this);
 	}
 	
 	public JsFile getResults() {
 		JsFile r = null;
 		lockMe(this);
 		r = results;
-		lockMe(this);
+		unlockMe(this);
 		return r;
 	}
 
@@ -94,8 +99,44 @@ public class Tester extends Locker implements JsClientListener {
 	}
 
 	protected void createResultsNoLock(List<TesterRequest> requests) {
-		// TODO: Create results
-		setResultsNolock(new JsFile());
+		long totalTime = 0;
+		int successFull = 0;
+		for (TesterRequest request: requests) {
+			totalTime += request.time;
+			if (request.error.length()==0) {
+				successFull++;
+			}
+		}
+		long avgTime = totalTime / requests.size();
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("tests","" + requests.size()));
+		json.rootElement.children.add(new JsElem("successFull","" + successFull));
+		json.rootElement.children.add(new JsElem("averageResponseTime","" + avgTime));
+		JsElem errsElem = new JsElem("errors",true);
+		json.rootElement.children.add(errsElem);
+		for (TesterRequest request: requests) {
+			if (request.error.length()>0) {
+				JsElem errElem = new JsElem();
+				errsElem.children.add(errElem);
+				errElem.children.add(new JsElem("error",request.error,true));
+				
+				JsElem reqElem = new JsElem("request");
+				errElem.children.add(reqElem);
+				reqElem.children = request.request.rootElement.children;
+				
+				JsElem resElem = new JsElem("response");
+				errElem.children.add(resElem);
+				if (request.response!=null && request.response.rootElement!=null) {
+					resElem.children = request.response.rootElement.children;
+				}
+				
+				JsElem expElem = new JsElem("expectedResponse");
+				errElem.children.add(expElem);
+				expElem.children = request.expectedResponse.rootElement.children;
+			}
+		}
+		setResultsNolock(json);
 	}
 	
 	protected void handleRequestNoLock(TesterRequest request) {
@@ -121,8 +162,13 @@ public class Tester extends Locker implements JsClientListener {
 	}
 	
 	protected void initializeRequestsNoLock() {
-		DatabaseRequest req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-		DatabaseResponse res = new DatabaseResponse();
+		DatabaseRequest req = null;
+		DatabaseResponse res = null;
+		DatabaseResult result = null;
+
+		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
+		req.contains = "SelfTest";
+		res = new DatabaseResponse();
 		addRequestNoLock(req,res);
 		
 		req = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
@@ -140,25 +186,35 @@ public class Tester extends Locker implements JsClientListener {
 		req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 		req.name = "SelfTestObject1";
 		res = new DatabaseResponse();
+		result = new DatabaseResult();
+		result.name = req.name;
+		result.id = 1;
+		result.obj = getTestObject(req.name);
+		res.results.add(result);
 		addRequestNoLock(req,res);
 		
 		req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 		req.name = "SelfTestObject2";
 		res = new DatabaseResponse();
-		addRequestNoLock(req,res);
-		
-		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
-		req.id = 1;
-		res = new DatabaseResponse();
-		addRequestNoLock(req,res);
-		
-		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
-		req.id = 2;
-		res = new DatabaseResponse();
+		result = new DatabaseResult();
+		result.name = req.name;
+		result.id = 2;
+		result.obj = getTestObject(req.name);
+		res.results.add(result);
 		addRequestNoLock(req,res);
 		
 		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
+		req.contains = "SelfTest";
 		res = new DatabaseResponse();
+		res = new DatabaseResponse();
+		result = new DatabaseResult();
+		result.name = "SelfTestObject1";
+		result.id = 1;
+		res.results.add(result);
+		result = new DatabaseResult();
+		result.name = "SelfTestObject2";
+		result.id = 2;
+		res.results.add(result);
 		addRequestNoLock(req,res);
 	}
 	
