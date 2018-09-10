@@ -70,16 +70,16 @@ public abstract class EntityObject {
 			,"Frowny"			
 			};
 	
-	private EntityValueTranslator				translator					= null;
+	private Translator				translator					= null;
 	
 	private boolean								initialized					= false;
 	private String								internalValuePrefix			= "";
 	private SortedMap<String,EntityValue>		externalValues				= new TreeMap<String,EntityValue>();
 	private SortedMap<String,List<EntityValue>>	internalValues				= new TreeMap<String,List<EntityValue>>();
 	
-	public EntityObject(EntityValueTranslator t) {
+	public EntityObject(Translator t) {
 		translator = t;
-		internalValuePrefix = getLanguage() + "_" + getType() + EntityValueTranslator.VALUE_CONCATENATOR;
+		internalValuePrefix = getLanguage() + "_" + getType() + Translator.VALUE_CONCATENATOR;
 	}
 	
 	public String getLanguage() {
@@ -192,7 +192,7 @@ public abstract class EntityObject {
 		return r;
 	}
 	
-	protected EntityValueTranslator getTranslator() {
+	protected Translator getTranslator() {
 		return translator;
 	}
 	

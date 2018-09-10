@@ -4,10 +4,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 
 public class EnglishTime extends EntityObject {
-	public EnglishTime(EntityValueTranslator t) {
+	public EnglishTime(Translator t) {
 		super(t);
 	}
 	@Override

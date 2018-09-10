@@ -3,10 +3,10 @@ package nl.zeesoft.zevt.trans;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zodb.Config;
 
-public class EntityValueTranslatorInitWorker extends Worker {
-	private EntityValueTranslator	translator	= null;
+public class TranslatorInitWorker extends Worker {
+	private Translator	translator	= null;
 	
-	public EntityValueTranslatorInitWorker(Config config,EntityValueTranslator t) {
+	public TranslatorInitWorker(Config config,Translator t) {
 		super(config.getMessenger(),config.getUnion());
 		translator = t;
 	}

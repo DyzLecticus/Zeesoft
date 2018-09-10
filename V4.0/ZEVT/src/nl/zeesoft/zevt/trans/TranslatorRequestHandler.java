@@ -2,14 +2,14 @@ package nl.zeesoft.zevt.trans;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
-public class EntityRequestHandler {
-	private EntityValueTranslator translator = null;
+public class TranslatorRequestHandler {
+	private Translator translator = null;
 	
-	public EntityRequestHandler(EntityValueTranslator translator) {
+	public TranslatorRequestHandler(Translator translator) {
 		this.translator = translator;
 	}
 	
-	public void handleRequest(EntityRequestResponse request) {
+	public void handleRequest(TranslatorRequestResponse request) {
 		if (request.sequence.length()>0) {
 			request.entityValueTranslation = translator.translateToInternalValues(request.sequence);
 			request.sequence = new ZStringSymbolParser();

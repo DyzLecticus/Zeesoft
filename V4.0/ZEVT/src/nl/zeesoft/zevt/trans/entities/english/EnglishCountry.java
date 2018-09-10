@@ -2,10 +2,10 @@ package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zevt.trans.EntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 
 public class EnglishCountry extends EntityObject {
-	public EnglishCountry(EntityValueTranslator t) {
+	public EnglishCountry(Translator t) {
 		super(t);
 	}
 	@Override

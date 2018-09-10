@@ -8,7 +8,7 @@ import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 
 public abstract class DatabaseEntityObject extends EntityObject implements DatabaseClientListener {
-	protected DatabaseEntityObject(EntityValueTranslator t) {
+	protected DatabaseEntityObject(Translator t) {
 		super(t);
 	}
 	

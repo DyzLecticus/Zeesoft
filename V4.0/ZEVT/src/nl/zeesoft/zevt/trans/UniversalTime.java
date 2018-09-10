@@ -1,7 +1,7 @@
 package nl.zeesoft.zevt.trans;
 
 public class UniversalTime extends EntityObject {
-	public UniversalTime(EntityValueTranslator t) {
+	public UniversalTime(Translator t) {
 		super(t);
 	}
 	@Override

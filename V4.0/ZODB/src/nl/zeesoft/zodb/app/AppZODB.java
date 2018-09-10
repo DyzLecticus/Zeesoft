@@ -18,7 +18,7 @@ public class AppZODB extends AppObject implements DatabaseStateListener {
 	public static final String	DESC		= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
 	private Database			database	= null;
-	private Tester				tester		= null; 
+	private ZODBTester			tester		= null; 
 	
 	public AppZODB(Config config) {
 		super(config);
@@ -63,7 +63,7 @@ public class AppZODB extends AppObject implements DatabaseStateListener {
 		return database;
 	}
 	
-	public Tester getTester() {
+	public ZODBTester getTester() {
 		return tester;
 	}
 	
@@ -80,7 +80,7 @@ public class AppZODB extends AppObject implements DatabaseStateListener {
 		return new DatabaseRequestHandler(db);
 	}
 	
-	protected Tester getNewTester() {
-		return new Tester(configuration,configuration.getApplicationUrl(NAME) + JsonZODBRequestHandler.PATH);
+	protected ZODBTester getNewTester() {
+		return new ZODBTester(configuration,configuration.getApplicationUrl(NAME) + JsonZODBRequestHandler.PATH);
 	}
 }

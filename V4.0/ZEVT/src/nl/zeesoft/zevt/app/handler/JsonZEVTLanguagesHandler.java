@@ -26,7 +26,7 @@ public class JsonZEVTLanguagesHandler extends JsonHandlerObject {
 		AppObject zapp = getConfiguration().getApplication(AppZEVT.NAME);
 		if (zapp!=null) {
 			AppZEVT zevt = (AppZEVT) zapp;
-			for (String language: zevt.getEntityValueTranslator().getLanguages()) {
+			for (String language: zevt.getTranslator().getLanguages()) {
 				langsElem.children.add(new JsElem(null,language,true));
 			}
 		}

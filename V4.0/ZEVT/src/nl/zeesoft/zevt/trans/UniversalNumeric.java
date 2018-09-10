@@ -1,7 +1,7 @@
 package nl.zeesoft.zevt.trans;
 
 public class UniversalNumeric extends EntityObject {
-	public UniversalNumeric(EntityValueTranslator t) {
+	public UniversalNumeric(Translator t) {
 		super(t);
 	}
 

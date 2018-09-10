@@ -1,10 +1,10 @@
 package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.EntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 
 public class EnglishMonth extends EntityObject {
-	public EnglishMonth(EntityValueTranslator t) {
+	public EnglishMonth(Translator t) {
 		super(t);
 	}
 	@Override

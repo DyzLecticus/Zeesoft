@@ -1,7 +1,7 @@
 package nl.zeesoft.zevt.trans;
 
 public class UniversalAlphabetic extends EntityObject {
-	public UniversalAlphabetic(EntityValueTranslator t) {
+	public UniversalAlphabetic(Translator t) {
 		super(t);
 	}
 

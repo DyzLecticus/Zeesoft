@@ -4,11 +4,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 
 public class DutchDate extends EntityObject {
 	private	Date	currentDate	= null;
-	public DutchDate(EntityValueTranslator t) {
+	public DutchDate(Translator t) {
 		super(t);
 	}
 	@Override

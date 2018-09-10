@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.app.AppObject;
-import nl.zeesoft.zodb.app.Tester;
+import nl.zeesoft.zodb.app.ZODBTester;
 
 public class JsonZODBTestResultsHandler extends JsonHandlerObject {
 	public final static String	PATH	= "/testResults.json"; 
@@ -19,7 +19,7 @@ public class JsonZODBTestResultsHandler extends JsonHandlerObject {
 	@Override
 	protected ZStringBuilder handleAllowedRequest(String method,HttpServletRequest request,HttpServletResponse response) {
 		ZStringBuilder r = new ZStringBuilder();
-		Tester tester = getConfiguration().getZODB().getTester();
+		ZODBTester tester = getConfiguration().getZODB().getTester();
 		JsFile results = tester.getResults();
 		if (tester.isTesting()) {
 			r = setResponse(response,503,"Tester is testing. Please wait.");

@@ -6,15 +6,15 @@ import nl.zeesoft.zdk.json.JsClientRequest;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 
-public class EntityClient extends JsClient {
-	private EntityRequestResponse		request			= null;
-	private EntityClientListener		listener		= null;
+public class TranslatorClient extends JsClient {
+	private TranslatorRequestResponse		request			= null;
+	private TranslatorClientListener		listener		= null;
 	
-	public EntityClient(Config config) {
+	public TranslatorClient(Config config) {
 		super(config.getMessenger(),config.getUnion());
 	}
 
-	public void handleRequest(EntityRequestResponse request,String url,EntityClientListener listener) {
+	public void handleRequest(TranslatorRequestResponse request,String url,TranslatorClientListener listener) {
 		lockMe(this);
 		if (this.request==null) {
 			this.request = request;
@@ -26,10 +26,10 @@ public class EntityClient extends JsClient {
 	
 	@Override
 	protected void requestIsDone(JsClientRequest request,JsFile response, ZStringBuilder err, Exception ex) {
-		EntityRequestResponse res = null;
+		TranslatorRequestResponse res = null;
 		lockMe(this);
 		if (response!=null && response.rootElement!=null) {
-			res = new EntityRequestResponse();
+			res = new TranslatorRequestResponse();
 			res.fromJson(response);	
 		}
 		listener.handledRequest(res, err, ex);

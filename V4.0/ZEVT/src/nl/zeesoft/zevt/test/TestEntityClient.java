@@ -6,10 +6,10 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.ZEVTConfig;
 import nl.zeesoft.zevt.app.AppZEVT;
-import nl.zeesoft.zevt.trans.EntityClientListener;
-import nl.zeesoft.zevt.trans.EntityRequestResponse;
+import nl.zeesoft.zevt.trans.TranslatorClientListener;
+import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
 
-public class TestEntityClient extends TestObject implements EntityClientListener {
+public class TestEntityClient extends TestObject implements TranslatorClientListener {
 	public TestEntityClient(Tester tester) {
 		super(tester);
 	}
@@ -29,7 +29,7 @@ public class TestEntityClient extends TestObject implements EntityClientListener
 		config.setDebug(true);
 		config.getZODB().url = "http://127.0.0.1:8080/ZEVT/ZODB";
 		
-		EntityRequestResponse request = new EntityRequestResponse();
+		TranslatorRequestResponse request = new TranslatorRequestResponse();
 		request.sequence = new ZStringSymbolParser("1 oktober");
 
 		AppZEVT app = (AppZEVT) config.getApplication(AppZEVT.NAME);
@@ -38,7 +38,7 @@ public class TestEntityClient extends TestObject implements EntityClientListener
 	}
 
 	@Override
-	public void handledRequest(EntityRequestResponse res, ZStringBuilder err, Exception ex) {
+	public void handledRequest(TranslatorRequestResponse res, ZStringBuilder err, Exception ex) {
 		if (res!=null) {
 			System.out.println("Entity value translation: " + res.entityValueTranslation);
 		}

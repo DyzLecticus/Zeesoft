@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
-public class EntityRequestResponse {
+public class TranslatorRequestResponse {
 	public ZStringSymbolParser	sequence				= new ZStringSymbolParser();
 	public ZStringSymbolParser	entityValueTranslation	= new ZStringSymbolParser();
 	

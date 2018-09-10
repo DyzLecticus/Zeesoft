@@ -27,11 +27,11 @@ public class JsonZEVTTypesHandler extends JsonHandlerObject {
 		if (zapp!=null) {
 			AppZEVT zevt = (AppZEVT) zapp;
 			int i = 0;
-			for (String type: zevt.getEntityValueTranslator().getTypes()) {
+			for (String type: zevt.getTranslator().getTypes()) {
 				JsElem typeElem = new JsElem();
 				typesElem.children.add(typeElem);
 				typeElem.children.add(new JsElem("code",type,true));
-				typeElem.children.add(new JsElem("name",zevt.getEntityValueTranslator().getTypeNames().get(i),true));
+				typeElem.children.add(new JsElem("name",zevt.getTranslator().getTypeNames().get(i),true));
 				i++;
 			}
 		}

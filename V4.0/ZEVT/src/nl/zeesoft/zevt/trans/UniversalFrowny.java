@@ -1,7 +1,7 @@
 package nl.zeesoft.zevt.trans;
 
 public class UniversalFrowny extends UniversalSmiley {
-	public UniversalFrowny(EntityValueTranslator t) {
+	public UniversalFrowny(Translator t) {
 		super(t);
 	}
 

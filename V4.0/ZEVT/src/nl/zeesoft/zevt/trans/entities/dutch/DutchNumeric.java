@@ -1,10 +1,10 @@
 package nl.zeesoft.zevt.trans.entities.dutch;
 
 import nl.zeesoft.zevt.trans.EntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 
 public class DutchNumeric extends EntityObject {
-	public DutchNumeric(EntityValueTranslator t) {
+	public DutchNumeric(Translator t) {
 		super(t);
 	}
 	@Override

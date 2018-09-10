@@ -1,10 +1,10 @@
 package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.EntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 
 public class EnglishCurrency extends EntityObject {
-	public EnglishCurrency(EntityValueTranslator t) {
+	public EnglishCurrency(Translator t) {
 		super(t);
 	}
 	@Override

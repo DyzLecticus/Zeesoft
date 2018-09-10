@@ -12,11 +12,8 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.db.DatabaseRequest;
-import nl.zeesoft.zodb.db.DatabaseResponse;
-import nl.zeesoft.zodb.db.DatabaseResult;
 
-public class Tester extends Locker implements JsClientListener {
+public abstract class TesterObject extends Locker implements JsClientListener {
 	private Config					configuration	= null;
 	private String					url				= "";
 	private JsClient				client			= null;
@@ -27,7 +24,7 @@ public class Tester extends Locker implements JsClientListener {
 	
 	private JsFile					results			= null;
 	
-	public Tester(Config config,String url) {
+	public TesterObject(Config config,String url) {
 		super(config.getMessenger());
 		this.configuration = config;
 		this.url = url;
@@ -161,78 +158,12 @@ public class Tester extends Locker implements JsClientListener {
 		}
 	}
 	
-	protected void initializeRequestsNoLock() {
-		DatabaseRequest req = null;
-		DatabaseResponse res = null;
-		DatabaseResult result = null;
-
-		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
-		req.contains = "SelfTest";
-		res = new DatabaseResponse();
-		addRequestNoLock(req,res);
-		
-		req = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-		req.name = "SelfTestObject1";
-		req.obj = getTestObject(req.name);
-		res = new DatabaseResponse();
-		addRequestNoLock(req,res);
-		
-		req = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-		req.name = "SelfTestObject2";
-		req.obj = getTestObject(req.name);
-		res = new DatabaseResponse();
-		addRequestNoLock(req,res);
-		
-		req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-		req.name = "SelfTestObject1";
-		res = new DatabaseResponse();
-		result = new DatabaseResult();
-		result.name = req.name;
-		result.id = 1;
-		result.obj = getTestObject(req.name);
-		res.results.add(result);
-		addRequestNoLock(req,res);
-		
-		req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-		req.name = "SelfTestObject2";
-		res = new DatabaseResponse();
-		result = new DatabaseResult();
-		result.name = req.name;
-		result.id = 2;
-		result.obj = getTestObject(req.name);
-		res.results.add(result);
-		addRequestNoLock(req,res);
-		
-		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-		req.contains = "SelfTest";
-		res = new DatabaseResponse();
-		res = new DatabaseResponse();
-		result = new DatabaseResult();
-		result.name = "SelfTestObject1";
-		result.id = 1;
-		res.results.add(result);
-		result = new DatabaseResult();
-		result.name = "SelfTestObject2";
-		result.id = 2;
-		res.results.add(result);
-		addRequestNoLock(req,res);
-	}
-	
-	protected void addRequestNoLock(DatabaseRequest req, DatabaseResponse res) {
-		addRequestNoLock(req.toJson(),res.toJson());
-	}
+	protected abstract void initializeRequestsNoLock();
 	
 	protected void addRequestNoLock(JsFile request,JsFile expectedResponse) {
 		TesterRequest req = new TesterRequest();
 		req.request = request;
 		req.expectedResponse = expectedResponse;
 		requests.add(req);
-	}
-	
-	private JsFile getTestObject(String name) {
-		JsFile obj = new JsFile();
-		obj.rootElement = new JsElem();
-		obj.rootElement.children.add(new JsElem("testData",name,true));
-		return obj;
 	}
 }

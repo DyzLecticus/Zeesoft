@@ -1,11 +1,11 @@
 package nl.zeesoft.zevt.trans.entities.dutch;
 
 import nl.zeesoft.zevt.trans.EntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
 
 public class DutchMathematic extends EntityObject {
-	public DutchMathematic(EntityValueTranslator t) {
+	public DutchMathematic(Translator t) {
 		super(t);
 	}
 	@Override

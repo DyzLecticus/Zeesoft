@@ -1,10 +1,10 @@
 package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.EntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 
 public class EnglishOrder2 extends EntityObject {
-	public EnglishOrder2(EntityValueTranslator t) {
+	public EnglishOrder2(Translator t) {
 		super(t);
 	}
 	@Override

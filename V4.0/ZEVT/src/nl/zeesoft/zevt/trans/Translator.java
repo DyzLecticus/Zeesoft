@@ -36,7 +36,7 @@ import nl.zeesoft.zevt.trans.entities.english.EnglishProfanity;
 import nl.zeesoft.zevt.trans.entities.english.EnglishTime;
 import nl.zeesoft.zodb.Config;
 
-public class EntityValueTranslator extends Locker {
+public class Translator extends Locker {
 	public static final String					VALUE_CONCATENATOR			= ":";
 	public static final String					OR_CONCATENATOR				= "|";
 	public static final String					OR_CONCATENATOR_SPLITTER	= "\\|";
@@ -54,13 +54,15 @@ public class EntityValueTranslator extends Locker {
 	private boolean								initialized					= false;
 	private int									todo						= 0;
 	
-	private EntityValueTranslatorRefreshWorker	refreshWorker				= null;
+	private TranslatorRefreshWorker				refreshWorker				= null;
 
-	public EntityValueTranslator(Config config) {
+	public List<TranslatorStateListener>		listeners					= new ArrayList<TranslatorStateListener>();
+	
+	public Translator(Config config) {
 		super(config.getMessenger());
 		configuration = config;
 		addDefaultEntities();
-		refreshWorker = new EntityValueTranslatorRefreshWorker(config,this);
+		refreshWorker = new TranslatorRefreshWorker(config,this);
 		for (int i = 0; i < EntityObject.LANGUAGES.length; i++) {
 			languages.add(EntityObject.LANGUAGES[i]);
 		}
@@ -70,6 +72,12 @@ public class EntityValueTranslator extends Locker {
 		}
 	}
 
+	public void addListener(TranslatorStateListener listener) {
+		lockMe(this);
+		listeners.add(listener);
+		unlockMe(this);
+	}
+	
 	public void install() {
 		lockMe(this);
 		for (EntityObject eo: entities) {
@@ -92,7 +100,7 @@ public class EntityValueTranslator extends Locker {
 					todo++;
 				}
 			}
-			EntityValueTranslatorInitWorker worker = new EntityValueTranslatorInitWorker(configuration,this);
+			TranslatorInitWorker worker = new TranslatorInitWorker(configuration,this);
 			worker.start();
 			refreshWorker.start();
 			r = true;
@@ -112,7 +120,11 @@ public class EntityValueTranslator extends Locker {
 			addDefaultEntities();
 			initialized = false;
 		}
+		List<TranslatorStateListener> lst = new ArrayList<TranslatorStateListener>(listeners);
 		unlockMe(this);
+		for (TranslatorStateListener listener: lst) {
+			listener.translatorStateChanged(false);
+		}
 	}
 	
 	public boolean isInitialized() {
@@ -513,8 +525,12 @@ public class EntityValueTranslator extends Locker {
 				lockMe(this);
 				initialized = true;
 				initializing = false;
+				List<TranslatorStateListener> lst = new ArrayList<TranslatorStateListener>(listeners);
 				unlockMe(this);
 				configuration.debug(this,"Initialized entity value translator");
+				for (TranslatorStateListener listener: lst) {
+					listener.translatorStateChanged(true);
+				}
 			}
 		}
 	}

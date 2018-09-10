@@ -3,10 +3,10 @@ package nl.zeesoft.zevt.test;
 import java.util.Calendar;
 import java.util.Date;
 
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zodb.Config;
 
-public class FixedDateEntityValueTranslator extends EntityValueTranslator {
+public class FixedDateEntityValueTranslator extends Translator {
 	public FixedDateEntityValueTranslator(Config config) {
 		super(config);
 	}

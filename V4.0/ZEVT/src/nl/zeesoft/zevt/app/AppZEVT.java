@@ -7,19 +7,20 @@ import nl.zeesoft.zevt.app.handler.JavaScriptZEVTEntityTranslatorHandler;
 import nl.zeesoft.zevt.app.handler.JsonZEVTLanguagesHandler;
 import nl.zeesoft.zevt.app.handler.JsonZEVTRequestHandler;
 import nl.zeesoft.zevt.app.handler.JsonZEVTTypesHandler;
-import nl.zeesoft.zevt.trans.EntityClient;
-import nl.zeesoft.zevt.trans.EntityClientListener;
-import nl.zeesoft.zevt.trans.EntityRequestHandler;
-import nl.zeesoft.zevt.trans.EntityRequestResponse;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.TranslatorClient;
+import nl.zeesoft.zevt.trans.TranslatorClientListener;
+import nl.zeesoft.zevt.trans.TranslatorRequestHandler;
+import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
+import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.trans.TranslatorStateListener;
 import nl.zeesoft.zodb.app.AppObject;
 
-public class AppZEVT extends AppObject {
-	public static final String		NAME					= "ZEVT";
-	public static final String		DESC					= 
+public class AppZEVT extends AppObject implements TranslatorStateListener {
+	public static final String		NAME			= "ZEVT";
+	public static final String		DESC			= 
 		"The Zeesoft Entity Value Translator provides a simple JSON API to translate sentences to and from language specific entity values.";
 	
-	private EntityValueTranslator	entityValueTranslator	= null;
+	private Translator				translator		= null;
 	
 	public AppZEVT(ZEVTConfig config) {
 		super(config);
@@ -29,43 +30,51 @@ public class AppZEVT extends AppObject {
 	
 	@Override
 	public void install() {
-		EntityValueTranslator entityValueTranslator = getNewEntityValueTranslator();
+		Translator entityValueTranslator = getNewEntityValueTranslator();
 		entityValueTranslator.install();
 	}
 	
 	@Override
 	public void initialize() {
-		entityValueTranslator = getNewEntityValueTranslator();
+		translator = getNewEntityValueTranslator();
+		translator.listeners.add(this);
 		handlers.add(new HtmlZEVTIndexHandler(configuration,this));
 		handlers.add(new HtmlZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JavaScriptZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JsonZEVTRequestHandler(configuration,this));
 		handlers.add(new JsonZEVTLanguagesHandler(configuration,this));
 		handlers.add(new JsonZEVTTypesHandler(configuration,this));
-		entityValueTranslator.initialize();
+		translator.initialize();
 		super.initialize();
 	}
 	
 	@Override
 	public void destroy() {
-		entityValueTranslator.destroy();
+		translator.destroy();
+	}
+
+	@Override
+	public void translatorStateChanged(boolean open) {
+		if (open && selfTest) {
+			// TODO Create and implement self tester
+		}
 	}
 	
-	public EntityValueTranslator getEntityValueTranslator() {
-		return entityValueTranslator;
+	public Translator getTranslator() {
+		return translator;
 	}
 	
-	public void handleRequest(EntityRequestResponse request) {
-		EntityRequestHandler handler = new EntityRequestHandler(entityValueTranslator);
+	public void handleRequest(TranslatorRequestResponse request) {
+		TranslatorRequestHandler handler = new TranslatorRequestHandler(translator);
 		handler.handleRequest(request);
 	}
 
-	public void handleRequest(EntityRequestResponse request,EntityClientListener listener) {
-		EntityClient client = new EntityClient(configuration);
+	public void handleRequest(TranslatorRequestResponse request,TranslatorClientListener listener) {
+		TranslatorClient client = new TranslatorClient(configuration);
 		client.handleRequest(request,configuration.getApplicationUrl(AppZEVT.NAME) + JsonZEVTRequestHandler.PATH,listener);
 	}
 	
-	protected EntityValueTranslator getNewEntityValueTranslator() {
-		return new EntityValueTranslator(configuration);
+	protected Translator getNewEntityValueTranslator() {
+		return new Translator(configuration);
 	}
 }

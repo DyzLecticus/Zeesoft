@@ -21,7 +21,7 @@ public class UniversalMathematic extends EntityObject {
 	public static final String	LESS_THAN			= "LT";
 	public static final String	LESS_OR_EQUALS		= "LE";
 	
-	public UniversalMathematic(EntityValueTranslator t) {
+	public UniversalMathematic(Translator t) {
 		super(t);
 	}
 	

@@ -2,7 +2,7 @@ package nl.zeesoft.zevt.trans;
 
 public class UniversalCurrency extends EntityObject {
 	public static final String CURR_EUR		= "EUR";
-	public UniversalCurrency(EntityValueTranslator t) {
+	public UniversalCurrency(Translator t) {
 		super(t);
 	}
 	@Override

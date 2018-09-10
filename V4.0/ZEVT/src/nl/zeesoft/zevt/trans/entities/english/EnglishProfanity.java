@@ -1,11 +1,11 @@
 package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.DatabaseEntityObject;
-import nl.zeesoft.zevt.trans.EntityValueTranslator;
+import nl.zeesoft.zevt.trans.Translator;
 
 public class EnglishProfanity extends DatabaseEntityObject {
 	private int counter = 1; 
-	public EnglishProfanity(EntityValueTranslator t) {
+	public EnglishProfanity(Translator t) {
 		super(t);
 	}
 	@Override
