@@ -9,13 +9,13 @@ import nl.zeesoft.zevt.app.AppZEVT;
 import nl.zeesoft.zevt.trans.TranslatorClientListener;
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
 
-public class TestEntityClient extends TestObject implements TranslatorClientListener {
-	public TestEntityClient(Tester tester) {
+public class TestTranslatorClient extends TestObject implements TranslatorClientListener {
+	public TestTranslatorClient(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestEntityClient(new Tester())).test(args);
+		(new TestTranslatorClient(new Tester())).test(args);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class TestEntityClient extends TestObject implements TranslatorClientList
 	@Override
 	public void handledRequest(TranslatorRequestResponse res, ZStringBuilder err, Exception ex) {
 		if (res!=null) {
-			System.out.println("Entity value translation: " + res.entityValueTranslation);
+			System.out.println("Entity value translation: " + res.translation);
 		}
 		if (err.length()>0) {
 			System.err.println("Error: " + err);

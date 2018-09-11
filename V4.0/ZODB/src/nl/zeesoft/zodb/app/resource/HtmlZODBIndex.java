@@ -3,7 +3,7 @@ package nl.zeesoft.zodb.app.resource;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.app.AppZODB;
-import nl.zeesoft.zodb.app.handler.JsonZODBTestResultsHandler;
+import nl.zeesoft.zodb.app.handler.JsonTestResultsHandler;
 
 public class HtmlZODBIndex extends HtmlResource {
 	public HtmlZODBIndex(Config config) {
@@ -31,7 +31,7 @@ public class HtmlZODBIndex extends HtmlResource {
 			
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<a href=\"" + getConfiguration().getApplicationUrl(AppZODB.NAME) + JsonZODBTestResultsHandler.PATH + "\">Test results JSON</a>");
+			html.append("<a href=\"" + getConfiguration().getApplicationUrl(AppZODB.NAME) + JsonTestResultsHandler.PATH + "\">Test results JSON</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("Returns the self test results as a JSON file.");

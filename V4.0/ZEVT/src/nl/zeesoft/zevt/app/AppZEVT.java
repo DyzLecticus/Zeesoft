@@ -7,13 +7,14 @@ import nl.zeesoft.zevt.app.handler.JavaScriptZEVTEntityTranslatorHandler;
 import nl.zeesoft.zevt.app.handler.JsonZEVTLanguagesHandler;
 import nl.zeesoft.zevt.app.handler.JsonZEVTRequestHandler;
 import nl.zeesoft.zevt.app.handler.JsonZEVTTypesHandler;
+import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.TranslatorClient;
 import nl.zeesoft.zevt.trans.TranslatorClientListener;
 import nl.zeesoft.zevt.trans.TranslatorRequestHandler;
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
-import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.TranslatorStateListener;
 import nl.zeesoft.zodb.app.AppObject;
+import nl.zeesoft.zodb.app.handler.JsonTestResultsHandler;
 
 public class AppZEVT extends AppObject implements TranslatorStateListener {
 	public static final String		NAME			= "ZEVT";
@@ -44,19 +45,24 @@ public class AppZEVT extends AppObject implements TranslatorStateListener {
 		handlers.add(new JsonZEVTRequestHandler(configuration,this));
 		handlers.add(new JsonZEVTLanguagesHandler(configuration,this));
 		handlers.add(new JsonZEVTTypesHandler(configuration,this));
+		handlers.add(new JsonTestResultsHandler(configuration,this));
 		translator.initialize();
+		tester = getNewTester();
 		super.initialize();
 	}
 	
 	@Override
 	public void destroy() {
+		if (selfTest) {
+			tester.stop();
+		}
 		translator.destroy();
 	}
 
 	@Override
 	public void translatorStateChanged(boolean open) {
 		if (open && selfTest) {
-			// TODO Create and implement self tester
+			tester.start();
 		}
 	}
 	
@@ -71,10 +77,14 @@ public class AppZEVT extends AppObject implements TranslatorStateListener {
 
 	public void handleRequest(TranslatorRequestResponse request,TranslatorClientListener listener) {
 		TranslatorClient client = new TranslatorClient(configuration);
-		client.handleRequest(request,configuration.getApplicationUrl(AppZEVT.NAME) + JsonZEVTRequestHandler.PATH,listener);
+		client.handleRequest(request,configuration.getApplicationUrl(NAME) + JsonZEVTRequestHandler.PATH,listener);
 	}
 	
 	protected Translator getNewEntityValueTranslator() {
 		return new Translator(configuration);
+	}
+	
+	protected ZEVTTester getNewTester() {
+		return new ZEVTTester(configuration,configuration.getApplicationUrl(NAME) + JsonZEVTRequestHandler.PATH);
 	}
 }

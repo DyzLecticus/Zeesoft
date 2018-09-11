@@ -5,16 +5,16 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class TranslatorRequestResponse {
-	public ZStringSymbolParser	sequence				= new ZStringSymbolParser();
-	public ZStringSymbolParser	entityValueTranslation	= new ZStringSymbolParser();
+	public ZStringSymbolParser	sequence		= new ZStringSymbolParser();
+	public ZStringSymbolParser	translation		= new ZStringSymbolParser();
 	
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		if (sequence.length()>0) {
 			json.rootElement.children.add(new JsElem("sequence",sequence,true));
-		} else if (entityValueTranslation.length()>0) {
-			json.rootElement.children.add(new JsElem("entityValueTranslation",entityValueTranslation,true));
+		} else if (translation.length()>0) {
+			json.rootElement.children.add(new JsElem("translation",translation,true));
 		}
 		return json;
 	}
@@ -22,7 +22,7 @@ public class TranslatorRequestResponse {
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			sequence = json.rootElement.getChildZStringSymbolParser("sequence",sequence);
-			entityValueTranslation = json.rootElement.getChildZStringSymbolParser("entityValueTranslation",entityValueTranslation);
+			translation = json.rootElement.getChildZStringSymbolParser("translation",translation);
 		}
 	}
 }

@@ -64,7 +64,7 @@ public class ZODBTester extends TesterObject {
 			result.name = name;
 			result.id = id;
 			res.results.add(result);
-			if (id==10) {
+			if (id==req.max) {
 				break;
 			}
 		}

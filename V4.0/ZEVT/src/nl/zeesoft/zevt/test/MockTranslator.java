@@ -3,7 +3,7 @@ package nl.zeesoft.zevt.test;
 import nl.zeesoft.zdk.test.MockObject;
 import nl.zeesoft.zevt.ZEVTConfig;
 
-public class MockEntityValueTranslator extends MockObject {
+public class MockTranslator extends MockObject {
 	@Override
 	protected void describe() {
 		System.out.println("This test uses the *MockEntityValueTranslator*.");
@@ -11,7 +11,7 @@ public class MockEntityValueTranslator extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
-		FixedDateEntityValueTranslator t = new FixedDateEntityValueTranslator(new ZEVTConfig());
+		FixedDateTranslator t = new FixedDateTranslator(new ZEVTConfig());
 		t.initialize();
 		return t;
 	}

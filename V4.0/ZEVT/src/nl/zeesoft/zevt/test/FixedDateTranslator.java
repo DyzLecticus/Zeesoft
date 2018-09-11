@@ -6,8 +6,8 @@ import java.util.Date;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zodb.Config;
 
-public class FixedDateEntityValueTranslator extends Translator {
-	public FixedDateEntityValueTranslator(Config config) {
+public class FixedDateTranslator extends Translator {
+	public FixedDateTranslator(Config config) {
 		super(config);
 	}
 

@@ -3,6 +3,7 @@ package nl.zeesoft.zevt.app.resource;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zevt.app.AppZEVT;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.app.handler.JsonTestResultsHandler;
 import nl.zeesoft.zodb.app.resource.HtmlResource;
 
 public class HtmlZEVTIndex extends HtmlResource {
@@ -17,12 +18,14 @@ public class HtmlZEVTIndex extends HtmlResource {
 		html.append("<a href=\"../index.html\">Back to applications</a>");
 		html.append("<hr />");
 		
+		String url = getConfiguration().getApplicationUrl(AppZEVT.NAME);
+		
 		html.append("<div>\n");
 		html.append("<table style=\"width: 100%;\">\n");
 		html.append("<tbody>\n");
 			html.append("<tr>\n");
 			html.append("<td width=\"20%\">");
-			html.append("<a href=\"" + getConfiguration().getApplicationUrl(AppZEVT.NAME) + "/entityTranslator.html\">Entity translator</a>");
+			html.append("<a href=\"" + url + "/entityTranslator.html\">Entity translator</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("Translate sequences to entity values and back.");
@@ -31,7 +34,7 @@ public class HtmlZEVTIndex extends HtmlResource {
 			
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<a href=\"" + getConfiguration().getApplicationUrl(AppZEVT.NAME) + "/languages.json\">Languages JSON</a>");
+			html.append("<a href=\"" + url + "/languages.json\">Languages JSON</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("Returns the supported language codes as a JSON file.");
@@ -40,10 +43,19 @@ public class HtmlZEVTIndex extends HtmlResource {
 			
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<a href=\"" + getConfiguration().getApplicationUrl(AppZEVT.NAME) + "/types.json\">Types JSON</a>");
+			html.append("<a href=\"" + url + "/types.json\">Types JSON</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("Returns the supported entity types as a JSON file.");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<a href=\"" + url + JsonTestResultsHandler.PATH + "\">Test results JSON</a>");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("Returns the self test results as a JSON file.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 		html.append("</tbody>\n");

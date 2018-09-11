@@ -11,11 +11,11 @@ public class TranslatorRequestHandler {
 	
 	public void handleRequest(TranslatorRequestResponse request) {
 		if (request.sequence.length()>0) {
-			request.entityValueTranslation = translator.translateToInternalValues(request.sequence);
+			request.translation = translator.translateToInternalValues(request.sequence);
 			request.sequence = new ZStringSymbolParser();
-		} else if (request.entityValueTranslation.length()>0) {
-			request.sequence = translator.translateToExternalValues(request.entityValueTranslation);
-			request.entityValueTranslation = new ZStringSymbolParser();
+		} else if (request.translation.length()>0) {
+			request.sequence = translator.translateToExternalValues(request.translation);
+			request.translation = new ZStringSymbolParser();
 		}
 	}
 }

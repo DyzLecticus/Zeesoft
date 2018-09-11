@@ -5,8 +5,8 @@ import nl.zeesoft.zodb.app.handler.HtmlZODBDataManagerHandler;
 import nl.zeesoft.zodb.app.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.app.handler.JavaScriptZODBDataManagerHandler;
 import nl.zeesoft.zodb.app.handler.JavaScriptZODBHandler;
+import nl.zeesoft.zodb.app.handler.JsonTestResultsHandler;
 import nl.zeesoft.zodb.app.handler.JsonZODBRequestHandler;
-import nl.zeesoft.zodb.app.handler.JsonZODBTestResultsHandler;
 import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
@@ -18,7 +18,6 @@ public class AppZODB extends AppObject implements DatabaseStateListener {
 	public static final String	DESC		= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
 	private Database			database	= null;
-	private ZODBTester			tester		= null; 
 	
 	public AppZODB(Config config) {
 		super(config);
@@ -39,7 +38,7 @@ public class AppZODB extends AppObject implements DatabaseStateListener {
 		handlers.add(new JavaScriptZODBDataManagerHandler(configuration,this));
 		handlers.add(new HtmlZODBDataManagerHandler(configuration,this));
 		handlers.add(new JsonZODBRequestHandler(configuration,this));
-		handlers.add(new JsonZODBTestResultsHandler(configuration,this));
+		handlers.add(new JsonTestResultsHandler(configuration,this));
 		database = getNewDatabase();
 		database.addListener(this);
 		tester = getNewTester();
@@ -49,6 +48,9 @@ public class AppZODB extends AppObject implements DatabaseStateListener {
 	
 	@Override
 	public void destroy() {
+		if (selfTest) {
+			tester.stop();
+		}
 		database.stop();
 	}
 
@@ -61,10 +63,6 @@ public class AppZODB extends AppObject implements DatabaseStateListener {
 	
 	public Database getDatabase() {
 		return database;
-	}
-	
-	public ZODBTester getTester() {
-		return tester;
 	}
 	
 	public DatabaseResponse handleRequest(DatabaseRequest request) {

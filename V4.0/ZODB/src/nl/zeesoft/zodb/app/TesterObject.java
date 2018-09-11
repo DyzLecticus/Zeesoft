@@ -52,6 +52,20 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 		return r;
 	}
 
+	public void stop() {
+		boolean r = false;
+		lockMe(this);
+		if (testing) {
+			testing = false;
+			todo = 0;
+			r = true;
+		}
+		unlockMe(this);
+		if (r) {
+			configuration.debug(this,"Stopped testing " + url);
+		}
+	}
+
 	public boolean isTesting() {
 		boolean r = false;
 		lockMe(this);
@@ -63,21 +77,23 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 	@Override
 	public void handledRequest(JsClientRequest request, JsFile response, ZStringBuilder err, Exception ex) {
 		lockMe(this);
-		int i = requests.size() - todo;
-		handledRequestNoLock(requests.get(i),response,err);
-		if (err.length()>0) {
-			configuration.error(this,err.toString(),ex);
-			todo = 0;
-			testing = false;
-		} else {
-			todo--;
-			if (todo>0) {
-				i++;
-				handleRequestNoLock(requests.get(i));
-			} else {
-				createResultsNoLock(requests);
+		if (testing) {
+			int i = requests.size() - todo;
+			handledRequestNoLock(requests.get(i),response,err);
+			if (err.length()>0) {
+				configuration.error(this,err.toString(),ex);
+				todo = 0;
 				testing = false;
-				configuration.debug(this,"Tested " + url);
+			} else {
+				todo--;
+				if (todo>0) {
+					i++;
+					handleRequestNoLock(requests.get(i));
+				} else {
+					createResultsNoLock(requests);
+					testing = false;
+					configuration.debug(this,"Tested " + url);
+				}
 			}
 		}
 		unlockMe(this);
@@ -109,7 +125,7 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("tests","" + requests.size()));
 		json.rootElement.children.add(new JsElem("successFull","" + successFull));
-		json.rootElement.children.add(new JsElem("averageResponseTime","" + avgTime));
+		json.rootElement.children.add(new JsElem("averageResponseMs","" + avgTime));
 		JsElem errsElem = new JsElem("errors",true);
 		json.rootElement.children.add(errsElem);
 		for (TesterRequest request: requests) {

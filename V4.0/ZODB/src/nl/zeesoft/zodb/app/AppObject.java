@@ -25,6 +25,8 @@ public abstract class AppObject {
 	public HandlerObject		notFoundHtmlHandler		= null;
 	public HandlerObject		notFoundJsonHandler		= null;
 	
+	public TesterObject			tester					= null;
+	
 	public AppObject(Config config) {
 		configuration = config;
 		addDefaultNotFoundHandlers();

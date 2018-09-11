@@ -11,13 +11,13 @@ import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
 
-public class TestEntityValueTranslator extends TestObject {
-	public TestEntityValueTranslator(Tester tester) {
+public class TestTranslator extends TestObject {
+	public TestTranslator(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestEntityValueTranslator(new Tester())).test(args);
+		(new TestTranslator(new Tester())).test(args);
 	}
 
 	@Override
@@ -35,11 +35,11 @@ public class TestEntityValueTranslator extends TestObject {
 		System.out.println("ZStringSymbolParser retranslated = translator.translateToExternalValues(translated);");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockEntityValueTranslator.class.getName());
+		getTester().describeMock(MockTranslator.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestEntityValueTranslator.class));
-		System.out.println(" * " + getTester().getLinkForClass(MockEntityValueTranslator.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestTranslator.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockTranslator.class));
 		System.out.println(" * " + getTester().getLinkForClass(Translator.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
@@ -51,7 +51,7 @@ public class TestEntityValueTranslator extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Date started = new Date();
-		Translator t = (Translator) getTester().getMockedObject(MockEntityValueTranslator.class.getName());
+		Translator t = (Translator) getTester().getMockedObject(MockTranslator.class.getName());
 		while(!t.isInitialized()) {
 			sleep(100);
 		}

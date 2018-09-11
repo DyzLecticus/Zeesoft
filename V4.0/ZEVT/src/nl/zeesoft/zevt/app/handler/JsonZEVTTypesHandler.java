@@ -20,7 +20,7 @@ public class JsonZEVTTypesHandler extends JsonHandlerObject {
 		super(config,app,PATH);
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		JsElem typesElem = new JsElem("languages",true);
+		JsElem typesElem = new JsElem("types",true);
 		json.rootElement.children.add(typesElem);
 		
 		AppObject zapp = getConfiguration().getApplication(AppZEVT.NAME);
