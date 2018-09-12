@@ -22,13 +22,13 @@ public class TestTranslator extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use the *EntityValueTranslator* to translate a sequence to and from internal values.");
+		System.out.println("This test shows how to use the *Translator* to translate a sequence to and from internal values.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the EntityValueTranslator");
-		System.out.println("EntityValueTranslator translator = new EntityValueTranslator();");
-		System.out.println("// Initialize the EntityValueTranslator");
+		System.out.println("EntityValueTranslator translator = new EntityValueTranslator(new Config());");
+		System.out.println("// Initialize the EntityValueTranslator (and wait or listen for initialization to finish)");
 		System.out.println("translator.initialize();");
 		System.out.println("// Use EntityValueTranslator to translate a sequence");
 		System.out.println("ZStringSymbolParser translated = translator.translateToInternalValues(new ZStringSymbolParser(\"some sequence\"));");
