@@ -5,6 +5,7 @@ import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zodb.Languages;
 
 public class DutchTime extends EntityObject {
 	public DutchTime(Translator t) {
@@ -12,7 +13,7 @@ public class DutchTime extends EntityObject {
 	}
 	@Override
 	public String getLanguage() {
-		return LANG_NLD;
+		return Languages.NLD;
 	}
 	@Override
 	public String getType() {
@@ -41,7 +42,7 @@ public class DutchTime extends EntityObject {
 	}
 	@Override
 	public void initializeEntityValues() {
-		DutchNumeric eoNumeric = (DutchNumeric) getTranslator().getEntityObject(LANG_NLD,TYPE_NUMERIC);
+		DutchNumeric eoNumeric = (DutchNumeric) getTranslator().getEntityObject(Languages.NLD,TYPE_NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize();
 		}

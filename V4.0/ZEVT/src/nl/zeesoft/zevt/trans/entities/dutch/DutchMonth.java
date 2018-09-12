@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.dutch;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zodb.Languages;
 
 public class DutchMonth extends EntityObject {
 	public DutchMonth(Translator t) {
@@ -9,7 +10,7 @@ public class DutchMonth extends EntityObject {
 	}
 	@Override
 	public String getLanguage() {
-		return LANG_NLD;
+		return Languages.NLD;
 	}
 	@Override
 	public String getType() {

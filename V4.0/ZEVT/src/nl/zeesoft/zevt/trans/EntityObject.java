@@ -5,13 +5,9 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public abstract class EntityObject {
-	public static final String					LANG_UNI					= "UN";
-	public static final String					LANG_ENG					= "EN";
-	public static final String					LANG_NLD					= "NL";
-	
-	public static final String[]				LANGUAGES					= {LANG_UNI,LANG_ENG,LANG_NLD};
+import nl.zeesoft.zodb.Languages;
 
+public abstract class EntityObject {
 	public static final String					TYPE_ALPHABETIC				= "ABC";
 	public static final String					TYPE_NUMERIC				= "NUM";
 	public static final String					TYPE_MATHEMATIC				= "MTH";
@@ -83,7 +79,7 @@ public abstract class EntityObject {
 	}
 	
 	public String getLanguage() {
-		return LANG_UNI;
+		return Languages.UNI;
 	}
 
 	public String getType() {

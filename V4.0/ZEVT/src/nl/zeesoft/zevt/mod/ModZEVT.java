@@ -4,7 +4,6 @@ import nl.zeesoft.zevt.ZEVTConfig;
 import nl.zeesoft.zevt.mod.handler.HtmlZEVTEntityTranslatorHandler;
 import nl.zeesoft.zevt.mod.handler.HtmlZEVTIndexHandler;
 import nl.zeesoft.zevt.mod.handler.JavaScriptZEVTEntityTranslatorHandler;
-import nl.zeesoft.zevt.mod.handler.JsonZEVTLanguagesHandler;
 import nl.zeesoft.zevt.mod.handler.JsonZEVTRequestHandler;
 import nl.zeesoft.zevt.mod.handler.JsonZEVTTypesHandler;
 import nl.zeesoft.zevt.trans.Translator;
@@ -43,7 +42,6 @@ public class ModZEVT extends ModObject implements TranslatorStateListener {
 		handlers.add(new HtmlZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JavaScriptZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JsonZEVTRequestHandler(configuration,this));
-		handlers.add(new JsonZEVTLanguagesHandler(configuration,this));
 		handlers.add(new JsonZEVTTypesHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		translator.initialize();

@@ -32,6 +32,8 @@ public class Config {
 	
 	private List<ModObject>		modules				= new ArrayList<ModObject>();
 	
+	private Languages			languages			= null;
+	
 	private HandlerObject		notFoundHtmlHandler	= null;
 	private HandlerObject		notFoundJsonHandler	= null;
 	private HandlerObject		modIndexHtmlHandler	= null;
@@ -42,6 +44,8 @@ public class Config {
 		union = factory.getWorkerUnion(messenger);
 		addModule(new ModZODB(this));
 		addModules();
+		languages = getNewLanguages();
+		languages.initialize();
 	}
 	
 	public void initialize(boolean debug,String installDir,String servletUrl) {
@@ -159,6 +163,10 @@ public class Config {
 		}
 	}
 
+	public Languages getLanguages() {
+		return languages;
+	}
+	
 	public ModObject getModule(String name) {
 		ModObject r = null;
 		for (ModObject mod: modules) {
@@ -245,6 +253,10 @@ public class Config {
 
 	public List<ModObject> getModules() {
 		return new ArrayList<ModObject>(modules);
+	}
+	
+	protected Languages getNewLanguages() {
+		return new Languages();
 	}
 	
 	protected HandlerObject getNewHtmlAppIndexHandler() {

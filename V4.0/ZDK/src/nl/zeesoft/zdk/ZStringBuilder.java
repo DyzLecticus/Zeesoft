@@ -185,6 +185,20 @@ public class ZStringBuilder {
 		}
 		return sb;
 	}
+	
+	public StringBuilder upperCaseFirst() {
+		if (sb!=null) {
+			int length = sb.length();
+			if (length>0) {
+				StringBuilder nsb = new StringBuilder();
+				nsb.append(sb.substring(0,1).toUpperCase());
+				if (length>1) {
+					nsb.append(sb.substring(1));
+				}
+			}
+		}
+		return sb;
+	}
 
 	public StringBuilder replaceStartEnd(String searchStart, String searchEnd, String replace) {
 		if (sb!=null) {
@@ -346,7 +360,7 @@ public class ZStringBuilder {
 			int cLength = characters.length();
 			for (int i = 0; i < length; i++) {
 				for (int ci = 0; ci < cLength; ci++) {
-					if ((!caseSensitive && sb.substring(i,i + 1).toUpperCase().equals(characters.substring(ci,ci + 1))) || 
+					if ((!caseSensitive && sb.substring(i,i + 1).equalsIgnoreCase(characters.substring(ci,ci + 1))) || 
 						(caseSensitive && sb.substring(i,i + 1).equals(characters.substring(ci,ci + 1)))
 						) {
 						contains = true;
@@ -373,7 +387,7 @@ public class ZStringBuilder {
 			for (int i = 0; i < length; i++) {
 				boolean found = false;
 				for (int ci = 0; ci < cLength; ci++) {
-					if ((!caseSensitive && sb.substring(i,i + 1).toUpperCase().equals(allowedcharacters.substring(ci,ci + 1))) || 
+					if ((!caseSensitive && sb.substring(i,i + 1).equalsIgnoreCase(allowedcharacters.substring(ci,ci + 1))) || 
 						(caseSensitive && sb.substring(i,i + 1).equals(allowedcharacters.substring(ci,ci + 1)))
 						) {
 						found = true;
@@ -499,5 +513,16 @@ public class ZStringBuilder {
 	 */
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
+	}
+
+	public static String upperCaseFirst(String str) {
+		String r = "";
+		if (str!=null && str.length()>0) {
+			r = str.substring(0,1).toUpperCase();
+			if (str.length()>0) {
+				r += str.substring(1);
+			}
+		}
+		return r;
 	}
 }

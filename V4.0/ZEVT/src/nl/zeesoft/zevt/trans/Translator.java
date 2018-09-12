@@ -41,7 +41,6 @@ public class Translator extends Locker {
 	public static final String					OR_CONCATENATOR				= "|";
 	public static final String					OR_CONCATENATOR_SPLITTER	= "\\|";
 	
-	private List<String>						languages					= new ArrayList<String>();
 	private List<String>						types						= new ArrayList<String>();
 	private List<String>						typeNames					= new ArrayList<String>();
 	
@@ -63,9 +62,6 @@ public class Translator extends Locker {
 		configuration = config;
 		addDefaultEntities();
 		refreshWorker = new TranslatorRefreshWorker(config,this);
-		for (int i = 0; i < EntityObject.LANGUAGES.length; i++) {
-			languages.add(EntityObject.LANGUAGES[i]);
-		}
 		for (int i = 0; i < EntityObject.TYPES.length; i++) {
 			types.add(EntityObject.TYPES[i]);
 			typeNames.add(EntityObject.TYPE_NAMES[i]);
@@ -166,15 +162,6 @@ public class Translator extends Locker {
 	 */
 	public Date getCurrentDate() {
 		return new Date();
-	}
-	
-	/**
-	 * Returns the supported languages
-	 * 
-	 * @return The supported languages
-	 */
-	public List<String> getLanguages() {
-		return new ArrayList<String>(languages);
 	}
 
 	/**
@@ -438,9 +425,6 @@ public class Translator extends Locker {
 	public void addEntity(EntityObject eo,String typeName) {
 		lockMe(this);
 		entities.add(eo);
-		if (!languages.contains(eo.getLanguage())) {
-			languages.add(eo.getLanguage());
-		}
 		if (!types.contains(eo.getType())) {
 			types.add(eo.getType());
 			if (typeName.length()==0) {

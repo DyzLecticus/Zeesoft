@@ -40,11 +40,11 @@ Class references;
 **Test output**  
 The output of this test shows 100 randomly generated integers within the range 0 - 9.
 ~~~~
-8 3 5 4 2 9 4 3 4 7 2 1 1 5 9 2 4 9 5 2
-4 0 3 8 4 1 8 4 5 7 3 5 3 9 3 8 5 0 0 1
-8 7 9 0 6 3 6 9 9 0 5 6 2 5 9 2 8 7 0 7
-4 7 4 3 4 4 6 2 0 5 0 1 6 4 1 9 2 3 2 0
-8 8 1 1 9 5 0 0 1 6 8 4 9 4 5 8 5 1 7 7
+7 4 4 4 4 1 1 4 6 0 1 8 2 0 8 9 2 4 1 6
+1 6 4 2 7 9 2 5 4 6 7 2 1 0 4 5 8 7 6 2
+0 5 2 7 7 4 9 6 0 3 8 4 6 4 1 4 1 7 4 9
+6 1 6 3 6 7 0 8 3 4 7 1 0 8 2 7 6 2 6 1
+6 0 0 5 4 3 1 0 7 5 7 4 1 1 5 1 5 6 2 3
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
@@ -73,9 +73,9 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 4769866392045310297023969246229717357739219099877889173384881010
+Key: 7470675837771302000044837713018223230083061388729702370128881256
 Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
-Encoded text: lB2E~ENGVFlCXCgBwFB~~~yBkCwAP:p:ABxE#DL:gAvBwE4DeFYATCXDPACBMGED~~GDqAGDlEID5BpFMAx:qF2~3GCFRF7EbE4F2FjFu~FDWBeBBFNCcFKEO:y#l#c#HB6DYDQGUFgCgD5AwFPAG~yAiCCB4~A~l~BGEE#~S~pBHGLDaEQARCTDe~ABJGLE:AJEIBwB9DWD0
+Encoded text: k#Cz#:Cwn#Y#sy:~eyV#6:s#0wmx8uBxfvXu7uQvLz4zp#yyW:u:gwpx9vEx#~LwXwswmwvynv~vm::yvwEzpway6~E:C:jxvAy:gvYxTymzmvawexM~7~F:Uvlw~v0uG#GyW#Fwm#T#I#p#ey0:c:sz8wvylvPxXu5vdvCwqxXzA~gxS#m#ewlxxvCxx~SxWxvyExiwauNv0
 Decoded text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 ~~~~
 
@@ -248,9 +248,9 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2018-09-08 20:26:24:336 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2018-09-08 20:26:24:637 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2018-09-08 20:26:24:637 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+2018-09-13 00:17:01:029 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2018-09-13 00:17:01:330 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2018-09-13 00:17:01:330 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
 java.lang.NumberFormatException: For input string: "A"
 	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
 	at java.lang.Integer.parseInt(Integer.java:580)
@@ -260,18 +260,18 @@ java.lang.NumberFormatException: For input string: "A"
 	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:39)
 	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:39)
 
-2018-09-08 20:26:24:949 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2018-09-13 00:17:01:641 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
 All 6 tests have been executed successfully (118 assertions).  
-Total test duration: 784 ms (total sleep duration: 600 ms).  
+Total test duration: 797 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 459 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 1067 Kb / 1 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 397 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 401 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 396 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestJson: 414 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestZHttpRequest: 421 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestMessenger: 678 Kb / 0 Mb

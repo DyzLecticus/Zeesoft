@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zodb.Languages;
 
 public class EnglishLanguage extends EntityObject {
 	public EnglishLanguage(Translator t) {
@@ -9,7 +10,7 @@ public class EnglishLanguage extends EntityObject {
 	}
 	@Override
 	public String getLanguage() {
-		return LANG_ENG;
+		return Languages.ENG;
 	}
 	@Override
 	public String getType() {

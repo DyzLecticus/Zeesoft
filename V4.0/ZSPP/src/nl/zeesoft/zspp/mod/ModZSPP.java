@@ -6,8 +6,9 @@ import nl.zeesoft.zspp.ZSPPConfig;
 import nl.zeesoft.zspp.mod.handler.HtmlZSPPIndexHandler;
 import nl.zeesoft.zspp.mod.handler.JsonZSPPRequestHandler;
 import nl.zeesoft.zspp.prepro.Preprocessor;
+import nl.zeesoft.zspp.prepro.PreprocessorStateListener;
 
-public class ModZSPP extends ModObject {
+public class ModZSPP extends ModObject implements PreprocessorStateListener {
 	public static final String		NAME			= "ZSPP";
 	public static final String		DESC			= 
 		"The Zeesoft Sequence Preprocessor provides a simple JSON API for language specific sentence preprocessing.";
@@ -22,7 +23,6 @@ public class ModZSPP extends ModObject {
 	
 	@Override
 	public void install() {
-		// TODO: Install sequence preprocessor
 		Preprocessor prepro = getNewPreprocessor();
 		prepro.install();
 	}
@@ -33,6 +33,7 @@ public class ModZSPP extends ModObject {
 		handlers.add(new JsonZSPPRequestHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		preprocessor = getNewPreprocessor();
+		preprocessor.addListener(this);
 		preprocessor.initialize();
 		tester = getNewTester();
 		super.initialize();
@@ -44,6 +45,13 @@ public class ModZSPP extends ModObject {
 			tester.stop();
 		}
 		preprocessor.destroy();
+	}
+
+	@Override
+	public void preprocessorStateChanged(boolean open) {
+		if (open && selfTest) {
+			tester.start();
+		}
 	}
 	
 	protected Preprocessor getNewPreprocessor() {

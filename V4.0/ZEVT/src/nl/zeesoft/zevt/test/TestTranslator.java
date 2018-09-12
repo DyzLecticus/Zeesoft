@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
+import nl.zeesoft.zodb.Languages;
 
 public class TestTranslator extends TestObject {
 	public TestTranslator(Tester tester) {
@@ -61,7 +62,7 @@ public class TestTranslator extends TestObject {
 			"Eat three donuts at 9:00 or count to 110",
 			"UN_ABC:Eat EN_NUM:3|UN_ABC:three UN_ABC:donuts UN_ABC:at UN_TIM:09:00:00 UN_ABC:or UN_ABC:count UN_ABC:to UN_NUM:110",
 			"Eat three donuts at 09:00:00 or count to 110");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,Languages.NLD,
 			"Eet drie donuts om 9:00 of tel tot 110",
 			"UN_ABC:Eet NL_NUM:3|UN_ABC:drie UN_ABC:donuts UN_ABC:om UN_TIM:09:00:00 UN_ABC:of UN_ABC:tel UN_ABC:tot UN_NUM:110",
 			"Eet drie donuts om 09:00:00 of tel tot 110");
@@ -85,7 +86,7 @@ public class TestTranslator extends TestObject {
 			"yesterday OR today OR the 1st of october",
 			"EN_DAT:2018-07-15|UN_ABC:yesterday UN_ABC:OR EN_DAT:2018-07-16|UN_ABC:today UN_ABC:OR EN_DAT:2018-10-01",
 			"july fifteenth twothousandeighteen OR july sixteenth twothousandeighteen OR october first twothousandeighteen");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,Languages.NLD,
 			"gisteren OF vandaag OF 1 oktober",
 			"NL_DAT:2018-07-15|UN_ABC:gisteren UN_ABC:OF NL_DAT:2018-07-16|UN_ABC:vandaag UN_ABC:OF NL_DAT:2018-10-01",
 			"vijftien juli tweeduizendachttien OF zestien juli tweeduizendachttien OF een oktober tweeduizendachttien");
@@ -93,23 +94,23 @@ public class TestTranslator extends TestObject {
 			"twelve o'clock OR five minutes to nine OR ten past one in the morning",
 			"EN_TIM:12:00:00 UN_ABC:OR EN_TIM:08:55:00 UN_ABC:OR EN_TIM:01:10:00",
 			"twelve o'clock OR fiftyfive past eight OR ten past one in the morning");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,Languages.NLD,
 			"twaalf uur OF vijf minuten voor negen OF tien over een sochtends",
 			"NL_TIM:12:00:00|NL_DUR:12:00 UN_ABC:OF NL_TIM:08:55:00 UN_ABC:OF NL_TIM:01:10:00",
 			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
-		testTranslation(t,EntityObject.LANG_ENG,
+		testTranslation(t,Languages.ENG,
 			"to Germany or France",
 			"UN_ABC:to EN_CNT:DE|UN_ABC:Germany UN_ABC:or EN_CNT:FR|UN_ABC:France",
 			"to Germany or France");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,Languages.NLD,
 			"naar Duitsland of Frankrijk",
 			"UN_ABC:naar NL_CNT:DE|UN_ABC:Duitsland UN_ABC:of NL_CNT:FR|UN_ABC:Frankrijk",
 			"naar Duitsland of Frankrijk");
-		testTranslation(t,EntityObject.LANG_ENG,
+		testTranslation(t,Languages.ENG,
 			"You asshole",
 			"UN_ABC:You EN_PRF:1|UN_ABC:asshole",
 			"You asshole");
-		testTranslation(t,EntityObject.LANG_NLD,
+		testTranslation(t,Languages.NLD,
 			"Jij klootzak",
 			"UN_ABC:Jij NL_PRF:2|UN_ABC:klootzak",
 			"Jij klootzak");
@@ -138,7 +139,7 @@ public class TestTranslator extends TestObject {
 			"UN_SML:7 UN_FRN:28 UN_SML:42",
 			":-) ]0: {;");
 		
-		UniversalMathematic math = (UniversalMathematic) t.getEntityObject(EntityObject.LANG_UNI,EntityObject.TYPE_MATHEMATIC);
+		UniversalMathematic math = (UniversalMathematic) t.getEntityObject(Languages.UNI,EntityObject.TYPE_MATHEMATIC);
 		
 		ZStringSymbolParser expression = new ZStringSymbolParser("10 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.DIVISION + " 5");
 		float result = math.calculate(expression);
@@ -191,7 +192,7 @@ public class TestTranslator extends TestObject {
 		
 		if (language.length()>0) {
 			languages.add(language);
-			languages.add(EntityObject.LANG_UNI);
+			languages.add(Languages.UNI);
 		}
 		
 		ZStringSymbolParser sequence = new ZStringSymbolParser(seq);

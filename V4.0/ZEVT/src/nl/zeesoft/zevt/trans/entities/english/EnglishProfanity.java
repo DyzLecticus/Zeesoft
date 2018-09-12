@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.DatabaseEntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zodb.Languages;
 
 public class EnglishProfanity extends DatabaseEntityObject {
 	private int counter = 1; 
@@ -10,7 +11,7 @@ public class EnglishProfanity extends DatabaseEntityObject {
 	}
 	@Override
 	public String getLanguage() {
-		return LANG_ENG;
+		return Languages.ENG;
 	}
 	@Override
 	public String getType() {

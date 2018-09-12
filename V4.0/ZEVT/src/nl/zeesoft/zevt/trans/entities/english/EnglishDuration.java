@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zodb.Languages;
 
 public class EnglishDuration extends EntityObject {
 	public EnglishDuration(Translator t) {
@@ -9,7 +10,7 @@ public class EnglishDuration extends EntityObject {
 	}
 	@Override
 	public String getLanguage() {
-		return LANG_ENG;
+		return Languages.ENG;
 	}
 	@Override
 	public String getType() {
@@ -21,7 +22,7 @@ public class EnglishDuration extends EntityObject {
 	}
 	@Override
 	public void initializeEntityValues() {
-		EnglishNumeric eo = (EnglishNumeric) getTranslator().getEntityObject(LANG_ENG,TYPE_NUMERIC);
+		EnglishNumeric eo = (EnglishNumeric) getTranslator().getEntityObject(Languages.ENG,TYPE_NUMERIC);
 		if (!eo.isInitialized()) {
 			eo.initialize();
 		}

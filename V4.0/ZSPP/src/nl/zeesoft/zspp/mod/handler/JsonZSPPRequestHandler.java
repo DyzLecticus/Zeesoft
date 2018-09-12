@@ -33,6 +33,7 @@ public class JsonZSPPRequestHandler extends JsonHandlerObject {
 				ModZSPP zssp = (ModZSPP) mod;
 				/*
 				 * TODO Implement
+				 * 
 				if (!zevt.getTranslator().isInitialized()) {
 					r = setResponse(response,503,"Entity value translation is not available right now. Please try again later.");
 				} else {

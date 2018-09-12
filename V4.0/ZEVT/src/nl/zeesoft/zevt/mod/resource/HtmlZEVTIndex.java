@@ -34,15 +34,6 @@ public class HtmlZEVTIndex extends HtmlResource {
 			
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<a href=\"" + url + "/languages.json\">Languages JSON</a>");
-			html.append("</td>\n");
-			html.append("<td>");
-			html.append("Returns the supported language codes as a JSON file.");
-			html.append("</td>\n");
-			html.append("</tr>\n");
-			
-			html.append("<tr>\n");
-			html.append("<td>");
 			html.append("<a href=\"" + url + "/types.json\">Types JSON</a>");
 			html.append("</td>\n");
 			html.append("<td>");

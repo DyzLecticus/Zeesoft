@@ -6,10 +6,6 @@ public class UniversalCurrency extends EntityObject {
 		super(t);
 	}
 	@Override
-	public String getLanguage() {
-		return LANG_UNI;
-	}
-	@Override
 	public String getType() {
 		return TYPE_CURRENCY;
 	}
