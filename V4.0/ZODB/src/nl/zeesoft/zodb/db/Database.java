@@ -3,7 +3,6 @@ package nl.zeesoft.zodb.db;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
@@ -82,16 +81,16 @@ public class Database {
 		return index.getObjectByName(name);
 	}
 	
-	public SortedMap<String,Long> listObjects(int start, int max) {
-		return index.listObjects(start,max);
+	public List<IndexElement> listObjects(int start, int max,List<Integer> data) {
+		return index.listObjects(start,max,data);
 	}
 	
-	protected SortedMap<String,Long> listObjectsThatStartWith(String startWith,int start, int max) {
-		return index.listObjectsThatStartWith(startWith,start,max);
+	protected List<IndexElement> listObjectsThatStartWith(String startWith,int start, int max,List<Integer> data) {
+		return index.listObjectsThatStartWith(startWith,start,max,data);
 	}
 
-	protected SortedMap<String,Long> listObjectsThatContain(String contains,int start, int max) {
-		return index.listObjectsThatContain(contains,start,max);
+	protected List<IndexElement> listObjectsThatContain(String contains,int start, int max,List<Integer> data) {
+		return index.listObjectsThatContain(contains,start,max,data);
 	}
 	
 	public List<IndexElement> getObjectsByNameStartsWith(String start) {

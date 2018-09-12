@@ -27,8 +27,8 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("<td width=\"20%\">");
 			html.append("Name");
 			html.append("</td>\n");
-			html.append("<td>");
-			html.append("<input type=\"text\" id=\"name\" style=\"width: 300px;\" />");
+			html.append("<td colspan=\"2\">");
+			html.append("<input type=\"text\" id=\"name\" style=\"width: 400px;\" />");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
@@ -36,7 +36,7 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("<td>");
 			html.append("Start / Max");
 			html.append("</td>\n");
-			html.append("<td>");
+			html.append("<td colspan=\"2\">");
 			html.append("<input type=\"number\" id=\"start\" value=\"0\" />");
 			html.append("<input type=\"number\" id=\"max\" value=\"10\" />");
 			html.append("<input type=\"button\" value=\"<\" onclick=\"ZODB.dm.prev();\" />");
@@ -47,8 +47,10 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("<tr>\n");
 			html.append("<td>");
 			html.append("</td>\n");
-			html.append("<td>");
+			html.append("<td width=\"1%\">");
 			html.append("<input type=\"button\" value=\"Fetch\" onclick=\"ZODB.dm.list();\" />");
+			html.append("</td>\n");
+			html.append("<td id=\"fetched\">");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 		html.append("</tbody>\n");
@@ -85,7 +87,7 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("<tr>\n");
 			html.append("<td>");
 			html.append("Name&nbsp;");
-			html.append("<input type=\"text\" id=\"saveName\" style=\"width: 300px;\" />");
+			html.append("<input type=\"text\" id=\"saveName\" style=\"width: 400px;\" />");
 			html.append("<input type=\"button\" value=\"Save\" onclick=\"ZODB.dm.save();\" />");
 			html.append("</td>\n");
 			html.append("</tr>\n");

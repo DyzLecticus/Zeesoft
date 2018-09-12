@@ -3,6 +3,7 @@ package nl.zeesoft.zevt.trans;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zevt.app.AppZEVT;
 import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
@@ -79,7 +80,7 @@ public abstract class DatabaseEntityObject extends EntityObject implements Datab
 	}
 	
 	private String getObjectName() {
-		return "ZEVT/Entities/" + getName();
+		return AppZEVT.NAME + "/Entities/" + getName();
 	}
 	
 	private void getData() {

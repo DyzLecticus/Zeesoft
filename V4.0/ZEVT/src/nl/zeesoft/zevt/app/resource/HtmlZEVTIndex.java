@@ -3,7 +3,7 @@ package nl.zeesoft.zevt.app.resource;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zevt.app.AppZEVT;
 import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.app.handler.JsonTestResultsHandler;
+import nl.zeesoft.zodb.app.handler.JsonAppTestResultsHandler;
 import nl.zeesoft.zodb.app.resource.HtmlResource;
 
 public class HtmlZEVTIndex extends HtmlResource {
@@ -50,14 +50,16 @@ public class HtmlZEVTIndex extends HtmlResource {
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
-			html.append("<tr>\n");
-			html.append("<td>");
-			html.append("<a href=\"" + url + JsonTestResultsHandler.PATH + "\">Test results JSON</a>");
-			html.append("</td>\n");
-			html.append("<td>");
-			html.append("Returns the self test results as a JSON file.");
-			html.append("</td>\n");
-			html.append("</tr>\n");
+			if (getConfiguration().getApplication(AppZEVT.NAME).selfTest) {
+				html.append("<tr>\n");
+				html.append("<td>");
+				html.append("<a href=\"" + url + JsonAppTestResultsHandler.PATH + "\">Test results JSON</a>");
+				html.append("</td>\n");
+				html.append("<td>");
+				html.append("Returns the self test results as a JSON file.");
+				html.append("</td>\n");
+				html.append("</tr>\n");
+			}
 		html.append("</tbody>\n");
 		html.append("</table>\n");
 		html.append("</div>\n");

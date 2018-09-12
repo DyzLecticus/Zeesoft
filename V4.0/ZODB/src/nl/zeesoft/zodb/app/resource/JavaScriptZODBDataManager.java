@@ -1,6 +1,7 @@
 package nl.zeesoft.zodb.app.resource;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zodb.app.AppZODB;
 import nl.zeesoft.zodb.app.handler.JsonZODBRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 
@@ -8,10 +9,11 @@ public class JavaScriptZODBDataManager {
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder script = new ZStringBuilder();
 		
-		String path = "../ZODB" + JsonZODBRequestHandler.PATH;
+		String path = "../" + AppZODB.NAME + JsonZODBRequestHandler.PATH;
 		
 		script.append("var ZODB = ZODB || {};\n");
 		script.append("ZODB.dm = ZODB.dm || {};\n");
+		script.append("ZODB.dm.selectedId = 0;\n");
 		script.append("ZODB.dm.next = function() {\n");
 		script.append("    elemS = window.document.getElementById(\"start\");\n");
 		script.append("    elemM = window.document.getElementById(\"max\");\n");
@@ -48,6 +50,10 @@ public class JavaScriptZODBDataManager {
 		script.append("    if (elem!=null) {\n");
 		script.append("        request.max = parseInt(elem.value,10);\n");
 		script.append("    }\n");
+		script.append("    var elem = window.document.getElementById(\"fetched\");\n");
+		script.append("    if (elem!=null) {\n");
+		script.append("        elem.innerHTML = \"Fetching&nbsp;...\";\n");
+		script.append("    }\n");
 		script.append("    ZODB.xhr.postJSON(\"" + path + "\",request,ZODB.dm.listCallback,ZODB.dm.listCallback);\n");
 		script.append("};\n");
 		script.append("ZODB.dm.listCallback = function(xhr) {\n");
@@ -81,21 +87,37 @@ public class JavaScriptZODBDataManager {
 		script.append("        html+='<th align=\"right\" width=\"9%\">';\n");
 		script.append("        html+= \"ID\";\n");
 		script.append("        html+=\"</th>\";\n");
-		script.append("        html+='<th align=\"left\">';\n");
+		script.append("        html+='<th align=\"left\" width=\"80%\">';\n");
 		script.append("        html+= \"Name\";\n");
+		script.append("        html+=\"</th>\";\n");
+		script.append("        html+='<th align=\"left\">';\n");
+		script.append("        html+= \"Modified\";\n");
 		script.append("        html+=\"</th>\";\n");
 		script.append("        html+=\"</tr>\";\n");
 		script.append("    html+=\"<tbody>\";\n");
+		script.append("    var fetched = 0;\n");
+		script.append("    var selId = 0;\n");
 		script.append("    for (var num in listObject.results) {\n");
+		script.append("        var sel = \"\";\n");
+		script.append("        if (listObject.results[num].id==ZODB.dm.selectedId) {\n");
+		script.append("            sel = ' checked=\"checked\"';\n");
+		script.append("            selId = listObject.results[num].id;\n");
+		script.append("        }\n");
+		script.append("        fetched++;\n");
 		script.append("        html+=\"<tr>\";\n");
 		script.append("        html+='<td width=\"1%\">';\n");
-		script.append("        html+= '<input type=\"radio\" name=\"selector\" value=\"' + listObject.results[num].id + '\" onchange=\"ZODB.dm.select();\"/>';\n");
+		script.append("        html+= '<input type=\"radio\" name=\"selector\" value=\"' + listObject.results[num].id + '\" onchange=\"ZODB.dm.select();\"' + sel + '/>';\n");
 		script.append("        html+=\"</td>\";\n");
 		script.append("        html+='<td align=\"right\" width=\"9%\">';\n");
 		script.append("        html+= listObject.results[num].id;\n");
 		script.append("        html+=\"</td>\";\n");
 		script.append("        html+='<td>';\n");
 		script.append("        html+= listObject.results[num].name;\n");
+		script.append("        html+=\"</td>\";\n");
+		script.append("        html+='<td>';\n");
+		script.append("        var dat = new Date();\n");
+		script.append("        dat.setTime(listObject.results[num].modified);\n");
+		script.append("        html+= dat.toISOString().replace(\"T\",\"&nbsp;\").replace(\"Z\",\"\");\n");
 		script.append("        html+=\"</td>\";\n");
 		script.append("        html+=\"</tr>\";\n");
 		script.append("    }\n");
@@ -105,9 +127,24 @@ public class JavaScriptZODBDataManager {
 		script.append("    if (elem!=null) {\n");
 		script.append("        elem.innerHTML = html;\n");
 		script.append("    }\n");
+		script.append("    var elem = window.document.getElementById(\"fetched\");\n");
+		script.append("    if (elem!=null) {\n");
+		script.append("        html=\"Fetched&nbsp;\";\n");
+		script.append("        html+=fetched;\n");
+		script.append("        html+=\" / \";\n");
+		script.append("        html+=listObject.size\n");
+		script.append("        elem.innerHTML = html;\n");
+		script.append("    }\n");
+		script.append("    if (selId>0) {\n");
+		script.append("        ZODB.dm.selectById(selId);\n");
+		script.append("    }\n");
 		script.append("};\n");
 		script.append("ZODB.dm.select = function() {\n");
 		script.append("    var id = ZODB.dom.getSelectedRadioByElementName(\"selector\");\n");
+		script.append("    ZODB.dm.selectedId = id;\n");
+		script.append("    ZODB.dm.selectById(id);\n");
+		script.append("};\n");
+		script.append("ZODB.dm.selectById = function(id) {\n");
 		script.append("    var request = {};\n");
 		script.append("    request.type = \"" + DatabaseRequest.TYPE_GET + "\";\n");
 		script.append("    request.id = id;\n");
@@ -220,6 +257,11 @@ public class JavaScriptZODBDataManager {
 		script.append("    }\n");
 		script.append("};\n");
 		script.append("ZODB.dm.onload = function() {\n");
+		script.append("    var elem = window.document.getElementById(\"name\");\n");
+		script.append("    if (elem!=null) {\n");
+		script.append("        elem.blur();\n");
+		script.append("        elem.focus();\n");
+		script.append("    }\n");
 		script.append("    ZODB.dm.list();\n");
 		script.append("    ZODB.dom.bindEnterFunctionToElementId(\"name\",ZODB.dm.list);\n");
 		script.append("    ZODB.dom.bindEnterFunctionToElementId(\"start\",ZODB.dm.list);\n");

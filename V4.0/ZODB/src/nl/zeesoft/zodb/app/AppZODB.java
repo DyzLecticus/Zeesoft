@@ -5,7 +5,7 @@ import nl.zeesoft.zodb.app.handler.HtmlZODBDataManagerHandler;
 import nl.zeesoft.zodb.app.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.app.handler.JavaScriptZODBDataManagerHandler;
 import nl.zeesoft.zodb.app.handler.JavaScriptZODBHandler;
-import nl.zeesoft.zodb.app.handler.JsonTestResultsHandler;
+import nl.zeesoft.zodb.app.handler.JsonAppTestResultsHandler;
 import nl.zeesoft.zodb.app.handler.JsonZODBRequestHandler;
 import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequest;
@@ -38,7 +38,7 @@ public class AppZODB extends AppObject implements DatabaseStateListener {
 		handlers.add(new JavaScriptZODBDataManagerHandler(configuration,this));
 		handlers.add(new HtmlZODBDataManagerHandler(configuration,this));
 		handlers.add(new JsonZODBRequestHandler(configuration,this));
-		handlers.add(new JsonTestResultsHandler(configuration,this));
+		handlers.add(new JsonAppTestResultsHandler(configuration,this));
 		database = getNewDatabase();
 		database.addListener(this);
 		tester = getNewTester();

@@ -39,8 +39,6 @@ public class Config {
 	public Config() {
 		ZDKFactory factory = new ZDKFactory();
 		messenger = factory.getMessenger();
-		messenger.setPrintDebugMessages(debug);
-		messenger.start();
 		union = factory.getWorkerUnion(messenger);
 		addApplication(new AppZODB(this));
 		addApplications();

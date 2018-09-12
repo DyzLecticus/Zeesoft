@@ -1,8 +1,7 @@
 package nl.zeesoft.zodb.db;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.SortedMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
@@ -50,19 +49,22 @@ public class DatabaseRequestHandler {
 						}
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
-					SortedMap<String,Long> list = null;
+					List<IndexElement> list = null;
+					List<Integer> data = new ArrayList<Integer>();
 					if (request.startsWith.length()>0) {
-						list = database.listObjectsThatStartWith(request.startsWith,request.start,request.max);
+						list = database.listObjectsThatStartWith(request.startsWith,request.start,request.max,data);
 					} else if (request.contains.length()>0) {
-						list = database.listObjectsThatContain(request.contains,request.start,request.max);
+						list = database.listObjectsThatContain(request.contains,request.start,request.max,data);
 					} else {
-						list = database.listObjects(request.start,request.max);
+						list = database.listObjects(request.start,request.max,data);
 					}
-					for (Entry<String,Long> entry: list.entrySet()) {
-						DatabaseResult res = new DatabaseResult();
-						res.name = entry.getKey();
-						res.id = entry.getValue();
+					for (IndexElement element: list) {
+						DatabaseResult res = new DatabaseResult(element);
+						res.obj = null;
 						response.results.add(res);
+					}
+					if (data.size()>0) {
+						response.size = data.get(0);
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
 					if (response.request.id>0) {

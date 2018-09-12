@@ -3,7 +3,6 @@ package nl.zeesoft.zodb.test;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
-import java.util.SortedMap;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -98,14 +97,14 @@ public class TestDatabase extends TestObject {
 				System.out.println("Reading 250 cached objects took: " + ms + " ms");
 			}
 
-			SortedMap<String,Long> list = db.listObjects(100,100);
+			List<IndexElement> list = db.listObjects(100,100,null);
 			assertEqual(list.size(),100,"List size does not match expectation");
 
-			list = db.listObjects(200,100);
+			list = db.listObjects(200,100,null);
 			assertEqual(list.size(),50,"List size does not match expectation");
 			System.out.println("Obtained list size: " + list.size() + " (start: " + 200 + ", max: " + 100 + ")");
-			System.out.println("First list object: " + list.firstKey());
-			System.out.println("Last list object: " + list.lastKey());
+			System.out.println("First list object: " + list.get(0).name);
+			System.out.println("Last list object: " + list.get((list.size() - 1)).name);
 		}
 				
 		sleep(1000);

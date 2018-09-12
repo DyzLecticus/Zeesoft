@@ -9,10 +9,10 @@ import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.app.AppObject;
 import nl.zeesoft.zodb.app.TesterObject;
 
-public class JsonTestResultsHandler extends JsonHandlerObject {
+public class JsonAppTestResultsHandler extends JsonHandlerObject {
 	public final static String	PATH	= "/testResults.json"; 
 	
-	public JsonTestResultsHandler(Config config, AppObject app) {
+	public JsonAppTestResultsHandler(Config config, AppObject app) {
 		super(config,app,PATH);
 	}
 
@@ -26,12 +26,12 @@ public class JsonTestResultsHandler extends JsonHandlerObject {
 			TesterObject tester = app.tester;
 			JsFile results = tester.getResults();
 			if (tester.isTesting()) {
-				r = setResponse(response,503,"Tester is testing. Please wait.");
+				r = setResponse(response,503,getApplicationName() + " is testing itself. Please wait.");
 			} else if (results==null) {
 				if (app.selfTest) {
-					r = setResponse(response,503,"Tester has not started yet. Please wait.");
+					r = setResponse(response,503,getApplicationName() + " tester has not started yet. Please wait.");
 				} else {
-					r = setResponse(response,405,"Test results are not available");
+					r = setResponse(response,405,getApplicationName() + " test results are not available");
 				}
 			} else {
 				if (getConfiguration().isDebug()) {

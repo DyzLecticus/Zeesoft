@@ -15,6 +15,7 @@ public class ZODBTester extends TesterObject {
 		super(config,url);
 	}
 	
+	@Override
 	protected void initializeRequestsNoLock() {
 		DatabaseRequest req = null;
 		DatabaseResponse res = null;
@@ -24,7 +25,7 @@ public class ZODBTester extends TesterObject {
 
 		List<String> objectNames = new ArrayList<String>();
 		for (int i = 1; i <= num; i++) {
-			objectNames.add("SelfTestObject" + String.format("%03d",i));
+			objectNames.add("Object" + String.format("%03d",i));
 		}
 		
 		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
@@ -34,8 +35,8 @@ public class ZODBTester extends TesterObject {
 		
 		for (String name: objectNames) {
 			req = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-			req.name = name;
-			req.obj = getTestObject(req.name);
+			req.name = getObjectName(name);
+			req.obj = getTestObject(name);
 			res = new DatabaseResponse();
 			addRequestNoLock(req.toJson(),res.toJson());
 		}
@@ -44,12 +45,12 @@ public class ZODBTester extends TesterObject {
 		for (String name: objectNames) {
 			id++;
 			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-			req.name = name;
+			req.name = getObjectName(name);
 			res = new DatabaseResponse();
 			result = new DatabaseResult();
 			result.name = req.name;
 			result.id = id;
-			result.obj = getTestObject(req.name);
+			result.obj = getTestObject(name);
 			res.results.add(result);
 			addRequestNoLock(req.toJson(),res.toJson());
 		}
@@ -57,11 +58,12 @@ public class ZODBTester extends TesterObject {
 		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 		req.contains = "SelfTest";
 		res = new DatabaseResponse();
+		res.size = num;
 		id = 0;
 		for (String name: objectNames) {
 			id++;
 			result = new DatabaseResult();
-			result.name = name;
+			result.name = getObjectName(name);
 			result.id = id;
 			res.results.add(result);
 			if (id==req.max) {
@@ -70,11 +72,27 @@ public class ZODBTester extends TesterObject {
 		}
 		addRequestNoLock(req.toJson(),res.toJson());
 	}
+
+	@Override
+	protected JsFile getCheckResponse(JsFile response) {
+		DatabaseResponse res = new DatabaseResponse();
+		res.fromJson(response);
+		if (res.results.size()>0) {
+			for (DatabaseResult result: res.results) {
+				result.modified = 0;
+			}
+		}
+		return res.toJson();
+	}
 	
 	private JsFile getTestObject(String name) {
 		JsFile obj = new JsFile();
 		obj.rootElement = new JsElem();
 		obj.rootElement.children.add(new JsElem("testData",name,true));
 		return obj;
+	}
+	
+	private String getObjectName(String name) {
+		return AppZODB.NAME + "/Objects/" + name;
 	}
 }

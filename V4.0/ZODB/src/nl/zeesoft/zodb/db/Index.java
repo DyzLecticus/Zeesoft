@@ -2,6 +2,7 @@ package nl.zeesoft.zodb.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -71,16 +72,16 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected SortedMap<String,Long> listObjects(int start, int max) {
-		return listObjects(start,max,null,null,null);
+	protected List<IndexElement> listObjects(int start, int max,List<Integer> data) {
+		return listObjects(start,max,null,null,null,data);
 	}
 
-	protected SortedMap<String,Long> listObjectsThatStartWith(String startWith,int start, int max) {
-		return listObjects(start,max,startWith,null,null);
+	protected List<IndexElement> listObjectsThatStartWith(String startWith,int start, int max,List<Integer> data) {
+		return listObjects(start,max,startWith,null,null,data);
 	}
 
-	protected SortedMap<String,Long> listObjectsThatContain(String contains,int start, int max) {
-		return listObjects(start,max,null,contains,null);
+	protected List<IndexElement> listObjectsThatContain(String contains,int start, int max,List<Integer> data) {
+		return listObjects(start,max,null,contains,null,data);
 	}
 	
 	protected List<IndexElement> getObjectsByNameStartsWith(String startsWith) {
@@ -236,35 +237,13 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private SortedMap<String,Long> listObjects(int start, int max,String startsWith,String contains,String endsWith) {
-		SortedMap<String,Long> r = new TreeMap<String,Long>();
-		if (start<0) {
-			start = 0;
-		}
-		if (max<1) {
-			max = 1;
-		}
-		List<IndexElement> elements = null;
+	private List<IndexElement> listObjects(int start, int max,String startsWith,String contains,String endsWith,List<Integer> data) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			if (
-				(startsWith!=null && startsWith.length()>0) ||
-				(contains!=null && contains.length()>0) ||
-				(endsWith!=null && endsWith.length()>0)
-				) {
-				elements = listObjectsByNameNoLock(startsWith,contains,endsWith);
-			} else {
-				elements = new ArrayList<IndexElement>(elementsByName.values());
-			}
-		}
-		if (elements!=null && start<=(elements.size() - 1)) {
-			int end = start + max;
-			if (end>elements.size()) {
-				end = elements.size();
-			}
-			for (int i = start; i < end; i++) {
-				IndexElement element = elements.get(i);
-				r.put(element.name,element.id);
+			SortedMap<String,Long> list = listObjectsNoLock(start, max, startsWith, contains, endsWith, data);
+			for (Entry<String,Long> entry: list.entrySet()) {
+				r.add(elementsById.get(entry.getValue()).copy());
 			}
 		}
 		unlockMe(this);
@@ -289,6 +268,44 @@ public class Index extends Locker {
 				lockMe(this);
 				readObjectNoLock(element);
 				unlockMe(this);
+			}
+		}
+		return r;
+	}
+
+	private SortedMap<String,Long> listObjectsNoLock(int start, int max,String startsWith,String contains,String endsWith,List<Integer> data) {
+		SortedMap<String,Long> r = new TreeMap<String,Long>();
+		if (start<0) {
+			start = 0;
+		}
+		if (max<1) {
+			max = 1;
+		}
+		List<IndexElement> elements = null;
+		if (open) {
+			if (
+				(startsWith!=null && startsWith.length()>0) ||
+				(contains!=null && contains.length()>0) ||
+				(endsWith!=null && endsWith.length()>0)
+				) {
+				elements = listObjectsByNameNoLock(startsWith,contains,endsWith);
+			} else {
+				elements = new ArrayList<IndexElement>(elementsByName.values());
+			}
+		}
+		if (elements!=null) {
+			if (data!=null) {
+				data.add(elements.size());
+			}
+			if (start<=(elements.size() - 1)) {
+				int end = start + max;
+				if (end>elements.size()) {
+					end = elements.size();
+				}
+				for (int i = start; i < end; i++) {
+					IndexElement element = elements.get(i);
+					r.put(element.name,element.id);
+				}
 			}
 		}
 		return r;

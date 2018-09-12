@@ -13,9 +13,13 @@ public class HtmlAppIndex extends HtmlResource {
 		setTitle("Applications");
 		
 		ZStringBuilder html = new ZStringBuilder();
+		html.append("This servlet consists of the following applications");
+		html.append("<hr />");
+		
 		html.append("<table style=\"width: 100%;\">\n");
 		html.append("<tbody>\n");
-		for (AppObject app: getConfiguration().getApplications()) {
+		for (int i = (getConfiguration().getApplications().size() - 1); i >= 0; i--) {
+			AppObject app = getConfiguration().getApplications().get(i);
 			html.append("<tr>\n");
 			html.append("<td width=\"20%\">");
 			html.append("<a href=\"" + getConfiguration().getApplicationUrl(app.name) + "/index.html\">" + app.name + "</a>");

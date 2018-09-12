@@ -13,6 +13,7 @@ public class DatabaseResponse {
 	public int						statusCode		= 200;
 	public List<ZStringBuilder>		errors			= new ArrayList<ZStringBuilder>();
 	public List<DatabaseResult>		results			= new ArrayList<DatabaseResult>();
+	public int						size			= 0;
 		
 	public JsFile toJson() {
 		JsFile json = new JsFile();
@@ -32,6 +33,9 @@ public class DatabaseResponse {
 				JsFile resJson = result.toJson();
 				ressElem.children.add(resJson.rootElement);
 			}
+		}
+		if (size>0) {
+			json.rootElement.children.add(new JsElem("size","" + size));
 		}
 		return json;
 	}
@@ -57,6 +61,7 @@ public class DatabaseResponse {
 					results.add(res);
 				}
 			}
+			size = json.rootElement.getChildInt("size",size);
 		}
 	}
 }

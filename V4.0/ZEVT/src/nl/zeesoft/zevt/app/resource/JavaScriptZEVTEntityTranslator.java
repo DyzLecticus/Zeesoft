@@ -1,13 +1,14 @@
 package nl.zeesoft.zevt.app.resource;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zevt.app.AppZEVT;
 import nl.zeesoft.zevt.app.handler.JsonZEVTRequestHandler;
 
 public class JavaScriptZEVTEntityTranslator {
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder script = new ZStringBuilder();
 		
-		String path = "../ZEVT" + JsonZEVTRequestHandler.PATH;
+		String path = "../" + AppZEVT.NAME + JsonZEVTRequestHandler.PATH;
 		
 		script.append("var ZEVT = ZEVT || {};\n");
 		script.append("ZEVT.et = ZEVT.et || {};\n");
@@ -50,6 +51,11 @@ public class JavaScriptZEVTEntityTranslator {
 		script.append("    }\n");
 		script.append("};\n");
 		script.append("ZEVT.et.onload = function() {\n");
+		script.append("    var elem = window.document.getElementById(\"sequence\");\n");
+		script.append("    if (elem!=null) {\n");
+		script.append("        elem.blur();\n");
+		script.append("        elem.focus();\n");
+		script.append("    }\n");
 		script.append("    ZODB.dom.bindEnterFunctionToElementId(\"sequence\",ZEVT.et.translate);\n");
 		script.append("    ZODB.dom.bindEnterFunctionToElementId(\"translation\",ZEVT.et.retranslate);\n");
 		script.append("};\n");

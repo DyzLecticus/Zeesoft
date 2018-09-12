@@ -14,7 +14,7 @@ import nl.zeesoft.zevt.trans.TranslatorRequestHandler;
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
 import nl.zeesoft.zevt.trans.TranslatorStateListener;
 import nl.zeesoft.zodb.app.AppObject;
-import nl.zeesoft.zodb.app.handler.JsonTestResultsHandler;
+import nl.zeesoft.zodb.app.handler.JsonAppTestResultsHandler;
 
 public class AppZEVT extends AppObject implements TranslatorStateListener {
 	public static final String		NAME			= "ZEVT";
@@ -45,7 +45,7 @@ public class AppZEVT extends AppObject implements TranslatorStateListener {
 		handlers.add(new JsonZEVTRequestHandler(configuration,this));
 		handlers.add(new JsonZEVTLanguagesHandler(configuration,this));
 		handlers.add(new JsonZEVTTypesHandler(configuration,this));
-		handlers.add(new JsonTestResultsHandler(configuration,this));
+		handlers.add(new JsonAppTestResultsHandler(configuration,this));
 		translator.initialize();
 		tester = getNewTester();
 		super.initialize();

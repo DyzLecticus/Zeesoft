@@ -159,15 +159,19 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 
 	protected void handledRequestNoLock(TesterRequest request, JsFile response, ZStringBuilder error) {
 		request.time = (new Date()).getTime() - request.time;
-		request.response = response;
+		request.response = getCheckResponse(response);
 		request.error = error;
 		if (error.length()==0) {
-			checkResponse(request,response);
+			checkResponse(request);
 		}
 	}
 	
-	protected void checkResponse(TesterRequest request, JsFile response) {
-		ZStringBuilder res = response.toStringBuilder();
+	protected JsFile getCheckResponse(JsFile response) {
+		return response;
+	}
+	
+	protected void checkResponse(TesterRequest request) {
+		ZStringBuilder res = request.response.toStringBuilder();
 		ZStringBuilder exp = request.expectedResponse.toStringBuilder();
 		if (!res.equals(exp)) {
 			request.error = new ZStringBuilder("Response does not match expectation");
