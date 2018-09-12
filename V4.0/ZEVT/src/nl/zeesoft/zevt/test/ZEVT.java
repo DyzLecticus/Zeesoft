@@ -6,12 +6,9 @@ import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
-import nl.zeesoft.zevt.app.AppZEVT;
+import nl.zeesoft.zevt.mod.ModZEVT;
 import nl.zeesoft.zodb.test.ZODB;
 
-/**
- * Documents and tests the ZSD.
- */
 public class ZEVT extends LibraryObject {
 	public ZEVT(Tester tester) {
 		super(tester);
@@ -32,7 +29,7 @@ public class ZEVT extends LibraryObject {
 	public void describe() {
 		System.out.println("Zeesoft Entity Value Translator");
 		System.out.println("===============================");
-		System.out.println(AppZEVT.DESC);
+		System.out.println(ModZEVT.DESC);
 		System.out.println();
 		describeDependencies();
 		System.out.println();

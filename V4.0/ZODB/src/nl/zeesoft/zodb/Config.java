@@ -12,14 +12,14 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zodb.app.AppObject;
-import nl.zeesoft.zodb.app.AppZODB;
-import nl.zeesoft.zodb.app.handler.HandlerObject;
-import nl.zeesoft.zodb.app.handler.HtmlAppIndexHandler;
-import nl.zeesoft.zodb.app.handler.JsonZODBRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseClient;
 import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
+import nl.zeesoft.zodb.mod.ModObject;
+import nl.zeesoft.zodb.mod.ModZODB;
+import nl.zeesoft.zodb.mod.handler.HandlerObject;
+import nl.zeesoft.zodb.mod.handler.HtmlModIndexHandler;
+import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 
 public class Config {
 	private Messenger			messenger			= null;
@@ -30,18 +30,18 @@ public class Config {
 	private String				dataDir				= "data/";
 	private String				servletUrl			= "http://127.0.0.1";
 	
-	private List<AppObject>		applications		= new ArrayList<AppObject>();
+	private List<ModObject>		modules				= new ArrayList<ModObject>();
 	
 	private HandlerObject		notFoundHtmlHandler	= null;
 	private HandlerObject		notFoundJsonHandler	= null;
-	private HandlerObject		appIndexHtmlHandler	= null;
+	private HandlerObject		modIndexHtmlHandler	= null;
 	
 	public Config() {
 		ZDKFactory factory = new ZDKFactory();
 		messenger = factory.getMessenger();
 		union = factory.getWorkerUnion(messenger);
-		addApplication(new AppZODB(this));
-		addApplications();
+		addModule(new ModZODB(this));
+		addModules();
 	}
 	
 	public void initialize(boolean debug,String installDir,String servletUrl) {
@@ -72,28 +72,28 @@ public class Config {
 		
 		messenger.start();
 
-		for (AppObject app: applications) {
-			debug(this,"Initializing " + app.name + " ...");
-			app.initialize();
-			debug(this,"Initialized " + app.name);
-			if (app.name.equals(AppZODB.NAME)) {
-				notFoundHtmlHandler = app.notFoundHtmlHandler;
-				notFoundJsonHandler = app.notFoundJsonHandler;
+		for (ModObject mod: modules) {
+			debug(this,"Initializing " + mod.name + " ...");
+			mod.initialize();
+			debug(this,"Initialized " + mod.name);
+			if (mod.name.equals(ModZODB.NAME)) {
+				notFoundHtmlHandler = mod.notFoundHtmlHandler;
+				notFoundJsonHandler = mod.notFoundJsonHandler;
 			}
 		}
-		appIndexHtmlHandler = getNewHtmlAppIndexHandler();
+		modIndexHtmlHandler = getNewHtmlAppIndexHandler();
 	}
 	
 	public HandlerObject getHandlerForRequest(HttpServletRequest request) {
 		HandlerObject r = null;
 		String path = request.getServletPath().toLowerCase();
 		if (path.equals("/") || path.equals("/index.html")) {
-			r = appIndexHtmlHandler;
+			r = modIndexHtmlHandler;
 		} else {
-			String name = getApplicationNameFromPath(path);
-			AppObject app = getApplication(name);
-			if (app!=null) {
-				r = app.getHandlerForRequest(request);
+			String name = getModuleNameFromPath(path);
+			ModObject mod = getModule(name);
+			if (mod!=null) {
+				r = mod.getHandlerForRequest(request);
 			}
 			if (r==null) {
 				if (path.endsWith(".json")) {
@@ -107,14 +107,14 @@ public class Config {
 	}
 	
 	public void destroy() {
-		for (int i = applications.size() - 1; i >= 0; i--) {
-			AppObject app = applications.get(i);
-			debug(this,"Destroying " + app.name + " ...");
-			app.destroy();
-			debug(this,"Destroyed " + app.name);
-			app.configuration = null;
+		for (int i = modules.size() - 1; i >= 0; i--) {
+			ModObject mod = modules.get(i);
+			debug(this,"Destroying " + mod.name + " ...");
+			mod.destroy();
+			debug(this,"Destroyed " + mod.name);
+			mod.configuration = null;
 		}
-		applications.clear();
+		modules.clear();
 		messenger.stop();
 		union.stopWorkers();
 		messenger.whileWorking();
@@ -126,13 +126,13 @@ public class Config {
 		json.rootElement.children.add(new JsElem("debug","" + debug));
 		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
 		json.rootElement.children.add(new JsElem("servletUrl",servletUrl,true));
-		JsElem appsElem = new JsElem("applications",true);
-		json.rootElement.children.add(appsElem);
-		for (AppObject app: applications) {
-			JsElem appElem = new JsElem();
-			appsElem.children.add(appElem);
-			JsFile appJson = app.toJson();
-			appElem.children = appJson.rootElement.children;
+		JsElem modsElem = new JsElem("modules",true);
+		json.rootElement.children.add(modsElem);
+		for (ModObject mod: modules) {
+			JsElem modElem = new JsElem();
+			modsElem.children.add(modElem);
+			JsFile modJson = mod.toJson();
+			modElem.children = modJson.rootElement.children;
 		}
 		return json;
 	}
@@ -142,57 +142,59 @@ public class Config {
 			debug = json.rootElement.getChildBoolean("debug",debug);
 			dataDir = json.rootElement.getChildString("dataDir",dataDir);
 			servletUrl = json.rootElement.getChildString("servletUrl",servletUrl);
-			JsElem appsElem = json.rootElement.getChildByName("applications");
-			for (JsElem appElem: appsElem.children) {
-				String name = appElem.getChildString("name");
-				AppObject app = getApplication(name);
-				if (app!=null) {
-					JsFile appJson = new JsFile();
-					appJson.rootElement = appElem;
-					app.fromJson(appJson);
-				} else {
-					error(this,"Application not found: " + name);
+			JsElem modsElem = json.rootElement.getChildByName("modules");
+			if (modsElem!=null) {
+				for (JsElem modElem: modsElem.children) {
+					String name = modElem.getChildString("name");
+					ModObject mod = getModule(name);
+					if (mod!=null) {
+						JsFile modJson = new JsFile();
+						modJson.rootElement = modElem;
+						mod.fromJson(modJson);
+					} else {
+						error(this,"Module not found: " + name);
+					}
 				}
 			}
 		}
 	}
 
-	public AppObject getApplication(String name) {
-		AppObject r = null;
-		for (AppObject app: applications) {
-			if (app.name.equalsIgnoreCase(name)) {
-				r = app;
+	public ModObject getModule(String name) {
+		ModObject r = null;
+		for (ModObject mod: modules) {
+			if (mod.name.equalsIgnoreCase(name)) {
+				r = mod;
 				break;
 			}
 		}
 		return r;
 	}
 
-	public String getApplicationUrl(String name) {
+	public String getModuleUrl(String name) {
 		String r = "";
-		AppObject app = getApplication(name);
-		if (app!=null) {
-			if (app.url.length()>0) {
-				r = app.url;
+		ModObject mod = getModule(name);
+		if (mod!=null) {
+			if (mod.url.length()>0) {
+				r = mod.url;
 			} else {
-				r = servletUrl + "/" + app.name;
+				r = servletUrl + "/" + mod.name;
 			}
 		}
 		return r;
 	}
 
-	public AppZODB getZODB() {
-		AppZODB r = null;
-		AppObject app = getApplication(AppZODB.NAME);
-		if (app!=null && app instanceof AppZODB) {
-			r = (AppZODB) app;
+	public ModZODB getZODB() {
+		ModZODB r = null;
+		ModObject mod = getModule(ModZODB.NAME);
+		if (mod!=null && mod instanceof ModZODB) {
+			r = (ModZODB) mod;
 		}
 		return r;
 	}
 
 	public void handleDatabaseRequest(DatabaseRequest request,DatabaseClientListener listener) {
 		DatabaseClient client = new DatabaseClient(this);
-		client.handleRequest(request,getApplicationUrl(AppZODB.NAME) + JsonZODBRequestHandler.PATH,listener);
+		client.handleRequest(request,getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH,listener);
 	}
 
 	public String getFullDataDir() {
@@ -241,12 +243,12 @@ public class Config {
 		this.debug = debug;
 	}
 
-	public List<AppObject> getApplications() {
-		return new ArrayList<AppObject>(applications);
+	public List<ModObject> getModules() {
+		return new ArrayList<ModObject>(modules);
 	}
 	
 	protected HandlerObject getNewHtmlAppIndexHandler() {
-		return new HtmlAppIndexHandler(this);
+		return new HtmlModIndexHandler(this);
 	}
 	
 	protected void install(String fileName) {
@@ -254,10 +256,10 @@ public class Config {
 		JsFile json = toJson();
 		ZStringBuilder err = json.toFile(fileName,true);
 		if (err.length()==0) {
-			for (AppObject app: applications) {
-				debug(this,"Installing " + app.name + " ...");
-				app.install();
-				debug(this,"Installed " + app.name);
+			for (ModObject mod: modules) {
+				debug(this,"Installing " + mod.name + " ...");
+				mod.install();
+				debug(this,"Installed " + mod.name);
 			}
 		}
 		if (err.length()>0) {
@@ -267,15 +269,15 @@ public class Config {
 		}
 	}
 	
-	protected void addApplications() {
+	protected void addModules() {
 		// Override to extend
 	}
 	
-	protected void addApplication(AppObject app) {
-		applications.add(app);
+	protected void addModule(ModObject mod) {
+		modules.add(mod);
 	}
 	
-	private String getApplicationNameFromPath(String path) {
+	private String getModuleNameFromPath(String path) {
 		String r = "";
 		String[] elems = path.split("/");
 		String lastElem = elems[(elems.length - 1)];

@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.app.AppZODB;
+import nl.zeesoft.zodb.mod.ModZODB;
 
 public class TestConfig extends TestObject {
 	public TestConfig(Tester tester) {
@@ -41,8 +41,8 @@ public class TestConfig extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Config config = new Config();
-		config.getApplication(AppZODB.NAME).url = "http://test.domain";
-		config.getApplication(AppZODB.NAME).selfTest = true;
+		config.getModule(ModZODB.NAME).url = "http://test.domain";
+		config.getModule(ModZODB.NAME).selfTest = true;
 		config.setDebug(true);
 		config.setDataDir("dir/");
 		String fullDataDir = config.getFullDataDir();

@@ -17,6 +17,8 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
+	<property name="classpath" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/db nl/zeesoft/zodb/test zdk.jar"/>
+
 	<target name="copyZDK" description="Copy the ZDK release">
 		<mkdir dir="${lib}"/>
 		<unzip src="${releasesZDK}/zdk-${versionZDK}.zip" dest="${lib}">
@@ -57,7 +59,7 @@
 		<!-- Generate manifest -->
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/db nl/zeesoft/zodb/test zdk.jar"/>  
+			<attribute name="Class-path" value="${classpath}"/>  
 			<attribute name="Main-Class" value="nl.zeesoft.zodb.test.ZODB"/>
 		</manifest>		
 		<!-- Build jar file -->
@@ -102,7 +104,7 @@
 	<target name="makeWar">
 		<manifest file="${dist}/warmanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
-			<attribute name="Class-path" value="nl/zeesoft/zodb nl/zeesoft/zodb/app nl/zeesoft/zodb/app/handler nl/zeesoft/zodb/app/resource nl/zeesoft/zodb/db nl/zeesoft/zodb/test zdk.jar"/>  
+			<attribute name="Class-path" value="${classpath}"/>  
 		</manifest>		
 		<antcall target="devWar"/>
 		<antcall target="prodWar"/>

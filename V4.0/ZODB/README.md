@@ -39,7 +39,7 @@ The output of this test shows the converted JSON.
   "debug": true,
   "dataDir": "dir/",
   "servletUrl": "http://127.0.0.1",
-  "applications": [
+  "modules": [
     {
       "name": "ZODB",
       "url": "http://test.domain",
@@ -149,7 +149,7 @@ The output of this test shows the converted JSON.
 Test results
 ------------
 All 3 tests have been executed successfully (16 assertions).  
-Total test duration: 78 ms (total sleep duration: 0 ms).  
+Total test duration: 60 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zodb.test.TestConfig: 542 Kb / 0 Mb

@@ -6,11 +6,8 @@ import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
-import nl.zeesoft.zodb.app.AppZODB;
+import nl.zeesoft.zodb.mod.ModZODB;
 
-/**
- * Documents and tests the ZSD.
- */
 public class ZODB extends LibraryObject {
 	public ZODB(Tester tester) {
 		super(tester);
@@ -30,7 +27,7 @@ public class ZODB extends LibraryObject {
 	public void describe() {
 		System.out.println("Zeesoft Object Database");
 		System.out.println("=======================");
-		System.out.println(AppZODB.DESC);
+		System.out.println(ModZODB.DESC);
 		System.out.println();
 		describeDependencies();
 		System.out.println();

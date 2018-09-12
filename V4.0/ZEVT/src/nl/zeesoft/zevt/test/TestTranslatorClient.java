@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.ZEVTConfig;
-import nl.zeesoft.zevt.app.AppZEVT;
+import nl.zeesoft.zevt.mod.ModZEVT;
 import nl.zeesoft.zevt.trans.TranslatorClientListener;
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
 
@@ -32,9 +32,9 @@ public class TestTranslatorClient extends TestObject implements TranslatorClient
 		TranslatorRequestResponse request = new TranslatorRequestResponse();
 		request.sequence = new ZStringSymbolParser("1 oktober");
 
-		AppZEVT app = (AppZEVT) config.getApplication(AppZEVT.NAME);
-		app.url = "http://127.0.0.1:8080/ZEVT/ZEVT";
-		app.handleRequest(request,this);
+		ModZEVT mod = (ModZEVT) config.getModule(ModZEVT.NAME);
+		mod.url = "http://127.0.0.1:8080/ZEVT/ZEVT";
+		mod.handleRequest(request,this);
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nl.zeesoft.zodb.app.handler.HandlerObject;
+import nl.zeesoft.zodb.mod.handler.HandlerObject;
 
 @WebServlet("/ZODBServlet")
 public class ZODBServlet extends HttpServlet {
