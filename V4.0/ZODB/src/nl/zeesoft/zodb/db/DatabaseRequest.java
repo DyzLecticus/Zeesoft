@@ -1,9 +1,10 @@
 package nl.zeesoft.zodb.db;
 
+import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
-public class DatabaseRequest {
+public class DatabaseRequest implements JsAble {
 	public static final String	TYPE_LIST	= "LIST";
 	public static final String	TYPE_GET	= "GET";
 	public static final String	TYPE_ADD	= "ADD";
@@ -27,6 +28,7 @@ public class DatabaseRequest {
 		this.type = type;
 	}
 	
+	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
@@ -53,6 +55,7 @@ public class DatabaseRequest {
 		return json;
 	}
 	
+	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			type = json.rootElement.getChildString("type",type);

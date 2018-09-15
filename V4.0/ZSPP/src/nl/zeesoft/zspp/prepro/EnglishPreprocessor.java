@@ -1,7 +1,7 @@
 package nl.zeesoft.zspp.prepro;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zodb.Languages;
+import nl.zeesoft.zodb.lang.Languages;
 
 public class EnglishPreprocessor extends LanguagePreprocessor {
 	public EnglishPreprocessor() {

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
@@ -13,7 +14,7 @@ import nl.zeesoft.zodb.mod.handler.HandlerObject;
 import nl.zeesoft.zodb.mod.handler.HtmlNotFoundHandler;
 import nl.zeesoft.zodb.mod.handler.JsonNotFoundHandler;
 
-public abstract class ModObject {
+public abstract class ModObject implements JsAble {
 	public Config				configuration			= null;
 	
 	public String				name					= "";
@@ -50,7 +51,8 @@ public abstract class ModObject {
 	public void destroy() {
 		// Override to implement
 	}
-	
+
+	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
@@ -59,7 +61,8 @@ public abstract class ModObject {
 		json.rootElement.children.add(new JsElem("selfTest","" + selfTest));
 		return json;
 	}
-	
+
+	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			name = json.rootElement.getChildString("name",name);

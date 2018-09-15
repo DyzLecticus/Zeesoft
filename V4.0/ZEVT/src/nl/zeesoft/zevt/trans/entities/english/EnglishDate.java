@@ -5,7 +5,7 @@ import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
-import nl.zeesoft.zodb.Languages;
+import nl.zeesoft.zodb.lang.Languages;
 
 public class EnglishDate extends EntityObject {
 	private	Date	currentDate	= null;

@@ -2,7 +2,7 @@ package nl.zeesoft.zevt.trans.entities.dutch;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
-import nl.zeesoft.zodb.Languages;
+import nl.zeesoft.zodb.lang.Languages;
 
 public class DutchLanguage extends EntityObject {
 	public DutchLanguage(Translator t) {

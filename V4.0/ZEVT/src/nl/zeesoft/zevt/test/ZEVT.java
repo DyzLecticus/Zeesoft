@@ -42,5 +42,6 @@ public class ZEVT extends LibraryObject {
 	@Override
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestTranslator(getTester()));
+		tests.add(new TestTranslatorRequestResponse(getTester()));
 	}
 }

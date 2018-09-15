@@ -42,7 +42,7 @@ public class JsClient extends Locker {
 		
 		ZStringBuilder err = new ZStringBuilder();
 		Exception ex = null;
-
+		
 		lockMe(this);
 		List<JsClientListener> list = new ArrayList<JsClientListener>(listeners);
 		int max = maxRetries;
@@ -60,22 +60,36 @@ public class JsClient extends Locker {
 			}
 		} else {
 			if (res.rootElement==null) {
-				err.append("Failed to obtain database response from " + request.url);
+				err.append("Failed to obtain response from " + request.url);
 				ex = http.getException();
 			}
 			done = true;
 		}
 		
 		if (done) {
-			for (JsClientListener listener: list) {
-				listener.handledRequest(request,res,err,ex);
-			}
-			requestIsDone(request,res,err,ex);
+			JsClientResponse response = new JsClientResponse();
+			response.request = request;
+			response.response = res;
+			response.error = err;
+			response.ex = ex;
+			requestIsDone(list,response);
 		}
 		return done;
 	}
 	
-	protected void requestIsDone(JsClientRequest request,JsFile response, ZStringBuilder err, Exception ex) {
-		// Override to extend
+	protected void requestIsDone(List<JsClientListener> list,JsClientResponse response) {
+		for (JsClientListener listener: list) {
+			try {
+				listener.handledRequest(response);
+			} catch (Exception ex) {
+				if (getMessenger()!=null) {
+					getMessenger().error(listener,"Exception while notifying listeners",ex);
+				}
+			}
+		}
+	}
+	
+	protected WorkerUnion getUnion() {
+		return union;
 	}
 }

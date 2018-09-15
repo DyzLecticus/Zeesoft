@@ -2,7 +2,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.DatabaseEntityObject;
 import nl.zeesoft.zevt.trans.Translator;
-import nl.zeesoft.zodb.Languages;
+import nl.zeesoft.zodb.lang.Languages;
 
 public class EnglishProfanity extends DatabaseEntityObject {
 	private int counter = 1; 

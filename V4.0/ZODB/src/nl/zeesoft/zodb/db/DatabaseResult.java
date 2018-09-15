@@ -1,9 +1,10 @@
 package nl.zeesoft.zodb.db;
 
+import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
-public class DatabaseResult {
+public class DatabaseResult implements JsAble {
 	public String	name		= "";
 	public long		id			= 0L;
 	public long		modified	= 0L;
@@ -19,7 +20,8 @@ public class DatabaseResult {
 		this.modified = element.modified;
 		this.obj = element.obj;
 	}
-	
+
+	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
@@ -35,7 +37,8 @@ public class DatabaseResult {
 		}
 		return json;
 	}
-	
+
+	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			name = json.rootElement.getChildString("name",name);

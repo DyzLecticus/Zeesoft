@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
-public class LanguagePreprocessor {
+public class LanguagePreprocessor implements JsAble {
 	private String						language		= "";
 	private List<PreprocessReplacement>	replacements	= new ArrayList<PreprocessReplacement>();
 
@@ -51,7 +52,8 @@ public class LanguagePreprocessor {
 		return replacements;
 	}
 	
-	protected JsFile toJson() {
+	@Override
+	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("language",language,true));
@@ -66,7 +68,8 @@ public class LanguagePreprocessor {
 		return json;
 	}
 	
-	protected void fromJson(JsFile json) {
+	@Override
+	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			replacements.clear();
 			language = json.rootElement.getChildString("language",language);

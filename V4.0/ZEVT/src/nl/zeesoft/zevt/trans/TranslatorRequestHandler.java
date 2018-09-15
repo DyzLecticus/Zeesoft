@@ -11,7 +11,7 @@ public class TranslatorRequestHandler {
 	
 	public void handleRequest(TranslatorRequestResponse request) {
 		if (request.sequence.length()>0) {
-			request.translation = translator.translateToInternalValues(request.sequence);
+			request.translation = translator.translateToInternalValues(request.sequence,request.languages,null);
 			request.sequence = new ZStringSymbolParser();
 		} else if (request.translation.length()>0) {
 			request.sequence = translator.translateToExternalValues(request.translation);

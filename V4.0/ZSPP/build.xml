@@ -17,7 +17,7 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 	
-	<property name="classpath" value="nl/zeesoft/zspp nl/zeesoft/zspp/app nl/zeesoft/zspp/app/handler nl/zeesoft/zspp/app/resource nl/zeesoft/zspp/trans nl/zeesoft/zspp/trans/entities/dutch nl/zeesoft/zspp/trans/entities/english nl/zeesoft/zspp/test zodb.jar zdk.jar"/>
+	<property name="classpath" value="nl/zeesoft/zspp nl/zeesoft/zspp/mod nl/zeesoft/zspp/mod/handler nl/zeesoft/zspp/mod/resource nl/zeesoft/zspp/prepro nl/zeesoft/zspp/test zodb.jar zdk.jar"/>
 
 	<target name="copyZODB" description="Copy the ZODB release">
 		<mkdir dir="${lib}"/>

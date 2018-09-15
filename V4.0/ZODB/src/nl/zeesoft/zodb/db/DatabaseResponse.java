@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
-public class DatabaseResponse {
+public class DatabaseResponse implements JsAble {
 	public DatabaseRequest			request			= null;
 	
 	public int						statusCode		= 200;
@@ -15,6 +16,7 @@ public class DatabaseResponse {
 	public List<DatabaseResult>		results			= new ArrayList<DatabaseResult>();
 	public int						size			= 0;
 		
+	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
@@ -40,6 +42,7 @@ public class DatabaseResponse {
 		return json;
 	}
 	
+	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			statusCode = json.rootElement.getChildInt("statusCode",statusCode);

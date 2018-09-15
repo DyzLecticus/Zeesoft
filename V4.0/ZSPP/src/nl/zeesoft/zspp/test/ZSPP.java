@@ -9,8 +9,8 @@ import nl.zeesoft.zdk.test.impl.ZDK;
 import nl.zeesoft.zodb.test.ZODB;
 import nl.zeesoft.zspp.mod.ModZSPP;
 
-public class ZSSP extends LibraryObject {
-	public ZSSP(Tester tester) {
+public class ZSPP extends LibraryObject {
+	public ZSPP(Tester tester) {
 		super(tester);
 		setNameAbbreviated("ZSPP");
 		setNameFull("Zeesoft Sequence Preprocessor");
@@ -22,7 +22,7 @@ public class ZSSP extends LibraryObject {
 	}
 
 	public static void main(String[] args) {
-		(new ZSSP(new Tester())).describeAndTest(args);
+		(new ZSPP(new Tester())).describeAndTest(args);
 	}
 
 	@Override
@@ -35,12 +35,12 @@ public class ZSSP extends LibraryObject {
 		System.out.println();
 		describeRelease();
 		System.out.println();
-		describeTesting(ZSSP.class);
+		describeTesting(ZSPP.class);
 		System.out.println();
 	}
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		//tests.add(new TestTranslator(getTester()));
+		tests.add(new TestPreprocessorRequestResponse(getTester()));
 	}
 }

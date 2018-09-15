@@ -1,14 +1,15 @@
 package nl.zeesoft.zevt.trans;
 
-import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsClientListener;
+import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zevt.mod.ModZEVT;
-import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 
-public abstract class DatabaseEntityObject extends EntityObject implements DatabaseClientListener {
+public abstract class DatabaseEntityObject extends EntityObject implements JsAble, JsClientListener {
 	protected DatabaseEntityObject(Translator t) {
 		super(t);
 	}
@@ -23,17 +24,18 @@ public abstract class DatabaseEntityObject extends EntityObject implements Datab
 	}
 
 	@Override
-	public void handledRequest(DatabaseResponse res, ZStringBuilder err, Exception ex) {
-		if (err.length()>0) {
+	public void handledRequest(JsClientResponse response) {
+		if (response.error.length()>0) {
 			if (getTranslator().logDatabaseRequestFailures()) {
-				getTranslator().getConfiguration().error(this,err.toString(),ex);
+				getTranslator().getConfiguration().error(this,response.error.toString(),response.ex);
 			}
 			if (!isInitialized()) {
 				initializeEntityValues();
 				initialized();
 			}
 		} else {
-			if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
+			DatabaseResponse res = getTranslator().getConfiguration().handledDatabaseRequest(response);
+			if (res!=null && res.request.type.equals(DatabaseRequest.TYPE_GET)) {
 				if (res.results.size()==0) {
 					initializeEntityValues();
 					DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
@@ -51,7 +53,8 @@ public abstract class DatabaseEntityObject extends EntityObject implements Datab
 		}
 	}
 	
-	protected JsFile toJson() {
+	@Override
+	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		JsElem evsElem = new JsElem("entityValues",true);
@@ -65,7 +68,8 @@ public abstract class DatabaseEntityObject extends EntityObject implements Datab
 		return json;
 	}
 	
-	protected void fromJson(JsFile json) {
+	@Override
+	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			JsElem evsElem = json.rootElement.getChildByName("entityValues");
 			if (evsElem!=null) {

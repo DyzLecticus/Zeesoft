@@ -1,5 +1,9 @@
 package nl.zeesoft.zevt.mod;
 
+import nl.zeesoft.zdk.json.JsAbleClient;
+import nl.zeesoft.zdk.json.JsAbleClientRequest;
+import nl.zeesoft.zdk.json.JsClientListener;
+import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zevt.ZEVTConfig;
 import nl.zeesoft.zevt.mod.handler.HtmlZEVTEntityTranslatorHandler;
 import nl.zeesoft.zevt.mod.handler.HtmlZEVTIndexHandler;
@@ -7,8 +11,6 @@ import nl.zeesoft.zevt.mod.handler.JavaScriptZEVTEntityTranslatorHandler;
 import nl.zeesoft.zevt.mod.handler.JsonZEVTRequestHandler;
 import nl.zeesoft.zevt.mod.handler.JsonZEVTTypesHandler;
 import nl.zeesoft.zevt.trans.Translator;
-import nl.zeesoft.zevt.trans.TranslatorClient;
-import nl.zeesoft.zevt.trans.TranslatorClientListener;
 import nl.zeesoft.zevt.trans.TranslatorRequestHandler;
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
 import nl.zeesoft.zevt.trans.TranslatorStateListener;
@@ -73,9 +75,20 @@ public class ModZEVT extends ModObject implements TranslatorStateListener {
 		handler.handleRequest(request);
 	}
 
-	public void handleRequest(TranslatorRequestResponse request,TranslatorClientListener listener) {
-		TranslatorClient client = new TranslatorClient(configuration);
-		client.handleRequest(request,configuration.getModuleUrl(NAME) + JsonZEVTRequestHandler.PATH,listener);
+	public void handleRequest(TranslatorRequestResponse request,JsClientListener listener) {
+		JsAbleClient client = new JsAbleClient(configuration.getMessenger(),configuration.getUnion());
+		client.addJsClientListener(listener);
+		client.handleRequest(request,configuration.getModuleUrl(NAME) + JsonZEVTRequestHandler.PATH,request);
+	}
+	
+	public TranslatorRequestResponse handledRequest(JsClientResponse response) {
+		TranslatorRequestResponse r = null;
+		if (response.request instanceof JsAbleClientRequest &&
+			((JsAbleClientRequest) response.request).resObject instanceof TranslatorRequestResponse 
+			) {
+			r = (TranslatorRequestResponse) ((JsAbleClientRequest) response.request).resObject;
+		}
+		return r;
 	}
 	
 	protected Translator getNewEntityValueTranslator() {

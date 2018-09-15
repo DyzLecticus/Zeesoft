@@ -1,6 +1,6 @@
 package nl.zeesoft.zspp.prepro;
 
-import nl.zeesoft.zodb.Languages;
+import nl.zeesoft.zodb.lang.Languages;
 
 public class DutchPreprocessor extends LanguagePreprocessor {
 	public DutchPreprocessor() {
@@ -12,6 +12,10 @@ public class DutchPreprocessor extends LanguagePreprocessor {
 		addReplacement("'s morgens","smorgens");
 		addReplacement("'s middags","smiddags");
 		addReplacement("'s avonds","savonds");
+		addReplacement("s'ochtends","sochtends");
+		addReplacement("s'morgens","smorgens");
+		addReplacement("s'middags","smiddags");
+		addReplacement("s'avonds","savonds");
 		addReplacement("ochtendsvroeg","ochtends vroeg");
 		addReplacement("morgensvroeg","morgens vroeg");
 		addReplacement("avondslaat","avonds laat");

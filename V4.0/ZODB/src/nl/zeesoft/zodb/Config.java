@@ -8,20 +8,25 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsAbleClient;
+import nl.zeesoft.zdk.json.JsAbleClientRequest;
+import nl.zeesoft.zdk.json.JsClientListener;
+import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zodb.db.DatabaseClient;
-import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
+import nl.zeesoft.zodb.db.DatabaseResponse;
+import nl.zeesoft.zodb.lang.Languages;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
 import nl.zeesoft.zodb.mod.handler.HandlerObject;
 import nl.zeesoft.zodb.mod.handler.HtmlModIndexHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 
-public class Config {
+public class Config implements JsAble {
 	private Messenger			messenger			= null;
 	private WorkerUnion			union				= null;
 	
@@ -123,7 +128,8 @@ public class Config {
 		union.stopWorkers();
 		messenger.whileWorking();
 	}
-	
+
+	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
@@ -140,7 +146,8 @@ public class Config {
 		}
 		return json;
 	}
-	
+
+	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			debug = json.rootElement.getChildBoolean("debug",debug);
@@ -200,9 +207,23 @@ public class Config {
 		return r;
 	}
 
-	public void handleDatabaseRequest(DatabaseRequest request,DatabaseClientListener listener) {
-		DatabaseClient client = new DatabaseClient(this);
-		client.handleRequest(request,getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH,listener);
+	public void handleDatabaseRequest(DatabaseRequest request,JsClientListener listener) {
+		JsAbleClient client = new JsAbleClient(getMessenger(),getUnion());
+		client.addJsClientListener(listener);
+		DatabaseResponse response = new DatabaseResponse();
+		response.request = request;
+		client.handleRequest(request,getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH,response);
+	}
+
+	public DatabaseResponse handledDatabaseRequest(JsClientResponse response) {
+		DatabaseResponse r = null;
+		if (response.error.length()==0 &&
+			response.request instanceof JsAbleClientRequest &&
+			((JsAbleClientRequest) response.request).resObject instanceof DatabaseResponse
+			) {
+			r = (DatabaseResponse) ((JsAbleClientRequest) response.request).resObject;
+		}
+		return r;
 	}
 
 	public String getFullDataDir() {

@@ -31,14 +31,14 @@ public class ZODBTester extends TesterObject {
 		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
 		req.contains = ModZODB.NAME + "/Objects/";
 		res = new DatabaseResponse();
-		addRequestNoLock(req.toJson(),res.toJson());
+		addRequestNoLock(req,res);
 		
 		for (String name: objectNames) {
 			req = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 			req.name = getObjectName(name);
 			req.obj = getTestObject(name);
 			res = new DatabaseResponse();
-			addRequestNoLock(req.toJson(),res.toJson());
+			addRequestNoLock(req,res);
 		}
 		
 		long id = 0;
@@ -52,7 +52,7 @@ public class ZODBTester extends TesterObject {
 			result.id = id;
 			result.obj = getTestObject(name);
 			res.results.add(result);
-			addRequestNoLock(req.toJson(),res.toJson());
+			addRequestNoLock(req,res);
 		}
 		
 		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
@@ -70,11 +70,11 @@ public class ZODBTester extends TesterObject {
 				break;
 			}
 		}
-		addRequestNoLock(req.toJson(),res.toJson());
+		addRequestNoLock(req,res);
 	}
 
 	@Override
-	protected JsFile getCheckResponse(JsFile response) {
+	protected JsFile getCheckResponseNoLock(JsFile response) {
 		DatabaseResponse res = new DatabaseResponse();
 		res.fromJson(response);
 		if (res.results.size()>0) {
@@ -83,6 +83,19 @@ public class ZODBTester extends TesterObject {
 			}
 		}
 		return res.toJson();
+	}
+	
+	@Override
+	protected void addLogLineForRequest(TesterRequest request) {
+		DatabaseRequest req = new DatabaseRequest();
+		req.fromJson(request.request);
+		DatabaseResponse res = new DatabaseResponse();
+		res.fromJson(request.response);
+		if (res.results.size()>0) {
+			addLogLineNoLock(req.type + " request took: " + request.time + " ms, results: " + res.results.size());
+		} else if (req.type.length()>0) {
+			addLogLineNoLock(req.type + " request took: " + request.time + " ms");
+		}
 	}
 	
 	private JsFile getTestObject(String name) {

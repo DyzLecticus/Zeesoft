@@ -1,14 +1,15 @@
 package nl.zeesoft.zodb.test;
 
-import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsAbleClientRequest;
+import nl.zeesoft.zdk.json.JsClientListener;
+import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 
-public class TestDatabaseClient extends TestObject implements DatabaseClientListener {
+public class TestDatabaseClient extends TestObject implements JsClientListener {
 	public TestDatabaseClient(Tester tester) {
 		super(tester);
 	}
@@ -36,14 +37,15 @@ public class TestDatabaseClient extends TestObject implements DatabaseClientList
 	}
 
 	@Override
-	public void handledRequest(DatabaseResponse res, ZStringBuilder err, Exception ex) {
-		if (res!=null) {
+	public void handledRequest(JsClientResponse response) {
+		if (response.response!=null) {
+			DatabaseResponse res = (DatabaseResponse) ((JsAbleClientRequest) response.request).resObject;
 			System.out.println("Results: " + res.results.size());
 		}
-		if (err.length()>0) {
-			System.err.println("Error: " + err);
-			if (ex!=null) {
-				ex.printStackTrace();
+		if (response.error.length()>0) {
+			System.err.println("Error: " + response.error);
+			if (response.ex!=null) {
+				response.ex.printStackTrace();
 			}
 		}
 		System.exit(0);

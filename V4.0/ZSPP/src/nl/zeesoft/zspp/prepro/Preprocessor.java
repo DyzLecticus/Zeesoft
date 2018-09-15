@@ -3,17 +3,17 @@ package nl.zeesoft.zspp.prepro;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.json.JsClientListener;
+import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.db.DatabaseClientListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 import nl.zeesoft.zodb.db.DatabaseResult;
 import nl.zeesoft.zspp.mod.ModZSPP;
 
-public class Preprocessor extends Locker implements DatabaseClientListener {
+public class Preprocessor extends Locker implements JsClientListener {
 	private Config							configuration	= null;
 	private List<PreprocessorStateListener>	listeners		= new ArrayList<PreprocessorStateListener>();
 	
@@ -73,7 +73,7 @@ public class Preprocessor extends Locker implements DatabaseClientListener {
 		return process(sequence,null);
 	}
 	
-	public ZStringSymbolParser process(ZStringSymbolParser sequence,String language) {
+	public ZStringSymbolParser process(ZStringSymbolParser sequence,List<String> languages) {
 		ZStringSymbolParser r = sequence;
 		r.trim();
 		if (r.length()>0) {
@@ -85,7 +85,7 @@ public class Preprocessor extends Locker implements DatabaseClientListener {
 			r.fromSymbols(symbols,true,true);
 			lockMe(this);
 			for (LanguagePreprocessor pp: processors) {
-				if (language==null || language.length()==0 || pp.getLanguage().equals(language)) {
+				if (languages==null || languages.size()==0 || languages.contains(pp.getLanguage())) {
 					r = pp.process(r);
 				}
 			}
@@ -95,61 +95,62 @@ public class Preprocessor extends Locker implements DatabaseClientListener {
 	}
 
 	@Override
-	public void handledRequest(DatabaseResponse res, ZStringBuilder err, Exception ex) {
-		if (err.length()>0) {
-			configuration.error(this,err.toString(),ex);
-			if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
-				lockMe(this);
-				todo--;
-				unlockMe(this);
-			}
-		} else {
-			if (res.request.type.equals(DatabaseRequest.TYPE_LIST)) {
-				if (res.results.size()==0) {
-					install();
-					stateChanged(true);
-				} else {
+	public void handledRequest(JsClientResponse response) {
+		DatabaseResponse res = configuration.handledDatabaseRequest(response);
+		if (res!=null) {
+			if (response.error.length()>0) {
+				configuration.error(this,response.error.toString(),response.ex);
+				if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
 					lockMe(this);
-					todo = 0;
-					for (DatabaseResult result: res.results) {
-						String[] elem = result.name.split("/");
-						String language = configuration.getLanguages().getCodeForName(elem[(elem.length - 1)]);
-						LanguagePreprocessor pp = new LanguagePreprocessor();
-						pp.setLanguage(language);
-						processors.add(pp);
-						todo++;
-					}
-					getPreprocessorsFromDatabaseNoLock();
+					todo--;
 					unlockMe(this);
 				}
-			} else if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
-				lockMe(this);
-				todo--;
-				LanguagePreprocessor lpp = null;
-				for (LanguagePreprocessor pp: processors) {
-					if (getLanguagePreprocessorName(pp).equals(res.request.name)) {
-						lpp = pp;
-						break;
+			} else {
+				if (res.request.type.equals(DatabaseRequest.TYPE_LIST)) {
+					if (res.results.size()==0) {
+						install();
+						stateChanged(true);
+					} else {
+						lockMe(this);
+						todo = 0;
+						for (DatabaseResult result: res.results) {
+							String[] elem = result.name.split("/");
+							String language = configuration.getLanguages().getCodeForName(elem[(elem.length - 1)]);
+							LanguagePreprocessor pp = new LanguagePreprocessor();
+							pp.setLanguage(language);
+							processors.add(pp);
+							todo++;
+						}
+						getPreprocessorsFromDatabaseNoLock();
+						unlockMe(this);
 					}
+				} else if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
+					lockMe(this);
+					todo--;
+					LanguagePreprocessor lpp = null;
+					for (LanguagePreprocessor pp: processors) {
+						if (getLanguagePreprocessorName(pp).equals(res.request.name)) {
+							lpp = pp;
+							break;
+						}
+					}
+					if (lpp!=null && res.results.size()>0 && res.results.get(0).obj!=null) {
+						lpp.fromJson(res.results.get(0).obj);
+						configuration.debug(this,"Loaded " + getLanguagePreprocessorName(lpp) + ", replacements: " + lpp.getReplacements().size());
+					}
+					unlockMe(this);
 				}
-				if (lpp!=null && res.results.size()>0 && res.results.get(0).obj!=null) {
-					lpp.fromJson(res.results.get(0).obj);
-					configuration.debug(this,"Loaded: " + getLanguagePreprocessorName(lpp) + "/" + lpp.getReplacements().size());
-				} else {
-					configuration.debug(this,"Loaded: " + res.request.name + "/" + res.results.size());
+			}
+			if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
+				boolean open = false;
+				lockMe(this);
+				if (todo==0) {
+					open = true;
 				}
 				unlockMe(this);
-			}
-		}
-		if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
-			boolean open = false;
-			lockMe(this);
-			if (todo==0) {
-				open = true;
-			}
-			unlockMe(this);
-			if (open) {
-				stateChanged(true);
+				if (open) {
+					stateChanged(true);
+				}
 			}
 		}
 	}
@@ -184,7 +185,7 @@ public class Preprocessor extends Locker implements DatabaseClientListener {
 	
 	private void stateChanged(boolean open) {
 		lockMe(this);
-		List<PreprocessorStateListener> lst = new ArrayList<PreprocessorStateListener>();
+		List<PreprocessorStateListener> lst = new ArrayList<PreprocessorStateListener>(listeners);
 		if (open) {
 			initializing = false;
 			initialized = true;

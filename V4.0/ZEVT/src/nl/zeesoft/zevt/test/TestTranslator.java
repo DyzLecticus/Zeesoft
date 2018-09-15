@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
-import nl.zeesoft.zodb.Languages;
+import nl.zeesoft.zodb.lang.Languages;
 
 public class TestTranslator extends TestObject {
 	public TestTranslator(Tester tester) {
@@ -27,11 +27,11 @@ public class TestTranslator extends TestObject {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the EntityValueTranslator");
-		System.out.println("EntityValueTranslator translator = new EntityValueTranslator(new Config());");
-		System.out.println("// Initialize the EntityValueTranslator (and wait or listen for initialization to finish)");
+		System.out.println("// Create the Translator");
+		System.out.println("Translator translator = new Translator(new Config());");
+		System.out.println("// Initialize the Translator (and wait or listen for initialization to finish)");
 		System.out.println("translator.initialize();");
-		System.out.println("// Use EntityValueTranslator to translate a sequence");
+		System.out.println("// Use Translator to translate a sequence");
 		System.out.println("ZStringSymbolParser translated = translator.translateToInternalValues(new ZStringSymbolParser(\"some sequence\"));");
 		System.out.println("ZStringSymbolParser retranslated = translator.translateToExternalValues(translated);");
 		System.out.println("~~~~");
@@ -56,7 +56,7 @@ public class TestTranslator extends TestObject {
 		while(!t.isInitialized()) {
 			sleep(100);
 		}
-		System.out.println("Initializing the EntityValueTranslator took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+		System.out.println("Initializing the Translator took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 		
 		testTranslation(t,"",
 			"Eat three donuts at 9:00 or count to 110",

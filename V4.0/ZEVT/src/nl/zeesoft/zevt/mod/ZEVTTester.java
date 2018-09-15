@@ -2,7 +2,9 @@ package nl.zeesoft.zevt.mod;
 
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.lang.Languages;
 import nl.zeesoft.zodb.mod.TesterObject;
+import nl.zeesoft.zodb.mod.TesterRequest;
 
 public class ZEVTTester extends TesterObject {
 	public ZEVTTester(Config config, String url) {
@@ -47,10 +49,10 @@ public class ZEVTTester extends TesterObject {
 			"twelve o'clock OR five minutes to nine OR ten past one in the morning",
 			"EN_TIM:12:00:00 UN_ABC:OR EN_TIM:08:55:00 UN_ABC:OR EN_TIM:01:10:00",
 			"twelve o'clock OR fiftyfive past eight OR ten past one in the morning");
-		addTranslationAndRetranslationRequests(
+		addTranslationAndRetranslationRequests(Languages.NLD,
 			"twaalf uur OF vijf minuten voor negen OF tien over een sochtends",
-			"NL_TIM:12:00:00|NL_DUR:12:00 EN_PRE:1|UN_ABC:OF NL_TIM:08:55:00 EN_PRE:1|UN_ABC:OF NL_TIM:01:10:00",
-			"twaalf uur of acht uur vijfenvijftig of een uur tien sochtends");
+			"NL_TIM:12:00:00|NL_DUR:12:00 UN_ABC:OF NL_TIM:08:55:00 UN_ABC:OF NL_TIM:01:10:00",
+			"twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends");
 		addTranslationAndRetranslationRequests(
 			"to Germany or France",
 			"UN_ABC:to EN_CNT:DE|UN_ABC:Germany UN_ABC:or EN_CNT:FR|UN_ABC:France",
@@ -93,20 +95,45 @@ public class ZEVTTester extends TesterObject {
 			":-) ]0: {;");
 	}
 	
+	@Override
+	protected void addLogLineForRequest(TesterRequest request) {
+		TranslatorRequestResponse req = new TranslatorRequestResponse();
+		req.fromJson(request.request);
+		TranslatorRequestResponse res = new TranslatorRequestResponse();
+		res.fromJson(request.response);
+		if (req.sequence.length()>0) {
+			addLogLineNoLock("Translation took: " + request.time + " ms");
+			addLogLineNoLock("  <<< '" + req.sequence + "'");
+			addLogLineNoLock("  >>> '" + res.translation + "'");
+		}
+	}
+	
 	private void addTranslationAndRetranslationRequests(String seq,String trans,String retrans) {
+		addTranslationAndRetranslationRequests("",seq,trans,retrans);
+	}
+	
+	private void addTranslationAndRetranslationRequests(String language,String seq,String trans,String retrans) {
 		TranslatorRequestResponse req = null;
 		TranslatorRequestResponse res = null;
 		
 		req = new TranslatorRequestResponse();
+		if (language.length()>0) {
+			req.languages.add(language);
+			req.languages.add(Languages.UNI);
+		}
 		req.sequence.append(seq);
 		res = new TranslatorRequestResponse();
+		if (language.length()>0) {
+			res.languages.add(language);
+			res.languages.add(Languages.UNI);
+		}
 		res.translation.append(trans);
-		addRequestNoLock(req.toJson(),res.toJson());
+		addRequestNoLock(req,res);
 		
 		req = new TranslatorRequestResponse();
 		req.translation.append(trans);
 		res = new TranslatorRequestResponse();
 		res.sequence.append(retrans);
-		addRequestNoLock(req.toJson(),res.toJson());
+		addRequestNoLock(req,res);
 	}
 }

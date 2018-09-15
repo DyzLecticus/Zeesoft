@@ -23,11 +23,11 @@ This test shows how to use the *Translator* to translate a sequence to and from 
 
 **Example implementation**  
 ~~~~
-// Create the EntityValueTranslator
-EntityValueTranslator translator = new EntityValueTranslator(new Config());
-// Initialize the EntityValueTranslator (and wait or listen for initialization to finish)
+// Create the Translator
+Translator translator = new Translator(new Config());
+// Initialize the Translator (and wait or listen for initialization to finish)
 translator.initialize();
-// Use EntityValueTranslator to translate a sequence
+// Use Translator to translate a sequence
 ZStringSymbolParser translated = translator.translateToInternalValues(new ZStringSymbolParser("some sequence"));
 ZStringSymbolParser retranslated = translator.translateToExternalValues(translated);
 ~~~~
@@ -44,16 +44,16 @@ The output of this test shows;
  * The time it takes to initialize the translator  
  * The translation results including the time it takes, for a set of input sequences  
 ~~~~
-Initializing the EntityValueTranslator took: 2703 ms
+Initializing the Translator took: 2931 ms
 
 Sequence: 'Eat three donuts at 9:00 or count to 110'
-Translating the sequence took: 7 ms
+Translating the sequence took: 3 ms
 Translation: 'UN_ABC:Eat EN_NUM:3|UN_ABC:three UN_ABC:donuts UN_ABC:at UN_TIM:09:00:00 UN_ABC:or UN_ABC:count UN_ABC:to UN_NUM:110'
-Retranslating the sequence took: 3 ms
+Retranslating the sequence took: 2 ms
 Retranslation: 'Eat three donuts at 09:00:00 or count to 110'
 
 Sequence: 'Eet drie donuts om 9:00 of tel tot 110'
-Translating the sequence took: 8 ms
+Translating the sequence took: 6 ms
 Translation: 'UN_ABC:Eet NL_NUM:3|UN_ABC:drie UN_ABC:donuts UN_ABC:om UN_TIM:09:00:00 UN_ABC:of UN_ABC:tel UN_ABC:tot UN_NUM:110'
 Retranslating the sequence took: 3 ms
 Retranslation: 'Eet drie donuts om 09:00:00 of tel tot 110'
@@ -67,11 +67,11 @@ Retranslation: 'I finished twohundredandtwentyfourth or 225th'
 Sequence: 'Ik ben tweehonderdvierentwintigste geworden'
 Translating the sequence took: 1 ms
 Translation: 'UN_ABC:Ik UN_ABC:ben NL_ORD:224|UN_ABC:tweehonderdvierentwintigste UN_ABC:geworden'
-Retranslating the sequence took: 0 ms
+Retranslating the sequence took: 1 ms
 Retranslation: 'Ik ben tweehonderdvierentwintigste geworden'
 
 Sequence: 'februari march october december'
-Translating the sequence took: 0 ms
+Translating the sequence took: 9 ms
 Translation: 'NL_MNT:2|UN_ABC:februari EN_MNT:3|UN_ABC:march EN_MNT:10|UN_ABC:october EN_MNT:12|NL_MNT:12|UN_ABC:december'
 Retranslating the sequence took: 0 ms
 Retranslation: 'februari march october december'
@@ -91,7 +91,7 @@ Retranslation: 'july fifteenth twothousandeighteen OR july sixteenth twothousand
 Sequence: 'gisteren OF vandaag OF 1 oktober'
 Translating the sequence took: 1 ms
 Translation: 'NL_DAT:2018-07-15|UN_ABC:gisteren UN_ABC:OF NL_DAT:2018-07-16|UN_ABC:vandaag UN_ABC:OF NL_DAT:2018-10-01'
-Retranslating the sequence took: 1 ms
+Retranslating the sequence took: 0 ms
 Retranslation: 'vijftien juli tweeduizendachttien OF zestien juli tweeduizendachttien OF een oktober tweeduizendachttien'
 
 Sequence: 'twelve o'clock OR five minutes to nine OR ten past one in the morning'
@@ -103,23 +103,23 @@ Retranslation: 'twelve o'clock OR fiftyfive past eight OR ten past one in the mo
 Sequence: 'twaalf uur OF vijf minuten voor negen OF tien over een sochtends'
 Translating the sequence took: 1 ms
 Translation: 'NL_TIM:12:00:00|NL_DUR:12:00 UN_ABC:OF NL_TIM:08:55:00 UN_ABC:OF NL_TIM:01:10:00'
-Retranslating the sequence took: 1 ms
+Retranslating the sequence took: 0 ms
 Retranslation: 'twaalf uur OF acht uur vijfenvijftig OF een uur tien sochtends'
 
 Sequence: 'to Germany or France'
-Translating the sequence took: 3 ms
+Translating the sequence took: 0 ms
 Translation: 'UN_ABC:to EN_CNT:DE|UN_ABC:Germany UN_ABC:or EN_CNT:FR|UN_ABC:France'
-Retranslating the sequence took: 1 ms
+Retranslating the sequence took: 0 ms
 Retranslation: 'to Germany or France'
 
 Sequence: 'naar Duitsland of Frankrijk'
-Translating the sequence took: 0 ms
+Translating the sequence took: 1 ms
 Translation: 'UN_ABC:naar NL_CNT:DE|UN_ABC:Duitsland UN_ABC:of NL_CNT:FR|UN_ABC:Frankrijk'
-Retranslating the sequence took: 1 ms
+Retranslating the sequence took: 0 ms
 Retranslation: 'naar Duitsland of Frankrijk'
 
 Sequence: 'You asshole'
-Translating the sequence took: 0 ms
+Translating the sequence took: 1 ms
 Translation: 'UN_ABC:You EN_PRF:1|UN_ABC:asshole'
 Retranslating the sequence took: 0 ms
 Retranslation: 'You asshole'
@@ -157,20 +157,50 @@ Retranslation: 'fifteen british pound sterling'
 Sequence: 'vijftien euro'
 Translating the sequence took: 0 ms
 Translation: 'NL_NUM:15|UN_ABC:vijftien EN_CUR:EUR|NL_CUR:EUR|UN_ABC:euro'
-Retranslating the sequence took: 0 ms
+Retranslating the sequence took: 1 ms
 Retranslation: 'vijftien euro'
 
 Sequence: ':-) ]0: {;'
 Translating the sequence took: 0 ms
 Translation: 'UN_SML:7 UN_FRN:28 UN_SML:42'
-Retranslating the sequence took: 1 ms
+Retranslating the sequence took: 0 ms
 Retranslation: ':-) ]0: {;'
+~~~~
+
+nl.zeesoft.zevt.test.TestTranslatorRequestResponse
+--------------------------------------------------
+This test shows how to convert *TranslatorRequestResponse* instances to and from JSON.
+
+**Example implementation**  
+~~~~
+// Create the TranslatorRequestResponse
+TranslatorRequestResponse request = new TranslatorRequestResponse();
+// Convert the TranslatorRequestResponse to JSON
+JsFile json = request.toJson();
+// Convert the TranslatorRequestResponse from JSON
+request.fromJson(json);
+~~~~
+
+Class references;  
+ * [TestTranslatorRequestResponse](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZEVT/src/nl/zeesoft/zevt/test/TestTranslatorRequestResponse.java)
+ * [TranslatorRequestResponse](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZEVT/src/nl/zeesoft/zevt/trans/TranslatorRequestResponse.java)
+
+**Test output**  
+The output of this test shows the converted JSON.  
+~~~~
+{
+  "languages": [
+    "EN"
+  ],
+  "sequence": "sequence of symbols"
+}
 ~~~~
 
 Test results
 ------------
-All 1 tests have been executed successfully (49 assertions).  
-Total test duration: 2879 ms (total sleep duration: 1900 ms).  
+All 2 tests have been executed successfully (49 assertions).  
+Total test duration: 3134 ms (total sleep duration: 2000 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zevt.test.TestTranslator: 1080 Kb / 1 Mb
+ * nl.zeesoft.zevt.test.TestTranslator: 1081 Kb / 1 Mb
+ * nl.zeesoft.zevt.test.TestTranslatorRequestResponse: 1087 Kb / 1 Mb
