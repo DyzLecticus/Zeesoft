@@ -24,20 +24,24 @@ public class JsonModTestResultsHandler extends JsonHandlerObject {
 			r = setResponse(response,405,getModuleName() + " module not found");
 		} else {
 			TesterObject tester = mod.tester;
-			JsFile results = tester.getResults();
-			if (tester.isTesting()) {
-				r = setResponse(response,503,getModuleName() + " is testing itself. Please wait.");
-			} else if (results==null) {
-				if (mod.selfTest) {
-					r = setResponse(response,503,getModuleName() + " tester has not started yet. Please wait.");
-				} else {
-					r = setResponse(response,405,getModuleName() + " test results are not available");
-				}
+			if (tester==null) {
+				r = setResponse(response,405,getModuleName() + " test results are not available");
 			} else {
-				if (getConfiguration().isDebug()) {
-					r = results.toStringBuilderReadFormat();
+				JsFile results = tester.getResults();
+				if (tester.isTesting()) {
+					r = setResponse(response,503,getModuleName() + " is testing itself. Please wait.");
+				} else if (results==null) {
+					if (mod.selfTest) {
+						r = setResponse(response,503,getModuleName() + " tester has not started yet. Please wait.");
+					} else {
+						r = setResponse(response,405,getModuleName() + " test results are not available");
+					}
 				} else {
-					r = results.toStringBuilder();
+					if (getConfiguration().isDebug()) {
+						r = results.toStringBuilderReadFormat();
+					} else {
+						r = results.toStringBuilder();
+					}
 				}
 			}
 		}
