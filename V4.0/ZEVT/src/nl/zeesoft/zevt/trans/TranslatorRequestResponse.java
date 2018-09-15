@@ -3,7 +3,7 @@ package nl.zeesoft.zevt.trans;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zodb.lang.LanguageRequest;
+import nl.zeesoft.znlb.lang.LanguageRequest;
 
 public class TranslatorRequestResponse extends LanguageRequest {
 	public ZStringSymbolParser	sequence		= new ZStringSymbolParser();

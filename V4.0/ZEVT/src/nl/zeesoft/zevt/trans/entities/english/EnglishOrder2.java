@@ -2,7 +2,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
-import nl.zeesoft.zodb.lang.Languages;
+import nl.zeesoft.znlb.lang.Languages;
 
 public class EnglishOrder2 extends EntityObject {
 	public EnglishOrder2(Translator t) {

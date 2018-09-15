@@ -19,7 +19,6 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
-import nl.zeesoft.zodb.lang.Languages;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
 import nl.zeesoft.zodb.mod.handler.HandlerObject;
@@ -37,8 +36,6 @@ public class Config implements JsAble {
 	
 	private List<ModObject>		modules				= new ArrayList<ModObject>();
 	
-	private Languages			languages			= null;
-	
 	private HandlerObject		notFoundHtmlHandler	= null;
 	private HandlerObject		notFoundJsonHandler	= null;
 	private HandlerObject		modIndexHtmlHandler	= null;
@@ -49,8 +46,6 @@ public class Config implements JsAble {
 		union = factory.getWorkerUnion(messenger);
 		addModule(new ModZODB(this));
 		addModules();
-		languages = getNewLanguages();
-		languages.initialize();
 	}
 	
 	public void initialize(boolean debug,String installDir,String servletUrl) {
@@ -169,10 +164,6 @@ public class Config implements JsAble {
 			}
 		}
 	}
-
-	public Languages getLanguages() {
-		return languages;
-	}
 	
 	public ModObject getModule(String name) {
 		ModObject r = null;
@@ -274,10 +265,6 @@ public class Config implements JsAble {
 
 	public List<ModObject> getModules() {
 		return new ArrayList<ModObject>(modules);
-	}
-	
-	protected Languages getNewLanguages() {
-		return new Languages();
 	}
 	
 	protected HandlerObject getNewHtmlAppIndexHandler() {

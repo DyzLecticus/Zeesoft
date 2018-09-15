@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.ZEVTConfig;
 import nl.zeesoft.zevt.mod.ModZEVT;
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
-import nl.zeesoft.zodb.lang.Languages;
+import nl.zeesoft.znlb.lang.Languages;
 
 public class TestTranslatorClient extends TestObject implements JsClientListener {
 	public TestTranslatorClient(Tester tester) {

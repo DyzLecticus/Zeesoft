@@ -1,11 +1,11 @@
-package nl.zeesoft.zevt.trans.entities.dutch;
+	package nl.zeesoft.zevt.trans.entities.dutch;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
-import nl.zeesoft.zodb.lang.Languages;
+import nl.zeesoft.znlb.lang.Languages;
 
 public class DutchDate extends EntityObject {
 	private	Date	currentDate	= null;

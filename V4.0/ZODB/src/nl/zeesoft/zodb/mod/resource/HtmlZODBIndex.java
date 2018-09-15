@@ -4,7 +4,6 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.mod.ModZODB;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
-import nl.zeesoft.zodb.mod.handler.JsonZODBLanguagesHandler;
 
 public class HtmlZODBIndex extends HtmlResource {
 	public HtmlZODBIndex(Config config) {
@@ -29,17 +28,6 @@ public class HtmlZODBIndex extends HtmlResource {
 			html.append("View, add, update and remove objects.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
-			
-			if (getConfiguration().isDebug()) {
-				html.append("<tr>\n");
-				html.append("<td>");
-				html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + JsonZODBLanguagesHandler.PATH + "\">Languages JSON</a>");
-				html.append("</td>\n");
-				html.append("<td>");
-				html.append("Returns the supported languages as a JSON file.");
-				html.append("</td>\n");
-				html.append("</tr>\n");
-			}
 			
 			if (getConfiguration().getModule(ModZODB.NAME).selfTest) {
 				html.append("<tr>\n");

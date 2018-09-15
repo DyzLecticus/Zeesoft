@@ -1,8 +1,8 @@
 package nl.zeesoft.zevt.mod;
 
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
+import nl.zeesoft.znlb.lang.Languages;
 import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.lang.Languages;
 import nl.zeesoft.zodb.mod.TesterObject;
 import nl.zeesoft.zodb.mod.TesterRequest;
 

@@ -10,9 +10,7 @@ import nl.zeesoft.zodb.mod.handler.HtmlZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBHandler;
-import nl.zeesoft.zodb.mod.handler.JavaScriptZODBLanguagesHandler;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
-import nl.zeesoft.zodb.mod.handler.JsonZODBLanguagesHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 
 public class ModZODB extends ModObject implements DatabaseStateListener {
@@ -38,10 +36,8 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 		handlers.add(new HtmlZODBIndexHandler(configuration,this));
 		handlers.add(new JavaScriptZODBHandler(configuration,this));
 		handlers.add(new JavaScriptZODBDataManagerHandler(configuration,this));
-		handlers.add(new JavaScriptZODBLanguagesHandler(configuration,this));
 		handlers.add(new HtmlZODBDataManagerHandler(configuration,this));
 		handlers.add(new JsonZODBRequestHandler(configuration,this));
-		handlers.add(new JsonZODBLanguagesHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		database = getNewDatabase();
 		database.addListener(this);

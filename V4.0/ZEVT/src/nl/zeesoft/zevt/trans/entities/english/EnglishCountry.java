@@ -3,7 +3,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
-import nl.zeesoft.zodb.lang.Languages;
+import nl.zeesoft.znlb.lang.Languages;
 
 public class EnglishCountry extends EntityObject {
 	public EnglishCountry(Translator t) {

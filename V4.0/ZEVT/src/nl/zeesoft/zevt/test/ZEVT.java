@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.ZDK;
 import nl.zeesoft.zevt.mod.ModZEVT;
+import nl.zeesoft.znlb.test.ZNLB;
 import nl.zeesoft.zodb.test.ZODB;
 
 public class ZEVT extends LibraryObject {
@@ -19,6 +20,7 @@ public class ZEVT extends LibraryObject {
 		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZEVT/");
 		getDependencies().add(new ZDK(null));
 		getDependencies().add(new ZODB(null));
+		getDependencies().add(new ZNLB(null));
 	}
 
 	public static void main(String[] args) {

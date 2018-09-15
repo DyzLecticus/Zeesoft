@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zodb.lang.Languages;
+import nl.zeesoft.znlb.lang.Languages;
 
 public abstract class EntityObject {
 	public static final String					TYPE_ALPHABETIC				= "ABC";

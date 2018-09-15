@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
-import nl.zeesoft.zodb.lang.Languages;
+import nl.zeesoft.znlb.lang.Languages;
 
 public class TestTranslatorRequestResponse extends TestObject {
 	public TestTranslatorRequestResponse(Tester tester) {

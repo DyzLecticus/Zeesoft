@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
-import nl.zeesoft.zodb.lang.Languages;
+import nl.zeesoft.znlb.lang.Languages;
 
 public class TestTranslator extends TestObject {
 	public TestTranslator(Tester tester) {

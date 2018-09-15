@@ -3,7 +3,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
-import nl.zeesoft.zodb.lang.Languages;
+import nl.zeesoft.znlb.lang.Languages;
 
 public class EnglishMathematic extends EntityObject {
 	public EnglishMathematic(Translator t) {

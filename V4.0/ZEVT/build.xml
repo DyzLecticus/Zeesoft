@@ -5,9 +5,9 @@
 	<!-- Release version -->
 	<property name="version" value="0.9.0"/>
 	
-	<!-- ZODB version -->
-	<property name="versionZODB" value="0.9.0"/>
-	<property name="releasesZODB" location="../ZODB/releases"/>
+	<!-- ZNLB version -->
+	<property name="versionZNLB" value="0.9.0"/>
+	<property name="releasesZNLB" location="../ZNLB/releases"/>
 
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
 	
@@ -17,11 +17,11 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zevt nl/zeesoft/zevt/mod nl/zeesoft/zevt/mod/handler nl/zeesoft/zevt/mod/resource nl/zeesoft/zevt/trans nl/zeesoft/zevt/trans/entities/dutch nl/zeesoft/zevt/trans/entities/english nl/zeesoft/zevt/test zodb.jar zdk.jar"/>
+	<property name="classpath" value="nl/zeesoft/zevt nl/zeesoft/zevt/mod nl/zeesoft/zevt/mod/handler nl/zeesoft/zevt/mod/resource nl/zeesoft/zevt/trans nl/zeesoft/zevt/trans/entities/dutch nl/zeesoft/zevt/trans/entities/english nl/zeesoft/zevt/test znlb.jar zdk.jar"/>
 
-	<target name="copyZODB" description="Copy the ZODB release">
+	<target name="copyZNLB" description="Copy the ZNLB release">
 		<mkdir dir="${lib}"/>
-		<unzip src="${releasesZODB}/zodb-${versionZODB}.zip" dest="${lib}">
+		<unzip src="${releasesZNLB}/znlb-${versionZNLB}.zip" dest="${lib}">
 		    <patternset>
 		        <include name="**/*.jar"/>
 		        <include name="**/*.zip"/>
