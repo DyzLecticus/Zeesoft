@@ -5,23 +5,26 @@ import nl.zeesoft.zdk.json.JsAbleClientRequest;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.znlb.ZNLBConfig;
+import nl.zeesoft.znlb.context.ContextConfig;
 import nl.zeesoft.znlb.mod.handler.HtmlZNLBIndexHandler;
 import nl.zeesoft.znlb.mod.handler.JavaScriptZNLBLanguagesHandler;
+import nl.zeesoft.znlb.mod.handler.JsonZNLBContextConfigurationHandler;
 import nl.zeesoft.znlb.mod.handler.JsonZNLBLanguagesHandler;
 import nl.zeesoft.znlb.mod.handler.JsonZNLBRequestHandler;
 import nl.zeesoft.znlb.prepro.Preprocessor;
 import nl.zeesoft.znlb.prepro.PreprocessorRequestHandler;
 import nl.zeesoft.znlb.prepro.PreprocessorRequestResponse;
-import nl.zeesoft.znlb.prepro.PreprocessorStateListener;
+import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
 
-public class ModZNLB extends ModObject implements PreprocessorStateListener {
-	public static final String		NAME			= "ZNLB";
-	public static final String		DESC			= 
+public class ModZNLB extends ModObject implements StateListener {
+	public static final String		NAME					= "ZNLB";
+	public static final String		DESC					= 
 		"The Zeesoft Natural Language Base provides a simple JSON API for language specific sentence preprocessing.";
 
-	private Preprocessor			preprocessor	= null;
+	private Preprocessor			preprocessor			= null;
+	private ContextConfig			contextConfiguration	= null;
 	
 	public ModZNLB(ZNLBConfig config) {
 		super(config);
@@ -33,6 +36,8 @@ public class ModZNLB extends ModObject implements PreprocessorStateListener {
 	public void install() {
 		Preprocessor prepro = getNewPreprocessor();
 		prepro.install();
+		ContextConfig config = getNewContextConfig();
+		config.install();
 	}
 	
 	@Override
@@ -42,25 +47,32 @@ public class ModZNLB extends ModObject implements PreprocessorStateListener {
 		handlers.add(new JsonZNLBRequestHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		handlers.add(new JsonZNLBLanguagesHandler(configuration,this));
+		handlers.add(new JsonZNLBContextConfigurationHandler(configuration,this));
 		preprocessor = getNewPreprocessor();
 		preprocessor.addListener(this);
 		preprocessor.initialize();
-		tester = getNewTester();
+		contextConfiguration = getNewContextConfig();
+		contextConfiguration.addListener(this);
+		contextConfiguration.initialize();
+		testers.add(getNewTester());
 		super.initialize();
 	}
 	
 	@Override
 	public void destroy() {
-		if (selfTest) {
-			tester.stop();
-		}
+		super.destroy();
 		preprocessor.destroy();
+		contextConfiguration.destroy();
 	}
 
 	@Override
-	public void preprocessorStateChanged(boolean open) {
-		if (open && selfTest) {
-			tester.start();
+	public void stateChanged(Object source,boolean open) {
+		if (open &&
+			(source instanceof Preprocessor || source instanceof ContextConfig)
+			) {
+			if (preprocessor.isInitialized() && contextConfiguration.isInitialized()) {
+				startTesters();
+			}
 		}
 	}
 	
@@ -89,8 +101,16 @@ public class ModZNLB extends ModObject implements PreprocessorStateListener {
 		return preprocessor;
 	}
 	
+	public ContextConfig getContextConfiguration() {
+		return contextConfiguration;
+	}
+	
 	protected Preprocessor getNewPreprocessor() {
-		return new Preprocessor(configuration);
+		return new Preprocessor((ZNLBConfig)configuration);
+	}
+	
+	protected ContextConfig getNewContextConfig() {
+		return new ContextConfig((ZNLBConfig)configuration);
 	}
 	
 	protected ZNLBTester getNewTester() {

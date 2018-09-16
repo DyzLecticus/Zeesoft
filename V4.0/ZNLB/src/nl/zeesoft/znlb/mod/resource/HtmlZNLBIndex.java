@@ -2,6 +2,7 @@ package nl.zeesoft.znlb.mod.resource;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.znlb.mod.ModZNLB;
+import nl.zeesoft.znlb.mod.handler.JsonZNLBContextConfigurationHandler;
 import nl.zeesoft.znlb.mod.handler.JsonZNLBLanguagesHandler;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
@@ -30,6 +31,15 @@ public class HtmlZNLBIndex extends HtmlResource {
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("Returns the supported languages as a JSON file.");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+				
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZNLB.NAME) + JsonZNLBContextConfigurationHandler.PATH + "\">Context configuration JSON</a>");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("Returns the context configuration as a JSON file.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 				

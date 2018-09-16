@@ -17,7 +17,7 @@ public class Database {
 	private IndexFileWriteWorker			fileWriter		= null;
 	private IndexObjectWriterWorker			objectWriter	= null;
 	
-	private List<DatabaseStateListener>		listeners		= new ArrayList<DatabaseStateListener>();
+	private List<StateListener>		listeners		= new ArrayList<StateListener>();
 	
 	public Database(Config config) {
 		configuration = config;
@@ -26,7 +26,7 @@ public class Database {
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
 	
-	public void addListener(DatabaseStateListener listener) {
+	public void addListener(StateListener listener) {
 		listeners.add(listener);
 	}
 	
@@ -59,9 +59,6 @@ public class Database {
 		configuration.debug(this,"Stopping database ...");
 		fileWriter.stop();
 		objectWriter.stop();
-		for (DatabaseStateListener listener: listeners) {
-			listener.databaseStateChanged(false);
-		}
 		configuration.debug(this,"Stopped database");
 	}
 	
@@ -127,8 +124,8 @@ public class Database {
 		} else {
 			configuration.debug(this,"Database is closed for business");
 		}
-		for (DatabaseStateListener listener: listeners) {
-			listener.databaseStateChanged(open);
+		for (StateListener listener: listeners) {
+			listener.stateChanged(this,open);
 		}
 	}
 }

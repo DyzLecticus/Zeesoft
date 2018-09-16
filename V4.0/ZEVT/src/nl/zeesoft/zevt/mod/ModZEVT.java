@@ -13,11 +13,11 @@ import nl.zeesoft.zevt.mod.handler.JsonZEVTTypesHandler;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.TranslatorRequestHandler;
 import nl.zeesoft.zevt.trans.TranslatorRequestResponse;
-import nl.zeesoft.zevt.trans.TranslatorStateListener;
+import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
 
-public class ModZEVT extends ModObject implements TranslatorStateListener {
+public class ModZEVT extends ModObject implements StateListener {
 	public static final String		NAME			= "ZEVT";
 	public static final String		DESC			= 
 		"The Zeesoft Entity Value Translator provides a simple JSON API to translate sentences to and from language specific entity values.";
@@ -47,22 +47,20 @@ public class ModZEVT extends ModObject implements TranslatorStateListener {
 		handlers.add(new JsonZEVTTypesHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		translator.initialize();
-		tester = getNewTester();
+		testers.add(getNewTester());
 		super.initialize();
 	}
 	
 	@Override
 	public void destroy() {
-		if (selfTest) {
-			tester.stop();
-		}
+		super.destroy();
 		translator.destroy();
 	}
 
 	@Override
-	public void translatorStateChanged(boolean open) {
-		if (open && selfTest) {
-			tester.start();
+	public void stateChanged(Object source,boolean open) {
+		if (source instanceof Translator && open) {
+			startTesters();
 		}
 	}
 	

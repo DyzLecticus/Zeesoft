@@ -26,7 +26,7 @@ public abstract class ModObject implements JsAble {
 	public HandlerObject		notFoundHtmlHandler		= null;
 	public HandlerObject		notFoundJsonHandler		= null;
 	
-	public TesterObject			tester					= null;
+	public List<TesterObject>	testers					= new ArrayList<TesterObject>();
 	
 	public ModObject(Config config) {
 		configuration = config;
@@ -49,7 +49,7 @@ public abstract class ModObject implements JsAble {
 	}
 	
 	public void destroy() {
-		// Override to implement
+		stopTesters();
 	}
 
 	@Override
@@ -93,6 +93,22 @@ public abstract class ModObject implements JsAble {
 			}
 		}
 		return r;
+	}
+	
+	public void startTesters() {
+		if (selfTest) {
+			for (TesterObject tester: testers) {
+				tester.start();
+			}
+		}
+	}
+	
+	public void stopTesters() {
+		if (selfTest) {
+			for (TesterObject tester: testers) {
+				tester.stop();
+			}
+		}
 	}
 	
 	private void addDefaultNotFoundHandlers() {

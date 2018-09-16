@@ -49,6 +49,7 @@ public class TestTranslatorRequestResponse extends TestObject {
 		
 		request = new TranslatorRequestResponse();
 		request.fromJson(json);
+		json = request.toJson();
 		ZStringBuilder newStr = json.toStringBuilderReadFormat();
 		if (!newStr.equals(oriStr)) {
 			assertEqual(false,true,"Converted JSON does not match original");

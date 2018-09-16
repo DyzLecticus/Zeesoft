@@ -4,20 +4,22 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.znlb.lang.Languages;
-import nl.zeesoft.znlb.prepro.PreprocessorRequestResponse;
+import nl.zeesoft.znlb.ZNLBConfig;
+import nl.zeesoft.znlb.context.ContextConfig;
 
-public class TestPreprocessorRequestResponse extends TestObject {
-	public TestPreprocessorRequestResponse(Tester tester) {
+public class TestContextConfig extends TestObject {
+	public TestContextConfig(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestPreprocessorRequestResponse(new Tester())).test(args);
+		(new TestContextConfig(new Tester())).test(args);
 	}
 
 	@Override
 	protected void describe() {
+		/*
+		 *  TODO: Describe
 		System.out.println("This test shows how to convert *PreprocessorRequestResponse* instances to and from JSON.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
@@ -31,25 +33,27 @@ public class TestPreprocessorRequestResponse extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestPreprocessorRequestResponse.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestContextConfig.class));
 		System.out.println(" * " + getTester().getLinkForClass(PreprocessorRequestResponse.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the converted JSON.  ");
+		*/
 	}
 	
 	@Override
 	protected void test(String[] args) {
-		PreprocessorRequestResponse request = new PreprocessorRequestResponse();
-		request.languages.add(Languages.ENG);
-		request.sequence.append("sequence of symbols");
-		JsFile json = request.toJson();
+		ContextConfig contextConfig = new ContextConfig(new ZNLBConfig());
+		contextConfig.initializeDatabaseObjects();
+		
+		JsFile json = contextConfig.getLanguages().get(0).toJson();
 		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
 		System.out.println(oriStr);
 		
-		request = new PreprocessorRequestResponse();
-		request.fromJson(json);
-		json = request.toJson();
+		contextConfig = new ContextConfig(new ZNLBConfig());
+		contextConfig.initializeDatabaseObjects();
+		contextConfig.getLanguages().get(0).fromJson(json);
+		json = contextConfig.getLanguages().get(0).toJson();
 		ZStringBuilder newStr = json.toStringBuilderReadFormat();
 		if (!newStr.equals(oriStr)) {
 			assertEqual(false,true,"Converted JSON does not match original");

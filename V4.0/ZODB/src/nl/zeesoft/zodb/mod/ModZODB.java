@@ -5,7 +5,7 @@ import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseResponse;
-import nl.zeesoft.zodb.db.DatabaseStateListener;
+import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBDataManagerHandler;
@@ -13,7 +13,7 @@ import nl.zeesoft.zodb.mod.handler.JavaScriptZODBHandler;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 
-public class ModZODB extends ModObject implements DatabaseStateListener {
+public class ModZODB extends ModObject implements StateListener {
 	public static final String	NAME		= "ZODB";
 	public static final String	DESC		= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
@@ -41,23 +41,21 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		database = getNewDatabase();
 		database.addListener(this);
-		tester = getNewTester();
+		testers.add(getNewTester());
 		database.start();
 		super.initialize();
 	}
 	
 	@Override
 	public void destroy() {
-		if (selfTest) {
-			tester.stop();
-		}
+		super.destroy();
 		database.stop();
 	}
 
 	@Override
-	public void databaseStateChanged(boolean open) {
-		if (open && selfTest) {
-			tester.start();
+	public void stateChanged(Object source,boolean open) {
+		if (source instanceof Database && open) {
+			startTesters();
 		}
 	}
 	

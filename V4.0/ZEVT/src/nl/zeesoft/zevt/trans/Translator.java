@@ -35,6 +35,7 @@ import nl.zeesoft.zevt.trans.entities.english.EnglishPreposition;
 import nl.zeesoft.zevt.trans.entities.english.EnglishProfanity;
 import nl.zeesoft.zevt.trans.entities.english.EnglishTime;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.db.StateListener;
 
 public class Translator extends Locker {
 	public static final String					VALUE_CONCATENATOR			= ":";
@@ -55,7 +56,7 @@ public class Translator extends Locker {
 	
 	private TranslatorRefreshWorker				refreshWorker				= null;
 
-	public List<TranslatorStateListener>		listeners					= new ArrayList<TranslatorStateListener>();
+	public List<StateListener>					listeners					= new ArrayList<StateListener>();
 	
 	public Translator(Config config) {
 		super(config.getMessenger());
@@ -68,7 +69,7 @@ public class Translator extends Locker {
 		}
 	}
 
-	public void addListener(TranslatorStateListener listener) {
+	public void addListener(StateListener listener) {
 		lockMe(this);
 		listeners.add(listener);
 		unlockMe(this);
@@ -116,10 +117,10 @@ public class Translator extends Locker {
 			addDefaultEntities();
 			initialized = false;
 		}
-		List<TranslatorStateListener> lst = new ArrayList<TranslatorStateListener>(listeners);
+		List<StateListener> lst = new ArrayList<StateListener>(listeners);
 		unlockMe(this);
-		for (TranslatorStateListener listener: lst) {
-			listener.translatorStateChanged(false);
+		for (StateListener listener: lst) {
+			listener.stateChanged(this,false);
 		}
 	}
 	
@@ -509,11 +510,11 @@ public class Translator extends Locker {
 				lockMe(this);
 				initialized = true;
 				initializing = false;
-				List<TranslatorStateListener> lst = new ArrayList<TranslatorStateListener>(listeners);
+				List<StateListener> lst = new ArrayList<StateListener>(listeners);
 				unlockMe(this);
 				configuration.debug(this,"Initialized entity value translator");
-				for (TranslatorStateListener listener: lst) {
-					listener.translatorStateChanged(true);
+				for (StateListener listener: lst) {
+					listener.stateChanged(this,true);
 				}
 			}
 		}

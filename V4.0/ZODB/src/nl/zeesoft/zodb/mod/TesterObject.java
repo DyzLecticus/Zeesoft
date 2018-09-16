@@ -127,6 +127,7 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 		long avgTime = totalTime / requests.size();
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("url",url,true));
 		json.rootElement.children.add(new JsElem("tests","" + requests.size()));
 		json.rootElement.children.add(new JsElem("successFull","" + successFull));
 		json.rootElement.children.add(new JsElem("averageResponseMs","" + avgTime));
