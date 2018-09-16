@@ -15,11 +15,28 @@ public class ContextConfig extends InitializerObject {
 	public static final String	MASTER_CONTEXT_GENERIC				= "Generic";
 	public static final String	MASTER_CONTEXT_GENERIC_DESC			= "Generic topics.";
 
-	public static final String	CONTEXT_GENERIC_SUPPORT				= "Support";
-	public static final String	CONTEXT_GENERIC_SUPPORT_DESC		= "Support the user when the bot is unable to help.";
+	public static final String	CONTEXT_GENERIC_CANCEL				= "Cancel";
+	public static final String	CONTEXT_GENERIC_CLASSIFICATION		= "Classification";
+	public static final String	CONTEXT_GENERIC_GOODBYE				= "Goodbye";
+	public static final String	CONTEXT_GENERIC_HANDSHAKE			= "Handshake";
+	public static final String	CONTEXT_GENERIC_LANGUAGE			= "Language";
+	public static final String	CONTEXT_GENERIC_MATH				= "Math";
 	public static final String	CONTEXT_GENERIC_PROFANITY			= "Profanity";
-	public static final String	CONTEXT_GENERIC_PROFANITY_DESC		= "Profanity, foul language and cursing.";
+	public static final String	CONTEXT_GENERIC_QNA					= "QuestionAndAnswer";
+	public static final String	CONTEXT_GENERIC_SUPPORT				= "Support";
+	public static final String	CONTEXT_GENERIC_THANKS				= "Thanks";
 
+	public static final String	CONTEXT_GENERIC_CANCEL_DESC			= "Allows the user to cancel the current dialog.";
+	public static final String	CONTEXT_GENERIC_CLASSIFICATION_DESC	= "Generates output when classification fails.";
+	public static final String	CONTEXT_GENERIC_HANDSHAKE_DESC		= "Greeting and name exchange.";
+	public static final String	CONTEXT_GENERIC_GOODBYE_DESC		= "Goodbye handling";
+	public static final String	CONTEXT_GENERIC_LANGUAGE_DESC		= "Handles questions about languages.";
+	public static final String	CONTEXT_GENERIC_MATH_DESC			= "Handles basic mathematical calculation.";
+	public static final String	CONTEXT_GENERIC_PROFANITY_DESC		= "Handles profanity like foul language and cursing.";
+	public static final String	CONTEXT_GENERIC_QNA_DESC			= "Handles general questions.";
+	public static final String	CONTEXT_GENERIC_SUPPORT_DESC		= "Allows the user to request support.";
+	public static final String	CONTEXT_GENERIC_THANKS_DESC			= "Handles compliments and feedback.";
+	
 	private ZNLBConfig			configuration						= null;
 	
 	public ContextConfig(ZNLBConfig config) {
@@ -50,16 +67,25 @@ public class ContextConfig extends InitializerObject {
 	
 	@Override
 	protected void initializeDatabaseObjectsNoLock() {
-		for (String code: configuration.getLanguages().getCodes()) {
+		Languages languages = ((ModZNLB) configuration.getModule(ModZNLB.NAME)).getLanguages(); 
+		for (String code: languages.getCodes()) {
 			if (!code.equals(Languages.UNI)) {
 				Language lang = new Language();
-				lang.name = configuration.getLanguages().getNameForCode(code);
+				lang.name = languages.getNameForCode(code);
 				lang.code = code;
 				addObjectNoLock(lang);
 				
 				MasterContext mc = lang.addMasterContext(MASTER_CONTEXT_GENERIC,MASTER_CONTEXT_GENERIC_DESC);
-				mc.addContext(CONTEXT_GENERIC_SUPPORT,CONTEXT_GENERIC_SUPPORT_DESC);
+				mc.addContext(CONTEXT_GENERIC_CANCEL,CONTEXT_GENERIC_CANCEL_DESC);
+				mc.addContext(CONTEXT_GENERIC_CLASSIFICATION,CONTEXT_GENERIC_CLASSIFICATION_DESC);
+				mc.addContext(CONTEXT_GENERIC_GOODBYE,CONTEXT_GENERIC_GOODBYE_DESC);
+				mc.addContext(CONTEXT_GENERIC_HANDSHAKE,CONTEXT_GENERIC_HANDSHAKE_DESC);
+				mc.addContext(CONTEXT_GENERIC_LANGUAGE,CONTEXT_GENERIC_LANGUAGE_DESC);
+				mc.addContext(CONTEXT_GENERIC_MATH,CONTEXT_GENERIC_MATH_DESC);
 				mc.addContext(CONTEXT_GENERIC_PROFANITY,CONTEXT_GENERIC_PROFANITY_DESC);
+				mc.addContext(CONTEXT_GENERIC_QNA,CONTEXT_GENERIC_QNA_DESC);
+				mc.addContext(CONTEXT_GENERIC_SUPPORT,CONTEXT_GENERIC_SUPPORT_DESC);
+				mc.addContext(CONTEXT_GENERIC_THANKS,CONTEXT_GENERIC_THANKS_DESC);
 			}
 		}
 	}

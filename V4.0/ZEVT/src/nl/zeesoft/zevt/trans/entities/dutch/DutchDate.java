@@ -5,6 +5,7 @@ import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class DutchDate extends EntityObject {
@@ -18,7 +19,7 @@ public class DutchDate extends EntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_DATE;
+		return Types.DATE;
 	}
 	@Override
 	public int getMaximumSymbols() {
@@ -52,12 +53,12 @@ public class DutchDate extends EntityObject {
 	}
 	@Override
 	public void initializeEntityValues() {
-		DutchNumeric eoNumeric = (DutchNumeric) getTranslator().getEntityObject(Languages.NLD,TYPE_NUMERIC);
+		DutchNumeric eoNumeric = (DutchNumeric) getTranslator().getEntityObject(Languages.NLD,Types.NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize();
 		}
 		
-		DutchMonth eoMonth = (DutchMonth) getTranslator().getEntityObject(Languages.NLD,TYPE_MONTH);
+		DutchMonth eoMonth = (DutchMonth) getTranslator().getEntityObject(Languages.NLD,Types.MONTH);
 		if (!eoMonth.isInitialized()) {
 			eoMonth.initialize();
 		}

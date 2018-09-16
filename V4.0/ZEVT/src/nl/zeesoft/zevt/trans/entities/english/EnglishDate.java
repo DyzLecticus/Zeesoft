@@ -5,6 +5,7 @@ import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class EnglishDate extends EntityObject {
@@ -18,7 +19,7 @@ public class EnglishDate extends EntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_DATE;
+		return Types.DATE;
 	}
 	@Override
 	public int getMaximumSymbols() {
@@ -52,22 +53,22 @@ public class EnglishDate extends EntityObject {
 	}
 	@Override
 	public void initializeEntityValues() {
-		EnglishNumeric eoNumeric = (EnglishNumeric) getTranslator().getEntityObject(Languages.ENG,TYPE_NUMERIC);
+		EnglishNumeric eoNumeric = (EnglishNumeric) getTranslator().getEntityObject(Languages.ENG,Types.NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize();
 		}
 		
-		EnglishOrder eoOrder = (EnglishOrder) getTranslator().getEntityObject(Languages.ENG,TYPE_ORDER);
+		EnglishOrder eoOrder = (EnglishOrder) getTranslator().getEntityObject(Languages.ENG,Types.ORDER);
 		if (!eoOrder.isInitialized()) {
 			eoOrder.initialize();
 		}
 
-		EnglishOrder2 eoOrder2 = (EnglishOrder2) getTranslator().getEntityObject(Languages.ENG,TYPE_ORDER2);
+		EnglishOrder2 eoOrder2 = (EnglishOrder2) getTranslator().getEntityObject(Languages.ENG,Types.ORDER2);
 		if (!eoOrder2.isInitialized()) {
 			eoOrder2.initialize();
 		}
 		
-		EnglishMonth eoMonth = (EnglishMonth) getTranslator().getEntityObject(Languages.ENG,TYPE_MONTH);
+		EnglishMonth eoMonth = (EnglishMonth) getTranslator().getEntityObject(Languages.ENG,Types.MONTH);
 		if (!eoMonth.isInitialized()) {
 			eoMonth.initialize();
 		}

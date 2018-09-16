@@ -3,17 +3,22 @@ package nl.zeesoft.zsdm.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.db.InitializerDatabaseObject;
 
 public class Dialog implements InitializerDatabaseObject {
-	private String					name			= "";
-	private String					language		= "";
-	private String					masterContext	= "";
-	private String					context			= "";
+	public static final String		VARIABLE_NAME_NEXT_DIALOG	= "nextDialog";
+	public static final String		VARIABLE_TYPE_NEXT_DIALOG	= "NXT";
+
+	private String					name						= "";
+	private String					language					= "";
+	private String					masterContext				= "";
+	private String					context						= "";
 	
-	private List<DialogExample>		examples		= new ArrayList<DialogExample>();
+	private List<DialogExample>		examples					= new ArrayList<DialogExample>();
+	private List<DialogVariable>	variables					= new ArrayList<DialogVariable>();
 
 	public void initialize() {
 		// Override to extend
@@ -33,6 +38,13 @@ public class Dialog implements InitializerDatabaseObject {
 			exsElem.children.add(exElem);
 			exElem.children = example.toJson().rootElement.children;
 		}
+		JsElem vrsElem = new JsElem("variables",true);
+		json.rootElement.children.add(vrsElem);
+		for (DialogVariable variable: variables) {
+			JsElem vrElem = new JsElem();
+			vrsElem.children.add(vrElem);
+			vrElem.children = variable.toJson().rootElement.children;
+		}
 		return json;
 	}
 
@@ -51,6 +63,16 @@ public class Dialog implements InitializerDatabaseObject {
 					ex.rootElement = exElem;
 					example.fromJson(ex);
 					examples.add(example);
+				}
+			}
+			JsElem vrsElem = json.rootElement.getChildByName("variables");
+			if (vrsElem!=null) {
+				for (JsElem vrElem: vrsElem.children) {
+					DialogVariable variable = new DialogVariable();
+					JsFile vr = new JsFile();
+					vr.rootElement = vrElem;
+					variable.fromJson(vr);
+					variables.add(variable);
 				}
 			}
 		}
@@ -96,18 +118,61 @@ public class Dialog implements InitializerDatabaseObject {
 	public List<DialogExample> getExamples() {
 		return examples;
 	}
-	
-	public void addExample(String input,String output) {
-		addExample(input,output,true,true,true);
+
+	public List<DialogVariable> getVariables() {
+		return variables;
 	}
 	
-	public void addExample(String input,String output,boolean lang, boolean mc, boolean c) {
+	public void addExample(String input,String output) {
+		addExample(input,output,"",true,true,true);
+	}
+	
+	public void addExample(String input,String output,String filterContext) {
+		addExample(input,output,filterContext,true,true,true);
+	}
+	
+	public void addExample(String input,String output,String filterContext,boolean lang, boolean mc, boolean c) {
 		DialogExample example = new DialogExample();
 		example.input.append(input);
 		example.output.append(output);
+		example.filterContext = filterContext;
 		example.toLanguageClassifier = lang;
 		example.toMasterClassifier = mc;
 		example.toContextClassifier = c;
 		examples.add(example);
+	}
+	
+	public void addNextDialogVariable() {
+		addVariable(VARIABLE_NAME_NEXT_DIALOG,VARIABLE_TYPE_NEXT_DIALOG);
+	}
+	
+	public void addVariable(String name, String type) {
+		addVariable(name,type,false);
+	}
+	
+	public void addVariable(String name, String type, boolean session) {
+		DialogVariable variable = new DialogVariable();
+		variable.name = name;
+		variable.type = type;
+		variable.session = session;
+		variables.add(variable);
+	}
+	
+	public DialogVariable getVariable(String name) {
+		DialogVariable r = null;
+		for (DialogVariable variable: variables) {
+			if (variable.name.equals(name)) {
+				r = variable;
+				break;
+			}
+		}
+		return r;
+	}
+
+	public void addVariablePrompt(String name,String prompt) {
+		DialogVariable r = getVariable(name);
+		if (r!=null) {
+			r.prompts.add(new ZStringSymbolParser(prompt));
+		}
 	}
 }

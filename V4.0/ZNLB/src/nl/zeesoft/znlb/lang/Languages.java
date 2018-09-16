@@ -33,11 +33,10 @@ public class Languages {
 		json.rootElement.children.add(langsElem);
 		int i = 0;
 		for (String code: languageCodes) {
-			String name = languageNames.get(i);
 			JsElem langElem = new JsElem();
 			langsElem.children.add(langElem);
 			langElem.children.add(new JsElem("code",code,true));
-			langElem.children.add(new JsElem("name",name,true));
+			langElem.children.add(new JsElem("name",languageNames.get(i),true));
 			i++;
 		}
 		return json;

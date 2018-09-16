@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class EnglishLanguage extends EntityObject {
@@ -14,7 +15,7 @@ public class EnglishLanguage extends EntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_LANGUAGE;
+		return Types.LANGUAGE;
 	}
 	@Override
 	public int getMaximumSymbols() {

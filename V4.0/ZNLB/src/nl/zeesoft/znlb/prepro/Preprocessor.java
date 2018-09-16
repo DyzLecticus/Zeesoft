@@ -5,6 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.znlb.ZNLBConfig;
+import nl.zeesoft.znlb.lang.Languages;
 import nl.zeesoft.znlb.mod.ModZNLB;
 import nl.zeesoft.zodb.db.InitializerDatabaseObject;
 import nl.zeesoft.zodb.db.InitializerObject;
@@ -43,8 +44,9 @@ public class Preprocessor extends InitializerObject {
 	protected void initializeDatabaseObjectsNoLock() {
 		addObjectNoLock(new EnglishPreprocessor());
 		addObjectNoLock(new DutchPreprocessor());
+		Languages languages = ((ModZNLB) getConfiguration().getModule(ModZNLB.NAME)).getLanguages(); 
 		for (LanguagePreprocessor pp: getPreprocessorsNoLock()) {
-			pp.setName(((ZNLBConfig)getConfiguration()).getLanguages().getNameForCode(pp.getLanguage()));
+			pp.setName(languages.getNameForCode(pp.getLanguage()));
 			pp.initializeReplacements();
 		}
 	}

@@ -1,5 +1,7 @@
 package nl.zeesoft.zevt.trans;
 
+import nl.zeesoft.zevt.type.Types;
+
 public class UniversalFrowny extends UniversalSmiley {
 	public UniversalFrowny(Translator t) {
 		super(t);
@@ -7,7 +9,7 @@ public class UniversalFrowny extends UniversalSmiley {
 
 	@Override
 	public String getType() {
-		return TYPE_FROWNY;
+		return Types.FROWNY;
 	}
 	
 	@Override

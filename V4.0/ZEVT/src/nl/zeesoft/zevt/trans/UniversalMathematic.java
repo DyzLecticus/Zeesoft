@@ -5,6 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zevt.type.Types;
 
 public class UniversalMathematic extends EntityObject {
 	public static final float	RESULT_INFINITY		= 999999999.9F;
@@ -27,7 +28,7 @@ public class UniversalMathematic extends EntityObject {
 	
 	@Override
 	public String getType() {
-		return TYPE_MATHEMATIC;
+		return Types.MATHEMATIC;
 	}
 	
 	@Override

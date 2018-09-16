@@ -1,5 +1,7 @@
 package nl.zeesoft.zevt.trans;
 
+import nl.zeesoft.zevt.type.Types;
+
 public class UniversalSmiley extends EntityObject {
 	private int counter = 0;
 	
@@ -9,7 +11,7 @@ public class UniversalSmiley extends EntityObject {
 
 	@Override
 	public String getType() {
-		return TYPE_SMILEY;
+		return Types.SMILEY;
 	}
 	
 	@Override

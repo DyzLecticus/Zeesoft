@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.json.JsFile;
 public class DialogExample implements JsAble {
 	public ZStringSymbolParser	input					= new ZStringSymbolParser();
 	public ZStringSymbolParser	output					= new ZStringSymbolParser();
+	public String				filterContext			= "";
 	
 	public boolean				toLanguageClassifier	= true;
 	public boolean				toMasterClassifier		= true;
@@ -19,6 +20,7 @@ public class DialogExample implements JsAble {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("input",input,true));
 		json.rootElement.children.add(new JsElem("output",output,true));
+		json.rootElement.children.add(new JsElem("filterContext",filterContext,true));
 		json.rootElement.children.add(new JsElem("toLanguageClassifier","" + toLanguageClassifier));
 		json.rootElement.children.add(new JsElem("toMasterClassifier","" + toMasterClassifier));
 		json.rootElement.children.add(new JsElem("toContextClassifier","" + toContextClassifier));
@@ -30,6 +32,7 @@ public class DialogExample implements JsAble {
 		if (json.rootElement!=null) {
 			input = json.rootElement.getChildZStringSymbolParser("input",input);
 			output = json.rootElement.getChildZStringSymbolParser("output",output);
+			filterContext = json.rootElement.getChildString("filterContext",filterContext);
 			toLanguageClassifier = json.rootElement.getChildBoolean("toLanguageClassifier",toLanguageClassifier);
 			toMasterClassifier = json.rootElement.getChildBoolean("toMasterClassifier",toMasterClassifier);
 			toContextClassifier = json.rootElement.getChildBoolean("toContextClassifier",toContextClassifier);

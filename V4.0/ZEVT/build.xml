@@ -17,7 +17,7 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zevt nl/zeesoft/zevt/mod nl/zeesoft/zevt/mod/handler nl/zeesoft/zevt/mod/resource nl/zeesoft/zevt/trans nl/zeesoft/zevt/trans/entities/dutch nl/zeesoft/zevt/trans/entities/english nl/zeesoft/zevt/test znlb.jar zodb.jar zdk.jar"/>
+	<property name="classpath" value="nl/zeesoft/zevt nl/zeesoft/zevt/mod nl/zeesoft/zevt/mod/handler nl/zeesoft/zevt/mod/resource nl/zeesoft/zevt/trans nl/zeesoft/zevt/trans/entities/dutch nl/zeesoft/zevt/trans/entities/english nl/zeesoft/zevt/type nl/zeesoft/zevt/test znlb.jar zodb.jar zdk.jar"/>
 
 	<target name="copyZNLB" description="Copy the ZNLB release">
 		<mkdir dir="${lib}"/>

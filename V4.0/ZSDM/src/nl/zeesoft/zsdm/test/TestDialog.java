@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 import nl.zeesoft.zsdm.dialog.Dialog;
 
@@ -55,6 +56,12 @@ public class TestDialog extends TestObject {
 		dialog.setContext("Context");
 		dialog.addExample("Test input 1.","Test output 1.");
 		dialog.addExample("Test input 2.","Test output 2.");
+		dialog.addVariable("testVariable1",Types.NUMERIC);
+		dialog.addVariablePrompt("testVariable1","Test prompt 1?");
+		dialog.addVariablePrompt("testVariable1","Test prompt 2?");
+		dialog.addVariable("testVariable2",Types.CURRENCY);
+		dialog.addVariablePrompt("testVariable2","Test prompt 1?");
+		dialog.addVariablePrompt("testVariable2","Test prompt 2?");
 		
 		JsFile json = dialog.toJson();
 		ZStringBuilder oriStr = json.toStringBuilderReadFormat();

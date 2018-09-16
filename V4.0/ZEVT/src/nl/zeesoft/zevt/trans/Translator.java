@@ -42,9 +42,6 @@ public class Translator extends Locker {
 	public static final String					OR_CONCATENATOR				= "|";
 	public static final String					OR_CONCATENATOR_SPLITTER	= "\\|";
 	
-	private List<String>						types						= new ArrayList<String>();
-	private List<String>						typeNames					= new ArrayList<String>();
-	
 	private Config								configuration				= null;
 	private List<EntityObject>					entities					= new ArrayList<EntityObject>();
 	
@@ -63,10 +60,6 @@ public class Translator extends Locker {
 		configuration = config;
 		addDefaultEntities();
 		refreshWorker = new TranslatorRefreshWorker(config,this);
-		for (int i = 0; i < EntityObject.TYPES.length; i++) {
-			types.add(EntityObject.TYPES[i]);
-			typeNames.add(EntityObject.TYPE_NAMES[i]);
-		}
 	}
 
 	public void addListener(StateListener listener) {
@@ -163,24 +156,6 @@ public class Translator extends Locker {
 	 */
 	public Date getCurrentDate() {
 		return new Date();
-	}
-
-	/**
-	 * Returns the supported types
-	 * 
-	 * @return The supported types
-	 */
-	public List<String> getTypes() {
-		return new ArrayList<String>(types);
-	}
-	
-	/**
-	 * Returns the supported type names
-	 * 
-	 * @return The supported type names
-	 */
-	public List<String> getTypeNames() {
-		return new ArrayList<String>(typeNames);
 	}
 
 	/**
@@ -421,18 +396,10 @@ public class Translator extends Locker {
 	 * Adds an entity to the list of entities
 	 * 
 	 * @param eo The entity
-	 * @param typeName The optional type name for non default types
 	 */
-	public void addEntity(EntityObject eo,String typeName) {
+	public void addEntity(EntityObject eo) {
 		lockMe(this);
 		entities.add(eo);
-		if (!types.contains(eo.getType())) {
-			types.add(eo.getType());
-			if (typeName.length()==0) {
-				typeName = eo.getType();
-			}
-			typeNames.add(typeName);
-		}
 		unlockMe(this);
 	}
 

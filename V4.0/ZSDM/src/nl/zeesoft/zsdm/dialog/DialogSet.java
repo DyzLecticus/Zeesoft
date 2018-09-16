@@ -4,17 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.znlb.ZNLBConfig;
+import nl.zeesoft.znlb.lang.Languages;
+import nl.zeesoft.znlb.mod.ModZNLB;
 import nl.zeesoft.zodb.db.InitializerDatabaseObject;
 import nl.zeesoft.zodb.db.InitializerObject;
-import nl.zeesoft.zsdm.dialog.entities.dutch.DutchProfanity;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericCancel;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericClassification;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericGoodbye;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericHandshake;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericLanguage;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericMath;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericProfanity;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericQnA;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericSupport;
+import nl.zeesoft.zsdm.dialog.dialogs.dutch.DutchGenericThanks;
 import nl.zeesoft.zsdm.mod.ModZSDM;
 
 public class DialogSet extends InitializerObject {
-	private ZNLBConfig	configuration	= null;
-	
 	public DialogSet(ZNLBConfig config) {
 		super(config,ModZSDM.NAME + "/Dialogs/");
-		configuration = config;
 	}
 	
 	public List<Dialog> getDialogs() {
@@ -34,9 +42,19 @@ public class DialogSet extends InitializerObject {
 
 	@Override
 	protected void initializeDatabaseObjectsNoLock() {
-		addObjectNoLock(new DutchProfanity());
+		addObjectNoLock(new DutchGenericCancel());
+		addObjectNoLock(new DutchGenericClassification());
+		addObjectNoLock(new DutchGenericGoodbye());
+		addObjectNoLock(new DutchGenericHandshake());
+		addObjectNoLock(new DutchGenericLanguage());
+		addObjectNoLock(new DutchGenericMath());
+		addObjectNoLock(new DutchGenericProfanity());
+		addObjectNoLock(new DutchGenericQnA());
+		addObjectNoLock(new DutchGenericSupport());
+		addObjectNoLock(new DutchGenericThanks());
 		for (Dialog dialog: getDialogsNoLock()) {
-			dialog.setName(configuration.getLanguages().getNameForCode(dialog.getLanguage()) + "/" + dialog.getMasterContext() + "/" + dialog.getContext());
+			Languages languages = ((ModZNLB) getConfiguration().getModule(ModZNLB.NAME)).getLanguages(); 
+			dialog.setName(languages.getNameForCode(dialog.getLanguage()) + "/" + dialog.getMasterContext() + "/" + dialog.getContext());
 			dialog.initialize();
 		}
 	}

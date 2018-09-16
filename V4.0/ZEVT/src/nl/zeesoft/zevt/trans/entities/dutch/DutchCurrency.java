@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.dutch;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class DutchCurrency extends EntityObject {
@@ -14,7 +15,7 @@ public class DutchCurrency extends EntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_CURRENCY;
+		return Types.CURRENCY;
 	}
 	@Override
 	public int getMaximumSymbols() {

@@ -5,68 +5,11 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public abstract class EntityObject {
-	public static final String					TYPE_ALPHABETIC				= "ABC";
-	public static final String					TYPE_NUMERIC				= "NUM";
-	public static final String					TYPE_MATHEMATIC				= "MTH";
-	public static final String					TYPE_ORDER					= "ORD";
-	public static final String					TYPE_ORDER2					= "OR2";
-	public static final String					TYPE_DURATION				= "DUR";
-	public static final String					TYPE_MONTH					= "MNT";
-	public static final String					TYPE_DATE					= "DAT";
-	public static final String					TYPE_TIME					= "TIM";
-	public static final String					TYPE_PREPOSITION			= "PRE";
-	public static final String					TYPE_COUNTRY				= "CNT";
-	public static final String					TYPE_LANGUAGE				= "LNG";
-	public static final String					TYPE_CURRENCY				= "CUR";
-	public static final String					TYPE_PROFANITY				= "PRF";
-	public static final String					TYPE_CONFIRMATION			= "CNF";
-	public static final String					TYPE_SMILEY					= "SML";
-	public static final String					TYPE_FROWNY					= "FRN";
-	
-	public static final String[]				TYPES						= {
-			TYPE_ALPHABETIC
-			,TYPE_NUMERIC
-			,TYPE_MATHEMATIC		
-			,TYPE_ORDER			
-			,TYPE_ORDER2			
-			,TYPE_DURATION		
-			,TYPE_MONTH			
-			,TYPE_DATE			
-			,TYPE_TIME			
-			,TYPE_PREPOSITION	
-			,TYPE_COUNTRY		
-			,TYPE_LANGUAGE		
-			,TYPE_CURRENCY		
-			,TYPE_PROFANITY		
-			,TYPE_CONFIRMATION	
-			,TYPE_SMILEY			
-			,TYPE_FROWNY			
-			};
-
-	public static final String[]				TYPE_NAMES					= {
-			"Alphabetic"
-			,"Numeric"
-			,"Mathematic"		
-			,"Order"			
-			,"Order2"			
-			,"Duration"		
-			,"Month"			
-			,"Date"			
-			,"Time"			
-			,"Preposition"	
-			,"Country"		
-			,"Language"		
-			,"Currency"		
-			,"Profanity"		
-			,"Confirmation"	
-			,"Smiley"			
-			,"Frowny"			
-			};
-	
-	private Translator				translator					= null;
+	private Translator							translator					= null;
 	
 	private boolean								initialized					= false;
 	private String								internalValuePrefix			= "";
@@ -83,7 +26,7 @@ public abstract class EntityObject {
 	}
 
 	public String getType() {
-		return TYPE_ALPHABETIC;
+		return Types.ALPHABETIC;
 	}
 
 	public String getName() {

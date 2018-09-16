@@ -3,6 +3,7 @@ package nl.zeesoft.zevt.trans.entities.dutch;
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class DutchMathematic extends EntityObject {
@@ -15,7 +16,7 @@ public class DutchMathematic extends EntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_MATHEMATIC;
+		return Types.MATHEMATIC;
 	}
 	@Override
 	public int getMaximumSymbols() {

@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.dutch;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class DutchMonth extends EntityObject {
@@ -14,7 +15,7 @@ public class DutchMonth extends EntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_MONTH;
+		return Types.MONTH;
 	}
 	@Override
 	public void initializeEntityValues() {

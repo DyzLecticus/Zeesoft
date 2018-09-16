@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.english;
 
 import nl.zeesoft.zevt.trans.DatabaseEntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class EnglishProfanity extends DatabaseEntityObject {
@@ -15,7 +16,7 @@ public class EnglishProfanity extends DatabaseEntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_PROFANITY;
+		return Types.PROFANITY;
 	}
 	@Override
 	public void initializeEntityValues() {

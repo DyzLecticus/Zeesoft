@@ -68,6 +68,8 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("<input type=\"button\" value=\"New\" onclick=\"ZODB.dm.new();\" />");
 			html.append("<input type=\"button\" value=\"Remove\" onclick=\"ZODB.dm.remove();\" />");
 			html.append("<input type=\"checkbox\" id=\"removeCheck\" />");
+			html.append("<input type=\"button\" value=\"Remove all\" onclick=\"ZODB.dm.removeAll();\" />");
+			html.append("<input type=\"checkbox\" id=\"removeAllCheck\" />");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			

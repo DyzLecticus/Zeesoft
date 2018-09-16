@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.znlb.ZNLBConfig;
 import nl.zeesoft.znlb.context.ContextConfig;
+import nl.zeesoft.znlb.lang.Languages;
 import nl.zeesoft.znlb.mod.handler.HtmlZNLBIndexHandler;
 import nl.zeesoft.znlb.mod.handler.JavaScriptZNLBLanguagesHandler;
 import nl.zeesoft.znlb.mod.handler.JsonZNLBContextConfigurationHandler;
@@ -23,6 +24,7 @@ public class ModZNLB extends ModObject implements StateListener {
 	public static final String		DESC					= 
 		"The Zeesoft Natural Language Base provides a simple JSON API for language specific sentence preprocessing.";
 
+	private Languages				languages				= null;
 	private Preprocessor			preprocessor			= null;
 	private ContextConfig			contextConfiguration	= null;
 	
@@ -30,6 +32,9 @@ public class ModZNLB extends ModObject implements StateListener {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
+		
+		languages = getNewLanguages();
+		languages.initialize();
 	}
 	
 	@Override
@@ -97,12 +102,20 @@ public class ModZNLB extends ModObject implements StateListener {
 		return r;
 	}
 	
+	public Languages getLanguages() {
+		return languages;
+	}
+	
 	public Preprocessor getPreprocessor() {
 		return preprocessor;
 	}
 	
 	public ContextConfig getContextConfiguration() {
 		return contextConfiguration;
+	}
+	
+	protected Languages getNewLanguages() {
+		return new Languages();
 	}
 	
 	protected Preprocessor getNewPreprocessor() {

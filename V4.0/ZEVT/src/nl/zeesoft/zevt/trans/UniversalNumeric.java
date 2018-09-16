@@ -1,5 +1,7 @@
 package nl.zeesoft.zevt.trans;
 
+import nl.zeesoft.zevt.type.Types;
+
 public class UniversalNumeric extends EntityObject {
 	public UniversalNumeric(Translator t) {
 		super(t);
@@ -7,7 +9,7 @@ public class UniversalNumeric extends EntityObject {
 
 	@Override
 	public String getType() {
-		return TYPE_NUMERIC;
+		return Types.NUMERIC;
 	}
 	
 	@Override

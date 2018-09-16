@@ -45,7 +45,7 @@ The output of this test shows;
  * The time it takes to initialize the translator  
  * The translation results including the time it takes, for a set of input sequences  
 ~~~~
-Initializing the Translator took: 2513 ms
+Initializing the Translator took: 2784 ms
 
 Sequence: 'Eat three donuts at 9:00 or count to 110'
 Translating the sequence took: 0 ms
@@ -54,7 +54,7 @@ Retranslating the sequence took: 0 ms
 Retranslation: 'Eat three donuts at 09:00:00 or count to 110'
 
 Sequence: 'Eet drie donuts om 9:00 of tel tot 110'
-Translating the sequence took: 16 ms
+Translating the sequence took: 0 ms
 Translation: 'UN_ABC:Eet NL_NUM:3|UN_ABC:drie UN_ABC:donuts UN_ABC:om UN_TIM:09:00:00 UN_ABC:of UN_ABC:tel UN_ABC:tot UN_NUM:110'
 Retranslating the sequence took: 0 ms
 Retranslation: 'Eet drie donuts om 09:00:00 of tel tot 110'
@@ -62,7 +62,7 @@ Retranslation: 'Eet drie donuts om 09:00:00 of tel tot 110'
 Sequence: 'I finished twohundredandtwentyfourth or 225th'
 Translating the sequence took: 0 ms
 Translation: 'UN_ABC:I UN_ABC:finished EN_ORD:224|UN_ABC:twohundredandtwentyfourth UN_ABC:or EN_OR2:225'
-Retranslating the sequence took: 15 ms
+Retranslating the sequence took: 0 ms
 Retranslation: 'I finished twohundredandtwentyfourth or 225th'
 
 Sequence: 'Ik ben tweehonderdvierentwintigste geworden'
@@ -72,7 +72,7 @@ Retranslating the sequence took: 0 ms
 Retranslation: 'Ik ben tweehonderdvierentwintigste geworden'
 
 Sequence: 'februari march october december'
-Translating the sequence took: 16 ms
+Translating the sequence took: 0 ms
 Translation: 'NL_MNT:2|UN_ABC:februari EN_MNT:3|UN_ABC:march EN_MNT:10|UN_ABC:october EN_MNT:12|NL_MNT:12|UN_ABC:december'
 Retranslating the sequence took: 0 ms
 Retranslation: 'februari march october december'
@@ -84,7 +84,7 @@ Retranslating the sequence took: 0 ms
 Retranslation: 'thirtythree hours and fourtyone minutes / drieendertig uur en eenenveertig minuten'
 
 Sequence: 'yesterday OR today OR the 1st of october'
-Translating the sequence took: 0 ms
+Translating the sequence took: 15 ms
 Translation: 'EN_DAT:2018-07-15|UN_ABC:yesterday UN_ABC:OR EN_DAT:2018-07-16|UN_ABC:today UN_ABC:OR EN_DAT:2018-10-01'
 Retranslating the sequence took: 0 ms
 Retranslation: 'july fifteenth twothousandeighteen OR july sixteenth twothousandeighteen OR october first twothousandeighteen'
@@ -116,7 +116,7 @@ Retranslation: 'to Germany or France'
 Sequence: 'naar Duitsland of Frankrijk'
 Translating the sequence took: 0 ms
 Translation: 'UN_ABC:naar NL_CNT:DE|UN_ABC:Duitsland UN_ABC:of NL_CNT:FR|UN_ABC:Frankrijk'
-Retranslating the sequence took: 15 ms
+Retranslating the sequence took: 0 ms
 Retranslation: 'naar Duitsland of Frankrijk'
 
 Sequence: 'You asshole'
@@ -200,8 +200,8 @@ The output of this test shows the converted JSON.
 Test results
 ------------
 All 2 tests have been executed successfully (49 assertions).  
-Total test duration: 2716 ms (total sleep duration: 1800 ms).  
+Total test duration: 2987 ms (total sleep duration: 1800 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zevt.test.TestTranslator: 1091 Kb / 1 Mb
- * nl.zeesoft.zevt.test.TestTranslatorRequestResponse: 1094 Kb / 1 Mb
+ * nl.zeesoft.zevt.test.TestTranslatorRequestResponse: 1095 Kb / 1 Mb

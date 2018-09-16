@@ -5,6 +5,7 @@ import java.util.Date;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class EnglishTime extends EntityObject {
@@ -17,7 +18,7 @@ public class EnglishTime extends EntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_TIME;
+		return Types.TIME;
 	}
 	@Override
 	public int getMaximumSymbols() {
@@ -42,7 +43,7 @@ public class EnglishTime extends EntityObject {
 	}
 	@Override
 	public void initializeEntityValues() {
-		EnglishNumeric eoNumeric = (EnglishNumeric) getTranslator().getEntityObject(Languages.ENG,TYPE_NUMERIC);
+		EnglishNumeric eoNumeric = (EnglishNumeric) getTranslator().getEntityObject(Languages.ENG,Types.NUMERIC);
 		if (!eoNumeric.isInitialized()) {
 			eoNumeric.initialize();
 		}

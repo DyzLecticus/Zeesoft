@@ -7,9 +7,9 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.trans.UniversalMathematic;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class TestTranslator extends TestObject {
@@ -139,7 +139,7 @@ public class TestTranslator extends TestObject {
 			"UN_SML:7 UN_FRN:28 UN_SML:42",
 			":-) ]0: {;");
 		
-		UniversalMathematic math = (UniversalMathematic) t.getEntityObject(Languages.UNI,EntityObject.TYPE_MATHEMATIC);
+		UniversalMathematic math = (UniversalMathematic) t.getEntityObject(Languages.UNI,Types.MATHEMATIC);
 		
 		ZStringSymbolParser expression = new ZStringSymbolParser("10 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.DIVISION + " 5");
 		float result = math.calculate(expression);

@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.trans.entities.dutch;
 
 import nl.zeesoft.zevt.trans.EntityObject;
 import nl.zeesoft.zevt.trans.Translator;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
 public class DutchOrder extends EntityObject {
@@ -14,11 +15,11 @@ public class DutchOrder extends EntityObject {
 	}
 	@Override
 	public String getType() {
-		return TYPE_ORDER;
+		return Types.ORDER;
 	}
 	@Override
 	public void initializeEntityValues() {
-		DutchNumeric eo = (DutchNumeric) getTranslator().getEntityObject(Languages.NLD,TYPE_NUMERIC);
+		DutchNumeric eo = (DutchNumeric) getTranslator().getEntityObject(Languages.NLD,Types.NUMERIC);
 		if (!eo.isInitialized()) {
 			eo.initialize();
 		}

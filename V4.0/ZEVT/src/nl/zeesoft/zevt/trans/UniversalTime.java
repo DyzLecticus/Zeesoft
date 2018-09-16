@@ -1,12 +1,14 @@
 package nl.zeesoft.zevt.trans;
 
+import nl.zeesoft.zevt.type.Types;
+
 public class UniversalTime extends EntityObject {
 	public UniversalTime(Translator t) {
 		super(t);
 	}
 	@Override
 	public String getType() {
-		return TYPE_TIME;
+		return Types.TIME;
 	}
 	@Override
 	public String getInternalValueForExternalValue(String str) {

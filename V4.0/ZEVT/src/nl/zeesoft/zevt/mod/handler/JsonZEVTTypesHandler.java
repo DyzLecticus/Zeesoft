@@ -4,9 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zevt.mod.ModZEVT;
+import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonHandlerObject;
@@ -18,24 +18,8 @@ public class JsonZEVTTypesHandler extends JsonHandlerObject {
 	
 	public JsonZEVTTypesHandler(Config config, ModObject mod) {
 		super(config,mod,PATH);
-		JsFile json = new JsFile();
-		json.rootElement = new JsElem();
-		JsElem typesElem = new JsElem("types",true);
-		json.rootElement.children.add(typesElem);
-		
-		ModObject zm = getConfiguration().getModule(ModZEVT.NAME);
-		if (zm!=null) {
-			ModZEVT zevt = (ModZEVT) zm;
-			int i = 0;
-			for (String type: zevt.getTranslator().getTypes()) {
-				JsElem typeElem = new JsElem();
-				typesElem.children.add(typeElem);
-				typeElem.children.add(new JsElem("code",type,true));
-				typeElem.children.add(new JsElem("name",zevt.getTranslator().getTypeNames().get(i),true));
-				i++;
-			}
-		}
-		
+		Types types = ((ModZEVT) getConfiguration().getModule(ModZEVT.NAME)).getTypes(); 
+		JsFile json = types.toJson();
 		if (config.isDebug()) {
 			res = json.toStringBuilderReadFormat();
 		} else {
