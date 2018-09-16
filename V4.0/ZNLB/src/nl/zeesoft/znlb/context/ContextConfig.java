@@ -5,9 +5,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.znlb.ZNLBConfig;
 import nl.zeesoft.znlb.lang.Languages;
 import nl.zeesoft.znlb.mod.ModZNLB;
+import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.InitializerDatabaseObject;
 import nl.zeesoft.zodb.db.InitializerObject;
 
@@ -37,11 +37,8 @@ public class ContextConfig extends InitializerObject {
 	public static final String	CONTEXT_GENERIC_SUPPORT_DESC		= "Allows the user to request support.";
 	public static final String	CONTEXT_GENERIC_THANKS_DESC			= "Handles compliments and feedback.";
 	
-	private ZNLBConfig			configuration						= null;
-	
-	public ContextConfig(ZNLBConfig config) {
+	public ContextConfig(Config config) {
 		super(config,ModZNLB.NAME + "/Contexts/");
-		configuration = config;
 	}
 	
 	public List<Language> getLanguages() {
@@ -67,7 +64,7 @@ public class ContextConfig extends InitializerObject {
 	
 	@Override
 	protected void initializeDatabaseObjectsNoLock() {
-		Languages languages = ((ModZNLB) configuration.getModule(ModZNLB.NAME)).getLanguages(); 
+		Languages languages = ((ModZNLB) getConfiguration().getModule(ModZNLB.NAME)).getLanguages(); 
 		for (String code: languages.getCodes()) {
 			if (!code.equals(Languages.UNI)) {
 				Language lang = new Language();

@@ -51,6 +51,6 @@ public class ModZSDM extends ModObject implements StateListener {
 	}
 	
 	protected DialogSet getNewDialogSet() {
-		return new DialogSet((ZNLBConfig)configuration);
+		return new DialogSet(configuration);
 	}
 }

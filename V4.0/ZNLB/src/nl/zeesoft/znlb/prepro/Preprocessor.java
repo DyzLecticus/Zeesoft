@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
-import nl.zeesoft.znlb.ZNLBConfig;
 import nl.zeesoft.znlb.lang.Languages;
 import nl.zeesoft.znlb.mod.ModZNLB;
+import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.InitializerDatabaseObject;
 import nl.zeesoft.zodb.db.InitializerObject;
 
 public class Preprocessor extends InitializerObject {
-	public Preprocessor(ZNLBConfig config) {
+	public Preprocessor(Config config) {
 		super(config,ModZNLB.NAME + "/Preprocessors/");
 	}
 

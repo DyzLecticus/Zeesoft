@@ -4,7 +4,6 @@ import nl.zeesoft.zdk.json.JsAbleClient;
 import nl.zeesoft.zdk.json.JsAbleClientRequest;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
-import nl.zeesoft.znlb.ZNLBConfig;
 import nl.zeesoft.znlb.context.ContextConfig;
 import nl.zeesoft.znlb.lang.Languages;
 import nl.zeesoft.znlb.mod.handler.HtmlZNLBIndexHandler;
@@ -15,6 +14,7 @@ import nl.zeesoft.znlb.mod.handler.JsonZNLBRequestHandler;
 import nl.zeesoft.znlb.prepro.Preprocessor;
 import nl.zeesoft.znlb.prepro.PreprocessorRequestHandler;
 import nl.zeesoft.znlb.prepro.PreprocessorRequestResponse;
+import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
@@ -28,7 +28,7 @@ public class ModZNLB extends ModObject implements StateListener {
 	private Preprocessor			preprocessor			= null;
 	private ContextConfig			contextConfiguration	= null;
 	
-	public ModZNLB(ZNLBConfig config) {
+	public ModZNLB(Config config) {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
@@ -119,11 +119,11 @@ public class ModZNLB extends ModObject implements StateListener {
 	}
 	
 	protected Preprocessor getNewPreprocessor() {
-		return new Preprocessor((ZNLBConfig)configuration);
+		return new Preprocessor(configuration);
 	}
 	
 	protected ContextConfig getNewContextConfig() {
-		return new ContextConfig((ZNLBConfig)configuration);
+		return new ContextConfig(configuration);
 	}
 	
 	protected ZNLBTester getNewTester() {

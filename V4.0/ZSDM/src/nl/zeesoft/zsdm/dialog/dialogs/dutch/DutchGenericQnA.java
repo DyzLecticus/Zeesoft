@@ -5,10 +5,8 @@ import nl.zeesoft.znlb.context.ContextConfig;
 public class DutchGenericQnA extends DutchGeneric {
 	private static final String 		SUPPORT	= "Ik kan helpen met " + 
 			"algemene vragen" + 
-			", het maken van eenvoudige wiskundige berekeningen" + 
-			", het boeken van kamers" + 
-			", vragen over kamer boekingen" +
-			" en vragen over buitenlandoverboekingen.";
+			" en het maken van eenvoudige wiskundige berekeningen" + 
+			"";
 	private static final String 		SELF	= "Ik ben een kunstmatig intelligente persoonlijk assistent.";
 	private static final String 		GOAL	= "Mijn doel is om mensen te begrijpen en te helpen.";
 	private static final String 		CREATOR	= "Mijn software is geschreven door André van der Zee.";
