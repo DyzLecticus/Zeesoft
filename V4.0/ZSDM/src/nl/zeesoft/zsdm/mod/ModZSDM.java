@@ -1,10 +1,9 @@
 package nl.zeesoft.zsdm.mod;
 
-import nl.zeesoft.znlb.ZNLBConfig;
+import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
-import nl.zeesoft.zsdm.ZSDMConfig;
 import nl.zeesoft.zsdm.dialog.DialogSet;
 import nl.zeesoft.zsdm.mod.handler.HtmlZSDMIndexHandler;
 
@@ -15,10 +14,12 @@ public class ModZSDM extends ModObject implements StateListener {
 	
 	private DialogSet				dialogSet		= null;
 	
-	public ModZSDM(ZSDMConfig config) {
+	public ModZSDM(Config config) {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
+		dialogSet = getNewDialogSet();
+		dialogSet.addListener(this);
 	}
 	
 	@Override
@@ -31,8 +32,6 @@ public class ModZSDM extends ModObject implements StateListener {
 	public void initialize() {
 		handlers.add(new HtmlZSDMIndexHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
-		dialogSet = getNewDialogSet();
-		dialogSet.addListener(this);
 		dialogSet.initialize();
 		super.initialize();
 	}

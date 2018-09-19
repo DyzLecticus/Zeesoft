@@ -23,6 +23,8 @@ public class ModZODB extends ModObject implements StateListener {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
+		database = getNewDatabase();
+		database.addListener(this);
 	}
 	
 	@Override
@@ -39,8 +41,6 @@ public class ModZODB extends ModObject implements StateListener {
 		handlers.add(new HtmlZODBDataManagerHandler(configuration,this));
 		handlers.add(new JsonZODBRequestHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
-		database = getNewDatabase();
-		database.addListener(this);
 		testers.add(getNewTester());
 		database.start();
 		super.initialize();

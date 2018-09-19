@@ -30,21 +30,20 @@ public class ModZEVT extends ModObject implements StateListener {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
-		
 		types = new Types();
 		types.initialize();
+		translator = getNewTranslator();
+		translator.listeners.add(this);
 	}
 	
 	@Override
 	public void install() {
-		Translator entityValueTranslator = getNewEntityValueTranslator();
+		Translator entityValueTranslator = getNewTranslator();
 		entityValueTranslator.install();
 	}
 	
 	@Override
 	public void initialize() {
-		translator = getNewEntityValueTranslator();
-		translator.listeners.add(this);
 		handlers.add(new HtmlZEVTIndexHandler(configuration,this));
 		handlers.add(new HtmlZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JavaScriptZEVTEntityTranslatorHandler(configuration,this));
@@ -98,7 +97,7 @@ public class ModZEVT extends ModObject implements StateListener {
 		return r;
 	}
 	
-	protected Translator getNewEntityValueTranslator() {
+	protected Translator getNewTranslator() {
 		return new Translator(configuration);
 	}
 	

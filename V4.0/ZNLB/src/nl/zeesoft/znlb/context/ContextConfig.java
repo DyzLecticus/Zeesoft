@@ -29,7 +29,7 @@ public class ContextConfig extends InitializerObject {
 	public static final String	CONTEXT_GENERIC_CANCEL_DESC			= "Allows the user to cancel the current dialog.";
 	public static final String	CONTEXT_GENERIC_CLASSIFICATION_DESC	= "Generates output when classification fails.";
 	public static final String	CONTEXT_GENERIC_HANDSHAKE_DESC		= "Greeting and name exchange.";
-	public static final String	CONTEXT_GENERIC_GOODBYE_DESC		= "Goodbye handling";
+	public static final String	CONTEXT_GENERIC_GOODBYE_DESC		= "Goodbye handling.";
 	public static final String	CONTEXT_GENERIC_LANGUAGE_DESC		= "Handles questions about languages.";
 	public static final String	CONTEXT_GENERIC_MATH_DESC			= "Handles basic mathematical calculation.";
 	public static final String	CONTEXT_GENERIC_PROFANITY_DESC		= "Handles profanity like foul language and cursing.";

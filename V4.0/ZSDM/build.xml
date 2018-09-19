@@ -17,7 +17,7 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zsdm nl/zeesoft/zsdm/mod nl/zeesoft/zsdm/mod/handler nl/zeesoft/zsdm/mod/resource nl/zeesoft/zsdm/dialog nl/zeesoft/zsdm/dialog/dialogs/dutch nl/zeesoft/zsdm/dialog/dialogs/english nl/zeesoft/zsdm/test zevt.jar zdk.jar"/>
+	<property name="classpath" value="nl/zeesoft/zsdm nl/zeesoft/zsdm/mod nl/zeesoft/zsdm/mod/handler nl/zeesoft/zsdm/mod/resource nl/zeesoft/zsdm/dialog nl/zeesoft/zsdm/dialog/dialogs/dutch nl/zeesoft/zsdm/dialog/dialogs/english nl/zeesoft/zsdm/test zevt.jar znlb.jar zevt.jar zodb.jar zdk.jar"/>
 
 	<target name="copyZEVT" description="Copy the ZEVT release">
 		<mkdir dir="${lib}"/>

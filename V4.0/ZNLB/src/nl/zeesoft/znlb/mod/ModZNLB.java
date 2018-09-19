@@ -32,9 +32,12 @@ public class ModZNLB extends ModObject implements StateListener {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
-		
 		languages = getNewLanguages();
 		languages.initialize();
+		preprocessor = getNewPreprocessor();
+		preprocessor.addListener(this);
+		contextConfiguration = getNewContextConfig();
+		contextConfiguration.addListener(this);
 	}
 	
 	@Override
@@ -53,11 +56,7 @@ public class ModZNLB extends ModObject implements StateListener {
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		handlers.add(new JsonZNLBLanguagesHandler(configuration,this));
 		handlers.add(new JsonZNLBContextConfigurationHandler(configuration,this));
-		preprocessor = getNewPreprocessor();
-		preprocessor.addListener(this);
 		preprocessor.initialize();
-		contextConfiguration = getNewContextConfig();
-		contextConfiguration.addListener(this);
 		contextConfiguration.initialize();
 		testers.add(getNewTester());
 		super.initialize();
