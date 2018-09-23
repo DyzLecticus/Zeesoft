@@ -252,12 +252,12 @@ public class Confabulator extends Locker {
 		}
 		logModuleStateNoLock(confab,"Initialized module symbol variations");
 
-		if (confab.expect) {
+		if (confab.validate) {
 			confabulateNoLock(confab,ctxt,false);
 			logModuleStateNoLock(confab,"Initialized module symbol expectations");
 		}
 		
-		if (confab.expect || !checkDoneNoLock(confab,ctxt)) {
+		if (confab.validate || !checkDoneNoLock(confab,ctxt)) {
 			while(!confabulateReturnDoneNoLock(confab,ctxt)) {
 				if ((new Date()).getTime() > (confab.started.getTime() + confab.maxTime)) {
 					break;

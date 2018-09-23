@@ -43,7 +43,7 @@ public class TestConfabulator extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Confabulator conf = (Confabulator) getTester().getMockedObject(MockConfabulator.class.getName());
-		System.out.println("Mock confabulator: " + conf.getName() + ", modules: " + conf.getModules());
+		System.out.println("Confabulator name: " + conf.getName() + ", modules: " + conf.getModules());
 		
 		Context def = conf.getContext("");
 		Context name = conf.getContext("Name");
@@ -64,15 +64,19 @@ public class TestConfabulator extends TestObject {
 		testCorrection(conf,"My goad is to help.",false,"My goal is to help.");
 	}
 	
-	private void testCorrection(Confabulator conf,String input,boolean expect,String expectedCorrection) {
+	private void testCorrection(Confabulator conf,String input,boolean validate,String expectedCorrection) {
 		CorrectionConfabulation confab = new CorrectionConfabulation();
 		confab.input.append(input);
-		confab.expect = expect;
+		confab.validate = validate;
 		confab.appendLog = true;
 		conf.confabulate(confab);
 		ZStringSymbolParser expected = new ZStringSymbolParser(expectedCorrection);
 		assertEqual(confab.corrected,expected,"Correction does not match expectation");
-		System.out.println("Corrected: '" + confab.input + "' -> '" + confab.corrected + "'");
+		String val = "";
+		if (validate) {
+			val = " (validated links)";
+		}
+		System.out.println("Corrected: '" + confab.input + "' -> '" + confab.corrected + "'" + val);
 		System.out.println("Log;");
 		System.out.println(confab.log);
 	}

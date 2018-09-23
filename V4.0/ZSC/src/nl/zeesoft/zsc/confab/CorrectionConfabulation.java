@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 
 public class CorrectionConfabulation extends ConfabulationObject {
 	public String				contextSymbol	= "";
-	public boolean				expect			= true;
+	public boolean				validate		= true;
 	public String				alphabet		= "";
 	
 	public ZStringSymbolParser	corrected		= new ZStringSymbolParser();
