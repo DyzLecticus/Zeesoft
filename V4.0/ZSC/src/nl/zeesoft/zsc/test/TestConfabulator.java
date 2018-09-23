@@ -60,8 +60,10 @@ public class TestConfabulator extends TestObject {
 		System.out.println();
 
 		testCorrection(conf,"My nam is Dyz agent.",true,"My name is Dyz Lecticus.");
+		testCorrection(conf,"MY NAM IS DYZ AGENT.",true,"My name is Dyz Lecticus.");
 		testCorrection(conf,"My goad is to help.",true,"My goal is to understand.");
 		testCorrection(conf,"My goad is to help.",false,"My goal is to help.");
+		testCorrection(conf,"gaad.",false,"Intelligent.");
 	}
 	
 	private void testCorrection(Confabulator conf,String input,boolean validate,String expectedCorrection) {

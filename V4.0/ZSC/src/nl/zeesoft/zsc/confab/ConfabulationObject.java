@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 
 public abstract class ConfabulationObject {
 	public ZStringSymbolParser	input			= new ZStringSymbolParser();
+	public boolean				caseSensitive	= false;
 	public long					maxTime			= 1000;
 	public boolean				appendLog		= false;
 

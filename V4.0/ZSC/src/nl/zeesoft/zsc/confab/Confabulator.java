@@ -12,6 +12,8 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
 
 public class Confabulator extends Locker {
+	private SymbolCorrector					corrector			= new SymbolCorrector();
+	
 	private Config							configuration		= null;
 	private String							name				= "";
 	private int								modules				= 0;
@@ -19,10 +21,6 @@ public class Confabulator extends Locker {
 	private SortedMap<String,Context>		contexts			= new TreeMap<String,Context>();
 	private SortedMap<String,Symbol>		symbols				= new TreeMap<String,Symbol>();
 	private SortedMap<String,Link>			links				= new TreeMap<String,Link>();
-	private SortedMap<String,List<Link>>	linksByFrom			= new TreeMap<String,List<Link>>();
-	private SortedMap<String,List<Link>>	linksByTo			= new TreeMap<String,List<Link>>();
-
-	private SymbolCorrector					corrector			= new SymbolCorrector();
 		
 	public Confabulator(Config config,String name,int modules) {
 		super(config.getMessenger());
@@ -149,6 +147,7 @@ public class Confabulator extends Locker {
 				symbols.put(sym.getId(),sym);
 				ctxt.totalSymbols++;
 				ctxt.knownSymbols.add(symbol);
+				ctxt.addSymbol(sym);
 			}
 			sym.count++;
 		}
@@ -167,25 +166,7 @@ public class Confabulator extends Locker {
 				lnk.context = contextSymbol;
 				links.put(lnk.getId(),lnk);
 				ctxt.totalLinks++;
-				
-				List<Link> lst = null;
-				String key = "";
-				
-				key = lnk.symbolFrom + "|" + lnk.distance + "|" + lnk.context;
-				lst = linksByFrom.get(key);
-				if (lst==null) {
-					lst = new ArrayList<Link>();
-					linksByFrom.put(key,lst);
-				}
-				lst.add(lnk);
-				
-				key = lnk.symbolTo + "|" + lnk.distance + "|" + lnk.context;
-				lst = linksByTo.get(key);
-				if (lst==null) {
-					lst = new ArrayList<Link>();
-					linksByTo.put(key,lst);
-				}
-				lst.add(lnk);
+				ctxt.addLink(lnk);
 			}
 			lnk.count++;
 		}
@@ -194,24 +175,72 @@ public class Confabulator extends Locker {
 	protected Symbol getSymbolNoLock(String symbol,String contextSymbol) {
 		return symbols.get(Symbol.getId(symbol,contextSymbol));
 	}
+	
+	protected List<Symbol> getSymbolsNoLock(String symbol,String contextSymbol,boolean caseSensitive) {
+		List<Symbol> r = null;
+		if (contextSymbol!=null) {
+			if (caseSensitive) {
+				Symbol sym = symbols.get(Symbol.getId(symbol,contextSymbol));
+				if (sym!=null) {
+					r = new ArrayList<Symbol>();
+					r.add(sym);
+				}
+			} else {
+				Context ctxt = contexts.get(contextSymbol);
+				if (ctxt!=null) {
+					r = ctxt.symbolsUC.get(symbol.toUpperCase());
+				}
+			}
+		}
+		if (r==null) {
+			r = new ArrayList<Symbol>();
+		}
+		return r;
+	}
 
 	protected Link getLinkNoLock(String symbolFrom,int distance,String contextSymbol,String symbolTo) {
 		return links.get(Link.getId(symbolFrom,distance,contextSymbol,symbolTo));
 	}
 
-	protected List<Link> getLinksNoLock(String symbolFrom,int distance,String contextSymbol,String symbolTo) {
+	protected List<Link> getLinksNoLock(String symbolFrom,int distance,String contextSymbol,String symbolTo,boolean caseSensitive) {
 		List<Link> r = null;
-		if (symbolFrom.length()==0) {
-			String key = symbolTo + "|" + distance + "|" + contextSymbol;
-			r = linksByTo.get(key);
-		} else if (symbolTo.length()==0) {
-			String key = symbolFrom + "|" + distance + "|" + contextSymbol;
-			r = linksByFrom.get(key);
-		} else if (symbolFrom.length()>0 && symbolTo.length()>0) {
-			r = new ArrayList<Link>();
-			Link lnk = links.get(Link.getId(symbolFrom,distance,contextSymbol,symbolTo));
-			if (lnk!=null) {
-				r.add(lnk);
+		if (contextSymbol!=null) {
+			Context ctxt = contexts.get(contextSymbol);
+			if (caseSensitive) {
+				if (symbolFrom.length()==0) {
+					if (ctxt!=null) {
+						String key = symbolTo + "|" + distance;
+						r = ctxt.linksByTo.get(key);
+					}
+				} else if (symbolTo.length()==0) {
+					if (ctxt!=null) {
+						String key = symbolFrom + "|" + distance;
+						r = ctxt.linksByFrom.get(key);
+					}
+				} else if (symbolFrom.length()>0 && symbolTo.length()>0) {
+					Link lnk = links.get(Link.getId(symbolFrom,distance,contextSymbol,symbolTo));
+					if (lnk!=null) {
+						r = new ArrayList<Link>();
+						r.add(lnk);
+					}
+				}
+			} else {
+				if (symbolFrom.length()==0) {
+					if (ctxt!=null) {
+						String key = symbolTo.toUpperCase() + "|" + distance;
+						r = ctxt.linksUCByTo.get(key);
+					}
+				} else if (symbolTo.length()==0) {
+					if (ctxt!=null) {
+						String key = symbolFrom.toUpperCase() + "|" + distance;
+						r = ctxt.linksUCByFrom.get(key);
+					}
+				} else if (symbolFrom.length()>0 && symbolTo.length()>0) {
+					if (ctxt!=null) {
+						String key = symbolFrom.toUpperCase() + "|" + distance + "|" + symbolTo.toUpperCase();
+						r = ctxt.linksUC.get(key);
+					}
+				}
 			}
 		}
 		if (r==null) {
@@ -388,7 +417,7 @@ public class Confabulator extends Locker {
 									symbolTo = oModSym.symbol;
 								}
 								
-								List<Link> lnks = getLinksNoLock(symbolFrom, distance, ctxt.contextSymbol, symbolTo);
+								List<Link> lnks = getLinksNoLock(symbolFrom,distance,ctxt.contextSymbol,symbolTo,confab.caseSensitive);
 								for (Link lnk: lnks) {
 									String symbol = "";
 									double prob = 0D;
@@ -418,6 +447,21 @@ public class Confabulator extends Locker {
 					}
 				}
 				if (strict) {
+					if (fired.size()==0 && mod.symbols.size()>1) {
+						for (ModuleSymbol modSym: mod.symbols.values()) {
+							List<Symbol> syms = getSymbolsNoLock(modSym.symbol,ctxt.contextSymbol,confab.caseSensitive);
+							for (Symbol sym: syms) {
+								modSym.prob += ((ctxt.symbolBandwidth + (ctxt.symbolMaxProb - sym.prob)) * ctxt.symbolToLinkBandwidthFactor);
+								if (!fired.contains(modSym)) {
+									fired.add(modSym);
+								}
+								if (modSym.prob>maxProb) {
+									maxProb = modSym.prob;
+								}
+							}
+						}
+					}
+					
 					List<ModuleSymbol> tModSymbols = new ArrayList<ModuleSymbol>(mod.symbols.values());
 					for (ModuleSymbol tModSymbol: tModSymbols) {
 						if (fired.contains(tModSymbol)) {
