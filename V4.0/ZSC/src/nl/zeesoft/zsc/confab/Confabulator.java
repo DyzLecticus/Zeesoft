@@ -21,7 +21,12 @@ public class Confabulator extends Locker {
 	private SortedMap<String,Context>		contexts			= new TreeMap<String,Context>();
 	private SortedMap<String,Symbol>		symbols				= new TreeMap<String,Symbol>();
 	private SortedMap<String,Link>			links				= new TreeMap<String,Link>();
-		
+
+	public SortedMap<String,List<Symbol>>	symbolsNoContext	= new TreeMap<String,List<Symbol>>();
+	public SortedMap<String,List<Link>>		linksNoContext		= new TreeMap<String,List<Link>>();
+	public SortedMap<String,List<Symbol>>	symbolsNoContextUC	= new TreeMap<String,List<Symbol>>();
+	public SortedMap<String,List<Link>>		linksNoContextUC	= new TreeMap<String,List<Link>>();
+	
 	public Confabulator(Config config,String name,int modules) {
 		super(config.getMessenger());
 		this.configuration = config;
@@ -148,6 +153,20 @@ public class Confabulator extends Locker {
 				ctxt.totalSymbols++;
 				ctxt.knownSymbols.add(symbol);
 				ctxt.addSymbol(sym);
+				
+				List<Symbol> syms = null;
+				syms = symbolsNoContext.get(sym.symbol);
+				if (syms==null) {
+					syms = new ArrayList<Symbol>();
+					symbolsNoContext.put(sym.symbol,syms);
+				}
+				syms.add(sym);
+				syms = symbolsNoContextUC.get(sym.symbol.toUpperCase());
+				if (syms==null) {
+					syms = new ArrayList<Symbol>();
+					symbolsNoContextUC.put(sym.symbol.toUpperCase(),syms);
+				}
+				syms.add(sym);
 			}
 			sym.count++;
 		}
@@ -167,6 +186,23 @@ public class Confabulator extends Locker {
 				links.put(lnk.getId(),lnk);
 				ctxt.totalLinks++;
 				ctxt.addLink(lnk);
+
+				List<Link> lst = null;
+				String key = "";
+				key = lnk.symbolFrom + "|" + lnk.distance + "|" + lnk.symbolTo;
+				lst = linksNoContext.get(key);
+				if (lst==null) {
+					lst = new ArrayList<Link>();
+					linksNoContext.put(key,lst);
+				}
+				lst.add(lnk);
+				key = lnk.symbolFrom.toUpperCase() + "|" + lnk.distance + "|" + lnk.symbolTo.toUpperCase();
+				lst = linksNoContextUC.get(key);
+				if (lst==null) {
+					lst = new ArrayList<Link>();
+					linksNoContextUC.put(key,lst);
+				}
+				lst.add(lnk);
 			}
 			lnk.count++;
 		}
@@ -174,6 +210,10 @@ public class Confabulator extends Locker {
 	
 	protected Symbol getSymbolNoLock(String symbol,String contextSymbol) {
 		return symbols.get(Symbol.getId(symbol,contextSymbol));
+	}
+	
+	protected List<Symbol> getSymbolsNoLock(String symbol,boolean caseSensitive) {
+		return getSymbolsNoLock(symbol,null,caseSensitive);
 	}
 	
 	protected List<Symbol> getSymbolsNoLock(String symbol,String contextSymbol,boolean caseSensitive) {
@@ -191,6 +231,12 @@ public class Confabulator extends Locker {
 					r = ctxt.symbolsUC.get(symbol.toUpperCase());
 				}
 			}
+		} else {
+			if (caseSensitive) {
+				r = symbolsNoContext.get(symbol);
+			} else {
+				r = symbolsNoContextUC.get(symbol.toUpperCase());
+			}
 		}
 		if (r==null) {
 			r = new ArrayList<Symbol>();
@@ -200,6 +246,10 @@ public class Confabulator extends Locker {
 
 	protected Link getLinkNoLock(String symbolFrom,int distance,String contextSymbol,String symbolTo) {
 		return links.get(Link.getId(symbolFrom,distance,contextSymbol,symbolTo));
+	}
+	
+	protected List<Link> getLinksNoLock(String symbolFrom,int distance,String symbolTo,boolean caseSensitive) {
+		return getLinksNoLock(symbolFrom,distance,null,symbolTo,caseSensitive);
 	}
 
 	protected List<Link> getLinksNoLock(String symbolFrom,int distance,String contextSymbol,String symbolTo,boolean caseSensitive) {
@@ -241,6 +291,14 @@ public class Confabulator extends Locker {
 						r = ctxt.linksUC.get(key);
 					}
 				}
+			}
+		} else {
+			if (caseSensitive) {
+				String key = symbolFrom + "|" + distance + "|" + symbolTo;
+				r = linksNoContext.get(key);
+			} else {
+				String key = symbolFrom.toUpperCase() + "|" + distance + "|" + symbolTo.toUpperCase();
+				r = linksNoContextUC.get(key);
 			}
 		}
 		if (r==null) {
