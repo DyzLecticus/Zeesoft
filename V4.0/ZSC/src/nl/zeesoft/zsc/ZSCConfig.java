@@ -7,6 +7,7 @@ public class ZSCConfig extends Config {
 	@Override
 	protected void addModules() {
 		super.addModules();
+		getZODB().selfTest = false;
 		addModule(new ModZSC(this));
 	}
 }

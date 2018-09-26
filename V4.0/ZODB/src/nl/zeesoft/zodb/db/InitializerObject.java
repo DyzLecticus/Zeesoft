@@ -47,7 +47,6 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		configuration.debug(this,"Install: " + objects.size());
 		addObjectsToDatabaseNoLock();
 		unlockMe(this);
-		stateChanged(true);
 	}
 	
 	public void initialize() {
@@ -58,12 +57,35 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		}
 		unlockMe(this);
 	}
+
+	public void reinitialize() {
+		boolean reinitialize = false;
+		lockMe(this);
+		if (!initializing && initialized) {
+			objects.clear();
+			reinitialize = true;
+			initialized = false;
+		}
+		unlockMe(this);
+		if (reinitialize) {
+			stateChanged(false);
+			initialize();
+		}
+	}
 	
 	public void destroy() {
 		stateChanged(false);
 		lockMe(this);
 		objects.clear();
 		unlockMe(this);
+	}
+	
+	public boolean isInitializing() {
+		boolean r = false;
+		lockMe(this);
+		r = initializing;
+		unlockMe(this);
+		return r;
 	}
 	
 	public boolean isInitialized() {
@@ -88,7 +110,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		}
 		if (res!=null) {
 			if (response.error.length()>0) {
-				if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
+				if (res.request.type.equals(DatabaseRequest.TYPE_GET) || res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 					lockMe(this);
 					todo--;
 					unlockMe(this);
@@ -97,7 +119,6 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 				if (res.request.type.equals(DatabaseRequest.TYPE_LIST)) {
 					if (res.results.size()==0) {
 						install();
-						stateChanged(true);
 					} else {
 						lockMe(this);
 						todo = 0;
@@ -122,11 +143,16 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 					if (object!=null && res.results.size()>0 && res.results.get(0).obj!=null) {
 						object.fromJson(res.results.get(0).obj);
 						configuration.debug(this,"Loaded " + res.request.name);
+						loadedObjectNoLock(object);
 					}
+					unlockMe(this);
+				} else if (res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
+					lockMe(this);
+					todo--;
 					unlockMe(this);
 				}
 			}
-			if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
+			if (res.request.type.equals(DatabaseRequest.TYPE_GET) || res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 				boolean open = false;
 				lockMe(this);
 				if (todo==0) {
@@ -144,12 +170,18 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 
 	protected abstract InitializerDatabaseObject getNewObjectNoLock(String name);
 	
+	protected void loadedObjectNoLock(InitializerDatabaseObject object) {
+		// Override to extend
+	}
+	
 	protected void setMaxObjectsNoLock(int max) {
 		maxObjects = max;
 	}
 	
 	protected void addObjectNoLock(InitializerDatabaseObject object) {
-		objects.add(object);
+		if (object!=null) {
+			objects.add(object);
+		}
 	}
 
 	protected InitializerDatabaseObject getObjectByNameNoLock(String name) {
@@ -168,6 +200,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	}
 	
 	private void addObjectsToDatabaseNoLock() {
+		todo = objects.size();
 		for (InitializerDatabaseObject object: objects) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 			request.name = namePrefix + object.getObjectName();

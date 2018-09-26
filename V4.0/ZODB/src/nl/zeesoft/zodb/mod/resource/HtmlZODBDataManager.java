@@ -17,7 +17,7 @@ public class HtmlZODBDataManager extends HtmlResource {
 		setOnload("ZODB.dm.onload();");
 		
 		ZStringBuilder html = new ZStringBuilder();
-		html.append("<a href=\"index.html\">Back to index</a>");
+		html.append("<a href=\"index.html\">Back to functions</a>");
 		html.append("<hr />");
 		
 		html.append("<div>\n");

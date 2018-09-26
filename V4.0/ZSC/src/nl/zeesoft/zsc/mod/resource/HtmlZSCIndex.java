@@ -23,25 +23,23 @@ public class HtmlZSCIndex extends HtmlResource {
 		html.append("<div>\n");
 		html.append("<table style=\"width: 100%;\">\n");
 		html.append("<tbody>\n");
-			/*
 			html.append("<tr>\n");
 			html.append("<td width=\"20%\">");
-			html.append("<a href=\"" + url + "/entityTranslator.html\">Entity translator</a>");
+			html.append("<a href=\"" + url + "/stateManager.html\">State manager</a>");
 			html.append("</td>\n");
 			html.append("<td>");
-			html.append("Translate sequences to entity values and back.");
+			html.append("Manage the state of the confabulator set.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<a href=\"" + url + "/types.json\">Types JSON</a>");
+			html.append("<a href=\"" + url + "/state.json\">State JSON</a>");
 			html.append("</td>\n");
 			html.append("<td>");
-			html.append("Returns the supported entity types as a JSON file.");
+			html.append("Returns the confabulator set state a JSON file.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
-			*/
 		
 			if (getConfiguration().getModule(ModZSC.NAME).selfTest) {
 				html.append("<tr>\n");
