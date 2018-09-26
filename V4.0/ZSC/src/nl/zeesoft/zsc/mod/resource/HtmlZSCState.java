@@ -18,7 +18,7 @@ public class HtmlZSCState extends HtmlResource {
 		setOnload("ZSC.state.onload();");
 		
 		ZStringBuilder html = new ZStringBuilder();
-		html.append("<a href=\"../index.html\">Back to functions</a>");
+		html.append("<a href=\"index.html\">Back to functions</a>");
 		html.append("<hr />");
 		
 		html.append("<div>\n");

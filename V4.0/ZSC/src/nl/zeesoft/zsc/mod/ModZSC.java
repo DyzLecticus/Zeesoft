@@ -1,15 +1,24 @@
 package nl.zeesoft.zsc.mod;
 
+import nl.zeesoft.zdk.json.JsAbleClient;
+import nl.zeesoft.zdk.json.JsAbleClientRequest;
+import nl.zeesoft.zdk.json.JsClientListener;
+import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
+import nl.zeesoft.zsc.confab.Confabulator;
 import nl.zeesoft.zsc.confab.ConfabulatorManager;
+import nl.zeesoft.zsc.confab.ConfabulatorRequest;
+import nl.zeesoft.zsc.confab.ConfabulatorRequestHandler;
+import nl.zeesoft.zsc.confab.ConfabulatorResponse;
 import nl.zeesoft.zsc.confab.ConfabulatorSet;
 import nl.zeesoft.zsc.confab.ConfabulatorSetLoader;
 import nl.zeesoft.zsc.mod.handler.HtmlZSCIndexHandler;
 import nl.zeesoft.zsc.mod.handler.HtmlZSCStateHandler;
 import nl.zeesoft.zsc.mod.handler.JavaScriptZSCStateHandler;
+import nl.zeesoft.zsc.mod.handler.JsonZSCRequestHandler;
 import nl.zeesoft.zsc.mod.handler.JsonZSCStateHandler;
 
 public class ModZSC extends ModObject implements StateListener {
@@ -50,6 +59,8 @@ public class ModZSC extends ModObject implements StateListener {
 		handlers.add(new JsonZSCStateHandler(configuration,this));
 		handlers.add(new HtmlZSCStateHandler(configuration,this));
 		handlers.add(new JavaScriptZSCStateHandler(configuration,this));
+		handlers.add(new JsonZSCRequestHandler(configuration,this));
+		testers.add(getNewTester());
 		confabulatorSetLoader.setConfabulatorSet(getNewConfabulatorSet());
 		confabulatorSetLoader.initialize();
 		super.initialize();
@@ -72,10 +83,46 @@ public class ModZSC extends ModObject implements StateListener {
 				} else {
 					confabulatorManager.initialize();
 				}
+			} else if (source==confabulatorManager) {
+				startTesters();
 			}
 		}
 	}
+
+	public ConfabulatorResponse handleRequest(ConfabulatorRequest request) {
+		ConfabulatorResponse r = null;
+		Confabulator conf = confabulatorManager.getConfabulator(request.name);
+		if (conf!=null) {
+			ConfabulatorRequestHandler handler = new ConfabulatorRequestHandler(conf);
+			r = handler.handleRequest(request);
+		} else {
+			r = new ConfabulatorResponse();
+			r.request = request;
+			if (request.name.length()==0) {
+				r.error.append("Request confabulator name is mandatory");
+			} else {
+				r.error.append("Request confabulator not found: " + request.name);
+			}
+		}
+		return r;
+	}
+
+	public void handleRequest(ConfabulatorRequest request,JsClientListener listener) {
+		JsAbleClient client = new JsAbleClient(configuration.getMessenger(),configuration.getUnion());
+		client.addJsClientListener(listener);
+		client.handleRequest(request,configuration.getModuleUrl(NAME) + JsonZSCRequestHandler.PATH,request);
+	}
 	
+	public ConfabulatorResponse handledRequest(JsClientResponse response) {
+		ConfabulatorResponse r = null;
+		if (response.request instanceof JsAbleClientRequest &&
+			((JsAbleClientRequest) response.request).resObject instanceof ConfabulatorResponse 
+			) {
+			r = (ConfabulatorResponse) ((JsAbleClientRequest) response.request).resObject;
+		}
+		return r;
+	}
+
 	public ConfabulatorSetLoader getConfabulatorSetLoader() {
 		return confabulatorSetLoader;
 	}
@@ -94,5 +141,9 @@ public class ModZSC extends ModObject implements StateListener {
 	
 	protected ConfabulatorManager getNewConfabulatorManager() {
 		return new ConfabulatorManager(configuration);
+	}
+	
+	protected ZSCTester getNewTester() {
+		return new ZSCTester(configuration,configuration.getModuleUrl(NAME) + JsonZSCRequestHandler.PATH);
 	}
 }

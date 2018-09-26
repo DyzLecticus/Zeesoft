@@ -50,8 +50,8 @@ public class ModZEVT extends ModObject implements StateListener {
 		handlers.add(new JsonZEVTRequestHandler(configuration,this));
 		handlers.add(new JsonZEVTTypesHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
-		translator.initialize();
 		testers.add(getNewTester());
+		translator.initialize();
 		super.initialize();
 	}
 	

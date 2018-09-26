@@ -403,6 +403,9 @@ public class Confabulator extends Locker {
 					confab.results.add(result);
 				}
 			}
+			logModuleStateNoLock(confab,"Confabulated context");
+		} else {
+			
 		}
 	}
 
