@@ -5,7 +5,9 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zsc.confab.Confabulator;
 import nl.zeesoft.zsc.confab.Context;
-import nl.zeesoft.zsc.confab.CorrectionConfabulation;
+import nl.zeesoft.zsc.confab.confabs.ContextConfabulation;
+import nl.zeesoft.zsc.confab.confabs.ContextResult;
+import nl.zeesoft.zsc.confab.confabs.CorrectionConfabulation;
 
 public class TestConfabulator extends TestObject {
 	public TestConfabulator(Tester tester) {
@@ -43,15 +45,15 @@ public class TestConfabulator extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Confabulator conf = (Confabulator) getTester().getMockedObject(MockConfabulator.class.getName());
-		System.out.println("Confabulator name: " + conf.getName() + ", modules: " + conf.getModules());
+		System.out.println("Confabulator name: " + conf.getName() + ", max. distance: " + conf.getMaxDistance());
 		
 		Context def = conf.getContext("");
 		Context name = conf.getContext("Name");
 
 		assertEqual(def.totalSymbols,40,"Total symbols for default context does not match expectation");
-		assertEqual(def.totalLinks,122,"Total links for default context does not match expectation");
+		assertEqual(def.totalLinks,153,"Total links for default context does not match expectation");
 		assertEqual(name.totalSymbols,6,"Total symbols for 'Name' context does not match expectation");
-		assertEqual(name.totalLinks,12,"Total links for 'Name' context does not match expectation");
+		assertEqual(name.totalLinks,14,"Total links for 'Name' context does not match expectation");
 		
 		System.out.println("Symbols/links for default context: " + def.totalSymbols + "/" + def.totalLinks);
 		System.out.println("Symbols/links for 'Name' context: " + name.totalSymbols + "/" + name.totalLinks);
@@ -63,7 +65,10 @@ public class TestConfabulator extends TestObject {
 		testCorrection(conf,"MY NAM IS DYZ AGENT.",true,"My name is Dyz Lecticus.");
 		testCorrection(conf,"My goad is to help.",true,"My goal is to understand.");
 		testCorrection(conf,"My goad is to help.",false,"My goal is to help.");
-		testCorrection(conf,"gaad.",false,"Intelligent.");
+		testCorrection(conf,"gaad.",false,"Gaad.");
+		
+		testContext(conf,"My name is Dyz Lecticus.",3);
+		testContext(conf,"I can learn context sensitive symbol sequences and use that knowledge to do things like correct symbols, classify context and more.",2);
 	}
 	
 	private void testCorrection(Confabulator conf,String input,boolean validate,String expectedCorrection) {
@@ -81,5 +86,16 @@ public class TestConfabulator extends TestObject {
 		System.out.println("Corrected: '" + confab.input + "' -> '" + confab.corrected + "'" + val);
 		System.out.println("Log;");
 		System.out.println(confab.log);
+	}
+	
+	private void testContext(Confabulator conf,String input,int expectedContexts) {
+		ContextConfabulation confab = new ContextConfabulation();
+		confab.input.append(input);
+		conf.confabulate(confab);
+		assertEqual(confab.results.size(),expectedContexts,"Context confabulation result size does not match expectation");
+		System.out.println("Contexts for '" + confab.input + "': " + confab.results.size());
+		for (ContextResult res: confab.results) {
+			System.out.println(" - " + res.contextSymbol + " " + res.prob + "/" + res.probNormalized);
+		}
 	}
 }

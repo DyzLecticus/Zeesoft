@@ -1,4 +1,4 @@
-package nl.zeesoft.zsc.confab;
+package nl.zeesoft.zsc.confab.confabs;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +7,7 @@ import java.util.List;
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zsc.confab.Module;
 
 public abstract class ConfabulationObject {
 	public ZStringSymbolParser	input			= new ZStringSymbolParser();

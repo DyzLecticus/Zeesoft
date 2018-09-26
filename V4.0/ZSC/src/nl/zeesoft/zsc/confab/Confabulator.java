@@ -10,13 +10,18 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zsc.confab.confabs.ConfabulationObject;
+import nl.zeesoft.zsc.confab.confabs.ContextConfabulation;
+import nl.zeesoft.zsc.confab.confabs.ContextResult;
+import nl.zeesoft.zsc.confab.confabs.Correction;
+import nl.zeesoft.zsc.confab.confabs.CorrectionConfabulation;
 
 public class Confabulator extends Locker {
 	private SymbolCorrector					corrector			= new SymbolCorrector();
 	
 	private Config							configuration		= null;
 	private String							name				= "";
-	private int								modules				= 0;
+	private int								maxDistance			= 0;
 
 	private SortedMap<String,Context>		contexts			= new TreeMap<String,Context>();
 	private SortedMap<String,Symbol>		symbols				= new TreeMap<String,Symbol>();
@@ -27,11 +32,11 @@ public class Confabulator extends Locker {
 	public SortedMap<String,List<Symbol>>	symbolsNoContextUC	= new TreeMap<String,List<Symbol>>();
 	public SortedMap<String,List<Link>>		linksNoContextUC	= new TreeMap<String,List<Link>>();
 	
-	public Confabulator(Config config,String name,int modules) {
+	public Confabulator(Config config,String name,int maxDistance) {
 		super(config.getMessenger());
 		this.configuration = config;
 		this.name = name;
-		this.modules = modules;
+		this.maxDistance = maxDistance;
 	}
 	
 	public Config getConfiguration() {
@@ -42,8 +47,8 @@ public class Confabulator extends Locker {
 		return name;
 	}
 	
-	public int getModules() {
-		return modules;
+	public int getMaxDistance() {
+		return maxDistance;
 	}
 	
 	public void learnSequence(String sequence,String context) {
@@ -64,7 +69,7 @@ public class Confabulator extends Locker {
 			String symbolFrom = symbols.get(s);
 			learnSymbolNoLock(symbolFrom,contextSymbols);
 			
-			int end = s + modules;
+			int end = s + (maxDistance + 1);
 			if (end > symbols.size()) {
 				end = symbols.size();
 			}
@@ -105,9 +110,16 @@ public class Confabulator extends Locker {
 				ctxt.linkMaxProb = lnk.prob;
 			}
 		}
+		Context def = getDefaultContextNoLock();
 		for (Context ctxt: contexts.values()) {
 			ctxt.symbolBandwidth = ((ctxt.symbolMaxProb - ctxt.symbolMinProb) / 2D);
 			ctxt.linkBandwidth = ((ctxt.linkMaxProb - ctxt.linkMinProb) / 2D);
+			if (ctxt.symbolBandwidth==0D && ctxt!=def) {
+				ctxt.symbolBandwidth = def.symbolBandwidth;
+			}
+			if (ctxt.linkBandwidth==0D && ctxt!=def) {
+				ctxt.linkBandwidth = def.linkBandwidth;
+			}
 			ctxt.symbolToLinkBandwidthFactor = ctxt.linkBandwidth / ctxt.symbolBandwidth;
 		}
 		unlockMe(this);
@@ -118,6 +130,10 @@ public class Confabulator extends Locker {
 		if (confab instanceof CorrectionConfabulation) {
 			lockMe(this);
 			confabulateCorrectionNoLock((CorrectionConfabulation) confab);
+			unlockMe(this);
+		} else if (confab instanceof ContextConfabulation) {
+			lockMe(this);
+			confabulateContextNoLock((ContextConfabulation) confab);
 			unlockMe(this);
 		}
 	}
@@ -206,6 +222,10 @@ public class Confabulator extends Locker {
 			}
 			lnk.count++;
 		}
+	}
+	
+	protected Context getDefaultContextNoLock() {
+		return contexts.get("");
 	}
 	
 	protected Symbol getSymbolNoLock(String symbol,String contextSymbol) {
@@ -307,6 +327,85 @@ public class Confabulator extends Locker {
 		return r;
 	}
 
+	protected void confabulateContextNoLock(ContextConfabulation confab) {
+		if (contexts.size()>1) {
+			Context def = getDefaultContextNoLock();
+			Module mod = confab.modules.get(0);
+			double maxProb = 0D;
+			boolean[] linked = new boolean[confab.symbols.size()];
+			for (int s = 0; s < confab.symbols.size(); s++) {
+				linked[s] = false;
+			}
+			for (int s = 0; s < confab.symbols.size(); s++) {
+				String symbolFrom = confab.symbols.get(s);
+				int start = (s + 1);
+				int end = start + maxDistance;
+				if (end > confab.symbols.size()) {
+					end = confab.symbols.size();
+				}
+				for (int n = start; n < end; n++) {
+					String symbolTo = confab.symbols.get(n);
+					int distance = ((n - start) + 1);
+					List<Link> lnks = getLinksNoLock(symbolFrom,distance,symbolTo,confab.caseSensitive);
+					for (Link lnk: lnks) {
+						if (lnk.context.length()>0) {
+							linked[s] = true;
+							linked[n] = true;
+							Link defLink = getLinkNoLock(lnk.symbolFrom,lnk.distance,"",lnk.symbolTo);
+							double prob = def.linkBandwidth + (def.linkMaxProb - defLink.prob);
+							if (prob>0D) {
+								ModuleSymbol modSym = mod.symbols.get(lnk.context);
+								if (modSym==null) {
+									modSym = new ModuleSymbol();
+									modSym.symbol = lnk.context;
+									mod.symbols.put(lnk.context,modSym);
+								}
+								modSym.prob += prob;
+								if (modSym.prob>maxProb) {
+									maxProb = modSym.prob;
+								}
+							}
+						}
+					}
+				}
+			}
+			for (int s = 0; s < confab.symbols.size(); s++) {
+				if (!linked[s]) {
+					String symbol = confab.symbols.get(s);
+					List<Symbol> syms = getSymbolsNoLock(symbol,confab.caseSensitive);
+					for (Symbol sym: syms) {
+						if (sym.context.length()>0) {
+							Symbol defSymbol = getSymbolNoLock(sym.symbol,"");
+							double prob = (def.symbolBandwidth + (def.symbolMaxProb - defSymbol.prob)) * def.symbolToLinkBandwidthFactor;
+							if (prob>0D) {
+								ModuleSymbol modSym = mod.symbols.get(sym.context);
+								if (modSym==null) {
+									modSym = new ModuleSymbol();
+									modSym.symbol = sym.context;
+									mod.symbols.put(sym.context,modSym);
+								}
+								modSym.prob += prob;
+								if (modSym.prob>maxProb) {
+									maxProb = modSym.prob;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (mod.symbols.size()>0) {
+				List<ModuleSymbol> syms = mod.getSymbols();
+				for (ModuleSymbol mSym: syms) {
+					ContextResult result = new ContextResult();
+					result.contextSymbol = mSym.symbol;
+					result.prob = mSym.prob;
+					result.probNormalized = result.prob / maxProb;
+					confab.results.add(result);
+				}
+			}
+		}
+	}
+
 	protected void confabulateCorrectionNoLock(CorrectionConfabulation confab) {
 		Context ctxt = contexts.get(confab.contextSymbol);
 		int unknownSymbols = 0;
@@ -340,7 +439,11 @@ public class Confabulator extends Locker {
 		logModuleStateNoLock(confab,"Initialized module symbol variations");
 
 		if (confab.validate) {
-			confabulateNoLock(confab,ctxt,false);
+			List<Module> copyModules = null;
+			if (confab.parallel) {
+				copyModules = confab.copyModules();
+			}
+			confabulateNoLock(confab,ctxt,false,copyModules);
 			logModuleStateNoLock(confab,"Initialized module symbol expectations");
 		}
 		
@@ -414,7 +517,7 @@ public class Confabulator extends Locker {
 		boolean done = false;
 		boolean changed = false;
 		List<Module> copyModules = confab.copyModules();
-		confabulateNoLock(confab,ctxt,true);
+		confabulateNoLock(confab,ctxt,true,copyModules);
 		logModuleStateNoLock(confab,"Confabulated module symbols");
 		int locked = 0;
 		for (int m = 0; m < confab.modules.size(); m++) {
@@ -433,7 +536,10 @@ public class Confabulator extends Locker {
 		return done;
 	}
 
-	protected void confabulateNoLock(ConfabulationObject confab,Context ctxt,boolean strict) {
+	protected void confabulateNoLock(ConfabulationObject confab,Context ctxt,boolean strict,List<Module> sourceModules) {
+		if (sourceModules==null) {
+			sourceModules = confab.modules;
+		}
 		for (int m = 0; m < confab.modules.size(); m++) {
 			Module mod = confab.modules.get(m);
 			if (!mod.locked) {
@@ -444,8 +550,8 @@ public class Confabulator extends Locker {
 				List<ModuleSymbol> fired = new ArrayList<ModuleSymbol>();
 				double maxProb = 0D;
 				for (ModuleSymbol modSym: modSymbols) {
-					int start = (m - modules);
-					int end = (m + modules);
+					int start = (m - maxDistance);
+					int end = (m + maxDistance);
 					if (start < 0) {
 						start = 0;
 					}
@@ -454,10 +560,9 @@ public class Confabulator extends Locker {
 					}
 					for (int c = start; c < end; c++) {
 						if (c!=m) {
-							Module oMod = confab.modules.get(c);
+							Module oMod = sourceModules.get(c);
 							List<ModuleSymbol> oModSymbols = oMod.getSymbols();
 							for (ModuleSymbol oModSym: oModSymbols) {
-							
 								String symbolFrom = "";
 								String symbolTo = "";
 								int distance = 0;
@@ -474,7 +579,6 @@ public class Confabulator extends Locker {
 									}
 									symbolTo = oModSym.symbol;
 								}
-								
 								List<Link> lnks = getLinksNoLock(symbolFrom,distance,ctxt.contextSymbol,symbolTo,confab.caseSensitive);
 								for (Link lnk: lnks) {
 									String symbol = "";
