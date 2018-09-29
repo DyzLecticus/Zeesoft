@@ -41,6 +41,7 @@ public class ZNLB extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
+		tests.add(new TestContextConfig(getTester()));
 		tests.add(new TestPreprocessorRequestResponse(getTester()));
 	}
 }

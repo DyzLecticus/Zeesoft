@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.thread.Locker;
@@ -18,6 +19,7 @@ import nl.zeesoft.zsc.confab.confabs.CorrectionConfabulation;
 
 public class Confabulator extends Locker {
 	private SymbolCorrector					corrector			= new SymbolCorrector();
+	private ZIntegerGenerator				generator			= new ZIntegerGenerator(1,100);
 	
 	private Config							configuration		= null;
 	private String							name				= "";
@@ -37,6 +39,7 @@ public class Confabulator extends Locker {
 		this.configuration = config;
 		this.name = name;
 		this.maxDistance = maxDistance;
+		learnContextNoLock("");
 	}
 	
 	public Config getConfiguration() {
@@ -49,6 +52,10 @@ public class Confabulator extends Locker {
 	
 	public int getMaxDistance() {
 		return maxDistance;
+	}
+	
+	public void learnSequence(String sequence) {
+		learnSequence(sequence,"");
 	}
 	
 	public void learnSequence(String sequence,String context) {
@@ -354,13 +361,7 @@ public class Confabulator extends Locker {
 							Link defLink = getLinkNoLock(lnk.symbolFrom,lnk.distance,"",lnk.symbolTo);
 							double prob = def.linkBandwidth + (def.linkMaxProb - defLink.prob);
 							if (prob>0D) {
-								ModuleSymbol modSym = mod.symbols.get(lnk.context);
-								if (modSym==null) {
-									modSym = new ModuleSymbol();
-									modSym.symbol = lnk.context;
-									mod.symbols.put(lnk.context,modSym);
-								}
-								modSym.prob += prob;
+								ModuleSymbol modSym = fireModuleSymbolNoLock(confab,mod,lnk.context,prob,null);
 								if (modSym.prob>maxProb) {
 									maxProb = modSym.prob;
 								}
@@ -378,13 +379,7 @@ public class Confabulator extends Locker {
 							Symbol defSymbol = getSymbolNoLock(sym.symbol,"");
 							double prob = (def.symbolBandwidth + (def.symbolMaxProb - defSymbol.prob)) * def.symbolToLinkBandwidthFactor;
 							if (prob>0D) {
-								ModuleSymbol modSym = mod.symbols.get(sym.context);
-								if (modSym==null) {
-									modSym = new ModuleSymbol();
-									modSym.symbol = sym.context;
-									mod.symbols.put(sym.context,modSym);
-								}
-								modSym.prob += prob;
+								ModuleSymbol modSym = fireModuleSymbolNoLock(confab,mod,sym.context,prob,null);
 								if (modSym.prob>maxProb) {
 									maxProb = modSym.prob;
 								}
@@ -405,12 +400,15 @@ public class Confabulator extends Locker {
 			}
 			logModuleStateNoLock(confab,"Confabulated context");
 		} else {
-			
+			addLogLineNoLock(confab,"No contexts to confabulate");
 		}
 	}
 
 	protected void confabulateCorrectionNoLock(CorrectionConfabulation confab) {
 		Context ctxt = contexts.get(confab.contextSymbol);
+		if (ctxt==null) {
+			ctxt = contexts.get("");
+		}
 		int unknownSymbols = 0;
 		for (String symbol: confab.symbols) {
 			Symbol sym = getSymbolNoLock(symbol,confab.contextSymbol);
@@ -583,47 +581,19 @@ public class Confabulator extends Locker {
 									symbolTo = oModSym.symbol;
 								}
 								List<Link> lnks = getLinksNoLock(symbolFrom,distance,ctxt.contextSymbol,symbolTo,confab.caseSensitive);
-								for (Link lnk: lnks) {
-									String symbol = "";
-									double prob = 0D;
-									if (c<m) {
-										symbol = lnk.symbolTo;
-									} else {
-										symbol = lnk.symbolFrom;
-									}
-									prob += ctxt.linkBandwidth + (ctxt.linkMaxProb - lnk.prob);
-									
-									modSym = mod.symbols.get(symbol);
-									if (modSym==null) {
-										modSym = new ModuleSymbol();
-										modSym.symbol = symbol;
-										mod.symbols.put(symbol,modSym);
-									}
-									modSym.prob += prob;
-									if (!fired.contains(modSym)) {
-										fired.add(modSym);
-									}
-									if (modSym.prob>maxProb) {
-										maxProb = modSym.prob;
-									}
-								}
+								fireLinksInModuleNoLock(confab,ctxt,mod,lnks,(c<m),fired);
 							}
 						}
 					}
 				}
 				if (strict) {
 					if (fired.size()==0 && mod.symbols.size()>1) {
-						for (ModuleSymbol modSym: mod.symbols.values()) {
-							List<Symbol> syms = getSymbolsNoLock(modSym.symbol,ctxt.contextSymbol,confab.caseSensitive);
-							for (Symbol sym: syms) {
-								modSym.prob += ((ctxt.symbolBandwidth + (ctxt.symbolMaxProb - sym.prob)) * ctxt.symbolToLinkBandwidthFactor);
-								if (!fired.contains(modSym)) {
-									fired.add(modSym);
-								}
-								if (modSym.prob>maxProb) {
-									maxProb = modSym.prob;
-								}
-							}
+						fireSymbolsInModuleNoLock(confab,ctxt,mod,fired);
+					}
+					
+					for (ModuleSymbol modSym: fired) {
+						if (modSym.prob>maxProb) {
+							maxProb = modSym.prob;
 						}
 					}
 					
@@ -645,7 +615,69 @@ public class Confabulator extends Locker {
 			}
 		}
 	}
+
+	protected void fireLinksInModuleNoLock(ConfabulationObject confab,Context ctxt,Module mod,List<Link> lnks,boolean forward,List<ModuleSymbol> fired) {
+		for (Link lnk: lnks) {
+			fireLinkInModuleNoLock(confab,ctxt,mod,lnk,forward,fired);
+		}
+	}
+
+	protected void fireLinkInModuleNoLock(ConfabulationObject confab,Context ctxt,Module mod,Link lnk, boolean forward,List<ModuleSymbol> fired) {
+		String symbol = "";
+		double prob = 0D;
+		if (forward) {
+			symbol = lnk.symbolTo;
+		} else {
+			symbol = lnk.symbolFrom;
+		}
+		prob += ctxt.linkBandwidth + (ctxt.linkMaxProb - lnk.prob);
+		fireModuleSymbolNoLock(confab,mod,symbol,prob,fired);
+	}
 	
+	protected void fireSymbolsInModuleNoLock(ConfabulationObject confab,Context ctxt,Module mod,List<ModuleSymbol> fired) {
+		for (ModuleSymbol modSym: mod.symbols.values()) {
+			List<Symbol> syms = getSymbolsNoLock(modSym.symbol,ctxt.contextSymbol,confab.caseSensitive);
+			for (Symbol sym: syms) {
+				double prob = ((ctxt.symbolBandwidth + (ctxt.symbolMaxProb - sym.prob)) * ctxt.symbolToLinkBandwidthFactor);
+				fireModuleSymbolNoLock(confab,modSym,prob,fired);
+			}
+		}
+	}
+
+	protected ModuleSymbol fireModuleSymbolNoLock(ConfabulationObject confab,Module mod,String symbol,double prob,List<ModuleSymbol> fired) {
+		ModuleSymbol modSym = null;
+		if (prob>0D) {
+			modSym = mod.symbols.get(symbol);
+			if (modSym==null) {
+				modSym = new ModuleSymbol();
+				modSym.symbol = symbol;
+				mod.symbols.put(symbol,modSym);
+			}
+			fireModuleSymbolNoLock(confab,modSym,prob,fired);
+		}
+		return modSym;
+	}
+
+	protected void fireModuleSymbolNoLock(ConfabulationObject confab,ModuleSymbol modSym,double prob,List<ModuleSymbol> fired) {
+		if (prob>0D) {
+			if (confab.noise>0D) {
+				int random = generator.getNewInteger();
+				double noise = (confab.noise / 100D) * (double)random;
+				prob += (prob * noise);
+			}
+			modSym.prob += prob;
+			if (fired!=null && !fired.contains(modSym)) {
+				fired.add(modSym);
+			}
+		}
+	}
+	
+	protected void addLogLineNoLock(ConfabulationObject confab,String logLine) {
+		if (confab.appendLog) {
+			confab.addLogLine(logLine);
+		}
+	}
+
 	protected void logModuleStateNoLock(ConfabulationObject confab,String logLine) {
 		if (confab.appendLog) {
 			ZStringBuilder line = new ZStringBuilder(logLine);

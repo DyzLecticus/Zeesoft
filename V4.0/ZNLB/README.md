@@ -17,6 +17,82 @@ The tests used to develop this libary are also used to generate this README file
 Run the [ZNLB](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZNLB/src/nl/zeesoft/znlb/test/ZNLB.java) class as a java application to print this documentation to the standard out.  
 Click [here](#test-results) to scroll down to the test result summary.  
 
+nl.zeesoft.znlb.test.TestContextConfig
+--------------------------------------
+This test shows how to convert *ContextConfig* instance languages to and from JSON.
+
+**Example implementation**  
+~~~~
+// Create the context configuration
+ContextConfig contextConfig = new ContextConfig(new ZNLBConfig());
+// Initialize the context configuration
+contextConfig.initializeDatabaseObjects();
+// Convert a context configuration language to JSON
+JsFile json = contextConfig.getLanguages().get(0).toJson();
+// Convert the context configuration language from JSON
+contextConfig.getLanguages().get(0).fromJson(json);
+~~~~
+
+Class references;  
+ * [TestContextConfig](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZNLB/src/nl/zeesoft/znlb/test/TestContextConfig.java)
+ * [ContextConfig](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZNLB/src/nl/zeesoft/znlb/context/ContextConfig.java)
+
+**Test output**  
+The output of this test shows the converted JSON.  
+~~~~
+{
+  "code": "EN",
+  "masterContexts": [
+    {
+      "name": "Generic",
+      "desc": "Generic topics.",
+      "contexts": [
+        {
+          "name": "Cancel",
+          "desc": "Allows the user to cancel the current dialog."
+        },
+        {
+          "name": "Classification",
+          "desc": "Generates output when classification fails."
+        },
+        {
+          "name": "Goodbye",
+          "desc": "Goodbye handling."
+        },
+        {
+          "name": "Handshake",
+          "desc": "Greeting and name exchange."
+        },
+        {
+          "name": "Language",
+          "desc": "Handles questions about languages."
+        },
+        {
+          "name": "Math",
+          "desc": "Handles basic mathematical calculation."
+        },
+        {
+          "name": "Profanity",
+          "desc": "Handles profanity like foul language and cursing."
+        },
+        {
+          "name": "QuestionAndAnswer",
+          "desc": "Handles general questions."
+        },
+        {
+          "name": "Support",
+          "desc": "Allows the user to request support."
+        },
+        {
+          "name": "Thanks",
+          "desc": "Handles compliments and feedback."
+        }
+      ]
+    }
+  ]
+}
+~~~~
+
 nl.zeesoft.znlb.test.TestPreprocessorRequestResponse
 ----------------------------------------------------
 This test shows how to convert *PreprocessorRequestResponse* instances to and from JSON.
@@ -48,8 +124,9 @@ The output of this test shows the converted JSON.
 
 Test results
 ------------
-All 1 tests have been executed successfully (0 assertions).  
-Total test duration: 16 ms (total sleep duration: 0 ms).  
+All 2 tests have been executed successfully (0 assertions).  
+Total test duration: 72 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.znlb.test.TestPreprocessorRequestResponse: 475 Kb / 0 Mb
+ * nl.zeesoft.znlb.test.TestContextConfig: 618 Kb / 0 Mb
+ * nl.zeesoft.znlb.test.TestPreprocessorRequestResponse: 425 Kb / 0 Mb

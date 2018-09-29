@@ -4,6 +4,7 @@ import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
+import nl.zeesoft.zsdm.confab.ConfabConfigurator;
 import nl.zeesoft.zsdm.dialog.DialogSet;
 import nl.zeesoft.zsdm.mod.handler.HtmlZSDMIndexHandler;
 
@@ -13,6 +14,7 @@ public class ModZSDM extends ModObject implements StateListener {
 		"The Zeesoft Smart Dialog Manager provides a simple JSON API to manage smart dialogs.";
 	
 	private DialogSet				dialogSet		= null;
+	private ConfabConfigurator		confabConfig	= null;
 	
 	public ModZSDM(Config config) {
 		super(config);
@@ -20,6 +22,7 @@ public class ModZSDM extends ModObject implements StateListener {
 		desc.append(DESC);
 		dialogSet = getNewDialogSet();
 		dialogSet.addListener(this);
+		confabConfig = new ConfabConfigurator(configuration);
 	}
 	
 	@Override
@@ -46,6 +49,7 @@ public class ModZSDM extends ModObject implements StateListener {
 	public void stateChanged(Object source, boolean open) {
 		if (source instanceof DialogSet && open) {
 			// TODO Create and implement tester
+			confabConfig.configureConfabulators();
 		}
 	}
 	

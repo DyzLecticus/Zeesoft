@@ -19,33 +19,24 @@ public class TestDialog extends TestObject {
 
 	@Override
 	protected void describe() {
-		/*
-		 *  TODO: Describe
-		System.out.println("This test shows how to use the *Translator* to translate a sequence to and from internal values.");
+		System.out.println("This test shows how to convert *Dialog* instances to and from JSON.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the Translator");
-		System.out.println("Translator translator = new Translator(new Config());");
-		System.out.println("// Initialize the Translator (and wait or listen for initialization to finish)");
-		System.out.println("translator.initialize();");
-		System.out.println("// Use Translator to translate a sequence");
-		System.out.println("ZStringSymbolParser translated = translator.translateToInternalValues(new ZStringSymbolParser(\"some sequence\"));");
-		System.out.println("ZStringSymbolParser retranslated = translator.translateToExternalValues(translated);");
+		System.out.println("// Create the dialog");
+		System.out.println("Dialog dialog = new Dialog();");
+		System.out.println("// Convert the dialog to JSON");
+		System.out.println("JsFile json = dialog.toJson();");
+		System.out.println("// Convert the dialog from JSON");
+		System.out.println("dialog.fromJson(json);");
 		System.out.println("~~~~");
-		System.out.println();
-		getTester().describeMock(MockTranslator.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestDialog.class));
-		System.out.println(" * " + getTester().getLinkForClass(MockTranslator.class));
-		System.out.println(" * " + getTester().getLinkForClass(Translator.class));
+		System.out.println(" * " + getTester().getLinkForClass(Dialog.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows;  ");
-		System.out.println(" * The time it takes to initialize the translator  ");
-		System.out.println(" * The translation results including the time it takes, for a set of input sequences  ");
-		*/
+		System.out.println("The output of this test shows the converted JSON.  ");
 	}
 	
 	@Override

@@ -9,6 +9,10 @@
 	<property name="versionZEVT" value="0.9.0"/>
 	<property name="releasesZEVT" location="../ZEVT/releases"/>
 
+	<!-- ZSC version -->
+	<property name="versionZSC" value="0.9.0"/>
+	<property name="releasesZSC" location="../ZSC/releases"/>
+
 	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
 	
 	<property name="releases" location="releases"/>
@@ -22,6 +26,16 @@
 	<target name="copyZEVT" description="Copy the ZEVT release">
 		<mkdir dir="${lib}"/>
 		<unzip src="${releasesZEVT}/zevt-${versionZEVT}.zip" dest="${lib}">
+		    <patternset>
+		        <include name="**/*.jar"/>
+		        <include name="**/*.zip"/>
+		    </patternset>
+		</unzip>
+	</target>
+	
+	<target name="copyZSC" description="Copy the ZSC release">
+		<mkdir dir="${lib}"/>
+		<unzip src="${releasesZSC}/zsc-${versionZSC}.zip" dest="${lib}">
 		    <patternset>
 		        <include name="**/*.jar"/>
 		        <include name="**/*.zip"/>

@@ -36,6 +36,8 @@ public class ConfabulatorRequestHandler {
 			initializeConfabulationFromRequest(confab,response.request);
 			confab.contextSymbol = response.request.contextSymbol;
 			confab.validate = response.request.validate;
+			confab.parallel = response.request.parallel;
+			confab.alphabet = response.request.alphabet;
 			confabulator.confabulate(confab);
 			response.log = confab.log;
 			response.corrected = confab.corrected;
@@ -46,6 +48,7 @@ public class ConfabulatorRequestHandler {
 	protected void initializeConfabulationFromRequest(ConfabulationObject confab,ConfabulatorRequest request) {
 		confab.appendLog = request.appendLog;
 		confab.caseSensitive = request.caseSensitive;
+		confab.noise = request.noise;
 		confab.input = request.input;
 		confab.maxTime = request.maxTime;
 	}

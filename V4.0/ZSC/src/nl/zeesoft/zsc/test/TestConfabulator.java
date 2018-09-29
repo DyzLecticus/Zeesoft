@@ -20,26 +20,38 @@ public class TestConfabulator extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: describe
-		System.out.println("This test shows how to convert a *DatabaseRequest* to and from JSON.");
+		System.out.println("This test shows how to train a *Confabulator* to and use it to correct sequences and determine context.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the database request");
+		System.out.println("// Create the confabulator");
 		System.out.println("DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);");
-		System.out.println("// Convert the database request to JSON");
-		System.out.println("JsFile json = request.toJson();");
-		System.out.println("// Convert the database request from JSON");
-		System.out.println("request.fromJson(json);");
+		System.out.println("// Train the confabulator");
+		System.out.println("conf.learnSequence(\"A sequence to learn.\",\"OptionalContextSymbolToAssociate\");");
+		System.out.println("conf.calculateProbabilities();");
+		System.out.println("// Create a correction confabulation");
+		System.out.println("CorrectionConfabulation confab1 = new CorrectionConfabulation();");
+		System.out.println("confab1.input.append(\"A sequence to correct\");");
+		System.out.println("// Confabulate the correction");
+		System.out.println("conf.confabulate(confab1);");
+		System.out.println("// Create a context confabulation");
+		System.out.println("ContextConfabulation confab2 = new ContextConfabulation();");
+		System.out.println("confab2.input.append(\"A sequence to determine context for\");");
+		System.out.println("// Confabulate the context");
+		System.out.println("conf.confabulate(confab2);");
 		System.out.println("~~~~");
+		System.out.println();
+		getTester().describeMock(MockConfabulator.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestConfabulator.class));
-		System.out.println(" * " + getTester().getLinkForClass(DatabaseRequest.class));
+		System.out.println(" * " + getTester().getLinkForClass(MockConfabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(Confabulator.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the converted JSON.  ");
-		*/
+		System.out.println("The output of this test shows;  ");
+		System.out.println(" * Some details about the trained confabulator  ");
+		System.out.println(" * The result of some confabulations  ");
 	}
 	
 	@Override
@@ -66,19 +78,28 @@ public class TestConfabulator extends TestObject {
 		testCorrection(conf,"My goad is to help.",true,"My goal is to understand.");
 		testCorrection(conf,"My goad is to help.",false,"My goal is to help.");
 		testCorrection(conf,"gaad.",false,"Gaad.");
+		testCorrection(conf,"gaad.",false,"",0.1D);
 		
 		testContext(conf,"My name is Dyz Lecticus.",3);
+		testContext(conf,"My name is Dyz Lecticus.",3,0.1D);
 		testContext(conf,"I can learn context sensitive symbol sequences and use that knowledge to do things like correct symbols, classify context and more.",2);
 	}
 	
 	private void testCorrection(Confabulator conf,String input,boolean validate,String expectedCorrection) {
+		testCorrection(conf,input,validate,expectedCorrection,0D);
+	}
+
+	private void testCorrection(Confabulator conf,String input,boolean validate,String expectedCorrection,double noise) {
 		CorrectionConfabulation confab = new CorrectionConfabulation();
 		confab.input.append(input);
 		confab.validate = validate;
 		confab.appendLog = true;
+		confab.noise = noise;
 		conf.confabulate(confab);
-		ZStringSymbolParser expected = new ZStringSymbolParser(expectedCorrection);
-		assertEqual(confab.corrected,expected,"Correction does not match expectation");
+		if (expectedCorrection.length()>0) {
+			ZStringSymbolParser expected = new ZStringSymbolParser(expectedCorrection);
+			assertEqual(confab.corrected,expected,"Correction does not match expectation");
+		}
 		String val = "";
 		if (validate) {
 			val = " (validated links)";
@@ -89,13 +110,18 @@ public class TestConfabulator extends TestObject {
 	}
 	
 	private void testContext(Confabulator conf,String input,int expectedContexts) {
+		testContext(conf,input,expectedContexts,0D);
+	}
+	
+	private void testContext(Confabulator conf,String input,int expectedContexts,double noise) {
 		ContextConfabulation confab = new ContextConfabulation();
 		confab.input.append(input);
+		confab.noise = noise;
 		conf.confabulate(confab);
 		assertEqual(confab.results.size(),expectedContexts,"Context confabulation result size does not match expectation");
 		System.out.println("Contexts for '" + confab.input + "': " + confab.results.size());
 		for (ContextResult res: confab.results) {
-			System.out.println(" - " + res.contextSymbol + " " + res.prob + "/" + res.probNormalized);
+			System.out.println(" - '" + res.contextSymbol + "' " + res.prob + "/" + res.probNormalized);
 		}
 	}
 }

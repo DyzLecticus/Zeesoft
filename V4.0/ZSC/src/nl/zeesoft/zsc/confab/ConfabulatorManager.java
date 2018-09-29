@@ -74,6 +74,7 @@ public class ConfabulatorManager extends InitializerObject implements StateListe
 		}
 		for (TrainingSet ts: confabulatorSet.getTrainingSets()) {
 			addObjectNoLock(ts);
+			confabulatorSet.trainConfabulator(ts);
 		}
 	}
 

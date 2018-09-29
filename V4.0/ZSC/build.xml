@@ -17,7 +17,7 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zsc nl/zeesoft/zsc/mod nl/zeesoft/zsc/mod/handler nl/zeesoft/zsc/mod/resource nl/zeesoft/zsc/dialog nl/zeesoft/zsc/dialog/dialogs/dutch nl/zeesoft/zsc/dialog/dialogs/english nl/zeesoft/zsc/test zodb.jar znlb.jar zodb.jar zodb.jar zdk.jar"/>
+	<property name="classpath" value="nl/zeesoft/zsc nl/zeesoft/zsc/mod nl/zeesoft/zsc/mod/handler nl/zeesoft/zsc/mod/resource nl/zeesoft/zsc/confab nl/zeesoft/zsc/dialog/confabs nl/zeesoft/zsc/test zodb.jar znlb.jar zodb.jar zodb.jar zdk.jar"/>
 
 	<target name="copyZODB" description="Copy the ZODB release">
 		<mkdir dir="${lib}"/>

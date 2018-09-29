@@ -14,6 +14,7 @@ public abstract class ConfabulationObject {
 	public boolean				caseSensitive	= false;
 	public long					maxTime			= 1000;
 	public boolean				appendLog		= false;
+	public double				noise			= 0D;
 
 	public ZStringBuilder		log				= new ZStringBuilder();
 	public Date					started			= null;
@@ -31,6 +32,10 @@ public abstract class ConfabulationObject {
 			r.add(mod.copy());
 		}
 		return r;
+	}
+	
+	public void addLogLine(String line) {
+		addLogLine(new ZStringBuilder(line));
 	}
 	
 	public void addLogLine(ZStringBuilder line) {

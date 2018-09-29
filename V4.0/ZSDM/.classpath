@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/zdk.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/znlb.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/zevt.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/zsc.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

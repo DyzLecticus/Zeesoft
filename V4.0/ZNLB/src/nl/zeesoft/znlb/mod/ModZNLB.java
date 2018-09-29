@@ -56,9 +56,9 @@ public class ModZNLB extends ModObject implements StateListener {
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		handlers.add(new JsonZNLBLanguagesHandler(configuration,this));
 		handlers.add(new JsonZNLBContextConfigurationHandler(configuration,this));
+		testers.add(getNewTester());
 		preprocessor.initialize();
 		contextConfiguration.initialize();
-		testers.add(getNewTester());
 		super.initialize();
 	}
 	

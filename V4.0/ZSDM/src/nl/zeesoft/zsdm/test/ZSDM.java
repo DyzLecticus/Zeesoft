@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.test.impl.ZDK;
 import nl.zeesoft.zevt.test.ZEVT;
 import nl.zeesoft.znlb.test.ZNLB;
 import nl.zeesoft.zodb.test.ZODB;
+import nl.zeesoft.zsc.test.ZSC;
 import nl.zeesoft.zsdm.mod.ModZSDM;
 
 public class ZSDM extends LibraryObject {
@@ -23,6 +24,7 @@ public class ZSDM extends LibraryObject {
 		getDependencies().add(new ZODB(null));
 		getDependencies().add(new ZNLB(null));
 		getDependencies().add(new ZEVT(null));
+		getDependencies().add(new ZSC(null));
 	}
 
 	public static void main(String[] args) {
