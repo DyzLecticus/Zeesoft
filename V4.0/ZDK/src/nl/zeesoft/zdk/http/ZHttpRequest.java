@@ -19,16 +19,17 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 
 public class ZHttpRequest {
-	private Messenger		messenger		= null;
-	private String			method			= "";
-	private String			url				= "";
+	private Messenger		messenger			= null;
+	private String			method				= "";
+	private String			url					= "";
 	
-	private int				timeoutMs		= 3000;
-	private String			encoding		= "UTF-8";
+	private int				connectTimeoutMs	= 1000;
+	private int				readTimeoutMs		= 3000;
+	private String			encoding			= "UTF-8";
 	
-	private int				responseCode	= 200;
-	private String			error			= "";
-	private Exception		exception		= null;
+	private int				responseCode		= 200;
+	private String			error				= "";
+	private Exception		exception			= null;
 	
 	public ZHttpRequest(String method,String url) {
 		this.method = method;
@@ -41,8 +42,12 @@ public class ZHttpRequest {
 		this.url = url;
 	}
 	
-	public void setTimeoutMs(int timeoutMs) {
-		this.timeoutMs = timeoutMs;
+	public void setConnectTimeoutMs(int timeoutMs) {
+		this.connectTimeoutMs = timeoutMs;
+	}
+	
+	public void setReadTimeoutMs(int timeoutMs) {
+		this.readTimeoutMs = timeoutMs;
 	}
 
 	public void setEncoding(String encoding) {
@@ -107,8 +112,8 @@ public class ZHttpRequest {
 				if (body!=null) {
 					con.setDoOutput(true);
 				}
-				con.setConnectTimeout(timeoutMs);
-				con.setReadTimeout(timeoutMs);
+				con.setConnectTimeout(connectTimeoutMs);
+				con.setReadTimeout(readTimeoutMs);
 				if (headers!=null) {
 					for (Entry<String,String> entry: headers.entrySet()) {
 						con.addRequestProperty(entry.getKey(),entry.getValue());

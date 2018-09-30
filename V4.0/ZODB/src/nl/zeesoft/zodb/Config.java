@@ -199,11 +199,15 @@ public class Config implements JsAble {
 	}
 
 	public void handleDatabaseRequest(DatabaseRequest request,JsClientListener listener) {
+		handleDatabaseRequest(request,listener,10);
+	}
+
+	public void handleDatabaseRequest(DatabaseRequest request,JsClientListener listener,int timeoutSeconds) {
 		JsAbleClient client = new JsAbleClient(getMessenger(),getUnion());
 		client.addJsClientListener(listener);
 		DatabaseResponse response = new DatabaseResponse();
 		response.request = request;
-		client.handleRequest(request,getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH,response);
+		client.handleRequest(request,getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH,response,timeoutSeconds);
 	}
 
 	public DatabaseResponse handledDatabaseRequest(JsClientResponse response) {

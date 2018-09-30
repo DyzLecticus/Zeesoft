@@ -11,7 +11,15 @@ public class JsAbleClient extends JsClient {
 	}
 
 	public void handleRequest(JsAble request,String url,JsAble response) {
-		JsClientWorker worker = new JsClientWorker(getMessenger(),getUnion(),this,new JsAbleClientRequest(request,url,response));
+		handleRequest(request,url,response,0);
+	}
+	
+	public void handleRequest(JsAble request,String url,JsAble response,int timeoutSeconds) {
+		JsAbleClientRequest req = new JsAbleClientRequest(request,url,response);
+		if (timeoutSeconds>0) {
+			req.timeoutSeconds = timeoutSeconds;
+		}
+		JsClientWorker worker = new JsClientWorker(getMessenger(),getUnion(),this,req);
 		worker.start();
 	}
 	

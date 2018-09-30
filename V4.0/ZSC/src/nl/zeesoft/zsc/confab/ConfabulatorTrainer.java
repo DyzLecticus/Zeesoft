@@ -32,7 +32,7 @@ public class ConfabulatorTrainer extends InitializerObject {
 	}
 
 	@Override
-	protected void loadedObjectNoLock(InitializerDatabaseObject object) {
+	protected void loadedObject(InitializerDatabaseObject object) {
 		confabulatorSet.trainAndReplaceConfabulator((TrainingSet) object);
 	}
 }

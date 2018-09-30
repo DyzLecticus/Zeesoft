@@ -41,6 +41,15 @@ public class HtmlZEVTIndex extends HtmlResource {
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<a href=\"" + url + "/entities.json\">Entities JSON</a>");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("Returns the supported entities as a JSON file.");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
 			if (getConfiguration().getModule(ModZEVT.NAME).selfTest) {
 				html.append("<tr>\n");
 				html.append("<td>");

@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zevt.mod.handler.HtmlZEVTEntityTranslatorHandler;
 import nl.zeesoft.zevt.mod.handler.HtmlZEVTIndexHandler;
 import nl.zeesoft.zevt.mod.handler.JavaScriptZEVTEntityTranslatorHandler;
+import nl.zeesoft.zevt.mod.handler.JsonZEVTEntitiesHandler;
 import nl.zeesoft.zevt.mod.handler.JsonZEVTRequestHandler;
 import nl.zeesoft.zevt.mod.handler.JsonZEVTTypesHandler;
 import nl.zeesoft.zevt.trans.Translator;
@@ -49,6 +50,7 @@ public class ModZEVT extends ModObject implements StateListener {
 		handlers.add(new JavaScriptZEVTEntityTranslatorHandler(configuration,this));
 		handlers.add(new JsonZEVTRequestHandler(configuration,this));
 		handlers.add(new JsonZEVTTypesHandler(configuration,this));
+		handlers.add(new JsonZEVTEntitiesHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		testers.add(getNewTester());
 		translator.initialize();

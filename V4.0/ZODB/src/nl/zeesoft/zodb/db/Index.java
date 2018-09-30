@@ -50,11 +50,13 @@ public class Index extends Locker {
 		if (id>0 && open) {
 			r = elementsById.get(id);
 			if (r!=null) {
-				readObjectNoLock(r);
 				r = r.copy();
 			}
 		}
 		unlockMe(this);
+		if (r!=null) {
+			readObject(r);
+		}
 		return r;
 	}
 	
@@ -64,11 +66,13 @@ public class Index extends Locker {
 		if (name.length()>0 && open) {
 			r = elementsByName.get(name);
 			if (r!=null) {
-				readObjectNoLock(r);
 				r = r.copy();
 			}
 		}
 		unlockMe(this);
+		if (r!=null) {
+			readObject(r);
+		}
 		return r;
 	}
 	
@@ -164,6 +168,27 @@ public class Index extends Locker {
 		}
 		unlockMe(this);
 		return r;
+	}
+	
+	protected void readObject(IndexElement element) {
+		lockMe(this);
+		IndexElement copy = element.copy();
+		unlockMe(this);
+		if (copy.obj==null) {
+			String fileName = getObjectDirectory() + copy.id + ".json";
+			JsFile obj = new JsFile();
+			ZStringBuilder err = obj.fromFile(fileName);
+			if (err.length()>0) {
+				getMessenger().error(this,"Failed to read object: " + err);
+			} else {
+				if (obj.rootElement==null) {
+					obj.rootElement = new JsElem();
+				}
+				lockMe(this);
+				element.obj = obj;
+				unlockMe(this);
+			}
+		}
 	}
 	
 	protected String getFileDirectory() {
@@ -265,9 +290,7 @@ public class Index extends Locker {
 		unlockMe(this);
 		if (read.size()>0) {
 			for (IndexElement element: read) {
-				lockMe(this);
-				readObjectNoLock(element);
-				unlockMe(this);
+				readObject(element);
 			}
 		}
 		return r;
@@ -324,22 +347,6 @@ public class Index extends Locker {
 			}
 		}
 		return r;
-	}
-	
-	private void readObjectNoLock(IndexElement element) {
-		if (element.obj==null) {
-			String fileName = getObjectDirectory() + element.id + ".json";
-			JsFile obj = new JsFile();
-			ZStringBuilder err = obj.fromFile(fileName);
-			if (err.length()>0) {
-				getMessenger().error(this,"Failed to read object: " + err);
-			} else {
-				if (obj.rootElement==null) {
-					obj.rootElement = new JsElem();
-				}
-				element.obj = obj;
-			}
-		}
 	}
 	
 	private IndexElement addObjectNoLock(String name,JsFile obj,List<ZStringBuilder> errors) {

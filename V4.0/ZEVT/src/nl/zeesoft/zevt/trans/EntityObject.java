@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
 
@@ -147,5 +149,17 @@ public abstract class EntityObject {
 		externalValues.clear();
 		internalValues.clear();
 		initialized = false;
+	}
+
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("language",getLanguage(),true));
+		JsElem evsElem = new JsElem("entityValues",true);
+		json.rootElement.children.add(evsElem);
+		for (EntityValue ev: getExternalValues().values()) {
+			evsElem.children.add(new JsElem(null,ev.externalValue,true));
+		}
+		return json;
 	}
 }

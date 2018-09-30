@@ -175,4 +175,12 @@ public class Dialog implements InitializerDatabaseObject {
 			r.prompts.add(new ZStringSymbolParser(prompt));
 		}
 	}
+
+	public ZStringSymbolParser getTypedSequence(ZStringSymbolParser sequence) {
+		ZStringSymbolParser r = new ZStringSymbolParser(sequence);
+		for (DialogVariable variable: variables) {
+			r.replace("{" + variable.name + "}","[" + variable.type + "]");
+		}
+		return r;
+	}
 }

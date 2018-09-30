@@ -14,6 +14,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	private int								maxObjects		= 1000;
 	
 	private List<StateListener>				listeners		= new ArrayList<StateListener>();
+	private int								timeoutSeconds	= 0;
 	
 	private List<InitializerDatabaseObject>	objects			= new ArrayList<InitializerDatabaseObject>();
 	
@@ -33,6 +34,12 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	
 	public String getNamePrefix() {
 		return namePrefix;
+	}
+	
+	public void setTimeoutSeconds(int timeoutSeconds) {
+		lockMe(this);
+		this.timeoutSeconds = timeoutSeconds;
+		unlockMe(this);
 	}
 	
 	public void addListener(StateListener listener) {
@@ -143,9 +150,9 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 					if (object!=null && res.results.size()>0 && res.results.get(0).obj!=null) {
 						object.fromJson(res.results.get(0).obj);
 						configuration.debug(this,"Loaded " + res.request.name);
-						loadedObjectNoLock(object);
 					}
 					unlockMe(this);
+					loadedObject(object);
 				} else if (res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 					lockMe(this);
 					todo--;
@@ -170,7 +177,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 
 	protected abstract InitializerDatabaseObject getNewObjectNoLock(String name);
 	
-	protected void loadedObjectNoLock(InitializerDatabaseObject object) {
+	protected void loadedObject(InitializerDatabaseObject object) {
 		// Override to extend
 	}
 	
@@ -220,7 +227,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		for (InitializerDatabaseObject object: objects) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 			request.name = namePrefix + object.getObjectName();
-			configuration.handleDatabaseRequest(request,this);
+			configuration.handleDatabaseRequest(request,this,timeoutSeconds);
 		}
 	}
 	

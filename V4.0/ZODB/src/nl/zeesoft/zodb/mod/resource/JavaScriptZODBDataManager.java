@@ -67,9 +67,13 @@ public class JavaScriptZODBDataManager {
 		script.append("    if (object.results) {\n");
 		script.append("        ZODB.dm.showList(object);\n");
 		script.append("    } else {\n");
+		script.append("        var size = 0;\n");
+		script.append("        if (object.size) {\n");
+		script.append("            size = object.size;\n");
+		script.append("        }\n");
 		script.append("        var elem = window.document.getElementById(\"fetched\");\n");
 		script.append("        if (elem!=null) {\n");
-		script.append("            elem.innerHTML = \"Fetched&nbsp;0&nbsp;/&nbsp;0\";\n");
+		script.append("            elem.innerHTML = \"Fetched&nbsp;0&nbsp;/&nbsp;\" + size;\n");
 		script.append("        }\n");
 		script.append("        ZODB.dm.clearList();\n");
 		script.append("    }\n");

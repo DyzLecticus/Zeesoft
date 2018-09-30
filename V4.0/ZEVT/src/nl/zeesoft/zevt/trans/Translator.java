@@ -6,6 +6,8 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zevt.trans.entities.dutch.DutchConfirmation;
 import nl.zeesoft.zevt.trans.entities.dutch.DutchCountry;
@@ -34,6 +36,7 @@ import nl.zeesoft.zevt.trans.entities.english.EnglishOrder2;
 import nl.zeesoft.zevt.trans.entities.english.EnglishPreposition;
 import nl.zeesoft.zevt.trans.entities.english.EnglishProfanity;
 import nl.zeesoft.zevt.trans.entities.english.EnglishTime;
+import nl.zeesoft.znlb.lang.Languages;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.StateListener;
 
@@ -50,6 +53,7 @@ public class Translator extends Locker {
 	private boolean								initializing				= false;
 	private boolean								initialized					= false;
 	private int									todo						= 0;
+	private ZStringBuilder						entitiesJson				= null;
 	
 	private TranslatorRefreshWorker				refreshWorker				= null;
 
@@ -121,6 +125,14 @@ public class Translator extends Locker {
 		boolean r = false;
 		lockMe(this);
 		r = initialized;
+		unlockMe(this);
+		return r;
+	}
+
+	public ZStringBuilder getEntitiesJson() {
+		ZStringBuilder r = null;
+		lockMe(this);
+		r = entitiesJson;
 		unlockMe(this);
 		return r;
 	}
@@ -483,8 +495,39 @@ public class Translator extends Locker {
 				for (StateListener listener: lst) {
 					listener.stateChanged(this,true);
 				}
+				createEntitiesJson();
 			}
 		}
+	}
+
+	protected void createEntitiesJson() {
+		configuration.debug(this,"Creating entities JSON ...");
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		JsElem eosElem = new JsElem("entities",true);
+		json.rootElement.children.add(eosElem);
+		lockMe(this);
+		List<EntityObject> ents = new ArrayList<EntityObject>(entities);
+		unlockMe(this);
+		for (EntityObject eo: ents) {
+			if (!eo.getLanguage().equals(Languages.UNI)) {
+				JsElem eoElem = new JsElem();
+				eosElem.children.add(eoElem);
+				JsFile eoJs = eo.toJson();
+				eoJs.rootElement.children.add(0,new JsElem("name",eo.getName(),true));
+				eoElem.children = eoJs.rootElement.children;
+			}
+		}
+		ZStringBuilder str = null;
+		if (configuration.isDebug()) {
+			str = json.toStringBuilderReadFormat();
+		} else {
+			str = json.toStringBuilderReadFormat();
+		}
+		lockMe(this);
+		entitiesJson = str;
+		unlockMe(this);
+		configuration.debug(this,"Created entities JSON");
 	}
 	
 	protected void refreshEntities() {

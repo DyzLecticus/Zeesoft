@@ -60,21 +60,21 @@ Symbol to link bandwidth factor for default context: 0.1103896103896104
 
 Corrected: 'My nam is Dyz agent.' -> 'My name is Dyz Lecticus.' (validated links)
 Log;
-13:55:06:459: Initialized module symbol variations;
+20:02:59:900: Initialized module symbol variations;
   01: My:0.006493506493506494
   02: am:0.003246753246753247 name:0.003246753246753247
   03: is:0.006493506493506494
   04: Dyz:0.006493506493506494
   05: agent:0.006493506493506494
   06: .:0.006493506493506494
-13:55:06:480: Initialized module symbol expectations;
+20:02:59:920: Initialized module symbol expectations;
   01: My:0.02922077922077922 I:0.00974025974025974
   02: name:0.061688311688311695 goal:0.03896103896103896 What:0.01948051948051948 artifically:0.01948051948051948 [1]
   03: is:0.03896103896103896 intelligent:0.01948051948051948 an:0.00974025974025974 and:0.00974025974025974 [1]
   04: Dyz:0.045454545454545456 to:0.01948051948051948 virtual:0.01948051948051948 and:0.00974025974025974 [3]
   05: Lecticus:0.048701298701298704 understand:0.01948051948051948 agent:0.016233766233766232 good:0.00974025974025974 [3]
   06: .:0.045454545454545456 ?:0.00974025974025974 and:0.00974025974025974 virtual:0.00974025974025974
-13:55:06:488: Confabulated module symbols;
+20:02:59:937: Confabulated module symbols;
   01: My:1.0
   02: name:1.0
   03: is:1.0
@@ -84,21 +84,21 @@ Log;
 
 Corrected: 'MY NAM IS DYZ AGENT.' -> 'My name is Dyz Lecticus.' (validated links)
 Log;
-13:55:06:569: Initialized module symbol variations;
+20:03:00:033: Initialized module symbol variations;
   01: My:0.003246753246753247
   02: am:0.003246753246753247 name:0.003246753246753247
   03: I:0.003246753246753247 is:0.003246753246753247
   04: Dyz:0.003246753246753247
   05: agent:0.003246753246753247
   06: .:0.006493506493506494
-13:55:06:571: Initialized module symbol expectations;
+20:03:00:034: Initialized module symbol expectations;
   01: My:0.025974025974025976 I:0.00974025974025974
   02: name:0.061688311688311695 goal:0.03896103896103896 What:0.01948051948051948 artifically:0.01948051948051948 [1]
   03: is:0.06818181818181819 intelligent:0.03896103896103896 an:0.01948051948051948 and:0.01948051948051948 [2]
   04: Dyz:0.04220779220779221 to:0.01948051948051948 virtual:0.01948051948051948 am:0.00974025974025974 [5]
   05: Lecticus:0.048701298701298704 understand:0.01948051948051948 agent:0.012987012987012988 an:0.00974025974025974 [5]
   06: .:0.045454545454545456 ?:0.00974025974025974 and:0.00974025974025974 artifically:0.00974025974025974 [2]
-13:55:06:579: Confabulated module symbols;
+20:03:00:036: Confabulated module symbols;
   01: My:1.0
   02: name:1.0
   03: is:1.0
@@ -108,21 +108,21 @@ Log;
 
 Corrected: 'My goad is to help.' -> 'My goal is to understand.' (validated links)
 Log;
-13:55:06:580: Initialized module symbol variations;
+20:03:00:038: Initialized module symbol variations;
   01: My:0.006493506493506494
   02: goal:0.003246753246753247 good:0.003246753246753247
   03: is:0.006493506493506494
   04: to:0.006493506493506494
   05: help:0.006493506493506494
   06: .:0.006493506493506494
-13:55:06:581: Initialized module symbol expectations;
+20:03:00:039: Initialized module symbol expectations;
   01: My:0.02922077922077922 use:0.00974025974025974 very:0.00974025974025974
   02: goal:0.061688311688311695 name:0.03896103896103896 What:0.01948051948051948 that:0.01948051948051948 [2]
   03: is:0.03896103896103896 ?:0.00974025974025974 and:0.00974025974025974 context:0.00974025974025974 [3]
   04: to:0.03571428571428571 Dyz:0.02922077922077922 and:0.01948051948051948 help:0.00974025974025974 [2]
   05: understand:0.03896103896103896 Lecticus:0.02922077922077922 agent:0.00974025974025974 do:0.00974025974025974 [4]
   06: and:0.02922077922077922 .:0.016233766233766232 ?:0.00974025974025974 people:0.00974025974025974 [1]
-13:55:06:583: Confabulated module symbols;
+20:03:00:041: Confabulated module symbols;
   01: My:1.0
   02: goal:1.0
   03: is:1.0
@@ -132,14 +132,14 @@ Log;
 
 Corrected: 'My goad is to help.' -> 'My goal is to help.'
 Log;
-13:55:06:585: Initialized module symbol variations;
+20:03:00:043: Initialized module symbol variations;
   01: My:0.006493506493506494
   02: goal:0.003246753246753247 good:0.003246753246753247
   03: is:0.006493506493506494
   04: to:0.006493506493506494
   05: help:0.006493506493506494
   06: .:0.006493506493506494
-13:55:06:587: Confabulated module symbols;
+20:03:00:043: Confabulated module symbols;
   01: My:1.0
   02: goal:1.0
   03: is:1.0
@@ -149,26 +149,26 @@ Log;
 
 Corrected: 'gaad.' -> 'Gaad.'
 Log;
-13:55:06:628: Initialized module symbol variations;
+20:03:00:080: Initialized module symbol variations;
   01: and:0.003246753246753247 goal:0.003246753246753247 good:0.003246753246753247
   02: .:0.006493506493506494
-13:55:06:628: Confabulated module symbols;
+20:03:00:080: Confabulated module symbols;
   01: goal:0.012987012987012988 good:0.012987012987012988
   02: .:1.0
-13:55:06:628: Confabulated module symbols;
+20:03:00:080: Confabulated module symbols;
   01: goal:0.022727272727272728 good:0.022727272727272728
   02: .:1.0
 
 Corrected: 'gaad.' -> 'Good.'
 Log;
-13:55:06:668: Initialized module symbol variations;
+20:03:00:126: Initialized module symbol variations;
   01: and:0.003246753246753247 goal:0.003246753246753247 good:0.003246753246753247
   02: .:0.006493506493506494
-13:55:06:670: Confabulated module symbols;
-  01: good:0.0132012987012987 goal:0.013181818181818183
+20:03:00:127: Confabulated module symbols;
+  01: good:0.013542207792207793 goal:0.013094155844155846
   02: .:1.0
-13:55:06:671: Confabulated module symbols;
-  01: good:0.023876623376623374 goal:0.0231948051948052
+20:03:00:127: Confabulated module symbols;
+  01: good:0.023964285714285716 goal:0.023087662337662337
   02: .:1.0
 
 Contexts for 'My name is Dyz Lecticus.': 3
@@ -176,9 +176,9 @@ Contexts for 'My name is Dyz Lecticus.': 3
  - 'Self' 0.12987012987012989/1.0
  - 'Goal' 0.003246753246753247/0.024999999999999998
 Contexts for 'My name is Dyz Lecticus.': 3
- - 'Name' 0.1379448051948052/1.0
- - 'Self' 0.1374577922077922/0.9964695083201919
- - 'Goal' 0.003350649350649351/0.024289782757078635
+ - 'Name' 0.13714935064935066/1.0
+ - 'Self' 0.1362694805194805/0.9935845840632545
+ - 'Goal' 0.003522727272727273/0.02568533686851948
 Contexts for 'I can learn context sensitive symbol sequences and use that knowledge to do things like correct symbols, classify context and more.': 2
  - 'Description' 0.7987012987012974/1.0
  - 'Self' 0.7987012987012974/1.0
@@ -187,7 +187,7 @@ Contexts for 'I can learn context sensitive symbol sequences and use that knowle
 Test results
 ------------
 All 1 tests have been executed successfully (12 assertions).  
-Total test duration: 300 ms (total sleep duration: 0 ms).  
+Total test duration: 304 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zsc.test.TestConfabulator: 1216 Kb / 1 Mb
+ * nl.zeesoft.zsc.test.TestConfabulator: 1215 Kb / 1 Mb

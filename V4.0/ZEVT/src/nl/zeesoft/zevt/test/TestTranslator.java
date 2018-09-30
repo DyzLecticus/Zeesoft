@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringSymbolParser;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zevt.trans.Translator;
@@ -180,6 +182,14 @@ public class TestTranslator extends TestObject {
 		expression.append("11 " + UniversalMathematic.MULTIPLICATION + " 3 " + UniversalMathematic.ADDITION + " 25 " + UniversalMathematic.DIVISION + " 5 " + UniversalMathematic.SUBTRACTION + " 2");
 		r = math.evaluate(expression);
 		assertEqual(r,true,"The evaluation did not produce the expected result");
+		
+		while(t.getEntitiesJson()==null) {
+			sleep(100);
+		}
+		JsFile json = new JsFile();
+		json.fromStringBuilder(t.getEntitiesJson());
+		JsElem entsElem = json.rootElement.getChildByName("entities");
+		assertEqual(entsElem.children.size(),27,"The number of entities in the JSON file does not match expectation");
 		
 		t.destroy();
 	}

@@ -31,9 +31,25 @@ public class JsClient extends Locker {
 		listeners.add(listener);
 		unlockMe(this);
 	}
+	
+	public void handleRequest(String url) {
+		handleRequest(null,url,0);
+	}
+	
+	public void handleRequest(String url,int timeoutSeconds) {
+		handleRequest(null,url,timeoutSeconds);
+	}
 
 	public void handleRequest(JsFile request,String url) {
-		JsClientWorker worker = new JsClientWorker(getMessenger(),union,this,new JsClientRequest(request,url));
+		handleRequest(request,url,0);
+	}
+
+	public void handleRequest(JsFile request,String url,int timeoutSeconds) {
+		JsClientRequest req = new JsClientRequest(request,url);
+		if (timeoutSeconds>0) {
+			req.timeoutSeconds = timeoutSeconds;
+		}
+		JsClientWorker worker = new JsClientWorker(getMessenger(),union,this,req);
 		worker.start();
 	}
 	
@@ -48,9 +64,18 @@ public class JsClient extends Locker {
 		int max = maxRetries;
 		unlockMe(this);
 		
-		ZStringBuilder req = request.request.toStringBuilder();
-		ZHttpRequest http = new ZHttpRequest(null,"POST",request.url);
-		JsFile res = http.sendJsonRequest(req);
+		JsFile res = null;
+		ZHttpRequest http = null;
+		if (request.request!=null) {
+			ZStringBuilder req = request.request.toStringBuilder();
+			http = new ZHttpRequest(null,"POST",request.url);
+			http.setReadTimeoutMs(request.timeoutSeconds * 1000);
+			res = http.sendJsonRequest(req);
+		} else {
+			http = new ZHttpRequest(null,"GET",request.url);
+			http.setReadTimeoutMs(request.timeoutSeconds * 1000);
+			res = http.sendJsonRequest();
+		}
 		
 		if (http.getResponseCode()==503) {
 			request.retries++;

@@ -2,6 +2,7 @@ package nl.zeesoft.zevt.test;
 
 import nl.zeesoft.zdk.test.MockObject;
 import nl.zeesoft.zevt.ZEVTConfig;
+import nl.zeesoft.zodb.Config;
 
 public class MockTranslator extends MockObject {
 	@Override
@@ -11,7 +12,9 @@ public class MockTranslator extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
-		FixedDateTranslator t = new FixedDateTranslator(new ZEVTConfig());
+		Config config = new ZEVTConfig();
+		config.setDebug(true);
+		FixedDateTranslator t = new FixedDateTranslator(config);
 		t.initialize();
 		return t;
 	}

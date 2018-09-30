@@ -16,6 +16,7 @@ public class ConfabulatorManager extends InitializerObject implements StateListe
 
 	public ConfabulatorManager(Config config) {
 		super(config,ModZSC.NAME + "/TrainingSets/");
+		setTimeoutSeconds(60);
 	}
 
 	public void setConfabulatorSet(ConfabulatorSet confabulatorSet) {
@@ -86,7 +87,7 @@ public class ConfabulatorManager extends InitializerObject implements StateListe
 	}
 
 	@Override
-	protected void loadedObjectNoLock(InitializerDatabaseObject object) {
+	protected void loadedObject(InitializerDatabaseObject object) {
 		confabulatorSet.trainConfabulator(null,(TrainingSet) object);
 	}
 }
