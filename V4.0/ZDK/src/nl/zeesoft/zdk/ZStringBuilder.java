@@ -195,6 +195,7 @@ public class ZStringBuilder {
 				if (length>1) {
 					nsb.append(sb.substring(1));
 				}
+				sb = nsb;
 			}
 		}
 		return sb;

@@ -125,7 +125,7 @@ The output of this test shows the converted JSON.
 Test results
 ------------
 All 2 tests have been executed successfully (0 assertions).  
-Total test duration: 74 ms (total sleep duration: 0 ms).  
+Total test duration: 59 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.znlb.test.TestContextConfig: 619 Kb / 0 Mb

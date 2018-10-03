@@ -125,6 +125,20 @@ public abstract class EntityObject {
 		return externalValues;
 	}
 	
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("language",getLanguage(),true));
+		JsElem evsElem = new JsElem("entityValues",true);
+		json.rootElement.children.add(evsElem);
+		for (EntityValue ev: getExternalValues().values()) {
+			if (exportEntityValue(ev)) {
+				evsElem.children.add(new JsElem(null,ev.externalValue,true));
+			}
+		}
+		return json;
+	}
+	
 	public static String upperCaseFirst(String str) {
 		String r = str.substring(0,1).toUpperCase();
 		if (str.length()>1) {
@@ -151,15 +165,7 @@ public abstract class EntityObject {
 		initialized = false;
 	}
 
-	public JsFile toJson() {
-		JsFile json = new JsFile();
-		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("language",getLanguage(),true));
-		JsElem evsElem = new JsElem("entityValues",true);
-		json.rootElement.children.add(evsElem);
-		for (EntityValue ev: getExternalValues().values()) {
-			evsElem.children.add(new JsElem(null,ev.externalValue,true));
-		}
-		return json;
+	protected boolean exportEntityValue(EntityValue ev) {
+		return true;
 	}
 }

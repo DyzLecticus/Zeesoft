@@ -1,6 +1,7 @@
 package nl.zeesoft.zevt.trans.entities.dutch;
 
 import nl.zeesoft.zevt.trans.EntityObject;
+import nl.zeesoft.zevt.trans.EntityValue;
 import nl.zeesoft.zevt.trans.Translator;
 import nl.zeesoft.zevt.type.Types;
 import nl.zeesoft.znlb.lang.Languages;
@@ -143,5 +144,13 @@ public class DutchOrder extends EntityObject {
 				addEntityValue(strMill + strCent + strDec + strNum,value,i);
 			}
 		}
+	}
+	@Override
+	protected boolean exportEntityValue(EntityValue ev) {
+		boolean r = true;
+		if ((Integer)ev.typeValue > 1000) {
+			r = false;
+		}
+		return r;
 	}
 }

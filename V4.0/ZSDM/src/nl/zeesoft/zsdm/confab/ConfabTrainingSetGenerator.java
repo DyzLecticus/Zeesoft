@@ -34,7 +34,6 @@ public class ConfabTrainingSetGenerator extends Locker implements JsClientListen
 	private ConfabConfigurator				configurator		= null;
 	
 	private List<Dialog>					dialogs				= new ArrayList<Dialog>();
-	private SortedMap<String,List<String>>	entityValues		= new TreeMap<String,List<String>>();
 	private SortedMap<String,Long>			trainingSetIds		= new TreeMap<String,Long>();
 	private int								todo				= 0;
 
@@ -71,7 +70,6 @@ public class ConfabTrainingSetGenerator extends Locker implements JsClientListen
 			if (todo==0) {
 				doIt = true;
 				dialogs.clear();
-				entityValues.clear();
 				trainingSetIds.clear();
 				if (includeLanguages) {
 					todo = 1;
@@ -157,6 +155,7 @@ public class ConfabTrainingSetGenerator extends Locker implements JsClientListen
 			}
 		} else {
 			if (response.response!=null && response.response.rootElement!=null) {
+				SortedMap<String,List<String>> entityValues = new TreeMap<String,List<String>>();
 				lockMe(this);
 				JsFile resJs = response.response;
 				JsElem entsElem = resJs.rootElement.getChildByName("entities");
@@ -179,10 +178,9 @@ public class ConfabTrainingSetGenerator extends Locker implements JsClientListen
 					}
 				}
 				List<Dialog> copyDialogs = new ArrayList<Dialog>(dialogs);
-				SortedMap<String,List<String>> copyEntityValues = new TreeMap<String,List<String>>(entityValues);
 				unlockMe(this);
-				if (copyDialogs.size()>0 && copyEntityValues.size()>0) {
-					generateLanguageTrainingSet(copyDialogs,copyEntityValues);
+				if (copyDialogs.size()>0 && entityValues.size()>0) {
+					generateLanguageTrainingSet(copyDialogs,entityValues);
 				}
 			}
 		}
