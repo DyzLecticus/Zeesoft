@@ -3,6 +3,7 @@ package nl.zeesoft.zsc.confab;
 import nl.zeesoft.zsc.confab.confabs.ConfabulationObject;
 import nl.zeesoft.zsc.confab.confabs.ContextConfabulation;
 import nl.zeesoft.zsc.confab.confabs.CorrectionConfabulation;
+import nl.zeesoft.zsc.confab.confabs.ExtensionConfabulation;
 
 public class ConfabulatorRequestHandler {
 	private Confabulator	confabulator	= null;
@@ -14,7 +15,10 @@ public class ConfabulatorRequestHandler {
 	public ConfabulatorResponse handleRequest(ConfabulatorRequest request) {
 		ConfabulatorResponse response = new ConfabulatorResponse();
 		response.request = request;
-		if (!request.type.equals(ConfabulatorRequest.CONTEXT) && !request.type.equals(ConfabulatorRequest.CORRECT)) {
+		if (!request.type.equals(ConfabulatorRequest.CONTEXT)
+			&& !request.type.equals(ConfabulatorRequest.CORRECT)
+			&& !request.type.equals(ConfabulatorRequest.EXTEND)
+			) {
 			response.error.append("Request type not supported: " + request.type);
 		} else if (request.input.length()==0) {
 			response.error.append("Request input is mandatory");
@@ -42,6 +46,15 @@ public class ConfabulatorRequestHandler {
 			response.log = confab.log;
 			response.corrected = confab.corrected;
 			response.corrections = confab.corrections;
+		} else if (response.request.type.equals(ConfabulatorRequest.EXTEND)) {
+			ExtensionConfabulation confab = new ExtensionConfabulation();
+			initializeConfabulationFromRequest(confab,response.request);
+			confab.contextSymbol = response.request.contextSymbol;
+			confab.parallel = response.request.parallel;
+			confab.extend = response.request.extend;
+			confabulator.confabulate(confab);
+			response.log = confab.log;
+			response.extension = confab.extension;
 		}
 	}
 	

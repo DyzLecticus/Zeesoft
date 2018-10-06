@@ -8,6 +8,7 @@ import nl.zeesoft.zsc.confab.Context;
 import nl.zeesoft.zsc.confab.confabs.ContextConfabulation;
 import nl.zeesoft.zsc.confab.confabs.ContextResult;
 import nl.zeesoft.zsc.confab.confabs.CorrectionConfabulation;
+import nl.zeesoft.zsc.confab.confabs.ExtensionConfabulation;
 
 public class TestConfabulator extends TestObject {
 	public TestConfabulator(Tester tester) {
@@ -83,6 +84,10 @@ public class TestConfabulator extends TestObject {
 		testContext(conf,"My name is Dyz Lecticus.",3);
 		testContext(conf,"My name is Dyz Lecticus.",3,0.1D);
 		testContext(conf,"I can learn context sensitive symbol sequences and use that knowledge to do things like correct symbols, classify context and more.",2);
+
+		testExtension(conf,"I","",10,"can learn context sensitive symbol sequences and use that knowledge");
+		testExtension(conf,"My","",5,"");
+		testExtension(conf,"My","Name",5,"name is Dyz Lecticus.");
 	}
 	
 	private void testCorrection(Confabulator conf,String input,boolean validate,String expectedCorrection) {
@@ -123,5 +128,26 @@ public class TestConfabulator extends TestObject {
 		for (ContextResult res: confab.results) {
 			System.out.println(" - '" + res.contextSymbol + "' " + res.prob + "/" + res.probNormalized);
 		}
+	}
+	
+	private void testExtension(Confabulator conf,String input,String contextSymbol,int extend,String expectedExtension) {
+		testExtension(conf,input,contextSymbol,extend,expectedExtension,0D);
+	}
+	
+	private void testExtension(Confabulator conf,String input,String contextSymbol,int extend,String expectedExtension,double noise) {
+		ExtensionConfabulation confab = new ExtensionConfabulation();
+		confab.input.append(input);
+		confab.contextSymbol = contextSymbol;
+		confab.noise = noise;
+		confab.extend = extend;
+		confab.appendLog = true;
+		conf.confabulate(confab);
+		if (expectedExtension.length()>0) {
+			assertEqual(confab.extension,new ZStringSymbolParser(expectedExtension),"Confabulated extension does not match expectation");
+		}
+		System.out.println();
+		System.out.println("Extension for '" + confab.input + "': " + confab.extension);
+		System.out.println("Log;");
+		System.out.println(confab.log);
 	}
 }

@@ -21,7 +21,9 @@ public class ConfabulatorResponse implements JsAble {
 	public List<Correction>		corrections		= new ArrayList<Correction>();
 	
 	public List<ContextResult>	contextResults	= new ArrayList<ContextResult>();
-	
+
+	public ZStringSymbolParser	extension		= new ZStringSymbolParser();
+
 	public ConfabulatorResponse() {
 		
 	}
@@ -55,6 +57,8 @@ public class ConfabulatorResponse implements JsAble {
 				corElem.children.add(new JsElem("symbol",correction.symbol,true));
 				corElem.children.add(new JsElem("correction",correction.correction,true));
 			}
+		} else if (extension.length()>0) {
+			json.rootElement.children.add(new JsElem("extension",extension,true));
 		}
 		return json;
 	}
@@ -87,6 +91,7 @@ public class ConfabulatorResponse implements JsAble {
 					corrections.add(correction);
 				}
 			}
+			extension = json.rootElement.getChildZStringSymbolParser("extension",extension);
 		}
 	}	
 }

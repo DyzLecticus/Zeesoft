@@ -16,6 +16,7 @@ import nl.zeesoft.zsc.confab.confabs.ContextConfabulation;
 import nl.zeesoft.zsc.confab.confabs.ContextResult;
 import nl.zeesoft.zsc.confab.confabs.Correction;
 import nl.zeesoft.zsc.confab.confabs.CorrectionConfabulation;
+import nl.zeesoft.zsc.confab.confabs.ExtensionConfabulation;
 
 public class Confabulator extends Locker {
 	private SymbolCorrector					corrector			= new SymbolCorrector();
@@ -141,6 +142,10 @@ public class Confabulator extends Locker {
 		} else if (confab instanceof ContextConfabulation) {
 			lockMe(this);
 			confabulateContextNoLock((ContextConfabulation) confab);
+			unlockMe(this);
+		} else if (confab instanceof ExtensionConfabulation) {
+			lockMe(this);
+			confabulateExtensionNoLock((ExtensionConfabulation) confab);
 			unlockMe(this);
 		}
 	}
@@ -485,6 +490,61 @@ public class Confabulator extends Locker {
 			}
 		}
 		confab.corrected.fromSymbols(newSyms,true,true);
+	}
+
+	protected void confabulateExtensionNoLock(ExtensionConfabulation confab) {
+		Context ctxt = contexts.get(confab.contextSymbol);
+		if (ctxt==null) {
+			ctxt = contexts.get("");
+		}
+		for (int s = 0; s < confab.symbols.size(); s++) {
+			String symbol = confab.symbols.get(s);
+			Module mod = confab.modules.get(s);
+			Symbol sym = getSymbolNoLock(symbol,confab.contextSymbol);
+			if (sym!=null) {
+				ModuleSymbol modSym = new ModuleSymbol();
+				modSym.symbol = symbol;
+				modSym.prob = 1D;
+				mod.symbols.put(symbol,modSym);
+			}
+			mod.locked = true;
+		}
+		logModuleStateNoLock(confab,"Initialized module symbols");
+
+		List<Module> copyModules = null;
+		if (confab.parallel) {
+			copyModules = confab.copyModules();
+		}
+		confabulateNoLock(confab,ctxt,false,copyModules);
+		logModuleStateNoLock(confab,"Initialized module symbol expectations");
+		
+		while(!confabulateReturnDoneNoLock(confab,ctxt)) {
+			if ((new Date()).getTime() > (confab.started.getTime() + confab.maxTime)) {
+				break;
+			}
+		}
+		
+		List<String> extSyms = new ArrayList<String>();
+		for (int m = 0; m < confab.modules.size(); m++) {
+			if (m>=confab.symbols.size()) {
+				Module mod = confab.modules.get(m);
+				if (mod.symbols.size()>1) {
+					List<ModuleSymbol> syms = mod.getSymbols();
+					if (syms.get(1).prob < syms.get(0).prob) {
+						syms.get(0).prob = 1D;
+						mod.symbols.clear();
+						mod.symbols.put(syms.get(0).symbol,syms.get(0));
+						mod.locked = true;
+					}
+				}
+				if (mod.locked && mod.symbols.size()==1) {
+					extSyms.add(mod.symbols.firstKey());
+				} else {
+					break;
+				}
+			}
+		}
+		confab.extension.fromSymbols(extSyms,false,true);
 	}
 
 	protected boolean checkDoneNoLock(ConfabulationObject confab,Context ctxt) {

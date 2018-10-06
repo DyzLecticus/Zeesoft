@@ -53,6 +53,23 @@ public class ZSCTester extends TesterObject {
 		correction.correction = "Lecticus";
 		res.corrections.add(correction);
 		addRequestNoLock(req,res);
+		
+		req = new ConfabulatorRequest(
+			ConfabulatorRequest.EXTEND,ConfabulatorSet.TEST_CONFAB_1,
+			"I am");
+		req.extend = 6;
+		res = new ConfabulatorResponse();
+		res.extension.append("an artificially intelligent virtual agent.");
+		addRequestNoLock(req,res);
+
+		req = new ConfabulatorRequest(
+			ConfabulatorRequest.EXTEND,ConfabulatorSet.TEST_CONFAB_1,
+			"My");
+		req.extend = 5;
+		req.contextSymbol = "Name";
+		res = new ConfabulatorResponse();
+		res.extension.append("name is Dyz Lecticus.");
+		addRequestNoLock(req,res);
 	}
 	
 	@Override
@@ -67,6 +84,10 @@ public class ZSCTester extends TesterObject {
 			addLogLineNoLock("Confabulating correction took: " + request.time + " ms");
 			addLogLineNoLock("  <<< '" + req.input + "'");
 			addLogLineNoLock("  >>> '" + res.corrected + "'");
+		} else if (req.type.equals(ConfabulatorRequest.EXTEND)) {
+			addLogLineNoLock("Confabulating extension took: " + request.time + " ms");
+			addLogLineNoLock("  <<< '" + req.input + "'");
+			addLogLineNoLock("  >>> '" + res.extension + "'");
 		}
 	}
 }
