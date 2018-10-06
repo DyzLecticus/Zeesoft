@@ -128,6 +128,7 @@ public class TestConfabulator extends TestObject {
 		for (ContextResult res: confab.results) {
 			System.out.println(" - '" + res.contextSymbol + "' " + res.prob + "/" + res.probNormalized);
 		}
+		System.out.println();
 	}
 	
 	private void testExtension(Confabulator conf,String input,String contextSymbol,int extend,String expectedExtension) {
@@ -145,7 +146,6 @@ public class TestConfabulator extends TestObject {
 		if (expectedExtension.length()>0) {
 			assertEqual(confab.extension,new ZStringSymbolParser(expectedExtension),"Confabulated extension does not match expectation");
 		}
-		System.out.println();
 		System.out.println("Extension for '" + confab.input + "': " + confab.extension);
 		System.out.println("Log;");
 		System.out.println(confab.log);

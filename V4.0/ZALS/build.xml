@@ -1,14 +1,10 @@
 <!DOCTYPE project>
-<project name="ZSDM" default="dist" basedir=".">
-	<description>ZSDM build file</description>
+<project name="ZALS" default="dist" basedir=".">
+	<description>ZALS build file</description>
 
 	<!-- Release version -->
 	<property name="version" value="0.9.0"/>
 	
-	<!-- ZEVT version -->
-	<property name="versionZEVT" value="0.9.0"/>
-	<property name="releasesZEVT" location="../ZEVT/releases"/>
-
 	<!-- ZSC version -->
 	<property name="versionZSC" value="0.9.0"/>
 	<property name="releasesZSC" location="../ZSC/releases"/>
@@ -21,18 +17,8 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zsdm nl/zeesoft/zsdm/mod nl/zeesoft/zsdm/mod/handler nl/zeesoft/zsdm/mod/resource nl/zeesoft/zsdm/confab nl/zeesoft/zsdm/dialog nl/zeesoft/zsdm/dialog/dialogs/dutch nl/zeesoft/zsdm/dialog/dialogs/english nl/zeesoft/zsdm/test zevt.jar znlb.jar zsc.jar zodb.jar zdk.jar"/>
+	<property name="classpath" value="nl/zeesoft/zals nl/zeesoft/zals/mod nl/zeesoft/zals/mod/handler nl/zeesoft/zals/mod/resource nl/zeesoft/zals/confab nl/zeesoft/zals/test zsc.jar zodb.jar zdk.jar"/>
 
-	<target name="copyZEVT" description="Copy the ZEVT release">
-		<mkdir dir="${lib}"/>
-		<unzip src="${releasesZEVT}/zevt-${versionZEVT}.zip" dest="${lib}">
-		    <patternset>
-		        <include name="**/*.jar"/>
-		        <include name="**/*.zip"/>
-		    </patternset>
-		</unzip>
-	</target>
-	
 	<target name="copyZSC" description="Copy the ZSC release">
 		<mkdir dir="${lib}"/>
 		<unzip src="${releasesZSC}/zsc-${versionZSC}.zip" dest="${lib}">
@@ -58,7 +44,7 @@
 		</javac>
 	</target>
 
-	<target name="dist" depends="compile" description="Generate the ZSDM distribution">
+	<target name="dist" depends="compile" description="Generate the ZALS distribution">
 		<!-- Copy sources to build directory -->
 		<copy todir="${build}">
             <fileset dir="${src}" />
@@ -74,13 +60,13 @@
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
 			<attribute name="Class-path" value="${classpath}"/>  
-			<attribute name="Main-Class" value="nl.zeesoft.zsdm.test.ZSDM"/>
+			<attribute name="Main-Class" value="nl.zeesoft.zals.test.ZALS"/>
 		</manifest>		
 		<!-- Build jar file -->
-		<jar jarfile="${dist}/zsdm.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<jar jarfile="${dist}/zals.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Run tests and generate README.md -->
 		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="_error" logError="true"> 
-			<arg line="/c java -jar zsdm.jar ${version}"/>
+			<arg line="/c java -jar zals.jar ${version}"/>
 		</exec>
 		<condition property="_abort">
 			<equals arg1="${_error}" arg2="1"/>
@@ -88,7 +74,7 @@
 		<fail if="_abort" message="One or more tests failed"/>		
 		<!-- Rebuild jar file (include README.md) -->
 		<copy file="${dist}/README.md" tofile="${build}/README.md"/>
-		<jar jarfile="${dist}/zsdm.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<jar jarfile="${dist}/zals.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Remove sources from build directory -->
 		<delete>
             <fileset dir="${build}" includes="**/*.xml"/>
@@ -101,7 +87,7 @@
 		</delete>
 	</target>
 
-	<target name="war" description="Generate the ZSDM war files">
+	<target name="war" description="Generate the ZALS war files">
 		<input message="Are you sure you want to generate the war files (y/n)?" validargs="y,n" addproperty="_release"/>
 		<condition property="_abort">
 			<equals arg1="n" arg2="${_release}"/>
@@ -128,14 +114,14 @@
 	<target name="devWar">
 		<antcall target="prepareWar"/>
 		<copy file="WebContent/WEB-INF/web.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
-		<war destfile="${releases}/zsdm-dev.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
+		<war destfile="${releases}/zals-dev.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
 		<antcall target="finishWar"/>
 	</target>
 	
 	<target name="prodWar">
 		<antcall target="prepareWar"/>
 		<copy file="WebContent/WEB-INF/web-prod.xml" tofile="${dist}/war/WEB-INF/web.xml"/>
-		<war destfile="${releases}/zsdm.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
+		<war destfile="${releases}/zals.war" basedir="${dist}/war" webxml="${dist}/war/WEB-INF/web.xml" manifest="${dist}/warmanifest" />
 		<antcall target="finishWar"/>
 	</target>
 	
@@ -159,7 +145,7 @@
 		
 		<copy todir="${dist}/war/WEB-INF/classes">
 	        <fileset dir="${build}">
-				<exclude name="**/zeesoft/zsdm/test/**" />
+				<exclude name="**/zeesoft/zals/test/**" />
 	        </fileset>
 	    </copy>		
 		
@@ -184,7 +170,7 @@
 		</delete>
 	</target>
 
-	<target name="release" description="Release the ZSDM">
+	<target name="release" description="Release the ZALS">
 		<antcall target="failIfReleaseExists"/>
 		<input message="Are you sure you want to release version ${version} (y/n)?" validargs="y,n" addproperty="_release"/>
 		<condition property="_abort">
@@ -203,9 +189,9 @@
 		<copy todir="${releases}/${version}/">
 	        <fileset dir="WebContent/WEB-INF/lib" includes="**/*.*"/>
 	    </copy>		
-		<copy file="${dist}/zsdm.jar" tofile="${releases}/${version}/zsdm.jar"/>
+		<copy file="${dist}/zals.jar" tofile="${releases}/${version}/zals.jar"/>
 		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
-		<zip destfile="${releases}/zsdm-${version}.zip" basedir="${releases}/${version}"/>
+		<zip destfile="${releases}/zals-${version}.zip" basedir="${releases}/${version}"/>
 		<delete dir="${releases}/${version}"/>
 		<copy file="${dist}/README.md" tofile="README.md"/>
 		<antcall target="clean"/>
@@ -220,7 +206,7 @@
 
 	<target name="failIfReleaseExists">
 		<condition property="_released">
-			<available file="${releases}/zsdm-${version}.zip"/>
+			<available file="${releases}/zals-${version}.zip"/>
 		</condition>
 		<fail if="_released" message="Version ${version} has already been released"/>		
 	</target>
