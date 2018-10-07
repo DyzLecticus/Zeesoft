@@ -1,9 +1,10 @@
 package nl.zeesoft.zals.env;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import nl.zeesoft.zals.mod.ModZALS;
+import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.db.InitializerDatabaseObject;
@@ -31,32 +32,157 @@ public class Environment implements InitializerDatabaseObject {
 	
 	public List<Plant>					plants					= new ArrayList<Plant>();
 	public List<Animal>					animals					= new ArrayList<Animal>();
+	public List<History>				histories				= new ArrayList<History>();
 	
-	private int							herbivores				= 8;
-	private int							carnivores				= 2;
+	public int							herbivores				= 8;
+	public int							carnivores				= 2;
 
-	private int							deathDurationSeconds	= 1;
+	public int							deathDurationSeconds	= 1;
 
-	private int							energyActionLook		= 100;
-	private int							energyActionMove		= 1000;
-	private int							energyActionTurn		= 300;
-	private int							energyActionBite		= 500;
+	public int							energyActionLook		= 100;
+	public int							energyActionMove		= 1000;
+	public int							energyActionTurn		= 300;
+	public int							energyActionBite		= 500;
 	
-	private int							energyInputPerSecond	= 500000;
-	private int							maxEnergyPlant			= 500000;
- 	private int							maxEnergyHerbivore		= 500000;
- 	private int							maxEnergyHerbivoreBite	= 50000;
-	private int							maxEnergyCarnivore		= 500000;
- 	private int							maxEnergyCarnivoreBite	= 100000;
+	public int							energyInputPerSecond	= 500000;
+	public int							maxEnergyPlant			= 500000;
+	public int							maxEnergyHerbivore		= 500000;
+	public int							maxEnergyHerbivoreBite	= 50000;
+ 	public int							maxEnergyCarnivore		= 500000;
+ 	public int							maxEnergyCarnivoreBite	= 100000;
 
-	private int							statesPerSecond			= 25;
-	private int							keepStateHistorySeconds	= 10;
+ 	public int							statesPerSecond			= 25;
+ 	public int							keepStateHistorySeconds	= 10;
 	
 	@Override
 	public String getObjectName() {
-		return ModZALS.NAME + "/Environment";
+		return "State";
 	}
 
+	public void initialize() {
+		plants.clear();
+		animals.clear();
+		histories.clear();
+		
+		for (int i = 0; i < PLANTS; i++) {
+			Plant plt = new Plant();
+			plt.name = "Plant" + (i + 1);
+			plants.add(plt);
+		}
+		for (int i = 0; i < herbivores; i++) {
+			Animal ani = new Animal();
+			ani.name = "Herbivore" + String.format("%02d",(i + 1)) ;
+			ani.type = Animal.HERBIVORE;
+			animals.add(ani);
+		}
+		for (int i = 0; i < carnivores; i++) {
+			Animal ani = new Animal();
+			ani.name = "Carnivore" + String.format("%02d",(i + 1)) ;
+			ani.type = Animal.CARNIVORE;
+			animals.add(ani);
+		}
+		
+		for (Plant plt: plants) {
+			repositionPlant(plt);
+		}
+		for (Animal ani: animals) {
+			initializeAnimal(ani);
+		}
+	}
+	
+	public void destroy() {
+		plants.clear();
+		animals.clear();
+		histories.clear();
+	}
+	
+	public List<Organism> getOrganisms() {
+		List<Organism> r = new ArrayList<Organism>();
+		for (Plant plt: plants) {
+			r.add(plt);
+		}
+		for (Animal ani: animals) {
+			r.add(ani);
+		}
+		return r;
+	}
+	
+	public void repositionPlant(Plant plt) {
+		int minX = 0;
+		int maxX = 0;
+		int minY = 0;
+		int maxY = 0;
+		int index = plants.indexOf(plt);
+		if (index==0) {
+			minX=0;
+			maxX=10;
+			minY=0;
+			maxY=10;
+		} else if (index==1) {
+			minX=(SIZE_X - 11);
+			maxX=(SIZE_X - 1);
+			minY=0;
+			maxY=10;
+		} else if (index==2) {
+			minX=0;
+			maxX=10;
+			minY=(SIZE_Y - 11);
+			maxY=(SIZE_Y - 1);
+		} else if (index==3) {
+			minX=(SIZE_X - 11);
+			maxX=(SIZE_X - 1);
+			minY=(SIZE_Y - 11);
+			maxY=(SIZE_Y - 1);
+		}
+		repositionOrganism(plt,minX,maxX,minY,maxY);
+	}
+	
+	public void initializeAnimal(Animal animal) {
+		animal.score = 0;
+		animal.generation++;
+		if (animal.isHerbivore()) {
+			animal.energy = maxEnergyHerbivore / 2;
+		} else if (animal.isHerbivore()) {
+			animal.energy = maxEnergyCarnivore / 2;
+		}
+		repositionOrganism(animal,0,SIZE_X - 1,0,SIZE_Y - 1);
+		ZIntegerGenerator gen = new ZIntegerGenerator(0,359);
+		animal.setRotation(gen.getNewInteger());
+	}
+	
+	public void repositionOrganism(Organism o,int minX,int maxX,int minY,int maxY) {
+		ZIntegerGenerator xGen = new ZIntegerGenerator(minX,maxX);
+		ZIntegerGenerator yGen = new ZIntegerGenerator(minY,maxY);
+		int x = xGen.getNewInteger();
+		int y = yGen.getNewInteger();
+		List<Organism> orgs = getOrganisms();
+		boolean free = false;
+		while (!free) {
+			boolean found = false;
+			for (Organism org: orgs) {
+				if (org.posX==x && org.posY==y) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				free = true;
+			} else {
+				x = xGen.getNewInteger();
+				y = yGen.getNewInteger();
+			}
+		}
+		o.posX = x;
+		o.posY = y;
+	}
+
+	public void addHistory() {
+		History his = new History();
+		his.timeStamp = (new Date()).getTime();
+		his.addOrganismData(getOrganisms());
+		histories.add(0,his);
+	}
+	
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
@@ -95,9 +221,16 @@ public class Environment implements InitializerDatabaseObject {
 			JsFile aniJs = ani.toJson();
 			anisElem.children.add(aniJs.rootElement);
 		}
+		
+		JsElem histsElem = new JsElem("histories",true);
+		json.rootElement.children.add(histsElem);
+		for (History his: histories) {
+			JsFile hisJs = his.toJson();
+			histsElem.children.add(hisJs.rootElement);
+		}
 		return json;
 	}
-
+	
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
@@ -140,6 +273,15 @@ public class Environment implements InitializerDatabaseObject {
 				aniJs.rootElement = aniElem;
 				ani.fromJson(aniJs);
 				animals.add(ani);
+			}
+			
+			JsElem histsElem = json.rootElement.getChildByName("histories");
+			for (JsElem histElem: histsElem.children) {
+				History his = new History();
+				JsFile hisJs = new JsFile();
+				hisJs.rootElement = histElem;
+				his.fromJson(hisJs);
+				histories.add(his);
 			}
 		}
 	}

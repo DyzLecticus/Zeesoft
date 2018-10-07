@@ -3,6 +3,8 @@ package nl.zeesoft.zals.confab;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zals.env.Animal;
+import nl.zeesoft.zals.env.Environment;
 import nl.zeesoft.zdk.json.JsClient;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
@@ -21,6 +23,7 @@ import nl.zeesoft.zsc.mod.handler.JsonZSCStateHandler;
 
 public class ConfabConfigurator extends Locker implements JsClientListener {
 	private Config				configuration		= null;
+	private Environment 		environment			= null;
 	
 	private boolean				configuring			= false;
 	private ConfabulatorSet		confabSet			= null;
@@ -58,10 +61,11 @@ public class ConfabConfigurator extends Locker implements JsClientListener {
 		return r;
 	}
 
-	public void configureConfabulators() {
+	public void configureConfabulators(Environment env) {
 		boolean stateChanged = false;
 		lockMe(this);
 		if (!configuring) {
+			environment = env;
 			configuring = true;
 			confabSet = null;
 			confabSetId = 0;
@@ -157,6 +161,9 @@ public class ConfabConfigurator extends Locker implements JsClientListener {
 	protected List<String> checkConfabulatorSetNoLock() {
 		List<String> added = new ArrayList<String>();
 		List<String> names = new ArrayList<String>();
+		for (Animal ani: environment.animals) {
+			names.add(ani.name);
+		}
 		for (String name: names) {
 			if (addConfabulatorIfNotExistsNoLock(name)) {
 				added.add(name);
@@ -173,7 +180,6 @@ public class ConfabConfigurator extends Locker implements JsClientListener {
 			r = true;
 		}
 		return r;
-		
 	}
 	
 	private void stateChanged() {
