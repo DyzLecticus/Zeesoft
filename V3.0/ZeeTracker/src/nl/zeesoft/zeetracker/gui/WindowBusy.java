@@ -107,7 +107,7 @@ public class WindowBusy extends Locker {
 	
 	private String maxLen(String str,int len) {
 		if (str.length()>len) {
-			str = str.substring((len - str.length()));
+			str = str.substring((str.length() - len));
 		}
 		return str;
 	}
