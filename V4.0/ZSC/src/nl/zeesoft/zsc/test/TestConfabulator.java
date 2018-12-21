@@ -26,7 +26,7 @@ public class TestConfabulator extends TestObject {
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the confabulator");
-		System.out.println("DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);");
+		System.out.println("Confabulator conf = new Confabulator(new Config(),\"MockConfabulator\",4);");
 		System.out.println("// Train the confabulator");
 		System.out.println("conf.learnSequence(\"A sequence to learn.\",\"OptionalContextSymbolToAssociate\");");
 		System.out.println("conf.calculateProbabilities();");

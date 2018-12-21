@@ -175,12 +175,53 @@ public class Environment implements InitializerDatabaseObject {
 		o.posX = x;
 		o.posY = y;
 	}
+	
+	public void updatePlants() {
+		List<Plant> livingPlants = getLivingPlants();
+		int div = livingPlants.size();
+		for (Plant plant: livingPlants) {
+			if (plant.energy==maxEnergyPlant) {
+				div--;
+			}
+		}
+		if (div>0) {
+			for (Plant plt: livingPlants) {
+				if (plt.energy<maxEnergyPlant) {
+					if (plt.energy==0) {
+						repositionPlant(plt);
+					}
+					plt.energy += (energyInputPerSecond / div);
+					if (plt.energy > maxEnergyPlant) {
+						plt.energy = maxEnergyPlant;
+					}
+				}
+			}
+		}
+	}
 
+	public List<Plant> getLivingPlants() {
+		List<Plant> r = new ArrayList<Plant>();
+		Date now = new Date();
+		for (Plant plt: plants) {
+			if (plt.dateTimeDied < (now.getTime() - (deathDurationSeconds * 1000))) {
+				r.add(plt);
+			}
+		}
+		return r;
+	}
+	
 	public void addHistory() {
 		History his = new History();
 		his.timeStamp = (new Date()).getTime();
 		his.addOrganismData(getOrganisms());
-		histories.add(0,his);
+		histories.add(his);
+		int max = (keepStateHistorySeconds * statesPerSecond);
+		if (histories.size()>max) {
+			int remove = (histories.size() - max);
+			for (int i = 0; i < remove; i++) {
+				histories.remove(0);
+			}
+		}
 	}
 	
 	@Override
