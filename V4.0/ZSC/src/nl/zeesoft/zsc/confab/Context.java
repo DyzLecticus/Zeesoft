@@ -2,6 +2,7 @@ package nl.zeesoft.zsc.confab;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -102,5 +103,23 @@ public class Context {
 			linksUCByTo.put(key,lst);
 		}
 		lst.add(lnk);
+	}
+	
+	public List<Link> getAllLinks(boolean caseSensitive) {
+		List<Link> r = new ArrayList<Link>();
+		if (caseSensitive) {
+			for (Entry<String,List<Link>> entry: linksByFrom.entrySet()) {
+				for (Link lnk: entry.getValue()) {
+					r.add(lnk);
+				}
+			}
+		} else {
+			for (Entry<String,List<Link>> entry: linksUCByFrom.entrySet()) {
+				for (Link lnk: entry.getValue()) {
+					r.add(lnk);
+				}
+			}
+		}
+		return r;
 	}
 }

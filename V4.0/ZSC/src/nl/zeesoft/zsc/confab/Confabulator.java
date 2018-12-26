@@ -30,10 +30,10 @@ public class Confabulator extends Locker {
 	private SortedMap<String,Symbol>		symbols				= new TreeMap<String,Symbol>();
 	private SortedMap<String,Link>			links				= new TreeMap<String,Link>();
 
-	public SortedMap<String,List<Symbol>>	symbolsNoContext	= new TreeMap<String,List<Symbol>>();
-	public SortedMap<String,List<Link>>		linksNoContext		= new TreeMap<String,List<Link>>();
-	public SortedMap<String,List<Symbol>>	symbolsNoContextUC	= new TreeMap<String,List<Symbol>>();
-	public SortedMap<String,List<Link>>		linksNoContextUC	= new TreeMap<String,List<Link>>();
+	private SortedMap<String,List<Symbol>>	symbolsNoContext	= new TreeMap<String,List<Symbol>>();
+	private SortedMap<String,List<Link>>	linksNoContext		= new TreeMap<String,List<Link>>();
+	private SortedMap<String,List<Symbol>>	symbolsNoContextUC	= new TreeMap<String,List<Symbol>>();
+	private SortedMap<String,List<Link>>	linksNoContextUC	= new TreeMap<String,List<Link>>();
 	
 	public Confabulator(Config config,String name,int maxDistance) {
 		super(config.getMessenger());
@@ -237,7 +237,11 @@ public class Confabulator extends Locker {
 	}
 	
 	protected Context getDefaultContextNoLock() {
-		return contexts.get("");
+		return getContextNoLock("");
+	}
+	
+	protected Context getContextNoLock(String contextSymbol) {
+		return contexts.get(contextSymbol);
 	}
 	
 	protected Symbol getSymbolNoLock(String symbol,String contextSymbol) {
