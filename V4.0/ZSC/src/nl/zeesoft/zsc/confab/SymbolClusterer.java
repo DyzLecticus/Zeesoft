@@ -65,14 +65,14 @@ public class SymbolClusterer {
 								total += vectorB[v];
 								diff += vectorB[v] - vectorA[v];
 							} else {
-								total += vectorB[v];
+								total += vectorA[v];
 							}
 						}
 					}
-					if (diff>0) {
+					if (total>0) {
 						difference[i] = (double)diff / (double)total;
 					} else {
-						difference[i] = 0D;
+						difference[i] = 1.0D;
 					}
 					i++;
 				}

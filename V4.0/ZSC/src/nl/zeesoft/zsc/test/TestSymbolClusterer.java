@@ -145,15 +145,15 @@ public class TestSymbolClusterer extends TestObject {
 				String maxDiffSymbol = "";
 				for (int d = 0; d < difference.length; d++) {
 					String symbolB = context.knownSymbols.get(d);
-					if (!ZStringSymbolParser.isLineEndSymbol(symbolA) &&
-						!ZStringSymbolParser.isPunctuationSymbol(symbolA)
+					if (!ZStringSymbolParser.isLineEndSymbol(symbolB) &&
+						!ZStringSymbolParser.isPunctuationSymbol(symbolB)
 						) {
 						if (!symbolA.equals(symbolB)) {
-							if (difference[d]<minDiff) {
+							if (difference[d]>=0.0D && difference[d]<minDiff) {
 								minDiff = difference[d];
 								minDiffSymbol = symbolB;
 							}
-							if (difference[d]>maxDiff) {
+							if (difference[d]<1.0D && difference[d]>maxDiff) {
 								maxDiff = difference[d];
 								maxDiffSymbol = symbolB;
 							}
