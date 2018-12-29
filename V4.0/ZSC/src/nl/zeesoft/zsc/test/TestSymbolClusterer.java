@@ -103,7 +103,9 @@ public class TestSymbolClusterer extends TestObject {
 				System.out.println("Calculating differences ...");
 				clust.calculateDifferences();
 				System.out.println("Calculating differences took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-				//writeDoubleDataToTsv(def,clust.getDifferences(),"resources/nl-qna-diff.txt");
+				writeMinMaxDifferenceToTsv(def,clust.getDifferences(),"resources/nl-qna-diff.txt");
+
+				System.out.println("Done");
 			} else {
 				System.err.println(err);
 			}
@@ -132,35 +134,48 @@ public class TestSymbolClusterer extends TestObject {
 	protected void writeMinMaxDifferenceToTsv(Context context, List<Double[]> differences, String fileName) {
 		ZStringBuilder tsv = new ZStringBuilder();
 		int i = 0;
-		for (String symbol: context.knownSymbols) {
-			Double[] difference = differences.get(i);
-			double minDiff = 1.0D;
-			double maxDiff = 0.0D;
-			String minDiffSymbol = "";
-			String maxDiffSymbol = "";
-			for (int d = 0; d < difference.length; d++) {
-				if (i!=d) {
-					if (difference[d]<minDiff) {
-						minDiff = difference[d];
-						minDiffSymbol = context.knownSymbols.get(d);
-					}
-					if (difference[d]>maxDiff) {
-						maxDiff = difference[d];
-						maxDiffSymbol = context.knownSymbols.get(d);
+		for (String symbolA: context.knownSymbols) {
+			if (!ZStringSymbolParser.isLineEndSymbol(symbolA) &&
+				!ZStringSymbolParser.isPunctuationSymbol(symbolA)
+				) {
+				Double[] difference = differences.get(i);
+				double minDiff = 1.0D;
+				double maxDiff = 0.0D;
+				String minDiffSymbol = "";
+				String maxDiffSymbol = "";
+				for (int d = 0; d < difference.length; d++) {
+					String symbolB = context.knownSymbols.get(d);
+					if (!ZStringSymbolParser.isLineEndSymbol(symbolA) &&
+						!ZStringSymbolParser.isPunctuationSymbol(symbolA)
+						) {
+						if (!symbolA.equals(symbolB)) {
+							if (difference[d]<minDiff) {
+								minDiff = difference[d];
+								minDiffSymbol = symbolB;
+							}
+							if (difference[d]>maxDiff) {
+								maxDiff = difference[d];
+								maxDiffSymbol = symbolB;
+							}
+						}
 					}
 				}
+				tsv.append(symbolA);
+				tsv.append("\t");
+				tsv.append(minDiffSymbol);
+				tsv.append("\t");
+				if (minDiffSymbol.length()>0) {
+					tsv.append("" + minDiff);
+				}
+				tsv.append("\t");
+				tsv.append(maxDiffSymbol);
+				tsv.append("\t");
+				if (maxDiffSymbol.length()>0) {
+					tsv.append("" + maxDiff);
+				}
+				tsv.append("\n");
+				i++;
 			}
-			tsv.append(symbol);
-			tsv.append("\t");
-			tsv.append(minDiffSymbol);
-			tsv.append("\t");
-			tsv.append("" + minDiff);
-			tsv.append("\t");
-			tsv.append(maxDiffSymbol);
-			tsv.append("\t");
-			tsv.append("" + maxDiff);
-			tsv.append("\n");
-			i++;
 		}
 		ZStringBuilder err = tsv.toFile(fileName);
 		if (err.length()>0) {
