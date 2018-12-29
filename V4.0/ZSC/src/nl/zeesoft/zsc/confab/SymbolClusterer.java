@@ -3,9 +3,7 @@ package nl.zeesoft.zsc.confab;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.thread.Locker;
-
-public class SymbolClusterer extends Locker {
+public class SymbolClusterer {
 	private Confabulator					confabulator	= null;
 	private Context							context			= null;
 	private boolean							caseSensitive	= true;
@@ -14,71 +12,12 @@ public class SymbolClusterer extends Locker {
 	private List<Double[]>					differences		= new ArrayList<Double[]>();
 	
 	public SymbolClusterer(Confabulator confab,String contextSymbol,boolean caseSensitive) {
-		super(confab.getConfiguration().getMessenger());
 		confabulator = confab;
 		context = confab.getContextNoLock(contextSymbol);
 		this.caseSensitive = caseSensitive;
 	}
 	
 	public void createVectors() {
-		lockMe(this);
-		createVectorsNoLock();
-		unlockMe(this);
-	}
-
-	public List<Integer[]> getVectors() {
-		List<Integer[]> r = new ArrayList<Integer[]>(); 
-		lockMe(this);
-		for (Integer[] vector: vectors) {
-			Integer[] vec = new Integer[vector.length];
-			for (int i = 0; i < vector.length; i++) {
-				vec[i] = vector[i];
-			}
-			r.add(vec);
-		}
-		unlockMe(this);
-		return r;
-	}
-	
-	public void calculateDifferences() {
-		lockMe(this);
-		calculateDifferencesNoLock();
-		unlockMe(this);
-	}
-
-	public List<Double[]> getDifferences() {
-		List<Double[]> r = new ArrayList<Double[]>(); 
-		lockMe(this);
-		for (Double[] difference: differences) {
-			Double[] diff = new Double[difference.length];
-			for (int i = 0; i < difference.length; i++) {
-				diff[i] = difference[i];
-			}
-			r.add(diff);
-		}
-		unlockMe(this);
-		return r;
-	}
-	
-	protected Integer[] getVectorForSymbolNoLock(String symbol) {
-		Integer[] r = null;
-		int index = context.knownSymbols.indexOf(symbol);
-		if (index>=0 && index<vectors.size()) {
-			r = vectors.get(index);
-		}
-		return r;
-	}
-
-	protected Double[] getDifferenceForSymbolNoLock(String symbol) {
-		Double[] r = null;
-		int index = context.knownSymbols.indexOf(symbol);
-		if (index>=0 && index<differences.size()) {
-			r = differences.get(index);
-		}
-		return r;
-	}
-
-	protected void createVectorsNoLock() {
 		vectors.clear();
 		if (context.totalLinks>0) {
 			for (String symbolA: context.knownSymbols) {
@@ -88,11 +27,11 @@ public class SymbolClusterer extends Locker {
 					int count = 0;
 					if (!symbolA.equals(symbolB)) {
 						for (int d = 1; d <= confabulator.getMaxDistance(); d++) {
-							List<Link> links = confabulator.getLinksNoLock(symbolA,d,context.contextSymbol,symbolB,caseSensitive);
+							List<Link> links = confabulator.getLinks(symbolA,d,context.contextSymbol,symbolB,caseSensitive);
 							for (Link lnk: links) {
 								count += lnk.count;
 							}
-							links = confabulator.getLinksNoLock(symbolB,d,context.contextSymbol,symbolA,caseSensitive);
+							links = confabulator.getLinks(symbolB,d,context.contextSymbol,symbolA,caseSensitive);
 							for (Link lnk: links) {
 								count += lnk.count;
 							}
@@ -105,8 +44,8 @@ public class SymbolClusterer extends Locker {
 			}
 		}
 	}
-
-	protected void calculateDifferencesNoLock() {
+	
+	public void calculateDifferences() {
 		differences.clear();
 		if (vectors.size()>0) {
 			for (String symbolA: context.knownSymbols) {
@@ -140,5 +79,22 @@ public class SymbolClusterer extends Locker {
 				differences.add(difference);
 			}
 		}
+	}
+
+	public List<Integer[]> getVectors() {
+		return vectors;
+	}
+
+	public List<Double[]> getDifferences() {
+		return differences;
+	}
+	
+	protected Integer[] getVectorForSymbolNoLock(String symbol) {
+		Integer[] r = null;
+		int index = context.knownSymbols.indexOf(symbol);
+		if (index>=0 && index<vectors.size()) {
+			r = vectors.get(index);
+		}
+		return r;
 	}
 }

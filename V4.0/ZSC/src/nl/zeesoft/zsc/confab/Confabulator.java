@@ -160,6 +160,14 @@ public class Confabulator extends Locker {
 		return r;
 	}
 	
+	public List<Link> getLinks(String symbolFrom,int distance,String contextSymbol,String symbolTo,boolean caseSensitive) {
+		List<Link> r = null;
+		lockMe(this);
+		r = getLinksNoLock(symbolFrom,distance,contextSymbol,symbolTo,caseSensitive);
+		unlockMe(this);
+		return r;
+	}
+	
 	protected void learnContextNoLock(String contextSymbol) {
 		if (contexts.get(contextSymbol)==null) {
 			Context ctxt = new Context();

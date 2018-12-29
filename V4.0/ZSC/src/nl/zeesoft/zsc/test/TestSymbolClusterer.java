@@ -97,28 +97,28 @@ public class TestSymbolClusterer extends TestObject {
 				System.out.println("Creating vectors ...");
 				clust.createVectors();
 				System.out.println("Creating vectors took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-				writeIntegerDataToTsv(def,clust.getVectors(),"resources/nl-qna-vec.txt");
+				writeVectorDataToTsv(def,clust.getVectors(),"resources/nl-qna-vec.txt");
 				
 				started = new Date();
 				System.out.println("Calculating differences ...");
 				clust.calculateDifferences();
 				System.out.println("Calculating differences took: " + ((new Date()).getTime() - started.getTime()) + " ms");
-				writeDoubleDataToTsv(def,clust.getDifferences(),"resources/nl-qna-diff.txt");
+				//writeDoubleDataToTsv(def,clust.getDifferences(),"resources/nl-qna-diff.txt");
 			} else {
 				System.err.println(err);
 			}
 		}
 	}
 	
-	private void writeIntegerDataToTsv(Context context, List<Integer[]> data, String fileName) {
+	protected void writeVectorDataToTsv(Context context, List<Integer[]> vectors, String fileName) {
 		ZStringBuilder tsv = new ZStringBuilder();
 		int i = 0;
 		for (String symbol: context.knownSymbols) {
 			tsv.append(symbol);
-			Integer[] dat = data.get(i);
-			for (int d = 0; d < dat.length; d++) {
+			Integer[] vec = vectors.get(i);
+			for (int d = 0; d < vec.length; d++) {
 				tsv.append("\t");
-				tsv.append("" + dat[d]);
+				tsv.append("" + vec[d]);
 			}
 			tsv.append("\n");
 			i++;
@@ -129,16 +129,36 @@ public class TestSymbolClusterer extends TestObject {
 		}
 	}
 
-	private void writeDoubleDataToTsv(Context context, List<Double[]> data, String fileName) {
+	protected void writeMinMaxDifferenceToTsv(Context context, List<Double[]> differences, String fileName) {
 		ZStringBuilder tsv = new ZStringBuilder();
 		int i = 0;
 		for (String symbol: context.knownSymbols) {
-			tsv.append(symbol);
-			Double[] dat = data.get(i);
-			for (int d = 0; d < dat.length; d++) {
-				tsv.append("\t");
-				tsv.append("" + dat[d]);
+			Double[] difference = differences.get(i);
+			double minDiff = 1.0D;
+			double maxDiff = 0.0D;
+			String minDiffSymbol = "";
+			String maxDiffSymbol = "";
+			for (int d = 0; d < difference.length; d++) {
+				if (i!=d) {
+					if (difference[d]<minDiff) {
+						minDiff = difference[d];
+						minDiffSymbol = context.knownSymbols.get(d);
+					}
+					if (difference[d]>maxDiff) {
+						maxDiff = difference[d];
+						maxDiffSymbol = context.knownSymbols.get(d);
+					}
+				}
 			}
+			tsv.append(symbol);
+			tsv.append("\t");
+			tsv.append(minDiffSymbol);
+			tsv.append("\t");
+			tsv.append("" + minDiff);
+			tsv.append("\t");
+			tsv.append(maxDiffSymbol);
+			tsv.append("\t");
+			tsv.append("" + maxDiff);
 			tsv.append("\n");
 			i++;
 		}
