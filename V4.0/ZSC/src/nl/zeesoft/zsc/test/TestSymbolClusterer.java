@@ -1,6 +1,7 @@
 package nl.zeesoft.zsc.test;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -8,6 +9,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zsc.confab.Confabulator;
 import nl.zeesoft.zsc.confab.Context;
 import nl.zeesoft.zsc.confab.SymbolClusterer;
 
@@ -63,7 +65,7 @@ public class TestSymbolClusterer extends TestObject {
 	protected void test(String[] args) {
 		File file = new File("resources/nl-qna.txt");
 		if (file.exists()) {
-			SymbolClusterer clust = new SymbolClusterer(new Config(),"clusterer",4);
+			Confabulator confab = new Confabulator(new Config(),"nl-qna",4);
 			ZStringBuilder content = new ZStringBuilder();
 			ZStringBuilder err = content.fromFile(file.getAbsolutePath());
 			
@@ -77,25 +79,72 @@ public class TestSymbolClusterer extends TestObject {
 						if (elems.size()>=3) {
 							ZStringSymbolParser sequence = new ZStringSymbolParser(elems.get(0));
 							ZStringSymbolParser context = new ZStringSymbolParser(elems.get(2));
-							clust.learnSequence(sequence,context);
+							confab.learnSequence(sequence,context);
 						}
 					}
 					num++;
 				}
-				clust.calculateProbabilities();
+				confab.calculateProbabilities();
 				
-				Context def = clust.getContext("");
+				Context def = confab.getContext("");
 				assertEqual(def.totalSymbols,5507,"Total symbols for default context does not match expectation");
 				assertEqual(def.totalLinks,91902,"Total links for default context does not match expectation");
 				
-				System.out.println("Initializing ...");
-				clust.initializeClusterer("",true);
-				System.out.println("Initialized");
+				SymbolClusterer clust = new SymbolClusterer(confab,"",true);
 				
-				System.out.println("Splitting ...");
-				clust.splitCluster(clust.getSymbolClusters().get(0));
-				System.out.println("Split");
+				Date started = new Date();
+
+				System.out.println("Creating vectors ...");
+				clust.createVectors();
+				System.out.println("Creating vectors took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+				writeIntegerDataToTsv(def,clust.getVectors(),"resources/nl-qna-vec.txt");
+				
+				started = new Date();
+				System.out.println("Calculating differences ...");
+				clust.calculateDifferences();
+				System.out.println("Calculating differences took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+				writeDoubleDataToTsv(def,clust.getDifferences(),"resources/nl-qna-diff.txt");
+			} else {
+				System.err.println(err);
 			}
+		}
+	}
+	
+	private void writeIntegerDataToTsv(Context context, List<Integer[]> data, String fileName) {
+		ZStringBuilder tsv = new ZStringBuilder();
+		int i = 0;
+		for (String symbol: context.knownSymbols) {
+			tsv.append(symbol);
+			Integer[] dat = data.get(i);
+			for (int d = 0; d < dat.length; d++) {
+				tsv.append("\t");
+				tsv.append("" + dat[d]);
+			}
+			tsv.append("\n");
+			i++;
+		}
+		ZStringBuilder err = tsv.toFile(fileName);
+		if (err.length()>0) {
+			System.err.println(err);
+		}
+	}
+
+	private void writeDoubleDataToTsv(Context context, List<Double[]> data, String fileName) {
+		ZStringBuilder tsv = new ZStringBuilder();
+		int i = 0;
+		for (String symbol: context.knownSymbols) {
+			tsv.append(symbol);
+			Double[] dat = data.get(i);
+			for (int d = 0; d < dat.length; d++) {
+				tsv.append("\t");
+				tsv.append("" + dat[d]);
+			}
+			tsv.append("\n");
+			i++;
+		}
+		ZStringBuilder err = tsv.toFile(fileName);
+		if (err.length()>0) {
+			System.err.println(err);
 		}
 	}
 }
