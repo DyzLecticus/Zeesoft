@@ -88,9 +88,13 @@ public class TestSymbolClusterer extends TestObject {
 				assertEqual(def.totalSymbols,5507,"Total symbols for default context does not match expectation");
 				assertEqual(def.totalLinks,91902,"Total links for default context does not match expectation");
 				
-				System.out.println("Clustering ...");
-				clust.clusterSymbols("",true);
-				System.out.println("Done");
+				System.out.println("Initializing ...");
+				clust.initializeClusterer("",true);
+				System.out.println("Initialized");
+				
+				System.out.println("Splitting ...");
+				clust.splitCluster(clust.getSymbolClusters().get(0));
+				System.out.println("Split");
 			}
 		}
 	}
