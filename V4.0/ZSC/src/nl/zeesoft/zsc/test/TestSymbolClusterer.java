@@ -174,8 +174,8 @@ public class TestSymbolClusterer extends TestObject {
 					tsv.append("" + maxDiff);
 				}
 				tsv.append("\n");
-				i++;
 			}
+			i++;
 		}
 		ZStringBuilder err = tsv.toFile(fileName);
 		if (err.length()>0) {

@@ -72,7 +72,7 @@ public class SymbolClusterer {
 					if (total>0) {
 						difference[i] = (double)diff / (double)total;
 					} else {
-						difference[i] = 1.0D;
+						difference[i] = 0.0D;
 					}
 					i++;
 				}
