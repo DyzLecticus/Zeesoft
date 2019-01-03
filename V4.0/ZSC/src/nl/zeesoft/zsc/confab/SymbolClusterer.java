@@ -53,27 +53,31 @@ public class SymbolClusterer {
 				Double[] difference = new Double[context.knownSymbols.size()];
 				int i = 0;
 				for (String symbolB: context.knownSymbols) {
-					int total = 0;
-					int diff = 0;
+					double diff = 0.0D;
+					//int total = 0;
+					//int diff = 0;
 					if (!symbolA.equals(symbolB)) {
 						Integer[] vectorB = getVectorForSymbolNoLock(symbolB);
 						for (int v = 0; v < vectorA.length; v++) {
 							if (vectorA[v] > vectorB[v]) {
-								total += vectorA[v];
-								diff += vectorA[v] - vectorB[v];
+								diff += (1.0D - ((double)vectorB[v] / (double)vectorA[v]));
+								//total += vectorA[v];
+								//diff += vectorA[v] - vectorB[v];
 							} else if (vectorA[v] < vectorB[v]) {
-								total += vectorB[v];
-								diff += vectorB[v] - vectorA[v];
+								diff += (1.0D - ((double)vectorA[v] / (double)vectorB[v]));
+								//total += vectorB[v];
+								//diff += vectorB[v] - vectorA[v];
 							} else {
-								total += vectorA[v];
+								//total += vectorA[v];
 							}
 						}
 					}
-					if (total>0) {
-						difference[i] = (double)diff / (double)total;
-					} else {
-						difference[i] = 0.0D;
-					}
+					difference[i] = diff;
+					//if (total>0) {
+					//	difference[i] = (double)diff / (double)total;
+					//} else {
+					//	difference[i] = 0.0D;
+					//}
 					i++;
 				}
 				differences.add(difference);

@@ -139,7 +139,7 @@ public class TestSymbolClusterer extends TestObject {
 				!ZStringSymbolParser.isPunctuationSymbol(symbolA)
 				) {
 				Double[] difference = differences.get(i);
-				double minDiff = 1.0D;
+				double minDiff = 1.0D * context.knownSymbols.size();
 				double maxDiff = 0.0D;
 				String minDiffSymbol = "";
 				String maxDiffSymbol = "";
@@ -149,11 +149,11 @@ public class TestSymbolClusterer extends TestObject {
 						!ZStringSymbolParser.isPunctuationSymbol(symbolB)
 						) {
 						if (!symbolA.equals(symbolB)) {
-							if (difference[d]>=0.0D && difference[d]<minDiff) {
+							if (difference[d]<minDiff) {
 								minDiff = difference[d];
 								minDiffSymbol = symbolB;
 							}
-							if (difference[d]<1.0D && difference[d]>maxDiff) {
+							if (difference[d]>maxDiff) {
 								maxDiff = difference[d];
 								maxDiffSymbol = symbolB;
 							}
