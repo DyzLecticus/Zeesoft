@@ -37,7 +37,7 @@ public class HtmlZSCIndex extends HtmlResource {
 			html.append("<a href=\"" + url + "/state.json\">State JSON</a>");
 			html.append("</td>\n");
 			html.append("<td>");
-			html.append("Returns the confabulator set state a JSON file.");
+			html.append("Returns the confabulator set state as a JSON file.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 		

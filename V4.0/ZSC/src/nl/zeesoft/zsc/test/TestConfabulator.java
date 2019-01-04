@@ -30,7 +30,7 @@ public class TestConfabulator extends TestObject {
 		System.out.println("// Create the confabulator");
 		System.out.println("Confabulator conf = new Confabulator(new Config(),\"MockConfabulator\",4);");
 		System.out.println("// Train the confabulator");
-		System.out.println("conf.learnSequence(\"A sequence to learn.\",\"OptionalContextSymbolToAssociate\");");
+		System.out.println("conf.learnSequence(\"A sequence to learn.\",\"OptionalContextSymbolToAssociate1 ContextSymbol2\");");
 		System.out.println("conf.calculateProbabilities();");
 		System.out.println("// Create a correction confabulation");
 		System.out.println("CorrectionConfabulation confab1 = new CorrectionConfabulation();");
@@ -96,7 +96,7 @@ public class TestConfabulator extends TestObject {
 		confab.appendLog = true;
 		conf.confabulate(confab);
 		assertEqual(confab.results.size(),1,"Number of synonyms does not match expectation");
-		System.out.println("Synonyms for: '" + confab.input + "'");
+		System.out.println("Synonyms for '" + confab.input + "':" + confab.results.size());
 		for (SynonymResult res: confab.results) {
 			System.out.println(" - '" + res.symbol + "' " + res.prob + "/" + res.probNormalized);
 		}

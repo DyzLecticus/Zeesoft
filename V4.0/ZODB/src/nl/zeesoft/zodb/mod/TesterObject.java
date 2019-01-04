@@ -43,6 +43,7 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 			requests.clear();
 			initializeRequestsNoLock();
 			if (requests.size()>0) {
+				logLines.clear();
 				testing = true;
 				todo = requests.size();
 				r = true;
