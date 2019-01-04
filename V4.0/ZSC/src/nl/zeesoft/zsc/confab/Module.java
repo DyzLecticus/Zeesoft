@@ -8,12 +8,14 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class Module {
-	public boolean							locked		= false;
-	public SortedMap<String,ModuleSymbol>	symbols		= new TreeMap<String,ModuleSymbol>();
+	public boolean							locked			= false;
+	public List<String>						suppressSymbols	= new ArrayList<String>();
+	public SortedMap<String,ModuleSymbol>	symbols			= new TreeMap<String,ModuleSymbol>();
 	
 	public Module copy() {
 		Module r = new Module();
 		r.locked = this.locked;
+		r.suppressSymbols = new ArrayList<String>(suppressSymbols);
 		for (ModuleSymbol modSym: this.symbols.values()) {
 			r.symbols.put(modSym.symbol,modSym.copy());
 		}

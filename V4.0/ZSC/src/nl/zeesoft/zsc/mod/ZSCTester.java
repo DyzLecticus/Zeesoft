@@ -8,6 +8,7 @@ import nl.zeesoft.zsc.confab.ConfabulatorResponse;
 import nl.zeesoft.zsc.confab.ConfabulatorSet;
 import nl.zeesoft.zsc.confab.confabs.ContextResult;
 import nl.zeesoft.zsc.confab.confabs.Correction;
+import nl.zeesoft.zsc.confab.confabs.SynonymResult;
 
 public class ZSCTester extends TesterObject {
 	public ZSCTester(Config config, String url) {
@@ -19,6 +20,7 @@ public class ZSCTester extends TesterObject {
 		ConfabulatorRequest req = null;
 		ConfabulatorResponse res = null;
 		ContextResult context = null;
+		SynonymResult synonym = null;
 		Correction correction = null;
 
 		req = new ConfabulatorRequest(
@@ -70,6 +72,17 @@ public class ZSCTester extends TesterObject {
 		res = new ConfabulatorResponse();
 		res.extension.append("name is Dyz Lecticus.");
 		addRequestNoLock(req,res);
+
+		req = new ConfabulatorRequest(
+			ConfabulatorRequest.SYNONYMIZE,ConfabulatorSet.TEST_CONFAB_1,
+			"name");
+		res = new ConfabulatorResponse();
+		synonym = new SynonymResult();
+		synonym.symbol = "goal";
+		synonym.prob = 1D;
+		synonym.probNormalized = 1D;
+		res.synonymResults.add(synonym);
+		addRequestNoLock(req,res);
 	}
 	
 	@Override
@@ -88,6 +101,8 @@ public class ZSCTester extends TesterObject {
 			addLogLineNoLock("Confabulating extension took: " + request.time + " ms");
 			addLogLineNoLock("  <<< '" + req.input + "'");
 			addLogLineNoLock("  >>> '" + res.extension + "'");
+		} else if (req.type.equals(ConfabulatorRequest.SYNONYMIZE)) {
+			addLogLineNoLock("Confabulating synonyms took: " + request.time + " ms, synonyms: " + res.synonymResults.size());
 		}
 	}
 }

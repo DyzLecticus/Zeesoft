@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zsc.confab.confabs.ContextResult;
 import nl.zeesoft.zsc.confab.confabs.Correction;
+import nl.zeesoft.zsc.confab.confabs.SynonymResult;
 
 public class ConfabulatorResponse implements JsAble {
 	public ConfabulatorRequest	request			= null;
@@ -23,6 +24,8 @@ public class ConfabulatorResponse implements JsAble {
 	public List<ContextResult>	contextResults	= new ArrayList<ContextResult>();
 
 	public ZStringSymbolParser	extension		= new ZStringSymbolParser();
+	
+	public List<SynonymResult>	synonymResults	= new ArrayList<SynonymResult>();
 
 	public ConfabulatorResponse() {
 		
@@ -59,6 +62,16 @@ public class ConfabulatorResponse implements JsAble {
 			}
 		} else if (extension.length()>0) {
 			json.rootElement.children.add(new JsElem("extension",extension,true));
+		} else if (synonymResults.size()>0) {
+			JsElem synsElem = new JsElem("synonyms",true);
+			json.rootElement.children.add(synsElem);
+			for (SynonymResult synonym: synonymResults) {
+				JsElem synElem = new JsElem();
+				synsElem.children.add(synElem);
+				synElem.children.add(new JsElem("symbol",synonym.symbol,true));
+				synElem.children.add(new JsElem("prob","" + synonym.prob));
+				synElem.children.add(new JsElem("probNormalized","" + synonym.probNormalized));
+			}
 		}
 		return json;
 	}
@@ -67,6 +80,7 @@ public class ConfabulatorResponse implements JsAble {
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			contextResults.clear();
+			synonymResults.clear();
 			corrections.clear();
 			log = json.rootElement.getChildZStringBuilder("log",log);
 			error = json.rootElement.getChildZStringBuilder("error",error);
@@ -92,6 +106,16 @@ public class ConfabulatorResponse implements JsAble {
 				}
 			}
 			extension = json.rootElement.getChildZStringSymbolParser("extension",extension);
+			JsElem synsElem = json.rootElement.getChildByName("synonyms");
+			if (synsElem!=null) {
+				for (JsElem synElem: synsElem.children) {
+					SynonymResult synonym = new SynonymResult();
+					synonym.symbol = synElem.getChildString("symbol");
+					synonym.prob = synElem.getChildDouble("prob");
+					synonym.probNormalized = synElem.getChildDouble("probNormalized");
+					synonymResults.add(synonym);
+				}
+			}
 		}
 	}	
 }

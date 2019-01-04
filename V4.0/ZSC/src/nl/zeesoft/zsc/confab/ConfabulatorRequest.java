@@ -9,6 +9,7 @@ public class ConfabulatorRequest implements JsAble {
 	public final static String	CORRECT			= "CORRECT";
 	public final static String	CONTEXT			= "CONTEXT";
 	public final static String	EXTEND			= "EXTEND";
+	public final static String	SYNONYMIZE		= "SYNONYMIZE";
 	
 	public String				type			= "";
 	public String				name			= "";
@@ -25,6 +26,8 @@ public class ConfabulatorRequest implements JsAble {
 	public String				alphabet		= "";
 	
 	public int					extend			= 1;
+	
+	public int					width			= 4;
 	
 	public ConfabulatorRequest() {
 		
@@ -56,6 +59,10 @@ public class ConfabulatorRequest implements JsAble {
 			json.rootElement.children.add(new JsElem("contextSymbol",contextSymbol,true));
 			json.rootElement.children.add(new JsElem("parallel","" + parallel));
 			json.rootElement.children.add(new JsElem("extend","" + extend));
+		} else if (type.equals(SYNONYMIZE)) {
+			json.rootElement.children.add(new JsElem("contextSymbol",contextSymbol,true));
+			json.rootElement.children.add(new JsElem("parallel","" + parallel));
+			json.rootElement.children.add(new JsElem("width","" + width));
 		}
 		return json;
 	}
@@ -75,6 +82,7 @@ public class ConfabulatorRequest implements JsAble {
 			parallel = json.rootElement.getChildBoolean("parallel",parallel);
 			alphabet = json.rootElement.getChildString("alphabet",alphabet);
 			extend = json.rootElement.getChildInt("extend",extend);
+			width = json.rootElement.getChildInt("width",width);
 		}
 	}	
 }

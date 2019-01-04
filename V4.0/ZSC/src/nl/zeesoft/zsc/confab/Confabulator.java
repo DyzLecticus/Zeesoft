@@ -17,6 +17,8 @@ import nl.zeesoft.zsc.confab.confabs.ContextResult;
 import nl.zeesoft.zsc.confab.confabs.Correction;
 import nl.zeesoft.zsc.confab.confabs.CorrectionConfabulation;
 import nl.zeesoft.zsc.confab.confabs.ExtensionConfabulation;
+import nl.zeesoft.zsc.confab.confabs.SynonymConfabulation;
+import nl.zeesoft.zsc.confab.confabs.SynonymResult;
 
 public class Confabulator extends Locker {
 	private SymbolCorrector					corrector			= new SymbolCorrector();
@@ -146,6 +148,10 @@ public class Confabulator extends Locker {
 		} else if (confab instanceof ExtensionConfabulation) {
 			lockMe(this);
 			confabulateExtensionNoLock((ExtensionConfabulation) confab);
+			unlockMe(this);
+		} else if (confab instanceof SynonymConfabulation) {
+			lockMe(this);
+			confabulateSynonymsNoLock((SynonymConfabulation) confab);
 			unlockMe(this);
 		}
 	}
@@ -379,7 +385,7 @@ public class Confabulator extends Locker {
 							double prob = def.linkBandwidth + (def.linkMaxProb - defLink.prob);
 							if (prob>0D) {
 								ModuleSymbol modSym = fireModuleSymbolNoLock(confab,mod,lnk.context,prob,null);
-								if (modSym.prob>maxProb) {
+								if (modSym!=null && modSym.prob>maxProb) {
 									maxProb = modSym.prob;
 								}
 							}
@@ -558,6 +564,66 @@ public class Confabulator extends Locker {
 		}
 		confab.extension.fromSymbols(extSyms,false,true);
 	}
+	
+	protected void confabulateSynonymsNoLock(SynonymConfabulation confab) {
+		if (confab.symbols.size()>0) {
+			Context ctxt = contexts.get(confab.contextSymbol);
+			if (ctxt==null) {
+				ctxt = contexts.get("");
+			}
+			
+			String symbol = confab.symbols.get(0);
+			Module mod = confab.modules.get(confab.width);
+			Symbol sym = getSymbolNoLock(symbol,confab.contextSymbol);
+			if (sym!=null) {
+				ModuleSymbol modSym = new ModuleSymbol();
+				modSym.symbol = symbol;
+				modSym.prob = 1D;
+				mod.symbols.put(symbol,modSym);
+			}
+			mod.locked = true;
+			logModuleStateNoLock(confab,"Initialized module symbols");
+
+			List<Module> copyModules = null;
+			if (confab.parallel) {
+				copyModules = confab.copyModules();
+			}
+			confabulateNoLock(confab,ctxt,false,copyModules);
+			mod.locked = false;
+			mod.symbols.clear();
+			List<Symbol> symbols = getSymbolsNoLock(symbol,confab.caseSensitive);
+			for (Symbol s: symbols) {
+				mod.suppressSymbols.add(s.symbol);
+			}
+			logModuleStateNoLock(confab,"Initialized module symbol expectations");
+			
+			while(!confabulateReturnDoneNoLock(confab,ctxt)) {
+				if ((new Date()).getTime() > (confab.started.getTime() + confab.maxTime)) {
+					break;
+				}
+			}
+			
+			if (mod.symbols.size()>0) {
+				List<ModuleSymbol> syms = mod.getSymbols();
+				double maxProb = 0D;
+				for (ModuleSymbol mSym: syms) {
+					SynonymResult result = new SynonymResult();
+					result.symbol = mSym.symbol;
+					result.prob = mSym.prob;
+					confab.results.add(result);
+					if (result.prob > maxProb) {
+						maxProb = result.prob;
+					}
+				}
+				for (SynonymResult result: confab.results) {
+					result.probNormalized = result.prob / maxProb;
+				}
+			}
+			logModuleStateNoLock(confab,"Confabulated synonyms");
+		} else {
+			addLogLineNoLock(confab,"Nothing to confabulate");
+		}
+	}
 
 	protected boolean checkDoneNoLock(ConfabulationObject confab,Context ctxt) {
 		boolean done = false;
@@ -703,22 +769,26 @@ public class Confabulator extends Locker {
 			symbol = lnk.symbolFrom;
 		}
 		prob += ctxt.linkBandwidth + (ctxt.linkMaxProb - lnk.prob);
-		fireModuleSymbolNoLock(confab,mod,symbol,prob,fired);
+		if (prob>0D && !mod.suppressSymbols.contains(symbol)) {
+			fireModuleSymbolNoLock(confab,mod,symbol,prob,fired);
+		}
 	}
 	
 	protected void fireSymbolsInModuleNoLock(ConfabulationObject confab,Context ctxt,Module mod,List<ModuleSymbol> fired) {
 		for (ModuleSymbol modSym: mod.symbols.values()) {
 			List<Symbol> syms = getSymbolsNoLock(modSym.symbol,ctxt.contextSymbol,confab.caseSensitive);
 			for (Symbol sym: syms) {
-				double prob = ((ctxt.symbolBandwidth + (ctxt.symbolMaxProb - sym.prob)) * ctxt.symbolToLinkBandwidthFactor);
-				fireModuleSymbolNoLock(confab,modSym,prob,fired);
+				if (!mod.suppressSymbols.contains(modSym.symbol)) {
+					double prob = ((ctxt.symbolBandwidth + (ctxt.symbolMaxProb - sym.prob)) * ctxt.symbolToLinkBandwidthFactor);
+					fireModuleSymbolNoLock(confab,modSym,prob,fired);
+				}
 			}
 		}
 	}
 
 	protected ModuleSymbol fireModuleSymbolNoLock(ConfabulationObject confab,Module mod,String symbol,double prob,List<ModuleSymbol> fired) {
 		ModuleSymbol modSym = null;
-		if (prob>0D) {
+		if (prob>0D && !mod.suppressSymbols.contains(symbol)) {
 			modSym = mod.symbols.get(symbol);
 			if (modSym==null) {
 				modSym = new ModuleSymbol();

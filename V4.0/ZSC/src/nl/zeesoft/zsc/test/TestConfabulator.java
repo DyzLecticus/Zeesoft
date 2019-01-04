@@ -9,6 +9,8 @@ import nl.zeesoft.zsc.confab.confabs.ContextConfabulation;
 import nl.zeesoft.zsc.confab.confabs.ContextResult;
 import nl.zeesoft.zsc.confab.confabs.CorrectionConfabulation;
 import nl.zeesoft.zsc.confab.confabs.ExtensionConfabulation;
+import nl.zeesoft.zsc.confab.confabs.SynonymConfabulation;
+import nl.zeesoft.zsc.confab.confabs.SynonymResult;
 
 public class TestConfabulator extends TestObject {
 	public TestConfabulator(Tester tester) {
@@ -21,7 +23,7 @@ public class TestConfabulator extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to train a *Confabulator* to and use it to correct sequences and determine context.");
+		System.out.println("This test shows how to train a *Confabulator* to and use it to correct sequences, determine context, confabulate extensions and synonyms.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -88,6 +90,18 @@ public class TestConfabulator extends TestObject {
 		testExtension(conf,"I","",10,"can learn context sensitive symbol sequences and use that knowledge");
 		testExtension(conf,"My","",5,"");
 		testExtension(conf,"My","Name",5,"name is Dyz Lecticus.");
+		
+		SynonymConfabulation confab = new SynonymConfabulation();
+		confab.input.append("name");
+		confab.appendLog = true;
+		conf.confabulate(confab);
+		assertEqual(confab.results.size(),1,"Number of synonyms does not match expectation");
+		System.out.println("Synonyms for: '" + confab.input + "'");
+		for (SynonymResult res: confab.results) {
+			System.out.println(" - '" + res.symbol + "' " + res.prob + "/" + res.probNormalized);
+		}
+		System.out.println("Log;");
+		System.out.println(confab.log);
 	}
 	
 	private void testCorrection(Confabulator conf,String input,boolean validate,String expectedCorrection) {
