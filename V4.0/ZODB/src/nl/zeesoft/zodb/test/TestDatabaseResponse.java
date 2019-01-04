@@ -24,7 +24,7 @@ public class TestDatabaseResponse extends TestObject {
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the database response");
-		System.out.println("DatabaseResponse response = new DatabaseResponse(DatabaseResponse.TYPE_LIST);");
+		System.out.println("DatabaseResponse response = new DatabaseResponse();");
 		System.out.println("// Convert the database response to JSON");
 		System.out.println("JsFile json = response.toJson();");
 		System.out.println("// Convert the database response from JSON");
