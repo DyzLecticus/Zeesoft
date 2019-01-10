@@ -8,7 +8,6 @@ import nl.zeesoft.zsmc.confab.Module;
 public class ExtensionConfabulation extends ConfabulationObject {
 	public String				contextSymbol	= "";
 	public int					extend			= 1;
-	public boolean				parallel		= true;
 
 	public ZStringSymbolParser	extension		= new ZStringSymbolParser();
 
@@ -18,6 +17,11 @@ public class ExtensionConfabulation extends ConfabulationObject {
 		for (int m = 0; m < (symbols.size() + extend); m++) {
 			Module mod = new Module(msgr);
 			modules.add(mod);
+		}
+		for (Module mod: modules) {
+			for (int d = 1; d <= kb.getMaxDistance(); d++) {
+				
+			}
 		}
 	}
 }

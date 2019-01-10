@@ -10,21 +10,25 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsmc.confab.Module;
+import nl.zeesoft.zsmc.confab.ModuleSequenceWorker;
+import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
-public abstract class ConfabulationObject {
-	public Messenger			messenger		= null;
-	public WorkerUnion			union			= null;
+public abstract class ConfabulationObject {	
+	public ZStringSymbolParser			input			= new ZStringSymbolParser();
+	public boolean						caseSensitive	= false;
+	public long							maxTime			= 1000;
+	public boolean						appendLog		= false;
+	public double						noise			= 0D;
+
+	public Messenger					messenger		= null;
+	public WorkerUnion					union			= null;
+	public KnowledgeBase				kb				= null;
 	
-	public ZStringSymbolParser	input			= new ZStringSymbolParser();
-	public boolean				caseSensitive	= false;
-	public long					maxTime			= 1000;
-	public boolean				appendLog		= false;
-	public double				noise			= 0D;
-
-	public ZStringBuilder		log				= new ZStringBuilder();
-	public Date					started			= null;
-	public List<String>			symbols			= null;
-	public List<Module>			modules 		= new ArrayList<Module>();
+	public ZStringBuilder				log				= new ZStringBuilder();
+	public Date							started			= null;
+	public List<String>					symbols			= null;
+	public List<Module>					modules 		= new ArrayList<Module>();
+	public List<ModuleSequenceWorker>	workers			= new ArrayList<ModuleSequenceWorker>();
 	
 	public void initialize(Messenger msgr, WorkerUnion uni) {
 		messenger = msgr;
