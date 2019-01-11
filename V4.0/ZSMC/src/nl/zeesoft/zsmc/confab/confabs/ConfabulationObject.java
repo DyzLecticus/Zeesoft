@@ -8,9 +8,9 @@ import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsmc.confab.Module;
-import nl.zeesoft.zsmc.confab.ModuleSequenceWorker;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public abstract class ConfabulationObject {	
@@ -28,11 +28,12 @@ public abstract class ConfabulationObject {
 	public Date							started			= null;
 	public List<String>					symbols			= null;
 	public List<Module>					modules 		= new ArrayList<Module>();
-	public List<ModuleSequenceWorker>	workers			= new ArrayList<ModuleSequenceWorker>();
+	public List<Worker>					workers			= new ArrayList<Worker>();
 	
-	public void initialize(Messenger msgr, WorkerUnion uni) {
+	public void initialize(Messenger msgr, WorkerUnion uni,KnowledgeBase kb) {
 		messenger = msgr;
 		union = uni;
+		this.kb = kb;
 		started = new Date();
 		symbols = input.toSymbolsPunctuated();
 	}

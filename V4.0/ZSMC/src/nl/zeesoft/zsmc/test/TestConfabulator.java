@@ -2,16 +2,18 @@ package nl.zeesoft.zsmc.test;
 
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zsmc.kb.KbContext;
+import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zsmc.confab.Confabulator;
+import nl.zeesoft.zsmc.confab.confabs.ExtensionConfabulation;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
-public class TestKnowledgeBase extends TestObject {
-	public TestKnowledgeBase(Tester tester) {
+public class TestConfabulator extends TestObject {
+	public TestConfabulator(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestKnowledgeBase(new Tester())).test(args);
+		(new TestConfabulator(new Tester())).test(args);
 	}
 
 	@Override
@@ -56,7 +58,16 @@ public class TestKnowledgeBase extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		KnowledgeBase kb = (KnowledgeBase) getTester().getMockedObject(MockKnowledgeBase.class.getName());
-		System.out.println("Knowledge base max. distance: " + kb.getMaxDistance());
+		Config conf = new Config();
+		Confabulator confabulator = new Confabulator(conf.getMessenger(),conf.getUnion(),kb,"");
+		
+		ExtensionConfabulation exConfab = new ExtensionConfabulation();
+		exConfab.input.append("brain");
+		
+		
+		confabulator.confabulate(exConfab);
+		/*
+		System.out.println("Confabulator max. distance: " + kb.getMaxDistance());
 		
 		KbContext def = kb.getContext("");
 		KbContext self = kb.getContext("Self");
@@ -70,5 +81,6 @@ public class TestKnowledgeBase extends TestObject {
 		System.out.println("Symbols/links for 'Name' context: " + self.totalSymbols + "/" + self.totalLinks);
 		System.out.println("Symbol/link bandwidth for default context: " + def.symbolBandwidth + "/" + def.linkBandwidth);
 		System.out.println("Symbol to link bandwidth factor for default context: " + def.symbolToLinkBandwidthFactor);
+		*/
 	}
 }

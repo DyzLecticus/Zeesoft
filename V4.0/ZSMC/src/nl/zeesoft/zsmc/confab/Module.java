@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.thread.Locker;
 
 public class Module extends Locker {
 	private boolean								locked			= false;
-	private SortedMap<String,ModuleSymbol>	symbols			= new TreeMap<String,ModuleSymbol>();
+	private SortedMap<String,ModuleSymbol>		symbols			= new TreeMap<String,ModuleSymbol>();
 
 	public Module(Messenger msgr) {
 		super(msgr);
@@ -40,11 +40,38 @@ public class Module extends Locker {
 		this.locked = locked;
 		unlockMe(this);
 	}
-	
-	public void normalize(boolean locked) {
+
+	public void setActiveSymbol(String symbol) {
 		lockMe(this);
 		if (!locked) {
-			List<ModuleSymbol> modSyms = getSymbolsNoLock();
+			symbols.clear();
+			ModuleSymbol modSym = new ModuleSymbol();
+			modSym.symbol = symbol;
+			modSym.probNormalized = 1.0D;
+			symbols.put(symbol, modSym);
+			locked = true;
+		}
+		unlockMe(this);
+	}
+	
+	public void exciteSymbol(String symbol,double prob) {
+		lockMe(this);
+		if (!locked) {
+			ModuleSymbol modSym = symbols.get(symbol);
+			if (modSym==null) {
+				modSym = new ModuleSymbol();
+				modSym.symbol = symbol;
+				symbols.put(symbol, modSym);
+			}
+			modSym.prob += prob;
+		}
+		unlockMe(this);
+	}
+	
+	public void normalize() {
+		lockMe(this);
+		if (!locked) {
+			List<ModuleSymbol> modSyms = getSymbolsNoLock(false,false);
 			if (modSyms.size()>0) {
 				double highest = modSyms.get(0).prob;
 				for (ModuleSymbol modSym: modSyms) {
@@ -54,23 +81,38 @@ public class Module extends Locker {
 		}
 		unlockMe(this);
 	}
+
+	public List<ModuleSymbol> getActiveSymbols() {
+		lockMe(this);
+		List<ModuleSymbol> r = getSymbolsNoLock(true,true);
+		unlockMe(this);
+		return r;
+	}
 	
-	protected List<ModuleSymbol> getSymbolsNoLock() {
+	protected List<ModuleSymbol> getSymbolsNoLock(boolean normalized,boolean copy) {
 		List<ModuleSymbol> r = new ArrayList<ModuleSymbol>();
 		SortedMap<Double,List<ModuleSymbol>> syms = new TreeMap<Double,List<ModuleSymbol>>();
 		for (ModuleSymbol modSym: symbols.values()) {
-			if (modSym.prob>0D) {
-				List<ModuleSymbol> msl = syms.get(modSym.prob);
+			double prob = modSym.prob;
+			if (normalized) {
+				prob = modSym.probNormalized;
+			}
+			if (prob>0D) {
+				List<ModuleSymbol> msl = syms.get(prob);
 				if (msl==null) {
 					msl = new ArrayList<ModuleSymbol>();
-					syms.put(modSym.prob,msl);
+					syms.put(prob,msl);
 				}
 				msl.add(0,modSym);
 			}
 		}
 		for (List<ModuleSymbol> msl: syms.values()) {
 			for (ModuleSymbol modSym: msl) {
-				r.add(0,modSym);
+				if (copy) {
+					r.add(0,modSym.copy());
+				} else {
+					r.add(0,modSym);
+				}
 			}
 		}
 		return r;

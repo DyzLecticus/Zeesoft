@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsmc.confab.Module;
+import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public class CorrectionConfabulation extends ConfabulationObject {
 	public String				contextSymbol	= "";
@@ -18,8 +19,8 @@ public class CorrectionConfabulation extends ConfabulationObject {
 	public List<Correction>		corrections		= new ArrayList<Correction>();
 	
 	@Override
-	public void initialize(Messenger msgr, WorkerUnion uni) {
-		super.initialize(msgr,uni);
+	public void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {
+		super.initialize(msgr,uni,kb);
 		for (int m = 0; m < symbols.size(); m++) {
 			Module mod = new Module(msgr);
 			modules.add(mod);
