@@ -1,14 +1,13 @@
 package nl.zeesoft.zsmc.confab;
 
-import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
-import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 
 public class ModuleNormalizeWorker extends Worker {
 	private Module			module			= null;
 	
-	public ModuleNormalizeWorker(Messenger msgr, WorkerUnion union,Module module) {
-		super(msgr, union);
+	public ModuleNormalizeWorker(ConfabulationObject confab,Module module) {
+		super(confab.messenger,confab.union);
 		this.module = module;
 		setSleep(0);
 	}

@@ -2,61 +2,67 @@ package nl.zeesoft.zsmc.confab;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
-import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 import nl.zeesoft.zsmc.kb.KbContext;
 import nl.zeesoft.zsmc.kb.KbLink;
-import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public class ModuleSequenceWorker extends Worker {
-	private KnowledgeBase	kb				= null;
-	private Module			from			= null;
-	private Module			to				= null;
-	private int				distance		= 0;
-	private String			contextSymbol	= "";
-	private boolean			caseSensitive	= true;
-	private KbContext		context			= null;
+	private int						moduleIndex		= 0;
+	private ConfabulationObject		confab			= null;
+	private String					contextSymbol	= "";
 	
-	public ModuleSequenceWorker(Messenger msgr, WorkerUnion union,KnowledgeBase kb,Module from,Module to,int distance,String contextSymbol,boolean caseSensitive) {
-		super(msgr, union);
-		this.kb = kb;
-		this.from = from;
-		this.to = to;
-		this.distance = distance;
+	private Module					module			= null;
+	private KbContext				context			= null;
+	
+	public ModuleSequenceWorker(ConfabulationObject confab,int moduleIndex,String contextSymbol) {
+		super(confab.messenger,confab.union);
+		this.confab = confab;
+		this.moduleIndex = moduleIndex;
 		this.contextSymbol = contextSymbol;
-		this.caseSensitive = caseSensitive;
-		context = kb.getContext(contextSymbol);
+		context = confab.kb.getContext(contextSymbol);
+		module = confab.modules.get(moduleIndex);
 		setSleep(0);
 	}
 
 	@Override
 	public void whileWorking() {
-		if (!from.isLocked() || !to.isLocked()) {
-			List<ModuleSymbol> modSymsFrom = from.getActiveSymbols();
-			List<ModuleSymbol> modSymsTo = to.getActiveSymbols();
-			if (modSymsFrom.size()>0 && modSymsTo.size()>0) {
-				for (ModuleSymbol modSymFrom: modSymsFrom) {
-					for (ModuleSymbol modSymTo: modSymsTo) {
-						List<KbLink> lnks = kb.getLinks(modSymFrom.symbol,distance,contextSymbol,modSymTo.symbol,caseSensitive);
-						for (KbLink lnk: lnks) {
-							from.exciteSymbol(lnk.symbolFrom,((context.linkMaxProb - lnk.prob) * modSymTo.probNormalized));
-							to.exciteSymbol(lnk.symbolTo,((context.linkMaxProb - lnk.prob) * modSymFrom.probNormalized));
+		if (!module.isLocked()) {
+			int start = moduleIndex - confab.kb.getMaxDistance();
+			int end = moduleIndex + confab.kb.getMaxDistance();
+			if (start<0) {
+				start = 0;
+			}
+			if (end>confab.modules.size()) {
+				end = confab.modules.size();
+			}
+			List<ModuleSymbol> modSyms = module.getActiveSymbols();
+			for (int i = start; i<end; i++) {
+				if (i!=moduleIndex) {
+					int distance = 0;
+					if (i<moduleIndex) {
+						distance = moduleIndex - i;
+					} else {
+						distance = i - moduleIndex;
+					}
+					List<ModuleSymbol> modSymsComp = confab.modules.get(i).getActiveSymbols();   
+					for (ModuleSymbol modSym: modSyms) {
+						for (ModuleSymbol modSymComp: modSymsComp) {
+							List<KbLink> lnks = null;
+							if (i<moduleIndex) {
+								lnks = confab.kb.getLinks(modSymComp.symbol,distance,contextSymbol,modSym.symbol,confab.caseSensitive);
+							} else {
+								lnks = confab.kb.getLinks(modSym.symbol,distance,contextSymbol,modSymComp.symbol,confab.caseSensitive);
+							}
+							for (KbLink lnk: lnks) {
+								double prob = ((context.linkBandwidth + (context.linkMaxProb - lnk.prob)) * modSymComp.probNormalized);
+								if (i<moduleIndex) {
+									module.exciteSymbol(lnk.symbolTo,prob);
+								} else {
+									module.exciteSymbol(lnk.symbolFrom,prob);
+								}
+							}
 						}
-					}
-				}
-			} else if (modSymsFrom.size()>0 && !to.isLocked()) {
-				for (ModuleSymbol modSymFrom: modSymsFrom) {
-					List<KbLink> lnks = kb.getLinks(modSymFrom.symbol,distance,contextSymbol,"",caseSensitive);
-					for (KbLink lnk: lnks) {
-						to.exciteSymbol(lnk.symbolTo,((context.linkMaxProb - lnk.prob) * modSymFrom.probNormalized));
-					}
-				}
-			} else if (modSymsTo.size()>0 && !from.isLocked()) {
-				for (ModuleSymbol modSymTo: modSymsTo) {
-					List<KbLink> lnks = kb.getLinks("",distance,contextSymbol,modSymTo.symbol,caseSensitive);
-					for (KbLink lnk: lnks) {
-						from.exciteSymbol(lnk.symbolFrom,((context.linkMaxProb - lnk.prob) * modSymTo.probNormalized));
 					}
 				}
 			}
