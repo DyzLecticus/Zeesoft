@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZDate;
+import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -12,6 +13,8 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsmc.confab.Module;
 import nl.zeesoft.zsmc.confab.ModuleSymbol;
+import nl.zeesoft.zsmc.kb.KbContext;
+import nl.zeesoft.zsmc.kb.KbLink;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public abstract class ConfabulationObject {	
@@ -30,7 +33,9 @@ public abstract class ConfabulationObject {
 	public List<String>					symbols			= null;
 	public List<Module>					modules 		= new ArrayList<Module>();
 	public List<Worker>					workers			= new ArrayList<Worker>();
-	
+
+	private ZIntegerGenerator			generator		= new ZIntegerGenerator(1,100);
+
 	public void initialize(Messenger msgr, WorkerUnion uni,KnowledgeBase kb) {
 		messenger = msgr;
 		union = uni;
@@ -114,5 +119,67 @@ public abstract class ConfabulationObject {
 			}
 		}
 		return r;
+	}
+	
+	protected void initializeModules(String contextSymbol) {
+		KbContext context = kb.getContext(contextSymbol);
+		for (int m = 0; m < modules.size(); m++) {
+			getAndFireLinksInModule(m,context);
+			modules.get(m).normalize();
+		}
+	}
+	
+	public void getAndFireLinksInModule(int moduleIndex,KbContext context) {
+		Module module = modules.get(moduleIndex);
+		int start = moduleIndex - kb.getMaxDistance();
+		int end = moduleIndex + kb.getMaxDistance();
+		if (start<0) {
+			start = 0;
+		}
+		if (end>modules.size()) {
+			end = modules.size();
+		}
+		List<ModuleSymbol> modSyms = module.getActiveSymbols();
+		for (int i = start; i<end; i++) {
+			if (i!=moduleIndex) {
+				int distance = 0;
+				if (i<moduleIndex) {
+					distance = moduleIndex - i;
+				} else {
+					distance = i - moduleIndex;
+				}
+				List<ModuleSymbol> modSymsComp = modules.get(i).getActiveSymbols();
+				if (modSyms.size()>0) {
+					for (ModuleSymbol modSym: modSyms) {
+						getAndFireLinks(module,modSymsComp,(i<moduleIndex),distance,modSym.symbol,context);
+					}
+				} else {
+					getAndFireLinks(module,modSymsComp,(i<moduleIndex),distance,"",context);
+				}
+			}
+		}
+	}
+
+	private void getAndFireLinks(Module module,List<ModuleSymbol> sourceSymbols,boolean from,int distance,String targetSymbol,KbContext context) {
+		for (ModuleSymbol sourceSymbol: sourceSymbols) {
+			List<KbLink> lnks = null;
+			if (from) {
+				lnks = kb.getLinks(sourceSymbol.symbol,distance,context.contextSymbol,targetSymbol,caseSensitive);
+			} else {
+				lnks = kb.getLinks(targetSymbol,distance,context.contextSymbol,sourceSymbol.symbol,caseSensitive);
+			}
+			for (KbLink lnk: lnks) {
+				double prob = ((context.linkBandwidth + (context.linkMaxProb - lnk.prob)) * sourceSymbol.probNormalized);
+				if (noise>0D) {
+					double mult = (noise / 100D) * (double)generator.getNewInteger();
+					prob += (prob * mult);
+				}
+				if (from) {
+					module.exciteSymbol(lnk.symbolTo,prob);
+				} else {
+					module.exciteSymbol(lnk.symbolFrom,prob);
+				}
+			}
+		}
 	}
 }

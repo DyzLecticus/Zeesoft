@@ -30,6 +30,7 @@ public class ModuleSequenceWorker extends ModuleWorker {
 		if (confabulationIsTimeOut()) {
 			stop();
 		} else if (!module.isLocked()) {
+			// TODO: Move to confab, use in initialization
 			int start = moduleIndex - confab.kb.getMaxDistance();
 			int end = moduleIndex + confab.kb.getMaxDistance();
 			if (start<0) {

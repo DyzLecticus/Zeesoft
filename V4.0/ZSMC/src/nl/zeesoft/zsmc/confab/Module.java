@@ -47,6 +47,7 @@ public class Module extends Locker {
 			symbols.clear();
 			ModuleSymbol modSym = new ModuleSymbol();
 			modSym.symbol = symbol;
+			modSym.prob = 1.0D;
 			modSym.probNormalized = 1.0D;
 			symbols.put(symbol, modSym);
 			locked = true;

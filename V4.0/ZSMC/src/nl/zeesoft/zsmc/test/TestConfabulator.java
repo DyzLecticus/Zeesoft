@@ -63,8 +63,17 @@ public class TestConfabulator extends TestObject {
 		
 		ExtensionConfabulation exConfab = new ExtensionConfabulation();
 		exConfab.appendLog = true;
-		exConfab.input.append("brain");
-		exConfab.extend = 6;
+		exConfab.input.append("brain structures");
+		exConfab.extend = 7;
+		
+		System.out.println("Confabulating ...");
+		confabulator.confabulate(exConfab);
+		System.out.println(exConfab.log);
+
+		exConfab = new ExtensionConfabulation();
+		exConfab.appendLog = true;
+		exConfab.input.append("My goal");
+		exConfab.extend = 7;
 		
 		System.out.println("Confabulating ...");
 		confabulator.confabulate(exConfab);

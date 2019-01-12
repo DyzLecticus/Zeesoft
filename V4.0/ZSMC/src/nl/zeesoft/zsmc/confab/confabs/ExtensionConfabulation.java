@@ -31,5 +31,7 @@ public class ExtensionConfabulation extends ConfabulationObject {
 			modules.get(m).setLocked(true);
 			m++;
 		}
+		initializeModules(contextSymbol);
+		logModuleStateNoLock("Initialized modules");
 	}
 }
