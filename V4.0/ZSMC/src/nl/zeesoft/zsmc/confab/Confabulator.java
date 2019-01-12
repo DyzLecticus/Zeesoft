@@ -4,7 +4,6 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
-import nl.zeesoft.zsmc.confab.confabs.ExtensionConfabulation;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public class Confabulator extends Locker {
@@ -25,17 +24,19 @@ public class Confabulator extends Locker {
 	
 	public void confabulate(ConfabulationObject confab) {
 		confab.initialize(getMessenger(), union, kb);
-		if (confab instanceof ExtensionConfabulation) {
-			confabulateExtension((ExtensionConfabulation) confab);
+		confab.addLogLine("Confabulating ...");
+		confab.confabulate();
+		while(confab.isConfabulating()) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				if (getMessenger()!=null) {
+					getMessenger().error(this,"Confabulation was interrupted",e);
+				} else {
+					e.printStackTrace();
+				}
+			}
 		}
-	}
-	
-	protected void confabulateExtension(ExtensionConfabulation confab) {
-		int i = 0;
-		for (String symbol: confab.symbols) {
-			confab.modules.get(i).setActiveSymbol(symbol);
-			confab.modules.get(i).setLocked(true);
-			i++;
-		}
+		confab.logModuleStateNoLock("Confabulated");
 	}
 }

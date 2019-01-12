@@ -1,20 +1,22 @@
 package nl.zeesoft.zsmc.confab;
 
-import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 
-public class ModuleNormalizeWorker extends Worker {
-	private Module			module			= null;
+public class ModuleNormalizeWorker extends ModuleWorker {
+	private Module					module			= null;
 	
 	public ModuleNormalizeWorker(ConfabulationObject confab,Module module) {
-		super(confab.messenger,confab.union);
+		super(confab);
+		this.confab = confab;
 		this.module = module;
 		setSleep(0);
 	}
 
 	@Override
 	public void whileWorking() {
-		if (!module.isLocked()) {
+		if (confabulationIsTimeOut()) {
+			stop();
+		} else if (!module.isLocked()) {
 			module.normalize();
 		} else {
 			stop();

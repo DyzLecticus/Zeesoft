@@ -62,10 +62,14 @@ public class TestConfabulator extends TestObject {
 		Confabulator confabulator = new Confabulator(conf.getMessenger(),conf.getUnion(),kb,"");
 		
 		ExtensionConfabulation exConfab = new ExtensionConfabulation();
+		exConfab.appendLog = true;
 		exConfab.input.append("brain");
+		exConfab.extend = 6;
 		
-		
+		System.out.println("Confabulating ...");
 		confabulator.confabulate(exConfab);
+		System.out.println(exConfab.log);
+		
 		/*
 		System.out.println("Confabulator max. distance: " + kb.getMaxDistance());
 		

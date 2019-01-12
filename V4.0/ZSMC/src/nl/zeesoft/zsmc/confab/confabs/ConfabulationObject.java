@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsmc.confab.Module;
+import nl.zeesoft.zsmc.confab.ModuleSymbol;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public abstract class ConfabulationObject {	
@@ -45,6 +46,25 @@ public abstract class ConfabulationObject {
 		}
 		return r;
 	}
+
+	public boolean confabulate() {
+		boolean r = false;
+		for (Worker worker: workers) {
+			worker.start();
+		}
+		return r;
+	}
+
+	public boolean isConfabulating() {
+		boolean r = false;
+		for (Worker worker: workers) {
+			if (worker.isWorking()) {
+				r = true;
+				break;
+			}
+		}
+		return r;
+	}
 	
 	public void addLogLine(String line) {
 		addLogLine(new ZStringBuilder(line));
@@ -55,6 +75,44 @@ public abstract class ConfabulationObject {
 			log.append((new ZDate()).getTimeString(true));
 			log.append(": ");
 			log.append(line);
+			log.append("\n");
 		}
+	}
+
+	public void logModuleStateNoLock(String logLine) {
+		if (appendLog) {
+			ZStringBuilder line = new ZStringBuilder(logLine);
+			line.append(";");
+			line.append(getDebugModuleSymbolsNoLock());
+			addLogLine(line);
+		}
+	}
+	
+	protected ZStringBuilder getDebugModuleSymbolsNoLock() {
+		ZStringBuilder r = new ZStringBuilder("");
+		int m = 0;
+		for (Module mod: modules) {
+			m++;
+			r.append("\n  ");
+			r.append(String.format("%02d",m) + ":");
+			List<ModuleSymbol> syms = mod.getActiveSymbols();
+			int s = 0;
+			for (ModuleSymbol modSym: syms) {
+				r.append(" ");
+				r.append(modSym.symbol);
+				r.append(":");
+				r.append("" + modSym.prob);
+				s++;
+				if (s>=4) {
+					if (syms.size()>s) {
+						r.append(" [");
+						r.append("" + (syms.size() - s));
+						r.append("]");
+					}
+					break;
+				}
+			}
+		}
+		return r;
 	}
 }

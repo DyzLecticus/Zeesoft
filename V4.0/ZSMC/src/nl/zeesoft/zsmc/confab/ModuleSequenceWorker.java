@@ -2,22 +2,22 @@ package nl.zeesoft.zsmc.confab;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.thread.Worker;
+import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 import nl.zeesoft.zsmc.kb.KbContext;
 import nl.zeesoft.zsmc.kb.KbLink;
 
-public class ModuleSequenceWorker extends Worker {
+public class ModuleSequenceWorker extends ModuleWorker {
+	private ZIntegerGenerator		generator		= new ZIntegerGenerator(1,100);
+	
 	private int						moduleIndex		= 0;
-	private ConfabulationObject		confab			= null;
 	private String					contextSymbol	= "";
 	
 	private Module					module			= null;
 	private KbContext				context			= null;
 	
 	public ModuleSequenceWorker(ConfabulationObject confab,int moduleIndex,String contextSymbol) {
-		super(confab.messenger,confab.union);
-		this.confab = confab;
+		super(confab);
 		this.moduleIndex = moduleIndex;
 		this.contextSymbol = contextSymbol;
 		context = confab.kb.getContext(contextSymbol);
@@ -27,7 +27,9 @@ public class ModuleSequenceWorker extends Worker {
 
 	@Override
 	public void whileWorking() {
-		if (!module.isLocked()) {
+		if (confabulationIsTimeOut()) {
+			stop();
+		} else if (!module.isLocked()) {
 			int start = moduleIndex - confab.kb.getMaxDistance();
 			int end = moduleIndex + confab.kb.getMaxDistance();
 			if (start<0) {
@@ -45,29 +47,41 @@ public class ModuleSequenceWorker extends Worker {
 					} else {
 						distance = i - moduleIndex;
 					}
-					List<ModuleSymbol> modSymsComp = confab.modules.get(i).getActiveSymbols();   
-					for (ModuleSymbol modSym: modSyms) {
-						for (ModuleSymbol modSymComp: modSymsComp) {
-							List<KbLink> lnks = null;
-							if (i<moduleIndex) {
-								lnks = confab.kb.getLinks(modSymComp.symbol,distance,contextSymbol,modSym.symbol,confab.caseSensitive);
-							} else {
-								lnks = confab.kb.getLinks(modSym.symbol,distance,contextSymbol,modSymComp.symbol,confab.caseSensitive);
-							}
-							for (KbLink lnk: lnks) {
-								double prob = ((context.linkBandwidth + (context.linkMaxProb - lnk.prob)) * modSymComp.probNormalized);
-								if (i<moduleIndex) {
-									module.exciteSymbol(lnk.symbolTo,prob);
-								} else {
-									module.exciteSymbol(lnk.symbolFrom,prob);
-								}
-							}
+					List<ModuleSymbol> modSymsComp = confab.modules.get(i).getActiveSymbols();
+					if (modSyms.size()>0) {
+						for (ModuleSymbol modSym: modSyms) {
+							getAndFireLinks(modSymsComp,(i<moduleIndex),distance,modSym.symbol);
 						}
+					} else {
+						getAndFireLinks(modSymsComp,(i<moduleIndex),distance,"");
 					}
 				}
 			}
 		} else {
 			stop();
+		}
+	}
+	
+	private void getAndFireLinks(List<ModuleSymbol> sourceSymbols,boolean from,int distance,String targetSymbol) {
+		for (ModuleSymbol sourceSymbol: sourceSymbols) {
+			List<KbLink> lnks = null;
+			if (from) {
+				lnks = confab.kb.getLinks(sourceSymbol.symbol,distance,contextSymbol,targetSymbol,confab.caseSensitive);
+			} else {
+				lnks = confab.kb.getLinks(targetSymbol,distance,contextSymbol,sourceSymbol.symbol,confab.caseSensitive);
+			}
+			for (KbLink lnk: lnks) {
+				double prob = ((context.linkBandwidth + (context.linkMaxProb - lnk.prob)) * sourceSymbol.probNormalized);
+				if (confab.noise>0D) {
+					double noise = (confab.noise / 100D) * (double)generator.getNewInteger();
+					prob += (prob * noise);
+				}
+				if (from) {
+					module.exciteSymbol(lnk.symbolTo,prob);
+				} else {
+					module.exciteSymbol(lnk.symbolFrom,prob);
+				}
+			}
 		}
 	}
 	

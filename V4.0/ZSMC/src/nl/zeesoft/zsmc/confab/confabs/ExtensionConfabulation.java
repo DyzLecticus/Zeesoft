@@ -25,5 +25,11 @@ public class ExtensionConfabulation extends ConfabulationObject {
 			workers.add(new ModuleSequenceWorker(this, m, contextSymbol));
 			workers.add(new ModuleNormalizeWorker(this, modules.get(m)));
 		}
+		int m = 0;
+		for (String symbol: symbols) {
+			modules.get(m).setActiveSymbol(symbol);
+			modules.get(m).setLocked(true);
+			m++;
+		}
 	}
 }
