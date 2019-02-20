@@ -15,6 +15,7 @@ public abstract class ModuleWorker extends Worker {
 	}
 
 	protected boolean confabulationIsTimeOut() {
-		return (new Date()).getTime() > (confab.started.getTime() + confab.maxTime);
+		Date now = new Date();
+		return now.getTime() > (confab.started.getTime() + confab.maxTime);
 	}
 }

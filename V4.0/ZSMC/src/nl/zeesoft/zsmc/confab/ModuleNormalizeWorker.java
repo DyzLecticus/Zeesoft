@@ -16,10 +16,10 @@ public class ModuleNormalizeWorker extends ModuleWorker {
 	public void whileWorking() {
 		if (confabulationIsTimeOut()) {
 			stop();
-		} else if (!module.isLocked()) {
-			module.normalize();
-		} else {
+		} else if (module.isLocked()) {
 			stop();
+		} else {
+			module.normalize(true);
 		}
 	}
 	

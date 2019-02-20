@@ -125,7 +125,7 @@ public abstract class ConfabulationObject {
 		KbContext context = kb.getContext(contextSymbol);
 		for (int m = 0; m < modules.size(); m++) {
 			getAndFireLinksInModule(m,context);
-			modules.get(m).normalize();
+			modules.get(m).normalize(false);
 		}
 	}
 	

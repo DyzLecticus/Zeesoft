@@ -13,7 +13,7 @@ public class ExtensionConfabulation extends ConfabulationObject {
 	public int					extend			= 1;
 
 	public ZStringSymbolParser	extension		= new ZStringSymbolParser();
-
+	
 	@Override
 	public void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {
 		super.initialize(msgr,uni,kb);
