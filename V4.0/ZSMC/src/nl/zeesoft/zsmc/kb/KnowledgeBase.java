@@ -60,7 +60,9 @@ public class KnowledgeBase extends Locker {
 			for (int n = s + 1; n < end; n++) {
 				int distance = n - s;
 				String symbolTo = symbols.get(n);
-				learnLinkNoLock(symbolFrom,distance,symbolTo,contextSymbols);
+				if (!symbolFrom.equals(symbolTo)) {
+					learnLinkNoLock(symbolFrom,distance,symbolTo,contextSymbols);
+				}
 			}
 		}
 		unlockMe(this);

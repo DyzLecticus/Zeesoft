@@ -39,5 +39,7 @@ public class Confabulator {
 			}
 		}
 		confab.logModuleStateNoLock("Confabulated");
+		confab.addLogLine("Finalizing ...");
+		confab.finalize();
 	}
 }

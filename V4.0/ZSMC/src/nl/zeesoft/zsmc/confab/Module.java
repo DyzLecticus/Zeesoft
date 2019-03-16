@@ -44,6 +44,7 @@ public class Module extends Locker {
 	public void setActiveSymbol(String symbol) {
 		lockMe(this);
 		setActiveSymbolNoLock(symbol);
+		locked = true;
 		unlockMe(this);
 	}
 	
@@ -61,7 +62,8 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 	
-	public void normalize(boolean lock) {
+	public ModuleSymbol normalize(boolean lock) {
+		ModuleSymbol winner = null;
 		lockMe(this);
 		if (!locked) {
 			List<ModuleSymbol> modSyms = getSymbolsNoLock(false,false);
@@ -75,8 +77,22 @@ public class Module extends Locker {
 					}
 				}
 				if (winners.size()==1) {
-					setActiveSymbolNoLock(winners.get(0).symbol);
+					winner = winners.get(0);
+					setActiveSymbolNoLock(winner.symbol);
 				}
+			}
+		}
+		unlockMe(this);
+		return winner;
+	}
+	
+	public void supressSymbol(String symbol) {
+		lockMe(this);
+		if (!locked) {
+			ModuleSymbol modSym = symbols.remove(symbol);
+			if (modSym!=null) {
+				modSym.prob = 0D;
+				modSym.probNormalized = 0D;
 			}
 		}
 		unlockMe(this);
@@ -126,7 +142,6 @@ public class Module extends Locker {
 			modSym.prob = 1.0D;
 			modSym.probNormalized = 1.0D;
 			symbols.put(symbol, modSym);
-			locked = true;
 		}
 	}
 }
