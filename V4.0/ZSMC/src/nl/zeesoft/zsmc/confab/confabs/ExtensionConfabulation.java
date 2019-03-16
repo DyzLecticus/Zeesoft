@@ -30,8 +30,9 @@ public class ExtensionConfabulation extends ConfabulationObject {
 		}
 		int m = 0;
 		for (String symbol: symbols) {
-			modules.get(m).setActiveSymbol(symbol);
-			modules.get(m).setLocked(true);
+			Module mod = modules.get(m);
+			mod.setActiveSymbol(symbol);
+			mod.setLocked(true);
 			m++;
 		}
 		initializeModules(contextSymbol);

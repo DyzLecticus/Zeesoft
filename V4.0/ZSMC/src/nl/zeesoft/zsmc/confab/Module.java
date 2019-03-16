@@ -44,7 +44,6 @@ public class Module extends Locker {
 	public void setActiveSymbol(String symbol) {
 		lockMe(this);
 		setActiveSymbolNoLock(symbol);
-		locked = true;
 		unlockMe(this);
 	}
 	

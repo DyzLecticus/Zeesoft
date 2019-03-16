@@ -45,7 +45,7 @@ public class ModuleSequenceWorker extends ModuleWorker {
 			}
 			ModuleSymbol winner = module.normalize(lock);
 			if (winner!=null) {
-				if (next!=null && ((ExtensionConfabulation) confab).strict) {
+				if (next!=null && confab instanceof ExtensionConfabulation && ((ExtensionConfabulation) confab).strict) {
 					//System.out.println("Module limit: " + moduleIndex);
 					confab.limitLinksInModule(next,winner,context);
 					//System.out.println("Module limited: " + moduleIndex);

@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zsmc.confab.Confabulator;
+import nl.zeesoft.zsmc.confab.confabs.CorrectionConfabulation;
 import nl.zeesoft.zsmc.confab.confabs.ExtensionConfabulation;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
@@ -78,7 +79,15 @@ public class TestConfabulator extends TestObject {
 		System.out.println("Confabulating ...");
 		confabulator.confabulate(exConfab);
 		System.out.println(exConfab.log);
+
+		CorrectionConfabulation corConfab = new CorrectionConfabulation();
+		corConfab.appendLog = true;
+		corConfab.input.append("My game is");
 		
+		System.out.println("Confabulating ...");
+		confabulator.confabulate(corConfab);
+		System.out.println(corConfab.log);
+
 		/*
 		System.out.println("Confabulator max. distance: " + kb.getMaxDistance());
 		

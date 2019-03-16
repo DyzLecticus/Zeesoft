@@ -14,17 +14,24 @@ public abstract class ModuleWorker extends Worker {
 		super(confab.messenger,confab.union);
 		this.confab = confab;
 		setSleep(0);
+		setStopOnException(true);
 	}
-
-	protected boolean confabulationIsTimeOut() {
-		Date now = new Date();
-		return now.getTime() > (confab.started.getTime() + confab.maxTime);
+	
+	@Override
+	protected void setCaughtException(Exception caughtException) {
+		super.setCaughtException(caughtException);
+		setDone(true);
 	}
 	
 	@Override
 	public void start() {
 		setDone(false);
 		super.start();
+	}
+
+	protected boolean confabulationIsTimeOut() {
+		Date now = new Date();
+		return now.getTime() > (confab.started.getTime() + confab.maxTime);
 	}
 
 	protected void setDone(boolean d) {
