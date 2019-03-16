@@ -63,13 +63,22 @@ public class CorrectionConfabulation extends ConfabulationObject {
 		List<String> syms = new ArrayList<String>();
 		int i = 0;
 		for (Module mod: modules) {
+			String oriSym = symbols.get(i);
 			if (mod.isLocked()) {
 				List<ModuleSymbol> modSyms = mod.getActiveSymbols();
 				if (modSyms.size()>0) {
-					syms.add(modSyms.get(0).symbol);
+					String corSym = modSyms.get(0).symbol;
+					syms.add(corSym);
+					if (!context.knownSymbols.contains(oriSym)) {
+						Correction cor = new Correction();
+						cor.index = i;
+						cor.symbol = oriSym;
+						cor.correction = corSym;
+						corrections.add(cor);
+					}
 				}
 			} else {
-				syms.add(symbols.get(i));
+				syms.add(oriSym);
 			}
 			i++;
 		}
