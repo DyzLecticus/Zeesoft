@@ -24,6 +24,8 @@ public abstract class ConfabulationObject {
 	public long							maxTime			= 1000;
 	public boolean						appendLog		= false;
 	public double						noise			= 0D;
+	public boolean						strict			= true;
+	public String						unknownSymbol	= "[?]";
 
 	public Messenger					messenger		= null;
 	public WorkerUnion					union			= null;
@@ -132,16 +134,16 @@ public abstract class ConfabulationObject {
 			Module mod = modules.get(m);
 			if (!mod.isLocked()) {
 				fired += getAndFireLinksInModule(m,context);
-				mod.normalize(false);
+				mod.normalize();
 			}
 		}
 		return fired;
 	}
 	
-	public void limitLinksInModule(Module mod,ModuleSymbol sourceSymbol,KbContext context) {
+	public void limitLinksInModule(Module mod,ModuleSymbol sourceSymbol,int distance,KbContext context) {
 		List<ModuleSymbol> modSymsComp = mod.getActiveSymbols();
 		for (ModuleSymbol modSym: modSymsComp) {
-			List<KbLink> lnks = kb.getLinks(sourceSymbol.symbol,1,context.contextSymbol,modSym.symbol,caseSensitive);
+			List<KbLink> lnks = kb.getLinks(sourceSymbol.symbol,distance,context.contextSymbol,modSym.symbol,caseSensitive);
 			if (lnks.size()==0) {
 				mod.supressSymbol(modSym.symbol);
 			}

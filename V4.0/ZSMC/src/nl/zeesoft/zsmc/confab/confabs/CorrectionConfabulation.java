@@ -34,25 +34,39 @@ public class CorrectionConfabulation extends ConfabulationObject {
 			workers.add(new ModuleSequenceWorker(this, m, contextSymbol));
 		}
 		context = kb.getContext(contextSymbol);
+		int unknown = 0;
 		int m = 0;
 		for (String symbol: symbols) {
-			Module mod = modules.get(m);
 			if (context.knownSymbols.contains(symbol)) {
+				Module mod = modules.get(m);
 				mod.setActiveSymbol(symbol);
 				mod.setLocked(true);
 			} else {
-				long stopAfterMs = (maxTime / 5);
-				List<String> syms = corrector.getVariations(symbol,context.knownSymbols,started,stopAfterMs,alphabet);
-				if (syms.size()==1) {
-					mod.setActiveSymbol(syms.get(0));
-					mod.setLocked(true);
-				} else {
-					for (String sym: syms) {
-						mod.exciteSymbol(sym,context.linkBandwidth);
-					}
-				}
+				unknown++;
 			}
 			m++;
+		}
+		if (unknown > 0) {
+			m = 0;
+			int u = 0;
+			long uMs = (((maxTime / 3) * 2) / unknown);
+			for (String symbol: symbols) {
+				if (!context.knownSymbols.contains(symbol)) {
+					u++;
+					long stopAfterMs = uMs * u;
+					Module mod = modules.get(m);
+					List<String> syms = corrector.getVariations(symbol,context.knownSymbols,started,stopAfterMs,alphabet);
+					if (syms.size()==1) {
+						mod.setActiveSymbol(syms.get(0));
+						mod.setLocked(true);
+					} else {
+						for (String sym: syms) {
+							mod.exciteSymbol(sym,context.linkBandwidth);
+						}
+					}
+				}
+				m++;
+			}
 		}
 		initializeModules(contextSymbol);
 		logModuleStateNoLock("Initialized modules");

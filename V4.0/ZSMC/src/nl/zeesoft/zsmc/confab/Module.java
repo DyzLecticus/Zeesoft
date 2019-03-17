@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
+import nl.zeesoft.zsmc.kb.KbContext;
 
 public class Module extends Locker {
 	private boolean								locked			= false;
@@ -61,7 +63,11 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 	
-	public ModuleSymbol normalize(boolean lock) {
+	public ModuleSymbol normalize() {
+		return normalize(false,null,null,null);
+	}
+	
+	public ModuleSymbol normalize(boolean checkLock,Module nextModule,ConfabulationObject confab,KbContext context) {
 		ModuleSymbol winner = null;
 		lockMe(this);
 		if (!locked) {
@@ -71,14 +77,18 @@ public class Module extends Locker {
 				List<ModuleSymbol> winners = new ArrayList<ModuleSymbol>();
 				for (ModuleSymbol modSym: modSyms) {
 					modSym.probNormalized = modSym.prob / highest;
-					if (lock && modSym.probNormalized==1D) {
+					if (checkLock && modSym.probNormalized==1D) {
 						winners.add(modSym);
 					}
 				}
 				if (winners.size()==1) {
 					winner = winners.get(0);
 					setActiveSymbolNoLock(winner.symbol);
+					locked = true;
 				}
+			}
+			if (winner!=null && nextModule!=null && confab!=null && context!=null && confab.strict && !nextModule.isLocked()) {
+				confab.limitLinksInModule(nextModule,winner,1,context);
 			}
 		}
 		unlockMe(this);

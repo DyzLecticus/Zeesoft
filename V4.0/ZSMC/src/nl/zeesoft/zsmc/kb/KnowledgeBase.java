@@ -122,9 +122,12 @@ public class KnowledgeBase extends Locker {
 	}
 	
 	public List<KbLink> getLinks(String symbolFrom,int distance,String contextSymbol,String symbolTo,boolean caseSensitive) {
-		List<KbLink> r = null;
+		List<KbLink> r = new ArrayList<KbLink>();
 		lockMe(this);
-		r = getLinksNoLock(symbolFrom,distance,contextSymbol,symbolTo,caseSensitive);
+		List<KbLink> internal = getLinksNoLock(symbolFrom,distance,contextSymbol,symbolTo,caseSensitive);
+		for (KbLink link: internal) {
+			r.add(link.copy());
+		}
 		unlockMe(this);
 		return r;
 	}

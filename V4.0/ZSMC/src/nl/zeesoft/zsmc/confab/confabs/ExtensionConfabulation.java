@@ -14,7 +14,6 @@ import nl.zeesoft.zsmc.kb.KnowledgeBase;
 public class ExtensionConfabulation extends ConfabulationObject {
 	public String				contextSymbol	= "";
 	public int					extend			= 1;
-	public boolean				strict			= true;
 
 	public ZStringSymbolParser	extension		= new ZStringSymbolParser();
 	
@@ -45,11 +44,15 @@ public class ExtensionConfabulation extends ConfabulationObject {
 		int i = 0;
 		for (Module mod: modules) {
 			if (i>=symbols.size()) {
+				List<ModuleSymbol> modSyms = mod.getActiveSymbols();
 				if (mod.isLocked()) {
-					List<ModuleSymbol> modSyms = mod.getActiveSymbols();
 					if (modSyms.size()>0) {
 						syms.add(modSyms.get(0).symbol);
 					}
+				} else if (modSyms.size()>0) {
+					syms.add(modSyms.get(0).symbol);
+				} else if (unknownSymbol.length()>0) {
+					syms.add(unknownSymbol);
 				}
 			}
 			i++;
