@@ -142,12 +142,14 @@ public abstract class ConfabulationObject {
 	
 	public void limitLinksInModule(Module mod,ModuleSymbol sourceSymbol,int distance,KbContext context) {
 		List<ModuleSymbol> modSymsComp = mod.getActiveSymbols();
+		List<String> exceptions = new ArrayList<String>();
 		for (ModuleSymbol modSym: modSymsComp) {
 			List<KbLink> lnks = kb.getLinks(sourceSymbol.symbol,distance,context.contextSymbol,modSym.symbol,caseSensitive);
-			if (lnks.size()==0) {
-				mod.supressSymbol(modSym.symbol);
+			if (lnks.size()>0) {
+				exceptions.add(modSym.symbol);
 			}
 		}
+		mod.supressSymbolsExcept(exceptions);
 	}
 	
 	public int getAndFireLinksInModule(int moduleIndex,KbContext context) {

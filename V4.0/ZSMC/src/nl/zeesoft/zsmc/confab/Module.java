@@ -67,6 +67,10 @@ public class Module extends Locker {
 		return normalize(false,null,null,null);
 	}
 	
+	public ModuleSymbol normalizeCheckLock() {
+		return normalize(true,null,null,null);
+	}
+	
 	public ModuleSymbol normalize(boolean checkLock,Module nextModule,ConfabulationObject confab,KbContext context) {
 		ModuleSymbol winner = null;
 		lockMe(this);
@@ -94,14 +98,19 @@ public class Module extends Locker {
 		unlockMe(this);
 		return winner;
 	}
-	
-	public void supressSymbol(String symbol) {
+
+	public void supressSymbolsExcept(List<String> exceptions) {
 		lockMe(this);
 		if (!locked) {
-			ModuleSymbol modSym = symbols.remove(symbol);
-			if (modSym!=null) {
-				modSym.prob = 0D;
-				modSym.probNormalized = 0D;
+			List<ModuleSymbol> syms = new ArrayList<ModuleSymbol>(symbols.values());
+			for (ModuleSymbol mSym: syms) {
+				if (!exceptions.contains(mSym.symbol)) {
+					ModuleSymbol modSym = symbols.remove(mSym.symbol);
+					if (modSym!=null) {
+						modSym.prob = 0D;
+						modSym.probNormalized = 0D;
+					}
+				}
 			}
 		}
 		unlockMe(this);
