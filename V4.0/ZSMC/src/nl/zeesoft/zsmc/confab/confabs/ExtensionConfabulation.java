@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsmc.confab.Module;
 import nl.zeesoft.zsmc.confab.ModuleSequenceWorker;
 import nl.zeesoft.zsmc.confab.ModuleSymbol;
+import nl.zeesoft.zsmc.kb.KbContext;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public class ExtensionConfabulation extends ConfabulationObject {
@@ -20,12 +21,13 @@ public class ExtensionConfabulation extends ConfabulationObject {
 	@Override
 	public void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {
 		super.initialize(msgr,uni,kb);
+		KbContext context = kb.getContext(contextSymbol);
 		for (int m = 0; m < (symbols.size() + extend); m++) {
 			Module mod = new Module(msgr);
 			modules.add(mod);
 		}
 		for (int m = 0; m < modules.size(); m++) {
-			workers.add(new ModuleSequenceWorker(this, m, contextSymbol));
+			workers.add(new ModuleSequenceWorker(this,m,context));
 		}
 		int m = 0;
 		for (String symbol: symbols) {
@@ -34,7 +36,7 @@ public class ExtensionConfabulation extends ConfabulationObject {
 			mod.setLocked(true);
 			m++;
 		}
-		initializeModules(contextSymbol);
+		initializeModules(context);
 		logModuleStateNoLock("Initialized modules");
 	}
 

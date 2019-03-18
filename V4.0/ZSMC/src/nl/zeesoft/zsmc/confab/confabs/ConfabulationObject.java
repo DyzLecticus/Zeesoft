@@ -120,9 +120,8 @@ public abstract class ConfabulationObject {
 		return r;
 	}
 	
-	protected int initializeModules(String contextSymbol) {
+	protected int initializeModules(KbContext context) {
 		int fired = 0;
-		KbContext context = kb.getContext(contextSymbol);
 		for (int m = 0; m < modules.size(); m++) {
 			Module mod = modules.get(m);
 			if (!mod.isLocked()) {

@@ -2,12 +2,14 @@ package nl.zeesoft.zsmc.confab.confabs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zsmc.confab.Module;
 import nl.zeesoft.zsmc.confab.ModuleContextWorker;
 import nl.zeesoft.zsmc.confab.ModuleSymbol;
+import nl.zeesoft.zsmc.kb.KbContext;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public class ContextConfabulation extends ConfabulationObject {
@@ -17,8 +19,9 @@ public class ContextConfabulation extends ConfabulationObject {
 	public void initialize(Messenger msgr, WorkerUnion uni,KnowledgeBase kb) {
 		super.initialize(msgr,uni,kb);
 		modules.add(new Module(msgr));
+		SortedMap<String,KbContext> contexts = kb.getContexts();
 		for (int s = 0; s < symbols.size(); s++) {
-			workers.add(new ModuleContextWorker(this,s,modules.get(0),kb.getContexts()));
+			workers.add(new ModuleContextWorker(this,s,modules.get(0),contexts));
 		}
 	}
 	

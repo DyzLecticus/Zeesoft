@@ -9,10 +9,10 @@ public class ModuleSequenceWorker extends ModuleWorker {
 	private Module					next			= null;
 	private KbContext				context			= null;
 	
-	public ModuleSequenceWorker(ConfabulationObject confab,int moduleIndex,String contextSymbol) {
+	public ModuleSequenceWorker(ConfabulationObject confab,int moduleIndex,KbContext context) {
 		super(confab);
 		this.moduleIndex = moduleIndex;
-		context = confab.kb.getContext(contextSymbol);
+		this.context = context;
 		module = confab.modules.get(moduleIndex);
 		if (moduleIndex<(confab.modules.size() - 1)) {
 			next = confab.modules.get(moduleIndex + 1);

@@ -26,14 +26,14 @@ public class CorrectionConfabulation extends ConfabulationObject {
 	@Override
 	public void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {
 		super.initialize(msgr,uni,kb);
+		context = kb.getContext(contextSymbol);
 		for (int m = 0; m < symbols.size(); m++) {
 			Module mod = new Module(msgr);
 			modules.add(mod);
 		}
 		for (int m = 0; m < modules.size(); m++) {
-			workers.add(new ModuleSequenceWorker(this,m,contextSymbol));
+			workers.add(new ModuleSequenceWorker(this,m,context));
 		}
-		context = kb.getContext(contextSymbol);
 		int unknown = 0;
 		int m = 0;
 		for (String symbol: symbols) {
@@ -68,7 +68,7 @@ public class CorrectionConfabulation extends ConfabulationObject {
 				m++;
 			}
 		}
-		initializeModules(contextSymbol);
+		initializeModules(context);
 		logModuleStateNoLock("Initialized modules");
 	}
 	
