@@ -3,6 +3,7 @@ package nl.zeesoft.zsmc.confab.confabs;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZIntegerGenerator;
@@ -50,14 +51,6 @@ public abstract class ConfabulationObject {
 	public void finalize() {
 		modules.clear();
 		workers.clear();
-	}
-	
-	public List<Module> copyModules() {
-		List<Module> r = new ArrayList<Module>();
-		for (Module mod: modules) {
-			r.add(mod.copy());
-		}
-		return r;
 	}
 
 	public void confabulate() {
@@ -141,7 +134,7 @@ public abstract class ConfabulationObject {
 	}
 	
 	public void limitLinksInModule(Module mod,ModuleSymbol sourceSymbol,int distance,KbContext context) {
-		List<ModuleSymbol> modSymsComp = mod.getActiveSymbols();
+		List<ModuleSymbol> modSymsComp = mod.getActiveSymbolsNormalized();
 		List<String> exceptions = new ArrayList<String>();
 		for (ModuleSymbol modSym: modSymsComp) {
 			List<KbLink> lnks = kb.getLinks(sourceSymbol.symbol,distance,context.contextSymbol,modSym.symbol,caseSensitive);
@@ -151,7 +144,30 @@ public abstract class ConfabulationObject {
 		}
 		mod.supressSymbolsExcept(exceptions);
 	}
-	
+
+	public int getAndFireLinksInContextModule(int symbolIndex,Module contextModule,SortedMap<String,KbContext> contexts) {
+		int fired = 0;
+		String symbolFrom = symbols.get(symbolIndex);
+		for (int d = 1; d <= kb.getMaxDistance(); d++) {
+			int i = symbolIndex + d;
+			if (i < symbols.size()) {
+				String symbolTo = symbols.get(i);
+				List<KbLink> lnks = kb.getLinks(symbolFrom,d,null,symbolTo,caseSensitive);
+				for (KbLink lnk: lnks) {
+					if (lnk.context.length()>0) {
+						KbContext context = contexts.get(lnk.context);
+						double prob = getFireProb(lnk,context);
+						contextModule.exciteSymbol(lnk.context,prob);
+						fired++;
+					}
+				}
+			} else {
+				break;
+			}
+		}
+		return fired;
+	}
+
 	public int getAndFireLinksInModule(int moduleIndex,KbContext context) {
 		int fired = 0;
 		Module module = modules.get(moduleIndex);
@@ -163,7 +179,7 @@ public abstract class ConfabulationObject {
 		if (end>modules.size()) {
 			end = modules.size();
 		}
-		List<ModuleSymbol> modSyms = module.getActiveSymbols();
+		List<ModuleSymbol> modSyms = module.getActiveSymbolsNormalized();
 		for (int i = start; i<end; i++) {
 			if (i!=moduleIndex) {
 				int distance = 0;
@@ -172,7 +188,7 @@ public abstract class ConfabulationObject {
 				} else {
 					distance = i - moduleIndex;
 				}
-				List<ModuleSymbol> modSymsComp = modules.get(i).getActiveSymbols();
+				List<ModuleSymbol> modSymsComp = modules.get(i).getActiveSymbolsNormalized();
 				if (modSyms.size()>0) {
 					for (ModuleSymbol modSym: modSyms) {
 						fired += getAndFireLinks(module,modSymsComp,(i<moduleIndex),distance,modSym.symbol,context);
@@ -206,9 +222,17 @@ public abstract class ConfabulationObject {
 		}
 		return fired;
 	}
+
+	private double getFireProb(KbLink lnk,KbContext context) {
+		return getFireProb(1D,lnk,context);
+	}
 	
 	private double getFireProb(ModuleSymbol sourceSymbol,KbLink lnk,KbContext context) {
-		double prob = ((context.linkBandwidth + (context.linkMaxProb - lnk.prob)) * sourceSymbol.probNormalized);
+		return getFireProb(sourceSymbol.probNormalized,lnk,context);
+	}
+
+	private double getFireProb(double sourceProb,KbLink lnk,KbContext context) {
+		double prob = ((context.linkBandwidth + (context.linkMaxProb - lnk.prob)) * sourceProb);
 		if (noise>0D) {
 			double mult = (noise / 100D) * (double)generator.getNewInteger();
 			prob += (prob * mult);

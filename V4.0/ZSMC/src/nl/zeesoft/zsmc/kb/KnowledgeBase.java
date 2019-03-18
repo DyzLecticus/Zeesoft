@@ -120,7 +120,17 @@ public class KnowledgeBase extends Locker {
 		unlockMe(this);
 		return r;
 	}
-	
+
+	public SortedMap<String,KbContext> getContexts() {
+		SortedMap<String,KbContext> r = new TreeMap<String,KbContext>();
+		lockMe(this);
+		for (KbContext ctxt: contexts.values()) {
+			r.put(ctxt.contextSymbol,ctxt.copy());
+		}
+		unlockMe(this);
+		return r;
+	}
+
 	public List<KbLink> getLinks(String symbolFrom,int distance,String contextSymbol,String symbolTo,boolean caseSensitive) {
 		List<KbLink> r = new ArrayList<KbLink>();
 		lockMe(this);

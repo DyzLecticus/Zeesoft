@@ -31,7 +31,7 @@ public class CorrectionConfabulation extends ConfabulationObject {
 			modules.add(mod);
 		}
 		for (int m = 0; m < modules.size(); m++) {
-			workers.add(new ModuleSequenceWorker(this, m, contextSymbol));
+			workers.add(new ModuleSequenceWorker(this,m,contextSymbol));
 		}
 		context = kb.getContext(contextSymbol);
 		int unknown = 0;
@@ -79,7 +79,7 @@ public class CorrectionConfabulation extends ConfabulationObject {
 		for (Module mod: modules) {
 			String oriSym = symbols.get(i);
 			if (mod.isLocked()) {
-				List<ModuleSymbol> modSyms = mod.getActiveSymbols();
+				List<ModuleSymbol> modSyms = mod.getActiveSymbolsNormalized();
 				if (modSyms.size()>0) {
 					String corSym = modSyms.get(0).symbol;
 					syms.add(corSym);

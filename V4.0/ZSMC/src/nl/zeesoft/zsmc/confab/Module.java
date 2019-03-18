@@ -18,17 +18,6 @@ public class Module extends Locker {
 		super(msgr);
 	}
 
-	public Module copy() {
-		Module r = new Module(getMessenger());
-		lockMe(this);
-		r.locked = this.locked;
-		for (ModuleSymbol modSym: this.symbols.values()) {
-			r.symbols.put(modSym.symbol,modSym.copy());
-		}
-		unlockMe(this);
-		return r;
-	}
-
 	public boolean isLocked() {
 		boolean r = false;
 		lockMe(this);
@@ -116,12 +105,20 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 
-	public List<ModuleSymbol> getActiveSymbols() {
+	public List<ModuleSymbol> getActiveSymbolsNormalized() {
 		lockMe(this);
 		List<ModuleSymbol> r = getSymbolsNoLock(true,true);
 		unlockMe(this);
 		return r;
 	}
+	
+	public List<ModuleSymbol> getActiveSymbols() {
+		lockMe(this);
+		List<ModuleSymbol> r = getSymbolsNoLock(false,true);
+		unlockMe(this);
+		return r;
+	}
+
 	
 	protected List<ModuleSymbol> getSymbolsNoLock(boolean normalized,boolean copy) {
 		List<ModuleSymbol> r = new ArrayList<ModuleSymbol>();

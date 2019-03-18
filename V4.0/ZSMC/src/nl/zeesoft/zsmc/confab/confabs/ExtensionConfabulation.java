@@ -44,7 +44,7 @@ public class ExtensionConfabulation extends ConfabulationObject {
 		int i = 0;
 		for (Module mod: modules) {
 			if (i>=symbols.size()) {
-				List<ModuleSymbol> modSyms = mod.getActiveSymbols();
+				List<ModuleSymbol> modSyms = mod.getActiveSymbolsNormalized();
 				if (mod.isLocked()) {
 					if (modSyms.size()>0) {
 						syms.add(modSyms.get(0).symbol);
