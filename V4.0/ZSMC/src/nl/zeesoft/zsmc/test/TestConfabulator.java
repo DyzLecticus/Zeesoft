@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zsmc.confab.Confabulator;
+import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 import nl.zeesoft.zsmc.confab.confabs.ContextConfabulation;
 import nl.zeesoft.zsmc.confab.confabs.CorrectionConfabulation;
 import nl.zeesoft.zsmc.confab.confabs.ExtensionConfabulation;
@@ -67,51 +68,32 @@ public class TestConfabulator extends TestObject {
 		exConfab.appendLog = true;
 		exConfab.input.append("brain structures");
 		exConfab.extend = 7;
-		
-		System.out.println("Confabulating ...");
-		confabulator.confabulate(exConfab);
-		System.out.println(exConfab.log);
+		confabulate(confabulator,exConfab);
+		assertEqual(exConfab.extension.toString(),", modules, emerged that could be","Extension not match expectation");
 
 		exConfab = new ExtensionConfabulation();
 		exConfab.appendLog = true;
 		exConfab.input.append("My goal");
 		exConfab.extend = 7;
-		
-		System.out.println("Confabulating ...");
-		confabulator.confabulate(exConfab);
-		System.out.println(exConfab.log);
+		confabulate(confabulator,exConfab);
+		assertEqual(exConfab.extension.toString(),"is to understand and help people.","Extension not match expectation");
 
 		CorrectionConfabulation corConfab = new CorrectionConfabulation();
 		corConfab.appendLog = true;
 		corConfab.input.append("My game is");
-		
-		System.out.println("Confabulating ...");
-		confabulator.confabulate(corConfab);
-		System.out.println(corConfab.log);
+		confabulate(confabulator,corConfab);
+		assertEqual(corConfab.corrected.toString(),"My name is","Extension not match expectation");
 
 		ContextConfabulation conConfab = new ContextConfabulation();
 		conConfab.appendLog = true;
 		conConfab.input.append("My name is");
-		
+		confabulate(confabulator,conConfab);
+		assertEqual(conConfab.results.size(),1,"Number of contexts not match expectation");
+	}
+	
+	private void confabulate(Confabulator confabulator,ConfabulationObject confab) {
 		System.out.println("Confabulating ...");
-		confabulator.confabulate(conConfab);
-		System.out.println(conConfab.log);
-
-		/*
-		System.out.println("Confabulator max. distance: " + kb.getMaxDistance());
-		
-		KbContext def = kb.getContext("");
-		KbContext self = kb.getContext("Self");
-
-		assertEqual(def.totalSymbols,181,"Total symbols for default context does not match expectation");
-		assertEqual(def.totalLinks,1014,"Total links for default context does not match expectation");
-		assertEqual(self.totalSymbols,37,"Total symbols for 'Self' context does not match expectation");
-		assertEqual(self.totalLinks,152,"Total links for 'Self' context does not match expectation");
-		
-		System.out.println("Symbols/links for default context: " + def.totalSymbols + "/" + def.totalLinks);
-		System.out.println("Symbols/links for 'Name' context: " + self.totalSymbols + "/" + self.totalLinks);
-		System.out.println("Symbol/link bandwidth for default context: " + def.symbolBandwidth + "/" + def.linkBandwidth);
-		System.out.println("Symbol to link bandwidth factor for default context: " + def.symbolToLinkBandwidthFactor);
-		*/
+		confabulator.confabulate(confab);
+		System.out.println(confab.log);
 	}
 }

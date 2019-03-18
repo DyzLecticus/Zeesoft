@@ -111,7 +111,7 @@ public class Module extends Locker {
 		unlockMe(this);
 		return r;
 	}
-	
+
 	public List<ModuleSymbol> getActiveSymbols() {
 		lockMe(this);
 		List<ModuleSymbol> r = getSymbolsNoLock(false,true);
@@ -119,7 +119,6 @@ public class Module extends Locker {
 		return r;
 	}
 
-	
 	protected List<ModuleSymbol> getSymbolsNoLock(boolean normalized,boolean copy) {
 		List<ModuleSymbol> r = new ArrayList<ModuleSymbol>();
 		SortedMap<Double,List<ModuleSymbol>> syms = new TreeMap<Double,List<ModuleSymbol>>();
