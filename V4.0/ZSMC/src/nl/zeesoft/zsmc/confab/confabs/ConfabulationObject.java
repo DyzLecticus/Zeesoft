@@ -40,7 +40,7 @@ public abstract class ConfabulationObject {
 
 	private ZIntegerGenerator			generator		= new ZIntegerGenerator(1,100);
 
-	public void initialize(Messenger msgr, WorkerUnion uni,KnowledgeBase kb) {
+	public void initialize(Messenger msgr,WorkerUnion uni,KnowledgeBase kb) {
 		messenger = msgr;
 		union = uni;
 		this.kb = kb;

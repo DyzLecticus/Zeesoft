@@ -21,17 +21,17 @@ public class TestConfabulator extends TestObject {
 
 	@Override
 	protected void describe() {
-		/*
-		 * TODO: Describe
-		System.out.println("This test shows how to train a *Confabulator* to and use it to correct sequences, determine context, confabulate extensions and synonyms.");
+		System.out.println("This test shows how to create a *Confabulator* and use it to correct sequences, determine context and confabulate extensions.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
+		System.out.println("// Create the knowledge base");
+		System.out.println("KnowledgeBase kb = new KnowledgeBase(new Config(),4);");
+		System.out.println("// Train the knowledge base");
+		System.out.println("kb.learnSequence(\"A sequence to learn.\",\"OptionalContextSymbolToAssociate1 ContextSymbol2\");");
+		System.out.println("kb.calculateProbabilities();");
 		System.out.println("// Create the confabulator");
-		System.out.println("Confabulator conf = new Confabulator(new Config(),\"MockConfabulator\",4);");
-		System.out.println("// Train the confabulator");
-		System.out.println("conf.learnSequence(\"A sequence to learn.\",\"OptionalContextSymbolToAssociate1 ContextSymbol2\");");
-		System.out.println("conf.calculateProbabilities();");
+		System.out.println("Confabulator conf = new Confabulator(new Messenger(),new WorkerUnion(),kb,\"OptionalName\");");
 		System.out.println("// Create a correction confabulation");
 		System.out.println("CorrectionConfabulation confab1 = new CorrectionConfabulation();");
 		System.out.println("confab1.input.append(\"A sequence to correct\");");
@@ -52,10 +52,7 @@ public class TestConfabulator extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(Confabulator.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows;  ");
-		System.out.println(" * Some details about the trained confabulator  ");
-		System.out.println(" * The result of some confabulations  ");
-		 */
+		System.out.println("The output of this test shows the logs of some confabulations.  ");
 	}
 	
 	@Override
