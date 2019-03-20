@@ -23,23 +23,25 @@ public class Confabulator {
 	}
 	
 	public void confabulate(ConfabulationObject confab) {
-		confab.addLogLine("Initializing ...");
-		confab.initialize(messenger, union, kb);
-		confab.addLogLine("Confabulating ...");
-		confab.confabulate();
-		while(confab.isConfabulating()) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				if (messenger!=null) {
-					messenger.error(this,"Confabulation was interrupted",e);
-				} else {
-					e.printStackTrace();
+		if (confab.input.length()>0) {
+			confab.addLogLine("Initializing ...");
+			confab.initialize(messenger, union, kb);
+			confab.addLogLine("Confabulating ...");
+			confab.confabulate();
+			while(confab.isConfabulating()) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					if (messenger!=null) {
+						messenger.error(this,"Confabulation was interrupted",e);
+					} else {
+						e.printStackTrace();
+					}
 				}
 			}
+			confab.logModuleStateNoLock("Confabulated");
+			confab.addLogLine("Finalizing ...");
+			confab.finalize();
 		}
-		confab.logModuleStateNoLock("Confabulated");
-		confab.addLogLine("Finalizing ...");
-		confab.finalize();
 	}
 }

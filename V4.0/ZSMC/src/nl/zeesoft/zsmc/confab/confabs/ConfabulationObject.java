@@ -17,6 +17,7 @@ import nl.zeesoft.zsmc.confab.ModuleSymbol;
 import nl.zeesoft.zsmc.confab.ModuleWorker;
 import nl.zeesoft.zsmc.kb.KbContext;
 import nl.zeesoft.zsmc.kb.KbLink;
+import nl.zeesoft.zsmc.kb.KbSymbol;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public abstract class ConfabulationObject {	
@@ -41,6 +42,15 @@ public abstract class ConfabulationObject {
 	private ZIntegerGenerator			generator		= new ZIntegerGenerator(1,100);
 
 	public void initialize(Messenger msgr,WorkerUnion uni,KnowledgeBase kb) {
+		if (maxTime > 60000) {
+			maxTime = 60000;
+		}
+		if (noise > 1D) {
+			noise = 1D;
+		}
+		if (unknownSymbol.length()==0) {
+			unknownSymbol = "[?]";
+		}
 		messenger = msgr;
 		union = uni;
 		this.kb = kb;
@@ -144,6 +154,20 @@ public abstract class ConfabulationObject {
 		mod.supressSymbolsExcept(exceptions);
 	}
 
+	public int getAndFireSymbolsInContextModule(int symbolIndex,Module contextModule,SortedMap<String,KbContext> contexts) {
+		int fired = 0;
+		List<KbSymbol> syms = kb.getSymbols(symbols.get(symbolIndex), null, caseSensitive);
+		for (KbSymbol sym: syms) {
+			if (sym.context.length()>0) {
+				KbContext context = contexts.get(sym.context);
+				double prob = getFireProb(sym,context);
+				contextModule.exciteSymbol(sym.context,prob);
+				fired++;
+			}
+		}
+		return fired;
+	}
+
 	public int getAndFireLinksInContextModule(int symbolIndex,Module contextModule,SortedMap<String,KbContext> contexts) {
 		int fired = 0;
 		String symbolFrom = symbols.get(symbolIndex);
@@ -162,6 +186,21 @@ public abstract class ConfabulationObject {
 				}
 			} else {
 				break;
+			}
+		}
+		return fired;
+	}
+
+	public int getAndFireSymbolsInModule(int moduleIndex,KbContext context) {
+		int fired = 0;
+		Module module = modules.get(moduleIndex);
+		List<ModuleSymbol> modSyms = module.getActiveSymbolsNormalized();
+		for (ModuleSymbol modSym: modSyms) {
+			List<KbSymbol> kbSyms = kb.getSymbols(modSym.symbol, context.contextSymbol, caseSensitive);
+			for (KbSymbol kbSym: kbSyms) {
+				double prob = getFireProb(kbSym,context);
+				module.exciteSymbol(modSym.symbol,prob);
+				fired++;
 			}
 		}
 		return fired;
@@ -222,16 +261,25 @@ public abstract class ConfabulationObject {
 		return fired;
 	}
 
-	private double getFireProb(KbLink lnk,KbContext context) {
-		return getFireProb(1D,lnk,context);
-	}
-	
-	private double getFireProb(ModuleSymbol sourceSymbol,KbLink lnk,KbContext context) {
-		return getFireProb(sourceSymbol.probNormalized,lnk,context);
+	private double getFireProb(KbSymbol sym,KbContext context) {
+		return getFireProb(1D,sym.prob,context,true);
 	}
 
-	private double getFireProb(double sourceProb,KbLink lnk,KbContext context) {
-		double prob = ((context.linkBandwidth + (context.linkMaxProb - lnk.prob)) * sourceProb);
+	private double getFireProb(KbLink lnk,KbContext context) {
+		return getFireProb(1D,lnk.prob,context,false);
+	}
+
+	private double getFireProb(ModuleSymbol sourceSymbol,KbLink lnk,KbContext context) {
+		return getFireProb(sourceSymbol.probNormalized,lnk.prob,context,false);
+	}
+
+	private double getFireProb(double sourceProb,double kbProb,KbContext context,boolean symbol) {
+		double prob = 0D;
+		if (symbol) {
+			prob = ((context.symbolBandwidth + (context.symbolMaxProb - kbProb)) * sourceProb);
+		} else {
+			prob = ((context.linkBandwidth + (context.linkMaxProb - kbProb)) * sourceProb);
+		}
 		if (noise>0D) {
 			double mult = (noise / 100D) * (double)generator.getNewInteger();
 			prob += (prob * mult);

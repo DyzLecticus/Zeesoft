@@ -27,7 +27,11 @@ public class ModuleContextWorker extends ModuleWorker {
 			setDone(true);
 			stop();
 		} else {
-			confab.getAndFireLinksInContextModule(symbolIndex,contextModule,contexts);
+			if (confab.symbols.size()==1) {
+				confab.getAndFireSymbolsInContextModule(symbolIndex,contextModule,contexts);
+			} else {
+				confab.getAndFireLinksInContextModule(symbolIndex,contextModule,contexts);
+			}
 			setDone(true);
 			stop();
 		}

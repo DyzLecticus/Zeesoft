@@ -75,15 +75,34 @@ public class TestConfabulator extends TestObject {
 		confabulate(confabulator,exConfab);
 		assertEqual(exConfab.extension.toString(),"is to understand and help people.","Extension not match expectation");
 
+		exConfab = new ExtensionConfabulation();
+		exConfab.appendLog = true;
+		exConfab.input.append("Confabulation");
+		exConfab.extend = 1;
+		confabulate(confabulator,exConfab);
+		assertEqual(exConfab.extension.toString(),"theory","Extension not match expectation");
+
 		CorrectionConfabulation corConfab = new CorrectionConfabulation();
 		corConfab.appendLog = true;
 		corConfab.input.append("My game is");
 		confabulate(confabulator,corConfab);
-		assertEqual(corConfab.corrected.toString(),"My name is","Extension not match expectation");
+		assertEqual(corConfab.corrected.toString(),"My name is","Correction not match expectation");
+
+		corConfab = new CorrectionConfabulation();
+		corConfab.appendLog = true;
+		corConfab.input.append("bran");
+		confabulate(confabulator,corConfab);
+		assertEqual(corConfab.corrected.toString(),"brain","Correction not match expectation");
 
 		ContextConfabulation conConfab = new ContextConfabulation();
 		conConfab.appendLog = true;
 		conConfab.input.append("My name is");
+		confabulate(confabulator,conConfab);
+		assertEqual(conConfab.results.size(),1,"Number of contexts not match expectation");
+
+		conConfab = new ContextConfabulation();
+		conConfab.appendLog = true;
+		conConfab.input.append("brain");
 		confabulate(confabulator,conConfab);
 		assertEqual(conConfab.results.size(),1,"Number of contexts not match expectation");
 	}

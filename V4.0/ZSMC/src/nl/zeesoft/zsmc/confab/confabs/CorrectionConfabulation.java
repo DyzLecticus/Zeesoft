@@ -24,9 +24,12 @@ public class CorrectionConfabulation extends ConfabulationObject {
 	private SymbolCorrector		corrector		= new SymbolCorrector();
 	
 	@Override
-	public void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {
+	public void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {		
 		super.initialize(msgr,uni,kb);
 		context = kb.getContext(contextSymbol);
+		if (context==null) {
+			context = kb.getContext("");
+		}
 		for (int m = 0; m < symbols.size(); m++) {
 			Module mod = new Module(msgr);
 			modules.add(mod);
@@ -96,7 +99,7 @@ public class CorrectionConfabulation extends ConfabulationObject {
 			}
 			i++;
 		}
-		corrected.fromSymbols(syms,true,true);
+		corrected.fromSymbols(syms,false,true);
 		addLogLine("Finalized; " + corrected);
 		super.finalize();
 	}

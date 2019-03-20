@@ -141,6 +141,17 @@ public class KnowledgeBase extends Locker {
 		unlockMe(this);
 		return r;
 	}
+
+	public List<KbSymbol> getSymbols(String symbol,String contextSymbol,boolean caseSensitive) {
+		List<KbSymbol> r = new ArrayList<KbSymbol>();
+		lockMe(this);
+		List<KbSymbol> internal = getSymbolsNoLock(symbol,contextSymbol,caseSensitive);
+		for (KbSymbol sym: internal) {
+			r.add(sym.copy());
+		}
+		unlockMe(this);
+		return r;
+	}
 	
 	protected void learnContextNoLock(String contextSymbol) {
 		if (contexts.get(contextSymbol)==null) {

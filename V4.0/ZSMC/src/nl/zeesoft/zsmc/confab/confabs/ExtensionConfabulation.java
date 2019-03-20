@@ -21,7 +21,15 @@ public class ExtensionConfabulation extends ConfabulationObject {
 	@Override
 	public void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {
 		super.initialize(msgr,uni,kb);
+		if (extend < 1) {
+			extend = 1;
+		} else if (extend > 100) {
+			extend = 100;
+		}
 		KbContext context = kb.getContext(contextSymbol);
+		if (context==null) {
+			context = kb.getContext("");
+		}
 		for (int m = 0; m < (symbols.size() + extend); m++) {
 			Module mod = new Module(msgr);
 			modules.add(mod);

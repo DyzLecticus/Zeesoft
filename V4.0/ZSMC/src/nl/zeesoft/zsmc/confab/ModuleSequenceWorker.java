@@ -30,7 +30,11 @@ public class ModuleSequenceWorker extends ModuleWorker {
 			setDone(true);
 			stop();
 		} else {
-			confab.getAndFireLinksInModule(moduleIndex, context);
+			if (confab.symbols.size()==1) {
+				confab.getAndFireSymbolsInModule(moduleIndex,context);
+			} else {
+				confab.getAndFireLinksInModule(moduleIndex,context);
+			}
 			boolean checkLock = false;
 			Module prev = null;
 			if (moduleIndex>0) {
