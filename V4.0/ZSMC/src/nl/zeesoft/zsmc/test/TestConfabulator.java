@@ -78,9 +78,9 @@ public class TestConfabulator extends TestObject {
 		exConfab = new ExtensionConfabulation();
 		exConfab.appendLog = true;
 		exConfab.input.append("Confabulation");
-		exConfab.extend = 1;
+		exConfab.extend = 16;
 		confabulate(confabulator,exConfab);
-		assertEqual(exConfab.extension.toString(),"theory","Extension not match expectation");
+		assertEqual(exConfab.extension.toSymbolsPunctuated().size(),16,"Number of symbols not match expectation");
 
 		CorrectionConfabulation corConfab = new CorrectionConfabulation();
 		corConfab.appendLog = true;

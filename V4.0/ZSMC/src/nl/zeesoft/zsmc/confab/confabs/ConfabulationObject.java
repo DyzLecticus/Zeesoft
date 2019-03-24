@@ -25,6 +25,7 @@ public abstract class ConfabulationObject {
 	public boolean						caseSensitive	= false;
 	public long							maxTime			= 1000;
 	public boolean						appendLog		= false;
+	public double						threshold		= 0.3D;
 	public double						noise			= 0D;
 	public boolean						strict			= true;
 	public String						unknownSymbol	= "[?]";
@@ -136,7 +137,7 @@ public abstract class ConfabulationObject {
 			Module mod = modules.get(m);
 			if (!mod.isLocked()) {
 				fired += getAndFireLinksInModule(m,context);
-				mod.normalize();
+				mod.normalize(threshold);
 			}
 		}
 		return fired;
@@ -186,21 +187,6 @@ public abstract class ConfabulationObject {
 				}
 			} else {
 				break;
-			}
-		}
-		return fired;
-	}
-
-	public int getAndFireSymbolsInModule(int moduleIndex,KbContext context) {
-		int fired = 0;
-		Module module = modules.get(moduleIndex);
-		List<ModuleSymbol> modSyms = module.getActiveSymbolsNormalized();
-		for (ModuleSymbol modSym: modSyms) {
-			List<KbSymbol> kbSyms = kb.getSymbols(modSym.symbol, context.contextSymbol, caseSensitive);
-			for (KbSymbol kbSym: kbSyms) {
-				double prob = getFireProb(kbSym,context);
-				module.exciteSymbol(modSym.symbol,prob);
-				fired++;
 			}
 		}
 		return fired;

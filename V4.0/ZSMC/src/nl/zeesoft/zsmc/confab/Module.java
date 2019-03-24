@@ -52,15 +52,11 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 	
-	public ModuleSymbol normalize() {
-		return normalize(false,null,null,null);
+	public ModuleSymbol normalize(double threshold) {
+		return normalize(false,null,null,null,threshold);
 	}
 	
-	public ModuleSymbol normalizeCheckLock() {
-		return normalize(true,null,null,null);
-	}
-	
-	public ModuleSymbol normalize(boolean checkLock,Module nextModule,ConfabulationObject confab,KbContext context) {
+	public ModuleSymbol normalize(boolean checkLock,Module nextModule,ConfabulationObject confab,KbContext context,double threshold) {
 		ModuleSymbol winner = null;
 		lockMe(this);
 		if (!locked) {
@@ -70,7 +66,9 @@ public class Module extends Locker {
 				List<ModuleSymbol> winners = new ArrayList<ModuleSymbol>();
 				for (ModuleSymbol modSym: modSyms) {
 					modSym.probNormalized = modSym.prob / highest;
-					if (checkLock && modSym.probNormalized==1D) {
+					if (modSym.probNormalized<threshold) {
+						symbols.remove(modSym.symbol);
+					} else if (checkLock && modSym.probNormalized==1D) {
 						winners.add(modSym);
 					}
 				}

@@ -28,7 +28,7 @@ public class ContextConfabulation extends ConfabulationObject {
 	@Override
 	public void finalize() {
 		Module mod = modules.get(0);
-		mod.normalize();
+		mod.normalize(threshold);
 		List<ModuleSymbol> modSyms = mod.getActiveSymbolsNormalized();
 		for (ModuleSymbol modSym: modSyms) {
 			ContextResult context = new ContextResult();

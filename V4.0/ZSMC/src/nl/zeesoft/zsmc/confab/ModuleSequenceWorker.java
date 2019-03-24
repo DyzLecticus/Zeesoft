@@ -23,18 +23,14 @@ public class ModuleSequenceWorker extends ModuleWorker {
 	@Override
 	public void whileWorking() {
 		if (confabulationIsTimeOut()) {
-			module.normalize(true,next,confab,context);
+			module.normalize(true,next,confab,context,confab.threshold);
 			setDone(true);
 			stop();
 		} else if (module.isLocked()) {
 			setDone(true);
 			stop();
 		} else {
-			if (confab.symbols.size()==1) {
-				confab.getAndFireSymbolsInModule(moduleIndex,context);
-			} else {
-				confab.getAndFireLinksInModule(moduleIndex,context);
-			}
+			confab.getAndFireLinksInModule(moduleIndex,context);
 			boolean checkLock = false;
 			Module prev = null;
 			if (moduleIndex>0) {
@@ -52,7 +48,7 @@ public class ModuleSequenceWorker extends ModuleWorker {
 			if (prev==null || prev.isLocked()) {
 				checkLock = true;
 			}
-			module.normalize(checkLock,next,confab,context);
+			module.normalize(checkLock,next,confab,context,confab.threshold);
 		}
 	}
 }
