@@ -147,35 +147,4 @@ public class ModZSMC extends ModObject implements StateListener {
 	protected ZSMCTester getNewTester() {
 		return new ZSMCTester(configuration,configuration.getModuleUrl(NAME) + JsonZSMCRequestHandler.PATH);
 	}
-	
-	/* TODO: Add tester
-	/*
-	public ModZSMC(Config config) {
-		super(config);
-		name = NAME;
-		desc.append(DESC);
-	}
-	
-	@Override
-	public void install() {
-	}
-	
-	@Override
-	public void initialize() {
-		handlers.add(new HtmlZSMCIndexHandler(configuration,this));
-		handlers.add(new JsonModTestResultsHandler(configuration,this));
-		handlers.add(new HtmlZSMCStateHandler(configuration,this));
-		super.initialize();
-	}
-	
-	@Override
-	public void destroy() {
-		super.destroy();
-	}
-
-	@Override
-	public void stateChanged(Object source, boolean open) {
-		
-	}
-	*/
 }
