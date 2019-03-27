@@ -1,4 +1,4 @@
-package nl.zeesoft.zsmc.confab.confabs;
+package nl.zeesoft.zsmc.confab;
 
 public class Correction {
 	public int 		index		= 0;

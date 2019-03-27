@@ -1,11 +1,11 @@
 package nl.zeesoft.zsmc.confab;
 
 public class ModuleSymbol {
-	public String		symbol			= "";
-	public double		prob			= 0;
-	public double		probNormalized	= 0;
+	protected String		symbol			= "";
+	protected double		prob			= 0;
+	protected double		probNormalized	= 0;
 
-	public ModuleSymbol copy() {
+	protected ModuleSymbol copy() {
 		ModuleSymbol r = new ModuleSymbol();
 		r.symbol = this.symbol;
 		r.prob = this.prob;

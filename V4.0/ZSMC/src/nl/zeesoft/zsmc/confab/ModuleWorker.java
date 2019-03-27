@@ -3,14 +3,13 @@ package nl.zeesoft.zsmc.confab;
 import java.util.Date;
 
 import nl.zeesoft.zdk.thread.Worker;
-import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 
 public abstract class ModuleWorker extends Worker {
 	protected ConfabulationObject	confab			= null;
 
 	private boolean					done			= false;
 	
-	public ModuleWorker(ConfabulationObject confab) {
+	protected ModuleWorker(ConfabulationObject confab) {
 		super(confab.messenger,confab.union);
 		this.confab = confab;
 		setSleep(0);
@@ -40,7 +39,7 @@ public abstract class ModuleWorker extends Worker {
 		unlockMe(this);
 	}
 
-	public boolean isDone() {
+	protected boolean isDone() {
 		boolean r = false;
 		lockMe(this);
 		r = done;

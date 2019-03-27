@@ -1,4 +1,4 @@
-package nl.zeesoft.zsmc.confab.confabs;
+package nl.zeesoft.zsmc.confab;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,6 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zsmc.confab.Module;
-import nl.zeesoft.zsmc.confab.ModuleSequenceWorker;
-import nl.zeesoft.zsmc.confab.ModuleSymbol;
-import nl.zeesoft.zsmc.confab.SymbolCorrector;
 import nl.zeesoft.zsmc.kb.KbContext;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
@@ -24,7 +20,7 @@ public class CorrectionConfabulation extends ConfabulationObject {
 	private SymbolCorrector		corrector		= new SymbolCorrector();
 	
 	@Override
-	public void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {		
+	protected void initialize(Messenger msgr, WorkerUnion uni, KnowledgeBase kb) {		
 		super.initialize(msgr,uni,kb);
 		context = kb.getContext(contextSymbol);
 		if (context==null) {
@@ -76,7 +72,7 @@ public class CorrectionConfabulation extends ConfabulationObject {
 	}
 	
 	@Override
-	public void finalize() {
+	protected void finalize() {
 		List<String> syms = new ArrayList<String>();
 		int i = 0;
 		for (Module mod: modules) {

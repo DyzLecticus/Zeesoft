@@ -7,18 +7,17 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
-import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 import nl.zeesoft.zsmc.kb.KbContext;
 
 public class Module extends Locker {
 	private boolean								locked			= false;
 	private SortedMap<String,ModuleSymbol>		symbols			= new TreeMap<String,ModuleSymbol>();
 
-	public Module(Messenger msgr) {
+	protected Module(Messenger msgr) {
 		super(msgr);
 	}
 
-	public boolean isLocked() {
+	protected boolean isLocked() {
 		boolean r = false;
 		lockMe(this);
 		r = locked;
@@ -26,19 +25,19 @@ public class Module extends Locker {
 		return r;
 	}
 
-	public void setLocked(boolean locked) {
+	protected void setLocked(boolean locked) {
 		lockMe(this);
 		this.locked = locked;
 		unlockMe(this);
 	}
 
-	public void setActiveSymbol(String symbol) {
+	protected void setActiveSymbol(String symbol) {
 		lockMe(this);
 		setActiveSymbolNoLock(symbol);
 		unlockMe(this);
 	}
 	
-	public void exciteSymbol(String symbol,double prob) {
+	protected void exciteSymbol(String symbol,double prob) {
 		lockMe(this);
 		if (!locked) {
 			ModuleSymbol modSym = symbols.get(symbol);
@@ -52,11 +51,11 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 	
-	public ModuleSymbol normalize(double threshold) {
+	protected ModuleSymbol normalize(double threshold) {
 		return normalize(false,null,null,null,threshold);
 	}
 	
-	public ModuleSymbol normalize(boolean checkLock,Module nextModule,ConfabulationObject confab,KbContext context,double threshold) {
+	protected ModuleSymbol normalize(boolean checkLock,Module nextModule,ConfabulationObject confab,KbContext context,double threshold) {
 		ModuleSymbol winner = null;
 		lockMe(this);
 		if (!locked) {
@@ -86,7 +85,7 @@ public class Module extends Locker {
 		return winner;
 	}
 
-	public void supressSymbolsExcept(List<String> exceptions) {
+	protected void supressSymbolsExcept(List<String> exceptions) {
 		lockMe(this);
 		if (!locked) {
 			List<ModuleSymbol> syms = new ArrayList<ModuleSymbol>(symbols.values());
@@ -103,14 +102,14 @@ public class Module extends Locker {
 		unlockMe(this);
 	}
 
-	public List<ModuleSymbol> getActiveSymbolsNormalized() {
+	protected List<ModuleSymbol> getActiveSymbolsNormalized() {
 		lockMe(this);
 		List<ModuleSymbol> r = getSymbolsNoLock(true,true);
 		unlockMe(this);
 		return r;
 	}
 
-	public List<ModuleSymbol> getActiveSymbols() {
+	protected List<ModuleSymbol> getActiveSymbols() {
 		lockMe(this);
 		List<ModuleSymbol> r = getSymbolsNoLock(false,true);
 		unlockMe(this);

@@ -2,7 +2,6 @@ package nl.zeesoft.zsmc.confab;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public class Confabulator {

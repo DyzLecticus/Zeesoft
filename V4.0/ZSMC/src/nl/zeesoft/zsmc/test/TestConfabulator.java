@@ -3,11 +3,11 @@ package nl.zeesoft.zsmc.test;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zsmc.confab.ConfabulationObject;
 import nl.zeesoft.zsmc.confab.Confabulator;
-import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
-import nl.zeesoft.zsmc.confab.confabs.ContextConfabulation;
-import nl.zeesoft.zsmc.confab.confabs.CorrectionConfabulation;
-import nl.zeesoft.zsmc.confab.confabs.ExtensionConfabulation;
+import nl.zeesoft.zsmc.confab.ContextConfabulation;
+import nl.zeesoft.zsmc.confab.CorrectionConfabulation;
+import nl.zeesoft.zsmc.confab.ExtensionConfabulation;
 import nl.zeesoft.zsmc.kb.KnowledgeBase;
 
 public class TestConfabulator extends TestObject {
@@ -50,6 +50,9 @@ public class TestConfabulator extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(TestKnowledgeBase.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockKnowledgeBase.class));
 		System.out.println(" * " + getTester().getLinkForClass(Confabulator.class));
+		System.out.println(" * " + getTester().getLinkForClass(ExtensionConfabulation.class));
+		System.out.println(" * " + getTester().getLinkForClass(CorrectionConfabulation.class));
+		System.out.println(" * " + getTester().getLinkForClass(ContextConfabulation.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the logs of some confabulations.  ");

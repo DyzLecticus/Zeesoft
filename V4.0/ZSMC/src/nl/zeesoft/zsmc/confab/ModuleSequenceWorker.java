@@ -1,6 +1,5 @@
 package nl.zeesoft.zsmc.confab;
 
-import nl.zeesoft.zsmc.confab.confabs.ConfabulationObject;
 import nl.zeesoft.zsmc.kb.KbContext;
 
 public class ModuleSequenceWorker extends ModuleWorker {
@@ -9,7 +8,7 @@ public class ModuleSequenceWorker extends ModuleWorker {
 	private Module					next			= null;
 	private KbContext				context			= null;
 	
-	public ModuleSequenceWorker(ConfabulationObject confab,int moduleIndex,KbContext context) {
+	protected ModuleSequenceWorker(ConfabulationObject confab,int moduleIndex,KbContext context) {
 		super(confab);
 		this.moduleIndex = moduleIndex;
 		this.context = context;

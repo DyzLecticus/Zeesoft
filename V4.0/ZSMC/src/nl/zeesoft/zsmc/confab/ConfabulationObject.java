@@ -1,4 +1,4 @@
-package nl.zeesoft.zsmc.confab.confabs;
+package nl.zeesoft.zsmc.confab;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,9 +12,6 @@ import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zsmc.confab.Module;
-import nl.zeesoft.zsmc.confab.ModuleSymbol;
-import nl.zeesoft.zsmc.confab.ModuleWorker;
 import nl.zeesoft.zsmc.kb.KbContext;
 import nl.zeesoft.zsmc.kb.KbLink;
 import nl.zeesoft.zsmc.kb.KbSymbol;
@@ -30,19 +27,20 @@ public abstract class ConfabulationObject {
 	public boolean						strict			= true;
 	public String						unknownSymbol	= "[?]";
 
-	public Messenger					messenger		= null;
-	public WorkerUnion					union			= null;
-	public KnowledgeBase				kb				= null;
+	protected Messenger					messenger		= null;
+	protected WorkerUnion				union			= null;
+	protected KnowledgeBase				kb				= null;
 	
 	public ZStringBuilder				log				= new ZStringBuilder();
 	public Date							started			= null;
 	public List<String>					symbols			= null;
-	public List<Module>					modules 		= new ArrayList<Module>();
-	public List<ModuleWorker>			workers			= new ArrayList<ModuleWorker>();
+
+	protected List<Module>				modules 		= new ArrayList<Module>();
+	protected List<ModuleWorker>		workers			= new ArrayList<ModuleWorker>();
 
 	private ZIntegerGenerator			generator		= new ZIntegerGenerator(1,100);
 
-	public void initialize(Messenger msgr,WorkerUnion uni,KnowledgeBase kb) {
+	protected void initialize(Messenger msgr,WorkerUnion uni,KnowledgeBase kb) {
 		if (maxTime > 60000) {
 			maxTime = 60000;
 		}
@@ -59,18 +57,18 @@ public abstract class ConfabulationObject {
 		symbols = input.toSymbolsPunctuated();
 	}
 	
-	public void finalize() {
+	protected void finalize() {
 		modules.clear();
 		workers.clear();
 	}
 
-	public void confabulate() {
+	protected void confabulate() {
 		for (Worker worker: workers) {
 			worker.start();
 		}
 	}
 
-	public boolean isConfabulating() {
+	protected boolean isConfabulating() {
 		boolean r = false;
 		for (ModuleWorker worker: workers) {
 			if (!worker.isDone()) {
@@ -81,11 +79,11 @@ public abstract class ConfabulationObject {
 		return r;
 	}
 	
-	public void addLogLine(String line) {
+	protected void addLogLine(String line) {
 		addLogLine(new ZStringBuilder(line));
 	}
 	
-	public void addLogLine(ZStringBuilder line) {
+	protected void addLogLine(ZStringBuilder line) {
 		if (appendLog) {
 			log.append((new ZDate()).getTimeString(true));
 			log.append(": ");
@@ -94,7 +92,7 @@ public abstract class ConfabulationObject {
 		}
 	}
 
-	public void logModuleStateNoLock(String logLine) {
+	protected void logModuleStateNoLock(String logLine) {
 		if (appendLog) {
 			ZStringBuilder line = new ZStringBuilder(logLine);
 			line.append(";");
@@ -143,7 +141,7 @@ public abstract class ConfabulationObject {
 		return fired;
 	}
 	
-	public void limitLinksInModule(Module mod,ModuleSymbol sourceSymbol,int distance,KbContext context) {
+	protected void limitLinksInModule(Module mod,ModuleSymbol sourceSymbol,int distance,KbContext context) {
 		List<ModuleSymbol> modSymsComp = mod.getActiveSymbolsNormalized();
 		List<String> exceptions = new ArrayList<String>();
 		for (ModuleSymbol modSym: modSymsComp) {
@@ -155,7 +153,7 @@ public abstract class ConfabulationObject {
 		mod.supressSymbolsExcept(exceptions);
 	}
 
-	public int getAndFireSymbolsInContextModule(int symbolIndex,Module contextModule,SortedMap<String,KbContext> contexts) {
+	protected int getAndFireSymbolsInContextModule(int symbolIndex,Module contextModule,SortedMap<String,KbContext> contexts) {
 		int fired = 0;
 		List<KbSymbol> syms = kb.getSymbols(symbols.get(symbolIndex), null, caseSensitive);
 		for (KbSymbol sym: syms) {
@@ -169,7 +167,7 @@ public abstract class ConfabulationObject {
 		return fired;
 	}
 
-	public int getAndFireLinksInContextModule(int symbolIndex,Module contextModule,SortedMap<String,KbContext> contexts) {
+	protected int getAndFireLinksInContextModule(int symbolIndex,Module contextModule,SortedMap<String,KbContext> contexts) {
 		int fired = 0;
 		String symbolFrom = symbols.get(symbolIndex);
 		for (int d = 1; d <= kb.getMaxDistance(); d++) {
@@ -192,7 +190,7 @@ public abstract class ConfabulationObject {
 		return fired;
 	}
 
-	public int getAndFireLinksInModule(int moduleIndex,KbContext context) {
+	protected int getAndFireLinksInModule(int moduleIndex,KbContext context) {
 		int fired = 0;
 		Module module = modules.get(moduleIndex);
 		int start = moduleIndex - kb.getMaxDistance();

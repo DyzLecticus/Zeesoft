@@ -1,4 +1,4 @@
-package nl.zeesoft.zsmc.confab.confabs;
+package nl.zeesoft.zsmc.confab;
 
 public class ContextResult {
 	public String 	contextSymbol	= "";
