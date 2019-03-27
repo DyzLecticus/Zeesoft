@@ -31,7 +31,7 @@ public class TestConfabulator extends TestObject {
 		System.out.println("kb.learnSequence(\"A sequence to learn.\",\"OptionalContextSymbolToAssociate1 ContextSymbol2\");");
 		System.out.println("kb.calculateProbabilities();");
 		System.out.println("// Create the confabulator");
-		System.out.println("Confabulator conf = new Confabulator(new Messenger(),new WorkerUnion(),kb,\"OptionalName\");");
+		System.out.println("Confabulator conf = new Confabulator(new Messenger(),new WorkerUnion(),kb);");
 		System.out.println("// Create a correction confabulation");
 		System.out.println("CorrectionConfabulation confab1 = new CorrectionConfabulation();");
 		System.out.println("confab1.input.append(\"A sequence to correct\");");
@@ -62,7 +62,7 @@ public class TestConfabulator extends TestObject {
 	protected void test(String[] args) {
 		KnowledgeBase kb = (KnowledgeBase) getTester().getMockedObject(MockKnowledgeBase.class.getName());
 		Config conf = new Config();
-		Confabulator confabulator = new Confabulator(conf.getMessenger(),conf.getUnion(),kb,"");
+		Confabulator confabulator = new Confabulator(conf.getMessenger(),conf.getUnion(),kb);
 		
 		ExtensionConfabulation exConfab = new ExtensionConfabulation();
 		exConfab.appendLog = true;

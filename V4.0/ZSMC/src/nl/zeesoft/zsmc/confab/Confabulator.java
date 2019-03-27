@@ -8,17 +8,11 @@ public class Confabulator {
 	private Messenger						messenger			= null;
 	private WorkerUnion						union				= null;
 	private KnowledgeBase					kb					= null;
-	private String							name				= "";
 
-	public Confabulator(Messenger msgr,WorkerUnion uni,KnowledgeBase kb,String name) {
+	public Confabulator(Messenger msgr,WorkerUnion uni,KnowledgeBase kb) {
 		messenger = msgr;
 		union = uni;
 		this.kb = kb;
-		this.name = name;
-	}
-	
-	public String getName() {
-		return name;
 	}
 	
 	public void confabulate(ConfabulationObject confab) {
