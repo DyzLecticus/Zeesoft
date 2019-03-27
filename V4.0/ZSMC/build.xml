@@ -17,7 +17,7 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zsmc nl/zeesoft/zsmc/mod nl/zeesoft/zsmc/mod/handler nl/zeesoft/zsmc/mod/resource nl/zeesoft/zsmc/confab nl/zeesoft/zsmc/dialog/confabs nl/zeesoft/zsmc/test zodb.jar znlb.jar zodb.jar zodb.jar zdk.jar"/>
+	<property name="classpath" value="nl/zeesoft/zsmc nl/zeesoft/zsmc/mod nl/zeesoft/zsmc/mod/handler nl/zeesoft/zsmc/mod/resource nl/zeesoft/zsmc/confab nl/zeesoft/zsmc/db nl/zeesoft/zsmc/kb nl/zeesoft/zsmc/request nl/zeesoft/zsmc/test zodb.jar zdk.jar"/>
 
 	<target name="copyZODB" description="Copy the ZODB release">
 		<mkdir dir="${lib}"/>
@@ -108,7 +108,6 @@
 		</manifest>		
 		<antcall target="devWar"/>
 		<antcall target="prodWar"/>
-		<copy file="${dist}/README.md" tofile="README.md"/>
 	</target>
 
 	<target name="devWar">
