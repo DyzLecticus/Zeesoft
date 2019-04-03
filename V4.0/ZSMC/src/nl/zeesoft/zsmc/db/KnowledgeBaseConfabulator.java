@@ -59,7 +59,7 @@ public class KnowledgeBaseConfabulator extends Locker {
 		lockMe(this);
 		if (trainingSet!=null) {
 			name = trainingSet.getName();
-			knowledgeBase = new KnowledgeBase(configuration.getMessenger(),maxDistance);
+			knowledgeBase = new KnowledgeBase(configuration.getMessenger(),maxDistance,false);
 			for (TrainingSequence seq: trainingSet.getSequences()) {
 				knowledgeBase.learnSequence(seq.sequence, seq.context);
 			}

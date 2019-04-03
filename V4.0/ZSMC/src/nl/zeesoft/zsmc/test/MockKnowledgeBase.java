@@ -28,7 +28,7 @@ public class MockKnowledgeBase extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
-		KnowledgeBase conf = new KnowledgeBase((new Config()).getMessenger(),4);
+		KnowledgeBase conf = new KnowledgeBase((new Config()).getMessenger(),4,false);
 		for (int i = 0; i < mockData.length; i++) {
 			conf.learnSequence(mockData[i],"Confabulation");
 		}

@@ -12,6 +12,8 @@ import nl.zeesoft.zdk.thread.Locker;
 public class KnowledgeBase extends Locker {
 	private int									maxDistance			= 0;
 
+	private boolean								threadSafe			= false;
+	
 	private SortedMap<String,KbContext>			contexts			= new TreeMap<String,KbContext>();
 	private SortedMap<String,KbSymbol>			symbols				= new TreeMap<String,KbSymbol>();
 	private SortedMap<String,KbLink>			links				= new TreeMap<String,KbLink>();
@@ -21,9 +23,15 @@ public class KnowledgeBase extends Locker {
 	private SortedMap<String,List<KbSymbol>>	symbolsNoContextUC	= new TreeMap<String,List<KbSymbol>>();
 	private SortedMap<String,List<KbLink>>		linksNoContextUC	= new TreeMap<String,List<KbLink>>();
 	
-	public KnowledgeBase(Messenger msgr,int maxDistance) {
+	/**
+	 * @param msgr The optional messenger
+	 * @param maxDistance The maximum link distance
+	 * @param threadSafe Indicates locking should be used to ensure thread safety
+	 */
+	public KnowledgeBase(Messenger msgr,int maxDistance, boolean threadSafe) {
 		super(msgr);
 		this.maxDistance = maxDistance;
+		this.threadSafe = threadSafe;
 		learnContextNoLock("");
 	}
 	
@@ -45,7 +53,7 @@ public class KnowledgeBase extends Locker {
 		if (!contextSymbols.contains("")) {
 			contextSymbols.add("");
 		}
-		lockMe(this);
+		threadLockMe();
 		for (String symbol: contextSymbols) {
 			learnContextNoLock(symbol);
 		}
@@ -65,11 +73,11 @@ public class KnowledgeBase extends Locker {
 				}
 			}
 		}
-		unlockMe(this);
+		threadUnlockMe();
 	}
 	
 	public void calculateProbabilities() {
-		lockMe(this);
+		threadLockMe();
 		for (KbContext ctxt: contexts.values()) {
 			ctxt.symbolMinProb = 1D;
 			ctxt.symbolMaxProb = 0D;
@@ -108,48 +116,48 @@ public class KnowledgeBase extends Locker {
 			}
 			ctxt.symbolToLinkBandwidthFactor = ctxt.linkBandwidth / ctxt.symbolBandwidth;
 		}
-		unlockMe(this);
+		threadUnlockMe();
 	}
 	
 	public KbContext getContext(String contextSymbol) {
 		KbContext r = null;
-		lockMe(this);
+		threadLockMe();
 		if (contexts.containsKey(contextSymbol)) {
 			r = contexts.get(contextSymbol).copy();
 		}
-		unlockMe(this);
+		threadUnlockMe();
 		return r;
 	}
 
 	public SortedMap<String,KbContext> getContexts() {
 		SortedMap<String,KbContext> r = new TreeMap<String,KbContext>();
-		lockMe(this);
+		threadLockMe();
 		for (KbContext ctxt: contexts.values()) {
 			r.put(ctxt.contextSymbol,ctxt.copy());
 		}
-		unlockMe(this);
+		threadUnlockMe();
 		return r;
 	}
 
 	public List<KbLink> getLinks(String symbolFrom,int distance,String contextSymbol,String symbolTo,boolean caseSensitive) {
 		List<KbLink> r = new ArrayList<KbLink>();
-		lockMe(this);
+		threadLockMe();
 		List<KbLink> internal = getLinksNoLock(symbolFrom,distance,contextSymbol,symbolTo,caseSensitive);
 		for (KbLink link: internal) {
 			r.add(link.copy());
 		}
-		unlockMe(this);
+		threadUnlockMe();
 		return r;
 	}
 
 	public List<KbSymbol> getSymbols(String symbol,String contextSymbol,boolean caseSensitive) {
 		List<KbSymbol> r = new ArrayList<KbSymbol>();
-		lockMe(this);
+		threadLockMe();
 		List<KbSymbol> internal = getSymbolsNoLock(symbol,contextSymbol,caseSensitive);
 		for (KbSymbol sym: internal) {
 			r.add(sym.copy());
 		}
-		unlockMe(this);
+		threadUnlockMe();
 		return r;
 	}
 	
@@ -334,5 +342,17 @@ public class KnowledgeBase extends Locker {
 			r = new ArrayList<KbLink>();
 		}
 		return r;
+	}
+	
+	private void threadLockMe() {
+		if (threadSafe) {
+			lockMe(this);
+		}
+	}
+	
+	private void threadUnlockMe() {
+		if (threadSafe) {
+			unlockMe(this);
+		}
 	}
 }
