@@ -45,8 +45,8 @@ public class TestKnowledgeBase extends TestObject {
 		KbContext def = kb.getContext("");
 		KbContext self = kb.getContext("Self");
 
-		assertEqual(def.totalSymbols,181,"Total symbols for default context does not match expectation");
-		assertEqual(def.totalLinks,1009,"Total links for default context does not match expectation");
+		assertEqual(def.totalSymbols,490,"Total symbols for default context does not match expectation");
+		assertEqual(def.totalLinks,4004,"Total links for default context does not match expectation");
 		assertEqual(self.totalSymbols,37,"Total symbols for 'Self' context does not match expectation");
 		assertEqual(self.totalLinks,152,"Total links for 'Self' context does not match expectation");
 		
