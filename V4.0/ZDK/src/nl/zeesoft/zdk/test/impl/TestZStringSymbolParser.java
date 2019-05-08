@@ -47,7 +47,7 @@ public class TestZStringSymbolParser extends TestObject {
 
 		splitter = new ZStringSymbolParser(":-D.");
 		symbols = splitter.toSymbolsPunctuated();
-		assertEqual(symbols.size(),2,"Smiley 2 was not parsed correctly");
+		assertEqual(symbols.size(),2,"Smiley 3 was not parsed correctly");
 
 		splitter = new ZStringSymbolParser(":-(.");
 		symbols = splitter.toSymbolsPunctuated();
@@ -55,7 +55,7 @@ public class TestZStringSymbolParser extends TestObject {
 		
 		splitter = new ZStringSymbolParser(")-:.");
 		symbols = splitter.toSymbolsPunctuated();
-		assertEqual(symbols.size(),2,"Frowny 1 was not parsed correctly");
+		assertEqual(symbols.size(),2,"Frowny 2 was not parsed correctly");
 		
 		splitter = new ZStringSymbolParser(TestZStringEncoder.getTestText());
 		System.out.println("Input text: " + splitter);

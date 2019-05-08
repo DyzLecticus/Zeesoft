@@ -18,9 +18,9 @@ public class ZDK extends LibraryObject {
 		super(tester);
 		setNameAbbreviated("ZDK");
 		setNameFull("Zeesoft Development Kit");
-		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/");
-		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V3.0/ZDK/releases/");
-		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZDK/");
+		setBaseProjectUrl("https://github.com/DyzLecticus/Zeesoft/tree/master/V4.0/ZDK/");
+		setBaseReleaseUrl("https://github.com/DyzLecticus/Zeesoft/raw/master/V4.0/ZDK/releases/");
+		setBaseSrcUrl("https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/");
 	}
 
 	public static void main(String[] args) {
@@ -50,7 +50,8 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * Extended StringBuilder manipulation and validation  ");
 		System.out.println(" * Basic file writing and reading  ");
 		System.out.println(" * HTTP requests  ");
-		System.out.println(" * JSON  ");
+		System.out.println(" * CSV data  ");
+		System.out.println(" * JSON data  ");
 		System.out.println(" * Multi threading  ");
 		System.out.println(" * Application message handling");
 		System.out.println(" * Self documenting and testing libraries  ");
@@ -66,6 +67,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestZIntegerGenerator(getTester()));
 		tests.add(new TestZStringEncoder(getTester()));
 		tests.add(new TestZStringSymbolParser(getTester()));
+		tests.add(new TestCsv(getTester()));
 		tests.add(new TestJson(getTester()));
 		tests.add(new TestZHttpRequest(getTester()));
 		tests.add(new TestMessenger(getTester()));

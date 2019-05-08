@@ -32,6 +32,7 @@ public class TestZHttpRequest extends TestObject {
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestZHttpRequest.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockZHttpRequest.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZHttpRequest.class));
 		System.out.println(" * " + getTester().getLinkForClass(JsFile.class));
 		System.out.println();
 		System.out.println("**Test output**  ");

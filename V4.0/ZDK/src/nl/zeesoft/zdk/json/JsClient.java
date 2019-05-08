@@ -9,6 +9,10 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * Thread safe JSON HTTP request handler.
+ * Retries a configurable number of times when a 503 HTTP response code is returned.
+ */
 public class JsClient extends Locker {
 	private WorkerUnion				union			= null; 
 

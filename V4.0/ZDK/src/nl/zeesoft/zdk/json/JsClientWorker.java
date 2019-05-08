@@ -8,7 +8,7 @@ public class JsClientWorker extends Worker {
 	private JsClient		client	= null;
 	private JsClientRequest	request	= null;
 
-	public JsClientWorker(Messenger msgr, WorkerUnion union, JsClient client, JsClientRequest request) {
+	protected JsClientWorker(Messenger msgr, WorkerUnion union, JsClient client, JsClientRequest request) {
 		super(msgr, union);
 		this.client = client;
 		this.request = request;

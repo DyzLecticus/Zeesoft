@@ -5,6 +5,9 @@ import java.util.List;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * Thread safe JSON HTTP request handler for request objects that implement the JsAble interface.
+ */
 public class JsAbleClient extends JsClient {
 	public JsAbleClient(Messenger msgr,WorkerUnion uni) {
 		super(msgr,uni);

@@ -5,9 +5,9 @@ public class JsClientRequest {
 	public String	url				= null;
 	public int		timeoutSeconds	= 3;
 	
-	public int		retries		= 0;
+	public int		retries			= 0;
 	
-	public JsClientRequest(JsFile request, String url) {
+	protected JsClientRequest(JsFile request, String url) {
 		this.request = request;
 		this.url = url;
 	}

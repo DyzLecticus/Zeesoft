@@ -18,6 +18,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 
+/**
+ * Wrapper for HTTP request handling which ensures all connections are opened and closed correctly.
+ */
 public class ZHttpRequest {
 	private Messenger		messenger			= null;
 	private String			method				= "";
