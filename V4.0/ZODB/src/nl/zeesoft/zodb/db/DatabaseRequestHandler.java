@@ -91,30 +91,43 @@ public class DatabaseRequestHandler {
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 			if (response.request.name.length()==0) {
 				response.errors.add(new ZStringBuilder("Request name is mandatory"));
-			} else if (response.request.obj==null || response.request.obj.rootElement==null) {
-				response.errors.add(new ZStringBuilder("Request object is mandatory"));
 			}
+			checkRequestObjectMandatory(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_GET)) {
 			if (response.request.id<=0 && response.request.name.length()==0 && response.request.startsWith.length()==0 && response.request.contains.length()==0) {
-				response.errors.add(new ZStringBuilder("Request id, name, startsWith or contains is mandatory"));
+				response.errors.add(new ZStringBuilder("One of request id, name, startsWith or contains is mandatory"));
 			}
+			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
 			if (response.request.max<=0) {
 				response.errors.add(new ZStringBuilder("Request max is mandatory"));
 			}
+			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
 			if (response.request.id<=0 && response.request.startsWith.length()==0 && response.request.contains.length()==0) {
-				response.errors.add(new ZStringBuilder("Request id, startsWith or contains is mandatory"));
+				response.errors.add(new ZStringBuilder("One of request id, startsWith or contains is mandatory"));
 			}
+			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
 			if (response.request.id<=0) {
 				response.errors.add(new ZStringBuilder("Request id is mandatory"));
-			} else if (response.request.obj==null || response.request.obj.rootElement==null) {
-				response.errors.add(new ZStringBuilder("Request object is mandatory"));
 			}
+			checkRequestObjectMandatory(response);
 		}
 		if (response.errors.size()>0) {
 			response.statusCode = 400;
+		}
+	}
+	
+	private void checkRequestObjectMandatory(DatabaseResponse response) {
+		if (response.request.obj==null || response.request.obj.rootElement==null) {
+			response.errors.add(new ZStringBuilder("Request object is mandatory"));
+		}
+	}
+	
+	private void checkRequestModAfterModBefore(DatabaseResponse response) {
+		if (response.request.modAfter>0L && response.request.modBefore>0L && response.request.modAfter>=response.request.modBefore) {
+			response.errors.add(new ZStringBuilder("Request modAfter must be lower than modBefore"));
 		}
 	}
 }

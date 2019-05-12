@@ -26,7 +26,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test can be used to test the ZODB *DatabaseRequestHanlder*.");
+		System.out.println("This test can be used to test the ZODB *DatabaseRequestHandler*.");
 	}
 	
 	@Override
@@ -59,7 +59,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 
 			DatabaseRequest req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 			req.id = 1;
-			DatabaseResponse res = handleRequest(handler,req,1);
+			DatabaseResponse res = handleRequest(handler,req,1,null);
 			if (res.results.size()>0) {
 				assertEqual(res.results.get(0).name,"testObject001","Name of object found by id does not match expectation");
 				assertEqual(res.results.get(0).obj!=null,true,"Index element found by id does not contain an object");
@@ -67,7 +67,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 			
 			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 			req.name = "testObject125";
-			res = handleRequest(handler,req,1);
+			res = handleRequest(handler,req,1,null);
 			if (res.results.size()>0) {
 				assertEqual(res.results.get(0).name,"testObject125","Name of object found by name does not match expectation");
 				assertEqual(res.results.get(0).obj!=null,true,"Index element found by name does not contain an object");
@@ -76,10 +76,16 @@ public class TestDatabaseRequestHandler extends TestObject {
 			req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 			req.startsWith = "testObject1";
 			req.max = 10;
-			res = handleRequest(handler,req,10);
+			res = handleRequest(handler,req,10,null);
 			if (res.results.size()>0) {
 				assertEqual(res.results.get(0).name,"testObject100","Name of object found by startsWith does not match expectation");
 			}
+			
+			req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
+			req.max = 10;
+			req.modAfter = (new Date()).getTime();
+			req.modBefore = req.modAfter - 1;
+			res = handleRequest(handler,req,10,"Request modAfter must be lower than modBefore");
 		}
 				
 		sleep(1000);
@@ -105,12 +111,20 @@ public class TestDatabaseRequestHandler extends TestObject {
 		}
 	}
 	
-	private DatabaseResponse handleRequest(DatabaseRequestHandler handler, DatabaseRequest req,int expectedResults) {
+	private DatabaseResponse handleRequest(DatabaseRequestHandler handler, DatabaseRequest req,int expectedResults,String expectedError) {
 		DatabaseResponse res = handler.handleDatabaseRequest(req);
 		if (res.errors.size()>0) {
-			assertEqual(res.errors.get(0),new ZStringBuilder(),"The request returned an error");
+			if (expectedError!=null && expectedError.length()>0) {
+				assertEqual(res.errors.get(0),new ZStringBuilder(expectedError),"The request returned an error");
+			} else {
+				assertEqual(res.errors.get(0),new ZStringBuilder(),"The request returned an error");
+			}
 		} else if (res.results.size()!=expectedResults) {
-			assertEqual(res.results.size(),expectedResults,"The number of results does not match expectation");
+			if (expectedError!=null && expectedError.length()>0) {
+				assertEqual(res.errors.size()>0,true,"Failed invoke response error");
+			} else {
+				assertEqual(res.results.size(),expectedResults,"The number of results does not match expectation");
+			}
 		}
 		return res;
 	}
