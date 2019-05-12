@@ -17,7 +17,7 @@ public class Database {
 	private IndexFileWriteWorker			fileWriter		= null;
 	private IndexObjectWriterWorker			objectWriter	= null;
 	
-	private List<StateListener>		listeners		= new ArrayList<StateListener>();
+	private List<StateListener>				listeners		= new ArrayList<StateListener>();
 	
 	public Database(Config config) {
 		configuration = config;
@@ -78,24 +78,24 @@ public class Database {
 		return index.getObjectByName(name);
 	}
 	
-	public List<IndexElement> listObjects(int start, int max,List<Integer> data) {
-		return index.listObjects(start,max,data);
+	public List<IndexElement> listObjects(int start,int max,long modAfter,long modBefore,List<Integer> data) {
+		return index.listObjects(start,max,modAfter,modBefore,data);
 	}
 	
-	protected List<IndexElement> listObjectsThatStartWith(String startWith,int start, int max,List<Integer> data) {
-		return index.listObjectsThatStartWith(startWith,start,max,data);
+	public List<IndexElement> listObjectsThatStartWith(String startWith,int start,int max,long modAfter,long modBefore,List<Integer> data) {
+		return index.listObjectsThatStartWith(startWith,start,max,modAfter,modBefore,data);
 	}
 
-	protected List<IndexElement> listObjectsThatContain(String contains,int start, int max,List<Integer> data) {
-		return index.listObjectsThatContain(contains,start,max,data);
+	public List<IndexElement> listObjectsThatContain(String contains,int start,int max,long modAfter,long modBefore,List<Integer> data) {
+		return index.listObjectsThatContain(contains,start,max,modAfter,modBefore,data);
 	}
 	
-	public List<IndexElement> getObjectsByNameStartsWith(String start) {
-		return index.getObjectsByNameStartsWith(start);
+	public List<IndexElement> getObjectsByNameStartsWith(String start,long modAfter,long modBefore) {
+		return index.getObjectsByNameStartsWith(start,modAfter,modBefore);
 	}
 	
-	public List<IndexElement> getObjectsByNameContains(String contains) {
-		return index.getObjectsByNameContains(contains);
+	public List<IndexElement> getObjectsByNameContains(String contains,long modAfter,long modBefore) {
+		return index.getObjectsByNameContains(contains,modAfter,modBefore);
 	}
 	
 	public void setObject(long id, JsFile obj,List<ZStringBuilder> errors) {
@@ -110,12 +110,12 @@ public class Database {
 		return index.removeObject(id,errors);
 	}
 	
-	public List<IndexElement> removeObjectsThatStartWith(String startsWith,List<ZStringBuilder> errors) {
-		return index.removeObjectsThatStartWith(startsWith,errors);
+	public List<IndexElement> removeObjectsThatStartWith(String startsWith,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+		return index.removeObjectsThatStartWith(startsWith,modAfter,modBefore,errors);
 	}
 	
-	public List<IndexElement> removeObjectsThatContain(String contains,List<ZStringBuilder> errors) {
-		return index.removeObjectsThatContain(contains,errors);
+	public List<IndexElement> removeObjectsThatContain(String contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+		return index.removeObjectsThatContain(contains,modAfter,modBefore,errors);
 	}
 
 	protected void stateChanged(boolean open) {

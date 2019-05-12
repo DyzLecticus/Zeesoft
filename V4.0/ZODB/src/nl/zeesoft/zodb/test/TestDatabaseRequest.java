@@ -1,5 +1,7 @@
 package nl.zeesoft.zodb.test;
 
+import java.util.Date;
+
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -43,11 +45,24 @@ public class TestDatabaseRequest extends TestObject {
 		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 		request.startsWith = "testObject";
 		testRequest(request,4);
-		
+
+		request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
+		request.modAfter = (new Date()).getTime();
+		request.modBefore = request.modAfter + 1;
+		System.out.println();
+		testRequest(request,5);
+
 		request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 		request.id = 1;
 		System.out.println();
 		testRequest(request,2);
+
+		request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+		request.contains = "testObject";
+		request.modAfter = (new Date()).getTime();
+		request.modBefore = request.modAfter + 1;
+		System.out.println();
+		testRequest(request,4);
 		
 		JsFile obj = new JsFile();
 		obj.rootElement = new JsElem();
@@ -73,6 +88,13 @@ public class TestDatabaseRequest extends TestObject {
 		request.id = 1;
 		System.out.println();
 		testRequest(request,2);
+		
+		request = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
+		request.contains = "testObject";
+		request.modAfter = (new Date()).getTime();
+		request.modBefore = request.modAfter + 1;
+		System.out.println();
+		testRequest(request,4);
 	}
 	
 	private void testRequest(DatabaseRequest request, int expectedChildren) {

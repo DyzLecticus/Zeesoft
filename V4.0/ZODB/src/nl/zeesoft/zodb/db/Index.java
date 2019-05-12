@@ -76,24 +76,24 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected List<IndexElement> listObjects(int start, int max,List<Integer> data) {
-		return listObjects(start,max,null,null,null,data);
+	protected List<IndexElement> listObjects(int start, int max,long modAfter,long modBefore,List<Integer> data) {
+		return listObjects(start,max,null,null,null,modAfter,modBefore,data);
 	}
 
-	protected List<IndexElement> listObjectsThatStartWith(String startWith,int start, int max,List<Integer> data) {
-		return listObjects(start,max,startWith,null,null,data);
+	protected List<IndexElement> listObjectsThatStartWith(String startWith,int start, int max,long modAfter,long modBefore,List<Integer> data) {
+		return listObjects(start,max,startWith,null,null,modAfter,modBefore,data);
 	}
 
-	protected List<IndexElement> listObjectsThatContain(String contains,int start, int max,List<Integer> data) {
-		return listObjects(start,max,null,contains,null,data);
+	protected List<IndexElement> listObjectsThatContain(String contains,int start, int max,long modAfter,long modBefore,List<Integer> data) {
+		return listObjects(start,max,null,contains,null,modAfter,modBefore,data);
 	}
 	
-	protected List<IndexElement> getObjectsByNameStartsWith(String startsWith) {
-		return getObjectsByName(startsWith,null,null);
+	protected List<IndexElement> getObjectsByNameStartsWith(String startsWith,long modAfter,long modBefore) {
+		return getObjectsByName(startsWith,null,null,modAfter,modBefore);
 	}
 	
-	protected List<IndexElement> getObjectsByNameContains(String contains) {
-		return getObjectsByName(null,contains,null);
+	protected List<IndexElement> getObjectsByNameContains(String contains,long modAfter,long modBefore) {
+		return getObjectsByName(null,contains,null,modAfter,modBefore);
 	}
 	
 	protected void setObject(long id, JsFile obj, List<ZStringBuilder> errors) {
@@ -136,34 +136,37 @@ public class Index extends Locker {
 			r = removeObjectNoLock(id,errors);
 			if (r!=null) {
 				r = r.copy();
+				r.obj = null;
 			}
 		}
 		unlockMe(this);
 		return r;
 	}
 
-	protected List<IndexElement> removeObjectsThatStartWith(String startsWith,List<ZStringBuilder> errors) {
+	protected List<IndexElement> removeObjectsThatStartWith(String startsWith,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (startsWith.length()>0 && open) {
-			List<IndexElement> elements = listObjectsByNameNoLock(startsWith,"","");
+			List<IndexElement> elements = listObjectsByNameNoLock(startsWith,"","",modAfter,modBefore);
 			for (IndexElement element: elements) {
 				removeObjectNoLock(element.id,errors);
 				r.add(element.copy());
+				element.obj = null;
 			}
 		}
 		unlockMe(this);
 		return r;
 	}
 	
-	protected List<IndexElement> removeObjectsThatContain(String contains,List<ZStringBuilder> errors) {
+	protected List<IndexElement> removeObjectsThatContain(String contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (contains.length()>0 && open) {
-			List<IndexElement> elements = listObjectsByNameNoLock("",contains,"");
+			List<IndexElement> elements = listObjectsByNameNoLock("",contains,"",modAfter,modBefore);
 			for (IndexElement element: elements) {
 				removeObjectNoLock(element.id,errors);
 				r.add(element.copy());
+				element.obj = null;
 			}
 		}
 		unlockMe(this);
@@ -262,11 +265,11 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjects(int start, int max,String startsWith,String contains,String endsWith,List<Integer> data) {
+	private List<IndexElement> listObjects(int start, int max,String startsWith,String contains,String endsWith,long modAfter,long modBefore,List<Integer> data) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			SortedMap<String,Long> list = listObjectsNoLock(start, max, startsWith, contains, endsWith, data);
+			SortedMap<String,Long> list = listObjectsNoLock(start, max, startsWith, contains, endsWith, modAfter, modBefore, data);
 			for (Entry<String,Long> entry: list.entrySet()) {
 				r.add(elementsById.get(entry.getValue()).copy());
 			}
@@ -275,12 +278,12 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private List<IndexElement> getObjectsByName(String startsWith,String contains,String endsWith) {
+	private List<IndexElement> getObjectsByName(String startsWith,String contains,String endsWith,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		List<IndexElement> read = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			r = listObjectsByNameNoLock(startsWith,contains,endsWith);
+			r = listObjectsByNameNoLock(startsWith,contains,endsWith,modAfter,modBefore);
 			for (IndexElement element: r) {
 				if (element.obj==null) {
 					read.add(element);
@@ -296,7 +299,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private SortedMap<String,Long> listObjectsNoLock(int start, int max,String startsWith,String contains,String endsWith,List<Integer> data) {
+	private SortedMap<String,Long> listObjectsNoLock(int start, int max,String startsWith,String contains,String endsWith,long modAfter,long modBefore,List<Integer> data) {
 		SortedMap<String,Long> r = new TreeMap<String,Long>();
 		if (start<0) {
 			start = 0;
@@ -311,9 +314,14 @@ public class Index extends Locker {
 				(contains!=null && contains.length()>0) ||
 				(endsWith!=null && endsWith.length()>0)
 				) {
-				elements = listObjectsByNameNoLock(startsWith,contains,endsWith);
+				elements = listObjectsByNameNoLock(startsWith,contains,endsWith,modAfter,modBefore);
 			} else {
-				elements = new ArrayList<IndexElement>(elementsByName.values());
+				elements = new ArrayList<IndexElement>();
+				for (IndexElement element: elementsByName.values()) {
+					if (checkModifiedNoLock(element,modAfter,modBefore)) {
+						elements.add(element);
+					}
+				}
 			}
 		}
 		if (elements!=null) {
@@ -334,7 +342,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjectsByNameNoLock(String startsWith,String contains,String endsWith) {
+	private List<IndexElement> listObjectsByNameNoLock(String startsWith,String contains,String endsWith,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		for (String name: elementsByName.keySet()) {
 			if (
@@ -343,7 +351,9 @@ public class Index extends Locker {
 				(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
 				) {
 				IndexElement element = elementsByName.get(name);
-				r.add(element.copy());
+				if (checkModifiedNoLock(element,modAfter,modBefore)) {
+					r.add(element.copy());
+				}
 			}
 		}
 		return r;
@@ -353,10 +363,10 @@ public class Index extends Locker {
 		IndexElement r = null;
 		if (!elementsByName.containsKey(name)) {
 			r = new IndexElement();
-			r.id = getNewUid();
+			r.id = getNewUidNoLock();
 			r.name = name;
 			r.obj = obj;
-			r.fileNum = getFileNumForNewObject();
+			r.fileNum = getFileNumForNewObjectNoLock();
 			r.added = true;
 			
 			elementsById.put(r.id,r);
@@ -378,7 +388,7 @@ public class Index extends Locker {
 		return r;
 	}
 		
-	private long getNewUid() {
+	private long getNewUidNoLock() {
 		long r = 1;
 		if (elementsById.size()>0) {
 			r = (elementsById.lastKey() + 1L);
@@ -386,7 +396,7 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private int getFileNumForNewObject() {
+	private int getFileNumForNewObjectNoLock() {
 		int r = -1;
 		if (elementsByFileNum.size()>0) {
 			for (int i = 0; i <= elementsByFileNum.lastKey(); i++) {
@@ -437,5 +447,13 @@ public class Index extends Locker {
 			errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
 		}
 		return r;
+	}
+	
+	private boolean checkModifiedNoLock(IndexElement element,long modAfter,long modBefore) {
+		return
+			(modAfter==0L && modBefore==0L) ||
+			(modAfter>0L && modBefore>0L && element.modified>modAfter && element.modified<modBefore) || 
+			(modAfter>0L && element.modified>modAfter) || 
+			(modBefore>0L && element.modified<modBefore);
 	}
 }

@@ -1,5 +1,7 @@
 package nl.zeesoft.zodb.test;
 
+import java.util.Date;
+
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -46,17 +48,32 @@ public class TestDatabaseResponse extends TestObject {
 		response.errors.add(new ZStringBuilder("Database is busy. Please wait."));
 		testResponse(response,2);
 
+		response = new DatabaseResponse();
 		DatabaseResult res = new DatabaseResult();
 		res.id = 1;
 		res.name = "testName";
+		res.modified = (new Date()).getTime();
 		res.obj = new JsFile();
 		res.obj.rootElement = new JsElem();
 		res.obj.rootElement.children.add(new JsElem("data","testObjectData",true));
-		
-		response = new DatabaseResponse();
 		response.results.add(res);
 		System.out.println();
 		testResponse(response,2);
+
+		response = new DatabaseResponse();
+		response.size = 2;
+		res = new DatabaseResult();
+		res.id = 1;
+		res.name = "testName1";
+		res.modified = (new Date()).getTime();
+		response.results.add(res);
+		res = new DatabaseResult();
+		res.id = 1;
+		res.name = "testName2";
+		res.modified = (new Date()).getTime();
+		response.results.add(res);
+		System.out.println();
+		testResponse(response,3);
 	}
 	
 	private void testResponse(DatabaseResponse response, int expectedChildren) {

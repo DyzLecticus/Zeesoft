@@ -2,7 +2,7 @@ Zeesoft Object Database
 =======================
 The Zeesoft Object Database provides a simple JSON API to store JSON objects.
 
-This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0/ZDK/).  
+This library depends on the [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V4.0/ZDK/).  
 
 **Release downloads**  
 Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V4.0/ZODB/releases/zodb-0.9.0.zip) to download the latest ZODB release (version 0.9.0).  
@@ -78,8 +78,23 @@ The output of this test shows the converted JSON.
 }
 
 {
+  "type": "LIST",
+  "start": 0,
+  "max": 10,
+  "modAfter": 1557655553321,
+  "modBefore": 1557655553322
+}
+
+{
   "type": "GET",
   "id": 1
+}
+
+{
+  "type": "GET",
+  "contains": "testObject",
+  "modAfter": 1557655553322,
+  "modBefore": 1557655553323
 }
 
 {
@@ -101,6 +116,13 @@ The output of this test shows the converted JSON.
 {
   "type": "REMOVE",
   "id": 1
+}
+
+{
+  "type": "REMOVE",
+  "contains": "testObject",
+  "modAfter": 1557655553323,
+  "modBefore": 1557655553324
 }
 ~~~~
 
@@ -138,20 +160,38 @@ The output of this test shows the converted JSON.
     {
       "name": "testName",
       "id": 1,
+      "modified": 1557655553362,
       "object": {
         "data": "testObjectData"
       }
     }
   ]
 }
+
+{
+  "statusCode": 200,
+  "results": [
+    {
+      "name": "testName1",
+      "id": 1,
+      "modified": 1557655553363
+    },
+    {
+      "name": "testName2",
+      "id": 1,
+      "modified": 1557655553363
+    }
+  ],
+  "size": 2
+}
 ~~~~
 
 Test results
 ------------
-All 3 tests have been executed successfully (16 assertions).  
-Total test duration: 73 ms (total sleep duration: 0 ms).  
+All 3 tests have been executed successfully (24 assertions).  
+Total test duration: 71 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zodb.test.TestConfig: 565 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestConfig: 567 Kb / 0 Mb
  * nl.zeesoft.zodb.test.TestDatabaseRequest: 400 Kb / 0 Mb
- * nl.zeesoft.zodb.test.TestDatabaseResponse: 405 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestDatabaseResponse: 406 Kb / 0 Mb

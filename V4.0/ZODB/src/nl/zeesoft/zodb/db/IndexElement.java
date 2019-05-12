@@ -52,12 +52,4 @@ public class IndexElement {
 		name = split.get(1).toString();
 		modified = Long.parseLong(split.get(2).toString());
 	}
-	
-	protected DatabaseResult toResult() {
-		DatabaseResult res = new DatabaseResult();
-		res.id = this.id;
-		res.name = this.name;
-		res.obj = this.obj;
-		return res;
-	}
 }

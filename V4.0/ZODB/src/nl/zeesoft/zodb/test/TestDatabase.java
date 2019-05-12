@@ -85,7 +85,7 @@ public class TestDatabase extends TestObject {
 			}
 			
 			Date started = new Date();
-			List<IndexElement> elements = db.getObjectsByNameStartsWith("testObject");
+			List<IndexElement> elements = db.getObjectsByNameStartsWith("testObject",0L,0L);
 			assertEqual(elements.size(),250,"Number of objects does not match expectation");
 			for (IndexElement elem: elements) {
 				assertEqual(elem.obj!=null,true,"Failed to read object id " + elem.id);
@@ -97,11 +97,17 @@ public class TestDatabase extends TestObject {
 				System.out.println("Reading 250 cached objects took: " + ms + " ms");
 			}
 
-			List<IndexElement> list = db.listObjects(100,100,null);
-			assertEqual(list.size(),100,"List size does not match expectation");
+			List<IndexElement> list = db.listObjects(100,100,0L,0L,null);
+			assertEqual(list.size(),100,"List size does not match expectation (1)");
 
-			list = db.listObjects(200,100,null);
-			assertEqual(list.size(),50,"List size does not match expectation");
+			if (list.size()==100) {
+				long modAfter = list.get(0).modified - 1;
+				list = db.listObjects(0,300,modAfter,0L,null);
+				assertEqual(list.size() >= 50,true,"List size does not match expectation (2)");
+			}
+			
+			list = db.listObjects(200,100,0L,0L,null);
+			assertEqual(list.size(),50,"List size does not match expectation (3)");
 			System.out.println("Obtained list size: " + list.size() + " (start: " + 200 + ", max: " + 100 + ")");
 			System.out.println("First list object: " + list.get(0).name);
 			System.out.println("Last list object: " + list.get((list.size() - 1)).name);

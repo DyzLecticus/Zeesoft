@@ -16,10 +16,12 @@ public class DatabaseRequest implements JsAble {
 	public int					max			= 10;
 	public long					id			= 0L;
 	public String				name		= "";
-	public String				contains		= "";
+	public String				contains	= "";
 	public String				startsWith	= "";
+	public long					modAfter	= 0L;
+	public long					modBefore	= 0L;
 	public JsFile				obj			= null;
-	
+
 	public DatabaseRequest() {
 		
 	}
@@ -47,6 +49,17 @@ public class DatabaseRequest implements JsAble {
 			json.rootElement.children.add(new JsElem("start","" + start));
 			json.rootElement.children.add(new JsElem("max","" + max));
 		}
+		if (type.equals(TYPE_LIST) ||
+			(type.equals(TYPE_GET) && (startsWith.length()>0 || contains.length()>0)) ||
+			(type.equals(TYPE_REMOVE) && (startsWith.length()>0 || contains.length()>0))
+			) {
+			if (modAfter>0L) {
+				json.rootElement.children.add(new JsElem("modAfter","" + modAfter));
+			}
+			if (modBefore>0L) {
+				json.rootElement.children.add(new JsElem("modBefore","" + modBefore));
+			}
+		}
 		if (obj!=null && obj.rootElement!=null && obj.rootElement.children.size()>0) {
 			JsElem objElem = new JsElem("object");
 			json.rootElement.children.add(objElem);
@@ -59,12 +72,14 @@ public class DatabaseRequest implements JsAble {
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			type = json.rootElement.getChildString("type",type);
+			start = json.rootElement.getChildInt("start",start);
+			max = json.rootElement.getChildInt("max",max);
 			id = json.rootElement.getChildLong("id",id);
 			name = json.rootElement.getChildString("name",name);
 			contains = json.rootElement.getChildString("contains",contains);
 			startsWith = json.rootElement.getChildString("startsWith",startsWith);
-			start = json.rootElement.getChildInt("start",start);
-			max = json.rootElement.getChildInt("max",max);
+			modAfter = json.rootElement.getChildLong("modAfter",modAfter);
+			modBefore = json.rootElement.getChildLong("modBefore",modBefore);
 			JsElem objElem = json.rootElement.getChildByName("object");
 			if (objElem!=null && objElem.children.size()>0) {
 				obj = new JsFile();

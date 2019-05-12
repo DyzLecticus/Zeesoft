@@ -30,33 +30,33 @@ public class DatabaseRequestHandler {
 					if (request.id>0) {
 						IndexElement element = database.getObjectById(request.id);
 						if (element!=null) {
-							response.results.add(element.toResult());
+							response.results.add(new DatabaseResult(element));
 						}
 					} else if (request.name.length()>0) {
 						IndexElement element = database.getObjectByName(request.name);
 						if (element!=null) {
-							response.results.add(element.toResult());
+							response.results.add(new DatabaseResult(element));
 						}
 					} else if (request.startsWith.length()>0) {
-						List<IndexElement> elements = database.getObjectsByNameStartsWith(request.startsWith);
+						List<IndexElement> elements = database.getObjectsByNameStartsWith(request.startsWith,request.modAfter,request.modBefore);
 						for (IndexElement element: elements) {
-							response.results.add(element.toResult());
+							response.results.add(new DatabaseResult(element));
 						}
 					} else if (request.contains.length()>0) {
-						List<IndexElement> elements = database.getObjectsByNameContains(request.contains);
+						List<IndexElement> elements = database.getObjectsByNameContains(request.contains,request.modAfter,request.modBefore);
 						for (IndexElement element: elements) {
-							response.results.add(element.toResult());
+							response.results.add(new DatabaseResult(element));
 						}
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
 					List<IndexElement> list = null;
 					List<Integer> data = new ArrayList<Integer>();
 					if (request.startsWith.length()>0) {
-						list = database.listObjectsThatStartWith(request.startsWith,request.start,request.max,data);
+						list = database.listObjectsThatStartWith(request.startsWith,request.start,request.max,request.modAfter,request.modBefore,data);
 					} else if (request.contains.length()>0) {
-						list = database.listObjectsThatContain(request.contains,request.start,request.max,data);
+						list = database.listObjectsThatContain(request.contains,request.start,request.max,request.modAfter,request.modBefore,data);
 					} else {
-						list = database.listObjects(request.start,request.max,data);
+						list = database.listObjects(request.start,request.max,request.modAfter,request.modBefore,data);
 					}
 					for (IndexElement element: list) {
 						DatabaseResult res = new DatabaseResult(element);
@@ -70,9 +70,9 @@ public class DatabaseRequestHandler {
 					if (response.request.id>0) {
 						database.removeObject(request.id,response.errors);
 					} else if (response.request.startsWith.length()>0) {
-						database.removeObjectsThatStartWith(response.request.startsWith,response.errors);
+						database.removeObjectsThatStartWith(response.request.startsWith,request.modAfter,request.modBefore,response.errors);
 					} else if (response.request.contains.length()>0) {
-						database.removeObjectsThatContain(response.request.contains,response.errors);
+						database.removeObjectsThatContain(response.request.contains,request.modAfter,request.modBefore,response.errors);
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
 					database.setObject(request.id,request.obj,response.errors);

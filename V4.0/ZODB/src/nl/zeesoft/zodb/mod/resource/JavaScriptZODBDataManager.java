@@ -95,7 +95,7 @@ public class JavaScriptZODBDataManager {
 		script.append("        html+='<th align=\"right\" width=\"9%\">';\n");
 		script.append("        html+= \"ID\";\n");
 		script.append("        html+=\"</th>\";\n");
-		script.append("        html+='<th align=\"left\" width=\"80%\">';\n");
+		script.append("        html+='<th align=\"left\" width=\"60%\">';\n");
 		script.append("        html+= \"Name\";\n");
 		script.append("        html+=\"</th>\";\n");
 		script.append("        html+='<th align=\"left\">';\n");
@@ -113,10 +113,10 @@ public class JavaScriptZODBDataManager {
 		script.append("        }\n");
 		script.append("        fetched++;\n");
 		script.append("        html+=\"<tr>\";\n");
-		script.append("        html+='<td width=\"1%\">';\n");
+		script.append("        html+='<td>';\n");
 		script.append("        html+= '<input type=\"radio\" name=\"selector\" value=\"' + listObject.results[num].id + '\" onchange=\"ZODB.dm.select();\"' + sel + '/>';\n");
 		script.append("        html+=\"</td>\";\n");
-		script.append("        html+='<td align=\"right\" width=\"9%\">';\n");
+		script.append("        html+='<td align=\"right\">';\n");
 		script.append("        html+= listObject.results[num].id;\n");
 		script.append("        html+=\"</td>\";\n");
 		script.append("        html+='<td>';\n");
