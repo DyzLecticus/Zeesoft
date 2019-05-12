@@ -173,9 +173,11 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected void readObject(IndexElement element) {
+	protected boolean readObject(IndexElement element) {
+		boolean r = true;
 		lockMe(this);
 		IndexElement copy = element.copy();
+		r = open;
 		unlockMe(this);
 		if (copy.obj==null) {
 			String fileName = getObjectDirectory() + copy.id + ".json";
@@ -189,9 +191,11 @@ public class Index extends Locker {
 				}
 				lockMe(this);
 				element.obj = obj;
+				r = open;
 				unlockMe(this);
 			}
 		}
+		return r;
 	}
 	
 	protected String getFileDirectory() {
@@ -293,7 +297,9 @@ public class Index extends Locker {
 		unlockMe(this);
 		if (read.size()>0) {
 			for (IndexElement element: read) {
-				readObject(element);
+				if (!readObject(element)) {
+					break;
+				}
 			}
 		}
 		return r;
