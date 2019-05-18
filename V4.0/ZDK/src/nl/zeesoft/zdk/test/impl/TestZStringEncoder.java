@@ -43,7 +43,7 @@ public class TestZStringEncoder extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		ZStringEncoder encoder = new ZStringEncoder(getTestText());
-		String key = encoder.generateNewKey(64);
+		StringBuilder key = encoder.generateNewKey(64);
 		System.out.println("Key: " + key);
 		assertEqual(key.length(),64,"The generated key length does not match expectation");
 		System.out.println("Input text: " + encoder);

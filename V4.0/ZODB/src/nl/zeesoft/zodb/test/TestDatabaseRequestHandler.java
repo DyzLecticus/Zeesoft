@@ -14,6 +14,7 @@ import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 import nl.zeesoft.zodb.db.IndexElement;
+import nl.zeesoft.zodb.mod.ModZODB;
 
 public class TestDatabaseRequestHandler extends TestObject {
 	public TestDatabaseRequestHandler(Tester tester) {
@@ -32,8 +33,9 @@ public class TestDatabaseRequestHandler extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Config config = new Config();
-		
+		config.getModule(ModZODB.NAME).selfTest = false;
 		config.initialize(true,"dist/","",false);
+		config.setKey(new StringBuilder("0123456789012345678901234567890123456789012345678901234567890123"));
 		
 		File dir = new File("dist/");
 		if (!dir.exists()) {

@@ -66,14 +66,14 @@ public class IndexObjectWriterWorker extends Worker {
 	private void writeChangedElements(List<IndexElement> elements) {
 		List<IndexObjectWriteWorker> workers = new ArrayList<IndexObjectWriteWorker>();
 		for (IndexElement elem: elements) {
-			String fileName = index.getObjectDirectory() + elem.id + ".json";
+			String fileName = index.getObjectDirectory() + elem.id + ".txt";
 			if (elem.removed) {
 				File file = new File(fileName);
 				if (!file.delete()) {
 					getMessenger().error(this,"Failed to delete file: " + fileName);
 				}
 			} else if (elem.obj!=null) {
-				workers.add(new IndexObjectWriteWorker(getMessenger(),union,this,fileName,elem.obj));
+				workers.add(new IndexObjectWriteWorker(getMessenger(),union,this,fileName,elem.obj,index.getKey()));
 			}
 		}
 		if (workers.size()>0) {

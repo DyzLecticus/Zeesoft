@@ -7,14 +7,16 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zodb.Config;
 
 public class Index extends Locker {
 	private int										blockSize			= 100;
 	
+	private Config									configuration		= null;
 	private Database								db					= null;
 	
 	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
@@ -26,11 +28,16 @@ public class Index extends Locker {
 	
 	private boolean									open				= false;
 	
-	public Index(Messenger msgr,Database db) {
-		super(msgr);
+	public Index(Config config,Database db) {
+		super(config.getMessenger());
+		this.configuration = config;
 		this.db = db;
 	}
 
+	protected StringBuilder getKey() {
+		return configuration.getKey();
+	}
+	
 	protected IndexElement addObject(String name,JsFile obj,List<ZStringBuilder> errors) {
 		IndexElement r = null;
 		lockMe(this);
@@ -180,12 +187,15 @@ public class Index extends Locker {
 		r = open;
 		unlockMe(this);
 		if (copy.obj==null) {
-			String fileName = getObjectDirectory() + copy.id + ".json";
-			JsFile obj = new JsFile();
-			ZStringBuilder err = obj.fromFile(fileName);
+			String fileName = getObjectDirectory() + copy.id + ".txt";
+			ZStringEncoder decoder = new ZStringEncoder();
+			ZStringBuilder err = decoder.fromFile(fileName);
 			if (err.length()>0) {
 				getMessenger().error(this,"Failed to read object: " + err);
 			} else {
+				decoder.decodeKey(configuration.getKey(),0);
+				JsFile obj = new JsFile();
+				obj.fromStringBuilder(decoder);
 				if (obj.rootElement==null) {
 					obj.rootElement = new JsElem();
 				}

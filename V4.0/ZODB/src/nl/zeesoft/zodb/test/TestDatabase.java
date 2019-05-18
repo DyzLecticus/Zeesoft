@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.IndexElement;
+import nl.zeesoft.zodb.mod.ModZODB;
 
 public class TestDatabase extends TestObject {
 	public TestDatabase(Tester tester) {
@@ -29,7 +30,9 @@ public class TestDatabase extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Config config = new Config();
+		config.getModule(ModZODB.NAME).selfTest = false;
 		config.initialize(true,"dist/","",false);
+		config.setKey(new StringBuilder("0123456789012345678901234567890123456789012345678901234567890123"));
 		
 		File dir = new File("dist/");
 		if (!dir.exists()) {

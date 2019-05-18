@@ -61,14 +61,14 @@ public class ZStringEncoder extends ZStringBuilder {
 	 * @param length The length of the key (longer is safer)
 	 * @return The generated key
 	 */
-	public String generateNewKey(int length) {
-		StringBuilder ps = new StringBuilder();
+	public StringBuilder generateNewKey(int length) {
+		StringBuilder k = new StringBuilder();
 		if (length < 64) {
 			length = 64;
 		}
 		for (int i = 0; i < length; i++) {
-			ps.append(generator.getNewInteger());
-			i = (ps.length() - 1);
+			k.append(generator.getNewInteger());
+			i = (k.length() - 1);
 			if (i < length) {
 				try {
 					Thread.sleep(1);
@@ -76,10 +76,10 @@ public class ZStringEncoder extends ZStringBuilder {
 					// Ignore
 				}
 			} else if (i > length) {
-				ps.replace(length - 1, i,"");
+				k.replace(length - 1, i,"");
 			}
 		}
-		return ps.toString();
+		return k;
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class ZStringEncoder extends ZStringBuilder {
 	 * @param seed The optional seed
 	 * @return The encoded StringBuilder value
 	 */
-	public StringBuilder encodeKey(String key, long seed) {
+	public StringBuilder encodeKey(StringBuilder key, long seed) {
 		if (getStringBuilder()!=null) {
 			int sVar = ((int) (seed % 200));
 			StringBuilder s = new StringBuilder();
@@ -125,7 +125,7 @@ public class ZStringEncoder extends ZStringBuilder {
 	 * @param seed The optional seed
 	 * @return The decoded text
 	 */
-	public StringBuilder decodeKey(String key, long seed) {
+	public StringBuilder decodeKey(StringBuilder key, long seed) {
 		if (getStringBuilder()!=null) {
 			int sVar = ((int) (seed % 200));
 			String str = "";
@@ -152,7 +152,7 @@ public class ZStringEncoder extends ZStringBuilder {
 		return getStringBuilder();
 	}
 	
-	private int getKeyOffset(String key) {
+	private int getKeyOffset(StringBuilder key) {
 		int idx = 0;
 		if (key.length()>=1024) {
 			idx = (Integer.parseInt(key.substring(0,3)) + 1);
@@ -168,7 +168,7 @@ public class ZStringEncoder extends ZStringBuilder {
 		return (Integer.parseInt(key.substring(idx,idx + 6)));
 	}
 
-	private String[] getCharCompressForKey(String key, long seed) {
+	private String[] getCharCompressForKey(StringBuilder key, long seed) {
 		int s = 0;
 		if (seed > (Integer.MAX_VALUE - 999999)) {
 			s = (Integer.MAX_VALUE - 999999);

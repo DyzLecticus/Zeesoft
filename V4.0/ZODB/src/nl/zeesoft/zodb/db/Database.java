@@ -21,7 +21,7 @@ public class Database {
 	
 	public Database(Config config) {
 		configuration = config;
-		index = new Index(config.getMessenger(),this);
+		index = new Index(config,this);
 		fileWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
