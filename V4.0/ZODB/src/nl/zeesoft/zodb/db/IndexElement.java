@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class IndexElement {
@@ -48,8 +49,16 @@ public class IndexElement {
 	
 	protected void fromStringBuilder(ZStringBuilder str) {
 		List<ZStringBuilder> split = str.split("\t");
-		id = Long.parseLong(split.get(0).toString());
-		name = split.get(1).toString();
-		modified = Long.parseLong(split.get(2).toString());
+		if (split.size()==3) {
+			String v = split.get(0).toString();
+			if (ZStringEncoder.isNumber(v)) {
+				id = Long.parseLong(v);
+			}
+			name = split.get(1).toString();
+			v = split.get(2).toString();
+			if (ZStringEncoder.isNumber(v)) {
+				modified = Long.parseLong(v);
+			}
+		}
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 
 /**
@@ -128,7 +129,7 @@ public class JsElem {
 	public long getChildLong(String name,long def) {
 		long r = def;
 		ZStringBuilder v = getChildValueByName(name);
-		if (v!=null) {
+		if (v!=null && ZStringEncoder.isNumber(v.toString())) {
 			r = Long.parseLong(v.toString());
 		}
 		return r;
@@ -137,7 +138,7 @@ public class JsElem {
 	public int getChildInt(String name,int def) {
 		int r = def;
 		ZStringBuilder v = getChildValueByName(name);
-		if (v!=null) {
+		if (v!=null && ZStringEncoder.isNumber(v.toString())) {
 			r = Integer.parseInt(v.toString());
 		}
 		return r;

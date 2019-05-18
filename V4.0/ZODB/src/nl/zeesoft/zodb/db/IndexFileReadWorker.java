@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
@@ -36,17 +37,21 @@ public class IndexFileReadWorker extends Worker {
 			} else {
 				String[] split = fileName.split("/");
 				split = split[(split.length - 1)].split("\\.");
-				int fileNum = Integer.parseInt(split[0]);
-				List<IndexElement> elements = new ArrayList<IndexElement>();
-				List<ZStringBuilder> lines = content.split("\n");
-				for (ZStringBuilder line: lines) {
-					IndexElement elem = new IndexElement();
-					elem.fromStringBuilder(line);
-					elem.fileNum = fileNum;
-					elements.add(elem);
-				}
-				if (elements.size()>0) {
-					index.addFileElements(fileNum,elements);
+				if (ZStringEncoder.isNumberNotNegative(split[0])) {
+					int fileNum = Integer.parseInt(split[0]);
+					List<IndexElement> elements = new ArrayList<IndexElement>();
+					List<ZStringBuilder> lines = content.split("\n");
+					for (ZStringBuilder line: lines) {
+						IndexElement elem = new IndexElement();
+						elem.fromStringBuilder(line);
+						if (elem.name.length()>0 && elem.modified>0) {
+							elem.fileNum = fileNum;
+							elements.add(elem);
+						}
+					}
+					if (elements.size()>0) {
+						index.addFileElements(fileNum,elements);
+					}
 				}
 			}
 			done++;

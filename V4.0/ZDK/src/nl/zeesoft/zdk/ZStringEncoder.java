@@ -9,6 +9,7 @@ import java.util.TreeMap;
  */
 public class ZStringEncoder extends ZStringBuilder {
 	private static final String[]	CHAR_COMPRESS	= {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","#",":","~"};
+	private static final char		CHAR_MINUS		= "-".charAt(0);
 	
 	private ZIntegerGenerator		generator		= null;
 
@@ -90,7 +91,7 @@ public class ZStringEncoder extends ZStringBuilder {
 	 * @return The encoded StringBuilder value
 	 */
 	public StringBuilder encodeKey(StringBuilder key, long seed) {
-		if (getStringBuilder()!=null) {
+		if (getStringBuilder()!=null && isNumber(key,false)) {
 			int sVar = ((int) (seed % 200));
 			StringBuilder s = new StringBuilder();
 			String str = "";
@@ -126,12 +127,11 @@ public class ZStringEncoder extends ZStringBuilder {
 	 * @return The decoded text
 	 */
 	public StringBuilder decodeKey(StringBuilder key, long seed) {
-		if (getStringBuilder()!=null) {
+		if (getStringBuilder()!=null && isNumber(key,false)) {
 			int sVar = ((int) (seed % 200));
 			String str = "";
 			int idx = 0;
 			int end = 0;
-			
 			decompress(getCharCompressForKey(key,seed));
 			StringBuilder sb = getStringBuilder();
 			int len = sb.length();
@@ -143,45 +143,17 @@ public class ZStringEncoder extends ZStringBuilder {
 					end = key.length();
 				}
 				str = sb.substring((p * 3), ((p * 3) + 3));
-				characters[p] = (char) (Integer.parseInt(str) - ((Integer.parseInt(key.substring(idx,end))) / 2) - sVar);
+				if (isNumberNotNegative(str)) {
+					characters[p] = (char) (Integer.parseInt(str) - ((Integer.parseInt(key.substring(idx,end))) / 2) - sVar);
+				} else {
+					characters[p] = CHAR_MINUS;
+				}
 			}
 			sb = new StringBuilder();
 			sb.append(characters);
 			setStringBuilder(sb);
 		}
 		return getStringBuilder();
-	}
-	
-	private int getKeyOffset(StringBuilder key) {
-		int idx = 0;
-		if (key.length()>=1024) {
-			idx = (Integer.parseInt(key.substring(0,3)) + 1);
-		} else if (key.length()>=512) {
-			idx = (Integer.parseInt(key.substring(0,3)) + 1) / 2;
-		} else if (key.length()>=256) {
-			idx = ((Integer.parseInt(key.substring(0,2)) + 1) * 2);
-		} else if (key.length()>=128) {
-			idx = (Integer.parseInt(key.substring(0,2)) + 1);
-		} else if (key.length()>=64) {
-			idx = ((Integer.parseInt(key.substring(0,2)) + 1) / 2);
-		}
-		return (Integer.parseInt(key.substring(idx,idx + 6)));
-	}
-
-	private String[] getCharCompressForKey(StringBuilder key, long seed) {
-		int s = 0;
-		if (seed > (Integer.MAX_VALUE - 999999)) {
-			s = (Integer.MAX_VALUE - 999999);
-		} else {
-			s = (int) seed;
-		}
-		int start = (getKeyOffset(key) + s) % CHAR_COMPRESS.length;
-		String[] charCompress = new String[CHAR_COMPRESS.length];
-		for (int i = start; i < CHAR_COMPRESS.length + start; i ++) {
-			int m = i % CHAR_COMPRESS.length;
-			charCompress[(i - start)] = CHAR_COMPRESS[m];
-		}
-		return charCompress;
 	}
 
 	public StringBuilder compress() {
@@ -193,13 +165,17 @@ public class ZStringEncoder extends ZStringBuilder {
 	}
 
 	public StringBuilder decompress(String[] charCompress) {
-		if (getStringBuilder()!=null) {
+		if (getStringBuilder()!=null && getStringBuilder().length()>0) {
 			StringBuilder sb = getStringBuilder();
 			StringBuilder r = new StringBuilder();
 			if ((sb.length() % 2) != 1) {
 				return r;
 			}
-			int added = Integer.parseInt(sb.substring(sb.length() - 1));
+			String tail = sb.substring(sb.length() - 1);
+			int added = 0;
+			if (isNumberNotNegative(tail)) {
+				added = Integer.parseInt(tail);
+			}
 			sb = new StringBuilder(sb.substring(0,(sb.length() - 1)));
 			SortedMap<String,Integer> decompressMap = new TreeMap<String,Integer>();
 			for (int i = 0; i < charCompress.length; i++) {
@@ -250,8 +226,14 @@ public class ZStringEncoder extends ZStringBuilder {
 			int num = 0;
 			n1 = 0;
 			n2 = 0;
+			String sub = "";
 			for (int i = 0; i < len; i++) {
-				num = Integer.parseInt(sb.substring((i*3),((i*3)+3)));
+				sub = sb.substring((i*3),((i*3)+3));
+				if (isNumber(sub)) {
+					num = Integer.parseInt(sub);
+				} else {
+					num = 0;
+				}
 				n1 = num % charCompress.length;
 				n2 = (num - n1) / charCompress.length;
 				r.append(charCompress[n1]);
@@ -314,12 +296,12 @@ public class ZStringEncoder extends ZStringBuilder {
 			StringBuilder r = new StringBuilder();
 			if (getStringBuilder().length()>0) {
 				List<ZStringBuilder> keyVals = split(",");
-				if (keyVals.size()>=2) {
+				if (keyVals.size()>=2 && isNumber(keyVals.get(0).toString())) {
 					int key = Integer.parseInt(keyVals.get(0).toString());
 					int i = 0;
 					int pKey = key;
 					for (ZStringBuilder val: keyVals) {
-						if (i>0) {
+						if (i>0 && isNumber(val.toString())) {
 							int iKey = key + ((i * pKey * 7) % 24);
 							pKey = iKey;
 							int iVal = iKey;
@@ -335,8 +317,103 @@ public class ZStringEncoder extends ZStringBuilder {
 					}
 				}
 			}
+			setStringBuilder(r);
 		}
 		return getStringBuilder();
 	}
 
+	/**
+	 * Returns true if a string is a number.
+	 * 
+	 * @param str The string
+	 * @return True if the string is a number
+	 */
+	public static final boolean isNumber(String str) {
+		return isNumber(str,true);
+	}
+	
+	/**
+	 * Returns true if a string is a positive number or zero.
+	 * 
+	 * @param str The string
+	 * @return True if the string is a positive number
+	 */
+	public static final boolean isNumberNotNegative(String str) {
+		return isNumber(str,false);
+	}
+	
+	/**
+	 * Returns true if a string is a number.
+	 * 
+	 * @param str The string
+	 * @param allowNegative Indicates negative integer values are considered valid
+	 * @return True if the string is a number
+	 */
+	public static final boolean isNumber(String str, boolean allowNegative) {
+		boolean r = str.length()>0;
+		int i = 0;
+		for (char c:str.toCharArray()) {
+	        if (!(Character.isDigit(c) || (i==0 && allowNegative && c==CHAR_MINUS && str.length()>1))) {
+	        	r = false;
+	        	break;
+	        }
+	        i++;
+	    }
+	    return r;
+	}
+	
+	/**
+	 * Returns true if a string builder is a number.
+	 * 
+	 * @param str The string builder
+	 * @param allowNegative Indicates negative integer values are considered valid
+	 * @return True if the string builder is a number
+	 */
+	public static final boolean isNumber(StringBuilder str, boolean allowNegative) {
+		boolean r = str.length()>0;
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+	        if (!(Character.isDigit(c) || (i==0 && allowNegative && c==CHAR_MINUS && str.length()>1))) {
+	        	r = false;
+	        	break;
+	        }
+		}
+	    return r;
+	}
+	
+	private int getKeyOffset(StringBuilder key) {
+		int r = 0;
+		if (isNumber(key,false)) {
+			int idx = 0;
+			if (key.length()>=1024) {
+				idx = (Integer.parseInt(key.substring(0,3)) + 1);
+			} else if (key.length()>=512) {
+				idx = (Integer.parseInt(key.substring(0,3)) + 1) / 2;
+			} else if (key.length()>=256) {
+				idx = ((Integer.parseInt(key.substring(0,2)) + 1) * 2);
+			} else if (key.length()>=128) {
+				idx = (Integer.parseInt(key.substring(0,2)) + 1);
+			} else if (key.length()>=64) {
+				idx = ((Integer.parseInt(key.substring(0,2)) + 1) / 2);
+			}
+			r = Integer.parseInt(key.substring(idx,idx + 6));
+		}
+		return r;
+	}
+
+	private String[] getCharCompressForKey(StringBuilder key, long seed) {
+		int s = 0;
+		if (seed > (Integer.MAX_VALUE - 999999)) {
+			s = (Integer.MAX_VALUE - 999999);
+		} else {
+			s = (int) seed;
+		}
+		int start = (getKeyOffset(key) + s) % CHAR_COMPRESS.length;
+		String[] charCompress = new String[CHAR_COMPRESS.length];
+		for (int i = start; i < CHAR_COMPRESS.length + start; i ++) {
+			int m = i % CHAR_COMPRESS.length;
+			charCompress[(i - start)] = CHAR_COMPRESS[m];
+		}
+		return charCompress;
+	}
 }

@@ -39,6 +39,7 @@ The output of this test shows the converted JSON.
   "debug": true,
   "dataDir": "dir/",
   "servletUrl": "http://127.0.0.1",
+  "key": "hDbOgIIGUHmKdDFMgKsMJK2NVFEJjL1",
   "modules": [
     {
       "name": "ZODB",
@@ -81,8 +82,8 @@ The output of this test shows the converted JSON.
   "type": "LIST",
   "start": 0,
   "max": 10,
-  "modAfter": 1557655553321,
-  "modBefore": 1557655553322
+  "modAfter": 1558186939091,
+  "modBefore": 1558186939092
 }
 
 {
@@ -93,8 +94,8 @@ The output of this test shows the converted JSON.
 {
   "type": "GET",
   "contains": "testObject",
-  "modAfter": 1557655553322,
-  "modBefore": 1557655553323
+  "modAfter": 1558186939091,
+  "modBefore": 1558186939092
 }
 
 {
@@ -121,8 +122,8 @@ The output of this test shows the converted JSON.
 {
   "type": "REMOVE",
   "contains": "testObject",
-  "modAfter": 1557655553323,
-  "modBefore": 1557655553324
+  "modAfter": 1558186939092,
+  "modBefore": 1558186939093
 }
 ~~~~
 
@@ -160,7 +161,7 @@ The output of this test shows the converted JSON.
     {
       "name": "testName",
       "id": 1,
-      "modified": 1557655553362,
+      "modified": 1558186939106,
       "object": {
         "data": "testObjectData"
       }
@@ -174,12 +175,12 @@ The output of this test shows the converted JSON.
     {
       "name": "testName1",
       "id": 1,
-      "modified": 1557655553363
+      "modified": 1558186939107
     },
     {
       "name": "testName2",
       "id": 1,
-      "modified": 1557655553363
+      "modified": 1558186939107
     }
   ],
   "size": 2
@@ -188,10 +189,10 @@ The output of this test shows the converted JSON.
 
 Test results
 ------------
-All 3 tests have been executed successfully (24 assertions).  
-Total test duration: 71 ms (total sleep duration: 0 ms).  
+All 3 tests have been executed successfully (25 assertions).  
+Total test duration: 56 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zodb.test.TestConfig: 567 Kb / 0 Mb
- * nl.zeesoft.zodb.test.TestDatabaseRequest: 400 Kb / 0 Mb
- * nl.zeesoft.zodb.test.TestDatabaseResponse: 406 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestConfig: 586 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestDatabaseRequest: 405 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestDatabaseResponse: 411 Kb / 0 Mb

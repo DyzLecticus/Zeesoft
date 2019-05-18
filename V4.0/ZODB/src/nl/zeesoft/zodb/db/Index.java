@@ -191,12 +191,13 @@ public class Index extends Locker {
 			ZStringEncoder decoder = new ZStringEncoder();
 			ZStringBuilder err = decoder.fromFile(fileName);
 			if (err.length()>0) {
-				getMessenger().error(this,"Failed to read object: " + err);
+				getMessenger().error(this,"Failed to read object " + element.id + ": " + err);
 			} else {
 				decoder.decodeKey(configuration.getKey(),0);
 				JsFile obj = new JsFile();
 				obj.fromStringBuilder(decoder);
 				if (obj.rootElement==null) {
+					getMessenger().error(this,"Object " + element.id + " has been corrupted");
 					obj.rootElement = new JsElem();
 				}
 				lockMe(this);
