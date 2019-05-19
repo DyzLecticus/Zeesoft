@@ -246,7 +246,7 @@ public class ZStringEncoder extends ZStringBuilder {
 	}
 
 	/**
-	 * Returns the StringBuilder value encoded to ASCII
+	 * Returns the StringBuilder value encoded to ASCII.
 	 * 
 	 * @return The ASCII StringBuilder value
 	 */
@@ -263,14 +263,11 @@ public class ZStringEncoder extends ZStringBuilder {
 				}
 				int key = (avg / sb.length()) / 2;
 				r.append(key);
-				r.append(",");
 				int pKey = key;
 				for (int i = 0; i < ascVals.length; i++) {
 					int iKey = key + (((i + 1) * pKey * 7) % 24);
 					pKey = iKey;
-					if (i>0) {
-						r.append(",");
-					}
+					r.append(",");
 					if (ascVals[i]==iKey) {
 						r.append("0");
 					} else if (ascVals[i]>iKey) {
@@ -287,7 +284,7 @@ public class ZStringEncoder extends ZStringBuilder {
 	}
 
 	/**
-	 * Returns the StringBuilder value decoded from ASCII
+	 * Returns the StringBuilder value decoded from ASCII.
 	 * 
 	 * @return The ASCII decoded StringBuilder value 
 	 */
