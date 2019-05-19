@@ -1,8 +1,5 @@
 package nl.zeesoft.zodb.mod;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -12,6 +9,7 @@ import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 import nl.zeesoft.zodb.db.StateListener;
+import nl.zeesoft.zodb.db.WhiteList;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBDataManagerHandler;
@@ -25,7 +23,7 @@ public class ModZODB extends ModObject implements StateListener {
 	
 	private StringBuilder		key			= null;
 	private StringBuilder		newKey		= null;
-	private List<String>		whiteList	= new ArrayList<String>();
+	private WhiteList			whiteList	= new WhiteList();
 	
 	private Database			database	= null;
 	
@@ -34,8 +32,8 @@ public class ModZODB extends ModObject implements StateListener {
 		name = NAME;
 		ZStringEncoder encoder = new ZStringEncoder();
 		key = encoder.generateNewKey(1024);
-		whiteList.add("127.0.0.1");
-		whiteList.add("0:0:0:0:0:0:0:1");
+		whiteList.getList().add("127.0.0.1");
+		whiteList.getList().add("0:0:0:0:0:0:0:1");
 		desc.append(DESC);
 		database = getNewDatabase();
 		database.addListener(this);
@@ -50,10 +48,9 @@ public class ModZODB extends ModObject implements StateListener {
 			encoder = new ZStringEncoder(newKey);
 			json.rootElement.children.add(new JsElem("newKey",encoder.compress().toString(),true));
 		}
-		JsElem wElem = new JsElem("whiteList",true);
-		json.rootElement.children.add(wElem);
-		for (String w: whiteList) {
-			wElem.children.add(new JsElem(null,w,true));
+		if (whiteList.getList().size()>0) {
+			JsFile wl = whiteList.toJson();
+			json.rootElement.children.add(wl.rootElement);
 		}
 		return json;
 	}
@@ -72,15 +69,7 @@ public class ModZODB extends ModObject implements StateListener {
 				ZStringEncoder encoder = new ZStringEncoder(k.value);
 				newKey = encoder.decompress();
 			}
-			JsElem wElem = json.rootElement.getChildByName("whiteList");
-			if (wElem!=null && wElem.array) {
-				whiteList.clear();
-				for (JsElem w: wElem.children) {
-					if (w.value!=null && w.value.length()>0) {
-						whiteList.add(w.value.toString());
-					}
-				}
-			}
+			whiteList.fromJson(json);
 		}
 	}
 	
@@ -135,7 +124,7 @@ public class ModZODB extends ModObject implements StateListener {
 		this.newKey = newKey;
 	}
 
-	public List<String> getWhiteList() {
+	public WhiteList getWhiteList() {
 		return whiteList;
 	}
 

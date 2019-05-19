@@ -19,6 +19,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
+import nl.zeesoft.zodb.db.WhiteList;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
 import nl.zeesoft.zodb.mod.handler.HandlerObject;
@@ -26,25 +27,30 @@ import nl.zeesoft.zodb.mod.handler.HtmlModIndexHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 
 public class Config implements JsAble {
-	private Messenger			messenger			= null;
-	private WorkerUnion			union				= null;
+	private Messenger			messenger				= null;
+	private WorkerUnion			union					= null;
 	
-	private boolean				write				= true;
-	private boolean				debug				= false;
-	private String				installDir			= "";
-	private String				dataDir				= "data/";
-	private String				servletUrl			= "http://127.0.0.1";
+	private boolean				write					= true;
+	private boolean				debug					= false;
+	private String				installDir				= "";
+	private String				dataDir					= "data/";
+	private String				servletUrl				= "http://127.0.0.1";
+	private WhiteList			whiteList				= new WhiteList();
 	
-	private List<ModObject>		modules				= new ArrayList<ModObject>();
+	private List<ModObject>		modules					= new ArrayList<ModObject>();
 	
-	private HandlerObject		notFoundHtmlHandler	= null;
-	private HandlerObject		notFoundJsonHandler	= null;
-	private HandlerObject		modIndexHtmlHandler	= null;
+	private HandlerObject		notFoundHtmlHandler		= null;
+	private HandlerObject		notFoundJsonHandler		= null;
+	private HandlerObject		forbiddenHtmlHandler	= null;
+	private HandlerObject		forbiddenJsonHandler	= null;
+	private HandlerObject		modIndexHtmlHandler		= null;
 	
 	public Config() {
 		ZDKFactory factory = new ZDKFactory();
 		messenger = factory.getMessenger();
 		union = factory.getWorkerUnion(messenger);
+		whiteList.getList().add("127.0.0.1");
+		whiteList.getList().add("0:0:0:0:0:0:0:1");
 		addModule(new ModZODB(this));
 		addModules();
 	}
@@ -85,6 +91,8 @@ public class Config implements JsAble {
 			if (mod.name.equals(ModZODB.NAME)) {
 				notFoundHtmlHandler = mod.notFoundHtmlHandler;
 				notFoundJsonHandler = mod.notFoundJsonHandler;
+				forbiddenHtmlHandler = mod.forbiddenHtmlHandler;
+				forbiddenJsonHandler = mod.forbiddenJsonHandler;
 			}
 		}
 		modIndexHtmlHandler = getNewHtmlAppIndexHandler();
@@ -93,19 +101,27 @@ public class Config implements JsAble {
 	public HandlerObject getHandlerForRequest(HttpServletRequest request) {
 		HandlerObject r = null;
 		String path = request.getServletPath().toLowerCase();
-		if (path.equals("/") || path.equals("/index.html")) {
-			r = modIndexHtmlHandler;
-		} else {
-			String name = getModuleNameFromPath(path);
-			ModObject mod = getModule(name);
-			if (mod!=null) {
-				r = mod.getHandlerForRequest(request);
+		if (!whiteList.isAllowed(request.getRemoteAddr())) {
+			if (path.endsWith(".json")) {
+				r = forbiddenJsonHandler;
+			} else {
+				r = forbiddenHtmlHandler;
 			}
-			if (r==null) {
-				if (path.endsWith(".json")) {
-					r = notFoundJsonHandler;
-				} else {
-					r = notFoundHtmlHandler;
+		} else {
+			if (path.equals("/") || path.equals("/index.html")) {
+				r = modIndexHtmlHandler;
+			} else {
+				String name = getModuleNameFromPath(path);
+				ModObject mod = getModule(name);
+				if (mod!=null) {
+					r = mod.getHandlerForRequest(request);
+				}
+				if (r==null) {
+					if (path.endsWith(".json")) {
+						r = notFoundJsonHandler;
+					} else {
+						r = notFoundHtmlHandler;
+					}
 				}
 			}
 		}
@@ -133,6 +149,10 @@ public class Config implements JsAble {
 		json.rootElement.children.add(new JsElem("debug","" + debug));
 		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
 		json.rootElement.children.add(new JsElem("servletUrl",servletUrl,true));
+		if (whiteList.getList().size()>0) {
+			JsFile wl = whiteList.toJson();
+			json.rootElement.children.add(wl.rootElement);
+		}
 		JsElem modsElem = new JsElem("modules",true);
 		json.rootElement.children.add(modsElem);
 		for (ModObject mod: modules) {
@@ -150,6 +170,7 @@ public class Config implements JsAble {
 			debug = json.rootElement.getChildBoolean("debug",debug);
 			dataDir = json.rootElement.getChildString("dataDir",dataDir);
 			servletUrl = json.rootElement.getChildString("servletUrl",servletUrl);
+			whiteList.fromJson(json);
 			JsElem modsElem = json.rootElement.getChildByName("modules");
 			if (modsElem!=null) {
 				for (JsElem modElem: modsElem.children) {

@@ -31,8 +31,7 @@ public class JsonZODBRequestHandler extends JsonHandlerObject {
 			if (zodb==null) {
 				r = setResponse(response,405,"ZODB module not found");
 			} else {
-				boolean allow = (zodb.getWhiteList().size()==0 || zodb.getWhiteList().indexOf(request.getRemoteAddr())>=0);
-				if (!allow) {
+				if (!zodb.getWhiteList().isAllowed(request.getRemoteAddr())) {
 					r = setResponse(response,403,"ZODB module does not allow requests from " + request.getRemoteAddr());
 				} else {
 					DatabaseRequest req = new DatabaseRequest();

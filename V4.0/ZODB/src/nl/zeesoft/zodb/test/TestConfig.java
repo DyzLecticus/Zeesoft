@@ -50,7 +50,7 @@ public class TestConfig extends TestObject {
 		StringBuilder key = config.getZODBKey();
 		
 		JsFile json = config.toJson();
-		assertEqual(json.rootElement.children.size(),4,"Number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),5,"Number of children does not match expectation");
 		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
 		System.out.println(oriStr);
 		

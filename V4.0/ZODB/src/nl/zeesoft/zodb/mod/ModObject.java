@@ -11,7 +11,9 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.mod.handler.HandlerObject;
+import nl.zeesoft.zodb.mod.handler.HtmlForbiddenHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlNotFoundHandler;
+import nl.zeesoft.zodb.mod.handler.JsonForbiddenHandler;
 import nl.zeesoft.zodb.mod.handler.JsonNotFoundHandler;
 
 public abstract class ModObject implements JsAble {
@@ -25,12 +27,14 @@ public abstract class ModObject implements JsAble {
 	public List<HandlerObject>	handlers				= new ArrayList<HandlerObject>();
 	public HandlerObject		notFoundHtmlHandler		= null;
 	public HandlerObject		notFoundJsonHandler		= null;
+	public HandlerObject		forbiddenHtmlHandler	= null;
+	public HandlerObject		forbiddenJsonHandler	= null;
 	
 	public List<TesterObject>	testers					= new ArrayList<TesterObject>();
 	
 	public ModObject(Config config) {
 		configuration = config;
-		addDefaultNotFoundHandlers();
+		addDefaultHandlers();
 	}
 	
 	public void install() {
@@ -44,6 +48,12 @@ public abstract class ModObject implements JsAble {
 			}
 			if (handler instanceof JsonNotFoundHandler) {
 				notFoundJsonHandler = handler;
+			}
+			if (handler instanceof HtmlForbiddenHandler) {
+				forbiddenHtmlHandler = handler;
+			}
+			if (handler instanceof JsonForbiddenHandler) {
+				forbiddenJsonHandler = handler;
 			}
 		}
 	}
@@ -111,8 +121,10 @@ public abstract class ModObject implements JsAble {
 		}
 	}
 	
-	private void addDefaultNotFoundHandlers() {
+	private void addDefaultHandlers() {
 		handlers.add(new HtmlNotFoundHandler(configuration,this));
 		handlers.add(new JsonNotFoundHandler(configuration,this));
+		handlers.add(new HtmlForbiddenHandler(configuration,this));
+		handlers.add(new JsonForbiddenHandler(configuration,this));
 	}
 }
