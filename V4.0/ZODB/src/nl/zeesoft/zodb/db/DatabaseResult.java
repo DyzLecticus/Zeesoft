@@ -9,6 +9,7 @@ public class DatabaseResult implements JsAble {
 	public String			name		= "";
 	public long				id			= 0L;
 	public long				modified	= 0L;
+	
 	public JsFile			obj			= null;
 	public ZStringBuilder	encoded		= null;
 	

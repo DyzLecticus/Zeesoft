@@ -12,10 +12,12 @@ public class IndexFileReader extends Locker {
 	private Index						index	= null;
 	private List<IndexFileReadWorker>	workers	= new ArrayList<IndexFileReadWorker>();
 	private int							done	= 0;
+	private StringBuilder				newKey	= null;
 	
-	protected IndexFileReader(Messenger msgr, WorkerUnion uni,Index idx) {
+	protected IndexFileReader(Messenger msgr, WorkerUnion uni,Index idx,StringBuilder nKey) {
 		super(msgr);
 		index = idx;
+		newKey = nKey;
 		for (int i = 0; i < 10; i++) {
 			workers.add(new IndexFileReadWorker(msgr,uni,index,this));
 		}
@@ -25,6 +27,9 @@ public class IndexFileReader extends Locker {
 		lockMe(this);
 		List<String> fileNames = getFileNames();
 		if (fileNames.size()==0) {
+			if (newKey!=null && newKey.length()>0) {
+				index.setKey(newKey);
+			}
 			index.setOpen(true);
 		} else {
 			int size = fileNames.size();
@@ -48,6 +53,11 @@ public class IndexFileReader extends Locker {
 		lockMe(this);
 		done++;
 		if (done>=workers.size()) {
+			if (newKey!=null && newKey.length()>0) {
+				index.readAll();
+				index.setKey(newKey);
+				index.writeAll();
+			}
 			index.setOpen(true);
 			index = null;
 			workers.clear();

@@ -47,7 +47,11 @@ public class Database {
 
 	public void start() {
 		configuration.debug(this,"Starting database ...");
-		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index);
+		StringBuilder newKey = configuration.getZODB().getNewKey();
+		if (newKey!=null && newKey.length()>0) {
+			configuration.debug(this,"Changing database key ...");
+		}
+		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index,newKey);
 		reader.start();
 		fileWriter.start();
 		objectWriter.start();
@@ -121,7 +125,17 @@ public class Database {
 	protected StringBuilder getKey() {
 		return configuration.getZODBKey();
 	}
-
+	
+	protected void setKey(StringBuilder key) {
+		configuration.setZODBKey(key);
+		ZStringBuilder err = configuration.rewriteConfig();
+		if (err.length()==0) {
+			configuration.debug(this,"Changed database key");
+		} else {
+			configuration.error(this,"An error occured while changing the database key");
+		}
+	}
+	
 	protected void stateChanged(boolean open) {
 		if (open) {
 			configuration.debug(this,"Database is open for business");

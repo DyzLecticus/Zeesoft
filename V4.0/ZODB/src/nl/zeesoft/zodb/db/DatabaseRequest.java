@@ -24,9 +24,9 @@ public class DatabaseRequest implements JsAble {
 	public String				startsWith	= "";
 	public long					modAfter	= 0L;
 	public long					modBefore	= 0L;
-	public JsFile				obj			= null;
-
 	public String				encoding	= "";
+	
+	public JsFile				obj			= null;
 	public ZStringBuilder		encoded		= null;
 	
 	public DatabaseRequest() {

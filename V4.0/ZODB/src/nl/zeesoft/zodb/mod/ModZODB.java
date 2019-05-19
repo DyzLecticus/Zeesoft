@@ -21,6 +21,7 @@ public class ModZODB extends ModObject implements StateListener {
 	public static final String	DESC		= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
 	private StringBuilder		key			= null;
+	private StringBuilder		newKey		= null;
 	private Database			database	= null;
 	
 	public ModZODB(Config config) {
@@ -38,6 +39,10 @@ public class ModZODB extends ModObject implements StateListener {
 		JsFile json = super.toJson();
 		ZStringEncoder encoder = new ZStringEncoder(key);
 		json.rootElement.children.add(new JsElem("key",encoder.compress().toString(),true));
+		if (newKey!=null && newKey.length()>0) {
+			encoder = new ZStringEncoder(newKey);
+			json.rootElement.children.add(new JsElem("newKey",encoder.compress().toString(),true));
+		}
 		return json;
 	}
 
@@ -49,6 +54,11 @@ public class ModZODB extends ModObject implements StateListener {
 			if (k!=null && k.value!=null && k.value.length()>0) {
 				ZStringEncoder encoder = new ZStringEncoder(k.value);
 				key = encoder.decompress();
+			}
+			k = json.rootElement.getChildByName("newKey");
+			if (k!=null && k.value!=null && k.value.length()>0) {
+				ZStringEncoder encoder = new ZStringEncoder(k.value);
+				newKey = encoder.decompress();
 			}
 		}
 	}
@@ -91,6 +101,17 @@ public class ModZODB extends ModObject implements StateListener {
 
 	public void setKey(StringBuilder key) {
 		this.key = key;
+		if (key.equals(newKey)) {
+			newKey = null;
+		}
+	}
+	
+	public StringBuilder getNewKey() {
+		return newKey;
+	}
+
+	public void setNewKey(StringBuilder newKey) {
+		this.newKey = newKey;
 	}
 
 	public Database getDatabase() {

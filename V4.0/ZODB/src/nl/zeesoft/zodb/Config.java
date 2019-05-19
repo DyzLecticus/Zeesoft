@@ -29,6 +29,7 @@ public class Config implements JsAble {
 	private Messenger			messenger			= null;
 	private WorkerUnion			union				= null;
 	
+	private boolean				write				= true;
 	private boolean				debug				= false;
 	private String				installDir			= "";
 	private String				dataDir				= "data/";
@@ -56,6 +57,7 @@ public class Config implements JsAble {
 		this.debug = debug;
 		this.installDir = installDir;
 		this.servletUrl = servletUrl;
+		this.write = write;
 		
 		File cfg = new File(installDir + "config.json");
 		if (cfg.exists()) {
@@ -70,7 +72,7 @@ public class Config implements JsAble {
 		} else {
 			messenger.setPrintDebugMessages(debug);
 			if (write) {
-				install(cfg.getAbsolutePath());
+				install();
 			}
 		}
 		
@@ -214,6 +216,14 @@ public class Config implements JsAble {
 		}
 	}
 
+	public ZStringBuilder rewriteConfig() {
+		ZStringBuilder err = writeConfig();
+		if (err.length()>0) {
+			messenger.error(this,"Error writing configuration: " + err);
+		}
+		return err;
+	}
+
 	public void handleDatabaseRequest(DatabaseRequest request,JsClientListener listener) {
 		handleDatabaseRequest(request,listener,10);
 	}
@@ -290,11 +300,20 @@ public class Config implements JsAble {
 	protected HandlerObject getNewHtmlAppIndexHandler() {
 		return new HtmlModIndexHandler(this);
 	}
+
+	protected ZStringBuilder writeConfig() {
+		ZStringBuilder err = new ZStringBuilder();
+		if (write) {
+			File cfg = new File(installDir + "config.json");
+			JsFile json = toJson();
+			err = json.toFile(cfg.getAbsolutePath(),true);
+		}
+		return err;
+	}
 	
-	protected void install(String fileName) {
+	protected void install() {
 		debug(this,"Installing ...");
-		JsFile json = toJson();
-		ZStringBuilder err = json.toFile(fileName,true);
+		ZStringBuilder err = writeConfig();
 		if (err.length()==0) {
 			for (ModObject mod: modules) {
 				debug(this,"Installing " + mod.name + " ...");
@@ -308,7 +327,7 @@ public class Config implements JsAble {
 			debug(this,"Installed");
 		}
 	}
-	
+
 	protected void addModules() {
 		// Override to extend
 	}

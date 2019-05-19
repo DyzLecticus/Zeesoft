@@ -181,7 +181,7 @@ public class Index extends Locker {
 	protected boolean readObject(IndexElement element) {
 		boolean r = true;
 		lockMe(this);
-		IndexElement copy = element.copy();
+		IndexElement copy = elementsById.get(element.id).copy();
 		r = open;
 		unlockMe(this);
 		if (copy.obj==null) {
@@ -199,6 +199,7 @@ public class Index extends Locker {
 					obj.rootElement = new JsElem();
 				}
 				lockMe(this);
+				elementsById.get(element.id).obj = obj;
 				element.obj = obj;
 				r = open;
 				unlockMe(this);
@@ -213,6 +214,34 @@ public class Index extends Locker {
 	
 	protected String getObjectDirectory() {
 		return db.getFullObjectDir();
+	}
+
+	protected void readAll() {
+		lockMe(this);
+		List<IndexElement> elems = new ArrayList<IndexElement>(elementsById.values());
+		List<IndexElement> elements = new ArrayList<IndexElement>();
+		for (IndexElement element: elems) {
+			elements.add(element.copy());
+		}
+		unlockMe(this);
+		for (IndexElement element: elements) {
+			readObject(element);
+		}
+	}
+
+	protected void setKey(StringBuilder key) {
+		db.setKey(key);
+	}
+	
+	protected void writeAll() {
+		lockMe(this);
+		List<IndexElement> elements = new ArrayList<IndexElement>(elementsById.values());
+		for (IndexElement element: elements) {
+			if (!changedElements.contains(element)) {
+				changedElements.add(element);
+			}
+		}
+		unlockMe(this);
 	}
 	
 	protected void setOpen(boolean open) {
