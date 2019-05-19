@@ -46,7 +46,10 @@ public class ModZODB extends ModObject implements StateListener {
 		json.rootElement.children.add(new JsElem("key",encoder.compress().toString(),true));
 		if (newKey!=null && newKey.length()>0) {
 			encoder = new ZStringEncoder(newKey);
-			json.rootElement.children.add(new JsElem("newKey",encoder.compress().toString(),true));
+			if (newKey.length()>4 || !newKey.toString().equals("true")) {
+				encoder.compress();
+			}
+			json.rootElement.children.add(new JsElem("newKey",encoder,true));
 		}
 		if (whiteList.getList().size()>0) {
 			JsFile wl = whiteList.toJson();
@@ -67,7 +70,11 @@ public class ModZODB extends ModObject implements StateListener {
 			k = json.rootElement.getChildByName("newKey");
 			if (k!=null && k.value!=null && k.value.length()>0) {
 				ZStringEncoder encoder = new ZStringEncoder(k.value);
-				newKey = encoder.decompress();
+				if (k.value.toString().equals("true")) {
+					newKey = encoder.generateNewKey(1024);
+				} else {
+					newKey = encoder.decompress();
+				}
 			}
 			whiteList.fromJson(json);
 		}
