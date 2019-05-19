@@ -46,6 +46,7 @@ public class TestConfig extends TestObject {
 		config.setDebug(true);
 		config.setDataDir("dir/");
 		config.setZODBKey(new StringBuilder("23894756239847569823478569283465987234658976"));
+		config.getZODB().setNewKey(new StringBuilder("38947562398475698234785692834659872346589765"));
 		String fullDataDir = config.getFullDataDir();
 		StringBuilder key = config.getZODBKey();
 		
