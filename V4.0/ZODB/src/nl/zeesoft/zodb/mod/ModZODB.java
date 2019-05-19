@@ -1,5 +1,8 @@
 package nl.zeesoft.zodb.mod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -22,6 +25,8 @@ public class ModZODB extends ModObject implements StateListener {
 	
 	private StringBuilder		key			= null;
 	private StringBuilder		newKey		= null;
+	private List<String>		whiteList	= new ArrayList<String>();
+	
 	private Database			database	= null;
 	
 	public ModZODB(Config config) {
@@ -29,6 +34,8 @@ public class ModZODB extends ModObject implements StateListener {
 		name = NAME;
 		ZStringEncoder encoder = new ZStringEncoder();
 		key = encoder.generateNewKey(1024);
+		whiteList.add("127.0.0.1");
+		whiteList.add("0:0:0:0:0:0:0:1");
 		desc.append(DESC);
 		database = getNewDatabase();
 		database.addListener(this);
@@ -42,6 +49,11 @@ public class ModZODB extends ModObject implements StateListener {
 		if (newKey!=null && newKey.length()>0) {
 			encoder = new ZStringEncoder(newKey);
 			json.rootElement.children.add(new JsElem("newKey",encoder.compress().toString(),true));
+		}
+		JsElem wElem = new JsElem("whiteList",true);
+		json.rootElement.children.add(wElem);
+		for (String w: whiteList) {
+			wElem.children.add(new JsElem(null,w,true));
 		}
 		return json;
 	}
@@ -59,6 +71,15 @@ public class ModZODB extends ModObject implements StateListener {
 			if (k!=null && k.value!=null && k.value.length()>0) {
 				ZStringEncoder encoder = new ZStringEncoder(k.value);
 				newKey = encoder.decompress();
+			}
+			JsElem wElem = json.rootElement.getChildByName("whiteList");
+			if (wElem!=null && wElem.array) {
+				whiteList.clear();
+				for (JsElem w: wElem.children) {
+					if (w.value!=null && w.value.length()>0) {
+						whiteList.add(w.value.toString());
+					}
+				}
 			}
 		}
 	}
@@ -112,6 +133,10 @@ public class ModZODB extends ModObject implements StateListener {
 
 	public void setNewKey(StringBuilder newKey) {
 		this.newKey = newKey;
+	}
+
+	public List<String> getWhiteList() {
+		return whiteList;
 	}
 
 	public Database getDatabase() {

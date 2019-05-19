@@ -31,15 +31,20 @@ public class JsonZODBRequestHandler extends JsonHandlerObject {
 			if (zodb==null) {
 				r = setResponse(response,405,"ZODB module not found");
 			} else {
-				DatabaseRequest req = new DatabaseRequest();
-				req.fromJson(json);
-				DatabaseResponse res = zodb.handleRequest(req);
-				response.setStatus(res.statusCode);
-				json = res.toJson();
-				if (getConfiguration().isDebug()) {
-					r = json.toStringBuilderReadFormat();
+				boolean allow = (zodb.getWhiteList().size()==0 || zodb.getWhiteList().indexOf(request.getRemoteAddr())>=0);
+				if (!allow) {
+					r = setResponse(response,403,"ZODB module does not allow requests from " + request.getRemoteAddr());
 				} else {
-					r = json.toStringBuilder();
+					DatabaseRequest req = new DatabaseRequest();
+					req.fromJson(json);
+					DatabaseResponse res = zodb.handleRequest(req);
+					response.setStatus(res.statusCode);
+					json = res.toJson();
+					if (getConfiguration().isDebug()) {
+						r = json.toStringBuilderReadFormat();
+					} else {
+						r = json.toStringBuilder();
+					}
 				}
 			}
 		}
