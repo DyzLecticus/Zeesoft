@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Date;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
@@ -66,6 +67,22 @@ public class TestDatabaseRequestHandler extends TestObject {
 				assertEqual(res.results.get(0).name,"testObject001","Name of object found by id does not match expectation");
 				assertEqual(res.results.get(0).obj!=null,true,"Index element found by id does not contain an object");
 			}
+
+			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+			req.id = 1;
+			req.encoding = DatabaseRequest.ENC_ASCII;
+			res = handleRequest(handler,req,1,null);
+			if (res.results.size()>0) {
+				assertEqual(res.results.get(0).encoded,new ZStringBuilder("41,59,-15,38,48,64,56,-24,9,-24,-15,70,60,63,67,29,49,42,60,53,67,4,-1,-9,-7,61"),"ASCII encoded object does not match expectation");
+			}
+			
+			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+			req.id = 1;
+			req.encoding = DatabaseRequest.ENC_KEY;
+			res = handleRequest(handler,req,1,null);
+			if (res.results.size()>0) {
+				assertEqual(res.results.get(0).encoded,new ZStringBuilder("UWpWhY5Ze1L1E1S2h3o3NWrXwYnZDZM1L2z3j4C4KVAWvX7Yn10"),"KEY encoded object does not match expectation");
+			}
 			
 			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 			req.name = "testObject125";
@@ -88,6 +105,36 @@ public class TestDatabaseRequestHandler extends TestObject {
 			req.modAfter = (new Date()).getTime();
 			req.modBefore = req.modAfter - 1;
 			res = handleRequest(handler,req,10,"Request modAfter must be lower than modBefore");
+			
+			ZStringEncoder encoder = new ZStringEncoder("{\"data\":\"changedObject002\"}");
+			encoder.encodeAscii();
+			req = new DatabaseRequest(DatabaseRequest.TYPE_SET);
+			req.id = 2;
+			req.encoding = DatabaseRequest.ENC_ASCII;
+			req.encoded = encoder; 
+			res = handleRequest(handler,req,0,null);
+			
+			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+			req.id = 2;
+			res = handleRequest(handler,req,1,null);
+			if (res.results.size()>0) {
+				assertEqual(res.results.get(0).obj.rootElement.children.get(0).value,new ZStringBuilder("changedObject002"),"Object with id 2 was not changed as expected");
+			}
+			
+			encoder = new ZStringEncoder("{\"data\":\"changedObject003\"}");
+			encoder.encodeKey(config.getKey(),0);
+			req = new DatabaseRequest(DatabaseRequest.TYPE_SET);
+			req.id = 3;
+			req.encoding = DatabaseRequest.ENC_KEY;
+			req.encoded = encoder; 
+			res = handleRequest(handler,req,0,null);
+			
+			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+			req.id = 3;
+			res = handleRequest(handler,req,1,null);
+			if (res.results.size()>0) {
+				assertEqual(res.results.get(0).obj.rootElement.children.get(0).value,new ZStringBuilder("changedObject003"),"Object with id 3 was not changed as expected");
+			}
 		}
 				
 		sleep(1000);
@@ -117,7 +164,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 		DatabaseResponse res = handler.handleDatabaseRequest(req);
 		if (res.errors.size()>0) {
 			if (expectedError!=null && expectedError.length()>0) {
-				assertEqual(res.errors.get(0),new ZStringBuilder(expectedError),"The request returned an error");
+				assertEqual(res.errors.get(0),new ZStringBuilder(expectedError),"Request error does not match expectation");
 			} else {
 				assertEqual(res.errors.get(0),new ZStringBuilder(),"The request returned an error");
 			}

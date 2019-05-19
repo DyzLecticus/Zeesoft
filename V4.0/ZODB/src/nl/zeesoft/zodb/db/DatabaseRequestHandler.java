@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
+import nl.zeesoft.zdk.json.JsFile;
 
 public class DatabaseRequestHandler {
 	public static final String	RESPONSE_CLOSED		=
@@ -48,6 +50,17 @@ public class DatabaseRequestHandler {
 							response.results.add(new DatabaseResult(element));
 						}
 					}
+					if (request.encoding.length()>0 && response.results.size()>0) {
+						for (DatabaseResult res: response.results) {
+							ZStringEncoder encoder = new ZStringEncoder(res.obj.toStringBuilder());
+							if (response.request.encoding.equals(DatabaseRequest.ENC_ASCII)) {
+								encoder.encodeAscii();
+							} else if (response.request.encoding.equals(DatabaseRequest.ENC_KEY)) {
+								encoder.encodeKey(database.getKey(),0);
+							}
+							res.encoded = encoder;
+						}
+					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
 					List<IndexElement> list = null;
 					List<Integer> data = new ArrayList<Integer>();
@@ -88,6 +101,14 @@ public class DatabaseRequestHandler {
 	private void checkRequest(DatabaseResponse response) {
 		if (response.request.type.length()==0) {
 			response.errors.add(new ZStringBuilder("Request type is mandatory"));
+		} else if (
+			!response.request.type.equals(DatabaseRequest.TYPE_ADD) &&
+			!response.request.type.equals(DatabaseRequest.TYPE_LIST) &&
+			!response.request.type.equals(DatabaseRequest.TYPE_GET) &&
+			!response.request.type.equals(DatabaseRequest.TYPE_SET) &&
+			!response.request.type.equals(DatabaseRequest.TYPE_REMOVE)
+			) {
+			response.errors.add(new ZStringBuilder("Request type must equal " + DatabaseRequest.TYPE_ADD + ", " + DatabaseRequest.TYPE_LIST + ", " + DatabaseRequest.TYPE_GET + ", " + DatabaseRequest.TYPE_SET + " or " + DatabaseRequest.TYPE_REMOVE));
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 			if (response.request.name.length()==0) {
 				response.errors.add(new ZStringBuilder("Request name is mandatory"));
@@ -118,8 +139,37 @@ public class DatabaseRequestHandler {
 			response.statusCode = 400;
 		}
 	}
-	
+
+	private void checkRequestEncoding(DatabaseResponse response) {
+		if (response.request.encoding.length()>0 &&
+			!response.request.encoding.equals(DatabaseRequest.ENC_ASCII) &&
+			!response.request.encoding.equals(DatabaseRequest.ENC_KEY)
+			) {
+			response.errors.add(new ZStringBuilder("Request encoding must equal " + DatabaseRequest.ENC_ASCII + " or " + DatabaseRequest.ENC_KEY));
+		}
+	}
+
+	private void checkRequestEncoded(DatabaseResponse response) {
+		if (response.request.encoding.length()>0 && response.request.encoded!=null && response.request.encoded.length()>0) {
+			ZStringEncoder encoder = new ZStringEncoder(response.request.encoded);
+			if (response.request.encoding.equals(DatabaseRequest.ENC_ASCII)) {
+				encoder.decodeAscii();
+			} else if (response.request.encoding.equals(DatabaseRequest.ENC_KEY)) {
+				encoder.decodeKey(database.getKey(),0);
+			}
+			JsFile obj = new JsFile();
+			obj.fromStringBuilder(encoder);
+			if (obj.rootElement!=null && obj.rootElement.children.size()>0) {
+				response.request.obj = obj;
+			} else {
+				response.errors.add(new ZStringBuilder("Failed to decode object"));
+			}
+		}
+	}
+
 	private void checkRequestObjectMandatory(DatabaseResponse response) {
+		checkRequestEncoding(response);
+		checkRequestEncoded(response);
 		if (response.request.obj==null || response.request.obj.rootElement==null) {
 			response.errors.add(new ZStringBuilder("Request object is mandatory"));
 		}

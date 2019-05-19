@@ -1,14 +1,16 @@
 package nl.zeesoft.zodb.db;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class DatabaseResult implements JsAble {
-	public String	name		= "";
-	public long		id			= 0L;
-	public long		modified	= 0L;
-	public JsFile	obj			= null;
+	public String			name		= "";
+	public long				id			= 0L;
+	public long				modified	= 0L;
+	public JsFile			obj			= null;
+	public ZStringBuilder	encoded		= null;
 	
 	public DatabaseResult() {
 		
@@ -30,7 +32,9 @@ public class DatabaseResult implements JsAble {
 		if (modified>0) {
 			json.rootElement.children.add(new JsElem("modified","" + modified));
 		}
-		if (obj!=null && obj.rootElement!=null && obj.rootElement.children.size()>0) {
+		if (encoded!=null && encoded.length()>0) {
+			json.rootElement.children.add(new JsElem("encoded",encoded,true));
+		} else if (obj!=null && obj.rootElement!=null && obj.rootElement.children.size()>0) {
 			JsElem objElem = new JsElem("object");
 			json.rootElement.children.add(objElem);
 			objElem.children = obj.rootElement.children;
@@ -44,6 +48,7 @@ public class DatabaseResult implements JsAble {
 			name = json.rootElement.getChildString("name",name);
 			id = json.rootElement.getChildLong("id",id);
 			modified = json.rootElement.getChildLong("modified",modified);
+			encoded = json.rootElement.getChildZStringBuilder("encoded",encoded);
 			JsElem objElem = json.rootElement.getChildByName("object");
 			if (objElem!=null && objElem.children.size()>0) {
 				obj = new JsFile();

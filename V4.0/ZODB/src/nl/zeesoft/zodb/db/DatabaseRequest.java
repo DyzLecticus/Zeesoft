@@ -1,16 +1,20 @@
 package nl.zeesoft.zodb.db;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class DatabaseRequest implements JsAble {
+	public static final String	TYPE_ADD	= "ADD";
 	public static final String	TYPE_LIST	= "LIST";
 	public static final String	TYPE_GET	= "GET";
-	public static final String	TYPE_ADD	= "ADD";
 	public static final String	TYPE_SET	= "SET";
 	public static final String	TYPE_REMOVE	= "REMOVE";
-	
+
+	public static final String	ENC_ASCII	= "ASCII";
+	public static final String	ENC_KEY		= "KEY";
+
 	public String				type		= "";
 	public int					start		= 0;
 	public int					max			= 10;
@@ -22,6 +26,9 @@ public class DatabaseRequest implements JsAble {
 	public long					modBefore	= 0L;
 	public JsFile				obj			= null;
 
+	public String				encoding	= "";
+	public ZStringBuilder		encoded		= null;
+	
 	public DatabaseRequest() {
 		
 	}
@@ -65,6 +72,12 @@ public class DatabaseRequest implements JsAble {
 			json.rootElement.children.add(objElem);
 			objElem.children = obj.rootElement.children;
 		}
+		if (encoding.length()>0) {
+			json.rootElement.children.add(new JsElem("encoding",encoding,true));
+		}
+		if (encoded!=null && encoded.length()>0) {
+			json.rootElement.children.add(new JsElem("encoded",encoded,true));
+		}
 		return json;
 	}
 	
@@ -86,6 +99,8 @@ public class DatabaseRequest implements JsAble {
 				obj.rootElement = new JsElem();
 				obj.rootElement.children = objElem.children;
 			}
+			encoding = json.rootElement.getChildString("encoding",encoding);
+			encoded = json.rootElement.getChildZStringBuilder("encoded",encoded);
 		}
 	}
 }

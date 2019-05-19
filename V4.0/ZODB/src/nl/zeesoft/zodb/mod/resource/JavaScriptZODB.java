@@ -114,7 +114,62 @@ public class JavaScriptZODB {
 		script.append("    }\n");
 		script.append("    return value;\n");
 		script.append("};\n");
-	
+		
+		script.append("ZODB.encode = {};\n");
+		script.append("ZODB.encode.encodeAscii = function(str) {\n");
+		script.append("    if (str==null || str.length==0) {\n");
+		script.append("        return \"\"\n");
+		script.append("    }\n");
+		script.append("    var r = \"\";\n");
+		script.append("    var ascVals = [];\n");
+		script.append("    var avg = 0;\n");
+		script.append("    for (var i = 0; i < str.length; i++) {\n");
+		script.append("        ascVals[i] = str.substring(i,i+1).charCodeAt(0);\n");
+		script.append("        avg += ascVals[i];\n");
+		script.append("    }\n");
+		script.append("    var key = Math.floor((avg / str.length) / 2);\n");
+		script.append("    r += key;\n");
+		script.append("    var pKey = key;\n");
+		script.append("    for (var i = 0; i < ascVals.length; i++) {\n");
+		script.append("        var iKey = key + (((i + 1) * pKey * 7) % 24);\n");
+		script.append("        pKey = iKey;\n");
+		script.append("        r += \",\";\n");
+		script.append("        if (ascVals[i]==iKey) {\n");
+	    script.append("            r += \"0\";\n");
+	    script.append("        } else if (ascVals[i]>iKey) {\n");
+	    script.append("            r += (ascVals[i] - iKey);\n");
+	    script.append("        } else if (ascVals[i]<iKey) {\n");
+	    script.append("            r += \"-\";\n");
+	    script.append("            r += (iKey - ascVals[i]);\n");
+	    script.append("        }\n");
+		script.append("    }\n");
+		script.append("    return r;\n");
+		script.append("};\n");
+		script.append("ZODB.encode.decodeAscii = function(str) {\n");
+		script.append("    if (str==null || str.length==0) {\n");
+		script.append("        return \"\"\n");
+		script.append("    }\n");
+		script.append("    var r = \"\";\n");
+		script.append("    var keyVals = str.split(\",\");\n");
+		script.append("    if (keyVals.length>=2) {\n");
+		script.append("        var key = parseInt(keyVals[0]);\n");
+		script.append("        var pKey = key;\n");
+		script.append("        for (var i = 1; i < keyVals.length; i++) {\n");
+		script.append("            var iKey = key + ((i * pKey * 7) % 24);\n");
+		script.append("            pKey = iKey;\n");
+		script.append("            var iVal = iKey;\n");
+		script.append("            var v = parseInt(keyVals[i]);\n");
+		script.append("            if (v>0) {\n");
+		script.append("                iVal = iVal + v;\n");							
+		script.append("            } else if (v<0) {\n");
+		script.append("                iVal = iVal - (v * -1);\n");							
+		script.append("            }\n");
+		script.append("            r += String.fromCharCode(iVal);\n");
+		script.append("        }\n");
+		script.append("    }\n");
+		script.append("    return r;\n");
+		script.append("};\n");
+		
 		return script;
 	}
 }

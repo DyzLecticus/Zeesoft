@@ -117,6 +117,10 @@ public class Database {
 	public List<IndexElement> removeObjectsThatContain(String contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		return index.removeObjectsThatContain(contains,modAfter,modBefore,errors);
 	}
+	
+	protected StringBuilder getKey() {
+		return configuration.getKey();
+	}
 
 	protected void stateChanged(boolean open) {
 		if (open) {

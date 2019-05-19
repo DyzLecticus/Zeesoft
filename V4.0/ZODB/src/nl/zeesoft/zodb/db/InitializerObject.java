@@ -3,8 +3,10 @@ package nl.zeesoft.zodb.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
 
@@ -147,9 +149,17 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 					todo--;
 					String objectName = res.request.name.substring(namePrefix.length());
 					InitializerDatabaseObject object = getObjectByNameNoLock(objectName);
-					if (object!=null && res.results.size()>0 && res.results.get(0).obj!=null) {
-						object.fromJson(res.results.get(0).obj);
-						configuration.debug(this,"Loaded " + res.request.name);
+					if (object!=null && res.results.size()>0 && res.results.get(0).encoded!=null && res.results.get(0).encoded.length()>0) {
+						ZStringEncoder encoder = new ZStringEncoder(res.results.get(0).encoded);
+						encoder.decodeKey(configuration.getKey(),0);
+						JsFile obj = new JsFile();
+						obj.fromStringBuilder(encoder);
+						if (obj.rootElement!=null && obj.rootElement.children.size()>0) {
+							object.fromJson(obj);
+							configuration.debug(this,"Loaded " + res.request.name);
+						} else {
+							configuration.debug(this,"Failed to load " + res.request.name);
+						}
 					}
 					unlockMe(this);
 					loadedObject(object);
@@ -211,7 +221,10 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		for (InitializerDatabaseObject object: objects) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 			request.name = namePrefix + object.getObjectName();
-			request.obj = object.toJson();
+			request.encoding = DatabaseRequest.ENC_KEY;
+			ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
+			encoder.encodeKey(configuration.getKey(),0);
+			request.encoded = encoder;
 			configuration.handleDatabaseRequest(request,this);
 		}
 	}
@@ -227,6 +240,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		for (InitializerDatabaseObject object: objects) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 			request.name = namePrefix + object.getObjectName();
+			request.encoding = DatabaseRequest.ENC_KEY;
 			configuration.handleDatabaseRequest(request,this,timeoutSeconds);
 		}
 	}

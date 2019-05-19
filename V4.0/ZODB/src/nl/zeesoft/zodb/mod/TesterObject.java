@@ -112,6 +112,10 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 		return r;
 	}
 
+	protected Config getConfiguration() {
+		return configuration;
+	}
+	
 	protected void setResultsNolock(JsFile results) {
 		this.results = results;
 	}

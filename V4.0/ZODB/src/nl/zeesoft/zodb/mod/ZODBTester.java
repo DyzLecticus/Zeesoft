@@ -3,6 +3,7 @@ package nl.zeesoft.zodb.mod;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
@@ -33,10 +34,25 @@ public class ZODBTester extends TesterObject {
 		res = new DatabaseResponse();
 		addRequestNoLock(req,res);
 		
+		int n = 0;
 		for (String name: objectNames) {
+			n++;
 			req = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 			req.name = getObjectName(name);
 			req.obj = getTestObject(name);
+			if (n>=(num - 20)) {
+				ZStringEncoder encoder = new ZStringEncoder(req.obj.toStringBuilder());
+				req.obj = null;
+				if (n>=(num - 10)) {
+					req.encoding = DatabaseRequest.ENC_KEY;
+					encoder.encodeKey(getConfiguration().getKey(),0);
+					req.encoded = encoder;
+				} else if (n>=(num - 20)) {
+					req.encoding = DatabaseRequest.ENC_ASCII;
+					encoder.encodeAscii();
+					req.encoded = encoder;
+				}
+			}
 			res = new DatabaseResponse();
 			addRequestNoLock(req,res);
 		}
@@ -53,8 +69,38 @@ public class ZODBTester extends TesterObject {
 			result.obj = getTestObject(name);
 			res.results.add(result);
 			addRequestNoLock(req,res);
+			if (id>=10) {
+				break;
+			}
 		}
-		
+
+		String objName = objectNames.get(0);
+		req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+		req.name = getObjectName(objName);
+		req.encoding = DatabaseRequest.ENC_ASCII;
+		ZStringEncoder encoder = new ZStringEncoder(getTestObject(objName).toStringBuilder());
+		encoder.encodeAscii();
+		res = new DatabaseResponse();
+		result = new DatabaseResult();
+		result.name = req.name;
+		result.id = 1;
+		result.encoded = encoder;
+		res.results.add(result);
+		addRequestNoLock(req,res);
+
+		req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+		req.name = getObjectName(objName);
+		req.encoding = DatabaseRequest.ENC_KEY;
+		encoder = new ZStringEncoder(getTestObject(objName).toStringBuilder());
+		encoder.encodeKey(getConfiguration().getKey(),0);
+		res = new DatabaseResponse();
+		result = new DatabaseResult();
+		result.name = req.name;
+		result.id = 1;
+		result.encoded = encoder;
+		res.results.add(result);
+		addRequestNoLock(req,res);
+
 		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 		req.contains = ModZODB.NAME + "/Objects/";
 		res = new DatabaseResponse();

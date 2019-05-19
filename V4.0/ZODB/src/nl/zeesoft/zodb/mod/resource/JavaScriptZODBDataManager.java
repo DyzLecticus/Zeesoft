@@ -156,6 +156,7 @@ public class JavaScriptZODBDataManager {
 		script.append("    var request = {};\n");
 		script.append("    request.type = \"" + DatabaseRequest.TYPE_GET + "\";\n");
 		script.append("    request.id = id;\n");
+		script.append("    request.encoding = \"" + DatabaseRequest.ENC_ASCII + "\";\n");
 		script.append("    ZODB.xhr.postJSON(\"" + path + "\",request,ZODB.dm.selectCallback,ZODB.dm.selectCallback);\n");
 		script.append("};\n");
 		script.append("ZODB.dm.selectCallback = function(xhr) {\n");
@@ -168,6 +169,7 @@ public class JavaScriptZODBDataManager {
 		script.append("    }\n");
 		script.append("    if (object.results) {\n");
 		script.append("        for (var num in object.results) {\n");
+		script.append("            object.results[num].object = JSON.parse(ZODB.encode.decodeAscii(object.results[num].encoded));\n");
 		script.append("            ZODB.dm.showObject(object.results[num].object,object.results[num].name);\n");
 		script.append("            break;\n");
 		script.append("        }\n");
@@ -228,7 +230,8 @@ public class JavaScriptZODBDataManager {
 		script.append("            request.type = \"" + DatabaseRequest.TYPE_ADD + "\";\n");
 		script.append("        }\n");
 		script.append("        request.name = name;\n");
-		script.append("        request.object = obj;\n");
+		script.append("        request.encoding = \"" + DatabaseRequest.ENC_ASCII + "\";\n");
+		script.append("        request.encoded = ZODB.encode.encodeAscii(JSON.stringify(obj));\n");
 		script.append("        ZODB.xhr.postJSON(\"" + path + "\",request,ZODB.dm.defaultCallback,ZODB.dm.defaultCallback);\n");
 		script.append("    } else {\n");
 		script.append("        if (name.length==0) {\n");
