@@ -151,7 +151,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 					InitializerDatabaseObject object = getObjectByNameNoLock(objectName);
 					if (object!=null && res.results.size()>0 && res.results.get(0).encoded!=null && res.results.get(0).encoded.length()>0) {
 						ZStringEncoder encoder = new ZStringEncoder(res.results.get(0).encoded);
-						encoder.decodeKey(configuration.getKey(),0);
+						encoder.decodeKey(configuration.getZODBKey(),0);
 						JsFile obj = new JsFile();
 						obj.fromStringBuilder(encoder);
 						if (obj.rootElement!=null && obj.rootElement.children.size()>0) {
@@ -223,7 +223,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 			request.name = namePrefix + object.getObjectName();
 			request.encoding = DatabaseRequest.ENC_KEY;
 			ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
-			encoder.encodeKey(configuration.getKey(),0);
+			encoder.encodeKey(configuration.getZODBKey(),0);
 			request.encoded = encoder;
 			configuration.handleDatabaseRequest(request,this);
 		}

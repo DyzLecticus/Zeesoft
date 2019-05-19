@@ -45,7 +45,7 @@ public class ZODBTester extends TesterObject {
 				req.obj = null;
 				if (n>=(num - 10)) {
 					req.encoding = DatabaseRequest.ENC_KEY;
-					encoder.encodeKey(getConfiguration().getKey(),0);
+					encoder.encodeKey(getConfiguration().getZODBKey(),0);
 					req.encoded = encoder;
 				} else if (n>=(num - 20)) {
 					req.encoding = DatabaseRequest.ENC_ASCII;
@@ -92,7 +92,7 @@ public class ZODBTester extends TesterObject {
 		req.name = getObjectName(objName);
 		req.encoding = DatabaseRequest.ENC_KEY;
 		encoder = new ZStringEncoder(getTestObject(objName).toStringBuilder());
-		encoder.encodeKey(getConfiguration().getKey(),0);
+		encoder.encodeKey(getConfiguration().getZODBKey(),0);
 		res = new DatabaseResponse();
 		result = new DatabaseResult();
 		result.name = req.name;

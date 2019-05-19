@@ -32,7 +32,7 @@ public class TestDatabase extends TestObject {
 		Config config = new Config();
 		config.getModule(ModZODB.NAME).selfTest = false;
 		config.initialize(true,"dist/","",false);
-		config.setKey(new StringBuilder("0123456789012345678901234567890123456789012345678901234567890123"));
+		config.setZODBKey(new StringBuilder("0123456789012345678901234567890123456789012345678901234567890123"));
 		
 		File dir = new File("dist/");
 		if (!dir.exists()) {

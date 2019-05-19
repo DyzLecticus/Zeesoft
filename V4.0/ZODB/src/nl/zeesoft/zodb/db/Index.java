@@ -10,13 +10,12 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
-import nl.zeesoft.zodb.Config;
 
 public class Index extends Locker {
 	private int										blockSize			= 100;
 	
-	private Config									configuration		= null;
 	private Database								db					= null;
 	
 	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
@@ -28,14 +27,13 @@ public class Index extends Locker {
 	
 	private boolean									open				= false;
 	
-	public Index(Config config,Database db) {
-		super(config.getMessenger());
-		this.configuration = config;
+	public Index(Messenger msgr,Database db) {
+		super(msgr);
 		this.db = db;
 	}
 
 	protected StringBuilder getKey() {
-		return configuration.getKey();
+		return db.getKey();
 	}
 	
 	protected IndexElement addObject(String name,JsFile obj,List<ZStringBuilder> errors) {
@@ -193,7 +191,7 @@ public class Index extends Locker {
 			if (err.length()>0) {
 				getMessenger().error(this,"Failed to read object " + element.id + ": " + err);
 			} else {
-				decoder.decodeKey(configuration.getKey(),0);
+				decoder.decodeKey(db.getKey(),0);
 				JsFile obj = new JsFile();
 				obj.fromStringBuilder(decoder);
 				if (obj.rootElement==null) {

@@ -45,12 +45,12 @@ public class TestConfig extends TestObject {
 		config.getModule(ModZODB.NAME).selfTest = true;
 		config.setDebug(true);
 		config.setDataDir("dir/");
-		config.setKey(new StringBuilder("23894756239847569823478569283465987234658976"));
+		config.setZODBKey(new StringBuilder("23894756239847569823478569283465987234658976"));
 		String fullDataDir = config.getFullDataDir();
-		StringBuilder key = config.getKey();
+		StringBuilder key = config.getZODBKey();
 		
 		JsFile json = config.toJson();
-		assertEqual(json.rootElement.children.size(),5,"Number of children does not match expectation");
+		assertEqual(json.rootElement.children.size(),4,"Number of children does not match expectation");
 		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
 		System.out.println(oriStr);
 		
@@ -64,6 +64,6 @@ public class TestConfig extends TestObject {
 			System.out.println(newStr);
 		}
 		assertEqual(config.getFullDataDir(),fullDataDir,"Full data directory does not match expectation");
-		assertEqual(config.getKey(),key,"Key does not match expectation");
+		assertEqual(config.getZODBKey(),key,"Key does not match expectation");
 	}
 }

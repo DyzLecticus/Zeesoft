@@ -21,7 +21,7 @@ public class Database {
 	
 	public Database(Config config) {
 		configuration = config;
-		index = new Index(config,this);
+		index = new Index(config.getMessenger(),this);
 		fileWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
@@ -119,7 +119,7 @@ public class Database {
 	}
 	
 	protected StringBuilder getKey() {
-		return configuration.getKey();
+		return configuration.getZODBKey();
 	}
 
 	protected void stateChanged(boolean open) {

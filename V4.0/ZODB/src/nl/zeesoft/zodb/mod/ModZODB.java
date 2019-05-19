@@ -1,5 +1,8 @@
 package nl.zeesoft.zodb.mod;
 
+import nl.zeesoft.zdk.ZStringEncoder;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequest;
@@ -17,14 +20,37 @@ public class ModZODB extends ModObject implements StateListener {
 	public static final String	NAME		= "ZODB";
 	public static final String	DESC		= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
+	private StringBuilder		key			= null;
 	private Database			database	= null;
 	
 	public ModZODB(Config config) {
 		super(config);
 		name = NAME;
+		ZStringEncoder encoder = new ZStringEncoder();
+		key = encoder.generateNewKey(1024);
 		desc.append(DESC);
 		database = getNewDatabase();
 		database.addListener(this);
+	}
+	
+	@Override
+	public JsFile toJson() {
+		JsFile json = super.toJson();
+		ZStringEncoder encoder = new ZStringEncoder(key);
+		json.rootElement.children.add(new JsElem("key",encoder.compress().toString(),true));
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		super.fromJson(json);
+		if (json.rootElement!=null) {
+			JsElem k = json.rootElement.getChildByName("key");
+			if (k!=null && k.value!=null && k.value.length()>0) {
+				ZStringEncoder encoder = new ZStringEncoder(k.value);
+				key = encoder.decompress();
+			}
+		}
 	}
 	
 	@Override
@@ -59,6 +85,14 @@ public class ModZODB extends ModObject implements StateListener {
 		}
 	}
 	
+	public StringBuilder getKey() {
+		return key;
+	}
+
+	public void setKey(StringBuilder key) {
+		this.key = key;
+	}
+
 	public Database getDatabase() {
 		return database;
 	}

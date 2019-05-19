@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsAbleClient;
 import nl.zeesoft.zdk.json.JsAbleClientRequest;
@@ -34,7 +33,6 @@ public class Config implements JsAble {
 	private String				installDir			= "";
 	private String				dataDir				= "data/";
 	private String				servletUrl			= "http://127.0.0.1";
-	private StringBuilder		key					= null;
 	
 	private List<ModObject>		modules				= new ArrayList<ModObject>();
 	
@@ -71,8 +69,6 @@ public class Config implements JsAble {
 			}
 		} else {
 			messenger.setPrintDebugMessages(debug);
-			ZStringEncoder encoder = new ZStringEncoder();
-			key = encoder.generateNewKey(1024);
 			if (write) {
 				install(cfg.getAbsolutePath());
 			}
@@ -135,8 +131,6 @@ public class Config implements JsAble {
 		json.rootElement.children.add(new JsElem("debug","" + debug));
 		json.rootElement.children.add(new JsElem("dataDir",dataDir,true));
 		json.rootElement.children.add(new JsElem("servletUrl",servletUrl,true));
-		ZStringEncoder encoder = new ZStringEncoder(key);
-		json.rootElement.children.add(new JsElem("key",encoder.compress().toString(),true));
 		JsElem modsElem = new JsElem("modules",true);
 		json.rootElement.children.add(modsElem);
 		for (ModObject mod: modules) {
@@ -154,11 +148,6 @@ public class Config implements JsAble {
 			debug = json.rootElement.getChildBoolean("debug",debug);
 			dataDir = json.rootElement.getChildString("dataDir",dataDir);
 			servletUrl = json.rootElement.getChildString("servletUrl",servletUrl);
-			JsElem k = json.rootElement.getChildByName("key");
-			if (k!=null && k.value!=null && k.value.length()>0) {
-				ZStringEncoder encoder = new ZStringEncoder(k.value);
-				key = encoder.decompress();
-			}
 			JsElem modsElem = json.rootElement.getChildByName("modules");
 			if (modsElem!=null) {
 				for (JsElem modElem: modsElem.children) {
@@ -207,6 +196,22 @@ public class Config implements JsAble {
 			r = (ModZODB) mod;
 		}
 		return r;
+	}
+	
+	public StringBuilder getZODBKey() {
+		StringBuilder r = new StringBuilder();
+		ModZODB zodb = getZODB();
+		if (zodb!=null) {
+			r = zodb.getKey();
+		}
+		return r;
+	}
+
+	public void setZODBKey(StringBuilder key) {
+		ModZODB zodb = getZODB();
+		if (zodb!=null) {
+			zodb.setKey(key);
+		}
 	}
 
 	public void handleDatabaseRequest(DatabaseRequest request,JsClientListener listener) {
@@ -280,14 +285,6 @@ public class Config implements JsAble {
 
 	public List<ModObject> getModules() {
 		return new ArrayList<ModObject>(modules);
-	}
-	
-	public StringBuilder getKey() {
-		return key;
-	}
-
-	public void setKey(StringBuilder key) {
-		this.key = key;
 	}
 
 	protected HandlerObject getNewHtmlAppIndexHandler() {
