@@ -31,7 +31,7 @@ public class Index extends Locker {
 	
 	private boolean									open				= false;
 	
-	public Index(Messenger msgr,Database db,IndexConfig indexConfig) {
+	protected Index(Messenger msgr,Database db,IndexConfig indexConfig) {
 		super(msgr);
 		this.db = db;
 		this.indexConfig = indexConfig;
@@ -127,6 +127,7 @@ public class Index extends Locker {
 	}
 
 	protected void setObjectName(long id, String name, List<ZStringBuilder> errors) {
+		name = Database.removeControlCharacters(name);
 		IndexElement element = null;
 		if (indexConfig.objectHasIndexes(name)) {
 			boolean read = false;
@@ -655,6 +656,7 @@ public class Index extends Locker {
 	}
 	
 	private IndexElement addObjectNoLock(String name,JsFile obj,List<ZStringBuilder> errors) {
+		name = Database.removeControlCharacters(name);
 		IndexElement r = null;
 		if (!elementsByName.containsKey(name)) {
 			IndexElement element = new IndexElement();

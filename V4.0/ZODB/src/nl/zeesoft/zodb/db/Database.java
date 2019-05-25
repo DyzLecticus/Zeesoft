@@ -75,7 +75,9 @@ public class Database {
 			configuration.debug(this,"Stopping database ...");
 			fileWriter.stop();
 			objectWriter.stop();
-			writeConfig();
+			if (indexConfig.isRebuild()) {
+				writeConfig();
+			}
 			configuration.debug(this,"Stopped database");
 		}
 	}
@@ -148,6 +150,13 @@ public class Database {
 	
 	public List<IndexElement> removeObjectsThatContain(String contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		return index.removeObjectsThatContain(contains,modAfter,modBefore,errors);
+	}
+	
+	public static String removeControlCharacters(String name) {
+		name = name.replace("\r","");
+		name = name.replace("\n","");
+		name = name.replace("\t","");
+		return name;
 	}
 	
 	protected StringBuilder getKey() {

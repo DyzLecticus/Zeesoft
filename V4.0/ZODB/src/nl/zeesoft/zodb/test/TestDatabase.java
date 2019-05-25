@@ -43,6 +43,7 @@ public class TestDatabase extends TestObject {
 		}
 		
 		Database db = config.getZODB().getDatabase();
+		db.getIndexConfig().removeIndex(ModZODB.NAME + "/Objects/:testData");
 		db.getIndexConfig().addIndex("testObject","data",false,true);
 		db.getIndexConfig().getIndex("testObject:data").added = false;
 		db.getIndexConfig().addIndex("testObject","num",true,true);

@@ -99,6 +99,18 @@ public class DatabaseRequestHandler {
 	}
 	
 	private void checkRequest(DatabaseResponse response) {
+		if (response.request.name.length()>0) {
+			response.request.name = Database.removeControlCharacters(response.request.name);
+		}
+		if (response.request.startsWith.length()>0) {
+			response.request.startsWith = Database.removeControlCharacters(response.request.startsWith);
+		}
+		if (response.request.contains.length()>0) {
+			response.request.contains = Database.removeControlCharacters(response.request.contains);
+		}
+		if (response.request.value.length()>0) {
+			response.request.value = Database.removeControlCharacters(response.request.value);
+		}
 		if (response.request.type.length()==0) {
 			response.errors.add(new ZStringBuilder("Request type is mandatory"));
 		} else if (
@@ -118,12 +130,14 @@ public class DatabaseRequestHandler {
 			if (response.request.id<=0 && response.request.name.length()==0 && response.request.startsWith.length()==0 && response.request.contains.length()==0 && response.request.index.length()==0) {
 				response.errors.add(new ZStringBuilder("One of request id, name, startsWith, contains or index is mandatory"));
 			}
+			checkRequestEncoding(response);
 			checkRequestIndex(response);
 			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
 			if (response.request.max<=0) {
 				response.errors.add(new ZStringBuilder("Request max is mandatory"));
 			}
+			checkRequestEncoding(response);
 			checkRequestIndex(response);
 			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
@@ -143,11 +157,20 @@ public class DatabaseRequestHandler {
 	}
 
 	private void checkRequestEncoding(DatabaseResponse response) {
-		if (response.request.encoding.length()>0 &&
-			!response.request.encoding.equals(DatabaseRequest.ENC_ASCII) &&
-			!response.request.encoding.equals(DatabaseRequest.ENC_KEY)
-			) {
-			response.errors.add(new ZStringBuilder("Request encoding must equal " + DatabaseRequest.ENC_ASCII + " or " + DatabaseRequest.ENC_KEY));
+		if (response.request.encoding.length()>0) {
+			if (!response.request.encoding.equals(DatabaseRequest.ENC_ASCII) &&
+				!response.request.encoding.equals(DatabaseRequest.ENC_KEY)
+				) {
+				response.errors.add(new ZStringBuilder("Request encoding must equal " + DatabaseRequest.ENC_ASCII + " or " + DatabaseRequest.ENC_KEY));
+			} else if (response.request.value.length()>0) {
+				ZStringEncoder encoder = new ZStringEncoder(response.request.value);
+				if (response.request.encoding.equals(DatabaseRequest.ENC_ASCII)) {
+					encoder.decodeAscii();
+				} else if (response.request.encoding.equals(DatabaseRequest.ENC_KEY)) {
+					encoder.decodeKey(database.getKey(),0);
+				}
+				response.request.value = Database.removeControlCharacters(encoder.toString());
+			}
 		}
 	}
 

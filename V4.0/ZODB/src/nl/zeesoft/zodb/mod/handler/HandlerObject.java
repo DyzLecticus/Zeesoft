@@ -13,13 +13,16 @@ import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.mod.ModObject;
 
 public abstract class HandlerObject {
-	private	Config				configuration	= null;
-	private	ModObject			module			= null;
-	private String				path			= "";
-	private String				contentType		= "text/html";
+	protected static final String	METH_GET		= "GET";
+	protected static final String	METH_POST		= "POST";
 	
-	private boolean				allowGet		= true;
-	private boolean				allowPost		= false;
+	private	Config					configuration	= null;
+	private	ModObject				module			= null;
+	private String					path			= "";
+	private String					contentType		= "text/html";
+	
+	private boolean					allowGet		= true;
+	private boolean					allowPost		= false;
 	
 	public HandlerObject(Config config,ModObject mod,String path) {
 		this.configuration = config;
@@ -32,7 +35,7 @@ public abstract class HandlerObject {
 		try {
 			PrintWriter out = response.getWriter();
 			if (allowGet) {
-				out.println(handleAllowedRequest("GET",request,response));
+				out.println(handleAllowedRequest(METH_GET,request,response));
 			} else {
 				out.println(setResponse(response,405,"Method Not Allowed"));
 			}
@@ -46,7 +49,7 @@ public abstract class HandlerObject {
 		try {
 			PrintWriter out = response.getWriter();
 			if (allowPost) {
-				out.println(handleAllowedRequest("POST",request,response));
+				out.println(handleAllowedRequest(METH_POST,request,response));
 			} else {
 				out.println(setResponse(response,405,"Method Not Allowed"));
 			}

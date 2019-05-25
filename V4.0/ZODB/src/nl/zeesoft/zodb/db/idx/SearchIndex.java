@@ -3,6 +3,7 @@ package nl.zeesoft.zodb.db.idx;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zodb.db.Database;
 
 public class SearchIndex implements JsAble {
 	public String		objectNamePrefix 	= "";
@@ -23,7 +24,7 @@ public class SearchIndex implements JsAble {
 		String r = "";
 		JsElem propElem = obj.rootElement.getChildByName(propertyName);
 		if (propElem!=null && propElem.value!=null && propElem.value.length()>0) {
-			r = propElem.value.toString();
+			r = Database.removeControlCharacters(propElem.value.toString());
 		}
 		return r;
 	}
