@@ -103,6 +103,7 @@ public class ModZODB extends ModObject implements StateListener {
 	public void destroy() {
 		super.destroy();
 		database.stop();
+		database.destroy();
 	}
 
 	@Override
@@ -145,7 +146,13 @@ public class ModZODB extends ModObject implements StateListener {
 	}
 	
 	protected Database getNewDatabase() {
-		return new Database(configuration);
+		Database r = new Database(configuration);
+		if (selfTest) {
+			String pfx = NAME + "/Objects/";
+			r.getIndexConfig().addIndex(pfx,"testData",false,true);
+			r.getIndexConfig().getIndex(pfx + ":testData").added = false;
+		}
+		return r;
 	}
 	
 	protected DatabaseRequestHandler getNewDatabaseRequestHandler(Database db) {

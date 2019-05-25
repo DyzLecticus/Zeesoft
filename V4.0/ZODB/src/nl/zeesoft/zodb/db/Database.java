@@ -7,12 +7,14 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.db.idx.IndexConfig;
 
 public class Database {
 	private static final String				INDEX_DIR		= "ZODB/Index/";
 	private static final String				OBJECT_DIR		= "ZODB/Objects/";
 	
 	private Config							configuration	= null;
+	private IndexConfig						indexConfig		= null;
 	private Index							index			= null;
 	private IndexFileWriteWorker			fileWriter		= null;
 	private IndexObjectWriterWorker			objectWriter	= null;
@@ -21,7 +23,8 @@ public class Database {
 	
 	public Database(Config config) {
 		configuration = config;
-		index = new Index(config.getMessenger(),this);
+		indexConfig = new IndexConfig(config.getMessenger());
+		index = new Index(config.getMessenger(),this,indexConfig);
 		fileWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
@@ -38,6 +41,10 @@ public class Database {
 		return configuration.getFullDataDir() + OBJECT_DIR;
 	}
 	
+	public IndexConfig getIndexConfig() {
+		return indexConfig;
+	}
+	
 	public void install() {
 		File dir = new File(getFullIndexDir());
 		dir.mkdirs();
@@ -47,9 +54,13 @@ public class Database {
 
 	public void start() {
 		configuration.debug(this,"Starting database ...");
+		readConfig();
 		StringBuilder newKey = configuration.getZODB().getNewKey();
 		if (newKey!=null && newKey.length()>0) {
 			configuration.debug(this,"Changing database key ...");
+		}
+		if (indexConfig.isRebuild()) {
+			configuration.debug(this,"Rebuilding indexes ...");
 		}
 		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index,newKey);
 		reader.start();
@@ -59,11 +70,20 @@ public class Database {
 	}
 
 	public void stop() {
-		index.setOpen(false);
-		configuration.debug(this,"Stopping database ...");
-		fileWriter.stop();
-		objectWriter.stop();
-		configuration.debug(this,"Stopped database");
+		if (index.isOpen()) {
+			index.setOpen(false);
+			configuration.debug(this,"Stopping database ...");
+			fileWriter.stop();
+			objectWriter.stop();
+			writeConfig();
+			configuration.debug(this,"Stopped database");
+		}
+	}
+	
+	public void destroy() {
+		fileWriter.destroy();
+		objectWriter.destroy();
+		index.destroy();
 	}
 	
 	public boolean isOpen() {
@@ -82,6 +102,10 @@ public class Database {
 		return index.getObjectByName(name);
 	}
 	
+	public List<IndexElement> listObjectsUseIndex(int start, int max,boolean ascending,String indexName,boolean invert,String operator,String value,long modAfter,long modBefore,List<Integer> data) {
+		return index.listObjectsUseIndex(start,max,ascending,indexName,invert,operator,value,modAfter,modBefore,data);
+	}
+	
 	public List<IndexElement> listObjects(int start,int max,long modAfter,long modBefore,List<Integer> data) {
 		return index.listObjects(start,max,modAfter,modBefore,data);
 	}
@@ -92,6 +116,10 @@ public class Database {
 
 	public List<IndexElement> listObjectsThatContain(String contains,int start,int max,long modAfter,long modBefore,List<Integer> data) {
 		return index.listObjectsThatContain(contains,start,max,modAfter,modBefore,data);
+	}
+	
+	public List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,String value,long modAfter,long modBefore) {
+		return index.getObjectsUseIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
 	}
 	
 	public List<IndexElement> getObjectsByNameStartsWith(String start,long modAfter,long modBefore) {
@@ -138,12 +166,38 @@ public class Database {
 	
 	protected void stateChanged(boolean open) {
 		if (open) {
+			if (indexConfig.isRebuild()) {
+				configuration.debug(this,"Rebuilt indexes");
+			}
 			configuration.debug(this,"Database is open for business");
 		} else {
 			configuration.debug(this,"Database is closed for business");
 		}
 		for (StateListener listener: listeners) {
 			listener.stateChanged(this,open);
+		}
+	}
+	
+	protected void readConfig() {
+		File f = new File(getFullIndexDir() + "config.json");
+		if (f.exists()) {
+			JsFile json = new JsFile();
+			ZStringBuilder err = json.fromFile(f.getAbsolutePath());
+			if (err.length()==0) {
+				indexConfig.fromJson(json);
+			} else {
+				configuration.error(this,"Failed to read index configuration: " + err);
+			}
+		}
+	}
+	
+	protected void writeConfig() {
+		JsFile json = indexConfig.toJson();
+		ZStringBuilder err = json.toFile(getFullIndexDir() + "config.json",true);
+		if (err.length()==0) {
+			indexConfig.fromJson(json);
+		} else {
+			configuration.error(this,"Failed to write index configuration: " + err);
 		}
 	}
 }

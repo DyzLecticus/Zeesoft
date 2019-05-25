@@ -117,6 +117,21 @@ public class ZODBTester extends TesterObject {
 			}
 		}
 		addRequestNoLock(req,res);
+
+		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
+		req.index = ModZODB.NAME + "/Objects/:testData";
+		req.ascending = false;
+		req.start = 20;
+		res = new DatabaseResponse();
+		res.size = num;
+		for (int i = 29; i >= 20; i--) {
+			String name = objectNames.get(i);
+			result = new DatabaseResult();
+			result.name = getObjectName(name);
+			result.id = (long) (i + 1);
+			res.results.add(result);
+		}
+		addRequestNoLock(req,res);
 	}
 
 	@Override

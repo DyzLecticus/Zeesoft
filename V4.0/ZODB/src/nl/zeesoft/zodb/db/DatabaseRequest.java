@@ -6,28 +6,39 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class DatabaseRequest implements JsAble {
-	public static final String	TYPE_ADD	= "ADD";
-	public static final String	TYPE_LIST	= "LIST";
-	public static final String	TYPE_GET	= "GET";
-	public static final String	TYPE_SET	= "SET";
-	public static final String	TYPE_REMOVE	= "REMOVE";
+	public static final String	TYPE_ADD			= "ADD";
+	public static final String	TYPE_LIST			= "LIST";
+	public static final String	TYPE_GET			= "GET";
+	public static final String	TYPE_SET			= "SET";
+	public static final String	TYPE_REMOVE			= "REMOVE";
 
-	public static final String	ENC_ASCII	= "ASCII";
-	public static final String	ENC_KEY		= "KEY";
+	public static final String	ENC_ASCII			= "ASCII";
+	public static final String	ENC_KEY				= "KEY";
 
-	public String				type		= "";
-	public int					start		= 0;
-	public int					max			= 10;
-	public long					id			= 0L;
-	public String				name		= "";
-	public String				contains	= "";
-	public String				startsWith	= "";
-	public long					modAfter	= 0L;
-	public long					modBefore	= 0L;
-	public String				encoding	= "";
+	public static final String	OP_EQUALS			= "EQUALS";
+	public static final String	OP_CONTAINS			= "CONTAINS";
+	public static final String	OP_GREATER			= "GREATER";
+	public static final String	OP_GREATER_OR_EQUAL	= "GREATER_OR_EQUAL";
 	
-	public JsFile				obj			= null;
-	public ZStringBuilder		encoded		= null;
+	public String				type				= "";
+	public int					start				= 0;
+	public int					max					= 10;
+	public long					id					= 0L;
+	public String				name				= "";
+	public String				contains			= "";
+	public String				startsWith			= "";
+	public long					modAfter			= 0L;
+	public long					modBefore			= 0L;
+	public String				encoding			= "";
+	
+	public String				index				= "";
+	public boolean				invert				= false;
+	public String				operator			= "";
+	public String				value				= "";
+	public boolean				ascending			= true;
+
+	public JsFile				obj					= null;
+	public ZStringBuilder		encoded				= null;
 	
 	public DatabaseRequest() {
 		
@@ -67,6 +78,15 @@ public class DatabaseRequest implements JsAble {
 				json.rootElement.children.add(new JsElem("modBefore","" + modBefore));
 			}
 		}
+		if (index.length()>0) {
+			json.rootElement.children.add(new JsElem("index",index,true));
+			if (operator.length()>0) {
+				json.rootElement.children.add(new JsElem("invert","" + invert));
+				json.rootElement.children.add(new JsElem("operator",operator,true));
+				json.rootElement.children.add(new JsElem("value",value,true));
+			}
+			json.rootElement.children.add(new JsElem("ascending","" + ascending));
+		}
 		if (obj!=null && obj.rootElement!=null && obj.rootElement.children.size()>0) {
 			JsElem objElem = new JsElem("object");
 			json.rootElement.children.add(objElem);
@@ -93,6 +113,13 @@ public class DatabaseRequest implements JsAble {
 			startsWith = json.rootElement.getChildString("startsWith",startsWith);
 			modAfter = json.rootElement.getChildLong("modAfter",modAfter);
 			modBefore = json.rootElement.getChildLong("modBefore",modBefore);
+			
+			index = json.rootElement.getChildString("index",index);
+			invert = json.rootElement.getChildBoolean("invert",invert);
+			operator = json.rootElement.getChildString("operator",operator);
+			value = json.rootElement.getChildString("value",value);
+			ascending = json.rootElement.getChildBoolean("ascending",ascending);
+			
 			JsElem objElem = json.rootElement.getChildByName("object");
 			if (objElem!=null && objElem.children.size()>0) {
 				obj = new JsFile();

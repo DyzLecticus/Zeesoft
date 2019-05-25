@@ -70,7 +70,9 @@ public class IndexFileReader extends Locker {
 		File dir = new File(index.getFileDirectory());
 		if (dir.exists()) {
 			for (File file: dir.listFiles()) {
-				r.add(file.getName());
+				if (file.getName().endsWith(".txt")) {
+					r.add(file.getName());
+				}
 			}
 		}
 		return r;

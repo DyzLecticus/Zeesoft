@@ -2,20 +2,25 @@ package nl.zeesoft.zodb.db;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class IndexElement {
-	public long			id			= 0L;
-	public String		name		= "";
-	public long			modified	= 0L;
-	public int			fileNum		= 0;
-	public JsFile		obj			= null;
+	public long						id			= 0L;
+	public String					name		= "";
+	public long						modified	= 0L;
+	public int						fileNum		= 0;
+	public JsFile					obj			= null;
 	
-	protected boolean	added		= false;
-	protected boolean	removed		= false;
+	public SortedMap<String,String>	idxValues	= new TreeMap<String,String>();
+	
+	protected boolean				added		= false;
+	protected boolean				removed		= false;
 	
 	protected IndexElement() {
 		updateModified();
@@ -30,6 +35,9 @@ public class IndexElement {
 		r.obj = this.obj;
 		r.removed = this.removed;
 		r.added = this.added;
+		for (Entry<String,String> entry: idxValues.entrySet()) {
+			r.idxValues.put(entry.getKey(), entry.getValue());
+		}
 		return r;
 	}
 	
@@ -37,19 +45,31 @@ public class IndexElement {
 		this.modified = (new Date()).getTime();
 	}
 	
-	protected ZStringBuilder toStringBuilder() {
+	protected ZStringBuilder toStringBuilder(StringBuilder key) {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("" + id);
 		r.append("\t");
 		r.append(name);
 		r.append("\t");
 		r.append("" + modified);
+		r.append("\t");
+		ZStringEncoder encoder = new ZStringEncoder();
+		for (Entry<String,String> entry: idxValues.entrySet()) {
+			if (encoder.length()>0) {
+				encoder.append("\t");
+			}
+			encoder.append(entry.getKey());
+			encoder.append("\t");
+			encoder.append(entry.getValue());
+		}
+		encoder.encodeKey(key,0);
+		r.append(encoder);
 		return r;
 	}
 	
-	protected void fromStringBuilder(ZStringBuilder str) {
+	protected void fromStringBuilder(ZStringBuilder str,StringBuilder key) {
 		List<ZStringBuilder> split = str.split("\t");
-		if (split.size()==3) {
+		if (split.size()==4) {
 			String v = split.get(0).toString();
 			if (ZStringEncoder.isNumber(v)) {
 				id = Long.parseLong(v);
@@ -58,6 +78,21 @@ public class IndexElement {
 			v = split.get(2).toString();
 			if (ZStringEncoder.isNumber(v)) {
 				modified = Long.parseLong(v);
+			}
+			ZStringEncoder encoder = new ZStringEncoder(split.get(3));
+			encoder.decodeKey(key,0);
+			List<ZStringBuilder> idxVals = encoder.split("\t");
+			int i = 0;
+			String k = "";
+			idxValues.clear();
+			for (ZStringBuilder idxVal: idxVals) {
+				if ((i % 2)==0) {
+					k = idxVal.toString();
+				} else {
+					v = idxVal.toString();
+					idxValues.put(k,v);
+				}
+				i++;
 			}
 		}
 	}

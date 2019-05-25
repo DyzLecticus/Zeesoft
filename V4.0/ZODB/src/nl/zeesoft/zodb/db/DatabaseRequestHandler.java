@@ -1,11 +1,13 @@
 package nl.zeesoft.zodb.db;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zodb.db.idx.SearchIndex;
 
 public class DatabaseRequestHandler {
 	public static final String	RESPONSE_CLOSED		=
@@ -40,15 +42,11 @@ public class DatabaseRequestHandler {
 							response.results.add(new DatabaseResult(element));
 						}
 					} else if (request.startsWith.length()>0) {
-						List<IndexElement> elements = database.getObjectsByNameStartsWith(request.startsWith,request.modAfter,request.modBefore);
-						for (IndexElement element: elements) {
-							response.results.add(new DatabaseResult(element));
-						}
+						response.resultsFromElements(database.getObjectsByNameStartsWith(request.startsWith,request.modAfter,request.modBefore));
 					} else if (request.contains.length()>0) {
-						List<IndexElement> elements = database.getObjectsByNameContains(request.contains,request.modAfter,request.modBefore);
-						for (IndexElement element: elements) {
-							response.results.add(new DatabaseResult(element));
-						}
+						response.resultsFromElements(database.getObjectsByNameContains(request.contains,request.modAfter,request.modBefore));
+					} else if (request.index.length()>0) {
+						response.resultsFromElements(database.getObjectsUseIndex(request.ascending,request.index,request.invert,request.operator,request.value,request.modAfter,request.modBefore));
 					}
 					if (request.encoding.length()>0 && response.results.size()>0) {
 						for (DatabaseResult res: response.results) {
@@ -64,7 +62,9 @@ public class DatabaseRequestHandler {
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
 					List<IndexElement> list = null;
 					List<Integer> data = new ArrayList<Integer>();
-					if (request.startsWith.length()>0) {
+					if (request.index.length()>0) {
+						list = database.listObjectsUseIndex(request.start,request.max,request.ascending,request.index,request.invert,request.operator,request.value,request.modAfter,request.modBefore,data);
+					} else if (request.startsWith.length()>0) {
 						list = database.listObjectsThatStartWith(request.startsWith,request.start,request.max,request.modAfter,request.modBefore,data);
 					} else if (request.contains.length()>0) {
 						list = database.listObjectsThatContain(request.contains,request.start,request.max,request.modAfter,request.modBefore,data);
@@ -115,14 +115,16 @@ public class DatabaseRequestHandler {
 			}
 			checkRequestObjectMandatory(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_GET)) {
-			if (response.request.id<=0 && response.request.name.length()==0 && response.request.startsWith.length()==0 && response.request.contains.length()==0) {
-				response.errors.add(new ZStringBuilder("One of request id, name, startsWith or contains is mandatory"));
+			if (response.request.id<=0 && response.request.name.length()==0 && response.request.startsWith.length()==0 && response.request.contains.length()==0 && response.request.index.length()==0) {
+				response.errors.add(new ZStringBuilder("One of request id, name, startsWith, contains or index is mandatory"));
 			}
+			checkRequestIndex(response);
 			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
 			if (response.request.max<=0) {
 				response.errors.add(new ZStringBuilder("Request max is mandatory"));
 			}
+			checkRequestIndex(response);
 			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
 			if (response.request.id<=0 && response.request.startsWith.length()==0 && response.request.contains.length()==0) {
@@ -172,6 +174,39 @@ public class DatabaseRequestHandler {
 		checkRequestEncoded(response);
 		if (response.request.obj==null || response.request.obj.rootElement==null) {
 			response.errors.add(new ZStringBuilder("Request object is mandatory"));
+		}
+	}
+	
+	private void checkRequestIndex(DatabaseResponse response) {
+		if (response.request.index.length()>0) {
+			SearchIndex index = database.getIndexConfig().getIndex(response.request.index);
+			if (index==null) {
+				response.errors.add(new ZStringBuilder("Request index does not exist"));
+			} else if (index.added) {
+				response.errors.add(new ZStringBuilder("Request index has not been built yet"));
+			}
+			if (index!=null && !index.added && response.request.operator.length()>0) {
+				if (!index.numeric &&
+					!response.request.operator.equals(DatabaseRequest.OP_EQUALS) &&
+					!response.request.operator.equals(DatabaseRequest.OP_CONTAINS)
+					) {
+					response.errors.add(new ZStringBuilder("Request operator must equal " + DatabaseRequest.OP_EQUALS + " or " + DatabaseRequest.OP_CONTAINS));
+				} else if (index.numeric &&
+					!response.request.operator.equals(DatabaseRequest.OP_GREATER) &&
+					!response.request.operator.equals(DatabaseRequest.OP_GREATER_OR_EQUAL)
+					) {
+					response.errors.add(new ZStringBuilder("Request operator must equal " + DatabaseRequest.OP_EQUALS + ", " + DatabaseRequest.OP_GREATER + " or " + DatabaseRequest.OP_GREATER_OR_EQUAL));
+				}
+				if (response.request.value.length()==0) {
+					response.errors.add(new ZStringBuilder("Request value is mandatory"));
+				} else if (index.numeric) {
+					try {
+						new BigDecimal(response.request.value);
+					} catch (NumberFormatException e) {
+						response.errors.add(new ZStringBuilder("Request value must be numeric"));
+					}
+				}
+			}
 		}
 	}
 	

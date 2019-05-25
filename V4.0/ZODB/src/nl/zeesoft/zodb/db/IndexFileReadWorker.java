@@ -43,7 +43,7 @@ public class IndexFileReadWorker extends Worker {
 					List<ZStringBuilder> lines = content.split("\n");
 					for (ZStringBuilder line: lines) {
 						IndexElement elem = new IndexElement();
-						elem.fromStringBuilder(line);
+						elem.fromStringBuilder(line,index.getKey());
 						if (elem.name.length()>0 && elem.modified>0) {
 							elem.fileNum = fileNum;
 							elements.add(elem);

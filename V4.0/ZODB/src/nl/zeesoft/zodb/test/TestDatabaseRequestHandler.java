@@ -94,14 +94,18 @@ public class TestDatabaseRequestHandler extends TestObject {
 			
 			req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 			req.startsWith = "testObject1";
-			req.max = 10;
 			res = handleRequest(handler,req,10,null);
 			if (res.results.size()>0) {
 				assertEqual(res.results.get(0).name,"testObject100","Name of object found by startsWith does not match expectation");
 			}
-			
+
 			req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-			req.max = 10;
+			req.start = 20;
+			req.index = "testObject:data";
+			req.ascending = false;
+			res = handleRequest(handler,req,10,null);
+
+			req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 			req.modAfter = (new Date()).getTime();
 			req.modBefore = req.modAfter - 1;
 			res = handleRequest(handler,req,10,"Request modAfter must be lower than modBefore");

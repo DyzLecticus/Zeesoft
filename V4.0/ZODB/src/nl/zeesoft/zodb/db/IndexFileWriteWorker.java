@@ -40,6 +40,13 @@ public class IndexFileWriteWorker extends Worker {
 		}
 	}
 	
+	protected void destroy() {
+		if (isWorking()) {
+			stop();
+		}
+		index = null;
+	}
+	
 	private void writeChangedFiles(SortedMap<Integer,List<IndexElement>> files) {
 		for (int num: files.keySet()) {
 			String fileName = index.getFileDirectory() + num + ".txt";
@@ -48,7 +55,7 @@ public class IndexFileWriteWorker extends Worker {
 				if (content.length()>0) {
 					content.append("\n");
 				}
-				content.append(elem.toStringBuilder());
+				content.append(elem.toStringBuilder(index.getKey()));
 			}
 			content.toFile(fileName);
 		}

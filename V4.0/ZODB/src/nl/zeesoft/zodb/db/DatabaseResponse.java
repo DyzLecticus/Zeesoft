@@ -67,4 +67,10 @@ public class DatabaseResponse implements JsAble {
 			size = json.rootElement.getChildInt("size",size);
 		}
 	}
+	
+	public void resultsFromElements(List<IndexElement> elements) {
+		for (IndexElement element: elements) {
+			results.add(new DatabaseResult(element));
+		}
+	}
 }

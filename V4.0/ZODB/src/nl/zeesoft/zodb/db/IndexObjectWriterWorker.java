@@ -52,6 +52,13 @@ public class IndexObjectWriterWorker extends Worker {
 		}
 	}
 	
+	protected void destroy() {
+		if (isWorking()) {
+			stop();
+		}
+		index = null;
+	}
+	
 	protected void writtenObject() {
 		lockMe(this);
 		done++;
