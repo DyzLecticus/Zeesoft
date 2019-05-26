@@ -13,11 +13,9 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class IndexConfig extends Locker implements JsAble {
-	public static final String	PFX_NAME		= "@NAME";
-	public static final String	PFX_MODIFIED	= "@MODIFIED";
-	
-	public static final String	IDX_NAME		= PFX_NAME + ":name";
-	public static final String	IDX_MODIFIED	= PFX_MODIFIED + ":modified";
+	private static final String	PFX_OBJ			= "@OBJECT";
+	public static final String	IDX_NAME		= PFX_OBJ + ":name";
+	public static final String	IDX_MODIFIED	= PFX_OBJ + ":modified";
 	
 	private boolean				rebuild			= false;
 	private List<SearchIndex>	indexes 		= new ArrayList<SearchIndex>();
@@ -122,7 +120,7 @@ public class IndexConfig extends Locker implements JsAble {
 		return r;
 	}
 	
-	public JsFile toSelectJson() {
+	public JsFile toListJson() {
 		JsFile json = new JsFile();
 		lockMe(this);
 		json = toJsonNoLock(getListIndexesNoLock());
@@ -187,24 +185,26 @@ public class IndexConfig extends Locker implements JsAble {
 
 	private List<SearchIndex> getListIndexesNoLock() {
 		List<SearchIndex> r = new ArrayList<SearchIndex>();
+		
+		SearchIndex idx = new SearchIndex();
+		idx.objectNamePrefix = PFX_OBJ;
+		idx.propertyName = "name";
+		idx.numeric = false;
+		idx.unique = true;
+		r.add(idx);
+		
+		idx = new SearchIndex();
+		idx.objectNamePrefix = PFX_OBJ;
+		idx.propertyName = "modified";
+		idx.numeric = true;
+		idx.unique = false;
+		r.add(idx);
+		
 		for (SearchIndex index: indexes) {
 			if (!index.added) {
 				r.add(index);
 			}
 		}
-		SearchIndex index = new SearchIndex();
-		index.objectNamePrefix = PFX_NAME;
-		index.propertyName = "name";
-		index.numeric = false;
-		index.unique = true;
-		r.add(index);
-		
-		index = new SearchIndex();
-		index.objectNamePrefix = PFX_MODIFIED;
-		index.propertyName = "modified";
-		index.numeric = true;
-		index.unique = false;
-		r.add(index);
 		return r;
 	}
 

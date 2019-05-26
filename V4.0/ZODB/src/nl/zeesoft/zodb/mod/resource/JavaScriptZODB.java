@@ -114,7 +114,30 @@ public class JavaScriptZODB {
 		script.append("    }\n");
 		script.append("    return value;\n");
 		script.append("};\n");
-		
+		script.append("ZODB.dom.clearSelectOptions = function(id) {\n");
+		script.append("    var elem = window.document.getElementById(id);\n");
+		script.append("    if (elem!=null) {\n");
+		script.append("        for (var i = elem.options.length - 1; i >= 0; i--) {\n");
+		script.append("            elem.remove(i);\n");
+		script.append("        }\n");
+		script.append("    }\n");
+		script.append("};\n");
+		script.append("ZODB.dom.addSelectOption = function(id,name,value) {\n");
+		script.append("    var elem = window.document.getElementById(id);\n");
+		script.append("    if (elem!=null) {\n");
+		script.append("        var option = window.document.createElement(\"option\");\n");
+		script.append("        option.text = name;\n");
+		script.append("        option.value = value;\n");
+		script.append("        elem.appendChild(option);\n");
+		script.append("    }\n");
+		script.append("};\n");
+		script.append("ZODB.dom.selectOptionValue = function(id,value) {\n");
+		script.append("    var elem = window.document.getElementById(id);\n");
+		script.append("    if (elem!=null) {\n");
+		script.append("        elem.value = value;\n");
+		script.append("    }\n");
+		script.append("};\n");
+
 		script.append("ZODB.encode = {};\n");
 		script.append("ZODB.encode.encodeAscii = function(str) {\n");
 		script.append("    if (str==null || str.length==0) {\n");

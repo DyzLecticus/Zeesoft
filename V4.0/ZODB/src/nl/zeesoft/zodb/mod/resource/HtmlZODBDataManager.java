@@ -25,10 +25,15 @@ public class HtmlZODBDataManager extends HtmlResource {
 		html.append("<tbody>\n");
 			html.append("<tr>\n");
 			html.append("<td width=\"20%\">");
-			html.append("Name");
+			html.append("<select id=\"index\" onchange=\"ZODB.dm.changedIndex();\">");
+			html.append("</select>");
 			html.append("</td>\n");
 			html.append("<td colspan=\"2\">");
-			html.append("<input type=\"text\" id=\"name\" style=\"width: 400px;\" />");
+			html.append("!<input type=\"checkbox\" id=\"invert\" />");
+			html.append("<select id=\"operator\">");
+			html.append("</select>");
+			html.append("<input type=\"text\" id=\"value\" style=\"width: 400px;\" />");
+			html.append("&nbsp;Descending<input type=\"checkbox\" id=\"descending\" />");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			

@@ -520,7 +520,7 @@ public class Index extends Locker {
 		SortedMap<BigDecimal,List<IndexElement>> map = new TreeMap<BigDecimal,List<IndexElement>>();
 		for (IndexElement element: elements) {
 			BigDecimal key = null;
-			if (index==null) {
+			if (index.getName().equals(IndexConfig.IDX_MODIFIED)) {
 				key = new BigDecimal(element.modified);
 			} else {
 				key = new BigDecimal("0");
@@ -554,12 +554,14 @@ public class Index extends Locker {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		SortedMap<String,List<IndexElement>> map = new TreeMap<String,List<IndexElement>>();
 		for (IndexElement element: elements) {
-			String key = element.name;
-			if (index!=null) {
+			String key = null;
+			if (index.getName().equals(IndexConfig.IDX_NAME)) {
+				key = element.name;
+			} else {
 				key = element.idxValues.get(index.propertyName);
-			}
-			if (key==null) {
-				key = "";
+				if (key==null) {
+					key = "";
+				}
 			}
 			if (checkStringPropertyValueNoLock(key,invert,operator,value)) {
 				List<IndexElement> v = map.get(key);

@@ -48,11 +48,7 @@ public class JsonModTestResultsHandler extends JsonHandlerObject {
 					}
 				}
 				if (r.length()==0) {
-					if (getConfiguration().isDebug()) {
-						r = json.toStringBuilderReadFormat();
-					} else {
-						r = json.toStringBuilder();
-					}
+					r = stringifyJson(json);
 				}
 			} else {
 				r = setResponse(response,405,getModuleName() + " test results are not available");

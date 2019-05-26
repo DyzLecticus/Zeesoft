@@ -48,4 +48,14 @@ public abstract class JsonHandlerObject extends HandlerObject {
 		
 		return json;
 	}
+	
+	protected ZStringBuilder stringifyJson(JsFile json) {
+		ZStringBuilder r = null;
+		if (getConfiguration().isDebug()) {
+			r = json.toStringBuilderReadFormat();
+		} else {
+			r = json.toStringBuilder();
+		}
+		return r;
+	}
 }

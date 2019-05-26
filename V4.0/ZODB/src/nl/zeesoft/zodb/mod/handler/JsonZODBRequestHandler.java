@@ -38,12 +38,7 @@ public class JsonZODBRequestHandler extends JsonHandlerObject {
 					req.fromJson(json);
 					DatabaseResponse res = zodb.handleRequest(req);
 					response.setStatus(res.statusCode);
-					json = res.toJson();
-					if (getConfiguration().isDebug()) {
-						r = json.toStringBuilderReadFormat();
-					} else {
-						r = json.toStringBuilder();
-					}
+					r = stringifyJson(res.toJson());
 				}
 			}
 		}
