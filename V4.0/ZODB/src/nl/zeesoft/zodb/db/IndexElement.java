@@ -11,16 +11,16 @@ import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class IndexElement {
-	public long						id			= 0L;
-	public String					name		= "";
-	public long						modified	= 0L;
-	public int						fileNum		= 0;
-	public JsFile					obj			= null;
+	public long								id			= 0L;
+	public String							name		= "";
+	public long								modified	= 0L;
+	public int								fileNum		= 0;
+	public JsFile							obj			= null;
 	
-	public SortedMap<String,String>	idxValues	= new TreeMap<String,String>();
+	public SortedMap<String,ZStringBuilder>	idxValues	= new TreeMap<String,ZStringBuilder>();
 	
-	protected boolean				added		= false;
-	protected boolean				removed		= false;
+	protected boolean						added		= false;
+	protected boolean						removed		= false;
 	
 	protected IndexElement() {
 		updateModified();
@@ -35,7 +35,7 @@ public class IndexElement {
 		r.obj = this.obj;
 		r.removed = this.removed;
 		r.added = this.added;
-		for (Entry<String,String> entry: idxValues.entrySet()) {
+		for (Entry<String,ZStringBuilder> entry: idxValues.entrySet()) {
 			r.idxValues.put(entry.getKey(), entry.getValue());
 		}
 		return r;
@@ -54,7 +54,7 @@ public class IndexElement {
 		r.append("" + modified);
 		r.append("\t");
 		ZStringEncoder encoder = new ZStringEncoder();
-		for (Entry<String,String> entry: idxValues.entrySet()) {
+		for (Entry<String,ZStringBuilder> entry: idxValues.entrySet()) {
 			if (encoder.length()>0) {
 				encoder.append("\t");
 			}
@@ -89,8 +89,7 @@ public class IndexElement {
 				if ((i % 2)==0) {
 					k = idxVal.toString();
 				} else {
-					v = idxVal.toString();
-					idxValues.put(k,v);
+					idxValues.put(k,idxVal);
 				}
 				i++;
 			}

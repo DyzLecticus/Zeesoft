@@ -51,14 +51,15 @@ public class JavaScriptZODBDataManager {
 		script.append("ZODB.dm.changedIndex = function() {\n");
 		script.append("    var index = ZODB.dm.getSelectedIndex();\n");
 		script.append("    ZODB.dom.clearSelectOptions(\"operator\");\n");
-		script.append("    ZODB.dom.addSelectOption(\"operator\",\"" + DatabaseRequest.OP_EQUALS + "\",\"" + DatabaseRequest.OP_EQUALS + "\");\n");
+		script.append("    ZODB.dom.addSelectOption(\"operator\",\"Equals\",\"" + DatabaseRequest.OP_EQUALS + "\");\n");
 		script.append("    if (index.numeric) {\n");
-		script.append("        ZODB.dom.addSelectOption(\"operator\",\"" + DatabaseRequest.OP_GREATER + "\",\"" + DatabaseRequest.OP_GREATER + "\");\n");
-		script.append("        ZODB.dom.addSelectOption(\"operator\",\"" + DatabaseRequest.OP_GREATER_OR_EQUAL + "\",\"" + DatabaseRequest.OP_GREATER_OR_EQUAL + "\");\n");
+		script.append("        ZODB.dom.addSelectOption(\"operator\",\"Greater\",\"" + DatabaseRequest.OP_GREATER + "\");\n");
+		script.append("        ZODB.dom.addSelectOption(\"operator\",\"Greater or equal\",\"" + DatabaseRequest.OP_GREATER_OR_EQUAL + "\");\n");
 		script.append("        ZODB.dom.selectOptionValue(\"operator\",\"" + DatabaseRequest.OP_EQUALS + "\");\n");
 		script.append("    } else {\n");
-		script.append("        ZODB.dom.addSelectOption(\"operator\",\"" + DatabaseRequest.OP_CONTAINS + "\",\"" + DatabaseRequest.OP_CONTAINS + "\");\n");
-		script.append("        ZODB.dom.addSelectOption(\"operator\",\"" + DatabaseRequest.OP_STARTS_WITH + "\",\"" + DatabaseRequest.OP_STARTS_WITH + "\");\n");
+		script.append("        ZODB.dom.addSelectOption(\"operator\",\"Contains\",\"" + DatabaseRequest.OP_CONTAINS + "\");\n");
+		script.append("        ZODB.dom.addSelectOption(\"operator\",\"Starts with\",\"" + DatabaseRequest.OP_STARTS_WITH + "\");\n");
+		script.append("        ZODB.dom.addSelectOption(\"operator\",\"Ends with\",\"" + DatabaseRequest.OP_ENDS_WITH + "\");\n");
 		script.append("        ZODB.dom.selectOptionValue(\"operator\",\"" + DatabaseRequest.OP_CONTAINS + "\");\n");
 		script.append("    }\n");
 		script.append("};\n");
@@ -93,7 +94,8 @@ public class JavaScriptZODBDataManager {
 		script.append("    }\n");
 		script.append("    elem = window.document.getElementById(\"value\");\n");
 		script.append("    if (elem!=null && elem.value.length>0) {\n");
-		script.append("        request.value = elem.value;\n");
+		script.append("        request.encoding = \"" + DatabaseRequest.ENC_ASCII + "\";\n");
+		script.append("        request.value = ZODB.encode.encodeAscii(elem.value);\n");
 		script.append("        elem = window.document.getElementById(\"operator\");\n");
 		script.append("        if (elem!=null) {\n");
 		script.append("            request.operator = elem.value;\n");
@@ -253,7 +255,7 @@ public class JavaScriptZODBDataManager {
 		script.append("    if (elem!=null) {\n");
 		script.append("        elem.value = \"\";\n");
 		script.append("    }\n");
-		script.append("    elem = window.document.getElementById(\"saveName\");\n");
+		script.append("    elem = window.document.getElementById(\"name\");\n");
 		script.append("    if (elem!=null) {\n");
 		script.append("        elem.value = \"\";\n");
 		script.append("    }\n");
@@ -263,7 +265,7 @@ public class JavaScriptZODBDataManager {
 		script.append("    if (elem!=null) {\n");
 		script.append("        elem.value = JSON.stringify(obj,null,2);\n");
 		script.append("    }\n");
-		script.append("    elem = window.document.getElementById(\"saveName\");\n");
+		script.append("    elem = window.document.getElementById(\"name\");\n");
 		script.append("    if (elem!=null) {\n");
 		script.append("        elem.value = name;\n");
 		script.append("    }\n");
@@ -271,7 +273,7 @@ public class JavaScriptZODBDataManager {
 		script.append("ZODB.dm.new = function() {\n");
 		script.append("    ZODB.dom.selectRadioByElementName(\"selector\",0);\n");
 		script.append("    ZODB.dm.clearObject();\n");
-		script.append("    var elem = window.document.getElementById(\"saveName\");\n");
+		script.append("    var elem = window.document.getElementById(\"name\");\n");
 		script.append("    if (elem!=null) {\n");
 		script.append("        elem.value = \"\";\n");
 		script.append("    }\n");
@@ -287,7 +289,7 @@ public class JavaScriptZODBDataManager {
 		script.append("            obj = null;\n");
 		script.append("        }\n");
 		script.append("    }\n");
-		script.append("    elem = window.document.getElementById(\"saveName\");\n");
+		script.append("    elem = window.document.getElementById(\"name\");\n");
 		script.append("    if (elem!=null) {\n");
 		script.append("        name = elem.value;\n");
 		script.append("    }\n");

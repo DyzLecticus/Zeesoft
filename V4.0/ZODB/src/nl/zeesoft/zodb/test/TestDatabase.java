@@ -112,28 +112,28 @@ public class TestDatabase extends TestObject {
 				System.out.println("Last list object: " + list.get((list.size() - 1)).name);
 			}
 			
-			list = db.listObjectsUseIndex(20,10,false,"testObject:data",false,"","",0L,0L,null);
+			list = db.listObjectsUseIndex(20,10,false,"testObject:data",false,"",null,0L,0L,null);
 			assertEqual(list.size(),10,"List size does not match expectation (4)");
 			if (list.size()>0) {
 				System.out.println("First index list object: " + list.get(0).name);
 				System.out.println("Last index list object: " + list.get((list.size() - 1)).name);
 			}
 
-			list = db.listObjectsUseIndex(20,10,false,IndexConfig.IDX_NAME,false,"","",0L,0L,null);
+			list = db.listObjectsUseIndex(20,10,false,IndexConfig.IDX_NAME,false,"",null,0L,0L,null);
 			assertEqual(list.size(),10,"List size does not match expectation (5)");
 			if (list.size()>0) {
 				System.out.println("First index list object: " + list.get(0).name);
 				System.out.println("Last index list object: " + list.get((list.size() - 1)).name);
 			}
 			
-			list = db.listObjectsUseIndex(0,300,true,"testObject:num",false,DatabaseRequest.OP_GREATER,"99",0L,0L,null);
+			list = db.listObjectsUseIndex(0,300,true,"testObject:num",false,DatabaseRequest.OP_GREATER,new ZStringBuilder("99"),0L,0L,null);
 			assertEqual(list.size(),206,"List size does not match expectation (6)");
 			if (list.size()>0) {
 				System.out.println("First index list object: " + list.get(0).name + ", num: " + list.get(0).idxValues.get("num"));
 				System.out.println("Last index list object: " + list.get((list.size() - 1)).name + ", num: " + list.get((list.size() - 1)).idxValues.get("num"));
 			}
 			
-			list = db.listObjectsUseIndex(0,300,true,"testObject:num",true,DatabaseRequest.OP_GREATER,"99",0L,0L,null);
+			list = db.listObjectsUseIndex(0,300,true,"testObject:num",true,DatabaseRequest.OP_GREATER,new ZStringBuilder("99"),0L,0L,null);
 			assertEqual(list.size(),44,"List size does not match expectation (7)");
 			if (list.size()>0) {
 				System.out.println("First index list object: " + list.get(0).name + ", num: " + list.get(0).idxValues.get("num"));

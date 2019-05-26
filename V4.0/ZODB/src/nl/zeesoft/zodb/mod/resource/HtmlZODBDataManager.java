@@ -94,7 +94,7 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("<tr>\n");
 			html.append("<td>");
 			html.append("Name&nbsp;");
-			html.append("<input type=\"text\" id=\"saveName\" style=\"width: 400px;\" />");
+			html.append("<input type=\"text\" id=\"name\" style=\"width: 400px;\" />");
 			html.append("<input type=\"button\" value=\"Save\" onclick=\"ZODB.dm.save();\" />");
 			html.append("</td>\n");
 			html.append("</tr>\n");

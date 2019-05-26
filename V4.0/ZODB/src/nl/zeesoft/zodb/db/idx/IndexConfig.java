@@ -76,12 +76,12 @@ public class IndexConfig extends Locker implements JsAble {
 		return r;
 	}
 	
-	public SortedMap<String,String> getIndexValuesForObject(String name,JsFile obj) {
+	public SortedMap<String,ZStringBuilder> getIndexValuesForObject(String name,JsFile obj) {
 		lockMe(this);
 		List<SearchIndex> indexes = getIndexesForObjectNameNoLock(name);
-		SortedMap<String,String> r = new TreeMap<String,String>();
+		SortedMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>();
 		for (SearchIndex index: indexes) {
-			String value = index.getIndexValueForObject(obj);
+			ZStringBuilder value = index.getIndexValueForObject(obj);
 			if (value!=null) {
 				r.put(index.propertyName,value);
 			}

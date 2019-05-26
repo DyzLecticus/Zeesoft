@@ -18,6 +18,7 @@ public class DatabaseRequest implements JsAble {
 	public static final String	OP_EQUALS			= "EQUALS";
 	public static final String	OP_CONTAINS			= "CONTAINS";
 	public static final String	OP_STARTS_WITH		= "STARTS_WITH";
+	public static final String	OP_ENDS_WITH		= "ENDS_WITH";
 	public static final String	OP_GREATER			= "GREATER";
 	public static final String	OP_GREATER_OR_EQUAL	= "GREATER_OR_EQUAL";
 	
@@ -35,7 +36,7 @@ public class DatabaseRequest implements JsAble {
 	public String				index				= "";
 	public boolean				invert				= false;
 	public String				operator			= "";
-	public String				value				= "";
+	public ZStringBuilder		value				= new ZStringBuilder();
 	public boolean				ascending			= true;
 
 	public JsFile				obj					= null;
@@ -118,7 +119,7 @@ public class DatabaseRequest implements JsAble {
 			index = json.rootElement.getChildString("index",index);
 			invert = json.rootElement.getChildBoolean("invert",invert);
 			operator = json.rootElement.getChildString("operator",operator);
-			value = json.rootElement.getChildString("value",value);
+			value = json.rootElement.getChildZStringBuilder("value",value);
 			ascending = json.rootElement.getChildBoolean("ascending",ascending);
 			
 			JsElem objElem = json.rootElement.getChildByName("object");

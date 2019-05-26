@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * The Zeesoft StringBuilder provides advanced StringBuilder manipulation and methods.
  */
-public class ZStringBuilder {
+public class ZStringBuilder implements Comparable<ZStringBuilder> {
 	private StringBuilder	sb			= null;
 	private	String			encoding	= "UTF8"; 
 	
@@ -123,25 +123,57 @@ public class ZStringBuilder {
 		}
 		return r;
 	}
+	
+	public ZStringBuilder substr(int s,int e) {
+		ZStringBuilder r = new ZStringBuilder();
+		if (sb!=null) {
+			for (int i = s; i < e; i++) {
+				r.append(sb.substring(i,i+1));
+			}
+		}
+		return r;
+	}
 
 	public boolean endsWith(String s) {
 		return (sb!=null && sb.length()>=s.length() && sb.substring(sb.length() - s.length(),sb.length()).equals(s));
 	}
 
+	public boolean endsWith(ZStringBuilder zsb) {
+		return (sb!=null && sb.length()>=zsb.length() && substr(sb.length() - zsb.length(),sb.length()).equals(zsb));
+	}
+
 	public boolean startsWith(String s) {
 		return (sb!=null && sb.length()>=s.length() && sb.substring(0, s.length()).equals(s));
 	}
+	
+	public boolean startsWith(ZStringBuilder zsb) {
+		return (sb!=null && sb.length()>=zsb.length() && substr(0, zsb.length()).equals(zsb));
+	}
 
 	public boolean equals(ZStringBuilder zsb) {
-		return equals(zsb.getStringBuilder());
+		return equals(zsb.getStringBuilder(),false);
+	}
+	
+	public boolean equalsIgnoreCase(ZStringBuilder zsb) {
+		return equals(zsb.getStringBuilder(),true);
 	}
 
 	public boolean equals(StringBuilder sbc) {
+		return equals(sbc,false);
+	}
+	
+	public boolean equalsIgnoreCase(StringBuilder sbc) {
+		return equals(sbc,true);
+	}
+
+	public boolean equals(StringBuilder sbc,boolean ignoreCase) {
 		boolean eq = true;
 		if (sb!=null && sbc!=null) {
 			if (sb.length()==sbc.length()) {
 				for (int i = 0; i < sb.length(); i++) {
-					if (!sb.substring(i,(i+1)).equals(sbc.substring(i,(i+1)))) {
+					if ((ignoreCase && !sb.substring(i,i+1).equalsIgnoreCase(sbc.substring(i,i+1))) ||
+						!sb.substring(i,i+1).equals(sbc.substring(i,i+1))
+						) {
 						eq = false;
 						break;
 					}
@@ -242,6 +274,10 @@ public class ZStringBuilder {
 	}
 	
 	public boolean contains(String search) {
+		return contains(new ZStringBuilder(search));
+	}
+	
+	public boolean contains(ZStringBuilder search) {
 		boolean contains = false;
 		if (sb!=null) {
 			int length = sb.length();
@@ -255,7 +291,7 @@ public class ZStringBuilder {
 							found = false;
 							break;
 						}
-						if (!sb.substring(i + si,i + si + 1).equals(search.substring(si,si+1))) {
+						if (!substr(i + si,i + si + 1).equals(search.substr(si,si+1))) {
 							found = false;
 							break;
 						}
@@ -525,5 +561,33 @@ public class ZStringBuilder {
 			}
 		}
 		return r;
+	}
+
+	public char[] toCharArray() {
+		char[] r = null;
+		if (sb!=null) {
+			r = new char[sb.length()];
+			sb.getChars(0,r.length,r,0);
+		}
+		return r;
+	}
+	
+	@Override
+	public int compareTo(ZStringBuilder other) {
+        int len1 = sb.length();
+        int len2 = other.getStringBuilder().length();
+        int lim = Math.min(len1, len2);
+        char v1[] = toCharArray();
+        char v2[] = other.toCharArray();
+        int k = 0;
+        while (k < lim) {
+            char c1 = v1[k];
+            char c2 = v2[k];
+            if (c1 != c2) {
+                return c1 - c2;
+            }
+            k++;
+        }
+        return len1 - len2;
 	}
 }

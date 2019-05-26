@@ -26,7 +26,7 @@ public class HtmlZODBIndexManager extends HtmlResource {
 		html.append("<div>\n");
 		html.append("<table style=\"width: 100%;\">\n");
 		html.append("<tr>\n");
-		html.append("<th align=\"left\" width=\"30%\">");
+		html.append("<th align=\"left\" width=\"20%\">");
 		html.append("New&nbsp;index&nbsp;");
 		html.append("</th>\n");
 		html.append("<th>");

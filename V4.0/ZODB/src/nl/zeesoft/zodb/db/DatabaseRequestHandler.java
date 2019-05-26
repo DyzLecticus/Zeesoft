@@ -111,7 +111,7 @@ public class DatabaseRequestHandler {
 			response.request.contains = Database.removeControlCharacters(response.request.contains);
 		}
 		if (response.request.value.length()>0) {
-			response.request.value = Database.removeControlCharacters(response.request.value);
+			Database.removeControlCharacters(response.request.value);
 		}
 		if (response.request.type.length()==0) {
 			response.errors.add(new ZStringBuilder("Request type is mandatory"));
@@ -173,7 +173,8 @@ public class DatabaseRequestHandler {
 				} else if (response.request.encoding.equals(DatabaseRequest.ENC_KEY)) {
 					encoder.decodeKey(database.getKey(),0);
 				}
-				response.request.value = Database.removeControlCharacters(encoder.toString());
+				Database.removeControlCharacters(encoder);
+				response.request.value = encoder;
 			}
 		}
 	}
@@ -213,9 +214,10 @@ public class DatabaseRequestHandler {
 				if (!index.numeric &&
 					!response.request.operator.equals(DatabaseRequest.OP_EQUALS) &&
 					!response.request.operator.equals(DatabaseRequest.OP_CONTAINS) &&
-					!response.request.operator.equals(DatabaseRequest.OP_STARTS_WITH)
+					!response.request.operator.equals(DatabaseRequest.OP_STARTS_WITH) &&
+					!response.request.operator.equals(DatabaseRequest.OP_ENDS_WITH)
 					) {
-					response.errors.add(new ZStringBuilder("Request operator must equal " + DatabaseRequest.OP_EQUALS + ", " + DatabaseRequest.OP_CONTAINS + " or " + DatabaseRequest.OP_STARTS_WITH));
+					response.errors.add(new ZStringBuilder("Request operator must equal " + DatabaseRequest.OP_EQUALS + ", " + DatabaseRequest.OP_CONTAINS + ", " + DatabaseRequest.OP_STARTS_WITH + " or " + DatabaseRequest.OP_ENDS_WITH));
 				} else if (index.numeric &&
 					!response.request.operator.equals(DatabaseRequest.OP_EQUALS) &&
 					!response.request.operator.equals(DatabaseRequest.OP_GREATER) &&
@@ -227,7 +229,7 @@ public class DatabaseRequestHandler {
 					response.errors.add(new ZStringBuilder("Request value is mandatory"));
 				} else if (index.numeric) {
 					try {
-						new BigDecimal(response.request.value);
+						new BigDecimal(response.request.value.toCharArray());
 					} catch (NumberFormatException e) {
 						response.errors.add(new ZStringBuilder("Request value must be numeric"));
 					}

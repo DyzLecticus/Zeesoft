@@ -1,5 +1,6 @@
 package nl.zeesoft.zodb.db.idx;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -20,11 +21,16 @@ public class SearchIndex implements JsAble {
 		return objNamePrefix + ":" + propName;
 	}
 
-	protected String getIndexValueForObject(JsFile obj) {
-		String r = null;
+	protected ZStringBuilder getIndexValueForObject(JsFile obj) {
+		ZStringBuilder r = null;
 		JsElem propElem = obj.rootElement.getChildByName(propertyName);
-		if (propElem!=null && propElem.value!=null) {
-			r = Database.removeControlCharacters(propElem.value.toString());
+		if (propElem!=null) {
+			if (propElem.value!=null) {
+				Database.removeControlCharacters(propElem.value);
+				r = propElem.value;
+			} else if (numeric && propElem.array) {
+				r = new ZStringBuilder("" + propElem.children.size());
+			}
 		}
 		return r;
 	}

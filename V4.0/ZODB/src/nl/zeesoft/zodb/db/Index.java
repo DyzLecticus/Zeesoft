@@ -86,7 +86,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	protected List<IndexElement> listObjectsUseIndex(int start, int max,boolean ascending,String indexName,boolean invert,String operator,String value,long modAfter,long modBefore,List<Integer> data) {
+	protected List<IndexElement> listObjectsUseIndex(int start, int max,boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<Integer> data) {
 		List<IndexElement> r = null;
 		lockMe(true);
 		r = listObjectsUseIndexNoLock(start,max,ascending,indexName,invert,operator,value,modAfter,modBefore,data);
@@ -106,7 +106,7 @@ public class Index extends Locker {
 		return listObjects(start,max,null,contains,null,modAfter,modBefore,data);
 	}
 	
-	protected List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,String value,long modAfter,long modBefore) {
+	protected List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		return getObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
 	}
 	
@@ -212,7 +212,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,String value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
@@ -427,7 +427,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> getObjectsUsingIndex(boolean ascending,String indexName,boolean invert,String operator,String value,long modAfter,long modBefore) {
+	private List<IndexElement> getObjectsUsingIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		List<IndexElement> read = new ArrayList<IndexElement>();
 		lockMe(this);
@@ -463,7 +463,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjectsUseIndexNoLock(int start, int max,boolean ascending,String indexName,boolean invert,String operator,String value,long modAfter,long modBefore,List<Integer> data) {
+	private List<IndexElement> listObjectsUseIndexNoLock(int start, int max,boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<Integer> data) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		if (start<0) {
 			start = 0;
@@ -492,7 +492,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjectsUseIndexNoLock(String indexName,boolean invert,String operator,String value,long modAfter,long modBefore) {
+	private List<IndexElement> listObjectsUseIndexNoLock(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		if (open) {
 			SearchIndex index = indexConfig.getListIndex(indexName);
@@ -508,7 +508,7 @@ public class Index extends Locker {
 						BigDecimal numVal = null;
 						if (value!=null && value.length()>0) {
 							try {
-								numVal = new BigDecimal(value);
+								numVal = new BigDecimal(value.toCharArray());
 							} catch (NumberFormatException e) {
 								// Ignore
 							}
@@ -532,10 +532,10 @@ public class Index extends Locker {
 				key = new BigDecimal(element.modified);
 			} else {
 				key = new BigDecimal("0");
-				String strVal = element.idxValues.get(index.propertyName);
+				ZStringBuilder strVal = element.idxValues.get(index.propertyName);
 				if (strVal!=null) {
 					try {
-						key = new BigDecimal(strVal);
+						key = new BigDecimal(strVal.toCharArray());
 					} catch (NumberFormatException e) {
 						key = new BigDecimal("0");
 					}
@@ -558,17 +558,17 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private List<IndexElement> listObjectsUseStringIndexNoLock(List<IndexElement> elements,SearchIndex index,boolean invert,String operator,String value) {
+	private List<IndexElement> listObjectsUseStringIndexNoLock(List<IndexElement> elements,SearchIndex index,boolean invert,String operator,ZStringBuilder value) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
-		SortedMap<String,List<IndexElement>> map = new TreeMap<String,List<IndexElement>>();
+		SortedMap<ZStringBuilder,List<IndexElement>> map = new TreeMap<ZStringBuilder,List<IndexElement>>();
 		for (IndexElement element: elements) {
-			String key = null;
+			ZStringBuilder key = null;
 			if (index.getName().equals(IndexConfig.IDX_NAME)) {
-				key = element.name;
+				key = new ZStringBuilder(element.name);
 			} else {
 				key = element.idxValues.get(index.propertyName);
 				if (key==null) {
-					key = "";
+					key = new ZStringBuilder();
 				}
 			}
 			if (checkStringPropertyValueNoLock(key,invert,operator,value)) {
@@ -580,7 +580,7 @@ public class Index extends Locker {
 				v.add(element);
 			}
 		}
-		for (Entry<String,List<IndexElement>> entry: map.entrySet()) {
+		for (Entry<ZStringBuilder,List<IndexElement>> entry: map.entrySet()) {
 			for (IndexElement element: entry.getValue()) {
 				r.add(element);
 			}
@@ -617,7 +617,7 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private boolean checkStringPropertyValueNoLock(String propertyValue, boolean invert, String operator, String checkValue) {
+	private boolean checkStringPropertyValueNoLock(ZStringBuilder propertyValue, boolean invert, String operator, ZStringBuilder checkValue) {
 		boolean r = (propertyValue!=null);
 		if (operator!=null && operator.length()>0 && propertyValue!=null && checkValue!=null) {
 			if (operator.equals(DatabaseRequest.OP_EQUALS)) {
@@ -638,6 +638,13 @@ public class Index extends Locker {
 				if (
 					(!invert && !propertyValue.startsWith(checkValue)) || 
 					(invert && propertyValue.startsWith(checkValue))
+					) {
+					r = false;
+				}
+			} else if (operator.equals(DatabaseRequest.OP_ENDS_WITH)) {
+				if (
+					(!invert && !propertyValue.endsWith(checkValue)) || 
+					(invert && propertyValue.endsWith(checkValue))
 					) {
 					r = false;
 				}
@@ -797,7 +804,7 @@ public class Index extends Locker {
 		boolean ok = true;
 		for (SearchIndex index: indexConfig.getUniqueIndexesForObjectName(element.name)) {
 			IndexElement duplicate = null;
-			String strVal = element.idxValues.get(index.propertyName);
+			ZStringBuilder strVal = element.idxValues.get(index.propertyName);
 			if (strVal!=null) {
 				List<IndexElement> elements = listObjectsUseIndexNoLock(index.getName(),false,DatabaseRequest.OP_EQUALS,strVal,0L,0L);
 				if (elements.size()==1) {

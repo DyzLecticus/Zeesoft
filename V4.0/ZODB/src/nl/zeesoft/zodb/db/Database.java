@@ -104,7 +104,7 @@ public class Database {
 		return index.getObjectByName(name);
 	}
 	
-	public List<IndexElement> listObjectsUseIndex(int start, int max,boolean ascending,String indexName,boolean invert,String operator,String value,long modAfter,long modBefore,List<Integer> data) {
+	public List<IndexElement> listObjectsUseIndex(int start, int max,boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<Integer> data) {
 		return index.listObjectsUseIndex(start,max,ascending,indexName,invert,operator,value,modAfter,modBefore,data);
 	}
 	
@@ -120,7 +120,7 @@ public class Database {
 		return index.listObjectsThatContain(contains,start,max,modAfter,modBefore,data);
 	}
 	
-	public List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,String value,long modAfter,long modBefore) {
+	public List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		return index.getObjectsUseIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
 	}
 	
@@ -152,15 +152,21 @@ public class Database {
 		return index.removeObjectsThatContain(contains,modAfter,modBefore,errors);
 	}
 	
-	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,String value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		return index.removeObjectsUseIndex(indexName,invert,operator,value,modAfter,modBefore,errors);
 	}
 	
-	public static String removeControlCharacters(String name) {
-		name = name.replace("\r","");
-		name = name.replace("\n","");
-		name = name.replace("\t","");
-		return name;
+	public static String removeControlCharacters(String str) {
+		str = str.replace("\r","");
+		str = str.replace("\n","");
+		str = str.replace("\t","");
+		return str;
+	}
+	
+	public static void removeControlCharacters(ZStringBuilder sb) {
+		sb.replace("\r","");
+		sb.replace("\n","");
+		sb.replace("\t","");
 	}
 	
 	protected StringBuilder getKey() {
