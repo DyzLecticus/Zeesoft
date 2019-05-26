@@ -20,7 +20,9 @@ public class IndexRequest extends SearchIndex {
 			json = new JsFile();
 			json.rootElement = new JsElem();
 		}
-		json.rootElement.children.add(0,new JsElem("name",name,true));
+		if (!type.equals(TYPE_GET)) {
+			json.rootElement.children.add(0,new JsElem("name",name,true));
+		}
 		json.rootElement.children.add(0,new JsElem("type",type,true));
 		return json;
 	}

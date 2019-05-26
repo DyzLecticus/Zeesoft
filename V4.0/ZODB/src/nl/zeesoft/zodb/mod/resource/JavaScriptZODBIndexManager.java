@@ -128,9 +128,10 @@ public class JavaScriptZODBIndexManager {
 		script.append("    } else {\n");
 		script.append("        ZODB.im.refresh();\n");
 		script.append("    }\n");
+		script.append("    return object;\n");
 		script.append("};\n");
 		script.append("ZODB.im.addCallback = function(xhr) {\n");
-		script.append("    ZODB.im.defaultCallback(xhr);\n");
+		script.append("    var object = ZODB.im.defaultCallback(xhr);\n");
 		script.append("    if (!object.error && !object.errors) {\n");
 		script.append("        var elem = window.document.getElementById(\"objectNamePrefix\");\n");
 		script.append("        if (elem!=null) {\n");
