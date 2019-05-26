@@ -17,6 +17,7 @@ public class DatabaseRequest implements JsAble {
 
 	public static final String	OP_EQUALS			= "EQUALS";
 	public static final String	OP_CONTAINS			= "CONTAINS";
+	public static final String	OP_STARTS_WITH		= "STARTS_WITH";
 	public static final String	OP_GREATER			= "GREATER";
 	public static final String	OP_GREATER_OR_EQUAL	= "GREATER_OR_EQUAL";
 	

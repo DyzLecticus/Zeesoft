@@ -14,6 +14,7 @@ import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.IndexElement;
+import nl.zeesoft.zodb.db.idx.IndexConfig;
 import nl.zeesoft.zodb.mod.ModZODB;
 
 public class TestDatabase extends TestObject {
@@ -33,22 +34,8 @@ public class TestDatabase extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Config config = new Config();
-		config.getModule(ModZODB.NAME).selfTest = false;
-		config.initialize(true,"dist/","",false);
-		config.setZODBKey(new StringBuilder("0123456789012345678901234567890123456789012345678901234567890123"));
 		
-		File dir = new File("dist/");
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-		
-		Database db = config.getZODB().getDatabase();
-		db.getIndexConfig().removeIndex(ModZODB.NAME + "/Objects/:testData");
-		db.getIndexConfig().addIndex("testObject","data",false,true);
-		db.getIndexConfig().getIndex("testObject:data").added = false;
-		db.getIndexConfig().addIndex("testObject","num",true,true);
-		db.getIndexConfig().getIndex("testObject:num").added = false;
-		db.install();
+		Database db = initializeTestDatabase(config,null);
 
 		sleep(1000);
 		
@@ -132,15 +119,22 @@ public class TestDatabase extends TestObject {
 				System.out.println("Last index list object: " + list.get((list.size() - 1)).name);
 			}
 
-			list = db.listObjectsUseIndex(0,300,true,"testObject:num",false,DatabaseRequest.OP_GREATER,"100",0L,0L,null);
-			assertEqual(list.size(),206,"List size does not match expectation (5)");
+			list = db.listObjectsUseIndex(20,10,false,IndexConfig.IDX_NAME,false,"","",0L,0L,null);
+			assertEqual(list.size(),10,"List size does not match expectation (5)");
+			if (list.size()>0) {
+				System.out.println("First index list object: " + list.get(0).name);
+				System.out.println("Last index list object: " + list.get((list.size() - 1)).name);
+			}
+			
+			list = db.listObjectsUseIndex(0,300,true,"testObject:num",false,DatabaseRequest.OP_GREATER,"99",0L,0L,null);
+			assertEqual(list.size(),206,"List size does not match expectation (6)");
 			if (list.size()>0) {
 				System.out.println("First index list object: " + list.get(0).name + ", num: " + list.get(0).idxValues.get("num"));
 				System.out.println("Last index list object: " + list.get((list.size() - 1)).name + ", num: " + list.get((list.size() - 1)).idxValues.get("num"));
 			}
 			
-			list = db.listObjectsUseIndex(0,300,true,"testObject:num",true,DatabaseRequest.OP_GREATER_OR_EQUAL,"100",0L,0L,null);
-			assertEqual(list.size(),44,"List size does not match expectation (6)");
+			list = db.listObjectsUseIndex(0,300,true,"testObject:num",true,DatabaseRequest.OP_GREATER,"99",0L,0L,null);
+			assertEqual(list.size(),44,"List size does not match expectation (7)");
 			if (list.size()>0) {
 				System.out.println("First index list object: " + list.get(0).name + ", num: " + list.get(0).idxValues.get("num"));
 				System.out.println("Last index list object: " + list.get((list.size() - 1)).name + ", num: " + list.get((list.size() - 1)).idxValues.get("num"));
@@ -180,6 +174,29 @@ public class TestDatabase extends TestObject {
 		sleep(1000);
 		
 		config.destroy();
+	}
+	
+	public static Database initializeTestDatabase(Config config,StringBuilder newKey) {
+		File dir = new File("dist/data/ZODB/Index");
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		
+		config.getModule(ModZODB.NAME).selfTest = false;
+		config.initialize(true,"dist/","",false);
+		config.setZODBKey(new StringBuilder("0123456789012345678901234567890123456789012345678901234567890123"));
+		if (newKey!=null && newKey.length()>0) {
+			config.getZODB().setNewKey(newKey);
+		}
+		
+		Database db = config.getZODB().getDatabase();
+		db.getIndexConfig().removeIndex(ModZODB.NAME + "/Objects/:testData");
+		db.getIndexConfig().addIndex("testObject","data",false,true);
+		db.getIndexConfig().getIndex("testObject:data").added = false;
+		db.getIndexConfig().addIndex("testObject","num",true,true);
+		db.getIndexConfig().getIndex("testObject:num").added = false;
+		db.install();
+		return db;
 	}
 	
 	private void addTestObjects(Database db) {

@@ -1,6 +1,5 @@
 package nl.zeesoft.zodb.test;
 
-import java.io.File;
 import java.util.Date;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -15,7 +14,6 @@ import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 import nl.zeesoft.zodb.db.IndexElement;
-import nl.zeesoft.zodb.mod.ModZODB;
 
 public class TestDatabaseRequestHandler extends TestObject {
 	public TestDatabaseRequestHandler(Tester tester) {
@@ -34,18 +32,9 @@ public class TestDatabaseRequestHandler extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Config config = new Config();
-		config.getModule(ModZODB.NAME).selfTest = false;
-		config.initialize(true,"dist/","",false);
-		config.setZODBKey(new StringBuilder("0123456789012345678901234567890123456789012345678901234567890123"));
 		
-		File dir = new File("dist/");
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-		
-		Database db = config.getZODB().getDatabase();
-		db.install();
-		
+		Database db = TestDatabase.initializeTestDatabase(config,null);
+				
 		sleep(1000);
 		
 		assertEqual(db.isOpen(),true,"Failed to initialize database within one second");

@@ -13,8 +13,14 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class IndexConfig extends Locker implements JsAble {
-	private boolean				rebuild	= false;
-	private List<SearchIndex>	indexes = new ArrayList<SearchIndex>();
+	public static final String	PFX_NAME		= "@NAME";
+	public static final String	PFX_MODIFIED	= "@MODIFIED";
+	
+	public static final String	IDX_NAME		= PFX_NAME + ":name";
+	public static final String	IDX_MODIFIED	= PFX_MODIFIED + ":modified";
+	
+	private boolean				rebuild			= false;
+	private List<SearchIndex>	indexes 		= new ArrayList<SearchIndex>();
 	
 	public IndexConfig(Messenger msgr) {
 		super(msgr);
@@ -102,19 +108,33 @@ public class IndexConfig extends Locker implements JsAble {
 		unlockMe(this);
 		return r;
 	}
+	
+	public SearchIndex getListIndex(String name) {
+		SearchIndex r = null;
+		lockMe(this);
+		for (SearchIndex index: getListIndexesNoLock()) {
+			if (index.getName().equals(name)) {
+				r = index;
+				break;
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+	
+	public JsFile toSelectJson() {
+		JsFile json = new JsFile();
+		lockMe(this);
+		json = toJsonNoLock(getListIndexesNoLock());
+		unlockMe(this);
+		return json;
+	}
 
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		lockMe(this);
-		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("rebuild","" + rebuild));
-		JsElem idxsElem = new JsElem("indexes",true);
-		json.rootElement.children.add(idxsElem);
-		for (SearchIndex index: indexes) {
-			JsFile js = index.toJson();
-			idxsElem.children.add(js.rootElement);
-		}
+		json = toJsonNoLock(indexes);
 		unlockMe(this);
 		return json;
 	}
@@ -152,7 +172,42 @@ public class IndexConfig extends Locker implements JsAble {
 		}
 		return index;
 	}
-	
+
+	private JsFile toJsonNoLock(List<SearchIndex> indexes) {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("rebuild","" + rebuild));
+		JsElem idxsElem = new JsElem("indexes",true);
+		json.rootElement.children.add(idxsElem);
+		for (SearchIndex index: indexes) {
+			idxsElem.children.add(index.toJson().rootElement);
+		}
+		return json;
+	}
+
+	private List<SearchIndex> getListIndexesNoLock() {
+		List<SearchIndex> r = new ArrayList<SearchIndex>();
+		for (SearchIndex index: indexes) {
+			if (!index.added) {
+				r.add(index);
+			}
+		}
+		SearchIndex index = new SearchIndex();
+		index.objectNamePrefix = PFX_NAME;
+		index.propertyName = "name";
+		index.numeric = false;
+		index.unique = true;
+		r.add(index);
+		
+		index = new SearchIndex();
+		index.objectNamePrefix = PFX_MODIFIED;
+		index.propertyName = "modified";
+		index.numeric = true;
+		index.unique = false;
+		r.add(index);
+		return r;
+	}
+
 	private SearchIndex getIndexNoLock(String name) {
 		SearchIndex r = null;
 		for (SearchIndex index: indexes) {

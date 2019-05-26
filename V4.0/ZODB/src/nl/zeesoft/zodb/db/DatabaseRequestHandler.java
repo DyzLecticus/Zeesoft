@@ -202,19 +202,18 @@ public class DatabaseRequestHandler {
 	
 	private void checkRequestIndex(DatabaseResponse response) {
 		if (response.request.index.length()>0) {
-			SearchIndex index = database.getIndexConfig().getIndex(response.request.index);
+			SearchIndex index = database.getIndexConfig().getListIndex(response.request.index);
 			if (index==null) {
 				response.errors.add(new ZStringBuilder("Request index does not exist"));
-			} else if (index.added) {
-				response.errors.add(new ZStringBuilder("Request index has not been built yet"));
-			}
-			if (index!=null && !index.added && response.request.operator.length()>0) {
+			} else if (response.request.operator.length()>0) {
 				if (!index.numeric &&
 					!response.request.operator.equals(DatabaseRequest.OP_EQUALS) &&
-					!response.request.operator.equals(DatabaseRequest.OP_CONTAINS)
+					!response.request.operator.equals(DatabaseRequest.OP_CONTAINS) &&
+					!response.request.operator.equals(DatabaseRequest.OP_STARTS_WITH)
 					) {
-					response.errors.add(new ZStringBuilder("Request operator must equal " + DatabaseRequest.OP_EQUALS + " or " + DatabaseRequest.OP_CONTAINS));
+					response.errors.add(new ZStringBuilder("Request operator must equal " + DatabaseRequest.OP_EQUALS + ", " + DatabaseRequest.OP_CONTAINS + " or " + DatabaseRequest.OP_STARTS_WITH));
 				} else if (index.numeric &&
+					!response.request.operator.equals(DatabaseRequest.OP_EQUALS) &&
 					!response.request.operator.equals(DatabaseRequest.OP_GREATER) &&
 					!response.request.operator.equals(DatabaseRequest.OP_GREATER_OR_EQUAL)
 					) {

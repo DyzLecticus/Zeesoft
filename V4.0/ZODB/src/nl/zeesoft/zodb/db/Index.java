@@ -487,9 +487,14 @@ public class Index extends Locker {
 	private List<IndexElement> listObjectsUseIndexNoLock(String indexName,boolean invert,String operator,String value,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		if (open) {
-			SearchIndex index = indexConfig.getIndex(indexName);
-			if (index!=null && !index.added) {
-				List<IndexElement> elements = listObjectsByNameNoLock(index.objectNamePrefix,null,null,modAfter,modBefore);
+			SearchIndex index = indexConfig.getListIndex(indexName);
+			if (index!=null) {
+				List<IndexElement> elements = null;
+				if (indexName.equals(IndexConfig.IDX_NAME) || indexName.equals(IndexConfig.IDX_MODIFIED)) {
+					elements = listObjectsByNameNoLock(null,null,null,modAfter,modBefore);
+				} else {
+					elements = listObjectsByNameNoLock(index.objectNamePrefix,null,null,modAfter,modBefore);
+				}
 				if (elements.size()>0) {
 					if (index.numeric) {
 						BigDecimal numVal = null;
@@ -500,93 +505,9 @@ public class Index extends Locker {
 								// Ignore
 							}
 						}
-						SortedMap<BigDecimal,List<IndexElement>> map = new TreeMap<BigDecimal,List<IndexElement>>();
-						for (IndexElement element: elements) {
-							BigDecimal key = new BigDecimal("0");
-							String strVal = element.idxValues.get(index.propertyName);
-							if (strVal!=null) {
-								try {
-									key = new BigDecimal(strVal);
-								} catch (NumberFormatException e) {
-									key = new BigDecimal("0");
-								}
-							}
-							if (operator!=null && operator.length()>0 && key!=null && numVal!=null) {
-								if (operator.equals(DatabaseRequest.OP_EQUALS)) {
-									if (
-										(!invert && key.compareTo(numVal)!=0) || 
-										(invert && key.compareTo(numVal)==0)
-										) {
-										key = null;
-									}
-								} else if (operator.equals(DatabaseRequest.OP_GREATER)) {
-									if (
-										(!invert && key.compareTo(numVal)<0) || 
-										(invert && key.compareTo(numVal)>0)
-										) {
-										key = null;
-									}
-								} else if (operator.equals(DatabaseRequest.OP_GREATER_OR_EQUAL)) {
-									if (
-										(!invert && key.compareTo(numVal)<=0) || 
-										(invert && key.compareTo(numVal)>=0)
-										) {
-										key = null;
-									}
-								}
-							}
-							if (key!=null) {
-								List<IndexElement> v = map.get(key);
-								if (v==null) {
-									v = new ArrayList<IndexElement>();
-									map.put(key,v);
-								}
-								v.add(element);
-							}
-						}
-						for (Entry<BigDecimal,List<IndexElement>> entry: map.entrySet()) {
-							for (IndexElement element: entry.getValue()) {
-								r.add(element);
-							}
-						}
+						r = listObjectsUseNumericIndexNoLock(elements,index,invert,operator,numVal);
 					} else {
-						SortedMap<String,List<IndexElement>> map = new TreeMap<String,List<IndexElement>>();
-						for (IndexElement element: elements) {
-							String key = element.idxValues.get(index.propertyName);
-							if (key==null) {
-								key = "";
-							}
-							if (operator!=null && operator.length()>0 && key!=null && value!=null) {
-								if (operator.equals(DatabaseRequest.OP_EQUALS)) {
-									if (
-										(!invert && !key.equals(value)) || 
-										(invert && key.equals(value))
-										) {
-										key = null;
-									}
-								} else if (operator.equals(DatabaseRequest.OP_CONTAINS)) {
-									if (
-										(!invert && !key.contains(value)) || 
-										(invert && key.contains(value))
-										) {
-										key = null;
-									}
-								}
-							}
-							if (key!=null) {
-								List<IndexElement> v = map.get(key);
-								if (v==null) {
-									v = new ArrayList<IndexElement>();
-									map.put(key,v);
-								}
-								v.add(element);
-							}
-						}
-						for (Entry<String,List<IndexElement>> entry: map.entrySet()) {
-							for (IndexElement element: entry.getValue()) {
-								r.add(element);
-							}
-						}
+						r = listObjectsUseStringIndexNoLock(elements,index,invert,operator,value);
 					}
 				}
 			}
@@ -594,6 +515,127 @@ public class Index extends Locker {
 		return r;
 	}
 
+	private List<IndexElement> listObjectsUseNumericIndexNoLock(List<IndexElement> elements,SearchIndex index,boolean invert,String operator,BigDecimal value) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
+		SortedMap<BigDecimal,List<IndexElement>> map = new TreeMap<BigDecimal,List<IndexElement>>();
+		for (IndexElement element: elements) {
+			BigDecimal key = null;
+			if (index==null) {
+				key = new BigDecimal(element.modified);
+			} else {
+				key = new BigDecimal("0");
+				String strVal = element.idxValues.get(index.propertyName);
+				if (strVal!=null) {
+					try {
+						key = new BigDecimal(strVal);
+					} catch (NumberFormatException e) {
+						key = new BigDecimal("0");
+					}
+				}
+			}
+			if (checkNumericPropertyValueNoLock(key,invert,operator,value)) {
+				List<IndexElement> v = map.get(key);
+				if (v==null) {
+					v = new ArrayList<IndexElement>();
+					map.put(key,v);
+				}
+				v.add(element);
+			}
+		}
+		for (Entry<BigDecimal,List<IndexElement>> entry: map.entrySet()) {
+			for (IndexElement element: entry.getValue()) {
+				r.add(element);
+			}
+		}
+		return r;
+	}
+	
+	private List<IndexElement> listObjectsUseStringIndexNoLock(List<IndexElement> elements,SearchIndex index,boolean invert,String operator,String value) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
+		SortedMap<String,List<IndexElement>> map = new TreeMap<String,List<IndexElement>>();
+		for (IndexElement element: elements) {
+			String key = element.name;
+			if (index!=null) {
+				key = element.idxValues.get(index.propertyName);
+			}
+			if (key==null) {
+				key = "";
+			}
+			if (checkStringPropertyValueNoLock(key,invert,operator,value)) {
+				List<IndexElement> v = map.get(key);
+				if (v==null) {
+					v = new ArrayList<IndexElement>();
+					map.put(key,v);
+				}
+				v.add(element);
+			}
+		}
+		for (Entry<String,List<IndexElement>> entry: map.entrySet()) {
+			for (IndexElement element: entry.getValue()) {
+				r.add(element);
+			}
+		}
+		return r;
+	}
+
+	private boolean checkNumericPropertyValueNoLock(BigDecimal propertyValue, boolean invert, String operator, BigDecimal checkValue) {
+		boolean r = (propertyValue!=null);
+		if (operator!=null && operator.length()>0 && propertyValue!=null && checkValue!=null) {
+			if (operator.equals(DatabaseRequest.OP_EQUALS)) {
+				if (
+					(!invert && propertyValue.compareTo(checkValue)!=0) || 
+					(invert && propertyValue.compareTo(checkValue)==0)
+					) {
+					r = false;
+				}
+			} else if (operator.equals(DatabaseRequest.OP_GREATER)) {
+				if (
+					(!invert && propertyValue.compareTo(checkValue)<=0) || 
+					(invert && propertyValue.compareTo(checkValue)>0)
+					) {
+					r = false;
+				}
+			} else if (operator.equals(DatabaseRequest.OP_GREATER_OR_EQUAL)) {
+				if (
+					(!invert && propertyValue.compareTo(checkValue)<0) || 
+					(invert && propertyValue.compareTo(checkValue)>=0)
+					) {
+					r = false;
+				}
+			}
+		}
+		return r;
+	}
+	
+	private boolean checkStringPropertyValueNoLock(String propertyValue, boolean invert, String operator, String checkValue) {
+		boolean r = (propertyValue!=null);
+		if (operator!=null && operator.length()>0 && propertyValue!=null && checkValue!=null) {
+			if (operator.equals(DatabaseRequest.OP_EQUALS)) {
+				if (
+					(!invert && !propertyValue.equals(checkValue)) || 
+					(invert && propertyValue.equals(checkValue))
+					) {
+					r = false;
+				}
+			} else if (operator.equals(DatabaseRequest.OP_CONTAINS)) {
+				if (
+					(!invert && !propertyValue.contains(checkValue)) || 
+					(invert && propertyValue.contains(checkValue))
+					) {
+					r = false;
+				}
+			} else if (operator.equals(DatabaseRequest.OP_STARTS_WITH)) {
+				if (
+					(!invert && !propertyValue.startsWith(checkValue)) || 
+					(invert && propertyValue.startsWith(checkValue))
+					) {
+					r = false;
+				}
+			}
+		}
+		return r;
+	}
+	
 	private SortedMap<String,Long> listObjectsNoLock(int start, int max,String startsWith,String contains,String endsWith,long modAfter,long modBefore,List<Integer> data) {
 		SortedMap<String,Long> r = new TreeMap<String,Long>();
 		if (start<0) {
@@ -722,9 +764,11 @@ public class Index extends Locker {
 		if (elementsById.containsKey(id)) {
 			IndexElement element = elementsById.get(id);
 			if (!element.removed) {
-				if (checkUniqueIndexForObjectNoLock(element,element.name,errors)) {
+				IndexElement copy = element.copy();
+				copy.idxValues = indexConfig.getIndexValuesForObject(copy.name,obj);
+				if (checkUniqueIndexForObjectNoLock(copy,copy.name,errors)) {
 					element.obj = obj;
-					element.idxValues = indexConfig.getIndexValuesForObject(element.name,obj);
+					element.idxValues = copy.idxValues;
 					element.updateModified();
 					if (!changedFileNums.contains(element.fileNum)) {
 						changedFileNums.add(element.fileNum);
@@ -744,11 +788,27 @@ public class Index extends Locker {
 		for (SearchIndex index: indexConfig.getUniqueIndexesForObjectName(element.name)) {
 			String strVal = element.idxValues.get(index.propertyName);
 			List<IndexElement> elements = listObjectsUseIndexNoLock(index.getName(),false,DatabaseRequest.OP_EQUALS,strVal,0L,0L);
-			if (elements.size()>0 && elements.get(0).id!=element.id) {
-				if (oldName.length()>0) {
-					errors.add(new ZStringBuilder("Index " + index.getName() + " blocks update of object named '" + oldName + "'"));
-				} else {
-					errors.add(new ZStringBuilder("Index " + index.getName() + " blocks addition of object named '" + element.name + "'"));
+			IndexElement duplicate = null;
+			if (elements.size()==1) {
+				duplicate = elements.get(0);
+				if (duplicate.id==element.id) {
+					duplicate = null;
+				}
+			} else if (elements.size()>1) {
+				for (IndexElement elem: elements) {
+					if (elem.id!=element.id) {
+						duplicate = elem;
+						break;
+					}
+				}
+			}
+			if (duplicate!=null) {
+				if (errors!=null) {
+					if (oldName.length()>0) {
+						errors.add(new ZStringBuilder("Index " + index.getName() + " blocks update of object named '" + oldName + "'"));
+					} else {
+						errors.add(new ZStringBuilder("Index " + index.getName() + " blocks addition of object named '" + element.name + "'"));
+					}
 				}
 				ok = false;
 			}
