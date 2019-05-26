@@ -68,7 +68,7 @@ public class IndexConfig extends Locker implements JsAble {
 		return err;
 	}
 
-	public boolean objectHasIndexes(String name) {
+	public boolean objectHasIndexes(ZStringBuilder name) {
 		boolean r = false;
 		lockMe(this);
 		r = getIndexesForObjectNameNoLock(name).size()>0;
@@ -76,7 +76,7 @@ public class IndexConfig extends Locker implements JsAble {
 		return r;
 	}
 	
-	public SortedMap<String,ZStringBuilder> getIndexValuesForObject(String name,JsFile obj) {
+	public SortedMap<String,ZStringBuilder> getIndexValuesForObject(ZStringBuilder name,JsFile obj) {
 		lockMe(this);
 		List<SearchIndex> indexes = getIndexesForObjectNameNoLock(name);
 		SortedMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>();
@@ -90,7 +90,7 @@ public class IndexConfig extends Locker implements JsAble {
 		return r;
 	}
 	
-	public List<SearchIndex> getUniqueIndexesForObjectName(String objectName) {
+	public List<SearchIndex> getUniqueIndexesForObjectName(ZStringBuilder objectName) {
 		lockMe(this);
 		List<SearchIndex> r = new ArrayList<SearchIndex>();
 		for (SearchIndex index: getIndexesForObjectNameNoLock(objectName)) {
@@ -222,7 +222,7 @@ public class IndexConfig extends Locker implements JsAble {
 		return r;
 	}
 	
-	private List<SearchIndex> getIndexesForObjectNameNoLock(String objectName) {
+	private List<SearchIndex> getIndexesForObjectNameNoLock(ZStringBuilder objectName) {
 		List<SearchIndex> r = new ArrayList<SearchIndex>();
 		for (SearchIndex index: indexes) {
 			if (!index.added && objectName.startsWith(index.objectNamePrefix)) {

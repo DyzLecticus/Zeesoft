@@ -3,6 +3,7 @@ package nl.zeesoft.zodb.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
@@ -132,7 +133,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 						lockMe(this);
 						todo = 0;
 						for (DatabaseResult result: res.results) {
-							String objectName = result.name.substring(namePrefix.length());
+							ZStringBuilder objectName = result.name.substring(namePrefix.length());
 							InitializerDatabaseObject object = getObjectByNameNoLock(objectName);
 							if (object==null) {
 								object = getNewObjectNoLock(objectName);
@@ -147,7 +148,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 				} else if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
 					lockMe(this);
 					todo--;
-					String objectName = res.request.name.substring(namePrefix.length());
+					ZStringBuilder objectName = res.request.name.substring(namePrefix.length());
 					InitializerDatabaseObject object = getObjectByNameNoLock(objectName);
 					if (object!=null && res.results.size()>0 && res.results.get(0).encoded!=null && res.results.get(0).encoded.length()>0) {
 						ZStringEncoder encoder = new ZStringEncoder(res.results.get(0).encoded);
@@ -185,7 +186,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	
 	protected abstract void initializeDatabaseObjectsNoLock();
 
-	protected abstract InitializerDatabaseObject getNewObjectNoLock(String name);
+	protected abstract InitializerDatabaseObject getNewObjectNoLock(ZStringBuilder name);
 	
 	protected void loadedObject(InitializerDatabaseObject object) {
 		// Override to extend
@@ -201,7 +202,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		}
 	}
 
-	protected InitializerDatabaseObject getObjectByNameNoLock(String name) {
+	protected InitializerDatabaseObject getObjectByNameNoLock(ZStringBuilder name) {
 		InitializerDatabaseObject r = null;
 		for (InitializerDatabaseObject object: objects) {
 			if (object.getObjectName().equals(name)) {
@@ -220,7 +221,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		todo = objects.size();
 		for (InitializerDatabaseObject object: objects) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-			request.name = namePrefix + object.getObjectName();
+			request.name = getFullObjectName(object.getObjectName());
 			request.encoding = DatabaseRequest.ENC_KEY;
 			ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
 			encoder.encodeKey(configuration.getZODBKey(),0);
@@ -231,7 +232,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 
 	private void listObjectsInDatabaseNoLock() {
 		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-		request.startsWith = namePrefix;
+		request.startsWith = new ZStringBuilder(namePrefix);
 		request.max = maxObjects;
 		configuration.handleDatabaseRequest(request,this);
 	}
@@ -239,10 +240,16 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	private void getObjectsFromDatabaseNoLock() {
 		for (InitializerDatabaseObject object: objects) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-			request.name = namePrefix + object.getObjectName();
+			request.name = getFullObjectName(object.getObjectName());
 			request.encoding = DatabaseRequest.ENC_KEY;
 			configuration.handleDatabaseRequest(request,this,timeoutSeconds);
 		}
+	}
+	
+	private ZStringBuilder getFullObjectName(ZStringBuilder objectName) {
+		ZStringBuilder r = new ZStringBuilder(namePrefix);
+		r.append(objectName);
+		return r;
 	}
 	
 	private void stateChanged(boolean open) {

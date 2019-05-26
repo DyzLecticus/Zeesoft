@@ -43,7 +43,7 @@ public class TestDatabaseRequest extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-		request.startsWith = "testObject";
+		request.startsWith = new ZStringBuilder("testObject");
 		testRequest(request,4);
 
 		request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
@@ -58,7 +58,7 @@ public class TestDatabaseRequest extends TestObject {
 		testRequest(request,2);
 
 		request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-		request.contains = "testObject";
+		request.contains = new ZStringBuilder("testObject");
 		request.modAfter = (new Date()).getTime();
 		request.modBefore = request.modAfter + 1;
 		System.out.println();
@@ -69,7 +69,7 @@ public class TestDatabaseRequest extends TestObject {
 		obj.rootElement.children.add(new JsElem("data","addObjectData",true));
 		
 		request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-		request.name = "objectName";
+		request.name = new ZStringBuilder("objectName");
 		request.obj = obj;
 		System.out.println();
 		testRequest(request,3);
@@ -90,7 +90,7 @@ public class TestDatabaseRequest extends TestObject {
 		testRequest(request,2);
 		
 		request = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
-		request.contains = "testObject";
+		request.contains = new ZStringBuilder("testObject");
 		request.modAfter = (new Date()).getTime();
 		request.modBefore = request.modAfter + 1;
 		System.out.println();

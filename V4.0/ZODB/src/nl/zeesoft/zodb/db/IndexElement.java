@@ -12,7 +12,7 @@ import nl.zeesoft.zdk.json.JsFile;
 
 public class IndexElement {
 	public long								id			= 0L;
-	public String							name		= "";
+	public ZStringBuilder					name		= new ZStringBuilder();
 	public long								modified	= 0L;
 	public int								fileNum		= 0;
 	public JsFile							obj			= null;
@@ -74,7 +74,7 @@ public class IndexElement {
 			if (ZStringEncoder.isNumber(v)) {
 				id = Long.parseLong(v);
 			}
-			name = split.get(1).toString();
+			name = split.get(1);
 			v = split.get(2).toString();
 			if (ZStringEncoder.isNumber(v)) {
 				modified = Long.parseLong(v);

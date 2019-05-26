@@ -55,35 +55,35 @@ public class TestDatabase extends TestObject {
 			
 			element = db.getObjectById(1L);
 			if (element!=null) {
-				assertEqual(element.name,"testObject001","Name of object found by id does not match expectation");
+				assertEqual(element.name.toString(),"testObject001","Name of object found by id does not match expectation");
 			} else {
 				assertEqual(false,true,"Object with id 1 not found");
 			}
 			
-			element = db.getObjectByName("testObject002");
+			element = db.getObjectByName(new ZStringBuilder("testObject002"));
 			if (element!=null) {
-				assertEqual(element.name,"testObject002","Name of object found by name does not match expectation");
+				assertEqual(element.name.toString(),"testObject002","Name of object found by name does not match expectation");
 			} else {
 				assertEqual(false,true,"Object with name 'testObject002' not found");
 			}
 			
 			sleep(1000);
 			
-			element = db.getObjectByName("testObject125");
+			element = db.getObjectByName(new ZStringBuilder("testObject125"));
 			if (element!=null) {
 				element = db.removeObject(element.id,null);
 				if (element!=null) {
-					assertEqual(element.name,"testObject125","Removed object name does not match expectation");
-					element = addTestObject(db,"testObject125",125);
+					assertEqual(element.name.toString(),"testObject125","Removed object name does not match expectation");
+					element = addTestObject(db,new ZStringBuilder("testObject125"),125);
 					assertEqual(element!=null,true,"Failed to add object with name 'testObject125'");
 				}
 			} else {
-				element = addTestObject(db,"testObject125",125);
+				element = addTestObject(db,new ZStringBuilder("testObject125"),125);
 				assertEqual(element!=null,true,"Failed to add object with name 'testObject125'");
 			}
 			
 			Date started = new Date();
-			List<IndexElement> elements = db.getObjectsByNameStartsWith("testObject",0L,0L);
+			List<IndexElement> elements = db.getObjectsByNameStartsWith(new ZStringBuilder("testObject"),0L,0L);
 			assertEqual(elements.size(),250,"Number of objects does not match expectation");
 			for (IndexElement elem: elements) {
 				assertEqual(elem.obj!=null,true,"Failed to read object id " + elem.id);
@@ -145,18 +145,18 @@ public class TestDatabase extends TestObject {
 			obj.rootElement.children.add(new JsElem("data","testObject001",true));
 			obj.rootElement.children.add(new JsElem("num","999"));
 			List<ZStringBuilder> errors = new ArrayList<ZStringBuilder>();
-			db.addObject("testObject999", obj, errors);
+			db.addObject(new ZStringBuilder("testObject999"), obj, errors);
 			assertEqual(errors.size(),1,"Number of errors does not match expectation (1)");
 			if (errors.size()==1) {
 				assertEqual(errors.get(0).toString(),"Index testObject:data blocks addition of object named 'testObject999'","Add object error does not match expectation");
 			}
 
 			errors.clear();
-			element = db.addObject("test999", obj, errors);
+			element = db.addObject(new ZStringBuilder("test999"), obj, errors);
 			assertEqual(errors.size(),0,"Number of errors does not match expectation (2)");
 			
 			errors.clear();
-			db.setObjectName(element.id,"testObject999",errors);
+			db.setObjectName(element.id,new ZStringBuilder("testObject999"),errors);
 			assertEqual(errors.size(),1,"Number of errors does not match expectation (3)");
 			if (errors.size()==1) {
 				assertEqual(errors.get(0).toString(),"Index testObject:data blocks update of object named 'test999'","Rename object error does not match expectation");
@@ -202,21 +202,23 @@ public class TestDatabase extends TestObject {
 	private void addTestObjects(Database db) {
 		int num = -30;
 		for (int i = 1; i <= 250; i++) {
-			IndexElement element = addTestObject(db,"testObject" + String.format("%03d",i),num);
+			ZStringBuilder name = new ZStringBuilder("testObject");
+			name.append(String.format("%03d",i));
+			IndexElement element = addTestObject(db,name,num);
 			assertEqual((int) element.id,i,"Object id does not match expectation");
 			num += 3;
 		}
 	}
 
-	private IndexElement addTestObject(Database db,String name,int num) {
+	private IndexElement addTestObject(Database db,ZStringBuilder name,int num) {
 		return db.addObject(name,getTestObject(name,num),null);
 	}
 	
-	private JsFile getTestObject(String data,int num) {
+	private JsFile getTestObject(ZStringBuilder data,int num) {
 		JsFile r = new JsFile();
 		r.rootElement = new JsElem();
 		r.rootElement.children.add(new JsElem("data",data,true));
-		if (data.equals("testObject125")) {
+		if (data.toString().equals("testObject125")) {
 			num = 125;
 		}
 		r.rootElement.children.add(new JsElem("num","" + num));

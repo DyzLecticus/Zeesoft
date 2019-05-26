@@ -3,6 +3,7 @@ package nl.zeesoft.zodb.mod;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -24,18 +25,18 @@ public class ZODBTester extends TesterObject {
 		
 		int num = 50;
 
-		List<String> objectNames = new ArrayList<String>();
+		List<ZStringBuilder> objectNames = new ArrayList<ZStringBuilder>();
 		for (int i = 1; i <= num; i++) {
-			objectNames.add("Object" + String.format("%03d",i));
+			objectNames.add(new ZStringBuilder("Object" + String.format("%03d",i)));
 		}
 		
 		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
-		req.contains = ModZODB.NAME + "/Objects/";
+		req.contains = new ZStringBuilder(ModZODB.NAME + "/Objects/");
 		res = new DatabaseResponse();
 		addRequestNoLock(req,res);
 		
 		int n = 0;
-		for (String name: objectNames) {
+		for (ZStringBuilder name: objectNames) {
 			n++;
 			req = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 			req.name = getObjectName(name);
@@ -58,7 +59,7 @@ public class ZODBTester extends TesterObject {
 		}
 		
 		long id = 0;
-		for (String name: objectNames) {
+		for (ZStringBuilder name: objectNames) {
 			id++;
 			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 			req.name = getObjectName(name);
@@ -74,7 +75,7 @@ public class ZODBTester extends TesterObject {
 			}
 		}
 
-		String objName = objectNames.get(0);
+		ZStringBuilder objName = objectNames.get(0);
 		req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 		req.name = getObjectName(objName);
 		req.encoding = DatabaseRequest.ENC_ASCII;
@@ -102,11 +103,11 @@ public class ZODBTester extends TesterObject {
 		addRequestNoLock(req,res);
 
 		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-		req.contains = ModZODB.NAME + "/Objects/";
+		req.contains = new ZStringBuilder(ModZODB.NAME + "/Objects/");
 		res = new DatabaseResponse();
 		res.size = num;
 		id = 0;
-		for (String name: objectNames) {
+		for (ZStringBuilder name: objectNames) {
 			id++;
 			result = new DatabaseResult();
 			result.name = getObjectName(name);
@@ -125,7 +126,7 @@ public class ZODBTester extends TesterObject {
 		res = new DatabaseResponse();
 		res.size = num;
 		for (int i = 29; i >= 20; i--) {
-			String name = objectNames.get(i);
+			ZStringBuilder name = objectNames.get(i);
 			result = new DatabaseResult();
 			result.name = getObjectName(name);
 			result.id = (long) (i + 1);
@@ -160,14 +161,14 @@ public class ZODBTester extends TesterObject {
 		}
 	}
 	
-	private JsFile getTestObject(String name) {
+	private JsFile getTestObject(ZStringBuilder name) {
 		JsFile obj = new JsFile();
 		obj.rootElement = new JsElem();
 		obj.rootElement.children.add(new JsElem("testData",name,true));
 		return obj;
 	}
 	
-	private String getObjectName(String name) {
-		return ModZODB.NAME + "/Objects/" + name;
+	private ZStringBuilder getObjectName(ZStringBuilder name) {
+		return new ZStringBuilder(ModZODB.NAME + "/Objects/" + name);
 	}
 }

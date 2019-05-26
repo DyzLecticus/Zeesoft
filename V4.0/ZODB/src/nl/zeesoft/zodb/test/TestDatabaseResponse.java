@@ -51,7 +51,7 @@ public class TestDatabaseResponse extends TestObject {
 		response = new DatabaseResponse();
 		DatabaseResult res = new DatabaseResult();
 		res.id = 1;
-		res.name = "testName";
+		res.name = new ZStringBuilder("testName");
 		res.modified = (new Date()).getTime();
 		res.obj = new JsFile();
 		res.obj.rootElement = new JsElem();
@@ -64,12 +64,12 @@ public class TestDatabaseResponse extends TestObject {
 		response.size = 2;
 		res = new DatabaseResult();
 		res.id = 1;
-		res.name = "testName1";
+		res.name = new ZStringBuilder("testName1");
 		res.modified = (new Date()).getTime();
 		response.results.add(res);
 		res = new DatabaseResult();
 		res.id = 1;
-		res.name = "testName2";
+		res.name = new ZStringBuilder("testName2");
 		res.modified = (new Date()).getTime();
 		response.results.add(res);
 		System.out.println();

@@ -23,7 +23,7 @@ public class Index extends Locker {
 	private IndexConfig								indexConfig			= null;
 	
 	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
-	private SortedMap<String,IndexElement>			elementsByName		= new TreeMap<String,IndexElement>();
+	private SortedMap<ZStringBuilder,IndexElement>	elementsByName		= new TreeMap<ZStringBuilder,IndexElement>();
 	private SortedMap<Integer,List<IndexElement>>	elementsByFileNum	= new TreeMap<Integer,List<IndexElement>>();
 	
 	private List<Integer>							changedFileNums		= new ArrayList<Integer>();
@@ -41,7 +41,7 @@ public class Index extends Locker {
 		return db.getKey();
 	}
 	
-	protected IndexElement addObject(String name,JsFile obj,List<ZStringBuilder> errors) {
+	protected IndexElement addObject(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
 		IndexElement r = null;
 		lockMe(this);
 		if (name.length()>0 && open) {
@@ -70,7 +70,7 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected IndexElement getObjectByName(String name) {
+	protected IndexElement getObjectByName(ZStringBuilder name) {
 		IndexElement r = null;
 		lockMe(this);
 		if (name.length()>0 && open) {
@@ -98,11 +98,11 @@ public class Index extends Locker {
 		return listObjects(start,max,null,null,null,modAfter,modBefore,data);
 	}
 
-	protected List<IndexElement> listObjectsThatStartWith(String startWith,int start, int max,long modAfter,long modBefore,List<Integer> data) {
+	protected List<IndexElement> listObjectsThatStartWith(ZStringBuilder startWith,int start, int max,long modAfter,long modBefore,List<Integer> data) {
 		return listObjects(start,max,startWith,null,null,modAfter,modBefore,data);
 	}
 
-	protected List<IndexElement> listObjectsThatContain(String contains,int start, int max,long modAfter,long modBefore,List<Integer> data) {
+	protected List<IndexElement> listObjectsThatContain(ZStringBuilder contains,int start, int max,long modAfter,long modBefore,List<Integer> data) {
 		return listObjects(start,max,null,contains,null,modAfter,modBefore,data);
 	}
 	
@@ -110,11 +110,11 @@ public class Index extends Locker {
 		return getObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
 	}
 	
-	protected List<IndexElement> getObjectsByNameStartsWith(String startsWith,long modAfter,long modBefore) {
+	protected List<IndexElement> getObjectsByNameStartsWith(ZStringBuilder startsWith,long modAfter,long modBefore) {
 		return getObjectsByName(startsWith,null,null,modAfter,modBefore);
 	}
 	
-	protected List<IndexElement> getObjectsByNameContains(String contains,long modAfter,long modBefore) {
+	protected List<IndexElement> getObjectsByNameContains(ZStringBuilder contains,long modAfter,long modBefore) {
 		return getObjectsByName(null,contains,null,modAfter,modBefore);
 	}
 	
@@ -126,8 +126,8 @@ public class Index extends Locker {
 		unlockMe(this);
 	}
 
-	protected void setObjectName(long id, String name, List<ZStringBuilder> errors) {
-		name = Database.removeControlCharacters(name);
+	protected void setObjectName(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
+		Database.removeControlCharacters(name);
 		IndexElement element = null;
 		if (indexConfig.objectHasIndexes(name)) {
 			boolean read = false;
@@ -184,11 +184,11 @@ public class Index extends Locker {
 		return r;
 	}
 
-	protected List<IndexElement> removeObjectsThatStartWith(String startsWith,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+	protected List<IndexElement> removeObjectsThatStartWith(ZStringBuilder startsWith,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (startsWith.length()>0 && open) {
-			List<IndexElement> elements = listObjectsByNameNoLock(startsWith,"","",modAfter,modBefore);
+			List<IndexElement> elements = listObjectsByNameNoLock(startsWith,null,null,modAfter,modBefore);
 			for (IndexElement element: elements) {
 				removeObjectNoLock(element.id,errors);
 				r.add(element);
@@ -198,11 +198,11 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected List<IndexElement> removeObjectsThatContain(String contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+	protected List<IndexElement> removeObjectsThatContain(ZStringBuilder contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (contains.length()>0 && open) {
-			List<IndexElement> elements = listObjectsByNameNoLock("",contains,"",modAfter,modBefore);
+			List<IndexElement> elements = listObjectsByNameNoLock(null,contains,null,modAfter,modBefore);
 			for (IndexElement element: elements) {
 				removeObjectNoLock(element.id,errors);
 				r.add(element);
@@ -391,12 +391,12 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjects(int start, int max,String startsWith,String contains,String endsWith,long modAfter,long modBefore,List<Integer> data) {
+	private List<IndexElement> listObjects(int start, int max,ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore,List<Integer> data) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			SortedMap<String,Long> list = listObjectsNoLock(start, max, startsWith, contains, endsWith, modAfter, modBefore, data);
-			for (Entry<String,Long> entry: list.entrySet()) {
+			SortedMap<ZStringBuilder,Long> list = listObjectsNoLock(start, max, startsWith, contains, endsWith, modAfter, modBefore, data);
+			for (Entry<ZStringBuilder,Long> entry: list.entrySet()) {
 				r.add(elementsById.get(entry.getValue()).copy());
 			}
 		}
@@ -404,7 +404,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> getObjectsByName(String startsWith,String contains,String endsWith,long modAfter,long modBefore) {
+	private List<IndexElement> getObjectsByName(ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		List<IndexElement> read = new ArrayList<IndexElement>();
 		lockMe(this);
@@ -501,7 +501,7 @@ public class Index extends Locker {
 				if (indexName.equals(IndexConfig.IDX_NAME) || indexName.equals(IndexConfig.IDX_MODIFIED)) {
 					elements = listObjectsByNameNoLock(null,null,null,modAfter,modBefore);
 				} else {
-					elements = listObjectsByNameNoLock(index.objectNamePrefix,null,null,modAfter,modBefore);
+					elements = listObjectsByNameNoLock(new ZStringBuilder(index.objectNamePrefix),null,null,modAfter,modBefore);
 				}
 				if (elements.size()>0) {
 					if (index.numeric) {
@@ -653,8 +653,8 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private SortedMap<String,Long> listObjectsNoLock(int start, int max,String startsWith,String contains,String endsWith,long modAfter,long modBefore,List<Integer> data) {
-		SortedMap<String,Long> r = new TreeMap<String,Long>();
+	private SortedMap<ZStringBuilder,Long> listObjectsNoLock(int start, int max,ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore,List<Integer> data) {
+		SortedMap<ZStringBuilder,Long> r = new TreeMap<ZStringBuilder,Long>();
 		if (start<0) {
 			start = 0;
 		}
@@ -696,9 +696,9 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjectsByNameNoLock(String startsWith,String contains,String endsWith,long modAfter,long modBefore) {
+	private List<IndexElement> listObjectsByNameNoLock(ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
-		for (String name: elementsByName.keySet()) {
+		for (ZStringBuilder name: elementsByName.keySet()) {
 			if (
 				(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
 				(contains==null || contains.length()==0 || name.contains(contains)) &&
@@ -713,15 +713,15 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private IndexElement addObjectNoLock(String name,JsFile obj,List<ZStringBuilder> errors) {
-		name = Database.removeControlCharacters(name);
+	private IndexElement addObjectNoLock(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
+		Database.removeControlCharacters(name);
 		IndexElement r = null;
 		if (!elementsByName.containsKey(name)) {
 			IndexElement element = new IndexElement();
 			element.name = name;
 			element.obj = obj;
 			element.idxValues = indexConfig.getIndexValuesForObject(name,obj);
-			if (checkUniqueIndexesForObjectNoLock(element,"",errors)) {
+			if (checkUniqueIndexesForObjectNoLock(element,null,errors)) {
 				r = new IndexElement();
 				r.id = getNewUidNoLock();
 				r.name = name;
@@ -800,7 +800,7 @@ public class Index extends Locker {
 		}
 	}
 
-	private boolean checkUniqueIndexesForObjectNoLock(IndexElement element,String oldName,List<ZStringBuilder> errors) {
+	private boolean checkUniqueIndexesForObjectNoLock(IndexElement element,ZStringBuilder oldName,List<ZStringBuilder> errors) {
 		boolean ok = true;
 		for (SearchIndex index: indexConfig.getUniqueIndexesForObjectName(element.name)) {
 			IndexElement duplicate = null;
@@ -823,7 +823,7 @@ public class Index extends Locker {
 			}
 			if (duplicate!=null || strVal==null) {
 				if (errors!=null) {
-					if (oldName.length()>0) {
+					if (oldName!=null && oldName.length()>0) {
 						errors.add(new ZStringBuilder("Index " + index.getName() + " blocks update of object named '" + oldName + "'"));
 					} else {
 						errors.add(new ZStringBuilder("Index " + index.getName() + " blocks addition of object named '" + element.name + "'"));

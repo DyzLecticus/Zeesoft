@@ -92,7 +92,7 @@ public class Database {
 		return index.isOpen();
 	}
 	
-	public IndexElement addObject(String name,JsFile obj,List<ZStringBuilder> errors) {
+	public IndexElement addObject(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
 		return index.addObject(name, obj, errors);
 	}
 	
@@ -100,7 +100,7 @@ public class Database {
 		return index.getObjectById(id);
 	}
 	
-	public IndexElement getObjectByName(String name) {
+	public IndexElement getObjectByName(ZStringBuilder name) {
 		return index.getObjectByName(name);
 	}
 	
@@ -112,11 +112,11 @@ public class Database {
 		return index.listObjects(start,max,modAfter,modBefore,data);
 	}
 	
-	public List<IndexElement> listObjectsThatStartWith(String startWith,int start,int max,long modAfter,long modBefore,List<Integer> data) {
+	public List<IndexElement> listObjectsThatStartWith(ZStringBuilder startWith,int start,int max,long modAfter,long modBefore,List<Integer> data) {
 		return index.listObjectsThatStartWith(startWith,start,max,modAfter,modBefore,data);
 	}
 
-	public List<IndexElement> listObjectsThatContain(String contains,int start,int max,long modAfter,long modBefore,List<Integer> data) {
+	public List<IndexElement> listObjectsThatContain(ZStringBuilder contains,int start,int max,long modAfter,long modBefore,List<Integer> data) {
 		return index.listObjectsThatContain(contains,start,max,modAfter,modBefore,data);
 	}
 	
@@ -124,11 +124,11 @@ public class Database {
 		return index.getObjectsUseIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
 	}
 	
-	public List<IndexElement> getObjectsByNameStartsWith(String start,long modAfter,long modBefore) {
+	public List<IndexElement> getObjectsByNameStartsWith(ZStringBuilder start,long modAfter,long modBefore) {
 		return index.getObjectsByNameStartsWith(start,modAfter,modBefore);
 	}
 	
-	public List<IndexElement> getObjectsByNameContains(String contains,long modAfter,long modBefore) {
+	public List<IndexElement> getObjectsByNameContains(ZStringBuilder contains,long modAfter,long modBefore) {
 		return index.getObjectsByNameContains(contains,modAfter,modBefore);
 	}
 	
@@ -136,7 +136,7 @@ public class Database {
 		index.setObject(id,obj,errors);
 	}
 
-	public void setObjectName(long id, String name,List<ZStringBuilder> errors) {
+	public void setObjectName(long id, ZStringBuilder name,List<ZStringBuilder> errors) {
 		index.setObjectName(id,name,errors);
 	}
 
@@ -144,11 +144,11 @@ public class Database {
 		return index.removeObject(id,errors);
 	}
 	
-	public List<IndexElement> removeObjectsThatStartWith(String startsWith,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+	public List<IndexElement> removeObjectsThatStartWith(ZStringBuilder startsWith,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		return index.removeObjectsThatStartWith(startsWith,modAfter,modBefore,errors);
 	}
 	
-	public List<IndexElement> removeObjectsThatContain(String contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+	public List<IndexElement> removeObjectsThatContain(ZStringBuilder contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		return index.removeObjectsThatContain(contains,modAfter,modBefore,errors);
 	}
 	

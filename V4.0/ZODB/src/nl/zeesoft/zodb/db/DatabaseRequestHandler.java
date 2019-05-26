@@ -102,13 +102,13 @@ public class DatabaseRequestHandler {
 	
 	private void checkRequest(DatabaseResponse response) {
 		if (response.request.name.length()>0) {
-			response.request.name = Database.removeControlCharacters(response.request.name);
+			Database.removeControlCharacters(response.request.name);
 		}
 		if (response.request.startsWith.length()>0) {
-			response.request.startsWith = Database.removeControlCharacters(response.request.startsWith);
+			Database.removeControlCharacters(response.request.startsWith);
 		}
 		if (response.request.contains.length()>0) {
-			response.request.contains = Database.removeControlCharacters(response.request.contains);
+			Database.removeControlCharacters(response.request.contains);
 		}
 		if (response.request.value.length()>0) {
 			Database.removeControlCharacters(response.request.value);

@@ -26,9 +26,9 @@ public class DatabaseRequest implements JsAble {
 	public int					start				= 0;
 	public int					max					= 10;
 	public long					id					= 0L;
-	public String				name				= "";
-	public String				contains			= "";
-	public String				startsWith			= "";
+	public ZStringBuilder		name				= new ZStringBuilder();
+	public ZStringBuilder		contains			= new ZStringBuilder();
+	public ZStringBuilder		startsWith			= new ZStringBuilder();
 	public long					modAfter			= 0L;
 	public long					modBefore			= 0L;
 	public String				encoding			= "";
@@ -110,9 +110,9 @@ public class DatabaseRequest implements JsAble {
 			start = json.rootElement.getChildInt("start",start);
 			max = json.rootElement.getChildInt("max",max);
 			id = json.rootElement.getChildLong("id",id);
-			name = json.rootElement.getChildString("name",name);
-			contains = json.rootElement.getChildString("contains",contains);
-			startsWith = json.rootElement.getChildString("startsWith",startsWith);
+			name = json.rootElement.getChildZStringBuilder("name",name);
+			contains = json.rootElement.getChildZStringBuilder("contains",contains);
+			startsWith = json.rootElement.getChildZStringBuilder("startsWith",startsWith);
 			modAfter = json.rootElement.getChildLong("modAfter",modAfter);
 			modBefore = json.rootElement.getChildLong("modBefore",modBefore);
 			

@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class DatabaseResult implements JsAble {
-	public String			name		= "";
+	public ZStringBuilder	name		= new ZStringBuilder();
 	public long				id			= 0L;
 	public long				modified	= 0L;
 	
@@ -46,7 +46,7 @@ public class DatabaseResult implements JsAble {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
-			name = json.rootElement.getChildString("name",name);
+			name = json.rootElement.getChildZStringBuilder("name",name);
 			id = json.rootElement.getChildLong("id",id);
 			modified = json.rootElement.getChildLong("modified",modified);
 			encoded = json.rootElement.getChildZStringBuilder("encoded",encoded);
