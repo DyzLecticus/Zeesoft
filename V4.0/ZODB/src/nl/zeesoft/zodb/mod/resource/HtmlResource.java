@@ -7,11 +7,13 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zodb.Config;
 
 public abstract class HtmlResource {
+	public static final String		HIGHLIGHT_COLOR	= "rgb(244,244,244)";
+	
 	private Config					configuration	= null;
 	private String					title			= "";
 	private String					onload			= "";
 
-	private String					bodyBgColor		= "";
+	private String					bodyBgColor		= "rgb(222,222,222)";
 	
 	private List<String> 			scriptFiles 	= new ArrayList<String>();
 	private List<String> 			styleFiles		= new ArrayList<String>();

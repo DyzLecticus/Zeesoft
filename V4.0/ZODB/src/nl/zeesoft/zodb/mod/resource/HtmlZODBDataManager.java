@@ -80,7 +80,7 @@ public class HtmlZODBDataManager extends HtmlResource {
 			
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<textarea id=\"object\" style=\"width: 100%; height: 200px;\" >\n");
+			html.append("<textarea id=\"object\" style=\"width: 100%; height: 200px;background-color:" + HIGHLIGHT_COLOR + ";\" >\n");
 			html.append("</textarea>\n");
 			html.append("</td>\n");
 			html.append("</tr>\n");
