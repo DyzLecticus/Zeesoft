@@ -52,6 +52,13 @@ public class TestDatabaseRequest extends TestObject {
 		System.out.println();
 		testRequest(request,5);
 
+		request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
+		request.index = "objectNamePrefix:propertyName";
+		request.operator = DatabaseRequest.OP_CONTAINS;
+		request.value = new ZStringBuilder("value");
+		System.out.println();
+		testRequest(request,8);
+
 		request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 		request.id = 1;
 		System.out.println();
