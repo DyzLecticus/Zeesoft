@@ -12,8 +12,10 @@ import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.db.WhiteList;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexHandler;
+import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexManagerHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBHandler;
+import nl.zeesoft.zodb.mod.handler.JavaScriptZODBIndexManagerHandler;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBIndexConfigHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
@@ -91,7 +93,9 @@ public class ModZODB extends ModObject implements StateListener {
 	public void initialize() {
 		handlers.add(new HtmlZODBIndexHandler(configuration,this));
 		handlers.add(new JavaScriptZODBHandler(configuration,this));
+		handlers.add(new JavaScriptZODBIndexManagerHandler(configuration,this));
 		handlers.add(new JavaScriptZODBDataManagerHandler(configuration,this));
+		handlers.add(new HtmlZODBIndexManagerHandler(configuration,this));
 		handlers.add(new HtmlZODBDataManagerHandler(configuration,this));
 		handlers.add(new JsonZODBIndexConfigHandler(configuration,this));
 		handlers.add(new JsonZODBRequestHandler(configuration,this));

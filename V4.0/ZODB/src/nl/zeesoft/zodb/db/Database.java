@@ -177,6 +177,8 @@ public class Database {
 		if (open) {
 			if (indexConfig.isRebuild()) {
 				configuration.debug(this,"Rebuilt indexes");
+				indexConfig.setRebuild(false);
+				writeConfig();
 			}
 			configuration.debug(this,"Database is open for business");
 		} else {

@@ -137,6 +137,7 @@ public class ZODBTester extends TesterObject {
 	@Override
 	protected JsFile getCheckResponseNoLock(JsFile response) {
 		DatabaseResponse res = new DatabaseResponse();
+		res.statusCode = 400;
 		res.fromJson(response);
 		if (res.results.size()>0) {
 			for (DatabaseResult result: res.results) {

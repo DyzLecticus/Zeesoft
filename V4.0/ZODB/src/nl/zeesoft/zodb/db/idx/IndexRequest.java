@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class IndexRequest extends SearchIndex {
+	public static final String	TYPE_GET	= "GET";
 	public static final String	TYPE_ADD	= "ADD";
 	public static final String	TYPE_REMOVE	= "REMOVE";
 	

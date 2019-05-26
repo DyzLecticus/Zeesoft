@@ -47,8 +47,19 @@ public class JsonZODBIndexConfigHandler extends JsonHandlerObject {
 					req.fromJson(json);
 					if (req.type.length()==0) {
 						r = setResponse(response,400,"Request type is mandatory");
-					} else if (!req.type.equals(IndexRequest.TYPE_ADD) && !req.type.equals(IndexRequest.TYPE_REMOVE)) {
+					} else if (
+						!req.type.equals(IndexRequest.TYPE_GET) && 
+						!req.type.equals(IndexRequest.TYPE_ADD) && 
+						!req.type.equals(IndexRequest.TYPE_REMOVE)
+						) {
 						r = setResponse(response,400,"Request type must be " + IndexRequest.TYPE_ADD + " or " + IndexRequest.TYPE_REMOVE);
+					} else if (req.type.equals(IndexRequest.TYPE_GET)) {
+						json = zodb.getDatabase().getIndexConfig().toJson();
+						if (getConfiguration().isDebug()) {
+							r = json.toStringBuilderReadFormat();
+						} else {
+							r = json.toStringBuilder();
+						}
 					} else if (req.type.equals(IndexRequest.TYPE_ADD)) {
 						req.objectNamePrefix = Database.removeControlCharacters(req.objectNamePrefix);
 						req.propertyName = Database.removeControlCharacters(req.propertyName);
@@ -73,7 +84,7 @@ public class JsonZODBIndexConfigHandler extends JsonHandlerObject {
 							if (err.length()>0) {
 								r = setResponse(response,400,err.toString());
 							} else {
-								r = setResponse(response,200,"Removed index " + req.getName());
+								r = setResponse(response,200,"Removed index " + req.name);
 							}
 						}
 					}

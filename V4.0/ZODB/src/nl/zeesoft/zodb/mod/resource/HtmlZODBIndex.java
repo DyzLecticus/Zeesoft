@@ -32,6 +32,15 @@ public class HtmlZODBIndex extends HtmlResource {
 			
 			html.append("<tr>\n");
 			html.append("<td>");
+			html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + "/indexManager.html\">Index manager</a>");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("View, add and remove indexes.");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
+			html.append("<tr>\n");
+			html.append("<td>");
 			html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + JsonZODBIndexConfigHandler.PATH + "\">Index configuration JSON</a>");
 			html.append("</td>\n");
 			html.append("<td>");

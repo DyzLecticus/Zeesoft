@@ -317,7 +317,6 @@ public class Index extends Locker {
 		db.stateChanged(open);
 		if (rebuild) {
 			writeAll(false);
-			indexConfig.setRebuild(false);
 		}
 	}
 	

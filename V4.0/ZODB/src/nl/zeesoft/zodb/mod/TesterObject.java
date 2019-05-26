@@ -88,16 +88,14 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 			if (response.error.length()>0) {
 				configuration.error(this,response.error.toString(),response.ex);
 				todo = 0;
-				testing = false;
+				finishedTestingNoLock();
 			} else {
 				todo--;
 				if (todo>0) {
 					i++;
 					handleRequestNoLock(requests.get(i));
 				} else {
-					createResultsNoLock(requests);
-					testing = false;
-					configuration.debug(this,"Tested " + url);
+					finishedTestingNoLock();
 				}
 			}
 		}
@@ -120,6 +118,12 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 		this.results = results;
 	}
 
+	protected void finishedTestingNoLock() {
+		createResultsNoLock(requests);
+		testing = false;
+		configuration.debug(this,"Tested " + url);
+	}
+	
 	protected void createResultsNoLock(List<TesterRequest> requests) {
 		long totalTime = 0;
 		int successFull = 0;
