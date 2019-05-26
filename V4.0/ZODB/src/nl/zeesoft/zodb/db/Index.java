@@ -153,7 +153,7 @@ public class Index extends Locker {
 						IndexElement copy = element.copy();
 						copy.name = name;
 						copy.idxValues = indexConfig.getIndexValuesForObject(copy.name,copy.obj);
-						if (checkUniqueIndexForObjectNoLock(copy,element.name,errors)) {
+						if (checkUniqueIndexesForObjectNoLock(copy,element.name,errors)) {
 							elementsByName.remove(element.name);
 							element.name = name;
 							elementsByName.put(element.name,element);
@@ -179,10 +179,6 @@ public class Index extends Locker {
 		lockMe(this);
 		if (id>0 && open) {
 			r = removeObjectNoLock(id,errors);
-			if (r!=null) {
-				r = r.copy();
-				r.obj = null;
-			}
 		}
 		unlockMe(this);
 		return r;
@@ -195,8 +191,7 @@ public class Index extends Locker {
 			List<IndexElement> elements = listObjectsByNameNoLock(startsWith,"","",modAfter,modBefore);
 			for (IndexElement element: elements) {
 				removeObjectNoLock(element.id,errors);
-				r.add(element.copy());
-				element.obj = null;
+				r.add(element);
 			}
 		}
 		unlockMe(this);
@@ -210,8 +205,7 @@ public class Index extends Locker {
 			List<IndexElement> elements = listObjectsByNameNoLock("",contains,"",modAfter,modBefore);
 			for (IndexElement element: elements) {
 				removeObjectNoLock(element.id,errors);
-				r.add(element.copy());
-				element.obj = null;
+				r.add(element);
 			}
 		}
 		unlockMe(this);
@@ -225,8 +219,7 @@ public class Index extends Locker {
 			List<IndexElement> elements = listObjectsUseIndexNoLock(indexName,invert,operator,value,modAfter,modBefore);
 			for (IndexElement element: elements) {
 				removeObjectNoLock(element.id,errors);
-				r.add(element.copy());
-				element.obj = null;
+				r.add(element);
 			}
 		}
 		unlockMe(this);
@@ -721,7 +714,7 @@ public class Index extends Locker {
 			element.name = name;
 			element.obj = obj;
 			element.idxValues = indexConfig.getIndexValuesForObject(name,obj);
-			if (checkUniqueIndexForObjectNoLock(element,"",errors)) {
+			if (checkUniqueIndexesForObjectNoLock(element,"",errors)) {
 				r = new IndexElement();
 				r.id = getNewUidNoLock();
 				r.name = name;
@@ -783,7 +776,7 @@ public class Index extends Locker {
 			if (!element.removed) {
 				IndexElement copy = element.copy();
 				copy.idxValues = indexConfig.getIndexValuesForObject(copy.name,obj);
-				if (checkUniqueIndexForObjectNoLock(copy,copy.name,errors)) {
+				if (checkUniqueIndexesForObjectNoLock(copy,copy.name,errors)) {
 					element.obj = obj;
 					element.idxValues = copy.idxValues;
 					element.updateModified();
@@ -800,26 +793,28 @@ public class Index extends Locker {
 		}
 	}
 
-	private boolean checkUniqueIndexForObjectNoLock(IndexElement element,String oldName,List<ZStringBuilder> errors) {
+	private boolean checkUniqueIndexesForObjectNoLock(IndexElement element,String oldName,List<ZStringBuilder> errors) {
 		boolean ok = true;
 		for (SearchIndex index: indexConfig.getUniqueIndexesForObjectName(element.name)) {
-			String strVal = element.idxValues.get(index.propertyName);
-			List<IndexElement> elements = listObjectsUseIndexNoLock(index.getName(),false,DatabaseRequest.OP_EQUALS,strVal,0L,0L);
 			IndexElement duplicate = null;
-			if (elements.size()==1) {
-				duplicate = elements.get(0);
-				if (duplicate.id==element.id) {
-					duplicate = null;
-				}
-			} else if (elements.size()>1) {
-				for (IndexElement elem: elements) {
-					if (elem.id!=element.id) {
-						duplicate = elem;
-						break;
+			String strVal = element.idxValues.get(index.propertyName);
+			if (strVal!=null) {
+				List<IndexElement> elements = listObjectsUseIndexNoLock(index.getName(),false,DatabaseRequest.OP_EQUALS,strVal,0L,0L);
+				if (elements.size()==1) {
+					duplicate = elements.get(0);
+					if (duplicate.id==element.id) {
+						duplicate = null;
+					}
+				} else if (elements.size()>1) {
+					for (IndexElement elem: elements) {
+						if (elem.id!=element.id) {
+							duplicate = elem;
+							break;
+						}
 					}
 				}
 			}
-			if (duplicate!=null) {
+			if (duplicate!=null || strVal==null) {
 				if (errors!=null) {
 					if (oldName.length()>0) {
 						errors.add(new ZStringBuilder("Index " + index.getName() + " blocks update of object named '" + oldName + "'"));
@@ -846,6 +841,9 @@ public class Index extends Locker {
 			if (!changedElements.contains(r)) {
 				changedElements.add(r);
 			}
+			IndexElement ori = r;
+			r = r.copy();
+			ori.obj = null;
 		} else if (errors!=null) {
 			errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
 		}

@@ -33,7 +33,7 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("<select id=\"operator\">");
 			html.append("</select>");
 			html.append("<input type=\"text\" id=\"value\" style=\"width: 400px;\" />");
-			html.append("&nbsp;Descending<input type=\"checkbox\" id=\"descending\" />");
+			html.append("&nbsp;Descending<input type=\"checkbox\" id=\"descending\" onchange=\"ZODB.dm.list();\" />");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			

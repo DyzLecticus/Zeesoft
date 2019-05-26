@@ -81,7 +81,10 @@ public class IndexConfig extends Locker implements JsAble {
 		List<SearchIndex> indexes = getIndexesForObjectNameNoLock(name);
 		SortedMap<String,String> r = new TreeMap<String,String>();
 		for (SearchIndex index: indexes) {
-			r.put(index.propertyName,index.getIndexValueForObject(obj));
+			String value = index.getIndexValueForObject(obj);
+			if (value!=null) {
+				r.put(index.propertyName,value);
+			}
 		}
 		unlockMe(this);
 		return r;

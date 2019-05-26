@@ -351,6 +351,7 @@ public class JavaScriptZODBDataManager {
 		script.append("        elem.focus();\n");
 		script.append("    }\n");
 		script.append("    ZODB.dm.init();\n");
+		script.append("    ZODB.dom.bindEnterFunctionToElementId(\"invert\",ZODB.dm.list);\n");
 		script.append("    ZODB.dom.bindEnterFunctionToElementId(\"value\",ZODB.dm.list);\n");
 		script.append("    ZODB.dom.bindEnterFunctionToElementId(\"start\",ZODB.dm.list);\n");
 		script.append("    ZODB.dom.bindEnterFunctionToElementId(\"max\",ZODB.dm.list);\n");

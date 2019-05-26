@@ -21,9 +21,9 @@ public class SearchIndex implements JsAble {
 	}
 
 	protected String getIndexValueForObject(JsFile obj) {
-		String r = "";
+		String r = null;
 		JsElem propElem = obj.rootElement.getChildByName(propertyName);
-		if (propElem!=null && propElem.value!=null && propElem.value.length()>0) {
+		if (propElem!=null && propElem.value!=null) {
 			r = Database.removeControlCharacters(propElem.value.toString());
 		}
 		return r;
