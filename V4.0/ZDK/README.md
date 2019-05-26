@@ -41,11 +41,11 @@ Class references;
 **Test output**  
 The output of this test shows 100 randomly generated integers within the range 0 - 9.
 ~~~~
-6 4 3 8 1 6 4 4 2 7 5 9 2 2 8 1 6 6 9 0
-9 9 9 5 5 3 7 7 3 4 2 5 7 3 0 9 3 0 7 4
-6 9 5 7 2 9 1 5 9 4 9 8 8 0 8 8 5 7 1 6
-7 1 1 7 6 7 0 6 7 3 1 8 3 3 8 7 2 3 8 2
-7 8 1 5 2 6 9 4 4 0 7 3 4 1 2 4 3 1 7 3
+3 9 3 6 4 0 8 6 2 3 8 4 4 7 3 4 7 4 3 4
+4 2 2 5 4 9 1 5 2 2 8 9 0 5 7 7 8 4 8 5
+7 5 2 9 9 6 2 7 1 2 4 2 7 5 3 8 7 5 0 7
+3 2 5 4 5 9 1 5 9 4 1 3 0 6 0 4 3 5 0 3
+7 5 0 2 5 6 9 3 2 7 8 4 3 2 3 7 0 6 3 0
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
@@ -74,10 +74,10 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 9627203513118198419221734603146191303054822978475021173598650147
+Key: 1785750212029466249763115039578533568317414698019178240644542422
 Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
-Key encoded text: ZAQ:fyF~JyrvEy7#mxnx6xnxt~#yzA#Auztwb~ex1yFyB:ky:#C:wxxz9xO#1:zxd~YwUyrwDzpvc#W#n~IxBzHBk~v~G#N~T#jwHy5xpxB:2zM:ABBAm:jz6vwxywavo~U#ByI~IymvXzUzmx:zcxnwr~GyKBLAcy#yiA1yCx~yP~3yxzx:uwtyxxM#X:DycA2xfyevtxAw0
+Key encoded text: lSsX7YVWlXpUwQaTCSTSKRATNYZVsVhWyTaUXYKW#W8UeRbShVEREUOYOVFXbYzU9T6TlVNW5YLSFSjX~UuRkVVXcZwW#RRTtYSTvXSYiTuT9SxWNUPUSW6UdSZUHQwQHRwWvXYWkXkUMRYSCS8TRSASLY9VDWvWgShV5ZzXcV2UsSTSdUzRCUKYdVDX9YDV8U9UDVAVRXZT0
 Key decoded text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
 ASCII encoded text: 42,24,59,48,66,63,2,-28,67,73,-10,50,55,61,59,-28,63,67,-10,-21,26,73,80,-28,34,53,57,56,63,51,75,55,-3,-2,-10,12,69,71,-10,37,72,53,-10,61,69,69,-10,42,59,53,66,45,68,55,-10,56,69,52,55,61,21,-16,16,-15,-1,-16,-2,8,69,62,-3,56,-10,73,69,57,-10,59,68,51,77,-16,62,51,77,-16,74,51,16,-16,49,54,59,11,73,52,69,62,58,33,-9,-7,4
@@ -281,9 +281,9 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2019-05-18 15:09:18:806 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2019-05-18 15:09:19:106 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2019-05-18 15:09:19:106 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+2019-05-26 21:17:35:175 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2019-05-26 21:17:35:476 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2019-05-26 21:17:35:476 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
 java.lang.NumberFormatException: For input string: "A"
 	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
 	at java.lang.Integer.parseInt(Integer.java:580)
@@ -293,19 +293,19 @@ java.lang.NumberFormatException: For input string: "A"
 	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:39)
 	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:39)
 
-2019-05-18 15:09:19:417 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2019-05-26 21:17:35:788 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 Test results
 ------------
 All 7 tests have been executed successfully (128 assertions).  
-Total test duration: 871 ms (total sleep duration: 600 ms).  
+Total test duration: 810 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 464 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 466 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 404 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 399 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestCsv: 406 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestJson: 419 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestZHttpRequest: 426 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 682 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 683 Kb / 0 Mb
