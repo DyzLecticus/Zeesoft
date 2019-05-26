@@ -24,8 +24,8 @@ public class HtmlZODBDataManager extends HtmlResource {
 		html.append("<table style=\"width: 100%;\">\n");
 		html.append("<tbody>\n");
 			html.append("<tr>\n");
-			html.append("<td width=\"20%\">");
-			html.append("<select id=\"index\" onchange=\"ZODB.dm.changedIndex();\">");
+			html.append("<td valign=\"top\" width=\"20%\">");
+			html.append("<select valign=\"top\" id=\"index\" onchange=\"ZODB.dm.changedIndex();\">");
 			html.append("</select>");
 			html.append("</td>\n");
 			html.append("<td colspan=\"2\">");
@@ -53,9 +53,9 @@ public class HtmlZODBDataManager extends HtmlResource {
 			html.append("<td>");
 			html.append("</td>\n");
 			html.append("<td width=\"1%\">");
-			html.append("<input type=\"button\" value=\"Fetch\" onclick=\"ZODB.dm.list();\" />");
+			html.append("<input type=\"button\" value=\"List\" onclick=\"ZODB.dm.list();\" />");
 			html.append("</td>\n");
-			html.append("<td id=\"fetched\">");
+			html.append("<td id=\"listed\">");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 		html.append("</tbody>\n");

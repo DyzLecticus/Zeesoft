@@ -152,6 +152,10 @@ public class Database {
 		return index.removeObjectsThatContain(contains,modAfter,modBefore,errors);
 	}
 	
+	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,String value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+		return index.removeObjectsUseIndex(indexName,invert,operator,value,modAfter,modBefore,errors);
+	}
+	
 	public static String removeControlCharacters(String name) {
 		name = name.replace("\r","");
 		name = name.replace("\n","");

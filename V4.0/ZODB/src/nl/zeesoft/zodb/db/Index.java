@@ -217,7 +217,22 @@ public class Index extends Locker {
 		unlockMe(this);
 		return r;
 	}
-	
+
+	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,String value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
+		lockMe(this);
+		if (open) {
+			List<IndexElement> elements = listObjectsUseIndexNoLock(indexName,invert,operator,value,modAfter,modBefore);
+			for (IndexElement element: elements) {
+				removeObjectNoLock(element.id,errors);
+				r.add(element.copy());
+				element.obj = null;
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+
 	protected boolean readObject(IndexElement element) {
 		boolean r = true;
 		lockMe(this);

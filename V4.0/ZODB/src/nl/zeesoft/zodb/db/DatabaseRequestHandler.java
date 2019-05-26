@@ -80,7 +80,9 @@ public class DatabaseRequestHandler {
 						response.size = data.get(0);
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
-					if (response.request.id>0) {
+					if (request.index.length()>0) {
+						database.removeObjectsUseIndex(request.index,request.invert,request.operator,request.value,request.modAfter,request.modBefore,response.errors);
+					} else if (response.request.id>0) {
 						database.removeObject(request.id,response.errors);
 					} else if (response.request.startsWith.length()>0) {
 						database.removeObjectsThatStartWith(response.request.startsWith,request.modAfter,request.modBefore,response.errors);
@@ -141,9 +143,11 @@ public class DatabaseRequestHandler {
 			checkRequestIndex(response);
 			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
-			if (response.request.id<=0 && response.request.startsWith.length()==0 && response.request.contains.length()==0) {
-				response.errors.add(new ZStringBuilder("One of request id, startsWith or contains is mandatory"));
+			if (response.request.id<=0 && response.request.startsWith.length()==0 && response.request.contains.length()==0 && response.request.index.length()==0) {
+				response.errors.add(new ZStringBuilder("One of request id, startsWith, contains or index is mandatory"));
 			}
+			checkRequestEncoding(response);
+			checkRequestIndex(response);
 			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
 			if (response.request.id<=0) {
