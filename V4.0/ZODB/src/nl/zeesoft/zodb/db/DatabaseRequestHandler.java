@@ -14,9 +14,13 @@ public class DatabaseRequestHandler {
 		"Database is not open for business right now. Please try again at another time.";
 	
 	private Database			database			= null;
+	private int					maxLenName			= 128;
+	private int					maxLenObj			= 32768;
 	
-	public DatabaseRequestHandler(Database database) {
+	public DatabaseRequestHandler(Database database,int maxLenName,int maxLenObj) {
 		this.database = database;
+		this.maxLenName = maxLenName;
+		this.maxLenObj = maxLenObj;
 	}
 	
 	public DatabaseResponse handleDatabaseRequest(DatabaseRequest request) {
@@ -29,7 +33,7 @@ public class DatabaseRequestHandler {
 			checkRequest(response);
 			if (response.errors.size()==0) {
 				if (response.request.type.equals(DatabaseRequest.TYPE_ADD)) {
-					database.addObject(request.name,request.obj,response.errors);
+					database.addObject(request.name,request.object,response.errors);
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_GET)) {
 					if (request.id>0) {
 						IndexElement element = database.getObjectById(request.id);
@@ -50,7 +54,7 @@ public class DatabaseRequestHandler {
 					}
 					if (request.encoding.length()>0 && response.results.size()>0) {
 						for (DatabaseResult res: response.results) {
-							ZStringEncoder encoder = new ZStringEncoder(res.obj.toStringBuilder());
+							ZStringEncoder encoder = new ZStringEncoder(res.object.toStringBuilder());
 							if (response.request.encoding.equals(DatabaseRequest.ENC_ASCII)) {
 								encoder.encodeAscii();
 							} else if (response.request.encoding.equals(DatabaseRequest.ENC_KEY)) {
@@ -73,7 +77,7 @@ public class DatabaseRequestHandler {
 					}
 					for (IndexElement element: list) {
 						DatabaseResult res = new DatabaseResult(element);
-						res.obj = null;
+						res.object = null;
 						response.results.add(res);
 					}
 					if (data.size()>0) {
@@ -90,7 +94,7 @@ public class DatabaseRequestHandler {
 						database.removeObjectsThatContain(response.request.contains,request.modAfter,request.modBefore,response.errors);
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
-					database.setObject(request.id,request.obj,response.errors);
+					database.setObject(request.id,request.object,response.errors);
 					if (request.name.length()>0) {
 						database.setObjectName(request.id,request.name,response.errors);
 					}
@@ -126,6 +130,8 @@ public class DatabaseRequestHandler {
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 			if (response.request.name.length()==0) {
 				response.errors.add(new ZStringBuilder("Request name is mandatory"));
+			} else if (response.request.name.length()>maxLenName) {
+				response.errors.add(new ZStringBuilder("Request name must be shorter or equal to " + maxLenName));
 			}
 			checkRequestObjectMandatory(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_GET)) {
@@ -190,7 +196,7 @@ public class DatabaseRequestHandler {
 			JsFile obj = new JsFile();
 			obj.fromStringBuilder(encoder);
 			if (obj.rootElement!=null && obj.rootElement.children.size()>0) {
-				response.request.obj = obj;
+				response.request.object = obj;
 			} else {
 				response.errors.add(new ZStringBuilder("Failed to decode object"));
 			}
@@ -200,8 +206,10 @@ public class DatabaseRequestHandler {
 	private void checkRequestObjectMandatory(DatabaseResponse response) {
 		checkRequestEncoding(response);
 		checkRequestEncoded(response);
-		if (response.request.obj==null || response.request.obj.rootElement==null) {
+		if (response.request.object==null || response.request.object.rootElement==null) {
 			response.errors.add(new ZStringBuilder("Request object is mandatory"));
+		} else if (response.request.object.toStringBuilder().length()>maxLenObj) {
+			response.errors.add(new ZStringBuilder("Request object must be smaller or equal to " + maxLenObj));
 		}
 	}
 	

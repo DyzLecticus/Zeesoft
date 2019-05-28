@@ -53,9 +53,9 @@ public class TestDatabaseResponse extends TestObject {
 		res.id = 1;
 		res.name = new ZStringBuilder("testName");
 		res.modified = (new Date()).getTime();
-		res.obj = new JsFile();
-		res.obj.rootElement = new JsElem();
-		res.obj.rootElement.children.add(new JsElem("data","testObjectData",true));
+		res.object = new JsFile();
+		res.object.rootElement = new JsElem();
+		res.object.rootElement.children.add(new JsElem("data","testObjectData",true));
 		response.results.add(res);
 		System.out.println();
 		testResponse(response,2);

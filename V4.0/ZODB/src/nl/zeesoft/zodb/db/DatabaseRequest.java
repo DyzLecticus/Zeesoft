@@ -39,7 +39,7 @@ public class DatabaseRequest implements JsAble {
 	public ZStringBuilder		value				= new ZStringBuilder();
 	public boolean				ascending			= true;
 
-	public JsFile				obj					= null;
+	public JsFile				object				= null;
 	public ZStringBuilder		encoded				= null;
 	
 	public DatabaseRequest() {
@@ -89,10 +89,10 @@ public class DatabaseRequest implements JsAble {
 			}
 			json.rootElement.children.add(new JsElem("ascending","" + ascending));
 		}
-		if (obj!=null && obj.rootElement!=null && obj.rootElement.children.size()>0) {
+		if (object!=null && object.rootElement!=null && object.rootElement.children.size()>0) {
 			JsElem objElem = new JsElem("object");
 			json.rootElement.children.add(objElem);
-			objElem.children = obj.rootElement.children;
+			objElem.children = object.rootElement.children;
 		}
 		if (encoding.length()>0) {
 			json.rootElement.children.add(new JsElem("encoding",encoding,true));
@@ -124,9 +124,9 @@ public class DatabaseRequest implements JsAble {
 			
 			JsElem objElem = json.rootElement.getChildByName("object");
 			if (objElem!=null && objElem.children.size()>0) {
-				obj = new JsFile();
-				obj.rootElement = new JsElem();
-				obj.rootElement.children = objElem.children;
+				object = new JsFile();
+				object.rootElement = new JsElem();
+				object.rootElement.children = objElem.children;
 			}
 			encoding = json.rootElement.getChildString("encoding",encoding);
 			encoded = json.rootElement.getChildZStringBuilder("encoded",encoded);

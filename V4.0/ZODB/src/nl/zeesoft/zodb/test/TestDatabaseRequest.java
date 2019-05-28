@@ -77,7 +77,7 @@ public class TestDatabaseRequest extends TestObject {
 		
 		request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 		request.name = new ZStringBuilder("objectName");
-		request.obj = obj;
+		request.object = obj;
 		System.out.println();
 		testRequest(request,3);
 
@@ -87,7 +87,7 @@ public class TestDatabaseRequest extends TestObject {
 
 		request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
 		request.id = 1;
-		request.obj = obj;
+		request.object = obj;
 		System.out.println();
 		testRequest(request,3);
 		

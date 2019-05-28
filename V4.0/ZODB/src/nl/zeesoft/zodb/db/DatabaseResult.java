@@ -10,7 +10,7 @@ public class DatabaseResult implements JsAble {
 	public long				id			= 0L;
 	public long				modified	= 0L;
 	
-	public JsFile			obj			= null;
+	public JsFile			object		= null;
 	public ZStringBuilder	encoded		= null;
 	
 	public DatabaseResult() {
@@ -21,7 +21,7 @@ public class DatabaseResult implements JsAble {
 		this.name = element.name;
 		this.id = element.id;
 		this.modified = element.modified;
-		this.obj = element.obj;
+		this.object = element.obj;
 	}
 
 	@Override
@@ -35,10 +35,10 @@ public class DatabaseResult implements JsAble {
 		}
 		if (encoded!=null && encoded.length()>0) {
 			json.rootElement.children.add(new JsElem("encoded",encoded,true));
-		} else if (obj!=null && obj.rootElement!=null && obj.rootElement.children.size()>0) {
+		} else if (object!=null && object.rootElement!=null && object.rootElement.children.size()>0) {
 			JsElem objElem = new JsElem("object");
 			json.rootElement.children.add(objElem);
-			objElem.children = obj.rootElement.children;
+			objElem.children = object.rootElement.children;
 		}
 		return json;
 	}
@@ -52,9 +52,9 @@ public class DatabaseResult implements JsAble {
 			encoded = json.rootElement.getChildZStringBuilder("encoded",encoded);
 			JsElem objElem = json.rootElement.getChildByName("object");
 			if (objElem!=null && objElem.children.size()>0) {
-				obj = new JsFile();
-				obj.rootElement = new JsElem();
-				obj.rootElement.children = objElem.children;
+				object = new JsFile();
+				object.rootElement = new JsElem();
+				object.rootElement.children = objElem.children;
 			}
 		}
 	}

@@ -40,10 +40,10 @@ public class ZODBTester extends TesterObject {
 			n++;
 			req = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 			req.name = getObjectName(name);
-			req.obj = getTestObject(name);
+			req.object = getTestObject(name);
 			if (n>=(num - 20)) {
-				ZStringEncoder encoder = new ZStringEncoder(req.obj.toStringBuilder());
-				req.obj = null;
+				ZStringEncoder encoder = new ZStringEncoder(req.object.toStringBuilder());
+				req.object = null;
 				if (n>=(num - 10)) {
 					req.encoding = DatabaseRequest.ENC_KEY;
 					encoder.encodeKey(getConfiguration().getZODBKey(),0);
@@ -67,7 +67,7 @@ public class ZODBTester extends TesterObject {
 			result = new DatabaseResult();
 			result.name = req.name;
 			result.id = id;
-			result.obj = getTestObject(name);
+			result.object = getTestObject(name);
 			res.results.add(result);
 			addRequestNoLock(req,res);
 			if (id>=10) {

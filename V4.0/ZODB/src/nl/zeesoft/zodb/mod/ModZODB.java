@@ -30,6 +30,9 @@ public class ModZODB extends ModObject implements StateListener {
 	
 	private Database			database	= null;
 	
+	public int					maxLenName	= 128;
+	public int					maxLenObj	= 32768;
+	
 	public ModZODB(Config config) {
 		super(config);
 		name = NAME;
@@ -47,6 +50,8 @@ public class ModZODB extends ModObject implements StateListener {
 		JsFile json = super.toJson();
 		ZStringEncoder encoder = new ZStringEncoder(key);
 		json.rootElement.children.add(new JsElem("key",encoder.compress().toString(),true));
+		json.rootElement.children.add(new JsElem("maxLenName","" + maxLenName));
+		json.rootElement.children.add(new JsElem("maxLenObj","" + maxLenObj));
 		if (newKey!=null && newKey.length()>0) {
 			encoder = new ZStringEncoder(newKey);
 			if (newKey.length()>4 || !newKey.toString().equals("true")) {
@@ -65,6 +70,8 @@ public class ModZODB extends ModObject implements StateListener {
 	public void fromJson(JsFile json) {
 		super.fromJson(json);
 		if (json.rootElement!=null) {
+			maxLenName = json.rootElement.getChildInt("maxLenName",maxLenName);
+			maxLenObj = json.rootElement.getChildInt("maxLenName",maxLenObj);
 			JsElem k = json.rootElement.getChildByName("key");
 			if (k!=null && k.value!=null && k.value.length()>0) {
 				ZStringEncoder encoder = new ZStringEncoder(k.value);
@@ -162,7 +169,7 @@ public class ModZODB extends ModObject implements StateListener {
 	}
 	
 	protected DatabaseRequestHandler getNewDatabaseRequestHandler(Database db) {
-		return new DatabaseRequestHandler(db);
+		return new DatabaseRequestHandler(db,maxLenName,maxLenObj);
 	}
 	
 	protected ZODBTester getNewTester() {

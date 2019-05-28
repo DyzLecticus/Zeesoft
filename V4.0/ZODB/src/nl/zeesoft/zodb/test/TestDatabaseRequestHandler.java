@@ -40,7 +40,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 		assertEqual(db.isOpen(),true,"Failed to initialize database within one second");
 		if (db.isOpen()) {
 			
-			DatabaseRequestHandler handler = new DatabaseRequestHandler(db);
+			DatabaseRequestHandler handler = new DatabaseRequestHandler(db,config.getZODB().maxLenName,config.getZODB().maxLenObj);
 			
 			IndexElement element = db.getObjectById(1L);
 			if (element==null) {
@@ -54,7 +54,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 			DatabaseResponse res = handleRequest(handler,req,1,null);
 			if (res.results.size()>0) {
 				assertEqual(res.results.get(0).name.toString(),"testObject001","Name of object found by id does not match expectation");
-				assertEqual(res.results.get(0).obj!=null,true,"Index element found by id does not contain an object");
+				assertEqual(res.results.get(0).object!=null,true,"Index element found by id does not contain an object");
 			}
 
 			req = new DatabaseRequest(DatabaseRequest.TYPE_GET);
@@ -78,7 +78,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 			res = handleRequest(handler,req,1,null);
 			if (res.results.size()>0) {
 				assertEqual(res.results.get(0).name.toString(),"testObject125","Name of object found by name does not match expectation");
-				assertEqual(res.results.get(0).obj!=null,true,"Index element found by name does not contain an object");
+				assertEqual(res.results.get(0).object!=null,true,"Index element found by name does not contain an object");
 			}
 			
 			req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
@@ -111,7 +111,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 			req.id = 2;
 			res = handleRequest(handler,req,1,null);
 			if (res.results.size()>0) {
-				assertEqual(res.results.get(0).obj.rootElement.children.get(0).value,new ZStringBuilder("changedObject002"),"Object with id 2 was not changed as expected");
+				assertEqual(res.results.get(0).object.rootElement.children.get(0).value,new ZStringBuilder("changedObject002"),"Object with id 2 was not changed as expected");
 			}
 			
 			encoder = new ZStringEncoder("{\"data\":\"changedObject003\",\"num\":3}");
@@ -126,7 +126,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 			req.id = 3;
 			res = handleRequest(handler,req,1,null);
 			if (res.results.size()>0) {
-				assertEqual(res.results.get(0).obj.rootElement.children.get(0).value,new ZStringBuilder("changedObject003"),"Object with id 3 was not changed as expected");
+				assertEqual(res.results.get(0).object.rootElement.children.get(0).value,new ZStringBuilder("changedObject003"),"Object with id 3 was not changed as expected");
 			}
 		}
 				
@@ -144,7 +144,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 			obj.rootElement = new JsElem();
 			obj.rootElement.children.add(new JsElem("data",req.name,true));
 			obj.rootElement.children.add(new JsElem("num","" + i,true));
-			req.obj = obj;
+			req.object = obj;
 			DatabaseResponse res = handler.handleDatabaseRequest(req);
 			assertEqual(res.errors.size(),0,"Response errors does not match expectation");
 			if (res.errors.size()>0) {
