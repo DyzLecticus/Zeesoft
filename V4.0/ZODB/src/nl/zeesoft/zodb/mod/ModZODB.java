@@ -48,10 +48,10 @@ public class ModZODB extends ModObject implements StateListener {
 	@Override
 	public JsFile toJson() {
 		JsFile json = super.toJson();
-		ZStringEncoder encoder = new ZStringEncoder(key);
-		json.rootElement.children.add(new JsElem("key",encoder.compress().toString(),true));
 		json.rootElement.children.add(new JsElem("maxLenName","" + maxLenName));
 		json.rootElement.children.add(new JsElem("maxLenObj","" + maxLenObj));
+		ZStringEncoder encoder = new ZStringEncoder(key);
+		json.rootElement.children.add(new JsElem("key",encoder.compress().toString(),true));
 		if (newKey!=null && newKey.length()>0) {
 			encoder = new ZStringEncoder(newKey);
 			if (newKey.length()>4 || !newKey.toString().equals("true")) {
@@ -71,7 +71,7 @@ public class ModZODB extends ModObject implements StateListener {
 		super.fromJson(json);
 		if (json.rootElement!=null) {
 			maxLenName = json.rootElement.getChildInt("maxLenName",maxLenName);
-			maxLenObj = json.rootElement.getChildInt("maxLenName",maxLenObj);
+			maxLenObj = json.rootElement.getChildInt("maxLenObj",maxLenObj);
 			JsElem k = json.rootElement.getChildByName("key");
 			if (k!=null && k.value!=null && k.value.length()>0) {
 				ZStringEncoder encoder = new ZStringEncoder(k.value);

@@ -30,6 +30,7 @@ public class CsvFile {
 		rows.clear();
 		
 		str.replace("\r","");
+		str.replace("\\\"","\"\"");
 		
 		List<ZStringBuilder> lines = str.split("\n");
 		int lineNum = 0;
@@ -44,29 +45,41 @@ public class CsvFile {
 	}
 	
 	private List<ZStringSymbolParser> parseValuesFromLine(ZStringBuilder line) {
-		String pChr = "";
-		boolean inQuote = false;
 		List<ZStringSymbolParser> values = new ArrayList<ZStringSymbolParser>();
-		ZStringSymbolParser value = new ZStringSymbolParser();
 		
+		String chr = "";
+		boolean add = true;
+		String nChr = "";
+		int quotes = 0;
+		boolean inQuote = false;
+		ZStringSymbolParser value = new ZStringSymbolParser();
 		for (int i = 0; i < line.length(); i++) {
-			String chr = line.substring(i,i+1).toString();
-			if (chr.equals("\"") && !pChr.equals("\\")) {
-				if (!inQuote) {
-					inQuote = true;
-				} else {
-					inQuote = false;
-				}
-			} else if (!chr.equals(seperator) || inQuote) {
-				value.append(chr);
+			chr = line.substring(i,i+1).toString();
+			add = true;
+			if (i < line.length()-1) {
+				nChr = line.substring(i+1,i+2).toString();
+			}
+			if (!inQuote && value.length()==0 && chr.equals("\"")) {
+				inQuote = true;
+				add = false;
+			} else if (inQuote && quotes % 2 == 0 && chr.equals("\"") && nChr.equals(seperator)) {
+				inQuote = false;
+				add = false;
 			}
 			if (chr.equals(seperator) && !inQuote) {
+				value.replace("\"\"","\"");
 				values.add(transformValue(value));
 				value = new ZStringSymbolParser();
+				quotes = 0;
+			} else if (add) {
+				value.append(chr);
+				if (chr.equals("\"")) {
+					quotes++;
+				}
 			}
-			pChr = chr;
 		}
-		if (value.length()>0 || pChr.equals(seperator)) {
+		if (value.length()>0) {
+			value.replace("\"\"","\"");
 			values.add(transformValue(value));
 		}
 		

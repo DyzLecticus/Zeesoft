@@ -40,16 +40,20 @@ public class TestCsv extends TestObject {
 		testCsv.append("test,qwer,123\n");
 		testCsv.append("test,qwer,123,qwer\n");
 		testCsv.append("\"t,e\\\"\\nst\",qwer,123\n");
+		testCsv.append("\"t,e\"\"\\nst\"\"\",qwer,123\n");
 		System.out.println("Input:");
 		System.out.println(testCsv);
 		CsvFile csv = new CsvFile();
 		csv.fromStringBuilder(testCsv);
 		System.out.println("Rows: " + csv.rows.size() + ", columns: " + csv.columns);
 		
-		assertEqual(csv.rows.size(),3,"Number of rows does not match expectation");
+		assertEqual(csv.rows.size(),4,"Number of rows does not match expectation");
 		assertEqual(csv.columns,3,"Number of columns does not match expectation");
-		if (csv.rows.size()==3) {
+		if (csv.rows.size()>=3) {
 			assertEqual(csv.rows.get(2)[0].toString(),"t,e\"\nst","Column value does not match expectation");
+		}
+		if (csv.rows.size()>=4) {
+			assertEqual(csv.rows.get(3)[0].toString(),"t,e\"\nst\"","Column value does not match expectation");
 		}
 	}
 }
