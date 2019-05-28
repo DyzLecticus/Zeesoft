@@ -166,30 +166,6 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 		return equals(sbc,true);
 	}
 
-	public boolean equals(StringBuilder sbc,boolean ignoreCase) {
-		boolean eq = true;
-		if (sb!=null && sbc!=null) {
-			if (sb.length()==sbc.length()) {
-				for (int i = 0; i < sb.length(); i++) {
-					if ((ignoreCase && !sb.substring(i,i+1).equalsIgnoreCase(sbc.substring(i,i+1))) ||
-						!sb.substring(i,i+1).equals(sbc.substring(i,i+1))
-						) {
-						eq = false;
-						break;
-					}
-				}
-			} else {
-				eq = false;
-			}
-		} else if (
-			(sb==null && sbc!=null) ||
-			(sb!=null && sbc==null)
-			) {
-			eq = false;
-		}
-		return eq;
-	}
-
 	public StringBuilder trim() {
 		if (sb!=null) {
 			while (startsWith(" ") || startsWith("\n") || startsWith("\r")) {
@@ -496,9 +472,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 	public ZStringBuilder toFile(String fileName) {
 		ZStringBuilder error = new ZStringBuilder();
 		if (sb!=null) {
-			char[] chars = new char[sb.length()];
-			sb.getChars(0, sb.length(), chars, 0);
-	
+			char[] chars = toCharArray();
 			FileOutputStream fos = null;
 			Writer wtr = null;
 			try {
@@ -534,6 +508,75 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 		return error;
 	}
 
+	public char[] toCharArray() {
+		char[] r = null;
+		if (sb!=null) {
+			r = new char[sb.length()];
+			sb.getChars(0,r.length,r,0);
+		}
+		return r;
+	}
+	
+	@Override
+	public int compareTo(ZStringBuilder other) {
+		int r = 0;
+		if (sb!=null) {
+	        int len1 = sb.length();
+	        int len2 = other.getStringBuilder().length();
+	        int lim = Math.min(len1, len2);
+	        char v1[] = toCharArray();
+	        char v2[] = other.toCharArray();
+	        int k = 0;
+	        while (k < lim) {
+	            char c1 = v1[k];
+	            char c2 = v2[k];
+	            if (c1 != c2) {
+	                return c1 - c2;
+	            }
+	            k++;
+	        }
+	        r = len1 - len2;
+		}
+        return r;
+	}
+
+	/**
+	 * Returns the CRC value of a char Array
+	 * 
+	 * WARNING: It is merely unlikely that this function results in the same CRC for one or more examples
+	 * 
+	 * @return The CRC value
+	 */
+	public long calculateCRC() {
+		long crc = 0;
+		if (sb!=null) {
+			crc = calculateCRC(toCharArray());
+		}
+	   	return crc;
+	}
+	
+	/**
+	 * Returns the CRC value of a char Array
+	 * 
+	 * WARNING: It is merely unlikely that this function results in the same CRC for one or more examples
+	 * 
+	 * @param charArray The char array
+	 * @return The CRC value
+	 */
+	public long calculateCRC(char[] charArray) {
+		long crc = 0;
+		if (charArray.length>0) {
+			int multiply = (charArray.length + 7);
+			for (int p = 0; p < charArray.length; p++) {
+				long c = Character.valueOf(charArray[p]);
+				crc = crc + (c * multiply);
+				multiply += c;
+				multiply = multiply % 101;
+			}
+		}
+	   	return crc;
+	}
+	
 	/**
 	 * Returns the encoding for file I/O operations
 	 * 
@@ -563,31 +606,27 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 		return r;
 	}
 
-	public char[] toCharArray() {
-		char[] r = null;
-		if (sb!=null) {
-			r = new char[sb.length()];
-			sb.getChars(0,r.length,r,0);
+	private boolean equals(StringBuilder sbc,boolean ignoreCase) {
+		boolean eq = true;
+		if (sb!=null && sbc!=null) {
+			if (sb.length()==sbc.length()) {
+				for (int i = 0; i < sb.length(); i++) {
+					if ((ignoreCase && !sb.substring(i,i+1).equalsIgnoreCase(sbc.substring(i,i+1))) ||
+						!sb.substring(i,i+1).equals(sbc.substring(i,i+1))
+						) {
+						eq = false;
+						break;
+					}
+				}
+			} else {
+				eq = false;
+			}
+		} else if (
+			(sb==null && sbc!=null) ||
+			(sb!=null && sbc==null)
+			) {
+			eq = false;
 		}
-		return r;
-	}
-	
-	@Override
-	public int compareTo(ZStringBuilder other) {
-        int len1 = sb.length();
-        int len2 = other.getStringBuilder().length();
-        int lim = Math.min(len1, len2);
-        char v1[] = toCharArray();
-        char v2[] = other.toCharArray();
-        int k = 0;
-        while (k < lim) {
-            char c1 = v1[k];
-            char c2 = v2[k];
-            if (c1 != c2) {
-                return c1 - c2;
-            }
-            k++;
-        }
-        return len1 - len2;
+		return eq;
 	}
 }

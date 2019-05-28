@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringSymbolParser;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -75,5 +76,18 @@ public class TestZStringSymbolParser extends TestObject {
 		parser.fromSymbols(symbols,true,true);
 		assertEqual(parser.toString(),TestZStringEncoder.getTestText(),"Merged string does not match expectation");
 		assertEqual(splitter,parser,"The splitter does not equal the parser");
+		
+		ZStringBuilder sb1 = new ZStringBuilder("Zeesoft provides cool software products for application development.");
+		ZStringBuilder sb2 = new ZStringBuilder("Zeesoft provides cool software products for application development!");
+		ZStringBuilder sb3 = new ZStringBuilder("zeesoft provides cool software products for application development.");
+		ZStringBuilder sb4 = new ZStringBuilder("Zeesoft provides cool softwarf products for application development.");
+		ZStringBuilder sb5 = new ZStringBuilder("a");
+		ZStringBuilder sb6 = new ZStringBuilder("b");
+		assertEqual("" + sb1.calculateCRC(),"383798","Calculated CRC does not match expectation (1)");
+		assertEqual("" + sb2.calculateCRC(),"383564","Calculated CRC does not match expectation (2)");
+		assertEqual("" + sb3.calculateCRC(),"337415","Calculated CRC does not match expectation (3)");
+		assertEqual("" + sb4.calculateCRC(),"376085","Calculated CRC does not match expectation (4)");
+		assertEqual("" + sb5.calculateCRC(),"776","Calculated CRC does not match expectation (5)");
+		assertEqual("" + sb6.calculateCRC(),"784","Calculated CRC does not match expectation (6)");
 	}
 }
