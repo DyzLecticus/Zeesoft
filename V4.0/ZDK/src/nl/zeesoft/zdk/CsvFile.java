@@ -67,7 +67,6 @@ public class CsvFile {
 				add = false;
 			}
 			if (chr.equals(seperator) && !inQuote) {
-				value.replace("\"\"","\"");
 				values.add(transformValue(value));
 				value = new ZStringSymbolParser();
 				quotes = 0;
@@ -79,7 +78,6 @@ public class CsvFile {
 			}
 		}
 		if (value.length()>0) {
-			value.replace("\"\"","\"");
 			values.add(transformValue(value));
 		}
 		
@@ -87,6 +85,7 @@ public class CsvFile {
 	}
 	
 	private ZStringSymbolParser transformValue(ZStringSymbolParser value) {
+		value.replace("\"\"","\"");
 		value.replace("\\\"","\"");
 		value.replace("\\t","\t");
 		value.replace("\\r","\r");
