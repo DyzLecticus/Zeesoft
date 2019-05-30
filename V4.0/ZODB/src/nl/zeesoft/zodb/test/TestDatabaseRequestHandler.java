@@ -33,11 +33,8 @@ public class TestDatabaseRequestHandler extends TestObject {
 	protected void test(String[] args) {
 		Config config = new Config();
 		
-		Database db = TestDatabase.initializeTestDatabase(config,null);
+		Database db = TestDatabase.initializeTestDatabase(config,null,true);
 				
-		sleep(1000);
-		
-		assertEqual(db.isOpen(),true,"Failed to initialize database within one second");
 		if (db.isOpen()) {
 			
 			DatabaseRequestHandler handler = new DatabaseRequestHandler(db,config.getZODB().maxLenName,config.getZODB().maxLenObj);

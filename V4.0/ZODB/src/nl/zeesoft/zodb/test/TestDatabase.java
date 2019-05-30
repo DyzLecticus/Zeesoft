@@ -35,11 +35,8 @@ public class TestDatabase extends TestObject {
 	protected void test(String[] args) {
 		Config config = new Config();
 		
-		Database db = initializeTestDatabase(config,null);
+		Database db = initializeTestDatabase(config,null,true);
 
-		sleep(1000);
-		
-		assertEqual(db.isOpen(),true,"Failed to initialize database within one second");
 		if (db.isOpen()) {
 			
 			boolean added = false;
@@ -175,7 +172,7 @@ public class TestDatabase extends TestObject {
 		config.destroy();
 	}
 	
-	public static Database initializeTestDatabase(Config config,StringBuilder newKey) {
+	public static Database initializeTestDatabase(Config config,StringBuilder newKey,boolean testIndexes) {
 		File dir = new File("dist/data/ZODB/Index");
 		if (!dir.exists()) {
 			dir.mkdirs();
@@ -189,12 +186,29 @@ public class TestDatabase extends TestObject {
 		config.initialize(true,"dist/","",false);
 		
 		Database db = config.getZODB().getDatabase();
-		db.getIndexConfig().removeIndex(ModZODB.NAME + "/Objects/:testData");
-		db.getIndexConfig().addIndex("testObject","data",false,true);
-		db.getIndexConfig().getIndex("testObject:data").added = false;
-		db.getIndexConfig().addIndex("testObject","num",true,true);
-		db.getIndexConfig().getIndex("testObject:num").added = false;
+		if (testIndexes) {
+			db.getIndexConfig().removeIndex(ModZODB.NAME + "/Objects/:testData");
+			db.getIndexConfig().addIndex("testObject","data",false,true);
+			db.getIndexConfig().getIndex("testObject:data").added = false;
+			db.getIndexConfig().addIndex("testObject","num",true,true);
+			db.getIndexConfig().getIndex("testObject:num").added = false;
+		}
 		db.install();
+		
+		int i = 0;
+		while(!db.isOpen()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (i > 10) {
+				break;
+			}
+		}
+		if (!db.isOpen()) {
+			System.out.println("Failed to initialize database within " + i + " seconds");
+		}
 		return db;
 	}
 	
