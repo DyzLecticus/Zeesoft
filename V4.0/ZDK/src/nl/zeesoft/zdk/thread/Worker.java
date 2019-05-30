@@ -220,6 +220,10 @@ public abstract class Worker extends Locker implements Runnable {
 			getMessenger().error(this,"Failed to stop worker within " + timeOutSeconds + " seconds");
 		}
 	}
+
+	protected WorkerUnion getUnion() {
+		return union;
+	}
 	
 	protected static final long getMaxSleepForSleep(long sleep) {
 		if (sleep>=1000) {
