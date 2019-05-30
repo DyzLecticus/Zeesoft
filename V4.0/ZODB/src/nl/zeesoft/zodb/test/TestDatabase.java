@@ -44,7 +44,7 @@ public class TestDatabase extends TestObject {
 			
 			boolean added = false;
 			IndexElement element = null;
-			
+
 			element = db.getObjectById(1L);
 			if (element==null) {
 				Date started = new Date();
@@ -168,7 +168,6 @@ public class TestDatabase extends TestObject {
 			if (errors.size()>0) {
 				System.err.println(errors.get(0));
 			}
-			
 		}
 				
 		sleep(1000);
@@ -183,11 +182,11 @@ public class TestDatabase extends TestObject {
 		}
 		
 		config.getModule(ModZODB.NAME).selfTest = false;
-		config.initialize(true,"dist/","",false);
 		config.setZODBKey(new StringBuilder("0123456789012345678901234567890123456789012345678901234567890123"));
 		if (newKey!=null && newKey.length()>0) {
 			config.getZODB().setNewKey(newKey);
 		}
+		config.initialize(true,"dist/","",false);
 		
 		Database db = config.getZODB().getDatabase();
 		db.getIndexConfig().removeIndex(ModZODB.NAME + "/Objects/:testData");

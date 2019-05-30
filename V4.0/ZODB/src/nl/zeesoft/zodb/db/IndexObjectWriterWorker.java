@@ -9,7 +9,6 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class IndexObjectWriterWorker extends Worker {
-	private WorkerUnion		union		= null;
 	private	Index			index		= null;
 	
 	private boolean			writing		= false;
@@ -18,7 +17,6 @@ public class IndexObjectWriterWorker extends Worker {
 	
 	protected IndexObjectWriterWorker(Messenger msgr, WorkerUnion union,Index index) {
 		super(msgr, union);
-		this.union = union;
 		this.index = index;
 		setSleep(100);
 	}
@@ -80,7 +78,7 @@ public class IndexObjectWriterWorker extends Worker {
 					getMessenger().error(this,"Failed to delete file: " + fileName);
 				}
 			} else if (elem.obj!=null) {
-				workers.add(new IndexObjectWriteWorker(getMessenger(),union,this,fileName,elem.obj,index.getKey()));
+				workers.add(new IndexObjectWriteWorker(getMessenger(),getUnion(),this,fileName,elem.obj,index.getKey()));
 			}
 		}
 		if (workers.size()>0) {

@@ -8,11 +8,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.ZStringEncoder;
-import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.idx.IndexConfig;
 import nl.zeesoft.zodb.db.idx.SearchIndex;
 
@@ -21,6 +19,7 @@ public class Index extends Locker {
 	
 	private Database								db					= null;
 	private IndexConfig								indexConfig			= null;
+	private IndexObjectReaderWorker					objectReader		= null;
 	
 	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
 	private SortedMap<ZStringBuilder,IndexElement>	elementsByName		= new TreeMap<ZStringBuilder,IndexElement>();
@@ -31,14 +30,19 @@ public class Index extends Locker {
 	
 	private boolean									open				= false;
 	
-	protected Index(Messenger msgr,Database db,IndexConfig indexConfig) {
-		super(msgr);
+	protected Index(Config config,Database db,IndexConfig indexConfig) {
+		super(config.getMessenger());
 		this.db = db;
 		this.indexConfig = indexConfig;
+		objectReader = new IndexObjectReaderWorker(config.getMessenger(),config.getUnion(),this);
 	}
 	
 	protected StringBuilder getKey() {
 		return db.getKey();
+	}
+	
+	protected IndexObjectReaderWorker getObjectReader() {
+		return objectReader;
 	}
 	
 	protected IndexElement addObject(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
@@ -227,35 +231,86 @@ public class Index extends Locker {
 	}
 
 	protected boolean readObject(IndexElement element) {
+		List<IndexElement> elements = new ArrayList<IndexElement>();
+		elements.add(element);
+		return readObjects(elements);
+	}
+
+	protected boolean readObjects(List<IndexElement> elements) {
 		boolean r = true;
 		lockMe(this);
-		IndexElement copy = elementsById.get(element.id).copy();
 		r = open;
 		unlockMe(this);
-		if (copy.obj==null) {
-			String fileName = getObjectDirectory() + copy.id + ".txt";
-			ZStringEncoder decoder = new ZStringEncoder();
-			ZStringBuilder err = decoder.fromFile(fileName);
-			if (err.length()>0) {
-				getMessenger().error(this,"Failed to read object " + element.id + ": " + err);
-			} else {
-				decoder.decodeKey(db.getKey(),0);
-				JsFile obj = new JsFile();
-				obj.fromStringBuilder(decoder);
-				if (obj.rootElement==null) {
-					getMessenger().error(this,"Object " + element.id + " has been corrupted");
-					obj.rootElement = new JsElem();
+		if (r) {
+			List<Long> idList = new ArrayList<Long>();
+			for (IndexElement element:elements) {
+				if (element.obj==null) {
+					idList.add(element.id);
 				}
+			}
+			if (idList.size()>0) {
+				objectReader.addIdList(idList);
+				r = waitForObjectRead(idList);
+				for (IndexElement element: elements) {
+					lockMe(this);
+					IndexElement elem = elementsById.get(element.id);
+					if (elem!=null && elem.obj!=null) {
+						element.obj = elem.obj;
+					}
+					unlockMe(this);
+				}
+			} else {
 				lockMe(this);
-				elementsById.get(element.id).obj = obj;
-				element.obj = obj;
 				r = open;
 				unlockMe(this);
 			}
 		}
 		return r;
 	}
+
+	protected boolean waitForObjectRead(List<Long> idList) {
+		boolean r = true;
+		long sleep = 1;
+		while(idList.size()>0) {
+			List<Long> remainingIdList = new ArrayList<Long>();
+			for (Long id: idList) {
+				lockMe(this);
+				IndexElement element = elementsById.get(id);
+				if (element!=null && element.obj==null) {
+					remainingIdList.add(id);
+				}
+				unlockMe(this);
+			}
+			idList = remainingIdList;
+			r = open;
+			unlockMe(this);
+			if (!r) {
+				break;
+			} else if (idList.size()>0) {
+				try {
+					Thread.sleep(sleep);
+				} catch (InterruptedException e) {
+					getMessenger().error(this,"Waiting for object read was interrupted",e);
+				}
+				if (sleep<100) {
+					sleep++;
+				}
+			}
+		}
+		return r;
+	}
 	
+	protected void readObject(long id,JsFile obj) {
+		lockMe(this);
+		if (open) {
+			IndexElement element = elementsById.get(id);
+			if (element!=null) {
+				element.obj = obj;
+			}
+		}
+		unlockMe(this);
+	}
+
 	protected String getFileDirectory() {
 		return db.getFullIndexDir();
 	}
@@ -274,9 +329,7 @@ public class Index extends Locker {
 			}
 		}
 		unlockMe(this);
-		for (IndexElement element: elements) {
-			readObject(element);
-		}
+		readObjects(elements);
 	}
 
 	protected void setKey(StringBuilder key) {
@@ -340,18 +393,17 @@ public class Index extends Locker {
 		lockMe(this);
 		if (!open) {
 			db = null;
+			objectReader.destroy();
 		}
 		unlockMe(this);
 	}
 
 	protected void addFileElements(Integer fileNum,List<IndexElement> elements) {
 		lockMe(this);
-		if (open) {
-			for (IndexElement elem: elements) {
-				elementsById.put(elem.id,elem);
-				elementsByName.put(elem.name,elem);
-				elementsByFileNum.put(fileNum,elements);
-			}
+		for (IndexElement elem: elements) {
+			elementsById.put(elem.id,elem);
+			elementsByName.put(elem.name,elem);
+			elementsByFileNum.put(fileNum,elements);
 		}
 		unlockMe(this);
 	}
@@ -406,30 +458,17 @@ public class Index extends Locker {
 
 	private List<IndexElement> getObjectsByName(ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
-		List<IndexElement> read = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
 			r = listObjectsByNameNoLock(startsWith,contains,endsWith,modAfter,modBefore);
 		}
 		unlockMe(this);
-		for (IndexElement element: r) {
-			if (element.obj==null) {
-				read.add(element);
-			}
-		}
-		if (read.size()>0) {
-			for (IndexElement element: read) {
-				if (!readObject(element)) {
-					break;
-				}
-			}
-		}
+		readObjects(r);
 		return r;
 	}
 
 	private List<IndexElement> getObjectsUsingIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
-		List<IndexElement> read = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
 			r = listObjectsUseIndexNoLock(indexName,invert,operator,value,modAfter,modBefore);
@@ -441,25 +480,10 @@ public class Index extends Locker {
 				r.clear();
 				for (IndexElement element: temp) {
 					r.add(0,element);
-					if (element.obj==null) {
-						read.add(element);
-					}
-				}
-			} else {
-				for (IndexElement element: r) {
-					if (element.obj==null) {
-						read.add(element);
-					}
 				}
 			}
 		}
-		if (read.size()>0) {
-			for (IndexElement element: read) {
-				if (!readObject(element)) {
-					break;
-				}
-			}
-		}
+		readObjects(r);
 		return r;
 	}
 

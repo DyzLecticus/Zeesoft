@@ -24,7 +24,7 @@ public class Database {
 	public Database(Config config) {
 		configuration = config;
 		indexConfig = new IndexConfig(config.getMessenger());
-		index = new Index(config.getMessenger(),this,indexConfig);
+		index = new Index(config,this,indexConfig);
 		fileWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
@@ -66,6 +66,7 @@ public class Database {
 		reader.start();
 		fileWriter.start();
 		objectWriter.start();
+		index.getObjectReader().start();
 		configuration.debug(this,"Started database");
 	}
 
@@ -73,6 +74,7 @@ public class Database {
 		if (index.isOpen()) {
 			index.setOpen(false);
 			configuration.debug(this,"Stopping database ...");
+			index.getObjectReader().stop();
 			fileWriter.stop();
 			objectWriter.stop();
 			if (indexConfig.isRebuild()) {
