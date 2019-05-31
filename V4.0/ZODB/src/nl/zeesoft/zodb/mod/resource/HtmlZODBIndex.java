@@ -4,7 +4,6 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.mod.ModZODB;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
-import nl.zeesoft.zodb.mod.handler.JsonZODBIndexConfigHandler;
 
 public class HtmlZODBIndex extends HtmlResource {
 	public HtmlZODBIndex(Config config) {
@@ -36,15 +35,6 @@ public class HtmlZODBIndex extends HtmlResource {
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("View, add and remove indexes.");
-			html.append("</td>\n");
-			html.append("</tr>\n");
-			
-			html.append("<tr>\n");
-			html.append("<td>");
-			html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + JsonZODBIndexConfigHandler.PATH + "\">Index configuration JSON</a>");
-			html.append("</td>\n");
-			html.append("<td>");
-			html.append("Returns the index configuration as a JSON file.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			

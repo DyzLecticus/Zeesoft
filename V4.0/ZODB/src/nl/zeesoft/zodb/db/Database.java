@@ -50,11 +50,14 @@ public class Database {
 		dir.mkdirs();
 		dir = new File(getFullObjectDir());
 		dir.mkdirs();
+		indexConfig.setRebuild(false);
+		writeConfig();
 	}
 
 	public void start() {
 		configuration.debug(this,"Starting database ...");
 		readConfig();
+		indexConfig.initialize();
 		StringBuilder newKey = configuration.getZODB().getNewKey();
 		if (newKey!=null && newKey.length()>0) {
 			configuration.debug(this,"Changing database key ...");
@@ -88,6 +91,7 @@ public class Database {
 		fileWriter.destroy();
 		objectWriter.destroy();
 		index.destroy();
+		indexConfig.destroy();
 	}
 	
 	public boolean isOpen() {
@@ -215,11 +219,9 @@ public class Database {
 	}
 	
 	protected void writeConfig() {
-		JsFile json = indexConfig.toJson();
+		JsFile json = indexConfig.toUpdateJson();
 		ZStringBuilder err = json.toFile(getFullIndexDir() + "config.json",true);
-		if (err.length()==0) {
-			indexConfig.fromJson(json);
-		} else {
+		if (err.length()>0) {
 			configuration.error(this,"Failed to write index configuration: " + err);
 		}
 	}

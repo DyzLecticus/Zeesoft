@@ -11,9 +11,11 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zodb.db.IndexElement;
 
 public class IndexConfig extends Locker implements JsAble {
 	private static final String	PFX_OBJ			= "@OBJECT";
+	
 	public static final String	IDX_NAME		= PFX_OBJ + ":name";
 	public static final String	IDX_MODIFIED	= PFX_OBJ + ":modified";
 	
@@ -24,6 +26,74 @@ public class IndexConfig extends Locker implements JsAble {
 		super(msgr);
 	}
 
+	public void initialize() {
+		lockMe(this);
+		if (getIndexNoLock(IDX_NAME)==null) {
+			addIndexNoLock(PFX_OBJ,"name",false,true);
+		}
+		if (getIndexNoLock(IDX_MODIFIED)==null) {
+			addIndexNoLock(PFX_OBJ,"modified",true,false);
+		}
+		for (SearchIndex index: indexes) {
+			index.initialize(getMessenger());
+		}
+		unlockMe(this);
+	}
+
+	public void clear() {
+		lockMe(this);
+		for (SearchIndex index: indexes) {
+			index.clear();
+		}
+		unlockMe(this);
+	}
+
+	public void destroy() {
+		lockMe(this);
+		for (SearchIndex index: indexes) {
+			index.destroy();
+		}
+		unlockMe(this);
+	}
+	
+	public boolean hasObject(String name,IndexElement element) {
+		boolean r = false;
+		lockMe(this);
+		SearchIndex index = getIndexNoLock(name);
+		unlockMe(this);
+		if (index!=null) {
+			r = index.hasObject(element);
+		}
+		return r;
+	}
+	
+	public void addObject(IndexElement element) {
+		lockMe(this);
+		for (SearchIndex index: getIndexesForObjectNameNoLock(element.name)) {
+			index.addObject(element);
+		}
+		unlockMe(this);
+	}
+	
+	public void removeObject(IndexElement element) {
+		lockMe(this);
+		for (SearchIndex index: getIndexesForObjectNameNoLock(element.name)) {
+			index.removeObject(element);
+		}
+		unlockMe(this);
+	}
+	
+	public List<IndexElement> listObjects(String name, boolean ascending,boolean invert,String operator,ZStringBuilder indexValue) {
+		List<IndexElement> r = new ArrayList<IndexElement>();
+		lockMe(this);
+		SearchIndex index = getIndexNoLock(name);
+		unlockMe(this);
+		if (index!=null) {
+			r = index.listObjects(ascending, invert, operator, indexValue);
+		}
+		return r;
+	}
+	
 	public boolean isRebuild() {
 		boolean r = false;
 		lockMe(this);
@@ -55,23 +125,28 @@ public class IndexConfig extends Locker implements JsAble {
 	}
 
 	public ZStringBuilder removeIndex(String name) {
-		lockMe(this);
 		ZStringBuilder err = new ZStringBuilder();
-		SearchIndex index = getIndexNoLock(name);
-		if (index!=null) {
-			indexes.remove(index);
-			rebuild = true;
+		if (name.equals(IDX_NAME) || name.equals(IDX_MODIFIED)) {
+			err.append("Index " + name + " is mandatory");
 		} else {
-			err.append("Index " + name + " does not exist");
+			lockMe(this);
+			SearchIndex index = getIndexNoLock(name);
+			if (index!=null) {
+				indexes.remove(index);
+				index.destroy();
+				rebuild = true;
+			} else {
+				err.append("Index " + name + " does not exist");
+			}
+			unlockMe(this);
 		}
-		unlockMe(this);
 		return err;
 	}
 
-	public boolean objectHasIndexes(ZStringBuilder name) {
+	public boolean objectHasUpdateIndexes(ZStringBuilder name) {
 		boolean r = false;
 		lockMe(this);
-		r = getIndexesForObjectNameNoLock(name).size()>0;
+		r = getIndexesForObjectNameNoLock(name).size()>2;
 		unlockMe(this);
 		return r;
 	}
@@ -81,9 +156,11 @@ public class IndexConfig extends Locker implements JsAble {
 		List<SearchIndex> indexes = getIndexesForObjectNameNoLock(name);
 		SortedMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>();
 		for (SearchIndex index: indexes) {
-			ZStringBuilder value = index.getIndexValueForObject(obj);
-			if (value!=null) {
-				r.put(index.propertyName,value);
+			if (!index.getName().equals(IndexConfig.IDX_NAME) && !index.getName().equals(IDX_MODIFIED)) {
+				ZStringBuilder value = index.getIndexValueForObject(obj);
+				if (value!=null) {
+					r.put(index.propertyName,value);
+				}
 			}
 		}
 		unlockMe(this);
@@ -94,14 +171,14 @@ public class IndexConfig extends Locker implements JsAble {
 		lockMe(this);
 		List<SearchIndex> r = new ArrayList<SearchIndex>();
 		for (SearchIndex index: getIndexesForObjectNameNoLock(objectName)) {
-			if (index.unique && objectName.startsWith(index.objectNamePrefix)) {
+			if (index.unique) {
 				r.add(index);
 			}
 		}
 		unlockMe(this);
 		return r;
 	}
-
+	
 	public SearchIndex getIndex(String name) {
 		SearchIndex r = null;
 		lockMe(this);
@@ -113,8 +190,8 @@ public class IndexConfig extends Locker implements JsAble {
 	public SearchIndex getListIndex(String name) {
 		SearchIndex r = null;
 		lockMe(this);
-		for (SearchIndex index: getListIndexesNoLock()) {
-			if (index.getName().equals(name)) {
+		for (SearchIndex index: indexes) {
+			if (!index.added && index.getName().equals(name)) {
 				r = index;
 				break;
 			}
@@ -123,10 +200,10 @@ public class IndexConfig extends Locker implements JsAble {
 		return r;
 	}
 	
-	public JsFile toListJson() {
+	public JsFile toUpdateJson() {
 		JsFile json = new JsFile();
 		lockMe(this);
-		json = toJsonNoLock(getListIndexesNoLock());
+		json = toJsonNoLock(getUpdateIndexesNoLock());
 		unlockMe(this);
 		return json;
 	}
@@ -186,25 +263,10 @@ public class IndexConfig extends Locker implements JsAble {
 		return json;
 	}
 
-	private List<SearchIndex> getListIndexesNoLock() {
+	private List<SearchIndex> getUpdateIndexesNoLock() {
 		List<SearchIndex> r = new ArrayList<SearchIndex>();
-		
-		SearchIndex idx = new SearchIndex();
-		idx.objectNamePrefix = PFX_OBJ;
-		idx.propertyName = "name";
-		idx.numeric = false;
-		idx.unique = true;
-		r.add(idx);
-		
-		idx = new SearchIndex();
-		idx.objectNamePrefix = PFX_OBJ;
-		idx.propertyName = "modified";
-		idx.numeric = true;
-		idx.unique = false;
-		r.add(idx);
-		
 		for (SearchIndex index: indexes) {
-			if (!index.added) {
+			if (!index.getName().equals(IDX_NAME) && !index.getName().equals(IDX_MODIFIED)) {
 				r.add(index);
 			}
 		}
@@ -225,7 +287,7 @@ public class IndexConfig extends Locker implements JsAble {
 	private List<SearchIndex> getIndexesForObjectNameNoLock(ZStringBuilder objectName) {
 		List<SearchIndex> r = new ArrayList<SearchIndex>();
 		for (SearchIndex index: indexes) {
-			if (!index.added && objectName.startsWith(index.objectNamePrefix)) {
+			if (!index.added && (index.objectNamePrefix.equals(PFX_OBJ) || objectName.startsWith(index.objectNamePrefix))) {
 				r.add(index);
 			}
 		}

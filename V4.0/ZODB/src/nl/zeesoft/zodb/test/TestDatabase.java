@@ -183,7 +183,6 @@ public class TestDatabase extends TestObject {
 		if (newKey!=null && newKey.length()>0) {
 			config.getZODB().setNewKey(newKey);
 		}
-		config.initialize(true,"dist/","",false);
 		
 		Database db = config.getZODB().getDatabase();
 		if (testIndexes) {
@@ -192,7 +191,11 @@ public class TestDatabase extends TestObject {
 			db.getIndexConfig().getIndex("testObject:data").added = false;
 			db.getIndexConfig().addIndex("testObject","num",true,true);
 			db.getIndexConfig().getIndex("testObject:num").added = false;
+			db.getIndexConfig().setRebuild(false);
 		}
+
+		config.initialize(true,"dist/","",false);
+		
 		db.install();
 		
 		int i = 0;

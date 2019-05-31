@@ -9,11 +9,13 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class IndexObjectWriterWorker extends Worker {
-	private	Index			index		= null;
+	private static final int	MAX			= 1000;
 	
-	private boolean			writing		= false;
-	private int 			todo		= 0;
-	private int				done		= 0;
+	private	Index				index		= null;
+	
+	private boolean				writing		= false;
+	private int 				todo		= 0;
+	private int					done		= 0;
 	
 	protected IndexObjectWriterWorker(Messenger msgr, WorkerUnion union,Index index) {
 		super(msgr, union);
@@ -28,19 +30,23 @@ public class IndexObjectWriterWorker extends Worker {
 		List<IndexElement> elements = index.getChangedElements(0);
 		if (elements.size()>0) {
 			getMessenger().debug(this,"Remaining objects: " + elements.size());
-			writeChangedElements(elements);
+			List<IndexElement> remainder = writeChangedElements(elements);
+			while(remainder.size()>0) {
+				getMessenger().debug(this,"Remaining objects: " + elements.size());
+				whileWriting();
+				remainder = writeChangedElements(elements);
+			}
+		}
+		whileWriting();
+		if (elements.size()>0) {
 			getMessenger().debug(this,"Done");
 		}
 	}
 	
 	@Override
 	public void whileWorking() {
-		boolean w = false;
-		lockMe(this);
-		w = writing;
-		unlockMe(this);
-		if (!w) {
-			List<IndexElement> elements = index.getChangedElements(1000);
+		if (!isWriting()) {
+			List<IndexElement> elements = index.getChangedElements(MAX);
 			if (elements.size()>0) {
 				writeChangedElements(elements);
 				setSleep(1);
@@ -68,9 +74,12 @@ public class IndexObjectWriterWorker extends Worker {
 		unlockMe(this);
 	}
 	
-	private void writeChangedElements(List<IndexElement> elements) {
+	private List<IndexElement> writeChangedElements(List<IndexElement> elements) {
+		List<IndexElement> r = new ArrayList<IndexElement>(elements);
 		List<IndexObjectWriteWorker> workers = new ArrayList<IndexObjectWriteWorker>();
+		int i = 0;
 		for (IndexElement elem: elements) {
+			r.remove(elem);
 			String fileName = index.getObjectDirectory() + elem.id + ".txt";
 			if (elem.removed) {
 				File file = new File(fileName);
@@ -80,15 +89,45 @@ public class IndexObjectWriterWorker extends Worker {
 			} else if (elem.obj!=null) {
 				workers.add(new IndexObjectWriteWorker(getMessenger(),getUnion(),this,fileName,elem.obj,index.getKey()));
 			}
+			i++;
+			if (i>=MAX) {
+				break;
+			}
 		}
 		if (workers.size()>0) {
 			lockMe(this);
 			writing = true;
-			done = 0;
-			todo = workers.size();
+			todo += workers.size();
 			unlockMe(this);
 			for (IndexObjectWriteWorker worker: workers) {
 				worker.start();
+			}
+		}
+		return r;
+	}
+	
+	private boolean isWriting() {
+		boolean r = false;
+		lockMe(this);
+		r = writing;
+		unlockMe(this);
+		return r;
+	}
+	
+	private void whileWriting() {
+		int sleep = 10;
+		while(isWriting()) {
+			try {
+				Thread.sleep(sleep);
+			} catch (InterruptedException e) {
+				if (getMessenger()!=null) {
+					getMessenger().error(this,"Waiting for object writing to finish was interrupted");
+				} else {
+					System.err.println("Waiting for object writing to finish was interrupted");
+				}
+			}
+			if (sleep<100) {
+				sleep += 10;
 			}
 		}
 	}

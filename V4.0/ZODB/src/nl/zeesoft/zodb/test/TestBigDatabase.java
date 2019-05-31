@@ -48,9 +48,9 @@ public class TestBigDatabase extends TestObject {
 			IndexElement element = db.getObjectById(1L);
 			if (element==null) {
 				Date started = new Date();
-				System.out.println("Adding 250000 objects ...");
-				addTestObjects(db);
-				System.out.println("Adding 250000 objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
+				System.out.println("Adding objects ...");
+				int added = addTestObjects(db);
+				System.out.println("Adding " + added + " objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			} else {
 				List<Integer> data = new ArrayList<Integer>();
 				db.listObjects(0, 10, 0L,0L, data);
@@ -63,15 +63,19 @@ public class TestBigDatabase extends TestObject {
 		config.destroy();
 	}
 	
-	private void addTestObjects(Database db) {
+	private int addTestObjects(Database db) {
+		int r = 0;
 		for (int i = 1; i <= 250000; i++) {
 			ZStringBuilder name = new ZStringBuilder(ModZODB.NAME + "/Objects/testObject");
 			name.append(String.format("%06d",i));
-			addTestObject(db,name);
-			if (i % 1000 == 0) {
-				System.out.println("Added " + i + " objects");
+			if (addTestObject(db,name)!=null) {
+				r++;
+			}
+			if (r % 1000 == 0) {
+				System.out.println("Added " + r + " objects");
 			}
 		}
+		return r;
 	}
 
 	private IndexElement addTestObject(Database db,ZStringBuilder name) {

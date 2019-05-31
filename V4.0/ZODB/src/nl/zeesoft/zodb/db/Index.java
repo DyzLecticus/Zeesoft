@@ -1,9 +1,7 @@
 package nl.zeesoft.zodb.db;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -22,7 +20,6 @@ public class Index extends Locker {
 	private IndexObjectReaderWorker					objectReader		= null;
 	
 	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
-	private SortedMap<ZStringBuilder,IndexElement>	elementsByName		= new TreeMap<ZStringBuilder,IndexElement>();
 	private SortedMap<Integer,List<IndexElement>>	elementsByFileNum	= new TreeMap<Integer,List<IndexElement>>();
 	
 	private List<Integer>							changedFileNums		= new ArrayList<Integer>();
@@ -77,11 +74,9 @@ public class Index extends Locker {
 	protected IndexElement getObjectByName(ZStringBuilder name) {
 		IndexElement r = null;
 		lockMe(this);
-		if (name.length()>0 && open) {
-			r = elementsByName.get(name);
-			if (r!=null) {
-				r = r.copy();
-			}
+		List<IndexElement> elements = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_EQUALS,name);
+		if (elements.size()>0) {
+			r = elements.get(0);
 		}
 		unlockMe(this);
 		if (r!=null) {
@@ -133,7 +128,7 @@ public class Index extends Locker {
 	protected void setObjectName(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
 		Database.removeControlCharacters(name);
 		IndexElement element = null;
-		if (indexConfig.objectHasIndexes(name)) {
+		if (indexConfig.objectHasUpdateIndexes(name)) {
 			boolean read = false;
 			lockMe(this);
 			if (open) {
@@ -153,22 +148,18 @@ public class Index extends Locker {
 			element = elementsById.get(id);
 			if (element!=null && !element.removed) {
 				if (!element.name.equals(name)) {
-					if (elementsByName.get(name)==null) {
-						IndexElement copy = element.copy();
-						copy.name = name;
-						copy.idxValues = indexConfig.getIndexValuesForObject(copy.name,copy.obj);
-						if (checkUniqueIndexesForObjectNoLock(copy,element.name,errors)) {
-							elementsByName.remove(element.name);
-							element.name = name;
-							elementsByName.put(element.name,element);
-							element.idxValues = copy.idxValues;
-							element.updateModified();
-							if (!changedFileNums.contains(element.fileNum)) {
-								changedFileNums.add(element.fileNum);
-							}
+					IndexElement copy = element.copy();
+					copy.name = name;
+					copy.idxValues = indexConfig.getIndexValuesForObject(copy.name,copy.obj);
+					if (checkUniqueIndexesForObjectNoLock(copy,element.name,errors)) {
+						indexConfig.removeObject(element);
+						element.name = name;
+						element.idxValues = copy.idxValues;
+						element.modified = copy.modified;
+						indexConfig.addObject(element);
+						if (!changedFileNums.contains(element.fileNum)) {
+							changedFileNums.add(element.fileNum);
 						}
-					} else if (errors!=null) {
-						errors.add(new ZStringBuilder("Object named '" + name + "' already exists"));
 					}
 				}
 			} else if (errors!=null) {
@@ -220,7 +211,7 @@ public class Index extends Locker {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			List<IndexElement> elements = listObjectsUseIndexNoLock(indexName,invert,operator,value,modAfter,modBefore);
+			List<IndexElement> elements = listObjectsUseIndexNoLock(true,indexName,invert,operator,value,modAfter,modBefore);
 			for (IndexElement element: elements) {
 				removeObjectNoLock(element.id,errors);
 				r.add(element);
@@ -348,9 +339,7 @@ public class Index extends Locker {
 				changedFileNums.add(element.fileNum);
 			}
 			if (includeObjects) {
-				if (!changedElements.contains(element)) {
-					changedElements.add(element);
-				}
+				changedElements.add(element);
 			}
 		}
 		unlockMe(this);
@@ -364,15 +353,17 @@ public class Index extends Locker {
 		}
 		lockMe(this);
 		if (rebuild) {
+			indexConfig.clear();
 			for (IndexElement element: elementsById.values()) {
 				element.idxValues = indexConfig.getIndexValuesForObject(element.name,element.obj);
+				indexConfig.addObject(element);
 			}
 		}
 		this.open = open;
 		if (!open) {
 			elementsById.clear();
-			elementsByName.clear();
 			elementsByFileNum.clear();
+			indexConfig.clear();
 		}
 		unlockMe(this);
 		db.stateChanged(open);
@@ -400,10 +391,10 @@ public class Index extends Locker {
 
 	protected void addFileElements(Integer fileNum,List<IndexElement> elements) {
 		lockMe(this);
+		elementsByFileNum.put(fileNum,elements);
 		for (IndexElement elem: elements) {
 			elementsById.put(elem.id,elem);
-			elementsByName.put(elem.name,elem);
-			elementsByFileNum.put(fileNum,elements);
+			indexConfig.addObject(elem);
 		}
 		unlockMe(this);
 	}
@@ -447,10 +438,7 @@ public class Index extends Locker {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			SortedMap<ZStringBuilder,Long> list = listObjectsNoLock(start, max, startsWith, contains, endsWith, modAfter, modBefore, data);
-			for (Entry<ZStringBuilder,Long> entry: list.entrySet()) {
-				r.add(elementsById.get(entry.getValue()).copy());
-			}
+			r = listObjectsNoLock(start, max, startsWith, contains, endsWith, modAfter, modBefore, data);
 		}
 		unlockMe(this);
 		return r;
@@ -471,7 +459,7 @@ public class Index extends Locker {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			r = listObjectsUseIndexNoLock(indexName,invert,operator,value,modAfter,modBefore);
+			r = listObjectsUseIndexNoLock(ascending,indexName,invert,operator,value,modAfter,modBefore);
 		}
 		unlockMe(this);
 		if (r.size()>0) {
@@ -495,14 +483,7 @@ public class Index extends Locker {
 		if (max<1) {
 			max = 1;
 		}
-		List<IndexElement> elements = listObjectsUseIndexNoLock(indexName,invert,operator,value,modAfter,modBefore);
-		if (!ascending) {
-			List<IndexElement> temp = new ArrayList<IndexElement>(elements);
-			elements.clear();
-			for (IndexElement element: temp) {
-				elements.add(0,element);
-			}
-		}
+		List<IndexElement> elements = listObjectsUseIndexNoLock(ascending,indexName,invert,operator,value,modAfter,modBefore);
 		int end = start + max;
 		if (end>=elements.size()) {
 			end = elements.size();
@@ -516,169 +497,24 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjectsUseIndexNoLock(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
+	private List<IndexElement> listObjectsUseIndexNoLock(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		if (open) {
 			SearchIndex index = indexConfig.getListIndex(indexName);
 			if (index!=null) {
-				List<IndexElement> elements = null;
-				if (indexName.equals(IndexConfig.IDX_NAME) || indexName.equals(IndexConfig.IDX_MODIFIED)) {
-					elements = listObjectsByNameNoLock(null,null,null,modAfter,modBefore);
-				} else {
-					elements = listObjectsByNameNoLock(new ZStringBuilder(index.objectNamePrefix),null,null,modAfter,modBefore);
-				}
-				if (elements.size()>0) {
-					if (index.numeric) {
-						BigDecimal numVal = null;
-						if (value!=null && value.length()>0) {
-							try {
-								numVal = new BigDecimal(value.toCharArray());
-							} catch (NumberFormatException e) {
-								// Ignore
-							}
-						}
-						r = listObjectsUseNumericIndexNoLock(elements,index,invert,operator,numVal);
-					} else {
-						r = listObjectsUseStringIndexNoLock(elements,index,invert,operator,value);
+				List<IndexElement> elements = indexConfig.listObjects(indexName,ascending,invert,operator,value);
+				for (IndexElement element: elements) {
+					if (checkModifiedNoLock(element, modAfter, modBefore)) {
+						r.add(element);
 					}
 				}
 			}
 		}
 		return r;
 	}
-
-	private List<IndexElement> listObjectsUseNumericIndexNoLock(List<IndexElement> elements,SearchIndex index,boolean invert,String operator,BigDecimal value) {
+	
+	private List<IndexElement> listObjectsNoLock(int start, int max,ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore,List<Integer> data) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
-		SortedMap<BigDecimal,List<IndexElement>> map = new TreeMap<BigDecimal,List<IndexElement>>();
-		for (IndexElement element: elements) {
-			BigDecimal key = null;
-			if (index.getName().equals(IndexConfig.IDX_MODIFIED)) {
-				key = new BigDecimal(element.modified);
-			} else {
-				key = new BigDecimal("0");
-				ZStringBuilder strVal = element.idxValues.get(index.propertyName);
-				if (strVal!=null) {
-					try {
-						key = new BigDecimal(strVal.toCharArray());
-					} catch (NumberFormatException e) {
-						key = new BigDecimal("0");
-					}
-				}
-			}
-			if (checkNumericPropertyValueNoLock(key,invert,operator,value)) {
-				List<IndexElement> v = map.get(key);
-				if (v==null) {
-					v = new ArrayList<IndexElement>();
-					map.put(key,v);
-				}
-				v.add(element);
-			}
-		}
-		for (Entry<BigDecimal,List<IndexElement>> entry: map.entrySet()) {
-			for (IndexElement element: entry.getValue()) {
-				r.add(element);
-			}
-		}
-		return r;
-	}
-	
-	private List<IndexElement> listObjectsUseStringIndexNoLock(List<IndexElement> elements,SearchIndex index,boolean invert,String operator,ZStringBuilder value) {
-		List<IndexElement> r = new ArrayList<IndexElement>();
-		SortedMap<ZStringBuilder,List<IndexElement>> map = new TreeMap<ZStringBuilder,List<IndexElement>>();
-		for (IndexElement element: elements) {
-			ZStringBuilder key = null;
-			if (index.getName().equals(IndexConfig.IDX_NAME)) {
-				key = new ZStringBuilder(element.name);
-			} else {
-				key = element.idxValues.get(index.propertyName);
-				if (key==null) {
-					key = new ZStringBuilder();
-				}
-			}
-			if (checkStringPropertyValueNoLock(key,invert,operator,value)) {
-				List<IndexElement> v = map.get(key);
-				if (v==null) {
-					v = new ArrayList<IndexElement>();
-					map.put(key,v);
-				}
-				v.add(element);
-			}
-		}
-		for (Entry<ZStringBuilder,List<IndexElement>> entry: map.entrySet()) {
-			for (IndexElement element: entry.getValue()) {
-				r.add(element);
-			}
-		}
-		return r;
-	}
-
-	private boolean checkNumericPropertyValueNoLock(BigDecimal propertyValue, boolean invert, String operator, BigDecimal checkValue) {
-		boolean r = (propertyValue!=null);
-		if (operator!=null && operator.length()>0 && propertyValue!=null && checkValue!=null) {
-			if (operator.equals(DatabaseRequest.OP_EQUALS)) {
-				if (
-					(!invert && propertyValue.compareTo(checkValue)!=0) || 
-					(invert && propertyValue.compareTo(checkValue)==0)
-					) {
-					r = false;
-				}
-			} else if (operator.equals(DatabaseRequest.OP_GREATER)) {
-				if (
-					(!invert && propertyValue.compareTo(checkValue)<=0) || 
-					(invert && propertyValue.compareTo(checkValue)>0)
-					) {
-					r = false;
-				}
-			} else if (operator.equals(DatabaseRequest.OP_GREATER_OR_EQUAL)) {
-				if (
-					(!invert && propertyValue.compareTo(checkValue)<0) || 
-					(invert && propertyValue.compareTo(checkValue)>=0)
-					) {
-					r = false;
-				}
-			}
-		}
-		return r;
-	}
-	
-	private boolean checkStringPropertyValueNoLock(ZStringBuilder propertyValue, boolean invert, String operator, ZStringBuilder checkValue) {
-		boolean r = (propertyValue!=null);
-		if (operator!=null && operator.length()>0 && propertyValue!=null && checkValue!=null) {
-			if (operator.equals(DatabaseRequest.OP_EQUALS)) {
-				if (
-					(!invert && !propertyValue.equals(checkValue)) || 
-					(invert && propertyValue.equals(checkValue))
-					) {
-					r = false;
-				}
-			} else if (operator.equals(DatabaseRequest.OP_CONTAINS)) {
-				if (
-					(!invert && !propertyValue.contains(checkValue)) || 
-					(invert && propertyValue.contains(checkValue))
-					) {
-					r = false;
-				}
-			} else if (operator.equals(DatabaseRequest.OP_STARTS_WITH)) {
-				if (
-					(!invert && !propertyValue.startsWith(checkValue)) || 
-					(invert && propertyValue.startsWith(checkValue))
-					) {
-					r = false;
-				}
-			} else if (operator.equals(DatabaseRequest.OP_ENDS_WITH)) {
-				if (
-					(!invert && !propertyValue.endsWith(checkValue)) || 
-					(invert && propertyValue.endsWith(checkValue))
-					) {
-					r = false;
-				}
-			}
-		}
-		return r;
-	}
-	
-	private SortedMap<ZStringBuilder,Long> listObjectsNoLock(int start, int max,ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore,List<Integer> data) {
-		SortedMap<ZStringBuilder,Long> r = new TreeMap<ZStringBuilder,Long>();
 		if (start<0) {
 			start = 0;
 		}
@@ -694,10 +530,13 @@ public class Index extends Locker {
 				) {
 				elements = listObjectsByNameNoLock(startsWith,contains,endsWith,modAfter,modBefore);
 			} else {
-				elements = new ArrayList<IndexElement>();
-				for (IndexElement element: elementsByName.values()) {
-					if (checkModifiedNoLock(element,modAfter,modBefore)) {
-						elements.add(element);
+				List<IndexElement> elems = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_STARTS_WITH,null);
+				if (elems.size()>0) {
+					elements = new ArrayList<IndexElement>();
+					for (IndexElement element: elems) {
+						if (checkModifiedNoLock(element,modAfter,modBefore)) {
+							elements.add(element);
+						}
 					}
 				}
 			}
@@ -712,8 +551,7 @@ public class Index extends Locker {
 					end = elements.size();
 				}
 				for (int i = start; i < end; i++) {
-					IndexElement element = elements.get(i);
-					r.put(element.name,element.id);
+					r.add(elements.get(i));
 				}
 			}
 		}
@@ -721,18 +559,24 @@ public class Index extends Locker {
 	}
 
 	private List<IndexElement> listObjectsByNameNoLock(ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore) {
-		List<IndexElement> r = new ArrayList<IndexElement>();
-		for (ZStringBuilder name: elementsByName.keySet()) {
-			if (
-				(startsWith==null || startsWith.length()==0 || name.startsWith(startsWith)) &&
-				(contains==null || contains.length()==0 || name.contains(contains)) &&
-				(endsWith==null || endsWith.length()==0 || name.endsWith(endsWith))
-				) {
-				IndexElement element = elementsByName.get(name);
+		List<IndexElement> r = null;
+		List<IndexElement> elements = null;
+		if (startsWith!=null && startsWith.length()>0) {
+			elements = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_STARTS_WITH,startsWith);
+		} else if (contains!=null && contains.length()>0) {
+			elements = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_CONTAINS,contains);
+		} else if (endsWith!=null && endsWith.length()>0) {
+			elements = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_ENDS_WITH,endsWith);
+		}
+		if (modAfter>0L || modBefore>0L) {
+			r = new ArrayList<IndexElement>();
+			for (IndexElement element: elements) {
 				if (checkModifiedNoLock(element,modAfter,modBefore)) {
-					r.add(element.copy());
+					r.add(element);
 				}
 			}
+		} else {
+			r = elements;
 		}
 		return r;
 	}
@@ -740,36 +584,33 @@ public class Index extends Locker {
 	private IndexElement addObjectNoLock(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
 		Database.removeControlCharacters(name);
 		IndexElement r = null;
-		if (!elementsByName.containsKey(name)) {
-			IndexElement element = new IndexElement();
-			element.name = name;
-			element.obj = obj;
-			element.idxValues = indexConfig.getIndexValuesForObject(name,obj);
-			if (checkUniqueIndexesForObjectNoLock(element,null,errors)) {
-				r = new IndexElement();
-				r.id = getNewUidNoLock();
-				r.name = name;
-				r.obj = obj;
-				r.idxValues = element.idxValues;
-				r.fileNum = getFileNumForNewObjectNoLock();
-				r.added = true;
-				
-				elementsById.put(r.id,r);
-				elementsByName.put(r.name,r);
-				List<IndexElement> list = elementsByFileNum.get(r.fileNum);
-				if (list==null) {
-					list = new ArrayList<IndexElement>();
-					elementsByFileNum.put(r.fileNum,list);
-				}
-				list.add(r);
-				
-				if (!changedFileNums.contains(r.fileNum)) {
-					changedFileNums.add(r.fileNum);
-				}
-				changedElements.add(r);
+		IndexElement element = new IndexElement();
+		element.name = name;
+		element.obj = obj;
+		element.idxValues = indexConfig.getIndexValuesForObject(element.name,obj);
+		if (checkUniqueIndexesForObjectNoLock(element,null,errors)) {
+			r = new IndexElement();
+			r.id = getNewUidNoLock();
+			r.name = name;
+			r.obj = obj;
+			r.idxValues = element.idxValues;
+			r.modified = element.modified;
+			r.fileNum = getFileNumForNewObjectNoLock();
+			r.added = true;
+			
+			elementsById.put(r.id,r);
+			List<IndexElement> list = elementsByFileNum.get(r.fileNum);
+			if (list==null) {
+				list = new ArrayList<IndexElement>();
+				elementsByFileNum.put(r.fileNum,list);
 			}
-		} else if (errors!=null) {
-			errors.add(new ZStringBuilder("Object named '" + name + "' already exists"));
+			list.add(r);
+			indexConfig.addObject(r);
+			
+			if (!changedFileNums.contains(r.fileNum)) {
+				changedFileNums.add(r.fileNum);
+			}
+			changedElements.add(r);
 		}
 		return r;
 	}
@@ -808,15 +649,18 @@ public class Index extends Locker {
 				IndexElement copy = element.copy();
 				copy.idxValues = indexConfig.getIndexValuesForObject(copy.name,obj);
 				if (checkUniqueIndexesForObjectNoLock(copy,copy.name,errors)) {
+					indexConfig.removeObject(element);
 					element.obj = obj;
 					element.idxValues = copy.idxValues;
-					element.updateModified();
+					element.modified = copy.modified;
+					indexConfig.addObject(element);
 					if (!changedFileNums.contains(element.fileNum)) {
 						changedFileNums.add(element.fileNum);
 					}
-					if (!changedElements.contains(element)) {
-						changedElements.add(element);
+					if (changedElements.contains(element)) {
+						changedElements.remove(element);
 					}
+					changedElements.add(element);
 				}
 			}
 		} else if (errors!=null) {
@@ -827,25 +671,15 @@ public class Index extends Locker {
 	private boolean checkUniqueIndexesForObjectNoLock(IndexElement element,ZStringBuilder oldName,List<ZStringBuilder> errors) {
 		boolean ok = true;
 		for (SearchIndex index: indexConfig.getUniqueIndexesForObjectName(element.name)) {
-			IndexElement duplicate = null;
-			ZStringBuilder strVal = element.idxValues.get(index.propertyName);
-			if (strVal!=null) {
-				List<IndexElement> elements = listObjectsUseIndexNoLock(index.getName(),false,DatabaseRequest.OP_EQUALS,strVal,0L,0L);
-				if (elements.size()==1) {
-					duplicate = elements.get(0);
-					if (duplicate.id==element.id) {
-						duplicate = null;
-					}
-				} else if (elements.size()>1) {
-					for (IndexElement elem: elements) {
-						if (elem.id!=element.id) {
-							duplicate = elem;
-							break;
-						}
-					}
-				}
+			ZStringBuilder strVal = null;
+			if (index.getName().equals(IndexConfig.IDX_NAME)) {
+				strVal = element.name;
+			} else if (index.getName().equals(IndexConfig.IDX_MODIFIED)) {
+				strVal = new ZStringBuilder("" + element.modified);
+			} else {
+				strVal = element.idxValues.get(index.propertyName);
 			}
-			if (duplicate!=null || strVal==null) {
+			if (strVal==null || indexConfig.hasObject(index.getName(),element)) {
 				if (errors!=null) {
 					if (oldName!=null && oldName.length()>0) {
 						errors.add(new ZStringBuilder("Index " + index.getName() + " blocks update of object named '" + oldName + "'"));
@@ -863,15 +697,16 @@ public class Index extends Locker {
 		IndexElement r = null;
 		if (elementsById.containsKey(id)) {
 			r = elementsById.remove(id);
-			elementsByName.remove(r.name);
 			elementsByFileNum.get(r.fileNum).remove(r);
+			indexConfig.removeObject(r);
 			r.removed = true;
 			if (!changedFileNums.contains(r.fileNum)) {
 				changedFileNums.add(r.fileNum);
 			}
-			if (!changedElements.contains(r)) {
-				changedElements.add(r);
+			if (changedElements.contains(r)) {
+				changedElements.remove(r);
 			}
+			changedElements.add(r);
 			IndexElement ori = r;
 			r = r.copy();
 			ori.obj = null;

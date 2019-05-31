@@ -28,7 +28,7 @@ public class JsonZODBIndexConfigHandler extends JsonHandlerObject {
 			ModZODB zodb = getConfiguration().getZODB();
 			r = checkRequest(zodb,request,response);
 			if (r.length()==0) {
-				r = stringifyJson(zodb.getDatabase().getIndexConfig().toJson());
+				r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
 			}
 		} else if (method.equals(METH_POST)) {
 			JsFile json = getPostBodyJson(request, response);
@@ -50,9 +50,9 @@ public class JsonZODBIndexConfigHandler extends JsonHandlerObject {
 						) {
 						r = setResponse(response,400,"Request type must be " + IndexRequest.TYPE_LIST + ", " + IndexRequest.TYPE_GET + ", " + IndexRequest.TYPE_ADD + " or " + IndexRequest.TYPE_REMOVE);
 					} else if (req.type.equals(IndexRequest.TYPE_LIST)) {
-						r = stringifyJson(zodb.getDatabase().getIndexConfig().toListJson());
-					} else if (req.type.equals(IndexRequest.TYPE_GET)) {
 						r = stringifyJson(zodb.getDatabase().getIndexConfig().toJson());
+					} else if (req.type.equals(IndexRequest.TYPE_GET)) {
+						r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
 					} else if (req.type.equals(IndexRequest.TYPE_ADD)) {
 						req.objectNamePrefix = Database.removeControlCharacters(req.objectNamePrefix);
 						req.propertyName = Database.removeControlCharacters(req.propertyName);

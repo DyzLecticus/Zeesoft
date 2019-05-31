@@ -163,7 +163,6 @@ public class ModZODB extends ModObject implements StateListener {
 		if (selfTest) {
 			String pfx = NAME + "/Objects/";
 			r.getIndexConfig().addIndex(pfx,"testData",false,true);
-			r.getIndexConfig().getIndex(pfx + ":testData").added = false;
 		}
 		return r;
 	}
