@@ -3,6 +3,7 @@ package nl.zeesoft.zodb.test;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.db.Database;
 
 public class TestDatabaseKeyChange extends TestObject {
 	public TestDatabaseKeyChange(Tester tester) {
@@ -22,8 +23,12 @@ public class TestDatabaseKeyChange extends TestObject {
 	protected void test(String[] args) {
 		Config config = new Config();
 		
-		TestDatabase.initializeTestDatabase(config,new StringBuilder("0123012345678901234567890123456789012345678901234567890123456789"),true);
+		Database db = TestDatabase.initializeTestDatabase(config,new StringBuilder("0123012345678901234567890123456789012345678901234567890123456789"),true);
 		
-		config.destroy();
+		if (db.isOpen()) {
+			config.destroy();
+		} else {
+			System.exit(1);
+		}
 	}
 }

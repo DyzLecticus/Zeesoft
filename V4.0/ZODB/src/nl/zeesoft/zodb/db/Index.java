@@ -47,9 +47,6 @@ public class Index extends Locker {
 		lockMe(this);
 		if (name.length()>0 && open) {
 			r = addObjectNoLock(name,obj,errors);
-			if (r!=null) {
-				r = r.copy();
-			}
 		}
 		unlockMe(this);
 		return r;
@@ -394,9 +391,11 @@ public class Index extends Locker {
 		elementsByFileNum.put(fileNum,elements);
 		for (IndexElement elem: elements) {
 			elementsById.put(elem.id,elem);
-			indexConfig.addObject(elem);
 		}
 		unlockMe(this);
+		for (IndexElement elem: elements) {
+			indexConfig.addObject(elem);
+		}
 	}
 
 	protected SortedMap<Integer,List<IndexElement>> getChangedFiles() {
@@ -611,6 +610,7 @@ public class Index extends Locker {
 				changedFileNums.add(r.fileNum);
 			}
 			changedElements.add(r);
+			r = r.copy();
 		}
 		return r;
 	}

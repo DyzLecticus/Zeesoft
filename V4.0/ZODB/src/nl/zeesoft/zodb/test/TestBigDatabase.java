@@ -38,11 +38,12 @@ public class TestBigDatabase extends TestObject {
 		int i = 0;
 		while(!db.isOpen()) {
 			sleep(1000);
-			if (i > 10) {
+			i++;
+			if (i >= 110) {
 				break;
 			}
 		}
-		assertEqual(db.isOpen(),true,"Failed to initialize database within " + i + " seconds");
+		assertEqual(db.isOpen(),true,"Failed to initialize BIG database within " + (i + 10) + " seconds");
 		
 		if (db.isOpen()) {
 			IndexElement element = db.getObjectById(1L);
@@ -56,11 +57,13 @@ public class TestBigDatabase extends TestObject {
 				db.listObjects(0, 10, 0L,0L, data);
 				System.out.println("Database has " + data.get(0) + " objects");
 			}
+			
+			sleep(1000);
+			
+			config.destroy();
+		} else {
+			System.exit(1);
 		}
-				
-		sleep(1000);
-		
-		config.destroy();
 	}
 	
 	private int addTestObjects(Database db) {

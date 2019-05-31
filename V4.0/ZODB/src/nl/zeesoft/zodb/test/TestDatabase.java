@@ -165,11 +165,13 @@ public class TestDatabase extends TestObject {
 			if (errors.size()>0) {
 				System.err.println(errors.get(0));
 			}
+					
+			sleep(1000);
+			
+			config.destroy();
+		} else {
+			System.exit(1);
 		}
-				
-		sleep(1000);
-		
-		config.destroy();
 	}
 	
 	public static Database initializeTestDatabase(Config config,StringBuilder newKey,boolean testIndexes) {
@@ -205,7 +207,8 @@ public class TestDatabase extends TestObject {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if (i > 10) {
+			i++;
+			if (i >= 10) {
 				break;
 			}
 		}

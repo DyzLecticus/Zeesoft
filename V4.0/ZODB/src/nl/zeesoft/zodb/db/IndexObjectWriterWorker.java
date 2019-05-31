@@ -27,18 +27,16 @@ public class IndexObjectWriterWorker extends Worker {
 	public void stop() {
 		super.stop();
 		waitForStop(10,false);
-		List<IndexElement> elements = index.getChangedElements(0);
-		if (elements.size()>0) {
-			getMessenger().debug(this,"Remaining objects: " + elements.size());
-			List<IndexElement> remainder = writeChangedElements(elements);
-			while(remainder.size()>0) {
-				getMessenger().debug(this,"Remaining objects: " + elements.size());
-				whileWriting();
-				remainder = writeChangedElements(elements);
-			}
+		List<IndexElement> remaining = index.getChangedElements(0);
+		boolean leftOvers = false;
+		while(remaining.size()>0) {
+			leftOvers = true;
+			getMessenger().debug(this,"Remaining objects: " + remaining.size());
+			whileWriting();
+			remaining = writeChangedElements(remaining);
 		}
 		whileWriting();
-		if (elements.size()>0) {
+		if (leftOvers) {
 			getMessenger().debug(this,"Done");
 		}
 	}

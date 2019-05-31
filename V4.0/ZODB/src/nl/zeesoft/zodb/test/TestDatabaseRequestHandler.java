@@ -125,11 +125,13 @@ public class TestDatabaseRequestHandler extends TestObject {
 			if (res.results.size()>0) {
 				assertEqual(res.results.get(0).object.rootElement.children.get(0).value,new ZStringBuilder("changedObject003"),"Object with id 3 was not changed as expected");
 			}
+			
+			sleep(1000);
+			
+			config.destroy();
+		} else {
+			System.exit(1);
 		}
-				
-		sleep(1000);
-
-		config.destroy();
 	}
 	
 	private void addTestObjects(DatabaseRequestHandler handler) {

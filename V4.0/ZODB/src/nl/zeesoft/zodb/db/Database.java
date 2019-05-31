@@ -67,8 +67,6 @@ public class Database {
 		}
 		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index,newKey);
 		reader.start();
-		fileWriter.start();
-		objectWriter.start();
 		index.getObjectReader().start();
 		configuration.debug(this,"Started database");
 	}
@@ -191,6 +189,8 @@ public class Database {
 	
 	protected void stateChanged(boolean open) {
 		if (open) {
+			fileWriter.start();
+			objectWriter.start();
 			if (indexConfig.isRebuild()) {
 				configuration.debug(this,"Rebuilt indexes");
 				indexConfig.setRebuild(false);

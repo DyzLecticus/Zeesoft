@@ -21,6 +21,7 @@ public class IndexConfig extends Locker implements JsAble {
 	
 	private boolean				rebuild			= false;
 	private List<SearchIndex>	indexes 		= new ArrayList<SearchIndex>();
+	private List<SearchIndex>	objectIndexes	= new ArrayList<SearchIndex>();
 	
 	public IndexConfig(Messenger msgr) {
 		super(msgr);
@@ -34,62 +35,55 @@ public class IndexConfig extends Locker implements JsAble {
 		if (getIndexNoLock(IDX_MODIFIED)==null) {
 			addIndexNoLock(PFX_OBJ,"modified",true,false);
 		}
-		for (SearchIndex index: indexes) {
+		objectIndexes = new ArrayList<SearchIndex>(indexes);
+		for (SearchIndex index: objectIndexes) {
 			index.initialize(getMessenger());
 		}
 		unlockMe(this);
 	}
 
 	public void clear() {
-		lockMe(this);
-		for (SearchIndex index: indexes) {
+		for (SearchIndex index: objectIndexes) {
 			index.clear();
 		}
-		unlockMe(this);
 	}
 
 	public void destroy() {
-		lockMe(this);
-		for (SearchIndex index: indexes) {
+		for (SearchIndex index: objectIndexes) {
 			index.destroy();
 		}
-		unlockMe(this);
 	}
 	
 	public boolean hasObject(String name,IndexElement element) {
 		boolean r = false;
-		lockMe(this);
-		SearchIndex index = getIndexNoLock(name);
-		unlockMe(this);
-		if (index!=null) {
-			r = index.hasObject(element);
+		for (SearchIndex index: objectIndexes) {
+			if (index.getName().equals(name)) {
+				r = index.hasObject(element);
+				break;
+			}
 		}
 		return r;
 	}
 	
 	public void addObject(IndexElement element) {
-		lockMe(this);
-		for (SearchIndex index: getIndexesForObjectNameNoLock(element.name)) {
+		for (SearchIndex index: getIndexesForObjectName(element.name)) {
 			index.addObject(element);
 		}
-		unlockMe(this);
 	}
 	
 	public void removeObject(IndexElement element) {
-		lockMe(this);
-		for (SearchIndex index: getIndexesForObjectNameNoLock(element.name)) {
+		for (SearchIndex index: getIndexesForObjectName(element.name)) {
 			index.removeObject(element);
 		}
-		unlockMe(this);
 	}
 	
 	public List<IndexElement> listObjects(String name, boolean ascending,boolean invert,String operator,ZStringBuilder indexValue) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
-		lockMe(this);
-		SearchIndex index = getIndexNoLock(name);
-		unlockMe(this);
-		if (index!=null) {
-			r = index.listObjects(ascending, invert, operator, indexValue);
+		for (SearchIndex index: objectIndexes) {
+			if (index.getName().equals(name)) {
+				r = index.listObjects(ascending, invert, operator, indexValue);
+				break;
+			}
 		}
 		return r;
 	}
@@ -145,15 +139,12 @@ public class IndexConfig extends Locker implements JsAble {
 
 	public boolean objectHasUpdateIndexes(ZStringBuilder name) {
 		boolean r = false;
-		lockMe(this);
-		r = getIndexesForObjectNameNoLock(name).size()>2;
-		unlockMe(this);
+		r = getIndexesForObjectName(name).size()>2;
 		return r;
 	}
 	
 	public SortedMap<String,ZStringBuilder> getIndexValuesForObject(ZStringBuilder name,JsFile obj) {
-		lockMe(this);
-		List<SearchIndex> indexes = getIndexesForObjectNameNoLock(name);
+		List<SearchIndex> indexes = getIndexesForObjectName(name);
 		SortedMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>();
 		for (SearchIndex index: indexes) {
 			if (!index.getName().equals(IndexConfig.IDX_NAME) && !index.getName().equals(IDX_MODIFIED)) {
@@ -163,19 +154,16 @@ public class IndexConfig extends Locker implements JsAble {
 				}
 			}
 		}
-		unlockMe(this);
 		return r;
 	}
 	
 	public List<SearchIndex> getUniqueIndexesForObjectName(ZStringBuilder objectName) {
-		lockMe(this);
 		List<SearchIndex> r = new ArrayList<SearchIndex>();
-		for (SearchIndex index: getIndexesForObjectNameNoLock(objectName)) {
+		for (SearchIndex index: getIndexesForObjectName(objectName)) {
 			if (index.unique) {
 				r.add(index);
 			}
 		}
-		unlockMe(this);
 		return r;
 	}
 	
@@ -189,14 +177,12 @@ public class IndexConfig extends Locker implements JsAble {
 	
 	public SearchIndex getListIndex(String name) {
 		SearchIndex r = null;
-		lockMe(this);
-		for (SearchIndex index: indexes) {
-			if (!index.added && index.getName().equals(name)) {
+		for (SearchIndex index: objectIndexes) {
+			if (index.getName().equals(name)) {
 				r = index;
 				break;
 			}
 		}
-		unlockMe(this);
 		return r;
 	}
 	
@@ -212,7 +198,7 @@ public class IndexConfig extends Locker implements JsAble {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		lockMe(this);
-		json = toJsonNoLock(indexes);
+		json = toJsonNoLock(getListIndexesNoLock());
 		unlockMe(this);
 		return json;
 	}
@@ -273,6 +259,17 @@ public class IndexConfig extends Locker implements JsAble {
 		return r;
 	}
 
+	private List<SearchIndex> getListIndexesNoLock() {
+		List<SearchIndex> r = new ArrayList<SearchIndex>();
+		for (SearchIndex index: indexes) {
+			if (!index.added) {
+				r.add(index);
+			}
+		}
+		return r;
+	}
+
+
 	private SearchIndex getIndexNoLock(String name) {
 		SearchIndex r = null;
 		for (SearchIndex index: indexes) {
@@ -284,9 +281,9 @@ public class IndexConfig extends Locker implements JsAble {
 		return r;
 	}
 	
-	private List<SearchIndex> getIndexesForObjectNameNoLock(ZStringBuilder objectName) {
+	private List<SearchIndex> getIndexesForObjectName(ZStringBuilder objectName) {
 		List<SearchIndex> r = new ArrayList<SearchIndex>();
-		for (SearchIndex index: indexes) {
+		for (SearchIndex index: objectIndexes) {
 			if (!index.added && (index.objectNamePrefix.equals(PFX_OBJ) || objectName.startsWith(index.objectNamePrefix))) {
 				r.add(index);
 			}

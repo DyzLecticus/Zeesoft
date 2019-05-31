@@ -25,8 +25,11 @@ public class NumericIndex extends IndexObject {
 		BigDecimal key = getPropertyValue(element);
 		List<IndexElement> elems = map.get(key);
 		if (elems!=null) {
-			r = (listHasObjectNoLock(elems,element) && elems.size()>1) || elems.size()>0;
-			
+			if (listHasObjectNoLock(elems,element)) {
+				r = elems.size()>1;
+			} else {
+				r = elems.size()>0;
+			}
 		}
 		return r;
 	}
@@ -39,9 +42,7 @@ public class NumericIndex extends IndexObject {
 			elems = new ArrayList<IndexElement>();
 			map.put(key, elems);
 		}
-		if (!listHasObjectNoLock(elems,element)) {
-			elems.add(element);
-		}
+		elems.add(element);
 	}
 
 	@Override

@@ -41,9 +41,7 @@ public class StringIndex extends IndexObject {
 			elems = new ArrayList<IndexElement>();
 			map.put(key, elems);
 		}
-		if (!listHasObjectNoLock(elems,element)) {
-			elems.add(element);
-		}
+		elems.add(element);
 	}
 
 	@Override
