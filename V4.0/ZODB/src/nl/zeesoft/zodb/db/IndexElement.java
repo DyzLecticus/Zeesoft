@@ -23,7 +23,7 @@ public class IndexElement {
 	protected boolean						removed		= false;
 	
 	protected IndexElement() {
-		modified = (new Date()).getTime();
+		updateModified();
 	}
 	
 	public IndexElement copy() {
@@ -39,6 +39,10 @@ public class IndexElement {
 			r.idxValues.put(entry.getKey(), entry.getValue());
 		}
 		return r;
+	}
+	
+	protected void updateModified() {
+		modified = (new Date()).getTime();
 	}
 	
 	protected ZStringBuilder toStringBuilder(StringBuilder key) {

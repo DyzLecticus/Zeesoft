@@ -152,7 +152,7 @@ public class Index extends Locker {
 						indexConfig.removeObject(element);
 						element.name = name;
 						element.idxValues = copy.idxValues;
-						element.modified = copy.modified;
+						element.updateModified();
 						indexConfig.addObject(element);
 						if (!changedFileNums.contains(element.fileNum)) {
 							changedFileNums.add(element.fileNum);
@@ -652,7 +652,7 @@ public class Index extends Locker {
 					indexConfig.removeObject(element);
 					element.obj = obj;
 					element.idxValues = copy.idxValues;
-					element.modified = copy.modified;
+					element.updateModified();
 					indexConfig.addObject(element);
 					if (!changedFileNums.contains(element.fileNum)) {
 						changedFileNums.add(element.fileNum);
