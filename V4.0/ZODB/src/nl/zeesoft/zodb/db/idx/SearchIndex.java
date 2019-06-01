@@ -83,6 +83,10 @@ public class SearchIndex implements JsAble {
 	protected void addObject(IndexElement element) {
 		index.addObject(element);
 	}
+
+	protected void setObject(IndexElement element) {
+		index.setObject(element);
+	}
 	
 	protected void removeObject(IndexElement element) {
 		index.removeObject(element);

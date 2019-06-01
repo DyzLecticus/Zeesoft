@@ -33,6 +33,12 @@ public abstract class IndexObject extends Locker {
 		unlockMe(this);
 	}
 
+	protected void setObject(IndexElement element) {
+		lockMe(this);
+		setObjectNoLock(element);
+		unlockMe(this);
+	}
+
 	protected void removeObject(IndexElement element) {
 		lockMe(this);
 		removeObjectNoLock(element);
@@ -55,6 +61,7 @@ public abstract class IndexObject extends Locker {
 
 	protected abstract boolean hasObjectNoLock(IndexElement element); 
 	protected abstract void addObjectNoLock(IndexElement element);
+	protected abstract void setObjectNoLock(IndexElement element);
 	protected abstract void removeObjectNoLock(IndexElement element);
 	protected abstract List<IndexElement> listObjectsNoLock(boolean ascending,boolean invert,String operator,ZStringBuilder indexValue);
 	protected abstract void clearNoLock();

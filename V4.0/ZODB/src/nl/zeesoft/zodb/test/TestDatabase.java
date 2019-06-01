@@ -53,6 +53,7 @@ public class TestDatabase extends TestObject {
 			element = db.getObjectById(1L);
 			if (element!=null) {
 				assertEqual(element.name.toString(),"testObject001","Name of object found by id does not match expectation");
+				assertEqual(element.obj==null,false,"Object found by id does not match expectation");
 			} else {
 				assertEqual(false,true,"Object with id 1 not found");
 			}
@@ -60,6 +61,7 @@ public class TestDatabase extends TestObject {
 			element = db.getObjectByName(new ZStringBuilder("testObject002"));
 			if (element!=null) {
 				assertEqual(element.name.toString(),"testObject002","Name of object found by name does not match expectation");
+				assertEqual(element.obj==null,false,"Object found by name does not match expectation");
 			} else {
 				assertEqual(false,true,"Object with name 'testObject002' not found");
 			}
@@ -68,6 +70,7 @@ public class TestDatabase extends TestObject {
 			
 			element = db.getObjectByName(new ZStringBuilder("testObject125"));
 			if (element!=null) {
+				assertEqual(element.obj==null,false,"testObject125 does not match expectation");
 				element = db.removeObject(element.id,null);
 				if (element!=null) {
 					assertEqual(element.name.toString(),"testObject125","Removed object name does not match expectation");

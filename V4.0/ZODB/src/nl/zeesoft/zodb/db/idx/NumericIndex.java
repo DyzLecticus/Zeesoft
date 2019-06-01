@@ -46,6 +46,18 @@ public class NumericIndex extends IndexObject {
 	}
 
 	@Override
+	protected void setObjectNoLock(IndexElement element) {
+		BigDecimal key = getPropertyValue(element);
+		List<IndexElement> elems = map.get(key);
+		if (elems!=null) {
+			IndexElement set = getListObjectNoLock(elems,element);
+			if (set!=null) {
+				set.obj = element.obj;
+			}
+		}
+	}
+
+	@Override
 	protected void removeObjectNoLock(IndexElement element) {
 		BigDecimal key = getPropertyValue(element);
 		List<IndexElement> elems = map.get(key);
