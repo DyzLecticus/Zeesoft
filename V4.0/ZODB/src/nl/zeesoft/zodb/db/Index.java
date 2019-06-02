@@ -424,7 +424,7 @@ public class Index extends Locker {
 				list.add(elem.copy());
 			}
 			r.put(num,list);
-			changedDataFileNums.remove(num);
+			changedIndexFileNums.remove(num);
 			if (max>0 && r.size()>=max) {
 				break;
 			}
