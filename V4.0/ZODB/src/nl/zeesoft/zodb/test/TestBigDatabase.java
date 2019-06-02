@@ -44,8 +44,14 @@ public class TestBigDatabase extends TestObject {
 				System.out.println("Adding " + added + " objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			} else {
 				List<Integer> data = new ArrayList<Integer>();
-				db.listObjects(0, 10, 0L,0L, data);
+				List<IndexElement> elements = db.listObjects(0, 200000, 0L,0L, data);
 				System.out.println("Database has " + data.get(0) + " objects");
+				Date started = new Date();
+				System.out.println("Removing objects ...");
+				for (IndexElement elem: elements) {
+					db.removeObject(elem.id,null);
+				}
+				System.out.println("Removing " + elements.size() + " objects took: " + ((new Date()).getTime() - started.getTime()) + " ms");
 			}
 			
 			sleep(1000);

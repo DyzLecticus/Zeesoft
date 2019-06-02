@@ -420,8 +420,11 @@ public class Index extends Locker {
 		List<Integer> fileNums = new ArrayList<Integer>(changedIndexFileNums);
 		for (Integer num: fileNums) {
 			List<IndexElement> list = new ArrayList<IndexElement>();
-			for (IndexElement elem: elementsByIndexFileNum.get(num)) {
-				list.add(elem.copy());
+			List<IndexElement> elements = elementsByIndexFileNum.get(num);
+			if (elements!=null) {
+				for (IndexElement elem: elements) {
+					list.add(elem.copy());
+				}
 			}
 			r.put(num,list);
 			changedIndexFileNums.remove(num);
@@ -440,11 +443,14 @@ public class Index extends Locker {
 		List<Integer> fileNums = new ArrayList<Integer>(changedDataFileNums);
 		for (Integer num: fileNums) {
 			List<IndexElement> list = new ArrayList<IndexElement>();
-			for (IndexElement elem: elementsByDataFileNum.get(num)) {
-				IndexElement copy = elem.copy();
-				list.add(copy);
-				if (copy.obj==null) {
-					read.add(copy);
+			List<IndexElement> elements = elementsByDataFileNum.get(num);
+			if (elements!=null) {
+				for (IndexElement elem: elements) {
+					IndexElement copy = elem.copy();
+					list.add(copy);
+					if (copy.obj==null) {
+						read.add(copy);
+					}
 				}
 			}
 			r.put(num,list);

@@ -1,5 +1,6 @@
 package nl.zeesoft.zodb.db;
 
+import java.io.File;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -54,17 +55,24 @@ public class IndexFileWriteWorker extends Worker {
 	}
 	
 	private void writeChangedFiles(SortedMap<Integer,List<IndexElement>> files) {
-		// TODO: Remove empty files
 		for (int num: files.keySet()) {
 			String fileName = index.getFileDirectory() + num + ".txt";
 			ZStringBuilder content = new ZStringBuilder();
-			for (IndexElement elem: files.get(num)) {
-				if (content.length()>0) {
-					content.append("\n");
+			List<IndexElement> elements = files.get(num);
+			if (elements.size()==0) {
+				File file = new File(fileName);
+				if (file.exists() && !file.delete()) {
+					getMessenger().error(this,"Failed to delete file: " + fileName);
 				}
-				content.append(elem.toStringBuilder(index.getKey()));
+			} else {
+				for (IndexElement element: elements) {
+					if (content.length()>0) {
+						content.append("\n");
+					}
+					content.append(element.toStringBuilder(index.getKey()));
+				}
+				content.toFile(fileName);
 			}
-			content.toFile(fileName);
 		}
 	}
 }
