@@ -45,7 +45,7 @@ public class IndexFileReadWorker extends Worker {
 						IndexElement elem = new IndexElement();
 						elem.fromStringBuilder(line,index.getKey());
 						if (elem.name.length()>0 && elem.modified>0) {
-							elem.fileNum = fileNum;
+							elem.indexFileNum = fileNum;
 							elements.add(elem);
 						}
 					}

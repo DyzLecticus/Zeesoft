@@ -33,7 +33,7 @@ public class TestDatabaseRequestHandler extends TestObject {
 	protected void test(String[] args) {
 		Config config = new Config();
 		
-		Database db = TestDatabase.initializeTestDatabase(config,null,true);
+		Database db = TestDatabase.initializeTestDatabase(config,null,true,10);
 				
 		if (db.isOpen()) {
 			

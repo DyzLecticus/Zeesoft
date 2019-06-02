@@ -1,7 +1,10 @@
 package nl.zeesoft.zodb.db;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -13,19 +16,23 @@ import nl.zeesoft.zodb.db.idx.IndexConfig;
 import nl.zeesoft.zodb.db.idx.SearchIndex;
 
 public class Index extends Locker {
-	private int										blockSize			= 100;
+	private int										indexBlockSize			= 100;
+	private int										dataBlockSize			= 10;
 	
-	private Database								db					= null;
-	private IndexConfig								indexConfig			= null;
-	private IndexObjectReaderWorker					objectReader		= null;
+	private Database								db						= null;
+	private IndexConfig								indexConfig				= null;
+	private IndexObjectReaderWorker					objectReader			= null;
 	
-	private SortedMap<Long,IndexElement>			elementsById		= new TreeMap<Long,IndexElement>();
-	private SortedMap<Integer,List<IndexElement>>	elementsByFileNum	= new TreeMap<Integer,List<IndexElement>>();
+	private SortedMap<Long,IndexElement>			elementsById			= new TreeMap<Long,IndexElement>();
+	private SortedMap<Integer,List<IndexElement>>	elementsByIndexFileNum	= new TreeMap<Integer,List<IndexElement>>();
+	private SortedMap<Integer,List<IndexElement>>	elementsByDataFileNum	= new TreeMap<Integer,List<IndexElement>>();
+	private Set<Integer>							availableIndexFileNums	= new HashSet<Integer>();
+	private Set<Integer>							availableDataFileNums	= new HashSet<Integer>();
 	
-	private List<Integer>							changedFileNums		= new ArrayList<Integer>();
-	private List<IndexElement>						changedElements		= new ArrayList<IndexElement>();
+	private Set<Integer>							changedIndexFileNums	= new HashSet<Integer>();
+	private Set<Integer>							changedDataFileNums		= new HashSet<Integer>();
 	
-	private boolean									open				= false;
+	private boolean									open					= false;
 	
 	protected Index(Config config,Database db,IndexConfig indexConfig) {
 		super(config.getMessenger());
@@ -144,9 +151,7 @@ public class Index extends Locker {
 						element.idxValues = copy.idxValues;
 						element.updateModified();
 						indexConfig.addObject(element.copy());
-						if (!changedFileNums.contains(element.fileNum)) {
-							changedFileNums.add(element.fileNum);
-						}
+						changedIndexFileNums.add(element.indexFileNum);
 					}
 				}
 			} else if (errors!=null) {
@@ -207,6 +212,7 @@ public class Index extends Locker {
 	}
 
 	protected void readObjects(List<IndexElement> elements) {
+		List<Integer> fileNumList = new ArrayList<Integer>();
 		List<Long> idList = new ArrayList<Long>();
 		for (IndexElement element: elements) {
 			lockMe(this);
@@ -215,13 +221,16 @@ public class Index extends Locker {
 				if (elem.obj!=null) {
 					element.obj = elem.obj;
 				} else {
+					if (!fileNumList.contains(element.dataFileNum)) {
+						fileNumList.add(element.dataFileNum);
+					}
 					idList.add(element.id);
 				}
 			}
 			unlockMe(this);
 		}
-		if (idList.size()>0) {
-			objectReader.addIdList(idList);
+		if (fileNumList.size()>0) {
+			objectReader.addFileNums(fileNumList);
 			waitForObjectRead(idList);
 			for (IndexElement element: elements) {
 				lockMe(this);
@@ -268,20 +277,20 @@ public class Index extends Locker {
 		}
 	}
 	
-	protected void readObject(long id,JsFile obj) {
-		IndexElement element = null;
+	protected void readObjects(SortedMap<Long,JsFile> idObjMap) {
+		List<IndexElement> elements = new ArrayList<IndexElement>();
 		lockMe(this);
 		if (open) {
-			element = elementsById.get(id);
-			if (element!=null) {
-				element.obj = obj;
-				element = element.copy();
+			for (Entry<Long,JsFile> entry: idObjMap.entrySet()) {
+				IndexElement element = elementsById.get(entry.getKey());
+				if (element!=null && element.obj==null) {
+					element.obj = entry.getValue();
+					elements.add(element.copy());
+				}
 			}
 		}
 		unlockMe(this);
-		if (element!=null) {
-			indexConfig.setObject(element);
-		}
+		indexConfig.setObjects(elements);
 	}
 
 	protected String getFileDirectory() {
@@ -317,11 +326,9 @@ public class Index extends Locker {
 		lockMe(this);
 		List<IndexElement> elements = new ArrayList<IndexElement>(elementsById.values());
 		for (IndexElement element: elements) {
-			if (!changedFileNums.contains(element.fileNum)) {
-				changedFileNums.add(element.fileNum);
-			}
+			changedIndexFileNums.add(element.indexFileNum);
 			if (includeObjects) {
-				changedElements.add(element);
+				changedDataFileNums.add(element.dataFileNum);
 			}
 		}
 		unlockMe(this);
@@ -341,12 +348,23 @@ public class Index extends Locker {
 				indexConfig.addObject(element.copy());
 			}
 		}
-		this.open = open;
-		if (!open) {
-			elementsById.clear();
-			elementsByFileNum.clear();
-			indexConfig.clear();
+		if (open) {
+			if (elementsByIndexFileNum.size()>0) {
+				for (int i = elementsByIndexFileNum.lastKey(); i>=0; i--) {
+					if (elementsByIndexFileNum.get(i).size()<indexBlockSize) {
+						availableIndexFileNums.add(i);
+					}
+				}
+			}
+			if (elementsByDataFileNum.size()>0) {
+				for (int i = elementsByDataFileNum.lastKey(); i>=0; i--) {
+					if (elementsByDataFileNum.get(i).size()<dataBlockSize) {
+						availableDataFileNums.add(i);
+					}
+				}
+			}
 		}
+		this.open = open;
 		unlockMe(this);
 		db.stateChanged(open);
 		if (rebuild) {
@@ -361,10 +379,17 @@ public class Index extends Locker {
 		unlockMe(this);
 		return r;
 	}
+	
+	protected void clear() {
+		lockMe(this);
+		clearNoLock();
+		unlockMe(this);
+	}
 
 	protected void destroy() {
 		lockMe(this);
 		if (!open) {
+			clearNoLock();
 			db = null;
 			objectReader.destroy();
 		}
@@ -373,9 +398,15 @@ public class Index extends Locker {
 
 	protected void addFileElements(Integer fileNum,List<IndexElement> elements) {
 		lockMe(this);
-		elementsByFileNum.put(fileNum,elements);
+		elementsByIndexFileNum.put(fileNum,elements);
 		for (IndexElement elem: elements) {
 			elementsById.put(elem.id,elem);
+			List<IndexElement> list = elementsByDataFileNum.get(elem.dataFileNum);
+			if (list==null) {
+				list = new ArrayList<IndexElement>();
+				elementsByDataFileNum.put(elem.dataFileNum,list);
+			}
+			list.add(elem);
 		}
 		unlockMe(this);
 		for (IndexElement elem: elements) {
@@ -383,38 +414,47 @@ public class Index extends Locker {
 		}
 	}
 
-	protected SortedMap<Integer,List<IndexElement>> getChangedFiles() {
+	protected SortedMap<Integer,List<IndexElement>> getChangedIndexFiles(int max) {
 		SortedMap<Integer,List<IndexElement>> r = new TreeMap<Integer,List<IndexElement>>();
 		lockMe(this);
-		for (Integer num: changedFileNums) {
+		List<Integer> fileNums = new ArrayList<Integer>(changedIndexFileNums);
+		for (Integer num: fileNums) {
 			List<IndexElement> list = new ArrayList<IndexElement>();
-			for (IndexElement elem: elementsByFileNum.get(num)) {
+			for (IndexElement elem: elementsByIndexFileNum.get(num)) {
 				list.add(elem.copy());
 			}
 			r.put(num,list);
-		}
-		changedFileNums.clear();
-		unlockMe(this);
-		return r;
-	}
-	
-	protected List<IndexElement> getChangedElements(int max) {
-		List<IndexElement> r = new ArrayList<IndexElement>();
-		lockMe(this);
-		int added = 0;
-		List<IndexElement> list = new ArrayList<IndexElement>(changedElements);
-		for (IndexElement elem: list) {
-			if (!(elem.added && elem.removed)) {
-				r.add(elem.copy());
-				added++;
-			}
-			elem.added = false;
-			changedElements.remove(elem);
-			if (max>0 && added>=max) {
+			changedDataFileNums.remove(num);
+			if (max>0 && r.size()>=max) {
 				break;
 			}
 		}
 		unlockMe(this);
+		return r;
+	}
+
+	protected SortedMap<Integer,List<IndexElement>> getChangedDataFiles(int max) {
+		SortedMap<Integer,List<IndexElement>> r = new TreeMap<Integer,List<IndexElement>>();
+		List<IndexElement> read = new ArrayList<IndexElement>();
+		lockMe(this);
+		List<Integer> fileNums = new ArrayList<Integer>(changedDataFileNums);
+		for (Integer num: fileNums) {
+			List<IndexElement> list = new ArrayList<IndexElement>();
+			for (IndexElement elem: elementsByDataFileNum.get(num)) {
+				IndexElement copy = elem.copy();
+				list.add(copy);
+				if (copy.obj==null) {
+					read.add(copy);
+				}
+			}
+			r.put(num,list);
+			changedDataFileNums.remove(num);
+			if (max>0 && r.size()>=max) {
+				break;
+			}
+		}
+		unlockMe(this);
+		readObjects(read);
 		return r;
 	}
 
@@ -548,6 +588,15 @@ public class Index extends Locker {
 		return r;
 	}
 	
+	private void clearNoLock() {
+		elementsById.clear();
+		elementsByIndexFileNum.clear();
+		elementsByDataFileNum.clear();
+		availableIndexFileNums.clear();
+		availableDataFileNums.clear();
+		indexConfig.clear();
+	}
+	
 	private IndexElement addObjectNoLock(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
 		Database.removeControlCharacters(name);
 		IndexElement r = null;
@@ -562,22 +611,37 @@ public class Index extends Locker {
 			r.obj = obj;
 			r.idxValues = element.idxValues;
 			r.modified = element.modified;
-			r.fileNum = getFileNumForNewObjectNoLock();
+			r.indexFileNum = getIndexFileNumForNewObjectNoLock();
+			r.dataFileNum = getDataFileNumForNewObjectNoLock();
 			r.added = true;
 			
 			elementsById.put(r.id,r);
-			List<IndexElement> list = elementsByFileNum.get(r.fileNum);
+			List<IndexElement> list = elementsByIndexFileNum.get(r.indexFileNum);
 			if (list==null) {
 				list = new ArrayList<IndexElement>();
-				elementsByFileNum.put(r.fileNum,list);
+				elementsByIndexFileNum.put(r.indexFileNum,list);
+				availableIndexFileNums.add(r.indexFileNum);
 			}
 			list.add(r);
+			if (list.size()>=indexBlockSize) {
+				availableIndexFileNums.remove(r.indexFileNum);
+			}
+				
+			list = elementsByDataFileNum.get(r.dataFileNum);
+			if (list==null) {
+				list = new ArrayList<IndexElement>();
+				elementsByDataFileNum.put(r.dataFileNum,list);
+				availableDataFileNums.add(r.dataFileNum);
+			}
+			list.add(r);
+			if (list.size()>=dataBlockSize) {
+				availableDataFileNums.remove(r.dataFileNum);
+			}
+
 			indexConfig.addObject(r.copy());
 			
-			if (!changedFileNums.contains(r.fileNum)) {
-				changedFileNums.add(r.fileNum);
-			}
-			changedElements.add(r);
+			changedIndexFileNums.add(r.indexFileNum);
+			changedDataFileNums.add(r.dataFileNum);
 			r = r.copy();
 		}
 		return r;
@@ -591,18 +655,29 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private int getFileNumForNewObjectNoLock() {
+	private int getIndexFileNumForNewObjectNoLock() {
 		int r = -1;
-		if (elementsByFileNum.size()>0) {
-			for (int i = 0; i <= elementsByFileNum.lastKey(); i++) {
-				if (elementsByFileNum.get(i).size()<blockSize) {
-					r = i;
-					break;
-				}
+		if (availableIndexFileNums.size()==0) {
+			if (elementsByIndexFileNum.size()>0) {
+				r = (elementsByIndexFileNum.lastKey() + 1);
 			}
-			if (r<0) {
-				r = (elementsByFileNum.lastKey() + 1);
+		} else {
+			r = availableIndexFileNums.iterator().next();
+		}
+		if (r<0) {
+			r = 0;
+		}
+		return r;
+	}
+	
+	private int getDataFileNumForNewObjectNoLock() {
+		int r = -1;
+		if (availableDataFileNums.size()==0) {
+			if (elementsByDataFileNum.size()>0) {
+				r = (elementsByDataFileNum.lastKey() + 1);
 			}
+		} else {
+			r = availableDataFileNums.iterator().next();
 		}
 		if (r<0) {
 			r = 0;
@@ -622,13 +697,8 @@ public class Index extends Locker {
 					element.idxValues = copy.idxValues;
 					element.updateModified();
 					indexConfig.addObject(element.copy());
-					if (!changedFileNums.contains(element.fileNum)) {
-						changedFileNums.add(element.fileNum);
-					}
-					if (changedElements.contains(element)) {
-						changedElements.remove(element);
-					}
-					changedElements.add(element);
+					changedIndexFileNums.add(element.indexFileNum);
+					changedDataFileNums.add(element.dataFileNum);
 				}
 			}
 		} else if (errors!=null) {
@@ -665,16 +735,29 @@ public class Index extends Locker {
 		IndexElement r = null;
 		if (elementsById.containsKey(id)) {
 			r = elementsById.remove(id);
-			elementsByFileNum.get(r.fileNum).remove(r);
+			
+			List<IndexElement> list = elementsByIndexFileNum.get(r.indexFileNum);
+			list.remove(r);
+			if (list.size()==0) {
+				elementsByIndexFileNum.remove(r.indexFileNum);
+				availableIndexFileNums.add(r.indexFileNum);
+			} else if (list.size() < indexBlockSize) {
+				availableIndexFileNums.add(r.indexFileNum);
+			}
+			
+			list = elementsByDataFileNum.get(r.dataFileNum);
+			list.remove(r);
+			if (list.size()==0) {
+				elementsByDataFileNum.remove(r.dataFileNum);
+				availableDataFileNums.add(r.dataFileNum);
+			} else if (list.size() < dataBlockSize) {
+				availableDataFileNums.add(r.dataFileNum);
+			}
+			
 			indexConfig.removeObject(r);
 			r.removed = true;
-			if (!changedFileNums.contains(r.fileNum)) {
-				changedFileNums.add(r.fileNum);
-			}
-			if (changedElements.contains(r)) {
-				changedElements.remove(r);
-			}
-			changedElements.add(r);
+			changedIndexFileNums.add(r.indexFileNum);
+			changedDataFileNums.add(r.indexFileNum);
 			IndexElement ori = r;
 			r = r.copy();
 			ori.obj = null;

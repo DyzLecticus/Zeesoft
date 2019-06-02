@@ -2,6 +2,7 @@ package nl.zeesoft.zodb.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -11,30 +12,23 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 public class IndexObjectReaderWorker extends Worker {
 	private	Index						index		= null;
 	
-	private List<Long>					queue		= new ArrayList<Long>();
-	private List<Long>					reading		= new ArrayList<Long>();
+	private List<Integer>				queue		= new ArrayList<Integer>();
+	private List<Integer>				reading		= new ArrayList<Integer>();
 	
 	protected IndexObjectReaderWorker(Messenger msgr, WorkerUnion union,Index index) {
 		super(msgr, union);
 		this.index = index;
 		setSleep(100);
 	}
-	
-	protected void addId(long id) {
-		lockMe(this);
-		boolean added = addIdNoLock(id);
-		unlockMe(this);
-		if (added) {
-			setSleep(0);
-		}
-	}
 
-	protected void addIdList(List<Long> idList) {
-		if (idList.size()>0) {
+	protected void addFileNums(List<Integer> fileNumList) {
+		if (fileNumList.size()>0) {
 			boolean added = false;
 			lockMe(this);
-			for (Long id: idList) {
-				addIdNoLock(id);
+			for (Integer fileNum: fileNumList) {
+				if (!queue.contains(fileNum) && !reading.contains(fileNum)) {
+					queue.add(fileNum);
+				}
 			}
 			unlockMe(this);
 			if (added) {
@@ -55,9 +49,9 @@ public class IndexObjectReaderWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		List<Long> list = null;
+		List<Integer> list = null;
 		lockMe(this);
-		list = new ArrayList<Long>();
+		list = new ArrayList<Integer>();
 		if (queue.size()>0) {
 			int add = (1000 - reading.size());
 			if (add>0) {
@@ -65,16 +59,16 @@ public class IndexObjectReaderWorker extends Worker {
 					if (queue.size()==0) {
 						break;
 					}
-					Long id = queue.get(0);
-					reading.add(id);
-					list.add(id);
+					int fileNum = queue.get(0);
+					reading.add(fileNum);
+					list.add(fileNum);
 					queue.remove(0);
 				}
 			}
 		}
 		unlockMe(this);
 		if (list.size()>0) {
-			readIdList(list);
+			readFileNumList(list);
 			setSleep(1);
 		} else {
 			setSleep(100);
@@ -90,36 +84,27 @@ public class IndexObjectReaderWorker extends Worker {
 		unlockMe(this);
 	}
 	
-	protected void readObject(long id,JsFile obj) {
+	protected void readObjects(int fileNum,SortedMap<Long,JsFile> idObjMap) {
 		if (isWorking()) {
 			lockMe(this);
 			if (index!=null) {
-				index.readObject(id,obj);
+				index.readObjects(idObjMap);
 			}
-			reading.remove(id);
+			reading.remove(fileNum);
 			unlockMe(this);
 		}
 	}
 	
-	private void readIdList(List<Long> idList) {
+	private void readFileNumList(List<Integer> fileNumList) {
 		List<IndexObjectReadWorker> workers = new ArrayList<IndexObjectReadWorker>();
-		for (Long id: idList) {
-			String fileName = index.getObjectDirectory() + id + ".txt";
-			workers.add(new IndexObjectReadWorker(getMessenger(),getUnion(),this,id,fileName,index.getKey()));
+		for (Integer fileNum: fileNumList) {
+			String fileName = index.getObjectDirectory() + fileNum + ".txt";
+			workers.add(new IndexObjectReadWorker(getMessenger(),getUnion(),this,fileNum,fileName,index.getKey()));
 		}
 		if (workers.size()>0) {
 			for (IndexObjectReadWorker worker: workers) {
 				worker.start();
 			}
 		}
-	}
-	
-	private boolean addIdNoLock(long id) {
-		boolean r = false;
-		if (!queue.contains(id) && !reading.contains(id)) {
-			queue.add(id);
-			r = true;
-		}
-		return r;
 	}
 }

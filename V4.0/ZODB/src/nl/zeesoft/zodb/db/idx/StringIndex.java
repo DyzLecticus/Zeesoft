@@ -20,17 +20,7 @@ public class StringIndex extends IndexObject {
 
 	@Override
 	protected boolean hasObjectNoLock(IndexElement element) {
-		boolean r = false;
-		ZStringBuilder key = getPropertyValue(element);
-		List<IndexElement> elems = map.get(key);
-		if (elems!=null) {
-			if (listHasObjectNoLock(elems,element)) {
-				r = elems.size()>1;
-			} else {
-				r = elems.size()>0;
-			}
-		}
-		return r;
+		return map.containsKey(getPropertyValue(element));
 	}
 	
 	@Override
@@ -46,8 +36,7 @@ public class StringIndex extends IndexObject {
 
 	@Override
 	protected void setObjectNoLock(IndexElement element) {
-		ZStringBuilder key = getPropertyValue(element);
-		List<IndexElement> elems = map.get(key);
+		List<IndexElement> elems = map.get(getPropertyValue(element));
 		if (elems!=null) {
 			IndexElement set = getListObjectNoLock(elems,element);
 			if (set!=null) {

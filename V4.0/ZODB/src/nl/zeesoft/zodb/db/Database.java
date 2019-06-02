@@ -81,6 +81,7 @@ public class Database {
 			if (indexConfig.isRebuild()) {
 				writeConfig();
 			}
+			index.clear();
 			configuration.debug(this,"Stopped database");
 		}
 	}

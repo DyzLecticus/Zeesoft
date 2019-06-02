@@ -77,6 +77,14 @@ public class IndexConfig extends Locker implements JsAble {
 		}
 	}
 	
+	public void setObjects(List<IndexElement> elements) {
+		for (IndexElement element: elements) {
+			for (SearchIndex index: getIndexesForObjectName(element.name)) {
+				index.setObject(element);
+			}
+		}
+	}
+	
 	public void removeObject(IndexElement element) {
 		for (SearchIndex index: getIndexesForObjectName(element.name)) {
 			index.removeObject(element);

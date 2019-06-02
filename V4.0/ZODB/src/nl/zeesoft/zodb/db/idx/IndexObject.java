@@ -38,7 +38,7 @@ public abstract class IndexObject extends Locker {
 		setObjectNoLock(element);
 		unlockMe(this);
 	}
-
+	
 	protected void removeObject(IndexElement element) {
 		lockMe(this);
 		removeObjectNoLock(element);
@@ -71,10 +71,6 @@ public abstract class IndexObject extends Locker {
 		clearNoLock();
 		index = null;
 		unlockMe(this);
-	}
-	
-	protected boolean listHasObjectNoLock(List<IndexElement> elements,IndexElement element) {
-		return getListObjectNoLock(elements,element) != null;
 	}
 
 	protected IndexElement getListObjectNoLock(List<IndexElement> elements,IndexElement element) {

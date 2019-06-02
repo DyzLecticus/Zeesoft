@@ -23,7 +23,7 @@ public class TestDatabaseKeyChange extends TestObject {
 	protected void test(String[] args) {
 		Config config = new Config();
 		
-		Database db = TestDatabase.initializeTestDatabase(config,new StringBuilder("0123012345678901234567890123456789012345678901234567890123456789"),true);
+		Database db = TestDatabase.initializeTestDatabase(config,new StringBuilder("0123012345678901234567890123456789012345678901234567890123456789"),true,30);
 		
 		if (db.isOpen()) {
 			config.destroy();

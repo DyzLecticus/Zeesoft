@@ -3,13 +3,16 @@ package nl.zeesoft.zodb.db;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class IndexObjectWriterWorker extends Worker {
-	private static final int	MAX			= 1000;
+	private static final int	MAX			= 100;
 	
 	private	Index				index		= null;
 	
@@ -27,13 +30,13 @@ public class IndexObjectWriterWorker extends Worker {
 	public void stop() {
 		super.stop();
 		waitForStop(10,false);
-		List<IndexElement> remaining = index.getChangedElements(0);
+		SortedMap<Integer,List<IndexElement>> remaining = writeChangedFiles(index.getChangedDataFiles(0));
 		boolean leftOvers = false;
 		while(remaining.size()>0) {
 			leftOvers = true;
-			getMessenger().debug(this,"Remaining objects: " + remaining.size());
+			getMessenger().debug(this,"Remaining object files: " + remaining.size());
 			whileWriting();
-			remaining = writeChangedElements(remaining);
+			remaining = writeChangedFiles(remaining);
 		}
 		whileWriting();
 		if (leftOvers) {
@@ -44,10 +47,14 @@ public class IndexObjectWriterWorker extends Worker {
 	@Override
 	public void whileWorking() {
 		if (!isWriting()) {
-			List<IndexElement> elements = index.getChangedElements(MAX);
-			if (elements.size()>0) {
-				writeChangedElements(elements);
-				setSleep(1);
+			SortedMap<Integer,List<IndexElement>> files = index.getChangedDataFiles(MAX);
+			if (files.size()>0) {
+				writeChangedFiles(files);
+				if (files.size()==MAX) {
+					setSleep(1);
+				} else {
+					setSleep(10);
+				}
 			} else {
 				setSleep(100);
 			}
@@ -71,21 +78,21 @@ public class IndexObjectWriterWorker extends Worker {
 		}
 		unlockMe(this);
 	}
-	
-	private List<IndexElement> writeChangedElements(List<IndexElement> elements) {
-		List<IndexElement> r = new ArrayList<IndexElement>(elements);
+
+	private SortedMap<Integer,List<IndexElement>> writeChangedFiles(SortedMap<Integer,List<IndexElement>> files) {
+		SortedMap<Integer,List<IndexElement>> r = new TreeMap<Integer,List<IndexElement>>(files);
 		List<IndexObjectWriteWorker> workers = new ArrayList<IndexObjectWriteWorker>();
 		int i = 0;
-		for (IndexElement elem: elements) {
-			r.remove(elem);
-			String fileName = index.getObjectDirectory() + elem.id + ".txt";
-			if (elem.removed) {
+		for (Entry<Integer,List<IndexElement>> entry: files.entrySet()) {
+			r.remove(entry.getKey());
+			String fileName = index.getObjectDirectory() + entry.getKey() + ".txt";
+			if (entry.getValue().size()==0) {
 				File file = new File(fileName);
-				if (!file.delete()) {
+				if (file.exists() && !file.delete()) {
 					getMessenger().error(this,"Failed to delete file: " + fileName);
 				}
-			} else if (elem.obj!=null) {
-				workers.add(new IndexObjectWriteWorker(getMessenger(),getUnion(),this,fileName,elem.obj,index.getKey()));
+			} else {
+				workers.add(new IndexObjectWriteWorker(getMessenger(),getUnion(),this,fileName,entry.getValue(),index.getKey()));
 			}
 			i++;
 			if (i>=MAX) {

@@ -35,7 +35,7 @@ public class TestDatabase extends TestObject {
 	protected void test(String[] args) {
 		Config config = new Config();
 		
-		Database db = initializeTestDatabase(config,null,true);
+		Database db = initializeTestDatabase(config,null,true,10);
 
 		if (db.isOpen()) {
 			
@@ -177,7 +177,7 @@ public class TestDatabase extends TestObject {
 		}
 	}
 	
-	public static Database initializeTestDatabase(Config config,StringBuilder newKey,boolean testIndexes) {
+	public static Database initializeTestDatabase(Config config,StringBuilder newKey,boolean testIndexes,int timeOut) {
 		File dir = new File("dist/data/ZODB/Index");
 		if (!dir.exists()) {
 			dir.mkdirs();
@@ -197,6 +197,8 @@ public class TestDatabase extends TestObject {
 			db.getIndexConfig().addIndex("testObject","num",true,true);
 			db.getIndexConfig().getIndex("testObject:num").added = false;
 			db.getIndexConfig().setRebuild(false);
+		} else {
+			db.getIndexConfig().getIndex(ModZODB.NAME + "/Objects/:testData").added = false;
 		}
 
 		config.initialize(true,"dist/","",false);
@@ -211,7 +213,7 @@ public class TestDatabase extends TestObject {
 				e.printStackTrace();
 			}
 			i++;
-			if (i >= 10) {
+			if (i >= timeOut) {
 				break;
 			}
 		}

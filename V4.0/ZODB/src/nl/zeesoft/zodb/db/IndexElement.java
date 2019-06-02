@@ -11,11 +11,12 @@ import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class IndexElement {
-	public long								id			= 0L;
-	public ZStringBuilder					name		= new ZStringBuilder();
-	public long								modified	= 0L;
-	public int								fileNum		= 0;
-	public JsFile							obj			= null;
+	public long								id				= 0L;
+	public ZStringBuilder					name			= new ZStringBuilder();
+	public long								modified		= 0L;
+	public int								indexFileNum	= 0;
+	public int								dataFileNum		= 0;
+	public JsFile							obj				= null;
 	
 	public SortedMap<String,ZStringBuilder>	idxValues	= new TreeMap<String,ZStringBuilder>();
 	
@@ -31,7 +32,8 @@ public class IndexElement {
 		r.id = this.id;
 		r.name = this.name;
 		r.modified = this.modified;
-		r.fileNum = this.fileNum;
+		r.indexFileNum = this.indexFileNum;
+		r.dataFileNum = this.dataFileNum;
 		r.obj = this.obj;
 		r.removed = this.removed;
 		r.added = this.added;
@@ -53,6 +55,8 @@ public class IndexElement {
 		r.append("\t");
 		r.append("" + modified);
 		r.append("\t");
+		r.append("" + dataFileNum);
+		r.append("\t");
 		ZStringEncoder encoder = new ZStringEncoder();
 		for (Entry<String,ZStringBuilder> entry: idxValues.entrySet()) {
 			if (encoder.length()>0) {
@@ -69,7 +73,7 @@ public class IndexElement {
 	
 	protected void fromStringBuilder(ZStringBuilder str,StringBuilder key) {
 		List<ZStringBuilder> split = str.split("\t");
-		if (split.size()==4) {
+		if (split.size()==5) {
 			String v = split.get(0).toString();
 			if (ZStringEncoder.isNumber(v)) {
 				id = Long.parseLong(v);
@@ -79,7 +83,11 @@ public class IndexElement {
 			if (ZStringEncoder.isNumber(v)) {
 				modified = Long.parseLong(v);
 			}
-			ZStringEncoder encoder = new ZStringEncoder(split.get(3));
+			v = split.get(3).toString();
+			if (ZStringEncoder.isNumber(v)) {
+				dataFileNum = Integer.parseInt(v);
+			}
+			ZStringEncoder encoder = new ZStringEncoder(split.get(4));
 			encoder.decodeKey(key,0);
 			List<ZStringBuilder> idxVals = encoder.split("\t");
 			int i = 0;

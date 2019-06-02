@@ -33,18 +33,8 @@ public class TestBigDatabase extends TestObject {
 	protected void test(String[] args) {
 		Config config = new Config();
 		
-		Database db = TestDatabase.initializeTestDatabase(config,null,false);
+		Database db = TestDatabase.initializeTestDatabase(config,null,false,30);
 
-		int i = 0;
-		while(!db.isOpen()) {
-			sleep(1000);
-			i++;
-			if (i >= 110) {
-				break;
-			}
-		}
-		assertEqual(db.isOpen(),true,"Failed to initialize BIG database within " + (i + 10) + " seconds");
-		
 		if (db.isOpen()) {
 			IndexElement element = db.getObjectById(1L);
 			if (element==null) {
@@ -68,7 +58,7 @@ public class TestBigDatabase extends TestObject {
 	
 	private int addTestObjects(Database db) {
 		int r = 0;
-		for (int i = 1; i <= 250000; i++) {
+		for (int i = 1; i <= 200000; i++) {
 			ZStringBuilder name = new ZStringBuilder(ModZODB.NAME + "/Objects/testObject");
 			name.append(String.format("%06d",i));
 			if (addTestObject(db,name)!=null) {
