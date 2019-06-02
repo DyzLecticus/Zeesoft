@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zodb.db.idx.IndexConfig;
 
 public class DatabaseRequest implements JsAble {
 	public static final String	TYPE_ADD			= "ADD";
@@ -27,8 +28,6 @@ public class DatabaseRequest implements JsAble {
 	public int					max					= 10;
 	public long					id					= 0L;
 	public ZStringBuilder		name				= new ZStringBuilder();
-	public ZStringBuilder		contains			= new ZStringBuilder();
-	public ZStringBuilder		startsWith			= new ZStringBuilder();
 	public long					modAfter			= 0L;
 	public long					modBefore			= 0L;
 	public String				encoding			= "";
@@ -50,6 +49,13 @@ public class DatabaseRequest implements JsAble {
 		this.type = type;
 	}
 	
+	public DatabaseRequest(String type,String nameStartsWith) {
+		this.type = type;
+		this.index = IndexConfig.IDX_NAME;
+		this.operator = OP_STARTS_WITH;
+		this.value.append(nameStartsWith);
+	}
+
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
@@ -60,19 +66,12 @@ public class DatabaseRequest implements JsAble {
 		}
 		if (name.length()>0) {
 			json.rootElement.children.add(new JsElem("name",name,true));
-		} else if (contains.length()>0) {
-			json.rootElement.children.add(new JsElem("contains",contains,true));
-		} else if (startsWith.length()>0) {
-			json.rootElement.children.add(new JsElem("startsWith",startsWith,true));
 		}
 		if (type.equals(TYPE_LIST)) {
 			json.rootElement.children.add(new JsElem("start","" + start));
 			json.rootElement.children.add(new JsElem("max","" + max));
 		}
-		if (type.equals(TYPE_LIST) ||
-			(type.equals(TYPE_GET) && (startsWith.length()>0 || contains.length()>0)) ||
-			(type.equals(TYPE_REMOVE) && (startsWith.length()>0 || contains.length()>0))
-			) {
+		if (type.equals(TYPE_LIST) || type.equals(TYPE_GET) || type.equals(TYPE_REMOVE)) {
 			if (modAfter>0L) {
 				json.rootElement.children.add(new JsElem("modAfter","" + modAfter));
 			}
@@ -111,8 +110,6 @@ public class DatabaseRequest implements JsAble {
 			max = json.rootElement.getChildInt("max",max);
 			id = json.rootElement.getChildLong("id",id);
 			name = json.rootElement.getChildZStringBuilder("name",name);
-			contains = json.rootElement.getChildZStringBuilder("contains",contains);
-			startsWith = json.rootElement.getChildZStringBuilder("startsWith",startsWith);
 			modAfter = json.rootElement.getChildLong("modAfter",modAfter);
 			modBefore = json.rootElement.getChildLong("modBefore",modBefore);
 			

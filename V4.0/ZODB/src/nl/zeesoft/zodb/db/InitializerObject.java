@@ -231,8 +231,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	}
 
 	private void listObjectsInDatabaseNoLock() {
-		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-		request.startsWith = new ZStringBuilder(namePrefix);
+		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST,namePrefix);
 		request.max = maxObjects;
 		configuration.handleDatabaseRequest(request,this);
 	}

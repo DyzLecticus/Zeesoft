@@ -45,10 +45,6 @@ public class DatabaseRequestHandler {
 						if (element!=null) {
 							response.results.add(new DatabaseResult(element));
 						}
-					} else if (request.startsWith.length()>0) {
-						response.resultsFromElements(database.getObjectsByNameStartsWith(request.startsWith,request.modAfter,request.modBefore));
-					} else if (request.contains.length()>0) {
-						response.resultsFromElements(database.getObjectsByNameContains(request.contains,request.modAfter,request.modBefore));
 					} else if (request.index.length()>0) {
 						response.resultsFromElements(database.getObjectsUseIndex(request.ascending,request.index,request.invert,request.operator,request.value,request.modAfter,request.modBefore));
 					}
@@ -68,10 +64,6 @@ public class DatabaseRequestHandler {
 					List<Integer> data = new ArrayList<Integer>();
 					if (request.index.length()>0) {
 						list = database.listObjectsUseIndex(request.start,request.max,request.ascending,request.index,request.invert,request.operator,request.value,request.modAfter,request.modBefore,data);
-					} else if (request.startsWith.length()>0) {
-						list = database.listObjectsThatStartWith(request.startsWith,request.start,request.max,request.modAfter,request.modBefore,data);
-					} else if (request.contains.length()>0) {
-						list = database.listObjectsThatContain(request.contains,request.start,request.max,request.modAfter,request.modBefore,data);
 					} else {
 						list = database.listObjects(request.start,request.max,request.modAfter,request.modBefore,data);
 					}
@@ -88,10 +80,6 @@ public class DatabaseRequestHandler {
 						database.removeObjectsUseIndex(request.index,request.invert,request.operator,request.value,request.modAfter,request.modBefore,response.errors);
 					} else if (response.request.id>0) {
 						database.removeObject(request.id,response.errors);
-					} else if (response.request.startsWith.length()>0) {
-						database.removeObjectsThatStartWith(response.request.startsWith,request.modAfter,request.modBefore,response.errors);
-					} else if (response.request.contains.length()>0) {
-						database.removeObjectsThatContain(response.request.contains,request.modAfter,request.modBefore,response.errors);
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
 					database.setObject(request.id,request.object,response.errors);
@@ -107,12 +95,6 @@ public class DatabaseRequestHandler {
 	private void checkRequest(DatabaseResponse response) {
 		if (response.request.name.length()>0) {
 			Database.removeControlCharacters(response.request.name);
-		}
-		if (response.request.startsWith.length()>0) {
-			Database.removeControlCharacters(response.request.startsWith);
-		}
-		if (response.request.contains.length()>0) {
-			Database.removeControlCharacters(response.request.contains);
 		}
 		if (response.request.value.length()>0) {
 			Database.removeControlCharacters(response.request.value);
@@ -135,8 +117,8 @@ public class DatabaseRequestHandler {
 			}
 			checkRequestObjectMandatory(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_GET)) {
-			if (response.request.id<=0 && response.request.name.length()==0 && response.request.startsWith.length()==0 && response.request.contains.length()==0 && response.request.index.length()==0) {
-				response.errors.add(new ZStringBuilder("One of request id, name, startsWith, contains or index is mandatory"));
+			if (response.request.id<=0 && response.request.name.length()==0 && response.request.index.length()==0) {
+				response.errors.add(new ZStringBuilder("One of request id, name or index is mandatory"));
 			}
 			checkRequestEncoding(response);
 			checkRequestIndex(response);
@@ -149,8 +131,8 @@ public class DatabaseRequestHandler {
 			checkRequestIndex(response);
 			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_REMOVE)) {
-			if (response.request.id<=0 && response.request.startsWith.length()==0 && response.request.contains.length()==0 && response.request.index.length()==0) {
-				response.errors.add(new ZStringBuilder("One of request id, startsWith, contains or index is mandatory"));
+			if (response.request.id<=0 && response.request.index.length()==0) {
+				response.errors.add(new ZStringBuilder("One of request id or index is mandatory"));
 			}
 			checkRequestEncoding(response);
 			checkRequestIndex(response);

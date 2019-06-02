@@ -30,8 +30,7 @@ public class ZODBTester extends TesterObject {
 			objectNames.add(new ZStringBuilder("Object" + String.format("%03d",i)));
 		}
 		
-		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
-		req.contains = new ZStringBuilder(ModZODB.NAME + "/Objects/");
+		req = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE,ModZODB.NAME + "/Objects/");
 		res = new DatabaseResponse();
 		addRequestNoLock(req,res);
 		
@@ -102,8 +101,7 @@ public class ZODBTester extends TesterObject {
 		res.results.add(result);
 		addRequestNoLock(req,res);
 
-		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-		req.contains = new ZStringBuilder(ModZODB.NAME + "/Objects/");
+		req = new DatabaseRequest(DatabaseRequest.TYPE_LIST,ModZODB.NAME + "/Objects/");
 		res = new DatabaseResponse();
 		res.size = num;
 		id = 0;

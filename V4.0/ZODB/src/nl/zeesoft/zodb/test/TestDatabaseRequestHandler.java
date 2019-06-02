@@ -77,13 +77,6 @@ public class TestDatabaseRequestHandler extends TestObject {
 				assertEqual(res.results.get(0).name.toString(),"testObject125","Name of object found by name does not match expectation");
 				assertEqual(res.results.get(0).object!=null,true,"Index element found by name does not contain an object");
 			}
-			
-			req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-			req.startsWith = new ZStringBuilder("testObject1");
-			res = handleRequest(handler,req,10,null);
-			if (res.results.size()>0) {
-				assertEqual(res.results.get(0).name.toString(),"testObject100","Name of object found by startsWith does not match expectation");
-			}
 
 			req = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 			req.start = 20;

@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zodb.db.DatabaseRequest;
+import nl.zeesoft.zodb.db.idx.IndexConfig;
 
 public class TestDatabaseRequest extends TestObject {
 	public TestDatabaseRequest(Tester tester) {
@@ -43,10 +44,6 @@ public class TestDatabaseRequest extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
-		request.startsWith = new ZStringBuilder("testObject");
-		testRequest(request,4);
-
-		request = new DatabaseRequest(DatabaseRequest.TYPE_LIST);
 		request.modAfter = (new Date()).getTime();
 		request.modBefore = request.modAfter + 1;
 		System.out.println();
@@ -64,8 +61,7 @@ public class TestDatabaseRequest extends TestObject {
 		System.out.println();
 		testRequest(request,2);
 
-		request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-		request.contains = new ZStringBuilder("testObject");
+		request = new DatabaseRequest(DatabaseRequest.TYPE_GET,"testObject");
 		request.modAfter = (new Date()).getTime();
 		request.modBefore = request.modAfter + 1;
 		System.out.println();
@@ -97,7 +93,9 @@ public class TestDatabaseRequest extends TestObject {
 		testRequest(request,2);
 		
 		request = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
-		request.contains = new ZStringBuilder("testObject");
+		request.index = IndexConfig.IDX_NAME;
+		request.operator = DatabaseRequest.OP_CONTAINS;
+		request.value = new ZStringBuilder("testObject");
 		request.modAfter = (new Date()).getTime();
 		request.modBefore = request.modAfter + 1;
 		System.out.println();

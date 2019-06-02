@@ -83,7 +83,7 @@ public class TestDatabase extends TestObject {
 			}
 			
 			Date started = new Date();
-			List<IndexElement> elements = db.getObjectsByNameStartsWith(new ZStringBuilder("testObject"),0L,0L);
+			List<IndexElement> elements = db.getObjectsUseIndex(true,IndexConfig.IDX_NAME,false,DatabaseRequest.OP_STARTS_WITH,new ZStringBuilder("testObject"),0L,0L);
 			assertEqual(elements.size(),250,"Number of objects does not match expectation");
 			for (IndexElement elem: elements) {
 				assertEqual(elem.obj!=null,true,"Failed to read object id " + elem.id);

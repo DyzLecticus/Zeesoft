@@ -92,27 +92,11 @@ public class Index extends Locker {
 	}
 	
 	protected List<IndexElement> listObjects(int start, int max,long modAfter,long modBefore,List<Integer> data) {
-		return listObjects(start,max,null,null,null,modAfter,modBefore,data);
-	}
-
-	protected List<IndexElement> listObjectsThatStartWith(ZStringBuilder startWith,int start, int max,long modAfter,long modBefore,List<Integer> data) {
-		return listObjects(start,max,startWith,null,null,modAfter,modBefore,data);
-	}
-
-	protected List<IndexElement> listObjectsThatContain(ZStringBuilder contains,int start, int max,long modAfter,long modBefore,List<Integer> data) {
-		return listObjects(start,max,null,contains,null,modAfter,modBefore,data);
+		return listObjectsOutsideLock(start,max,modAfter,modBefore,data);
 	}
 	
 	protected List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		return getObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
-	}
-	
-	protected List<IndexElement> getObjectsByNameStartsWith(ZStringBuilder startsWith,long modAfter,long modBefore) {
-		return getObjectsByName(startsWith,null,null,modAfter,modBefore);
-	}
-	
-	protected List<IndexElement> getObjectsByNameContains(ZStringBuilder contains,long modAfter,long modBefore) {
-		return getObjectsByName(null,contains,null,modAfter,modBefore);
 	}
 	
 	protected void setObject(long id, JsFile obj, List<ZStringBuilder> errors) {
@@ -168,30 +152,6 @@ public class Index extends Locker {
 			r = removeObjectNoLock(id,errors);
 		}
 		unlockMe(this);
-		return r;
-	}
-
-	protected List<IndexElement> removeObjectsThatStartWith(ZStringBuilder startsWith,long modAfter,long modBefore,List<ZStringBuilder> errors) {
-		List<IndexElement> r = new ArrayList<IndexElement>();
-		if (startsWith.length()>0 && isOpen()) {
-			List<IndexElement> elements = listObjectsByNameOutsideLock(startsWith,null,null,modAfter,modBefore);
-			for (IndexElement element: elements) {
-				removeObjectNoLock(element.id,errors);
-				r.add(element);
-			}
-		}
-		return r;
-	}
-	
-	protected List<IndexElement> removeObjectsThatContain(ZStringBuilder contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
-		List<IndexElement> r = new ArrayList<IndexElement>();
-		if (contains.length()>0 && isOpen()) {
-			List<IndexElement> elements = listObjectsByNameOutsideLock(null,contains,null,modAfter,modBefore);
-			for (IndexElement element: elements) {
-				removeObjectNoLock(element.id,errors);
-				r.add(element);
-			}
-		}
 		return r;
 	}
 
@@ -464,23 +424,6 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjects(int start, int max,ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore,List<Integer> data) {
-		List<IndexElement> r = new ArrayList<IndexElement>();
-		if (isOpen()) {
-			r = listObjectsOutsideLock(start, max, startsWith, contains, endsWith, modAfter, modBefore, data);
-		}
-		return r;
-	}
-
-	private List<IndexElement> getObjectsByName(ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore) {
-		List<IndexElement> r = new ArrayList<IndexElement>();
-		if (isOpen()) {
-			r = listObjectsByNameOutsideLock(startsWith,contains,endsWith,modAfter,modBefore);
-		}
-		readObjects(r);
-		return r;
-	}
-
 	private List<IndexElement> getObjectsUsingIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		r = listObjectsUseIndexOutsideLock(ascending,indexName,invert,operator,value,modAfter,modBefore);
@@ -526,7 +469,7 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	private List<IndexElement> listObjectsOutsideLock(int start, int max,ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore,List<Integer> data) {
+	private List<IndexElement> listObjectsOutsideLock(int start, int max,long modAfter,long modBefore,List<Integer> data) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		if (start<0) {
 			start = 0;
@@ -536,20 +479,12 @@ public class Index extends Locker {
 		}
 		List<IndexElement> elements = null;
 		if (isOpen()) {
-			if (
-				(startsWith!=null && startsWith.length()>0) ||
-				(contains!=null && contains.length()>0) ||
-				(endsWith!=null && endsWith.length()>0)
-				) {
-				elements = listObjectsByNameOutsideLock(startsWith,contains,endsWith,modAfter,modBefore);
-			} else {
-				List<IndexElement> elems = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_STARTS_WITH,null);
-				if (elems.size()>0) {
-					elements = new ArrayList<IndexElement>();
-					for (IndexElement element: elems) {
-						if (checkModifiedNoLock(element,modAfter,modBefore)) {
-							elements.add(element);
-						}
+			List<IndexElement> elems = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_STARTS_WITH,null);
+			if (elems.size()>0) {
+				elements = new ArrayList<IndexElement>();
+				for (IndexElement element: elems) {
+					if (checkModifiedNoLock(element,modAfter,modBefore)) {
+						elements.add(element);
 					}
 				}
 			}
@@ -567,29 +502,6 @@ public class Index extends Locker {
 					r.add(elements.get(i));
 				}
 			}
-		}
-		return r;
-	}
-
-	private List<IndexElement> listObjectsByNameOutsideLock(ZStringBuilder startsWith,ZStringBuilder contains,ZStringBuilder endsWith,long modAfter,long modBefore) {
-		List<IndexElement> r = null;
-		List<IndexElement> elements = null;
-		if (startsWith!=null && startsWith.length()>0) {
-			elements = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_STARTS_WITH,startsWith);
-		} else if (contains!=null && contains.length()>0) {
-			elements = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_CONTAINS,contains);
-		} else if (endsWith!=null && endsWith.length()>0) {
-			elements = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_ENDS_WITH,endsWith);
-		}
-		if (modAfter>0L || modBefore>0L) {
-			r = new ArrayList<IndexElement>();
-			for (IndexElement element: elements) {
-				if (checkModifiedNoLock(element,modAfter,modBefore)) {
-					r.add(element);
-				}
-			}
-		} else {
-			r = elements;
 		}
 		return r;
 	}

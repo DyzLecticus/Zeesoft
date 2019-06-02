@@ -117,24 +117,8 @@ public class Database {
 		return index.listObjects(start,max,modAfter,modBefore,data);
 	}
 	
-	public List<IndexElement> listObjectsThatStartWith(ZStringBuilder startWith,int start,int max,long modAfter,long modBefore,List<Integer> data) {
-		return index.listObjectsThatStartWith(startWith,start,max,modAfter,modBefore,data);
-	}
-
-	public List<IndexElement> listObjectsThatContain(ZStringBuilder contains,int start,int max,long modAfter,long modBefore,List<Integer> data) {
-		return index.listObjectsThatContain(contains,start,max,modAfter,modBefore,data);
-	}
-	
 	public List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		return index.getObjectsUseIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
-	}
-	
-	public List<IndexElement> getObjectsByNameStartsWith(ZStringBuilder start,long modAfter,long modBefore) {
-		return index.getObjectsByNameStartsWith(start,modAfter,modBefore);
-	}
-	
-	public List<IndexElement> getObjectsByNameContains(ZStringBuilder contains,long modAfter,long modBefore) {
-		return index.getObjectsByNameContains(contains,modAfter,modBefore);
 	}
 	
 	public void setObject(long id, JsFile obj,List<ZStringBuilder> errors) {
@@ -147,14 +131,6 @@ public class Database {
 
 	public IndexElement removeObject(long id,List<ZStringBuilder> errors) {
 		return index.removeObject(id,errors);
-	}
-	
-	public List<IndexElement> removeObjectsThatStartWith(ZStringBuilder startsWith,long modAfter,long modBefore,List<ZStringBuilder> errors) {
-		return index.removeObjectsThatStartWith(startsWith,modAfter,modBefore,errors);
-	}
-	
-	public List<IndexElement> removeObjectsThatContain(ZStringBuilder contains,long modAfter,long modBefore,List<ZStringBuilder> errors) {
-		return index.removeObjectsThatContain(contains,modAfter,modBefore,errors);
 	}
 	
 	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
