@@ -65,7 +65,7 @@ public class TestDatabaseRequest extends TestObject {
 		request.modAfter = (new Date()).getTime();
 		request.modBefore = request.modAfter + 1;
 		System.out.println();
-		testRequest(request,4);
+		testRequest(request,8);
 		
 		JsFile obj = new JsFile();
 		obj.rootElement = new JsElem();
@@ -99,7 +99,7 @@ public class TestDatabaseRequest extends TestObject {
 		request.modAfter = (new Date()).getTime();
 		request.modBefore = request.modAfter + 1;
 		System.out.println();
-		testRequest(request,4);
+		testRequest(request,8);
 	}
 	
 	private void testRequest(DatabaseRequest request, int expectedChildren) {

@@ -64,27 +64,20 @@ public class StringIndex extends IndexObject {
 	protected List<IndexElement> listObjectsNoLock(boolean ascending, boolean invert, String operator, ZStringBuilder indexValue) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		ZStringBuilder key = getZStringBuilderValue(indexValue);
-		if (!invert && operator.equals(DatabaseRequest.OP_EQUALS)) {
-			if (map.containsKey(key)) {
-				List<IndexElement> elements = map.get(key);
-				for (IndexElement element: elements) {
-					if (ascending) {
-						r.add(element.copy());
-					} else {
-						r.add(0,element.copy());
+		if (operator.equals(DatabaseRequest.OP_EQUALS)) {
+			if (invert) {
+				for (Entry<ZStringBuilder,List<IndexElement>> entry: map.entrySet()) {
+					if (!entry.getKey().equals(key)) {
+						addElementsToList(r,entry.getValue(),ascending);
 					}
 				}
+			} else if (map.containsKey(key)) {
+				addElementsToList(r,map.get(key),ascending);
 			}
 		} else {
 			for (Entry<ZStringBuilder,List<IndexElement>> entry: map.entrySet()) {
 				if (checkStringPropertyValueNoLock(entry.getKey(),invert,operator,key)) {
-					for (IndexElement element: entry.getValue()) {
-						if (ascending) {
-							r.add(element.copy());
-						} else {
-							r.add(0,element.copy());
-						}
-					}
+					addElementsToList(r,entry.getValue(),ascending);
 				}
 			}
 		}
@@ -98,31 +91,21 @@ public class StringIndex extends IndexObject {
 
 	private boolean checkStringPropertyValueNoLock(ZStringBuilder propertyValue, boolean invert, String operator, ZStringBuilder checkValue) {
 		boolean r = (propertyValue!=null);
-		if (operator!=null && operator.length()>0 && propertyValue!=null && checkValue!=null) {
-			if (operator.equals(DatabaseRequest.OP_EQUALS)) {
-				if (
-					(!invert && !propertyValue.equals(checkValue)) || 
-					(invert && propertyValue.equals(checkValue))
-					) {
-					r = false;
-				}
-			} else if (operator.equals(DatabaseRequest.OP_CONTAINS)) {
-				if (
-					(!invert && !propertyValue.contains(checkValue)) || 
+		if (operator!=null && operator.length()>0 && propertyValue!=null && checkValue!=null && checkValue.length()>0) {
+			if (operator.equals(DatabaseRequest.OP_CONTAINS)) {
+				if ((!invert && !propertyValue.contains(checkValue)) || 
 					(invert && propertyValue.contains(checkValue))
 					) {
 					r = false;
 				}
 			} else if (operator.equals(DatabaseRequest.OP_STARTS_WITH)) {
-				if (
-					(!invert && !propertyValue.startsWith(checkValue)) || 
+				if ((!invert && !propertyValue.startsWith(checkValue)) || 
 					(invert && propertyValue.startsWith(checkValue))
 					) {
 					r = false;
 				}
 			} else if (operator.equals(DatabaseRequest.OP_ENDS_WITH)) {
-				if (
-					(!invert && !propertyValue.endsWith(checkValue)) || 
+				if ((!invert && !propertyValue.endsWith(checkValue)) || 
 					(invert && propertyValue.endsWith(checkValue))
 					) {
 					r = false;

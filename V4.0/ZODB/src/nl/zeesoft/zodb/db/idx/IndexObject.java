@@ -48,7 +48,7 @@ public abstract class IndexObject extends Locker {
 	protected List<IndexElement> listObjects(boolean ascending,boolean invert,String operator,ZStringBuilder indexValue) {
 		List<IndexElement> r = null;
 		lockMe(this);
-		r = this.listObjectsNoLock(ascending, invert, operator, indexValue);
+		r = listObjectsNoLock(ascending, invert, operator, indexValue);
 		unlockMe(this);
 		return r;
 	}
@@ -65,6 +65,16 @@ public abstract class IndexObject extends Locker {
 	protected abstract void removeObjectNoLock(IndexElement element);
 	protected abstract List<IndexElement> listObjectsNoLock(boolean ascending,boolean invert,String operator,ZStringBuilder indexValue);
 	protected abstract void clearNoLock();
+
+	protected void addElementsToList(List<IndexElement> list,List<IndexElement> elements,boolean ascending) {
+		for (IndexElement element: elements) {
+			if (ascending) {
+				list.add(element.copy());
+			} else {
+				list.add(0,element.copy());
+			}
+		}
+	}
 	
 	protected void destroy() {
 		lockMe(this);

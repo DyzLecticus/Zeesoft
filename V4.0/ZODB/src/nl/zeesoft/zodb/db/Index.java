@@ -88,11 +88,11 @@ public class Index extends Locker {
 	}
 
 	protected List<IndexElement> listObjectsUseIndex(int start, int max,boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<Integer> data) {
-		return listObjectsUseIndexOutsideLock(start,max,ascending,indexName,invert,operator,value,modAfter,modBefore,data);
+		return listObjectsUsingIndex(start,max,ascending,indexName,invert,operator,value,modAfter,modBefore,data);
 	}
 	
 	protected List<IndexElement> listObjects(int start, int max,long modAfter,long modBefore,List<Integer> data) {
-		return listObjectsOutsideLock(start,max,modAfter,modBefore,data);
+		return listObjectsUsingIndex(start,max,true,IndexConfig.IDX_NAME,false,DatabaseRequest.OP_STARTS_WITH,null,modAfter,modBefore,data);
 	}
 	
 	protected List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
@@ -109,10 +109,9 @@ public class Index extends Locker {
 
 	protected void setObjectName(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
 		Database.removeControlCharacters(name);
-		IndexElement element = null;
 		if (indexConfig.objectHasUpdateIndexes(name)) {
 			lockMe(this);
-			element = elementsById.get(id);
+			IndexElement element = elementsById.get(id);
 			if (element!=null) {
 				element = element.copy();
 			}
@@ -122,26 +121,7 @@ public class Index extends Locker {
 			}
 		}
 		lockMe(this);
-		if (open) {
-			element = elementsById.get(id);
-			if (element!=null && !element.removed) {
-				if (!element.name.equals(name)) {
-					IndexElement copy = element.copy();
-					copy.name = name;
-					copy.idxValues = indexConfig.getIndexValuesForObject(copy.name,copy.obj);
-					if (checkUniqueIndexesForObjectNoLock(copy,element.name,errors)) {
-						indexConfig.removeObject(element);
-						element.name = name;
-						element.idxValues = copy.idxValues;
-						element.updateModified();
-						indexConfig.addObject(element.copy());
-						changedIndexFileNums.add(element.indexFileNum);
-					}
-				}
-			} else if (errors!=null) {
-				errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
-			}
-		}
+		setObjectName(id,name,errors);
 		unlockMe(this);
 	}
 
@@ -157,7 +137,7 @@ public class Index extends Locker {
 
 	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
-		List<IndexElement> elements = listObjectsUseIndexOutsideLock(true,indexName,invert,operator,value,modAfter,modBefore);
+		List<IndexElement> elements = listObjectsUsingIndex(true,indexName,invert,operator,value,modAfter,modBefore);
 		for (IndexElement element: elements) {
 			removeObjectNoLock(element.id,errors);
 			r.add(element);
@@ -426,12 +406,12 @@ public class Index extends Locker {
 
 	private List<IndexElement> getObjectsUsingIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
-		r = listObjectsUseIndexOutsideLock(ascending,indexName,invert,operator,value,modAfter,modBefore);
+		r = listObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
 		readObjects(r);
 		return r;
 	}
 
-	private List<IndexElement> listObjectsUseIndexOutsideLock(int start, int max,boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<Integer> data) {
+	private List<IndexElement> listObjectsUsingIndex(int start, int max,boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<Integer> data) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		if (start<0) {
 			start = 0;
@@ -439,7 +419,7 @@ public class Index extends Locker {
 		if (max<1) {
 			max = 1;
 		}
-		List<IndexElement> elements = listObjectsUseIndexOutsideLock(ascending,indexName,invert,operator,value,modAfter,modBefore);
+		List<IndexElement> elements = listObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
 		int end = start + max;
 		if (end>=elements.size()) {
 			end = elements.size();
@@ -453,7 +433,7 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> listObjectsUseIndexOutsideLock(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
+	private List<IndexElement> listObjectsUsingIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		if (isOpen()) {
 			SearchIndex index = indexConfig.getListIndex(indexName);
@@ -463,43 +443,6 @@ public class Index extends Locker {
 					if (checkModifiedNoLock(element, modAfter, modBefore)) {
 						r.add(element);
 					}
-				}
-			}
-		}
-		return r;
-	}
-	
-	private List<IndexElement> listObjectsOutsideLock(int start, int max,long modAfter,long modBefore,List<Integer> data) {
-		List<IndexElement> r = new ArrayList<IndexElement>();
-		if (start<0) {
-			start = 0;
-		}
-		if (max<1) {
-			max = 1;
-		}
-		List<IndexElement> elements = null;
-		if (isOpen()) {
-			List<IndexElement> elems = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_STARTS_WITH,null);
-			if (elems.size()>0) {
-				elements = new ArrayList<IndexElement>();
-				for (IndexElement element: elems) {
-					if (checkModifiedNoLock(element,modAfter,modBefore)) {
-						elements.add(element);
-					}
-				}
-			}
-		}
-		if (elements!=null) {
-			if (data!=null) {
-				data.add(elements.size());
-			}
-			if (start<=(elements.size() - 1)) {
-				int end = start + max;
-				if (end>elements.size()) {
-					end = elements.size();
-				}
-				for (int i = start; i < end; i++) {
-					r.add(elements.get(i));
 				}
 			}
 		}
@@ -603,6 +546,29 @@ public class Index extends Locker {
 		return r;
 	}
 	
+	protected void setObjectNameNoLock(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
+		if (open) {
+			IndexElement element = elementsById.get(id);
+			if (element!=null && !element.removed) {
+				if (!element.name.equals(name)) {
+					IndexElement copy = element.copy();
+					copy.name = name;
+					copy.idxValues = indexConfig.getIndexValuesForObject(copy.name,copy.obj);
+					if (checkUniqueIndexesForObjectNoLock(copy,element.name,errors)) {
+						indexConfig.removeObject(element);
+						element.name = name;
+						element.idxValues = copy.idxValues;
+						element.updateModified();
+						indexConfig.addObject(element.copy());
+						changedIndexFileNums.add(element.indexFileNum);
+					}
+				}
+			} else if (errors!=null) {
+				errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
+			}
+		}
+	}
+
 	private void setObjectNoLock(long id, JsFile obj,List<ZStringBuilder> errors) {
 		if (elementsById.containsKey(id)) {
 			IndexElement element = elementsById.get(id);

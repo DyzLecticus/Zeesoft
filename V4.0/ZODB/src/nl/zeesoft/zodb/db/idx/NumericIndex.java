@@ -65,28 +65,20 @@ public class NumericIndex extends IndexObject {
 	protected List<IndexElement> listObjectsNoLock(boolean ascending, boolean invert, String operator, ZStringBuilder indexValue) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		BigDecimal key = getBigDecimalValue(indexValue);
-		if (!invert && operator.equals(DatabaseRequest.OP_EQUALS)) {
-			if (map.containsKey(key)) {
-				List<IndexElement> elements = map.get(key);
-				for (IndexElement element: elements) {
-					if (ascending) {
-						r.add(element.copy());
-					} else {
-						r.add(0,element.copy());
+		if (operator.equals(DatabaseRequest.OP_EQUALS)) {
+			if (invert) {
+				for (Entry<BigDecimal,List<IndexElement>> entry: map.entrySet()) {
+					if (!entry.getKey().equals(key)) {
+						addElementsToList(r,entry.getValue(),ascending);
 					}
 				}
+			} else if (map.containsKey(key)) {
+				addElementsToList(r,map.get(key),ascending);
 			}
 		} else {
-			for (Entry<BigDecimal,List<IndexElement>> entry: map.entrySet()) {
-				if (checkNumericPropertyValueNoLock(entry.getKey(),invert,operator,key)) {
-					for (IndexElement element: entry.getValue()) {
-						if (ascending) {
-							r.add(element.copy());
-						} else {
-							r.add(0,element.copy());
-						}
-					}
-				}
+			SortedMap<BigDecimal,List<IndexElement>> subMap = getSubmap(key,invert,operator.equals(DatabaseRequest.OP_GREATER_OR_EQUAL));
+			for (Entry<BigDecimal,List<IndexElement>> entry: subMap.entrySet()) {
+				addElementsToList(r,entry.getValue(),ascending);
 			}
 		}
 		return r;
@@ -96,31 +88,18 @@ public class NumericIndex extends IndexObject {
 	protected void clearNoLock() {
 		map.clear();
 	}
-
-	private boolean checkNumericPropertyValueNoLock(BigDecimal propertyValue, boolean invert, String operator, BigDecimal checkValue) {
-		boolean r = (propertyValue!=null);
-		if (operator!=null && operator.length()>0 && propertyValue!=null && checkValue!=null) {
-			if (operator.equals(DatabaseRequest.OP_EQUALS)) {
-				if (
-					(!invert && propertyValue.compareTo(checkValue)!=0) || 
-					(invert && propertyValue.compareTo(checkValue)==0)
-					) {
-					r = false;
-				}
-			} else if (operator.equals(DatabaseRequest.OP_GREATER)) {
-				if (
-					(!invert && propertyValue.compareTo(checkValue)<=0) || 
-					(invert && propertyValue.compareTo(checkValue)>0)
-					) {
-					r = false;
-				}
-			} else if (operator.equals(DatabaseRequest.OP_GREATER_OR_EQUAL)) {
-				if (
-					(!invert && propertyValue.compareTo(checkValue)<0) || 
-					(invert && propertyValue.compareTo(checkValue)>=0)
-					) {
-					r = false;
-				}
+	
+	private SortedMap<BigDecimal,List<IndexElement>> getSubmap(BigDecimal checkValue, boolean invert, boolean equals) {
+		SortedMap<BigDecimal,List<IndexElement>> r = null;
+		if (invert) {
+			r = new TreeMap<BigDecimal,List<IndexElement>>(map.headMap(checkValue));
+			if (!equals && map.containsKey(checkValue)) {
+				r.put(checkValue,map.get(checkValue));
+			}
+		} else {
+			r = new TreeMap<BigDecimal,List<IndexElement>>(map.tailMap(checkValue));
+			if (!equals) {
+				r.remove(checkValue);
 			}
 		}
 		return r;
