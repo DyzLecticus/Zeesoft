@@ -121,7 +121,7 @@ public class Index extends Locker {
 			}
 		}
 		lockMe(this);
-		setObjectName(id,name,errors);
+		setObjectNameNoLock(id,name,errors);
 		unlockMe(this);
 	}
 
