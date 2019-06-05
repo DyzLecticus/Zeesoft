@@ -51,9 +51,8 @@ public class IndexObjectReadWorker extends Worker {
 					if (obj.rootElement==null) {
 						getMessenger().error(this,"Object " + id + " has been corrupted");
 						obj.rootElement = new JsElem();
-					} else {
-						idObjMap.put(id,obj);
 					}
+					idObjMap.put(id,obj);
 				}
 			}
 		}

@@ -152,6 +152,10 @@ public class Index extends Locker {
 	}
 
 	protected void readObjects(List<IndexElement> elements) {
+		readObjects(elements,false);
+	}
+
+	protected void readObjects(List<IndexElement> elements, boolean force) {
 		List<Integer> fileNumList = new ArrayList<Integer>();
 		List<Long> idList = new ArrayList<Long>();
 		for (IndexElement element: elements) {
@@ -171,7 +175,7 @@ public class Index extends Locker {
 		}
 		if (fileNumList.size()>0) {
 			objectReader.addFileNums(fileNumList);
-			waitForObjectRead(idList);
+			waitForObjectRead(idList,force);
 			for (IndexElement element: elements) {
 				lockMe(this);
 				IndexElement elem = elementsById.get(element.id);
@@ -183,7 +187,7 @@ public class Index extends Locker {
 		}
 	}
 
-	protected void waitForObjectRead(List<Long> idList) {
+	protected void waitForObjectRead(List<Long> idList,boolean force) {
 		boolean o = true;
 		long sleep = 1;
 		while(idList.size()>0) {
@@ -197,7 +201,7 @@ public class Index extends Locker {
 				unlockMe(this);
 			}
 			idList = remainingIdList;
-			if (idList.size()>0) {
+			if (!force && idList.size()>0) {
 				lockMe(this);
 				o = open;
 				unlockMe(this);
@@ -220,13 +224,11 @@ public class Index extends Locker {
 	protected void readObjects(SortedMap<Long,JsFile> idObjMap) {
 		List<IndexElement> elements = new ArrayList<IndexElement>();
 		lockMe(this);
-		if (open) {
-			for (Entry<Long,JsFile> entry: idObjMap.entrySet()) {
-				IndexElement element = elementsById.get(entry.getKey());
-				if (element!=null && element.obj==null) {
-					element.obj = entry.getValue();
-					elements.add(element.copy());
-				}
+		for (Entry<Long,JsFile> entry: idObjMap.entrySet()) {
+			IndexElement element = elementsById.get(entry.getKey());
+			if (element!=null && element.obj==null) {
+				element.obj = entry.getValue();
+				elements.add(element.copy());
 			}
 		}
 		unlockMe(this);
@@ -243,15 +245,14 @@ public class Index extends Locker {
 
 	protected void readAll() {
 		lockMe(this);
-		List<IndexElement> elems = new ArrayList<IndexElement>(elementsById.values());
 		List<IndexElement> elements = new ArrayList<IndexElement>();
-		for (IndexElement element: elems) {
+		for (IndexElement element: elementsById.values()) {
 			if (element.obj==null) {
 				elements.add(element.copy());
 			}
 		}
 		unlockMe(this);
-		readObjects(elements);
+		readObjects(elements,true);
 	}
 
 	protected void setKey(StringBuilder key) {
@@ -267,7 +268,7 @@ public class Index extends Locker {
 		List<IndexElement> elements = new ArrayList<IndexElement>(elementsById.values());
 		for (IndexElement element: elements) {
 			changedIndexFileNums.add(element.indexFileNum);
-			if (includeObjects) {
+			if (includeObjects && element.obj!=null) {
 				changedDataFileNums.add(element.dataFileNum);
 			}
 		}
