@@ -34,8 +34,10 @@ public class Index extends Locker {
 	
 	private boolean									open					= false;
 	
-	protected Index(Config config,Database db,IndexConfig indexConfig) {
+	protected Index(Config config,Database db,int idxBlkSize,int datBlkSize,IndexConfig indexConfig) {
 		super(config.getMessenger());
+		this.indexBlockSize = idxBlkSize;
+		this.dataBlockSize = datBlkSize;
 		this.db = db;
 		this.indexConfig = indexConfig;
 		objectReader = new IndexObjectReaderWorker(config.getMessenger(),config.getUnion(),this);

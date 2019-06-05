@@ -21,10 +21,10 @@ public class Database {
 	
 	private List<StateListener>				listeners		= new ArrayList<StateListener>();
 	
-	public Database(Config config) {
+	public Database(Config config,int idxBlkSize,int datBlkSize) {
 		configuration = config;
 		indexConfig = new IndexConfig(config.getMessenger());
-		index = new Index(config,this,indexConfig);
+		index = new Index(config,this,idxBlkSize,datBlkSize,indexConfig);
 		fileWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}

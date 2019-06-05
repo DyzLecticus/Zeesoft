@@ -21,17 +21,19 @@ import nl.zeesoft.zodb.mod.handler.JsonZODBIndexConfigHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 
 public class ModZODB extends ModObject implements StateListener {
-	public static final String	NAME		= "ZODB";
-	public static final String	DESC		= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
+	public static final String	NAME			= "ZODB";
+	public static final String	DESC			= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
-	private StringBuilder		key			= null;
-	private StringBuilder		newKey		= null;
-	private WhiteList			whiteList	= new WhiteList();
+	private StringBuilder		key				= null;
+	private StringBuilder		newKey			= null;
+	private WhiteList			whiteList		= new WhiteList();
 	
-	private Database			database	= null;
+	private Database			database		= null;
 	
-	public int					maxLenName	= 128;
-	public int					maxLenObj	= 32768;
+	public int					maxLenName		= 128;
+	public int					maxLenObj		= 32768;
+	public int					indexBlockSize	= 100;
+	public int					dataBlockSize	= 10;
 	
 	public ModZODB(Config config) {
 		super(config);
@@ -48,8 +50,8 @@ public class ModZODB extends ModObject implements StateListener {
 	@Override
 	public JsFile toJson() {
 		JsFile json = super.toJson();
-		json.rootElement.children.add(new JsElem("maxLenName","" + maxLenName));
-		json.rootElement.children.add(new JsElem("maxLenObj","" + maxLenObj));
+		json.rootElement.children.add(new JsElem("indexBlockSize","" + indexBlockSize));
+		json.rootElement.children.add(new JsElem("dataBlockSize","" + dataBlockSize));
 		ZStringEncoder encoder = new ZStringEncoder(key);
 		json.rootElement.children.add(new JsElem("key",encoder.compress().toString(),true));
 		if (newKey!=null && newKey.length()>0) {
@@ -59,6 +61,8 @@ public class ModZODB extends ModObject implements StateListener {
 			}
 			json.rootElement.children.add(new JsElem("newKey",encoder,true));
 		}
+		json.rootElement.children.add(new JsElem("maxLenName","" + maxLenName));
+		json.rootElement.children.add(new JsElem("maxLenObj","" + maxLenObj));
 		if (whiteList.getList().size()>0) {
 			JsFile wl = whiteList.toJson();
 			json.rootElement.children.add(wl.rootElement);
@@ -70,8 +74,14 @@ public class ModZODB extends ModObject implements StateListener {
 	public void fromJson(JsFile json) {
 		super.fromJson(json);
 		if (json.rootElement!=null) {
-			maxLenName = json.rootElement.getChildInt("maxLenName",maxLenName);
-			maxLenObj = json.rootElement.getChildInt("maxLenObj",maxLenObj);
+			indexBlockSize = json.rootElement.getChildInt("indexBlockSize",indexBlockSize);
+			if (indexBlockSize<10) {
+				indexBlockSize = 10;
+			}
+			dataBlockSize = json.rootElement.getChildInt("dataBlockSize",dataBlockSize);
+			if (dataBlockSize<1) {
+				dataBlockSize = 1;
+			}
 			JsElem k = json.rootElement.getChildByName("key");
 			if (k!=null && k.value!=null && k.value.length()>0) {
 				ZStringEncoder encoder = new ZStringEncoder(k.value);
@@ -85,6 +95,20 @@ public class ModZODB extends ModObject implements StateListener {
 				} else {
 					newKey = encoder.decompress();
 				}
+			}
+			if (key.length()<64 || !ZStringEncoder.isNumber(key,false)) {
+				if (newKey.length()<64 || !ZStringEncoder.isNumber(newKey,false)) {
+					ZStringEncoder encoder = new ZStringEncoder();
+					newKey = encoder.generateNewKey(1024);
+				}
+			}
+			maxLenName = json.rootElement.getChildInt("maxLenName",maxLenName);
+			if (maxLenName<8) {
+				maxLenName = 8;
+			}
+			maxLenObj = json.rootElement.getChildInt("maxLenObj",maxLenObj);
+			if (maxLenObj<24) {
+				maxLenObj = 24;
 			}
 			whiteList.fromJson(json);
 		}
@@ -159,7 +183,7 @@ public class ModZODB extends ModObject implements StateListener {
 	}
 	
 	protected Database getNewDatabase() {
-		Database r = new Database(configuration);
+		Database r = new Database(configuration,indexBlockSize,dataBlockSize);
 		if (selfTest) {
 			String pfx = NAME + "/Objects/";
 			r.getIndexConfig().addIndex(pfx,"testData",false,true);

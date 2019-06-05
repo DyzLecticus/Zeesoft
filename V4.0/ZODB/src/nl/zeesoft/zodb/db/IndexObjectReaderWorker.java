@@ -10,6 +10,8 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class IndexObjectReaderWorker extends Worker {
+	private static final int			MAX			= 1000;
+	
 	private	Index						index		= null;
 	
 	private List<Integer>				queue		= new ArrayList<Integer>();
@@ -18,7 +20,7 @@ public class IndexObjectReaderWorker extends Worker {
 	protected IndexObjectReaderWorker(Messenger msgr, WorkerUnion union,Index index) {
 		super(msgr, union);
 		this.index = index;
-		setSleep(100);
+		setSleep(10);
 	}
 
 	protected void addFileNums(List<Integer> fileNumList) {
@@ -28,6 +30,7 @@ public class IndexObjectReaderWorker extends Worker {
 			for (Integer fileNum: fileNumList) {
 				if (!queue.contains(fileNum) && !reading.contains(fileNum)) {
 					queue.add(fileNum);
+					added = true;
 				}
 			}
 			unlockMe(this);
@@ -53,7 +56,7 @@ public class IndexObjectReaderWorker extends Worker {
 		lockMe(this);
 		list = new ArrayList<Integer>();
 		if (queue.size()>0) {
-			int add = (1000 - reading.size());
+			int add = (MAX - reading.size());
 			if (add>0) {
 				for (int i = 0; i < add; i++) {
 					if (queue.size()==0) {
@@ -71,7 +74,7 @@ public class IndexObjectReaderWorker extends Worker {
 			readFileNumList(list);
 			setSleep(1);
 		} else {
-			setSleep(100);
+			setSleep(10);
 		}
 	}
 	
@@ -96,15 +99,10 @@ public class IndexObjectReaderWorker extends Worker {
 	}
 	
 	private void readFileNumList(List<Integer> fileNumList) {
-		List<IndexObjectReadWorker> workers = new ArrayList<IndexObjectReadWorker>();
 		for (Integer fileNum: fileNumList) {
 			String fileName = index.getObjectDirectory() + fileNum + ".txt";
-			workers.add(new IndexObjectReadWorker(getMessenger(),getUnion(),this,fileNum,fileName,index.getKey()));
-		}
-		if (workers.size()>0) {
-			for (IndexObjectReadWorker worker: workers) {
-				worker.start();
-			}
+			IndexObjectReadWorker worker = new IndexObjectReadWorker(getMessenger(),getUnion(),this,fileNum,fileName,index.getKey());
+			worker.start();
 		}
 	}
 }
