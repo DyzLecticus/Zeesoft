@@ -14,11 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Zeesoft StringBuilder provides advanced StringBuilder manipulation and methods.
+ * The Zeesoft StringBuilder provides methods for advanced StringBuilder manipulation.
  */
 public class ZStringBuilder implements Comparable<ZStringBuilder> {
 	private StringBuilder	sb			= null;
-	private	String			encoding	= "UTF8"; 
+	private	String			encoding	= "UTF8";
+	private long			crc			= 0;
 	
 	public ZStringBuilder() {
 		sb = new StringBuilder();
@@ -50,42 +51,49 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 	public void append(String x) {
 		if (sb!=null) {
 			sb.append(x);
+			crc = 0;
 		}
 	}
 
 	public void append(StringBuilder x) {
 		if (sb!=null) {
 			sb.append(x);
+			crc = 0;
 		}
 	}
 
 	public void append(ZStringBuilder x) {
 		if (sb!=null) {
 			sb.append(x.getStringBuilder());
+			crc = 0;
 		}
 	}
 	
 	public void insert(int pos,String x) {
 		if (sb!=null) {
 			sb.insert(pos,x);
+			crc = 0;
 		}
 	}
 
 	public void insert(int pos,StringBuilder x) {
 		if (sb!=null) {
 			sb.insert(pos,x);
+			crc = 0;
 		}
 	}
 
 	public void insert(int pos,ZStringBuilder x) {
 		if (sb!=null) {
 			sb.insert(pos,x.getStringBuilder());
+			crc = 0;
 		}
 	}
 
 	public void replace(int start, int end, String replace) {
 		if (sb!=null) {
 			sb.replace(start, end, replace);
+			crc = 0;
 		}
 	}
 
@@ -106,14 +114,6 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 	
 	public ZStringBuilder getCopy() {
 		return new ZStringBuilder(sb);
-	}
-	
-	public StringBuilder getStringBuilder() {
-		return sb;
-	}
-
-	public void setStringBuilder(StringBuilder sb) {
-		this.sb = sb;
 	}
 
 	public int length() {
@@ -170,9 +170,11 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 		if (sb!=null) {
 			while (startsWith(" ") || startsWith("\n") || startsWith("\r")) {
 				sb = sb.delete(0,1);
+				crc = 0;
 			}
 			while (endsWith(" ") || endsWith("\n") || startsWith("\r")) {
 				sb.delete(sb.length()-1,sb.length());
+				crc = 0;
 			}
 		}
 		return sb;
@@ -190,6 +192,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 				}
 			}
 			sb = nsb;
+			crc = 0;
 		}
 		return sb;
 	}
@@ -204,6 +207,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 					nsb.append(sb.substring(1));
 				}
 				sb = nsb;
+				crc = 0;
 			}
 		}
 		return sb;
@@ -241,6 +245,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 								i = startIdx + replace.length() - 1;
 							}
 							length = sb.length();
+							crc = 0;
 						}
 					}
 				}
@@ -295,7 +300,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 				for (int i = 0; i < length; i++) {
 					found = true;
 					if ((i==0 && prefixAlphabetic) ||
-						(i>0 && prefixAlphabetic && !Character.isAlphabetic(sb.substring(i - 1,i).toCharArray()[0]))
+						(i>0 && prefixAlphabetic && !Character.isAlphabetic(sb.substring(i - 1,i).charAt(0)))
 						) {
 						found = false;
 					} else {
@@ -311,7 +316,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 						}
 					}
 					if ((found && i==(length - 1) && suffixAlphabetic) ||
-						(found && i<(length - 1) && suffixAlphabetic && !Character.isAlphabetic(sb.substring(i + 1,i + 2).toCharArray()[0]))
+						(found && i<(length - 1) && suffixAlphabetic && !Character.isAlphabetic(sb.substring(i + 1,i + 2).charAt(0)))
 						) {
 						found = false;
 					}
@@ -321,6 +326,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 							i = i + replace.length() - 1;
 						}
 						length = sb.length();
+						crc = 0;
 					}
 				}
 			}
@@ -448,6 +454,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 				sb.append((char)ch);
 			}
 			in.close();
+			crc = 0;
 		} catch (IOException e) {
 			error.append("" + e);
 		} finally {
@@ -519,40 +526,23 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 	
 	@Override
 	public int compareTo(ZStringBuilder other) {
-		int r = 0;
-		if (sb!=null) {
-	        int len1 = sb.length();
-	        int len2 = other.getStringBuilder().length();
-	        int lim = Math.min(len1, len2);
-	        char v1[] = toCharArray();
-	        char v2[] = other.toCharArray();
-	        int k = 0;
-	        while (k < lim) {
-	            char c1 = v1[k];
-	            char c2 = v2[k];
-	            if (c1 != c2) {
-	                return c1 - c2;
-	            }
-	            k++;
-	        }
-	        r = len1 - len2;
-		}
-        return r;
+		return compareTo(other.getStringBuilder());
 	}
 
 	/**
-	 * Returns the CRC value of a char Array
+	 * Returns the CRC value of the StringBuilder
 	 * 
 	 * WARNING: It is merely unlikely that this function results in the same CRC for one or more examples
 	 * 
 	 * @return The CRC value
 	 */
 	public long calculateCRC() {
-		long crc = 0;
-		if (sb!=null) {
-			crc = calculateCRC(toCharArray());
+		long r = crc;
+		if (r==0 && sb!=null && sb.length()>0) {
+			r = calculateCRC(toCharArray());
+			crc = r;
 		}
-	   	return crc;
+	   	return r;
 	}
 	
 	/**
@@ -563,12 +553,12 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 	 * @param charArray The char array
 	 * @return The CRC value
 	 */
-	public long calculateCRC(char[] charArray) {
+	public static long calculateCRC(char[] charArray) {
 		long crc = 0;
 		if (charArray.length>0) {
 			int multiply = (charArray.length + 7);
 			for (int p = 0; p < charArray.length; p++) {
-				long c = Character.valueOf(charArray[p]);
+				long c = charArray[p];
 				crc = crc + (c * multiply);
 				multiply += c;
 				multiply = multiply % 101;
@@ -605,17 +595,48 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 		}
 		return r;
 	}
+	
+	protected StringBuilder getStringBuilder() {
+		return sb;
+	}
+
+	protected void setStringBuilder(StringBuilder sb) {
+		this.sb = sb;
+		crc = 0;
+	}
+
+	private int compareTo(StringBuilder other) {
+		int r = 0;
+		if (sb!=null) {
+			int len1 = sb.length();
+			int len2 = other.length();
+			int lim = Math.min(len1, len2);
+			int k = 0;
+			while (k < lim) {
+				char c1 = sb.charAt(k);
+				char c2 = other.charAt(k);
+				if (c1 != c2) {
+					return c1 - c2;
+				}
+				k++;
+			}
+			r = len1 - len2;
+		}
+		return r;
+	}
 
 	private boolean equals(StringBuilder sbc,boolean ignoreCase) {
 		boolean eq = true;
 		if (sb!=null && sbc!=null) {
 			if (sb.length()==sbc.length()) {
-				for (int i = 0; i < sb.length(); i++) {
-					if ((ignoreCase && !sb.substring(i,i+1).equalsIgnoreCase(sbc.substring(i,i+1))) ||
-						!sb.substring(i,i+1).equals(sbc.substring(i,i+1))
-						) {
-						eq = false;
-						break;
+				if (!ignoreCase) {
+					eq = compareTo(sbc)==0;
+				} else {
+					for (int i = 0; i < sb.length(); i++) {
+						if (!sb.substring(i,i+1).equalsIgnoreCase(sbc.substring(i,i+1))) {
+							eq = false;
+							break;
+						}
 					}
 				}
 			} else {
