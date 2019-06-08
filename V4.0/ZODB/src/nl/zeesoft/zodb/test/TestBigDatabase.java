@@ -16,6 +16,8 @@ import nl.zeesoft.zodb.db.IndexElement;
 import nl.zeesoft.zodb.mod.ModZODB;
 
 public class TestBigDatabase extends TestObject {
+	private int letter = 0;
+	
 	public TestBigDatabase(Tester tester) {
 		super(tester);
 	}
@@ -88,7 +90,8 @@ public class TestBigDatabase extends TestObject {
 		for (int w = 0; w < words; w++) {
 			int letters = generator.getNewInteger();
 			for (int l = 0; l < letters; l++) {
-				data.append("" + l);
+				letter = (letter + letters + l) % 26;
+				data.append(Character.toString ((char) (97 + letter)));
 			}
 			if (data.length()>0) {
 				data.append(" ");

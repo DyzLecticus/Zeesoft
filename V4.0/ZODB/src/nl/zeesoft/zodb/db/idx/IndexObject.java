@@ -27,6 +27,18 @@ public abstract class IndexObject extends Locker {
 		return r;
 	}
 
+	protected void addObjects(List<IndexElement> elements) {
+		if (!index.added) {
+			lockMe(this);
+			for (IndexElement element: elements) {
+				if (index.objectNamePrefix.equals(IndexConfig.PFX_OBJ) || element.name.startsWith(index.objectNamePrefix)) {
+					addObjectNoLock(element);
+				}
+			}
+			unlockMe(this);
+		}
+	}
+
 	protected void addObject(IndexElement element) {
 		lockMe(this);
 		addObjectNoLock(element);

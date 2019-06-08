@@ -32,7 +32,7 @@ public class ModZODB extends ModObject implements StateListener {
 	
 	public int					maxLenName		= 128;
 	public int					maxLenObj		= 32768;
-	public int					indexBlockSize	= 100;
+	public int					indexBlockSize	= 1000;
 	public int					dataBlockSize	= 10;
 	
 	public ModZODB(Config config) {

@@ -12,13 +12,12 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class IndexObjectWriterWorker extends Worker {
-	private static final int	MAX			= 100;
+	private static final int	MAX			= 1000;
+	private static final int	PART		= (MAX / 3) * 2;
 	
 	private	Index				index		= null;
 	
-	private boolean				writing		= false;
 	private int 				todo		= 0;
-	private int					done		= 0;
 	
 	protected IndexObjectWriterWorker(Messenger msgr, WorkerUnion union,Index index) {
 		super(msgr, union);
@@ -35,10 +34,10 @@ public class IndexObjectWriterWorker extends Worker {
 		while(remaining.size()>0) {
 			leftOvers = true;
 			getMessenger().debug(this,"Remaining object files: " + remaining.size());
-			whileWriting();
+			whileTodoGreaterThanPartMax();
 			remaining = writeChangedFiles(remaining);
 		}
-		whileWriting();
+		whileTodoGreaterThanZero();
 		if (leftOvers) {
 			getMessenger().debug(this,"Done");
 		}
@@ -46,11 +45,14 @@ public class IndexObjectWriterWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		if (!isWriting()) {
-			SortedMap<Integer,List<IndexElement>> files = index.getChangedDataFiles(MAX);
+		if (!todoGreaterThanPartMax()) {
+			lockMe(this);
+			int get = MAX - todo;
+			unlockMe(this);
+			SortedMap<Integer,List<IndexElement>> files = index.getChangedDataFiles(get);
 			if (files.size()>0) {
 				writeChangedFiles(files);
-				if (files.size()==MAX) {
+				if (files.size()==get) {
 					setSleep(1);
 				} else {
 					setSleep(10);
@@ -67,15 +69,10 @@ public class IndexObjectWriterWorker extends Worker {
 		}
 		index = null;
 	}
-	
+
 	protected void writtenObject() {
 		lockMe(this);
-		done++;
-		if (done==todo) {
-			writing = false;
-			done = 0;
-			todo = 0;
-		}
+		todo--;
 		unlockMe(this);
 	}
 
@@ -101,7 +98,6 @@ public class IndexObjectWriterWorker extends Worker {
 		}
 		if (workers.size()>0) {
 			lockMe(this);
-			writing = true;
 			todo += workers.size();
 			unlockMe(this);
 			for (IndexObjectWriteWorker worker: workers) {
@@ -110,18 +106,30 @@ public class IndexObjectWriterWorker extends Worker {
 		}
 		return r;
 	}
+
+	private boolean todoGreaterThanPartMax() {
+		return testTodoGreaterThan(PART);
+	}
 	
-	private boolean isWriting() {
+	private void whileTodoGreaterThanPartMax() {
+		whileTodoGreaterThan(PART);
+	}
+	
+	private void whileTodoGreaterThanZero() {
+		whileTodoGreaterThan(0);
+	}
+
+	private boolean testTodoGreaterThan(int num) {
 		boolean r = false;
 		lockMe(this);
-		r = writing;
+		r = todo > num;
 		unlockMe(this);
 		return r;
 	}
-	
-	private void whileWriting() {
+
+	private void whileTodoGreaterThan(int num) {
 		int sleep = 10;
-		while(isWriting()) {
+		while(testTodoGreaterThan(num)) {
 			try {
 				Thread.sleep(sleep);
 			} catch (InterruptedException e) {

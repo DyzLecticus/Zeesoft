@@ -16,7 +16,7 @@ import nl.zeesoft.zodb.db.idx.IndexConfig;
 import nl.zeesoft.zodb.db.idx.SearchIndex;
 
 public class Index extends Locker {
-	private int										indexBlockSize			= 100;
+	private int										indexBlockSize			= 1000;
 	private int										dataBlockSize			= 10;
 	
 	private Database								db						= null;
@@ -294,14 +294,14 @@ public class Index extends Locker {
 		if (open) {
 			if (elementsByIndexFileNum.size()>0) {
 				for (int i = elementsByIndexFileNum.lastKey(); i>=0; i--) {
-					if (elementsByIndexFileNum.get(i).size()<indexBlockSize) {
+					if (elementsByIndexFileNum.get(i)==null || elementsByIndexFileNum.get(i).size()<indexBlockSize) {
 						availableIndexFileNums.add(i);
 					}
 				}
 			}
 			if (elementsByDataFileNum.size()>0) {
 				for (int i = elementsByDataFileNum.lastKey(); i>=0; i--) {
-					if (elementsByDataFileNum.get(i).size()<dataBlockSize) {
+					if (elementsByDataFileNum.get(i)==null || elementsByDataFileNum.get(i).size()<dataBlockSize) {
 						availableDataFileNums.add(i);
 					}
 				}
@@ -338,9 +338,10 @@ public class Index extends Locker {
 		}
 		unlockMe(this);
 	}
-
+	
 	protected void addFileElements(Integer fileNum,List<IndexElement> elements) {
 		lockMe(this);
+		List<IndexElement> added = new ArrayList<IndexElement>();
 		elementsByIndexFileNum.put(fileNum,elements);
 		for (IndexElement elem: elements) {
 			elementsById.put(elem.id,elem);
@@ -350,11 +351,10 @@ public class Index extends Locker {
 				elementsByDataFileNum.put(elem.dataFileNum,list);
 			}
 			list.add(elem);
+			added.add(elem.copy());
 		}
 		unlockMe(this);
-		for (IndexElement elem: elements) {
-			indexConfig.addObject(elem.copy());
-		}
+		indexConfig.addObjects(added);
 	}
 
 	protected SortedMap<Integer,List<IndexElement>> getChangedIndexFiles(int max) {

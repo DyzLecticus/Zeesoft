@@ -14,14 +14,14 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.db.IndexElement;
 
 public class IndexConfig extends Locker implements JsAble {
-	private static final String	PFX_OBJ			= "@OBJECT";
+	protected static final String	PFX_OBJ			= "@OBJECT";
 	
-	public static final String	IDX_NAME		= PFX_OBJ + ":name";
-	public static final String	IDX_MODIFIED	= PFX_OBJ + ":modified";
+	public static final String		IDX_NAME		= PFX_OBJ + ":name";
+	public static final String		IDX_MODIFIED	= PFX_OBJ + ":modified";
 	
-	private boolean				rebuild			= false;
-	private List<SearchIndex>	indexes 		= new ArrayList<SearchIndex>();
-	private List<SearchIndex>	objectIndexes	= new ArrayList<SearchIndex>();
+	private boolean					rebuild			= false;
+	private List<SearchIndex>		indexes 		= new ArrayList<SearchIndex>();
+	private List<SearchIndex>		objectIndexes	= new ArrayList<SearchIndex>();
 	
 	public IndexConfig(Messenger msgr) {
 		super(msgr);
@@ -64,7 +64,13 @@ public class IndexConfig extends Locker implements JsAble {
 		}
 		return r;
 	}
-	
+
+	public void addObjects(List<IndexElement> elements) {
+		for (SearchIndex index: objectIndexes) {
+			index.addObjects(elements);
+		}
+	}
+
 	public void addObject(IndexElement element) {
 		for (SearchIndex index: getIndexesForObjectName(element.name)) {
 			index.addObject(element);

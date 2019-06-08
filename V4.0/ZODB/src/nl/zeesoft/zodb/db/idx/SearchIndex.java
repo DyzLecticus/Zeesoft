@@ -79,6 +79,10 @@ public class SearchIndex implements JsAble {
 	protected boolean hasObject(IndexElement element) {
 		return index.hasObject(element);
 	}
+	
+	protected void addObjects(List<IndexElement> elements) {
+		index.addObjects(elements);
+	}
 
 	protected void addObject(IndexElement element) {
 		index.addObject(element);
