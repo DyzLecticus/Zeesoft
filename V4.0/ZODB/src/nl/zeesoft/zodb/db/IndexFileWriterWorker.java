@@ -6,10 +6,10 @@ import java.util.SortedMap;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class IndexObjectWriterWorker extends FileWriterWorkerObject {
-	private static final int	MAX			= 1000;
+public class IndexFileWriterWorker extends FileWriterWorkerObject {
+	private static final int	MAX			= 10;
 	
-	protected IndexObjectWriterWorker(Messenger msgr, WorkerUnion union,Index index) {
+	protected IndexFileWriterWorker(Messenger msgr, WorkerUnion union, Index index) {
 		super(msgr, union, index);
 	}
 	
@@ -20,16 +20,16 @@ public class IndexObjectWriterWorker extends FileWriterWorkerObject {
 
 	@Override
 	protected String getDirectory() {
-		return getIndex().getObjectDirectory();
+		return getIndex().getFileDirectory();
 	}
-
+	
 	@Override
 	protected FileWriteWorkerObject getNewFileWriteWorker(Messenger msgr, WorkerUnion union,FileWriterWorkerObject writer, String fileName, List<IndexElement> elements, StringBuilder key) {
-		return new IndexObjectWriteWorker(msgr,union,this,fileName,elements,key);
+		return new IndexFileWriteWorker(msgr,union,this,fileName,elements,key);
 	}
 
 	@Override
 	protected SortedMap<Integer, List<IndexElement>> getChangedFiles(int max) {
-		return getIndex().getChangedDataFiles(max);
+		return getIndex().getChangedIndexFiles(max);
 	}
 }

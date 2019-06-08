@@ -366,7 +366,9 @@ public class Index extends Locker {
 			List<IndexElement> elements = elementsByIndexFileNum.get(num);
 			if (elements!=null) {
 				for (IndexElement elem: elements) {
-					list.add(elem.copy());
+					if (!elem.removed) {
+						list.add(elem.copy());
+					}
 				}
 			}
 			r.put(num,list);
@@ -389,10 +391,12 @@ public class Index extends Locker {
 			List<IndexElement> elements = elementsByDataFileNum.get(num);
 			if (elements!=null) {
 				for (IndexElement elem: elements) {
-					IndexElement copy = elem.copy();
-					list.add(copy);
-					if (copy.obj==null) {
-						read.add(copy);
+					if (!elem.removed) {
+						IndexElement copy = elem.copy();
+						list.add(copy);
+						if (copy.obj==null) {
+							read.add(copy);
+						}
 					}
 				}
 			}
@@ -404,6 +408,11 @@ public class Index extends Locker {
 		}
 		unlockMe(this);
 		readObjects(read);
+		for (IndexElement element: read) {
+			if (element.obj==null) {
+				r.get(element.dataFileNum).remove(element);
+			}
+		}
 		return r;
 	}
 
@@ -644,7 +653,7 @@ public class Index extends Locker {
 			indexConfig.removeObject(r);
 			r.removed = true;
 			changedIndexFileNums.add(r.indexFileNum);
-			changedDataFileNums.add(r.indexFileNum);
+			changedDataFileNums.add(r.dataFileNum);
 			IndexElement ori = r;
 			r = r.copy();
 			ori.obj = null;

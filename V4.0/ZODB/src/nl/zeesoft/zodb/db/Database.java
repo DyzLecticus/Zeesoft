@@ -16,7 +16,7 @@ public class Database {
 	private Config							configuration	= null;
 	private IndexConfig						indexConfig		= null;
 	private Index							index			= null;
-	private IndexFileWriteWorker			fileWriter		= null;
+	private IndexFileWriterWorker			fileWriter		= null;
 	private IndexObjectWriterWorker			objectWriter	= null;
 	
 	private List<StateListener>				listeners		= new ArrayList<StateListener>();
@@ -25,7 +25,7 @@ public class Database {
 		configuration = config;
 		indexConfig = new IndexConfig(config.getMessenger());
 		index = new Index(config,this,idxBlkSize,datBlkSize,indexConfig);
-		fileWriter = new IndexFileWriteWorker(config.getMessenger(),config.getUnion(),index);
+		fileWriter = new IndexFileWriterWorker(config.getMessenger(),config.getUnion(),index);
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
 	

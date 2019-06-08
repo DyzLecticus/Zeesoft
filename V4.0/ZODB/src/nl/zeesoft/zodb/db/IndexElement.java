@@ -38,7 +38,7 @@ public class IndexElement {
 		r.removed = this.removed;
 		r.added = this.added;
 		for (Entry<String,ZStringBuilder> entry: idxValues.entrySet()) {
-			r.idxValues.put(entry.getKey(), entry.getValue());
+			r.idxValues.put(entry.getKey(), new ZStringBuilder(entry.getValue()));
 		}
 		return r;
 	}
