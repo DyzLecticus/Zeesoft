@@ -22,10 +22,6 @@ public class IndexFileReadWorker extends Worker {
 		setSleep(0);
 	}
 
-	protected List<String> getFileNames() {
-		return fileNames;
-	}
-	
 	@Override
 	public void whileWorking() {
 		if (done<fileNames.size()) {
@@ -61,5 +57,17 @@ public class IndexFileReadWorker extends Worker {
 			index = null;
 			stop();
 		}
+	}
+	
+	@Override
+	protected void setCaughtException(Exception caughtException) {
+		super.setCaughtException(caughtException);
+		reader.workerIsDone();
+		reader = null;
+		index = null;
+	}
+
+	protected List<String> getFileNames() {
+		return fileNames;
 	}
 }

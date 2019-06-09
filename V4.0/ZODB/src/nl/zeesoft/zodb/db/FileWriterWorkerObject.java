@@ -22,24 +22,6 @@ public abstract class FileWriterWorkerObject extends Worker {
 	}
 	
 	@Override
-	public void stop() {
-		super.stop();
-		waitForStop(10,false);
-		SortedMap<Integer,List<IndexElement>> remaining = writeChangedFiles(getChangedFiles(0));
-		boolean leftOvers = false;
-		while(remaining.size()>0) {
-			leftOvers = true;
-			getMessenger().debug(this,"Remaining files: " + remaining.size());
-			whileTodoGreaterThanZero();
-			remaining = writeChangedFiles(remaining);
-		}
-		whileTodoGreaterThanZero();
-		if (leftOvers) {
-			getMessenger().debug(this,"Done");
-		}
-	}
-	
-	@Override
 	public void whileWorking() {
 		if (!todoGreaterThanZero()) {
 			lockMe(this);
@@ -56,6 +38,24 @@ public abstract class FileWriterWorkerObject extends Worker {
 			} else {
 				setSleep(100);
 			}
+		}
+	}
+	
+	@Override
+	public void stop() {
+		super.stop();
+		waitForStop(10,false);
+		SortedMap<Integer,List<IndexElement>> remaining = writeChangedFiles(getChangedFiles(0));
+		boolean leftOvers = false;
+		while(remaining.size()>0) {
+			leftOvers = true;
+			getMessenger().debug(this,"Remaining files: " + remaining.size());
+			whileTodoGreaterThanZero();
+			remaining = writeChangedFiles(remaining);
+		}
+		whileTodoGreaterThanZero();
+		if (leftOvers) {
+			getMessenger().debug(this,"Done");
 		}
 	}
 	

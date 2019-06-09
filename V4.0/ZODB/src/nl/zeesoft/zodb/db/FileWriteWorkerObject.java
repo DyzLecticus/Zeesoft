@@ -22,12 +22,6 @@ public abstract class FileWriteWorkerObject extends Worker {
 		setSleep(0);
 	}
 	
-	protected void setCaughtException(Exception caughtException) {
-		super.setCaughtException(caughtException);
-		writer.writtenFile();
-		writer = null;
-	}
-	
 	@Override
 	public void whileWorking() {
 		ZStringBuilder error = getData().toFile(fileName);
@@ -35,6 +29,13 @@ public abstract class FileWriteWorkerObject extends Worker {
 			getMessenger().error(this,"Failed to write file: " + error);
 		}
 		stop();
+		writer.writtenFile();
+		writer = null;
+	}
+	
+	@Override
+	protected void setCaughtException(Exception caughtException) {
+		super.setCaughtException(caughtException);
 		writer.writtenFile();
 		writer = null;
 	}

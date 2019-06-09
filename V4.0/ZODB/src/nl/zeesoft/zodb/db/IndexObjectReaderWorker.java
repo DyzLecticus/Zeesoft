@@ -52,9 +52,8 @@ public class IndexObjectReaderWorker extends Worker {
 	
 	@Override
 	public void whileWorking() {
-		List<Integer> list = null;
+		List<Integer> list = new ArrayList<Integer>();
 		lockMe(this);
-		list = new ArrayList<Integer>();
 		if (queue.size()>0) {
 			int add = (MAX - reading.size());
 			if (add>0) {

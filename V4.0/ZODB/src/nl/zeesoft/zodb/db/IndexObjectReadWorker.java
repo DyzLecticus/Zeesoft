@@ -57,9 +57,7 @@ public class IndexObjectReadWorker extends Worker {
 			}
 		}
 		stop();
-		if (idObjMap.size()>0) {
-			objectReader.readObjects(fileNum,idObjMap);
-		}
+		objectReader.readObjects(fileNum,idObjMap);
 		objectReader = null;
 	}
 }
