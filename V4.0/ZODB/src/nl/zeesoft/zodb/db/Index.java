@@ -73,6 +73,9 @@ public class Index extends Locker {
 		unlockMe(this);
 		if (r!=null) {
 			readObject(r);
+			if (r.obj==null) {
+				r = null;
+			}
 		}
 		return r;
 	}
@@ -85,6 +88,9 @@ public class Index extends Locker {
 		}
 		if (r!=null) {
 			readObject(r);
+			if (r.obj==null) {
+				r = null;
+			}
 		}
 		return r;
 	}
@@ -111,20 +117,26 @@ public class Index extends Locker {
 
 	protected void setObjectName(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
 		Database.removeControlCharacters(name);
+		IndexElement element = null;
 		if (indexConfig.objectHasUpdateIndexes(name)) {
 			lockMe(this);
-			IndexElement element = elementsById.get(id);
+			element = elementsById.get(id);
 			if (element!=null) {
 				element = element.copy();
 			}
 			unlockMe(this);
 			if (element!=null) {
 				readObject(element);
+				if (element.obj==null) {
+					element = null;
+				}
 			}
 		}
-		lockMe(this);
-		setObjectNameNoLock(id,name,errors);
-		unlockMe(this);
+		if (element!=null) {
+			lockMe(this);
+			setObjectNameNoLock(id,name,errors);
+			unlockMe(this);
+		}
 	}
 
 	protected IndexElement removeObject(long id,List<ZStringBuilder> errors) {
@@ -420,6 +432,12 @@ public class Index extends Locker {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		r = listObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
 		readObjects(r);
+		List<IndexElement> read = new ArrayList<IndexElement>(r);
+		for (IndexElement element: read) {
+			if (element.obj==null) {
+				r.remove(element);
+			}
+		}
 		return r;
 	}
 
