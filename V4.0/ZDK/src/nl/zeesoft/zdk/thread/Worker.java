@@ -45,47 +45,7 @@ public abstract class Worker extends Locker implements Runnable {
 		worker = null;
 		unlockMe(this);
 	}
-
-	/**
-	 * Override this method to implement logic in the Worker.
-	 */
-	public abstract void whileWorking();
-
-	/**
-	 * Returns the amount of milliseconds this worker will sleep between whileWorking method calls.
-	 *
-	 * @return The amount of milliseconds this worker will sleep between whileWorking method calls
-	 */
-	public final int getSleep() {
-		int r = 100;
-		lockMe(this);
-		r = sleep;
-		unlockMe(this);
-		return r;
-	}
-
-	/**
-	 * Sets the amount of milliseconds this worker should sleep between whileWorking method calls (default 100).
-	 * 
-	 * @param sleep The amount of milliseconds this worker should sleep between whileWorking method calls
-	 */
-	public final void setSleep(int sleep) {
-		lockMe(this);
-		this.sleep = sleep;
-		unlockMe(this);
-	}
-
-	/**
-	 * Indicates the worker should stop if an exception is thrown while working (default true).
-	 * 
-	 * @param stopOnException True if the worker should stop if an exception is thrown while working
-	 */
-	public final void setStopOnException(boolean stopOnException) {
-		lockMe(this);
-		this.stopOnException = stopOnException;
-		unlockMe(this);
-	}
-
+	
 	/**
 	 * Returns true if the worker is working.
 	 * 
@@ -191,7 +151,47 @@ public abstract class Worker extends Locker implements Runnable {
 			union.removeWorker(this);
 		}
 	}
-	
+
+	/**
+	 * Override this method to implement logic in the Worker.
+	 */
+	protected abstract void whileWorking();
+
+	/**
+	 * Returns the amount of milliseconds this worker will sleep between whileWorking method calls.
+	 *
+	 * @return The amount of milliseconds this worker will sleep between whileWorking method calls
+	 */
+	protected final int getSleep() {
+		int r = 100;
+		lockMe(this);
+		r = sleep;
+		unlockMe(this);
+		return r;
+	}
+
+	/**
+	 * Sets the amount of milliseconds this worker should sleep between whileWorking method calls (default 100).
+	 * 
+	 * @param sleep The amount of milliseconds this worker should sleep between whileWorking method calls
+	 */
+	protected final void setSleep(int sleep) {
+		lockMe(this);
+		this.sleep = sleep;
+		unlockMe(this);
+	}
+
+	/**
+	 * Indicates the worker should stop if an exception is thrown while working (default true).
+	 * 
+	 * @param stopOnException True if the worker should stop if an exception is thrown while working
+	 */
+	protected final void setStopOnException(boolean stopOnException) {
+		lockMe(this);
+		this.stopOnException = stopOnException;
+		unlockMe(this);
+	}
+
 	/**
 	 * Forces calling threads to wait for this worker to stop.
 	 * 

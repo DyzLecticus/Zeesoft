@@ -84,25 +84,7 @@ public class Messenger extends Worker  {
 		addMessage(msg);
 	}
 
-	/**
-	 * Prints all messages in the buffer.
-	 * Notifies all MessageListener instances.
-	 * Clears the message buffer.
-	 */
-	@Override
-	public void whileWorking() {
-		List<MessageObject> printed = new ArrayList<MessageObject>();
-		lockMe(this);
-		if (messages.size()>0) {
-			printMessagesNoLock();
-			for (MessageObject msg: messages) {
-				printed.add(msg.getCopy());
-			}
-			messages.clear();
-		}
-		unlockMe(this);
-		printedMessagesNoLock(printed);
-	}
+	
 	
 	/**
 	 * Stops the Messenger.
@@ -163,6 +145,30 @@ public class Messenger extends Worker  {
 		lockMe(this);
 		this.printDebugMessages = printDebugMessages;
 		unlockMe(this);
+	}
+	
+	/**
+	 * Prints all messages in the buffer.
+	 * Notifies all MessageListener instances.
+	 * Clears the message buffer.
+	 */
+	public void handleMessages() {
+		List<MessageObject> printed = new ArrayList<MessageObject>();
+		lockMe(this);
+		if (messages.size()>0) {
+			printMessagesNoLock();
+			for (MessageObject msg: messages) {
+				printed.add(msg.getCopy());
+			}
+			messages.clear();
+		}
+		unlockMe(this);
+		printedMessagesNoLock(printed);
+	}
+	
+	@Override
+	protected void whileWorking() {
+		handleMessages();
 	}
 
 	protected void printMessage(MessageObject msg, boolean error) {

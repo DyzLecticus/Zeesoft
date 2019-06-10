@@ -42,7 +42,7 @@ public class TestMessenger extends TestObject {
 		System.out.println("// Ensure all application workers are stopped");
 		System.out.println("factory.getWorkerUnion(messenger).stopWorkers();");
 		System.out.println("// Trigger the messenger to print the remaining messages");
-		System.out.println("messenger.whileWorking();");
+		System.out.println("messenger.handleMessages();");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("The *Messenger* can be used to log debug, warning and error messages and print them to the standard and/or error out.");
@@ -89,7 +89,7 @@ public class TestMessenger extends TestObject {
 		sleep(150);
 		workerUnion.stopWorkers();
 		messenger.warn(listener,"Test log warning message after Messenger has stopped");
-		messenger.whileWorking(); // Prints and flushes remaining messages
+		messenger.handleMessages(); // Prints and flushes remaining messages
 		assertEqual(messenger.isWorking(),false,"Failed to stop the messenger");
 		assertEqual(messenger.isWarning(),true,"The messenger failed to register the warning message correctly");
 		assertEqual(messenger.isError(),true,"The messenger failed to register the warning error correctly");

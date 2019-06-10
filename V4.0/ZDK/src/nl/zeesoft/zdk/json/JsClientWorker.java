@@ -16,7 +16,7 @@ public class JsClientWorker extends Worker {
 	}
 
 	@Override
-	public void whileWorking() {
+	protected void whileWorking() {
 		if (client.sendRequest(request)) {
 			client = null;
 			request = null;
