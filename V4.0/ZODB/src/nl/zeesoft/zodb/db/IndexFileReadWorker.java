@@ -23,7 +23,7 @@ public class IndexFileReadWorker extends Worker {
 	}
 
 	@Override
-	public void whileWorking() {
+	protected void whileWorking() {
 		if (done<fileNames.size()) {
 			String fileName = fileNames.get(done);
 			ZStringBuilder content = new ZStringBuilder();

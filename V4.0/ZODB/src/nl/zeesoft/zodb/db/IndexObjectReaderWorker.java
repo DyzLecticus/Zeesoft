@@ -23,10 +23,28 @@ public class IndexObjectReaderWorker extends Worker {
 		setSleep(10);
 	}
 
+	@Override
+	public void stop() {
+		super.stop();
+		waitForStop(10,false);
+		lockMe(this);
+		reading.clear();
+		queue.clear();
+		unlockMe(this);
+	}
+
 	protected void addFileNums(List<Integer> fileNumList) {
 		if (fileNumList.size()>0) {
 			boolean added = false;
 			lockMe(this);
+			int num = MAX - reading.size();
+			for (int i = 0; i < num; i++) {
+				if (fileNumList.size()>0) {
+					int fileNum = fileNumList.remove(0);
+					reading.add(fileNum);
+					readFileNum(fileNum);
+				}
+			}
 			for (Integer fileNum: fileNumList) {
 				if (!queue.contains(fileNum) && !reading.contains(fileNum)) {
 					queue.add(fileNum);
@@ -39,19 +57,9 @@ public class IndexObjectReaderWorker extends Worker {
 			}
 		}
 	}
-
-	@Override
-	public void stop() {
-		super.stop();
-		waitForStop(10,false);
-		lockMe(this);
-		reading.clear();
-		queue.clear();
-		unlockMe(this);
-	}
 	
 	@Override
-	public void whileWorking() {
+	protected void whileWorking() {
 		List<Integer> list = new ArrayList<Integer>();
 		lockMe(this);
 		if (queue.size()>0) {
@@ -99,9 +107,13 @@ public class IndexObjectReaderWorker extends Worker {
 	
 	private void readFileNumList(List<Integer> fileNumList) {
 		for (Integer fileNum: fileNumList) {
-			String fileName = index.getObjectDirectory() + fileNum + ".txt";
-			IndexObjectReadWorker worker = new IndexObjectReadWorker(getMessenger(),getUnion(),this,fileNum,fileName,index.getKey());
-			worker.start();
+			readFileNum(fileNum);
 		}
+	}
+	
+	private void readFileNum(int fileNum) {
+		String fileName = index.getObjectDirectory() + fileNum + ".txt";
+		IndexObjectReadWorker worker = new IndexObjectReadWorker(getMessenger(),getUnion(),this,fileNum,fileName,index.getKey());
+		worker.start();
 	}
 }

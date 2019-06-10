@@ -19,7 +19,6 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
-import nl.zeesoft.zodb.db.WhiteList;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
 import nl.zeesoft.zodb.mod.handler.HandlerObject;
@@ -139,7 +138,7 @@ public class Config implements JsAble {
 		modules.clear();
 		messenger.stop();
 		union.stopWorkers();
-		messenger.whileWorking();
+		messenger.handleMessages();
 	}
 
 	@Override

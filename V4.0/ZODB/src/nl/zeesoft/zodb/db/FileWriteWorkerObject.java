@@ -23,7 +23,7 @@ public abstract class FileWriteWorkerObject extends Worker {
 	}
 	
 	@Override
-	public void whileWorking() {
+	protected void whileWorking() {
 		ZStringBuilder error = getData().toFile(fileName);
 		if (error.length()>0) {
 			getMessenger().error(this,"Failed to write file: " + error);

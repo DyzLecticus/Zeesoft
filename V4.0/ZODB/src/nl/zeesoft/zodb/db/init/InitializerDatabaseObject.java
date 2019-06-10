@@ -1,4 +1,4 @@
-package nl.zeesoft.zodb.db;
+package nl.zeesoft.zodb.db.init;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;

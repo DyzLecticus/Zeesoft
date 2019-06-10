@@ -1,4 +1,4 @@
-package nl.zeesoft.zodb.db;
+package nl.zeesoft.zodb;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -27,7 +27,7 @@ public class IndexObjectReadWorker extends Worker {
 	}
 	
 	@Override
-	public void whileWorking() {
+	protected void whileWorking() {
 		SortedMap<Long,JsFile> idObjMap = new TreeMap<Long,JsFile>();
 		ZStringBuilder data = new ZStringBuilder();
 		ZStringBuilder err = data.fromFile(fileName);
