@@ -133,7 +133,7 @@ public abstract class FileWriterWorkerObject extends Worker {
 	}
 
 	private void whileTodoGreaterThan(int num) {
-		int sleep = 10;
+		int sleep = 1;
 		while(testTodoGreaterThan(num)) {
 			try {
 				Thread.sleep(sleep);
@@ -145,7 +145,7 @@ public abstract class FileWriterWorkerObject extends Worker {
 				}
 			}
 			if (sleep<100) {
-				sleep += 10;
+				sleep += 1;
 			}
 		}
 	}

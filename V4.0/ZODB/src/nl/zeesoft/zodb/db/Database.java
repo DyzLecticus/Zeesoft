@@ -6,10 +6,16 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.idx.IndexConfig;
 
-public class Database {
+public class Database extends Locker {
+	private static final String				STAT_CLOSED		= "CLOSED";
+	private static final String				STAT_STARTING	= "STARTING";
+	private static final String				STAT_OPEN		= "OPEN";
+	private static final String				STAT_STOPPING	= "STOPPING";
+	
 	private static final String				INDEX_DIR		= "ZODB/Index/";
 	private static final String				OBJECT_DIR		= "ZODB/Objects/";
 	
@@ -21,7 +27,10 @@ public class Database {
 	
 	private List<StateListener>				listeners		= new ArrayList<StateListener>();
 	
+	private String							state			= STAT_CLOSED;
+	
 	public Database(Config config,int idxBlkSize,int datBlkSize) {
+		super(config.getMessenger());
 		configuration = config;
 		indexConfig = new IndexConfig(config.getMessenger());
 		index = new Index(config,this,idxBlkSize,datBlkSize,indexConfig);
@@ -31,14 +40,6 @@ public class Database {
 	
 	public void addListener(StateListener listener) {
 		listeners.add(listener);
-	}
-	
-	public String getFullIndexDir() {
-		return configuration.getFullDataDir() + INDEX_DIR;
-	}
-	
-	public String getFullObjectDir() {
-		return configuration.getFullDataDir() + OBJECT_DIR;
 	}
 	
 	public IndexConfig getIndexConfig() {
@@ -55,24 +56,38 @@ public class Database {
 	}
 
 	public void start() {
-		configuration.debug(this,"Starting database ...");
-		readConfig();
-		indexConfig.initialize();
-		StringBuilder newKey = configuration.getZODB().getNewKey();
-		if (newKey!=null && newKey.length()>0) {
-			configuration.debug(this,"Changing database key ...");
+		lockMe(this);
+		boolean start = state.equals(STAT_CLOSED);
+		if (start) {
+			state = STAT_STARTING;
 		}
-		if (indexConfig.isRebuild()) {
-			configuration.debug(this,"Rebuilding indexes ...");
+		unlockMe(this);
+		if (start) {
+			configuration.debug(this,"Starting database ...");
+			readConfig();
+			indexConfig.initialize();
+			StringBuilder newKey = configuration.getZODB().getNewKey();
+			if (newKey!=null && newKey.length()>0) {
+				configuration.debug(this,"Changing database key ...");
+			}
+			if (indexConfig.isRebuild()) {
+				configuration.debug(this,"Rebuilding indexes ...");
+			}
+			IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index,newKey);
+			reader.start();
+			index.getObjectReader().start();
+			configuration.debug(this,"Started database");
 		}
-		IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index,newKey);
-		reader.start();
-		index.getObjectReader().start();
-		configuration.debug(this,"Started database");
 	}
 
 	public void stop() {
-		if (index.isOpen()) {
+		lockMe(this);
+		boolean stop = state.equals(STAT_OPEN);
+		if (stop) {
+			state = STAT_STOPPING;
+		}
+		unlockMe(this);
+		if (stop) {
 			index.setOpen(false);
 			configuration.debug(this,"Stopping database ...");
 			index.getObjectReader().stop();
@@ -83,6 +98,9 @@ public class Database {
 			}
 			index.clear();
 			configuration.debug(this,"Stopped database");
+			lockMe(this);
+			state = STAT_CLOSED;
+			unlockMe(this);
 		}
 	}
 	
@@ -94,7 +112,11 @@ public class Database {
 	}
 	
 	public boolean isOpen() {
-		return index.isOpen();
+		boolean r = false;
+		lockMe(this);
+		r = state.equals(STAT_OPEN);
+		unlockMe(this);
+		return r;
 	}
 	
 	public IndexElement addObject(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
@@ -133,7 +155,7 @@ public class Database {
 		return index.removeObject(id,errors);
 	}
 	
-	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
+	public List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		return index.removeObjectsUseIndex(indexName,invert,operator,value,modAfter,modBefore,errors);
 	}
 	
@@ -148,6 +170,14 @@ public class Database {
 		sb.replace("\r","");
 		sb.replace("\n","");
 		sb.replace("\t","");
+	}
+	
+	protected String getFullIndexDir() {
+		return configuration.getFullDataDir() + INDEX_DIR;
+	}
+	
+	protected String getFullObjectDir() {
+		return configuration.getFullDataDir() + OBJECT_DIR;
 	}
 	
 	protected StringBuilder getKey() {
@@ -177,6 +207,11 @@ public class Database {
 		} else {
 			configuration.debug(this,"Database is closed for business");
 		}
+		lockMe(this);
+		if (open) {
+			state = STAT_OPEN;
+		}
+		unlockMe(this);
 		for (StateListener listener: listeners) {
 			listener.stateChanged(this,open);
 		}
