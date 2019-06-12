@@ -1,9 +1,10 @@
 package nl.zeesoft.zodb.db;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -13,7 +14,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public abstract class FileWriterWorkerObject extends Worker {
 	private	Index				index			= null;
-	private int 				todo			= 0;
+	private Set<Integer>		writing			= new HashSet<Integer>();
 	
 	protected FileWriterWorkerObject(Messenger msgr, WorkerUnion union,Index index) {
 		super(msgr, union);
@@ -25,12 +26,13 @@ public abstract class FileWriterWorkerObject extends Worker {
 	public void stop() {
 		super.stop();
 		waitForStop(10,false);
+		whileTodoGreaterThanZero(); // Empty buffer to ensure all remaining changes are captured
 		SortedMap<Integer,List<IndexElement>> remaining = writeChangedFiles(getChangedFiles(0));
 		boolean leftOvers = false;
 		while(remaining.size()>0) {
 			leftOvers = true;
 			getMessenger().debug(this,"Remaining files: " + remaining.size());
-			whileTodoGreaterThanZero();
+			whileTodoGreaterThanPartMax();
 			remaining = writeChangedFiles(remaining);
 		}
 		whileTodoGreaterThanZero();
@@ -41,9 +43,9 @@ public abstract class FileWriterWorkerObject extends Worker {
 	
 	@Override
 	protected void whileWorking() {
-		if (!todoGreaterThanZero()) {
+		if (!todoGreaterThanPartMax()) {
 			lockMe(this);
-			int get = getMax() - todo;
+			int get = getMax() - writing.size();
 			unlockMe(this);
 			SortedMap<Integer,List<IndexElement>> files = getChangedFiles(get);
 			if (files.size()>0) {
@@ -63,18 +65,20 @@ public abstract class FileWriterWorkerObject extends Worker {
 		if (isWorking()) {
 			stop();
 		}
+		lockMe(this);
 		index = null;
+		unlockMe(this);
 	}
 
-	protected void writtenFile() {
+	protected void writtenFile(int num) {
 		lockMe(this);
-		todo--;
+		writing.remove(num);
 		unlockMe(this);
 	}
 	
 	protected abstract int getMax();
 	
-	protected abstract FileWriteWorkerObject getNewFileWriteWorker(Messenger msgr, WorkerUnion union,FileWriterWorkerObject writer,String fileName, List<IndexElement> elements, StringBuilder key);
+	protected abstract FileWriteWorkerObject getNewFileWriteWorker(Messenger msgr,WorkerUnion union,FileWriterWorkerObject writer,int fileNum,String directory,List<IndexElement> elements,StringBuilder key);
 	
 	protected abstract SortedMap<Integer,List<IndexElement>> getChangedFiles(int max);
 
@@ -84,49 +88,46 @@ public abstract class FileWriterWorkerObject extends Worker {
 		return index;
 	}
 	
+	protected Set<Integer> getWriting() {
+		return writing;
+	}
+	
 	private SortedMap<Integer,List<IndexElement>> writeChangedFiles(SortedMap<Integer,List<IndexElement>> files) {
 		SortedMap<Integer,List<IndexElement>> r = new TreeMap<Integer,List<IndexElement>>(files);
 		List<FileWriteWorkerObject> workers = new ArrayList<FileWriteWorkerObject>();
 		int i = 0;
 		for (Entry<Integer,List<IndexElement>> entry: files.entrySet()) {
 			r.remove(entry.getKey());
-			String fileName = getDirectory() + entry.getKey() + ".txt";
-			if (entry.getValue().size()==0) {
-				File file = new File(fileName);
-				if (file.exists() && !file.delete()) {
-					getMessenger().error(this,"Failed to delete file: " + fileName);
-				}
-			} else {
-				workers.add(getNewFileWriteWorker(getMessenger(),getUnion(),this,fileName,entry.getValue(),index.getKey()));
-			}
+			FileWriteWorkerObject worker = getNewFileWriteWorker(getMessenger(),getUnion(),this,entry.getKey(),getDirectory(),entry.getValue(),index.getKey());
+			workers.add(worker);
+			worker.start();
+			lockMe(this);
+			writing.add(entry.getKey());
+			unlockMe(this);
 			i++;
 			if (i>=getMax()) {
 				break;
 			}
 		}
-		if (workers.size()>0) {
-			lockMe(this);
-			todo += workers.size();
-			unlockMe(this);
-			for (FileWriteWorkerObject worker: workers) {
-				worker.start();
-			}
-		}
 		return r;
 	}
 	
-	private boolean todoGreaterThanZero() {
-		return testTodoGreaterThan(0);
+	private boolean todoGreaterThanPartMax() {
+		return testTodoGreaterThan((getMax() / 4) * 3);
 	}
 	
 	private void whileTodoGreaterThanZero() {
 		whileTodoGreaterThan(0);
 	}
+	
+	private void whileTodoGreaterThanPartMax() {
+		whileTodoGreaterThan((getMax() / 4) * 3);
+	}
 
 	private boolean testTodoGreaterThan(int num) {
 		boolean r = false;
 		lockMe(this);
-		r = todo > num;
+		r = writing.size() > num;
 		unlockMe(this);
 		return r;
 	}

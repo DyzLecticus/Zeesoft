@@ -8,8 +8,8 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class IndexObjectWriteWorker extends FileWriteWorkerObject {
-	protected IndexObjectWriteWorker(Messenger msgr, WorkerUnion union,FileWriterWorkerObject writer,String fileName, List<IndexElement> elements, StringBuilder key) {
-		super(msgr, union, writer, fileName, elements, key);
+	protected IndexObjectWriteWorker(Messenger msgr,WorkerUnion union,FileWriterWorkerObject writer,int fileNum,String directory,List<IndexElement> elements,StringBuilder key) {
+		super(msgr,union,writer,fileNum,directory,elements,key);
 	}
 
 	@Override

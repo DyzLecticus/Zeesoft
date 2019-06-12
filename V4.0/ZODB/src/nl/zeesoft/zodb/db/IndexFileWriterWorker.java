@@ -24,12 +24,12 @@ public class IndexFileWriterWorker extends FileWriterWorkerObject {
 	}
 	
 	@Override
-	protected FileWriteWorkerObject getNewFileWriteWorker(Messenger msgr, WorkerUnion union,FileWriterWorkerObject writer, String fileName, List<IndexElement> elements, StringBuilder key) {
-		return new IndexFileWriteWorker(msgr,union,this,fileName,elements,key);
+	protected FileWriteWorkerObject getNewFileWriteWorker(Messenger msgr,WorkerUnion union,FileWriterWorkerObject writer,int fileNum,String directory,List<IndexElement> elements,StringBuilder key) {
+		return new IndexFileWriteWorker(msgr,union,this,fileNum,directory,elements,key);
 	}
 
 	@Override
 	protected SortedMap<Integer, List<IndexElement>> getChangedFiles(int max) {
-		return getIndex().getChangedIndexFiles(max);
+		return getIndex().getChangedIndexFiles(max,getWriting());
 	}
 }

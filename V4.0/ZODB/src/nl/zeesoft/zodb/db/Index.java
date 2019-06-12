@@ -369,53 +369,57 @@ public class Index extends Locker {
 		indexConfig.addObjects(added);
 	}
 
-	protected SortedMap<Integer,List<IndexElement>> getChangedIndexFiles(int max) {
+	protected SortedMap<Integer,List<IndexElement>> getChangedIndexFiles(int max,Set<Integer> exclude) {
 		SortedMap<Integer,List<IndexElement>> r = new TreeMap<Integer,List<IndexElement>>();
 		lockMe(this);
 		List<Integer> fileNums = new ArrayList<Integer>(changedIndexFileNums);
 		for (Integer num: fileNums) {
-			List<IndexElement> list = new ArrayList<IndexElement>();
-			List<IndexElement> elements = elementsByIndexFileNum.get(num);
-			if (elements!=null) {
-				for (IndexElement elem: elements) {
-					if (!elem.removed) {
-						list.add(elem.copy());
+			if (!exclude.contains(num)) {
+				List<IndexElement> list = new ArrayList<IndexElement>();
+				List<IndexElement> elements = elementsByIndexFileNum.get(num);
+				if (elements!=null) {
+					for (IndexElement elem: elements) {
+						if (!elem.removed) {
+							list.add(elem.copy());
+						}
 					}
 				}
-			}
-			r.put(num,list);
-			changedIndexFileNums.remove(num);
-			if (max>0 && r.size()>=max) {
-				break;
+				r.put(num,list);
+				changedIndexFileNums.remove(num);
+				if (max>0 && r.size()>=max) {
+					break;
+				}
 			}
 		}
 		unlockMe(this);
 		return r;
 	}
 
-	protected SortedMap<Integer,List<IndexElement>> getChangedDataFiles(int max) {
+	protected SortedMap<Integer,List<IndexElement>> getChangedDataFiles(int max,Set<Integer> exclude) {
 		SortedMap<Integer,List<IndexElement>> r = new TreeMap<Integer,List<IndexElement>>();
 		List<IndexElement> read = new ArrayList<IndexElement>();
 		lockMe(this);
 		List<Integer> fileNums = new ArrayList<Integer>(changedDataFileNums);
 		for (Integer num: fileNums) {
-			List<IndexElement> list = new ArrayList<IndexElement>();
-			List<IndexElement> elements = elementsByDataFileNum.get(num);
-			if (elements!=null) {
-				for (IndexElement elem: elements) {
-					if (!elem.removed) {
-						IndexElement copy = elem.copy();
-						list.add(copy);
-						if (copy.obj==null) {
-							read.add(copy);
+			if (!exclude.contains(num)) {
+				List<IndexElement> list = new ArrayList<IndexElement>();
+				List<IndexElement> elements = elementsByDataFileNum.get(num);
+				if (elements!=null) {
+					for (IndexElement elem: elements) {
+						if (!elem.removed) {
+							IndexElement copy = elem.copy();
+							list.add(copy);
+							if (copy.obj==null) {
+								read.add(copy);
+							}
 						}
 					}
 				}
-			}
-			r.put(num,list);
-			changedDataFileNums.remove(num);
-			if (max>0 && r.size()>=max) {
-				break;
+				r.put(num,list);
+				changedDataFileNums.remove(num);
+				if (max>0 && r.size()>=max) {
+					break;
+				}
 			}
 		}
 		unlockMe(this);
