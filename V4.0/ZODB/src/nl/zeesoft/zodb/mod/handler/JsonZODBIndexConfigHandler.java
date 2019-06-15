@@ -54,8 +54,8 @@ public class JsonZODBIndexConfigHandler extends JsonHandlerObject {
 					} else if (req.type.equals(IndexRequest.TYPE_GET)) {
 						r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
 					} else if (req.type.equals(IndexRequest.TYPE_ADD)) {
-						req.objectNamePrefix = Database.removeControlCharacters(req.objectNamePrefix);
-						req.propertyName = Database.removeControlCharacters(req.propertyName);
+						req.objectNamePrefix = Database.removeSpecialCharacters(req.objectNamePrefix);
+						req.propertyName = Database.removeSpecialCharacters(req.propertyName);
 						if (req.objectNamePrefix.length()==0) {
 							r = setResponse(response,400,"Request objectNamePrefix is mandatory");
 						} else if (req.propertyName.length()==0) {
@@ -69,7 +69,7 @@ public class JsonZODBIndexConfigHandler extends JsonHandlerObject {
 							}
 						}
 					} else if (req.type.equals(IndexRequest.TYPE_REMOVE)) {
-						req.name = Database.removeControlCharacters(req.name);
+						req.name = Database.removeSpecialCharacters(req.name);
 						if (req.name.length()==0) {
 							r = setResponse(response,400,"Request name is mandatory");
 						} else {

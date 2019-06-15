@@ -94,7 +94,7 @@ public class DatabaseRequestHandler {
 	
 	private void checkRequest(DatabaseResponse response) {
 		if (response.request.name.length()>0) {
-			Database.removeControlCharacters(response.request.name);
+			Database.removeSpecialCharacters(response.request.name);
 		}
 		if (response.request.value.length()>0) {
 			Database.removeControlCharacters(response.request.value);

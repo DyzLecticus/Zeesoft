@@ -159,13 +159,30 @@ public class Database extends Locker {
 		return index.removeObjectsUseIndex(indexName,invert,operator,value,modAfter,modBefore,errors);
 	}
 	
+	public static String removeSpecialCharacters(String str) {
+		str = str.replace("\"","");
+		str = str.replace("{","");
+		str = str.replace("}","");
+		str = str.replace("'","");
+		str = removeControlCharacters(str);
+		return str;
+	}
+	
 	public static String removeControlCharacters(String str) {
 		str = str.replace("\r","");
 		str = str.replace("\n","");
 		str = str.replace("\t","");
 		return str;
 	}
-	
+
+	public static void removeSpecialCharacters(ZStringBuilder sb) {
+		sb.replace("\"","");
+		sb.replace("{","");
+		sb.replace("}","");
+		sb.replace("'","");
+		removeControlCharacters(sb);
+	}
+
 	public static void removeControlCharacters(ZStringBuilder sb) {
 		sb.replace("\r","");
 		sb.replace("\n","");

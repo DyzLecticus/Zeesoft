@@ -116,7 +116,7 @@ public class Index extends Locker {
 	}
 
 	protected void setObjectName(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
-		Database.removeControlCharacters(name);
+		Database.removeSpecialCharacters(name);
 		IndexElement element = null;
 		if (indexConfig.objectHasUpdateIndexes(name)) {
 			lockMe(this);
@@ -493,7 +493,7 @@ public class Index extends Locker {
 	}
 	
 	private IndexElement addObjectNoLock(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
-		Database.removeControlCharacters(name);
+		Database.removeSpecialCharacters(name);
 		IndexElement r = null;
 		IndexElement element = new IndexElement();
 		element.name = name;
