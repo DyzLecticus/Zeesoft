@@ -152,11 +152,11 @@ public class TestDatabase extends TestObject {
 			}
 
 			errors.clear();
-			element = db.addObject(new ZStringBuilder("test999"), obj, errors);
+			element = db.addObject(new ZStringBuilder("test999"),obj,errors);
 			assertEqual(errors.size(),0,"Number of errors does not match expectation (2)");
 			
 			errors.clear();
-			db.setObjectName(element.id,new ZStringBuilder("testObject999"),errors);
+			db.setObjectName(element.id,new ZStringBuilder("testObject999"),0,errors);
 			assertEqual(errors.size(),1,"Number of errors does not match expectation (3)");
 			if (errors.size()==1) {
 				assertEqual(errors.get(0).toString(),"Index testObject:data blocks update of object named 'test999'","Rename object error does not match expectation");
@@ -205,8 +205,13 @@ public class TestDatabase extends TestObject {
 		
 		db.install();
 		
+		waitForDatabaseState(db,true,timeOut);
+		return db;
+	}
+	
+	public static final void waitForDatabaseState(Database db,boolean open,int timeOut) {
 		int i = 0;
-		while(!db.isOpen()) {
+		while(db.isOpen()!=open) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -217,10 +222,9 @@ public class TestDatabase extends TestObject {
 				break;
 			}
 		}
-		if (!db.isOpen()) {
-			System.out.println("Failed to initialize database within " + i + " seconds");
+		if (db.isOpen()!=open) {
+			System.out.println("Waiting for database state timed out after " + i + " seconds");
 		}
-		return db;
 	}
 	
 	private void addTestObjects(Database db) {

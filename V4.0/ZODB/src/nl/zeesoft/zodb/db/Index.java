@@ -16,12 +16,12 @@ import nl.zeesoft.zodb.db.idx.IndexConfig;
 import nl.zeesoft.zodb.db.idx.SearchIndex;
 
 public class Index extends Locker {
-	private int										indexBlockSize			= 1000;
-	private int										dataBlockSize			= 10;
-	
 	private Database								db						= null;
 	private IndexConfig								indexConfig				= null;
 	private IndexObjectReaderWorker					objectReader			= null;
+	
+	private int										indexBlockSize			= 1000;
+	private int										dataBlockSize			= 10;
 	
 	private SortedMap<Long,IndexElement>			elementsById			= new TreeMap<Long,IndexElement>();
 	private SortedMap<Integer,List<IndexElement>>	elementsByIndexFileNum	= new TreeMap<Integer,List<IndexElement>>();
@@ -34,13 +34,13 @@ public class Index extends Locker {
 	
 	private boolean									open					= false;
 	
-	protected Index(Config config,Database db,int idxBlkSize,int datBlkSize,IndexConfig indexConfig) {
+	protected Index(Config config,Database db,IndexConfig indexConfig,int idxBlkSize,int datBlkSize) {
 		super(config.getMessenger());
-		this.indexBlockSize = idxBlkSize;
-		this.dataBlockSize = datBlkSize;
 		this.db = db;
 		this.indexConfig = indexConfig;
 		objectReader = new IndexObjectReaderWorker(config.getMessenger(),config.getUnion(),this);
+		this.indexBlockSize = idxBlkSize;
+		this.dataBlockSize = datBlkSize;
 	}
 	
 	protected StringBuilder getKey() {
@@ -60,8 +60,8 @@ public class Index extends Locker {
 		unlockMe(this);
 		return r;
 	}
-	
-	protected IndexElement getObjectById(long id) {
+
+	protected IndexElement getObjectById(long id,int readTimeOutSeconds,List<ZStringBuilder> errors) {
 		IndexElement r = null;
 		lockMe(this);
 		if (id>0 && open) {
@@ -72,7 +72,7 @@ public class Index extends Locker {
 		}
 		unlockMe(this);
 		if (r!=null) {
-			readObject(r);
+			readObject(r,readTimeOutSeconds,errors);
 			if (r.obj==null) {
 				r = null;
 			}
@@ -80,14 +80,14 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected IndexElement getObjectByName(ZStringBuilder name) {
+	protected IndexElement getObjectByName(ZStringBuilder name,int readTimeOutSeconds,List<ZStringBuilder> errors) {
 		IndexElement r = null;
 		List<IndexElement> elements = indexConfig.listObjects(IndexConfig.IDX_NAME,true,false,DatabaseRequest.OP_EQUALS,name);
 		if (elements.size()>0) {
 			r = elements.get(0);
 		}
 		if (r!=null) {
-			readObject(r);
+			readObject(r,readTimeOutSeconds,errors);
 			if (r.obj==null) {
 				r = null;
 			}
@@ -103,8 +103,8 @@ public class Index extends Locker {
 		return listObjectsUsingIndex(start,max,true,IndexConfig.IDX_NAME,false,DatabaseRequest.OP_STARTS_WITH,null,modAfter,modBefore,data);
 	}
 	
-	protected List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
-		return getObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
+	protected List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		return getObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore,readTimeOutSeconds,errors);
 	}
 	
 	protected void setObject(long id, JsFile obj, List<ZStringBuilder> errors) {
@@ -115,7 +115,7 @@ public class Index extends Locker {
 		unlockMe(this);
 	}
 
-	protected void setObjectName(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
+	protected void setObjectName(long id,ZStringBuilder name,int readTimeOutSeconds,List<ZStringBuilder> errors) {
 		Database.removeSpecialCharacters(name);
 		IndexElement element = null;
 		if (indexConfig.objectHasUpdateIndexes(name)) {
@@ -126,7 +126,7 @@ public class Index extends Locker {
 			}
 			unlockMe(this);
 			if (element!=null) {
-				readObject(element);
+				readObject(element,readTimeOutSeconds,errors);
 				if (element.obj==null) {
 					element = null;
 				}
@@ -157,82 +157,6 @@ public class Index extends Locker {
 			r.add(element);
 		}
 		return r;
-	}
-
-	protected void readObject(IndexElement element) {
-		List<IndexElement> elements = new ArrayList<IndexElement>();
-		elements.add(element);
-		readObjects(elements);
-	}
-
-	protected void readObjects(List<IndexElement> elements) {
-		readObjects(elements,false);
-	}
-
-	protected void readObjects(List<IndexElement> elements, boolean force) {
-		List<Integer> fileNumList = new ArrayList<Integer>();
-		List<Long> idList = new ArrayList<Long>();
-		for (IndexElement element: elements) {
-			lockMe(this);
-			IndexElement elem = elementsById.get(element.id);
-			if (elem!=null) {
-				if (elem.obj!=null) {
-					element.obj = elem.obj;
-				} else {
-					if (!fileNumList.contains(element.dataFileNum)) {
-						fileNumList.add(element.dataFileNum);
-					}
-					idList.add(element.id);
-				}
-			}
-			unlockMe(this);
-		}
-		if (fileNumList.size()>0) {
-			objectReader.addFileNums(fileNumList);
-			waitForObjectRead(idList,force);
-			for (IndexElement element: elements) {
-				lockMe(this);
-				IndexElement elem = elementsById.get(element.id);
-				if (elem!=null && elem.obj!=null) {
-					element.obj = elem.obj;
-				}
-				unlockMe(this);
-			}
-		}
-	}
-
-	protected void waitForObjectRead(List<Long> idList,boolean force) {
-		boolean o = true;
-		long sleep = 1;
-		while(idList.size()>0) {
-			List<Long> remainingIdList = new ArrayList<Long>();
-			for (Long id: idList) {
-				lockMe(this);
-				IndexElement element = elementsById.get(id);
-				if (element!=null && element.obj==null) {
-					remainingIdList.add(id);
-				}
-				unlockMe(this);
-			}
-			idList = remainingIdList;
-			if (!force && idList.size()>0) {
-				lockMe(this);
-				o = open;
-				unlockMe(this);
-			}
-			if (!o) {
-				break;
-			} else if (idList.size()>0) {
-				try {
-					Thread.sleep(sleep);
-				} catch (InterruptedException e) {
-					getMessenger().error(this,"Waiting for object read was interrupted",e);
-				}
-				if (sleep<100) {
-					sleep++;
-				}
-			}
-		}
 	}
 	
 	protected void readObjects(SortedMap<Long,JsFile> idObjMap) {
@@ -266,7 +190,7 @@ public class Index extends Locker {
 			}
 		}
 		unlockMe(this);
-		readObjects(elements,true);
+		forceReadObjects(elements);
 	}
 
 	protected void setKey(StringBuilder key) {
@@ -423,7 +347,7 @@ public class Index extends Locker {
 			}
 		}
 		unlockMe(this);
-		readObjects(read);
+		forceReadObjects(read);
 		for (IndexElement element: read) {
 			if (element.obj==null) {
 				r.get(element.dataFileNum).remove(element);
@@ -432,10 +356,10 @@ public class Index extends Locker {
 		return r;
 	}
 
-	private List<IndexElement> getObjectsUsingIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
+	private List<IndexElement> getObjectsUsingIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,int readTimeOutSeconds,List<ZStringBuilder> errors) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		r = listObjectsUsingIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
-		readObjects(r);
+		readObjects(r,readTimeOutSeconds,errors);
 		List<IndexElement> read = new ArrayList<IndexElement>(r);
 		for (IndexElement element: read) {
 			if (element.obj==null) {
@@ -580,7 +504,102 @@ public class Index extends Locker {
 		return r;
 	}
 	
-	protected void setObjectNameNoLock(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
+
+	private void readObject(IndexElement element,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		List<IndexElement> elements = new ArrayList<IndexElement>();
+		elements.add(element);
+		readObjects(elements,readTimeOutSeconds,errors);
+	}
+
+	private void readObjects(List<IndexElement> elements,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		readObjects(elements,false,readTimeOutSeconds,errors);
+	}
+
+	private void forceReadObjects(List<IndexElement> elements) {
+		readObjects(elements,true,0,null);
+	}
+	
+	private void readObjects(List<IndexElement> elements, boolean force,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		if (readTimeOutSeconds<=0) {
+			readTimeOutSeconds = 1;
+		}
+		List<Integer> fileNumList = new ArrayList<Integer>();
+		List<Long> idList = new ArrayList<Long>();
+		for (IndexElement element: elements) {
+			lockMe(this);
+			IndexElement elem = elementsById.get(element.id);
+			if (elem!=null) {
+				if (elem.obj!=null) {
+					element.obj = elem.obj;
+				} else {
+					if (!fileNumList.contains(element.dataFileNum)) {
+						fileNumList.add(element.dataFileNum);
+					}
+					idList.add(element.id);
+				}
+			}
+			unlockMe(this);
+		}
+		if (fileNumList.size()>0) {
+			objectReader.addFileNums(fileNumList);
+			waitForObjectRead(idList,force,readTimeOutSeconds,errors);
+			for (IndexElement element: elements) {
+				lockMe(this);
+				IndexElement elem = elementsById.get(element.id);
+				if (elem!=null && elem.obj!=null) {
+					element.obj = elem.obj;
+				}
+				unlockMe(this);
+			}
+		}
+	}
+
+	private void waitForObjectRead(List<Long> idList,boolean force,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		boolean o = true;
+		long sleep = 1;
+		long started = System.currentTimeMillis();
+		while(idList.size()>0) {
+			List<Long> remainingIdList = new ArrayList<Long>();
+			for (Long id: idList) {
+				lockMe(this);
+				IndexElement element = elementsById.get(id);
+				if (element!=null && element.obj==null) {
+					remainingIdList.add(id);
+				}
+				unlockMe(this);
+			}
+			idList = remainingIdList;
+			if (!force && idList.size()>0) {
+				o = isOpen();
+				if (errors!=null) {
+					if (!o) {
+						errors.add(new ZStringBuilder("Database has been closed while reading object(s)"));
+					} else if (System.currentTimeMillis() - started > (long)readTimeOutSeconds * 1000L) {
+						errors.add(new ZStringBuilder("Reading object(s) timed out after " + readTimeOutSeconds + " seconds"));
+						break;
+					}
+				} 
+			}
+			if (!o) {
+				break;
+			} else if (idList.size()>0) {
+				try {
+					Thread.sleep(sleep);
+				} catch (InterruptedException e) {
+					getMessenger().error(this,"Waiting for object read was interrupted",e);
+					if (errors!=null) {
+						errors.add(new ZStringBuilder("Waiting for object read was interrupted"));
+					}
+					break;
+				}
+				if (sleep<100) {
+					sleep++;
+				}
+			}
+		}
+	}
+	
+	private void setObjectNameNoLock(long id, ZStringBuilder name, List<ZStringBuilder> errors) {
 		if (open) {
 			IndexElement element = elementsById.get(id);
 			if (element!=null && !element.removed) {

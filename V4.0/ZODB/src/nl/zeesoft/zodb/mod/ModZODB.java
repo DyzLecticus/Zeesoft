@@ -21,19 +21,19 @@ import nl.zeesoft.zodb.mod.handler.JsonZODBIndexConfigHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 
 public class ModZODB extends ModObject implements StateListener {
-	public static final String	NAME			= "ZODB";
-	public static final String	DESC			= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
+	public static final String	NAME				= "ZODB";
+	public static final String	DESC				= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
-	private StringBuilder		key				= null;
-	private StringBuilder		newKey			= null;
-	private WhiteList			whiteList		= new WhiteList();
+	private StringBuilder		key					= null;
+	private StringBuilder		newKey				= null;
+	private WhiteList			whiteList			= new WhiteList();
 	
-	private Database			database		= null;
+	private Database			database			= null;
 	
-	public int					maxLenName		= 128;
-	public int					maxLenObj		= 32768;
-	public int					indexBlockSize	= 1000;
-	public int					dataBlockSize	= 10;
+	public int					maxLenName			= 128;
+	public int					maxLenObj			= 32768;
+	public int					indexBlockSize		= 1000;
+	public int					dataBlockSize		= 10;
 	
 	public ModZODB(Config config) {
 		super(config);
@@ -61,12 +61,12 @@ public class ModZODB extends ModObject implements StateListener {
 			}
 			json.rootElement.children.add(new JsElem("newKey",encoder,true));
 		}
-		json.rootElement.children.add(new JsElem("maxLenName","" + maxLenName));
-		json.rootElement.children.add(new JsElem("maxLenObj","" + maxLenObj));
 		if (whiteList.getList().size()>0) {
 			JsFile wl = whiteList.toJson();
 			json.rootElement.children.add(wl.rootElement);
 		}
+		json.rootElement.children.add(new JsElem("maxLenName","" + maxLenName));
+		json.rootElement.children.add(new JsElem("maxLenObj","" + maxLenObj));
 		return json;
 	}
 
@@ -102,6 +102,7 @@ public class ModZODB extends ModObject implements StateListener {
 					newKey = encoder.generateNewKey(1024);
 				}
 			}
+			whiteList.fromJson(json);
 			maxLenName = json.rootElement.getChildInt("maxLenName",maxLenName);
 			if (maxLenName<8) {
 				maxLenName = 8;
@@ -110,7 +111,6 @@ public class ModZODB extends ModObject implements StateListener {
 			if (maxLenObj<24) {
 				maxLenObj = 24;
 			}
-			whiteList.fromJson(json);
 		}
 	}
 	

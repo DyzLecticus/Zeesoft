@@ -33,7 +33,7 @@ public class Database extends Locker {
 		super(config.getMessenger());
 		configuration = config;
 		indexConfig = new IndexConfig(config.getMessenger());
-		index = new Index(config,this,idxBlkSize,datBlkSize,indexConfig);
+		index = new Index(config,this,indexConfig,idxBlkSize,datBlkSize);
 		fileWriter = new IndexFileWriterWorker(config.getMessenger(),config.getUnion(),index);
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
@@ -124,11 +124,19 @@ public class Database extends Locker {
 	}
 	
 	public IndexElement getObjectById(long id) {
-		return index.getObjectById(id);
+		return index.getObjectById(id,0,null);
+	}
+	
+	public IndexElement getObjectById(long id,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		return index.getObjectById(id,readTimeOutSeconds,errors);
 	}
 	
 	public IndexElement getObjectByName(ZStringBuilder name) {
-		return index.getObjectByName(name);
+		return index.getObjectByName(name,0,null);
+	}
+	
+	public IndexElement getObjectByName(ZStringBuilder name,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		return index.getObjectByName(name,readTimeOutSeconds,errors);
 	}
 	
 	public List<IndexElement> listObjectsUseIndex(int start, int max,boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<Integer> data) {
@@ -140,15 +148,23 @@ public class Database extends Locker {
 	}
 	
 	public List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore) {
-		return index.getObjectsUseIndex(ascending,indexName,invert,operator,value,modAfter,modBefore);
+		return index.getObjectsUseIndex(ascending,indexName,invert,operator,value,modAfter,modBefore,0,null);
+	}
+	
+	public List<IndexElement> getObjectsUseIndex(boolean ascending,String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		return index.getObjectsUseIndex(ascending,indexName,invert,operator,value,modAfter,modBefore,readTimeOutSeconds,errors);
 	}
 	
 	public void setObject(long id, JsFile obj,List<ZStringBuilder> errors) {
 		index.setObject(id,obj,errors);
 	}
 
-	public void setObjectName(long id, ZStringBuilder name,List<ZStringBuilder> errors) {
-		index.setObjectName(id,name,errors);
+	public void setObjectName(long id, ZStringBuilder name) {
+		index.setObjectName(id,name,0,null);
+	}
+
+	public void setObjectName(long id, ZStringBuilder name,int readTimeOutSeconds,List<ZStringBuilder> errors) {
+		index.setObjectName(id,name,readTimeOutSeconds,errors);
 	}
 
 	public IndexElement removeObject(long id,List<ZStringBuilder> errors) {

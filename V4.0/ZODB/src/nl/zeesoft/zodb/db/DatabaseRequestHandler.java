@@ -36,27 +36,29 @@ public class DatabaseRequestHandler {
 					database.addObject(request.name,request.object,response.errors);
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_GET)) {
 					if (request.id>0) {
-						IndexElement element = database.getObjectById(request.id);
+						IndexElement element = database.getObjectById(request.id,request.readTimeOutSeconds,response.errors);
 						if (element!=null) {
 							response.results.add(new DatabaseResult(element));
 						}
 					} else if (request.name.length()>0) {
-						IndexElement element = database.getObjectByName(request.name);
+						IndexElement element = database.getObjectByName(request.name,request.readTimeOutSeconds,response.errors);
 						if (element!=null) {
 							response.results.add(new DatabaseResult(element));
 						}
 					} else if (request.index.length()>0) {
-						response.resultsFromElements(database.getObjectsUseIndex(request.ascending,request.index,request.invert,request.operator,request.value,request.modAfter,request.modBefore));
+						response.resultsFromElements(database.getObjectsUseIndex(request.ascending,request.index,request.invert,request.operator,request.value,request.modAfter,request.modBefore,request.readTimeOutSeconds,response.errors));
 					}
 					if (request.encoding.length()>0 && response.results.size()>0) {
 						for (DatabaseResult res: response.results) {
-							ZStringEncoder encoder = new ZStringEncoder(res.object.toStringBuilder());
-							if (response.request.encoding.equals(DatabaseRequest.ENC_ASCII)) {
-								encoder.encodeAscii();
-							} else if (response.request.encoding.equals(DatabaseRequest.ENC_KEY)) {
-								encoder.encodeKey(database.getKey(),0);
+							if (res.object!=null) {
+								ZStringEncoder encoder = new ZStringEncoder(res.object.toStringBuilder());
+								if (response.request.encoding.equals(DatabaseRequest.ENC_ASCII)) {
+									encoder.encodeAscii();
+								} else if (response.request.encoding.equals(DatabaseRequest.ENC_KEY)) {
+									encoder.encodeKey(database.getKey(),0);
+								}
+								res.encoded = encoder;
 							}
-							res.encoded = encoder;
 						}
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_LIST)) {
@@ -82,9 +84,11 @@ public class DatabaseRequestHandler {
 						database.removeObject(request.id,response.errors);
 					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
-					database.setObject(request.id,request.object,response.errors);
+					if (request.object!=null) {
+						database.setObject(request.id,request.object,response.errors);
+					}
 					if (request.name.length()>0) {
-						database.setObjectName(request.id,request.name,response.errors);
+						database.setObjectName(request.id,request.name,request.readTimeOutSeconds,response.errors);
 					}
 				}
 			}
@@ -141,7 +145,12 @@ public class DatabaseRequestHandler {
 			if (response.request.id<=0) {
 				response.errors.add(new ZStringBuilder("Request id is mandatory"));
 			}
-			checkRequestObjectMandatory(response);
+			if (response.request.name.length()==0 && response.request.object==null) {
+				response.errors.add(new ZStringBuilder("Request name and/or object is mandatory"));
+			}
+			if (response.request.name.length()==0 || response.request.object!=null) {
+				checkRequestObjectMandatory(response);
+			}
 		}
 		if (response.errors.size()>0) {
 			response.statusCode = 400;

@@ -24,6 +24,7 @@ public class DatabaseRequest implements JsAble {
 	public static final String	OP_GREATER_OR_EQUAL	= "GREATER_OR_EQUAL";
 	
 	public String				type				= "";
+	public int					readTimeOutSeconds	= 3;
 	public int					start				= 0;
 	public int					max					= 10;
 	public long					id					= 0L;
@@ -63,6 +64,9 @@ public class DatabaseRequest implements JsAble {
 		json.rootElement.children.add(new JsElem("type",type,true));
 		if (id>0) {
 			json.rootElement.children.add(new JsElem("id","" + id));
+		}
+		if (readTimeOutSeconds!=3) {
+			json.rootElement.children.add(new JsElem("readTimeOutSeconds","" + readTimeOutSeconds));
 		}
 		if (name.length()>0) {
 			json.rootElement.children.add(new JsElem("name",name,true));
@@ -106,10 +110,11 @@ public class DatabaseRequest implements JsAble {
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			type = json.rootElement.getChildString("type",type);
+			readTimeOutSeconds = json.rootElement.getChildInt("readTimeOutSeconds",readTimeOutSeconds);
+ 			name = json.rootElement.getChildZStringBuilder("name",name);
 			start = json.rootElement.getChildInt("start",start);
 			max = json.rootElement.getChildInt("max",max);
 			id = json.rootElement.getChildLong("id",id);
-			name = json.rootElement.getChildZStringBuilder("name",name);
 			modAfter = json.rootElement.getChildLong("modAfter",modAfter);
 			modBefore = json.rootElement.getChildLong("modBefore",modBefore);
 			

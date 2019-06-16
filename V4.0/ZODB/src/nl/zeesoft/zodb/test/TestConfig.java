@@ -1,6 +1,7 @@
 package nl.zeesoft.zodb.test;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -40,13 +41,16 @@ public class TestConfig extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
+		ZStringEncoder encoder = new ZStringEncoder();
+		encoder.generateNewKey(1024);
+		
 		Config config = new Config();
 		config.getModule(ModZODB.NAME).url = "http://test.domain";
 		config.getModule(ModZODB.NAME).selfTest = true;
 		config.setDebug(true);
 		config.setDataDir("dir/");
-		config.setZODBKey(new StringBuilder("23894756239847569823478569283465987234658976"));
-		config.getZODB().setNewKey(new StringBuilder("38947562398475698234785692834659872346589765"));
+		config.setZODBKey(encoder.generateNewKey(64));
+		config.getZODB().setNewKey(encoder.generateNewKey(64));
 		String fullDataDir = config.getFullDataDir();
 		StringBuilder key = config.getZODBKey();
 		
