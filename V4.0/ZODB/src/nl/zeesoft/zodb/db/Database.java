@@ -11,10 +11,11 @@ import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.idx.IndexConfig;
 
 public class Database extends Locker {
+	public static final String				STAT_OPEN		= "OPEN";
+	
+	private static final String				STAT_STOPPING	= "STOPPING";
 	private static final String				STAT_CLOSED		= "CLOSED";
 	private static final String				STAT_STARTING	= "STARTING";
-	private static final String				STAT_OPEN		= "OPEN";
-	private static final String				STAT_STOPPING	= "STOPPING";
 	
 	private static final String				INDEX_DIR		= "ZODB/Index/";
 	private static final String				OBJECT_DIR		= "ZODB/Objects/";
@@ -55,7 +56,7 @@ public class Database extends Locker {
 		writeConfig();
 	}
 
-	public void start() {
+	public boolean start() {
 		lockMe(this);
 		boolean start = state.equals(STAT_CLOSED);
 		if (start) {
@@ -78,9 +79,10 @@ public class Database extends Locker {
 			index.getObjectReader().start();
 			configuration.debug(this,"Started database");
 		}
+		return start;
 	}
 
-	public void stop() {
+	public boolean stop() {
 		lockMe(this);
 		boolean stop = state.equals(STAT_OPEN);
 		if (stop) {
@@ -102,6 +104,7 @@ public class Database extends Locker {
 			state = STAT_CLOSED;
 			unlockMe(this);
 		}
+		return stop;
 	}
 	
 	public void destroy() {
@@ -115,6 +118,14 @@ public class Database extends Locker {
 		boolean r = false;
 		lockMe(this);
 		r = state.equals(STAT_OPEN);
+		unlockMe(this);
+		return r;
+	}
+	
+	public String getState() {
+		String r = "";
+		lockMe(this);
+		r = state;
 		unlockMe(this);
 		return r;
 	}

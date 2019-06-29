@@ -11,7 +11,7 @@ import nl.zeesoft.zodb.db.DatabaseResponse;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
 
-public class JsonZODBRequestHandler extends JsonHandlerObject {
+public class JsonZODBRequestHandler extends JsonZODBHandlerObject {
 	public final static String	PATH	= "/request.json"; 
 	
 	public JsonZODBRequestHandler(Config config, ModObject mod) {
@@ -27,19 +27,13 @@ public class JsonZODBRequestHandler extends JsonHandlerObject {
 		if (json.rootElement==null) {
 			r = setResponse(response,400,"Failed to parse JSON");
 		} else {
-			ModZODB zodb = getConfiguration().getZODB();
-			if (zodb==null) {
-				r = setResponse(response,405,"ZODB module not found");
-			} else {
-				if (!zodb.getWhiteList().isAllowed(request.getRemoteAddr())) {
-					r = setResponse(response,403,"ZODB module does not allow requests from " + request.getRemoteAddr());
-				} else {
-					DatabaseRequest req = new DatabaseRequest();
-					req.fromJson(json);
-					DatabaseResponse res = zodb.handleRequest(req);
-					response.setStatus(res.statusCode);
-					r = stringifyJson(res.toJson());
-				}
+			ModZODB zodb = getZODB(request,response);
+			if (zodb!=null) {
+				DatabaseRequest req = new DatabaseRequest();
+				req.fromJson(json);
+				DatabaseResponse res = zodb.handleRequest(req);
+				response.setStatus(res.statusCode);
+				r = stringifyJson(res.toJson());
 			}
 		}
 		return r;

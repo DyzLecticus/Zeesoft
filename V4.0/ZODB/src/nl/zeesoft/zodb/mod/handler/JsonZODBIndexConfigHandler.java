@@ -12,7 +12,7 @@ import nl.zeesoft.zodb.db.idx.IndexRequest;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
 
-public class JsonZODBIndexConfigHandler extends JsonHandlerObject {
+public class JsonZODBIndexConfigHandler extends JsonZODBHandlerObject {
 	public final static String	PATH	= "/indexConfig.json"; 
 	
 	public JsonZODBIndexConfigHandler(Config config, ModObject mod) {
@@ -25,59 +25,63 @@ public class JsonZODBIndexConfigHandler extends JsonHandlerObject {
 	protected ZStringBuilder handleAllowedRequest(String method,HttpServletRequest request,HttpServletResponse response) {
 		ZStringBuilder r = new ZStringBuilder();
 		if (method.equals(METH_GET)) {
-			ModZODB zodb = getConfiguration().getZODB();
-			r = checkRequest(zodb,request,response);
-			if (r.length()==0) {
-				r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
+			ModZODB zodb = getZODB(request,response);
+			if (zodb!=null) {
+				r = checkRequest(zodb,request,response);
+				if (r.length()==0) {
+					r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
+				}
 			}
 		} else if (method.equals(METH_POST)) {
 			JsFile json = getPostBodyJson(request, response);
 			if (json.rootElement==null) {
 				r = setResponse(response,400,"Failed to parse JSON");
 			} else {
-				ModZODB zodb = getConfiguration().getZODB();
-				r = checkRequest(zodb,request,response);
-				if (r.length()==0) {
-					IndexRequest req = new IndexRequest();
-					req.fromJson(json);
-					if (req.type.length()==0) {
-						r = setResponse(response,400,"Request type is mandatory");
-					} else if (
-						!req.type.equals(IndexRequest.TYPE_LIST) && 
-						!req.type.equals(IndexRequest.TYPE_GET) && 
-						!req.type.equals(IndexRequest.TYPE_ADD) && 
-						!req.type.equals(IndexRequest.TYPE_REMOVE)
-						) {
-						r = setResponse(response,400,"Request type must be " + IndexRequest.TYPE_LIST + ", " + IndexRequest.TYPE_GET + ", " + IndexRequest.TYPE_ADD + " or " + IndexRequest.TYPE_REMOVE);
-					} else if (req.type.equals(IndexRequest.TYPE_LIST)) {
-						r = stringifyJson(zodb.getDatabase().getIndexConfig().toJson());
-					} else if (req.type.equals(IndexRequest.TYPE_GET)) {
-						r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
-					} else if (req.type.equals(IndexRequest.TYPE_ADD)) {
-						req.objectNamePrefix = Database.removeSpecialCharacters(req.objectNamePrefix);
-						req.propertyName = Database.removeSpecialCharacters(req.propertyName);
-						if (req.objectNamePrefix.length()==0) {
-							r = setResponse(response,400,"Request objectNamePrefix is mandatory");
-						} else if (req.propertyName.length()==0) {
-							r = setResponse(response,400,"Request propertyName is mandatory");
-						} else {
-							ZStringBuilder err = zodb.getDatabase().getIndexConfig().addIndex(req.objectNamePrefix,req.propertyName,req.numeric,req.unique);
-							if (err.length()>0) {
-								r = setResponse(response,400,err.toString());
+				ModZODB zodb = getZODB(request,response);
+				if (zodb!=null) {
+					r = checkRequest(zodb,request,response);
+					if (r.length()==0) {
+						IndexRequest req = new IndexRequest();
+						req.fromJson(json);
+						if (req.type.length()==0) {
+							r = setResponse(response,400,"Request type is mandatory");
+						} else if (
+							!req.type.equals(IndexRequest.TYPE_LIST) && 
+							!req.type.equals(IndexRequest.TYPE_GET) && 
+							!req.type.equals(IndexRequest.TYPE_ADD) && 
+							!req.type.equals(IndexRequest.TYPE_REMOVE)
+							) {
+							r = setResponse(response,400,"Request type must be " + IndexRequest.TYPE_LIST + ", " + IndexRequest.TYPE_GET + ", " + IndexRequest.TYPE_ADD + " or " + IndexRequest.TYPE_REMOVE);
+						} else if (req.type.equals(IndexRequest.TYPE_LIST)) {
+							r = stringifyJson(zodb.getDatabase().getIndexConfig().toJson());
+						} else if (req.type.equals(IndexRequest.TYPE_GET)) {
+							r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
+						} else if (req.type.equals(IndexRequest.TYPE_ADD)) {
+							req.objectNamePrefix = Database.removeSpecialCharacters(req.objectNamePrefix);
+							req.propertyName = Database.removeSpecialCharacters(req.propertyName);
+							if (req.objectNamePrefix.length()==0) {
+								r = setResponse(response,400,"Request objectNamePrefix is mandatory");
+							} else if (req.propertyName.length()==0) {
+								r = setResponse(response,400,"Request propertyName is mandatory");
 							} else {
-								r = setResponse(response,200,"Added index " + req.getName());
+								ZStringBuilder err = zodb.getDatabase().getIndexConfig().addIndex(req.objectNamePrefix,req.propertyName,req.numeric,req.unique);
+								if (err.length()>0) {
+									r = setResponse(response,400,err.toString());
+								} else {
+									r = setResponse(response,200,"Added index " + req.getName());
+								}
 							}
-						}
-					} else if (req.type.equals(IndexRequest.TYPE_REMOVE)) {
-						req.name = Database.removeSpecialCharacters(req.name);
-						if (req.name.length()==0) {
-							r = setResponse(response,400,"Request name is mandatory");
-						} else {
-							ZStringBuilder err = zodb.getDatabase().getIndexConfig().removeIndex(req.name);
-							if (err.length()>0) {
-								r = setResponse(response,400,err.toString());
+						} else if (req.type.equals(IndexRequest.TYPE_REMOVE)) {
+							req.name = Database.removeSpecialCharacters(req.name);
+							if (req.name.length()==0) {
+								r = setResponse(response,400,"Request name is mandatory");
 							} else {
-								r = setResponse(response,200,"Removed index " + req.name);
+								ZStringBuilder err = zodb.getDatabase().getIndexConfig().removeIndex(req.name);
+								if (err.length()>0) {
+									r = setResponse(response,400,err.toString());
+								} else {
+									r = setResponse(response,200,"Removed index " + req.name);
+								}
 							}
 						}
 					}

@@ -398,7 +398,12 @@ public class Index extends Locker {
 			if (index!=null) {
 				List<IndexElement> elements = indexConfig.listObjects(indexName,ascending,invert,operator,value);
 				for (IndexElement element: elements) {
-					if (checkModifiedNoLock(element, modAfter, modBefore)) {
+					if (
+						(modAfter==0L && modBefore==0L) ||
+						(modAfter>0L && modBefore>0L && element.modified>modAfter && element.modified<modBefore) || 
+						(modAfter>0L && element.modified>modAfter) || 
+						(modBefore>0L && element.modified<modBefore)
+						) {
 						r.add(element);
 					}
 				}
@@ -702,13 +707,5 @@ public class Index extends Locker {
 			errors.add(new ZStringBuilder("Object with id " + id + " does not exist"));
 		}
 		return r;
-	}
-	
-	private boolean checkModifiedNoLock(IndexElement element,long modAfter,long modBefore) {
-		return
-			(modAfter==0L && modBefore==0L) ||
-			(modAfter>0L && modBefore>0L && element.modified>modAfter && element.modified<modBefore) || 
-			(modAfter>0L && element.modified>modAfter) || 
-			(modBefore>0L && element.modified<modBefore);
 	}
 }

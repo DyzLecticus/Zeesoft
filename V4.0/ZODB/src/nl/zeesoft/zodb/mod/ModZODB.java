@@ -13,12 +13,15 @@ import nl.zeesoft.zodb.db.StateListener;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexManagerHandler;
+import nl.zeesoft.zodb.mod.handler.HtmlZODBStateManagerHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBHandler;
 import nl.zeesoft.zodb.mod.handler.JavaScriptZODBIndexManagerHandler;
+import nl.zeesoft.zodb.mod.handler.JavaScriptZODBStateManagerHandler;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBIndexConfigHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
+import nl.zeesoft.zodb.mod.handler.JsonZODBStateHandler;
 
 public class ModZODB extends ModObject implements StateListener {
 	public static final String	NAME				= "ZODB";
@@ -126,10 +129,13 @@ public class ModZODB extends ModObject implements StateListener {
 		handlers.add(new JavaScriptZODBHandler(configuration,this));
 		handlers.add(new JavaScriptZODBIndexManagerHandler(configuration,this));
 		handlers.add(new JavaScriptZODBDataManagerHandler(configuration,this));
+		handlers.add(new JavaScriptZODBStateManagerHandler(configuration,this));
 		handlers.add(new HtmlZODBIndexManagerHandler(configuration,this));
 		handlers.add(new HtmlZODBDataManagerHandler(configuration,this));
+		handlers.add(new HtmlZODBStateManagerHandler(configuration,this));
 		handlers.add(new JsonZODBIndexConfigHandler(configuration,this));
 		handlers.add(new JsonZODBRequestHandler(configuration,this));
+		handlers.add(new JsonZODBStateHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		testers.add(getNewTester());
 		database.start();
@@ -178,8 +184,7 @@ public class ModZODB extends ModObject implements StateListener {
 	}
 	
 	public DatabaseResponse handleRequest(DatabaseRequest request) {
-		DatabaseRequestHandler handler = getNewDatabaseRequestHandler(database);
-		return handler.handleDatabaseRequest(request);
+		return getNewDatabaseRequestHandler(database).handleDatabaseRequest(request);
 	}
 	
 	protected Database getNewDatabase() {

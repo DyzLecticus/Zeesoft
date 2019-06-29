@@ -38,6 +38,15 @@ public class HtmlZODBIndex extends HtmlResource {
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + "/stateManager.html\">State manager</a>");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("Monitor and change the state of the database.");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
 			if (getConfiguration().getModule(ModZODB.NAME).selfTest) {
 				html.append("<tr>\n");
 				html.append("<td>");
