@@ -190,15 +190,17 @@ public class TestDatabase extends TestObject {
 		}
 		
 		Database db = config.getZODB().getDatabase();
+		IndexConfig idxConf = db.getConfiguration().indexConfig;
+
 		if (testIndexes) {
-			db.getIndexConfig().removeIndex(ModZODB.NAME + "/Objects/:testData");
-			db.getIndexConfig().addIndex("testObject","data",false,true);
-			db.getIndexConfig().getIndex("testObject:data").added = false;
-			db.getIndexConfig().addIndex("testObject","num",true,true);
-			db.getIndexConfig().getIndex("testObject:num").added = false;
-			db.getIndexConfig().setRebuild(false);
+			idxConf.removeIndex(ModZODB.NAME + "/Objects/:testData");
+			idxConf.addIndex("testObject","data",false,true);
+			idxConf.getIndex("testObject:data").added = false;
+			idxConf.addIndex("testObject","num",true,true);
+			idxConf.getIndex("testObject:num").added = false;
+			idxConf.setRebuild(false);
 		} else {
-			db.getIndexConfig().getIndex(ModZODB.NAME + "/Objects/:testData").added = false;
+			idxConf.getIndex(ModZODB.NAME + "/Objects/:testData").added = false;
 		}
 
 		config.initialize(true,"dist/","",false);
@@ -227,22 +229,21 @@ public class TestDatabase extends TestObject {
 		}
 	}
 	
-	private void addTestObjects(Database db) {
+	public static void addTestObjects(Database db) {
 		int num = -30;
 		for (int i = 1; i <= 250; i++) {
 			ZStringBuilder name = new ZStringBuilder("testObject");
 			name.append(String.format("%03d",i));
-			IndexElement element = addTestObject(db,name,num);
-			assertEqual((int) element.id,i,"Object id does not match expectation");
+			addTestObject(db,name,num);
 			num += 3;
 		}
 	}
 
-	private IndexElement addTestObject(Database db,ZStringBuilder name,int num) {
+	private static IndexElement addTestObject(Database db,ZStringBuilder name,int num) {
 		return db.addObject(name,getTestObject(name,num),null);
 	}
 	
-	private JsFile getTestObject(ZStringBuilder data,int num) {
+	private static JsFile getTestObject(ZStringBuilder data,int num) {
 		JsFile r = new JsFile();
 		r.rootElement = new JsElem();
 		r.rootElement.children.add(new JsElem("data",data,true));

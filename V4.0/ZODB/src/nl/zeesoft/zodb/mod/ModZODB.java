@@ -139,6 +139,17 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 		handlers.add(new JsonZODBStateHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		testers.add(getNewTester());
+		database.getConfiguration().debug = configuration.isDebug();
+		database.getConfiguration().dataDir = configuration.getFullDataDir();
+		database.getConfiguration().key = key;
+		database.getConfiguration().newKey = newKey;
+		database.getConfiguration().indexBlockSize = dataBlockSize;
+		database.getConfiguration().dataBlockSize = dataBlockSize;
+		if (selfTest) {
+			String pfx = NAME + "/Objects/";
+			database.getConfiguration().indexConfig.addIndex(pfx,"testData",false,true);
+		}
+		database.initialize();
 		database.start();
 		super.initialize();
 	}
@@ -200,12 +211,7 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 	}
 	
 	protected Database getNewDatabase() {
-		Database r = new Database(configuration,indexBlockSize,dataBlockSize);
-		if (selfTest) {
-			String pfx = NAME + "/Objects/";
-			r.getIndexConfig().addIndex(pfx,"testData",false,true);
-		}
-		return r;
+		return new Database(configuration.getMessenger(),configuration.getUnion());
 	}
 	
 	protected DatabaseRequestHandler getNewDatabaseRequestHandler(Database db) {

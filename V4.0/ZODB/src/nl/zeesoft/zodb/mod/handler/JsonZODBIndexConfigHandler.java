@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
+import nl.zeesoft.zodb.db.idx.IndexConfig;
 import nl.zeesoft.zodb.db.idx.IndexRequest;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
@@ -29,7 +30,7 @@ public class JsonZODBIndexConfigHandler extends JsonZODBHandlerObject {
 			if (zodb!=null) {
 				r = checkRequest(zodb,request,response);
 				if (r.length()==0) {
-					r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
+					r = stringifyJson(zodb.getDatabase().getConfiguration().indexConfig.toUpdateJson());
 				}
 			}
 		} else if (method.equals(METH_POST)) {
@@ -41,6 +42,7 @@ public class JsonZODBIndexConfigHandler extends JsonZODBHandlerObject {
 				if (zodb!=null) {
 					r = checkRequest(zodb,request,response);
 					if (r.length()==0) {
+						IndexConfig idxConf = zodb.getDatabase().getConfiguration().indexConfig;
 						IndexRequest req = new IndexRequest();
 						req.fromJson(json);
 						if (req.type.length()==0) {
@@ -53,9 +55,9 @@ public class JsonZODBIndexConfigHandler extends JsonZODBHandlerObject {
 							) {
 							r = setResponse(response,400,"Request type must be " + IndexRequest.TYPE_LIST + ", " + IndexRequest.TYPE_GET + ", " + IndexRequest.TYPE_ADD + " or " + IndexRequest.TYPE_REMOVE);
 						} else if (req.type.equals(IndexRequest.TYPE_LIST)) {
-							r = stringifyJson(zodb.getDatabase().getIndexConfig().toJson());
+							r = stringifyJson(idxConf.toJson());
 						} else if (req.type.equals(IndexRequest.TYPE_GET)) {
-							r = stringifyJson(zodb.getDatabase().getIndexConfig().toUpdateJson());
+							r = stringifyJson(idxConf.toUpdateJson());
 						} else if (req.type.equals(IndexRequest.TYPE_ADD)) {
 							req.objectNamePrefix = Database.removeSpecialCharacters(req.objectNamePrefix);
 							req.propertyName = Database.removeSpecialCharacters(req.propertyName);
@@ -64,7 +66,7 @@ public class JsonZODBIndexConfigHandler extends JsonZODBHandlerObject {
 							} else if (req.propertyName.length()==0) {
 								r = setResponse(response,400,"Request propertyName is mandatory");
 							} else {
-								ZStringBuilder err = zodb.getDatabase().getIndexConfig().addIndex(req.objectNamePrefix,req.propertyName,req.numeric,req.unique);
+								ZStringBuilder err = idxConf.addIndex(req.objectNamePrefix,req.propertyName,req.numeric,req.unique);
 								if (err.length()>0) {
 									r = setResponse(response,400,err.toString());
 								} else {
@@ -76,7 +78,7 @@ public class JsonZODBIndexConfigHandler extends JsonZODBHandlerObject {
 							if (req.name.length()==0) {
 								r = setResponse(response,400,"Request name is mandatory");
 							} else {
-								ZStringBuilder err = zodb.getDatabase().getIndexConfig().removeIndex(req.name);
+								ZStringBuilder err = idxConf.removeIndex(req.name);
 								if (err.length()>0) {
 									r = setResponse(response,400,err.toString());
 								} else {

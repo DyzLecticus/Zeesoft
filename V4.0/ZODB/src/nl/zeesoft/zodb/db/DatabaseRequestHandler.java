@@ -206,7 +206,7 @@ public class DatabaseRequestHandler {
 	
 	private void checkRequestIndex(DatabaseResponse response) {
 		if (response.request.index.length()>0) {
-			SearchIndex index = database.getIndexConfig().getListIndex(response.request.index);
+			SearchIndex index = database.getConfiguration().indexConfig.getListIndex(response.request.index);
 			if (index==null) {
 				response.errors.add(new ZStringBuilder("Request index does not exist"));
 			} else if (response.request.operator.length()>0) {

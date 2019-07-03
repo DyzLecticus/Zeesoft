@@ -10,8 +10,9 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
-import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.db.idx.IndexConfig;
 import nl.zeesoft.zodb.db.idx.SearchIndex;
 
@@ -34,11 +35,11 @@ public class Index extends Locker {
 	
 	private boolean									open					= false;
 	
-	protected Index(Config config,Database db,IndexConfig indexConfig,int idxBlkSize,int datBlkSize) {
-		super(config.getMessenger());
+	protected Index(Messenger msgr,WorkerUnion uni,Database db,IndexConfig indexConfig,int idxBlkSize,int datBlkSize) {
+		super(msgr);
 		this.db = db;
 		this.indexConfig = indexConfig;
-		objectReader = new IndexObjectReaderWorker(config.getMessenger(),config.getUnion(),this);
+		objectReader = new IndexObjectReaderWorker(msgr,uni,this);
 		this.indexBlockSize = idxBlkSize;
 		this.dataBlockSize = datBlkSize;
 	}

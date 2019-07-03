@@ -6,9 +6,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
-import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.db.idx.IndexConfig;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class Database extends Locker {
 	public static final String				STAT_OPEN		= "OPEN";
@@ -20,8 +20,8 @@ public class Database extends Locker {
 	private static final String				INDEX_DIR		= "ZODB/Index/";
 	private static final String				OBJECT_DIR		= "ZODB/Objects/";
 	
-	private Config							configuration	= null;
-	private IndexConfig						indexConfig		= null;
+	private DatabaseConfig					configuration	= null;
+	
 	private Index							index			= null;
 	private IndexFileWriterWorker			fileWriter		= null;
 	private IndexObjectWriterWorker			objectWriter	= null;
@@ -30,21 +30,17 @@ public class Database extends Locker {
 	
 	private String							state			= STAT_CLOSED;
 	
-	public Database(Config config,int idxBlkSize,int datBlkSize) {
-		super(config.getMessenger());
-		configuration = config;
-		indexConfig = new IndexConfig(config.getMessenger());
-		index = new Index(config,this,indexConfig,idxBlkSize,datBlkSize);
-		fileWriter = new IndexFileWriterWorker(config.getMessenger(),config.getUnion(),index);
-		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
+	public Database(Messenger msgr, WorkerUnion uni) {
+		super(msgr);
+		configuration = new DatabaseConfig(msgr,uni);
 	}
 	
 	public void addListener(DatabaseStateListener listener) {
 		listeners.add(listener);
 	}
 	
-	public IndexConfig getIndexConfig() {
-		return indexConfig;
+	public DatabaseConfig getConfiguration() {
+		return configuration;
 	}
 	
 	public void install() {
@@ -52,8 +48,14 @@ public class Database extends Locker {
 		dir.mkdirs();
 		dir = new File(getFullObjectDir());
 		dir.mkdirs();
-		indexConfig.setRebuild(false);
+		configuration.indexConfig.setRebuild(false);
 		writeConfig();
+	}
+
+	public void initialize() {
+		index = new Index(configuration.getMessenger(),configuration.getUnion(),this,configuration.indexConfig,configuration.indexBlockSize,configuration.dataBlockSize);
+		fileWriter = new IndexFileWriterWorker(configuration.getMessenger(),configuration.getUnion(),index);
+		objectWriter = new IndexObjectWriterWorker(configuration.getMessenger(),configuration.getUnion(),index);
 	}
 
 	public boolean start() {
@@ -66,12 +68,12 @@ public class Database extends Locker {
 		if (start) {
 			configuration.debug(this,"Starting database ...");
 			readConfig();
-			indexConfig.initialize();
-			StringBuilder newKey = configuration.getZODB().getNewKey();
+			configuration.indexConfig.initialize();
+			StringBuilder newKey = configuration.newKey;
 			if (newKey!=null && newKey.length()>0) {
 				configuration.debug(this,"Changing database key ...");
 			}
-			if (indexConfig.isRebuild()) {
+			if (configuration.indexConfig.isRebuild()) {
 				configuration.debug(this,"Rebuilding indexes ...");
 			}
 			IndexFileReader reader = new IndexFileReader(configuration.getMessenger(),configuration.getUnion(),index,newKey);
@@ -95,7 +97,7 @@ public class Database extends Locker {
 			index.getObjectReader().stop();
 			fileWriter.stop();
 			objectWriter.stop();
-			if (indexConfig.isRebuild()) {
+			if (configuration.indexConfig.isRebuild()) {
 				writeConfig();
 			}
 			index.clear();
@@ -111,7 +113,7 @@ public class Database extends Locker {
 		fileWriter.destroy();
 		objectWriter.destroy();
 		index.destroy();
-		indexConfig.destroy();
+		configuration.indexConfig.destroy();
 	}
 	
 	public boolean isOpen() {
@@ -217,15 +219,15 @@ public class Database extends Locker {
 	}
 	
 	protected String getFullIndexDir() {
-		return configuration.getFullDataDir() + INDEX_DIR;
+		return configuration.dataDir + INDEX_DIR;
 	}
 	
 	protected String getFullObjectDir() {
-		return configuration.getFullDataDir() + OBJECT_DIR;
+		return configuration.dataDir + OBJECT_DIR;
 	}
 	
 	protected StringBuilder getKey() {
-		return configuration.getZODBKey();
+		return configuration.key;
 	}
 	
 	protected void setKey(StringBuilder key) {
@@ -238,9 +240,9 @@ public class Database extends Locker {
 		if (open) {
 			fileWriter.start();
 			objectWriter.start();
-			if (indexConfig.isRebuild()) {
+			if (configuration.indexConfig.isRebuild()) {
 				configuration.debug(this,"Rebuilt indexes");
-				indexConfig.setRebuild(false);
+				configuration.indexConfig.setRebuild(false);
 				writeConfig();
 			}
 			configuration.debug(this,"Database is open for business");
@@ -263,7 +265,7 @@ public class Database extends Locker {
 			JsFile json = new JsFile();
 			ZStringBuilder err = json.fromFile(f.getAbsolutePath());
 			if (err.length()==0) {
-				indexConfig.fromJson(json);
+				configuration.indexConfig.fromJson(json);
 			} else {
 				configuration.error(this,"Failed to read index configuration: " + err);
 			}
@@ -271,7 +273,7 @@ public class Database extends Locker {
 	}
 	
 	protected void writeConfig() {
-		JsFile json = indexConfig.toUpdateJson();
+		JsFile json = configuration.indexConfig.toUpdateJson();
 		ZStringBuilder err = json.toFile(getFullIndexDir() + "config.json",true);
 		if (err.length()>0) {
 			configuration.error(this,"Failed to write index configuration: " + err);
