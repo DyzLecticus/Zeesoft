@@ -10,10 +10,10 @@ import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.StateListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 import nl.zeesoft.zodb.db.DatabaseResult;
-import nl.zeesoft.zodb.db.StateListener;
 
 public abstract class InitializerObject extends Locker implements JsClientListener {
 	private Config							configuration	= null;

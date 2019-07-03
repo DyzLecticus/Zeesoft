@@ -1,5 +1,6 @@
 package nl.zeesoft.zodb.mod;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -9,7 +10,7 @@ import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseResponse;
-import nl.zeesoft.zodb.db.StateListener;
+import nl.zeesoft.zodb.db.DatabaseStateListener;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBDataManagerHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexHandler;
 import nl.zeesoft.zodb.mod.handler.HtmlZODBIndexManagerHandler;
@@ -23,7 +24,7 @@ import nl.zeesoft.zodb.mod.handler.JsonZODBIndexConfigHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBStateHandler;
 
-public class ModZODB extends ModObject implements StateListener {
+public class ModZODB extends ModObject implements DatabaseStateListener {
 	public static final String	NAME				= "ZODB";
 	public static final String	DESC				= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
@@ -153,6 +154,17 @@ public class ModZODB extends ModObject implements StateListener {
 	public void stateChanged(Object source,boolean open) {
 		if (source instanceof Database && open) {
 			startTesters();
+		}
+	}
+
+	@Override
+	public void keyChanged(StringBuilder newKey) {
+		setKey(newKey);
+		ZStringBuilder err = configuration.rewriteConfig();
+		if (err.length()==0) {
+			configuration.debug(this,"Changed database key");
+		} else {
+			configuration.error(this,"An error occured while changing the database key");
 		}
 	}
 	

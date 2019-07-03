@@ -26,7 +26,7 @@ public class Database extends Locker {
 	private IndexFileWriterWorker			fileWriter		= null;
 	private IndexObjectWriterWorker			objectWriter	= null;
 	
-	private List<StateListener>				listeners		= new ArrayList<StateListener>();
+	private List<DatabaseStateListener>		listeners		= new ArrayList<DatabaseStateListener>();
 	
 	private String							state			= STAT_CLOSED;
 	
@@ -39,7 +39,7 @@ public class Database extends Locker {
 		objectWriter = new IndexObjectWriterWorker(config.getMessenger(),config.getUnion(),index);
 	}
 	
-	public void addListener(StateListener listener) {
+	public void addListener(DatabaseStateListener listener) {
 		listeners.add(listener);
 	}
 	
@@ -229,12 +229,8 @@ public class Database extends Locker {
 	}
 	
 	protected void setKey(StringBuilder key) {
-		configuration.setZODBKey(key);
-		ZStringBuilder err = configuration.rewriteConfig();
-		if (err.length()==0) {
-			configuration.debug(this,"Changed database key");
-		} else {
-			configuration.error(this,"An error occured while changing the database key");
+		for (DatabaseStateListener listener: listeners) {
+			listener.keyChanged(key);
 		}
 	}
 	
@@ -256,7 +252,7 @@ public class Database extends Locker {
 			state = STAT_OPEN;
 		}
 		unlockMe(this);
-		for (StateListener listener: listeners) {
+		for (DatabaseStateListener listener: listeners) {
 			listener.stateChanged(this,open);
 		}
 	}
