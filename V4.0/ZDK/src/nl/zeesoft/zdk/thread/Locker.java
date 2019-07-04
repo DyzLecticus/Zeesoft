@@ -52,10 +52,30 @@ public class Locker {
 		return locked;
 	}
 
+	protected Object doLocked(Object source,LockedCode code) {
+		Object r = null;
+		Exception ex = null;
+		lockMe(source);
+		try {
+			r = code.doLocked();
+		} catch (Exception e) {
+			ex = e;
+		}
+		unlockMe(source);
+		if (ex!=null) {
+			if (msgr!=null) {
+				msgr.error(source,"Exeption occured while executing locked code",ex);
+			} else {
+				ex.printStackTrace();
+			}
+		}
+		return r;
+	}
+
 	protected Messenger getMessenger() {
 		return msgr;
 	}
-
+	
 	private synchronized boolean isLocked() {
 		return (lockedBy!=null);
 	}

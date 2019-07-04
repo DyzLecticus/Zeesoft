@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.db.IndexElement;
 
@@ -28,18 +29,23 @@ public class IndexConfig extends Locker implements JsAble {
 	}
 
 	public void initialize() {
-		lockMe(this);
-		if (getIndexNoLock(IDX_NAME)==null) {
-			addIndexNoLock(PFX_OBJ,"name",false,true);
-		}
-		if (getIndexNoLock(IDX_MODIFIED)==null) {
-			addIndexNoLock(PFX_OBJ,"modified",true,false);
-		}
-		objectIndexes = new ArrayList<SearchIndex>(indexes);
-		for (SearchIndex index: objectIndexes) {
-			index.initialize(getMessenger());
-		}
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (getIndexNoLock(IDX_NAME)==null) {
+					addIndexNoLock(PFX_OBJ,"name",false,true);
+				}
+				if (getIndexNoLock(IDX_MODIFIED)==null) {
+					addIndexNoLock(PFX_OBJ,"modified",true,false);
+				}
+				objectIndexes = new ArrayList<SearchIndex>(indexes);
+				for (SearchIndex index: objectIndexes) {
+					index.initialize(getMessenger());
+				}
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 
 	public void clear() {
@@ -123,44 +129,50 @@ public class IndexConfig extends Locker implements JsAble {
 	}
 	
 	public ZStringBuilder addIndex(String objectNamePrefix,String propertyName,boolean numeric,boolean unique) {
-		lockMe(this);
-		ZStringBuilder err = new ZStringBuilder();
-		String name = SearchIndex.getName(objectNamePrefix,propertyName);
-		SearchIndex index = getIndexNoLock(name);
-		if (index!=null) {
-			err.append("Index " + name + " already exists");
-		} else {
-			index = addIndexNoLock(objectNamePrefix,propertyName,numeric,unique);
-			index.added = true;
-			rebuild = true;
-		}
-		unlockMe(this);
-		return err;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				ZStringBuilder err = new ZStringBuilder();
+				String name = SearchIndex.getName(objectNamePrefix,propertyName);
+				SearchIndex index = getIndexNoLock(name);
+				if (index!=null) {
+					err.append("Index " + name + " already exists");
+				} else {
+					index = addIndexNoLock(objectNamePrefix,propertyName,numeric,unique);
+					index.added = true;
+					rebuild = true;
+				}
+				return err;
+			}
+		};
+		return (ZStringBuilder) doLocked(this,code);
 	}
 
 	public ZStringBuilder removeIndex(String name) {
-		ZStringBuilder err = new ZStringBuilder();
-		if (name.equals(IDX_NAME) || name.equals(IDX_MODIFIED)) {
-			err.append("Index " + name + " is mandatory");
-		} else {
-			lockMe(this);
-			SearchIndex index = getIndexNoLock(name);
-			if (index!=null) {
-				indexes.remove(index);
-				index.destroy();
-				rebuild = true;
-			} else {
-				err.append("Index " + name + " does not exist");
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				ZStringBuilder err = new ZStringBuilder();
+				if (name.equals(IDX_NAME) || name.equals(IDX_MODIFIED)) {
+					err.append("Index " + name + " is mandatory");
+				} else {
+					SearchIndex index = getIndexNoLock(name);
+					if (index!=null) {
+						indexes.remove(index);
+						index.destroy();
+						rebuild = true;
+					} else {
+						err.append("Index " + name + " does not exist");
+					}
+				}
+				return err;
 			}
-			unlockMe(this);
-		}
-		return err;
+		};
+		return (ZStringBuilder) doLocked(this,code);
 	}
 
 	public boolean objectHasUpdateIndexes(ZStringBuilder name) {
-		boolean r = false;
-		r = getIndexesForObjectName(name).size()>2;
-		return r;
+		return getIndexesForObjectName(name).size()>2;
 	}
 	
 	public SortedMap<String,ZStringBuilder> getIndexValuesForObject(ZStringBuilder name,JsFile obj) {
@@ -188,11 +200,13 @@ public class IndexConfig extends Locker implements JsAble {
 	}
 	
 	public SearchIndex getIndex(String name) {
-		SearchIndex r = null;
-		lockMe(this);
-		r = getIndexNoLock(name);
-		unlockMe(this);
-		return r;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				return getIndexNoLock(name);
+			}
+		};
+		return (SearchIndex) doLocked(this,code);
 	}
 	
 	public SearchIndex getListIndex(String name) {
@@ -207,40 +221,49 @@ public class IndexConfig extends Locker implements JsAble {
 	}
 	
 	public JsFile toUpdateJson() {
-		JsFile json = new JsFile();
-		lockMe(this);
-		json = toJsonNoLock(getUpdateIndexesNoLock());
-		unlockMe(this);
-		return json;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				return toJsonNoLock(getUpdateIndexesNoLock());
+			}
+		};
+		return (JsFile) doLocked(this,code);
 	}
 
 	@Override
 	public JsFile toJson() {
-		JsFile json = new JsFile();
-		lockMe(this);
-		json = toJsonNoLock(getListIndexesNoLock());
-		unlockMe(this);
-		return json;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				return toJsonNoLock(getListIndexesNoLock());
+			}
+		};
+		return (JsFile) doLocked(this,code);
 	}
 
 	@Override
 	public void fromJson(JsFile json) {
-		if (json.rootElement!=null) {
-			lockMe(this);
-			indexes.clear();
-			rebuild = json.rootElement.getChildBoolean("rebuild",rebuild);
-			JsElem idxsElem = json.rootElement.getChildByName("indexes");
-			if (idxsElem!=null) {
-				for (JsElem idxElem: idxsElem.children) {
-					SearchIndex index = new SearchIndex();
-					JsFile js = new JsFile();
-					js.rootElement = idxElem;
-					index.fromJson(js);
-					addIndexNoLock(index.objectNamePrefix,index.propertyName,index.numeric,index.unique);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (json.rootElement!=null) {
+					indexes.clear();
+					rebuild = json.rootElement.getChildBoolean("rebuild",rebuild);
+					JsElem idxsElem = json.rootElement.getChildByName("indexes");
+					if (idxsElem!=null) {
+						for (JsElem idxElem: idxsElem.children) {
+							SearchIndex index = new SearchIndex();
+							JsFile js = new JsFile();
+							js.rootElement = idxElem;
+							index.fromJson(js);
+							addIndexNoLock(index.objectNamePrefix,index.propertyName,index.numeric,index.unique);
+						}
+					}
 				}
+				return null;
 			}
-			unlockMe(this);
-		}
+		};
+		doLocked(this,code);
 	}
 
 	private SearchIndex addIndexNoLock(String objectNamePrefix,String propertyName,boolean numeric,boolean unique) {

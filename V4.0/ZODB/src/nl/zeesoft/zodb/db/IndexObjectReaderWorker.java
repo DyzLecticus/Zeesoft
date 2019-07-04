@@ -6,6 +6,7 @@ import java.util.SortedMap;
 
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
@@ -96,12 +97,17 @@ public class IndexObjectReaderWorker extends Worker {
 	
 	protected void readObjects(int fileNum,SortedMap<Long,JsFile> idObjMap) {
 		if (isWorking()) {
-			lockMe(this);
-			if (index!=null) {
-				index.readObjects(idObjMap);
-			}
-			reading.remove(fileNum);
-			unlockMe(this);
+			LockedCode code = new LockedCode() {
+				@Override
+				public Object doLocked() {
+					if (index!=null) {
+						index.readObjects(idObjMap);
+					}
+					reading.remove(fileNum);
+					return null;
+				}
+			};
+			doLocked(this,code);
 		}
 	}
 	

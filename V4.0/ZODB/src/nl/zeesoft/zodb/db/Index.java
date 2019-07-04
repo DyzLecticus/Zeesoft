@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.db.idx.IndexConfig;
@@ -53,25 +54,35 @@ public class Index extends Locker {
 	}
 	
 	protected IndexElement addObject(ZStringBuilder name,JsFile obj,List<ZStringBuilder> errors) {
-		IndexElement r = null;
-		lockMe(this);
-		if (name.length()>0 && open) {
-			r = addObjectNoLock(name,obj,errors);
-		}
-		unlockMe(this);
-		return r;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				IndexElement r = null;
+				if (name.length()>0 && open) {
+					r = addObjectNoLock(name,obj,errors);
+				}
+				return r;
+			}
+		};
+		return (IndexElement) doLocked(this,code);
 	}
 
 	protected IndexElement getObjectById(long id,int readTimeOutSeconds,List<ZStringBuilder> errors) {
 		IndexElement r = null;
-		lockMe(this);
-		if (id>0 && open) {
-			r = elementsById.get(id);
-			if (r!=null) {
-				r = r.copy();
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				IndexElement r = null;
+				if (id>0 && open) {
+					r = elementsById.get(id);
+					if (r!=null) {
+						r = r.copy();
+					}
+				}
+				return r;
 			}
-		}
-		unlockMe(this);
+		};
+		r = (IndexElement) doLocked(this,code);
 		if (r!=null) {
 			readObject(r,readTimeOutSeconds,errors);
 			if (r.obj==null) {
@@ -109,24 +120,28 @@ public class Index extends Locker {
 	}
 	
 	protected void setObject(long id, JsFile obj, List<ZStringBuilder> errors) {
-		lockMe(this);
-		if (id>0 && open) {
-			setObjectNoLock(id,obj,errors);
-		}
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (id>0 && open) {
+					setObjectNoLock(id,obj,errors);
+				}
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 
 	protected void setObjectName(long id,ZStringBuilder name,int readTimeOutSeconds,List<ZStringBuilder> errors) {
 		Database.removeSpecialCharacters(name);
-		IndexElement element = null;
-		if (indexConfig.objectHasUpdateIndexes(name)) {
-			lockMe(this);
-			element = elementsById.get(id);
-			if (element!=null) {
-				element = element.copy();
-			}
-			unlockMe(this);
-			if (element!=null) {
+		lockMe(this);
+		IndexElement element = elementsById.get(id);
+		if (element!=null) {
+			element = element.copy();
+		}
+		unlockMe(this);
+		if (element!=null) {
+			if (indexConfig.objectHasUpdateIndexes(name)) {
 				readObject(element,readTimeOutSeconds,errors);
 				if (element.obj==null) {
 					element = null;
@@ -134,44 +149,58 @@ public class Index extends Locker {
 			}
 		}
 		if (element!=null) {
-			lockMe(this);
-			setObjectNameNoLock(id,name,errors);
-			unlockMe(this);
+			LockedCode code = new LockedCode() {
+				@Override
+				public Object doLocked() {
+					setObjectNameNoLock(id,name,errors);
+					return null;
+				}
+			};
+			doLocked(this,code);
 		}
 	}
 
 	protected IndexElement removeObject(long id,List<ZStringBuilder> errors) {
-		IndexElement r = null;
-		lockMe(this);
-		if (id>0 && open) {
-			r = removeObjectNoLock(id,errors);
-		}
-		unlockMe(this);
-		return r;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				IndexElement r = null;
+				if (id>0 && open) {
+					r = removeObjectNoLock(id,errors);
+				}
+				return r;
+			}
+		};
+		return (IndexElement) doLocked(this,code);
 	}
 
 	protected List<IndexElement> removeObjectsUseIndex(String indexName,boolean invert,String operator,ZStringBuilder value,long modAfter,long modBefore,List<ZStringBuilder> errors) {
 		List<IndexElement> r = new ArrayList<IndexElement>();
 		List<IndexElement> elements = listObjectsUsingIndex(true,indexName,invert,operator,value,modAfter,modBefore);
 		for (IndexElement element: elements) {
-			removeObjectNoLock(element.id,errors);
+			removeObject(element.id,errors);
 			r.add(element);
 		}
 		return r;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void readObjects(SortedMap<Long,JsFile> idObjMap) {
-		List<IndexElement> elements = new ArrayList<IndexElement>();
-		lockMe(this);
-		for (Entry<Long,JsFile> entry: idObjMap.entrySet()) {
-			IndexElement element = elementsById.get(entry.getKey());
-			if (element!=null && element.obj==null) {
-				element.obj = entry.getValue();
-				elements.add(element.copy());
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				List<IndexElement> elements = new ArrayList<IndexElement>();
+				for (Entry<Long,JsFile> entry: idObjMap.entrySet()) {
+					IndexElement element = elementsById.get(entry.getKey());
+					if (element!=null && element.obj==null) {
+						element.obj = entry.getValue();
+						elements.add(element.copy());
+					}
+				}
+				return elements;
 			}
-		}
-		unlockMe(this);
-		indexConfig.setObjects(elements);
+		};
+		indexConfig.setObjects((List<IndexElement>) doLocked(this,code));
 	}
 
 	protected String getFileDirectory() {

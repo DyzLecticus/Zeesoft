@@ -155,18 +155,20 @@ public class TestDatabase extends TestObject {
 			element = db.addObject(new ZStringBuilder("test999"),obj,errors);
 			assertEqual(errors.size(),0,"Number of errors does not match expectation (2)");
 			
-			errors.clear();
-			db.setObjectName(element.id,new ZStringBuilder("testObject999"),0,errors);
-			assertEqual(errors.size(),1,"Number of errors does not match expectation (3)");
-			if (errors.size()==1) {
-				assertEqual(errors.get(0).toString(),"Index testObject:data blocks update of object named 'test999'","Rename object error does not match expectation");
-			}
-			
-			errors.clear();
-			db.removeObject(element.id, errors);
-			assertEqual(errors.size(),0,"Number of errors does not match expectation (4)");
-			if (errors.size()>0) {
-				System.err.println(errors.get(0));
+			if (element!=null) {
+				errors.clear();
+				db.setObjectName(element.id,new ZStringBuilder("testObject999"),0,errors);
+				assertEqual(errors.size(),1,"Number of errors does not match expectation (3)");
+				if (errors.size()==1) {
+					assertEqual(errors.get(0).toString(),"Index testObject:data blocks update of object named 'test999'","Rename object error does not match expectation");
+				}
+				
+				errors.clear();
+				db.removeObject(element.id, errors);
+				assertEqual(errors.size(),0,"Number of errors does not match expectation (4)");
+				if (errors.size()>0) {
+					System.err.println(errors.get(0));
+				}
 			}
 					
 			sleep(1000);

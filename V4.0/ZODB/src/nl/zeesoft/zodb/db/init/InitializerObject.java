@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.StateListener;
@@ -56,20 +57,30 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	}
 	
 	public void install() {
-		lockMe(this);
-		initializeDatabaseObjectsNoLock();
-		configuration.debug(this,"Install: " + objects.size());
-		addObjectsToDatabaseNoLock();
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				initializeDatabaseObjectsNoLock();
+				configuration.debug(this,"Install: " + objects.size());
+				addObjectsToDatabaseNoLock();
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 	
 	public void initialize() {
-		lockMe(this);
-		if (!initializing && !initialized) {
-			initializing = true;
-			listObjectsInDatabaseNoLock();
-		}
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (!initializing && !initialized) {
+					initializing = true;
+					listObjectsInDatabaseNoLock();
+				}
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 
 	public void reinitialize() {

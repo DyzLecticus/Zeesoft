@@ -4,6 +4,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.db.IndexElement;
 
@@ -20,55 +21,85 @@ public abstract class IndexObject extends Locker {
 	}
 	
 	protected boolean hasObject(IndexElement element) {
-		boolean r = false;
-		lockMe(this);
-		r = hasObjectNoLock(element);
-		unlockMe(this);
-		return r;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				return hasObjectNoLock(element);
+			}
+		};
+		return (boolean) doLocked(this,code);
 	}
 
 	protected void addObjects(List<IndexElement> elements) {
-		if (!index.added) {
-			lockMe(this);
-			for (IndexElement element: elements) {
-				if (index.objectNamePrefix.equals(IndexConfig.PFX_OBJ) || element.name.startsWith(index.objectNamePrefix)) {
-					addObjectNoLock(element);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (!index.added) {
+					for (IndexElement element: elements) {
+						if (index.objectNamePrefix.equals(IndexConfig.PFX_OBJ) || element.name.startsWith(index.objectNamePrefix)) {
+							addObjectNoLock(element);
+						}
+					}
 				}
+				return null;
 			}
-			unlockMe(this);
-		}
+		};
+		doLocked(this,code);
 	}
 
 	protected void addObject(IndexElement element) {
-		lockMe(this);
-		addObjectNoLock(element);
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				addObjectNoLock(element);
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 
 	protected void setObject(IndexElement element) {
-		lockMe(this);
-		setObjectNoLock(element);
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				setObjectNoLock(element);
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 	
 	protected void removeObject(IndexElement element) {
-		lockMe(this);
-		removeObjectNoLock(element);
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				removeObjectNoLock(element);
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected List<IndexElement> listObjects(boolean ascending,boolean invert,String operator,ZStringBuilder indexValue) {
-		List<IndexElement> r = null;
-		lockMe(this);
-		r = listObjectsNoLock(ascending, invert, operator, indexValue);
-		unlockMe(this);
-		return r;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				return listObjectsNoLock(ascending, invert, operator, indexValue);
+			}
+		};
+		return (List<IndexElement>) doLocked(this,code);
 	}
 	
 	protected void clear() {
-		lockMe(this);
-		clearNoLock();
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				clearNoLock();
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 
 	protected abstract boolean hasObjectNoLock(IndexElement element); 
@@ -89,10 +120,15 @@ public abstract class IndexObject extends Locker {
 	}
 	
 	protected void destroy() {
-		lockMe(this);
-		clearNoLock();
-		index = null;
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				clearNoLock();
+				index = null;
+				return null;
+			}
+		};
+		doLocked(this,code);
 	}
 
 	protected IndexElement getListObjectNoLock(List<IndexElement> elements,IndexElement element) {

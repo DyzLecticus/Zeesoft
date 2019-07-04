@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
@@ -24,45 +25,55 @@ public class IndexFileReader extends Locker {
 	}
 
 	protected void start() {
-		lockMe(this);
-		List<String> fileNames = getFileNames();
-		if (fileNames.size()==0) {
-			if (newKey!=null && newKey.length()>0) {
-				index.setKey(newKey);
-			}
-			index.setOpen(true);
-		} else {
-			int size = fileNames.size();
-			for (int i = 0; i < size; i++) {
-				int index = i % workers.size();
-				IndexFileReadWorker worker = workers.get(index);
-				worker.getFileNames().add(fileNames.get(i));
-			}
-			for (IndexFileReadWorker worker: workers) {
-				if (worker.getFileNames().size()>0) {
-					worker.start();
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				List<String> fileNames = getFileNames();
+				if (fileNames.size()==0) {
+					if (newKey!=null && newKey.length()>0) {
+						index.setKey(newKey);
+					}
+					index.setOpen(true);
 				} else {
-					done++;
+					int size = fileNames.size();
+					for (int i = 0; i < size; i++) {
+						int index = i % workers.size();
+						IndexFileReadWorker worker = workers.get(index);
+						worker.getFileNames().add(fileNames.get(i));
+					}
+					for (IndexFileReadWorker worker: workers) {
+						if (worker.getFileNames().size()>0) {
+							worker.start();
+						} else {
+							done++;
+						}
+					}
 				}
+				return null;
 			}
-		}
-		unlockMe(this);
+		};
+		doLocked(this,code);
 	}
 	
 	protected void workerIsDone() {
-		lockMe(this);
-		done++;
-		if (done>=workers.size()) {
-			if (newKey!=null && newKey.length()>0) {
-				index.readAll();
-				index.setKey(newKey);
-				index.writeAll();
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				done++;
+				if (done>=workers.size()) {
+					if (newKey!=null && newKey.length()>0) {
+						index.readAll();
+						index.setKey(newKey);
+						index.writeAll();
+					}
+					index.setOpen(true);
+					index = null;
+					workers.clear();
+				}
+				return null;
 			}
-			index.setOpen(true);
-			index = null;
-			workers.clear();
-		}
-		unlockMe(this);
+		};
+		doLocked(this,code);
 	}
 	
 	private List<String> getFileNames() {

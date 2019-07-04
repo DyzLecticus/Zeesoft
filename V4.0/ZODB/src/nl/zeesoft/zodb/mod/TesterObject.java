@@ -12,6 +12,7 @@ import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
 
@@ -38,19 +39,25 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 	
 	public boolean start() {
 		boolean r = false;
-		lockMe(this);
-		if (!testing) {
-			requests.clear();
-			initializeRequestsNoLock();
-			if (requests.size()>0) {
-				logLines.clear();
-				testing = true;
-				todo = requests.size();
-				r = true;
-				handleRequestNoLock(requests.get(0));
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				boolean r = false;
+				if (!testing) {
+					requests.clear();
+					initializeRequestsNoLock();
+					if (requests.size()>0) {
+						logLines.clear();
+						testing = true;
+						todo = requests.size();
+						r = true;
+						handleRequestNoLock(requests.get(0));
+					}
+				}
+				return r;
 			}
-		}
-		unlockMe(this);
+		};
+		r = (boolean) doLocked(this,code);
 		if (r) {
 			configuration.debug(this,"Testing " + url + " ...");
 		}
@@ -81,25 +88,30 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 	
 	@Override
 	public void handledRequest(JsClientResponse response) {
-		lockMe(this);
-		if (testing) {
-			int i = requests.size() - todo;
-			handledRequestNoLock(requests.get(i),response.response,response.error);
-			if (response.error.length()>0) {
-				configuration.error(this,response.error.toString(),response.ex);
-				todo = 0;
-				finishedTestingNoLock();
-			} else {
-				todo--;
-				if (todo>0) {
-					i++;
-					handleRequestNoLock(requests.get(i));
-				} else {
-					finishedTestingNoLock();
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (testing) {
+					int i = requests.size() - todo;
+					handledRequestNoLock(requests.get(i),response.response,response.error);
+					if (response.error.length()>0) {
+						configuration.error(this,response.error.toString(),response.ex);
+						todo = 0;
+						finishedTestingNoLock();
+					} else {
+						todo--;
+						if (todo>0) {
+							i++;
+							handleRequestNoLock(requests.get(i));
+						} else {
+							finishedTestingNoLock();
+						}
+					}
 				}
+				return null;
 			}
-		}
-		unlockMe(this);
+		};
+		doLocked(this,code);
 	}
 	
 	public JsFile getResults() {
