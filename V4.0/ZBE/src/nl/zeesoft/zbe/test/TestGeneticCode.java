@@ -16,35 +16,38 @@ public class TestGeneticCode extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to create and mutate a *GeneticCode*.");
+		System.out.println("This test shows how to create, mutate and use a *GeneticCode*.");
 		System.out.println();
-		/* TODO describe
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the test configuration");
-		System.out.println("Config config = new Config();");
-		System.out.println("// Convert the test configuration to JSON");
-		System.out.println("JsFile json = config.toJson();");
-		System.out.println("// Convert the test configuration from JSON");
-		System.out.println("config.fromJson(json);");
+		System.out.println("// Create the genetic code");
+		System.out.println("GeneticCode genCode = new GeneticCode(100);");
+		System.out.println("// Mutate 5 genes");
+		System.out.println("genCode.mutate(5);");
+		System.out.println("// Get the number of properties");
+		System.out.println("int size = genCode.size();");
+		System.out.println("// Get a property value");
+		System.out.println("float f = genCode.get(4);");
+		System.out.println("// Get a scaled property value");
+		System.out.println("int i = genCode.getValue(4,100);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestGeneticCode.class));
-		System.out.println(" * " + getTester().getLinkForClass(Config.class));
+		System.out.println(" * " + getTester().getLinkForClass(GeneticCode.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the converted JSON.  ");
-		*/
+		System.out.println("The output of this test shows;  ");
+		System.out.println(" * A generated genetic code  ");
+		System.out.println(" * The mutated genetic code and the resulting scaled property values  ");
 	}
 	
 	@Override
 	protected void test(String[] args) {
-		GeneticCode genCode = new GeneticCode();
 		int length = 100;
 		int mutations = 5;
+		GeneticCode genCode = new GeneticCode(length);
 		
-		genCode.generate(length);
 		ZStringBuilder ori = genCode.getCode();
 		System.out.println("Genetic code: " + ori);
 		assertEqual(genCode.getCode().length(),length,"Code length does not match expectation");
@@ -66,7 +69,7 @@ public class TestGeneticCode extends TestObject {
 		System.out.println("              " + pointers);
 		System.out.println();
 		
-		System.out.println("Property values;");
+		System.out.println("Scaled property values;");
 		muts = 0;
 		GeneticCode oriCode = new GeneticCode(ori);
 		for (int p = 0; p < genCode.size(); p++) {
@@ -79,41 +82,32 @@ public class TestGeneticCode extends TestObject {
 			}
 			System.out.println(p + ": " + mVal + append);
 		}
-		System.out.println("Mutated factors: " + muts);
-		System.out.println();
+		System.out.println("Mutated property values: " + muts);
 		
 		genCode = new GeneticCode(new ZStringBuilder("9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"));
-		System.out.println("Genetic code: " + genCode.getCode());
 		assertEqual(genCode.size(),33,"Size does not match expectation");
 		
 		int val = 0;
 		
 		val = genCode.getValue(0,25);
-		System.out.println("Property 0, scale 25: " + val);
 		assertEqual(val,25,"Property value does not match expectation");
 		
 		val = genCode.getValue(0,100);
-		System.out.println("Property 0, scale 100: " + val);
 		assertEqual(val,100,"Property value does not match expectation");
 		
 		val = genCode.getValue(0,250);
-		System.out.println("Property 0, scale 250: " + val);
 		assertEqual(val,250,"Property value does not match expectation");
 		
 		val = genCode.getValue(0,1000);
-		System.out.println("Property 0, scale 1000: " + val);
 		assertEqual(val,999,"Property value does not match expectation");
 		
 		val = genCode.getValue(32,1000);
-		System.out.println("Property 32, scale 1000: " + val);
 		assertEqual(val,999,"Property value does not match expectation");
 		
 		val = genCode.getValue(33,1000);
-		System.out.println("Property 33, scale 1000: " + val);
 		assertEqual(val,-1000,"Property value does not match expectation");
 		
 		val = genCode.getValue(99,1000);
-		System.out.println("Property 99, scale 1000: " + val);
 		assertEqual(val,-1000,"Property value does not match expectation");
 	}
 }

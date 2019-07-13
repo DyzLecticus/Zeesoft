@@ -15,6 +15,10 @@ public class GeneticCode {
 		
 	}
 	
+	public GeneticCode(int length) {
+		generate(length);
+	}
+	
 	public GeneticCode(ZStringBuilder code) {
 		setCode(code);
 	}
