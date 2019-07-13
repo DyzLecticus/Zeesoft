@@ -1,15 +1,34 @@
 package nl.zeesoft.zbe.brain;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.zeesoft.zdk.ZIntegerGenerator;
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
 
 public class GeneticCode {
-	public ZStringEncoder code = new ZStringEncoder();
+	private ZStringEncoder 	code		= new ZStringEncoder();
+	private List<Float>		factors		= new ArrayList<Float>();
 	
-	public void initialize(int length) {
+	public GeneticCode() {
+		
+	}
+	
+	public GeneticCode(ZStringBuilder code) {
+		setCode(code);
+	}
+	
+	public void setCode(ZStringBuilder code) {
+		this.code = new ZStringEncoder(code);
+		refreshFactors();
+	}
+	
+	public ZStringBuilder getCode() {
+		return new ZStringBuilder(code);
+	}
+
+	public void generate(int length) {
 		if (length<100) {
 			length = 100;
 		}
@@ -17,22 +36,25 @@ public class GeneticCode {
 			code = new ZStringEncoder();
 		}
 		code.append(code.generateNewKey(length));
+		refreshFactors();
 	}
 	
 	public void mutate(int num) {
 		if (code!=null) {
-			if (num>=code.length()) {
-				initialize(code.length());
+			if (num>=(code.length() / 2)) {
+				generate(code.length());
 			} else if (num>0 && code.length()>0) {
-				ZIntegerGenerator indexGen = new ZIntegerGenerator(0,(code.length() - 1));
+				int div = code.length() / num;
+				ZIntegerGenerator indexGen = null;
 				ZIntegerGenerator valueGen = new ZIntegerGenerator(0,9);
-				Set<Integer> mutPos = new HashSet<Integer>(); 
 				for (int n = 0; n < num; n++) {
-					int i = -1;
-					while (i<0 || mutPos.contains(i)) {
-						i = indexGen.getNewInteger();
+					int min = n * div;
+					int max = (n + 1) * div;
+					if (max>code.length() - 1) {
+						max = code.length() - 1;
 					}
-					mutPos.add(i);
+					indexGen = new ZIntegerGenerator(min,max);
+					int i = indexGen.getNewInteger();
 					String o = code.substring(i,i+1).toString();
 					String r = o;
 					while (r.equals(o)) {
@@ -41,25 +63,44 @@ public class GeneticCode {
 					code.replace(i,i+1,r);
 				}
 			}
+			refreshFactors();
 		}
 	}
 	
-	public int getMaxProperties() {
+	public int size() {
 		int r = 0;
 		if (code!=null) {
-			r = (code.length() / 3) - 1;
+			r = code.length() / 3;
 		}
 		return r;
 	}
 	
-	public int getPropertyValue(int num, int scale) {
-		return Math.round(getPropertyFactor(num) * (float)scale);
+	public int getValue(int index, int scale) {
+		return Math.round(get(index) * (float)scale);
 	}
 	
-	public float getPropertyFactor(int num) {
+	public float get(int index) {
 		float r = -1;
-		if (num <= getMaxProperties()) {
-			int p = num * 3;
+		if (index>-1 && factors.size()>index) {
+			r = factors.get(index);
+		}
+		return r;
+	}
+	
+	private void refreshFactors() {
+		factors.clear();
+		for (int p = 0; p < size(); p++) {
+			factors.add(getPropertyFactor(p));
+		}
+	}
+	
+	private float getPropertyFactor(int index) {
+		float r = -1;
+		if (index < size()) {
+			int p = index * 3;
+			if (index>0) {
+				p = p - 1;
+			}
 			int end = p + 3;
 			if (end>=code.length()) {
 				end = code.length();
@@ -69,7 +110,11 @@ public class GeneticCode {
 			} catch (NumberFormatException e) {
 				// Ignore
 			}
-			p = p % code.length();
+			if (code.length() % 100 == 0) {
+				p = p % (code.length() - 1);
+			} else {
+				p = p % code.length();
+			}
 			end = p + 3;
 			if (end>=code.length()) {
 				end = code.length();

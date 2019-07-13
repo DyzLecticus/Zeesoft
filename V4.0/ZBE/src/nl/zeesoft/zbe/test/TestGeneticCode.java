@@ -44,13 +44,13 @@ public class TestGeneticCode extends TestObject {
 		int length = 100;
 		int mutations = 5;
 		
-		genCode.initialize(length);
-		ZStringBuilder ori = new ZStringBuilder(genCode.code);
+		genCode.generate(length);
+		ZStringBuilder ori = genCode.getCode();
 		System.out.println("Genetic code: " + ori);
-		assertEqual(genCode.code.length(),length,"Code length does not match expectation");
+		assertEqual(genCode.getCode().length(),length,"Code length does not match expectation");
 
 		genCode.mutate(mutations);
-		ZStringBuilder mut = new ZStringBuilder(genCode.code);
+		ZStringBuilder mut = genCode.getCode();
 		ZStringBuilder pointers = new ZStringBuilder();
 		int muts = 0;
 		for(int i = 0; i < ori.length(); i++) {
@@ -66,51 +66,53 @@ public class TestGeneticCode extends TestObject {
 		System.out.println("              " + pointers);
 		System.out.println();
 		
-		GeneticCode oriCode = new GeneticCode();
-		oriCode.code.append(ori);
-		for (int p = 0; p < genCode.getMaxProperties(); p++) {
-			int oVal = oriCode.getPropertyValue(p,1000);
-			int mVal = genCode.getPropertyValue(p,1000);
+		System.out.println("Property values;");
+		muts = 0;
+		GeneticCode oriCode = new GeneticCode(ori);
+		for (int p = 0; p < genCode.size(); p++) {
+			int oVal = oriCode.getValue(p,1000);
+			int mVal = genCode.getValue(p,1000);
 			String append = "";
 			if (mVal!=oVal) {
 				append = " <";
+				muts++;
 			}
-			System.out.println("Property/value: " + p + "/" + mVal + append);
+			System.out.println(p + ": " + mVal + append);
 		}
+		System.out.println("Mutated factors: " + muts);
 		System.out.println();
 		
-		genCode = new GeneticCode();
-		genCode.code.append("9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999");
-		System.out.println("Genetic code: " + genCode.code);
-		assertEqual(genCode.getMaxProperties(),32,"Maximum number of properties does not match expectation");
+		genCode = new GeneticCode(new ZStringBuilder("9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"));
+		System.out.println("Genetic code: " + genCode.getCode());
+		assertEqual(genCode.size(),33,"Size does not match expectation");
 		
 		int val = 0;
 		
-		val = genCode.getPropertyValue(0,25);
+		val = genCode.getValue(0,25);
 		System.out.println("Property 0, scale 25: " + val);
 		assertEqual(val,25,"Property value does not match expectation");
 		
-		val = genCode.getPropertyValue(0,100);
+		val = genCode.getValue(0,100);
 		System.out.println("Property 0, scale 100: " + val);
 		assertEqual(val,100,"Property value does not match expectation");
 		
-		val = genCode.getPropertyValue(0,250);
+		val = genCode.getValue(0,250);
 		System.out.println("Property 0, scale 250: " + val);
 		assertEqual(val,250,"Property value does not match expectation");
 		
-		val = genCode.getPropertyValue(0,1000);
+		val = genCode.getValue(0,1000);
 		System.out.println("Property 0, scale 1000: " + val);
 		assertEqual(val,999,"Property value does not match expectation");
 		
-		val = genCode.getPropertyValue(32,1000);
+		val = genCode.getValue(32,1000);
 		System.out.println("Property 32, scale 1000: " + val);
 		assertEqual(val,999,"Property value does not match expectation");
 		
-		val = genCode.getPropertyValue(33,1000);
+		val = genCode.getValue(33,1000);
 		System.out.println("Property 33, scale 1000: " + val);
 		assertEqual(val,-1000,"Property value does not match expectation");
 		
-		val = genCode.getPropertyValue(99,1000);
+		val = genCode.getValue(99,1000);
 		System.out.println("Property 99, scale 1000: " + val);
 		assertEqual(val,-1000,"Property value does not match expectation");
 	}
