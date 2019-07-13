@@ -67,18 +67,19 @@ public class ZStringEncoder extends ZStringBuilder {
 		if (length < 64) {
 			length = 64;
 		}
+		int pv = -1;
 		for (int i = 0; i < length; i++) {
-			k.append(generator.getNewInteger());
-			i = (k.length() - 1);
-			if (i < length) {
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					// Ignore
-				}
-			} else if (i > length) {
-				k.replace(length - 1, i,"");
+			int v = pv;
+			while (v == pv) {
+				v = generator.getNewInteger();
 			}
+			k.append(v);
+			if (k.length()>=length) {
+				break;
+			}
+		}
+		if (k.length()>length) {
+			k.delete(length,k.length());
 		}
 		return k;
 	}

@@ -124,22 +124,12 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 		return r;
 	}
 	
-	public ZStringBuilder substr(int s,int e) {
-		ZStringBuilder r = new ZStringBuilder();
-		if (sb!=null) {
-			for (int i = s; i < e; i++) {
-				r.append(sb.substring(i,i+1));
-			}
-		}
-		return r;
-	}
-
 	public boolean endsWith(String s) {
 		return (sb!=null && sb.length()>=s.length() && sb.substring(sb.length() - s.length(),sb.length()).equals(s));
 	}
 
 	public boolean endsWith(ZStringBuilder zsb) {
-		return (sb!=null && sb.length()>=zsb.length() && substr(sb.length() - zsb.length(),sb.length()).equals(zsb));
+		return (sb!=null && sb.length()>=zsb.length() && substring(sb.length() - zsb.length(),sb.length()).equals(zsb));
 	}
 
 	public boolean startsWith(String s) {
@@ -147,7 +137,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 	}
 	
 	public boolean startsWith(ZStringBuilder zsb) {
-		return (sb!=null && sb.length()>=zsb.length() && substr(0, zsb.length()).equals(zsb));
+		return (sb!=null && sb.length()>=zsb.length() && substring(0, zsb.length()).equals(zsb));
 	}
 
 	public boolean equals(ZStringBuilder zsb) {
@@ -272,7 +262,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 							found = false;
 							break;
 						}
-						if (!substr(i + si,i + si + 1).equals(search.substr(si,si+1))) {
+						if (!substring(i + si,i + si + 1).equals(search.substring(si,si+1))) {
 							found = false;
 							break;
 						}

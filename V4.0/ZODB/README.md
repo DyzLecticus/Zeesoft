@@ -48,12 +48,16 @@ The output of this test shows the converted JSON.
       "name": "ZODB",
       "url": "http://test.domain",
       "selfTest": true,
-      "key": "hDbOgIIGUHmKdDFMgKsMJK2NVFEJjL1",
-      "newKey": "~FUHcJJPfLHPWFLNSOVFNJILKHqNAK1",
+      "indexBlockSize": 1000,
+      "dataBlockSize": 10,
+      "key": "DDILwDqOGA0L#LgH:GJKYJQHPIVMcJ0DsEHMABfJ3JFD2",
+      "newKey": "OKpOFIYBEPkAVD#EYJILwCfOfMcOOEmBCMMKfK0ADAjH2",
       "whiteList": [
         "127.0.0.1",
         "0:0:0:0:0:0:0:1"
-      ]
+      ],
+      "maxLenName": 128,
+      "maxLenObj": 32768
     }
   ]
 }
@@ -80,19 +84,24 @@ Class references;
 **Test output**  
 The output of this test shows the converted JSON.  
 ~~~~
+
 {
   "type": "LIST",
-  "startsWith": "testObject",
   "start": 0,
-  "max": 10
+  "max": 10,
+  "modAfter": 1563016698238,
+  "modBefore": 1563016698239
 }
 
 {
   "type": "LIST",
   "start": 0,
   "max": 10,
-  "modAfter": 1558306170214,
-  "modBefore": 1558306170215
+  "index": "objectNamePrefix:propertyName",
+  "invert": false,
+  "operator": "CONTAINS",
+  "value": "value",
+  "ascending": true
 }
 
 {
@@ -102,9 +111,13 @@ The output of this test shows the converted JSON.
 
 {
   "type": "GET",
-  "contains": "testObject",
-  "modAfter": 1558306170215,
-  "modBefore": 1558306170216
+  "modAfter": 1563016698238,
+  "modBefore": 1563016698239,
+  "index": "@OBJECT:name",
+  "invert": false,
+  "operator": "STARTS_WITH",
+  "value": "testObject",
+  "ascending": true
 }
 
 {
@@ -130,9 +143,13 @@ The output of this test shows the converted JSON.
 
 {
   "type": "REMOVE",
-  "contains": "testObject",
-  "modAfter": 1558306170217,
-  "modBefore": 1558306170218
+  "modAfter": 1563016698239,
+  "modBefore": 1563016698240,
+  "index": "@OBJECT:name",
+  "invert": false,
+  "operator": "CONTAINS",
+  "value": "testObject",
+  "ascending": true
 }
 ~~~~
 
@@ -170,7 +187,7 @@ The output of this test shows the converted JSON.
     {
       "name": "testName",
       "id": 1,
-      "modified": 1558306170237,
+      "modified": 1563016698265,
       "object": {
         "data": "testObjectData"
       }
@@ -184,12 +201,12 @@ The output of this test shows the converted JSON.
     {
       "name": "testName1",
       "id": 1,
-      "modified": 1558306170238
+      "modified": 1563016698265
     },
     {
       "name": "testName2",
       "id": 1,
-      "modified": 1558306170238
+      "modified": 1563016698265
     }
   ],
   "size": 2
@@ -199,9 +216,9 @@ The output of this test shows the converted JSON.
 Test results
 ------------
 All 3 tests have been executed successfully (25 assertions).  
-Total test duration: 444 ms (total sleep duration: 0 ms).  
+Total test duration: 65 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zodb.test.TestConfig: 602 Kb / 0 Mb
- * nl.zeesoft.zodb.test.TestDatabaseRequest: 410 Kb / 0 Mb
- * nl.zeesoft.zodb.test.TestDatabaseResponse: 416 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestConfig: 624 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestDatabaseRequest: 416 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestDatabaseResponse: 421 Kb / 0 Mb
