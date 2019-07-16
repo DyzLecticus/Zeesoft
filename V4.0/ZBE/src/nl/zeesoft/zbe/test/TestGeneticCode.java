@@ -50,7 +50,7 @@ public class TestGeneticCode extends TestObject {
 		
 		ZStringBuilder ori = genCode.getCode();
 		System.out.println("Genetic code: " + ori);
-		assertEqual(genCode.getCode().length(),length,"Code length does not match expectation");
+		assertEqual(genCode.length(),length,"Code length does not match expectation");
 
 		genCode.mutate(mutations);
 		ZStringBuilder mut = genCode.getCode();

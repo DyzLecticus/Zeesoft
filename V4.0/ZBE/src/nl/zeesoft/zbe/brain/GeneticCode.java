@@ -32,6 +32,10 @@ public class GeneticCode {
 		return new ZStringBuilder(code);
 	}
 
+	public int length() {
+		return code.length();
+	}
+
 	public void generate(int length) {
 		if (length<100) {
 			length = 100;
