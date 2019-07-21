@@ -24,6 +24,9 @@ public class AnimalTestCycleSet extends TestCycleSet {
 		// Move toward food
 		for (int d = 3; d >= 1; d--) {
 			tc = addTestCycle(brain);
+			if (d>1) {
+				tc.level = 1;
+			}
 			tc.inputs[frontFoodInput] = AnimalBrain.INTENSITIES[d]; 
 			tc.expectedOutputs[AnimalBrain.OUT_BACK] = 1.0F;
 		}
@@ -36,10 +39,16 @@ public class AnimalTestCycleSet extends TestCycleSet {
 		// Turn toward food
 		for (int d = 3; d >= 0; d--) {
 			tc = addTestCycle(brain);
+			if (d>1) {
+				tc.level = 1;
+			}
 			tc.inputs[leftFoodInput] = AnimalBrain.INTENSITIES[d]; 
 			tc.expectedOutputs[AnimalBrain.OUT_RIGHT] = 1.0F;
 
 			tc = addTestCycle(brain);
+			if (d>1) {
+				tc.level = 1;
+			}
 			tc.inputs[rightFoodInput] = AnimalBrain.INTENSITIES[d]; 
 			tc.expectedOutputs[AnimalBrain.OUT_LEFT] = 1.0F;
 		}
@@ -47,6 +56,9 @@ public class AnimalTestCycleSet extends TestCycleSet {
 		// Turn away from walls
 		for (int d = 3; d >= 0; d--) {
 			tc = addTestCycle(brain);
+			if (d>1) {
+				tc.level = 1;
+			}
 			tc.inputs[AnimalBrain.FRONT_GREY] = AnimalBrain.INTENSITIES[d]; 
 			tc.expectedOutputs[AnimalBrain.OUT_RIGHT] = 1.0F;
 			tc.expectedOutputs[AnimalBrain.OUT_LEFT] = 1.0F;
@@ -55,6 +67,9 @@ public class AnimalTestCycleSet extends TestCycleSet {
 		// Turn away from corners
 		for (int d = 3; d >= 0; d--) {
 			tc = addTestCycle(brain);
+			if (d>1) {
+				tc.level = 1;
+			}
 			tc.inputs[AnimalBrain.FRONT_GREY] = AnimalBrain.INTENSITIES[d]; 
 			tc.inputs[AnimalBrain.LEFT_GREY] = AnimalBrain.INTENSITIES[d]; 
 			tc.expectedOutputs[AnimalBrain.OUT_LEFT] = 1.0F;

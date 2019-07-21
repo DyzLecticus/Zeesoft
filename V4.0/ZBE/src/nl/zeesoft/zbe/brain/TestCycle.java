@@ -44,22 +44,20 @@ public class TestCycle extends Cycle {
 		super.finalize(brain);
 		for (int n = 0; n < outputs.length; n++) {
 			if (outputs[n]!=expectedOutputs[n]) {
-				if (n<brain.getOutputLayer().neurons.size()) {
-					Neuron output = brain.getOutputLayer().neurons.get(n);
-					float diff = expectedOutputs[n] - output.value;
-					if (diff<0.0F) {
-						diff = diff * -1.0F;
-					}
-					if (!normalizeOutput && diff<errorTolerance) {
-						diff = 0.0F;
-					}
-					if (diff!=0.0F) {
-						success	= false;
-						if (normalizeOutput) {
-							errors[n] = output.threshold - output.value;
-						} else {
-							errors[n] = expectedOutputs[n] - output.value;
-						}
+				Neuron output = brain.getOutputLayer().neurons.get(n);
+				float diff = expectedOutputs[n] - output.value;
+				if (diff<0.0F) {
+					diff = diff * -1.0F;
+				}
+				if (!normalizeOutput && diff<errorTolerance) {
+					diff = 0.0F;
+				}
+				if (diff!=0.0F) {
+					success	= false;
+					if (normalizeOutput) {
+						errors[n] = output.threshold - output.value;
+					} else {
+						errors[n] = expectedOutputs[n] - output.value;
 					}
 				}
 			}

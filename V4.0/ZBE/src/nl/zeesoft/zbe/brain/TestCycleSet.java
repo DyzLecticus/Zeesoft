@@ -10,7 +10,7 @@ public class TestCycleSet {
 	
 	public int							successes			= 0;
 	public float						averageError		= 0.0F;
-	public SortedMap<Integer,Integer>	cyclesPerLevel	= new TreeMap<Integer,Integer>();
+	public SortedMap<Integer,Integer>	cyclesPerLevel		= new TreeMap<Integer,Integer>();
 	public SortedMap<Integer,Integer>	successesPerLevel	= new TreeMap<Integer,Integer>();
 	
 	public boolean isSuccess(int level) {
@@ -26,7 +26,7 @@ public class TestCycleSet {
 		float total = 0.0F;
 		
 		for (TestCycle tc: cycles) {
-			int cycPerLevel = 0;
+			int cycPerLevel = 1;
 			if (cyclesPerLevel.get(tc.level)!=null) {
 				cycPerLevel = cyclesPerLevel.get(tc.level);
 				cycPerLevel++;
@@ -34,7 +34,7 @@ public class TestCycleSet {
 			cyclesPerLevel.put(tc.level,cycPerLevel);
 			if (tc.success) {
 				successes++;
-				int sucPerLevel = 0;
+				int sucPerLevel = 1;
 				if (successesPerLevel.get(tc.level)!=null) {
 					sucPerLevel = successesPerLevel.get(tc.level);
 					sucPerLevel++;
