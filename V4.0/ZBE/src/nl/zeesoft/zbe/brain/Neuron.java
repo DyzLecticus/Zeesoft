@@ -17,7 +17,7 @@ public class Neuron {
 	}
 	
 	public void destroy() {
-		for (NeuronLink link: targets) {
+		for (NeuronLink link: sources) {
 			link.source = null;
 			link.target = null;
 		}

@@ -82,7 +82,7 @@ public class TrainingProgram {
 	}
 	
 	public void trainVariation(Brain brain, TestCycleSet tcs, float learningRate) {
-		if (trainedCycles % 10 == 0) {
+		if (trainedCycles % 5 == 0) {
 			trainVariationRandom(brain,learningRate);
 		} else {
 			trainVariationRandomUseTestResults(brain,tcs,learningRate);
@@ -146,7 +146,7 @@ public class TrainingProgram {
 						}
 						neuron.threshold = threshold;
 					}
-					for (NeuronLink link: neuron.targets) {
+					for (NeuronLink link: neuron.sources) {
 						if (getRandomBoolean()) {
 							float weight = link.weight;
 							if (getRandomBoolean()) {

@@ -89,7 +89,7 @@ public class AnimalTestCycleSet extends TestCycleSet {
 		int c = 0;
 		for (TestCycle tc: cycles) {
 			c++;
-			System.out.println("Test cycle: " + c + ", fired neurons: " + tc.firedNeurons.size() + ", fired links: " + tc.firedLinks.size() + ", level: " + tc.level + ", success: " + tc.success);
+			System.out.println("Test cycle: " + c + ", level: " + tc.level + ", fired neurons: " + tc.firedNeurons.size() + ", fired links: " + tc.firedLinks.size() + ", success: " + tc.success);
 			for (int n = 0; n < tc.outputs.length; n++) {
 				if (tc.outputs[n]!=tc.expectedOutputs[n]) {
 					System.out.println("  Output: " + n + ": " + tc.outputs[n] + ", expected: " + tc.expectedOutputs[n] + ", error: " + tc.errors[n]);
