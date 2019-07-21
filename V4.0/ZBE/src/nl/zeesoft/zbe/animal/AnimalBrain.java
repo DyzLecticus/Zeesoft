@@ -1,12 +1,19 @@
-package nl.zeesoft.zbe.brain;
+package nl.zeesoft.zbe.animal;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zbe.brain.Brain;
+import nl.zeesoft.zbe.brain.Cycle;
+import nl.zeesoft.zbe.brain.Neuron;
+import nl.zeesoft.zbe.brain.NeuronLayer;
+import nl.zeesoft.zbe.brain.NeuronLink;
+import nl.zeesoft.zbe.brain.TestCycle;
+import nl.zeesoft.zbe.brain.TestCycleSet;
 import nl.zeesoft.zdk.ZStringBuilder;
 
-public class BrainTest extends Brain {
+public class AnimalBrain extends Brain {
 	public static final int			INPUT_NEURONS	= 12;
 	public static final int			OUTPUT_NEURONS	= 4;
 	public static final int			MIN_LAYERS		= 1;
@@ -34,9 +41,9 @@ public class BrainTest extends Brain {
 	
 	public static final float[]		INTENSITIES		= {1.00F,0.75F,0.50F,0.25F};
 	
-	public BrainTest() {
+	public ZStringBuilder initialize() {
 		getCode().generate(10000);
-		initialize(INPUT_NEURONS,OUTPUT_NEURONS,MIN_LAYERS,MAX_LAYERS);
+		return initialize(INPUT_NEURONS,OUTPUT_NEURONS,MIN_LAYERS,MAX_LAYERS);
 	}
 	
 	public void layersToSystemOut() {
@@ -69,7 +76,13 @@ public class BrainTest extends Brain {
 		}
 	}
 	
-	public List<Cycle> getTestCycles(boolean herbivore) {
+	public TestCycleSet getTestCycleSet(boolean herbivore) {
+		TestCycleSet r = new TestCycleSet();
+		r.cycles = getTestCycles(herbivore);
+		return r;
+	}
+	
+	protected List<Cycle> getTestCycles(boolean herbivore) {
 		List<Cycle> r = new ArrayList<Cycle>();
 		
 		TestCycle tc = null;
@@ -168,6 +181,28 @@ public class BrainTest extends Brain {
 			r.add(tc);
 		}
 		
+		return r;
+	}
+	
+	public static AnimalBrain getTrainableAnimalBrain(boolean herbivore, int minSuccesses, int timeOutMs) {
+		AnimalBrain r = null;
+		long started = System.currentTimeMillis();
+		while (r==null) {
+			AnimalBrain brain = new AnimalBrain();
+			ZStringBuilder err = brain.initialize();
+			if (err.length()>0) {
+				break;
+			} else {
+				TestCycleSet tcs = brain.getTestCycleSet(true);
+				brain.runTestCycleSet(tcs);
+				if (tcs.successes>=minSuccesses) {
+					r = brain;
+				}
+			}
+			if (r==null && (System.currentTimeMillis() - started) >= timeOutMs) {
+				break;
+			}
+		}
 		return r;
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZIntegerGenerator;
+import nl.zeesoft.zdk.ZStringBuilder;
 
 public class Brain {
 	private ZIntegerGenerator				generator		= new ZIntegerGenerator(0,100);
@@ -27,55 +28,68 @@ public class Brain {
 		return outputLayer;
 	}
 	
-	public void initialize(int inputNeurons,int outputNeurons,int minLayers,int maxLayers) {
+	public ZStringBuilder initialize(int inputNeurons,int outputNeurons,int minLayers,int maxLayers) {
+		ZStringBuilder err = new ZStringBuilder();
+		
 		destroy();
 		
-		// Initialize layers and nodes
-		int nodeId = 1;
-		for (int n = 0; n < inputNeurons; n++) {
-			inputLayer.neurons.add(new Neuron(nodeId));
-			nodeId++;
+		int max = inputNeurons;
+		if (outputNeurons>max) {
+			max = outputNeurons;
 		}
-		int nodesPerLayer = properties.getMiddleLayerNodes(inputLayer, outputLayer);
-		for (int l = 0; l < properties.getMiddleLayers(minLayers, maxLayers); l++) {
-			NeuronLayer layer = new NeuronLayer();
-			for (int n = 0; n < nodesPerLayer; n++) {
-				layer.neurons.add(new Neuron(nodeId));
-				nodeId++;
+		int requiredCodeSize = properties.getRequiredCodeSize(inputNeurons, outputNeurons, maxLayers);
+		if (requiredCodeSize>code.size()) {
+			err.append("The minimum genetic code length for the specified dimensions is " + (requiredCodeSize * 3));
+		} else {
+			// Initialize layers and nodes
+			int objectId = 1;
+			for (int n = 0; n < inputNeurons; n++) {
+				inputLayer.neurons.add(new Neuron(objectId));
+				objectId++;
 			}
-			middleLayers.add(layer);
-		}
-		for (int n = 0; n < outputNeurons; n++) {
-			outputLayer.neurons.add(new Neuron(nodeId));
-			nodeId++;
-		}
-
-		// Initialize thresholds
-		List<NeuronLayer> layers = getLayers();
-		for (NeuronLayer layer: layers) {
-			for (Neuron neuron: layer.neurons) {
-				neuron.threshold = getRandomFloat();
+			int nodesPerLayer = properties.getMiddleLayerNodes(inputLayer, outputLayer);
+			for (int l = 0; l < properties.getMiddleLayers(minLayers, maxLayers); l++) {
+				NeuronLayer layer = new NeuronLayer();
+				for (int n = 0; n < nodesPerLayer; n++) {
+					layer.neurons.add(new Neuron(objectId));
+					objectId++;
+				}
+				middleLayers.add(layer);
 			}
-		}
-
-		// Initialize links
-		int nl = 0;
-		for (NeuronLayer layer: layers) {
-			nl++;
-			if (nl<layers.size()) {
-				NeuronLayer nextLayer = layers.get(nl);
+			for (int n = 0; n < outputNeurons; n++) {
+				outputLayer.neurons.add(new Neuron(objectId));
+				objectId++;
+			}
+	
+			// Initialize thresholds
+			List<NeuronLayer> layers = getLayers();
+			for (NeuronLayer layer: layers) {
 				for (Neuron neuron: layer.neurons) {
-					for (Neuron target: nextLayer.neurons) {
-						NeuronLink link = new NeuronLink();
-						link.target = target;
-						link.source = neuron;
-						link.weight = getRandomFloat();
-						neuron.targets.add(link);
-						target.sources.add(link);  
+					neuron.threshold = properties.getThresholdWeight(neuron.id);
+				}
+			}
+	
+			// Initialize links
+			int nl = 0;
+			for (NeuronLayer layer: layers) {
+				nl++;
+				if (nl<layers.size()) {
+					NeuronLayer nextLayer = layers.get(nl);
+					for (Neuron neuron: layer.neurons) {
+						for (Neuron target: nextLayer.neurons) {
+							NeuronLink link = new NeuronLink(objectId);
+							objectId++;
+							link.target = target;
+							link.source = neuron;
+							link.weight = properties.getThresholdWeight(link.id);
+							neuron.targets.add(link);
+							target.sources.add(link);  
+						}
 					}
 				}
 			}
 		}
+		return err;
 	}
 	
 	public void destroy() {
@@ -87,10 +101,11 @@ public class Brain {
 		outputLayer.destroy();
 	}
 	
-	public void runCycles(List<Cycle> cycles) {
-		for (Cycle cycle: cycles) {
+	public void runTestCycleSet(TestCycleSet tcs) {
+		for (Cycle cycle: tcs.cycles) {
 			runCycle(cycle);
 		}
+		tcs.finalize();
 	}
 	
 	public void runCycle(Cycle cycle) {
@@ -98,29 +113,33 @@ public class Brain {
 		resetNodeValues(layers);
 		for (int n = 0; n < cycle.inputs.length; n++) {
 			if (n<inputLayer.neurons.size()) {
-				inputLayer.neurons.get(n).value = cycle.inputs[n];
+				Neuron input = inputLayer.neurons.get(n);
+				input.value = cycle.inputs[n];
+				if (input.value>=input.threshold) {
+					cycle.firedNeurons.add(input);
+				}
 			}
 		}
 		for (NeuronLayer layer: layers) {
 			if (layer!=inputLayer) {
 				for (Neuron neuron: layer.neurons) {
+					if (neuron.value>=neuron.threshold) {
+						cycle.firedNeurons.add(neuron);
+					}
 					float value = 0.0F;
 					float maxValue = 0.0F;
 					for (NeuronLink link: neuron.sources) {
 						maxValue += link.weight;
-						if (link.source.value>link.source.threshold) {
+						if (link.source.value>=link.source.threshold) {
 							value += link.weight;
+							cycle.firedLinks.add(link);
 						}
 					}
 					neuron.value = (value / maxValue);
 				}
 			}
 		}
-		for (int n = 0; n < cycle.outputs.length; n++) {
-			if (n<outputLayer.neurons.size()) {
-				cycle.outputs[n] = outputLayer.neurons.get(n).value;
-			}
-		}
+		cycle.finalize(this);
 	}
 	
 	protected List<NeuronLayer> getLayers() {
