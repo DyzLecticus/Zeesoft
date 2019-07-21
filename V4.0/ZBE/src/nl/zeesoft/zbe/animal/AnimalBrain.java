@@ -1,16 +1,12 @@
 package nl.zeesoft.zbe.animal;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zbe.brain.Brain;
-import nl.zeesoft.zbe.brain.Cycle;
 import nl.zeesoft.zbe.brain.Neuron;
 import nl.zeesoft.zbe.brain.NeuronLayer;
 import nl.zeesoft.zbe.brain.NeuronLink;
-import nl.zeesoft.zbe.brain.TestCycle;
-import nl.zeesoft.zbe.brain.TestCycleSet;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class AnimalBrain extends Brain {
@@ -46,7 +42,29 @@ public class AnimalBrain extends Brain {
 		return initialize(INPUT_NEURONS,OUTPUT_NEURONS,MIN_LAYERS,MAX_LAYERS);
 	}
 	
-	public void layersToSystemOut() {
+	public static AnimalBrain getTrainableAnimalBrain(boolean herbivore, int minSuccesses, int timeOutMs) {
+		AnimalBrain r = null;
+		long started = System.currentTimeMillis();
+		while (r==null) {
+			AnimalBrain brain = new AnimalBrain();
+			ZStringBuilder err = brain.initialize();
+			if (err.length()>0) {
+				break;
+			} else {
+				AnimalTestCycleSet tcs = new AnimalTestCycleSet(brain,true);
+				brain.runTestCycleSet(tcs);
+				if (tcs.successes>=minSuccesses) {
+					r = brain;
+				}
+			}
+			if (r==null && (System.currentTimeMillis() - started) >= timeOutMs) {
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public void toSystemOut() {
 		DecimalFormat df = new DecimalFormat("0.00");
 		
 		int l = 0;
@@ -74,135 +92,5 @@ public class AnimalBrain extends Brain {
 				System.out.println("  Neuron: " + String.format("%03d",neuron.id) + ", threshold: " + df.format(neuron.threshold) + ", value: " + df.format(neuron.value) + sources);
 			}
 		}
-	}
-	
-	public TestCycleSet getTestCycleSet(boolean herbivore) {
-		TestCycleSet r = new TestCycleSet();
-		r.cycles = getTestCycles(herbivore);
-		return r;
-	}
-	
-	protected List<Cycle> getTestCycles(boolean herbivore) {
-		List<Cycle> r = new ArrayList<Cycle>();
-		
-		TestCycle tc = null;
-		
-		int leftFoodInput = LEFT_GREEN;
-		int frontFoodInput = FRONT_GREEN;
-		int rightFoodInput = RIGHT_GREEN;
-		if (!herbivore) {
-			leftFoodInput = LEFT_BLUE;
-			frontFoodInput = FRONT_BLUE;
-			rightFoodInput = RIGHT_BLUE;
-		}
-		
-		tc = new TestCycle();
-		tc.initialize(this);
-		tc.expectedOutputs[OUT_BACK] = 1.0F;
-		r.add(tc);
-
-		// Move toward food
-		for (int d = 3; d >= 1; d--) {
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[frontFoodInput] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_BACK] = 1.0F;
-			r.add(tc);
-		}
-		
-		// Eat food
-		tc = new TestCycle();
-		tc.initialize(this);
-		tc.inputs[frontFoodInput] = INTENSITIES[0]; 
-		tc.expectedOutputs[OUT_FRONT] = 1.0F;
-		r.add(tc);
-
-		// Turn toward food
-		for (int d = 3; d >= 0; d--) {
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[leftFoodInput] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_RIGHT] = 1.0F;
-			r.add(tc);
-			
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[rightFoodInput] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_LEFT] = 1.0F;
-			r.add(tc);
-		}
-
-		// Turn away from walls
-		for (int d = 3; d >= 0; d--) {
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[FRONT_GREY] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_RIGHT] = 1.0F;
-			tc.expectedOutputs[OUT_LEFT] = 1.0F;
-			r.add(tc);
-		}
-
-		// Turn away from corners
-		for (int d = 3; d >= 0; d--) {
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[FRONT_GREY] = INTENSITIES[d]; 
-			tc.inputs[LEFT_GREY] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_LEFT] = 1.0F;
-			r.add(tc);
-			
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[FRONT_GREY] = INTENSITIES[d]; 
-			tc.inputs[RIGHT_GREY] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_RIGHT] = 1.0F;
-			r.add(tc);
-		}
-
-		// Turn/move away from carnivores
-		for (int d = 3; d >= 0; d--) {
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[LEFT_RED] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_BACK] = 1.0F;
-			r.add(tc);
-
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[FRONT_RED] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_RIGHT] = 1.0F;
-			tc.expectedOutputs[OUT_LEFT] = 1.0F;
-			r.add(tc);
-			
-			tc = new TestCycle();
-			tc.initialize(this);
-			tc.inputs[RIGHT_RED] = INTENSITIES[d]; 
-			tc.expectedOutputs[OUT_BACK] = 1.0F;
-			r.add(tc);
-		}
-		
-		return r;
-	}
-	
-	public static AnimalBrain getTrainableAnimalBrain(boolean herbivore, int minSuccesses, int timeOutMs) {
-		AnimalBrain r = null;
-		long started = System.currentTimeMillis();
-		while (r==null) {
-			AnimalBrain brain = new AnimalBrain();
-			ZStringBuilder err = brain.initialize();
-			if (err.length()>0) {
-				break;
-			} else {
-				TestCycleSet tcs = brain.getTestCycleSet(true);
-				brain.runTestCycleSet(tcs);
-				if (tcs.successes>=minSuccesses) {
-					r = brain;
-				}
-			}
-			if (r==null && (System.currentTimeMillis() - started) >= timeOutMs) {
-				break;
-			}
-		}
-		return r;
 	}
 }

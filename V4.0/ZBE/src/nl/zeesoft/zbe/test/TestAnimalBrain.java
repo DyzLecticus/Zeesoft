@@ -1,9 +1,7 @@
 package nl.zeesoft.zbe.test;
 
 import nl.zeesoft.zbe.animal.AnimalBrain;
-import nl.zeesoft.zbe.brain.Cycle;
-import nl.zeesoft.zbe.brain.TestCycle;
-import nl.zeesoft.zbe.brain.TestCycleSet;
+import nl.zeesoft.zbe.animal.AnimalTestCycleSet;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -63,28 +61,13 @@ public class TestAnimalBrain extends TestObject {
 		} else {
 			System.out.println("Generating trainable animal brain took " + (System.currentTimeMillis() - started) + " ms");
 			System.out.println();
-			brain.layersToSystemOut();
-			TestCycleSet tcs = brain.getTestCycleSet(true);
+			brain.toSystemOut();
+			AnimalTestCycleSet tcs = new AnimalTestCycleSet(brain,true);
 			brain.runTestCycleSet(tcs);
 			System.out.println();
-			brain.layersToSystemOut();
+			brain.toSystemOut();
 			System.out.println();
-			testCycleSetToSystemOut(tcs);
+			tcs.toSystemOut();
 		}
-	}
-	
-	private void testCycleSetToSystemOut(TestCycleSet tcs) {
-		int c = 0;
-		for (Cycle cycle: tcs.cycles) {
-			if (cycle instanceof TestCycle) {
-				c++;
-				TestCycle tc = (TestCycle) cycle;
-				System.out.println("Test cycle: " + c + ", success: " + tc.success + ", fired neurons: " + tc.firedNeurons.size());
-				for (int n = 0; n < tc.outputs.length; n++) {
-					System.out.println("  Output: " + n + ": " + tc.outputs[n] + ", expected: " + tc.expectedOutputs[n] + ", error: " + tc.errors[n]);
-				}
-			}
-		}
-		System.out.println("Test cycle set average error: " + tcs.averageError + ", successes: " + tcs.successes);
 	}
 }
