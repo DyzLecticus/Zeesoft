@@ -28,8 +28,8 @@ public class TestGeneticCode extends TestObject {
 		System.out.println("int size = genCode.size();");
 		System.out.println("// Get a property value");
 		System.out.println("float f = genCode.get(4);");
-		System.out.println("// Get a scaled property value");
-		System.out.println("int i = genCode.getValue(4,100);");
+		System.out.println("// Get a scaled integer property value");
+		System.out.println("int i = genCode.getInteger(4,100);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");

@@ -2,7 +2,6 @@ package nl.zeesoft.zbe.brain;
 
 public class TestCycle extends Cycle {
 	public float[]		expectedOutputs		= null;
-	public boolean		expectAllOutputs	= false; // Functions as an OR operator on output evaluation
 	public float		errorTolerance		= 0.1F; // Used for non normalized output  
 	
 	public float[]		errors				= null;
@@ -34,7 +33,6 @@ public class TestCycle extends Cycle {
 			for (int i = 0; i < tc.errors.length; i++) {
 				tc.errors[i] = 0.0F;
 			}
-			tc.expectAllOutputs = expectAllOutputs;
 			tc.errorTolerance = errorTolerance;
 		}
 	}
@@ -42,7 +40,6 @@ public class TestCycle extends Cycle {
 	@Override
 	protected void finalize(Brain brain) {
 		super.finalize(brain);
-		boolean hasSuccess = false;
 		for (int n = 0; n < outputs.length; n++) {
 			if (n<brain.getOutputLayer().neurons.size()) {
 				Neuron output = brain.getOutputLayer().neurons.get(n);
@@ -61,14 +58,9 @@ public class TestCycle extends Cycle {
 						} else {
 							errors[n] = expectedOutputs[n] - output.value;
 						}
-					} else {
-						hasSuccess = true;
 					}
 				}
 			}
-		}
-		if (!expectAllOutputs && hasSuccess) {
-			success = true;
 		}
 	}
 }

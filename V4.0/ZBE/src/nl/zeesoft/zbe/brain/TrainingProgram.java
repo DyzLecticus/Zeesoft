@@ -1,19 +1,26 @@
 package nl.zeesoft.zbe.brain;
 
 public class TrainingProgram {
-	private Brain 			baseBrain			= null;
-	private	TestCycleSet	baseTestCycleSet	= null;
-	private int				trainCycles			= 1000;
+	private Brain 						baseBrain			= null;
+	private	TestCycleSet				baseTestCycleSet	= null;
 	
-	private int				trainedCycles		= 0;
+	private int							trainCycles			= 500;
+	private int							learningFactor		= 3;
+	
+	private int							trainedCycles		= 0;
+	private int							learnedTests		= 0;
 
 	public TrainingProgram(Brain baseBrain, TestCycleSet baseTestCycleSet) {
-		initialize(baseBrain,baseTestCycleSet);
+		this.baseBrain = baseBrain;
+		this.baseTestCycleSet = baseTestCycleSet;
 	}
-	
-	public TrainingProgram(Brain baseBrain, TestCycleSet baseTestCycleSet,int trainCycles) {
-		initialize(baseBrain,baseTestCycleSet);
+
+	public void setTrainCycles(int trainCycles) {
 		this.trainCycles = trainCycles;
+	}
+
+	public void setLearningFactor(int learningFactor) {
+		this.learningFactor = learningFactor;
 	}
 	
 	public Brain runProgram() {
@@ -21,23 +28,25 @@ public class TrainingProgram {
 		trainedCycles = 0;
 		TestCycleSet bestResults = baseTestCycleSet.copy();
 		r.runTestCycleSet(bestResults);
+		learnedTests = bestResults.successes;
 		if (!bestResults.isSuccess()) {
-			float learningRate = bestResults.averageError;
 			for (int c = 0; c < trainCycles; c++) {
 				trainedCycles++;
+				float learningRate = bestResults.averageError * (float)learningFactor;
 				Brain variation = r.copy(true,learningRate);
 				TestCycleSet tcs = baseTestCycleSet.copy();
 				variation.runTestCycleSet(tcs);
 				if (tcs.isSuccess()) {
+					bestResults = tcs;
 					r = variation;
 					break;
 				} else if (tcs.successes > bestResults.successes) {
 					bestResults = tcs;
-					learningRate = tcs.averageError;
 					r = variation;
 				}
 			}
 		}
+		learnedTests = bestResults.successes - learnedTests;
 		return r;
 	}
 	
@@ -45,8 +54,7 @@ public class TrainingProgram {
 		return trainedCycles;
 	}
 	
-	private void initialize(Brain baseBrain, TestCycleSet baseTestCycleSet) {
-		this.baseBrain = baseBrain;
-		this.baseTestCycleSet = baseTestCycleSet;
+	public int getLearnedTests() {
+		return learnedTests;
 	}
 }

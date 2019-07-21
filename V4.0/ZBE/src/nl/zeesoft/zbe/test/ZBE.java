@@ -42,5 +42,7 @@ public class ZBE extends LibraryObject {
 	@Override
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestGeneticCode(getTester()));
+		tests.add(new TestAnimalBrain(getTester()));
+		tests.add(new TestTrainingProgram(getTester()));
 	}
 }
