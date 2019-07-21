@@ -83,10 +83,14 @@ public class GeneticCode {
 		return r;
 	}
 	
-	public int getValue(int index, int scale) {
+	public int getInteger(int index, int scale) {
 		return Math.round(get(index) * (float)scale);
 	}
-	
+
+	public boolean getBoolean(int index, int scale) {
+		return get(index) < 0.5F;
+	}
+
 	public float get(int index) {
 		float r = -1;
 		if (index>-1 && factors.size()>index) {
@@ -114,7 +118,7 @@ public class GeneticCode {
 				end = code.length();
 			}
 			try {
-				p = Integer.parseInt(code.substring(p,end).toString());
+				p = index + Integer.parseInt(code.substring(p,end).toString());
 			} catch (NumberFormatException e) {
 				// Ignore
 			}

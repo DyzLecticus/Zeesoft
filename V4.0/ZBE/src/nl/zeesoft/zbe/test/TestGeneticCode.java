@@ -73,8 +73,8 @@ public class TestGeneticCode extends TestObject {
 		muts = 0;
 		GeneticCode oriCode = new GeneticCode(ori);
 		for (int p = 0; p < genCode.size(); p++) {
-			int oVal = oriCode.getValue(p,1000);
-			int mVal = genCode.getValue(p,1000);
+			int oVal = oriCode.getInteger(p,1000);
+			int mVal = genCode.getInteger(p,1000);
 			String append = "";
 			if (mVal!=oVal) {
 				append = " <";
@@ -89,25 +89,28 @@ public class TestGeneticCode extends TestObject {
 		
 		int val = 0;
 		
-		val = genCode.getValue(0,25);
+		val = genCode.getInteger(0,5);
+		assertEqual(val,5,"Property value does not match expectation");
+		
+		val = genCode.getInteger(0,25);
 		assertEqual(val,25,"Property value does not match expectation");
 		
-		val = genCode.getValue(0,100);
+		val = genCode.getInteger(0,100);
 		assertEqual(val,100,"Property value does not match expectation");
 		
-		val = genCode.getValue(0,250);
+		val = genCode.getInteger(0,250);
 		assertEqual(val,250,"Property value does not match expectation");
 		
-		val = genCode.getValue(0,1000);
+		val = genCode.getInteger(0,1000);
 		assertEqual(val,999,"Property value does not match expectation");
 		
-		val = genCode.getValue(32,1000);
+		val = genCode.getInteger(32,1000);
 		assertEqual(val,999,"Property value does not match expectation");
 		
-		val = genCode.getValue(33,1000);
+		val = genCode.getInteger(33,1000);
 		assertEqual(val,-1000,"Property value does not match expectation");
 		
-		val = genCode.getValue(99,1000);
+		val = genCode.getInteger(99,1000);
 		assertEqual(val,-1000,"Property value does not match expectation");
 	}
 }
