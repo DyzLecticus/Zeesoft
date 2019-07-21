@@ -22,6 +22,24 @@ public class TestCycle extends Cycle {
 	}
 	
 	@Override
+	public void copy(Cycle toCycle) {
+		super.copy(toCycle);
+		if (toCycle instanceof TestCycle) {
+			TestCycle tc = (TestCycle) toCycle;
+			tc.expectedOutputs = new float[expectedOutputs.length];
+			for (int i = 0; i < tc.expectedOutputs.length; i++) {
+				tc.expectedOutputs[i] = expectedOutputs[i];
+			}
+			tc.errors = new float[errors.length];
+			for (int i = 0; i < tc.errors.length; i++) {
+				tc.errors[i] = 0.0F;
+			}
+			tc.expectAllOutputs = expectAllOutputs;
+			tc.errorTolerance = errorTolerance;
+		}
+	}
+	
+	@Override
 	protected void finalize(Brain brain) {
 		super.finalize(brain);
 		boolean hasSuccess = false;

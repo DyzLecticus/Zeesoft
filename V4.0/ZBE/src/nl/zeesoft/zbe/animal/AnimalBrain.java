@@ -42,6 +42,11 @@ public class AnimalBrain extends Brain {
 		return initialize(INPUT_NEURONS,OUTPUT_NEURONS,MIN_LAYERS,MAX_LAYERS);
 	}
 	
+	@Override
+	public Brain getCopyBrain() {
+		return new AnimalBrain();
+	}
+
 	public static AnimalBrain getTrainableAnimalBrain(boolean herbivore, int minSuccesses, int timeOutMs) {
 		AnimalBrain r = null;
 		long started = System.currentTimeMillis();
@@ -51,7 +56,8 @@ public class AnimalBrain extends Brain {
 			if (err.length()>0) {
 				break;
 			} else {
-				AnimalTestCycleSet tcs = new AnimalTestCycleSet(brain,true);
+				AnimalTestCycleSet tcs = new AnimalTestCycleSet();
+				tcs.initialize(brain,herbivore);
 				brain.runTestCycleSet(tcs);
 				if (tcs.successes>=minSuccesses) {
 					r = brain;

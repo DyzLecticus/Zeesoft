@@ -5,7 +5,12 @@ import nl.zeesoft.zbe.brain.TestCycle;
 import nl.zeesoft.zbe.brain.TestCycleSet;
 
 public class AnimalTestCycleSet extends TestCycleSet {
-	public AnimalTestCycleSet(AnimalBrain brain,boolean herbivore) {
+	@Override
+	public TestCycleSet getCopyTestCycleSet() {
+		return new AnimalTestCycleSet();
+	}
+	
+	public void initialize(AnimalBrain brain,boolean herbivore) {
 		TestCycle tc = null;
 		
 		int leftFoodInput = AnimalBrain.LEFT_GREEN;

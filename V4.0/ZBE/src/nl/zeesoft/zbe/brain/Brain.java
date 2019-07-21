@@ -2,15 +2,19 @@ package nl.zeesoft.zbe.brain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class Brain {
-	private ZIntegerGenerator				generator		= new ZIntegerGenerator(0,100);
+	private Random 							random			= new Random();
 	
 	private GeneticCode						code			= new GeneticCode(10000);
 	private BrainProperties					properties		= new BrainProperties(code);
+	
+	// Used for copies
+	private int								minLayers		= 0;
+	private int								maxLayers		= 0;
 	
 	private NeuronLayer						inputLayer		= new NeuronLayer(); 
 	private List<NeuronLayer>				middleLayers	= new ArrayList<NeuronLayer>();
@@ -32,6 +36,9 @@ public class Brain {
 		ZStringBuilder err = new ZStringBuilder();
 		
 		destroy();
+		
+		this.minLayers = minLayers;
+		this.maxLayers = maxLayers;
 		
 		int max = inputNeurons;
 		if (outputNeurons>max) {
@@ -142,6 +149,57 @@ public class Brain {
 		cycle.finalize(this);
 	}
 	
+	public Brain copy() {
+		return copy(true,0.0F);
+	}
+	
+	public Brain copy(boolean copyThresholdWeight, float learningRate) {
+		Brain r = getCopyBrain();
+		r.getCode().setCode(getCode().getCode());
+		r.initialize(inputLayer.neurons.size(),outputLayer.neurons.size(),minLayers,maxLayers);
+		List<NeuronLayer> copyLayers = r.getLayers();
+		if (copyThresholdWeight) {
+			int l = 0;
+			for (NeuronLayer layer: getLayers()) {
+				NeuronLayer copyLayer = copyLayers.get(l);
+				int n = 0;
+				for (Neuron neuron: layer.neurons) {
+					Neuron copyNeuron = copyLayer.neurons.get(n);
+					float threshold = neuron.threshold;
+					if (learningRate!=0.0F) {
+						if (getRandomBoolean()) {
+							threshold -= getRandomFloat(learningRate);
+						} else {
+							threshold += getRandomFloat(learningRate);
+						}
+					}
+					copyNeuron.threshold = threshold;
+					int li = 0;
+					for (NeuronLink link: neuron.targets) {
+						NeuronLink copyLink = copyNeuron.targets.get(li);
+						float weight = link.weight;
+						if (learningRate!=0.0F) {
+							if (getRandomBoolean()) {
+								weight -= getRandomFloat(learningRate);
+							} else {
+								weight += getRandomFloat(learningRate);
+							}
+						}
+						copyLink.weight = weight;
+						li++;
+					}
+					n++;
+				}
+				l++;
+			}
+		}
+		return r;
+	}
+	
+	protected Brain getCopyBrain() {
+		return new Brain();
+	}
+	
 	protected List<NeuronLayer> getLayers() {
 		List<NeuronLayer> r = new ArrayList<NeuronLayer>();
 		r.add(inputLayer);
@@ -160,7 +218,11 @@ public class Brain {
 		}
 	}
 	
-	private float getRandomFloat() {
-		return (0.01F * (float)generator.getNewInteger());
+	private float getRandomFloat(float max) {
+		return random.nextFloat() * max;
+	}
+	
+	private boolean getRandomBoolean() {
+		return random.nextFloat() > 0.5F;
 	}
 }

@@ -9,6 +9,10 @@ public class TestCycleSet {
 	public int			successes		= 0;
 	public float		averageError	= 0.0F;
 	
+	public boolean isSuccess() {
+		return successes == cycles.size();
+	}
+	
 	public void finalize() {
 		float totalError = 0.0F;
 		float total = 0.0F;
@@ -37,4 +41,17 @@ public class TestCycleSet {
 		}
 	}
 
+	public TestCycleSet copy() {
+		TestCycleSet r = getCopyTestCycleSet();
+		for (Cycle tc: cycles) {
+			TestCycle copyTc = new TestCycle();
+			tc.copy(copyTc);
+			r.cycles.add(copyTc);
+		}
+		return r;
+	}
+	
+	protected TestCycleSet getCopyTestCycleSet() {
+		return new TestCycleSet();
+	}
 }

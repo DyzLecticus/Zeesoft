@@ -2,6 +2,7 @@ package nl.zeesoft.zbe.test;
 
 import nl.zeesoft.zbe.animal.AnimalBrain;
 import nl.zeesoft.zbe.animal.AnimalTestCycleSet;
+import nl.zeesoft.zbe.brain.TrainingProgram;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -62,11 +63,22 @@ public class TestAnimalBrain extends TestObject {
 			System.out.println("Generating trainable animal brain took " + (System.currentTimeMillis() - started) + " ms");
 			System.out.println();
 			brain.toSystemOut();
-			AnimalTestCycleSet tcs = new AnimalTestCycleSet(brain,true);
+			AnimalTestCycleSet tcs = new AnimalTestCycleSet();
+			tcs.initialize(brain,true);
 			brain.runTestCycleSet(tcs);
 			System.out.println();
 			brain.toSystemOut();
 			System.out.println();
+			tcs.toSystemOut();
+			
+			System.out.println();
+			started = System.currentTimeMillis();
+			System.out.println("Training animal brain ...");
+			TrainingProgram tp = new TrainingProgram(brain,tcs.copy());
+			AnimalBrain trainedBrain = (AnimalBrain) tp.runProgram();
+			System.out.println("Training animal brain took " + (System.currentTimeMillis() - started) + " ms, cycles: " + tp.getTrainedCycles());
+			tcs = (AnimalTestCycleSet) tcs.copy();
+			trainedBrain.runTestCycleSet(tcs);
 			tcs.toSystemOut();
 		}
 	}

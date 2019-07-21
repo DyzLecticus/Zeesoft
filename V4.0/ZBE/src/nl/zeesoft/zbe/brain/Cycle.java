@@ -22,6 +22,18 @@ public class Cycle {
 		}
 	}
 	
+	public void copy(Cycle toCycle) {
+		toCycle.inputs = new float[inputs.length];
+		for (int i = 0; i < toCycle.inputs.length; i++) {
+			toCycle.inputs[i] = inputs[i];
+		}
+		toCycle.outputs = new float[outputs.length];
+		for (int i = 0; i < toCycle.outputs.length; i++) {
+			toCycle.outputs[i] = outputs[i];
+		}
+		toCycle.normalizeOutput = normalizeOutput;
+	}
+	
 	protected void finalize(Brain brain) {
 		for (int n = 0; n < outputs.length; n++) {
 			if (n<brain.getOutputLayer().neurons.size()) {
