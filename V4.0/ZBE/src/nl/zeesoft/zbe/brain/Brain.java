@@ -2,13 +2,10 @@ package nl.zeesoft.zbe.brain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class Brain {
-	private Random 							random			= new Random();
-	
 	private GeneticCode						code			= new GeneticCode(10000);
 	private BrainProperties					properties		= new BrainProperties(code);
 	
@@ -150,10 +147,10 @@ public class Brain {
 	}
 	
 	public Brain copy() {
-		return copy(true,0.0F);
+		return copy(true);
 	}
 	
-	public Brain copy(boolean copyThresholdWeight, float learningRate) {
+	public Brain copy(boolean copyThresholdWeight) {
 		Brain r = getCopyBrain();
 		r.getCode().setCode(getCode().getCode());
 		r.initialize(inputLayer.neurons.size(),outputLayer.neurons.size(),minLayers,maxLayers);
@@ -165,27 +162,11 @@ public class Brain {
 				int n = 0;
 				for (Neuron neuron: layer.neurons) {
 					Neuron copyNeuron = copyLayer.neurons.get(n);
-					float threshold = neuron.threshold;
-					if (learningRate!=0.0F) {
-						if (getRandomBoolean()) {
-							threshold -= getRandomFloat(learningRate);
-						} else {
-							threshold += getRandomFloat(learningRate);
-						}
-					}
-					copyNeuron.threshold = threshold;
+					copyNeuron.threshold = neuron.threshold;
 					int li = 0;
 					for (NeuronLink link: neuron.targets) {
 						NeuronLink copyLink = copyNeuron.targets.get(li);
-						float weight = link.weight;
-						if (learningRate!=0.0F) {
-							if (getRandomBoolean()) {
-								weight -= getRandomFloat(learningRate);
-							} else {
-								weight += getRandomFloat(learningRate);
-							}
-						}
-						copyLink.weight = weight;
+						copyLink.weight = link.weight;
 						li++;
 					}
 					n++;
@@ -216,13 +197,5 @@ public class Brain {
 				neuron.value = 0.0F;
 			}
 		}
-	}
-	
-	private float getRandomFloat(float max) {
-		return random.nextFloat() * max;
-	}
-	
-	private boolean getRandomBoolean() {
-		return random.nextFloat() > 0.5F;
 	}
 }

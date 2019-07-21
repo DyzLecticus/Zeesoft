@@ -1,6 +1,11 @@
 package nl.zeesoft.zbe.brain;
 
+import java.util.List;
+import java.util.Random;
+
 public class TrainingProgram {
+	private Random 						random				= new Random();
+	
 	private Brain 						baseBrain			= null;
 	private	TestCycleSet				baseTestCycleSet	= null;
 	
@@ -33,8 +38,9 @@ public class TrainingProgram {
 			for (int c = 0; c < trainCycles; c++) {
 				trainedCycles++;
 				float learningRate = bestResults.averageError * (float)learningFactor;
-				Brain variation = r.copy(true,learningRate);
+				Brain variation = r.copy();
 				TestCycleSet tcs = baseTestCycleSet.copy();
+				trainVariation(variation,tcs,learningRate);
 				variation.runTestCycleSet(tcs);
 				if (tcs.isSuccess()) {
 					bestResults = tcs;
@@ -56,5 +62,44 @@ public class TrainingProgram {
 	
 	public int getLearnedTests() {
 		return learnedTests;
+	}
+
+	public void trainVariation(Brain brain, TestCycleSet tcs, float learningRate) {
+		//tcs = tcs.copy();
+		//brain.runTestCycleSet(tcs);
+
+		List<NeuronLayer> layers = brain.getLayers();
+		for (NeuronLayer layer: layers) {
+			for (Neuron neuron: layer.neurons) {
+				float threshold = neuron.threshold;
+				if (learningRate!=0.0F) {
+					if (getRandomBoolean()) {
+						threshold -= getRandomFloat(learningRate);
+					} else {
+						threshold += getRandomFloat(learningRate);
+					}
+				}
+				neuron.threshold = threshold;
+				for (NeuronLink link: neuron.targets) {
+					float weight = link.weight;
+					if (learningRate!=0.0F) {
+						if (getRandomBoolean()) {
+							weight -= getRandomFloat(learningRate);
+						} else {
+							weight += getRandomFloat(learningRate);
+						}
+					}
+					link.weight = weight;
+				}
+			}
+		}
+	}
+
+	private float getRandomFloat(float max) {
+		return random.nextFloat() * max;
+	}
+	
+	private boolean getRandomBoolean() {
+		return random.nextFloat() > 0.5F;
 	}
 }
