@@ -10,10 +10,12 @@ public class TrainingProgram {
 	private	TestCycleSet				baseTestCycleSet	= null;
 	
 	private int							trainCycles			= 1000;
-	private int							learningFactor		= 5;
+	private float						minLearningRate		= 0.1F;
+	private float						maxLearningRate		= 0.5F;
 	
 	private int							trainedCycles		= 0;
-	private int							learnedTests		= 0;
+	private TestCycleSet				initialResults		= null;
+	private TestCycleSet				finalResults		= null;
 
 	public TrainingProgram(Brain baseBrain, TestCycleSet baseTestCycleSet) {
 		this.baseBrain = baseBrain;
@@ -24,32 +26,33 @@ public class TrainingProgram {
 		this.trainCycles = trainCycles;
 	}
 
-	public void setLearningFactor(int learningFactor) {
-		this.learningFactor = learningFactor;
+	public void setMinMaxLearningRate(int min,int max) {
+		this.minLearningRate = min;
+		this.maxLearningRate = max;
 	}
 
-	public Brain runProgram() {
+	public Brain runProgram(int minSuccessLevel) {
 		Brain r = baseBrain.copy();
 		trainedCycles = 0;
 		TestCycleSet bestResults = baseTestCycleSet.copy();
 		r.runTestCycleSet(bestResults);
-		learnedTests = bestResults.successes;
-		if (!bestResults.isSuccess()) {
-			int factor = learningFactor;
-			int factorChange = 0;
+		initialResults = bestResults;
+		if (!bestResults.isSuccess(minSuccessLevel)) {
 			for (int c = 0; c < trainCycles; c++) {
 				trainedCycles++;
 				
 				Brain variation = r.copy();
 				TestCycleSet tcs = baseTestCycleSet.copy();
-				float learningRate = bestResults.averageError * (float)factor;
-				if (learningRate>1.0F) {
-					learningRate = 1.0F;
+				float learningRate = bestResults.averageError;
+				if (learningRate<minLearningRate) {
+					learningRate = minLearningRate;
+				} else if (learningRate>maxLearningRate) {
+					learningRate = maxLearningRate;
 				}
 				trainVariation(variation,tcs,learningRate);
 				
 				variation.runTestCycleSet(tcs);
-				if (tcs.isSuccess()) {
+				if (tcs.isSuccess(minSuccessLevel)) {
 					bestResults = tcs;
 					r = variation;
 					break;
@@ -57,21 +60,12 @@ public class TrainingProgram {
 					tcs.successes > bestResults.successes || 
 					(tcs.successes == bestResults.successes && tcs.averageError < bestResults.averageError)
 					) {
-					if (factor>1) {
-						factor--;
-					}
 					bestResults = tcs;
 					r = variation;
-				} else if (factor<learningFactor) {
-					factorChange++;
-					if (factorChange>=100) {
-						factorChange = 0;
-						factor++;
-					}
 				}
 			}
 		}
-		learnedTests = bestResults.successes - learnedTests;
+		finalResults = bestResults;
 		return r;
 	}
 	
@@ -79,58 +73,52 @@ public class TrainingProgram {
 		return trainedCycles;
 	}
 	
-	public int getLearnedTests() {
-		return learnedTests;
+	public TestCycleSet getInitialResults() {
+		return initialResults;
+	}
+	
+	public TestCycleSet getFinalResults() {
+		return finalResults;
 	}
 	
 	public void trainVariation(Brain brain, TestCycleSet tcs, float learningRate) {
-		if (trainedCycles % 2 == 0) {
-			trainVariationRandomUseTestResults(brain,tcs,learningRate);
-		} else {
+		if (trainedCycles % 10 == 0) {
 			trainVariationRandom(brain,learningRate);
+		} else {
+			trainVariationRandomUseTestResults(brain,tcs,learningRate);
 		}
 	}
 
 	private void trainVariationRandomUseTestResults(Brain brain, TestCycleSet tcs, float learningRate) {
 		if (learningRate>0.0F) {
 			tcs = tcs.copy();
-			for (Cycle cycle: tcs.cycles) {
-				if (cycle instanceof TestCycle) {
-					brain.runCycle(cycle);
-					TestCycle tc = (TestCycle) cycle;
-					if (!tc.success) {
-						for (int i = 0; i < tc.errors.length; i++) {
-							if (tc.errors[i]!=0.0F) {
-								for (Neuron neuron: tc.firedNeurons) {
-									if (getRandomBoolean()) {
-										if (tc.errors[i]>0.0F) {
-											neuron.threshold += getRandomFloat(learningRate);
-											if (neuron.threshold>1.0F) {
-												neuron.threshold = 1.0F;
-											}
-										} else {
-											neuron.threshold -= getRandomFloat(learningRate);
-											if (neuron.threshold<0.0F) {
-												neuron.threshold = 0.0F;
-											}
-										}
+			int layers = brain.getLayers().size();
+			for (TestCycle tc: tcs.cycles) {
+				brain.runCycle(tc);
+				if (!tc.success) {
+					for (int i = 0; i < tc.errors.length; i++) {
+						if (tc.errors[i]!=0.0F) {
+							for (NeuronLink link: tc.firedLinks) {
+								if (getRandomBoolean()) {
+									float diff = tc.errors[i];
+									if (diff<0.0F) {
+										diff = diff * -1.0F;
 									}
-								}
-								for (NeuronLink link: tc.firedLinks) {
-									//if (getRandomBoolean()) {
-										if (tc.errors[i]>0.0F) {
-											link.weight += getRandomFloat(learningRate);
-										} else {
-											link.weight -= getRandomFloat(learningRate);
-										}
-									//}
+									float rate = (learningRate + (diff / (float)layers)) / 2.0F;
+									if (rate<minLearningRate) {
+										rate = minLearningRate;
+									}
+									if (tc.errors[i]>0.0F) {
+										link.weight += getRandomFloat(rate);
+									} else {
+										link.weight -= getRandomFloat(rate);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-			//trainVariationRandom(brain,learningRate);
 		}
 	}
 	
@@ -139,26 +127,35 @@ public class TrainingProgram {
 			List<NeuronLayer> layers = brain.getLayers();
 			for (NeuronLayer layer: layers) {
 				for (Neuron neuron: layer.neurons) {
-					float threshold = neuron.threshold;
 					if (getRandomBoolean()) {
-						threshold -= getRandomFloat(learningRate);
-					} else {
-						threshold += getRandomFloat(learningRate);
-					}
-					if (threshold<0.0F) {
-						threshold = 0.0F;
-					} else if (threshold>1.0F) {
-						threshold = 1.0F;
-					}
-					neuron.threshold = threshold;
-					for (NeuronLink link: neuron.targets) {
-						float weight = link.weight;
-						if (getRandomBoolean()) {
-							weight -= getRandomFloat(learningRate);
-						} else {
-							weight += getRandomFloat(learningRate);
+						float threshold = neuron.threshold;
+						float diff = neuron.threshold - neuron.value;
+						if (diff<0.0F) {
+							diff = diff * -1.0F;
 						}
-						link.weight = weight;
+						float rate = (learningRate + diff) / 2.0F;
+						if (getRandomBoolean()) {
+							threshold -= getRandomFloat(rate);
+						} else {
+							threshold += getRandomFloat(rate);
+						}
+						if (threshold<0.0F) {
+							threshold = 0.0F;
+						} else if (threshold>1.0F) {
+							threshold = 1.0F;
+						}
+						neuron.threshold = threshold;
+					}
+					for (NeuronLink link: neuron.targets) {
+						if (getRandomBoolean()) {
+							float weight = link.weight;
+							if (getRandomBoolean()) {
+								weight -= getRandomFloat(learningRate);
+							} else {
+								weight += getRandomFloat(learningRate);
+							}
+							link.weight = weight;
+						}
 					}
 				}
 			}

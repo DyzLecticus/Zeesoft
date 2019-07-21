@@ -1,4 +1,4 @@
-package nl.zeesoft.zbe.brain;
+package nl.zeesoft.zbe;
 
 import java.util.ArrayList;
 import java.util.List;

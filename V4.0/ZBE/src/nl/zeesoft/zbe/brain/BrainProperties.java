@@ -1,5 +1,7 @@
 package nl.zeesoft.zbe.brain;
 
+import nl.zeesoft.zbe.GeneticCode;
+
 public class BrainProperties {
 	private static final int	MIDDLE_LAYERS					= 100;
 	private static final int	MIDDLE_LAYER_NODES				= 101;
@@ -18,7 +20,7 @@ public class BrainProperties {
 			range = outputNeurons;
 		}
 		int width = (range * 2);
-		return (THRESHOLD_WEIGHT_START + 1) + ((width * width) + width) * maxLayers; 
+		return (THRESHOLD_WEIGHT_START + 1) + ((width * width) + width) * (maxLayers - 1); 
 	}
 	
 	protected int getMiddleLayers(int minLayers,int maxLayers) {

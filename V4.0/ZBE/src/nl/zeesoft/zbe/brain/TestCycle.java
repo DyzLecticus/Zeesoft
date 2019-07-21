@@ -1,6 +1,7 @@
 package nl.zeesoft.zbe.brain;
 
 public class TestCycle extends Cycle {
+	public int			level				= 0;
 	public float[]		expectedOutputs		= null;
 	public float		errorTolerance		= 0.1F; // Used for non normalized output  
 	
@@ -34,6 +35,7 @@ public class TestCycle extends Cycle {
 				tc.errors[i] = 0.0F;
 			}
 			tc.errorTolerance = errorTolerance;
+			tc.level = level;
 		}
 	}
 	
@@ -41,12 +43,12 @@ public class TestCycle extends Cycle {
 	protected void finalize(Brain brain) {
 		super.finalize(brain);
 		for (int n = 0; n < outputs.length; n++) {
-			if (n<brain.getOutputLayer().neurons.size()) {
-				Neuron output = brain.getOutputLayer().neurons.get(n);
-				if (outputs[n]!=expectedOutputs[n]) {
+			if (outputs[n]!=expectedOutputs[n]) {
+				if (n<brain.getOutputLayer().neurons.size()) {
+					Neuron output = brain.getOutputLayer().neurons.get(n);
 					float diff = expectedOutputs[n] - output.value;
 					if (diff<0.0F) {
-						diff = diff * -1;
+						diff = diff * -1.0F;
 					}
 					if (!normalizeOutput && diff<errorTolerance) {
 						diff = 0.0F;

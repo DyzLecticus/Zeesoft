@@ -59,9 +59,10 @@ public class TestTrainingProgram extends TestObject {
 			TrainingProgram tp = new TrainingProgram(brain,tcs);
 			long started = System.currentTimeMillis();
 			System.out.println("Training animal brain ...");
-			AnimalBrain trainedBrain = (AnimalBrain) tp.runProgram();
+			AnimalBrain trainedBrain = (AnimalBrain) tp.runProgram(0);
 			long ms = (System.currentTimeMillis() - started);
-			System.out.println("Training animal brain took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + tp.getLearnedTests());
+			int learnedTests = tp.getFinalResults().successes - tp.getInitialResults().successes;
+			System.out.println("Training animal brain took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + learnedTests);
 			System.out.println();
 			tcs = (AnimalTestCycleSet) tcs.copy();
 			trainedBrain.runTestCycleSet(tcs);

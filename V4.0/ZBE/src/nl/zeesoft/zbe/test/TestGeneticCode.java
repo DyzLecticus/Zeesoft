@@ -1,6 +1,6 @@
 package nl.zeesoft.zbe.test;
 
-import nl.zeesoft.zbe.brain.GeneticCode;
+import nl.zeesoft.zbe.GeneticCode;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;

@@ -3,6 +3,7 @@ package nl.zeesoft.zbe.brain;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zbe.GeneticCode;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class Brain {
@@ -106,8 +107,8 @@ public class Brain {
 	}
 	
 	public void runTestCycleSet(TestCycleSet tcs) {
-		for (Cycle cycle: tcs.cycles) {
-			runCycle(cycle);
+		for (TestCycle tc: tcs.cycles) {
+			runCycle(tc);
 		}
 		tcs.finalize();
 	}

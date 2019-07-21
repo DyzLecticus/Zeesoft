@@ -10,8 +10,6 @@ import nl.zeesoft.zbe.brain.NeuronLink;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class AnimalBrain extends Brain {
-	public static final int			INPUT_NEURONS	= 12;
-	public static final int			OUTPUT_NEURONS	= 4;
 	public static final int			MIN_LAYERS		= 1;
 	public static final int			MAX_LAYERS		= 5;
 	
@@ -22,29 +20,28 @@ public class AnimalBrain extends Brain {
 	
 	public static final int			FRONT_RED		= 4;
 	public static final int			FRONT_GREEN		= 5;
-	public static final int			FRONT_BLUE		= 6;
-	public static final int			FRONT_GREY		= 7;
+	public static final int			FRONT_BLACK		= 6;
+	public static final int			FRONT_BLUE		= 7;
+	public static final int			FRONT_GREY		= 8;
 	
-	public static final int			RIGHT_RED		= 8;
-	public static final int			RIGHT_GREEN		= 9;
-	public static final int			RIGHT_BLUE		= 10;
-	public static final int			RIGHT_GREY		= 11;
+	public static final int			RIGHT_RED		= 9;
+	public static final int			RIGHT_GREEN		= 10;
+	public static final int			RIGHT_BLUE		= 11;
+	public static final int			RIGHT_GREY		= 12;
 	
 	public static final int			OUT_LEFT		= 0;
 	public static final int			OUT_FRONT		= 1;
 	public static final int			OUT_BACK		= 2;
 	public static final int			OUT_RIGHT		= 3;
 	
+	public static final int			INPUT_NEURONS	= RIGHT_GREY + 1;
+	public static final int			OUTPUT_NEURONS	= OUT_RIGHT + 1;
+	
 	public static final float[]		INTENSITIES		= {1.00F,0.75F,0.50F,0.25F};
 	
 	public ZStringBuilder initialize() {
 		getCode().generate(10000);
 		return initialize(INPUT_NEURONS,OUTPUT_NEURONS,MIN_LAYERS,MAX_LAYERS);
-	}
-	
-	@Override
-	public Brain getCopyBrain() {
-		return new AnimalBrain();
 	}
 
 	public static AnimalBrain getTrainableAnimalBrain(boolean herbivore, int minSuccesses, int timeOutMs) {
@@ -98,5 +95,10 @@ public class AnimalBrain extends Brain {
 				System.out.println("  Neuron: " + String.format("%03d",neuron.id) + ", threshold: " + df.format(neuron.threshold) + ", value: " + df.format(neuron.value) + sources);
 			}
 		}
+	}
+	
+	@Override
+	protected Brain getCopyBrain() {
+		return new AnimalBrain();
 	}
 }
