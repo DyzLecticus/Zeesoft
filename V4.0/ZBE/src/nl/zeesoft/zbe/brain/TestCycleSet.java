@@ -15,8 +15,17 @@ public class TestCycleSet {
 	
 	public boolean isSuccess(int level) {
 		boolean r = successes == cycles.size();
-		if (successesPerLevel.get(level)!=null && cyclesPerLevel.get(level)!=null) {
-			r = successesPerLevel.get(level) == cyclesPerLevel.get(level);
+		if (level>0) {
+			for (Integer key: cyclesPerLevel.keySet()) {
+				if (successesPerLevel.get(key)!=null) {
+					r = successesPerLevel.get(key) == cyclesPerLevel.get(key);
+					if (!r) {
+						break;
+					} else if (key==level) {
+						break;
+					}
+				}
+			}
 		}
 		return r;
 	}
