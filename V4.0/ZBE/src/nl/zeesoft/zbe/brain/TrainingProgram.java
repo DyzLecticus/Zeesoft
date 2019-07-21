@@ -10,7 +10,8 @@ public class TrainingProgram {
 	private	TestCycleSet				baseTestCycleSet	= null;
 	
 	private int							trainCycles			= 500;
-	private int							learningFactor		= 3;
+	private int							learningFactor		= 5;
+	private boolean						useTestResults		= true;
 	
 	private int							trainedCycles		= 0;
 	private int							learnedTests		= 0;
@@ -27,6 +28,10 @@ public class TrainingProgram {
 	public void setLearningFactor(int learningFactor) {
 		this.learningFactor = learningFactor;
 	}
+
+	public void setUseTestResults(boolean useTestResults) {
+		this.useTestResults = useTestResults;
+	}
 	
 	public Brain runProgram() {
 		Brain r = baseBrain.copy();
@@ -35,20 +40,37 @@ public class TrainingProgram {
 		r.runTestCycleSet(bestResults);
 		learnedTests = bestResults.successes;
 		if (!bestResults.isSuccess()) {
+			int factor = learningFactor;
+			int factorChange = 0;
 			for (int c = 0; c < trainCycles; c++) {
 				trainedCycles++;
-				float learningRate = bestResults.averageError * (float)learningFactor;
+				
 				Brain variation = r.copy();
 				TestCycleSet tcs = baseTestCycleSet.copy();
+				float learningRate = bestResults.averageError * (float)factor;
+				
 				trainVariation(variation,tcs,learningRate);
+				
 				variation.runTestCycleSet(tcs);
 				if (tcs.isSuccess()) {
 					bestResults = tcs;
 					r = variation;
 					break;
-				} else if (tcs.successes > bestResults.successes) {
+				} else if (
+					tcs.successes > bestResults.successes && 
+					tcs.averageError < bestResults.averageError
+					) {
+					if (factor>1) {
+						factor--;
+					}
 					bestResults = tcs;
 					r = variation;
+				} else if (factor<learningFactor) {
+					factorChange++;
+					if (factorChange>=100) {
+						factorChange = 0;
+						factor++;
+					}
 				}
 			}
 		}
@@ -63,33 +85,50 @@ public class TrainingProgram {
 	public int getLearnedTests() {
 		return learnedTests;
 	}
-
+	
 	public void trainVariation(Brain brain, TestCycleSet tcs, float learningRate) {
-		//tcs = tcs.copy();
-		//brain.runTestCycleSet(tcs);
+		if (useTestResults) {
+			trainVariationRandomUseTestResults(brain,tcs,learningRate);
+		} else {
+			trainVariationRandom(brain,learningRate);
+		}
+	}
 
-		List<NeuronLayer> layers = brain.getLayers();
-		for (NeuronLayer layer: layers) {
-			for (Neuron neuron: layer.neurons) {
-				float threshold = neuron.threshold;
-				if (learningRate!=0.0F) {
+	private void trainVariationRandomUseTestResults(Brain brain, TestCycleSet tcs, float learningRate) {
+		if (learningRate>0.0F) {
+			tcs = tcs.copy();
+			brain.runTestCycleSet(tcs);
+			trainVariationRandom(brain,learningRate);
+		}
+	}
+	
+	private void trainVariationRandom(Brain brain, float learningRate) {
+		if (learningRate>0.0F) {
+			List<NeuronLayer> layers = brain.getLayers();
+			for (NeuronLayer layer: layers) {
+				for (Neuron neuron: layer.neurons) {
+					float threshold = neuron.threshold;
 					if (getRandomBoolean()) {
 						threshold -= getRandomFloat(learningRate);
 					} else {
 						threshold += getRandomFloat(learningRate);
 					}
-				}
-				neuron.threshold = threshold;
-				for (NeuronLink link: neuron.targets) {
-					float weight = link.weight;
-					if (learningRate!=0.0F) {
+					if (threshold<0.0F) {
+						threshold = 0.0F;
+					}
+					if (threshold>1.0F) {
+						threshold = 1.0F;
+					}
+					neuron.threshold = threshold;
+					for (NeuronLink link: neuron.targets) {
+						float weight = link.weight;
 						if (getRandomBoolean()) {
 							weight -= getRandomFloat(learningRate);
 						} else {
 							weight += getRandomFloat(learningRate);
 						}
+						link.weight = weight;
 					}
-					link.weight = weight;
 				}
 			}
 		}

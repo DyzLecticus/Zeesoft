@@ -133,9 +133,17 @@ public class Brain {
 					float value = 0.0F;
 					float maxValue = 0.0F;
 					for (NeuronLink link: neuron.sources) {
-						maxValue += link.weight;
+						if (link.weight>0.0F) {
+							maxValue += link.weight;
+						} else {
+							maxValue -= (link.weight * -1);
+						}
 						if (link.source.value>=link.source.threshold) {
-							value += link.weight;
+							if (link.weight>0.0F) {
+								value += link.weight;
+							} else {
+								value -= (link.weight * -1);
+							}
 							cycle.firedLinks.add(link);
 						}
 					}
