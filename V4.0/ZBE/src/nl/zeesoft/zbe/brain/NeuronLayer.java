@@ -12,4 +12,15 @@ public class NeuronLayer {
 		}
 		neurons.clear();
 	}
+	
+	public Neuron getNeuronByPosX(int posX) {
+		Neuron r = null;
+		for (Neuron neuron: neurons) {
+			if (neuron.posX==posX) {
+				r = neuron;
+				break;
+			}
+		}
+		return r;
+	}
 }

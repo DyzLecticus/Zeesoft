@@ -1,12 +1,16 @@
 package nl.zeesoft.zbe.brain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestCycle extends Cycle {
-	public int			level				= 0;
-	public float[]		expectedOutputs		= null;
-	public float		errorTolerance		= 0.1F; // Used for non normalized output  
+	public int					level				= 0;
+	public float[]				expectedOutputs		= null;
+	public float				errorTolerance		= 0.1F; // Used for non normalized output  
 	
-	public float[]		errors				= null;
-	public boolean		success				= true;
+	public float[]				errors				= null;
+	public boolean				success				= true;
+	public List<TestCyclePath>	paths				= new ArrayList<TestCyclePath>();
 	
 	@Override
 	public void initialize(Brain brain) {
@@ -45,22 +49,45 @@ public class TestCycle extends Cycle {
 		for (int n = 0; n < outputs.length; n++) {
 			if (outputs[n]!=expectedOutputs[n]) {
 				Neuron output = brain.getOutputLayer().neurons.get(n);
-				float diff = output.threshold - output.value;
-				if (diff<0.0F) {
-					diff = diff * -1.0F;
-				}
-				if (!normalizeOutput && diff<errorTolerance) {
-					diff = 0.0F;
+				float diff = 0.0F;
+				if (normalizeOutput) {
+					diff = output.threshold - output.value;
+				} else {
+					diff = expectedOutputs[n] - outputs[n];
+					if (diff<errorTolerance) {
+						diff = 0.0F;
+					}
 				}
 				if (diff!=0.0F) {
 					success	= false;
-					if (normalizeOutput) {
-						errors[n] = output.threshold - output.value;
-					} else {
-						errors[n] = expectedOutputs[n] - output.value;
+					errors[n] = diff;
+					if (errors[n]>0.0F) {
+						for (int in = 0; in < inputs.length; in++) {
+							TestCyclePath path = new TestCyclePath();
+							paths.add(path);
+							path.inputNeuron = brain.getInputLayer().neurons.get(in);
+							path.outputNeuron = output;
+							findPath(brain, path);
+						}
 					}
 				}
 			}
+		}
+	}
+	
+	private void findPath(Brain brain,TestCyclePath path) {
+		findPath(brain,path,path.inputNeuron);
+	}
+	
+	private void findPath(Brain brain,TestCyclePath path,Neuron workingNeuron) {
+		// Find nearby in next layer 
+		List<NeuronLink> candidates = new ArrayList<NeuronLink>();
+		for (NeuronLink link: workingNeuron.targets) {
+			
+		}
+		if (candidates.size()>0) {
+			// Select random candidate
+			// Add candidate target to middleNeurons and self call
 		}
 	}
 }

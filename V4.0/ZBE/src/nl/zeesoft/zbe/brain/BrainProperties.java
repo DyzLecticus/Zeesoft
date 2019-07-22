@@ -26,11 +26,11 @@ public class BrainProperties {
 	protected int getMiddleLayers(int minLayers,int maxLayers) {
 		return minLayers + code.getInteger(MIDDLE_LAYERS,(maxLayers - minLayers));
 	}
-	
-	protected int getMiddleLayerNodes(NeuronLayer inputLayer,NeuronLayer outputLayer) {
-		int range = inputLayer.neurons.size();
-		if (outputLayer.neurons.size()>range) {
-			range = outputLayer.neurons.size();
+
+	protected int getMiddleLayerNodes(int inputNeurons,int outputNeurons) {
+		int range = inputNeurons;
+		if (outputNeurons>range) {
+			range = outputNeurons;
 		}
 		return range + code.getInteger(MIDDLE_LAYER_NODES,range);
 	}

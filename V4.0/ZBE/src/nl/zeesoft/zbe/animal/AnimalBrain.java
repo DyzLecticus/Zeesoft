@@ -70,8 +70,28 @@ public class AnimalBrain extends Brain {
 	public void toSystemOut() {
 		DecimalFormat df = new DecimalFormat("0.00");
 		
-		int l = 0;
 		List<NeuronLayer> layers = getLayers();
+		
+		ZStringBuilder layout = new ZStringBuilder();
+		int width = layers.get(1).neurons.size();
+		for (NeuronLayer layer: layers) {
+			if (layout.length()>0) {
+				layout.append("\n");
+			}
+			for (int x = 0; x < width; x++) {
+				Neuron neuron = layer.getNeuronByPosX(x);
+				if (neuron!=null) {
+					layout.append("[ ]");
+				} else {
+					layout.append("   ");
+				}
+			}
+		}
+		System.out.println("Neuron layout");
+		System.out.println(layout);
+		
+		System.out.println();
+		int l = 0;
 		for (NeuronLayer layer: layers) {
 			String name = "Middle " + l;
 			l++;

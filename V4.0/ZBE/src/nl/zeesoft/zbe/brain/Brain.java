@@ -47,22 +47,27 @@ public class Brain {
 			err.append("The minimum genetic code length for the specified dimensions is " + (requiredCodeSize * 3));
 		} else {
 			// Initialize layers and nodes
+			int nodesPerLayer = properties.getMiddleLayerNodes(inputNeurons,outputNeurons);
+			int inputStartPosX = (nodesPerLayer - inputNeurons) / 2;
+			int outputStartPosX = (nodesPerLayer - outputNeurons) / 2;
 			int objectId = 1;
 			for (int n = 0; n < inputNeurons; n++) {
-				inputLayer.neurons.add(new Neuron(objectId));
+				inputLayer.neurons.add(new Neuron(objectId,inputStartPosX));
+				inputStartPosX++;
 				objectId++;
 			}
-			int nodesPerLayer = properties.getMiddleLayerNodes(inputLayer, outputLayer);
-			for (int l = 0; l < properties.getMiddleLayers(minLayers, maxLayers); l++) {
+			int numMidLayers = properties.getMiddleLayers(minLayers, maxLayers);
+			for (int l = 0; l < numMidLayers; l++) {
 				NeuronLayer layer = new NeuronLayer();
 				for (int n = 0; n < nodesPerLayer; n++) {
-					layer.neurons.add(new Neuron(objectId));
+					layer.neurons.add(new Neuron(objectId,n));
 					objectId++;
 				}
 				middleLayers.add(layer);
 			}
 			for (int n = 0; n < outputNeurons; n++) {
-				outputLayer.neurons.add(new Neuron(objectId));
+				outputLayer.neurons.add(new Neuron(objectId,outputStartPosX));
+				outputStartPosX++;
 				objectId++;
 			}
 	
