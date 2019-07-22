@@ -87,7 +87,7 @@ public class AnimalBrain extends Brain {
 				}
 			}
 		}
-		System.out.println("Neuron layout");
+		System.out.println("Neuron layout;");
 		System.out.println(layout);
 		
 		System.out.println();

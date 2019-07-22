@@ -2,6 +2,7 @@ package nl.zeesoft.zbe.brain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class TestCycle extends Cycle {
 	public int					level				= 0;
@@ -46,6 +47,7 @@ public class TestCycle extends Cycle {
 	@Override
 	protected void finalize(Brain brain) {
 		super.finalize(brain);
+		Random random = new Random();
 		for (int n = 0; n < outputs.length; n++) {
 			if (outputs[n]!=expectedOutputs[n]) {
 				Neuron output = brain.getOutputLayer().neurons.get(n);
@@ -67,7 +69,7 @@ public class TestCycle extends Cycle {
 							paths.add(path);
 							path.inputNeuron = brain.getInputLayer().neurons.get(in);
 							path.outputNeuron = output;
-							findPath(brain, path);
+							findPath(brain,path,random);
 						}
 					}
 				}
@@ -75,19 +77,35 @@ public class TestCycle extends Cycle {
 		}
 	}
 	
-	private void findPath(Brain brain,TestCyclePath path) {
-		findPath(brain,path,path.inputNeuron);
+	private void findPath(Brain brain,TestCyclePath path,Random random) {
+		findPath(brain,path,path.inputNeuron,random);
 	}
 	
-	private void findPath(Brain brain,TestCyclePath path,Neuron workingNeuron) {
-		// Find nearby in next layer 
+	private void findPath(Brain brain,TestCyclePath path,Neuron workingNeuron,Random random) {
 		List<NeuronLink> candidates = new ArrayList<NeuronLink>();
 		for (NeuronLink link: workingNeuron.targets) {
-			
+			if (link.target==path.outputNeuron) {
+				candidates.clear();
+				break;
+			} else if (
+				link.target.posX > workingNeuron.posX - 2 &&
+				link.target.posX < workingNeuron.posX + 2
+				) {
+				candidates.add(link);
+			}
 		}
 		if (candidates.size()>0) {
-			// Select random candidate
-			// Add candidate target to middleNeurons and self call
+			if (candidates.size()>1) {
+				int index = random.nextInt() % candidates.size();
+				if (index<0) {
+					index = index * -1;
+				}
+				workingNeuron = candidates.get(index).target;
+			} else {
+				workingNeuron = candidates.get(0).target;
+			}
+			path.middleNeurons.add(workingNeuron);
+			findPath(brain,path,workingNeuron,random);
 		}
 	}
 }
