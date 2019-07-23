@@ -105,7 +105,7 @@ public class TestCycleSet {
 				if (successesPerLevel.get(key)!=null) {
 					successes = successesPerLevel.get(key);
 				}
-				System.out.println(" Level: " + key + ", successes: " + successes + "/" + cyclesPerLevel.get(key));
+				System.out.println("  Level: " + key + ", successes: " + successes + "/" + cyclesPerLevel.get(key));
 			}
 		}
 	}

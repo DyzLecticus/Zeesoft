@@ -142,8 +142,6 @@ public class NN {
 					for (NeuronLink link: neuron.sources) {
 						if (link.weight>0.0F) {
 							maxValue += link.weight;
-						} else {
-							maxValue -= (link.weight * -1);
 						}
 						if (link.source.value>=link.source.threshold) {
 							if (link.weight>0.0F) {
@@ -154,7 +152,9 @@ public class NN {
 							cycle.firedLinks.add(link);
 						}
 					}
-					neuron.value = (value / maxValue);
+					if (value>0.0F && maxValue>0.0F) {
+						neuron.value = (value / maxValue);
+					}
 				}
 			}
 		}

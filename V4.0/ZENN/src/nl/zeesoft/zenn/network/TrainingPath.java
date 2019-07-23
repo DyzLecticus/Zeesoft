@@ -3,7 +3,7 @@ package nl.zeesoft.zenn.network;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestCyclePath {
+public class TrainingPath {
 	public Neuron 			inputNeuron		= null;
 	public List<Neuron> 	middleNeurons	= new ArrayList<Neuron>();
 	public Neuron			outputNeuron	= null;

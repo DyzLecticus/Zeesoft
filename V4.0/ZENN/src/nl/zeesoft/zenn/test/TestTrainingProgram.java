@@ -21,9 +21,9 @@ public class TestTrainingProgram extends TestObject {
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the animal nn");
+		System.out.println("// Create the animal neural network");
 		System.out.println("AnimalNN nn = new AnimalNN();");
-		System.out.println("// Initialize the animal nn");
+		System.out.println("// Initialize the animal neural network");
 		System.out.println("ZStringBuilder err = nn.initialize();");
 		System.out.println("// Create the animal test cycle set");
 		System.out.println("AnimalTestCycleSet tcs = AnimalTestCycleSet();");
@@ -46,8 +46,8 @@ public class TestTrainingProgram extends TestObject {
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
-		System.out.println(" * The time it took to train the animal nn including the amount of training cycles and learned tests  ");
-		System.out.println(" * The test cycle set results for the trained nn  ");
+		System.out.println(" * The time it took to train the animal neural network including the amount of training cycles and learned tests  ");
+		System.out.println(" * The test cycle set results for the trained neural network  ");
 	}
 	
 	@Override
@@ -58,11 +58,11 @@ public class TestTrainingProgram extends TestObject {
 			tcs.initialize(nn,true);
 			TrainingProgram tp = new TrainingProgram(nn,tcs);
 			long started = System.currentTimeMillis();
-			System.out.println("Training animal nn ...");
+			System.out.println("Training animal neural network ...");
 			AnimalNN trainedNN = (AnimalNN) tp.runProgram(0);
 			long ms = (System.currentTimeMillis() - started);
 			int learnedTests = tp.getFinalResults().successes - tp.getInitialResults().successes;
-			System.out.println("Training animal nn took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + learnedTests);
+			System.out.println("Training animal neural network took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + learnedTests);
 			System.out.println();
 			tcs = (AnimalTestCycleSet) tcs.copy();
 			trainedNN.runTestCycleSet(tcs);
