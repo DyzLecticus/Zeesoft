@@ -19,8 +19,8 @@ public class ModZENN extends ModObject implements StateListener {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
-		herbivoreEvolver = new AnimalEvolver(config.getMessenger(),config.getUnion(),true);
-		carnivoreEvolver = new AnimalEvolver(config.getMessenger(),config.getUnion(),false);
+		herbivoreEvolver = new AnimalEvolver(config,true);
+		carnivoreEvolver = new AnimalEvolver(config,false);
 	}
 	
 	@Override
@@ -34,8 +34,8 @@ public class ModZENN extends ModObject implements StateListener {
 		super.initialize();
 		herbivoreEvolver.setDebug(configuration.isDebug());
 		carnivoreEvolver.setDebug(configuration.isDebug());
-		herbivoreEvolver.start();
-		carnivoreEvolver.start();
+		herbivoreEvolver.load();
+		carnivoreEvolver.load();
 	}
 	
 	@Override

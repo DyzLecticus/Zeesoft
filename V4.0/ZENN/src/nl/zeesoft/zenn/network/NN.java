@@ -5,11 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zenn.GeneticCode;
 
-public class NN {
-	private GeneticCode						code			= new GeneticCode(10000);
-	private NNProperties					properties		= new NNProperties(code);
+public class NN implements JsAble {
+	private GeneticCode						code			= null;
+	private NNProperties					properties		= null;
 	
 	// Used for copies
 	private int								minLayers		= 0;
@@ -21,6 +25,11 @@ public class NN {
 	
 	public GeneticCode getCode() {
 		return code;
+	}
+	
+	public void setCode(GeneticCode code) {
+		this.code = code;
+		properties = new NNProperties(code);
 	}
 	
 	public NeuronLayer getInputLayer() {
@@ -108,6 +117,28 @@ public class NN {
 		}
 		return err;
 	}
+
+	@Override
+	public JsFile toJson() {
+		return toJson(true);
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			ZStringBuilder code = json.rootElement.getChildZStringBuilder("code");
+			int inputNeurons = json.rootElement.getChildInt("inputNeurons");
+			int outputNeurons = json.rootElement.getChildInt("outputNeurons");
+			int minLayers = json.rootElement.getChildInt("minLayers");
+			int maxLayers = json.rootElement.getChildInt("maxLayers");
+			if (code.length()>0) {
+				ZStringEncoder encoder = new ZStringEncoder(code);
+				encoder.decompress();
+				this.code.setCode(encoder);
+				initialize(inputNeurons,outputNeurons,minLayers,maxLayers);
+			}
+		}
+	}
 	
 	public void destroy() {
 		inputLayer.destroy();
@@ -177,7 +208,7 @@ public class NN {
 	
 	public NN copy(boolean copyThresholdWeight,float mutationPercentage) {
 		NN r = getCopyNN();
-		r.getCode().setCode(getCode().getCode());
+		r.setCode(new GeneticCode(getCode().getCode()));
 		if (mutationPercentage>0.0F) {
 			r.getCode().mutate(mutationPercentage);
 		}
@@ -269,6 +300,23 @@ public class NN {
 		return r;
 	}
 	
+	protected JsFile toJson(boolean includeNN) {
+		ZStringEncoder encoder = new ZStringEncoder(code.getCode());
+		encoder.compress();
+
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("code",encoder,true));
+		json.rootElement.children.add(new JsElem("inputNeurons","" + inputLayer.neurons.size(),true));
+		json.rootElement.children.add(new JsElem("outputNeurons","" + outputLayer.neurons.size(),true));
+		json.rootElement.children.add(new JsElem("minLayers","" + minLayers,true));
+		json.rootElement.children.add(new JsElem("maxLayers","" + maxLayers,true));
+		if (includeNN) {
+			// TODO: Neural network thresholds and weights
+		}
+		return json;
+	}
+
 	private void resetNodeValues(List<NeuronLayer> layers) {
 		for (NeuronLayer layer: layers) {
 			for (Neuron neuron: layer.neurons) {

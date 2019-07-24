@@ -1,6 +1,7 @@
 package nl.zeesoft.zenn.animal;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zenn.GeneticCode;
 import nl.zeesoft.zenn.network.NN;
 
 public class AnimalNN extends NN {
@@ -33,7 +34,7 @@ public class AnimalNN extends NN {
 	private static final int		OUTPUT_NEURONS	= OUT_RIGHT + 1;
 
 	public ZStringBuilder initialize() {
-		getCode().generate(10000);
+		setCode(new GeneticCode(10000));
 		return initialize(INPUT_NEURONS,OUTPUT_NEURONS,MIN_LAYERS,MAX_LAYERS);
 	}
 

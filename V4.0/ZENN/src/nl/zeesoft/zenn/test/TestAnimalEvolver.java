@@ -1,21 +1,22 @@
 package nl.zeesoft.zenn.test;
 
 import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zenn.animal.AnimalEvolver;
 import nl.zeesoft.zenn.animal.AnimalNN;
 import nl.zeesoft.zenn.animal.AnimalTestCycleSet;
-import nl.zeesoft.zenn.network.Evolver;
 
-public class TestEvolver extends TestObject {
-	public TestEvolver(Tester tester) {
+public class TestAnimalEvolver extends TestObject {
+	public TestAnimalEvolver(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestEvolver(new Tester())).test(args);
+		(new TestAnimalEvolver(new Tester())).test(args);
 	}
 
 	@Override
@@ -65,28 +66,32 @@ public class TestEvolver extends TestObject {
 			AnimalTestCycleSet tcs = new AnimalTestCycleSet();
 			tcs.initialize(nn,true);
 			
-			Evolver evolver = new Evolver(messenger,union);
+			AnimalEvolver evolver = new AnimalEvolver(messenger,union,true);
 			evolver.initialize(nn,tcs,4);
 			evolver.setSleepMs(100);
 			evolver.setDebug(true);
+			evolver.start();
 			
 			messenger.start();
-
+			
 			evolver.start();
 			sleep(30000);
 			evolver.stop();
 			
 			AnimalNN bnn = (AnimalNN) evolver.getBestSoFar();
 			if (bnn!=null) {
-				AnimalTestCycleSet btcs = (AnimalTestCycleSet) evolver.getBestResults();
+				JsFile json = evolver.toJson();
 				System.out.println();
-				System.out.println("Evolver result; ");
-				System.out.println();
-				bnn.toSystemOut();
-				System.out.println();
-				btcs.toSystemOut();
+				System.out.println("Evolver JSON; ");
+				System.out.println(json.toStringBuilderReadFormat());
+				
+				evolver = new AnimalEvolver(messenger,union,true);
+				evolver.fromJson(json);
+				JsFile copy = evolver.toJson();
+				
+				assertEqual(copy.toStringBuilderReadFormat(),json.toStringBuilderReadFormat(),"Animal evolver does not match orignial");
 			}
-			
+
 			messenger.stop();
 			union.stopWorkers();
 		}

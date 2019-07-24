@@ -121,6 +121,7 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 	@Override
 	public void install() {
 		Database db = getNewDatabase();
+		configureDatabase(db);
 		db.install();
 	}
 	
@@ -139,16 +140,7 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 		handlers.add(new JsonZODBStateHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		testers.add(getNewTester());
-		database.getConfiguration().debug = configuration.isDebug();
-		database.getConfiguration().dataDir = configuration.getFullDataDir();
-		database.getConfiguration().key = key;
-		database.getConfiguration().newKey = newKey;
-		database.getConfiguration().indexBlockSize = dataBlockSize;
-		database.getConfiguration().dataBlockSize = dataBlockSize;
-		if (selfTest) {
-			String pfx = NAME + "/Objects/";
-			database.getConfiguration().indexConfig.addIndex(pfx,"testData",false,true);
-		}
+		configureDatabase(database);
 		database.initialize();
 		database.start();
 		super.initialize();
@@ -220,5 +212,18 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 	
 	protected ZODBTester getNewTester() {
 		return new ZODBTester(configuration,configuration.getModuleUrl(NAME) + JsonZODBRequestHandler.PATH);
+	}
+	
+	protected void configureDatabase(Database database) {
+		database.getConfiguration().debug = configuration.isDebug();
+		database.getConfiguration().dataDir = configuration.getFullDataDir();
+		database.getConfiguration().key = key;
+		database.getConfiguration().newKey = newKey;
+		database.getConfiguration().indexBlockSize = dataBlockSize;
+		database.getConfiguration().dataBlockSize = dataBlockSize;
+		if (selfTest) {
+			String pfx = NAME + "/Objects/";
+			database.getConfiguration().indexConfig.addIndex(pfx,"testData",false,true);
+		}
 	}
 }

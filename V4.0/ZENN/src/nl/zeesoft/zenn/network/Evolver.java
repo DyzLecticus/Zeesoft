@@ -13,6 +13,7 @@ public class Evolver extends Locker {
 	private WorkerUnion					union					= null;
 	
 	private List<EvolverWorker>			workers					= new ArrayList<EvolverWorker>();
+	private boolean						working					= false;
 
 	private NN							baseNN					= null;
 	private	TestCycleSet				baseTestCycleSet		= null;
@@ -74,35 +75,68 @@ public class Evolver extends Locker {
 		unlockMe(this);
 	}
 
+	public boolean isWorking() {
+		boolean r = false;
+		lockMe(this);
+		r = working;
+		unlockMe(this);
+		return r;
+	}
+	
 	public void start() {
-		for (EvolverWorker worker: workers) {
-			worker.start();
+		boolean r = false;
+		lockMe(this);
+		r = !working;
+		unlockMe(this);
+		if (r) {
+			debug("Starting" + getTypeSafe() + " evolver ...");
+			for (EvolverWorker worker: workers) {
+				worker.start();
+			}
+			working = true;
+			debug("Started" + getTypeSafe() + " evolver");
 		}
+		lockMe(this);
+		working = r;
+		unlockMe(this);
 	}
 
 	public void stop() {
-		for (EvolverWorker worker: workers) {
-			worker.stop();
-		}
-		for (EvolverWorker worker: workers) {
-			while(worker.isWorking()) {
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					if (getMessenger()!=null) {
-						getMessenger().error(this,"Waiting for evolver worker to finish was interrupted",e);
-					} else {
-						e.printStackTrace();
+		boolean r = false;
+		lockMe(this);
+		r = working;
+		unlockMe(this);
+		if (r) {
+			for (EvolverWorker worker: workers) {
+				worker.stop();
+			}
+			debug("Stopping" + getTypeSafe() + " evolver ...");
+			for (EvolverWorker worker: workers) {
+				while(worker.isWorking()) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						if (getMessenger()!=null) {
+							getMessenger().error(this,"Waiting for evolver worker to finish was interrupted",e);
+						} else {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
+			debug("Stopped" + getTypeSafe() + " evolver");
 		}
+		lockMe(this);
+		working = r;
+		unlockMe(this);
 	}
 
 	public NN getBestSoFar() {
 		NN r = null;
 		lockMe(this);
-		r = bestSoFar;
+		if (bestSoFar!=null) {
+			r = bestSoFar.copy();
+		}
 		unlockMe(this);
 		return r;
 	}
@@ -110,16 +144,35 @@ public class Evolver extends Locker {
 	public TestCycleSet getBestResults() {
 		TestCycleSet r = null;
 		lockMe(this);
-		r = bestResults;
+		if (bestResults!=null) {
+			r = bestResults.copy();
+		}
 		unlockMe(this);
 		return r;
 	}
 	
+	protected void setBest(NN bestSoFar,TestCycleSet bestResults) {
+		lockMe(this);
+		this.bestSoFar = bestSoFar;
+		this.bestResults = bestResults;
+		debug("Best" + getTypeSafe() + " neural net so far: " + bestResults.successes + "/" + bestResults.cycles.size() + " " + bestResults.averageError);
+		unlockMe(this);
+	}
+
+	protected String getTypeSafe() {
+		String r = getType();
+		if (r.length()>0) {
+			r = " " + r;
+		}
+		return r;
+	}
+
 	protected String getType() {
 		return "";
 	}
 	
 	protected void trainedNN(NN nn,TestCycleSet finalResult,boolean success) {
+		boolean selected = false;
 		lockMe(this);
 		if (bestSoFar==null || finalResult.compareTo(bestResults)>0) {
 			String viable = "";
@@ -128,19 +181,23 @@ public class Evolver extends Locker {
 				viable = " viable";
 			}
 			if (bestSoFar!=null) {
-				String type = getType();
-				if (type.length()>0) {
-					type = " " + type;
-				}
-				debug("Best" + viable + type + " neural net so far: " + finalResult.successes + "/" + finalResult.cycles.size() + " " + finalResult.averageError);
+				debug("Best" + viable + getTypeSafe() + " neural net so far: " + finalResult.successes + "/" + finalResult.cycles.size() + " " + finalResult.averageError);
+				bestSoFar.destroy();
 			}
-			bestSoFar.destroy();
 			bestSoFar = nn;
 			bestResults = finalResult;
+			selected = true;
 		} else {
 			nn.destroy();
 		}
 		unlockMe(this);
+		if (selected) {
+			selectedNN();
+		}
+	}
+	
+	protected void selectedNN() {
+		// Override to implement
 	}
 	
 	protected int getTrainRepeat() {
@@ -174,20 +231,24 @@ public class Evolver extends Locker {
 	protected NN getNewNN(EvolverWorker worker) {
 		NN r = null;
 		lockMe(this);
-		if (bestSoFar!=null && workers.indexOf(worker)<workers.size()/2) {
+		if (bestSoFar!=null && workers.indexOf(worker)<((workers.size() / 3) * 2)) {
 			r = bestSoFar.copy(mutationPercentage);
 		}
 		unlockMe(this);
 		if (r==null) {
-			r = baseNN.copy(1.0F);
+			r = getNewNN();
 		}
 		return r;
 	}
-	
+
+	protected NN getNewNN() {
+		return baseNN.copy(1.0F);
+	}
+
 	protected TestCycleSet getNewTestCycleSet() {
 		return baseTestCycleSet.copy();
 	}
-	
+
 	protected void debug(String msg) {
 		if (debug && getMessenger()!=null) {
 			getMessenger().debug(this,msg);

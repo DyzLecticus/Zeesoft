@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class TestCycleSet implements Comparable<TestCycleSet> {
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
+
+public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 	public List<TestCycle>				cycles				= new ArrayList<TestCycle>();
 	
 	public int							successes			= 0;
@@ -104,6 +108,16 @@ public class TestCycleSet implements Comparable<TestCycleSet> {
 
 	public TestCycleSet copy() {
 		TestCycleSet r = getCopyTestCycleSet();
+		r.successes = successes;
+		r.averageError = averageError;
+		for (Integer key: cyclesPerLevel.keySet()) {
+			if (cyclesPerLevel.get(key)!=null) {
+				r.cyclesPerLevel.put(key,cyclesPerLevel.get(key));
+			}
+			if (successesPerLevel.get(key)!=null) {
+				r.successesPerLevel.put(key,successesPerLevel.get(key));
+			}
+		}
 		for (TestCycle tc: cycles) {
 			TestCycle copyTc = new TestCycle();
 			tc.copy(copyTc);
@@ -117,6 +131,46 @@ public class TestCycleSet implements Comparable<TestCycleSet> {
 		r.initialize(nn);
 		cycles.add(r);
 		return r;
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("successes","" + successes));
+		json.rootElement.children.add(new JsElem("averageError","" + averageError));
+		JsElem sPerLevel = new JsElem("successesPerLevel",true);
+		json.rootElement.children.add(sPerLevel);
+		for (Integer key: cyclesPerLevel.keySet()) {
+			int s = 0;
+			if (successesPerLevel.get(key)!=null) {
+				s = successesPerLevel.get(key);
+			}
+			JsElem sucTotElem = new JsElem();
+			sPerLevel.children.add(sucTotElem);
+			sucTotElem.children.add(new JsElem("level","" + key));
+			sucTotElem.children.add(new JsElem("successes","" + s));
+			sucTotElem.children.add(new JsElem("total","" + cyclesPerLevel.get(key)));
+		}
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			successes = json.rootElement.getChildInt("successes",successes);
+			averageError = json.rootElement.getChildFloat("averageError",averageError);
+			JsElem sPerLevel = json.rootElement.getChildByName("successesPerLevel");
+			if (sPerLevel!=null) {
+				for (JsElem sucTotElem: sPerLevel.children) {
+					int l = sucTotElem.getChildInt("level");
+					int s = sucTotElem.getChildInt("successes");
+					int t = sucTotElem.getChildInt("total");
+					cyclesPerLevel.put(l,t);
+					successesPerLevel.put(l,s);
+				}
+			}
+		}
 	}
 
 	public void toSystemOut() {
