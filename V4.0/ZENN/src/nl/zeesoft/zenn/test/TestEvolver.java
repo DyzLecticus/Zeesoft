@@ -65,17 +65,22 @@ public class TestEvolver extends TestObject {
 			AnimalTestCycleSet tcs = new AnimalTestCycleSet();
 			tcs.initialize(nn,true);
 			
-			Evolver evolver = new Evolver(messenger,union,nn,tcs,10);
+			Evolver evolver = new Evolver(messenger,union);
+			evolver.initialize(nn,tcs,4);
+			evolver.setSleepMs(100);
 			evolver.setDebug(true);
 			
 			messenger.start();
 			
+			System.out.println();
 			evolver.start();
-			sleep(60000);
+			
+			sleep(30000);
 			evolver.stop();
 			AnimalNN bnn = (AnimalNN) evolver.getBestSoFar();
-			AnimalTestCycleSet btcs = (AnimalTestCycleSet) evolver.getBestResults();
 			if (bnn!=null) {
+				AnimalTestCycleSet btcs = (AnimalTestCycleSet) evolver.getBestResults();
+				System.out.println();
 				System.out.println("Evolver result; ");
 				System.out.println();
 				bnn.toSystemOut();

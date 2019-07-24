@@ -2,34 +2,51 @@ package nl.zeesoft.zenn.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class Evolver extends Locker {
-	private List<EvolverWorker>		workers					= new ArrayList<EvolverWorker>();
-	private NN						baseNN					= null;
-	private	TestCycleSet			baseTestCycleSet		= null;
-	private	TrainingProgram			baseTrainingProgram		= null;
+	private WorkerUnion					union					= null;
 	
-	private boolean					debug					= false;
-	private float 					mutationPercentage		= 0.01F;
-	private int 					trainRepeat				= 20;
-	private int						trainCycles				= 50;
-	private int						trainSleepMs			= 1000;
-	
-	private NN						bestSoFar				= null;
-	private TestCycleSet			bestResults				= null;
+	private List<EvolverWorker>			workers					= new ArrayList<EvolverWorker>();
 
-	public Evolver(Messenger msgr,WorkerUnion uni,NN baseNN, TestCycleSet baseTestCycleSet,int slots) {
+	private NN							baseNN					= null;
+	private	TestCycleSet				baseTestCycleSet		= null;
+	private	TrainingProgram				baseTrainingProgram		= null;
+	
+	private boolean						debug					= false;
+	private float 						mutationPercentage		= 0.01F;
+	private int 						trainRepeat				= 20;
+	private int							trainCycles				= 50;
+	private int							trainSleepMs			= 1000;
+	
+	private NN							bestSoFar				= null;
+	private TestCycleSet				bestResults				= null;
+	private SortedMap<TestCycleSet,NN>	viableNNs				= new TreeMap<TestCycleSet,NN>();
+
+	public Evolver(Messenger msgr,WorkerUnion uni) {
 		super(msgr);
-		init(uni,baseNN,baseTestCycleSet,new TrainingProgram(baseNN,baseTestCycleSet),slots);
+		this.union = uni;
+	}
+	
+	public void initialize(NN baseNN, TestCycleSet baseTestCycleSet,int slots) {
+		initialize(baseNN,baseTestCycleSet,new TrainingProgram(baseNN,baseTestCycleSet),slots);
 	}
 
-	public Evolver(Messenger msgr,WorkerUnion uni,NN baseNN, TestCycleSet baseTestCycleSet,TrainingProgram baseTrainingProgram,int slots) {
-		super(msgr);
-		init(uni,baseNN,baseTestCycleSet,baseTrainingProgram,slots);
+	public void initialize(NN baseNN, TestCycleSet baseTestCycleSet,TrainingProgram baseTrainingProgram,int slots) {
+		if (slots<3) {
+			slots = 3;
+		}
+		this.baseNN = baseNN;
+		this.baseTestCycleSet = baseTestCycleSet;
+		this.baseTrainingProgram = baseTrainingProgram;
+		for (int i = 0; i < slots; i++) {
+			workers.add(new EvolverWorker(getMessenger(),union,this));
+		}
 	}
 	
 	public void setDebug(boolean debug) {
@@ -98,18 +115,30 @@ public class Evolver extends Locker {
 		return r;
 	}
 	
-	protected void trainedNN(NN nn,TestCycleSet finalResult) {
+	protected String getType() {
+		return "";
+	}
+	
+	protected void trainedNN(NN nn,TestCycleSet finalResult,boolean success) {
 		lockMe(this);
-		if (bestSoFar==null || finalResult.successes>bestResults.successes) {
+		if (bestSoFar==null || finalResult.compareTo(bestResults)>0) {
+			String viable = "";
+			if (success) {
+				viableNNs.put(finalResult,nn);
+				viable = " viable";
+			}
+			if (bestSoFar!=null) {
+				String type = getType();
+				if (type.length()>0) {
+					type = " " + type;
+				}
+				debug("Best" + viable + type + " neural net so far: " + finalResult.successes + "/" + finalResult.cycles.size() + " " + finalResult.averageError);
+			}
+			bestSoFar.destroy();
 			bestSoFar = nn;
 			bestResults = finalResult;
-		}
-		if (debug && getMessenger()!=null) {
-			String improved = "";
-			if (nn==bestSoFar) {
-				improved = "!";
-			}
-			getMessenger().debug(this,"Trained neural net: " + finalResult.successes + "/" + finalResult.cycles.size() + improved);
+		} else {
+			nn.destroy();
 		}
 		unlockMe(this);
 	}
@@ -158,16 +187,10 @@ public class Evolver extends Locker {
 	protected TestCycleSet getNewTestCycleSet() {
 		return baseTestCycleSet.copy();
 	}
-
-	private void init(WorkerUnion uni,NN baseNN, TestCycleSet baseTestCycleSet,TrainingProgram baseTrainingProgram,int slots) {
-		if (slots<3) {
-			slots = 3;
-		}
-		this.baseNN = baseNN;
-		this.baseTestCycleSet = baseTestCycleSet;
-		this.baseTrainingProgram = baseTrainingProgram;
-		for (int i = 0; i < slots; i++) {
-			workers.add(new EvolverWorker(getMessenger(),uni,this));
+	
+	protected void debug(String msg) {
+		if (debug && getMessenger()!=null) {
+			getMessenger().debug(this,msg);
 		}
 	}
 }

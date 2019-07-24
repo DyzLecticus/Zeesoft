@@ -8,8 +8,9 @@ import java.util.Random;
  * Generates random non-negative integers.
  */
 public class ZIntegerGenerator {
-	private int min		= 0;
-	private int max		= 1;
+	private Random	rand	= new Random();
+	private int		min		= 0;
+	private int		max		= 1;
 	
 	/**
 	 * @param min The minimum (non-negative) value
@@ -34,7 +35,6 @@ public class ZIntegerGenerator {
 	public int getNewInteger() {
 		int num = -1;
 		if (min<max) {
-			Random rand = new Random();
 			while (num < min) {
 				 num = (int) (rand.nextDouble() * (max + 1));
 			}

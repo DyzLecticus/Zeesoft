@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class TestCycleSet {
+public class TestCycleSet implements Comparable<TestCycleSet> {
 	public List<TestCycle>				cycles				= new ArrayList<TestCycle>();
 	
 	public int							successes			= 0;
@@ -68,6 +68,38 @@ public class TestCycleSet {
 		if (total>0.0F) {
 			averageError = totalError / total;
 		}
+	}
+	
+	@Override
+	public int compareTo(TestCycleSet o) {
+		int r = 0;
+		if (this!=o && cyclesPerLevel.size()>0) {
+			for (Integer key: cyclesPerLevel.keySet()) {
+				int successes = 0;
+				int compare = 0;
+				if (successesPerLevel.get(key)!=null) {
+					successes = successesPerLevel.get(key);
+				}
+				if (o.successesPerLevel.get(key)!=null) {
+					compare = o.successesPerLevel.get(key);
+				}
+				if (successes>compare) {
+					r = 1;
+					break;
+				} else if (successes<compare) {
+					r = -1;
+					break;
+				}
+			}
+			if (r==0) {
+				if (averageError < o.averageError) {
+					r = 1;
+				} else if (averageError > o.averageError) {
+					r = -1;
+				}
+			}
+		}
+		return r;
 	}
 
 	public TestCycleSet copy() {

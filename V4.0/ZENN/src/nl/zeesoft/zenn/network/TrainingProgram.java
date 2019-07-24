@@ -82,10 +82,7 @@ public class TrainingProgram {
 					bestResults = tcs;
 					r = variation;
 					break;
-				} else if (
-					tcs.successes > bestResults.successes || 
-					(tcs.successes == bestResults.successes && tcs.averageError < bestResults.averageError)
-					) {
+				} else if (tcs.compareTo(bestResults) > 0) {
 					bestResults = tcs;
 					r = variation;
 				}
@@ -105,6 +102,10 @@ public class TrainingProgram {
 	
 	public TestCycleSet getFinalResults() {
 		return finalResults;
+	}
+	
+	public boolean isSuccess() {
+		return finalResults.isSuccess(minSuccessLevel);
 	}
 	
 	protected void trainVariation(NN nn, int method, TestCycleSet tcs, float learningRate) {
@@ -182,7 +183,6 @@ public class TrainingProgram {
 	private void trainVariationRandomUseTestResults(NN nn, TestCycleSet tcs, float learningRate) {
 		if (learningRate>0.0F) {
 			tcs = tcs.copy();
-			int layers = nn.getLayers().size();
 			for (TestCycle tc: tcs.cycles) {
 				nn.runCycle(tc);
 				if (!tc.success) {
@@ -194,7 +194,7 @@ public class TrainingProgram {
 									if (diff<0.0F) {
 										diff = diff * -1.0F;
 									}
-									float rate = (learningRate + (diff / (float)layers)) / 2.0F;
+									float rate = (learningRate + diff) / 2.0F;
 									if (rate<minLearningRate) {
 										rate = minLearningRate;
 									}

@@ -6,8 +6,8 @@
   </welcome-file-list>
   <description>Zeesoft Evolutionary Neural Networks</description>
   <servlet>
-    <servlet-name>ZSMCServlet</servlet-name>
-    <servlet-class>nl.zeesoft.zsmc.ZENNServlet</servlet-class>
+    <servlet-name>ZENNServlet</servlet-name>
+    <servlet-class>nl.zeesoft.zenn.ZENNServlet</servlet-class>
     <init-param>
       <param-name>debug</param-name>
       <param-value>true</param-value>
