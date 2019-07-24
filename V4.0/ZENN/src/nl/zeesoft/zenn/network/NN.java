@@ -51,32 +51,38 @@ public class NN {
 			int nodesPerLayer = properties.getMiddleLayerNodes(inputNeurons,outputNeurons);
 			int inputStartPosX = (nodesPerLayer - inputNeurons) / 2;
 			int outputStartPosX = (nodesPerLayer - outputNeurons) / 2;
-			int objectId = 1;
+			int nodeId = 1;
 			for (int n = 0; n < inputNeurons; n++) {
-				inputLayer.neurons.add(new Neuron(objectId,inputStartPosX));
+				inputLayer.neurons.add(new Neuron(nodeId,inputStartPosX));
 				inputStartPosX++;
-				objectId++;
+				nodeId++;
 			}
 			int numMidLayers = properties.getMiddleLayers(minLayers, maxLayers);
 			for (int l = 0; l < numMidLayers; l++) {
 				NeuronLayer layer = new NeuronLayer();
 				for (int n = 0; n < nodesPerLayer; n++) {
-					layer.neurons.add(new Neuron(objectId,n));
-					objectId++;
+					layer.neurons.add(new Neuron(nodeId,n));
+					nodeId++;
 				}
 				middleLayers.add(layer);
 			}
 			for (int n = 0; n < outputNeurons; n++) {
-				outputLayer.neurons.add(new Neuron(objectId,outputStartPosX));
+				outputLayer.neurons.add(new Neuron(nodeId,outputStartPosX));
 				outputStartPosX++;
-				objectId++;
+				nodeId++;
 			}
 	
 			// Initialize thresholds
+			int i = properties.getThresholdWeightStart();
 			List<NeuronLayer> layers = getLayers();
 			for (NeuronLayer layer: layers) {
 				for (Neuron neuron: layer.neurons) {
-					neuron.threshold = properties.getThresholdWeight(neuron.id);
+					if (layer!=inputLayer) {
+						neuron.threshold = properties.getThresholdWeight(i);
+						i++;
+					} else {
+						neuron.threshold = 0.0F;
+					}
 				}
 			}
 	
@@ -88,13 +94,13 @@ public class NN {
 					NeuronLayer nextLayer = layers.get(nl);
 					for (Neuron neuron: layer.neurons) {
 						for (Neuron target: nextLayer.neurons) {
-							NeuronLink link = new NeuronLink(objectId);
-							objectId++;
+							NeuronLink link = new NeuronLink();
 							link.target = target;
 							link.source = neuron;
-							link.weight = properties.getThresholdWeight(link.id);
+							link.weight = properties.getThresholdWeight(i);
 							neuron.targets.add(link);
 							target.sources.add(link);  
+							i++;
 						}
 					}
 				}
@@ -126,7 +132,7 @@ public class NN {
 			if (n<inputLayer.neurons.size()) {
 				Neuron input = inputLayer.neurons.get(n);
 				input.value = cycle.inputs[n];
-				if (input.value>=input.threshold) {
+				if (input.value>input.threshold) {
 					cycle.firedNeurons.add(input);
 				}
 			}
@@ -134,7 +140,7 @@ public class NN {
 		for (NeuronLayer layer: layers) {
 			if (layer!=inputLayer) {
 				for (Neuron neuron: layer.neurons) {
-					if (neuron.value>=neuron.threshold) {
+					if (neuron.value>neuron.threshold) {
 						cycle.firedNeurons.add(neuron);
 					}
 					float value = 0.0F;
@@ -143,7 +149,7 @@ public class NN {
 						if (link.weight>0.0F) {
 							maxValue += link.weight;
 						}
-						if (link.source.value>=link.source.threshold) {
+						if (link.source.value>link.source.threshold) {
 							if (link.weight>0.0F) {
 								value += link.weight;
 							} else {
@@ -162,12 +168,19 @@ public class NN {
 	}
 	
 	public NN copy() {
-		return copy(true);
+		return copy(true,0.0F);
 	}
 	
-	public NN copy(boolean copyThresholdWeight) {
+	public NN copy(float mutationPercentage) {
+		return copy(false,mutationPercentage);
+	}
+	
+	public NN copy(boolean copyThresholdWeight,float mutationPercentage) {
 		NN r = getCopyNN();
 		r.getCode().setCode(getCode().getCode());
+		if (mutationPercentage>0.0F) {
+			r.getCode().mutate(mutationPercentage);
+		}
 		r.initialize(inputLayer.neurons.size(),outputLayer.neurons.size(),minLayers,maxLayers);
 		List<NeuronLayer> copyLayers = r.getLayers();
 		if (copyThresholdWeight) {

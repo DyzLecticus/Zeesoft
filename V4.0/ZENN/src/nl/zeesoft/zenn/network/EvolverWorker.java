@@ -4,21 +4,18 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class BreederWorker extends Worker {
-	private Breeder 			breeder 		= null;
-	private int					trainCycles		= 50;
+public class EvolverWorker extends Worker {
+	private Evolver 			evolver 		= null;
 	private int 				trainRepeat		= 20;
+	private int					trainCycles		= 50;
 	
 	private int					repeat			= 0;
 
-	private	NN					nn				= null;
-	private TestCycleSet 		tcs				= null;
 	private TrainingProgram		tp				= null;
 
-	public BreederWorker(Messenger msgr, WorkerUnion union, Breeder breeder) {
+	protected EvolverWorker(Messenger msgr, WorkerUnion union, Evolver evolver) {
 		super(msgr, union);
-		this.breeder = breeder;
-		setSleep(0);
+		this.evolver = evolver;
 	}
 	
 	@Override
@@ -31,24 +28,23 @@ public class BreederWorker extends Worker {
 	
 	@Override
 	protected void whileWorking() {
-		if (nn==null) {
-			nn = breeder.getNewNN();
-			tcs = breeder.getNewTestCycleSet();
-			tp = breeder.getNewTrainingProgram(nn,tcs);
+		if (tp==null) {
+			tp = evolver.getNewTrainingProgram(this);
 			tp.setTrainCycles(trainCycles);
 		}
-		nn = tp.runProgram();
+		NN nn = tp.runProgram();
 		repeat++;
 		if (repeat>=trainRepeat) {
-			breeder.bredNN(nn,tp.getFinalResults());
+			evolver.trainedNN(nn,tp.getFinalResults());
 			reset();
 		}
 	}
 
 	private void reset() {
+		trainCycles = evolver.getTrainCycles();
+		trainRepeat = evolver.getTrainRepeat();
+		setSleep(evolver.getTrainSleepMs());
 		repeat = 0;
-		nn = null;
-		nn = null;
-		tcs = null;
+		tp = null;
 	}
 }

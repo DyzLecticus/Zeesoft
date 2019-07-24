@@ -46,7 +46,11 @@ public class GeneticCode {
 		code.append(code.generateNewKey(length));
 		refreshFactors();
 	}
-	
+
+	public void mutate(float percentage) {
+		mutate((int)(percentage * (float)code.length()));
+	}
+
 	public void mutate(int num) {
 		if (code!=null) {
 			if (num>=(code.length() / 2)) {

@@ -1,23 +1,27 @@
 package nl.zeesoft.zenn.test;
 
+import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zenn.animal.AnimalNN;
 import nl.zeesoft.zenn.animal.AnimalTestCycleSet;
-import nl.zeesoft.zenn.network.TrainingProgram;
+import nl.zeesoft.zenn.network.Evolver;
 
-public class TestTrainingProgram extends TestObject {
-	public TestTrainingProgram(Tester tester) {
+public class TestEvolver extends TestObject {
+	public TestEvolver(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestTrainingProgram(new Tester())).test(args);
+		(new TestEvolver(new Tester())).test(args);
 	}
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use a *TrainingProgram* to train an *AnimalNN*.");
+		/* TODO: describe
+		System.out.println("This test shows how to create an *AnimalNN* and an *AnimalTestCycleSet* to test its functioning.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -29,44 +33,58 @@ public class TestTrainingProgram extends TestObject {
 		System.out.println("AnimalTestCycleSet tcs = AnimalTestCycleSet();");
 		System.out.println("// Initialize the animal test cycle set");
 		System.out.println("tcs.initialize(nn,true);");
-		System.out.println("// Create the training program");
-		System.out.println("TrainingProgram tp = new TrainingProgram(nn,tcs);");
-		System.out.println("// Run the training program");
-		System.out.println("AnimalNN trainedNN = (AnimalNN) tp.runProgram();");
+		System.out.println("// Run the animal test cycle set");
+		System.out.println("nn.runTestCycleSet(tcs);");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockAnimalNN.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestTrainingProgram.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestEvolver.class));
 		System.out.println(" * " + getTester().getLinkForClass(MockAnimalNN.class));
 		System.out.println(" * " + getTester().getLinkForClass(AnimalNN.class));
 		System.out.println(" * " + getTester().getLinkForClass(AnimalTestCycleSet.class));
-		System.out.println(" * " + getTester().getLinkForClass(TrainingProgram.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
-		System.out.println(" * The time it took to train the animal neural network including the amount of training cycles and learned tests  ");
-		System.out.println(" * The test cycle set results for the trained neural network  ");
+		System.out.println(" * The time it took to generate a trainable animal neural network  ");
+		System.out.println(" * The neural network state after running the final test cycle  ");
+		System.out.println(" * The test cycle set results  ");
+		*/
 	}
 	
 	@Override
 	protected void test(String[] args) {
 		AnimalNN nn = (AnimalNN) getTester().getMockedObject(MockAnimalNN.class.getName());
 		if (nn!=null) {
+			ZDKFactory factory = new ZDKFactory();
+			Messenger messenger = factory.getMessenger();
+			messenger.setPrintDebugMessages(true);
+			WorkerUnion union = factory.getWorkerUnion(messenger);
+			
 			AnimalTestCycleSet tcs = new AnimalTestCycleSet();
 			tcs.initialize(nn,true);
-			TrainingProgram tp = new TrainingProgram(nn,tcs);
-			long started = System.currentTimeMillis();
-			System.out.println("Training animal neural network ...");
-			AnimalNN trainedNN = (AnimalNN) tp.runProgram();
-			long ms = (System.currentTimeMillis() - started);
-			int learnedTests = tp.getFinalResults().successes - tp.getInitialResults().successes;
-			System.out.println("Training animal neural network took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + learnedTests);
-			System.out.println();
-			tcs = (AnimalTestCycleSet) tcs.copy();
-			trainedNN.runTestCycleSet(tcs);
-			tcs.toSystemOut();
+			
+			Evolver evolver = new Evolver(messenger,union,nn,tcs,10);
+			evolver.setDebug(true);
+			
+			messenger.start();
+			
+			evolver.start();
+			sleep(60000);
+			evolver.stop();
+			AnimalNN bnn = (AnimalNN) evolver.getBestSoFar();
+			AnimalTestCycleSet btcs = (AnimalTestCycleSet) evolver.getBestResults();
+			if (bnn!=null) {
+				System.out.println("Evolver result; ");
+				System.out.println();
+				bnn.toSystemOut();
+				System.out.println();
+				btcs.toSystemOut();
+			}
+			
+			messenger.stop();
+			union.stopWorkers();
 		}
 	}
 }

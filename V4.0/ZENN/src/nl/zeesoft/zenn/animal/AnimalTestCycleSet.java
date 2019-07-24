@@ -1,11 +1,12 @@
 package nl.zeesoft.zenn.animal;
 
+import nl.zeesoft.zenn.network.NN;
 import nl.zeesoft.zenn.network.TestCycle;
 import nl.zeesoft.zenn.network.TestCycleSet;
 
 public class AnimalTestCycleSet extends TestCycleSet {
 
-	public void initialize(AnimalNN nn,boolean herbivore) {
+	public void initialize(NN nn,boolean herbivore) {
 		TestCycle tc = null;
 		
 		int leftFoodInput = AnimalNN.LEFT_GREEN;

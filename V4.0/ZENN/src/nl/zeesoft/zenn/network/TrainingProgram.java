@@ -25,6 +25,15 @@ public class TrainingProgram {
 		this.baseTestCycleSet = baseTestCycleSet;
 	}
 
+	public TrainingProgram copy(NN baseNN, TestCycleSet baseTestCycleSet) {
+		TrainingProgram r = getCopyTrainingProgram(baseNN,baseTestCycleSet);
+		r.setMethod(method);
+		r.setMinSuccessLevel(minSuccessLevel);
+		r.setTrainCycles(trainCycles);
+		r.setMinMaxLearningRate(minLearningRate,maxLearningRate);
+		return r;
+	}
+	
 	public void setMethod(int method) {
 		this.method = method;
 	}
@@ -37,7 +46,7 @@ public class TrainingProgram {
 		this.trainCycles = trainCycles;
 	}
 
-	public void setMinMaxLearningRate(int min,int max) {
+	public void setMinMaxLearningRate(float min,float max) {
 		this.minLearningRate = min;
 		this.maxLearningRate = max;
 	}
@@ -112,6 +121,10 @@ public class TrainingProgram {
 		}
 	}
 
+	protected TrainingProgram getCopyTrainingProgram(NN baseNN, TestCycleSet baseTestCycleSet) {
+		return new TrainingProgram(baseNN,baseTestCycleSet);
+	}
+
 	protected float getRandomFloat(float max) {
 		return random.nextFloat() * max;
 	}
@@ -145,8 +158,8 @@ public class TrainingProgram {
 								next = path.middleNeurons.get(i);
 							}
 							if (
-								(path.error>0.0F && next.value<next.threshold) ||
-								(path.error<0.0F && next.value>next.threshold)
+								(path.error>0.0F && next.value<=next.threshold) ||
+								(path.error<0.0F && next.value>=next.threshold)
 								) {
 								for (NeuronLink link: current.targets) {
 									if (link.target==next) {

@@ -20,7 +20,13 @@ public class NNProperties {
 			range = outputNeurons;
 		}
 		int width = (range * 2);
-		return (THRESHOLD_WEIGHT_START + 1) + ((width * width) + width) * (maxLayers - 1); 
+		return
+			(THRESHOLD_WEIGHT_START + 1) + 
+			(width * maxLayers) +
+			outputNeurons +
+			((width * width) * (maxLayers - 1)) +
+			(width * outputNeurons)
+			; 
 	}
 	
 	protected int getMiddleLayers(int minLayers,int maxLayers) {
@@ -35,7 +41,11 @@ public class NNProperties {
 		return range + code.getInteger(MIDDLE_LAYER_NODES,range);
 	}
 	
-	protected float getThresholdWeight(int objectId) {
-		return code.get(objectId + THRESHOLD_WEIGHT_START);
+	protected int getThresholdWeightStart() {
+		return THRESHOLD_WEIGHT_START;
+	}
+	
+	protected float getThresholdWeight(int index) {
+		return code.get(index);
 	}
 }
