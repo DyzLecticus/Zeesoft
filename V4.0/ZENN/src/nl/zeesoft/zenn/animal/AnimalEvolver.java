@@ -51,6 +51,9 @@ public class AnimalEvolver extends Evolver implements InitializerDatabaseObject,
 			for (JsElem elem: resJson.rootElement.children) {
 				json.rootElement.children.add(elem);
 			}
+			JsElem code = json.rootElement.getChildByName("code");
+			json.rootElement.children.remove(code);
+			json.rootElement.children.add(code);
 		}
 		return json;
 	}
@@ -121,7 +124,6 @@ public class AnimalEvolver extends Evolver implements InitializerDatabaseObject,
 		ZStringEncoder encoder = new ZStringEncoder(toJson().toStringBuilder());
 		encoder.encodeKey(configuration.getZODBKey(),0);
 		request.encoded = encoder;
-		System.out.println(request.toJson().toStringBuilderReadFormat());
 		configuration.handleDatabaseRequest(request,this,3);
 	}
 	

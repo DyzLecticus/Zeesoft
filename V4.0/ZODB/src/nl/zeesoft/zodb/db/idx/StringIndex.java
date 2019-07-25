@@ -19,8 +19,8 @@ public class StringIndex extends IndexObject {
 	}
 
 	@Override
-	protected boolean hasObjectNoLock(IndexElement element) {
-		return map.containsKey(getPropertyValue(element));
+	protected List<IndexElement> getObjectsNoLock(IndexElement element) {
+		return map.get(getPropertyValue(element));
 	}
 	
 	@Override

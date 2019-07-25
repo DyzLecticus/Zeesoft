@@ -145,11 +145,11 @@ public class DatabaseRequestHandler {
 			if (response.request.id<=0) {
 				response.errors.add(new ZStringBuilder("Request id is mandatory"));
 			}
-			if (response.request.name.length()==0 && response.request.object==null) {
-				response.errors.add(new ZStringBuilder("Request name and/or object is mandatory"));
-			}
 			if (response.request.name.length()==0 || response.request.object!=null) {
 				checkRequestObjectMandatory(response);
+			}
+			if (response.request.name.length()==0 && response.request.object==null) {
+				response.errors.add(new ZStringBuilder("Request name and/or object is mandatory"));
 			}
 		}
 		if (response.errors.size()>0) {

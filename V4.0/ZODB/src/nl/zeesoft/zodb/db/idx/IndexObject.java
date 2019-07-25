@@ -24,7 +24,14 @@ public abstract class IndexObject extends Locker {
 		LockedCode code = new LockedCode() {
 			@Override
 			public Object doLocked() {
-				return hasObjectNoLock(element);
+				boolean r = false;
+				List<IndexElement> elements = getObjectsNoLock(element);
+				for (IndexElement elem: elements) {
+					if (elem.id!=element.id) {
+						r = true;
+					}
+				}
+				return r;
 			}
 		};
 		return (boolean) doLocked(this,code);
@@ -102,7 +109,7 @@ public abstract class IndexObject extends Locker {
 		doLocked(this,code);
 	}
 
-	protected abstract boolean hasObjectNoLock(IndexElement element); 
+	protected abstract List<IndexElement> getObjectsNoLock(IndexElement element); 
 	protected abstract void addObjectNoLock(IndexElement element);
 	protected abstract void setObjectNoLock(IndexElement element);
 	protected abstract void removeObjectNoLock(IndexElement element);

@@ -306,11 +306,11 @@ public class NN implements JsAble {
 
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("code",encoder,true));
 		json.rootElement.children.add(new JsElem("inputNeurons","" + inputLayer.neurons.size(),true));
 		json.rootElement.children.add(new JsElem("outputNeurons","" + outputLayer.neurons.size(),true));
 		json.rootElement.children.add(new JsElem("minLayers","" + minLayers,true));
 		json.rootElement.children.add(new JsElem("maxLayers","" + maxLayers,true));
+		json.rootElement.children.add(new JsElem("code",encoder,true));
 		if (includeNN) {
 			// TODO: Neural network thresholds and weights
 		}
