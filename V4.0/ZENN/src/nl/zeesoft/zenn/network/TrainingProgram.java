@@ -13,7 +13,7 @@ public class TrainingProgram {
 	private int							method				= 0;
 	private int							minSuccessLevel		= 0;
 	private int							trainCycles			= 1000;
-	private float						minLearningRate		= 0.1F;
+	private float						minLearningRate		= 0.01F;
 	private float						maxLearningRate		= 0.5F;
 	
 	private int							trainedCycles		= 0;
@@ -64,14 +64,14 @@ public class TrainingProgram {
 				NN variation = r.copy();
 				TestCycleSet tcs = baseTestCycleSet.copy();
 				float err = bestResults.averageError;
-				if (err<0.001) {
+				if (err<0.0001) {
 					err = err * 1000.0F;
-				} if (err<0.01) {
+				} if (err<0.001) {
 					err = err * 100.0F;
-				} if (err<0.1) {
+				} if (err<0.01) {
 					err = err * 10.0F;
 				}
-				float learningRate = minLearningRate + (err * 2.0F);
+				float learningRate = minLearningRate + err;
 				if (learningRate>maxLearningRate) {
 					learningRate = maxLearningRate;
 				}
@@ -105,7 +105,7 @@ public class TrainingProgram {
 	}
 	
 	public boolean isSuccess() {
-		return finalResults.isSuccess(-1);
+		return finalResults.isSuccess(minSuccessLevel);
 	}
 	
 	protected void trainVariation(NN nn, int method, TestCycleSet tcs, float learningRate) {
@@ -115,7 +115,7 @@ public class TrainingProgram {
 			if (trainedCycles % 5 == 0) {
 				trainVariationRandom(nn,learningRate);
 			} else if (trainedCycles % 3 == 0) {
-				trainVariationRandomUseTestResults(nn,tcs,learningRate);
+				trainVariationRandomUseFiredLinks(nn,tcs,learningRate);
 			} else {
 				trainVariationRandomUsePaths(nn,tcs,learningRate);
 			}
@@ -124,6 +124,11 @@ public class TrainingProgram {
 
 	protected TrainingProgram getCopyTrainingProgram(NN baseNN, TestCycleSet baseTestCycleSet) {
 		return new TrainingProgram(baseNN,baseTestCycleSet);
+	}
+
+	protected float getRandomFloorFloat(float max) {
+		max = max / 2.0F;
+		return max + (random.nextFloat() * max);
 	}
 
 	protected float getRandomFloat(float max) {
@@ -139,6 +144,7 @@ public class TrainingProgram {
 	}
 
 	private void trainVariationRandomUseAllPaths(NN nn, TestCycleSet tcs, float learningRate) {
+		//System.out.println(learningRate);
 		if (learningRate>0.0F) {
 			tcs = tcs.copy();
 			
@@ -149,8 +155,8 @@ public class TrainingProgram {
 			
 			for (TrainingPath path: allPaths) {
 				Neuron current = path.inputNeuron;
-				if (path.error>0.0F && current.value<current.threshold) {
-					current.threshold = current.value;
+				if (path.error>0.0F && current.value<=current.threshold) {
+					current.threshold = NN.distribute(current.value);
 				}
 				Neuron next = null;
 				for (int i = 0; i <= path.middleNeurons.size(); i++) {
@@ -165,19 +171,28 @@ public class TrainingProgram {
 						(path.error>0.0F && next.value<=next.threshold) ||
 						(path.error<0.0F && next.value>=next.threshold)
 						) {
+						float diff = path.error;
+						if (diff<0.0F) {
+							diff = diff * -1.0F;
+						}
+						float rate = (learningRate + diff) / 2.0F;
+						//if (rate<learningRate) {
+						//	rate = learningRate;
+						//}
+						//System.out.println(rate);
 						for (NeuronLink link: current.targets) {
 							if (link.target==next) {
 								if (path.error>0.0F) {
 									if (link.weight<0) {
 										link.weight = link.weight * -1;
 									} else {
-										link.weight = NN.distribute(link.weight + getRandomFloat(learningRate));
+										link.weight = NN.distribute(link.weight + getRandomFloorFloat(rate));
 									}
 								} else {
 									if (flip && link.weight>0) {
 										link.weight = link.weight * -1;
 									} else {
-										link.weight = NN.distribute(link.weight - getRandomFloat(learningRate));
+										link.weight = NN.distribute(link.weight - getRandomFloorFloat(rate));
 									}
 								}
 							}
@@ -235,29 +250,25 @@ public class TrainingProgram {
 		}
 	}
 
-	private void trainVariationRandomUseTestResults(NN nn, TestCycleSet tcs, float learningRate) {
+	private void trainVariationRandomUseFiredLinks(NN nn, TestCycleSet tcs, float learningRate) {
 		if (learningRate>0.0F) {
 			tcs = tcs.copy();
 			for (TestCycle tc: tcs.cycles) {
-				nn.runCycle(tc);
-				if (!tc.success) {
-					for (int i = 0; i < tc.errors.length; i++) {
-						if (tc.errors[i]!=0.0F) {
-							for (NeuronLink link: tc.firedLinks) {
-								if (getRandomBoolean()) {
+				if (tc.level<=minSuccessLevel) {
+					nn.runCycle(tc);
+					if (!tc.success) {
+						for (int i = 0; i < tc.errors.length; i++) {
+							if (tc.errors[i]>0.0F) {
+								for (NeuronLink link: tc.firedLinks) {
 									float diff = tc.errors[i];
 									if (diff<0.0F) {
 										diff = diff * -1.0F;
 									}
 									float rate = (learningRate + diff) / 2.0F;
-									if (rate<minLearningRate) {
-										rate = minLearningRate;
-									}
-									if (tc.errors[i]>0.0F) {
-										link.weight += getRandomFloat(rate);
-									} else {
-										link.weight -= getRandomFloat(rate);
-									}
+									//if (rate<learningRate) {
+									//	rate = learningRate;
+									//}
+									link.weight = NN.distribute(link.weight + getRandomFloorFloat(rate));
 								}
 							}
 						}
@@ -321,12 +332,12 @@ public class TrainingProgram {
 		}
 		for (TestCycle tc: tcs.cycles) {
 			if (tc.level==focusLevel && !tc.success) {
-				List<TrainingPath> pPaths = getPositivePaths(nn,tc,r);
-				List<TrainingPath> nPaths = getNegativePaths(nn,tc,r);
-				for (TrainingPath tp: pPaths) {
+				List<TrainingPath> paths = getPositivePaths(nn,tc,r);
+				for (TrainingPath tp: paths) {
 					r.add(tp);
 				}
-				for (TrainingPath tp: nPaths) {
+				paths = getNegativePaths(nn,tc,r);
+				for (TrainingPath tp: paths) {
 					r.add(tp);
 				}
 			}
@@ -352,11 +363,12 @@ public class TrainingProgram {
 				for (int in = 0; in < tc.inputs.length; in++) {
 					if (tc.inputs[in]>0.0F) {
 						TrainingPath path = new TrainingPath();
-						r.add(path);
 						path.inputNeuron = nn.getInputLayer().neurons.get(in);
 						path.outputNeuron = nn.getOutputLayer().neurons.get(e);
 						path.error = tc.errors[e];
-						findPath(nn,path,exclude);
+						if (findPath(nn,path,exclude)) {
+							r.add(path);
+						}
 					}
 				}
 			}
@@ -364,19 +376,20 @@ public class TrainingProgram {
 		return r;
 	}
 	
-	private void findPath(NN nn,TrainingPath path,List<TrainingPath> exclude) {
-		findPath(nn,path,path.inputNeuron,exclude);
+	private boolean findPath(NN nn,TrainingPath path,List<TrainingPath> exclude) {
+		return findPath(nn,path,path.inputNeuron,exclude);
 	}
 	
-	private void findPath(NN nn,TrainingPath path,Neuron workingNeuron,List<TrainingPath> exclude) {
+	private boolean findPath(NN nn,TrainingPath path,Neuron workingNeuron,List<TrainingPath> exclude) {
+		boolean r = true;
 		List<NeuronLink> candidates = new ArrayList<NeuronLink>();
 		for (NeuronLink link: workingNeuron.targets) {
 			if (link.target==path.outputNeuron) {
 				candidates.clear();
 				break;
 			} else if (
-				link.target.posX > workingNeuron.posX - 2 &&
-				link.target.posX < workingNeuron.posX + 2
+				link.target.posX > workingNeuron.posX - 3 &&
+				link.target.posX < workingNeuron.posX + 3
 				) {
 				boolean add = true;
 				if (exclude!=null) {
@@ -402,8 +415,13 @@ public class TrainingProgram {
 			} else {
 				workingNeuron = candidates.get(0).target;
 			}
-			path.middleNeurons.add(workingNeuron);
-			findPath(nn,path,workingNeuron,exclude);
+			if (workingNeuron!=path.outputNeuron) {
+				path.middleNeurons.add(workingNeuron);
+				findPath(nn,path,workingNeuron,exclude);
+			}
+		} else {
+			r = false;
 		}
+		return r;
 	}
 }

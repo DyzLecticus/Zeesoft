@@ -242,7 +242,7 @@ public class JavaScriptZODBDataManager {
 		script.append("    }\n");
 		script.append("    if (object.results) {\n");
 		script.append("        for (var num in object.results) {\n");
-		script.append("            object.results[num].object = JSON.parse(ZODB.encode.decodeAscii(object.results[num].encoded));\n");
+		script.append("            object.results[num].object = ZODB.xhr.parseResponseJSON(ZODB.encode.decodeAscii(object.results[num].encoded));\n");
 		script.append("            ZODB.dm.showObject(object.results[num].object,object.results[num].name);\n");
 		script.append("            break;\n");
 		script.append("        }\n");

@@ -1,10 +1,6 @@
 package nl.zeesoft.zenn.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.ZDKFactory;
-import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
@@ -90,9 +86,9 @@ public class TestAnimalEvolver extends TestObject {
 				JsFile copy = evolver.toJson();
 				
 				assertEqual(copy.toStringBuilderReadFormat(),json.toStringBuilderReadFormat(),"Animal evolver does not match orignial");
-				
+
+				/* TODO: Add JSON check to TestAnimalNN 
 				JsElem neuronsElem = json.rootElement.getChildByName("neurons");
-				assertEqual(neuronsElem!=null,true,"Evolver JSON neurons element not found");
 				if (neuronsElem!=null) {
 					int i = 0;
 					List<JsElem> children = new ArrayList<JsElem>(neuronsElem.children);
@@ -103,6 +99,7 @@ public class TestAnimalEvolver extends TestObject {
 						i++;
 					}
 				}
+				*/
 				System.out.println();
 				System.out.println("Evolver JSON; ");
 				System.out.println(json.toStringBuilderReadFormat());

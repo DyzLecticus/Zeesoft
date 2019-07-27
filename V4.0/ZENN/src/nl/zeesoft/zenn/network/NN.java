@@ -142,6 +142,28 @@ public class NN implements JsAble {
 	public JsFile toJson() {
 		return toJson(true);
 	}
+	
+	public JsFile toJson(boolean includeNN) {
+		ZStringEncoder encoder = new ZStringEncoder(code.getCode());
+		encoder.compress();
+
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("inputNeurons","" + inputLayer.neurons.size(),true));
+		json.rootElement.children.add(new JsElem("outputNeurons","" + outputLayer.neurons.size(),true));
+		json.rootElement.children.add(new JsElem("minLayers","" + minLayers,true));
+		json.rootElement.children.add(new JsElem("maxLayers","" + maxLayers,true));
+		json.rootElement.children.add(new JsElem("code",encoder,true));
+		if (includeNN) {
+			JsElem neuronsElem = new JsElem("neurons",true);
+			json.rootElement.children.add(neuronsElem);
+			for (Neuron neuron: neuronsById.values()) {
+				JsFile neuronJson = neuron.toJson();
+				neuronsElem.children.add(neuronJson.rootElement);
+			}
+		}
+		return json;
+	}
 
 	@Override
 	public void fromJson(JsFile json) {
@@ -269,9 +291,9 @@ public class NN implements JsAble {
 		return r;
 	}
 
-	public void toSystemOut() {
+	public ZStringBuilder getSummary() {
+		ZStringBuilder r = new ZStringBuilder();
 		DecimalFormat df = new DecimalFormat("0.00");
-		
 		List<NeuronLayer> layers = getLayers();
 		
 		ZStringBuilder layout = new ZStringBuilder();
@@ -289,10 +311,12 @@ public class NN implements JsAble {
 				}
 			}
 		}
-		System.out.println("Neuron layout;");
-		System.out.println(layout);
+		r.append("Neuron layout;");
+		r.append("\n");
+		r.append(layout);
+		r.append("\n");
 		
-		System.out.println();
+		r.append("\n");
 		int l = 0;
 		for (NeuronLayer layer: layers) {
 			String name = "Middle " + l;
@@ -302,7 +326,10 @@ public class NN implements JsAble {
 			} else if (l==layers.size()) {
 				name = "Output";
 			}
-			System.out.println("Layer: " + name);
+			r.append("Layer: ");
+			r.append(name);
+			r.append("\n");
+			
 			for (Neuron neuron: layer.neurons) {
 				ZStringBuilder sources = new ZStringBuilder();
 				for (NeuronLink link: neuron.sources) {
@@ -314,9 +341,17 @@ public class NN implements JsAble {
 				if (sources.length()>0) {
 					sources.insert(0,", sources/weights: ");
 				}
-				System.out.println("  Neuron: " + String.format("%03d",neuron.id) + ", threshold: " + df.format(neuron.threshold) + ", value: " + df.format(neuron.value) + sources);
+				r.append("  Neuron: ");
+				r.append(String.format("%03d",neuron.id));
+				r.append(", threshold: ");
+				r.append(df.format(neuron.threshold));
+				r.append(", value: " + df.format(neuron.value) + sources);
+				r.append(df.format(neuron.value));
+				r.append(sources);
+				r.append("\n");
 			}
 		}
+		return r;
 	}
 
 	protected NN getCopyNN() {
@@ -331,28 +366,6 @@ public class NN implements JsAble {
 		}
 		r.add(outputLayer);
 		return r;
-	}
-	
-	protected JsFile toJson(boolean includeNN) {
-		ZStringEncoder encoder = new ZStringEncoder(code.getCode());
-		encoder.compress();
-
-		JsFile json = new JsFile();
-		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("inputNeurons","" + inputLayer.neurons.size(),true));
-		json.rootElement.children.add(new JsElem("outputNeurons","" + outputLayer.neurons.size(),true));
-		json.rootElement.children.add(new JsElem("minLayers","" + minLayers,true));
-		json.rootElement.children.add(new JsElem("maxLayers","" + maxLayers,true));
-		json.rootElement.children.add(new JsElem("code",encoder,true));
-		if (includeNN) {
-			JsElem neuronsElem = new JsElem("neurons",true);
-			json.rootElement.children.add(neuronsElem);
-			for (Neuron neuron: neuronsById.values()) {
-				JsFile neuronJson = neuron.toJson();
-				neuronsElem.children.add(neuronJson.rootElement);
-			}
-		}
-		return json;
 	}
 
 	private void resetNodeValues(List<NeuronLayer> layers) {

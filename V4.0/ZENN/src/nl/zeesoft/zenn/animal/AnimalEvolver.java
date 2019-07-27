@@ -45,7 +45,7 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 		TestCycleSet bestResults = getBestResultsNoLock();
 		unlockMe(this);
 		if (bestSoFar!=null) {
-			JsFile nnJson = bestSoFar.toJson();
+			JsFile nnJson = bestSoFar.toJson(false);
 			for (JsElem elem: nnJson.rootElement.children) {
 				json.rootElement.children.add(elem);
 			}
@@ -92,7 +92,9 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 					JsFile obj = new JsFile();
 					obj.fromStringBuilder(encoder);
 					if (obj.rootElement!=null && obj.rootElement.children.size()>0) {
+						lockMe(this);
 						id = res.results.get(0).id;
+						unlockMe(this);
 						fromJson(obj);
 					}
 				}
@@ -119,7 +121,9 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 			DatabaseRequest request = null;
 			if (id>0) {
 				request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
+				lockMe(this);
 				request.id = id;
+				unlockMe(this);
 			} else {
 				request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 				request.name = new ZStringBuilder("ZENN/Evolvers/" + getObjectName());

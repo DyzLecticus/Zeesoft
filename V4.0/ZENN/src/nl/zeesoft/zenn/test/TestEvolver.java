@@ -82,9 +82,9 @@ public class TestEvolver extends TestObject {
 				System.out.println();
 				System.out.println("Evolver result; ");
 				System.out.println();
-				bnn.toSystemOut();
+				System.out.println(bnn.getSummary());
 				System.out.println();
-				btcs.toSystemOut();
+				System.out.println(btcs.summary);
 			}
 			
 			messenger.stop();

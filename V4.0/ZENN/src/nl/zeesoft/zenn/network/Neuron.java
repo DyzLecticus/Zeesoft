@@ -35,15 +35,15 @@ public class Neuron implements JsAble {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("id","" + id));
-		json.rootElement.children.add(new JsElem("posX","" + posX));
-		json.rootElement.children.add(new JsElem("threshold","" + threshold));
-		JsElem sourcesElem = new JsElem("sources",true);
+		json.rootElement.children.add(new JsElem("x","" + posX));
+		json.rootElement.children.add(new JsElem("t","" + threshold));
+		JsElem sourcesElem = new JsElem("sls",true);
 		json.rootElement.children.add(sourcesElem);
 		for (NeuronLink source: sources) {
 			JsElem sourceElem = new JsElem();
 			sourcesElem.children.add(sourceElem);
-			sourceElem.children.add(new JsElem("sourceId","" + source.source.id));
-			sourceElem.children.add(new JsElem("weight","" + source.weight));
+			sourceElem.children.add(new JsElem("sId","" + source.source.id));
+			sourceElem.children.add(new JsElem("w","" + source.weight));
 		}
 		return json;
 	}
@@ -52,15 +52,15 @@ public class Neuron implements JsAble {
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			id = json.rootElement.getChildInt("id");
-			posX = json.rootElement.getChildInt("posX");
-			threshold = json.rootElement.getChildFloat("threshold");
-			JsElem sourcesElem = json.rootElement.getChildByName("sources");
+			posX = json.rootElement.getChildInt("x");
+			threshold = json.rootElement.getChildFloat("t");
+			JsElem sourcesElem = json.rootElement.getChildByName("sls");
 			if (sourcesElem!=null) {
 				for (JsElem sourceElem: sourcesElem.children) {
-					int sourceId = sourceElem.getChildInt("sourceId");
+					int sourceId = sourceElem.getChildInt("sId");
 					for (NeuronLink link: sources) {
 						if (link.source.id==sourceId) {
-							link.weight = sourceElem.getChildFloat("weight");
+							link.weight = sourceElem.getChildFloat("w");
 							break;
 						}
 					}

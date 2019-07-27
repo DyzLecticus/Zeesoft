@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -16,6 +17,7 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 	public float						averageError		= 0.0F;
 	public SortedMap<Integer,Integer>	cyclesPerLevel		= new TreeMap<Integer,Integer>();
 	public SortedMap<Integer,Integer>	successesPerLevel	= new TreeMap<Integer,Integer>();
+	public ZStringBuilder				summary				= null;
 	
 	public boolean isSuccess(int level) {
 		boolean r = successes == cycles.size();
@@ -54,6 +56,11 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 	public void finalize() {
 		float totalError = 0.0F;
 		float total = 0.0F;
+		successes = 0;
+		averageError = 0.0F;
+		cyclesPerLevel.clear();
+		successesPerLevel.clear();
+		summary = null;
 		
 		for (TestCycle tc: cycles) {
 			int cycPerLevel = 1;
@@ -89,6 +96,7 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 		if (total>0.0F) {
 			averageError = totalError / total;
 		}
+		summary = getSummary();
 	}
 	
 	@Override
@@ -140,6 +148,9 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 			tc.copy(copyTc);
 			r.cycles.add(copyTc);
 		}
+		if (summary!=null) {
+			r.summary = new ZStringBuilder(summary);
+		}
 		return r;
 	}
 	
@@ -169,6 +180,7 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 			sucTotElem.children.add(new JsElem("successes","" + s));
 			sucTotElem.children.add(new JsElem("total","" + cyclesPerLevel.get(key)));
 		}
+		json.rootElement.children.add(new JsElem("summary",summary,true));
 		return json;
 	}
 
@@ -187,30 +199,62 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 					successesPerLevel.put(l,s);
 				}
 			}
+			summary = json.rootElement.getChildZStringBuilder("summary",summary);
 		}
 	}
 
-	public void toSystemOut() {
+	protected ZStringBuilder getSummary() {
+		ZStringBuilder r = new ZStringBuilder();
 		int c = 0;
 		for (TestCycle tc: cycles) {
 			c++;
-			System.out.println("Test cycle: " + c + ", level: " + tc.level + ", fired neurons: " + tc.firedNeurons.size() + ", fired links: " + tc.firedLinks.size() + ", success: " + tc.success);
+			r.append("Test cycle: ");
+			r.append("" + c);
+			r.append(", level: ");
+			r.append("" + tc.level);
+			r.append(", fired neurons: ");
+			r.append("" + tc.firedNeurons.size());
+			r.append(", fired links: ");
+			r.append("" + tc.firedLinks.size());
+			r.append( ", success: ");
+			r.append("" + tc.success);
+			r.append("\n");
+			
 			for (int n = 0; n < tc.outputs.length; n++) {
 				if (tc.outputs[n]!=tc.expectedOutputs[n]) {
-					System.out.println("  Output: " + n + ": " + tc.outputs[n] + ", expected: " + tc.expectedOutputs[n] + ", error: " + tc.errors[n]);
+					r.append("  Output: ");
+					r.append("" + n);
+					r.append(": ");
+					r.append("" + tc.outputs[n]);
+					r.append(", expected: ");
+					r.append("" + tc.expectedOutputs[n]);
+					r.append(", error: ");
+					r.append("" + tc.errors[n]);
+					r.append("\n");
 				}
 			}
 		}
-		System.out.println("Test cycle set average error: " + averageError + ", successes: " + successes);
+		r.append("Test cycle set average error: ");
+		r.append("" + averageError);
+		r.append(", successes: ");
+		r.append("" + successes);
+		r.append("\n");
 		if (cyclesPerLevel.size()>0) {
 			for (Integer key: cyclesPerLevel.keySet()) {
 				int successes = 0;
 				if (successesPerLevel.get(key)!=null) {
 					successes = successesPerLevel.get(key);
 				}
-				System.out.println("  Level: " + key + ", successes: " + successes + "/" + cyclesPerLevel.get(key));
+				r.append("  Level: ");
+				r.append("" + key);
+				r.append(", successes: ");
+				r.append("" + successes);
+				r.append("/");
+				r.append("" + cyclesPerLevel.get(key));
+				r.append("\n");
 			}
 		}
+		return r;
 	}
 	
 	protected TestCycleSet getCopyTestCycleSet() {

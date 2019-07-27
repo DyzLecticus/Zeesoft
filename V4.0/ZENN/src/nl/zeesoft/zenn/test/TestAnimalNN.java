@@ -55,9 +55,9 @@ public class TestAnimalNN extends TestObject {
 			tcs.initialize(nn,true);
 			nn.runTestCycleSet(tcs);
 			System.out.println();
-			nn.toSystemOut();
+			System.out.println(nn.getSummary());
 			System.out.println();
-			tcs.toSystemOut();
+			System.out.println(tcs.summary);
 		}
 	}
 }

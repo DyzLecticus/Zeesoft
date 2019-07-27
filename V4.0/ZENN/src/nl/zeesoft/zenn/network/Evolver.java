@@ -195,7 +195,7 @@ public class Evolver extends Locker {
 				viableNNs.put(finalResult,nn);
 			}
 			if (bestSoFar!=null) {
-				debugBest(bestResults,success);
+				debugBest(finalResult,success);
 			}
 			bestSoFar = nn;
 			bestResults = finalResult;
