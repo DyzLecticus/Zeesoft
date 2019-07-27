@@ -1,5 +1,6 @@
 package nl.zeesoft.zodb.db.idx;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -25,7 +26,7 @@ public abstract class IndexObject extends Locker {
 			@Override
 			public Object doLocked() {
 				boolean r = false;
-				List<IndexElement> elements = getObjectsNoLock(element);
+				List<IndexElement> elements = getObjectsSafeNoLock(element);
 				for (IndexElement elem: elements) {
 					if (elem.id!=element.id) {
 						r = true;
@@ -148,4 +149,13 @@ public abstract class IndexObject extends Locker {
 		}
 		return r;
 	}
+	
+	private List<IndexElement> getObjectsSafeNoLock(IndexElement element) {
+		List<IndexElement> r = getObjectsNoLock(element);
+		if (r==null) {
+			r = new ArrayList<IndexElement>();
+		}
+		return r;
+	}
+
 }

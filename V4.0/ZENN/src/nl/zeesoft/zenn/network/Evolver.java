@@ -35,7 +35,7 @@ public class Evolver extends Locker {
 	}
 	
 	public void initialize(NN baseNN, TestCycleSet baseTestCycleSet) {
-		initialize(baseNN,baseTestCycleSet,4);
+		initialize(baseNN,baseTestCycleSet,5);
 	}
 	
 	public void initialize(NN baseNN, TestCycleSet baseTestCycleSet,int slots) {
@@ -131,7 +131,7 @@ public class Evolver extends Locker {
 			debug("Stopped" + getTypeSafe() + " evolver");
 		}
 		lockMe(this);
-		working = r;
+		working = !r;
 		unlockMe(this);
 	}
 

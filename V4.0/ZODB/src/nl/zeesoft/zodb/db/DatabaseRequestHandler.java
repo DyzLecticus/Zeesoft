@@ -199,8 +199,11 @@ public class DatabaseRequestHandler {
 		checkRequestEncoded(response);
 		if (response.request.object==null || response.request.object.rootElement==null) {
 			response.errors.add(new ZStringBuilder("Request object is mandatory"));
-		} else if (response.request.object.toStringBuilder().length()>maxLenObj) {
-			response.errors.add(new ZStringBuilder("Request object must be smaller or equal to " + maxLenObj));
+		} else {
+			int length = response.request.object.toStringBuilder().length();
+			if (length>maxLenObj) {
+				response.errors.add(new ZStringBuilder("Request object must be smaller or equal to " + maxLenObj + " (size: " + length + ")"));
+			}
 		}
 	}
 	

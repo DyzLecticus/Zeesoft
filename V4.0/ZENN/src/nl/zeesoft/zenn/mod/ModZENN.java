@@ -4,10 +4,12 @@ import nl.zeesoft.zenn.animal.AnimalEvolver;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNIndexHandler;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.StateListener;
+import nl.zeesoft.zodb.db.Database;
+import nl.zeesoft.zodb.db.DatabaseStateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
 
-public class ModZENN extends ModObject implements StateListener {
+public class ModZENN extends ModObject implements StateListener, DatabaseStateListener {
 	public static final String		NAME						= "ZENN";
 	public static final String		DESC						= 
 		"Zeesoft Evolutionary Neural Networks provides an interface to manage artificial life.";
@@ -21,6 +23,7 @@ public class ModZENN extends ModObject implements StateListener {
 		desc.append(DESC);
 		herbivoreEvolver = new AnimalEvolver(config,true);
 		carnivoreEvolver = new AnimalEvolver(config,false);
+		config.getZODB().getDatabase().addListener(this);
 	}
 	
 	@Override
@@ -34,8 +37,6 @@ public class ModZENN extends ModObject implements StateListener {
 		super.initialize();
 		herbivoreEvolver.setDebug(configuration.isDebug());
 		carnivoreEvolver.setDebug(configuration.isDebug());
-		herbivoreEvolver.load();
-		carnivoreEvolver.load();
 	}
 	
 	@Override
@@ -47,7 +48,19 @@ public class ModZENN extends ModObject implements StateListener {
 
 	@Override
 	public void stateChanged(Object source, boolean open) {
-		if (open) {
+		if (source instanceof Database) {
+			if (open) {
+				herbivoreEvolver.load();
+				carnivoreEvolver.load();
+			} else {
+				herbivoreEvolver.stop();
+				carnivoreEvolver.stop();
+			}
 		}
+	}
+
+	@Override
+	public void keyChanged(StringBuilder newKey) {
+		// Ignore
 	}
 }

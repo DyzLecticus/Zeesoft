@@ -8,6 +8,7 @@ public class ZENNConfig extends Config {
 	protected void addModules() {
 		super.addModules();
 		getZODB().selfTest = false;
+		getZODB().maxLenObj = 999999;
 		addModule(new ModZENN(this));
 	}
 }
