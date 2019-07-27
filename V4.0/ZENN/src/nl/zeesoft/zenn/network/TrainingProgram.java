@@ -105,7 +105,7 @@ public class TrainingProgram {
 	}
 	
 	public boolean isSuccess() {
-		return finalResults.isSuccess(minSuccessLevel);
+		return finalResults.isSuccess(-1);
 	}
 	
 	protected void trainVariation(NN nn, int method, TestCycleSet tcs, float learningRate) {
@@ -171,13 +171,13 @@ public class TrainingProgram {
 									if (link.weight<0) {
 										link.weight = link.weight * -1;
 									} else {
-										link.weight += getRandomFloat(learningRate);
+										link.weight = NN.distribute(link.weight + getRandomFloat(learningRate));
 									}
 								} else {
 									if (flip && link.weight>0) {
 										link.weight = link.weight * -1;
 									} else {
-										link.weight -= getRandomFloat(learningRate);
+										link.weight = NN.distribute(link.weight - getRandomFloat(learningRate));
 									}
 								}
 							}

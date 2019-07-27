@@ -128,6 +128,16 @@ public class NN implements JsAble {
 		return err;
 	}
 
+	public static float distribute(float x) {
+		float r = 0.0F;
+		if (x > 0.0F) {
+			r = (float) Math.tanh(x);
+		} else if (x < 0.0F) {
+			r = (float) Math.tan(x * -1.0F) * 1.0F;
+		}
+	    return r;
+	}
+	
 	@Override
 	public JsFile toJson() {
 		return toJson(true);
@@ -213,7 +223,7 @@ public class NN implements JsAble {
 						}
 					}
 					if (value>0.0F && maxValue>0.0F) {
-						neuron.value = (value / maxValue);
+						neuron.value = distribute(value / maxValue);
 					}
 				}
 			}
