@@ -14,9 +14,9 @@ import nl.zeesoft.zenn.network.TestCycleSet;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
-import nl.zeesoft.zodb.db.init.InitializerDatabaseObject;
+import nl.zeesoft.zodb.db.init.Persistable;
 
-public class AnimalEvolver extends Evolver implements InitializerDatabaseObject, JsClientListener {
+public class AnimalEvolver extends Evolver implements Persistable, JsClientListener {
 	private Config		configuration	= null;
 	private boolean		herbivore		= true;
 	
@@ -40,20 +40,21 @@ public class AnimalEvolver extends Evolver implements InitializerDatabaseObject,
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("herbivore","" + herbivore));
-		NN bestSoFar = getBestSoFar();
+		lockMe(this);
+		NN bestSoFar = getBestSoFarNoLock();
+		TestCycleSet bestResults = getBestResultsNoLock();
+		unlockMe(this);
 		if (bestSoFar!=null) {
 			JsFile nnJson = bestSoFar.toJson();
 			for (JsElem elem: nnJson.rootElement.children) {
 				json.rootElement.children.add(elem);
 			}
-			TestCycleSet bestResults = getBestResults();
 			JsFile resJson = bestResults.toJson();
 			for (JsElem elem: resJson.rootElement.children) {
 				json.rootElement.children.add(elem);
 			}
-			JsElem code = json.rootElement.getChildByName("code");
-			json.rootElement.children.remove(code);
-			json.rootElement.children.add(code);
+			moveElemToBottom(json.rootElement,"neurons");
+			moveElemToBottom(json.rootElement,"code");
 		}
 		return json;
 	}
@@ -105,26 +106,30 @@ public class AnimalEvolver extends Evolver implements InitializerDatabaseObject,
 	}
 	
 	public void load() {
-		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-		request.name = new ZStringBuilder("ZENN/Evolvers/" + getObjectName());
-		request.encoding = DatabaseRequest.ENC_KEY;
-		configuration.handleDatabaseRequest(request,this,3);
+		if (configuration!=null) {
+			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+			request.name = new ZStringBuilder("ZENN/Evolvers/" + getObjectName());
+			request.encoding = DatabaseRequest.ENC_KEY;
+			configuration.handleDatabaseRequest(request,this,3);
+		}
 	}
 	
 	protected void save() {
-		DatabaseRequest request = null;
-		if (id>0) {
-			request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
-			request.id = id;
-		} else {
-			request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-			request.name = new ZStringBuilder("ZENN/Evolvers/" + getObjectName());
+		if (configuration!=null) {
+			DatabaseRequest request = null;
+			if (id>0) {
+				request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
+				request.id = id;
+			} else {
+				request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
+				request.name = new ZStringBuilder("ZENN/Evolvers/" + getObjectName());
+			}
+			request.encoding = DatabaseRequest.ENC_KEY;
+			ZStringEncoder encoder = new ZStringEncoder(toJson().toStringBuilder());
+			encoder.encodeKey(configuration.getZODBKey(),0);
+			request.encoded = encoder;
+			configuration.handleDatabaseRequest(request,this,3);
 		}
-		request.encoding = DatabaseRequest.ENC_KEY;
-		ZStringEncoder encoder = new ZStringEncoder(toJson().toStringBuilder());
-		encoder.encodeKey(configuration.getZODBKey(),0);
-		request.encoded = encoder;
-		configuration.handleDatabaseRequest(request,this,3);
 	}
 	
 	@Override
@@ -141,11 +146,19 @@ public class AnimalEvolver extends Evolver implements InitializerDatabaseObject,
 		return r;
 	}
 	
+	private void moveElemToBottom(JsElem parent, String name) {
+		JsElem elem = parent.getChildByName(name);
+		if (elem!=null) {
+			parent.children.remove(elem);
+			parent.children.add(elem);
+		}
+	}
+	
 	private void initialize() {
 		AnimalNN nn = new AnimalNN();
 		nn.initialize();
 		AnimalTestCycleSet tcs = new AnimalTestCycleSet();
 		tcs.initialize(nn, herbivore);
-		initialize(nn,tcs,3);
+		initialize(nn,tcs);
 	}
 }

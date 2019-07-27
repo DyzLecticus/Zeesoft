@@ -110,6 +110,8 @@ public class TrainingProgram {
 	
 	protected void trainVariation(NN nn, int method, TestCycleSet tcs, float learningRate) {
 		if (method==0) {
+			trainVariationRandomUseAllPaths(nn,tcs,learningRate);
+		} else {
 			if (trainedCycles % 5 == 0) {
 				trainVariationRandom(nn,learningRate);
 			} else if (trainedCycles % 3 == 0) {
@@ -117,8 +119,6 @@ public class TrainingProgram {
 			} else {
 				trainVariationRandomUsePaths(nn,tcs,learningRate);
 			}
-		} else {
-			trainVariationRandomUsePaths(nn,tcs,learningRate);
 		}
 	}
 
@@ -134,13 +134,68 @@ public class TrainingProgram {
 		return random.nextFloat() > 0.5F;
 	}
 	
+	protected List<NeuronLayer> getLayers(NN nn) {
+		return nn.getLayers();
+	}
+
+	private void trainVariationRandomUseAllPaths(NN nn, TestCycleSet tcs, float learningRate) {
+		if (learningRate>0.0F) {
+			tcs = tcs.copy();
+			
+			List<TrainingPath> allPaths = null;
+			for (Integer l: tcs.getLevels()) {
+				allPaths = getAllPaths(nn,tcs,allPaths,l);
+			}
+			
+			for (TrainingPath path: allPaths) {
+				Neuron current = path.inputNeuron;
+				if (path.error>0.0F && current.value<current.threshold) {
+					current.threshold = current.value;
+				}
+				Neuron next = null;
+				for (int i = 0; i <= path.middleNeurons.size(); i++) {
+					boolean flip = false;
+					if (i==path.middleNeurons.size()) {
+						next = path.outputNeuron;
+						flip = true;
+					} else {
+						next = path.middleNeurons.get(i);
+					}
+					if (
+						(path.error>0.0F && next.value<=next.threshold) ||
+						(path.error<0.0F && next.value>=next.threshold)
+						) {
+						for (NeuronLink link: current.targets) {
+							if (link.target==next) {
+								if (path.error>0.0F) {
+									if (link.weight<0) {
+										link.weight = link.weight * -1;
+									} else {
+										link.weight += getRandomFloat(learningRate);
+									}
+								} else {
+									if (flip && link.weight>0) {
+										link.weight = link.weight * -1;
+									} else {
+										link.weight -= getRandomFloat(learningRate);
+									}
+								}
+							}
+						}
+					}
+					current = next;
+				}
+			}
+		}
+	}
+
 	private void trainVariationRandomUsePaths(NN nn, TestCycleSet tcs, float learningRate) {
 		if (learningRate>0.0F) {
 			tcs = tcs.copy();
 			for (TestCycle tc: tcs.cycles) {
 				nn.runCycle(tc);
 				if (!tc.success) {
-					List<TrainingPath> positivePaths = getPositivePaths(nn,tc);
+					List<TrainingPath> positivePaths = getPositivePaths(nn,tc,null);
 					List<TrainingPath> negativePaths = getNegativePaths(nn,tc,positivePaths);
 					List<TrainingPath> paths = new ArrayList<TrainingPath>(positivePaths);
 					for (TrainingPath tp: negativePaths) {
@@ -214,7 +269,7 @@ public class TrainingProgram {
 	
 	private void trainVariationRandom(NN nn, float learningRate) {
 		if (learningRate>0.0F) {
-			List<NeuronLayer> layers = nn.getLayers();
+			List<NeuronLayer> layers = getLayers(nn);
 			for (NeuronLayer layer: layers) {
 				for (Neuron neuron: layer.neurons) {
 					if (getRandomBoolean()) {
@@ -252,20 +307,47 @@ public class TrainingProgram {
 		}
 	}
 	
-	private List<TrainingPath> getNegativePaths(NN nn,TestCycle tc,List<TrainingPath> positivePaths) {
-		return getPaths(nn,tc,positivePaths);
+	private List<TrainingPath> getAllPaths(NN nn,TestCycleSet tcs,List<TrainingPath> exclude,int focusLevel) {
+		List<TrainingPath> r = new ArrayList<TrainingPath>();
+		if (exclude!=null) {
+			for (TrainingPath tp: exclude) {
+				r.add(tp);
+			}
+		}
+		for (TestCycle tc: tcs.cycles) {
+			if (tc.level==focusLevel) {
+				nn.runCycle(tc);
+			}
+		}
+		for (TestCycle tc: tcs.cycles) {
+			if (tc.level==focusLevel && !tc.success) {
+				List<TrainingPath> pPaths = getPositivePaths(nn,tc,r);
+				List<TrainingPath> nPaths = getNegativePaths(nn,tc,r);
+				for (TrainingPath tp: pPaths) {
+					r.add(tp);
+				}
+				for (TrainingPath tp: nPaths) {
+					r.add(tp);
+				}
+			}
+		}
+		return r;
 	}
 	
-	private List<TrainingPath> getPositivePaths(NN nn,TestCycle tc) {
-		return getPaths(nn,tc,null);
+	private List<TrainingPath> getPositivePaths(NN nn,TestCycle tc,List<TrainingPath> exclude) {
+		return getPaths(nn,tc,exclude,true);
 	}
 	
-	private List<TrainingPath> getPaths(NN nn,TestCycle tc,List<TrainingPath> exclude) {
+	private List<TrainingPath> getNegativePaths(NN nn,TestCycle tc,List<TrainingPath> exclude) {
+		return getPaths(nn,tc,exclude,false);
+	}
+	
+	private List<TrainingPath> getPaths(NN nn,TestCycle tc,List<TrainingPath> exclude,boolean positive) {
 		List<TrainingPath> r = new ArrayList<TrainingPath>();
 		for (int e = 0; e < tc.outputs.length; e++) {
 			if (
-				(exclude==null && tc.errors[e]>0.0F) ||
-				(exclude!=null && tc.errors[e]<0.0F)
+				(positive && tc.errors[e]>0.0F) ||
+				(!positive && tc.errors[e]<0.0F)
 				) {
 				for (int in = 0; in < tc.inputs.length; in++) {
 					if (tc.inputs[in]>0.0F) {

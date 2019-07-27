@@ -66,7 +66,7 @@ public class TestEvolver extends TestObject {
 			tcs.initialize(nn,true);
 			
 			Evolver evolver = new Evolver(messenger,union);
-			evolver.initialize(nn,tcs,4);
+			evolver.initialize(nn,tcs);
 			evolver.setSleepMs(100);
 			evolver.setDebug(true);
 			

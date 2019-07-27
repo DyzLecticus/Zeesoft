@@ -34,6 +34,10 @@ public class Evolver extends Locker {
 		this.union = uni;
 	}
 	
+	public void initialize(NN baseNN, TestCycleSet baseTestCycleSet) {
+		initialize(baseNN,baseTestCycleSet,4);
+	}
+	
 	public void initialize(NN baseNN, TestCycleSet baseTestCycleSet,int slots) {
 		initialize(baseNN,baseTestCycleSet,new TrainingProgram(baseNN,baseTestCycleSet),slots);
 	}
@@ -134,9 +138,7 @@ public class Evolver extends Locker {
 	public NN getBestSoFar() {
 		NN r = null;
 		lockMe(this);
-		if (bestSoFar!=null) {
-			r = bestSoFar.copy();
-		}
+		r = getBestSoFarNoLock();
 		unlockMe(this);
 		return r;
 	}
@@ -144,10 +146,24 @@ public class Evolver extends Locker {
 	public TestCycleSet getBestResults() {
 		TestCycleSet r = null;
 		lockMe(this);
+		r = getBestResultsNoLock();
+		unlockMe(this);
+		return r;
+	}
+	
+	protected NN getBestSoFarNoLock() {
+		NN r = null;
+		if (bestSoFar!=null) {
+			r = bestSoFar.copy();
+		}
+		return r;
+	}
+
+	public TestCycleSet getBestResultsNoLock() {
+		TestCycleSet r = null;
 		if (bestResults!=null) {
 			r = bestResults.copy();
 		}
-		unlockMe(this);
 		return r;
 	}
 	
@@ -155,7 +171,7 @@ public class Evolver extends Locker {
 		lockMe(this);
 		this.bestSoFar = bestSoFar;
 		this.bestResults = bestResults;
-		debug("Best" + getTypeSafe() + " neural net so far: " + bestResults.successes + "/" + bestResults.cycles.size() + " " + bestResults.averageError);
+		debugBest(bestResults,false);
 		unlockMe(this);
 	}
 
@@ -175,14 +191,11 @@ public class Evolver extends Locker {
 		boolean selected = false;
 		lockMe(this);
 		if (bestSoFar==null || finalResult.compareTo(bestResults)>0) {
-			String viable = "";
 			if (success) {
 				viableNNs.put(finalResult,nn);
-				viable = " viable";
 			}
 			if (bestSoFar!=null) {
-				debug("Best" + viable + getTypeSafe() + " neural net so far: " + finalResult.successes + "/" + finalResult.cycles.size() + " " + finalResult.averageError);
-				bestSoFar.destroy();
+				debugBest(bestResults,success);
 			}
 			bestSoFar = nn;
 			bestResults = finalResult;
@@ -253,5 +266,13 @@ public class Evolver extends Locker {
 		if (debug && getMessenger()!=null) {
 			getMessenger().debug(this,msg);
 		}
+	}
+	
+	protected void debugBest(TestCycleSet best, boolean success) {
+		String viable = "";
+		if (success) {
+			viable = " viable";
+		}
+		debug("Best" + viable + getTypeSafe() + " neural net so far: " + best.successes + "/" + best.cycles.size() + " " + best.averageError);
 	}
 }

@@ -24,7 +24,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	private List<StateListener>				listeners		= new ArrayList<StateListener>();
 	private int								timeoutSeconds	= 0;
 	
-	private List<InitializerDatabaseObject>	objects			= new ArrayList<InitializerDatabaseObject>();
+	private List<Persistable>	objects			= new ArrayList<Persistable>();
 	
 	private boolean							initializing	= false;
 	private boolean							initialized		= false;
@@ -149,7 +149,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 						todo = 0;
 						for (DatabaseResult result: res.results) {
 							ZStringBuilder objectName = result.name.substring(namePrefix.length());
-							InitializerDatabaseObject object = getObjectByNameNoLock(objectName);
+							Persistable object = getObjectByNameNoLock(objectName);
 							if (object==null) {
 								object = getNewObjectNoLock(objectName);
 								objects.add(object);
@@ -164,7 +164,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 					lockMe(this);
 					todo--;
 					ZStringBuilder objectName = res.request.name.substring(namePrefix.length());
-					InitializerDatabaseObject object = getObjectByNameNoLock(objectName);
+					Persistable object = getObjectByNameNoLock(objectName);
 					if (object!=null && res.results.size()>0 && res.results.get(0).encoded!=null && res.results.get(0).encoded.length()>0) {
 						ZStringEncoder encoder = new ZStringEncoder(res.results.get(0).encoded);
 						encoder.decodeKey(configuration.getZODBKey(),0);
@@ -201,9 +201,9 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	
 	protected abstract void initializeDatabaseObjectsNoLock();
 
-	protected abstract InitializerDatabaseObject getNewObjectNoLock(ZStringBuilder name);
+	protected abstract Persistable getNewObjectNoLock(ZStringBuilder name);
 	
-	protected void loadedObject(InitializerDatabaseObject object) {
+	protected void loadedObject(Persistable object) {
 		// Override to extend
 	}
 	
@@ -211,15 +211,15 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		maxObjects = max;
 	}
 	
-	protected void addObjectNoLock(InitializerDatabaseObject object) {
+	protected void addObjectNoLock(Persistable object) {
 		if (object!=null) {
 			objects.add(object);
 		}
 	}
 
-	protected InitializerDatabaseObject getObjectByNameNoLock(ZStringBuilder name) {
-		InitializerDatabaseObject r = null;
-		for (InitializerDatabaseObject object: objects) {
+	protected Persistable getObjectByNameNoLock(ZStringBuilder name) {
+		Persistable r = null;
+		for (Persistable object: objects) {
 			if (object.getObjectName().equals(name)) {
 				r = object;
 				break;
@@ -228,13 +228,13 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		return r;
 	}
 	
-	protected List<InitializerDatabaseObject> getObjectsNoLock() {
-		return new ArrayList<InitializerDatabaseObject>(objects);
+	protected List<Persistable> getObjectsNoLock() {
+		return new ArrayList<Persistable>(objects);
 	}
 	
 	private void addObjectsToDatabaseNoLock() {
 		todo = objects.size();
-		for (InitializerDatabaseObject object: objects) {
+		for (Persistable object: objects) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 			request.name = getFullObjectName(object.getObjectName());
 			request.encoding = DatabaseRequest.ENC_KEY;
@@ -252,7 +252,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	}
 
 	private void getObjectsFromDatabaseNoLock() {
-		for (InitializerDatabaseObject object: objects) {
+		for (Persistable object: objects) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 			request.name = getFullObjectName(object.getObjectName());
 			request.encoding = DatabaseRequest.ENC_KEY;

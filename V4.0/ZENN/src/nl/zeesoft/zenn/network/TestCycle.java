@@ -26,23 +26,26 @@ public class TestCycle extends Cycle {
 		super.copy(toCycle);
 		if (toCycle instanceof TestCycle) {
 			TestCycle tc = (TestCycle) toCycle;
+			tc.level = level;
 			tc.expectedOutputs = new float[expectedOutputs.length];
 			for (int i = 0; i < tc.expectedOutputs.length; i++) {
 				tc.expectedOutputs[i] = expectedOutputs[i];
 			}
+			tc.errorTolerance = errorTolerance;
 			tc.errors = new float[errors.length];
 			for (int i = 0; i < tc.errors.length; i++) {
-				tc.errors[i] = 0.0F;
+				tc.errors[i] = errors[i];
 			}
-			tc.errorTolerance = errorTolerance;
-			tc.level = level;
+			tc.success = success;
 		}
 	}
 	
 	@Override
 	protected void finalize(NN nn) {
 		super.finalize(nn);
+		success = true;
 		for (int n = 0; n < outputs.length; n++) {
+			errors[n] = 0.0F;
 			if (outputs[n]!=expectedOutputs[n]) {
 				Neuron output = nn.getOutputLayer().neurons.get(n);
 				if (normalizeOutput) {

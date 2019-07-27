@@ -45,7 +45,13 @@ public class NNProperties {
 		return THRESHOLD_WEIGHT_START;
 	}
 	
-	protected float getThresholdWeight(int index) {
-		return code.get(index);
+	protected float getThresholdWeight(int index,boolean threshold) {
+		float r = code.get(THRESHOLD_WEIGHT_START + index);
+		if (threshold) {
+			r = 0.0F + (r * 0.5F);
+		} else  {
+			r = -0.1F + (r * 0.2F);
+		}
+		return r;
 	}
 }

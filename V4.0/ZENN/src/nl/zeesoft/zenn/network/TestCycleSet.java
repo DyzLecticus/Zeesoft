@@ -34,6 +34,23 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 		return r;
 	}
 	
+	public List<Integer> getLevels() {
+		List<Integer> r = new ArrayList<Integer>();
+		for (TestCycle tc: cycles) {
+			if (!r.contains(tc.level)) {
+				int add = r.size();
+				for (Integer l: r) {
+					if (tc.level<l) {
+						add = r.indexOf(l);
+						break;
+					}
+				}
+				r.add(add,tc.level);
+			}
+		}
+		return r;
+	}
+
 	public void finalize() {
 		float totalError = 0.0F;
 		float total = 0.0F;

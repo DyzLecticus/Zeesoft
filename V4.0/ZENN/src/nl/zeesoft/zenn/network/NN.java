@@ -3,6 +3,8 @@ package nl.zeesoft.zenn.network;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
@@ -22,6 +24,8 @@ public class NN implements JsAble {
 	private NeuronLayer						inputLayer		= new NeuronLayer(); 
 	private List<NeuronLayer>				middleLayers	= new ArrayList<NeuronLayer>();
 	private NeuronLayer						outputLayer		= new NeuronLayer(); 
+	
+	private SortedMap<Integer,Neuron>		neuronsById		= new TreeMap<Integer,Neuron>();
 	
 	public GeneticCode getCode() {
 		return code;
@@ -60,25 +64,31 @@ public class NN implements JsAble {
 			int nodesPerLayer = properties.getMiddleLayerNodes(inputNeurons,outputNeurons);
 			int inputStartPosX = (nodesPerLayer - inputNeurons) / 2;
 			int outputStartPosX = (nodesPerLayer - outputNeurons) / 2;
-			int nodeId = 1;
+			int id = 1;
 			for (int n = 0; n < inputNeurons; n++) {
-				inputLayer.neurons.add(new Neuron(nodeId,inputStartPosX));
+				Neuron neuron = new Neuron(id,inputStartPosX);
+				neuronsById.put(id,neuron);
+				inputLayer.neurons.add(neuron);
 				inputStartPosX++;
-				nodeId++;
+				id++;
 			}
 			int numMidLayers = properties.getMiddleLayers(minLayers, maxLayers);
 			for (int l = 0; l < numMidLayers; l++) {
 				NeuronLayer layer = new NeuronLayer();
 				for (int n = 0; n < nodesPerLayer; n++) {
-					layer.neurons.add(new Neuron(nodeId,n));
-					nodeId++;
+					Neuron neuron = new Neuron(id,n);
+					neuronsById.put(id,neuron);
+					layer.neurons.add(neuron);
+					id++;
 				}
 				middleLayers.add(layer);
 			}
 			for (int n = 0; n < outputNeurons; n++) {
-				outputLayer.neurons.add(new Neuron(nodeId,outputStartPosX));
+				Neuron neuron = new Neuron(id,outputStartPosX);
+				neuronsById.put(id,neuron);
+				outputLayer.neurons.add(neuron);
 				outputStartPosX++;
-				nodeId++;
+				id++;
 			}
 	
 			// Initialize thresholds
@@ -87,7 +97,7 @@ public class NN implements JsAble {
 			for (NeuronLayer layer: layers) {
 				for (Neuron neuron: layer.neurons) {
 					if (layer!=inputLayer) {
-						neuron.threshold = properties.getThresholdWeight(i);
+						neuron.threshold = properties.getThresholdWeight(i,true);
 						i++;
 					} else {
 						neuron.threshold = 0.0F;
@@ -106,10 +116,10 @@ public class NN implements JsAble {
 							NeuronLink link = new NeuronLink();
 							link.target = target;
 							link.source = neuron;
-							link.weight = properties.getThresholdWeight(i);
+							link.weight = properties.getThresholdWeight(i,false);
+							i++;
 							neuron.targets.add(link);
 							target.sources.add(link);  
-							i++;
 						}
 					}
 				}
@@ -137,6 +147,18 @@ public class NN implements JsAble {
 				this.code.setCode(encoder);
 				initialize(inputNeurons,outputNeurons,minLayers,maxLayers);
 			}
+			JsElem neuronsElem = json.rootElement.getChildByName("neurons");
+			if (neuronsElem!=null) {
+				for (JsElem neuronElem: neuronsElem.children) {
+					int id = neuronElem.getChildInt("id");
+					Neuron neuron = neuronsById.get(id);
+					if (neuron!=null) {
+						JsFile neuronJson = new JsFile();
+						neuronJson.rootElement = neuronElem;
+						neuron.fromJson(neuronJson);
+					}
+				}
+			}
 		}
 	}
 	
@@ -147,6 +169,7 @@ public class NN implements JsAble {
 		}
 		middleLayers.clear();
 		outputLayer.destroy();
+		neuronsById.clear();
 	}
 	
 	public void runTestCycleSet(TestCycleSet tcs) {
@@ -312,7 +335,12 @@ public class NN implements JsAble {
 		json.rootElement.children.add(new JsElem("maxLayers","" + maxLayers,true));
 		json.rootElement.children.add(new JsElem("code",encoder,true));
 		if (includeNN) {
-			// TODO: Neural network thresholds and weights
+			JsElem neuronsElem = new JsElem("neurons",true);
+			json.rootElement.children.add(neuronsElem);
+			for (Neuron neuron: neuronsById.values()) {
+				JsFile neuronJson = neuron.toJson();
+				neuronsElem.children.add(neuronJson.rootElement);
+			}
 		}
 		return json;
 	}

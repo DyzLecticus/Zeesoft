@@ -1,6 +1,10 @@
 package nl.zeesoft.zenn.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
@@ -67,7 +71,7 @@ public class TestAnimalEvolver extends TestObject {
 			tcs.initialize(nn,true);
 			
 			AnimalEvolver evolver = new AnimalEvolver(messenger,union,true);
-			evolver.initialize(nn,tcs,4);
+			evolver.initialize(nn,tcs);
 			evolver.setSleepMs(100);
 			evolver.setDebug(true);
 			evolver.start();
@@ -81,15 +85,27 @@ public class TestAnimalEvolver extends TestObject {
 			AnimalNN bnn = (AnimalNN) evolver.getBestSoFar();
 			if (bnn!=null) {
 				JsFile json = evolver.toJson();
-				System.out.println();
-				System.out.println("Evolver JSON; ");
-				System.out.println(json.toStringBuilderReadFormat());
-				
 				evolver = new AnimalEvolver(messenger,union,true);
 				evolver.fromJson(json);
 				JsFile copy = evolver.toJson();
 				
 				assertEqual(copy.toStringBuilderReadFormat(),json.toStringBuilderReadFormat(),"Animal evolver does not match orignial");
+				
+				JsElem neuronsElem = json.rootElement.getChildByName("neurons");
+				assertEqual(neuronsElem!=null,true,"Evolver JSON neurons element not found");
+				if (neuronsElem!=null) {
+					int i = 0;
+					List<JsElem> children = new ArrayList<JsElem>(neuronsElem.children);
+					for (JsElem neuronElem: children) {
+						if (i>=1 && i < (children.size() - 1)) {
+							neuronsElem.children.remove(neuronElem);
+						}
+						i++;
+					}
+				}
+				System.out.println();
+				System.out.println("Evolver JSON; ");
+				System.out.println(json.toStringBuilderReadFormat());
 			}
 
 			messenger.stop();

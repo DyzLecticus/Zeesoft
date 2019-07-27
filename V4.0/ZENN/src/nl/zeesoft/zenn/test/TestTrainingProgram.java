@@ -57,6 +57,7 @@ public class TestTrainingProgram extends TestObject {
 			AnimalTestCycleSet tcs = new AnimalTestCycleSet();
 			tcs.initialize(nn,true);
 			TrainingProgram tp = new TrainingProgram(nn,tcs);
+			tp.setMethod(1);
 			long started = System.currentTimeMillis();
 			System.out.println("Training animal neural network ...");
 			AnimalNN trainedNN = (AnimalNN) tp.runProgram();
