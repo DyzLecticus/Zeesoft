@@ -200,7 +200,7 @@ public class Evolver extends Locker {
 			bestSoFar = nn;
 			bestResults = finalResult;
 			selected = true;
-		} else {
+		} else if (bestSoFar!=nn && !viableNNs.containsValue(nn)) {
 			nn.destroy();
 		}
 		unlockMe(this);

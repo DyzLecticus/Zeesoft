@@ -52,6 +52,7 @@ public class TrainingProgram {
 
 	public NN runProgram() {
 		NN r = baseNN.copy();
+		
 		trainedCycles = 0;
 		
 		initialResults = baseTestCycleSet.copy();
@@ -71,6 +72,7 @@ public class TrainingProgram {
 			r.runTestCycleSet(tcs);
 			err = tcs.averageError;
 			r.trainedCycle();
+			baseNN.trainedCycle();
 		}
 		
 		finalResults = baseTestCycleSet.copy();
@@ -225,11 +227,7 @@ public class TrainingProgram {
 						System.out.println("Layer: " + l + ", bias deltas; ");
 						for (int be = 0; be < biasDeltas.length; be++) {
 							Neuron neuron = layer.neurons.get(be);
-							System.out.println("  Error: " + biasDeltas[be] + ", new bias: " + neuron.bias);
-						}
-						System.out.println("Previous layer: " + (l - 1) + ", deltas; ");
-						for (int pe = 0; pe < pDeltas.length; pe++) {
-							System.out.println("  " + pDeltas[pe]);
+							System.out.println("  Delta: " + biasDeltas[be] + ", new bias: " + neuron.bias);
 						}
 					}
 					
