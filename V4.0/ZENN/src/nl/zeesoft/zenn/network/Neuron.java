@@ -68,4 +68,26 @@ public class Neuron implements JsAble {
 			}
 		}
 	}
+	
+	public NeuronLink getSourceByNeuron(Neuron source) {
+		NeuronLink r = null;
+		for (NeuronLink link: sources) {
+			if (link.source==source) {
+				r = link;
+			}
+		}
+		return r;
+	}
+	
+	public float getTotalSourceWeight() {
+		float r = 0;
+		for (NeuronLink source: sources) {
+			if (source.weight>0.0F) {
+				r += source.weight;
+			} else if (source.weight<0.0F) {
+				r -= source.weight * -1.0F;
+			}
+		}
+		return r;
+	}
 }

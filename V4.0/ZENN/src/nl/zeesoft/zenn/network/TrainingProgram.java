@@ -162,46 +162,38 @@ public class TrainingProgram {
 			if (!tc.success) {
 				System.out.println("BEFORE " + tc.getSummary(1));
 				
-				NeuronLayer pLayer = layers.get(layers.size()-2);
-				for (int n = 0; n < tc.errors.length; n++) {
-					Neuron neuron = nn.getOutputLayer().neurons.get(n);
-					if (tc.errors[n]!=0.0F) {
-						for (Neuron pNeuron: pLayer.neurons) {
-							if (pNeuron.value>pNeuron.bias) {
-								List<NeuronLink> sources = new ArrayList<NeuronLink>();
-								for (NeuronLink source: neuron.sources) {
-									if (source.source==pNeuron) {
-										sources.add(source);
-									}
-								}
-								for (NeuronLink source: sources) {
-									float size = sources.size();
-									//System.out.println("< error: " + tc.errors[n] + ", weight: " + source.weight + ", sources: " + sources.size());
-									if (tc.errors[n]>0.0F) {
-										if (source.weight<0.0F) {
-											source.weight = (source.weight * -1.0F) + (tc.errors[n]  / size) + learningRate;
-										} else {
-											source.weight = source.weight + (tc.errors[n] / size) + learningRate;
-										}
-									} else if (tc.errors[n]<0.0F) {
-										if (source.weight>0.0F) {
-											//System.out.println("< error: " + tc.errors[n] + ", weight: " + source.weight + ", sources: " + sources.size());
-											source.weight = (source.weight + ((tc.errors[n] * -1.0F) / size) + learningRate) * -1.0F;
-											//source.weight = source.weight * -1F;
-											//System.out.println("> error: " + tc.errors[n] + ", weight: " + source.weight + ", sources: " + sources.size());
-										} else {
-											System.out.println("< error: " + tc.errors[n] + ", weight: " + source.weight + ", sources: " + sources.size());
-											source.weight = ((source.weight * -1.0F) + ((tc.errors[n] * -1.0F) / size) + learningRate) * -1.0F;
-											System.out.println("> error: " + tc.errors[n] + ", weight: " + source.weight + ", sources: " + sources.size());
-										}
-									}
-									source.weight = NN.tanh(source.weight);
-									//System.out.println("> error: " + tc.errors[n] + ", weight: " + source.weight + ", sources: " + sources.size());
-								}
+				float[] errors = tc.errors;
+				for (int l = layers.size() - 1; l>0 ; l--) {
+					NeuronLayer layer = layers.get(l);
+					NeuronLayer pLayer = layers.get(l - 1);
+					
+					float[] pErrors = new float[pLayer.neurons.size()];
+					for (int pe = 0; pe < pErrors.length; pe++) {
+						pErrors[pe] = 0.0F; 
+					}
+					
+					for (int e = 0; e < errors.length; e++) {
+						if (errors[e]!=0.0F) {
+							Neuron neuron = layer.neurons.get(e);
+							float totalWeight = neuron.getTotalSourceWeight();
+							for (int pe = 0; pe < pErrors.length; pe++) {
+								Neuron pNeuron = pLayer.neurons.get(pe);
+								NeuronLink link = neuron.getSourceByNeuron(pNeuron);
+								float ratio = link.weight / totalWeight;
+								pErrors[pe] = ratio * errors[e];
 							}
 						}
 					}
+					
+					System.out.println("Previous layer: " + (l - 1));
+					for (int pe = 0; pe < pErrors.length; pe++) {
+						System.out.println("  " + pErrors[pe]);
+					}
+					
+					
+					errors = pErrors;
 				}
+				
 				
 				TestCycle copy = new TestCycle();
 				copy.initialize(nn);
@@ -212,6 +204,8 @@ public class TrainingProgram {
 				if (!copy.success) {
 					break;
 				}
+
+				break;
 			}
 		}	
 	}
