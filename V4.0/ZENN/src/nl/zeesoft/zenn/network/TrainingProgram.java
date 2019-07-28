@@ -12,8 +12,8 @@ public class TrainingProgram {
 	private int							method				= 0;
 	private int							minSuccessLevel		= 0;
 	private int							trainCycles			= 10000;
-	private float						minLearningRate		= 0.05F;
-	private float						maxLearningRate		= 0.3F;
+	private float						minLearningRate		= 0.00001F;
+	private float						maxLearningRate		= 0.1F;
 	
 	private int							trainedCycles		= 0;
 	private TestCycleSet				initialResults		= null;
@@ -62,7 +62,8 @@ public class TrainingProgram {
 		for (int c = 0; c < trainCycles; c++) {
 			trainedCycles++;
 			TestCycleSet tcs = baseTestCycleSet.copy(random);
-			float learningRate = (NN.sigmoid(err) / 10.0F);
+			float add = NN.tanh(err / 10.0F);
+			float learningRate = minLearningRate + add;
 			if (learningRate<minLearningRate) {
 				learningRate=minLearningRate;
 			} else if (learningRate>maxLearningRate) {
