@@ -23,7 +23,7 @@ public class Evolver extends Locker {
 	private float 						mutationPercentage		= 0.01F;
 	private int 						trainRepeat				= 20;
 	private int							trainCycles				= 50;
-	private int							trainSleepMs			= 2000;
+	private int							trainSleepMs			= 1000;
 	
 	private NN							bestSoFar				= null;
 	private TestCycleSet				bestResults				= null;

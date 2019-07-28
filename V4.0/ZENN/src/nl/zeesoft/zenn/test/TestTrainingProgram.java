@@ -64,12 +64,10 @@ public class TestTrainingProgram extends TestObject {
 			int learnedTests = tp.getFinalResults().successes - tp.getInitialResults().successes;
 			float errorChange = tp.getFinalResults().averageError - tp.getInitialResults().averageError;
 			System.out.println("Training animal neural network took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + learnedTests + ", average error change: " + errorChange);
-			if (trainedNN!=null) {
-				System.out.println();
-				tcs = (AnimalTestCycleSet) tcs.copy();
-				trainedNN.runTestCycleSet(tcs);
-				System.out.println(tcs.summary);
-			}
+			System.out.println();
+			tcs = (AnimalTestCycleSet) tcs.copy();
+			trainedNN.runTestCycleSet(tcs);
+			System.out.println(tcs.summary);
 		}
 	}
 }

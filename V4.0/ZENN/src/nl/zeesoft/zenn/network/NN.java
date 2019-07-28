@@ -292,9 +292,9 @@ public class NN implements JsAble {
 			r.getCode().mutate(mutationPercentage);
 		}
 		r.initialize(inputLayer.neurons.size(),outputLayer.neurons.size(),minLayers,maxLayers);
-		List<NeuronLayer> copyLayers = r.getLayers();
 		if (copyBiasWeight) {
 			r.setTrainedCycles(trainedCycles);
+			List<NeuronLayer> copyLayers = r.getLayers();
 			int l = 0;
 			for (NeuronLayer layer: getLayers()) {
 				NeuronLayer copyLayer = copyLayers.get(l);

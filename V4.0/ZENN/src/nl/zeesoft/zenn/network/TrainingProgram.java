@@ -76,12 +76,11 @@ public class TrainingProgram {
 		finalResults = baseTestCycleSet.copy();
 		r.runTestCycleSet(finalResults);
 		if (finalResults.compareTo(initialResults) > 0) {
+			baseNN.destroy();
 			baseNN = r;
-		} else {
-			r = null;
 		}
 		
-		return r;
+		return r.copy();
 	}
 	
 	public int getTrainedCycles() {
@@ -226,7 +225,8 @@ public class TrainingProgram {
 						System.out.println();
 						System.out.println("Layer: " + l + ", bias deltas; ");
 						for (int be = 0; be < biasDeltas.length; be++) {
-							System.out.println("  " + biasDeltas[be]);
+							Neuron neuron = layer.neurons.get(be);
+							System.out.println("  Error: " + biasDeltas[be] + ", new bias: " + neuron.bias);
 						}
 						System.out.println("Previous layer: " + (l - 1) + ", deltas; ");
 						for (int pe = 0; pe < pDeltas.length; pe++) {

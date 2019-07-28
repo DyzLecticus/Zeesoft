@@ -35,9 +35,7 @@ public class EvolverWorker extends Worker {
 		NN nn = tp.runProgram();
 		repeat++;
 		if (repeat>=trainRepeat) {
-			if (nn!=null) {
-				evolver.trainedNN(nn,tp.getFinalResults(),tp.isSuccess());
-			}
+			evolver.trainedNN(nn,tp.getFinalResults(),tp.isSuccess());
 			reset();
 		}
 	}

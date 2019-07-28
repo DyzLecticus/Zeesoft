@@ -75,7 +75,7 @@ public class TestAnimalEvolver extends TestObject {
 			messenger.start();
 			
 			evolver.start();
-			sleep(120000);
+			sleep(60000);
 			evolver.stop();
 			
 			AnimalNN bnn = (AnimalNN) evolver.getBestSoFar();
