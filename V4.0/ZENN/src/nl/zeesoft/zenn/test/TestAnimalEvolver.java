@@ -75,7 +75,7 @@ public class TestAnimalEvolver extends TestObject {
 			messenger.start();
 			
 			evolver.start();
-			sleep(30000);
+			sleep(120000);
 			evolver.stop();
 			
 			AnimalNN bnn = (AnimalNN) evolver.getBestSoFar();
@@ -85,7 +85,7 @@ public class TestAnimalEvolver extends TestObject {
 				evolver.fromJson(json);
 				JsFile copy = evolver.toJson();
 				
-				assertEqual(copy.toStringBuilderReadFormat(),json.toStringBuilderReadFormat(),"Animal evolver does not match orignial");
+				assertEqual(copy.toStringBuilderReadFormat(),json.toStringBuilderReadFormat(),"Animal evolver JSON does not match orignial");
 
 				/* TODO: Add JSON check to TestAnimalNN 
 				JsElem neuronsElem = json.rootElement.getChildByName("neurons");
@@ -106,6 +106,7 @@ public class TestAnimalEvolver extends TestObject {
 			}
 
 			messenger.stop();
+			messenger.handleMessages();
 			union.stopWorkers();
 		}
 	}

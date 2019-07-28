@@ -2,6 +2,7 @@ package nl.zeesoft.zenn.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -143,8 +144,12 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 		}
 		return r;
 	}
-
+	
 	public TestCycleSet copy() {
+		return copy(null);
+	}
+
+	public TestCycleSet copy(Random random) {
 		TestCycleSet r = getCopyTestCycleSet();
 		r.successes = successes;
 		r.averageError = averageError;
@@ -157,9 +162,13 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 			}
 		}
 		for (TestCycle tc: cycles) {
+			int index = r.cycles.size();
+			if (random!=null) {
+				index = getRandomInteger(random,r.cycles.size());
+			}
 			TestCycle copyTc = new TestCycle();
 			tc.copy(copyTc);
-			r.cycles.add(copyTc);
+			r.cycles.add(index,copyTc);
 		}
 		if (summary!=null) {
 			r.summary = new ZStringBuilder(summary);
@@ -248,5 +257,9 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 	
 	protected TestCycleSet getCopyTestCycleSet() {
 		return new TestCycleSet();
+	}
+	
+	private int getRandomInteger(Random random,int max) {
+		return (int) (random.nextDouble() * (max + 1));
 	}
 }

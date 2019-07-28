@@ -75,10 +75,20 @@ public class TestAnimalNN extends TestObject {
 			testActivationFunctions(0.9F);
 			testActivationFunctions(1.0F);
 			testActivationFunctions(10.0F);
+			
+			System.out.println();
+			testDerivativeOfSigmoid(0.1F);
+			testDerivativeOfSigmoid(0.5F);
+			testDerivativeOfSigmoid(0.9F);
+			testDerivativeOfSigmoid(1.0F);
 		}
 	}
 	
 	private void testActivationFunctions(float x) {
 		System.out.println("X: " + df.format(x) + ", sigmoid: " + df.format(NN.sigmoid(x)) + ", tanh: " + df.format(NN.tanh(x)));
+	}
+	
+	private void testDerivativeOfSigmoid(float x) {
+		System.out.println("X: " + df.format(x) + ", sigmoid: " + df.format(NN.sigmoid(x)) + ", derivative of sigmoid: " + df.format(NN.derivativeOfSigmoided(NN.sigmoid(x))));
 	}
 }

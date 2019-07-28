@@ -131,7 +131,11 @@ public class NN implements JsAble {
 	public static float sigmoid(float x) {
 		return (float) (1 / (1 + Math.pow(Math.E,(x * -1))));
 	}
-	
+
+	public static float derivativeOfSigmoided(float y) {
+		return y * (1.0F - y);
+	}
+
 	public static float tanh(float x) {
 		float r = 0.0F;
 		if (x > 0.0F) {

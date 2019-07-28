@@ -88,6 +88,7 @@ public class TestEvolver extends TestObject {
 			}
 			
 			messenger.stop();
+			messenger.handleMessages();
 			union.stopWorkers();
 		}
 	}

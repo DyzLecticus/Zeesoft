@@ -26,6 +26,7 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 		super(config.getMessenger(),config.getUnion());
 		this.configuration = config;
 		this.herbivore = herbivore;
+		this.setRepeatCycles(200,50);
 		initialize();
 	}
 	
