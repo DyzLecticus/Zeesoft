@@ -27,6 +27,8 @@ public class NN implements JsAble {
 	
 	private SortedMap<Integer,Neuron>		neuronsById		= new TreeMap<Integer,Neuron>();
 	
+	private int								trainedCycles	= 0;
+	
 	public GeneticCode getCode() {
 		return code;
 	}
@@ -157,10 +159,12 @@ public class NN implements JsAble {
 
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("inputNeurons","" + inputLayer.neurons.size(),true));
-		json.rootElement.children.add(new JsElem("outputNeurons","" + outputLayer.neurons.size(),true));
-		json.rootElement.children.add(new JsElem("minLayers","" + minLayers,true));
-		json.rootElement.children.add(new JsElem("maxLayers","" + maxLayers,true));
+		json.rootElement.children.add(new JsElem("inputNeurons","" + inputLayer.neurons.size()));
+		json.rootElement.children.add(new JsElem("outputNeurons","" + outputLayer.neurons.size()));
+		json.rootElement.children.add(new JsElem("minLayers","" + minLayers));
+		json.rootElement.children.add(new JsElem("maxLayers","" + maxLayers));
+		json.rootElement.children.add(new JsElem("trainedCycles","" + trainedCycles));
+		
 		json.rootElement.children.add(new JsElem("code",encoder,true));
 		if (includeNN) {
 			JsElem neuronsElem = new JsElem("neurons",true);
@@ -181,6 +185,8 @@ public class NN implements JsAble {
 			int outputNeurons = json.rootElement.getChildInt("outputNeurons");
 			int minLayers = json.rootElement.getChildInt("minLayers");
 			int maxLayers = json.rootElement.getChildInt("maxLayers");
+			trainedCycles = json.rootElement.getChildInt("trainedCycles");
+			
 			if (code.length()>0) {
 				ZStringEncoder encoder = new ZStringEncoder(code);
 				encoder.decompress();
@@ -259,6 +265,18 @@ public class NN implements JsAble {
 		cycle.finalize(this);
 	}
 	
+	public void setTrainedCycles(int trainedCycles) {
+		this.trainedCycles = trainedCycles;
+	}
+
+	public int getTrainedCycles() {
+		return trainedCycles;
+	}
+	
+	public void trainedCycle() {
+		trainedCycles++;
+	}
+	
 	public NN copy() {
 		return copy(true,0.0F);
 	}
@@ -276,6 +294,7 @@ public class NN implements JsAble {
 		r.initialize(inputLayer.neurons.size(),outputLayer.neurons.size(),minLayers,maxLayers);
 		List<NeuronLayer> copyLayers = r.getLayers();
 		if (copyBiasWeight) {
+			r.setTrainedCycles(trainedCycles);
 			int l = 0;
 			for (NeuronLayer layer: getLayers()) {
 				NeuronLayer copyLayer = copyLayers.get(l);

@@ -29,7 +29,7 @@ public class AnimalNN extends NN {
 	public static final float[]		INTENSITIES		= {1.00F,0.75F,0.50F,0.25F};
 
 	private static final int		MIN_LAYERS		= 1;
-	private static final int		MAX_LAYERS		= 5;
+	private static final int		MAX_LAYERS		= 3;
 	private static final int		INPUT_NEURONS	= RIGHT_GREY + 1;
 	private static final int		OUTPUT_NEURONS	= OUT_RIGHT + 1;
 

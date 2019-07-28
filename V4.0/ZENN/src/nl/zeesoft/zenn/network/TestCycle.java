@@ -93,7 +93,7 @@ public class TestCycle extends Cycle {
 			if (outputs[n]!=expectedOutputs[n]) {
 				r.append("  Output: ");
 				r.append("" + n);
-				r.append(": ");
+				r.append(", value: ");
 				if (roundOutput) {
 					if (errors[n] > 0.0F) {
 						r.append("" + df.format(expectedOutputs[n] - errors[n]));

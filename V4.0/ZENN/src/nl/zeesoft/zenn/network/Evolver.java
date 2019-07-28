@@ -23,7 +23,7 @@ public class Evolver extends Locker {
 	private float 						mutationPercentage		= 0.01F;
 	private int 						trainRepeat				= 20;
 	private int							trainCycles				= 50;
-	private int							trainSleepMs			= 1000;
+	private int							trainSleepMs			= 2000;
 	
 	private NN							bestSoFar				= null;
 	private TestCycleSet				bestResults				= null;
@@ -171,7 +171,7 @@ public class Evolver extends Locker {
 		lockMe(this);
 		this.bestSoFar = bestSoFar;
 		this.bestResults = bestResults;
-		debugBest(bestResults,false);
+		debugBest(bestSoFar,bestResults,false);
 		unlockMe(this);
 	}
 
@@ -195,7 +195,7 @@ public class Evolver extends Locker {
 				viableNNs.put(finalResult,nn);
 			}
 			if (bestSoFar!=null) {
-				debugBest(finalResult,success);
+				debugBest(nn,finalResult,success);
 			}
 			bestSoFar = nn;
 			bestResults = finalResult;
@@ -244,8 +244,12 @@ public class Evolver extends Locker {
 	protected NN getNewNN(EvolverWorker worker) {
 		NN r = null;
 		lockMe(this);
-		if (bestSoFar!=null && workers.indexOf(worker)<((workers.size() / 3) * 2)) {
-			r = bestSoFar.copy(mutationPercentage);
+		if (bestSoFar!=null && workers.indexOf(worker)<((workers.size() / 3) * 2)) { 
+			if (workers.indexOf(worker)==0) {
+				r = bestSoFar.copy();
+			} else {
+				r = bestSoFar.copy(mutationPercentage);
+			}
 		}
 		unlockMe(this);
 		if (r==null) {
@@ -268,11 +272,11 @@ public class Evolver extends Locker {
 		}
 	}
 	
-	protected void debugBest(TestCycleSet best, boolean success) {
+	protected void debugBest(NN nn,TestCycleSet best, boolean success) {
 		String viable = "";
 		if (success) {
 			viable = " viable";
 		}
-		debug("Best" + viable + getTypeSafe() + " neural net so far: " + best.successes + "/" + best.cycles.size() + " " + best.averageError);
+		debug("Best" + viable + getTypeSafe() + " neural net so far: " + best.successes + "/" + best.cycles.size() + " " + best.averageError + " " + nn.getTrainedCycles());
 	}
 }
