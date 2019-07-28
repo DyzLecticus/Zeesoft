@@ -166,7 +166,12 @@ public class TrainingProgram {
 				for (int l = layers.size() - 1; l>0 ; l--) {
 					NeuronLayer layer = layers.get(l);
 					NeuronLayer pLayer = layers.get(l - 1);
-					
+
+					float[] biasErrors = new float[layer.neurons.size()];
+					for (int be = 0; be < biasErrors.length; be++) {
+						biasErrors[be] = 0.0F; 
+					}
+
 					float[] pErrors = new float[pLayer.neurons.size()];
 					for (int pe = 0; pe < pErrors.length; pe++) {
 						pErrors[pe] = 0.0F; 
@@ -182,14 +187,19 @@ public class TrainingProgram {
 								float ratio = link.weight / totalWeight;
 								pErrors[pe] = ratio * errors[e];
 							}
+							float ratio = neuron.bias / totalWeight;
+							biasErrors[e] = ratio * errors[e];
 						}
 					}
 					
-					System.out.println("Previous layer: " + (l - 1));
+					System.out.println("Layer: " + l + ", bias errors; ");
+					for (int be = 0; be < biasErrors.length; be++) {
+						System.out.println("  " + biasErrors[be]);
+					}
+					System.out.println("Previous layer: " + (l - 1) + ", errors; ");
 					for (int pe = 0; pe < pErrors.length; pe++) {
 						System.out.println("  " + pErrors[pe]);
 					}
-					
 					
 					errors = pErrors;
 				}

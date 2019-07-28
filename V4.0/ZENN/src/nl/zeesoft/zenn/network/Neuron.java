@@ -88,6 +88,11 @@ public class Neuron implements JsAble {
 				r -= source.weight * -1.0F;
 			}
 		}
+		if (bias>0.0F) {
+			r += bias;
+		} else if (bias<0.0F) {
+			r -= bias * -1.0F;
+		}
 		return r;
 	}
 }
