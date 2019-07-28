@@ -124,8 +124,7 @@ public class TrainingProgram {
 		}
 		
 		List<NeuronLayer> layers = getLayers(nn);
-		List<TestCycle> cycles = tcs.getCycles();
-		for (TestCycle tc: cycles) {
+		for (TestCycle tc: tcs.cycles) {
 			nn.runCycle(tc);
 			if (!tc.success) {
 				if (debug) {

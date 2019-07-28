@@ -63,6 +63,7 @@ public class TestTrainingProgram extends TestObject {
 			long ms = (System.currentTimeMillis() - started);
 			int learnedTests = tp.getFinalResults().successes - tp.getInitialResults().successes;
 			float errorChange = tp.getFinalResults().averageError - tp.getInitialResults().averageError;
+			assertEqual(trainedNN.getTrainedCycles(),tp.getTrainedCycles(),"Number of neural net trained cycles does not match expecttion");
 			System.out.println("Training animal neural network took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + learnedTests + ", average error change: " + errorChange);
 			System.out.println();
 			tcs = (AnimalTestCycleSet) tcs.copy();

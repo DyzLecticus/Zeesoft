@@ -54,7 +54,7 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 		return r;
 	}
 	
-	public List<TestCycle> getCycles() {
+	public List<TestCycle> getCyclesOrderedByLevel() {
 		List<TestCycle> r = new ArrayList<TestCycle>();
 		for (Integer l: getLevels()) {
 			for (TestCycle tc: cycles) {
