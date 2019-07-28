@@ -1,5 +1,9 @@
 package nl.zeesoft.zenn.network;
 
+import java.text.DecimalFormat;
+
+import nl.zeesoft.zdk.ZStringBuilder;
+
 public class TestCycle extends Cycle {
 	public int					level				= 0;
 	public float[]				expectedOutputs		= null;
@@ -19,6 +23,7 @@ public class TestCycle extends Cycle {
 		for (int i = 0; i < errors.length; i++) {
 			errors[i] = 0.0F;
 		}
+		success = true;
 	}
 	
 	@Override
@@ -41,19 +46,22 @@ public class TestCycle extends Cycle {
 	}
 	
 	@Override
+	protected void prepare() {
+		for (int i = 0; i < errors.length; i++) {
+			errors[i] = 0.0F;
+		}
+		success = true;
+	}
+	
+	@Override
 	protected void finalize(NN nn) {
 		super.finalize(nn);
-		success = true;
 		for (int n = 0; n < outputs.length; n++) {
-			errors[n] = 0.0F;
 			if (outputs[n]!=expectedOutputs[n]) {
-				Neuron output = nn.getOutputLayer().neurons.get(n);
-				if (normalizeOutput) {
+				if (roundOutput) {
 					success	= false;
-					errors[n] = output.threshold - output.value;
-					if (errors[n]==0.0F) {
-						errors[n] = 0.0001F;
-					}
+					Neuron output = nn.getOutputLayer().neurons.get(n);
+					errors[n] = expectedOutputs[n] - output.value;
 				} else {
 					float diff = expectedOutputs[n] - outputs[n];
 					if (diff<0.0F) {
@@ -61,10 +69,47 @@ public class TestCycle extends Cycle {
 					}
 					if (diff>errorTolerance) {
 						success	= false;
-						errors[n] = (diff - errorTolerance);
+						errors[n] = expectedOutputs[n] - outputs[n];
 					}
 				}
 			}
 		}
+	}
+
+	protected ZStringBuilder getSummary(int num) {
+		DecimalFormat df = new DecimalFormat("0.00");
+
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("Test cycle: ");
+		r.append("" + num);
+		r.append(", level: ");
+		r.append("" + level);
+		r.append(", fired neurons: ");
+		r.append("" + firedNeurons.size());
+		r.append( ", success: ");
+		r.append("" + success);
+		r.append("\n");
+		for (int n = 0; n < outputs.length; n++) {
+			if (outputs[n]!=expectedOutputs[n]) {
+				r.append("  Output: ");
+				r.append("" + n);
+				r.append(": ");
+				if (roundOutput) {
+					if (errors[n] > 0.0F) {
+						r.append("" + df.format(expectedOutputs[n] - errors[n]));
+					} else {
+						r.append("" + df.format(expectedOutputs[n] + (errors[n] * -1.0F)));
+					}
+				} else {
+					r.append("" + df.format(outputs[n]));
+				}
+				r.append(", expected: ");
+				r.append("" + df.format(expectedOutputs[n]));
+				r.append(", error: ");
+				r.append("" + df.format(errors[n]));
+				r.append("\n");
+			}
+		}
+		return r;
 	}
 }

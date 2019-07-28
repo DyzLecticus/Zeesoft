@@ -6,7 +6,7 @@ public class NNProperties {
 	private static final int	MIDDLE_LAYERS					= 100;
 	private static final int	MIDDLE_LAYER_NODES				= 101;
 	
-	private static final int	THRESHOLD_WEIGHT_START			= 102;
+	private static final int	BIAS_WEIGHT_START			= 102;
 	
 	private GeneticCode			code							= null;
 	
@@ -21,7 +21,7 @@ public class NNProperties {
 		}
 		int width = (range * 2);
 		return
-			(THRESHOLD_WEIGHT_START + 1) + 
+			(BIAS_WEIGHT_START + 1) + 
 			(width * maxLayers) +
 			outputNeurons +
 			((width * width) * (maxLayers - 1)) +
@@ -41,17 +41,13 @@ public class NNProperties {
 		return range + code.getInteger(MIDDLE_LAYER_NODES,range);
 	}
 	
-	protected int getThresholdWeightStart() {
-		return THRESHOLD_WEIGHT_START;
+	protected int getBiasWeightStart() {
+		return BIAS_WEIGHT_START;
 	}
 	
-	protected float getThresholdWeight(int index,boolean threshold) {
-		float r = code.get(THRESHOLD_WEIGHT_START + index);
-		if (threshold) {
-			r = 0.0F + (r * 0.5F);
-		} else  {
-			r = -0.1F + (r * 0.2F);
-		}
+	protected float getBiasWeight(int index,boolean bias) {
+		float r = code.get(BIAS_WEIGHT_START + index);
+		r = -1.0F + (r * 2.0F);
 		return r;
 	}
 }

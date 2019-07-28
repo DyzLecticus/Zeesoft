@@ -22,7 +22,7 @@ public class NN implements JsAble {
 	private int								maxLayers		= 0;
 	
 	private NeuronLayer						inputLayer		= new NeuronLayer(); 
-	private List<NeuronLayer>				middleLayers	= new ArrayList<NeuronLayer>();
+	private List<NeuronLayer>				hiddenLayers	= new ArrayList<NeuronLayer>();
 	private NeuronLayer						outputLayer		= new NeuronLayer(); 
 	
 	private SortedMap<Integer,Neuron>		neuronsById		= new TreeMap<Integer,Neuron>();
@@ -81,7 +81,7 @@ public class NN implements JsAble {
 					layer.neurons.add(neuron);
 					id++;
 				}
-				middleLayers.add(layer);
+				hiddenLayers.add(layer);
 			}
 			for (int n = 0; n < outputNeurons; n++) {
 				Neuron neuron = new Neuron(id,outputStartPosX);
@@ -91,16 +91,16 @@ public class NN implements JsAble {
 				id++;
 			}
 	
-			// Initialize thresholds
-			int i = properties.getThresholdWeightStart();
+			// Initialize biases
+			int i = properties.getBiasWeightStart();
 			List<NeuronLayer> layers = getLayers();
 			for (NeuronLayer layer: layers) {
 				for (Neuron neuron: layer.neurons) {
 					if (layer!=inputLayer) {
-						neuron.threshold = properties.getThresholdWeight(i,true);
+						neuron.bias = properties.getBiasWeight(i,true);
 						i++;
 					} else {
-						neuron.threshold = 0.0F;
+						neuron.bias = 0.0F;
 					}
 				}
 			}
@@ -116,7 +116,7 @@ public class NN implements JsAble {
 							NeuronLink link = new NeuronLink();
 							link.target = target;
 							link.source = neuron;
-							link.weight = properties.getThresholdWeight(i,false);
+							link.weight = properties.getBiasWeight(i,false);
 							i++;
 							neuron.targets.add(link);
 							target.sources.add(link);  
@@ -128,12 +128,16 @@ public class NN implements JsAble {
 		return err;
 	}
 
-	public static float distribute(float x) {
+	public static float sigmoid(float x) {
+		return (float) (1 / (1 + Math.pow(Math.E,(x * -1))));
+	}
+	
+	public static float tanh(float x) {
 		float r = 0.0F;
 		if (x > 0.0F) {
 			r = (float) Math.tanh(x);
 		} else if (x < 0.0F) {
-			r = (float) Math.tan(x * -1.0F) * 1.0F;
+			r = (float) Math.tanh(x * -1) * -1;
 		}
 	    return r;
 	}
@@ -178,16 +182,16 @@ public class NN implements JsAble {
 				encoder.decompress();
 				this.code.setCode(encoder);
 				initialize(inputNeurons,outputNeurons,minLayers,maxLayers);
-			}
-			JsElem neuronsElem = json.rootElement.getChildByName("neurons");
-			if (neuronsElem!=null) {
-				for (JsElem neuronElem: neuronsElem.children) {
-					int id = neuronElem.getChildInt("id");
-					Neuron neuron = neuronsById.get(id);
-					if (neuron!=null) {
-						JsFile neuronJson = new JsFile();
-						neuronJson.rootElement = neuronElem;
-						neuron.fromJson(neuronJson);
+				JsElem neuronsElem = json.rootElement.getChildByName("neurons");
+				if (neuronsElem!=null) {
+					for (JsElem neuronElem: neuronsElem.children) {
+						int id = neuronElem.getChildInt("id");
+						Neuron neuron = neuronsById.get(id);
+						if (neuron!=null) {
+							JsFile neuronJson = new JsFile();
+							neuronJson.rootElement = neuronElem;
+							neuron.fromJson(neuronJson);
+						}
 					}
 				}
 			}
@@ -196,10 +200,10 @@ public class NN implements JsAble {
 	
 	public void destroy() {
 		inputLayer.destroy();
-		for (NeuronLayer layer: middleLayers) {
+		for (NeuronLayer layer: hiddenLayers) {
 			layer.destroy();
 		}
-		middleLayers.clear();
+		hiddenLayers.clear();
 		outputLayer.destroy();
 		neuronsById.clear();
 	}
@@ -214,11 +218,12 @@ public class NN implements JsAble {
 	public void runCycle(Cycle cycle) {
 		List<NeuronLayer> layers = getLayers();
 		resetNodeValues(layers);
+		cycle.prepare();
 		for (int n = 0; n < cycle.inputs.length; n++) {
 			if (n<inputLayer.neurons.size()) {
 				Neuron input = inputLayer.neurons.get(n);
 				input.value = cycle.inputs[n];
-				if (input.value>input.threshold) {
+				if (input.value>0.0F) {
 					cycle.firedNeurons.add(input);
 				}
 			}
@@ -226,26 +231,23 @@ public class NN implements JsAble {
 		for (NeuronLayer layer: layers) {
 			if (layer!=inputLayer) {
 				for (Neuron neuron: layer.neurons) {
-					if (neuron.value>neuron.threshold) {
-						cycle.firedNeurons.add(neuron);
-					}
 					float value = 0.0F;
-					float maxValue = 0.0F;
-					for (NeuronLink link: neuron.sources) {
-						if (link.weight>0.0F) {
-							maxValue += link.weight;
-						}
-						if (link.source.value>link.source.threshold) {
-							if (link.weight>0.0F) {
-								value += link.weight;
-							} else {
-								value -= (link.weight * -1);
-							}
-							cycle.firedLinks.add(link);
+					for (NeuronLink source: neuron.sources) {
+						float add = (source.source.value * source.weight);
+						if (add>0.0F) {
+							value += add;
+						} else if (add<0.0F) {
+							value -= add * -1.0F;
 						}
 					}
-					if (value>0.0F && maxValue>0.0F) {
-						neuron.value = distribute(value / maxValue);
+					if (neuron.bias>0.0F) {
+						value += neuron.bias;
+					} else if (neuron.bias<0.0F) {
+						value -= neuron.bias * -1.0F;
+					}
+					neuron.value = sigmoid(value);
+					if (neuron.value!=0.0F) {
+						cycle.firedNeurons.add(neuron);
 					}
 				}
 			}
@@ -261,7 +263,7 @@ public class NN implements JsAble {
 		return copy(false,mutationPercentage);
 	}
 	
-	public NN copy(boolean copyThresholdWeight,float mutationPercentage) {
+	public NN copy(boolean copyBiasWeight,float mutationPercentage) {
 		NN r = getCopyNN();
 		r.setCode(new GeneticCode(getCode().getCode()));
 		if (mutationPercentage>0.0F) {
@@ -269,14 +271,14 @@ public class NN implements JsAble {
 		}
 		r.initialize(inputLayer.neurons.size(),outputLayer.neurons.size(),minLayers,maxLayers);
 		List<NeuronLayer> copyLayers = r.getLayers();
-		if (copyThresholdWeight) {
+		if (copyBiasWeight) {
 			int l = 0;
 			for (NeuronLayer layer: getLayers()) {
 				NeuronLayer copyLayer = copyLayers.get(l);
 				int n = 0;
 				for (Neuron neuron: layer.neurons) {
 					Neuron copyNeuron = copyLayer.neurons.get(n);
-					copyNeuron.threshold = neuron.threshold;
+					copyNeuron.bias = neuron.bias;
 					int li = 0;
 					for (NeuronLink link: neuron.targets) {
 						NeuronLink copyLink = copyNeuron.targets.get(li);
@@ -343,9 +345,9 @@ public class NN implements JsAble {
 				}
 				r.append("  Neuron: ");
 				r.append(String.format("%03d",neuron.id));
-				r.append(", threshold: ");
-				r.append(df.format(neuron.threshold));
-				r.append(", value: " + df.format(neuron.value) + sources);
+				r.append(", bias: ");
+				r.append(df.format(neuron.bias));
+				r.append(", value: ");
 				r.append(df.format(neuron.value));
 				r.append(sources);
 				r.append("\n");
@@ -361,7 +363,7 @@ public class NN implements JsAble {
 	protected List<NeuronLayer> getLayers() {
 		List<NeuronLayer> r = new ArrayList<NeuronLayer>();
 		r.add(inputLayer);
-		for (NeuronLayer layer: middleLayers) {
+		for (NeuronLayer layer: hiddenLayers) {
 			r.add(layer);
 		}
 		r.add(outputLayer);

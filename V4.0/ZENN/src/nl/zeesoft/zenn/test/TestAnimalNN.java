@@ -1,11 +1,16 @@
 package nl.zeesoft.zenn.test;
 
+import java.text.DecimalFormat;
+
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zenn.animal.AnimalNN;
 import nl.zeesoft.zenn.animal.AnimalTestCycleSet;
+import nl.zeesoft.zenn.network.NN;
 
 public class TestAnimalNN extends TestObject {
+	private DecimalFormat	df	= new DecimalFormat("0.00");
+	
 	public TestAnimalNN(Tester tester) {
 		super(tester);
 	}
@@ -58,6 +63,22 @@ public class TestAnimalNN extends TestObject {
 			System.out.println(nn.getSummary());
 			System.out.println();
 			System.out.println(tcs.summary);
+			
+			testActivationFunctions(-10.0F);
+			testActivationFunctions(-1.0F);
+			testActivationFunctions(-0.9F);
+			testActivationFunctions(-0.5F);
+			testActivationFunctions(-0.1F);
+			testActivationFunctions(0.0F);
+			testActivationFunctions(0.1F);
+			testActivationFunctions(0.5F);
+			testActivationFunctions(0.9F);
+			testActivationFunctions(1.0F);
+			testActivationFunctions(10.0F);
 		}
+	}
+	
+	private void testActivationFunctions(float x) {
+		System.out.println("X: " + df.format(x) + ", sigmoid: " + df.format(NN.sigmoid(x)) + ", tanh: " + df.format(NN.tanh(x)));
 	}
 }

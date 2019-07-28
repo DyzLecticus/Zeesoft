@@ -52,6 +52,19 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 		}
 		return r;
 	}
+	
+	public List<TestCycle> getCycles() {
+		List<TestCycle> r = new ArrayList<TestCycle>();
+		for (Integer l: getLevels()) {
+			for (TestCycle tc: cycles) {
+				if (tc.level==l) {
+					r.add(tc);
+				}
+			}
+		}
+		return r;
+	}
+
 
 	public void finalize() {
 		float totalError = 0.0F;
@@ -208,31 +221,7 @@ public class TestCycleSet implements Comparable<TestCycleSet>, JsAble {
 		int c = 0;
 		for (TestCycle tc: cycles) {
 			c++;
-			r.append("Test cycle: ");
-			r.append("" + c);
-			r.append(", level: ");
-			r.append("" + tc.level);
-			r.append(", fired neurons: ");
-			r.append("" + tc.firedNeurons.size());
-			r.append(", fired links: ");
-			r.append("" + tc.firedLinks.size());
-			r.append( ", success: ");
-			r.append("" + tc.success);
-			r.append("\n");
-			
-			for (int n = 0; n < tc.outputs.length; n++) {
-				if (tc.outputs[n]!=tc.expectedOutputs[n]) {
-					r.append("  Output: ");
-					r.append("" + n);
-					r.append(": ");
-					r.append("" + tc.outputs[n]);
-					r.append(", expected: ");
-					r.append("" + tc.expectedOutputs[n]);
-					r.append(", error: ");
-					r.append("" + tc.errors[n]);
-					r.append("\n");
-				}
-			}
+			r.append(tc.getSummary(c));
 		}
 		r.append("Test cycle set average error: ");
 		r.append("" + averageError);

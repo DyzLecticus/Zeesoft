@@ -12,7 +12,7 @@ public class Neuron implements JsAble {
 	public int					posX		= -1;
 	public List<NeuronLink>		targets		= new ArrayList<NeuronLink>();
 	public List<NeuronLink>		sources		= new ArrayList<NeuronLink>();
-	public float				threshold	= 0.5F;
+	public float				bias		= 0.5F;
 	
 	public float				value		= 0.0F;
 	
@@ -36,7 +36,7 @@ public class Neuron implements JsAble {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("id","" + id));
 		json.rootElement.children.add(new JsElem("x","" + posX));
-		json.rootElement.children.add(new JsElem("t","" + threshold));
+		json.rootElement.children.add(new JsElem("b","" + bias));
 		JsElem sourcesElem = new JsElem("sls",true);
 		json.rootElement.children.add(sourcesElem);
 		for (NeuronLink source: sources) {
@@ -53,7 +53,7 @@ public class Neuron implements JsAble {
 		if (json.rootElement!=null) {
 			id = json.rootElement.getChildInt("id");
 			posX = json.rootElement.getChildInt("x");
-			threshold = json.rootElement.getChildFloat("t");
+			bias = json.rootElement.getChildFloat("b");
 			JsElem sourcesElem = json.rootElement.getChildByName("sls");
 			if (sourcesElem!=null) {
 				for (JsElem sourceElem: sourcesElem.children) {
