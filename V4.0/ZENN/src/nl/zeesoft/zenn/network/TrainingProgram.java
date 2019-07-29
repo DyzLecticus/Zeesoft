@@ -129,117 +129,123 @@ public class TrainingProgram {
 		List<NeuronLayer> layers = getLayers(nn);
 		for (TestCycle tc: tcs.cycles) {
 			nn.runCycle(tc);
-			if (!tc.success) {
+			
+			if (debug) {
+				System.out.println(nn.getSummary());
+				System.out.println("BEFORE " + tc.getSummary(1));
+			}
+			
+			float[] errors = tc.errors;
+			for (int l = layers.size() - 1; l>0 ; l--) {
+				NeuronLayer layer = layers.get(l);
+				NeuronLayer pLayer = layers.get(l - 1);
+
+				// Calculate errors
+				float[] biasErrors = new float[layer.neurons.size()];
+				for (int be = 0; be < biasErrors.length; be++) {
+					biasErrors[be] = 0.0F; 
+				}
+				float[] pErrors = new float[pLayer.neurons.size()];
+				for (int pe = 0; pe < pErrors.length; pe++) {
+					pErrors[pe] = 0.0F; 
+				}
+				for (int e = 0; e < errors.length; e++) {
+					if (errors[e]!=0.0F) {
+						Neuron neuron = layer.neurons.get(e);
+						for (int pe = 0; pe < pErrors.length; pe++) {
+							Neuron pNeuron = pLayer.neurons.get(pe);
+							NeuronLink link = neuron.getSourceByNeuron(pNeuron);
+							float ratio = link.weight;
+							if (ratio<0) {
+								ratio = ratio * -1.0F;
+							}
+							float add = ratio * errors[e];
+							if (add>0.0F) {
+								pErrors[pe] += add;
+							} else if (add<0.0F) {
+								pErrors[pe] -= add * -1.0F;
+							}
+						}
+						float ratio = neuron.bias;
+						if (ratio<0) {
+							ratio = ratio * -1.0F;
+						}
+						biasErrors[e] = ratio * errors[e];
+					}
+				}
 				if (debug) {
-					System.out.println(nn.getSummary());
-					System.out.println("BEFORE " + tc.getSummary(1));
+					System.out.println();
+					System.out.println("Layer: " + l + ", bias errors; ");
+					for (int be = 0; be < biasErrors.length; be++) {
+						Neuron neuron = layer.neurons.get(be);
+						float ratio = neuron.bias;
+						if (ratio<0) {
+							ratio = ratio * -1.0F;
+						}
+						System.out.println("  Bias: " + neuron.bias + ", ratio: " + ratio + ", error: " + biasErrors[be]);
+					}
+					System.out.println("Previous layer: " + (l - 1) + ", errors; ");
+					for (int pe = 0; pe < pErrors.length; pe++) {
+						System.out.println("  " + pErrors[pe]);
+					}
 				}
 				
-				float[] errors = tc.errors;
-				for (int l = layers.size() - 1; l>0 ; l--) {
-					NeuronLayer layer = layers.get(l);
-					NeuronLayer pLayer = layers.get(l - 1);
-	
-					// Calculate errors
-					float[] biasErrors = new float[layer.neurons.size()];
-					for (int be = 0; be < biasErrors.length; be++) {
-						biasErrors[be] = 0.0F; 
-					}
-					float[] pErrors = new float[pLayer.neurons.size()];
-					for (int pe = 0; pe < pErrors.length; pe++) {
-						pErrors[pe] = 0.0F; 
-					}
-					for (int e = 0; e < errors.length; e++) {
-						if (errors[e]!=0.0F) {
-							Neuron neuron = layer.neurons.get(e);
-							float totalWeight = neuron.getTotalSourceWeight();
-							for (int pe = 0; pe < pErrors.length; pe++) {
-								Neuron pNeuron = pLayer.neurons.get(pe);
-								NeuronLink link = neuron.getSourceByNeuron(pNeuron);
-								float ratio = neuron.getSourceWeightRatio(link.weight,totalWeight);
-								float add = ratio * errors[e];
-								if (add>0.0F) {
-									pErrors[pe] += add;
-								} else if (add<0.0F) {
-									pErrors[pe] -= add * -1.0F;
-								}
-							}
-							float ratio = neuron.getSourceWeightRatio(neuron.bias,totalWeight);
-							biasErrors[e] = ratio * errors[e];
-						}
-					}
-					if (debug) {
-						System.out.println();
-						System.out.println("Layer: " + l + ", bias errors; ");
-						for (int be = 0; be < biasErrors.length; be++) {
-							Neuron neuron = layer.neurons.get(be);
-							float totalWeight = neuron.getTotalSourceWeight();
-							float ratio = neuron.getSourceWeightRatio(neuron.bias,totalWeight);
-							System.out.println("  Bias: " + neuron.bias + ", totalWeight: " + totalWeight + ", ratio: " + ratio + ", error: " + biasErrors[be]);
-						}
-						System.out.println("Previous layer: " + (l - 1) + ", errors; ");
+				// Calculate and apply deltas
+				float[] biasDeltas = new float[layer.neurons.size()];
+				for (int be = 0; be < biasDeltas.length; be++) {
+					biasDeltas[be] = 0.0F; 
+				}
+				float[] pDeltas = new float[pLayer.neurons.size()];
+				for (int pe = 0; pe < pDeltas.length; pe++) {
+					pDeltas[pe] = 0.0F; 
+				}
+				for (int e = 0; e < errors.length; e++) {
+					Neuron neuron = layer.neurons.get(e);
+					if (errors[e]!=0.0F) {
 						for (int pe = 0; pe < pErrors.length; pe++) {
-							System.out.println("  " + pErrors[pe]);
-						}
-					}
-					
-					// Calculate and apply deltas
-					float[] biasDeltas = new float[layer.neurons.size()];
-					for (int be = 0; be < biasDeltas.length; be++) {
-						biasDeltas[be] = 0.0F; 
-					}
-					float[] pDeltas = new float[pLayer.neurons.size()];
-					for (int pe = 0; pe < pDeltas.length; pe++) {
-						pDeltas[pe] = 0.0F; 
-					}
-					for (int e = 0; e < errors.length; e++) {
-						Neuron neuron = layer.neurons.get(e);
-						if (errors[e]!=0.0F) {
-							for (int pe = 0; pe < pErrors.length; pe++) {
-								if (pErrors[pe]!=0.0F) {
-									Neuron pNeuron = pLayer.neurons.get(pe);
-									float gradient = NN.derivativeOfSigmoided(neuron.value) * pErrors[pe] * learningRate;
-									pDeltas[pe] = gradient * pNeuron.value;
-									
-									// Apply
-									NeuronLink link = neuron.getSourceByNeuron(pNeuron);
-									if (pDeltas[pe]>0.0F) {
-										link.weight += pDeltas[pe];
-									} else if (pDeltas[pe]<0.0F) {
-										link.weight -= pDeltas[pe] * -1.0F;
-									}
-								}
-							}
-							if (biasErrors[e]!=0.0F) {
-								float gradient = biasErrors[e] * learningRate;
-								biasDeltas[e] = gradient * neuron.bias;
+							if (pErrors[pe]!=0.0F) {
+								Neuron pNeuron = pLayer.neurons.get(pe);
+								float gradient = nn.applyActivationDerivative(neuron.value) * pErrors[pe] * learningRate;
+								pDeltas[pe] = gradient * pNeuron.value;
 								
 								// Apply
-								if (biasDeltas[e]>0.0F) {
-									neuron.bias += biasDeltas[e];
-								} else if (biasDeltas[e]<0.0F) {
-									neuron.bias -= biasDeltas[e] * -1.0F;
+								NeuronLink link = neuron.getSourceByNeuron(pNeuron);
+								if (pDeltas[pe]>0.0F) {
+									link.weight -= pDeltas[pe];
+								} else if (pDeltas[pe]<0.0F) {
+									link.weight += pDeltas[pe] * -1.0F;
 								}
 							}
 						}
-					}
-					if (debug) {
-						System.out.println();
-						System.out.println("Layer: " + l + ", bias deltas; ");
-						for (int be = 0; be < biasDeltas.length; be++) {
-							Neuron neuron = layer.neurons.get(be);
-							System.out.println("  Delta: " + biasDeltas[be] + ", new bias: " + neuron.bias);
+						if (biasErrors[e]!=0.0F) {
+							float gradient = biasErrors[e] * learningRate;
+							biasDeltas[e] = gradient * neuron.bias;
+							
+							// Apply
+							if (biasDeltas[e]>0.0F) {
+								neuron.bias -= biasDeltas[e];
+							} else if (biasDeltas[e]<0.0F) {
+								neuron.bias += biasDeltas[e] * -1.0F;
+							}
 						}
 					}
-					
-					errors = pErrors;
+				}
+				if (debug) {
+					System.out.println();
+					System.out.println("Layer: " + l + ", bias deltas; ");
+					for (int be = 0; be < biasDeltas.length; be++) {
+						Neuron neuron = layer.neurons.get(be);
+						System.out.println("  Delta: " + biasDeltas[be] + ", new bias: " + neuron.bias);
+					}
 				}
 				
-				if (debug) {
-					nn.runCycle(tc);
-					System.out.println("AFTER " + tc.getSummary(1));
-					break;
-				}
+				errors = pErrors;
+			}
+			
+			if (debug) {
+				nn.runCycle(tc);
+				System.out.println("AFTER " + tc.getSummary(1));
+				break;
 			}
 		}
 	}

@@ -49,6 +49,27 @@ public class NN implements JsAble {
 	public ZStringBuilder initialize(int inputNeurons,int outputNeurons,int minLayers,int maxLayers) {
 		ZStringBuilder err = new ZStringBuilder();
 		
+		if (minLayers<=0) {
+			minLayers = 1;
+		}
+		if (maxLayers>10) {
+			minLayers = 10;
+		}
+		if (minLayers>maxLayers) {
+			minLayers = maxLayers;
+		}
+
+		if (inputNeurons<=1) {
+			inputNeurons = 1;
+		} else if (inputNeurons>32) {
+			inputNeurons = 32;
+		}
+		if (outputNeurons<=1) {
+			outputNeurons = 1;
+		} else if (outputNeurons>32) {
+			outputNeurons = 32;
+		}
+
 		destroy();
 		
 		this.minLayers = minLayers;
@@ -130,6 +151,14 @@ public class NN implements JsAble {
 		return err;
 	}
 
+	public float applyActivation(float x) {
+		return sigmoid(x);
+	}
+
+	public float applyActivationDerivative(float x) {
+		return derivativeOfSigmoided(x);
+	}
+	
 	public static float sigmoid(float x) {
 		return (float) (1 / (1 + Math.pow(Math.E,(x * -1))));
 	}
@@ -255,7 +284,7 @@ public class NN implements JsAble {
 					} else if (neuron.bias<0.0F) {
 						value -= neuron.bias * -1.0F;
 					}
-					neuron.value = sigmoid(value);
+					neuron.value = applyActivation(value);
 					if (neuron.value!=0.0F) {
 						cycle.firedNeurons.add(neuron);
 					}

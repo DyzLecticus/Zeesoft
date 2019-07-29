@@ -58,6 +58,7 @@ public class TestTrainingProgram extends TestObject {
 			tcs.initialize(nn,true);
 			TrainingProgram tp = new TrainingProgram(nn,tcs);
 			long started = System.currentTimeMillis();
+			
 			System.out.println("Training animal neural network ...");
 			AnimalNN trainedNN = (AnimalNN) tp.runProgram();
 			long ms = (System.currentTimeMillis() - started);
@@ -66,9 +67,19 @@ public class TestTrainingProgram extends TestObject {
 			assertEqual(trainedNN.getTrainedCycles(),tp.getTrainedCycles(),"Number of neural net trained cycles does not match expecttion");
 			System.out.println("Training animal neural network took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + learnedTests + ", average error change: " + errorChange);
 			System.out.println();
-			tcs = (AnimalTestCycleSet) tcs.copy();
-			trainedNN.runTestCycleSet(tcs);
-			System.out.println(tcs.summary);
+			System.out.println(tp.getFinalResults().summary);
+			if (!tp.isSuccess()) {
+				System.out.println();
+				System.out.println("Training animal neural network ...");
+				started = System.currentTimeMillis();
+				trainedNN = (AnimalNN) tp.runProgram();
+				ms = (System.currentTimeMillis() - started);
+				learnedTests = tp.getFinalResults().successes - tp.getInitialResults().successes;
+				errorChange = tp.getFinalResults().averageError - tp.getInitialResults().averageError;
+				System.out.println("Training animal neural network took " + ms + " ms, cycles: " + tp.getTrainedCycles() + ", learned tests: " + learnedTests + ", average error change: " + errorChange);
+				System.out.println();
+				System.out.println(tp.getFinalResults().summary);
+			}
 		}
 	}
 }

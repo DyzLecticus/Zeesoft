@@ -6,7 +6,6 @@ import java.util.List;
 public class Cycle {
 	public float[]			inputs				= null;
 	public float[]			outputs				= null;
-	public boolean			roundOutput		= true;
 	
 	public List<Neuron>		firedNeurons		= new ArrayList<Neuron>();
 	
@@ -30,7 +29,6 @@ public class Cycle {
 		for (int i = 0; i < toCycle.outputs.length; i++) {
 			toCycle.outputs[i] = outputs[i];
 		}
-		toCycle.roundOutput = roundOutput;
 	}
 	
 	protected void prepare() {
@@ -41,15 +39,7 @@ public class Cycle {
 		for (int n = 0; n < outputs.length; n++) {
 			if (n<nn.getOutputLayer().neurons.size()) {
 				Neuron output = nn.getOutputLayer().neurons.get(n);
-				if (roundOutput) {
-					if (output.value>=0.5F) {
-						outputs[n] = 1.0F;
-					} else {
-						outputs[n] = 0.0F;
-					}
-				} else {
-					outputs[n] = output.value;
-				}
+				outputs[n] = output.value;
 			}
 		}
 	}

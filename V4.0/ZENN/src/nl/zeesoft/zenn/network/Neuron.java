@@ -78,31 +78,4 @@ public class Neuron implements JsAble {
 		}
 		return r;
 	}
-	
-	public float getTotalSourceWeight() {
-		float r = 0;
-		for (NeuronLink source: sources) {
-			if (source.weight>0.0F) {
-				r += source.weight;
-			} else if (source.weight<0.0F) {
-				r += source.weight * -1.0F;
-			}
-		}
-		if (bias>0.0F) {
-			r += bias;
-		} else if (bias<0.0F) {
-			r += bias * -1.0F;
-		}
-		return r;
-	}
-	
-	public float getSourceWeightRatio(float weightOrBias,float totalSourceWeight) {
-		float r = 0.0F;
-		if (weightOrBias>0.0F) {
-			r = weightOrBias / totalSourceWeight;
-		} else if (weightOrBias<0.0F) {
-			r = (weightOrBias * -1.0F) / totalSourceWeight;
-		}
-		return r;
-	}
 }
