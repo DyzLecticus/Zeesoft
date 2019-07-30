@@ -55,6 +55,8 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * Multi threading  ");
 		System.out.println(" * Application message handling");
 		System.out.println(" * Self documenting and testing libraries  ");
+		System.out.println(" * Basic matrix mathematics  ");
+		System.out.println(" * Genetic algorithms  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -71,5 +73,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestJson(getTester()));
 		tests.add(new TestZHttpRequest(getTester()));
 		tests.add(new TestMessenger(getTester()));
+		tests.add(new TestZMatrix(getTester()));
+		tests.add(new TestGeneticCode(getTester()));
 	}
 }

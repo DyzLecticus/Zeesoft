@@ -108,7 +108,41 @@ public abstract class TestObject {
 	protected boolean assertEqual(boolean b1, boolean b2,String failMessage) {
 		return handleAssertionResult(b1 == b2,failMessage + " (" + b1 + " <> " + b2 + ")");
 	}
+	
+	/**
+	 * Handles errors if the floats are not equal.
+	 * 
+	 * @param f1 Float 1
+	 * @param f2 Float 2
+	 * @param failMessage The message to log if the assertion fails
+	 * @return True if the assertion is correct
+	 */
+	protected boolean assertEqual(float f1, float f2,String failMessage) {
+		return handleAssertionResult(f1 == f2,failMessage + " (" + f1 + " <> " + f2 + ")");
+	}
 
+	/**
+	 * Handles errors if the object is not null.
+	 * 
+	 * @param obj Object
+	 * @param failMessage The message to log if the assertion fails
+	 * @return True if the assertion is correct
+	 */
+	protected boolean assertNull(Object obj,String failMessage) {
+		return handleAssertionResult(obj == null,failMessage + " (" + obj.getClass().getName() + " <> " + null + ")");
+	}
+	
+	/**
+	 * Handles errors if the object is not null.
+	 * 
+	 * @param obj Object
+	 * @param failMessage The message to log if the assertion fails
+	 * @return True if the assertion is correct
+	 */
+	protected boolean assertNotNull(Object obj,String failMessage) {
+		return handleAssertionResult(obj != null,failMessage + " (" + obj.getClass().getName() + " <> " + null + ")");
+	}
+	
 	/**
 	 * Returns the number of assertions to the Tester.
 	 * 
