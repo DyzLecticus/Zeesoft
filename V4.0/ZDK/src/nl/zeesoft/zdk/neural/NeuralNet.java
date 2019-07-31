@@ -92,11 +92,9 @@ public class NeuralNet {
 		runCycle(ex);
 		
 		ZMatrix errors = ZMatrix.getFromArray(ex.errors);
+		
 		int p = layerValues.length - 2;
 		for (int i = (layerValues.length - 1); i > 0; i--) {
-			ZMatrix tWeights = ZMatrix.transpose(layerWeights[i]);
-			errors = ZMatrix.multiply(tWeights,errors);
-			
 			ZMatrix gradients = layerValues[i].copy();
 			gradients.applyFunction(activator.getDerivative());
 			gradients.multiply(errors);
@@ -106,6 +104,10 @@ public class NeuralNet {
 			ZMatrix deltas = ZMatrix.multiply(gradients,pTValues);
 			layerWeights[i].add(deltas); 
 			
+			layerBiases[i].add(gradients);
+			
+			ZMatrix tWeights = ZMatrix.transpose(layerWeights[i]);
+			errors = ZMatrix.multiply(tWeights,errors);
 			p--;
 		}
 	}

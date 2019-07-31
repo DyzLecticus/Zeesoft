@@ -60,7 +60,24 @@ public class TestNeuralNet extends TestObject {
 		
 		for (Exercise ex: exSet.exercises) {
 			System.out.println(
-				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[0]) + "]" + 
+				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[1]) + "]" + 
+				", output: [" + df.format(ex.outputs[0]) + "]" + 
+				", expectation: [" + df.format(ex.expectations[0]) + "]" + 
+				", error " + df.format(ex.errors[0]) + 
+				", success: " + ex.success);
+		}
+		
+		for (int i = 0; i < 10000; i++) {
+			ExerciseSet exSet2 = exSet.copy();
+			exSet2.randomizeOrder();
+			nn.train(exSet2);
+		}
+
+		nn.train(exSet);
+		
+		for (Exercise ex: exSet.exercises) {
+			System.out.println(
+				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[1]) + "]" + 
 				", output: [" + df.format(ex.outputs[0]) + "]" + 
 				", expectation: [" + df.format(ex.expectations[0]) + "]" + 
 				", error " + df.format(ex.errors[0]) + 
