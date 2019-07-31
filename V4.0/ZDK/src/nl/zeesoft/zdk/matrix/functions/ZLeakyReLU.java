@@ -4,6 +4,10 @@ import nl.zeesoft.zdk.matrix.ZActivator;
 import nl.zeesoft.zdk.matrix.ZFunction;
 
 public class ZLeakyReLU implements ZActivator {
+	protected ZLeakyReLU() {
+		// Use StaticFunctions class to get instance
+	}
+	
 	@Override
 	public float applyFunction(float v) {
 		return relu(v);

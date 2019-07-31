@@ -3,12 +3,8 @@ package nl.zeesoft.zdk.matrix;
 import java.text.DecimalFormat;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.matrix.functions.ZAdd;
-import nl.zeesoft.zdk.matrix.functions.ZDivide;
-import nl.zeesoft.zdk.matrix.functions.ZMultiply;
+import nl.zeesoft.zdk.matrix.functions.StaticFunctions;
 import nl.zeesoft.zdk.matrix.functions.ZRandomize;
-import nl.zeesoft.zdk.matrix.functions.ZSet;
-import nl.zeesoft.zdk.matrix.functions.ZSubtract;
 
 public class ZMatrix {
 	public int			rows	= 0;
@@ -28,44 +24,44 @@ public class ZMatrix {
 	
 	// Scalar
 	public void add(float f) {
-		applyFunction(new ZAdd(),f);
+		applyFunction(StaticFunctions.ADD,f);
 	}
 	
 	public void subtract(float f) {
-		applyFunction(new ZSubtract(),f);
+		applyFunction(StaticFunctions.SUBTRACT,f);
 	}
 	
 	public void multiply(float f) {
-		applyFunction(new ZMultiply(),f);
+		applyFunction(StaticFunctions.MULTIPLY,f);
 	}
 	
 	public void divide(float f) {
-		applyFunction(new ZDivide(),f);
+		applyFunction(StaticFunctions.DIVIDE,f);
 	}
 	
 	public void set(float f) {
-		applyFunction(new ZSet(),f);
+		applyFunction(StaticFunctions.SET,f);
 	}
 	
 	// Element
 	public void add(ZMatrix m) {
-		applyFunction(new ZAdd(),m);
+		applyFunction(StaticFunctions.ADD,m);
 	}
 	
 	public void subtract(ZMatrix m) {
-		applyFunction(new ZSubtract(),m);
+		applyFunction(StaticFunctions.SUBTRACT,m);
 	}
 	
 	public void multiply(ZMatrix m) {
-		applyFunction(new ZMultiply(),m);
+		applyFunction(StaticFunctions.MULTIPLY,m);
 	}
 	
 	public void divide(ZMatrix m) {
-		applyFunction(new ZDivide(),m);
+		applyFunction(StaticFunctions.DIVIDE,m);
 	}
 	
 	public void set(ZMatrix m) {
-		applyFunction(new ZSet(),m);
+		applyFunction(StaticFunctions.SET,m);
 	}
 	
 	public void randomize() {
@@ -81,19 +77,19 @@ public class ZMatrix {
 	
 	// Matrix
 	public static ZMatrix add(ZMatrix a,ZMatrix b) {
-		return applyFunction(new ZAdd(),a,b);
+		return applyFunction(StaticFunctions.ADD,a,b);
 	}
 
 	public static ZMatrix subtract(ZMatrix a,ZMatrix b) {
-		return applyFunction(new ZSubtract(),a,b);
+		return applyFunction(StaticFunctions.SUBTRACT,a,b);
 	}
 	
 	public static ZMatrix multiply(ZMatrix a,ZMatrix b) {
-		return applyFunction(new ZMultiply(),a,b);
+		return applyFunction(StaticFunctions.MULTIPLY,a,b);
 	}
 	
 	public static ZMatrix divide(ZMatrix a,ZMatrix b) {
-		return applyFunction(new ZDivide(),a,b);
+		return applyFunction(StaticFunctions.DIVIDE,a,b);
 	}
 	
 	public void applyFunction(ZFunction function) {
