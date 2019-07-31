@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.neural;
 
 import nl.zeesoft.zdk.matrix.ZActivator;
 import nl.zeesoft.zdk.matrix.ZMatrix;
-import nl.zeesoft.zdk.matrix.functions.ZSigmoid;
+import nl.zeesoft.zdk.matrix.functions.ZLeakyReLU;
 
 public class NeuralNet {
 	public int				inputNeurons	= 1;
@@ -10,7 +10,7 @@ public class NeuralNet {
 	public int				hiddenNeurons	= 1;
 	public int				outputNeurons	= 1;
 	
-	public ZActivator		activator		= new ZSigmoid();
+	public ZActivator		activator		= new ZLeakyReLU();
 	public float			learningRate	= 0.1F;
 	
 	protected ZMatrix[]		layerValues		= null;

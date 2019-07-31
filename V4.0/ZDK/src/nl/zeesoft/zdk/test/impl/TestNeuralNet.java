@@ -61,7 +61,7 @@ public class TestNeuralNet extends TestObject {
 		trainingSetToSystemOut(tSet);
 		
 		TrainingProgram tp = new TrainingProgram(nn,tSet);
-		for (int i = 0; i < 50000; i++) {
+		for (int i = 0; i < 5000; i++) {
 			if (tp.train(10)) {
 				break;
 			}
