@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.matrix;
 
-public interface ZMatrixFunction {
+public interface ZFunction {
 	/**
 	 * Should return the new value for the current value.
 	 * 

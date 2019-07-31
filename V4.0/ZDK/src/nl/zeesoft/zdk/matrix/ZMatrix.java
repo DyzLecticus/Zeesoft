@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.matrix.functions.ZAdd;
 import nl.zeesoft.zdk.matrix.functions.ZDivide;
 import nl.zeesoft.zdk.matrix.functions.ZMultiply;
 import nl.zeesoft.zdk.matrix.functions.ZRandomize;
+import nl.zeesoft.zdk.matrix.functions.ZSet;
 import nl.zeesoft.zdk.matrix.functions.ZSubtract;
 
 public class ZMatrix {
@@ -42,6 +43,10 @@ public class ZMatrix {
 		applyFunction(new ZDivide(),f);
 	}
 	
+	public void set(float f) {
+		applyFunction(new ZSet(),f);
+	}
+	
 	// Element
 	public void add(ZMatrix m) {
 		applyFunction(new ZAdd(),m);
@@ -57,6 +62,10 @@ public class ZMatrix {
 	
 	public void divide(ZMatrix m) {
 		applyFunction(new ZDivide(),m);
+	}
+	
+	public void set(ZMatrix m) {
+		applyFunction(new ZSet(),m);
 	}
 	
 	public void randomize() {
@@ -87,7 +96,7 @@ public class ZMatrix {
 		return applyFunction(new ZDivide(),a,b);
 	}
 	
-	public void applyFunction(ZMatrixFunction function) {
+	public void applyFunction(ZFunction function) {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				data[i][j] = function.applyFunction(data[i][j]);
@@ -95,7 +104,7 @@ public class ZMatrix {
 		}
 	}
 	
-	public void applyFunction(ZMatrixParameterizedFunction function,float p) {
+	public void applyFunction(ZParamFunction function,float p) {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				data[i][j] = function.applyFunction(data[i][j],p);
@@ -103,7 +112,7 @@ public class ZMatrix {
 		}
 	}
 
-	public void applyFunction(ZMatrixParameterizedFunction function,ZMatrix p) {
+	public void applyFunction(ZParamFunction function,ZMatrix p) {
 		if (p.rows==rows && p.cols==cols) {
 			for (int i = 0; i < rows; i++) {
 				for (int j = 0; j < cols; j++) {
@@ -113,7 +122,7 @@ public class ZMatrix {
 		}
 	}
 
-	public static ZMatrix applyFunction(ZMatrixParameterizedFunction function,ZMatrix a,ZMatrix b) {
+	public static ZMatrix applyFunction(ZParamFunction function,ZMatrix a,ZMatrix b) {
 		ZMatrix r = null;
 		if (a.cols==b.rows) {
 			r = new ZMatrix(a.rows,b.cols);
@@ -140,13 +149,25 @@ public class ZMatrix {
 		return r;
 	}
 
-	public ZMatrix copy() {
-		ZMatrix r = new ZMatrix(rows,cols);
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				r.data[i][j] = data[i][j];
+	public void fromArray(float [] a) {
+		if (rows==a.length) {
+			for (int i = 0; i < a.length; i++) {
+				data[i][0] = a[i];
 			}
 		}
+	}
+
+	public float[] toArray() {
+		float[] r = new float[cols];
+		for (int i = 0; i < cols; i++) {
+			r[i] = data[0][i];
+		}
+		return r;
+	}
+	
+	public ZMatrix copy() {
+		ZMatrix r = new ZMatrix(rows,cols);
+		r.set(this);
 		return r;
 	}
 	

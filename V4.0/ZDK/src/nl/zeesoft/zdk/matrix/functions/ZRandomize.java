@@ -2,9 +2,9 @@ package nl.zeesoft.zdk.matrix.functions;
 
 import java.util.Random;
 
-import nl.zeesoft.zdk.matrix.ZMatrixFunction;
+import nl.zeesoft.zdk.matrix.ZFunction;
 
-public class ZRandomize implements ZMatrixFunction {
+public class ZRandomize implements ZFunction {
 	private Random 	random		= new Random();
 	
 	public float	min			= -1F; 
