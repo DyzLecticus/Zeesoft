@@ -2,24 +2,24 @@ package nl.zeesoft.zdk.neural;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
-public class Cycle {
+public class Prediction {
 	public ZStringBuilder	error	= new ZStringBuilder();
 	public float[] 			inputs	= null;
 	public float[] 			outputs	= null;
 	
-	protected Cycle() {
+	protected Prediction() {
 		
 	}
 
-	protected Cycle(NeuralNet nn) {
+	protected Prediction(NeuralNet nn) {
 		inputs = new float[nn.inputNeurons];
 		initializeValues(inputs);
 		outputs = new float[nn.outputNeurons];
 		initializeValues(outputs);
 	}
 	
-	public Cycle copy() {
-		Cycle r = new Cycle();
+	public Prediction copy() {
+		Prediction r = new Prediction();
 		copyTo(r);
 		return r;
 	}
@@ -39,7 +39,7 @@ public class Cycle {
 		// Override to implement
 	}
 	
-	protected void copyTo(Cycle c) {
+	protected void copyTo(Prediction c) {
 		c.error = new ZStringBuilder(error);
 		c.inputs = new float[inputs.length];
 		copyValues(c.inputs,inputs);

@@ -140,7 +140,7 @@ public abstract class TestObject {
 	 * @return True if the assertion is correct
 	 */
 	protected boolean assertNotNull(Object obj,String failMessage) {
-		return handleAssertionResult(obj != null,failMessage + " (" + obj.getClass().getName() + " <> " + null + ")");
+		return handleAssertionResult(obj != null,failMessage + " (? == " + null + ")");
 	}
 	
 	/**

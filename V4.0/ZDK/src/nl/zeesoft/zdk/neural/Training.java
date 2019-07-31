@@ -1,17 +1,17 @@
 package nl.zeesoft.zdk.neural;
 
-public class Exercise extends Cycle {
+public class Training extends Prediction {
 	public float[] 			expectations	= null;
 	public float			errorTolerance	= 0.1F;
 
 	public float[] 			errors			= null;
 	public boolean			success			= true;
 	
-	protected Exercise() {
+	protected Training() {
 		
 	}
 	
-	protected Exercise(NeuralNet nn) {
+	protected Training(NeuralNet nn) {
 		super(nn);
 		expectations = new float[nn.outputNeurons];
 		initializeValues(expectations);
@@ -20,8 +20,8 @@ public class Exercise extends Cycle {
 	}
 	
 	@Override
-	public Cycle copy() {
-		Exercise r = new Exercise();
+	public Prediction copy() {
+		Training r = new Training();
 		copyTo(r);
 		return r;
 	}
@@ -51,10 +51,10 @@ public class Exercise extends Cycle {
 	}
 
 	@Override
-	protected void copyTo(Cycle c) {
+	protected void copyTo(Prediction c) {
 		super.copyTo(c);
-		if (c instanceof Exercise) {
-			Exercise ex = (Exercise) c;
+		if (c instanceof Training) {
+			Training ex = (Training) c;
 			ex.expectations = new float[expectations.length];
 			copyValues(ex.expectations,expectations);
 			ex.errorTolerance = errorTolerance;

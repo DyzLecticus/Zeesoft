@@ -2,13 +2,16 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.text.DecimalFormat;
 
-import nl.zeesoft.zdk.neural.Exercise;
-import nl.zeesoft.zdk.neural.ExerciseSet;
 import nl.zeesoft.zdk.neural.NeuralNet;
+import nl.zeesoft.zdk.neural.Training;
+import nl.zeesoft.zdk.neural.TrainingProgram;
+import nl.zeesoft.zdk.neural.TrainingSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
 public class TestNeuralNet extends TestObject {	
+	private DecimalFormat	df	= new DecimalFormat("0.00");
+	
 	public TestNeuralNet(Tester tester) {
 		super(tester);
 	}
@@ -52,43 +55,46 @@ public class TestNeuralNet extends TestObject {
 		NeuralNet nn = new NeuralNet(2,1,2,1);
 		nn.randomizeWeightsAndBiases();
 		
-		DecimalFormat df = new DecimalFormat("0.00");
+		TrainingSet tSet = getTrainingSet(nn,false);
 		
-		ExerciseSet exSet = getExerciseSet(nn,false);
+		nn.train(tSet);
+		trainingSetToSystemOut(tSet);
 		
-		nn.train(exSet);
-		
-		for (Exercise ex: exSet.exercises) {
-			System.out.println(
-				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[1]) + "]" + 
-				", output: [" + df.format(ex.outputs[0]) + "]" + 
-				", expectation: [" + df.format(ex.expectations[0]) + "]" + 
-				", error " + df.format(ex.errors[0]) + 
-				", success: " + ex.success);
+		TrainingProgram tp = new TrainingProgram(nn,tSet);
+		for (int i = 0; i < 50000; i++) {
+			if (tp.train(10)) {
+				break;
+			}
 		}
-		
-		for (int i = 0; i < 10000; i++) {
-			ExerciseSet exSet2 = exSet.copy();
-			exSet2.randomizeOrder();
-			nn.train(exSet2);
-		}
-
-		nn.train(exSet);
-		
-		for (Exercise ex: exSet.exercises) {
-			System.out.println(
-				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[1]) + "]" + 
-				", output: [" + df.format(ex.outputs[0]) + "]" + 
-				", expectation: [" + df.format(ex.expectations[0]) + "]" + 
-				", error " + df.format(ex.errors[0]) + 
-				", success: " + ex.success);
+		System.out.println();
+		if (assertNotNull(tp.finalResults,"Training program final results does not match expectation")) {
+			trainingSetToSystemOut(tp.finalResults);
+			float errorChange = tp.finalResults.averageError - tp.initialResults.averageError;
+			System.out.println("Trained: " + tp.trained + ", error change: " + errorChange + ", learnedRate: " + errorChange / (float) tp.trained);
+		} else {
+			nn.train(tSet);
+			trainingSetToSystemOut(tSet);
+			float errorChange = tSet.averageError - tp.initialResults.averageError;
+			System.out.println("Trained: " + tp.trained + ", error change: " + errorChange + ", change per training: " + errorChange / (float) tp.trained);
 		}
 	}
+	
+	private void trainingSetToSystemOut(TrainingSet tSet) {
+		for (Training ex: tSet.trainings) {
+			System.out.println(
+				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[1]) + "]" + 
+				", output: [" + df.format(ex.outputs[0]) + "]" + 
+				", expectation: [" + df.format(ex.expectations[0]) + "]" + 
+				", error " + df.format(ex.errors[0]) + 
+				", success: " + ex.success);
+		}
+		System.out.println("Average error: " + df.format(tSet.averageError) + ", success: " + tSet.success);
+	}
 
-	private ExerciseSet getExerciseSet(NeuralNet nn, boolean randomize) {
-		ExerciseSet r = new ExerciseSet();
+	private TrainingSet getTrainingSet(NeuralNet nn, boolean randomize) {
+		TrainingSet r = new TrainingSet();
 		for (int i = 0; i<4; i++) {
-			r.exercises.add(getExercise(nn,i));
+			r.trainings.add(getTraining(nn,i));
 		}
 		if (randomize) {
 			r.randomizeOrder();
@@ -96,8 +102,8 @@ public class TestNeuralNet extends TestObject {
 		return r;
 	}
 	
-	private Exercise getExercise(NeuralNet nn,int index) {
-		Exercise r = nn.getNewExercise();
+	private Training getTraining(NeuralNet nn,int index) {
+		Training r = nn.getNewTraining();
 		if (index==0) {
 			r.inputs[0] = 0;
 			r.inputs[1] = 0;

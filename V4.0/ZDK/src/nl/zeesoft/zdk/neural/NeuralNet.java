@@ -66,32 +66,33 @@ public class NeuralNet {
 		}
 	}
 	
-	public Cycle getNewCycle() {
-		return new Cycle(this);
+	public Prediction getNewPrediction() {
+		return new Prediction(this);
 	}
 
-	public Exercise getNewExercise() {
-		return new Exercise(this);
+	public Training getNewTraining() {
+		return new Training(this);
 	}
 
-	public void runCycle(Cycle c) {
-		c.prepare(this);
-		if (c.error.length()==0) {
-			c.outputs = feedForward(c.inputs);
-			c.finalize(this);
+	public void predict(Prediction p) {
+		p.prepare(this);
+		if (p.error.length()==0) {
+			p.outputs = feedForward(p.inputs);
+			p.finalize(this);
 		}
 	}
 	
-	public void train(ExerciseSet exSet) {
-		for (Exercise ex: exSet.exercises) {
-			train(ex);
+	public void train(TrainingSet tSet) {
+		for (Training t: tSet.trainings) {
+			train(t);
 		}
+		tSet.finalize();
 	}
 
-	public void train(Exercise ex) {
-		runCycle(ex);
+	public void train(Training t) {
+		predict(t);
 		
-		ZMatrix errors = ZMatrix.getFromArray(ex.errors);
+		ZMatrix errors = ZMatrix.getFromArray(t.errors);
 		
 		int p = layerValues.length - 2;
 		for (int i = (layerValues.length - 1); i > 0; i--) {
