@@ -148,6 +148,12 @@ public class ZMatrix {
 		}
 		return r;
 	}
+	
+	public static ZMatrix getFromArray(float [] a) {
+		ZMatrix r = new ZMatrix(a.length,1);
+		r.fromArray(a);
+		return r;
+	}
 
 	public void fromArray(float [] a) {
 		if (rows==a.length) {

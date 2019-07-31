@@ -12,6 +12,10 @@ public class ZRandomize implements ZFunction {
 	
 	@Override
 	public float applyFunction(float v) {
+		return getRandomFloat();
+	}
+	
+	public float getRandomFloat() {
 		return getRandomFloat(min,max);
 	}
 

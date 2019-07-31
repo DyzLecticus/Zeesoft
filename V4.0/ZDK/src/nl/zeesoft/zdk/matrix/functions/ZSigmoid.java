@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.matrix.functions;
 
 import nl.zeesoft.zdk.matrix.ZActivator;
+import nl.zeesoft.zdk.matrix.ZFunction;
 
 public class ZSigmoid implements ZActivator {
 	@Override
@@ -9,15 +10,11 @@ public class ZSigmoid implements ZActivator {
 	}
 
 	@Override
-	public float applyDerivativeFunction(float v) {
-		return sigmoidDerived(v);
+	public ZFunction getDerivative() {
+		return new ZSigmoidDerivative();
 	}
 	
 	public static float sigmoid(float x) {
 		return (float) (1 / (1 + Math.pow(Math.E,(x * -1))));
-	}
-
-	public static float sigmoidDerived(float y) {
-		return y * (1.0F - y);
 	}
 }

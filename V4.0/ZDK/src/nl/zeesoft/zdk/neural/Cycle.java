@@ -7,11 +7,21 @@ public class Cycle {
 	public float[] 			inputs	= null;
 	public float[] 			outputs	= null;
 	
+	protected Cycle() {
+		
+	}
+
 	protected Cycle(NeuralNet nn) {
 		inputs = new float[nn.inputNeurons];
 		initializeValues(inputs);
 		outputs = new float[nn.outputNeurons];
 		initializeValues(outputs);
+	}
+	
+	public Cycle copy() {
+		Cycle r = new Cycle();
+		copyTo(r);
+		return r;
 	}
 	
 	protected void prepare(NeuralNet nn) {
@@ -29,9 +39,23 @@ public class Cycle {
 		// Override to implement
 	}
 	
+	protected void copyTo(Cycle c) {
+		c.error = new ZStringBuilder(error);
+		c.inputs = new float[inputs.length];
+		copyValues(c.inputs,inputs);
+		c.outputs = new float[outputs.length];
+		copyValues(c.outputs,outputs);
+	}
+	
 	protected void initializeValues(float[] a) {
 		for (int i = 0; i< a.length; i++) {
 			a[i] = 0;
+		}
+	}
+	
+	protected void copyValues(float[] to,float[] from) {
+		for (int i = 0; i< to.length; i++) {
+			to[i] = from[i];
 		}
 	}
 }

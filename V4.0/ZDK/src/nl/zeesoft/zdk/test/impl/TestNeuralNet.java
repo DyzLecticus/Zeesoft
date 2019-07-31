@@ -1,6 +1,9 @@
 package nl.zeesoft.zdk.test.impl;
 
+import java.text.DecimalFormat;
+
 import nl.zeesoft.zdk.neural.Exercise;
+import nl.zeesoft.zdk.neural.ExerciseSet;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -49,13 +52,32 @@ public class TestNeuralNet extends TestObject {
 		NeuralNet nn = new NeuralNet(2,1,2,1);
 		nn.randomizeWeightsAndBiases();
 		
-		Exercise ex = getExercise(nn,0); 
-		nn.runCycle(ex);
-		assertEqual(ex.outputs.length,1,"The number of outputs does not match expectation");
-		System.out.println(ex.outputs[0]);
+		DecimalFormat df = new DecimalFormat("0.00");
+		
+		ExerciseSet exSet = getExerciseSet(nn,false);
+		
+		nn.train(exSet);
+		
+		for (Exercise ex: exSet.exercises) {
+			System.out.println(
+				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[0]) + "]" + 
+				", output: [" + df.format(ex.outputs[0]) + "]" + 
+				", expectation: [" + df.format(ex.expectations[0]) + "]" + 
+				", error " + df.format(ex.errors[0]) + 
+				", success: " + ex.success);
+		}
 	}
-	
-	
+
+	private ExerciseSet getExerciseSet(NeuralNet nn, boolean randomize) {
+		ExerciseSet r = new ExerciseSet();
+		for (int i = 0; i<4; i++) {
+			r.exercises.add(getExercise(nn,i));
+		}
+		if (randomize) {
+			r.randomizeOrder();
+		}
+		return r;
+	}
 	
 	private Exercise getExercise(NeuralNet nn,int index) {
 		Exercise r = nn.getNewExercise();

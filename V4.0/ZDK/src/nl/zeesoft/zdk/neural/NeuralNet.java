@@ -11,6 +11,7 @@ public class NeuralNet {
 	public int				outputNeurons	= 1;
 	
 	public ZActivator		activator		= new ZSigmoid();
+	public float			learningRate	= 0.1F;
 	
 	protected ZMatrix[]		layerValues		= null;
 	protected ZMatrix[]		layerWeights	= null;
@@ -81,6 +82,34 @@ public class NeuralNet {
 		}
 	}
 	
+	public void train(ExerciseSet exSet) {
+		for (Exercise ex: exSet.exercises) {
+			train(ex);
+		}
+	}
+
+	public void train(Exercise ex) {
+		runCycle(ex);
+		
+		ZMatrix errors = ZMatrix.getFromArray(ex.errors);
+		int p = layerValues.length - 2;
+		for (int i = (layerValues.length - 1); i > 0; i--) {
+			ZMatrix tWeights = ZMatrix.transpose(layerWeights[i]);
+			errors = ZMatrix.multiply(tWeights,errors);
+			
+			ZMatrix gradients = layerValues[i].copy();
+			gradients.applyFunction(activator.getDerivative());
+			gradients.multiply(errors);
+			gradients.multiply(learningRate);
+
+			ZMatrix pTValues = ZMatrix.transpose(layerValues[p]);
+			ZMatrix deltas = ZMatrix.multiply(gradients,pTValues);
+			layerWeights[i].add(deltas); 
+			
+			p--;
+		}
+	}
+	
 	protected float[] feedForward(float[] inputs) {
 		resetValues();
 		getInputValues().fromArray(inputs);
@@ -93,18 +122,18 @@ public class NeuralNet {
 		}
 		return getOutputValues().toArray();
 	}
-	
-	private void resetValues() {
+
+	protected void resetValues() {
 		for (int i = 0; i < layerValues.length; i++) {
 			layerValues[i].set(0.0F);
 		}
 	}
 	
-	private ZMatrix getInputValues() {
+	protected ZMatrix getInputValues() {
 		return layerValues[0];
 	}
 	
-	private ZMatrix getOutputValues() {
+	protected ZMatrix getOutputValues() {
 		return layerValues[layerValues.length - 1];
 	}
 }
