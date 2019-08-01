@@ -92,6 +92,23 @@ public class ZMatrix {
 		return applyFunction(StaticFunctions.DIVIDE,a,b);
 	}
 	
+	// Column values
+	public float getColumnValuesAdded(int col) {
+		return getColunValues(col,StaticFunctions.ADD);
+	}
+	
+	public float getColumnValuesSubtracted(int col) {
+		return getColunValues(col,StaticFunctions.SUBTRACT);
+	}
+	
+	public float getColumnValuesMultiplied(int col) {
+		return getColunValues(col,StaticFunctions.MULTIPLY);
+	}
+	
+	public float getColumnValuesDivided(int col) {
+		return getColunValues(col,StaticFunctions.DIVIDE);
+	}
+	
 	public void applyFunction(ZFunction function) {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
@@ -131,6 +148,14 @@ public class ZMatrix {
 					r.data[i][j] = v;
 				}
 			}
+		}
+		return r;
+	}
+	
+	public float getColunValues(int col,ZParamFunction function) {
+		float r = 0;
+		for (int i = 0; i < rows; i++) {
+			r = function.applyFunction(r,data[i][col]);
 		}
 		return r;
 	}

@@ -18,4 +18,6 @@ public class StaticFunctions {
 	
 	public static ZLeakyReLU				L_RELU		= new ZLeakyReLU();
 	public static ZLeakyReLUDerivative		L_RELU_DER	= new ZLeakyReLUDerivative();
+	
+	public static ZSoftmaxTop				SOFTMAX_TOP	= new ZSoftmaxTop();
 }

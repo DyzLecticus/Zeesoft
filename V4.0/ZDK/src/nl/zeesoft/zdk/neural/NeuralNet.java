@@ -11,6 +11,7 @@ public class NeuralNet {
 	public int				outputNeurons	= 1;
 	
 	public ZActivator		activator		= StaticFunctions.L_RELU;
+	public boolean			softmaxOutput	= false;
 	public float			learningRate	= 0.1F;
 	
 	protected ZMatrix[]		layerValues		= null;
@@ -81,7 +82,14 @@ public class NeuralNet {
 			p.finalize(this);
 		}
 	}
-	
+
+	public void test(TrainingSet tSet) {
+		for (Training t: tSet.trainings) {
+			predict(t);
+		}
+		tSet.finalize();
+	}
+
 	public void train(TrainingSet tSet) {
 		for (Training t: tSet.trainings) {
 			train(t);
@@ -122,6 +130,13 @@ public class NeuralNet {
 			layerValues[i].add(layerBiases[i]);
 			layerValues[i].applyFunction(activator);
 			p++;
+		}
+		if (softmaxOutput) {
+			getOutputValues().applyFunction(StaticFunctions.SOFTMAX_TOP);
+			float total = getOutputValues().getColumnValuesAdded(0);
+			if (total>0) {
+				getOutputValues().divide(total);
+			}
 		}
 		return getOutputValues().toArray();
 	}
