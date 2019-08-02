@@ -71,8 +71,8 @@ public class NeuralNet {
 		return new Prediction(this);
 	}
 
-	public Training getNewTraining() {
-		return new Training(this);
+	public Test getNewTraining() {
+		return new Test(this);
 	}
 
 	public void predict(Prediction p) {
@@ -83,41 +83,43 @@ public class NeuralNet {
 		}
 	}
 
-	public void test(TrainingSet tSet) {
-		for (Training t: tSet.trainings) {
+	public void test(TestSet tSet) {
+		for (Test t: tSet.tests) {
 			predict(t);
 		}
 		tSet.finalize();
 	}
 
-	public void train(TrainingSet tSet) {
-		for (Training t: tSet.trainings) {
+	public void train(TestSet tSet) {
+		for (Test t: tSet.tests) {
 			train(t);
 		}
 		tSet.finalize();
 	}
 
-	public void train(Training t) {
+	public void train(Test t) {
 		predict(t);
 		
-		ZMatrix errors = ZMatrix.getFromArray(t.errors);
-		
-		int p = layerValues.length - 2;
-		for (int i = (layerValues.length - 1); i > 0; i--) {
-			ZMatrix gradients = layerValues[i].copy();
-			gradients.applyFunction(activator.getDerivative());
-			gradients.multiply(errors);
-			gradients.multiply(learningRate);
-
-			ZMatrix pTValues = ZMatrix.transpose(layerValues[p]);
-			ZMatrix deltas = ZMatrix.multiply(gradients,pTValues);
-			layerWeights[i].add(deltas); 
+		if (t.error.length()==0) {
+			ZMatrix errors = ZMatrix.getFromArray(t.errors);
 			
-			layerBiases[i].add(gradients);
-			
-			ZMatrix tWeights = ZMatrix.transpose(layerWeights[i]);
-			errors = ZMatrix.multiply(tWeights,errors);
-			p--;
+			int p = layerValues.length - 2;
+			for (int i = (layerValues.length - 1); i > 0; i--) {
+				ZMatrix gradients = layerValues[i].copy();
+				gradients.applyFunction(activator.getDerivative());
+				gradients.multiply(errors);
+				gradients.multiply(learningRate);
+	
+				ZMatrix pTValues = ZMatrix.transpose(layerValues[p]);
+				ZMatrix deltas = ZMatrix.multiply(gradients,pTValues);
+				layerWeights[i].add(deltas); 
+				
+				layerBiases[i].add(gradients);
+				
+				ZMatrix tWeights = ZMatrix.transpose(layerWeights[i]);
+				errors = ZMatrix.multiply(tWeights,errors);
+				p--;
+			}
 		}
 	}
 	
@@ -128,15 +130,16 @@ public class NeuralNet {
 		for (int i = 1; i < layerValues.length; i++) {
 			layerValues[i] = ZMatrix.multiply(layerWeights[i],layerValues[p]);
 			layerValues[i].add(layerBiases[i]);
-			layerValues[i].applyFunction(activator);
-			p++;
-		}
-		if (softmaxOutput) {
-			getOutputValues().applyFunction(StaticFunctions.SOFTMAX_TOP);
-			float total = getOutputValues().getColumnValuesAdded(0);
-			if (total>0) {
-				getOutputValues().divide(total);
+			if (softmaxOutput && i == layerValues.length - 1) {
+				getOutputValues().applyFunction(StaticFunctions.SOFTMAX_TOP);
+				float total = getOutputValues().getColumnValuesAdded(0);
+				if (total>0) {
+					getOutputValues().divide(total);
+				}
+			} else {
+				layerValues[i].applyFunction(activator);
 			}
+			p++;
 		}
 		return getOutputValues().toArray();
 	}

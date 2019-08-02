@@ -3,9 +3,9 @@ package nl.zeesoft.zdk.test.impl;
 import java.text.DecimalFormat;
 
 import nl.zeesoft.zdk.neural.NeuralNet;
-import nl.zeesoft.zdk.neural.Training;
+import nl.zeesoft.zdk.neural.Test;
 import nl.zeesoft.zdk.neural.TrainingProgram;
-import nl.zeesoft.zdk.neural.TrainingSet;
+import nl.zeesoft.zdk.neural.TestSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -55,9 +55,9 @@ public class TestNeuralNet extends TestObject {
 		NeuralNet nn = new NeuralNet(2,1,2,1);
 		nn.randomizeWeightsAndBiases();
 		
-		TrainingSet tSet = getTrainingSet(nn,false);
+		TestSet tSet = getTrainingSet(nn,false);
 		
-		nn.train(tSet);
+		nn.test(tSet);
 		trainingSetToSystemOut(tSet);
 		
 		TrainingProgram tp = new TrainingProgram(nn,tSet);
@@ -67,34 +67,28 @@ public class TestNeuralNet extends TestObject {
 			}
 		}
 		System.out.println();
-		if (assertNotNull(tp.finalResults,"Training program final results does not match expectation")) {
-			trainingSetToSystemOut(tp.finalResults);
-			float errorChange = tp.finalResults.averageError - tp.initialResults.averageError;
-			System.out.println("Trained: " + tp.trained + ", error change: " + errorChange + ", learnedRate: " + errorChange / (float) tp.trained);
-		} else {
-			nn.train(tSet);
-			trainingSetToSystemOut(tSet);
-			float errorChange = tSet.averageError - tp.initialResults.averageError;
-			System.out.println("Trained: " + tp.trained + ", error change: " + errorChange + ", change per training: " + errorChange / (float) tp.trained);
-		}
+		trainingSetToSystemOut(tp.latestResults);
+		float errorChange = tp.latestResults.averageError - tp.initialResults.averageError;
+		float learnedRate = errorChange / (float) tp.trainedEpochs;
+		System.out.println("Trained epochs: " + tp.trainedEpochs + ", error change: " + errorChange + ", learned rate: " + learnedRate);
 	}
 	
-	private void trainingSetToSystemOut(TrainingSet tSet) {
-		for (Training ex: tSet.trainings) {
+	private void trainingSetToSystemOut(TestSet tSet) {
+		for (Test t: tSet.tests) {
 			System.out.println(
-				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[1]) + "]" + 
-				", output: [" + df.format(ex.outputs[0]) + "]" + 
-				", expectation: [" + df.format(ex.expectations[0]) + "]" + 
-				", error " + df.format(ex.errors[0]) + 
-				", success: " + ex.success);
+				"Input: [" + df.format(t.inputs[0]) + "|" + df.format(t.inputs[1]) + "]" + 
+				", output: [" + df.format(t.outputs[0]) + "]" + 
+				", expectation: [" + df.format(t.expectations[0]) + "]" + 
+				", error " + df.format(t.errors[0])
+				);
 		}
 		System.out.println("Average error: " + df.format(tSet.averageError) + ", success: " + tSet.success);
 	}
 
-	private TrainingSet getTrainingSet(NeuralNet nn, boolean randomize) {
-		TrainingSet r = new TrainingSet();
+	private TestSet getTrainingSet(NeuralNet nn, boolean randomize) {
+		TestSet r = new TestSet();
 		for (int i = 0; i<4; i++) {
-			r.trainings.add(getTraining(nn,i));
+			r.tests.add(getTraining(nn,i));
 		}
 		if (randomize) {
 			r.randomizeOrder();
@@ -102,8 +96,8 @@ public class TestNeuralNet extends TestObject {
 		return r;
 	}
 	
-	private Training getTraining(NeuralNet nn,int index) {
-		Training r = nn.getNewTraining();
+	private Test getTraining(NeuralNet nn,int index) {
+		Test r = nn.getNewTraining();
 		if (index==0) {
 			r.inputs[0] = 0;
 			r.inputs[1] = 0;

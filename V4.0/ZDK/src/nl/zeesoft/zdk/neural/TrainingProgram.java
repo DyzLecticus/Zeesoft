@@ -1,63 +1,47 @@
 package nl.zeesoft.zdk.neural;
 
 public class TrainingProgram {
-	public NeuralNet		neuralNet			= null;
-	public TrainingSet		baseTrainingSet		= null;
+	public NeuralNet	neuralNet			= null;
+	public TestSet		baseTestSet			= null;
 	
-	public int				stopOnSuccesses		= 10;
+	public boolean		stopSuccess			= true;
 	
-	public int				trained				= 0;
-	public int				successes			= 0;
-	public TrainingSet		initialResults		= null;
-	public TrainingSet		finalResults		= null;
+	public int			trainedEpochs		= 0;
+	public int			successes			= 0;
+	public TestSet		initialResults		= null;
+	public TestSet		latestResults		= null;
 	
-	public TrainingProgram(NeuralNet nn,TrainingSet baseTs) {
+	public TrainingProgram(NeuralNet nn,TestSet baseTs) {
 		neuralNet = nn;
-		baseTrainingSet = baseTs;
+		baseTestSet = baseTs;
 		prepare();
 	}
 	
 	public void prepare() {
-		trained = 0;
+		trainedEpochs = 0;
 		successes = 0;
-		finalResults = null;
+		latestResults = null;
 		initialResults = getNewTrainingSet();
-		neuralNet.train(initialResults);
-		handleResult(initialResults);
+		neuralNet.test(initialResults);
 	}
 	
 	public boolean train(int repeats) {
 		boolean done = false;
 		for (int i = 0; i < repeats; i++) {
-			TrainingSet tSet = getNewTrainingSet();
-			if (train(tSet)) {
-				finalize(tSet);
+			TestSet tSet = getNewTrainingSet();
+			neuralNet.train(tSet);
+			trainedEpochs++;
+			latestResults = tSet;
+			if (stopSuccess && tSet.success) {
 				done = true;
 				break;
 			}
 		}
 		return done;
 	}
-	
-	protected boolean train(TrainingSet tSet) {
-		neuralNet.train(tSet);
-		return handleResult(tSet);
-	}
-	
-	protected void finalize(TrainingSet tSet) {
-		finalResults = tSet;
-	}
-	
-	protected boolean handleResult(TrainingSet tSet) {
-		trained++;
-		if (tSet.success) {
-			successes++;
-		}
-		return (successes >= stopOnSuccesses);
-	}
-	
-	protected TrainingSet getNewTrainingSet() {
-		TrainingSet r = baseTrainingSet.copy();
+		
+	protected TestSet getNewTrainingSet() {
+		TestSet r = baseTestSet.copy();
 		r.randomizeOrder();
 		return r;
 	}
