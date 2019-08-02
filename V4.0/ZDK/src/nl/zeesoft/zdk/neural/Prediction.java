@@ -39,12 +39,12 @@ public class Prediction {
 		// Override to implement
 	}
 	
-	protected void copyTo(Prediction c) {
-		c.error = new ZStringBuilder(error);
-		c.inputs = new float[inputs.length];
-		copyValues(c.inputs,inputs);
-		c.outputs = new float[outputs.length];
-		copyValues(c.outputs,outputs);
+	protected void copyTo(Prediction p) {
+		p.error = new ZStringBuilder(error);
+		p.inputs = new float[inputs.length];
+		copyValues(p.inputs,inputs);
+		p.outputs = new float[outputs.length];
+		copyValues(p.outputs,outputs);
 	}
 	
 	protected void initializeValues(float[] a) {

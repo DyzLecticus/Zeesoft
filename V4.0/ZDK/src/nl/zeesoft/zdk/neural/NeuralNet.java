@@ -128,15 +128,16 @@ public class NeuralNet {
 		for (int i = 1; i < layerValues.length; i++) {
 			layerValues[i] = ZMatrix.multiply(layerWeights[i],layerValues[p]);
 			layerValues[i].add(layerBiases[i]);
-			layerValues[i].applyFunction(activator);
-			p++;
-		}
-		if (softmaxOutput) {
-			getOutputValues().applyFunction(StaticFunctions.SOFTMAX_TOP);
-			float total = getOutputValues().getColumnValuesAdded(0);
-			if (total>0) {
-				getOutputValues().divide(total);
+			if (i == layerValues.length -1 && softmaxOutput) {
+				getOutputValues().applyFunction(StaticFunctions.SOFTMAX_TOP);
+				float total = getOutputValues().getColumnValuesAdded(0);
+				if (total>0) {
+					getOutputValues().divide(total);
+				}
+			} else {
+				layerValues[i].applyFunction(activator);
 			}
+			p++;
 		}
 		return getOutputValues().toArray();
 	}

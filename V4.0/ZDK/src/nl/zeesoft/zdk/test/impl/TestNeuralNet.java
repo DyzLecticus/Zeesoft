@@ -67,16 +67,13 @@ public class TestNeuralNet extends TestObject {
 			}
 		}
 		System.out.println();
-		if (assertNotNull(tp.finalResults,"Training program final results does not match expectation")) {
-			trainingSetToSystemOut(tp.finalResults);
-			float errorChange = tp.finalResults.averageError - tp.initialResults.averageError;
-			System.out.println("Trained: " + tp.trained + ", error change: " + errorChange + ", learnedRate: " + errorChange / (float) tp.trained);
-		} else {
-			nn.train(tSet);
-			trainingSetToSystemOut(tSet);
-			float errorChange = tSet.averageError - tp.initialResults.averageError;
-			System.out.println("Trained: " + tp.trained + ", error change: " + errorChange + ", change per training: " + errorChange / (float) tp.trained);
+		trainingSetToSystemOut(tp.latestResults);
+		float errorChange = tp.latestResults.averageError - tp.initialResults.averageError;
+		float learnedRate = 1;
+		if (tp.trainedEpochs>0) {
+			learnedRate = errorChange / (float) tp.trainedEpochs;
 		}
+		System.out.println("Trained epochs: " + tp.trainedEpochs + ", error change: " + errorChange + ", learned rate: " + learnedRate);
 	}
 	
 	private void trainingSetToSystemOut(TrainingSet tSet) {
@@ -85,8 +82,8 @@ public class TestNeuralNet extends TestObject {
 				"Input: [" + df.format(ex.inputs[0]) + "|" + df.format(ex.inputs[1]) + "]" + 
 				", output: [" + df.format(ex.outputs[0]) + "]" + 
 				", expectation: [" + df.format(ex.expectations[0]) + "]" + 
-				", error " + df.format(ex.errors[0]) + 
-				", success: " + ex.success);
+				", error " + df.format(ex.errors[0])
+				); 
 		}
 		System.out.println("Average error: " + df.format(tSet.averageError) + ", success: " + tSet.success);
 	}

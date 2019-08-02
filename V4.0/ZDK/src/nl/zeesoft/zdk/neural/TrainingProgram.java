@@ -4,12 +4,11 @@ public class TrainingProgram {
 	public NeuralNet		neuralNet			= null;
 	public TrainingSet		baseTrainingSet		= null;
 	
-	public int				stopOnSuccesses		= 10;
+	public boolean			stopOnSuccess		= true;
 	
-	public int				trained				= 0;
-	public int				successes			= 0;
+	public int				trainedEpochs		= 0;
 	public TrainingSet		initialResults		= null;
-	public TrainingSet		finalResults		= null;
+	public TrainingSet		latestResults		= null;
 	
 	public TrainingProgram(NeuralNet nn,TrainingSet baseTs) {
 		neuralNet = nn;
@@ -18,42 +17,24 @@ public class TrainingProgram {
 	}
 	
 	public void prepare() {
-		trained = 0;
-		successes = 0;
-		finalResults = null;
+		trainedEpochs = 0;
+		latestResults = null;
 		initialResults = getNewTrainingSet();
-		neuralNet.train(initialResults);
-		handleResult(initialResults);
+		neuralNet.test(initialResults);
 	}
 	
-	public boolean train(int repeats) {
+	public boolean train(int epochs) {
 		boolean done = false;
-		for (int i = 0; i < repeats; i++) {
+		for (int i = 0; i < epochs; i++) {
 			TrainingSet tSet = getNewTrainingSet();
-			if (train(tSet)) {
-				finalize(tSet);
+			neuralNet.train(tSet);
+			latestResults = tSet;
+			trainedEpochs++;
+			if (stopOnSuccess && tSet.success) {
 				done = true;
-				break;
 			}
 		}
 		return done;
-	}
-	
-	protected boolean train(TrainingSet tSet) {
-		neuralNet.train(tSet);
-		return handleResult(tSet);
-	}
-	
-	protected void finalize(TrainingSet tSet) {
-		finalResults = tSet;
-	}
-	
-	protected boolean handleResult(TrainingSet tSet) {
-		trained++;
-		if (tSet.success) {
-			successes++;
-		}
-		return (successes >= stopOnSuccesses);
 	}
 	
 	protected TrainingSet getNewTrainingSet() {

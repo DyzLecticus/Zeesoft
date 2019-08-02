@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.matrix.functions.ZRandomize;
 
 public class TrainingSet {
 	public List<Training> 	trainings	 	= new ArrayList<Training>();
+	public float			errorTolerance	= 0.1F;
 	
 	public float			averageError	= 0;
 	public boolean			success			= true;
@@ -16,15 +17,11 @@ public class TrainingSet {
 		success = true;
 		float total = 0;
 		for (Training t: trainings) {
-			if (!t.success) {
+			if (!trainingIsSuccess(t)) {
 				success = false;
 			}
 			for (int i = 0; i<t.errors.length; i++) {
-				if (t.errors[i]>0) {
-					averageError += t.errors[i];
-				} else if (t.errors[i]<0) {
-					averageError += t.errors[i] * -1F;
-				}
+				averageError += t.errors[i];
 				total++;
 			}
 		}
@@ -38,6 +35,9 @@ public class TrainingSet {
 		for (Training ex: trainings) {
 			r.trainings.add((Training) ex.copy());
 		}
+		r.errorTolerance = errorTolerance;
+		r.averageError = averageError;
+		r.success = success;
 		return r;
 	}
 	
@@ -50,5 +50,22 @@ public class TrainingSet {
 				trainings.add(rand.getRandomInt(0,l - 1),t);
 			}
 		}
+	}
+	
+	protected boolean trainingIsSuccess(Training t) {
+		boolean r = true;
+		for (int i = 0; i < t.errors.length; i++) {
+			t.errors[i] = t.expectations[i] - t.outputs[i];
+			if (t.errors[i]!=0.0) {
+				float diff = t.errors[i];
+				if (diff<0) {
+					diff = diff * -1;
+				}
+				if (diff>errorTolerance) {
+					r = false;
+				}
+			}
+		}
+		return r;
 	}
 }

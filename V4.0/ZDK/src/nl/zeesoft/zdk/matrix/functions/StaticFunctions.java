@@ -9,13 +9,10 @@ public class StaticFunctions {
 	
 	public static ZSigmoid					SIGMOID		= new ZSigmoid();
 	public static ZSigmoidDerivative		SIGMOID_DER	= new ZSigmoidDerivative();
-	
 	public static ZTanH						TANH		= new ZTanH();
 	public static ZTanHDerivative			TANH_DER	= new ZTanHDerivative();
-	
 	public static ZReLU						RELU		= new ZReLU();
 	public static ZReLUDerivative			RELU_DER	= new ZReLUDerivative();
-	
 	public static ZLeakyReLU				L_RELU		= new ZLeakyReLU();
 	public static ZLeakyReLUDerivative		L_RELU_DER	= new ZLeakyReLUDerivative();
 	
