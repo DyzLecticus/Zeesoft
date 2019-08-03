@@ -1,14 +1,14 @@
-package nl.zeesoft.zdk.matrix.functions;
+package nl.zeesoft.zdk.functions;
 
 import nl.zeesoft.zdk.matrix.ZParamFunction;
 
-public class ZDivide implements ZParamFunction {
-	protected ZDivide() {
+public class ZSet implements ZParamFunction {
+	protected ZSet() {
 		// Use StaticFunctions class to get instance
 	}
 	
 	@Override
 	public float applyFunction(float v,float p) {
-		return v / p;
+		return p;
 	}
 }

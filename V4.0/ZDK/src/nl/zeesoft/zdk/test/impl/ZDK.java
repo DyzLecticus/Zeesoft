@@ -54,9 +54,10 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * JSON data  ");
 		System.out.println(" * Multi threading  ");
 		System.out.println(" * Application message handling");
-		System.out.println(" * Self documenting and testing libraries  ");
 		System.out.println(" * Basic matrix mathematics  ");
 		System.out.println(" * Genetic algorithms  ");
+		System.out.println(" * Neural networks  ");
+		System.out.println(" * Self documenting and testing libraries  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -66,7 +67,6 @@ public class ZDK extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		tests.add(new TestZIntegerGenerator(getTester()));
 		tests.add(new TestZStringEncoder(getTester()));
 		tests.add(new TestZStringSymbolParser(getTester()));
 		tests.add(new TestCsv(getTester()));
@@ -75,5 +75,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestMessenger(getTester()));
 		tests.add(new TestZMatrix(getTester()));
 		tests.add(new TestGeneticCode(getTester()));
+		tests.add(new TestNeuralNet(getTester()));
+		tests.add(new TestGeneticNN(getTester()));
 	}
 }

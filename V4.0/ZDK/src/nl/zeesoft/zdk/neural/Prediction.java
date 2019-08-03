@@ -7,19 +7,16 @@ public class Prediction {
 	public float[] 			inputs	= null;
 	public float[] 			outputs	= null;
 	
-	protected Prediction() {
-		
+	protected Prediction(int inputNeurons,int outputNeurons) {
+		initialize(inputNeurons,outputNeurons);
 	}
 
 	protected Prediction(NeuralNet nn) {
-		inputs = new float[nn.inputNeurons];
-		initializeValues(inputs);
-		outputs = new float[nn.outputNeurons];
-		initializeValues(outputs);
+		initialize(nn.inputNeurons,nn.outputNeurons);
 	}
 	
 	public Prediction copy() {
-		Prediction r = new Prediction();
+		Prediction r = new Prediction(inputs.length,outputs.length);
 		copyTo(r);
 		return r;
 	}
@@ -57,5 +54,12 @@ public class Prediction {
 		for (int i = 0; i< to.length; i++) {
 			to[i] = from[i];
 		}
+	}
+	
+	protected void initialize(int inputNeurons, int outputNeurons) {
+		inputs = new float[inputNeurons];
+		initializeValues(inputs);
+		outputs = new float[outputNeurons];
+		initializeValues(outputs);
 	}
 }

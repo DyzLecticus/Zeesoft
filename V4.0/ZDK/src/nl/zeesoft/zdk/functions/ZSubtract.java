@@ -1,14 +1,14 @@
-package nl.zeesoft.zdk.matrix.functions;
+package nl.zeesoft.zdk.functions;
 
 import nl.zeesoft.zdk.matrix.ZParamFunction;
 
-public class ZAdd implements ZParamFunction {
-	protected ZAdd() {
+public class ZSubtract implements ZParamFunction {
+	protected ZSubtract() {
 		// Use StaticFunctions class to get instance
 	}
 	
 	@Override
 	public float applyFunction(float v,float p) {
-		return v + p;
+		return v - p;
 	}
 }

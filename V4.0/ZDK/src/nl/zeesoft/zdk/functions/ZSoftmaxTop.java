@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.matrix.functions;
+package nl.zeesoft.zdk.functions;
 
 import nl.zeesoft.zdk.matrix.ZFunction;
 

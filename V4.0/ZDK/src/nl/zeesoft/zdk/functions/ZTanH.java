@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.matrix.functions;
+package nl.zeesoft.zdk.functions;
 
 import nl.zeesoft.zdk.matrix.ZActivator;
 import nl.zeesoft.zdk.matrix.ZFunction;
@@ -15,7 +15,7 @@ public class ZTanH implements ZActivator {
 
 	@Override
 	public ZFunction getDerivative() {
-		return new ZTanHDerivative();
+		return StaticFunctions.TANH_DER;
 	}
 
 	public static float tanh(float x) {

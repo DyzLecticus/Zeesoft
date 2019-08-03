@@ -3,14 +3,39 @@ package nl.zeesoft.zdk.neural;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.matrix.functions.ZRandomize;
+import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class TestSet {
+	public int				inputNeurons	= 1;
+	public int				outputNeurons	= 1;
+	
 	public List<Test> 		tests	 		= new ArrayList<Test>();
 	public float			errorTolerance	= 0.1F;
 	
 	public float			averageError	= 0;
 	public boolean			success			= true;
+	
+	public TestSet(int inputNeurons, int outputNeurons) {
+		if (inputNeurons<1) {
+			inputNeurons=1;
+		}
+		if (outputNeurons<1) {
+			outputNeurons=1;
+		}
+		this.inputNeurons = inputNeurons;
+		this.outputNeurons = outputNeurons;
+	}
+	
+	protected TestSet(NeuralNet nn) {
+		this.inputNeurons = nn.inputNeurons;
+		this.outputNeurons = nn.outputNeurons;
+	}
+	
+	public Test addNewTest() {
+		Test r = new Test(inputNeurons,outputNeurons);
+		tests.add(r);
+		return r;
+	}
 	
 	public void finalize() {
 		averageError = 0;
@@ -34,8 +59,18 @@ public class TestSet {
 		}
 	}
 	
+	public void randomizeOrder() {
+		int l = tests.size();
+		if (l>1) {
+			for (int i = 0; i < l; i++) {
+				Test t = tests.remove(i);
+				tests.add(ZRandomize.getRandomInt(0,l - 1),t);
+			}
+		}
+	}
+	
 	public TestSet copy() {
-		TestSet r = new TestSet();
+		TestSet r = getNewTestSet(inputNeurons,outputNeurons);
 		for (Test t: tests) {
 			r.tests.add((Test) t.copy());
 		}
@@ -45,14 +80,7 @@ public class TestSet {
 		return r;
 	}
 	
-	public void randomizeOrder() {
-		ZRandomize rand = new ZRandomize();
-		int l = tests.size();
-		if (l>1) {
-			for (int i = 0; i < l; i++) {
-				Test t = tests.remove(i);
-				tests.add(rand.getRandomInt(0,l - 1),t);
-			}
-		}
+	protected TestSet getNewTestSet(int inputNeurons,int outputNeurons) {
+		return new TestSet(inputNeurons,outputNeurons);
 	}
 }

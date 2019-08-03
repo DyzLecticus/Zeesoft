@@ -1,4 +1,6 @@
-package nl.zeesoft.zdk.matrix.functions;
+package nl.zeesoft.zdk.functions;
+
+import nl.zeesoft.zdk.matrix.ZActivator;
 
 public class StaticFunctions {
 	public static ZAdd						ADD			= new ZAdd();
@@ -17,4 +19,6 @@ public class StaticFunctions {
 	public static ZLeakyReLUDerivative		L_RELU_DER	= new ZLeakyReLUDerivative();
 	
 	public static ZSoftmaxTop				SOFTMAX_TOP	= new ZSoftmaxTop();
+	
+	public static ZActivator[]				ACTIVATORS	= {SIGMOID,TANH,RELU,L_RELU};
 }

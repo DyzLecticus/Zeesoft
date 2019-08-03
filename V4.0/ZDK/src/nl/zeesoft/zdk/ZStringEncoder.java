@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.functions.ZRandomize;
+
 /**
  * The Zeesoft StringEncoder extends the Zeesoft StringBuilder with key based encoding and decoding and more.
  */
@@ -11,49 +13,25 @@ public class ZStringEncoder extends ZStringBuilder {
 	private static final String[]	CHAR_COMPRESS	= {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","#",":","~"};
 	private static final char		CHAR_MINUS		= "-".charAt(0);
 	
-	private ZIntegerGenerator		generator		= null;
-
 	public ZStringEncoder() {
-		generator = new ZIntegerGenerator(0,99999999);
+		
 	}
 	
-	public ZStringEncoder(ZIntegerGenerator generator) {
-		this.generator = generator;
-	}
-
-	public ZStringEncoder(String s,ZIntegerGenerator generator) {
-		super(s);
-		this.generator = generator;
-	}
-
-	public ZStringEncoder(StringBuilder sb,ZIntegerGenerator generator) {
-		super(sb);
-		this.generator = generator;
-	}
-
-	public ZStringEncoder(ZStringBuilder zsb,ZIntegerGenerator generator) {
-		super(zsb);
-		this.generator = generator;
-	}
-
 	public ZStringEncoder(String s) {
 		super(s);
-		generator = new ZIntegerGenerator(0,99999999);
 	}
 
 	public ZStringEncoder(StringBuilder sb) {
 		super(sb);
-		generator = new ZIntegerGenerator(0,99999999);
 	}
 
 	public ZStringEncoder(ZStringBuilder zsb) {
 		super(zsb);
-		generator = new ZIntegerGenerator(0,99999999);
 	}
 	
 	@Override
 	public ZStringEncoder getCopy() {
-		return new ZStringEncoder(getStringBuilder(),null);
+		return new ZStringEncoder(getStringBuilder());
 	}
 	
 	/**
@@ -71,7 +49,7 @@ public class ZStringEncoder extends ZStringBuilder {
 		for (int i = 0; i < length; i++) {
 			int v = pv;
 			while (v == pv) {
-				v = generator.getNewInteger();
+				v = ZRandomize.getRandomInt(0,99999999);
 			}
 			k.append(v);
 			if (k.length()>=length) {

@@ -7,7 +7,6 @@ public class TrainingProgram {
 	public boolean		stopSuccess			= true;
 	
 	public int			trainedEpochs		= 0;
-	public int			successes			= 0;
 	public TestSet		initialResults		= null;
 	public TestSet		latestResults		= null;
 	
@@ -19,7 +18,6 @@ public class TrainingProgram {
 	
 	public void prepare() {
 		trainedEpochs = 0;
-		successes = 0;
 		latestResults = null;
 		initialResults = getNewTrainingSet();
 		neuralNet.test(initialResults);
@@ -39,7 +37,7 @@ public class TrainingProgram {
 		}
 		return done;
 	}
-		
+	
 	protected TestSet getNewTrainingSet() {
 		TestSet r = baseTestSet.copy();
 		r.randomizeOrder();

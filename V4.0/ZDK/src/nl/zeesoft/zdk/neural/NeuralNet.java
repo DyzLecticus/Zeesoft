@@ -1,8 +1,8 @@
 package nl.zeesoft.zdk.neural;
 
+import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.matrix.ZActivator;
 import nl.zeesoft.zdk.matrix.ZMatrix;
-import nl.zeesoft.zdk.matrix.functions.StaticFunctions;
 
 public class NeuralNet {
 	public int				inputNeurons	= 1;
@@ -71,8 +71,12 @@ public class NeuralNet {
 		return new Prediction(this);
 	}
 
-	public Test getNewTraining() {
+	public Test getNewTest() {
 		return new Test(this);
+	}
+
+	public TestSet getNewTestSet() {
+		return new TestSet(this);
 	}
 
 	public void predict(Prediction p) {
@@ -99,28 +103,22 @@ public class NeuralNet {
 
 	public void train(Test t) {
 		predict(t);
-		
 		if (t.error.length()==0) {
-			ZMatrix errors = ZMatrix.getFromArray(t.errors);
-			
-			int p = layerValues.length - 2;
-			for (int i = (layerValues.length - 1); i > 0; i--) {
-				ZMatrix gradients = layerValues[i].copy();
-				gradients.applyFunction(activator.getDerivative());
-				gradients.multiply(errors);
-				gradients.multiply(learningRate);
-	
-				ZMatrix pTValues = ZMatrix.transpose(layerValues[p]);
-				ZMatrix deltas = ZMatrix.multiply(gradients,pTValues);
-				layerWeights[i].add(deltas); 
-				
-				layerBiases[i].add(gradients);
-				
-				ZMatrix tWeights = ZMatrix.transpose(layerWeights[i]);
-				errors = ZMatrix.multiply(tWeights,errors);
-				p--;
-			}
+			propagateBackward(t.errors);
 		}
+	}
+	
+	public NeuralNet copy() {
+		NeuralNet r = getNewNeuralNet(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
+		r.activator = activator;
+		r.softmaxOutput = softmaxOutput;
+		r.learningRate = learningRate;
+		for (int i = 0; i < r.layerValues.length; i++) {
+			r.layerValues[i] = layerValues[i].copy();
+			r.layerWeights[i] = layerWeights[i].copy();
+			r.layerBiases[i] = layerBiases[i].copy();
+		}
+		return r;
 	}
 	
 	protected float[] feedForward(float[] inputs) {
@@ -130,7 +128,7 @@ public class NeuralNet {
 		for (int i = 1; i < layerValues.length; i++) {
 			layerValues[i] = ZMatrix.multiply(layerWeights[i],layerValues[p]);
 			layerValues[i].add(layerBiases[i]);
-			if (softmaxOutput && i == layerValues.length - 1) {
+			if (softmaxOutput && i == layerValues.length - 1 && layerValues[i].cols>1) {
 				getOutputValues().applyFunction(StaticFunctions.SOFTMAX_TOP);
 				float total = getOutputValues().getColumnValuesAdded(0);
 				if (total>0) {
@@ -142,6 +140,28 @@ public class NeuralNet {
 			p++;
 		}
 		return getOutputValues().toArray();
+	}
+
+	protected void propagateBackward(float[] errs) {
+		ZMatrix errors = ZMatrix.getFromArray(errs);
+		
+		int p = layerValues.length - 2;
+		for (int i = (layerValues.length - 1); i > 0; i--) {
+			ZMatrix gradients = layerValues[i].copy();
+			gradients.applyFunction(activator.getDerivative());
+			gradients.multiply(errors);
+			gradients.multiply(learningRate);
+
+			ZMatrix pTValues = ZMatrix.transpose(layerValues[p]);
+			ZMatrix deltas = ZMatrix.multiply(gradients,pTValues);
+			layerWeights[i].add(deltas); 
+			
+			layerBiases[i].add(gradients);
+			
+			ZMatrix tWeights = ZMatrix.transpose(layerWeights[i]);
+			errors = ZMatrix.multiply(tWeights,errors);
+			p--;
+		}
 	}
 
 	protected void resetValues() {
@@ -156,5 +176,9 @@ public class NeuralNet {
 	
 	protected ZMatrix getOutputValues() {
 		return layerValues[layerValues.length - 1];
+	}
+	
+	protected NeuralNet getNewNeuralNet(int inputNeurons, int hiddenLayers, int hiddenNeurons, int outputNeurons) {
+		return new NeuralNet(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
 	}
 }

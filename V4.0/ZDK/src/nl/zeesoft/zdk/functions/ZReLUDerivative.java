@@ -1,9 +1,9 @@
-package nl.zeesoft.zdk.matrix.functions;
+package nl.zeesoft.zdk.functions;
 
 import nl.zeesoft.zdk.matrix.ZFunction;
 
-public class ZLeakyReLUDerivative implements ZFunction {
-	protected ZLeakyReLUDerivative() {
+public class ZReLUDerivative implements ZFunction {
+	protected ZReLUDerivative() {
 		// Use StaticFunctions class to get instance
 	}
 	
@@ -13,6 +13,6 @@ public class ZLeakyReLUDerivative implements ZFunction {
 	}
 
 	public static float reulDerived(float y) {
-		return y <= 0.01F ? 0.01F : 1;
+		return y <= 0 ? 0 : 1;
 	}
 }

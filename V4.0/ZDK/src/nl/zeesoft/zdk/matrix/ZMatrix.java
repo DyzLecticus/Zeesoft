@@ -3,8 +3,8 @@ package nl.zeesoft.zdk.matrix;
 import java.text.DecimalFormat;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.matrix.functions.StaticFunctions;
-import nl.zeesoft.zdk.matrix.functions.ZRandomize;
+import nl.zeesoft.zdk.functions.StaticFunctions;
+import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class ZMatrix {
 	public int			rows	= 0;

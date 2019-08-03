@@ -3,9 +3,7 @@ package nl.zeesoft.zdk;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.ZIntegerGenerator;
-import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.ZStringEncoder;
+import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class GeneticCode {
 	private ZStringEncoder 	code		= new ZStringEncoder();
@@ -57,20 +55,17 @@ public class GeneticCode {
 				generate(code.length());
 			} else if (num>0 && code.length()>0) {
 				int div = code.length() / num;
-				ZIntegerGenerator indexGen = null;
-				ZIntegerGenerator valueGen = new ZIntegerGenerator(0,9);
 				for (int n = 0; n < num; n++) {
 					int min = n * div;
 					int max = (n + 1) * div;
 					if (max>code.length() - 1) {
 						max = code.length() - 1;
 					}
-					indexGen = new ZIntegerGenerator(min,max);
-					int i = indexGen.getNewInteger();
+					int i = ZRandomize.getRandomInt(min,max);
 					String o = code.substring(i,i+1).toString();
 					String r = o;
 					while (r.equals(o)) {
-						r = "" + valueGen.getNewInteger();
+						r = "" + ZRandomize.getRandomInt(0,9);
 					}
 					code.replace(i,i+1,r);
 				}
@@ -86,14 +81,6 @@ public class GeneticCode {
 		}
 		return r;
 	}
-	
-	public int getInteger(int index, int scale) {
-		return Math.round(get(index) * (float)scale);
-	}
-
-	public boolean getBoolean(int index, int scale) {
-		return get(index) < 0.5F;
-	}
 
 	public float get(int index) {
 		float r = -1;
@@ -101,6 +88,18 @@ public class GeneticCode {
 			r = factors.get(index);
 		}
 		return r;
+	}
+	
+	public int getInteger(int index, int scale) {
+		return Math.round(get(index) * (float)scale);
+	}
+
+	public int getIntegerMinMax(int index, int min, int max) {
+		return min + getInteger(index,max - min);
+	}
+	
+	public boolean getBoolean(int index) {
+		return get(index) < 0.5F;
 	}
 	
 	private void refreshFactors() {

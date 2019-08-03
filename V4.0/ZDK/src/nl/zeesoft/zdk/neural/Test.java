@@ -5,21 +5,19 @@ public class Test extends Prediction {
 
 	public float[] 			errors			= null;
 	
-	protected Test() {
-		
+	protected Test(int inputNeurons,int outputNeurons) {
+		super(inputNeurons,outputNeurons);
+		initialize(inputNeurons,outputNeurons);
 	}
 	
 	protected Test(NeuralNet nn) {
 		super(nn);
-		expectations = new float[nn.outputNeurons];
-		initializeValues(expectations);
-		errors = new float[nn.outputNeurons];
-		initializeValues(errors);
+		initialize(nn.inputNeurons,nn.outputNeurons);
 	}
 	
 	@Override
 	public Prediction copy() {
-		Test r = new Test();
+		Test r = new Test(inputs.length,outputs.length);
 		copyTo(r);
 		return r;
 	}
@@ -48,5 +46,14 @@ public class Test extends Prediction {
 			t.errors = new float[errors.length];
 			copyValues(t.errors,errors);
 		}
+	}
+	
+	@Override
+	protected void initialize(int inputNeurons, int outputNeurons) {
+		super.initialize(inputNeurons, outputNeurons);
+		expectations = new float[outputNeurons];
+		initializeValues(expectations);
+		errors = new float[outputNeurons];
+		initializeValues(errors);
 	}
 }

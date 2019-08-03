@@ -4,14 +4,12 @@ import java.text.DecimalFormat;
 
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.Test;
-import nl.zeesoft.zdk.neural.TrainingProgram;
 import nl.zeesoft.zdk.neural.TestSet;
+import nl.zeesoft.zdk.neural.TrainingProgram;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
 public class TestNeuralNet extends TestObject {	
-	private DecimalFormat	df	= new DecimalFormat("0.00");
-	
 	public TestNeuralNet(Tester tester) {
 		super(tester);
 	}
@@ -54,11 +52,15 @@ public class TestNeuralNet extends TestObject {
 		// XOR NN
 		NeuralNet nn = new NeuralNet(2,1,2,1);
 		nn.randomizeWeightsAndBiases();
-		
+		testXORNeuralNet(nn);
+	}
+	
+	public static TrainingProgram testXORNeuralNet(NeuralNet nn) {
+		DecimalFormat df = new DecimalFormat("0.00");
 		TestSet tSet = getTrainingSet(nn,false);
 		
 		nn.test(tSet);
-		trainingSetToSystemOut(tSet);
+		trainingSetToSystemOut(tSet,df);
 		
 		TrainingProgram tp = new TrainingProgram(nn,tSet);
 		for (int i = 0; i < 5000; i++) {
@@ -67,13 +69,15 @@ public class TestNeuralNet extends TestObject {
 			}
 		}
 		System.out.println();
-		trainingSetToSystemOut(tp.latestResults);
+		trainingSetToSystemOut(tp.latestResults,df);
 		float errorChange = tp.latestResults.averageError - tp.initialResults.averageError;
 		float learnedRate = errorChange / (float) tp.trainedEpochs;
 		System.out.println("Trained epochs: " + tp.trainedEpochs + ", error change: " + errorChange + ", learned rate: " + learnedRate);
+		
+		return tp;
 	}
 	
-	private void trainingSetToSystemOut(TestSet tSet) {
+	private static void trainingSetToSystemOut(TestSet tSet,DecimalFormat df) {
 		for (Test t: tSet.tests) {
 			System.out.println(
 				"Input: [" + df.format(t.inputs[0]) + "|" + df.format(t.inputs[1]) + "]" + 
@@ -85,8 +89,8 @@ public class TestNeuralNet extends TestObject {
 		System.out.println("Average error: " + df.format(tSet.averageError) + ", success: " + tSet.success);
 	}
 
-	private TestSet getTrainingSet(NeuralNet nn, boolean randomize) {
-		TestSet r = new TestSet();
+	private static TestSet getTrainingSet(NeuralNet nn, boolean randomize) {
+		TestSet r = nn.getNewTestSet();
 		for (int i = 0; i<4; i++) {
 			r.tests.add(getTraining(nn,i));
 		}
@@ -96,8 +100,8 @@ public class TestNeuralNet extends TestObject {
 		return r;
 	}
 	
-	private Test getTraining(NeuralNet nn,int index) {
-		Test r = nn.getNewTraining();
+	private static Test getTraining(NeuralNet nn,int index) {
+		Test r = nn.getNewTest();
 		if (index==0) {
 			r.inputs[0] = 0;
 			r.inputs[1] = 0;
