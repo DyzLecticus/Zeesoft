@@ -1,8 +1,8 @@
 package nl.zeesoft.zdk.neural;
 
+import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.functions.StaticFunctions;
-import nl.zeesoft.zdk.matrix.ZActivator;
-import nl.zeesoft.zdk.matrix.ZMatrix;
+import nl.zeesoft.zdk.functions.ZActivator;
 
 public class NeuralNet {
 	public int				inputNeurons	= 1;
@@ -104,7 +104,7 @@ public class NeuralNet {
 	public void train(Test t) {
 		predict(t);
 		if (t.error.length()==0) {
-			propagateBackward(t.errors);
+			feedBackward(t.errors);
 		}
 	}
 	
@@ -142,7 +142,7 @@ public class NeuralNet {
 		return getOutputValues().toArray();
 	}
 
-	protected void propagateBackward(float[] errs) {
+	protected void feedBackward(float[] errs) {
 		ZMatrix errors = ZMatrix.getFromArray(errs);
 		
 		int p = layerValues.length - 2;

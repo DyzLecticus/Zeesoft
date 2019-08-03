@@ -1,7 +1,5 @@
 package nl.zeesoft.zdk.functions;
 
-import nl.zeesoft.zdk.matrix.ZActivator;
-
 public class StaticFunctions {
 	public static ZAdd						ADD			= new ZAdd();
 	public static ZSubtract					SUBTRACT	= new ZSubtract();
@@ -19,6 +17,8 @@ public class StaticFunctions {
 	public static ZLeakyReLUDerivative		L_RELU_DER	= new ZLeakyReLUDerivative();
 	
 	public static ZSoftmaxTop				SOFTMAX_TOP	= new ZSoftmaxTop();
+	
+	public static ZMeanSquaredError			MSE			= new ZMeanSquaredError();
 	
 	public static ZActivator[]				ACTIVATORS	= {SIGMOID,TANH,RELU,L_RELU};
 }

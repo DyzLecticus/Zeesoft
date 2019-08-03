@@ -1,7 +1,5 @@
 package nl.zeesoft.zdk.functions;
 
-import nl.zeesoft.zdk.matrix.ZParamFunction;
-
 public class ZSubtract implements ZParamFunction {
 	protected ZSubtract() {
 		// Use StaticFunctions class to get instance

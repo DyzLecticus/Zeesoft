@@ -1,8 +1,8 @@
 package nl.zeesoft.zdk.neural;
 
 import nl.zeesoft.zdk.GeneticCode;
+import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.functions.StaticFunctions;
-import nl.zeesoft.zdk.matrix.ZMatrix;
 
 public class GeneticNN {
 	private static int		HIDDEN_LAYERS		= 0;

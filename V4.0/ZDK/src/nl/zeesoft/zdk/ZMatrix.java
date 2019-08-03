@@ -1,9 +1,10 @@
-package nl.zeesoft.zdk.matrix;
+package nl.zeesoft.zdk;
 
 import java.text.DecimalFormat;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.StaticFunctions;
+import nl.zeesoft.zdk.functions.ZFunction;
+import nl.zeesoft.zdk.functions.ZParamFunction;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class ZMatrix {

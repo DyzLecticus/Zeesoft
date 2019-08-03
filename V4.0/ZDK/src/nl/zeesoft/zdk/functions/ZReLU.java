@@ -1,8 +1,5 @@
 package nl.zeesoft.zdk.functions;
 
-import nl.zeesoft.zdk.matrix.ZActivator;
-import nl.zeesoft.zdk.matrix.ZFunction;
-
 public class ZReLU implements ZActivator {
 	protected ZReLU() {
 		// Use StaticFunctions class to get instance

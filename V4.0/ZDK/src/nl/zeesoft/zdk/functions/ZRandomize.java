@@ -2,8 +2,6 @@ package nl.zeesoft.zdk.functions;
 
 import java.util.Random;
 
-import nl.zeesoft.zdk.matrix.ZFunction;
-
 public class ZRandomize implements ZFunction {
 	private static Random 	random		= new Random();
 	

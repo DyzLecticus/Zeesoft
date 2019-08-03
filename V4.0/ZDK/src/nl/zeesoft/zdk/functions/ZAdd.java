@@ -1,7 +1,5 @@
 package nl.zeesoft.zdk.functions;
 
-import nl.zeesoft.zdk.matrix.ZParamFunction;
-
 public class ZAdd implements ZParamFunction {
 	protected ZAdd() {
 		// Use StaticFunctions class to get instance

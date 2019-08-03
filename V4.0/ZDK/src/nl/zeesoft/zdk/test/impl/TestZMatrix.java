@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.test.impl;
 
-import nl.zeesoft.zdk.matrix.ZMatrix;
+import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 

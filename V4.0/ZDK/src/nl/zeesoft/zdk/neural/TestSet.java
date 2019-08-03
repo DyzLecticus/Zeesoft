@@ -3,16 +3,20 @@ package nl.zeesoft.zdk.neural;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.functions.StaticFunctions;
+import nl.zeesoft.zdk.functions.ZLossFunction;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class TestSet {
 	public int				inputNeurons	= 1;
 	public int				outputNeurons	= 1;
 	
+	public ZLossFunction	lossFunction	= StaticFunctions.MSE;
 	public List<Test> 		tests	 		= new ArrayList<Test>();
 	public float			errorTolerance	= 0.1F;
 	
 	public float			averageError	= 0;
+	public float			averageLoss		= 0;
 	public boolean			success			= true;
 	
 	public TestSet(int inputNeurons, int outputNeurons) {
@@ -51,11 +55,13 @@ public class TestSet {
 					success = false;
 				}
 				averageError += diff;
+				averageLoss += lossFunction.calculateLoss(t.outputs,t.expectations);
 				total++;
 			}
 		}
 		if (total>0) {
 			averageError = averageError / total;
+			averageLoss += averageLoss / total;
 		}
 	}
 	
@@ -76,6 +82,7 @@ public class TestSet {
 		}
 		r.errorTolerance = errorTolerance;
 		r.averageError = averageError;
+		r.averageLoss = averageLoss;
 		r.success = success;
 		return r;
 	}

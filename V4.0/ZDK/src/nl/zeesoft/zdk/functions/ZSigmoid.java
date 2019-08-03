@@ -1,8 +1,5 @@
 package nl.zeesoft.zdk.functions;
 
-import nl.zeesoft.zdk.matrix.ZActivator;
-import nl.zeesoft.zdk.matrix.ZFunction;
-
 public class ZSigmoid implements ZActivator {
 	protected ZSigmoid() {
 		// Use StaticFunctions class to get instance

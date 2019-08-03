@@ -1,7 +1,5 @@
 package nl.zeesoft.zdk.functions;
 
-import nl.zeesoft.zdk.matrix.ZFunction;
-
 public class ZSoftmaxTop implements ZFunction {
 	@Override
 	public float applyFunction(float v) {

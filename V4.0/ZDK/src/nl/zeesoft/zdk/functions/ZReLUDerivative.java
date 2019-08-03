@@ -1,7 +1,5 @@
 package nl.zeesoft.zdk.functions;
 
-import nl.zeesoft.zdk.matrix.ZFunction;
-
 public class ZReLUDerivative implements ZFunction {
 	protected ZReLUDerivative() {
 		// Use StaticFunctions class to get instance

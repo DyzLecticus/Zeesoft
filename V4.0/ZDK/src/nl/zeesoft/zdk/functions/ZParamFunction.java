@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.matrix;
+package nl.zeesoft.zdk.functions;
 
 public interface ZParamFunction {
 	/**

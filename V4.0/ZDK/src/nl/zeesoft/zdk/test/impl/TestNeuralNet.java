@@ -83,10 +83,11 @@ public class TestNeuralNet extends TestObject {
 				"Input: [" + df.format(t.inputs[0]) + "|" + df.format(t.inputs[1]) + "]" + 
 				", output: [" + df.format(t.outputs[0]) + "]" + 
 				", expectation: [" + df.format(t.expectations[0]) + "]" + 
-				", error " + df.format(t.errors[0])
+				", error: " + df.format(t.errors[0]) +
+				", loss: " + df.format(tSet.lossFunction.calculateLoss(t.outputs, t.expectations))
 				);
 		}
-		System.out.println("Average error: " + df.format(tSet.averageError) + ", success: " + tSet.success);
+		System.out.println("Average error: " + df.format(tSet.averageError) + ", average loss: " + df.format(tSet.averageLoss) + ", success: " + tSet.success);
 	}
 
 	private static TestSet getTrainingSet(NeuralNet nn, boolean randomize) {

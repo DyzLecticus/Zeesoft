@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.functions;
 
-import nl.zeesoft.zdk.matrix.ZFunction;
+import nl.zeesoft.zdk.functions.ZFunction;
 
 public class ZLeakyReLUDerivative implements ZFunction {
 	protected ZLeakyReLUDerivative() {
