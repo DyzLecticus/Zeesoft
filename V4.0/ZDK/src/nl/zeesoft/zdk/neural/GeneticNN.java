@@ -21,26 +21,13 @@ public class GeneticNN {
 	
 	public GeneticCode		code				= null;
 	public NeuralNet		neuralNet			= null;
-	
+
 	public GeneticNN(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons, int start) {
-		if (inputNeurons<1) {
-			inputNeurons = 1;
-		}
-		if (maxHiddenLayers<1) {
-			maxHiddenLayers = 1;
-		}
-		if (maxHiddenNeurons<2) {
-			maxHiddenLayers = 2;
-		}
-		if (outputNeurons<1) {
-			outputNeurons = 1;
-		}
-		this.inputNeurons = inputNeurons;
-		this.maxHiddenLayers = maxHiddenLayers;
-		this.maxHiddenNeurons = maxHiddenNeurons;
-		this.outputNeurons = outputNeurons;
-		this.start = start;
-		generateNewNN();
+		initialize(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,start,null);
+	}
+
+	public GeneticNN(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons, int start, GeneticCode code) {
+		initialize(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,start,code);
 	}
 	
 	public int calculateMinCodeLength() {
@@ -48,10 +35,17 @@ public class GeneticNN {
 	}
 	
 	public void generateNewNN() {
-		code = new GeneticCode(calculateMinCodeLength());
-		neuralNet = getNewNN(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,code,start);
+		generateNewNN(null);
 	}
-	
+
+	public void generateNewNN(GeneticCode code) {
+		this.code = code;
+		if (this.code==null) {
+			this.code = new GeneticCode(calculateMinCodeLength());
+		}
+		neuralNet = getNewNN(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,start,this.code);
+	}
+
 	public static int calculateMinCodeLength(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int start) {
 		int r = 0;
 		r += maxHiddenNeurons * inputNeurons;
@@ -64,7 +58,7 @@ public class GeneticNN {
 		return r;
 	}
 	
-	public static NeuralNet getNewNN(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons, GeneticCode code,int start) {
+	public static NeuralNet getNewNN(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int start, GeneticCode code) {
 		NeuralNet r = null;
 		
 		if (inputNeurons<1) {
@@ -103,6 +97,27 @@ public class GeneticNN {
 		}
 		
 		return r;
+	}
+	
+	protected void initialize(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int start, GeneticCode code) {
+		if (inputNeurons<1) {
+			inputNeurons = 1;
+		}
+		if (maxHiddenLayers<1) {
+			maxHiddenLayers = 1;
+		}
+		if (maxHiddenNeurons<2) {
+			maxHiddenLayers = 2;
+		}
+		if (outputNeurons<1) {
+			outputNeurons = 1;
+		}
+		this.inputNeurons = inputNeurons;
+		this.maxHiddenLayers = maxHiddenLayers;
+		this.maxHiddenNeurons = maxHiddenNeurons;
+		this.outputNeurons = outputNeurons;
+		this.start = start;
+		generateNewNN(code);
 	}
 	
 	private static int assignProperties(GeneticCode code,int prop,ZMatrix m) {
