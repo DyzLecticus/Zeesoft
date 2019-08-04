@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.test.impl;
 
-import nl.zeesoft.zdk.GeneticCode;
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.genetic.GeneticCode;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 

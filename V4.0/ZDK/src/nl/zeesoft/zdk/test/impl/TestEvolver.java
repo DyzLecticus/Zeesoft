@@ -1,18 +1,21 @@
 package nl.zeesoft.zdk.test.impl;
 
-import nl.zeesoft.zdk.genetic.GeneticNN;
-import nl.zeesoft.zdk.neural.NeuralNet;
-import nl.zeesoft.zdk.neural.TrainingProgram;
+import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zdk.genetic.Evolver;
+import nl.zeesoft.zdk.genetic.EvolverUnit;
+import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.neural.TestSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class TestGeneticNN extends TestObject {	
-	public TestGeneticNN(Tester tester) {
+public class TestEvolver extends TestObject {	
+	public TestEvolver(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestGeneticNN(new Tester())).test(args);
+		(new TestEvolver(new Tester())).test(args);
 	}
 
 	@Override
@@ -46,17 +49,29 @@ public class TestGeneticNN extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		GeneticNN gnn = new GeneticNN(2,1,2,1,0);
-		TrainingProgram tp = null;
-		while (tp==null) {
-			// XOR NN
-			NeuralNet nn = gnn.neuralNet;
-			tp = TestNeuralNet.testXORNeuralNet(nn,false);
-			if (!tp.latestResults.success) {
-				gnn.generateNewNN();
-				tp = null;
-				System.out.println("================================================================================");
-			}
-		}
+		ZDKFactory factory = new ZDKFactory();
+		Messenger messenger = factory.getMessenger();
+		messenger.setPrintDebugMessages(true);
+		WorkerUnion union = factory.getWorkerUnion(messenger);
+		
+		TestSet tSet = TestNeuralNet.getXORTestSet(false);
+		
+		Evolver evolver = new Evolver(messenger,union,1,2,0,tSet,10);
+		evolver.setDebug(true);
+		
+		messenger.start();
+
+		evolver.start();
+		sleep(30000);
+		evolver.stop();
+		
+		EvolverUnit bestSoFar = evolver.getBestSoFar();
+		
+		System.out.println("Best result size: " + bestSoFar.geneticNN.neuralNet.size() + ", trained epochs: " + bestSoFar.trainingProgram.trainedEpochs);
+		
+		messenger.stop();
+		messenger.handleMessages();
+		union.stopWorkers();
+
 	}
 }

@@ -7,7 +7,7 @@ public class ZSoftmaxDerivative implements ZFunction {
 	
 	@Override
 	public float applyFunction(float y) {
-		// TODO: Softmax derivative
-		return y;
+		// TODO: Replace this shortcut with a real implementation
+		return ZSigmoidDerivative.sigmoidDerived(y);
 	}
 }

@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.text.DecimalFormat;
 
+import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.Test;
 import nl.zeesoft.zdk.neural.TestSet;
@@ -52,15 +53,33 @@ public class TestNeuralNet extends TestObject {
 		// XOR NN
 		NeuralNet nn = new NeuralNet(2,1,2,1);
 		nn.randomizeWeightsAndBiases();
-		//nn.outputActivator = StaticFunctions.SOFTMAX_TOP;
-		testXORNeuralNet(nn);
+		testXORNeuralNet(nn,false);
+
+		System.out.println("================================================================================");
+		
+		// XOR NN as classifier
+		nn = new NeuralNet(2,1,2,1);
+		nn.randomizeWeightsAndBiases();
+		testXORNeuralNet(nn,true);
 	}
 	
-	public static TrainingProgram testXORNeuralNet(NeuralNet nn) {
+	public static TrainingProgram testXORNeuralNet(NeuralNet nn,boolean classifier) {
 		DecimalFormat df = new DecimalFormat("0.00");
-		TestSet tSet = getTrainingSet(nn,false);
+		TestSet tSet = getXORTestSet(false);
+		
+		if (classifier) {
+			nn.outputActivator = StaticFunctions.SOFTMAX_TOP;
+			tSet.lossFunction = StaticFunctions.MEAN_SQUARED_ERROR;
+		}
+		
+		if (nn.outputActivator!=null) {
+			System.out.println("Neural net activator: " + nn.activator.getClass().getName() + ", output activator: " + nn.outputActivator.getClass().getName() + ", learning rate: " + nn.learningRate);
+		} else {
+			System.out.println("Neural net activator: " + nn.activator.getClass().getName() + ", learning rate: " + nn.learningRate);
+		}
 		
 		nn.test(tSet);
+		System.out.println("Initial test results;");
 		trainingSetToSystemOut(tSet,df);
 		
 		TrainingProgram tp = new TrainingProgram(nn,tSet);
@@ -69,11 +88,9 @@ public class TestNeuralNet extends TestObject {
 				break;
 			}
 		}
-		System.out.println();
+		System.out.println("Latest test results;");
 		trainingSetToSystemOut(tp.latestResults,df);
-		float errorChange = tp.latestResults.averageError - tp.initialResults.averageError;
-		float learnedRate = errorChange / (float) tp.trainedEpochs;
-		System.out.println("Trained epochs: " + tp.trainedEpochs + ", error change: " + errorChange + ", learned rate: " + learnedRate);
+		System.out.println("Trained epochs: " + tp.trainedEpochs + ", error change rate: " + tp.getErrorChangeRate() + ", loss change rate: " + tp.getLossChangeRate());
 		
 		return tp;
 	}
@@ -81,20 +98,20 @@ public class TestNeuralNet extends TestObject {
 	private static void trainingSetToSystemOut(TestSet tSet,DecimalFormat df) {
 		for (Test t: tSet.tests) {
 			System.out.println(
-				"Input: [" + df.format(t.inputs[0]) + "|" + df.format(t.inputs[1]) + "]" + 
+				"  Input: [" + df.format(t.inputs[0]) + "|" + df.format(t.inputs[1]) + "]" + 
 				", output: [" + df.format(t.outputs[0]) + "]" + 
 				", expectation: [" + df.format(t.expectations[0]) + "]" + 
 				", error: " + df.format(t.errors[0]) +
 				", loss: " + df.format(t.loss)
 				);
 		}
-		System.out.println("Average error: " + df.format(tSet.averageError) + ", average loss: " + df.format(tSet.averageLoss) + ", success: " + tSet.success);
+		System.out.println("  Average error: " + df.format(tSet.averageError) + ", average loss: " + df.format(tSet.averageLoss) + ", success: " + tSet.success);
 	}
 
-	private static TestSet getTrainingSet(NeuralNet nn, boolean randomize) {
-		TestSet r = nn.getNewTestSet();
+	public static TestSet getXORTestSet(boolean randomize) {
+		TestSet r = new TestSet(2,1);
 		for (int i = 0; i<4; i++) {
-			r.tests.add(getTraining(nn,i));
+			addTest(r,i);
 		}
 		if (randomize) {
 			r.randomizeOrder();
@@ -102,8 +119,8 @@ public class TestNeuralNet extends TestObject {
 		return r;
 	}
 	
-	private static Test getTraining(NeuralNet nn,int index) {
-		Test r = nn.getNewTest();
+	private static void addTest(TestSet tSet,int index) {
+		Test r = tSet.addNewTest();
 		if (index==0) {
 			r.inputs[0] = 0;
 			r.inputs[1] = 0;
@@ -121,7 +138,6 @@ public class TestNeuralNet extends TestObject {
 			r.inputs[1] = 0;
 			r.expectations[0] = 1;
 		}
-		return r;
 	}
 			
 }

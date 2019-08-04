@@ -4,10 +4,10 @@ public class TrainingProgram {
 	public NeuralNet	neuralNet			= null;
 	public TestSet		baseTestSet			= null;
 	
-	public boolean		stopSuccess			= true;
+	public boolean		stopOnSuccess		= true;
 	
-	public int			trainedEpochs		= 0;
 	public TestSet		initialResults		= null;
+	public int			trainedEpochs		= 0;
 	public TestSet		latestResults		= null;
 	
 	public TrainingProgram(NeuralNet nn,TestSet baseTs) {
@@ -30,12 +30,37 @@ public class TrainingProgram {
 			neuralNet.train(tSet);
 			trainedEpochs++;
 			latestResults = tSet;
-			if (stopSuccess && tSet.success) {
+			if (stopOnSuccess && tSet.success) {
 				done = true;
 				break;
 			}
 		}
 		return done;
+	}
+	
+	public float getErrorChange() {
+		return latestResults.averageError - initialResults.averageError;
+	}
+	
+	public float getErrorChangeRate() {
+		return getErrorChange() / trainedEpochs * -1F;
+	}
+	
+	public float getLossChange() {
+		return latestResults.averageLoss - initialResults.averageLoss;
+	}
+
+	public float getLossChangeRate() {
+		return getLossChange() / trainedEpochs * -1F;
+	}
+	
+	public TrainingProgram copy() {
+		TrainingProgram r = new TrainingProgram(neuralNet.copy(),baseTestSet.copy());
+		r.stopOnSuccess = stopOnSuccess;
+		r.initialResults = initialResults.copy();
+		r.trainedEpochs = trainedEpochs;
+		r.latestResults = latestResults.copy();
+		return r;
 	}
 	
 	protected TestSet getNewTrainingSet() {

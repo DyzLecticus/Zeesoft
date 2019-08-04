@@ -1,8 +1,10 @@
-package nl.zeesoft.zdk;
+package nl.zeesoft.zdk.genetic;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class GeneticCode {
@@ -45,8 +47,8 @@ public class GeneticCode {
 		refreshFactors();
 	}
 
-	public void mutate(float percentage) {
-		mutate((int)(percentage * (float)code.length()));
+	public void mutate(float rate) {
+		mutate((int)(rate * (float)code.length()));
 	}
 
 	public void mutate(int num) {

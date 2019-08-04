@@ -17,9 +17,9 @@ public class NeuralNet {
 	public ZParamFunction		errorFunction	= null;
 	public float				learningRate	= 0.1F;
 	
-	protected ZMatrix[]			layerValues		= null;
-	protected ZMatrix[]			layerWeights	= null;
-	protected ZMatrix[]			layerBiases		= null;
+	public ZMatrix[]			layerValues		= null;
+	public ZMatrix[]			layerWeights	= null;
+	public ZMatrix[]			layerBiases		= null;
 
 	public NeuralNet(int inputNeurons, int hiddenLayers, int hiddenNeurons, int outputNeurons) {
 		if (inputNeurons<1) {
@@ -63,6 +63,19 @@ public class NeuralNet {
 		}
 	}
 	
+	public int size() {
+		return calculateSize(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons); 
+	}
+
+	public static int calculateSize(int inputNeurons,int hiddenLayers,int hiddenNeurons,int outputNeurons) {
+		return 
+			(inputNeurons + (inputNeurons * hiddenNeurons)) + 
+			(hiddenLayers * hiddenNeurons)  +
+			((hiddenLayers - 1) * hiddenNeurons * hiddenNeurons) +
+			(outputNeurons + (outputNeurons * hiddenNeurons))
+			; 
+	}
+
 	public void randomizeWeightsAndBiases() {
 		for (int i = 0; i < layerValues.length; i++) {
 			layerWeights[i].randomize();
@@ -158,8 +171,10 @@ public class NeuralNet {
 		for (int i = (layerValues.length - 1); i > 0; i--) {
 			ZMatrix gradients = layerValues[i].copy();
 			if (i == layerValues.length - 1 && outputActivator!=null) {
-				// TODO: Softmax derivative
 				gradients.applyFunction(outputActivator.getDerivative());
+				if (outputActivator==StaticFunctions.SOFTMAX_TOP) {
+					// TODO: Replace softmax derivative shortcut with a real implementation
+				}
 			} else {
 				gradients.applyFunction(activator.getDerivative());
 			}

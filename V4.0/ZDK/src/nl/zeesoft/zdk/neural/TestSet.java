@@ -11,7 +11,7 @@ public class TestSet {
 	public int				inputNeurons	= 1;
 	public int				outputNeurons	= 1;
 	
-	public ZLossFunction	lossFunction	= StaticFunctions.MEAN_SQUARED_ERROR;
+	public ZLossFunction	lossFunction	= StaticFunctions.MEAN_ABSOLUTE_ERROR;
 	public List<Test> 		tests	 		= new ArrayList<Test>();
 	public float			errorTolerance	= 0.1F;
 	
@@ -81,6 +81,7 @@ public class TestSet {
 		for (Test t: tests) {
 			r.tests.add((Test) t.copy());
 		}
+		r.lossFunction = lossFunction;
 		r.errorTolerance = errorTolerance;
 		r.averageError = averageError;
 		r.averageLoss = averageLoss;

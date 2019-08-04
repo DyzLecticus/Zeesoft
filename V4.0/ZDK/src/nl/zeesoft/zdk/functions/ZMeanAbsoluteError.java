@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.functions;
 
-public class ZMeanSquaredError implements ZLossFunction {
-	protected ZMeanSquaredError() {
+public class ZMeanAbsoluteError implements ZLossFunction {
+	protected ZMeanAbsoluteError() {
 		
 	}
 
@@ -9,9 +9,12 @@ public class ZMeanSquaredError implements ZLossFunction {
 	public float calculateLoss(float[] outputs, float[] expectations) {
 		float r = 0;
 		for (int i = 0; i < outputs.length; i++) {
-			r += Math.pow(expectations[i] - outputs[i],2);
+			r += expectations[i] - outputs[i];
 		}
 		r = r / outputs.length;
+		if (r<0) {
+			r = r * -1;
+		}
 		return r;
 	}
 }

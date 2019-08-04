@@ -11,6 +11,6 @@ public class ZSigmoidDerivative implements ZFunction {
 	}
 
 	public static float sigmoidDerived(float y) {
-		return y * (1.0F - y);
+		return y * (1 - y);
 	}
 }
