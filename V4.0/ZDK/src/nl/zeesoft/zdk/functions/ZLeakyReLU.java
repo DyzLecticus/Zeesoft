@@ -12,7 +12,7 @@ public class ZLeakyReLU implements ZActivator {
 
 	@Override
 	public ZFunction getDerivative() {
-		return StaticFunctions.L_RELU_DER;
+		return StaticFunctions.LEAKY_RELU_DER;
 	}
 	
 	public static float relu(float x) {

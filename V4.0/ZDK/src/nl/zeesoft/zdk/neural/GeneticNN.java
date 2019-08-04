@@ -8,7 +8,7 @@ public class GeneticNN {
 	private static int		HIDDEN_LAYERS		= 0;
 	private static int		HIDDEN_NEURONS		= 1;
 	private static int		ACTIVATOR			= 2;
-	private static int		SOFTMAX_OUTPUT		= 3;
+	private static int		OUTPUT_ACTIVATOR	= 3;
 	private static int		LEARNING_RATE		= 4;
 	private static int		WEIGHT_BIAS_START	= 5;
 
@@ -47,7 +47,7 @@ public class GeneticNN {
 	}
 
 	public static int calculateMinCodeLength(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int start) {
-		int r = 0;
+		int r = start;
 		r += maxHiddenNeurons * inputNeurons;
 		r += maxHiddenNeurons;
 		for (int i = 0; i < maxHiddenLayers; i++) {
@@ -79,8 +79,9 @@ public class GeneticNN {
 		r = new NeuralNet(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
 		
 		int activator = code.getInteger(start + ACTIVATOR,StaticFunctions.ACTIVATORS.length - 1);
+		int outputActivator = code.getInteger(start + OUTPUT_ACTIVATOR,StaticFunctions.OUTPUT_ACTIVATORS.length - 1);
 		r.activator = StaticFunctions.ACTIVATORS[activator];
-		r.softmaxOutput = code.getBoolean(start + SOFTMAX_OUTPUT);
+		r.outputActivator = StaticFunctions.OUTPUT_ACTIVATORS[outputActivator];
 		r.learningRate = 0.1F * code.get(start + LEARNING_RATE);
 		
 		r.randomizeWeightsAndBiases();

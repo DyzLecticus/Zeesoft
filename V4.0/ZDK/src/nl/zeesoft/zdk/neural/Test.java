@@ -1,9 +1,12 @@
 package nl.zeesoft.zdk.neural;
 
+import nl.zeesoft.zdk.functions.ZLossFunction;
+
 public class Test extends Prediction {
 	public float[] 			expectations	= null;
 
 	public float[] 			errors			= null;
+	public float			loss			= 0;
 	
 	protected Test(int inputNeurons,int outputNeurons) {
 		super(inputNeurons,outputNeurons);
@@ -26,13 +29,17 @@ public class Test extends Prediction {
 	protected void prepare(NeuralNet nn) {
 		super.prepare(nn);
 		initializeValues(errors);
+		loss = 0;
 	}
 		
 	@Override
-	protected void finalize(NeuralNet nn) {
-		super.finalize(nn);
+	protected void finalize(NeuralNet nn,ZLossFunction lossFunction) {
+		super.finalize(nn,lossFunction);
 		for (int i = 0; i < errors.length; i++) {
 			errors[i] = expectations[i] - outputs[i];
+		}
+		if (lossFunction!=null) {
+			loss = lossFunction.calculateLoss(outputs,expectations);
 		}
 	}
 
@@ -45,6 +52,7 @@ public class Test extends Prediction {
 			copyValues(t.expectations,expectations);
 			t.errors = new float[errors.length];
 			copyValues(t.errors,errors);
+			t.loss = loss;
 		}
 	}
 	

@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.text.DecimalFormat;
 
+import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.Test;
 import nl.zeesoft.zdk.neural.TestSet;
@@ -84,7 +85,7 @@ public class TestNeuralNet extends TestObject {
 				", output: [" + df.format(t.outputs[0]) + "]" + 
 				", expectation: [" + df.format(t.expectations[0]) + "]" + 
 				", error: " + df.format(t.errors[0]) +
-				", loss: " + df.format(tSet.lossFunction.calculateLoss(t.outputs, t.expectations))
+				", loss: " + df.format(t.loss)
 				);
 		}
 		System.out.println("Average error: " + df.format(tSet.averageError) + ", average loss: " + df.format(tSet.averageLoss) + ", success: " + tSet.success);

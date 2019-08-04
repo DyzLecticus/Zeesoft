@@ -51,7 +51,7 @@ public class TestGeneticNN extends TestObject {
 		while (tp==null) {
 			// XOR NN
 			NeuralNet nn = gnn.neuralNet;
-			System.out.println("Generated NN activator: " + nn.activator.getClass().getName() + ", softmax output: " + nn.softmaxOutput + ", learning rate: " + nn.learningRate);
+			System.out.println("Generated NN activator: " + nn.activator.getClass().getName() + ", output activator: " + nn.outputActivator.getClass().getName() + ", learning rate: " + nn.learningRate);
 			tp = TestNeuralNet.testXORNeuralNet(nn);
 			if (!tp.latestResults.success) {
 				gnn.generateNewNN();
