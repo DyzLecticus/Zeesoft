@@ -16,7 +16,7 @@ public class TestZMatrix extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use the *ZMatrix* to do matrix calculations and manipulations.");
+		System.out.println("This test shows how to use a *ZMatrix* to do matrix calculations and manipulations.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -39,9 +39,7 @@ public class TestZMatrix extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		ZMatrix m1 = new ZMatrix(2,3);
-
-		// TODO: Add some more assertions
-		
+	
 		m1.add(10);
 		System.out.println("Initial;");
 		System.out.println(m1.getTable());

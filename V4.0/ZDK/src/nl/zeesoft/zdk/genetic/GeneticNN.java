@@ -36,6 +36,14 @@ public class GeneticNN {
 	public void generateNewNN() {
 		generateNewNN(null);
 	}
+	
+	public void generateNewNN(GeneticCode code) {
+		this.code = code;
+		if (this.code==null) {
+			this.code = new GeneticCode(calculateMinCodeLength());
+		}
+		neuralNet = getNewNN(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart,this.code);
+	}
 
 	public GeneticNN copy() {
 		GeneticCode copyCode = null;
@@ -48,14 +56,6 @@ public class GeneticNN {
 			r.neuralNet = neuralNet.copy();
 		}
 		return r;
-	}
-	
-	public void generateNewNN(GeneticCode code) {
-		this.code = code;
-		if (this.code==null) {
-			this.code = new GeneticCode(calculateMinCodeLength());
-		}
-		neuralNet = getNewNN(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart,this.code);
 	}
 
 	public static int calculateMinCodeLength(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int codePropertyStart) {

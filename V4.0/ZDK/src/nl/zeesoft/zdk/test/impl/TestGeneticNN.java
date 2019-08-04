@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.genetic.GeneticCode;
 import nl.zeesoft.zdk.genetic.GeneticNN;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.neural.NeuralNet;
@@ -19,31 +20,27 @@ public class TestGeneticNN extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use the *ZStringEncoder* to generate a key and then use that to encode and decode a text.");
+		System.out.println("This test shows how to use a *GeneticNN* to generate a *GeneticCode* and corresponding *NeuralNet*.");
+		System.out.println("It uses a *TrainingProgram* to train and test the *NeuralNet*.");
+		System.out.println("It keeps generating neural nets until it finds one that passes all the tests.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the ZStringEncoder");
-		System.out.println("ZStringEncoder encoder = new ZStringEncoder(\"Example text to be encoded.\");");
-		System.out.println("// Generate a key");
-		System.out.println("String key = encoder.generateNewKey(1024);");
-		System.out.println("// Use the key to encode the text");
-		System.out.println("encoder.encodeKey(key,0);");
-		System.out.println("// Use the key to decode the encoded text");
-		System.out.println("encoder.decodeKey(key,0);");
+		System.out.println("// Create the genetic neural network");
+		System.out.println("GeneticNN gnn = new GeneticNN(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart);");
+		System.out.println("// Generate a new genetic code and corresponding neural network");
+		System.out.println("gnn.generateNewNN();");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("This encoding mechanism can be used to encode and decode passwords and other sensitive data.");
-		System.out.println("The minimum key length is 64. Longer keys provide stronger encoding.");
-		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestNeuralNet.class));
-		System.out.println(" * " + getTester().getLinkForClass(ZStringEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestGeneticNN.class));
+		System.out.println(" * " + getTester().getLinkForClass(GeneticNN.class));
+		System.out.println(" * " + getTester().getLinkForClass(GeneticCode.class));
+		System.out.println(" * " + getTester().getLinkForClass(NeuralNet.class));
+		System.out.println(" * " + getTester().getLinkForClass(TrainingProgram.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the generated key, the input text, the encoded text, and the decoded text.");
-		*/
+		System.out.println("The output of this test shows the training program outputs of one or more generated XOR neural nets.  ");
 	}
 	
 	@Override
