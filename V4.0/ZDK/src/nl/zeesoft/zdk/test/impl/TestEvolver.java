@@ -67,6 +67,10 @@ public class TestEvolver extends TestObject {
 		sleep(30000);
 		evolver.stop();
 		
+		messenger.stop();
+		messenger.handleMessages();
+		union.stopWorkers();
+		
 		EvolverUnit bestSoFar = evolver.getBestSoFar();
 		assertNotNull(bestSoFar,"Failed to evolve a neural net within 30 seconds");
 		
@@ -82,10 +86,5 @@ public class TestEvolver extends TestObject {
 			System.out.println(oriStr);
 			System.err.println(newStr);
 		}
-		
-		messenger.stop();
-		messenger.handleMessages();
-		union.stopWorkers();
-
 	}
 }
