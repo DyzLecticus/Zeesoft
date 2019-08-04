@@ -105,7 +105,6 @@ public class TestSet implements JsAble {
 
 	@Override
 	public void fromJson(JsFile json) {
-		// TODO Auto-generated method stub
 		if (json.rootElement!=null) {
 			inputNeurons = json.rootElement.getChildInt("inputNeurons",inputNeurons);
 			outputNeurons = json.rootElement.getChildInt("outputNeurons",outputNeurons);
@@ -123,20 +122,6 @@ public class TestSet implements JsAble {
 					tests.add(new Test(tJs));
 				}
 			}
-		}
-		
-		json.rootElement.children.add(new JsElem("inputNeurons","" + inputNeurons));
-		json.rootElement.children.add(new JsElem("outputNeurons","" + outputNeurons));
-		json.rootElement.children.add(new JsElem("lossFunction","" + lossFunction.getClass().getName(),true));
-		json.rootElement.children.add(new JsElem("errorTolerance","" + errorTolerance));
-		json.rootElement.children.add(new JsElem("averageError","" + averageError));
-		json.rootElement.children.add(new JsElem("averageLoss","" + averageLoss));
-		json.rootElement.children.add(new JsElem("success","" + success));
-		
-		JsElem testsElem = new JsElem("tests",true);
-		json.rootElement.children.add(testsElem);
-		for (Test t: tests) {
-			testsElem.children.add(t.toJson().rootElement);
 		}
 	}
 	

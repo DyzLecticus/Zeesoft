@@ -1,6 +1,8 @@
 package nl.zeesoft.zdk.test.impl;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.genetic.GeneticNN;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.TrainingProgram;
 import nl.zeesoft.zdk.test.TestObject;
@@ -57,6 +59,19 @@ public class TestGeneticNN extends TestObject {
 				tp = null;
 				System.out.println("================================================================================");
 			}
+		}
+		
+		System.out.println();
+		JsFile json = tp.toJson();
+		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
+		
+		TrainingProgram tpCopy = new TrainingProgram(gnn.neuralNet,tp.baseTestSet);
+		tpCopy.fromJson(json);
+		ZStringBuilder newStr = tpCopy.toJson().toStringBuilderReadFormat();
+		assertEqual(newStr.equals(oriStr),true,"Training program JSON does not match expectation");
+		if (!newStr.equals(oriStr)) {
+			System.out.println(oriStr);
+			System.err.println(newStr);
 		}
 	}
 }

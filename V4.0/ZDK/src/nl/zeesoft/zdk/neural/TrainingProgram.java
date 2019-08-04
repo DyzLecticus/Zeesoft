@@ -1,6 +1,10 @@
 package nl.zeesoft.zdk.neural;
 
-public class TrainingProgram {
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
+
+public class TrainingProgram implements JsAble {
 	public NeuralNet	neuralNet			= null;
 	public TestSet		baseTestSet			= null;
 	
@@ -52,6 +56,49 @@ public class TrainingProgram {
 
 	public float getLossChangeRate() {
 		return getLossChange() / trainedEpochs * -1F;
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("stopOnSuccess","" + stopOnSuccess));
+		json.rootElement.children.add(new JsElem("trainedEpochs","" + trainedEpochs));
+		if (initialResults!=null) {
+			JsElem initElem = new JsElem("initialResults",true);
+			json.rootElement.children.add(initElem);
+			initElem.children.add(initialResults.toJson().rootElement);
+		}
+		if (latestResults!=null) {
+			JsElem latestElem = new JsElem("latestResults",true);
+			json.rootElement.children.add(latestElem);
+			latestElem.children.add(latestResults.toJson().rootElement);
+		}
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			stopOnSuccess = json.rootElement.getChildBoolean("stopOnSuccess",stopOnSuccess);
+			trainedEpochs = json.rootElement.getChildInt("trainedEpochs",trainedEpochs);
+			JsElem initElem = json.rootElement.getChildByName("initialResults");
+			if (initElem!=null) {
+				JsFile js = new JsFile();
+				js.rootElement = initElem.children.get(0);
+				if (js.rootElement!=null) {
+					initialResults = new TestSet(js);
+				}
+			}
+			JsElem latestElem = json.rootElement.getChildByName("latestResults");
+			if (latestElem!=null) {
+				JsFile js = new JsFile();
+				js.rootElement = latestElem.children.get(0);
+				if (js.rootElement!=null) {
+					latestResults = new TestSet(js);
+				}
+			}
+		}
 	}
 	
 	public TrainingProgram copy() {

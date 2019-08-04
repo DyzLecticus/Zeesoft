@@ -60,7 +60,6 @@ public class TestNeuralNet extends TestObject {
 		ZStringBuilder newStr = tSetCopy.toJson().toStringBuilderReadFormat();
 		assertEqual(newStr.equals(oriStr),true,"Test set JSON does not match expectation");
 		if (!newStr.equals(oriStr)) {
-			System.out.println("Test set JSON;");
 			System.out.println(oriStr);
 			System.err.println(newStr);
 		} else {
