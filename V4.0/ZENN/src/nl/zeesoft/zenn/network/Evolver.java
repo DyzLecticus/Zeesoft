@@ -97,7 +97,6 @@ public class Evolver extends Locker {
 			for (EvolverWorker worker: workers) {
 				worker.start();
 			}
-			working = true;
 			debug("Started" + getTypeSafe() + " evolver");
 		}
 		lockMe(this);

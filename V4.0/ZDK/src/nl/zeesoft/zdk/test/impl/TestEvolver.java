@@ -66,6 +66,7 @@ public class TestEvolver extends TestObject {
 		evolver.start();
 		sleep(30000);
 		evolver.stop();
+		evolver.whileStopping();
 		
 		messenger.stop();
 		messenger.handleMessages();
@@ -85,6 +86,7 @@ public class TestEvolver extends TestObject {
 		if (!newStr.equals(oriStr)) {
 			System.out.println(oriStr);
 			System.err.println(newStr);
+			System.err.println("First line difference: " + oriStr.getFirstLineDifference(newStr));
 		}
 	}
 }

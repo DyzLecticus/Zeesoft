@@ -412,6 +412,25 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 		return contains;
 	}
 	
+	public int getFirstLineDifference(ZStringBuilder compare) {
+		return getFirstLineDifference(compare,"\n");
+	}
+	
+	public int getFirstLineDifference(ZStringBuilder compare,String splitter) {
+		int r = 0;
+		List<ZStringBuilder> lines = split(splitter);
+		List<ZStringBuilder> cLines = compare.split(splitter);
+		int i = 0;
+		for (ZStringBuilder line: lines) {
+			r++;
+			if (!line.equals(cLines.get(i))) {
+				break;
+			}
+			i++;
+		}
+		return r;
+	}
+	
 	public ZStringBuilder fromFile(String fileName) {
 		ZStringBuilder error = new ZStringBuilder();
 		FileInputStream fis = null;

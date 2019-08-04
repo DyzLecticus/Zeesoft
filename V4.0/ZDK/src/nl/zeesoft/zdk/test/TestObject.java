@@ -17,6 +17,15 @@ public abstract class TestObject {
 	public TestObject(Tester tester) {
 		this.tester = tester;
 	}
+
+	/**
+	 * Returns the Tester
+	 * 
+	 * @return The Tester
+	 */
+	public Tester getTester() {
+		return tester;
+	}
 	
 	/**
 	 * Print the description of this test to System.out.
@@ -184,14 +193,5 @@ public abstract class TestObject {
 	 */
 	protected int getSleeptMs() {
 		return sleepMs;
-	}
-
-	/**
-	 * Returns the Tester
-	 * 
-	 * @return The Tester
-	 */
-	public Tester getTester() {
-		return tester;
 	}
 }

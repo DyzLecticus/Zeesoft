@@ -25,6 +25,7 @@ public class Evolver extends Locker implements JsAble {
 	private int						trainEpochs			= 5000;
 	private int						trainEpochSize		= 10;
 	private int						evolverSleepMs		= 10;
+	private boolean					working				= false;
 	
 	private EvolverUnit				bestSoFar			= null;
 	
@@ -63,16 +64,71 @@ public class Evolver extends Locker implements JsAble {
 		this.evolverSleepMs = evolverSleepMs;
 		unlockMe(this);
 	}
-	
+
+	public boolean isWorking() {
+		boolean r = false;
+		lockMe(this);
+		r = working;
+		unlockMe(this);
+		return r;
+	}
+
 	public void start() {
-		for (EvolverWorker evolver: evolvers) {
-			evolver.start();
+		boolean r = false;
+		lockMe(this);
+		if (!working) {
+			working = true;
+			r = true;
+		}
+		unlockMe(this);
+		if (r) {
+			for (EvolverWorker evolver: evolvers) {
+				evolver.start();
+			}
 		}
 	}
 	
 	public void stop() {
-		for (EvolverWorker evolver: evolvers) {
-			evolver.stop();
+		boolean r = false;
+		lockMe(this);
+		if (working) {
+			working = false;
+			r = true;
+		}
+		unlockMe(this);
+		if (r) {
+			for (EvolverWorker evolver: evolvers) {
+				evolver.stop();
+			}
+		}
+	}
+
+	public void whileStopping() {
+		whileStopping(10);
+	}
+
+	public void whileStopping(int timeoutSeconds) {
+		long started = System.currentTimeMillis();
+		for (EvolverWorker worker: evolvers) {
+			while(worker.isWorking()) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					if (getMessenger()!=null) {
+						getMessenger().error(this,"Waiting for evolver worker to finish was interrupted",e);
+					} else {
+						e.printStackTrace();
+					}
+				}
+				long now = System.currentTimeMillis();
+				if (now - started > timeoutSeconds * 1000) {
+					break;
+				}
+			}
+			long now = System.currentTimeMillis();
+			if (now - started > timeoutSeconds * 1000) {
+				break;
+			}
 		}
 	}
 	
@@ -94,7 +150,7 @@ public class Evolver extends Locker implements JsAble {
 		json.rootElement.children.add(new JsElem("trainEpochSize","" + trainEpochSize));
 		json.rootElement.children.add(new JsElem("evolverSleepMs","" + evolverSleepMs));
 		if (bestSoFar!=null) {
-			json.rootElement.children.add(new JsElem("bestCode",bestSoFar.code.getCode()));
+			json.rootElement.children.add(new JsElem("bestCode",bestSoFar.code.getCode(),true));
 			
 			JsElem bestNNElem = new JsElem("bestNeuralNet",true);
 			json.rootElement.children.add(bestNNElem);
