@@ -2,7 +2,6 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.text.DecimalFormat;
 
-import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.Test;
 import nl.zeesoft.zdk.neural.TestSet;
@@ -53,6 +52,7 @@ public class TestNeuralNet extends TestObject {
 		// XOR NN
 		NeuralNet nn = new NeuralNet(2,1,2,1);
 		nn.randomizeWeightsAndBiases();
+		//nn.outputActivator = StaticFunctions.SOFTMAX_TOP;
 		testXORNeuralNet(nn);
 	}
 	
