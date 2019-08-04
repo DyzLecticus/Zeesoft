@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.neural.NeuralNet;
+import nl.zeesoft.zdk.neural.Prediction;
 import nl.zeesoft.zdk.neural.Test;
 import nl.zeesoft.zdk.neural.TestSet;
 import nl.zeesoft.zdk.neural.TrainingProgram;
@@ -23,31 +24,45 @@ public class TestNeuralNet extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use the *ZStringEncoder* to generate a key and then use that to encode and decode a text.");
+		System.out.println("This test shows how to create, train and use a *NeuralNet*.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the ZStringEncoder");
-		System.out.println("ZStringEncoder encoder = new ZStringEncoder(\"Example text to be encoded.\");");
-		System.out.println("// Generate a key");
-		System.out.println("String key = encoder.generateNewKey(1024);");
-		System.out.println("// Use the key to encode the text");
-		System.out.println("encoder.encodeKey(key,0);");
-		System.out.println("// Use the key to decode the encoded text");
-		System.out.println("encoder.decodeKey(key,0);");
+		System.out.println("// Create the neural net");
+		System.out.println("NeuralNet nn = new NeuralNet(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);");
+		System.out.println("// Get a new prediction");
+		System.out.println("Prediction p = nn.getNewPrediction();");
+		System.out.println("// Set the prediction inputs (0.0 - 1.0)");
+		System.out.println("p.inputs[0] = 0.0F;");
+		System.out.println("p.inputs[1] = 1.0;");
+		System.out.println("// Let the neural net predict the outputs");
+		System.out.println("n.predict(p);");
+		System.out.println("// Get a new test set");
+		System.out.println("TestSet ts = nn.getNewTestSet();");
+		System.out.println("// Get a new test");
+		System.out.println("Test t = ts.addNewTest();");
+		System.out.println("// Set the test inputs (0.0 - 1.0)");
+		System.out.println("t.inputs[0] = 0.0F;");
+		System.out.println("t.inputs[1] = 1.0;");
+		System.out.println("// Set the test expectations (0.0 - 1.0)");
+		System.out.println("t.expectations[0] = 1.0F;");
+		System.out.println("// Let the neural net predict the test outputs and calculate the error and loss");
+		System.out.println("n.test(ts);");
+		System.out.println("// Use the test set to train the neural net");
+		System.out.println("n.train(ts);");
 		System.out.println("~~~~");
-		System.out.println();
-		System.out.println("This encoding mechanism can be used to encode and decode passwords and other sensitive data.");
-		System.out.println("The minimum key length is 64. Longer keys provide stronger encoding.");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestNeuralNet.class));
-		System.out.println(" * " + getTester().getLinkForClass(ZStringEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(NeuralNet.class));
+		System.out.println(" * " + getTester().getLinkForClass(Prediction.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestSet.class));
+		System.out.println(" * " + getTester().getLinkForClass(Test.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the generated key, the input text, the encoded text, and the decoded text.");
-		*/
+		System.out.println("The output of this test shows;  ");
+		System.out.println(" * The test results for 2 XOR neural net implementations before and after training.  ");
+		System.out.println(" * The second neural net JSON structure.  ");
 	}
 	
 	@Override

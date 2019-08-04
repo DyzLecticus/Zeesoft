@@ -16,31 +16,24 @@ public class TestZMatrix extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use the *ZStringEncoder* to generate a key and then use that to encode and decode a text.");
+		System.out.println("This test shows how to use the *ZMatrix* to do matrix calculations and manipulations.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the ZStringEncoder");
-		System.out.println("ZStringEncoder encoder = new ZStringEncoder(\"Example text to be encoded.\");");
-		System.out.println("// Generate a key");
-		System.out.println("String key = encoder.generateNewKey(1024);");
-		System.out.println("// Use the key to encode the text");
-		System.out.println("encoder.encodeKey(key,0);");
-		System.out.println("// Use the key to decode the encoded text");
-		System.out.println("encoder.decodeKey(key,0);");
+		System.out.println("// Create the matrix");
+		System.out.println("ZMatrix m = new ZMatrix(2,3);");
+		System.out.println("// Ransdomize the matrix");
+		System.out.println("m.randomize();");
+		System.out.println("// Print the matrix");
+		System.out.println("System.out.println(m.getTable());");
 		System.out.println("~~~~");
-		System.out.println();
-		System.out.println("This encoding mechanism can be used to encode and decode passwords and other sensitive data.");
-		System.out.println("The minimum key length is 64. Longer keys provide stronger encoding.");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestZMatrix.class));
-		System.out.println(" * " + getTester().getLinkForClass(ZStringEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZMatrix.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the generated key, the input text, the encoded text, and the decoded text.");
-		*/
+		System.out.println("The output of this test shows the results of several matrix manipulations.  ");
 	}
 	
 	@Override
@@ -50,21 +43,25 @@ public class TestZMatrix extends TestObject {
 		// TODO: Add some more assertions
 		
 		m1.add(10);
+		System.out.println("Initial;");
 		System.out.println(m1.getTable());
 		assertEqual(m1.data[0][0],10F,"Matrix value does match expectation");
 		
 		m1.multiply(3);
 		System.out.println();
+		System.out.println("Scalar multiplied by " + 3 + ";");
 		System.out.println(m1.getTable());
 		assertEqual(m1.data[0][0],30F,"Matrix value does match expectation");
 
 		ZMatrix m2 = new ZMatrix(2,3);
 		m2.randomize();
 		System.out.println();
+		System.out.println("Randomized;");
 		System.out.println(m2.getTable());
 		
 		m2.multiply(m1);
 		System.out.println();
+		System.out.println("Randomized multiplied element wise;");
 		System.out.println(m2.getTable());
 		
 		m1.data[0][0] = 1;
@@ -74,6 +71,7 @@ public class TestZMatrix extends TestObject {
 		m1.data[1][1] = 2;
 		m1.data[1][2] = 2;
 		System.out.println();
+		System.out.println("Matrix 1;");
 		System.out.println(m1.getTable());
 		
 		m2 = new ZMatrix(3,2);
@@ -84,24 +82,32 @@ public class TestZMatrix extends TestObject {
 		m2.data[2][0] = 5;
 		m2.data[2][1] = 5;
 		System.out.println();
+		System.out.println("Matrix 2;");
 		System.out.println(m2.getTable());
 		
 		ZMatrix m3 = ZMatrix.multiply(m1,m2);
 		System.out.println();
+		System.out.println("Matrix multiplication of matrix 1 * matrix 2;");
 		System.out.println(m3.getTable());
 
 		ZMatrix m4 = new ZMatrix(2,3);
 		m4.randomize();
 		System.out.println();
+		System.out.println("New randomized matrix;");
 		System.out.println(m4.getTable());
 		
 		ZMatrix m5 = ZMatrix.transpose(m4);
 		System.out.println();
+		System.out.println("Randomized matrix transposed;");
 		System.out.println(m5.getTable());
+		assertEqual(m5.rows,3,"Number of rows does not match expectation");
+		assertEqual(m5.cols,2,"Number of columns does not match expectation");
 		
 		ZStringBuilder str = m5.toStringBuilder();
 		ZMatrix m6 = ZMatrix.fromStringBuilder(str);
-		System.out.println();
-		System.out.println(m6.getTable());
+		assertEqual(m6.toStringBuilder().equals(m5.toStringBuilder()),true,"Matrix string builder does not match expectation");
+		if (!m6.toStringBuilder().equals(m5.toStringBuilder())) {
+			System.err.println(m6.getTable());
+		}
 	}
 }
