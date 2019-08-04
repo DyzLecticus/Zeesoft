@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZFunction;
@@ -13,6 +14,12 @@ public class ZMatrix {
 	public float[][]	data	= null;
 	
 	public ZMatrix(int rows,int cols) {
+		if (rows<1) {
+			rows = 1;
+		}
+		if (cols<1) {
+			cols = 1;
+		}
 		this.rows = rows;
 		this.cols = cols;
 		data = new float[rows][cols];
@@ -196,6 +203,41 @@ public class ZMatrix {
 	public ZMatrix copy() {
 		ZMatrix r = new ZMatrix(rows,cols);
 		r.set(this);
+		return r;
+	}
+	
+	public ZStringBuilder toStringBuilder() {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("" + rows);
+		r.append(",");
+		r.append("" + cols);
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				r.append(",");
+				r.append("" + data[i][j]);
+			}
+		}
+		return r;
+	}
+	
+	public static ZMatrix fromStringBuilder(ZStringBuilder str) {
+		ZMatrix r = null;
+		List<ZStringBuilder> elems = str.split(",");
+		if (elems.size()>=3) {
+			int rows = Integer.parseInt(elems.get(0).toString());
+			int cols = Integer.parseInt(elems.get(1).toString());
+			r = new ZMatrix(rows,cols);
+			int row = 0;
+			int col = 0;
+			for (int i = 2; i < elems.size(); i++) {
+				r.data[row][col] = Float.parseFloat(elems.get(i).toString());
+				col++;
+				if (col>=cols) {
+					col = 0;
+					row++;
+				}
+			}
+		}
 		return r;
 	}
 	

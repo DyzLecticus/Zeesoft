@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.ZMatrix;
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -97,5 +98,10 @@ public class TestZMatrix extends TestObject {
 		ZMatrix m5 = ZMatrix.transpose(m4);
 		System.out.println();
 		System.out.println(m5.getTable());
+		
+		ZStringBuilder str = m5.toStringBuilder();
+		ZMatrix m6 = ZMatrix.fromStringBuilder(str);
+		System.out.println();
+		System.out.println(m6.getTable());
 	}
 }
