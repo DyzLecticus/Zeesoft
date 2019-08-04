@@ -8,6 +8,10 @@ public class Prediction {
 	public float[] 			inputs	= null;
 	public float[] 			outputs	= null;
 	
+	protected Prediction() {
+		
+	}
+	
 	protected Prediction(int inputNeurons,int outputNeurons) {
 		initialize(inputNeurons,outputNeurons);
 	}
@@ -45,6 +49,13 @@ public class Prediction {
 		copyValues(c.outputs,outputs);
 	}
 	
+	protected void initialize(int inputNeurons, int outputNeurons) {
+		inputs = new float[inputNeurons];
+		initializeValues(inputs);
+		outputs = new float[outputNeurons];
+		initializeValues(outputs);
+	}
+	
 	protected void initializeValues(float[] a) {
 		for (int i = 0; i< a.length; i++) {
 			a[i] = 0;
@@ -55,12 +66,5 @@ public class Prediction {
 		for (int i = 0; i< to.length; i++) {
 			to[i] = from[i];
 		}
-	}
-	
-	protected void initialize(int inputNeurons, int outputNeurons) {
-		inputs = new float[inputNeurons];
-		initializeValues(inputs);
-		outputs = new float[outputNeurons];
-		initializeValues(outputs);
 	}
 }

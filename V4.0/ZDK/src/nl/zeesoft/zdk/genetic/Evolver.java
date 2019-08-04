@@ -19,7 +19,7 @@ public class Evolver extends Locker {
 	private List<EvolverWorker>		evolvers			= new ArrayList<EvolverWorker>();
 	
 	private boolean					debug				= false;
-	private float					mutationRate		= 0.1F;
+	private float					mutationRate		= 0.05F;
 	private int						trainEpochs			= 5000;
 	private int						trainEpochSize		= 10;
 	private int						evolverSleepMs		= 10;

@@ -4,9 +4,11 @@ import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZActivator;
 import nl.zeesoft.zdk.functions.ZLossFunction;
-import nl.zeesoft.zdk.functions.ZParamFunction;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
-public class NeuralNet {
+public class NeuralNet implements JsAble {
 	public int					inputNeurons	= 1;
 	public int					hiddenLayers	= 1;
 	public int					hiddenNeurons	= 1;
@@ -14,53 +16,18 @@ public class NeuralNet {
 	
 	public ZActivator			activator		= StaticFunctions.LEAKY_RELU;
 	public ZActivator			outputActivator	= null;
-	public ZParamFunction		errorFunction	= null;
 	public float				learningRate	= 0.1F;
 	
 	public ZMatrix[]			layerValues		= null;
 	public ZMatrix[]			layerWeights	= null;
 	public ZMatrix[]			layerBiases		= null;
 
-	public NeuralNet(int inputNeurons, int hiddenLayers, int hiddenNeurons, int outputNeurons) {
-		if (inputNeurons<1) {
-			inputNeurons = 1;
-		}
-		if (hiddenLayers<1) {
-			hiddenLayers = 1;
-		}
-		if (hiddenNeurons<1) {
-			hiddenNeurons = 1;
-		}
-		if (outputNeurons<1) {
-			outputNeurons = 1;
-		}
-		this.inputNeurons = inputNeurons;
-		this.hiddenLayers = hiddenLayers;
-		this.hiddenNeurons = hiddenNeurons;
-		this.outputNeurons = outputNeurons;
+	public NeuralNet(JsFile json) {
+		fromJson(json);
+	}
 
-		int totalLayers = hiddenLayers + 2;
-		
-		layerValues = new ZMatrix[totalLayers];
-		layerWeights = new ZMatrix[totalLayers];
-		layerBiases = new ZMatrix[totalLayers];
-		int lNeurons = inputNeurons;
-		int pNeurons = inputNeurons;
-		for (int i = 0; i < layerValues.length; i++) {
-			if (i == layerValues.length - 1) {
-				lNeurons = outputNeurons;
-			}
-			layerValues[i] = new ZMatrix(lNeurons,1);
-			if (i==0) {
-				layerWeights[i] = new ZMatrix(1,1);
-				layerBiases[i] = new ZMatrix(1,1);
-			} else {
-				layerWeights[i] = new ZMatrix(lNeurons,pNeurons);
-				layerBiases[i] = new ZMatrix(lNeurons,1);
-				pNeurons = lNeurons;
-			}
-			lNeurons = hiddenNeurons;
-		}
+	public NeuralNet(int inputNeurons, int hiddenLayers, int hiddenNeurons, int outputNeurons) {
+		initialize(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
 	}
 	
 	public int size() {
@@ -77,7 +44,7 @@ public class NeuralNet {
 	}
 
 	public void randomizeWeightsAndBiases() {
-		for (int i = 0; i < layerValues.length; i++) {
+		for (int i = 1; i < layerValues.length; i++) {
 			layerWeights[i].randomize();
 			layerBiases[i].randomize();;
 		}
@@ -139,6 +106,120 @@ public class NeuralNet {
 			r.layerBiases[i] = layerBiases[i].copy();
 		}
 		return r;
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("inputNeurons","" + inputNeurons));
+		json.rootElement.children.add(new JsElem("hiddenLayers","" + hiddenLayers));
+		json.rootElement.children.add(new JsElem("hiddenNeurons","" + hiddenNeurons));
+		json.rootElement.children.add(new JsElem("outputNeurons","" + outputNeurons));
+		json.rootElement.children.add(new JsElem("activator",activator.getClass().getName(),true));
+		String outAct = "";
+		if (outputActivator!=null) {
+			outAct = outputActivator.getClass().getName();
+		}
+		json.rootElement.children.add(new JsElem("outputActivator",outAct,true));
+		json.rootElement.children.add(new JsElem("learningRate","" + learningRate));
+		
+		JsElem valuesElem = new JsElem("values",true);
+		json.rootElement.children.add(valuesElem);
+		for (int i = 0; i < layerValues.length; i++) {
+			valuesElem.children.add(new JsElem(null,layerValues[i].toStringBuilder(),true));
+		}
+		
+		JsElem weightsElem = new JsElem("weights",true);
+		json.rootElement.children.add(weightsElem);
+		for (int i = 0; i < layerValues.length; i++) {
+			weightsElem.children.add(new JsElem(null,layerWeights[i].toStringBuilder(),true));
+		}
+		
+		JsElem biasesElem = new JsElem("biases",true);
+		json.rootElement.children.add(biasesElem);
+		for (int i = 0; i < layerValues.length; i++) {
+			biasesElem.children.add(new JsElem(null,layerBiases[i].toStringBuilder(),true));
+		}
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			int inputNeurons = json.rootElement.getChildInt("inputNeurons",this.inputNeurons);
+			int hiddenLayers = json.rootElement.getChildInt("hiddenLayers",this.hiddenLayers);
+			int hiddenNeurons = json.rootElement.getChildInt("hiddenNeurons",this.hiddenNeurons);
+			int outputNeurons = json.rootElement.getChildInt("outputNeurons",this.outputNeurons);
+			initialize(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
+
+			activator = StaticFunctions.getActivatorByClassName(json.rootElement.getChildString("activator"));
+			outputActivator = StaticFunctions.getActivatorByClassName(json.rootElement.getChildString("outputActivator"));
+			learningRate = json.rootElement.getChildFloat("learningRate",this.learningRate);
+			
+			JsElem valuesElem = json.rootElement.getChildByName("values");
+			if (valuesElem!=null && valuesElem.children.size()==layerValues.length) {
+				for (int i = 0; i < layerValues.length; i++) {
+					layerValues[i] = ZMatrix.fromStringBuilder(valuesElem.children.get(i).value);
+				}
+			}
+			
+			JsElem weightsElem = json.rootElement.getChildByName("weights");
+			if (weightsElem!=null && weightsElem.children.size()==layerValues.length) {
+				for (int i = 0; i < layerValues.length; i++) {
+					layerWeights[i] = ZMatrix.fromStringBuilder(weightsElem.children.get(i).value);
+				}
+			}
+			
+			JsElem biasesElem = json.rootElement.getChildByName("biases");
+			if (biasesElem!=null && biasesElem.children.size()==layerValues.length) {
+				for (int i = 0; i < layerValues.length; i++) {
+					layerBiases[i] = ZMatrix.fromStringBuilder(biasesElem.children.get(i).value);
+				}
+			}
+		}
+	}
+
+	public void initialize(int inputNeurons, int hiddenLayers, int hiddenNeurons, int outputNeurons) {
+		if (inputNeurons<1) {
+			inputNeurons = 1;
+		}
+		if (hiddenLayers<1) {
+			hiddenLayers = 1;
+		}
+		if (hiddenNeurons<1) {
+			hiddenNeurons = 1;
+		}
+		if (outputNeurons<1) {
+			outputNeurons = 1;
+		}
+		this.inputNeurons = inputNeurons;
+		this.hiddenLayers = hiddenLayers;
+		this.hiddenNeurons = hiddenNeurons;
+		this.outputNeurons = outputNeurons;
+
+		int totalLayers = hiddenLayers + 2;
+		
+		layerValues = new ZMatrix[totalLayers];
+		layerWeights = new ZMatrix[totalLayers];
+		layerBiases = new ZMatrix[totalLayers];
+		int lNeurons = inputNeurons;
+		int pNeurons = inputNeurons;
+		for (int i = 0; i < layerValues.length; i++) {
+			if (i == layerValues.length - 1) {
+				lNeurons = outputNeurons;
+			}
+			layerValues[i] = new ZMatrix(lNeurons,1);
+			if (i==0) {
+				layerWeights[i] = new ZMatrix(1,1);
+				layerBiases[i] = new ZMatrix(1,1);
+			} else {
+				layerWeights[i] = new ZMatrix(lNeurons,pNeurons);
+				layerBiases[i] = new ZMatrix(lNeurons,1);
+				pNeurons = lNeurons;
+			}
+			lNeurons = hiddenNeurons;
+		}
 	}
 	
 	protected float[] feedForward(float[] inputs) {

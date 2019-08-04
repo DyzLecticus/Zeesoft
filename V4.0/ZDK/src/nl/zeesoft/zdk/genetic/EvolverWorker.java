@@ -23,7 +23,7 @@ public class EvolverWorker extends Worker {
 		}
 		unit.trainingProgram.train(evolver.getTrainEpochSize());
 		if ((unit.trainingProgram.stopOnSuccess && unit.trainingProgram.latestResults.success) || 
-			unit.trainingProgram.trainedEpochs >= evolver.getTrainEpochs() * evolver.getTrainEpochSize()
+			(unit.trainingProgram.trainedEpochs >= evolver.getTrainEpochs() * evolver.getTrainEpochSize())
 			) {
 			evolver.finishedTrainigProgram(this,unit);
 			unit = null;

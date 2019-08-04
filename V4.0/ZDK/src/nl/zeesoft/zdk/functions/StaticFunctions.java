@@ -33,10 +33,12 @@ public class StaticFunctions {
 	
 	public static ZActivator getActivatorByClassName(String name) {
 		ZActivator r = null;
-		for (int i = 0; i < OUTPUT_ACTIVATORS.length; i++) {
-			if (OUTPUT_ACTIVATORS[i].getClass().getName().equals(name)) {
-				r = OUTPUT_ACTIVATORS[i];
-				break;
+		if (name.length()>0) {
+			for (int i = 0; i < OUTPUT_ACTIVATORS.length; i++) {
+				if (OUTPUT_ACTIVATORS[i].getClass().getName().equals(name)) {
+					r = OUTPUT_ACTIVATORS[i];
+					break;
+				}
 			}
 		}
 		return r;
@@ -44,10 +46,12 @@ public class StaticFunctions {
 	
 	public static ZLossFunction getLossFunctionByClassName(String name) {
 		ZLossFunction r = null;
-		for (int i = 0; i < LOSS_FUNCTIONS.length; i++) {
-			if (LOSS_FUNCTIONS[i].getClass().getName().equals(name)) {
-				r = LOSS_FUNCTIONS[i];
-				break;
+		if (name.length()>0) {
+			for (int i = 0; i < LOSS_FUNCTIONS.length; i++) {
+				if (LOSS_FUNCTIONS[i].getClass().getName().equals(name)) {
+					r = LOSS_FUNCTIONS[i];
+					break;
+				}
 			}
 		}
 		return r;

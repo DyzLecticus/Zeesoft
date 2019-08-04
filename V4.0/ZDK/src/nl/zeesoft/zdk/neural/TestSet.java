@@ -6,8 +6,11 @@ import java.util.List;
 import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZLossFunction;
 import nl.zeesoft.zdk.functions.ZRandomize;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
-public class TestSet {
+public class TestSet implements JsAble {
 	public int				inputNeurons	= 1;
 	public int				outputNeurons	= 1;
 	
@@ -18,6 +21,10 @@ public class TestSet {
 	public float			averageError	= 0;
 	public float			averageLoss		= 0;
 	public boolean			success			= true;
+	
+	public TestSet(JsFile json) {
+		fromJson(json);
+	}
 	
 	public TestSet(int inputNeurons, int outputNeurons) {
 		if (inputNeurons<1) {
@@ -73,6 +80,63 @@ public class TestSet {
 				Test t = tests.remove(i);
 				tests.add(ZRandomize.getRandomInt(0,l - 1),t);
 			}
+		}
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("inputNeurons","" + inputNeurons));
+		json.rootElement.children.add(new JsElem("outputNeurons","" + outputNeurons));
+		json.rootElement.children.add(new JsElem("lossFunction","" + lossFunction.getClass().getName(),true));
+		json.rootElement.children.add(new JsElem("errorTolerance","" + errorTolerance));
+		json.rootElement.children.add(new JsElem("averageError","" + averageError));
+		json.rootElement.children.add(new JsElem("averageLoss","" + averageLoss));
+		json.rootElement.children.add(new JsElem("success","" + success));
+		
+		JsElem testsElem = new JsElem("tests",true);
+		json.rootElement.children.add(testsElem);
+		for (Test t: tests) {
+			testsElem.children.add(t.toJson().rootElement);
+		}
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		// TODO Auto-generated method stub
+		if (json.rootElement!=null) {
+			inputNeurons = json.rootElement.getChildInt("inputNeurons",inputNeurons);
+			outputNeurons = json.rootElement.getChildInt("outputNeurons",outputNeurons);
+			lossFunction = StaticFunctions.getLossFunctionByClassName(json.rootElement.getChildString("lossFunction"));
+			errorTolerance = json.rootElement.getChildFloat("errorTolerance",errorTolerance);
+			averageError = json.rootElement.getChildFloat("averageError",averageError);
+			averageLoss = json.rootElement.getChildFloat("averageLoss",averageLoss);
+			success = json.rootElement.getChildBoolean("success",success);
+			
+			JsElem testsElem = json.rootElement.getChildByName("tests");
+			if (testsElem!=null) {
+				for (JsElem testElem: testsElem.children) {
+					JsFile tJs = new JsFile();
+					tJs.rootElement = testElem;
+					tests.add(new Test(tJs));
+				}
+			}
+		}
+		
+		json.rootElement.children.add(new JsElem("inputNeurons","" + inputNeurons));
+		json.rootElement.children.add(new JsElem("outputNeurons","" + outputNeurons));
+		json.rootElement.children.add(new JsElem("lossFunction","" + lossFunction.getClass().getName(),true));
+		json.rootElement.children.add(new JsElem("errorTolerance","" + errorTolerance));
+		json.rootElement.children.add(new JsElem("averageError","" + averageError));
+		json.rootElement.children.add(new JsElem("averageLoss","" + averageLoss));
+		json.rootElement.children.add(new JsElem("success","" + success));
+		
+		JsElem testsElem = new JsElem("tests",true);
+		json.rootElement.children.add(testsElem);
+		for (Test t: tests) {
+			testsElem.children.add(t.toJson().rootElement);
 		}
 	}
 	

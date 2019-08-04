@@ -2,7 +2,9 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.text.DecimalFormat;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.StaticFunctions;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.Test;
 import nl.zeesoft.zdk.neural.TestSet;
@@ -50,17 +52,43 @@ public class TestNeuralNet extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		// XOR NN
-		NeuralNet nn = new NeuralNet(2,1,2,1);
-		nn.randomizeWeightsAndBiases();
-		testXORNeuralNet(nn,false);
-
-		System.out.println("================================================================================");
-		
-		// XOR NN as classifier
-		nn = new NeuralNet(2,1,2,1);
-		nn.randomizeWeightsAndBiases();
-		testXORNeuralNet(nn,true);
+		// XOR test set
+		TestSet tSet = getXORTestSet(false);
+		JsFile tsJs = tSet.toJson();
+		ZStringBuilder oriStr = tsJs.toStringBuilderReadFormat();
+		TestSet tSetCopy = new TestSet(tsJs);
+		ZStringBuilder newStr = tSetCopy.toJson().toStringBuilderReadFormat();
+		assertEqual(newStr.equals(oriStr),true,"Test set JSON does not match expectation");
+		if (!newStr.equals(oriStr)) {
+			System.out.println("Test set JSON;");
+			System.out.println(oriStr);
+			System.err.println(newStr);
+		} else {
+			// XOR NN
+			NeuralNet nn = new NeuralNet(2,1,2,1);
+			nn.randomizeWeightsAndBiases();		
+			testXORNeuralNet(nn,false);
+	
+			System.out.println("================================================================================");
+			
+			// XOR NN as classifier
+			nn = new NeuralNet(2,1,2,1);
+			nn.randomizeWeightsAndBiases();
+			testXORNeuralNet(nn,true);
+			
+			System.out.println();
+			System.out.println("Neural net JSON;");
+			JsFile json = nn.toJson();
+			oriStr = json.toStringBuilderReadFormat();
+			System.out.println(oriStr);
+			
+			NeuralNet nnCopy = new NeuralNet(json);
+			newStr = nnCopy.toJson().toStringBuilderReadFormat();
+			assertEqual(newStr.equals(oriStr),true,"Neural net JSON does not match expectation");
+			if (!newStr.equals(oriStr)) {
+				System.err.println(newStr);
+			}
+		}
 	}
 	
 	public static TrainingProgram testXORNeuralNet(NeuralNet nn,boolean classifier) {
@@ -91,7 +119,6 @@ public class TestNeuralNet extends TestObject {
 		System.out.println("Latest test results;");
 		trainingSetToSystemOut(tp.latestResults,df);
 		System.out.println("Trained epochs: " + tp.trainedEpochs + ", error change rate: " + tp.getErrorChangeRate() + ", loss change rate: " + tp.getLossChangeRate());
-		
 		return tp;
 	}
 	
