@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nl.zeesoft.zdk.ZIntegerGenerator;
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
@@ -84,11 +84,10 @@ public class TestBigDatabase extends TestObject {
 	}
 	
 	private JsFile getTestObject() {
-		ZIntegerGenerator generator = new ZIntegerGenerator(4,16);
 		ZStringBuilder data = new ZStringBuilder();
-		int words = generator.getNewInteger();
+		int words = ZRandomize.getRandomInt(4,16);
 		for (int w = 0; w < words; w++) {
-			int letters = generator.getNewInteger();
+			int letters = ZRandomize.getRandomInt(4,16);
 			for (int l = 0; l < letters; l++) {
 				letter = (letter + letters + l) % 26;
 				data.append(Character.toString ((char) (97 + letter)));

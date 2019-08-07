@@ -1,14 +1,12 @@
 package nl.zeesoft.zenn.test;
 
 import nl.zeesoft.zdk.ZDKFactory;
-import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.genetic.EvolverUnit;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zenn.animal.AnimalEvolver;
-import nl.zeesoft.zenn.animal.AnimalNN;
-import nl.zeesoft.zenn.animal.AnimalTestCycleSet;
 
 public class TestAnimalEvolver extends TestObject {
 	public TestAnimalEvolver(Tester tester) {
@@ -56,58 +54,25 @@ public class TestAnimalEvolver extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		AnimalNN nn = (AnimalNN) getTester().getMockedObject(MockAnimalNN.class.getName());
-		if (nn!=null) {
-			ZDKFactory factory = new ZDKFactory();
-			Messenger messenger = factory.getMessenger();
-			messenger.setPrintDebugMessages(true);
-			WorkerUnion union = factory.getWorkerUnion(messenger);
-			
-			AnimalTestCycleSet tcs = new AnimalTestCycleSet();
-			tcs.initialize(nn,true);
-			
-			AnimalEvolver evolver = new AnimalEvolver(messenger,union,true);
-			evolver.initialize(nn,tcs);
-			evolver.setSleepMs(100);
-			evolver.setDebug(true);
-			evolver.start();
-			
-			messenger.start();
-			
-			evolver.start();
-			sleep(60000);
-			evolver.stop();
-			
-			AnimalNN bnn = (AnimalNN) evolver.getBestSoFar();
-			if (bnn!=null) {
-				JsFile json = evolver.toJson();
-				evolver = new AnimalEvolver(messenger,union,true);
-				evolver.fromJson(json);
-				JsFile copy = evolver.toJson();
-				
-				assertEqual(copy.toStringBuilderReadFormat(),json.toStringBuilderReadFormat(),"Animal evolver JSON does not match orignial");
+		ZDKFactory factory = new ZDKFactory();
+		Messenger messenger = factory.getMessenger();
+		messenger.setPrintDebugMessages(true);
+		WorkerUnion union = factory.getWorkerUnion(messenger);
+		
+		AnimalEvolver evolver = new AnimalEvolver(messenger,union,true);
+		evolver.setDebug(true);
+		
+		messenger.start();
 
-				/* TODO: Add JSON check to TestAnimalNN 
-				JsElem neuronsElem = json.rootElement.getChildByName("neurons");
-				if (neuronsElem!=null) {
-					int i = 0;
-					List<JsElem> children = new ArrayList<JsElem>(neuronsElem.children);
-					for (JsElem neuronElem: children) {
-						if (i>=1 && i < (children.size() - 1)) {
-							neuronsElem.children.remove(neuronElem);
-						}
-						i++;
-					}
-				}
-				*/
-				System.out.println();
-				System.out.println("Evolver JSON; ");
-				System.out.println(json.toStringBuilderReadFormat());
-			}
-
-			messenger.stop();
-			messenger.handleMessages();
-			union.stopWorkers();
-		}
+		evolver.start();
+		sleep(30000);
+		evolver.stop();
+			
+		EvolverUnit bestSoFar = evolver.getBestSoFar();
+		assertNotNull(bestSoFar,"Failed to generate and successfully train an animal neural network within 30 seconds");
+		
+		messenger.stop();
+		messenger.handleMessages();
+		union.stopWorkers();
 	}
 }

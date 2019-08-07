@@ -143,20 +143,25 @@ public class Evolver extends Locker implements JsAble {
 
 	@Override
 	public JsFile toJson() {
-		JsFile json = new JsFile();
-		json.rootElement = new JsElem();
-		lockMe(this);
-		json.rootElement.children.add(new JsElem("mutationRate","" + mutationRate));
-		json.rootElement.children.add(new JsElem("trainEpochs","" + trainEpochs));
-		json.rootElement.children.add(new JsElem("trainEpochSize","" + trainEpochSize));
-		json.rootElement.children.add(new JsElem("evolverSleepMs","" + evolverSleepMs));
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				JsFile json = new JsFile();
+				json.rootElement = new JsElem();
+				json.rootElement.children.add(new JsElem("mutationRate","" + mutationRate));
+				json.rootElement.children.add(new JsElem("trainEpochs","" + trainEpochs));
+				json.rootElement.children.add(new JsElem("trainEpochSize","" + trainEpochSize));
+				json.rootElement.children.add(new JsElem("evolverSleepMs","" + evolverSleepMs));
 
-		if (bestSoFar!=null) {
-			JsElem bestElem = new JsElem("bestSoFar",true);
-			json.rootElement.children.add(bestElem);
-			bestElem.children.add(bestSoFar.toJson().rootElement);
-		}
-		unlockMe(this);
+				if (bestSoFar!=null) {
+					JsElem bestElem = new JsElem("bestSoFar",true);
+					json.rootElement.children.add(bestElem);
+					bestElem.children.add(bestSoFar.toJson().rootElement);
+				}
+				return json;
+			}
+		};
+		JsFile json = (JsFile) doLocked(this,code);
 		return json;
 	}
 
@@ -192,24 +197,37 @@ public class Evolver extends Locker implements JsAble {
 		}
 	}
 	
+	protected void selectedBest() {
+		// Override to implement
+	}
+	
 	protected EvolverUnit getNewEvolverUnit(EvolverWorker evolver) {
-		EvolverUnit r = new EvolverUnit();
-		GeneticCode code = null;
+		GeneticCode gCode = null;
 		if (evolvers.indexOf(evolver)<=(evolvers.size() / 2)) {
 			lockMe(this);
 			if (bestSoFar!=null) {
-				code = new GeneticCode();
-				code.setCode(bestSoFar.code.getCode());
-				code.mutate(mutationRate);
+				gCode = new GeneticCode();
+				gCode.setCode(bestSoFar.code.getCode());
+				gCode.mutate(mutationRate);
 			}
 			unlockMe(this);
 		}
-		lockMe(this);
-		geneticNN.generateNewNN(code);
-		r.code = geneticNN.code;
-		r.neuralNet = geneticNN.neuralNet;
-		r.trainingProgram = getNewTrainingProgram(r.neuralNet,baseTestSet.copy());
-		unlockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				GeneticCode code = (GeneticCode) param1;
+				EvolverUnit r = new EvolverUnit();
+				lockMe(this);
+				geneticNN.generateNewNN(code);
+				r.code = geneticNN.code;
+				r.neuralNet = geneticNN.neuralNet;
+				r.trainingProgram = getNewTrainingProgram(r.neuralNet,baseTestSet.copy());
+				unlockMe(this);
+				return r;
+			}
+		};
+		code.param1 = gCode;
+		EvolverUnit r = (EvolverUnit) doLocked(this,code);
 		return r;
 	}
 
@@ -248,6 +266,7 @@ public class Evolver extends Locker implements JsAble {
 	}
 	
 	protected void finishedTrainigProgram(EvolverWorker worker,EvolverUnit unit) {
+		boolean selected = false;
 		if (unit.trainingProgram.latestResults.success) {
 			lockMe(this);
 			if (bestSoFar==null || unit.compareTo(bestSoFar)>0) {
@@ -255,8 +274,12 @@ public class Evolver extends Locker implements JsAble {
 				if (debug && getMessenger()!=null) {
 					getMessenger().debug(this,"Selected new best genetic neural net;\n" + unit.toStringBuilder());
 				}
+				selected = true;
 			}
 			unlockMe(this);
+		}
+		if (selected) {
+			selectedBest();
 		}
 	}
 	

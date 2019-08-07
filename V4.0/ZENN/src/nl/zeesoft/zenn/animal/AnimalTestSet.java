@@ -1,14 +1,16 @@
 package nl.zeesoft.zenn.animal;
 
-import nl.zeesoft.zenn.network.NN;
-import nl.zeesoft.zenn.network.TestCycle;
-import nl.zeesoft.zenn.network.TestCycleSet;
+import nl.zeesoft.zdk.neural.TestSet;
 
-public class AnimalTestCycleSet extends TestCycleSet {
+public class AnimalTestSet {
+	public static TestSet getNewAnimalTestSet(boolean herbivore) {
+		TestSet r = new TestSet(AnimalConstants.INPUT_NEURONS,AnimalConstants.OUTPUT_NEURONS);
+		return r;
+	}
 
-	public void initialize(NN nn,boolean herbivore) {
-		TestCycle tc = null;
-		
+	public void initialize(boolean herbivore) {
+		/*
+		Test t = null;
 		int leftFoodInput = AnimalNN.LEFT_GREEN;
 		int frontFoodInput = AnimalNN.FRONT_GREEN;
 		int rightFoodInput = AnimalNN.RIGHT_GREEN;
@@ -99,10 +101,6 @@ public class AnimalTestCycleSet extends TestCycleSet {
 			tc.inputs[AnimalNN.RIGHT_RED] = AnimalNN.INTENSITIES[d]; 
 			tc.expectedOutputs[AnimalNN.OUT_BACK] = 1.0F;
 		}
-	}
-	
-	@Override
-	protected TestCycleSet getCopyTestCycleSet() {
-		return new AnimalTestCycleSet();
+		*/
 	}
 }

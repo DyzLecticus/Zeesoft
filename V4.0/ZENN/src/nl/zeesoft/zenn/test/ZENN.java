@@ -41,8 +41,6 @@ public class ZENN extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		tests.add(new TestGeneticCode(getTester()));
-		tests.add(new TestAnimalNN(getTester()));
-		tests.add(new TestTrainingProgram(getTester()));
+		//tests.add(new TestGeneticCode(getTester()));
 	}
 }

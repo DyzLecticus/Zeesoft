@@ -2,15 +2,12 @@ package nl.zeesoft.zenn.animal;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
+import nl.zeesoft.zdk.genetic.Evolver;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
-import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zenn.network.Evolver;
-import nl.zeesoft.zenn.network.NN;
-import nl.zeesoft.zenn.network.TestCycleSet;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
@@ -23,55 +20,20 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 	private	long		id				= 0;
 	
 	public AnimalEvolver(Config config,boolean herbivore) {
-		super(config.getMessenger(),config.getUnion());
+		super(
+			config.getMessenger(),config.getUnion(),
+			AnimalConstants.MAX_LAYERS,AnimalConstants.MAX_NEURONS,
+			100,AnimalTestSet.getNewAnimalTestSet(herbivore),5);
 		this.configuration = config;
 		this.herbivore = herbivore;
-		this.setRepeatCycles(200,50);
-		initialize();
 	}
 	
-	public AnimalEvolver(Messenger msgr,WorkerUnion uni,boolean herbivore) {
-		super(msgr,uni);
+	public AnimalEvolver(Messenger msgr, WorkerUnion uni,boolean herbivore) {
+		super(
+			msgr,uni,
+			AnimalConstants.MAX_LAYERS,AnimalConstants.MAX_NEURONS,
+			100,AnimalTestSet.getNewAnimalTestSet(herbivore),5);
 		this.herbivore = herbivore;
-		initialize();
-	}
-
-	@Override
-	public JsFile toJson() {
-		JsFile json = new JsFile();
-		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("herbivore","" + herbivore));
-		lockMe(this);
-		NN bestSoFar = getBestSoFarNoLock();
-		TestCycleSet bestResults = getBestResultsNoLock();
-		unlockMe(this);
-		if (bestSoFar!=null) {
-			JsFile nnJson = bestSoFar.toJson(false);
-			for (JsElem elem: nnJson.rootElement.children) {
-				json.rootElement.children.add(elem);
-			}
-			JsFile resJson = bestResults.toJson();
-			for (JsElem elem: resJson.rootElement.children) {
-				json.rootElement.children.add(elem);
-			}
-			moveElemToBottom(json.rootElement,"neurons");
-			moveElemToBottom(json.rootElement,"code");
-		}
-		return json;
-	}
-
-	@Override
-	public void fromJson(JsFile json) {
-		if (json.rootElement!=null) {
-			herbivore = json.rootElement.getChildBoolean("hebrivore",herbivore);
-			if (json.rootElement.children.size()>1) {
-				NN bestSoFar = getNewNN();
-				bestSoFar.fromJson(json);
-				TestCycleSet bestResults = getNewTestCycleSet();
-				bestResults.fromJson(json);
-				setBest(bestSoFar, bestResults);
-			}
-		}
 	}
 
 	@Override
@@ -138,32 +100,15 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 	}
 	
 	@Override
-	protected void selectedNN() {
+	protected void selectedBest() {
 		save();
 	}
 	
-	@Override
 	protected String getType() {
 		String r = "herbivore";
 		if (!herbivore) {
 			r = "carnivore";
 		}
 		return r;
-	}
-	
-	private void moveElemToBottom(JsElem parent, String name) {
-		JsElem elem = parent.getChildByName(name);
-		if (elem!=null) {
-			parent.children.remove(elem);
-			parent.children.add(elem);
-		}
-	}
-	
-	private void initialize() {
-		AnimalNN nn = new AnimalNN();
-		nn.initialize();
-		AnimalTestCycleSet tcs = new AnimalTestCycleSet();
-		tcs.initialize(nn, herbivore);
-		initialize(nn,tcs);
 	}
 }
