@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.TestSet;
 import nl.zeesoft.zdk.neural.TrainingProgram;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
@@ -149,16 +150,11 @@ public class Evolver extends Locker implements JsAble {
 		json.rootElement.children.add(new JsElem("trainEpochs","" + trainEpochs));
 		json.rootElement.children.add(new JsElem("trainEpochSize","" + trainEpochSize));
 		json.rootElement.children.add(new JsElem("evolverSleepMs","" + evolverSleepMs));
+
 		if (bestSoFar!=null) {
-			json.rootElement.children.add(new JsElem("bestCode",bestSoFar.code.getCode(),true));
-			
-			JsElem bestNNElem = new JsElem("bestNeuralNet",true);
-			json.rootElement.children.add(bestNNElem);
-			bestNNElem.children.add(bestSoFar.neuralNet.toJson().rootElement);
-			
-			JsElem bestTPElem = new JsElem("bestTrainingProgram",true);
-			json.rootElement.children.add(bestTPElem);
-			bestTPElem.children.add(bestSoFar.trainingProgram.toJson().rootElement);
+			JsElem bestElem = new JsElem("bestSoFar",true);
+			json.rootElement.children.add(bestElem);
+			bestElem.children.add(bestSoFar.toJson().rootElement);
 		}
 		unlockMe(this);
 		return json;
@@ -167,31 +163,32 @@ public class Evolver extends Locker implements JsAble {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
-			lockMe(this);
-			mutationRate = json.rootElement.getChildFloat("mutationRate",mutationRate);
-			trainEpochs = json.rootElement.getChildInt("trainEpochs",trainEpochs);
-			trainEpochSize = json.rootElement.getChildInt("trainEpochSize",trainEpochSize);
-			evolverSleepMs = json.rootElement.getChildInt("evolverSleepMs",evolverSleepMs);
-			
-			JsElem bestCodeElem = json.rootElement.getChildByName("bestCode");
-			JsElem bestNNElem = json.rootElement.getChildByName("bestNeuralNet");
-			JsElem bestTPElem = json.rootElement.getChildByName("bestTrainingProgram");
-			if (bestCodeElem!=null && bestNNElem!=null && bestTPElem!=null) {
-				EvolverUnit evolver = new EvolverUnit();
-				evolver.code = new GeneticCode();
-				evolver.code.setCode(bestCodeElem.value);
-				
-				JsFile js = new JsFile();
-				js.rootElement = bestNNElem.children.get(0);
-				evolver.neuralNet = new NeuralNet(js);
-				
-				js.rootElement = bestTPElem.children.get(0);
-				evolver.trainingProgram = getNewTrainingProgram(evolver.neuralNet,baseTestSet.copy());
-				evolver.trainingProgram.fromJson(js);
-				
-				bestSoFar = evolver;
-			}
-			unlockMe(this);
+			LockedCode code = new LockedCode() {
+				@Override
+				public Object doLocked() {
+					Evolver evolver = (Evolver) this.param1;
+					JsFile json = (JsFile) this.param2;
+					mutationRate = json.rootElement.getChildFloat("mutationRate",mutationRate);
+					trainEpochs = json.rootElement.getChildInt("trainEpochs",trainEpochs);
+					trainEpochSize = json.rootElement.getChildInt("trainEpochSize",trainEpochSize);
+					evolverSleepMs = json.rootElement.getChildInt("evolverSleepMs",evolverSleepMs);
+					
+					JsElem bestSoFarElem = json.rootElement.getChildByName("bestSoFar");
+					if (bestSoFarElem!=null && bestSoFarElem.children.size()>0) {
+						bestSoFar = new EvolverUnit();
+						JsFile js = new JsFile();
+						js.rootElement = bestSoFarElem.children.get(0);
+						bestSoFar.fromJson(js,evolver);
+						if (bestSoFar.code==null || bestSoFar.neuralNet==null || bestSoFar.trainingProgram==null) {
+							bestSoFar = null;
+						}
+					}
+					return null;
+				}
+			};
+			code.param1 = this;
+			code.param2 = json;
+			doLocked(this,code);
 		}
 	}
 	
@@ -218,6 +215,12 @@ public class Evolver extends Locker implements JsAble {
 
 	protected TrainingProgram getNewTrainingProgram(NeuralNet nn, TestSet baseTs) {
 		return new TrainingProgram(nn,baseTs);
+	}
+	
+	protected TrainingProgram getNewTrainingProgram(NeuralNet nn) {
+		TrainingProgram r =  new TrainingProgram(nn,null);
+		r.baseTestSet = baseTestSet.copy();
+		return r;
 	}
 	
 	protected int getTrainEpochs() {

@@ -19,11 +19,13 @@ public class TrainingProgram implements JsAble {
 	public TestSet		initialResults		= null;
 	public int			trainedEpochs		= 0;
 	public TestSet		latestResults		= null;
-	
+
 	public TrainingProgram(NeuralNet nn,TestSet baseTs) {
 		neuralNet = nn;
-		baseTestSet = baseTs;
-		prepare();
+		if (baseTs!=null) {
+			baseTestSet = baseTs;
+			prepare();
+		}
 	}
 	
 	/**

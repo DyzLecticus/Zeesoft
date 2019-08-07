@@ -1,10 +1,13 @@
 package nl.zeesoft.zdk.genetic;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.TrainingProgram;
 
-public class EvolverUnit implements Comparable<EvolverUnit> {
+public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 	private static final float	TOLERANCE			= 0.1F;
 	
 	public GeneticCode			code				= null;
@@ -41,6 +44,47 @@ public class EvolverUnit implements Comparable<EvolverUnit> {
 			}
 		}
 		return r;
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("code",code.toCompressedCode(),true));
+		
+		JsElem bestNNElem = new JsElem("neuralNet",true);
+		json.rootElement.children.add(bestNNElem);
+		bestNNElem.children.add(neuralNet.toJson().rootElement);
+		
+		JsElem bestTPElem = new JsElem("trainingProgram",true);
+		json.rootElement.children.add(bestTPElem);
+		bestTPElem.children.add(trainingProgram.toJson().rootElement);
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		fromJson(json,null);
+	}
+	
+	public void fromJson(JsFile json,Evolver evolver) {
+		if (json.rootElement!=null && evolver!=null) {
+			JsElem bestCodeElem = json.rootElement.getChildByName("code");
+			JsElem bestNNElem = json.rootElement.getChildByName("neuralNet");
+			JsElem bestTPElem = json.rootElement.getChildByName("trainingProgram");
+			if (bestCodeElem!=null && bestNNElem!=null && bestTPElem!=null) {
+				this.code = new GeneticCode();
+				this.code.fromCompressedCode(bestCodeElem.value);
+				
+				JsFile js = new JsFile();
+				js.rootElement = bestNNElem.children.get(0);
+				neuralNet = new NeuralNet(js);
+				
+				js.rootElement = bestTPElem.children.get(0);
+				trainingProgram = evolver.getNewTrainingProgram(neuralNet);
+				trainingProgram.fromJson(js);
+			}
+		}
 	}
 	
 	public ZStringBuilder toStringBuilder() {
