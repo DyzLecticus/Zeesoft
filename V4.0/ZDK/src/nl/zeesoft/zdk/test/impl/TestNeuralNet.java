@@ -34,7 +34,7 @@ public class TestNeuralNet extends TestObject {
 		System.out.println("Prediction p = nn.getNewPrediction();");
 		System.out.println("// Set the prediction inputs (0.0 - 1.0)");
 		System.out.println("p.inputs[0] = 0.0F;");
-		System.out.println("p.inputs[1] = 1.0;");
+		System.out.println("p.inputs[1] = 1.0F;");
 		System.out.println("// Let the neural net predict the outputs");
 		System.out.println("n.predict(p);");
 		System.out.println("// Get a new test set");
@@ -43,13 +43,17 @@ public class TestNeuralNet extends TestObject {
 		System.out.println("Test t = ts.addNewTest();");
 		System.out.println("// Set the test inputs (0.0 - 1.0)");
 		System.out.println("t.inputs[0] = 0.0F;");
-		System.out.println("t.inputs[1] = 1.0;");
+		System.out.println("t.inputs[1] = 1.0F;");
 		System.out.println("// Set the test expectations (0.0 - 1.0)");
 		System.out.println("t.expectations[0] = 1.0F;");
 		System.out.println("// Let the neural net predict the test outputs and calculate the error and loss");
 		System.out.println("n.test(ts);");
+		System.out.println("// Randomize the order of the tests");
+		System.out.println("ts.randomizeOrder();");
 		System.out.println("// Use the test set to train the neural net");
 		System.out.println("n.train(ts);");
+		System.out.println("// Repeat randomization and training until the network reaches the desired state");
+		System.out.println("// ... or a maximum number of times because sometimes they fail to converge");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");

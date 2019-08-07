@@ -2,6 +2,9 @@ package nl.zeesoft.zdk.functions;
 
 import java.util.Random;
 
+/**
+ * Provides randomness in the form of a function so it can be used among the other static functions.
+ */
 public class ZRandomize implements ZFunction {
 	private static Random 	random		= new Random();
 	

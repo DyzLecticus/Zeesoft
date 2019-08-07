@@ -8,6 +8,13 @@ import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
+/**
+ * NeuralNet provides a simple multi layer perceptron network.
+ * It requires the number of input neurons, hidden layers, neurons per hidden layer, and output neurons to be specified.
+ * The activator functions and a separate output layer activator can be configured as well.
+ * The learning rate can be used to tune the speed at which the network converges.
+ * This class relies heavily on the ZMatrix class and StaticFunctions for its calculations and activations.
+ */
 public class NeuralNet implements JsAble {
 	public int					inputNeurons	= 1;
 	public int					hiddenLayers	= 1;
@@ -30,10 +37,28 @@ public class NeuralNet implements JsAble {
 		initialize(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
 	}
 	
+	/**
+	 * Returns the size of the neural network.
+	 * 
+	 * The size of the network is the total number of neurons and links.
+	 * 
+	 * @return The size of the neural network
+	 */
 	public int size() {
 		return calculateSize(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons); 
 	}
 
+	/**
+	 * Calculates the size of a neural network with the specified dimensions.
+	 * 
+	 * The size of a network is the total number of neurons and links.
+	 * 
+	 * @param inputNeurons The number of input neurons
+	 * @param hiddenLayers The number of hidden layers
+	 * @param hiddenNeurons The number of neurons per hidden layer
+	 * @param outputNeurons The number of output neurons
+	 * @return The size of a neural network with the specified dimensions
+	 */
 	public static int calculateSize(int inputNeurons,int hiddenLayers,int hiddenNeurons,int outputNeurons) {
 		return 
 			(inputNeurons + (inputNeurons * hiddenNeurons)) + 
@@ -43,6 +68,9 @@ public class NeuralNet implements JsAble {
 			; 
 	}
 
+	/**
+	 * Randomizes all weights and biases in the neural network.
+	 */
 	public void randomizeWeightsAndBiases() {
 		for (int i = 1; i < layerValues.length; i++) {
 			layerWeights[i].randomize();
@@ -50,22 +78,49 @@ public class NeuralNet implements JsAble {
 		}
 	}
 	
+	/**
+	 * Returns a new prediction with the input and output arrays initialized for this neural network.
+	 * 
+	 * @return A new prediction
+	 */
 	public Prediction getNewPrediction() {
 		return new Prediction(this);
 	}
 
+	/**
+	 * Returns a new test with all the arrays initialized for this neural network.
+	 * 
+	 * @return A new test
+	 */
 	public Test getNewTest() {
 		return new Test(this);
 	}
 
+	/**
+	 * Returns a new test set with the number of input and output neurons initialized for this neural network.
+	 * 
+	 * @return A new test set
+	 */
 	public TestSet getNewTestSet() {
 		return new TestSet(this);
 	}
 
+	/**
+	 * Uses the neural network to get the predicted output for a certain set of inputs.
+	 * 
+	 * @param p The prediction
+	 */
 	public void predict(Prediction p) {
 		predict(p,null);
 	}
 
+	/**
+	 * Uses the neural network to get the predicted output for a certain set of inputs.
+	 * This can also be used to get the output of a Test.
+	 * 
+	 * @param p The prediction
+	 * @param lossFunction The optional loss function which is applied in case the prediction is and instance of a Test
+	 */
 	public void predict(Prediction p,ZLossFunction lossFunction) {
 		p.prepare(this);
 		if (p.error.length()==0) {
@@ -74,6 +129,11 @@ public class NeuralNet implements JsAble {
 		}
 	}
 
+	/**
+	 * Uses the neural network to get the predicted outputs for a certain set of tests.
+	 * 
+	 * @param tSet The test set
+	 */
 	public void test(TestSet tSet) {
 		for (Test t: tSet.tests) {
 			predict(t,tSet.lossFunction);
@@ -81,6 +141,11 @@ public class NeuralNet implements JsAble {
 		tSet.finalize();
 	}
 
+	/**
+	 * Trains the neural network using a certain set of tests.
+	 * 
+	 * @param tSet The test set
+	 */
 	public void train(TestSet tSet) {
 		for (Test t: tSet.tests) {
 			train(t,tSet.lossFunction);
@@ -88,6 +153,12 @@ public class NeuralNet implements JsAble {
 		tSet.finalize();
 	}
 
+	/**
+	 * Trains the neural network using a specific test.
+	 * 
+	 * @param t The test
+	 * @param lossFunction The optional loss function
+	 */
 	public void train(Test t,ZLossFunction lossFunction) {
 		predict(t,lossFunction);
 		if (t.error.length()==0) {
@@ -180,6 +251,14 @@ public class NeuralNet implements JsAble {
 		}
 	}
 
+	/**
+	 * Initializes the neural network with the specified dimensions.
+	 * 
+	 * @param inputNeurons The number of input neurons
+	 * @param hiddenLayers The number of hidden layers
+	 * @param hiddenNeurons The number of neurons per hidden layer
+	 * @param outputNeurons The number of output neurons
+	 */
 	public void initialize(int inputNeurons, int hiddenLayers, int hiddenNeurons, int outputNeurons) {
 		if (inputNeurons<1) {
 			inputNeurons = 1;

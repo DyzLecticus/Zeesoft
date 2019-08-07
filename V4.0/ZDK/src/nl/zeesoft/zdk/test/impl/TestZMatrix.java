@@ -16,13 +16,13 @@ public class TestZMatrix extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use a *ZMatrix* to do matrix calculations and manipulations.");
+		System.out.println("This test shows how to use a *ZMatrix* to do matrix calculations and transformations.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the matrix");
 		System.out.println("ZMatrix m = new ZMatrix(2,3);");
-		System.out.println("// Ransdomize the matrix");
+		System.out.println("// Randomize the matrix");
 		System.out.println("m.randomize();");
 		System.out.println("// Print the matrix");
 		System.out.println("System.out.println(m.getTable());");
@@ -33,7 +33,7 @@ public class TestZMatrix extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(ZMatrix.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the results of several matrix manipulations.  ");
+		System.out.println("The output of this test shows the results of several matrix calculations and transformations.  ");
 	}
 	
 	@Override

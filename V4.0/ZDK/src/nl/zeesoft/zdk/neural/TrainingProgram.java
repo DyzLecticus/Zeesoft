@@ -4,6 +4,12 @@ import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
+/**
+ * A TrainingProgram can be used to simplify the process of testing and training NeuralNet instances.
+ * It requires a NeuralNet instance and a base TestSet instance.
+ * It will use a randomized copy of of the TestSet to test and train each epoch.
+ * It will also record initial results and keep track of latest results to provide insights into the rate of convergence.
+ */
 public class TrainingProgram implements JsAble {
 	public NeuralNet	neuralNet			= null;
 	public TestSet		baseTestSet			= null;
@@ -20,6 +26,9 @@ public class TrainingProgram implements JsAble {
 		prepare();
 	}
 	
+	/**
+	 * Resets the training program.
+	 */
 	public void prepare() {
 		trainedEpochs = 0;
 		latestResults = null;
@@ -27,33 +36,59 @@ public class TrainingProgram implements JsAble {
 		neuralNet.test(initialResults);
 	}
 	
-	public boolean train(int repeats) {
+	/**
+	 * Trains the network a specific number of epochs.
+	 * 
+	 * @param epochs The number of epochs
+	 * @return true If the latest training results were successful
+	 */
+	public boolean train(int epochs) {
 		boolean done = false;
-		for (int i = 0; i < repeats; i++) {
+		for (int i = 0; i < epochs; i++) {
 			TestSet tSet = getNewTrainingSet();
 			neuralNet.train(tSet);
 			trainedEpochs++;
 			latestResults = tSet;
-			if (stopOnSuccess && tSet.success) {
-				done = true;
+			done = tSet.success;
+			if (stopOnSuccess) {
 				break;
 			}
 		}
 		return done;
 	}
 	
+	/**
+	 * Returns the calculated error change.
+	 * 
+	 * @return The error change
+	 */
 	public float getErrorChange() {
 		return latestResults.averageError - initialResults.averageError;
 	}
 	
+	/**
+	 * Returns the calculated error change rate.
+	 * 
+	 * @return The error change rate
+	 */
 	public float getErrorChangeRate() {
 		return getErrorChange() / trainedEpochs * -1F;
 	}
 	
+	/**
+	 * Returns the calculated loss change.
+	 * 
+	 * @return The loss change
+	 */
 	public float getLossChange() {
 		return latestResults.averageLoss - initialResults.averageLoss;
 	}
-
+	
+	/**
+	 * Returns the calculated loss change rate.
+	 * 
+	 * @return The loss change rate
+	 */
 	public float getLossChangeRate() {
 		return getLossChange() / trainedEpochs * -1F;
 	}

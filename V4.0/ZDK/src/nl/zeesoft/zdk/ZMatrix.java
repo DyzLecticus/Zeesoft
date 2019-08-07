@@ -8,6 +8,10 @@ import nl.zeesoft.zdk.functions.ZFunction;
 import nl.zeesoft.zdk.functions.ZParamFunction;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
+/**
+ * ZMatrix provides support for basic matrix mathematics.
+ * It relies heavily on the StaticFunctions class to simplify the code.
+ */
 public class ZMatrix {
 	public int			rows	= 0;
 	public int			cols	= 0;

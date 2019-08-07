@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.functions;
 
+/**
+ * StaticFunctions contains a set of common and specialized functions that can be used for functional programming of basic mathematics.
+ */
 public class StaticFunctions {
 	// Parameterized functions
 	public static ZAdd						ADD					= new ZAdd();

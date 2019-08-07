@@ -10,6 +10,9 @@ It provides support for;
  * JSON data  
  * Multi threading  
  * Application message handling
+ * Basic matrix mathematics  
+ * Genetic algorithms  
+ * Neural networks  
  * Self documenting and testing libraries  
 
 **Release downloads**  
@@ -21,32 +24,6 @@ All ZDK releases can be downloaded [here](https://github.com/DyzLecticus/Zeesoft
 The tests used to develop this libary are also used to generate this README file.  
 Run the [ZDK](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/ZDK.java) class as a java application to print this documentation to the standard out.  
 Click [here](#test-results) to scroll down to the test result summary.  
-
-nl.zeesoft.zdk.test.impl.TestZIntegerGenerator
-----------------------------------------------
-This test shows how to use the *ZIntegerGenerator* to generate non-negative random integers.
-
-**Example implementation**  
-~~~~
-// Create the ZIntegerGenerator
-ZIntegerGenerator generator = new ZIntegerGenerator(0,9);
-// Generate a random integer
-int random = generator.getNewInteger();
-~~~~
-
-Class references;  
- * [TestZIntegerGenerator](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/TestZIntegerGenerator.java)
- * [ZIntegerGenerator](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/ZIntegerGenerator.java)
-
-**Test output**  
-The output of this test shows 100 randomly generated integers within the range 0 - 9.
-~~~~
-3 8 3 3 2 0 9 9 4 4 4 2 9 9 2 4 9 2 8 0
-1 9 2 5 8 3 4 5 6 4 9 3 7 2 3 4 5 3 4 6
-6 3 9 4 1 3 2 1 6 4 4 4 4 0 3 9 9 2 2 9
-2 1 1 6 6 4 6 1 8 5 0 1 8 4 9 1 4 0 8 4
-1 2 5 8 7 9 0 5 9 2 8 1 7 5 0 6 8 5 8 3
-~~~~
 
 nl.zeesoft.zdk.test.impl.TestZStringEncoder
 -------------------------------------------
@@ -74,10 +51,10 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 5359337051459127921978955683036183470706980259376675398144504987
+Key: 4079238017088824151948279094819227995538790669285622476882766486
 Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
-Key encoded text: RIXHRJvLWHbG#IHFuIgERIFJmLbFiFnKwLOFKFeL:KqLvK7I:IrJOL~GtEeHbJDFLKNGoHMK2F:IEFLKJMkJGFmG1JmK8H7KlJwJ4KvIjHFLGLuFAHAHpIZEYH9L1ElDgH2GgIyLVH7GQKyDuIuFYIFIkLkFwG:KeKVGRG1MdJkLGMOIxHjJMLyGPEcH9JKGKLQHGI~IOEMJ0
+Key encoded text: odjbTgThFcJcMfWakc6exbuhAh3gvbWd5bBdfbvhHeohLbpgFhpbeiteXgrc1hvbZbLfThciefLdAdDhLgAgxbZfhgLgTcih2e~fvcIcpezfegCh3gKcTgefBeLdwaO0KcnaigWhEcEc6gK0kcjgBbug:hbhGcaeMaIemchimdihZc8fBghbcipemgpcXh~cYcOgeiZg2dZd0
 Key decoded text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
 ASCII encoded text: 42,24,59,48,66,63,2,-28,67,73,-10,50,55,61,59,-28,63,67,-10,-21,26,73,80,-28,34,53,57,56,63,51,75,55,-3,-2,-10,12,69,71,-10,37,72,53,-10,61,69,69,-10,42,59,53,66,45,68,55,-10,56,69,52,55,61,21,-16,16,-15,-1,-16,-2,8,69,62,-3,56,-10,73,69,57,-10,59,68,51,77,-16,62,51,77,-16,74,51,16,-16,49,54,59,11,73,52,69,62,58,33,-9,-7,4
@@ -282,9 +259,9 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2019-07-24 17:23:42:479 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2019-07-24 17:23:42:779 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2019-07-24 17:23:42:779 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+2019-08-07 14:16:31:962 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2019-08-07 14:16:32:263 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2019-08-07 14:16:32:264 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
 java.lang.NumberFormatException: For input string: "A"
 	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
 	at java.lang.Integer.parseInt(Integer.java:580)
@@ -294,19 +271,305 @@ java.lang.NumberFormatException: For input string: "A"
 	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:39)
 	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:39)
 
-2019-07-24 17:23:43:089 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2019-08-07 14:16:32:575 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+~~~~
+
+nl.zeesoft.zdk.test.impl.TestZMatrix
+------------------------------------
+This test shows how to use a *ZMatrix* to do matrix calculations and transformations.
+
+**Example implementation**  
+~~~~
+// Create the matrix
+ZMatrix m = new ZMatrix(2,3);
+// Randomize the matrix
+m.randomize();
+// Print the matrix
+System.out.println(m.getTable());
+~~~~
+
+Class references;  
+ * [TestZMatrix](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/TestZMatrix.java)
+ * [ZMatrix](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/ZMatrix.java)
+
+**Test output**  
+The output of this test shows the results of several matrix calculations and transformations.  
+~~~~
+Initial;
+010.00 | 010.00 | 010.00
+-------+--------+-------
+010.00 | 010.00 | 010.00
+
+Scalar multiplied by 3;
+030.00 | 030.00 | 030.00
+-------+--------+-------
+030.00 | 030.00 | 030.00
+
+Randomized;
+-00.73 | 000.39 | -00.15
+-------+--------+-------
+-00.80 | -00.73 | 000.26
+
+Randomized multiplied element wise;
+-21.77 | 011.78 | -04.37
+-------+--------+-------
+-24.12 | -21.92 | 007.93
+
+Matrix 1;
+001.00 | 001.00 | 001.00
+-------+--------+-------
+002.00 | 002.00 | 002.00
+
+Matrix 2;
+003.00 | 003.00
+-------+-------
+004.00 | 004.00
+-------+-------
+005.00 | 005.00
+
+Matrix multiplication of matrix 1 * matrix 2;
+012.00 | 012.00
+-------+-------
+024.00 | 024.00
+
+New randomized matrix;
+-00.28 | 001.00 | -00.39
+-------+--------+-------
+-00.30 | 000.83 | 000.87
+
+Randomized matrix transposed;
+-00.28 | -00.30
+-------+-------
+001.00 | 000.83
+-------+-------
+-00.39 | 000.87
+~~~~
+
+nl.zeesoft.zdk.test.impl.TestGeneticCode
+----------------------------------------
+This test shows how to create, mutate and use a *GeneticCode*.
+
+**Example implementation**  
+~~~~
+// Create the genetic code
+GeneticCode genCode = new GeneticCode(100);
+// Mutate 5 genes
+genCode.mutate(5);
+// Get the number of properties
+int size = genCode.size();
+// Get a property value
+float f = genCode.get(4);
+// Get a scaled integer property value
+int i = genCode.getInteger(4,100);
+~~~~
+
+Class references;  
+ * [TestGeneticCode](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/TestGeneticCode.java)
+ * [GeneticCode](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/genetic/GeneticCode.java)
+
+**Test output**  
+The output of this test shows;  
+ * A generated genetic code  
+ * The mutated genetic code and the resulting scaled property values  
+~~~~
+Genetic code: 2188371480597592908206724714944413611740431142447216994453628152440541527227504112003514298173679867
+Mutated code: 2184371480597592908200724714944413611740431142447216974453628152440541527027504112003514698173679867
+                 ^                 ^                               ^                   ^              ^           
+
+Scaled property values;
+0: 7 <
+1: 974 <
+2: 247
+3: 908
+4: 698 <
+5: 142
+6: 698 <
+7: 929 <
+8: 362
+9: 281
+10: 628
+11: 721
+12: 441
+13: 72 <
+14: 944
+15: 142
+16: 736
+17: 469 <
+18: 152 <
+19: 815
+20: 371
+21: 169
+22: 413
+23: 114
+24: 986 <
+25: 437 <
+26: 541
+27: 721
+28: 244
+29: 504 <
+30: 72 <
+31: 275
+32: 404
+Mutated property values: 12
+~~~~
+
+nl.zeesoft.zdk.test.impl.TestNeuralNet
+--------------------------------------
+This test shows how to create, train and use a *NeuralNet*.
+
+**Example implementation**  
+~~~~
+// Create the neural net
+NeuralNet nn = new NeuralNet(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
+// Get a new prediction
+Prediction p = nn.getNewPrediction();
+// Set the prediction inputs (0.0 - 1.0)
+p.inputs[0] = 0.0F;
+p.inputs[1] = 1.0F;
+// Let the neural net predict the outputs
+n.predict(p);
+// Get a new test set
+TestSet ts = nn.getNewTestSet();
+// Get a new test
+Test t = ts.addNewTest();
+// Set the test inputs (0.0 - 1.0)
+t.inputs[0] = 0.0F;
+t.inputs[1] = 1.0F;
+// Set the test expectations (0.0 - 1.0)
+t.expectations[0] = 1.0F;
+// Let the neural net predict the test outputs and calculate the error and loss
+n.test(ts);
+// Randomize the order of the tests
+ts.randomizeOrder();
+// Use the test set to train the neural net
+n.train(ts);
+// Repeat randomization and training until the network reaches the desired state
+// ... or a maximum number of times because sometimes they fail to converge
+~~~~
+
+Class references;  
+ * [TestNeuralNet](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/TestNeuralNet.java)
+ * [NeuralNet](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/neural/NeuralNet.java)
+ * [Prediction](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/neural/Prediction.java)
+ * [TestSet](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/neural/TestSet.java)
+ * [Test](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/neural/Test.java)
+
+**Test output**  
+The output of this test shows;  
+ * The test results for 2 XOR neural net implementations before and after training.  
+ * The second neural net JSON structure.  
+~~~~
+Neural net activator: nl.zeesoft.zdk.functions.ZLeakyReLU, learning rate: 0.1
+Initial test results;
+  Input: [0.00|0.00], output: [-0.00], expectation: [0.00], error: 0.00, loss: 0.00
+  Input: [1.00|1.00], output: [-0.01], expectation: [0.00], error: 0.01, loss: 0.01
+  Input: [0.00|1.00], output: [0.39], expectation: [1.00], error: 0.61, loss: 0.61
+  Input: [1.00|0.00], output: [-0.01], expectation: [1.00], error: 1.01, loss: 1.01
+  Average error: 0.41, average loss: 0.41, success: false
+Latest test results;
+  Input: [1.00|0.00], output: [0.49], expectation: [1.00], error: 0.51, loss: 0.51
+  Input: [1.00|1.00], output: [0.55], expectation: [0.00], error: -0.55, loss: 0.55
+  Input: [0.00|0.00], output: [-0.00], expectation: [0.00], error: 0.00, loss: 0.00
+  Input: [0.00|1.00], output: [0.98], expectation: [1.00], error: 0.02, loss: 0.02
+  Average error: 0.27, average loss: 0.27, success: false
+Trained epochs: 5000, error change rate: 2.7151536E-5, loss change rate: 2.7151536E-5
+================================================================================
+Neural net activator: nl.zeesoft.zdk.functions.ZLeakyReLU, output activator: nl.zeesoft.zdk.functions.ZSoftmaxTop, learning rate: 0.1
+Initial test results;
+  Input: [0.00|0.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.00
+  Input: [1.00|1.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.00
+  Input: [0.00|1.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.00
+  Input: [1.00|0.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.00
+  Average error: 0.50, average loss: 0.50, success: false
+Latest test results;
+  Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.00
+  Input: [0.00|0.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.00
+  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.00
+  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.00
+  Average error: 0.75, average loss: 0.75, success: false
+Trained epochs: 5000, error change rate: -5.0E-5, loss change rate: -5.0E-5
+
+Neural net JSON;
+{
+  "inputNeurons": 2,
+  "hiddenLayers": 1,
+  "hiddenNeurons": 2,
+  "outputNeurons": 1,
+  "activator": "nl.zeesoft.zdk.functions.ZLeakyReLU",
+  "outputActivator": "nl.zeesoft.zdk.functions.ZSoftmaxTop",
+  "learningRate": 0.1,
+  "values": [
+    "2,1,0.0,1.0",
+    "2,1,-0.0010833433,0.35667652",
+    "1,1,0.0"
+  ],
+  "weights": [
+    "1,1,0.0",
+    "2,2,-0.007653366,0.13424478,-0.04890263,0.01794003",
+    "1,2,0.04218495,-0.82172096"
+  ],
+  "biases": [
+    "1,1,0.0",
+    "2,1,-0.24249475,0.17439228",
+    "1,1,0.20400071"
+  ]
+}
+~~~~
+
+nl.zeesoft.zdk.test.impl.TestGeneticNN
+--------------------------------------
+This test shows how to use a *GeneticNN* to generate a *GeneticCode* and corresponding *NeuralNet*.
+It uses a *TrainingProgram* to train and test the *NeuralNet*.
+It keeps generating neural nets until it finds one that passes all the tests.
+
+**Example implementation**  
+~~~~
+// Create the genetic neural network
+GeneticNN gnn = new GeneticNN(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart);
+// Generate a new genetic code and corresponding neural network
+gnn.generateNewNN();
+~~~~
+
+Class references;  
+ * [TestGeneticNN](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/TestGeneticNN.java)
+ * [GeneticNN](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/genetic/GeneticNN.java)
+ * [GeneticCode](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/genetic/GeneticCode.java)
+ * [NeuralNet](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/neural/NeuralNet.java)
+ * [TrainingProgram](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/neural/TrainingProgram.java)
+
+**Test output**  
+The output of this test shows the training program outputs of one or more generated XOR neural nets.  
+~~~~
+Neural net activator: nl.zeesoft.zdk.functions.ZSigmoid, output activator: nl.zeesoft.zdk.functions.ZReLU, learning rate: 0.0364
+Initial test results;
+  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.00
+  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.00
+  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.00
+  Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.00
+  Average error: 0.50, average loss: 0.50, success: false
+Latest test results;
+  Input: [1.00|1.00], output: [0.10], expectation: [0.00], error: -0.10, loss: 0.10
+  Input: [1.00|0.00], output: [0.93], expectation: [1.00], error: 0.07, loss: 0.07
+  Input: [0.00|0.00], output: [0.04], expectation: [0.00], error: -0.04, loss: 0.04
+  Input: [0.00|1.00], output: [0.93], expectation: [1.00], error: 0.07, loss: 0.07
+  Average error: 0.07, average loss: 0.07, success: true
+Trained epochs: 3160, error change rate: 1.3597801E-4, loss change rate: 1.3597801E-4
+
 ~~~~
 
 Test results
 ------------
-All 7 tests have been executed successfully (135 assertions).  
-Total test duration: 820 ms (total sleep duration: 600 ms).  
+All 10 tests have been executed successfully (54 assertions).  
+Total test duration: 1303 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZIntegerGenerator: 468 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 404 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 1067 Kb / 1 Mb
- * nl.zeesoft.zdk.test.impl.TestCsv: 408 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestJson: 421 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZHttpRequest: 428 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 686 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 521 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 404 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestCsv: 411 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestJson: 424 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZHttpRequest: 431 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 689 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZMatrix: 803 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestGeneticCode: 775 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestNeuralNet: 1247 Kb / 1 Mb
+ * nl.zeesoft.zdk.test.impl.TestGeneticNN: 4275 Kb / 4 Mb

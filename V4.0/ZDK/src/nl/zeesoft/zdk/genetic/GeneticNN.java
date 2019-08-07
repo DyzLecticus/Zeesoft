@@ -4,6 +4,10 @@ import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.neural.NeuralNet;
 
+/**
+ * A GeneticNN can be used to generate combinations of GeneticCode and corresponding NeuralNet instances.
+ * It can also be used to generate a NeuralNet instance for a given GeneticCode.
+ */
 public class GeneticNN {
 	private static int		HIDDEN_LAYERS		= 0;
 	private static int		HIDDEN_NEURONS		= 1;
