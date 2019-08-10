@@ -67,12 +67,13 @@ public class TestAnimalEvolver extends TestObject {
 		evolver.start();
 		sleep(30000);
 		evolver.stop();
+		evolver.whileStopping();
 			
-		EvolverUnit bestSoFar = evolver.getBestSoFar();
-		assertNotNull(bestSoFar,"Failed to generate and successfully train an animal neural network within 30 seconds");
-		
 		messenger.stop();
 		messenger.handleMessages();
 		union.stopWorkers();
+		
+		EvolverUnit bestSoFar = evolver.getBestSoFar();
+		assertNotNull(bestSoFar,"Failed to generate and successfully train an animal neural network within 30 seconds");
 	}
 }

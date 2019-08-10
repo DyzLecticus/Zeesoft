@@ -43,6 +43,8 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 	public void destroy() {
 		herbivoreEvolver.stop();
 		carnivoreEvolver.stop();
+		herbivoreEvolver.whileStopping();
+		carnivoreEvolver.whileStopping();
 		super.destroy();
 	}
 
@@ -55,6 +57,8 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 			} else {
 				herbivoreEvolver.stop();
 				carnivoreEvolver.stop();
+				herbivoreEvolver.whileStopping();
+				carnivoreEvolver.whileStopping();
 			}
 		}
 	}

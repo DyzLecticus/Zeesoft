@@ -197,9 +197,9 @@ public class ZMatrix {
 	}
 
 	public float[] toArray() {
-		float[] r = new float[cols];
-		for (int i = 0; i < cols; i++) {
-			r[i] = data[0][i];
+		float[] r = new float[rows];
+		for (int i = 0; i < rows; i++) {
+			r[i] = data[i][0];
 		}
 		return r;
 	}

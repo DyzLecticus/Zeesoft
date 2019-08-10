@@ -23,8 +23,8 @@ public class Evolver extends Locker implements JsAble {
 	
 	private boolean					debug				= false;
 	private float					mutationRate		= 0.05F;
-	private int						trainEpochs			= 5000;
-	private int						trainEpochSize		= 10;
+	private int						trainEpochBatches	= 5000;
+	private int						trainEpochBatchSize	= 10;
 	private int						evolverSleepMs		= 10;
 	private boolean					working				= false;
 	
@@ -48,15 +48,15 @@ public class Evolver extends Locker implements JsAble {
 		unlockMe(this);
 	}
 	
-	public void setTrainEpochs(int trainEpochs) {
+	public void setTrainEpochBatches(int trainEpochBatches) {
 		lockMe(this);
-		this.trainEpochs = trainEpochs;
+		this.trainEpochBatches = trainEpochBatches;
 		unlockMe(this);
 	}
 	
-	public void setTrainEpochSize(int trainEpochSize) {
+	public void setTrainEpochBatchSize(int trainEpochBatchSize) {
 		lockMe(this);
-		this.trainEpochSize = trainEpochSize;
+		this.trainEpochBatchSize = trainEpochBatchSize;
 		unlockMe(this);
 	}
 	
@@ -85,6 +85,9 @@ public class Evolver extends Locker implements JsAble {
 		if (r) {
 			for (EvolverWorker evolver: evolvers) {
 				evolver.start();
+			}
+			if (debug && getMessenger()!=null) {
+				getMessenger().debug(this,"Started evolver");
 			}
 		}
 	}
@@ -131,12 +134,17 @@ public class Evolver extends Locker implements JsAble {
 				break;
 			}
 		}
+		if (debug && getMessenger()!=null) {
+			getMessenger().debug(this,"Stopped evolver");
+		}
 	}
 	
 	public EvolverUnit getBestSoFar() {
 		EvolverUnit r = null;
 		lockMe(this);
-		r = bestSoFar.copy();
+		if (bestSoFar!=null) {
+			r = bestSoFar.copy();
+		}
 		unlockMe(this);
 		return r;
 	}
@@ -149,8 +157,8 @@ public class Evolver extends Locker implements JsAble {
 				JsFile json = new JsFile();
 				json.rootElement = new JsElem();
 				json.rootElement.children.add(new JsElem("mutationRate","" + mutationRate));
-				json.rootElement.children.add(new JsElem("trainEpochs","" + trainEpochs));
-				json.rootElement.children.add(new JsElem("trainEpochSize","" + trainEpochSize));
+				json.rootElement.children.add(new JsElem("trainEpochBatches","" + trainEpochBatches));
+				json.rootElement.children.add(new JsElem("trainEpochBatchSize","" + trainEpochBatchSize));
 				json.rootElement.children.add(new JsElem("evolverSleepMs","" + evolverSleepMs));
 
 				if (bestSoFar!=null) {
@@ -174,8 +182,8 @@ public class Evolver extends Locker implements JsAble {
 					Evolver evolver = (Evolver) this.param1;
 					JsFile json = (JsFile) this.param2;
 					mutationRate = json.rootElement.getChildFloat("mutationRate",mutationRate);
-					trainEpochs = json.rootElement.getChildInt("trainEpochs",trainEpochs);
-					trainEpochSize = json.rootElement.getChildInt("trainEpochSize",trainEpochSize);
+					trainEpochBatches = json.rootElement.getChildInt("trainEpochBatches",trainEpochBatches);
+					trainEpochBatchSize = json.rootElement.getChildInt("trainEpochBatchSize",trainEpochBatchSize);
 					evolverSleepMs = json.rootElement.getChildInt("evolverSleepMs",evolverSleepMs);
 					
 					JsElem bestSoFarElem = json.rootElement.getChildByName("bestSoFar");
@@ -217,12 +225,10 @@ public class Evolver extends Locker implements JsAble {
 			public Object doLocked() {
 				GeneticCode code = (GeneticCode) param1;
 				EvolverUnit r = new EvolverUnit();
-				lockMe(this);
 				geneticNN.generateNewNN(code);
 				r.code = geneticNN.code;
 				r.neuralNet = geneticNN.neuralNet;
 				r.trainingProgram = getNewTrainingProgram(r.neuralNet,baseTestSet.copy());
-				unlockMe(this);
 				return r;
 			}
 		};
@@ -241,18 +247,18 @@ public class Evolver extends Locker implements JsAble {
 		return r;
 	}
 	
-	protected int getTrainEpochs() {
+	protected int getTrainEpochBatches() {
 		int r = 0;
 		lockMe(this);
-		r = trainEpochs;
+		r = trainEpochBatches;
 		unlockMe(this);
 		return r;
 	}
 	
-	protected int getTrainEpochSize() {
+	protected int getTrainEpochBatchSize() {
 		int r = 0;
 		lockMe(this);
-		r = trainEpochSize;
+		r = trainEpochBatchSize;
 		unlockMe(this);
 		return r;
 	}
