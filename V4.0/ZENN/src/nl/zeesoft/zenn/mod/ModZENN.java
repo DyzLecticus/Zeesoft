@@ -2,6 +2,7 @@ package nl.zeesoft.zenn.mod;
 
 import nl.zeesoft.zenn.animal.AnimalEvolver;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNIndexHandler;
+import nl.zeesoft.zenn.simulator.EnvironmentInitializer;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.StateListener;
 import nl.zeesoft.zodb.db.Database;
@@ -14,13 +15,16 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 	public static final String		DESC						= 
 		"Zeesoft Evolutionary Neural Networks provides an interface to manage artificial life.";
 
+	private EnvironmentInitializer	environmentInitializer		= null;
+	
 	private AnimalEvolver			herbivoreEvolver			= null;
 	private AnimalEvolver			carnivoreEvolver			= null;
-
+	
 	public ModZENN(Config config) {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
+		environmentInitializer = new EnvironmentInitializer(config);
 		herbivoreEvolver = new AnimalEvolver(config,true);
 		carnivoreEvolver = new AnimalEvolver(config,false);
 		config.getZODB().getDatabase().addListener(this);
@@ -28,6 +32,7 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 	
 	@Override
 	public void install() {
+		environmentInitializer.install();
 	}
 	
 	@Override
@@ -35,12 +40,14 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		handlers.add(new HtmlZENNIndexHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		super.initialize();
+		environmentInitializer.initialize();
 		herbivoreEvolver.setDebug(configuration.isDebug());
 		carnivoreEvolver.setDebug(configuration.isDebug());
 	}
 	
 	@Override
 	public void destroy() {
+		environmentInitializer.destroy();
 		herbivoreEvolver.stop();
 		carnivoreEvolver.stop();
 		herbivoreEvolver.whileStopping();
