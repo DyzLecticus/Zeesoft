@@ -33,7 +33,11 @@ public class DatabaseRequestHandler {
 			checkRequest(response);
 			if (response.errors.size()==0) {
 				if (response.request.type.equals(DatabaseRequest.TYPE_ADD)) {
-					database.addObject(request.name,request.object,response.errors);
+					IndexElement element = database.addObject(request.name,request.object,response.errors);
+					if (element!=null) {
+						element.obj = null;
+						response.results.add(new DatabaseResult(element));
+					}
 				} else if (response.request.type.equals(DatabaseRequest.TYPE_GET)) {
 					if (request.id>0) {
 						IndexElement element = database.getObjectById(request.id,request.readTimeOutSeconds,response.errors);

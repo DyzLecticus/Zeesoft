@@ -2,6 +2,8 @@ package nl.zeesoft.zodb.db.init;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
@@ -24,7 +26,8 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	private List<StateListener>				listeners		= new ArrayList<StateListener>();
 	private int								timeoutSeconds	= 0;
 	
-	private List<Persistable>	objects			= new ArrayList<Persistable>();
+	private List<Persistable>				objects			= new ArrayList<Persistable>();
+	private SortedMap<ZStringBuilder,Long>	objectIdMap		= new TreeMap<ZStringBuilder,Long>();
 	
 	private boolean							initializing	= false;
 	private boolean							initialized		= false;
@@ -88,6 +91,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		lockMe(this);
 		if (!initializing && initialized) {
 			objects.clear();
+			objectIdMap.clear();
 			reinitialize = true;
 			initialized = false;
 		}
@@ -102,6 +106,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		stateChanged(false);
 		lockMe(this);
 		objects.clear();
+		objectIdMap.clear();
 		unlockMe(this);
 	}
 	
@@ -124,6 +129,20 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	public void initializeDatabaseObjects() {
 		lockMe(this);
 		initializeDatabaseObjectsNoLock();
+		unlockMe(this);
+	}
+	
+	public void updateObjectsNoLock() {
+		lockMe(this);
+		for (Persistable object: objects) {
+			updateObjectNoLock(object);
+		}
+		unlockMe(this);
+	}
+	
+	public void updateObjectNoLock(ZStringBuilder name) {
+		lockMe(this);
+		updateObjectNoLock(getObjectByNameNoLock(name));
 		unlockMe(this);
 	}
 
@@ -153,6 +172,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 							if (object==null) {
 								object = getNewObjectNoLock(objectName);
 								objects.add(object);
+								objectIdMap.put(objectName,result.id);
 							}
 							todo++;
 						}
@@ -182,6 +202,10 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 				} else if (res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 					lockMe(this);
 					todo--;
+					for (DatabaseResult result: res.results) {
+						ZStringBuilder objectName = result.name.substring(namePrefix.length());
+						objectIdMap.put(objectName,result.id);
+					}
 					unlockMe(this);
 				}
 			}
@@ -228,8 +252,30 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		return r;
 	}
 	
+	protected long getObjectIdByNameNoLock(ZStringBuilder name) {
+		return objectIdMap.get(name);
+	}
+	
 	protected List<Persistable> getObjectsNoLock() {
 		return new ArrayList<Persistable>(objects);
+	}
+	
+	protected ZStringBuilder getFullObjectName(ZStringBuilder objectName) {
+		ZStringBuilder r = new ZStringBuilder(namePrefix);
+		r.append(objectName);
+		return r;
+	}
+	
+	protected void updateObjectNoLock(Persistable object) {
+		if (object!=null) {
+			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
+			request.id = getObjectIdByNameNoLock(object.getObjectName());
+			request.encoding = DatabaseRequest.ENC_KEY;
+			ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
+			encoder.encodeKey(configuration.getZODBKey(),0);
+			request.encoded = encoder;
+			configuration.handleDatabaseRequest(request,this);
+		}
 	}
 	
 	private void addObjectsToDatabaseNoLock() {
@@ -258,12 +304,6 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 			request.encoding = DatabaseRequest.ENC_KEY;
 			configuration.handleDatabaseRequest(request,this,timeoutSeconds);
 		}
-	}
-	
-	private ZStringBuilder getFullObjectName(ZStringBuilder objectName) {
-		ZStringBuilder r = new ZStringBuilder(namePrefix);
-		r.append(objectName);
-		return r;
 	}
 	
 	private void stateChanged(boolean open) {
