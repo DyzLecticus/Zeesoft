@@ -203,7 +203,7 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 		if (configuration.isDebug() && r.errors.size()>0) {
 			configuration.debug(this,"Database request error: " + r.errors.get(0).toString());
 		}
-		return getNewDatabaseRequestHandler(database).handleDatabaseRequest(request);
+		return r;
 	}
 	
 	protected Database getNewDatabase() {

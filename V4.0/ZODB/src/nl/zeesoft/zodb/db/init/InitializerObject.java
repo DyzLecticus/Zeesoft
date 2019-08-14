@@ -64,12 +64,12 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 			@Override
 			public Object doLocked() {
 				initializeDatabaseObjectsNoLock();
-				configuration.debug(this,"Install: " + objects.size());
 				addObjectsToDatabaseNoLock();
-				return null;
+				return objects.size();
 			}
 		};
-		doLocked(this,code);
+		int size = (Integer) doLocked(this,code);
+		configuration.debug(this,"Install: " + size);
 	}
 	
 	public void initialize() {
@@ -148,10 +148,10 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 
 	@Override
 	public void handledRequest(JsClientResponse response) {
-		DatabaseResponse res = configuration.handledDatabaseRequest(response);
 		if (response.error.length()>0) {
 			configuration.error(this,response.error.toString(),response.ex);
 		}
+		DatabaseResponse res = configuration.handledDatabaseRequest(response);
 		if (res!=null) {
 			if (response.error.length()>0) {
 				if (res.request.type.equals(DatabaseRequest.TYPE_GET) || res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
