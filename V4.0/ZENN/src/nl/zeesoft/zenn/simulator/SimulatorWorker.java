@@ -20,7 +20,7 @@ public class SimulatorWorker extends Worker {
 	@Override
 	public void stop() {
 		super.stop();
-		this.waitForStop(10,false);
+		waitForStop(10,false);
 	}
 	
 	@Override
