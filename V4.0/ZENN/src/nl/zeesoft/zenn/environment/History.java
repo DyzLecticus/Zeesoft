@@ -3,13 +3,18 @@ package nl.zeesoft.zenn.environment;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zodb.db.init.Persistable;
 
-public class History implements JsAble {
+public class History implements Persistable {
 	public long				timeStamp		= 0;
 	public ZStringBuilder	organismData	= new ZStringBuilder();
+
+	@Override
+	public ZStringBuilder getObjectName() {
+		return new ZStringBuilder("" + timeStamp);
+	}
 	
 	public void addOrganismData(List<Organism> organisms) {
 		for (Organism org: organisms) {

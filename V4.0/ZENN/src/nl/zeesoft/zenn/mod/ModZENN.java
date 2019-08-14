@@ -1,8 +1,10 @@
 package nl.zeesoft.zenn.mod;
 
-import nl.zeesoft.zenn.animal.AnimalEvolver;
+import nl.zeesoft.zenn.animal.CarnivoreEvolver;
+import nl.zeesoft.zenn.animal.HerbivoreEvolver;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNIndexHandler;
 import nl.zeesoft.zenn.simulator.EnvironmentInitializer;
+import nl.zeesoft.zenn.simulator.Simulator;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.StateListener;
 import nl.zeesoft.zodb.db.Database;
@@ -17,22 +19,27 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 
 	private EnvironmentInitializer	environmentInitializer		= null;
 	
-	private AnimalEvolver			herbivoreEvolver			= null;
-	private AnimalEvolver			carnivoreEvolver			= null;
+	private HerbivoreEvolver		herbivoreEvolver			= null;
+	private CarnivoreEvolver		carnivoreEvolver			= null;
+	
+	private Simulator				simulator					= null;
 	
 	public ModZENN(Config config) {
 		super(config);
 		name = NAME;
 		desc.append(DESC);
 		environmentInitializer = new EnvironmentInitializer(config);
-		herbivoreEvolver = new AnimalEvolver(config,true);
-		carnivoreEvolver = new AnimalEvolver(config,false);
+		environmentInitializer.addListener(this);
+		herbivoreEvolver = new HerbivoreEvolver(config);
+		carnivoreEvolver = new CarnivoreEvolver(config);
+		simulator = new Simulator(config,environmentInitializer,herbivoreEvolver,carnivoreEvolver);
 		config.getZODB().getDatabase().addListener(this);
 	}
 	
 	@Override
 	public void install() {
-		environmentInitializer.install();
+		EnvironmentInitializer envInit = new EnvironmentInitializer(configuration);
+		envInit.install();
 	}
 	
 	@Override
@@ -52,6 +59,8 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		carnivoreEvolver.stop();
 		herbivoreEvolver.whileStopping();
 		carnivoreEvolver.whileStopping();
+		simulator.stop();
+		simulator.destroy();
 		super.destroy();
 	}
 
@@ -61,12 +70,31 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 			if (open) {
 				herbivoreEvolver.load();
 				carnivoreEvolver.load();
+				environmentInitializer.reinitialize();
 			} else {
-				herbivoreEvolver.stop();
-				carnivoreEvolver.stop();
-				herbivoreEvolver.whileStopping();
-				carnivoreEvolver.whileStopping();
+				boolean waitHerb = false;
+				boolean waitCarn = false;
+				if (herbivoreEvolver.isWorking()) {
+					herbivoreEvolver.stop();
+					waitHerb = true;
+				}
+				if (carnivoreEvolver.isWorking()) {
+					carnivoreEvolver.stop();
+					waitCarn = true;
+				}
+				if (waitHerb) {
+					herbivoreEvolver.whileStopping();
+				}
+				if (waitCarn) {
+					carnivoreEvolver.whileStopping();
+				}
+				if (simulator.isWorking()) {
+					simulator.stop();
+				}
 			}
+		} else if (source instanceof EnvironmentInitializer && open) {
+			simulator.setEnvironment(environmentInitializer.getEnvironment());
+			simulator.start();
 		}
 	}
 

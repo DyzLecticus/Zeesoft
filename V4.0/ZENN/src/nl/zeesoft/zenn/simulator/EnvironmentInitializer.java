@@ -15,7 +15,9 @@ public class EnvironmentInitializer extends InitializerObject {
 
 	@Override
 	protected void initializeDatabaseObjectsNoLock() {
-		addObjectNoLock(new Environment());
+		Environment env = new Environment();
+		env.initialize();
+		addObjectNoLock(env);
 	}
 
 	@Override

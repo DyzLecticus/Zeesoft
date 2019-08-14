@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.db.init.Persistable;
@@ -42,7 +43,191 @@ public class Environment implements Persistable {
  	public int							statesPerSecond			= 25;
  	public int							keepStateHistorySeconds	= 10;
 
-	public List<Plant> getPlants() {
+	public void initialize() {
+		organisms.clear();
+		
+		for (int i = 0; i < PLANTS; i++) {
+			Plant plt = new Plant();
+			plt.name = "Plant" + (i + 1);
+			organisms.add(plt);
+		}
+		for (int i = 0; i < herbivores; i++) {
+			Animal ani = new Animal();
+			ani.name = "Herbivore" + String.format("%02d",(i + 1)) ;
+			ani.herbivore = true;
+			organisms.add(ani);
+		}
+		for (int i = 0; i < carnivores; i++) {
+			Animal ani = new Animal();
+			ani.name = "Carnivore" + String.format("%02d",(i + 1)) ;
+			ani.herbivore = false;
+			organisms.add(ani);
+		}
+		
+		for (Organism organism: organisms) {
+			if (organism instanceof Plant) {
+				repositionPlant((Plant)organism);
+			} else if (organism instanceof Animal) {
+				initializeAnimal((Animal)organism);
+			}
+		}
+	}
+	
+	public boolean prepareForStart() {
+ 		boolean r = false;
+ 		List<Plant> plants = getPlants();
+ 		if (plants.size()!=PLANTS) {
+ 			if (plants.size()>PLANTS) {
+ 				for (int i = plants.size() - 1; i >= PLANTS; i--) {
+ 					organisms.remove(plants.get(i));
+ 				}
+ 			} else {
+ 				for (int i = plants.size() - 1; i < PLANTS; i++) {
+ 					Plant plt = new Plant();
+ 					plt.name = "Plant" + (i + 1);
+ 					organisms.add(plt);
+ 	 				repositionPlant(plt);
+ 				}
+ 			}
+ 			r = true;
+ 		}
+ 		List<Animal> herbis = getAnimals(true);
+ 		if (herbis.size()!=herbivores) {
+ 			if (herbis.size()>herbivores) {
+ 				for (int i = herbis.size() - 1; i >= herbivores; i--) {
+ 					organisms.remove(herbis.get(i));
+ 				}
+ 			} else {
+ 				int start = herbis.size() - 1;
+ 				if (start < 0) {
+ 					start = 0;
+ 				}
+ 				for (int i = start; i < herbivores; i++) {
+ 					Animal ani = new Animal();
+ 					ani.name = "Herbivore" + String.format("%02d",(i + 1)) ;
+ 					ani.herbivore = true;
+ 					organisms.add(ani);
+ 					initializeAnimal(ani);
+ 				}
+ 			}
+ 			r = true;
+ 		}
+ 		List<Animal> carnis = getAnimals(false);
+ 		if (carnis.size()!=carnivores) {
+ 			if (carnis.size()>carnivores) {
+ 				for (int i = carnis.size() - 1; i >= carnivores; i--) {
+ 					organisms.remove(carnis.get(i));
+ 				}
+ 			} else {
+ 				int start = carnis.size() - 1;
+ 				if (start < 0) {
+ 					start = 0;
+ 				}
+ 				for (int i = start; i < carnivores; i++) {
+ 					Animal ani = new Animal();
+ 					ani.name = "Carnivore" + String.format("%02d",(i + 1)) ;
+ 					ani.herbivore = false;
+ 					organisms.add(ani);
+ 					initializeAnimal(ani);
+ 				}
+ 			}
+ 			r = true;
+ 		}
+ 		return r;
+	}
+	
+	public void updatePlants() {
+		List<Plant> livingPlants = getLivingPlants();
+		int div = livingPlants.size();
+		for (Plant plant: livingPlants) {
+			if (plant.energy==maxEnergyPlant) {
+				div--;
+			}
+		}
+		if (div>0) {
+			for (Plant plt: livingPlants) {
+				if (plt.energy<maxEnergyPlant) {
+					if (plt.energy==0) {
+						repositionPlant(plt);
+					}
+					plt.energy += (energyInputPerSecond / div);
+					if (plt.energy > maxEnergyPlant) {
+						plt.energy = maxEnergyPlant;
+					}
+				}
+			}
+		}
+	}
+
+	public List<Plant> getLivingPlants() {
+		List<Plant> r = new ArrayList<Plant>();
+		long now = System.currentTimeMillis();
+		for (Plant plt: getPlants()) {
+			if (plt.dateTimeDied < (now - (deathDurationSeconds * 1000))) {
+				r.add(plt);
+			}
+		}
+		return r;
+	}
+ 	
+	public void initializeAnimal(Animal animal) {
+		animal.score = 0;
+		if (animal.herbivore) {
+			animal.energy = maxEnergyHerbivore / 2;
+		} else {
+			animal.energy = maxEnergyCarnivore / 2;
+		}
+		repositionOrganism(animal,0,SIZE_X - 1,0,SIZE_Y - 1);
+		animal.setRotation(ZRandomize.getRandomInt(0,3) * 90);
+	}
+ 	
+	public void repositionPlant(Plant plt) {
+		int minX = 0;
+		int maxX = 0;
+		int minY = 0;
+		int maxY = 0;
+		int index = getPlants().indexOf(plt);
+		if (index==0) {
+			minX=0;
+			maxX=10;
+			minY=0;
+			maxY=10;
+		} else if (index==1) {
+			minX=(SIZE_X - 11);
+			maxX=(SIZE_X - 1);
+			minY=0;
+			maxY=10;
+		} else if (index==2) {
+			minX=0;
+			maxX=10;
+			minY=(SIZE_Y - 11);
+			maxY=(SIZE_Y - 1);
+		} else if (index==3) {
+			minX=(SIZE_X - 11);
+			maxX=(SIZE_X - 1);
+			minY=(SIZE_Y - 11);
+			maxY=(SIZE_Y - 1);
+		}
+		repositionOrganism(plt,minX,maxX,minY,maxY);
+	}
+	
+	public void repositionOrganism(Organism o,int minX,int maxX,int minY,int maxY) {
+		int x = ZRandomize.getRandomInt(minX, maxX);
+		int y = ZRandomize.getRandomInt(minY, maxY);
+		boolean free = false;
+		while (!free) {
+			if (getOrganismByPos(x,y)==null) {
+				free = true;
+			} else {
+				x = ZRandomize.getRandomInt(minX, maxX);
+				y = ZRandomize.getRandomInt(minY, maxY);
+			}
+		}
+		o.posX = x;
+		o.posY = y;
+	}
+
+ 	public List<Plant> getPlants() {
 		List<Plant> r = new ArrayList<Plant>();
 		for (Organism organism: organisms) {
 			if (organism instanceof Plant) {
@@ -62,10 +247,23 @@ public class Environment implements Persistable {
 		return r;
 	}
 	
-	public Organism getOrganismByPos(int posX, int postY) {
+	public List<Animal> getAnimals(boolean herbivore) {
+		List<Animal> r = new ArrayList<Animal>();
+		for (Organism organism: organisms) {
+			if (organism instanceof Animal) {
+				Animal ani = (Animal) organism;
+				if (ani.herbivore==herbivore) {
+					r.add(ani);
+				}
+			}
+		}
+		return r;
+	}
+	
+	public Organism getOrganismByPos(int posX, int posY) {
 		Organism r = null;
 		for (Organism organism: organisms) {
-			if (organism.posX == posX && organism.posY == postY) {
+			if (organism.posX == posX && organism.posY == posY) {
 				r = organism;
 				break;
 			}
@@ -112,8 +310,6 @@ public class Environment implements Persistable {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
-			organisms.clear();
-			
 			herbivores = json.rootElement.getChildInt("herbivores",herbivores);
 			carnivores = json.rootElement.getChildInt("carnivores",carnivores);
 
@@ -135,14 +331,15 @@ public class Environment implements Persistable {
 			keepStateHistorySeconds = json.rootElement.getChildInt("keepStateHistorySeconds",keepStateHistorySeconds);
 			
 			JsElem orgsElem = json.rootElement.getChildByName("organisms");
-			if (orgsElem!=null) {
+			if (orgsElem!=null && orgsElem.children.size()>0) {
+				organisms.clear();
 				for (JsElem orgElem: orgsElem.children) {
 					JsElem herbElem = orgElem.getChildByName("herbivore");
 					JsFile js = new JsFile();
 					js.rootElement = orgElem;
 					if (herbElem!=null) {
 						Animal ani = new Animal();
-						ani.fromJson(json);
+						ani.fromJson(js);
 						organisms.add(ani);
 					} else {
 						Plant plt = new Plant();
