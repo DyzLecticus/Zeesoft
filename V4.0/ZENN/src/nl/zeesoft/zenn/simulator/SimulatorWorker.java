@@ -3,7 +3,7 @@ package nl.zeesoft.zenn.simulator;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
-import nl.zeesoft.zenn.environment.Environment;
+import nl.zeesoft.zenn.environment.EnvironmentConfig;
 
 public class SimulatorWorker extends Worker {
 	private Simulator	simulator	= null;
@@ -13,7 +13,7 @@ public class SimulatorWorker extends Worker {
 		this.simulator = simulator;
 	}
 	
-	protected void setEnvironment(Environment environment) {
+	protected void setEnvironmentConfig(EnvironmentConfig environment) {
 		setSleep(1000 / environment.statesPerSecond);
 	}
 	

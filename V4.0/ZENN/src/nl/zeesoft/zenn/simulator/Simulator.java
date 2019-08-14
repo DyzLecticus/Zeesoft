@@ -4,7 +4,8 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zenn.animal.CarnivoreEvolver;
 import nl.zeesoft.zenn.animal.HerbivoreEvolver;
-import nl.zeesoft.zenn.environment.Environment;
+import nl.zeesoft.zenn.environment.EnvironmentConfig;
+import nl.zeesoft.zenn.environment.EnvironmentState;
 import nl.zeesoft.zodb.Config;
 
 public class Simulator extends Locker {
@@ -15,12 +16,12 @@ public class Simulator extends Locker {
 	private SimulatorWorker			worker				= null;
 	private HistoryManager			histManager			= null;
 
-	private Environment				environment			= null;
+	private EnvironmentConfig		environmentConfig	= null;
+	private EnvironmentState		environmentState	= null;
 
 	private boolean					working				= false;
 	
 	private long					energyUpdated		= 0;
-	private long					environmentUpdated	= 0;
 	
 	public Simulator(Config config,EnvironmentInitializer envInit,HerbivoreEvolver herbEvo,CarnivoreEvolver carnEvo) {
 		super(config.getMessenger());
@@ -32,36 +33,25 @@ public class Simulator extends Locker {
 		histManager = new HistoryManager(config);
 	}
 	
-	public void setEnvironment(Environment environment) {
+	public void setEnvironment(EnvironmentConfig environmentConfig,EnvironmentState environmentState) {
 		lockMe(this);
-		boolean loaded = this.environment != environment && environment!=null;
-		this.environment = environment;
-		unlockMe(this);
-		if (loaded) {
-			loadedEnvironment();
-		}
-	}
-	
-	public void loadedEnvironment() {
-		lockMe(this);
-		if (environment!=null) {
-			worker.setEnvironment(environment);
-			histManager.setEnvironment(environment);
-		}
+		this.environmentConfig = environmentConfig;
+		this.environmentState = environmentState;
+		worker.setEnvironmentConfig(environmentConfig);
+		histManager.setEnvironment(environmentConfig,environmentState);
 		unlockMe(this);
 	}
 	
 	public void start() {
 		lockMe(this);
-		if (environment!=null && !working) {
-			if (environment.prepareForStart()) {
+		if (environmentConfig!=null && environmentState!=null && !working) {
+			if (environmentState.prepareForStart()) {
 				if (envInitializer!=null) {
-					envInitializer.updateObjectsNoLock();
+					envInitializer.updatedState();
 				}
 			}
 			long now = System.currentTimeMillis();
 			energyUpdated = now;
-			environmentUpdated = now;
 			worker.start();
 			working = true;
 			if (getMessenger()!=null) {
@@ -102,19 +92,16 @@ public class Simulator extends Locker {
 	
 	protected void simulateNextState() {
 		lockMe(this);
-		if (environment!=null) {
+		if (environmentState!=null) {
 			long now = System.currentTimeMillis();
 			if (now>(energyUpdated + 1000)) {
-				environment.updatePlants();
+				environmentState.updatePlants();
 				energyUpdated = now;
 			}
 			if (envInitializer!=null) {
-				if (now>(environmentUpdated + 10000)) {
-					envInitializer.updateObjectsNoLock();
-					environmentUpdated = now;
-				}
+				envInitializer.updatedState();
+				histManager.updateHistory();
 			}
-			histManager.updateHistory();
 		}
 		unlockMe(this);
 	}

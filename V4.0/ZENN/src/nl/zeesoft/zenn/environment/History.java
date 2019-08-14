@@ -19,13 +19,13 @@ public class History implements Persistable {
 	public void addOrganismData(List<Organism> organisms) {
 		for (Organism org: organisms) {
 			Animal ani = null;
-			String color = Environment.COLOR_PLANT;
+			String color = EnvironmentConfig.COLOR_PLANT;
 			if (org instanceof Animal) {
 				ani = (Animal) org;
 				if (ani.herbivore) {
-					color = Environment.COLOR_HERBIVORE;
+					color = EnvironmentConfig.COLOR_HERBIVORE;
 				} else {
-					color = Environment.COLOR_CARNIVORE;
+					color = EnvironmentConfig.COLOR_CARNIVORE;
 				}
 			}
 			

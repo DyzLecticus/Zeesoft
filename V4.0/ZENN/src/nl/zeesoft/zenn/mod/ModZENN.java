@@ -93,7 +93,7 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 				}
 			}
 		} else if (source instanceof EnvironmentInitializer && open) {
-			simulator.setEnvironment(environmentInitializer.getEnvironment());
+			simulator.setEnvironment(environmentInitializer.getEnvironmentConfig(),environmentInitializer.getEnvironmentState());
 			simulator.start();
 		}
 	}

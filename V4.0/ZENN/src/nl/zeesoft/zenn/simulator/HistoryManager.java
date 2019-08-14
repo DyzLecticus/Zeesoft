@@ -5,32 +5,35 @@ import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.thread.Locker;
-import nl.zeesoft.zenn.environment.Environment;
+import nl.zeesoft.zenn.environment.EnvironmentConfig;
+import nl.zeesoft.zenn.environment.EnvironmentState;
 import nl.zeesoft.zenn.environment.History;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.idx.IndexConfig;
 
 public class HistoryManager extends Locker implements JsClientListener {
-	private Config			configuration	= null;
-	private String			namePrefix		= "ZENN/History/";
+	private Config					configuration		= null;
+	private String					namePrefix			= "ZENN/History/";
 	
-	private Environment		environment		= null;
+	private EnvironmentConfig		environmentConfig	= null;
+	private EnvironmentState		environmentState	= null;
 	
 	protected HistoryManager(Config config) {
 		super(config.getMessenger());
 		this.configuration = config;
 	}
-		
-	protected void setEnvironment(Environment environment) {
+	
+	protected void setEnvironment(EnvironmentConfig environmentConfig,EnvironmentState environmentState) {
 		lockMe(this);
-		this.environment = environment;
+		this.environmentConfig = environmentConfig;
+		this.environmentState = environmentState;
 		unlockMe(this);
 	}
 
 	protected void updateHistory() {
 		lockMe(this);
-		if (environment!=null) {
+		if (environmentConfig!=null && environmentState!=null) {
 			removeOldHistories();
 			addNewHistory();
 		}
@@ -45,7 +48,7 @@ public class HistoryManager extends Locker implements JsClientListener {
 	}
 
 	private void removeOldHistories() {
-		long timeStamp = System.currentTimeMillis() - environment.keepStateHistorySeconds * 1000;
+		long timeStamp = System.currentTimeMillis() - environmentConfig.keepStateHistorySeconds * 1000;
 		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
 		request.index = IndexConfig.IDX_NAME;
 		request.invert = false;
@@ -58,7 +61,7 @@ public class HistoryManager extends Locker implements JsClientListener {
 	private void addNewHistory() {
 		History hist = new History();
 		hist.timeStamp = System.currentTimeMillis();
-		hist.addOrganismData(environment.organisms);
+		hist.addOrganismData(environmentState.organisms);
 		ZStringBuilder name = new ZStringBuilder(namePrefix);
 		name.append(hist.getObjectName());
 		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
