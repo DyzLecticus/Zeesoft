@@ -12,12 +12,12 @@ public class EnvironmentInitializer extends InitializerObject {
 	public EnvironmentInitializer(Config config) {
 		super(config,"ZENN/Environment/");
 	}
-
+	
 	@Override
 	protected void initializeDatabaseObjectsNoLock() {
-		Environment env = new Environment();
-		env.initialize();
-		addObjectNoLock(env);
+		environment = new Environment();
+		environment.initialize();
+		addObjectNoLock(environment);
 	}
 
 	@Override
