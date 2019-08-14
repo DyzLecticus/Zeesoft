@@ -9,12 +9,13 @@ public class ZMeanAbsoluteError implements ZLossFunction {
 	public float calculateLoss(float[] outputs, float[] expectations) {
 		float r = 0;
 		for (int i = 0; i < outputs.length; i++) {
-			r += expectations[i] - outputs[i];
+			float diff = expectations[i] - outputs[i];
+			if (diff<0) {
+				diff = diff * -1;
+			}
+			r += diff;
 		}
 		r = r / outputs.length;
-		if (r<0) {
-			r = r * -1;
-		}
 		return r;
 	}
 }

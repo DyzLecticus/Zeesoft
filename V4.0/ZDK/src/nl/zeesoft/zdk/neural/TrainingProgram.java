@@ -74,7 +74,7 @@ public class TrainingProgram implements JsAble {
 	 * @return The error change rate
 	 */
 	public float getErrorChangeRate() {
-		return getErrorChange() / trainedEpochs * -1F;
+		return getErrorChange() < 0 ? (getErrorChange() / trainedEpochs) * -1F : 0;
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class TrainingProgram implements JsAble {
 	 * @return The loss change rate
 	 */
 	public float getLossChangeRate() {
-		return getLossChange() / trainedEpochs * -1F;
+		return getLossChange() < 0 ? (getLossChange() / trainedEpochs) * -1F : 0;
 	}
 
 	@Override
