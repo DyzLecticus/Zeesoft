@@ -252,10 +252,6 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		return r;
 	}
 	
-	protected long getObjectIdByNameNoLock(ZStringBuilder name) {
-		return objectIdMap.get(name);
-	}
-	
 	protected List<Persistable> getObjectsNoLock() {
 		return new ArrayList<Persistable>(objects);
 	}
@@ -267,9 +263,10 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	}
 	
 	protected void updateObjectNoLock(Persistable object) {
-		if (object!=null) {
+		Long id = objectIdMap.get(object.getObjectName());
+		if (object!=null && id!=null) {
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
-			request.id = getObjectIdByNameNoLock(object.getObjectName());
+			request.id = id;
 			request.encoding = DatabaseRequest.ENC_KEY;
 			ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
 			encoder.encodeKey(configuration.getZODBKey(),0);
