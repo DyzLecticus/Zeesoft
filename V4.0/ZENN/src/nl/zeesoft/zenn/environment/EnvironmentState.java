@@ -13,6 +13,7 @@ public class EnvironmentState implements Persistable {
 	public EnvironmentConfig 			config					= null;
 	
 	public List<Organism>				organisms				= new ArrayList<Organism>();
+	public List<History>				histories				= new ArrayList<History>();
 
 	public void initialize(EnvironmentConfig config) {
 		this.config = config;
@@ -143,6 +144,20 @@ public class EnvironmentState implements Persistable {
 		return r;
 	}
  	
+	public void updateHistory() {
+		List<History> list = new ArrayList<History>(histories);
+		long timeStamp = System.currentTimeMillis() - (config.keepStateHistorySeconds * 1000);
+		for (History hist: list) {
+			if (hist.timeStamp < timeStamp) {
+				histories.remove(hist);
+			}
+		}
+		History hist = new History();
+		hist.timeStamp = System.currentTimeMillis();
+		hist.addOrganismData(organisms);
+		histories.add(hist);
+	}
+	
 	public void initializeAnimal(Animal animal) {
 		animal.score = 0;
 		if (animal.herbivore) {
@@ -256,6 +271,14 @@ public class EnvironmentState implements Persistable {
 				orgsElem.children.add(orgJs.rootElement);
 			}
 		}
+		if (histories.size()>0) {
+			JsElem histsElem = new JsElem("histories",true);
+			json.rootElement.children.add(histsElem);
+			for (History history: histories) {
+				JsFile histJs = history.toJson();
+				histsElem.children.add(histJs.rootElement);
+			}
+		}
 		return json;
 	}
 	
@@ -278,6 +301,17 @@ public class EnvironmentState implements Persistable {
 						plt.fromJson(js);
 						organisms.add(plt);
 					}
+				}
+			}
+			JsElem histsElem = json.rootElement.getChildByName("histories");
+			if (histsElem!=null && histsElem.children.size()>0) {
+				histories.clear();
+				for (JsElem histElem: histsElem.children) {
+					JsFile js = new JsFile();
+					js.rootElement = histElem;
+					History hist = new History();
+					hist.fromJson(js);
+					histories.add(hist);
 				}
 			}
 		}

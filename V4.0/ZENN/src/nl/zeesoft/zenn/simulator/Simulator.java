@@ -20,7 +20,6 @@ public class Simulator extends Locker {
 	private HerbivoreEvolver			herbEvolver			= null;
 	private CarnivoreEvolver			carnEvolver			= null;
 	private SimulatorWorker				worker				= null;
-	private HistoryManager				histManager			= null;
 
 	private EnvironmentConfig			environmentConfig	= null;
 	private EnvironmentState			environmentState	= null;
@@ -29,6 +28,7 @@ public class Simulator extends Locker {
 	private boolean						working				= false;
 	
 	private long						energyUpdated		= 0;
+	private long						stateUpdated		= 0;
 	
 	public Simulator(Config config,EnvironmentInitializer envInit,HerbivoreEvolver herbEvo,CarnivoreEvolver carnEvo) {
 		super(config.getMessenger());
@@ -37,7 +37,6 @@ public class Simulator extends Locker {
 		herbEvolver = herbEvo;
 		carnEvolver = carnEvo;
 		worker = new SimulatorWorker(config.getMessenger(),config.getUnion(),this);
-		histManager = new HistoryManager(config);
 	}
 	
 	public void setEnvironment(EnvironmentConfig environmentConfig,EnvironmentState environmentState) {
@@ -45,7 +44,6 @@ public class Simulator extends Locker {
 		this.environmentConfig = environmentConfig;
 		this.environmentState = environmentState;
 		worker.setEnvironmentConfig(environmentConfig);
-		histManager.setEnvironment(environmentConfig,environmentState);
 		unlockMe(this);
 	}
 	
@@ -155,11 +153,12 @@ public class Simulator extends Locker {
 				environmentState.updatePlants();
 				energyUpdated = now;
 			}
-			unlockMe(this);
-			if (isWorking() && envInitializer!=null) {
+			environmentState.updateHistory();
+			if (working && envInitializer!=null && now> stateUpdated + 1000) {
+				stateUpdated = now;
 				envInitializer.updatedState();
-				histManager.updateHistory();
 			}
+			unlockMe(this);
 		}
 	}
 	
