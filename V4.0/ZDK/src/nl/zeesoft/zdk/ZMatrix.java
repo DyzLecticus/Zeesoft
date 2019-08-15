@@ -130,9 +130,14 @@ public class ZMatrix {
 			for (int j = 0; j < cols; j++) {
 				float v = function.applyFunction(data[i][j]);
 				if (Float.isNaN(v)) {
-					preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] = " + v);
+					if (DEBUG_NAN) {
+						preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] = " + v);
+					}
 				} else if (Float.isInfinite(v)) {
-					preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "] = " + v);
+					if (DEBUG_INF) {
+						preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "] = " + v);
+					}
+					data[i][j] = Float.MAX_VALUE;
 				} else {
 					data[i][j] = v;
 				}
@@ -145,9 +150,14 @@ public class ZMatrix {
 			for (int j = 0; j < cols; j++) {
 				float v = function.applyFunction(data[i][j],p);
 				if (Float.isNaN(v)) {
-					preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] " + p + " = " + v);
+					if (DEBUG_NAN) {
+						preventedNaN(data[i][j] + " [" + function.getClass().getName() + "](scalar) " + p + " = " + v);
+					}
 				} else if (Float.isInfinite(v)) {
-					preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "] " + p + " = " + v);
+					if (DEBUG_INF) {
+						preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "](scalar) " + p + " = " + v);
+					}
+					data[i][j] = Float.MAX_VALUE;
 				} else {
 					data[i][j] = v;
 				}
@@ -161,9 +171,14 @@ public class ZMatrix {
 				for (int j = 0; j < cols; j++) {
 					float v = function.applyFunction(data[i][j],p.data[i][j]);
 					if (Float.isNaN(v)) {
-						preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] " + p.data[i][j] + " = " + v);
+						if (DEBUG_NAN) {
+							preventedNaN(data[i][j] + " [" + function.getClass().getName() + "](element) " + p.data[i][j] + " = " + v);
+						}
 					} else if (Float.isInfinite(v)) {
-						preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "] " + p.data[i][j] + " = " + v);
+						if (DEBUG_INF) {
+							preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "](element) " + p.data[i][j] + " = " + v);
+						}
+						data[i][j] = Float.MAX_VALUE;
 					} else {
 						data[i][j] = v;
 					}
@@ -182,11 +197,24 @@ public class ZMatrix {
 					for (int k = 0; k < a.cols; k++) {
 						float add = function.applyFunction(a.data[i][k],b.data[k][j]);
 						if (Float.isNaN(add)) {
-							preventedNaN(a.data[i][k] + " [" + function.getClass().getName() + "] " + b.data[k][j] + " = " + add);
+							if (DEBUG_NAN) {
+								preventedNaN(a.data[i][k] + " [" + function.getClass().getName() + "](static element) " + b.data[k][j] + " = " + add);
+							}
 						} else if (Float.isInfinite(add)) {
-							preventedInfinity(a.data[i][k] + " [" + function.getClass().getName() + "] " + b.data[k][j] + " = " + add);
+							if (DEBUG_INF) {
+								preventedInfinity(a.data[i][k] + " [" + function.getClass().getName() + "](static element) " + b.data[k][j] + " = " + add);
+							}
+							v = Float.MAX_VALUE;
+							break;
 						} else {
 							v = v + add;
+							if (Float.isInfinite(v)) {
+								if (DEBUG_INF) {
+									preventedInfinity(" ? [+](static element) " + add + " = " + v);
+								}
+								v = Float.MAX_VALUE;
+								break;
+							}
 						}
 					}
 					r.data[i][j] = v;
