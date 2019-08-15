@@ -55,8 +55,9 @@ public class TestAnimalEvolver extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		ZMatrix.DEBUG_NAN = false;
-		ZMatrix.DEBUG_NAN_EXIT = false;
+		ZMatrix.DEBUG_NAN = true;
+		ZMatrix.DEBUG_INF = true;
+		ZMatrix.DEBUG_EXIT = true;
 		
 		ZDKFactory factory = new ZDKFactory();
 		Messenger messenger = factory.getMessenger();

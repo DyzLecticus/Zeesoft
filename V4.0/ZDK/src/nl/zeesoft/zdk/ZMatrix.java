@@ -14,7 +14,8 @@ import nl.zeesoft.zdk.functions.ZRandomize;
  */
 public class ZMatrix {
 	public static boolean	DEBUG_NAN		= false;
-	public static boolean	DEBUG_NAN_EXIT	= false;
+	public static boolean	DEBUG_INF		= false;
+	public static boolean	DEBUG_EXIT		= false;
 	
 	public int				rows			= 0;
 	public int				cols			= 0;
@@ -128,10 +129,12 @@ public class ZMatrix {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				float v = function.applyFunction(data[i][j]);
-				if (!Float.isNaN(v)) {
-					data[i][j] = v;
-				} else if (DEBUG_NAN) {
+				if (Float.isNaN(v)) {
 					preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] = " + v);
+				} else if (Float.isInfinite(v)) {
+					preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "] = " + v);
+				} else {
+					data[i][j] = v;
 				}
 			}
 		}
@@ -141,10 +144,12 @@ public class ZMatrix {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				float v = function.applyFunction(data[i][j],p);
-				if (!Float.isNaN(v)) {
-					data[i][j] = v;
-				} else if (DEBUG_NAN) {
+				if (Float.isNaN(v)) {
 					preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] " + p + " = " + v);
+				} else if (Float.isInfinite(v)) {
+					preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "] " + p + " = " + v);
+				} else {
+					data[i][j] = v;
 				}
 			}
 		}
@@ -155,10 +160,12 @@ public class ZMatrix {
 			for (int i = 0; i < rows; i++) {
 				for (int j = 0; j < cols; j++) {
 					float v = function.applyFunction(data[i][j],p.data[i][j]);
-					if (!Float.isNaN(v)) {
-						data[i][j] = v;
-					} else if (DEBUG_NAN) {
+					if (Float.isNaN(v)) {
 						preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] " + p.data[i][j] + " = " + v);
+					} else if (Float.isInfinite(v)) {
+						preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "] " + p.data[i][j] + " = " + v);
+					} else {
+						data[i][j] = v;
 					}
 				}
 			}
@@ -174,10 +181,12 @@ public class ZMatrix {
 					float v = 0;
 					for (int k = 0; k < a.cols; k++) {
 						float add = function.applyFunction(a.data[i][k],b.data[k][j]);
-						if (!Float.isNaN(add)) {
-							v = v + add;
-						} else if (DEBUG_NAN) {
+						if (Float.isNaN(add)) {
 							preventedNaN(a.data[i][k] + " [" + function.getClass().getName() + "] " + b.data[k][j] + " = " + add);
+						} else if (Float.isInfinite(add)) {
+							preventedInfinity(a.data[i][k] + " [" + function.getClass().getName() + "] " + b.data[k][j] + " = " + add);
+						} else {
+							v = v + add;
 						}
 					}
 					r.data[i][j] = v;
@@ -287,16 +296,32 @@ public class ZMatrix {
 	public static void preventedNaN(String msg) {
 		if (DEBUG_NAN) {
 			System.err.println("Prevented NaN: " + msg);
-			if (DEBUG_NAN_EXIT) {
+			if (DEBUG_EXIT) {
 				System.exit(1);
 			}
 		}
 	}
+
+	public boolean hasInf() {
+		boolean r = false;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (Float.isInfinite(data[i][j])) {
+					r = true;
+					break;
+				}
+			}
+			if (r) {
+				break;
+			}
+		}
+		return r;
+	}
 	
-	public void debugNaN(String msg) {
-		if (DEBUG_NAN && hasNaN()) {
-			System.err.println(msg);
-			if (DEBUG_NAN_EXIT) {
+	public static void preventedInfinity(String msg) {
+		if (DEBUG_INF) {
+			System.err.println("Prevented infinity: " + msg);
+			if (DEBUG_EXIT) {
 				System.exit(1);
 			}
 		}
