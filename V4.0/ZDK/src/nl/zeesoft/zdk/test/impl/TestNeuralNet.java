@@ -147,7 +147,7 @@ public class TestNeuralNet extends TestObject {
 				", output: [" + df.format(t.outputs[0]) + "]" + 
 				", expectation: [" + df.format(t.expectations[0]) + "]" + 
 				", error: " + df.format(t.errors[0]) +
-				", loss: " + df.format(t.loss)
+				", loss: " + tSet.lossFunction.calculateLoss(t.outputs,t.expectations)
 				);
 		}
 		System.out.println("  Average error: " + df.format(tSet.averageError) + ", average loss: " + df.format(tSet.averageLoss) + ", success: " + tSet.success);

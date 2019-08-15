@@ -1,7 +1,6 @@
 package nl.zeesoft.zdk.neural;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.functions.ZLossFunction;
 
 public class Prediction {
 	public ZStringBuilder	error	= new ZStringBuilder();
@@ -37,7 +36,7 @@ public class Prediction {
 		}
 	}
 		
-	protected void finalize(NeuralNet nn,ZLossFunction lossFunction) {
+	protected void finalize(NeuralNet nn) {
 		// Override to implement
 	}
 	

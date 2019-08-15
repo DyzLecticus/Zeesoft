@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.neural;
 
-import nl.zeesoft.zdk.functions.ZLossFunction;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -9,7 +8,6 @@ public class Test extends Prediction implements JsAble {
 	public float[] 			expectations	= null;
 
 	public float[] 			errors			= null;
-	public float			loss			= 0;
 	
 	protected Test(JsFile json) {
 		fromJson(json);
@@ -33,7 +31,6 @@ public class Test extends Prediction implements JsAble {
 		json.rootElement.children.add(toJsElem("outputs",outputs));
 		json.rootElement.children.add(toJsElem("expectations",expectations));
 		json.rootElement.children.add(toJsElem("errors",errors));
-		json.rootElement.children.add(new JsElem("loss","" + loss));
 		return json;
 	}
 
@@ -44,7 +41,6 @@ public class Test extends Prediction implements JsAble {
 			outputs = fromJsElem("outputs",json.rootElement);
 			expectations = fromJsElem("expectations",json.rootElement);
 			errors = fromJsElem("errors",json.rootElement);
-			loss = json.rootElement.getChildFloat("loss",loss);
 		}
 	}
 	
@@ -59,17 +55,13 @@ public class Test extends Prediction implements JsAble {
 	protected void prepare(NeuralNet nn) {
 		super.prepare(nn);
 		initializeValues(errors);
-		loss = 0;
 	}
 		
 	@Override
-	protected void finalize(NeuralNet nn,ZLossFunction lossFunction) {
-		super.finalize(nn,lossFunction);
+	protected void finalize(NeuralNet nn) {
+		super.finalize(nn);
 		for (int i = 0; i < errors.length; i++) {
 			errors[i] = expectations[i] - outputs[i];
-		}
-		if (lossFunction!=null) {
-			loss = lossFunction.calculateLoss(outputs,expectations);
 		}
 	}
 
@@ -82,7 +74,6 @@ public class Test extends Prediction implements JsAble {
 			copyValues(t.expectations,expectations);
 			t.errors = new float[errors.length];
 			copyValues(t.errors,errors);
-			t.loss = loss;
 		}
 	}
 	

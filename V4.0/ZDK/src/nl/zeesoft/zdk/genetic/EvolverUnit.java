@@ -94,8 +94,9 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 		r.append("- Size: ");
 		r.append("" + neuralNet.size());
 		r.append("\n");
-		r.append("- Initial average loss: ");
+		r.append("- Initial / latest average loss: ");
 		r.append("" + trainingProgram.initialResults.averageLoss);
+		r.append(" / " + trainingProgram.latestResults.averageLoss);
 		r.append("\n");
 		r.append("- Trained epochs: ");
 		r.append("" + trainingProgram.trainedEpochs);

@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.neural;
 import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZActivator;
-import nl.zeesoft.zdk.functions.ZLossFunction;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -107,25 +106,15 @@ public class NeuralNet implements JsAble {
 
 	/**
 	 * Uses the neural network to get the predicted output for a certain set of inputs.
+	 * This can also be used to get the output of a Test.
 	 * 
 	 * @param p The prediction
 	 */
 	public void predict(Prediction p) {
-		predict(p,null);
-	}
-
-	/**
-	 * Uses the neural network to get the predicted output for a certain set of inputs.
-	 * This can also be used to get the output of a Test.
-	 * 
-	 * @param p The prediction
-	 * @param lossFunction The optional loss function which is applied in case the prediction is and instance of a Test
-	 */
-	public void predict(Prediction p,ZLossFunction lossFunction) {
 		p.prepare(this);
 		if (p.error.length()==0) {
 			p.outputs = feedForward(p.inputs);
-			p.finalize(this,lossFunction);
+			p.finalize(this);
 		}
 	}
 
@@ -136,7 +125,7 @@ public class NeuralNet implements JsAble {
 	 */
 	public void test(TestSet tSet) {
 		for (Test t: tSet.tests) {
-			predict(t,tSet.lossFunction);
+			predict(t);
 		}
 		tSet.finalize();
 	}
@@ -148,7 +137,7 @@ public class NeuralNet implements JsAble {
 	 */
 	public void train(TestSet tSet) {
 		for (Test t: tSet.tests) {
-			train(t,tSet.lossFunction);
+			train(t);
 		}
 		tSet.finalize();
 	}
@@ -157,10 +146,9 @@ public class NeuralNet implements JsAble {
 	 * Trains the neural network using a specific test.
 	 * 
 	 * @param t The test
-	 * @param lossFunction The optional loss function
 	 */
-	public void train(Test t,ZLossFunction lossFunction) {
-		predict(t,lossFunction);
+	public void train(Test t) {
+		predict(t);
 		if (t.error.length()==0) {
 			feedBackward(t.errors);
 		}

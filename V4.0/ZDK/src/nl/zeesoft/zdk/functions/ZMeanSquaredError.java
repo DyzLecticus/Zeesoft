@@ -8,10 +8,12 @@ public class ZMeanSquaredError implements ZLossFunction {
 	@Override
 	public float calculateLoss(float[] outputs, float[] expectations) {
 		float r = 0;
-		for (int i = 0; i < outputs.length; i++) {
-			r += Math.pow(expectations[i] - outputs[i],2);
+		if (outputs.length>0) {
+			for (int i = 0; i < outputs.length; i++) {
+				r += Math.pow(expectations[i] - outputs[i],2);
+			}
+			r = r / outputs.length;
 		}
-		r = r / outputs.length;
 		return r;
 	}
 }
