@@ -189,6 +189,7 @@ public class JsFile {
 	}
 
 	private ZStringBuilder elementToStringBuilder(JsElem elem, int level, boolean readFormat) {
+		ZStringBuilder nan = new ZStringBuilder("NaN");
 		ZStringBuilder s = new ZStringBuilder();
 		if (readFormat) {
 			s.append("\n");
@@ -227,6 +228,9 @@ public class JsFile {
 				s.append("]");
 			}
 		} else {
+			if (!elem.cData && elem.value!=null && elem.value.equals(nan)) {
+				elem.cData = true;
+			}
 			if (elem.cData) {
 				s.append("\"");
 			}

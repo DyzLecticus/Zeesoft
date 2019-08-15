@@ -13,9 +13,12 @@ import nl.zeesoft.zdk.functions.ZRandomize;
  * It relies heavily on the StaticFunctions class to simplify the code.
  */
 public class ZMatrix {
-	public int			rows	= 0;
-	public int			cols	= 0;
-	public float[][]	data	= null;
+	public static boolean	DEBUG_NAN		= false;
+	public static boolean	DEBUG_NAN_EXIT	= false;
+	
+	public int				rows			= 0;
+	public int				cols			= 0;
+	public float[][]		data			= null;
 	
 	public ZMatrix(int rows,int cols) {
 		if (rows<1) {
@@ -124,7 +127,12 @@ public class ZMatrix {
 	public void applyFunction(ZFunction function) {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				data[i][j] = function.applyFunction(data[i][j]);
+				float v = function.applyFunction(data[i][j]);
+				if (!Float.isNaN(v)) {
+					data[i][j] = v;
+				} else if (DEBUG_NAN) {
+					preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] = " + v);
+				}
 			}
 		}
 	}
@@ -132,7 +140,12 @@ public class ZMatrix {
 	public void applyFunction(ZParamFunction function,float p) {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				data[i][j] = function.applyFunction(data[i][j],p);
+				float v = function.applyFunction(data[i][j],p);
+				if (!Float.isNaN(v)) {
+					data[i][j] = v;
+				} else if (DEBUG_NAN) {
+					preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] " + p + " = " + v);
+				}
 			}
 		}
 	}
@@ -141,7 +154,12 @@ public class ZMatrix {
 		if (p.rows==rows && p.cols==cols) {
 			for (int i = 0; i < rows; i++) {
 				for (int j = 0; j < cols; j++) {
-					data[i][j] = function.applyFunction(data[i][j],p.data[i][j]);
+					float v = function.applyFunction(data[i][j],p.data[i][j]);
+					if (!Float.isNaN(v)) {
+						data[i][j] = v;
+					} else if (DEBUG_NAN) {
+						preventedNaN(data[i][j] + " [" + function.getClass().getName() + "] " + p.data[i][j] + " = " + v);
+					}
 				}
 			}
 		}
@@ -155,7 +173,12 @@ public class ZMatrix {
 				for (int j = 0; j < r.cols; j++) {
 					float v = 0;
 					for (int k = 0; k < a.cols; k++) {
-						v = v + function.applyFunction(a.data[i][k],b.data[k][j]);
+						float add = function.applyFunction(a.data[i][k],b.data[k][j]);
+						if (!Float.isNaN(add)) {
+							v = v + add;
+						} else if (DEBUG_NAN) {
+							preventedNaN(a.data[i][k] + " [" + function.getClass().getName() + "] " + b.data[k][j] + " = " + add);
+						}
 					}
 					r.data[i][j] = v;
 				}
@@ -243,6 +266,40 @@ public class ZMatrix {
 			}
 		}
 		return r;
+	}
+	
+	public boolean hasNaN() {
+		boolean r = false;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (Float.isNaN(data[i][j])) {
+					r = true;
+					break;
+				}
+			}
+			if (r) {
+				break;
+			}
+		}
+		return r;
+	}
+
+	public static void preventedNaN(String msg) {
+		if (DEBUG_NAN) {
+			System.err.println("Prevented NaN: " + msg);
+			if (DEBUG_NAN_EXIT) {
+				System.exit(1);
+			}
+		}
+	}
+	
+	public void debugNaN(String msg) {
+		if (DEBUG_NAN && hasNaN()) {
+			System.err.println(msg);
+			if (DEBUG_NAN_EXIT) {
+				System.exit(1);
+			}
+		}
 	}
 	
 	public ZStringBuilder getTable() {

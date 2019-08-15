@@ -73,7 +73,7 @@ public class TestSet implements JsAble {
 			averageError = averageError / total;
 		}
 		if (tests.size()>0 && averageLoss>0) {
-			averageLoss = averageLoss / tests.size();
+			averageLoss = averageLoss / (float) tests.size();
 		}
 	}
 	

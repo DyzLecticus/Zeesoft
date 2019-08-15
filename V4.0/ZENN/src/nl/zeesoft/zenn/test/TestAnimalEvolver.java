@@ -1,6 +1,7 @@
 package nl.zeesoft.zenn.test;
 
 import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.genetic.EvolverUnit;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
@@ -54,6 +55,9 @@ public class TestAnimalEvolver extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
+		ZMatrix.DEBUG_NAN = false;
+		ZMatrix.DEBUG_NAN_EXIT = false;
+		
 		ZDKFactory factory = new ZDKFactory();
 		Messenger messenger = factory.getMessenger();
 		messenger.setPrintDebugMessages(true);
