@@ -137,7 +137,11 @@ public class ZMatrix {
 					if (DEBUG_INF) {
 						preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "] = " + v);
 					}
-					data[i][j] = Float.MAX_VALUE;
+					if (v==Float.POSITIVE_INFINITY) {
+						data[i][j] = Float.MAX_VALUE;
+					} else {
+						data[i][j] = Float.MIN_VALUE;
+					}
 				} else {
 					data[i][j] = v;
 				}
@@ -157,7 +161,11 @@ public class ZMatrix {
 					if (DEBUG_INF) {
 						preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "](scalar) " + p + " = " + v);
 					}
-					data[i][j] = Float.MAX_VALUE;
+					if (v==Float.POSITIVE_INFINITY) {
+						data[i][j] = Float.MAX_VALUE;
+					} else {
+						data[i][j] = Float.MIN_VALUE;
+					}
 				} else {
 					data[i][j] = v;
 				}
@@ -178,7 +186,11 @@ public class ZMatrix {
 						if (DEBUG_INF) {
 							preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "](element) " + p.data[i][j] + " = " + v);
 						}
-						data[i][j] = Float.MAX_VALUE;
+						if (v==Float.POSITIVE_INFINITY) {
+							data[i][j] = Float.MAX_VALUE;
+						} else {
+							data[i][j] = Float.MIN_VALUE;
+						}
 					} else {
 						data[i][j] = v;
 					}
@@ -204,7 +216,11 @@ public class ZMatrix {
 							if (DEBUG_INF) {
 								preventedInfinity(a.data[i][k] + " [" + function.getClass().getName() + "](static element) " + b.data[k][j] + " = " + add);
 							}
-							v = Float.MAX_VALUE;
+							if (add==Float.POSITIVE_INFINITY) {
+								v = Float.MAX_VALUE;
+							} else {
+								v = Float.MIN_VALUE;
+							}
 							break;
 						} else {
 							v = v + add;
@@ -212,7 +228,11 @@ public class ZMatrix {
 								if (DEBUG_INF) {
 									preventedInfinity(" ? [+](static element) " + add + " = " + v);
 								}
-								v = Float.MAX_VALUE;
+								if (v==Float.POSITIVE_INFINITY) {
+									v = Float.MAX_VALUE;
+								} else {
+									v = Float.MIN_VALUE;
+								}
 								break;
 							}
 						}
