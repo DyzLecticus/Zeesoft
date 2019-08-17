@@ -11,24 +11,24 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class Database extends Locker {
-	public static final String				STAT_OPEN		= "OPEN";
+	public static final String				STAT_OPEN			= "OPEN";
+	public static final String				STAT_STOPPING		= "STOPPING";
+	public static final String				STAT_CLOSED			= "CLOSED";
+	public static final String				STAT_STARTING		= "STARTING";
 	
-	private static final String				STAT_STOPPING	= "STOPPING";
-	private static final String				STAT_CLOSED		= "CLOSED";
-	private static final String				STAT_STARTING	= "STARTING";
+	private static final String				INDEX_DIR			= "ZODB/Index/";
+	private static final String				OBJECT_DIR			= "ZODB/Objects/";
 	
-	private static final String				INDEX_DIR		= "ZODB/Index/";
-	private static final String				OBJECT_DIR		= "ZODB/Objects/";
+	private DatabaseConfig					configuration		= null;
 	
-	private DatabaseConfig					configuration	= null;
+	private Index							index				= null;
+	private IndexFileWriterWorker			fileWriter			= null;
+	private IndexObjectWriterWorker			objectWriter		= null;
 	
-	private Index							index			= null;
-	private IndexFileWriterWorker			fileWriter		= null;
-	private IndexObjectWriterWorker			objectWriter	= null;
+	private List<DatabaseStateListener>		stateListeners		= new ArrayList<DatabaseStateListener>();
+	private List<DatabaseKeyChangeListener>	keyChangeListeners	= new ArrayList<DatabaseKeyChangeListener>();
 	
-	private List<DatabaseStateListener>		listeners		= new ArrayList<DatabaseStateListener>();
-	
-	private String							state			= STAT_CLOSED;
+	private String							state				= STAT_CLOSED;
 	
 	public Database(Messenger msgr, WorkerUnion uni) {
 		super(msgr);
@@ -36,7 +36,11 @@ public class Database extends Locker {
 	}
 	
 	public void addListener(DatabaseStateListener listener) {
-		listeners.add(listener);
+		stateListeners.add(listener);
+	}
+	
+	public void addKeyChangeListener(DatabaseKeyChangeListener listener) {
+		keyChangeListeners.add(listener);
 	}
 	
 	public DatabaseConfig getConfiguration() {
@@ -66,6 +70,9 @@ public class Database extends Locker {
 		}
 		unlockMe(this);
 		if (start) {
+			for (DatabaseStateListener listener: stateListeners) {
+				listener.databaseStateChanged(STAT_STARTING);
+			}
 			configuration.debug(this,"Starting database ...");
 			readConfig();
 			configuration.indexConfig.initialize();
@@ -92,6 +99,9 @@ public class Database extends Locker {
 		}
 		unlockMe(this);
 		if (stop) {
+			for (DatabaseStateListener listener: stateListeners) {
+				listener.databaseStateChanged(STAT_STOPPING);
+			}
 			index.setOpen(false);
 			configuration.debug(this,"Stopping database ...");
 			index.getObjectReader().stop();
@@ -105,6 +115,9 @@ public class Database extends Locker {
 			lockMe(this);
 			state = STAT_CLOSED;
 			unlockMe(this);
+			for (DatabaseStateListener listener: stateListeners) {
+				listener.databaseStateChanged(STAT_CLOSED);
+			}
 		}
 		return stop;
 	}
@@ -231,7 +244,7 @@ public class Database extends Locker {
 	}
 	
 	protected void setKey(StringBuilder key) {
-		for (DatabaseStateListener listener: listeners) {
+		for (DatabaseKeyChangeListener listener: keyChangeListeners) {
 			listener.keyChanged(key);
 		}
 	}
@@ -254,8 +267,10 @@ public class Database extends Locker {
 			state = STAT_OPEN;
 		}
 		unlockMe(this);
-		for (DatabaseStateListener listener: listeners) {
-			listener.stateChanged(this,open);
+		if (open) {
+			for (DatabaseStateListener listener: stateListeners) {
+				listener.databaseStateChanged(STAT_OPEN);
+			}
 		}
 	}
 	

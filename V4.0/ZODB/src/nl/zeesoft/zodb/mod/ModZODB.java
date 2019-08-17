@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.WhiteList;
 import nl.zeesoft.zodb.db.Database;
+import nl.zeesoft.zodb.db.DatabaseKeyChangeListener;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseRequestHandler;
 import nl.zeesoft.zodb.db.DatabaseResponse;
@@ -24,7 +25,7 @@ import nl.zeesoft.zodb.mod.handler.JsonZODBIndexConfigHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBStateHandler;
 
-public class ModZODB extends ModObject implements DatabaseStateListener {
+public class ModZODB extends ModObject implements DatabaseStateListener, DatabaseKeyChangeListener {
 	public static final String	NAME				= "ZODB";
 	public static final String	DESC				= "The Zeesoft Object Database provides a simple JSON API to store JSON objects.";
 	
@@ -49,6 +50,7 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 		desc.append(DESC);
 		database = getNewDatabase();
 		database.addListener(this);
+		database.addKeyChangeListener(this);
 	}
 	
 	@Override
@@ -154,8 +156,8 @@ public class ModZODB extends ModObject implements DatabaseStateListener {
 	}
 
 	@Override
-	public void stateChanged(Object source,boolean open) {
-		if (source instanceof Database && open) {
+	public void databaseStateChanged(String state) {
+		if (state.equals(Database.STAT_OPEN)) {
 			startTesters();
 		}
 	}
