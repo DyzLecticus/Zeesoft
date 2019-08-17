@@ -64,10 +64,10 @@ public class NeuralNet implements JsAble {
 	 */
 	public static int calculateSize(int inputNeurons,int hiddenLayers,int hiddenNeurons,int outputNeurons) {
 		return 
-			(inputNeurons + (inputNeurons * hiddenNeurons)) + 
+			(inputNeurons + ((inputNeurons + 1) * hiddenNeurons)) + 
 			(hiddenLayers * hiddenNeurons)  +
-			((hiddenLayers - 1) * hiddenNeurons * hiddenNeurons) +
-			(outputNeurons + (outputNeurons * hiddenNeurons))
+			((hiddenLayers - 1) * (hiddenNeurons + 1) * hiddenNeurons) +
+			(outputNeurons + (outputNeurons * (hiddenNeurons + 1)))
 			; 
 	}
 
