@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.genetic.EvolverUnit;
 import nl.zeesoft.zdk.neural.Prediction;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zenn.animal.AnimalConstants;
@@ -196,153 +197,163 @@ public class Simulator extends Locker {
 	}
 	
 	protected void setPredictionInputForAnimal(Animal ani,Prediction p) {
-		lockMe(this);
-		if (working && organismIsAliveNoLock(ani)) {
-			p.inputs[AnimalConstants.IN_RANDOM] = Math.round(ZRandomize.getRandomFloat(0,1));
-			for (int i = 0; i < 3; i++) {
-				//System.out.println("Animal: " + ani.name + " take a look, step " + (i + 1));
-				int posX = ani.posX;
-				int posY = ani.posY;
-				for (int d = 0; d <= 3; d++) {
-					if (ani.rotation==0) {
-						if (i==0) {
-							posX--;
-						} else if (i==1) {
-							posY++;
-						} else if (i==2) {
-							posX++;
-						}
-					} else if (ani.rotation==90) {
-						if (i==0) {
-							posY++;
-						} else if (i==1) {
-							posX++;
-						} else if (i==2) {
-							posY--;
-						}
-					} else if (ani.rotation==180) {
-						if (i==0) {
-							posX++;
-						} else if (i==1) {
-							posY--;
-						} else if (i==2) {
-							posX--;
-						}
-					} else if (ani.rotation==270) {
-						if (i==0) {
-							posY--;
-						} else if (i==1) {
-							posX--;
-						} else if (i==2) {
-							posY++;
-						}
-					}
-					float[] color = null;
-					if (posX<0||posX>=EnvironmentConfig.SIZE_X ||
-						posY<0||posX>=EnvironmentConfig.SIZE_Y
-						) {
-						color = AnimalConstants.COLOR_GREY;
-					} else {
-						Organism org = environmentState.getOrganismByPos(posX, posY);
-						if (org!=null && !organismIsAliveNoLock(org)) {
-							org = null;
-							color = AnimalConstants.COLOR_GREY;
-						}
-						if (org!=null) {
-							if (org instanceof Plant) {
-								color = AnimalConstants.COLOR_GREEN;
-							} else if (org instanceof Animal) {
-								Animal ani2 = (Animal) org;
-								if (ani2.herbivore) {
-									color = AnimalConstants.COLOR_BLUE;
-								} else {
-									color = AnimalConstants.COLOR_RED;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (working && organismIsAliveNoLock(ani)) {
+					p.inputs[AnimalConstants.IN_RANDOM] = Math.round(ZRandomize.getRandomFloat(0,1));
+					for (int i = 0; i < 3; i++) {
+						//System.out.println("Animal: " + ani.name + " take a look, step " + (i + 1));
+						int posX = ani.posX;
+						int posY = ani.posY;
+						for (int d = 0; d <= 3; d++) {
+							if (ani.rotation==0) {
+								if (i==0) {
+									posX--;
+								} else if (i==1) {
+									posY++;
+								} else if (i==2) {
+									posX++;
 								}
+							} else if (ani.rotation==90) {
+								if (i==0) {
+									posY++;
+								} else if (i==1) {
+									posX++;
+								} else if (i==2) {
+									posY--;
+								}
+							} else if (ani.rotation==180) {
+								if (i==0) {
+									posX++;
+								} else if (i==1) {
+									posY--;
+								} else if (i==2) {
+									posX--;
+								}
+							} else if (ani.rotation==270) {
+								if (i==0) {
+									posY--;
+								} else if (i==1) {
+									posX--;
+								} else if (i==2) {
+									posY++;
+								}
+							}
+							float[] color = null;
+							if (posX<0||posX>=EnvironmentConfig.SIZE_X ||
+								posY<0||posX>=EnvironmentConfig.SIZE_Y
+								) {
+								color = AnimalConstants.COLOR_GREY;
+							} else {
+								Organism org = environmentState.getOrganismByPos(posX, posY);
+								if (org!=null && !organismIsAliveNoLock(org)) {
+									org = null;
+									color = AnimalConstants.COLOR_GREY;
+								}
+								if (org!=null) {
+									if (org instanceof Plant) {
+										color = AnimalConstants.COLOR_GREEN;
+									} else if (org instanceof Animal) {
+										Animal ani2 = (Animal) org;
+										if (ani2.herbivore) {
+											color = AnimalConstants.COLOR_BLUE;
+										} else {
+											color = AnimalConstants.COLOR_RED;
+										}
+									}
+								}
+							}
+							if (color!=null) {
+								//System.out.println(i + " " + color[0] + " " +  + color[1] + " " + color[2]);
+								for (int c = 0; c < color.length; c++) {
+									p.inputs[1 + (i * 3) + c] = color[c] * AnimalConstants.INTENSITIES[d];
+								}
+								break;
 							}
 						}
 					}
-					if (color!=null) {
-						//System.out.println(i + " " + color[0] + " " +  + color[1] + " " + color[2]);
-						for (int c = 0; c < color.length; c++) {
-							p.inputs[1 + (i * 3) + c] = color[c] * AnimalConstants.INTENSITIES[d];
-						}
-						break;
-					}
+					ani.energy = ani.energy - environmentConfig.energyActionLook;
+					checkOrganismEnergyNoLock(ani);
+					//System.out.println("Animal: " + ani.name + " took a look: " + ani.energy);
 				}
+				return null;
 			}
-			ani.energy = ani.energy - environmentConfig.energyActionLook;
-			checkOrganismEnergyNoLock(ani);
-			//System.out.println("Animal: " + ani.name + " took a look: " + ani.energy);
-		}
-		unlockMe(this);
+		};
+		doLocked(this, code);
 	}
 	
 	protected void handlePredictionOutputForAnimal(Animal ani,Prediction p) {
-		lockMe(this);
-		if (working && organismIsAliveNoLock(ani)) {
-			for (int i = 0; i < p.outputs.length; i++) {
-				int rounded = Math.round(p.outputs[i]);
-				if (rounded==1) {
-					if (i==AnimalConstants.OUT_BACK_ACTUATOR) {
-						//System.out.println("Animal: " + ani.name + " take action: MOVE FORWARD " + ani.posX + "," + ani.posY);
-						int newX = ani.getForwardPosX();
-						int newY = ani.getForwardPosY();
-						if (newX>=0 && newX<EnvironmentConfig.SIZE_X &&
-							newY>=0 && newY<EnvironmentConfig.SIZE_Y
-							) {
-							Organism org = environmentState.getOrganismByPos(newX,newY);
-							//System.out.println("Animal: " + ani.name + " take action: MOVE FORWARD " + ani.posX + "," + ani.posY + " -> " + newX + "," + newY + "? org: " + org);
-							if (org==null) {
-								ani.posX = newX;
-								ani.posY = newY;
-							}
-						}
-						ani.energy = ani.energy - environmentConfig.energyActionMove;
-						checkOrganismEnergyNoLock(ani);
-						//System.out.println("Animal: " + ani.name + " took action: MOVE FORWARD " + ani.posX + "," + ani.posY);
-					} else if (i==AnimalConstants.OUT_LEFT_ACTUATOR) {
-						//System.out.println("Animal: " + ani.name + " take action: TURN RIGHT");
-						ani.rotation = (ani.rotation + 90) % 360;
-						ani.energy = ani.energy - environmentConfig.energyActionTurn;
-						checkOrganismEnergyNoLock(ani);
-					} else if (i==AnimalConstants.OUT_RIGHT_ACTUATOR) {
-						//System.out.println("Animal: " + ani.name + " take action: TURN LEFT");
-						if (ani.rotation==0) {
-							ani.rotation = 270;
-						} else {
-							ani.rotation = (ani.rotation - 90);
-						}
-						ani.energy = ani.energy - environmentConfig.energyActionTurn;
-						checkOrganismEnergyNoLock(ani);
-					} else if (i==AnimalConstants.OUT_FRONT_MOUTH) {
-						//System.out.println("Animal: " + ani.name + " take action: BITE");
-						Organism org = environmentState.getOrganismByPos(ani.getForwardPosX(),ani.getForwardPosY());
-						if (org!=null) {
-							int energy = 0;
-							if (ani.herbivore && org instanceof Plant) {
-								energy = environmentConfig.maxEnergyHerbivoreBite;
-							} else {
-								Animal ani2 = (Animal) org;
-								if (!ani.herbivore && ani2.herbivore) {
-									energy = environmentConfig.maxEnergyCarnivoreBite;
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (working && organismIsAliveNoLock(ani)) {
+					for (int i = 0; i < p.outputs.length; i++) {
+						int rounded = Math.round(p.outputs[i]);
+						if (rounded==1) {
+							if (i==AnimalConstants.OUT_BACK_ACTUATOR) {
+								//System.out.println("Animal: " + ani.name + " take action: MOVE FORWARD " + ani.posX + "," + ani.posY);
+								int newX = ani.getForwardPosX();
+								int newY = ani.getForwardPosY();
+								if (newX>=0 && newX<EnvironmentConfig.SIZE_X &&
+									newY>=0 && newY<EnvironmentConfig.SIZE_Y
+									) {
+									Organism org = environmentState.getOrganismByPos(newX,newY);
+									//System.out.println("Animal: " + ani.name + " take action: MOVE FORWARD " + ani.posX + "," + ani.posY + " -> " + newX + "," + newY + "? org: " + org);
+									if (org==null) {
+										ani.posX = newX;
+										ani.posY = newY;
+									}
 								}
+								ani.energy = ani.energy - environmentConfig.energyActionMove;
+								checkOrganismEnergyNoLock(ani);
+								//System.out.println("Animal: " + ani.name + " took action: MOVE FORWARD " + ani.posX + "," + ani.posY);
+							} else if (i==AnimalConstants.OUT_LEFT_ACTUATOR) {
+								//System.out.println("Animal: " + ani.name + " take action: TURN RIGHT");
+								ani.rotation = (ani.rotation + 90) % 360;
+								ani.energy = ani.energy - environmentConfig.energyActionTurn;
+								checkOrganismEnergyNoLock(ani);
+							} else if (i==AnimalConstants.OUT_RIGHT_ACTUATOR) {
+								//System.out.println("Animal: " + ani.name + " take action: TURN LEFT");
+								if (ani.rotation==0) {
+									ani.rotation = 270;
+								} else {
+									ani.rotation = (ani.rotation - 90);
+								}
+								ani.energy = ani.energy - environmentConfig.energyActionTurn;
+								checkOrganismEnergyNoLock(ani);
+							} else if (i==AnimalConstants.OUT_FRONT_MOUTH) {
+								//System.out.println("Animal: " + ani.name + " take action: BITE");
+								Organism org = environmentState.getOrganismByPos(ani.getForwardPosX(),ani.getForwardPosY());
+								if (org!=null) {
+									int energy = 0;
+									if (ani.herbivore && org instanceof Plant) {
+										energy = environmentConfig.maxEnergyHerbivoreBite;
+									} else if (!ani.herbivore && org instanceof Animal){
+										Animal ani2 = (Animal) org;
+										if (!ani.herbivore && ani2.herbivore) {
+											energy = environmentConfig.maxEnergyCarnivoreBite;
+										}
+									}
+									if (energy>0) {
+										org.energy = org.energy - energy;
+										checkOrganismEnergyNoLock(org);
+										ani.energy = ani.energy + energy;
+										ani.score = ani.score + 1;
+									}
+								}
+								ani.energy = ani.energy - environmentConfig.energyActionBite;
+								checkOrganismEnergyNoLock(ani);
 							}
-							if (energy>0) {
-								org.energy = org.energy - energy;
-								checkOrganismEnergyNoLock(org);
-								ani.energy = ani.energy + energy;
-								ani.score = ani.score + 1;
-							}
+							break;
 						}
-						ani.energy = ani.energy - environmentConfig.energyActionBite;
-						checkOrganismEnergyNoLock(ani);
 					}
-					break;
+					//System.out.println("Animal: " + ani.name + " took action: " + ani.energy);
 				}
+				return null;
 			}
-			//System.out.println("Animal: " + ani.name + " took action: " + ani.energy);
-		}
-		unlockMe(this);
+		};
+		doLocked(this, code);
 	}
 	
 	protected void checkOrganismEnergyNoLock(Organism org) {
