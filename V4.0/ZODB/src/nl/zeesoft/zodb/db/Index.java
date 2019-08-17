@@ -538,7 +538,6 @@ public class Index extends Locker {
 		}
 		return r;
 	}
-	
 
 	private void readObject(IndexElement element,int readTimeOutSeconds,List<ZStringBuilder> errors) {
 		List<IndexElement> elements = new ArrayList<IndexElement>();

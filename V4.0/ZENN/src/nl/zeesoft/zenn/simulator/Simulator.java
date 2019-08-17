@@ -17,6 +17,7 @@ import nl.zeesoft.zodb.Config;
 public class Simulator extends Locker {
 	private WorkerUnion					union				= null;
 	private EnvironmentInitializer		envInitializer		= null;
+	private SimulatorAnimalInitializer	simAniInitializer	= null;
 	private HerbivoreEvolver			herbEvolver			= null;
 	private CarnivoreEvolver			carnEvolver			= null;
 	private SimulatorWorker				worker				= null;
@@ -30,10 +31,11 @@ public class Simulator extends Locker {
 	private long						energyUpdated		= 0;
 	private long						stateUpdated		= 0;
 	
-	public Simulator(Config config,EnvironmentInitializer envInit,HerbivoreEvolver herbEvo,CarnivoreEvolver carnEvo) {
+	public Simulator(Config config,EnvironmentInitializer envInit,SimulatorAnimalInitializer simAniInit,HerbivoreEvolver herbEvo,CarnivoreEvolver carnEvo) {
 		super(config.getMessenger());
 		union = config.getUnion();
 		envInitializer = envInit;
+		simAniInitializer = simAniInit;
 		herbEvolver = herbEvo;
 		carnEvolver = carnEvo;
 		worker = new SimulatorWorker(config.getMessenger(),config.getUnion(),this);
@@ -126,23 +128,31 @@ public class Simulator extends Locker {
 	
 	protected void simulateNextState() {
 		lockMe(this);
-		List<Animal> animals = environmentState.getAnimals();
+		List<Animal> animals = null;
+		boolean simulate = environmentState!=null;
+		if (simulate) {
+			animals = environmentState.getAnimals();
+		}
 		unlockMe(this);
-		if (environmentState!=null) {
+		if (simulate) {
 			for (Animal ani: animals) {
 				SimulatorAnimalWorker animalWorker = getAnimalWorkerByAnimalName(ani.name);
 				if (animalWorker!=null && !animalWorker.hasSimulatorAnimal()) {
 					EvolverUnit bestSoFar = null;
 					if (ani.herbivore) {
 						bestSoFar = herbEvolver.getBestSoFar();
-					} else if (ani.herbivore) {
+					} else {
 						bestSoFar = carnEvolver.getBestSoFar();
 					}
 					if (bestSoFar!=null) {
-						SimulatorAnimal simAni = new SimulatorAnimal();
-						simAni.name = ani.name;
-						simAni.code = bestSoFar.code;
-						simAni.neuralNet = bestSoFar.neuralNet;
+						SimulatorAnimal simAni = simAniInitializer.getSimulatorAnimalByName(ani.name);
+						if (simAni==null) {
+							simAni = new SimulatorAnimal();
+							simAni.name = ani.name;
+							simAni.code = bestSoFar.code;
+							simAni.neuralNet = bestSoFar.neuralNet;
+							simAniInitializer.addNewObject(simAni);
+						}
 						animalWorker.setSimulatorAnimal(simAni);
 					}
 				}

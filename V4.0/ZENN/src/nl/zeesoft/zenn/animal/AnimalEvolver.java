@@ -75,7 +75,7 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
 			request.name = new ZStringBuilder("ZENN/Evolvers/" + getObjectName());
 			request.encoding = DatabaseRequest.ENC_KEY;
-			configuration.handleDatabaseRequest(request,this,3);
+			configuration.handleDatabaseRequest(request,this,10);
 		}
 	}
 	

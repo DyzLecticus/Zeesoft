@@ -5,6 +5,7 @@ import nl.zeesoft.zenn.animal.HerbivoreEvolver;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNIndexHandler;
 import nl.zeesoft.zenn.simulator.EnvironmentInitializer;
 import nl.zeesoft.zenn.simulator.Simulator;
+import nl.zeesoft.zenn.simulator.SimulatorAnimalInitializer;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.StateListener;
 import nl.zeesoft.zodb.db.Database;
@@ -13,16 +14,17 @@ import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
 
 public class ModZENN extends ModObject implements StateListener, DatabaseStateListener {
-	public static final String		NAME						= "ZENN";
-	public static final String		DESC						= 
+	public static final String			NAME						= "ZENN";
+	public static final String			DESC						= 
 		"Zeesoft Evolutionary Neural Networks provides an interface to manage artificial life.";
 
-	private EnvironmentInitializer	environmentInitializer		= null;
+	private EnvironmentInitializer		environmentInitializer		= null;
+	private SimulatorAnimalInitializer	simulatorAnimalInitializer	= null;
 	
-	private HerbivoreEvolver		herbivoreEvolver			= null;
-	private CarnivoreEvolver		carnivoreEvolver			= null;
+	private HerbivoreEvolver			herbivoreEvolver			= null;
+	private CarnivoreEvolver			carnivoreEvolver			= null;
 	
-	private Simulator				simulator					= null;
+	private Simulator					simulator					= null;
 	
 	public ModZENN(Config config) {
 		super(config);
@@ -30,16 +32,17 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		desc.append(DESC);
 		environmentInitializer = new EnvironmentInitializer(config);
 		environmentInitializer.addListener(this);
+		simulatorAnimalInitializer = new SimulatorAnimalInitializer(config);
+		simulatorAnimalInitializer.addListener(this);
 		herbivoreEvolver = new HerbivoreEvolver(config);
 		carnivoreEvolver = new CarnivoreEvolver(config);
-		simulator = new Simulator(config,environmentInitializer,herbivoreEvolver,carnivoreEvolver);
+		simulator = new Simulator(config,environmentInitializer,simulatorAnimalInitializer,herbivoreEvolver,carnivoreEvolver);
 		config.getZODB().getDatabase().addListener(this);
 	}
 	
 	@Override
 	public void install() {
-		EnvironmentInitializer envInit = new EnvironmentInitializer(configuration);
-		envInit.install();
+		environmentInitializer.install();
 	}
 	
 	@Override
@@ -48,6 +51,7 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		super.initialize();
 		environmentInitializer.initialize();
+		simulatorAnimalInitializer.initialize();
 		herbivoreEvolver.setDebug(configuration.isDebug());
 		carnivoreEvolver.setDebug(configuration.isDebug());
 	}
@@ -94,7 +98,13 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 			}
 		} else if (source instanceof EnvironmentInitializer && open) {
 			simulator.setEnvironment(environmentInitializer.getEnvironmentConfig(),environmentInitializer.getEnvironmentState());
-			simulator.start();
+			if (simulatorAnimalInitializer.isInitialized()) {
+				simulator.start();
+			}
+		} else if (source instanceof SimulatorAnimalInitializer && open) {
+			if (environmentInitializer.isInitialized()) {
+				simulator.start();
+			}
 		}
 	}
 

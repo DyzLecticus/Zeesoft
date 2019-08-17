@@ -69,7 +69,11 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 			}
 		};
 		int size = (Integer) doLocked(this,code);
-		configuration.debug(this,"Install: " + size);
+		if (size>0) {
+			configuration.debug(this,"Install: " + size);
+		} else {
+			stateChanged(true);
+		}
 	}
 	
 	public void initialize() {
@@ -132,7 +136,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		unlockMe(this);
 	}
 	
-	public void updateObjectsNoLock() {
+	public void updateObjects() {
 		lockMe(this);
 		for (Persistable object: objects) {
 			updateObjectNoLock(object);
@@ -140,9 +144,18 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		unlockMe(this);
 	}
 	
-	public void updateObjectNoLock(ZStringBuilder name) {
+	public void updateObject(ZStringBuilder name) {
 		lockMe(this);
 		updateObjectNoLock(getObjectByNameNoLock(name));
+		unlockMe(this);
+	}
+	
+	public void addNewObject(Persistable object) {
+		lockMe(this);
+		if (initialized && object!=null && !objects.contains(object)) {
+			objects.add(object);
+			addObjectToDatabaseNoLock(object);
+		}
 		unlockMe(this);
 	}
 
@@ -156,7 +169,9 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 			if (response.error.length()>0) {
 				if (res.request.type.equals(DatabaseRequest.TYPE_GET) || res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 					lockMe(this);
-					todo--;
+					if (initializing) {
+						todo--;
+					}
 					unlockMe(this);
 				}
 			} else {
@@ -198,13 +213,17 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 						}
 					}
 					unlockMe(this);
-					loadedObject(object);
+					if (object!=null) {
+						loadedObject(object);
+					}
 				} else if (res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 					lockMe(this);
-					todo--;
-					for (DatabaseResult result: res.results) {
-						ZStringBuilder objectName = result.name.substring(namePrefix.length());
-						objectIdMap.put(objectName,result.id);
+					if (initializing) {
+						todo--;
+						for (DatabaseResult result: res.results) {
+							ZStringBuilder objectName = result.name.substring(namePrefix.length());
+							objectIdMap.put(objectName,result.id);
+						}
 					}
 					unlockMe(this);
 				}
@@ -212,7 +231,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 			if (res.request.type.equals(DatabaseRequest.TYPE_GET) || res.request.type.equals(DatabaseRequest.TYPE_ADD)) {
 				boolean open = false;
 				lockMe(this);
-				if (todo==0) {
+				if (initializing && todo==0) {
 					open = true;
 				}
 				unlockMe(this);
@@ -234,7 +253,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	protected void setMaxObjectsNoLock(int max) {
 		maxObjects = max;
 	}
-	
+
 	protected void addObjectNoLock(Persistable object) {
 		if (object!=null) {
 			objects.add(object);
@@ -278,14 +297,18 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	private void addObjectsToDatabaseNoLock() {
 		todo = objects.size();
 		for (Persistable object: objects) {
-			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-			request.name = getFullObjectName(object.getObjectName());
-			request.encoding = DatabaseRequest.ENC_KEY;
-			ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
-			encoder.encodeKey(configuration.getZODBKey(),0);
-			request.encoded = encoder;
-			configuration.handleDatabaseRequest(request,this);
+			addObjectToDatabaseNoLock(object);
 		}
+	}
+	
+	private void addObjectToDatabaseNoLock(Persistable object) {
+		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
+		request.name = getFullObjectName(object.getObjectName());
+		request.encoding = DatabaseRequest.ENC_KEY;
+		ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
+		encoder.encodeKey(configuration.getZODBKey(),0);
+		request.encoded = encoder;
+		configuration.handleDatabaseRequest(request,this);
 	}
 
 	private void listObjectsInDatabaseNoLock() {

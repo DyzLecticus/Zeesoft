@@ -252,6 +252,7 @@ public class Config implements JsAble {
 		JsAbleClient client = new JsAbleClient(getMessenger(),getUnion());
 		client.addJsClientListener(listener);
 		DatabaseResponse response = new DatabaseResponse();
+		request.readTimeOutSeconds = timeoutSeconds;
 		response.request = request;
 		client.handleRequest(request,getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH,response,timeoutSeconds);
 	}
