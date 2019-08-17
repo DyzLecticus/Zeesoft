@@ -25,22 +25,13 @@ public class HtmlZENNIndex extends HtmlResource {
 		html.append("<tbody>\n");
 			html.append("<tr>\n");
 			html.append("<td width=\"20%\">");
-			html.append("<a href=\"" + url + "/stateManager.html\">State manager</a>");
+			html.append("<a href=\"" + url + "/environment.html\">Environment</a>");
 			html.append("</td>\n");
 			html.append("<td>");
-			html.append("Manage the state of the confabulator set.");
+			html.append("Monitor the environment.");
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
-			html.append("<tr>\n");
-			html.append("<td>");
-			html.append("<a href=\"" + url + "/state.json\">State JSON</a>");
-			html.append("</td>\n");
-			html.append("<td>");
-			html.append("Returns the confabulator set state as a JSON file.");
-			html.append("</td>\n");
-			html.append("</tr>\n");
-		
 			if (getConfiguration().getModule(ModZENN.NAME).selfTest) {
 				html.append("<tr>\n");
 				html.append("<td>");

@@ -2,6 +2,8 @@ package nl.zeesoft.zenn.mod;
 
 import nl.zeesoft.zenn.animal.CarnivoreEvolver;
 import nl.zeesoft.zenn.animal.HerbivoreEvolver;
+import nl.zeesoft.zenn.mod.handler.CssZENNHandler;
+import nl.zeesoft.zenn.mod.handler.HtmlZENNEnvironmentHandler;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNIndexHandler;
 import nl.zeesoft.zenn.simulator.EnvironmentInitializer;
 import nl.zeesoft.zenn.simulator.Simulator;
@@ -47,7 +49,9 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 	
 	@Override
 	public void initialize() {
+		handlers.add(new CssZENNHandler(configuration,this));
 		handlers.add(new HtmlZENNIndexHandler(configuration,this));
+		handlers.add(new HtmlZENNEnvironmentHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		super.initialize();
 		environmentInitializer.initialize();

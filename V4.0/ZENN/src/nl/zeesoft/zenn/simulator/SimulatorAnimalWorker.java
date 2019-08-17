@@ -59,7 +59,7 @@ public class SimulatorAnimalWorker extends Worker {
 	protected void whileWorking() {
 		SimulatorAnimal simAni = null;
 		lockMe(this);
-		if (simAnimal!=null && simulator.animalIsAlive(animal)) {
+		if (simAnimal!=null) {
 			simAni = simAnimal;
 		}
 		unlockMe(this);

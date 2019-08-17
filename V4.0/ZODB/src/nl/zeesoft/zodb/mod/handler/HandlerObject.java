@@ -28,6 +28,11 @@ public abstract class HandlerObject {
 		this.configuration = config;
 		this.module = mod;
 		this.path = path;
+		if (path.endsWith(".js")) {
+			contentType = "application/javascript";
+		} else if (path.endsWith(".css")) {
+			contentType = "text/css";
+		}
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {

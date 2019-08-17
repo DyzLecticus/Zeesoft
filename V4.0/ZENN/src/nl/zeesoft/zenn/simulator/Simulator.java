@@ -195,17 +195,9 @@ public class Simulator extends Locker {
 		}
 	}
 	
-	protected boolean animalIsAlive(Animal ani) {
-		boolean r = true;
-		lockMe(this);
-		r = organismIsAliveNoLock(ani);
-		unlockMe(this);
-		return r;
-	}
-	
 	protected void setPredictionInputForAnimal(Animal ani,Prediction p) {
 		lockMe(this);
-		if (working) {
+		if (working && organismIsAliveNoLock(ani)) {
 			p.inputs[AnimalConstants.IN_RANDOM] = Math.round(ZRandomize.getRandomFloat(0,1));
 			for (int i = 0; i < 3; i++) {
 				//System.out.println("Animal: " + ani.name + " take a look, step " + (i + 1));
@@ -272,7 +264,7 @@ public class Simulator extends Locker {
 					if (color!=null) {
 						//System.out.println(i + " " + color[0] + " " +  + color[1] + " " + color[2]);
 						for (int c = 0; c < color.length; c++) {
-							p.inputs[1 + (i * 3)] = color[c] * AnimalConstants.INTENSITIES[d];
+							p.inputs[1 + (i * 3) + c] = color[c] * AnimalConstants.INTENSITIES[d];
 						}
 						break;
 					}
@@ -287,7 +279,7 @@ public class Simulator extends Locker {
 	
 	protected void handlePredictionOutputForAnimal(Animal ani,Prediction p) {
 		lockMe(this);
-		if (working) {
+		if (working && organismIsAliveNoLock(ani)) {
 			for (int i = 0; i < p.outputs.length; i++) {
 				int rounded = Math.round(p.outputs[i]);
 				if (rounded==1) {
@@ -309,12 +301,12 @@ public class Simulator extends Locker {
 						checkOrganismEnergyNoLock(ani);
 						//System.out.println("Animal: " + ani.name + " took action: MOVE FORWARD " + ani.posX + "," + ani.posY);
 					} else if (i==AnimalConstants.OUT_LEFT_ACTUATOR) {
-						System.out.println("Animal: " + ani.name + " take action: TURN RIGHT");
+						//System.out.println("Animal: " + ani.name + " take action: TURN RIGHT");
 						ani.rotation = (ani.rotation + 90) % 360;
 						ani.energy = ani.energy - environmentConfig.energyActionTurn;
 						checkOrganismEnergyNoLock(ani);
 					} else if (i==AnimalConstants.OUT_RIGHT_ACTUATOR) {
-						System.out.println("Animal: " + ani.name + " take action: TURN LEFT");
+						//System.out.println("Animal: " + ani.name + " take action: TURN LEFT");
 						if (ani.rotation==0) {
 							ani.rotation = 270;
 						} else {
@@ -323,7 +315,7 @@ public class Simulator extends Locker {
 						ani.energy = ani.energy - environmentConfig.energyActionTurn;
 						checkOrganismEnergyNoLock(ani);
 					} else if (i==AnimalConstants.OUT_FRONT_MOUTH) {
-						System.out.println("Animal: " + ani.name + " take action: BITE");
+						//System.out.println("Animal: " + ani.name + " take action: BITE");
 						Organism org = environmentState.getOrganismByPos(ani.getForwardPosX(),ani.getForwardPosY());
 						if (org!=null) {
 							int energy = 0;
