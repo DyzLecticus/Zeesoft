@@ -70,33 +70,7 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 
 	@Override
 	public void stateChanged(Object source, boolean open) {
-		if (source instanceof Database) {
-			if (open) {
-				herbivoreEvolver.load();
-				carnivoreEvolver.load();
-				environmentInitializer.reinitialize();
-			} else {
-				boolean waitHerb = false;
-				boolean waitCarn = false;
-				if (herbivoreEvolver.isWorking()) {
-					herbivoreEvolver.stop();
-					waitHerb = true;
-				}
-				if (carnivoreEvolver.isWorking()) {
-					carnivoreEvolver.stop();
-					waitCarn = true;
-				}
-				if (waitHerb) {
-					herbivoreEvolver.whileStopping();
-				}
-				if (waitCarn) {
-					carnivoreEvolver.whileStopping();
-				}
-				if (simulator.isWorking()) {
-					simulator.stop();
-				}
-			}
-		} else if (source instanceof EnvironmentInitializer && open) {
+		if (source instanceof EnvironmentInitializer && open) {
 			simulator.setEnvironment(environmentInitializer.getEnvironmentConfig(),environmentInitializer.getEnvironmentState());
 			if (simulatorAnimalInitializer.isInitialized()) {
 				simulator.start();
@@ -109,7 +83,31 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 	}
 
 	@Override
-	public void keyChanged(StringBuilder newKey) {
-		// Ignore
+	public void databaseStateChanged(String state) {
+		if (state.equals(Database.STAT_OPEN)) {
+			herbivoreEvolver.load();
+			carnivoreEvolver.load();
+			environmentInitializer.reinitialize();
+		} else if (state.equals(Database.STAT_STOPPING)) {
+			boolean waitHerb = false;
+			boolean waitCarn = false;
+			if (herbivoreEvolver.isWorking()) {
+				herbivoreEvolver.stop();
+				waitHerb = true;
+			}
+			if (carnivoreEvolver.isWorking()) {
+				carnivoreEvolver.stop();
+				waitCarn = true;
+			}
+			if (waitHerb) {
+				herbivoreEvolver.whileStopping();
+			}
+			if (waitCarn) {
+				carnivoreEvolver.whileStopping();
+			}
+			if (simulator.isWorking()) {
+				simulator.stop();
+			}
+		}
 	}
 }

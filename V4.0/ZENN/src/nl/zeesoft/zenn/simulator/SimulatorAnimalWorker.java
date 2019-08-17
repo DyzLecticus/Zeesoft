@@ -48,6 +48,9 @@ public class SimulatorAnimalWorker extends Worker {
 	@Override
 	public void stop() {
 		super.stop();
+	}
+	
+	public void waitForStopAndDestroy() {
 		waitForStop(10,false);
 		destroy();
 	}
