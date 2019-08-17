@@ -46,7 +46,13 @@ public class JsElem {
 		this.value = value;
 		this.cData = cData;
 	}
-
+	
+	public JsElem(String name,float[] array) {
+		this.name = name;
+		this.value = arrayToValue(array);
+		this.cData = true;
+	}
+	
 	public JsElem(String name,boolean array) {
 		this.name = name;
 		this.array = true;
@@ -144,6 +150,15 @@ public class JsElem {
 		return r;
 	}
 
+	public float[] getChildFloatArray(String name,float[] def) {
+		float r[] = def;
+		ZStringBuilder v = getChildValueByName(name);
+		if (v!=null) {
+			r = valueToFloatArray(v);
+		}
+		return r;
+	}
+	
 	public ZStringBuilder getChildZStringBuilder(String name) {
 		return getChildZStringBuilder(name,new ZStringBuilder());
 	}
@@ -174,5 +189,32 @@ public class JsElem {
 
 	public int getChildInt(String name) {
 		return getChildInt(name,0);
+	}
+	
+	public float[] getChildFloatArray(String name) {
+		return getChildFloatArray(name,new float[0]);
+	}
+	
+	public static ZStringBuilder arrayToValue(float[] a) {
+		ZStringBuilder r = new ZStringBuilder();
+		for (int i = 0; i < a.length; i++) {
+			if (r.length()>0) {
+				r.append(",");
+			}
+			r.append("" + a[i]);
+		}
+		return r;
+	}
+	
+	public static float[] valueToFloatArray(ZStringBuilder value) {
+		float[] r = null;
+		List<ZStringBuilder> vals = value.split(",");
+		r = new float[vals.size()];
+		int i = 0;
+		for (ZStringBuilder v: vals) {
+			r[i] = Float.parseFloat(v.toString());
+			i++;
+		}
+		return r;
 	}
 }

@@ -34,25 +34,30 @@ public class StaticFunctions {
 	
 	public static ZLossFunction[]			LOSS_FUNCTIONS		= {MEAN_ABSOLUTE_ERROR,MEAN_SQUARED_ERROR};
 	
+	// Weight functions
+	public static ZWeightDefault			WEIGHT_DEFAULT		= new ZWeightDefault();
+	public static ZWeightZero				WEIGHT_ZERO			= new ZWeightZero();
+	
+	public static ZWeightFunction[]			WEIGHT_FUNCTIONS	= {WEIGHT_DEFAULT,WEIGHT_ZERO};
+	
 	public static ZActivator getActivatorByClassName(String name) {
-		ZActivator r = null;
-		if (name.length()>0) {
-			for (int i = 0; i < OUTPUT_ACTIVATORS.length; i++) {
-				if (OUTPUT_ACTIVATORS[i].getClass().getName().equals(name)) {
-					r = OUTPUT_ACTIVATORS[i];
-					break;
-				}
-			}
-		}
-		return r;
+		return (ZActivator) getObjectFromArrayByClassName(OUTPUT_ACTIVATORS,name);
 	}
 	
 	public static ZLossFunction getLossFunctionByClassName(String name) {
-		ZLossFunction r = null;
+		return (ZLossFunction) getObjectFromArrayByClassName(LOSS_FUNCTIONS,name);
+	}
+	
+	public static ZWeightFunction getWeightFunctionByClassName(String name) {
+		return (ZWeightFunction) getObjectFromArrayByClassName(WEIGHT_FUNCTIONS,name);
+	}
+
+	private static Object getObjectFromArrayByClassName(Object[] objects, String name) {
+		Object r = null;
 		if (name.length()>0) {
-			for (int i = 0; i < LOSS_FUNCTIONS.length; i++) {
-				if (LOSS_FUNCTIONS[i].getClass().getName().equals(name)) {
-					r = LOSS_FUNCTIONS[i];
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i].getClass().getName().equals(name)) {
+					r = objects[i];
 					break;
 				}
 			}

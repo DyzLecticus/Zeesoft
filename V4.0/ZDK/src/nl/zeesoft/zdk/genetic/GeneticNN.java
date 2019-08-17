@@ -107,6 +107,7 @@ public class GeneticNN {
 				break;
 			}
 		}
+		r.applyWeightFunctions();
 		
 		return r;
 	}

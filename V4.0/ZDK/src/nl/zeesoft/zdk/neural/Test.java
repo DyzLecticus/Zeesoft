@@ -27,20 +27,20 @@ public class Test extends Prediction implements JsAble {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		json.rootElement.children.add(toJsElem("inputs",inputs));
-		json.rootElement.children.add(toJsElem("outputs",outputs));
-		json.rootElement.children.add(toJsElem("expectations",expectations));
-		json.rootElement.children.add(toJsElem("errors",errors));
+		json.rootElement.children.add(new JsElem("inputs",inputs));
+		json.rootElement.children.add(new JsElem("outputs",outputs));
+		json.rootElement.children.add(new JsElem("expectations",expectations));
+		json.rootElement.children.add(new JsElem("errors",errors));
 		return json;
 	}
 
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
-			inputs = fromJsElem("inputs",json.rootElement);
-			outputs = fromJsElem("outputs",json.rootElement);
-			expectations = fromJsElem("expectations",json.rootElement);
-			errors = fromJsElem("errors",json.rootElement);
+			inputs = json.rootElement.getChildFloatArray("inputs",inputs);
+			outputs = json.rootElement.getChildFloatArray("outputs",outputs);
+			expectations = json.rootElement.getChildFloatArray("expectations",expectations);
+			errors = json.rootElement.getChildFloatArray("errors",errors);
 		}
 	}
 	
@@ -84,27 +84,5 @@ public class Test extends Prediction implements JsAble {
 		initializeValues(expectations);
 		errors = new float[outputNeurons];
 		initializeValues(errors);
-	}
-	
-	protected JsElem toJsElem(String name,float[] values) {
-		JsElem r = new JsElem(name,true);
-		for (int i = 0; i< values.length; i++) {
-			r.children.add(new JsElem(null,"" + values[i]));
-		}
-		return r;
-	}
-	
-	protected float[] fromJsElem(String name,JsElem parent) {
-		float[] r = null;
-		JsElem elem = parent.getChildByName(name);
-		if (elem!=null) {
-			r = new float[elem.children.size()];
-			int i = 0;
-			for (JsElem v: elem.children) {
-				r[i] = Float.parseFloat(v.value.toString());
-				i++;
-			}
-		}
-		return r;
 	}
 }

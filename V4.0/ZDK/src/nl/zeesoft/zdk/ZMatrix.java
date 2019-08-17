@@ -152,23 +152,7 @@ public class ZMatrix {
 	public void applyFunction(ZParamFunction function,float p) {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				float v = function.applyFunction(data[i][j],p);
-				if (Float.isNaN(v)) {
-					if (DEBUG_NAN) {
-						preventedNaN(data[i][j] + " [" + function.getClass().getName() + "](scalar) " + p + " = " + v);
-					}
-				} else if (Float.isInfinite(v)) {
-					if (DEBUG_INF) {
-						preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "](scalar) " + p + " = " + v);
-					}
-					if (v==Float.POSITIVE_INFINITY) {
-						data[i][j] = Float.MAX_VALUE;
-					} else {
-						data[i][j] = Float.MIN_VALUE;
-					}
-				} else {
-					data[i][j] = v;
-				}
+				data[i][j] = getParamFunctionResultSafe(function,data[i][j],p,"scalar");
 			}
 		}
 	}
@@ -177,23 +161,7 @@ public class ZMatrix {
 		if (p.rows==rows && p.cols==cols) {
 			for (int i = 0; i < rows; i++) {
 				for (int j = 0; j < cols; j++) {
-					float v = function.applyFunction(data[i][j],p.data[i][j]);
-					if (Float.isNaN(v)) {
-						if (DEBUG_NAN) {
-							preventedNaN(data[i][j] + " [" + function.getClass().getName() + "](element) " + p.data[i][j] + " = " + v);
-						}
-					} else if (Float.isInfinite(v)) {
-						if (DEBUG_INF) {
-							preventedInfinity(data[i][j] + " [" + function.getClass().getName() + "](element) " + p.data[i][j] + " = " + v);
-						}
-						if (v==Float.POSITIVE_INFINITY) {
-							data[i][j] = Float.MAX_VALUE;
-						} else {
-							data[i][j] = Float.MIN_VALUE;
-						}
-					} else {
-						data[i][j] = v;
-					}
+					data[i][j] = getParamFunctionResultSafe(function,data[i][j],p.data[i][j],"element");
 				}
 			}
 		}
@@ -247,7 +215,7 @@ public class ZMatrix {
 	public float getColunValues(int col,ZParamFunction function) {
 		float r = 0;
 		for (int i = 0; i < rows; i++) {
-			r = function.applyFunction(r,data[i][col]);
+			r = getParamFunctionResultSafe(function,r,data[i][col],"column");
 		}
 		return r;
 	}
@@ -400,6 +368,28 @@ public class ZMatrix {
 					r.append(dfn.format(data[i][j]));
 				}
 			}
+		}
+		return r;
+	}
+	
+	protected float getParamFunctionResultSafe(ZParamFunction function,float x,float y,String type) {
+		float r = x;
+		float v = function.applyFunction(x,y);
+		if (Float.isNaN(v)) {
+			if (DEBUG_NAN) {
+				preventedNaN(x + " [" + function.getClass().getName() + "](" + type + ") " + y + " = " + v);
+			}
+		} else if (Float.isInfinite(v)) {
+			if (DEBUG_INF) {
+				preventedInfinity(x + " [" + function.getClass().getName() + "](" + type + ") " + y + " = " + v);
+			}
+			if (v==Float.POSITIVE_INFINITY) {
+				r = Float.MAX_VALUE;
+			} else {
+				r = Float.MIN_VALUE;
+			}
+		} else {
+			r = v;
 		}
 		return r;
 	}

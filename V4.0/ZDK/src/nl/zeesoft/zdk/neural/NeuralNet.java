@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.neural;
 import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZActivator;
+import nl.zeesoft.zdk.functions.ZWeightFunction;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -19,7 +20,10 @@ public class NeuralNet implements JsAble {
 	public int					hiddenLayers	= 1;
 	public int					hiddenNeurons	= 1;
 	public int					outputNeurons	= 1;
-	
+
+	public ZWeightFunction		weightFunction	= StaticFunctions.WEIGHT_DEFAULT;
+	public ZWeightFunction		biasFunction	= StaticFunctions.WEIGHT_ZERO;
+
 	public ZActivator			activator		= StaticFunctions.LEAKY_RELU;
 	public ZActivator			outputActivator	= null;
 	public float				learningRate	= 0.1F;
@@ -76,6 +80,23 @@ public class NeuralNet implements JsAble {
 			layerBiases[i].randomize();;
 		}
 	}
+	
+	/**
+	 * Applies the weight and bias functions
+	 */
+	public void applyWeightFunctions() {
+		int inputs = inputNeurons;
+		int outputs = hiddenNeurons;
+		for (int i = 1; i < layerValues.length; i++) {
+			outputs = layerValues[i].rows;
+			float param = weightFunction.getParameterValue(inputs,outputs);
+			layerWeights[i].applyFunction(weightFunction,param);
+			param = biasFunction.getParameterValue(inputs,outputs);
+			layerBiases[i].applyFunction(biasFunction,param);
+			inputs = layerValues[i].rows;
+		}
+	}
+	
 	
 	/**
 	 * Returns a new prediction with the input and output arrays initialized for this neural network.
@@ -175,6 +196,8 @@ public class NeuralNet implements JsAble {
 		json.rootElement.children.add(new JsElem("hiddenLayers","" + hiddenLayers));
 		json.rootElement.children.add(new JsElem("hiddenNeurons","" + hiddenNeurons));
 		json.rootElement.children.add(new JsElem("outputNeurons","" + outputNeurons));
+		json.rootElement.children.add(new JsElem("weightFunction",weightFunction.getClass().getName(),true));
+		json.rootElement.children.add(new JsElem("biasFunction",biasFunction.getClass().getName(),true));
 		json.rootElement.children.add(new JsElem("activator",activator.getClass().getName(),true));
 		String outAct = "";
 		if (outputActivator!=null) {
@@ -211,6 +234,9 @@ public class NeuralNet implements JsAble {
 			int hiddenNeurons = json.rootElement.getChildInt("hiddenNeurons",this.hiddenNeurons);
 			int outputNeurons = json.rootElement.getChildInt("outputNeurons",this.outputNeurons);
 			initialize(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
+
+			weightFunction = StaticFunctions.getWeightFunctionByClassName(json.rootElement.getChildString("weightFunction"));
+			biasFunction = StaticFunctions.getWeightFunctionByClassName(json.rootElement.getChildString("biasFunction"));
 
 			activator = StaticFunctions.getActivatorByClassName(json.rootElement.getChildString("activator"));
 			outputActivator = StaticFunctions.getActivatorByClassName(json.rootElement.getChildString("outputActivator"));

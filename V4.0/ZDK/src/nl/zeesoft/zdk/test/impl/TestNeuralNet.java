@@ -30,6 +30,9 @@ public class TestNeuralNet extends TestObject {
 		System.out.println("~~~~");
 		System.out.println("// Create the neural net");
 		System.out.println("NeuralNet nn = new NeuralNet(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);");
+		System.out.println("// Initialize the weights");
+		System.out.println("nn.randomizeWeightsAndBiases();");
+		System.out.println("nn.applyWeightFunctions();");
 		System.out.println("// Get a new prediction");
 		System.out.println("Prediction p = nn.getNewPrediction();");
 		System.out.println("// Set the prediction inputs (0.0 - 1.0)");
@@ -84,7 +87,8 @@ public class TestNeuralNet extends TestObject {
 		} else {
 			// XOR NN
 			NeuralNet nn = new NeuralNet(2,1,2,1);
-			nn.randomizeWeightsAndBiases();		
+			nn.randomizeWeightsAndBiases();
+			nn.applyWeightFunctions();
 			testXORNeuralNet(nn,false);
 	
 			System.out.println("================================================================================");
