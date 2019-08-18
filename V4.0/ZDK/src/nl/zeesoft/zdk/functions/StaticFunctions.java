@@ -36,9 +36,12 @@ public class StaticFunctions {
 	
 	// Weight functions
 	public static ZWeightDefault			WEIGHT_DEFAULT		= new ZWeightDefault();
+	public static ZWeightKaiming			WEIGHT_KAIMING		= new ZWeightKaiming();
+	public static ZWeightXavier				WEIGHT_XAVIER		= new ZWeightXavier();
 	public static ZWeightZero				WEIGHT_ZERO			= new ZWeightZero();
 	
-	public static ZWeightFunction[]			WEIGHT_FUNCTIONS	= {WEIGHT_DEFAULT,WEIGHT_ZERO};
+	public static ZWeightFunction[]			WEIGHT_FUNCTIONS	= {WEIGHT_DEFAULT,WEIGHT_KAIMING,WEIGHT_XAVIER};
+	public static ZWeightFunction[]			BIAS_FUNCTIONS		= {WEIGHT_DEFAULT,WEIGHT_KAIMING,WEIGHT_XAVIER,WEIGHT_ZERO};
 	
 	public static ZActivator getActivatorByClassName(String name) {
 		return (ZActivator) getObjectFromArrayByClassName(OUTPUT_ACTIVATORS,name);
@@ -49,7 +52,7 @@ public class StaticFunctions {
 	}
 	
 	public static ZWeightFunction getWeightFunctionByClassName(String name) {
-		return (ZWeightFunction) getObjectFromArrayByClassName(WEIGHT_FUNCTIONS,name);
+		return (ZWeightFunction) getObjectFromArrayByClassName(BIAS_FUNCTIONS,name);
 	}
 
 	private static Object getObjectFromArrayByClassName(Object[] objects, String name) {

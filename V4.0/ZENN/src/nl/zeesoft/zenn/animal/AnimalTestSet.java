@@ -13,35 +13,29 @@ public class AnimalTestSet {
 		t = r.addNewTest();
 		t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
 		
-		//addMoveForwardTests(r);
+		addMoveBetweenWallsTests(r);
 		addFoodTests(r,herbivore);
 		addFrontalAvoidTests(r,herbivore);
 		addWallCornerAvoidTests(r,herbivore);
 		
 		return r;
 	}
-	
-	public static void addMoveForwardTests(TestSet ts) {
+
+	public static void addMoveBetweenWallsTests(TestSet ts) {
 		Test t = null;
 		for (float rand = 0; rand <=1; rand++) {
-			t = ts.addNewTest();
-			t.inputs[AnimalConstants.IN_RANDOM] = rand;
-			t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
-			
 			for (int d1 = 3; d1 >= 0; d1--) {
-				t = ts.addNewTest();
-				t.inputs[AnimalConstants.IN_RANDOM] = rand;
-				setInputColor(t.inputs,0,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d1]);
-				t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
-				
-				t = ts.addNewTest();
-				t.inputs[AnimalConstants.IN_RANDOM] = rand;
-				setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d1]);
-				t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
+				for (int d2 = 3; d2 >= 0; d2--) {
+					t = ts.addNewTest();
+					t.inputs[AnimalConstants.IN_RANDOM] = rand;
+					setInputColor(t.inputs,0,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d1]);
+					setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
+					t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
+				}
 			}
 		}
 	}
-	
+
 	public static void addFoodTests(TestSet ts,boolean herbivore) {
 		Test t = null;
 		

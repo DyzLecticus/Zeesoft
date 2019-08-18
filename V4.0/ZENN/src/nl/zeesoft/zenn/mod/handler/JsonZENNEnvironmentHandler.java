@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zenn.mod.ModZENN;
 import nl.zeesoft.zodb.Config;
@@ -32,6 +33,10 @@ public class JsonZENNEnvironmentHandler extends JsonHandlerObject {
 				if (res==null) {
 					r = setResponse(response,503,"Environment simulator is not working right now. Please try again at another time.");
 				} else {
+					JsElem orgsElem = res.rootElement.getChildByName("organisms");
+					if (orgsElem!=null) {
+						res.rootElement.children.remove(orgsElem);
+					}
 					r = stringifyJson(res);
 				}
 			}

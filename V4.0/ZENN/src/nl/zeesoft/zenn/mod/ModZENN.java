@@ -45,11 +45,6 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 	}
 	
 	@Override
-	public void install() {
-		environmentInitializer.install();
-	}
-	
-	@Override
 	public void initialize() {
 		handlers.add(new CssZENNHandler(configuration,this));
 		handlers.add(new HtmlZENNIndexHandler(configuration,this));

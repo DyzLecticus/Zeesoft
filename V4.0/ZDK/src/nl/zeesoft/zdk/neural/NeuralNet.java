@@ -21,7 +21,7 @@ public class NeuralNet implements JsAble {
 	public int					hiddenNeurons	= 1;
 	public int					outputNeurons	= 1;
 
-	public ZWeightFunction		weightFunction	= StaticFunctions.WEIGHT_DEFAULT;
+	public ZWeightFunction		weightFunction	= StaticFunctions.WEIGHT_KAIMING;
 	public ZWeightFunction		biasFunction	= StaticFunctions.WEIGHT_ZERO;
 
 	public ZActivator			activator		= StaticFunctions.LEAKY_RELU;
@@ -85,15 +85,21 @@ public class NeuralNet implements JsAble {
 	 * Applies the weight and bias functions
 	 */
 	public void applyWeightFunctions() {
-		int inputs = inputNeurons;
-		int outputs = hiddenNeurons;
-		for (int i = 1; i < layerValues.length; i++) {
-			outputs = layerValues[i].rows;
-			float param = weightFunction.getParameterValue(inputs,outputs);
-			layerWeights[i].applyFunction(weightFunction,param);
-			param = biasFunction.getParameterValue(inputs,outputs);
-			layerBiases[i].applyFunction(biasFunction,param);
-			inputs = layerValues[i].rows;
+		if (weightFunction!=null || biasFunction!=null) {
+			int fanIn = inputNeurons + 1;
+			int fanOut = hiddenNeurons;
+			for (int i = 1; i < layerValues.length; i++) {
+				fanOut = layerValues[i].rows;
+				if (weightFunction!=null) {
+					float param = weightFunction.getParameterValue(fanIn,fanOut);
+					layerWeights[i].applyFunction(weightFunction,param);
+				}
+				if (biasFunction!=null) {
+					float param = biasFunction.getParameterValue(fanIn,fanOut);
+					layerBiases[i].applyFunction(biasFunction,param);
+				}
+				fanIn = layerValues[i].rows + 1;
+			}
 		}
 	}
 	

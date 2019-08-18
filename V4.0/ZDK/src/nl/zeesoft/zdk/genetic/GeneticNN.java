@@ -11,10 +11,12 @@ import nl.zeesoft.zdk.neural.NeuralNet;
 public class GeneticNN {
 	private static int		HIDDEN_LAYERS		= 0;
 	private static int		HIDDEN_NEURONS		= 1;
-	private static int		ACTIVATOR			= 2;
-	private static int		OUTPUT_ACTIVATOR	= 3;
-	private static int		LEARNING_RATE		= 4;
-	private static int		WEIGHT_BIAS_START	= 5;
+	private static int		WEIGHT_FUNCTION		= 2;
+	private static int		BIAS_FUNCTION		= 3;
+	private static int		ACTIVATOR			= 4;
+	private static int		OUTPUT_ACTIVATOR	= 5;
+	private static int		LEARNING_RATE		= 6;
+	private static int		WEIGHT_BIAS_START	= 7;
 
 	public int				inputNeurons		= 1;
 	public int				maxHiddenLayers		= 1;
@@ -63,7 +65,7 @@ public class GeneticNN {
 	}
 
 	public static int calculateMinCodeLength(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int codePropertyStart) {
-		int r = codePropertyStart;
+		int r = codePropertyStart + WEIGHT_BIAS_START;
 		r += NeuralNet.calculateSize(inputNeurons, maxHiddenLayers, maxHiddenNeurons, outputNeurons);
 		r = r * 3;
 		return r;
@@ -88,11 +90,17 @@ public class GeneticNN {
 		}
 
 		r = new NeuralNet(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
+
+		int weightFunction = code.getInteger(codePropertyStart + WEIGHT_FUNCTION,StaticFunctions.WEIGHT_FUNCTIONS.length - 1);
+		int biasFunction = code.getInteger(codePropertyStart + BIAS_FUNCTION,StaticFunctions.BIAS_FUNCTIONS.length - 1);
+		r.weightFunction = StaticFunctions.WEIGHT_FUNCTIONS[weightFunction];
+		r.biasFunction = StaticFunctions.BIAS_FUNCTIONS[biasFunction];
 		
 		int activator = code.getInteger(codePropertyStart + ACTIVATOR,StaticFunctions.ACTIVATORS.length - 1);
 		int outputActivator = code.getInteger(codePropertyStart + OUTPUT_ACTIVATOR,StaticFunctions.OUTPUT_ACTIVATORS.length - 1);
 		r.activator = StaticFunctions.ACTIVATORS[activator];
 		r.outputActivator = StaticFunctions.OUTPUT_ACTIVATORS[outputActivator];
+		
 		r.learningRate = 0.1F * code.get(codePropertyStart + LEARNING_RATE);
 		
 		r.randomizeWeightsAndBiases();
