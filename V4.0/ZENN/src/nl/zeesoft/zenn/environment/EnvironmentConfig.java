@@ -10,13 +10,16 @@ public class EnvironmentConfig implements Persistable {
 	public static final int				SIZE_Y					= 40;
 	public static final int				PLANTS					= 4;
 
-	public static final String			COLOR_NOTHING			= "black";
-	public static final String			COLOR_WALL				= "white";
 	public static final String			COLOR_PLANT				= "green";
 	public static final String			COLOR_HERBIVORE			= "blue";
 	public static final String			COLOR_CARNIVORE			= "red";
 	public static final String			COLOR_DEAD_OBJECT		= "purple";
-	
+
+	public static final String			ACTION_MOVE_FORWARD		= "moveForward";
+	public static final String			ACTION_BITE				= "bite";
+	public static final String			ACTION_TURN_LEFT		= "turnLeft";
+	public static final String			ACTION_TURN_RIGHT		= "turnRight";
+
 	public int							herbivores				= 8;
 	public int							carnivores				= 2;
 

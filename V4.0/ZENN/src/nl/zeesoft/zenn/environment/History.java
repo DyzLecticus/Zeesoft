@@ -44,6 +44,10 @@ public class History implements JsAble {
 			if (ani!=null) {
 				organismData.append("" + ani.score);
 			}
+			organismData.append(";");
+			if (ani!=null) {
+				organismData.append("" + ani.lastAction);
+			}
 		}
 	}
 

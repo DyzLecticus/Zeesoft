@@ -4,10 +4,12 @@ import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.genetic.EvolverUnit;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.neural.TestSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zenn.animal.AnimalEvolver;
+import nl.zeesoft.zenn.animal.AnimalTestSet;
 
 public class TestAnimalEvolver extends TestObject {
 	public TestAnimalEvolver(Tester tester) {
@@ -64,6 +66,10 @@ public class TestAnimalEvolver extends TestObject {
 		messenger.setPrintDebugMessages(true);
 		WorkerUnion union = factory.getWorkerUnion(messenger);
 		
+		TestSet ts = AnimalTestSet.getNewAnimalTestSet(true);
+		System.out.println("Tests: " + ts.tests.size());
+		//System.out.println(ts.toJson().toStringBuilderReadFormat());
+
 		AnimalEvolver evolver = new AnimalEvolver(messenger,union,true);
 		evolver.setDebug(true);
 		

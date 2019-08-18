@@ -29,6 +29,6 @@ public class ZRandomize implements ZFunction {
 	}
 
 	public static int getRandomInt(int min, int max) {
-		return (int) getRandomFloat(min,max);
+		return Math.round(getRandomFloat(min,max));
 	}
 }

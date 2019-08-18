@@ -8,6 +8,7 @@ public class Animal extends Organism implements JsAble {
 	public boolean				herbivore		= true;
 	public int					rotation		= 0;
 	public int					score			= 0;
+	public String				lastAction		= "";
 	
 	public int getForwardPosX() {
 		int r = posX;
@@ -47,6 +48,7 @@ public class Animal extends Organism implements JsAble {
 		json.rootElement.children.add(new JsElem("herbivore","" + herbivore));
 		json.rootElement.children.add(new JsElem("rotation","" + rotation));
 		json.rootElement.children.add(new JsElem("score","" + score));
+		json.rootElement.children.add(new JsElem("lastAction",lastAction,true));
 		return json;
 	}
 
@@ -57,8 +59,7 @@ public class Animal extends Organism implements JsAble {
 			herbivore = json.rootElement.getChildBoolean("herbivore",herbivore);
 			rotation = json.rootElement.getChildInt("rotation",rotation);
 			score = json.rootElement.getChildInt("score",score);
+			lastAction = json.rootElement.getChildString("lastAction",lastAction);
 		}
 	}
-	
-
 }
