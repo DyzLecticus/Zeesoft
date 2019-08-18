@@ -5,6 +5,8 @@ import nl.zeesoft.zenn.animal.HerbivoreEvolver;
 import nl.zeesoft.zenn.mod.handler.CssZENNHandler;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNEnvironmentHandler;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNIndexHandler;
+import nl.zeesoft.zenn.mod.handler.JavaScriptZENNEnvironmentHandler;
+import nl.zeesoft.zenn.mod.handler.JsonZENNEnvironmentHandler;
 import nl.zeesoft.zenn.simulator.EnvironmentInitializer;
 import nl.zeesoft.zenn.simulator.Simulator;
 import nl.zeesoft.zenn.simulator.SimulatorAnimalInitializer;
@@ -52,6 +54,8 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		handlers.add(new CssZENNHandler(configuration,this));
 		handlers.add(new HtmlZENNIndexHandler(configuration,this));
 		handlers.add(new HtmlZENNEnvironmentHandler(configuration,this));
+		handlers.add(new JsonZENNEnvironmentHandler(configuration,this));
+		handlers.add(new JavaScriptZENNEnvironmentHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		super.initialize();
 		environmentInitializer.initialize();
@@ -72,6 +76,10 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		super.destroy();
 	}
 
+	public Simulator getSimulator() {
+		return simulator;
+	}
+	
 	@Override
 	public void stateChanged(Object source, boolean open) {
 		if (source instanceof EnvironmentInitializer && open) {

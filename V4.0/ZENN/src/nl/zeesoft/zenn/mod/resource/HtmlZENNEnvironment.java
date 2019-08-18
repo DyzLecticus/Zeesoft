@@ -2,7 +2,9 @@ package nl.zeesoft.zenn.mod.resource;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zenn.environment.EnvironmentConfig;
+import nl.zeesoft.zenn.mod.ModZENN;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.mod.ModZODB;
 import nl.zeesoft.zodb.mod.resource.HtmlResource;
 
 public class HtmlZENNEnvironment extends HtmlResource {
@@ -13,10 +15,12 @@ public class HtmlZENNEnvironment extends HtmlResource {
 	public ZStringBuilder toStringBuilder() {
 		setTitle("ZENN - Environment");	
 		
-		getScriptFiles().add("ZODB.js");
-		getScriptFiles().add("ZENN.js");
-		getStyleFiles().add("ZENN.css");
+		getScriptFiles().add("../" + ModZODB.NAME + "/ZODB.js");
+		getScriptFiles().add("../" + ModZENN.NAME + "/state.js");
+		getStyleFiles().add("../" + ModZENN.NAME + "/ZENN.css");
 
+		setOnload("ZENN.state.onload();");
+		
 		ZStringBuilder html = new ZStringBuilder();
 		html.append("<a href=\"./index.html\">Back to functions</a>");
 		html.append("<hr />");

@@ -5,6 +5,8 @@ import java.util.List;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.genetic.EvolverUnit;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.neural.Prediction;
 import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
@@ -127,7 +129,20 @@ public class Simulator extends Locker {
 		}
 		unlockMe(this);
 	}
-	
+
+	public JsFile getEnvironmentState() {
+		JsFile json = null; 
+		lockMe(this);
+		if (environmentState!=null && environmentConfig!=null && working) {
+			json = environmentState.toJson();
+			json.rootElement.children.add(new JsElem("statesPerSecond","" + environmentConfig.statesPerSecond));
+			json.rootElement.children.add(new JsElem("keepStateHistorySeconds","" + environmentConfig.keepStateHistorySeconds));
+			json.rootElement.children.add(new JsElem("maxEnergyPlant","" + environmentConfig.maxEnergyPlant));
+		}
+		unlockMe(this);
+		return json;
+	}
+
 	protected SimulatorAnimalWorker getAnimalWorkerByAnimalName(String name) {
 		SimulatorAnimalWorker r = null;
 		for (SimulatorAnimalWorker animalWorker: animalWorkers) {
