@@ -17,7 +17,7 @@
 	<property name="build" location="build/build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zenn nl/zeesoft/zenn/mod nl/zeesoft/zenn/mod/handler nl/zeesoft/zenn/mod/resource nl/zeesoft/zenn/confab nl/zeesoft/zenn/db nl/zeesoft/zenn/kb nl/zeesoft/zenn/request nl/zeesoft/zenn/test zodb.jar zdk.jar"/>
+	<property name="classpath" value="nl/zeesoft/zenn nl/zeesoft/zenn/mod nl/zeesoft/zenn/mod/handler nl/zeesoft/zenn/mod/resource nl/zeesoft/zenn/animal nl/zeesoft/zenn/environment nl/zeesoft/zenn/simulator nl/zeesoft/zenn/test zodb.jar zdk.jar"/>
 
 	<target name="copyZODB" description="Copy the ZODB release">
 		<mkdir dir="${lib}"/>
