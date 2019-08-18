@@ -150,11 +150,19 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 		unlockMe(this);
 	}
 	
-	public void addNewObject(Persistable object) {
+	public void addOrReplaceObject(Persistable object) {
 		lockMe(this);
 		if (initialized && object!=null && !objects.contains(object)) {
+			Persistable existing = getObjectByNameNoLock(object.getObjectName());
+			if (existing!=null) {
+				objects.remove(existing);
+			}
 			objects.add(object);
-			addObjectToDatabaseNoLock(object);
+			if (existing!=null) {
+				updateObjectNoLock(object);
+			} else {
+				addObjectToDatabaseNoLock(object);
+			}
 		}
 		unlockMe(this);
 	}

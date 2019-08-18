@@ -163,14 +163,11 @@ public class Simulator extends Locker {
 						bestSoFar = carnEvolver.getBestSoFar();
 					}
 					if (bestSoFar!=null) {
-						SimulatorAnimal simAni = simAniInitializer.getSimulatorAnimalByName(ani.name);
-						if (simAni==null) {
-							simAni = new SimulatorAnimal();
-							simAni.name = ani.name;
-							simAni.code = bestSoFar.code;
-							simAni.neuralNet = bestSoFar.neuralNet;
-							simAniInitializer.addNewObject(simAni);
-						}
+						SimulatorAnimal simAni = new SimulatorAnimal();
+						simAni.name = ani.name;
+						simAni.code = bestSoFar.code;
+						simAni.neuralNet = bestSoFar.neuralNet;
+						simAniInitializer.addOrReplaceObject(simAni);
 						//System.out.println("Set new simulation animal: " + ani.name + " " + simAni);
 						lockMe(this);
 						if (ani.energy==0) {
@@ -331,11 +328,12 @@ public class Simulator extends Locker {
 										energy = environmentConfig.maxEnergyHerbivoreBite;
 									} else if (!ani.herbivore && org instanceof Animal){
 										Animal ani2 = (Animal) org;
-										if (!ani.herbivore && ani2.herbivore) {
+										if (ani2.herbivore) {
 											energy = environmentConfig.maxEnergyCarnivoreBite;
 										}
 									}
 									if (energy>0) {
+										//System.out.println("Animal: " + ani.name + " took action: BITE");
 										org.energy = org.energy - energy;
 										checkOrganismEnergyNoLock(org);
 										ani.energy = ani.energy + energy;
