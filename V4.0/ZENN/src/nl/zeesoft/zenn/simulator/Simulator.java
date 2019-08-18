@@ -223,38 +223,38 @@ public class Simulator extends Locker {
 								if (i==0) {
 									posX--;
 								} else if (i==1) {
-									posY++;
+									posY--;
 								} else if (i==2) {
 									posX++;
 								}
 							} else if (ani.rotation==90) {
 								if (i==0) {
-									posY++;
+									posY--;
 								} else if (i==1) {
 									posX++;
 								} else if (i==2) {
-									posY--;
+									posY++;
 								}
 							} else if (ani.rotation==180) {
 								if (i==0) {
 									posX++;
 								} else if (i==1) {
-									posY--;
+									posY++;
 								} else if (i==2) {
 									posX--;
 								}
 							} else if (ani.rotation==270) {
 								if (i==0) {
-									posY--;
+									posY++;
 								} else if (i==1) {
 									posX--;
 								} else if (i==2) {
-									posY++;
+									posY--;
 								}
 							}
 							float[] color = null;
 							if (posX<0||posX>=EnvironmentConfig.SIZE_X ||
-								posY<0||posX>=EnvironmentConfig.SIZE_Y
+								posY<0||posY>=EnvironmentConfig.SIZE_Y
 								) {
 								color = AnimalConstants.COLOR_GREY;
 							} else {
@@ -287,7 +287,16 @@ public class Simulator extends Locker {
 					}
 					ani.energy = ani.energy - environmentConfig.energyActionLook;
 					checkOrganismEnergyNoLock(ani);
-					//System.out.println("Animal: " + ani.name + " took a look: " + ani.energy);
+					/*
+					ZStringBuilder inputs = new ZStringBuilder();
+					for (int i = 0; i < p.inputs.length; i++) {
+						if (inputs.length()>0) {
+							inputs.append("|");
+						}
+						inputs.append("" + p.inputs[i]);
+					}
+					System.out.println("Animal: " + ani.name + " (" + ani.posX + "," + ani.posY + "/" + ani.rotation + ") took a look: " + inputs);
+					*/
 				}
 				return null;
 			}
@@ -315,7 +324,7 @@ public class Simulator extends Locker {
 						//System.out.println("Size: " + activeOutputs.size() + " i: " + i);
 						ani.lastAction = getActionForActiveOutput(activeOutputs.get(i));
 					}
-					System.out.println("Animal: " + ani.name + " take action: " + ani.lastAction + " (" + p.outputs[0] + " " + p.outputs[1] + " " + p.outputs[2] + " " + p.outputs[3] + ")");
+					//System.out.println("Animal: " + ani.name + " take action: " + ani.lastAction + " (" + p.outputs[0] + " " + p.outputs[1] + " " + p.outputs[2] + " " + p.outputs[3] + ")");
 					if (ani.lastAction.length()==0) {
 						int i = ZRandomize.getRandomInt(0,AnimalConstants.OUTPUTS.length - 1);
 						ani.lastAction = getActionForActiveOutput(i);

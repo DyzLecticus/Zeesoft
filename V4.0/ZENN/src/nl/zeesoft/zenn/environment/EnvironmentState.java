@@ -176,25 +176,25 @@ public class EnvironmentState implements Persistable {
 		int maxY = 0;
 		int index = getPlants().indexOf(plt);
 		if (index==0) {
-			minX=0;
-			maxX=10;
-			minY=0;
-			maxY=10;
+			minX=2;
+			maxX=12;
+			minY=2;
+			maxY=12;
 		} else if (index==1) {
-			minX=(EnvironmentConfig.SIZE_X - 11);
-			maxX=(EnvironmentConfig.SIZE_X - 1);
-			minY=0;
-			maxY=10;
+			minX=(EnvironmentConfig.SIZE_X - 13);
+			maxX=(EnvironmentConfig.SIZE_X - 3);
+			minY=2;
+			maxY=12;
 		} else if (index==2) {
-			minX=0;
-			maxX=10;
-			minY=(EnvironmentConfig.SIZE_Y - 11);
-			maxY=(EnvironmentConfig.SIZE_Y - 1);
+			minX=2;
+			maxX=12;
+			minY=(EnvironmentConfig.SIZE_Y - 13);
+			maxY=(EnvironmentConfig.SIZE_Y - 3);
 		} else if (index==3) {
-			minX=(EnvironmentConfig.SIZE_X - 11);
-			maxX=(EnvironmentConfig.SIZE_X - 1);
-			minY=(EnvironmentConfig.SIZE_Y - 11);
-			maxY=(EnvironmentConfig.SIZE_Y - 1);
+			minX=(EnvironmentConfig.SIZE_X - 13);
+			maxX=(EnvironmentConfig.SIZE_X - 3);
+			minY=(EnvironmentConfig.SIZE_Y - 13);
+			maxY=(EnvironmentConfig.SIZE_Y - 3);
 		}
 		repositionOrganism(plt,minX,maxX,minY,maxY);
 	}

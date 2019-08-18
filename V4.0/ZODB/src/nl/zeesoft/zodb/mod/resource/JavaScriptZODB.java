@@ -45,8 +45,14 @@ public class JavaScriptZODB {
 		script.append("    console.error(\"Post request response error: \" + xhr.status + \" \" + xhr.responseText);\n");
 		script.append("};\n");
 		script.append("ZODB.xhr.parseResponseJSON = function(text) {\n");
-		script.append("    var json = JSON.parse(text);\n");
-		script.append("    json = ZODB.xhr.correctJSONValues(json);\n");
+		script.append("    var json = null;\n");
+		script.append("    try {\n");
+		script.append("        var json = JSON.parse(text);\n");
+		script.append("        json = ZODB.xhr.correctJSONValues(json);\n");
+		script.append("    } catch (err) {\n");
+		script.append("        json = {};\n");
+		script.append("        json.error = \"Failed to parse JSON\";\n");
+		script.append("    }\n");
 		script.append("    return json;\n");
 		script.append("};\n");
 		script.append("ZODB.xhr.correctJSONValues = function(value) {\n");
