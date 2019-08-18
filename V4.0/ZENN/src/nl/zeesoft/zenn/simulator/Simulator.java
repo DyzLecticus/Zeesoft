@@ -185,7 +185,6 @@ public class Simulator extends Locker {
 							simAni.code = bestSoFar.code;
 							simAni.neuralNet = bestSoFar.neuralNet;
 							simAniInitializer.addOrReplaceObject(simAni);
-							//System.out.println("Set new simulation animal: " + ani.name + " " + simAni);
 							if (ani.energy==0) {
 								environmentState.initializeAnimal(ani);
 							}
@@ -210,14 +209,13 @@ public class Simulator extends Locker {
 		}
 	}
 	
-	protected void setPredictionInputForAnimal(Animal ani,Prediction p) {
+	protected void setPredictionInputForAnimal(Animal ani, int size,Prediction p) {
 		LockedCode code = new LockedCode() {
 			@Override
 			public Object doLocked() {
 				if (working && organismIsAliveNoLock(ani)) {
 					p.inputs[AnimalConstants.IN_RANDOM] = Math.round(ZRandomize.getRandomFloat(0,1));
 					for (int i = 0; i < 3; i++) {
-						//System.out.println("Animal: " + ani.name + " take a look, step " + (i + 1));
 						int posX = ani.posX;
 						int posY = ani.posY;
 						for (int d = 0; d <= 3; d++) {
@@ -279,7 +277,6 @@ public class Simulator extends Locker {
 								}
 							}
 							if (color!=null) {
-								//System.out.println(i + " " + color[0] + " " +  + color[1] + " " + color[2]);
 								for (int c = 0; c < color.length; c++) {
 									p.inputs[1 + (i * 3) + c] = color[c] * AnimalConstants.INTENSITIES[d];
 								}
@@ -287,18 +284,8 @@ public class Simulator extends Locker {
 							}
 						}
 					}
-					ani.energy = ani.energy - environmentConfig.energyActionLook;
+					ani.energy = ani.energy - (environmentConfig.energyActionLookFactor * size);
 					checkOrganismEnergyNoLock(ani);
-					/*
-					ZStringBuilder inputs = new ZStringBuilder();
-					for (int i = 0; i < p.inputs.length; i++) {
-						if (inputs.length()>0) {
-							inputs.append("|");
-						}
-						inputs.append("" + p.inputs[i]);
-					}
-					System.out.println("Animal: " + ani.name + " (" + ani.posX + "," + ani.posY + "/" + ani.rotation + ") took a look: " + inputs);
-					*/
 				}
 				return null;
 			}
@@ -323,24 +310,20 @@ public class Simulator extends Locker {
 						ani.lastAction = getActionForActiveOutput(activeOutputs.get(0));
 					} else if (activeOutputs.size()>0) {
 						int i = ZRandomize.getRandomInt(0,activeOutputs.size() - 1);
-						//System.out.println("Size: " + activeOutputs.size() + " i: " + i);
 						ani.lastAction = getActionForActiveOutput(activeOutputs.get(i));
 					}
-					//System.out.println("Animal: " + ani.name + " take action: " + ani.lastAction + " (" + p.outputs[0] + " " + p.outputs[1] + " " + p.outputs[2] + " " + p.outputs[3] + ")");
 					if (ani.lastAction.length()==0) {
 						int i = ZRandomize.getRandomInt(0,AnimalConstants.OUTPUTS.length - 1);
 						ani.lastAction = getActionForActiveOutput(i);
 					}
 					
 					if (ani.lastAction.equals(EnvironmentConfig.ACTION_MOVE_FORWARD)) {
-						//System.out.println("Animal: " + ani.name + " take action: MOVE FORWARD " + ani.posX + "," + ani.posY);
 						int newX = ani.getForwardPosX();
 						int newY = ani.getForwardPosY();
 						if (newX>=0 && newX<EnvironmentConfig.SIZE_X &&
 							newY>=0 && newY<EnvironmentConfig.SIZE_Y
 							) {
 							Organism org = environmentState.getOrganismByPos(newX,newY);
-							//System.out.println("Animal: " + ani.name + " take action: MOVE FORWARD " + ani.posX + "," + ani.posY + " -> " + newX + "," + newY + "? org: " + org);
 							if (org==null) {
 								ani.posX = newX;
 								ani.posY = newY;
@@ -348,14 +331,11 @@ public class Simulator extends Locker {
 						}
 						ani.energy = ani.energy - environmentConfig.energyActionMove;
 						checkOrganismEnergyNoLock(ani);
-						//System.out.println("Animal: " + ani.name + " took action: MOVE FORWARD " + ani.posX + "," + ani.posY);
 					} else if (ani.lastAction.equals(EnvironmentConfig.ACTION_TURN_RIGHT)) {
-						//System.out.println("Animal: " + ani.name + " take action: TURN RIGHT");
 						ani.rotation = (ani.rotation + 90) % 360;
 						ani.energy = ani.energy - environmentConfig.energyActionTurn;
 						checkOrganismEnergyNoLock(ani);
 					} else if (ani.lastAction.equals(EnvironmentConfig.ACTION_TURN_LEFT)) {
-						//System.out.println("Animal: " + ani.name + " take action: TURN LEFT");
 						if (ani.rotation==0) {
 							ani.rotation = 270;
 						} else {
@@ -364,7 +344,6 @@ public class Simulator extends Locker {
 						ani.energy = ani.energy - environmentConfig.energyActionTurn;
 						checkOrganismEnergyNoLock(ani);
 					} else if (ani.lastAction.equals(EnvironmentConfig.ACTION_BITE)) {
-						//System.out.println("Animal: " + ani.name + " take action: BITE");
 						Organism org = environmentState.getOrganismByPos(ani.getForwardPosX(),ani.getForwardPosY());
 						if (org!=null) {
 							int energy = 0;
@@ -377,7 +356,6 @@ public class Simulator extends Locker {
 								}
 							}
 							if (energy>0) {
-								//System.out.println("Animal: " + ani.name + " took action: BITE");
 								org.energy = org.energy - energy;
 								checkOrganismEnergyNoLock(org);
 								ani.energy = ani.energy + energy;
@@ -387,7 +365,6 @@ public class Simulator extends Locker {
 						ani.energy = ani.energy - environmentConfig.energyActionBite;
 						checkOrganismEnergyNoLock(ani);
 					}
-					//System.out.println("Animal: " + ani.name + " took action: " + ani.lastAction + " (" + ani.energy + ")");
 				}
 				return null;
 			}

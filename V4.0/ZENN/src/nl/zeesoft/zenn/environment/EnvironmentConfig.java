@@ -25,7 +25,7 @@ public class EnvironmentConfig implements Persistable {
 
 	public int							deathDurationSeconds	= 1;
 
-	public int							energyActionLook		= 100;
+	public int							energyActionLookFactor	= 2;
 	public int							energyActionMove		= 1000;
 	public int							energyActionTurn		= 300;
 	public int							energyActionBite		= 500;
@@ -50,7 +50,7 @@ public class EnvironmentConfig implements Persistable {
 
 		json.rootElement.children.add(new JsElem("deathDurationSeconds","" + deathDurationSeconds));
 
-		json.rootElement.children.add(new JsElem("energyActionLook","" + energyActionLook));
+		json.rootElement.children.add(new JsElem("energyActionLookFactor","" + energyActionLookFactor));
 		json.rootElement.children.add(new JsElem("energyActionMove","" + energyActionMove));
 		json.rootElement.children.add(new JsElem("energyActionTurn","" + energyActionTurn));
 		json.rootElement.children.add(new JsElem("energyActionBite","" + energyActionBite));
@@ -76,7 +76,7 @@ public class EnvironmentConfig implements Persistable {
 
 			deathDurationSeconds = json.rootElement.getChildInt("deathDurationSeconds",deathDurationSeconds);
 
-			energyActionLook = json.rootElement.getChildInt("energyActionLook",energyActionLook);
+			energyActionLookFactor = json.rootElement.getChildInt("energyActionLookFactor",energyActionLookFactor);
 			energyActionMove = json.rootElement.getChildInt("energyActionMove",energyActionMove);
 			energyActionTurn = json.rootElement.getChildInt("energyActionTurn",energyActionTurn);
 			energyActionBite = json.rootElement.getChildInt("energyActionBite",energyActionBite);

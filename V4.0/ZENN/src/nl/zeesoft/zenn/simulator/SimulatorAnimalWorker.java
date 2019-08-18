@@ -65,7 +65,7 @@ public class SimulatorAnimalWorker extends Worker {
 		unlockMe(this);
 		if (simAni!=null) {
 			Prediction p = simAni.neuralNet.getNewPrediction();
-			simulator.setPredictionInputForAnimal(animal, p);
+			simulator.setPredictionInputForAnimal(animal, simAni.neuralNet.size(), p);
 			simAni.neuralNet.predict(p);
 			simulator.handlePredictionOutputForAnimal(animal, p);
 		}
