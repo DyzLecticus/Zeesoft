@@ -50,8 +50,8 @@ The output of this test shows the converted JSON.
       "selfTest": true,
       "indexBlockSize": 1000,
       "dataBlockSize": 10,
-      "key": "VILPMG8AzNcK0LDNaLgJFI2IAGAHQFtFVJ~EqG4ISNFD2",
-      "newKey": "WHUOnI6KZDzAdGxNrBoCMFpBvOUDwJbCCKwETBTLzNKG2",
+      "key": "qHKNoDENSKqGAAWGmCTBJDdClAWGrAILVOVL:MHHYIjH2",
+      "newKey": "KKhBLG2CGPPNZOlLiHCFnKtCAINE9D4HVMLAzDZBfDeE2",
       "whiteList": [
         "127.0.0.1",
         "0:0:0:0:0:0:0:1"
@@ -89,8 +89,8 @@ The output of this test shows the converted JSON.
   "type": "LIST",
   "start": 0,
   "max": 10,
-  "modAfter": 1566145047447,
-  "modBefore": 1566145047448
+  "modAfter": 1566156750662,
+  "modBefore": 1566156750663
 }
 
 {
@@ -111,8 +111,8 @@ The output of this test shows the converted JSON.
 
 {
   "type": "GET",
-  "modAfter": 1566145047448,
-  "modBefore": 1566145047449,
+  "modAfter": 1566156750663,
+  "modBefore": 1566156750664,
   "index": "@OBJECT:name",
   "invert": false,
   "operator": "STARTS_WITH",
@@ -143,8 +143,8 @@ The output of this test shows the converted JSON.
 
 {
   "type": "REMOVE",
-  "modAfter": 1566145047448,
-  "modBefore": 1566145047449,
+  "modAfter": 1566156750664,
+  "modBefore": 1566156750665,
   "index": "@OBJECT:name",
   "invert": false,
   "operator": "CONTAINS",
@@ -187,7 +187,7 @@ The output of this test shows the converted JSON.
     {
       "name": "testName",
       "id": 1,
-      "modified": 1566145047483,
+      "modified": 1566156750704,
       "object": {
         "data": "testObjectData"
       }
@@ -201,12 +201,12 @@ The output of this test shows the converted JSON.
     {
       "name": "testName1",
       "id": 1,
-      "modified": 1566145047486
+      "modified": 1566156750704
     },
     {
       "name": "testName2",
       "id": 1,
-      "modified": 1566145047486
+      "modified": 1566156750704
     }
   ],
   "size": 2
@@ -216,7 +216,7 @@ The output of this test shows the converted JSON.
 Test results
 ------------
 All 3 tests have been executed successfully (25 assertions).  
-Total test duration: 86 ms (total sleep duration: 0 ms).  
+Total test duration: 85 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zodb.test.TestConfig: 631 Kb / 0 Mb

@@ -142,7 +142,11 @@ public class JavaScriptZENNEnvironment {
 		script.append("                    ZENN.state.displayedGridElems[tdId] = {};\n");
 		script.append("                    ZENN.state.displayedGridElems[tdId].color = \"black\";\n");
 		script.append("                }\n");
-		script.append("                ZENN.state.displayedGridElems[tdId].box = \"greyBox\";\n");
+		script.append("                if (props[7]==\"" + EnvironmentConfig.ACTION_BITE + "\") {\n");
+		script.append("                    ZENN.state.displayedGridElems[tdId].box = \"whiteBox\";\n");
+		script.append("                } else {\n");
+		script.append("                    ZENN.state.displayedGridElems[tdId].box = \"greyBox\";\n");
+		script.append("                }\n");
 		script.append("            }\n");
 		script.append("        }\n");
 		script.append("    }\n");

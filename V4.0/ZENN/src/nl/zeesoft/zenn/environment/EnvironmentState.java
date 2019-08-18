@@ -14,6 +14,7 @@ public class EnvironmentState implements Persistable {
 	
 	public List<Organism>				organisms				= new ArrayList<Organism>();
 	public List<History>				histories				= new ArrayList<History>();
+	public int							energySurplus			= 0;
 
 	public void initialize(EnvironmentConfig config) {
 		this.config = config;
@@ -126,10 +127,16 @@ public class EnvironmentState implements Persistable {
 					}
 					plt.energy += (config.energyInputPerSecond / div);
 					if (plt.energy > config.maxEnergyPlant) {
+						energySurplus = energySurplus + (plt.energy - config.maxEnergyPlant);
 						plt.energy = config.maxEnergyPlant;
 					}
 				}
 			}
+		} else {
+			energySurplus = energySurplus + config.energyInputPerSecond;
+		}
+		if (energySurplus > config.maxEnergyHerbivore / 2) {
+			energySurplus = config.maxEnergyHerbivore / 2;
 		}
 	}
 
@@ -156,6 +163,17 @@ public class EnvironmentState implements Persistable {
 		hist.timeStamp = System.currentTimeMillis();
 		hist.addOrganismData(organisms);
 		histories.add(hist);
+	}
+
+	public boolean canInitializeAnimal(boolean herbivore) {
+		boolean r = false;
+		if (!herbivore) {
+			r = true;
+		} else if (energySurplus >= config.maxEnergyHerbivore / 2) {
+			energySurplus = energySurplus - (config.maxEnergyHerbivore / 2);
+			r = true;
+		}
+		return r;
 	}
 	
 	public void initializeAnimal(Animal animal) {

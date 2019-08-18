@@ -178,18 +178,20 @@ public class Simulator extends Locker {
 						bestSoFar = carnEvolver.getBestSoFar();
 					}
 					if (bestSoFar!=null) {
-						SimulatorAnimal simAni = new SimulatorAnimal();
-						simAni.name = ani.name;
-						simAni.code = bestSoFar.code;
-						simAni.neuralNet = bestSoFar.neuralNet;
-						simAniInitializer.addOrReplaceObject(simAni);
-						//System.out.println("Set new simulation animal: " + ani.name + " " + simAni);
 						lockMe(this);
-						if (ani.energy==0) {
-							environmentState.initializeAnimal(ani);
+						if (environmentState.canInitializeAnimal(ani.herbivore)) {
+							SimulatorAnimal simAni = new SimulatorAnimal();
+							simAni.name = ani.name;
+							simAni.code = bestSoFar.code;
+							simAni.neuralNet = bestSoFar.neuralNet;
+							simAniInitializer.addOrReplaceObject(simAni);
+							//System.out.println("Set new simulation animal: " + ani.name + " " + simAni);
+							if (ani.energy==0) {
+								environmentState.initializeAnimal(ani);
+							}
+							animalWorker.setSimulatorAnimal(simAni);
 						}
 						unlockMe(this);
-						animalWorker.setSimulatorAnimal(simAni);
 					}
 				}
 			}

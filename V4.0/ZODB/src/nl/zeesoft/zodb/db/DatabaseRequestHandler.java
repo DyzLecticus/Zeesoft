@@ -146,6 +146,8 @@ public class DatabaseRequestHandler {
 			checkRequestIndex(response);
 			checkRequestModAfterModBefore(response);
 		} else if (response.request.type.equals(DatabaseRequest.TYPE_SET)) {
+			checkRequestEncoding(response);
+			checkRequestEncoded(response);
 			if (response.request.id<=0) {
 				response.errors.add(new ZStringBuilder("Request id is mandatory"));
 			}
