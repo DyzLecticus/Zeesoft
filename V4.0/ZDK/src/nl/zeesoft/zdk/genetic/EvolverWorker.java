@@ -12,21 +12,23 @@ public class EvolverWorker extends Worker {
 	public EvolverWorker(Messenger msgr, WorkerUnion union, Evolver evolver) {
 		super(msgr, union);
 		this.evolver = evolver;
-		setSleep(evolver.getEvolverSleepMs());
+		setSleep(evolver.getEvolverWorkerSleepMs());
 	}
 
 	@Override
 	protected void whileWorking() {
-		setSleep(evolver.getEvolverSleepMs());
+		setSleep(evolver.getEvolverWorkerSleepMs());
 		if (unit==null) {
 			unit = evolver.getNewEvolverUnit(this);
 		}
-		unit.trainingProgram.train(evolver.getTrainEpochBatchSize());
-		if ((unit.trainingProgram.stopOnSuccess && unit.trainingProgram.latestResults.success) || 
-			(unit.trainingProgram.trainedEpochs >= evolver.getTrainEpochBatches() * evolver.getTrainEpochBatchSize())
-			) {
-			evolver.finishedTrainigProgram(this,unit);
-			unit = null;
+		if (unit!=null) {
+			unit.trainingProgram.train(evolver.getTrainEpochBatchSize());
+			if ((unit.trainingProgram.stopOnSuccess && unit.trainingProgram.latestResults.success) || 
+				(unit.trainingProgram.trainedEpochs >= evolver.getTrainEpochBatches() * evolver.getTrainEpochBatchSize())
+				) {
+				evolver.finishedTrainigProgram(this,unit);
+				unit = null;
+			}
 		}
 	}
 }

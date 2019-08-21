@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsAbleClient;
 import nl.zeesoft.zdk.json.JsAbleClientRequest;
@@ -19,6 +20,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
+import nl.zeesoft.zodb.db.init.Persistable;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
 import nl.zeesoft.zodb.mod.handler.HandlerObject;
@@ -211,6 +213,20 @@ public class Config implements JsAble {
 		return r;
 	}
 
+	public String getDomainUrl(String name) {
+		String r = getModuleUrl(name);
+		if (r.startsWith(servletUrl)) {
+			String e[] = r.split("/");
+			if (e.length>3) {
+				r = "";
+				for (int i = 3; i < e.length; i++) {
+					r = r + "/" + e[i];
+				}
+			}
+		}
+		return r;
+	}
+	
 	public ModZODB getZODB() {
 		ModZODB r = null;
 		ModObject mod = getModule(ModZODB.NAME);
@@ -257,6 +273,56 @@ public class Config implements JsAble {
 		client.handleRequest(request,getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH,response,timeoutSeconds);
 	}
 
+	public void addObject(Persistable object,ZStringBuilder fullObjectName,JsClientListener listener) {
+		addObject(object,fullObjectName,listener,10);
+	}
+
+	public void addObject(Persistable object,ZStringBuilder fullObjectName,JsClientListener listener,int timeoutSeconds) {
+		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
+		request.name = fullObjectName;
+		request.encoding = DatabaseRequest.ENC_KEY;
+		ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
+		encoder.encodeKey(getZODBKey(),0);
+		request.encoded = encoder;
+		handleDatabaseRequest(request,listener,timeoutSeconds);
+	}
+	
+	public void getObject(ZStringBuilder fullObjectName,JsClientListener listener) {
+		getObject(fullObjectName,listener,10);
+	}
+	
+	public void getObject(ZStringBuilder fullObjectName,JsClientListener listener,int timeoutSeconds) {
+		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
+		request.name = fullObjectName;
+		request.encoding = DatabaseRequest.ENC_KEY;
+		handleDatabaseRequest(request,listener,timeoutSeconds);
+	}
+	
+	public void setObject(long id,Persistable object,JsClientListener listener) {
+		setObject(id,object,null,listener,10);
+	}
+	
+	public void setObject(long id,Persistable object,ZStringBuilder fullObjectName,JsClientListener listener) {
+		setObject(id,object,fullObjectName,listener,10);
+	}
+	
+	public void setObject(long id,Persistable object,JsClientListener listener,int timeoutSeconds) {
+		setObject(id,object,null,listener,timeoutSeconds);
+	}
+	
+	public void setObject(long id,Persistable object,ZStringBuilder fullObjectName,JsClientListener listener,int timeoutSeconds) {
+		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
+		request.id = id;
+		request.encoding = DatabaseRequest.ENC_KEY;
+		if (fullObjectName!=null && fullObjectName.length()>0) {
+			request.name = fullObjectName;
+		}
+		ZStringEncoder encoder = new ZStringEncoder(object.toJson().toStringBuilder());
+		encoder.encodeKey(getZODBKey(),0);
+		request.encoded = encoder;
+		handleDatabaseRequest(request,listener,timeoutSeconds);
+	}
+	
 	public DatabaseResponse handledDatabaseRequest(JsClientResponse response) {
 		DatabaseResponse r = null;
 		if (response.error.length()==0 &&
@@ -264,6 +330,7 @@ public class Config implements JsAble {
 			((JsAbleClientRequest) response.request).resObject instanceof DatabaseResponse
 			) {
 			r = (DatabaseResponse) ((JsAbleClientRequest) response.request).resObject;
+			r.decodeObjects(getZODBKey());
 		}
 		return r;
 	}

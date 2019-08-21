@@ -1,6 +1,7 @@
 package nl.zeesoft.zodb.db;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -23,7 +24,23 @@ public class DatabaseResult implements JsAble {
 		this.modified = element.modified;
 		this.object = element.obj;
 	}
+	
+	public void decodeObject() {
+		if (encoded!=null && encoded.length()>0) {
+			ZStringEncoder encoder = new ZStringEncoder(encoded);
+			encoder.decodeAscii();
+			decodedObject(encoder);
+		}
+	}
 
+	public void decodeObject(StringBuilder key) {
+		if (encoded!=null && encoded.length()>0) {
+			ZStringEncoder encoder = new ZStringEncoder(encoded);
+			encoder.decodeKey(key,0);
+			decodedObject(encoder);
+		}
+	}
+	
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
@@ -56,6 +73,15 @@ public class DatabaseResult implements JsAble {
 				object.rootElement = new JsElem();
 				object.rootElement.children = objElem.children;
 			}
+		}
+	}
+	
+	private void decodedObject(ZStringEncoder encoder) {
+		JsFile obj = new JsFile();
+		obj.fromStringBuilder(encoder);
+		if (obj.rootElement!=null && obj.rootElement.children.size()>0) {
+			object = obj;
+			encoded = null;
 		}
 	}
 }

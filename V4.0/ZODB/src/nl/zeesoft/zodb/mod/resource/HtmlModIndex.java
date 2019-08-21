@@ -22,7 +22,7 @@ public class HtmlModIndex extends HtmlResource {
 			ModObject mod = getConfiguration().getModules().get(i);
 			html.append("<tr>\n");
 			html.append("<td width=\"20%\">");
-			html.append("<a href=\"" + getConfiguration().getModuleUrl(mod.name) + "/index.html\">" + mod.name + "</a>");
+			html.append("<a href=\"" + getConfiguration().getDomainUrl(mod.name) + "/index.html\">" + mod.name + "</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append(mod.desc);

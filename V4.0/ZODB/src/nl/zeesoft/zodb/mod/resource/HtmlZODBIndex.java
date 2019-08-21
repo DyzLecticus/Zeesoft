@@ -22,7 +22,7 @@ public class HtmlZODBIndex extends HtmlResource {
 		html.append("<tbody>\n");
 			html.append("<tr>\n");
 			html.append("<td width=\"20%\">");
-			html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + "/dataManager.html\">Data manager</a>");
+			html.append("<a href=\"" + getConfiguration().getDomainUrl(ModZODB.NAME) + "/dataManager.html\">Data manager</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("View, add, update and remove objects.");
@@ -31,7 +31,7 @@ public class HtmlZODBIndex extends HtmlResource {
 			
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + "/indexManager.html\">Index manager</a>");
+			html.append("<a href=\"" + getConfiguration().getDomainUrl(ModZODB.NAME) + "/indexManager.html\">Index manager</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("View, add and remove indexes.");
@@ -40,7 +40,7 @@ public class HtmlZODBIndex extends HtmlResource {
 			
 			html.append("<tr>\n");
 			html.append("<td>");
-			html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + "/stateManager.html\">State manager</a>");
+			html.append("<a href=\"" + getConfiguration().getDomainUrl(ModZODB.NAME) + "/stateManager.html\">State manager</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("Monitor and change the state of the database.");
@@ -50,7 +50,7 @@ public class HtmlZODBIndex extends HtmlResource {
 			if (getConfiguration().getModule(ModZODB.NAME).selfTest) {
 				html.append("<tr>\n");
 				html.append("<td>");
-				html.append("<a href=\"" + getConfiguration().getModuleUrl(ModZODB.NAME) + JsonModTestResultsHandler.PATH + "\">Test results JSON</a>");
+				html.append("<a href=\"" + getConfiguration().getDomainUrl(ModZODB.NAME) + JsonModTestResultsHandler.PATH + "\">Test results JSON</a>");
 				html.append("</td>\n");
 				html.append("<td>");
 				html.append("Returns the self test results as a JSON file.");

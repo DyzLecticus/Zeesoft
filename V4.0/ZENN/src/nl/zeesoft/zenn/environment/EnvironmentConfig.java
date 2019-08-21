@@ -20,6 +20,8 @@ public class EnvironmentConfig implements Persistable {
 	public static final String			ACTION_TURN_LEFT		= "turnLeft";
 	public static final String			ACTION_TURN_RIGHT		= "turnRight";
 
+	public boolean						active					= true;
+	
 	public int							herbivores				= 8;
 	public int							carnivores				= 2;
 
@@ -44,7 +46,9 @@ public class EnvironmentConfig implements Persistable {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		
+
+		json.rootElement.children.add(new JsElem("active","" + active));
+
 		json.rootElement.children.add(new JsElem("herbivores","" + herbivores));
 		json.rootElement.children.add(new JsElem("carnivores","" + carnivores));
 
@@ -71,6 +75,8 @@ public class EnvironmentConfig implements Persistable {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
+			active = json.rootElement.getChildBoolean("active",active);
+			
 			herbivores = json.rootElement.getChildInt("herbivores",herbivores);
 			carnivores = json.rootElement.getChildInt("carnivores",carnivores);
 

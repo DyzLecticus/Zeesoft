@@ -18,7 +18,7 @@ public class HtmlZENNIndex extends HtmlResource {
 		html.append("<a href=\"../index.html\">Back to modules</a>");
 		html.append("<hr />");
 		
-		String url = getConfiguration().getModuleUrl(ModZENN.NAME);
+		String url = getConfiguration().getDomainUrl(ModZENN.NAME);
 		
 		html.append("<div>\n");
 		html.append("<table style=\"width: 100%;\">\n");

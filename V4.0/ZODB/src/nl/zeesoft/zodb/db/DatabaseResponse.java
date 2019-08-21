@@ -15,7 +15,19 @@ public class DatabaseResponse implements JsAble {
 	public List<ZStringBuilder>		errors			= new ArrayList<ZStringBuilder>();
 	public List<DatabaseResult>		results			= new ArrayList<DatabaseResult>();
 	public int						size			= 0;
-		
+	
+	public void decodeObjects(StringBuilder key) {
+		if (request.encoding.equals(DatabaseRequest.ENC_KEY)) {
+			for (DatabaseResult result: results) {
+				result.decodeObject(key);
+			}
+		} else if (request.encoding.equals(DatabaseRequest.ENC_ASCII)) {
+			for (DatabaseResult result: results) {
+				result.decodeObject();
+			}
+		}
+	}
+	
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();

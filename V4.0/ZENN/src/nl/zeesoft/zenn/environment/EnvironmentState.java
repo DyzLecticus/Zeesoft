@@ -43,7 +43,7 @@ public class EnvironmentState implements Persistable {
 			if (organism instanceof Plant) {
 				repositionPlant((Plant)organism);
 			} else if (organism instanceof Animal) {
-				initializeAnimal((Animal)organism);
+				initializeAnimal((Animal)organism,false);
 			}
 		}
 	}
@@ -82,7 +82,7 @@ public class EnvironmentState implements Persistable {
  					ani.name = "Herbivore" + String.format("%02d",(i + 1)) ;
  					ani.herbivore = true;
  					organisms.add(ani);
- 					initializeAnimal(ani);
+ 					initializeAnimal(ani,false);
  				}
  			}
  			r = true;
@@ -103,7 +103,7 @@ public class EnvironmentState implements Persistable {
  					ani.name = "Carnivore" + String.format("%02d",(i + 1)) ;
  					ani.herbivore = false;
  					organisms.add(ani);
- 					initializeAnimal(ani);
+ 					initializeAnimal(ani,false);
  				}
  			}
  			r = true;
@@ -176,12 +176,14 @@ public class EnvironmentState implements Persistable {
 		return r;
 	}
 	
-	public void initializeAnimal(Animal animal) {
+	public void initializeAnimal(Animal animal,boolean initializeEnergy) {
 		animal.score = 0;
-		if (animal.herbivore) {
-			animal.energy = config.maxEnergyHerbivore / 2;
-		} else {
-			animal.energy = config.maxEnergyCarnivore / 2;
+		if (initializeEnergy) {
+			if (animal.herbivore) {
+				animal.energy = config.maxEnergyHerbivore / 2;
+			} else {
+				animal.energy = config.maxEnergyCarnivore / 2;
+			}
 		}
 		repositionOrganism(animal,0,EnvironmentConfig.SIZE_X - 1,0,EnvironmentConfig.SIZE_Y - 1);
 		animal.setRotation(ZRandomize.getRandomInt(0,3) * 90);

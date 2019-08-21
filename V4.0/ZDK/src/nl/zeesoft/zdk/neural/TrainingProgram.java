@@ -15,10 +15,16 @@ public class TrainingProgram implements JsAble {
 	public TestSet		baseTestSet			= null;
 	
 	public boolean		stopOnSuccess		= true;
-	
+
 	public TestSet		initialResults		= null;
 	public int			trainedEpochs		= 0;
 	public TestSet		latestResults		= null;
+	public float		totalAverageError	= 0;
+	public float		totalAverageLoss	= 0;
+
+	public TrainingProgram(NeuralNet nn) {
+		neuralNet = nn;
+	}
 
 	public TrainingProgram(NeuralNet nn,TestSet baseTs) {
 		neuralNet = nn;
@@ -34,6 +40,10 @@ public class TrainingProgram implements JsAble {
 	public void prepare() {
 		trainedEpochs = 0;
 		latestResults = null;
+		totalAverageError = 0;
+		totalAverageLoss = 0;
+		totalAverageError = 0;
+		totalAverageLoss = 0;
 		initialResults = getNewTrainingSet();
 		neuralNet.test(initialResults);
 	}
@@ -50,9 +60,11 @@ public class TrainingProgram implements JsAble {
 			TestSet tSet = getNewTrainingSet();
 			neuralNet.train(tSet);
 			trainedEpochs++;
+			totalAverageError += tSet.averageError;
+			totalAverageLoss += tSet.averageLoss;
 			latestResults = tSet;
 			done = tSet.success;
-			if (stopOnSuccess) {
+			if (done && stopOnSuccess) {
 				break;
 			}
 		}
@@ -101,6 +113,8 @@ public class TrainingProgram implements JsAble {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("stopOnSuccess","" + stopOnSuccess));
 		json.rootElement.children.add(new JsElem("trainedEpochs","" + trainedEpochs));
+		json.rootElement.children.add(new JsElem("totalAverageError","" + totalAverageError));
+		json.rootElement.children.add(new JsElem("totalAverageLoss","" + totalAverageLoss));
 		if (initialResults!=null) {
 			JsElem initElem = new JsElem("initialResults",true);
 			json.rootElement.children.add(initElem);
@@ -119,6 +133,8 @@ public class TrainingProgram implements JsAble {
 		if (json.rootElement!=null) {
 			stopOnSuccess = json.rootElement.getChildBoolean("stopOnSuccess",stopOnSuccess);
 			trainedEpochs = json.rootElement.getChildInt("trainedEpochs",trainedEpochs);
+			totalAverageError = json.rootElement.getChildFloat("totalAverageError",totalAverageError);
+			totalAverageLoss = json.rootElement.getChildFloat("totalAverageLoss",totalAverageLoss);
 			JsElem initElem = json.rootElement.getChildByName("initialResults");
 			if (initElem!=null) {
 				JsFile js = new JsFile();

@@ -1,11 +1,9 @@
 package nl.zeesoft.zenn.animal;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.genetic.Evolver;
 import nl.zeesoft.zdk.json.JsClientListener;
 import nl.zeesoft.zdk.json.JsClientResponse;
-import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.Config;
@@ -26,7 +24,8 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 			100,AnimalTestSet.getNewAnimalTestSet(herbivore),5);
 		this.configuration = config;
 		this.herbivore = herbivore;
-		setEvolverSleepMs(20);
+		setSleepMs(20);
+		setSleepMsFoundBest(200);
 	}
 	
 	public AnimalEvolver(Messenger msgr, WorkerUnion uni,boolean herbivore) {
@@ -35,6 +34,8 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 			AnimalConstants.MAX_LAYERS,AnimalConstants.MAX_NEURONS,
 			100,AnimalTestSet.getNewAnimalTestSet(herbivore),5);
 		this.herbivore = herbivore;
+		setSleepMs(20);
+		setSleepMsFoundBest(200);
 	}
 
 	@Override
@@ -50,17 +51,11 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 		}
 		if (res!=null) {
 			if (res.request.type.equals(DatabaseRequest.TYPE_GET)) {
-				if (res.results.size()>0) {
-					ZStringEncoder encoder = new ZStringEncoder(res.results.get(0).encoded);
-					encoder.decodeKey(configuration.getZODBKey(),0);
-					JsFile obj = new JsFile();
-					obj.fromStringBuilder(encoder);
-					if (obj.rootElement!=null && obj.rootElement.children.size()>0) {
-						lockMe(this);
-						id = res.results.get(0).id;
-						unlockMe(this);
-						fromJson(obj);
-					}
+				if (res.results.size()>0 && res.results.get(0).object!=null) {
+					lockMe(this);
+					id = res.results.get(0).id;
+					unlockMe(this);
+					fromJson(res.results.get(0).object);
 				}
 				if (!isWorking()) {
 					start();
@@ -73,30 +68,21 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 	
 	public void load() {
 		if (configuration!=null) {
-			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_GET);
-			request.name = new ZStringBuilder("ZENN/Evolvers/" + getObjectName());
-			request.encoding = DatabaseRequest.ENC_KEY;
-			configuration.handleDatabaseRequest(request,this,10);
+			configuration.getObject(new ZStringBuilder("ZENN/Evolvers/" + getObjectName()),this,10);
 		}
 	}
 	
 	protected void save() {
 		if (configuration!=null) {
-			DatabaseRequest request = null;
-			if (id>0) {
-				request = new DatabaseRequest(DatabaseRequest.TYPE_SET);
-				lockMe(this);
-				request.id = id;
-				unlockMe(this);
+			long objId = 0;
+			lockMe(this);
+			objId = id;
+			unlockMe(this);
+			if (objId>0) {
+				configuration.setObject(objId,this,this);
 			} else {
-				request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
-				request.name = new ZStringBuilder("ZENN/Evolvers/" + getObjectName());
+				configuration.addObject(this,new ZStringBuilder("ZENN/Evolvers/" + getObjectName()),this);
 			}
-			request.encoding = DatabaseRequest.ENC_KEY;
-			ZStringEncoder encoder = new ZStringEncoder(toJson().toStringBuilder());
-			encoder.encodeKey(configuration.getZODBKey(),0);
-			request.encoded = encoder;
-			configuration.handleDatabaseRequest(request,this,3);
 		}
 	}
 	

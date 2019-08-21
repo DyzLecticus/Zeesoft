@@ -22,21 +22,21 @@ import nl.zeesoft.zenn.environment.Plant;
 import nl.zeesoft.zodb.Config;
 
 public class Simulator extends Locker {
-	private WorkerUnion					union				= null;
-	private EnvironmentInitializer		envInitializer		= null;
-	private SimulatorAnimalInitializer	simAniInitializer	= null;
-	private HerbivoreEvolver			herbEvolver			= null;
-	private CarnivoreEvolver			carnEvolver			= null;
-	private SimulatorWorker				worker				= null;
+	private WorkerUnion							union					= null;
+	private EnvironmentInitializer				envInitializer			= null;
+	private SimulatorAnimalInitializer			simAniInitializer		= null;
+	private HerbivoreEvolver					herbEvolver				= null;
+	private CarnivoreEvolver					carnEvolver				= null;
+	private SimulatorWorker						worker					= null;
 
-	private EnvironmentConfig			environmentConfig	= null;
-	private EnvironmentState			environmentState	= null;
+	private EnvironmentConfig					environmentConfig		= null;
+	private EnvironmentState					environmentState		= null;
 
-	private List<SimulatorAnimalWorker>	animalWorkers		= new ArrayList<SimulatorAnimalWorker>();
-	private boolean						working				= false;
+	private List<SimulatorAnimalWorker>			animalWorkers			= new ArrayList<SimulatorAnimalWorker>();
+	private boolean								working					= false;
 	
-	private long						energyUpdated		= 0;
-	private long						stateUpdated		= 0;
+	private long								energyUpdated			= 0;
+	private long								stateUpdated			= 0;
 	
 	public Simulator(Config config,EnvironmentInitializer envInit,SimulatorAnimalInitializer simAniInit,HerbivoreEvolver herbEvo,CarnivoreEvolver carnEvo) {
 		super(config.getMessenger());
@@ -58,7 +58,7 @@ public class Simulator extends Locker {
 	
 	public void start() {
 		lockMe(this);
-		if (environmentConfig!=null && environmentState!=null && !working && !worker.isWorking()) {
+		if (environmentConfig!=null && environmentConfig.active && environmentState!=null && !working && !worker.isWorking()) {
 			if (environmentState.prepareForStart()) {
 				if (envInitializer!=null) {
 					envInitializer.updatedState();
@@ -186,7 +186,7 @@ public class Simulator extends Locker {
 							simAni.neuralNet = bestSoFar.neuralNet;
 							simAniInitializer.addOrReplaceObject(simAni);
 							if (ani.energy==0) {
-								environmentState.initializeAnimal(ani);
+								environmentState.initializeAnimal(ani,true);
 							}
 							animalWorker.setSimulatorAnimal(simAni);
 						}
@@ -259,7 +259,7 @@ public class Simulator extends Locker {
 								color = AnimalConstants.COLOR_GREY;
 							} else {
 								Organism org = environmentState.getOrganismByPos(posX, posY);
-								if (org!=null && !organismIsAliveNoLock(org)) {
+								if (org!=null && (org.energy==0 || !organismIsAliveNoLock(org))) {
 									org = null;
 									color = AnimalConstants.COLOR_GREY;
 								}

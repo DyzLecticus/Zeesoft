@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.genetic;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -22,12 +23,15 @@ public class Evolver extends Locker implements JsAble {
 	private GeneticNN				geneticNN			= null;
 	
 	private boolean					debug				= false;
+	private boolean					appendLog			= true;
 	private float					mutationRate		= 0.05F;
 	private int						trainEpochBatches	= 5000;
 	private int						trainEpochBatchSize	= 10;
-	private int						evolverSleepMs		= 10;
+	private int						sleepMs				= 10;
+	private int						sleepMsFoundBest	= 50;
 	private boolean					working				= false;
 	
+	private List<ZStringBuilder>	logLines			= new ArrayList<ZStringBuilder>();
 	private EvolverUnit				bestSoFar			= null;
 	
 	public Evolver(Messenger msgr, WorkerUnion uni, int maxHiddenLayers, int maxHiddenNeurons, int codePropertyStart, TestSet baseTestSet,int evolvers) {
@@ -39,6 +43,12 @@ public class Evolver extends Locker implements JsAble {
 	public void setDebug(boolean debug) {
 		lockMe(this);
 		this.debug = debug;
+		unlockMe(this);
+	}
+	
+	public void setAppendLog(boolean appendLog) {
+		lockMe(this);
+		this.appendLog = appendLog;
 		unlockMe(this);
 	}
 	
@@ -60,9 +70,15 @@ public class Evolver extends Locker implements JsAble {
 		unlockMe(this);
 	}
 	
-	public void setEvolverSleepMs(int evolverSleepMs) {
+	public void setSleepMs(int sleepMs) {
 		lockMe(this);
-		this.evolverSleepMs = evolverSleepMs;
+		this.sleepMs = sleepMs;
+		unlockMe(this);
+	}
+
+	public void setSleepMsFoundBest(int sleepMsFoundBest) {
+		lockMe(this);
+		this.sleepMsFoundBest = sleepMsFoundBest;
 		unlockMe(this);
 	}
 
@@ -76,17 +92,19 @@ public class Evolver extends Locker implements JsAble {
 
 	public void start() {
 		boolean r = false;
+		boolean dbg = false;
 		lockMe(this);
 		if (!working) {
 			working = true;
 			r = true;
+			dbg = debug;
 		}
 		unlockMe(this);
 		if (r) {
 			for (EvolverWorker evolver: evolvers) {
 				evolver.start();
 			}
-			if (debug && getMessenger()!=null) {
+			if (dbg && getMessenger()!=null) {
 				getMessenger().debug(this,"Started evolver");
 			}
 		}
@@ -134,7 +152,11 @@ public class Evolver extends Locker implements JsAble {
 				break;
 			}
 		}
-		if (debug && getMessenger()!=null) {
+		boolean dbg = false;
+		lockMe(this);
+		dbg = debug;
+		unlockMe(this);
+		if (dbg && getMessenger()!=null) {
 			getMessenger().debug(this,"Stopped evolver");
 		}
 	}
@@ -159,8 +181,15 @@ public class Evolver extends Locker implements JsAble {
 				json.rootElement.children.add(new JsElem("mutationRate","" + mutationRate));
 				json.rootElement.children.add(new JsElem("trainEpochBatches","" + trainEpochBatches));
 				json.rootElement.children.add(new JsElem("trainEpochBatchSize","" + trainEpochBatchSize));
-				json.rootElement.children.add(new JsElem("evolverSleepMs","" + evolverSleepMs));
+				json.rootElement.children.add(new JsElem("sleepMs","" + sleepMs));
+				json.rootElement.children.add(new JsElem("sleepMsFoundBest","" + sleepMsFoundBest));
 
+				JsElem logElem = new JsElem("log",true);
+				json.rootElement.children.add(logElem);
+				for (ZStringBuilder line: logLines) {
+					logElem.children.add(new JsElem(null,line,true));
+				}
+				
 				if (bestSoFar!=null) {
 					JsElem bestElem = new JsElem("bestSoFar",true);
 					json.rootElement.children.add(bestElem);
@@ -184,7 +213,16 @@ public class Evolver extends Locker implements JsAble {
 					mutationRate = json.rootElement.getChildFloat("mutationRate",mutationRate);
 					trainEpochBatches = json.rootElement.getChildInt("trainEpochBatches",trainEpochBatches);
 					trainEpochBatchSize = json.rootElement.getChildInt("trainEpochBatchSize",trainEpochBatchSize);
-					evolverSleepMs = json.rootElement.getChildInt("evolverSleepMs",evolverSleepMs);
+					sleepMs = json.rootElement.getChildInt("sleepMs",sleepMs);
+					sleepMsFoundBest = json.rootElement.getChildInt("sleepMsFoundBest",sleepMsFoundBest);
+					
+					logLines.clear();
+					JsElem logElem = json.rootElement.getChildByName("log");
+					if (logElem!=null) {
+						for (JsElem lineElem: logElem.children) {
+							logLines.add(lineElem.value);
+						}
+					}
 					
 					JsElem bestSoFarElem = json.rootElement.getChildByName("bestSoFar");
 					if (bestSoFarElem!=null && bestSoFarElem.children.size()>0) {
@@ -227,8 +265,13 @@ public class Evolver extends Locker implements JsAble {
 				EvolverUnit r = new EvolverUnit();
 				geneticNN.generateNewNN(code);
 				r.code = geneticNN.code;
+				r.codePropertyStart = geneticNN.codePropertyStart;
 				r.neuralNet = geneticNN.neuralNet;
 				r.trainingProgram = getNewTrainingProgram(r.neuralNet,baseTestSet.copy());
+				// Skip if initial results are not satisfactory
+				if (bestSoFar!=null && r.compareTo(bestSoFar) < 0) {
+					r = null;
+				}
 				return r;
 			}
 		};
@@ -242,7 +285,7 @@ public class Evolver extends Locker implements JsAble {
 	}
 	
 	protected TrainingProgram getNewTrainingProgram(NeuralNet nn) {
-		TrainingProgram r =  new TrainingProgram(nn,null);
+		TrainingProgram r =  new TrainingProgram(nn);
 		r.baseTestSet = baseTestSet.copy();
 		return r;
 	}
@@ -263,10 +306,14 @@ public class Evolver extends Locker implements JsAble {
 		return r;
 	}
 	
-	protected int getEvolverSleepMs() {
+	protected int getEvolverWorkerSleepMs() {
 		int r = 0;
 		lockMe(this);
-		r = evolverSleepMs;
+		if (bestSoFar==null) {
+			r = sleepMs;
+		} else {
+			r = sleepMsFoundBest;
+		}
 		unlockMe(this);
 		return r;
 	}
@@ -279,6 +326,9 @@ public class Evolver extends Locker implements JsAble {
 				bestSoFar = unit;
 				if (debug && getMessenger()!=null) {
 					getMessenger().debug(this,"Selected new best genetic neural net;\n" + unit.toStringBuilder());
+				}
+				if (appendLog) {
+					logLines.add(0,bestSoFar.toLogLine());
 				}
 				selected = true;
 			}

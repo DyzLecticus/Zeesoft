@@ -18,7 +18,7 @@ public class EnvironmentInitializer extends InitializerObject {
 	
 	public void updatedState() {
 		lockMe(this);
-		updateObjectNoLock(environmentState);
+		updateObjectInDatabaseNoLock(environmentState);
 		unlockMe(this);
 	}
 	
