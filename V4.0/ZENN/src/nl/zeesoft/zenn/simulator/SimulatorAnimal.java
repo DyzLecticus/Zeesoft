@@ -8,9 +8,10 @@ import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zodb.db.init.Persistable;
 
 public class SimulatorAnimal implements Persistable {
-	public String			name		= "";
-	public GeneticCode		code		= null;
-	public NeuralNet		neuralNet	= null;
+	public String			name				= "";
+	public GeneticCode		code				= null;
+	public int				codePropertyStart	= 0;
+	public NeuralNet		neuralNet			= null;
 	
 	@Override
 	public JsFile toJson() {
@@ -18,6 +19,7 @@ public class SimulatorAnimal implements Persistable {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("name",name,true));
 		json.rootElement.children.add(new JsElem("code",code.toCompressedCode(),true));
+		json.rootElement.children.add(new JsElem("codePropertyStart","" + codePropertyStart));
 		JsElem netElem = new JsElem("neuralNet",true);
 		json.rootElement.children.add(netElem);
 		netElem.children.add(neuralNet.toJson().rootElement);
@@ -33,6 +35,7 @@ public class SimulatorAnimal implements Persistable {
 				code = new GeneticCode();
 				code.fromCompressedCode(c);
 			}
+			codePropertyStart = json.rootElement.getChildInt("codePropertyStart",codePropertyStart);
 			JsElem netElem = json.rootElement.getChildByName("neuralNet");
 			if (netElem!=null && netElem.children.size()>0) {
 				JsFile js = new JsFile();

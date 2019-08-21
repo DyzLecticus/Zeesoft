@@ -183,6 +183,7 @@ public class Simulator extends Locker {
 							SimulatorAnimal simAni = new SimulatorAnimal();
 							simAni.name = ani.name;
 							simAni.code = bestSoFar.code;
+							simAni.codePropertyStart = bestSoFar.codePropertyStart;
 							simAni.neuralNet = bestSoFar.neuralNet;
 							simAniInitializer.addOrReplaceObject(simAni);
 							if (ani.energy==0) {

@@ -140,7 +140,6 @@ public class TestNeuralNet extends TestObject {
 		}
 		System.out.println("Latest test results;");
 		trainingSetToSystemOut(tp.latestResults,df);
-		//System.out.println("Trained epochs: " + tp.trainedEpochs + ", error change rate: " + tp.getErrorChangeRate() + ", loss change rate: " + tp.getLossChangeRate());
 		System.out.println("Trained epochs: " + tp.trainedEpochs + ", total average error: " + tp.totalAverageError + ", total average loss: " + tp.totalAverageLoss);
 		return tp;
 	}

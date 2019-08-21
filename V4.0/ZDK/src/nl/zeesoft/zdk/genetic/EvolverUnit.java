@@ -34,27 +34,20 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 				r = -1;
 			}
 		}
-		if (r == 0 && !equalsTolerance(trainingProgram.initialResults.averageLoss,o.trainingProgram.initialResults.averageLoss,TOLERANCE)) {
-			if (trainingProgram.initialResults.averageLoss < o.trainingProgram.initialResults.averageLoss) {
-				r = 1;
-			} else if (trainingProgram.initialResults.averageLoss > o.trainingProgram.initialResults.averageLoss) {
-				r = -1;
-			}
-		}
-		if (trainingProgram.latestResults!=null && o.trainingProgram.latestResults!=null) {
-			if (r == 0) {
-				if (!equalsTolerance(trainingProgram.trainedEpochs,o.trainingProgram.trainedEpochs,TOLERANCE)) {
-					if (trainingProgram.trainedEpochs < o.trainingProgram.trainedEpochs) {
+		if (r==0) {
+			if (trainingProgram.latestResults==null || o.trainingProgram.latestResults==null) {
+				if (!equalsTolerance(trainingProgram.initialResults.averageLoss,o.trainingProgram.initialResults.averageLoss,TOLERANCE)) {
+					if (trainingProgram.initialResults.averageLoss < o.trainingProgram.initialResults.averageLoss) {
 						r = 1;
-					} else if (trainingProgram.trainedEpochs > o.trainingProgram.trainedEpochs) {
+					} else if (trainingProgram.initialResults.averageLoss > o.trainingProgram.initialResults.averageLoss) {
 						r = -1;
 					}
-				} else if (!equalsTolerance(trainingProgram.totalAverageLoss,o.trainingProgram.totalAverageLoss,TOLERANCE)) {
-					if (trainingProgram.totalAverageLoss < o.trainingProgram.totalAverageLoss) {
-						r = 1;
-					} else if (trainingProgram.totalAverageLoss > o.trainingProgram.totalAverageLoss) {
-						r = -1;
-					}
+				}
+			} else if (!equalsTolerance(trainingProgram.getTrainingResult(),o.trainingProgram.getTrainingResult(),TOLERANCE)) {
+				if (trainingProgram.getTrainingResult() < o.trainingProgram.getTrainingResult()) {
+					r = 1;
+				} else if (trainingProgram.getTrainingResult() > o.trainingProgram.getTrainingResult()) {
+					r = -1;
 				}
 			}
 		}
@@ -118,13 +111,16 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 			r.append(" (final: ");
 			r.append(df.format(trainingProgram.latestResults.averageLoss));
 			r.append(")");
+			r.append("\n");
+			r.append("- Total average loss: ");
+			r.append(df.format(trainingProgram.totalAverageLoss));
+			r.append(" (epochs: ");
+			r.append("" + trainingProgram.trainedEpochs);
+			r.append(")");
+			r.append("\n");
+			r.append("- Training result: ");
+			r.append(df.format(trainingProgram.getTrainingResult()));
 		}
-		r.append("\n");
-		r.append("- Trained epochs: ");
-		r.append("" + trainingProgram.trainedEpochs);
-		r.append("\n");
-		r.append("- Total average loss: ");
-		r.append(df.format(trainingProgram.totalAverageLoss));
 		return r;
 	}
 
@@ -142,11 +138,11 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 			r.append(" (final: ");
 			r.append(df.format(trainingProgram.latestResults.averageLoss));
 			r.append(")");
+			r.append(", total average loss: ");
+			r.append(df.format(trainingProgram.totalAverageLoss));
+			r.append(", training result: ");
+			r.append(df.format(trainingProgram.getTrainingResult()));
 		}
-		r.append(", trained epochs: ");
-		r.append("" + trainingProgram.trainedEpochs);
-		r.append(", total average loss: ");
-		r.append(df.format(trainingProgram.totalAverageLoss));
 		return r;
 	}
 
@@ -154,6 +150,7 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 		EvolverUnit r = new EvolverUnit();
 		r.code = new GeneticCode();
 		r.code.setCode(code.getCode());
+		r.codePropertyStart = codePropertyStart;
 		r.neuralNet = neuralNet.copy();
 		r.trainingProgram = trainingProgram.copy();
 		return r;
@@ -170,9 +167,5 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 			r = false;
 		}
 		return r;
-	}
-	
-	private boolean equalsTolerance(int t,int o,float tolerance) {
-		return equalsTolerance((float)t,(float)o,tolerance);
 	}
 }

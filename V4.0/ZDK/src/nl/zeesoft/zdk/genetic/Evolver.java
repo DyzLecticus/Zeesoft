@@ -29,6 +29,7 @@ public class Evolver extends Locker implements JsAble {
 	private int						trainEpochBatchSize	= 10;
 	private int						sleepMs				= 10;
 	private int						sleepMsFoundBest	= 50;
+	private boolean					stopIfFoundBest		= false;
 	private boolean					working				= false;
 	
 	private List<ZStringBuilder>	logLines			= new ArrayList<ZStringBuilder>();
@@ -79,6 +80,12 @@ public class Evolver extends Locker implements JsAble {
 	public void setSleepMsFoundBest(int sleepMsFoundBest) {
 		lockMe(this);
 		this.sleepMsFoundBest = sleepMsFoundBest;
+		unlockMe(this);
+	}
+
+	public void setStopIfFoundBest(boolean stopIfFoundBest) {
+		lockMe(this);
+		this.stopIfFoundBest = stopIfFoundBest;
 		unlockMe(this);
 	}
 
@@ -158,6 +165,25 @@ public class Evolver extends Locker implements JsAble {
 		unlockMe(this);
 		if (dbg && getMessenger()!=null) {
 			getMessenger().debug(this,"Stopped evolver");
+		}
+	}
+	
+	public void setBase(ZStringBuilder code,int codePropertyStart,NeuralNet nn) {
+		lockMe(this);
+		geneticNN.code.setCode(code);
+		geneticNN.codePropertyStart = codePropertyStart;
+		geneticNN.neuralNet = nn;
+		
+		EvolverUnit unit = new EvolverUnit();
+		unit.code = geneticNN.code;
+		unit.codePropertyStart = geneticNN.codePropertyStart;
+		unit.neuralNet = geneticNN.neuralNet;
+		unit.trainingProgram = getNewTrainingProgram(unit.neuralNet,baseTestSet.copy());
+		bestSoFar = unit;
+		boolean start = !working && stopIfFoundBest;
+		unlockMe(this);
+		if (start) {
+			start();
 		}
 	}
 	
@@ -249,7 +275,7 @@ public class Evolver extends Locker implements JsAble {
 	
 	protected EvolverUnit getNewEvolverUnit(EvolverWorker evolver) {
 		GeneticCode gCode = null;
-		if (evolvers.indexOf(evolver)<=(evolvers.size() / 2)) {
+		if (evolvers.size()==1 || evolvers.indexOf(evolver)<=(evolvers.size() / 2)) {
 			lockMe(this);
 			if (bestSoFar!=null) {
 				gCode = new GeneticCode();
@@ -320,6 +346,7 @@ public class Evolver extends Locker implements JsAble {
 	
 	protected void finishedTrainigProgram(EvolverWorker worker,EvolverUnit unit) {
 		boolean selected = false;
+		boolean stop = false;
 		if (unit.trainingProgram.latestResults.success) {
 			lockMe(this);
 			if (bestSoFar==null || unit.compareTo(bestSoFar)>0) {
@@ -331,10 +358,14 @@ public class Evolver extends Locker implements JsAble {
 					logLines.add(0,bestSoFar.toLogLine());
 				}
 				selected = true;
+				stop = stopIfFoundBest;
 			}
 			unlockMe(this);
 		}
 		if (selected) {
+			if (stop) {
+				stop();
+			}
 			selectedBest();
 		}
 	}
@@ -346,8 +377,8 @@ public class Evolver extends Locker implements JsAble {
 		if (maxHiddenNeurons<2) {
 			maxHiddenLayers = 2;
 		}
-		if (evolvers < 2) {
-			evolvers = 2;
+		if (evolvers < 1) {
+			evolvers = 1;
 		}
 		this.baseTestSet = baseTestSet;
 		for (int i = 0; i < evolvers; i++) {

@@ -25,7 +25,7 @@ public class EnvironmentConfig implements Persistable {
 	public int							herbivores				= 8;
 	public int							carnivores				= 2;
 
-	public int							deathDurationSeconds	= 1;
+	public int							deathDurationSeconds	= 2;
 
 	public int							energyActionLookFactor	= 2;
 	public int							energyActionMove		= 1000;

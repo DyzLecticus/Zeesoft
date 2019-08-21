@@ -72,39 +72,16 @@ public class TrainingProgram implements JsAble {
 	}
 	
 	/**
-	 * Returns the calculated error change.
+	 * Returns the calculated training result (lower is better).
 	 * 
-	 * @return The error change
+	 * @return The training result
 	 */
-	public float getErrorChange() {
-		return latestResults.averageError - initialResults.averageError;
-	}
-	
-	/**
-	 * Returns the calculated error change rate.
-	 * 
-	 * @return The error change rate
-	 */
-	public float getErrorChangeRate() {
-		return getErrorChange() < 0 ? (getErrorChange() / trainedEpochs) * -1F : 0;
-	}
-	
-	/**
-	 * Returns the calculated loss change.
-	 * 
-	 * @return The loss change
-	 */
-	public float getLossChange() {
-		return latestResults.averageLoss - initialResults.averageLoss;
-	}
-	
-	/**
-	 * Returns the calculated loss change rate.
-	 * 
-	 * @return The loss change rate
-	 */
-	public float getLossChangeRate() {
-		return getLossChange() < 0 ? (getLossChange() / trainedEpochs) * -1F : 0;
+	public float getTrainingResult() {
+		float r = 0;
+		if (initialResults!=null && latestResults!=null) {
+			r = initialResults.averageLoss * totalAverageLoss;
+		}
+		return r;
 	}
 
 	@Override
@@ -159,6 +136,8 @@ public class TrainingProgram implements JsAble {
 		r.stopOnSuccess = stopOnSuccess;
 		r.initialResults = initialResults.copy();
 		r.trainedEpochs = trainedEpochs;
+		r.totalAverageError = totalAverageError;
+		r.totalAverageLoss = totalAverageLoss;
 		r.latestResults = latestResults.copy();
 		return r;
 	}
