@@ -3,7 +3,6 @@ package nl.zeesoft.zenn.mod.resource;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zenn.mod.ModZENN;
 import nl.zeesoft.zodb.Config;
-import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
 import nl.zeesoft.zodb.mod.resource.HtmlResource;
 
 public class HtmlZENNIndex extends HtmlResource {
@@ -32,6 +31,7 @@ public class HtmlZENNIndex extends HtmlResource {
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
+			/*
 			if (getConfiguration().getModule(ModZENN.NAME).selfTest) {
 				html.append("<tr>\n");
 				html.append("<td>");
@@ -42,6 +42,7 @@ public class HtmlZENNIndex extends HtmlResource {
 				html.append("</td>\n");
 				html.append("</tr>\n");
 			}
+			*/
 		html.append("</tbody>\n");
 		html.append("</table>\n");
 		html.append("</div>\n");
