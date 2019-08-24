@@ -281,7 +281,7 @@ public class Evolver extends Locker implements JsAble {
 				if (debug && getMessenger()!=null) {
 					getMessenger().debug(this,"Set new best genetic neural net;\n" + unit.toStringBuilder());
 				}
-				addLogLine(bestSoFar,"SEL");
+				addLogLine(bestSoFar,"SET");
 			}
 		}
 		unlockMe(this);

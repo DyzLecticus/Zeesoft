@@ -96,9 +96,9 @@ The output of this test shows the converted JSON.
 Test results
 ------------
 All 3 tests have been executed successfully (26 assertions).  
-Total test duration: 48 ms (total sleep duration: 0 ms).  
+Total test duration: 52 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zodb.test.TestConfig: 635 Kb / 0 Mb
- * nl.zeesoft.zodb.test.TestDatabaseRequest: 419 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestConfig: 634 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestDatabaseRequest: 418 Kb / 0 Mb
  * nl.zeesoft.zodb.test.TestDatabaseResponse: 424 Kb / 0 Mb

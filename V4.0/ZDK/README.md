@@ -51,10 +51,10 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 7107920899016448170179846287402511246169644428888946648197400747
+Key: 6402933611692703532932481199421393242944556133769115759271750880
 Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
-Key encoded text: VtIpBp8u0vCpyoWvPwLubo8pZtnszrgusqfs6nLpnvNwnu6rJt6qRvEuYrmo4qSrVoNonqAsVt0odtywRthqBsnsorFuKvJvMvjv#satVtzrsv:qpwzujrooroZtqo3nksMo1oau9v#pOpKuPwZvio8oXtwsKsuvaomtco#qZtHw:vNrFsXqPvAunrko1qZsUpQpFqqrIsnp0
+Key encoded text: GKkIzF:HzMVHVH3KrGtFFLiMrHBKrEZIyJFHxGSM2ItHQI5L9GHH7NyMrI7HwGiHzLDGCGEJKIrL:IUJwJuIfKpG4I4H0LyKeMdGvGLK6LHJ:MtHHLwGjLzIPFlLYFjE6JoHVFBHyMQHeIQJrGEHMLiLpHKLCFdIgIMIBHENDGnH5JML5F~G5NuMNI5HtGpIyMGIXHuH#GCL0
 Key decoded text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
 ASCII encoded text: 42,24,59,48,66,63,2,-28,67,73,-10,50,55,61,59,-28,63,67,-10,-21,26,73,80,-28,34,53,57,56,63,51,75,55,-3,-2,-10,12,69,71,-10,37,72,53,-10,61,69,69,-10,42,59,53,66,45,68,55,-10,56,69,52,55,61,21,-16,16,-15,-1,-16,-2,8,69,62,-3,56,-10,73,69,57,-10,59,68,51,77,-16,62,51,77,-16,74,51,16,-16,49,54,59,11,73,52,69,62,58,33,-9,-7,4
@@ -259,9 +259,9 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2019-08-24 23:24:15:343 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2019-08-24 23:24:15:644 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2019-08-24 23:24:15:645 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+2019-08-24 23:42:24:995 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2019-08-24 23:42:25:297 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2019-08-24 23:42:25:297 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
 java.lang.NumberFormatException: For input string: "A"
 	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
 	at java.lang.Integer.parseInt(Integer.java:580)
@@ -271,7 +271,7 @@ java.lang.NumberFormatException: For input string: "A"
 	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:39)
 	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:39)
 
-2019-08-24 23:24:15:957 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2019-08-24 23:42:25:609 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZMatrix
@@ -306,14 +306,14 @@ Scalar multiplied by 3;
 030.00 | 030.00 | 030.00
 
 Randomized;
-000.94 | 000.45 | 000.68
+-00.13 | -00.70 | 000.70
 -------+--------+-------
--00.66 | 000.94 | -00.17
+000.63 | 000.96 | -00.24
 
 Randomized multiplied element wise;
-028.19 | 013.60 | 020.53
+-03.76 | -21.07 | 020.99
 -------+--------+-------
--19.81 | 028.14 | -05.01
+018.93 | 028.77 | -07.33
 
 Matrix 1;
 001.00 | 001.00 | 001.00
@@ -333,16 +333,16 @@ Matrix multiplication of matrix 1 * matrix 2;
 024.00 | 024.00
 
 New randomized matrix;
-000.41 | -00.52 | 000.88
+000.28 | -00.92 | -00.60
 -------+--------+-------
--00.57 | -00.12 | 000.02
+-00.45 | 000.81 | 000.50
 
 Randomized matrix transposed;
-000.41 | -00.57
+000.28 | -00.45
 -------+-------
--00.52 | -00.12
+-00.92 | 000.81
 -------+-------
-000.88 | 000.02
+-00.60 | 000.50
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestGeneticCode
@@ -372,45 +372,45 @@ The output of this test shows;
  * A generated genetic code  
  * The mutated genetic code and the resulting scaled property values  
 ~~~~
-Genetic code: 7321080872032608347368646409724481210848123697821700201698861536747109689575695500787562022368419235
-Mutated code: 7321083872032608347368646409724491210848123697821700201668863536747109689575695500087562022368419235
-                    ^                         ^                       ^   ^                     ^                 
+Genetic code: 3203028425106773683744725193684358480415941775377254446756192822274900619762369794244846763892596376
+Mutated code: 3203028425101773683744725193684358280415971775377254446756192622274900619762369794244845763892596376
+                          ^                     ^      ^                   ^                         ^            
 
 Scaled property values;
-0: 812
-1: 608
-2: 170 <
-3: 449 <
-4: 121
-5: 22
-6: 875
-7: 732
-8: 695
-9: 872
-10: 688 <
-11: 912 <
-12: 864
-13: 235
-14: 201
-15: 108
-16: 108
-17: 368
-18: 210
-19: 83 <
-20: 536 <
-21: 368
-22: 235
-23: 686
-24: 724
-25: 22
-26: 236
-27: 972 <
-28: 260
-29: 668 <
-30: 668 <
-31: 646
-32: 97
-Mutated property values: 9
+0: 251
+1: 358
+2: 763
+3: 561
+4: 472 <
+5: 725
+6: 444
+7: 192
+8: 622 <
+9: 675
+10: 622 <
+11: 376 <
+12: 519
+13: 762
+14: 159 <
+15: 236
+16: 963
+17: 490
+18: 638
+19: 845 <
+20: 756 <
+21: 537
+22: 979
+23: 843
+24: 251
+25: 675
+26: 435
+27: 979
+28: 942
+29: 389 <
+30: 623
+31: 749
+32: 284
+Mutated property values: 8
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestNeuralNet
@@ -465,17 +465,17 @@ The output of this test shows;
 Neural net activator: nl.zeesoft.zdk.functions.ZLeakyReLU, learning rate: 0.1
 Initial test results;
   Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|1.00], output: [-0.00], expectation: [0.00], error: 0.00, loss: 0.0037970291
-  Input: [0.00|1.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0034558
-  Input: [1.00|0.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0003413
-  Average error: 0.50, average loss: 0.50, success: false
+  Input: [1.00|1.00], output: [0.09], expectation: [0.00], error: -0.09, loss: 0.09143398
+  Input: [0.00|1.00], output: [0.47], expectation: [1.00], error: 0.53, loss: 0.5302915
+  Input: [1.00|0.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0000424
+  Average error: 0.41, average loss: 0.41, success: false
 Latest test results;
-  Input: [0.00|0.00], output: [-0.01], expectation: [0.00], error: 0.01, loss: 0.0061326846
-  Input: [1.00|0.00], output: [0.94], expectation: [1.00], error: 0.06, loss: 0.064896464
-  Input: [1.00|1.00], output: [0.09], expectation: [0.00], error: -0.09, loss: 0.09181327
-  Input: [0.00|1.00], output: [0.90], expectation: [1.00], error: 0.10, loss: 0.098739564
-  Average error: 0.07, average loss: 0.07, success: true
-Trained epochs: 14162, total average error: 6955.5513, total average loss: 6955.5513
+  Input: [1.00|1.00], output: [0.05], expectation: [0.00], error: -0.05, loss: 0.046416994
+  Input: [0.00|1.00], output: [0.96], expectation: [1.00], error: 0.04, loss: 0.04116589
+  Input: [0.00|0.00], output: [0.09], expectation: [0.00], error: -0.09, loss: 0.09293024
+  Input: [1.00|0.00], output: [0.92], expectation: [1.00], error: 0.08, loss: 0.07888383
+  Average error: 0.06, average loss: 0.06, success: true
+Trained epochs: 1006, total average error: 356.1224, total average loss: 356.1224
 ================================================================================
 Neural net activator: nl.zeesoft.zdk.functions.ZLeakyReLU, output activator: nl.zeesoft.zdk.functions.ZSoftmaxTop, learning rate: 0.1
 Initial test results;
@@ -485,12 +485,12 @@ Initial test results;
   Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
   Average error: 0.50, average loss: 0.50, success: false
 Latest test results;
-  Input: [1.00|1.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
-  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
   Input: [0.00|0.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
-  Average error: 1.00, average loss: 1.00, success: false
-Trained epochs: 50000, total average error: 30563.75, total average loss: 30563.75
+  Input: [1.00|0.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.0
+  Input: [0.00|1.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.0
+  Input: [1.00|1.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
+  Average error: 0.50, average loss: 0.50, success: false
+Trained epochs: 50000, total average error: 36364.75, total average loss: 36364.75
 
 Neural net JSON;
 {
@@ -504,19 +504,19 @@ Neural net JSON;
   "outputActivator": "nl.zeesoft.zdk.functions.ZSoftmaxTop",
   "learningRate": 0.1,
   "values": [
-    "2,1,0.0,0.0",
-    "2,1,-0.056656454,-0.101902045",
+    "2,1,1.0,1.0",
+    "2,1,1.7603052,-0.008363706",
     "1,1,1.0"
   ],
   "weights": [
     "1,1,0.0",
-    "2,2,-0.24231839,-0.012574186,0.13640735,0.007022285",
-    "1,2,-0.35613334,-0.63084126"
+    "2,2,-0.0960982,-0.06256783,0.29094654,-0.80137026",
+    "1,2,0.5471834,-0.3739575"
   ],
   "biases": [
     "1,1,0.0",
-    "2,1,-5.6652894,-10.189574",
-    "1,1,-0.084456205"
+    "2,1,1.7548162,-0.324825",
+    "1,1,-0.96466935"
   ]
 }
 ~~~~
@@ -547,26 +547,26 @@ Class references;
 **Test output**  
 The output of this test shows the training program outputs of one or more generated XOR neural nets.  
 ~~~~
-Neural net activator: nl.zeesoft.zdk.functions.ZTanH, output activator: nl.zeesoft.zdk.functions.ZReLU, learning rate: 0.0081
+Neural net activator: nl.zeesoft.zdk.functions.ZSigmoid, output activator: nl.zeesoft.zdk.functions.ZSoftmaxTop, learning rate: 0.0792
 Initial test results;
-  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|1.00], output: [0.19], expectation: [0.00], error: -0.19, loss: 0.18653451
-  Input: [0.00|1.00], output: [0.01], expectation: [1.00], error: 0.99, loss: 0.9850794
-  Input: [1.00|0.00], output: [0.18], expectation: [1.00], error: 0.82, loss: 0.8197533
+  Input: [0.00|0.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
+  Input: [1.00|1.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
+  Input: [0.00|1.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.0
+  Input: [1.00|0.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.0
   Average error: 0.50, average loss: 0.50, success: false
 Latest test results;
-  Input: [1.00|1.00], output: [0.10], expectation: [0.00], error: -0.10, loss: 0.099961996
-  Input: [0.00|1.00], output: [0.92], expectation: [1.00], error: 0.08, loss: 0.07917243
-  Input: [1.00|0.00], output: [0.92], expectation: [1.00], error: 0.08, loss: 0.0763433
-  Input: [0.00|0.00], output: [0.08], expectation: [0.00], error: -0.08, loss: 0.08302361
-  Average error: 0.08, average loss: 0.08, success: true
-Trained epochs: 4589, total average error: 1853.5175, total average loss: 1853.5175
+  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
+  Input: [0.00|1.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.0
+  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
+  Input: [1.00|0.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.0
+  Average error: 0.00, average loss: 0.00, success: true
+Trained epochs: 209, total average error: 99.25, total average loss: 99.25
 ~~~~
 
 Test results
 ------------
 All 10 tests have been executed successfully (55 assertions).  
-Total test duration: 2316 ms (total sleep duration: 600 ms).  
+Total test duration: 1804 ms (total sleep duration: 600 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 524 Kb / 0 Mb
@@ -577,5 +577,5 @@ Memory usage per test;
  * nl.zeesoft.zdk.test.impl.TestMessenger: 689 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestZMatrix: 815 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestGeneticCode: 777 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestNeuralNet: 16395 Kb / 16 Mb
- * nl.zeesoft.zdk.test.impl.TestGeneticNN: 5713 Kb / 5 Mb
+ * nl.zeesoft.zdk.test.impl.TestNeuralNet: 2085 Kb / 2 Mb
+ * nl.zeesoft.zdk.test.impl.TestGeneticNN: 3687 Kb / 3 Mb

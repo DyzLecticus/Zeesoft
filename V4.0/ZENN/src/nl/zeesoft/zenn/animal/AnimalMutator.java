@@ -23,6 +23,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 	
 	private int					topScore			= 0;
 	private SimulatorAnimal		topScoringAnimal	= null;
+	private long				topScoreCounter		= 0;
 	
 	private boolean				loaded				= false;
 	private	long				id					= 0;
@@ -63,16 +64,20 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 				unit2 = topScoringAnimal.unit.copy();
 				r = true;
 			} else if (topScore>10) {
-				if (topScore>400) {
-					topScore = (topScore / 40) * 39;
-					if (topScore < 400) {
-						topScore = 400;
+				topScoreCounter++;
+				if (topScoreCounter>=10) {
+					topScoreCounter = 0;
+					if (topScore>400) {
+						topScore = (topScore / 40) * 39;
+						if (topScore < 400) {
+							topScore = 400;
+						}
+					} else {
+						topScore--;
 					}
-				} else {
-					topScore--;
-				}
-				if (topScore % 10 == 0) {
-					save = true;
+					if (topScore % 10 == 0) {
+						save = true;
+					}
 				}
 			}
 		}
@@ -97,6 +102,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		lockMe(this);
 		topScore = 0;
 		topScoringAnimal = null;
+		topScoreCounter = 0;
 		unlockMe(this);
 		if (isWorking()) {
 			stop();
