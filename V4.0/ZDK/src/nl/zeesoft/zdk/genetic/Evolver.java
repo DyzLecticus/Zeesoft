@@ -15,6 +15,12 @@ import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * An evolver can be used to generate neural nets according to certain specification.
+ * It uses multi threading to use processing power effectively.
+ * When specifying multiple evolvers, half of them are used to generate completely new neural nets.
+ * The other half are used to generate mutations of the best-so-far generated neural net.  
+ */
 public class Evolver extends Locker implements JsAble {
 	private WorkerUnion				union				= null;
 	
@@ -29,7 +35,6 @@ public class Evolver extends Locker implements JsAble {
 	private int						trainEpochBatchSize	= 10;
 	private int						sleepMs				= 10;
 	private int						sleepMsFoundBest	= 50;
-	private boolean					stopIfFoundBest		= false;
 	private boolean					working				= false;
 	
 	private List<ZStringBuilder>	logLines			= new ArrayList<ZStringBuilder>();
@@ -83,12 +88,6 @@ public class Evolver extends Locker implements JsAble {
 		unlockMe(this);
 	}
 
-	public void setStopIfFoundBest(boolean stopIfFoundBest) {
-		lockMe(this);
-		this.stopIfFoundBest = stopIfFoundBest;
-		unlockMe(this);
-	}
-
 	public boolean isWorking() {
 		boolean r = false;
 		lockMe(this);
@@ -112,7 +111,7 @@ public class Evolver extends Locker implements JsAble {
 				evolver.start();
 			}
 			if (dbg && getMessenger()!=null) {
-				getMessenger().debug(this,"Started evolver");
+				getMessenger().debug(this,"Started");
 			}
 		}
 	}
@@ -164,27 +163,30 @@ public class Evolver extends Locker implements JsAble {
 		dbg = debug;
 		unlockMe(this);
 		if (dbg && getMessenger()!=null) {
-			getMessenger().debug(this,"Stopped evolver");
+			getMessenger().debug(this,"Stopped");
 		}
 	}
 	
-	public void setBase(ZStringBuilder code,int codePropertyStart,NeuralNet nn) {
+	public void setGeneticNN(GeneticNN geneticNN) {
 		lockMe(this);
-		geneticNN.code.setCode(code);
-		geneticNN.codePropertyStart = codePropertyStart;
-		geneticNN.neuralNet = nn;
-		
-		EvolverUnit unit = new EvolverUnit();
-		unit.code = geneticNN.code;
-		unit.codePropertyStart = geneticNN.codePropertyStart;
-		unit.neuralNet = geneticNN.neuralNet;
-		unit.trainingProgram = getNewTrainingProgram(unit.neuralNet,baseTestSet.copy());
-		bestSoFar = unit;
-		boolean start = !working && stopIfFoundBest;
+		this.geneticNN = geneticNN.copy();
 		unlockMe(this);
-		if (start) {
-			start();
-		}
+	}
+	
+	public GeneticNN getGeneticNN() {
+		GeneticNN r = null;
+		lockMe(this);
+		r = geneticNN.copy();
+		unlockMe(this);
+		return r;
+	}
+
+	public void setBestSoFar(EvolverUnit unit) {
+		setBestSoFar(unit,false);
+	}
+
+	public void setBestSoFarIfBetter(EvolverUnit unit) {
+		setBestSoFar(unit,unit!=null);
 	}
 	
 	public EvolverUnit getBestSoFar() {
@@ -234,8 +236,7 @@ public class Evolver extends Locker implements JsAble {
 			LockedCode code = new LockedCode() {
 				@Override
 				public Object doLocked() {
-					Evolver evolver = (Evolver) this.param1;
-					JsFile json = (JsFile) this.param2;
+					JsFile json = (JsFile) this.param1;
 					mutationRate = json.rootElement.getChildFloat("mutationRate",mutationRate);
 					trainEpochBatches = json.rootElement.getChildInt("trainEpochBatches",trainEpochBatches);
 					trainEpochBatchSize = json.rootElement.getChildInt("trainEpochBatchSize",trainEpochBatchSize);
@@ -255,22 +256,32 @@ public class Evolver extends Locker implements JsAble {
 						bestSoFar = new EvolverUnit();
 						JsFile js = new JsFile();
 						js.rootElement = bestSoFarElem.children.get(0);
-						bestSoFar.fromJson(js,evolver);
-						if (bestSoFar.code==null || bestSoFar.neuralNet==null || bestSoFar.trainingProgram==null) {
-							bestSoFar = null;
-						}
+						bestSoFar.fromJson(js);
 					}
 					return null;
 				}
 			};
-			code.param1 = this;
-			code.param2 = json;
+			code.param1 = json;
 			doLocked(this,code);
 		}
 	}
 	
 	protected void selectedBest() {
 		// Override to implement
+	}
+
+	protected void setBestSoFar(EvolverUnit unit,boolean ifBetter) {
+		lockMe(this);
+		if (unit==null || (!ifBetter || unit.compareTo(bestSoFar)>0)) {
+			bestSoFar = unit;
+			if (bestSoFar!=null) {
+				this.geneticNN = unit.geneticNN.copy();
+				if (debug && getMessenger()!=null) {
+					getMessenger().debug(this,"Set new best genetic neural net;\n" + unit.toStringBuilder());
+				}
+			}
+		}
+		unlockMe(this);
 	}
 	
 	protected EvolverUnit getNewEvolverUnit(EvolverWorker evolver) {
@@ -279,7 +290,7 @@ public class Evolver extends Locker implements JsAble {
 			lockMe(this);
 			if (bestSoFar!=null) {
 				gCode = new GeneticCode();
-				gCode.setCode(bestSoFar.code.getCode());
+				gCode.setCode(bestSoFar.geneticNN.code.getCode());
 				gCode.mutate(mutationRate);
 			}
 			unlockMe(this);
@@ -290,10 +301,8 @@ public class Evolver extends Locker implements JsAble {
 				GeneticCode code = (GeneticCode) param1;
 				EvolverUnit r = new EvolverUnit();
 				geneticNN.generateNewNN(code);
-				r.code = geneticNN.code;
-				r.codePropertyStart = geneticNN.codePropertyStart;
-				r.neuralNet = geneticNN.neuralNet;
-				r.trainingProgram = getNewTrainingProgram(r.neuralNet,baseTestSet.copy());
+				r.geneticNN = geneticNN.copy();
+				r.trainingProgram = getNewTrainingProgram(r.geneticNN.neuralNet,baseTestSet.copy());
 				// Skip if initial results are not satisfactory
 				if (bestSoFar!=null && r.compareTo(bestSoFar) < 0) {
 					r = null;
@@ -308,12 +317,6 @@ public class Evolver extends Locker implements JsAble {
 
 	protected TrainingProgram getNewTrainingProgram(NeuralNet nn, TestSet baseTs) {
 		return new TrainingProgram(nn,baseTs);
-	}
-	
-	protected TrainingProgram getNewTrainingProgram(NeuralNet nn) {
-		TrainingProgram r =  new TrainingProgram(nn);
-		r.baseTestSet = baseTestSet.copy();
-		return r;
 	}
 	
 	protected int getTrainEpochBatches() {
@@ -346,7 +349,6 @@ public class Evolver extends Locker implements JsAble {
 	
 	protected void finishedTrainigProgram(EvolverWorker worker,EvolverUnit unit) {
 		boolean selected = false;
-		boolean stop = false;
 		if (unit.trainingProgram.latestResults.success) {
 			lockMe(this);
 			if (bestSoFar==null || unit.compareTo(bestSoFar)>0) {
@@ -358,14 +360,10 @@ public class Evolver extends Locker implements JsAble {
 					logLines.add(0,bestSoFar.toLogLine());
 				}
 				selected = true;
-				stop = stopIfFoundBest;
 			}
 			unlockMe(this);
 		}
 		if (selected) {
-			if (stop) {
-				stop();
-			}
 			selectedBest();
 		}
 	}
@@ -384,6 +382,7 @@ public class Evolver extends Locker implements JsAble {
 		for (int i = 0; i < evolvers; i++) {
 			this.evolvers.add(new EvolverWorker(getMessenger(),union,this));
 		}
-		geneticNN = new GeneticNN(baseTestSet.inputNeurons,maxHiddenLayers,maxHiddenNeurons,baseTestSet.outputNeurons,codePropertyStart);
+		geneticNN = new GeneticNN();
+		geneticNN.initialize(baseTestSet.inputNeurons,maxHiddenLayers,maxHiddenNeurons,baseTestSet.outputNeurons,codePropertyStart);
 	}
 }

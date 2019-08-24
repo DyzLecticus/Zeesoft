@@ -58,26 +58,14 @@ public class TestEnvironment extends TestObject {
 		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
 		System.out.println(oriStr);
 		
-		EnvironmentConfig copy = new EnvironmentConfig();
-		copy.fromJson(json);
-		ZStringBuilder newStr = copy.toJson().toStringBuilderReadFormat();
-		assertEqual(newStr.equals(oriStr),true,"The environment configuration JSON does not match expectation");
-		if (!newStr.equals(oriStr)) {
-			System.err.println(newStr);
-		}
-
+		testJsAble(env,new EnvironmentConfig(),"The environment configuration JSON does not match expectation");
+		
 		EnvironmentState envS = new EnvironmentState();
 		envS.initialize(env);
 		json = envS.toJson();
 		oriStr = json.toStringBuilderReadFormat();
 		System.out.println(oriStr);
 		
-		EnvironmentState copyS = new EnvironmentState();
-		copyS.fromJson(json);
-		newStr = copyS.toJson().toStringBuilderReadFormat();
-		assertEqual(newStr.equals(oriStr),true,"The environment state JSON does not match expectation");
-		if (!newStr.equals(oriStr)) {
-			System.err.println(newStr);
-		}
+		testJsAble(envS,new EnvironmentState(),"The environment state JSON does not match expectation");
 	}
 }

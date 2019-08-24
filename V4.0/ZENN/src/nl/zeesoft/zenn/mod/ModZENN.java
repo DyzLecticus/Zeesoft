@@ -1,7 +1,9 @@
 package nl.zeesoft.zenn.mod;
 
 import nl.zeesoft.zenn.animal.CarnivoreEvolver;
+import nl.zeesoft.zenn.animal.CarnivoreMutator;
 import nl.zeesoft.zenn.animal.HerbivoreEvolver;
+import nl.zeesoft.zenn.animal.HerbivoreMutator;
 import nl.zeesoft.zenn.mod.handler.CssZENNHandler;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNEnvironmentHandler;
 import nl.zeesoft.zenn.mod.handler.HtmlZENNIndexHandler;
@@ -27,6 +29,8 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 	
 	private HerbivoreEvolver			herbivoreEvolver			= null;
 	private CarnivoreEvolver			carnivoreEvolver			= null;
+	private HerbivoreMutator			herbivoreMutator			= null;
+	private CarnivoreMutator			carnivoreMutator			= null;
 	
 	private Simulator					simulator					= null;
 	
@@ -40,7 +44,10 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		simulatorAnimalInitializer.addListener(this);
 		herbivoreEvolver = new HerbivoreEvolver(config);
 		carnivoreEvolver = new CarnivoreEvolver(config);
-		simulator = new Simulator(config,environmentInitializer,simulatorAnimalInitializer,herbivoreEvolver,carnivoreEvolver);
+		herbivoreMutator = new HerbivoreMutator(config,herbivoreEvolver);
+		carnivoreMutator = new CarnivoreMutator(config,carnivoreEvolver);
+		simulator = new Simulator(
+			config,environmentInitializer,simulatorAnimalInitializer,herbivoreEvolver,carnivoreEvolver,herbivoreMutator,carnivoreMutator);
 		config.getZODB().getDatabase().addListener(this);
 	}
 	
@@ -63,6 +70,8 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		simulatorAnimalInitializer.initialize();
 		herbivoreEvolver.setDebug(configuration.isDebug());
 		carnivoreEvolver.setDebug(configuration.isDebug());
+		herbivoreMutator.setDebug(configuration.isDebug());
+		carnivoreMutator.setDebug(configuration.isDebug());
 	}
 	
 	@Override
@@ -70,8 +79,12 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		environmentInitializer.destroy();
 		herbivoreEvolver.stop();
 		carnivoreEvolver.stop();
+		herbivoreMutator.stop();
+		carnivoreMutator.stop();
 		herbivoreEvolver.whileStopping();
 		carnivoreEvolver.whileStopping();
+		herbivoreMutator.whileStopping();
+		carnivoreMutator.whileStopping();
 		simulator.stop();
 		simulator.destroy();
 		super.destroy();
@@ -100,6 +113,8 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 		if (state.equals(Database.STAT_OPEN)) {
 			herbivoreEvolver.load();
 			carnivoreEvolver.load();
+			herbivoreMutator.load();
+			carnivoreMutator.load();
 			environmentInitializer.reinitialize();
 		} else if (state.equals(Database.STAT_STOPPING)) {
 			boolean waitHerb = false;
@@ -117,6 +132,22 @@ public class ModZENN extends ModObject implements StateListener, DatabaseStateLi
 			}
 			if (waitCarn) {
 				carnivoreEvolver.whileStopping();
+			}
+			waitHerb = false;
+			waitCarn = false;
+			if (herbivoreMutator.isWorking()) {
+				herbivoreMutator.stop();
+				waitHerb = true;
+			}
+			if (carnivoreMutator.isWorking()) {
+				carnivoreMutator.stop();
+				waitCarn = true;
+			}
+			if (waitHerb) {
+				herbivoreMutator.whileStopping();
+			}
+			if (waitCarn) {
+				carnivoreMutator.whileStopping();
 			}
 			if (simulator.isWorking()) {
 				simulator.stop();

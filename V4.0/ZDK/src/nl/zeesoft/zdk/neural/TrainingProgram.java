@@ -113,15 +113,16 @@ public class TrainingProgram implements JsAble {
 			totalAverageError = json.rootElement.getChildFloat("totalAverageError",totalAverageError);
 			totalAverageLoss = json.rootElement.getChildFloat("totalAverageLoss",totalAverageLoss);
 			JsElem initElem = json.rootElement.getChildByName("initialResults");
-			if (initElem!=null) {
+			if (initElem!=null && initElem.children.size()>0) {
 				JsFile js = new JsFile();
 				js.rootElement = initElem.children.get(0);
 				if (js.rootElement!=null) {
 					initialResults = new TestSet(js);
+					baseTestSet = initialResults.copy();
 				}
 			}
 			JsElem latestElem = json.rootElement.getChildByName("latestResults");
-			if (latestElem!=null) {
+			if (latestElem!=null && latestElem.children.size()>0) {
 				JsFile js = new JsFile();
 				js.rootElement = latestElem.children.get(0);
 				if (js.rootElement!=null) {

@@ -1,6 +1,5 @@
 package nl.zeesoft.zodb.test;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.ZStringEncoder;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
@@ -56,18 +55,7 @@ public class TestConfig extends TestObject {
 		
 		JsFile json = config.toJson();
 		assertEqual(json.rootElement.children.size(),5,"Number of children does not match expectation");
-		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
-		System.out.println(oriStr);
-		
-		config = new Config();
-		config.fromJson(json);
-		
-		json = config.toJson();
-		ZStringBuilder newStr = json.toStringBuilderReadFormat();
-		if (!oriStr.equals(newStr)) {
-			assertEqual(false,true,"Configuration does not match original");
-			System.out.println(newStr);
-		}
+		testJsAble(config,new Config(),"Configuration JSON does not match original");
 		assertEqual(config.getFullDataDir(),fullDataDir,"Full data directory does not match expectation");
 		assertEqual(config.getZODBKey(),key,"Key does not match expectation");
 	}

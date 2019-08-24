@@ -98,17 +98,13 @@ public class TestNeuralNet extends TestObject {
 			nn.randomizeWeightsAndBiases();
 			testXORNeuralNet(nn,true);
 			
-			System.out.println();
-			System.out.println("Neural net JSON;");
-			JsFile json = nn.toJson();
-			oriStr = json.toStringBuilderReadFormat();
-			System.out.println(oriStr);
-			
-			NeuralNet nnCopy = new NeuralNet(json);
-			newStr = nnCopy.toJson().toStringBuilderReadFormat();
-			assertEqual(newStr.equals(oriStr),true,"Neural net JSON does not match expectation");
-			if (!newStr.equals(oriStr)) {
-				System.err.println(newStr);
+			NeuralNet nnNew = new NeuralNet(3,2,3,2);
+			if (testJsAble(nn,nnNew,"Neural net JSON does not match expectation")) {
+				System.out.println();
+				System.out.println("Neural net JSON;");
+				JsFile json = nn.toJson();
+				oriStr = json.toStringBuilderReadFormat();
+				System.out.println(oriStr);
 			}
 		}
 	}

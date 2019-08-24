@@ -202,14 +202,18 @@ public class NeuralNet implements JsAble {
 		json.rootElement.children.add(new JsElem("hiddenLayers","" + hiddenLayers));
 		json.rootElement.children.add(new JsElem("hiddenNeurons","" + hiddenNeurons));
 		json.rootElement.children.add(new JsElem("outputNeurons","" + outputNeurons));
-		json.rootElement.children.add(new JsElem("weightFunction",weightFunction.getClass().getName(),true));
-		json.rootElement.children.add(new JsElem("biasFunction",biasFunction.getClass().getName(),true));
-		json.rootElement.children.add(new JsElem("activator",activator.getClass().getName(),true));
-		String outAct = "";
-		if (outputActivator!=null) {
-			outAct = outputActivator.getClass().getName();
+		
+		if (weightFunction!=null) {
+			json.rootElement.children.add(new JsElem("weightFunction",weightFunction.getClass().getName(),true));
 		}
-		json.rootElement.children.add(new JsElem("outputActivator",outAct,true));
+		if (biasFunction!=null) {
+			json.rootElement.children.add(new JsElem("biasFunction",biasFunction.getClass().getName(),true));
+		}
+		
+		json.rootElement.children.add(new JsElem("activator",activator.getClass().getName(),true));
+		if (outputActivator!=null) {
+			json.rootElement.children.add(new JsElem("outputActivator",outputActivator.getClass().getName(),true));
+		}
 		json.rootElement.children.add(new JsElem("learningRate","" + learningRate));
 		
 		JsElem valuesElem = new JsElem("values",true);

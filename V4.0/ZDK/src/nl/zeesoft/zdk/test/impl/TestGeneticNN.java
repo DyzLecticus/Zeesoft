@@ -1,9 +1,7 @@
 package nl.zeesoft.zdk.test.impl;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.genetic.GeneticCode;
 import nl.zeesoft.zdk.genetic.GeneticNN;
-import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.TrainingProgram;
 import nl.zeesoft.zdk.test.TestObject;
@@ -27,7 +25,9 @@ public class TestGeneticNN extends TestObject {
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the genetic neural network");
-		System.out.println("GeneticNN gnn = new GeneticNN(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart);");
+		System.out.println("GeneticNN gnn = new GeneticNN();");
+		System.out.println("// Initialize the genetic neural network");
+		System.out.println("gnn.initialize(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart);");
 		System.out.println("// Generate a new genetic code and corresponding neural network");
 		System.out.println("gnn.generateNewNN();");
 		System.out.println("~~~~");
@@ -45,7 +45,8 @@ public class TestGeneticNN extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		GeneticNN gnn = new GeneticNN(2,1,2,1,0);
+		GeneticNN gnn = new GeneticNN();
+		gnn.initialize(2,1,2,1,0);
 		TrainingProgram tp = null;
 		while (tp==null) {
 			// XOR NN
@@ -58,17 +59,10 @@ public class TestGeneticNN extends TestObject {
 			}
 		}
 		
-		System.out.println();
-		JsFile json = tp.toJson();
-		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
+		GeneticNN gnnNew = new GeneticNN();
+		testJsAble(gnn,gnnNew,"Genetic neural net JSON does not match expectation");
 		
-		TrainingProgram tpCopy = new TrainingProgram(gnn.neuralNet,tp.baseTestSet);
-		tpCopy.fromJson(json);
-		ZStringBuilder newStr = tpCopy.toJson().toStringBuilderReadFormat();
-		assertEqual(newStr.equals(oriStr),true,"Training program JSON does not match expectation");
-		if (!newStr.equals(oriStr)) {
-			System.out.println(oriStr);
-			System.err.println(newStr);
-		}
+		TrainingProgram tpNew = new TrainingProgram(gnn.neuralNet,tp.baseTestSet);
+		testJsAble(tp,tpNew,"Training program JSON does not match expectation");
 	}
 }

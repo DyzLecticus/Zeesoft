@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsFile;
 
 /**
  * Classes that extend this class can be executed by a Tester
@@ -151,7 +153,41 @@ public abstract class TestObject {
 	protected boolean assertNotNull(Object obj,String failMessage) {
 		return handleAssertionResult(obj != null,failMessage + " (? == " + null + ")");
 	}
-	
+
+	/**
+	 * Tests the JsAble interface to make sure the new object matches the original after converting from JSON.
+	 * 
+	 * @param oriObj The original JsAble object
+	 * @param newObj The new JsAble object
+	 * @param failMessage The message to log if the assertion fails
+	 * @return True unless an exception occurs or the new object JSON does not match the original
+	 */
+	protected boolean testJsAble(JsAble oriObj,JsAble newObj,String failMessage) {
+		boolean r = true;
+		ZStringBuilder oriStr = null;
+		ZStringBuilder newStr = null;
+		try {
+			JsFile json = oriObj.toJson();
+			oriStr = json.toStringBuilderReadFormat();
+			newObj.fromJson(json);
+			newStr = newObj.toJson().toStringBuilderReadFormat();
+		} catch (Exception e) {
+			assertNull(e,"An exception occured while testing the JsAble interface");
+			e.printStackTrace();
+			r = false;
+		}
+		if (r) {
+			assertEqual(newStr.equals(oriStr),true,failMessage);
+			if (!newStr.equals(oriStr)) {
+				r = false;
+				System.out.println(oriStr);
+				System.err.println(newStr);
+				System.err.println("First line difference: " + oriStr.getFirstLineDifference(newStr));
+			}
+		}
+		return r;
+	}
+
 	/**
 	 * Returns the number of assertions to the Tester.
 	 * 

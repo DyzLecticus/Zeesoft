@@ -1,28 +1,30 @@
 package nl.zeesoft.zenn.simulator;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.genetic.GeneticCode;
+import nl.zeesoft.zdk.genetic.EvolverUnit;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zodb.db.init.Persistable;
 
 public class SimulatorAnimal implements Persistable {
-	public String			name				= "";
-	public GeneticCode		code				= null;
-	public int				codePropertyStart	= 0;
-	public NeuralNet		neuralNet			= null;
+	public String			name	= "";
+	public EvolverUnit		unit	= null;
+	
+	public SimulatorAnimal copy() {
+		SimulatorAnimal r = new SimulatorAnimal();
+		r.name = name;
+		r.unit = unit.copy();
+		return r;
+	}
 	
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("name",name,true));
-		json.rootElement.children.add(new JsElem("code",code.toCompressedCode(),true));
-		json.rootElement.children.add(new JsElem("codePropertyStart","" + codePropertyStart));
-		JsElem netElem = new JsElem("neuralNet",true);
-		json.rootElement.children.add(netElem);
-		netElem.children.add(neuralNet.toJson().rootElement);
+		JsElem unitElem = new JsElem("unit",true);
+		json.rootElement.children.add(unitElem);
+		unitElem.children.add(unit.toJson().rootElement);
 		return json;
 	}
 
@@ -30,17 +32,12 @@ public class SimulatorAnimal implements Persistable {
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			name = json.rootElement.getChildString("name",name);
-			ZStringBuilder c = json.rootElement.getChildZStringBuilder("code");
-			if (c!=null && c.length()>0) {
-				code = new GeneticCode();
-				code.fromCompressedCode(c);
-			}
-			codePropertyStart = json.rootElement.getChildInt("codePropertyStart",codePropertyStart);
-			JsElem netElem = json.rootElement.getChildByName("neuralNet");
-			if (netElem!=null && netElem.children.size()>0) {
+			JsElem unitElem = json.rootElement.getChildByName("unit");
+			if (unitElem!=null && unitElem.children.size()>0) {
 				JsFile js = new JsFile();
-				js.rootElement = netElem.children.get(0);
-				neuralNet = new NeuralNet(js);
+				js.rootElement = unitElem.children.get(0);
+				unit = new EvolverUnit();
+				unit.fromJson(js);
 			}
 		}
 	}

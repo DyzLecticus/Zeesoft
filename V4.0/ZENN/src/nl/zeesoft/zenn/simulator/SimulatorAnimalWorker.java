@@ -37,6 +37,14 @@ public class SimulatorAnimalWorker extends Worker {
 		unlockMe(this);
 		return r;
 	}
+	
+	protected SimulatorAnimal getSimulatorAnimal() {
+		SimulatorAnimal r = null;
+		lockMe(this);
+		r = this.simAnimal;
+		unlockMe(this);
+		return r;
+	}
 
 	protected void destroy() {
 		lockMe(this);
@@ -58,16 +66,18 @@ public class SimulatorAnimalWorker extends Worker {
 	@Override
 	protected void whileWorking() {
 		SimulatorAnimal simAni = null;
+		Simulator sim = null;
 		lockMe(this);
 		if (simAnimal!=null) {
 			simAni = simAnimal;
+			sim = simulator;
 		}
 		unlockMe(this);
 		if (simAni!=null) {
-			Prediction p = simAni.neuralNet.getNewPrediction();
-			simulator.setPredictionInputForAnimal(animal, simAni.neuralNet.size(), p);
-			simAni.neuralNet.predict(p);
-			simulator.handlePredictionOutputForAnimal(animal, p);
+			Prediction p = simAni.unit.geneticNN.neuralNet.getNewPrediction();
+			sim.setPredictionInputForAnimal(animal,simAni.unit.geneticNN.neuralNet.size(),p);
+			simAni.unit.geneticNN.neuralNet.predict(p);
+			sim.handlePredictionOutputForAnimal(animal, p);
 		}
 	}
 }

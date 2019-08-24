@@ -9,7 +9,7 @@ public class CarnivoreEvolver extends AnimalEvolver {
 		super(config,false);
 	}
 	
-	public CarnivoreEvolver(Messenger msgr, WorkerUnion uni,boolean herbivore) {
+	public CarnivoreEvolver(Messenger msgr, WorkerUnion uni) {
 		super(msgr,uni,false);
 	}
 }

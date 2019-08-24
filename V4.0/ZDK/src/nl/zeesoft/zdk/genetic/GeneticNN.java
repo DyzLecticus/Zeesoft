@@ -2,13 +2,16 @@ package nl.zeesoft.zdk.genetic;
 
 import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.functions.StaticFunctions;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.neural.NeuralNet;
 
 /**
  * A GeneticNN can be used to generate combinations of GeneticCode and corresponding NeuralNet instances.
  * It can also be used to generate a NeuralNet instance for a given GeneticCode.
  */
-public class GeneticNN {
+public class GeneticNN implements JsAble {
 	private static int		HIDDEN_LAYERS		= 0;
 	private static int		HIDDEN_NEURONS		= 1;
 	private static int		WEIGHT_FUNCTION		= 2;
@@ -27,12 +30,29 @@ public class GeneticNN {
 	public GeneticCode		code				= null;
 	public NeuralNet		neuralNet			= null;
 
-	public GeneticNN(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons, int codePropertyStart) {
+	public void initialize(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int codePropertyStart) {
 		initialize(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart,null);
 	}
-
-	public GeneticNN(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons, int codePropertyStart, GeneticCode code) {
-		initialize(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart,code);
+	
+	public void initialize(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int codePropertyStart, GeneticCode code) {
+		if (inputNeurons<1) {
+			inputNeurons = 1;
+		}
+		if (maxHiddenLayers<1) {
+			maxHiddenLayers = 1;
+		}
+		if (maxHiddenNeurons<2) {
+			maxHiddenLayers = 2;
+		}
+		if (outputNeurons<1) {
+			outputNeurons = 1;
+		}
+		this.inputNeurons = inputNeurons;
+		this.maxHiddenLayers = maxHiddenLayers;
+		this.maxHiddenNeurons = maxHiddenNeurons;
+		this.outputNeurons = outputNeurons;
+		this.codePropertyStart = codePropertyStart;
+		generateNewNN(code);
 	}
 	
 	public int calculateMinCodeLength() {
@@ -57,7 +77,8 @@ public class GeneticNN {
 			copyCode = new GeneticCode();
 			copyCode.setCode(code.getCode());
 		}
-		GeneticNN r = new GeneticNN(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart,copyCode);
+		GeneticNN r = new GeneticNN();
+		r.initialize(inputNeurons,maxHiddenLayers,maxHiddenNeurons,outputNeurons,codePropertyStart,copyCode);
 		if (neuralNet!=null) {
 			r.neuralNet = neuralNet.copy();
 		}
@@ -119,26 +140,51 @@ public class GeneticNN {
 		
 		return r;
 	}
-	
-	protected void initialize(int inputNeurons, int maxHiddenLayers, int maxHiddenNeurons, int outputNeurons,int codePropertyStart, GeneticCode code) {
-		if (inputNeurons<1) {
-			inputNeurons = 1;
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("inputNeurons","" + inputNeurons));
+		json.rootElement.children.add(new JsElem("maxHiddenLayers","" + maxHiddenLayers));
+		json.rootElement.children.add(new JsElem("maxHiddenNeurons","" + maxHiddenNeurons));
+		json.rootElement.children.add(new JsElem("outputNeurons","" + outputNeurons));
+		json.rootElement.children.add(new JsElem("codePropertyStart","" + codePropertyStart));
+		
+		if (code!=null) {
+			json.rootElement.children.add(new JsElem("code",code.toCompressedCode(),true));
 		}
-		if (maxHiddenLayers<1) {
-			maxHiddenLayers = 1;
+		
+		if (neuralNet!=null) {
+			JsElem nnElem = new JsElem("neuralNet",true);
+			json.rootElement.children.add(nnElem);
+			nnElem.children.add(neuralNet.toJson().rootElement);
 		}
-		if (maxHiddenNeurons<2) {
-			maxHiddenLayers = 2;
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			inputNeurons = json.rootElement.getChildInt("inputNeurons",inputNeurons);
+			maxHiddenLayers = json.rootElement.getChildInt("maxHiddenLayers",maxHiddenLayers);
+			maxHiddenNeurons = json.rootElement.getChildInt("maxHiddenNeurons",maxHiddenNeurons);
+			outputNeurons = json.rootElement.getChildInt("outputNeurons",outputNeurons);
+			codePropertyStart = json.rootElement.getChildInt("codePropertyStart",codePropertyStart);
+			
+			JsElem codeElem = json.rootElement.getChildByName("code");
+			if (codeElem!=null && codeElem.value.length()>0) {
+				code = new GeneticCode();
+				code.fromCompressedCode(codeElem.value);
+			}
+			
+			JsElem nnElem = json.rootElement.getChildByName("neuralNet");
+			if (nnElem!=null) {
+				JsFile js = new JsFile();
+				js.rootElement = nnElem.children.get(0);
+				neuralNet = new NeuralNet(js);
+			}
 		}
-		if (outputNeurons<1) {
-			outputNeurons = 1;
-		}
-		this.inputNeurons = inputNeurons;
-		this.maxHiddenLayers = maxHiddenLayers;
-		this.maxHiddenNeurons = maxHiddenNeurons;
-		this.outputNeurons = outputNeurons;
-		this.codePropertyStart = codePropertyStart;
-		generateNewNN(code);
 	}
 	
 	private static int assignProperties(GeneticCode code,int prop,ZMatrix m) {

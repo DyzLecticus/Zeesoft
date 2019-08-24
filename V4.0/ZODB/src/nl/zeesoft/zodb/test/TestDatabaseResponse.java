@@ -79,18 +79,7 @@ public class TestDatabaseResponse extends TestObject {
 	private void testResponse(DatabaseResponse response, int expectedChildren) {
 		JsFile json = response.toJson();
 		assertEqual(json.rootElement.children.size(),expectedChildren,"Number of children does not match expectation");
-		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
-		System.out.println(oriStr);
 		
-		response = new DatabaseResponse();
-		response.fromJson(json);
-		
-		json = response.toJson();
-		ZStringBuilder newStr = json.toStringBuilderReadFormat();
-		
-		assertEqual(oriStr.equals(newStr),true,"Response created from JSON does not match original");
-		if (!oriStr.equals(newStr)) {
-			System.err.println(newStr);
-		}
+		testJsAble(response,new DatabaseResponse(),"Response created from JSON does not match original");
 	}
 }

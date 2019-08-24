@@ -7,15 +7,12 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
-import nl.zeesoft.zdk.neural.NeuralNet;
 import nl.zeesoft.zdk.neural.TrainingProgram;
 
 public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 	private static final float	TOLERANCE			= 0.1F;
 	
-	public GeneticCode			code				= null;
-	public int					codePropertyStart	= 0;
-	public NeuralNet			neuralNet			= null;
+	public GeneticNN			geneticNN			= null;
 	public TrainingProgram		trainingProgram		= null;
 	
 	public int compareTo(EvolverUnit o) {
@@ -28,9 +25,9 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 			}
 		}
 		if (r == 0) {
-			if (neuralNet.size() < o.neuralNet.size()) {
+			if (geneticNN.neuralNet.size() < o.geneticNN.neuralNet.size()) {
 				r = 1;
-			} else if (neuralNet.size() > o.neuralNet.size()) {
+			} else if (geneticNN.neuralNet.size() > o.geneticNN.neuralNet.size()) {
 				r = -1;
 			}
 		}
@@ -58,40 +55,30 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("code",code.toCompressedCode(),true));
-		json.rootElement.children.add(new JsElem("codePropertyStart","" + codePropertyStart));
 		
-		JsElem bestNNElem = new JsElem("neuralNet",true);
-		json.rootElement.children.add(bestNNElem);
-		bestNNElem.children.add(neuralNet.toJson().rootElement);
-		
-		JsElem bestTPElem = new JsElem("trainingProgram",true);
-		json.rootElement.children.add(bestTPElem);
-		bestTPElem.children.add(trainingProgram.toJson().rootElement);
+		JsElem gnnElem = new JsElem("geneticNN",true);
+		json.rootElement.children.add(gnnElem);
+		gnnElem.children.add(geneticNN.toJson().rootElement);
+				
+		JsElem tpElem = new JsElem("trainingProgram",true);
+		json.rootElement.children.add(tpElem);
+		tpElem.children.add(trainingProgram.toJson().rootElement);
 		return json;
 	}
 
 	@Override
 	public void fromJson(JsFile json) {
-		fromJson(json,null);
-	}
-	
-	public void fromJson(JsFile json,Evolver evolver) {
-		if (json.rootElement!=null && evolver!=null) {
-			codePropertyStart = json.rootElement.getChildInt("codePropertyStart",codePropertyStart);
-			JsElem bestCodeElem = json.rootElement.getChildByName("code");
-			JsElem bestNNElem = json.rootElement.getChildByName("neuralNet");
-			JsElem bestTPElem = json.rootElement.getChildByName("trainingProgram");
-			if (bestCodeElem!=null && bestNNElem!=null && bestTPElem!=null) {
-				this.code = new GeneticCode();
-				this.code.fromCompressedCode(bestCodeElem.value);
-				
+		if (json.rootElement!=null) {
+			JsElem gnnElem = json.rootElement.getChildByName("geneticNN");
+			JsElem tpElem = json.rootElement.getChildByName("trainingProgram");
+			if (gnnElem!=null && tpElem!=null) {
 				JsFile js = new JsFile();
-				js.rootElement = bestNNElem.children.get(0);
-				neuralNet = new NeuralNet(js);
+				js.rootElement = gnnElem.children.get(0);
+				geneticNN = new GeneticNN();
+				geneticNN.fromJson(js);
 				
-				js.rootElement = bestTPElem.children.get(0);
-				trainingProgram = evolver.getNewTrainingProgram(neuralNet);
+				js.rootElement = tpElem.children.get(0);
+				trainingProgram = new TrainingProgram(geneticNN.neuralNet);
 				trainingProgram.fromJson(js);
 			}
 		}
@@ -100,10 +87,10 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 	public ZStringBuilder toStringBuilder() {
 		DecimalFormat df = new DecimalFormat("0.00000");
 		ZStringBuilder r = new ZStringBuilder("- Code: ");
-		r.append(code.getCode().substring(0,16));
+		r.append(geneticNN.code.getCode().substring(0,16));
 		r.append("\n");
 		r.append("- Size: ");
-		r.append("" + neuralNet.size());
+		r.append("" + geneticNN.neuralNet.size());
 		r.append("\n");
 		r.append("- Initial average loss: ");
 		r.append(df.format(trainingProgram.initialResults.averageLoss));
@@ -129,9 +116,9 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append((new ZDate()).getDateTimeString());
 		r.append(" Code: ");
-		r.append(code.getCode().substring(0,16));
+		r.append(geneticNN.code.getCode().substring(0,16));
 		r.append(", size: ");
-		r.append("" + neuralNet.size());
+		r.append("" + geneticNN.neuralNet.size());
 		r.append(", initial average loss: ");
 		r.append(df.format(trainingProgram.initialResults.averageLoss));
 		if (trainingProgram.latestResults!=null) {
@@ -148,10 +135,7 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 
 	public EvolverUnit copy() {
 		EvolverUnit r = new EvolverUnit();
-		r.code = new GeneticCode();
-		r.code.setCode(code.getCode());
-		r.codePropertyStart = codePropertyStart;
-		r.neuralNet = neuralNet.copy();
+		r.geneticNN = geneticNN.copy();
 		r.trainingProgram = trainingProgram.copy();
 		return r;
 	}

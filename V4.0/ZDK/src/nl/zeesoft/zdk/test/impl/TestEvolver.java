@@ -1,10 +1,8 @@
 package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.ZDKFactory;
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.genetic.Evolver;
 import nl.zeesoft.zdk.genetic.EvolverUnit;
-import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.neural.TestSet;
 import nl.zeesoft.zdk.test.TestObject;
@@ -75,18 +73,9 @@ public class TestEvolver extends TestObject {
 		EvolverUnit bestSoFar = evolver.getBestSoFar();
 		assertNotNull(bestSoFar,"Failed to evolve a neural net within 30 seconds");
 		
-		JsFile json = evolver.toJson();
-		ZStringBuilder oriStr = json.toStringBuilderReadFormat();
-
 		Evolver evolverCopy = new Evolver(messenger,union,1,2,0,tSet,10);
 		evolverCopy.setDebug(true);
-		evolverCopy.fromJson(json);
-		ZStringBuilder newStr = evolverCopy.toJson().toStringBuilderReadFormat();
-		assertEqual(newStr.equals(oriStr),true,"Evolver JSON does not match expectation");
-		if (!newStr.equals(oriStr)) {
-			System.out.println(oriStr);
-			System.err.println(newStr);
-			System.err.println("First line difference: " + oriStr.getFirstLineDifference(newStr));
-		}
+
+		testJsAble(evolver,evolverCopy,"Evolver JSON does not match expectation");
 	}
 }

@@ -12,8 +12,11 @@ import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zenn.animal.AnimalConstants;
+import nl.zeesoft.zenn.animal.AnimalMutator;
 import nl.zeesoft.zenn.animal.CarnivoreEvolver;
+import nl.zeesoft.zenn.animal.CarnivoreMutator;
 import nl.zeesoft.zenn.animal.HerbivoreEvolver;
+import nl.zeesoft.zenn.animal.HerbivoreMutator;
 import nl.zeesoft.zenn.environment.Animal;
 import nl.zeesoft.zenn.environment.EnvironmentConfig;
 import nl.zeesoft.zenn.environment.EnvironmentState;
@@ -27,6 +30,8 @@ public class Simulator extends Locker {
 	private SimulatorAnimalInitializer			simAniInitializer		= null;
 	private HerbivoreEvolver					herbEvolver				= null;
 	private CarnivoreEvolver					carnEvolver				= null;
+	private HerbivoreMutator					herbMutator				= null;
+	private CarnivoreMutator					carnMutator				= null;
 	private SimulatorWorker						worker					= null;
 
 	private EnvironmentConfig					environmentConfig		= null;
@@ -38,13 +43,15 @@ public class Simulator extends Locker {
 	private long								energyUpdated			= 0;
 	private long								stateUpdated			= 0;
 	
-	public Simulator(Config config,EnvironmentInitializer envInit,SimulatorAnimalInitializer simAniInit,HerbivoreEvolver herbEvo,CarnivoreEvolver carnEvo) {
+	public Simulator(Config config,EnvironmentInitializer envInit,SimulatorAnimalInitializer simAniInit,HerbivoreEvolver herbEvo,CarnivoreEvolver carnEvo,HerbivoreMutator herbMut, CarnivoreMutator carnMut) {
 		super(config.getMessenger());
 		union = config.getUnion();
 		envInitializer = envInit;
 		simAniInitializer = simAniInit;
 		herbEvolver = herbEvo;
 		carnEvolver = carnEvo;
+		herbMutator = herbMut;
+		carnMutator = carnMut;
 		worker = new SimulatorWorker(config.getMessenger(),config.getUnion(),this);
 	}
 	
@@ -178,20 +185,39 @@ public class Simulator extends Locker {
 						bestSoFar = carnEvolver.getBestSoFar();
 					}
 					if (bestSoFar!=null) {
-						lockMe(this);
-						if (environmentState.canInitializeAnimal(ani.herbivore)) {
-							SimulatorAnimal simAni = new SimulatorAnimal();
-							simAni.name = ani.name;
-							simAni.code = bestSoFar.code;
-							simAni.codePropertyStart = bestSoFar.codePropertyStart;
-							simAni.neuralNet = bestSoFar.neuralNet;
-							simAniInitializer.addOrReplaceObject(simAni);
-							if (ani.energy==0) {
-								environmentState.initializeAnimal(ani,true);
+						LockedCode code = new LockedCode() {
+							@Override
+							public Object doLocked() {
+								if (environmentState.canInitializeAnimal(ani.herbivore)) {
+									EvolverUnit bestSoFar = (EvolverUnit) param1;
+									SimulatorAnimal simAni = null;
+									AnimalMutator mutator = null;
+									if (ani.herbivore) {
+										mutator = herbMutator;
+									} else {
+										mutator = carnMutator;
+									}
+									simAni = mutator.getTopScoringAnimal();
+									if (simAni==null || ZRandomize.getRandomInt(0,1)==1) {
+										EvolverUnit bestVariation = mutator.getBestSoFar();
+										if (bestVariation!=null && ZRandomize.getRandomInt(0,1)==1) {
+											bestSoFar = bestVariation;
+										}
+										simAni = new SimulatorAnimal();
+										simAni.name = ani.name;
+										simAni.unit = bestSoFar;
+									}
+									simAniInitializer.addOrReplaceObject(simAni);
+									if (ani.energy==0) {
+										environmentState.initializeAnimal(ani,true);
+									}
+									animalWorker.setSimulatorAnimal(simAni);
+								}
+								return null;
 							}
-							animalWorker.setSimulatorAnimal(simAni);
-						}
-						unlockMe(this);
+						};
+						code.param1 = bestSoFar;
+						doLocked(this,code);
 					}
 				}
 			}
@@ -379,7 +405,26 @@ public class Simulator extends Locker {
 			if (org instanceof Animal) {
 				SimulatorAnimalWorker animalWorker = getAnimalWorkerByAnimalName(org.name);
 				if (animalWorker!=null) {
-					animalWorker.setSimulatorAnimal(null);
+					SimulatorAnimal simAni = animalWorker.getSimulatorAnimal();
+					if (simAni!=null) {
+						Animal ani = (Animal) org;
+						if (ani.herbivore) {
+							herbMutator.checkBest(ani,simAni);
+						} else {
+							boolean resetHerb = false;
+							if (carnMutator.getTopScoringAnimal()==null) {
+								resetHerb = true;
+							}
+							carnMutator.checkBest(ani,simAni);
+							if (carnMutator.checkBest(ani,simAni) && resetHerb) {
+								for (Animal herb: environmentState.getAnimals(true)) {
+									herb.score = 0;
+								}
+								herbMutator.resetTopScoringAnimal();
+							}
+						}
+						animalWorker.setSimulatorAnimal(null);
+					}
 				}
 			}
 			org.energy = 0;
