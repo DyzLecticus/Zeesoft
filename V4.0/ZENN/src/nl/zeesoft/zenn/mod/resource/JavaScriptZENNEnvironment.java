@@ -15,6 +15,7 @@ public class JavaScriptZENNEnvironment {
 		script.append("ZENN.state = ZENN.state || {};\n");
 		script.append("ZENN.state.working = false;\n");
 		script.append("ZENN.state.statesPerSecond = 25;\n");
+		script.append("ZENN.state.keepStateHistorySeconds = 10;\n");
 		script.append("ZENN.state.object = null;\n");
 		script.append("ZENN.state.totalHistories = 0;\n");
 		script.append("ZENN.state.currentHistoryIndex = 0;\n");
@@ -39,6 +40,7 @@ public class JavaScriptZENNEnvironment {
 		script.append("    } else if (object.statesPerSecond) {\n");
 		script.append("        ZENN.state.working = false;\n");
 		script.append("        ZENN.state.statesPerSecond = object.statesPerSecond;\n");
+		script.append("        ZENN.state.keepStateHistorySeconds = object.keepStateHistorySeconds;\n");
 		script.append("        var found = false;\n");
 		script.append("        var total = 0;\n");
 		script.append("        for (var name in object.histories) {\n");
@@ -58,7 +60,7 @@ public class JavaScriptZENNEnvironment {
 		script.append("            ZENN.state.working = true;\n");
 		script.append("        }\n");
 		script.append("    }\n");
-		script.append("    setTimeout(function() { ZENN.state.get(); },1000);\n");
+		script.append("    setTimeout(function() { ZENN.state.get(); },(1000 * ZENN.state.keepStateHistorySeconds / 2));\n");
 		script.append("};\n");
 		script.append("ZENN.state.refresh = function() {\n");
 		script.append("    if (ZENN.state.object!=null) {\n");

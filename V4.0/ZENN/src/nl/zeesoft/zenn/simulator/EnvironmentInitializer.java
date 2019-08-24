@@ -13,7 +13,7 @@ public class EnvironmentInitializer extends InitializerObject {
 
 	public EnvironmentInitializer(Config config) {
 		super(config,"ZENN/Environment/");
-		setTimeoutSeconds(10);
+		setTimeoutSeconds(30);
 	}
 	
 	public void updatedState() {

@@ -185,8 +185,8 @@ public class Evolver extends Locker implements JsAble {
 		setBestSoFar(unit,false);
 	}
 
-	public void setBestSoFarIfBetter(EvolverUnit unit) {
-		setBestSoFar(unit,unit!=null);
+	public boolean setBestSoFarIfBetter(EvolverUnit unit) {
+		return setBestSoFar(unit,unit!=null);
 	}
 	
 	public EvolverUnit getBestSoFar() {
@@ -270,18 +270,22 @@ public class Evolver extends Locker implements JsAble {
 		// Override to implement
 	}
 
-	protected void setBestSoFar(EvolverUnit unit,boolean ifBetter) {
+	protected boolean setBestSoFar(EvolverUnit unit,boolean ifBetter) {
+		boolean r = false;
 		lockMe(this);
-		if (unit==null || (!ifBetter || unit.compareTo(bestSoFar)>0)) {
+		if (unit==null || bestSoFar==null || (!ifBetter || unit.compareTo(bestSoFar)>0)) {
 			bestSoFar = unit;
+			r = true;
 			if (bestSoFar!=null) {
 				this.geneticNN = unit.geneticNN.copy();
 				if (debug && getMessenger()!=null) {
 					getMessenger().debug(this,"Set new best genetic neural net;\n" + unit.toStringBuilder());
 				}
+				addLogLine(bestSoFar,"SEL");
 			}
 		}
 		unlockMe(this);
+		return r;
 	}
 	
 	protected EvolverUnit getNewEvolverUnit(EvolverWorker evolver) {
@@ -356,15 +360,19 @@ public class Evolver extends Locker implements JsAble {
 				if (debug && getMessenger()!=null) {
 					getMessenger().debug(this,"Selected new best genetic neural net;\n" + unit.toStringBuilder());
 				}
-				if (appendLog) {
-					logLines.add(0,bestSoFar.toLogLine());
-				}
+				addLogLine(bestSoFar,"SEL");
 				selected = true;
 			}
 			unlockMe(this);
 		}
 		if (selected) {
 			selectedBest();
+		}
+	}
+	
+	protected void addLogLine(EvolverUnit unit,String action) {
+		if (appendLog) {
+			logLines.add(0,unit.toLogLine(action));
 		}
 	}
 	

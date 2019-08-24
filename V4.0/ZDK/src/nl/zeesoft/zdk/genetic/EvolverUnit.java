@@ -111,11 +111,13 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 		return r;
 	}
 
-	public ZStringBuilder toLogLine() {
+	public ZStringBuilder toLogLine(String action) {
 		DecimalFormat df = new DecimalFormat("0.00000");
 		ZStringBuilder r = new ZStringBuilder();
 		r.append((new ZDate()).getDateTimeString());
-		r.append(" Code: ");
+		r.append(" ");
+		r.append(action);
+		r.append(" code: ");
 		r.append(geneticNN.code.getCode().substring(0,16));
 		r.append(", size: ");
 		r.append("" + geneticNN.neuralNet.size());

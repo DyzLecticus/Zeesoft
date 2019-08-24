@@ -8,7 +8,7 @@ import nl.zeesoft.zodb.db.init.Persistable;
 public class SimulatorAnimalInitializer extends InitializerObject {
 	public SimulatorAnimalInitializer(Config config) {
 		super(config,"ZENN/Animal/");
-		setTimeoutSeconds(10);
+		setTimeoutSeconds(30);
 	}
 
 	protected SimulatorAnimal getSimulatorAnimalByName(String name) {

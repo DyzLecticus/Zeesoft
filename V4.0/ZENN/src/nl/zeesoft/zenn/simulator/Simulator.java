@@ -136,15 +136,19 @@ public class Simulator extends Locker {
 		}
 		unlockMe(this);
 	}
-
+	
 	public JsFile getEnvironmentState() {
-		JsFile json = null; 
+		JsFile json = null;
+		int herbTopScore = herbMutator.getTopScore();
+		int carnTopScore = carnMutator.getTopScore();
 		lockMe(this);
 		if (environmentState!=null && environmentConfig!=null && working) {
 			json = environmentState.toJson();
 			json.rootElement.children.add(new JsElem("statesPerSecond","" + environmentConfig.statesPerSecond));
 			json.rootElement.children.add(new JsElem("keepStateHistorySeconds","" + environmentConfig.keepStateHistorySeconds));
 			json.rootElement.children.add(new JsElem("maxEnergyPlant","" + environmentConfig.maxEnergyPlant));
+			json.rootElement.children.add(new JsElem("herbivoreTopScore","" + herbTopScore));
+			json.rootElement.children.add(new JsElem("carnivoreTopScore","" + carnTopScore));
 		}
 		unlockMe(this);
 		return json;

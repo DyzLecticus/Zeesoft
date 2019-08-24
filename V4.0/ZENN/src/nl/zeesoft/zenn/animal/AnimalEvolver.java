@@ -68,7 +68,7 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 	
 	public void load() {
 		if (configuration!=null) {
-			configuration.getObject(new ZStringBuilder("ZENN/Evolvers/" + getObjectName()),this,10);
+			configuration.getObject(new ZStringBuilder("ZENN/Evolvers/" + getObjectName()),this,30);
 		}
 	}
 	

@@ -51,26 +51,44 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 
 	public boolean checkBest(Animal ani,SimulatorAnimal simAni) {
 		boolean r = false;
+		boolean save = false;
 		EvolverUnit unit1 = null;
 		EvolverUnit unit2 = null;
 		lockMe(this);
-		if (loaded && ani.score > topScore) {
-			topScore = ani.score;
-			topScoringAnimal = simAni.copy();
-			unit1 = topScoringAnimal.unit.copy();
-			unit2 = topScoringAnimal.unit.copy();
-			r = true;
+		if (loaded) {
+			if (ani.score > topScore) {
+				topScore = ani.score;
+				topScoringAnimal = simAni.copy();
+				unit1 = topScoringAnimal.unit.copy();
+				unit2 = topScoringAnimal.unit.copy();
+				r = true;
+			} else if (topScore>10) {
+				if (topScore>400) {
+					topScore = (topScore / 40) * 39;
+					if (topScore < 400) {
+						topScore = 400;
+					}
+				} else {
+					topScore--;
+				}
+				if (topScore % 10 == 0) {
+					save = true;
+				}
+			}
 		}
 		unlockMe(this);
 		if (r) {
-			setBestSoFar(unit1);
 			if (evolver!=null) {
-				evolver.setBestSoFarIfBetter(unit2);
+				evolver.setBestSoFarIfBetter(unit1);
+			}
+			if (setBestSoFarIfBetter(unit2)) {
+				if (!isWorking()) {
+					start();
+				}
 			}
 			save();
-			if (!isWorking()) {
-				start();
-			}
+		} else if (save) {
+			save();
 		}
 		return r;
 	}
@@ -92,6 +110,14 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		if (topScoringAnimal!=null) {
 			r = topScoringAnimal.copy();
 		}
+		unlockMe(this);
+		return r;
+	}
+	
+	public int getTopScore() {
+		int r = 0;
+		lockMe(this);
+		r = topScore;
 		unlockMe(this);
 		return r;
 	}
@@ -163,7 +189,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 	
 	public void load() {
 		if (configuration!=null) {
-			configuration.getObject(new ZStringBuilder("ZENN/Mutators/" + getObjectName()),this,10);
+			configuration.getObject(new ZStringBuilder("ZENN/Mutators/" + getObjectName()),this,30);
 		}
 	}
 	
@@ -186,6 +212,12 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		stop();
 		whileStopping();
 		save();
+		if (evolver!=null) {
+			EvolverUnit unit = getBestSoFar();
+			if (unit!=null) {
+				evolver.setBestSoFarIfBetter(unit);
+			}
+		}
 	}
 	
 	protected String getType() {
