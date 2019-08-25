@@ -68,10 +68,10 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 				topScoreCounter++;
 				if (topScoreCounter>=10) {
 					topScoreCounter = 0;
-					if (topScore>400) {
+					if (topScore>200) {
 						topScore = (topScore / 40) * 39;
-						if (topScore < 400) {
-							topScore = 400;
+						if (topScore < 200) {
+							topScore = 200;
 						}
 					} else {
 						topScore--;
