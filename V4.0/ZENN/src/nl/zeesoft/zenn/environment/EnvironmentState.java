@@ -140,12 +140,23 @@ public class EnvironmentState implements Persistable {
 		}
 	}
 
-	public List<Plant> getLivingPlants() {
-		List<Plant> r = new ArrayList<Plant>();
+	public List<Organism> getLivingOrganisms() {
+		List<Organism> r = new ArrayList<Organism>();
 		long now = System.currentTimeMillis();
-		for (Plant plt: getPlants()) {
-			if (plt.dateTimeDied < (now - (config.deathDurationSeconds * 1000))) {
-				r.add(plt);
+		for (Organism org: organisms) {
+			if (org.dateTimeDied < (now - (config.deathDurationSeconds * 1000))) {
+				r.add(org);
+			}
+		}
+		return r;
+	}
+
+	public List<Plant> getLivingPlants() {
+		List<Organism> orgs = getLivingOrganisms();
+		List<Plant> r = new ArrayList<Plant>();
+		for (Organism org: orgs) {
+			if (org instanceof Plant) {
+				r.add((Plant)org);
 			}
 		}
 		return r;
@@ -263,6 +274,24 @@ public class EnvironmentState implements Persistable {
 				if (ani.herbivore==herbivore) {
 					r.add(ani);
 				}
+			}
+		}
+		return r;
+	}
+	
+	public List<Animal> getLivingAnimalsByScore(boolean herbivore) {
+		List<Animal> r = new ArrayList<Animal>();
+		List<Organism> orgs = getLivingOrganisms();
+		for (Animal ani: getAnimals(herbivore)) {
+			if (orgs.contains(ani)) {
+				int index = 0;
+				for (Animal t: r) {
+					if (ani.score>t.score) {
+						break;
+					}
+					index++;
+				}
+				r.add(index,ani);
 			}
 		}
 		return r;

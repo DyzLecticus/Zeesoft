@@ -1,8 +1,10 @@
 package nl.zeesoft.zenn.simulator;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.genetic.EvolverUnit;
 import nl.zeesoft.zdk.json.JsElem;
@@ -139,21 +141,48 @@ public class Simulator extends Locker {
 	
 	public JsFile getEnvironmentState() {
 		JsFile json = null;
-		int herbTopScore = herbMutator.getTopScore();
-		int carnTopScore = carnMutator.getTopScore();
-		lockMe(this);
-		if (environmentState!=null && environmentConfig!=null && working) {
-			json = environmentState.toJson();
-			json.rootElement.children.add(new JsElem("statesPerSecond","" + environmentConfig.statesPerSecond));
-			json.rootElement.children.add(new JsElem("keepStateHistorySeconds","" + environmentConfig.keepStateHistorySeconds));
-			json.rootElement.children.add(new JsElem("maxEnergyPlant","" + environmentConfig.maxEnergyPlant));
-			json.rootElement.children.add(new JsElem("herbivoreTopScore","" + herbTopScore));
-			json.rootElement.children.add(new JsElem("carnivoreTopScore","" + carnTopScore));
-		}
-		unlockMe(this);
+		ZStringBuilder herbSummary = herbMutator.getTopScoringAnimalSummary();
+		ZStringBuilder carnSummary = carnMutator.getTopScoringAnimalSummary();
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				JsFile json = null;
+				ZStringBuilder herbSummary = (ZStringBuilder) param1;
+				ZStringBuilder carnSummary = (ZStringBuilder) param2;
+				if (environmentState!=null && environmentConfig!=null && working) {
+					ZStringBuilder livingHerbSummary = getBestLivingAnimalSummaryNoLock(true);
+					ZStringBuilder livingCarnSummary = getBestLivingAnimalSummaryNoLock(false);
+					json = environmentState.toJson();
+					json.rootElement.children.add(new JsElem("statesPerSecond","" + environmentConfig.statesPerSecond));
+					json.rootElement.children.add(new JsElem("keepStateHistorySeconds","" + environmentConfig.keepStateHistorySeconds));
+					json.rootElement.children.add(new JsElem("maxEnergyPlant","" + environmentConfig.maxEnergyPlant));
+					json.rootElement.children.add(new JsElem("bestHerbivore","" + herbSummary,true));
+					json.rootElement.children.add(new JsElem("bestCarnivore","" + carnSummary,true));
+					json.rootElement.children.add(new JsElem("bestLivingHerbivore","" + livingHerbSummary,true));
+					json.rootElement.children.add(new JsElem("bestLivingCarnivore","" + livingCarnSummary,true));
+				}
+				return json;
+			}
+		};
+		code.param1 = herbSummary;
+		code.param2 = carnSummary;
+		json = (JsFile) doLocked(this,code);
 		return json;
 	}
-
+	
+	public static ZStringBuilder formatUnitSummary(EvolverUnit unit, int score) {
+		ZStringBuilder r = new ZStringBuilder();
+		DecimalFormat df = new DecimalFormat("0.00000");
+		r.append(unit.geneticNN.code.getCode().substring(0,16));
+		r.append(" (size ");
+		r.append("" + unit.geneticNN.neuralNet.size());
+		r.append(", training result ");
+		r.append(df.format(unit.trainingProgram.getTrainingResult()));
+		r.append(") ");
+		r.append("" + score);
+		return r;
+	}
+		
 	protected SimulatorAnimalWorker getAnimalWorkerByAnimalName(String name) {
 		SimulatorAnimalWorker r = null;
 		for (SimulatorAnimalWorker animalWorker: animalWorkers) {
@@ -448,6 +477,23 @@ public class Simulator extends Locker {
 		boolean r = true;
 		if (org.dateTimeDied + (environmentConfig.deathDurationSeconds * 1000) > System.currentTimeMillis()) {
 			r = false;
+		}
+		return r;
+	}
+
+	protected ZStringBuilder getBestLivingAnimalSummaryNoLock(boolean herbivore) {
+		ZStringBuilder r = new ZStringBuilder();
+		for (Animal ani: environmentState.getLivingAnimalsByScore(herbivore)) {
+			SimulatorAnimalWorker animalWorker = getAnimalWorkerByAnimalName(ani.name);
+			if (animalWorker!=null) {
+				SimulatorAnimal simAni = animalWorker.getSimulatorAnimal();
+				if (simAni!=null) {
+					r = formatUnitSummary(simAni.unit,ani.score);
+				}
+			}
+			if (r.length()>0) {
+				break;
+			}
 		}
 		return r;
 	}

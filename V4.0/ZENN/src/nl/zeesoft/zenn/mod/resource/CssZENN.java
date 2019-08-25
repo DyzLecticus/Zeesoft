@@ -6,18 +6,36 @@ public class CssZENN {
 	public ZStringBuilder css = new ZStringBuilder();
 	
 	public CssZENN() {
+		css.append(".envTable {\n");
+		css.append("    border: 1px solid black;\n");
+		css.append("    border-collapse: separate;\n");
+		css.append("    border-spacing: 0px;\n");
+		css.append("}\n");
+		css.append(".envTr {\n");
+		css.append("    border: 1px solid black;\n");
+		css.append("    border-collapse: separate;\n");
+		css.append("    border-spacing: 0px;\n");
+		css.append("}\n");
+		css.append(".envTd {\n");
+		css.append("    border: 1px solid black;\n");
+		css.append("    border-collapse: separate;\n");
+		css.append("    border-spacing: 0px;\n");
+		css.append("}\n");
+		
+		/*
 		css.append("table, th, td {\n");
 		css.append("    border: 1px solid black;\n");
 		css.append("    border-collapse: separate;\n");
 		css.append("    border-spacing: 0px;\n");
 		css.append("}\n");
+		*/
 
 		css.append("@media (max-width: 400px) and (max-height: 400px) {\n");
-		css.append("    table {\n");
+		css.append("    .envTable {\n");
 		css.append("        width: 220px;\n");
 		css.append("        height: 220px;\n");
 		css.append("    }\n");
-		css.append("    td {\n");
+		css.append("    .envTd {\n");
 		css.append("        padding: 0px;\n");
 		css.append("        width: 5px;\n");
 		css.append("        height: 5px;\n");
@@ -25,11 +43,11 @@ public class CssZENN {
 		css.append("}\n");
 
 		css.append("@media (min-width: 401px) and (min-height: 401px) {\n");
-		css.append("    table {\n");
+		css.append("    .envTable {\n");
 		css.append("        width: 344px;\n");
 		css.append("        height: 344px;\n");
 		css.append("    }\n");
-		css.append("    td {\n");
+		css.append("    .envTd {\n");
 		css.append("        padding: 0px;\n");
 		css.append("        width: 8px;\n");
 		css.append("        height: 8px;\n");
@@ -37,11 +55,11 @@ public class CssZENN {
 		css.append("}\n");
 
 		css.append("@media (min-width: 541px) and (min-height: 541px) {\n");
-		css.append("    table {\n");
+		css.append("    .envTable {\n");
 		css.append("        width: 440px;\n");
 		css.append("        height: 440px;\n");
 		css.append("    }\n");
-		css.append("    td {\n");
+		css.append("    .envTd {\n");
 		css.append("        padding: 0px;\n");
 		css.append("        width: 10px;\n");
 		css.append("        height: 10px;\n");
@@ -49,11 +67,11 @@ public class CssZENN {
 		css.append("}\n");
 
 		css.append("@media (min-width: 740px) and (min-height: 740px) {\n");
-		css.append("    table {\n");
+		css.append("    .envTable {\n");
 		css.append("        width: 660px;\n");
 		css.append("        height: 660px;\n");
 		css.append("    }\n");
-		css.append("    td {\n");
+		css.append("    .envTd {\n");
 		css.append("        padding: 0px;\n");
 		css.append("        width: 15px;\n");
 		css.append("        height: 15px;\n");

@@ -26,19 +26,70 @@ public class HtmlZENNEnvironment extends HtmlResource {
 		html.append("<hr />");
 		
 		html.append("<div>\n");
-		html.append("<table id=\"grid\">");
+		html.append("<table>");
 		html.append("<tbody>\n");
-		for (int y = 0; y < EnvironmentConfig.SIZE_Y; y++) {
-			html.append("<tr>");
-			for (int x = 0; x < EnvironmentConfig.SIZE_X; x++) {
-				String tdId = x + "-" + y;
-				html.append("<td id=\"" + tdId + "\" class=\"black\">");
-				html.append("</td>");
+		html.append("<tr>");
+		html.append("<td>");
+			
+			html.append("<table id=\"grid\" class=\"envTable\">");
+			html.append("<tbody>\n");
+			for (int y = 0; y < EnvironmentConfig.SIZE_Y; y++) {
+				html.append("<tr class=\"envTr\">");
+				for (int x = 0; x < EnvironmentConfig.SIZE_X; x++) {
+					String tdId = x + "-" + y;
+					html.append("<td id=\"" + tdId + "\" class=\"envTd black\">");
+					html.append("</td>");
+				}
+				html.append("</tr>");
 			}
+			html.append("</tbody>\n");
+			html.append("</table>");
+
+		html.append("</td>");
+		html.append("<td valign=\"top\">");
+		
+			html.append("<table>");
+			html.append("<tbody>\n");
+			
+			html.append("<tr>");
+			html.append("<td>");
+			html.append("Best herbivore");
+			html.append("</td>");
+			html.append("<td id=\"bestHerbivore\">");
+			html.append("</td>");
 			html.append("</tr>");
-		}
+			
+			html.append("<tr>");
+			html.append("<td>");
+			html.append("Best living herbivore");
+			html.append("</td>");
+			html.append("<td id=\"bestLivingHerbivore\">");
+			html.append("</td>");
+			html.append("</tr>");
+			
+			html.append("<tr>");
+			html.append("<td>");
+			html.append("Best carnivore");
+			html.append("</td>");
+			html.append("<td id=\"bestCarnivore\">");
+			html.append("</td>");
+			html.append("</tr>");
+			
+			html.append("<tr>");
+			html.append("<td>");
+			html.append("Best living carnivore");
+			html.append("</td>");
+			html.append("<td id=\"bestLivingCarnivore\">");
+			html.append("</td>");
+			html.append("</tr>");
+			html.append("</tbody>\n");
+			html.append("</table>");
+			
+		html.append("</td>");
+		html.append("</tr>");
 		html.append("</tbody>\n");
 		html.append("</table>");
+			
 		html.append("</div>\n");
 		
 		getBodyElements().add(html);

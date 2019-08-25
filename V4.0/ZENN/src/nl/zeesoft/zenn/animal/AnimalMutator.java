@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zenn.environment.Animal;
+import nl.zeesoft.zenn.simulator.Simulator;
 import nl.zeesoft.zenn.simulator.SimulatorAnimal;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.DatabaseRequest;
@@ -75,9 +76,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 					} else {
 						topScore--;
 					}
-					if (topScore % 10 == 0) {
-						save = true;
-					}
+					save = true;
 				}
 			}
 		}
@@ -119,11 +118,13 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		unlockMe(this);
 		return r;
 	}
-	
-	public int getTopScore() {
-		int r = 0;
+
+	public ZStringBuilder getTopScoringAnimalSummary() {
+		ZStringBuilder r = new ZStringBuilder();
 		lockMe(this);
-		r = topScore;
+		if (topScoringAnimal!=null) {
+			r = Simulator.formatUnitSummary(topScoringAnimal.unit,topScore);
+		}
 		unlockMe(this);
 		return r;
 	}

@@ -41,6 +41,10 @@ public class JavaScriptZENNEnvironment {
 		script.append("        ZENN.state.working = false;\n");
 		script.append("        ZENN.state.statesPerSecond = object.statesPerSecond;\n");
 		script.append("        ZENN.state.keepStateHistorySeconds = object.keepStateHistorySeconds;\n");
+		script.append("        ZENN.state.setTdInnerHtml(\"bestHerbivore\",object.bestHerbivore);\n");
+		script.append("        ZENN.state.setTdInnerHtml(\"bestCarnivore\",object.bestCarnivore);\n");
+		script.append("        ZENN.state.setTdInnerHtml(\"bestLivingHerbivore\",object.bestLivingHerbivore);\n");
+		script.append("        ZENN.state.setTdInnerHtml(\"bestLivingCarnivore\",object.bestLivingCarnivore);\n");
 		script.append("        var found = false;\n");
 		script.append("        var total = 0;\n");
 		script.append("        for (var name in object.histories) {\n");
@@ -61,6 +65,12 @@ public class JavaScriptZENNEnvironment {
 		script.append("        }\n");
 		script.append("    }\n");
 		script.append("    setTimeout(function() { ZENN.state.get(); },(1000 * ZENN.state.keepStateHistorySeconds / 2));\n");
+		script.append("};\n");
+		script.append("ZENN.state.setTdInnerHtml = function(id,html) {\n");
+		script.append("    var elem = window.document.getElementById(id);\n");
+		script.append("    if (elem!=null) {\n");
+		script.append("        elem.innerHTML = html;\n");
+		script.append("    }\n");
 		script.append("};\n");
 		script.append("ZENN.state.refresh = function() {\n");
 		script.append("    if (ZENN.state.object!=null) {\n");
@@ -153,7 +163,7 @@ public class JavaScriptZENNEnvironment {
 		script.append("        }\n");
 		script.append("    }\n");
 		script.append("    for (tdId in ZENN.state.displayedGridElems) {\n");
-		script.append("        var classes = ZENN.state.displayedGridElems[tdId].color;\n");
+		script.append("        var classes = \"envTd \" + ZENN.state.displayedGridElems[tdId].color;\n");
 		script.append("        if (ZENN.state.displayedGridElems[tdId].box!=\"\") {\n");
 		script.append("            classes += \" \" + ZENN.state.displayedGridElems[tdId].box;\n");
 		script.append("        }\n");
@@ -161,7 +171,7 @@ public class JavaScriptZENNEnvironment {
 		script.append("    }\n");
 		script.append("    for (tdId in displayedGridElems) {\n");
 		script.append("        if (!ZENN.state.displayedGridElems[tdId]) {\n");
-		script.append("           window.document.getElementById(tdId).className = \"black\";\n");
+		script.append("           window.document.getElementById(tdId).className = \"envTd black\";\n");
 		script.append("        }\n");
 		script.append("    }\n");
 		script.append("};\n");
