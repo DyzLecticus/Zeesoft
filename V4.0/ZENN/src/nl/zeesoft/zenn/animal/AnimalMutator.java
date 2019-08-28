@@ -24,7 +24,6 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 	
 	private int					topScore			= 0;
 	private SimulatorAnimal		topScoringAnimal	= null;
-	private long				topScoreCounter		= 0;
 	
 	private boolean				loaded				= false;
 	private	long				id					= 0;
@@ -53,7 +52,6 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 
 	public boolean checkBest(Animal ani,SimulatorAnimal simAni) {
 		boolean r = false;
-		boolean save = false;
 		EvolverUnit unit1 = null;
 		EvolverUnit unit2 = null;
 		lockMe(this);
@@ -64,20 +62,6 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 				unit1 = topScoringAnimal.unit.copy();
 				unit2 = topScoringAnimal.unit.copy();
 				r = true;
-			} else if (topScore>10) {
-				topScoreCounter++;
-				if (topScoreCounter>=10) {
-					topScoreCounter = 0;
-					if (topScore>200) {
-						topScore = (topScore / 40) * 39;
-						if (topScore < 200) {
-							topScore = 200;
-						}
-					} else {
-						topScore--;
-					}
-					save = true;
-				}
 			}
 		}
 		unlockMe(this);
@@ -85,13 +69,13 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 			if (evolver!=null) {
 				evolver.setBestSoFarIfBetter(unit1);
 			}
-			if (setBestSoFarIfBetter(unit2)) {
+			EvolverUnit unit = getBestSoFar();
+			if (unit==null || !unit.geneticNN.code.getCode().equals(unit2.geneticNN.code.getCode())) {
+				setBestSoFar(unit2);
 				if (!isWorking()) {
 					start();
 				}
 			}
-			save();
-		} else if (save) {
 			save();
 		}
 		return r;
@@ -101,12 +85,13 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		lockMe(this);
 		topScore = 0;
 		topScoringAnimal = null;
-		topScoreCounter = 0;
 		unlockMe(this);
 		if (isWorking()) {
 			stop();
 			whileStopping();
 		}
+		setBestSoFar(null);
+		save();
 	}
 
 	public SimulatorAnimal getTopScoringAnimal() {
@@ -118,12 +103,22 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		unlockMe(this);
 		return r;
 	}
+	
+	public int getTopScore() {
+		int r = 0;
+		lockMe(this);
+		if (topScoringAnimal!=null) {
+			r = topScore;
+		}
+		unlockMe(this);
+		return r;
+	}
 
 	public ZStringBuilder getTopScoringAnimalSummary() {
 		ZStringBuilder r = new ZStringBuilder();
 		lockMe(this);
 		if (topScoringAnimal!=null) {
-			r = Simulator.formatUnitSummary(topScoringAnimal.unit,topScore);
+			r = Simulator.formatUnitSummary(topScoringAnimal.unit);
 		}
 		unlockMe(this);
 		return r;

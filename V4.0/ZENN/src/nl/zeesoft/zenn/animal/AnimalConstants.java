@@ -23,15 +23,15 @@ public class AnimalConstants {
 	};
 
 	public static final int			OUT_LEFT_ACTUATOR	= 0;
-	public static final int			OUT_FRONT_MOUTH		= 1;
-	public static final int			OUT_BACK_ACTUATOR	= 2;
-	public static final int			OUT_RIGHT_ACTUATOR	= 3;
+	public static final int			OUT_BACK_ACTUATOR	= 1;
+	public static final int			OUT_RIGHT_ACTUATOR	= 2;
+	public static final int			OUT_FRONT_MOUTH		= 3;
 
 	public static final int[]		OUTPUTS				= {
 		OUT_LEFT_ACTUATOR,
-		OUT_FRONT_MOUTH,
 		OUT_BACK_ACTUATOR,
-		OUT_RIGHT_ACTUATOR
+		OUT_RIGHT_ACTUATOR,
+		OUT_FRONT_MOUTH
 	};
 
 	public static final float[]		INTENSITIES			= {1.00F,0.75F,0.50F,0.25F};

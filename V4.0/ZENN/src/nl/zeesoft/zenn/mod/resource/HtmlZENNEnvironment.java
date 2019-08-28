@@ -52,34 +52,42 @@ public class HtmlZENNEnvironment extends HtmlResource {
 			html.append("<tbody>\n");
 			
 			html.append("<tr>");
-			html.append("<td>");
+			html.append("<td valign=\"top\">");
 			html.append("Best herbivore");
 			html.append("</td>");
 			html.append("<td id=\"bestHerbivore\">");
 			html.append("</td>");
+			html.append("<td valign=\"top\" align=\"right\" id=\"bestHerbivoreScore\">");
+			html.append("</td>");
 			html.append("</tr>");
-			
+						
 			html.append("<tr>");
-			html.append("<td>");
+			html.append("<td valign=\"top\">");
 			html.append("Best living herbivore");
 			html.append("</td>");
 			html.append("<td id=\"bestLivingHerbivore\">");
 			html.append("</td>");
+			html.append("<td valign=\"top\" align=\"right\" id=\"bestLivingHerbivoreScore\">");
+			html.append("</td>");
 			html.append("</tr>");
 			
 			html.append("<tr>");
-			html.append("<td>");
+			html.append("<td valign=\"top\">");
 			html.append("Best carnivore");
 			html.append("</td>");
 			html.append("<td id=\"bestCarnivore\">");
 			html.append("</td>");
+			html.append("<td valign=\"top\" align=\"right\" id=\"bestCarnivoreScore\">");
+			html.append("</td>");
 			html.append("</tr>");
 			
 			html.append("<tr>");
-			html.append("<td>");
+			html.append("<td valign=\"top\">");
 			html.append("Best living carnivore");
 			html.append("</td>");
 			html.append("<td id=\"bestLivingCarnivore\">");
+			html.append("</td>");
+			html.append("<td valign=\"top\" align=\"right\" id=\"bestLivingCarnivoreScore\">");
 			html.append("</td>");
 			html.append("</tr>");
 			html.append("</tbody>\n");

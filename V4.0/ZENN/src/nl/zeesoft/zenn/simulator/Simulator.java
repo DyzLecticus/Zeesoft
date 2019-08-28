@@ -148,18 +148,44 @@ public class Simulator extends Locker {
 			public Object doLocked() {
 				JsFile json = null;
 				ZStringBuilder herbSummary = (ZStringBuilder) param1;
+				int herbScore = herbMutator.getTopScore();
+				if (herbSummary.length()==0) {
+					herbScore = 0;
+				}
 				ZStringBuilder carnSummary = (ZStringBuilder) param2;
+				int carnScore = carnMutator.getTopScore();
+				if (carnSummary.length()==0) {
+					carnScore = 0;
+				}
 				if (environmentState!=null && environmentConfig!=null && working) {
-					ZStringBuilder livingHerbSummary = getBestLivingAnimalSummaryNoLock(true);
-					ZStringBuilder livingCarnSummary = getBestLivingAnimalSummaryNoLock(false);
+					int livingHerbScore = 0;
+					int livingCarnScore = 0;
+					ZStringBuilder livingHerbSummary = new ZStringBuilder();
+					ZStringBuilder livingCarnSummary = new ZStringBuilder();
+					Animal livingHerb = getBestLivingAnimal(true);
+					Animal livingCarn = getBestLivingAnimal(false);
+					if (livingHerb!=null) {
+						livingHerbSummary = getBestLivingAnimalSummaryNoLock(livingHerb);
+						if (livingHerbSummary.length()>0) {
+							livingHerbScore = livingHerb.score;
+						}
+						livingCarnSummary = getBestLivingAnimalSummaryNoLock(livingCarn);
+						if (livingCarnSummary.length()>0) {
+							livingCarnScore = livingCarn.score;
+						}
+					}
 					json = environmentState.toJson();
 					json.rootElement.children.add(new JsElem("statesPerSecond","" + environmentConfig.statesPerSecond));
 					json.rootElement.children.add(new JsElem("keepStateHistorySeconds","" + environmentConfig.keepStateHistorySeconds));
 					json.rootElement.children.add(new JsElem("maxEnergyPlant","" + environmentConfig.maxEnergyPlant));
-					json.rootElement.children.add(new JsElem("bestHerbivore","" + herbSummary,true));
-					json.rootElement.children.add(new JsElem("bestCarnivore","" + carnSummary,true));
-					json.rootElement.children.add(new JsElem("bestLivingHerbivore","" + livingHerbSummary,true));
-					json.rootElement.children.add(new JsElem("bestLivingCarnivore","" + livingCarnSummary,true));
+					json.rootElement.children.add(new JsElem("bestHerbivore",herbSummary,true));
+					json.rootElement.children.add(new JsElem("bestHerbivoreScore","" + herbScore));
+					json.rootElement.children.add(new JsElem("bestCarnivore",carnSummary,true));
+					json.rootElement.children.add(new JsElem("bestCarnivoreScore","" + carnScore));
+					json.rootElement.children.add(new JsElem("bestLivingHerbivore",livingHerbSummary,true));
+					json.rootElement.children.add(new JsElem("bestLivingHerbivoreScore","" + livingHerbScore));
+					json.rootElement.children.add(new JsElem("bestLivingCarnivore",livingCarnSummary,true));
+					json.rootElement.children.add(new JsElem("bestLivingCarnivoreScore","" + livingCarnScore));
 				}
 				return json;
 			}
@@ -170,7 +196,7 @@ public class Simulator extends Locker {
 		return json;
 	}
 	
-	public static ZStringBuilder formatUnitSummary(EvolverUnit unit, int score) {
+	public static ZStringBuilder formatUnitSummary(EvolverUnit unit) {
 		ZStringBuilder r = new ZStringBuilder();
 		DecimalFormat df = new DecimalFormat("0.00000");
 		r.append(unit.geneticNN.code.getCode().substring(0,16));
@@ -178,8 +204,34 @@ public class Simulator extends Locker {
 		r.append("" + unit.geneticNN.neuralNet.size());
 		r.append(", training result ");
 		r.append(df.format(unit.trainingProgram.getTrainingResult()));
-		r.append(") ");
-		r.append("" + score);
+		r.append(")");
+		
+		r.append("|Layers / neurons: ");
+		r.append("" + unit.geneticNN.neuralNet.hiddenLayers);
+		r.append(" / ");
+		r.append("" + unit.geneticNN.neuralNet.hiddenNeurons);
+		
+		r.append("|Weight / bias function: ");
+		if (unit.geneticNN.neuralNet.weightFunction!=null) {
+			r.append(unit.geneticNN.neuralNet.weightFunction.getClass().getSimpleName());
+		}
+		r.append(" / ");
+		if (unit.geneticNN.neuralNet.biasFunction!=null) {
+			r.append(unit.geneticNN.neuralNet.biasFunction.getClass().getSimpleName());
+		}
+
+		r.append("|Main / ouput activator: ");
+		r.append(unit.geneticNN.neuralNet.activator.getClass().getSimpleName());
+		r.append(" / ");
+		if (unit.geneticNN.neuralNet.outputActivator!=null) {
+			r.append(unit.geneticNN.neuralNet.outputActivator.getClass().getSimpleName());
+		} else {
+			r.append(unit.geneticNN.neuralNet.activator.getClass().getSimpleName());
+		}
+
+		r.append("|Learning rate: ");
+		r.append(df.format(unit.geneticNN.neuralNet.learningRate));
+		
 		return r;
 	}
 		
@@ -373,7 +425,7 @@ public class Simulator extends Locker {
 						ani.lastAction = getActionForActiveOutput(activeOutputs.get(i));
 					}
 					if (ani.lastAction.length()==0) {
-						int i = ZRandomize.getRandomInt(0,AnimalConstants.OUTPUTS.length - 1);
+						int i = ZRandomize.getRandomInt(0,AnimalConstants.OUTPUTS.length - 2);
 						ani.lastAction = getActionForActiveOutput(i);
 					}
 					
@@ -481,18 +533,28 @@ public class Simulator extends Locker {
 		return r;
 	}
 
-	protected ZStringBuilder getBestLivingAnimalSummaryNoLock(boolean herbivore) {
-		ZStringBuilder r = new ZStringBuilder();
+	protected Animal getBestLivingAnimal(boolean herbivore) {
+		Animal r = null;
 		for (Animal ani: environmentState.getLivingAnimalsByScore(herbivore)) {
 			SimulatorAnimalWorker animalWorker = getAnimalWorkerByAnimalName(ani.name);
 			if (animalWorker!=null) {
 				SimulatorAnimal simAni = animalWorker.getSimulatorAnimal();
 				if (simAni!=null) {
-					r = formatUnitSummary(simAni.unit,ani.score);
+					r = ani;
+					break;
 				}
 			}
-			if (r.length()>0) {
-				break;
+		}
+		return r;
+	}
+	
+	protected ZStringBuilder getBestLivingAnimalSummaryNoLock(Animal ani) {
+		ZStringBuilder r = new ZStringBuilder();
+		SimulatorAnimalWorker animalWorker = getAnimalWorkerByAnimalName(ani.name);
+		if (animalWorker!=null) {
+			SimulatorAnimal simAni = animalWorker.getSimulatorAnimal();
+			if (simAni!=null) {
+				r = formatUnitSummary(simAni.unit);
 			}
 		}
 		return r;

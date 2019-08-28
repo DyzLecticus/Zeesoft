@@ -11,7 +11,13 @@ public class AnimalTestSet {
 		
 		// Move forward by default
 		t = r.addNewTest();
+		t.inputs[AnimalConstants.IN_RANDOM] = 0;
 		t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
+		t = r.addNewTest();
+		t.inputs[AnimalConstants.IN_RANDOM] = 1;
+		t.expectations[AnimalConstants.OUT_LEFT_ACTUATOR] = 1;
+		t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
+		t.expectations[AnimalConstants.OUT_RIGHT_ACTUATOR] = 1;
 		
 		addMoveBetweenWallsTests(r);
 		addFoodTests(r,herbivore);
