@@ -29,7 +29,7 @@ public class HtmlZENNEnvironment extends HtmlResource {
 		html.append("<table>");
 		html.append("<tbody>\n");
 		html.append("<tr>");
-		html.append("<td>");
+		html.append("<td valign=\"top\">");
 			
 			html.append("<table id=\"grid\" class=\"envTable\">");
 			html.append("<tbody>\n");
@@ -49,11 +49,25 @@ public class HtmlZENNEnvironment extends HtmlResource {
 		html.append("<td valign=\"top\">");
 		
 			html.append("<table>");
+			html.append("<thead>\n");
+			
+			html.append("<tr>");
+			html.append("<th>");
+			html.append("</th>");
+			html.append("<th>");
+			html.append("Details");
+			html.append("</th>");
+			html.append("<th align=\"right\">");
+			html.append("Score");
+			html.append("</th>");
+			html.append("</tr>");
+
+			html.append("</thead>\n");
 			html.append("<tbody>\n");
 			
 			html.append("<tr>");
 			html.append("<td valign=\"top\">");
-			html.append("Best herbivore");
+			html.append("<b>Best herbivore</b>");
 			html.append("</td>");
 			html.append("<td id=\"bestHerbivore\">");
 			html.append("</td>");
@@ -63,7 +77,7 @@ public class HtmlZENNEnvironment extends HtmlResource {
 						
 			html.append("<tr>");
 			html.append("<td valign=\"top\">");
-			html.append("Best living herbivore");
+			html.append("<b>Best living herbivore</b>");
 			html.append("</td>");
 			html.append("<td id=\"bestLivingHerbivore\">");
 			html.append("</td>");
@@ -73,7 +87,17 @@ public class HtmlZENNEnvironment extends HtmlResource {
 			
 			html.append("<tr>");
 			html.append("<td valign=\"top\">");
-			html.append("Best carnivore");
+			html.append("<b>Evolver herbivore</b>");
+			html.append("</td>");
+			html.append("<td id=\"evolverHerbivore\">");
+			html.append("</td>");
+			html.append("<td>");
+			html.append("</td>");
+			html.append("</tr>");
+			
+			html.append("<tr>");
+			html.append("<td valign=\"top\">");
+			html.append("<b>Best carnivore</b>");
 			html.append("</td>");
 			html.append("<td id=\"bestCarnivore\">");
 			html.append("</td>");
@@ -83,13 +107,24 @@ public class HtmlZENNEnvironment extends HtmlResource {
 			
 			html.append("<tr>");
 			html.append("<td valign=\"top\">");
-			html.append("Best living carnivore");
+			html.append("<b>Best living carnivore</b>");
 			html.append("</td>");
 			html.append("<td id=\"bestLivingCarnivore\">");
 			html.append("</td>");
 			html.append("<td valign=\"top\" align=\"right\" id=\"bestLivingCarnivoreScore\">");
 			html.append("</td>");
 			html.append("</tr>");
+			
+			html.append("<tr>");
+			html.append("<td valign=\"top\">");
+			html.append("<b>Evolver carnivore</b>");
+			html.append("</td>");
+			html.append("<td id=\"evolverCarnivore\">");
+			html.append("</td>");
+			html.append("<td>");
+			html.append("</td>");
+			html.append("</tr>");
+			
 			html.append("</tbody>\n");
 			html.append("</table>");
 			

@@ -41,6 +41,8 @@ public class JavaScriptZENNEnvironment {
 		script.append("        ZENN.state.working = false;\n");
 		script.append("        ZENN.state.statesPerSecond = object.statesPerSecond;\n");
 		script.append("        ZENN.state.keepStateHistorySeconds = object.keepStateHistorySeconds;\n");
+		script.append("        ZENN.state.setTdInnerHtml(\"evolverHerbivore\",ZENN.state.summaryToTable(object.evolverHerbivore));\n");
+		script.append("        ZENN.state.setTdInnerHtml(\"evolverCarnivore\",ZENN.state.summaryToTable(object.evolverCarnivore));\n");
 		script.append("        ZENN.state.setTdInnerHtml(\"bestHerbivore\",ZENN.state.summaryToTable(object.bestHerbivore));\n");
 		script.append("        ZENN.state.setTdInnerHtml(\"bestHerbivoreScore\",object.bestHerbivoreScore);\n");
 		script.append("        ZENN.state.setTdInnerHtml(\"bestCarnivore\",ZENN.state.summaryToTable(object.bestCarnivore));\n");
@@ -79,9 +81,9 @@ public class JavaScriptZENNEnvironment {
 		script.append("        html += \"<tr>\";\n");
 		script.append("        if (split[i].indexOf(\": \")>0) {\n");
 		script.append("            var spl = split[i].split(\": \");\n");
-		script.append("            html += \"<td>\";\n");
+		script.append("            html += \"<td><b>\";\n");
 		script.append("            html += spl[0];\n");
-		script.append("            html += \"</td>\";\n");
+		script.append("            html += \"</b></td>\";\n");
 		script.append("            html += \"<td>\";\n");
 		script.append("            html += spl[1];\n");
 		script.append("            html += \"</td>\";\n");

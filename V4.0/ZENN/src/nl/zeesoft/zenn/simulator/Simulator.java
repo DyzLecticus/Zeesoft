@@ -147,17 +147,17 @@ public class Simulator extends Locker {
 			@Override
 			public Object doLocked() {
 				JsFile json = null;
-				ZStringBuilder herbSummary = (ZStringBuilder) param1;
-				int herbScore = herbMutator.getTopScore();
-				if (herbSummary.length()==0) {
-					herbScore = 0;
-				}
-				ZStringBuilder carnSummary = (ZStringBuilder) param2;
-				int carnScore = carnMutator.getTopScore();
-				if (carnSummary.length()==0) {
-					carnScore = 0;
-				}
 				if (environmentState!=null && environmentConfig!=null && working) {
+					ZStringBuilder herbSummary = (ZStringBuilder) param1;
+					int herbScore = herbMutator.getTopScore();
+					if (herbSummary.length()==0) {
+						herbScore = 0;
+					}
+					ZStringBuilder carnSummary = (ZStringBuilder) param2;
+					int carnScore = carnMutator.getTopScore();
+					if (carnSummary.length()==0) {
+						carnScore = 0;
+					}
 					int livingHerbScore = 0;
 					int livingCarnScore = 0;
 					ZStringBuilder livingHerbSummary = new ZStringBuilder();
@@ -174,10 +174,22 @@ public class Simulator extends Locker {
 							livingCarnScore = livingCarn.score;
 						}
 					}
+					ZStringBuilder evolverHerbSummary = new ZStringBuilder();
+					EvolverUnit bestHerb = herbEvolver.getBestSoFar();
+					if (bestHerb!=null) {
+						evolverHerbSummary = formatUnitSummary(bestHerb);
+					}
+					ZStringBuilder evolverCarnSummary = new ZStringBuilder();
+					EvolverUnit bestCarn = carnEvolver.getBestSoFar();
+					if (bestCarn!=null) {
+						evolverCarnSummary = formatUnitSummary(bestCarn);
+					}
 					json = environmentState.toJson();
 					json.rootElement.children.add(new JsElem("statesPerSecond","" + environmentConfig.statesPerSecond));
 					json.rootElement.children.add(new JsElem("keepStateHistorySeconds","" + environmentConfig.keepStateHistorySeconds));
 					json.rootElement.children.add(new JsElem("maxEnergyPlant","" + environmentConfig.maxEnergyPlant));
+					json.rootElement.children.add(new JsElem("evolverHerbivore",evolverHerbSummary,true));
+					json.rootElement.children.add(new JsElem("evolverCarnivore",evolverCarnSummary,true));
 					json.rootElement.children.add(new JsElem("bestHerbivore",herbSummary,true));
 					json.rootElement.children.add(new JsElem("bestHerbivoreScore","" + herbScore));
 					json.rootElement.children.add(new JsElem("bestCarnivore",carnSummary,true));
@@ -282,16 +294,16 @@ public class Simulator extends Locker {
 									} else {
 										mutator = carnMutator;
 									}
-									simAni = mutator.getTopScoringAnimal();
-									if (simAni==null || ZRandomize.getRandomInt(0,1)==1) {
-										EvolverUnit bestVariation = mutator.getBestSoFar();
-										if (bestVariation!=null && ZRandomize.getRandomInt(0,1)==1) {
-											bestSoFar = bestVariation;
-										}
-										simAni = new SimulatorAnimal();
-										simAni.name = ani.name;
-										simAni.unit = bestSoFar;
+									EvolverUnit bestVariation = mutator.getBestSoFar();
+									if (bestVariation==null) {
+										bestVariation = mutator.getTopScoringAnimal().unit;
 									}
+									if (bestVariation!=null && ZRandomize.getRandomInt(0,1)==1) {
+										bestSoFar = bestVariation;
+									}
+									simAni = new SimulatorAnimal();
+									simAni.name = ani.name;
+									simAni.unit = bestSoFar;
 									simAniInitializer.addOrReplaceObject(simAni);
 									if (ani.energy==0) {
 										environmentState.initializeAnimal(ani,true);
