@@ -54,6 +54,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		boolean r = false;
 		EvolverUnit unit1 = null;
 		EvolverUnit unit2 = null;
+		boolean save = false;
 		lockMe(this);
 		if (loaded) {
 			if (ani.score > topScore) {
@@ -62,6 +63,16 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 				unit1 = topScoringAnimal.unit.copy();
 				unit2 = topScoringAnimal.unit.copy();
 				r = true;
+			} else if (topScoringAnimal!=null && topScore>10 && simAni.unit.compareTo(topScoringAnimal.unit)>0) {
+				if (topScore>200) {
+					topScore = topScore - Math.round((topScore - 200) * 0.90F);
+					if (topScore <= ani.score) {
+						topScore = ani.score + 1;
+					}
+				} else {
+					topScore--;
+				}
+				save = true;
 			}
 		}
 		unlockMe(this);
@@ -76,6 +87,8 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 					start();
 				}
 			}
+			save();
+		} else if (save) {
 			save();
 		}
 		return r;
