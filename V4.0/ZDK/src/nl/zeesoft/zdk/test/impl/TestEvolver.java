@@ -57,6 +57,7 @@ public class TestEvolver extends TestObject {
 		TestSet tSet = TestNeuralNet.getXORTestSet(false);
 		
 		Evolver evolver = new Evolver(messenger,union,1,2,0,tSet,10);
+		evolver.setTrainEpochBatches(1000);
 		evolver.setDebug(true);
 		
 		messenger.start();

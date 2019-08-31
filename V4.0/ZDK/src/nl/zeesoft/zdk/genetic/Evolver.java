@@ -33,6 +33,8 @@ public class Evolver extends Locker implements JsAble {
 	private float					mutationRate		= 0.05F;
 	private int						trainEpochBatches	= 5000;
 	private int						trainEpochBatchSize	= 10;
+	private float					checkFactorQuarter	= 0.66F;
+	private float					checkFactorHalf		= 0.33F;
 	private int						sleepMs				= 10;
 	private int						sleepMsFoundBest	= 50;
 	private boolean					working				= false;
@@ -73,6 +75,18 @@ public class Evolver extends Locker implements JsAble {
 	public void setTrainEpochBatchSize(int trainEpochBatchSize) {
 		lockMe(this);
 		this.trainEpochBatchSize = trainEpochBatchSize;
+		unlockMe(this);
+	}
+	
+	public void setCheckFactorQuarter(float checkFactorQuarter) {
+		lockMe(this);
+		this.checkFactorQuarter = checkFactorQuarter;
+		unlockMe(this);
+	}
+	
+	public void setCheckFactorHalf(float checkFactorHalf) {
+		lockMe(this);
+		this.checkFactorHalf = checkFactorHalf;
 		unlockMe(this);
 	}
 	
@@ -209,6 +223,8 @@ public class Evolver extends Locker implements JsAble {
 				json.rootElement.children.add(new JsElem("mutationRate","" + mutationRate));
 				json.rootElement.children.add(new JsElem("trainEpochBatches","" + trainEpochBatches));
 				json.rootElement.children.add(new JsElem("trainEpochBatchSize","" + trainEpochBatchSize));
+				json.rootElement.children.add(new JsElem("checkFactorQuarter","" + checkFactorQuarter));
+				json.rootElement.children.add(new JsElem("checkFactorHalf","" + checkFactorHalf));
 				json.rootElement.children.add(new JsElem("sleepMs","" + sleepMs));
 				json.rootElement.children.add(new JsElem("sleepMsFoundBest","" + sleepMsFoundBest));
 
@@ -240,6 +256,8 @@ public class Evolver extends Locker implements JsAble {
 					mutationRate = json.rootElement.getChildFloat("mutationRate",mutationRate);
 					trainEpochBatches = json.rootElement.getChildInt("trainEpochBatches",trainEpochBatches);
 					trainEpochBatchSize = json.rootElement.getChildInt("trainEpochBatchSize",trainEpochBatchSize);
+					checkFactorQuarter = json.rootElement.getChildFloat("checkFactorQuarter",checkFactorQuarter);
+					checkFactorHalf = json.rootElement.getChildFloat("checkFactorHalf",checkFactorHalf);
 					sleepMs = json.rootElement.getChildInt("sleepMs",sleepMs);
 					sleepMsFoundBest = json.rootElement.getChildInt("sleepMsFoundBest",sleepMsFoundBest);
 					
@@ -335,6 +353,22 @@ public class Evolver extends Locker implements JsAble {
 		int r = 0;
 		lockMe(this);
 		r = trainEpochBatchSize;
+		unlockMe(this);
+		return r;
+	}
+	
+	protected float getCheckFactorQuarter() {
+		float r = 0;
+		lockMe(this);
+		r = checkFactorQuarter;
+		unlockMe(this);
+		return r;
+	}
+	
+	protected float getCheckFactorHalf() {
+		float r = 0;
+		lockMe(this);
+		r = checkFactorHalf;
 		unlockMe(this);
 		return r;
 	}

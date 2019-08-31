@@ -32,7 +32,7 @@ public class EnvironmentConfig implements Persistable {
 	public int							energyActionTurn		= 300;
 	public int							energyActionBite		= 500;
 	
-	public int							energyInputPerSecond	= 400000;
+	public int							energyInputPerSecond	= 500000;
 	public int							maxEnergyPlant			= 500000;
 	public int							maxEnergyHerbivore		= 500000;
 	public int							maxEnergyHerbivoreBite	= 50000;

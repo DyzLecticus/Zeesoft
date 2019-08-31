@@ -122,12 +122,14 @@ public class JavaScriptZENNEnvironment {
 		script.append("        }\n");
 		script.append("    }\n");
 		script.append("    var factor = 1;\n");
-		script.append("    if (ZENN.state.currentHistoryIndex < ZENN.state.totalHistories / 3) {\n");
+		script.append("    if (ZENN.state.currentHistoryIndex < ZENN.state.totalHistories / 5) {\n");
 		script.append("        factor = 0.5;\n");
+		script.append("    } else if (ZENN.state.currentHistoryIndex < ZENN.state.totalHistories / 3) {\n");
+		script.append("        factor = 0.75;\n");
 		script.append("    } else if (ZENN.state.currentHistoryIndex > (ZENN.state.totalHistories / 5) * 4) {\n");
-		script.append("        factor = 3.0;\n");
-		script.append("    } else if (ZENN.state.currentHistoryIndex > (ZENN.state.totalHistories / 3) * 2) {\n");
 		script.append("        factor = 1.5;\n");
+		script.append("    } else if (ZENN.state.currentHistoryIndex > (ZENN.state.totalHistories / 3) * 2) {\n");
+		script.append("        factor = 1.25;\n");
 		script.append("    }\n");
 		script.append("    var to = Math.round(((1000 / ZENN.state.statesPerSecond) - ZENN.state.displayTimeAvg) * factor);\n");
 		script.append("    if (to < 0) {\n");

@@ -72,6 +72,21 @@ public class TrainingProgram implements JsAble {
 	}
 	
 	/**
+	 * Returns false if the latest average loss is above a certain factor of the initial loss.
+	 * Used by evolvers to check if the the average loss decreases better than linear; if not, the training is abandoned.
+	 *  
+	 * @param factor The factor to apply to the initial average loss for comparison
+	 * @return False if the latest average loss is above a certain factor of the initial loss, else true
+	 */
+	public boolean lossCheckPoint(float factor) {
+		boolean r = true;
+		if (latestResults!=null && latestResults.averageLoss > initialResults.averageLoss * factor) {
+			r = false;
+		}
+		return r;
+	}
+	
+	/**
 	 * Returns the calculated training result (lower is better).
 	 * 
 	 * @return The training result
