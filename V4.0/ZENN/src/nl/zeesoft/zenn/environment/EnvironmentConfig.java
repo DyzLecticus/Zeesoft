@@ -32,7 +32,7 @@ public class EnvironmentConfig implements Persistable {
 	public int							energyActionTurn		= 300;
 	public int							energyActionBite		= 500;
 	
-	public int							energyInputPerSecond	= 500000;
+	public int							energyInputPerSecond	= 400000;
 	public int							maxEnergyPlant			= 500000;
 	public int							maxEnergyHerbivore		= 500000;
 	public int							maxEnergyHerbivoreBite	= 50000;
@@ -41,6 +41,8 @@ public class EnvironmentConfig implements Persistable {
 
  	public int							statesPerSecond			= 25;
  	public int							keepStateHistorySeconds	= 10;
+ 	
+	public float						randomToOne				= 0.10F;
 	
 	@Override
 	public JsFile toJson() {
@@ -69,6 +71,7 @@ public class EnvironmentConfig implements Persistable {
 		json.rootElement.children.add(new JsElem("statesPerSecond","" + statesPerSecond));
 		json.rootElement.children.add(new JsElem("keepStateHistorySeconds","" + keepStateHistorySeconds));
 		
+		json.rootElement.children.add(new JsElem("randomToOne","" + randomToOne));
 		return json;
 	}
 	
@@ -96,6 +99,8 @@ public class EnvironmentConfig implements Persistable {
 
 			statesPerSecond = json.rootElement.getChildInt("statesPerSecond",statesPerSecond);
 			keepStateHistorySeconds = json.rootElement.getChildInt("keepStateHistorySeconds",keepStateHistorySeconds);
+			
+			randomToOne = json.rootElement.getChildFloat("randomToOne",randomToOne);
 		}
 	}
 

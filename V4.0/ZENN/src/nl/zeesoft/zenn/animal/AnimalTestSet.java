@@ -103,11 +103,8 @@ public class AnimalTestSet {
 					t = ts.addNewTest();
 					t.inputs[AnimalConstants.IN_RANDOM] = rand;
 					setInputColor(t.inputs,1,avoidColors[c],AnimalConstants.INTENSITIES[d1]);
-					if (rand==0) {
-						t.expectations[AnimalConstants.OUT_LEFT_ACTUATOR] = 1;
-					} else {
-						t.expectations[AnimalConstants.OUT_RIGHT_ACTUATOR] = 1;
-					}
+					t.expectations[AnimalConstants.OUT_LEFT_ACTUATOR] = 1;
+					t.expectations[AnimalConstants.OUT_RIGHT_ACTUATOR] = 1;
 				}
 			}
 		}
@@ -118,7 +115,7 @@ public class AnimalTestSet {
 		
 		for (float rand = 0; rand <=1; rand++) {
 			for (int d1 = 1; d1 >= 0; d1--) {
-				if (d1==0 || rand==0) {
+				if (d1==0 || rand==1) {
 					t = ts.addNewTest();
 					t.inputs[AnimalConstants.IN_RANDOM] = rand;
 					setInputColor(t.inputs,0,AnimalConstants.COLOR_GREY,1);

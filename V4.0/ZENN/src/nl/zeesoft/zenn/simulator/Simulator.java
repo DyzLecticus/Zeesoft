@@ -163,12 +163,14 @@ public class Simulator extends Locker {
 					ZStringBuilder livingHerbSummary = new ZStringBuilder();
 					ZStringBuilder livingCarnSummary = new ZStringBuilder();
 					Animal livingHerb = getBestLivingAnimal(true);
-					Animal livingCarn = getBestLivingAnimal(false);
 					if (livingHerb!=null) {
 						livingHerbSummary = getBestLivingAnimalSummaryNoLock(livingHerb);
 						if (livingHerbSummary.length()>0) {
 							livingHerbScore = livingHerb.score;
 						}
+					}
+					Animal livingCarn = getBestLivingAnimal(false);
+					if (livingCarn!=null) {
 						livingCarnSummary = getBestLivingAnimalSummaryNoLock(livingCarn);
 						if (livingCarnSummary.length()>0) {
 							livingCarnScore = livingCarn.score;
@@ -296,7 +298,10 @@ public class Simulator extends Locker {
 									}
 									EvolverUnit bestVariation = mutator.getBestSoFar();
 									if (bestVariation==null) {
-										bestVariation = mutator.getTopScoringAnimal().unit;
+										SimulatorAnimal topSimAni = mutator.getTopScoringAnimal();
+										if (topSimAni!=null) {
+											bestVariation = topSimAni.unit;
+										}
 									}
 									if (bestVariation!=null && ZRandomize.getRandomInt(0,1)==1) {
 										bestSoFar = bestVariation;
@@ -338,7 +343,10 @@ public class Simulator extends Locker {
 			@Override
 			public Object doLocked() {
 				if (working && organismIsAliveNoLock(ani)) {
-					p.inputs[AnimalConstants.IN_RANDOM] = Math.round(ZRandomize.getRandomFloat(0,1));
+					float rand = ZRandomize.getRandomFloat(0,1);
+					if (rand > 1 - environmentConfig.randomToOne) {
+						p.inputs[AnimalConstants.IN_RANDOM] = 1;
+					}
 					for (int i = 0; i < 3; i++) {
 						int posX = ani.posX;
 						int posY = ani.posY;
@@ -512,7 +520,6 @@ public class Simulator extends Locker {
 							if (carnMutator.getTopScoringAnimal()==null) {
 								resetHerb = true;
 							}
-							carnMutator.checkBest(ani,simAni);
 							if (carnMutator.checkBest(ani,simAni) && resetHerb) {
 								for (Animal herb: environmentState.getAnimals(true)) {
 									herb.score = 0;
