@@ -16,7 +16,7 @@ import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 /**
- * An evolver can be used to generate neural nets according to certain specification.
+ * An evolver can be used to generate neural nets according to a certain specification.
  * It uses multi threading to use processing power effectively.
  * When specifying multiple evolvers, half of them are used to generate completely new neural nets.
  * The other half are used to generate mutations of the best-so-far generated neural net.  
@@ -29,7 +29,7 @@ public class Evolver extends Locker implements JsAble {
 	private GeneticNN				geneticNN			= null;
 	
 	private boolean					debug				= false;
-	private boolean					appendLog			= true;
+	private int						maxLogLines			= 20;
 	private float					mutationRate		= 0.05F;
 	private int						trainEpochBatches	= 5000;
 	private int						trainEpochBatchSize	= 10;
@@ -54,9 +54,9 @@ public class Evolver extends Locker implements JsAble {
 		unlockMe(this);
 	}
 	
-	public void setAppendLog(boolean appendLog) {
+	public void setMaxLogLines(int maxLogLines) {
 		lockMe(this);
-		this.appendLog = appendLog;
+		this.maxLogLines = maxLogLines;
 		unlockMe(this);
 	}
 	
@@ -402,8 +402,6 @@ public class Evolver extends Locker implements JsAble {
 				addLogLine(bestSoFar,"SEL");
 				selected = true;
 				stop = unit.trainingProgram.trainedEpochs == 0;
-			} else {
-				addLogLine(bestSoFar,"REF");
 			}
 			unlockMe(this);
 		}
@@ -417,8 +415,11 @@ public class Evolver extends Locker implements JsAble {
 	}
 	
 	protected void addLogLine(EvolverUnit unit,String action) {
-		if (appendLog) {
-			logLines.add(0,unit.toLogLine(action));
+		if (maxLogLines>0) {
+			logLines.add(unit.toLogLine(action));
+			while(logLines.size()>maxLogLines) {
+				logLines.remove(0);
+			}
 		}
 	}
 	

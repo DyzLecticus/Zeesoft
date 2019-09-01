@@ -21,9 +21,10 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 		super(
 			config.getMessenger(),config.getUnion(),
 			AnimalConstants.MAX_LAYERS,AnimalConstants.MAX_NEURONS,
-			100,AnimalTestSet.getNewAnimalTestSet(herbivore),5);
+			100,AnimalTestSet.getNewAnimalTestSet(herbivore),4);
 		this.configuration = config;
 		this.herbivore = herbivore;
+		setTrainEpochBatches(3000);
 		setSleepMs(50);
 		setSleepMsFoundBest(250);
 	}
@@ -32,8 +33,9 @@ public class AnimalEvolver extends Evolver implements Persistable, JsClientListe
 		super(
 			msgr,uni,
 			AnimalConstants.MAX_LAYERS,AnimalConstants.MAX_NEURONS,
-			100,AnimalTestSet.getNewAnimalTestSet(herbivore),5);
+			100,AnimalTestSet.getNewAnimalTestSet(herbivore),4);
 		this.herbivore = herbivore;
+		setTrainEpochBatches(3000);
 		setSleepMs(20);
 		setSleepMsFoundBest(200);
 	}

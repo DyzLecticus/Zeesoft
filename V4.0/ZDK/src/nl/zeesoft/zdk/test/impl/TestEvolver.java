@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.impl;
 import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.genetic.Evolver;
 import nl.zeesoft.zdk.genetic.EvolverUnit;
+import nl.zeesoft.zdk.genetic.GeneticNN;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.neural.TestSet;
 import nl.zeesoft.zdk.test.TestObject;
@@ -20,31 +21,35 @@ public class TestEvolver extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use the *ZStringEncoder* to generate a key and then use that to encode and decode a text.");
+		System.out.println("This test shows how to use an *Evolver* and a *TestSet* to generate, train and select the best *GeneticNN* for a certain task.  ");
+		System.out.println("Evolvers use multi threading to use processing power effectively.  ");
+		System.out.println("When specifying multiple evolvers, half of them are used to generate completely new neural nets.  ");
+		System.out.println("The other half are used to generate mutations of the best-so-far generated neural net.  ");  
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the ZStringEncoder");
-		System.out.println("ZStringEncoder encoder = new ZStringEncoder(\"Example text to be encoded.\");");
-		System.out.println("// Generate a key");
-		System.out.println("String key = encoder.generateNewKey(1024);");
-		System.out.println("// Use the key to encode the text");
-		System.out.println("encoder.encodeKey(key,0);");
-		System.out.println("// Use the key to decode the encoded text");
-		System.out.println("encoder.decodeKey(key,0);");
+		System.out.println("// Create the TestSet");
+		System.out.println("TestSet tSet = new TestSet(inputs,outputs);");
+		System.out.println("// (Add tests to the test ...)");
+		System.out.println("// Create the Evolver");
+		System.out.println("Evolver evolver = new Evolver(new Messenger(),new WorkerUnion(),maxHiddenLayers,maxHiddenNeurons,codePropertyStart,tSet,evolvers);");
+		System.out.println("// Start the evolver");
+		System.out.println("evolver.start();");
+		System.out.println("// (Give it some time ...)");
+		System.out.println("// Stop the evolver");
+		System.out.println("evolver.stop();");
+		System.out.println("// Get the best-so-far result");
+		System.out.println("EvolverUnit unit = evolver.getBestSoFar();");
 		System.out.println("~~~~");
 		System.out.println();
-		System.out.println("This encoding mechanism can be used to encode and decode passwords and other sensitive data.");
-		System.out.println("The minimum key length is 64. Longer keys provide stronger encoding.");
-		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestNeuralNet.class));
-		System.out.println(" * " + getTester().getLinkForClass(ZStringEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestEvolver.class));
+		System.out.println(" * " + getTester().getLinkForClass(Evolver.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestSet.class));
+		System.out.println(" * " + getTester().getLinkForClass(GeneticNN.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the generated key, the input text, the encoded text, and the decoded text.");
-		*/
+		System.out.println("The output of this test shows the evolver debug output and the evolver object converted to JSON.  ");
 	}
 	
 	@Override
@@ -63,9 +68,16 @@ public class TestEvolver extends TestObject {
 		messenger.start();
 
 		evolver.start();
-		sleep(30000);
-		evolver.stop();
-		evolver.whileStopping();
+		for (int i = 0; i < 30; i++) {
+			sleep(1000);
+			if (!evolver.isWorking()) {
+				break;
+			}
+		}
+		if (evolver.isWorking()) {
+			evolver.stop();
+			evolver.whileStopping();
+		}
 		
 		messenger.stop();
 		messenger.handleMessages();

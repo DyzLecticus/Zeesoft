@@ -42,8 +42,6 @@ public class TrainingProgram implements JsAble {
 		latestResults = null;
 		totalAverageError = 0;
 		totalAverageLoss = 0;
-		totalAverageError = 0;
-		totalAverageLoss = 0;
 		initialResults = getNewTrainingSet();
 		neuralNet.test(initialResults);
 	}
@@ -58,6 +56,8 @@ public class TrainingProgram implements JsAble {
 		boolean done = !stopOnSuccess || initialResults.success;
 		if (done) {
 			latestResults = initialResults;
+			totalAverageError = initialResults.averageError;
+			totalAverageLoss = initialResults.averageLoss;
 		} else {
 			for (int i = 0; i < epochs; i++) {
 				TestSet tSet = getNewTrainingSet();

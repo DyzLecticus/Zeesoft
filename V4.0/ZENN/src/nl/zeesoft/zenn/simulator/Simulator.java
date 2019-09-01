@@ -164,14 +164,14 @@ public class Simulator extends Locker {
 					int livingCarnScore = 0;
 					ZStringBuilder livingHerbSummary = new ZStringBuilder();
 					ZStringBuilder livingCarnSummary = new ZStringBuilder();
-					Animal livingHerb = getBestLivingAnimal(true);
+					Animal livingHerb = getBestLivingAnimalNoLock(true);
 					if (livingHerb!=null) {
 						livingHerbSummary = getBestLivingAnimalSummaryNoLock(livingHerb);
 						if (livingHerbSummary.length()>0) {
 							livingHerbScore = livingHerb.score;
 						}
 					}
-					Animal livingCarn = getBestLivingAnimal(false);
+					Animal livingCarn = getBestLivingAnimalNoLock(false);
 					if (livingCarn!=null) {
 						livingCarnSummary = getBestLivingAnimalSummaryNoLock(livingCarn);
 						if (livingCarnSummary.length()>0) {
@@ -344,7 +344,7 @@ public class Simulator extends Locker {
 		LockedCode code = new LockedCode() {
 			@Override
 			public Object doLocked() {
-				if (working && organismIsAliveNoLock(ani)) {
+				if (working && organismIsAliveNoLock(ani) && ani.energy>0) {
 					float rand = ZRandomize.getRandomFloat(0,1);
 					if (rand > 1 - environmentConfig.randomToOne) {
 						p.inputs[AnimalConstants.IN_RANDOM] = 1;
@@ -431,7 +431,7 @@ public class Simulator extends Locker {
 		LockedCode code = new LockedCode() {
 			@Override
 			public Object doLocked() {
-				if (working && organismIsAliveNoLock(ani)) {
+				if (working && organismIsAliveNoLock(ani) && ani.energy>0) {
 					ani.lastAction = "";
 					List<Integer> activeOutputs = new ArrayList<Integer>();
 					for (int i = 0; i < p.outputs.length; i++) {
@@ -554,7 +554,7 @@ public class Simulator extends Locker {
 		return r;
 	}
 
-	protected Animal getBestLivingAnimal(boolean herbivore) {
+	protected Animal getBestLivingAnimalNoLock(boolean herbivore) {
 		Animal r = null;
 		for (Animal ani: environmentState.getLivingAnimalsByScore(herbivore)) {
 			SimulatorAnimalWorker animalWorker = getAnimalWorkerByAnimalName(ani.name);

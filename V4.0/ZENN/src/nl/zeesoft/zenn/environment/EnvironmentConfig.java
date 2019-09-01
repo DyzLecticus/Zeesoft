@@ -43,7 +43,7 @@ public class EnvironmentConfig implements Persistable {
  	public int							keepStateHistorySeconds	= 10;
  	
 	public float						randomToOne				= 0.10F;
- 	public int							minTopScore				= 400;
+ 	public int							minTopScore				= 200;
 	
 	@Override
 	public JsFile toJson() {

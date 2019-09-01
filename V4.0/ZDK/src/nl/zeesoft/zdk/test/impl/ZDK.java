@@ -77,5 +77,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestGeneticCode(getTester()));
 		tests.add(new TestNeuralNet(getTester()));
 		tests.add(new TestGeneticNN(getTester()));
+		tests.add(new TestEvolver(getTester()));
 	}
 }

@@ -36,8 +36,8 @@ public class AnimalConstants {
 
 	public static final float[]		INTENSITIES			= {1.00F,0.75F,0.50F,0.25F};
 
-	public static final int			MAX_LAYERS			= 3;
-	public static final int			MAX_NEURONS			= 12;
+	public static final int			MAX_LAYERS			= 2;
+	public static final int			MAX_NEURONS			= 10;
 	
 	public static final float[]		COLOR_BLACK			= {0.00F,0.00F,0.00F};
 	public static final float[]		COLOR_RED			= {1.00F,0.00F,0.00F};

@@ -121,15 +121,15 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 		r.append(geneticNN.code.getCode().substring(0,16));
 		r.append(", size: ");
 		r.append("" + geneticNN.neuralNet.size());
-		r.append(", initial average loss: ");
+		r.append(", initial loss: ");
 		r.append(df.format(trainingProgram.initialResults.averageLoss));
 		if (trainingProgram.latestResults!=null) {
 			r.append(" (final: ");
 			r.append(df.format(trainingProgram.latestResults.averageLoss));
 			r.append(")");
-			r.append(", total average loss: ");
+			r.append(", total loss: ");
 			r.append(df.format(trainingProgram.totalAverageLoss));
-			r.append(", training result: ");
+			r.append(", result: ");
 			r.append(df.format(trainingProgram.getTrainingResult()));
 			r.append(" (epochs: ");
 			r.append("" + trainingProgram.trainedEpochs);

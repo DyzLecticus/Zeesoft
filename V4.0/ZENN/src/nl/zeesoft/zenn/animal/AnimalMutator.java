@@ -38,6 +38,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		this.configuration = config;
 		this.herbivore = herbivore;
 		this.evolver = evolver;
+		setTrainEpochBatches(3000);
 		setSleepMs(200);
 		setSleepMsFoundBest(200);
 	}
@@ -48,6 +49,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 			AnimalConstants.MAX_LAYERS,AnimalConstants.MAX_NEURONS,
 			100,AnimalTestSet.getNewAnimalTestSet(herbivore),1);
 		this.herbivore = herbivore;
+		setTrainEpochBatches(3000);
 		setSleepMs(200);
 		setSleepMsFoundBest(200);
 	}
@@ -72,7 +74,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 				unit2 = topScoringAnimal.unit.copy();
 				r = true;
 			} else if (topScore>minTopScore && topScoringAnimal!=null && simAni.unit.compareTo(topScoringAnimal.unit)>0) {
-				if (topScore>(minTopScore * 1.5F)) {
+				if (topScore>(minTopScore * 1.1F)) {
 					topScore = topScore - Math.round((topScore - 200) * 0.90F);
 					if (topScore <= ani.score) {
 						topScore = ani.score + 1;
