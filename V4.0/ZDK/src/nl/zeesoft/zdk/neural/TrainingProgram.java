@@ -55,17 +55,21 @@ public class TrainingProgram implements JsAble {
 	 * @return true If the latest training results were successful
 	 */
 	public boolean train(int epochs) {
-		boolean done = false;
-		for (int i = 0; i < epochs; i++) {
-			TestSet tSet = getNewTrainingSet();
-			neuralNet.train(tSet);
-			trainedEpochs++;
-			totalAverageError += tSet.averageError;
-			totalAverageLoss += tSet.averageLoss;
-			latestResults = tSet;
-			done = tSet.success;
-			if (done && stopOnSuccess) {
-				break;
+		boolean done = !stopOnSuccess || initialResults.success;
+		if (done) {
+			latestResults = initialResults;
+		} else {
+			for (int i = 0; i < epochs; i++) {
+				TestSet tSet = getNewTrainingSet();
+				neuralNet.train(tSet);
+				trainedEpochs++;
+				totalAverageError += tSet.averageError;
+				totalAverageLoss += tSet.averageLoss;
+				latestResults = tSet;
+				done = tSet.success;
+				if (done && stopOnSuccess) {
+					break;
+				}
 			}
 		}
 		return done;

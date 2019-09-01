@@ -48,6 +48,40 @@ public class TestSet implements JsAble {
 		return r;
 	}
 	
+	public boolean isConsistent() {
+		boolean r = true;
+		for (Test t1: tests) {
+			for (Test t2: tests) {
+				if (t2!=t1) {
+					boolean equalIn = true;
+					boolean equalOut = true;
+					for (int i = 0; i<t1.inputs.length; i++) {
+						if (t1.inputs[i]!=t2.inputs[i]) {
+							equalIn = false;
+							break;
+						}
+					}
+					if (equalIn) {
+						for (int i = 0; i<t1.outputs.length; i++) {
+							if (t1.outputs[i]!=t2.outputs[i]) {
+								equalOut = false;
+								break;
+							}
+						}
+						if (!equalOut) {
+							r = false;
+							break;
+						};
+					}
+				}
+			}
+			if (!r) {
+				break;
+			}
+		}
+		return r;
+	}
+	
 	public void finalize() {
 		averageError = 0;
 		averageLoss = 0;

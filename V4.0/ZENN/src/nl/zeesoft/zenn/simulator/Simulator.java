@@ -62,6 +62,8 @@ public class Simulator extends Locker {
 		this.environmentConfig = environmentConfig;
 		this.environmentState = environmentState;
 		worker.setEnvironmentConfig(environmentConfig);
+		herbMutator.setEnvironmentConfig(environmentConfig);
+		carnMutator.setEnvironmentConfig(environmentConfig);
 		unlockMe(this);
 	}
 	

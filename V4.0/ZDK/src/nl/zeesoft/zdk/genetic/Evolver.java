@@ -111,21 +111,25 @@ public class Evolver extends Locker implements JsAble {
 	}
 
 	public void start() {
-		boolean r = false;
-		boolean dbg = false;
-		lockMe(this);
-		if (!working) {
-			working = true;
-			r = true;
-			dbg = debug;
-		}
-		unlockMe(this);
-		if (r) {
-			for (EvolverWorker evolver: evolvers) {
-				evolver.start();
+		if (!baseTestSet.isConsistent()) {
+			getMessenger().error(this,"Unable to start evolver; test set is inconsistent");
+		} else {
+			boolean r = false;
+			boolean dbg = false;
+			lockMe(this);
+			if (!working) {
+				working = true;
+				r = true;
+				dbg = debug;
 			}
-			if (dbg && getMessenger()!=null) {
-				getMessenger().debug(this,"Started");
+			unlockMe(this);
+			if (r) {
+				for (EvolverWorker evolver: evolvers) {
+					evolver.start();
+				}
+				if (dbg && getMessenger()!=null) {
+					getMessenger().debug(this,"Started");
+				}
 			}
 		}
 	}
@@ -387,6 +391,7 @@ public class Evolver extends Locker implements JsAble {
 	
 	protected void finishedTrainigProgram(EvolverWorker worker,EvolverUnit unit) {
 		boolean selected = false;
+		boolean stop = false;
 		if (unit.trainingProgram.latestResults.success) {
 			lockMe(this);
 			if (bestSoFar==null || unit.compareTo(bestSoFar)>0) {
@@ -396,11 +401,18 @@ public class Evolver extends Locker implements JsAble {
 				}
 				addLogLine(bestSoFar,"SEL");
 				selected = true;
+				stop = unit.trainingProgram.trainedEpochs == 0;
+			} else {
+				addLogLine(bestSoFar,"REF");
 			}
 			unlockMe(this);
 		}
 		if (selected) {
 			selectedBest();
+		}
+		if (stop) {
+			stop();
+			whileStopping();
 		}
 	}
 	

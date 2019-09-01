@@ -46,8 +46,8 @@ public class AnimalConstants {
 	public static final float[]		COLOR_GREY			= {0.50F,0.50F,0.50F};
 	
 	public static final float[][]	COLORS				= {COLOR_BLACK,COLOR_RED,COLOR_GREEN,COLOR_BLUE,COLOR_GREY};
-	public static final float[][]	COLORS_AVOID_HERB	= {COLOR_RED,COLOR_BLUE,COLOR_GREY};
-	public static final float[][]	COLORS_AVOID_CARN	= {COLOR_RED,COLOR_GREEN,COLOR_GREY};
+	public static final float[][]	COLORS_AVOID_HERB	= {COLOR_RED,COLOR_BLUE};
+	public static final float[][]	COLORS_AVOID_CARN	= {COLOR_RED,COLOR_GREEN};
 	
 	public static float[] getFoodColor(boolean herbivore) {
 		float[] r = COLOR_GREEN;

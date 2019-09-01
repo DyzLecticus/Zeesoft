@@ -56,7 +56,7 @@ public class TestEvolver extends TestObject {
 		
 		TestSet tSet = TestNeuralNet.getXORTestSet(false);
 		
-		Evolver evolver = new Evolver(messenger,union,1,2,0,tSet,10);
+		Evolver evolver = new Evolver(messenger,union,1,2,0,tSet,20);
 		evolver.setTrainEpochBatches(1000);
 		evolver.setDebug(true);
 		
@@ -77,6 +77,10 @@ public class TestEvolver extends TestObject {
 		Evolver evolverCopy = new Evolver(messenger,union,1,2,0,tSet,10);
 		evolverCopy.setDebug(true);
 
-		testJsAble(evolver,evolverCopy,"Evolver JSON does not match expectation");
+		if (testJsAble(evolver,evolverCopy,"Evolver JSON does not match expectation")) {
+			System.out.println();
+			System.out.println("Evolver JSON;");
+			System.out.println(evolver.toJson().toStringBuilderReadFormat());
+		}
 	}
 }

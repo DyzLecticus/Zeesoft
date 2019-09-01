@@ -131,6 +131,9 @@ public class EvolverUnit implements Comparable<EvolverUnit>, JsAble {
 			r.append(df.format(trainingProgram.totalAverageLoss));
 			r.append(", training result: ");
 			r.append(df.format(trainingProgram.getTrainingResult()));
+			r.append(" (epochs: ");
+			r.append("" + trainingProgram.trainedEpochs);
+			r.append(")");
 		}
 		return r;
 	}

@@ -43,6 +43,7 @@ public class EnvironmentConfig implements Persistable {
  	public int							keepStateHistorySeconds	= 10;
  	
 	public float						randomToOne				= 0.10F;
+ 	public int							minTopScore				= 400;
 	
 	@Override
 	public JsFile toJson() {
@@ -72,6 +73,7 @@ public class EnvironmentConfig implements Persistable {
 		json.rootElement.children.add(new JsElem("keepStateHistorySeconds","" + keepStateHistorySeconds));
 		
 		json.rootElement.children.add(new JsElem("randomToOne","" + randomToOne));
+		json.rootElement.children.add(new JsElem("minTopScore","" + minTopScore));
 		return json;
 	}
 	
@@ -101,6 +103,7 @@ public class EnvironmentConfig implements Persistable {
 			keepStateHistorySeconds = json.rootElement.getChildInt("keepStateHistorySeconds",keepStateHistorySeconds);
 			
 			randomToOne = json.rootElement.getChildFloat("randomToOne",randomToOne);
+			minTopScore = json.rootElement.getChildInt("minTopScore",minTopScore);
 		}
 	}
 

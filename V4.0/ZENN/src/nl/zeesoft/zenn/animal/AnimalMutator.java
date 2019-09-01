@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zenn.environment.Animal;
+import nl.zeesoft.zenn.environment.EnvironmentConfig;
 import nl.zeesoft.zenn.simulator.Simulator;
 import nl.zeesoft.zenn.simulator.SimulatorAnimal;
 import nl.zeesoft.zodb.Config;
@@ -22,6 +23,7 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 	private boolean				herbivore			= true;
 	private AnimalEvolver		evolver				= null;
 	
+	private int					minTopScore			= 0;
 	private int					topScore			= 0;
 	private SimulatorAnimal		topScoringAnimal	= null;
 	
@@ -36,8 +38,8 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 		this.configuration = config;
 		this.herbivore = herbivore;
 		this.evolver = evolver;
-		setSleepMs(100);
-		setSleepMsFoundBest(100);
+		setSleepMs(200);
+		setSleepMsFoundBest(200);
 	}
 	
 	public AnimalMutator(Messenger msgr, WorkerUnion uni,boolean herbivore) {
@@ -46,10 +48,16 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 			AnimalConstants.MAX_LAYERS,AnimalConstants.MAX_NEURONS,
 			100,AnimalTestSet.getNewAnimalTestSet(herbivore),1);
 		this.herbivore = herbivore;
-		setSleepMs(100);
-		setSleepMsFoundBest(100);
+		setSleepMs(200);
+		setSleepMsFoundBest(200);
 	}
-
+	
+	public void setEnvironmentConfig(EnvironmentConfig environment) {
+		lockMe(this);
+		minTopScore = environment.minTopScore;
+		unlockMe(this);
+	}
+	
 	public boolean checkBest(Animal ani,SimulatorAnimal simAni) {
 		boolean r = false;
 		EvolverUnit unit1 = null;
@@ -63,8 +71,8 @@ public class AnimalMutator extends Evolver implements Persistable, JsClientListe
 				unit1 = topScoringAnimal.unit.copy();
 				unit2 = topScoringAnimal.unit.copy();
 				r = true;
-			} else if (topScoringAnimal!=null && topScore>10 && simAni.unit.compareTo(topScoringAnimal.unit)>0) {
-				if (topScore>200) {
+			} else if (topScore>minTopScore && topScoringAnimal!=null && simAni.unit.compareTo(topScoringAnimal.unit)>0) {
+				if (topScore>(minTopScore * 1.5F)) {
 					topScore = topScore - Math.round((topScore - 200) * 0.90F);
 					if (topScore <= ani.score) {
 						topScore = ani.score + 1;

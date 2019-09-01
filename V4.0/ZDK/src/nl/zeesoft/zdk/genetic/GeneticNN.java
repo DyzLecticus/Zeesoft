@@ -122,7 +122,7 @@ public class GeneticNN implements JsAble {
 		r.activator = StaticFunctions.ACTIVATORS[activator];
 		r.outputActivator = StaticFunctions.OUTPUT_ACTIVATORS[outputActivator];
 		
-		r.learningRate = 0.1F * code.get(codePropertyStart + LEARNING_RATE);
+		r.learningRate = 0.2F * code.get(codePropertyStart + LEARNING_RATE);
 		
 		r.randomizeWeightsAndBiases();
 		int prop = WEIGHT_BIAS_START;

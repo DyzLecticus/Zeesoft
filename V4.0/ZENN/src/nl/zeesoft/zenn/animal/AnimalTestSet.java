@@ -71,8 +71,8 @@ public class AnimalTestSet {
 				for (int d2 = 3; d2 >= 0; d2--) {
 					t = ts.addNewTest();
 					t.inputs[AnimalConstants.IN_RANDOM] = rand;
+					setInputColor(t.inputs,0,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
 					setInputColor(t.inputs,1,foodColor,AnimalConstants.INTENSITIES[d1]);
-					setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
 					if (d1>0) {
 						t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
 					} else {
@@ -81,13 +81,25 @@ public class AnimalTestSet {
 
 					t = ts.addNewTest();
 					t.inputs[AnimalConstants.IN_RANDOM] = rand;
-					setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
 					setInputColor(t.inputs,1,foodColor,AnimalConstants.INTENSITIES[d1]);
+					setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
 					if (d1>0) {
 						t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
 					} else {
 						t.expectations[AnimalConstants.OUT_FRONT_MOUTH] = 1;
 					}
+					
+					t = ts.addNewTest();
+					t.inputs[AnimalConstants.IN_RANDOM] = rand;
+					setInputColor(t.inputs,0,foodColor,AnimalConstants.INTENSITIES[d1]);
+					setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
+					t.expectations[AnimalConstants.OUT_RIGHT_ACTUATOR] = 1;
+
+					t = ts.addNewTest();
+					t.inputs[AnimalConstants.IN_RANDOM] = rand;
+					setInputColor(t.inputs,0,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
+					setInputColor(t.inputs,2,foodColor,AnimalConstants.INTENSITIES[d1]);
+					t.expectations[AnimalConstants.OUT_LEFT_ACTUATOR] = 1;
 				}
 			}
 		}
@@ -95,9 +107,14 @@ public class AnimalTestSet {
 	
 	public static void addFrontalAvoidTests(TestSet ts,boolean herbivore) {
 		Test t = null;
-		
 		float[][] avoidColors = AnimalConstants.getAvoidColors(herbivore);
 		for (float rand = 0; rand <=1; rand++) {
+			t = ts.addNewTest();
+			t.inputs[AnimalConstants.IN_RANDOM] = rand;
+			setInputColor(t.inputs,1,AnimalConstants.COLOR_GREY,1);
+			t.expectations[AnimalConstants.OUT_LEFT_ACTUATOR] = 1;
+			t.expectations[AnimalConstants.OUT_RIGHT_ACTUATOR] = 1;
+			
 			for (int c = 0; c < avoidColors.length; c++) {
 				for (int d1 = 3; d1 >= 0; d1--) {
 					t = ts.addNewTest();
@@ -112,21 +129,39 @@ public class AnimalTestSet {
 	
 	public static void addWallCornerAvoidTests(TestSet ts,boolean herbivore) {
 		Test t = null;
-		
 		for (float rand = 0; rand <=1; rand++) {
 			for (int d1 = 1; d1 >= 0; d1--) {
-				if (d1==0 || rand==1) {
+				for (int d2 = 1; d2 >= 0; d2--) {
 					t = ts.addNewTest();
 					t.inputs[AnimalConstants.IN_RANDOM] = rand;
-					setInputColor(t.inputs,0,AnimalConstants.COLOR_GREY,1);
+					setInputColor(t.inputs,0,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
 					setInputColor(t.inputs,1,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d1]);
+					if (d1==0 || rand==1) {
+						t.expectations[AnimalConstants.OUT_LEFT_ACTUATOR] = 1;
+					} else {
+						t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
+					}
+					
+					t = ts.addNewTest();
+					t.inputs[AnimalConstants.IN_RANDOM] = rand;
+					setInputColor(t.inputs,0,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
+					setInputColor(t.inputs,1,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d1]);
+					setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
 					t.expectations[AnimalConstants.OUT_LEFT_ACTUATOR] = 1;
-
+					if (rand==1 && d1==1) {
+						t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
+					}
+					t.expectations[AnimalConstants.OUT_RIGHT_ACTUATOR] = 1;
+					
 					t = ts.addNewTest();
 					t.inputs[AnimalConstants.IN_RANDOM] = rand;
 					setInputColor(t.inputs,1,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d1]);
-					setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,1);
-					t.expectations[AnimalConstants.OUT_RIGHT_ACTUATOR] = 1;
+					setInputColor(t.inputs,2,AnimalConstants.COLOR_GREY,AnimalConstants.INTENSITIES[d2]);
+					if (d1==0 || rand==1) {
+						t.expectations[AnimalConstants.OUT_RIGHT_ACTUATOR] = 1;
+					} else {
+						t.expectations[AnimalConstants.OUT_BACK_ACTUATOR] = 1;
+					}
 				}
 			}
 		}
