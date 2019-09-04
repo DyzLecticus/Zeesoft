@@ -184,6 +184,8 @@ public class NeuralNet implements JsAble {
 	public NeuralNet copy() {
 		NeuralNet r = getNewNeuralNet(inputNeurons,hiddenLayers,hiddenNeurons,outputNeurons);
 		r.activator = activator;
+		r.weightFunction = weightFunction;
+		r.biasFunction = biasFunction;
 		r.outputActivator = outputActivator;
 		r.learningRate = learningRate;
 		for (int i = 0; i < r.layerValues.length; i++) {

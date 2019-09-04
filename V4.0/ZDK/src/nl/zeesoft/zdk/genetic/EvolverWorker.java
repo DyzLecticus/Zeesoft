@@ -5,30 +5,45 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class EvolverWorker extends Worker {
-	private Evolver		evolver		= null;
+	private Evolver		evolver				= null;
 
-	private EvolverUnit unit		= null;
+	private EvolverUnit unit				= null;
+	private int			trainEpochBatches	= 0;
+	private int			trainEpochBatchSize	= 0;
+	private float		checkFactorQuarter	= 0F;
+	private float		checkFactorHalf		= 0F;
 	
-	public EvolverWorker(Messenger msgr, WorkerUnion union, Evolver evolver) {
+	protected EvolverWorker(Messenger msgr, WorkerUnion union, Evolver evolver) {
 		super(msgr, union);
 		this.evolver = evolver;
-		setSleep(evolver.getEvolverWorkerSleepMs());
+	}
+	
+	protected void start(int sleepMs,int trainEpochBatches,int trainEpochBatchSize,float checkFactorQuarter,float checkFactorHalf) {
+		setSleep(sleepMs);
+		lockMe(this);
+		this.trainEpochBatches = trainEpochBatches;
+		this.trainEpochBatchSize = trainEpochBatchSize;
+		this.checkFactorQuarter = checkFactorQuarter;
+		this.checkFactorHalf = checkFactorHalf;
+		unlockMe(this);
+		start();
+	}
+	
+	protected void setSleepMs(int sleepMs) {
+		setSleep(sleepMs);
 	}
 
 	@Override
 	protected void whileWorking() {
-		setSleep(evolver.getEvolverWorkerSleepMs());
 		if (unit==null) {
 			unit = evolver.getNewEvolverUnit(this);
 		}
 		if (unit!=null) {
-			int trainEpochBatches = evolver.getTrainEpochBatches();
-			int trainEpochBatchSize = evolver.getTrainEpochBatchSize();
 			unit.trainingProgram.train(trainEpochBatchSize);
 			if ((unit.trainingProgram.stopOnSuccess && unit.trainingProgram.latestResults.success) || 
 				(unit.trainingProgram.trainedEpochs >= trainEpochBatches * trainEpochBatchSize) ||
-				!lossCheckPointQuarter(trainEpochBatches,trainEpochBatchSize,evolver.getCheckFactorQuarter()) ||
-				!lossCheckPointHalf(trainEpochBatches,trainEpochBatchSize,evolver.getCheckFactorHalf())
+				!lossCheckQuarter() ||
+				!lossCheckHalf()
 				) {
 				evolver.finishedTrainigProgram(this,unit);
 				unit = null;
@@ -36,18 +51,18 @@ public class EvolverWorker extends Worker {
 		}
 	}
 	
-	private boolean lossCheckPointQuarter(int trainEpochBatches, int trainEpochBatchSize, float factor) {
-		return lossCheckPoint(trainEpochBatches,trainEpochBatchSize,4,factor);
+	private boolean lossCheckQuarter() {
+		return lossCheck(4,checkFactorQuarter);
 	}
 	
-	private boolean lossCheckPointHalf(int trainEpochBatches, int trainEpochBatchSize,float factor) {
-		return lossCheckPoint(trainEpochBatches,trainEpochBatchSize,2,factor);
+	private boolean lossCheckHalf() {
+		return lossCheck(2,checkFactorHalf);
 	}
 	
-	private boolean lossCheckPoint(int trainEpochBatches, int trainEpochBatchSize,int div,float factor) {
+	private boolean lossCheck(int div,float factor) {
 		boolean r = true;
-		if (unit.trainingProgram.trainedEpochs == Math.round(trainEpochBatches / div) * trainEpochBatchSize) {
-			r = unit.trainingProgram.lossCheckPoint(factor);
+		if (unit.trainingProgram.trainedEpochs >= Math.round(trainEpochBatches / div) * trainEpochBatchSize) {
+			r = unit.trainingProgram.lossCheck(factor);
 		}
 		return r;
 	}

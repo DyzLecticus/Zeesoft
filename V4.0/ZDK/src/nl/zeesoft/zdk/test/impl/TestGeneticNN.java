@@ -51,7 +51,7 @@ public class TestGeneticNN extends TestObject {
 		while (tp==null) {
 			// XOR NN
 			NeuralNet nn = gnn.neuralNet;
-			tp = TestNeuralNet.testXORNeuralNet(nn,false);
+			tp = TestNeuralNet.testXORNeuralNet(nn,false,true);
 			if (!tp.latestResults.success) {
 				gnn.generateNewNN();
 				tp = null;

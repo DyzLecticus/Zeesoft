@@ -82,7 +82,7 @@ public class TrainingProgram implements JsAble {
 	 * @param factor The factor to apply to the initial average loss for comparison
 	 * @return False if the latest average loss is above a certain factor of the initial loss, else true
 	 */
-	public boolean lossCheckPoint(float factor) {
+	public boolean lossCheck(float factor) {
 		boolean r = true;
 		if (latestResults!=null && latestResults.averageLoss > initialResults.averageLoss * factor) {
 			r = false;

@@ -29,14 +29,16 @@ public class Evolver extends Locker implements JsAble {
 	private GeneticNN				geneticNN			= null;
 	
 	private boolean					debug				= false;
+	
 	private int						maxLogLines			= 20;
 	private float					mutationRate		= 0.05F;
 	private int						trainEpochBatches	= 5000;
 	private int						trainEpochBatchSize	= 10;
-	private float					checkFactorQuarter	= 0.66F;
-	private float					checkFactorHalf		= 0.33F;
+	private float					checkFactorQuarter	= 0.75F;
+	private float					checkFactorHalf		= 0.50F;
 	private int						sleepMs				= 10;
 	private int						sleepMsFoundBest	= 50;
+	
 	private boolean					working				= false;
 	
 	private List<ZStringBuilder>	logLines			= new ArrayList<ZStringBuilder>();
@@ -112,7 +114,9 @@ public class Evolver extends Locker implements JsAble {
 
 	public void start() {
 		if (!baseTestSet.isConsistent()) {
-			getMessenger().error(this,"Unable to start evolver; test set is inconsistent");
+			if (getMessenger()!=null) {
+				getMessenger().error(this,"Unable to start evolver; test set is inconsistent");
+			}
 		} else {
 			boolean r = false;
 			boolean dbg = false;
@@ -122,10 +126,15 @@ public class Evolver extends Locker implements JsAble {
 				r = true;
 				dbg = debug;
 			}
+			int sMs = getSleepMsNoLock();
+			int tEpochBatches = trainEpochBatches;
+			int tEpochBatchSize = trainEpochBatchSize;
+			float cFactorQuarter = checkFactorQuarter;
+			float cFactorHalf = checkFactorHalf;
 			unlockMe(this);
 			if (r) {
 				for (EvolverWorker evolver: evolvers) {
-					evolver.start();
+					evolver.start(sMs,tEpochBatches,tEpochBatchSize,cFactorQuarter,cFactorHalf);
 				}
 				if (dbg && getMessenger()!=null) {
 					getMessenger().debug(this,"Started");
@@ -232,6 +241,7 @@ public class Evolver extends Locker implements JsAble {
 				json.rootElement.children.add(new JsElem("sleepMs","" + sleepMs));
 				json.rootElement.children.add(new JsElem("sleepMsFoundBest","" + sleepMsFoundBest));
 
+				json.rootElement.children.add(new JsElem("maxLogLines","" + maxLogLines));
 				JsElem logElem = new JsElem("log",true);
 				json.rootElement.children.add(logElem);
 				for (ZStringBuilder line: logLines) {
@@ -265,6 +275,7 @@ public class Evolver extends Locker implements JsAble {
 					sleepMs = json.rootElement.getChildInt("sleepMs",sleepMs);
 					sleepMsFoundBest = json.rootElement.getChildInt("sleepMsFoundBest",sleepMsFoundBest);
 					
+					maxLogLines = json.rootElement.getChildInt("maxLogLines",maxLogLines);
 					logLines.clear();
 					JsElem logElem = json.rootElement.getChildByName("log");
 					if (logElem!=null) {
@@ -292,9 +303,18 @@ public class Evolver extends Locker implements JsAble {
 		// Override to implement
 	}
 
+	protected int getSleepMsNoLock() {
+		int r = sleepMs;
+		if (bestSoFar!=null) {
+			r = sleepMsFoundBest; 
+		}
+		return r;
+	}
+
 	protected boolean setBestSoFar(EvolverUnit unit,boolean ifBetter) {
 		boolean r = false;
 		lockMe(this);
+		int sMs = getSleepMsNoLock();
 		if (unit==null || bestSoFar==null || (!ifBetter || unit.compareTo(bestSoFar)>0)) {
 			bestSoFar = unit;
 			r = true;
@@ -307,7 +327,16 @@ public class Evolver extends Locker implements JsAble {
 			}
 		}
 		unlockMe(this);
+		if (r) {
+			changedBestSoFar(sMs);
+		}
 		return r;
+	}
+	
+	protected void changedBestSoFar(int sMs) {
+		for (EvolverWorker evolver: evolvers) {
+			evolver.setSleepMs(sMs);
+		}
 	}
 	
 	protected EvolverUnit getNewEvolverUnit(EvolverWorker evolver) {
@@ -345,52 +374,9 @@ public class Evolver extends Locker implements JsAble {
 		return new TrainingProgram(nn,baseTs);
 	}
 	
-	protected int getTrainEpochBatches() {
-		int r = 0;
-		lockMe(this);
-		r = trainEpochBatches;
-		unlockMe(this);
-		return r;
-	}
-	
-	protected int getTrainEpochBatchSize() {
-		int r = 0;
-		lockMe(this);
-		r = trainEpochBatchSize;
-		unlockMe(this);
-		return r;
-	}
-	
-	protected float getCheckFactorQuarter() {
-		float r = 0;
-		lockMe(this);
-		r = checkFactorQuarter;
-		unlockMe(this);
-		return r;
-	}
-	
-	protected float getCheckFactorHalf() {
-		float r = 0;
-		lockMe(this);
-		r = checkFactorHalf;
-		unlockMe(this);
-		return r;
-	}
-	
-	protected int getEvolverWorkerSleepMs() {
-		int r = 0;
-		lockMe(this);
-		if (bestSoFar==null) {
-			r = sleepMs;
-		} else {
-			r = sleepMsFoundBest;
-		}
-		unlockMe(this);
-		return r;
-	}
-	
 	protected void finishedTrainigProgram(EvolverWorker worker,EvolverUnit unit) {
 		boolean selected = false;
+		int sMs = 0;
 		boolean stop = false;
 		if (unit.trainingProgram.latestResults.success) {
 			lockMe(this);
@@ -401,11 +387,13 @@ public class Evolver extends Locker implements JsAble {
 				}
 				addLogLine(bestSoFar,"SEL");
 				selected = true;
+				sMs = getSleepMsNoLock();
 				stop = unit.trainingProgram.trainedEpochs == 0;
 			}
 			unlockMe(this);
 		}
 		if (selected) {
+			changedBestSoFar(sMs);
 			selectedBest();
 		}
 		if (stop) {

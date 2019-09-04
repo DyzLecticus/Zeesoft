@@ -63,6 +63,7 @@ public class TestEvolver extends TestObject {
 		
 		Evolver evolver = new Evolver(messenger,union,1,2,0,tSet,20);
 		evolver.setTrainEpochBatches(1000);
+		evolver.setSleepMsFoundBest(10);
 		evolver.setDebug(true);
 		
 		messenger.start();

@@ -22,7 +22,7 @@ public class EnvironmentConfig implements Persistable {
 
 	public boolean						active					= true;
 	
-	public int							herbivores				= 8;
+	public int							herbivores				= 6;
 	public int							carnivores				= 2;
 
 	public int							deathDurationSeconds	= 2;

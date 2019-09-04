@@ -89,14 +89,14 @@ public class TestNeuralNet extends TestObject {
 			NeuralNet nn = new NeuralNet(2,1,2,1);
 			nn.randomizeWeightsAndBiases();
 			nn.applyWeightFunctions();
-			testXORNeuralNet(nn,false);
+			testXORNeuralNet(nn,false,false);
 	
 			System.out.println("================================================================================");
 			
 			// XOR NN as classifier
 			nn = new NeuralNet(2,1,2,1);
 			nn.randomizeWeightsAndBiases();
-			testXORNeuralNet(nn,true);
+			testXORNeuralNet(nn,true,false);
 			
 			NeuralNet nnNew = new NeuralNet(3,2,3,2);
 			if (testJsAble(nn,nnNew,"Neural net JSON does not match expectation")) {
@@ -109,7 +109,7 @@ public class TestNeuralNet extends TestObject {
 		}
 	}
 	
-	public static TrainingProgram testXORNeuralNet(NeuralNet nn,boolean classifier) {
+	public static TrainingProgram testXORNeuralNet(NeuralNet nn,boolean classifier,boolean showGraph) {
 		DecimalFormat df = new DecimalFormat("0.00");
 		TestSet tSet = getXORTestSet(false);
 		
@@ -129,10 +129,44 @@ public class TestNeuralNet extends TestObject {
 		trainingSetToSystemOut(tSet,df);
 		
 		TrainingProgram tp = new TrainingProgram(nn,tSet);
-		for (int i = 0; i < 5000; i++) {
+		boolean first = true;
+		int pPerc = 100;
+		for (int i = 0; i < 1000; i++) {
 			if (tp.train(10)) {
 				break;
+			} else if ((i+1) % 10 == 0) {
+				if (showGraph) {
+					if (first) {
+						first = false;
+						System.out.println();
+					}
+					String epoch = String.format("%05d",(i+1) * 10);
+					ZStringBuilder stat = new ZStringBuilder("" + epoch);
+					stat.append(" ");
+					int perc = (int) ((tp.latestResults.averageLoss / tp.initialResults.averageLoss) * 100F);
+					int scaled = perc / 4;
+					for (int i2 = 0; i2 < scaled; i2++) {
+						if (i2==scaled-1) {
+							if (perc==pPerc) {
+								stat.append("|");
+							} else if (perc < pPerc) {
+								stat.append("/");
+							} else if (perc > pPerc) {
+								stat.append("\\");
+							}
+						} else {
+							stat.append("-");
+						}
+					}
+					stat.append(" " + perc);
+					stat.append("%");
+					System.out.println(stat);
+					pPerc = perc;
+				}
 			}
+		}
+		if (!first) {
+			System.out.println();
 		}
 		System.out.println("Latest test results;");
 		trainingSetToSystemOut(tp.latestResults,df);
