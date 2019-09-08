@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestScalarEncoder extends TestObject {	
+public class TestScalarEncoder extends TestObject {
 	public TestScalarEncoder(Tester tester) {
 		super(tester);
 	}
@@ -22,7 +22,7 @@ public class TestScalarEncoder extends TestObject {
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the encoder");
-		System.out.println("ScalarEncoder enc = new ScalarEncode(52,2,0,50);");
+		System.out.println("ScalarEncoder enc = new ScalarEncoder(52,2,0,50);");
 		System.out.println("// Obtain the SDR for a certain value");
 		System.out.println("SDR sdr = enc.getSDRForValue(0);");
 		System.out.println("~~~~");

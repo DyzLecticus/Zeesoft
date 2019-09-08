@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.htm.enc;
 
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class ScalarEncoder extends EncoderObject {	
+public class ScalarEncoder extends EncoderObject {
 	private int		minValue	= 0;
 	private int		maxValue	= 0;
 	private boolean periodic	= false;
@@ -11,10 +11,6 @@ public class ScalarEncoder extends EncoderObject {
 		super(size,bits);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
-	}
-	
-	public void setResolution(float resolution) {
-		this.resolution = resolution;
 	}
 	
 	public void setPeriodic(boolean periodic) {

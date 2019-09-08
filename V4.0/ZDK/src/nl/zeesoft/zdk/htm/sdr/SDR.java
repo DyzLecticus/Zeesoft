@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.htm.sdr;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +8,8 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class SDR {
-	private int				size 	= 0;
-	private List<Integer>	onBits	= new ArrayList<Integer>();
+	private int				size 		= 0;
+	private List<Integer>	onBits		= new ArrayList<Integer>();
 	
 	public SDR(int size) {
 		if (size < 10) {
@@ -46,6 +47,19 @@ public class SDR {
 		}
 	}
 	
+	public Integer turnOffRandomBit() {
+		Integer r = null;
+		if (onBits.size()>0) {
+			if (onBits.size()==1) {
+				r = onBits.remove(0);
+			} else {
+				int remove = ZRandomize.getRandomInt(0,onBits.size() - 1);
+				r = onBits.remove(remove);
+			}
+		}
+		return r;
+	}
+	
 	public boolean getBit(int index) {
 		return onBits.contains((Integer)index);
 	}
@@ -67,7 +81,7 @@ public class SDR {
 		}
 	}
 	
-	public void randomize(int set) {
+	public List<Integer> randomize(int set) {
 		onBits.clear();
 		if (set>0) {
 			for (int i = 0; i<set; i++) {
@@ -81,6 +95,7 @@ public class SDR {
 				}
 			}
 		}
+		return getOnBits();
 	}
 	
 	public ZStringBuilder toStringBuilder() {
@@ -223,5 +238,37 @@ public class SDR {
 
 	public static SDR xor(SDR a,SDR b) {
 		return a.xor(b);
+	}
+	
+	public static BigInteger capacity(int size,int onBits) {
+		BigInteger r = null;
+		if (size==128 && onBits==2) {
+			r = new BigInteger("8128");
+		} else if (size==256 && onBits==5) {
+			r = new BigInteger("8809549056");
+		} else if (size==1024 && onBits==20) {
+			r = new BigInteger("547994376586478624307777948483062748869376");
+		} else if (size==2048 && onBits==41) {
+			r = new BigInteger("116159298814240952148294423915105693715223390099660465104363841507980771546258614700032");
+		} else {
+			BigInteger sizeF = factorial(size);
+			BigInteger onBitsF = factorial(onBits);
+			BigInteger offBitsF = factorial(size - onBits);
+			BigInteger div = onBitsF.multiply(offBitsF);
+			r = sizeF.divide(div);
+		}
+		return r;
+	}
+	
+	private static BigInteger factorial(int number) {
+		return factorial(BigInteger.valueOf(number));
+	}
+	
+	private static BigInteger factorial(BigInteger number) {
+		BigInteger r = BigInteger.valueOf(1);
+		for (long factor = 2; factor <= number.longValue(); factor++) {
+			r = r.multiply(BigInteger.valueOf(factor));
+		}
+		return r;
 	}
 }

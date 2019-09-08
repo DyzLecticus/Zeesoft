@@ -1,0 +1,117 @@
+package nl.zeesoft.zdk.htm.enc;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.functions.ZRandomize;
+import nl.zeesoft.zdk.htm.sdr.SDR;
+
+public class RDScalarEncoder extends EncoderObject {
+	private SortedMap<Float,SDR>			sdrsByValue			= new TreeMap<Float,SDR>();
+	private SortedMap<ZStringBuilder,SDR>	sdrsByStringBuilder	= new TreeMap<ZStringBuilder,SDR>();
+	private List<Integer>					freeBits			= new ArrayList<Integer>();
+	private BigInteger						capacity			= null;
+	
+	public RDScalarEncoder(int size,int bits) {
+		super(size,bits);
+		for (int i = 0; i < size; i++) {
+			freeBits.add(i);
+		}
+		capacity = SDR.capacity(size,bits);
+	}
+	
+	@Override
+	public SDR getSDRForValue(float value) {
+		if (value % resolution > 0) {
+			value = value - (value % resolution);
+		}
+		
+		SDR r = sdrsByValue.get(value);
+		if (r==null) {
+			if (sdrsByValue.size()==0) {
+				r = new SDR(size);
+				List<Integer> onBits = r.randomize(bits);
+				for (Integer onBit: onBits) {
+					freeBits.remove(onBit);
+				}
+				sdrsByValue.put(value,r);
+				sdrsByStringBuilder.put(r.toStringBuilder(),r);
+			} else {
+				if (capacity.compareTo(BigInteger.valueOf(sdrsByValue.size()))>0) {
+					if (value > sdrsByValue.lastKey()) {
+						int num = (int) ((value - sdrsByValue.lastKey()) / resolution);
+						float val = sdrsByValue.lastKey() + resolution;
+						r = sdrsByValue.get(sdrsByValue.lastKey());
+						for (int i = 0; i < num; i++) {
+							r = addNewUniqueRandomVariation(val,r);
+							if (r==null) {
+								break;
+							} else {
+								val = val + resolution;
+							}
+						}
+					} else if (value < sdrsByValue.firstKey()) {
+						int num = (int) ((sdrsByValue.firstKey() - value) / resolution);
+						float val = sdrsByValue.firstKey() - resolution;
+						r = sdrsByValue.get(sdrsByValue.firstKey());
+						for (int i = 0; i < num; i++) {
+							r = addNewUniqueRandomVariation(val,r);
+							if (r==null) {
+								break;
+							} else {
+								val = val - resolution;
+							}
+						}
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
+	public int getBuckets() {
+		return sdrsByValue.size();
+	}
+	
+	public BigInteger getCapacity() {
+		return capacity;
+	}
+	
+	private SDR addNewUniqueRandomVariation(float value,SDR sdr) {
+		SDR r = null;
+		if (capacity.compareTo(BigInteger.valueOf(sdrsByValue.size()))>0) {
+			r = sdr.copy();
+			if (freeBits.size()>0) {
+				r.turnOffRandomBit();
+				int select = ZRandomize.getRandomInt(0,freeBits.size() - 1);
+				Integer on = freeBits.remove(select);
+				r.setBit(on,true);
+			} else {
+				r = generateNewUniqueRandomVariation(r);
+			}
+			sdrsByValue.put(value,r);
+			sdrsByStringBuilder.put(r.toStringBuilder(),r);
+		}
+		return r;
+	}
+	
+	private SDR generateNewUniqueRandomVariation(SDR sdr) {
+		SDR r = null;
+		List<Integer> availableBits = sdr.copy().not().getOnBits();
+		sdr.turnOffRandomBit();
+		while (r==null) {
+			r = sdr.copy();
+			int select = ZRandomize.getRandomInt(0,availableBits.size() - 1);
+			Integer on = availableBits.remove(select);
+			r.setBit(on,true);
+			if (sdrsByStringBuilder.containsKey(r.toStringBuilder())) {
+				r = null;
+			}
+		}
+		return r;
+	}
+}

@@ -78,6 +78,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestSDR(getTester()));
 		tests.add(new TestSDRSet(getTester()));
 		tests.add(new TestScalarEncoder(getTester()));
+		tests.add(new TestRDScalarEncoder(getTester()));
 		tests.add(new TestGeneticCode(getTester()));
 		tests.add(new TestNeuralNet(getTester()));
 		tests.add(new TestGeneticNN(getTester()));
