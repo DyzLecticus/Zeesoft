@@ -12,6 +12,9 @@ public class SDRSet {
 	private List<SDR>	set		= new ArrayList<SDR>();
 	
 	public SDRSet(int width) {
+		if (width < 10) {
+			width = 10;
+		}
 		this.width = width;
 	}
 	

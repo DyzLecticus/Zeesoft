@@ -15,7 +15,7 @@ public class TestSDR extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to create and compare Sparse Distributed Representations using *SDR* instances.");
+		System.out.println("This test shows how to create and compare sparse distributed representations using *SDR* instances.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");

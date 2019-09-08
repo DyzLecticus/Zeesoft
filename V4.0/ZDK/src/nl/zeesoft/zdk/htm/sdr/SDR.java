@@ -11,6 +11,9 @@ public class SDR {
 	private List<Integer>	onBits	= new ArrayList<Integer>();
 	
 	public SDR(int size) {
+		if (size < 10) {
+			size = 10;
+		}
 		this.size = size;
 	}
 	
@@ -101,6 +104,18 @@ public class SDR {
 		}
 	}
 
+	public ZStringBuilder toBitString() {
+		ZStringBuilder r = new ZStringBuilder();
+		for (int i = 0; i < size; i++) {
+			if (getBit(i)) {
+				r.append("1");
+			} else {
+				r.append("0");
+			}
+		}
+		return r;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		boolean r = true;
