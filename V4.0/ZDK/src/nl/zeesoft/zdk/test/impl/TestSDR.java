@@ -60,17 +60,25 @@ public class TestSDR extends TestObject {
 		SDR sdrC = sdrB.copy();
 		sdrC.fromStringBuilder(sdrA.toStringBuilder());
 		assertEqual(sdrC.equals(sdrA),true,"SDR was not correctly parsed from string builder");
-		sdrC = sdrA.and(sdrB);
+		sdrC = SDR.and(sdrA,sdrB);
 		assertEqual(sdrC.onBits(),1,"SDR 'and' result does not match expectation");
-		sdrC = sdrA.or(sdrB);
+		sdrC = SDR.or(sdrA,sdrB);
 		assertEqual(sdrC.onBits(),3,"SDR 'or' result does not match expectation");
-		sdrC = sdrA.xor(sdrB);
+		sdrC = SDR.xor(sdrA,sdrB);
 		assertEqual(sdrC.onBits(),2,"SDR 'xor' result does not match expectation");
-		sdrC = sdrA.not();
+		sdrC = SDR.not(sdrA);
 		assertEqual(sdrC.onBits(),98,"SDR 'not' result does not match expectation");
 		sdrC.subsample(10);
 		assertEqual(sdrC.onBits(),10,"Subsampled SDR onbits does not match expectation");
 		sdrC.randomize(20);
 		assertEqual(sdrC.onBits(),20,"Randomized SDR onbits does not match expectation");
+		sdrA = new SDR(10);
+		sdrA.setBit(0,true);
+		sdrA.setBit(9,true);
+		sdrB = SDR.concat(sdrA,sdrA);
+		assertEqual(sdrB.getBit(0),true,"Concatenated SDR bit(1) does not match expectation");
+		assertEqual(sdrB.getBit(9),true,"Concatenated SDR bit(2) does not match expectation");
+		assertEqual(sdrB.getBit(10),true,"Concatenated SDR bit(3) does not match expectation");
+		assertEqual(sdrB.getBit(19),true,"Concatenated SDR bit(4) does not match expectation");
 	}
 }

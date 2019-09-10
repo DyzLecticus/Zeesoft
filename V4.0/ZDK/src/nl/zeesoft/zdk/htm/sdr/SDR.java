@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class SDR {
@@ -170,7 +171,47 @@ public class SDR {
 		return r;
 	}
 
-	public SDR and(SDR c) {
+	public static SDR and(SDR a,SDR b) {
+		return a.and(b);
+	}
+
+	public static SDR or(SDR a,SDR b) {
+		return a.or(b);
+	}
+
+	public static SDR xor(SDR a,SDR b) {
+		return a.xor(b);
+	}
+
+	public static SDR not(SDR a) {
+		return a.not();
+	}
+
+	public static SDR concat(SDR a,SDR b) {
+		return a.concat(b);
+	}
+
+	public static BigInteger capacity(int size,int onBits) {
+		BigInteger r = null;
+		if (size==128 && onBits==2) {
+			r = new BigInteger("8128");
+		} else if (size==256 && onBits==5) {
+			r = new BigInteger("8809549056");
+		} else if (size==1024 && onBits==20) {
+			r = new BigInteger("547994376586478624307777948483062748869376");
+		} else if (size==2048 && onBits==41) {
+			r = new BigInteger("116159298814240952148294423915105693715223390099660465104363841507980771546258614700032");
+		} else {
+			BigInteger sizeF = StaticFunctions.factorial(size);
+			BigInteger onBitsF = StaticFunctions.factorial(onBits);
+			BigInteger offBitsF = StaticFunctions.factorial(size - onBits);
+			BigInteger div = onBitsF.multiply(offBitsF);
+			r = sizeF.divide(div);
+		}
+		return r;
+	}
+
+	private SDR and(SDR c) {
 		SDR r = null;
 		if (c.size == size) {
 			r = new SDR(size);
@@ -183,7 +224,7 @@ public class SDR {
 		return r;
 	}
 	
-	public SDR or(SDR c) {
+	private SDR or(SDR c) {
 		SDR r = null;
 		if (c.size == size) {
 			r = new SDR(size);
@@ -199,7 +240,7 @@ public class SDR {
 		return r;
 	}
 	
-	public SDR xor(SDR c) {
+	private SDR xor(SDR c) {
 		SDR r = null;
 		if (c.size == size) {
 			r = new SDR(size);
@@ -217,7 +258,7 @@ public class SDR {
 		return r;
 	}
 	
-	public SDR not() {
+	private SDR not() {
 		SDR r = new SDR(size);
 		for (int i = 0; i < size; i++) {
 			Integer onBit = (Integer) i;
@@ -227,47 +268,12 @@ public class SDR {
 		}
 		return r;
 	}
-
-	public static SDR and(SDR a,SDR b) {
-		return a.and(b);
-	}
-
-	public static SDR or(SDR a,SDR b) {
-		return a.or(b);
-	}
-
-	public static SDR xor(SDR a,SDR b) {
-		return a.xor(b);
-	}
 	
-	public static BigInteger capacity(int size,int onBits) {
-		BigInteger r = null;
-		if (size==128 && onBits==2) {
-			r = new BigInteger("8128");
-		} else if (size==256 && onBits==5) {
-			r = new BigInteger("8809549056");
-		} else if (size==1024 && onBits==20) {
-			r = new BigInteger("547994376586478624307777948483062748869376");
-		} else if (size==2048 && onBits==41) {
-			r = new BigInteger("116159298814240952148294423915105693715223390099660465104363841507980771546258614700032");
-		} else {
-			BigInteger sizeF = factorial(size);
-			BigInteger onBitsF = factorial(onBits);
-			BigInteger offBitsF = factorial(size - onBits);
-			BigInteger div = onBitsF.multiply(offBitsF);
-			r = sizeF.divide(div);
-		}
-		return r;
-	}
-	
-	private static BigInteger factorial(int number) {
-		return factorial(BigInteger.valueOf(number));
-	}
-	
-	private static BigInteger factorial(BigInteger number) {
-		BigInteger r = BigInteger.valueOf(1);
-		for (long factor = 2; factor <= number.longValue(); factor++) {
-			r = r.multiply(BigInteger.valueOf(factor));
+	private SDR concat(SDR c) {
+		SDR r = copy();
+		r.size = r.size + c.size;
+		for (Integer onBit: c.onBits) {
+			r.onBits.add(new Integer(onBit + size));
 		}
 		return r;
 	}

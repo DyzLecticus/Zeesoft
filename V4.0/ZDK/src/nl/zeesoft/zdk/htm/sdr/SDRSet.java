@@ -49,7 +49,7 @@ public class SDRSet {
 	}
 	
 	public void fromStringBuilder(ZStringBuilder str) {
-		width = 0;
+		width = 10;
 		set.clear();
 		List<ZStringBuilder> elems = str.split("|");
 		if (elems.size()>=1) {
@@ -128,7 +128,7 @@ public class SDRSet {
 	public SDR getUnion() {
 		SDR r = new SDR(width);
 		for (SDR sdr: set) {
-			r = r.or(sdr);
+			r = SDR.or(r,sdr);
 		}
 		return r;
 	}

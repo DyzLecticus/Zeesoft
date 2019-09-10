@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test.impl;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.RDScalarEncoder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.test.TestObject;
@@ -78,5 +79,14 @@ public class TestRDScalarEncoder extends TestObject {
 		assertEqual(sdr.onBits(),4,"SDR(7) number of on bits does not match expectation");
 		assertEqual(enc.getBuckets(),78,"Number encoder of buckets (7) does not match expectation");
 		System.out.println("SDR for value -1: " + sdr.toBitString());
+		
+		ZStringBuilder str = enc.toStringBuilder();
+		RDScalarEncoder encCopy = new RDScalarEncoder(50,4);
+		encCopy.fromStringBuilder(str);
+		ZStringBuilder strCopy = encCopy.toStringBuilder();
+		if (!assertEqual(strCopy.equals(str),true,"SDR StringBuilder does not match expectation")) {
+			System.err.println(str);
+			System.err.println(strCopy);
+		}
 	}
 }

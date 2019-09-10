@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.htm.enc;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -81,6 +82,45 @@ public class RDScalarEncoder extends EncoderObject {
 		return capacity;
 	}
 	
+	public ZStringBuilder toStringBuilder() {
+		ZStringBuilder r = new ZStringBuilder();
+		for (Entry<Float,SDR> entry: sdrsByValue.entrySet()) {
+			if (r.length()>0) {
+				r.append("|");
+			}
+			r.append("" + entry.getKey());
+			for (Integer onBit: entry.getValue().getOnBits()) {
+				r.append(",");
+				r.append("" + onBit);
+			}
+		}
+		return r;
+	}
+	
+	public void fromStringBuilder(ZStringBuilder str) {
+		if (str.length()>0) {
+			sdrsByValue.clear();
+			sdrsByStringBuilder.clear();
+			freeBits.clear();
+			SDR fBits = new SDR(size);
+			List<ZStringBuilder> elems = str.split("|");
+			for (ZStringBuilder elem: elems) {
+				List<ZStringBuilder> onBits = elem.split(",");
+				if (onBits.size() == bits + 1) {
+					Float value = Float.parseFloat(onBits.get(0).toString());
+					SDR sdr = new SDR(size);
+					for (int b = 1; b<onBits.size(); b++) {
+						sdr.setBit(Integer.parseInt(onBits.get(b).toString()),true);
+					}
+					sdrsByValue.put(value,sdr);
+					sdrsByStringBuilder.put(sdr.toStringBuilder(),sdr);
+					fBits = SDR.or(fBits,sdr);
+				}
+			}
+			freeBits = SDR.not(fBits).getOnBits();
+		}
+	}
+	
 	private SDR addNewUniqueRandomVariation(float value,SDR sdr) {
 		SDR r = null;
 		if (capacity.compareTo(BigInteger.valueOf(sdrsByValue.size()))>0) {
@@ -101,7 +141,7 @@ public class RDScalarEncoder extends EncoderObject {
 	
 	private SDR generateNewUniqueRandomVariation(SDR sdr) {
 		SDR r = null;
-		List<Integer> availableBits = sdr.copy().not().getOnBits();
+		List<Integer> availableBits = SDR.not(sdr).getOnBits();
 		sdr.turnOffRandomBit();
 		while (r==null) {
 			r = sdr.copy();
