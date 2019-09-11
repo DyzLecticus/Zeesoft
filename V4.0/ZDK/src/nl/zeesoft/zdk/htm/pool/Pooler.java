@@ -30,7 +30,7 @@ public class Pooler {
 		}
 	}
 	
-	protected List<PoolerColumn> getTopColumnsByOverlapScore() {
+	protected List<PoolerColumn> getActiveColumns() {
 		List<PoolerColumn> r = new ArrayList<PoolerColumn>();
 		SortedMap<Integer,List<PoolerColumn>> map = new TreeMap<Integer,List<PoolerColumn>>();
 		for (PoolerColumn col: columns) {
@@ -41,8 +41,8 @@ public class Pooler {
 			}
 			list.add(col);
 		}
-		Integer[] keys = (Integer[]) map.keySet().toArray();
-		for (int i = map.size(); i>=0; i--) {
+		Object[] keys = map.keySet().toArray();
+		for (int i = (map.size() - 1); i>=0; i--) {
 			List<PoolerColumn> list = map.get(keys[i]);
 			if (config.outputBits - r.size() < list.size()) {
 				for (int s = 0; s < config.outputBits - r.size(); s++) {

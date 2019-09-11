@@ -26,8 +26,10 @@ public class PoolerColumn {
 				if (ZRandomize.getRandomInt(0,1)==1) {
 					inputConnections[i] = ZRandomize.getRandomFloat(0,config.connectionThreshold);
 				} else {
-					inputConnections[i] = ZRandomize.getRandomFloat(config.connectionThreshold,0);
+					inputConnections[i] = ZRandomize.getRandomFloat(config.connectionThreshold,1.0F);
 				}
+			} else {
+				inputConnections[i] = -1;
 			}
 		}
 	}
@@ -37,6 +39,24 @@ public class PoolerColumn {
 		for (Integer onBit: onBits) {
 			if (inputConnections[onBit]>config.connectionThreshold) {
 				overlapScore++;
+			}
+		}
+	}
+	
+	protected void learnOnBits(List<Integer> onBits) {
+		for (int i = 0; i < inputConnections.length; i++) {
+			if (inputConnections[i]>=0) {
+				if (onBits.contains(i)) {
+					inputConnections[i] += config.connectionIncrement;
+					if (inputConnections[i] > 1) {
+						inputConnections[i] = 1;
+					}
+				} else {
+					inputConnections[i] -= config.connectionDecrement;
+					if (inputConnections[i] < 0) {
+						inputConnections[i] = 0;
+					}
+				}
 			}
 		}
 	}

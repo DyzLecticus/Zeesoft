@@ -65,6 +65,10 @@ public class SDRSet {
 		}
 	}
 	
+	public int width() {
+		return width;
+	}
+	
 	public int size() {
 		return set.size();
 	}

@@ -7,10 +7,13 @@ public class PoolerConfig {
 	
 	protected float			potentialConnections	= 0.85F;
 	protected float			connectionThreshold		= 0.1F;
+	protected float			connectionDecrement		= 0.008F;
+	protected float			connectionIncrement		= 0.05F;
 	
-	public PoolerConfig(int inputSize, int outputSize) {
+	public PoolerConfig(int inputSize, int outputSize, int outputBits) {
 		this.inputSize = inputSize;
 		this.outputSize = outputSize;
+		this.outputBits = outputBits;
 	}
 
 	public void setPotentialConnections(float potentialConnections) {
