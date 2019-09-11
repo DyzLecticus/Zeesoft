@@ -23,15 +23,8 @@ public class Pooler {
 			col.randomizeConnections();
 		}
 	}
-
-	protected void initialize() {
-		for (int i = 0; i < config.outputSize; i++) {
-			PoolerColumn col = new PoolerColumn(config,i);
-			columns.add(col);
-		}
-	}
 	
-	protected SDR getSDRForInput(SDR input,boolean learn) {
+	public SDR getSDRForInput(SDR input,boolean learn) {
 		List<Integer> onBits = input.getOnBits();
 		calculateOverlapScoresForSDROnBits(onBits);
 		List<PoolerColumn> activeColumns = getActiveColumns();
@@ -94,5 +87,12 @@ public class Pooler {
 			r.setBit(col.index,true);
 		}
 		return r;
+	}
+
+	protected void initialize() {
+		for (int i = 0; i < config.outputSize; i++) {
+			PoolerColumn col = new PoolerColumn(config,i);
+			columns.add(col);
+		}
 	}
 }
