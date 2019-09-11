@@ -84,7 +84,7 @@ public class TestRDScalarEncoder extends TestObject {
 		RDScalarEncoder encCopy = new RDScalarEncoder(50,4);
 		encCopy.fromStringBuilder(str);
 		ZStringBuilder strCopy = encCopy.toStringBuilder();
-		if (!assertEqual(strCopy.equals(str),true,"SDR StringBuilder does not match expectation")) {
+		if (!assertEqual(strCopy.equals(str),true,"Encoder StringBuilder does not match expectation")) {
 			System.err.println(str);
 			System.err.println(strCopy);
 		}

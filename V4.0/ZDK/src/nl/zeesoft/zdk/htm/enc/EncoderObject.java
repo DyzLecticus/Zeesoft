@@ -23,4 +23,12 @@ public abstract class EncoderObject {
 	public void setResolution(float resolution) {
 		this.resolution = resolution;
 	}
+	
+	public int size() {
+		return size;
+	}
+	
+	public int bits() {
+		return bits;
+	}
 }

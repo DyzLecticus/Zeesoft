@@ -11,7 +11,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class RDScalarEncoder extends EncoderObject {
+public class RDScalarEncoder extends StateEncoderObject {
 	private SortedMap<Float,SDR>			sdrsByValue			= new TreeMap<Float,SDR>();
 	private SortedMap<ZStringBuilder,SDR>	sdrsByStringBuilder	= new TreeMap<ZStringBuilder,SDR>();
 	private List<Integer>					freeBits			= new ArrayList<Integer>();
@@ -82,11 +82,12 @@ public class RDScalarEncoder extends EncoderObject {
 		return capacity;
 	}
 	
+	@Override
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder r = new ZStringBuilder();
 		for (Entry<Float,SDR> entry: sdrsByValue.entrySet()) {
 			if (r.length()>0) {
-				r.append("|");
+				r.append(";");
 			}
 			r.append("" + entry.getKey());
 			for (Integer onBit: entry.getValue().getOnBits()) {
@@ -97,13 +98,14 @@ public class RDScalarEncoder extends EncoderObject {
 		return r;
 	}
 	
+	@Override
 	public void fromStringBuilder(ZStringBuilder str) {
 		if (str.length()>0) {
 			sdrsByValue.clear();
 			sdrsByStringBuilder.clear();
 			freeBits.clear();
 			SDR fBits = new SDR(size);
-			List<ZStringBuilder> elems = str.split("|");
+			List<ZStringBuilder> elems = str.split(";");
 			for (ZStringBuilder elem: elems) {
 				List<ZStringBuilder> onBits = elem.split(",");
 				if (onBits.size() == bits + 1) {

@@ -40,9 +40,9 @@ public class TestScalarEncoder extends TestObject {
 	protected void test(String[] args) {
 		ScalarEncoder enc = null;
 		SDR sdr = null;
-
+		
 		enc = new ScalarEncoder(52,2,0,50);
-		System.out.println("Encoder size: 52, bits: 2, min: 0, max: 50 ");
+		System.out.println("Encoder size: 52, bits: 2, min: 0, max: 50");
 		sdr = enc.getSDRForValue(0);
 		System.out.println("SDR for value 0:  " + sdr.toBitString());
 		sdr = enc.getSDRForValue(1);
@@ -64,7 +64,7 @@ public class TestScalarEncoder extends TestObject {
 
 		enc = new ScalarEncoder(50,2,0,50);
 		enc.setPeriodic(true);
-		System.out.println("Periodic encoder size: 50, bits: 2, min: 0, max: 50 ");
+		System.out.println("Periodic encoder size: 50, bits: 2, min: 0, max: 50");
 		sdr = enc.getSDRForValue(0);
 		System.out.println("SDR for value 0:  " + sdr.toBitString());
 		sdr = enc.getSDRForValue(1);
