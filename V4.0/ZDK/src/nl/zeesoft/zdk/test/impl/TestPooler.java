@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.htm.pool.Pooler;
 import nl.zeesoft.zdk.htm.pool.PoolerConfig;
-import nl.zeesoft.zdk.htm.pool.PoolerWorker;
+import nl.zeesoft.zdk.htm.pool.PoolerProcessor;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -55,9 +55,9 @@ public class TestPooler extends TestObject {
 		Pooler pooler = new Pooler(config);
 		pooler.randomizeConnections();
 		
-		PoolerWorker worker = new PoolerWorker(pooler);
+		PoolerProcessor worker = new PoolerProcessor(pooler);
 		worker.setIntputSDRSet(inputSDRSet);
-		worker.work(true);
+		worker.process(true);
 		
 		SDRSet outputSDRSet = worker.getOutputSDRSet();
 		assertEqual(inputSDRSet.size(),outputSDRSet.size(),"Output SDR set size does not match expectation");
