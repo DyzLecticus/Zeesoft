@@ -6,6 +6,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
+import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Pooler {
 	protected PoolerConfig			config		= null;
@@ -27,6 +28,22 @@ public class Pooler {
 		for (int i = 0; i < config.outputSize; i++) {
 			PoolerColumn col = new PoolerColumn(config,i);
 			columns.add(col);
+		}
+	}
+	
+	protected SDR getSDRForInput(SDR input,boolean learn) {
+		List<Integer> onBits = input.getOnBits();
+		calculateOverlapScoresForSDROnBits(onBits);
+		List<PoolerColumn> activeColumns = getActiveColumns();
+		if (learn) {
+			learnActiveColumns(activeColumns,onBits);
+		}
+		return recordActiveColumnsInSDR(activeColumns);
+	}
+	
+	protected void calculateOverlapScoresForSDROnBits(List<Integer> onBits) {
+		for (PoolerColumn col: columns) {
+			col.calculateOverlapScoreForOnBits(onBits);
 		}
 	}
 	
@@ -61,6 +78,20 @@ public class Pooler {
 			if (r.size()>=config.outputBits) {
 				break;
 			}
+		}
+		return r;
+	}
+	
+	protected void learnActiveColumns(List<PoolerColumn> activeColumns,List<Integer> onBits) {
+		for (PoolerColumn col: activeColumns) {
+			col.learnOnBits(onBits);
+		}
+	}
+
+	protected SDR recordActiveColumnsInSDR(List<PoolerColumn> activeColumns) {
+		SDR r = new SDR(config.outputSize);
+		for (PoolerColumn col: activeColumns) {
+			r.setBit(col.index,true);
 		}
 		return r;
 	}

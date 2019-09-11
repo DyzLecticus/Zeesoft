@@ -55,11 +55,11 @@ public class TestPooler extends TestObject {
 		Pooler pooler = new Pooler(config);
 		pooler.randomizeConnections();
 		
-		PoolerProcessor worker = new PoolerProcessor(pooler);
-		worker.setIntputSDRSet(inputSDRSet);
-		worker.process(true);
+		PoolerProcessor processor = new PoolerProcessor(pooler);
+		processor.setIntputSDRSet(inputSDRSet);
+		processor.process(true);
 		
-		SDRSet outputSDRSet = worker.getOutputSDRSet();
+		SDRSet outputSDRSet = processor.getOutputSDRSet();
 		assertEqual(inputSDRSet.size(),outputSDRSet.size(),"Output SDR set size does not match expectation");
 	}
 }
