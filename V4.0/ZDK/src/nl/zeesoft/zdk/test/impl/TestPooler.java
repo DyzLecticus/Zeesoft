@@ -2,12 +2,16 @@ package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.htm.pool.Pooler;
 import nl.zeesoft.zdk.htm.pool.PoolerConfig;
+import nl.zeesoft.zdk.htm.pool.PoolerProcessorListener;
 import nl.zeesoft.zdk.htm.pool.PoolerProcessor;
+import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestPooler extends TestObject {
+public class TestPooler extends TestObject implements PoolerProcessorListener {
+	private int	counter	= 0;
+	
 	public TestPooler(Tester tester) {
 		super(tester);
 	}
@@ -55,11 +59,25 @@ public class TestPooler extends TestObject {
 		Pooler pooler = new Pooler(config);
 		pooler.randomizeConnections();
 		
+		System.out.println(pooler.getDescription());
+		
+		int num = inputSDRSet.size() / 2;
+		
 		PoolerProcessor processor = new PoolerProcessor(pooler);
+		processor.getListeners().add(this);
+		
 		processor.setIntputSDRSet(inputSDRSet);
-		processor.process(true);
+		processor.process(true,num);
 		
 		SDRSet outputSDRSet = processor.getOutputSDRSet();
-		assertEqual(inputSDRSet.size(),outputSDRSet.size(),"Output SDR set size does not match expectation");
+		assertEqual(outputSDRSet.size(),num,"Output SDR set size does not match expectation");
+	}
+
+	@Override
+	public void processedSDR(PoolerProcessor processor, SDR inputSDR, SDR outputSDR) {
+		if (counter % 24 == 0) {
+			System.out.println(counter + " <= " + inputSDR.toStringBuilder() + " => " + outputSDR.toStringBuilder());
+		}
+		counter++;
 	}
 }

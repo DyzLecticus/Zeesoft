@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
@@ -22,6 +23,40 @@ public class Pooler {
 		for (PoolerColumn col: columns) {
 			col.randomizeConnections();
 		}
+	}
+	
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = config.getDescription();
+		int min = config.inputSize; 
+		int max = 0;
+		int avg = 0;
+		for (PoolerColumn col: columns) {
+			int con = 0;
+			for (int i = 0; i < col.inputConnections.length; i++) {
+				if (col.inputConnections[i]>=0) {
+					con++;
+					avg++;
+				}
+			}
+			if (con<min) {
+				min = con;
+			}
+			if (con>max) {
+				max = con;
+			}
+		}
+		if (avg>0) {
+			avg = avg / columns.size();
+			r.append("\n");
+			r.append("Average input connections per column: ");
+			r.append("" + avg);
+			r.append(" (min: ");
+			r.append("" + min);
+			r.append(", max: ");
+			r.append("" + max);
+			r.append(")");
+		}
+		return r;
 	}
 	
 	public SDR getSDRForInput(SDR input,boolean learn) {
@@ -90,9 +125,16 @@ public class Pooler {
 	}
 
 	protected void initialize() {
+		int posX = 0;
+		int posY = 0;
 		for (int i = 0; i < config.outputSize; i++) {
-			PoolerColumn col = new PoolerColumn(config,i);
+			PoolerColumn col = new PoolerColumn(config,i,posX,posY);
 			columns.add(col);
+			posX++;
+			if (posX % config.outputSizeX == 0) {
+				posX = 0;
+				posY++;
+			}
 		}
 	}
 }

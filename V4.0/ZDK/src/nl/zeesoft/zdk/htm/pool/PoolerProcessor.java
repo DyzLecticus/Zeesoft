@@ -1,26 +1,39 @@
 package nl.zeesoft.zdk.htm.pool;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 
 public class PoolerProcessor {
-	protected Pooler 	pooler			= null;
+	protected Pooler 				pooler			= null;
+	protected List<PoolerProcessorListener>	listeners		= new ArrayList<PoolerProcessorListener>();
 	
-	protected SDRSet	inputSDRSet		= null;
-	protected SDRSet	outputSDRSet	= null;
+	protected SDRSet				inputSDRSet		= null;
+	protected SDRSet				outputSDRSet	= null;
 	
 	public PoolerProcessor(Pooler pooler) {
 		this.pooler = pooler;
 	}
 	
+	public List<PoolerProcessorListener> getListeners() {
+		return listeners;
+	}
+	
 	public void setIntputSDRSet(SDRSet inputSDRSet) {
 		this.inputSDRSet = inputSDRSet;
+		outputSDRSet = new SDRSet(pooler.config.outputSize);
 	}
 
-	public void process(boolean learn) {
+	public void process(boolean learn,int num) {
 		if (inputSDRSet!=null) {
-			outputSDRSet = new SDRSet(pooler.config.outputSize);
-			for (int i = 0; i < inputSDRSet.size(); i++) {
+			int start = outputSDRSet.size();
+			int stop = start + num;
+			if (stop > inputSDRSet.size()) {
+				stop = inputSDRSet.size();
+			}
+			for (int i = start; i < stop; i++) {
 				processSDR(inputSDRSet.get(i),learn);
 			}
 		}
@@ -31,6 +44,10 @@ public class PoolerProcessor {
 	}
 	
 	protected void processSDR(SDR inputSDR,boolean learn) {
-		outputSDRSet.add(pooler.getSDRForInput(inputSDR,learn));
+		SDR outputSDR = pooler.getSDRForInput(inputSDR,learn);
+		outputSDRSet.add(outputSDR);
+		for (PoolerProcessorListener listener: listeners) {
+			listener.processedSDR(this, inputSDR, outputSDR);
+		}
 	}
 }
