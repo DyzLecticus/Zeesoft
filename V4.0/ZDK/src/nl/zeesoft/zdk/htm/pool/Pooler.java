@@ -32,8 +32,8 @@ public class Pooler {
 		int avg = 0;
 		for (PoolerColumn col: columns) {
 			int con = 0;
-			for (int i = 0; i < col.inputConnections.length; i++) {
-				if (col.inputConnections[i]>=0) {
+			for (ProximalLink lnk: col.proxLinks.values()) {
+				if (lnk.connection>=0) {
 					con++;
 					avg++;
 				}
@@ -48,13 +48,15 @@ public class Pooler {
 		if (avg>0) {
 			avg = avg / columns.size();
 			r.append("\n");
-			r.append("Average input connections per column: ");
+			r.append("Average proximal inputs per column: ");
 			r.append("" + avg);
-			r.append(" (min: ");
-			r.append("" + min);
-			r.append(", max: ");
-			r.append("" + max);
-			r.append(")");
+			if (min!=avg || max!=avg) {
+				r.append(" (min: ");
+				r.append("" + min);
+				r.append(", max: ");
+				r.append("" + max);
+				r.append(")");
+			}
 		}
 		return r;
 	}

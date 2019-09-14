@@ -7,11 +7,11 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 
 public class PoolerProcessor {
-	protected Pooler 				pooler			= null;
+	protected Pooler 						pooler			= null;
 	protected List<PoolerProcessorListener>	listeners		= new ArrayList<PoolerProcessorListener>();
 	
-	protected SDRSet				inputSDRSet		= null;
-	protected SDRSet				outputSDRSet	= null;
+	protected SDRSet						inputSDRSet		= null;
+	protected SDRSet						outputSDRSet	= null;
 	
 	public PoolerProcessor(Pooler pooler) {
 		this.pooler = pooler;
@@ -24,6 +24,10 @@ public class PoolerProcessor {
 	public void setIntputSDRSet(SDRSet inputSDRSet) {
 		this.inputSDRSet = inputSDRSet;
 		outputSDRSet = new SDRSet(pooler.config.outputSize);
+	}
+	
+	public void process(boolean learn) {
+		process(learn,inputSDRSet.size());
 	}
 
 	public void process(boolean learn,int num) {

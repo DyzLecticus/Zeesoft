@@ -2,29 +2,32 @@ package nl.zeesoft.zdk.htm.pool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class PoolerColumn {
-	private 	PoolerConfig	config				= null;
-	protected	int				index				= 0;
-	protected	int				posX				= 0;
-	protected	int				posY				= 0;
-	protected	List<Integer>	inputIndices		= null;
+	private 	PoolerConfig					config				= null;
+	protected	int								index				= 0;
+	protected	int								posX				= 0;
+	protected	int								posY				= 0;
 	
-	protected	float[]			inputConnections	= null;
+	protected	SortedMap<Integer,ProximalLink>	proxLinks			= new TreeMap<Integer,ProximalLink>();
 	
-	protected	int				overlapScore		= 0;
+	protected	int								overlapScore		= 0;
 	
 	protected PoolerColumn(PoolerConfig config,int index,int posX, int posY) {
 		this.config = config;
 		this.index = index;
 		this.posX = posX;
 		this.posY = posY;
-		inputIndices = calculateInputIndices();
-		inputConnections = new float[inputIndices.size()];
-		for (int i = 0; i < inputConnections.length; i++) {
-			inputConnections[i] = -1;
+		
+		List<Integer> inputIndices = calculateInputIndices();
+		for (Integer idx: inputIndices) {
+			ProximalLink lnk = new ProximalLink();
+			lnk.inputIndex = idx;
+			proxLinks.put(lnk.inputIndex,lnk);
 		}
 	}
 	
@@ -41,49 +44,46 @@ public class PoolerColumn {
 		float thresh = config.potentialConnections;
 		if (min!=max) {
 			float minPotential = (min / max) * config.potentialConnections;
-			thresh = (max / (float) inputIndices.size()) * minPotential;
+			thresh = (max / (float) proxLinks.size()) * minPotential;
+			//System.out.println("Index " + index + "; thresh: " + thresh + ", indices: " + proxLinks.size() + " / " + max + ", minPotential: " + minPotential);
 		}
-		//System.out.println("Index " + index + "; thresh: " + thresh + ", indices: " + inputIndices.size() + " / " + max + ", minPotential: " + minPotential);
-		List<Integer> availableConnections = new ArrayList<Integer>();
-		for (int i = 0; i < inputConnections.length; i++) {
-			availableConnections.add(i);
-		}
-		int sel = (int) ((float) availableConnections.size() * thresh);
+		List<ProximalLink> availableLinks = new ArrayList<ProximalLink>(proxLinks.values());
+		int sel = (int) ((float) availableLinks.size() * thresh);
 		for (int i = 0; i < sel; i++) {
-			int index = availableConnections.remove(ZRandomize.getRandomInt(0,availableConnections.size() - 1));
+			ProximalLink lnk = availableLinks.remove(ZRandomize.getRandomInt(0,availableLinks.size() - 1));
 			if (ZRandomize.getRandomInt(0,1)==1) {
-				inputConnections[index] = ZRandomize.getRandomFloat(0,config.connectionThreshold);
+				lnk.connection = ZRandomize.getRandomFloat(0,config.connectionThreshold);
 			} else {
-				inputConnections[index] = ZRandomize.getRandomFloat(config.connectionThreshold,1.0F);
+				lnk.connection = ZRandomize.getRandomFloat(config.connectionThreshold,1.0F);
 			}
+		}
+		for (ProximalLink lnk: availableLinks) {
+			proxLinks.remove(lnk.inputIndex);
 		}
 	}
 	
 	protected void calculateOverlapScoreForOnBits(List<Integer> onBits) {
 		overlapScore = 0;
 		for (Integer onBit: onBits) {
-			if (inputIndices.size()==config.inputSize || inputIndices.contains(onBit)) {
-				int i = inputIndices.indexOf(onBit);
-				if (inputConnections[i]>config.connectionThreshold) {
-					overlapScore++;
-				}
+			ProximalLink lnk = proxLinks.get(onBit);
+			if (lnk!=null && lnk.connection>config.connectionThreshold) {
+				overlapScore++;
 			}
 		}
 	}
 	
 	protected void learnOnBits(List<Integer> onBits) {
-		for (int i = 0; i < inputConnections.length; i++) {
-			if (inputConnections[i]>=0) {
-				Integer index = inputIndices.get(i);
-				if (onBits.contains(index)) {
-					inputConnections[i] += config.connectionIncrement;
-					if (inputConnections[i] > 1) {
-						inputConnections[i] = 1;
+		for (ProximalLink lnk: proxLinks.values()) {
+			if (lnk.connection>=0) {
+				if (onBits.contains(lnk.inputIndex)) {
+					lnk.connection += config.connectionIncrement;
+					if (lnk.connection > 1) {
+						lnk.connection = 1;
 					}
 				} else {
-					inputConnections[i] -= config.connectionDecrement;
-					if (inputConnections[i] < 0) {
-						inputConnections[i] = 0;
+					lnk.connection -= config.connectionDecrement;
+					if (lnk.connection < 0) {
+						lnk.connection = 0;
 					}
 				}
 			}

@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.impl;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -47,7 +48,7 @@ public class TestDateTimeEncoder extends TestObject {
 		DateTimeEncoder enc = new DateTimeEncoder();
 		assertEqual(enc.size(),120,"Encoder size does not match expectation");
 		
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		cal.set(Calendar.YEAR,2019);
 		cal.set(Calendar.MONTH,0);
 		cal.set(Calendar.DATE,1);

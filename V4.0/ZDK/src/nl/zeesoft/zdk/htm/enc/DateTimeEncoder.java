@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.htm.enc;
 
 import java.util.Calendar;
 import java.util.SortedMap;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.htm.sdr.SDR;
@@ -14,7 +15,7 @@ public class DateTimeEncoder extends CombinedEncoder {
 	public SDR getSDRForValue(long dateTime) {
 		return getSDRForValues(getValuesForDateTime(dateTime));
 	}
-
+	
 	@Override
 	protected void initialize() {
 		addEncoder(MONTH,getNewMonthEncoder());
@@ -42,7 +43,7 @@ public class DateTimeEncoder extends CombinedEncoder {
 	
 	protected SortedMap<String,Float> getValuesForDateTime(long dateTime) {
 		SortedMap<String,Float> r = new TreeMap<String,Float>();
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(getTimeZone());
 		cal.setTimeInMillis(dateTime);
 		
 		float hour = (float) cal.get(Calendar.HOUR_OF_DAY);
@@ -58,5 +59,9 @@ public class DateTimeEncoder extends CombinedEncoder {
 		r.put(WEEKDAY,weekday);
 		r.put(HOUR,hour);
 		return r;
+	}
+
+	protected TimeZone getTimeZone() {
+		return TimeZone.getTimeZone("UTC");
 	}
 }

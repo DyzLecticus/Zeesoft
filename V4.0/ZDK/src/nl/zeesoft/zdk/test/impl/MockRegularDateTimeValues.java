@@ -3,14 +3,14 @@ package nl.zeesoft.zdk.test.impl;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
-import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.test.MockObject;
 
-public class MockDateTimeValues extends MockObject {
+public class MockRegularDateTimeValues extends MockObject {
 	@Override
 	protected void describe() {
-		System.out.println("This test uses the *MockDateTimeValues*.");
+		System.out.println("This test uses the *MockRegularDateTimeValues*.");
 	}
 
 	@Override
@@ -18,10 +18,9 @@ public class MockDateTimeValues extends MockObject {
 		List<MockDateTimeValue> r = new ArrayList<MockDateTimeValue>();
 		
 		int num = 24 * 365 * 2; // Every hour, every day for 2 years
-		int numFinalQuarter = num - (num / 4);
 		
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR,2019);
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		cal.set(Calendar.YEAR,2018);
 		cal.set(Calendar.MONTH,0);
 		cal.set(Calendar.DATE,1);
 		cal.set(Calendar.HOUR_OF_DAY,0);
@@ -32,30 +31,8 @@ public class MockDateTimeValues extends MockObject {
 		int val1 = 0;
 		int val2 = 0;
 		for (int i = 0; i<=num; i++) {
-			int base = 20;
-			
-			int month = cal.get(Calendar.MONTH);
-			if (month<6) {
-				base += month;
-			} else {
-				base += 12 - month;
-			}
-			if (i>numFinalQuarter) {
-				base = base * 2;
-			}
-			
-			val1 = base;
-
-			val2 = (int) ((base + cal.get(Calendar.DAY_OF_MONTH) - cal.get(Calendar.DAY_OF_WEEK)) * 1.5F);
-			
-			int hour = cal.get(Calendar.HOUR);
-			if (hour<12) {
-				val2 += (hour * 4);
-			} else {
-				val2 += 96 - (hour * 4);
-			}
-			
-			val2 += ZRandomize.getRandomInt(0,3);
+			val1 = cal.get(Calendar.HOUR);
+			val2 = cal.get(Calendar.HOUR) * cal.get(Calendar.DAY_OF_WEEK);
 			
 			MockDateTimeValue mockVal = new MockDateTimeValue();
 			mockVal.dateTime = cal.getTimeInMillis();
