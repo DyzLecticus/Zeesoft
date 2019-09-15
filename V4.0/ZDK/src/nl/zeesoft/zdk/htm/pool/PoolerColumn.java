@@ -12,43 +12,34 @@ public class PoolerColumn {
 	protected	int								index				= 0;
 	protected	int								posX				= 0;
 	protected	int								posY				= 0;
+	protected	List<PoolerColumn>				localAreaColumns	= new ArrayList<PoolerColumn>();
 	
 	protected	SortedMap<Integer,ProximalLink>	proxLinks			= new TreeMap<Integer,ProximalLink>();
 	
 	protected	int								overlapScore		= 0;
+	
+	protected	List<Boolean>					activityLog			= new ArrayList<Boolean>();
+	protected	float							totalActive			= 0;
+	protected	float							averageActivity		= 0;
+	protected	float							boostFactor			= 1;
 	
 	protected PoolerColumn(PoolerConfig config,int index,int posX, int posY) {
 		this.config = config;
 		this.index = index;
 		this.posX = posX;
 		this.posY = posY;
-		
+	}
+	
+	protected void randomizeConnections() {
+		proxLinks.clear();
 		List<Integer> inputIndices = calculateInputIndices();
 		for (Integer idx: inputIndices) {
 			ProximalLink lnk = new ProximalLink();
 			lnk.inputIndex = idx;
 			proxLinks.put(lnk.inputIndex,lnk);
 		}
-	}
-	
-	protected void randomizeConnections() {
-		float max = (config.inputRadius * 2);
-		max = max * max;
-		if (config.inputSize<max) {
-			max = config.inputSize;
-		}
-		float min = (config.inputRadius * config.inputRadius);
-		if (config.inputSize<min) {
-			min = config.inputSize;
-		}
-		float thresh = config.potentialConnections;
-		if (min!=max) {
-			float minPotential = (min / max) * config.potentialConnections;
-			thresh = (max / (float) proxLinks.size()) * minPotential;
-			//System.out.println("Index " + index + "; thresh: " + thresh + ", indices: " + proxLinks.size() + " / " + max + ", minPotential: " + minPotential);
-		}
 		List<ProximalLink> availableLinks = new ArrayList<ProximalLink>(proxLinks.values());
-		int sel = (int) ((float) availableLinks.size() * thresh);
+		int sel = (int) ((float) availableLinks.size() * config.potentialConnections);
 		for (int i = 0; i < sel; i++) {
 			ProximalLink lnk = availableLinks.remove(ZRandomize.getRandomInt(0,availableLinks.size() - 1));
 			if (ZRandomize.getRandomInt(0,1)==1) {
@@ -68,6 +59,50 @@ public class PoolerColumn {
 			ProximalLink lnk = proxLinks.get(onBit);
 			if (lnk!=null && lnk.connection>config.connectionThreshold) {
 				overlapScore++;
+			}
+		}
+	}
+	
+	protected void logActivity(boolean active) {
+		if (config.boostStrength>0) {
+			activityLog.add(active);
+			if (active) {
+				totalActive++;
+			}
+			while (activityLog.size() > config.maxActivityLogSize) {
+				boolean act = activityLog.remove(0);
+				if (act) {
+					totalActive--;
+				}
+			}
+			if (totalActive>0) {
+				averageActivity = totalActive / (float) activityLog.size();
+			} else {
+				averageActivity = 0;
+			}
+		}
+	}
+	
+	protected void updateBoostFactor(float globalAverageActivity) {
+		if (config.boostStrength>0) {
+			float localAverageActivity = 0;
+			if (globalAverageActivity>0) {
+				localAverageActivity = globalAverageActivity;
+			} else {
+				for (PoolerColumn col: localAreaColumns) {
+					localAverageActivity += col.averageActivity;
+				}
+			}
+			if (localAverageActivity>0) {
+				localAverageActivity = localAverageActivity / localAreaColumns.size();
+				if (averageActivity!=localAverageActivity) {
+					boostFactor = (float) Math.exp((float)config.boostStrength * - 1 * (averageActivity - localAverageActivity));
+				} else {
+					boostFactor = 1;
+				}
+				//if (index==100) {
+					//System.out.println("Activity: " + averageActivity + ", target: " + localAverageActivity + ", boost: " + boostFactor);
+				//}
 			}
 		}
 	}
@@ -97,8 +132,8 @@ public class PoolerColumn {
 		
 		int minPosX = inputPosX - config.inputRadius;
 		int minPosY = inputPosY - config.inputRadius;
-		int maxPosX = inputPosX + config.inputRadius;
-		int maxPosY = inputPosY + config.inputRadius;
+		int maxPosX = inputPosX + 1 + config.inputRadius;
+		int maxPosY = inputPosY + 1 + config.inputRadius;
 		
 		if (minPosX < 0) {
 			minPosX = 0;
@@ -113,7 +148,7 @@ public class PoolerColumn {
 			maxPosY = config.inputSizeY;
 		}
 		
-		//System.out.println("-> " + index + "; min, max X/Y: " + minPosX + "/" + minPosY + ", " + maxPosX + "/" + maxPosY + " (" + getOutputPosX() + "/" + getOutputPosY() + " => " + inputPosX + "/" + inputPosX + ")");
+		//System.out.println("-> " + index + "; min, max X/Y: " + minPosX + "/" + minPosY + ", " + maxPosX + "/" + maxPosY + " (" + getOutputPosX() + "/" + getOutputPosY() + " => " + inputPosX + "/" + inputPosY + ")");
 		
 		int posX = 0;
 		int posY = 0;
@@ -142,10 +177,26 @@ public class PoolerColumn {
 	}
 	
 	protected int getInputPosX() {
-		return (int) (getOutputPosX() * (float) config.inputSizeX);  
+		int r = 0;
+		int min = config.inputRadius;
+		int max = config.inputSizeX - (config.inputRadius * 2);
+		if (min>=max) {
+			r = config.inputSizeX / 2;
+		} else {
+			r = min + ((int) (getOutputPosX() * (float) max));
+		}
+		return r;
 	}
 	
 	protected int getInputPosY() {
-		return (int) (getOutputPosY() * (float) config.inputSizeY);  
+		int r = 0;
+		int min = config.inputRadius;
+		int max = config.inputSizeY - (config.inputRadius * 2);
+		if (min>=max) {
+			r = config.inputSizeY / 2;
+		} else {
+			r = min + ((int) (getOutputPosY() * (float) max));
+		}
+		return r;  
 	}
 }

@@ -134,7 +134,7 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 			System.out.println("Combined average: " + avg + ", Combined weekly average: " + avgWeek);
 			
 			r = avgWeek / avg;
-			assertEqual(r > 3F,true,"Combined weekly average does not match expectation");
+			assertEqual(r > 10F,true,"Combined weekly average does not match expectation");
 		}
 		return r;
 	}

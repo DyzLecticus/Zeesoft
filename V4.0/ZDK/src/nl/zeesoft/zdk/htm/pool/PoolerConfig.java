@@ -7,12 +7,16 @@ public class PoolerConfig {
 	protected int			outputSize				= 0;
 	protected int			outputBits				= 0;
 	
-	protected float			potentialConnections	= 0.85F;
+	protected float			potentialConnections	= 0.5F;
 	protected float			connectionThreshold		= 0.1F;
 	protected float			connectionDecrement		= 0.008F;
 	protected float			connectionIncrement		= 0.05F;
 	
 	protected int			inputRadius				= 5;
+	protected int			outputRadius			= 10;
+
+	protected float			boostStrength			= 10;
+	protected int			maxActivityLogSize		= 100;
 
 	protected int			inputSizeX				= 0;
 	protected int			inputSizeY				= 0;
@@ -59,6 +63,22 @@ public class PoolerConfig {
 		r.append("x");
 		r.append("" + outputSizeY);
 		return r;
+	}
+
+	public void setInputRadius(int inputRadius) {
+		this.inputRadius = inputRadius;
+	}
+
+	public void setOutputRadius(int outputRadius) {
+		this.outputRadius = outputRadius;
+	}
+
+	public void setBoostStrength(float boostStrength) {
+		this.boostStrength = boostStrength;
+	}
+
+	public void setMaxActivityLogSize(int maxActivityLogSize) {
+		this.maxActivityLogSize = maxActivityLogSize;
 	}
 
 	protected void calculateDimensions() {

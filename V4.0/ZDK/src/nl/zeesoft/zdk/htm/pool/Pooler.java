@@ -68,6 +68,8 @@ public class Pooler {
 		if (learn) {
 			learnActiveColumns(activeColumns,onBits);
 		}
+		logActivity(activeColumns);
+		updateBoostFactors();
 		return recordActiveColumnsInSDR(activeColumns);
 	}
 	
@@ -81,10 +83,11 @@ public class Pooler {
 		List<PoolerColumn> r = new ArrayList<PoolerColumn>();
 		SortedMap<Integer,List<PoolerColumn>> map = new TreeMap<Integer,List<PoolerColumn>>();
 		for (PoolerColumn col: columns) {
-			List<PoolerColumn> list = map.get(col.overlapScore);
+			int boostedScore = (int) ((float)col.overlapScore * col.boostFactor);
+			List<PoolerColumn> list = map.get(boostedScore);
 			if (list==null) {
 				list = new ArrayList<PoolerColumn>();
-				map.put(col.overlapScore,list);
+				map.put(boostedScore,list);
 			}
 			list.add(col);
 		}
@@ -117,6 +120,24 @@ public class Pooler {
 			col.learnOnBits(onBits);
 		}
 	}
+	
+	protected void logActivity(List<PoolerColumn> activeColumns) {
+		if (config.boostStrength>0) {
+			for (PoolerColumn col: columns) {
+				col.logActivity(activeColumns.contains(col));
+			}
+		}
+	}
+
+	protected void updateBoostFactors() {
+		// TODO: if radius squared + 1 > outputSizeX && outputSizeY than calculate global average activity
+		float globalAverageActivity = 0;
+		if (config.boostStrength>0) {
+			for (PoolerColumn col: columns) {
+				col.updateBoostFactor(globalAverageActivity);
+			}
+		}
+	}
 
 	protected SDR recordActiveColumnsInSDR(List<PoolerColumn> activeColumns) {
 		SDR r = new SDR(config.outputSize);
@@ -136,6 +157,42 @@ public class Pooler {
 			if (posX % config.outputSizeX == 0) {
 				posX = 0;
 				posY++;
+			}
+		}
+		// TODO: Use relative positional self projection
+		for (PoolerColumn col: columns) {
+			int minPosX = col.posX - config.outputRadius;
+			int minPosY = col.posY - config.outputRadius;
+			int maxPosX = col.posX + 1 + config.outputRadius;
+			int maxPosY = col.posY + 1 + config.outputRadius;
+
+			if (minPosX<0) {
+				maxPosX = maxPosX + (minPosX * -1);
+				minPosX = 0;
+			}
+			if (minPosY<0) {
+				maxPosY = maxPosY + (minPosY * -1);
+				minPosY = 0;
+			}
+			if (maxPosX>config.outputSizeX) {
+				minPosX = minPosX - (maxPosX - config.outputSizeX);
+				maxPosX = config.outputSizeX;
+			}
+			if (maxPosY>config.outputSizeY) {
+				minPosY = minPosY - (maxPosY - config.outputSizeY);
+				maxPosY = config.outputSizeY;
+			}
+			if (minPosX<0) {
+				minPosX = 0;
+			}
+			if (minPosY<0) {
+				minPosY = 0;
+			}
+			
+			for (PoolerColumn colC: columns) {
+				if (colC.posX>=minPosX && colC.posX<maxPosX && colC.posY>=minPosY && colC.posY<maxPosY) {
+					col.localAreaColumns.add(colC);
+				}
 			}
 		}
 	}
