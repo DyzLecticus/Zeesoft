@@ -1,9 +1,11 @@
 package nl.zeesoft.zdk.htm.pool;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -20,6 +22,8 @@ public class PoolerColumn {
 	protected	List<PoolerColumnCell>			cells				= new ArrayList<PoolerColumnCell>();
 	
 	protected	SortedMap<Integer,ProximalLink>	proxLinks			= new TreeMap<Integer,ProximalLink>();
+	
+	protected	Set<Integer>					connectedIndices	= new HashSet<Integer>();
 	
 	protected	int								overlapScore		= 0;
 	
@@ -52,6 +56,9 @@ public class PoolerColumn {
 			} else {
 				lnk.connection = ZRandomize.getRandomFloat(config.connectionThreshold,1.0F);
 			}
+			if (lnk.connection>config.connectionThreshold) {
+				connectedIndices.add(lnk.inputIndex);
+			}
 		}
 		for (ProximalLink lnk: availableLinks) {
 			proxLinks.remove(lnk.inputIndex);
@@ -66,8 +73,7 @@ public class PoolerColumn {
 	protected void calculateOverlapScoreForOnBits(List<Integer> onBits) {
 		overlapScore = 0;
 		for (Integer onBit: onBits) {
-			ProximalLink lnk = proxLinks.get(onBit);
-			if (lnk!=null && lnk.connection>config.connectionThreshold) {
+			if (connectedIndices.contains(onBit)) {
 				overlapScore++;
 			}
 		}
@@ -77,11 +83,17 @@ public class PoolerColumn {
 		for (ProximalLink lnk: proxLinks.values()) {
 			if (lnk.connection>=0) {
 				if (onBits.contains(lnk.inputIndex)) {
+					if (lnk.connection <= config.connectionThreshold && lnk.connection + config.connectionIncrement > config.connectionThreshold) {
+						connectedIndices.add(lnk.inputIndex);
+					}
 					lnk.connection += config.connectionIncrement;
 					if (lnk.connection > 1) {
 						lnk.connection = 1;
 					}
 				} else {
+					if (lnk.connection > config.connectionThreshold && lnk.connection - config.connectionDecrement <= config.connectionThreshold) {
+						connectedIndices.remove((Integer) lnk.inputIndex);
+					}
 					lnk.connection -= config.connectionDecrement;
 					if (lnk.connection < 0) {
 						lnk.connection = 0;

@@ -115,7 +115,7 @@ public class Pooler {
 		if (learn) {
 			start = System.nanoTime();
 			learnActiveColumns(activeColumns,onBits);
-			stats.selectActiveTotal += System.nanoTime() - start;
+			stats.learnActiveTotal += System.nanoTime() - start;
 		}
 		
 		if (config.boostStrength>0) {

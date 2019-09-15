@@ -2,7 +2,9 @@ package nl.zeesoft.zdk.htm.sdr;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.StaticFunctions;
@@ -10,7 +12,7 @@ import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class SDR {
 	private int				size 		= 0;
-	private List<Integer>	onBits		= new ArrayList<Integer>();
+	private Set<Integer>	onBits		= new HashSet<Integer>();
 	
 	public SDR(int size) {
 		if (size < 10) {
@@ -52,10 +54,21 @@ public class SDR {
 		Integer r = null;
 		if (onBits.size()>0) {
 			if (onBits.size()==1) {
-				r = onBits.remove(0);
+				for (Integer onBit: onBits) {
+					r = onBit;
+				}
+				onBits.clear();
 			} else {
 				int remove = ZRandomize.getRandomInt(0,onBits.size() - 1);
-				r = onBits.remove(remove);
+				int i = 0;
+				for (Integer onBit: onBits) {
+					if (i==remove) {
+						r = onBit;
+						break;
+					}
+					i++;
+				}
+				onBits.remove((Integer)r);
 			}
 		}
 		return r;
