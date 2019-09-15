@@ -72,6 +72,7 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		
 		System.out.println();
 		System.out.println("Original ratio: " + ratio1 + ", learned ratio: " + ratio2);
+		assertEqual(ratio2>ratio1,true,"Learned ratio does not match expectation");
 	}
 
 	private float processInputSDRSet(PoolerProcessor processor,SDRSet inputSDRSet, boolean learn) {

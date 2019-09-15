@@ -10,9 +10,10 @@ import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Pooler {
-	protected PoolerConfig			config		= null;
+	protected PoolerConfig							config			= null;
 	
-	protected List<PoolerColumn>	columns		= new ArrayList<PoolerColumn>();
+	protected List<PoolerColumn>					columns			= new ArrayList<PoolerColumn>();
+	protected SortedMap<String,PoolerColumnGroup>	columnGroups	= new TreeMap<String,PoolerColumnGroup>();
 	
 	public Pooler(PoolerConfig config) {
 		this.config = config;
@@ -58,6 +59,33 @@ public class Pooler {
 				r.append(")");
 			}
 		}
+		min = config.inputSize;
+		max = 0;
+		avg = 0;
+		for (PoolerColumnGroup pcg: columnGroups.values()) {
+			avg = avg + pcg.columns.size();
+			if (pcg.columns.size()<min) {
+				min = pcg.columns.size();
+			}
+			if (pcg.columns.size()>max) {
+				max = pcg.columns.size();
+			}
+		}
+		if (avg>0) {
+			avg = avg / columnGroups.size();
+			r.append("\n");
+			r.append("Column groups: ");
+			r.append("" + columnGroups.size());
+			r.append(", average columns per group: ");
+			r.append("" + avg);
+			if (min!=avg || max!=avg) {
+				r.append(" (min: ");
+				r.append("" + min);
+				r.append(", max: ");
+				r.append("" + max);
+				r.append(")");
+			}
+		}
 		return r;
 	}
 	
@@ -69,6 +97,7 @@ public class Pooler {
 			learnActiveColumns(activeColumns,onBits);
 		}
 		logActivity(activeColumns);
+		calculateColumnGroupActivity();
 		updateBoostFactors();
 		return recordActiveColumnsInSDR(activeColumns);
 	}
@@ -129,12 +158,18 @@ public class Pooler {
 		}
 	}
 
+	protected void calculateColumnGroupActivity() {
+		if (config.boostStrength>0) {
+			for (PoolerColumnGroup pcg: columnGroups.values()) {
+				pcg.calculateAverageActivity();
+			}
+		}
+	}
+	
 	protected void updateBoostFactors() {
-		// TODO: if radius squared + 1 > outputSizeX && outputSizeY than calculate global average activity
-		float globalAverageActivity = 0;
 		if (config.boostStrength>0) {
 			for (PoolerColumn col: columns) {
-				col.updateBoostFactor(globalAverageActivity);
+				col.updateBoostFactor();
 			}
 		}
 	}
@@ -148,6 +183,7 @@ public class Pooler {
 	}
 
 	protected void initialize() {
+		// Initialize columns
 		int posX = 0;
 		int posY = 0;
 		for (int i = 0; i < config.outputSize; i++) {
@@ -159,12 +195,15 @@ public class Pooler {
 				posY++;
 			}
 		}
-		// TODO: Use relative positional self projection
+		// Initialize column groups
 		for (PoolerColumn col: columns) {
-			int minPosX = col.posX - config.outputRadius;
-			int minPosY = col.posY - config.outputRadius;
-			int maxPosX = col.posX + 1 + config.outputRadius;
-			int maxPosY = col.posY + 1 + config.outputRadius;
+			posX = col.getRelativePosX();
+			posY = col.getRelativePosY();
+
+			int minPosX = posX - config.outputRadius;
+			int minPosY = posY - config.outputRadius;
+			int maxPosX = posX + 1 + config.outputRadius;
+			int maxPosY = posY + 1 + config.outputRadius;
 
 			if (minPosX<0) {
 				maxPosX = maxPosX + (minPosX * -1);
@@ -189,11 +228,19 @@ public class Pooler {
 				minPosY = 0;
 			}
 			
-			for (PoolerColumn colC: columns) {
-				if (colC.posX>=minPosX && colC.posX<maxPosX && colC.posY>=minPosY && colC.posY<maxPosY) {
-					col.localAreaColumns.add(colC);
+			//System.out.println("-> " + col.index + "; min, max X/Y: " + minPosX + "/" + minPosY + ", " + maxPosX + "/" + maxPosY + " (" + posX + "/" + posY + ")");
+			
+			PoolerColumnGroup columnGroup = columnGroups.get(PoolerColumnGroup.getId(minPosX,minPosY));
+			if (columnGroup==null) {
+				columnGroup = new PoolerColumnGroup(minPosX,minPosY); 
+				columnGroups.put(columnGroup.getId(),columnGroup);
+				for (PoolerColumn colC: columns) {
+					if (colC.posX>=minPosX && colC.posX<maxPosX && colC.posY>=minPosY && colC.posY<maxPosY) {
+						columnGroup.columns.add(colC);
+					}
 				}
 			}
+			col.columnGroup = columnGroup;
 		}
 	}
 }

@@ -12,7 +12,8 @@ public class PoolerColumn {
 	protected	int								index				= 0;
 	protected	int								posX				= 0;
 	protected	int								posY				= 0;
-	protected	List<PoolerColumn>				localAreaColumns	= new ArrayList<PoolerColumn>();
+
+	protected	PoolerColumnGroup				columnGroup			= null;
 	
 	protected	SortedMap<Integer,ProximalLink>	proxLinks			= new TreeMap<Integer,ProximalLink>();
 	
@@ -83,25 +84,17 @@ public class PoolerColumn {
 		}
 	}
 	
-	protected void updateBoostFactor(float globalAverageActivity) {
+	protected void updateBoostFactor() {
 		if (config.boostStrength>0) {
-			float localAverageActivity = 0;
-			if (globalAverageActivity>0) {
-				localAverageActivity = globalAverageActivity;
-			} else {
-				for (PoolerColumn col: localAreaColumns) {
-					localAverageActivity += col.averageActivity;
-				}
-			}
+			float localAverageActivity = columnGroup.averageActivity;
 			if (localAverageActivity>0) {
-				localAverageActivity = localAverageActivity / localAreaColumns.size();
 				if (averageActivity!=localAverageActivity) {
 					boostFactor = (float) Math.exp((float)config.boostStrength * - 1 * (averageActivity - localAverageActivity));
 				} else {
 					boostFactor = 1;
 				}
 				//if (index==100) {
-					//System.out.println("Activity: " + averageActivity + ", target: " + localAverageActivity + ", boost: " + boostFactor);
+				//	System.out.println("Activity: " + averageActivity + ", target: " + localAverageActivity + ", boost: " + boostFactor);
 				//}
 			}
 		}
@@ -198,5 +191,31 @@ public class PoolerColumn {
 			r = min + ((int) (getOutputPosY() * (float) max));
 		}
 		return r;  
+	}
+	
+	protected int getRelativePosX() {
+		int r = 0;
+		float rel = (float) posX / (float) config.outputSizeX;
+		int min = config.outputRadius;
+		float max = config.outputSizeX - (config.outputRadius * 2);
+		if (min>=max) {
+			r = config.outputSizeX / 2;
+		} else {
+			r = min + (int) (rel * max);
+		}
+		return r;
+	}
+	
+	protected int getRelativePosY() {
+		int r = 0;
+		float rel = (float) posY / (float) config.outputSizeY;
+		int min = config.outputRadius;
+		float max = config.outputSizeY - (config.outputRadius * 2);
+		if (min>=max) {
+			r = config.outputSizeY / 2;
+		} else {
+			r = min + (int) (rel * max);
+		}
+		return r;
 	}
 }
