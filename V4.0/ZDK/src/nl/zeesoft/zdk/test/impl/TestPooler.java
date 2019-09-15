@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.htm.pool.Pooler;
 import nl.zeesoft.zdk.htm.pool.PoolerConfig;
 import nl.zeesoft.zdk.htm.pool.PoolerProcessor;
 import nl.zeesoft.zdk.htm.pool.PoolerProcessorListener;
+import nl.zeesoft.zdk.htm.pool.PoolerStats;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.TestObject;
@@ -54,7 +55,7 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockRegularSDRSet.class.getName());
 		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
 		
-		PoolerConfig config = new PoolerConfig(inputSDRSet.width(),1024,21);
+		PoolerConfig config = new PoolerConfig(inputSDRSet.width(),1024,21,4);
 		
 		Pooler pooler = new Pooler(config);
 		pooler.randomizeConnections();
@@ -67,12 +68,19 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		System.out.println();
 		float ratio1 = processInputSDRSet(processor,inputSDRSet,false);
 		
+		pooler.resetStats();
+		
 		System.out.println();
 		float ratio2 = processInputSDRSet(processor,inputSDRSet,true);
 		
 		System.out.println();
 		System.out.println("Original ratio: " + ratio1 + ", learned ratio: " + ratio2);
 		assertEqual(ratio2>ratio1,true,"Learned ratio does not match expectation");
+		
+		PoolerStats stats = pooler.getStats();
+		System.out.println();
+		System.out.println("Performance statistics;");
+		System.out.println(stats.getDescription());
 	}
 
 	private float processInputSDRSet(PoolerProcessor processor,SDRSet inputSDRSet, boolean learn) {
@@ -135,7 +143,7 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 			System.out.println("Combined average: " + avg + ", Combined weekly average: " + avgWeek);
 			
 			r = avgWeek / avg;
-			assertEqual(r > 10F,true,"Combined weekly average does not match expectation");
+			assertEqual(r > 8F,true,"Combined weekly average does not match expectation");
 		}
 		return r;
 	}

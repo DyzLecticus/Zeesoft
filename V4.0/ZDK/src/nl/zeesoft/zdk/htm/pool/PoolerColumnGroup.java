@@ -21,7 +21,7 @@ public class PoolerColumnGroup {
 	}
 	
 	protected static String getId(int posX, int posY) {
-		return posX + "," + posY;
+		return posX + "-" + posY;
 	}
 	
 	protected void calculateAverageActivity() {

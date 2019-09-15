@@ -3,39 +3,76 @@ package nl.zeesoft.zdk.htm.pool;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class PoolerConfig {
-	protected int			inputSize				= 0;
-	protected int			outputSize				= 0;
-	protected int			outputBits				= 0;
+	protected int			inputSize						= 0;
+	protected int			outputSize						= 0;
+	protected int			outputBits						= 0;
+	protected int			outputDepth						= 0;
 	
-	protected float			potentialConnections	= 0.5F;
-	protected float			connectionThreshold		= 0.1F;
-	protected float			connectionDecrement		= 0.008F;
-	protected float			connectionIncrement		= 0.05F;
+	protected float			potentialProximalConnections	= 0.50F;
+	protected float			potentialDistalConnections		= 0.50F;
+	protected boolean		distalColumnGroupGlobal			= false;
 	
-	protected int			inputRadius				= 5;
-	protected int			outputRadius			= 10;
+	protected float			connectionThreshold				= 0.1F;
+	protected float			connectionDecrement				= 0.008F;
+	protected float			connectionIncrement				= 0.05F;
+	
+	protected int			inputRadius						= 5;
+	protected int			outputRadius					= 10;
 
-	protected float			boostStrength			= 10;
-	protected int			maxActivityLogSize		= 100;
+	protected float			boostStrength					= 10;
+	protected int			maxActivityLogSize				= 100;
 
-	protected int			inputSizeX				= 0;
-	protected int			inputSizeY				= 0;
-	protected int			outputSizeX				= 0;
-	protected int			outputSizeY				= 0;
+	protected int			inputSizeX						= 0;
+	protected int			inputSizeY						= 0;
+	protected int			outputSizeX						= 0;
+	protected int			outputSizeY						= 0;
 	
-	public PoolerConfig(int inputSize, int outputSize, int outputBits) {
+	public PoolerConfig(int inputSize, int outputSize, int outputBits, int outputDepth) {
 		this.inputSize = inputSize;
 		this.outputSize = outputSize;
 		this.outputBits = outputBits;
+		this.outputDepth = outputDepth;
 		calculateDimensions();
 	}
 
-	public void setPotentialConnections(float potentialConnections) {
-		this.potentialConnections = potentialConnections;
+	public void setPotentialProximalConnections(float potentialConnections) {
+		this.potentialProximalConnections = potentialConnections;
+	}
+
+	public void setPotentialDistalConnections(float potentialConnections) {
+		this.potentialDistalConnections = potentialConnections;
 	}
 
 	public void setConnectionThreshold(float connectionThreshold) {
 		this.connectionThreshold = connectionThreshold;
+	}
+
+	public void setDistalColumnGroupGlobal(boolean distalColumnGroupGlobal) {
+		this.distalColumnGroupGlobal = distalColumnGroupGlobal;
+	}
+
+	public void setConnectionDecrement(float connectionDecrement) {
+		this.connectionDecrement = connectionDecrement;
+	}
+
+	public void setConnectionIncrement(float connectionIncrement) {
+		this.connectionIncrement = connectionIncrement;
+	}
+
+	public void setInputRadius(int inputRadius) {
+		this.inputRadius = inputRadius;
+	}
+
+	public void setOutputRadius(int outputRadius) {
+		this.outputRadius = outputRadius;
+	}
+
+	public void setBoostStrength(float boostStrength) {
+		this.boostStrength = boostStrength;
+	}
+
+	public void setMaxActivityLogSize(int maxActivityLogSize) {
+		this.maxActivityLogSize = maxActivityLogSize;
 	}
 	
 	public void setInputDimensions(int sizeX,int sizeY) {
@@ -63,22 +100,6 @@ public class PoolerConfig {
 		r.append("x");
 		r.append("" + outputSizeY);
 		return r;
-	}
-
-	public void setInputRadius(int inputRadius) {
-		this.inputRadius = inputRadius;
-	}
-
-	public void setOutputRadius(int outputRadius) {
-		this.outputRadius = outputRadius;
-	}
-
-	public void setBoostStrength(float boostStrength) {
-		this.boostStrength = boostStrength;
-	}
-
-	public void setMaxActivityLogSize(int maxActivityLogSize) {
-		this.maxActivityLogSize = maxActivityLogSize;
 	}
 
 	protected void calculateDimensions() {

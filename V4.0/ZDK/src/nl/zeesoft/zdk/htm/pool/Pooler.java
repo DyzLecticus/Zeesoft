@@ -10,10 +10,13 @@ import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Pooler {
-	protected PoolerConfig							config			= null;
+	protected PoolerConfig							config				= null;
+
+	protected PoolerStats							stats				= new PoolerStats();
 	
-	protected List<PoolerColumn>					columns			= new ArrayList<PoolerColumn>();
-	protected SortedMap<String,PoolerColumnGroup>	columnGroups	= new TreeMap<String,PoolerColumnGroup>();
+	protected List<PoolerColumn>					columns				= new ArrayList<PoolerColumn>();
+	protected SortedMap<String,PoolerColumnGroup>	columnGroups		= new TreeMap<String,PoolerColumnGroup>();
+	protected PoolerColumnGroup						globalColumnGroup	= null;
 	
 	public Pooler(PoolerConfig config) {
 		this.config = config;
@@ -59,7 +62,7 @@ public class Pooler {
 				r.append(")");
 			}
 		}
-		min = config.inputSize;
+		min = config.outputSize;
 		max = 0;
 		avg = 0;
 		for (PoolerColumnGroup pcg: columnGroups.values()) {
@@ -89,16 +92,46 @@ public class Pooler {
 		return r;
 	}
 	
+	public void resetStats() {
+		stats = new PoolerStats();
+	}
+	
+	public PoolerStats getStats() {
+		return stats;
+	}
+	
 	public SDR getSDRForInput(SDR input,boolean learn) {
 		List<Integer> onBits = input.getOnBits();
+		long start = 0;
+				
+		start = System.nanoTime();
 		calculateOverlapScoresForSDROnBits(onBits);
-		List<PoolerColumn> activeColumns = getActiveColumns();
+		stats.calculateOverlapTotal += System.nanoTime() - start;
+		
+		start = System.nanoTime();
+		List<PoolerColumn> activeColumns = selectActiveColumns();
+		stats.selectActiveTotal += System.nanoTime() - start;
+		
 		if (learn) {
+			start = System.nanoTime();
 			learnActiveColumns(activeColumns,onBits);
+			stats.selectActiveTotal += System.nanoTime() - start;
 		}
-		logActivity(activeColumns);
-		calculateColumnGroupActivity();
-		updateBoostFactors();
+		
+		if (config.boostStrength>0) {
+			start = System.nanoTime();
+			logActivity(activeColumns);
+			stats.logActiveTotal += System.nanoTime() - start;
+			
+			start = System.nanoTime();
+			calculateColumnGroupActivity();
+			stats.calculateActivityTotal += System.nanoTime() - start;
+			
+			start = System.nanoTime();
+			updateBoostFactors();
+			stats.boostFactorTotal += System.nanoTime() - start;
+		}
+		
 		return recordActiveColumnsInSDR(activeColumns);
 	}
 	
@@ -108,7 +141,7 @@ public class Pooler {
 		}
 	}
 	
-	protected List<PoolerColumn> getActiveColumns() {
+	protected List<PoolerColumn> selectActiveColumns() {
 		List<PoolerColumn> r = new ArrayList<PoolerColumn>();
 		SortedMap<Integer,List<PoolerColumn>> map = new TreeMap<Integer,List<PoolerColumn>>();
 		for (PoolerColumn col: columns) {
@@ -195,8 +228,12 @@ public class Pooler {
 				posY++;
 			}
 		}
+		
 		// Initialize column groups
+		globalColumnGroup = new PoolerColumnGroup(0,0);
 		for (PoolerColumn col: columns) {
+			globalColumnGroup.columns.add(col);
+			
 			posX = col.getRelativePosX();
 			posY = col.getRelativePosY();
 
@@ -241,6 +278,18 @@ public class Pooler {
 				}
 			}
 			col.columnGroup = columnGroup;
+		}
+		
+		// Initialize column cells
+		for (PoolerColumn col: columns) {
+			for (int i = 0; i < config.outputDepth; i++) {
+				PoolerColumnGroup pcg = col.columnGroup;
+				if (config.distalColumnGroupGlobal) {
+					pcg = globalColumnGroup;
+				}
+				PoolerColumnCell cell = new PoolerColumnCell(config,pcg,col.posX,col.posY,i);
+				col.cells.add(cell);
+			}
 		}
 	}
 }
