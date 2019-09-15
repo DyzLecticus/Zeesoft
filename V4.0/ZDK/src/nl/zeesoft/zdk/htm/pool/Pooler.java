@@ -36,7 +36,7 @@ public class Pooler {
 		int avg = 0;
 		for (PoolerColumn col: columns) {
 			int con = 0;
-			for (ProximalLink lnk: col.proxLinks.values()) {
+			for (ProximalLink lnk: col.proxLinks) {
 				if (lnk.connection>=0) {
 					con++;
 					avg++;

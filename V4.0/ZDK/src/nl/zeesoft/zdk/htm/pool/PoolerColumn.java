@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 
@@ -21,8 +19,7 @@ public class PoolerColumn {
 	
 	protected	List<PoolerColumnCell>			cells				= new ArrayList<PoolerColumnCell>();
 	
-	protected	SortedMap<Integer,ProximalLink>	proxLinks			= new TreeMap<Integer,ProximalLink>();
-	
+	protected	Set<ProximalLink>				proxLinks			= new HashSet<ProximalLink>();
 	protected	Set<Integer>					connectedIndices	= new HashSet<Integer>();
 	
 	protected	int								overlapScore		= 0;
@@ -45,9 +42,9 @@ public class PoolerColumn {
 		for (Integer idx: inputIndices) {
 			ProximalLink lnk = new ProximalLink();
 			lnk.inputIndex = idx;
-			proxLinks.put(lnk.inputIndex,lnk);
+			proxLinks.add(lnk);
 		}
-		List<ProximalLink> availableLinks = new ArrayList<ProximalLink>(proxLinks.values());
+		List<ProximalLink> availableLinks = new ArrayList<ProximalLink>(proxLinks);
 		int sel = (int) ((float) availableLinks.size() * config.potentialProximalConnections);
 		for (int i = 0; i < sel; i++) {
 			ProximalLink lnk = availableLinks.remove(ZRandomize.getRandomInt(0,availableLinks.size() - 1));
@@ -61,7 +58,7 @@ public class PoolerColumn {
 			}
 		}
 		for (ProximalLink lnk: availableLinks) {
-			proxLinks.remove(lnk.inputIndex);
+			proxLinks.remove(lnk);
 		}
 		
 		// Randomize cell connections
@@ -80,7 +77,7 @@ public class PoolerColumn {
 	}
 	
 	protected void learnOnBits(List<Integer> onBits) {
-		for (ProximalLink lnk: proxLinks.values()) {
+		for (ProximalLink lnk: proxLinks) {
 			if (lnk.connection>=0) {
 				if (onBits.contains(lnk.inputIndex)) {
 					if (lnk.connection <= config.connectionThreshold && lnk.connection + config.connectionIncrement > config.connectionThreshold) {

@@ -2,8 +2,10 @@ package nl.zeesoft.zdk.htm.enc;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -12,10 +14,10 @@ import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class RDScalarEncoder extends StateEncoderObject {
-	private SortedMap<Float,SDR>			sdrsByValue			= new TreeMap<Float,SDR>();
-	private SortedMap<ZStringBuilder,SDR>	sdrsByStringBuilder	= new TreeMap<ZStringBuilder,SDR>();
-	private List<Integer>					freeBits			= new ArrayList<Integer>();
-	private BigInteger						capacity			= null;
+	private SortedMap<Float,SDR>	sdrsByValue			= new TreeMap<Float,SDR>();
+	private Set<ZStringBuilder>		sdrsByStringBuilder	= new HashSet<ZStringBuilder>();
+	private List<Integer>			freeBits			= new ArrayList<Integer>();
+	private BigInteger				capacity			= null;
 	
 	public RDScalarEncoder(int size,int bits) {
 		super(size,bits);
@@ -40,7 +42,7 @@ public class RDScalarEncoder extends StateEncoderObject {
 					freeBits.remove(onBit);
 				}
 				sdrsByValue.put(value,r);
-				sdrsByStringBuilder.put(r.toStringBuilder(),r);
+				sdrsByStringBuilder.add(r.toStringBuilder());
 			} else {
 				if (capacity.compareTo(BigInteger.valueOf(sdrsByValue.size()))>0) {
 					if (value > sdrsByValue.lastKey()) {
@@ -115,7 +117,7 @@ public class RDScalarEncoder extends StateEncoderObject {
 						sdr.setBit(Integer.parseInt(onBits.get(b).toString()),true);
 					}
 					sdrsByValue.put(value,sdr);
-					sdrsByStringBuilder.put(sdr.toStringBuilder(),sdr);
+					sdrsByStringBuilder.add(sdr.toStringBuilder());
 					fBits = SDR.or(fBits,sdr);
 				}
 			}
@@ -136,7 +138,7 @@ public class RDScalarEncoder extends StateEncoderObject {
 				r = generateNewUniqueRandomVariation(r);
 			}
 			sdrsByValue.put(value,r);
-			sdrsByStringBuilder.put(r.toStringBuilder(),r);
+			sdrsByStringBuilder.add(r.toStringBuilder());
 		}
 		return r;
 	}
@@ -150,7 +152,7 @@ public class RDScalarEncoder extends StateEncoderObject {
 			int select = ZRandomize.getRandomInt(0,availableBits.size() - 1);
 			Integer on = availableBits.remove(select);
 			r.setBit(on,true);
-			if (sdrsByStringBuilder.containsKey(r.toStringBuilder())) {
+			if (sdrsByStringBuilder.contains(r.toStringBuilder())) {
 				r = null;
 			}
 		}

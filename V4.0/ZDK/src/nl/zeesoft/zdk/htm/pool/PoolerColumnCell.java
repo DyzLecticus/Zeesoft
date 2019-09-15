@@ -1,7 +1,9 @@
 package nl.zeesoft.zdk.htm.pool;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 
@@ -12,7 +14,7 @@ public class PoolerColumnCell {
 	protected	int					posY		= 0;
 	protected	int					posZ		= 0;
 	
-	protected	List<DistalLink>	distLinks	= new ArrayList<DistalLink>();
+	protected	Set<DistalLink>		distLinks	= new HashSet<DistalLink>();
 	
 	protected	boolean				active		= false;
 	protected	boolean				predictive	= false;
