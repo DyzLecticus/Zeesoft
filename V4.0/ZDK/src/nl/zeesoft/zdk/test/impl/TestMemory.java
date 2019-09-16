@@ -73,7 +73,7 @@ public class TestMemory extends TestObject implements PoolerProcessorListener {
 		System.out.println("Randomizing connections took: " + (System.currentTimeMillis() - start) + " ms");
 		
 		System.out.println();
-		System.out.println(memoryConfig.getDescription());
+		System.out.println(memory.getDescription());
 		
 		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
 		processor.getListeners().add(this);

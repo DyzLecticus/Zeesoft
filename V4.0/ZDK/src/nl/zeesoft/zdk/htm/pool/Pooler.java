@@ -152,13 +152,15 @@ public class Pooler {
 		List<PoolerColumn> r = new ArrayList<PoolerColumn>();
 		SortedMap<Integer,List<PoolerColumn>> map = new TreeMap<Integer,List<PoolerColumn>>();
 		for (PoolerColumn col: columns) {
-			int boostedScore = (int) ((float)col.overlapScore * col.boostFactor);
-			List<PoolerColumn> list = map.get(boostedScore);
-			if (list==null) {
-				list = new ArrayList<PoolerColumn>();
-				map.put(boostedScore,list);
+			if (col.overlapScore>0) {
+				int boostedScore = (int) ((float)col.overlapScore * col.boostFactor);
+				List<PoolerColumn> list = map.get(boostedScore);
+				if (list==null) {
+					list = new ArrayList<PoolerColumn>();
+					map.put(boostedScore,list);
+				}
+				list.add(col);
 			}
-			list.add(col);
 		}
 		Object[] keys = map.keySet().toArray();
 		for (int i = (map.size() - 1); i>=0; i--) {

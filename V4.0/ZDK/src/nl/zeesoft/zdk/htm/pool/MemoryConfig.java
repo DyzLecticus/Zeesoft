@@ -6,7 +6,7 @@ public class MemoryConfig {
 	protected int			size							= 0;
 	
 	protected int			depth							= 4;
-	protected float			potentialDistalConnections		= 0.50F;
+	protected float			potentialDistalConnections		= 0.85F;
 	protected boolean		distalColumnGroupGlobal			= false;
 	
 	protected float			connectionThreshold				= 0.1F;

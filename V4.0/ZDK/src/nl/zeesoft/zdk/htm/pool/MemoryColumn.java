@@ -2,16 +2,15 @@ package nl.zeesoft.zdk.htm.pool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class MemoryColumn {
-	private		MemoryConfig			config		= null;
 	protected	MemoryColumnGroup		columnGroup	= null;	
 	protected	int						index		= 0;
 	
 	protected	List<MemoryColumnCell>	cells		= new ArrayList<MemoryColumnCell>();
 	
-	protected MemoryColumn(MemoryConfig config,MemoryColumnGroup columnGroup,int index) {
-		this.config = config;
+	protected MemoryColumn(MemoryColumnGroup columnGroup,int index) {
 		this.columnGroup = columnGroup;
 		this.index = index;
 	}
@@ -21,7 +20,7 @@ public class MemoryColumn {
 			cell.randomizeConnections();
 		}
 	}
-	
+
 	protected boolean activateColumnCells() {
 		boolean r = false;
 		MemoryColumnCell winner = null;
@@ -38,5 +37,18 @@ public class MemoryColumn {
 			}
 		}
 		return r;
+	}
+	
+	protected void calculateOverlapScoresForActiveLinks() {
+		for (MemoryColumnCell cell: cells) {
+			cell.calculateOverlapScoresForActiveLinks();
+		}
+	}
+
+	protected void predictColumnCells(Set<MemoryColumnCell> predictiveCells) {
+		for (MemoryColumnCell cell: cells) {
+			cell.active = false;
+			cell.predictive = predictiveCells.contains(cell);
+		}
 	}
 }

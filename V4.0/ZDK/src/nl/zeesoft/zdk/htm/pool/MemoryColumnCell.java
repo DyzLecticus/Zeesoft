@@ -8,17 +8,17 @@ import java.util.Set;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class MemoryColumnCell {
-	private		MemoryConfig		config			= null;
-	private		MemoryColumnGroup	columnGroup		= null;	
-	protected	int					columnIndex		= 0;
-	protected	int					posZ			= 0;
+	private		MemoryConfig		config				= null;
+	private		MemoryColumnGroup	columnGroup			= null;	
+	protected	int					columnIndex			= 0;
+	protected	int					posZ				= 0;
 	
-	protected	Set<DistalLink>		distLinks		= new HashSet<DistalLink>();
+	protected	Set<DistalLink>		distLinks			= new HashSet<DistalLink>();
 	
-	protected	int					overlapScore	= 0;
+	protected	int					overlapScore		= 0;
 	
-	protected	boolean				active			= false;
-	protected	boolean				predictive		= false;
+	protected	boolean				active				= false;
+	protected	boolean				predictive			= false;
 	
 	protected MemoryColumnCell(MemoryConfig config,MemoryColumnGroup columnGroup,int columnIndex,int posZ) {
 		this.config = config;
@@ -34,6 +34,7 @@ public class MemoryColumnCell {
 				if (!(col.index == columnIndex && d==posZ)) {
 					DistalLink link = new DistalLink();
 					link.cell = col.cells.get(d);
+					distLinks.add(link);
 				}
 			}
 		}
@@ -51,5 +52,13 @@ public class MemoryColumnCell {
 			distLinks.remove(lnk);
 		}
 	}
-
+	
+	protected void calculateOverlapScoresForActiveLinks() {
+		overlapScore = 0;
+		for (DistalLink link: distLinks) {
+			if (link.cell.active && link.connection>config.connectionThreshold) {
+				overlapScore++;
+			}
+		}
+	}
 }
