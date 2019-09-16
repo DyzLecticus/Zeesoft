@@ -7,31 +7,31 @@ import java.util.Set;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 
-public class PoolerColumnCell {
-	private		PoolerConfig		config		= null;
-	private		PoolerColumnGroup	columnGroup	= null;	
-	protected	int					posX		= 0;
-	protected	int					posY		= 0;
-	protected	int					posZ		= 0;
+public class MemoryColumnCell {
+	private		MemoryConfig		config			= null;
+	private		MemoryColumnGroup	columnGroup		= null;	
+	protected	int					columnIndex		= 0;
+	protected	int					posZ			= 0;
 	
-	protected	Set<DistalLink>		distLinks	= new HashSet<DistalLink>();
+	protected	Set<DistalLink>		distLinks		= new HashSet<DistalLink>();
 	
-	protected	boolean				active		= false;
-	protected	boolean				predictive	= false;
+	protected	int					overlapScore	= 0;
 	
-	protected PoolerColumnCell(PoolerConfig config,PoolerColumnGroup columnGroup,int posX,int posY,int posZ) {
+	protected	boolean				active			= false;
+	protected	boolean				predictive		= false;
+	
+	protected MemoryColumnCell(MemoryConfig config,MemoryColumnGroup columnGroup,int columnIndex,int posZ) {
 		this.config = config;
 		this.columnGroup = columnGroup;
-		this.posX = posX;
-		this.posY = posY;
+		this.columnIndex = columnIndex;
 		this.posZ = posZ;
 	}
 
 	protected void randomizeConnections() {
 		distLinks.clear();
-		for (PoolerColumn col: columnGroup.columns) {
-			for (int d = 0; d < config.outputDepth; d++) {
-				if (!(col.posX == posX && col.posY == posY && d==posZ)) {
+		for (MemoryColumn col: columnGroup.columns) {
+			for (int d = 0; d < config.depth; d++) {
+				if (!(col.index == columnIndex && d==posZ)) {
 					DistalLink link = new DistalLink();
 					link.cell = col.cells.get(d);
 				}
@@ -51,4 +51,5 @@ public class PoolerColumnCell {
 			distLinks.remove(lnk);
 		}
 	}
+
 }

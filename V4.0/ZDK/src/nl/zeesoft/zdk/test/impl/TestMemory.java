@@ -1,24 +1,26 @@
 package nl.zeesoft.zdk.test.impl;
 
+import nl.zeesoft.zdk.htm.pool.Memory;
+import nl.zeesoft.zdk.htm.pool.MemoryConfig;
+import nl.zeesoft.zdk.htm.pool.MemoryProcessor;
 import nl.zeesoft.zdk.htm.pool.Pooler;
 import nl.zeesoft.zdk.htm.pool.PoolerConfig;
 import nl.zeesoft.zdk.htm.pool.PoolerProcessor;
 import nl.zeesoft.zdk.htm.pool.PoolerProcessorListener;
-import nl.zeesoft.zdk.htm.pool.PoolerStats;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestPooler extends TestObject implements PoolerProcessorListener {
+public class TestMemory extends TestObject implements PoolerProcessorListener {
 	private int	counter	= 0;
 	
-	public TestPooler(Tester tester) {
+	public TestMemory(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestPooler(new Tester())).test(args);
+		(new TestMemory(new Tester())).test(args);
 	}
 
 	@Override
@@ -55,106 +57,38 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockRegularSDRSet.class.getName());
 		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
 		
-		PoolerConfig config = new PoolerConfig(inputSDRSet.width(),1024,21);
+		PoolerConfig poolerConfig = new PoolerConfig(inputSDRSet.width(),1024,21);
+		Pooler pooler = new Pooler(poolerConfig);
+		pooler.randomizeConnections();
+		
+		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
+		Memory memory = new Memory(memoryConfig);
 		
 		long start = System.currentTimeMillis();
-		Pooler pooler = new Pooler(config);
-		System.out.println("Initializing pooler took: " + (System.currentTimeMillis() - start) + " ms");
-		
+		memory.initialize(pooler);
+		System.out.println("Initializing memory took: " + (System.currentTimeMillis() - start) + " ms");
+				
 		start = System.currentTimeMillis();
-		pooler.randomizeConnections();
+		memory.randomizeConnections();
 		System.out.println("Randomizing connections took: " + (System.currentTimeMillis() - start) + " ms");
 		
 		System.out.println();
-		System.out.println(pooler.getDescription());
+		System.out.println(memoryConfig.getDescription());
 		
-		PoolerProcessor processor = new PoolerProcessor(pooler);
+		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
 		processor.getListeners().add(this);
 
-		System.out.println();
-		float ratio1 = processInputSDRSet(processor,inputSDRSet,false);
-		
-		processor.resetStats();
-		
-		System.out.println();
-		float ratio2 = processInputSDRSet(processor,inputSDRSet,true);
-		
-		System.out.println();
-		System.out.println("Original ratio: " + ratio1 + ", learned ratio: " + ratio2);
-		assertEqual(ratio2>ratio1,true,"Learned ratio does not match expectation");
-		
-	}
-	
-	private float processInputSDRSet(PoolerProcessor processor,SDRSet inputSDRSet, boolean learn) {
-		int num = inputSDRSet.size();
+		int num = 100;
 		processor.setIntputSDRSet(inputSDRSet);
-		processor.setLearn(learn);
 		
+		System.out.println();
 		long started = System.currentTimeMillis();
-		System.out.println("Processing input SDR set (learning: " + learn + ") ...");
-		processor.process();
+		System.out.println("Processing input SDR set ...");
+		processor.process(num);
 		System.out.println("Processing input SDR set took: " + (System.currentTimeMillis() - started) + " ms");
 		
-		SDRSet outputSDRSet = processor.getOutputSDRSet();
-		assertEqual(outputSDRSet.size(),num,"Output SDR set size does not match expectation");
-		
-		PoolerStats stats = processor.getStats();
-		System.out.println();
-		System.out.println("Performance statistics;");
-		System.out.println(stats.getDescription());
-		
-		return analyzeOutputSDRSet(outputSDRSet);
-	}
-	
-	private float analyzeOutputSDRSet(SDRSet outputSDRSet) {
-		float r = 0;
-		int weeks = 0;
-		float avg = 0;
-		float avgWeek = 0;
-		for (int i = (24 * 70); i < outputSDRSet.size(); i++) {
-			if (i % (24 * 7) == 0) {
-				SDR baseSDR = outputSDRSet.get(i);
-				int div = 0;
-				int divWeek = 0;
-				int total = 0;
-				int totalWeek = 0;
-				
-				int start = (i - (24 * 7 * 10));
-				if (start<0) {
-					start = 0;
-				}
-				
-				for (int i2 = start; i2 < i; i2++) {
-					SDR compSDR = outputSDRSet.get(i2);
-					if (i2 % (24 * 7) == 0) {
-						divWeek++;
-						totalWeek = totalWeek + baseSDR.getOverlapScore(compSDR);
-					} else {
-						div++;
-						total = total + baseSDR.getOverlapScore(compSDR);
-					}
-				}
-				if (div > 0) {
-					float avgOverlap = (float) total / (float) div;
-					float avgOverlapWeek = (float) totalWeek / (float) divWeek;
-					//System.out.println("Average: " + avgOverlap + ", weekly average: " + avgOverlapWeek);
-					
-					weeks++;
-					avg = avg + avgOverlap;
-					avgWeek = avgWeek + avgOverlapWeek;
-				}
-			}
-		}
-		if (weeks>0) {
-			avg = avg / (float) weeks;
-			avgWeek = avgWeek / (float) weeks;
-			System.out.println();
-			System.out.println("Combined average: " + avg + ", Combined weekly average: " + avgWeek);
-			
-			r = avgWeek / avg;
-			assertEqual(r > 8F,true,"Combined weekly average does not match expectation");
-		}
-		return r;
+		SDRSet burstSDRSet = processor.getBurstSDRSet();
+		assertEqual(burstSDRSet.size(),num,"Burst SDR set size does not match expectation");
 	}
 	
 	@Override

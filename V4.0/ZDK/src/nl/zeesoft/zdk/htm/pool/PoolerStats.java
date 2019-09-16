@@ -36,6 +36,7 @@ public class PoolerStats {
 	
 	private void appendValue(ZStringBuilder str,String description,DecimalFormat df,long val) {
 		str.append(description);
+		str.append(" ");
 		ZStringBuilder strVal = new ZStringBuilder(df.format(val / 1000000F));
 		while (strVal.length() < 10) {
 			strVal.insert(0," ");

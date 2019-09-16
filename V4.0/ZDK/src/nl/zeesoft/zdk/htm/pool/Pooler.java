@@ -16,7 +16,6 @@ public class Pooler {
 	
 	protected List<PoolerColumn>					columns				= new ArrayList<PoolerColumn>();
 	protected SortedMap<String,PoolerColumnGroup>	columnGroups		= new TreeMap<String,PoolerColumnGroup>();
-	protected PoolerColumnGroup						globalColumnGroup	= null;
 	
 	public Pooler(PoolerConfig config) {
 		this.config = config;
@@ -214,7 +213,7 @@ public class Pooler {
 			}
 		}
 	}
-
+	
 	protected SDR recordActiveColumnsInSDR(List<PoolerColumn> activeColumns) {
 		SDR r = new SDR(config.outputSize);
 		for (PoolerColumn col: activeColumns) {
@@ -238,10 +237,7 @@ public class Pooler {
 		}
 		
 		// Initialize column groups
-		globalColumnGroup = new PoolerColumnGroup(0,0);
 		for (PoolerColumn col: columns) {
-			globalColumnGroup.columns.add(col);
-			
 			posX = col.getRelativePosX();
 			posY = col.getRelativePosY();
 
@@ -286,18 +282,6 @@ public class Pooler {
 				}
 			}
 			col.columnGroup = columnGroup;
-		}
-		
-		// Initialize column cells
-		for (PoolerColumn col: columns) {
-			for (int i = 0; i < config.outputDepth; i++) {
-				PoolerColumnGroup pcg = col.columnGroup;
-				if (config.distalColumnGroupGlobal) {
-					pcg = globalColumnGroup;
-				}
-				PoolerColumnCell cell = new PoolerColumnCell(config,pcg,col.posX,col.posY,i);
-				col.cells.add(cell);
-			}
 		}
 	}
 }

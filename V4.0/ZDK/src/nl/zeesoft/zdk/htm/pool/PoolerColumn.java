@@ -17,9 +17,8 @@ public class PoolerColumn {
 
 	protected	PoolerColumnGroup				columnGroup			= null;
 	
-	protected	List<PoolerColumnCell>			cells				= new ArrayList<PoolerColumnCell>();
-	
 	protected	Set<ProximalLink>				proxLinks			= new HashSet<ProximalLink>();
+
 	protected	Set<Integer>					connectedIndices	= new HashSet<Integer>();
 	
 	protected	int								overlapScore		= 0;
@@ -59,11 +58,6 @@ public class PoolerColumn {
 		}
 		for (ProximalLink lnk: availableLinks) {
 			proxLinks.remove(lnk);
-		}
-		
-		// Randomize cell connections
-		for (PoolerColumnCell cell: cells) {
-			cell.randomizeConnections();
 		}
 	}
 	

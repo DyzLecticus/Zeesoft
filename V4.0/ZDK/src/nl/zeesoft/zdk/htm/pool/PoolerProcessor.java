@@ -11,6 +11,7 @@ public class PoolerProcessor {
 	protected List<PoolerProcessorListener>	listeners		= new ArrayList<PoolerProcessorListener>();
 	
 	protected SDRSet						inputSDRSet		= null;
+	protected boolean						learn			= true;
 	protected SDRSet						outputSDRSet	= null;
 	
 	public PoolerProcessor(Pooler pooler) {
@@ -21,16 +22,20 @@ public class PoolerProcessor {
 		return listeners;
 	}
 	
+	public void setLearn(boolean learn) {
+		this.learn = learn;
+	}
+	
 	public void setIntputSDRSet(SDRSet inputSDRSet) {
 		this.inputSDRSet = inputSDRSet;
 		outputSDRSet = new SDRSet(pooler.config.outputSize);
 	}
 	
-	public void process(boolean learn) {
-		process(learn,inputSDRSet.size());
+	public void process() {
+		process(inputSDRSet.size());
 	}
 
-	public void process(boolean learn,int num) {
+	public void process(int num) {
 		if (inputSDRSet!=null) {
 			int start = outputSDRSet.size();
 			int stop = start + num;
@@ -38,7 +43,7 @@ public class PoolerProcessor {
 				stop = inputSDRSet.size();
 			}
 			for (int i = start; i < stop; i++) {
-				processSDR(inputSDRSet.get(i),learn);
+				processSDR(inputSDRSet.get(i));
 			}
 		}
 	}
@@ -55,7 +60,7 @@ public class PoolerProcessor {
 		return pooler.getStats();
 	}
 	
-	protected void processSDR(SDR inputSDR,boolean learn) {
+	protected void processSDR(SDR inputSDR) {
 		SDR outputSDR = pooler.getSDRForInput(inputSDR,learn);
 		outputSDRSet.add(outputSDR);
 		for (PoolerProcessorListener listener: listeners) {

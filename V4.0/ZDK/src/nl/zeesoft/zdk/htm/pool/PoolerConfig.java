@@ -6,11 +6,8 @@ public class PoolerConfig {
 	protected int			inputSize						= 0;
 	protected int			outputSize						= 0;
 	protected int			outputBits						= 0;
-	protected int			outputDepth						= 0;
 	
 	protected float			potentialProximalConnections	= 0.50F;
-	protected float			potentialDistalConnections		= 0.50F;
-	protected boolean		distalColumnGroupGlobal			= false;
 	
 	protected float			connectionThreshold				= 0.1F;
 	protected float			connectionDecrement				= 0.008F;
@@ -27,11 +24,10 @@ public class PoolerConfig {
 	protected int			outputSizeX						= 0;
 	protected int			outputSizeY						= 0;
 	
-	public PoolerConfig(int inputSize, int outputSize, int outputBits, int outputDepth) {
+	public PoolerConfig(int inputSize, int outputSize, int outputBits) {
 		this.inputSize = inputSize;
 		this.outputSize = outputSize;
 		this.outputBits = outputBits;
-		this.outputDepth = outputDepth;
 		calculateDimensions();
 	}
 
@@ -39,16 +35,8 @@ public class PoolerConfig {
 		this.potentialProximalConnections = potentialConnections;
 	}
 
-	public void setPotentialDistalConnections(float potentialConnections) {
-		this.potentialDistalConnections = potentialConnections;
-	}
-
 	public void setConnectionThreshold(float connectionThreshold) {
 		this.connectionThreshold = connectionThreshold;
-	}
-
-	public void setDistalColumnGroupGlobal(boolean distalColumnGroupGlobal) {
-		this.distalColumnGroupGlobal = distalColumnGroupGlobal;
 	}
 
 	public void setConnectionDecrement(float connectionDecrement) {
