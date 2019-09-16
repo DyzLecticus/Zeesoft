@@ -6,15 +6,13 @@ public class MemoryConfig {
 	protected int			size							= 0;
 	
 	protected int			depth							= 4;
-	protected float			potentialDistalConnections		= 0.85F;
+	protected float			potentialDistalConnections		= 0.50F;
 	protected boolean		distalColumnGroupGlobal			= false;
+	protected int			maxDistalConnectionsPerCell		= 10000;
 	
-	protected float			connectionThreshold				= 0.1F;
-	protected float			connectionDecrement				= 0.008F;
-	protected float			connectionIncrement				= 0.05F;
-	
-	protected float			boostStrength					= 10;
-	protected int			maxActivityLogSize				= 100;
+	protected float			connectionThreshold				= 0.5F;
+	protected float			connectionDecrement				= 0.05F;
+	protected float			connectionIncrement				= 0.1F;
 
 	protected int			sizeX							= 0;
 	protected int			sizeY							= 0;
@@ -23,11 +21,6 @@ public class MemoryConfig {
 		this.size = poolerConfig.outputSize;
 		this.sizeX = poolerConfig.outputSizeX;
 		this.sizeY = poolerConfig.outputSizeY;
-		this.connectionThreshold = poolerConfig.connectionThreshold;
-		this.connectionDecrement = poolerConfig.connectionDecrement;
-		this.connectionIncrement = poolerConfig.connectionIncrement;
-		this.boostStrength = poolerConfig.boostStrength;
-		this.maxActivityLogSize = poolerConfig.maxActivityLogSize;
 	}
 
 	public MemoryConfig(int size) {
@@ -43,6 +36,10 @@ public class MemoryConfig {
 		this.distalColumnGroupGlobal = distalColumnGroupGlobal;
 	}
 
+	public void setMaxDistalConnectionsPerCell(int maxDistalConnectionsPerCell) {
+		this.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
+	}
+
 	public void setConnectionThreshold(float connectionThreshold) {
 		this.connectionThreshold = connectionThreshold;
 	}
@@ -53,14 +50,6 @@ public class MemoryConfig {
 
 	public void setConnectionIncrement(float connectionIncrement) {
 		this.connectionIncrement = connectionIncrement;
-	}
-
-	public void setBoostStrength(float boostStrength) {
-		this.boostStrength = boostStrength;
-	}
-
-	public void setMaxActivityLogSize(int maxActivityLogSize) {
-		this.maxActivityLogSize = maxActivityLogSize;
 	}
 	
 	public void setDimensions(int sizeX,int sizeY) {

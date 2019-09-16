@@ -1,19 +1,22 @@
 package nl.zeesoft.zdk.test.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.htm.pool.Memory;
 import nl.zeesoft.zdk.htm.pool.MemoryConfig;
 import nl.zeesoft.zdk.htm.pool.MemoryProcessor;
+import nl.zeesoft.zdk.htm.pool.MemoryProcessorListener;
 import nl.zeesoft.zdk.htm.pool.Pooler;
 import nl.zeesoft.zdk.htm.pool.PoolerConfig;
-import nl.zeesoft.zdk.htm.pool.PoolerProcessor;
-import nl.zeesoft.zdk.htm.pool.PoolerProcessorListener;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestMemory extends TestObject implements PoolerProcessorListener {
-	private int	counter	= 0;
+public class TestMemory extends TestObject implements MemoryProcessorListener {
+	private List<Integer>	bursts	= new ArrayList<Integer>();
+	private int				counter	= 0;
 	
 	public TestMemory(Tester tester) {
 		super(tester);
@@ -76,7 +79,7 @@ public class TestMemory extends TestObject implements PoolerProcessorListener {
 		System.out.println(memory.getDescription());
 		
 		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
-		processor.getListeners().add(this);
+		processor.getMemoryListeners().add(this);
 
 		//int num = 100;
 		int num = inputSDRSet.size();
@@ -93,9 +96,20 @@ public class TestMemory extends TestObject implements PoolerProcessorListener {
 	}
 	
 	@Override
-	public void processedSDR(PoolerProcessor processor, SDR inputSDR, SDR outputSDR) {
+	public void processedSDR(MemoryProcessor processor, SDR inputSDR, SDR outputSDR, SDR burstSDR) {
+		bursts.add(burstSDR.onBits());
+		while(bursts.size()>100) {
+			bursts.remove(0);
+		}
+		int a = 0;
+		for (Integer b: bursts) {
+			a += b;
+		}
+		if (a>0) {
+			a = a / bursts.size();
+		}
 		if (counter % (24 * 7) == 0) {
-			//System.out.println(counter + " <= " + inputSDR.toStringBuilder() + " => " + outputSDR.toStringBuilder());
+			System.out.println("--->>> Processed SDR " + counter + ", bursting average: " + a);
 		}
 		counter++;
 	}

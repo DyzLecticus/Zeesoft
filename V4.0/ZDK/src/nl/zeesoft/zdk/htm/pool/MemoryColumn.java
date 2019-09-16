@@ -46,20 +46,11 @@ public class MemoryColumn {
 		}
 		if (winner==null) {
 			r = true;
-			SortedMap<Integer,List<MemoryColumnCell>> cellsByPreviouslyActiveLinks = new TreeMap<Integer,List<MemoryColumnCell>>();
 			SortedMap<Integer,List<MemoryColumnCell>> cellsByDistalLinks = new TreeMap<Integer,List<MemoryColumnCell>>();
 			for (MemoryColumnCell cell: cells) {
 				cell.active = true;
-				int key = cell.getPreviouslyActiveLinks().size();
-				if (key>0) {
-					List<MemoryColumnCell> list = cellsByPreviouslyActiveLinks.get(key);
-					if (list==null) {
-						list = new ArrayList<MemoryColumnCell>();
-						cellsByPreviouslyActiveLinks.put(key,list);
-					}
-					list.add(cell);
-				}
-				key = cell.distLinks.size();
+				
+				int key = cell.distLinks.size();
 				List<MemoryColumnCell> list = cellsByDistalLinks.get(key);
 				if (list==null) {
 					list = new ArrayList<MemoryColumnCell>();
@@ -67,21 +58,14 @@ public class MemoryColumn {
 				}
 				list.add(cell);
 			}
-			if (cellsByPreviouslyActiveLinks.size()>0) {
-				List<MemoryColumnCell> list = cellsByPreviouslyActiveLinks.get(cellsByPreviouslyActiveLinks.lastKey());
-				if (list.size()==1) {
-					winner = list.get(0);
-				} else {
-					winner = list.get(ZRandomize.getRandomInt(0,list.size()-1));
-				}
-			} else if (learn && previouslyActiveCells.size()>0) {
+			if (learn && previouslyActiveCells.size()>0) {
 				List<MemoryColumnCell> list = cellsByDistalLinks.get(cellsByDistalLinks.firstKey());
 				if (list.size()==1) {
 					winner = list.get(0);
 				} else {
 					winner = list.get(ZRandomize.getRandomInt(0,list.size()-1));
 				}
-				System.out.println("Growing: " + previouslyActiveCells.size() + " !!!");
+				//System.out.println("Growing: " + previouslyActiveCells.size() + " !!!");
 				winner.addLinksToCells(previouslyActiveCells);
 			} else {
 				winner = cells.get(ZRandomize.getRandomInt(0,cells.size()-1));
@@ -99,8 +83,11 @@ public class MemoryColumn {
 		}
 	}
 
-	protected void predictColumnCells(Set<MemoryColumnCell> predictiveCells) {
+	protected void predictColumnCells(Set<MemoryColumnCell> predictiveCells,boolean learn) {
 		for (MemoryColumnCell cell: cells) {
+			if (learn && cell.predictive && !cell.active) {
+				cell.unlearnPreviouslyActiveLinks();
+			}
 			cell.predictive = predictiveCells.contains(cell);
 		}
 	}

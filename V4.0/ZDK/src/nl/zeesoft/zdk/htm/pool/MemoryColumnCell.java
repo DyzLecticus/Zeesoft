@@ -39,6 +39,9 @@ public class MemoryColumnCell {
 		}
 		List<DistalLink> availableLinks = new ArrayList<DistalLink>(distLinks);
 		int sel = (int) ((float) availableLinks.size() * config.potentialDistalConnections);
+		if (sel > config.maxDistalConnectionsPerCell) {
+			sel = config.maxDistalConnectionsPerCell;
+		}
 		for (int i = 0; i < sel; i++) {
 			DistalLink lnk = availableLinks.remove(ZRandomize.getRandomInt(0,availableLinks.size() - 1));
 			if (ZRandomize.getRandomInt(0,1)==1) {
@@ -67,37 +70,53 @@ public class MemoryColumnCell {
 	}
 	
 	protected void addLinksToCells(List<MemoryColumnCell> toCells) {
-		for (MemoryColumnCell toCell: toCells) {
-			DistalLink link = new DistalLink();
-			link.cell = toCell;
-			link.connection = config.connectionThreshold + config.connectionDecrement;
-			distLinks.add(link);
+		int addMax = config.maxDistalConnectionsPerCell - distLinks.size();
+		if (addMax>0) {
+			toCells = new ArrayList<MemoryColumnCell>(toCells);
+			for (DistalLink link: distLinks) {
+				int idx = toCells.indexOf(link.cell);
+				if (idx>=0) {
+					toCells.remove(idx);
+				}
+			}
+			int added = 0;
+			for (MemoryColumnCell toCell: toCells) {
+				DistalLink link = new DistalLink();
+				link.cell = toCell;
+				link.connection = config.connectionThreshold;
+				distLinks.add(link);
+				added++;
+				if (added>=addMax) {
+					break;
+				}
+			}
 		}
 	}
 	
 	protected void learnPreviouslyActiveLinks() {
-		for (DistalLink link: distLinks) {
-			if (link.cell.activePreviously) {
-				link.connection += config.connectionIncrement;
-				if (link.connection < 0) {
-					link.connection = 0;
-				}
-			} else {
-				link.connection -= config.connectionIncrement;
-				if (link.connection > 1) {
-					link.connection = 1;
+		if (active) {
+			for (DistalLink link: distLinks) {
+				if (link.cell.activePreviously) {
+					link.connection += config.connectionIncrement;
+					if (link.connection > 1) {
+						link.connection = 1;
+					}
 				}
 			}
 		}
 	}
 	
-	protected List<DistalLink> getPreviouslyActiveLinks() {
-		List<DistalLink> r = new ArrayList<DistalLink>();
-		for (DistalLink link: distLinks) {
-			if (link.cell.activePreviously) {
-				r.add(link);
+	protected void unlearnPreviouslyActiveLinks() {
+		if (predictive && !active) {
+			for (int i = 0; i < distLinks.size(); i++) {
+				DistalLink link = distLinks.get(i);
+				if (link.cell.activePreviously) {
+					link.connection -= config.connectionDecrement;
+					if (link.connection<=0) {
+						distLinks.remove(i);
+					}
+				}
 			}
 		}
-		return r;
 	}
 }

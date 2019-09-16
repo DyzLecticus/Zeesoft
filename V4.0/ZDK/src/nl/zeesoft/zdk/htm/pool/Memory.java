@@ -121,7 +121,7 @@ public class Memory {
 		//	System.out.println("     ---> Cell: " + cell.columnIndex + "/" + cell.posZ + ", overlap: " + cell.overlapScore);
 		//}
 		
-		predictColumnCells(predictiveCells);
+		predictColumnCells(predictiveCells,learn);
 		///System.out.println("---> Set predictions");
 		
 		return r;
@@ -188,9 +188,9 @@ public class Memory {
 		return r;
 	}
 	
-	protected void predictColumnCells(Set<MemoryColumnCell> predictiveCells) {
+	protected void predictColumnCells(Set<MemoryColumnCell> predictiveCells,boolean learn) {
 		for (MemoryColumn col: columns) {
-			col.predictColumnCells(predictiveCells);
+			col.predictColumnCells(predictiveCells,learn);
 		}
 	}
 	
