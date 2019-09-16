@@ -57,9 +57,15 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		
 		PoolerConfig config = new PoolerConfig(inputSDRSet.width(),1024,21,4);
 		
+		long start = System.currentTimeMillis();
 		Pooler pooler = new Pooler(config);
-		pooler.randomizeConnections();
+		System.out.println("Initializing pooler took: " + (System.currentTimeMillis() - start) + " ms");
 		
+		start = System.currentTimeMillis();
+		pooler.randomizeConnections();
+		System.out.println("Randomizing connections took: " + (System.currentTimeMillis() - start) + " ms");
+		
+		System.out.println();
 		System.out.println(pooler.getDescription());
 		
 		PoolerProcessor processor = new PoolerProcessor(pooler);
@@ -68,7 +74,7 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		System.out.println();
 		float ratio1 = processInputSDRSet(processor,inputSDRSet,false);
 		
-		pooler.resetStats();
+		processor.resetStats();
 		
 		System.out.println();
 		float ratio2 = processInputSDRSet(processor,inputSDRSet,true);
@@ -77,12 +83,8 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		System.out.println("Original ratio: " + ratio1 + ", learned ratio: " + ratio2);
 		assertEqual(ratio2>ratio1,true,"Learned ratio does not match expectation");
 		
-		PoolerStats stats = pooler.getStats();
-		System.out.println();
-		System.out.println("Performance statistics;");
-		System.out.println(stats.getDescription());
 	}
-
+	
 	private float processInputSDRSet(PoolerProcessor processor,SDRSet inputSDRSet, boolean learn) {
 		int num = inputSDRSet.size();
 		processor.setIntputSDRSet(inputSDRSet);
@@ -94,6 +96,11 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		
 		SDRSet outputSDRSet = processor.getOutputSDRSet();
 		assertEqual(outputSDRSet.size(),num,"Output SDR set size does not match expectation");
+		
+		PoolerStats stats = processor.getStats();
+		System.out.println();
+		System.out.println("Performance statistics;");
+		System.out.println(stats.getDescription());
 		
 		return analyzeOutputSDRSet(outputSDRSet);
 	}
@@ -140,6 +147,7 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		if (weeks>0) {
 			avg = avg / (float) weeks;
 			avgWeek = avgWeek / (float) weeks;
+			System.out.println();
 			System.out.println("Combined average: " + avg + ", Combined weekly average: " + avgWeek);
 			
 			r = avgWeek / avg;
@@ -147,7 +155,7 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 		}
 		return r;
 	}
-
+	
 	@Override
 	public void processedSDR(PoolerProcessor processor, SDR inputSDR, SDR outputSDR) {
 		if (counter % (24 * 7) == 0) {

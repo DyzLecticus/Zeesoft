@@ -46,6 +46,14 @@ public class PoolerProcessor {
 	public SDRSet getOutputSDRSet() {
 		return outputSDRSet;
 	}
+
+	public void resetStats() {
+		pooler.resetStats();
+	}
+
+	public PoolerStats getStats() {
+		return pooler.getStats();
+	}
 	
 	protected void processSDR(SDR inputSDR,boolean learn) {
 		SDR outputSDR = pooler.getSDRForInput(inputSDR,learn);

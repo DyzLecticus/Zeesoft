@@ -75,7 +75,7 @@ public class PoolerColumn {
 			}
 		}
 	}
-	
+
 	protected void learnOnBits(List<Integer> onBits) {
 		for (ProximalLink lnk: proxLinks) {
 			if (lnk.connection>=0) {

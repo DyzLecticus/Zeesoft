@@ -99,40 +99,48 @@ public class Pooler {
 	public PoolerStats getStats() {
 		return stats;
 	}
-	
+
 	public SDR getSDRForInput(SDR input,boolean learn) {
+		SDR r = null;
 		List<Integer> onBits = input.getOnBits();
 		long start = 0;
-				
+		
 		start = System.nanoTime();
 		calculateOverlapScoresForSDROnBits(onBits);
-		stats.calculateOverlapTotal += System.nanoTime() - start;
+		stats.calculateOverlapNs += System.nanoTime() - start;
 		
 		start = System.nanoTime();
 		List<PoolerColumn> activeColumns = selectActiveColumns();
-		stats.selectActiveTotal += System.nanoTime() - start;
+		stats.selectActiveNs += System.nanoTime() - start;
 		
 		if (learn) {
 			start = System.nanoTime();
 			learnActiveColumns(activeColumns,onBits);
-			stats.learnActiveTotal += System.nanoTime() - start;
+			stats.learnActiveNs += System.nanoTime() - start;
 		}
 		
 		if (config.boostStrength>0) {
 			start = System.nanoTime();
 			logActivity(activeColumns);
-			stats.logActiveTotal += System.nanoTime() - start;
+			stats.logActiveNs += System.nanoTime() - start;
 			
 			start = System.nanoTime();
 			calculateColumnGroupActivity();
-			stats.calculateActivityTotal += System.nanoTime() - start;
+			stats.calculateActivityNs += System.nanoTime() - start;
 			
 			start = System.nanoTime();
 			updateBoostFactors();
-			stats.boostFactorTotal += System.nanoTime() - start;
+			stats.updateBoostNs += System.nanoTime() - start;
 		}
 		
-		return recordActiveColumnsInSDR(activeColumns);
+		r = recordActiveColumnsInSDR(activeColumns);
+		
+		stats.total++;
+		if (learn) {
+			stats.totalLearned++;
+		}
+		
+		return r;
 	}
 	
 	protected void calculateOverlapScoresForSDROnBits(List<Integer> onBits) {
