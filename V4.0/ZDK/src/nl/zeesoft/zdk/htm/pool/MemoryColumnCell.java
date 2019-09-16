@@ -1,9 +1,7 @@
 package nl.zeesoft.zdk.htm.pool;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 
@@ -13,11 +11,12 @@ public class MemoryColumnCell {
 	protected	int					columnIndex			= 0;
 	protected	int					posZ				= 0;
 	
-	protected	Set<DistalLink>		distLinks			= new HashSet<DistalLink>();
+	protected	List<DistalLink>	distLinks			= new ArrayList<DistalLink>();
 	
 	protected	int					overlapScore		= 0;
 	
 	protected	boolean				active				= false;
+	protected	boolean				activePreviously	= false;
 	protected	boolean				predictive			= false;
 	
 	protected MemoryColumnCell(MemoryConfig config,MemoryColumnGroup columnGroup,int columnIndex,int posZ) {
@@ -53,6 +52,11 @@ public class MemoryColumnCell {
 		}
 	}
 	
+	protected void cycleActiveState() {
+		activePreviously = active;
+		active = false;
+	}
+
 	protected void calculateOverlapScoresForActiveLinks() {
 		overlapScore = 0;
 		for (DistalLink link: distLinks) {
@@ -60,5 +64,40 @@ public class MemoryColumnCell {
 				overlapScore++;
 			}
 		}
+	}
+	
+	protected void addLinksToCells(List<MemoryColumnCell> toCells) {
+		for (MemoryColumnCell toCell: toCells) {
+			DistalLink link = new DistalLink();
+			link.cell = toCell;
+			link.connection = config.connectionThreshold + config.connectionDecrement;
+			distLinks.add(link);
+		}
+	}
+	
+	protected void learnPreviouslyActiveLinks() {
+		for (DistalLink link: distLinks) {
+			if (link.cell.activePreviously) {
+				link.connection += config.connectionIncrement;
+				if (link.connection < 0) {
+					link.connection = 0;
+				}
+			} else {
+				link.connection -= config.connectionIncrement;
+				if (link.connection > 1) {
+					link.connection = 1;
+				}
+			}
+		}
+	}
+	
+	protected List<DistalLink> getPreviouslyActiveLinks() {
+		List<DistalLink> r = new ArrayList<DistalLink>();
+		for (DistalLink link: distLinks) {
+			if (link.cell.activePreviously) {
+				r.add(link);
+			}
+		}
+		return r;
 	}
 }

@@ -78,7 +78,8 @@ public class TestMemory extends TestObject implements PoolerProcessorListener {
 		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
 		processor.getListeners().add(this);
 
-		int num = 100;
+		//int num = 100;
+		int num = inputSDRSet.size();
 		processor.setIntputSDRSet(inputSDRSet);
 		
 		System.out.println();

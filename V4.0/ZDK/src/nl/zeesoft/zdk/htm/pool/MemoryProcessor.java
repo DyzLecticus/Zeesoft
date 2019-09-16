@@ -26,6 +26,8 @@ public class MemoryProcessor extends PoolerProcessor implements PoolerProcessorL
 
 	@Override
 	public void processedSDR(PoolerProcessor processor, SDR inputSDR, SDR outputSDR) {
-		burstSDRSet.add(memory.getSDRForInput(outputSDR,learn));
+		SDR burstSDR = memory.getSDRForInput(outputSDR,learn);
+		burstSDRSet.add(burstSDR);
+		System.out.println("--->>> Processed SDR " + burstSDRSet.size() + ", bursting: " + burstSDR.onBits());
 	}
 }

@@ -12,11 +12,11 @@ import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Memory {
-	private		MemoryConfig							config				= null;
+	private		MemoryConfig							config					= null;
 
-	protected	List<MemoryColumn>						columns				= new ArrayList<MemoryColumn>();
-	protected	SortedMap<String,MemoryColumnGroup>		columnGroups		= new TreeMap<String,MemoryColumnGroup>();
-	protected	MemoryColumnGroup						globalColumnGroup	= null;
+	protected	List<MemoryColumn>						columns					= new ArrayList<MemoryColumn>();
+	protected	SortedMap<String,MemoryColumnGroup>		columnGroups			= new TreeMap<String,MemoryColumnGroup>();
+	protected	MemoryColumnGroup						globalColumnGroup		= null;
 	
 	public Memory(MemoryConfig config) {
 		this.config = config;
@@ -53,7 +53,8 @@ public class Memory {
 	
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = config.getDescription();
-		int min = config.size * config.depth; 
+		int cells = config.size * config.depth;
+		int min = cells; 
 		int max = 0;
 		int avg = 0;
 		for (MemoryColumn col: columns) {
@@ -74,7 +75,7 @@ public class Memory {
 			}
 		}
 		if (avg>0) {
-			avg = avg / columns.size();
+			avg = avg / cells;
 			r.append("\n");
 			r.append("Average distal inputs per cell: ");
 			r.append("" + avg);
@@ -98,34 +99,45 @@ public class Memory {
 	public SDR getSDRForInput(SDR input,boolean learn) {
 		SDR r = new SDR(config.size);
 		
+		List<MemoryColumnCell> previouslyActiveCells = cycleActiveState();
+		//System.out.println("---> Cycled active state");
+		
 		List<MemoryColumn> activeColumns = new ArrayList<MemoryColumn>();
 		for (Integer onBit: input.getOnBits()) {
 			activeColumns.add(columns.get(onBit));
 		}
-		System.out.println("---> Active columns: " + activeColumns.size());
+		//System.out.println("---> Active columns: " + activeColumns.size());
 		
-		activateColumnCells(activeColumns,r);
-		System.out.println("---> Activated column cells");
+		activateColumnCells(activeColumns,learn,previouslyActiveCells,r);
+		//System.out.println("---> Activated column cells, bursting: " + r.onBits());
 		
 		calculateOverlapScoresForActiveLinks();
-		System.out.println("---> Calculated overlap scores");
+		//System.out.println("---> Calculated overlap scores");
 		
 		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells(activeColumns.size());
-		System.out.println("---> Selected predictive cells: " + predictiveCells.size());
+		//System.out.println("---> Selected predictive cells: " + predictiveCells.size());
 		
-		for (MemoryColumnCell cell: predictiveCells) {
-			System.out.println("     ---> Cell: " + cell.columnIndex + "/" + cell.posZ + ", overlap: " + cell.overlapScore);
-		}
+		//for (MemoryColumnCell cell: predictiveCells) {
+		//	System.out.println("     ---> Cell: " + cell.columnIndex + "/" + cell.posZ + ", overlap: " + cell.overlapScore);
+		//}
 		
 		predictColumnCells(predictiveCells);
-		System.out.println("---> Set predictions");
+		///System.out.println("---> Set predictions");
 		
 		return r;
 	}
-	
-	protected void activateColumnCells(List<MemoryColumn> activeColumns,SDR burstSDR) {
+
+	protected List<MemoryColumnCell> cycleActiveState() {
+		List<MemoryColumnCell> r = new ArrayList<MemoryColumnCell>();
+		for (MemoryColumn col: columns) {
+			col.cycleActiveState(r);
+		}
+		return r;
+	}
+
+	protected void activateColumnCells(List<MemoryColumn> activeColumns,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR burstSDR) {
 		for (MemoryColumn col: activeColumns) {
-			if (col.activateColumnCells()) {
+			if (col.activateColumnCells(learn,previouslyActiveCells)) {
 				burstSDR.setBit(col.index,true);
 			}
 		}
