@@ -23,6 +23,14 @@ public class MemoryProcessor extends PoolerProcessor {
 		return burstSDRSet;
 	}
 
+	public void resetMemoryStats() {
+		((Memory)processors.get(1)).resetStats();
+	}
+
+	public MemoryStats getMemoryStats() {
+		return ((Memory)processors.get(1)).getStats();
+	}
+
 	@Override
 	protected void processedSDR(SDR inputSDR, List<SDR> outputSDRs) {
 		super.processedSDR(inputSDR, outputSDRs);

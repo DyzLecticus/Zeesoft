@@ -101,6 +101,7 @@ public class Pooler implements Processable {
 
 	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
+		long total = System.nanoTime();
 		SDR r = null;
 		List<Integer> onBits = input.getOnBits();
 		long start = 0;
@@ -136,9 +137,7 @@ public class Pooler implements Processable {
 		r = recordActiveColumnsInSDR(activeColumns);
 		
 		stats.total++;
-		if (learn) {
-			stats.totalLearned++;
-		}
+		stats.totalNs += System.nanoTime() - total;
 		
 		return r;
 	}

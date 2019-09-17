@@ -22,11 +22,11 @@ public class PoolerProcessor extends ProcessorObject {
 		return outputSDRSet;
 	}
 
-	public void resetStats() {
+	public void resetPoolerStats() {
 		((Pooler)processors.get(0)).resetStats();
 	}
 
-	public PoolerStats getStats() {
+	public PoolerStats getPoolerStats() {
 		return ((Pooler)processors.get(0)).getStats();
 	}
 

@@ -9,9 +9,11 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Memory implements Processable {
-	protected	MemoryConfig							config					= null;
+	protected	MemoryConfig		config		= null;
 
-	protected	List<MemoryColumn>						columns					= new ArrayList<MemoryColumn>();
+	protected	MemoryStats			stats		= new MemoryStats();
+
+	protected	List<MemoryColumn>	columns		= new ArrayList<MemoryColumn>();
 	
 	public Memory(MemoryConfig config) {
 		this.config = config;
@@ -43,7 +45,6 @@ public class Memory implements Processable {
 		}
 		if (avg>0) {
 			avg = avg / cells;
-			r.append("\n");
 			r.append("Average distal inputs per memory cell: ");
 			r.append("" + avg);
 			if (min!=avg || max!=avg) {
@@ -56,31 +57,43 @@ public class Memory implements Processable {
 		}
 		return r;
 	}
+	
+	public void resetStats() {
+		stats = new MemoryStats();
+	}
+	
+	public MemoryStats getStats() {
+		return stats;
+	}
 
 	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
+		long total = System.nanoTime();
 		SDR r = new SDR(config.size);
+		long start = 0;
 		
+		start = System.nanoTime();
 		List<MemoryColumnCell> previouslyActiveCells = cycleActiveState();
-		//System.out.println("---> Cycled active state");
+		stats.cycleStateNs += System.nanoTime() - start;
 		
-		List<MemoryColumn> activeColumns = new ArrayList<MemoryColumn>();
-		for (Integer onBit: input.getOnBits()) {
-			activeColumns.add(columns.get(onBit));
-		}
-		//System.out.println("---> Active columns: " + activeColumns.size());
+		start = System.nanoTime();
+		activateColumnCells(input,learn,previouslyActiveCells,r);
+		stats.activateCellsNs += System.nanoTime() - start;
 		
-		activateColumnCells(activeColumns,learn,previouslyActiveCells,r);
-		//System.out.println("---> Activated column cells, bursting: " + r.onBits());
-		
+		start = System.nanoTime();
 		calculateActivity();
-		//System.out.println("---> Calculated overlap scores");
+		stats.calculateActivityNs += System.nanoTime() - start;
 		
+		start = System.nanoTime();
 		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells();
-		//System.out.println("---> Selected predictive cells: " + predictiveCells.size());
+		stats.selectPredictiveNs += System.nanoTime() - start;
 		
+		start = System.nanoTime();
 		updatePredictions(predictiveCells,learn);
-		///System.out.println("---> Set predictions");
+		stats.updatePredictionsNs += System.nanoTime() - start;
+		
+		stats.total++;
+		stats.totalNs += System.nanoTime() - total;
 		
 		return r;
 	}
@@ -93,8 +106,9 @@ public class Memory implements Processable {
 		return r;
 	}
 
-	protected void activateColumnCells(List<MemoryColumn> activeColumns,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR burstSDR) {
-		for (MemoryColumn col: activeColumns) {
+	protected void activateColumnCells(SDR input,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR burstSDR) {
+		for (Integer onBit: input.getOnBits()) {
+			MemoryColumn col = columns.get(onBit);
 			if (col.activateCells(learn,previouslyActiveCells)) {
 				burstSDR.setBit(col.index,true);
 			}

@@ -16,8 +16,9 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
 public class TestMemory extends TestObject implements ProcessorListener {
-	private List<Integer>	bursts	= new ArrayList<Integer>();
-	private int				counter	= 0;
+	private List<Integer>	bursts			= new ArrayList<Integer>();
+	private int				averageBurst	= 0;
+	private int				counter			= 0;
 	
 	public TestMemory(Tester tester) {
 		super(tester);
@@ -73,20 +74,26 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
 		processor.getListeners().add(this);
 
-		int num = inputSDRSet.size();
+		int num = 5000;
 		processor.setIntputSDRSet(inputSDRSet);
 		
 		System.out.println();
 		long started = System.currentTimeMillis();
-		System.out.println("Processing input SDR set ...");
-		processor.process();
+		System.out.println("Processing input SDR set (5000/" + inputSDRSet.size() + ") ...");
+		processor.process(0,num);
 		System.out.println("Processing input SDR set took: " + (System.currentTimeMillis() - started) + " ms");
 		
 		SDRSet burstSDRSet = processor.getBurstSDRSet();
 		assertEqual(burstSDRSet.size(),num,"Burst SDR set size does not match expectation");
 		
+		assertEqual(averageBurst,0,"Average burst does not match expectation");
+
 		System.out.println();
 		System.out.println(memory.getDescription());
+		
+		System.out.println();
+		System.out.println("Performance statistics;");
+		System.out.println(processor.getMemoryStats().getDescription());
 	}
 
 	@Override
@@ -97,18 +104,18 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		while(bursts.size()>100) {
 			bursts.remove(0);
 		}
-		int a = 0;
+		averageBurst = 0;
 		for (Integer b: bursts) {
 			if (b > max) {
 				max = b;
 			}
-			a += b;
+			averageBurst += b;
 		}
-		if (a>0) {
-			a = a / bursts.size();
+		if (averageBurst>0) {
+			averageBurst = averageBurst / bursts.size();
 		}
 		if (counter % (24 * 7) == 0) {
-			System.out.println("--->>> Processed SDR " + counter + ", bursting average: " + a + " (max: " + max + ")");
+			//System.out.println("Processed SDRs: " + counter + ", bursting average: " + averageBurst + " (max: " + max + ")");
 		}
 	}
 }

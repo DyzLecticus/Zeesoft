@@ -5,7 +5,6 @@ import java.util.List;
 import nl.zeesoft.zdk.htm.pool.Pooler;
 import nl.zeesoft.zdk.htm.pool.PoolerConfig;
 import nl.zeesoft.zdk.htm.pool.PoolerProcessor;
-import nl.zeesoft.zdk.htm.pool.PoolerStats;
 import nl.zeesoft.zdk.htm.pool.ProcessorListener;
 import nl.zeesoft.zdk.htm.pool.ProcessorObject;
 import nl.zeesoft.zdk.htm.sdr.SDR;
@@ -78,7 +77,7 @@ public class TestPooler extends TestObject implements ProcessorListener {
 		float ratio1 = processInputSDRSet(processor,inputSDRSet,false);
 		assertEqual(ratio1 > 6F,true,"Unlearned ratio is lower than minimal expectation");
 		
-		processor.resetStats();
+		processor.resetPoolerStats();
 		
 		System.out.println();
 		float ratio2 = processInputSDRSet(processor,inputSDRSet,true);
@@ -103,10 +102,9 @@ public class TestPooler extends TestObject implements ProcessorListener {
 		SDRSet outputSDRSet = processor.getOutputSDRSet();
 		assertEqual(outputSDRSet.size(),num,"Output SDR set size does not match expectation");
 		
-		PoolerStats stats = processor.getStats();
 		System.out.println();
 		System.out.println("Performance statistics;");
-		System.out.println(stats.getDescription());
+		System.out.println(processor.getPoolerStats().getDescription());
 		
 		return analyzeOutputSDRSet(outputSDRSet);
 	}
