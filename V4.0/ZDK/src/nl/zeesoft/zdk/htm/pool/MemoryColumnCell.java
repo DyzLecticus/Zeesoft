@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.htm.pool;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class MemoryColumnCell {
@@ -13,7 +14,7 @@ public class MemoryColumnCell {
 	
 	protected	List<DistalLink>	distLinks			= new ArrayList<DistalLink>();
 	
-	protected	int					overlapScore		= 0;
+	protected	int					activity			= 0;
 	
 	protected	boolean				active				= false;
 	protected	boolean				activePreviously	= false;
@@ -62,16 +63,19 @@ public class MemoryColumnCell {
 		active = false;
 	}
 
-	protected void calculateOverlapScoresForActiveLinks() {
-		overlapScore = 0;
+	protected void calculateActivity() {
+		activity = 0;
 		float activation = 0;
 		for (DistalLink link: distLinks) {
 			if (link.cell.active && link.connection>config.connectionThreshold) {
-				overlapScore++;
+				activity++;
 				activation += link.connection;
 			}
 		}
-		overlapScore = (int) (overlapScore * activation);
+		if (activity>0) {
+			activation = (activation / activity) * (1F / config.connectionThreshold);
+		}
+		activity = (int) (activation * activity);
 	}
 	
 	protected void addLinksToCells(List<MemoryColumnCell> toCells) {

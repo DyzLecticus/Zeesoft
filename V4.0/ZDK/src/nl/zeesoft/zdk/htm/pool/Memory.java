@@ -111,15 +111,24 @@ public class Memory {
 		activateColumnCells(activeColumns,learn,previouslyActiveCells,r);
 		//System.out.println("---> Activated column cells, bursting: " + r.onBits());
 		
-		calculateOverlapScoresForActiveLinks();
+		calculateActivity();
 		//System.out.println("---> Calculated overlap scores");
 		
-		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells((activeColumns.size() * 100));
-		System.out.println("---> Selected predictive cells: " + predictiveCells.size());
+		//int max = activeColumns.size() * config.depth * config.depth;
+		int max = 1000;
+		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells(max);
+		//System.out.println("---> Selected predictive cells: " + predictiveCells.size());
 		
-		//for (MemoryColumnCell cell: predictiveCells) {
-		//	System.out.println("     ---> Cell: " + cell.columnIndex + "/" + cell.posZ + ", overlap: " + cell.overlapScore);
-		//}
+		/*
+		int i = 0;
+		for (MemoryColumnCell cell: predictiveCells) {
+			//System.out.println("     ---> Cell: " + cell.columnIndex + "/" + cell.posZ + ", activity: " + cell.activity);
+			i++;
+			if (i>20) {
+				break;
+			}
+		}
+		*/
 		
 		predictColumnCells(predictiveCells,learn);
 		///System.out.println("---> Set predictions");
@@ -143,9 +152,9 @@ public class Memory {
 		}
 	}
 	
-	protected void calculateOverlapScoresForActiveLinks() {
+	protected void calculateActivity() {
 		for (MemoryColumn col: columns) {
-			col.calculateOverlapScoresForActiveLinks();
+			col.calculateActivity();
 		}
 	}
 
@@ -154,11 +163,11 @@ public class Memory {
 		SortedMap<Integer,List<MemoryColumnCell>> map = new TreeMap<Integer,List<MemoryColumnCell>>();
 		for (MemoryColumn col: columns) {
 			for (MemoryColumnCell cell: col.cells) {
-				if (cell.overlapScore>config.minDistalConnectionsPredictive) {
-					List<MemoryColumnCell> list = map.get(cell.overlapScore);
+				if (cell.activity>0) {
+					List<MemoryColumnCell> list = map.get(cell.activity);
 					if (list==null) {
 						list = new ArrayList<MemoryColumnCell>();
-						map.put(cell.overlapScore,list);
+						map.put(cell.activity,list);
 					}
 					list.add(cell);
 				}

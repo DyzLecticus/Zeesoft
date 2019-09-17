@@ -77,9 +77,9 @@ public class MemoryColumn {
 		return r;
 	}
 	
-	protected void calculateOverlapScoresForActiveLinks() {
+	protected void calculateActivity() {
 		for (MemoryColumnCell cell: cells) {
-			cell.calculateOverlapScoresForActiveLinks();
+			cell.calculateActivity();
 		}
 	}
 
