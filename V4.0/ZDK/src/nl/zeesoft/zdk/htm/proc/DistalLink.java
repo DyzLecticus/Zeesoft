@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.pool;
+package nl.zeesoft.zdk.htm.proc;
 
 public class DistalLink {
 	protected MemoryColumnCell	cell		= null;

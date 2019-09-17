@@ -2,11 +2,11 @@ package nl.zeesoft.zdk.test.impl;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.pool.Pooler;
-import nl.zeesoft.zdk.htm.pool.PoolerConfig;
-import nl.zeesoft.zdk.htm.pool.PoolerProcessor;
-import nl.zeesoft.zdk.htm.pool.ProcessorListener;
-import nl.zeesoft.zdk.htm.pool.ProcessorObject;
+import nl.zeesoft.zdk.htm.proc.Pooler;
+import nl.zeesoft.zdk.htm.proc.PoolerConfig;
+import nl.zeesoft.zdk.htm.proc.PoolerProcessor;
+import nl.zeesoft.zdk.htm.proc.ProcessorListener;
+import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.TestObject;

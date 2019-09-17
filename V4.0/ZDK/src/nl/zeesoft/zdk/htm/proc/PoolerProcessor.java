@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.pool;
+package nl.zeesoft.zdk.htm.proc;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 
 public class PoolerProcessor extends ProcessorObject {
-	protected SDRSet						outputSDRSet	= null;
+	protected SDRSet	outputSDRSet	= null;
 	
 	public PoolerProcessor(Pooler pooler) {
 		super(pooler);
