@@ -146,7 +146,7 @@ public class Memory implements Processable {
 			MemoryColumn col = new MemoryColumn(i);
 			columns.add(col);
 			for (int d = 0; d < config.depth; d++) {
-				MemoryColumnCell cell = new MemoryColumnCell(config,posX,posY,d);
+				MemoryColumnCell cell = new MemoryColumnCell(config,i,posX,posY,d);
 				col.cells.add(cell);
 			}
 			posX++;

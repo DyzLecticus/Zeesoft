@@ -5,6 +5,7 @@ import java.util.List;
 
 public class MemoryColumnCell {
 	private		MemoryConfig		config				= null;
+	protected	int					columnIndex			= 0;
 	protected	int					posX				= 0;
 	protected	int					posY				= 0;
 	protected	int					posZ				= 0;
@@ -18,8 +19,9 @@ public class MemoryColumnCell {
 	protected	boolean				activePreviously	= false;
 	protected	boolean				predictive			= false;
 	
-	protected MemoryColumnCell(MemoryConfig config,int posX,int posY,int posZ) {
+	protected MemoryColumnCell(MemoryConfig config,int columnIndex,int posX,int posY,int posZ) {
 		this.config = config;
+		this.columnIndex = columnIndex;
 		this.posX = posX;
 		this.posY = posY;
 		this.posZ = posZ;

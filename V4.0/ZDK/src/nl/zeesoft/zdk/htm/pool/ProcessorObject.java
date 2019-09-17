@@ -55,6 +55,9 @@ public abstract class ProcessorObject {
 		for (Processable processor: processors) {
 			SDR outputSDR = processor.getSDRForInput(inSDR,learn);
 			outputSDRs.add(outputSDR);
+			if (processor instanceof ProcessableSecondaryOutput) {
+				((ProcessableSecondaryOutput) processor).addSecondarySDRs(outputSDRs);
+			}
 			inSDR = outputSDR;
 		}
 		processedSDR(inputSDR,outputSDRs);
