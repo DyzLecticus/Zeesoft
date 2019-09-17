@@ -30,31 +30,30 @@ public class TestMemory extends TestObject implements ProcessorListener {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *DateTimeValueEncoder* to convert a range of dates/times and values into combined periodic sparse distributed representations.");
-		System.out.println("The *DateTimeValueEncoder* is merely an example implementation of a *CombinedEncoder* used to test this library.");
-		System.out.println("It uses random distributed scalar encoders to represent the values in order to show how these use state to maintain consistent representations.");
+		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the encoder");
-		System.out.println("DateTimeValueEncoder enc = new DateTimeEncoder();");
-		System.out.println("// Obtain the SDR for a certain value");
-		System.out.println("SDR sdr = enc.getSDRForValue(System.currentTimeMillis(),2,6);");
+		System.out.println("// Create the configuration");
+		System.out.println("MemoryConfig config = new MemoryConfig(1024);");
+		System.out.println("// Create the memory");
+		System.out.println("Memory memory = new Memory(config);");
+		System.out.println("// Obtain the output SDR for a certain input SDR");
+		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
 		System.out.println("~~~~");
 		System.out.println();
+		getTester().describeMock(MockRegularSDRSet.class.getName());
+		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestPooler.class));
-		System.out.println(" * " + getTester().getLinkForClass(DateTimeValueEncoder.class));
-		System.out.println(" * " + getTester().getLinkForClass(DateTimeEncoder.class));
-		System.out.println(" * " + getTester().getLinkForClass(CombinedEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestMemory.class));
 		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
+		System.out.println(" * " + getTester().getLinkForClass(MemoryConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(Memory.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
-		System.out.println(" * How the generated SDRs represent several date/time and value combinations.");
-		System.out.println(" * The StringBuilder representation of the encoder state.");
-		*/
+		System.out.println(" * How memory column bursting is reduced after leaning several sequences  ");
+		System.out.println(" * Information about the memory after passing the SDR test set through it  ");
 	}
 	
 	@Override
@@ -114,8 +113,8 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		if (averageBurst>0) {
 			averageBurst = averageBurst / bursts.size();
 		}
-		if (counter % (24 * 7) == 0) {
-			//System.out.println("Processed SDRs: " + counter + ", bursting average: " + averageBurst + " (max: " + max + ")");
+		if (counter % (500) == 0) {
+			System.out.println("Processed SDRs: " + counter + ", bursting average: " + averageBurst + " (max: " + max + ")");
 		}
 	}
 }

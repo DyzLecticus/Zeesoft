@@ -35,6 +35,7 @@ public class MemoryColumn {
 				break;
 			}
 		}
+		boolean added = false;
 		if (winner==null) {
 			r = true;
 			SortedMap<Integer,List<MemoryColumnCell>> cellsByDistalLinks = new TreeMap<Integer,List<MemoryColumnCell>>();
@@ -55,13 +56,14 @@ public class MemoryColumn {
 					winner = list.get(ZRandomize.getRandomInt(0,list.size()-1));
 				}
 				winner.addLinksToCells(previouslyActiveCells);
+				added = true;
 			} else {
 				winner = cells.get(ZRandomize.getRandomInt(0,cells.size()-1));
 			}
 		}
 		if (winner!=null) {
 			winner.active = true;
-			if (learn) {
+			if (learn &! added) {
 				winner.learnPreviouslyActiveLinks();
 			}
 		}

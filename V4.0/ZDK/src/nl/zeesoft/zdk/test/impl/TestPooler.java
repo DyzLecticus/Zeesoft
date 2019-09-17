@@ -25,31 +25,31 @@ public class TestPooler extends TestObject implements ProcessorListener {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *DateTimeValueEncoder* to convert a range of dates/times and values into combined periodic sparse distributed representations.");
-		System.out.println("The *DateTimeValueEncoder* is merely an example implementation of a *CombinedEncoder* used to test this library.");
-		System.out.println("It uses random distributed scalar encoders to represent the values in order to show how these use state to maintain consistent representations.");
+		System.out.println("This test shows how to use a *Pooler* to convert encoder out SDRs into consistently sparse representations.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the encoder");
-		System.out.println("DateTimeValueEncoder enc = new DateTimeEncoder();");
-		System.out.println("// Obtain the SDR for a certain value");
-		System.out.println("SDR sdr = enc.getSDRForValue(System.currentTimeMillis(),2,6);");
+		System.out.println("// Create the configuration");
+		System.out.println("PoolerConfig config = new PoolerConfig(200,1024,21);");
+		System.out.println("// Create the pooler");
+		System.out.println("Pooler pooler = new Pooler(config);");
+		System.out.println("// Randomize the connections");
+		System.out.println("pooler.randomizeConnections();");
+		System.out.println("// Obtain the output SDR for a certain input SDR");
+		System.out.println("SDR sdr = pooler.getSDRForInput(new SDR(),true);");
 		System.out.println("~~~~");
+		System.out.println();
+		getTester().describeMock(MockRegularSDRSet.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestPooler.class));
-		System.out.println(" * " + getTester().getLinkForClass(DateTimeValueEncoder.class));
-		System.out.println(" * " + getTester().getLinkForClass(DateTimeEncoder.class));
-		System.out.println(" * " + getTester().getLinkForClass(CombinedEncoder.class));
 		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
+		System.out.println(" * " + getTester().getLinkForClass(PoolerConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(Pooler.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows;  ");
-		System.out.println(" * How the generated SDRs represent several date/time and value combinations.");
-		System.out.println(" * The StringBuilder representation of the encoder state.");
-		*/
+		System.out.println("The output of this test shows information about the pooler after passing the SDR test set through it.  ");
+		System.out.println("It asserts that learning increases the difference in overlap between the regular weekly recurring values and all the other pooler output SDRs.  ");
 	}
 	
 	@Override
@@ -86,7 +86,6 @@ public class TestPooler extends TestObject implements ProcessorListener {
 		System.out.println();
 		System.out.println("Original ratio: " + ratio1 + ", learned ratio: " + ratio2);
 		assertEqual(ratio2>ratio1,true,"Learned ratio does not match expectation");
-		
 	}
 	
 	private float processInputSDRSet(PoolerProcessor processor,SDRSet inputSDRSet, boolean learn) {

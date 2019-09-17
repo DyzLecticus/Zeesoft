@@ -87,10 +87,13 @@ public class SDR {
 	}
 
 	public void subsample(int keep) {
-		if (keep>0 && keep<onBits.size()) {
+		if (keep>0 && keep < onBits.size()) {
 			int remove = (onBits.size() - keep);
-			for (int i = 0; i<remove; i++) {
-				onBits.remove(ZRandomize.getRandomInt(0,onBits.size() - 1));
+			if (remove>0) {
+				List<Integer> list = new ArrayList<Integer>(onBits);
+				for (int i = 0; i<remove; i++) {
+					onBits.remove(list.remove(ZRandomize.getRandomInt(0,list.size() - 1)));
+				}
 			}
 		}
 	}

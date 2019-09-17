@@ -140,12 +140,19 @@ public class Memory implements Processable {
 	}
 	
 	protected void initialize() {
+		int posX = 0;
+		int posY = 0;
 		for (int i = 0; i < config.size; i++) {
 			MemoryColumn col = new MemoryColumn(i);
 			columns.add(col);
 			for (int d = 0; d < config.depth; d++) {
-				MemoryColumnCell cell = new MemoryColumnCell(config,col.index,d);
+				MemoryColumnCell cell = new MemoryColumnCell(config,posX,posY,d);
 				col.cells.add(cell);
+			}
+			posX++;
+			if (posX % config.sizeX == 0) {
+				posX = 0;
+				posY++;
 			}
 		}
 	}

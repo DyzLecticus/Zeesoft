@@ -69,7 +69,7 @@ public class TestDateTimeEncoder extends TestObject {
 		}
 		assertEqual(sdr.size(),enc.size(),"SDR size does not match expectation");
 		assertEqual(sdr.onBits(),enc.bits(),"SDR onBits does not match expectation");
-		assertEqual(sdr.toStringBuilder(),new ZStringBuilder("120,0,1,2,3,4,5,6,7,92,93,94,95,48,49,50,51,96,97,98,99,100,101,102,103"),"SDR(1) does not match expectation");
+		assertSDREequals(sdr,"120,0,1,2,3,4,5,6,7,92,93,94,95,48,49,50,51,96,97,98,99,100,101,102,103","SDR(1) does not match expectation");
 		
 		System.out.println();
 		System.out.println("Changing days of week;");
@@ -80,7 +80,7 @@ public class TestDateTimeEncoder extends TestObject {
 			System.out.println("SDR for " + date.getDateTimeString() + "; " + sdr.toBitString());
 			cal.set(Calendar.DATE,cal.get(Calendar.DATE) + 1);
 		}
-		assertEqual(sdr.toStringBuilder(),new ZStringBuilder("120,0,1,2,3,4,5,6,7,48,49,50,51,52,53,54,55,102,103,104,105,106,107,108,109"),"SDR(2) does not match expectation");
+		assertSDREequals(sdr,"120,0,1,2,3,4,5,6,7,48,49,50,51,52,53,54,55,102,103,104,105,106,107,108,109","SDR(2) does not match expectation");
 		
 		System.out.println();
 		System.out.println("Changing hours of day;");
@@ -91,6 +91,12 @@ public class TestDateTimeEncoder extends TestObject {
 			System.out.println("SDR for " + date.getDateTimeString() + "; " + sdr.toBitString());
 			cal.set(Calendar.HOUR_OF_DAY,cal.get(Calendar.HOUR_OF_DAY) + 1);
 		}
-		assertEqual(sdr.toStringBuilder(),new ZStringBuilder("120,46,47,0,1,2,3,4,5,49,50,51,52,53,54,55,56,109,110,111,112,113,114,115,116"),"SDR(3) does not match expectation");
+		assertSDREequals(sdr,"120,46,47,0,1,2,3,4,5,49,50,51,52,53,54,55,56,109,110,111,112,113,114,115,116","SDR(3) does not match expectation");
+	}
+	
+	public boolean assertSDREequals(SDR sdr,String strVal,String msg) {
+		SDR comp = new SDR(sdr.size());
+		comp.fromStringBuilder(new ZStringBuilder(strVal));
+		return assertEqual(sdr.toStringBuilder(),comp.toStringBuilder(),msg);
 	}
 }

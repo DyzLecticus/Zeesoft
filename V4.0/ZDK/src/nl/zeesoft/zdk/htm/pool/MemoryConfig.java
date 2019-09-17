@@ -7,6 +7,7 @@ public class MemoryConfig {
 	
 	protected int			depth							= 4;
 	protected int			maxDistalConnectionsPerCell		= 10000;
+	protected int			initialDistalConnectedRadius	= 30;
 	
 	protected float			connectionThreshold				= 0.2F;
 	protected float			connectionDecrement				= 0.003F;
