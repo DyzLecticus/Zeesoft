@@ -123,9 +123,6 @@ public class PoolerColumn {
 				} else {
 					boostFactor = 1;
 				}
-				//if (index==100) {
-				//	System.out.println("Activity: " + averageActivity + ", target: " + localAverageActivity + ", boost: " + boostFactor);
-				//}
 			}
 		}
 	}
@@ -152,8 +149,6 @@ public class PoolerColumn {
 		if (maxPosY > config.inputSizeY) {
 			maxPosY = config.inputSizeY;
 		}
-		
-		//System.out.println("-> " + index + "; min, max X/Y: " + minPosX + "/" + minPosY + ", " + maxPosX + "/" + maxPosY + " (" + getOutputPosX() + "/" + getOutputPosY() + " => " + inputPosX + "/" + inputPosY + ")");
 		
 		int posX = 0;
 		int posY = 0;
@@ -184,10 +179,11 @@ public class PoolerColumn {
 	protected int getInputPosX() {
 		int r = 0;
 		int min = config.inputRadius;
-		int max = config.inputSizeX - (config.inputRadius * 2);
+		int max = config.inputSizeX - config.inputRadius;
 		if (min>=max) {
 			r = config.inputSizeX / 2;
 		} else {
+			max = max - config.inputRadius;
 			r = min + ((int) (getOutputPosX() * (float) max));
 		}
 		return r;
@@ -196,10 +192,11 @@ public class PoolerColumn {
 	protected int getInputPosY() {
 		int r = 0;
 		int min = config.inputRadius;
-		int max = config.inputSizeY - (config.inputRadius * 2);
+		int max = config.inputSizeY - config.inputRadius;
 		if (min>=max) {
 			r = config.inputSizeY / 2;
 		} else {
+			max = max - config.inputRadius;
 			r = min + ((int) (getOutputPosY() * (float) max));
 		}
 		return r;  
@@ -209,10 +206,11 @@ public class PoolerColumn {
 		int r = 0;
 		float rel = (float) posX / (float) config.outputSizeX;
 		int min = config.outputRadius;
-		float max = config.outputSizeX - (config.outputRadius * 2);
+		float max = config.outputSizeX - config.outputRadius;
 		if (min>=max) {
 			r = config.outputSizeX / 2;
 		} else {
+			max = max - config.outputRadius;
 			r = min + (int) (rel * max);
 		}
 		return r;
@@ -222,10 +220,11 @@ public class PoolerColumn {
 		int r = 0;
 		float rel = (float) posY / (float) config.outputSizeY;
 		int min = config.outputRadius;
-		float max = config.outputSizeY - (config.outputRadius * 2);
+		float max = config.outputSizeY - config.outputRadius;
 		if (min>=max) {
 			r = config.outputSizeY / 2;
 		} else {
+			max = max - config.outputRadius;
 			r = min + (int) (rel * max);
 		}
 		return r;

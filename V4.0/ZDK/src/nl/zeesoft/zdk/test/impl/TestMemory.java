@@ -108,7 +108,7 @@ public class TestMemory extends TestObject implements ProcessorListener {
 			a = a / bursts.size();
 		}
 		if (counter % (24 * 7) == 0) {
-			//System.out.println("--->>> Processed SDR " + counter + ", bursting average: " + a + " (max: " + max + ")");
+			System.out.println("--->>> Processed SDR " + counter + ", bursting average: " + a + " (max: " + max + ")");
 		}
 	}
 }

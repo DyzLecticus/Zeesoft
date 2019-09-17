@@ -79,7 +79,7 @@ public class Memory implements Processable {
 		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells();
 		//System.out.println("---> Selected predictive cells: " + predictiveCells.size());
 		
-		predictColumnCells(predictiveCells,learn);
+		updatePredictions(predictiveCells,learn);
 		///System.out.println("---> Set predictions");
 		
 		return r;
@@ -95,7 +95,7 @@ public class Memory implements Processable {
 
 	protected void activateColumnCells(List<MemoryColumn> activeColumns,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR burstSDR) {
 		for (MemoryColumn col: activeColumns) {
-			if (col.activateColumnCells(learn,previouslyActiveCells)) {
+			if (col.activateCells(learn,previouslyActiveCells)) {
 				burstSDR.setBit(col.index,true);
 			}
 		}
@@ -119,9 +119,9 @@ public class Memory implements Processable {
 		return r;
 	}
 	
-	protected void predictColumnCells(Set<MemoryColumnCell> predictiveCells,boolean learn) {
+	protected void updatePredictions(Set<MemoryColumnCell> predictiveCells,boolean learn) {
 		for (MemoryColumn col: columns) {
-			col.predictColumnCells(predictiveCells,learn);
+			col.updatePreditions(predictiveCells,learn);
 		}
 	}
 	

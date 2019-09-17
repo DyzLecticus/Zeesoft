@@ -26,7 +26,7 @@ public class MemoryColumn {
 		}
 	}
 	
-	protected boolean activateColumnCells(boolean learn,List<MemoryColumnCell> previouslyActiveCells) {
+	protected boolean activateCells(boolean learn,List<MemoryColumnCell> previouslyActiveCells) {
 		boolean r = false;
 		MemoryColumnCell winner = null;
 		for (MemoryColumnCell cell: cells) {
@@ -54,7 +54,6 @@ public class MemoryColumn {
 				} else {
 					winner = list.get(ZRandomize.getRandomInt(0,list.size()-1));
 				}
-				//System.out.println("Growing: " + previouslyActiveCells.size() + " !!!");
 				winner.addLinksToCells(previouslyActiveCells);
 			} else {
 				winner = cells.get(ZRandomize.getRandomInt(0,cells.size()-1));
@@ -75,7 +74,7 @@ public class MemoryColumn {
 		}
 	}
 
-	protected void predictColumnCells(Set<MemoryColumnCell> predictiveCells,boolean learn) {
+	protected void updatePreditions(Set<MemoryColumnCell> predictiveCells,boolean learn) {
 		for (MemoryColumnCell cell: cells) {
 			if (learn && cell.predictive && !cell.active) {
 				cell.unlearnPreviouslyActiveLinks();

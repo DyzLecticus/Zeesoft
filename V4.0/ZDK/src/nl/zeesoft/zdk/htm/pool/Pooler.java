@@ -272,8 +272,6 @@ public class Pooler implements Processable {
 				minPosY = 0;
 			}
 			
-			//System.out.println("-> " + col.index + "; min, max X/Y: " + minPosX + "/" + minPosY + ", " + maxPosX + "/" + maxPosY + " (" + posX + "/" + posY + ")");
-			
 			PoolerColumnGroup columnGroup = columnGroups.get(PoolerColumnGroup.getId(minPosX,minPosY));
 			if (columnGroup==null) {
 				columnGroup = new PoolerColumnGroup(minPosX,minPosY); 
