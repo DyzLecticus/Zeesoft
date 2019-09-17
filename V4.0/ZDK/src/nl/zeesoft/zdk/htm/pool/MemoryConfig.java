@@ -9,10 +9,11 @@ public class MemoryConfig {
 	protected float			potentialDistalConnections		= 0.50F;
 	protected boolean		distalColumnGroupGlobal			= false;
 	protected int			maxDistalConnectionsPerCell		= 10000;
+	protected int			minDistalConnectionsPredictive	= 4;
 	
-	protected float			connectionThreshold				= 0.5F;
-	protected float			connectionDecrement				= 0.05F;
-	protected float			connectionIncrement				= 0.1F;
+	protected float			connectionThreshold				= 0.2F;
+	protected float			connectionDecrement				= 0.001F;
+	protected float			connectionIncrement				= 0.03F;
 
 	protected int			sizeX							= 0;
 	protected int			sizeY							= 0;
@@ -38,6 +39,10 @@ public class MemoryConfig {
 
 	public void setMaxDistalConnectionsPerCell(int maxDistalConnectionsPerCell) {
 		this.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
+	}
+
+	public void setMinDistalConnectionsPredictive(int minDistalConnectionsPredictive) {
+		this.minDistalConnectionsPredictive = minDistalConnectionsPredictive;
 	}
 
 	public void setConnectionThreshold(float connectionThreshold) {

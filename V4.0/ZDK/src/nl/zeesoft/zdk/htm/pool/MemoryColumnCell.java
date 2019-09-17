@@ -27,6 +27,7 @@ public class MemoryColumnCell {
 	}
 
 	protected void randomizeConnections() {
+		/*
 		distLinks.clear();
 		for (MemoryColumn col: columnGroup.columns) {
 			for (int d = 0; d < config.depth; d++) {
@@ -53,6 +54,7 @@ public class MemoryColumnCell {
 		for (DistalLink lnk: availableLinks) {
 			distLinks.remove(lnk);
 		}
+		*/
 	}
 	
 	protected void cycleActiveState() {
@@ -62,17 +64,21 @@ public class MemoryColumnCell {
 
 	protected void calculateOverlapScoresForActiveLinks() {
 		overlapScore = 0;
+		float activation = 0;
 		for (DistalLink link: distLinks) {
 			if (link.cell.active && link.connection>config.connectionThreshold) {
 				overlapScore++;
+				activation += link.connection;
 			}
 		}
+		overlapScore = (int) (overlapScore * activation);
 	}
 	
 	protected void addLinksToCells(List<MemoryColumnCell> toCells) {
 		int addMax = config.maxDistalConnectionsPerCell - distLinks.size();
 		if (addMax>0) {
 			toCells = new ArrayList<MemoryColumnCell>(toCells);
+			toCells.remove(this);
 			for (DistalLink link: distLinks) {
 				int idx = toCells.indexOf(link.cell);
 				if (idx>=0) {

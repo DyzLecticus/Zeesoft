@@ -39,7 +39,6 @@ public class MemoryColumn {
 		MemoryColumnCell winner = null;
 		for (MemoryColumnCell cell: cells) {
 			if (cell.predictive) {
-				cell.active = true;
 				winner = cell;
 				break;
 			}
@@ -48,8 +47,6 @@ public class MemoryColumn {
 			r = true;
 			SortedMap<Integer,List<MemoryColumnCell>> cellsByDistalLinks = new TreeMap<Integer,List<MemoryColumnCell>>();
 			for (MemoryColumnCell cell: cells) {
-				cell.active = true;
-				
 				int key = cell.distLinks.size();
 				List<MemoryColumnCell> list = cellsByDistalLinks.get(key);
 				if (list==null) {
@@ -71,8 +68,11 @@ public class MemoryColumn {
 				winner = cells.get(ZRandomize.getRandomInt(0,cells.size()-1));
 			}
 		}
-		if (winner!=null && learn) {
-			winner.learnPreviouslyActiveLinks();
+		if (winner!=null) {
+			winner.active = true;
+			if (learn) {
+				winner.learnPreviouslyActiveLinks();
+			}
 		}
 		return r;
 	}

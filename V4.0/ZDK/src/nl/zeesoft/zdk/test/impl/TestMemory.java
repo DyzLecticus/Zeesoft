@@ -81,36 +81,47 @@ public class TestMemory extends TestObject implements MemoryProcessorListener {
 		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
 		processor.getMemoryListeners().add(this);
 
-		//int num = 100;
-		int num = inputSDRSet.size();
-		processor.setIntputSDRSet(inputSDRSet);
-		
-		System.out.println();
-		long started = System.currentTimeMillis();
-		System.out.println("Processing input SDR set ...");
-		processor.process(num);
-		System.out.println("Processing input SDR set took: " + (System.currentTimeMillis() - started) + " ms");
-		
-		SDRSet burstSDRSet = processor.getBurstSDRSet();
-		assertEqual(burstSDRSet.size(),num,"Burst SDR set size does not match expectation");
+		//for (int i = 0; i < 100; i++) {
+			bursts.clear();
+			counter = 0;
+			//int num = 10000;
+			int num = inputSDRSet.size();
+			processor.setIntputSDRSet(inputSDRSet);
+			
+			System.out.println();
+			long started = System.currentTimeMillis();
+			System.out.println("Processing input SDR set ...");
+			processor.process(num);
+			System.out.println("Processing input SDR set took: " + (System.currentTimeMillis() - started) + " ms");
+			
+			SDRSet burstSDRSet = processor.getBurstSDRSet();
+			assertEqual(burstSDRSet.size(),num,"Burst SDR set size does not match expectation");
+			
+			System.out.println();
+			System.out.println(memory.getDescription());
+		//}
 	}
 	
 	@Override
 	public void processedSDR(MemoryProcessor processor, SDR inputSDR, SDR outputSDR, SDR burstSDR) {
+		counter++;
 		bursts.add(burstSDR.onBits());
+		int max = 0;
 		while(bursts.size()>100) {
 			bursts.remove(0);
 		}
 		int a = 0;
 		for (Integer b: bursts) {
+			if (b > max) {
+				max = b;
+			}
 			a += b;
 		}
 		if (a>0) {
 			a = a / bursts.size();
 		}
 		if (counter % (24 * 7) == 0) {
-			System.out.println("--->>> Processed SDR " + counter + ", bursting average: " + a);
+			System.out.println("--->>> Processed SDR " + counter + ", bursting average: " + a + " (max: " + max + ")");
 		}
-		counter++;
 	}
 }

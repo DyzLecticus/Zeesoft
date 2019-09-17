@@ -114,8 +114,8 @@ public class Memory {
 		calculateOverlapScoresForActiveLinks();
 		//System.out.println("---> Calculated overlap scores");
 		
-		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells(activeColumns.size());
-		//System.out.println("---> Selected predictive cells: " + predictiveCells.size());
+		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells((activeColumns.size() * 100));
+		System.out.println("---> Selected predictive cells: " + predictiveCells.size());
 		
 		//for (MemoryColumnCell cell: predictiveCells) {
 		//	System.out.println("     ---> Cell: " + cell.columnIndex + "/" + cell.posZ + ", overlap: " + cell.overlapScore);
@@ -154,7 +154,7 @@ public class Memory {
 		SortedMap<Integer,List<MemoryColumnCell>> map = new TreeMap<Integer,List<MemoryColumnCell>>();
 		for (MemoryColumn col: columns) {
 			for (MemoryColumnCell cell: col.cells) {
-				if (cell.overlapScore>0) {
+				if (cell.overlapScore>config.minDistalConnectionsPredictive) {
 					List<MemoryColumnCell> list = map.get(cell.overlapScore);
 					if (list==null) {
 						list = new ArrayList<MemoryColumnCell>();
