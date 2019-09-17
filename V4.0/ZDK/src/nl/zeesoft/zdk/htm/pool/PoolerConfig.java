@@ -7,7 +7,7 @@ public class PoolerConfig {
 	protected int			outputSize						= 0;
 	protected int			outputBits						= 0;
 	
-	protected float			potentialProximalConnections	= 0.50F;
+	protected float			potentialProximalConnections	= 0.5F;
 	
 	protected float			connectionThreshold				= 0.1F;
 	protected float			connectionDecrement				= 0.008F;
@@ -79,7 +79,7 @@ public class PoolerConfig {
 	
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
-		r.append("Input dimensions: ");
+		r.append("Pooler input dimensions: ");
 		r.append("" + inputSizeX);
 		r.append("x");
 		r.append("" + inputSizeY);

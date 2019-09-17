@@ -4,55 +4,22 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class Memory {
-	private		MemoryConfig							config					= null;
+public class Memory implements Processable {
+	protected	MemoryConfig							config					= null;
 
 	protected	List<MemoryColumn>						columns					= new ArrayList<MemoryColumn>();
-	protected	SortedMap<String,MemoryColumnGroup>		columnGroups			= new TreeMap<String,MemoryColumnGroup>();
-	protected	MemoryColumnGroup						globalColumnGroup		= null;
 	
 	public Memory(MemoryConfig config) {
 		this.config = config;
-	}
-
-	public void initialize() {
-		globalColumnGroup = new MemoryColumnGroup();
-		for (int i = 0; i < config.size; i++) {
-			MemoryColumn mCol = new MemoryColumn(globalColumnGroup,i);
-			globalColumnGroup.columns.add(mCol);
-			columns.add(mCol);
-		}
-		initializeCells();
-	}
-
-	public void initialize(Pooler pooler) {
-		globalColumnGroup = new MemoryColumnGroup();
-		for (PoolerColumnGroup pcg: pooler.columnGroups.values()) {
-			columnGroups.put(pcg.getId(),new MemoryColumnGroup());
-		}
-		for (PoolerColumn pCol: pooler.columns) {
-			MemoryColumn mCol = new MemoryColumn(columnGroups.get(pCol.columnGroup.getId()),pCol.index);
-			globalColumnGroup.columns.add(mCol);
-			columns.add(mCol);
-		}
-		for (PoolerColumnGroup pcg: pooler.columnGroups.values()) {
-			MemoryColumnGroup mcg = columnGroups.get(pcg.getId());
-			for (PoolerColumn pCol: pcg.columns) {
-				mcg.columns.add(columns.get(pCol.index));
-			}
-		}
-		initializeCells();
+		initialize();
 	}
 	
 	public ZStringBuilder getDescription() {
-		ZStringBuilder r = config.getDescription();
+		ZStringBuilder r = new ZStringBuilder();
 		int cells = config.size * config.depth;
 		int min = cells; 
 		int max = 0;
@@ -77,7 +44,7 @@ public class Memory {
 		if (avg>0) {
 			avg = avg / cells;
 			r.append("\n");
-			r.append("Average distal inputs per cell: ");
+			r.append("Average distal inputs per memory cell: ");
 			r.append("" + avg);
 			if (min!=avg || max!=avg) {
 				r.append(" (min: ");
@@ -89,13 +56,8 @@ public class Memory {
 		}
 		return r;
 	}
-	
-	public void randomizeConnections() {
-		for (MemoryColumn col: columns) {
-			col.randomizeConnections();
-		}
-	}
 
+	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
 		SDR r = new SDR(config.size);
 		
@@ -114,21 +76,8 @@ public class Memory {
 		calculateActivity();
 		//System.out.println("---> Calculated overlap scores");
 		
-		//int max = activeColumns.size() * config.depth * config.depth;
-		int max = 1000;
-		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells(max);
+		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells();
 		//System.out.println("---> Selected predictive cells: " + predictiveCells.size());
-		
-		/*
-		int i = 0;
-		for (MemoryColumnCell cell: predictiveCells) {
-			//System.out.println("     ---> Cell: " + cell.columnIndex + "/" + cell.posZ + ", activity: " + cell.activity);
-			i++;
-			if (i>20) {
-				break;
-			}
-		}
-		*/
 		
 		predictColumnCells(predictiveCells,learn);
 		///System.out.println("---> Set predictions");
@@ -158,40 +107,13 @@ public class Memory {
 		}
 	}
 
-	protected Set<MemoryColumnCell> selectPredictiveCells(int max) {
+	protected Set<MemoryColumnCell> selectPredictiveCells() {
 		Set<MemoryColumnCell> r = new HashSet<MemoryColumnCell>();
-		SortedMap<Integer,List<MemoryColumnCell>> map = new TreeMap<Integer,List<MemoryColumnCell>>();
 		for (MemoryColumn col: columns) {
 			for (MemoryColumnCell cell: col.cells) {
 				if (cell.activity>0) {
-					List<MemoryColumnCell> list = map.get(cell.activity);
-					if (list==null) {
-						list = new ArrayList<MemoryColumnCell>();
-						map.put(cell.activity,list);
-					}
-					list.add(cell);
+					r.add(cell);
 				}
-			}
-		}
-		Object[] keys = map.keySet().toArray();
-		for (int i = (map.size() - 1); i>=0; i--) {
-			List<MemoryColumnCell> list = map.get(keys[i]);
-			if (max - r.size() < list.size()) {
-				for (int s = 0; s < max - r.size(); s++) {
-					int sel = ZRandomize.getRandomInt(0,list.size() - 1);
-					r.add(list.get(sel));
-					list.remove(sel);
-				}
-			} else {
-				for (MemoryColumnCell col: list) {
-					r.add(col);
-					if (r.size()>=max) {
-						break;
-					}
-				}
-			}
-			if (r.size()>=max) {
-				break;
 			}
 		}
 		return r;
@@ -203,14 +125,12 @@ public class Memory {
 		}
 	}
 	
-	protected void initializeCells() {
-		for (MemoryColumn col: columns) {
-			for (int i = 0; i < config.depth; i++) {
-				MemoryColumnGroup mcg = col.columnGroup;
-				if (config.distalColumnGroupGlobal) {
-					mcg = globalColumnGroup;
-				}
-				MemoryColumnCell cell = new MemoryColumnCell(config,mcg,col.index,i);
+	protected void initialize() {
+		for (int i = 0; i < config.size; i++) {
+			MemoryColumn col = new MemoryColumn(i);
+			columns.add(col);
+			for (int d = 0; d < config.depth; d++) {
+				MemoryColumnCell cell = new MemoryColumnCell(config,col.index,d);
 				col.cells.add(cell);
 			}
 		}

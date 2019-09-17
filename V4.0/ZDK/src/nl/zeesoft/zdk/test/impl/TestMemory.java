@@ -6,15 +6,16 @@ import java.util.List;
 import nl.zeesoft.zdk.htm.pool.Memory;
 import nl.zeesoft.zdk.htm.pool.MemoryConfig;
 import nl.zeesoft.zdk.htm.pool.MemoryProcessor;
-import nl.zeesoft.zdk.htm.pool.MemoryProcessorListener;
 import nl.zeesoft.zdk.htm.pool.Pooler;
 import nl.zeesoft.zdk.htm.pool.PoolerConfig;
+import nl.zeesoft.zdk.htm.pool.ProcessorListener;
+import nl.zeesoft.zdk.htm.pool.ProcessorObject;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestMemory extends TestObject implements MemoryProcessorListener {
+public class TestMemory extends TestObject implements ProcessorListener {
 	private List<Integer>	bursts	= new ArrayList<Integer>();
 	private int				counter	= 0;
 	
@@ -65,47 +66,33 @@ public class TestMemory extends TestObject implements MemoryProcessorListener {
 		pooler.randomizeConnections();
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
+		System.out.println(memoryConfig.getDescription());
+		
 		Memory memory = new Memory(memoryConfig);
 		
-		long start = System.currentTimeMillis();
-		memory.initialize(pooler);
-		System.out.println("Initializing memory took: " + (System.currentTimeMillis() - start) + " ms");
-				
-		start = System.currentTimeMillis();
-		memory.randomizeConnections();
-		System.out.println("Randomizing connections took: " + (System.currentTimeMillis() - start) + " ms");
+		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
+		processor.getListeners().add(this);
+
+		int num = inputSDRSet.size();
+		processor.setIntputSDRSet(inputSDRSet);
+		
+		System.out.println();
+		long started = System.currentTimeMillis();
+		System.out.println("Processing input SDR set ...");
+		processor.process();
+		System.out.println("Processing input SDR set took: " + (System.currentTimeMillis() - started) + " ms");
+		
+		SDRSet burstSDRSet = processor.getBurstSDRSet();
+		assertEqual(burstSDRSet.size(),num,"Burst SDR set size does not match expectation");
 		
 		System.out.println();
 		System.out.println(memory.getDescription());
-		
-		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
-		processor.getMemoryListeners().add(this);
-
-		//for (int i = 0; i < 100; i++) {
-			bursts.clear();
-			counter = 0;
-			//int num = 10000;
-			int num = inputSDRSet.size();
-			processor.setIntputSDRSet(inputSDRSet);
-			
-			System.out.println();
-			long started = System.currentTimeMillis();
-			System.out.println("Processing input SDR set ...");
-			processor.process(num);
-			System.out.println("Processing input SDR set took: " + (System.currentTimeMillis() - started) + " ms");
-			
-			SDRSet burstSDRSet = processor.getBurstSDRSet();
-			assertEqual(burstSDRSet.size(),num,"Burst SDR set size does not match expectation");
-			
-			System.out.println();
-			System.out.println(memory.getDescription());
-		//}
 	}
-	
+
 	@Override
-	public void processedSDR(MemoryProcessor processor, SDR inputSDR, SDR outputSDR, SDR burstSDR) {
+	public void processedSDR(ProcessorObject processor, SDR inputSDR, List<SDR> outputSDRs) {
 		counter++;
-		bursts.add(burstSDR.onBits());
+		bursts.add(outputSDRs.get(1).onBits());
 		int max = 0;
 		while(bursts.size()>100) {
 			bursts.remove(0);
@@ -121,7 +108,7 @@ public class TestMemory extends TestObject implements MemoryProcessorListener {
 			a = a / bursts.size();
 		}
 		if (counter % (24 * 7) == 0) {
-			System.out.println("--->>> Processed SDR " + counter + ", bursting average: " + a + " (max: " + max + ")");
+			//System.out.println("--->>> Processed SDR " + counter + ", bursting average: " + a + " (max: " + max + ")");
 		}
 	}
 }

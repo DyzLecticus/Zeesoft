@@ -9,20 +9,12 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class MemoryColumn {
-	protected	MemoryColumnGroup		columnGroup	= null;	
 	protected	int						index		= 0;
 	
 	protected	List<MemoryColumnCell>	cells		= new ArrayList<MemoryColumnCell>();
 	
-	protected MemoryColumn(MemoryColumnGroup columnGroup,int index) {
-		this.columnGroup = columnGroup;
+	protected MemoryColumn(int index) {
 		this.index = index;
-	}
-	
-	protected void randomizeConnections() {
-		for (MemoryColumnCell cell: cells) {
-			cell.randomizeConnections();
-		}
 	}
 	
 	protected void cycleActiveState(List<MemoryColumnCell> previouslyActiveCells) {

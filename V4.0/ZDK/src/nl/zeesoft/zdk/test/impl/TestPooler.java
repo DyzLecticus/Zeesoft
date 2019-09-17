@@ -1,16 +1,19 @@
 package nl.zeesoft.zdk.test.impl;
 
+import java.util.List;
+
 import nl.zeesoft.zdk.htm.pool.Pooler;
 import nl.zeesoft.zdk.htm.pool.PoolerConfig;
 import nl.zeesoft.zdk.htm.pool.PoolerProcessor;
-import nl.zeesoft.zdk.htm.pool.PoolerProcessorListener;
 import nl.zeesoft.zdk.htm.pool.PoolerStats;
+import nl.zeesoft.zdk.htm.pool.ProcessorListener;
+import nl.zeesoft.zdk.htm.pool.ProcessorObject;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestPooler extends TestObject implements PoolerProcessorListener {
+public class TestPooler extends TestObject implements ProcessorListener {
 	private int	counter	= 0;
 	
 	public TestPooler(Tester tester) {
@@ -73,11 +76,13 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 
 		System.out.println();
 		float ratio1 = processInputSDRSet(processor,inputSDRSet,false);
+		assertEqual(ratio1 > 6F,true,"Unlearned ratio is lower than minimal expectation");
 		
 		processor.resetStats();
 		
 		System.out.println();
 		float ratio2 = processInputSDRSet(processor,inputSDRSet,true);
+		assertEqual(ratio1 > 8F,true,"Learned ratio is lower than minimal expectation");
 		
 		System.out.println();
 		System.out.println("Original ratio: " + ratio1 + ", learned ratio: " + ratio2);
@@ -152,16 +157,15 @@ public class TestPooler extends TestObject implements PoolerProcessorListener {
 			System.out.println("Combined average: " + avg + ", Combined weekly average: " + avgWeek);
 			
 			r = avgWeek / avg;
-			assertEqual(r > 8F,true,"Combined weekly average does not match expectation");
 		}
 		return r;
 	}
-	
+
 	@Override
-	public void processedSDR(PoolerProcessor processor, SDR inputSDR, SDR outputSDR) {
+	public void processedSDR(ProcessorObject processor, SDR inputSDR, List<SDR> outputSDRs) {
+		counter++;
 		if (counter % (24 * 7) == 0) {
 			//System.out.println(counter + " <= " + inputSDR.toStringBuilder() + " => " + outputSDR.toStringBuilder());
 		}
-		counter++;
 	}
 }

@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class Pooler {
+public class Pooler implements Processable {
 	protected PoolerConfig							config				= null;
 
 	protected PoolerStats							stats				= new PoolerStats();
@@ -51,7 +51,7 @@ public class Pooler {
 		if (avg>0) {
 			avg = avg / columns.size();
 			r.append("\n");
-			r.append("Average proximal inputs per column: ");
+			r.append("- Average proximal inputs per column: ");
 			r.append("" + avg);
 			if (min!=avg || max!=avg) {
 				r.append(" (min: ");
@@ -76,7 +76,7 @@ public class Pooler {
 		if (avg>0) {
 			avg = avg / columnGroups.size();
 			r.append("\n");
-			r.append("Column groups: ");
+			r.append("- Column groups: ");
 			r.append("" + columnGroups.size());
 			r.append(", average columns per group: ");
 			r.append("" + avg);
@@ -99,6 +99,7 @@ public class Pooler {
 		return stats;
 	}
 
+	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
 		SDR r = null;
 		List<Integer> onBits = input.getOnBits();

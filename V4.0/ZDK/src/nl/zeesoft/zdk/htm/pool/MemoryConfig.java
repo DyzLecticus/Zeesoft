@@ -6,8 +6,6 @@ public class MemoryConfig {
 	protected int			size							= 0;
 	
 	protected int			depth							= 4;
-	protected float			potentialDistalConnections		= 0.50F;
-	protected boolean		distalColumnGroupGlobal			= false;
 	protected int			maxDistalConnectionsPerCell		= 10000;
 	
 	protected float			connectionThreshold				= 0.2F;
@@ -26,14 +24,6 @@ public class MemoryConfig {
 	public MemoryConfig(int size) {
 		this.size = size;
 		calculateDimensions();
-	}
-
-	public void setPotentialDistalConnections(float potentialConnections) {
-		this.potentialDistalConnections = potentialConnections;
-	}
-
-	public void setDistalColumnGroupGlobal(boolean distalColumnGroupGlobal) {
-		this.distalColumnGroupGlobal = distalColumnGroupGlobal;
 	}
 
 	public void setMaxDistalConnectionsPerCell(int maxDistalConnectionsPerCell) {
@@ -65,7 +55,7 @@ public class MemoryConfig {
 	
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
-		r.append("Dimensions: ");
+		r.append("Memory dimensions: ");
 		r.append("" + sizeX);
 		r.append("x");
 		r.append("" + sizeY);
