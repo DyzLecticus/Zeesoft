@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test.impl.htm;
 
 import java.util.Calendar;
 

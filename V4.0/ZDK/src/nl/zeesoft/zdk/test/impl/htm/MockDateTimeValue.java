@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test.impl.htm;
 
 public class MockDateTimeValue {
 	public long		dateTime	= 0;

@@ -58,6 +58,9 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 				}
 			}
 			for (int i = 0; i < input.onBits(); i++) {
+				if (i==indices.size()) {
+					break;
+				}
 				predictionSDR.setBit(indices.get(i),true);
 			}
 		}

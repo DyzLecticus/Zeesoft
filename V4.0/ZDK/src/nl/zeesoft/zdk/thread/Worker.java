@@ -237,6 +237,8 @@ public abstract class Worker extends Locker implements Runnable {
 	protected void setCaughtException(Exception caughtException) {
 		if (getMessenger()!=null) {
 			getMessenger().error(this,"Error while working",caughtException);
+		} else {
+			caughtException.printStackTrace();
 		}
 		lockMe(this);
 		this.caughtException = caughtException;

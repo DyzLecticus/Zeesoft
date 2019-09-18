@@ -7,6 +7,14 @@ import nl.zeesoft.zdk.build.ManifestWriter;
 import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder;
+import nl.zeesoft.zdk.test.impl.htm.TestDateTimeValueEncoder;
+import nl.zeesoft.zdk.test.impl.htm.TestMemory;
+import nl.zeesoft.zdk.test.impl.htm.TestPooler;
+import nl.zeesoft.zdk.test.impl.htm.TestRDScalarEncoder;
+import nl.zeesoft.zdk.test.impl.htm.TestSDR;
+import nl.zeesoft.zdk.test.impl.htm.TestSDRSet;
+import nl.zeesoft.zdk.test.impl.htm.TestScalarEncoder;
 
 /**
  * Documents and tests the ZDK.
