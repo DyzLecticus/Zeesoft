@@ -19,7 +19,9 @@ public class MockRealDateTimeValues extends MockObject {
 		List<MockDateTimeValue> r = new ArrayList<MockDateTimeValue>();
 		
 		int num = 24 * 365 * 2; // Every hour, every day for 2 years
-		int numFinalQuarter = num - (num / 4);
+		int numAnomaly = num / 2;
+		
+		int maxVal2 = 0;
 		
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		cal.set(Calendar.YEAR,2018);
@@ -33,7 +35,7 @@ public class MockRealDateTimeValues extends MockObject {
 		int val1 = 0;
 		int val2 = 0;
 		for (int i = 0; i<=num; i++) {
-			int base = 20;
+			int base = 0;
 			
 			int month = cal.get(Calendar.MONTH);
 			if (month<6) {
@@ -41,22 +43,23 @@ public class MockRealDateTimeValues extends MockObject {
 			} else {
 				base += 12 - month;
 			}
-			if (i>numFinalQuarter) {
-				base = base * 2;
+			
+			if (i>=numAnomaly) {
+				base = 100 + base;
 			}
 			
 			val1 = base;
 
-			val2 = (int) ((base + cal.get(Calendar.DAY_OF_MONTH) - cal.get(Calendar.DAY_OF_WEEK)) * 1.5F);
-			
-			int hour = cal.get(Calendar.HOUR);
+			int hour = cal.get(Calendar.HOUR_OF_DAY);
 			if (hour<12) {
-				val2 += (hour * 4);
+				hour += (hour * 2);
 			} else {
-				val2 += 96 - (hour * 4);
+				hour += 48 - (hour * 2);
 			}
 			
-			val2 += ZRandomize.getRandomInt(0,3);
+			val2 = base + hour;
+			val2 += ZRandomize.getRandomInt(0,5);
+			
 			
 			MockDateTimeValue mockVal = new MockDateTimeValue();
 			mockVal.dateTime = cal.getTimeInMillis();
@@ -65,7 +68,13 @@ public class MockRealDateTimeValues extends MockObject {
 			r.add(mockVal);
 			
 			cal.set(Calendar.HOUR_OF_DAY,cal.get(Calendar.HOUR_OF_DAY) + 1);
+			
+			if (val2>maxVal2) {
+				maxVal2 = val2;
+			}
 		}
+		
+		System.out.println("Anomaly is at: " + numAnomaly + ", maximum value 2: " + maxVal2);
 		
 		return r;
 	}

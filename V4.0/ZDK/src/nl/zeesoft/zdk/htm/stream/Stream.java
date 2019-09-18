@@ -47,11 +47,12 @@ public class Stream extends Worker {
 		unlockMe(this);
 	}
 	
-	public void addSDR(SDR inputSDR) {
+	public long addSDR(SDR inputSDR) {
 		StreamResult result = results.getNewResult(inputSDR);
 		lockMe(this);
 		processors.get(0).addResultToQueue(result);
 		unlockMe(this);
+		return result.id;
 	}
 	
 	@Override

@@ -36,10 +36,10 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 				}
 				list.add(cell);
 			}
-			SortedMap<Integer,List<Integer>> columnIndicesByActivity = new TreeMap<Integer,List<Integer>>();
+			SortedMap<Float,List<Integer>> columnIndicesByActivity = new TreeMap<Float,List<Integer>>();
 			for (List<MemoryColumnCell> cells: predictionsByColumnIndex.values()) {
 				int index = 0;
-				int activity = 0;
+				float activity = 0;
 				for (MemoryColumnCell cell: cells) {
 					index = cell.columnIndex;
 					activity += cell.activity;

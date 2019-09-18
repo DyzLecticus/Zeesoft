@@ -13,7 +13,7 @@ public class MemoryColumnCell {
 	protected	List<DistalLink>	distLinks			= new ArrayList<DistalLink>();
 	protected	List<DistalLink>	activeLinks			= new ArrayList<DistalLink>();
 	
-	protected	int					activity			= 0;
+	protected	float				activity			= 0;
 	
 	protected	boolean				active				= false;
 	protected	boolean				activePreviously	= false;
@@ -34,17 +34,11 @@ public class MemoryColumnCell {
 
 	protected void calculateActivity() {
 		activity = 0;
-		float activation = 0;
 		for (DistalLink link: activeLinks) {
 			if (link.cell.active && link.connection>config.connectionThreshold) {
-				activity++;
-				activation += link.connection;
+				activity += link.connection - config.connectionThreshold;
 			}
 		}
-		if (activity>0) {
-			activation = (activation / activity) * (1F / config.connectionThreshold);
-		}
-		activity = (int) (activation * activity);
 	}
 	
 	protected void addLinksToCells(List<MemoryColumnCell> toCells) {

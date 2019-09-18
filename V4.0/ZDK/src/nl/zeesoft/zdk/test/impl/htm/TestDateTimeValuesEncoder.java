@@ -6,18 +6,18 @@ import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
 import nl.zeesoft.zdk.htm.enc.DateTimeEncoder;
-import nl.zeesoft.zdk.htm.enc.DateTimeValueEncoder;
+import nl.zeesoft.zdk.htm.enc.DateTimeValuesEncoder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestDateTimeValueEncoder extends TestObject {
-	public TestDateTimeValueEncoder(Tester tester) {
+public class TestDateTimeValuesEncoder extends TestObject {
+	public TestDateTimeValuesEncoder(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestDateTimeValueEncoder(new Tester())).test(args);
+		(new TestDateTimeValuesEncoder(new Tester())).test(args);
 	}
 
 	@Override
@@ -35,8 +35,8 @@ public class TestDateTimeValueEncoder extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestDateTimeValueEncoder.class));
-		System.out.println(" * " + getTester().getLinkForClass(DateTimeValueEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestDateTimeValuesEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(DateTimeValuesEncoder.class));
 		System.out.println(" * " + getTester().getLinkForClass(DateTimeEncoder.class));
 		System.out.println(" * " + getTester().getLinkForClass(CombinedEncoder.class));
 		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
@@ -49,7 +49,7 @@ public class TestDateTimeValueEncoder extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		DateTimeValueEncoder enc = new DateTimeValueEncoder();
+		DateTimeValuesEncoder enc = new DateTimeValuesEncoder();
 		assertEqual(enc.size(),200,"Encoder size does not match expectation");
 		assertEqual(enc.bits(),40,"Encoder bits does not match expectation");
 		
@@ -81,7 +81,7 @@ public class TestDateTimeValueEncoder extends TestObject {
 		}
 		
 		ZStringBuilder str = enc.toStringBuilder();
-		DateTimeValueEncoder encCopy = new DateTimeValueEncoder();
+		DateTimeValuesEncoder encCopy = new DateTimeValuesEncoder();
 		encCopy.fromStringBuilder(str);
 		ZStringBuilder strCopy = encCopy.toStringBuilder();
 		if (!assertEqual(strCopy.equals(str),true,"Encoder StringBuilder does not match expectation")) {

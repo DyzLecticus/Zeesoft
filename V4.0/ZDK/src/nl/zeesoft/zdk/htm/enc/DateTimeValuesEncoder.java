@@ -4,7 +4,7 @@ import java.util.SortedMap;
 
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class DateTimeValueEncoder extends DateTimeEncoder {
+public class DateTimeValuesEncoder extends DateTimeEncoder {
 	private static final String		VALUE1		= "VALUE1";
 	private static final String		VALUE2		= "VALUE2";
 	

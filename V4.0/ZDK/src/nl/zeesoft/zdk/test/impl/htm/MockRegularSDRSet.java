@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.enc.DateTimeValueEncoder;
+import nl.zeesoft.zdk.htm.enc.DateTimeValuesEncoder;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.test.MockObject;
 
@@ -14,7 +14,7 @@ public class MockRegularSDRSet extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
-		DateTimeValueEncoder enc = new DateTimeValueEncoder();
+		DateTimeValuesEncoder enc = new DateTimeValuesEncoder();
 		SDRSet sdrSet = new SDRSet(enc.size());
 		@SuppressWarnings("unchecked")
 		List<MockDateTimeValue> mockVals = (List<MockDateTimeValue>) getTester().getMockedObject(MockRegularDateTimeValues.class.getName());
