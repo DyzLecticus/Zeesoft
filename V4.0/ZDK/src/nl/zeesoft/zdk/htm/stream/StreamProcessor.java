@@ -1,9 +1,12 @@
 package nl.zeesoft.zdk.htm.stream;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import nl.zeesoft.zdk.htm.proc.Processable;
+import nl.zeesoft.zdk.htm.proc.ProcessableContextInput;
 import nl.zeesoft.zdk.htm.proc.ProcessableSecondaryOutput;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -60,6 +63,14 @@ public class StreamProcessor extends Worker {
 		}
 		unlockMe(this);
 		if (input!=null) {
+			if (processor instanceof ProcessableContextInput) {
+				List<SDR> contextSDRs = new ArrayList<SDR>();
+				contextSDRs.add(result.inputSDR);
+				for (SDR sdr: result.outputSDRs) {
+					contextSDRs.add(sdr);
+				}
+				((ProcessableContextInput) processor).setContextSDRs(contextSDRs);
+			}
 			SDR outputSDR = processor.getSDRForInput(input, learn);
 			result.outputSDRs.add(outputSDR);
 			if (processor instanceof ProcessableSecondaryOutput) {

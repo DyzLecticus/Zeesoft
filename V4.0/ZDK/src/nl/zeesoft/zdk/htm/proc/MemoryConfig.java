@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 
 public class MemoryConfig {
 	protected int			size							= 0;
+	protected int			bits							= 0;
 	
 	protected int			depth							= 4;
 	protected int			maxDistalConnectionsPerCell		= 10000;
@@ -20,10 +21,12 @@ public class MemoryConfig {
 		this.size = poolerConfig.outputSize;
 		this.sizeX = poolerConfig.outputSizeX;
 		this.sizeY = poolerConfig.outputSizeY;
+		this.bits = poolerConfig.outputBits;
 	}
 
-	public MemoryConfig(int size) {
+	public MemoryConfig(int size,int bits) {
 		this.size = size;
+		this.bits = bits;
 		calculateDimensions();
 	}
 

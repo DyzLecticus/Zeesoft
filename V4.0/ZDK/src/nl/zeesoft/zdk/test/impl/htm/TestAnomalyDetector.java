@@ -2,10 +2,12 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.text.DecimalFormat;
 
+import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.Predictor;
+import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
@@ -65,7 +67,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	
 	@Override
 	protected void test(String[] args) {
-		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockRealSDRSet.class.getName());
+		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockAnomalySDRSet.class.getName());
 		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
 		
 		numChange = (inputSDRSet.size() / 2) + 1;
@@ -77,7 +79,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
 		
-		Predictor predictor = new Predictor(memoryConfig);
+		Predictor predictor = new BufferedPredictor(memoryConfig);
 		
 		stream = new PredictionStream(null,null,pooler,predictor);
 		detector = stream.getNewAnomalyDetector();
@@ -115,9 +117,14 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 
 	@Override
 	public void detectedAnomaly(float averageAccuracy, float averageAccuracyChange, StreamResult result) {
+		stream.stop();
 		System.out.println();
 		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracyChange + ", change: " + averageAccuracyChange);
+		if (result.outputSDRs.size()>3) {
+			DateTimeSDR dts = (DateTimeSDR) result.outputSDRs.get(3);
+			System.out.println("Predicted value 1: " + dts.keyValues.get("value1"));
+			System.out.println("Predicted value 2: " + dts.keyValues.get("value2"));
+		}
 		numDetected = (int) result.id;
-		stream.stop();
 	}
 }

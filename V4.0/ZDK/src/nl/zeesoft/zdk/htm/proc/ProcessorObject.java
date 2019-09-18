@@ -6,6 +6,9 @@ import java.util.List;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 
+/**
+ * A processor provides basic sequential processor chaining where the output SDR of each processor is used as input for the next processor
+ */
 public abstract class ProcessorObject {
 	protected List<Processable>				processors		= new ArrayList<Processable>();
 	protected List<ProcessorListener>		listeners		= new ArrayList<ProcessorListener>();
@@ -53,6 +56,11 @@ public abstract class ProcessorObject {
 		List<SDR> outputSDRs = new ArrayList<SDR>();
 		SDR inSDR = inputSDR;
 		for (Processable processor: processors) {
+			if (processor instanceof ProcessableContextInput) {
+				List<SDR> contextSDRs = new ArrayList<SDR>();
+				contextSDRs.add(inputSDR);
+				((ProcessableContextInput) processor).setContextSDRs(contextSDRs);
+			}
 			SDR outputSDR = processor.getSDRForInput(inSDR,learn);
 			outputSDRs.add(outputSDR);
 			if (processor instanceof ProcessableSecondaryOutput) {

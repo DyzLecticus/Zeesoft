@@ -10,11 +10,18 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Predictor extends Memory implements ProcessableSecondaryOutput {
+	private	int						maxOnBits			= 0;
+	
 	private SDR						predictionSDR		= null;
 	private Set<MemoryColumnCell>	predictiveCells		= new HashSet<MemoryColumnCell>();
 	
 	public Predictor(MemoryConfig config) {
 		super(config);
+		maxOnBits = config.bits;
+	}
+	
+	public void setMaxOnBits(int maxOnBits) {
+		this.maxOnBits = maxOnBits;
 	}
 	
 	public SDR getPredictionSDR() {
@@ -24,8 +31,7 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
 		SDR r = super.getSDRForInput(input,learn);
-		
-		predictionSDR =new SDR(config.size);
+		predictionSDR = new SDR(config.size);
 		if (predictiveCells.size()>0) {
 			SortedMap<Integer,List<MemoryColumnCell>> predictionsByColumnIndex = new TreeMap<Integer,List<MemoryColumnCell>>();
 			for (MemoryColumnCell cell: predictiveCells) {
@@ -57,14 +63,13 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 					indices.add(0,index);
 				}
 			}
-			for (int i = 0; i < input.onBits(); i++) {
+			for (int i = 0; i < maxOnBits; i++) {
 				if (i==indices.size()) {
 					break;
 				}
 				predictionSDR.setBit(indices.get(i),true);
 			}
 		}
-		
 		return r;
 	}
 
@@ -76,8 +81,6 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 
 	@Override
 	public void addSecondarySDRs(List<SDR> outputSDRs) {
-		if (predictionSDR!=null) {
-			outputSDRs.add(predictionSDR);
-		}
+		outputSDRs.add(predictionSDR);
 	}
 }

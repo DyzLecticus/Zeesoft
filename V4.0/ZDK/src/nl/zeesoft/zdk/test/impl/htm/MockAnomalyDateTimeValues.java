@@ -8,10 +8,10 @@ import java.util.TimeZone;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.test.MockObject;
 
-public class MockRealDateTimeValues extends MockObject {
+public class MockAnomalyDateTimeValues extends MockObject {
 	@Override
 	protected void describe() {
-		System.out.println("This test uses the *MockRealDateTimeValues*.");
+		System.out.println("This test uses the *MockAnomalyDateTimeValues*.");
 	}
 
 	@Override
@@ -58,8 +58,7 @@ public class MockRealDateTimeValues extends MockObject {
 			}
 			
 			val2 = base + hour;
-			val2 += ZRandomize.getRandomInt(0,5);
-			
+			val2 += ZRandomize.getRandomInt(0,3);
 			
 			MockDateTimeValue mockVal = new MockDateTimeValue();
 			mockVal.dateTime = cal.getTimeInMillis();
@@ -73,8 +72,6 @@ public class MockRealDateTimeValues extends MockObject {
 				maxVal2 = val2;
 			}
 		}
-		
-		System.out.println("Anomaly is at: " + numAnomaly + ", maximum value 2: " + maxVal2);
 		
 		return r;
 	}

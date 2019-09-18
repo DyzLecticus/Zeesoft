@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.htm.proc.Processable;
+import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * A stream provides a threaded processor sequence where the output SDR of each processor is used as input for the next processor
+ */
 public class Stream extends Worker {
 	private List<StreamProcessor>	processors	= new ArrayList<StreamProcessor>();
 
@@ -48,6 +52,11 @@ public class Stream extends Worker {
 	}
 	
 	public long addSDR(SDR inputSDR) {
+		if (!(inputSDR instanceof DateTimeSDR)) {
+			DateTimeSDR dts = new DateTimeSDR(inputSDR);
+			dts.dateTime = System.currentTimeMillis();
+			inputSDR = dts;
+		}
 		StreamResult result = results.getNewResult(inputSDR);
 		lockMe(this);
 		processors.get(0).addResultToQueue(result);
