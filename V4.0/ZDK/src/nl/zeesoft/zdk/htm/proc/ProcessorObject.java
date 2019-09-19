@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 
 /**
  * A processor provides basic sequential processor chaining where the output SDR of each processor is used as input for the next processor
@@ -13,7 +13,7 @@ public abstract class ProcessorObject {
 	protected List<Processable>				processors		= new ArrayList<Processable>();
 	protected List<ProcessorListener>		listeners		= new ArrayList<ProcessorListener>();
 	
-	protected SDRSet						inputSDRSet		= null;
+	protected SDRMap						inputSDRMap		= null;
 	protected boolean						learn			= true;
 	
 	public ProcessorObject(Processable processable) {
@@ -32,22 +32,22 @@ public abstract class ProcessorObject {
 		this.learn = learn;
 	}
 	
-	public void setIntputSDRSet(SDRSet inputSDRSet) {
-		this.inputSDRSet = inputSDRSet;
+	public void setIntputSDRMap(SDRMap inputSDRMap) {
+		this.inputSDRMap = inputSDRMap;
 	}
 	
 	public void process() {
-		process(0,inputSDRSet.size());
+		process(0,inputSDRMap.size());
 	}
 
 	public void process(int start,int num) {
-		if (inputSDRSet!=null) {
+		if (inputSDRMap!=null) {
 			int stop = start + num;
-			if (stop > inputSDRSet.size()) {
-				stop = inputSDRSet.size();
+			if (stop > inputSDRMap.size()) {
+				stop = inputSDRMap.size();
 			}
 			for (int i = start; i < stop; i++) {
-				processSDR(inputSDRSet.get(i));
+				processSDR(inputSDRMap.getSDR(i));
 			}
 		}
 	}

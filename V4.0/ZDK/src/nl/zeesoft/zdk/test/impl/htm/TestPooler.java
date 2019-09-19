@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.htm.proc.PoolerProcessor;
 import nl.zeesoft.zdk.htm.proc.ProcessorListener;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -39,7 +39,7 @@ public class TestPooler extends TestObject implements ProcessorListener {
 		System.out.println("SDR sdr = pooler.getSDRForInput(new SDR(),true);");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockRegularSDRSet.class.getName());
+		getTester().describeMock(MockRegularSDRMap.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestPooler.class));
@@ -54,10 +54,10 @@ public class TestPooler extends TestObject implements ProcessorListener {
 	
 	@Override
 	protected void test(String[] args) {
-		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockRegularSDRSet.class.getName());
-		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
+		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockRegularSDRMap.class.getName());
+		assertEqual(inputSDRMap.size(),17521,"Input SDR map size does not match expectation");
 		
-		PoolerConfig config = new PoolerConfig(inputSDRSet.width(),1024,21);
+		PoolerConfig config = new PoolerConfig(inputSDRMap.length(),1024,21);
 		
 		long start = System.currentTimeMillis();
 		Pooler pooler = new Pooler(config);
@@ -74,13 +74,13 @@ public class TestPooler extends TestObject implements ProcessorListener {
 		processor.getListeners().add(this);
 
 		System.out.println();
-		float ratio1 = processInputSDRSet(processor,inputSDRSet,false);
+		float ratio1 = processInputSDRMap(processor,inputSDRMap,false);
 		assertEqual(ratio1 > 6F,true,"Unlearned ratio is lower than minimal expectation");
 		
 		processor.resetPoolerStats();
 		
 		System.out.println();
-		float ratio2 = processInputSDRSet(processor,inputSDRSet,true);
+		float ratio2 = processInputSDRMap(processor,inputSDRMap,true);
 		assertEqual(ratio1 > 8F,true,"Learned ratio is lower than minimal expectation");
 		
 		System.out.println();
@@ -88,34 +88,34 @@ public class TestPooler extends TestObject implements ProcessorListener {
 		assertEqual(ratio2>ratio1,true,"Learned ratio does not match expectation");
 	}
 	
-	private float processInputSDRSet(PoolerProcessor processor,SDRSet inputSDRSet, boolean learn) {
-		int num = inputSDRSet.size();
-		processor.setIntputSDRSet(inputSDRSet);
+	private float processInputSDRMap(PoolerProcessor processor,SDRMap inputSDRMap, boolean learn) {
+		int num = inputSDRMap.size();
+		processor.setIntputSDRMap(inputSDRMap);
 		processor.setLearn(learn);
 		
 		long started = System.currentTimeMillis();
-		System.out.println("Processing input SDR set (learning: " + learn + ") ...");
+		System.out.println("Processing input SDR map (learning: " + learn + ") ...");
 		processor.process();
-		System.out.println("Processing input SDR set took: " + (System.currentTimeMillis() - started) + " ms");
+		System.out.println("Processing input SDR map took: " + (System.currentTimeMillis() - started) + " ms");
 		
-		SDRSet outputSDRSet = processor.getOutputSDRSet();
-		assertEqual(outputSDRSet.size(),num,"Output SDR set size does not match expectation");
+		SDRMap outputSDRMap = processor.getOutputSDRMap();
+		assertEqual(outputSDRMap.size(),num,"Output SDR map size does not match expectation");
 		
 		System.out.println();
 		System.out.println("Performance statistics;");
 		System.out.println(processor.getPoolerStats().getDescription());
 		
-		return analyzeOutputSDRSet(outputSDRSet);
+		return analyzeOutputSDRMap(outputSDRMap);
 	}
 	
-	private float analyzeOutputSDRSet(SDRSet outputSDRSet) {
+	private float analyzeOutputSDRMap(SDRMap outputSDRMap) {
 		float r = 0;
 		int weeks = 0;
 		float avg = 0;
 		float avgWeek = 0;
-		for (int i = (24 * 70); i < outputSDRSet.size(); i++) {
+		for (int i = (24 * 70); i < outputSDRMap.size(); i++) {
 			if (i % (24 * 7) == 0) {
-				SDR baseSDR = outputSDRSet.get(i);
+				SDR baseSDR = outputSDRMap.getSDR(i);
 				int div = 0;
 				int divWeek = 0;
 				int total = 0;
@@ -127,7 +127,7 @@ public class TestPooler extends TestObject implements ProcessorListener {
 				}
 				
 				for (int i2 = start; i2 < i; i2++) {
-					SDR compSDR = outputSDRSet.get(i2);
+					SDR compSDR = outputSDRMap.getSDR(i2);
 					if (i2 % (24 * 7) == 0) {
 						divWeek++;
 						totalWeek = totalWeek + baseSDR.getOverlapScore(compSDR);

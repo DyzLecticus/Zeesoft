@@ -3,23 +3,23 @@ package nl.zeesoft.zdk.htm.proc;
 import java.util.List;
 
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 
 public class PoolerProcessor extends ProcessorObject {
-	protected SDRSet	outputSDRSet	= null;
+	protected SDRMap	outputSDRMap	= null;
 	
 	public PoolerProcessor(Pooler pooler) {
 		super(pooler);
 	}
 	
 	@Override
-	public void setIntputSDRSet(SDRSet inputSDRSet) {
-		super.setIntputSDRSet(inputSDRSet);
-		outputSDRSet = new SDRSet(((Pooler)processors.get(0)).config.outputLength);
+	public void setIntputSDRMap(SDRMap inputSDRMap) {
+		super.setIntputSDRMap(inputSDRMap);
+		outputSDRMap = new SDRMap(((Pooler)processors.get(0)).config.outputLength);
 	}
 	
-	public SDRSet getOutputSDRSet() {
-		return outputSDRSet;
+	public SDRMap getOutputSDRMap() {
+		return outputSDRMap;
 	}
 
 	public void resetPoolerStats() {
@@ -32,6 +32,6 @@ public class PoolerProcessor extends ProcessorObject {
 
 	@Override
 	protected void processedSDR(SDR inputSDR, List<SDR> outputSDRs) {
-		outputSDRSet.add(outputSDRs.get(0));
+		outputSDRMap.add(outputSDRs.get(0));
 	}
 }

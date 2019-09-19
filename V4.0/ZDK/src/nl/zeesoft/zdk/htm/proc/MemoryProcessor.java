@@ -3,10 +3,10 @@ package nl.zeesoft.zdk.htm.proc;
 import java.util.List;
 
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 
 public class MemoryProcessor extends PoolerProcessor {
-	protected SDRSet	burstSDRSet			= null;
+	protected SDRMap	burstSDRMap			= null;
 
 	public MemoryProcessor(Pooler pooler,Memory memory) {
 		super(pooler);
@@ -14,13 +14,13 @@ public class MemoryProcessor extends PoolerProcessor {
 	}
 
 	@Override
-	public void setIntputSDRSet(SDRSet inputSDRSet) {
-		super.setIntputSDRSet(inputSDRSet);
-		burstSDRSet = new SDRSet(((Memory)processors.get(1)).config.length);
+	public void setIntputSDRMap(SDRMap inputSDRMap) {
+		super.setIntputSDRMap(inputSDRMap);
+		burstSDRMap = new SDRMap(((Memory)processors.get(1)).config.length);
 	}
 	
-	public SDRSet getBurstSDRSet() {
-		return burstSDRSet;
+	public SDRMap getBurstSDRMap() {
+		return burstSDRMap;
 	}
 
 	public void resetMemoryStats() {
@@ -34,6 +34,6 @@ public class MemoryProcessor extends PoolerProcessor {
 	@Override
 	protected void processedSDR(SDR inputSDR, List<SDR> outputSDRs) {
 		super.processedSDR(inputSDR, outputSDRs);
-		burstSDRSet.add(outputSDRs.get(1));
+		burstSDRMap.add(outputSDRs.get(1));
 	}
 }

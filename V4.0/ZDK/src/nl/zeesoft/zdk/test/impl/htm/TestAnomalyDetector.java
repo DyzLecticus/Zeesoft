@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.PoolerStats;
 import nl.zeesoft.zdk.htm.proc.Predictor;
 import nl.zeesoft.zdk.htm.proc.StatsObject;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
 import nl.zeesoft.zdk.htm.stream.PredictionStream;
@@ -53,7 +53,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockRegularSDRSet.class.getName());
+		getTester().describeMock(MockRegularSDRMap.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestAnomalyDetector.class));
@@ -70,9 +70,9 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	
 	@Override
 	protected void test(String[] args) {
-		SDRSet inputSDRSet = getInputSDRSet();
+		SDRMap inputSDRMap = getInputSDRMap();
 
-		PoolerConfig poolerConfig = new PoolerConfig(inputSDRSet.width(),1024,21);
+		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);
 		pooler.randomizeConnections();
 		
@@ -89,33 +89,33 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println(memoryConfig.getDescription());
 		System.out.println();
 
-		testPredictionStream(stream, inputSDRSet);
+		testPredictionStream(stream, inputSDRMap);
 		
 		assertDetection();
 	}
 	
-	protected SDRSet getInputSDRSet() {
-		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockAnomalySDRSet.class.getName());
-		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
+	protected SDRMap getInputSDRMap() {
+		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockAnomalySDRMap.class.getName());
+		assertEqual(inputSDRMap.size(),17521,"Input SDR map size does not match expectation");
 		
-		numExpected = (inputSDRSet.size() / 2) + 1;
+		numExpected = (inputSDRMap.size() / 2) + 1;
 		System.out.println("Test set anomaly detection is expected after: " + numExpected);
 		System.out.println();
 		
-		return inputSDRSet;
+		return inputSDRMap;
 	}
 
 	protected void assertDetection() {
 		assertEqual(numDetected > numExpected && numDetected < numExpected + 48,true,"Failed to detect the expected anomaly");
 	}
 
-	protected void testPredictionStream(Stream stream,SDRSet inputSDRSet) {
+	protected void testPredictionStream(Stream stream,SDRMap inputSDRMap) {
 		long started = System.currentTimeMillis();
 		stream.start();
 		System.out.println("Started stream");
 
-		for (int i = 0; i < inputSDRSet.size(); i++) {
-			stream.addSDR(inputSDRSet.get(i));
+		for (int i = 0; i < inputSDRMap.size(); i++) {
+			stream.addSDR(inputSDRMap.getSDR(i));
 		}
 		
 		int i = 0;

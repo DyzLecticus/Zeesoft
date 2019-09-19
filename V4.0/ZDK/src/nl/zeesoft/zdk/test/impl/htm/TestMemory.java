@@ -11,7 +11,7 @@ import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.ProcessorListener;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -42,7 +42,7 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockRegularSDRSet.class.getName());
+		getTester().describeMock(MockRegularSDRMap.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestMemory.class));
@@ -58,10 +58,10 @@ public class TestMemory extends TestObject implements ProcessorListener {
 	
 	@Override
 	protected void test(String[] args) {
-		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockRegularSDRSet.class.getName());
-		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
+		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockRegularSDRMap.class.getName());
+		assertEqual(inputSDRMap.size(),17521,"Input SDR map size does not match expectation");
 		
-		PoolerConfig poolerConfig = new PoolerConfig(inputSDRSet.width(),1024,21);
+		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);
 		pooler.randomizeConnections();
 		
@@ -74,16 +74,16 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		processor.getListeners().add(this);
 
 		int num = 5000;
-		processor.setIntputSDRSet(inputSDRSet);
+		processor.setIntputSDRMap(inputSDRMap);
 		
 		System.out.println();
 		long started = System.currentTimeMillis();
-		System.out.println("Processing input SDR set (5000/" + inputSDRSet.size() + ") ...");
+		System.out.println("Processing input SDR map (5000/" + inputSDRMap.size() + ") ...");
 		processor.process(0,num);
-		System.out.println("Processing input SDR set took: " + (System.currentTimeMillis() - started) + " ms");
+		System.out.println("Processing input SDR map took: " + (System.currentTimeMillis() - started) + " ms");
 		
-		SDRSet burstSDRSet = processor.getBurstSDRSet();
-		assertEqual(burstSDRSet.size(),num,"Burst SDR set size does not match expectation");
+		SDRMap burstSDRMap = processor.getBurstSDRMap();
+		assertEqual(burstSDRMap.size(),num,"Burst SDR map size does not match expectation");
 		
 		assertEqual(averageBurst,0,"Average burst does not match expectation");
 

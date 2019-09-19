@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
 import nl.zeesoft.zdk.htm.stream.BufferedPredictionStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
@@ -42,7 +42,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockRegularSDRSet.class.getName());
+		getTester().describeMock(MockRegularSDRMap.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestAnomalyDetector.class));
@@ -59,9 +59,9 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 	
 	@Override
 	protected void test(String[] args) {
-		SDRSet inputSDRSet = getInputSDRSet();
+		SDRMap inputSDRMap = getInputSDRMap();
 
-		PoolerConfig poolerConfig = new PoolerConfig(inputSDRSet.width(),1024,21);
+		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);
 		pooler.randomizeConnections();
 		
@@ -78,7 +78,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		System.out.println(memoryConfig.getDescription());
 		System.out.println();
 
-		testPredictionStream(stream, inputSDRSet);
+		testPredictionStream(stream, inputSDRMap);
 		
 		assertDetection();
 	}

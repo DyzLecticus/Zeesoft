@@ -5,19 +5,19 @@ import java.util.List;
 import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.test.MockObject;
 
-public class MockAnomalySDRSet extends MockObject {
+public class MockAnomalySDRMap extends MockObject {
 	@Override
 	protected void describe() {
-		System.out.println("This test uses the *MockAnomalySDRSet*.");
+		System.out.println("This test uses the *MockAnomalySDRMap*.");
 	}
 
 	@Override
 	protected Object initialzeMock() {
 		ScalarEncoder enc = new ScalarEncoder(256,16,0,200);
-		SDRSet sdrSet = new SDRSet(enc.length());
+		SDRMap sdrMap = new SDRMap(enc.length());
 		@SuppressWarnings("unchecked")
 		List<MockDateTimeValue> mockVals = (List<MockDateTimeValue>) getTester().getMockedObject(MockAnomalyDateTimeValues.class.getName());
 		for (MockDateTimeValue mockVal: mockVals) {
@@ -25,8 +25,8 @@ public class MockAnomalySDRSet extends MockObject {
 			DateTimeSDR dts = new DateTimeSDR(sdr);
 			dts.dateTime = mockVal.dateTime;
 			dts.keyValues.put("value",mockVal.value2);
-			sdrSet.add(dts);
+			sdrMap.add(dts);
 		}
-		return sdrSet;
+		return sdrMap;
 	}
 }

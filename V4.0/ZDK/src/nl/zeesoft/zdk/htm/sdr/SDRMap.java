@@ -34,7 +34,11 @@ public class SDRMap {
 	public SDRMap(int length,int bits,boolean useIndex) {
 		initialize(length,bits,useIndex);
 	}
-	
+
+	public void add(SDR sdr) {
+		add(sdr,null);
+	}
+
 	public void add(SDR sdr,Object value) {
 		if (sdr.onBits()>bits) {
 			sdr.subsample(bits);
@@ -241,7 +245,7 @@ public class SDRMap {
 	}
 	
 	private boolean checkUnionOverlap(SDR sdr,int minOverlap) {
-		return sdr.getOverlapScore(getUnion()) > minOverlap;
+		return sdr.getOverlapScore(getUnion()) >= minOverlap;
 	}
 	
 	private SortedMap<Integer,List<SDRMapElement>> getMatchesUseIndex(SDR sdr, int minOverlap) {

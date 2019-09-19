@@ -13,7 +13,7 @@ import nl.zeesoft.zdk.test.impl.htm.TestMemory;
 import nl.zeesoft.zdk.test.impl.htm.TestPooler;
 import nl.zeesoft.zdk.test.impl.htm.TestRDScalarEncoder;
 import nl.zeesoft.zdk.test.impl.htm.TestSDR;
-import nl.zeesoft.zdk.test.impl.htm.TestSDRSet;
+import nl.zeesoft.zdk.test.impl.htm.TestSDRMap;
 import nl.zeesoft.zdk.test.impl.htm.TestScalarEncoder;
 
 /**
@@ -90,7 +90,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestGeneticNN(getTester()));
 		tests.add(new TestEvolver(getTester()));
 		tests.add(new TestSDR(getTester()));
-		tests.add(new TestSDRSet(getTester()));
+		tests.add(new TestSDRMap(getTester()));
 		tests.add(new TestScalarEncoder(getTester()));
 		tests.add(new TestRDScalarEncoder(getTester()));
 		tests.add(new TestDateTimeEncoder(getTester()));
