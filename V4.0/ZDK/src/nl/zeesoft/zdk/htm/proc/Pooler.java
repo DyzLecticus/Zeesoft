@@ -9,10 +9,8 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class Pooler implements Processable {
+public class Pooler extends ProcessableObject implements Processable {
 	protected PoolerConfig							config				= null;
-
-	protected PoolerStats							stats				= new PoolerStats();
 	
 	protected List<PoolerColumn>					columns				= new ArrayList<PoolerColumn>();
 	protected SortedMap<String,PoolerColumnGroup>	columnGroups		= new TreeMap<String,PoolerColumnGroup>();
@@ -92,44 +90,42 @@ public class Pooler implements Processable {
 	}
 
 	@Override
-	public SDR getSDRForInput(SDR input,boolean learn) {
-		long total = System.nanoTime();
+	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
 		SDR r = null;
 		List<Integer> onBits = input.getOnBits();
 		long start = 0;
 		
+		PoolerStats pStats = (PoolerStats) stats;
+		
 		start = System.nanoTime();
 		calculateOverlapScoresForSDROnBits(onBits);
-		stats.calculateOverlapNs += System.nanoTime() - start;
+		pStats.calculateOverlapNs += System.nanoTime() - start;
 		
 		start = System.nanoTime();
 		List<PoolerColumn> activeColumns = selectActiveColumns();
-		stats.selectActiveNs += System.nanoTime() - start;
+		pStats.selectActiveNs += System.nanoTime() - start;
 		
 		if (learn) {
 			start = System.nanoTime();
 			learnActiveColumns(activeColumns,onBits);
-			stats.learnActiveNs += System.nanoTime() - start;
+			pStats.learnActiveNs += System.nanoTime() - start;
 		}
 		
 		if (config.boostStrength>0) {
 			start = System.nanoTime();
 			logActivity(activeColumns);
-			stats.logActiveNs += System.nanoTime() - start;
+			pStats.logActiveNs += System.nanoTime() - start;
 			
 			start = System.nanoTime();
 			calculateColumnGroupActivity();
-			stats.calculateActivityNs += System.nanoTime() - start;
+			pStats.calculateActivityNs += System.nanoTime() - start;
 			
 			start = System.nanoTime();
 			updateBoostFactors();
-			stats.updateBoostNs += System.nanoTime() - start;
+			pStats.updateBoostNs += System.nanoTime() - start;
 		}
 		
 		r = recordActiveColumnsInSDR(activeColumns);
-		
-		stats.total++;
-		stats.totalNs += System.nanoTime() - total;
 		
 		return r;
 	}
@@ -141,7 +137,7 @@ public class Pooler implements Processable {
 	
 	@Override
 	public PoolerStats getStats() {
-		return stats;
+		return (PoolerStats) stats;
 	}
 	
 	protected void calculateOverlapScoresForSDROnBits(List<Integer> onBits) {
@@ -227,6 +223,8 @@ public class Pooler implements Processable {
 	}
 
 	protected void initialize() {
+		stats = new PoolerStats();
+		
 		// Initialize columns
 		int posX = 0;
 		int posY = 0;

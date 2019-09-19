@@ -12,11 +12,6 @@ public class MemoryStats extends StatsObject {
 	public StatsObject copy() {
 		MemoryStats r = new MemoryStats();
 		copyTo(r);
-		r.cycleStateNs = this.cycleStateNs;
-		r.activateCellsNs = this.activateCellsNs;
-		r.calculateActivityNs = this.calculateActivityNs;
-		r.selectPredictiveNs = this.selectPredictiveNs;
-		r.updatePredictionsNs = this.updatePredictionsNs;
 		return r;
 	}
 	
@@ -34,5 +29,18 @@ public class MemoryStats extends StatsObject {
 		r.append("\n");
 		appendValue(r,"- Updating predictions took:       ",updatePredictionsNs);
 		return r;
+	}
+	
+	@Override
+	protected void copyTo(StatsObject copy) {
+		super.copyTo(copy);
+		if (copy instanceof MemoryStats) {
+			MemoryStats stats = (MemoryStats) copy;
+			stats.cycleStateNs = this.cycleStateNs;
+			stats.activateCellsNs = this.activateCellsNs;
+			stats.calculateActivityNs = this.calculateActivityNs;
+			stats.selectPredictiveNs = this.selectPredictiveNs;
+			stats.updatePredictionsNs = this.updatePredictionsNs;
+		}
 	}
 }

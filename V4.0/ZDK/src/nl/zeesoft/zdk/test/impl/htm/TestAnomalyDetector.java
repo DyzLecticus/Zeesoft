@@ -89,7 +89,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println(memoryConfig.getDescription());
 		System.out.println();
 
-		testPredictionStream(stream, inputSDRMap);
+		testStream(stream, inputSDRMap, 30);
 		
 		assertDetection();
 	}
@@ -109,7 +109,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		assertEqual(numDetected > numExpected && numDetected < numExpected + 48,true,"Failed to detect the expected anomaly");
 	}
 
-	protected void testPredictionStream(Stream stream,SDRMap inputSDRMap) {
+	protected void testStream(Stream stream,SDRMap inputSDRMap, int maxSeconds) {
 		long started = System.currentTimeMillis();
 		stream.start();
 		stream.waitForStart();
@@ -123,7 +123,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		while(stream.isWorking()) {
 			sleep(100);
 			i++;
-			if (i >= 600) {
+			if (i >= maxSeconds * 10) {
 				break;
 			}
 		}
@@ -145,7 +145,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		}
 		
 		System.out.println();
-		System.out.println("Total processing time " + totalMs + " ms");
+		System.out.println("Total processing time: " + totalMs + " ms");
 		if (streamMs < totalMs) {
 			System.out.println("Net stream processing performance gain over sequential processing per input SDR: " + df.format((totalMs - streamMs) / (float) stats.get(0).total) + " ms");
 		}

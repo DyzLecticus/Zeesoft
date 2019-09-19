@@ -78,7 +78,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		System.out.println(memoryConfig.getDescription());
 		System.out.println();
 
-		testPredictionStream(stream, inputSDRMap);
+		testStream(stream, inputSDRMap, 30);
 		
 		assertDetection();
 	}

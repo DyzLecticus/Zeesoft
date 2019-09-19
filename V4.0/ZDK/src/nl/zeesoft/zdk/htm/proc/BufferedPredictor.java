@@ -39,9 +39,15 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 	}
 
 	@Override
-	public SDR getSDRForInput(SDR input, boolean learn) {
+	protected SDR getSDRForInputSDR(SDR input, boolean learn) {
+		SDR r = super.getSDRForInputSDR(input, learn);
 		dateTimeSDR = null;
-		SDR burstSDR = super.getSDRForInput(input, learn);
+		long start = 0;
+
+		PredictorStats pStats = (PredictorStats) stats;
+		
+		start = System.nanoTime();
+		
 		SDR predictionSDR = getPredictionSDR();
 		if (predictionSDR!=null && buffer.size()>1) {
 			SDRMapElement element = buffer.getRandomClosestMatch(predictionSDR);
@@ -52,7 +58,10 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 		if (dateTimeSDR==null) {
 			dateTimeSDR = new DateTimeSDR(config.length);
 		}
-		return burstSDR;
+		
+		pStats.generatingPredictionsNs += System.nanoTime() - start;
+		
+		return r;
 	}
 
 	@Override

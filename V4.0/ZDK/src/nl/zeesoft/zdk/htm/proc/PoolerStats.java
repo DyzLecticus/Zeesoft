@@ -13,12 +13,6 @@ public class PoolerStats extends StatsObject {
 	public StatsObject copy() {
 		PoolerStats r = new PoolerStats();
 		copyTo(r);
-		r.calculateOverlapNs = this.calculateOverlapNs;
-		r.selectActiveNs = this.selectActiveNs;
-		r.learnActiveNs = this.learnActiveNs;
-		r.logActiveNs = this.logActiveNs;
-		r.calculateActivityNs = this.calculateActivityNs;
-		r.updateBoostNs = this.updateBoostNs;
 		return r;
 	}
 	
@@ -38,5 +32,19 @@ public class PoolerStats extends StatsObject {
 		r.append("\n");
 		appendValue(r,"- Updating boost factors took:            ",updateBoostNs);
 		return r;
+	}
+	
+	@Override
+	protected void copyTo(StatsObject copy) {
+		super.copyTo(copy);
+		if (copy instanceof PoolerStats) {
+			PoolerStats stats = (PoolerStats) copy;
+			stats.calculateOverlapNs = this.calculateOverlapNs;
+			stats.selectActiveNs = this.selectActiveNs;
+			stats.learnActiveNs = this.learnActiveNs;
+			stats.logActiveNs = this.logActiveNs;
+			stats.calculateActivityNs = this.calculateActivityNs;
+			stats.updateBoostNs = this.updateBoostNs;
+		}
 	}
 }

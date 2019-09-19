@@ -17,6 +17,7 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 	
 	public Predictor(MemoryConfig config) {
 		super(config);
+		stats = new PredictorStats();
 		maxOnBits = config.bits;
 	}
 	
@@ -29,8 +30,14 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 	}
 
 	@Override
-	public SDR getSDRForInput(SDR input,boolean learn) {
-		SDR r = super.getSDRForInput(input,learn);
+	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
+		SDR r = super.getSDRForInputSDR(input,learn);
+		long start = 0;
+
+		PredictorStats pStats = (PredictorStats) stats;
+		
+		start = System.nanoTime();
+		
 		predictionSDR = new SDR(config.length);
 		if (predictiveCells.size()>0) {
 			SortedMap<Integer,List<MemoryColumnCell>> predictionsByColumnIndex = new TreeMap<Integer,List<MemoryColumnCell>>();
@@ -70,7 +77,20 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 				predictionSDR.setBit(indices.get(i),true);
 			}
 		}
+		
+		pStats.generatingPredictionsNs += System.nanoTime() - start;
+		
 		return r;
+	}
+	
+	@Override
+	public void resetStats() {
+		stats = new PredictorStats();
+	}
+	
+	@Override
+	public PredictorStats getStats() {
+		return (PredictorStats) stats;
 	}
 
 	@Override

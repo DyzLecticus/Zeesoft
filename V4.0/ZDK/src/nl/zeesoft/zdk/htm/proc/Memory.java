@@ -8,10 +8,8 @@ import java.util.Set;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class Memory implements Processable {
+public class Memory extends ProcessableObject implements Processable {
 	protected	MemoryConfig		config		= null;
-
-	protected	MemoryStats			stats		= new MemoryStats();
 
 	protected	List<MemoryColumn>	columns		= new ArrayList<MemoryColumn>();
 	
@@ -59,33 +57,31 @@ public class Memory implements Processable {
 	}
 
 	@Override
-	public SDR getSDRForInput(SDR input,boolean learn) {
-		long total = System.nanoTime();
+	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
 		SDR r = new SDR(config.length);
 		long start = 0;
 		
+		MemoryStats mStats = (MemoryStats) stats;
+		
 		start = System.nanoTime();
 		List<MemoryColumnCell> previouslyActiveCells = cycleActiveState();
-		stats.cycleStateNs += System.nanoTime() - start;
+		mStats.cycleStateNs += System.nanoTime() - start;
 		
 		start = System.nanoTime();
 		activateColumnCells(input,learn,previouslyActiveCells,r);
-		stats.activateCellsNs += System.nanoTime() - start;
+		mStats.activateCellsNs += System.nanoTime() - start;
 		
 		start = System.nanoTime();
 		calculateActivity();
-		stats.calculateActivityNs += System.nanoTime() - start;
+		mStats.calculateActivityNs += System.nanoTime() - start;
 		
 		start = System.nanoTime();
 		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells();
-		stats.selectPredictiveNs += System.nanoTime() - start;
+		mStats.selectPredictiveNs += System.nanoTime() - start;
 		
 		start = System.nanoTime();
 		updatePredictions(predictiveCells,learn);
-		stats.updatePredictionsNs += System.nanoTime() - start;
-		
-		stats.total++;
-		stats.totalNs += System.nanoTime() - total;
+		mStats.updatePredictionsNs += System.nanoTime() - start;
 		
 		return r;
 	}
@@ -97,7 +93,7 @@ public class Memory implements Processable {
 	
 	@Override
 	public MemoryStats getStats() {
-		return stats;
+		return (MemoryStats) stats;
 	}
 
 	protected List<MemoryColumnCell> cycleActiveState() {
@@ -147,6 +143,8 @@ public class Memory implements Processable {
 	}
 	
 	protected void initialize() {
+		stats = new MemoryStats();
+		
 		int posX = 0;
 		int posY = 0;
 		for (int i = 0; i < config.length; i++) {
