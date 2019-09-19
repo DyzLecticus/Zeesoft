@@ -11,18 +11,18 @@ import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class SDR {
-	private int				size 		= 0;
+	private int				length 		= 0;
 	private Set<Integer>	onBits		= new HashSet<Integer>();
 	
-	public SDR(int size) {
-		if (size < 10) {
-			size = 10;
+	public SDR(int length) {
+		if (length < 10) {
+			length = 10;
 		}
-		this.size = size;
+		this.length = length;
 	}
 	
 	public SDR copy() {
-		SDR r = new SDR(size);
+		SDR r = new SDR(length);
 		for (Integer onBit: onBits) {
 			r.onBits.add(new Integer(onBit));
 		}
@@ -38,7 +38,7 @@ public class SDR {
 	}
 	
 	public void setBit(int index,boolean on) {
-		if (index>=0 && index<size) {
+		if (index>=0 && index<length) {
 			Integer onBit = (Integer) index;
 			if (on) {
 				if (!onBits.contains(onBit)) {
@@ -78,8 +78,8 @@ public class SDR {
 		return onBits.contains((Integer)index);
 	}
 	
-	public int size() {
-		return size;
+	public int length() {
+		return length;
 	}
 	
 	public int onBits() {
@@ -104,7 +104,7 @@ public class SDR {
 			for (int i = 0; i<set; i++) {
 				boolean added = false;
 				while (!added) {
-					Integer onBit = ZRandomize.getRandomInt(0,size - 1);
+					Integer onBit = ZRandomize.getRandomInt(0,length - 1);
 					if (!onBits.contains(onBit)) {
 						onBits.add(onBit);
 						added = true;
@@ -116,7 +116,7 @@ public class SDR {
 	}
 	
 	public ZStringBuilder toStringBuilder() {
-		ZStringBuilder r = new ZStringBuilder("" + size);
+		ZStringBuilder r = new ZStringBuilder("" + length);
 		for (Integer onBit: onBits) {
 			r.append(",");
 			r.append("" + onBit);
@@ -125,11 +125,11 @@ public class SDR {
 	}
 
 	public void fromStringBuilder(ZStringBuilder str) {
-		size = 0;
+		length = 0;
 		onBits.clear();
 		List<ZStringBuilder> elems = str.split(",");
 		if (elems.size()>1) {
-			size = Integer.parseInt(elems.get(0).toString());
+			length = Integer.parseInt(elems.get(0).toString());
 			for (int i = 1; i<elems.size(); i++) {
 				onBits.add(Integer.parseInt(elems.get(i).toString()));
 			}
@@ -138,7 +138,7 @@ public class SDR {
 
 	public ZStringBuilder toBitString() {
 		ZStringBuilder r = new ZStringBuilder();
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < length; i++) {
 			if (getBit(i)) {
 				r.append("1");
 			} else {
@@ -155,7 +155,7 @@ public class SDR {
 			r = false;
 		} else {
 			SDR c = (SDR) o;
-			if (size!=c.size ||	onBits.size()!=c.onBits.size()) {
+			if (length!=c.length ||	onBits.size()!=c.onBits.size()) {
 				r = false;
 			} else if (onBits.size()>0) {
 				for (Integer onBit: onBits) {
@@ -207,30 +207,30 @@ public class SDR {
 		return a.concat(b);
 	}
 
-	public static BigInteger capacity(int size,int onBits) {
+	public static BigInteger capacity(int length,int onBits) {
 		BigInteger r = null;
-		if (size==128 && onBits==2) {
+		if (length==128 && onBits==2) {
 			r = new BigInteger("8128");
-		} else if (size==256 && onBits==5) {
+		} else if (length==256 && onBits==5) {
 			r = new BigInteger("8809549056");
-		} else if (size==1024 && onBits==20) {
+		} else if (length==1024 && onBits==20) {
 			r = new BigInteger("547994376586478624307777948483062748869376");
-		} else if (size==2048 && onBits==41) {
+		} else if (length==2048 && onBits==41) {
 			r = new BigInteger("116159298814240952148294423915105693715223390099660465104363841507980771546258614700032");
 		} else {
-			BigInteger sizeF = StaticFunctions.factorial(size);
+			BigInteger lengthF = StaticFunctions.factorial(length);
 			BigInteger onBitsF = StaticFunctions.factorial(onBits);
-			BigInteger offBitsF = StaticFunctions.factorial(size - onBits);
+			BigInteger offBitsF = StaticFunctions.factorial(length - onBits);
 			BigInteger div = onBitsF.multiply(offBitsF);
-			r = sizeF.divide(div);
+			r = lengthF.divide(div);
 		}
 		return r;
 	}
 
 	private SDR and(SDR c) {
 		SDR r = null;
-		if (c.size == size) {
-			r = new SDR(size);
+		if (c.length == length) {
+			r = new SDR(length);
 			for (Integer onBit: onBits) {
 				if (c.onBits.contains(onBit)) {
 					r.onBits.add(onBit);
@@ -242,8 +242,8 @@ public class SDR {
 	
 	private SDR or(SDR c) {
 		SDR r = null;
-		if (c.size == size) {
-			r = new SDR(size);
+		if (c.length == length) {
+			r = new SDR(length);
 			for (Integer onBit: onBits) {
 				r.onBits.add(onBit);
 			}
@@ -258,8 +258,8 @@ public class SDR {
 	
 	private SDR xor(SDR c) {
 		SDR r = null;
-		if (c.size == size) {
-			r = new SDR(size);
+		if (c.length == length) {
+			r = new SDR(length);
 			for (Integer onBit: onBits) {
 				if (!c.onBits.contains(onBit)) {
 					r.onBits.add(onBit);
@@ -275,8 +275,8 @@ public class SDR {
 	}
 	
 	private SDR not() {
-		SDR r = new SDR(size);
-		for (int i = 0; i < size; i++) {
+		SDR r = new SDR(length);
+		for (int i = 0; i < length; i++) {
 			Integer onBit = (Integer) i;
 			if (!onBits.contains(onBit)) {
 				r.onBits.add(onBit);
@@ -287,9 +287,9 @@ public class SDR {
 	
 	private SDR concat(SDR c) {
 		SDR r = copy();
-		r.size = r.size + c.size;
+		r.length = r.length + c.length;
 		for (Integer onBit: c.onBits) {
-			r.onBits.add(new Integer(onBit + size));
+			r.onBits.add(new Integer(onBit + length));
 		}
 		return r;
 	}

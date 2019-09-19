@@ -15,7 +15,7 @@ public class PoolerProcessor extends ProcessorObject {
 	@Override
 	public void setIntputSDRSet(SDRSet inputSDRSet) {
 		super.setIntputSDRSet(inputSDRSet);
-		outputSDRSet = new SDRSet(((Pooler)processors.get(0)).config.outputSize);
+		outputSDRSet = new SDRSet(((Pooler)processors.get(0)).config.outputLength);
 	}
 	
 	public SDRSet getOutputSDRSet() {

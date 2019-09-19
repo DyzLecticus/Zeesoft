@@ -15,7 +15,7 @@ public class MockRegularSDRSet extends MockObject {
 	@Override
 	protected Object initialzeMock() {
 		DateTimeValuesEncoder enc = new DateTimeValuesEncoder();
-		SDRSet sdrSet = new SDRSet(enc.size());
+		SDRSet sdrSet = new SDRSet(enc.length());
 		@SuppressWarnings("unchecked")
 		List<MockDateTimeValue> mockVals = (List<MockDateTimeValue>) getTester().getMockedObject(MockRegularDateTimeValues.class.getName());
 		for (MockDateTimeValue mockVal: mockVals) {

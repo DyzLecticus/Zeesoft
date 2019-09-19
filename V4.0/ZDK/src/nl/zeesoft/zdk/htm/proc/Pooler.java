@@ -30,7 +30,7 @@ public class Pooler implements Processable {
 	
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = config.getDescription();
-		int min = config.inputSize; 
+		int min = config.inputLength; 
 		int max = 0;
 		int avg = 0;
 		for (PoolerColumn col: columns) {
@@ -61,7 +61,7 @@ public class Pooler implements Processable {
 				r.append(")");
 			}
 		}
-		min = config.outputSize;
+		min = config.outputLength;
 		max = 0;
 		avg = 0;
 		for (PoolerColumnGroup pcg: columnGroups.values()) {
@@ -219,7 +219,7 @@ public class Pooler implements Processable {
 	}
 	
 	protected SDR recordActiveColumnsInSDR(List<PoolerColumn> activeColumns) {
-		SDR r = new SDR(config.outputSize);
+		SDR r = new SDR(config.outputLength);
 		for (PoolerColumn col: activeColumns) {
 			r.setBit(col.index,true);
 		}
@@ -230,7 +230,7 @@ public class Pooler implements Processable {
 		// Initialize columns
 		int posX = 0;
 		int posY = 0;
-		for (int i = 0; i < config.outputSize; i++) {
+		for (int i = 0; i < config.outputLength; i++) {
 			PoolerColumn col = new PoolerColumn(config,i,posX,posY);
 			columns.add(col);
 			posX++;

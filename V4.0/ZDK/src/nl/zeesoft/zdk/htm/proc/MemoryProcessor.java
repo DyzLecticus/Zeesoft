@@ -16,7 +16,7 @@ public class MemoryProcessor extends PoolerProcessor {
 	@Override
 	public void setIntputSDRSet(SDRSet inputSDRSet) {
 		super.setIntputSDRSet(inputSDRSet);
-		burstSDRSet = new SDRSet(((Memory)processors.get(1)).config.size);
+		burstSDRSet = new SDRSet(((Memory)processors.get(1)).config.length);
 	}
 	
 	public SDRSet getBurstSDRSet() {

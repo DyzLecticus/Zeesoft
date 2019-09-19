@@ -152,7 +152,7 @@ public class PoolerColumn {
 		
 		int posX = 0;
 		int posY = 0;
-		for (int i = 0; i < config.inputSize; i++) {
+		for (int i = 0; i < config.inputLength; i++) {
 			if (posX>=minPosX && posX<maxPosX && posY>=minPosY && posY<maxPosY) {
 				r.add(i);
 			}

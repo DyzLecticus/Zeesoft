@@ -1,9 +1,11 @@
 package nl.zeesoft.zdk.htm.proc;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 
 public class MemoryConfig {
-	protected int			size							= 0;
+	protected int			length							= 0;
 	protected int			bits							= 0;
 	
 	protected int			depth							= 4;
@@ -18,14 +20,14 @@ public class MemoryConfig {
 	protected int			sizeY							= 0;
 
 	public MemoryConfig(PoolerConfig poolerConfig) {
-		this.size = poolerConfig.outputSize;
+		this.length = poolerConfig.outputLength;
 		this.sizeX = poolerConfig.outputSizeX;
 		this.sizeY = poolerConfig.outputSizeY;
 		this.bits = poolerConfig.outputBits;
 	}
 
-	public MemoryConfig(int size,int bits) {
-		this.size = size;
+	public MemoryConfig(int length,int bits) {
+		this.length = length;
 		this.bits = bits;
 		calculateDimensions();
 	}
@@ -47,7 +49,7 @@ public class MemoryConfig {
 	}
 	
 	public void setDimensions(int sizeX,int sizeY) {
-		if (sizeX * sizeY == size) {
+		if (sizeX * sizeY == length) {
 			this.sizeX = sizeX;
 			this.sizeY = sizeY;
 		}
@@ -69,13 +71,25 @@ public class MemoryConfig {
 	}
 
 	protected void calculateDimensions() {
-		sizeX = (int) Math.sqrt(size);
+		sizeX = (int) Math.sqrt(length);
 		sizeY = sizeX;
-		if (sizeX * sizeY < size) {
+		if (sizeX * sizeY < length) {
 			sizeX += 1;
 		}
-		if (sizeX * sizeY < size) {
+		if (sizeX * sizeY < length) {
 			sizeY += 1;
 		}
+	}
+	
+	public SDR getNewSDR() {
+		return new SDR(length);
+	}
+	
+	public SDRMap getNewSDRMap() {
+		return new SDRMap(length,bits);
+	}
+	
+	public SDRMap getNewSDRMapWithoutIndex() {
+		return new SDRMap(length,bits,false);
 	}
 }

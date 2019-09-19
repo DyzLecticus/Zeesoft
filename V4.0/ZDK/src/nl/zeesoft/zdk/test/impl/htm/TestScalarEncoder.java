@@ -127,7 +127,7 @@ public class TestScalarEncoder extends TestObject {
 	}
 	
 	public boolean assertSDREequals(SDR sdr,String strVal,String msg) {
-		SDR comp = new SDR(sdr.size());
+		SDR comp = new SDR(sdr.length());
 		comp.fromStringBuilder(new ZStringBuilder(strVal));
 		return assertEqual(sdr.toStringBuilder(),comp.toStringBuilder(),msg);
 	}

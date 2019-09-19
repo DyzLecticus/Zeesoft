@@ -7,10 +7,11 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class SDRMap {
-	private int												width				= 0;
+	private int												length				= 0;
 	private int												bits				= 0;
 	private boolean											useIndex			= true;
 	
@@ -18,16 +19,16 @@ public class SDRMap {
 	
 	private SortedMap<Integer,List<SDRMapElement>>			elementsByOnBits	= new TreeMap<Integer,List<SDRMapElement>>();
 	
-	public SDRMap(int width,int bits) {
-		initialize(width,bits,useIndex);
+	public SDRMap(int length,int bits) {
+		initialize(length,bits,useIndex);
 	}
 	
-	public SDRMap(int width,int bits,boolean useIndex) {
-		initialize(width,bits,useIndex);
+	public SDRMap(int length,int bits,boolean useIndex) {
+		initialize(length,bits,useIndex);
 	}
 	
 	public void add(SDR sdr,Object value) {
-		if (sdr.size()==width && sdr.onBits()<=bits) {
+		if (sdr.length()==length && sdr.onBits()<=bits) {
 			SDRMapElement element = new SDRMapElement();
 			element.key = sdr;
 			element.value = value;
@@ -40,8 +41,8 @@ public class SDRMap {
 		return elements.size();
 	}
 	
-	public int width() {
-		return width;
+	public int length() {
+		return length;
 	}
 	
 	public int bits() {
@@ -106,6 +107,38 @@ public class SDRMap {
 		elementsByOnBits.clear();
 	}
 
+	public ZStringBuilder toStringBuilder() {
+		ZStringBuilder r = new ZStringBuilder("" + length);
+		for (SDRMapElement element: elements) {
+			r.append("|");
+			int added = 0;
+			for (Integer onBit: element.key.getOnBits()) {
+				if (added>0) {
+					r.append(",");
+				}
+				r.append("" + onBit);
+				added++;
+			}
+		}
+		return r;
+	}
+	
+	public void fromStringBuilder(ZStringBuilder str) {
+		clear();
+		List<ZStringBuilder> elems = str.split("|");
+		if (elems.size()>=1) {
+			length = Integer.parseInt(elems.get(0).toString());
+			for (int i = 1; i<elems.size(); i++) {
+				SDR sdr = new SDR(length);
+				List<ZStringBuilder> onBits = elems.get(i).split(",");
+				for (ZStringBuilder onBit: onBits) {
+					sdr.setBit(Integer.parseInt(onBit.toString()),true);
+				}
+				add(sdr,null);
+			}
+		}
+	}
+	
 	public SDRMapElement getRandomClosestMatch(SDR sdr) {
 		return getRandomClosestMatch(sdr,bits / 4);
 	}
@@ -135,7 +168,7 @@ public class SDRMap {
 			} else if (minOverlap >= bits) {
 				minOverlap = bits - 1;
 			}
-			if (sdr.onBits()>=minOverlap && sdr.size()==width && checkUnionOverlap(sdr,minOverlap)) {
+			if (sdr.onBits()>=minOverlap && sdr.length()==length && checkUnionOverlap(sdr,minOverlap)) {
 				for (SDRMapElement element: elements) {
 					int overlap = 0;
 					if (sdr.onBits()>=element.key.onBits()) {
@@ -158,7 +191,7 @@ public class SDRMap {
 	}
 	
 	public SDR getUnion() {
-		SDR r = new SDR(width);
+		SDR r = new SDR(length);
 		if (useIndex) {
 			for (Integer onBit: elementsByOnBits.keySet()) {
 				r.setBit(onBit,true);
@@ -182,7 +215,7 @@ public class SDRMap {
 		} else if (minOverlap >= bits) {
 			minOverlap = bits - 1;
 		}
-		if (useIndex && sdr.onBits()>=minOverlap && sdr.size()==width && checkUnionOverlap(sdr,minOverlap)) {
+		if (useIndex && sdr.onBits()>=minOverlap && sdr.length()==length && checkUnionOverlap(sdr,minOverlap)) {
 			Set<SDRMapElement> done = new HashSet<SDRMapElement>(); 
 			for (Integer onBit: sdr.getOnBits()) {
 				List<SDRMapElement> bitList = elementsByOnBits.get(onBit);
@@ -234,14 +267,14 @@ public class SDRMap {
 		}
 	}
 	
-	private void initialize(int width,int bits, boolean useIndex) {
-		if (width < 10) {
-			width = 10;
+	private void initialize(int length,int bits, boolean useIndex) {
+		if (length < 10) {
+			length = 10;
 		}
-		if (width < 1) {
-			width = 1;
+		if (length < 1) {
+			length = 1;
 		}
-		this.width = width;
+		this.length = length;
 		this.bits = bits;
 		this.useIndex = useIndex;
 	}

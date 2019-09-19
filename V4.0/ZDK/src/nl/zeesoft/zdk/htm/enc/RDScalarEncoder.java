@@ -19,12 +19,12 @@ public class RDScalarEncoder extends StateEncoderObject {
 	private List<Integer>			freeBits			= new ArrayList<Integer>();
 	private BigInteger				capacity			= null;
 	
-	public RDScalarEncoder(int size,int bits) {
-		super(size,bits);
-		for (int i = 0; i < size; i++) {
+	public RDScalarEncoder(int length,int bits) {
+		super(length,bits);
+		for (int i = 0; i < length; i++) {
 			freeBits.add(i);
 		}
-		capacity = SDR.capacity(size,bits);
+		capacity = SDR.capacity(length,bits);
 	}
 	
 	@Override
@@ -36,7 +36,7 @@ public class RDScalarEncoder extends StateEncoderObject {
 		SDR r = sdrsByValue.get(value);
 		if (r==null) {
 			if (sdrsByValue.size()==0) {
-				r = new SDR(size);
+				r = new SDR(length);
 				List<Integer> onBits = r.randomize(bits);
 				for (Integer onBit: onBits) {
 					freeBits.remove(onBit);
@@ -106,13 +106,13 @@ public class RDScalarEncoder extends StateEncoderObject {
 			sdrsByValue.clear();
 			sdrsByStringBuilder.clear();
 			freeBits.clear();
-			SDR fBits = new SDR(size);
+			SDR fBits = new SDR(length);
 			List<ZStringBuilder> elems = str.split(";");
 			for (ZStringBuilder elem: elems) {
 				List<ZStringBuilder> onBits = elem.split(",");
 				if (onBits.size() == bits + 1) {
 					Float value = Float.parseFloat(onBits.get(0).toString());
-					SDR sdr = new SDR(size);
+					SDR sdr = new SDR(length);
 					for (int b = 1; b<onBits.size(); b++) {
 						sdr.setBit(Integer.parseInt(onBits.get(b).toString()),true);
 					}

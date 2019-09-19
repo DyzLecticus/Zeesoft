@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class CombinedEncoder {
-	private int									size		= 0;
+	private int									length		= 0;
 	private int									bits		= 0;
 	private SortedMap<String,EncoderObject>		encoders	= new TreeMap<String,EncoderObject>();
 	
@@ -18,13 +18,13 @@ public class CombinedEncoder {
 	}
 	
 	public void addEncoder(String name,EncoderObject encoder) {
-		size = size + encoder.size;
+		length = length + encoder.length;
 		bits = bits + encoder.bits;
 		encoders.put(name,encoder);
 	}
 	
-	public int size() {
-		return size;
+	public int length() {
+		return length;
 	}
 	
 	public int bits() {
@@ -37,7 +37,7 @@ public class CombinedEncoder {
 			SDR add = null;
 			Float value = values.get(entry.getKey());
 			if (value==null) {
-				add = new SDR(entry.getValue().size);
+				add = new SDR(entry.getValue().length);
 			} else {
 				add = entry.getValue().getSDRForValue(value);
 			}

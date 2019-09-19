@@ -17,7 +17,7 @@ public class MockAnomalySDRSet extends MockObject {
 	@Override
 	protected Object initialzeMock() {
 		ScalarEncoder enc = new ScalarEncoder(256,16,0,200);
-		SDRSet sdrSet = new SDRSet(enc.size());
+		SDRSet sdrSet = new SDRSet(enc.length());
 		@SuppressWarnings("unchecked")
 		List<MockDateTimeValue> mockVals = (List<MockDateTimeValue>) getTester().getMockedObject(MockAnomalyDateTimeValues.class.getName());
 		for (MockDateTimeValue mockVal: mockVals) {

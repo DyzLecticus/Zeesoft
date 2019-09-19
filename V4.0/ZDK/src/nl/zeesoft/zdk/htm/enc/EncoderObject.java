@@ -3,18 +3,18 @@ package nl.zeesoft.zdk.htm.enc;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public abstract class EncoderObject {
-	protected int		size		= 0;
+	protected int		length		= 0;
 	protected int		bits		= 0;
 	protected float		resolution	= 1;
 	
-	public EncoderObject(int size,int bits) {
-		if (size < 10) {
-			size = 10;
+	public EncoderObject(int length,int bits) {
+		if (length < 10) {
+			length = 10;
 		}
 		if (bits < 1) {
-			size = 1;
+			length = 1;
 		}
-		this.size = size;
+		this.length = length;
 		this.bits = bits;
 	}
 	
@@ -24,8 +24,8 @@ public abstract class EncoderObject {
 		this.resolution = resolution;
 	}
 	
-	public int size() {
-		return size;
+	public int length() {
+		return length;
 	}
 	
 	public int bits() {

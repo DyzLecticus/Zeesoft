@@ -8,12 +8,12 @@ public class DateTimeSDR extends SDR {
 	public	long						dateTime	= System.currentTimeMillis();
 	public	SortedMap<String,Object>	keyValues	= new TreeMap<String,Object>();
 	
-	public DateTimeSDR(int size) {
-		super(size);
+	public DateTimeSDR(int length) {
+		super(length);
 	}
 	
 	public DateTimeSDR(SDR sdr) {
-		super(sdr.size());
+		super(sdr.length());
 		for (Integer onBit: sdr.getOnBits()) {
 			setBit(onBit,true);
 		}

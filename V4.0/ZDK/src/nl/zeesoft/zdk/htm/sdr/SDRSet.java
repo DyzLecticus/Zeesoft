@@ -74,7 +74,7 @@ public class SDRSet {
 	}
 	
 	public void add(SDR sdr) {
-		if (sdr.size()==width) {
+		if (sdr.length()==width) {
 			set.add(sdr);
 		}
 	}
@@ -101,7 +101,7 @@ public class SDRSet {
 
 	public List<SDR> getMatches(SDR sdr,int theta) {
 		List<SDR> r = new ArrayList<SDR>();
-		if (sdr.size()==width) {
+		if (sdr.length()==width) {
 			for (SDR sdrC: set) {
 				if (sdrC.matches(sdr, theta)) {
 					r.add(sdrC);
@@ -113,7 +113,7 @@ public class SDRSet {
 	
 	public SortedMap<Integer,List<SDR>> getMatches(SDR sdr) {
 		SortedMap<Integer,List<SDR>> r = new TreeMap<Integer,List<SDR>>();
-		if (sdr.size()==width) {
+		if (sdr.length()==width) {
 			for (SDR sdrC: set) {
 				int overlap = sdrC.getOverlapScore(sdr);
 				if (overlap>0) {

@@ -46,7 +46,7 @@ public class TestDateTimeEncoder extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		DateTimeEncoder enc = new DateTimeEncoder();
-		assertEqual(enc.size(),120,"Encoder size does not match expectation");
+		assertEqual(enc.length(),120,"Encoder size does not match expectation");
 		
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		cal.set(Calendar.YEAR,2019);
@@ -67,7 +67,7 @@ public class TestDateTimeEncoder extends TestObject {
 			System.out.println("SDR for " + date.getDateTimeString() + "; " + sdr.toBitString());
 			cal.set(Calendar.MONTH,cal.get(Calendar.MONTH) + 1);
 		}
-		assertEqual(sdr.size(),enc.size(),"SDR size does not match expectation");
+		assertEqual(sdr.length(),enc.length(),"SDR size does not match expectation");
 		assertEqual(sdr.onBits(),enc.bits(),"SDR onBits does not match expectation");
 		assertSDREequals(sdr,"120,0,1,2,3,4,5,6,7,92,93,94,95,48,49,50,51,96,97,98,99,100,101,102,103","SDR(1) does not match expectation");
 		
@@ -95,7 +95,7 @@ public class TestDateTimeEncoder extends TestObject {
 	}
 	
 	public boolean assertSDREequals(SDR sdr,String strVal,String msg) {
-		SDR comp = new SDR(sdr.size());
+		SDR comp = new SDR(sdr.length());
 		comp.fromStringBuilder(new ZStringBuilder(strVal));
 		return assertEqual(sdr.toStringBuilder(),comp.toStringBuilder(),msg);
 	}

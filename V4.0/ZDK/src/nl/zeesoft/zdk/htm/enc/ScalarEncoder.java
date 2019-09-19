@@ -7,8 +7,8 @@ public class ScalarEncoder extends EncoderObject {
 	private int		maxValue	= 0;
 	private boolean periodic	= false;
 	
-	public ScalarEncoder(int size,int bits,int minValue,int maxValue) {
-		super(size,bits);
+	public ScalarEncoder(int length,int bits,int minValue,int maxValue) {
+		super(length,bits);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 	}
@@ -19,7 +19,7 @@ public class ScalarEncoder extends EncoderObject {
 
 	@Override
 	public SDR getSDRForValue(float value) {
-		SDR r = new SDR(size);
+		SDR r = new SDR(length);
 
 		int bucket = 0;
 
@@ -44,8 +44,8 @@ public class ScalarEncoder extends EncoderObject {
 		int end = bucket + bits;
 		for (int i = bucket; i < end; i++) {
 			int set = i;
-			if (set>=size) {
-				set = set % size;
+			if (set>=length) {
+				set = set % length;
 			}
 			r.setBit(set,true);
 		}
@@ -53,6 +53,6 @@ public class ScalarEncoder extends EncoderObject {
 	}
 	
 	public int getBuckets() {
-		return periodic ? size : size - bits;
+		return periodic ? length : length - bits;
 	}
 }

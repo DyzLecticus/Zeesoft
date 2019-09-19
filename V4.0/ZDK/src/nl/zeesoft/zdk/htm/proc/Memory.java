@@ -22,7 +22,7 @@ public class Memory implements Processable {
 	
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
-		int cells = config.size * config.depth;
+		int cells = config.length * config.depth;
 		int min = cells; 
 		int max = 0;
 		int avg = 0;
@@ -61,7 +61,7 @@ public class Memory implements Processable {
 	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
 		long total = System.nanoTime();
-		SDR r = new SDR(config.size);
+		SDR r = new SDR(config.length);
 		long start = 0;
 		
 		start = System.nanoTime();
@@ -144,7 +144,7 @@ public class Memory implements Processable {
 	protected void initialize() {
 		int posX = 0;
 		int posY = 0;
-		for (int i = 0; i < config.size; i++) {
+		for (int i = 0; i < config.length; i++) {
 			MemoryColumn col = new MemoryColumn(i);
 			columns.add(col);
 			for (int d = 0; d < config.depth; d++) {

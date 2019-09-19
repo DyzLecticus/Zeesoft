@@ -15,7 +15,7 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 	
 	public BufferedPredictor(MemoryConfig config) {
 		super(config);
-		buffer = new SDRMap(config.size,config.bits);
+		buffer = new SDRMap(config.length,config.bits);
 	}
 
 	public void setMaxBufferSize(int maxBufferSize) {
@@ -50,7 +50,7 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 			}
 		}
 		if (dateTimeSDR==null) {
-			dateTimeSDR = new DateTimeSDR(config.size);
+			dateTimeSDR = new DateTimeSDR(config.length);
 		}
 		return burstSDR;
 	}

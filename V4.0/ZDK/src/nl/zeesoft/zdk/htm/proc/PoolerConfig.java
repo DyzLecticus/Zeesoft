@@ -1,10 +1,12 @@
 package nl.zeesoft.zdk.htm.proc;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
 
 public class PoolerConfig {
-	protected int			inputSize						= 0;
-	protected int			outputSize						= 0;
+	protected int			inputLength						= 0;
+	protected int			outputLength					= 0;
 	protected int			outputBits						= 0;
 	
 	protected float			potentialProximalConnections	= 0.5F;
@@ -24,9 +26,9 @@ public class PoolerConfig {
 	protected int			outputSizeX						= 0;
 	protected int			outputSizeY						= 0;
 	
-	public PoolerConfig(int inputSize, int outputSize, int outputBits) {
-		this.inputSize = inputSize;
-		this.outputSize = outputSize;
+	public PoolerConfig(int inputLength, int outputLength, int outputBits) {
+		this.inputLength = inputLength;
+		this.outputLength = outputLength;
 		this.outputBits = outputBits;
 		calculateDimensions();
 	}
@@ -64,14 +66,14 @@ public class PoolerConfig {
 	}
 	
 	public void setInputDimensions(int sizeX,int sizeY) {
-		if (sizeX * sizeY == inputSize) {
+		if (sizeX * sizeY == inputLength) {
 			inputSizeX = sizeX;
 			inputSizeY = sizeY;
 		}
 	}
 	
 	public void setOutputDimensions(int sizeX,int sizeY) {
-		if (sizeX * sizeY == outputSize) {
+		if (sizeX * sizeY == outputLength) {
 			outputSizeX = sizeX;
 			outputSizeY = sizeY;
 		}
@@ -91,21 +93,33 @@ public class PoolerConfig {
 	}
 
 	protected void calculateDimensions() {
-		inputSizeX = (int) Math.sqrt(inputSize);
+		inputSizeX = (int) Math.sqrt(inputLength);
 		inputSizeY = inputSizeX;
-		if (inputSizeX * inputSizeY < inputSize) {
+		if (inputSizeX * inputSizeY < inputLength) {
 			inputSizeX += 1;
 		}
-		if (inputSizeX * inputSizeY < inputSize) {
+		if (inputSizeX * inputSizeY < inputLength) {
 			inputSizeY += 1;
 		}
-		outputSizeX = (int) Math.sqrt(outputSize);
+		outputSizeX = (int) Math.sqrt(outputLength);
 		outputSizeY = outputSizeX;
-		if (outputSizeX * outputSizeY < outputSize) {
+		if (outputSizeX * outputSizeY < outputLength) {
 			outputSizeX += 1;
 		}
-		if (outputSizeX * outputSizeY < outputSize) {
+		if (outputSizeX * outputSizeY < outputLength) {
 			outputSizeY += 1;
 		}
+	}
+	
+	public SDR getNewSDR() {
+		return new SDR(outputLength);
+	}
+	
+	public SDRMap getNewSDRMap() {
+		return new SDRMap(outputLength,outputBits);
+	}
+	
+	public SDRMap getNewSDRMapWithoutIndex() {
+		return new SDRMap(outputLength,outputBits,false);
 	}
 }

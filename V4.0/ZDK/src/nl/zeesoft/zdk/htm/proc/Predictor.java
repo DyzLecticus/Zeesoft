@@ -31,7 +31,7 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
 		SDR r = super.getSDRForInput(input,learn);
-		predictionSDR = new SDR(config.size);
+		predictionSDR = new SDR(config.length);
 		if (predictiveCells.size()>0) {
 			SortedMap<Integer,List<MemoryColumnCell>> predictionsByColumnIndex = new TreeMap<Integer,List<MemoryColumnCell>>();
 			for (MemoryColumnCell cell: predictiveCells) {

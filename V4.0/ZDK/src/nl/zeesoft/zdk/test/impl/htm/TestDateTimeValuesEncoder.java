@@ -50,7 +50,7 @@ public class TestDateTimeValuesEncoder extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		DateTimeValuesEncoder enc = new DateTimeValuesEncoder();
-		assertEqual(enc.size(),200,"Encoder size does not match expectation");
+		assertEqual(enc.length(),200,"Encoder size does not match expectation");
 		assertEqual(enc.bits(),40,"Encoder bits does not match expectation");
 		
 		Calendar cal = Calendar.getInstance();
