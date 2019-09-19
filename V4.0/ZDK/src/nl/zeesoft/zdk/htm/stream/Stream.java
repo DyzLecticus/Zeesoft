@@ -106,6 +106,20 @@ public class Stream extends Worker {
 		}
 	}
 	
+	public void waitForStart() {
+		while (!isWorking()) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				if (getMessenger()!=null) {
+					getMessenger().error(this,"Exception while starting stream",e);
+				} else {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void stop() {
 		for (StreamProcessor processor: processors) {

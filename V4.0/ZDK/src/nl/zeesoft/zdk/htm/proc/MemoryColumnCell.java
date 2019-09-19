@@ -114,7 +114,7 @@ public class MemoryColumnCell {
 			for (int i = 0; i < distLinks.size(); i++) {
 				DistalLink link = distLinks.get(i);
 				if (link.cell.activePreviously) {
-					//link.connection -= config.connectionDecrement;
+					link.connection -= config.connectionDecrement;
 					if (link.connection<=0) {
 						distLinks.remove(i);
 						link.cell.forwardLinks.remove(link);

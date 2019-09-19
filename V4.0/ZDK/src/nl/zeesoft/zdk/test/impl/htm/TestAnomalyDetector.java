@@ -112,6 +112,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	protected void testPredictionStream(Stream stream,SDRMap inputSDRMap) {
 		long started = System.currentTimeMillis();
 		stream.start();
+		stream.waitForStart();
 		System.out.println("Started stream");
 
 		for (int i = 0; i < inputSDRMap.size(); i++) {
