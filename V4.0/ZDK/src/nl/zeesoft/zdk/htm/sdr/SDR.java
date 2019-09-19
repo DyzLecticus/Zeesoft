@@ -37,17 +37,20 @@ public class SDR {
 		return r;
 	}
 	
-	public void setBit(int index,boolean on) {
+	public boolean setBit(int index,boolean on) {
+		boolean r = false;
 		if (index>=0 && index<length) {
 			Integer onBit = (Integer) index;
 			if (on) {
 				if (!onBits.contains(onBit)) {
 					onBits.add(onBit);
+					r = true;
 				}
 			} else {
-				onBits.remove(onBit);
+				r = onBits.remove(onBit);
 			}
 		}
+		return r;
 	}
 	
 	public Integer turnOffRandomBit() {

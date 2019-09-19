@@ -19,8 +19,16 @@ public class SDRMap {
 	
 	private SortedMap<Integer,List<SDRMapElement>>			elementsByOnBits	= new TreeMap<Integer,List<SDRMapElement>>();
 	
+	public SDRMap(int length) {
+		initialize(length,length,useIndex);
+	}
+	
 	public SDRMap(int length,int bits) {
 		initialize(length,bits,useIndex);
+	}
+	
+	public SDRMap(int length,boolean useIndex) {
+		initialize(length,length,useIndex);
 	}
 	
 	public SDRMap(int length,int bits,boolean useIndex) {
@@ -28,7 +36,10 @@ public class SDRMap {
 	}
 	
 	public void add(SDR sdr,Object value) {
-		if (sdr.length()==length && sdr.onBits()<=bits) {
+		if (sdr.onBits()>bits) {
+			sdr.subsample(bits);
+		}
+		if (sdr.length()==length) {
 			SDRMapElement element = new SDRMapElement();
 			element.key = sdr;
 			element.value = value;
@@ -87,6 +98,27 @@ public class SDRMap {
 	public void setValue(int index,Object value) {
 		if (index>=0 && index<elements.size()) {
 			elements.get(index).value = value;
+		}
+	}
+	
+	public void setBit(int index,int bitIndex,boolean on) {
+		if (index>=0 && index<elements.size()) {
+			SDRMapElement element = elements.get(index);
+			boolean flipped = element.key.setBit(bitIndex,on);
+			if (flipped && useIndex) {
+				List<SDRMapElement> list = elementsByOnBits.get(bitIndex);
+				if (list==null) {
+					list = new ArrayList<SDRMapElement>();
+					elementsByOnBits.put(bitIndex,list);
+				}
+				if (on) {
+					if (!list.contains(element)) {
+						list.add(element);
+					}
+				} else {
+					list.remove(element);
+				}
+			}
 		}
 	}
 	
@@ -155,6 +187,10 @@ public class SDRMap {
 			}
 		}
 		return r;
+	}
+	
+	public SortedMap<Integer,List<SDRMapElement>> getMatches(SDR sdr) {
+		return getMatches(sdr,bits / 4);
 	}
 	
 	public SortedMap<Integer,List<SDRMapElement>> getMatches(SDR sdr, int minOverlap) {
@@ -271,8 +307,10 @@ public class SDRMap {
 		if (length < 10) {
 			length = 10;
 		}
-		if (length < 1) {
-			length = 1;
+		if (bits < 1) {
+			bits = 1;
+		} else if (bits > length) {
+			bits = length;
 		}
 		this.length = length;
 		this.bits = bits;
