@@ -11,7 +11,8 @@ public class MemoryColumnCell {
 	protected	int					posZ				= 0;
 	
 	protected	List<DistalLink>	distLinks			= new ArrayList<DistalLink>();
-	protected	List<DistalLink>	activeLinks			= new ArrayList<DistalLink>();
+	
+	protected	List<DistalLink>	forwardLinks		= new ArrayList<DistalLink>();
 	
 	protected	float				activity			= 0;
 	
@@ -31,12 +32,13 @@ public class MemoryColumnCell {
 		activePreviously = active;
 		active = false;
 	}
-
+	
 	protected void calculateActivity() {
-		activity = 0;
-		for (DistalLink link: activeLinks) {
-			if (link.cell.active && link.connection>config.connectionThreshold) {
-				activity += link.connection - config.connectionThreshold;
+		if (active) {
+			for (DistalLink link: forwardLinks) {
+				if (link.cell.active && link.connection>config.connectionThreshold) {
+					link.origin.activity += link.connection - config.connectionThreshold;
+				}
 			}
 		}
 	}
@@ -72,7 +74,9 @@ public class MemoryColumnCell {
 				}
 				
 				DistalLink link = new DistalLink();
+				link.origin = this;
 				link.cell = toCell;
+				toCell.forwardLinks.add(link);
 				link.connection = config.connectionThreshold + (config.connectionIncrement / 2F);
 				if (dist<=config.initialDistalConnectedRadius) {
 					link.connection += config.connectionIncrement;
@@ -84,7 +88,6 @@ public class MemoryColumnCell {
 					link.connection = 1;
 				}
 				distLinks.add(link);
-				activeLinks.add(link);
 				added++;
 				if (added>=addMax) {
 					break;
@@ -97,9 +100,6 @@ public class MemoryColumnCell {
 		if (active) {
 			for (DistalLink link: distLinks) {
 				if (link.cell.activePreviously) {
-					if (link.connection <= config.connectionThreshold && link.connection + config.connectionIncrement > config.connectionThreshold) {
-						activeLinks.add(link);
-					}
 					link.connection += config.connectionIncrement;
 					if (link.connection > 1) {
 						link.connection = 1;
@@ -114,12 +114,10 @@ public class MemoryColumnCell {
 			for (int i = 0; i < distLinks.size(); i++) {
 				DistalLink link = distLinks.get(i);
 				if (link.cell.activePreviously) {
-					if (link.connection > config.connectionThreshold && link.connection - config.connectionDecrement <= config.connectionThreshold) {
-						activeLinks.remove(link);
-					}
-					link.connection -= config.connectionDecrement;
+					//link.connection -= config.connectionDecrement;
 					if (link.connection<=0) {
 						distLinks.remove(i);
+						link.cell.forwardLinks.remove(link);
 					}
 				}
 			}

@@ -119,6 +119,11 @@ public class Memory implements Processable {
 	
 	protected void calculateActivity() {
 		for (MemoryColumn col: columns) {
+			for (MemoryColumnCell cell: col.cells) {
+				cell.activity = 0;
+			}
+		}
+		for (MemoryColumn col: columns) {
 			col.calculateActivity();
 		}
 	}
