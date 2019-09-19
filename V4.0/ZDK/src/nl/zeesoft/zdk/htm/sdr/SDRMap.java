@@ -145,6 +145,8 @@ public class SDRMap {
 
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder r = new ZStringBuilder("" + length);
+		r.append(",");
+		r.append("" + bits);
 		for (SDRMapElement element: elements) {
 			r.append("|");
 			int added = 0;
@@ -163,7 +165,9 @@ public class SDRMap {
 		clear();
 		List<ZStringBuilder> elems = str.split("|");
 		if (elems.size()>=1) {
-			length = Integer.parseInt(elems.get(0).toString());
+			List<ZStringBuilder> vals = elems.get(0).split(",");
+			length = Integer.parseInt(vals.get(0).toString());
+			bits = Integer.parseInt(vals.get(1).toString());
 			for (int i = 1; i<elems.size(); i++) {
 				SDR sdr = new SDR(length);
 				List<ZStringBuilder> onBits = elems.get(i).split(",");
@@ -259,22 +263,24 @@ public class SDRMap {
 			Set<SDRMapElement> done = new HashSet<SDRMapElement>(); 
 			for (Integer onBit: sdr.getOnBits()) {
 				List<SDRMapElement> bitList = elementsByOnBits.get(onBit);
-				for (SDRMapElement element: bitList) {
-					if (!done.contains(element)) {
-						done.add(element);
-						int overlap = 0;
-						if (sdr.onBits()>=element.key.onBits()) {
-							overlap = element.key.getOverlapScore(sdr);
-						} else {
-							overlap = sdr.getOverlapScore(element.key);
-						}
-						if (overlap>=minOverlap) {
-							List<SDRMapElement> list = r.get(overlap);
-							if (list==null) {
-								list = new ArrayList<SDRMapElement>();
-								r.put(overlap,list);
+				if (bitList!=null) {
+					for (SDRMapElement element: bitList) {
+						if (!done.contains(element)) {
+							done.add(element);
+							int overlap = 0;
+							if (sdr.onBits()>=element.key.onBits()) {
+								overlap = element.key.getOverlapScore(sdr);
+							} else {
+								overlap = sdr.getOverlapScore(element.key);
 							}
-							list.add(element);
+							if (overlap>=minOverlap) {
+								List<SDRMapElement> list = r.get(overlap);
+								if (list==null) {
+									list = new ArrayList<SDRMapElement>();
+									r.put(overlap,list);
+								}
+								list.add(element);
+							}
 						}
 					}
 				}

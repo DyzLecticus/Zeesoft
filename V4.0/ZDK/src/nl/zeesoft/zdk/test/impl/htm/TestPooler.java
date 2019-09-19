@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.PoolerProcessor;
@@ -69,6 +70,20 @@ public class TestPooler extends TestObject implements ProcessorListener {
 		
 		System.out.println();
 		System.out.println(pooler.getDescription());
+		ZStringBuilder strOri = pooler.toStringBuilder();
+		Pooler poolerNew = new Pooler(config);
+		poolerNew.fromStringBuilder(strOri);
+		ZStringBuilder strNew = poolerNew.toStringBuilder();
+		if (!assertEqual(strNew.length(),strOri.length(),"Pooler string builder does not match expectation")) {
+			System.out.println(strOri.substring(0,500));
+			System.err.println(strNew.substring(0,500));
+		} else {
+			strOri = pooler.getDescription();
+			strNew = poolerNew.getDescription();
+			if (!assertEqual(strNew.equals(strOri),true,"Pooler string builder does not match expectation")) {
+				System.err.println(poolerNew.getDescription());
+			}
+		}
 		
 		PoolerProcessor processor = new PoolerProcessor(pooler);
 		processor.getListeners().add(this);

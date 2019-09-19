@@ -140,6 +140,48 @@ public class Pooler extends ProcessableObject implements Processable {
 		return (PoolerStats) stats;
 	}
 	
+	public ZStringBuilder toStringBuilder() {
+		ZStringBuilder r = new ZStringBuilder();
+		for (PoolerColumn col: columns) {
+			if (r.length()>0) {
+				r.append("|");
+			}
+			boolean first = true;
+			for (ProximalLink link: col.proxLinks) {
+				if (!first) {
+					r.append(";");
+				}
+				r.append("" + link.connection);
+				r.append(",");
+				r.append("" + link.inputIndex);
+				first = false;
+			}
+		}
+		return r;
+	}
+	
+	public void fromStringBuilder(ZStringBuilder str) {
+		List<ZStringBuilder> cols = str.split("|");
+		if (cols.size()==columns.size()) {
+			for (int i = 0; i < cols.size(); i++) {
+				PoolerColumn col = columns.get(i);
+				List<ZStringBuilder> lnks = cols.get(i).split(";");
+				for (ZStringBuilder lnk: lnks) {
+					List<ZStringBuilder> vals = lnk.split(",");
+					if (vals.size()==2) {
+						ProximalLink link = new ProximalLink();
+						link.connection = Float.parseFloat(vals.get(0).toString());
+						link.inputIndex = Integer.parseInt(vals.get(1).toString());
+						col.proxLinks.add(link);
+						if (link.connection>config.connectionThreshold) {
+							col.connectedIndices.add(link.inputIndex);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	protected void calculateOverlapScoresForSDROnBits(List<Integer> onBits) {
 		for (PoolerColumn col: columns) {
 			col.calculateOverlapScoreForOnBits(onBits);
