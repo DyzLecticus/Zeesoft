@@ -1,7 +1,9 @@
 package nl.zeesoft.zdk.htm.sdr;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -10,26 +12,27 @@ import nl.zeesoft.zdk.functions.ZRandomize;
 public class SDRMap {
 	private int												width				= 0;
 	private int												bits				= 0;
+	private boolean											useIndex			= true;
 	
 	private List<SDRMapElement>								elements			= new ArrayList<SDRMapElement>();
 	
+	private SortedMap<Integer,List<SDRMapElement>>			elementsByOnBits	= new TreeMap<Integer,List<SDRMapElement>>();
+	
 	public SDRMap(int width,int bits) {
-		if (width < 10) {
-			width = 10;
-		}
-		if (width < 1) {
-			width = 1;
-		}
-		this.width = width;
-		this.bits = bits;
+		initialize(width,bits,useIndex);
 	}
 	
-	public void addSDR(SDR sdr,Object value) {
-		if (sdr.size()==width && sdr.onBits()<=bits && value!=null) {
+	public SDRMap(int width,int bits,boolean useIndex) {
+		initialize(width,bits,useIndex);
+	}
+	
+	public void add(SDR sdr,Object value) {
+		if (sdr.size()==width && sdr.onBits()<=bits) {
 			SDRMapElement element = new SDRMapElement();
 			element.key = sdr;
 			element.value = value;
 			elements.add(element);
+			addToIndex(element);
 		}
 	}
 
@@ -53,6 +56,25 @@ public class SDRMap {
 		return r;
 	}
 
+	public SDR getSDR(int index) {
+		SDR r = null;
+		if (index>=0 && index<elements.size()) {
+			r = elements.get(index).key;
+		}
+		return r;
+	}
+
+	public DateTimeSDR getDateTimeSDR(int index) {
+		DateTimeSDR r = null;
+		if (index>=0 && index<elements.size()) {
+			SDR	sdr = elements.get(index).key;
+			if (sdr instanceof DateTimeSDR) {
+				r = (DateTimeSDR) sdr;
+			}
+		}
+		return r;
+	}
+	
 	public Object getValue(int index) {
 		Object r = null;
 		if (index>=0 && index<elements.size()) {
@@ -70,12 +92,18 @@ public class SDRMap {
 	public Object remove(int index) {
 		Object r = null;
 		if (index>=0 && index<elements.size()) {
-			SDRMapElement elem = elements.remove(index);
-			if (elem!=null) {
-				r = elem.value;
+			SDRMapElement element = elements.remove(index);
+			if (element!=null) {
+				r = element.value;
+				removeFromIndex(element);
 			}
 		}
 		return r;
+	}
+
+	public void clear() {
+		elements.clear();
+		elementsByOnBits.clear();
 	}
 
 	public SDRMapElement getRandomClosestMatch(SDR sdr) {
@@ -98,29 +126,123 @@ public class SDRMap {
 	
 	public SortedMap<Integer,List<SDRMapElement>> getMatches(SDR sdr, int minOverlap) {
 		SortedMap<Integer,List<SDRMapElement>> r = new TreeMap<Integer,List<SDRMapElement>>();
+		if (useIndex) {
+			r = getMatchesUseIndex(sdr,minOverlap);
+		} else {
+			r = new TreeMap<Integer,List<SDRMapElement>>();
+			if (minOverlap	< 1) {
+				minOverlap = 1;
+			} else if (minOverlap >= bits) {
+				minOverlap = bits - 1;
+			}
+			if (sdr.onBits()>=minOverlap && sdr.size()==width && checkUnionOverlap(sdr,minOverlap)) {
+				for (SDRMapElement element: elements) {
+					int overlap = 0;
+					if (sdr.onBits()>=element.key.onBits()) {
+						overlap = element.key.getOverlapScore(sdr);
+					} else {
+						overlap = sdr.getOverlapScore(element.key);
+					}
+					if (overlap>=minOverlap) {
+						List<SDRMapElement> list = r.get(overlap);
+						if (list==null) {
+							list = new ArrayList<SDRMapElement>();
+							r.put(overlap,list);
+						}
+						list.add(element);
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
+	public SDR getUnion() {
+		SDR r = new SDR(width);
+		if (useIndex) {
+			for (Integer onBit: elementsByOnBits.keySet()) {
+				r.setBit(onBit,true);
+			}
+		} else {
+			for (SDRMapElement element: elements) {
+				r = SDR.or(r,element.key);
+			}
+		}
+		return r;
+	}
+	
+	private boolean checkUnionOverlap(SDR sdr,int minOverlap) {
+		return sdr.getOverlapScore(getUnion()) > minOverlap;
+	}
+	
+	private SortedMap<Integer,List<SDRMapElement>> getMatchesUseIndex(SDR sdr, int minOverlap) {
+		SortedMap<Integer,List<SDRMapElement>> r = new TreeMap<Integer,List<SDRMapElement>>();
 		if (minOverlap	< 1) {
 			minOverlap = 1;
 		} else if (minOverlap >= bits) {
 			minOverlap = bits - 1;
 		}
-		if (sdr.onBits()>=minOverlap && sdr.size()==width) {
-			for (SDRMapElement element: elements) {
-				int overlap = 0;
-				if (sdr.onBits()>=element.key.onBits()) {
-					overlap = element.key.getOverlapScore(sdr);
-				} else {
-					overlap = sdr.getOverlapScore(element.key);
-				}
-				if (overlap>=minOverlap) {
-					List<SDRMapElement> list = r.get(overlap);
-					if (list==null) {
-						list = new ArrayList<SDRMapElement>();
-						r.put(overlap,list);
+		if (useIndex && sdr.onBits()>=minOverlap && sdr.size()==width && checkUnionOverlap(sdr,minOverlap)) {
+			Set<SDRMapElement> done = new HashSet<SDRMapElement>(); 
+			for (Integer onBit: sdr.getOnBits()) {
+				List<SDRMapElement> bitList = elementsByOnBits.get(onBit);
+				for (SDRMapElement element: bitList) {
+					if (!done.contains(element)) {
+						done.add(element);
+						int overlap = 0;
+						if (sdr.onBits()>=element.key.onBits()) {
+							overlap = element.key.getOverlapScore(sdr);
+						} else {
+							overlap = sdr.getOverlapScore(element.key);
+						}
+						if (overlap>=minOverlap) {
+							List<SDRMapElement> list = r.get(overlap);
+							if (list==null) {
+								list = new ArrayList<SDRMapElement>();
+								r.put(overlap,list);
+							}
+							list.add(element);
+						}
 					}
-					list.add(element);
 				}
 			}
 		}
 		return r;
+	}
+	
+	private void addToIndex(SDRMapElement element) {
+		if (useIndex) {
+			for (Integer onBit: element.key.getOnBits()) {
+				List<SDRMapElement> list = elementsByOnBits.get(onBit);
+				if (list==null) {
+					list = new ArrayList<SDRMapElement>();
+					elementsByOnBits.put(onBit, list);
+				}
+				list.add(element);
+			}
+		}
+	}
+	
+	private void removeFromIndex(SDRMapElement element) {
+		if (useIndex) {
+			for (Integer onBit: element.key.getOnBits()) {
+				List<SDRMapElement> list = elementsByOnBits.get(onBit);
+				if (list!=null) {
+					list.remove(element);
+				}
+			}
+		}
+	}
+	
+	private void initialize(int width,int bits, boolean useIndex) {
+		if (width < 10) {
+			width = 10;
+		}
+		if (width < 1) {
+			width = 1;
+		}
+		this.width = width;
+		this.bits = bits;
+		this.useIndex = useIndex;
 	}
 }

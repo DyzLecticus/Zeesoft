@@ -32,14 +32,6 @@ public class StreamProcessor extends Worker {
 		setSleep(1);
 	}
 	
-	public void resetStats() {
-		processor.resetStats();
-	}
-	
-	public StatsObject getStats() {
-		return processor.getStats();
-	}
-	
 	protected void setLearn(boolean learn) {
 		lockMe(this);
 		this.learn = learn;
@@ -85,7 +77,11 @@ public class StreamProcessor extends Worker {
 			if (processor instanceof ProcessableSecondaryOutput) {
 				((ProcessableSecondaryOutput) processor).addSecondarySDRs(result.outputSDRs);
 			}
-			stream.processedResult(this,result);
+			StatsObject stats = processor.getStats().copy();
+			boolean resetStats = stream.processedResult(this,stats,result);
+			if (resetStats) {
+				processor.resetStats();
+			}
 			setSleep(0);
 		} else {
 			setSleep(1);

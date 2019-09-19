@@ -31,7 +31,7 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 		SDR inputSDR = contextSDRs.get(0);
 		SDR outputSDR = contextSDRs.get(1);
 		if (inputSDR instanceof DateTimeSDR) {
-			buffer.addSDR(outputSDR,inputSDR);
+			buffer.add(outputSDR,inputSDR);
 			if (buffer.size()>maxBufferSize) {
 				buffer.remove(0);
 			}

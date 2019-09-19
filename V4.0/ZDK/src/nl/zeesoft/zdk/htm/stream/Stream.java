@@ -21,6 +21,7 @@ public class Stream extends Worker {
 	
 	private StreamStats				stats			= new StreamStats();
 	private StatsObject[]			processorStats	= null;
+	private boolean[]				resetStats		= null;
 	
 	private	StreamResults			results			= null;
 	
@@ -39,6 +40,10 @@ public class Stream extends Worker {
 		StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
 		processors.add(sp);
 		processorStats = new StatsObject[processors.size()];
+		resetStats = new boolean[processors.size()];
+		for (int i = 0; i < processors.size(); i++) {
+			resetStats[i] = false;
+		}
 		unlockMe(this);
 	}
 	
@@ -72,8 +77,8 @@ public class Stream extends Worker {
 	public void resetStats() {
 		lockMe(this);
 		stats = new StreamStats();
-		for (StreamProcessor processor: processors) {
-			processor.resetStats();
+		for (int i = 0; i < processors.size(); i++) {
+			resetStats[i] = true;
 		}
 		unlockMe(this);
 	}
@@ -107,6 +112,7 @@ public class Stream extends Worker {
 			processor.stop();
 		}
 		super.stop();
+		flushOutput();
 	}
 	
 	public void waitForStop() {
@@ -133,10 +139,11 @@ public class Stream extends Worker {
 		}
 	}
 	
-	protected void processedResult(StreamProcessor processor,StreamResult result) {
+	protected boolean processedResult(StreamProcessor processor,StatsObject pStats,StreamResult result) {
+		boolean r = false;
 		lockMe(this);
 		int index = processors.indexOf(processor);
-		processorStats[index] = processor.getStats().copy();
+		processorStats[index] = pStats;
 		int nextIndex = index + 1;
 		if (nextIndex<processors.size()) {
 			processors.get(nextIndex).addResultToQueue(result);
@@ -145,11 +152,17 @@ public class Stream extends Worker {
 			stats.total++;
 			stats.totalNs += System.nanoTime() - result.added;
 		}
+		r = resetStats[index];
 		unlockMe(this);
+		return r;
 	}
 	
 	@Override
 	protected void whileWorking() {
+		flushOutput();
+	}
+	
+	protected void flushOutput() {
 		lockMe(this);
 		List<StreamResult> res = results.flush();
 		List<StreamListener> list = new ArrayList<StreamListener>(listeners);

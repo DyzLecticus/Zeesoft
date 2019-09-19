@@ -4,8 +4,10 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
+import nl.zeesoft.zdk.htm.proc.MemoryStats;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
+import nl.zeesoft.zdk.htm.proc.PoolerStats;
 import nl.zeesoft.zdk.htm.proc.Predictor;
 import nl.zeesoft.zdk.htm.proc.StatsObject;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
@@ -19,13 +21,14 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
 public class TestAnomalyDetector extends TestObject implements StreamListener, AnomalyDetectorListener {
-	private int					counter			= 0;
+	protected int				counter			= 0;
+	protected DecimalFormat		df				= new DecimalFormat("0.000");
+	protected int				numDetected		= 0;
 	
-	private int					numChange		= 0;
-	private int					numDetected		= 0;
+	private int					numExpected		= 0;
+	
 	private PredictionStream	stream			= null;
 	private AnomalyDetector		detector 		= null;
-	private DecimalFormat		df				= new DecimalFormat("0.000");
 	
 	public TestAnomalyDetector(Tester tester) {
 		super(tester);
@@ -67,12 +70,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	
 	@Override
 	protected void test(String[] args) {
-		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockAnomalySDRSet.class.getName());
-		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
-		
-		numChange = (inputSDRSet.size() / 2) + 1;
-		System.out.println("Test set anomaly detection is expected after: " + numChange);
-		System.out.println();
+		SDRSet inputSDRSet = getInputSDRSet();
 
 		PoolerConfig poolerConfig = new PoolerConfig(inputSDRSet.width(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);
@@ -91,6 +89,28 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println(memoryConfig.getDescription());
 		System.out.println();
 
+		testPredictionStream(stream, inputSDRSet);
+		
+		assertDetection();
+	}
+	
+	protected SDRSet getInputSDRSet() {
+		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockAnomalySDRSet.class.getName());
+		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
+		
+		numExpected = (inputSDRSet.size() / 2) + 1;
+		System.out.println("Test set anomaly detection is expected after: " + numExpected);
+		System.out.println();
+		
+		return inputSDRSet;
+	}
+
+	protected void assertDetection() {
+		assertEqual(numDetected > numExpected && numDetected < numExpected + 48,true,"Failed to detect the expected anomaly");
+	}
+
+	protected void testPredictionStream(Stream stream,SDRSet inputSDRSet) {
+		long started = System.currentTimeMillis();
 		stream.start();
 		System.out.println("Started stream");
 
@@ -102,24 +122,34 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		while(stream.isWorking()) {
 			sleep(100);
 			i++;
-			if (i >= 900) {
+			if (i >= 600) {
 				break;
 			}
 		}
 		
+		stream.stop();
 		stream.waitForStop();
-		System.out.println("Stopped stream");
-		
-		assertEqual(numDetected > numChange && numDetected < numChange + 48,true,"Failed to detect the expected anomaly");
+		long streamMs = (System.currentTimeMillis() - started);
+		System.out.println("Stopped stream after " + streamMs + " ms");
 		
 		List<StatsObject> stats = stream.getStats();
+		long totalMs = 0;
 		for (StatsObject stat: stats) {
 			System.out.println();
 			System.out.println(stat.getClass().getSimpleName() + ";");
 			System.out.println(stat.getDescription());
+			if (stat instanceof PoolerStats || stat instanceof MemoryStats) {
+				totalMs += stat.totalNs / 1000000;
+			}
+		}
+		
+		System.out.println();
+		System.out.println("Total processing time " + totalMs + " ms");
+		if (streamMs < totalMs) {
+			System.out.println("Net stream processing performance gain over sequential processing per input SDR: " + df.format((totalMs - streamMs) / (float) stats.get(0).total) + " ms");
 		}
 	}
-
+	
 	@Override
 	public void processedResult(Stream stream, StreamResult result) {
 		counter++;
@@ -130,9 +160,8 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 
 	@Override
 	public void detectedAnomaly(float averageAccuracy, float averageAccuracyChange, StreamResult result) {
-		stream.stop();
-		System.out.println();
 		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", change: " + averageAccuracyChange);
 		numDetected = (int) result.id;
+		stream.stop();
 	}
 }

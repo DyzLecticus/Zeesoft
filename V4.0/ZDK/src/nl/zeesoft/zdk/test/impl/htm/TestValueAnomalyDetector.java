@@ -1,34 +1,23 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
-import java.text.DecimalFormat;
-import java.util.List;
-
 import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
-import nl.zeesoft.zdk.htm.proc.Predictor;
-import nl.zeesoft.zdk.htm.proc.StatsObject;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
-import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
-import nl.zeesoft.zdk.htm.stream.PredictionStream;
+import nl.zeesoft.zdk.htm.stream.BufferedPredictionStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
-import nl.zeesoft.zdk.test.TestObject;
+import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetector;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestValueAnomalyDetector extends TestObject implements StreamListener, AnomalyDetectorListener {
-	private int					counter			= 0;
-	
-	private int					numChange		= 0;
-	private int					numDetected		= 0;
-	private PredictionStream	stream			= null;
-	private AnomalyDetector		detector 		= null;
-	private StreamResult		previousResult	= null;
-	private DecimalFormat		df				= new DecimalFormat("0.000");
+public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, AnomalyDetectorListener {
+	private BufferedPredictionStream	stream			= null;
+	private ValueAnomalyDetector		detector 		= null;
+	private StreamResult				previousResult	= null;
 	
 	public TestValueAnomalyDetector(Tester tester) {
 		super(tester);
@@ -70,12 +59,7 @@ public class TestValueAnomalyDetector extends TestObject implements StreamListen
 	
 	@Override
 	protected void test(String[] args) {
-		SDRSet inputSDRSet = (SDRSet) getTester().getMockedObject(MockAnomalySDRSet.class.getName());
-		assertEqual(inputSDRSet.size(),17521,"Input SDR set size does not match expectation");
-		
-		numChange = (inputSDRSet.size() / 2) + 1;
-		System.out.println("Test set anomaly detection is expected after: " + numChange);
-		System.out.println();
+		SDRSet inputSDRSet = getInputSDRSet();
 
 		PoolerConfig poolerConfig = new PoolerConfig(inputSDRSet.width(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);
@@ -83,9 +67,9 @@ public class TestValueAnomalyDetector extends TestObject implements StreamListen
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
 		
-		Predictor predictor = new BufferedPredictor(memoryConfig);
+		BufferedPredictor predictor = new BufferedPredictor(memoryConfig);
 		
-		stream = new PredictionStream(null,null,pooler,predictor);
+		stream = new BufferedPredictionStream(null,null,pooler,predictor);
 		detector = stream.getNewValueAnomalyDetector("value");
 		stream.addListener(this);
 		detector.addListener(this);
@@ -94,33 +78,9 @@ public class TestValueAnomalyDetector extends TestObject implements StreamListen
 		System.out.println(memoryConfig.getDescription());
 		System.out.println();
 
-		stream.start();
-		System.out.println("Started stream");
+		testPredictionStream(stream, inputSDRSet);
 		
-		for (int i = 0; i < inputSDRSet.size(); i++) {
-			stream.addSDR(inputSDRSet.get(i));
-		}
-		
-		int i = 0;
-		while(stream.isWorking()) {
-			sleep(100);
-			i++;
-			if (i >= 900) {
-				break;
-			}
-		}
-		
-		stream.waitForStop();
-		System.out.println("Stopped stream");
-		
-		assertEqual(numDetected > numChange && numDetected < numChange + 48,true,"Failed to detect the expected anomaly");
-		
-		List<StatsObject> stats = stream.getStats();
-		for (StatsObject stat: stats) {
-			System.out.println();
-			System.out.println(stat.getClass().getSimpleName() + ";");
-			System.out.println(stat.getDescription());
-		}
+		assertDetection();
 	}
 
 	@Override
@@ -140,9 +100,8 @@ public class TestValueAnomalyDetector extends TestObject implements StreamListen
 
 	@Override
 	public void detectedAnomaly(float averageAccuracy, float averageAccuracyChange, StreamResult result) {
-		stream.stop();
-		System.out.println();
 		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", change: " + averageAccuracyChange);
 		numDetected = (int) result.id;
+		stream.stop();
 	}
 }
