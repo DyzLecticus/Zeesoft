@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
-public class StatsObject {
+public abstract class StatsObject {
 	protected	DecimalFormat 	df		= new DecimalFormat("0.000");
 
 	public 		int				total	= 0;
@@ -12,6 +12,13 @@ public class StatsObject {
 	
 	public ZStringBuilder getDescription() {
 		return new ZStringBuilder();
+	}
+	
+	public abstract StatsObject copy();
+	
+	protected void copyTo(StatsObject copy) {
+		copy.total = total;
+		copy.totalNs = totalNs;
 	}
 	
 	protected void appendValue(ZStringBuilder str,String description,long val) {
@@ -28,7 +35,11 @@ public class StatsObject {
 	protected void appendNsPerTotal(ZStringBuilder str,String description) {
 		str.append(description);
 		str.append(" ");
-		ZStringBuilder strVal = new ZStringBuilder(df.format((totalNs / total) / 1000000F));
+		long val = 0;
+		if (total>0) {
+			val = (totalNs / total);
+		}
+		ZStringBuilder strVal = new ZStringBuilder(df.format(val / 1000000F));
 		while (strVal.length() < 10) {
 			strVal.insert(0," ");
 		}

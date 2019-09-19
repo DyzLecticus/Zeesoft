@@ -3,11 +3,13 @@ package nl.zeesoft.zdk.test.impl.htm;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.Predictor;
 import nl.zeesoft.zdk.htm.proc.StatsObject;
+import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
@@ -18,21 +20,22 @@ import nl.zeesoft.zdk.htm.stream.StreamResult;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestAnomalyDetector extends TestObject implements StreamListener, AnomalyDetectorListener {
+public class TestValueAnomalyDetector extends TestObject implements StreamListener, AnomalyDetectorListener {
 	private int					counter			= 0;
 	
 	private int					numChange		= 0;
 	private int					numDetected		= 0;
 	private PredictionStream	stream			= null;
 	private AnomalyDetector		detector 		= null;
+	private StreamResult		previousResult	= null;
 	private DecimalFormat		df				= new DecimalFormat("0.000");
 	
-	public TestAnomalyDetector(Tester tester) {
+	public TestValueAnomalyDetector(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestAnomalyDetector(new Tester())).test(args);
+		(new TestValueAnomalyDetector(new Tester())).test(args);
 	}
 
 	@Override
@@ -80,10 +83,10 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
 		
-		Predictor predictor = new Predictor(memoryConfig);
+		Predictor predictor = new BufferedPredictor(memoryConfig);
 		
 		stream = new PredictionStream(null,null,pooler,predictor);
-		detector = stream.getNewAnomalyDetector();
+		detector = stream.getNewValueAnomalyDetector("value");
 		stream.addListener(this);
 		detector.addListener(this);
 		
@@ -93,7 +96,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 
 		stream.start();
 		System.out.println("Started stream");
-
+		
 		for (int i = 0; i < inputSDRSet.size(); i++) {
 			stream.addSDR(inputSDRSet.get(i));
 		}
@@ -124,8 +127,15 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	public void processedResult(Stream stream, StreamResult result) {
 		counter++;
 		if (counter % (500) == 0) {
-			System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", change: " + df.format(detector.getAverageAccuracyChange()));
+			if (previousResult!=null && previousResult.outputSDRs.size()>3) {
+				DateTimeSDR dtsP = (DateTimeSDR) previousResult.outputSDRs.get(3);
+				DateTimeSDR dtsI = (DateTimeSDR) result.inputSDR;
+				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", change: " + df.format(detector.getAverageAccuracyChange()) + ", predicted value: " + dtsP.keyValues.get("value") + ", input value: " + dtsI.keyValues.get("value"));
+			} else {
+				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", change: " + df.format(detector.getAverageAccuracyChange()));
+			}
 		}
+		previousResult = result;
 	}
 
 	@Override

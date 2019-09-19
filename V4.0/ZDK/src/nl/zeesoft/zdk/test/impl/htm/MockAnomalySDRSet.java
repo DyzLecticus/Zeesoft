@@ -24,8 +24,7 @@ public class MockAnomalySDRSet extends MockObject {
 			SDR sdr = enc.getSDRForValue(mockVal.value2);
 			DateTimeSDR dts = new DateTimeSDR(sdr);
 			dts.dateTime = mockVal.dateTime;
-			dts.keyValues.put("value1",mockVal.value1);
-			dts.keyValues.put("value2",mockVal.value2);
+			dts.keyValues.put("value",mockVal.value2);
 			sdrSet.add(dts);
 		}
 		return sdrSet;

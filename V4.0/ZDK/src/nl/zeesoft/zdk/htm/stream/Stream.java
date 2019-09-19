@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.htm.proc.Processable;
+import nl.zeesoft.zdk.htm.proc.StatsObject;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -14,11 +15,14 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * A stream provides a threaded processor sequence where the output SDR of each processor is used as input for the next processor
  */
 public class Stream extends Worker {
-	private List<StreamProcessor>	processors	= new ArrayList<StreamProcessor>();
+	private List<StreamProcessor>	processors		= new ArrayList<StreamProcessor>();
 
-	private List<StreamListener>	listeners	= new ArrayList<StreamListener>();
+	private List<StreamListener>	listeners		= new ArrayList<StreamListener>();
 	
-	private	StreamResults			results		= null;
+	private StreamStats				stats			= new StreamStats();
+	private StatsObject[]			processorStats	= null;
+	
+	private	StreamResults			results			= null;
 	
 	public Stream(Messenger msgr,WorkerUnion uni) {
 		super(msgr,uni);
@@ -34,6 +38,7 @@ public class Stream extends Worker {
 		lockMe(this);
 		StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
 		processors.add(sp);
+		processorStats = new StatsObject[processors.size()];
 		unlockMe(this);
 	}
 	
@@ -64,6 +69,28 @@ public class Stream extends Worker {
 		return result.id;
 	}
 	
+	public void resetStats() {
+		lockMe(this);
+		stats = new StreamStats();
+		for (StreamProcessor processor: processors) {
+			processor.resetStats();
+		}
+		unlockMe(this);
+	}
+	
+	public List<StatsObject> getStats() {
+		List<StatsObject> r = new ArrayList<StatsObject>();
+		lockMe(this);
+		r.add(stats.copy());
+		for (int i = 0; i < processorStats.length; i++) {
+			if (processorStats[i]!=null) {
+				r.add(processorStats[i]);
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+	
 	@Override
 	public void start() {
 		if (!isWorking()) {
@@ -86,7 +113,10 @@ public class Stream extends Worker {
 		for (StreamProcessor processor: processors) {
 			whileStopping(processor); 
 		}
-		whileStopping(this); 
+		whileStopping(this);
+		for (StreamProcessor processor: processors) {
+			processor.destroy();
+		}
 	}
 	
 	protected void whileStopping(Worker worker) {
@@ -105,11 +135,15 @@ public class Stream extends Worker {
 	
 	protected void processedResult(StreamProcessor processor,StreamResult result) {
 		lockMe(this);
-		int nextIndex = processors.indexOf(processor) + 1;
+		int index = processors.indexOf(processor);
+		processorStats[index] = processor.getStats().copy();
+		int nextIndex = index + 1;
 		if (nextIndex<processors.size()) {
 			processors.get(nextIndex).addResultToQueue(result);
 		} else {
 			results.addResult(result);
+			stats.total++;
+			stats.totalNs += System.nanoTime() - result.added;
 		}
 		unlockMe(this);
 	}

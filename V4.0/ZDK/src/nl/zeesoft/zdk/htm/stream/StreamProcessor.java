@@ -8,6 +8,7 @@ import java.util.Queue;
 import nl.zeesoft.zdk.htm.proc.Processable;
 import nl.zeesoft.zdk.htm.proc.ProcessableContextInput;
 import nl.zeesoft.zdk.htm.proc.ProcessableSecondaryOutput;
+import nl.zeesoft.zdk.htm.proc.StatsObject;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
@@ -29,6 +30,14 @@ public class StreamProcessor extends Worker {
 		this.processor = processor;
 		this.useOutputIndex = useOutputIndex;
 		setSleep(1);
+	}
+	
+	public void resetStats() {
+		processor.resetStats();
+	}
+	
+	public StatsObject getStats() {
+		return processor.getStats();
 	}
 	
 	protected void setLearn(boolean learn) {

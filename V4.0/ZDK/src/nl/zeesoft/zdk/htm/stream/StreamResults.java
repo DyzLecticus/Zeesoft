@@ -13,7 +13,7 @@ public class StreamResults extends Locker {
 	private long							uid			= 0;
 	private SortedMap<Long,StreamResult>	results		= new TreeMap<Long,StreamResult>();
 	
-	public StreamResults(Messenger msgr) {
+	protected StreamResults(Messenger msgr) {
 		super(msgr);
 	}
 	

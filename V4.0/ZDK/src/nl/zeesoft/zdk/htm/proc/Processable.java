@@ -4,4 +4,6 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public interface Processable {
 	public SDR getSDRForInput(SDR input,boolean learn);
+	public void resetStats();
+	public StatsObject getStats();
 }

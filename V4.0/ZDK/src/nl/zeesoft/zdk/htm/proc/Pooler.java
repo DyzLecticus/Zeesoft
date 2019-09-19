@@ -90,14 +90,6 @@ public class Pooler implements Processable {
 		}
 		return r;
 	}
-	
-	public void resetStats() {
-		stats = new PoolerStats();
-	}
-	
-	public PoolerStats getStats() {
-		return stats;
-	}
 
 	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
@@ -140,6 +132,16 @@ public class Pooler implements Processable {
 		stats.totalNs += System.nanoTime() - total;
 		
 		return r;
+	}
+	
+	@Override
+	public void resetStats() {
+		stats = new PoolerStats();
+	}
+	
+	@Override
+	public PoolerStats getStats() {
+		return stats;
 	}
 	
 	protected void calculateOverlapScoresForSDROnBits(List<Integer> onBits) {

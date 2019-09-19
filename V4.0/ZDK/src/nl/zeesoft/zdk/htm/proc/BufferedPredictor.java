@@ -1,27 +1,27 @@
 package nl.zeesoft.zdk.htm.proc;
 
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRSet;
+import nl.zeesoft.zdk.htm.sdr.SDRMap;
+import nl.zeesoft.zdk.htm.sdr.SDRMapElement;
 
 public class BufferedPredictor extends Predictor implements Processable, ProcessableContextInput {
-	private SDRSet										outputBuffer		= null;
-	private SortedMap<ZStringBuilder,DateTimeSDR>		inputByOutput		= new TreeMap<ZStringBuilder,DateTimeSDR>();
-	private	int											maxBufferSize		= 1000;
+	private SDRMap			buffer				= null;
+	private	int				maxBufferSize		= 1000;
 	
-	private DateTimeSDR									dateTimeSDR			= null;
+	private DateTimeSDR		dateTimeSDR			= null;
 	
 	public BufferedPredictor(MemoryConfig config) {
 		super(config);
-		outputBuffer = new SDRSet(config.size);
+		buffer = new SDRMap(config.size,config.bits);
 	}
-	
+
+	public void setMaxBufferSize(int maxBufferSize) {
+		this.maxBufferSize = maxBufferSize;
+	}
+
 	public DateTimeSDR getDateTimeSDR() {
 		return dateTimeSDR;
 	}
@@ -31,11 +31,9 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 		SDR inputSDR = contextSDRs.get(0);
 		SDR outputSDR = contextSDRs.get(1);
 		if (inputSDR instanceof DateTimeSDR) {
-			inputByOutput.put(outputSDR.toStringBuilder(),(DateTimeSDR)inputSDR);
-			outputBuffer.add(outputSDR);
-			if (outputBuffer.size()>maxBufferSize) {
-				SDR removed = outputBuffer.remove(0);
-				inputByOutput.remove(removed.toStringBuilder());
+			buffer.addSDR(outputSDR,inputSDR);
+			if (buffer.size()>maxBufferSize) {
+				buffer.remove(0);
 			}
 		}
 	}
@@ -45,17 +43,10 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 		dateTimeSDR = null;
 		SDR burstSDR = super.getSDRForInput(input, learn);
 		SDR predictionSDR = getPredictionSDR();
-		if (predictionSDR!=null && outputBuffer.size()>1) {
-			SortedMap<Integer,List<SDR>> inputs = outputBuffer.getMatches(predictionSDR);
-			if (inputs.size()>0) {
-				SDR winner = null;
-				List<SDR> winners = inputs.get(inputs.lastKey());
-				if (winners.size()==1) {
-					winner = winners.get(0);
-				} else {
-					winner = winners.get(ZRandomize.getRandomInt(0,winners.size() - 1));
-				}
-				dateTimeSDR = inputByOutput.get(winner.toStringBuilder());
+		if (predictionSDR!=null && buffer.size()>1) {
+			SDRMapElement element = buffer.getRandomClosestMatch(predictionSDR);
+			if (element!=null && element.value instanceof DateTimeSDR) {
+				dateTimeSDR = (DateTimeSDR) element.value;
 			}
 		}
 		if (dateTimeSDR==null) {

@@ -8,7 +8,10 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class AnomalyDetector extends Locker implements StreamListener {
-	private List<AnomalyDetectorListener>	listeners		= new ArrayList<AnomalyDetectorListener>();
+	protected int							predictedIndex	= 2;
+	protected int							compareIndex	= 0;
+	
+	private	List<AnomalyDetectorListener>	listeners		= new ArrayList<AnomalyDetectorListener>();
 
 	private int								window			= 1000;
 	private int								changeWindow	= 24;
@@ -33,12 +36,43 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		listeners.add(listener);
 		unlockMe(this);
 	}
+
+	public void setWindow(int window) {
+		lockMe(this);
+		this.window = window;
+		unlockMe(this);
+	}
+
+	public void setChangeWindow(int changeWindow) {
+		lockMe(this);
+		this.changeWindow = changeWindow;
+		unlockMe(this);
+	}
+
+	public void setStart(int start) {
+		lockMe(this);
+		this.start = start;
+		unlockMe(this);
+	}
+
+	public void setThreshold(float threshold) {
+		lockMe(this);
+		this.threshold = threshold;
+		unlockMe(this);
+	}
+
+	public void setRecoveryWindow(int recoveryWindow) {
+		lockMe(this);
+		this.recoveryWindow = recoveryWindow;
+		unlockMe(this);
+	}
 	
 	@Override
 	public void processedResult(Stream stream, StreamResult result) {
 		boolean warn = false;
 		float averageAccuracy = 0;
 		float averageAccuracyChange = 0;
+		
 		lockMe(this);
 		List<AnomalyDetectorListener> list = new ArrayList<AnomalyDetectorListener>(listeners);
 		if (predictedSDR!=null) {
@@ -49,49 +83,61 @@ public class AnomalyDetector extends Locker implements StreamListener {
 				recovery--;
 			}
 			
-			SDR outputSDR = result.outputSDRs.get(0);
-			float acc = calculateAccuracy(predictedSDR,outputSDR);
-			
-			accuracy.add(acc);
-			while(accuracy.size()>window) {
-				accuracy.remove(0);
+		}
+		
+		SDR compareSDR = null;
+		if (compareIndex==-1) {
+			compareSDR = result.inputSDR;
+		} else {
+			if (compareIndex>=0 && compareIndex<result.outputSDRs.size()) {
+				compareSDR = result.outputSDRs.get(compareIndex);
 			}
-			
-			average = 0;
-			averageChange = 0;
-			int i = 0;
-			for (Float hist: accuracy) {
-				average += hist;
-				if (i >= window - changeWindow) {
-					averageChange += hist;
-				}
-				i++;
+		}
+		
+		float acc = 0;
+		if (compareSDR!=null && predictedSDR!=null) {
+			acc = calculateAccuracy(predictedSDR,compareSDR);
+		}
+		
+		accuracy.add(acc);
+		while(accuracy.size()>window) {
+			accuracy.remove(0);
+		}
+		
+		average = 0;
+		averageChange = 0;
+		int i = 0;
+		for (Float hist: accuracy) {
+			average += hist;
+			if (i >= window - changeWindow) {
+				averageChange += hist;
 			}
-			
+			i++;
+		}
+		
+		if (average > 0) {
+			average = average / window;
+		}
+		if (averageChange>0) {
+			averageChange = averageChange / changeWindow;
 			if (average > 0) {
-				average = average / window;
-			}
-			if (averageChange>0) {
-				averageChange = averageChange / changeWindow;
-				if (average > 0) {
-					averageChange = 1F - (averageChange / average);
-					float absoluteChange = averageChange;
-					if (absoluteChange < 1) {
-						absoluteChange = absoluteChange * -1F;
-					}
-					if (seen>=start && absoluteChange>threshold) {
-						if (recovery==0) {
-							warn = true;
-							averageAccuracy = average;
-							averageAccuracyChange = averageChange;
-							recovery = recoveryWindow;
-						}
-					}
+				averageChange = 1F - (averageChange / average);
+				float absoluteChange = averageChange;
+				if (absoluteChange < 0) {
+					absoluteChange = absoluteChange * -1F;
+				}
+				if (seen>=start && absoluteChange>threshold && recovery==0) {
+					warn = true;
+					averageAccuracy = average;
+					averageAccuracyChange = averageChange;
+					recovery = recoveryWindow;
 				}
 			}
 		}
-		predictedSDR = result.outputSDRs.get(2);
+		
+		predictedSDR = result.outputSDRs.get(predictedIndex);
 		unlockMe(this);
+		
 		if (warn) {
 			for (AnomalyDetectorListener listener: list) {
 				listener.detectedAnomaly(averageAccuracy, averageAccuracyChange, result);
@@ -115,7 +161,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		return r;
 	}
 	
-	protected float calculateAccuracy(SDR predictedSDR,SDR outputSDR) {
-		return (float) outputSDR.getOverlapScore(predictedSDR) / (float) outputSDR.onBits();
+	protected float calculateAccuracy(SDR predictedSDR,SDR compareSDR) {
+		return (float) compareSDR.getOverlapScore(predictedSDR) / (float) compareSDR.onBits();
 	}
 }

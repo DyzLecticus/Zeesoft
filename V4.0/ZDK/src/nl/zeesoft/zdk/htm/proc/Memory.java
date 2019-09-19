@@ -57,14 +57,6 @@ public class Memory implements Processable {
 		}
 		return r;
 	}
-	
-	public void resetStats() {
-		stats = new MemoryStats();
-	}
-	
-	public MemoryStats getStats() {
-		return stats;
-	}
 
 	@Override
 	public SDR getSDRForInput(SDR input,boolean learn) {
@@ -96,6 +88,16 @@ public class Memory implements Processable {
 		stats.totalNs += System.nanoTime() - total;
 		
 		return r;
+	}
+	
+	@Override
+	public void resetStats() {
+		stats = new MemoryStats();
+	}
+	
+	@Override
+	public MemoryStats getStats() {
+		return stats;
 	}
 
 	protected List<MemoryColumnCell> cycleActiveState() {

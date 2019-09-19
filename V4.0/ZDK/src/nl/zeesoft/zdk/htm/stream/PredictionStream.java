@@ -17,4 +17,10 @@ public class PredictionStream extends Stream {
 		addListener(r);
 		return r;
 	}
+
+	public AnomalyDetector getNewValueAnomalyDetector(String valueKey) {
+		AnomalyDetector r = new ValueAnomalyDetector(getMessenger(),valueKey);
+		addListener(r);
+		return r;
+	}
 }

@@ -10,6 +10,18 @@ public class PoolerStats extends StatsObject {
 	public long	calculateActivityNs		= 0;
 	public long	updateBoostNs			= 0;
 	
+	public StatsObject copy() {
+		PoolerStats r = new PoolerStats();
+		copyTo(r);
+		r.calculateOverlapNs = this.calculateOverlapNs;
+		r.selectActiveNs = this.selectActiveNs;
+		r.learnActiveNs = this.learnActiveNs;
+		r.logActiveNs = this.logActiveNs;
+		r.calculateActivityNs = this.calculateActivityNs;
+		r.updateBoostNs = this.updateBoostNs;
+		return r;
+	}
+	
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = super.getDescription();
 		appendNsPerTotal(r,"- Average time per input SDR:             ");
