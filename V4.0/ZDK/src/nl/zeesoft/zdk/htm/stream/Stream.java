@@ -36,29 +36,35 @@ public class Stream extends Worker {
 	}
 
 	public void addNextProcessor(Processable processor,int useOutputIndex) {
-		lockMe(this);
-		StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
-		processors.add(sp);
-		processorStats = new StatsObject[processors.size()];
-		resetStats = new boolean[processors.size()];
-		for (int i = 0; i < processors.size(); i++) {
-			resetStats[i] = false;
+		if (!isWorking()) {
+			lockMe(this);
+			StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
+			processors.add(sp);
+			processorStats = new StatsObject[processors.size()];
+			resetStats = new boolean[processors.size()];
+			for (int i = 0; i < processors.size(); i++) {
+				resetStats[i] = false;
+			}
+			unlockMe(this);
 		}
-		unlockMe(this);
 	}
 	
 	public void addListener(StreamListener listener) {
-		lockMe(this);
-		listeners.add(listener);
-		unlockMe(this);
+		if (!isWorking()) {
+			lockMe(this);
+			listeners.add(listener);
+			unlockMe(this);
+		}
 	}
 
 	public void setLearn(boolean learn) {
-		lockMe(this);
-		for (StreamProcessor processor: processors) {
-			processor.setLearn(learn);
+		if (!isWorking()) {
+			lockMe(this);
+			for (StreamProcessor processor: processors) {
+				processor.setLearn(learn);
+			}
+			unlockMe(this);
 		}
-		unlockMe(this);
 	}
 	
 	public long addSDR(SDR inputSDR) {
@@ -109,7 +115,7 @@ public class Stream extends Worker {
 	public void waitForStart() {
 		while (!isWorking()) {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				if (getMessenger()!=null) {
 					getMessenger().error(this,"Exception while starting stream",e);
@@ -167,6 +173,9 @@ public class Stream extends Worker {
 			stats.totalNs += System.nanoTime() - result.added;
 		}
 		r = resetStats[index];
+		if (resetStats[index]) {
+			resetStats[index] = false;
+		}
 		unlockMe(this);
 		return r;
 	}

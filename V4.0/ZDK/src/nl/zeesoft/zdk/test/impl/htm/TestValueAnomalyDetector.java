@@ -29,7 +29,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 
 	@Override
 	protected void describe() {
-		/*
+		/* TODO: Describe
 		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
