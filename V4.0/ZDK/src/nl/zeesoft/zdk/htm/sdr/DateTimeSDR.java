@@ -28,4 +28,27 @@ public class DateTimeSDR extends SDR {
 		}
 		return r;
 	}
+	
+	public static Float getValueFromSDR(DateTimeSDR sdr,String valueKey) {
+		Float r = null;
+		Object val = sdr.keyValues.get(valueKey);
+		if (val!=null) {
+			r = objectToFloat(val);
+		}
+		return r;
+	}
+	
+	public static float objectToFloat(Object val) {
+		float r = 0;
+		if (val!=null) {
+			if (val instanceof Float) {
+				r = (float) val;
+			} else if (val instanceof Integer) {
+				r = (float) (Integer) val;
+			} else if (val instanceof Long) {
+				r = (float) (Long) val;
+			}
+		}
+		return r;
+	}
 }

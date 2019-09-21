@@ -185,18 +185,28 @@ public class SDRMap {
 	
 	public SDRMapElement getRandomClosestMatch(SDR sdr,int minOverlap) {
 		SDRMapElement r = null;
-		SortedMap<Integer,List<SDRMapElement>> matches = getMatches(sdr,minOverlap);
-		if (matches.size()>0) {
-			List<SDRMapElement> elements = matches.get(matches.lastKey());
-			if (elements.size()==1) {
-				r = elements.get(0);
-			} else {
-				r = elements.get(ZRandomize.getRandomInt(0,elements.size() - 1));
-			}
+		List<SDRMapElement> elements = getClosestMatches(sdr,minOverlap);
+		if (elements.size()==1) {
+			r = elements.get(0);
+		} else {
+			r = elements.get(ZRandomize.getRandomInt(0,elements.size() - 1));
 		}
 		return r;
 	}
 	
+	public List<SDRMapElement> getClosestMatches(SDR sdr) {
+		return getClosestMatches(sdr,bits / 4);
+	}
+	
+	public List<SDRMapElement> getClosestMatches(SDR sdr,int minOverlap) {
+		List<SDRMapElement> r = null;
+		SortedMap<Integer,List<SDRMapElement>> matches = getMatches(sdr,minOverlap);
+		if (matches.size()>0) {
+			r = matches.get(matches.lastKey());
+		}
+		return r;
+	}
+
 	public SortedMap<Integer,List<SDRMapElement>> getMatches(SDR sdr) {
 		return getMatches(sdr,bits / 4);
 	}

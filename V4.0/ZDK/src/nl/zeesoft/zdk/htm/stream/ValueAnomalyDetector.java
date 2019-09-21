@@ -48,20 +48,10 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 					Object pVal = pred.keyValues.get(valueKey);
 					Object cVal = comp.keyValues.get(valueKey);
 					if (pVal!=null && cVal!=null && pVal.getClass().getName().equals(cVal.getClass().getName())) {
-						if (pVal instanceof Float) {
-							float pV = (Float) pVal;
-							float cV = (Float) cVal;
-							total += getFloatDifference(pV,cV);
-						} else if (pVal instanceof Integer) {
-							float pV = (float) (Integer) pVal;
-							float cV = (float) (Integer) cVal;
-							total += getFloatDifference(pV,cV);
-						} else if (pVal instanceof Long) {
-							float pV = (float) (Long) pVal;
-							float cV = (float) (Long) cVal;
-							total += getFloatDifference(pV,cV);
-						} else if (pVal instanceof String && pVal.equals(cVal)) {
+						if (pVal instanceof String && pVal.equals(cVal)) {
 							total += 1;
+						} else {
+							total += getFloatDifference(DateTimeSDR.objectToFloat(pVal),DateTimeSDR.objectToFloat(cVal));
 						}
 					}
 				}

@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
 import nl.zeesoft.zdk.htm.stream.BufferedPredictionStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
+import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
 import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetector;
@@ -67,7 +68,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
 		
-		BufferedPredictor predictor = new BufferedPredictor(memoryConfig);
+		BufferedPredictor predictor = new BufferedPredictor(memoryConfig,StreamEncoder.VALUE_KEY);
 		
 		stream = new BufferedPredictionStream(pooler,predictor);
 		detector = stream.getNewValueAnomalyDetector("value");
