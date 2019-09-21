@@ -12,6 +12,8 @@ public class StreamStats extends StatsObject {
 	
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = super.getDescription();
+		appendTotal(r,"- Processed SDRs:             ");
+		r.append("\n");
 		appendNsPerTotal(r,"- Average time per input SDR: ");
 		return r;
 	}

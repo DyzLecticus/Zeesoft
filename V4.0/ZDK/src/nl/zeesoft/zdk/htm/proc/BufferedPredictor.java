@@ -5,11 +5,11 @@ import java.util.List;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.sdr.SDRMapElement;
+import nl.zeesoft.zdk.htm.sdr.SDRSet;
 
 public class BufferedPredictor extends Predictor implements Processable, ProcessableContextInput {
-	private SDRMap			buffer				= null;
+	private SDRSet			buffer				= null;
 	private	int				maxBufferSize		= 1000;
 	
 	private DateTimeSDR		predictedValueSDR	= null;
@@ -147,6 +147,6 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 		if (valueKey!=null && valueKey.length()>0) {
 			this.valueKey = valueKey;
 		}
-		buffer = new SDRMap(config.length,config.bits);
+		buffer = new SDRSet(config.length,config.bits);
 	}
 }

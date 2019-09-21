@@ -32,6 +32,16 @@ public abstract class StatsObject {
 		str.append(" ms");
 	}
 	
+	protected void appendTotal(ZStringBuilder str,String description) {
+		str.append(description);
+		str.append(" ");
+		ZStringBuilder strVal = new ZStringBuilder("" + total);
+		while (strVal.length() < 10) {
+			strVal.insert(0," ");
+		}
+		str.append(strVal);
+	}
+	
 	protected void appendNsPerTotal(ZStringBuilder str,String description) {
 		str.append(description);
 		str.append(" ");

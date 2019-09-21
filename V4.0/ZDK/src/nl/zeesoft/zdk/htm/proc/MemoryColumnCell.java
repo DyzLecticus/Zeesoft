@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.htm.proc;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.functions.ZRandomize;
+
 public class MemoryColumnCell {
 	private		MemoryConfig		config				= null;
 	protected	int					columnIndex			= 0;
@@ -83,12 +85,13 @@ public class MemoryColumnCell {
 				toCell.forwardLinks.add(link);
 				link.connection = config.connectionThreshold;
 				if (dist<=config.initialDistalConnectedRadius) {
-					link.connection += config.connectionIncrement / 2F;
 					if (dist<=(config.initialDistalConnectedRadius / 2)) {
-						link.connection += config.connectionIncrement;
+						link.connection += ZRandomize.getRandomFloat(config.connectionIncrement,config.connectionIncrement * 2F);
+					} else {
+						link.connection += ZRandomize.getRandomFloat(config.connectionDecrement,config.connectionIncrement);
 					}
 				} else {
-					link.connection -= config.connectionDecrement;
+					link.connection -= ZRandomize.getRandomFloat(0,config.connectionDecrement);
 				}
 				if (link.connection > 1) {
 					link.connection = 1;

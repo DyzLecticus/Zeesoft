@@ -35,11 +35,12 @@ public class SDRMap {
 		initialize(length,bits,useIndex);
 	}
 
-	public void add(SDR sdr) {
-		add(sdr,null);
+	public SDRMapElement add(SDR sdr) {
+		return add(sdr,null);
 	}
 
-	public void add(SDR sdr,Object value) {
+	public SDRMapElement add(SDR sdr,Object value) {
+		SDRMapElement r = null;
 		if (sdr.onBits()>bits) {
 			sdr.subsample(bits);
 		}
@@ -50,6 +51,7 @@ public class SDRMap {
 			elements.add(element);
 			addToIndex(element);
 		}
+		return r;
 	}
 
 	public int size() {
@@ -62,6 +64,14 @@ public class SDRMap {
 	
 	public int bits() {
 		return bits;
+	}
+	
+	public void toLast(SDRMapElement element) {
+		int index = elements.indexOf(element);
+		if (index>=0 && index<elements.size() - 1) {
+			elements.remove(index);
+			elements.add(element);
+		}
 	}
 
 	public SDRMapElement get(int index) {
@@ -126,13 +136,12 @@ public class SDRMap {
 		}
 	}
 	
-	public Object remove(int index) {
-		Object r = null;
+	public SDRMapElement remove(int index) {
+		SDRMapElement r = null;
 		if (index>=0 && index<elements.size()) {
-			SDRMapElement element = elements.remove(index);
-			if (element!=null) {
-				r = element.value;
-				removeFromIndex(element);
+			r = elements.remove(index);
+			if (r!=null) {
+				removeFromIndex(r);
 			}
 		}
 		return r;
@@ -186,10 +195,12 @@ public class SDRMap {
 	public SDRMapElement getRandomClosestMatch(SDR sdr,int minOverlap) {
 		SDRMapElement r = null;
 		List<SDRMapElement> elements = getClosestMatches(sdr,minOverlap);
-		if (elements.size()==1) {
-			r = elements.get(0);
-		} else {
-			r = elements.get(ZRandomize.getRandomInt(0,elements.size() - 1));
+		if (elements!=null && elements.size()>0) {
+			if (elements.size()==1) {
+				r = elements.get(0);
+			} else {
+				r = elements.get(ZRandomize.getRandomInt(0,elements.size() - 1));
+			}
 		}
 		return r;
 	}
@@ -318,6 +329,9 @@ public class SDRMap {
 				List<SDRMapElement> list = elementsByOnBits.get(onBit);
 				if (list!=null) {
 					list.remove(element);
+					if (list.size()==0) {
+						elementsByOnBits.remove(onBit);
+					}
 				}
 			}
 		}

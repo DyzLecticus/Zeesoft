@@ -17,6 +17,10 @@ public class MemoryStats extends StatsObject {
 	
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = super.getDescription();
+		appendTotal(r,"- Processed SDRs:                  ");
+		r.append("\n");
+		appendValue(r,"- Total processing time:           ",totalNs);
+		r.append("\n");
 		appendNsPerTotal(r,"- Average time per input SDR:      ");
 		r.append("\n");
 		appendValue(r,"- Cycling active state took:       ",cycleStateNs);

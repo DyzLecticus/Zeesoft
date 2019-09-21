@@ -134,21 +134,19 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println("Stopped stream after " + streamMs + " ms");
 		
 		List<StatsObject> stats = stream.getStats();
-		long totalMs = 0;
+		long totalNs = 0;
 		for (StatsObject stat: stats) {
 			System.out.println();
 			System.out.println(stat.getClass().getSimpleName() + ";");
 			System.out.println(stat.getDescription());
 			if (stat instanceof PoolerStats || stat instanceof MemoryStats) {
-				totalMs += stat.totalNs / 1000000;
+				totalNs += stat.totalNs / stat.total;
 			}
 		}
 		
 		System.out.println();
-		System.out.println("Total processing time: " + totalMs + " ms");
-		if (streamMs < totalMs) {
-			System.out.println("Net stream processing performance gain over sequential processing per input SDR: " + df.format((totalMs - streamMs) / (float) stats.get(0).total) + " ms");
-		}
+		System.out.println("Total processing time per SDR: " + df.format(totalNs / 1000000F) + " ms");
+		System.out.println("Total stream time per SDR:     " + df.format(streamMs / (float) stats.get(0).total) + " ms");
 	}
 	
 	@Override
