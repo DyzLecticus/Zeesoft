@@ -23,7 +23,7 @@ public class BufferedPredictionStream extends PredictionStream {
 	}
 
 	public ValueAnomalyDetector getNewValueAnomalyDetector(String valueKey) {
-		ValueAnomalyDetector r = new ValueAnomalyDetector(getMessenger(),valueKey);
+		ValueAnomalyDetector r = new ValueAnomalyDetector(this,valueKey);
 		addListener(r);
 		return r;
 	}

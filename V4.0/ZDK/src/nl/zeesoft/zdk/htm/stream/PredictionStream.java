@@ -27,7 +27,7 @@ public class PredictionStream extends Stream {
 	}
 	
 	public AnomalyDetector getNewAnomalyDetector() {
-		AnomalyDetector r = new AnomalyDetector(getMessenger());
+		AnomalyDetector r = new AnomalyDetector(this);
 		addListener(r);
 		return r;
 	}

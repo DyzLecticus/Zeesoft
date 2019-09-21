@@ -42,6 +42,16 @@ public class Stream extends Worker {
 		initialize(msgr,encoder);
 	}
 
+	@Override
+	protected Messenger getMessenger() {
+		return super.getMessenger();
+	}
+
+	@Override
+	protected WorkerUnion getUnion() {
+		return super.getUnion();
+	}
+
 	public void addInputProcessor(Processable processor) {
 		addNextProcessor(processor,-1);
 	}
@@ -61,21 +71,17 @@ public class Stream extends Worker {
 	}
 	
 	public void addListener(StreamListener listener) {
-		if (!isWorking() && !isStreaming()) {
-			lockMe(this);
-			listeners.add(listener);
-			unlockMe(this);
-		}
+		lockMe(this);
+		listeners.add(listener);
+		unlockMe(this);
 	}
 
 	public void setLearn(boolean learn) {
-		if (!isWorking() && !isStreaming()) {
-			lockMe(this);
-			for (StreamProcessor processor: processors) {
-				processor.setLearn(learn);
-			}
-			unlockMe(this);
+		lockMe(this);
+		for (StreamProcessor processor: processors) {
+			processor.setLearn(learn);
 		}
+		unlockMe(this);
 	}
 
 	public long addValue(int value) {

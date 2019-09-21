@@ -5,15 +5,12 @@ import java.util.List;
 
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.messenger.Messenger;
 
 public class ValueAnomalyDetector extends AnomalyDetector {
 	private List<String>	valueKeys	= new ArrayList<String>();
 	
-	public ValueAnomalyDetector(Messenger msgr,String valueKey) {
-		super(msgr);
-		predictedIndex = 3;
-		compareIndex = -1;
+	public ValueAnomalyDetector(BufferedPredictionStream stream,String valueKey) {
+		super(stream);
 		setWindow(100);
 		setChangeWindow(10);
 		setStart(3000);
@@ -26,6 +23,16 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 		lockMe(this);
 		valueKeys.add(valueKey);
 		unlockMe(this);
+	}
+	
+	@Override
+	protected int getPredictedIndex() {
+		return 3;
+	}
+	
+	@Override
+	protected int getCompareIndex() {
+		return -1;
 	}
 	
 	@Override

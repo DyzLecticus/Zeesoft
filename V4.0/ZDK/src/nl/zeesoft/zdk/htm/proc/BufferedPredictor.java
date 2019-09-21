@@ -15,6 +15,7 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 	
 	public BufferedPredictor(MemoryConfig config) {
 		super(config);
+		setMaxOnBits(config.bits);
 		buffer = new SDRMap(config.length,config.bits);
 	}
 

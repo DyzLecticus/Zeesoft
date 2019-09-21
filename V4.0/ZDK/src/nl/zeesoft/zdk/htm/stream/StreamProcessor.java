@@ -54,6 +54,7 @@ public class StreamProcessor extends Worker {
 	@Override
 	protected void whileWorking() {
 		SDR input = null;
+		boolean learn = true;
 		lockMe(this);
 		StreamResult result = queue.poll();
 		if (result!=null) {
@@ -62,6 +63,7 @@ public class StreamProcessor extends Worker {
 				input = result.outputSDRs.get(useOutputIndex);
 			}
 		}
+		learn = this.learn;
 		unlockMe(this);
 		if (input!=null) {
 			if (processor instanceof ProcessableContextInput) {

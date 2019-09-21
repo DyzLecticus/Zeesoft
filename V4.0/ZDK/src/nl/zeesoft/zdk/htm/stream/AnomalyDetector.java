@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class AnomalyDetector extends Locker implements StreamListener {
-	protected int							predictedIndex	= 2;
-	protected int							compareIndex	= 0;
+	protected PredictionStream				stream			= null;
 	
 	private	List<AnomalyDetectorListener>	listeners		= new ArrayList<AnomalyDetectorListener>();
 
@@ -26,11 +24,16 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	private float							average			= 0;
 	private float							averageChange	= 0;
 	private int								recovery		= 0;	
-	
-	public AnomalyDetector(Messenger msgr) {
-		super(msgr);
+
+	public AnomalyDetector(PredictionStream stream) {
+		super(stream.getMessenger());
+		this.stream = stream;
 	}
 
+	protected Stream getStream() {
+		return stream;
+	}
+	
 	public void addListener(AnomalyDetectorListener listener) {
 		lockMe(this);
 		listeners.add(listener);
@@ -86,11 +89,11 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		}
 		
 		SDR compareSDR = null;
-		if (compareIndex==-1) {
+		if (getCompareIndex()==-1) {
 			compareSDR = result.inputSDR;
 		} else {
-			if (compareIndex>=0 && compareIndex<result.outputSDRs.size()) {
-				compareSDR = result.outputSDRs.get(compareIndex);
+			if (getCompareIndex()>=0 && getCompareIndex()<result.outputSDRs.size()) {
+				compareSDR = result.outputSDRs.get(getCompareIndex());
 			}
 		}
 		
@@ -135,7 +138,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 			}
 		}
 		
-		predictedSDR = result.outputSDRs.get(predictedIndex);
+		predictedSDR = result.outputSDRs.get(getPredictedIndex());
 		unlockMe(this);
 		
 		if (warn) {
@@ -159,6 +162,14 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		r = averageChange;
 		unlockMe(this);
 		return r;
+	}
+	
+	protected int getPredictedIndex() {
+		return 2;
+	}
+	
+	protected int getCompareIndex() {
+		return 0;
 	}
 	
 	protected float calculateAccuracy(SDR predictedSDR,SDR compareSDR) {

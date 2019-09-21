@@ -89,7 +89,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println(memoryConfig.getDescription());
 		System.out.println();
 
-		testStream(stream, inputSDRMap, 30);
+		testStream(stream, inputSDRMap, 60);
 		
 		assertDetection();
 	}
