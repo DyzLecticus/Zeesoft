@@ -56,33 +56,39 @@ public class MemoryColumnCell {
 			}
 			int added = 0;
 			for (MemoryColumnCell toCell: toCells) {
+				int distX = 0;
+				int distY = 0;
+				int distZ = 0;
 				int dist = 0;
 				if (toCell.posX>posX) {
-					dist = toCell.posX - posX;
+					distX = toCell.posX - posX;
 				} else {
-					dist = posX - toCell.posX;
+					distX = posX - toCell.posX;
 				}
 				if (toCell.posY>posY) {
-					dist += toCell.posY - posY;
+					distY += toCell.posY - posY;
 				} else {
-					dist += posY - toCell.posY;
+					distY += posY - toCell.posY;
 				}
 				if (toCell.posZ>posZ) {
-					dist += toCell.posZ - posZ;
+					distZ += toCell.posZ - posZ;
 				} else {
-					dist += posZ - toCell.posZ;
+					distZ += posZ - toCell.posZ;
 				}
-				
+				dist = (int) Math.sqrt((distX * distX) + (distY * distY));
+				dist = (int) Math.sqrt((dist * dist) + (distZ * distZ));
 				DistalLink link = new DistalLink();
 				link.origin = this;
 				link.cell = toCell;
 				toCell.forwardLinks.add(link);
-				link.connection = config.connectionThreshold + (config.connectionIncrement / 2F);
+				link.connection = config.connectionThreshold;
 				if (dist<=config.initialDistalConnectedRadius) {
-					link.connection += config.connectionIncrement;
+					link.connection += config.connectionIncrement / 2F;
 					if (dist<=(config.initialDistalConnectedRadius / 2)) {
 						link.connection += config.connectionIncrement;
 					}
+				} else {
+					link.connection -= config.connectionDecrement;
 				}
 				if (link.connection > 1) {
 					link.connection = 1;
@@ -94,6 +100,16 @@ public class MemoryColumnCell {
 				}
 			}
 		}
+	}
+	
+	protected int getAlmostActiveLinks() {
+		int r = 0;
+		for (DistalLink link: distLinks) {
+			if (link.cell.activePreviously && link.connection<=config.connectionThreshold && link.connection>config.connectionThreshold - config.connectionIncrement) {
+				r++;
+			}
+		}
+		return r;
 	}
 	
 	protected void learnPreviouslyActiveLinks() {

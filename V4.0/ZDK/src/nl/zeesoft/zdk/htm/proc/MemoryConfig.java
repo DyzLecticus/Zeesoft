@@ -10,7 +10,7 @@ public class MemoryConfig {
 	
 	protected int			depth							= 4;
 	protected int			maxDistalConnectionsPerCell		= 10000;
-	protected int			initialDistalConnectedRadius	= 30;
+	protected int			initialDistalConnectedRadius	= 20;
 	
 	protected float			connectionThreshold				= 0.2F;
 	protected float			connectionDecrement				= 0.003F;
@@ -31,9 +31,17 @@ public class MemoryConfig {
 		this.bits = bits;
 		calculateDimensions();
 	}
+	
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
 
 	public void setMaxDistalConnectionsPerCell(int maxDistalConnectionsPerCell) {
 		this.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
+	}
+
+	public void setInitialDistalConnectedRadius(int initialDistalConnectedRadius) {
+		this.initialDistalConnectedRadius = initialDistalConnectedRadius;
 	}
 
 	public void setConnectionThreshold(float connectionThreshold) {
@@ -53,10 +61,6 @@ public class MemoryConfig {
 			this.sizeX = sizeX;
 			this.sizeY = sizeY;
 		}
-	}
-	
-	public void setDepth(int depth) {
-		this.depth = depth;
 	}
 	
 	public ZStringBuilder getDescription() {

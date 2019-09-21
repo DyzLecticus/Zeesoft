@@ -38,25 +38,46 @@ public class MemoryColumn {
 		boolean added = false;
 		if (winner==null) {
 			r = true;
-			SortedMap<Integer,List<MemoryColumnCell>> cellsByDistalLinks = new TreeMap<Integer,List<MemoryColumnCell>>();
-			for (MemoryColumnCell cell: cells) {
-				int key = cell.distLinks.size();
-				List<MemoryColumnCell> list = cellsByDistalLinks.get(key);
-				if (list==null) {
-					list = new ArrayList<MemoryColumnCell>();
-					cellsByDistalLinks.put(key,list);
-				}
-				list.add(cell);
-			}
 			if (learn && previouslyActiveCells.size()>0) {
-				List<MemoryColumnCell> list = cellsByDistalLinks.get(cellsByDistalLinks.firstKey());
-				if (list.size()==1) {
-					winner = list.get(0);
-				} else {
-					winner = list.get(ZRandomize.getRandomInt(0,list.size()-1));
+				SortedMap<Integer,List<MemoryColumnCell>> cellsByAlmostActiveLinks = new TreeMap<Integer,List<MemoryColumnCell>>();
+				for (MemoryColumnCell cell: cells) {
+					int key = cell.getAlmostActiveLinks();
+					if (key>0) {
+						List<MemoryColumnCell> list = cellsByAlmostActiveLinks.get(key);
+						if (list==null) {
+							list = new ArrayList<MemoryColumnCell>();
+							cellsByAlmostActiveLinks.put(key,list);
+						}
+						list.add(cell);
+					}
 				}
-				winner.addLinksToCells(previouslyActiveCells);
-				added = true;
+				if (cellsByAlmostActiveLinks.size()>0) {
+					List<MemoryColumnCell> list = cellsByAlmostActiveLinks.get(cellsByAlmostActiveLinks.lastKey());
+					if (list.size()==1) {
+						winner = list.get(0);
+					} else {
+						winner = list.get(ZRandomize.getRandomInt(0,list.size()-1));
+					}
+				} else {
+					SortedMap<Integer,List<MemoryColumnCell>> cellsByDistalLinks = new TreeMap<Integer,List<MemoryColumnCell>>();
+					for (MemoryColumnCell cell: cells) {
+						int key = cell.distLinks.size();
+						List<MemoryColumnCell> list = cellsByDistalLinks.get(key);
+						if (list==null) {
+							list = new ArrayList<MemoryColumnCell>();
+							cellsByDistalLinks.put(key,list);
+						}
+						list.add(cell);
+					}
+					List<MemoryColumnCell> list = cellsByDistalLinks.get(cellsByDistalLinks.firstKey());
+					if (list.size()==1) {
+						winner = list.get(0);
+					} else {
+						winner = list.get(ZRandomize.getRandomInt(0,list.size()-1));
+					}
+					winner.addLinksToCells(previouslyActiveCells);
+					added = true;
+				}
 			} else {
 				winner = cells.get(ZRandomize.getRandomInt(0,cells.size()-1));
 			}

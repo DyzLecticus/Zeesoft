@@ -95,16 +95,24 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 								}
 							}
 						}
-						predictedLowerSDR = (DateTimeSDR) minElem.value;
-						predictedUpperSDR = (DateTimeSDR) maxElem.value;
-						if (elements.size()>2) {
-							elements.remove(minElem);
-							elements.remove(maxElem);
+						if (minElem!=null && maxElem!=null) {
+							predictedLowerSDR = (DateTimeSDR) minElem.value;
+							predictedUpperSDR = (DateTimeSDR) maxElem.value;
+							if (elements.size()>2) {
+								elements.remove(minElem);
+								elements.remove(maxElem);
+							}
 						}
 						if (elements.size()==1) {
 							predictedValueSDR = (DateTimeSDR) elements.get(0).value;
 						} else {
 							predictedValueSDR = (DateTimeSDR) elements.get(ZRandomize.getRandomInt(0,elements.size() - 1)).value;
+						}
+						if (predictedLowerSDR==null) {
+							predictedLowerSDR = predictedValueSDR;
+						}
+						if (predictedUpperSDR==null) {
+							predictedUpperSDR = predictedValueSDR;
 						}
 					}
 				}

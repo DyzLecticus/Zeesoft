@@ -18,7 +18,6 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 	public Predictor(MemoryConfig config) {
 		super(config);
 		stats = new PredictorStats();
-		maxOnBits = config.bits;
 	}
 	
 	public void setMaxOnBits(int maxOnBits) {
@@ -70,7 +69,11 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 					indices.add(0,index);
 				}
 			}
-			for (int i = 0; i < maxOnBits; i++) {
+			int max = maxOnBits;
+			if (max<=0) {
+				max = indices.size();
+			}
+			for (int i = 0; i < max; i++) {
 				if (i==indices.size()) {
 					break;
 				}

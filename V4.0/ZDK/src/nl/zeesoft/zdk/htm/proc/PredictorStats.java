@@ -14,7 +14,7 @@ public class PredictorStats extends MemoryStats {
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = super.getDescription();
 		r.append("\n");
-		appendValue(r,"- Generating predictions took:     ",cycleStateNs);
+		appendValue(r,"- Generating prediction SDRs took: ",generatingPredictionsNs);
 		return r;
 	}
 	
