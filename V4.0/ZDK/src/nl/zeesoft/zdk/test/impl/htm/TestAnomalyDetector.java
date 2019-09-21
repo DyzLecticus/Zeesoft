@@ -80,7 +80,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		
 		Predictor predictor = new Predictor(memoryConfig);
 		
-		stream = new PredictionStream(null,null,pooler,predictor);
+		stream = new PredictionStream(pooler,predictor);
 		detector = stream.getNewAnomalyDetector();
 		stream.addListener(this);
 		detector.addListener(this);

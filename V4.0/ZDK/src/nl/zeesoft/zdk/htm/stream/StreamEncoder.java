@@ -23,10 +23,6 @@ public class StreamEncoder extends CombinedEncoder {
 	private static final String					MINUTE				= "MINUTE";
 	private static final String					VALUE				= "VALUE";
 	
-	//private int									length				= 0;
-	//private int									bits				= 0;
-	//private SortedMap<String,EncoderObject>		encoders			= new TreeMap<String,EncoderObject>();
-
 	protected int								scale				= 1;
 	protected int								bitsPerEncoder		= 8;
 	
@@ -78,26 +74,39 @@ public class StreamEncoder extends CombinedEncoder {
 		initialize();
 	}
 
-	public DateTimeSDR getSDRForSDR(SDR sdr,long dateTime,Object value,String label) {
-		DateTimeSDR r = null;
-		if (sdr.length()==length()) {
-			if (sdr instanceof DateTimeSDR) {
-				r = (DateTimeSDR) sdr;
-			} else {
-				r = new DateTimeSDR(sdr);
-			}
-		} else {
-			r = new DateTimeSDR(length());
-		}
-		r.dateTime = dateTime;
-		r.keyValues.put(VALUE_KEY,value);
-		if (label!=null) {
-			r.keyValues.put(LABEL_KEY,label);
-		}
-		return r;
+	public DateTimeSDR getSDRForValue(int value) {
+		return getSDRForValue(0,(Object)value,null);
+	}
+	
+	public DateTimeSDR getSDRForValue(float value) {
+		return getSDRForValue(0,(Object)value,null);
+	}
+	
+	public DateTimeSDR getSDRForValue(long value) {
+		return getSDRForValue(0,(Object)value,null);
+	}
+	
+	public DateTimeSDR getSDRForValue(int value,String label) {
+		return getSDRForValue(0,(Object)value,label);
+	}
+	
+	public DateTimeSDR getSDRForValue(float value,String label) {
+		return getSDRForValue(0,(Object)value,label);
+	}
+	
+	public DateTimeSDR getSDRForValue(long value,String label) {
+		return getSDRForValue(0,(Object)value,label);
 	}
 
 	public DateTimeSDR getSDRForValue(long dateTime,int value) {
+		return getSDRForValue(dateTime,(Object)value,null);
+	}
+	
+	public DateTimeSDR getSDRForValue(long dateTime,float value) {
+		return getSDRForValue(dateTime,(Object)value,null);
+	}
+	
+	public DateTimeSDR getSDRForValue(long dateTime,long value) {
 		return getSDRForValue(dateTime,(Object)value,null);
 	}
 	
@@ -105,22 +114,54 @@ public class StreamEncoder extends CombinedEncoder {
 		return getSDRForValue(dateTime,(Object)value,label);
 	}
 	
-	public DateTimeSDR getSDRForValue(long dateTime,float value) {
-		return getSDRForValue(dateTime,(Object)value,null);
-	}
-	
 	public DateTimeSDR getSDRForValue(long dateTime,float value,String label) {
 		return getSDRForValue(dateTime,(Object)value,label);
-	}
-	
-	public DateTimeSDR getSDRForValue(long dateTime,long value) {
-		return getSDRForValue(dateTime,(Object)value,null);
 	}
 	
 	public DateTimeSDR getSDRForValue(long dateTime,long value,String label) {
 		return getSDRForValue(dateTime,(Object)value,label);
 	}
-	
+
+	public DateTimeSDR getSDRForSDR(SDR sdr) {
+		return getSDRForSDR(0,sdr,null,null);
+	}
+
+	public DateTimeSDR getSDRForSDR(SDR sdr,String label) {
+		return getSDRForSDR(0,sdr,null,label);
+	}
+
+	public DateTimeSDR getSDRForSDR(SDR sdr,int value,String label) {
+		return getSDRForSDR(0,sdr,(Object)value,label);
+	}
+
+	public DateTimeSDR getSDRForSDR(SDR sdr,float value,String label) {
+		return getSDRForSDR(0,sdr,(Object)value,label);
+	}
+
+	public DateTimeSDR getSDRForSDR(SDR sdr,long value,String label) {
+		return getSDRForSDR(0,sdr,(Object)value,label);
+	}
+
+	public DateTimeSDR getSDRForSDR(long dateTime,SDR sdr) {
+		return getSDRForSDR(dateTime,sdr,null,null);
+	}
+
+	public DateTimeSDR getSDRForSDR(long dateTime,SDR sdr,String label) {
+		return getSDRForSDR(dateTime,sdr,null,label);
+	}
+
+	public DateTimeSDR getSDRForSDR(long dateTime,SDR sdr,int value,String label) {
+		return getSDRForSDR(dateTime,sdr,(Object)value,label);
+	}
+
+	public DateTimeSDR getSDRForSDR(long dateTime,SDR sdr,float value,String label) {
+		return getSDRForSDR(dateTime,sdr,(Object)value,label);
+	}
+
+	public DateTimeSDR getSDRForSDR(long dateTime,SDR sdr,long value,String label) {
+		return getSDRForSDR(dateTime,sdr,(Object)value,label);
+	}
+
 	public ZStringBuilder testScalarOverlap(boolean checkValue) {
 		ZStringBuilder r = new ZStringBuilder();
 		for (String name: getEncoderNames()) {
@@ -158,12 +199,37 @@ public class StreamEncoder extends CombinedEncoder {
 		values.put(VALUE,encVal);
 		
 		r = new DateTimeSDR(getSDRForValues(values));
-		r.dateTime = dateTime;
-		r.keyValues.put(VALUE_KEY,value);
-		if (label!=null) {
-			r.keyValues.put(LABEL_KEY,label);
-		}
+		setSDRProperties(r,dateTime,value,label);
 		return r;
+	}
+
+	protected DateTimeSDR getSDRForSDR(long dateTime,SDR sdr,Object value,String label) {
+		DateTimeSDR r = null;
+		if (sdr.length()==length()) {
+			if (sdr instanceof DateTimeSDR) {
+				r = (DateTimeSDR) sdr;
+			} else {
+				r = new DateTimeSDR(sdr);
+			}
+		} else {
+			r = new DateTimeSDR(length());
+		}
+		setSDRProperties(r,dateTime,value,label);
+		return r;
+	}
+	
+	protected void setSDRProperties(DateTimeSDR sdr,long dateTime,Object value,String label) {
+		if (dateTime>0) {
+			sdr.dateTime = dateTime;
+		} else {
+			sdr.dateTime = System.currentTimeMillis();
+		}
+		if (value!=null) {
+			sdr.keyValues.put(VALUE_KEY,value);
+		}
+		if (label!=null) {
+			sdr.keyValues.put(LABEL_KEY,label);
+		}
 	}
 	
 	protected SortedMap<String,Float> getValuesForDateTime(long dateTime) {
@@ -206,7 +272,9 @@ public class StreamEncoder extends CombinedEncoder {
 		if (includeMinute) {
 			addEncoder(MINUTE,getNewMinuteEncoder());
 		}
-		addEncoder(VALUE,getNewValueEncoder());
+		if (includeValue) {
+			addEncoder(VALUE,getNewValueEncoder());
+		}
 	}
 	
 	protected EncoderObject getNewMonthEncoder() {

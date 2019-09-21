@@ -15,9 +15,11 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * A stream provides a threaded processor sequence where the output SDR of each processor is used as input for the next processor
  */
 public class Stream extends Worker {
+	private StreamEncoder			encoder			= null;
 	private List<StreamProcessor>	processors		= new ArrayList<StreamProcessor>();
-
 	private List<StreamListener>	listeners		= new ArrayList<StreamListener>();
+	
+	private boolean					streaming		= false;
 	
 	private StreamStats				stats			= new StreamStats();
 	private StatsObject[]			processorStats	= null;
@@ -25,10 +27,19 @@ public class Stream extends Worker {
 	
 	private	StreamResults			results			= null;
 	
+	public Stream() {
+		super(null,null);
+		initialize(null,new StreamEncoder());
+	}
+	
 	public Stream(Messenger msgr,WorkerUnion uni) {
 		super(msgr,uni);
-		results = new StreamResults(msgr);
-		setSleep(10);
+		initialize(msgr,new StreamEncoder());
+	}
+
+	public Stream(Messenger msgr,WorkerUnion uni,StreamEncoder encoder) {
+		super(msgr,uni);
+		initialize(msgr,encoder);
 	}
 
 	public void addInputProcessor(Processable processor) {
@@ -36,7 +47,7 @@ public class Stream extends Worker {
 	}
 
 	public void addNextProcessor(Processable processor,int useOutputIndex) {
-		if (!isWorking()) {
+		if (!isWorking() && !isStreaming()) {
 			lockMe(this);
 			StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
 			processors.add(sp);
@@ -50,7 +61,7 @@ public class Stream extends Worker {
 	}
 	
 	public void addListener(StreamListener listener) {
-		if (!isWorking()) {
+		if (!isWorking() && !isStreaming()) {
 			lockMe(this);
 			listeners.add(listener);
 			unlockMe(this);
@@ -58,7 +69,7 @@ public class Stream extends Worker {
 	}
 
 	public void setLearn(boolean learn) {
-		if (!isWorking()) {
+		if (!isWorking() && !isStreaming()) {
 			lockMe(this);
 			for (StreamProcessor processor: processors) {
 				processor.setLearn(learn);
@@ -66,18 +77,93 @@ public class Stream extends Worker {
 			unlockMe(this);
 		}
 	}
+
+	public long addValue(int value) {
+		return addSDRtoStream(encoder.getSDRForValue(value));
+	}
 	
-	public long addSDR(SDR inputSDR) {
-		if (!(inputSDR instanceof DateTimeSDR)) {
-			DateTimeSDR dts = new DateTimeSDR(inputSDR);
-			dts.dateTime = System.currentTimeMillis();
-			inputSDR = dts;
-		}
-		StreamResult result = results.getNewResult(inputSDR);
-		lockMe(this);
-		processors.get(0).addResultToQueue(result);
-		unlockMe(this);
-		return result.id;
+	public long addValue(float value) {
+		return addSDRtoStream(encoder.getSDRForValue(value));
+	}
+	
+	public long addValue(long value) {
+		return addSDRtoStream(encoder.getSDRForValue(value));
+	}
+	
+	public long addValue(int value,String label) {
+		return addSDRtoStream(encoder.getSDRForValue(value,label));
+	}
+	
+	public long addValue(float value,String label) {
+		return addSDRtoStream(encoder.getSDRForValue(value,label));
+	}
+	
+	public long addValue(long value,String label) {
+		return addSDRtoStream(encoder.getSDRForValue(value,label));
+	}
+
+	public long addValue(long dateTime,int value) {
+		return addSDRtoStream(encoder.getSDRForValue(dateTime,value));
+	}
+	
+	public long addValue(long dateTime,float value) {
+		return addSDRtoStream(encoder.getSDRForValue(dateTime,value));
+	}
+	
+	public long addValue(long dateTime,long value) {
+		return addSDRtoStream(encoder.getSDRForValue(dateTime,value));
+	}
+	
+	public long addValue(long dateTime,int value,String label) {
+		return addSDRtoStream(encoder.getSDRForValue(dateTime,value,label));
+	}
+	
+	public long addValue(long dateTime,float value,String label) {
+		return addSDRtoStream(encoder.getSDRForValue(dateTime,value,label));
+	}
+	
+	public long addValue(long dateTime,long value,String label) {
+		return addSDRtoStream(encoder.getSDRForValue(dateTime,value,label));
+	}
+
+	public long addSDR(SDR sdr) {
+		return addSDRtoStream(encoder.getSDRForSDR(sdr));
+	}
+
+	public long addSDR(SDR sdr,String label) {
+		return addSDRtoStream(encoder.getSDRForSDR(sdr,label));
+	}
+
+	public long addSDR(SDR sdr,int value,String label) {
+		return addSDRtoStream(encoder.getSDRForSDR(sdr,value,label));
+	}
+
+	public long addSDR(SDR sdr,float value,String label) {
+		return addSDRtoStream(encoder.getSDRForSDR(sdr,value,label));
+	}
+
+	public long addSDR(SDR sdr,long value,String label) {
+		return addSDRtoStream(encoder.getSDRForSDR(sdr,value,label));
+	}
+
+	public long addSDR(long dateTime,SDR sdr) {
+		return addSDRtoStream(encoder.getSDRForSDR(dateTime,sdr));
+	}
+
+	public long addSDR(long dateTime,SDR sdr,String label) {
+		return addSDRtoStream(encoder.getSDRForSDR(dateTime,sdr,label));
+	}
+
+	public long addSDR(long dateTime,SDR sdr,int value,String label) {
+		return addSDRtoStream(encoder.getSDRForSDR(dateTime,sdr,value,label));
+	}
+
+	public long addSDR(long dateTime,SDR sdr,float value,String label) {
+		return addSDRtoStream(encoder.getSDRForSDR(dateTime,sdr,value,label));
+	}
+
+	public long addSDR(long dateTime,SDR sdr,long value,String label) {
+		return addSDRtoStream(encoder.getSDRForSDR(dateTime,sdr,value,label));
 	}
 	
 	public void resetStats() {
@@ -101,14 +187,31 @@ public class Stream extends Worker {
 		unlockMe(this);
 		return r;
 	}
-	
+
+	public boolean isStreaming() {
+		boolean r = false;
+		lockMe(this);
+		r = streaming;
+		unlockMe(this);
+		return r;
+	}
+
 	@Override
 	public void start() {
-		if (!isWorking()) {
-			for (StreamProcessor processor: processors) {
-				processor.start();
+		boolean r = !isWorking();
+		if (r) {
+			lockMe(this);
+			r = !streaming;
+			if (r) {
+				streaming = r;
 			}
-			super.start();
+			unlockMe(this);
+			if (r) {
+				for (StreamProcessor processor: processors) {
+					processor.start();
+				}
+				super.start();
+			}
 		}
 	}
 	
@@ -128,11 +231,22 @@ public class Stream extends Worker {
 	
 	@Override
 	public void stop() {
-		for (StreamProcessor processor: processors) {
-			processor.stop();
+		boolean r = isWorking();
+		if (r) {
+			lockMe(this);
+			r = streaming;
+			if (r) {
+				streaming = false;
+			}
+			unlockMe(this);
+			if (r) {
+				for (StreamProcessor processor: processors) {
+					processor.stop();
+				}
+				super.stop();
+				flushOutput();
+			}
 		}
-		super.stop();
-		flushOutput();
 	}
 	
 	public void waitForStop() {
@@ -140,11 +254,14 @@ public class Stream extends Worker {
 			whileStopping(processor); 
 		}
 		whileStopping(this);
+	}
+	
+	public void destroy() {
 		for (StreamProcessor processor: processors) {
 			processor.destroy();
 		}
 	}
-	
+
 	protected void whileStopping(Worker worker) {
 		while (worker.isWorking()) {
 			try {
@@ -158,7 +275,15 @@ public class Stream extends Worker {
 			}
 		}
 	}
-	
+
+	protected long addSDRtoStream(DateTimeSDR inputSDR) {
+		StreamResult result = results.getNewResult(inputSDR);
+		lockMe(this);
+		processors.get(0).addResultToQueue(result);
+		unlockMe(this);
+		return result.id;
+	}
+
 	protected boolean processedResult(StreamProcessor processor,StatsObject pStats,StreamResult result) {
 		boolean r = false;
 		lockMe(this);
@@ -187,9 +312,9 @@ public class Stream extends Worker {
 	
 	protected void flushOutput() {
 		lockMe(this);
-		List<StreamResult> res = results.flush();
 		List<StreamListener> list = new ArrayList<StreamListener>(listeners);
 		unlockMe(this);
+		List<StreamResult> res = results.flush();
 		for (StreamResult result: res) {
 			for (StreamListener listener: list) {
 				try {
@@ -203,5 +328,11 @@ public class Stream extends Worker {
 				}
 			}
 		}
+	}
+	
+	protected void initialize(Messenger msgr,StreamEncoder encoder) {
+		this.encoder = encoder;
+		results = new StreamResults(msgr);
+		setSleep(10);
 	}
 }

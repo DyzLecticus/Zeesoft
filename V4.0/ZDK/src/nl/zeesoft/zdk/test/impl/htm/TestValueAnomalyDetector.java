@@ -69,7 +69,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		
 		BufferedPredictor predictor = new BufferedPredictor(memoryConfig);
 		
-		stream = new BufferedPredictionStream(null,null,pooler,predictor);
+		stream = new BufferedPredictionStream(pooler,predictor);
 		detector = stream.getNewValueAnomalyDetector("value");
 		stream.addListener(this);
 		detector.addListener(this);
