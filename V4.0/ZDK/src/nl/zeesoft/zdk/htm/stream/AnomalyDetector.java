@@ -11,18 +11,17 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	
 	private	List<AnomalyDetectorListener>	listeners		= new ArrayList<AnomalyDetectorListener>();
 
-	private int								window			= 1000;
-	private int								changeWindow	= 24;
+	private HistoricalAccuracy				history			= new HistoricalAccuracy();
+	
 	private int								start			= 3000;
-	private float							threshold		= 0.5F;
+	private float							threshold		= 0.4F;
 	private int								recoveryWindow	= 500;
 	
 	private SDR								predictedSDR	= null;
 	
 	private int								seen			= 0;
-	private List<Float>						accuracy		= new ArrayList<Float>();
 	private float							average			= 0;
-	private float							averageChange	= 0;
+	private float							latest			= 0;
 	private int								recovery		= 0;	
 
 	public AnomalyDetector(PredictionStream stream) {
@@ -42,13 +41,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 
 	public void setWindow(int window) {
 		lockMe(this);
-		this.window = window;
-		unlockMe(this);
-	}
-
-	public void setChangeWindow(int changeWindow) {
-		lockMe(this);
-		this.changeWindow = changeWindow;
+		history.window = window;
 		unlockMe(this);
 	}
 
@@ -74,7 +67,8 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	public void processedResult(Stream stream, StreamResult result) {
 		boolean warn = false;
 		float averageAccuracy = 0;
-		float averageAccuracyChange = 0;
+		float accuracy = 0;
+		float difference = 0;
 		
 		lockMe(this);
 		List<AnomalyDetectorListener> list = new ArrayList<AnomalyDetectorListener>(listeners);
@@ -97,53 +91,27 @@ public class AnomalyDetector extends Locker implements StreamListener {
 			}
 		}
 		
-		float acc = 0;
 		if (compareSDR!=null && predictedSDR!=null) {
-			acc = calculateAccuracy(predictedSDR,compareSDR);
+			accuracy = calculateAccuracy(predictedSDR,compareSDR);
 		}
 		
-		accuracy.add(acc);
-		while(accuracy.size()>window) {
-			accuracy.remove(0);
+		averageAccuracy = history.average;
+		difference = 1F - getFloatDifference(averageAccuracy,accuracy);
+		if (seen>=start && difference>threshold && recovery==0) {
+			warn = true;
+			recovery = recoveryWindow;
 		}
-		
-		average = 0;
-		averageChange = 0;
-		int i = 0;
-		for (Float hist: accuracy) {
-			average += hist;
-			if (i >= window - changeWindow) {
-				averageChange += hist;
-			}
-			i++;
-		}
-		
-		if (average > 0) {
-			average = average / window;
-		}
-		if (averageChange>0) {
-			averageChange = averageChange / changeWindow;
-			if (average > 0) {
-				averageChange = 1F - (averageChange / average);
-				float absoluteChange = averageChange;
-				if (absoluteChange < 0) {
-					absoluteChange = absoluteChange * -1F;
-				}
-				if (seen>=start && absoluteChange>threshold && recovery==0) {
-					warn = true;
-					averageAccuracy = average;
-					averageAccuracyChange = averageChange;
-					recovery = recoveryWindow;
-				}
-			}
-		}
-		
+		history.addAccuracy(accuracy);
+
+		average = history.average;
+		latest = accuracy;
+				
 		predictedSDR = result.outputSDRs.get(getPredictedIndex());
 		unlockMe(this);
 		
 		if (warn) {
 			for (AnomalyDetectorListener listener: list) {
-				listener.detectedAnomaly(averageAccuracy, averageAccuracyChange, result);
+				listener.detectedAnomaly(averageAccuracy,accuracy,difference,result);
 			}
 		}
 	}
@@ -156,11 +124,24 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		return r;
 	}
 
-	public float getAverageAccuracyChange() {
+	public float getLatestAccuracy() {
 		float r = 0;
 		lockMe(this);
-		r = averageChange;
+		r = latest;
 		unlockMe(this);
+		return r;
+	}
+	
+	public static float getFloatDifference(float pV, float cV) {
+		float r = ((pV - cV) / ((pV + cV) / 2F));
+		if (r < 0) {
+			r = r * - 1F;
+		}
+		if (r > 0) {
+			r = 1F - (r / 2F);
+		} else {
+			r = 1F;
+		}
 		return r;
 	}
 	
@@ -174,5 +155,9 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	
 	protected float calculateAccuracy(SDR predictedSDR,SDR compareSDR) {
 		return (float) compareSDR.getOverlapScore(predictedSDR) / (float) compareSDR.onBits();
+	}
+	
+	protected float getFloatDifference(float pV, float cV,int resolution) {
+		return getFloatDifference(pV * resolution, cV * resolution);
 	}
 }

@@ -12,9 +12,8 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 	public ValueAnomalyDetector(BufferedPredictionStream stream,String valueKey) {
 		super(stream);
 		setWindow(100);
-		setChangeWindow(10);
 		setStart(3000);
-		setThreshold(0.3F);
+		setThreshold(0.5F);
 		setRecoveryWindow(100);
 		valueKeys.add(valueKey);
 	}
@@ -57,19 +56,6 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 				}
 				r = total / (float) valueKeys.size();
 			}
-		}
-		return r;
-	}
-	
-	private float getFloatDifference(float pV, float cV) {
-		float r = ((pV - cV) / ((pV + cV) / 2F));
-		if (r < 0) {
-			r = r * - 1F;
-		}
-		if (r > 0) {
-			r = 1F - (r / 2F);
-		} else {
-			r = 1;
 		}
 		return r;
 	}

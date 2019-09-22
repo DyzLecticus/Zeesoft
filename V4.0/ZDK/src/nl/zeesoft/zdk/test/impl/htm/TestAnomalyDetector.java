@@ -98,8 +98,8 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockAnomalySDRMap.class.getName());
 		assertEqual(inputSDRMap.size(),17521,"Input SDR map size does not match expectation");
 		
-		numExpected = (inputSDRMap.size() / 2) + 1;
-		System.out.println("Test set anomaly detection is expected after: " + numExpected);
+		numExpected = (inputSDRMap.size() / 2);
+		System.out.println("Test set anomaly detection is expected at: " + numExpected);
 		System.out.println();
 		
 		return inputSDRMap;
@@ -153,13 +153,13 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	public void processedResult(Stream stream, StreamResult result) {
 		counter++;
 		if (counter % (500) == 0) {
-			System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", change: " + df.format(detector.getAverageAccuracyChange()));
+			System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", latest: " + df.format(detector.getLatestAccuracy()));
 		}
 	}
 
 	@Override
-	public void detectedAnomaly(float averageAccuracy, float averageAccuracyChange, StreamResult result) {
-		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", change: " + averageAccuracyChange);
+	public void detectedAnomaly(float averageAccuracy, float latestAccuracy, float difference, StreamResult result) {
+		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", latest: " + latestAccuracy + ", difference: " + difference);
 		numDetected = (int) result.id;
 		stream.stop();
 	}

@@ -91,17 +91,17 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 			if (previousResult!=null && previousResult.outputSDRs.size()>3) {
 				DateTimeSDR dtsP = (DateTimeSDR) previousResult.outputSDRs.get(3);
 				DateTimeSDR dtsI = (DateTimeSDR) result.inputSDR;
-				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", change: " + df.format(detector.getAverageAccuracyChange()) + ", predicted value: " + dtsP.keyValues.get("value") + ", input value: " + dtsI.keyValues.get("value"));
+				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", latest: " + df.format(detector.getLatestAccuracy()) + ", predicted value: " + dtsP.keyValues.get("value") + ", input value: " + dtsI.keyValues.get("value"));
 			} else {
-				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", change: " + df.format(detector.getAverageAccuracyChange()));
+				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", latest: " + df.format(detector.getLatestAccuracy()));
 			}
 		}
 		previousResult = result;
 	}
 
 	@Override
-	public void detectedAnomaly(float averageAccuracy, float averageAccuracyChange, StreamResult result) {
-		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", change: " + averageAccuracyChange);
+	public void detectedAnomaly(float averageAccuracy, float latestAccuracy, float difference, StreamResult result) {
+		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", latest: " + latestAccuracy + ", difference: " + difference);
 		numDetected = (int) result.id;
 		stream.stop();
 	}
