@@ -10,7 +10,7 @@ public class MemoryConfig {
 	
 	protected int			depth							= 4;
 	protected int			maxDistalConnectionsPerCell		= 10000;
-	protected int			initialDistalConnectedRadius	= 20;
+	protected int			localDistalConnectedRadius		= 25;
 	
 	protected float			connectionThreshold				= 0.2F;
 	protected float			connectionDecrement				= 0.003F;
@@ -40,8 +40,8 @@ public class MemoryConfig {
 		this.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
 	}
 
-	public void setInitialDistalConnectedRadius(int initialDistalConnectedRadius) {
-		this.initialDistalConnectedRadius = initialDistalConnectedRadius;
+	public void setLocalDistalConnectedRadius(int localDistalConnectedRadius) {
+		this.localDistalConnectedRadius = localDistalConnectedRadius;
 	}
 
 	public void setConnectionThreshold(float connectionThreshold) {

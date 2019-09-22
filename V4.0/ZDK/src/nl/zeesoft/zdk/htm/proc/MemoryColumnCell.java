@@ -84,14 +84,9 @@ public class MemoryColumnCell {
 				link.cell = toCell;
 				toCell.forwardLinks.add(link);
 				link.connection = config.connectionThreshold;
-				if (dist<=config.initialDistalConnectedRadius) {
-					if (dist<=(config.initialDistalConnectedRadius / 2)) {
-						link.connection += ZRandomize.getRandomFloat(config.connectionIncrement,config.connectionIncrement * 2F);
-					} else {
-						link.connection += ZRandomize.getRandomFloat(config.connectionDecrement,config.connectionIncrement);
-					}
-				} else {
-					link.connection -= ZRandomize.getRandomFloat(0,config.connectionDecrement);
+				link.connection += ZRandomize.getRandomFloat(config.connectionIncrement / 2F,config.connectionIncrement);
+				if (dist<=config.localDistalConnectedRadius) {
+					link.connection += ZRandomize.getRandomFloat(config.connectionIncrement,config.connectionIncrement * 2F);
 				}
 				if (link.connection > 1) {
 					link.connection = 1;

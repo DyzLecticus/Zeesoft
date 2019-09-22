@@ -39,7 +39,9 @@ public class CsvFile {
 			if (lineNum==0) {
 				columns = values.size();
 			}
-			addRow(values);
+			if (values.size()>0) {
+				addRow(values);
+			}
 			lineNum++;
 		}
 	}

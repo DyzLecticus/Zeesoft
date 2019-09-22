@@ -38,6 +38,10 @@ public class TestZStringSymbolParser extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
+		ZStringBuilder str = new ZStringBuilder("|||");
+		List<ZStringBuilder> split = str.split("|");
+		assertEqual(split.size(),4,"String builder split size does not match expectation");
+		
 		ZStringSymbolParser splitter = new ZStringSymbolParser(":-).");
 		List<String> symbols = splitter.toSymbolsPunctuated();
 		assertEqual(symbols.size(),2,"Smiley 1 was not parsed correctly");

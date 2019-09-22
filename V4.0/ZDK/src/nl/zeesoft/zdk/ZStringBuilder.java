@@ -351,9 +351,7 @@ public class ZStringBuilder implements Comparable<ZStringBuilder> {
 					sAdd.append(sb.substring(i,i + 1));
 				}
 			}
-			if (sAdd.length()>0) {
-				strs.add(sAdd);
-			}
+			strs.add(sAdd);
 		}
 		return strs;
 	}

@@ -80,7 +80,7 @@ public class TestPooler extends TestObject implements ProcessorListener {
 		} else {
 			strOri = pooler.getDescription();
 			strNew = poolerNew.getDescription();
-			if (!assertEqual(strNew.equals(strOri),true,"Pooler string builder does not match expectation")) {
+			if (!assertEqual(strNew.equals(strOri),true,"Pooler description does not match expectation")) {
 				System.err.println(poolerNew.getDescription());
 			}
 		}

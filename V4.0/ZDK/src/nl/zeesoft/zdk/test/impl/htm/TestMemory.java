@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.MemoryProcessor;
@@ -93,6 +94,23 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		System.out.println();
 		System.out.println("Performance statistics;");
 		System.out.println(processor.getMemoryStats().getDescription());
+
+		System.out.println();
+		System.out.println(memory.getDescription());
+		ZStringBuilder strOri = memory.toStringBuilder();
+		Memory memoryNew = new Memory(memoryConfig);
+		memoryNew.fromStringBuilder(strOri);
+		ZStringBuilder strNew = memoryNew.toStringBuilder();
+		if (!assertEqual(strNew.length(),strOri.length(),"Memory string builder does not match expectation")) {
+			System.out.println(strOri.substring(0,500));
+			System.err.println(strNew.substring(0,500));
+		} else {
+			strOri = memory.getDescription();
+			strNew = memoryNew.getDescription();
+			if (!assertEqual(strNew.equals(strOri),true,"Memory description does not match expectation")) {
+				System.err.println(memoryNew.getDescription());
+			}
+		}
 	}
 
 	@Override

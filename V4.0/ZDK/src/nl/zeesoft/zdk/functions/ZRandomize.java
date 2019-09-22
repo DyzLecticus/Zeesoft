@@ -22,7 +22,14 @@ public class ZRandomize implements ZFunction {
 
 	public static float getRandomFloat(float min, float max) {
 		float r = 0;
-		if (min<max) {
+		if (min==max) {
+			r = min;
+		} else {
+			if (min>max) {
+				float t = max;
+				max = min;
+				min = t;
+			}
 			r = min + random.nextFloat() * (max - min);
 		}
 		return r;
