@@ -25,17 +25,10 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 	}
 	
 	@Override
-	protected int getPredictedIndex() {
-		return 3;
-	}
-	
-	@Override
-	protected int getCompareIndex() {
-		return -1;
-	}
-	
-	@Override
-	protected float calculateAccuracy(SDR predictedSDR,SDR compareSDR) {
+	protected float calculateAccuracy(StreamResult result) {
+		SDR predictedSDR = result.outputSDRs.get(3);
+		SDR compareSDR = result.inputSDR;
+
 		float r = 0;
 		if (predictedSDR instanceof DateTimeSDR && compareSDR instanceof DateTimeSDR) {
 			r = 0;

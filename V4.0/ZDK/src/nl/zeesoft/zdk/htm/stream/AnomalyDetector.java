@@ -82,18 +82,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 			
 		}
 		
-		SDR compareSDR = null;
-		if (getCompareIndex()==-1) {
-			compareSDR = result.inputSDR;
-		} else {
-			if (getCompareIndex()>=0 && getCompareIndex()<result.outputSDRs.size()) {
-				compareSDR = result.outputSDRs.get(getCompareIndex());
-			}
-		}
-		
-		if (compareSDR!=null && predictedSDR!=null) {
-			accuracy = calculateAccuracy(predictedSDR,compareSDR);
-		}
+		accuracy = calculateAccuracy(result);
 		
 		averageAccuracy = history.average;
 		difference = 1F - getFloatDifference(averageAccuracy,accuracy);
@@ -106,7 +95,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		average = history.average;
 		latest = accuracy;
 				
-		predictedSDR = result.outputSDRs.get(getPredictedIndex());
+		predictedSDR = result.outputSDRs.get(2);
 		unlockMe(this);
 		
 		if (warn) {
@@ -132,7 +121,13 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		return r;
 	}
 	
-	public static float getFloatDifference(float pV, float cV) {
+	protected float calculateAccuracy(StreamResult result) {
+		SDR predictedSDR = result.outputSDRs.get(2);
+		SDR compareSDR = result.outputSDRs.get(0);
+		return (float) compareSDR.getOverlapScore(predictedSDR) / (float) compareSDR.onBits();
+	}
+	
+	protected static float getFloatDifference(float pV, float cV) {
 		float r = ((pV - cV) / ((pV + cV) / 2F));
 		if (r < 0) {
 			r = r * - 1F;
@@ -143,21 +138,5 @@ public class AnomalyDetector extends Locker implements StreamListener {
 			r = 1F;
 		}
 		return r;
-	}
-	
-	protected int getPredictedIndex() {
-		return 2;
-	}
-	
-	protected int getCompareIndex() {
-		return 0;
-	}
-	
-	protected float calculateAccuracy(SDR predictedSDR,SDR compareSDR) {
-		return (float) compareSDR.getOverlapScore(predictedSDR) / (float) compareSDR.onBits();
-	}
-	
-	protected float getFloatDifference(float pV, float cV,int resolution) {
-		return getFloatDifference(pV * resolution, cV * resolution);
 	}
 }
