@@ -9,6 +9,8 @@ public class ColumnGroup extends ModelObject {
 	
 	public List<Column>		columns				= new ArrayList<Column>();
 	
+	public float			averageActivity		= 0;
+	
 	public ColumnGroup(int minPosX,int minPosY) {
 		this.minPosX = minPosX;
 		this.minPosY = minPosY;
@@ -27,5 +29,15 @@ public class ColumnGroup extends ModelObject {
 		ColumnGroup copy = new ColumnGroup(minPosX,minPosY);
 		copy.setId(getId());
 		return copy;
+	}
+	
+	public void calculateAverageActivity() {
+		averageActivity = 0;
+		for (Column column: columns) {
+			averageActivity += column.averageActivity;
+		}
+		if (averageActivity>0) {
+			averageActivity = averageActivity / columns.size();
+		}
 	}
 }

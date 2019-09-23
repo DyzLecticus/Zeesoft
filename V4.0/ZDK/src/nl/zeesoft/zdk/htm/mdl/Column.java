@@ -1,7 +1,9 @@
 package nl.zeesoft.zdk.htm.mdl;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Column extends ModelObject {
 	protected ModelConfig	config				= null;
@@ -13,6 +15,11 @@ public class Column extends ModelObject {
 	public ColumnGroup		columnGroup			= null;
 	public List<Cell>		cells				= new ArrayList<Cell>();
 	public ProximalDendrite	proximalDendrite	= null;
+	
+	public Queue<Boolean>	activityLog			= new LinkedList<Boolean>();
+	public float			totalActive			= 0;
+	public float			averageActivity		= 0;
+	public float			boostFactor			= 1;
 	
 	public Column(ModelConfig config, int index,int posX,int posY) {
 		this.config = config;

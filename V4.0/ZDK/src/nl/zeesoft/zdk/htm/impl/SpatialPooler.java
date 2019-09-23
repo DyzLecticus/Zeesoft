@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.mdl.Column;
+import nl.zeesoft.zdk.htm.mdl.ColumnGroup;
 import nl.zeesoft.zdk.htm.mdl.Model;
 import nl.zeesoft.zdk.htm.mdl.ProximalSynapse;
 import nl.zeesoft.zdk.htm.sdr.SDR;
@@ -45,13 +48,23 @@ public class SpatialPooler extends Model {
 		connectedIndexesPerInputIndex.clear();
 	}
 	
-	protected SDR getSDRForInputSDR(SDR input,boolean learn,List<SDR> context) {
+	public SDR getOutputSDRForInputSDR(SDR input,boolean learn) {
 		SDR r = null;
 		
 		List<Integer> onBits = input.getOnBits();
-		// TODO: Calculate overlap and select active columns
+		int[] columnOverlapScores = getColumnOverlapScores(onBits);
+		Set<Column> activeColumns = selectActiveColumns(columnOverlapScores);
 		
-		r = config.getNewSDR();
+		learnOnBits(activeColumns,onBits);
+		
+		if (poolerConfig.boostStrength>0) {
+			logActivity(activeColumns);
+			calculateColumnGroupActivity();
+			updateBoostFactors();
+		}
+		
+		r = recordActiveColumnsInSDR(activeColumns);
+		
 		return r;
 	}
 
@@ -83,13 +96,160 @@ public class SpatialPooler extends Model {
 		connectedIndexesPerInputIndex.clear();
 		for (Column column: columns) {
 			for (ProximalSynapse synapse: column.proximalDendrite.synapses) {
-				Set<Integer> list = connectedIndexesPerInputIndex.get(synapse.inputIndex);
-				if (list==null) {
-					list = new HashSet<Integer>();
-					connectedIndexesPerInputIndex.put(synapse.inputIndex,list);
+				if (synapse.permanence>poolerConfig.permanenceThreshold) {
+					Set<Integer> list = connectedIndexesPerInputIndex.get(synapse.inputIndex);
+					if (list==null) {
+						list = new HashSet<Integer>();
+						connectedIndexesPerInputIndex.put(synapse.inputIndex,list);
+					}
+					list.add(column.index);
 				}
-				list.add(columns.indexOf(column));
 			}
 		}
+	}
+	
+	protected int[] getColumnOverlapScores(List<Integer> onBits) {
+		int[] r = new int[config.getOutputLength()];
+		for (int i = 0; i < r.length; i++) {
+			r[i] = 0;
+		}
+		for (Integer onBit: onBits) {
+			Set<Integer> list = connectedIndexesPerInputIndex.get(onBit);
+			if (list!=null) {
+				for (Integer index: list) {
+					r[index]++;
+				}
+			}
+		}
+		return r;
+	}
+	
+	protected Set<Column> selectActiveColumns(int[] columnOverlapScores) {
+		Set<Column> r = new HashSet<Column>();
+		SortedMap<Integer,List<Column>> map = new TreeMap<Integer,List<Column>>();
+		int i = 0;
+		for (Column column: columns) {
+			if (columnOverlapScores[i]>0) {
+				int boostedScore = (int) ((float)columnOverlapScores[i] * column.boostFactor);
+				List<Column> list = map.get(boostedScore);
+				if (list==null) {
+					list = new ArrayList<Column>();
+					map.put(boostedScore,list);
+				}
+				list.add(column);
+			}
+			i++;
+		}
+		Object[] keys = map.keySet().toArray();
+		for (i = (map.size() - 1); i>=0; i--) {
+			List<Column> list = map.get(keys[i]);
+			if (config.getOutputBits() - r.size() < list.size()) {
+				for (int s = 0; s < config.getOutputBits() - r.size(); s++) {
+					int sel = ZRandomize.getRandomInt(0,list.size() - 1);
+					r.add(list.get(sel));
+					list.remove(sel);
+				}
+			} else {
+				for (Column col: list) {
+					r.add(col);
+					if (r.size()>=config.getOutputBits()) {
+						break;
+					}
+				}
+			}
+			if (r.size()>=config.getOutputBits()) {
+				break;
+			}
+		}
+		return r;
+	}
+
+	protected void learnOnBits(Set<Column> activeColumns,List<Integer> onBits) {
+		for (Column column: activeColumns) {
+			for (ProximalSynapse lnk: column.proximalDendrite.synapses) {
+				if (onBits.contains(lnk.inputIndex)) {
+					if (lnk.permanence <= poolerConfig.permanenceThreshold &&
+						lnk.permanence + poolerConfig.permanenceIncrement > poolerConfig.permanenceThreshold) {
+						Set<Integer> list = connectedIndexesPerInputIndex.get(lnk.inputIndex);
+						if (list==null) {
+							list = new HashSet<Integer>();
+							connectedIndexesPerInputIndex.put(lnk.inputIndex,list);
+						}
+						list.add(column.index);
+					}
+					lnk.permanence += poolerConfig.permanenceIncrement;
+					if (lnk.permanence > 1) {
+						lnk.permanence = 1;
+					}
+				} else {
+					if (lnk.permanence > poolerConfig.permanenceThreshold &&
+						lnk.permanence - poolerConfig.permanenceDecrement <= poolerConfig.permanenceThreshold) {
+						Set<Integer> list = connectedIndexesPerInputIndex.get(lnk.inputIndex);
+						if (list!=null) {
+							list.remove((Integer)column.index);
+							if (list.size()==0) {
+								connectedIndexesPerInputIndex.remove(lnk.inputIndex);
+							}
+						}
+					}
+					lnk.permanence -= poolerConfig.permanenceDecrement;
+					if (lnk.permanence < 0) {
+						lnk.permanence = 0;
+					}
+				}
+			}
+		}
+	}
+	
+	protected void logActivity(Set<Column> activeColumns) {
+		if (poolerConfig.boostStrength>0) {
+			for (Column column: columns) {
+				boolean active = activeColumns.contains(column);
+				column.activityLog.add(active);
+				if (active) {
+					column.totalActive++;
+				}
+				while (column.activityLog.size() > poolerConfig.maxActivityLogSize) {
+					boolean act = column.activityLog.remove();
+					if (act) {
+						column.totalActive--;
+					}
+				}
+				if (column.totalActive>0) {
+					column.averageActivity = column.totalActive / (float) column.activityLog.size();
+				} else {
+					column.averageActivity = 0;
+				}
+			}
+		}
+	}
+
+	protected void calculateColumnGroupActivity() {
+		if (poolerConfig.boostStrength>0) {
+			for (ColumnGroup columnGroup: columnGroupsById.values()) {
+				columnGroup.calculateAverageActivity();
+			}
+		}
+	}
+	
+	protected void updateBoostFactors() {
+		if (poolerConfig.boostStrength>0) {
+			for (Column column: columns) {
+				float localAverageActivity = column.columnGroup.averageActivity;
+				if (localAverageActivity>0) {
+					if (column.averageActivity!=localAverageActivity) {
+						column.boostFactor = (float) Math.exp((float)poolerConfig.boostStrength * - 1 * (column.averageActivity - localAverageActivity));
+					}
+				}
+			}
+		}
+	}
+	
+	protected SDR recordActiveColumnsInSDR(Set<Column> activeColumns) {
+		SDR r = config.getNewSDR();
+		for (Column column: activeColumns) {
+			r.setBit(column.index,true);
+		}
+		return r;
 	}
 }
