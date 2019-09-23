@@ -1,17 +1,19 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
+import nl.zeesoft.zdk.htm.impl.SpatialPooler;
+import nl.zeesoft.zdk.htm.impl.SpatialPoolerConfig;
 import nl.zeesoft.zdk.htm.mdl.Model;
 import nl.zeesoft.zdk.htm.mdl.ModelConfig;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestModel extends TestObject {
-	public TestModel(Tester tester) {
+public class TestSpatialPooler extends TestObject {
+	public TestSpatialPooler(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestModel(new Tester())).test(args);
+		(new TestSpatialPooler(new Tester())).test(args);
 	}
 
 	@Override
@@ -47,32 +49,20 @@ public class TestModel extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		ModelConfig config = null;
-		Model model = null;
-		
-		config = new ModelConfig(100,4,256,5);
+		ModelConfig config = new ModelConfig(256,4,1024,21);
 		System.out.println(config.getDescription());
 		
-		model = new Model(config);
+		Model model = new Model(config);
 		model.initialize();
-		System.out.println("Model objects;");
-		System.out.println(model.getDescription());
-		assertEqual(model.size(),1537,"Model size does not match expectation");
+		assertEqual(model.size(),6288,"Model size does not match expectation");
 		
-		Model modelCopy = model.copy();
-		if (!assertEqual(modelCopy.size(),model.size(),"Model copy size does not match expectation")) {
-			System.err.println("Model copy objects;");
-			System.err.println(modelCopy.getDescription());
-		}
+		SpatialPoolerConfig poolerConfig = new SpatialPoolerConfig();
+		SpatialPooler pooler = new SpatialPooler(model,poolerConfig);
 		
-		System.out.println();
-		config = new ModelConfig(1600,32,2304,48);
-		System.out.println(config.getDescription());
+		pooler.initializeProximalDendriteSynapses();
 		
-		model = new Model(config);
-		model.initialize();
-		System.out.println("Model objects;");
-		System.out.println(model.getDescription());
-		assertEqual(model.size(),79120,"Model size does not match expectation");
+		System.out.println("Pooler objects;");
+		System.out.println(pooler.getDescription());
+		assertEqual(pooler.size(),106640,"Model size does not match expectation");
 	}
 }

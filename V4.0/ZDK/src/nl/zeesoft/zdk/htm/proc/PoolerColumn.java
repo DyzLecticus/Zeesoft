@@ -72,23 +72,21 @@ public class PoolerColumn {
 
 	protected void learnOnBits(List<Integer> onBits) {
 		for (ProximalLink lnk: proxLinks) {
-			if (lnk.connection>=0) {
-				if (onBits.contains(lnk.inputIndex)) {
-					if (lnk.connection <= config.connectionThreshold && lnk.connection + config.connectionIncrement > config.connectionThreshold) {
-						connectedIndices.add(lnk.inputIndex);
-					}
-					lnk.connection += config.connectionIncrement;
-					if (lnk.connection > 1) {
-						lnk.connection = 1;
-					}
-				} else {
-					if (lnk.connection > config.connectionThreshold && lnk.connection - config.connectionDecrement <= config.connectionThreshold) {
-						connectedIndices.remove((Integer) lnk.inputIndex);
-					}
-					lnk.connection -= config.connectionDecrement;
-					if (lnk.connection < 0) {
-						lnk.connection = 0;
-					}
+			if (onBits.contains(lnk.inputIndex)) {
+				if (lnk.connection <= config.connectionThreshold && lnk.connection + config.connectionIncrement > config.connectionThreshold) {
+					connectedIndices.add(lnk.inputIndex);
+				}
+				lnk.connection += config.connectionIncrement;
+				if (lnk.connection > 1) {
+					lnk.connection = 1;
+				}
+			} else {
+				if (lnk.connection > config.connectionThreshold && lnk.connection - config.connectionDecrement <= config.connectionThreshold) {
+					connectedIndices.remove((Integer) lnk.inputIndex);
+				}
+				lnk.connection -= config.connectionDecrement;
+				if (lnk.connection < 0) {
+					lnk.connection = 0;
 				}
 			}
 		}

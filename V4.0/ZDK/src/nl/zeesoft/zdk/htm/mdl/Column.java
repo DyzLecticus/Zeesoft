@@ -3,9 +3,7 @@ package nl.zeesoft.zdk.htm.mdl;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.functions.ZRandomize;
-
-public class Column implements ModelObject {
+public class Column extends ModelObject {
 	protected ModelConfig	config				= null;
 	
 	public int				index				= 0;
@@ -22,36 +20,33 @@ public class Column implements ModelObject {
 		this.posX = posX;
 		this.posY = posY;
 	}
+
+	public Column copy(boolean includeProximalDendrite,boolean includeCells) {
+		Column copy = copy();
+		if (includeProximalDendrite) {
+			copy.proximalDendrite = proximalDendrite.copy();
+		}
+		if (includeCells) {
+			for (Cell cell: cells) {
+				Cell cellCopy = cell.copy();
+				cell.proximalDendrites.add(copy.proximalDendrite);
+				copy.cells.add(cellCopy);
+			}
+		}
+		return copy;
+	}
 	
 	@Override
-	public String getId() {
-		return getClass().getSimpleName() + ":" + posX + "-" + posY;
+	public Column copy() {
+		Column copy = new Column(config,index,posX,posY);
+		copy.setId(getId());
+		return copy;
 	}
 	
-	protected List<ProximalSynapse> initializeProximalDendriteSynapses() {
-		List<ProximalSynapse> r = new ArrayList<ProximalSynapse>();
-		proximalDendrite.synapses.clear();
-		List<Integer> inputIndices = calculateInputIndices();
-		List<ProximalSynapse> availableSynapses = new ArrayList<ProximalSynapse>();
-		int i = 0;
-		for (Integer idx: inputIndices) {
-			ProximalSynapse synapse = new ProximalSynapse(proximalDendrite.getId(),i);
-			synapse.inputIndex = idx;
-			availableSynapses.add(synapse);
-		}
-		int sel = (int) ((float) availableSynapses.size() * config.proximalConnections);
-		for (i = 0; i < sel; i++) {
-			ProximalSynapse synapse = availableSynapses.remove(ZRandomize.getRandomInt(0,availableSynapses.size() - 1));
-			proximalDendrite.synapses.add(synapse);
-			r.add(synapse);
-		}
-		return r;
-	}
-	
-	protected List<Integer> calculateInputIndices() {
+	public List<Integer> calculateInputIndices(Column column) {
 		List<Integer> r = new ArrayList<Integer>();
-		int inputPosX = getInputPosX();
-		int inputPosY = getInputPosY();
+		int inputPosX = column.getInputPosX();
+		int inputPosY = column.getInputPosY();
 		
 		int minPosX = inputPosX - config.proximalRadius;
 		int minPosY = inputPosY - config.proximalRadius;
@@ -89,62 +84,39 @@ public class Column implements ModelObject {
 		return r;
 	}
 
-	protected float getFloatPosX() {
+	public int getInputPosX() {
+		return getRelativePos(getFloatPosX(),config.proximalRadius,config.inputSizeX);
+	}
+	
+	public int getInputPosY() {
+		return getRelativePos(getFloatPosY(),config.proximalRadius,config.inputSizeY);
+	}
+	
+	public int getColumnPosX() {
+		return getRelativePos(getFloatPosX(),config.distalRadius,config.columnSizeX);
+	}
+	
+	public int getColumnPosY() {
+		return getRelativePos(getFloatPosY(),config.distalRadius,config.columnSizeY);
+	}
+
+	public float getFloatPosX() {
 		return (float) posX / (float) config.columnSizeX;  
 	}
 	
-	protected float getFloatPosY() {
+	public float getFloatPosY() {
 		return (float) posY / (float) config.columnSizeY;  
 	}
-	
-	protected int getInputPosX() {
+
+	public static int getRelativePos(float floatPos,int radius,int size) {
 		int r = 0;
-		int min = config.proximalRadius;
-		int max = config.inputSizeX - config.proximalRadius;
+		int min = radius;
+		int max = size - radius;
 		if (min>=max) {
-			r = config.inputSizeX / 2;
+			r = size / 2;
 		} else {
-			max = max - config.proximalRadius;
-			r = min + ((int) (getFloatPosX() * (float) max));
-		}
-		return r;
-	}
-	
-	protected int getInputPosY() {
-		int r = 0;
-		int min = config.proximalRadius;
-		int max = config.inputSizeY - config.proximalRadius;
-		if (min>=max) {
-			r = config.inputSizeY / 2;
-		} else {
-			max = max - config.proximalRadius;
-			r = min + ((int) (getFloatPosY() * (float) max));
-		}
-		return r;  
-	}
-	
-	protected int getRelativePosX() {
-		int r = 0;
-		int min = config.distalRadius;
-		float max = config.columnSizeX - config.distalRadius;
-		if (min>=max) {
-			r = config.columnSizeX / 2;
-		} else {
-			max = max - config.distalRadius;
-			r = min + (int) (getFloatPosX() * max);
-		}
-		return r;
-	}
-	
-	protected int getRelativePosY() {
-		int r = 0;
-		int min = config.distalRadius;
-		float max = config.columnSizeY - config.distalRadius;
-		if (min>=max) {
-			r = config.columnSizeY / 2;
-		} else {
-			max = max - config.distalRadius;
-			r = min + (int) (getFloatPosY() * max);
+			max = max - radius;
+			r = min + ((int) (floatPos * (float) max));
 		}
 		return r;
 	}

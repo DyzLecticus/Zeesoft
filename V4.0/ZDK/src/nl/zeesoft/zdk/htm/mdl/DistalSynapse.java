@@ -1,9 +1,18 @@
 package nl.zeesoft.zdk.htm.mdl;
 
 public class DistalSynapse extends Synapse {
-	public Cell source	= null;
+	public String 	sourceCellId		= "";
 	
-	public DistalSynapse(String segmentId,int index) {
-		super(segmentId,index);
+	public DistalSynapse(String dendriteId,String sourceCellId) {
+		super(dendriteId);
+		this.sourceCellId = sourceCellId;
+	}
+
+	@Override
+	public DistalSynapse copy() {
+		DistalSynapse copy = new DistalSynapse(dendriteId,sourceCellId);
+		copy.setId(getId());
+		copy.permanence = permanence;
+		return copy;
 	}
 }
