@@ -21,9 +21,6 @@ public class TemporalMemory extends Model {
 	private HashMap<DistalDendrite,Float>		dendriteActivity				= new HashMap<DistalDendrite,Float>();
 	private HashMap<Cell,List<DistalDendrite>>	cellActivity					= new HashMap<Cell,List<DistalDendrite>>();
 
-	private List<Column>						activeColumns					= new ArrayList<Column>();
-	private Set<Column>							previouslyActiveColumns			= new HashSet<Column>();
-
 	private List<Cell>							winnerCells						= new ArrayList<Cell>();							
 	private Set<Cell>							previousWinnerCells				= new HashSet<Cell>();
 	
@@ -42,11 +39,13 @@ public class TemporalMemory extends Model {
 		SDR r = null;
 		
 		List<Integer> onBits = input.getOnBits();
-		activateColumns(onBits);
+		List<Column> activeColumns = getActiveColumns(onBits);
 		
-		selectWinnerCells(learn);
+		selectWinnerCells(activeColumns,learn);
 		
 		calculateDendriteActivity(winnerCells);
+		
+		// TODO: Forgetting
 		
 		return r;
 	}
@@ -75,18 +74,15 @@ public class TemporalMemory extends Model {
 		}
 	}
 	
-	protected void activateColumns(List<Integer> onBits) {
-		previouslyActiveColumns.clear();
-		for (Column column: activeColumns) {
-			previouslyActiveColumns.add(column);
-		}
-		activeColumns.clear();
+	protected List<Column> getActiveColumns(List<Integer> onBits) {
+		List<Column> r = new ArrayList<Column>();
 		for (Integer onBit: onBits) {
-			activeColumns.add(columns.get(onBit));
+			r.add(columns.get(onBit));
 		}
+		return r;
 	}
 
-	protected void selectWinnerCells(boolean learn) {
+	protected void selectWinnerCells(List<Column> activeColumns,boolean learn) {
 		previousWinnerCells.clear();
 		for (Cell cell: winnerCells) {
 			previousWinnerCells.add(cell);
@@ -122,8 +118,10 @@ public class TemporalMemory extends Model {
 					if (distance <= memoryConfig.localDistalConnectionRadius) {
 						DistalSynapse synapse = null;
 						if (targetDendrite==null) {
-							targetDendrite = new DistalDendrite(winner.getId());
-							putObject(targetDendrite);
+							if (winner.distalDendrites.size()<memoryConfig.maxDistalDendritesPerCell) {
+								targetDendrite = new DistalDendrite(winner.getId());
+								putObject(targetDendrite);
+							}
 						} else {
 							for (DistalSynapse syn: targetDendrite.synapses) {
 								if (syn.sourceCellId.equals(sourceCell.getId())) {
@@ -131,22 +129,24 @@ public class TemporalMemory extends Model {
 									break;
 								}
 							}
-						}						
-						if (synapse==null) {
-							synapse = new DistalSynapse(targetDendrite.getId(),sourceCell.getId());
-							putObject(synapse);
-							targetDendrite.synapses.add(synapse);
-							synapse.permanence = memoryConfig.permanenceThreshold;
-							synapse.permanence += ZRandomize.getRandomFloat(memoryConfig.permanenceIncrement / 2F,memoryConfig.permanenceIncrement);
-							addConnectedDendriteForSourceCell(sourceCell,targetDendrite);
-						} else {
-							if (synapse.permanence<memoryConfig.permanenceThreshold && synapse.permanence>memoryConfig.permanenceThreshold - memoryConfig.permanenceIncrement) {
-								addConnectedDendriteForSourceCell(sourceCell,targetDendrite);
-							}
-							synapse.permanence += memoryConfig.permanenceIncrement;
 						}
-						if (synapse.permanence > 1) {
-							synapse.permanence = 1;
+						if (targetDendrite!=null) {
+							if (synapse==null) {
+								synapse = new DistalSynapse(targetDendrite.getId(),sourceCell.getId());
+								putObject(synapse);
+								targetDendrite.synapses.add(synapse);
+								synapse.permanence = memoryConfig.permanenceThreshold;
+								synapse.permanence += ZRandomize.getRandomFloat(memoryConfig.permanenceIncrement / 2F,memoryConfig.permanenceIncrement);
+								addConnectedDendriteForSourceCell(sourceCell,targetDendrite);
+							} else {
+								if (synapse.permanence<memoryConfig.permanenceThreshold && synapse.permanence>memoryConfig.permanenceThreshold - memoryConfig.permanenceIncrement) {
+									addConnectedDendriteForSourceCell(sourceCell,targetDendrite);
+								}
+								synapse.permanence += memoryConfig.permanenceIncrement;
+							}
+							if (synapse.permanence > 1) {
+								synapse.permanence = 1;
+							}
 						}
 					}
 				}
