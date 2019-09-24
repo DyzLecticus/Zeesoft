@@ -35,7 +35,9 @@ public class SpatialPooler extends Model {
 		int[] columnOverlapScores = getColumnOverlapScores(onBits);
 		Set<Column> activeColumns = selectActiveColumns(columnOverlapScores);
 		
-		learnOnBits(activeColumns,onBits);
+		if (learn) {
+			learnOnBits(activeColumns,onBits);
+		}
 		
 		if (poolerConfig.boostStrength>0) {
 			logActivity(activeColumns);
@@ -170,35 +172,35 @@ public class SpatialPooler extends Model {
 
 	protected void learnOnBits(Set<Column> activeColumns,List<Integer> onBits) {
 		for (Column column: activeColumns) {
-			for (ProximalSynapse lnk: column.proximalDendrite.synapses) {
-				if (onBits.contains(lnk.inputIndex)) {
-					if (lnk.permanence <= poolerConfig.permanenceThreshold &&
-						lnk.permanence + poolerConfig.permanenceIncrement > poolerConfig.permanenceThreshold) {
-						Set<Integer> list = connectedIndexesPerInputIndex.get(lnk.inputIndex);
+			for (ProximalSynapse synapse: column.proximalDendrite.synapses) {
+				if (onBits.contains(synapse.inputIndex)) {
+					if (synapse.permanence <= poolerConfig.permanenceThreshold &&
+						synapse.permanence + poolerConfig.permanenceIncrement > poolerConfig.permanenceThreshold) {
+						Set<Integer> list = connectedIndexesPerInputIndex.get(synapse.inputIndex);
 						if (list==null) {
 							list = new HashSet<Integer>();
-							connectedIndexesPerInputIndex.put(lnk.inputIndex,list);
+							connectedIndexesPerInputIndex.put(synapse.inputIndex,list);
 						}
 						list.add(column.index);
 					}
-					lnk.permanence += poolerConfig.permanenceIncrement;
-					if (lnk.permanence > 1) {
-						lnk.permanence = 1;
+					synapse.permanence += poolerConfig.permanenceIncrement;
+					if (synapse.permanence > 1) {
+						synapse.permanence = 1;
 					}
 				} else {
-					if (lnk.permanence > poolerConfig.permanenceThreshold &&
-						lnk.permanence - poolerConfig.permanenceDecrement <= poolerConfig.permanenceThreshold) {
-						Set<Integer> list = connectedIndexesPerInputIndex.get(lnk.inputIndex);
+					if (synapse.permanence > poolerConfig.permanenceThreshold &&
+						synapse.permanence - poolerConfig.permanenceDecrement <= poolerConfig.permanenceThreshold) {
+						Set<Integer> list = connectedIndexesPerInputIndex.get(synapse.inputIndex);
 						if (list!=null) {
 							list.remove((Integer)column.index);
 							if (list.size()==0) {
-								connectedIndexesPerInputIndex.remove(lnk.inputIndex);
+								connectedIndexesPerInputIndex.remove(synapse.inputIndex);
 							}
 						}
 					}
-					lnk.permanence -= poolerConfig.permanenceDecrement;
-					if (lnk.permanence < 0) {
-						lnk.permanence = 0;
+					synapse.permanence -= poolerConfig.permanenceDecrement;
+					if (synapse.permanence < 0) {
+						synapse.permanence = 0;
 					}
 				}
 			}
