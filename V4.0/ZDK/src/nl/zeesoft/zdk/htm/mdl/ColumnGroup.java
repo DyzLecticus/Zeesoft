@@ -9,6 +9,7 @@ public class ColumnGroup extends ModelObject {
 	
 	public List<Column>		columns				= new ArrayList<Column>();
 	
+	// Used for boosting by SpatialPooler
 	public float			averageActivity		= 0;
 	
 	public ColumnGroup(int minPosX,int minPosY) {

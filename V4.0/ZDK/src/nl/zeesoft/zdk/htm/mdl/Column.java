@@ -16,6 +16,7 @@ public class Column extends ModelObject {
 	public List<Cell>		cells				= new ArrayList<Cell>();
 	public ProximalDendrite	proximalDendrite	= null;
 	
+	// Used for boosting by SpatialPooler
 	public Queue<Boolean>	activityLog			= new LinkedList<Boolean>();
 	public float			totalActive			= 0;
 	public float			averageActivity		= 0;

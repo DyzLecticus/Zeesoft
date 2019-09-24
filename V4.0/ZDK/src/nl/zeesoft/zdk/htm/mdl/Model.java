@@ -108,13 +108,15 @@ public class Model {
 		ZStringBuilder r = new ZStringBuilder();
 		int[] sizes = sizes();
 		for (int i = 0; i < Model.SIZE_LABELS.length; i++) {
-			if (r.length()>0) {
-				r.append("\n");
+			if (sizes[i]>0) {
+				if (r.length()>0) {
+					r.append("\n");
+				}
+				r.append("- ");
+				r.append(Model.SIZE_LABELS[i]);
+				r.append(": ");
+				r.append("" + sizes[i]);
 			}
-			r.append("- ");
-			r.append(Model.SIZE_LABELS[i]);
-			r.append(": ");
-			r.append("" + sizes[i]);
 		}
 		return r;
 	}
