@@ -122,8 +122,6 @@ public class TestSpatialPooler extends TestObject {
 				if (div > 0) {
 					float avgOverlap = (float) total / (float) div;
 					float avgOverlapWeek = (float) totalWeek / (float) divWeek;
-					//System.out.println("Average: " + avgOverlap + ", weekly average: " + avgOverlapWeek);
-					
 					weeks++;
 					avg = avg + avgOverlap;
 					avgWeek = avgWeek + avgOverlapWeek;
@@ -135,7 +133,6 @@ public class TestSpatialPooler extends TestObject {
 			avgWeek = avgWeek / (float) weeks;
 			System.out.println();
 			System.out.println("Combined average: " + avg + ", Combined weekly average: " + avgWeek);
-			
 			r = avgWeek / avg;
 		}
 		return r;

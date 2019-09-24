@@ -28,26 +28,6 @@ public class SpatialPooler extends Model {
 		initializeConnectedIndexesPerInputIndex();
 	}
 	
-	public List<ProximalSynapse> initializeProximalDendriteSynapses() {
-		clearProximalDendriteSynapses();
-		List<ProximalSynapse> r = new ArrayList<ProximalSynapse>();
-		for (Column column: columns) {
-			List<ProximalSynapse> synapses = initializeProximalDendriteSynapses(column);
-			for (ProximalSynapse synapse: synapses) {
-				putObject(synapse);
-				r.add(synapse);
-			}
-		}
-		initializeConnectedIndexesPerInputIndex();
-		return r;
-	}
-
-	@Override
-	public void clearProximalDendriteSynapses() {
-		super.clearProximalDendriteSynapses();
-		connectedIndexesPerInputIndex.clear();
-	}
-	
 	public SDR getOutputSDRForInputSDR(SDR input,boolean learn) {
 		SDR r = null;
 		
@@ -67,8 +47,30 @@ public class SpatialPooler extends Model {
 		
 		return r;
 	}
+	
+	public List<ProximalSynapse> initializeProximalDendriteSynapses() {
+		clearProximalDendriteSynapses();
+		List<ProximalSynapse> r = new ArrayList<ProximalSynapse>();
+		for (Column column: columns) {
+			if (column instanceof SpatialColumn) {
+				List<ProximalSynapse> synapses = initializeProximalDendriteSynapses((SpatialColumn)column);
+				for (ProximalSynapse synapse: synapses) {
+					putObject(synapse);
+					r.add(synapse);
+				}
+			}
+		}
+		initializeConnectedIndexesPerInputIndex();
+		return r;
+	}
 
-	protected List<ProximalSynapse> initializeProximalDendriteSynapses(Column column) {
+	@Override
+	public void clearProximalDendriteSynapses() {
+		super.clearProximalDendriteSynapses();
+		connectedIndexesPerInputIndex.clear();
+	}
+
+	protected List<ProximalSynapse> initializeProximalDendriteSynapses(SpatialColumn column) {
 		List<ProximalSynapse> r = new ArrayList<ProximalSynapse>();
 		column.proximalDendrite.synapses.clear();
 		List<Integer> inputIndices = column.calculateInputIndices(column);
@@ -129,14 +131,16 @@ public class SpatialPooler extends Model {
 		SortedMap<Integer,List<Column>> map = new TreeMap<Integer,List<Column>>();
 		int i = 0;
 		for (Column column: columns) {
-			if (columnOverlapScores[i]>0) {
-				int boostedScore = (int) ((float)columnOverlapScores[i] * column.boostFactor);
-				List<Column> list = map.get(boostedScore);
-				if (list==null) {
-					list = new ArrayList<Column>();
-					map.put(boostedScore,list);
+			if (column instanceof SpatialColumn) {
+				if (columnOverlapScores[i]>0) {
+					int boostedScore = (int) ((float)columnOverlapScores[i] * ((SpatialColumn)column).boostFactor);
+					List<Column> list = map.get(boostedScore);
+					if (list==null) {
+						list = new ArrayList<Column>();
+						map.put(boostedScore,list);
+					}
+					list.add(column);
 				}
-				list.add(column);
 			}
 			i++;
 		}
@@ -204,21 +208,9 @@ public class SpatialPooler extends Model {
 	protected void logActivity(Set<Column> activeColumns) {
 		if (poolerConfig.boostStrength>0) {
 			for (Column column: columns) {
-				boolean active = activeColumns.contains(column);
-				column.activityLog.add(active);
-				if (active) {
-					column.totalActive++;
-				}
-				while (column.activityLog.size() > poolerConfig.maxActivityLogSize) {
-					boolean act = column.activityLog.remove();
-					if (act) {
-						column.totalActive--;
-					}
-				}
-				if (column.totalActive>0) {
-					column.averageActivity = column.totalActive / (float) column.activityLog.size();
-				} else {
-					column.averageActivity = 0;
+				if (column instanceof SpatialColumn) {
+					boolean active = activeColumns.contains(column);
+					((SpatialColumn)column).logActivity(active, poolerConfig);
 				}
 			}
 		}
@@ -227,7 +219,9 @@ public class SpatialPooler extends Model {
 	protected void calculateColumnGroupActivity() {
 		if (poolerConfig.boostStrength>0) {
 			for (ColumnGroup columnGroup: columnGroupsById.values()) {
-				columnGroup.calculateAverageActivity();
+				if (columnGroup instanceof SpatialColumnGroup) {
+					((SpatialColumnGroup)columnGroup).calculateAverageActivity();
+				}
 			}
 		}
 	}
@@ -235,11 +229,8 @@ public class SpatialPooler extends Model {
 	protected void updateBoostFactors() {
 		if (poolerConfig.boostStrength>0) {
 			for (Column column: columns) {
-				float localAverageActivity = column.columnGroup.averageActivity;
-				if (localAverageActivity>0) {
-					if (column.averageActivity!=localAverageActivity) {
-						column.boostFactor = (float) Math.exp((float)poolerConfig.boostStrength * - 1 * (column.averageActivity - localAverageActivity));
-					}
+				if (column instanceof SpatialColumn) {
+					((SpatialColumn)column).updateBoostFactors(poolerConfig);
 				}
 			}
 		}
@@ -251,5 +242,18 @@ public class SpatialPooler extends Model {
 			r.setBit(column.index,true);
 		}
 		return r;
+	}
+	
+	@Override
+	protected void addColumnGroup(ColumnGroup columnGroup) {
+		SpatialColumnGroup scg = new SpatialColumnGroup(columnGroup);
+		super.addColumnGroup(scg);
+	}
+	
+	@Override
+	protected void addColumn(Column column,boolean includeProximalDendrites,boolean includeCells) {
+		SpatialColumn sc = new SpatialColumn(config,column);
+		column.copyTo(sc,includeProximalDendrites, includeCells);
+		super.addColumn(sc,includeProximalDendrites,includeCells);
 	}
 }
