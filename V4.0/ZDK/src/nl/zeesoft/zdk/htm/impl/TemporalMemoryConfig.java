@@ -10,9 +10,9 @@ public class TemporalMemoryConfig {
 	protected int			maxDistalDendritesPerCell		= 256;
 	protected int			maxDistalSynapsesPerDendrite	= 256;
 	protected ZActivator	distalActivator					= StaticFunctions.SIGMOID;
-	protected float			distalActivityThreshold			= 0.2F;
+	protected float			distalActivityThreshold			= 0.5F;
 	
-	protected float			permanenceThreshold				= 0.1F;
+	protected float			permanenceThreshold				= 0.2F;
 	protected float			permanenceIncrement				= 0.05F;
 	protected float			permanenceDecrement				= 0.008F;
 

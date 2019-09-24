@@ -18,14 +18,13 @@ public class TemporalMemory extends Model {
 	private TemporalMemoryConfig				memoryConfig					= null;
 
 	private HashMap<Cell,List<DistalDendrite>>	connectedDendritesPerSourceCell	= new HashMap<Cell,List<DistalDendrite>>();
+	
 	private HashMap<DistalDendrite,Float>		dendriteActivity				= new HashMap<DistalDendrite,Float>();
 	private HashMap<Cell,List<DistalDendrite>>	cellActivity					= new HashMap<Cell,List<DistalDendrite>>();
 
 	private List<Cell>							winnerCells						= new ArrayList<Cell>();							
 	private Set<Cell>							previousWinnerCells				= new HashSet<Cell>();
-	
 	private List<Cell>							predictiveCells					= new ArrayList<Cell>();							
-	private Set<Cell>							previouslyPredictiveCells		= new HashSet<Cell>();
 	
 	public TemporalMemory(Model model,TemporalMemoryConfig config) {
 		super(model.config);
@@ -41,11 +40,14 @@ public class TemporalMemory extends Model {
 		List<Integer> onBits = input.getOnBits();
 		List<Column> activeColumns = getActiveColumns(onBits);
 		
-		selectWinnerCells(activeColumns,learn);
+		//System.out.println("Predictive cells before selecting winners: " + predictiveCells.size());
+		List<Integer> burstingColumnIndices = selectWinnerCells(activeColumns,learn);
+		//System.out.println("Bursting columns: " + burstingColumnIndices.size());
 		
-		calculateDendriteActivity(winnerCells);
+		calculateDendriteActivity(learn);
+		//System.out.println("Predictive cells after calculating activity: " + predictiveCells.size());
 		
-		// TODO: Forgetting
+		r = recordBurstingColumnsInSDR(burstingColumnIndices);
 		
 		return r;
 	}
@@ -82,7 +84,8 @@ public class TemporalMemory extends Model {
 		return r;
 	}
 
-	protected void selectWinnerCells(List<Column> activeColumns,boolean learn) {
+	protected List<Integer> selectWinnerCells(List<Column> activeColumns,boolean learn) {
+		List<Integer> r = new ArrayList<Integer>();
 		previousWinnerCells.clear();
 		for (Cell cell: winnerCells) {
 			previousWinnerCells.add(cell);
@@ -98,6 +101,7 @@ public class TemporalMemory extends Model {
 			}
 			DistalDendrite targetDendrite = null;
 			if (learn && winner==null) {
+				r.add(column.index);
 				List<DistalDendrite> availableDendrites = getAvailableActiveDendrites(column);
 				if (availableDendrites.size()==0) {
 					availableDendrites = getAvailableDendrites(column);
@@ -116,31 +120,36 @@ public class TemporalMemory extends Model {
 				for (Cell sourceCell: previousWinnerCells) {
 					int distance = sourceCell.getDistanceToCell(winner);
 					if (distance <= memoryConfig.localDistalConnectionRadius) {
+						DistalDendrite synapseDendrite = targetDendrite;
 						DistalSynapse synapse = null;
-						if (targetDendrite==null) {
-							if (winner.distalDendrites.size()<memoryConfig.maxDistalDendritesPerCell) {
-								targetDendrite = new DistalDendrite(winner.getId());
-								putObject(targetDendrite);
-							}
-						} else {
-							for (DistalSynapse syn: targetDendrite.synapses) {
+						for (DistalDendrite dendrite: winner.distalDendrites) {
+							for (DistalSynapse syn: dendrite.synapses) {
 								if (syn.sourceCellId.equals(sourceCell.getId())) {
 									synapse = syn;
+									synapseDendrite = distalDendritesById.get(syn.dendriteId);
 									break;
 								}
 							}
 						}
-						if (targetDendrite!=null) {
+						if (synapseDendrite==null && winner.distalDendrites.size()<memoryConfig.maxDistalDendritesPerCell) {
+							synapseDendrite = new DistalDendrite(winner.getId());
+							putObject(synapseDendrite);
+							winner.distalDendrites.add(synapseDendrite);
+							if (targetDendrite==null) {
+								targetDendrite = synapseDendrite;
+							}
+						}
+						if (synapseDendrite!=null) {
 							if (synapse==null) {
-								synapse = new DistalSynapse(targetDendrite.getId(),sourceCell.getId());
+								synapse = new DistalSynapse(synapseDendrite.getId(),sourceCell.getId());
 								putObject(synapse);
-								targetDendrite.synapses.add(synapse);
+								synapseDendrite.synapses.add(synapse);
 								synapse.permanence = memoryConfig.permanenceThreshold;
 								synapse.permanence += ZRandomize.getRandomFloat(memoryConfig.permanenceIncrement / 2F,memoryConfig.permanenceIncrement);
-								addConnectedDendriteForSourceCell(sourceCell,targetDendrite);
+								addConnectedDendriteForSourceCell(sourceCell,synapseDendrite);
 							} else {
 								if (synapse.permanence<memoryConfig.permanenceThreshold && synapse.permanence>memoryConfig.permanenceThreshold - memoryConfig.permanenceIncrement) {
-									addConnectedDendriteForSourceCell(sourceCell,targetDendrite);
+									addConnectedDendriteForSourceCell(sourceCell,synapseDendrite);
 								}
 								synapse.permanence += memoryConfig.permanenceIncrement;
 							}
@@ -152,6 +161,7 @@ public class TemporalMemory extends Model {
 				}
 			}
 		}
+		return r;
 	}
 
 	protected void addConnectedDendriteForSourceCell(Cell sourceCell, DistalDendrite dendrite) {
@@ -162,7 +172,12 @@ public class TemporalMemory extends Model {
 		}
 		list.add(dendrite);
 	}
-	
+
+	protected DistalDendrite getDendriteForSourceCell(Column column) {
+		DistalDendrite r = null;
+		return r;
+	}
+
 	protected List<DistalDendrite> getAvailableActiveDendrites(Column column) {
 		List<DistalDendrite> r = new ArrayList<DistalDendrite>();
 		int min = Integer.MAX_VALUE;
@@ -205,45 +220,82 @@ public class TemporalMemory extends Model {
 		return r;
 	}
 	
-	protected void calculateDendriteActivity(List<Cell> winnerCells) {
-		previouslyPredictiveCells.clear();
-		for (Cell cell: predictiveCells) {
-			previouslyPredictiveCells.add(cell);
-		}
-		predictiveCells.clear();
-		dendriteActivity.clear();
-		cellActivity.clear();
-		for (Cell cell: winnerCells) {
-			List<DistalDendrite> targetDendrites = connectedDendritesPerSourceCell.get(cell);
-			for (DistalDendrite target: targetDendrites) {
-				if (!dendriteActivity.containsKey(target)) {
-					float activity = 0;
-					for (DistalSynapse synapse: target.synapses) {
-						Cell sourceCell = cellsById.get(synapse.sourceCellId);
-						if (winnerCells.contains(sourceCell) && synapse.permanence>memoryConfig.permanenceThreshold) {
-							activity += synapse.permanence - memoryConfig.permanenceThreshold; 
-						}
-					}
-					if (activity>0) {
-						activity = memoryConfig.distalActivator.applyFunction(activity);
-						dendriteActivity.put(target,activity);
-	
-						Cell targetCell = cellsById.get(target.cellId);
-						List<DistalDendrite> list = cellActivity.get(targetCell);
-						if (list==null) {
-							list = new ArrayList<DistalDendrite>();
-							cellActivity.put(targetCell,list);
-						}
-						list.add(target);
-	
-						if (activity>memoryConfig.distalActivityThreshold) {
-							if (predictiveCells.contains(cell)) {
-								predictiveCells.add(cell);
+	protected void calculateDendriteActivity(boolean learn) {
+		if (learn) {
+			for (Cell cell: predictiveCells) {
+				if (!winnerCells.contains(cell)) {
+					for (DistalDendrite dendrite: cell.distalDendrites) {
+						if (dendriteActivity.containsKey(dendrite)) {
+							List<DistalSynapse> remove = new ArrayList<DistalSynapse>();
+							for (DistalSynapse synapse: dendrite.synapses) {
+								if (synapse.permanence>memoryConfig.permanenceThreshold && synapse.permanence - memoryConfig.permanenceDecrement<=memoryConfig.permanenceThreshold) {
+									Cell sourceCell = cellsById.get(synapse.sourceCellId);
+									List<DistalDendrite> list = connectedDendritesPerSourceCell.get(sourceCell);
+									if (list!=null) {
+										list.remove(dendrite);
+										if (list.size()==0) {
+											connectedDendritesPerSourceCell.remove(sourceCell);
+										}
+									}
+								}
+								synapse.permanence -= memoryConfig.permanenceDecrement;
+								if (synapse.permanence<=0) {
+									remove.add(synapse);
+								}
+							}
+							for (DistalSynapse synapse: remove) {
+								dendrite.synapses.remove(synapse);
+								removeObject(synapse);
 							}
 						}
 					}
 				}
 			}
 		}
+		predictiveCells.clear();
+		dendriteActivity.clear();
+		cellActivity.clear();
+		for (Cell cell: winnerCells) {
+			List<DistalDendrite> targetDendrites = connectedDendritesPerSourceCell.get(cell);
+			if (targetDendrites!=null) {
+				for (DistalDendrite target: targetDendrites) {
+					if (!dendriteActivity.containsKey(target)) {
+						float activity = 0;
+						for (DistalSynapse synapse: target.synapses) {
+							Cell sourceCell = cellsById.get(synapse.sourceCellId);
+							if (winnerCells.contains(sourceCell) && synapse.permanence>memoryConfig.permanenceThreshold) {
+								activity += synapse.permanence - memoryConfig.permanenceThreshold; 
+							}
+						}
+						if (activity>0) {
+							activity = memoryConfig.distalActivator.applyFunction(activity);
+							dendriteActivity.put(target,activity);
+		
+							Cell targetCell = cellsById.get(target.cellId);
+							List<DistalDendrite> list = cellActivity.get(targetCell);
+							if (list==null) {
+								list = new ArrayList<DistalDendrite>();
+								cellActivity.put(targetCell,list);
+							}
+							list.add(target);
+		
+							if (activity>memoryConfig.distalActivityThreshold) {
+								if (!predictiveCells.contains(cell)) {
+									predictiveCells.add(cell);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	protected SDR recordBurstingColumnsInSDR(List<Integer> burstingColumnIndices) {
+		SDR r = config.getNewSDR();
+		for (Integer onBit: burstingColumnIndices) {
+			r.setBit(onBit,true);
+		}
+		return r;
 	}
 }
