@@ -8,20 +8,20 @@ import java.util.Queue;
 import nl.zeesoft.zdk.htm.mdl.Column;
 import nl.zeesoft.zdk.htm.mdl.ModelConfig;
 
-public class SpatialColumn extends Column {	
+public class SpatialPoolerColumn extends Column {	
 	public Queue<Boolean>	activityLog			= new LinkedList<Boolean>();
 	public float			totalActive			= 0;
 	public float			averageActivity		= 0;
 	public float			boostFactor			= 1;
 	
-	public SpatialColumn(ModelConfig config,Column column) {
+	public SpatialPoolerColumn(ModelConfig config,Column column) {
 		super(config,column.index,column.posX,column.posY);
 		setId(column.getId());
 	}
 	
 	@Override
-	public SpatialColumn copy() {
-		SpatialColumn copy = new SpatialColumn(config,this);
+	public SpatialPoolerColumn copy() {
+		SpatialPoolerColumn copy = new SpatialPoolerColumn(config,this);
 		copyTo(copy,true,true);
 		return copy;
 	}
@@ -44,18 +44,15 @@ public class SpatialColumn extends Column {
 		}
 	}
 	
-	protected void updateBoostFactors(SpatialPoolerConfig poolerConfig) {
-		if (columnGroup instanceof SpatialColumnGroup) {
-			float localAverageActivity = ((SpatialColumnGroup)columnGroup).averageActivity;
-			if (localAverageActivity>0) {
-				if (averageActivity!=localAverageActivity) {
-					boostFactor = (float) Math.exp((float)poolerConfig.boostStrength * - 1 * (averageActivity - localAverageActivity));
-				}
+	protected void updateBoostFactors(SpatialPoolerConfig poolerConfig,float localAverageActivity) {
+		if (localAverageActivity>0) {
+			if (averageActivity!=localAverageActivity) {
+				boostFactor = (float) Math.exp((float)poolerConfig.boostStrength * - 1 * (averageActivity - localAverageActivity));
 			}
 		}
 	}
 	
-	protected List<Integer> calculateInputIndices(SpatialColumn column) {
+	protected List<Integer> calculateInputIndices(SpatialPoolerColumn column) {
 		List<Integer> r = new ArrayList<Integer>();
 		int inputPosX = column.getInputPosX();
 		int inputPosY = column.getInputPosY();

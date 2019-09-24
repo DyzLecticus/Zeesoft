@@ -39,6 +39,14 @@ public class Model {
 	}
 
 	public void initialize() {
+		columnsById.clear();
+		columnGroupsById.clear();
+		cellsById.clear();
+		proximalDendritesById.clear();
+		proximalSynapsesById.clear();
+		distalDendritesById.clear();
+		distalSynapsesById.clear();
+		
 		int posX = 0;
 		int posY = 0;
 		for (int i = 0; i < config.outputLength; i++) {
@@ -126,7 +134,7 @@ public class Model {
 
 	public Model copyTo(Model copy,boolean includeProximalDendrites,boolean includeCells) {
 		for (ColumnGroup group: columnGroupsById.values()) {
-			copy.addColumnGroup(group.copy());
+			copy.putObject(group.copy());
 		}
 		for (Column column: columns) {
 			Column columnCopy = column.copy(includeProximalDendrites,includeCells);
@@ -196,10 +204,6 @@ public class Model {
 		}
 		distalDendritesById.clear();
 		distalSynapsesById.clear();
-	}
-	
-	protected void addColumnGroup(ColumnGroup columnGroup) {
-		putObject(columnGroup);
 	}
 	
 	protected void addColumn(Column column,boolean includeProximalDendrites,boolean includeCells) {
