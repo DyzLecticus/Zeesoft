@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.functions.ZActivator;
 public class TemporalMemoryConfig {
 	protected boolean		initialized						= false;
 	
-	protected int			localDistalConnectionRadius		= 25;
+	protected int			localDistalConnectionRadius		= 64;
 	protected int			maxDistalDendritesPerCell		= 256;
 	protected int			maxDistalSynapsesPerDendrite	= 256;
 	protected ZActivator	distalActivator					= StaticFunctions.SIGMOID;

@@ -25,4 +25,29 @@ public class Cell extends ModelObject {
 		}
 		return copy;
 	}
+	
+	public int getDistanceToCell(Cell toCell) {
+		int r = 0;
+		int distX = 0;
+		int distY = 0;
+		int distZ = 0;
+		if (toCell.posX>posX) {
+			distX = toCell.posX - posX;
+		} else {
+			distX = posX - toCell.posX;
+		}
+		if (toCell.posY>posY) {
+			distY += toCell.posY - posY;
+		} else {
+			distY += posY - toCell.posY;
+		}
+		if (toCell.posZ>posZ) {
+			distZ += toCell.posZ - posZ;
+		} else {
+			distZ += posZ - toCell.posZ;
+		}
+		r = (int) Math.sqrt((distX * distX) + (distY * distY));
+		r = (int) Math.sqrt((r * r) + (distZ * distZ));
+		return r;
+	}
 }
