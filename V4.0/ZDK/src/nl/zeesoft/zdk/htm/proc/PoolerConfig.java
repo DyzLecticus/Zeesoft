@@ -5,6 +5,8 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 
 public class PoolerConfig {
+	protected boolean		initialized						= false;
+	
 	protected int			inputLength						= 0;
 	protected int			outputLength					= 0;
 	protected int			outputBits						= 0;
@@ -34,46 +36,62 @@ public class PoolerConfig {
 	}
 
 	public void setPotentialProximalConnections(float potentialConnections) {
-		this.potentialProximalConnections = potentialConnections;
+		if (!initialized) {
+			this.potentialProximalConnections = potentialConnections;
+		}
 	}
 
 	public void setConnectionThreshold(float connectionThreshold) {
-		this.connectionThreshold = connectionThreshold;
+		if (!initialized) {
+			this.connectionThreshold = connectionThreshold;
+		}
 	}
 
 	public void setConnectionDecrement(float connectionDecrement) {
-		this.connectionDecrement = connectionDecrement;
+		if (!initialized) {
+			this.connectionDecrement = connectionDecrement;
+		}
 	}
 
 	public void setConnectionIncrement(float connectionIncrement) {
-		this.connectionIncrement = connectionIncrement;
+		if (!initialized) {
+			this.connectionIncrement = connectionIncrement;
+		}
 	}
 
 	public void setInputRadius(int inputRadius) {
-		this.inputRadius = inputRadius;
+		if (!initialized) {
+			this.inputRadius = inputRadius;
+		}
 	}
 
 	public void setOutputRadius(int outputRadius) {
-		this.outputRadius = outputRadius;
+		if (!initialized) {
+			this.outputRadius = outputRadius;
+		}
 	}
 
 	public void setBoostStrength(float boostStrength) {
-		this.boostStrength = boostStrength;
+		if (!initialized) {
+			this.boostStrength = boostStrength;
+		}
 	}
 
 	public void setMaxActivityLogSize(int maxActivityLogSize) {
-		this.maxActivityLogSize = maxActivityLogSize;
+		if (!initialized) {
+			this.maxActivityLogSize = maxActivityLogSize;
+		}
 	}
 	
 	public void setInputDimensions(int sizeX,int sizeY) {
-		if (sizeX * sizeY == inputLength) {
+		if (!initialized && sizeX * sizeY == inputLength) {
 			inputSizeX = sizeX;
 			inputSizeY = sizeY;
 		}
 	}
 	
 	public void setOutputDimensions(int sizeX,int sizeY) {
-		if (sizeX * sizeY == outputLength) {
+		if (!initialized && sizeX * sizeY == outputLength) {
 			outputSizeX = sizeX;
 			outputSizeY = sizeY;
 		}
@@ -90,6 +108,18 @@ public class PoolerConfig {
 		r.append("x");
 		r.append("" + outputSizeY);
 		return r;
+	}
+	
+	public SDR getNewSDR() {
+		return new SDR(outputLength);
+	}
+	
+	public SDRMap getNewSDRMap() {
+		return new SDRMap(outputLength,outputBits);
+	}
+	
+	public SDRMap getNewSDRMapWithoutIndex() {
+		return new SDRMap(outputLength,outputBits,false);
 	}
 
 	protected void calculateDimensions() {
@@ -109,17 +139,5 @@ public class PoolerConfig {
 		if (outputSizeX * outputSizeY < outputLength) {
 			outputSizeY += 1;
 		}
-	}
-	
-	public SDR getNewSDR() {
-		return new SDR(outputLength);
-	}
-	
-	public SDRMap getNewSDRMap() {
-		return new SDRMap(outputLength,outputBits);
-	}
-	
-	public SDRMap getNewSDRMapWithoutIndex() {
-		return new SDRMap(outputLength,outputBits,false);
 	}
 }

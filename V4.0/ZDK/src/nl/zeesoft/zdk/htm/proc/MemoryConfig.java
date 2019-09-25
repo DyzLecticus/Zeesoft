@@ -5,6 +5,8 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 
 public class MemoryConfig {
+	protected boolean		initialized						= false;
+	
 	protected int			length							= 0;
 	protected int			bits							= 0;
 	
@@ -33,31 +35,43 @@ public class MemoryConfig {
 	}
 	
 	public void setDepth(int depth) {
-		this.depth = depth;
+		if (!initialized) {
+			this.depth = depth;
+		}
 	}
 
 	public void setMaxDistalConnectionsPerCell(int maxDistalConnectionsPerCell) {
-		this.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
+		if (!initialized) {
+			this.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
+		}
 	}
 
 	public void setLocalDistalConnectedRadius(int localDistalConnectedRadius) {
-		this.localDistalConnectedRadius = localDistalConnectedRadius;
+		if (!initialized) {
+			this.localDistalConnectedRadius = localDistalConnectedRadius;
+		}
 	}
 
 	public void setConnectionThreshold(float connectionThreshold) {
-		this.connectionThreshold = connectionThreshold;
+		if (!initialized) {
+			this.connectionThreshold = connectionThreshold;
+		}
 	}
 
 	public void setConnectionDecrement(float connectionDecrement) {
-		this.connectionDecrement = connectionDecrement;
+		if (!initialized) {
+			this.connectionDecrement = connectionDecrement;
+		}
 	}
 
 	public void setConnectionIncrement(float connectionIncrement) {
-		this.connectionIncrement = connectionIncrement;
+		if (!initialized) {
+			this.connectionIncrement = connectionIncrement;
+		}
 	}
 	
 	public void setDimensions(int sizeX,int sizeY) {
-		if (sizeX * sizeY == length) {
+		if (!initialized && sizeX * sizeY == length) {
 			this.sizeX = sizeX;
 			this.sizeY = sizeY;
 		}
@@ -73,17 +87,6 @@ public class MemoryConfig {
 		r.append("" + depth);
 		return r;
 	}
-
-	protected void calculateDimensions() {
-		sizeX = (int) Math.sqrt(length);
-		sizeY = sizeX;
-		if (sizeX * sizeY < length) {
-			sizeX += 1;
-		}
-		if (sizeX * sizeY < length) {
-			sizeY += 1;
-		}
-	}
 	
 	public SDR getNewSDR() {
 		return new SDR(length);
@@ -95,5 +98,16 @@ public class MemoryConfig {
 	
 	public SDRMap getNewSDRMapWithoutIndex() {
 		return new SDRMap(length,bits,false);
+	}
+
+	protected void calculateDimensions() {
+		sizeX = (int) Math.sqrt(length);
+		sizeY = sizeX;
+		if (sizeX * sizeY < length) {
+			sizeX += 1;
+		}
+		if (sizeX * sizeY < length) {
+			sizeY += 1;
+		}
 	}
 }

@@ -17,6 +17,7 @@ public class Memory extends ProcessableObject implements Processable {
 	
 	public Memory(MemoryConfig config) {
 		this.config = config;
+		config.initialized = true;
 		initialize();
 	}
 	

@@ -20,6 +20,7 @@ public class Pooler extends ProcessableObject implements Processable {
 	
 	public Pooler(PoolerConfig config) {
 		this.config = config;
+		config.initialized = true;
 		connections = new PoolerConnections(config);
 		initialize();
 	}

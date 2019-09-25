@@ -6,17 +6,14 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
-import nl.zeesoft.zdk.htm.proc.MemoryProcessor;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
-import nl.zeesoft.zdk.htm.proc.ProcessorListener;
-import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestMemory extends TestObject implements ProcessorListener {
+public class TestMemory extends TestObject {
 	private List<Integer>	bursts			= new ArrayList<Integer>();
 	private int				averageBurst	= 0;
 	private int				counter			= 0;
@@ -70,20 +67,22 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		System.out.println(memoryConfig.getDescription());
 		
 		Memory memory = new Memory(memoryConfig);
-		
-		MemoryProcessor processor = new MemoryProcessor(pooler,memory);
-		processor.getListeners().add(this);
 
 		int num = 5000;
-		processor.setIntputSDRMap(inputSDRMap);
+		
+		SDRMap burstSDRMap = memoryConfig.getNewSDRMap();
 		
 		System.out.println();
 		long started = System.currentTimeMillis();
 		System.out.println("Processing input SDR map (5000/" + inputSDRMap.size() + ") ...");
-		processor.process(0,num);
+		for (int i = 0; i < 5000; i++) {
+			SDR outputSDR = pooler.getSDRForInput(inputSDRMap.getSDR(i),true);
+			SDR burstSDR = memory.getSDRForInput(outputSDR,true);
+			processedSDR(burstSDR);
+			burstSDRMap.add(burstSDR);
+		}
 		System.out.println("Processing input SDR map took: " + (System.currentTimeMillis() - started) + " ms");
 		
-		SDRMap burstSDRMap = processor.getBurstSDRMap();
 		assertEqual(burstSDRMap.size(),num,"Burst SDR map size does not match expectation");
 		
 		assertEqual(averageBurst,0,"Average burst does not match expectation");
@@ -93,7 +92,7 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		
 		System.out.println();
 		System.out.println("Performance statistics;");
-		System.out.println(processor.getMemoryStats().getDescription());
+		System.out.println(memory.getStats().getDescription());
 
 		System.out.println();
 		System.out.println(memory.getDescription());
@@ -113,10 +112,9 @@ public class TestMemory extends TestObject implements ProcessorListener {
 		}
 	}
 
-	@Override
-	public void processedSDR(ProcessorObject processor, SDR inputSDR, List<SDR> outputSDRs) {
+	private void processedSDR(SDR burstSDR) {
 		counter++;
-		bursts.add(outputSDRs.get(1).onBits());
+		bursts.add(burstSDR.onBits());
 		int max = 0;
 		while(bursts.size()>100) {
 			bursts.remove(0);
