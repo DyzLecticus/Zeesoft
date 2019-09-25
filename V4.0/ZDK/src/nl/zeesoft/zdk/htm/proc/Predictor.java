@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.htm.proc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,23 +40,18 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 		
 		predictionSDR = new SDR(config.length);
 		if (predictiveCells.size()>0) {
-			SortedMap<Integer,List<MemoryColumnCell>> predictionsByColumnIndex = new TreeMap<Integer,List<MemoryColumnCell>>();
+			HashMap<Integer,Float> columnActivity = new HashMap<Integer,Float>();
 			for (MemoryColumnCell cell: predictiveCells) {
-				List<MemoryColumnCell> list = predictionsByColumnIndex.get(cell.columnIndex);
-				if (list==null) {
-					list = new ArrayList<MemoryColumnCell>();
-					predictionsByColumnIndex.put(cell.columnIndex,list);
+				Float activity = columnActivity.get(cell.columnIndex);
+				if (activity==null) {
+					activity = new Float(0);
 				}
-				list.add(cell);
+				activity += cell.activity;
+				columnActivity.put(cell.columnIndex,activity);
 			}
 			SortedMap<Float,List<Integer>> columnIndicesByActivity = new TreeMap<Float,List<Integer>>();
-			for (List<MemoryColumnCell> cells: predictionsByColumnIndex.values()) {
-				int index = 0;
-				float activity = 0;
-				for (MemoryColumnCell cell: cells) {
-					index = cell.columnIndex;
-					activity += cell.activity;
-				}
+			for (Integer index: columnActivity.keySet()) {
+				Float activity = columnActivity.get(index);
 				List<Integer> list = columnIndicesByActivity.get(activity);
 				if (list==null) {
 					list = new ArrayList<Integer>();
