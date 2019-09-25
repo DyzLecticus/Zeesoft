@@ -64,7 +64,7 @@ public class TestTemporalMemory extends TestObject {
 			inputSDRs.add(enc.getSDRForValue(mockVal.dateTime,mockVal.value2));
 		}
 		
-		ModelConfig config = new ModelConfig(enc.length(),4,1024,21);
+		ModelConfig config = new ModelConfig(enc.length(),32,1024,21);
 		System.out.println(config.getDescription());
 		
 		Model model = new Model(config);
@@ -72,6 +72,7 @@ public class TestTemporalMemory extends TestObject {
 		assertEqual(model.size(),6288,"Model size does not match expectation");
 		
 		SpatialPoolerConfig poolerConfig = new SpatialPoolerConfig();
+		poolerConfig.setBoostStrength(0);
 		SpatialPooler pooler = new SpatialPooler(model,poolerConfig);
 		
 		pooler.initializeProximalDendriteSynapses();
@@ -96,7 +97,7 @@ public class TestTemporalMemory extends TestObject {
 		List<SDR> outputSDRs = new ArrayList<SDR>();
 		int i = 0;
 		for (SDR input: inputSDRs) {
-			SDR memoryInputSDR = pooler.getOutputSDRForInputSDR(input,true);
+			SDR memoryInputSDR = pooler.getOutputSDRForInputSDR(input,false);
 			SDR outputSDR = memory.getOutputSDRForInputSDR(memoryInputSDR,true);
 			outputSDRs.add(outputSDR);
 

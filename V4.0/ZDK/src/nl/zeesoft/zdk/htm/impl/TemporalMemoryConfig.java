@@ -1,20 +1,18 @@
 package nl.zeesoft.zdk.htm.impl;
 
-import nl.zeesoft.zdk.functions.StaticFunctions;
-import nl.zeesoft.zdk.functions.ZActivator;
-
 public class TemporalMemoryConfig {
 	protected boolean		initialized						= false;
 	
 	protected int			localDistalConnectionRadius		= 64;
 	protected int			maxDistalDendritesPerCell		= 256;
 	protected int			maxDistalSynapsesPerDendrite	= 256;
-	protected ZActivator	distalActivator					= StaticFunctions.SIGMOID;
-	protected float			distalActivityThreshold			= 0.5F;
 	
-	protected float			permanenceThreshold				= 0.2F;
-	protected float			permanenceIncrement				= 0.05F;
-	protected float			permanenceDecrement				= 0.008F;
+	protected int			minActiveSynapses				= 2;
+	protected int			minMatchingSynapses				= 1;
+	
+	protected float			permanenceThreshold				= 0.5F;
+	protected float			permanenceIncrement				= 0.1F;
+	protected float			permanenceDecrement				= 0.1F;
 
 	public void setLocalDistalConnectionRadius(int localDistalConnectionRadius) {
 		if (!initialized) {
@@ -34,15 +32,15 @@ public class TemporalMemoryConfig {
 		}
 	}
 
-	public void setDistalActivator(ZActivator distalActivator) {
+	public void setMinActiveSynapses(int minActiveSynapses) {
 		if (!initialized) {
-			this.distalActivator = distalActivator;
+			this.minActiveSynapses = minActiveSynapses;
 		}
 	}
 
-	public void setDistalActivityThreshold(float distalActivityThreshold) {
+	public void setMinMatchingSynapses(int minMatchingSynapses) {
 		if (!initialized) {
-			this.distalActivityThreshold = distalActivityThreshold;
+			this.minMatchingSynapses = minMatchingSynapses;
 		}
 	}
 

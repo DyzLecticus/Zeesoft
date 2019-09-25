@@ -18,10 +18,6 @@ public class PoolerColumn {
 	protected	PoolerColumnGroup				columnGroup			= null;
 	
 	protected	Set<ProximalLink>				proxLinks			= new HashSet<ProximalLink>();
-
-	protected	Set<Integer>					connectedIndices	= new HashSet<Integer>();
-	
-	protected	int								overlapScore		= 0;
 	
 	protected	Queue<Boolean>					activityLog			= new LinkedList<Boolean>();
 	protected	float							totalActive			= 0;
@@ -35,46 +31,33 @@ public class PoolerColumn {
 		this.posY = posY;
 	}
 	
-	protected void randomizeConnections() {
+	protected void randomizeConnections(PoolerConnections connections) {
 		proxLinks.clear();
 		List<Integer> inputIndices = calculateInputIndices();
+		List<ProximalLink> availableLinks = new ArrayList<ProximalLink>();
 		for (Integer idx: inputIndices) {
 			ProximalLink lnk = new ProximalLink();
 			lnk.inputIndex = idx;
-			proxLinks.add(lnk);
+			availableLinks.add(lnk);
 		}
-		List<ProximalLink> availableLinks = new ArrayList<ProximalLink>(proxLinks);
 		int sel = (int) ((float) availableLinks.size() * config.potentialProximalConnections);
 		for (int i = 0; i < sel; i++) {
 			ProximalLink lnk = availableLinks.remove(ZRandomize.getRandomInt(0,availableLinks.size() - 1));
+			proxLinks.add(lnk);
 			if (ZRandomize.getRandomInt(0,1)==1) {
 				lnk.connection = ZRandomize.getRandomFloat(0,config.connectionThreshold);
 			} else {
 				lnk.connection = ZRandomize.getRandomFloat(config.connectionThreshold,1.0F);
 			}
-			if (lnk.connection>config.connectionThreshold) {
-				connectedIndices.add(lnk.inputIndex);
-			}
-		}
-		for (ProximalLink lnk: availableLinks) {
-			proxLinks.remove(lnk);
-		}
-	}
-	
-	protected void calculateOverlapScoreForOnBits(List<Integer> onBits) {
-		overlapScore = 0;
-		for (Integer onBit: onBits) {
-			if (connectedIndices.contains(onBit)) {
-				overlapScore++;
-			}
+			connections.addColumnLink(this,lnk);
 		}
 	}
 
-	protected void learnOnBits(List<Integer> onBits) {
+	protected void learnOnBits(List<Integer> onBits,PoolerConnections connections) {
 		for (ProximalLink lnk: proxLinks) {
 			if (onBits.contains(lnk.inputIndex)) {
 				if (lnk.connection <= config.connectionThreshold && lnk.connection + config.connectionIncrement > config.connectionThreshold) {
-					connectedIndices.add(lnk.inputIndex);
+					connections.addColumnLink(this,lnk);
 				}
 				lnk.connection += config.connectionIncrement;
 				if (lnk.connection > 1) {
@@ -82,7 +65,7 @@ public class PoolerColumn {
 				}
 			} else {
 				if (lnk.connection > config.connectionThreshold && lnk.connection - config.connectionDecrement <= config.connectionThreshold) {
-					connectedIndices.remove((Integer) lnk.inputIndex);
+					connections.removeColumnLink(this,lnk);
 				}
 				lnk.connection -= config.connectionDecrement;
 				if (lnk.connection < 0) {
@@ -112,15 +95,12 @@ public class PoolerColumn {
 		}
 	}
 	
-	protected void updateBoostFactor() {
-		if (config.boostStrength>0) {
-			float localAverageActivity = columnGroup.averageActivity;
-			if (localAverageActivity>0) {
-				if (averageActivity!=localAverageActivity) {
-					boostFactor = (float) Math.exp((float)config.boostStrength * - 1 * (averageActivity - localAverageActivity));
-				} else {
-					boostFactor = 1;
-				}
+	protected void updateBoostFactor(float localAverageActivity) {
+		if (config.boostStrength>0 && localAverageActivity>0) {
+			if (averageActivity!=localAverageActivity) {
+				boostFactor = (float) Math.exp((float)config.boostStrength * - 1 * (averageActivity - localAverageActivity));
+			} else {
+				boostFactor = 1;
 			}
 		}
 	}

@@ -9,8 +9,6 @@ public class PoolerColumnGroup {
 	
 	protected	List<PoolerColumn>	columns				= new ArrayList<PoolerColumn>();
 	
-	protected	float				averageActivity		= 0;
-	
 	protected PoolerColumnGroup(int posX, int posY) {
 		this.posX = posX;
 		this.posY = posY;
@@ -22,15 +20,5 @@ public class PoolerColumnGroup {
 	
 	protected static String getId(int posX, int posY) {
 		return posX + "-" + posY;
-	}
-	
-	protected void calculateAverageActivity() {
-		averageActivity = 0;
-		for (PoolerColumn col: columns) {
-			averageActivity += col.averageActivity;
-		}
-		if (averageActivity>0) {
-			averageActivity = averageActivity / columns.size();
-		}
 	}
 }

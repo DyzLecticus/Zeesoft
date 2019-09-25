@@ -1,7 +1,9 @@
 package nl.zeesoft.zdk.htm.proc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -10,19 +12,21 @@ import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Pooler extends ProcessableObject implements Processable {
-	protected PoolerConfig							config				= null;
+	protected PoolerConfig							config							= null;
 	
-	protected List<PoolerColumn>					columns				= new ArrayList<PoolerColumn>();
-	protected SortedMap<String,PoolerColumnGroup>	columnGroups		= new TreeMap<String,PoolerColumnGroup>();
+	protected List<PoolerColumn>					columns							= new ArrayList<PoolerColumn>();
+	protected SortedMap<String,PoolerColumnGroup>	columnGroups					= new TreeMap<String,PoolerColumnGroup>();
+	protected PoolerConnections						connections						= null;
 	
 	public Pooler(PoolerConfig config) {
 		this.config = config;
+		connections = new PoolerConnections(config);
 		initialize();
 	}
 
 	public void randomizeConnections() {
 		for (PoolerColumn col: columns) {
-			col.randomizeConnections();
+			col.randomizeConnections(connections);
 		}
 	}
 	
@@ -98,16 +102,16 @@ public class Pooler extends ProcessableObject implements Processable {
 		PoolerStats pStats = (PoolerStats) stats;
 		
 		start = System.nanoTime();
-		calculateOverlapScoresForSDROnBits(onBits);
+		int[] columnOverlapScores = calculateOverlapScores(onBits);
 		pStats.calculateOverlapNs += System.nanoTime() - start;
 		
 		start = System.nanoTime();
-		List<PoolerColumn> activeColumns = selectActiveColumns();
+		List<PoolerColumn> activeColumns = selectActiveColumns(columnOverlapScores);
 		pStats.selectActiveNs += System.nanoTime() - start;
 		
 		if (learn) {
 			start = System.nanoTime();
-			learnActiveColumns(activeColumns,onBits);
+			learnActiveColumnsOnBits(activeColumns,onBits);
 			pStats.learnActiveNs += System.nanoTime() - start;
 		}
 		
@@ -117,11 +121,11 @@ public class Pooler extends ProcessableObject implements Processable {
 			pStats.logActiveNs += System.nanoTime() - start;
 			
 			start = System.nanoTime();
-			calculateColumnGroupActivity();
+			HashMap<PoolerColumnGroup,Float> groupActivity = calculateColumnGroupActivity();
 			pStats.calculateActivityNs += System.nanoTime() - start;
 			
 			start = System.nanoTime();
-			updateBoostFactors();
+			updateBoostFactors(groupActivity);
 			pStats.updateBoostNs += System.nanoTime() - start;
 		}
 		
@@ -147,13 +151,13 @@ public class Pooler extends ProcessableObject implements Processable {
 				r.append("|");
 			}
 			boolean first = true;
-			for (ProximalLink link: col.proxLinks) {
+			for (ProximalLink lnk: col.proxLinks) {
 				if (!first) {
 					r.append(";");
 				}
-				r.append("" + link.connection);
+				r.append("" + lnk.connection);
 				r.append(",");
-				r.append("" + link.inputIndex);
+				r.append("" + lnk.inputIndex);
 				first = false;
 			}
 		}
@@ -165,35 +169,43 @@ public class Pooler extends ProcessableObject implements Processable {
 		if (cols.size()==columns.size()) {
 			for (int i = 0; i < cols.size(); i++) {
 				PoolerColumn col = columns.get(i);
-				List<ZStringBuilder> lnks = cols.get(i).split(";");
-				for (ZStringBuilder lnk: lnks) {
-					List<ZStringBuilder> vals = lnk.split(",");
+				List<ZStringBuilder> links = cols.get(i).split(";");
+				for (ZStringBuilder link: links) {
+					List<ZStringBuilder> vals = link.split(",");
 					if (vals.size()==2) {
-						ProximalLink link = new ProximalLink();
-						link.connection = Float.parseFloat(vals.get(0).toString());
-						link.inputIndex = Integer.parseInt(vals.get(1).toString());
-						col.proxLinks.add(link);
-						if (link.connection>config.connectionThreshold) {
-							col.connectedIndices.add(link.inputIndex);
-						}
+						ProximalLink lnk = new ProximalLink();
+						lnk.connection = Float.parseFloat(vals.get(0).toString());
+						lnk.inputIndex = Integer.parseInt(vals.get(1).toString());
+						col.proxLinks.add(lnk);
+						connections.addColumnLink(col,lnk);
 					}
 				}
 			}
 		}
 	}
 	
-	protected void calculateOverlapScoresForSDROnBits(List<Integer> onBits) {
-		for (PoolerColumn col: columns) {
-			col.calculateOverlapScoreForOnBits(onBits);
+	protected int[] calculateOverlapScores(List<Integer> onBits) {
+		int[] r = new int[config.outputLength];
+		for (int i = 0; i < r.length; i++) {
+			r[i] = 0;
 		}
+		for (Integer onBit: onBits) {
+			Set<Integer> list = connections.connectedIndexesPerInputIndex.get(onBit);
+			if (list!=null) {
+				for (Integer index: list) {
+					r[index]++;
+				}
+			}
+		}
+		return r;
 	}
 	
-	protected List<PoolerColumn> selectActiveColumns() {
+	protected List<PoolerColumn> selectActiveColumns(int[] columnOverlapScores) {
 		List<PoolerColumn> r = new ArrayList<PoolerColumn>();
 		SortedMap<Integer,List<PoolerColumn>> map = new TreeMap<Integer,List<PoolerColumn>>();
 		for (PoolerColumn col: columns) {
-			if (col.overlapScore>0) {
-				int boostedScore = (int) ((float)col.overlapScore * col.boostFactor);
+			if (columnOverlapScores[col.index]>0) {
+				int boostedScore = (int) ((float)columnOverlapScores[col.index] * col.boostFactor);
 				List<PoolerColumn> list = map.get(boostedScore);
 				if (list==null) {
 					list = new ArrayList<PoolerColumn>();
@@ -226,9 +238,9 @@ public class Pooler extends ProcessableObject implements Processable {
 		return r;
 	}
 	
-	protected void learnActiveColumns(List<PoolerColumn> activeColumns,List<Integer> onBits) {
+	protected void learnActiveColumnsOnBits(List<PoolerColumn> activeColumns,List<Integer> onBits) {
 		for (PoolerColumn col: activeColumns) {
-			col.learnOnBits(onBits);
+			col.learnOnBits(onBits,connections);
 		}
 	}
 	
@@ -240,18 +252,29 @@ public class Pooler extends ProcessableObject implements Processable {
 		}
 	}
 
-	protected void calculateColumnGroupActivity() {
+	protected HashMap<PoolerColumnGroup,Float> calculateColumnGroupActivity() {
+		HashMap<PoolerColumnGroup,Float> r = new HashMap<PoolerColumnGroup,Float>();
 		if (config.boostStrength>0) {
-			for (PoolerColumnGroup pcg: columnGroups.values()) {
-				pcg.calculateAverageActivity();
+			for (PoolerColumnGroup columnGroup: columnGroups.values()) {
+				float averageActivity = 0;
+				for (PoolerColumn col: columnGroup.columns) {
+					averageActivity += col.averageActivity;
+				}
+				if (averageActivity>0) {
+					averageActivity = averageActivity / columns.size();
+					r.put(columnGroup,averageActivity);
+				}
 			}
 		}
+		return r;
 	}
 	
-	protected void updateBoostFactors() {
+	protected void updateBoostFactors(HashMap<PoolerColumnGroup,Float> activity) {
 		if (config.boostStrength>0) {
-			for (PoolerColumn col: columns) {
-				col.updateBoostFactor();
+			for (PoolerColumn column: columns) {
+				if (activity.containsKey(column.columnGroup)) {
+					column.updateBoostFactor(activity.get(column.columnGroup));
+				}
 			}
 		}
 	}
