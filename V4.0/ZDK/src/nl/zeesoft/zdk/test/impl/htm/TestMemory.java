@@ -61,12 +61,14 @@ public class TestMemory extends TestObject {
 		
 		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);
+		pooler.logStats = true;
 		pooler.randomizeConnections();
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
 		System.out.println(memoryConfig.getDescription());
 		
 		Memory memory = new Memory(memoryConfig);
+		memory.logStats = true;
 
 		int num = 5000;
 		
@@ -92,7 +94,7 @@ public class TestMemory extends TestObject {
 		
 		System.out.println();
 		System.out.println("Performance statistics;");
-		System.out.println(memory.getStats().getDescription());
+		System.out.println(memory.statsLog.getSummary());
 
 		System.out.println();
 		System.out.println(memory.getDescription());

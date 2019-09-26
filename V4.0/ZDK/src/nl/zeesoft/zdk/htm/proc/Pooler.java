@@ -11,7 +11,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class Pooler extends ProcessableObject implements Processable {
+public class Pooler extends ProcessorObject {
 	protected PoolerConfig							config							= null;
 	
 	protected List<PoolerColumn>					columns							= new ArrayList<PoolerColumn>();
@@ -100,49 +100,37 @@ public class Pooler extends ProcessableObject implements Processable {
 		List<Integer> onBits = input.getOnBits();
 		long start = 0;
 		
-		PoolerStats pStats = (PoolerStats) stats;
-		
 		start = System.nanoTime();
 		int[] columnOverlapScores = calculateOverlapScores(onBits);
-		pStats.calculateOverlapNs += System.nanoTime() - start;
+		logStatsValue("calculateOverlapScores",System.nanoTime() - start);
 		
 		start = System.nanoTime();
 		List<PoolerColumn> activeColumns = selectActiveColumns(columnOverlapScores);
-		pStats.selectActiveNs += System.nanoTime() - start;
+		logStatsValue("selectActiveColumns",System.nanoTime() - start);
 		
 		if (learn) {
 			start = System.nanoTime();
 			learnActiveColumnsOnBits(activeColumns,onBits);
-			pStats.learnActiveNs += System.nanoTime() - start;
+			logStatsValue("learnActiveColumnsOnBits",System.nanoTime() - start);
 		}
 		
 		if (config.boostStrength>0) {
 			start = System.nanoTime();
 			logActivity(activeColumns);
-			pStats.logActiveNs += System.nanoTime() - start;
+			logStatsValue("logActivity",System.nanoTime() - start);
 			
 			start = System.nanoTime();
 			HashMap<PoolerColumnGroup,Float> groupActivity = calculateColumnGroupActivity();
-			pStats.calculateActivityNs += System.nanoTime() - start;
+			logStatsValue("calculateColumnGroupActivity",System.nanoTime() - start);
 			
 			start = System.nanoTime();
 			updateBoostFactors(groupActivity);
-			pStats.updateBoostNs += System.nanoTime() - start;
+			logStatsValue("updateBoostFactors",System.nanoTime() - start);
 		}
 		
 		r = recordActiveColumnsInSDR(activeColumns);
 		
 		return r;
-	}
-	
-	@Override
-	public void resetStats() {
-		stats = new PoolerStats();
-	}
-	
-	@Override
-	public PoolerStats getStats() {
-		return (PoolerStats) stats;
 	}
 	
 	public ZStringBuilder toStringBuilder() {
@@ -289,8 +277,6 @@ public class Pooler extends ProcessableObject implements Processable {
 	}
 
 	protected void initialize() {
-		stats = new PoolerStats();
-		
 		// Initialize columns
 		int posX = 0;
 		int posY = 0;

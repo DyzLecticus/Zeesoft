@@ -3,13 +3,12 @@ package nl.zeesoft.zdk.test.impl.htm;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
-import nl.zeesoft.zdk.htm.proc.MemoryStats;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
-import nl.zeesoft.zdk.htm.proc.PoolerStats;
 import nl.zeesoft.zdk.htm.proc.Predictor;
-import nl.zeesoft.zdk.htm.proc.StatsObject;
+import nl.zeesoft.zdk.htm.proc.StatsLog;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
@@ -110,6 +109,8 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	}
 
 	protected void testStream(Stream stream,SDRMap inputSDRMap, int maxSeconds) {
+		stream.setLogStats(true);
+		
 		long started = System.currentTimeMillis();
 		stream.start();
 		stream.waitForStart();
@@ -133,20 +134,20 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		long streamMs = (System.currentTimeMillis() - started);
 		System.out.println("Stopped stream after " + streamMs + " ms");
 		
-		List<StatsObject> stats = stream.getStats();
+		List<StatsLog> statsLogs = stream.getStats();
 		long totalNs = 0;
-		for (StatsObject stat: stats) {
+		for (StatsLog statsLog: statsLogs) {
 			System.out.println();
-			System.out.println(stat.getClass().getSimpleName() + ";");
-			System.out.println(stat.getDescription());
-			if (stat instanceof PoolerStats || stat instanceof MemoryStats) {
-				totalNs += stat.totalNs / stat.total;
+			System.out.println(statsLog.source.getClass().getSimpleName() + ";");
+			System.out.println(statsLog.getSummary());
+			if (statsLog.source instanceof Pooler || statsLog.source instanceof Memory) {
+				totalNs += statsLog.getTotals().get("total") / statsLog.log.size();
 			}
 		}
 		
 		System.out.println();
 		System.out.println("Total processing time per SDR: " + df.format(totalNs / 1000000F) + " ms");
-		System.out.println("Total stream time per SDR:     " + df.format(streamMs / (float) stats.get(0).total) + " ms");
+		System.out.println("Total stream time per SDR:     " + df.format(streamMs / (float) statsLogs.get(0).log.size()) + " ms");
 	}
 	
 	@Override

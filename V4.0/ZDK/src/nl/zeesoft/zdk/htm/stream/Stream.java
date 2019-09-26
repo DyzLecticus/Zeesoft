@@ -3,8 +3,9 @@ package nl.zeesoft.zdk.htm.stream;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.proc.Processable;
-import nl.zeesoft.zdk.htm.proc.StatsObject;
+import nl.zeesoft.zdk.htm.proc.ProcessorObject;
+import nl.zeesoft.zdk.htm.proc.Stats;
+import nl.zeesoft.zdk.htm.proc.StatsLog;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -15,17 +16,17 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * A stream provides a threaded processor sequence where the output SDR of each processor is used as input for the next processor
  */
 public class Stream extends Worker {
-	private StreamEncoder			encoder			= null;
-	private List<StreamProcessor>	processors		= new ArrayList<StreamProcessor>();
-	private List<StreamListener>	listeners		= new ArrayList<StreamListener>();
+	private StreamEncoder					encoder				= null;
+	private List<StreamProcessor>			processors			= new ArrayList<StreamProcessor>();
+	private List<StreamListener>			listeners			= new ArrayList<StreamListener>();
 	
-	private boolean					streaming		= false;
+	private boolean							streaming			= false;
 	
-	private StreamStats				stats			= new StreamStats();
-	private StatsObject[]			processorStats	= null;
-	private boolean[]				resetStats		= null;
+	private boolean							logStats			= false;						
+	private StatsLog						statsLog			= new StatsLog(this);
+	private StatsLog[]						processorStatsLogs	= null;
 	
-	private	StreamResults			results			= null;
+	private	StreamResults					results				= null;
 	
 	public Stream() {
 		super(null,null);
@@ -52,19 +53,18 @@ public class Stream extends Worker {
 		return super.getUnion();
 	}
 
-	public void addInputProcessor(Processable processor) {
+	public void addInputProcessor(ProcessorObject processor) {
 		addNextProcessor(processor,-1);
 	}
 
-	public void addNextProcessor(Processable processor,int useOutputIndex) {
+	public void addNextProcessor(ProcessorObject processor,int useOutputIndex) {
 		if (!isWorking() && !isStreaming()) {
 			lockMe(this);
 			StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
 			processors.add(sp);
-			processorStats = new StatsObject[processors.size()];
-			resetStats = new boolean[processors.size()];
-			for (int i = 0; i < processors.size(); i++) {
-				resetStats[i] = false;
+			processorStatsLogs = new StatsLog[processors.size()];
+			for (int i = 0; i < processorStatsLogs.length; i++) {
+				processorStatsLogs[i] = new StatsLog(processor);
 			}
 			unlockMe(this);
 		}
@@ -82,6 +82,29 @@ public class Stream extends Worker {
 			processor.setLearn(learn);
 		}
 		unlockMe(this);
+	}
+
+	public void setLogStats(boolean logStats) {
+		lockMe(this);
+		if (logStats!=this.logStats) {
+			statsLog.log.clear();
+			this.logStats = logStats;
+			for (StreamProcessor processor: processors) {
+				processor.setLogStats(logStats);
+			}
+		}
+		unlockMe(this);
+	}
+	
+	public List<StatsLog> getStats() {
+		List<StatsLog> r = new ArrayList<StatsLog>();
+		lockMe(this);
+		r.add(statsLog.copy());
+		for (int i = 0; i < processorStatsLogs.length; i++) {
+			r.add(processorStatsLogs[i].copy());
+		}
+		unlockMe(this);
+		return r;
 	}
 
 	public long addValue(int value) {
@@ -172,28 +195,6 @@ public class Stream extends Worker {
 		return addSDRtoStream(encoder.getSDRForSDR(dateTime,sdr,value,label));
 	}
 	
-	public void resetStats() {
-		lockMe(this);
-		stats = new StreamStats();
-		for (int i = 0; i < processors.size(); i++) {
-			resetStats[i] = true;
-		}
-		unlockMe(this);
-	}
-	
-	public List<StatsObject> getStats() {
-		List<StatsObject> r = new ArrayList<StatsObject>();
-		lockMe(this);
-		r.add(stats.copy());
-		for (int i = 0; i < processorStats.length; i++) {
-			if (processorStats[i]!=null) {
-				r.add(processorStats[i]);
-			}
-		}
-		unlockMe(this);
-		return r;
-	}
-
 	public boolean isStreaming() {
 		boolean r = false;
 		lockMe(this);
@@ -290,25 +291,24 @@ public class Stream extends Worker {
 		return result.id;
 	}
 
-	protected boolean processedResult(StreamProcessor processor,StatsObject pStats,StreamResult result) {
-		boolean r = false;
+	protected void processedResult(StreamProcessor processor,Stats pStats,StreamResult result) {
 		lockMe(this);
 		int index = processors.indexOf(processor);
-		processorStats[index] = pStats;
+		if (logStats && pStats!=null) {
+			processorStatsLogs[index].log.add(pStats);
+		}
 		int nextIndex = index + 1;
 		if (nextIndex<processors.size()) {
 			processors.get(nextIndex).addResultToQueue(result);
 		} else {
 			results.addResult(result);
-			stats.total++;
-			stats.totalNs += System.nanoTime() - result.added;
-		}
-		r = resetStats[index];
-		if (resetStats[index]) {
-			resetStats[index] = false;
+			if (logStats) {
+				Stats stats = new Stats();
+				stats.setValue("total",System.nanoTime() - result.added);
+				statsLog.log.add(stats);
+			}
 		}
 		unlockMe(this);
-		return r;
 	}
 	
 	@Override

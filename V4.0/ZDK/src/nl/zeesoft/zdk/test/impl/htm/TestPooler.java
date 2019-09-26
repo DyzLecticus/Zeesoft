@@ -55,6 +55,7 @@ public class TestPooler extends TestObject {
 		
 		long start = System.currentTimeMillis();
 		Pooler pooler = new Pooler(config);
+		pooler.logStats = true;
 		System.out.println("Initializing pooler took: " + (System.currentTimeMillis() - start) + " ms");
 		
 		start = System.currentTimeMillis();
@@ -82,7 +83,7 @@ public class TestPooler extends TestObject {
 		float ratio1 = processInputSDRMap(config,pooler,inputSDRMap,false);
 		assertEqual(ratio1 > 6F,true,"Unlearned ratio is lower than minimal expectation");
 		
-		pooler.resetStats();
+		pooler.statsLog.log.clear();
 		
 		System.out.println();
 		float ratio2 = processInputSDRMap(config,pooler,inputSDRMap,true);
@@ -109,7 +110,7 @@ public class TestPooler extends TestObject {
 		
 		System.out.println();
 		System.out.println("Performance statistics;");
-		System.out.println(pooler.getStats().getDescription());
+		System.out.println(pooler.statsLog.getSummary());
 		
 		return analyzeOutputSDRMap(outputSDRMap);
 	}

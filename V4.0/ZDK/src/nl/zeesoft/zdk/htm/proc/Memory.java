@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class Memory extends ProcessableObject implements Processable {
+public class Memory extends ProcessorObject {
 	protected MemoryConfig				config			= null;
 
 	protected List<MemoryColumn>		columns			= new ArrayList<MemoryColumn>();
@@ -89,39 +89,27 @@ public class Memory extends ProcessableObject implements Processable {
 		SDR r = new SDR(config.length);
 		long start = 0;
 		
-		MemoryStats mStats = (MemoryStats) stats;
-		
 		start = System.nanoTime();
 		List<MemoryColumnCell> previouslyActiveCells = cycleActiveState();
-		mStats.cycleStateNs += System.nanoTime() - start;
+		logStatsValue("cycleActiveState",System.nanoTime() - start);
 		
 		start = System.nanoTime();
 		activateColumnCells(input,learn,previouslyActiveCells,r);
-		mStats.activateCellsNs += System.nanoTime() - start;
+		logStatsValue("activateColumnCells",System.nanoTime() - start);
 		
 		start = System.nanoTime();
 		calculateActivity();
-		mStats.calculateActivityNs += System.nanoTime() - start;
+		logStatsValue("calculateActivity",System.nanoTime() - start);
 		
 		start = System.nanoTime();
 		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells();
-		mStats.selectPredictiveNs += System.nanoTime() - start;
+		logStatsValue("selectPredictiveCells",System.nanoTime() - start);
 		
 		start = System.nanoTime();
 		updatePredictions(predictiveCells,learn);
-		mStats.updatePredictionsNs += System.nanoTime() - start;
+		logStatsValue("updatePredictions",System.nanoTime() - start);
 		
 		return r;
-	}
-	
-	@Override
-	public void resetStats() {
-		stats = new MemoryStats();
-	}
-	
-	@Override
-	public MemoryStats getStats() {
-		return (MemoryStats) stats;
 	}
 
 	public ZStringBuilder toStringBuilder() {
@@ -244,8 +232,6 @@ public class Memory extends ProcessableObject implements Processable {
 	}
 	
 	protected void initialize() {
-		stats = new MemoryStats();
-		
 		int posX = 0;
 		int posY = 0;
 		for (int i = 0; i < config.length; i++) {

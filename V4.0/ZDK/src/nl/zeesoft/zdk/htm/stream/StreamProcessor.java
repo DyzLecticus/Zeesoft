@@ -5,10 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import nl.zeesoft.zdk.htm.proc.Processable;
-import nl.zeesoft.zdk.htm.proc.ProcessableContextInput;
-import nl.zeesoft.zdk.htm.proc.ProcessableSecondaryOutput;
-import nl.zeesoft.zdk.htm.proc.StatsObject;
+import nl.zeesoft.zdk.htm.proc.ProcessorObject;
+import nl.zeesoft.zdk.htm.proc.Stats;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
@@ -17,14 +15,15 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 public class StreamProcessor extends Worker {
 	private Stream				stream					= null;
 	
-	private Processable			processor				= null;
+	private ProcessorObject		processor				= null;
 	private int					useOutputIndex			= -1;
 	
 	private boolean				learn					= true;
+	private boolean				logStats				= true;
 	
 	private Queue<StreamResult>	queue					= new LinkedList<StreamResult>();
 		
-	protected StreamProcessor(Messenger msgr,WorkerUnion uni,Stream stream,Processable processor,int useOutputIndex) {
+	protected StreamProcessor(Messenger msgr,WorkerUnion uni,Stream stream,ProcessorObject processor,int useOutputIndex) {
 		super(msgr,uni);
 		this.stream = stream;
 		this.processor = processor;
@@ -35,6 +34,12 @@ public class StreamProcessor extends Worker {
 	protected void setLearn(boolean learn) {
 		lockMe(this);
 		this.learn = learn;
+		unlockMe(this);
+	}
+	
+	protected void setLogStats(boolean logStats) {
+		lockMe(this);
+		this.logStats = logStats;
 		unlockMe(this);
 	}
 	
@@ -64,26 +69,24 @@ public class StreamProcessor extends Worker {
 			}
 		}
 		learn = this.learn;
+		processor.logStats = logStats;
+		processor.statsLog.log.clear();
 		unlockMe(this);
 		if (input!=null) {
-			if (processor instanceof ProcessableContextInput) {
-				List<SDR> contextSDRs = new ArrayList<SDR>();
-				contextSDRs.add(result.inputSDR);
-				for (SDR sdr: result.outputSDRs) {
-					contextSDRs.add(sdr);
-				}
-				((ProcessableContextInput) processor).setContextSDRs(contextSDRs);
+			List<SDR> context = new ArrayList<SDR>();
+			context.add(result.inputSDR);
+			for (SDR sdr: result.outputSDRs) {
+				context.add(sdr);
 			}
-			SDR outputSDR = processor.getSDRForInput(input, learn);
-			result.outputSDRs.add(outputSDR);
-			if (processor instanceof ProcessableSecondaryOutput) {
-				((ProcessableSecondaryOutput) processor).addSecondarySDRs(result.outputSDRs);
+			List<SDR> outputSDRs = processor.getSDRsForInput(input,context,learn);
+			for (SDR outputSDR: outputSDRs) {
+				result.outputSDRs.add(outputSDR);
 			}
-			StatsObject stats = processor.getStats().copy();
-			boolean resetStats = stream.processedResult(this,stats,result);
-			if (resetStats) {
-				processor.resetStats();
+			Stats stats = null;
+			if (processor.statsLog.log.size()>0) {
+				stats = processor.statsLog.log.get(0);
 			}
+			stream.processedResult(this,stats,result);
 			setSleep(0);
 		} else {
 			setSleep(1);

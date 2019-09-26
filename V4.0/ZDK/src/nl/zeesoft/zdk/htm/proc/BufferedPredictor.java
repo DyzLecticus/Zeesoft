@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMapElement;
 import nl.zeesoft.zdk.htm.sdr.SDRSet;
 
-public class BufferedPredictor extends Predictor implements Processable, ProcessableContextInput {
+public class BufferedPredictor extends Predictor {
 	private SDRSet			buffer				= null;
 	private	int				maxBufferSize		= 1000;
 	
@@ -45,15 +45,22 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 	}
 
 	@Override
-	public void setContextSDRs(List<SDR> contextSDRs) {
-		SDR inputSDR = contextSDRs.get(0);
-		SDR outputSDR = contextSDRs.get(1);
+	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
+		SDR inputSDR = context.get(0);
+		SDR outputSDR = context.get(1);
 		if (inputSDR instanceof DateTimeSDR) {
 			buffer.add(outputSDR,inputSDR);
 			if (buffer.size()>maxBufferSize) {
 				buffer.remove(0);
 			}
 		}
+		List<SDR> r = super.getSDRsForInput(input, context, learn);
+		r.add(predictedValueSDR);
+		if (predictedLowerSDR!=null && predictedUpperSDR!=null) {
+			r.add(predictedLowerSDR);
+			r.add(predictedUpperSDR);
+		}
+		return r;
 	}
 
 	@Override
@@ -62,8 +69,6 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 		predictedValueSDR = null;
 		long start = 0;
 
-		PredictorStats pStats = (PredictorStats) stats;
-		
 		start = System.nanoTime();
 		
 		SDR predictionSDR = getPredictionSDR();
@@ -127,19 +132,9 @@ public class BufferedPredictor extends Predictor implements Processable, Process
 			predictedValueSDR = new DateTimeSDR(config.length);
 		}
 		
-		pStats.generatingPredictionsNs += System.nanoTime() - start;
+		logStatsValue("generateValuePredictionSDRs",System.nanoTime() - start);
 		
 		return r;
-	}
-
-	@Override
-	public void addSecondarySDRs(List<SDR> outputSDRs) {
-		super.addSecondarySDRs(outputSDRs);
-		outputSDRs.add(predictedValueSDR);
-		if (predictedLowerSDR!=null && predictedUpperSDR!=null) {
-			outputSDRs.add(predictedLowerSDR);
-			outputSDRs.add(predictedUpperSDR);
-		}
 	}
 	
 	protected void initialize(String valueKey) {

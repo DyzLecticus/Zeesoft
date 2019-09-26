@@ -10,7 +10,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class Predictor extends Memory implements ProcessableSecondaryOutput {
+public class Predictor extends Memory {
 	private	int						maxOnBits			= 0;
 	
 	private SDR						predictionSDR		= null;
@@ -18,7 +18,6 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 	
 	public Predictor(MemoryConfig config) {
 		super(config);
-		stats = new PredictorStats();
 	}
 	
 	public void setMaxOnBits(int maxOnBits) {
@@ -30,12 +29,17 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 	}
 
 	@Override
+	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
+		List<SDR> r = super.getSDRsForInput(input,context,learn);
+		r.add(predictionSDR);
+		return r;
+	}
+
+	@Override
 	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
 		SDR r = super.getSDRForInputSDR(input,learn);
 		long start = 0;
 
-		PredictorStats pStats = (PredictorStats) stats;
-		
 		start = System.nanoTime();
 		
 		predictionSDR = new SDR(config.length);
@@ -76,30 +80,14 @@ public class Predictor extends Memory implements ProcessableSecondaryOutput {
 				predictionSDR.setBit(indices.get(i),true);
 			}
 		}
-		
-		pStats.generatingPredictionsNs += System.nanoTime() - start;
+		logStatsValue("generatePredictionSDR",System.nanoTime() - start);
 		
 		return r;
-	}
-	
-	@Override
-	public void resetStats() {
-		stats = new PredictorStats();
-	}
-	
-	@Override
-	public PredictorStats getStats() {
-		return (PredictorStats) stats;
 	}
 
 	@Override
 	protected void updatePredictions(Set<MemoryColumnCell> predictiveCells,boolean learn) {
 		super.updatePredictions(predictiveCells, learn);
 		this.predictiveCells = predictiveCells;
-	}
-
-	@Override
-	public void addSecondarySDRs(List<SDR> outputSDRs) {
-		outputSDRs.add(predictionSDR);
 	}
 }
