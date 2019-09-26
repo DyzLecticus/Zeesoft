@@ -4,16 +4,14 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import nl.zeesoft.zdk.htm.proc.Memory;
-import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
-import nl.zeesoft.zdk.htm.proc.PoolerConfig;
-import nl.zeesoft.zdk.htm.proc.Predictor;
 import nl.zeesoft.zdk.htm.proc.StatsLog;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
 import nl.zeesoft.zdk.htm.stream.PredictionStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
+import nl.zeesoft.zdk.htm.stream.StreamFactory;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
 import nl.zeesoft.zdk.test.TestObject;
@@ -71,23 +69,15 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	protected void test(String[] args) {
 		SDRMap inputSDRMap = getInputSDRMap();
 
-		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
-		Pooler pooler = new Pooler(poolerConfig);
-		pooler.randomizeConnections();
+		StreamFactory factory = new StreamFactory(1024,21);
+		System.out.println(factory.getDescription());
 		
-		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
-		
-		Predictor predictor = new Predictor(memoryConfig);
-		
-		stream = new PredictionStream(pooler,predictor);
+		stream = factory.getNewPredictionStream();
 		detector = stream.getNewAnomalyDetector();
 		stream.addListener(this);
 		detector.addListener(this);
-		
-		System.out.println(poolerConfig.getDescription());
-		System.out.println(memoryConfig.getDescription());
-		System.out.println();
 
+		System.out.println();
 		testStream(stream, inputSDRMap, 60);
 		
 		assertDetection();

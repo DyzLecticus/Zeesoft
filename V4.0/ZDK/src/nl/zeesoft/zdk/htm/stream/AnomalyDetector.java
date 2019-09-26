@@ -11,10 +11,10 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	
 	private	List<AnomalyDetectorListener>	listeners		= new ArrayList<AnomalyDetectorListener>();
 
-	private HistoricalAccuracy				history			= new HistoricalAccuracy();
+	private HistoricalFloats				history			= new HistoricalFloats();
 	
-	private int								start			= 3000;
-	private float							threshold		= 0.4F;
+	private int								start			= 5000;
+	private float							threshold		= 0.3F;
 	private int								recoveryWindow	= 500;
 	
 	private SDR								predictedSDR	= null;
@@ -27,10 +27,6 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	public AnomalyDetector(PredictionStream stream) {
 		super(stream.getMessenger());
 		this.stream = stream;
-	}
-
-	protected Stream getStream() {
-		return stream;
 	}
 	
 	public void addListener(AnomalyDetectorListener listener) {
@@ -82,7 +78,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 			
 		}
 		
-		accuracy = calculateAccuracy(result);
+		accuracy = calculateAccuracy(result,history.average);
 		
 		averageAccuracy = history.average;
 		difference = 1F - getFloatDifference(averageAccuracy,accuracy);
@@ -90,7 +86,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 			warn = true;
 			recovery = recoveryWindow;
 		}
-		history.addAccuracy(accuracy);
+		history.addFloat(accuracy);
 
 		average = history.average;
 		latest = accuracy;
@@ -120,8 +116,12 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		unlockMe(this);
 		return r;
 	}
+
+	protected Stream getStream() {
+		return stream;
+	}
 	
-	protected float calculateAccuracy(StreamResult result) {
+	protected float calculateAccuracy(StreamResult result,float currentAverageAccuracy) {
 		SDR predictedSDR = result.outputSDRs.get(2);
 		SDR compareSDR = result.outputSDRs.get(0);
 		return (float) compareSDR.getOverlapScore(predictedSDR) / (float) compareSDR.onBits();

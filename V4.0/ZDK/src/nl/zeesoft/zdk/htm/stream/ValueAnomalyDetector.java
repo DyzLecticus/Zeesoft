@@ -7,15 +7,19 @@ import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class ValueAnomalyDetector extends AnomalyDetector {
-	private List<String>	valueKeys	= new ArrayList<String>();
+	private List<String>		valueKeys		= new ArrayList<String>();
+	
+	private HistoricalFloats	lowerRange		= new HistoricalFloats();
+	private HistoricalFloats	upperRange		= new HistoricalFloats();
 	
 	public ValueAnomalyDetector(BufferedPredictionStream stream,String valueKey) {
 		super(stream);
 		setWindow(100);
 		setStart(3000);
-		setThreshold(0.5F);
+		setThreshold(0.3F);
 		setRecoveryWindow(100);
 		valueKeys.add(valueKey);
+		setRangeWindow(1000);
 	}
 
 	public void addValueKey(String valueKey) {
@@ -23,13 +27,20 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 		valueKeys.add(valueKey);
 		unlockMe(this);
 	}
+
+	public void setRangeWindow(int window) {
+		lockMe(this);
+		lowerRange.window = window;
+		upperRange.window = window;
+		unlockMe(this);
+	}
 	
 	@Override
-	protected float calculateAccuracy(StreamResult result) {
+	protected float calculateAccuracy(StreamResult result,float currentAverageAccuracy) {
 		SDR predictedSDR = result.outputSDRs.get(3);
 		SDR compareSDR = result.inputSDR;
 
-		float r = 0;
+		float r = currentAverageAccuracy;
 		if (predictedSDR instanceof DateTimeSDR && compareSDR instanceof DateTimeSDR) {
 			if (valueKeys.size()==1 && result.outputSDRs.size()>=6) {
 				DateTimeSDR pred = (DateTimeSDR) predictedSDR;
@@ -44,15 +55,26 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 				float l = DateTimeSDR.objectToFloat(lVal);
 				float u = DateTimeSDR.objectToFloat(uVal);
 				float c = DateTimeSDR.objectToFloat(cVal);
-				//System.out.println(l + " > " + c + " < " + u + " (p: " + p + ")");
-				if (c < l) {
+				
+				float min = lowerRange.minimum;
+				float max = upperRange.maximum;
+				
+				System.out.println(min + " <= " + c + " <= " + max + " (p: " + p + ") " + ((min <= c) && (c <= max)));
+				if (c < min) {
 					r = getFloatDifference(l,c);
-				} else if (c > u) {
+				} else if (c > max) {
 					r = getFloatDifference(u,c);
 				} else {
-					r = getFloatDifference(p,c);
+					r = 1;
+					//r = getFloatDifference(p,c);
 				}
+				
+				lowerRange.addFloat(l);
+				upperRange.addFloat(u);
+				
 			} else if (valueKeys.size()>0) {
+				/*
+				r = 1;
 				float total = 0;
 				for (String valueKey: valueKeys) {
 					DateTimeSDR pred = (DateTimeSDR) predictedSDR;
@@ -68,6 +90,7 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 					}
 				}
 				r = total / (float) valueKeys.size();
+				*/
 			}
 		}
 		return r;

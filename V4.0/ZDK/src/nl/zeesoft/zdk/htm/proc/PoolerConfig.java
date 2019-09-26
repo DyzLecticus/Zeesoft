@@ -11,7 +11,7 @@ public class PoolerConfig {
 	protected int			outputLength					= 0;
 	protected int			outputBits						= 0;
 	
-	protected float			potentialProximalConnections	= 0.5F;
+	protected float			potentialProximalConnections	= 0.85F;
 	
 	protected float			connectionThreshold				= 0.1F;
 	protected float			connectionDecrement				= 0.008F;

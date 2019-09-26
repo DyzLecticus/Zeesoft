@@ -2,10 +2,10 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
+import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.test.MockObject;
 
 public class MockAnomalySDRMap extends MockObject {
@@ -16,8 +16,10 @@ public class MockAnomalySDRMap extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
-		ScalarEncoder enc = new ScalarEncoder(256,16,0,200);
+		StreamEncoder enc = new StreamEncoder();
+		enc.setValueMinMax(0,150);
 		SDRMap sdrMap = new SDRMap(enc.length());
+		int maxValue = 0;
 		@SuppressWarnings("unchecked")
 		List<MockDateTimeValue> mockVals = (List<MockDateTimeValue>) getTester().getMockedObject(MockAnomalyDateTimeValues.class.getName());
 		for (MockDateTimeValue mockVal: mockVals) {
@@ -26,6 +28,9 @@ public class MockAnomalySDRMap extends MockObject {
 			dts.dateTime = mockVal.dateTime;
 			dts.keyValues.put("value",mockVal.value2);
 			sdrMap.add(dts);
+			if (mockVal.value2>maxValue) {
+				maxValue = mockVal.value2;
+			}
 		}
 		return sdrMap;
 	}

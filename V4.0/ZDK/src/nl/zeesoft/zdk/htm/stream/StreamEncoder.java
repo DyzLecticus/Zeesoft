@@ -27,9 +27,9 @@ public class StreamEncoder extends CombinedEncoder {
 	protected int								bitsPerEncoder		= 8;
 	
 	protected boolean							includeMonth		= false;
-	protected boolean							includeDayOfWeek	= true;
-	protected boolean							includeHourOfDay	= true;
-	protected boolean							includeMinute		= true;
+	protected boolean							includeDayOfWeek	= false;
+	protected boolean							includeHourOfDay	= false;
+	protected boolean							includeMinute		= false;
 
 	protected boolean							includeValue		= true;
 	protected int								valueMin			= 0;
@@ -44,7 +44,6 @@ public class StreamEncoder extends CombinedEncoder {
 	public void setScale(int scale) {
 		if (scale>0) {
 			this.scale = scale;
-			bitsPerEncoder = 8 * scale;
 		}
 		initialize();
 	}
@@ -260,6 +259,19 @@ public class StreamEncoder extends CombinedEncoder {
 	@Override
 	protected void initialize() {
 		super.initialize();
+		int factor = 1;
+		
+		if (includeDayOfWeek) {
+			factor++;
+		}
+		if (includeHourOfDay) {
+			factor++;
+		}
+		if (includeMinute) {
+			factor++;
+		}
+		bitsPerEncoder = (32 / factor) * scale;
+		
 		if (includeMonth) {
 			addEncoder(MONTH,getNewMonthEncoder());
 		}
@@ -306,7 +318,17 @@ public class StreamEncoder extends CombinedEncoder {
 	}
 	
 	protected EncoderObject getNewValueEncoder() {
-		int length = 120 * scale;
+		int baseLength = 256;
+		if (includeDayOfWeek) {
+			baseLength = baseLength - 24;
+		}
+		if (includeHourOfDay) {
+			baseLength = baseLength - 48;
+		}
+		if (includeMinute) {
+			baseLength = baseLength - 64;
+		}
+		int length = baseLength * scale;
 		EncoderObject r = null;
 		if (valueDistributed) {
 			r = new RDScalarEncoder(length,bitsPerEncoder);
