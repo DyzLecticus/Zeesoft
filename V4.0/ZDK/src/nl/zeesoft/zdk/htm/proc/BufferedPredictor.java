@@ -15,11 +15,16 @@ public class BufferedPredictor extends Predictor {
 	private DateTimeSDR		predictedValueSDR	= null;
 	
 	private String			valueKey			= null;
+	private int				matchDepth			= 4;
 	private DateTimeSDR		predictedLowerSDR	= null;
 	private DateTimeSDR		predictedUpperSDR	= null;
 	
 	public BufferedPredictor(MemoryConfig config) {
 		super(config);
+		matchDepth = config.bits / 4;
+		if (matchDepth < 1) {
+			matchDepth = 1;
+		}
 		initialize(null);
 	}
 
@@ -34,6 +39,10 @@ public class BufferedPredictor extends Predictor {
 
 	public DateTimeSDR getPredictedValueSDR() {
 		return predictedValueSDR;
+	}
+
+	public void setMatchDepth(int matchDepth) {
+		this.matchDepth = matchDepth;
 	}
 
 	public DateTimeSDR getPredictedUpperSDR() {
@@ -90,7 +99,7 @@ public class BufferedPredictor extends Predictor {
 		SDR predictionSDR = getPredictionSDR();
 		if (predictionSDR!=null && buffer.size()>1) {
 			if (valueKey!=null) {
-				List<SDRMapElement> elements = buffer.getClosestMatches(predictionSDR);
+				List<SDRMapElement> elements = buffer.getClosestMatches(predictionSDR,matchDepth);
 				if (elements!=null) {
 					if (elements.size()==1) {
 						if (elements.get(0).value instanceof DateTimeSDR) {

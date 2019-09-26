@@ -1,23 +1,26 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
-import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
 import nl.zeesoft.zdk.htm.stream.BufferedPredictionStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
-import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetector;
+import nl.zeesoft.zdk.htm.stream.ValuePredictor;
+import nl.zeesoft.zdk.htm.stream.ValuePredictorListener;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, AnomalyDetectorListener {
+public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, ValuePredictorListener {
 	private BufferedPredictionStream	stream			= null;
-	private ValueAnomalyDetector		detector 		= null;
+	private ValuePredictor				valuePredictor	= null;
 	private StreamResult				previousResult	= null;
 	
 	public TestValueAnomalyDetector(Tester tester) {
@@ -71,9 +74,9 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		BufferedPredictor predictor = new BufferedPredictor(memoryConfig,StreamEncoder.VALUE_KEY);
 		
 		stream = new BufferedPredictionStream(pooler,predictor);
-		detector = stream.getNewValueAnomalyDetector("value");
+		valuePredictor = stream.getNewValuePredictor("value");
 		stream.addListener(this);
-		detector.addListener(this);
+		valuePredictor.addListener(this);
 		
 		System.out.println(poolerConfig.getDescription());
 		System.out.println(memoryConfig.getDescription());
@@ -89,11 +92,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		counter++;
 		if (counter % (500) == 0) {
 			if (previousResult!=null && previousResult.outputSDRs.size()>3) {
-				DateTimeSDR dtsP = (DateTimeSDR) previousResult.outputSDRs.get(3);
-				DateTimeSDR dtsI = (DateTimeSDR) result.inputSDR;
-				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", latest: " + df.format(detector.getLatestAccuracy()) + ", predicted value: " + dtsP.keyValues.get("value") + ", input value: " + dtsI.keyValues.get("value"));
-			} else {
-				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy()) + ", latest: " + df.format(detector.getLatestAccuracy()));
+				System.out.println("Processed SDRs: " + counter);
 			}
 		}
 		previousResult = result;
@@ -104,5 +103,19 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", latest: " + latestAccuracy + ", difference: " + difference);
 		numDetected = (int) result.id;
 		stream.stop();
+	}
+
+	@Override
+	public void predictedValues(HashMap<String, Object> keyValues,Object currentValue) {
+		ZStringBuilder str = new ZStringBuilder();
+		for (Entry<String,Object> entry: keyValues.entrySet()) {
+			if (str.length()>0) {
+				str.append(", ");
+			}
+			str.append(entry.getKey());
+			str.append(": ");
+			str.append("" + entry.getValue());
+		}
+		System.out.println("Predicted " + str + ", current: " + currentValue);
 	}
 }

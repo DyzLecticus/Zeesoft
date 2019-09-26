@@ -75,10 +75,8 @@ public class AnomalyDetector extends Locker implements StreamListener {
 			if (recovery>0) {
 				recovery--;
 			}
-			
+			accuracy = calculateAccuracy(result);
 		}
-		
-		accuracy = calculateAccuracy(result,history.average);
 		
 		averageAccuracy = history.average;
 		difference = 1F - getFloatDifference(averageAccuracy,accuracy);
@@ -116,13 +114,8 @@ public class AnomalyDetector extends Locker implements StreamListener {
 		unlockMe(this);
 		return r;
 	}
-
-	protected Stream getStream() {
-		return stream;
-	}
 	
-	protected float calculateAccuracy(StreamResult result,float currentAverageAccuracy) {
-		SDR predictedSDR = result.outputSDRs.get(2);
+	protected float calculateAccuracy(StreamResult result) {
 		SDR compareSDR = result.outputSDRs.get(0);
 		return (float) compareSDR.getOverlapScore(predictedSDR) / (float) compareSDR.onBits();
 	}

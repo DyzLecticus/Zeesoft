@@ -18,6 +18,7 @@ public class MockAnomalySDRMap extends MockObject {
 	protected Object initialzeMock() {
 		StreamEncoder enc = new StreamEncoder();
 		enc.setValueMinMax(0,150);
+		//enc.setEncodeProperties(false,true,true,false,true);
 		SDRMap sdrMap = new SDRMap(enc.length());
 		int maxValue = 0;
 		@SuppressWarnings("unchecked")

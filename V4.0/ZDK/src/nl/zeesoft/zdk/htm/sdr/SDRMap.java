@@ -205,15 +205,28 @@ public class SDRMap {
 		return r;
 	}
 	
-	public List<SDRMapElement> getClosestMatches(SDR sdr) {
-		return getClosestMatches(sdr,bits / 4);
+	public List<SDRMapElement> getClosestMatches(SDR sdr,int matchDepth) {
+		return getClosestMatches(sdr,bits / 4,matchDepth);
 	}
 	
-	public List<SDRMapElement> getClosestMatches(SDR sdr,int minOverlap) {
+	public List<SDRMapElement> getClosestMatches(SDR sdr,int minOverlap,int matchDepth) {
+		if (matchDepth < 1) {
+			matchDepth = 1;
+		}
 		List<SDRMapElement> r = null;
 		SortedMap<Integer,List<SDRMapElement>> matches = getMatches(sdr,minOverlap);
 		if (matches.size()>0) {
-			r = matches.get(matches.lastKey());
+			r = new ArrayList<SDRMapElement>();
+			for (int i = 0; i < matchDepth; i++) {
+				if (matches.size()>0) {
+					List<SDRMapElement> list = matches.remove(matches.lastKey());
+					for (SDRMapElement elem: list) {
+						r.add(elem);
+					}
+				} else {
+					break;
+				}
+			}
 		}
 		return r;
 	}
