@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.mdl;
+package nl.zeesoft.zdk.htm2.mdl;
 
 import java.util.ArrayList;
 import java.util.List;

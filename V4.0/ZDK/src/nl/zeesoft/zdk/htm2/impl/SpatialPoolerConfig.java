@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.impl;
+package nl.zeesoft.zdk.htm2.impl;
 
 public class SpatialPoolerConfig {
 	protected boolean		initialized						= false;

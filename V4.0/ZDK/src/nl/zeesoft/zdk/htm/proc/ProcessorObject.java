@@ -25,7 +25,7 @@ public abstract class ProcessorObject {
 		r = getSDRForInputSDR(input,learn);
 		if (logStats) {
 			stats.setValue("total",System.nanoTime() - start);
-			statsLog.log.add(stats);
+			statsLog.addStats(stats);
 		}
 		return r;
 	}

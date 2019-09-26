@@ -31,8 +31,28 @@ public class ValueAnomalyDetector extends AnomalyDetector {
 
 		float r = 0;
 		if (predictedSDR instanceof DateTimeSDR && compareSDR instanceof DateTimeSDR) {
-			r = 0;
-			if (valueKeys.size()>0) {
+			if (valueKeys.size()==1 && result.outputSDRs.size()>=6) {
+				DateTimeSDR pred = (DateTimeSDR) predictedSDR;
+				DateTimeSDR lower = (DateTimeSDR) result.outputSDRs.get(4);
+				DateTimeSDR upper = (DateTimeSDR) result.outputSDRs.get(5);
+				DateTimeSDR comp = (DateTimeSDR) compareSDR;
+				Object pVal = pred.keyValues.get(valueKeys.get(0));
+				Object lVal = lower.keyValues.get(valueKeys.get(0));
+				Object uVal = upper.keyValues.get(valueKeys.get(0));
+				Object cVal = comp.keyValues.get(valueKeys.get(0));
+				float p = DateTimeSDR.objectToFloat(pVal);
+				float l = DateTimeSDR.objectToFloat(lVal);
+				float u = DateTimeSDR.objectToFloat(uVal);
+				float c = DateTimeSDR.objectToFloat(cVal);
+				//System.out.println(l + " > " + c + " < " + u + " (p: " + p + ")");
+				if (c < l) {
+					r = getFloatDifference(l,c);
+				} else if (c > u) {
+					r = getFloatDifference(u,c);
+				} else {
+					r = getFloatDifference(p,c);
+				}
+			} else if (valueKeys.size()>0) {
 				float total = 0;
 				for (String valueKey: valueKeys) {
 					DateTimeSDR pred = (DateTimeSDR) predictedSDR;

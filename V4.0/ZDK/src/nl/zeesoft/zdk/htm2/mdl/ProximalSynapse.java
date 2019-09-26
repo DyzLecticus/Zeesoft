@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.mdl;
+package nl.zeesoft.zdk.htm2.mdl;
 
 public class ProximalSynapse extends Synapse {
 	public int 		inputIndex	= 0;

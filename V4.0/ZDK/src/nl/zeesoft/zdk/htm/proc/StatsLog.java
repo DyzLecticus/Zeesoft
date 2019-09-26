@@ -8,13 +8,21 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 
 public class StatsLog {
-	protected static final DecimalFormat	df 		= new DecimalFormat("0.000");
+	protected static final DecimalFormat	df 			= new DecimalFormat("0.000");
 	
-	public Object							source	= null;
-	public List<Stats>						log		= new ArrayList<Stats>();
+	public Object							source		= null;
+	public int								maxLogSize	= 99999;
+	public List<Stats>						log			= new ArrayList<Stats>();
 	
 	public StatsLog(Object source) {
 		this.source = source;
+	}
+	
+	public void addStats(Stats stats) {
+		log.add(stats);
+		while(log.size()>maxLogSize) {
+			log.remove(0);
+		}
 	}
 	
 	public StatsLog copy() {
@@ -35,15 +43,17 @@ public class StatsLog {
 	
 	public static HashMap<String,Long> getTotals(List<Stats> log) {
 		HashMap<String,Long> r = new HashMap<String,Long>();
-		List<String> names = log.get(0).names;
-		for (Stats stats: log) {
-			for (String name: names) {
-				Long total = r.get(name);
-				if (total==null) {
-					total = new Long(0);
+		if (log.size()>0) {
+			List<String> names = log.get(0).names;
+			for (Stats stats: log) {
+				for (String name: names) {
+					Long total = r.get(name);
+					if (total==null) {
+						total = new Long(0);
+					}
+					total += stats.getValue(name);
+					r.put(name,total);
 				}
-				total += stats.getValue(name);
-				r.put(name,total);
 			}
 		}
 		return r;
@@ -54,7 +64,7 @@ public class StatsLog {
 		
 		if (log.size()>0) {
 			List<String> names = log.get(0).names;
-			int maxNameLength = 0;
+			int maxNameLength = 10;
 			for (String name: names) {
 				if (name.length()>maxNameLength) {
 					maxNameLength = name.length();
@@ -63,29 +73,48 @@ public class StatsLog {
 			int maxValueLength = 0;
 			HashMap<String,Long> totals = getTotals(log);
 			for (Long total: totals.values()) {
-				if (total.toString().length()>maxValueLength) {
-					maxValueLength = total.toString().length();
+				int totalLength = getStringValueForStatsValue(total).length();
+				if (totalLength>maxValueLength) {
+					maxValueLength = totalLength;
 				}
 			}
 			for (String name: names) {
 				Long total = totals.get(name);
-				ZStringBuilder labelValue = new ZStringBuilder(name);
-				labelValue.append(":");
-				for (int i = 0; i < maxNameLength - name.length(); i++) {
-					labelValue.append(" ");
-				}
-				labelValue.append(" ");
-				for (int i = 0; i < maxValueLength - total.toString().length(); i++) {
-					labelValue.append(" ");
-				}
-				labelValue.append("" + getStringValueForStatsValue(total));
-				
 				if (r.length()>0) {
 					r.append("\n");
 				}
-				r.append(labelValue);
+				r.append(getLabelValue(name,maxNameLength,total,maxValueLength,true));
+			}
+			if (names.contains("total")) {
+				long totalAvg = totals.get("total") / log.size();
+				if (r.length()>0) {
+					r.append("\n");
+				}
+				r.append(getLabelValue("logSize",maxNameLength,(long)log.size(),maxValueLength,false));
+				r.append("\n");
+				r.append(getLabelValue("avgPerLog",maxNameLength,totalAvg,maxValueLength,true));
 			}
 		}
+		return r;
+	}
+	
+	protected static ZStringBuilder getLabelValue(String name,int maxNameLength,Long total,int maxValueLength,boolean isNanoSeconds) {
+		ZStringBuilder r = new ZStringBuilder(name);
+		r.append(":");
+		for (int i = 0; i < maxNameLength - name.length(); i++) {
+			r.append(" ");
+		}
+		r.append(" ");
+		
+		String strVal = "" + total + "   ";
+		if (isNanoSeconds) {
+			strVal = getStringValueForStatsValue(total);
+		}
+		int strLength = strVal.length();
+		for (int i = 0; i < maxValueLength - strLength; i++) {
+			r.append(" ");
+		}
+		r.append(strVal);
 		return r;
 	}
 	

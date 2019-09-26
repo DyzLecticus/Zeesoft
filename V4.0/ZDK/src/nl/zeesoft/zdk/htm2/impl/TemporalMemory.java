@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.impl;
+package nl.zeesoft.zdk.htm2.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
-import nl.zeesoft.zdk.htm.mdl.Cell;
-import nl.zeesoft.zdk.htm.mdl.Column;
-import nl.zeesoft.zdk.htm.mdl.DistalDendrite;
-import nl.zeesoft.zdk.htm.mdl.DistalSynapse;
-import nl.zeesoft.zdk.htm.mdl.Model;
 import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm2.mdl.Cell;
+import nl.zeesoft.zdk.htm2.mdl.Column;
+import nl.zeesoft.zdk.htm2.mdl.DistalDendrite;
+import nl.zeesoft.zdk.htm2.mdl.DistalSynapse;
+import nl.zeesoft.zdk.htm2.mdl.Model;
 
 public class TemporalMemory extends Model {
 	private TemporalMemoryConfig				memoryConfig					= null;

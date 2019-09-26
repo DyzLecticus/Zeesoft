@@ -67,10 +67,26 @@ public class BufferedPredictor extends Predictor {
 	protected SDR getSDRForInputSDR(SDR input, boolean learn) {
 		SDR r = super.getSDRForInputSDR(input, learn);
 		predictedValueSDR = null;
+		predictedLowerSDR = null;
+		predictedUpperSDR = null;
 		long start = 0;
 
 		start = System.nanoTime();
+		generateValuePredictionSDRs();
+		logStatsValue("generateValuePredictionSDRs",System.nanoTime() - start);
 		
+		return r;
+	}
+	
+	protected void initialize(String valueKey) {
+		setMaxOnBits(config.bits);
+		if (valueKey!=null && valueKey.length()>0) {
+			this.valueKey = valueKey;
+		}
+		buffer = new SDRSet(config.length,config.bits);
+	}
+	
+	protected void generateValuePredictionSDRs() {
 		SDR predictionSDR = getPredictionSDR();
 		if (predictionSDR!=null && buffer.size()>1) {
 			if (valueKey!=null) {
@@ -131,17 +147,5 @@ public class BufferedPredictor extends Predictor {
 		if (predictedValueSDR==null) {
 			predictedValueSDR = new DateTimeSDR(config.length);
 		}
-		
-		logStatsValue("generateValuePredictionSDRs",System.nanoTime() - start);
-		
-		return r;
-	}
-	
-	protected void initialize(String valueKey) {
-		setMaxOnBits(config.bits);
-		if (valueKey!=null && valueKey.length()>0) {
-			this.valueKey = valueKey;
-		}
-		buffer = new SDRSet(config.length,config.bits);
 	}
 }

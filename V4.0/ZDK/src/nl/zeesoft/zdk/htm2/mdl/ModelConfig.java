@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.mdl;
+package nl.zeesoft.zdk.htm2.mdl;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;

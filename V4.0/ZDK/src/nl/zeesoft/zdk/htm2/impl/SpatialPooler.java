@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.impl;
+package nl.zeesoft.zdk.htm2.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,11 +9,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
-import nl.zeesoft.zdk.htm.mdl.Column;
-import nl.zeesoft.zdk.htm.mdl.ColumnGroup;
-import nl.zeesoft.zdk.htm.mdl.Model;
-import nl.zeesoft.zdk.htm.mdl.ProximalSynapse;
 import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm2.mdl.Column;
+import nl.zeesoft.zdk.htm2.mdl.ColumnGroup;
+import nl.zeesoft.zdk.htm2.mdl.Model;
+import nl.zeesoft.zdk.htm2.mdl.ProximalSynapse;
 
 public class SpatialPooler extends Model {
 	private SpatialPoolerConfig					poolerConfig					= null;

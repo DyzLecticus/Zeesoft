@@ -69,8 +69,8 @@ public class TestEvolver extends TestObject {
 		messenger.start();
 
 		evolver.start();
-		for (int i = 0; i < 30; i++) {
-			sleep(1000);
+		for (int i = 0; i < 300; i++) {
+			sleep(100);
 			if (!evolver.isWorking()) {
 				break;
 			}

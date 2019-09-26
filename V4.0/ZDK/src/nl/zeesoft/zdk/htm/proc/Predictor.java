@@ -41,7 +41,19 @@ public class Predictor extends Memory {
 		long start = 0;
 
 		start = System.nanoTime();
+		generatePredictionSDR();
+		logStatsValue("generatePredictionSDR",System.nanoTime() - start);
 		
+		return r;
+	}
+
+	@Override
+	protected void updatePredictions(Set<MemoryColumnCell> predictiveCells,boolean learn) {
+		super.updatePredictions(predictiveCells, learn);
+		this.predictiveCells = predictiveCells;
+	}
+	
+	protected void generatePredictionSDR() {
 		predictionSDR = new SDR(config.length);
 		if (predictiveCells.size()>0) {
 			HashMap<Integer,Float> columnActivity = new HashMap<Integer,Float>();
@@ -80,14 +92,5 @@ public class Predictor extends Memory {
 				predictionSDR.setBit(indices.get(i),true);
 			}
 		}
-		logStatsValue("generatePredictionSDR",System.nanoTime() - start);
-		
-		return r;
-	}
-
-	@Override
-	protected void updatePredictions(Set<MemoryColumnCell> predictiveCells,boolean learn) {
-		super.updatePredictions(predictiveCells, learn);
-		this.predictiveCells = predictiveCells;
 	}
 }

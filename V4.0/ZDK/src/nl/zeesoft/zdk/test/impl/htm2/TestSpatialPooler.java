@@ -1,16 +1,18 @@
-package nl.zeesoft.zdk.test.impl.htm;
+package nl.zeesoft.zdk.test.impl.htm2;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.impl.SpatialPooler;
-import nl.zeesoft.zdk.htm.impl.SpatialPoolerConfig;
-import nl.zeesoft.zdk.htm.mdl.Model;
-import nl.zeesoft.zdk.htm.mdl.ModelConfig;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
+import nl.zeesoft.zdk.htm2.impl.SpatialPooler;
+import nl.zeesoft.zdk.htm2.impl.SpatialPoolerConfig;
+import nl.zeesoft.zdk.htm2.mdl.Model;
+import nl.zeesoft.zdk.htm2.mdl.ModelConfig;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.test.impl.htm.MockDateTimeValue;
+import nl.zeesoft.zdk.test.impl.htm.MockRegularDateTimeValues;
 
 public class TestSpatialPooler extends TestObject {
 	public TestSpatialPooler(Tester tester) {

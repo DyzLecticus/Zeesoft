@@ -24,7 +24,7 @@ public class Stream extends Worker {
 	
 	private boolean							logStats			= false;						
 	private StatsLog						statsLog			= new StatsLog(this);
-	private StatsLog[]						processorStatsLogs	= null;
+	private List<StatsLog>					processorStatsLogs	= new ArrayList<StatsLog>();
 	
 	private	StreamResults					results				= null;
 	
@@ -62,10 +62,7 @@ public class Stream extends Worker {
 			lockMe(this);
 			StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
 			processors.add(sp);
-			processorStatsLogs = new StatsLog[processors.size()];
-			for (int i = 0; i < processorStatsLogs.length; i++) {
-				processorStatsLogs[i] = new StatsLog(processor);
-			}
+			processorStatsLogs.add(new StatsLog(processor));
 			unlockMe(this);
 		}
 	}
@@ -88,6 +85,9 @@ public class Stream extends Worker {
 		lockMe(this);
 		if (logStats!=this.logStats) {
 			statsLog.log.clear();
+			for (StatsLog statsLog: processorStatsLogs) {
+				statsLog.log.clear();
+			}
 			this.logStats = logStats;
 			for (StreamProcessor processor: processors) {
 				processor.setLogStats(logStats);
@@ -100,10 +100,12 @@ public class Stream extends Worker {
 		List<StatsLog> r = new ArrayList<StatsLog>();
 		lockMe(this);
 		r.add(statsLog.copy());
-		for (int i = 0; i < processorStatsLogs.length; i++) {
-			r.add(processorStatsLogs[i].copy());
-		}
 		unlockMe(this);
+		for (StatsLog statsLog: processorStatsLogs) {
+			lockMe(this);
+			r.add(statsLog.copy());
+			unlockMe(this);
+		}
 		return r;
 	}
 
@@ -295,7 +297,7 @@ public class Stream extends Worker {
 		lockMe(this);
 		int index = processors.indexOf(processor);
 		if (logStats && pStats!=null) {
-			processorStatsLogs[index].log.add(pStats);
+			processorStatsLogs.get(index).addStats(pStats);
 		}
 		int nextIndex = index + 1;
 		if (nextIndex<processors.size()) {
@@ -305,7 +307,7 @@ public class Stream extends Worker {
 			if (logStats) {
 				Stats stats = new Stats();
 				stats.setValue("total",System.nanoTime() - result.added);
-				statsLog.log.add(stats);
+				statsLog.addStats(stats);
 			}
 		}
 		unlockMe(this);

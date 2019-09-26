@@ -1,7 +1,7 @@
-package nl.zeesoft.zdk.test.impl.htm;
+package nl.zeesoft.zdk.test.impl.htm2;
 
-import nl.zeesoft.zdk.htm.mdl.Model;
-import nl.zeesoft.zdk.htm.mdl.ModelConfig;
+import nl.zeesoft.zdk.htm2.mdl.Model;
+import nl.zeesoft.zdk.htm2.mdl.ModelConfig;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 

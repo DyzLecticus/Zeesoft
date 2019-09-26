@@ -1,12 +1,12 @@
-package nl.zeesoft.zdk.htm.impl;
+package nl.zeesoft.zdk.htm2.impl;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import nl.zeesoft.zdk.htm.mdl.Column;
-import nl.zeesoft.zdk.htm.mdl.ModelConfig;
+import nl.zeesoft.zdk.htm2.mdl.Column;
+import nl.zeesoft.zdk.htm2.mdl.ModelConfig;
 
 public class SpatialPoolerColumn extends Column {	
 	public Queue<Boolean>	activityLog			= new LinkedList<Boolean>();

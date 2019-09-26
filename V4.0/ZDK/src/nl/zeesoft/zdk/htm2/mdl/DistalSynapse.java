@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.mdl;
+package nl.zeesoft.zdk.htm2.mdl;
 
 public class DistalSynapse extends Synapse {
 	public String 	sourceCellId		= "";
