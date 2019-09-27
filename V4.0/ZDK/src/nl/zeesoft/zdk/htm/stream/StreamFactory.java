@@ -68,15 +68,15 @@ public class StreamFactory {
 		return new PredictionStream(msgr,uni,encoder,pooler,predictor);
 	}
 
-	public PredictionStream getNewBufferedPredictionStream() {
+	public BufferedPredictionStream getNewBufferedPredictionStream() {
 		return getNewBufferedPredictionStream(null,null,null);
 	}
 
-	public PredictionStream getNewBufferedPredictionStream(String valueKey) {
+	public BufferedPredictionStream getNewBufferedPredictionStream(String valueKey) {
 		return getNewBufferedPredictionStream(null,null,valueKey);
 	}
 	
-	public PredictionStream getNewBufferedPredictionStream(Messenger msgr, WorkerUnion uni,String valueKey) {
+	public BufferedPredictionStream getNewBufferedPredictionStream(Messenger msgr, WorkerUnion uni,String valueKey) {
 		Pooler pooler = getNewPooler();
 		BufferedPredictor predictor = new BufferedPredictor(memoryConfig,valueKey);
 		return new BufferedPredictionStream(msgr,uni,encoder,pooler,predictor);

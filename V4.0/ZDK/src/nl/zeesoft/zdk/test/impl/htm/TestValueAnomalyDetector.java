@@ -1,9 +1,5 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
@@ -14,14 +10,14 @@ import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
-import nl.zeesoft.zdk.htm.stream.ValuePredictor;
-import nl.zeesoft.zdk.htm.stream.ValuePredictorListener;
+import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetector;
+import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetectorListener;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, ValuePredictorListener {
-	private BufferedPredictionStream	stream			= null;
-	private ValuePredictor				valuePredictor	= null;
-	private StreamResult				previousResult	= null;
+public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, ValueAnomalyDetectorListener {
+	private BufferedPredictionStream	stream					= null;
+	private ValueAnomalyDetector		valueAnomalyDetector	= null;
+	private StreamResult				previousResult			= null;
 	
 	public TestValueAnomalyDetector(Tester tester) {
 		super(tester);
@@ -74,9 +70,9 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		BufferedPredictor predictor = new BufferedPredictor(memoryConfig,StreamEncoder.VALUE_KEY);
 		
 		stream = new BufferedPredictionStream(pooler,predictor);
-		valuePredictor = stream.getNewValuePredictor("value");
+		valueAnomalyDetector = stream.getNewValueAnomalyDetector("value");
 		stream.addListener(this);
-		valuePredictor.addListener(this);
+		valueAnomalyDetector.addDetectorListener(this);
 		
 		System.out.println(poolerConfig.getDescription());
 		System.out.println(memoryConfig.getDescription());
@@ -99,23 +95,9 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 	}
 
 	@Override
-	public void detectedAnomaly(float averageAccuracy, float latestAccuracy, float difference, StreamResult result) {
-		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", latest: " + latestAccuracy + ", difference: " + difference);
+	public void detectedAnomaly(String valueKey, float difference, StreamResult result) {
+		System.out.println("Detected anomaly at: " + result.id + ", property: " + valueKey + ", difference: " + difference);
 		numDetected = (int) result.id;
 		stream.stop();
-	}
-
-	@Override
-	public void predictedValues(HashMap<String, Object> keyValues,Object currentValue) {
-		ZStringBuilder str = new ZStringBuilder();
-		for (Entry<String,Object> entry: keyValues.entrySet()) {
-			if (str.length()>0) {
-				str.append(", ");
-			}
-			str.append(entry.getKey());
-			str.append(": ");
-			str.append("" + entry.getValue());
-		}
-		System.out.println("Predicted " + str + ", current: " + currentValue);
 	}
 }
