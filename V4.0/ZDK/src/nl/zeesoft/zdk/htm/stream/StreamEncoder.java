@@ -12,8 +12,11 @@ import nl.zeesoft.zdk.htm.enc.RDScalarEncoder;
 import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
-public class StreamEncoder extends CombinedEncoder {
+public class StreamEncoder extends CombinedEncoder implements JsAble {
 	public static final String					VALUE_KEY			= "value";
 	public static final String					LABEL_KEY			= "label";
 	
@@ -71,6 +74,44 @@ public class StreamEncoder extends CombinedEncoder {
 	public void valueDistributed(boolean valueDistributed) {
 		this.valueDistributed = valueDistributed;
 		initialize();
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("scale","" + scale));
+		json.rootElement.children.add(new JsElem("includeMonth","" + includeMonth));
+		json.rootElement.children.add(new JsElem("includeDayOfWeek","" + includeDayOfWeek));
+		json.rootElement.children.add(new JsElem("includeHourOfDay","" + includeHourOfDay));
+		json.rootElement.children.add(new JsElem("includeMinute","" + includeMinute));
+		json.rootElement.children.add(new JsElem("includeValue","" + includeValue));
+		if (includeValue) {
+			json.rootElement.children.add(new JsElem("valueMin","" + valueMin));
+			json.rootElement.children.add(new JsElem("valueMax","" + valueMax));
+			json.rootElement.children.add(new JsElem("valueRes","" + valueRes));
+			json.rootElement.children.add(new JsElem("valueDistributed","" + valueDistributed));
+		}
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			scale = json.rootElement.getChildInt("scale");
+			includeMonth = json.rootElement.getChildBoolean("includeMonth");
+			includeDayOfWeek = json.rootElement.getChildBoolean("includeDayOfWeek");
+			includeHourOfDay = json.rootElement.getChildBoolean("includeHourOfDay");
+			includeMinute = json.rootElement.getChildBoolean("includeMinute");
+			includeValue = json.rootElement.getChildBoolean("includeValue");
+			if (includeValue) {
+				valueMin = json.rootElement.getChildInt("valueMin");
+				valueMax = json.rootElement.getChildInt("valueMax");
+				valueRes = json.rootElement.getChildFloat("valueRes");
+				valueDistributed = json.rootElement.getChildBoolean("valueDistributed");
+			}
+			initialize();
+		}
 	}
 
 	public DateTimeSDR getSDRForValue(int value) {

@@ -133,6 +133,7 @@ public class Pooler extends ProcessorObject {
 		return r;
 	}
 	
+	@Override
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder r = new ZStringBuilder();
 		for (PoolerColumn col: columns) {
@@ -153,11 +154,14 @@ public class Pooler extends ProcessorObject {
 		return r;
 	}
 	
+	@Override
 	public void fromStringBuilder(ZStringBuilder str) {
 		List<ZStringBuilder> cols = str.split("|");
 		if (cols.size()==columns.size()) {
+			connections.clear();
 			for (int i = 0; i < cols.size(); i++) {
 				PoolerColumn col = columns.get(i);
+				col.proxLinks.clear();
 				List<ZStringBuilder> links = cols.get(i).split(";");
 				for (ZStringBuilder link: links) {
 					List<ZStringBuilder> vals = link.split(",");

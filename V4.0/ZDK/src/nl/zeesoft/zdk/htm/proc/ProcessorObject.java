@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public abstract class ProcessorObject {
@@ -30,6 +31,10 @@ public abstract class ProcessorObject {
 		return r;
 	}
 	
+	public abstract ZStringBuilder toStringBuilder();
+	
+	public abstract void fromStringBuilder(ZStringBuilder str);
+
 	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
 		List<SDR> r = new ArrayList<SDR>();
 		r.add(getSDRForInput(input,learn));

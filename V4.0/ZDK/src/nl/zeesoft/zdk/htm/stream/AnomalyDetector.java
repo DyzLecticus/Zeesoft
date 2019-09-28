@@ -14,7 +14,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	private HistoricalFloats				history			= new HistoricalFloats();
 	
 	private int								start			= 5000;
-	private float							threshold		= 0.3F;
+	private float							threshold		= 0.4F;
 	private int								recoveryWindow	= 500;
 	
 	private SDR								predictedSDR	= null;

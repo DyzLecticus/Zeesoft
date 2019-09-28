@@ -3,11 +3,15 @@ package nl.zeesoft.zdk.htm.stream;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.htm.proc.Stats;
 import nl.zeesoft.zdk.htm.proc.StatsLog;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
@@ -15,9 +19,10 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 /**
  * A stream provides a threaded processor sequence where the output SDR of each processor is used as input for the next processor
  */
-public class Stream extends Worker {
+public class Stream extends Worker implements JsAble {
 	private StreamEncoder					encoder				= null;
-	private List<StreamProcessor>			processors			= new ArrayList<StreamProcessor>();
+	private List<ProcessorObject>			processors			= new ArrayList<ProcessorObject>();
+	private List<StreamProcessor>			streamProcessors	= new ArrayList<StreamProcessor>();
 	private List<StreamListener>			listeners			= new ArrayList<StreamListener>();
 	
 	private boolean							streaming			= false;
@@ -58,11 +63,14 @@ public class Stream extends Worker {
 	}
 
 	public void addNextProcessor(ProcessorObject processor,int useOutputIndex) {
-		if (!isWorking() && !isStreaming()) {
+		if (!isWorking()) {
 			lockMe(this);
-			StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
-			processors.add(sp);
-			processorStatsLogs.add(new StatsLog(processor));
+			if (!streaming) {
+				processors.add(processor);
+				StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
+				streamProcessors.add(sp);
+				processorStatsLogs.add(new StatsLog(processor));
+			}
 			unlockMe(this);
 		}
 	}
@@ -75,7 +83,7 @@ public class Stream extends Worker {
 
 	public void setLearn(boolean learn) {
 		lockMe(this);
-		for (StreamProcessor processor: processors) {
+		for (StreamProcessor processor: streamProcessors) {
 			processor.setLearn(learn);
 		}
 		unlockMe(this);
@@ -89,11 +97,68 @@ public class Stream extends Worker {
 				statsLog.log.clear();
 			}
 			this.logStats = logStats;
-			for (StreamProcessor processor: processors) {
+			for (StreamProcessor processor: streamProcessors) {
 				processor.setLogStats(logStats);
 			}
 		}
 		unlockMe(this);
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		if (!isWorking()) {
+			lockMe(this);
+			if (!streaming) {
+				json.rootElement = new JsElem();
+				json.rootElement.children.add(new JsElem("streamClassName",this.getClass().getName(),true));
+				json.rootElement.children.add(new JsElem("encoderClassName",encoder.getClass().getName(),true));
+				json.rootElement.children.add(new JsElem("encoderData",encoder.toStringBuilder(),true));
+				JsElem procsElem = new JsElem("processors",true);
+				json.rootElement.children.add(procsElem);
+				for (ProcessorObject processor: processors) {
+					JsElem procElem = new JsElem();
+					procsElem.children.add(procElem);
+					procElem.children.add(new JsElem("processorClassName",processor.getClass().getName(),true));
+					procElem.children.add(new JsElem("processorData",processor.toStringBuilder(),true));
+				}
+			}
+			unlockMe(this);
+		}
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null && !isWorking()) {
+			lockMe(this);
+			if (!streaming) {
+				String streamClassName = json.rootElement.getChildString("streamClassName");
+				String encoderClassName = json.rootElement.getChildString("encoderClassName");
+				if (this.getClass().getName().equals(streamClassName) && encoder.getClass().getName().equals(encoderClassName)) {
+					ZStringBuilder encoderData = json.rootElement.getChildZStringBuilder("encoderData");
+					if (encoderData.length()>0) {
+						encoder.fromStringBuilder(encoderData);
+					}
+					JsElem procsElem = json.rootElement.getChildByName("processors");
+					if (procsElem!=null) {
+						int i = 0;
+						for (JsElem procElem: procsElem.children) {
+							ProcessorObject processor = processors.get(i);
+							if (processor!=null) {
+								String processorClassName = procElem.getChildString("processorClassName");
+								ZStringBuilder processorData = procElem.getChildZStringBuilder("processorData");
+								if (processor.getClass().getName().equals(processorClassName) && processorData.length()>0) {
+									processor.fromStringBuilder(processorData);
+								}
+							}
+							i++;
+						}
+					}
+				}
+			}
+			unlockMe(this);
+		}
 	}
 	
 	public List<StatsLog> getStats() {
@@ -216,7 +281,7 @@ public class Stream extends Worker {
 			}
 			unlockMe(this);
 			if (r) {
-				for (StreamProcessor processor: processors) {
+				for (StreamProcessor processor: streamProcessors) {
 					processor.start();
 				}
 				super.start();
@@ -249,7 +314,7 @@ public class Stream extends Worker {
 			}
 			unlockMe(this);
 			if (r) {
-				for (StreamProcessor processor: processors) {
+				for (StreamProcessor processor: streamProcessors) {
 					processor.stop();
 				}
 				super.stop();
@@ -259,14 +324,14 @@ public class Stream extends Worker {
 	}
 	
 	public void waitForStop() {
-		for (StreamProcessor processor: processors) {
+		for (StreamProcessor processor: streamProcessors) {
 			whileStopping(processor); 
 		}
 		whileStopping(this);
 	}
 	
 	public void destroy() {
-		for (StreamProcessor processor: processors) {
+		for (StreamProcessor processor: streamProcessors) {
 			processor.destroy();
 		}
 	}
@@ -288,20 +353,20 @@ public class Stream extends Worker {
 	protected long addSDRtoStream(DateTimeSDR inputSDR) {
 		StreamResult result = results.getNewResult(inputSDR);
 		lockMe(this);
-		processors.get(0).addResultToQueue(result);
+		streamProcessors.get(0).addResultToQueue(result);
 		unlockMe(this);
 		return result.id;
 	}
 
 	protected void processedResult(StreamProcessor processor,Stats pStats,StreamResult result) {
 		lockMe(this);
-		int index = processors.indexOf(processor);
+		int index = streamProcessors.indexOf(processor);
 		if (logStats && pStats!=null) {
 			processorStatsLogs.get(index).addStats(pStats);
 		}
 		int nextIndex = index + 1;
-		if (nextIndex<processors.size()) {
-			processors.get(nextIndex).addResultToQueue(result);
+		if (nextIndex<streamProcessors.size()) {
+			streamProcessors.get(nextIndex).addResultToQueue(result);
 		} else {
 			results.addResult(result);
 			if (logStats) {

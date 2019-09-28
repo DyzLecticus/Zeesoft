@@ -2,7 +2,6 @@ package nl.zeesoft.zdk.htm.proc;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMapElement;
@@ -98,63 +97,46 @@ public class BufferedPredictor extends Predictor {
 	protected void generateValuePredictionSDRs() {
 		SDR predictionSDR = getPredictionSDR();
 		if (predictionSDR!=null && buffer.size()>1) {
-			if (valueKey!=null) {
-				List<SDRMapElement> elements = buffer.getClosestMatches(predictionSDR,matchDepth);
-				if (elements!=null) {
-					if (elements.size()==1) {
-						if (elements.get(0).value instanceof DateTimeSDR) {
-							predictedValueSDR = (DateTimeSDR) elements.get(0).value;
-							predictedLowerSDR = (DateTimeSDR) elements.get(0).value;
-							predictedUpperSDR = (DateTimeSDR) elements.get(0).value;
-						}
+			List<SDRMapElement> elements = buffer.getClosestMatches(predictionSDR,matchDepth);
+			if (elements.size()>0) {
+				predictedValueSDR = (DateTimeSDR) elements.remove(0).value;
+				if (valueKey!=null) {
+					if (elements.size()==0) {
+						predictedLowerSDR = predictedValueSDR;
+						predictedUpperSDR = predictedValueSDR;
+					} else if (elements.size()==1) {
+						predictedLowerSDR = (DateTimeSDR) elements.get(0).value;
+						predictedUpperSDR = (DateTimeSDR) elements.get(0).value;
 					} else {
 						float min = Float.MAX_VALUE;
 						float max = Float.MIN_VALUE;
 						SDRMapElement minElem = null;
 						SDRMapElement maxElem = null;
-						for (SDRMapElement element: elements) {
-							Float value = DateTimeSDR.getValueFromSDR((DateTimeSDR) element.value,valueKey);
+						for (SDRMapElement elementC: elements) {
+							Float value = DateTimeSDR.getValueFromSDR((DateTimeSDR) elementC.value,valueKey);
 							if (value!=null) {
 								if (value < min) {
 									min = value;
-									minElem = element;
+									minElem = elementC;
 								}
 								if (value > max) {
 									max = value;
-									maxElem = element;
+									maxElem = elementC;
 								}
 							}
 						}
 						if (minElem!=null && maxElem!=null) {
 							predictedLowerSDR = (DateTimeSDR) minElem.value;
 							predictedUpperSDR = (DateTimeSDR) maxElem.value;
-							if (elements.size()>2) {
-								elements.remove(minElem);
-								elements.remove(maxElem);
-							}
-						}
-						if (elements.size()==1) {
-							predictedValueSDR = (DateTimeSDR) elements.get(0).value;
-						} else {
-							predictedValueSDR = (DateTimeSDR) elements.get(ZRandomize.getRandomInt(0,elements.size() - 1)).value;
-						}
-						if (predictedLowerSDR==null) {
-							predictedLowerSDR = predictedValueSDR;
-						}
-						if (predictedUpperSDR==null) {
-							predictedUpperSDR = predictedValueSDR;
 						}
 					}
-				}
-			} else {
-				SDRMapElement element = buffer.getRandomClosestMatch(predictionSDR);
-				if (element!=null) {
-					predictedValueSDR = (DateTimeSDR) element.value;
 				}
 			}
 		}
 		if (predictedValueSDR==null) {
 			predictedValueSDR = new DateTimeSDR(config.length);
+			predictedLowerSDR = null;
+			predictedUpperSDR = null;
 		}
 	}
 }

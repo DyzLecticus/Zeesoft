@@ -77,7 +77,7 @@ public class ValuePredictor extends Locker implements StreamListener {
 	protected HashMap<String,Object> getPredictedValues() {
 		HashMap<String,Object> r = null;
 		lockMe(this);
-		r = predictedValues;
+		r = new HashMap<String,Object>(predictedValues);
 		unlockMe(this);
 		return r;
 	}

@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.StatsLog;
@@ -14,6 +15,7 @@ import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamFactory;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -81,13 +83,22 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		testStream(stream, inputSDRMap, 60);
 		
 		assertDetection();
+		
+		JsFile json = stream.toJson();
+		ZStringBuilder oriJs = json.toStringBuilderReadFormat();
+		
+		PredictionStream streamNew = factory.getNewPredictionStream();
+		streamNew.fromJson(json);
+		ZStringBuilder newJs = streamNew.toJson().toStringBuilderReadFormat();
+		
+		assertEqual(oriJs.length(),newJs.length(),"Stream JSON does not match expectation");
 	}
 	
 	protected SDRMap getInputSDRMap() {
 		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockAnomalySDRMap.class.getName());
 		assertEqual(inputSDRMap.size(),17521,"Input SDR map size does not match expectation");
 		
-		numExpected = (inputSDRMap.size() / 2);
+		numExpected = (inputSDRMap.size() / 2) + 1; // Add 1 because result ID counter starts at 1
 		System.out.println("Test set anomaly detection is expected at: " + numExpected);
 		System.out.println();
 		
@@ -95,7 +106,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	}
 
 	protected void assertDetection() {
-		assertEqual(numDetected > numExpected && numDetected < numExpected + 48,true,"Failed to detect the expected anomaly");
+		assertEqual(numDetected >= numExpected && numDetected < numExpected + 48,true,"Failed to detect the expected anomaly");
 	}
 
 	protected void testStream(Stream stream,SDRMap inputSDRMap, int maxSeconds) {

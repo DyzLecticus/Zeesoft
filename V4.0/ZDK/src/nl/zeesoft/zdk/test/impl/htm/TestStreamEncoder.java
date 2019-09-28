@@ -55,7 +55,7 @@ public class TestStreamEncoder extends TestObject {
 		assertEqual(err,new ZStringBuilder(),"Encoder scalar overlap does not match expectation");
 		
 		enc.setScale(2);
-		System.out.println("Scaled (factor 4) encoding length: " + enc.length() + ", bits: " + enc.bits());
+		System.out.println("Scaled (factor 2) encoding length: " + enc.length() + ", bits: " + enc.bits());
 		assertEqual(enc.length(),512,"Encoder size does not match expectation");
 		assertEqual(enc.bits(),64,"Encoder bits does not match expectation");
 		err = enc.testScalarOverlap(true);
@@ -67,5 +67,8 @@ public class TestStreamEncoder extends TestObject {
 		assertEqual(enc.bits(),128,"Encoder bits does not match expectation");
 		err = enc.testScalarOverlap(true);
 		assertEqual(err,new ZStringBuilder(),"Encoder scalar overlap does not match expectation");
+		
+		StreamEncoder encNew = new StreamEncoder();
+		testJsAble(enc,encNew,"Encoder JSON does not match expectation");
 	}
 }

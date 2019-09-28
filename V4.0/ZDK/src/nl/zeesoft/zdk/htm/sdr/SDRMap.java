@@ -194,13 +194,9 @@ public class SDRMap {
 	
 	public SDRMapElement getRandomClosestMatch(SDR sdr,int minOverlap) {
 		SDRMapElement r = null;
-		List<SDRMapElement> elements = getClosestMatches(sdr,minOverlap);
-		if (elements!=null && elements.size()>0) {
-			if (elements.size()==1) {
-				r = elements.get(0);
-			} else {
-				r = elements.get(ZRandomize.getRandomInt(0,elements.size() - 1));
-			}
+		List<SDRMapElement> elements = getClosestMatches(sdr,minOverlap,1);
+		if (elements.size()>0) {
+			r = elements.get(0);
 		}
 		return r;
 	}
@@ -210,16 +206,23 @@ public class SDRMap {
 	}
 	
 	public List<SDRMapElement> getClosestMatches(SDR sdr,int minOverlap,int matchDepth) {
+		List<SDRMapElement> r = new ArrayList<SDRMapElement>();
 		if (matchDepth < 1) {
 			matchDepth = 1;
 		}
-		List<SDRMapElement> r = null;
+		SDRMapElement first = null;
 		SortedMap<Integer,List<SDRMapElement>> matches = getMatches(sdr,minOverlap);
 		if (matches.size()>0) {
-			r = new ArrayList<SDRMapElement>();
 			for (int i = 0; i < matchDepth; i++) {
 				if (matches.size()>0) {
 					List<SDRMapElement> list = matches.remove(matches.lastKey());
+					if (first==null) {
+						if (list.size()==1) {
+							first = list.remove(0);
+						} else {
+							first = list.remove(ZRandomize.getRandomInt(0,list.size() - 1));
+						}
+					}
 					for (SDRMapElement elem: list) {
 						r.add(elem);
 					}
@@ -227,6 +230,9 @@ public class SDRMap {
 					break;
 				}
 			}
+		}
+		if (first!=null) {
+			r.add(0,first);
 		}
 		return r;
 	}

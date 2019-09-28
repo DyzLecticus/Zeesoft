@@ -35,4 +35,11 @@ public class HistoricalFloats {
 		}
 		return average;
 	}
+	
+	public void clear() {
+		history.clear();
+		average = 0;
+		minimum = 0;
+		maximum = 0;
+	}
 }

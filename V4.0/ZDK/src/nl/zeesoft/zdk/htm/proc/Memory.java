@@ -112,6 +112,7 @@ public class Memory extends ProcessorObject {
 		return r;
 	}
 
+	@Override
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder r = new ZStringBuilder();
 		for (MemoryColumn col: columns) {
@@ -143,6 +144,7 @@ public class Memory extends ProcessorObject {
 		return r;
 	}
 	
+	@Override
 	public void fromStringBuilder(ZStringBuilder str) {
 		SortedMap<ZStringBuilder,MemoryColumnCell> cellsByPos = new TreeMap<ZStringBuilder,MemoryColumnCell>();
 		for (MemoryColumn col: columns) {

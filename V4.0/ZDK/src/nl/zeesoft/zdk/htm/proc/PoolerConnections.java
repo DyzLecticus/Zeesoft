@@ -13,6 +13,10 @@ public class PoolerConnections {
 		this.config = config;
 	}
 
+	protected void clear() {
+		connectedIndexesPerInputIndex.clear();
+	}
+	
 	protected void initialize(List<PoolerColumn> columns) {
 		connectedIndexesPerInputIndex.clear();
 		for (PoolerColumn col: columns) {

@@ -7,15 +7,13 @@ import java.util.List;
 public class ValueAnomalyDetector extends ValuePredictor {
 	private	List<ValueAnomalyDetectorListener>	listeners						= new ArrayList<ValueAnomalyDetectorListener>();
 	
-	private boolean								usePredictedRange				= false;
 	private int									start							= 1000;
-	private float								threshold						= 0.1F;
+	private float								threshold						= 0.2F;
 	private int									recoveryWindow					= 100;
-	
-	private HashMap<String,HistoricalFloats>	absolutePredictionDeviations	= new HashMap<String,HistoricalFloats>();
-	
-	private HistoricalFloats					lowerPredictionDeviations		= new HistoricalFloats();
-	private HistoricalFloats					upperPredictionDeviations		= new HistoricalFloats();
+
+	private HashMap<String,HistoricalFloats>	deviations	= new HashMap<String,HistoricalFloats>();
+	private HashMap<String,HistoricalFloats>	accuracy						= new HashMap<String,HistoricalFloats>();
+	private HistoricalFloats					rangeAccuracy					= new HistoricalFloats();
 	
 	private int									seen							= 0;
 	private int									recovery						= 0;	
@@ -32,11 +30,13 @@ public class ValueAnomalyDetector extends ValuePredictor {
 
 	public void setWindow(int window) {
 		lockMe(this);
-		for (HistoricalFloats hist: absolutePredictionDeviations.values()) {
-			hist.window = window;
+		for (HistoricalFloats dev: deviations.values()) {
+			dev.window = window;
 		}
-		lowerPredictionDeviations.window = window;
-		upperPredictionDeviations.window = window;
+		for (HistoricalFloats acc: accuracy.values()) {
+			acc.window = window;
+		}
+		rangeAccuracy.window = window;
 		unlockMe(this);
 	}
 
@@ -80,7 +80,48 @@ public class ValueAnomalyDetector extends ValuePredictor {
 			if (recovery>0) {
 				recovery--;
 			}
-			if (usePredictedRange && valKeys.size()==1 && predictedValues.size()==3) {
+
+			for (String valueKey: valKeys) {
+				if (predictedValues.containsKey(valueKey) && currentValues.containsKey(valueKey)) {
+					float pV = getFloatValue(predictedValues.get(valueKey));
+					float cV = getFloatValue(currentValues.get(valueKey));
+					
+					HistoricalFloats acc = accuracy.get(valueKey);
+					if (acc==null) {
+						acc = new HistoricalFloats();
+						accuracy.put(valueKey,acc);
+					}
+					
+					float abs = 0;
+					if (pV > cV) {
+						abs = pV - cV;
+						acc.addFloat(0);
+					} else if (pV < cV) {
+						abs = cV - pV;
+						acc.addFloat(0);
+					} else {
+						acc.addFloat(1);
+					}
+					
+					HistoricalFloats dev = deviations.get(valueKey);
+					if (dev==null) {
+						dev = new HistoricalFloats();
+						deviations.put(valueKey,dev);
+					} else {
+						if (abs > dev.maximum) {
+							difference = ((abs / dev.maximum) - 1);
+							if (seen>=start && difference>threshold && recovery==0) {
+								warn = true;
+								valKey = valueKey;
+								recovery = recoveryWindow;
+							}
+						}
+					}
+					dev.addFloat(abs);
+				}
+			}
+
+			if (valKeys.size()==1 && predictedValues.size()==3) {
 				String valueKey = valKeys.get(0);
 				if (predictedValues.containsKey(valueKey + "Min") &&
 					predictedValues.containsKey(valueKey + "Max") &&
@@ -89,54 +130,10 @@ public class ValueAnomalyDetector extends ValuePredictor {
 					float lV = getFloatValue(predictedValues.get(valueKey + "Min"));
 					float uV = getFloatValue(predictedValues.get(valueKey + "Max"));
 					float cV = getFloatValue(currentValues.get(valueKey));
-					float lAbs = 0;
-					float uAbs = 0;
-					if (cV < lV) {
-						uAbs = lV - cV;
-					} else if (cV > uV) {
-						lAbs = cV - uV;
-					}
-
-					if (lAbs > lowerPredictionDeviations.maximum) {
-						difference = ((lAbs / lowerPredictionDeviations.maximum) - 1);
-					} else if (uAbs > upperPredictionDeviations.maximum) {
-						difference = ((uAbs / upperPredictionDeviations.maximum) - 1);
-					}
-					
-					if (seen>=start && difference>threshold && recovery==0) {
-						warn = true;
-						valKey = valueKey;
-						recovery = recoveryWindow;
-					}
-					lowerPredictionDeviations.addFloat(lAbs);
-					upperPredictionDeviations.addFloat(uAbs);
-				}
-			} else {
-				for (String valueKey: valKeys) {
-					if (predictedValues.containsKey(valueKey) && currentValues.containsKey(valueKey)) {
-						float pV = getFloatValue(predictedValues.get(valueKey));
-						float cV = getFloatValue(currentValues.get(valueKey));
-						float abs = 0;
-						if (pV > cV) {
-							abs = pV - cV;
-						} else if (pV < cV) {
-							abs = cV - pV;
-						}
-						HistoricalFloats hist = absolutePredictionDeviations.get(valueKey);
-						if (hist==null) {
-							hist = new HistoricalFloats();
-							absolutePredictionDeviations.put(valueKey,hist);
-						} else {
-							if (abs > hist.maximum) {
-								difference = ((abs / hist.maximum) - 1);
-								if (seen>=start && difference>threshold && recovery==0) {
-									warn = true;
-									valKey = valueKey;
-									recovery = recoveryWindow;
-								}
-							}
-						}
-						hist.addFloat(abs);
+					if (lV < cV && cV < uV) {
+						rangeAccuracy.addFloat(1);
+					} else {
+						rangeAccuracy.addFloat(0);
 					}
 				}
 			}
@@ -145,11 +142,41 @@ public class ValueAnomalyDetector extends ValuePredictor {
 
 		if (warn) {
 			for (ValueAnomalyDetectorListener listener: list) {
-				listener.detectedAnomaly(valKey,difference,result);
+				listener.detectedAnomaly(valKey,predictedValues,difference,result);
 			}
 		}
 		
 		super.processedResult(stream, result);
+	}
+	
+	public float getAverageAccuracy(String valueKey) {
+		float r = 0;
+		lockMe(this);
+		HistoricalFloats acc = accuracy.get(valueKey);
+		if (acc!=null) {
+			r = acc.average;
+		}
+		unlockMe(this);
+		return r;
+	}
+	
+	public float getAverageDeviation(String valueKey) {
+		float r = 0;
+		lockMe(this);
+		HistoricalFloats dev = deviations.get(valueKey);
+		if (dev!=null) {
+			r = dev.average;
+		}
+		unlockMe(this);
+		return r;
+	}
+	
+	public float getAverageRangeAccuracy() {
+		float r = 0;
+		lockMe(this);
+		r = rangeAccuracy.average;
+		unlockMe(this);
+		return r;
 	}
 	
 	protected static float getFloatValue(Object value) {

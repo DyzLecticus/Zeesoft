@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
+import java.util.HashMap;
+
 import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
@@ -16,7 +18,7 @@ import nl.zeesoft.zdk.test.Tester;
 
 public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, ValueAnomalyDetectorListener {
 	private BufferedPredictionStream	stream					= null;
-	private ValueAnomalyDetector		valueAnomalyDetector	= null;
+	private ValueAnomalyDetector		detector	= null;
 	private StreamResult				previousResult			= null;
 	
 	public TestValueAnomalyDetector(Tester tester) {
@@ -70,9 +72,9 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		BufferedPredictor predictor = new BufferedPredictor(memoryConfig,StreamEncoder.VALUE_KEY);
 		
 		stream = new BufferedPredictionStream(pooler,predictor);
-		valueAnomalyDetector = stream.getNewValueAnomalyDetector("value");
+		detector = stream.getNewValueAnomalyDetector("value");
 		stream.addListener(this);
-		valueAnomalyDetector.addDetectorListener(this);
+		detector.addDetectorListener(this);
 		
 		System.out.println(poolerConfig.getDescription());
 		System.out.println(memoryConfig.getDescription());
@@ -88,14 +90,14 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		counter++;
 		if (counter % (500) == 0) {
 			if (previousResult!=null && previousResult.outputSDRs.size()>3) {
-				System.out.println("Processed SDRs: " + counter);
+				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy("value")) + ", average deviation: " + df.format(detector.getAverageDeviation("value")) + ", average range accuracy: " + df.format(detector.getAverageRangeAccuracy()));
 			}
 		}
 		previousResult = result;
 	}
 
 	@Override
-	public void detectedAnomaly(String valueKey, float difference, StreamResult result) {
+	public void detectedAnomaly(String valueKey,HashMap<String,Object> predictedValues,float difference,StreamResult result) {
 		System.out.println("Detected anomaly at: " + result.id + ", property: " + valueKey + ", difference: " + difference);
 		numDetected = (int) result.id;
 		stream.stop();
