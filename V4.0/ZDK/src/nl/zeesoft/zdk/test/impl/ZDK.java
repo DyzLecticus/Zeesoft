@@ -15,6 +15,7 @@ import nl.zeesoft.zdk.test.impl.htm.TestRDScalarEncoder;
 import nl.zeesoft.zdk.test.impl.htm.TestSDR;
 import nl.zeesoft.zdk.test.impl.htm.TestSDRMap;
 import nl.zeesoft.zdk.test.impl.htm.TestScalarEncoder;
+import nl.zeesoft.zdk.test.impl.htm.TestStreamEncoder;
 
 /**
  * Documents and tests the ZDK.
@@ -97,5 +98,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestDateTimeValuesEncoder(getTester()));
 		tests.add(new TestPooler(getTester()));
 		tests.add(new TestMemory(getTester()));
+		tests.add(new TestStreamEncoder(getTester()));
 	}
 }
