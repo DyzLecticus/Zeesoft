@@ -92,6 +92,8 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		ZStringBuilder newJs = streamNew.toJson().toStringBuilderReadFormat();
 		
 		assertEqual(oriJs.length(),newJs.length(),"Stream JSON does not match expectation");
+		
+		stream.destroy();
 	}
 	
 	protected SDRMap getInputSDRMap() {

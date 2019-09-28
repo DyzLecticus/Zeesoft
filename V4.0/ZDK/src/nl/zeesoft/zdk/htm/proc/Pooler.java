@@ -177,6 +177,19 @@ public class Pooler extends ProcessorObject {
 		}
 	}
 	
+	@Override
+	public void destroy() {
+		connections.clear();
+		for (PoolerColumnGroup columnGroup: columnGroups.values()) {
+			columnGroup.columns.clear();
+		}
+		columnGroups.clear();
+		for (PoolerColumn col: columns) {
+			col.proxLinks.clear();
+		}
+		columns.clear();
+	}
+	
 	protected int[] calculateOverlapScores(List<Integer> onBits) {
 		int[] r = new int[config.outputLength];
 		for (int i = 0; i < r.length; i++) {

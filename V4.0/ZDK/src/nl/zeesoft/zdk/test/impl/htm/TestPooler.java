@@ -92,6 +92,9 @@ public class TestPooler extends TestObject {
 		System.out.println();
 		System.out.println("Original ratio: " + ratio1 + ", learned ratio: " + ratio2);
 		assertEqual(ratio2>ratio1,true,"Learned ratio does not match expectation");
+		
+		poolerNew.destroy();
+		pooler.destroy();
 	}
 	
 	private float processInputSDRMap(PoolerConfig poolerConfig,Pooler pooler,SDRMap inputSDRMap, boolean learn) {

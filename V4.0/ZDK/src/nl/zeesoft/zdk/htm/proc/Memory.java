@@ -187,6 +187,21 @@ public class Memory extends ProcessorObject {
 		}
 	}
 	
+	@Override
+	public void destroy() {
+		for (MemoryColumn col: columns) {
+			for (MemoryColumnCell cell: col.cells) {
+				for (DistalLink link: cell.distLinks) {
+					link.origin = null;
+				}
+				cell.distLinks.clear();
+				cell.forwardLinks.clear();
+			}
+			col.cells.clear();
+		}
+		columns.clear();
+	}
+	
 	protected List<MemoryColumnCell> cycleActiveState() {
 		List<MemoryColumnCell> r = new ArrayList<MemoryColumnCell>();
 		for (MemoryColumn col: columns) {

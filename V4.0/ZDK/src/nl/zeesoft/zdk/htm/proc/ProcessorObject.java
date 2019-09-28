@@ -35,6 +35,10 @@ public abstract class ProcessorObject {
 	
 	public abstract void fromStringBuilder(ZStringBuilder str);
 
+	public void destroy() {
+		// Override to implement
+	}
+	
 	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
 		List<SDR> r = new ArrayList<SDR>();
 		r.add(getSDRForInput(input,learn));

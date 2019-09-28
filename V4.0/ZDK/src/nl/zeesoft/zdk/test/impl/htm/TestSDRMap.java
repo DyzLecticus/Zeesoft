@@ -20,7 +20,8 @@ public class TestSDRMap extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use an *SDRMap* to maintain sets of Sparse Distributed Representations.");
+		System.out.println("This test shows how to use an *SDRMap* to maintain a list of Sparse Distributed Representations.");
+		System.out.println("By default, an *SDRMap* uses an index for each bit of every SDR in the list so it can quickly retrieve matching SDRs.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");

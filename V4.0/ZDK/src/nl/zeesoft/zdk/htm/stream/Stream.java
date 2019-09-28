@@ -334,6 +334,9 @@ public class Stream extends Worker implements JsAble {
 		for (StreamProcessor processor: streamProcessors) {
 			processor.destroy();
 		}
+		for (ProcessorObject processor: processors) {
+			processor.destroy();
+		}
 	}
 
 	protected void whileStopping(Worker worker) {

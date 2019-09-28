@@ -112,6 +112,10 @@ public class TestMemory extends TestObject {
 				System.err.println(memoryNew.getDescription());
 			}
 		}
+		
+		pooler.destroy();
+		memory.destroy();
+		memoryNew.destroy();
 	}
 
 	private void processedSDR(SDR burstSDR) {

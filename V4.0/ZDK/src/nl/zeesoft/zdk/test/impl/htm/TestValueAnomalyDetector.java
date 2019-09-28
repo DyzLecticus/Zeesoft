@@ -83,6 +83,8 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		testStream(stream, inputSDRMap, 60);
 		
 		assertDetection();
+		
+		stream.destroy();
 	}
 
 	@Override

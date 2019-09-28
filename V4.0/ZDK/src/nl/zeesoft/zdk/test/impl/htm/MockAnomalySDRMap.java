@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
@@ -18,7 +19,10 @@ public class MockAnomalySDRMap extends MockObject {
 	protected Object initialzeMock() {
 		StreamEncoder enc = new StreamEncoder();
 		enc.setValueMinMax(0,150);
-		//enc.setEncodeProperties(false,true,true,false,true);
+		ZStringBuilder err = enc.testScalarOverlap(true);
+		if (err.length()>0) {
+			System.err.println(err);
+		}
 		SDRMap sdrMap = new SDRMap(enc.length());
 		int maxValue = 0;
 		@SuppressWarnings("unchecked")
