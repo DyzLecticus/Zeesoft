@@ -104,6 +104,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 
 	@Override
 	public void predictedValues(HashMap<String, Object> currentValues, HashMap<String, Object> nextValues,StreamResult result) {
+		/*
 		if (counter % (333) >= 0 && counter % (333) <= 10) {
 			System.out.println(
 				result.id + " -> " +
@@ -113,5 +114,6 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 				"), current value: " + currentValues.get(StreamEncoder.VALUE_KEY)
 			);
 		}
+		*/
 	}
 }

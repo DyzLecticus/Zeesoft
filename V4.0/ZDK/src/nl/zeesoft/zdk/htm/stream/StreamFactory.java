@@ -18,22 +18,23 @@ public class StreamFactory implements JsAble {
 	protected int			outputBits						= 0;
 
 	// Pooler configuration
-	protected float			potentialProximalConnections	= 0.75F;
-	protected int			proximalRadius					= 5;
-	protected float			proximalConnectionThreshold		= 0.1F;
-	protected float			proximalConnectionDecrement		= 0.008F;
-	protected float			proximalConnectionIncrement		= 0.05F;
-	protected int			boostStrength					= 10;
-	protected int			boostInhibitionRadius			= 10;
-	protected int			boostActivityLogSize			= 100;
+	protected float			potentialProximalConnections		= 0.75F;
+	protected int			proximalRadius						= 5;
+	protected float			proximalConnectionThreshold			= 0.1F;
+	protected float			proximalConnectionDecrement			= 0.008F;
+	protected float			proximalConnectionIncrement			= 0.05F;
+	protected int			boostStrength						= 10;
+	protected int			boostInhibitionRadius				= 10;
+	protected int			boostActivityLogSize				= 100;
 
 	// Memory configuration
-	protected int			depth							= 4;
-	protected int			maxDistalConnectionsPerCell		= 9999;
-	protected int			localDistalConnectedRadius		= 25;
-	protected float			distalConnectionThreshold		= 0.2F;
-	protected float			distalConnectionDecrement		= 0.003F;
-	protected float			distalConnectionIncrement		= 0.1F;
+	protected int			depth								= 4;
+	protected int			maxDistalConnectionsPerCell			= 9999;
+	protected int			localDistalConnectedRadius			= 25;
+	protected int			minAlmostActiveDistalConnections	= 5;
+	protected float			distalConnectionThreshold			= 0.2F;
+	protected float			distalConnectionDecrement			= 0.003F;
+	protected float			distalConnectionIncrement			= 0.1F;
 
 	// Buffered predictor value key
 	protected String		valueKey						= StreamEncoder.VALUE_KEY;
@@ -70,6 +71,7 @@ public class StreamFactory implements JsAble {
 		json.rootElement.children.add(new JsElem("depth","" + depth));
 		json.rootElement.children.add(new JsElem("maxDistalConnectionsPerCell","" + maxDistalConnectionsPerCell));
 		json.rootElement.children.add(new JsElem("localDistalConnectedRadius","" + localDistalConnectedRadius));
+		json.rootElement.children.add(new JsElem("minAlmostActiveDistalConnections","" + minAlmostActiveDistalConnections));
 		json.rootElement.children.add(new JsElem("distalConnectionThreshold","" + distalConnectionThreshold));
 		json.rootElement.children.add(new JsElem("distalConnectionDecrement","" + distalConnectionDecrement));
 		json.rootElement.children.add(new JsElem("distalConnectionIncrement","" + distalConnectionIncrement));
@@ -106,6 +108,7 @@ public class StreamFactory implements JsAble {
 			depth = json.rootElement.getChildInt("depth",depth);
 			maxDistalConnectionsPerCell = json.rootElement.getChildInt("maxDistalConnectionsPerCell",maxDistalConnectionsPerCell);
 			localDistalConnectedRadius = json.rootElement.getChildInt("localDistalConnectedRadius",localDistalConnectedRadius);
+			minAlmostActiveDistalConnections = json.rootElement.getChildInt("minAlmostActiveDistalConnections",minAlmostActiveDistalConnections);
 			distalConnectionThreshold = json.rootElement.getChildFloat("distalConnectionThreshold",distalConnectionThreshold);
 			distalConnectionDecrement = json.rootElement.getChildFloat("distalConnectionDecrement",distalConnectionDecrement);
 			distalConnectionIncrement = json.rootElement.getChildFloat("distalConnectionIncrement",distalConnectionIncrement);
@@ -207,6 +210,10 @@ public class StreamFactory implements JsAble {
 		this.localDistalConnectedRadius = localDistalConnectedRadius;
 	}
 
+	public void setMinAlmostActiveDistalConnections(int minAlmostActiveDistalConnections) {
+		this.minAlmostActiveDistalConnections = minAlmostActiveDistalConnections;
+	}
+
 	public void setDistalConnectionThreshold(float distalConnectionThreshold) {
 		this.distalConnectionThreshold = distalConnectionThreshold;
 	}
@@ -247,6 +254,7 @@ public class StreamFactory implements JsAble {
 		r.setDepth(depth);
 		r.setMaxDistalConnectionsPerCell(maxDistalConnectionsPerCell);
 		r.setLocalDistalConnectedRadius(localDistalConnectedRadius);
+		r.setMinAlmostActiveDistalConnections(minAlmostActiveDistalConnections);
 		r.setDistalConnectionThreshold(distalConnectionThreshold);
 		r.setDistalConnectionIncrement(distalConnectionIncrement);
 		r.setDistalConnectionDecrement(distalConnectionDecrement);

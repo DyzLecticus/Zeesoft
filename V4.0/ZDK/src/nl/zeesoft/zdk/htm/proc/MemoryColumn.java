@@ -29,12 +29,24 @@ public class MemoryColumn {
 	protected boolean activateCells(boolean learn,List<MemoryColumnCell> previouslyActiveCells) {
 		boolean r = false;
 		MemoryColumnCell winner = null;
+		List<MemoryColumnCell> predictedCells = new ArrayList<MemoryColumnCell>();
+		float maxActivity = 0;
 		for (MemoryColumnCell cell: cells) {
 			if (cell.predictive) {
-				winner = cell;
-				break;
+				if (cell.activity>maxActivity) {
+					predictedCells.clear();
+					predictedCells.add(cell);
+				} else if (cell.activity==maxActivity) {
+					predictedCells.add(cell);
+				}
 			}
 		}
+		if (predictedCells.size()==1) {
+			winner = predictedCells.get(0);
+		} else if (predictedCells.size()>1) {
+			winner = predictedCells.get(ZRandomize.getRandomInt(0,predictedCells.size()-1));
+		}
+		
 		boolean added = false;
 		if (winner==null) {
 			r = true;
@@ -82,6 +94,7 @@ public class MemoryColumn {
 				winner = cells.get(ZRandomize.getRandomInt(0,cells.size()-1));
 			}
 		}
+		
 		if (winner!=null) {
 			winner.active = true;
 			if (learn &! added) {

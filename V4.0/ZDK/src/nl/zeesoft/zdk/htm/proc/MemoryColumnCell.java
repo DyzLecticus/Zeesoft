@@ -103,9 +103,15 @@ public class MemoryColumnCell {
 	protected int getAlmostActiveLinks() {
 		int r = 0;
 		for (DistalLink link: distLinks) {
-			if (link.cell.activePreviously && link.connection<=config.distalConnectionThreshold && link.connection>config.distalConnectionThreshold - config.distalConnectionIncrement) {
+			if (link.cell.activePreviously &&
+				link.connection<=config.distalConnectionThreshold &&
+				link.connection>config.distalConnectionThreshold - config.distalConnectionIncrement
+				) {
 				r++;
 			}
+		}
+		if (r<config.minAlmostActiveDistalConnections) {
+			r = 0;
 		}
 		return r;
 	}

@@ -5,21 +5,22 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 
 public class MemoryConfig {
-	protected boolean		initialized						= false;
+	protected boolean		initialized							= false;
 	
-	protected int			length							= 0;
-	protected int			bits							= 0;
+	protected int			length								= 0;
+	protected int			bits								= 0;
 	
-	protected int			depth							= 4;
-	protected int			maxDistalConnectionsPerCell		= 9999;
-	protected int			localDistalConnectedRadius		= 64;
+	protected int			depth								= 4;
+	protected int			maxDistalConnectionsPerCell			= 9999;
+	protected int			localDistalConnectedRadius			= 64;
+	protected int			minAlmostActiveDistalConnections	= 5;
 	
-	protected float			distalConnectionThreshold		= 0.2F;
-	protected float			distalConnectionDecrement		= 0.003F;
-	protected float			distalConnectionIncrement		= 0.1F;
+	protected float			distalConnectionThreshold			= 0.2F;
+	protected float			distalConnectionDecrement			= 0.003F;
+	protected float			distalConnectionIncrement			= 0.1F;
 
-	protected int			sizeX							= 0;
-	protected int			sizeY							= 0;
+	protected int			sizeX								= 0;
+	protected int			sizeY								= 0;
 
 	public MemoryConfig(PoolerConfig poolerConfig) {
 		this.length = poolerConfig.outputLength;
@@ -67,6 +68,12 @@ public class MemoryConfig {
 	public void setLocalDistalConnectedRadius(int localDistalConnectedRadius) {
 		if (!initialized) {
 			this.localDistalConnectedRadius = localDistalConnectedRadius;
+		}
+	}
+
+	public void setMinAlmostActiveDistalConnections(int minAlmostActiveDistalConnections) {
+		if (!initialized) {
+			this.minAlmostActiveDistalConnections = minAlmostActiveDistalConnections;
 		}
 	}
 

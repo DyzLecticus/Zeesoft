@@ -7,18 +7,18 @@ import java.util.List;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 
 public class ValueAnomalyDetector extends ValuePredictor {
-	private	List<ValueAnomalyDetectorListener>	listeners						= new ArrayList<ValueAnomalyDetectorListener>();
+	private	List<ValueAnomalyDetectorListener>	listeners			= new ArrayList<ValueAnomalyDetectorListener>();
 	
-	private int									start							= 1000;
-	private float								threshold						= 0.5F;
-	private int									recoveryWindow					= 100;
+	private int									start				= 1000;
+	private float								threshold			= 0.5F;
+	private int									recoveryWindow		= 100;
 
-	private HashMap<String,HistoricalFloats>	deviations	= new HashMap<String,HistoricalFloats>();
-	private HashMap<String,HistoricalFloats>	accuracy						= new HashMap<String,HistoricalFloats>();
-	private HistoricalFloats					rangeAccuracy					= new HistoricalFloats();
+	private HashMap<String,HistoricalFloats>	deviations			= new HashMap<String,HistoricalFloats>();
+	private HashMap<String,HistoricalFloats>	accuracy			= new HashMap<String,HistoricalFloats>();
+	private HistoricalFloats					rangeAccuracy		= new HistoricalFloats();
 	
-	private int									seen							= 0;
-	private int									recovery						= 0;	
+	private int									seen				= 0;
+	private int									recovery			= 0;	
 	
 	public ValueAnomalyDetector(BufferedPredictionStream stream,String valueKey) {
 		super(stream,valueKey);
