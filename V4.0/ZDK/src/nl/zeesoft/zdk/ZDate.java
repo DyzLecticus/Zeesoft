@@ -20,6 +20,10 @@ public class ZDate {
 			this.date = date;
 		}
 	}
+
+	public void setTime(long dateTime) {
+		date.setTime(dateTime);
+	}
 	
 	/**
 	 * Formats the date object to 'YYYY-MM-DD HH:MM:SS:MS0'

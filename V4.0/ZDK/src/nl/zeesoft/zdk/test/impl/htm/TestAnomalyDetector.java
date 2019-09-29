@@ -24,7 +24,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	protected DecimalFormat		df				= new DecimalFormat("0.000");
 	protected int				numDetected		= 0;
 	
-	private int					numExpected		= 0;
+	protected int				numExpected		= 0;
 	
 	private PredictionStream	stream			= null;
 	private AnomalyDetector		detector 		= null;
@@ -129,7 +129,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	
 	protected SDRMap getInputSDRMap() {
 		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockAnomalySDRMap.class.getName());
-		assertEqual(inputSDRMap.size(),17521,"Input SDR map size does not match expectation");
+		assertEqual(inputSDRMap.size(),15330,"Input SDR map size does not match expectation");
 		
 		numExpected = (inputSDRMap.size() / 2) + 1; // Add 1 because result ID counter starts at 1
 		System.out.println("Test set anomaly detection is expected at: " + numExpected);
@@ -196,6 +196,8 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	public void detectedAnomaly(float averageAccuracy, float latestAccuracy, float difference, StreamResult result) {
 		System.out.println("Detected anomaly at: " + result.id + ", average accuracy: " + averageAccuracy + ", latest: " + latestAccuracy + ", difference: " + difference);
 		numDetected = (int) result.id;
-		stream.stop();
+		if (numDetected>=numExpected) {
+			stream.stop();
+		}
 	}
 }

@@ -1,9 +1,7 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
-import java.util.List;
-
-import nl.zeesoft.zdk.htm.enc.DateTimeValuesEncoder;
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
+import nl.zeesoft.zdk.htm.sdr.DateTimeValue;
+import nl.zeesoft.zdk.htm.sdr.DateTimeValueGenerator;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.test.MockObject;
@@ -16,15 +14,14 @@ public class MockRegularSDRMap extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
-		DateTimeValuesEncoder enc = new DateTimeValuesEncoder();
+		StreamEncoder enc = new StreamEncoder();
+		enc.setEncodeProperties(true,true,true,false,false,true);
 		SDRMap sdrMap = new SDRMap(enc.length());
-		@SuppressWarnings("unchecked")
-		List<MockDateTimeValue> mockVals = (List<MockDateTimeValue>) getTester().getMockedObject(MockRegularDateTimeValues.class.getName());
-		for (MockDateTimeValue mockVal: mockVals) {
-			DateTimeSDR sdr = new DateTimeSDR(enc.getSDRForValue(mockVal.dateTime,mockVal.value1,mockVal.value2));
-			sdr.dateTime = mockVal.dateTime;
-			sdr.keyValues.put(StreamEncoder.VALUE_KEY,mockVal.value2);
-			sdrMap.add(sdr);
+		DateTimeValueGenerator generator = new DateTimeValueGenerator(7200000,0,42,1);
+		int num = (12 * 7 * 365) / 2;
+		for (int i = 0; i < num; i++) {
+			DateTimeValue dtv = generator.getNextDateTimeValue();
+			sdrMap.add(enc.getSDRForValue(dtv.dateTime,dtv.value,dtv.label));
 		}
 		return sdrMap;
 	}

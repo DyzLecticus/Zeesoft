@@ -10,7 +10,7 @@ public class ValueAnomalyDetector extends ValuePredictor {
 	private	List<ValueAnomalyDetectorListener>	listeners						= new ArrayList<ValueAnomalyDetectorListener>();
 	
 	private int									start							= 1000;
-	private float								threshold						= 0.2F;
+	private float								threshold						= 0.5F;
 	private int									recoveryWindow					= 100;
 
 	private HashMap<String,HistoricalFloats>	deviations	= new HashMap<String,HistoricalFloats>();

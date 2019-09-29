@@ -95,6 +95,8 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 	public void detectedAnomaly(String valueKey,HashMap<String,Object> predictedValues,float difference,StreamResult result) {
 		System.out.println("Detected anomaly at: " + result.id + ", property: " + valueKey + ", difference: " + difference);
 		numDetected = (int) result.id;
-		stream.stop();
+		if (numDetected>=numExpected) {
+			stream.stop();
+		}
 	}
 }

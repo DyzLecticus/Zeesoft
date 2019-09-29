@@ -400,6 +400,9 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	
 	protected EncoderObject getNewValueEncoder() {
 		int baseLength = 256;
+		if (includeMonth) {
+			baseLength = baseLength - 48;
+		}
 		if (includeDayOfWeek) {
 			baseLength = baseLength - 24;
 		}

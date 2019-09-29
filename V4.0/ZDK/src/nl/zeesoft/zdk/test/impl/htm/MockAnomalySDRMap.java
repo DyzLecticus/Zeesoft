@@ -1,10 +1,7 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
-import java.util.List;
-
-import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.sdr.DateTimeValue;
+import nl.zeesoft.zdk.htm.sdr.DateTimeValueGenerator;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.test.MockObject;
@@ -18,24 +15,17 @@ public class MockAnomalySDRMap extends MockObject {
 	@Override
 	protected Object initialzeMock() {
 		StreamEncoder enc = new StreamEncoder();
-		enc.setValueMinMax(0,150);
-		ZStringBuilder err = enc.testScalarOverlap(true);
-		if (err.length()>0) {
-			System.err.println(err);
-		}
 		SDRMap sdrMap = new SDRMap(enc.length());
-		int maxValue = 0;
-		@SuppressWarnings("unchecked")
-		List<MockDateTimeValue> mockVals = (List<MockDateTimeValue>) getTester().getMockedObject(MockAnomalyDateTimeValues.class.getName());
-		for (MockDateTimeValue mockVal: mockVals) {
-			SDR sdr = enc.getSDRForValue(mockVal.value2);
-			DateTimeSDR dts = new DateTimeSDR(sdr);
-			dts.dateTime = mockVal.dateTime;
-			dts.keyValues.put(StreamEncoder.VALUE_KEY,mockVal.value2);
-			sdrMap.add(dts);
-			if (mockVal.value2>maxValue) {
-				maxValue = mockVal.value2;
+		DateTimeValueGenerator generator = new DateTimeValueGenerator(7200000,0,42,1);
+		int num = (12 * 7 * 365) / 2;
+		int numAnomaly = num / 2;
+		for (int i = 0; i < num; i++) {
+			float addValue = 0;
+			if (i>=numAnomaly) {
+				addValue = 40;
 			}
+			DateTimeValue dtv = generator.getNextDateTimeValue(addValue);
+			sdrMap.add(enc.getSDRForValue(dtv.dateTime,dtv.value,dtv.label));
 		}
 		return sdrMap;
 	}

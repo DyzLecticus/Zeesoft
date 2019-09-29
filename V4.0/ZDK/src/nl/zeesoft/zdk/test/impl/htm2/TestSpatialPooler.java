@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.test.impl.htm2;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.htm.sdr.DateTimeValue;
+import nl.zeesoft.zdk.htm.sdr.DateTimeValueGenerator;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.htm2.impl.SpatialPooler;
@@ -11,8 +13,6 @@ import nl.zeesoft.zdk.htm2.mdl.Model;
 import nl.zeesoft.zdk.htm2.mdl.ModelConfig;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zdk.test.impl.htm.MockDateTimeValue;
-import nl.zeesoft.zdk.test.impl.htm.MockRegularDateTimeValues;
 
 public class TestSpatialPooler extends TestObject {
 	public TestSpatialPooler(Tester tester) {
@@ -56,12 +56,13 @@ public class TestSpatialPooler extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		StreamEncoder enc = new StreamEncoder();
 		List<SDR> inputSDRs = new ArrayList<SDR>();
-		@SuppressWarnings("unchecked")
-		List<MockDateTimeValue> mockVals = (List<MockDateTimeValue>) getTester().getMockedObject(MockRegularDateTimeValues.class.getName());
-		for (MockDateTimeValue mockVal: mockVals) {
-			inputSDRs.add(enc.getSDRForValue(mockVal.dateTime,mockVal.value2));
+		StreamEncoder enc = new StreamEncoder();
+		DateTimeValueGenerator generator = new DateTimeValueGenerator(3600,0,42,0.25F);
+		int num = 24 * 7 * 365;
+		for (int i = 0; i < num; i++) {
+			DateTimeValue dtv = generator.getNextDateTimeValue();
+			inputSDRs.add(enc.getSDRForValue(dtv.dateTime,dtv.value,dtv.label));
 		}
 		
 		ModelConfig config = new ModelConfig(enc.length(),4,1024,21);

@@ -57,7 +57,7 @@ public class TestMemory extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockRegularSDRMap.class.getName());
-		assertEqual(inputSDRMap.size(),17521,"Input SDR map size does not match expectation");
+		assertEqual(inputSDRMap.size(),15330,"Input SDR map size does not match expectation");
 		
 		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);

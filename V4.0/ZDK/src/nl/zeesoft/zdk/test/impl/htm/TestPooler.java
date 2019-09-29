@@ -49,7 +49,7 @@ public class TestPooler extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockRegularSDRMap.class.getName());
-		assertEqual(inputSDRMap.size(),17521,"Input SDR map size does not match expectation");
+		assertEqual(inputSDRMap.size(),15330,"Input SDR map size does not match expectation");
 		
 		PoolerConfig config = new PoolerConfig(inputSDRMap.length(),1024,21);
 		
@@ -81,13 +81,13 @@ public class TestPooler extends TestObject {
 
 		System.out.println();
 		float ratio1 = processInputSDRMap(config,pooler,inputSDRMap,false);
-		assertEqual(ratio1 > 6F,true,"Unlearned ratio is lower than minimal expectation");
+		assertEqual(ratio1 > 8F,true,"Unlearned ratio is lower than minimal expectation");
 		
 		pooler.statsLog.log.clear();
 		
 		System.out.println();
 		float ratio2 = processInputSDRMap(config,pooler,inputSDRMap,true);
-		assertEqual(ratio1 > 8F,true,"Learned ratio is lower than minimal expectation");
+		assertEqual(ratio2 > 15F,true,"Learned ratio is lower than minimal expectation");
 		
 		System.out.println();
 		System.out.println("Original ratio: " + ratio1 + ", learned ratio: " + ratio2);
@@ -123,22 +123,22 @@ public class TestPooler extends TestObject {
 		int weeks = 0;
 		float avg = 0;
 		float avgWeek = 0;
-		for (int i = (24 * 70); i < outputSDRMap.size(); i++) {
-			if (i % (24 * 7) == 0) {
+		for (int i = (12 * 70); i < outputSDRMap.size(); i++) {
+			if (i % (12 * 7) == 0) {
 				SDR baseSDR = outputSDRMap.getSDR(i);
 				int div = 0;
 				int divWeek = 0;
 				int total = 0;
 				int totalWeek = 0;
 				
-				int start = (i - (24 * 7 * 10));
+				int start = (i - (12 * 7 * 10));
 				if (start<0) {
 					start = 0;
 				}
 				
 				for (int i2 = start; i2 < i; i2++) {
 					SDR compSDR = outputSDRMap.getSDR(i2);
-					if (i2 % (24 * 7) == 0) {
+					if (i2 % (12 * 7) == 0) {
 						divWeek++;
 						totalWeek = totalWeek + baseSDR.getOverlapScore(compSDR);
 					} else {
