@@ -14,16 +14,12 @@ public class BufferedPredictor extends Predictor {
 	private DateTimeSDR		predictedValueSDR	= null;
 	
 	private String			valueKey			= null;
-	private int				matchDepth			= 4;
+	private int				matchDepth			= 2;
 	private DateTimeSDR		predictedLowerSDR	= null;
 	private DateTimeSDR		predictedUpperSDR	= null;
 	
 	public BufferedPredictor(MemoryConfig config) {
 		super(config);
-		matchDepth = config.bits / 4;
-		if (matchDepth < 1) {
-			matchDepth = 1;
-		}
 		initialize(null);
 	}
 

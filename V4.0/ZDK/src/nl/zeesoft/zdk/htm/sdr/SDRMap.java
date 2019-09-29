@@ -65,7 +65,11 @@ public class SDRMap {
 	public int bits() {
 		return bits;
 	}
-	
+
+	public int indexOf(SDRMapElement element) {
+		return elements.indexOf(element);
+	}
+
 	public void toLast(SDRMapElement element) {
 		int index = elements.indexOf(element);
 		if (index>=0 && index<elements.size() - 1) {

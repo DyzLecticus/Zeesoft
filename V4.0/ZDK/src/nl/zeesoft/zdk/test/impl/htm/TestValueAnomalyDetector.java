@@ -11,9 +11,10 @@ import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
 import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetector;
 import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetectorListener;
+import nl.zeesoft.zdk.htm.stream.ValuePredictorListener;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, ValueAnomalyDetectorListener {
+public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, ValuePredictorListener, ValueAnomalyDetectorListener {
 	private BufferedPredictionStream	stream					= null;
 	private ValueAnomalyDetector		detector	= null;
 	private StreamResult				previousResult			= null;
@@ -66,6 +67,7 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		stream = factory.getNewBufferedPredictionStream(true);
 		detector = stream.getNewValueAnomalyDetector();
 		stream.addListener(this);
+		detector.addPredictorListener(this);
 		detector.addDetectorListener(this);
 
 		System.out.println();
@@ -93,10 +95,23 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 
 	@Override
 	public void detectedAnomaly(String valueKey,HashMap<String,Object> predictedValues,float difference,StreamResult result) {
-		System.out.println("Detected anomaly at: " + result.id + ", property: " + valueKey + ", difference: " + difference);
+		System.out.println("Detected anomaly at: " + result.id + ", property: " + valueKey + ", difference: " + df.format(difference));
 		numDetected = (int) result.id;
 		if (numDetected>=numExpected) {
 			stream.stop();
+		}
+	}
+
+	@Override
+	public void predictedValues(HashMap<String, Object> currentValues, HashMap<String, Object> nextValues,StreamResult result) {
+		if (counter % (333) >= 0 && counter % (333) <= 10) {
+			System.out.println(
+				result.id + " -> " +
+				"Next value: " + nextValues.get(StreamEncoder.VALUE_KEY) +
+				" (" + nextValues.get(StreamEncoder.VALUE_KEY + "Min") +
+				" - " + nextValues.get(StreamEncoder.VALUE_KEY + "Max") +
+				"), current value: " + currentValues.get(StreamEncoder.VALUE_KEY)
+			);
 		}
 	}
 }

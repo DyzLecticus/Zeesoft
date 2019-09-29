@@ -55,7 +55,7 @@ public class ValuePredictor extends Locker implements StreamListener {
 		if (predictedValues.size()>0) {
 			setPredictedValues(predictedValues);
 			for (ValuePredictorListener listener: list) {
-				listener.predictedValues(currentValues,predictedValues);
+				listener.predictedValues(currentValues,predictedValues,result);
 			}
 		}
 	}
