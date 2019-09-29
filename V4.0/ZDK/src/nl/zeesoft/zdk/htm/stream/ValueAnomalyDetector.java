@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 public class ValueAnomalyDetector extends ValuePredictor {
 	private	List<ValueAnomalyDetectorListener>	listeners			= new ArrayList<ValueAnomalyDetectorListener>();
 	
-	private int									start				= 1000;
+	private int									start				= 3000;
 	private float								threshold			= 0.5F;
 	private int									recoveryWindow		= 100;
 

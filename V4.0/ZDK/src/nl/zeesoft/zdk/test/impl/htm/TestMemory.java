@@ -76,8 +76,8 @@ public class TestMemory extends TestObject {
 		
 		System.out.println();
 		long started = System.currentTimeMillis();
-		System.out.println("Processing input SDR map (5000/" + inputSDRMap.size() + ") ...");
-		for (int i = 0; i < 5000; i++) {
+		System.out.println("Processing input SDR map (" + num + "/" + inputSDRMap.size() + ") ...");
+		for (int i = 0; i < num; i++) {
 			SDR outputSDR = pooler.getSDRForInput(inputSDRMap.getSDR(i),true);
 			SDR burstSDR = memory.getSDRForInput(outputSDR,true);
 			processedSDR(burstSDR);

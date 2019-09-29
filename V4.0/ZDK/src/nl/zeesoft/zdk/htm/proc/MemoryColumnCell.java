@@ -79,22 +79,24 @@ public class MemoryColumnCell {
 				}
 				dist = (int) Math.sqrt((distX * distX) + (distY * distY));
 				dist = (int) Math.sqrt((dist * dist) + (distZ * distZ));
-				DistalLink link = new DistalLink();
-				link.origin = this;
-				link.cell = toCell;
-				toCell.forwardLinks.add(link);
-				link.connection = config.distalConnectionThreshold;
-				link.connection += ZRandomize.getRandomFloat(config.distalConnectionIncrement / 2F,config.distalConnectionIncrement);
 				if (dist<=config.localDistalConnectedRadius) {
-					link.connection += ZRandomize.getRandomFloat(config.distalConnectionIncrement,config.distalConnectionIncrement * 2F);
-				}
-				if (link.connection > 1) {
-					link.connection = 1;
-				}
-				distLinks.add(link);
-				added++;
-				if (added>=addMax) {
-					break;
+					DistalLink link = new DistalLink();
+					link.origin = this;
+					link.cell = toCell;
+					toCell.forwardLinks.add(link);
+					link.connection = config.distalConnectionThreshold;
+					link.connection += ZRandomize.getRandomFloat(config.distalConnectionIncrement / 2F,config.distalConnectionIncrement);
+					if (dist<=config.localDistalConnectedRadius / 2) {
+						link.connection += ZRandomize.getRandomFloat(config.distalConnectionIncrement,config.distalConnectionIncrement * 2F);
+					}
+					if (link.connection > 1) {
+						link.connection = 1;
+					}
+					distLinks.add(link);
+					added++;
+					if (added>=addMax) {
+						break;
+					}
 				}
 			}
 		}
