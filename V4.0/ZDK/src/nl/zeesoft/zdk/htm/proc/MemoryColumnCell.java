@@ -38,8 +38,8 @@ public class MemoryColumnCell {
 	protected void calculateActivity() {
 		if (active) {
 			for (DistalLink link: forwardLinks) {
-				if (link.cell.active && link.connection>config.connectionThreshold) {
-					link.origin.activity += link.connection - config.connectionThreshold;
+				if (link.cell.active && link.connection>config.distalConnectionThreshold) {
+					link.origin.activity += link.connection - config.distalConnectionThreshold;
 				}
 			}
 		}
@@ -83,10 +83,10 @@ public class MemoryColumnCell {
 				link.origin = this;
 				link.cell = toCell;
 				toCell.forwardLinks.add(link);
-				link.connection = config.connectionThreshold;
-				link.connection += ZRandomize.getRandomFloat(config.connectionIncrement / 2F,config.connectionIncrement);
+				link.connection = config.distalConnectionThreshold;
+				link.connection += ZRandomize.getRandomFloat(config.distalConnectionIncrement / 2F,config.distalConnectionIncrement);
 				if (dist<=config.localDistalConnectedRadius) {
-					link.connection += ZRandomize.getRandomFloat(config.connectionIncrement,config.connectionIncrement * 2F);
+					link.connection += ZRandomize.getRandomFloat(config.distalConnectionIncrement,config.distalConnectionIncrement * 2F);
 				}
 				if (link.connection > 1) {
 					link.connection = 1;
@@ -103,7 +103,7 @@ public class MemoryColumnCell {
 	protected int getAlmostActiveLinks() {
 		int r = 0;
 		for (DistalLink link: distLinks) {
-			if (link.cell.activePreviously && link.connection<=config.connectionThreshold && link.connection>config.connectionThreshold - config.connectionIncrement) {
+			if (link.cell.activePreviously && link.connection<=config.distalConnectionThreshold && link.connection>config.distalConnectionThreshold - config.distalConnectionIncrement) {
 				r++;
 			}
 		}
@@ -114,7 +114,7 @@ public class MemoryColumnCell {
 		if (active) {
 			for (DistalLink link: distLinks) {
 				if (link.cell.activePreviously) {
-					link.connection += config.connectionIncrement;
+					link.connection += config.distalConnectionIncrement;
 					if (link.connection > 1) {
 						link.connection = 1;
 					}
@@ -128,7 +128,7 @@ public class MemoryColumnCell {
 			for (int i = 0; i < distLinks.size(); i++) {
 				DistalLink link = distLinks.get(i);
 				if (link.cell.activePreviously) {
-					link.connection -= config.connectionDecrement;
+					link.connection -= config.distalConnectionDecrement;
 					if (link.connection<=0) {
 						distLinks.remove(i);
 						link.cell.forwardLinks.remove(link);

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
+
 public class ValueAnomalyDetector extends ValuePredictor {
 	private	List<ValueAnomalyDetectorListener>	listeners						= new ArrayList<ValueAnomalyDetectorListener>();
 	
@@ -83,8 +85,8 @@ public class ValueAnomalyDetector extends ValuePredictor {
 
 			for (String valueKey: valKeys) {
 				if (predictedValues.containsKey(valueKey) && currentValues.containsKey(valueKey)) {
-					float pV = getFloatValue(predictedValues.get(valueKey));
-					float cV = getFloatValue(currentValues.get(valueKey));
+					float pV = DateTimeSDR.objectToFloat(predictedValues.get(valueKey));
+					float cV = DateTimeSDR.objectToFloat(currentValues.get(valueKey));
 					
 					HistoricalFloats acc = accuracy.get(valueKey);
 					if (acc==null) {
@@ -127,9 +129,9 @@ public class ValueAnomalyDetector extends ValuePredictor {
 					predictedValues.containsKey(valueKey + "Max") &&
 					currentValues.containsKey(valueKey)
 					) {
-					float lV = getFloatValue(predictedValues.get(valueKey + "Min"));
-					float uV = getFloatValue(predictedValues.get(valueKey + "Max"));
-					float cV = getFloatValue(currentValues.get(valueKey));
+					float lV = DateTimeSDR.objectToFloat(predictedValues.get(valueKey + "Min"));
+					float uV = DateTimeSDR.objectToFloat(predictedValues.get(valueKey + "Max"));
+					float cV = DateTimeSDR.objectToFloat(currentValues.get(valueKey));
 					if (lV < cV && cV < uV) {
 						rangeAccuracy.addFloat(1);
 					} else {
@@ -176,20 +178,6 @@ public class ValueAnomalyDetector extends ValuePredictor {
 		lockMe(this);
 		r = rangeAccuracy.average;
 		unlockMe(this);
-		return r;
-	}
-	
-	protected static float getFloatValue(Object value) {
-		float r = 0;
-		if (value!=null) {
-			if (value instanceof Float) {
-				r = (float) value;
-			} else if (value instanceof Integer) {
-				r = (float) (Integer) value;
-			} else if (value instanceof Long) {
-				r = (float) (Long) value;
-			}
-		}
 		return r;
 	}
 }

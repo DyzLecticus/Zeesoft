@@ -39,32 +39,46 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.");
+		System.out.println("This test shows how to use an *AnomalyDetector* to detect anomalies in an SDR *Stream*.");
+		System.out.println("It uses a *StreamFactory* to create a *PredictionStream* and then uses that to create an *AnomalyDetector*.");
+		System.out.println("The *AnomalyDetectorListener* interface can be used to listen for anomaly detections.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the configuration");
-		System.out.println("MemoryConfig config = new MemoryConfig(1024);");
-		System.out.println("// Create the memory");
-		System.out.println("Memory memory = new Memory(config);");
-		System.out.println("// Obtain the output SDR for a certain input SDR");
-		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
+		System.out.println("// Create the stream factory");
+		System.out.println("StreamFactory factory = new StreamFactory(1024,21);");
+		System.out.println("// Create the stream");
+		System.out.println("PredictionStream stream = factory.getNewPredictionStream(true);");
+		System.out.println("// Create the anomaly detector");
+		System.out.println("AnomalyDetector detector = stream.getNewAnomalyDetector();");
+		System.out.println("// Attach a listener (implement the AnomalyDetectorListener interface)");
+		System.out.println("detector.addListener(this);");
+		System.out.println("// Start the stream");
+		System.out.println("stream.start();");
+		System.out.println("stream.waitForStart();");
+		System.out.println("// Add some values to the stream (include an anomaly after 5000 inputs)");
+		System.out.println("stream.addValue(1);");
+		System.out.println("stream.addValue(2);");
+		System.out.println("// Remember to stop and destroy the stream after use");
+		System.out.println("stream.stop();");
+		System.out.println("stream.waitForStop();");
+		System.out.println("stream.destroy();");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockRegularSDRMap.class.getName());
+		getTester().describeMock(MockAnomalySDRMap.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestAnomalyDetector.class));
-		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
-		System.out.println(" * " + getTester().getLinkForClass(MemoryConfig.class));
-		System.out.println(" * " + getTester().getLinkForClass(Memory.class));
+		System.out.println(" * " + getTester().getLinkForClass(StreamFactory.class));
+		System.out.println(" * " + getTester().getLinkForClass(PredictionStream.class));
+		System.out.println(" * " + getTester().getLinkForClass(AnomalyDetector.class));
+		System.out.println(" * " + getTester().getLinkForClass(AnomalyDetectorListener.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
-		System.out.println(" * How memory column bursting is reduced after leaning several sequences  ");
-		System.out.println(" * Information about the memory after passing the SDR test set through it  ");
-		*/
+		System.out.println(" * The average prediction accuracy  ");
+		System.out.println(" * The detected anomaly  ");
+		System.out.println(" * Information about the stream after passing the SDR test set through it  ");
 	}
 	
 	@Override
@@ -74,7 +88,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		StreamFactory factory = new StreamFactory(1024,21);
 		System.out.println(factory.getDescription());
 		
-		stream = factory.getNewPredictionStream();
+		stream = factory.getNewPredictionStream(true);
 		detector = stream.getNewAnomalyDetector();
 		stream.addListener(this);
 		detector.addListener(this);
@@ -87,7 +101,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		JsFile json = stream.toJson();
 		ZStringBuilder oriJs = json.toStringBuilderReadFormat();
 		
-		PredictionStream streamNew = factory.getNewPredictionStream();
+		PredictionStream streamNew = factory.getNewPredictionStream(false);
 		streamNew.fromJson(json);
 		ZStringBuilder newJs = streamNew.toJson().toStringBuilderReadFormat();
 		

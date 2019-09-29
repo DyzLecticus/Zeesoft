@@ -312,10 +312,10 @@ public class Pooler extends ProcessorObject {
 			posX = col.getRelativePosX();
 			posY = col.getRelativePosY();
 
-			int minPosX = posX - config.outputRadius;
-			int minPosY = posY - config.outputRadius;
-			int maxPosX = posX + 1 + config.outputRadius;
-			int maxPosY = posY + 1 + config.outputRadius;
+			int minPosX = posX - config.boostInhibitionRadius;
+			int minPosY = posY - config.boostInhibitionRadius;
+			int maxPosX = posX + 1 + config.boostInhibitionRadius;
+			int maxPosY = posY + 1 + config.boostInhibitionRadius;
 
 			if (minPosX<0) {
 				maxPosX = maxPosX + (minPosX * -1);

@@ -5,6 +5,7 @@ import java.util.List;
 import nl.zeesoft.zdk.htm.enc.DateTimeValuesEncoder;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
+import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.test.MockObject;
 
 public class MockRegularSDRMap extends MockObject {
@@ -22,7 +23,7 @@ public class MockRegularSDRMap extends MockObject {
 		for (MockDateTimeValue mockVal: mockVals) {
 			DateTimeSDR sdr = new DateTimeSDR(enc.getSDRForValue(mockVal.dateTime,mockVal.value1,mockVal.value2));
 			sdr.dateTime = mockVal.dateTime;
-			sdr.keyValues.put("value",mockVal.value2);
+			sdr.keyValues.put(StreamEncoder.VALUE_KEY,mockVal.value2);
 			sdrMap.add(sdr);
 		}
 		return sdrMap;

@@ -45,9 +45,9 @@ public class PoolerColumn {
 			ProximalLink lnk = availableLinks.remove(ZRandomize.getRandomInt(0,availableLinks.size() - 1));
 			proxLinks.add(lnk);
 			if (ZRandomize.getRandomInt(0,1)==1) {
-				lnk.connection = ZRandomize.getRandomFloat(0,config.connectionThreshold);
+				lnk.connection = ZRandomize.getRandomFloat(0,config.proximalConnectionThreshold);
 			} else {
-				lnk.connection = ZRandomize.getRandomFloat(config.connectionThreshold,1.0F);
+				lnk.connection = ZRandomize.getRandomFloat(config.proximalConnectionThreshold,1.0F);
 			}
 			connections.addColumnLink(this,lnk);
 		}
@@ -56,18 +56,18 @@ public class PoolerColumn {
 	protected void learnOnBits(List<Integer> onBits,PoolerConnections connections) {
 		for (ProximalLink lnk: proxLinks) {
 			if (onBits.contains(lnk.inputIndex)) {
-				if (lnk.connection <= config.connectionThreshold && lnk.connection + config.connectionIncrement > config.connectionThreshold) {
+				if (lnk.connection <= config.proximalConnectionThreshold && lnk.connection + config.proximalConnectionIncrement > config.proximalConnectionThreshold) {
 					connections.addColumnLink(this,lnk);
 				}
-				lnk.connection += config.connectionIncrement;
+				lnk.connection += config.proximalConnectionIncrement;
 				if (lnk.connection > 1) {
 					lnk.connection = 1;
 				}
 			} else {
-				if (lnk.connection > config.connectionThreshold && lnk.connection - config.connectionDecrement <= config.connectionThreshold) {
+				if (lnk.connection > config.proximalConnectionThreshold && lnk.connection - config.proximalConnectionDecrement <= config.proximalConnectionThreshold) {
 					connections.removeColumnLink(this,lnk);
 				}
-				lnk.connection -= config.connectionDecrement;
+				lnk.connection -= config.proximalConnectionDecrement;
 				if (lnk.connection < 0) {
 					lnk.connection = 0;
 				}
@@ -81,7 +81,7 @@ public class PoolerColumn {
 			if (active) {
 				totalActive++;
 			}
-			while (activityLog.size() > config.maxActivityLogSize) {
+			while (activityLog.size() > config.boostActivityLogSize) {
 				boolean act = activityLog.remove();
 				if (act) {
 					totalActive--;
@@ -110,10 +110,10 @@ public class PoolerColumn {
 		int inputPosX = getInputPosX();
 		int inputPosY = getInputPosY();
 		
-		int minPosX = inputPosX - config.inputRadius;
-		int minPosY = inputPosY - config.inputRadius;
-		int maxPosX = inputPosX + 1 + config.inputRadius;
-		int maxPosY = inputPosY + 1 + config.inputRadius;
+		int minPosX = inputPosX - config.proximalRadius;
+		int minPosY = inputPosY - config.proximalRadius;
+		int maxPosX = inputPosX + 1 + config.proximalRadius;
+		int maxPosY = inputPosY + 1 + config.proximalRadius;
 		
 		if (minPosX < 0) {
 			minPosX = 0;
@@ -156,12 +156,12 @@ public class PoolerColumn {
 	
 	protected int getInputPosX() {
 		int r = 0;
-		int min = config.inputRadius;
-		int max = config.inputSizeX - config.inputRadius;
+		int min = config.proximalRadius;
+		int max = config.inputSizeX - config.proximalRadius;
 		if (min>=max) {
 			r = config.inputSizeX / 2;
 		} else {
-			max = max - config.inputRadius;
+			max = max - config.proximalRadius;
 			r = min + ((int) (getOutputPosX() * (float) max));
 		}
 		return r;
@@ -169,12 +169,12 @@ public class PoolerColumn {
 	
 	protected int getInputPosY() {
 		int r = 0;
-		int min = config.inputRadius;
-		int max = config.inputSizeY - config.inputRadius;
+		int min = config.proximalRadius;
+		int max = config.inputSizeY - config.proximalRadius;
 		if (min>=max) {
 			r = config.inputSizeY / 2;
 		} else {
-			max = max - config.inputRadius;
+			max = max - config.proximalRadius;
 			r = min + ((int) (getOutputPosY() * (float) max));
 		}
 		return r;  
@@ -183,12 +183,12 @@ public class PoolerColumn {
 	protected int getRelativePosX() {
 		int r = 0;
 		float rel = (float) posX / (float) config.outputSizeX;
-		int min = config.outputRadius;
-		float max = config.outputSizeX - config.outputRadius;
+		int min = config.boostInhibitionRadius;
+		float max = config.outputSizeX - config.boostInhibitionRadius;
 		if (min>=max) {
 			r = config.outputSizeX / 2;
 		} else {
-			max = max - config.outputRadius;
+			max = max - config.boostInhibitionRadius;
 			r = min + (int) (rel * max);
 		}
 		return r;
@@ -197,12 +197,12 @@ public class PoolerColumn {
 	protected int getRelativePosY() {
 		int r = 0;
 		float rel = (float) posY / (float) config.outputSizeY;
-		int min = config.outputRadius;
-		float max = config.outputSizeY - config.outputRadius;
+		int min = config.boostInhibitionRadius;
+		float max = config.outputSizeY - config.boostInhibitionRadius;
 		if (min>=max) {
 			r = config.outputSizeY / 2;
 		} else {
-			max = max - config.outputRadius;
+			max = max - config.boostInhibitionRadius;
 			r = min + (int) (rel * max);
 		}
 		return r;

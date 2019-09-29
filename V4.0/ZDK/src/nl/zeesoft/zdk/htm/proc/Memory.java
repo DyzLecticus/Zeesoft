@@ -36,7 +36,7 @@ public class Memory extends ProcessorObject {
 			for (MemoryColumnCell cell: col.cells) {
 				int con = 0;
 				for (DistalLink lnk: cell.distLinks) {
-					if (lnk.connection>config.connectionThreshold) {
+					if (lnk.connection>config.distalConnectionThreshold) {
 						con++;
 						avgCon++;
 					}

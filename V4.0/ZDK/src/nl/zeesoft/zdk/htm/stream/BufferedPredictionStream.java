@@ -22,10 +22,18 @@ public class BufferedPredictionStream extends PredictionStream {
 		super(msgr, uni, encoder, pooler, predictor);
 	}
 
+	public ValuePredictor getNewValuePredictor() {
+		return getNewValuePredictor(StreamEncoder.VALUE_KEY);
+	}
+	
 	public ValuePredictor getNewValuePredictor(String valueKey) {
 		ValuePredictor r = new ValuePredictor(this,valueKey);
 		addListener(r);
 		return r;
+	}
+	
+	public ValueAnomalyDetector getNewValueAnomalyDetector() {
+		return getNewValueAnomalyDetector(StreamEncoder.VALUE_KEY);
 	}
 
 	public ValueAnomalyDetector getNewValueAnomalyDetector(String valueKey) {

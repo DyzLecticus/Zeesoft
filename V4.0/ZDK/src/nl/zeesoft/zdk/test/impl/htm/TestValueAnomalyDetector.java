@@ -2,14 +2,11 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.util.HashMap;
 
-import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
-import nl.zeesoft.zdk.htm.proc.MemoryConfig;
-import nl.zeesoft.zdk.htm.proc.Pooler;
-import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.BufferedPredictionStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
+import nl.zeesoft.zdk.htm.stream.StreamFactory;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
 import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetector;
@@ -63,23 +60,15 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 	protected void test(String[] args) {
 		SDRMap inputSDRMap = getInputSDRMap();
 
-		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
-		Pooler pooler = new Pooler(poolerConfig);
-		pooler.randomizeConnections();
+		StreamFactory factory = new StreamFactory(1024,21);
+		System.out.println(factory.getDescription());
 		
-		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
-		
-		BufferedPredictor predictor = new BufferedPredictor(memoryConfig,StreamEncoder.VALUE_KEY);
-		
-		stream = new BufferedPredictionStream(pooler,predictor);
-		detector = stream.getNewValueAnomalyDetector("value");
+		stream = factory.getNewBufferedPredictionStream(true);
+		detector = stream.getNewValueAnomalyDetector();
 		stream.addListener(this);
 		detector.addDetectorListener(this);
-		
-		System.out.println(poolerConfig.getDescription());
-		System.out.println(memoryConfig.getDescription());
-		System.out.println();
 
+		System.out.println();
 		testStream(stream, inputSDRMap, 60);
 		
 		assertDetection();
@@ -92,7 +81,11 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		counter++;
 		if (counter % (500) == 0) {
 			if (previousResult!=null && previousResult.outputSDRs.size()>3) {
-				System.out.println("Processed SDRs: " + counter + ", average accuracy: " + df.format(detector.getAverageAccuracy("value")) + ", average deviation: " + df.format(detector.getAverageDeviation("value")) + ", average range accuracy: " + df.format(detector.getAverageRangeAccuracy()));
+				System.out.println("Processed SDRs: " + counter +
+					", average accuracy: " + df.format(detector.getAverageAccuracy(StreamEncoder.VALUE_KEY)) +
+					", average deviation: " + df.format(detector.getAverageDeviation(StreamEncoder.VALUE_KEY)) +
+					", average range accuracy: " + df.format(detector.getAverageRangeAccuracy())
+				);
 			}
 		}
 		previousResult = result;

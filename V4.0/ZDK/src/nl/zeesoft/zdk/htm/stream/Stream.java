@@ -114,6 +114,7 @@ public class Stream extends Worker implements JsAble {
 				json.rootElement.children.add(new JsElem("streamClassName",this.getClass().getName(),true));
 				json.rootElement.children.add(new JsElem("encoderClassName",encoder.getClass().getName(),true));
 				json.rootElement.children.add(new JsElem("encoderData",encoder.toStringBuilder(),true));
+				json.rootElement.children.add(new JsElem("uid","" + results.uid,true));
 				JsElem procsElem = new JsElem("processors",true);
 				json.rootElement.children.add(procsElem);
 				for (ProcessorObject processor: processors) {
@@ -140,6 +141,7 @@ public class Stream extends Worker implements JsAble {
 					if (encoderData.length()>0) {
 						encoder.fromStringBuilder(encoderData);
 					}
+					results.uid = json.rootElement.getChildLong("uid",results.uid);
 					JsElem procsElem = json.rootElement.getChildByName("processors");
 					if (procsElem!=null) {
 						int i = 0;

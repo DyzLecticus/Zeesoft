@@ -31,7 +31,7 @@ public class MockAnomalySDRMap extends MockObject {
 			SDR sdr = enc.getSDRForValue(mockVal.value2);
 			DateTimeSDR dts = new DateTimeSDR(sdr);
 			dts.dateTime = mockVal.dateTime;
-			dts.keyValues.put("value",mockVal.value2);
+			dts.keyValues.put(StreamEncoder.VALUE_KEY,mockVal.value2);
 			sdrMap.add(dts);
 			if (mockVal.value2>maxValue) {
 				maxValue = mockVal.value2;

@@ -14,9 +14,9 @@ public class MemoryConfig {
 	protected int			maxDistalConnectionsPerCell		= 9999;
 	protected int			localDistalConnectedRadius		= 25;
 	
-	protected float			connectionThreshold				= 0.2F;
-	protected float			connectionDecrement				= 0.003F;
-	protected float			connectionIncrement				= 0.1F;
+	protected float			distalConnectionThreshold		= 0.2F;
+	protected float			distalConnectionDecrement		= 0.003F;
+	protected float			distalConnectionIncrement		= 0.1F;
 
 	protected int			sizeX							= 0;
 	protected int			sizeY							= 0;
@@ -40,6 +40,24 @@ public class MemoryConfig {
 		}
 	}
 
+	public void setDistalConnectionThreshold(float distalConnectionThreshold) {
+		if (!initialized) {
+			this.distalConnectionThreshold = distalConnectionThreshold;
+		}
+	}
+
+	public void setDistalConnectionDecrement(float distalConnectionDecrement) {
+		if (!initialized) {
+			this.distalConnectionDecrement = distalConnectionDecrement;
+		}
+	}
+
+	public void setDistalConnectionIncrement(float distalConnectionIncrement) {
+		if (!initialized) {
+			this.distalConnectionIncrement = distalConnectionIncrement;
+		}
+	}
+
 	public void setMaxDistalConnectionsPerCell(int maxDistalConnectionsPerCell) {
 		if (!initialized) {
 			this.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
@@ -52,24 +70,6 @@ public class MemoryConfig {
 		}
 	}
 
-	public void setConnectionThreshold(float connectionThreshold) {
-		if (!initialized) {
-			this.connectionThreshold = connectionThreshold;
-		}
-	}
-
-	public void setConnectionDecrement(float connectionDecrement) {
-		if (!initialized) {
-			this.connectionDecrement = connectionDecrement;
-		}
-	}
-
-	public void setConnectionIncrement(float connectionIncrement) {
-		if (!initialized) {
-			this.connectionIncrement = connectionIncrement;
-		}
-	}
-	
 	public void setDimensions(int sizeX,int sizeY) {
 		if (!initialized && sizeX * sizeY == length) {
 			this.sizeX = sizeX;

@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.build.ManifestWriter;
 import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.test.impl.htm.TestAnomalyDetector;
 import nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder;
 import nl.zeesoft.zdk.test.impl.htm.TestDateTimeValuesEncoder;
 import nl.zeesoft.zdk.test.impl.htm.TestMemory;
@@ -99,5 +100,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestPooler(getTester()));
 		tests.add(new TestMemory(getTester()));
 		tests.add(new TestStreamEncoder(getTester()));
+		tests.add(new TestAnomalyDetector(getTester()));
 	}
 }

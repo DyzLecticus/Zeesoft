@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class StreamResults extends Locker {
-	private long							uid			= 0;
+	protected long							uid			= 0;
 	private SortedMap<Long,StreamResult>	results		= new TreeMap<Long,StreamResult>();
 	
 	protected StreamResults(Messenger msgr) {

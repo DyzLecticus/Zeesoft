@@ -11,17 +11,15 @@ public class PoolerConfig {
 	protected int			outputLength					= 0;
 	protected int			outputBits						= 0;
 	
-	protected float			potentialProximalConnections	= 0.85F;
+	protected float			potentialProximalConnections	= 0.75F;
+	protected int			proximalRadius					= 5;
+	protected float			proximalConnectionThreshold		= 0.1F;
+	protected float			proximalConnectionDecrement		= 0.008F;
+	protected float			proximalConnectionIncrement		= 0.05F;
 	
-	protected float			connectionThreshold				= 0.1F;
-	protected float			connectionDecrement				= 0.008F;
-	protected float			connectionIncrement				= 0.05F;
-	
-	protected int			inputRadius						= 5;
-	protected int			outputRadius					= 10;
-
 	protected float			boostStrength					= 10;
-	protected int			maxActivityLogSize				= 100;
+	protected int			boostInhibitionRadius			= 10;
+	protected int			boostActivityLogSize			= 100;
 
 	protected int			inputSizeX						= 0;
 	protected int			inputSizeY						= 0;
@@ -35,39 +33,33 @@ public class PoolerConfig {
 		calculateDimensions();
 	}
 
-	public void setPotentialProximalConnections(float potentialConnections) {
+	public void setPotentialProximalConnections(float potentialProximalConnections) {
 		if (!initialized) {
-			this.potentialProximalConnections = potentialConnections;
+			this.potentialProximalConnections = potentialProximalConnections;
 		}
 	}
 
-	public void setConnectionThreshold(float connectionThreshold) {
+	public void setProximalRadius(int proximalRadius) {
 		if (!initialized) {
-			this.connectionThreshold = connectionThreshold;
+			this.proximalRadius = proximalRadius;
 		}
 	}
 
-	public void setConnectionDecrement(float connectionDecrement) {
+	public void setProximalConnectionThreshold(float proximalConnectionThreshold) {
 		if (!initialized) {
-			this.connectionDecrement = connectionDecrement;
+			this.proximalConnectionThreshold = proximalConnectionThreshold;
 		}
 	}
 
-	public void setConnectionIncrement(float connectionIncrement) {
+	public void setProximalConnectionDecrement(float proximalConnectionDecrement) {
 		if (!initialized) {
-			this.connectionIncrement = connectionIncrement;
+			this.proximalConnectionDecrement = proximalConnectionDecrement;
 		}
 	}
 
-	public void setInputRadius(int inputRadius) {
+	public void setProximalConnectionIncrement(float proximalConnectionIncrement) {
 		if (!initialized) {
-			this.inputRadius = inputRadius;
-		}
-	}
-
-	public void setOutputRadius(int outputRadius) {
-		if (!initialized) {
-			this.outputRadius = outputRadius;
+			this.proximalConnectionIncrement = proximalConnectionIncrement;
 		}
 	}
 
@@ -77,9 +69,15 @@ public class PoolerConfig {
 		}
 	}
 
-	public void setMaxActivityLogSize(int maxActivityLogSize) {
+	public void setBoostInhibitionRadius(int boostInhibitionRadius) {
 		if (!initialized) {
-			this.maxActivityLogSize = maxActivityLogSize;
+			this.boostInhibitionRadius = boostInhibitionRadius;
+		}
+	}
+
+	public void setBoostActivityLogSize(int boostActivityLogSize) {
+		if (!initialized) {
+			this.boostActivityLogSize = boostActivityLogSize;
 		}
 	}
 	

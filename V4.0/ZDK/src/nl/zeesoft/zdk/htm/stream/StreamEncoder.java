@@ -37,11 +37,28 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	protected boolean							includeValue		= true;
 	protected int								valueMin			= 0;
 	protected int								valueMax			= 100;
-	protected float								valueRes			= 1;
+	protected float								valueResolution		= 1;
 	protected boolean							valueDistributed	= false;
 	
 	public StreamEncoder() {
 		initialize();
+	}
+	
+	public StreamEncoder copy() {
+		StreamEncoder copy = new StreamEncoder();
+		copy.scale = scale;
+		copy.bitsPerEncoder = bitsPerEncoder;
+		copy.includeMonth = includeMonth;
+		copy.includeDayOfWeek = includeDayOfWeek;
+		copy.includeHourOfDay = includeHourOfDay;
+		copy.includeMinute = includeMinute;
+		copy.includeValue = includeValue;
+		copy.valueMin = valueMin;
+		copy.valueMax = valueMax;
+		copy.valueResolution = valueResolution;
+		copy.valueDistributed = valueDistributed;
+		copy.initialize();
+		return copy;
 	}
 	
 	public void setScale(int scale) {
@@ -67,7 +84,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	}
 	
 	public void setValueResolution(float res) {
-		valueRes = res;
+		valueResolution = res;
 		initialize();
 	}
 	
@@ -89,7 +106,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		if (includeValue) {
 			json.rootElement.children.add(new JsElem("valueMin","" + valueMin));
 			json.rootElement.children.add(new JsElem("valueMax","" + valueMax));
-			json.rootElement.children.add(new JsElem("valueRes","" + valueRes));
+			json.rootElement.children.add(new JsElem("valueResolution","" + valueResolution));
 			json.rootElement.children.add(new JsElem("valueDistributed","" + valueDistributed));
 		}
 		return json;
@@ -107,7 +124,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 			if (includeValue) {
 				valueMin = json.rootElement.getChildInt("valueMin");
 				valueMax = json.rootElement.getChildInt("valueMax");
-				valueRes = json.rootElement.getChildFloat("valueRes");
+				valueResolution = json.rootElement.getChildFloat("valueResolution");
 				valueDistributed = json.rootElement.getChildBoolean("valueDistributed");
 			}
 			initialize();
@@ -376,7 +393,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		} else {
 			r = new ScalarEncoder(length,bitsPerEncoder,valueMin,valueMax);
 		}
-		r.setResolution(valueRes);
+		r.setResolution(valueResolution);
 		return r;
 	}
 		
