@@ -17,7 +17,7 @@ public class PoolerConfig {
 	protected float			proximalConnectionDecrement		= 0.008F;
 	protected float			proximalConnectionIncrement		= 0.05F;
 	
-	protected float			boostStrength					= 10;
+	protected int			boostStrength					= 10;
 	protected int			boostInhibitionRadius			= 10;
 	protected int			boostActivityLogSize			= 100;
 
@@ -63,7 +63,7 @@ public class PoolerConfig {
 		}
 	}
 
-	public void setBoostStrength(float boostStrength) {
+	public void setBoostStrength(int boostStrength) {
 		if (!initialized) {
 			this.boostStrength = boostStrength;
 		}

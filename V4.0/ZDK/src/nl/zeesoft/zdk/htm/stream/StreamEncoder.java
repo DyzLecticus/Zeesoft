@@ -24,6 +24,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	private static final String					DAY_OF_WEEK			= "WEEKDAY";
 	private static final String					HOUR_OF_DAY			= "HOUR";
 	private static final String					MINUTE				= "MINUTE";
+	private static final String					SECOND				= "SECOND";
 	private static final String					VALUE				= "VALUE";
 	
 	protected int								scale				= 1;
@@ -33,6 +34,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	protected boolean							includeDayOfWeek	= false;
 	protected boolean							includeHourOfDay	= false;
 	protected boolean							includeMinute		= false;
+	protected boolean							includeSecond		= false;
 
 	protected boolean							includeValue		= true;
 	protected int								valueMin			= 0;
@@ -52,6 +54,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		copy.includeDayOfWeek = includeDayOfWeek;
 		copy.includeHourOfDay = includeHourOfDay;
 		copy.includeMinute = includeMinute;
+		copy.includeSecond = includeSecond;
 		copy.includeValue = includeValue;
 		copy.valueMin = valueMin;
 		copy.valueMax = valueMax;
@@ -68,11 +71,12 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		initialize();
 	}
 	
-	public void setEncodeProperties(boolean includeMonth, boolean includeDayOfWeek, boolean includeHourOfDay, boolean includeMinute, boolean includeValue) {
+	public void setEncodeProperties(boolean includeMonth, boolean includeDayOfWeek, boolean includeHourOfDay, boolean includeMinute, boolean includeSecond, boolean includeValue) {
 		this.includeMonth = includeMonth;
 		this.includeDayOfWeek = includeDayOfWeek;
 		this.includeHourOfDay = includeHourOfDay;
 		this.includeMinute = includeMinute;
+		this.includeSecond = includeSecond;
 		this.includeValue = includeValue;
 		initialize();
 	}
@@ -102,6 +106,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		json.rootElement.children.add(new JsElem("includeDayOfWeek","" + includeDayOfWeek));
 		json.rootElement.children.add(new JsElem("includeHourOfDay","" + includeHourOfDay));
 		json.rootElement.children.add(new JsElem("includeMinute","" + includeMinute));
+		json.rootElement.children.add(new JsElem("includeSecond","" + includeSecond));
 		json.rootElement.children.add(new JsElem("includeValue","" + includeValue));
 		if (includeValue) {
 			json.rootElement.children.add(new JsElem("valueMin","" + valueMin));
@@ -115,17 +120,18 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
-			scale = json.rootElement.getChildInt("scale");
-			includeMonth = json.rootElement.getChildBoolean("includeMonth");
-			includeDayOfWeek = json.rootElement.getChildBoolean("includeDayOfWeek");
-			includeHourOfDay = json.rootElement.getChildBoolean("includeHourOfDay");
-			includeMinute = json.rootElement.getChildBoolean("includeMinute");
-			includeValue = json.rootElement.getChildBoolean("includeValue");
+			scale = json.rootElement.getChildInt("scale",scale);
+			includeMonth = json.rootElement.getChildBoolean("includeMonth",includeMonth);
+			includeDayOfWeek = json.rootElement.getChildBoolean("includeDayOfWeek",includeDayOfWeek);
+			includeHourOfDay = json.rootElement.getChildBoolean("includeHourOfDay",includeHourOfDay);
+			includeMinute = json.rootElement.getChildBoolean("includeMinute",includeMinute);
+			includeSecond = json.rootElement.getChildBoolean("includeSecond",includeSecond);
+			includeValue = json.rootElement.getChildBoolean("includeValue",includeDayOfWeek);
 			if (includeValue) {
-				valueMin = json.rootElement.getChildInt("valueMin");
-				valueMax = json.rootElement.getChildInt("valueMax");
-				valueResolution = json.rootElement.getChildFloat("valueResolution");
-				valueDistributed = json.rootElement.getChildBoolean("valueDistributed");
+				valueMin = json.rootElement.getChildInt("valueMin",valueMin);
+				valueMax = json.rootElement.getChildInt("valueMax",valueMax);
+				valueResolution = json.rootElement.getChildFloat("valueResolution",valueResolution);
+				valueDistributed = json.rootElement.getChildBoolean("valueDistributed",valueDistributed);
 			}
 			initialize();
 		}
@@ -296,7 +302,10 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		
 		float factor = 1.5F;
 		
+		float second = (float) cal.get(Calendar.SECOND);
+		
 		float minute = (float) cal.get(Calendar.MINUTE);
+		minute += second / (60F * factor);
 		
 		float hour = (float) cal.get(Calendar.HOUR_OF_DAY);
 		hour += minute / (60F * factor);
@@ -311,6 +320,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		r.put(DAY_OF_WEEK,weekday);
 		r.put(HOUR_OF_DAY,hour);
 		r.put(MINUTE,minute);
+		r.put(SECOND,second);
 		return r;
 	}
 	
@@ -328,6 +338,9 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		if (includeMinute) {
 			factor++;
 		}
+		if (includeSecond) {
+			factor++;
+		}
 		bitsPerEncoder = (32 / factor) * scale;
 		
 		if (includeMonth) {
@@ -341,6 +354,9 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		}
 		if (includeMinute) {
 			addEncoder(MINUTE,getNewMinuteEncoder());
+		}
+		if (includeSecond) {
+			addEncoder(SECOND,getNewSecondEncoder());
 		}
 		if (includeValue) {
 			addEncoder(VALUE,getNewValueEncoder());
@@ -375,6 +391,13 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		return r;
 	}
 	
+	protected EncoderObject getNewSecondEncoder() {
+		int length = 64 * scale;
+		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,60);
+		r.setPeriodic(true);
+		return r;
+	}
+	
 	protected EncoderObject getNewValueEncoder() {
 		int baseLength = 256;
 		if (includeDayOfWeek) {
@@ -384,6 +407,9 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 			baseLength = baseLength - 48;
 		}
 		if (includeMinute) {
+			baseLength = baseLength - 64;
+		}
+		if (includeSecond) {
 			baseLength = baseLength - 64;
 		}
 		int length = baseLength * scale;

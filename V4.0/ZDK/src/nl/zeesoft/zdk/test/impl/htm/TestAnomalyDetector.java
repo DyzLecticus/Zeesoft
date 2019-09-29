@@ -76,6 +76,8 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
+		System.out.println(" * Information about the stream factory  ");
+		System.out.println(" * A JSON export of the stream factory  ");
 		System.out.println(" * The average prediction accuracy  ");
 		System.out.println(" * The detected anomaly  ");
 		System.out.println(" * Information about the stream after passing the SDR test set through it  ");
@@ -87,6 +89,10 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 
 		StreamFactory factory = new StreamFactory(1024,21);
 		System.out.println(factory.getDescription());
+
+		System.out.println("");
+		System.out.println("Stream factory JSON;");
+		System.out.println(factory.toJson().toStringBuilderReadFormat());
 		
 		stream = factory.getNewPredictionStream(true);
 		detector = stream.getNewAnomalyDetector();
@@ -106,6 +112,17 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		ZStringBuilder newJs = streamNew.toJson().toStringBuilderReadFormat();
 		
 		assertEqual(oriJs.length(),newJs.length(),"Stream JSON does not match expectation");
+
+		StreamFactory factoryOri = new StreamFactory(2304,46);
+		factoryOri.getEncoder().setScale(4);
+		factoryOri.getEncoder().setEncodeProperties(false,false,false,true,true,true);
+		factoryOri.getEncoder().setValueMinMax(0,50);
+		factoryOri.setDepth(8);
+		factoryOri.setBoostStrength(10);
+		factoryOri.setValueKey("test");
+		
+		StreamFactory factoryNew = new StreamFactory(1024,21);
+		this.testJsAble(factoryOri, factoryNew, "Factory JSON does not match expectation");
 		
 		stream.destroy();
 	}

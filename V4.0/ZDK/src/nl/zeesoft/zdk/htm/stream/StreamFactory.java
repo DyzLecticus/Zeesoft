@@ -6,10 +6,13 @@ import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.Predictor;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class StreamFactory {
+public class StreamFactory implements JsAble {
 	protected StreamEncoder	encoder							= null;
 	protected int			outputLength					= 0;
 	protected int			outputBits						= 0;
@@ -20,7 +23,7 @@ public class StreamFactory {
 	protected float			proximalConnectionThreshold		= 0.1F;
 	protected float			proximalConnectionDecrement		= 0.008F;
 	protected float			proximalConnectionIncrement		= 0.05F;
-	protected float			boostStrength					= 10;
+	protected int			boostStrength					= 10;
 	protected int			boostInhibitionRadius			= 10;
 	protected int			boostActivityLogSize			= 100;
 
@@ -32,6 +35,7 @@ public class StreamFactory {
 	protected float			distalConnectionDecrement		= 0.003F;
 	protected float			distalConnectionIncrement		= 0.1F;
 
+	// Buffered predictor value key
 	protected String		valueKey						= StreamEncoder.VALUE_KEY;
 	
 	public StreamFactory(int outputLength, int outputBits) {
@@ -40,6 +44,75 @@ public class StreamFactory {
 	
 	public StreamFactory(StreamEncoder encoder,int outputLength, int outputBits) {
 		initialize(encoder,outputLength,outputBits);
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		JsElem encoderElem = new JsElem("encoder",true);
+		json.rootElement.children.add(encoderElem);
+		encoderElem.children.add(encoder.toJson().rootElement);
+		json.rootElement.children.add(new JsElem("outputLength","" + outputLength));
+		json.rootElement.children.add(new JsElem("outputBits","" + outputBits));
+		
+		// Pooler configuration
+		json.rootElement.children.add(new JsElem("potentialProximalConnections","" + potentialProximalConnections));
+		json.rootElement.children.add(new JsElem("proximalRadius","" + proximalRadius));
+		json.rootElement.children.add(new JsElem("proximalConnectionThreshold","" + proximalConnectionThreshold));
+		json.rootElement.children.add(new JsElem("proximalConnectionDecrement","" + proximalConnectionDecrement));
+		json.rootElement.children.add(new JsElem("proximalConnectionIncrement","" + proximalConnectionIncrement));
+		json.rootElement.children.add(new JsElem("boostStrength","" + boostStrength));
+		json.rootElement.children.add(new JsElem("boostInhibitionRadius","" + boostInhibitionRadius));
+		json.rootElement.children.add(new JsElem("boostActivityLogSize","" + boostActivityLogSize));
+		
+		// Memory configuration
+		json.rootElement.children.add(new JsElem("depth","" + depth));
+		json.rootElement.children.add(new JsElem("maxDistalConnectionsPerCell","" + maxDistalConnectionsPerCell));
+		json.rootElement.children.add(new JsElem("localDistalConnectedRadius","" + localDistalConnectedRadius));
+		json.rootElement.children.add(new JsElem("distalConnectionThreshold","" + distalConnectionThreshold));
+		json.rootElement.children.add(new JsElem("distalConnectionDecrement","" + distalConnectionDecrement));
+		json.rootElement.children.add(new JsElem("distalConnectionIncrement","" + distalConnectionIncrement));
+
+		// Buffered predictor value key
+		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			JsElem encoderElem = json.rootElement.getChildByName("encoder");
+			if (encoderElem!=null) {
+				JsFile encoderJs = new JsFile();
+				encoderJs.rootElement = encoderElem.children.get(0);
+				encoder = new StreamEncoder();
+				encoder.fromJson(encoderJs);
+			}
+			outputLength = json.rootElement.getChildInt("outputLength",outputLength);
+			outputBits = json.rootElement.getChildInt("outputBits",outputBits);
+
+			// Pooler configuration
+			potentialProximalConnections = json.rootElement.getChildFloat("potentialProximalConnections",potentialProximalConnections);
+			proximalRadius = json.rootElement.getChildInt("proximalRadius",proximalRadius);
+			proximalConnectionThreshold = json.rootElement.getChildFloat("proximalConnectionThreshold",proximalConnectionThreshold);
+			proximalConnectionDecrement = json.rootElement.getChildFloat("proximalConnectionDecrement",proximalConnectionDecrement);
+			proximalConnectionIncrement = json.rootElement.getChildFloat("proximalConnectionIncrement",proximalConnectionIncrement);
+			boostStrength = json.rootElement.getChildInt("boostStrength",boostStrength);
+			boostInhibitionRadius = json.rootElement.getChildInt("boostInhibitionRadius",boostInhibitionRadius);
+			proximalRadius = json.rootElement.getChildInt("proximalRadius",proximalRadius);
+
+			// Memory configuration
+			depth = json.rootElement.getChildInt("depth",depth);
+			maxDistalConnectionsPerCell = json.rootElement.getChildInt("maxDistalConnectionsPerCell",maxDistalConnectionsPerCell);
+			localDistalConnectedRadius = json.rootElement.getChildInt("localDistalConnectedRadius",localDistalConnectedRadius);
+			distalConnectionThreshold = json.rootElement.getChildFloat("distalConnectionThreshold",distalConnectionThreshold);
+			distalConnectionDecrement = json.rootElement.getChildFloat("distalConnectionDecrement",distalConnectionDecrement);
+			distalConnectionIncrement = json.rootElement.getChildFloat("distalConnectionIncrement",distalConnectionIncrement);
+			
+			// Buffered predictor value key
+			valueKey = json.rootElement.getChildString("valueKey",valueKey);
+		}
 	}
 	
 	public StreamEncoder getEncoder() {
@@ -110,7 +183,7 @@ public class StreamFactory {
 		this.proximalConnectionIncrement = proximalConnectionIncrement;
 	}
 
-	public void setBoostStrength(float boostStrength) {
+	public void setBoostStrength(int boostStrength) {
 		this.boostStrength = boostStrength;
 	}
 
