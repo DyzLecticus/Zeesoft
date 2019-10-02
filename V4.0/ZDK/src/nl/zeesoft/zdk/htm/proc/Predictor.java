@@ -56,40 +56,46 @@ public class Predictor extends Memory {
 	protected void generatePredictionSDR() {
 		predictionSDR = new SDR(config.length);
 		if (predictiveCells.size()>0) {
-			HashMap<Integer,Float> columnActivity = new HashMap<Integer,Float>();
-			for (MemoryColumnCell cell: predictiveCells) {
-				Float activity = columnActivity.get(cell.columnIndex);
-				if (activity==null) {
-					activity = new Float(0);
+			if (maxOnBits<=0) {
+				for (MemoryColumnCell cell: predictiveCells) {
+					predictionSDR.setBit(cell.columnIndex,true);
 				}
-				activity += cell.activity;
-				columnActivity.put(cell.columnIndex,activity);
-			}
-			SortedMap<Float,List<Integer>> columnIndicesByActivity = new TreeMap<Float,List<Integer>>();
-			for (Integer index: columnActivity.keySet()) {
-				Float activity = columnActivity.get(index);
-				List<Integer> list = columnIndicesByActivity.get(activity);
-				if (list==null) {
-					list = new ArrayList<Integer>();
-					columnIndicesByActivity.put(activity,list);
+			} else {
+				HashMap<Integer,Float> columnActivity = new HashMap<Integer,Float>();
+				for (MemoryColumnCell cell: predictiveCells) {
+					Float activity = columnActivity.get(cell.columnIndex);
+					if (activity==null) {
+						activity = new Float(0);
+					}
+					activity += cell.activity;
+					columnActivity.put(cell.columnIndex,activity);
 				}
-				list.add(0,index);
-			}
-			List<Integer> indices = new ArrayList<Integer>();
-			for (List<Integer> list: columnIndicesByActivity.values()) {
-				for (Integer index: list) {
-					indices.add(0,index);
+				SortedMap<Float,List<Integer>> columnIndicesByActivity = new TreeMap<Float,List<Integer>>();
+				for (Integer index: columnActivity.keySet()) {
+					Float activity = columnActivity.get(index);
+					List<Integer> list = columnIndicesByActivity.get(activity);
+					if (list==null) {
+						list = new ArrayList<Integer>();
+						columnIndicesByActivity.put(activity,list);
+					}
+					list.add(0,index);
 				}
-			}
-			int max = maxOnBits;
-			if (max<=0) {
-				max = indices.size();
-			}
-			for (int i = 0; i < max; i++) {
-				if (i==indices.size()) {
-					break;
+				List<Integer> indices = new ArrayList<Integer>();
+				for (List<Integer> list: columnIndicesByActivity.values()) {
+					for (Integer index: list) {
+						indices.add(0,index);
+					}
 				}
-				predictionSDR.setBit(indices.get(i),true);
+				int max = maxOnBits;
+				if (max<=0) {
+					max = indices.size();
+				}
+				for (int i = 0; i < max; i++) {
+					if (i==indices.size()) {
+						break;
+					}
+					predictionSDR.setBit(indices.get(i),true);
+				}
 			}
 		}
 	}

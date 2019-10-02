@@ -251,12 +251,14 @@ public class Memory extends ProcessorObject {
 	protected void initialize() {
 		int posX = 0;
 		int posY = 0;
+		int cellIndex = 0;
 		for (int i = 0; i < config.length; i++) {
 			MemoryColumn col = new MemoryColumn(i);
 			columns.add(col);
 			for (int d = 0; d < config.depth; d++) {
-				MemoryColumnCell cell = new MemoryColumnCell(config,i,posX,posY,d);
+				MemoryColumnCell cell = new MemoryColumnCell(config,i,cellIndex,posX,posY,d);
 				col.cells.add(cell);
+				cellIndex++;
 			}
 			posX++;
 			if (posX % config.sizeX == 0) {

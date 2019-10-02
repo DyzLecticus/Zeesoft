@@ -9,6 +9,8 @@ import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class ValuePredictor extends Locker implements StreamListener {
+	private static final int				PREDICTION_SDR	= 3;
+	
 	protected PredictionStream				stream			= null;
 	
 	private	List<ValuePredictorListener>	listeners		= new ArrayList<ValuePredictorListener>();
@@ -40,7 +42,7 @@ public class ValuePredictor extends Locker implements StreamListener {
 		HashMap<String,Object> currentValues = new HashMap<String,Object>();
 		HashMap<String,Object> predictedValues = new HashMap<String,Object>();
 
-		SDR predictedSDR = result.outputSDRs.get(3);
+		SDR predictedSDR = result.outputSDRs.get(PREDICTION_SDR);
 		if (predictedSDR instanceof DateTimeSDR) {
 			List<String> valKeys = getValueKeys();
 			
@@ -93,7 +95,7 @@ public class ValuePredictor extends Locker implements StreamListener {
 	
 	protected HashMap<String,Object> getPredictedValues(StreamResult result,List<String> valKeys) {
 		HashMap<String,Object> r = new HashMap<String,Object>();
-		SDR predictedSDR = result.outputSDRs.get(3);
+		SDR predictedSDR = result.outputSDRs.get(PREDICTION_SDR);
 		if (predictedSDR instanceof DateTimeSDR) {
 			DateTimeSDR pred = (DateTimeSDR) predictedSDR;
 			for (String valueKey: valKeys) {
@@ -101,9 +103,9 @@ public class ValuePredictor extends Locker implements StreamListener {
 					r.put(valueKey,pred.keyValues.get(valueKey));
 				}
 			}
-			if (valKeys.size()==1 && result.outputSDRs.size()>=6) {
-				DateTimeSDR lower = (DateTimeSDR) result.outputSDRs.get(4);
-				DateTimeSDR upper = (DateTimeSDR) result.outputSDRs.get(5);
+			if (valKeys.size()==1 && result.outputSDRs.size()>=PREDICTION_SDR + 3) {
+				DateTimeSDR lower = (DateTimeSDR) result.outputSDRs.get(PREDICTION_SDR + 1);
+				DateTimeSDR upper = (DateTimeSDR) result.outputSDRs.get(PREDICTION_SDR + 2);
 				String key = valKeys.get(0);
 				r.put(key + "Min",lower.keyValues.get(key));
 				r.put(key + "Max",upper.keyValues.get(key));
