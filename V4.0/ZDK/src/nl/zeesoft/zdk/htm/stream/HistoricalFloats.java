@@ -1,16 +1,16 @@
 package nl.zeesoft.zdk.htm.stream;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class HistoricalFloats {
-	public 	int								window			= 1000;
+	public 	int				window		= 1000;
 
-	private List<Float>						history			= new ArrayList<Float>();
+	private	Queue<Float>	history		= new LinkedList<Float>();
 	
-	public	float							average			= 0;
-	public	float							minimum			= 0;
-	public	float							maximum			= 0;
+	public	float			average		= 0;
+	public	float			minimum		= 0;
+	public	float			maximum		= 0;
 
 	public float addFloat(float f) {
 		average = 0;
@@ -18,7 +18,7 @@ public class HistoricalFloats {
 		maximum = Float.MIN_VALUE;
 		history.add(f);
 		while (history.size()>window) {
-			history.remove(0);
+			history.remove();
 		}
 		average = 0;
 		for (Float hist: history) {
@@ -31,7 +31,7 @@ public class HistoricalFloats {
 			}
 		}
 		if (average > 0) {
-			average = average / window;
+			average = average / (float) history.size();
 		}
 		return average;
 	}

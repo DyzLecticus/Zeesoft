@@ -12,11 +12,11 @@ import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Pooler extends ProcessorObject {
-	protected PoolerConfig							config							= null;
+	protected PoolerConfig							config			= null;
 	
-	protected List<PoolerColumn>					columns							= new ArrayList<PoolerColumn>();
-	protected SortedMap<String,PoolerColumnGroup>	columnGroups					= new TreeMap<String,PoolerColumnGroup>();
-	protected PoolerConnections						connections						= null;
+	protected List<PoolerColumn>					columns			= new ArrayList<PoolerColumn>();
+	protected SortedMap<String,PoolerColumnGroup>	columnGroups	= new TreeMap<String,PoolerColumnGroup>();
+	protected PoolerConnections						connections		= null;
 	
 	public Pooler(PoolerConfig config) {
 		this.config = config;
@@ -264,7 +264,7 @@ public class Pooler extends ProcessorObject {
 			for (PoolerColumnGroup columnGroup: columnGroups.values()) {
 				float averageActivity = 0;
 				for (PoolerColumn col: columnGroup.columns) {
-					averageActivity += col.averageActivity;
+					averageActivity += col.activityLog.average;
 				}
 				if (averageActivity>0) {
 					averageActivity = averageActivity / columns.size();

@@ -2,33 +2,31 @@ package nl.zeesoft.zdk.htm.proc;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class PoolerColumn {
-	private 	PoolerConfig					config				= null;
-	protected	int								index				= 0;
-	protected	int								posX				= 0;
-	protected	int								posY				= 0;
+	private 	PoolerConfig			config			= null;
+	protected	int						index			= 0;
+	protected	int						posX			= 0;
+	protected	int						posY			= 0;
 
-	protected	PoolerColumnGroup				columnGroup			= null;
+	protected	PoolerColumnGroup		columnGroup		= null;
 	
-	protected	Set<ProximalLink>				proxLinks			= new HashSet<ProximalLink>();
+	protected	Set<ProximalLink>		proxLinks		= new HashSet<ProximalLink>();
 	
-	protected	Queue<Boolean>					activityLog			= new LinkedList<Boolean>();
-	protected	float							totalActive			= 0;
-	protected	float							averageActivity		= 0;
-	protected	float							boostFactor			= 1;
+	protected	HistoricalBits			activityLog		= null;
+	protected	float					boostFactor		= 1;
 	
 	protected PoolerColumn(PoolerConfig config,int index,int posX, int posY) {
 		this.config = config;
 		this.index = index;
 		this.posX = posX;
 		this.posY = posY;
+		this.activityLog = new HistoricalBits();
+		activityLog.window = config.boostActivityLogSize;
 	}
 	
 	protected void randomizeConnections(PoolerConnections connections) {
@@ -77,28 +75,14 @@ public class PoolerColumn {
 	
 	protected void logActivity(boolean active) {
 		if (config.boostStrength>0) {
-			activityLog.add(active);
-			if (active) {
-				totalActive++;
-			}
-			while (activityLog.size() > config.boostActivityLogSize) {
-				boolean act = activityLog.remove();
-				if (act) {
-					totalActive--;
-				}
-			}
-			if (totalActive>0) {
-				averageActivity = totalActive / (float) activityLog.size();
-			} else {
-				averageActivity = 0;
-			}
+			activityLog.addBit(active);
 		}
 	}
 	
 	protected void updateBoostFactor(float localAverageActivity) {
 		if (config.boostStrength>0 && localAverageActivity>0) {
-			if (averageActivity!=localAverageActivity) {
-				boostFactor = (float) Math.exp((float)config.boostStrength * - 1 * (averageActivity - localAverageActivity));
+			if (activityLog.average!=localAverageActivity) {
+				boostFactor = (float) Math.exp((float)config.boostStrength * - 1 * (activityLog.average - localAverageActivity));
 			} else {
 				boostFactor = 1;
 			}

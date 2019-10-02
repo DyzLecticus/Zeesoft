@@ -11,9 +11,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Memory extends ProcessorObject {
-	protected MemoryConfig				config			= null;
+	protected MemoryConfig			config		= null;
 
-	protected List<MemoryColumn>		columns			= new ArrayList<MemoryColumn>();
+	protected List<MemoryColumn>	columns		= new ArrayList<MemoryColumn>();
 	
 	public Memory(MemoryConfig config) {
 		this.config = config;
