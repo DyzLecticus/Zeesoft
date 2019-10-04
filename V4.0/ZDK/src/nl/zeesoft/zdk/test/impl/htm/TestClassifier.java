@@ -19,6 +19,7 @@ import nl.zeesoft.zdk.test.Tester;
 
 public class TestClassifier extends TestObject {
 	private HistoricalFloats	averageAccuracy	= new HistoricalFloats(); 
+	private List<Object>		predictedValues	= new ArrayList<Object>();
 	private int					counter			= 0;
 	
 	public TestClassifier(Tester tester) {
@@ -75,7 +76,7 @@ public class TestClassifier extends TestObject {
 		Memory memory = new Memory(memoryConfig);
 		memory.logStats = true;
 
-		ClassifierConfig classifierConfig = new ClassifierConfig();
+		ClassifierConfig classifierConfig = new ClassifierConfig(1);
 		Classifier classifier = new Classifier(classifierConfig);
 		classifier.logStats = true;
 		
@@ -109,7 +110,7 @@ public class TestClassifier extends TestObject {
 		
 		assertEqual(predictionSDRs.size(),num,"Activation SDR list size does not match expectation");
 		
-		assertEqual(averageAccuracy.average > 0.95F,true,"Prediction accuracy is lower than expected");
+		assertEqual(averageAccuracy.average > 0.9F,true,"Prediction accuracy is lower than expected");
 		
 		System.out.println();
 		System.out.println("Performance statistics;");
@@ -144,8 +145,19 @@ public class TestClassifier extends TestObject {
 	private void processedSDR(DateTimeSDR inputSDR,DateTimeSDR predictionSDR) {
 		counter++;
 		Object value = inputSDR.keyValues.get(DateTimeSDR.VALUE_KEY);
-		ZStringBuilder predictions = new ZStringBuilder();
+		
 		float accuracy = 0;
+
+		for (Object predicted: predictedValues) {
+			if (predicted.equals(value)) {
+				accuracy = 1;
+				break;
+			}
+		}
+		averageAccuracy.addFloat(accuracy);
+		
+		predictedValues.clear();
+		ZStringBuilder predictions = new ZStringBuilder();
 		for (String key: predictionSDR.keyValues.keySet()) {
 			if (key.startsWith(DateTimeSDR.VALUE_KEY)) {
 				if (predictions.length()>0) {
@@ -153,19 +165,12 @@ public class TestClassifier extends TestObject {
 				}
 				Object predicted = predictionSDR.keyValues.get(key);
 				predictions.append("" + predicted);
-				if (value.equals(predicted)) {
-					accuracy = 1;
-				}
+				predictedValues.add(predicted);
 			}
-		}
-		averageAccuracy.addFloat(accuracy);
-	
-		if (accuracy==0) {
-			System.out.println("Processed SDRs: " + counter + ", value: " + value + ", prediction(s): " + predictions + ", accuracy: " + averageAccuracy.average);
 		}
 		
 		if (counter % (500) == 0) {
-			//System.out.println("Processed SDRs: " + counter + ", value: " + value + ", prediction(s): " + predictions + ", accuracy: " + averageAccuracy.average);
+			System.out.println("Processed SDRs: " + counter + ", value: " + value + ", prediction(s): " + predictions + ", accuracy: " + averageAccuracy.average);
 		}
 	}
 }

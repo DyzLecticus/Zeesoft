@@ -5,14 +5,14 @@ import java.util.HashMap;
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
-public class ClassifierBit {
+public class StepsClassifierBit {
 	protected ClassifierConfig			config		= null;
 	protected int						index		= 0;
 	
 	protected HashMap<Float,Integer>	valueCounts	= new HashMap<Float,Integer>();
 	protected HashMap<String,Integer>	labelCounts	= new HashMap<String,Integer>();
 	
-	protected ClassifierBit(ClassifierConfig config,int index) {
+	protected StepsClassifierBit(ClassifierConfig config,int index) {
 		this.config = config;
 		this.index = index;
 	}
