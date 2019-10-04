@@ -71,8 +71,6 @@ public class TestClassifier extends TestObject {
 		pooler.randomizeConnections();
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
-		System.out.println(memoryConfig.getDescription());
-		
 		Memory memory = new Memory(memoryConfig);
 		memory.logStats = true;
 
@@ -84,7 +82,6 @@ public class TestClassifier extends TestObject {
 		
 		List<DateTimeSDR> predictionSDRs = new ArrayList<DateTimeSDR>();
 		
-		System.out.println();
 		long started = System.currentTimeMillis();
 		System.out.println("Processing input SDR map (" + num + "/" + inputSDRMap.size() + ") ...");
 		for (int i = 0; i < num; i++) {

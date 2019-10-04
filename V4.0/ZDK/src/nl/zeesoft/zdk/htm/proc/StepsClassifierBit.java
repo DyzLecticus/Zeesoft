@@ -9,7 +9,7 @@ public class StepsClassifierBit {
 	protected ClassifierConfig			config		= null;
 	protected int						index		= 0;
 	
-	protected HashMap<Float,Integer>	valueCounts	= new HashMap<Float,Integer>();
+	protected HashMap<Object,Integer>	valueCounts	= new HashMap<Object,Integer>();
 	protected HashMap<String,Integer>	labelCounts	= new HashMap<String,Integer>();
 	
 	protected StepsClassifierBit(ClassifierConfig config,int index) {
@@ -20,13 +20,12 @@ public class StepsClassifierBit {
 	protected void associate(SDR activationSDR,DateTimeSDR inputSDR) {
 		Object value = inputSDR.keyValues.get(config.valueKey);
 		if (value!=null) {
-			Float val = DateTimeSDR.objectToFloat(value);
-			Integer count = valueCounts.get(val);
+			Integer count = valueCounts.get(value);
 			if (count==null) {
 				count = new Integer(0);
 			}
 			count++;
-			valueCounts.put(val,count);
+			valueCounts.put(value,count);
 		}
 		String label = (String) inputSDR.keyValues.get(config.labelKey);
 		if (label!=null) {

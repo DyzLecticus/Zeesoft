@@ -8,19 +8,23 @@ import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Classifier extends ProcessorObject {
-	protected ClassifierConfig					config					= null;
+	protected ClassifierConfig			config					= null;
 	
-	protected List<StepsClassifier>				classifiers				= new ArrayList<StepsClassifier>();
+	protected List<StepsClassifier>		classifiers				= new ArrayList<StepsClassifier>();
+	protected int						maxSteps				= 0;
+	protected List<SDR>					activationHistory		= new ArrayList<SDR>();
 	
-	protected List<DateTimeSDR>					classifierSDRs			= new ArrayList<DateTimeSDR>();
-	
-	protected DateTimeSDR						inputSDR				= null;
+	protected DateTimeSDR				inputSDR				= null;
+	protected List<DateTimeSDR>			classifierSDRs			= new ArrayList<DateTimeSDR>();
 	
 	public Classifier(ClassifierConfig config) {
 		this.config = config;
 		config.initialized = true;
 		for (Integer steps: config.predictSteps) {
-			classifiers.add(new StepsClassifier(config,steps));
+			classifiers.add(new StepsClassifier(config,activationHistory,steps));
+			if (steps>maxSteps) {
+				maxSteps = steps;
+			}
 		}
 	}
 	
@@ -41,10 +45,16 @@ public class Classifier extends ProcessorObject {
 		if (context.get(0) instanceof DateTimeSDR) {
 			inputSDR = (DateTimeSDR) context.get(0);
 		}
-		classifierSDRs.clear();
+		
+		activationHistory.add(input);
+		
 		List<SDR> r = super.getSDRsForInput(input, context, learn);
 		for (DateTimeSDR sdr: classifierSDRs) {
 			r.add(sdr);
+		}
+		
+		while (activationHistory.size()>maxSteps + 1) {
+			activationHistory.remove(0);
 		}
 		return r;
 	}
@@ -54,9 +64,10 @@ public class Classifier extends ProcessorObject {
 		DateTimeSDR r = null;
 		long start = 0;
 		
+		classifierSDRs.clear();
 		if (inputSDR!=null) {
 			start = System.currentTimeMillis();
-			r = generateClassifications(input);
+			r = generateClassifications(input,learn);
 			logStatsValue("generateClassifications",System.currentTimeMillis() - start);
 		} else {
 			r = new DateTimeSDR(input.length());
@@ -65,11 +76,11 @@ public class Classifier extends ProcessorObject {
 		return r;
 	}
 	
-	protected DateTimeSDR generateClassifications(SDR input) {
+	protected DateTimeSDR generateClassifications(SDR input,boolean learn) {
 		DateTimeSDR r = null;
 		int i = 0;
 		for (StepsClassifier classifier: classifiers) {
-			DateTimeSDR classificationSDR = classifier.getClassificationSDRForActivationSDR(input,inputSDR);
+			DateTimeSDR classificationSDR = classifier.getClassificationSDRForActivationSDR(input,inputSDR,learn);
 			if (i==0) {
 				r = classificationSDR;
 			} else {

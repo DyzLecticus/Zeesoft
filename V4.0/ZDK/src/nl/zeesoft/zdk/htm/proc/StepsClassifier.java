@@ -2,9 +2,7 @@ package nl.zeesoft.zdk.htm.proc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
@@ -13,24 +11,23 @@ public class StepsClassifier {
 	protected ClassifierConfig						config					= null;
 	protected int									steps					= 0;
 	
-	protected Queue<SDR>							activationHistory		= new LinkedList<SDR>();
+	protected List<SDR>								activationHistory		= null;
 	protected HashMap<Integer,StepsClassifierBit>	bits					= new HashMap<Integer,StepsClassifierBit>();
 	
-	public StepsClassifier(ClassifierConfig config,int steps) {
+	public StepsClassifier(ClassifierConfig config,List<SDR> activationHistory,int steps) {
 		this.config = config;
+		this.activationHistory = activationHistory;
 		this.steps = steps;
 	}
 
-	protected DateTimeSDR getClassificationSDRForActivationSDR(SDR activationSDR,DateTimeSDR inputSDR) {
+	protected DateTimeSDR getClassificationSDRForActivationSDR(SDR activationSDR,DateTimeSDR inputSDR,boolean learn) {
 		DateTimeSDR r = null;
 		if (inputSDR!=null) {
 			r = new DateTimeSDR(inputSDR.length());
-			associateBits(inputSDR);
-			generatePrediction(activationSDR,r);
-			activationHistory.add(activationSDR);
-			while (activationHistory.size()>steps) {
-				activationHistory.remove();
+			if (learn) {
+				associateBits(inputSDR);
 			}
+			generatePrediction(activationSDR,r);
 		} else {
 			r = new DateTimeSDR(activationSDR.length());
 		}
@@ -38,11 +35,12 @@ public class StepsClassifier {
 	}
 
 	protected void associateBits(DateTimeSDR inputSDR) {
-		if (activationHistory.size()==steps) {
+		if (activationHistory.size()>steps) {
+			int index = activationHistory.size() - (steps + 1);
 			Object value = inputSDR.keyValues.get(config.valueKey);
 			String label = (String) inputSDR.keyValues.get(config.labelKey);
 			if (value!=null || label!=null) {
-				SDR histActivationSDR = activationHistory.remove();
+				SDR histActivationSDR = activationHistory.get(index);
 				for (Integer onBit: histActivationSDR.getOnBits()) {
 					StepsClassifierBit bit = bits.get(onBit);
 					if (bit==null) {
@@ -56,9 +54,9 @@ public class StepsClassifier {
 	}
 
 	protected void generatePrediction(SDR activationSDR,DateTimeSDR outputSDR) {
-		HashMap<Float,Integer> valueCounts = new HashMap<Float,Integer>();
+		HashMap<Object,Integer> valueCounts = new HashMap<Object,Integer>();
 		HashMap<String,Integer> labelCounts = new HashMap<String,Integer>();
-		List<Float> maxCountedValues = new ArrayList<Float>();
+		List<Object> maxCountedValues = new ArrayList<Object>();
 		List<String> maxCountedLabels = new ArrayList<String>();
 		if (bits.size()>0) {
 			int maxValueCounts = 0;
@@ -66,7 +64,7 @@ public class StepsClassifier {
 			for (Integer onBit: activationSDR.getOnBits()) {
 				StepsClassifierBit bit = bits.get(onBit);
 				if (bit!=null) {
-					for (Float value: bit.valueCounts.keySet()) {
+					for (Object value: bit.valueCounts.keySet()) {
 						Integer count = valueCounts.get(value);
 						if (count==null) {
 							count = new Integer(0);
@@ -102,9 +100,9 @@ public class StepsClassifier {
 		setPredictionSDR(outputSDR,valueCounts,labelCounts,maxCountedValues,maxCountedLabels);
 	}
 	
-	protected void setPredictionSDR(DateTimeSDR outputSDR,HashMap<Float,Integer> valueCounts,HashMap<String,Integer> labelCounts,List<Float> maxCountedValues,List<String> maxCountedLabels) {
+	protected void setPredictionSDR(DateTimeSDR outputSDR,HashMap<Object,Integer> valueCounts,HashMap<String,Integer> labelCounts,List<Object> maxCountedValues,List<String> maxCountedLabels) {
 		int i = 0;
-		for (Float value: maxCountedValues) {
+		for (Object value: maxCountedValues) {
 			i++;
 			outputSDR.keyValues.put(config.valueKey + i,value);
 		}

@@ -1,7 +1,12 @@
 package nl.zeesoft.zdk.htm.stream;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
+import nl.zeesoft.zdk.htm.proc.Classifier;
+import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
 import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
@@ -14,32 +19,37 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class StreamFactory implements JsAble {
-	protected StreamEncoder	encoder								= null;
-	protected int			outputLength						= 0;
-	protected int			outputBits							= 0;
+	protected StreamEncoder		encoder								= null;
+	protected int				outputLength						= 0;
+	protected int				outputBits							= 0;
 
 	// Pooler configuration
-	protected float			potentialProximalConnections		= 0.75F;
-	protected int			proximalRadius						= 5;
-	protected float			proximalConnectionThreshold			= 0.1F;
-	protected float			proximalConnectionDecrement			= 0.008F;
-	protected float			proximalConnectionIncrement			= 0.05F;
-	protected int			boostStrength						= 10;
-	protected int			boostInhibitionRadius				= 10;
-	protected int			boostActivityLogSize				= 100;
+	protected float				potentialProximalConnections		= 0.75F;
+	protected int				proximalRadius						= 5;
+	protected float				proximalConnectionThreshold			= 0.1F;
+	protected float				proximalConnectionDecrement			= 0.008F;
+	protected float				proximalConnectionIncrement			= 0.05F;
+	protected int				boostStrength						= 10;
+	protected int				boostInhibitionRadius				= 10;
+	protected int				boostActivityLogSize				= 100;
 
 	// Memory configuration
-	protected int			depth								= 4;
-	protected int			maxDistalConnectionsPerCell			= 9999;
-	protected int			localDistalConnectedRadius			= 64;
-	protected int			minAlmostActiveDistalConnections	= 5;
-	protected float			distalConnectionThreshold			= 0.2F;
-	protected float			distalConnectionDecrement			= 0.003F;
-	protected float			distalConnectionIncrement			= 0.1F;
-	protected boolean		outputActivationSDR					= true;
+	protected int				depth								= 4;
+	protected int				maxDistalConnectionsPerCell			= 9999;
+	protected int				localDistalConnectedRadius			= 64;
+	protected int				minAlmostActiveDistalConnections	= 5;
+	protected float				distalConnectionThreshold			= 0.2F;
+	protected float				distalConnectionDecrement			= 0.003F;
+	protected float				distalConnectionIncrement			= 0.1F;
+	protected boolean			outputActivationSDR					= true;
 
+	// Classifier configuration
+	protected List<Integer>		predictSteps						= new ArrayList<Integer>();
+	protected String			valueKey							= DateTimeSDR.VALUE_KEY;
+	protected String			labelKey							= DateTimeSDR.LABEL_KEY;
+	
 	// Buffered predictor value key
-	protected String		valueKey							= DateTimeSDR.VALUE_KEY;
+	//protected String		valueKey							= DateTimeSDR.VALUE_KEY;
 	
 	public StreamFactory(int outputLength, int outputBits) {
 		initialize(new StreamEncoder(),outputLength,outputBits);
@@ -80,8 +90,17 @@ public class StreamFactory implements JsAble {
 		json.rootElement.children.add(new JsElem("distalConnectionIncrement","" + distalConnectionIncrement));
 		json.rootElement.children.add(new JsElem("outputActivationSDR","" + outputActivationSDR));
 		
-		// Buffered predictor value key
+		// Classifier configuration
+		ZStringBuilder pSteps = new ZStringBuilder();
+		for (Integer steps: predictSteps) {
+			if (pSteps.length()>0) {
+				pSteps.append(",");
+			}
+			pSteps.append("" + steps);
+		}
+		json.rootElement.children.add(new JsElem("predictSteps",pSteps,true));
 		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
+		json.rootElement.children.add(new JsElem("labelKey",labelKey,true));
 		return json;
 	}
 
@@ -118,8 +137,17 @@ public class StreamFactory implements JsAble {
 			distalConnectionIncrement = json.rootElement.getChildFloat("distalConnectionIncrement",distalConnectionIncrement);
 			outputActivationSDR = json.rootElement.getChildBoolean("outputActivationSDR",outputActivationSDR);
 			
-			// Buffered predictor value key
+			// Classifier configuration
+			ZStringBuilder pSteps = json.rootElement.getChildZStringBuilder("predictSteps");
+			predictSteps.clear();
+			if (pSteps.length()>0) {
+				List<ZStringBuilder> pElems = pSteps.split(",");
+				for (ZStringBuilder pStep: pElems) {
+					predictSteps.add(Integer.parseInt(pStep.toString()));
+				}
+			}
 			valueKey = json.rootElement.getChildString("valueKey",valueKey);
+			labelKey = json.rootElement.getChildString("labelKey",labelKey);
 		}
 	}
 	
@@ -136,6 +164,17 @@ public class StreamFactory implements JsAble {
 		r.append(poolerConfig.getDescription());
 		r.append("\n");
 		r.append(memoryConfig.getDescription());
+		if (predictSteps.size()>0) {
+			ZStringBuilder pSteps = new ZStringBuilder();
+			for (Integer steps: predictSteps) {
+				if (pSteps.length()>0) {
+					pSteps.append(", ");
+				}
+				pSteps.append("" + steps);
+			}
+			r.append("\n");
+			r.append("Classifier prediction steps: " + pSteps);
+		}
 		return r;
 	}
 	
@@ -149,6 +188,20 @@ public class StreamFactory implements JsAble {
 		Pooler pooler = getNewPooler(poolerConfig,randomizePoolerConnections);
 		Memory memory = getNewMemory(memoryConfig);
 		return new DefaultStream(msgr,uni,encoder.copy(),pooler,memory);
+	}
+	
+	public ClassificationStream getNewClassificationStream(boolean randomizePoolerConnections) {
+		return getNewClassificationStream(null,null,randomizePoolerConnections);
+	}
+	
+	public ClassificationStream getNewClassificationStream(Messenger msgr, WorkerUnion uni,boolean randomizePoolerConnections) {
+		PoolerConfig poolerConfig = getNewPoolerConfig();
+		MemoryConfig memoryConfig = getNewMemoryConfig(poolerConfig);
+		ClassifierConfig classifierConfig = getNewClassifierConfig();
+		Pooler pooler = getNewPooler(poolerConfig,randomizePoolerConnections);
+		Memory memory = getNewMemory(memoryConfig);
+		Classifier classifier = getNewClassifier(classifierConfig);
+		return new ClassificationStream(msgr,uni,encoder.copy(),pooler,memory,classifier);
 	}
 
 	public BufferedPredictionStream getNewBufferedPredictionStream(boolean randomizePoolerConnections) {
@@ -235,8 +288,16 @@ public class StreamFactory implements JsAble {
 		this.outputActivationSDR = outputActivationSDR;
 	}
 
+	public List<Integer> getPredictSteps() {
+		return predictSteps;
+	}
+
 	public void setValueKey(String valueKey) {
 		this.valueKey = valueKey;
+	}
+
+	public void setLabelKey(String labelKey) {
+		this.labelKey = labelKey;
 	}
 	
 	protected void initialize(StreamEncoder encoder,int outputLength, int outputBits) {
@@ -271,6 +332,23 @@ public class StreamFactory implements JsAble {
 		return r;
 	}
 
+	protected ClassifierConfig getNewClassifierConfig() {
+		ClassifierConfig r = null;
+		int steps = 0;
+		if (predictSteps.size()>0) {
+			steps = predictSteps.get(0);
+		}
+		r = new ClassifierConfig(steps);
+		if (predictSteps.size()>1) {
+			for (int i = 1; i<predictSteps.size(); i++) {
+				r.addPredictSteps(predictSteps.get(i));
+			}
+		}
+		r.setValueKey(valueKey);
+		r.setLabelKey(labelKey);
+		return r;
+	}
+
 	protected Pooler getNewPooler(PoolerConfig poolerConfig,boolean randomizePoolerConnections) {
 		Pooler r = new Pooler(poolerConfig);
 		if (randomizePoolerConnections) {
@@ -281,5 +359,9 @@ public class StreamFactory implements JsAble {
 
 	protected Memory getNewMemory(MemoryConfig memoryConfig) {
 		return new Memory(memoryConfig);
+	}
+
+	protected Classifier getNewClassifier(ClassifierConfig classifierConfig) {
+		return new Classifier(classifierConfig);
 	}
 }

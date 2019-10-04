@@ -12,6 +12,10 @@ public class ClassifierConfig {
 	protected String			valueKey		= DateTimeSDR.VALUE_KEY;
 	protected String			labelKey		= DateTimeSDR.LABEL_KEY;
 	
+	public ClassifierConfig() {
+		predictSteps.add(0);
+	}
+	
 	public ClassifierConfig(int steps) {
 		if (steps < 1) {
 			steps = 1;
