@@ -1,11 +1,11 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
-import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.ClassificationStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamFactory;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
+import nl.zeesoft.zdk.htm.util.SDRMap;
 import nl.zeesoft.zdk.test.Tester;
 
 public class TestClassificationStream extends TestAnomalyDetector implements StreamListener {

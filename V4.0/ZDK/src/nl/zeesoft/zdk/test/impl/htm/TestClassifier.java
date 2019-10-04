@@ -11,10 +11,10 @@ import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
-import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRMap;
-import nl.zeesoft.zdk.htm.stream.HistoricalFloats;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
+import nl.zeesoft.zdk.htm.util.HistoricalFloats;
+import nl.zeesoft.zdk.htm.util.SDR;
+import nl.zeesoft.zdk.htm.util.SDRMap;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 

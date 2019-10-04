@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class Pooler extends ProcessorObject {
 	protected PoolerConfig							config			= null;

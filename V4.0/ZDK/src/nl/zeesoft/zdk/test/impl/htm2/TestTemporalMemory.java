@@ -3,10 +3,10 @@ package nl.zeesoft.zdk.test.impl.htm2;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.sdr.DateTimeValue;
-import nl.zeesoft.zdk.htm.sdr.DateTimeValueGenerator;
-import nl.zeesoft.zdk.htm.sdr.SDR;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
+import nl.zeesoft.zdk.htm.util.DateTimeValue;
+import nl.zeesoft.zdk.htm.util.DateTimeValueGenerator;
+import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm2.impl.SpatialPooler;
 import nl.zeesoft.zdk.htm2.impl.SpatialPoolerConfig;
 import nl.zeesoft.zdk.htm2.impl.TemporalMemory;

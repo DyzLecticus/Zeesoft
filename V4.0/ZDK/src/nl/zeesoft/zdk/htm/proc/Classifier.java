@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class Classifier extends ProcessorObject {
 	public static final String			CLASSIFICATION_KEY		= "classification";

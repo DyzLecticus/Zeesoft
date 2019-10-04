@@ -3,8 +3,8 @@ package nl.zeesoft.zdk.test.impl.htm;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
-import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRMap;
+import nl.zeesoft.zdk.htm.util.SDR;
+import nl.zeesoft.zdk.htm.util.SDRMap;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 

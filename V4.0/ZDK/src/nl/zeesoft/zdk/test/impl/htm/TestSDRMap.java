@@ -3,9 +3,9 @@ package nl.zeesoft.zdk.test.impl.htm;
 import java.util.List;
 import java.util.SortedMap;
 
-import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRMap;
-import nl.zeesoft.zdk.htm.sdr.SDRMapElement;
+import nl.zeesoft.zdk.htm.util.SDR;
+import nl.zeesoft.zdk.htm.util.SDRMap;
+import nl.zeesoft.zdk.htm.util.SDRMapElement;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 

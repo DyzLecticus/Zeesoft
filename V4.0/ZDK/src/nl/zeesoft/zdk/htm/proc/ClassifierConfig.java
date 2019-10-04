@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.htm.proc;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 
 public class ClassifierConfig {
 	protected boolean			initialized		= false;

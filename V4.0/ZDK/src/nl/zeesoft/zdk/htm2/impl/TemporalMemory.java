@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm2.mdl.Cell;
 import nl.zeesoft.zdk.htm2.mdl.Column;
 import nl.zeesoft.zdk.htm2.mdl.DistalDendrite;

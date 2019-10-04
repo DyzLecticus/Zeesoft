@@ -1,9 +1,9 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
-import nl.zeesoft.zdk.htm.sdr.DateTimeValue;
-import nl.zeesoft.zdk.htm.sdr.DateTimeValueGenerator;
-import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.StreamEncoder;
+import nl.zeesoft.zdk.htm.util.DateTimeValue;
+import nl.zeesoft.zdk.htm.util.DateTimeValueGenerator;
+import nl.zeesoft.zdk.htm.util.SDRMap;
 import nl.zeesoft.zdk.test.MockObject;
 
 public class MockRegularSDRMap extends MockObject {

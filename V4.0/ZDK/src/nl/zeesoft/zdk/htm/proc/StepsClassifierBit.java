@@ -2,8 +2,8 @@ package nl.zeesoft.zdk.htm.proc;
 
 import java.util.HashMap;
 
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class StepsClassifierBit {
 	protected ClassifierConfig			config		= null;

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
+import nl.zeesoft.zdk.htm.util.HistoricalBits;
 
 public class PoolerColumn {
 	private 	PoolerConfig			config			= null;

@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.htm.enc;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class ScalarEncoder extends EncoderObject {
 	private int		minValue	= 0;

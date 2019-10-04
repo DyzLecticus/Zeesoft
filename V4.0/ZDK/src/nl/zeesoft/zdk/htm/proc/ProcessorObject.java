@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public abstract class ProcessorObject {
 	protected DecimalFormat		df 			= new DecimalFormat("0.000");

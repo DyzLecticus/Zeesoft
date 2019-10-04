@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.htm.enc;
 
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public abstract class EncoderObject {
 	protected int		length		= 0;

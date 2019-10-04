@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class StepsClassifier {
 	protected ClassifierConfig						config					= null;

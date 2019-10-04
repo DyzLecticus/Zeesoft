@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.htm.enc;
 
 import java.util.SortedMap;
 
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class DateTimeValuesEncoder extends DateTimeEncoder {
 	private static final String		VALUE1		= "VALUE1";

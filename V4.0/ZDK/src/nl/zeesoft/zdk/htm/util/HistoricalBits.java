@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.proc;
+package nl.zeesoft.zdk.htm.util;
 
 import java.util.LinkedList;
 import java.util.Queue;

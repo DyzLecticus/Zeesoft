@@ -3,7 +3,8 @@ package nl.zeesoft.zdk.htm.stream;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.HistoricalFloats;
+import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class AnomalyDetector extends Locker implements StreamListener {

@@ -5,7 +5,7 @@ import java.util.SortedMap;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class DateTimeEncoder extends CombinedEncoder {
 	private static final String		MONTH		= "MONTH";

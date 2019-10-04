@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.sdr;
+package nl.zeesoft.zdk.htm.util;
 
 public class SDRMapElement {
 	public SDR		key		= null;

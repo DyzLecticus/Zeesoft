@@ -1,8 +1,8 @@
 package nl.zeesoft.zdk.htm.proc;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.htm.sdr.SDR;
-import nl.zeesoft.zdk.htm.sdr.SDRMap;
+import nl.zeesoft.zdk.htm.util.SDR;
+import nl.zeesoft.zdk.htm.util.SDRMap;
 
 public class PoolerConfig {
 	protected boolean		initialized						= false;

@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.sdr;
+package nl.zeesoft.zdk.htm.util;
 
 import java.util.Calendar;
 import java.util.TimeZone;

@@ -11,7 +11,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class RDScalarEncoder extends StateEncoderObject {
 	private SortedMap<Float,SDR>	sdrsByValue			= new TreeMap<Float,SDR>();

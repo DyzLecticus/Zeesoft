@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.htm.stream;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.sdr.SDR;
+import nl.zeesoft.zdk.htm.util.SDR;
 
 public class StreamResult {
 	protected long		added		= System.nanoTime();
