@@ -11,7 +11,7 @@ import nl.zeesoft.zdk.thread.Locker;
 public class ValuePredictor extends Locker implements StreamListener {
 	private static final int				PREDICTION_SDR	= 3;
 	
-	protected PredictionStream				stream			= null;
+	protected BufferedPredictionStream		stream			= null;
 	
 	private	List<ValuePredictorListener>	listeners		= new ArrayList<ValuePredictorListener>();
 	

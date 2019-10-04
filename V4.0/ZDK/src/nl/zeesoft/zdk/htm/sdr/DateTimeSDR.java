@@ -5,6 +5,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class DateTimeSDR extends SDR {
+	public static final String			VALUE_KEY	= "value";
+	public static final String			LABEL_KEY	= "label";
+	
 	public	long						dateTime	= System.currentTimeMillis();
 	public	SortedMap<String,Object>	keyValues	= new TreeMap<String,Object>();
 	

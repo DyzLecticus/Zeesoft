@@ -2,10 +2,11 @@ package nl.zeesoft.zdk.htm.stream;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
+import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
-import nl.zeesoft.zdk.htm.proc.Predictor;
+import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -13,9 +14,9 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class StreamFactory implements JsAble {
-	protected StreamEncoder	encoder							= null;
-	protected int			outputLength					= 0;
-	protected int			outputBits						= 0;
+	protected StreamEncoder	encoder								= null;
+	protected int			outputLength						= 0;
+	protected int			outputBits							= 0;
 
 	// Pooler configuration
 	protected float			potentialProximalConnections		= 0.75F;
@@ -35,9 +36,10 @@ public class StreamFactory implements JsAble {
 	protected float			distalConnectionThreshold			= 0.2F;
 	protected float			distalConnectionDecrement			= 0.003F;
 	protected float			distalConnectionIncrement			= 0.1F;
+	protected boolean		outputActivationSDR					= true;
 
 	// Buffered predictor value key
-	protected String		valueKey						= StreamEncoder.VALUE_KEY;
+	protected String		valueKey							= DateTimeSDR.VALUE_KEY;
 	
 	public StreamFactory(int outputLength, int outputBits) {
 		initialize(new StreamEncoder(),outputLength,outputBits);
@@ -69,13 +71,15 @@ public class StreamFactory implements JsAble {
 		
 		// Memory configuration
 		json.rootElement.children.add(new JsElem("depth","" + depth));
+		json.rootElement.children.add(new JsElem("depth","" + depth));
 		json.rootElement.children.add(new JsElem("maxDistalConnectionsPerCell","" + maxDistalConnectionsPerCell));
 		json.rootElement.children.add(new JsElem("localDistalConnectedRadius","" + localDistalConnectedRadius));
 		json.rootElement.children.add(new JsElem("minAlmostActiveDistalConnections","" + minAlmostActiveDistalConnections));
 		json.rootElement.children.add(new JsElem("distalConnectionThreshold","" + distalConnectionThreshold));
 		json.rootElement.children.add(new JsElem("distalConnectionDecrement","" + distalConnectionDecrement));
 		json.rootElement.children.add(new JsElem("distalConnectionIncrement","" + distalConnectionIncrement));
-
+		json.rootElement.children.add(new JsElem("outputActivationSDR","" + outputActivationSDR));
+		
 		// Buffered predictor value key
 		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
 		return json;
@@ -112,6 +116,7 @@ public class StreamFactory implements JsAble {
 			distalConnectionThreshold = json.rootElement.getChildFloat("distalConnectionThreshold",distalConnectionThreshold);
 			distalConnectionDecrement = json.rootElement.getChildFloat("distalConnectionDecrement",distalConnectionDecrement);
 			distalConnectionIncrement = json.rootElement.getChildFloat("distalConnectionIncrement",distalConnectionIncrement);
+			outputActivationSDR = json.rootElement.getChildBoolean("outputActivationSDR",outputActivationSDR);
 			
 			// Buffered predictor value key
 			valueKey = json.rootElement.getChildString("valueKey",valueKey);
@@ -134,16 +139,16 @@ public class StreamFactory implements JsAble {
 		return r;
 	}
 	
-	public PredictionStream getNewPredictionStream(boolean randomizePoolerConnections) {
-		return getNewPredictionStream(null,null,randomizePoolerConnections);
+	public DefaultStream getNewDefaultStream(boolean randomizePoolerConnections) {
+		return getNewDefaultStream(null,null,randomizePoolerConnections);
 	}
 	
-	public PredictionStream getNewPredictionStream(Messenger msgr, WorkerUnion uni,boolean randomizePoolerConnections) {
+	public DefaultStream getNewDefaultStream(Messenger msgr, WorkerUnion uni,boolean randomizePoolerConnections) {
 		PoolerConfig poolerConfig = getNewPoolerConfig();
 		MemoryConfig memoryConfig = getNewMemoryConfig(poolerConfig);
 		Pooler pooler = getNewPooler(poolerConfig,randomizePoolerConnections);
-		Predictor predictor = new Predictor(memoryConfig);
-		return new PredictionStream(msgr,uni,encoder.copy(),pooler,predictor);
+		Memory memory = getNewMemory(memoryConfig);
+		return new DefaultStream(msgr,uni,encoder.copy(),pooler,memory);
 	}
 
 	public BufferedPredictionStream getNewBufferedPredictionStream(boolean randomizePoolerConnections) {
@@ -226,6 +231,10 @@ public class StreamFactory implements JsAble {
 		this.distalConnectionIncrement = distalConnectionIncrement;
 	}
 
+	public void setOutputActivationSDR(boolean outputActivationSDR) {
+		this.outputActivationSDR = outputActivationSDR;
+	}
+
 	public void setValueKey(String valueKey) {
 		this.valueKey = valueKey;
 	}
@@ -241,8 +250,8 @@ public class StreamFactory implements JsAble {
 		r.setPotentialProximalConnections(potentialProximalConnections);
 		r.setProximalRadius(proximalRadius);
 		r.setProximalConnectionThreshold(proximalConnectionThreshold);
-		r.setProximalConnectionIncrement(proximalConnectionIncrement);
 		r.setProximalConnectionDecrement(proximalConnectionDecrement);
+		r.setProximalConnectionIncrement(proximalConnectionIncrement);
 		r.setBoostStrength(boostStrength);
 		r.setBoostInhibitionRadius(boostInhibitionRadius);
 		r.setBoostActivityLogSize(boostActivityLogSize);
@@ -256,8 +265,9 @@ public class StreamFactory implements JsAble {
 		r.setLocalDistalConnectedRadius(localDistalConnectedRadius);
 		r.setMinAlmostActiveDistalConnections(minAlmostActiveDistalConnections);
 		r.setDistalConnectionThreshold(distalConnectionThreshold);
-		r.setDistalConnectionIncrement(distalConnectionIncrement);
 		r.setDistalConnectionDecrement(distalConnectionDecrement);
+		r.setDistalConnectionIncrement(distalConnectionIncrement);
+		r.setOutputActivationSDR(outputActivationSDR);
 		return r;
 	}
 
@@ -267,5 +277,9 @@ public class StreamFactory implements JsAble {
 			r.randomizeConnections();
 		}
 		return r;
+	}
+
+	protected Memory getNewMemory(MemoryConfig memoryConfig) {
+		return new Memory(memoryConfig);
 	}
 }

@@ -17,9 +17,6 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class StreamEncoder extends CombinedEncoder implements JsAble {
-	public static final String					VALUE_KEY			= "value";
-	public static final String					LABEL_KEY			= "label";
-	
 	private static final String					MONTH				= "MONTH";
 	private static final String					DAY_OF_WEEK			= "WEEKDAY";
 	private static final String					HOUR_OF_DAY			= "HOUR";
@@ -288,10 +285,10 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 			sdr.dateTime = System.currentTimeMillis();
 		}
 		if (value!=null) {
-			sdr.keyValues.put(VALUE_KEY,value);
+			sdr.keyValues.put(DateTimeSDR.VALUE_KEY,value);
 		}
 		if (label!=null) {
-			sdr.keyValues.put(LABEL_KEY,label);
+			sdr.keyValues.put(DateTimeSDR.LABEL_KEY,label);
 		}
 	}
 	

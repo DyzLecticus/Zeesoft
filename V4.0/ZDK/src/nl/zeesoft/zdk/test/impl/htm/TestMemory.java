@@ -65,6 +65,7 @@ public class TestMemory extends TestObject {
 		pooler.randomizeConnections();
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
+		memoryConfig.setOutputActivationSDR(false); // Configure the memory to output the burst SDR
 		System.out.println(memoryConfig.getDescription());
 		
 		Memory memory = new Memory(memoryConfig);

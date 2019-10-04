@@ -2,10 +2,11 @@ package nl.zeesoft.zdk.htm.stream;
 
 import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
 import nl.zeesoft.zdk.htm.proc.Pooler;
+import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class BufferedPredictionStream extends PredictionStream {
+public class BufferedPredictionStream extends DefaultStream {
 	public BufferedPredictionStream(Pooler pooler,BufferedPredictor predictor) {
 		super(pooler, predictor);
 	}
@@ -23,7 +24,7 @@ public class BufferedPredictionStream extends PredictionStream {
 	}
 
 	public ValuePredictor getNewValuePredictor() {
-		return getNewValuePredictor(StreamEncoder.VALUE_KEY);
+		return getNewValuePredictor(DateTimeSDR.VALUE_KEY);
 	}
 	
 	public ValuePredictor getNewValuePredictor(String valueKey) {
@@ -33,7 +34,7 @@ public class BufferedPredictionStream extends PredictionStream {
 	}
 	
 	public ValueAnomalyDetector getNewValueAnomalyDetector() {
-		return getNewValueAnomalyDetector(StreamEncoder.VALUE_KEY);
+		return getNewValueAnomalyDetector(DateTimeSDR.VALUE_KEY);
 	}
 
 	public ValueAnomalyDetector getNewValueAnomalyDetector(String valueKey) {

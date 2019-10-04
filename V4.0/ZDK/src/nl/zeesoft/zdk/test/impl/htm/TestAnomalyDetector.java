@@ -8,9 +8,9 @@ import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.StatsLog;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
-import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
-import nl.zeesoft.zdk.htm.stream.PredictionStream;
+import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
+import nl.zeesoft.zdk.htm.stream.DefaultStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamFactory;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
@@ -26,7 +26,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	
 	protected int				numExpected		= 0;
 	
-	private PredictionStream	stream			= null;
+	private DefaultStream		stream			= null;
 	private AnomalyDetector		detector 		= null;
 	
 	public TestAnomalyDetector(Tester tester) {
@@ -47,8 +47,10 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println("~~~~");
 		System.out.println("// Create the stream factory");
 		System.out.println("StreamFactory factory = new StreamFactory(1024,21);");
+		System.out.println("// Configure the stream to output the burst SDR");
+		System.out.println("factory.setOutputActivationSDR(false);");
 		System.out.println("// Create the stream");
-		System.out.println("PredictionStream stream = factory.getNewPredictionStream(true);");
+		System.out.println("DefaultStream stream = factory.getNewDefaultStream(true);");
 		System.out.println("// Create the anomaly detector");
 		System.out.println("AnomalyDetector detector = stream.getNewAnomalyDetector();");
 		System.out.println("// Attach a listener (implement the AnomalyDetectorListener interface)");
@@ -70,7 +72,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestAnomalyDetector.class));
 		System.out.println(" * " + getTester().getLinkForClass(StreamFactory.class));
-		System.out.println(" * " + getTester().getLinkForClass(PredictionStream.class));
+		System.out.println(" * " + getTester().getLinkForClass(DefaultStream.class));
 		System.out.println(" * " + getTester().getLinkForClass(AnomalyDetector.class));
 		System.out.println(" * " + getTester().getLinkForClass(AnomalyDetectorListener.class));
 		System.out.println();
@@ -88,13 +90,14 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		SDRMap inputSDRMap = getInputSDRMap();
 
 		StreamFactory factory = new StreamFactory(1024,21);
+		factory.setOutputActivationSDR(false); // Configure the stream to output the burst SDR
 		System.out.println(factory.getDescription());
 
 		System.out.println("");
 		System.out.println("Stream factory JSON;");
 		System.out.println(factory.toJson().toStringBuilderReadFormat());
 		
-		stream = factory.getNewPredictionStream(true);
+		stream = factory.getNewDefaultStream(true);
 		detector = stream.getNewAnomalyDetector();
 		stream.addListener(this);
 		detector.addListener(this);
@@ -107,7 +110,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		JsFile json = stream.toJson();
 		ZStringBuilder oriJs = json.toStringBuilderReadFormat();
 		
-		PredictionStream streamNew = factory.getNewPredictionStream(false);
+		DefaultStream streamNew = factory.getNewDefaultStream(false);
 		streamNew.fromJson(json);
 		ZStringBuilder newJs = streamNew.toJson().toStringBuilderReadFormat();
 		

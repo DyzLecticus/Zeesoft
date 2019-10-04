@@ -26,7 +26,7 @@ public class MemoryColumn {
 		}
 	}
 	
-	protected boolean activateCells(boolean learn,List<MemoryColumnCell> previouslyActiveCells) {
+	protected boolean activateCells(boolean learn,List<MemoryColumnCell> previouslyActiveCells, Set<MemoryColumnCell> activatedCells) {
 		boolean r = false;
 		MemoryColumnCell winner = null;
 		List<MemoryColumnCell> predictedCells = new ArrayList<MemoryColumnCell>();
@@ -46,6 +46,9 @@ public class MemoryColumn {
 		} else if (predictedCells.size()>1) {
 			winner = predictedCells.get(ZRandomize.getRandomInt(0,predictedCells.size()-1));
 		}
+		if (winner!=null) {
+			activatedCells.add(winner);
+		}
 		
 		boolean added = false;
 		if (winner==null) {
@@ -53,6 +56,7 @@ public class MemoryColumn {
 			if (learn && previouslyActiveCells.size()>0) {
 				SortedMap<Integer,List<MemoryColumnCell>> cellsByAlmostActiveLinks = new TreeMap<Integer,List<MemoryColumnCell>>();
 				for (MemoryColumnCell cell: cells) {
+					activatedCells.add(cell);
 					int key = cell.getAlmostActiveLinks();
 					if (key>0) {
 						List<MemoryColumnCell> list = cellsByAlmostActiveLinks.get(key);

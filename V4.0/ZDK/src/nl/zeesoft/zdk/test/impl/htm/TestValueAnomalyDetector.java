@@ -2,10 +2,10 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.util.HashMap;
 
+import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
 import nl.zeesoft.zdk.htm.stream.BufferedPredictionStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
-import nl.zeesoft.zdk.htm.stream.StreamEncoder;
 import nl.zeesoft.zdk.htm.stream.StreamFactory;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
@@ -84,8 +84,8 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		if (counter % (500) == 0) {
 			if (previousResult!=null && previousResult.outputSDRs.size()>3) {
 				System.out.println("Processed SDRs: " + counter +
-					", average accuracy: " + df.format(detector.getAverageAccuracy(StreamEncoder.VALUE_KEY)) +
-					", average deviation: " + df.format(detector.getAverageDeviation(StreamEncoder.VALUE_KEY)) +
+					", average accuracy: " + df.format(detector.getAverageAccuracy(DateTimeSDR.VALUE_KEY)) +
+					", average deviation: " + df.format(detector.getAverageDeviation(DateTimeSDR.VALUE_KEY)) +
 					", average range accuracy: " + df.format(detector.getAverageRangeAccuracy())
 				);
 			}

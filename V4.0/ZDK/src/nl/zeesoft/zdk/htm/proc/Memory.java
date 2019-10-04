@@ -11,9 +11,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Memory extends ProcessorObject {
-	protected MemoryConfig			config		= null;
+	protected MemoryConfig			config				= null;
 
-	protected List<MemoryColumn>	columns		= new ArrayList<MemoryColumn>();
+	protected List<MemoryColumn>	columns				= new ArrayList<MemoryColumn>();
 	
 	public Memory(MemoryConfig config) {
 		this.config = config;
@@ -86,7 +86,12 @@ public class Memory extends ProcessorObject {
 
 	@Override
 	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
-		SDR r = new SDR(config.length);
+		SDR r = null;
+		if (config.outputActivationSDR) {
+			r = new SDR(config.length * config.depth);
+		} else {
+			r = new SDR(config.length);
+		}
 		long start = 0;
 		
 		start = System.nanoTime();
@@ -210,13 +215,24 @@ public class Memory extends ProcessorObject {
 		return r;
 	}
 
-	protected void activateColumnCells(SDR input,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR burstSDR) {
+	protected Set<MemoryColumnCell> activateColumnCells(SDR input,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR outputSDR) {
+		Set<MemoryColumnCell> r = new HashSet<MemoryColumnCell>(); 
 		for (Integer onBit: input.getOnBits()) {
 			MemoryColumn col = columns.get(onBit);
-			if (col.activateCells(learn,previouslyActiveCells)) {
-				burstSDR.setBit(col.index,true);
+			Set<MemoryColumnCell> activatedCells = new HashSet<MemoryColumnCell>();
+			if (col.activateCells(learn,previouslyActiveCells,activatedCells)) {
+				if (!config.outputActivationSDR) {
+					outputSDR.setBit(col.index,true);
+				}
+			}
+			for (MemoryColumnCell cell: activatedCells) {
+				if (config.outputActivationSDR) {
+					outputSDR.setBit(cell.cellIndex,true);
+				}
+				r.add(cell);
 			}
 		}
+		return r;
 	}
 	
 	protected void calculateActivity() {
