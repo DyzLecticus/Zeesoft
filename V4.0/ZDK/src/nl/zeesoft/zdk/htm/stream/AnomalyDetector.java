@@ -61,14 +61,14 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	@Override
 	public void processedResult(Stream stream, StreamResult result) {
 		
-		SDR activationSDR = result.outputSDRs.get(0);
-		SDR burstSDR = result.outputSDRs.get(1);
-		if (activationSDR.length() == burstSDR.length()) {
+		SDR poolerSDR = result.outputSDRs.get(0);
+		SDR burstSDR = result.outputSDRs.get(2);
+		if (poolerSDR.length() == burstSDR.length()) {
 			boolean warn = false;
 			float averageAccuracy = 0;
 			float difference = 0;
 			
-			float accuracy = 1F - (float) burstSDR.onBits() / (float) activationSDR.onBits();
+			float accuracy = 1F - (float) burstSDR.onBits() / (float) poolerSDR.onBits();
 			
 			lockMe(this);
 			List<AnomalyDetectorListener> list = new ArrayList<AnomalyDetectorListener>(listeners);

@@ -43,11 +43,9 @@ public class StreamFactory implements JsAble {
 
 	// Classifier configuration
 	protected List<Integer>		predictSteps						= new ArrayList<Integer>();
-	protected String			valueKey							= DateTimeSDR.VALUE_KEY;
-	protected String			labelKey							= DateTimeSDR.LABEL_KEY;
-	
-	// Buffered predictor value key
-	//protected String		valueKey							= DateTimeSDR.VALUE_KEY;
+	protected String			classifyValueKey					= DateTimeSDR.VALUE_KEY;
+	protected String			classifyLabelKey					= DateTimeSDR.LABEL_KEY;
+	protected int				classifyMaxCount					= 40;
 	
 	public StreamFactory(int outputLength, int outputBits) {
 		initialize(new StreamEncoder(),outputLength,outputBits);
@@ -96,8 +94,9 @@ public class StreamFactory implements JsAble {
 			pSteps.append("" + steps);
 		}
 		json.rootElement.children.add(new JsElem("predictSteps",pSteps,true));
-		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
-		json.rootElement.children.add(new JsElem("labelKey",labelKey,true));
+		json.rootElement.children.add(new JsElem("classifyValueKey",classifyValueKey,true));
+		json.rootElement.children.add(new JsElem("classifyLabelKey",classifyLabelKey,true));
+		json.rootElement.children.add(new JsElem("classifyMaxCount","" + classifyMaxCount));
 		return json;
 	}
 
@@ -142,8 +141,9 @@ public class StreamFactory implements JsAble {
 					predictSteps.add(Integer.parseInt(pStep.toString()));
 				}
 			}
-			valueKey = json.rootElement.getChildString("valueKey",valueKey);
-			labelKey = json.rootElement.getChildString("labelKey",labelKey);
+			classifyValueKey = json.rootElement.getChildString("classifyValueKey",classifyValueKey);
+			classifyLabelKey = json.rootElement.getChildString("classifyLabelKey",classifyLabelKey);
+			classifyMaxCount = json.rootElement.getChildInt("classifyMaxCount",classifyMaxCount);
 		}
 	}
 	
@@ -264,12 +264,16 @@ public class StreamFactory implements JsAble {
 		return predictSteps;
 	}
 
-	public void setValueKey(String valueKey) {
-		this.valueKey = valueKey;
+	public void setClassifyValueKey(String classifyValueKey) {
+		this.classifyValueKey = classifyValueKey;
 	}
 
-	public void setLabelKey(String labelKey) {
-		this.labelKey = labelKey;
+	public void setClassifyLabelKey(String classifyLabelKey) {
+		this.classifyLabelKey = classifyLabelKey;
+	}
+
+	public void setClassifyMaxCount(int classifyMaxCount) {
+		this.classifyMaxCount = classifyMaxCount;
 	}
 	
 	protected void initialize(StreamEncoder encoder,int outputLength, int outputBits) {
@@ -315,8 +319,9 @@ public class StreamFactory implements JsAble {
 				r.addPredictSteps(predictSteps.get(i));
 			}
 		}
-		r.setValueKey(valueKey);
-		r.setLabelKey(labelKey);
+		r.setValueKey(classifyValueKey);
+		r.setLabelKey(classifyLabelKey);
+		r.setMaxCount(classifyMaxCount);
 		return r;
 	}
 

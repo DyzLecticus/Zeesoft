@@ -11,7 +11,7 @@ public class ClassifierConfig {
 	protected List<Integer>		predictSteps	= new ArrayList<Integer>();
 	protected String			valueKey		= DateTimeSDR.VALUE_KEY;
 	protected String			labelKey		= DateTimeSDR.LABEL_KEY;
-	protected int				maxCount		= 30;
+	protected int				maxCount		= 40;
 	
 	public ClassifierConfig() {
 		predictSteps.add(0);
@@ -39,6 +39,12 @@ public class ClassifierConfig {
 	public void setLabelKey(String labelKey) {
 		if (!initialized) {
 			this.labelKey = labelKey;
+		}
+	}
+	
+	public void setMaxCount(int maxCount) {
+		if (!initialized) {
+			this.maxCount = maxCount;
 		}
 	}
 }
