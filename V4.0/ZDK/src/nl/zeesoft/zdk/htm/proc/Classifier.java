@@ -90,41 +90,43 @@ public class Classifier extends ProcessorObject {
 	protected DateTimeSDR generatePrediction(SDR input) {
 		HashMap<Float,Integer> valueCounts = new HashMap<Float,Integer>();
 		HashMap<String,Integer> labelCounts = new HashMap<String,Integer>();
-		int maxValueCounts = 0;
-		int maxLabelCounts = 0;
 		List<Float> maxCountedValues = new ArrayList<Float>();
 		List<String> maxCountedLabels = new ArrayList<String>();
-		for (Integer onBit: input.getOnBits()) {
-			ClassifierBit bit = bits.get(onBit);
-			if (bit!=null) {
-				for (Float value: bit.valueCounts.keySet()) {
-					Integer count = valueCounts.get(value);
-					if (count==null) {
-						count = new Integer(0);
+		if (bits.size()>0) {
+			int maxValueCounts = 0;
+			int maxLabelCounts = 0;
+			for (Integer onBit: input.getOnBits()) {
+				ClassifierBit bit = bits.get(onBit);
+				if (bit!=null) {
+					for (Float value: bit.valueCounts.keySet()) {
+						Integer count = valueCounts.get(value);
+						if (count==null) {
+							count = new Integer(0);
+						}
+						count += bit.valueCounts.get(value);
+						valueCounts.put(value,count);
+						if (count > maxValueCounts) {
+							maxValueCounts = count;
+							maxCountedValues.clear();
+						}
+						if (count == maxValueCounts) {
+							maxCountedValues.add(value);
+						}
 					}
-					count += bit.valueCounts.get(value);
-					valueCounts.put(value,count);
-					if (count > maxValueCounts) {
-						maxValueCounts = count;
-						maxCountedValues.clear();
-					}
-					if (count == maxValueCounts) {
-						maxCountedValues.add(value);
-					}
-				}
-				for (String label: bit.labelCounts.keySet()) {
-					Integer count = labelCounts.get(label);
-					if (count==null) {
-						count = new Integer(0);
-					}
-					count += bit.labelCounts.get(label);
-					labelCounts.put(label,count);
-					if (count > maxLabelCounts) {
-						maxLabelCounts = count;
-						maxCountedLabels.clear();
-					}
-					if (count == maxLabelCounts) {
-						maxCountedLabels.add(label);
+					for (String label: bit.labelCounts.keySet()) {
+						Integer count = labelCounts.get(label);
+						if (count==null) {
+							count = new Integer(0);
+						}
+						count += bit.labelCounts.get(label);
+						labelCounts.put(label,count);
+						if (count > maxLabelCounts) {
+							maxLabelCounts = count;
+							maxCountedLabels.clear();
+						}
+						if (count == maxLabelCounts) {
+							maxCountedLabels.add(label);
+						}
 					}
 				}
 			}
