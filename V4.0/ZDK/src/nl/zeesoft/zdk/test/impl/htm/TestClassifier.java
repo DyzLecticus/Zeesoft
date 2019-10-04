@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.proc.Classification;
 import nl.zeesoft.zdk.htm.proc.Classifier;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
 import nl.zeesoft.zdk.htm.proc.Memory;
@@ -155,15 +156,13 @@ public class TestClassifier extends TestObject {
 		
 		predictedValues.clear();
 		ZStringBuilder predictions = new ZStringBuilder();
-		for (String key: predictionSDR.keyValues.keySet()) {
-			if (key.startsWith(DateTimeSDR.VALUE_KEY)) {
-				if (predictions.length()>0) {
-					predictions.append(", ");
-				}
-				Object predicted = predictionSDR.keyValues.get(key);
-				predictions.append("" + predicted);
-				predictedValues.add(predicted);
+		Classification classification = (Classification) predictionSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
+		for (Object pValue: classification.maxCountedValues) {
+			if (predictions.length()>0) {
+				predictions.append(", ");
 			}
+			predictions.append("" + pValue);
+			predictedValues.add(pValue);
 		}
 		
 		if (counter % (500) == 0) {

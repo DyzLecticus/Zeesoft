@@ -30,5 +30,6 @@ public class ClassificationStream extends Stream {
 	protected void initialize(Pooler pooler,Memory memory,Classifier classifier) {
 		addInputProcessor(pooler);
 		addNextProcessor(memory,0);
+		addNextProcessor(classifier,1);
 	}
 }

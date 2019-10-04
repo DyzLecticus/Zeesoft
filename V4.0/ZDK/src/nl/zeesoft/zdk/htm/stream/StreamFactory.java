@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.htm.proc.BufferedPredictor;
 import nl.zeesoft.zdk.htm.proc.Classifier;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
 import nl.zeesoft.zdk.htm.proc.Memory;
@@ -41,7 +40,6 @@ public class StreamFactory implements JsAble {
 	protected float				distalConnectionThreshold			= 0.2F;
 	protected float				distalConnectionDecrement			= 0.003F;
 	protected float				distalConnectionIncrement			= 0.1F;
-	protected boolean			outputActivationSDR					= true;
 
 	// Classifier configuration
 	protected List<Integer>		predictSteps						= new ArrayList<Integer>();
@@ -88,7 +86,6 @@ public class StreamFactory implements JsAble {
 		json.rootElement.children.add(new JsElem("distalConnectionThreshold","" + distalConnectionThreshold));
 		json.rootElement.children.add(new JsElem("distalConnectionDecrement","" + distalConnectionDecrement));
 		json.rootElement.children.add(new JsElem("distalConnectionIncrement","" + distalConnectionIncrement));
-		json.rootElement.children.add(new JsElem("outputActivationSDR","" + outputActivationSDR));
 		
 		// Classifier configuration
 		ZStringBuilder pSteps = new ZStringBuilder();
@@ -135,7 +132,6 @@ public class StreamFactory implements JsAble {
 			distalConnectionThreshold = json.rootElement.getChildFloat("distalConnectionThreshold",distalConnectionThreshold);
 			distalConnectionDecrement = json.rootElement.getChildFloat("distalConnectionDecrement",distalConnectionDecrement);
 			distalConnectionIncrement = json.rootElement.getChildFloat("distalConnectionIncrement",distalConnectionIncrement);
-			outputActivationSDR = json.rootElement.getChildBoolean("outputActivationSDR",outputActivationSDR);
 			
 			// Classifier configuration
 			ZStringBuilder pSteps = json.rootElement.getChildZStringBuilder("predictSteps");
@@ -204,26 +200,6 @@ public class StreamFactory implements JsAble {
 		return new ClassificationStream(msgr,uni,encoder.copy(),pooler,memory,classifier);
 	}
 
-	public BufferedPredictionStream getNewBufferedPredictionStream(boolean randomizePoolerConnections) {
-		return getNewBufferedPredictionStream(null,null,valueKey,randomizePoolerConnections);
-	}
-
-	public BufferedPredictionStream getNewBufferedPredictionStream(String valueKey,boolean randomizePoolerConnections) {
-		return getNewBufferedPredictionStream(null,null,valueKey,randomizePoolerConnections);
-	}
-
-	public BufferedPredictionStream getNewBufferedPredictionStream(Messenger msgr, WorkerUnion uni,boolean randomizePoolerConnections) {
-		return getNewBufferedPredictionStream(null,null,valueKey,randomizePoolerConnections);
-	}
-
-	public BufferedPredictionStream getNewBufferedPredictionStream(Messenger msgr, WorkerUnion uni,String valueKey,boolean randomizePoolerConnections) {
-		PoolerConfig poolerConfig = getNewPoolerConfig();
-		MemoryConfig memoryConfig = getNewMemoryConfig(poolerConfig);
-		Pooler pooler = getNewPooler(poolerConfig,randomizePoolerConnections);
-		BufferedPredictor predictor = new BufferedPredictor(memoryConfig,valueKey);
-		return new BufferedPredictionStream(msgr,uni,encoder.copy(),pooler,predictor);
-	}
-
 	public void setPotentialProximalConnections(float potentialProximalConnections) {
 		this.potentialProximalConnections = potentialProximalConnections;
 	}
@@ -284,10 +260,6 @@ public class StreamFactory implements JsAble {
 		this.distalConnectionIncrement = distalConnectionIncrement;
 	}
 
-	public void setOutputActivationSDR(boolean outputActivationSDR) {
-		this.outputActivationSDR = outputActivationSDR;
-	}
-
 	public List<Integer> getPredictSteps() {
 		return predictSteps;
 	}
@@ -328,7 +300,6 @@ public class StreamFactory implements JsAble {
 		r.setDistalConnectionThreshold(distalConnectionThreshold);
 		r.setDistalConnectionDecrement(distalConnectionDecrement);
 		r.setDistalConnectionIncrement(distalConnectionIncrement);
-		r.setOutputActivationSDR(outputActivationSDR);
 		return r;
 	}
 

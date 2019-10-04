@@ -8,6 +8,8 @@ import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Classifier extends ProcessorObject {
+	public static final String			CLASSIFICATION_KEY		= "classification";
+	
 	protected ClassifierConfig			config					= null;
 	
 	protected List<StepsClassifier>		classifiers				= new ArrayList<StepsClassifier>();
@@ -66,9 +68,9 @@ public class Classifier extends ProcessorObject {
 		
 		classifierSDRs.clear();
 		if (inputSDR!=null) {
-			start = System.currentTimeMillis();
+			start = System.nanoTime();
 			r = generateClassifications(input,learn);
-			logStatsValue("generateClassifications",System.currentTimeMillis() - start);
+			logStatsValue("generateClassifications",System.nanoTime() - start);
 		} else {
 			r = new DateTimeSDR(input.length());
 		}

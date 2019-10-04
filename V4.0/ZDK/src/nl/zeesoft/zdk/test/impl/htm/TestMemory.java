@@ -65,7 +65,6 @@ public class TestMemory extends TestObject {
 		pooler.randomizeConnections();
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
-		memoryConfig.setOutputActivationSDR(false); // Configure the memory to output the burst SDR
 		System.out.println(memoryConfig.getDescription());
 		
 		Memory memory = new Memory(memoryConfig);
@@ -80,7 +79,10 @@ public class TestMemory extends TestObject {
 		System.out.println("Processing input SDR map (" + num + "/" + inputSDRMap.size() + ") ...");
 		for (int i = 0; i < num; i++) {
 			SDR outputSDR = pooler.getSDRForInput(inputSDRMap.getSDR(i),true);
-			SDR burstSDR = memory.getSDRForInput(outputSDR,true);
+			List<SDR> context = new ArrayList<SDR>();
+			context.add(outputSDR);
+			List<SDR> outputSDRs = memory.getSDRsForInput(outputSDR, context, true);
+			SDR burstSDR = outputSDRs.get(1);
 			processedSDR(burstSDR);
 			burstSDRMap.add(burstSDR);
 		}

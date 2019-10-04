@@ -90,7 +90,6 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		SDRMap inputSDRMap = getInputSDRMap();
 
 		StreamFactory factory = new StreamFactory(1024,21);
-		factory.setOutputActivationSDR(false); // Configure the stream to output the burst SDR
 		System.out.println(factory.getDescription());
 
 		System.out.println("");

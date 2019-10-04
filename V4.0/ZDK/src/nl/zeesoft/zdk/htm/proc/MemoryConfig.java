@@ -19,8 +19,6 @@ public class MemoryConfig {
 	protected float			distalConnectionDecrement			= 0.003F;
 	protected float			distalConnectionIncrement			= 0.1F;
 
-	protected boolean		outputActivationSDR					= true;
-	
 	protected int			sizeX								= 0;
 	protected int			sizeY								= 0;
 
@@ -76,12 +74,6 @@ public class MemoryConfig {
 	public void setMinAlmostActiveDistalConnections(int minAlmostActiveDistalConnections) {
 		if (!initialized) {
 			this.minAlmostActiveDistalConnections = minAlmostActiveDistalConnections;
-		}
-	}
-
-	public void setOutputActivationSDR(boolean outputActivationSDR) {
-		if (!initialized) {
-			this.outputActivationSDR = outputActivationSDR;
 		}
 	}
 

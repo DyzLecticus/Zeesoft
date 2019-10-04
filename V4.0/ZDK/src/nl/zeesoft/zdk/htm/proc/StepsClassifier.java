@@ -97,19 +97,12 @@ public class StepsClassifier {
 				}
 			}
 		}
-		setPredictionSDR(outputSDR,valueCounts,labelCounts,maxCountedValues,maxCountedLabels);
-	}
-	
-	protected void setPredictionSDR(DateTimeSDR outputSDR,HashMap<Object,Integer> valueCounts,HashMap<String,Integer> labelCounts,List<Object> maxCountedValues,List<String> maxCountedLabels) {
-		int i = 0;
-		for (Object value: maxCountedValues) {
-			i++;
-			outputSDR.keyValues.put(config.valueKey + i,value);
-		}
-		i = 0;
-		for (String label: maxCountedLabels) {
-			i++;
-			outputSDR.keyValues.put(config.labelKey + i,label);
-		}
+		Classification classification = new Classification();
+		classification.steps = steps;
+		classification.valueCounts = valueCounts;
+		classification.labelCounts = labelCounts;
+		classification.maxCountedValues = maxCountedValues;
+		classification.maxCountedLabels = maxCountedLabels;
+		outputSDR.keyValues.put(Classifier.CLASSIFICATION_KEY,classification);
 	}
 }

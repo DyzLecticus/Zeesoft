@@ -11,9 +11,11 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.sdr.SDR;
 
 public class Memory extends ProcessorObject {
-	protected MemoryConfig			config				= null;
+	protected MemoryConfig			config		= null;
 
-	protected List<MemoryColumn>	columns				= new ArrayList<MemoryColumn>();
+	protected List<MemoryColumn>	columns		= new ArrayList<MemoryColumn>();
+	
+	protected SDR					burstSDR	= null;	
 	
 	public Memory(MemoryConfig config) {
 		this.config = config;
@@ -83,15 +85,18 @@ public class Memory extends ProcessorObject {
 		}
 		return r;
 	}
+	
+	@Override
+	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
+		List<SDR> r = super.getSDRsForInput(input, context, learn);
+		r.add(burstSDR);
+		return r;
+	}
 
 	@Override
 	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
-		SDR r = null;
-		if (config.outputActivationSDR) {
-			r = new SDR(config.length * config.depth);
-		} else {
-			r = new SDR(config.length);
-		}
+		SDR r = new SDR(config.length * config.depth);
+		burstSDR = config.getNewSDR();
 		long start = 0;
 		
 		start = System.nanoTime();
@@ -99,7 +104,7 @@ public class Memory extends ProcessorObject {
 		logStatsValue("cycleActiveState",System.nanoTime() - start);
 		
 		start = System.nanoTime();
-		activateColumnCells(input,learn,previouslyActiveCells,r);
+		activateColumnCells(input,learn,previouslyActiveCells,r,burstSDR);
 		logStatsValue("activateColumnCells",System.nanoTime() - start);
 		
 		start = System.nanoTime();
@@ -215,20 +220,16 @@ public class Memory extends ProcessorObject {
 		return r;
 	}
 
-	protected Set<MemoryColumnCell> activateColumnCells(SDR input,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR outputSDR) {
+	protected Set<MemoryColumnCell> activateColumnCells(SDR input,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR outputSDR,SDR burstSDR) {
 		Set<MemoryColumnCell> r = new HashSet<MemoryColumnCell>(); 
 		for (Integer onBit: input.getOnBits()) {
 			MemoryColumn col = columns.get(onBit);
 			Set<MemoryColumnCell> activatedCells = new HashSet<MemoryColumnCell>();
 			if (col.activateCells(learn,previouslyActiveCells,activatedCells)) {
-				if (!config.outputActivationSDR) {
-					outputSDR.setBit(col.index,true);
-				}
+				burstSDR.setBit(col.index,true);
 			}
 			for (MemoryColumnCell cell: activatedCells) {
-				if (config.outputActivationSDR) {
-					outputSDR.setBit(cell.cellIndex,true);
-				}
+				outputSDR.setBit(cell.cellIndex,true);
 				r.add(cell);
 			}
 		}

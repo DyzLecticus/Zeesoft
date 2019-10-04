@@ -1,30 +1,23 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
-import java.util.HashMap;
-
-import nl.zeesoft.zdk.htm.sdr.DateTimeSDR;
 import nl.zeesoft.zdk.htm.sdr.SDRMap;
-import nl.zeesoft.zdk.htm.stream.BufferedPredictionStream;
+import nl.zeesoft.zdk.htm.stream.ClassificationStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamFactory;
 import nl.zeesoft.zdk.htm.stream.StreamListener;
 import nl.zeesoft.zdk.htm.stream.StreamResult;
-import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetector;
-import nl.zeesoft.zdk.htm.stream.ValueAnomalyDetectorListener;
-import nl.zeesoft.zdk.htm.stream.ValuePredictorListener;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestValueAnomalyDetector extends TestAnomalyDetector implements StreamListener, ValuePredictorListener, ValueAnomalyDetectorListener {
-	private BufferedPredictionStream	stream					= null;
-	private ValueAnomalyDetector		detector	= null;
-	private StreamResult				previousResult			= null;
+public class TestClassificationStream extends TestAnomalyDetector implements StreamListener {
+	private ClassificationStream	stream				= null;
+	private StreamResult			previousResult		= null;
 	
-	public TestValueAnomalyDetector(Tester tester) {
+	public TestClassificationStream(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestValueAnomalyDetector(new Tester())).test(args);
+		(new TestClassificationStream(new Tester())).test(args);
 	}
 
 	@Override
@@ -64,11 +57,8 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		StreamFactory factory = new StreamFactory(1024,21);
 		System.out.println(factory.getDescription());
 		
-		stream = factory.getNewBufferedPredictionStream(true);
-		detector = stream.getNewValueAnomalyDetector();
+		stream = factory.getNewClassificationStream(true);
 		stream.addListener(this);
-		detector.addPredictorListener(this);
-		detector.addDetectorListener(this);
 
 		System.out.println();
 		testStream(stream, inputSDRMap, 60);
@@ -83,37 +73,15 @@ public class TestValueAnomalyDetector extends TestAnomalyDetector implements Str
 		counter++;
 		if (counter % (500) == 0) {
 			if (previousResult!=null && previousResult.outputSDRs.size()>3) {
+				/*
 				System.out.println("Processed SDRs: " + counter +
 					", average accuracy: " + df.format(detector.getAverageAccuracy(DateTimeSDR.VALUE_KEY)) +
 					", average deviation: " + df.format(detector.getAverageDeviation(DateTimeSDR.VALUE_KEY)) +
 					", average range accuracy: " + df.format(detector.getAverageRangeAccuracy())
 				);
+				*/
 			}
 		}
 		previousResult = result;
-	}
-
-	@Override
-	public void detectedAnomaly(String valueKey,HashMap<String,Object> predictedValues,float difference,StreamResult result) {
-		System.out.println("Detected anomaly at: " + result.id + ", property: " + valueKey + ", difference: " + df.format(difference));
-		numDetected = (int) result.id;
-		if (numDetected>=numExpected) {
-			stream.stop();
-		}
-	}
-
-	@Override
-	public void predictedValues(HashMap<String, Object> currentValues, HashMap<String, Object> nextValues,StreamResult result) {
-		/*
-		if (counter % (333) >= 0 && counter % (333) <= 10) {
-			System.out.println(
-				result.id + " -> " +
-				"Next value: " + nextValues.get(StreamEncoder.VALUE_KEY) +
-				" (" + nextValues.get(StreamEncoder.VALUE_KEY + "Min") +
-				" - " + nextValues.get(StreamEncoder.VALUE_KEY + "Max") +
-				"), current value: " + currentValues.get(StreamEncoder.VALUE_KEY)
-			);
-		}
-		*/
 	}
 }
