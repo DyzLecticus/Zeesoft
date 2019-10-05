@@ -32,32 +32,49 @@ public class TestValueClassifier extends TestObject implements ValueClassifierLi
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.");
+		System.out.println("This test shows how to use a *ClassificationStream* and a *ValueClassifier* to classify and/or predict values.");
+		System.out.println("It uses a *StreamFactory* to create the *ClassificationStream* and then uses that to create an *ValueClassifer*.");
+		System.out.println("The *ValueClassiferListener* interface can be used to listen for classifications and/or predictions.");
+		System.out.println("The *ValueClassifer* creates a list of *Classification* objects for each input SDR and then passes that list to its listeners.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the configuration");
-		System.out.println("MemoryConfig config = new MemoryConfig(1024);");
-		System.out.println("// Create the memory");
-		System.out.println("Memory memory = new Memory(config);");
-		System.out.println("// Obtain the output SDR for a certain input SDR");
-		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
+		System.out.println("// Create the stream factory");
+		System.out.println("StreamFactory factory = new StreamFactory(1024,21);");
+		System.out.println("// Specify the number of steps to predict (use 0 to specify classification of the current input)");
+		System.out.println("factory.getPredictSteps().add(1);");
+		System.out.println("// Create the stream");
+		System.out.println("ClassificationStream stream = factory.getNewClassificationStream(true);");
+		System.out.println("// Create the classifier");
+		System.out.println("ValueClassifier classifier = stream.getNewValueClassifier();");
+		System.out.println("// Attach a listener (implement the ValueClassifierListener interface)");
+		System.out.println("classifier.addListener(this);");
+		System.out.println("// Start the stream");
+		System.out.println("stream.start();");
+		System.out.println("stream.waitForStart();");
+		System.out.println("// Add some values to the stream");
+		System.out.println("stream.addValue(1);");
+		System.out.println("stream.addValue(2);");
+		System.out.println("// Remember to stop and destroy the stream after use");
+		System.out.println("stream.stop();");
+		System.out.println("stream.waitForStop();");
+		System.out.println("stream.destroy();");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockRegularSDRMap.class.getName());
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestAnomalyDetector.class));
-		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
-		System.out.println(" * " + getTester().getLinkForClass(MemoryConfig.class));
-		System.out.println(" * " + getTester().getLinkForClass(Memory.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestValueClassifier.class));
+		System.out.println(" * " + getTester().getLinkForClass(StreamFactory.class));
+		System.out.println(" * " + getTester().getLinkForClass(ClassificationStream.class));
+		System.out.println(" * " + getTester().getLinkForClass(ValueClassifier.class));
+		System.out.println(" * " + getTester().getLinkForClass(ValueClassifierListener.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
-		System.out.println(" * How memory column bursting is reduced after leaning several sequences  ");
-		System.out.println(" * Information about the memory after passing the SDR test set through it  ");
-		*/
+		System.out.println(" * Information about the stream factory  ");
+		System.out.println(" * The average prediction accuracy  ");
+		System.out.println(" * Information about the stream after passing the SDR test set through it  ");
 	}
 	
 	@Override

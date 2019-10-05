@@ -33,32 +33,8 @@ public class TestClassifier extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.");
-		System.out.println();
-		System.out.println("**Example implementation**  ");
-		System.out.println("~~~~");
-		System.out.println("// Create the configuration");
-		System.out.println("MemoryConfig config = new MemoryConfig(1024);");
-		System.out.println("// Create the memory");
-		System.out.println("Memory memory = new Memory(config);");
-		System.out.println("// Obtain the output SDR for a certain input SDR");
-		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
-		System.out.println("~~~~");
-		System.out.println();
-		getTester().describeMock(MockRegularSDRMap.class.getName());
-		System.out.println();
-		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestClassifier.class));
-		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
-		System.out.println(" * " + getTester().getLinkForClass(MemoryConfig.class));
-		System.out.println(" * " + getTester().getLinkForClass(Memory.class));
-		System.out.println();
-		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows;  ");
-		System.out.println(" * How memory column bursting is reduced after leaning several sequences  ");
-		System.out.println(" * Information about the memory after passing the SDR test set through it  ");
-		*/
+		System.out.println("This test shows how to use a *Classifier* to classify and/or predict values.");
+		System.out.println("It is not included in the ZDK test set.");
 	}
 	
 	@Override
@@ -68,7 +44,6 @@ public class TestClassifier extends TestObject {
 		
 		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);
-		pooler.logStats = true;
 		pooler.randomizeConnections();
 		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
