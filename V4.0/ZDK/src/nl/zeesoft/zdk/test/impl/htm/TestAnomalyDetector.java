@@ -4,11 +4,9 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.htm.proc.Memory;
-import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.StatsLog;
-import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
 import nl.zeesoft.zdk.htm.stream.AnomalyDetector;
+import nl.zeesoft.zdk.htm.stream.AnomalyDetectorListener;
 import nl.zeesoft.zdk.htm.stream.DefaultStream;
 import nl.zeesoft.zdk.htm.stream.Stream;
 import nl.zeesoft.zdk.htm.stream.StreamFactory;
@@ -20,14 +18,12 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
 public class TestAnomalyDetector extends TestObject implements StreamListener, AnomalyDetectorListener {
-	protected int				counter			= 0;
-	protected DecimalFormat		df				= new DecimalFormat("0.000");
-	protected int				numDetected		= 0;
-	
-	protected int				numExpected		= 0;
-	
+	private int					counter			= 0;
+	private DecimalFormat		df				= new DecimalFormat("0.000");
+	private int					numExpected		= 0;
 	private DefaultStream		stream			= null;
 	private AnomalyDetector		detector 		= null;
+	private int					numDetected		= 0;
 	
 	public TestAnomalyDetector(Tester tester) {
 		super(tester);
@@ -47,8 +43,6 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println("~~~~");
 		System.out.println("// Create the stream factory");
 		System.out.println("StreamFactory factory = new StreamFactory(1024,21);");
-		System.out.println("// Configure the stream to output the burst SDR");
-		System.out.println("factory.setOutputActivationSDR(false);");
 		System.out.println("// Create the stream");
 		System.out.println("DefaultStream stream = factory.getNewDefaultStream(true);");
 		System.out.println("// Create the anomaly detector");
@@ -102,7 +96,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		detector.addListener(this);
 
 		System.out.println();
-		testStream(stream, inputSDRMap, 60);
+		incrementSleepMs(testStream(stream, inputSDRMap, 60, df));
 		
 		assertDetection();
 		
@@ -144,7 +138,8 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		assertEqual(numDetected >= numExpected && numDetected < numExpected + 48,true,"Failed to detect the expected anomaly");
 	}
 
-	protected void testStream(Stream stream,SDRMap inputSDRMap, int maxSeconds) {
+	protected static int testStream(Stream stream,SDRMap inputSDRMap, int maxSeconds,DecimalFormat df) {
+		int r = 0;
 		stream.setLogStats(true);
 		
 		long started = System.currentTimeMillis();
@@ -158,7 +153,13 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		
 		int i = 0;
 		while(stream.isWorking()) {
-			sleep(100);
+			try {
+				Thread.sleep(100);
+				r += 100;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				break;
+			}
 			i++;
 			if (i >= maxSeconds * 10) {
 				break;
@@ -176,7 +177,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 			System.out.println();
 			System.out.println(statsLog.source.getClass().getSimpleName() + ";");
 			System.out.println(statsLog.getSummary());
-			if (statsLog.source instanceof Pooler || statsLog.source instanceof Memory) {
+			if (!(statsLog.source instanceof Stream)) {
 				totalNs += statsLog.getTotals().get("total") / statsLog.log.size();
 			}
 		}
@@ -184,6 +185,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println();
 		System.out.println("Total processing time per SDR: " + df.format(totalNs / 1000000F) + " ms");
 		System.out.println("Total stream time per SDR:     " + df.format(streamMs / (float) statsLogs.get(0).log.size()) + " ms");
+		return r;
 	}
 	
 	@Override

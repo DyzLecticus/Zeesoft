@@ -50,12 +50,21 @@ public abstract class TestObject {
 	 * @param ms The number of milliseconds to sleep
 	 */
 	protected final void sleep(int ms) {
-		sleepMs += ms;
+		incrementSleepMs(ms);
 		try {
 			Thread.sleep(ms);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Increments the number of milliseconds spent sleeping.
+	 * 
+	 * @param ms The number of milliseconds to increment
+	 */
+	protected final void incrementSleepMs(int ms) {
+		sleepMs += ms;
 	}
 
 	/**

@@ -60,7 +60,6 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	
 	@Override
 	public void processedResult(Stream stream, StreamResult result) {
-		
 		SDR poolerSDR = result.outputSDRs.get(0);
 		SDR burstSDR = result.outputSDRs.get(2);
 		if (poolerSDR.length() == burstSDR.length()) {

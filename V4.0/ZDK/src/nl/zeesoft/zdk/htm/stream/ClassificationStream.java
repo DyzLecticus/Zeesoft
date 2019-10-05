@@ -27,6 +27,12 @@ public class ClassificationStream extends DefaultStream {
 		initialize(classifier);
 	}
 	
+	public ValueClassifier getNewValueClassifier() {
+		ValueClassifier r = new ValueClassifier(this);
+		addListener(r);
+		return r;
+	}
+	
 	protected void initialize(Classifier classifier) {
 		addNextProcessor(classifier,1);
 	}

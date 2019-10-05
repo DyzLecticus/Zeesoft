@@ -52,6 +52,23 @@ public class Classifier extends ProcessorObject {
 		}
 	}
 	
+	@Override
+	public void destroy() {
+		for (StepsClassifier classifier: classifiers) {
+			for (StepsClassifierBit bit: classifier.bits.values()) {
+				bit.labelCounts.clear();
+				bit.valueCounts.clear();
+				bit.config = null;
+			}
+			classifier.bits.clear();
+			classifier.config = null;
+		}
+		classifiers.clear();
+		activationHistory.clear();
+		classifierSDRs.clear();
+	}
+	
+	@Override
 	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
 		inputSDR = null;
 		if (context.get(0) instanceof DateTimeSDR) {

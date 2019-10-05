@@ -17,6 +17,7 @@ public class MockAnomalySDRMap extends MockObject {
 		StreamEncoder enc = new StreamEncoder();
 		SDRMap sdrMap = new SDRMap(enc.length());
 		DateTimeValueGenerator generator = new DateTimeValueGenerator(7200000,0,42,1);
+		generator.setRandomValueResolutions(3);
 		int num = (12 * 7 * 365) / 2;
 		int numAnomaly = num / 2;
 		for (int i = 0; i < num; i++) {

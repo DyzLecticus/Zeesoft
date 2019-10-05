@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.htm.util;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import nl.zeesoft.zdk.functions.ZRandomize;
+
 public class DateTimeValueGenerator {
 	private long	startDateTime			= 0;
 	private long	incrementMs				= 1000;
@@ -10,16 +12,22 @@ public class DateTimeValueGenerator {
 	private int		maxValue				= 50;
 	private float	resolution				= 1;
 	
+	private int		randomValueResolutions	= 0;
+	
 	private long	currentIncrement		= 0;
 	private float	currentValue			= 0;
 	private boolean incrementCurrentValue	= true;
-	
+
 	public DateTimeValueGenerator(long incrementMs, int minValue, int maxValue, float resolution) {
 		initialize(0,incrementMs,minValue,maxValue,resolution);
 	}
 	
 	public DateTimeValueGenerator(long startDateTime, long incrementMs, int minValue, int maxValue, float resolution) {
 		initialize(startDateTime,incrementMs,minValue,maxValue,resolution);
+	}
+	
+	public void setRandomValueResolutions(int randomValueResolutions) {
+		this.randomValueResolutions = randomValueResolutions;
 	}
 
 	public void reset() {
@@ -46,6 +54,10 @@ public class DateTimeValueGenerator {
 		currentIncrement++;
 		
 		r.value = currentValue + addValue;
+		if (randomValueResolutions>0) {
+			r.value += ZRandomize.getRandomInt(0,randomValueResolutions) * resolution;
+		}
+		
 		if (incrementCurrentValue) {
 			currentValue += resolution;
 		} else {

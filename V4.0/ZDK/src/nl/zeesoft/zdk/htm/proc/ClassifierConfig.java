@@ -18,8 +18,8 @@ public class ClassifierConfig {
 	}
 	
 	public ClassifierConfig(int steps) {
-		if (steps < 1) {
-			steps = 1;
+		if (steps < 0) {
+			steps = 0;
 		}
 		predictSteps.add(steps);
 	}
