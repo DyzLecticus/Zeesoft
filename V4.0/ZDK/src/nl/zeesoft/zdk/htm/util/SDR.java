@@ -10,6 +10,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
+/**
+ * Sparse distributed representations are used to code signals in HTM systems.
+ */
 public class SDR {
 	private int				length 		= 0;
 	private Set<Integer>	onBits		= new HashSet<Integer>();
@@ -21,6 +24,11 @@ public class SDR {
 		this.length = length;
 	}
 	
+	/**
+	 * Returns a copy of this SDR.
+	 * 
+	 * @return A copy of this SDR
+	 */
 	public SDR copy() {
 		SDR r = new SDR(length);
 		for (Integer onBit: onBits) {
@@ -29,6 +37,11 @@ public class SDR {
 		return r;
 	}
 	
+	/**
+	 * Returns a list of on bits.
+	 * 
+	 * @return A list of on bits
+	 */
 	public List<Integer> getOnBits() {
 		List<Integer> r = new ArrayList<Integer>();
 		for (Integer onBit: onBits) {
@@ -37,6 +50,13 @@ public class SDR {
 		return r;
 	}
 	
+	/**
+	 * Sets a specific bit.
+	 * 
+	 * @param index The bit index
+	 * @param on Indicates the bit should be set to 1
+	 * @return True of the bit was set to the specified value
+	 */
 	public boolean setBit(int index,boolean on) {
 		boolean r = false;
 		if (index>=0 && index<length) {
@@ -53,6 +73,11 @@ public class SDR {
 		return r;
 	}
 	
+	/**
+	 * Turns of a random bit
+	 * 
+	 * @return The index of the bit that was turned off
+	 */
 	public Integer turnOffRandomBit() {
 		Integer r = null;
 		if (onBits.size()>0) {
@@ -77,18 +102,39 @@ public class SDR {
 		return r;
 	}
 	
+	/**
+	 * Returns the value of a specific bit
+	 * 
+	 * @param index The bit index
+	 * @return The value of the bit
+	 */
 	public boolean getBit(int index) {
 		return onBits.contains((Integer)index);
 	}
 	
+	/**
+	 * Returns the length of the SDR.
+	 * 
+	 * @return The length of the SDR.
+	 */
 	public int length() {
 		return length;
 	}
 	
+	/**
+	 * Returns the number of on bits.
+	 * 
+	 * @return The number of on bits
+	 */
 	public int onBits() {
 		return onBits.size();
 	}
 
+	/**
+	 * Turns off bits until a specific number of on bits remains.
+	 * 
+	 * @param keep The number of on bits to keep
+	 */
 	public void subsample(int keep) {
 		if (keep>0 && keep < onBits.size()) {
 			int remove = (onBits.size() - keep);
@@ -101,6 +147,12 @@ public class SDR {
 		}
 	}
 	
+	/**
+	 * Initializes the SDR with a specified number of random bits turned on
+	 * 
+	 * @param set The number of bits to turn on
+	 * @return A list of bit indexes of bits that were turned on
+	 */
 	public List<Integer> randomize(int set) {
 		onBits.clear();
 		if (set>0) {
@@ -118,6 +170,11 @@ public class SDR {
 		return getOnBits();
 	}
 	
+	/**
+	 * Converts the SDR to a string builder.
+	 * 
+	 * @return The string builder
+	 */
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder r = new ZStringBuilder("" + length);
 		for (Integer onBit: onBits) {
@@ -127,6 +184,11 @@ public class SDR {
 		return r;
 	}
 
+	/**
+	 * Initializes the SDR from a string builder.
+	 * 
+	 * @param str The string builder
+	 */
 	public void fromStringBuilder(ZStringBuilder str) {
 		length = 0;
 		onBits.clear();
@@ -139,6 +201,11 @@ public class SDR {
 		}
 	}
 
+	/**
+	 * Converts the SDR to a complete binary string builder representation
+	 * 
+	 * @return The string builder
+	 */
 	public ZStringBuilder toBitString() {
 		ZStringBuilder r = new ZStringBuilder();
 		for (int i = 0; i < length; i++) {
@@ -172,6 +239,13 @@ public class SDR {
 		return r;
 	}
 	
+	/**
+	 * Returns true if the specified SDR matches this SDR with a certain minimal number of overlapping bits.
+	 * 
+	 * @param c The SDR to compare this SDR to
+	 * @param theta The minimal number of overlapping bits
+	 * @return True if the specified SDR matches
+	 */
 	public boolean matches(SDR c,int theta) {
 		boolean r = false;
 		if (theta<=0 || getOverlapScore(c)>=theta) {
@@ -180,6 +254,12 @@ public class SDR {
 		return r;
 	}
 
+	/**
+	 * Returns the number of overlapping bits between this SDR and another SDR.
+	 * 
+	 * @param c The SDR to compare this SDR to
+	 * @return The number of overlapping bits
+	 */
 	public int getOverlapScore(SDR c) {
 		int r = 0;
 		for (Integer onBit: onBits) {
@@ -190,26 +270,67 @@ public class SDR {
 		return r;
 	}
 
+	/**
+	 * Returns a new SDR that combines two SDRs using the AND operator.
+	 * 
+	 * @param a SDR A
+	 * @param b SDR B
+	 * @return The new SDR
+	 */
 	public static SDR and(SDR a,SDR b) {
 		return a.and(b);
 	}
 
+	/**
+	 * Returns a new SDR that combines two SDRs using the OR operator.
+	 * 
+	 * @param a SDR A
+	 * @param b SDR B
+	 * @return The new SDR
+	 */
 	public static SDR or(SDR a,SDR b) {
 		return a.or(b);
 	}
 
+	/**
+	 * Returns a new SDR that combines two SDRs using the XOR operator.
+	 * 
+	 * @param a SDR A
+	 * @param b SDR B
+	 * @return The new SDR
+	 */
 	public static SDR xor(SDR a,SDR b) {
 		return a.xor(b);
 	}
 
+	/**
+	 * Returns a new SDR that is an inversion of the input SDR. 
+	 * 
+	 * @param a The input SDR
+	 * @return The new SDR
+	 */
 	public static SDR not(SDR a) {
 		return a.not();
 	}
 
+	/**
+	 * Returns a new SDR that is a concatenation of two SDRs.
+	 * 
+	 * @param a SDR A
+	 * @param b SDR B
+	 * @return The new SDR
+	 */
 	public static SDR concat(SDR a,SDR b) {
 		return a.concat(b);
 	}
 
+	/**
+	 * Returns the capacity (number of possible unique SDRs) for an a certain SDR length and on bits
+	 * 
+	 * @param length The length of the SDR
+	 * @param onBits The number of on bits for the SDR
+	 * @return The capacity
+	 */
 	public static BigInteger capacity(int length,int onBits) {
 		BigInteger r = null;
 		if (length==128 && onBits==2) {
