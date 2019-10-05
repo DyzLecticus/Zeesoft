@@ -114,30 +114,19 @@ public class TestClassifier extends TestObject {
 		System.out.println("Performance statistics;");
 		System.out.println(classifier.statsLog.getSummary());
 
-		/*
-		 * TODO: Implement and test string builder conversion
-		System.out.println();
-		System.out.println(memory.getDescription());
-		ZStringBuilder strOri = memory.toStringBuilder();
-		Memory memoryNew = new Memory(memoryConfig);
-		memoryNew.fromStringBuilder(strOri);
-		ZStringBuilder strNew = memoryNew.toStringBuilder();
-		if (!assertEqual(strNew.length(),strOri.length(),"Memory string builder does not match expectation")) {
+		ZStringBuilder strOri = classifier.toStringBuilder();
+		Classifier classifierNew = new Classifier(classifierConfig);
+		classifierNew.fromStringBuilder(strOri);
+		ZStringBuilder strNew = classifier.toStringBuilder();
+		if (!assertEqual(strNew.length(),strOri.length(),"Classifier string builder does not match expectation")) {
 			System.out.println(strOri.substring(0,500));
 			System.err.println(strNew.substring(0,500));
-		} else {
-			strOri = memory.getDescription();
-			strNew = memoryNew.getDescription();
-			if (!assertEqual(strNew.equals(strOri),true,"Memory description does not match expectation")) {
-				System.err.println(memoryNew.getDescription());
-			}
 		}
-		*/
 		
 		pooler.destroy();
 		memory.destroy();
 		classifier.destroy();
-		//classifierNew.destroy();
+		classifierNew.destroy();
 	}
 
 	private void processedSDR(DateTimeSDR inputSDR,DateTimeSDR predictionSDR) {

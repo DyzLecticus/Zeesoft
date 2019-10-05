@@ -32,14 +32,24 @@ public class Classifier extends ProcessorObject {
 	
 	@Override
 	public ZStringBuilder toStringBuilder() {
-		// TODO Auto-generated method stub
-		return null;
+		ZStringBuilder r = new ZStringBuilder();
+		for (StepsClassifier classifier: classifiers) {
+			if (r.length()>0) {
+				r.append("@");
+			}
+			r.append(classifier.toStringBuilder());
+		}
+		return r;
 	}
 
 	@Override
 	public void fromStringBuilder(ZStringBuilder str) {
-		// TODO Auto-generated method stub
-		
+		List<ZStringBuilder> elems = str.split("@");
+		for (ZStringBuilder elem: elems) {
+			StepsClassifier classifier = new StepsClassifier(config,activationHistory,0);
+			classifier.fromStringBuilder(elem);
+			classifiers.add(classifier);
+		}
 	}
 	
 	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {

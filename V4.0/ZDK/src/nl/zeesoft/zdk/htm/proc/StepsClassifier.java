@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 
@@ -14,12 +15,36 @@ public class StepsClassifier {
 	protected List<SDR>								activationHistory		= null;
 	protected HashMap<Integer,StepsClassifierBit>	bits					= new HashMap<Integer,StepsClassifierBit>();
 	
-	public StepsClassifier(ClassifierConfig config,List<SDR> activationHistory,int steps) {
+	protected StepsClassifier(ClassifierConfig config,List<SDR> activationHistory,int steps) {
 		this.config = config;
 		this.activationHistory = activationHistory;
 		this.steps = steps;
 	}
 
+	protected ZStringBuilder toStringBuilder() {
+		ZStringBuilder r = new ZStringBuilder("" + steps);
+		for (StepsClassifierBit bit: bits.values()) {
+			r.append("#");
+			r.append(bit.toStringBuilder());
+		}
+		return r;
+	}
+	
+	protected void fromStringBuilder(ZStringBuilder str) {
+		List<ZStringBuilder> elems = str.split("#");
+		if (elems.size()>1) {
+			steps = Integer.parseInt(elems.get(0).toString());
+			bits.clear();
+			for (ZStringBuilder elem: elems) {
+				if (elem.contains(";")) {
+					StepsClassifierBit bit = new StepsClassifierBit(config,0);
+					bit.fromStringBuilder(elem);
+					bits.put(bit.index,bit);
+				}
+			}
+		}
+	}
+	
 	protected DateTimeSDR getClassificationSDRForActivationSDR(SDR activationSDR,DateTimeSDR inputSDR,boolean learn) {
 		DateTimeSDR r = null;
 		if (inputSDR!=null) {
