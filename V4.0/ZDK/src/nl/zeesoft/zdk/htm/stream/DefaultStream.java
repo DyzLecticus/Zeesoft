@@ -17,12 +17,12 @@ public class DefaultStream extends Stream {
 	}
 	
 	public DefaultStream(Messenger msgr, WorkerUnion uni,Pooler pooler,Memory memory) {
-		super(msgr, uni);
+		super(msgr,uni);
 		initialize(pooler,memory);
 	}
 	
 	public DefaultStream(Messenger msgr, WorkerUnion uni,StreamEncoder encoder,Pooler pooler,Memory memory) {
-		super(msgr, uni, encoder);
+		super(msgr,uni,encoder);
 		initialize(pooler,memory);
 	}
 	
