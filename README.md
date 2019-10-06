@@ -13,7 +13,7 @@ Version 4.0 of the Zeesoft architecture features major version 3.0 ZDK improveme
 The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V4.0">V4.0</a> folder contains the complete source code for the following products;
  * [ZDK](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/) Zeesoft Development Kit  
  * [ZODB](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZODB/) Zeesoft Object Database  
- * [ZENN](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSC/) Zeesoft Evolutionary Neural Networks  
+ * [ZENN](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZENN/) Zeesoft Evolutionary Neural Networks  
 
 Version 3.0 of the Zeesoft architecture is a departure from previous full stack Zeesoft architectures.
 The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0">V3.0</a> folder contains the complete source code for the following products;  
