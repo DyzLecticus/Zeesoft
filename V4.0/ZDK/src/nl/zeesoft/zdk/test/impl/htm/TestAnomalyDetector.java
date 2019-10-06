@@ -51,13 +51,11 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		System.out.println("detector.addListener(this);");
 		System.out.println("// Start the stream");
 		System.out.println("stream.start();");
-		System.out.println("stream.waitForStart();");
 		System.out.println("// Add some values to the stream (include an anomaly after 5000 inputs)");
 		System.out.println("stream.addValue(1);");
 		System.out.println("stream.addValue(2);");
 		System.out.println("// Remember to stop and destroy the stream after use");
 		System.out.println("stream.stop();");
-		System.out.println("stream.waitForStop();");
 		System.out.println("stream.destroy();");
 		System.out.println("~~~~");
 		System.out.println();
@@ -144,7 +142,6 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		
 		long started = System.currentTimeMillis();
 		stream.start();
-		stream.waitForStart();
 		System.out.println("Started stream");
 
 		for (int i = 0; i < inputSDRMap.size(); i++) {
@@ -152,7 +149,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		}
 		
 		int i = 0;
-		while(stream.isWorking()) {
+		while(stream.isActive()) {
 			try {
 				Thread.sleep(100);
 				r += 100;
@@ -167,7 +164,6 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		}
 		
 		stream.stop();
-		stream.waitForStop();
 		long streamMs = (System.currentTimeMillis() - started);
 		System.out.println("Stopped stream after " + streamMs + " ms");
 		

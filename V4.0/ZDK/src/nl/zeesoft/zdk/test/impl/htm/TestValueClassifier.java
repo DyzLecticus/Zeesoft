@@ -54,13 +54,11 @@ public class TestValueClassifier extends TestObject implements ValueClassifierLi
 		System.out.println("classifier.addListener(this);");
 		System.out.println("// Start the stream");
 		System.out.println("stream.start();");
-		System.out.println("stream.waitForStart();");
 		System.out.println("// Add some values to the stream");
 		System.out.println("stream.addValue(1);");
 		System.out.println("stream.addValue(2);");
 		System.out.println("// Remember to stop and destroy the stream after use");
 		System.out.println("stream.stop();");
-		System.out.println("stream.waitForStop();");
 		System.out.println("stream.destroy();");
 		System.out.println("~~~~");
 		System.out.println();

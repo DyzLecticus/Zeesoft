@@ -53,6 +53,7 @@ public class StreamProcessor extends Worker {
 		lockMe(this);
 		stream = null;
 		processor = null;
+		queue.clear();
 		unlockMe(this);
 	}
 	

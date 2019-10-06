@@ -5,15 +5,12 @@ import java.util.List;
 
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
 import nl.zeesoft.zdk.htm.util.SDR;
-import nl.zeesoft.zdk.thread.Locker;
 
 /**
  * An AnomalyDetector is used to monitor DefaultStream output for bursting anomalies.
  * It tracks the average column prediction accuracy and calls its listeners if the difference between the latest accuracy and the average is higher than a certain threshold.
  */
-public class AnomalyDetector extends Locker implements StreamListener {
-	protected DefaultStream					stream			= null;
-	
+public class AnomalyDetector extends StreamListenerObject {
 	private	List<AnomalyDetectorListener>	listeners		= new ArrayList<AnomalyDetectorListener>();
 
 	private HistoricalFloats				history			= new HistoricalFloats();
@@ -28,8 +25,7 @@ public class AnomalyDetector extends Locker implements StreamListener {
 	private int								recovery		= 0;	
 
 	public AnomalyDetector(DefaultStream stream) {
-		super(stream.getMessenger());
-		this.stream = stream;
+		super(stream);
 	}
 	
 	public void addListener(AnomalyDetectorListener listener) {

@@ -94,6 +94,8 @@ public abstract class Worker extends Locker implements Runnable {
 		stopOnEx = stopOnException;
 		unlockMe(this);
 		
+		startedWorking();
+		
 		while ((wrkr!=null) && (!wrkr.isInterrupted())) {
 			compensatedSleep = slp;
 			started = null;
@@ -150,12 +152,28 @@ public abstract class Worker extends Locker implements Runnable {
 		if (union!=null) {
 			union.removeWorker(this);
 		}
+		
+		stoppedWorking();
+	}
+	
+	/**
+	 * Called when the worker has stopped.
+	 */
+	protected void startedWorking() {
+		// Override to implement
 	}
 
 	/**
 	 * Override this method to implement logic in the Worker.
 	 */
 	protected abstract void whileWorking();
+	
+	/**
+	 * Called when the worker has stopped.
+	 */
+	protected void stoppedWorking() {
+		// Override to implement
+	}
 
 	/**
 	 * Returns the amount of milliseconds this worker will sleep between whileWorking method calls.

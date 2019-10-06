@@ -22,12 +22,17 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * The learned state of the processors in the stream can be converted to and from JSON when the stream is not actively streaming SDRs.
  */
 public class Stream extends Worker implements JsAble {
+	public static final String				STATE_STOPPED		= "STOPPED";
+	public static final String				STATE_STARTING		= "STARTING";
+	public static final String				STATE_STARTED		= "STARTED";
+	public static final String				STATE_STOPPING		= "STOPPING";
+	
 	private StreamEncoder					encoder				= null;
 	private List<ProcessorObject>			processors			= new ArrayList<ProcessorObject>();
 	private List<StreamProcessor>			streamProcessors	= new ArrayList<StreamProcessor>();
-	private List<StreamListener>			listeners			= new ArrayList<StreamListener>();
+	private List<StreamListenerWorker>		listeners			= new ArrayList<StreamListenerWorker>();
 	
-	private boolean							streaming			= false;
+	private String							state				= STATE_STOPPED;
 	
 	private boolean							logStats			= false;						
 	private StatsLog						statsLog			= new StatsLog(this);
@@ -77,31 +82,36 @@ public class Stream extends Worker implements JsAble {
 
 	/**
 	 * Adds the next processor to the stream.
+	 * This will only work while the stream state equals STOPPED
 	 * 
 	 * @param processor The processor to add
 	 * @param useOutputIndex The stream result output list index of the SDR to use as input for this processor
 	 */
 	public void addNextProcessor(ProcessorObject processor,int useOutputIndex) {
-		if (!isWorking()) {
-			lockMe(this);
-			if (!streaming) {
-				processors.add(processor);
-				StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
-				streamProcessors.add(sp);
-				processorStatsLogs.add(new StatsLog(processor));
-			}
-			unlockMe(this);
+		lockMe(this);
+		if (state.equals(STATE_STOPPED)) {
+			processors.add(processor);
+			StreamProcessor sp = new StreamProcessor(getMessenger(),getUnion(),this,processor,useOutputIndex);
+			streamProcessors.add(sp);
+			processorStatsLogs.add(new StatsLog(processor));
 		}
+		unlockMe(this);
 	}
 	
 	/**
 	 * Adds a stream listener to this stream.
+	 * The stream is isolated from listeners by delegating the work of pushing results to the listeners to separate workers for each listener.
+	 * If the listener throws an exception, the worker will keep working and the stream itself will not be impacted.
 	 * 
 	 * @param listener The listener to add
 	 */
 	public void addListener(StreamListener listener) {
 		lockMe(this);
-		listeners.add(listener);
+		StreamListenerWorker listenerWorker = new StreamListenerWorker(getMessenger(),getUnion(),this,listener);
+		listeners.add(listenerWorker);
+		if (state.equals(STATE_STARTED)) {
+			listenerWorker.start();
+		}
 		unlockMe(this);
 	}
 
@@ -141,33 +151,31 @@ public class Stream extends Worker implements JsAble {
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
-		if (!isWorking()) {
-			lockMe(this);
-			if (!streaming) {
-				json.rootElement = new JsElem();
-				json.rootElement.children.add(new JsElem("streamClassName",this.getClass().getName(),true));
-				json.rootElement.children.add(new JsElem("encoderClassName",encoder.getClass().getName(),true));
-				json.rootElement.children.add(new JsElem("encoderData",encoder.toStringBuilder(),true));
-				json.rootElement.children.add(new JsElem("uid","" + results.uid,true));
-				JsElem procsElem = new JsElem("processors",true);
-				json.rootElement.children.add(procsElem);
-				for (ProcessorObject processor: processors) {
-					JsElem procElem = new JsElem();
-					procsElem.children.add(procElem);
-					procElem.children.add(new JsElem("processorClassName",processor.getClass().getName(),true));
-					procElem.children.add(new JsElem("processorData",processor.toStringBuilder(),true));
-				}
+		lockMe(this);
+		if (state.equals(STATE_STOPPED)) {
+			json.rootElement = new JsElem();
+			json.rootElement.children.add(new JsElem("streamClassName",this.getClass().getName(),true));
+			json.rootElement.children.add(new JsElem("encoderClassName",encoder.getClass().getName(),true));
+			json.rootElement.children.add(new JsElem("encoderData",encoder.toStringBuilder(),true));
+			json.rootElement.children.add(new JsElem("uid","" + results.uid,true));
+			JsElem procsElem = new JsElem("processors",true);
+			json.rootElement.children.add(procsElem);
+			for (ProcessorObject processor: processors) {
+				JsElem procElem = new JsElem();
+				procsElem.children.add(procElem);
+				procElem.children.add(new JsElem("processorClassName",processor.getClass().getName(),true));
+				procElem.children.add(new JsElem("processorData",processor.toStringBuilder(),true));
 			}
-			unlockMe(this);
 		}
+		unlockMe(this);
 		return json;
 	}
 
 	@Override
 	public void fromJson(JsFile json) {
-		if (json.rootElement!=null && !isWorking()) {
+		if (json.rootElement!=null) {
 			lockMe(this);
-			if (!streaming) {
+			if (state.equals(STATE_STOPPED)) {
 				String streamClassName = json.rootElement.getChildString("streamClassName");
 				String encoderClassName = json.rootElement.getChildString("encoderClassName");
 				if (this.getClass().getName().equals(streamClassName) && encoder.getClass().getName().equals(encoderClassName)) {
@@ -304,107 +312,122 @@ public class Stream extends Worker implements JsAble {
 	}
 	
 	/**
-	 * Returns true if the stream is processing SDRs.
+	 * Returns the state of the stream.
 	 * 
-	 * @return True if the stream is processing SDRs
+	 * @return The state of the stream
 	 */
-	public boolean isStreaming() {
+	public String getState() {
+		String r = "";
+		lockMe(this);
+		r = state;
+		unlockMe(this);
+		return r;
+	}
+	
+	/**
+	 * Returns true if the stream state does not equal STOPPED.
+	 * 
+	 * @return True if the stream state does not equals STOPPED
+	 */
+	public boolean isActive() {
 		boolean r = false;
 		lockMe(this);
-		r = streaming;
+		r = !state.equals(STATE_STOPPED);
 		unlockMe(this);
 		return r;
 	}
 
 	@Override
 	public void start() {
-		boolean r = !isWorking();
+		boolean r = false;
+		lockMe(this);
+		r = state.equals(STATE_STOPPED);
 		if (r) {
-			lockMe(this);
-			r = !streaming;
-			if (r) {
-				streaming = r;
-			}
-			unlockMe(this);
-			if (r) {
-				for (StreamProcessor processor: streamProcessors) {
-					processor.start();
-				}
-				super.start();
-			}
+			state = STATE_STARTING;
 		}
-	}
-	
-	/**
-	 * Puts the calling thread in a wait state until the stream is started.
-	 */
-	public void waitForStart() {
-		while (!isWorking()) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				if (getMessenger()!=null) {
-					getMessenger().error(this,"Exception while starting stream",e);
-				} else {
-					e.printStackTrace();
-				}
+		unlockMe(this);
+		if (r) {
+			for (StreamProcessor processor: streamProcessors) {
+				processor.start();
 			}
+			for (StreamListenerWorker listener: listeners) {
+				listener.start();
+			}
+			super.start();
 		}
 	}
 	
 	@Override
 	public void stop() {
-		boolean r = isWorking();
+		boolean r = false;
+		lockMe(this);
+		r = state.equals(STATE_STARTED);
 		if (r) {
-			lockMe(this);
-			r = streaming;
-			if (r) {
-				streaming = false;
-			}
-			unlockMe(this);
+			state = STATE_STOPPING;
+		}
+		unlockMe(this);
+		if (r) {
 			if (r) {
 				for (StreamProcessor processor: streamProcessors) {
 					processor.stop();
 				}
+				for (StreamListenerWorker listener: listeners) {
+					listener.stop();
+				}
 				super.stop();
-				flushOutput();
 			}
 		}
 	}
 	
 	/**
-	 * Puts the calling thread in a wait state until the stream is stopped.
-	 */
-	public void waitForStop() {
-		for (StreamProcessor processor: streamProcessors) {
-			whileStopping(processor); 
-		}
-		whileStopping(this);
-	}
-	
-	/**
-	 * Destroys the stream and its processors.
+	 * Destroys the stream, its processors and its listener workers.
 	 */
 	public void destroy() {
-		for (StreamProcessor processor: streamProcessors) {
-			processor.destroy();
-		}
-		for (ProcessorObject processor: processors) {
-			processor.destroy();
-		}
-	}
-
-	protected void whileStopping(Worker worker) {
-		while (worker.isWorking()) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				if (getMessenger()!=null) {
-					getMessenger().error(this,"Exception while stopping stream",e);
-				} else {
-					e.printStackTrace();
-				}
+		lockMe(this);
+		if (state.equals(STATE_STOPPED)) {
+			for (StreamProcessor processor: streamProcessors) {
+				processor.destroy();
 			}
+			streamProcessors.clear();
+			for (ProcessorObject processor: processors) {
+				processor.destroy();
+			}
+			processors.clear();
+			for (StreamListenerWorker listener: listeners) {
+				listener.destroy();
+			}
+			listeners.clear();
+			results.flush();
+		}
+		unlockMe(this);
+	}
+	
+	@Override
+	protected void startedWorking() {
+		lockMe(this);
+		state = STATE_STARTED;
+		unlockMe(this);
+	}
+	
+	@Override
+	protected void stoppedWorking() {
+		lockMe(this);
+		state = STATE_STOPPED;
+		unlockMe(this);
+	}
+	
+	@Override
+	protected void whileWorking() {
+		flushOutput();
+	}
+	
+	protected void flushOutput() {
+		lockMe(this);
+		List<StreamListenerWorker> list = new ArrayList<StreamListenerWorker>(listeners);
+		unlockMe(this);
+		List<StreamResult> res = results.flush();
+		for (StreamListenerWorker listener: list) {
+			listener.addResults(res);
 		}
 	}
 
@@ -434,31 +457,6 @@ public class Stream extends Worker implements JsAble {
 			}
 		}
 		unlockMe(this);
-	}
-	
-	@Override
-	protected void whileWorking() {
-		flushOutput();
-	}
-	
-	protected void flushOutput() {
-		lockMe(this);
-		List<StreamListener> list = new ArrayList<StreamListener>(listeners);
-		unlockMe(this);
-		List<StreamResult> res = results.flush();
-		for (StreamResult result: res) {
-			for (StreamListener listener: list) {
-				try {
-					listener.processedResult(this,result);
-				} catch (Exception e) {
-					if (getMessenger()!=null) {
-						getMessenger().error(this,"Exception while sending result to listener: " + listener,e);
-					} else {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
 	}
 	
 	protected void initialize(Messenger msgr,StreamEncoder encoder) {
