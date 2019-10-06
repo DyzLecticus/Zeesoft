@@ -16,6 +16,10 @@ import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
+/**
+ * A StreamEncoder is used by streams to provide an easy and configurable way for encoding date and time related values.
+ * By default, it only encodes the value in the SDR.
+ */
 public class StreamEncoder extends CombinedEncoder implements JsAble {
 	private static final String					MONTH				= "MONTH";
 	private static final String					DAY_OF_WEEK			= "WEEKDAY";
@@ -43,6 +47,11 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		initialize();
 	}
 	
+	/**
+	 * Returns a copy of this stream encoder.
+	 * 
+	 * @return A copy of this stream encoder
+	 */
 	public StreamEncoder copy() {
 		StreamEncoder copy = new StreamEncoder();
 		copy.scale = scale;
@@ -61,6 +70,11 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		return copy;
 	}
 	
+	/**
+	 * Sets the scale of this stream encoder.
+	 * 
+	 * @param scale The scale of the stream encoder.
+	 */
 	public void setScale(int scale) {
 		if (scale>0) {
 			this.scale = scale;
@@ -68,6 +82,16 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		initialize();
 	}
 	
+	/**
+	 * Specifies which properties should be encoded in the SDR.
+	 * 
+	 * @param includeMonth Indicates the month (season) should be encoded in the SDR
+	 * @param includeDayOfWeek Indicates the day of week should be encoded in the SDR
+	 * @param includeHourOfDay Indicates the hour of day should be encoded in the SDR
+	 * @param includeMinute Indicates the minute should be encoded in the SDR
+	 * @param includeSecond Indicates the Second should be encoded in the SDR
+	 * @param includeValue Indicates the value should be encoded in the SDR
+	 */
 	public void setEncodeProperties(boolean includeMonth, boolean includeDayOfWeek, boolean includeHourOfDay, boolean includeMinute, boolean includeSecond, boolean includeValue) {
 		this.includeMonth = includeMonth;
 		this.includeDayOfWeek = includeDayOfWeek;
@@ -78,17 +102,33 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		initialize();
 	}
 	
+	/**
+	 * Specifies the minimum and maximum value to be encoded in the SDR.
+	 * 
+	 * @param min The minimum value
+	 * @param max The maximum value
+	 */
 	public void setValueMinMax(int min, int max) {
 		valueMin = min;
 		valueMax = max;
 		initialize();
 	}
 	
+	/**
+	 * Specifies the value resolution to be used for encoding SDRs.
+	 * 
+	 * @param res The resolution
+	 */
 	public void setValueResolution(float res) {
 		valueResolution = res;
 		initialize();
 	}
 	
+	/**
+	 * Indicates a random distributed scalar encoder should be used to encode values.
+	 *  
+	 * @param valueDistributed Indicates a random distributed scalar encoder should be used to encode values
+	 */
 	public void valueDistributed(boolean valueDistributed) {
 		this.valueDistributed = valueDistributed;
 		initialize();
@@ -222,6 +262,12 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 		return getSDRForSDR(dateTime,sdr,(Object)value,label);
 	}
 
+	/**
+	 * Iterates through all possible values of the encoders to determine if the SDR values have a certain minimal and maximal overlap.
+	 * 
+	 * @param checkValue Indicates the value encoder should be checked as well (using this on RDScalarEncoders will cause state generation)
+	 * @return An empty string builder or a string builder containing an error message
+	 */
 	public ZStringBuilder testScalarOverlap(boolean checkValue) {
 		ZStringBuilder r = new ZStringBuilder();
 		for (String name: getEncoderNames()) {

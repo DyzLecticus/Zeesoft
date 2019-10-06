@@ -17,7 +17,9 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 /**
- * A stream provides a threaded processor sequence where the output SDR of each processor is used as input for the next processor
+ * A Stream provides a threaded processor chain where the output SDR of each processor is used as input for the next processor.
+ * It uses a StreamEncoder to encode values or SDRs that are added to the stream.
+ * The learned state of the processors in the stream can be converted to and from JSON when the stream is not actively streaming SDRs.
  */
 public class Stream extends Worker implements JsAble {
 	private StreamEncoder					encoder				= null;
@@ -36,6 +38,11 @@ public class Stream extends Worker implements JsAble {
 	public Stream() {
 		super(null,null);
 		initialize(null,new StreamEncoder());
+	}
+	
+	public Stream(StreamEncoder encoder) {
+		super(null,null);
+		initialize(null,encoder);
 	}
 	
 	public Stream(Messenger msgr,WorkerUnion uni) {
@@ -58,10 +65,22 @@ public class Stream extends Worker implements JsAble {
 		return super.getUnion();
 	}
 
+	/**
+	 * Adds the input processor to the stream.
+	 * The input processor gets its input SDR directly from the stream encoder.
+	 * 
+	 * @param processor The processor to add
+	 */
 	public void addInputProcessor(ProcessorObject processor) {
 		addNextProcessor(processor,-1);
 	}
 
+	/**
+	 * Adds the next processor to the stream.
+	 * 
+	 * @param processor The processor to add
+	 * @param useOutputIndex The stream result output list index of the SDR to use as input for this processor
+	 */
 	public void addNextProcessor(ProcessorObject processor,int useOutputIndex) {
 		if (!isWorking()) {
 			lockMe(this);
@@ -75,12 +94,22 @@ public class Stream extends Worker implements JsAble {
 		}
 	}
 	
+	/**
+	 * Adds a stream listener to this stream.
+	 * 
+	 * @param listener The listener to add
+	 */
 	public void addListener(StreamListener listener) {
 		lockMe(this);
 		listeners.add(listener);
 		unlockMe(this);
 	}
 
+	/**
+	 * Indicates the processors in the stream should learn from their input.
+	 * 
+	 * @param learn Indicates the processors in the stream should learn from their input
+	 */
 	public void setLearn(boolean learn) {
 		lockMe(this);
 		for (StreamProcessor processor: streamProcessors) {
@@ -89,6 +118,11 @@ public class Stream extends Worker implements JsAble {
 		unlockMe(this);
 	}
 
+	/**
+	 * Indicates the stream and its processors should log performance statistics.
+	 * 
+	 * @param logStats Indicates the stream and its processors should log performance statistics
+	 */
 	public void setLogStats(boolean logStats) {
 		lockMe(this);
 		if (logStats!=this.logStats) {
@@ -163,6 +197,11 @@ public class Stream extends Worker implements JsAble {
 		}
 	}
 	
+	/**
+	 * Returns a list of statistics logs for the stream and its processors.
+	 * 
+	 * @return A list of statistics logs for the stream and its processors
+	 */
 	public List<StatsLog> getStats() {
 		List<StatsLog> r = new ArrayList<StatsLog>();
 		lockMe(this);
@@ -264,6 +303,11 @@ public class Stream extends Worker implements JsAble {
 		return addSDRtoStream(encoder.getSDRForSDR(dateTime,sdr,value,label));
 	}
 	
+	/**
+	 * Returns true if the stream is processing SDRs.
+	 * 
+	 * @return True if the stream is processing SDRs
+	 */
 	public boolean isStreaming() {
 		boolean r = false;
 		lockMe(this);
@@ -291,6 +335,9 @@ public class Stream extends Worker implements JsAble {
 		}
 	}
 	
+	/**
+	 * Puts the calling thread in a wait state until the stream is started.
+	 */
 	public void waitForStart() {
 		while (!isWorking()) {
 			try {
@@ -325,6 +372,9 @@ public class Stream extends Worker implements JsAble {
 		}
 	}
 	
+	/**
+	 * Puts the calling thread in a wait state until the stream is stopped.
+	 */
 	public void waitForStop() {
 		for (StreamProcessor processor: streamProcessors) {
 			whileStopping(processor); 
@@ -332,6 +382,9 @@ public class Stream extends Worker implements JsAble {
 		whileStopping(this);
 	}
 	
+	/**
+	 * Destroys the stream and its processors.
+	 */
 	public void destroy() {
 		for (StreamProcessor processor: streamProcessors) {
 			processor.destroy();
