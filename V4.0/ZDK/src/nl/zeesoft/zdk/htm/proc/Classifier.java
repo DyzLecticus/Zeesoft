@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.htm.util.SDR;
 /**
  * A Classifier is used to learn, classify and predict specific values and/or labels based on the temporal memory cell activation pattern.
  * The Classification objects it produces are attached to output DateTimeSDR objects using the keyValues property.
- * One output DateTimeSDR with Classification is produced for each of the configured prediction steps. 
+ * One output DateTimeSDR with Classification is produced for each of the configured prediction steps.
  */
 public class Classifier extends ProcessorObject {
 	public static final String			CLASSIFICATION_KEY		= "classification";

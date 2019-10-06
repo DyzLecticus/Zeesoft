@@ -68,9 +68,13 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * Basic matrix mathematics  ");
 		System.out.println(" * Genetic algorithms  ");
 		System.out.println(" * Neural networks  ");
-		System.out.println(" * Sparse distributed representations  ");
-		System.out.println(" * Spatial pooling  ");
-		System.out.println(" * Temporal memory  ");
+		System.out.println(" * [Hierarchical Temporal Memory](https://numenta.com/)  ");
+		System.out.println("   * Sparse distributed representations  ");
+		System.out.println("   * Spatial pooling  ");
+		System.out.println("   * Temporal memory  ");
+		System.out.println("   * SDR streaming  ");
+		System.out.println("   * Anomaly detection  ");
+		System.out.println("   * Value classification and prediction  ");
 		System.out.println(" * Self documenting and testing libraries  ");
 		System.out.println();
 		describeRelease();

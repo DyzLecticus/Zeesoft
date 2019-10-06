@@ -12,6 +12,10 @@ import nl.zeesoft.zdk.htm.util.SDR;
 
 /**
  * A (Temporal) Memory is used to learn SDR sequences.
+ * 
+ * PLEASE NOTE; This implementation differs greatly from the Numenta HTM implementation because it does not model dendrites;
+ * Memory cells are directly connected to each other and dendrite activation is not limited.
+ * Further more, distal connections do not need to be randomly initialized when the memory is created. 
  */
 public class Memory extends ProcessorObject {
 	protected MemoryConfig			config		= null;
