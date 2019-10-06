@@ -7,6 +7,10 @@ import nl.zeesoft.zdk.htm.util.HistoricalFloats;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.thread.Locker;
 
+/**
+ * An AnomalyDetector is used to monitor DefaultStream output for bursting anomalies.
+ * It tracks the average column prediction accuracy and calls its listeners if the difference between the latest accuracy and the average is higher than a certain threshold.
+ */
 public class AnomalyDetector extends Locker implements StreamListener {
 	protected DefaultStream					stream			= null;
 	

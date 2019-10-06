@@ -9,12 +9,16 @@ import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.thread.Locker;
 
+/**
+ * A ValueClassifier is used to listen to ClassificationStream output for Classifications.
+ * It combines these into a list for its listeners. 
+ */
 public class ValueClassifier extends Locker implements StreamListener {
-	protected DefaultStream					stream			= null;
+	protected ClassificationStream			stream			= null;
 	
 	private	List<ValueClassifierListener>	listeners		= new ArrayList<ValueClassifierListener>();
 
-	public ValueClassifier(DefaultStream stream) {
+	public ValueClassifier(ClassificationStream stream) {
 		super(stream.getMessenger());
 		this.stream = stream;
 	}

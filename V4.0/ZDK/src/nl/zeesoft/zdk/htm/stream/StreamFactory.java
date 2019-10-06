@@ -17,6 +17,10 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * A StreamFactory provides an easy way to configure and instantiate most commonly used SDR streams. 
+ * See PoolerConfig, MemoryConfig and ClassifierConfig for processor specific configuration details.
+ */
 public class StreamFactory implements JsAble {
 	protected StreamEncoder		encoder								= null;
 	protected int				outputLength						= 0;
@@ -174,10 +178,24 @@ public class StreamFactory implements JsAble {
 		return r;
 	}
 	
+	/**
+	 * Returns a new DefaultStream.
+	 * 
+	 * @param randomizePoolerConnections Indicates the pooler connections should be initialized randomly
+	 * @return A new DefaultStream
+	 */
 	public DefaultStream getNewDefaultStream(boolean randomizePoolerConnections) {
 		return getNewDefaultStream(null,null,randomizePoolerConnections);
 	}
 	
+	/**
+	 * Returns a new DefaultStream.
+	 * 
+	 * @param msgr The messenger
+	 * @param uni The worker union
+	 * @param randomizePoolerConnections Indicates the spatial pooler connections should be initialized randomly
+	 * @return A new DefaultStream
+	 */
 	public DefaultStream getNewDefaultStream(Messenger msgr, WorkerUnion uni,boolean randomizePoolerConnections) {
 		PoolerConfig poolerConfig = getNewPoolerConfig();
 		MemoryConfig memoryConfig = getNewMemoryConfig(poolerConfig);
@@ -186,10 +204,24 @@ public class StreamFactory implements JsAble {
 		return new DefaultStream(msgr,uni,encoder.copy(),pooler,memory);
 	}
 	
+	/**
+	 * Returns a new ClassificationStream.
+	 * 
+	 * @param randomizePoolerConnections Indicates the spatial pooler connections should be initialized randomly
+	 * @return A new ClassificationStream
+	 */
 	public ClassificationStream getNewClassificationStream(boolean randomizePoolerConnections) {
 		return getNewClassificationStream(null,null,randomizePoolerConnections);
 	}
 	
+	/**
+	 * Returns a new ClassificationStream.
+	 * 
+	 * @param msgr The messenger
+	 * @param uni The worker union
+	 * @param randomizePoolerConnections Indicates the spatial pooler connections should be initialized randomly
+	 * @return A new ClassificationStream
+	 */
 	public ClassificationStream getNewClassificationStream(Messenger msgr, WorkerUnion uni,boolean randomizePoolerConnections) {
 		PoolerConfig poolerConfig = getNewPoolerConfig();
 		MemoryConfig memoryConfig = getNewMemoryConfig(poolerConfig);

@@ -6,6 +6,10 @@ import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * A ClassificationStream consists of a spatial pooler, a temporal memory and a classifier.
+ * It can be used for anomaly detection and value classification and/or prediction.
+ */
 public class ClassificationStream extends DefaultStream {
 	public ClassificationStream(Pooler pooler,Memory memory,Classifier classifier) {
 		super(pooler,memory);

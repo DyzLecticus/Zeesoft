@@ -5,6 +5,10 @@ import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * A DefaultStream consists of a spatial pooler and a temporal memory.
+ * It can be used for anomaly detection.
+ */
 public class DefaultStream extends Stream {
 	public DefaultStream(Pooler pooler,Memory memory) {
 		super(null,null);

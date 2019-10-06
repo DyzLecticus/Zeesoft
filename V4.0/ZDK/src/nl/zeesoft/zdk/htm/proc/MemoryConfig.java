@@ -100,9 +100,9 @@ public class MemoryConfig {
 	/**
 	 * Sets the local distal connection radius.
 	 * Used to limit the range of distal connections between cells within the temporal memory.
-	 * Use a short radius when 2D topology is important.
+	 * Use a short radius when 3D topology is important.
 	 * 
-	 * @param localDistalConnectedRadius
+	 * @param localDistalConnectedRadius The local distal connected radius
 	 */
 	public void setLocalDistalConnectedRadius(int localDistalConnectedRadius) {
 		if (!initialized) {
