@@ -90,9 +90,9 @@ public class TestEvolver extends TestObject {
 		Evolver evolverCopy = new Evolver(messenger,union,1,2,0,tSet,10);
 		evolverCopy.setDebug(true);
 
+		System.out.println();
+		System.out.println("Evolver JSON;");
 		if (testJsAble(evolver,evolverCopy,"Evolver JSON does not match expectation")) {
-			System.out.println();
-			System.out.println("Evolver JSON;");
 			System.out.println(evolver.toJson().toStringBuilderReadFormat());
 		}
 	}

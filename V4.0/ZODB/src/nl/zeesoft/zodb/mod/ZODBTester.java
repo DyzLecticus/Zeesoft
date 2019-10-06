@@ -54,6 +54,10 @@ public class ZODBTester extends TesterObject {
 				}
 			}
 			res = new DatabaseResponse();
+			result = new DatabaseResult();
+			result.id = n;
+			result.name = req.name;
+			res.results.add(result);
 			addRequestNoLock(req,res);
 		}
 		

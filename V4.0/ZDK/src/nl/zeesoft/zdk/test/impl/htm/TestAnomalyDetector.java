@@ -118,7 +118,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		factoryOri.setClassifyValueKey("test");
 		
 		StreamFactory factoryNew = new StreamFactory(1024,21);
-		this.testJsAble(factoryOri, factoryNew, "Factory JSON does not match expectation");
+		testJsAble(factoryOri, factoryNew, "Factory JSON does not match expectation");
 		
 		stream.destroy();
 	}

@@ -55,7 +55,9 @@ public class TestConfig extends TestObject {
 		
 		JsFile json = config.toJson();
 		assertEqual(json.rootElement.children.size(),5,"Number of children does not match expectation");
-		testJsAble(config,new Config(),"Configuration JSON does not match original");
+		if (testJsAble(config,new Config(),"Configuration JSON does not match original")) {
+			System.out.println(json.toStringBuilderReadFormat());
+		}
 		assertEqual(config.getFullDataDir(),fullDataDir,"Full data directory does not match expectation");
 		assertEqual(config.getZODBKey(),key,"Key does not match expectation");
 	}

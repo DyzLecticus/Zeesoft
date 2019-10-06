@@ -70,8 +70,9 @@ public class TestStreamEncoder extends TestObject {
 		
 		System.out.println();
 		System.out.println("Stream encoder JSON;");
-		System.out.println(enc.toJson().toStringBuilderReadFormat());
 		StreamEncoder encNew = new StreamEncoder();
-		testJsAble(enc,encNew,"Encoder JSON does not match expectation");
+		if (testJsAble(enc,encNew,"Encoder JSON does not match expectation")) {
+			System.out.println(enc.toJson().toStringBuilderReadFormat());
+		}
 	}
 }

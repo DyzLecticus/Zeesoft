@@ -35,6 +35,32 @@ Class references;
 **Test output**  
 The output of this test shows the converted JSON.  
 ~~~~
+{
+  "debug": true,
+  "dataDir": "dir/",
+  "servletUrl": "http://127.0.0.1",
+  "whiteList": [
+    "127.0.0.1",
+    "0:0:0:0:0:0:0:1"
+  ],
+  "modules": [
+    {
+      "name": "ZODB",
+      "url": "http://test.domain",
+      "selfTest": true,
+      "indexBlockSize": 1000,
+      "dataBlockSize": 10,
+      "key": "MIuE9KUP~O2HcNXJUIXJLGkNDFaAKImE6MOAkDwD1CoK2",
+      "newKey": "MKLD:GxMXBUJ9EMGMOWBQH0JDNEJRHPL8BLPhG:IHD0B2",
+      "whiteList": [
+        "127.0.0.1",
+        "0:0:0:0:0:0:0:1"
+      ],
+      "maxLenName": 128,
+      "maxLenObj": 32768
+    }
+  ]
+}
 ~~~~
 
 nl.zeesoft.zodb.test.TestDatabaseRequest
@@ -59,13 +85,72 @@ Class references;
 The output of this test shows the converted JSON.  
 ~~~~
 
+{
+  "type": "LIST",
+  "start": 0,
+  "max": 10,
+  "modAfter": 1570378287470,
+  "modBefore": 1570378287471
+}
 
+{
+  "type": "LIST",
+  "start": 0,
+  "max": 10,
+  "index": "objectNamePrefix:propertyName",
+  "invert": false,
+  "operator": "CONTAINS",
+  "value": "value",
+  "ascending": true
+}
 
+{
+  "type": "GET",
+  "id": 1
+}
 
+{
+  "type": "GET",
+  "modAfter": 1570378287471,
+  "modBefore": 1570378287472,
+  "index": "@OBJECT:name",
+  "invert": false,
+  "operator": "STARTS_WITH",
+  "value": "testObject",
+  "ascending": true
+}
 
+{
+  "type": "ADD",
+  "name": "objectName",
+  "object": {
+    "data": "addObjectData"
+  }
+}
 
+{
+  "type": "SET",
+  "id": 1,
+  "object": {
+    "data": "setObjectData"
+  }
+}
 
+{
+  "type": "REMOVE",
+  "id": 1
+}
 
+{
+  "type": "REMOVE",
+  "modAfter": 1570378287472,
+  "modBefore": 1570378287473,
+  "index": "@OBJECT:name",
+  "invert": false,
+  "operator": "CONTAINS",
+  "value": "testObject",
+  "ascending": true
+}
 ~~~~
 
 nl.zeesoft.zodb.test.TestDatabaseResponse
@@ -89,16 +174,51 @@ Class references;
 **Test output**  
 The output of this test shows the converted JSON.  
 ~~~~
+{
+  "statusCode": 503,
+  "errors": [
+    "Database is busy. Please wait."
+  ]
+}
 
+{
+  "statusCode": 200,
+  "results": [
+    {
+      "name": "testName",
+      "id": 1,
+      "modified": 1570378287509,
+      "object": {
+        "data": "testObjectData"
+      }
+    }
+  ]
+}
 
+{
+  "statusCode": 200,
+  "results": [
+    {
+      "name": "testName1",
+      "id": 1,
+      "modified": 1570378287510
+    },
+    {
+      "name": "testName2",
+      "id": 1,
+      "modified": 1570378287510
+    }
+  ],
+  "size": 2
+}
 ~~~~
 
 Test results
 ------------
 All 3 tests have been executed successfully (26 assertions).  
-Total test duration: 55 ms (total sleep duration: 0 ms).  
+Total test duration: 77 ms (total sleep duration: 0 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zodb.test.TestConfig: 634 Kb / 0 Mb
- * nl.zeesoft.zodb.test.TestDatabaseRequest: 418 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestConfig: 637 Kb / 0 Mb
+ * nl.zeesoft.zodb.test.TestDatabaseRequest: 419 Kb / 0 Mb
  * nl.zeesoft.zodb.test.TestDatabaseResponse: 424 Kb / 0 Mb
