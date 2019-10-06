@@ -9,22 +9,11 @@ Zeesoft products are created to avoid all that noise and let you focus on writin
  
 Contents
 --------
-Version 1.0 of the Zeesoft architecture has some very nice features and has spawned some very nice products but the database has some limitations.
-The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V1.0">V1.0</a> folder contains the complete source code for the following products;
-  * ZODB Zeesoft Object Database
-  * ZADF Zeesoft Application Development Framework
-  * ZPO	 Zeesoft Personal Organizer
-  * ZCRM Zeesoft Customer Relationship Manager
- 
-Version 2.0 of the Zeesoft architecture features a complete rewrite of the database in order to provide better performance with less memory usage.
-The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V2.0">V2.0</a> folder contains the complete source code for the following products;
- * ZODB Zeesoft Object Database
- * ZODD Zeesoft Object Database Demo
- * ZACS Zeesoft Artificial Cognition Simulator
- * ZIDS Zeesoft Intelligent Dialog Server
- * ZIDD Zeesoft Intelligent Dialog server Demo
- * ZIDL Zeesoft Intelligent Dialog Lambda
- * ZDSM Zeesoft Domain Service Monitor
+Version 4.0 of the Zeesoft architecture features major version 3.0 ZDK improvements and a complete rewrite of the version 2.0 database using the ZDK.
+The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V4.0">V4.0</a> folder contains the complete source code for the following products;
+ * [ZDK](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/) Zeesoft Development Kit  
+ * [ZODB](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZODB/) Zeesoft Object Database  
+ * [ZENN](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSC/) Zeesoft Evolutionary Neural Networks  
 
 Version 3.0 of the Zeesoft architecture is a departure from previous full stack Zeesoft architectures.
 The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0">V3.0</a> folder contains the complete source code for the following products;  
@@ -37,6 +26,23 @@ The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V3.0">V3.0</a> f
  * [ZSO](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZSO/) Zeesoft Sample Orchestration  
  * [ZMMT](https://github.com/DyzLecticus/Zeesoft/blob/master/V3.0/ZMMT/) Zeesoft MIDI Mod Tracker
  * [ZeeTracker](https://github.com/DyzLecticus/Zeesoft/blob/master/ZeeTracker/) A fast and fun way of composing music
+ 
+Version 2.0 of the Zeesoft architecture features a complete rewrite of the database in order to provide better performance with less memory usage.
+The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V2.0">V2.0</a> folder contains the complete source code for the following products;
+ * ZODB Zeesoft Object Database
+ * ZODD Zeesoft Object Database Demo
+ * ZACS Zeesoft Artificial Cognition Simulator
+ * ZIDS Zeesoft Intelligent Dialog Server
+ * ZIDD Zeesoft Intelligent Dialog server Demo
+ * ZIDL Zeesoft Intelligent Dialog Lambda
+ * ZDSM Zeesoft Domain Service Monitor
+
+Version 1.0 of the Zeesoft architecture has some very nice features and has spawned some very nice products but the database has some limitations.
+The <a href="https://github.com/DyzLecticus/Zeesoft/tree/master/V1.0">V1.0</a> folder contains the complete source code for the following products;
+  * ZODB Zeesoft Object Database
+  * ZADF Zeesoft Application Development Framework
+  * ZPO	 Zeesoft Personal Organizer
+  * ZCRM Zeesoft Customer Relationship Manager
  
 Future development
 ------------------
