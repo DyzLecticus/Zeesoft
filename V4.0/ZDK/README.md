@@ -58,10 +58,10 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 2171390044467960530778525673986022108942778743122471052420298814
+Key: 2179359262169116468992046052774815546101345937125238952825860084
 Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
-Key encoded text: P7V7dbM7L9Eb~567m0Z8m0LaRb1cd067U0U7g67bXbwc~9d8Y0KaybJ9bdvcuaP5u7b716t7LcNbP9W8AbAaDcvbb0X7:7m8x8m00b#746~9H819a8L6e9CclbebR5I5e7Z6~aP7K9~bS6T5m0d0t0L0Pb0draj7C928n7Sb~aqcN0V7U9CawbF9#ctcraW6t8e8l7g6:b2b0
+Key encoded text: EVOVD1J2nX9Yx1~WyZ4VSVGZ:2mVDUvZhYFYq1:2P2mWJTAX7ZOUIYCWo1t1nYKZMUDXdY0YrZaUvUFV7XUXkZN2zXRYrVpWuYpWwXu2N2tXQWW2rWTZo2vYtTsUfU#T4VSU31M2mX4YN2qVyZhWZWGYz2vVRVGZZXMZx2n3u1gWXVlX3YGUGY:WKZr1kYR1LVGYyYWXeYoU0
 Key decoded text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
 ASCII encoded text: 42,24,59,48,66,63,2,-28,67,73,-10,50,55,61,59,-28,63,67,-10,-21,26,73,80,-28,34,53,57,56,63,51,75,55,-3,-2,-10,12,69,71,-10,37,72,53,-10,61,69,69,-10,42,59,53,66,45,68,55,-10,56,69,52,55,61,21,-16,16,-15,-1,-16,-2,8,69,62,-3,56,-10,73,69,57,-10,59,68,51,77,-16,62,51,77,-16,74,51,16,-16,49,54,59,11,73,52,69,62,58,33,-9,-7,4
@@ -266,9 +266,9 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2019-10-06 17:47:21:537 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2019-10-06 17:47:21:838 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2019-10-06 17:47:21:839 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+2019-10-06 23:56:32:983 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2019-10-06 23:56:33:284 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2019-10-06 23:56:33:284 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
 java.lang.NumberFormatException: For input string: "A"
 	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
 	at java.lang.Integer.parseInt(Integer.java:580)
@@ -278,7 +278,7 @@ java.lang.NumberFormatException: For input string: "A"
 	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:39)
 	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:50)
 
-2019-10-06 17:47:22:151 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2019-10-06 23:56:33:596 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZMatrix
@@ -313,14 +313,14 @@ Scalar multiplied by 3;
 030.00 | 030.00 | 030.00
 
 Randomized;
-000.62 | 000.23 | -00.63
+-00.15 | 000.87 | -00.25
 -------+--------+-------
--00.38 | -00.35 | -01.00
+-00.38 | -00.66 | 000.23
 
 Randomized multiplied element wise;
-018.61 | 006.93 | -18.98
+-04.42 | 026.24 | -07.63
 -------+--------+-------
--11.28 | -10.50 | -29.96
+-11.35 | -19.81 | 007.01
 
 Matrix 1;
 001.00 | 001.00 | 001.00
@@ -340,16 +340,16 @@ Matrix multiplication of matrix 1 * matrix 2;
 024.00 | 024.00
 
 New randomized matrix;
-000.88 | -00.97 | 000.03
+000.24 | -00.02 | -00.83
 -------+--------+-------
--00.86 | 000.26 | -00.72
+000.18 | -00.99 | -00.14
 
 Randomized matrix transposed;
-000.88 | -00.86
+000.24 | 000.18
 -------+-------
--00.97 | 000.26
+-00.02 | -00.99
 -------+-------
-000.03 | -00.72
+-00.83 | -00.14
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestGeneticCode
@@ -379,45 +379,45 @@ The output of this test shows;
  * A generated genetic code  
  * The mutated genetic code and the resulting scaled property values  
 ~~~~
-Genetic code: 7299990451686932893073365082904075231392671564726191780097701648640264874538832723479842123092288684
-Mutated code: 7299990451686932793073365086904075231392671364726191780097701618640264874538832723579842123092288684
-                              ^          ^               ^                  ^                   ^                 
+Genetic code: 2435395882769080924291769691290494520904847678165596370991439521543592842045988659446129031452077951
+Mutated code: 2437395882769080924291769691290494540904847678165593370991439521543595842045988659746129031452077951
+                 ^                               ^               ^                 ^            ^                 
 
 Scaled property values;
-0: 139
-1: 686
-2: 279 <
-3: 508
-4: 357 <
-5: 313 <
-6: 472
-7: 261
-8: 640
-9: 421 <
-10: 917
-11: 874
-12: 904
-13: 619
-14: 231 <
-15: 648
-16: 723
-17: 364 <
-18: 869 <
-19: 45
-20: 139
-21: 168 <
-22: 904
-23: 327
-24: 832
-25: 930
-26: 977
-27: 640 <
-28: 231
-29: 9
-30: 186 <
-31: 186 <
-32: 690 <
-Mutated property values: 12
+0: 816
+1: 886 <
+2: 584 <
+3: 48
+4: 437 <
+5: 769
+6: 933 <
+7: 454 <
+8: 690
+9: 49
+10: 696
+11: 435
+12: 691 <
+13: 521
+14: 77
+15: 395
+16: 886
+17: 395 <
+18: 540 <
+19: 767
+20: 291
+21: 48
+22: 521
+23: 145 <
+24: 559
+25: 31
+26: 176
+27: 49 <
+28: 207
+29: 769
+30: 655
+31: 914
+32: 291
+Mutated property values: 10
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestNeuralNet
@@ -472,17 +472,17 @@ The output of this test shows;
 Neural net activator: nl.zeesoft.zdk.functions.ZLeakyReLU, learning rate: 0.1
 Initial test results;
   Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|1.00], output: [-0.00], expectation: [0.00], error: 0.00, loss: 0.0032400384
-  Input: [0.00|1.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0018582
-  Input: [1.00|0.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0013819
+  Input: [1.00|1.00], output: [-0.01], expectation: [0.00], error: 0.01, loss: 0.009638871
+  Input: [0.00|1.00], output: [-0.01], expectation: [1.00], error: 1.01, loss: 1.006593
+  Input: [1.00|0.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0030459
   Average error: 0.50, average loss: 0.50, success: false
 Latest test results;
-  Input: [1.00|1.00], output: [0.01], expectation: [0.00], error: -0.01, loss: 0.011711657
-  Input: [0.00|1.00], output: [0.68], expectation: [1.00], error: 0.32, loss: 0.31935704
-  Input: [1.00|0.00], output: [0.71], expectation: [1.00], error: 0.29, loss: 0.28751212
-  Input: [0.00|0.00], output: [0.74], expectation: [0.00], error: -0.74, loss: 0.73823655
-  Average error: 0.34, average loss: 0.34, success: false
-Trained epochs: 10000, total average error: 3550.0266, total average loss: 3550.0266
+  Input: [1.00|1.00], output: [0.01], expectation: [0.00], error: -0.01, loss: 0.008854799
+  Input: [0.00|1.00], output: [0.95], expectation: [1.00], error: 0.05, loss: 0.051279604
+  Input: [1.00|0.00], output: [0.95], expectation: [1.00], error: 0.05, loss: 0.048368335
+  Input: [0.00|0.00], output: [0.12], expectation: [0.00], error: -0.12, loss: 0.12358746
+  Average error: 0.06, average loss: 0.06, success: false
+Trained epochs: 10000, total average error: 2899.5056, total average loss: 2899.5056
 ================================================================================
 Neural net activator: nl.zeesoft.zdk.functions.ZLeakyReLU, output activator: nl.zeesoft.zdk.functions.ZSoftmaxTop, learning rate: 0.1
 Initial test results;
@@ -492,12 +492,12 @@ Initial test results;
   Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
   Average error: 0.50, average loss: 0.50, success: false
 Latest test results;
-  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
+  Input: [1.00|1.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
   Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Average error: 0.50, average loss: 0.50, success: false
-Trained epochs: 10000, total average error: 5000.0, total average loss: 5000.0
+  Input: [0.00|0.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
+  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
+  Average error: 1.00, average loss: 1.00, success: false
+Trained epochs: 10000, total average error: 7109.5, total average loss: 7109.5
 
 Neural net JSON;
 {
@@ -511,19 +511,19 @@ Neural net JSON;
   "outputActivator": "nl.zeesoft.zdk.functions.ZSoftmaxTop",
   "learningRate": 0.1,
   "values": [
-    "2,1,1.0,0.0",
-    "2,1,-0.037282247,-0.080730624",
+    "2,1,0.0,1.0",
+    "2,1,1.1232579,-0.029934349",
     "1,1,0.0"
   ],
   "weights": [
     "1,1,0.0",
-    "2,2,-1.0733123,-0.6580581,-2.8773637,-3.4812655",
-    "1,2,-0.1103344,-0.25459325"
+    "2,2,-0.042926986,-0.009389047,-0.667572,-0.8089906",
+    "1,2,0.5977514,-0.8952775"
   ],
   "biases": [
     "1,1,0.0",
-    "2,1,-2.6551332,-5.196209",
-    "1,1,-0.6946341"
+    "2,1,1.2521971,-2.1862347",
+    "1,1,-0.7099886"
   ]
 }
 ~~~~
@@ -554,143 +554,49 @@ Class references;
 **Test output**  
 The output of this test shows the training program outputs of one or more generated XOR neural nets.  
 ~~~~
-Neural net activator: nl.zeesoft.zdk.functions.ZReLU, output activator: nl.zeesoft.zdk.functions.ZReLU, learning rate: 0.001
+Neural net activator: nl.zeesoft.zdk.functions.ZSigmoid, output activator: nl.zeesoft.zdk.functions.ZReLU, learning rate: 0.0408
 Initial test results;
-  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Average error: 0.50, average loss: 0.50, success: false
+  Input: [0.00|0.00], output: [1.63], expectation: [0.00], error: -1.63, loss: 1.6339092
+  Input: [1.00|1.00], output: [1.51], expectation: [0.00], error: -1.51, loss: 1.5062909
+  Input: [0.00|1.00], output: [1.58], expectation: [1.00], error: -0.58, loss: 0.58254707
+  Input: [1.00|0.00], output: [1.55], expectation: [1.00], error: -0.55, loss: 0.55242884
+  Average error: 1.07, average loss: 1.07, success: false
 
-00100 ------------------------| 100%
-00200 ------------------------| 100%
-00300 ------------------------| 100%
-00400 ------------------------| 100%
-00500 ------------------------| 100%
-00600 ------------------------| 100%
-00700 ------------------------| 100%
-00800 ------------------------| 100%
-00900 ------------------------| 100%
-01000 ------------------------| 100%
-01100 ------------------------| 100%
-01200 ------------------------| 100%
-01300 ------------------------| 100%
-01400 ------------------------| 100%
-01500 ------------------------| 100%
-01600 ------------------------| 100%
-01700 ------------------------| 100%
-01800 ------------------------| 100%
-01900 ------------------------| 100%
-02000 ------------------------| 100%
-02100 ------------------------| 100%
-02200 ------------------------| 100%
-02300 ------------------------| 100%
-02400 ------------------------| 100%
-02500 ------------------------| 100%
-02600 ------------------------| 100%
-02700 ------------------------| 100%
-02800 ------------------------| 100%
-02900 ------------------------| 100%
-03000 ------------------------| 100%
-03100 ------------------------| 100%
-03200 ------------------------| 100%
-03300 ------------------------| 100%
-03400 ------------------------| 100%
-03500 ------------------------| 100%
-03600 ------------------------| 100%
-03700 ------------------------| 100%
-03800 ------------------------| 100%
-03900 ------------------------| 100%
-04000 ------------------------| 100%
-04100 ------------------------| 100%
-04200 ------------------------| 100%
-04300 ------------------------| 100%
-04400 ------------------------| 100%
-04500 ------------------------| 100%
-04600 ------------------------| 100%
-04700 ------------------------| 100%
-04800 ------------------------| 100%
-04900 ------------------------| 100%
-05000 ------------------------| 100%
-05100 ------------------------| 100%
-05200 ------------------------| 100%
-05300 ------------------------| 100%
-05400 ------------------------| 100%
-05500 ------------------------| 100%
-05600 ------------------------| 100%
-05700 ------------------------| 100%
-05800 ------------------------| 100%
-05900 ------------------------| 100%
-06000 ------------------------| 100%
-06100 ------------------------| 100%
-06200 ------------------------| 100%
-06300 ------------------------| 100%
-06400 ------------------------| 100%
-06500 ------------------------| 100%
-06600 ------------------------| 100%
-06700 ------------------------| 100%
-06800 ------------------------| 100%
-06900 ------------------------| 100%
-07000 ------------------------| 100%
-07100 ------------------------| 100%
-07200 ------------------------| 100%
-07300 ------------------------| 100%
-07400 ------------------------| 100%
-07500 ------------------------| 100%
-07600 ------------------------| 100%
-07700 ------------------------| 100%
-07800 ------------------------| 100%
-07900 ------------------------| 100%
-08000 ------------------------| 100%
-08100 ------------------------| 100%
-08200 ------------------------| 100%
-08300 ------------------------| 100%
-08400 ------------------------| 100%
-08500 ------------------------| 100%
-08600 ------------------------| 100%
-08700 ------------------------| 100%
-08800 ------------------------| 100%
-08900 ------------------------| 100%
-09000 ------------------------| 100%
-09100 ------------------------| 100%
-09200 ------------------------| 100%
-09300 ------------------------| 100%
-09400 ------------------------| 100%
-09500 ------------------------| 100%
-09600 ------------------------| 100%
-09700 ------------------------| 100%
-09800 ------------------------| 100%
-09900 ------------------------| 100%
-10000 ------------------------| 100%
+00100 -----------/ 48%
+00200 -----------| 48%
+00300 -----------| 48%
+00400 -----------| 48%
+00500 -----------| 48%
+00600 ----------/ 47%
+00700 ----------| 47%
+00800 ----------| 47%
+00900 ----------| 47%
+01000 ----------| 47%
+01100 ----------| 47%
+01200 ----------| 47%
+01300 ----------/ 46%
+01400 ----------| 46%
+01500 ----------/ 45%
+01600 ----------/ 44%
+01700 ---------/ 43%
+01800 ---------/ 42%
+01900 ---------/ 40%
+02000 --------/ 37%
+02100 -------/ 34%
+02200 ------/ 29%
+02300 -----/ 25%
+02400 ----/ 21%
+02500 ---/ 16%
+02600 --/ 12%
+02700 -/ 8%
 
 Latest test results;
-  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Average error: 0.50, average loss: 0.50, success: false
-Trained epochs: 10000, total average error: 5000.0, total average loss: 5000.0
-================================================================================
-Neural net activator: nl.zeesoft.zdk.functions.ZReLU, output activator: nl.zeesoft.zdk.functions.ZReLU, learning rate: 0.0858
-Initial test results;
-  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Input: [1.00|0.00], output: [0.06], expectation: [1.00], error: 0.94, loss: 0.93702155
-  Average error: 0.48, average loss: 0.48, success: false
-
-00100 -------------------------\ 107%
-00200 ----------------------------------------\ 165%
-00300 ---------------------/ 90%
-00400 ---/ 18%
-
-Latest test results;
-  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|0.00], output: [0.91], expectation: [1.00], error: 0.09, loss: 0.08971989
-  Input: [0.00|0.00], output: [0.03], expectation: [0.00], error: -0.03, loss: 0.033923864
-  Input: [0.00|1.00], output: [1.01], expectation: [1.00], error: -0.01, loss: 0.0096588135
-  Average error: 0.03, average loss: 0.03, success: true
-Trained epochs: 420, total average error: 208.9504, total average loss: 208.9504
+  Input: [1.00|1.00], output: [0.10], expectation: [0.00], error: -0.10, loss: 0.099095404
+  Input: [1.00|0.00], output: [0.93], expectation: [1.00], error: 0.07, loss: 0.07317859
+  Input: [0.00|0.00], output: [0.04], expectation: [0.00], error: -0.04, loss: 0.041377723
+  Input: [0.00|1.00], output: [0.93], expectation: [1.00], error: 0.07, loss: 0.07015109
+  Average error: 0.07, average loss: 0.07, success: true
+Trained epochs: 2787, total average error: 1171.3406, total average loss: 1171.3406
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestEvolver
@@ -725,39 +631,45 @@ Class references;
 **Test output**  
 The output of this test shows the evolver debug output and the evolver object converted to JSON.  
 ~~~~
-2019-10-06 17:47:23:082 DBG nl.zeesoft.zdk.genetic.Evolver: Started
-2019-10-06 17:47:23:306 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 9249428880084296
+2019-10-06 23:56:34:296 DBG nl.zeesoft.zdk.genetic.Evolver: Started
+2019-10-06 23:56:34:376 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 8094276811121005
 - Size: 14
-- Initial average loss: 0.48417 (final: 0.07853)
-- Total average loss: 99.23747 (epochs: 226)
-- Training result: 48.04776
-2019-10-06 17:47:23:563 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 9249428880084295
+- Initial average loss: 0.51633 (final: 0.05599)
+- Total average loss: 21.21823 (epochs: 72)
+- Training result: 10.95551
+2019-10-06 23:56:34:768 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 8094276111121005
 - Size: 14
-- Initial average loss: 0.49651 (final: 0.06942)
-- Total average loss: 64.59866 (epochs: 159)
-- Training result: 32.07360
-2019-10-06 17:47:28:669 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 9249428880784295
+- Initial average loss: 0.54678 (final: 0.07705)
+- Total average loss: 17.04869 (epochs: 62)
+- Training result: 9.32194
+2019-10-06 23:56:38:280 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 8094276111125005
 - Size: 14
-- Initial average loss: 0.46113 (final: 0.07095)
-- Total average loss: 30.65082 (epochs: 89)
-- Training result: 14.13404
-2019-10-06 17:47:28:954 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 9249428880784495
+- Initial average loss: 0.55534 (final: 0.06481)
+- Total average loss: 7.61667 (epochs: 25)
+- Training result: 4.22981
+2019-10-06 23:56:38:373 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 8094276111125055
 - Size: 14
-- Initial average loss: 0.25000 (final: 0.00000)
-- Total average loss: 1.50000 (epochs: 5)
-- Training result: 0.37500
-2019-10-06 17:47:29:030 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 9249488880784495
+- Initial average loss: 0.44761 (final: 0.07418)
+- Total average loss: 6.81544 (epochs: 24)
+- Training result: 3.05069
+2019-10-06 23:56:38:477 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 8094273111125055
 - Size: 14
-- Initial average loss: 0.25000 (final: 0.00000)
-- Total average loss: 0.25000 (epochs: 2)
-- Training result: 0.06250
-2019-10-06 17:47:29:082 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 9249488880784495
+- Initial average loss: 0.35884 (final: 0.05790)
+- Total average loss: 6.83307 (epochs: 27)
+- Training result: 2.45199
+2019-10-06 23:56:39:757 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 8094273111125055
+- Size: 14
+- Initial average loss: 0.30640 (final: 0.07115)
+- Total average loss: 2.82585 (epochs: 16)
+- Training result: 0.86583
+2019-10-06 23:56:39:792 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 8094273111125052
 - Size: 14
 - Initial average loss: 0.00000 (final: 0.00000)
 - Total average loss: 0.00000 (epochs: 0)
@@ -774,12 +686,13 @@ Evolver JSON;
   "sleepMsFoundBest": 10,
   "maxLogLines": 20,
   "log": [
-    "2019-10-06 17:47:23:306 SEL code: 9249428880084296, size: 14, initial loss: 0.48417 (final: 0.07853), total loss: 99.23747, result: 48.04776 (epochs: 226)",
-    "2019-10-06 17:47:23:563 SEL code: 9249428880084295, size: 14, initial loss: 0.49651 (final: 0.06942), total loss: 64.59866, result: 32.07360 (epochs: 159)",
-    "2019-10-06 17:47:28:669 SEL code: 9249428880784295, size: 14, initial loss: 0.46113 (final: 0.07095), total loss: 30.65082, result: 14.13404 (epochs: 89)",
-    "2019-10-06 17:47:28:954 SEL code: 9249428880784495, size: 14, initial loss: 0.25000 (final: 0.00000), total loss: 1.50000, result: 0.37500 (epochs: 5)",
-    "2019-10-06 17:47:29:030 SEL code: 9249488880784495, size: 14, initial loss: 0.25000 (final: 0.00000), total loss: 0.25000, result: 0.06250 (epochs: 2)",
-    "2019-10-06 17:47:29:082 SEL code: 9249488880784495, size: 14, initial loss: 0.00000 (final: 0.00000), total loss: 0.00000, result: 0.00000 (epochs: 0)"
+    "2019-10-06 23:56:34:376 SEL code: 8094276811121005, size: 14, initial loss: 0.51633 (final: 0.05599), total loss: 21.21823, result: 10.95551 (epochs: 72)",
+    "2019-10-06 23:56:34:768 SEL code: 8094276111121005, size: 14, initial loss: 0.54678 (final: 0.07705), total loss: 17.04869, result: 9.32194 (epochs: 62)",
+    "2019-10-06 23:56:38:280 SEL code: 8094276111125005, size: 14, initial loss: 0.55534 (final: 0.06481), total loss: 7.61667, result: 4.22981 (epochs: 25)",
+    "2019-10-06 23:56:38:373 SEL code: 8094276111125055, size: 14, initial loss: 0.44761 (final: 0.07418), total loss: 6.81544, result: 3.05069 (epochs: 24)",
+    "2019-10-06 23:56:38:477 SEL code: 8094273111125055, size: 14, initial loss: 0.35884 (final: 0.05790), total loss: 6.83307, result: 2.45199 (epochs: 27)",
+    "2019-10-06 23:56:39:757 SEL code: 8094273111125055, size: 14, initial loss: 0.30640 (final: 0.07115), total loss: 2.82585, result: 0.86583 (epochs: 16)",
+    "2019-10-06 23:56:39:792 SEL code: 8094273111125052, size: 14, initial loss: 0.00000 (final: 0.00000), total loss: 0.00000, result: 0.00000 (epochs: 0)"
   ],
   "bestSoFar": [
     {
@@ -790,32 +703,32 @@ Evolver JSON;
           "maxHiddenNeurons": 2,
           "outputNeurons": 1,
           "codePropertyStart": 0,
-          "code": "OOcOhNNBxG3IVBvLnOSFrLHCeJLK6LrAPCoKmFvMREmCTOMM#OIO:JcCWAnGaAsDGDKG2",
+          "code": "4MbGpElBoHQENBWORNwK4HqIDGPEJObLfJQNGA4DhBbGDMPGdOjO3DfOlEbCkCPOwCPJ2",
           "neuralNet": [
             {
               "inputNeurons": 2,
               "hiddenLayers": 1,
               "hiddenNeurons": 2,
               "outputNeurons": 1,
-              "weightFunction": "nl.zeesoft.zdk.functions.ZWeightDefault",
-              "biasFunction": "nl.zeesoft.zdk.functions.ZWeightDefault",
-              "activator": "nl.zeesoft.zdk.functions.ZTanH",
+              "weightFunction": "nl.zeesoft.zdk.functions.ZWeightXavier",
+              "biasFunction": "nl.zeesoft.zdk.functions.ZWeightKaiming",
+              "activator": "nl.zeesoft.zdk.functions.ZReLU",
               "outputActivator": "nl.zeesoft.zdk.functions.ZSoftmaxTop",
-              "learningRate": 0.1458,
+              "learningRate": 0.1578,
               "values": [
-                "2,1,1.0,1.0",
-                "2,1,0.44142565,-0.6921129",
-                "1,1,0.0"
+                "2,1,1.0,0.0",
+                "2,1,0.0,0.33489418",
+                "1,1,1.0"
               ],
               "weights": [
                 "1,1,0.0",
-                "2,2,-0.928,0.776,-0.994,0.806",
-                "1,2,-0.956,0.806"
+                "2,2,-0.85006547,-0.6835578,0.98809147,0.62002194",
+                "1,2,-0.7421954,-0.61237246"
               ],
               "biases": [
                 "1,1,0.0",
-                "2,1,0.62600005,-0.66400003",
-                "1,1,0.86800003"
+                "2,1,0.73321396,-0.6531973",
+                "1,1,0.5045949"
               ]
             }
           ]
@@ -838,15 +751,9 @@ Evolver JSON;
               "success": true,
               "tests": [
                 {
-                  "inputs": "0.0,0.0",
+                  "inputs": "1.0,1.0",
                   "outputs": "0.0",
                   "expectations": "0.0",
-                  "errors": "0.0"
-                },
-                {
-                  "inputs": "1.0,0.0",
-                  "outputs": "1.0",
-                  "expectations": "1.0",
                   "errors": "0.0"
                 },
                 {
@@ -856,9 +763,15 @@ Evolver JSON;
                   "errors": "0.0"
                 },
                 {
-                  "inputs": "1.0,1.0",
+                  "inputs": "0.0,0.0",
                   "outputs": "0.0",
                   "expectations": "0.0",
+                  "errors": "0.0"
+                },
+                {
+                  "inputs": "1.0,0.0",
+                  "outputs": "1.0",
+                  "expectations": "1.0",
                   "errors": "0.0"
                 }
               ]
@@ -875,15 +788,9 @@ Evolver JSON;
               "success": true,
               "tests": [
                 {
-                  "inputs": "0.0,0.0",
+                  "inputs": "1.0,1.0",
                   "outputs": "0.0",
                   "expectations": "0.0",
-                  "errors": "0.0"
-                },
-                {
-                  "inputs": "1.0,0.0",
-                  "outputs": "1.0",
-                  "expectations": "1.0",
                   "errors": "0.0"
                 },
                 {
@@ -893,9 +800,15 @@ Evolver JSON;
                   "errors": "0.0"
                 },
                 {
-                  "inputs": "1.0,1.0",
+                  "inputs": "0.0,0.0",
                   "outputs": "0.0",
                   "expectations": "0.0",
+                  "errors": "0.0"
+                },
+                {
+                  "inputs": "1.0,0.0",
+                  "outputs": "1.0",
+                  "expectations": "1.0",
                   "errors": "0.0"
                 }
               ]
@@ -973,9 +886,9 @@ Class references;
 **Test output**  
 The output of this test shows the SDR map, a third SDR and the number of matches for the that SDR in the set.
 ~~~~
-SDR map: 100,2|17,98|55,13
+SDR map: 100,2|77,79|3,59
 Number of SDR A matches in SDR map: 1
-SDR C: 100,33,95
+SDR C: 100,64,42
 Number of SDR C matches in SDR map: 0
 ~~~~
 
@@ -1041,13 +954,13 @@ Class references;
 The output of this test shows a random distributed scalar encoder and the SDRs it generated for several values.
 ~~~~
 Random distributed encoder size: 50, bits: 4, capacity: 230300
-SDR for value 0:  00000000100101000000000000000100000000000000000000
-SDR for value 1:  00000000100100000000000000000100000000000100000000
-SDR for value 24: 00001100010000000000000000000000000000000000000100
-SDR for value 25: 00001100010000000000000000000000000000000001000000
-SDR for value 75: 00000100000100000000000010000010000000000000000000
-SDR for value 76: 00000100000100000000000000000010000000100000000000
-SDR for value -1: 00010000100001000000000000000100000000000000000000
+SDR for value 0:  00000000100000000010000000000000011000000000000000
+SDR for value 1:  00000100100000000010000000000000001000000000000000
+SDR for value 24: 01000000000100000000000000010001000000000000000000
+SDR for value 25: 01100000000100000000000000010000000000000000000000
+SDR for value 75: 00001000000000000000010000000001000000000000010000
+SDR for value 76: 00001000000000000000000000000001000000000000010100
+SDR for value -1: 00000000000000000010000000000000011100000000000000
 ~~~~
 
 nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder
@@ -1148,14 +1061,14 @@ The output of this test shows;
  * How the generated SDRs represent several date/time and value combinations.
  * The StringBuilder representation of the encoder state.
 ~~~~
-SDR for 2019-01-01 00:00:00:000, value1: 0, value2: 0; 11111100000000000000000000000000000000000000001111111110000000000000000000000000000000000000000101000011000000100000000000100010100001000000100000000110010000100000100000010001000000111111110000000000
-SDR for 2019-02-02 01:00:00:000, value1: 1, value2: 2; 11111111000000000000000000000000000000000000000000001111111100000000000000000000000000000000000001100010000000100000000000100010100001001000100000001010010000000000100000010001111100000000000000001111
-SDR for 2019-03-03 02:00:00:000, value1: 2, value2: 4; 00111111110000000000000000000000000000000000000000000000111111110000000000000000000000000000000001100010000000100000000010100000100001001010100000001000000000000000100100010001111111110000000000000000
-SDR for 2019-04-04 03:00:00:000, value1: 3, value2: 6; 00111111110000000000000000000000000000000000000000000000000011111111000000000000000000000000000001100010000000100000000001100000100001001010100010001000000000000000000100010001000000000000011111111000
-SDR for 2019-05-05 04:00:00:000, value1: 4, value2: 8; 00001111111100000000000000000000000000000000000000000000000000001111111100000000000000000000000001100010000000100010000001100000100000001010000010001000001001000000000100000001111111110000000000000000
+SDR for 2019-01-01 00:00:00:000, value1: 0, value2: 0; 11111100000000000000000000000000000000000000001111111110000000000000000000000000000000000000000100101000010000000100100000000010000110000010000000000010010001001000001000010100000000111111110000000000
+SDR for 2019-02-02 01:00:00:000, value1: 1, value2: 2; 11111111000000000000000000000000000000000000000000001111111100000000000000000000000000000000000000101000010000000100101000000010000010000010000000000010010001001000100000110000111100000000000000001111
+SDR for 2019-03-03 02:00:00:000, value1: 2, value2: 4; 00111111110000000000000000000000000000000000000000000000111111110000000000000000000000000000000000101000000000000100101000000010000010100011000000000010010000001000100000110000111111110000000000000000
+SDR for 2019-04-04 03:00:00:000, value1: 3, value2: 6; 00111111110000000000000000000000000000000000000000000000000011111111000000000000000000000000000000101000000000000100101000000011000000100011000100000010010000011000100000000000000000000000011111111000
+SDR for 2019-05-05 04:00:00:000, value1: 4, value2: 8; 00001111111100000000000000000000000000000000000000000000000000001111111100000000000000000000000000111000000000000100101000000010000000100010000001000110010000011000100000000000111111110000000000000000
 
 Encoder StringBuilder:
-VALUE1=0.0,32,1,37,6,7,26,30,14;1.0,32,1,2,37,6,26,30,14;2.0,32,1,2,37,6,24,26,14;3.0,32,1,2,37,6,25,26,14;4.0,32,1,2,18,6,25,26,14|VALUE2=0.0,17,35,4,22,39,28,13,14;1.0,0,17,35,4,22,39,28,14;2.0,0,17,35,4,39,28,12,14;3.0,0,35,4,39,28,12,14,31;4.0,0,2,35,4,39,28,12,31;5.0,0,2,35,4,39,11,12,31;6.0,0,2,35,4,39,8,12,31;7.0,0,2,18,4,39,8,12,31;8.0,0,2,18,21,39,8,12,31
+VALUE1=0.0,17,2,35,4,20,36,9,30;1.0,17,2,4,20,36,22,9,30;2.0,17,2,4,20,36,22,38,30;3.0,17,2,4,20,22,38,30,31;4.0,17,2,3,4,20,22,38,30|VALUE2=0.0,17,2,35,21,37,24,30,14;1.0,17,2,35,21,37,24,28,14;2.0,17,2,34,35,21,24,28,14;3.0,17,2,34,35,24,27,28,14;4.0,17,2,34,35,3,24,28,14;5.0,17,2,34,3,7,24,28,14;6.0,17,2,3,7,23,24,28,14;7.0,17,2,3,23,24,9,28,14;8.0,17,2,23,24,9,28,13,14
 ~~~~
 
 nl.zeesoft.zdk.test.impl.htm.TestPooler
@@ -1186,45 +1099,45 @@ Class references;
 The output of this test shows information about the pooler after passing the SDR test set through it.  
 It asserts that learning increases the difference in overlap between the regular weekly recurring values and all the other pooler output SDRs.  
 ~~~~
-Initializing pooler took: 17 ms
-Randomizing connections took: 67 ms
+Initializing pooler took: 18 ms
+Randomizing connections took: 76 ms
 
 Pooler input dimensions: 16x16, output dimensions: 32x32
 - Average proximal inputs per column: 90
 - Column groups: 144, average columns per group: 441
 
 Processing input SDR map (learning: false) ...
-Processing input SDR map took: 8443 ms
+Processing input SDR map took: 8019 ms
 
 Performance statistics;
-calculateOverlapScores:       1792.074 ms
-selectActiveColumns:           967.614 ms
-logActivity:                  1196.124 ms
-calculateColumnGroupActivity: 2963.468 ms
-updateBoostFactors:           1271.496 ms
-total:                        8252.693 ms
+calculateOverlapScores:       1718.086 ms
+selectActiveColumns:           870.309 ms
+logActivity:                  1147.552 ms
+calculateColumnGroupActivity: 2808.459 ms
+updateBoostFactors:           1242.457 ms
+total:                        7847.295 ms
 logSize:                         15330   
-avgPerLog:                       0.538 ms
+avgPerLog:                       0.512 ms
 
-Combined average: 0.35673797, Combined weekly average: 5.701158
+Combined average: 0.37596637, Combined weekly average: 4.9757214
 
 Processing input SDR map (learning: true) ...
-Processing input SDR map took: 11123 ms
+Processing input SDR map took: 11386 ms
 
 Performance statistics;
-calculateOverlapScores:        2506.502 ms
-selectActiveColumns:            963.551 ms
-learnActiveColumnsOnBits:      2413.979 ms
-logActivity:                    899.617 ms
-calculateColumnGroupActivity:  2835.869 ms
-updateBoostFactors:            1228.878 ms
-total:                        10934.268 ms
+calculateOverlapScores:        2681.246 ms
+selectActiveColumns:            900.980 ms
+learnActiveColumnsOnBits:      2544.721 ms
+logActivity:                    961.656 ms
+calculateColumnGroupActivity:  2816.548 ms
+updateBoostFactors:            1227.795 ms
+total:                        11194.338 ms
 logSize:                          15330   
-avgPerLog:                        0.713 ms
+avgPerLog:                        0.730 ms
 
-Combined average: 0.30563408, Combined weekly average: 8.153758
+Combined average: 0.3209485, Combined weekly average: 7.3554926
 
-Original ratio: 15.98136, learned ratio: 26.678171
+Original ratio: 13.234486, learned ratio: 22.917984
 ~~~~
 
 nl.zeesoft.zdk.test.impl.htm.TestMemory
@@ -1261,30 +1174,30 @@ The output of this test shows;
 Memory dimensions: 32x32x4
 
 Processing input SDR map (5000/15330) ...
-Processed SDRs: 500, bursting average: 4 (max: 11)
+Processed SDRs: 500, bursting average: 4 (max: 9)
 Processed SDRs: 1000, bursting average: 2 (max: 7)
-Processed SDRs: 1500, bursting average: 1 (max: 7)
-Processed SDRs: 2000, bursting average: 0 (max: 3)
-Processed SDRs: 2500, bursting average: 1 (max: 5)
-Processed SDRs: 3000, bursting average: 1 (max: 6)
-Processed SDRs: 3500, bursting average: 0 (max: 3)
-Processed SDRs: 4000, bursting average: 1 (max: 5)
-Processed SDRs: 4500, bursting average: 0 (max: 4)
-Processed SDRs: 5000, bursting average: 0 (max: 4)
-Processing input SDR map took: 13071 ms
+Processed SDRs: 1500, bursting average: 1 (max: 8)
+Processed SDRs: 2000, bursting average: 1 (max: 4)
+Processed SDRs: 2500, bursting average: 1 (max: 7)
+Processed SDRs: 3000, bursting average: 1 (max: 4)
+Processed SDRs: 3500, bursting average: 0 (max: 4)
+Processed SDRs: 4000, bursting average: 0 (max: 4)
+Processed SDRs: 4500, bursting average: 0 (max: 3)
+Processed SDRs: 5000, bursting average: 0 (max: 5)
+Processing input SDR map took: 13352 ms
 
 Performance statistics;
-cycleActiveState:       200.014 ms
-activateColumnCells:    194.114 ms
-calculateActivity:      908.292 ms
-selectPredictiveCells:  421.672 ms
-updatePredictions:     3650.672 ms
-total:                 5385.933 ms
+cycleActiveState:       190.622 ms
+activateColumnCells:    210.260 ms
+calculateActivity:      894.152 ms
+selectPredictiveCells:  424.895 ms
+updatePredictions:     3922.325 ms
+total:                 5653.498 ms
 logSize:                   5000   
-avgPerLog:                1.077 ms
+avgPerLog:                1.131 ms
 
-Average distal inputs per memory cell: 56 (min: 0, max: 105)
-Average connected distal inputs per memory cell: 53 (min: 0, max: 105)
+Average distal inputs per memory cell: 56 (min: 21, max: 105)
+Average connected distal inputs per memory cell: 53 (min: 11, max: 104)
 ~~~~
 
 nl.zeesoft.zdk.test.impl.htm.TestStreamEncoder
@@ -1352,13 +1265,11 @@ AnomalyDetector detector = stream.getNewAnomalyDetector();
 detector.addListener(this);
 // Start the stream
 stream.start();
-stream.waitForStart();
 // Add some values to the stream (include an anomaly after 5000 inputs)
 stream.addValue(1);
 stream.addValue(2);
 // Remember to stop and destroy the stream after use
 stream.stop();
-stream.waitForStop();
 stream.destroy();
 ~~~~
 
@@ -1426,52 +1337,52 @@ Stream factory JSON;
 }
 
 Started stream
-Processed SDRs: 500, average accuracy: 0.438, latest: 0.952
-Processed SDRs: 1000, average accuracy: 0.626, latest: 1.000
-Processed SDRs: 1500, average accuracy: 0.850, latest: 1.000
-Processed SDRs: 2000, average accuracy: 0.899, latest: 0.905
-Processed SDRs: 2500, average accuracy: 0.927, latest: 0.810
-Processed SDRs: 3000, average accuracy: 0.947, latest: 0.952
-Processed SDRs: 3500, average accuracy: 0.957, latest: 1.000
-Processed SDRs: 4000, average accuracy: 0.967, latest: 0.952
-Processed SDRs: 4500, average accuracy: 0.971, latest: 0.952
-Processed SDRs: 5000, average accuracy: 0.975, latest: 1.000
-Processed SDRs: 5500, average accuracy: 0.977, latest: 0.952
-Processed SDRs: 6000, average accuracy: 0.977, latest: 1.000
-Processed SDRs: 6500, average accuracy: 0.978, latest: 1.000
-Processed SDRs: 7000, average accuracy: 0.978, latest: 1.000
-Processed SDRs: 7500, average accuracy: 0.979, latest: 1.000
-Detected anomaly at: 7666, average accuracy: 0.9790976, latest: 0.14285713, difference: 0.7453425
-Stopped stream after 15256 ms
+Processed SDRs: 500, average accuracy: 0.452, latest: 0.810
+Processed SDRs: 1000, average accuracy: 0.633, latest: 1.000
+Processed SDRs: 1500, average accuracy: 0.843, latest: 1.000
+Processed SDRs: 2000, average accuracy: 0.902, latest: 0.952
+Processed SDRs: 2500, average accuracy: 0.930, latest: 1.000
+Processed SDRs: 3000, average accuracy: 0.946, latest: 1.000
+Processed SDRs: 3500, average accuracy: 0.959, latest: 0.905
+Processed SDRs: 4000, average accuracy: 0.968, latest: 1.000
+Processed SDRs: 4500, average accuracy: 0.972, latest: 0.952
+Processed SDRs: 5000, average accuracy: 0.972, latest: 0.810
+Processed SDRs: 5500, average accuracy: 0.974, latest: 0.952
+Processed SDRs: 6000, average accuracy: 0.977, latest: 0.905
+Processed SDRs: 6500, average accuracy: 0.978, latest: 0.952
+Processed SDRs: 7000, average accuracy: 0.978, latest: 0.952
+Processed SDRs: 7500, average accuracy: 0.976, latest: 1.000
+Detected anomaly at: 7666, average accuracy: 0.9769547, latest: 0.047619045, difference: 0.9070461
+Stopped stream after 16947 ms
 
 DefaultStream;
-total:      53622648.000 ms
-logSize:            7673   
-avgPerLog:      6988.486 ms
+total:      57581540.000 ms
+logSize:            7668   
+avgPerLog:      7509.330 ms
 
 Pooler;
-calculateOverlapScores:        5171.839 ms
-selectActiveColumns:            895.851 ms
-learnActiveColumnsOnBits:      2291.027 ms
-logActivity:                   1247.448 ms
-calculateColumnGroupActivity:  4386.075 ms
-updateBoostFactors:            1113.022 ms
-total:                        15161.901 ms
-logSize:                          12730   
-avgPerLog:                        1.191 ms
+calculateOverlapScores:        5208.748 ms
+selectActiveColumns:            844.452 ms
+learnActiveColumnsOnBits:      2653.069 ms
+logActivity:                   1378.459 ms
+calculateColumnGroupActivity:  5433.421 ms
+updateBoostFactors:            1228.095 ms
+total:                        16809.283 ms
+logSize:                          13894   
+avgPerLog:                        1.210 ms
 
 Memory;
-cycleActiveState:        475.102 ms
-activateColumnCells:     305.744 ms
-calculateActivity:      1308.008 ms
-selectPredictiveCells:   867.240 ms
-updatePredictions:     10848.721 ms
-total:                 13820.984 ms
-logSize:                    7673   
-avgPerLog:                 1.801 ms
+cycleActiveState:        501.786 ms
+activateColumnCells:     305.309 ms
+calculateActivity:      1191.905 ms
+selectPredictiveCells:  1016.190 ms
+updatePredictions:     12757.426 ms
+total:                 15787.575 ms
+logSize:                    7668   
+avgPerLog:                 2.059 ms
 
-Total processing time per SDR: 2.992 ms
-Total stream time per SDR:     1.988 ms
+Total processing time per SDR: 3.269 ms
+Total stream time per SDR:     2.210 ms
 ~~~~
 
 nl.zeesoft.zdk.test.impl.htm.TestValueClassifier
@@ -1495,13 +1406,11 @@ ValueClassifier classifier = stream.getNewValueClassifier();
 classifier.addListener(this);
 // Start the stream
 stream.start();
-stream.waitForStart();
 // Add some values to the stream
 stream.addValue(1);
 stream.addValue(2);
 // Remember to stop and destroy the stream after use
 stream.stop();
-stream.waitForStop();
 stream.destroy();
 ~~~~
 
@@ -1527,52 +1436,52 @@ Memory dimensions: 32x32x4
 Classifier prediction steps: 1
 
 Started stream
-Processed SDRs: 500, accuracy: 0.311
-Processed SDRs: 1000, accuracy: 0.528
-Processed SDRs: 1500, accuracy: 0.761
-Processed SDRs: 2000, accuracy: 0.814
-Processed SDRs: 2500, accuracy: 0.891
-Processed SDRs: 3000, accuracy: 0.926
-Processed SDRs: 3500, accuracy: 0.930
-Processed SDRs: 4000, accuracy: 0.928
-Processed SDRs: 4500, accuracy: 0.914
-Processed SDRs: 5000, accuracy: 0.934
-Stopped stream after 8842 ms
+Processed SDRs: 500, accuracy: 0.297
+Processed SDRs: 1000, accuracy: 0.529
+Processed SDRs: 1500, accuracy: 0.753
+Processed SDRs: 2000, accuracy: 0.800
+Processed SDRs: 2500, accuracy: 0.878
+Processed SDRs: 3000, accuracy: 0.894
+Processed SDRs: 3500, accuracy: 0.919
+Processed SDRs: 4000, accuracy: 0.945
+Processed SDRs: 4500, accuracy: 0.929
+Processed SDRs: 5000, accuracy: 0.933
+Stopped stream after 10015 ms
 
 ClassificationStream;
-total:      21720920.000 ms
-logSize:            5006   
-avgPerLog:      4338.977 ms
+total:      23252246.000 ms
+logSize:            5005   
+avgPerLog:      4645.804 ms
 
 Pooler;
-calculateOverlapScores:       3865.427 ms
-selectActiveColumns:           403.502 ms
-learnActiveColumnsOnBits:     1273.698 ms
-logActivity:                   562.399 ms
-calculateColumnGroupActivity: 2097.631 ms
-updateBoostFactors:            524.057 ms
-total:                        8757.896 ms
-logSize:                          6022   
-avgPerLog:                       1.454 ms
+calculateOverlapScores:       3756.707 ms
+selectActiveColumns:           482.117 ms
+learnActiveColumnsOnBits:     1556.507 ms
+logActivity:                   749.814 ms
+calculateColumnGroupActivity: 2646.004 ms
+updateBoostFactors:            659.198 ms
+total:                        9888.814 ms
+logSize:                          7454   
+avgPerLog:                       1.327 ms
 
 Memory;
-cycleActiveState:       308.464 ms
-activateColumnCells:    201.286 ms
-calculateActivity:      809.547 ms
-selectPredictiveCells:  509.216 ms
-updatePredictions:     5052.402 ms
-total:                 6890.663 ms
-logSize:                   5007   
-avgPerLog:                1.376 ms
+cycleActiveState:       334.774 ms
+activateColumnCells:    202.487 ms
+calculateActivity:      771.703 ms
+selectPredictiveCells:  602.947 ms
+updatePredictions:     6609.973 ms
+total:                 8531.671 ms
+logSize:                   5006   
+avgPerLog:                1.704 ms
 
 Classifier;
-generateClassifications: 644.670 ms
-total:                   652.057 ms
-logSize:                    5006   
-avgPerLog:                 0.130 ms
+generateClassifications: 626.017 ms
+total:                   632.476 ms
+logSize:                    5005   
+avgPerLog:                 0.126 ms
 
-Total processing time per SDR: 2.961 ms
-Total stream time per SDR:     1.766 ms
+Total processing time per SDR: 3.157 ms
+Total stream time per SDR:     2.001 ms
 
 Stream state JSON;
 {
@@ -1583,15 +1492,15 @@ Stream state JSON;
   "processors": [
     {
       "processorClassName": "nl.zeesoft.zdk.htm.proc.Pooler",
-      "processorData": "0.0,36;0.0,169;0.0,128;0.992,113;0.0,97;0.0,120;1.0,148;0.0,166;0.0,98;0.0,163;0 ..."
+      "processorData": "0.0,153;0.98399997,68;0.78399956,58;0.0,164;0.1679994,87;0.0,96;0.98399997,113;0 ..."
     },
     {
       "processorClassName": "nl.zeesoft.zdk.htm.proc.Memory",
-      "processorData": "0.43872043,0-0-2;0.41301697,1-0-1;0.34989405,24-0-0;0.35397014,3-1-1;0.36996734, ..."
+      "processorData": "0.38518602,0-1-0;0.28071848,21-3-1;0.29650417,17-4-2;0.22381736,22-4-3;0.3897513 ..."
     },
     {
       "processorClassName": "nl.zeesoft.zdk.htm.proc.Classifier",
-      "processorData": "1#0;Float;14.0,1;10.0,4;9.0,4;5.0,1;32.0,1;15.0,1;38.0,1;29.0,1;27.0,1;34.0,1;39 ..."
+      "processorData": "1#0;Float;10.0,5;7.0,1;14.0,2;25.0,2;17.0,1;21.0,1;35.0,1;11.0,3;13.0,1;22.0,7;9 ..."
     }
   ]
 }
@@ -1600,7 +1509,7 @@ Stream state JSON;
 Test results
 ------------
 All 22 tests have been executed successfully (149 assertions).  
-Total test duration: 75267 ms (total sleep duration: 30500 ms).  
+Total test duration: 76757 ms (total sleep duration: 32800 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 766 Kb / 0 Mb
@@ -1611,17 +1520,17 @@ Memory usage per test;
  * nl.zeesoft.zdk.test.impl.TestMessenger: 756 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestZMatrix: 830 Kb / 0 Mb
  * nl.zeesoft.zdk.test.impl.TestGeneticCode: 790 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestNeuralNet: 3720 Kb / 3 Mb
- * nl.zeesoft.zdk.test.impl.TestGeneticNN: 11973 Kb / 11 Mb
- * nl.zeesoft.zdk.test.impl.TestEvolver: 18633 Kb / 18 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestSDR: 21510 Kb / 21 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestSDRMap: 19149 Kb / 18 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestScalarEncoder: 10016 Kb / 9 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestRDScalarEncoder: 956 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder: 962 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestDateTimeValuesEncoder: 959 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestPooler: 34983 Kb / 34 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestMemory: 34936 Kb / 34 Mb
+ * nl.zeesoft.zdk.test.impl.TestNeuralNet: 3754 Kb / 3 Mb
+ * nl.zeesoft.zdk.test.impl.TestGeneticNN: 6464 Kb / 6 Mb
+ * nl.zeesoft.zdk.test.impl.TestEvolver: 9073 Kb / 8 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestSDR: 884 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestSDRMap: 892 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestScalarEncoder: 890 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestRDScalarEncoder: 915 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder: 921 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestDateTimeValuesEncoder: 918 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestPooler: 34957 Kb / 34 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestMemory: 34935 Kb / 34 Mb
  * nl.zeesoft.zdk.test.impl.htm.TestStreamEncoder: 34938 Kb / 34 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestAnomalyDetector: 79458 Kb / 77 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestValueClassifier: 87547 Kb / 85 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestAnomalyDetector: 72895 Kb / 71 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestValueClassifier: 79385 Kb / 77 Mb
