@@ -81,7 +81,6 @@ public class StreamFactory implements JsAble {
 		
 		// Memory configuration
 		json.rootElement.children.add(new JsElem("depth","" + depth));
-		json.rootElement.children.add(new JsElem("depth","" + depth));
 		json.rootElement.children.add(new JsElem("maxDistalConnectionsPerCell","" + maxDistalConnectionsPerCell));
 		json.rootElement.children.add(new JsElem("localDistalConnectedRadius","" + localDistalConnectedRadius));
 		json.rootElement.children.add(new JsElem("minAlmostActiveDistalConnections","" + minAlmostActiveDistalConnections));

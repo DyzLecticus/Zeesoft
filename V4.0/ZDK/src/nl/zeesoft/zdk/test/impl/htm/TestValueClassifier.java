@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.Classification;
 import nl.zeesoft.zdk.htm.stream.ClassificationStream;
 import nl.zeesoft.zdk.htm.stream.StreamFactory;
@@ -12,6 +13,8 @@ import nl.zeesoft.zdk.htm.stream.ValueClassifierListener;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
 import nl.zeesoft.zdk.htm.util.SDRMap;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -75,6 +78,7 @@ public class TestValueClassifier extends TestObject implements ValueClassifierLi
 		System.out.println(" * Information about the stream factory  ");
 		System.out.println(" * The average prediction accuracy  ");
 		System.out.println(" * Information about the stream after passing the SDR test set through it  ");
+		System.out.println(" * A trimmed JSON export of stream encoder and processor state information  ");
 	}
 	
 	@Override
@@ -93,6 +97,26 @@ public class TestValueClassifier extends TestObject implements ValueClassifierLi
 		incrementSleepMs(TestAnomalyDetector.testStream(stream, inputSDRMap, 60, df));
 
 		assertEqual(averageAccuracy.average > 0.9F,true,"Prediction accuracy is lower than expected");
+		
+		JsFile json = stream.toJson();
+		ZStringBuilder oriJs = json.toStringBuilder();
+		assertEqual(json.rootElement.children.size(),5,"Number of stream JSON elements does not match expectation");
+		
+		ClassificationStream streamNew = factory.getNewClassificationStream(true);
+		streamNew.fromJson(json);
+		ZStringBuilder newJs = streamNew.toJson().toStringBuilder();
+		assertEqual(newJs.length() / 100,oriJs.length() / 100,"Stream JSON does not match expectation");
+		
+		JsElem procsElem = json.rootElement.getChildByName("processors");
+		for (JsElem procElem: procsElem.children) {
+			JsElem dataElem = procElem.getChildByName("processorData");
+			ZStringBuilder value = dataElem.value.substring(0,80);
+			value.append(" ...");
+			dataElem.value = value;
+		}
+		System.out.println();
+		System.out.println("Stream state JSON;");
+		System.out.println(json.toStringBuilderReadFormat());
 		
 		stream.destroy();
 	}

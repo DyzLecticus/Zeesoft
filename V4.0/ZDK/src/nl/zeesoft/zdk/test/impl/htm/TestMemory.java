@@ -28,7 +28,8 @@ public class TestMemory extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.");
+		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.  ");
+		System.out.println();
 		System.out.println("**Please note** that this implementation differs greatly from the Numenta HTM implementation because it does not model dendrites;  ");
 		System.out.println("Memory cells are directly connected to each other and dendrite activation is not limited.  ");
 		System.out.println("Further more, distal connections do not need to be randomly initialized when the memory is created.  ");
