@@ -96,14 +96,12 @@ public class TestMemory extends TestObject {
 		assertEqual(averageBurst,0,"Average burst does not match expectation");
 
 		System.out.println();
-		System.out.println(memory.getDescription());
-		
-		System.out.println();
 		System.out.println("Performance statistics;");
 		System.out.println(memory.statsLog.getSummary());
 
 		System.out.println();
 		System.out.println(memory.getDescription());
+		
 		ZStringBuilder strOri = memory.toStringBuilder();
 		Memory memoryNew = new Memory(memoryConfig);
 		memoryNew.fromStringBuilder(strOri);

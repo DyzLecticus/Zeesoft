@@ -36,7 +36,7 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 	@Override
 	protected void describe() {
 		System.out.println("This test shows how to use an *AnomalyDetector* to detect anomalies in an SDR *Stream*.");
-		System.out.println("It uses a *StreamFactory* to create a *PredictionStream* and then uses that to create an *AnomalyDetector*.");
+		System.out.println("It uses a *StreamFactory* to create a *DefaultStream* and then uses that to create an *AnomalyDetector*.");
 		System.out.println("The *AnomalyDetectorListener* interface can be used to listen for anomaly detections.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");

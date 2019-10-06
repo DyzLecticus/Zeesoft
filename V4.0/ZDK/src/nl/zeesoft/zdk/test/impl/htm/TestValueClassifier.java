@@ -36,7 +36,7 @@ public class TestValueClassifier extends TestObject implements ValueClassifierLi
 	@Override
 	protected void describe() {
 		System.out.println("This test shows how to use a *ClassificationStream* and a *ValueClassifier* to classify and/or predict values.");
-		System.out.println("It uses a *StreamFactory* to create the *ClassificationStream* and then uses that to create an *ValueClassifer*.");
+		System.out.println("It uses a *StreamFactory* to create a *ClassificationStream* and then uses that to create a *ValueClassifer*.");
 		System.out.println("The *ValueClassiferListener* interface can be used to listen for classifications and/or predictions.");
 		System.out.println("The *ValueClassifer* creates a list of *Classification* objects for each input SDR and then passes that list to its listeners.");
 		System.out.println();

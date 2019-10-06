@@ -39,7 +39,7 @@ public class TestStreamEncoder extends TestObject {
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
-		System.out.println(" * How scaling changes the output size and bits of the SDRs the encoder will generate.");
+		System.out.println(" * How scaling changes the output length and bits of the SDRs the encoder will generate.");
 		System.out.println(" * The JSON structure of the encoder.");
 	}
 	
