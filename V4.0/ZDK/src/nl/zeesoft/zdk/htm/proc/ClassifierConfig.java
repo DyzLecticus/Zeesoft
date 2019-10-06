@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 /**
  * A ClassifierConfig is used to configure a single classifier.
  * The configuration cannot be changed once it has been used to instantiate a temporal memory.
- * A classifier can create classifications (or prediction) for multiple steps.
+ * A classifier can create classifications (or prediction) for multiple prediction steps.
  */
 public class ClassifierConfig {
 	protected boolean			initialized		= false;
