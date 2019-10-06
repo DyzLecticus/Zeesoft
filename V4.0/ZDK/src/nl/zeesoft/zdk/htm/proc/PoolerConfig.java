@@ -4,6 +4,11 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
 
+/**
+ * A PoolerConfig is used to configure a single spatial pooler.
+ * The configuration cannot be changed once it has been used to instantiate a spatial pooler.
+ * The input and output length are automatically translated to a 2D (or 3D single layer) input and output SDR space.
+ */
 public class PoolerConfig {
 	protected boolean		initialized						= false;
 	
@@ -33,54 +38,107 @@ public class PoolerConfig {
 		calculateDimensions();
 	}
 
+	/**
+	 * Sets the potential proximal connections.
+	 * Used by spatial pooler connection randomization to initialize proximal links.
+	 * 
+	 * @param potentialProximalConnections The potential proximal connections
+	 */
 	public void setPotentialProximalConnections(float potentialProximalConnections) {
 		if (!initialized) {
 			this.potentialProximalConnections = potentialProximalConnections;
 		}
 	}
-
+	
+	/**
+	 * Sets the proximal radius for column proximal connections.
+	 * Used to limit and map columns to the encoder input space.
+	 * Use a short radius when 2D topology is important.
+	 * 
+	 * @param proximalRadius The proximal radius
+	 */
 	public void setProximalRadius(int proximalRadius) {
 		if (!initialized) {
 			this.proximalRadius = proximalRadius;
 		}
 	}
 
+	/**
+	 * Sets the proximal connection (permanence) threshold.
+	 * 
+	 * @param proximalConnectionThreshold The connection threshold
+	 */
 	public void setProximalConnectionThreshold(float proximalConnectionThreshold) {
 		if (!initialized) {
 			this.proximalConnectionThreshold = proximalConnectionThreshold;
 		}
 	}
 
+	/**
+	 * Sets the proximal connection (permanence) decrement.
+	 * 
+	 * @param proximalConnectionDecrement The connection decrement
+	 */
 	public void setProximalConnectionDecrement(float proximalConnectionDecrement) {
 		if (!initialized) {
 			this.proximalConnectionDecrement = proximalConnectionDecrement;
 		}
 	}
 
+	/**
+	 * Sets the proximal connection (permanence) increment.
+	 * 
+	 * @param proximalConnectionIncrement The connection increment
+	 */
 	public void setProximalConnectionIncrement(float proximalConnectionIncrement) {
 		if (!initialized) {
 			this.proximalConnectionIncrement = proximalConnectionIncrement;
 		}
 	}
 
+	/**
+	 * Sets the boost strength.
+	 * Boosting greatly improves column activation distribution.
+	 * 
+	 * @param boostStrength The boost strength
+	 */
 	public void setBoostStrength(int boostStrength) {
 		if (!initialized) {
 			this.boostStrength = boostStrength;
 		}
 	}
 
+	/**
+	 * Sets the boost inhibition radius.
+	 * Used to limit the range of inhibition between pooler columns.
+	 * Use a short radius when 2D topology is important.
+	 * 
+	 * @param boostInhibitionRadius The boost inhibition radius
+	 */
 	public void setBoostInhibitionRadius(int boostInhibitionRadius) {
 		if (!initialized) {
 			this.boostInhibitionRadius = boostInhibitionRadius;
 		}
 	}
 
+	/**
+	 * Sets the boost activity log size.
+	 * A long log size will make the spatial pooler more stable but also less responsive to changes.
+	 * 
+	 * @param boostActivityLogSize The boost activity log size
+	 */
 	public void setBoostActivityLogSize(int boostActivityLogSize) {
 		if (!initialized) {
 			this.boostActivityLogSize = boostActivityLogSize;
 		}
 	}
 	
+	/**
+	 * Specifies the exact 2D input space dimensions. 
+	 * 
+	 * @param sizeX The x axis size
+	 * @param sizeY The y axis size
+	 */
 	public void setInputDimensions(int sizeX,int sizeY) {
 		if (!initialized && sizeX * sizeY == inputLength) {
 			inputSizeX = sizeX;
@@ -88,6 +146,12 @@ public class PoolerConfig {
 		}
 	}
 	
+	/**
+	 * Specifies the exact 2D output space dimensions. 
+	 * 
+	 * @param sizeX The x axis size
+	 * @param sizeY The y axis size
+	 */
 	public void setOutputDimensions(int sizeX,int sizeY) {
 		if (!initialized && sizeX * sizeY == outputLength) {
 			outputSizeX = sizeX;
@@ -95,6 +159,11 @@ public class PoolerConfig {
 		}
 	}
 	
+	/**
+	 * Returns a description of this configuration.
+	 * 
+	 * @return A description
+	 */
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("Pooler input dimensions: ");
@@ -108,16 +177,22 @@ public class PoolerConfig {
 		return r;
 	}
 	
+	/**
+	 * Returns a new SDR based on the output length of the spatial pooler.
+	 * 
+	 * @return A new SDR
+	 */
 	public SDR getNewSDR() {
 		return new SDR(outputLength);
 	}
 	
+	/**
+	 * Returns a new SDR map based on the output length and bits of the spatial pooler.
+	 * 
+	 * @return A new SDR map
+	 */
 	public SDRMap getNewSDRMap() {
 		return new SDRMap(outputLength,outputBits);
-	}
-	
-	public SDRMap getNewSDRMapWithoutIndex() {
-		return new SDRMap(outputLength,outputBits,false);
 	}
 
 	protected void calculateDimensions() {

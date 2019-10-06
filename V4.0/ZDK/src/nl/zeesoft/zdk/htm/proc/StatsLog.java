@@ -7,6 +7,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 
+/**
+ * A StatsLog contains a list of Stats object used to log processor performance statistics.
+ */
 public class StatsLog {
 	protected static final DecimalFormat	df 			= new DecimalFormat("0.000");
 	

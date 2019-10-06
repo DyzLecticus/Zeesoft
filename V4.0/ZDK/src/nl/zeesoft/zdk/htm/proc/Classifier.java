@@ -68,6 +68,12 @@ public class Classifier extends ProcessorObject {
 		classifierSDRs.clear();
 	}
 	
+	public List<SDR> getSDRsForInput(SDR inputSDR,SDR activationSDR,boolean learn) {
+		List<SDR> context = new ArrayList<SDR>();
+		context.add(inputSDR);
+		return getSDRsForInput(activationSDR, context, learn);
+	}
+	
 	@Override
 	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
 		inputSDR = null;

@@ -11,6 +11,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.util.SDR;
 
+/**
+ * A (Spatial) Pooler is used to transform encoder SDRs into sparse SDRs for temporal memory processing.
+ */
 public class Pooler extends ProcessorObject {
 	protected PoolerConfig							config			= null;
 	
@@ -25,12 +28,23 @@ public class Pooler extends ProcessorObject {
 		initialize();
 	}
 
+	/**
+	 * Initializes proximal links for all columns.
+	 * 
+	 * This method must be called before processing SDRs if the state of this pooler has not yet been initialized from a string builder.
+	 * Without it, the spatial pooler will not have any proximal links to learn from input SDRs.
+	 */
 	public void randomizeConnections() {
 		for (PoolerColumn col: columns) {
 			col.randomizeConnections(connections);
 		}
 	}
 	
+	/**
+	 * Returns a description of this spatial pooler.
+	 * 
+	 * @return A description of this spatial pooler
+	 */
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = config.getDescription();
 		int min = config.inputLength; 
@@ -286,7 +300,7 @@ public class Pooler extends ProcessorObject {
 	}
 	
 	protected SDR recordActiveColumnsInSDR(List<PoolerColumn> activeColumns) {
-		SDR r = new SDR(config.outputLength);
+		SDR r = config.getNewSDR();
 		for (PoolerColumn col: activeColumns) {
 			r.setBit(col.index,true);
 		}

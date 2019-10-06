@@ -64,13 +64,7 @@ public class TestClassifier extends TestObject {
 			DateTimeSDR inputSDR = (DateTimeSDR) inputSDRMap.getSDR(i);
 			SDR outputSDR = pooler.getSDRForInput(inputSDR,true);
 			SDR activationSDR = memory.getSDRForInput(outputSDR,true);
-			
-			List<SDR> context = new ArrayList<SDR>();
-			context.add(inputSDR);
-			context.add(outputSDR);
-			context.add(activationSDR);
-			
-			List<SDR> classifierSDRs = classifier.getSDRsForInput(activationSDR, context,true);
+			List<SDR> classifierSDRs = classifier.getSDRsForInput(inputSDR,activationSDR,true);
 			if (classifierSDRs.size()>0) {
 				DateTimeSDR predictionSDR = (DateTimeSDR) classifierSDRs.get(0);
 				if (predictionSDR!=null) {
