@@ -5,6 +5,9 @@ import java.util.TimeZone;
 
 import nl.zeesoft.zdk.functions.ZRandomize;
 
+/**
+ * A DateTimeValuGenerator can be used to generate mock input data for SDR streams.  
+ */
 public class DateTimeValueGenerator {
 	private long	startDateTime			= 0;
 	private long	incrementMs				= 1000;

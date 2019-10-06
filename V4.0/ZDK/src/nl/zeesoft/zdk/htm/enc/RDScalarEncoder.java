@@ -13,6 +13,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.functions.ZRandomize;
 import nl.zeesoft.zdk.htm.util.SDR;
 
+/**
+ * An RDScalarEncoder can be used to encode a large range of values into an SDR by distributing the bits randomly while maintaining overlap properties.
+ */
 public class RDScalarEncoder extends StateEncoderObject {
 	private SortedMap<Float,SDR>	sdrsByValue			= new TreeMap<Float,SDR>();
 	private Set<ZStringBuilder>		sdrsByStringBuilder	= new HashSet<ZStringBuilder>();
@@ -76,6 +79,11 @@ public class RDScalarEncoder extends StateEncoderObject {
 		return r;
 	}
 	
+	/**
+	 * Returns the number of used buckets in this SDR.
+	 * 
+	 * @return The number of used buckets in this SDR
+	 */
 	public int getBuckets() {
 		return sdrsByValue.size();
 	}

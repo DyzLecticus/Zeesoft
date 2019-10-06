@@ -4,6 +4,9 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+/**
+ * A DateTimeSDR is used by streams to propagate the actual input along with the SDR so classifiers can learn to classify and predict real values. 
+ */
 public class DateTimeSDR extends SDR {
 	public static final String			VALUE_KEY	= "value";
 	public static final String			LABEL_KEY	= "label";
@@ -28,29 +31,6 @@ public class DateTimeSDR extends SDR {
 		r.dateTime = new Long(dateTime);
 		for (Entry<String,Object> entry: keyValues.entrySet()) {
 			r.keyValues.put(entry.getKey(),entry.getValue());
-		}
-		return r;
-	}
-	
-	public static Float getValueFromSDR(DateTimeSDR sdr,String valueKey) {
-		Float r = null;
-		Object val = sdr.keyValues.get(valueKey);
-		if (val!=null) {
-			r = objectToFloat(val);
-		}
-		return r;
-	}
-	
-	public static float objectToFloat(Object val) {
-		float r = 0;
-		if (val!=null) {
-			if (val instanceof Float) {
-				r = (float) val;
-			} else if (val instanceof Integer) {
-				r = (float) (Integer) val;
-			} else if (val instanceof Long) {
-				r = (float) (Long) val;
-			}
 		}
 		return r;
 	}

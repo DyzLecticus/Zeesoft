@@ -3,6 +3,9 @@ package nl.zeesoft.zdk.htm.enc;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 
+/**
+ * ScalarEncoders are used to encode scalar values into SDRs.
+ */
 public class ScalarEncoder extends EncoderObject {
 	private int		minValue	= 0;
 	private int		maxValue	= 0;
@@ -14,6 +17,12 @@ public class ScalarEncoder extends EncoderObject {
 		this.maxValue = maxValue;
 	}
 	
+	/**
+	 * Sets the periodic indicator of this SDR.
+	 * Periodic SDRs can be used to represent cyclic values like dates and times.
+	 *  
+	 * @param periodic Indicates this encoder should generate periodic SDRs
+	 */
 	public void setPeriodic(boolean periodic) {
 		this.periodic = periodic;
 	}
@@ -53,10 +62,22 @@ public class ScalarEncoder extends EncoderObject {
 		return r;
 	}
 	
+	/**
+	 * Returns the number of possible buckets in this SDR.
+	 * 
+	 * @return The number of possible buckets in this SDR
+	 */
 	public int getBuckets() {
 		return periodic ? length : length - bits;
 	}
 
+	/**
+	 * Iterates through all possible values of this encoder to determine if the SDR values have a certain minimal and maximal overlap.
+	 * 
+	 * @param minOverlap The minimal overlap between two sequential values
+	 * @param maxOverlap The maximal overlap between two sequential values
+	 * @return An empty string builder or a string builder containing an error message
+	 */
 	public ZStringBuilder testScalarOverlap(int minOverlap, int maxOverlap) {
 		if (maxOverlap==0) {
 			maxOverlap = bits; 

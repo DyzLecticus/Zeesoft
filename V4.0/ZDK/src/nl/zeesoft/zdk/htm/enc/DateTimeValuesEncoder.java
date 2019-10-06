@@ -4,6 +4,9 @@ import java.util.SortedMap;
 
 import nl.zeesoft.zdk.htm.util.SDR;
 
+/**
+ * A DateTimeValuesEncoder is an example implementation of a combined encoder for date, time and multiple corresponding values.
+ */
 public class DateTimeValuesEncoder extends DateTimeEncoder {
 	private static final String		VALUE1		= "VALUE1";
 	private static final String		VALUE2		= "VALUE2";

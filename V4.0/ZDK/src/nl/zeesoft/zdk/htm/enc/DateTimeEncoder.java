@@ -7,6 +7,9 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.htm.util.SDR;
 
+/**
+ * A DateTimeEncoder is an example implementation of a combined encoder for date and time periods.
+ */
 public class DateTimeEncoder extends CombinedEncoder {
 	private static final String		MONTH		= "MONTH";
 	private static final String		WEEKDAY		= "WEEKDAY";
