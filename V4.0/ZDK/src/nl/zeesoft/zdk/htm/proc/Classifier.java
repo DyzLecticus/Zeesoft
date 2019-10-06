@@ -7,6 +7,9 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 
+/**
+ * A Classifier is used to learn, classify and predict specific values and/or labels based on the temporal memory cell activation pattern.
+ */
 public class Classifier extends ProcessorObject {
 	public static final String			CLASSIFICATION_KEY		= "classification";
 	
@@ -68,7 +71,16 @@ public class Classifier extends ProcessorObject {
 		classifierSDRs.clear();
 	}
 	
-	public List<SDR> getSDRsForInput(SDR inputSDR,SDR activationSDR,boolean learn) {
+	/**
+	 * Returns a list classification SDRs for a certain cell activation SDR.
+	 * The ability to create classifications depends on the learned associations between input SDRs and corresponding cell activation SDRs.
+	 * 
+	 * @param activationSDR The temporal memory cell activation SDR
+	 * @param inputSDR The input SDR used to learn associations between activations and values (and/or labels)
+	 * @param learn Indicates the classifier should learn the associations
+	 * @return A list of classification SDRs
+	 */
+	public List<SDR> getSDRsForInput(SDR activationSDR,SDR inputSDR,boolean learn) {
 		List<SDR> context = new ArrayList<SDR>();
 		context.add(inputSDR);
 		return getSDRsForInput(activationSDR, context, learn);

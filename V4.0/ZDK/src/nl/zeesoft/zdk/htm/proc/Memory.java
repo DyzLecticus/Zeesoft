@@ -10,6 +10,9 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 
+/**
+ * A (Temporal) Memory is used to learn SDR sequences.
+ */
 public class Memory extends ProcessorObject {
 	protected MemoryConfig			config		= null;
 
@@ -23,6 +26,11 @@ public class Memory extends ProcessorObject {
 		initialize();
 	}
 	
+	/**
+	 * Returns a description of this temporal memory.
+	 * 
+	 * @return A description
+	 */
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
 		int cells = config.length * config.depth;

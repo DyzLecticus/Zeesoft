@@ -106,7 +106,7 @@ public class TestValueClassifier extends TestObject implements ValueClassifierLi
 			Object value = inputSDR.keyValues.get(DateTimeSDR.VALUE_KEY);
 			float accuracy = 0;
 			Classification classification = previousClassification;
-			for (Object predicted: classification.maxCountedValues) {
+			for (Object predicted: classification.mostCountedValues) {
 				if (predicted.equals(value)) {
 					accuracy = 1;
 					break;

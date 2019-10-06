@@ -4,6 +4,11 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
 
+/**
+ * A MemoryConfig is used to configure a single temporal memory.
+ * The configuration cannot be changed once it has been used to instantiate a temporal memory.
+ * The length is automatically translated to a 3D memory space of the specified depth.
+ */
 public class MemoryConfig {
 	protected boolean		initialized							= false;
 	
@@ -35,48 +40,93 @@ public class MemoryConfig {
 		calculateDimensions();
 	}
 	
+	/**
+	 * Sets the depth of the temporal memory.
+	 * A deeper memory can learn more sequence variations.
+	 * 
+	 * @param depth The depth
+	 */
 	public void setDepth(int depth) {
 		if (!initialized) {
 			this.depth = depth;
 		}
 	}
 
+	/**
+	 * Sets the distal connection (permanence) threshold.
+	 * 
+	 * @param distalConnectionThreshold The distal connection threshold
+	 */
 	public void setDistalConnectionThreshold(float distalConnectionThreshold) {
 		if (!initialized) {
 			this.distalConnectionThreshold = distalConnectionThreshold;
 		}
 	}
 
+	/**
+	 * Sets the distal connection (permanence) decrement.
+	 * 
+	 * @param distalConnectionDecrement The distal connection decrement
+	 */
 	public void setDistalConnectionDecrement(float distalConnectionDecrement) {
 		if (!initialized) {
 			this.distalConnectionDecrement = distalConnectionDecrement;
 		}
 	}
 
+
+	/**
+	 * Sets the distal connection (permanence) increment.
+	 * 
+	 * @param distalConnectionIncrement The distal connection increment
+	 */
 	public void setDistalConnectionIncrement(float distalConnectionIncrement) {
 		if (!initialized) {
 			this.distalConnectionIncrement = distalConnectionIncrement;
 		}
 	}
 
+	/**
+	 * Sets the maximal number of distal connections per cell.
+	 * 
+	 * @param maxDistalConnectionsPerCell The maximal number of distal connections per cell
+	 */
 	public void setMaxDistalConnectionsPerCell(int maxDistalConnectionsPerCell) {
 		if (!initialized) {
 			this.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
 		}
 	}
 
+	/**
+	 * Sets the local distal connection radius.
+	 * Used to limit the range of distal connections between cells within the temporal memory.
+	 * Use a short radius when 2D topology is important.
+	 * 
+	 * @param localDistalConnectedRadius
+	 */
 	public void setLocalDistalConnectedRadius(int localDistalConnectedRadius) {
 		if (!initialized) {
 			this.localDistalConnectedRadius = localDistalConnectedRadius;
 		}
 	}
 
+	/**
+	 * Sets the minimal number of almost active distal connections a cell must have to be selected the winner of a bursting column.
+	 * 
+	 * @param minAlmostActiveDistalConnections The minimal number of almost active distal connections
+	 */
 	public void setMinAlmostActiveDistalConnections(int minAlmostActiveDistalConnections) {
 		if (!initialized) {
 			this.minAlmostActiveDistalConnections = minAlmostActiveDistalConnections;
 		}
 	}
 
+	/**
+	 * Specifies the exact 2 dimensional size of the temporal memory.
+	 * 
+	 * @param sizeX The x axis size
+	 * @param sizeY The y axis size
+	 */
 	public void setDimensions(int sizeX,int sizeY) {
 		if (!initialized && sizeX * sizeY == length) {
 			this.sizeX = sizeX;
@@ -84,6 +134,11 @@ public class MemoryConfig {
 		}
 	}
 	
+	/**
+	 * Returns a description of this configuration.
+	 * 
+	 * @return A description
+	 */
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("Memory dimensions: ");
@@ -95,16 +150,22 @@ public class MemoryConfig {
 		return r;
 	}
 	
+	/**
+	 * Returns a new SDR based on the length of the temporal memory.
+	 * 
+	 * @return A new SDR 
+	 */
 	public SDR getNewSDR() {
 		return new SDR(length);
 	}
 	
+	/**
+	 * Returns a new SDR map based on the length and bits of the temporal memory.
+	 * 
+	 * @return A new SDR map
+	 */
 	public SDRMap getNewSDRMap() {
 		return new SDRMap(length,bits);
-	}
-	
-	public SDRMap getNewSDRMapWithoutIndex() {
-		return new SDRMap(length,bits,false);
 	}
 
 	protected void calculateDimensions() {

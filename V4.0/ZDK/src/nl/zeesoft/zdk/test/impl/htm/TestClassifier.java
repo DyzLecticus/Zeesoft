@@ -64,7 +64,7 @@ public class TestClassifier extends TestObject {
 			DateTimeSDR inputSDR = (DateTimeSDR) inputSDRMap.getSDR(i);
 			SDR outputSDR = pooler.getSDRForInput(inputSDR,true);
 			SDR activationSDR = memory.getSDRForInput(outputSDR,true);
-			List<SDR> classifierSDRs = classifier.getSDRsForInput(inputSDR,activationSDR,true);
+			List<SDR> classifierSDRs = classifier.getSDRsForInput(activationSDR,inputSDR,true);
 			if (classifierSDRs.size()>0) {
 				DateTimeSDR predictionSDR = (DateTimeSDR) classifierSDRs.get(0);
 				if (predictionSDR!=null) {
@@ -115,7 +115,7 @@ public class TestClassifier extends TestObject {
 		predictedValues.clear();
 		ZStringBuilder predictions = new ZStringBuilder();
 		Classification classification = (Classification) predictionSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
-		for (Object pValue: classification.maxCountedValues) {
+		for (Object pValue: classification.mostCountedValues) {
 			if (predictions.length()>0) {
 				predictions.append(", ");
 			}

@@ -3,9 +3,6 @@ package nl.zeesoft.zdk.messenger;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.messenger.messages.DebugMessage;
-import nl.zeesoft.zdk.messenger.messages.ErrorMessage;
-import nl.zeesoft.zdk.messenger.messages.WarningMessage;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
@@ -58,7 +55,7 @@ public class Messenger extends Worker  {
 			}
 			message += st;
 		}
-		ErrorMessage msg = new ErrorMessage(source,message);
+		MessageError msg = new MessageError(source,message);
 		addMessage(msg);
 	}
 		
@@ -69,7 +66,7 @@ public class Messenger extends Worker  {
 	 * @param message The message
 	 */
 	public void warn(Object source, String message) {
-		WarningMessage msg = new WarningMessage(source,message);
+		MessageWarning msg = new MessageWarning(source,message);
 		addMessage(msg);
 	}
 	
@@ -80,7 +77,7 @@ public class Messenger extends Worker  {
 	 * @param message The message
 	 */
 	public void debug(Object source, String message) {
-		DebugMessage msg = new DebugMessage(source,message);
+		MessageDebug msg = new MessageDebug(source,message);
 		addMessage(msg);
 	}
 
@@ -184,9 +181,9 @@ public class Messenger extends Worker  {
 		if (messages.size()>1000) {
 			messages.remove(0);
 		}
-		if (msg instanceof ErrorMessage) {
+		if (msg instanceof MessageError) {
 			error = true;
-		} else if (msg instanceof WarningMessage) {
+		} else if (msg instanceof MessageWarning) {
 			warning = true;
 		}
 		unlockMe(msg.getSource());
@@ -195,9 +192,9 @@ public class Messenger extends Worker  {
 	private void printMessagesNoLock() {
 		if (messages.size()>0) {
 			for (MessageObject msg: messages) {
-				if (msg instanceof ErrorMessage) {
+				if (msg instanceof MessageError) {
 					printMessage(msg,true);
-				} else if (!(msg instanceof DebugMessage) || printDebugMessages) {
+				} else if (!(msg instanceof MessageDebug) || printDebugMessages) {
 					printMessage(msg,false);
 				}
 			}
@@ -215,7 +212,7 @@ public class Messenger extends Worker  {
 	private void printedMessageNoLock(MessageObject msg) {
 		if (listeners.size()>0) {
 			for (MessengerListener listener: listeners) {
-				if (!(msg instanceof DebugMessage) || printDebugMessages) {
+				if (!(msg instanceof MessageDebug) || printDebugMessages) {
 					listener.printedMessage(msg);
 				}
 			}

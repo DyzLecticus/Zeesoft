@@ -81,8 +81,8 @@ public class StepsClassifier {
 	protected void generatePrediction(SDR activationSDR,DateTimeSDR outputSDR) {
 		HashMap<Object,Integer> valueCounts = new HashMap<Object,Integer>();
 		HashMap<String,Integer> labelCounts = new HashMap<String,Integer>();
-		List<Object> maxCountedValues = new ArrayList<Object>();
-		List<String> maxCountedLabels = new ArrayList<String>();
+		List<Object> mostCountedValues = new ArrayList<Object>();
+		List<String> mostCountedLabels = new ArrayList<String>();
 		if (bits.size()>0) {
 			int maxValueCounts = 0;
 			int maxLabelCounts = 0;
@@ -98,10 +98,10 @@ public class StepsClassifier {
 						valueCounts.put(value,count);
 						if (count > maxValueCounts) {
 							maxValueCounts = count;
-							maxCountedValues.clear();
+							mostCountedValues.clear();
 						}
 						if (count == maxValueCounts) {
-							maxCountedValues.add(value);
+							mostCountedValues.add(value);
 						}
 					}
 					for (String label: bit.labelCounts.keySet()) {
@@ -113,10 +113,10 @@ public class StepsClassifier {
 						labelCounts.put(label,count);
 						if (count > maxLabelCounts) {
 							maxLabelCounts = count;
-							maxCountedLabels.clear();
+							mostCountedLabels.clear();
 						}
 						if (count == maxLabelCounts) {
-							maxCountedLabels.add(label);
+							mostCountedLabels.add(label);
 						}
 					}
 				}
@@ -126,8 +126,8 @@ public class StepsClassifier {
 		classification.steps = steps;
 		classification.valueCounts = valueCounts;
 		classification.labelCounts = labelCounts;
-		classification.maxCountedValues = maxCountedValues;
-		classification.maxCountedLabels = maxCountedLabels;
+		classification.mostCountedValues = mostCountedValues;
+		classification.mostCountedLabels = mostCountedLabels;
 		outputSDR.keyValues.put(Classifier.CLASSIFICATION_KEY,classification);
 	}
 }
