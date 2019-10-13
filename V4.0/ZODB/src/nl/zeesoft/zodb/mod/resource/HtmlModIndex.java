@@ -11,6 +11,7 @@ public class HtmlModIndex extends HtmlResource {
 	@Override
 	public ZStringBuilder toStringBuilder() {
 		setTitle("Application modules");
+		setFaviconPath("favicon.ico");
 		
 		ZStringBuilder html = new ZStringBuilder();
 		html.append("This application consists of the following modules");

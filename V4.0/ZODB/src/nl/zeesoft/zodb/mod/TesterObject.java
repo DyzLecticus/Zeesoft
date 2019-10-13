@@ -131,18 +131,25 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 	}
 
 	protected void finishedTestingNoLock() {
-		createResultsNoLock(requests);
+		int errors = createResultsNoLock(requests);
 		testing = false;
-		configuration.debug(this,"Tested " + url);
+		if (errors>0) {
+			configuration.warn(this,"Tested " + url + ", errors: " + errors);
+		} else {
+			configuration.debug(this,"Tested " + url + ", errors: " + errors);
+		}
 	}
 	
-	protected void createResultsNoLock(List<TesterRequest> requests) {
+	protected int createResultsNoLock(List<TesterRequest> requests) {
+		int r = 0;
 		long totalTime = 0;
 		int successFull = 0;
 		for (TesterRequest request: requests) {
 			totalTime += request.time;
 			if (request.error.length()==0) {
 				successFull++;
+			} else {
+				r++;
 			}
 		}
 		long avgTime = totalTime / requests.size();
@@ -181,6 +188,7 @@ public abstract class TesterObject extends Locker implements JsClientListener {
 			logsElem.children.add(new JsElem(null,line,true));
 		}
 		setResultsNolock(json);
+		return r;
 	}
 	
 	protected void handleRequestNoLock(TesterRequest request) {

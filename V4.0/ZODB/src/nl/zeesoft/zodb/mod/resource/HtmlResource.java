@@ -12,6 +12,7 @@ public abstract class HtmlResource {
 	private Config					configuration	= null;
 	private String					title			= "";
 	private String					onload			= "";
+	private String					faviconPath		= "../favicon.ico";
 
 	private String					bodyBgColor		= "DEDEDE";
 	
@@ -37,6 +38,7 @@ public abstract class HtmlResource {
 		html.append("<title>");
 		html.append(title);
 		html.append("</title>");
+		html.append("<link rel=\"icon\" href=\"" + faviconPath + "\" type=\"image/png\" />");
 		html.append("\n");
 		for (String src: scriptFiles) {
 			html.append("<script type=\"text/javascript\" src=\"");
@@ -94,6 +96,10 @@ public abstract class HtmlResource {
 
 	public void setOnload(String onload) {
 		this.onload = onload;
+	}
+
+	public void setFaviconPath(String faviconPath) {
+		this.faviconPath = faviconPath;
 	}
 
 	public void setBodyBgColor(String bodyBgColor) {

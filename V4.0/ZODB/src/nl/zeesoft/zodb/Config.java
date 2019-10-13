@@ -23,6 +23,7 @@ import nl.zeesoft.zodb.db.DatabaseResponse;
 import nl.zeesoft.zodb.db.init.Persistable;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.ModZODB;
+import nl.zeesoft.zodb.mod.handler.FaviconHandler;
 import nl.zeesoft.zodb.mod.handler.HandlerObject;
 import nl.zeesoft.zodb.mod.handler.HtmlModIndexHandler;
 import nl.zeesoft.zodb.mod.handler.JsonZODBRequestHandler;
@@ -45,6 +46,7 @@ public class Config implements JsAble {
 	private HandlerObject		forbiddenHtmlHandler	= null;
 	private HandlerObject		forbiddenJsonHandler	= null;
 	private HandlerObject		modIndexHtmlHandler		= null;
+	private HandlerObject		modFaviconHandler		= null;
 	
 	public Config() {
 		ZDKFactory factory = new ZDKFactory();
@@ -97,6 +99,7 @@ public class Config implements JsAble {
 			}
 		}
 		modIndexHtmlHandler = getNewHtmlAppIndexHandler();
+		modFaviconHandler = getNewAppFaviconHandler();
 	}
 	
 	public HandlerObject getHandlerForRequest(HttpServletRequest request) {
@@ -111,6 +114,8 @@ public class Config implements JsAble {
 		} else {
 			if (path.equals("/") || path.equals("/index.html")) {
 				r = modIndexHtmlHandler;
+			} else if (path.equals("/favicon.ico")) {
+				r = modFaviconHandler;
 			} else {
 				String name = getModuleNameFromPath(path);
 				ModObject mod = getModule(name);
@@ -387,6 +392,10 @@ public class Config implements JsAble {
 
 	protected HandlerObject getNewHtmlAppIndexHandler() {
 		return new HtmlModIndexHandler(this);
+	}
+
+	protected HandlerObject getNewAppFaviconHandler() {
+		return new FaviconHandler(this);
 	}
 
 	protected ZStringBuilder writeConfig() {
