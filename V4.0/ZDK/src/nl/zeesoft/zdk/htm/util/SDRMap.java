@@ -253,8 +253,8 @@ public class SDRMap {
 			r = new TreeMap<Integer,List<SDRMapElement>>();
 			if (minOverlap	< 1) {
 				minOverlap = 1;
-			} else if (minOverlap >= bits) {
-				minOverlap = bits - 1;
+			} else if (minOverlap > bits) {
+				minOverlap = bits;
 			}
 			if (sdr.onBits()>=minOverlap && sdr.length()==length && checkUnionOverlap(sdr,minOverlap)) {
 				for (SDRMapElement element: elements) {
@@ -300,8 +300,8 @@ public class SDRMap {
 		SortedMap<Integer,List<SDRMapElement>> r = new TreeMap<Integer,List<SDRMapElement>>();
 		if (minOverlap	< 1) {
 			minOverlap = 1;
-		} else if (minOverlap >= bits) {
-			minOverlap = bits - 1;
+		} else if (minOverlap > bits) {
+			minOverlap = bits;
 		}
 		if (useIndex && sdr.onBits()>=minOverlap && sdr.length()==length && checkUnionOverlap(sdr,minOverlap)) {
 			Set<SDRMapElement> done = new HashSet<SDRMapElement>(); 
@@ -361,8 +361,8 @@ public class SDRMap {
 	}
 	
 	private void initialize(int length,int bits, boolean useIndex) {
-		if (length < 10) {
-			length = 10;
+		if (length < 2) {
+			length = 2;
 		}
 		if (bits < 1) {
 			bits = 1;

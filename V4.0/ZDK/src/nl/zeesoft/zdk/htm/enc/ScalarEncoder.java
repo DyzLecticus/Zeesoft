@@ -7,11 +7,11 @@ import nl.zeesoft.zdk.htm.util.SDR;
  * ScalarEncoders are used to encode scalar values into SDRs.
  */
 public class ScalarEncoder extends EncoderObject {
-	private int		minValue	= 0;
-	private int		maxValue	= 0;
+	private float	minValue	= 0;
+	private float	maxValue	= 0;
 	private boolean periodic	= false;
 	
-	public ScalarEncoder(int length,int bits,int minValue,int maxValue) {
+	public ScalarEncoder(int length,int bits,float minValue,float maxValue) {
 		super(length,bits);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -30,7 +30,7 @@ public class ScalarEncoder extends EncoderObject {
 	@Override
 	public SDR getSDRForValue(float value) {
 		SDR r = new SDR(length);
-
+				
 		int bucket = 0;
 
 		float range = (maxValue - minValue) / resolution;

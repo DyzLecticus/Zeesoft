@@ -18,8 +18,8 @@ public class SDR {
 	private Set<Integer>	onBits		= new HashSet<Integer>();
 	
 	public SDR(int length) {
-		if (length < 10) {
-			length = 10;
+		if (length < 2) {
+			length = 2;
 		}
 		this.length = length;
 	}

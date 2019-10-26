@@ -11,8 +11,8 @@ public abstract class EncoderObject {
 	protected float		resolution	= 1;
 	
 	public EncoderObject(int length,int bits) {
-		if (length < 10) {
-			length = 10;
+		if (length < 2) {
+			length = 2;
 		}
 		if (bits < 1) {
 			length = 1;
