@@ -19,25 +19,24 @@ public class TestGridEncoder extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe and document
-		System.out.println("This test shows how to use a *ScalarEncoder* to convert a range of scalar values into sparse distributed representations.");
+		System.out.println("This test shows how to use a *GridEncoder* to convert a range of multidimensional positions into sparse distributed representations.");
+		System.out.println("The *GridEncoder* class provides static helper methods to create different type of 2D or 3D encoders.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the encoder");
-		System.out.println("ScalarEncoder enc = new ScalarEncoder(52,2,0,50);");
-		System.out.println("// Obtain the SDR for a certain value");
-		System.out.println("SDR sdr = enc.getSDRForValue(0);");
+		System.out.println("GridEncoder enc = GridEncoder.getNew2DGridEncoder(length,bits,sizeX,sizeY);");
+		System.out.println("// Obtain the SDR for a certain position");
+		System.out.println("SDR sdr = enc.getSDRForPosition(0,0);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestGridEncoder.class));
-		System.out.println(" * " + getTester().getLinkForClass(ScalarEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(GridEncoder.class));
 		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows two scalar encoders and the SDRs they generate for several values.");
-		*/
+		System.out.println("The output of this test shows different grid encoders and the SDRs they generate for several positions.");
 	}
 	
 	@Override

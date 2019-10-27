@@ -9,7 +9,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.htm.util.SDR;
 
 /**
- * A GridEncoder can be used to encode locations within a multidimensional grid.
+ * A GridEncoder can be used to encode positions within a multidimensional grid.
  */
 public class GridEncoder extends CombinedEncoder {
 	private int		length		= 0;
@@ -100,7 +100,7 @@ public class GridEncoder extends CombinedEncoder {
 	}
 
 	/**
-	 * Returns the encoded SDR for a certain 2 dimensional location.
+	 * Returns the encoded SDR for a certain 2 dimensional position.
 	 * 
 	 * @param posX The position in the first dimension (0 - dimension.getCapacity())
 	 * @param posY The position in the second dimension (0 - dimension.getCapacity())
@@ -111,7 +111,7 @@ public class GridEncoder extends CombinedEncoder {
 	}
 	
 	/**
-	 * Returns the encoded SDR for a certain 3 dimensional location.
+	 * Returns the encoded SDR for a certain 3 dimensional position.
 	 * 
 	 * @param posX The position in the first dimension (0 - dimension.getCapacity())
 	 * @param posY The position in the second dimension (0 - dimension.getCapacity())

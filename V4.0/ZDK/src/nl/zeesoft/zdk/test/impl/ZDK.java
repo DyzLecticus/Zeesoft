@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.htm.TestAnomalyDetector;
 import nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder;
 import nl.zeesoft.zdk.test.impl.htm.TestDateTimeValuesEncoder;
+import nl.zeesoft.zdk.test.impl.htm.TestGridEncoder;
 import nl.zeesoft.zdk.test.impl.htm.TestMemory;
 import nl.zeesoft.zdk.test.impl.htm.TestPooler;
 import nl.zeesoft.zdk.test.impl.htm.TestRDScalarEncoder;
@@ -102,6 +103,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestRDScalarEncoder(getTester()));
 		tests.add(new TestDateTimeEncoder(getTester()));
 		tests.add(new TestDateTimeValuesEncoder(getTester()));
+		tests.add(new TestGridEncoder(getTester()));
 		tests.add(new TestPooler(getTester()));
 		tests.add(new TestMemory(getTester()));
 		tests.add(new TestStreamEncoder(getTester()));
