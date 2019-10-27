@@ -93,6 +93,14 @@ public class RDScalarEncoder extends StateEncoderObject {
 	}
 	
 	@Override
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = super.getDescription();
+		r.append(", capacity: ");
+		r.append("" + capacity);
+		return r;
+	}
+	
+	@Override
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder r = new ZStringBuilder();
 		for (Entry<Float,SDR> entry: sdrsByValue.entrySet()) {

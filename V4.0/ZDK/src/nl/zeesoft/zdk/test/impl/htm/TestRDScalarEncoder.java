@@ -42,7 +42,7 @@ public class TestRDScalarEncoder extends TestObject {
 		SDR sdr = null;
 
 		enc = new RDScalarEncoder(50,4);
-		System.out.println("Random distributed encoder size: 50, bits: 4, capacity: " + enc.getCapacity());
+		System.out.println(enc.getDescription());
 		assertEqual(enc.getCapacity().toString(),"230300","Encoder capacity does not match expectation");
 		
 		sdr = enc.getSDRForValue(0);

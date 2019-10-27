@@ -62,6 +62,18 @@ public class ScalarEncoder extends EncoderObject {
 		return r;
 	}
 	
+	@Override
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = super.getDescription();
+		r.append(", min: ");
+		r.append("" + minValue);
+		r.append(", max: ");
+		r.append("" + maxValue);
+		r.append(", periodic: ");
+		r.append("" + periodic);
+		return r;
+	}
+	
 	/**
 	 * Returns the number of possible buckets in this SDR.
 	 * 

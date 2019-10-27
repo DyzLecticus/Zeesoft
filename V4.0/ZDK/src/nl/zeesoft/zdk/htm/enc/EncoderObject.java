@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.htm.enc;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 
 /**
@@ -54,5 +55,21 @@ public abstract class EncoderObject {
 	 */
 	public int bits() {
 		return bits;
+	}
+	
+	/**
+	 * Returns the description of the encoder.
+	 * 
+	 * @return The description
+	 */
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = new ZStringBuilder(getClass().getSimpleName());
+		r.append(" length: ");
+		r.append("" + length);
+		r.append(", bits: ");
+		r.append("" + bits);
+		r.append(", resolution: ");
+		r.append("" + resolution); 
+		return r;
 	}
 }

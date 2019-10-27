@@ -46,23 +46,25 @@ public class TestStreamEncoder extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		StreamEncoder enc = new StreamEncoder();
+		System.out.println(enc.getDescription());
 		
 		assertEqual(enc.length(),256,"Encoder size does not match expectation");
 		assertEqual(enc.bits(),32,"Encoder bits does not match expectation");
 		ZStringBuilder err = null;
 		err = enc.testScalarOverlap(true);
-		System.out.println("Default encoding length: " + enc.length() + ", bits: " + enc.bits());
 		assertEqual(err,new ZStringBuilder(),"Encoder scalar overlap does not match expectation");
 		
 		enc.setScale(2);
-		System.out.println("Scaled (factor 2) encoding length: " + enc.length() + ", bits: " + enc.bits());
+		System.out.println();
+		System.out.println(enc.getDescription());
 		assertEqual(enc.length(),512,"Encoder size does not match expectation");
 		assertEqual(enc.bits(),64,"Encoder bits does not match expectation");
 		err = enc.testScalarOverlap(true);
 		assertEqual(err,new ZStringBuilder(),"Encoder scalar overlap does not match expectation");
 		
 		enc.setScale(4);
-		System.out.println("Scaled (factor 4) encoding length: " + enc.length() + ", bits: " + enc.bits());
+		System.out.println();
+		System.out.println(enc.getDescription());
 		assertEqual(enc.length(),1024,"Encoder size does not match expectation");
 		assertEqual(enc.bits(),128,"Encoder bits does not match expectation");
 		err = enc.testScalarOverlap(true);

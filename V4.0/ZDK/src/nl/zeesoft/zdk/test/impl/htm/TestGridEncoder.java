@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import nl.zeesoft.zdk.htm.enc.GridDimensionEncoder;
 import nl.zeesoft.zdk.htm.enc.GridEncoder;
+import nl.zeesoft.zdk.htm.enc.GridDimensionScaledEncoder;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
 import nl.zeesoft.zdk.test.TestObject;
@@ -42,10 +43,21 @@ public class TestGridEncoder extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		testGridDimensionEncoder(32,4,224,true,true);
-		testGridDimensionEncoder(48,6,831,true,true);
-		testGridDimensionEncoder(64,8,4320,true,true);
-		testGridDimensionEncoder(128,16,43904,true,false);
-		testGridEncoder(128,16,20,60,false);
+		testGridDimensionEncoder(48,6,1663,true,true);
+		testGridDimensionEncoder(64,8,6480,true,false);
+		testGridDimensionEncoder(128,16,76832,true,false);
+		testGridEncoder(128,16,20,60,false,false);
+		
+		testGridDimensionScaledEncoder(48,true);
+		testGridDimensionScaledEncoder(64,true);
+		testGridDimensionScaledEncoder(96,true);
+		testGridDimensionScaledEncoder(128,true);
+
+		System.out.println();
+		testGridEncoder(128,16,20,60,true,false);
+
+		System.out.println();
+		testGridEncoder(512,64,20,60,true,false);
 	}
 
 	private void testGridDimensionEncoder(int length, int bits, int expectedCapacity, boolean silent, boolean checkUnique) {
@@ -82,9 +94,12 @@ public class TestGridEncoder extends TestObject {
 			
 			if (sdrC!=null) {
 				int overlap = sdr.getOverlapScore(sdrC);
+				int minOverlap = (enc.bits() / 8 * 5);
 				if (!assertEqual(overlap<enc.bits(),true,"SDR overlap score does not match expectation")) {
+					System.err.println("Bucket: " + i + ", overlap: " + overlap);
 					break;
-				} else if (!assertEqual(overlap>=(enc.bits() / 8 * 5),true,"SDR overlap score does not match expectation")) {
+				} else if (!assertEqual(overlap>=minOverlap,true,"SDR overlap score does not match expectation")) {
+					System.err.println("Bucket: " + i + ", overlap: " + overlap + " (min: " + minOverlap + ")");
 					break;
 				}
 			}
@@ -92,8 +107,13 @@ public class TestGridEncoder extends TestObject {
 		}
 	}
 
-	private void testGridEncoder(int length, int bits, int sizeX, int sizeY, boolean silent) {
-		GridEncoder enc = GridEncoder.getNew2DGridEncoder(length,bits,sizeX,sizeY);
+	private void testGridEncoder(int length, int bits, int sizeX, int sizeY,boolean scaled, boolean silent) {
+		GridEncoder enc = null;
+		if (scaled) {
+			enc = GridEncoder.getNewScaled2DGridEncoder(length,sizeX,sizeY);
+		} else {
+			enc = GridEncoder.getNew2DGridEncoder(length,bits,sizeX,sizeY);
+		}
 		if (!silent) {
 			System.out.println(enc.getDescription());
 			System.out.println();
@@ -124,6 +144,55 @@ public class TestGridEncoder extends TestObject {
 			if (err) {
 				break;
 			}
+		}
+	}
+	
+	private void testGridDimensionScaledEncoder(int length,boolean silent) {
+		GridDimensionScaledEncoder enc = new GridDimensionScaledEncoder(length);
+		enc.setResolution(0.1F);
+
+		SDR sdr1 = null;
+		SDR sdr = null;
+		SDR sdrC = null;
+		
+		if (!silent) {
+			System.out.println(enc.getDescription());
+			System.out.println();
+		}
+		SDRMap sdrMap = new SDRMap(enc.length(),enc.bits());
+		for (int i = 0; i < enc.getCapacity(); i++) {
+			float v = (float)i * 0.1F;
+			sdr = enc.getSDRForValue(v);
+			if (sdr1 == null) {
+				sdr1 = sdr;
+			}
+			
+			boolean unique = sdrMap.getMatches(sdr,enc.bits()).size()==0;
+			if (!assertEqual(unique,true,"SDR for value " + v + " is not unique")) {
+				break;
+			}
+			sdrMap.add(sdr);
+			
+			int overlap = 0;
+			if (sdrC!=null) {
+				overlap = sdr.getOverlapScore(sdrC);
+				if (!assertEqual(overlap<enc.bits(),true,"SDR overlap score does not match expectation")) {
+					break;
+				}
+			}
+
+			if (!assertEqual(sdr.onBits(),enc.bits(),"SDR on bits does not match expectation")) {
+				break;
+			}
+
+			if (!silent) {
+				System.out.println(sdr.toBitString() + " (Overlap: " + overlap + ")");
+			}
+
+			sdrC = sdr;
+		}
+		if (!silent) {
+			System.out.println("SDRs: " + sdrMap.size() + ", overlap last with first: " + sdrC.getOverlapScore(sdr1));
 		}
 	}
 }

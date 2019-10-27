@@ -1,7 +1,12 @@
 package nl.zeesoft.zdk.htm.enc;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 
+/**
+ * A GridDimensionEncoder can be used to encode coordinates within a single dimension (0 - getCapacity()).
+ * It is deterministic and has a relatively large capacity while maintaining uniqueness and relative overlaps.
+ */
 public class GridDimensionEncoder extends EncoderObject {
 	protected CombinedEncoder 	modules		= new CombinedEncoder();
 
@@ -16,11 +21,16 @@ public class GridDimensionEncoder extends EncoderObject {
 		initializeModules();
 	}
 	
+	/**
+	 * Returns the capacity of this encoder.
+	 * 
+	 * @return The capacity
+	 */
 	public int getCapacity() {
 		int r = 0;
 		int mods = modules.getEncoders().size();
 		float unit = (((ScalarEncoder)modules.getEncoders().get(mods - 1)).getMaxValue() / resolution);
-		int mult = (mods / 2);
+		int mult = (mods - 1);
 		if (mult == 0) {
 			mult = 1;
 		}
@@ -42,6 +52,21 @@ public class GridDimensionEncoder extends EncoderObject {
 		if (r.length()<length) {
 			SDR sdr = new SDR(length - r.length());
 			r = SDR.concat(r, sdr);
+		}
+		return r;
+	}
+	
+	@Override
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = super.getDescription();
+		r.append(", capacity: ");
+		r.append("" + getCapacity());
+		for (String name: modules.getEncoderNames()) {
+			EncoderObject encoder = modules.getEncoder(name);
+			r.append("\n- ");
+			r.append(name);
+			r.append(" ");
+			r.append(encoder.getDescription());
 		}
 		return r;
 	}
