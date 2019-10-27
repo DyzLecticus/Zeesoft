@@ -32,7 +32,7 @@ public class GridDimensionScaledEncoder extends GridDimensionEncoder {
 			
 			float res = resolution;
 			if (m > 1) {
-				res = (bts * resolution * m) - resolution;
+				res = (bts * resolution * (m * m)) - resolution;
 			}
 			
 			if (totalLength + len > length) {
