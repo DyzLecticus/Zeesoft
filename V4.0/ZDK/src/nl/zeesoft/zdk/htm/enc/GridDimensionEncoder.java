@@ -16,6 +16,18 @@ public class GridDimensionEncoder extends EncoderObject {
 		initializeModules();
 	}
 	
+	public int getCapacity() {
+		int r = 0;
+		int mods = modules.getEncoders().size();
+		float unit = (((ScalarEncoder)modules.getEncoders().get(mods - 1)).getMaxValue() / resolution);
+		int mult = (mods / 2);
+		if (mult == 0) {
+			mult = 1;
+		}
+		r = (int)(unit * mult);
+		return r;
+	}
+	
 	@Override
 	public SDR getSDRForValue(float value) {
 		SDR r = null;
@@ -24,7 +36,7 @@ public class GridDimensionEncoder extends EncoderObject {
 			if (r==null) {
 				r = sdr;
 			} else {
-				r = SDR.concat(r, sdr);
+				r = SDR.concat(r, sdr, length);
 			}
 		}
 		if (r.length()<length) {
@@ -34,27 +46,21 @@ public class GridDimensionEncoder extends EncoderObject {
 		return r;
 	}
 	
-	private void initializeModules() {
+	protected void initializeModules() {
 		modules.initialize();
 		int mods = (bits / 2);
 		int lengthPerModule = length / mods;
 		float res = resolution;
-		float resP = 0;
 		for (int m = 1; m <= mods; m++) {
-			if (resP==0) {
-				res = resolution;
-			} else if (resP==resolution) {
-				res = resolution * lengthPerModule;
-			} else {
-				res = (lengthPerModule * resP);
-			}
-				
 			ScalarEncoder module = new ScalarEncoder(lengthPerModule,2,0,(lengthPerModule * res));
 			module.setPeriodic(true);
 			module.setResolution(res);
 			modules.addEncoder(String.format("%03d",m),module);
 			
-			resP = res;
+			float unit = resolution * lengthPerModule;
+			unit = unit - (resolution * ((m % 3) + 1));
+			int mult = m * m;
+			res = unit * mult;
 		}
 	}
 }

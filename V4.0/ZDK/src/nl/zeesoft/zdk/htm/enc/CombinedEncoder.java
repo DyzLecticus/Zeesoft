@@ -38,6 +38,37 @@ public class CombinedEncoder {
 	public int bits() {
 		return bits;
 	}
+	
+	/**
+	 * Returns the description of the encoder.
+	 * 
+	 * @return The description
+	 */
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = new ZStringBuilder(getClass().getSimpleName());
+		r.append(" length: ");
+		r.append("" + length);
+		r.append(", bits: ");
+		r.append("" + bits);
+		for (Entry<String,EncoderObject> entry: encoders.entrySet()) {
+			r.append("\n- ");
+			r.append(entry.getValue().getClass().getSimpleName());
+			r.append(" name: ");
+			r.append(entry.getKey());
+			r.append(", length: ");
+			r.append("" + entry.getValue().length); 
+			r.append(", bits: ");
+			r.append("" + entry.getValue().bits); 
+			r.append(", resolution: ");
+			r.append("" + entry.getValue().resolution); 
+			if (entry.getValue() instanceof GridDimensionEncoder) {
+				GridDimensionEncoder dimension = (GridDimensionEncoder)entry.getValue();
+				r.append(", capacity: ");
+				r.append("" + dimension.getCapacity()); 
+			}
+		}
+		return r;
+	}
 
 	/**
 	 * Returns a string builder representation the state of RDScalarEncoder instances in this combined encoder.

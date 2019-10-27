@@ -29,6 +29,11 @@ public class GridEncoder extends CombinedEncoder {
 		dims[2] = sizeZ;
 		return new GridEncoder(length,bits,dims);
 	}
+	
+	public void setResolution(float resolution) {
+		this.resolution = resolution;
+		initialize(length,bits,dimensions,resolution);
+	}
 
 	public SDR getSDRForPosition(float posX, float posY) {
 		return getSDRForPosition(posX,posY,0);
@@ -36,15 +41,10 @@ public class GridEncoder extends CombinedEncoder {
 	
 	public SDR getSDRForPosition(float posX, float posY, float posZ) {
 		SortedMap<String,Float> values = new TreeMap<String,Float>();
-		values.put("0",posX);
-		values.put("1",posY);
-		values.put("2",posZ);
+		values.put(getNameForDimension(0),posX);
+		values.put(getNameForDimension(1),posY);
+		values.put(getNameForDimension(2),posZ);
 		return getSDRForValues(values);
-	}
-	
-	public void setResolution(float resolution) {
-		this.resolution = resolution;
-		initialize(length,bits,dimensions,resolution);
 	}
 	
 	protected void initialize(int length,int bits,int[] dimensions,float resolution) {
@@ -71,7 +71,11 @@ public class GridEncoder extends CombinedEncoder {
 			int len = bts * (length / bits);
 			GridDimensionEncoder enc = new GridDimensionEncoder(len,bts);
 			enc.setResolution(resolution);
-			addEncoder("" + i, enc);
+			addEncoder(getNameForDimension(i),enc);
 		}
+	}
+	
+	protected String getNameForDimension(int index) {
+		return "D" + String.format("%02d",index + 1);
 	}
 }

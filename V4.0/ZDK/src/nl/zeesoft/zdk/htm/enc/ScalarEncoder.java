@@ -102,4 +102,31 @@ public class ScalarEncoder extends EncoderObject {
 		}
 		return r;
 	}
+
+	/**
+	 * Returns the minimum value.
+	 * 
+	 * @return The minimum value
+	 */
+	public float getMinValue() {
+		return minValue;
+	}
+
+	/**
+	 * Returns the maximum value.
+	 * 
+	 * @return The maximum value
+	 */
+	public float getMaxValue() {
+		return maxValue;
+	}
+
+	/**
+	 * Returns true if the encoder is periodic.
+	 * 
+	 * @return True if the encoder is periodic
+	 */
+	public boolean isPeriodic() {
+		return periodic;
+	}
 }

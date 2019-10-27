@@ -323,6 +323,18 @@ public class SDR {
 	public static SDR concat(SDR a,SDR b) {
 		return a.concat(b);
 	}
+	
+	/**
+	 * Returns a new SDR that is a concatenation of two SDRs.
+	 * 
+	 * @param a SDR A
+	 * @param b SDR B
+	 * @param maxLength The maximum length of the new SDR
+	 * @return The new SDR
+	 */
+	public static SDR concat(SDR a,SDR b,int maxLength) {
+		return a.concat(b,maxLength);
+	}
 
 	/**
 	 * Returns the capacity (number of possible unique SDRs) for an a certain SDR length and on bits
@@ -408,12 +420,22 @@ public class SDR {
 		}
 		return r;
 	}
-	
+
 	private SDR concat(SDR c) {
+		return concat(c,length + c.length);
+	}
+
+	private SDR concat(SDR c, int maxLength) {
 		SDR r = copy();
-		r.length = r.length + c.length;
+		r.length = length + c.length;
+		if (r.length > maxLength) {
+			r.length = maxLength;
+		}
 		for (Integer onBit: c.onBits) {
-			r.onBits.add(new Integer(onBit + length));
+			Integer newBit = new Integer(onBit + length);
+			if (newBit<r.length) {
+				r.onBits.add(newBit);
+			}
 		}
 		return r;
 	}
