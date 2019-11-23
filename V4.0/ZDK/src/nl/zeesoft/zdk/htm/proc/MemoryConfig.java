@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.htm.proc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
@@ -23,6 +26,8 @@ public class MemoryConfig {
 	protected float			distalConnectionThreshold			= 0.2F;
 	protected float			distalConnectionDecrement			= 0.003F;
 	protected float			distalConnectionIncrement			= 0.1F;
+	
+	protected List<Integer>	contextDimensions					= new ArrayList<Integer>();
 
 	protected int			sizeX								= 0;
 	protected int			sizeY								= 0;
@@ -118,6 +123,17 @@ public class MemoryConfig {
 	public void setMinAlmostActiveDistalConnections(int minAlmostActiveDistalConnections) {
 		if (!initialized) {
 			this.minAlmostActiveDistalConnections = minAlmostActiveDistalConnections;
+		}
+	}
+
+	/**
+	 * Adds a context dimension with the specified length.
+	 * 
+	 * @param length The length of the dimension
+	 */
+	public void addContextDimension(int length) {
+		if (!initialized) {
+			this.contextDimensions.add(length);
 		}
 	}
 

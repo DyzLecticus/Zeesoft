@@ -18,11 +18,13 @@ import nl.zeesoft.zdk.htm.util.SDR;
  * Further more, distal connections do not need to be randomly initialized when the memory is created. 
  */
 public class Memory extends ProcessorObject {
-	protected MemoryConfig			config		= null;
+	protected MemoryConfig			config			= null;
 
-	protected List<MemoryColumn>	columns		= new ArrayList<MemoryColumn>();
+	protected List<MemoryColumn>	columns			= new ArrayList<MemoryColumn>();
+	protected List<MemoryColumn>	contextColumns	= new ArrayList<MemoryColumn>();
+	protected List<MemoryColumn>	allColumns		= new ArrayList<MemoryColumn>();
 	
-	protected SDR					burstSDR	= null;	
+	protected SDR					burstSDR		= null;	
 	
 	public Memory(MemoryConfig config) {
 		this.config = config;
@@ -46,7 +48,7 @@ public class Memory extends ProcessorObject {
 		int maxCon = 0;
 		int avgCon = 0;
 
-		for (MemoryColumn col: columns) {
+		for (MemoryColumn col: allColumns) {
 			for (MemoryColumnCell cell: col.cells) {
 				int con = 0;
 				for (DistalLink lnk: cell.distLinks) {
@@ -137,7 +139,7 @@ public class Memory extends ProcessorObject {
 	@Override
 	public ZStringBuilder toStringBuilder() {
 		ZStringBuilder r = new ZStringBuilder();
-		for (MemoryColumn col: columns) {
+		for (MemoryColumn col: allColumns) {
 			if (r.length()>0) {
 				r.append("#");
 			}
@@ -169,7 +171,7 @@ public class Memory extends ProcessorObject {
 	@Override
 	public void fromStringBuilder(ZStringBuilder str) {
 		SortedMap<ZStringBuilder,MemoryColumnCell> cellsByPos = new TreeMap<ZStringBuilder,MemoryColumnCell>();
-		for (MemoryColumn col: columns) {
+		for (MemoryColumn col: allColumns) {
 			for (MemoryColumnCell cell: col.cells) {
 				ZStringBuilder pos = new ZStringBuilder();
 				pos.append("" + cell.posX);
@@ -211,7 +213,7 @@ public class Memory extends ProcessorObject {
 	
 	@Override
 	public void destroy() {
-		for (MemoryColumn col: columns) {
+		for (MemoryColumn col: allColumns) {
 			for (MemoryColumnCell cell: col.cells) {
 				for (DistalLink link: cell.distLinks) {
 					link.origin = null;
@@ -222,11 +224,13 @@ public class Memory extends ProcessorObject {
 			col.cells.clear();
 		}
 		columns.clear();
+		contextColumns.clear();
+		allColumns.clear();
 	}
 	
 	protected List<MemoryColumnCell> cycleActiveState() {
 		List<MemoryColumnCell> r = new ArrayList<MemoryColumnCell>();
-		for (MemoryColumn col: columns) {
+		for (MemoryColumn col: allColumns) {
 			col.cycleActiveState(r);
 		}
 		return r;
@@ -284,6 +288,8 @@ public class Memory extends ProcessorObject {
 		for (int i = 0; i < config.length; i++) {
 			MemoryColumn col = new MemoryColumn(i);
 			columns.add(col);
+			allColumns.add(col);
+			
 			for (int d = 0; d < config.depth; d++) {
 				MemoryColumnCell cell = new MemoryColumnCell(config,i,cellIndex,posX,posY,d);
 				col.cells.add(cell);
@@ -294,6 +300,19 @@ public class Memory extends ProcessorObject {
 				posX = 0;
 				posY++;
 			}
+		}
+		int i = -1;
+		for (Integer length: config.contextDimensions) {
+			MemoryColumn col = new MemoryColumn(i);
+			contextColumns.add(col);
+			allColumns.add(col);
+
+			for (int d = 0; d < length; d++) {
+				MemoryColumnCell cell = new MemoryColumnCell(config,i,cellIndex,i,-1,d);
+				col.cells.add(cell);
+				cellIndex++;
+			}
+			i--;
 		}
 	}
 }
