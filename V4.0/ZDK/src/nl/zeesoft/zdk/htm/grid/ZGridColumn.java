@@ -73,7 +73,14 @@ public class ZGridColumn extends Worker {
 				}
 				if (input!=null) {
 					List<SDR> context = new ArrayList<SDR>();
-					// TODO: Add context
+					if (contexts.size()>0) {
+						for (ZGridColumnContext ctx: contexts) {
+							SDR contextSDR = request.getColumnOutput(getColumnId(ctx.sourceRow,ctx.sourceColumn),ctx.sourceIndex);
+							if (contextSDR!=null) {
+								context.add(contextSDR);
+							}
+						}
+					}
 					outputs = processor.getSDRsForInput(input,context,request.learn);
 				}
 			}

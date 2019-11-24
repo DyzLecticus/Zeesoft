@@ -4,11 +4,10 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.GridEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 
 public class ZGridEncoderPosition extends ZGridColumnEncoder {
-	private GridEncoder		encoder				= null;
-
 	private int				length				= 256;
 	private int				sizeX				= 100;
 	private int				sizeY				= 100;
@@ -18,10 +17,10 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 		this.length = length;
 		rebuildEncoder();
 	}
-
+	
 	@Override
-	public int length() {
-		return encoder.length();
+	public String getValueKey() {
+		return "POSITION";
 	}
 	
 	public void setDimensions(int sizeX,int sizeY,int sizeZ) {
@@ -31,39 +30,46 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 		rebuildEncoder();
 	}
 	
-	public ZStringBuilder testScalarOverlap() {
-		return encoder.testScalarOverlap();
-	}
-	
-	public SDR getSDRForPosition(int[] position) {
+	public SDR getSDRForPosition(float[] position) {
 		SDR r = null;
 		if (sizeZ>0 && position.length==3) {
-			r = encoder.getSDRForPosition((float) position[0],(float) position[1],(float) position[2]);
+			r = ((GridEncoder) encoder).getSDRForPosition(position[0],position[1],position[2]);
 		} else if (sizeZ<=0 && position.length>=2) {
-			r = encoder.getSDRForPosition((float) position[0],(float) position[1]);
+			r = ((GridEncoder) encoder).getSDRForPosition(position[0],position[1]);
 		}
 		return r;
 	}
 	
-	protected SDR encodeRequestValue(int columnIndex,ZGridRequest request) {
-		int[] position = null;
+	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridRequest request) {
+		float[] position = null;
 		if (request.inputValues.length>columnIndex &&
 			request.inputValues[columnIndex]!=null &&
-			request.inputValues[columnIndex] instanceof int[]
+			request.inputValues[columnIndex] instanceof float[]
 			) {
-			position = (int[]) request.inputValues[columnIndex];
+			position = (float[]) request.inputValues[columnIndex];
 		}
 		if (position==null) {
 			if (sizeZ>0) {
-				position = new int[3];
+				position = new float[3];
 			} else {
-				position = new int[2];
+				position = new float[2];
 			}
 			for (int i = 0; i < position.length; i++) {
 				position[i] = 0;
 			}
 		}
-		return getSDRForPosition(position);
+		DateTimeSDR r = new DateTimeSDR(getSDRForPosition(position));
+		r.dateTime = request.dateTime;
+		ZStringBuilder pos = new ZStringBuilder();
+		pos.append("" + position[0]);
+		pos.append("|");
+		pos.append("" + position[1]);
+		if (position.length>2) {
+			pos.append("|");
+			pos.append("" + position[2]);
+		}
+		r.keyValues.put(getValueKey(),pos.toString());
+		return r;
 	}
 	
 	protected void rebuildEncoder() {

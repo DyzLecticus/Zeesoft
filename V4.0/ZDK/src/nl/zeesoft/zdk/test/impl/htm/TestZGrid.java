@@ -9,6 +9,9 @@ import nl.zeesoft.zdk.htm.grid.ZGridListener;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
+import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
+import nl.zeesoft.zdk.htm.proc.Memory;
+import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.util.SDR;
@@ -82,24 +85,46 @@ public class TestZGrid extends TestObject implements ZGridListener {
 		sdr = dateTimeEncoder.getSDRForDateTime(System.currentTimeMillis());
 		assertEqual(sdr.length(),1024,"SDR (scale: 4) length does not match expectation");
 		
+		// Create encoders
 		dateTimeEncoder = new ZGridEncoderDateTime();
+		System.out.println(dateTimeEncoder.getDescription());
+		
+		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(256);
+		System.out.println();
+		System.out.println(valueEncoder.getDescription());
+		
 		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition(256);
+		System.out.println();
+		System.out.println(positionEncoder.getDescription());
+		
+		System.out.println();
 		
 		// Add encoders
 		grid.setEncoder(0,dateTimeEncoder);
+		grid.setEncoder(1,valueEncoder);
 		grid.setEncoder(2,positionEncoder);
 		
 		// Add processors
 		PoolerConfig poolerConfig = new PoolerConfig(dateTimeEncoder.length(),1024,21);
 		Pooler dateTimePooler = new Pooler(poolerConfig);
 		dateTimePooler.randomizeConnections();
+		grid.setProcessor(1,0,dateTimePooler);
+		
+		poolerConfig = new PoolerConfig(valueEncoder.length(),1024,21);
+		Pooler valuePooler = new Pooler(poolerConfig);
+		valuePooler.randomizeConnections();
+		grid.setProcessor(1,1,valuePooler);
 
 		poolerConfig = new PoolerConfig(positionEncoder.length(),1024,21);
 		Pooler positionPooler = new Pooler(poolerConfig);
 		positionPooler.randomizeConnections();
-
-		grid.setProcessor(1,0,dateTimePooler);
 		grid.setProcessor(1,2,positionPooler);
+		
+		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
+		memoryConfig.addContextDimension(1024);
+		memoryConfig.addContextDimension(1024);
+		Memory valueMemory = new Memory(memoryConfig);
+		grid.setProcessor(2,1,valueMemory);
 		
 		// Route context from dateTime and position poolers to memory
 		grid.addColumnContext(2,1,1,0);
@@ -114,7 +139,7 @@ public class TestZGrid extends TestObject implements ZGridListener {
 		
 		// Add requests
 		for (int r = 0; r < 10; r++) {
-			int[] position = new int[3];
+			float[] position = new float[3];
 			position[0] = 4;
 			position[1] = 5;
 			position[2] = 6;

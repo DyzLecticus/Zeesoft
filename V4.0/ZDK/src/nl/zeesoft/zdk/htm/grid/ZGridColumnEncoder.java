@@ -1,11 +1,27 @@
 package nl.zeesoft.zdk.htm.grid;
 
-import nl.zeesoft.zdk.htm.util.SDR;
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 
 public abstract class ZGridColumnEncoder {
-	public abstract int length();
+	protected CombinedEncoder encoder	=	null;
 	
-	protected abstract SDR encodeRequestValue(int columnIndex,ZGridRequest request);
+	public abstract String getValueKey();
+	
+	public int length() {
+		return encoder.length();
+	}
+	
+	public ZStringBuilder getDescription() {
+		return encoder.getDescription();
+	}
+	
+	public ZStringBuilder testScalarOverlap() {
+		return encoder.testScalarOverlap();
+	}
+	
+	protected abstract DateTimeSDR encodeRequestValue(int columnIndex,ZGridRequest request);
 	
 	protected long getInputValueAsLong(int columnIndex,ZGridRequest request) {
 		long r = 0;
@@ -14,6 +30,17 @@ public abstract class ZGridColumnEncoder {
 			request.inputValues[columnIndex] instanceof Long
 			) {
 			r = (Long) request.inputValues[columnIndex];
+		}
+		return r;
+	}
+	
+	protected float getInputValueAsFloat(int columnIndex,ZGridRequest request) {
+		float r = 0;
+		if (request.inputValues.length>columnIndex &&
+			request.inputValues[columnIndex]!=null &&
+			request.inputValues[columnIndex] instanceof Float
+			) {
+			r = (Float) request.inputValues[columnIndex];
 		}
 		return r;
 	}

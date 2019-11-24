@@ -5,14 +5,12 @@ import java.util.SortedMap;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
 import nl.zeesoft.zdk.htm.enc.EncoderObject;
 import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
-import nl.zeesoft.zdk.htm.util.SDR;
 
 public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 	private static final String					MONTH				= "MONTH";
@@ -20,8 +18,6 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 	private static final String					HOUR_OF_DAY			= "HOUR";
 	private static final String					MINUTE				= "MINUTE";
 	private static final String					SECOND				= "SECOND";
-	
-	private CombinedEncoder						encoder				= null;	
 	
 	protected int								scale				= 1;
 	protected int								bitsPerEncoder		= 8;
@@ -31,14 +27,14 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 	protected boolean							includeHourOfDay	= true;
 	protected boolean							includeMinute		= true;
 	protected boolean							includeSecond		= true;
-	
+
 	public ZGridEncoderDateTime() {
 		rebuildEncoder();
 	}
-
+	
 	@Override
-	public int length() {
-		return encoder.length();
+	public String getValueKey() {
+		return "DATETIME";
 	}
 	
 	public void setScale(int scale) {
@@ -76,16 +72,15 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 		rebuildEncoder();
 	}
 	
-	public ZStringBuilder testScalarOverlap() {
-		return encoder.testScalarOverlap();
-	}
-	
-	public SDR getSDRForDateTime(long dateTime) {
+	public DateTimeSDR getSDRForDateTime(long dateTime) {
 		SortedMap<String,Float> values = getValuesForDateTime(dateTime);
-		return new DateTimeSDR(encoder.getSDRForValues(values));
+		DateTimeSDR r = new DateTimeSDR(encoder.getSDRForValues(values));
+		r.dateTime = dateTime;
+		r.keyValues.put(getValueKey(),dateTime);
+		return r;
 	}
 	
-	protected SDR encodeRequestValue(int columnIndex,ZGridRequest request) {
+	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridRequest request) {
 		long dateTime = getInputValueAsLong(columnIndex,request);
 		return getSDRForDateTime(dateTime);
 	}

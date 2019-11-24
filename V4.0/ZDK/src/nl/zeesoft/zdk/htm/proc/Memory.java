@@ -24,6 +24,8 @@ public class Memory extends ProcessorObject {
 	protected List<MemoryColumn>	contextColumns	= new ArrayList<MemoryColumn>();
 	protected List<MemoryColumn>	allColumns		= new ArrayList<MemoryColumn>();
 	
+	protected List<SDR>				contextSDRs		= null;
+	
 	protected SDR					burstSDR		= null;	
 	
 	public Memory(MemoryConfig config) {
@@ -102,6 +104,7 @@ public class Memory extends ProcessorObject {
 	
 	@Override
 	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
+		contextSDRs = context;
 		List<SDR> r = super.getSDRsForInput(input, context, learn);
 		r.add(burstSDR);
 		return r;
@@ -238,6 +241,21 @@ public class Memory extends ProcessorObject {
 
 	protected Set<MemoryColumnCell> activateColumnCells(SDR input,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR outputSDR,SDR burstSDR) {
 		Set<MemoryColumnCell> r = new HashSet<MemoryColumnCell>(); 
+		if (config.contextDimensions.size()>0 && contextSDRs!=null && contextSDRs.size()==config.contextDimensions.size()) {
+			int i = 0;
+			for (SDR contextSDR: contextSDRs) {
+				int size = config.contextDimensions.get(i);
+				if (contextSDR.length()<=size) {
+					MemoryColumn contextColumn = contextColumns.get(i);
+					for (Integer onBit: contextSDR.getOnBits()) {
+						MemoryColumnCell cell = contextColumn.cells.get(onBit); 
+						cell.active = true;
+						r.add(cell);
+					}
+				}
+				i++;
+			}
+		}
 		for (Integer onBit: input.getOnBits()) {
 			MemoryColumn col = columns.get(onBit);
 			Set<MemoryColumnCell> activatedCells = new HashSet<MemoryColumnCell>();
