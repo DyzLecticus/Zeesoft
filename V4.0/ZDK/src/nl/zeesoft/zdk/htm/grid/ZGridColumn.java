@@ -10,10 +10,11 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class ZGridColumn extends Worker {
-	protected ZGridRow				row			= null;
-	protected int 					index		= 0;
-	protected ZGridColumnEncoder	encoder		= null;
-	protected ProcessorObject		processor	= null;
+	protected ZGridRow					row			= null;
+	protected int 						index		= 0;
+	protected ZGridColumnEncoder		encoder		= null;
+	protected ProcessorObject			processor	= null;
+	protected List<ZGridColumnContext>	contexts	= new ArrayList<ZGridColumnContext>();
 	
 	protected ZGridRequest			request		= null;
 
@@ -37,6 +38,7 @@ public class ZGridColumn extends Worker {
 		row = null;
 		encoder = null;
 		processor = null;
+		contexts.clear();
 		unlockMe(this);
 	}
 	
@@ -44,20 +46,38 @@ public class ZGridColumn extends Worker {
 	protected void whileWorking() {
 		lockMe(this);
 		if (request!=null) {
-			SDR output = null;
+			List<SDR> outputs = null;
 			if (encoder!=null) {
-				output = encoder.encodeRequestValue(index, request);
+				SDR output = encoder.encodeRequestValue(index, request);
+				if (output!=null) {
+					outputs = new ArrayList<SDR>();
+					outputs.add(output);
+				}
 			}
 			if (processor!=null) {
-				SDR input = request.getColumnOutput(getColumnId(row.index - 1,index));
+				// Use previous row column output as input
+				SDR input = request.getColumnOutput(getColumnId(row.index - 1,index),0);
+				if (row.index==0) {
+					if (input==null && outputs!=null) {
+						// Use encoded output as input
+						input = outputs.get(0);
+					}
+					if (input==null && 
+						request.inputValues.length>index &&
+						request.inputValues[index]!=null &&
+						request.inputValues[index] instanceof SDR
+						) {
+						// Use input value SDR as input
+						input = (SDR) request.inputValues[index];
+					}
+				}
 				if (input!=null) {
 					List<SDR> context = new ArrayList<SDR>();
 					// TODO: Add context
-					List<SDR> outputSDRs = processor.getSDRsForInput(input,context,request.learn);
-					output = outputSDRs.get(0);
+					outputs = processor.getSDRsForInput(input,context,request.learn);
 				}
 			}
-			request.setColumnOutput(getId(),output);
+			request.setColumnOutput(getId(),outputs);
 			request = null;
 			row.processedColumn();
 		}

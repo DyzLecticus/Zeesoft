@@ -2,14 +2,13 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
-import nl.zeesoft.zdk.htm.grid.ZGridEncoderDateTime;
-import nl.zeesoft.zdk.htm.grid.ZGridEncoderPosition;
 import nl.zeesoft.zdk.htm.grid.ZGridListener;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
+import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
+import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.util.SDR;
@@ -83,21 +82,28 @@ public class TestZGrid extends TestObject implements ZGridListener {
 		sdr = dateTimeEncoder.getSDRForDateTime(System.currentTimeMillis());
 		assertEqual(sdr.length(),1024,"SDR (scale: 4) length does not match expectation");
 		
+		dateTimeEncoder = new ZGridEncoderDateTime();
+		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition(256);
+		
 		// Add encoders
-		grid.setEncoder(0,new ZGridEncoderDateTime());
-		grid.setEncoder(2,new ZGridEncoderPosition(256,100,100,100));
+		grid.setEncoder(0,dateTimeEncoder);
+		grid.setEncoder(2,positionEncoder);
 		
 		// Add processors
-		PoolerConfig poolerConfig = new PoolerConfig(256,1024,21);
+		PoolerConfig poolerConfig = new PoolerConfig(dateTimeEncoder.length(),1024,21);
 		Pooler dateTimePooler = new Pooler(poolerConfig);
 		dateTimePooler.randomizeConnections();
 
-		poolerConfig = new PoolerConfig(256,1024,21);
+		poolerConfig = new PoolerConfig(positionEncoder.length(),1024,21);
 		Pooler positionPooler = new Pooler(poolerConfig);
 		positionPooler.randomizeConnections();
 
 		grid.setProcessor(1,0,dateTimePooler);
 		grid.setProcessor(1,2,positionPooler);
+		
+		// Route context from dateTime and position poolers to memory
+		grid.addColumnContext(2,1,1,0);
+		grid.addColumnContext(2,1,1,2);
 
 		// Start grid
 		grid.start();
@@ -159,12 +165,13 @@ public class TestZGrid extends TestObject implements ZGridListener {
 		returnedIds.add(request.id);
 		
 		System.out.println("================================================");
-		for (Entry<String,SDR> entry: request.columnOutputs.entrySet()) {
+		for (String columnId: request.getColumnIds()) {
+			SDR output = request.getColumnOutput(columnId,0);
 			ZStringBuilder value = new ZStringBuilder("null");
-			if (entry.getValue()!=null) {
-				value = entry.getValue().toStringBuilder();
+			if (output!=null) {
+				value = output.toStringBuilder();
 			}
-			System.out.println(entry.getKey() + " = " + value);
+			System.out.println(columnId + " = " + value);
 		}
 	}
 }

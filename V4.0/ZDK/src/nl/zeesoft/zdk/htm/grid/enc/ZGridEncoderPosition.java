@@ -1,7 +1,9 @@
-package nl.zeesoft.zdk.htm.grid;
+package nl.zeesoft.zdk.htm.grid.enc;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.GridEncoder;
+import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
+import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.util.SDR;
 
 public class ZGridEncoderPosition extends ZGridColumnEncoder {
@@ -12,18 +14,20 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 	private int				sizeY				= 100;
 	private int				sizeZ				= 100;
 	
-	private boolean 		threeDimensional	= true;
-	
-	public ZGridEncoderPosition(int length,int sizeX,int sizeY,int sizeZ) {
+	public ZGridEncoderPosition(int length) {
 		this.length = length;
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
-		this.sizeZ = sizeZ;
 		rebuildEncoder();
 	}
 
-	public void setThreeDimensional(boolean threeDimensional) {
-		this.threeDimensional = threeDimensional;
+	@Override
+	public int length() {
+		return encoder.length();
+	}
+	
+	public void setDimensions(int sizeX,int sizeY,int sizeZ) {
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
+		this.sizeZ = sizeZ;
 		rebuildEncoder();
 	}
 	
@@ -33,9 +37,9 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 	
 	public SDR getSDRForPosition(int[] position) {
 		SDR r = null;
-		if (threeDimensional && position.length==3) {
+		if (sizeZ>0 && position.length==3) {
 			r = encoder.getSDRForPosition((float) position[0],(float) position[1],(float) position[2]);
-		} else if (!threeDimensional && position.length>=2) {
+		} else if (sizeZ<=0 && position.length>=2) {
 			r = encoder.getSDRForPosition((float) position[0],(float) position[1]);
 		}
 		return r;
@@ -50,7 +54,7 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 			position = (int[]) request.inputValues[columnIndex];
 		}
 		if (position==null) {
-			if (threeDimensional) {
+			if (sizeZ>0) {
 				position = new int[3];
 			} else {
 				position = new int[2];
@@ -63,7 +67,7 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 	}
 	
 	protected void rebuildEncoder() {
-		if (threeDimensional) {
+		if (sizeZ>0) {
 			encoder = GridEncoder.getNewScaled3DGridEncoder(length, sizeX, sizeY, sizeZ);
 		} else {
 			encoder = GridEncoder.getNewScaled2DGridEncoder(length, sizeX, sizeY);

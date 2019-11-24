@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.htm.grid;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -8,13 +10,13 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class ZGridRequest extends Locker {
-	public long						id				= 0;
-	public long						dateTime		= 0;
-	public Object[]					inputValues		= null;
+	public long								id				= 0;
+	public long								dateTime		= 0;
+	public Object[]							inputValues		= null;
 	
-	public boolean					learn			= true;
+	protected boolean						learn			= true;
 	
-	public SortedMap<String,SDR>	columnOutputs	= new TreeMap<String,SDR>();
+	private SortedMap<String,List<SDR>>		columnOutputs	= new TreeMap<String,List<SDR>>();
 	
 	public ZGridRequest(Messenger msgr,int columns) {
 		super(msgr);
@@ -27,16 +29,34 @@ public class ZGridRequest extends Locker {
 		inputValues = new Object[columns];
 	}
 	
-	protected SDR getColumnOutput(String columnId) {
+	public List<String> getColumnIds() {
 		lockMe(this);
-		SDR r = columnOutputs.get(columnId);
+		List<String> r = new ArrayList<String>(columnOutputs.keySet());
 		unlockMe(this);
 		return r;
 	}
 	
-	protected void setColumnOutput(String columnId,SDR output) {
+	public SDR getColumnOutput(String columnId,int index) {
 		lockMe(this);
-		columnOutputs.put(columnId,output);
+		SDR r = null;
+		List<SDR> outputs = columnOutputs.get(columnId);
+		if (outputs!=null && outputs.size()>index) {
+			r = outputs.get(index);
+		}
+		unlockMe(this);
+		return r;
+	}
+
+	public List<SDR> getColumnOutput(String columnId) {
+		lockMe(this);
+		List<SDR> r = new ArrayList<>(columnOutputs.get(columnId));
+		unlockMe(this);
+		return r;
+	}
+	
+	protected void setColumnOutput(String columnId,List<SDR> outputs) {
+		lockMe(this);
+		columnOutputs.put(columnId,outputs);
 		unlockMe(this);
 	}
 }

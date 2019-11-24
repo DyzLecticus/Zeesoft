@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.htm.grid;
 import nl.zeesoft.zdk.htm.util.SDR;
 
 public abstract class ZGridColumnEncoder {
+	public abstract int length();
+	
 	protected abstract SDR encodeRequestValue(int columnIndex,ZGridRequest request);
 	
 	protected long getInputValueAsLong(int columnIndex,ZGridRequest request) {

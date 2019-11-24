@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.grid;
+package nl.zeesoft.zdk.htm.grid.enc;
 
 import java.util.Calendar;
 import java.util.SortedMap;
@@ -9,6 +9,8 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
 import nl.zeesoft.zdk.htm.enc.EncoderObject;
 import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
+import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
+import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 
@@ -34,6 +36,11 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 		rebuildEncoder();
 	}
 
+	@Override
+	public int length() {
+		return encoder.length();
+	}
+	
 	public void setScale(int scale) {
 		this.scale = scale;
 		rebuildEncoder();

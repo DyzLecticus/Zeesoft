@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class ZGrid extends Worker implements ZGridRequestNext {
 	private List<ZGridRow>		rows		= new ArrayList<ZGridRow>();
-	private ZGridResults			results		= null;
+	private ZGridResults		results		= null;
 	
 	private List<ZGridListener>	listeners	= new ArrayList<ZGridListener>();
 
@@ -32,13 +32,33 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 
 	public void setEncoder(int columnIndex,ZGridColumnEncoder encoder) {
 		lockMe(this);
-		rows.get(0).columns.get(columnIndex).encoder = encoder;
+		if (rows.size()>0 && rows.get(0).columns.size()>columnIndex) {
+			rows.get(0).columns.get(columnIndex).encoder = encoder;
+		}
 		unlockMe(this);
 	}
 
 	public void setProcessor(int rowIndex,int columnIndex,ProcessorObject processor) {
 		lockMe(this);
-		rows.get(rowIndex).columns.get(columnIndex).processor = processor;
+		if (rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex) {
+			rows.get(rowIndex).columns.get(columnIndex).processor = processor;
+		}
+		unlockMe(this);
+	}
+
+	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn) {
+		addColumnContext(rowIndex,columnIndex,sourceRow,sourceColumn,0);
+	}
+
+	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn,int sourceIndex) {
+		lockMe(this);
+		if (rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex && sourceRow<rowIndex) {
+			ZGridColumnContext context = new ZGridColumnContext();
+			context.sourceRow = sourceRow;
+			context.sourceColumn = sourceColumn;
+			context.sourceIndex = sourceIndex;
+			rows.get(rowIndex).columns.get(columnIndex).contexts.add(context);
+		}
 		unlockMe(this);
 	}
 	
@@ -67,10 +87,12 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 	}
 	
 	public void destroy() {
+		lockMe(this);
 		for (ZGridRow row: rows) {
 			row.destroy();
 		}
 		rows.clear();
+		unlockMe(this);
 	}
 
 	@Override
