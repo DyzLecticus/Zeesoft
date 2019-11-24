@@ -108,19 +108,34 @@ public class CombinedEncoder {
 		}
 	}
 	
-	protected void initialize() {
+	/**
+	 * Initializes the combined encoder state to its defaults.
+	 */
+	public void initialize() {
 		length = 0;
 		bits = 0;
 		encoders.clear();
 	}
 	
-	protected void addEncoder(String name,EncoderObject encoder) {
+	/**
+	 * Adds an encoder.
+	 * 
+	 * @param name The name of the encoder
+	 * @param encoder The encoder
+	 */
+	public void addEncoder(String name,EncoderObject encoder) {
 		length = length + encoder.length;
 		bits = bits + encoder.bits;
 		encoders.put(name,encoder);
 	}
 	
-	protected SDR getSDRForValues(SortedMap<String,Float> values) {
+	/**
+	 * Returns an encoded SDR for a map of named values assuming the names correspond to the names of the added encoders.
+	 * 
+	 * @param values The named value map
+	 * @return The encoder SDR
+	 */
+	public SDR getSDRForValues(SortedMap<String,Float> values) {
 		SDR r = null;
 		for (Entry<String,EncoderObject> entry: encoders.entrySet()) {
 			SDR add = null;
@@ -134,6 +149,30 @@ public class CombinedEncoder {
 				r = add;
 			} else {
 				r = SDR.concat(r,add);
+			}
+		}
+		return r;
+	}
+	
+	/**
+	 * Iterates through all possible values of the encoders to determine if the SDR values have a certain minimal and maximal overlap.
+	 * 
+	 * @return An empty string builder or a string builder containing an error message
+	 */
+	public ZStringBuilder testScalarOverlap() {
+		ZStringBuilder r = new ZStringBuilder();
+		for (String name: getEncoderNames()) {
+			ScalarEncoder encoder = getScalarEncoder(name);
+			if (encoder!=null) {
+				ZStringBuilder err = ((ScalarEncoder) encoder).testScalarOverlap(1,encoder.bits - 1);
+				if (err.length()>0) {
+					if (r.length()>0) {
+						r.append("\n");
+					}
+					r.append(name);
+					r.append(": ");
+					r.append(err);
+				}
 			}
 		}
 		return r;

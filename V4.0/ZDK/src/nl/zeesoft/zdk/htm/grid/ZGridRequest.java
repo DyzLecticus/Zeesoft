@@ -7,34 +7,24 @@ import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
-public class GridRequest extends Locker {
+public class ZGridRequest extends Locker {
 	public long						id				= 0;
+	public long						dateTime		= 0;
 	public Object[]					inputValues		= null;
 	
-	public SortedMap<String,SDR>	columnInputs	= new TreeMap<String,SDR>();
+	public boolean					learn			= true;
+	
 	public SortedMap<String,SDR>	columnOutputs	= new TreeMap<String,SDR>();
 	
-	public GridRequest(Messenger msgr,int columns) {
+	public ZGridRequest(Messenger msgr,int columns) {
 		super(msgr);
+		dateTime = System.currentTimeMillis();
 		inputValues = new Object[columns];
 	}
 	
-	public GridRequest(int columns) {
+	public ZGridRequest(int columns) {
 		super(null);
 		inputValues = new Object[columns];
-	}
-	
-	protected SDR getColumnInput(String columnId) {
-		lockMe(this);
-		SDR r = columnInputs.get(columnId);
-		unlockMe(this);
-		return r;
-	}
-	
-	protected void setColumnInput(String columnId,SDR input) {
-		lockMe(this);
-		columnInputs.put(columnId,input);
-		unlockMe(this);
 	}
 	
 	protected SDR getColumnOutput(String columnId) {

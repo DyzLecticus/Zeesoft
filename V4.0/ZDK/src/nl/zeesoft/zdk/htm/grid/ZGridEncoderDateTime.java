@@ -1,0 +1,195 @@
+package nl.zeesoft.zdk.htm.grid;
+
+import java.util.Calendar;
+import java.util.SortedMap;
+import java.util.TimeZone;
+import java.util.TreeMap;
+
+import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
+import nl.zeesoft.zdk.htm.enc.EncoderObject;
+import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
+import nl.zeesoft.zdk.htm.util.SDR;
+
+public class ZGridEncoderDateTime extends ZGridColumnEncoder {
+	private static final String					MONTH				= "MONTH";
+	private static final String					DAY_OF_WEEK			= "WEEKDAY";
+	private static final String					HOUR_OF_DAY			= "HOUR";
+	private static final String					MINUTE				= "MINUTE";
+	private static final String					SECOND				= "SECOND";
+	
+	private CombinedEncoder						encoder				= null;	
+	
+	protected int								scale				= 1;
+	protected int								bitsPerEncoder		= 8;
+	
+	protected boolean							includeMonth		= true;
+	protected boolean							includeDayOfWeek	= true;
+	protected boolean							includeHourOfDay	= true;
+	protected boolean							includeMinute		= true;
+	protected boolean							includeSecond		= true;
+	
+	public ZGridEncoderDateTime() {
+		rebuildEncoder();
+	}
+
+	public void setScale(int scale) {
+		this.scale = scale;
+		rebuildEncoder();
+	}
+
+	public void setBitsPerEncoder(int bitsPerEncoder) {
+		this.bitsPerEncoder = bitsPerEncoder;
+		rebuildEncoder();
+	}
+
+	public void setIncludeMonth(boolean includeMonth) {
+		this.includeMonth = includeMonth;
+		rebuildEncoder();
+	}
+
+	public void setIncludeDayOfWeek(boolean includeDayOfWeek) {
+		this.includeDayOfWeek = includeDayOfWeek;
+		rebuildEncoder();
+	}
+
+	public void setIncludeHourOfDay(boolean includeHourOfDay) {
+		this.includeHourOfDay = includeHourOfDay;
+		rebuildEncoder();
+	}
+
+	public void setIncludeMinute(boolean includeMinute) {
+		this.includeMinute = includeMinute;
+		rebuildEncoder();
+	}
+
+	public void setIncludeSecond(boolean includeSecond) {
+		this.includeSecond = includeSecond;
+		rebuildEncoder();
+	}
+	
+	public ZStringBuilder testScalarOverlap() {
+		return encoder.testScalarOverlap();
+	}
+	
+	public SDR getSDRForDateTime(long dateTime) {
+		SortedMap<String,Float> values = getValuesForDateTime(dateTime);
+		return new DateTimeSDR(encoder.getSDRForValues(values));
+	}
+	
+	protected SDR encodeRequestValue(int columnIndex,ZGridRequest request) {
+		long dateTime = getInputValueAsLong(columnIndex,request);
+		return getSDRForDateTime(dateTime);
+	}
+	
+	protected void rebuildEncoder() {
+		encoder = new CombinedEncoder();
+		
+		int factor = 1;
+		if (includeDayOfWeek) {
+			factor++;
+		}
+		if (includeHourOfDay) {
+			factor++;
+		}
+		if (includeMinute) {
+			factor++;
+		}
+		if (includeSecond) {
+			factor++;
+		}
+		bitsPerEncoder = (32 / factor) * scale;
+		
+		if (includeMonth) {
+			encoder.addEncoder(MONTH,getNewMonthEncoder());
+		}
+		if (includeDayOfWeek) {
+			encoder.addEncoder(DAY_OF_WEEK,getNewDayOfWeekEncoder());
+		}
+		if (includeHourOfDay) {
+			encoder.addEncoder(HOUR_OF_DAY,getNewHourOfDayEncoder());
+		}
+		if (includeMinute) {
+			encoder.addEncoder(MINUTE,getNewMinuteEncoder());
+		}
+		if (includeSecond) {
+			encoder.addEncoder(SECOND,getNewSecondEncoder());
+		}
+
+	}
+	
+	protected EncoderObject getNewMonthEncoder() {
+		int length = 48 * scale;
+		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,12);
+		r.setPeriodic(true);
+		return r;
+	}
+	
+	protected EncoderObject getNewDayOfWeekEncoder() {
+		int length = 32 * scale;
+		if (scale==2) {
+			length += 7;
+		}
+		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,7);
+		r.setPeriodic(true);
+		return r;
+	}
+	
+	protected EncoderObject getNewHourOfDayEncoder() {
+		int length = 48 * scale;
+		if (scale==2) {
+			length += 10;
+		}
+		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,24);
+		r.setPeriodic(true);
+		return r;
+	}
+	
+	protected EncoderObject getNewMinuteEncoder() {
+		int length = 64 * scale;
+		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,60);
+		r.setPeriodic(true);
+		return r;
+	}
+	
+	protected EncoderObject getNewSecondEncoder() {
+		int length = 64 * scale;
+		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,60);
+		r.setPeriodic(true);
+		return r;
+	}
+	
+	protected SortedMap<String,Float> getValuesForDateTime(long dateTime) {
+		SortedMap<String,Float> r = new TreeMap<String,Float>();
+		Calendar cal = Calendar.getInstance(getTimeZone());
+		cal.setTimeInMillis(dateTime);
+		
+		float factor = 1.5F;
+		
+		float second = (float) cal.get(Calendar.SECOND);
+		
+		float minute = (float) cal.get(Calendar.MINUTE);
+		minute += second / (60F * factor);
+		
+		float hour = (float) cal.get(Calendar.HOUR_OF_DAY);
+		hour += minute / (60F * factor);
+
+		float weekday = (float) (cal.get(Calendar.DAY_OF_WEEK) - 1);
+		weekday += hour / (24F * factor); 
+		
+		float month = (float) cal.get(Calendar.MONTH);
+		month += cal.get(Calendar.DAY_OF_MONTH) / (31F * factor);
+		
+		r.put(MONTH,month);
+		r.put(DAY_OF_WEEK,weekday);
+		r.put(HOUR_OF_DAY,hour);
+		r.put(MINUTE,minute);
+		r.put(SECOND,second);
+		return r;
+	}
+		
+	protected TimeZone getTimeZone() {
+		return TimeZone.getTimeZone("UTC");
+	}
+}

@@ -19,7 +19,7 @@ public class DateTimeValuesEncoder extends DateTimeEncoder {
 	}
 
 	@Override
-	protected void initialize() {
+	public void initialize() {
 		super.initialize();
 		addEncoder(VALUE1,getNewValueEncoder());
 		addEncoder(VALUE2,getNewValueEncoder());

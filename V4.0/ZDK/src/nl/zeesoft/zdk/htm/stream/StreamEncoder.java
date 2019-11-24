@@ -368,7 +368,7 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	}
 	
 	@Override
-	protected void initialize() {
+	public void initialize() {
 		super.initialize();
 		int factor = 1;
 		

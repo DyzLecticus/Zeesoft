@@ -20,7 +20,7 @@ public class DateTimeEncoder extends CombinedEncoder {
 	}
 	
 	@Override
-	protected void initialize() {
+	public void initialize() {
 		addEncoder(MONTH,getNewMonthEncoder());
 		addEncoder(WEEKDAY,getNewWeekdayEncoder());
 		addEncoder(HOUR,getNewHourEncoder());
