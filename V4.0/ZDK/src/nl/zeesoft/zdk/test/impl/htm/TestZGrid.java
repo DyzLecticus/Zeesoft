@@ -1,26 +1,36 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
-import nl.zeesoft.zdk.htm.grid.ZGridListener;
+import nl.zeesoft.zdk.htm.grid.ZGridResultsListener;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
+import nl.zeesoft.zdk.htm.proc.Classification;
+import nl.zeesoft.zdk.htm.proc.Classifier;
+import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
 import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
+import nl.zeesoft.zdk.htm.util.HistoricalFloats;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestZGrid extends TestObject implements ZGridListener {
-	private List<Long>	expectedIds		= new ArrayList<Long>();
-	private List<Long>	returnedIds		= new ArrayList<Long>();
+public class TestZGrid extends TestObject implements ZGridResultsListener {
+	private ZGrid					grid					= null;
+	private List<Long>				expectedIds				= new ArrayList<Long>();
+	private List<Long>				returnedIds				= new ArrayList<Long>();
+	
+	private DecimalFormat			df						= new DecimalFormat("0.000");
+	private Classification			previousClassification	= null;
+	private HistoricalFloats		averageAccuracy			= new HistoricalFloats(); 
 	
 	public TestZGrid(Tester tester) {
 		super(tester);
@@ -66,7 +76,7 @@ public class TestZGrid extends TestObject implements ZGridListener {
 	
 	@Override
 	protected void test(String[] args) {
-		ZGrid grid = new ZGrid(4,3);
+		grid = new ZGrid(4,3);
 		
 		grid.addListener(this);
 		
@@ -87,17 +97,8 @@ public class TestZGrid extends TestObject implements ZGridListener {
 		
 		// Create encoders
 		dateTimeEncoder = new ZGridEncoderDateTime();
-		System.out.println(dateTimeEncoder.getDescription());
-		
 		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(256);
-		System.out.println();
-		System.out.println(valueEncoder.getDescription());
-		
 		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition(256);
-		System.out.println();
-		System.out.println(positionEncoder.getDescription());
-		
-		System.out.println();
 		
 		// Add encoders
 		grid.setEncoder(0,dateTimeEncoder);
@@ -126,10 +127,20 @@ public class TestZGrid extends TestObject implements ZGridListener {
 		Memory valueMemory = new Memory(memoryConfig);
 		grid.setProcessor(2,1,valueMemory);
 		
+		ClassifierConfig classifierConfig = new ClassifierConfig(1);
+		Classifier valueClassifier = new Classifier(classifierConfig);
+		grid.setProcessor(3,1,valueClassifier);
+		
 		// Route context from dateTime and position poolers to memory
 		grid.addColumnContext(2,1,1,0);
 		grid.addColumnContext(2,1,1,2);
 
+		// Route value DateTimeSDR from encoder to classifier
+		grid.addColumnContext(3,1,0,1);
+
+		System.out.println(grid.getDescription());
+		System.out.println();
+		
 		// Start grid
 		grid.start();
 		while(!grid.isWorking()) {
@@ -137,17 +148,24 @@ public class TestZGrid extends TestObject implements ZGridListener {
 		}
 		System.out.println("Started grid");
 		
+		long started = System.currentTimeMillis();
+		long dateTime = started;
+		
 		// Add requests
-		for (int r = 0; r < 10; r++) {
-			float[] position = new float[3];
-			position[0] = 4;
-			position[1] = 5;
-			position[2] = 6;
-			ZGridRequest request = new ZGridRequest(3);
-			request.inputValues[0] = request.dateTime + (r * 1000);
-			request.inputValues[1] = r + 1;
-			request.inputValues[2] = position;
-			expectedIds.add(grid.addRequest(request));
+		for (int c = 1; c <= 300; c++) {
+			for (int r = 1; r <= 10; r++) {
+				float[] position = new float[3];
+				position[0] = 0;
+				position[1] = r;
+				position[2] = r * 2;
+				ZGridRequest request = grid.getNewRequest();
+				request.dateTime = dateTime;
+				request.inputValues[0] = request.dateTime;
+				request.inputValues[1] = (float) r;
+				request.inputValues[2] = position;
+				expectedIds.add(grid.addRequest(request));
+				dateTime += 1000;
+			}
 		}
 		System.out.println("Added requests");
 		
@@ -155,13 +173,17 @@ public class TestZGrid extends TestObject implements ZGridListener {
 		while(grid.isWorking()) {
 			sleep(100);
 			i++;
-			if (i>=10) {
+			if (i>=450) {
 				break;
 			}
 		}
-		
+
+		long stopped = System.currentTimeMillis();
+
 		// Stop & destroy grid
-		grid.stop();
+		if (grid.isWorking()) {
+			grid.stop();
+		}
 		System.out.println("Stopped grid");
 		grid.destroy();
 		System.out.println("Destroyed grid");
@@ -181,7 +203,7 @@ public class TestZGrid extends TestObject implements ZGridListener {
 			}
 		}
 		if (success) {
-			System.out.println("Succesfully processed " + expectedIds.size() + " requests");
+			System.out.println("Processing " + expectedIds.size() + " requests took " + (stopped - started) + " ms");
 		}
 	}
 
@@ -189,14 +211,30 @@ public class TestZGrid extends TestObject implements ZGridListener {
 	public void processedRequest(ZGridRequest request) {
 		returnedIds.add(request.id);
 		
-		System.out.println("================================================");
-		for (String columnId: request.getColumnIds()) {
-			SDR output = request.getColumnOutput(columnId,0);
-			ZStringBuilder value = new ZStringBuilder("null");
-			if (output!=null) {
-				value = output.toStringBuilder();
+		List<Classification> classifications = request.getClassifications();
+		if (classifications.size()>0) {
+			if (previousClassification!=null) {
+				Object value = request.inputValues[1];
+				float accuracy = 0;
+				Classification classification = previousClassification;
+				for (Object predicted: classification.mostCountedValues) {
+					//System.out.println("Predicted: " + predicted + ", value: " + value);
+					if (predicted.equals(value)) {
+						accuracy = 1;
+						break;
+					}
+				}
+				averageAccuracy.addFloat(accuracy);
 			}
-			System.out.println(columnId + " = " + value);
+			previousClassification = classifications.get(0);
+		} 
+			
+		if (returnedIds.size() % 100 == 0) {
+			System.out.println("Processed requests: " + returnedIds.size() + ", accuracy: " + df.format(averageAccuracy.average));
+		}
+		
+		if (returnedIds.size()==expectedIds.size()) {
+			grid.stop();
 		}
 	}
 }

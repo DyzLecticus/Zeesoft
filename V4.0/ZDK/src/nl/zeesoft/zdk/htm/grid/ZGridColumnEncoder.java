@@ -37,10 +37,15 @@ public abstract class ZGridColumnEncoder {
 	protected float getInputValueAsFloat(int columnIndex,ZGridRequest request) {
 		float r = 0;
 		if (request.inputValues.length>columnIndex &&
-			request.inputValues[columnIndex]!=null &&
-			request.inputValues[columnIndex] instanceof Float
+			request.inputValues[columnIndex]!=null
 			) {
-			r = (Float) request.inputValues[columnIndex];
+			if (request.inputValues[columnIndex] instanceof Float) {
+				r = (float) request.inputValues[columnIndex];
+			} else if (request.inputValues[columnIndex] instanceof Long) {
+				r = (float) (long) request.inputValues[columnIndex];
+			} else if (request.inputValues[columnIndex] instanceof Integer) {
+				r = (float) (int) request.inputValues[columnIndex];
+			}
 		}
 		return r;
 	}

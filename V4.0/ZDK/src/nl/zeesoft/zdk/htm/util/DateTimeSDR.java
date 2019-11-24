@@ -8,8 +8,8 @@ import java.util.TreeMap;
  * A DateTimeSDR is used by streams to propagate the actual input along with the SDR so classifiers can learn to classify and predict real values. 
  */
 public class DateTimeSDR extends SDR {
-	public static final String			VALUE_KEY	= "value";
-	public static final String			LABEL_KEY	= "label";
+	public static final String			VALUE_KEY	= "VALUE";
+	public static final String			LABEL_KEY	= "LABEL";
 	
 	public	long						dateTime	= System.currentTimeMillis();
 	public	SortedMap<String,Object>	keyValues	= new TreeMap<String,Object>();

@@ -14,10 +14,10 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 	protected List<ZGridColumn>		columns			= new ArrayList<ZGridColumn>();
 	protected ZGridRequestNext		nextProcessor	= null;
 	
-	protected Queue<ZGridRequest>	queue			= new LinkedList<ZGridRequest>();
-	protected ZGridRequest			request			= null;
-	protected int					done			= 0;
-
+	private Queue<ZGridRequest>		queue			= new LinkedList<ZGridRequest>();
+	private ZGridRequest			request			= null;
+	private int						done			= 0;
+	
 	protected ZGridRow(Messenger msgr, WorkerUnion union) {
 		super(msgr, union);
 		setSleep(1);
@@ -64,6 +64,7 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 	@Override
 	protected void whileWorking() {
 		boolean r = false;
+		int s = 1;
 		lockMe(this);
 		if (request==null) {
 			request = queue.poll();
@@ -71,7 +72,11 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 				r = true;
 			}
 		}
+		if (request!=null) {
+			s = 0;
+		}
 		unlockMe(this);
+		setSleep(s);
 		if (r) {
 			lockMe(this);
 			done = 0;

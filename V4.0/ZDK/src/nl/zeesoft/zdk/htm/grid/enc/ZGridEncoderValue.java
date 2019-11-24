@@ -14,7 +14,7 @@ import nl.zeesoft.zdk.htm.util.SDR;
 public class ZGridEncoderValue extends ZGridColumnEncoder {
 	private int				length			= 256;
 	
-	private String			valueKey		= "VALUE";
+	private String			valueKey		= DateTimeSDR.VALUE_KEY;
 	private int				bits			= 8;
 	private float			resolution		= 1;
 	private float			minValue		= 0;
@@ -86,6 +86,12 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		DateTimeSDR r = new DateTimeSDR(getSDRForValue(value));
 		r.dateTime = request.dateTime;
 		r.keyValues.put(valueKey,value);
+		if (request.inputLabels.length>columnIndex &&
+			request.inputLabels[columnIndex]!=null &&
+			request.inputLabels[columnIndex].length()>0
+			) {
+			r.keyValues.put(DateTimeSDR.LABEL_KEY,request.inputLabels[columnIndex]);
+		}
 		return r;
 	}
 	

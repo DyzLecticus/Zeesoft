@@ -39,8 +39,9 @@ public class Memory extends ProcessorObject {
 	 * 
 	 * @return A description
 	 */
+	@Override
 	public ZStringBuilder getDescription() {
-		ZStringBuilder r = new ZStringBuilder();
+		ZStringBuilder r = config.getDescription();
 		int cells = config.length * config.depth;
 		int min = Integer.MAX_VALUE; 
 		int max = 0;
@@ -77,6 +78,7 @@ public class Memory extends ProcessorObject {
 		}
 		if (avg>0) {
 			avg = avg / cells;
+			r.append("\n");
 			r.append("Average distal inputs per memory cell: ");
 			r.append("" + avg);
 			if (min!=avg || max!=avg) {

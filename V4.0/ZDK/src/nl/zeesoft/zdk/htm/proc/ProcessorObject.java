@@ -45,6 +45,13 @@ public abstract class ProcessorObject {
 	}
 	
 	/**
+	 * Returns a description of this processor.
+	 * 
+	 * @return A description of this processor
+	 */
+	public abstract ZStringBuilder getDescription();
+	
+	/**
 	 * Returns a string builder that represents the state information of this processor.
 	 * 
 	 * @return A string builder

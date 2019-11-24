@@ -16,7 +16,7 @@ public class ZGridColumn extends Worker {
 	protected ProcessorObject			processor	= null;
 	protected List<ZGridColumnContext>	contexts	= new ArrayList<ZGridColumnContext>();
 	
-	protected ZGridRequest			request		= null;
+	protected ZGridRequest				request		= null;
 
 	protected ZGridColumn(Messenger msgr, WorkerUnion union) {
 		super(msgr, union);
@@ -27,7 +27,12 @@ public class ZGridColumn extends Worker {
 		return getColumnId(row.index,index);
 	}
 	
+	protected void setSleepMs(int sleep) {
+		setSleep(sleep);
+	}
+	
 	protected void setRequest(ZGridRequest request) {
+		setSleep(0);
 		lockMe(this);
 		this.request = request;
 		unlockMe(this);
@@ -53,23 +58,16 @@ public class ZGridColumn extends Worker {
 					outputs = new ArrayList<SDR>();
 					outputs.add(output);
 				}
-			}
-			if (processor!=null) {
+			} else if (processor!=null) {
 				// Use previous row column output as input
 				SDR input = request.getColumnOutput(getColumnId(row.index - 1,index),0);
-				if (row.index==0) {
-					if (input==null && outputs!=null) {
-						// Use encoded output as input
-						input = outputs.get(0);
-					}
-					if (input==null && 
-						request.inputValues.length>index &&
-						request.inputValues[index]!=null &&
-						request.inputValues[index] instanceof SDR
-						) {
-						// Use input value SDR as input
-						input = (SDR) request.inputValues[index];
-					}
+				if (input==null && 
+					request.inputValues.length>index &&
+					request.inputValues[index]!=null &&
+					request.inputValues[index] instanceof SDR
+					) {
+					// Use input value SDR as input
+					input = (SDR) request.inputValues[index];
 				}
 				if (input!=null) {
 					List<SDR> context = new ArrayList<SDR>();
@@ -89,6 +87,7 @@ public class ZGridColumn extends Worker {
 			row.processedColumn();
 		}
 		unlockMe(this);
+		setSleep(1);
 	}
 	
 	protected static final String getColumnId(int rowIndex,int columnIndex) {

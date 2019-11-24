@@ -13,7 +13,7 @@ import nl.zeesoft.zdk.htm.util.SDR;
  * One output DateTimeSDR with Classification is produced for each of the configured prediction steps.
  */
 public class Classifier extends ProcessorObject {
-	public static final String			CLASSIFICATION_KEY		= "classification";
+	public static final String			CLASSIFICATION_KEY		= "CLASSIFICATION";
 	
 	protected ClassifierConfig			config					= null;
 	
@@ -33,6 +33,26 @@ public class Classifier extends ProcessorObject {
 				maxSteps = steps;
 			}
 		}
+	}
+	
+	/**
+	 * Returns a description of this classifier.
+	 * 
+	 * @return A description of this classifier
+	 */
+	@Override
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append(this.getClass().getSimpleName());
+		r.append(" value key: ");
+		r.append(config.valueKey);
+		r.append(", steps; ");
+		for (Integer step: config.predictSteps) {
+			r.append("\n");
+			r.append("- ");
+			r.append("" + step);
+		}
+		return r;
 	}
 	
 	@Override
@@ -91,7 +111,7 @@ public class Classifier extends ProcessorObject {
 	@Override
 	public List<SDR> getSDRsForInput(SDR input,List<SDR> context,boolean learn) {
 		inputSDR = null;
-		if (context.get(0) instanceof DateTimeSDR) {
+		if (context.size()>0 && context.get(0) instanceof DateTimeSDR) {
 			inputSDR = (DateTimeSDR) context.get(0);
 		}
 		

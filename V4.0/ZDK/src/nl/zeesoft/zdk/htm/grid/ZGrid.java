@@ -3,16 +3,17 @@ package nl.zeesoft.zdk.htm.grid;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class ZGrid extends Worker implements ZGridRequestNext {
-	private List<ZGridRow>		rows		= new ArrayList<ZGridRow>();
-	private ZGridResults		results		= null;
+	private List<ZGridRow>	rows		= new ArrayList<ZGridRow>();
+	private ZGridResults	results		= null;
 	
-	private List<ZGridListener>	listeners	= new ArrayList<ZGridListener>();
+	private boolean			learn		= true;
 
 	public ZGrid(int rows, int columns) {
 		super(null,null);
@@ -24,9 +25,15 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		initialize(msgr,rows,columns);
 	}
 	
-	public void addListener(ZGridListener listener) {
+	public void addListener(ZGridResultsListener listener) {
 		lockMe(this);
-		listeners.add(listener);
+		results.addListener(listener);
+		unlockMe(this);
+	}
+
+	public void setLearn(boolean learn) {
+		lockMe(this);
+		this.learn = learn;
 		unlockMe(this);
 	}
 
@@ -40,7 +47,7 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 
 	public void setProcessor(int rowIndex,int columnIndex,ProcessorObject processor) {
 		lockMe(this);
-		if (rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex) {
+		if (rowIndex>0 && rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex) {
 			rows.get(rowIndex).columns.get(columnIndex).processor = processor;
 		}
 		unlockMe(this);
@@ -61,9 +68,39 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		}
 		unlockMe(this);
 	}
+
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = new ZStringBuilder();
+		for (ZGridRow row: rows) {
+			for (ZGridColumn col: row.columns) {
+				ZStringBuilder desc = null;
+				if (col.encoder!=null) {
+					desc = col.encoder.getDescription();
+				} else if (col.processor!=null) {
+					desc = col.processor.getDescription();
+				}
+				if (desc!=null) {
+					desc.replace("\n","\n  ");
+					if (r.length()>0) {
+						r.append("\n");
+					}
+					r.append("- Column ");
+					r.append(col.getId());
+					r.append(" = ");
+					r.append(desc);
+				}
+			}
+		}
+		return r;
+	}
+	
+	public ZGridRequest getNewRequest() {
+		return new ZGridRequest(getMessenger(),rows.get(0).columns.size());
+	}
 	
 	public long addRequest(ZGridRequest request) {
 		lockMe(this);
+		request.learn = learn;
 		long r = results.assignRequestId(request);
 		rows.get(0).addRequest(request);
 		unlockMe(this);
@@ -92,6 +129,7 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 			row.destroy();
 		}
 		rows.clear();
+		results.destroy();
 		unlockMe(this);
 	}
 
@@ -102,25 +140,7 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 	
 	@Override
 	protected void whileWorking() {
-		List<ZGridRequest> requests = results.flush();
-		if (requests.size()>0) {
-			lockMe(this);
-			List<ZGridListener> list = new ArrayList<ZGridListener>(listeners);
-			unlockMe(this);
-			for (ZGridRequest request: requests) {
-				for (ZGridListener listener: list) {
-					try {
-						listener.processedRequest(request);
-					} catch(Exception e) {
-						if (getMessenger()!=null) {
-							getMessenger().error(this,"Grid listener exception",e);
-						} else {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}
+		results.flush();
 	}
 	
 	protected ZGridRow addRow() {
@@ -138,6 +158,12 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 	}
 
 	protected void initialize(Messenger msgr,int rows, int columns) {
+		if (rows < 1) {
+			rows = 1;
+		}
+		if (columns < 1) {
+			columns = 1;
+		}
 		setSleep(1);
 		ZGridRow pRow = null;
 		for (int r = 0; r < rows; r++) {

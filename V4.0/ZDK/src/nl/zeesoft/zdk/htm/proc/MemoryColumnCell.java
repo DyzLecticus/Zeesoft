@@ -60,27 +60,29 @@ public class MemoryColumnCell {
 			}
 			int added = 0;
 			for (MemoryColumnCell toCell: toCells) {
-				int distX = 0;
-				int distY = 0;
-				int distZ = 0;
 				int dist = 0;
-				if (toCell.posX>posX) {
-					distX = toCell.posX - posX;
-				} else {
-					distX = posX - toCell.posX;
+				if (toCell.posX>=0 && toCell.posY>=0 && toCell.posZ>=0) {
+					int distX = 0;
+					int distY = 0;
+					int distZ = 0;
+					if (toCell.posX>posX) {
+						distX = toCell.posX - posX;
+					} else {
+						distX = posX - toCell.posX;
+					}
+					if (toCell.posY>posY) {
+						distY += toCell.posY - posY;
+					} else {
+						distY += posY - toCell.posY;
+					}
+					if (toCell.posZ>posZ) {
+						distZ += toCell.posZ - posZ;
+					} else {
+						distZ += posZ - toCell.posZ;
+					}
+					dist = (int) Math.sqrt((distX * distX) + (distY * distY));
+					dist = (int) Math.sqrt((dist * dist) + (distZ * distZ));
 				}
-				if (toCell.posY>posY) {
-					distY += toCell.posY - posY;
-				} else {
-					distY += posY - toCell.posY;
-				}
-				if (toCell.posZ>posZ) {
-					distZ += toCell.posZ - posZ;
-				} else {
-					distZ += posZ - toCell.posZ;
-				}
-				dist = (int) Math.sqrt((distX * distX) + (distY * distY));
-				dist = (int) Math.sqrt((dist * dist) + (distZ * distZ));
 				if (dist<=config.localDistalConnectedRadius) {
 					DistalLink link = new DistalLink();
 					link.origin = this;

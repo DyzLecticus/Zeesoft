@@ -45,6 +45,7 @@ public class Pooler extends ProcessorObject {
 	 * 
 	 * @return A description of this spatial pooler
 	 */
+	@Override
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = config.getDescription();
 		int min = config.inputLength; 

@@ -12,6 +12,7 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 	private int				sizeX				= 100;
 	private int				sizeY				= 100;
 	private int				sizeZ				= 100;
+	private float			resolution			= 1;
 	
 	public ZGridEncoderPosition(int length) {
 		this.length = length;
@@ -23,10 +24,19 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 		return "POSITION";
 	}
 	
+	public void setDimensions(int sizeX,int sizeY) {
+		setDimensions(sizeX,sizeY,0);
+	}
+	
 	public void setDimensions(int sizeX,int sizeY,int sizeZ) {
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
+		rebuildEncoder();
+	}
+	
+	public void setResolution(float resolution) {
+		this.resolution = resolution;
 		rebuildEncoder();
 	}
 	
@@ -73,10 +83,15 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 	}
 	
 	protected void rebuildEncoder() {
+		GridEncoder enc = null; 
 		if (sizeZ>0) {
-			encoder = GridEncoder.getNewScaled3DGridEncoder(length, sizeX, sizeY, sizeZ);
+			enc = GridEncoder.getNewScaled3DGridEncoder(length, sizeX, sizeY, sizeZ);
 		} else {
-			encoder = GridEncoder.getNewScaled2DGridEncoder(length, sizeX, sizeY);
+			enc = GridEncoder.getNewScaled2DGridEncoder(length, sizeX, sizeY);
 		}
+		if (resolution!=1) {
+			enc.setResolution(resolution);
+		}
+		encoder = enc;
 	}
 }
