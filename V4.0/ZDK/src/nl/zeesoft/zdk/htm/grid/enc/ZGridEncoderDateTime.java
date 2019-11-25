@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
 import nl.zeesoft.zdk.htm.enc.EncoderObject;
 import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
-import nl.zeesoft.zdk.htm.grid.ZGridRequest;
+import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 
 public class ZGridEncoderDateTime extends ZGridColumnEncoder {
@@ -80,8 +80,8 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 		return r;
 	}
 	
-	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridRequest request) {
-		long dateTime = getInputValueAsLong(columnIndex,request);
+	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
+		long dateTime = getInputValueAsLong(columnIndex,result);
 		return getSDRForDateTime(dateTime);
 	}
 	

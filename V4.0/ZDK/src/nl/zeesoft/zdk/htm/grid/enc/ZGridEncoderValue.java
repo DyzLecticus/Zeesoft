@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
 import nl.zeesoft.zdk.htm.enc.GridDimensionScaledEncoder;
 import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
-import nl.zeesoft.zdk.htm.grid.ZGridRequest;
+import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 
@@ -81,16 +81,16 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		return r;
 	}
 	
-	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridRequest request) {
-		float value = getInputValueAsFloat(columnIndex, request);
+	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
+		float value = getInputValueAsFloat(columnIndex, result);
 		DateTimeSDR r = new DateTimeSDR(getSDRForValue(value));
-		r.dateTime = request.dateTime;
+		r.dateTime = result.getRequest().dateTime;
 		r.keyValues.put(valueKey,value);
-		if (request.inputLabels.length>columnIndex &&
-			request.inputLabels[columnIndex]!=null &&
-			request.inputLabels[columnIndex].length()>0
+		if (result.getRequest().inputLabels.length>columnIndex &&
+			result.getRequest().inputLabels[columnIndex]!=null &&
+			result.getRequest().inputLabels[columnIndex].length()>0
 			) {
-			r.keyValues.put(DateTimeSDR.LABEL_KEY,request.inputLabels[columnIndex]);
+			r.keyValues.put(DateTimeSDR.LABEL_KEY,result.getRequest().inputLabels[columnIndex]);
 		}
 		return r;
 	}

@@ -21,30 +21,30 @@ public abstract class ZGridColumnEncoder {
 		return encoder.testScalarOverlap();
 	}
 	
-	protected abstract DateTimeSDR encodeRequestValue(int columnIndex,ZGridRequest request);
+	protected abstract DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result);
 	
-	protected long getInputValueAsLong(int columnIndex,ZGridRequest request) {
+	protected long getInputValueAsLong(int columnIndex,ZGridResult result) {
 		long r = 0;
-		if (request.inputValues.length>columnIndex &&
-			request.inputValues[columnIndex]!=null &&
-			request.inputValues[columnIndex] instanceof Long
+		if (result.getRequest().inputValues.length>columnIndex &&
+			result.getRequest().inputValues[columnIndex]!=null &&
+			result.getRequest().inputValues[columnIndex] instanceof Long
 			) {
-			r = (Long) request.inputValues[columnIndex];
+			r = (Long) result.getRequest().inputValues[columnIndex];
 		}
 		return r;
 	}
 	
-	protected float getInputValueAsFloat(int columnIndex,ZGridRequest request) {
+	protected float getInputValueAsFloat(int columnIndex,ZGridResult result) {
 		float r = 0;
-		if (request.inputValues.length>columnIndex &&
-			request.inputValues[columnIndex]!=null
+		if (result.getRequest().inputValues.length>columnIndex &&
+			result.getRequest().inputValues[columnIndex]!=null
 			) {
-			if (request.inputValues[columnIndex] instanceof Float) {
-				r = (float) request.inputValues[columnIndex];
-			} else if (request.inputValues[columnIndex] instanceof Long) {
-				r = (float) (long) request.inputValues[columnIndex];
-			} else if (request.inputValues[columnIndex] instanceof Integer) {
-				r = (float) (int) request.inputValues[columnIndex];
+			if (result.getRequest().inputValues[columnIndex] instanceof Float) {
+				r = (float) result.getRequest().inputValues[columnIndex];
+			} else if (result.getRequest().inputValues[columnIndex] instanceof Long) {
+				r = (float) (long) result.getRequest().inputValues[columnIndex];
+			} else if (result.getRequest().inputValues[columnIndex] instanceof Integer) {
+				r = (float) (int) result.getRequest().inputValues[columnIndex];
 			}
 		}
 		return r;

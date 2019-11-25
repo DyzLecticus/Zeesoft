@@ -6,8 +6,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
-import nl.zeesoft.zdk.htm.grid.ZGridResultsListener;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
+import nl.zeesoft.zdk.htm.grid.ZGridResult;
+import nl.zeesoft.zdk.htm.grid.ZGridResultsListener;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
@@ -208,13 +209,13 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 	}
 
 	@Override
-	public void processedRequest(ZGridRequest request) {
-		returnedIds.add(request.id);
+	public void processedRequest(ZGridResult result) {
+		returnedIds.add(result.getRequest().id);
 		
-		List<Classification> classifications = request.getClassifications();
+		List<Classification> classifications = result.getClassifications();
 		if (classifications.size()>0) {
 			if (previousClassification!=null) {
-				Object value = request.inputValues[1];
+				Object value = result.getRequest().inputValues[1];
 				float accuracy = 0;
 				Classification classification = previousClassification;
 				for (Object predicted: classification.mostCountedValues) {

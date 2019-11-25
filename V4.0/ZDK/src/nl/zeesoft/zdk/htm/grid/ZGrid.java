@@ -26,9 +26,7 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 	}
 	
 	public void addListener(ZGridResultsListener listener) {
-		lockMe(this);
 		results.addListener(listener);
-		unlockMe(this);
 	}
 
 	public void setLearn(boolean learn) {
@@ -95,14 +93,15 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 	}
 	
 	public ZGridRequest getNewRequest() {
-		return new ZGridRequest(getMessenger(),rows.get(0).columns.size());
+		return new ZGridRequest(rows.get(0).columns.size());
 	}
 	
 	public long addRequest(ZGridRequest request) {
 		lockMe(this);
 		request.learn = learn;
 		long r = results.assignRequestId(request);
-		rows.get(0).addRequest(request);
+		ZGridResult result = new ZGridResult(getMessenger(),request.copy()); 
+		rows.get(0).addResult(result);
 		unlockMe(this);
 		return r;
 	}
@@ -134,8 +133,8 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 	}
 
 	@Override
-	public void processedRequest(ZGridRequest request) {
-		results.addResult(request);
+	public void processedRequest(ZGridResult result) {
+		results.addResult(result);
 	}
 	
 	@Override

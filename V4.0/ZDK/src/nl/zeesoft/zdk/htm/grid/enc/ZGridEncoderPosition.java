@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.htm.grid.enc;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.GridEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
-import nl.zeesoft.zdk.htm.grid.ZGridRequest;
+import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 
@@ -50,13 +50,13 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 		return r;
 	}
 	
-	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridRequest request) {
+	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
 		float[] position = null;
-		if (request.inputValues.length>columnIndex &&
-			request.inputValues[columnIndex]!=null &&
-			request.inputValues[columnIndex] instanceof float[]
+		if (result.getRequest().inputValues.length>columnIndex &&
+			result.getRequest().inputValues[columnIndex]!=null &&
+			result.getRequest().inputValues[columnIndex] instanceof float[]
 			) {
-			position = (float[]) request.inputValues[columnIndex];
+			position = (float[]) result.getRequest().inputValues[columnIndex];
 		}
 		if (position==null) {
 			if (sizeZ>0) {
@@ -69,7 +69,7 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 			}
 		}
 		DateTimeSDR r = new DateTimeSDR(getSDRForPosition(position));
-		r.dateTime = request.dateTime;
+		r.dateTime = result.getRequest().dateTime;
 		ZStringBuilder pos = new ZStringBuilder();
 		pos.append("" + position[0]);
 		pos.append("|");

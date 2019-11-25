@@ -14,8 +14,8 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 	protected List<ZGridColumn>		columns			= new ArrayList<ZGridColumn>();
 	protected ZGridRequestNext		nextProcessor	= null;
 	
-	private Queue<ZGridRequest>		queue			= new LinkedList<ZGridRequest>();
-	private ZGridRequest			request			= null;
+	private Queue<ZGridResult>		queue			= new LinkedList<ZGridResult>();
+	private ZGridResult				result			= null;
 	private int						done			= 0;
 	
 	protected ZGridRow(Messenger msgr, WorkerUnion union) {
@@ -28,12 +28,6 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 		r.row = this;
 		r.index = columns.size();
 		columns.add(r);
-	}
-	
-	protected void addRequest(ZGridRequest request) {
-		lockMe(this);
-		queue.add(request);
-		unlockMe(this);
 	}
 	
 	@Override
@@ -51,6 +45,11 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 		}
 		super.stop();
 	}
+
+	@Override
+	public void processedRequest(ZGridResult result) {
+		addResult(result);
+	}
 	
 	protected void destroy() {
 		lockMe(this);
@@ -60,19 +59,25 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 		columns.clear();
 		unlockMe(this);
 	}
+	
+	protected void addResult(ZGridResult result) {
+		lockMe(this);
+		queue.add(result);
+		unlockMe(this);
+	}
 
 	@Override
 	protected void whileWorking() {
 		boolean r = false;
 		int s = 1;
 		lockMe(this);
-		if (request==null) {
-			request = queue.poll();
-			if (request!=null) {
+		if (result==null) {
+			result = queue.poll();
+			if (result!=null) {
 				r = true;
 			}
 		}
-		if (request!=null) {
+		if (result!=null) {
 			s = 0;
 		}
 		unlockMe(this);
@@ -81,7 +86,7 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 			lockMe(this);
 			done = 0;
 			for (ZGridColumn col: columns) {
-				col.setRequest(request);
+				col.setRequest(result);
 			}
 			unlockMe(this);
 		}
@@ -91,14 +96,9 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 		lockMe(this);
 		done++;
 		if (done>=columns.size()) {
-			nextProcessor.processedRequest(request);
-			request = null;
+			nextProcessor.processedRequest(result);
+			result = null;
 		}
 		unlockMe(this);
-	}
-
-	@Override
-	public void processedRequest(ZGridRequest request) {
-		addRequest(request);
 	}
 }

@@ -16,7 +16,7 @@ public class ZGridColumn extends Worker {
 	protected ProcessorObject			processor	= null;
 	protected List<ZGridColumnContext>	contexts	= new ArrayList<ZGridColumnContext>();
 	
-	protected ZGridRequest				request		= null;
+	protected ZGridResult				result		= null;
 
 	protected ZGridColumn(Messenger msgr, WorkerUnion union) {
 		super(msgr, union);
@@ -31,10 +31,10 @@ public class ZGridColumn extends Worker {
 		setSleep(sleep);
 	}
 	
-	protected void setRequest(ZGridRequest request) {
+	protected void setRequest(ZGridResult result) {
 		setSleep(0);
 		lockMe(this);
-		this.request = request;
+		this.result = result;
 		unlockMe(this);
 	}
 
@@ -50,40 +50,40 @@ public class ZGridColumn extends Worker {
 	@Override
 	protected void whileWorking() {
 		lockMe(this);
-		if (request!=null) {
+		if (result!=null) {
 			List<SDR> outputs = null;
 			if (encoder!=null) {
-				SDR output = encoder.encodeRequestValue(index, request);
+				SDR output = encoder.encodeRequestValue(index, result);
 				if (output!=null) {
 					outputs = new ArrayList<SDR>();
 					outputs.add(output);
 				}
 			} else if (processor!=null) {
 				// Use previous row column output as input
-				SDR input = request.getColumnOutput(getColumnId(row.index - 1,index),0);
+				SDR input = result.getColumnOutput(getColumnId(row.index - 1,index),0);
 				if (input==null && 
-					request.inputValues.length>index &&
-					request.inputValues[index]!=null &&
-					request.inputValues[index] instanceof SDR
+					result.getRequest().inputValues.length>index &&
+					result.getRequest().inputValues[index]!=null &&
+					result.getRequest().inputValues[index] instanceof SDR
 					) {
 					// Use input value SDR as input
-					input = (SDR) request.inputValues[index];
+					input = (SDR) result.getRequest().inputValues[index];
 				}
 				if (input!=null) {
 					List<SDR> context = new ArrayList<SDR>();
 					if (contexts.size()>0) {
 						for (ZGridColumnContext ctx: contexts) {
-							SDR contextSDR = request.getColumnOutput(getColumnId(ctx.sourceRow,ctx.sourceColumn),ctx.sourceIndex);
+							SDR contextSDR = result.getColumnOutput(getColumnId(ctx.sourceRow,ctx.sourceColumn),ctx.sourceIndex);
 							if (contextSDR!=null) {
 								context.add(contextSDR);
 							}
 						}
 					}
-					outputs = processor.getSDRsForInput(input,context,request.learn);
+					outputs = processor.getSDRsForInput(input,context,result.getRequest().learn);
 				}
 			}
-			request.setColumnOutput(getId(),outputs);
-			request = null;
+			result.setColumnOutput(getId(),outputs);
+			result = null;
 			row.processedColumn();
 		}
 		unlockMe(this);

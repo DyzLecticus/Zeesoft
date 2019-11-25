@@ -1,5 +1,5 @@
 package nl.zeesoft.zdk.htm.grid;
 
 public interface ZGridResultsListener {
-	public void processedRequest(ZGridRequest request);
+	public void processedRequest(ZGridResult result);
 }

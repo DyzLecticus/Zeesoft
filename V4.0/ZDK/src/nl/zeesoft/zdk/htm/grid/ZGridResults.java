@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.thread.Locker;
 
 public class ZGridResults extends Locker {
 	private long							uid			= 0;
-	private SortedMap<Long,ZGridRequest>	results		= new TreeMap<Long,ZGridRequest>();
+	private SortedMap<Long,ZGridResult>		results		= new TreeMap<Long,ZGridResult>();
 	private List<ZGridResultsListener>		listeners	= new ArrayList<ZGridResultsListener>();
 	
 	protected ZGridResults(Messenger msgr) {
@@ -32,36 +32,36 @@ public class ZGridResults extends Locker {
 		return r;
 	}
 	
-	protected void addResult(ZGridRequest result) {
+	protected void addResult(ZGridResult result) {
 		lockMe(this);
-		if (result.id==0) {
+		if (result.getRequest().id==0) {
 			uid++;
-			result.id = uid;
+			result.getRequest().id = uid;
 		}
-		if (result.id!=0 && !results.containsKey(result.id)) {
-			results.put(result.id,result);
+		if (result.getRequest().id!=0 && !results.containsKey(result.getRequest().id)) {
+			results.put(result.getRequest().id,result);
 		}
 		unlockMe(this);
 	}
 	
-	protected ZGridRequest getResult(long id) {
-		ZGridRequest r = null;
+	protected ZGridResult getResult(long id) {
+		ZGridResult r = null;
 		lockMe(this);
 		r = results.get(id);
 		unlockMe(this);
 		return r;
 	}
 	
-	protected ZGridRequest removeResult(long id) {
-		ZGridRequest r = null;
+	protected ZGridResult removeResult(long id) {
+		ZGridResult r = null;
 		lockMe(this);
 		r = results.remove(id);
 		unlockMe(this);
 		return r;
 	}
 
-	protected List<ZGridRequest> flush() {
-		List<ZGridRequest> r = new ArrayList<ZGridRequest>();
+	protected List<ZGridResult> flush() {
+		List<ZGridResult> r = new ArrayList<ZGridResult>();
 		List<ZGridResultsListener> list = null;
 		lockMe(this);
 		for (Long key: results.keySet()) {
@@ -73,10 +73,10 @@ public class ZGridResults extends Locker {
 		}
 		unlockMe(this);
 		if (r.size()>0 && list.size()>0) {
-			for (ZGridRequest request: r) {
+			for (ZGridResult result: r) {
 				for (ZGridResultsListener listener: list) {
 					try {
-						listener.processedRequest(request);
+						listener.processedRequest(result);
 					} catch(Exception e) {
 						if (getMessenger()!=null) {
 							getMessenger().error(this,"Grid listener exception",e);
