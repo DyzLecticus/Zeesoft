@@ -10,10 +10,17 @@ import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class ZGrid extends Worker implements ZGridRequestNext {
-	private List<ZGridRow>	rows		= new ArrayList<ZGridRow>();
-	private ZGridResults	results		= null;
+	public static final String		STATE_STOPPED	= "STOPPED";
+	public static final String		STATE_STARTING	= "STARTING";
+	public static final String		STATE_STARTED	= "STARTED";
+	public static final String		STATE_STOPPING	= "STOPPING";
 	
-	private boolean			learn		= true;
+	private String					state			= STATE_STOPPED;
+	
+	private List<ZGridRow>			rows			= new ArrayList<ZGridRow>();
+	private ZGridResults			results			= null;
+	
+	private boolean					learn			= true;
 
 	public ZGrid(int rows, int columns) {
 		super(null,null);
@@ -25,6 +32,22 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		initialize(msgr,rows,columns);
 	}
 	
+	public String getState() {
+		String r = "";
+		lockMe(this);
+		r = state;
+		unlockMe(this);
+		return r;
+	}
+	
+	public boolean isActive() {
+		boolean r = false;
+		lockMe(this);
+		r = !state.equals(STATE_STOPPED);
+		unlockMe(this);
+		return r;
+	}
+
 	public void addListener(ZGridResultsListener listener) {
 		results.addListener(listener);
 	}
@@ -37,16 +60,20 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 
 	public void setEncoder(int columnIndex,ZGridColumnEncoder encoder) {
 		lockMe(this);
-		if (rows.size()>0 && rows.get(0).columns.size()>columnIndex) {
-			rows.get(0).columns.get(columnIndex).encoder = encoder;
+		if (state.equals(STATE_STOPPED)) {
+			if (rows.size()>0 && rows.get(0).columns.size()>columnIndex) {
+				rows.get(0).columns.get(columnIndex).encoder = encoder;
+			}
 		}
 		unlockMe(this);
 	}
 
 	public void setProcessor(int rowIndex,int columnIndex,ProcessorObject processor) {
 		lockMe(this);
-		if (rowIndex>0 && rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex) {
-			rows.get(rowIndex).columns.get(columnIndex).processor = processor;
+		if (state.equals(STATE_STOPPED)) {
+			if (rowIndex>0 && rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex) {
+				rows.get(rowIndex).columns.get(columnIndex).processor = processor;
+			}
 		}
 		unlockMe(this);
 	}
@@ -57,38 +84,44 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 
 	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn,int sourceIndex) {
 		lockMe(this);
-		if (rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex && sourceRow<rowIndex) {
-			ZGridColumnContext context = new ZGridColumnContext();
-			context.sourceRow = sourceRow;
-			context.sourceColumn = sourceColumn;
-			context.sourceIndex = sourceIndex;
-			rows.get(rowIndex).columns.get(columnIndex).contexts.add(context);
+		if (state.equals(STATE_STOPPED)) {
+			if (rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex && sourceRow<rowIndex) {
+				ZGridColumnContext context = new ZGridColumnContext();
+				context.sourceRow = sourceRow;
+				context.sourceColumn = sourceColumn;
+				context.sourceIndex = sourceIndex;
+				rows.get(rowIndex).columns.get(columnIndex).contexts.add(context);
+			}
 		}
 		unlockMe(this);
 	}
 
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
-		for (ZGridRow row: rows) {
-			for (ZGridColumn col: row.columns) {
-				ZStringBuilder desc = null;
-				if (col.encoder!=null) {
-					desc = col.encoder.getDescription();
-				} else if (col.processor!=null) {
-					desc = col.processor.getDescription();
-				}
-				if (desc!=null) {
-					desc.replace("\n","\n  ");
-					if (r.length()>0) {
-						r.append("\n");
+		lockMe(this);
+		if (state.equals(STATE_STOPPED)) {
+			for (ZGridRow row: rows) {
+				for (ZGridColumn col: row.columns) {
+					ZStringBuilder desc = null;
+					if (col.encoder!=null) {
+						desc = col.encoder.getDescription();
+					} else if (col.processor!=null) {
+						desc = col.processor.getDescription();
 					}
-					r.append("- Column ");
-					r.append(col.getId());
-					r.append(" = ");
-					r.append(desc);
+					if (desc!=null) {
+						desc.replace("\n","\n  ");
+						if (r.length()>0) {
+							r.append("\n");
+						}
+						r.append("- Column ");
+						r.append(col.getId());
+						r.append(" = ");
+						r.append(desc);
+					}
 				}
 			}
 		}
+		unlockMe(this);
 		return r;
 	}
 	
@@ -108,27 +141,47 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 	
 	@Override
 	public void start() {
-		for (ZGridRow row: rows) {
-			row.start();
+		boolean r = false;
+		lockMe(this);
+		r = state.equals(STATE_STOPPED);
+		if (r) {
+			state = STATE_STARTING;
 		}
-		super.start();
+		unlockMe(this);
+		if (r) {
+			for (ZGridRow row: rows) {
+				row.start();
+			}
+			super.start();
+		}
 	}
 	
 	@Override
 	public void stop() {
-		for (ZGridRow row: rows) {
-			row.stop();
+		boolean r = false;
+		lockMe(this);
+		r = state.equals(STATE_STARTED);
+		if (r) {
+			state = STATE_STOPPING;
 		}
-		super.stop();
+		unlockMe(this);
+		if (r) {
+			for (ZGridRow row: rows) {
+				row.stop();
+			}
+			super.stop();
+		}
 	}
 	
 	public void destroy() {
 		lockMe(this);
-		for (ZGridRow row: rows) {
-			row.destroy();
+		if (state.equals(STATE_STOPPED)) {
+			for (ZGridRow row: rows) {
+				row.destroy();
+			}
+			rows.clear();
+			results.destroy();
 		}
-		rows.clear();
-		results.destroy();
 		unlockMe(this);
 	}
 
@@ -140,6 +193,20 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 	@Override
 	protected void whileWorking() {
 		results.flush();
+	}
+	
+	@Override
+	protected void startedWorking() {
+		lockMe(this);
+		state = STATE_STARTED;
+		unlockMe(this);
+	}
+	
+	@Override
+	protected void stoppedWorking() {
+		lockMe(this);
+		state = STATE_STOPPED;
+		unlockMe(this);
 	}
 	
 	protected ZGridRow addRow() {
