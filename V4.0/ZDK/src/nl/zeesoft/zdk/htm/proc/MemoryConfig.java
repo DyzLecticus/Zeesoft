@@ -49,6 +49,28 @@ public class MemoryConfig implements JsAble {
 	}
 	
 	/**
+	 * Returns a copy of this configuration.
+	 * 
+	 * @return A copy of this configuration
+	 */
+	public MemoryConfig copy() {
+		MemoryConfig r = new MemoryConfig(length, bits);
+		r.sizeX = sizeX;
+		r.sizeY = sizeY;
+		r.depth = depth;
+		r.maxDistalConnectionsPerCell = maxDistalConnectionsPerCell;
+		r.localDistalConnectedRadius = localDistalConnectedRadius;
+		r.minAlmostActiveDistalConnections = minAlmostActiveDistalConnections;
+		r.distalConnectionThreshold = distalConnectionThreshold;
+		r.distalConnectionDecrement = distalConnectionDecrement;
+		r.distalConnectionIncrement = distalConnectionIncrement;
+		for (Integer length: contextDimensions) {
+			r.contextDimensions.add(new Integer(length));
+		}
+		return r;
+	}
+	
+	/**
 	 * Sets the depth of the temporal memory.
 	 * A deeper memory can learn more sequence variations.
 	 * 
@@ -172,6 +194,11 @@ public class MemoryConfig implements JsAble {
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
+		json.rootElement.children.add(new JsElem("length","" + length));
+		json.rootElement.children.add(new JsElem("sizeX","" + sizeX));
+		json.rootElement.children.add(new JsElem("sizeY","" + sizeY));
+		json.rootElement.children.add(new JsElem("bits","" + bits));
+		
 		json.rootElement.children.add(new JsElem("depth","" + depth));
 		json.rootElement.children.add(new JsElem("maxDistalConnectionsPerCell","" + maxDistalConnectionsPerCell));
 		json.rootElement.children.add(new JsElem("localDistalConnectedRadius","" + localDistalConnectedRadius));
@@ -193,6 +220,11 @@ public class MemoryConfig implements JsAble {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
+			length = json.rootElement.getChildInt("length",length);
+			sizeX = json.rootElement.getChildInt("sizeX",sizeX);
+			sizeY = json.rootElement.getChildInt("sizeY",sizeY);
+			bits = json.rootElement.getChildInt("bits",bits);
+
 			depth = json.rootElement.getChildInt("depth",depth);
 			maxDistalConnectionsPerCell = json.rootElement.getChildInt("maxDistalConnectionsPerCell",maxDistalConnectionsPerCell);
 			localDistalConnectedRadius = json.rootElement.getChildInt("localDistalConnectedRadius",localDistalConnectedRadius);

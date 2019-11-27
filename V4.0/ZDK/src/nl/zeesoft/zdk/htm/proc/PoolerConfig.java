@@ -42,6 +42,28 @@ public class PoolerConfig implements JsAble {
 	}
 
 	/**
+	 * Returns a copy of this configuration.
+	 * 
+	 * @return A copy of this configuration
+	 */
+	public PoolerConfig copy() {
+		PoolerConfig r = new PoolerConfig(inputLength,outputLength,outputBits);
+		r.inputSizeX = inputSizeX;
+		r.inputSizeY = inputSizeY;
+		r.outputSizeX = outputSizeX;
+		r.outputSizeY = outputSizeY;
+		r.potentialProximalConnections = potentialProximalConnections;
+		r.proximalRadius = proximalRadius;
+		r.proximalConnectionThreshold = proximalConnectionThreshold;
+		r.proximalConnectionDecrement = proximalConnectionDecrement;
+		r.proximalConnectionIncrement = proximalConnectionIncrement;
+		r.boostStrength = boostStrength;
+		r.boostInhibitionRadius = boostInhibitionRadius;
+		r.boostActivityLogSize = boostActivityLogSize;
+		return r;
+	}
+	
+	/**
 	 * Sets the potential proximal connections.
 	 * Used by spatial pooler connection randomization to initialize proximal links.
 	 * 
@@ -183,6 +205,14 @@ public class PoolerConfig implements JsAble {
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
+		json.rootElement.children.add(new JsElem("inputLength","" + inputLength));
+		json.rootElement.children.add(new JsElem("outputLength","" + outputLength));
+		json.rootElement.children.add(new JsElem("outputBits","" + outputBits));
+		json.rootElement.children.add(new JsElem("inputSizeX","" + inputSizeX));
+		json.rootElement.children.add(new JsElem("inputSizeY","" + inputSizeY));
+		json.rootElement.children.add(new JsElem("outputSizeX","" + outputSizeX));
+		json.rootElement.children.add(new JsElem("outputSizeY","" + outputSizeY));
+		
 		json.rootElement.children.add(new JsElem("potentialProximalConnections","" + potentialProximalConnections));
 		json.rootElement.children.add(new JsElem("proximalRadius","" + proximalRadius));
 		json.rootElement.children.add(new JsElem("proximalConnectionThreshold","" + proximalConnectionThreshold));
@@ -197,6 +227,14 @@ public class PoolerConfig implements JsAble {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
+			inputLength = json.rootElement.getChildInt("inputLength",inputLength);
+			outputLength = json.rootElement.getChildInt("outputLength",outputLength);
+			outputBits = json.rootElement.getChildInt("outputBits",outputBits);
+			inputSizeX = json.rootElement.getChildInt("inputSizeX",inputSizeX);
+			inputSizeY = json.rootElement.getChildInt("inputSizeY",inputSizeY);
+			outputSizeX = json.rootElement.getChildInt("outputSizeX",outputSizeX);
+			outputSizeY = json.rootElement.getChildInt("outputSizeY",outputSizeY);
+			
 			potentialProximalConnections = json.rootElement.getChildFloat("potentialProximalConnections",potentialProximalConnections);
 			proximalRadius = json.rootElement.getChildInt("proximalRadius",proximalRadius);
 			proximalConnectionThreshold = json.rootElement.getChildFloat("proximalConnectionThreshold",proximalConnectionThreshold);

@@ -34,6 +34,23 @@ public class ClassifierConfig implements JsAble {
 	}
 	
 	/**
+	 * Returns a copy of this configuration.
+	 * 
+	 * @return A copy of this configuration
+	 */
+	public ClassifierConfig copy() {
+		ClassifierConfig r = new ClassifierConfig();
+		r.predictSteps.clear();
+		for (Integer steps: predictSteps) {
+			r.predictSteps.add(new Integer(steps));
+		}
+		r.valueKey = valueKey;
+		r.labelKey = labelKey;
+		r.maxCount = maxCount;
+		return r;
+	}
+	
+	/**
 	 * Adds a number of prediction steps to the classifier.
 	 * 
 	 * When specifying 0 prediction steps, a classification for the current input is produced.
