@@ -207,6 +207,7 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		lockMe(this);
 		state = STATE_STOPPED;
 		unlockMe(this);
+		results.flush();
 	}
 	
 	protected ZGridRow addRow() {

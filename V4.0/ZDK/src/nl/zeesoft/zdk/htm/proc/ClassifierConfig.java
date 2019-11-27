@@ -3,14 +3,18 @@ package nl.zeesoft.zdk.htm.proc;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
 /**
  * A ClassifierConfig is used to configure a single classifier.
  * The configuration cannot be changed once it has been used to instantiate a temporal memory.
  * A classifier can create classifications (or prediction) for multiple prediction steps.
  */
-public class ClassifierConfig {
+public class ClassifierConfig implements JsAble {
 	protected boolean			initialized		= false;
 	
 	protected List<Integer>		predictSteps	= new ArrayList<Integer>();
@@ -76,6 +80,61 @@ public class ClassifierConfig {
 	public void setMaxCount(int maxCount) {
 		if (!initialized) {
 			this.maxCount = maxCount;
+		}
+	}
+	
+	/**
+	 * Returns a description of this configuration.
+	 * 
+	 * @return A description
+	 */
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("Classifier value key: ");
+		r.append("" + valueKey);
+		r.append(", predict steps: ");
+		ZStringBuilder pSteps = new ZStringBuilder();
+		for (Integer steps: predictSteps) {
+			if (pSteps.length()>0) {
+				pSteps.append(", ");
+			}
+			pSteps.append("" + steps);
+		}
+		r.append(pSteps);
+		return r;
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		ZStringBuilder pSteps = new ZStringBuilder();
+		for (Integer steps: predictSteps) {
+			if (pSteps.length()>0) {
+				pSteps.append(",");
+			}
+			pSteps.append("" + steps);
+		}
+		json.rootElement.children.add(new JsElem("predictSteps",pSteps,true));
+		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
+		json.rootElement.children.add(new JsElem("labelKey",labelKey,true));
+		json.rootElement.children.add(new JsElem("maxCount","" + maxCount));
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			ZStringBuilder pSteps = json.rootElement.getChildZStringBuilder("predictSteps");
+			predictSteps.clear();
+			if (pSteps.length()>0) {
+				List<ZStringBuilder> pElems = pSteps.split(",");
+				for (ZStringBuilder pStep: pElems) {
+					predictSteps.add(Integer.parseInt(pStep.toString()));
+				}
+			}
+			valueKey = json.rootElement.getChildString("valueKey",valueKey);
+			labelKey = json.rootElement.getChildString("labelKey",labelKey);
+			maxCount = json.rootElement.getChildInt("maxCount",maxCount);
 		}
 	}
 }

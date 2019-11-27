@@ -42,17 +42,7 @@ public class Classifier extends ProcessorObject {
 	 */
 	@Override
 	public ZStringBuilder getDescription() {
-		ZStringBuilder r = new ZStringBuilder();
-		r.append(this.getClass().getSimpleName());
-		r.append(" value key: ");
-		r.append(config.valueKey);
-		r.append(", steps; ");
-		for (Integer step: config.predictSteps) {
-			r.append("\n");
-			r.append("- ");
-			r.append("" + step);
-		}
-		return r;
+		return config.getDescription();
 	}
 	
 	@Override

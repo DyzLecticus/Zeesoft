@@ -3,13 +3,16 @@ package nl.zeesoft.zdk.htm.proc;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
 /**
  * A PoolerConfig is used to configure a single spatial pooler.
  * The configuration cannot be changed once it has been used to instantiate a spatial pooler.
  * The input and output length are automatically translated to a 2D (or 3D single layer) input and output SDR space.
  */
-public class PoolerConfig {
+public class PoolerConfig implements JsAble {
 	protected boolean		initialized						= false;
 	
 	protected int			inputLength						= 0;
@@ -175,6 +178,34 @@ public class PoolerConfig {
 		r.append("x");
 		r.append("" + outputSizeY);
 		return r;
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement.children.add(new JsElem("potentialProximalConnections","" + potentialProximalConnections));
+		json.rootElement.children.add(new JsElem("proximalRadius","" + proximalRadius));
+		json.rootElement.children.add(new JsElem("proximalConnectionThreshold","" + proximalConnectionThreshold));
+		json.rootElement.children.add(new JsElem("proximalConnectionDecrement","" + proximalConnectionDecrement));
+		json.rootElement.children.add(new JsElem("proximalConnectionIncrement","" + proximalConnectionIncrement));
+		json.rootElement.children.add(new JsElem("boostStrength","" + boostStrength));
+		json.rootElement.children.add(new JsElem("boostInhibitionRadius","" + boostInhibitionRadius));
+		json.rootElement.children.add(new JsElem("boostActivityLogSize","" + boostActivityLogSize));
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			potentialProximalConnections = json.rootElement.getChildFloat("potentialProximalConnections",potentialProximalConnections);
+			proximalRadius = json.rootElement.getChildInt("proximalRadius",proximalRadius);
+			proximalConnectionThreshold = json.rootElement.getChildFloat("proximalConnectionThreshold",proximalConnectionThreshold);
+			proximalConnectionDecrement = json.rootElement.getChildFloat("proximalConnectionDecrement",proximalConnectionDecrement);
+			proximalConnectionIncrement = json.rootElement.getChildFloat("proximalConnectionIncrement",proximalConnectionIncrement);
+			boostStrength = json.rootElement.getChildInt("boostStrength",boostStrength);
+			boostInhibitionRadius = json.rootElement.getChildInt("boostInhibitionRadius",boostInhibitionRadius);
+			boostActivityLogSize = json.rootElement.getChildInt("boostActivityLogSize",boostActivityLogSize);
+		}
 	}
 	
 	/**

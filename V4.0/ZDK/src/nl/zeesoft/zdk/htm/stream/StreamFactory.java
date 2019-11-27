@@ -124,7 +124,7 @@ public class StreamFactory implements JsAble {
 			proximalConnectionIncrement = json.rootElement.getChildFloat("proximalConnectionIncrement",proximalConnectionIncrement);
 			boostStrength = json.rootElement.getChildInt("boostStrength",boostStrength);
 			boostInhibitionRadius = json.rootElement.getChildInt("boostInhibitionRadius",boostInhibitionRadius);
-			proximalRadius = json.rootElement.getChildInt("proximalRadius",proximalRadius);
+			boostActivityLogSize = json.rootElement.getChildInt("boostActivityLogSize",boostActivityLogSize);
 
 			// Memory configuration
 			depth = json.rootElement.getChildInt("depth",depth);

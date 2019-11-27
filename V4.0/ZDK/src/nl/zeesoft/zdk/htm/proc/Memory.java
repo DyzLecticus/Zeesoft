@@ -79,7 +79,7 @@ public class Memory extends ProcessorObject {
 		if (avg>0) {
 			avg = avg / cells;
 			r.append("\n");
-			r.append("Average distal inputs per memory cell: ");
+			r.append("- Average distal inputs per memory cell: ");
 			r.append("" + avg);
 			if (min!=avg || max!=avg) {
 				r.append(" (min: ");
@@ -91,7 +91,7 @@ public class Memory extends ProcessorObject {
 
 			avgCon = avgCon / cells;
 			r.append("\n");
-			r.append("Average connected distal inputs per memory cell: ");
+			r.append("- Average connected distal inputs per memory cell: ");
 			r.append("" + avgCon);
 			if (minCon!=avgCon || maxCon!=avgCon) {
 				r.append(" (min: ");

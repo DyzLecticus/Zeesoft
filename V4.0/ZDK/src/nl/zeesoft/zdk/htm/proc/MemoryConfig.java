@@ -6,13 +6,16 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
 /**
  * A MemoryConfig is used to configure a single temporal memory.
  * The configuration cannot be changed once it has been used to instantiate a temporal memory.
  * The length is automatically translated to a 3D memory space of the specified depth.
  */
-public class MemoryConfig {
+public class MemoryConfig implements JsAble {
 	protected boolean		initialized							= false;
 	
 	protected int			length								= 0;
@@ -164,6 +167,48 @@ public class MemoryConfig {
 		r.append("x");
 		r.append("" + depth);
 		return r;
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement.children.add(new JsElem("depth","" + depth));
+		json.rootElement.children.add(new JsElem("maxDistalConnectionsPerCell","" + maxDistalConnectionsPerCell));
+		json.rootElement.children.add(new JsElem("localDistalConnectedRadius","" + localDistalConnectedRadius));
+		json.rootElement.children.add(new JsElem("minAlmostActiveDistalConnections","" + minAlmostActiveDistalConnections));
+		json.rootElement.children.add(new JsElem("distalConnectionThreshold","" + distalConnectionThreshold));
+		json.rootElement.children.add(new JsElem("distalConnectionDecrement","" + distalConnectionDecrement));
+		json.rootElement.children.add(new JsElem("distalConnectionIncrement","" + distalConnectionIncrement));
+		ZStringBuilder cDims = new ZStringBuilder();
+		for (Integer length: contextDimensions) {
+			if (cDims.length()>0) {
+				cDims.append(",");
+			}
+			cDims.append("" + length);
+		}
+		json.rootElement.children.add(new JsElem("contextDimensions",cDims,true));
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			depth = json.rootElement.getChildInt("depth",depth);
+			maxDistalConnectionsPerCell = json.rootElement.getChildInt("maxDistalConnectionsPerCell",maxDistalConnectionsPerCell);
+			localDistalConnectedRadius = json.rootElement.getChildInt("localDistalConnectedRadius",localDistalConnectedRadius);
+			minAlmostActiveDistalConnections = json.rootElement.getChildInt("minAlmostActiveDistalConnections",minAlmostActiveDistalConnections);
+			distalConnectionThreshold = json.rootElement.getChildFloat("distalConnectionThreshold",distalConnectionThreshold);
+			distalConnectionDecrement = json.rootElement.getChildFloat("distalConnectionDecrement",distalConnectionDecrement);
+			distalConnectionIncrement = json.rootElement.getChildFloat("distalConnectionIncrement",distalConnectionIncrement);
+			ZStringBuilder cDims = json.rootElement.getChildZStringBuilder("contextDimensions");
+			contextDimensions.clear();
+			if (cDims.length()>0) {
+				List<ZStringBuilder> pElems = cDims.split(",");
+				for (ZStringBuilder pStep: pElems) {
+					contextDimensions.add(Integer.parseInt(pStep.toString()));
+				}
+			}
+		}
 	}
 	
 	/**
