@@ -205,6 +205,8 @@ public class PoolerConfig implements JsAble {
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		
 		json.rootElement.children.add(new JsElem("inputLength","" + inputLength));
 		json.rootElement.children.add(new JsElem("outputLength","" + outputLength));
 		json.rootElement.children.add(new JsElem("outputBits","" + outputBits));

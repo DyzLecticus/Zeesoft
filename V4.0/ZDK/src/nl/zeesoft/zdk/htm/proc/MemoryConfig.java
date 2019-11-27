@@ -194,6 +194,8 @@ public class MemoryConfig implements JsAble {
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		
 		json.rootElement.children.add(new JsElem("length","" + length));
 		json.rootElement.children.add(new JsElem("sizeX","" + sizeX));
 		json.rootElement.children.add(new JsElem("sizeY","" + sizeY));

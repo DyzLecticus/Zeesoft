@@ -111,9 +111,9 @@ public class TestAnomalyDetector extends TestObject implements StreamListener, A
 		factoryOri.getEncoder().setScale(4);
 		factoryOri.getEncoder().setEncodeProperties(false,false,false,true,true,true);
 		factoryOri.getEncoder().setValueMinMax(0,50);
-		factoryOri.setDepth(8);
-		factoryOri.setBoostStrength(10);
-		factoryOri.setClassifyValueKey("test");
+		factoryOri.getMemoryConfig().setDepth(8);
+		factoryOri.getPoolerConfig().setBoostStrength(11);
+		factoryOri.getClassifierConfig().setValueKey("test");
 		
 		StreamFactory factoryNew = new StreamFactory(1024,21);
 		testJsAble(factoryOri, factoryNew, "Factory JSON does not match expectation");

@@ -84,7 +84,8 @@ public class TestValueClassifier extends TestObject implements ValueClassifierLi
 		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockRegularSDRMap.class.getName());
 
 		StreamFactory factory = new StreamFactory(1024,21);
-		factory.getPredictSteps().add(1);
+		factory.getClassifierConfig().clearPredictSteps();
+		factory.getClassifierConfig().addPredictSteps(1);
 		System.out.println(factory.getDescription());
 		
 		stream = factory.getNewClassificationStream(true);

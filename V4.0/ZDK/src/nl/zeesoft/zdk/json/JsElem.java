@@ -61,7 +61,7 @@ public class JsElem {
 	public JsElem getChildByName(String name) {
 		JsElem r = null;
 		for (JsElem child: children) {
-			if (child.name.equals(name)) {
+			if (child.name!=null && child.name.equals(name)) {
 				r = child;
 				break;
 			}

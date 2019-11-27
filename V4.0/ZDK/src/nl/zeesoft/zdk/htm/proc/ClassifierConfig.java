@@ -65,6 +65,15 @@ public class ClassifierConfig implements JsAble {
 	}
 	
 	/**
+	 * Clears the prediction steps.
+	 */
+	public void clearPredictSteps() {
+		if (!initialized) {
+			predictSteps.clear();
+		}
+	}
+	
+	/**
 	 * Specifies the input DateTimeSDR value key to classify
 	 * 
 	 * @param valueKey The value key
@@ -124,6 +133,8 @@ public class ClassifierConfig implements JsAble {
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+
 		ZStringBuilder pSteps = new ZStringBuilder();
 		for (Integer steps: predictSteps) {
 			if (pSteps.length()>0) {
