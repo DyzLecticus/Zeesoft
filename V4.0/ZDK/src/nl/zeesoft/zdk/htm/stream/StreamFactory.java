@@ -19,9 +19,6 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  */
 public class StreamFactory implements JsAble {
 	protected StreamEncoder		encoder				= null;
-	protected int				outputLength		= 0;
-	protected int				outputBits			= 0;
-
 	protected PoolerConfig		poolerConfig		= null;
 	protected MemoryConfig		memoryConfig		= null;
 	protected ClassifierConfig	classifierConfig	= null;
@@ -32,6 +29,10 @@ public class StreamFactory implements JsAble {
 	
 	public StreamFactory(StreamEncoder encoder,int outputLength, int outputBits) {
 		initialize(encoder,outputLength,outputBits);
+	}
+	
+	public StreamEncoder getEncoder() {
+		return encoder;
 	}
 	
 	public PoolerConfig getPoolerConfig() {
@@ -46,6 +47,18 @@ public class StreamFactory implements JsAble {
 		return classifierConfig;
 	}
 	
+	public ZStringBuilder getDescription() {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append(encoder.getDescription());
+		r.append("\n");
+		r.append(poolerConfig.getDescription());
+		r.append("\n");
+		r.append(memoryConfig.getDescription());
+		r.append("\n");
+		r.append(classifierConfig.getDescription());
+		return r;
+	}
+	
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
@@ -53,8 +66,6 @@ public class StreamFactory implements JsAble {
 		JsElem encoderElem = new JsElem("encoder",true);
 		json.rootElement.children.add(encoderElem);
 		encoderElem.children.add(encoder.toJson().rootElement);
-		json.rootElement.children.add(new JsElem("outputLength","" + outputLength));
-		json.rootElement.children.add(new JsElem("outputBits","" + outputBits));
 		
 		JsElem pcfgElem = new JsElem("poolerConfig",true);
 		json.rootElement.children.add(pcfgElem);
@@ -81,8 +92,6 @@ public class StreamFactory implements JsAble {
 				encoder = new StreamEncoder();
 				encoder.fromJson(encoderJs);
 			}
-			outputLength = json.rootElement.getChildInt("outputLength",outputLength);
-			outputBits = json.rootElement.getChildInt("outputBits",outputBits);
 			
 			JsElem pcfgElem = json.rootElement.getChildByName("poolerConfig");
 			if (pcfgElem!=null && pcfgElem.children.size()>0) {
@@ -105,24 +114,6 @@ public class StreamFactory implements JsAble {
 				classifierConfig.fromJson(js);
 			}
 		}
-	}
-	
-	public StreamEncoder getEncoder() {
-		return encoder;
-	}
-	
-	public ZStringBuilder getDescription() {
-		PoolerConfig poolerConfig = getNewPoolerConfig();
-		MemoryConfig memoryConfig = getNewMemoryConfig(poolerConfig);
-		ZStringBuilder r = new ZStringBuilder();
-		r.append(encoder.getClass().getSimpleName() + " length: " + encoder.length() + ", bits: " + encoder.bits());
-		r.append("\n");
-		r.append(poolerConfig.getDescription());
-		r.append("\n");
-		r.append(memoryConfig.getDescription());
-		r.append("\n");
-		r.append(classifierConfig.getDescription());
-		return r;
 	}
 	
 	/**
@@ -181,9 +172,6 @@ public class StreamFactory implements JsAble {
 	
 	protected void initialize(StreamEncoder encoder,int outputLength, int outputBits) {
 		this.encoder = encoder;
-		this.outputLength = outputLength;
-		this.outputBits = outputBits;
-		
 		this.poolerConfig = new PoolerConfig(encoder.length(),outputLength,outputBits);
 		this.memoryConfig = new MemoryConfig(poolerConfig);
 		this.classifierConfig = new ClassifierConfig();
