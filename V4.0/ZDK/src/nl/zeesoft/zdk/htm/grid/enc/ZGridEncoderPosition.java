@@ -6,14 +6,20 @@ import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
 public class ZGridEncoderPosition extends ZGridColumnEncoder {
-	private int				length				= 256;
+	private int				length				= 96;
 	private int				sizeX				= 100;
 	private int				sizeY				= 100;
 	private int				sizeZ				= 100;
 	private float			resolution			= 1;
-	
+
+	public ZGridEncoderPosition() {
+		rebuildEncoder();
+	}
+
 	public ZGridEncoderPosition(int length) {
 		this.length = length;
 		rebuildEncoder();
@@ -23,7 +29,12 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 	public String getValueKey() {
 		return "POSITION";
 	}
-	
+
+	public void setLength(int length) {
+		this.length = length;
+		rebuildEncoder();
+	}
+
 	public void setDimensions(int sizeX,int sizeY) {
 		setDimensions(sizeX,sizeY,0);
 	}
@@ -49,7 +60,32 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 		}
 		return r;
 	}
-	
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("length","" + length));
+		json.rootElement.children.add(new JsElem("sizeX","" + sizeX));
+		json.rootElement.children.add(new JsElem("sizeY","" + sizeY));
+		json.rootElement.children.add(new JsElem("sizeZ","" + sizeZ));
+		json.rootElement.children.add(new JsElem("resolution","" + resolution));
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			length = json.rootElement.getChildInt("length",length);
+			sizeX = json.rootElement.getChildInt("sizeX",sizeX);
+			sizeY = json.rootElement.getChildInt("sizeY",sizeY);
+			sizeZ = json.rootElement.getChildInt("sizeZ",sizeZ);
+			resolution = json.rootElement.getChildFloat("resolution",resolution);
+			rebuildEncoder();
+		}
+	}
+
+	@Override
 	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
 		float[] position = null;
 		if (result.getRequest().inputValues.length>columnIndex &&

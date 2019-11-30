@@ -11,6 +11,8 @@ import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
 public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 	private static final String					MONTH				= "MONTH";
@@ -79,7 +81,36 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 		r.keyValues.put(getValueKey(),dateTime);
 		return r;
 	}
-	
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("scale","" + scale));
+		json.rootElement.children.add(new JsElem("bitsPerEncoder","" + bitsPerEncoder));
+		json.rootElement.children.add(new JsElem("includeMonth","" + includeMonth));
+		json.rootElement.children.add(new JsElem("includeDayOfWeek","" + includeDayOfWeek));
+		json.rootElement.children.add(new JsElem("includeHourOfDay","" + includeHourOfDay));
+		json.rootElement.children.add(new JsElem("includeMinute","" + includeMinute));
+		json.rootElement.children.add(new JsElem("includeSecond","" + includeSecond));
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			scale = json.rootElement.getChildInt("scale",scale);
+			bitsPerEncoder = json.rootElement.getChildInt("bitsPerEncoder",bitsPerEncoder);
+			includeMonth = json.rootElement.getChildBoolean("includeMonth",includeMonth);
+			includeDayOfWeek = json.rootElement.getChildBoolean("includeDayOfWeek",includeDayOfWeek);
+			includeHourOfDay = json.rootElement.getChildBoolean("includeHourOfDay",includeHourOfDay);
+			includeMinute = json.rootElement.getChildBoolean("includeMinute",includeMinute);
+			includeSecond = json.rootElement.getChildBoolean("includeSecond",includeSecond);
+			rebuildEncoder();
+		}
+	}
+
+	@Override
 	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
 		long dateTime = getInputValueAsLong(columnIndex,result);
 		return getSDRForDateTime(dateTime);
@@ -118,7 +149,6 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 		if (includeSecond) {
 			encoder.addEncoder(SECOND,getNewSecondEncoder());
 		}
-
 	}
 	
 	protected EncoderObject getNewMonthEncoder() {

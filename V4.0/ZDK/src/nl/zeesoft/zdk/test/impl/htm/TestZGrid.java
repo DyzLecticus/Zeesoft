@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
@@ -20,7 +19,6 @@ import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
-import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -80,26 +78,18 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		grid = new ZGrid(4,3);
 		
 		grid.addListener(this);
-		
-		ZGridEncoderDateTime dateTimeEncoder = new ZGridEncoderDateTime();
-		assertEqual(dateTimeEncoder.testScalarOverlap(),new ZStringBuilder(),"Scalar overlap test results do not match expectation for scale 1");
-		SDR sdr = dateTimeEncoder.getSDRForDateTime(System.currentTimeMillis());
-		assertEqual(sdr.length(),256,"SDR (scale: 1) length does not match expectation");
-		
-		dateTimeEncoder.setScale(2);
-		assertEqual(dateTimeEncoder.testScalarOverlap(),new ZStringBuilder(),"Scalar overlap test results do not match expectation for scale 2");
-		sdr = dateTimeEncoder.getSDRForDateTime(System.currentTimeMillis());
-		assertEqual(sdr.length(),529,"SDR (scale: 2) length does not match expectation");
-		
-		dateTimeEncoder.setScale(4);
-		assertEqual(dateTimeEncoder.testScalarOverlap(),new ZStringBuilder(),"Scalar overlap test results do not match expectation for scale 4");
-		sdr = dateTimeEncoder.getSDRForDateTime(System.currentTimeMillis());
-		assertEqual(sdr.length(),1024,"SDR (scale: 4) length does not match expectation");
-		
+
 		// Create encoders
-		dateTimeEncoder = new ZGridEncoderDateTime();
-		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(256);
-		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition(256);
+		ZGridEncoderDateTime dateTimeEncoder = new ZGridEncoderDateTime();
+		dateTimeEncoder.setIncludeMonth(false);
+		dateTimeEncoder.setIncludeDayOfWeek(false);
+		dateTimeEncoder.setIncludeHourOfDay(false);
+		dateTimeEncoder.setIncludeMinute(false);
+		dateTimeEncoder.setScale(2);
+		ZGridEncoderValue valueEncoder = new ZGridEncoderValue();
+		valueEncoder.setLength(64);
+		valueEncoder.setMaxValue(20);
+		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition();
 		
 		// Add encoders
 		grid.setEncoder(0,dateTimeEncoder);
@@ -132,7 +122,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		Classifier valueClassifier = new Classifier(classifierConfig);
 		grid.setProcessor(3,1,valueClassifier);
 		
-		// Route context from dateTime and position poolers to memory
+		// Route output from dateTime and position poolers to memory context
 		grid.addColumnContext(2,1,1,0);
 		grid.addColumnContext(2,1,1,2);
 

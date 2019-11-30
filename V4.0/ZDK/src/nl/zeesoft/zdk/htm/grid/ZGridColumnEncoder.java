@@ -3,8 +3,9 @@ package nl.zeesoft.zdk.htm.grid;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
+import nl.zeesoft.zdk.json.JsAble;
 
-public abstract class ZGridColumnEncoder {
+public abstract class ZGridColumnEncoder implements JsAble {
 	protected CombinedEncoder encoder	=	null;
 	
 	public abstract String getValueKey();

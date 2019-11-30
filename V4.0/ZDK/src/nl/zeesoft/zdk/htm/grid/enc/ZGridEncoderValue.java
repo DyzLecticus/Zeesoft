@@ -10,18 +10,23 @@ import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 
 public class ZGridEncoderValue extends ZGridColumnEncoder {
-	private int				length			= 256;
-	
 	private String			valueKey		= DateTimeSDR.VALUE_KEY;
+	private int				length			= 256;
 	private int				bits			= 8;
 	private float			resolution		= 1;
 	private float			minValue		= 0;
 	private float			maxValue		= 255 - bits;
 	private boolean			periodic		= false;
-	private boolean			scaled			= true;
+	private boolean			scaled			= false;
 
+	public ZGridEncoderValue() {
+		rebuildEncoder();
+	}
+	
 	public ZGridEncoderValue(int length) {
 		this.length = length;
 		rebuildEncoder();
@@ -40,6 +45,11 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 
 	public void setValueKey(String valueKey) {
 		this.valueKey = valueKey;
+		rebuildEncoder();
+	}
+
+	public void setLength(int length) {
+		this.length = length;
 		rebuildEncoder();
 	}
 
@@ -80,7 +90,38 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		r = encoder.getSDRForValues(values);
 		return r;
 	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("length","" + length));
+		json.rootElement.children.add(new JsElem("bits","" + bits));
+		json.rootElement.children.add(new JsElem("resolution","" + resolution));
+		json.rootElement.children.add(new JsElem("minValue","" + minValue));
+		json.rootElement.children.add(new JsElem("maxValue","" + maxValue));
+		json.rootElement.children.add(new JsElem("periodic","" + periodic));
+		json.rootElement.children.add(new JsElem("scaled","" + scaled));
+		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			length = json.rootElement.getChildInt("length",length);
+			bits = json.rootElement.getChildInt("bits",bits);
+			resolution = json.rootElement.getChildFloat("resolution",resolution);
+			minValue = json.rootElement.getChildFloat("minValue",minValue);
+			maxValue = json.rootElement.getChildFloat("maxValue",maxValue);
+			periodic = json.rootElement.getChildBoolean("periodic",periodic);
+			scaled = json.rootElement.getChildBoolean("scaled",scaled);
+			valueKey = json.rootElement.getChildString("valueKey",valueKey);
+			rebuildEncoder();
+		}
+	}
 	
+	@Override
 	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
 		float value = getInputValueAsFloat(columnIndex, result);
 		DateTimeSDR r = new DateTimeSDR(getSDRForValue(value));
