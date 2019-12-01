@@ -198,6 +198,9 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		if (success) {
 			System.out.println("Processing " + expectedIds.size() + " requests took " + (stopped - started) + " ms");
 		}
+		
+		System.out.println();
+		System.out.println(valueMemory.getDescription());
 	}
 
 	@Override

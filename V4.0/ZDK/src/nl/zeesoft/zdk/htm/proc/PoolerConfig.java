@@ -193,11 +193,11 @@ public class PoolerConfig implements JsAble {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("Pooler input dimensions: ");
 		r.append("" + inputSizeX);
-		r.append("x");
+		r.append("*");
 		r.append("" + inputSizeY);
 		r.append(", output dimensions: ");
 		r.append("" + outputSizeX);
-		r.append("x");
+		r.append("*");
 		r.append("" + outputSizeY);
 		return r;
 	}

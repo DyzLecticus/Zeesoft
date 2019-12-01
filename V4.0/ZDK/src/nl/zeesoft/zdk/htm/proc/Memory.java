@@ -43,6 +43,7 @@ public class Memory extends ProcessorObject {
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = config.getDescription();
 		int cells = config.length * config.depth;
+		
 		int min = Integer.MAX_VALUE; 
 		int max = 0;
 		int avg = 0;
@@ -50,14 +51,23 @@ public class Memory extends ProcessorObject {
 		int minCon = Integer.MAX_VALUE; 
 		int maxCon = 0;
 		int avgCon = 0;
+		
+		int minCtx = Integer.MAX_VALUE;
+		int maxCtx = 0;
+		int avgCtx = 0;
 
 		for (MemoryColumn col: allColumns) {
 			for (MemoryColumnCell cell: col.cells) {
 				int con = 0;
+				int ctx = 0;
 				for (DistalLink lnk: cell.distLinks) {
 					if (lnk.connection>config.distalConnectionThreshold) {
 						con++;
 						avgCon++;
+					}
+					if (lnk.cell.posZ<0 || lnk.cell.posY<0 || lnk.cell.posZ<0) {
+						ctx++;
+						avgCtx++;
 					}
 				}
 				int size = cell.distLinks.size();
@@ -73,6 +83,12 @@ public class Memory extends ProcessorObject {
 				}
 				if (con>maxCon) {
 					maxCon = con;
+				}
+				if (ctx<minCtx) {
+					minCtx = ctx;
+				}
+				if (ctx>maxCtx) {
+					maxCtx = ctx;
 				}
 			}
 		}
@@ -99,6 +115,20 @@ public class Memory extends ProcessorObject {
 				r.append(", max: ");
 				r.append("" + maxCon);
 				r.append(")");
+			}
+			
+			if (config.contextDimensions.size()>0) {
+				avgCtx = avgCtx / cells;
+				r.append("\n");
+				r.append("- Average connected distal context inputs per memory cell: ");
+				r.append("" + avgCtx);
+				if (minCtx!=avgCtx || maxCon!=avgCtx) {
+					r.append(" (min: ");
+					r.append("" + minCtx);
+					r.append(", max: ");
+					r.append("" + maxCtx);
+					r.append(")");
+				}
 			}
 		}
 		return r;

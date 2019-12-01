@@ -184,9 +184,9 @@ public class MemoryConfig implements JsAble {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("Memory dimensions: ");
 		r.append("" + sizeX);
-		r.append("x");
+		r.append("*");
 		r.append("" + sizeY);
-		r.append("x");
+		r.append("*");
 		r.append("" + depth);
 		return r;
 	}
