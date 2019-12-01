@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
+import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderProperty;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.test.TestObject;
@@ -55,6 +56,7 @@ public class TestZGridEncoders extends TestObject {
 	protected void test(String[] args) {
 		ZStringBuilder err = null;
 		
+		// DateTime encoder
 		ZGridEncoderDateTime dateTimeEncoder = new ZGridEncoderDateTime();
 		assertEqual(dateTimeEncoder.testScalarOverlap(),new ZStringBuilder(),"Scalar overlap test results do not match expectation for scale 1");
 		SDR sdr = dateTimeEncoder.getSDRForDateTime(System.currentTimeMillis());
@@ -81,6 +83,7 @@ public class TestZGridEncoders extends TestObject {
 			System.out.println(dateTimeEncoder.toJson().toStringBuilderReadFormat());
 		}
 		
+		// Value encoder
 		ZGridEncoderValue valueEncoder = new ZGridEncoderValue();
 		err = valueEncoder.testScalarOverlap();
 		assertEqual(err,new ZStringBuilder(),"Error does not match expectation (4)");
@@ -91,6 +94,7 @@ public class TestZGridEncoders extends TestObject {
 			System.out.println(valueEncoder.toJson().toStringBuilderReadFormat());
 		}
 		
+		// Position encoder
 		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition();
 		err = positionEncoder.testScalarOverlap();
 		assertEqual(err,new ZStringBuilder(),"Error does not match expectation (5)");
@@ -100,5 +104,32 @@ public class TestZGridEncoders extends TestObject {
 			System.out.println("Position encoder JSON:");
 			System.out.println(positionEncoder.toJson().toStringBuilderReadFormat());
 		}
+		
+		// Property encoder
+		ZGridEncoderProperty propertyEncoder = new ZGridEncoderProperty();
+		propertyEncoder.addProperty("Pizza");
+		propertyEncoder.addProperty("Coffee");
+		propertyEncoder.addProperty("Ice cream");
+		propertyEncoder.addProperty("Chicken");
+		propertyEncoder.addProperty("Sandwich");
+		sdr = propertyEncoder.getSDRForValue(3);
+		SDR sdrC = new SDR(256);
+		for (int i = 16; i < 24; i++) {
+			sdrC.setBit(i,true);
+		}
+		assertEqual(sdr.toBitString(),sdrC.toBitString(),"SDR does not match expectation (1)");
+		
+		if (testJsAble(propertyEncoder,new ZGridEncoderProperty(),"Encoder JSON does not match expectation (4)")) {
+			System.out.println();
+			System.out.println("Property encoder JSON:");
+			System.out.println(propertyEncoder.toJson().toStringBuilderReadFormat());
+		}
+		
+		ZStringBuilder str = propertyEncoder.toStringBuilder();
+		propertyEncoder = new ZGridEncoderProperty();
+		propertyEncoder.fromStringBuilder(str);
+		assertEqual(propertyEncoder.getValueForProperty("Ice cream"),3,"Value not match expectation");
+		sdr = propertyEncoder.getSDRForProperty("Ice cream");
+		assertEqual(sdr.toBitString(),sdrC.toBitString(),"SDR does not match expectation (2)");
 	}
 }

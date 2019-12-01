@@ -22,12 +22,29 @@ public abstract class ZGridColumnEncoder implements JsAble {
 		return encoder.testScalarOverlap();
 	}
 	
+	public ZStringBuilder toStringBuilder() {
+		return encoder.toStringBuilder();
+	}
+	
+	public void fromStringBuilder(ZStringBuilder str) {
+		encoder.fromStringBuilder(str);
+	}
+	
 	protected abstract DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result);
+	
+	protected boolean hasInputValue(int columnIndex,ZGridResult result) {
+		boolean r = false;
+		if (result.getRequest().inputValues.length>columnIndex &&
+			result.getRequest().inputValues[columnIndex]!=null
+			) {
+			r = true;
+		}
+		return r;
+	}
 	
 	protected long getInputValueAsLong(int columnIndex,ZGridResult result) {
 		long r = 0;
-		if (result.getRequest().inputValues.length>columnIndex &&
-			result.getRequest().inputValues[columnIndex]!=null &&
+		if (hasInputValue(columnIndex,result) &&
 			result.getRequest().inputValues[columnIndex] instanceof Long
 			) {
 			r = (Long) result.getRequest().inputValues[columnIndex];
@@ -37,9 +54,7 @@ public abstract class ZGridColumnEncoder implements JsAble {
 	
 	protected float getInputValueAsFloat(int columnIndex,ZGridResult result) {
 		float r = 0;
-		if (result.getRequest().inputValues.length>columnIndex &&
-			result.getRequest().inputValues[columnIndex]!=null
-			) {
+		if (hasInputValue(columnIndex,result)) {
 			if (result.getRequest().inputValues[columnIndex] instanceof Float) {
 				r = (float) result.getRequest().inputValues[columnIndex];
 			} else if (result.getRequest().inputValues[columnIndex] instanceof Long) {

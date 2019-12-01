@@ -86,9 +86,11 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		dateTimeEncoder.setIncludeHourOfDay(false);
 		dateTimeEncoder.setIncludeMinute(false);
 		dateTimeEncoder.setScale(2);
+		
 		ZGridEncoderValue valueEncoder = new ZGridEncoderValue();
 		valueEncoder.setLength(64);
 		valueEncoder.setMaxValue(20);
+		
 		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition();
 		
 		// Add encoders

@@ -67,7 +67,7 @@ public class CombinedEncoder {
 	}
 
 	/**
-	 * Returns a string builder representation the state of RDScalarEncoder instances in this combined encoder.
+	 * Returns a string builder representation the state of StateEncoderObject instances in this combined encoder.
 	 * 
 	 * @return The string builder
 	 */
@@ -88,7 +88,7 @@ public class CombinedEncoder {
 	}
 	
 	/**
-	 * Initializes the state of RDScalarEncoder instances in this combined encoder using a string builder.
+	 * Initializes the state of StateEncoderObject instances in this combined encoder using a string builder.
 	 * 
 	 * @param str The string builder
 	 */
