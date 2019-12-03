@@ -12,9 +12,7 @@ import nl.zeesoft.zdk.json.JsFile;
  * The configuration cannot be changed once it has been used to instantiate a spatial pooler.
  * The input and output length are automatically translated to a 2D (or 3D single layer) input and output SDR space.
  */
-public class PoolerConfig implements JsAble {
-	protected boolean		initialized						= false;
-	
+public class PoolerConfig extends ProcessorConfigObject implements JsAble {
 	protected int			inputLength						= 0;
 	protected int			outputLength					= 0;
 	protected int			outputBits						= 0;

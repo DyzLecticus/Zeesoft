@@ -14,9 +14,7 @@ import nl.zeesoft.zdk.json.JsFile;
  * The configuration cannot be changed once it has been used to instantiate a temporal memory.
  * A classifier can create classifications (or prediction) for multiple prediction steps.
  */
-public class ClassifierConfig implements JsAble {
-	protected boolean			initialized		= false;
-	
+public class ClassifierConfig extends ProcessorConfigObject implements JsAble {
 	protected List<Integer>		predictSteps	= new ArrayList<Integer>();
 	protected String			valueKey		= DateTimeSDR.VALUE_KEY;
 	protected String			labelKey		= DateTimeSDR.LABEL_KEY;

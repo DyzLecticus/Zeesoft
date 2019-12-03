@@ -14,12 +14,23 @@ import nl.zeesoft.zdk.htm.util.SDR;
  * Can log performance statistics for its internal operations.
  */
 public abstract class ProcessorObject {
-	protected DecimalFormat		df 			= new DecimalFormat("0.000");
+	protected DecimalFormat				df 			= new DecimalFormat("0.000");
 	
-	public boolean				logStats	= false;						
-	public StatsLog				statsLog	= new StatsLog(this);
+	protected ProcessorConfigObject		config		= null;
 	
-	private Stats				stats		= null;
+	public boolean						logStats	= false;						
+	public StatsLog						statsLog	= new StatsLog(this);
+	
+	private Stats						stats		= null;
+	
+	public ProcessorObject(ProcessorConfigObject config) {
+		this.config = config;
+		config.initialized = true;
+	}
+	
+	public ProcessorConfigObject getConfig() {
+		return config;
+	}
 	
 	/**
 	 * Returns the output SDR for a certain input SDR.

@@ -15,17 +15,19 @@ import nl.zeesoft.zdk.htm.util.SDR;
  * A (Spatial) Pooler is used to transform encoder SDRs into sparse SDRs for temporal memory processing.
  */
 public class Pooler extends ProcessorObject {
-	protected PoolerConfig							config			= null;
-	
 	protected List<PoolerColumn>					columns			= new ArrayList<PoolerColumn>();
 	protected SortedMap<String,PoolerColumnGroup>	columnGroups	= new TreeMap<String,PoolerColumnGroup>();
 	protected PoolerConnections						connections		= null;
 	
 	public Pooler(PoolerConfig config) {
-		this.config = config;
-		config.initialized = true;
+		super(config);
 		connections = new PoolerConnections(config);
 		initialize();
+	}
+	
+	@Override
+	public PoolerConfig getConfig() {
+		return (PoolerConfig) super.getConfig();
 	}
 
 	/**
@@ -47,8 +49,8 @@ public class Pooler extends ProcessorObject {
 	 */
 	@Override
 	public ZStringBuilder getDescription() {
-		ZStringBuilder r = config.getDescription();
-		int min = config.inputLength; 
+		ZStringBuilder r = getConfig().getDescription();
+		int min = getConfig().inputLength; 
 		int max = 0;
 		int avg = 0;
 		for (PoolerColumn col: columns) {
@@ -79,7 +81,7 @@ public class Pooler extends ProcessorObject {
 				r.append(")");
 			}
 		}
-		min = config.outputLength;
+		min = getConfig().outputLength;
 		max = 0;
 		avg = 0;
 		for (PoolerColumnGroup pcg: columnGroups.values()) {
@@ -129,7 +131,7 @@ public class Pooler extends ProcessorObject {
 			logStatsValue("learnActiveColumnsOnBits",System.nanoTime() - start);
 		}
 		
-		if (config.boostStrength>0) {
+		if (getConfig().boostStrength>0) {
 			start = System.nanoTime();
 			logActivity(activeColumns);
 			logStatsValue("logActivity",System.nanoTime() - start);
@@ -206,7 +208,7 @@ public class Pooler extends ProcessorObject {
 	}
 	
 	protected int[] calculateOverlapScores(List<Integer> onBits) {
-		int[] r = new int[config.outputLength];
+		int[] r = new int[getConfig().outputLength];
 		for (int i = 0; i < r.length; i++) {
 			r[i] = 0;
 		}
@@ -238,8 +240,8 @@ public class Pooler extends ProcessorObject {
 		Object[] keys = map.keySet().toArray();
 		for (int i = (map.size() - 1); i>=0; i--) {
 			List<PoolerColumn> list = map.get(keys[i]);
-			if (config.outputBits - r.size() < list.size()) {
-				for (int s = 0; s < config.outputBits - r.size(); s++) {
+			if (getConfig().outputBits - r.size() < list.size()) {
+				for (int s = 0; s < getConfig().outputBits - r.size(); s++) {
 					int sel = ZRandomize.getRandomInt(0,list.size() - 1);
 					r.add(list.get(sel));
 					list.remove(sel);
@@ -247,12 +249,12 @@ public class Pooler extends ProcessorObject {
 			} else {
 				for (PoolerColumn col: list) {
 					r.add(col);
-					if (r.size()>=config.outputBits) {
+					if (r.size()>=getConfig().outputBits) {
 						break;
 					}
 				}
 			}
-			if (r.size()>=config.outputBits) {
+			if (r.size()>=getConfig().outputBits) {
 				break;
 			}
 		}
@@ -266,7 +268,7 @@ public class Pooler extends ProcessorObject {
 	}
 	
 	protected void logActivity(List<PoolerColumn> activeColumns) {
-		if (config.boostStrength>0) {
+		if (getConfig().boostStrength>0) {
 			for (PoolerColumn col: columns) {
 				col.logActivity(activeColumns.contains(col));
 			}
@@ -275,7 +277,7 @@ public class Pooler extends ProcessorObject {
 
 	protected HashMap<PoolerColumnGroup,Float> calculateColumnGroupActivity() {
 		HashMap<PoolerColumnGroup,Float> r = new HashMap<PoolerColumnGroup,Float>();
-		if (config.boostStrength>0) {
+		if (getConfig().boostStrength>0) {
 			for (PoolerColumnGroup columnGroup: columnGroups.values()) {
 				float averageActivity = 0;
 				for (PoolerColumn col: columnGroup.columns) {
@@ -291,7 +293,7 @@ public class Pooler extends ProcessorObject {
 	}
 	
 	protected void updateBoostFactors(HashMap<PoolerColumnGroup,Float> activity) {
-		if (config.boostStrength>0) {
+		if (getConfig().boostStrength>0) {
 			for (PoolerColumn column: columns) {
 				if (activity.containsKey(column.columnGroup)) {
 					column.updateBoostFactor(activity.get(column.columnGroup));
@@ -301,7 +303,7 @@ public class Pooler extends ProcessorObject {
 	}
 	
 	protected SDR recordActiveColumnsInSDR(List<PoolerColumn> activeColumns) {
-		SDR r = config.getNewSDR();
+		SDR r = getConfig().getNewSDR();
 		for (PoolerColumn col: activeColumns) {
 			r.setBit(col.index,true);
 		}
@@ -312,11 +314,11 @@ public class Pooler extends ProcessorObject {
 		// Initialize columns
 		int posX = 0;
 		int posY = 0;
-		for (int i = 0; i < config.outputLength; i++) {
-			PoolerColumn col = new PoolerColumn(config,i,posX,posY);
+		for (int i = 0; i < getConfig().outputLength; i++) {
+			PoolerColumn col = new PoolerColumn(getConfig(),i,posX,posY);
 			columns.add(col);
 			posX++;
-			if (posX % config.outputSizeX == 0) {
+			if (posX % getConfig().outputSizeX == 0) {
 				posX = 0;
 				posY++;
 			}
@@ -327,10 +329,10 @@ public class Pooler extends ProcessorObject {
 			posX = col.getRelativePosX();
 			posY = col.getRelativePosY();
 
-			int minPosX = posX - config.boostInhibitionRadius;
-			int minPosY = posY - config.boostInhibitionRadius;
-			int maxPosX = posX + 1 + config.boostInhibitionRadius;
-			int maxPosY = posY + 1 + config.boostInhibitionRadius;
+			int minPosX = posX - getConfig().boostInhibitionRadius;
+			int minPosY = posY - getConfig().boostInhibitionRadius;
+			int maxPosX = posX + 1 + getConfig().boostInhibitionRadius;
+			int maxPosY = posY + 1 + getConfig().boostInhibitionRadius;
 
 			if (minPosX<0) {
 				maxPosX = maxPosX + (minPosX * -1);
@@ -340,13 +342,13 @@ public class Pooler extends ProcessorObject {
 				maxPosY = maxPosY + (minPosY * -1);
 				minPosY = 0;
 			}
-			if (maxPosX>config.outputSizeX) {
-				minPosX = minPosX - (maxPosX - config.outputSizeX);
-				maxPosX = config.outputSizeX;
+			if (maxPosX>getConfig().outputSizeX) {
+				minPosX = minPosX - (maxPosX - getConfig().outputSizeX);
+				maxPosX = getConfig().outputSizeX;
 			}
-			if (maxPosY>config.outputSizeY) {
-				minPosY = minPosY - (maxPosY - config.outputSizeY);
-				maxPosY = config.outputSizeY;
+			if (maxPosY>getConfig().outputSizeY) {
+				minPosY = minPosY - (maxPosY - getConfig().outputSizeY);
+				maxPosY = getConfig().outputSizeY;
 			}
 			if (minPosX<0) {
 				minPosX = 0;

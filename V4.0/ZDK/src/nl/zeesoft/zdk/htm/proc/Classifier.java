@@ -15,8 +15,6 @@ import nl.zeesoft.zdk.htm.util.SDR;
 public class Classifier extends ProcessorObject {
 	public static final String			CLASSIFICATION_KEY		= "CLASSIFICATION";
 	
-	protected ClassifierConfig			config					= null;
-	
 	protected List<StepsClassifier>		classifiers				= new ArrayList<StepsClassifier>();
 	protected int						maxSteps				= 0;
 	protected List<SDR>					activationHistory		= new ArrayList<SDR>();
@@ -25,14 +23,18 @@ public class Classifier extends ProcessorObject {
 	protected List<DateTimeSDR>			classifierSDRs			= new ArrayList<DateTimeSDR>();
 	
 	public Classifier(ClassifierConfig config) {
-		this.config = config;
-		config.initialized = true;
-		for (Integer steps: config.predictSteps) {
+		super(config);
+		for (Integer steps: getConfig().predictSteps) {
 			classifiers.add(new StepsClassifier(config,activationHistory,steps));
 			if (steps>maxSteps) {
 				maxSteps = steps;
 			}
 		}
+	}
+	
+	@Override
+	public ClassifierConfig getConfig() {
+		return (ClassifierConfig) super.getConfig();
 	}
 	
 	/**
@@ -42,7 +44,7 @@ public class Classifier extends ProcessorObject {
 	 */
 	@Override
 	public ZStringBuilder getDescription() {
-		return config.getDescription();
+		return getConfig().getDescription();
 	}
 	
 	@Override
@@ -61,7 +63,7 @@ public class Classifier extends ProcessorObject {
 	public void fromStringBuilder(ZStringBuilder str) {
 		List<ZStringBuilder> elems = str.split("@");
 		for (ZStringBuilder elem: elems) {
-			StepsClassifier classifier = new StepsClassifier(config,activationHistory,0);
+			StepsClassifier classifier = new StepsClassifier(getConfig(),activationHistory,0);
 			classifier.fromStringBuilder(elem);
 			classifiers.add(classifier);
 		}

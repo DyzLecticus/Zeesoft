@@ -15,9 +15,7 @@ import nl.zeesoft.zdk.json.JsFile;
  * The configuration cannot be changed once it has been used to instantiate a temporal memory.
  * The length is automatically translated to a 3D memory space of the specified depth.
  */
-public class MemoryConfig implements JsAble {
-	protected boolean		initialized							= false;
-	
+public class MemoryConfig extends ProcessorConfigObject implements JsAble {
 	protected int			length								= 0;
 	protected int			bits								= 0;
 	

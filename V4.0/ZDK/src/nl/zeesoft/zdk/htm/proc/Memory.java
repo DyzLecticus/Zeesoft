@@ -18,8 +18,6 @@ import nl.zeesoft.zdk.htm.util.SDR;
  * Further more, distal connections do not need to be randomly initialized when the memory is created. 
  */
 public class Memory extends ProcessorObject {
-	protected MemoryConfig			config			= null;
-
 	protected List<MemoryColumn>	columns			= new ArrayList<MemoryColumn>();
 	protected List<MemoryColumn>	contextColumns	= new ArrayList<MemoryColumn>();
 	protected List<MemoryColumn>	allColumns		= new ArrayList<MemoryColumn>();
@@ -29,11 +27,15 @@ public class Memory extends ProcessorObject {
 	protected SDR					burstSDR		= null;	
 	
 	public Memory(MemoryConfig config) {
-		this.config = config;
-		config.initialized = true;
+		super(config);
 		initialize();
 	}
 	
+	@Override
+	public MemoryConfig getConfig() {
+		return (MemoryConfig) super.getConfig();
+	}
+
 	/**
 	 * Returns a description of this temporal memory.
 	 * 
@@ -41,8 +43,8 @@ public class Memory extends ProcessorObject {
 	 */
 	@Override
 	public ZStringBuilder getDescription() {
-		ZStringBuilder r = config.getDescription();
-		int cells = config.length * config.depth;
+		ZStringBuilder r = getConfig().getDescription();
+		int cells = getConfig().length * getConfig().depth;
 		
 		int min = Integer.MAX_VALUE; 
 		int max = 0;
@@ -61,7 +63,7 @@ public class Memory extends ProcessorObject {
 				int con = 0;
 				int ctx = 0;
 				for (DistalLink lnk: cell.distLinks) {
-					if (lnk.connection>config.distalConnectionThreshold) {
+					if (lnk.connection>getConfig().distalConnectionThreshold) {
 						con++;
 						avgCon++;
 					}
@@ -117,7 +119,7 @@ public class Memory extends ProcessorObject {
 				r.append(")");
 			}
 			
-			if (config.contextDimensions.size()>0) {
+			if (getConfig().contextDimensions.size()>0) {
 				avgCtx = avgCtx / cells;
 				r.append("\n");
 				r.append("- Average connected distal context inputs per memory cell: ");
@@ -144,8 +146,8 @@ public class Memory extends ProcessorObject {
 
 	@Override
 	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
-		SDR r = new SDR(config.length * config.depth);
-		burstSDR = config.getNewSDR();
+		SDR r = new SDR(getConfig().length * getConfig().depth);
+		burstSDR = getConfig().getNewSDR();
 		long start = 0;
 		
 		start = System.nanoTime();
@@ -273,10 +275,10 @@ public class Memory extends ProcessorObject {
 
 	protected Set<MemoryColumnCell> activateColumnCells(SDR input,boolean learn,List<MemoryColumnCell> previouslyActiveCells,SDR outputSDR,SDR burstSDR) {
 		Set<MemoryColumnCell> r = new HashSet<MemoryColumnCell>(); 
-		if (config.contextDimensions.size()>0 && contextSDRs!=null && contextSDRs.size()==config.contextDimensions.size()) {
+		if (getConfig().contextDimensions.size()>0 && contextSDRs!=null && contextSDRs.size()==getConfig().contextDimensions.size()) {
 			int i = 0;
 			for (SDR contextSDR: contextSDRs) {
-				int size = config.contextDimensions.get(i);
+				int size = getConfig().contextDimensions.get(i);
 				if (contextSDR.length()<=size) {
 					MemoryColumn contextColumn = contextColumns.get(i);
 					for (Integer onBit: contextSDR.getOnBits()) {
@@ -335,30 +337,30 @@ public class Memory extends ProcessorObject {
 		int posX = 0;
 		int posY = 0;
 		int cellIndex = 0;
-		for (int i = 0; i < config.length; i++) {
+		for (int i = 0; i < getConfig().length; i++) {
 			MemoryColumn col = new MemoryColumn(i);
 			columns.add(col);
 			allColumns.add(col);
 			
-			for (int d = 0; d < config.depth; d++) {
-				MemoryColumnCell cell = new MemoryColumnCell(config,i,cellIndex,posX,posY,d);
+			for (int d = 0; d < getConfig().depth; d++) {
+				MemoryColumnCell cell = new MemoryColumnCell(getConfig(),i,cellIndex,posX,posY,d);
 				col.cells.add(cell);
 				cellIndex++;
 			}
 			posX++;
-			if (posX % config.sizeX == 0) {
+			if (posX % getConfig().sizeX == 0) {
 				posX = 0;
 				posY++;
 			}
 		}
 		int i = -1;
-		for (Integer length: config.contextDimensions) {
+		for (Integer length: getConfig().contextDimensions) {
 			MemoryColumn col = new MemoryColumn(i);
 			contextColumns.add(col);
 			allColumns.add(col);
 
 			for (int d = 0; d < length; d++) {
-				MemoryColumnCell cell = new MemoryColumnCell(config,i,cellIndex,i,-1,d);
+				MemoryColumnCell cell = new MemoryColumnCell(getConfig(),i,cellIndex,i,-1,d);
 				col.cells.add(cell);
 				cellIndex++;
 			}

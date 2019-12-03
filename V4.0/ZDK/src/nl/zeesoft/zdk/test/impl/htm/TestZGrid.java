@@ -163,7 +163,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println("Added requests");
 		
 		int i = 0;
-		while(grid.isWorking()) {
+		while(grid.isActive()) {
 			sleep(100);
 			i++;
 			if (i>=450) {
@@ -174,7 +174,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		long stopped = System.currentTimeMillis();
 
 		// Stop & destroy grid
-		if (grid.isWorking()) {
+		if (grid.isActive()) {
 			grid.stop();
 		}
 		System.out.println("Stopped grid");
