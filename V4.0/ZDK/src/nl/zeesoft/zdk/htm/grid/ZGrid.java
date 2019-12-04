@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.proc.Classifier;
+import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
+import nl.zeesoft.zdk.htm.proc.Memory;
+import nl.zeesoft.zdk.htm.proc.MemoryConfig;
+import nl.zeesoft.zdk.htm.proc.Pooler;
+import nl.zeesoft.zdk.htm.proc.PoolerConfig;
+import nl.zeesoft.zdk.htm.proc.ProcessorConfigObject;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
@@ -78,6 +85,15 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		unlockMe(this);
 	}
 
+	public ProcessorObject setProcessor(int rowIndex,int columnIndex,ProcessorConfigObject config) {
+		ProcessorObject r = null;
+		r = getNewProcessor(config);
+		if (r!=null) {
+			setProcessor(rowIndex,columnIndex,r);
+		}
+		return r;
+	}
+
 	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn) {
 		addColumnContext(rowIndex,columnIndex,sourceRow,sourceColumn,0);
 	}
@@ -91,6 +107,20 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 				context.sourceColumn = sourceColumn;
 				context.sourceIndex = sourceIndex;
 				rows.get(rowIndex).columns.get(columnIndex).contexts.add(context);
+			}
+		}
+		unlockMe(this);
+	}
+	
+	public void randomizePoolerConnections() {
+		lockMe(this);
+		if (state.equals(STATE_STOPPED)) {
+			for (ZGridRow row: rows) {
+				for (ZGridColumn col: row.columns) {
+					if (col.processor!=null && col.processor instanceof Pooler) {
+						((Pooler) col.processor).randomizeConnections();
+					}
+				}
 			}
 		}
 		unlockMe(this);
@@ -172,6 +202,14 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 			super.stop();
 		}
 	}
+
+	public void whileInactive() {
+		whileActive(false);
+	}
+	
+	public void whileActive() {
+		whileActive(true);
+	}
 	
 	public void destroy() {
 		lockMe(this);
@@ -208,6 +246,20 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		state = STATE_STOPPED;
 		unlockMe(this);
 		results.flush();
+	}
+
+	protected void whileActive(boolean active) {
+		while(isActive()==active) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				if (getMessenger()!=null) {
+					getMessenger().error(this,"Waiting for grid activity to stop was interrupted",e);
+				} else {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	protected ZGridRow addRow() {
@@ -247,5 +299,29 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 			pRow.nextProcessor = this; 
 		}
 		results = new ZGridResults(msgr);
+	}
+	
+	protected ProcessorObject getNewProcessor(ProcessorConfigObject config) {
+		ProcessorObject r = null;
+		if (config instanceof PoolerConfig) {
+			r = getNewPooler((PoolerConfig)config);
+		} else if (config instanceof MemoryConfig) {
+			r = getNewMemory((MemoryConfig)config);
+		} else if (config instanceof ClassifierConfig) {
+			r = getNewClassifier((ClassifierConfig)config);
+		}
+		return r;
+	}
+	
+	protected Pooler getNewPooler(PoolerConfig config) {
+		return new Pooler(config);
+	}
+	
+	protected Memory getNewMemory(MemoryConfig config) {
+		return new Memory(config);
+	}
+	
+	protected Classifier getNewClassifier(ClassifierConfig config) {
+		return new Classifier(config);
 	}
 }

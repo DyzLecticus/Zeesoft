@@ -49,6 +49,7 @@ public class Memory extends ProcessorObject {
 		int min = Integer.MAX_VALUE; 
 		int max = 0;
 		int avg = 0;
+		int act = 0;
 		
 		int minCon = Integer.MAX_VALUE; 
 		int maxCon = 0;
@@ -66,6 +67,7 @@ public class Memory extends ProcessorObject {
 					if (lnk.connection>getConfig().distalConnectionThreshold) {
 						con++;
 						avgCon++;
+						act++;
 					}
 					if (lnk.cell.posZ<0 || lnk.cell.posY<0 || lnk.cell.posZ<0) {
 						ctx++;
@@ -95,6 +97,11 @@ public class Memory extends ProcessorObject {
 			}
 		}
 		if (avg>0) {
+			r.append("\n");
+			r.append("- Total distal links: ");
+			r.append("" + avg);
+			r.append(", active: ");
+			r.append("" + act);
 			avg = avg / cells;
 			r.append("\n");
 			r.append("- Average distal inputs per memory cell: ");

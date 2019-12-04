@@ -12,11 +12,8 @@ import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
 import nl.zeesoft.zdk.htm.proc.Classification;
-import nl.zeesoft.zdk.htm.proc.Classifier;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
-import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
-import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
 import nl.zeesoft.zdk.test.TestObject;
@@ -100,29 +97,21 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		
 		// Add processors
 		PoolerConfig poolerConfig = new PoolerConfig(dateTimeEncoder.length(),1024,21);
-		Pooler dateTimePooler = new Pooler(poolerConfig);
-		dateTimePooler.randomizeConnections();
-		grid.setProcessor(1,0,dateTimePooler);
+		grid.setProcessor(1,0,poolerConfig);
 		
 		poolerConfig = new PoolerConfig(valueEncoder.length(),1024,21);
-		Pooler valuePooler = new Pooler(poolerConfig);
-		valuePooler.randomizeConnections();
-		grid.setProcessor(1,1,valuePooler);
+		grid.setProcessor(1,1,poolerConfig);
 
-		poolerConfig = new PoolerConfig(positionEncoder.length(),1024,21);
-		Pooler positionPooler = new Pooler(poolerConfig);
-		positionPooler.randomizeConnections();
-		grid.setProcessor(1,2,positionPooler);
-		
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
 		memoryConfig.addContextDimension(1024);
 		memoryConfig.addContextDimension(1024);
-		Memory valueMemory = new Memory(memoryConfig);
-		grid.setProcessor(2,1,valueMemory);
+		grid.setProcessor(2,1,memoryConfig);
 		
 		ClassifierConfig classifierConfig = new ClassifierConfig(1);
-		Classifier valueClassifier = new Classifier(classifierConfig);
-		grid.setProcessor(3,1,valueClassifier);
+		grid.setProcessor(3,1,classifierConfig);
+		
+		poolerConfig = new PoolerConfig(positionEncoder.length(),1024,21);
+		grid.setProcessor(1,2,poolerConfig);
 		
 		// Route output from dateTime and position poolers to memory context
 		grid.addColumnContext(2,1,1,0);
@@ -131,14 +120,15 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		// Route value DateTimeSDR from encoder to classifier
 		grid.addColumnContext(3,1,0,1);
 
+		// Randomize pooler connections
+		grid.randomizePoolerConnections();
+		
 		System.out.println(grid.getDescription());
 		System.out.println();
 		
 		// Start grid
 		grid.start();
-		while(!grid.isWorking()) {
-			sleep(10);
-		}
+		grid.whileInactive();
 		System.out.println("Started grid");
 		
 		long started = System.currentTimeMillis();
@@ -177,9 +167,8 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		if (grid.isActive()) {
 			grid.stop();
 		}
+		grid.whileActive();
 		System.out.println("Stopped grid");
-		grid.destroy();
-		System.out.println("Destroyed grid");
 
 		// Test assertions
 		boolean success = false;
@@ -200,7 +189,10 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		}
 		
 		System.out.println();
-		System.out.println(valueMemory.getDescription());
+		System.out.println(grid.getDescription());
+		
+		grid.destroy();
+		System.out.println("Destroyed grid");
 	}
 
 	@Override

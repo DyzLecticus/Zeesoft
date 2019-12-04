@@ -40,6 +40,9 @@ public class ZGridColumn extends Worker {
 
 	protected void destroy() {
 		lockMe(this);
+		if (processor!=null) {
+			processor.destroy();
+		}
 		row = null;
 		encoder = null;
 		processor = null;

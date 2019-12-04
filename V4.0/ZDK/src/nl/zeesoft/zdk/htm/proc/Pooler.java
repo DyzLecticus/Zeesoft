@@ -53,12 +53,16 @@ public class Pooler extends ProcessorObject {
 		int min = getConfig().inputLength; 
 		int max = 0;
 		int avg = 0;
+		int act = 0;
 		for (PoolerColumn col: columns) {
 			int con = 0;
 			for (ProximalLink lnk: col.proxLinks) {
 				if (lnk.connection>=0) {
 					con++;
 					avg++;
+				}
+				if (lnk.connection>getConfig().proximalConnectionThreshold) {
+					act++;
 				}
 			}
 			if (con<min) {
@@ -69,6 +73,11 @@ public class Pooler extends ProcessorObject {
 			}
 		}
 		if (avg>0) {
+			r.append("\n");
+			r.append("- Total proximal links: ");
+			r.append("" + avg);
+			r.append(", active: ");
+			r.append("" + act);
 			avg = avg / columns.size();
 			r.append("\n");
 			r.append("- Average proximal inputs per column: ");
