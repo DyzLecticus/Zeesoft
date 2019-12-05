@@ -214,19 +214,9 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 									col.encoder = (ZGridColumnEncoder) obj;
 									col.encoder.fromJson(cfgJs);
 								} else if (obj instanceof ProcessorConfigObject) {
-									if (obj instanceof PoolerConfig) {
-										PoolerConfig config = (PoolerConfig) obj;
-										config.fromJson(cfgJs);
-										col.processor = getNewPooler(config);
-									} else if (obj instanceof MemoryConfig) {
-										MemoryConfig config = (MemoryConfig) obj;
-										config.fromJson(cfgJs);
-										col.processor = getNewMemory(config);
-									} else if (obj instanceof ClassifierConfig) {
-										ClassifierConfig config = (ClassifierConfig) obj;
-										config.fromJson(cfgJs);
-										col.processor = getNewClassifier(config);
-									}
+									ProcessorConfigObject config = (ProcessorConfigObject) obj;
+									config.fromJson(cfgJs);
+									col.processor = getNewProcessor(config);
 									JsElem ctxsElem = cfgElem.getChildByName("contexts");
 									if (ctxsElem!=null) {
 										for (JsElem ctxElem: ctxsElem.children) {
