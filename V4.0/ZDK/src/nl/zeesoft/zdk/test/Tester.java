@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZDKFactory;
+
 /**
  * A Tester provides an easy way to create a self testing and documenting library.
  * It is designed to sequentially execute tests that extend the abstract TestObject class.
@@ -174,17 +176,10 @@ public final class Tester {
 			}
 		}
 		if (r==null) {
-			try {
-				Class<?> mockObjectClass = Class.forName(mockObjectClassName);
-				r = (MockObject) mockObjectClass.newInstance();
+			r = (MockObject) ZDKFactory.getNewClassInstanceForName(mockObjectClassName);
+			if (r!=null) {
 				r.setTester(this);
 				mocks.add(r);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
 			}
 		}
 		return r;

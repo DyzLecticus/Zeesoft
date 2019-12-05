@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.htm.proc;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
-import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
@@ -12,10 +11,10 @@ import nl.zeesoft.zdk.json.JsFile;
  * The configuration cannot be changed once it has been used to instantiate a spatial pooler.
  * The input and output length are automatically translated to a 2D (or 3D single layer) input and output SDR space.
  */
-public class PoolerConfig extends ProcessorConfigObject implements JsAble {
-	protected int			inputLength						= 0;
-	protected int			outputLength					= 0;
-	protected int			outputBits						= 0;
+public class PoolerConfig extends ProcessorConfigObject {
+	protected int			inputLength						= 100;
+	protected int			outputLength					= 100;
+	protected int			outputBits						= 2;
 	
 	protected float			potentialProximalConnections	= 0.75F;
 	protected int			proximalRadius					= 5;
@@ -31,7 +30,11 @@ public class PoolerConfig extends ProcessorConfigObject implements JsAble {
 	protected int			inputSizeY						= 0;
 	protected int			outputSizeX						= 0;
 	protected int			outputSizeY						= 0;
-	
+
+	public PoolerConfig() {
+		calculateDimensions();
+	}
+
 	public PoolerConfig(int inputLength, int outputLength, int outputBits) {
 		this.inputLength = inputLength;
 		this.outputLength = outputLength;
@@ -226,7 +229,7 @@ public class PoolerConfig extends ProcessorConfigObject implements JsAble {
 
 	@Override
 	public void fromJson(JsFile json) {
-		if (json.rootElement!=null) {
+		if (!initialized && json.rootElement!=null) {
 			inputLength = json.rootElement.getChildInt("inputLength",inputLength);
 			outputLength = json.rootElement.getChildInt("outputLength",outputLength);
 			outputBits = json.rootElement.getChildInt("outputBits",outputBits);

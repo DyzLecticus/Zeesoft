@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.htm.proc;
 
-public abstract class ProcessorConfigObject {
+import nl.zeesoft.zdk.json.JsAble;
+
+public abstract class ProcessorConfigObject implements JsAble {
 	protected boolean		initialized			= false;
 }

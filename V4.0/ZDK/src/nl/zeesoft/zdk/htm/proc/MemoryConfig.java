@@ -6,7 +6,6 @@ import java.util.List;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
-import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
@@ -15,9 +14,9 @@ import nl.zeesoft.zdk.json.JsFile;
  * The configuration cannot be changed once it has been used to instantiate a temporal memory.
  * The length is automatically translated to a 3D memory space of the specified depth.
  */
-public class MemoryConfig extends ProcessorConfigObject implements JsAble {
-	protected int			length								= 0;
-	protected int			bits								= 0;
+public class MemoryConfig extends ProcessorConfigObject {
+	protected int			length								= 100;
+	protected int			bits								= 2;
 	
 	protected int			depth								= 4;
 	protected int			maxDistalConnectionsPerCell			= 9999;
@@ -32,6 +31,10 @@ public class MemoryConfig extends ProcessorConfigObject implements JsAble {
 
 	protected int			sizeX								= 0;
 	protected int			sizeY								= 0;
+
+	public MemoryConfig() {
+		calculateDimensions();
+	}
 
 	public MemoryConfig(PoolerConfig poolerConfig) {
 		this.length = poolerConfig.outputLength;
@@ -219,7 +222,7 @@ public class MemoryConfig extends ProcessorConfigObject implements JsAble {
 
 	@Override
 	public void fromJson(JsFile json) {
-		if (json.rootElement!=null) {
+		if (!initialized && json.rootElement!=null) {
 			length = json.rootElement.getChildInt("length",length);
 			sizeX = json.rootElement.getChildInt("sizeX",sizeX);
 			sizeY = json.rootElement.getChildInt("sizeY",sizeY);

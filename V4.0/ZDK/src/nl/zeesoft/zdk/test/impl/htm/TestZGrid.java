@@ -191,7 +191,16 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println();
 		System.out.println(grid.getDescription());
 		
+		ZGrid newGrid = new ZGrid(4,3);
+		System.out.println();
+		if (testJsAble(grid,newGrid,"Grid JSON does not match expectation")) {
+			System.out.println("Grid JSON;");
+			System.out.println(grid.toJson().toStringBuilderReadFormat());
+		}
+		
 		grid.destroy();
+		newGrid.destroy();
+		System.out.println();
 		System.out.println("Destroyed grid");
 	}
 

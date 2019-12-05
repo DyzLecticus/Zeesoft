@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.htm.grid;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.Classifier;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
@@ -12,11 +13,14 @@ import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.ProcessorConfigObject;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
+import nl.zeesoft.zdk.json.JsAble;
+import nl.zeesoft.zdk.json.JsElem;
+import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
-public class ZGrid extends Worker implements ZGridRequestNext {
+public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	public static final String		STATE_STOPPED	= "STOPPED";
 	public static final String		STATE_STARTING	= "STARTING";
 	public static final String		STATE_STARTED	= "STARTED";
@@ -31,12 +35,12 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 
 	public ZGrid(int rows, int columns) {
 		super(null,null);
-		initialize(null,rows,columns);
+		initialize(rows,columns);
 	}
 	
 	public ZGrid(Messenger msgr, WorkerUnion union,int rows, int columns) {
 		super(msgr, union);
-		initialize(msgr,rows,columns);
+		initialize(rows,columns);
 	}
 	
 	public String getState() {
@@ -153,6 +157,94 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		}
 		unlockMe(this);
 		return r;
+	}
+
+	@Override
+	public JsFile toJson() {
+		JsFile json = new JsFile();
+		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("rows","" + rows.size()));
+		json.rootElement.children.add(new JsElem("columns","" + rows.get(0).columns.size()));
+		JsElem cfgsElem = new JsElem("configurations",true);
+		json.rootElement.children.add(cfgsElem);
+		for (ZGridRow row: rows) {
+			for (ZGridColumn col: row.columns) {
+				if (col.encoder!=null) {
+					JsFile cfgJs = col.encoder.toJson();
+					cfgJs.rootElement.children.add(0,new JsElem("className",col.encoder.getClass().getName(),true));
+					cfgJs.rootElement.children.add(0,new JsElem("columnId",col.getId(),true));
+					cfgsElem.children.add(cfgJs.rootElement);
+				} else if (col.processor!=null) {
+					JsFile cfgJs = col.processor.getConfig().toJson();
+					cfgJs.rootElement.children.add(0,new JsElem("className",col.processor.getConfig().getClass().getName(),true));
+					cfgJs.rootElement.children.add(0,new JsElem("columnId",col.getId(),true));
+					if (col.contexts.size()>0) {
+						JsElem ctxsElem = new JsElem("contexts",true);
+						cfgJs.rootElement.children.add(ctxsElem);
+						for (ZGridColumnContext ctx: col.contexts) {
+							ctxsElem.children.add(ctx.toJson().rootElement);
+						}
+					}
+					cfgsElem.children.add(cfgJs.rootElement);
+				}
+			}
+		}
+		return json;
+	}
+
+	@Override
+	public void fromJson(JsFile json) {
+		if (json.rootElement!=null) {
+			int rs = json.rootElement.getChildInt("rows");
+			int cs = json.rootElement.getChildInt("columns");
+			JsElem cfgsElem = json.rootElement.getChildByName("configurations");
+			if (rs>0 && cs>0 && rows.size()==rs && rows.get(0).columns.size()==cs && cfgsElem!=null) {
+				lockMe(this);
+				if (state.equals(STATE_STOPPED)) {
+					for (JsElem cfgElem: cfgsElem.children) {
+						String id = cfgElem.getChildString("columnId");
+						String className = cfgElem.getChildString("className");
+						ZGridColumn col = getColumnById(id);
+						if (col!=null) {
+							Object obj = ZDKFactory.getNewClassInstanceForName(className);
+							if (obj!=null && obj instanceof JsAble) {
+								JsFile cfgJs = new JsFile();
+								cfgJs.rootElement = cfgElem;
+								if (obj instanceof ZGridColumnEncoder) {
+									col.encoder = (ZGridColumnEncoder) obj;
+									col.encoder.fromJson(cfgJs);
+								} else if (obj instanceof ProcessorConfigObject) {
+									if (obj instanceof PoolerConfig) {
+										PoolerConfig config = (PoolerConfig) obj;
+										config.fromJson(cfgJs);
+										col.processor = getNewPooler(config);
+									} else if (obj instanceof MemoryConfig) {
+										MemoryConfig config = (MemoryConfig) obj;
+										config.fromJson(cfgJs);
+										col.processor = getNewMemory(config);
+									} else if (obj instanceof ClassifierConfig) {
+										ClassifierConfig config = (ClassifierConfig) obj;
+										config.fromJson(cfgJs);
+										col.processor = getNewClassifier(config);
+									}
+									JsElem ctxsElem = cfgElem.getChildByName("contexts");
+									if (ctxsElem!=null) {
+										for (JsElem ctxElem: ctxsElem.children) {
+											JsFile ctxJs = new JsFile();
+											ctxJs.rootElement = ctxElem;
+											ZGridColumnContext ctx = new ZGridColumnContext();
+											ctx.fromJson(ctxJs);
+											col.contexts.add(ctx);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				unlockMe(this);
+			}
+		}
 	}
 	
 	public ZGridRequest getNewRequest() {
@@ -276,7 +368,7 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		}
 	}
 
-	protected void initialize(Messenger msgr,int rows, int columns) {
+	protected void initialize(int rows, int columns) {
 		if (rows < 1) {
 			rows = 1;
 		}
@@ -298,7 +390,23 @@ public class ZGrid extends Worker implements ZGridRequestNext {
 		if (pRow!=null) {
 			pRow.nextProcessor = this; 
 		}
-		results = new ZGridResults(msgr);
+		results = new ZGridResults(getMessenger());
+	}
+	
+	protected ZGridColumn getColumnById(String id) {
+		ZGridColumn r = null;
+		for (ZGridRow row: rows) {
+			for (ZGridColumn col: row.columns) {
+				if (col.getId().equals(id)) {
+					r = col;
+					break;
+				}
+			}
+			if (r!=null) {
+				break;
+			}
+		}
+		return r;
 	}
 	
 	protected ProcessorObject getNewProcessor(ProcessorConfigObject config) {

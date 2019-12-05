@@ -5,7 +5,6 @@ import java.util.List;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
-import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
@@ -14,12 +13,12 @@ import nl.zeesoft.zdk.json.JsFile;
  * The configuration cannot be changed once it has been used to instantiate a temporal memory.
  * A classifier can create classifications (or prediction) for multiple prediction steps.
  */
-public class ClassifierConfig extends ProcessorConfigObject implements JsAble {
+public class ClassifierConfig extends ProcessorConfigObject {
 	protected List<Integer>		predictSteps	= new ArrayList<Integer>();
 	protected String			valueKey		= DateTimeSDR.VALUE_KEY;
 	protected String			labelKey		= DateTimeSDR.LABEL_KEY;
 	protected int				maxCount		= 40;
-	
+
 	public ClassifierConfig() {
 		predictSteps.add(0);
 	}
@@ -149,7 +148,7 @@ public class ClassifierConfig extends ProcessorConfigObject implements JsAble {
 
 	@Override
 	public void fromJson(JsFile json) {
-		if (json.rootElement!=null) {
+		if (!initialized && json.rootElement!=null) {
 			ZStringBuilder pSteps = json.rootElement.getChildZStringBuilder("predictSteps");
 			predictSteps.clear();
 			if (pSteps.length()>0) {
