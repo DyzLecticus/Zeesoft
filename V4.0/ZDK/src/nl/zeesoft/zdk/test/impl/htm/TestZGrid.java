@@ -3,7 +3,10 @@ package nl.zeesoft.zdk.test.impl.htm;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
@@ -119,13 +122,64 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 
 		// Route value DateTimeSDR from encoder to classifier
 		grid.addColumnContext(3,1,0,1);
-
+		
 		// Randomize pooler connections
 		grid.randomizePoolerConnections();
 		
 		System.out.println(grid.getDescription());
 		System.out.println();
 		
+		boolean test = false;
+		ZGrid newGrid = new ZGrid(4,3);
+		if (testJsAble(grid,newGrid,"Grid JSON does not match expectation")) {
+			test = true;
+			System.out.println("Grid JSON;");
+			System.out.println(grid.toJson().toStringBuilderReadFormat());
+		}
+		
+		if (test) {
+			System.out.println();
+			testGrid(newGrid);
+		}
+		
+		grid.destroy();
+		newGrid.destroy();
+		System.out.println();
+		System.out.println("Destroyed grid");
+	}
+
+	@Override
+	public void processedRequest(ZGridResult result) {
+		returnedIds.add(result.getRequest().id);
+		
+		List<Classification> classifications = result.getClassifications();
+		if (classifications.size()>0) {
+			if (previousClassification!=null) {
+				Object value = result.getRequest().inputValues[1];
+				float accuracy = 0;
+				Classification classification = previousClassification;
+				for (Object predicted: classification.mostCountedValues) {
+					//System.out.println("Predicted: " + predicted + ", value: " + value);
+					if (predicted.equals(value)) {
+						accuracy = 1;
+						break;
+					}
+				}
+				averageAccuracy.addFloat(accuracy);
+			}
+			previousClassification = classifications.get(0);
+		} 
+			
+		if (returnedIds.size() % 100 == 0) {
+			System.out.println("Processed requests: " + returnedIds.size() + ", accuracy: " + df.format(averageAccuracy.average));
+		}
+		
+		if (returnedIds.size()==expectedIds.size()) {
+			grid.stop();
+		}
+	}
+	
+	private void testGrid(ZGrid newGrid) {
 		// Start grid
 		grid.start();
 		grid.whileInactive();
@@ -188,50 +242,20 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 			System.out.println("Processing " + expectedIds.size() + " requests took " + (stopped - started) + " ms");
 		}
 		
+		ZStringBuilder desc = grid.getDescription();
 		System.out.println();
-		System.out.println(grid.getDescription());
+		System.out.println(desc);
 		
-		ZGrid newGrid = new ZGrid(4,3);
+		SortedMap<String,ZStringBuilder> columnIdStateDataMap = grid.getColumnStateData();
 		System.out.println();
-		if (testJsAble(grid,newGrid,"Grid JSON does not match expectation")) {
-			System.out.println("Grid JSON;");
-			System.out.println(grid.toJson().toStringBuilderReadFormat());
+		System.out.println("Grid column state data;");
+		for (Entry<String,ZStringBuilder> entry: columnIdStateDataMap.entrySet()) {
+			System.out.println("- " + entry.getKey() + ": " + entry.getValue().length());
 		}
-		
-		grid.destroy();
-		newGrid.destroy();
-		System.out.println();
-		System.out.println("Destroyed grid");
-	}
-
-	@Override
-	public void processedRequest(ZGridResult result) {
-		returnedIds.add(result.getRequest().id);
-		
-		List<Classification> classifications = result.getClassifications();
-		if (classifications.size()>0) {
-			if (previousClassification!=null) {
-				Object value = result.getRequest().inputValues[1];
-				float accuracy = 0;
-				Classification classification = previousClassification;
-				for (Object predicted: classification.mostCountedValues) {
-					//System.out.println("Predicted: " + predicted + ", value: " + value);
-					if (predicted.equals(value)) {
-						accuracy = 1;
-						break;
-					}
-				}
-				averageAccuracy.addFloat(accuracy);
-			}
-			previousClassification = classifications.get(0);
-		} 
-			
-		if (returnedIds.size() % 100 == 0) {
-			System.out.println("Processed requests: " + returnedIds.size() + ", accuracy: " + df.format(averageAccuracy.average));
-		}
-		
-		if (returnedIds.size()==expectedIds.size()) {
-			grid.stop();
+		newGrid.setColumnStateData(columnIdStateDataMap);
+		ZStringBuilder newDesc = newGrid.getDescription();
+		if (!assertEqual(desc.equals(newDesc),true,"New grid description does not match expectation")) {
+			System.err.println(newDesc);
 		}
 	}
 }

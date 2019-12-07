@@ -2,6 +2,9 @@ package nl.zeesoft.zdk.htm.grid;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
@@ -237,6 +240,49 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		}
 	}
 	
+	public SortedMap<String,ZStringBuilder> getColumnStateData() {
+		SortedMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>();
+		lockMe(this);
+		if (state.equals(STATE_STOPPED)) {
+			for (ZGridRow row: rows) {
+				for (ZGridColumn col: row.columns) {
+					ZStringBuilder state = null;
+					if (col.encoder!=null) {
+						state = col.encoder.toStringBuilder();
+					} else if (col.processor!=null) {
+						state = col.processor.toStringBuilder();
+					}
+					if (state!=null && state.length()>0) {
+						r.put(col.getId(),state);
+					}
+				}
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+	
+	public void setColumnStateData(SortedMap<String,ZStringBuilder> columnIdStateDataMap) {
+		for (Entry<String,ZStringBuilder> entry: columnIdStateDataMap.entrySet()) {
+			setColumnStateData(entry.getKey(),entry.getValue());
+		}
+	}
+
+	public void setColumnStateData(String columnId, ZStringBuilder stateData) {
+		lockMe(this);
+		if (state.equals(STATE_STOPPED)) {
+			ZGridColumn col = getColumnById(columnId);
+			if (col!=null) {
+				if (col.encoder!=null) {
+					col.encoder.fromStringBuilder(stateData);
+				} else if (col.processor!=null) {
+					col.processor.fromStringBuilder(stateData);
+				}
+			}
+		}
+		unlockMe(this);
+	}
+
 	public ZGridRequest getNewRequest() {
 		return new ZGridRequest(rows.get(0).columns.size());
 	}

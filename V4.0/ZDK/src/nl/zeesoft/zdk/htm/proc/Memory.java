@@ -228,9 +228,9 @@ public class Memory extends ProcessorObject {
 		}
 		
 		List<ZStringBuilder> cols = str.split("#");
-		if (cols.size()==columns.size()) {
+		if (cols.size()==allColumns.size()) {
 			for (int i = 0; i < cols.size(); i++) {
-				MemoryColumn col = columns.get(i);
+				MemoryColumn col = allColumns.get(i);
 				List<ZStringBuilder> cells = cols.get(i).split("|");
 				if (cells.size()==col.cells.size()) {
 					for (int j = 0; j < cells.size(); j++) {
