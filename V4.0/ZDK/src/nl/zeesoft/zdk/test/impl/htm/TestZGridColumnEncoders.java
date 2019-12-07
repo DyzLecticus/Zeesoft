@@ -1,6 +1,8 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.grid.ZGrid;
+import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderProperty;
@@ -9,47 +11,42 @@ import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestZGridEncoders extends TestObject {
-	public TestZGridEncoders(Tester tester) {
+public class TestZGridColumnEncoders extends TestObject {
+	public TestZGridColumnEncoders(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestZGridEncoders(new Tester())).test(args);
+		(new TestZGridColumnEncoders(new Tester())).test(args);
 	}
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.  ");
-		System.out.println();
-		System.out.println("**Please note** that this implementation differs greatly from the Numenta HTM implementation because it does not model dendrites;  ");
-		System.out.println("Memory cells are directly connected to each other and dendrite activation is not limited.  ");
-		System.out.println("Further more, distal connections do not need to be randomly initialized when the memory is created.  ");
+		System.out.println("This test shows the configuration options of several *ZGridColumnEncoder* instances.  ");
+		System.out.println("*ZGridColumnEncoder* instances are used to translate *ZGrid* request values into SDRs for further grid processing.  ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the configuration");
-		System.out.println("MemoryConfig config = new MemoryConfig(1024);");
-		System.out.println("// Create the memory");
-		System.out.println("Memory memory = new Memory(config);");
-		System.out.println("// Obtain the output SDR for a certain input SDR");
-		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
+		System.out.println("// Create a date/time grid encoder");
+		System.out.println("ZGridEncoderDateTime dateTimeEncoder = new ZGridEncoderDateTime();");
+		System.out.println("// Transform the encoder to JSON");
+		System.out.println("JsFile json = dateTimeEncoder.toJson();");
+		System.out.println("// Configure the encoder using JSON");
+		System.out.println("dateTimeEncoder.fromJson(json);");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockRegularSDRMap.class.getName());
-		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestGrid.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestZGridColumnEncoders.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGridColumnEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGrid.class));
 		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
-		System.out.println(" * " + getTester().getLinkForClass(MemoryConfig.class));
-		System.out.println(" * " + getTester().getLinkForClass(Memory.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGridEncoderDateTime.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGridEncoderValue.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGridEncoderPosition.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGridEncoderProperty.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows;  ");
-		System.out.println(" * How memory column bursting is reduced after leaning several sequences  ");
-		System.out.println(" * Information about the memory after passing the SDR test set through it  ");
-		*/
+		System.out.println("The output of this test shows the JSON representations of several encoders  ");
 	}
 	
 	@Override

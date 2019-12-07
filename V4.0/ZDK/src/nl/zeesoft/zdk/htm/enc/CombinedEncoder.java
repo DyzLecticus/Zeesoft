@@ -155,7 +155,7 @@ public class CombinedEncoder {
 	}
 	
 	/**
-	 * Iterates through all possible values of the encoders to determine if the SDR values have a certain minimal and maximal overlap.
+	 * Iterates through all possible values of the scalar encoders in this combined encoder to determine if the SDR values have a certain minimal and maximal overlap.
 	 * 
 	 * @return An empty string builder or a string builder containing an error message
 	 */

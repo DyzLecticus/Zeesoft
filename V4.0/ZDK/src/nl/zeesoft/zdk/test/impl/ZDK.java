@@ -19,6 +19,8 @@ import nl.zeesoft.zdk.test.impl.htm.TestSDRMap;
 import nl.zeesoft.zdk.test.impl.htm.TestScalarEncoder;
 import nl.zeesoft.zdk.test.impl.htm.TestStreamEncoder;
 import nl.zeesoft.zdk.test.impl.htm.TestValueClassifier;
+import nl.zeesoft.zdk.test.impl.htm.TestZGrid;
+import nl.zeesoft.zdk.test.impl.htm.TestZGridColumnEncoders;
 
 /**
  * Documents and tests the ZDK.
@@ -109,5 +111,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestStreamEncoder(getTester()));
 		tests.add(new TestAnomalyDetector(getTester()));
 		tests.add(new TestValueClassifier(getTester()));
+		tests.add(new TestZGridColumnEncoders(getTester()));
+		tests.add(new TestZGrid(getTester()));
 	}
 }

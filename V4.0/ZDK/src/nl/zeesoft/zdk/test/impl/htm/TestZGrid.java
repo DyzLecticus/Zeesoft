@@ -8,6 +8,7 @@ import java.util.SortedMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
+import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.grid.ZGridResultsListener;
@@ -40,36 +41,47 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *Memory* instance to learn temporal sequences of SDRs.  ");
-		System.out.println();
-		System.out.println("**Please note** that this implementation differs greatly from the Numenta HTM implementation because it does not model dendrites;  ");
-		System.out.println("Memory cells are directly connected to each other and dendrite activation is not limited.  ");
-		System.out.println("Further more, distal connections do not need to be randomly initialized when the memory is created.  ");
+		System.out.println("This test shows how to create and configure a *ZGrid* instance to learn and predict sequences of values.");
+		System.out.println("A *ZGrid* consists of several rows and columns where each column processes a certain input value.");
+		System.out.println("It uses multithreading to maximize the througput of grid requests.");
+		System.out.println("The first row of a *ZGrid* is reserved for *ZGridColumnEncoder* objects that translate request input values into SDRs.");
+		System.out.println("The remaining rows can be used for *Pooler*, *Memory*, *Classifier* and custom processors.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the configuration");
-		System.out.println("MemoryConfig config = new MemoryConfig(1024);");
-		System.out.println("// Create the memory");
-		System.out.println("Memory memory = new Memory(config);");
-		System.out.println("// Obtain the output SDR for a certain input SDR");
-		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
+		System.out.println("// Create the grid");
+		System.out.println("ZGrid grid = new ZGrid(4,2);");
+		System.out.println("// Add encoders");
+		System.out.println("grid.setEncoder(0,new ZGridEncoderDateTime());");
+		System.out.println("grid.setEncoder(1,new ZGridEncoderValue(256));");
+		System.out.println("// Add processors");
+		System.out.println("grid.setProcessor(1,0,new PoolerConfig(256,1024,21));");
+		System.out.println("grid.setProcessor(1,1,new PoolerConfig(256,1024,21));");
+		System.out.println("MemoryConfig config = new MemoryConfig(1024,21);");
+		System.out.println("config.addContextDimension(1024);");
+		System.out.println("grid.setProcessor(2,1,config);");
+		System.out.println("grid.setProcessor(3,1,new ClassifierConfig(1));");
+		System.out.println("// Route output from date/time pooler to value memory context");
+		System.out.println("grid.addColumnContext(2,1,1,0);");
+		System.out.println("// Route output from value encoder to value classifier context");
+		System.out.println("grid.addColumnContext(3,1,0,1);");
+		System.out.println("// Add a listener for grid results");
+		System.out.println("grid.addListener(this);");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockRegularSDRMap.class.getName());
-		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestGrid.class));
-		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
-		System.out.println(" * " + getTester().getLinkForClass(MemoryConfig.class));
-		System.out.println(" * " + getTester().getLinkForClass(Memory.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestZGrid.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGrid.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGridRequest.class));
+		System.out.println(" * " + getTester().getLinkForClass(ZGridColumnEncoder.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
-		System.out.println(" * How memory column bursting is reduced after leaning several sequences  ");
-		System.out.println(" * Information about the memory after passing the SDR test set through it  ");
-		*/
+		System.out.println(" * A description of the grid after initialization  ");
+		System.out.println(" * A JSON representation of the grid configuration  ");
+		System.out.println(" * The classifier prediction accuracy of the grid while processing requests   ");
+		System.out.println(" * A description of the grid after processign requests  ");
+		System.out.println(" * The size of the state data for each grid processor  ");
 	}
 	
 	@Override
@@ -116,8 +128,8 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		grid.setProcessor(1,2,poolerConfig);
 		
 		// Route output from dateTime and position poolers to memory context
-		grid.addColumnContext(2,1,1,0);
-		grid.addColumnContext(2,1,1,2);
+		int[] sourceColumns = {0,2};
+		grid.addColumnContexts(2,1,1,sourceColumns);
 
 		// Route value DateTimeSDR from encoder to classifier
 		grid.addColumnContext(3,1,0,1);
@@ -254,7 +266,10 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		for (Entry<String,ZStringBuilder> entry: columnIdStateDataMap.entrySet()) {
 			System.out.println("- " + entry.getKey() + ": " + entry.getValue().length());
 		}
+		long started = System.currentTimeMillis();
 		newGrid.setColumnStateData(columnIdStateDataMap);
+		System.out.println("Loading state data took " + (System.currentTimeMillis() - started) + " ms");
+		
 		ZStringBuilder newDesc = newGrid.getDescription();
 		if (!assertEqual(desc.equals(newDesc),true,"New grid description does not match expectation")) {
 			System.err.println(newDesc);
