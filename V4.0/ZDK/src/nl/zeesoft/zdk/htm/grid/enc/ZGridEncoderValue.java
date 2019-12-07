@@ -82,13 +82,21 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		this.scaled = scaled;
 		rebuildEncoder();
 	}
-	
-	public SDR getSDRForValue(float value) {
+
+	public SDR getSDRForFloatValue(float value) {
 		SDR r = null;
 		SortedMap<String,Float> values = new TreeMap<String,Float>();
 		values.put(valueKey,value);
 		r = encoder.getSDRForValues(values);
 		return r;
+	}
+
+	public SDR getSDRForIntegerValue(int value) {
+		return getSDRForFloatValue((float) value);
+	}
+
+	public SDR getSDRForLongValue(long value) {
+		return getSDRForFloatValue((float) value);
 	}
 
 	@Override
@@ -123,8 +131,17 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	
 	@Override
 	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
-		float value = getInputValueAsFloat(columnIndex, result);
-		DateTimeSDR r = new DateTimeSDR(getSDRForValue(value));
+		DateTimeSDR r = null;
+		Object value = result.getRequest().inputValues[columnIndex];
+		if (hasInputValue(columnIndex,result)) {
+			if (result.getRequest().inputValues[columnIndex] instanceof Float) {
+				r = new DateTimeSDR(getSDRForFloatValue((float)value));
+			} else if (result.getRequest().inputValues[columnIndex] instanceof Integer) {
+				r = new DateTimeSDR(getSDRForIntegerValue((int)value));
+			} else if (result.getRequest().inputValues[columnIndex] instanceof Long) {
+				r = new DateTimeSDR(getSDRForLongValue((long)value));
+			}
+		}
 		r.dateTime = result.getRequest().dateTime;
 		r.keyValues.put(valueKey,value);
 		if (result.getRequest().inputLabels.length>columnIndex &&

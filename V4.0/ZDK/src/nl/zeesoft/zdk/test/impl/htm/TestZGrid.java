@@ -184,7 +184,6 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 				float accuracy = 0;
 				Classification classification = previousClassification;
 				for (Object predicted: classification.mostCountedValues) {
-					//System.out.println("Predicted: " + predicted + ", value: " + value);
 					if (predicted.equals(value)) {
 						accuracy = 1;
 						break;
@@ -223,7 +222,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 				ZGridRequest request = grid.getNewRequest();
 				request.dateTime = dateTime;
 				request.inputValues[0] = request.dateTime;
-				request.inputValues[1] = (float) r;
+				request.inputValues[1] = r;
 				request.inputValues[2] = position;
 				expectedIds.add(grid.addRequest(request));
 				dateTime += 1000;

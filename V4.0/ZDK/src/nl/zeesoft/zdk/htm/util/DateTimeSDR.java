@@ -5,7 +5,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * A DateTimeSDR is used by streams to propagate the actual input along with the SDR so classifiers can learn to classify and predict real values. 
+ * A DateTimeSDR is used to propagate the input that created the SDR along with the SDR so classifiers can learn to classify and predict real values. 
  */
 public class DateTimeSDR extends SDR {
 	public static final String			VALUE_KEY	= "VALUE";

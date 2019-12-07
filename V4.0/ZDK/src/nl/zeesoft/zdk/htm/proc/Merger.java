@@ -51,12 +51,14 @@ public class Merger extends ProcessorObject {
 	protected SDR getSDRForInputSDR(SDR input, boolean learn) {
 		DateTimeSDR r = null;
 		SDR t = null;
+		long dateTime = 0;
 		SortedMap<String,Object> keyValues = new TreeMap<String,Object>();
 		boolean skipFirst = false;
 		if (input!=null) {
 			t = input;
 			if (input instanceof DateTimeSDR) {
 				DateTimeSDR sdr = (DateTimeSDR) input;
+				dateTime = sdr.dateTime;
 				for (Entry<String,Object> entry: sdr.keyValues.entrySet()) {
 					keyValues.put(entry.getKey(),entry.getValue());
 				}
@@ -75,12 +77,16 @@ public class Merger extends ProcessorObject {
 			first = false;
 			if (contextSDR instanceof DateTimeSDR) {
 				DateTimeSDR sdr = (DateTimeSDR) contextSDR;
+				if (dateTime==0) {
+					dateTime = sdr.dateTime;
+				}
 				for (Entry<String,Object> entry: sdr.keyValues.entrySet()) {
 					keyValues.put(entry.getKey(),entry.getValue());
 				}
 			}
 		}
 		r = new DateTimeSDR(t);
+		r.dateTime = dateTime;
 		for (Entry<String,Object> entry: keyValues.entrySet()) {
 			r.keyValues.put(entry.getKey(),entry.getValue());
 		}
