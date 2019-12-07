@@ -23,6 +23,13 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
+/**
+ * A ZGrid consists of several rows and columns where each column can process a certain input value.
+ * It uses multithreading to maximize the throughput of grid requests.
+ * The first row of a ZGrid is reserved for ZGridColumnEncoder* objects that translate request input values into SDRs.
+ * The remaining rows can be used for Pooler, Memory, Classifier and custom processors.
+ * Context routing can be used to route the output of a column to the context of another column.
+ */
 public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	public static final String		STATE_STOPPED	= "STOPPED";
 	public static final String		STATE_STARTING	= "STARTING";

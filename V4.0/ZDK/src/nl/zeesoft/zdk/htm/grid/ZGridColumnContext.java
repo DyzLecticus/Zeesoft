@@ -8,6 +8,10 @@ public class ZGridColumnContext implements JsAble {
 	protected int sourceRow		= 0;
 	protected int sourceColumn	= 0;
 	protected int sourceIndex	= 0;
+	
+	protected ZGridColumnContext() {
+		
+	}
 
 	@Override
 	public JsFile toJson() {

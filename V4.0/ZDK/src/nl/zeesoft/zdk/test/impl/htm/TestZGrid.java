@@ -42,10 +42,11 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 	@Override
 	protected void describe() {
 		System.out.println("This test shows how to create and configure a *ZGrid* instance to learn and predict sequences of values.");
-		System.out.println("A *ZGrid* consists of several rows and columns where each column processes a certain input value.");
-		System.out.println("It uses multithreading to maximize the througput of grid requests.");
+		System.out.println("A *ZGrid* consists of several rows and columns where each column can process a certain input value.");
+		System.out.println("It uses multithreading to maximize the throughput of grid requests.");
 		System.out.println("The first row of a *ZGrid* is reserved for *ZGridColumnEncoder* objects that translate request input values into SDRs.");
 		System.out.println("The remaining rows can be used for *Pooler*, *Memory*, *Classifier* and custom processors.");
+		System.out.println("Context routing can be used to route the output of a column to the context of another column.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");

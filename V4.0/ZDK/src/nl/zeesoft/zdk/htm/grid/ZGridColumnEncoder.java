@@ -5,27 +5,59 @@ import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.json.JsAble;
 
+/**
+ * ZGridColumnEncoder instances are used to translate ZGridRequest input values into SDRs for further grid processing.  
+ */
 public abstract class ZGridColumnEncoder implements JsAble {
 	protected CombinedEncoder encoder	=	null;
 	
+	/**
+	 * Returns the value key used to store the original value that created the DateTimeSDR in its keyValues property.
+	 * 
+	 * @return The value key
+	 */
 	public abstract String getValueKey();
 	
+	/**
+	 * Returns the length of the SDRs this encoder generates.
+	 * 
+	 * @return The length
+	 */
 	public int length() {
 		return encoder.length();
 	}
 	
+	/**
+	 * Returns the description of this encoder.
+	 * @return The description
+	 */
 	public ZStringBuilder getDescription() {
 		return encoder.getDescription();
 	}
 	
+	/**
+	 * Returns an error message if the scalar encoders in the encoder do not overlap.
+	 * 
+	 * @return An empty string builder or a string builder containing an error message
+	 */
 	public ZStringBuilder testScalarOverlap() {
 		return encoder.testScalarOverlap();
 	}
 	
+	/**
+	 * Returns a string builder representation the state of StateEncoderObject instances in this encoder.
+	 * 
+	 * @return The string builder
+	 */
 	public ZStringBuilder toStringBuilder() {
 		return encoder.toStringBuilder();
 	}
 	
+	/**
+	 * Initializes the state of StateEncoderObject instances in this encoder using a string builder.
+	 * 
+	 * @param str The string builder
+	 */
 	public void fromStringBuilder(ZStringBuilder str) {
 		encoder.fromStringBuilder(str);
 	}
