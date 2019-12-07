@@ -97,4 +97,15 @@ public abstract class ZGridColumnEncoder implements JsAble {
 		}
 		return r;
 	}
+	
+	protected String getInputLabel(int columnIndex,ZGridResult result) {
+		String r = "";
+		if (result.getRequest().inputLabels.length>columnIndex &&
+			result.getRequest().inputLabels[columnIndex]!=null &&
+			result.getRequest().inputLabels[columnIndex].length()>0
+			) {
+			r = result.getRequest().inputLabels[columnIndex];
+		}
+		return r;
+	}
 }

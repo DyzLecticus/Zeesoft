@@ -115,6 +115,10 @@ public class ZGridEncoderPosition extends ZGridColumnEncoder {
 			pos.append("" + position[2]);
 		}
 		r.keyValues.put(getValueKey(),pos.toString());
+		String label = getInputLabel(columnIndex,result);
+		if (label.length()>0) {
+			r.keyValues.put(DateTimeSDR.LABEL_KEY,label);
+		}
 		return r;
 	}
 	

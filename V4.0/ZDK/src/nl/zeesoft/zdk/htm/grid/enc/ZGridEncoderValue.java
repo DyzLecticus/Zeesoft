@@ -144,11 +144,9 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		}
 		r.dateTime = result.getRequest().dateTime;
 		r.keyValues.put(valueKey,value);
-		if (result.getRequest().inputLabels.length>columnIndex &&
-			result.getRequest().inputLabels[columnIndex]!=null &&
-			result.getRequest().inputLabels[columnIndex].length()>0
-			) {
-			r.keyValues.put(DateTimeSDR.LABEL_KEY,result.getRequest().inputLabels[columnIndex]);
+		String label = getInputLabel(columnIndex,result);
+		if (label.length()>0) {
+			r.keyValues.put(DateTimeSDR.LABEL_KEY,label);
 		}
 		return r;
 	}
