@@ -50,6 +50,10 @@ public class ZGridColumn extends Worker {
 		unlockMe(this);
 	}
 	
+	protected boolean isActive() {
+		return encoder!=null || processor!=null;
+	}
+	
 	@Override
 	protected void whileWorking() {
 		lockMe(this);

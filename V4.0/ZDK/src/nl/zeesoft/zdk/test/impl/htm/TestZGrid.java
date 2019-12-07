@@ -23,7 +23,6 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
 public class TestZGrid extends TestObject implements ZGridResultsListener {
-	private ZGrid					grid					= null;
 	private List<Long>				expectedIds				= new ArrayList<Long>();
 	private List<Long>				returnedIds				= new ArrayList<Long>();
 	
@@ -75,7 +74,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 	
 	@Override
 	protected void test(String[] args) {
-		grid = new ZGrid(4,3);
+		ZGrid grid = new ZGrid(4,3);
 		
 		grid.addListener(this);
 
@@ -139,7 +138,8 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		
 		if (test) {
 			System.out.println();
-			testGrid(newGrid);
+			testGrid(grid);
+			testNewGrid(grid,newGrid);
 		}
 		
 		grid.destroy();
@@ -149,7 +149,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 	}
 
 	@Override
-	public void processedRequest(ZGridResult result) {
+	public void processedRequest(ZGrid grid,ZGridResult result) {
 		returnedIds.add(result.getRequest().id);
 		
 		List<Classification> classifications = result.getClassifications();
@@ -179,7 +179,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		}
 	}
 	
-	private void testGrid(ZGrid newGrid) {
+	private void testGrid(ZGrid grid) {
 		// Start grid
 		grid.start();
 		grid.whileInactive();
@@ -241,7 +241,9 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		if (success) {
 			System.out.println("Processing " + expectedIds.size() + " requests took " + (stopped - started) + " ms");
 		}
-		
+	}
+	
+	private void testNewGrid(ZGrid grid,ZGrid newGrid) {
 		ZStringBuilder desc = grid.getDescription();
 		System.out.println();
 		System.out.println(desc);

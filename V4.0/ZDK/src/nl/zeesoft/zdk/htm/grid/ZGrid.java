@@ -29,6 +29,9 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	public static final String		STATE_STARTED	= "STARTED";
 	public static final String		STATE_STOPPING	= "STOPPING";
 	
+	private int						numRows			= 1;
+	private int						numColumns		= 1;
+	
 	private String					state			= STATE_STOPPED;
 	
 	private List<ZGridRow>			rows			= new ArrayList<ZGridRow>();
@@ -46,6 +49,11 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		initialize(rows,columns);
 	}
 	
+	/**
+	 * Returns the grid state.
+	 * 
+	 * @return The grid state
+	 */
 	public String getState() {
 		String r = "";
 		lockMe(this);
@@ -54,6 +62,11 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		return r;
 	}
 	
+	/**
+	 * Indicates the grid state does not equal STATE_STOPPED.
+	 * 
+	 * @return True if the grid state does not equal STATE_STOPPED
+	 */
 	public boolean isActive() {
 		boolean r = false;
 		lockMe(this);
@@ -62,36 +75,69 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		return r;
 	}
 
+	/**
+	 * Adds a result listener to the grid.
+	 * 
+	 * @param listener The result listener to add
+	 */
 	public void addListener(ZGridResultsListener listener) {
 		results.addListener(listener);
 	}
 
+	/**
+	 * Indicates processors should learn from requests (default = true).
+	 * 
+	 * @param learn Indicates processors should learn from requests
+	 */
 	public void setLearn(boolean learn) {
 		lockMe(this);
 		this.learn = learn;
 		unlockMe(this);
 	}
 
+	/**
+	 * Sets the encoder for the specified column.
+	 * Encoders are always placed in the first row of the grid.
+	 * 
+	 * @param columnIndex The column index
+	 * @param encoder The encoder to be placed at the specified column index
+	 */
 	public void setEncoder(int columnIndex,ZGridColumnEncoder encoder) {
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
-			if (rows.size()>0 && rows.get(0).columns.size()>columnIndex) {
+			if (numRows>0 && numColumns>columnIndex) {
 				rows.get(0).columns.get(columnIndex).encoder = encoder;
 			}
 		}
 		unlockMe(this);
 	}
 
+	/**
+	 * Sets a processor at the specified position in the grid.
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndex The column index
+	 * @param processor The processor
+	 */
 	public void setProcessor(int rowIndex,int columnIndex,ProcessorObject processor) {
-		lockMe(this);
-		if (state.equals(STATE_STOPPED)) {
-			if (rowIndex>0 && rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex) {
-				rows.get(rowIndex).columns.get(columnIndex).processor = processor;
+		if (rowIndex>0) {
+			lockMe(this);
+			if (state.equals(STATE_STOPPED)) {
+				if (rowIndex>0 && numRows>rowIndex && numColumns>columnIndex) {
+					rows.get(rowIndex).columns.get(columnIndex).processor = processor;
+				}
 			}
+			unlockMe(this);
 		}
-		unlockMe(this);
 	}
 
+	/**
+	 * Creates a processor at the specified position in the grid using the specified configuration.
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndex The column index
+	 * @param processor The processor
+	 */
 	public ProcessorObject setProcessor(int rowIndex,int columnIndex,ProcessorConfigObject config) {
 		ProcessorObject r = null;
 		r = getNewProcessor(config);
@@ -101,14 +147,85 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		return r;
 	}
 
+	/**
+	 * Adds column context to the specified columns of a row using a single source (1 - N).
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndexes The array of column indexes
+	 * @param sourceRow The source row index
+	 * @param sourceColumn The source column index
+	 */
+	public void addColumnContexts(int rowIndex,int[] columnIndexes,int sourceRow,int sourceColumn) {
+		addColumnContexts(rowIndex,columnIndexes,sourceRow,sourceColumn,0);
+	}
+
+	/**
+	 * Adds column context to the specified columns of a row using a single source (1 - N).
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndexes The array of column indexes
+	 * @param sourceRow The source row index
+	 * @param sourceColumn The source column index
+	 * @param sourceIndex The source column result index
+	 */
+	public void addColumnContexts(int rowIndex,int[] columnIndexes,int sourceRow,int sourceColumn,int sourceIndex) {
+		for (int i = 0; i < columnIndexes.length; i++) {
+			addColumnContext(rowIndex,columnIndexes[i],sourceRow,sourceColumn,sourceIndex);
+		}
+	}
+
+	/**
+	 * Adds column context to the specified column using multiple sources (N - 1).
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndex The column index
+	 * @param sourceRow The source row index
+	 * @param sourceColumns The array of source column indexes
+	 */
+	public void addColumnContexts(int rowIndex,int columnIndex,int sourceRow,int[] sourceColumns) {
+		addColumnContexts(rowIndex,columnIndex,sourceRow,sourceColumns,0);
+	}
+	
+	/**
+	 * Adds column context to the specified column using multiple sources (N - 1).
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndex The column index
+	 * @param sourceRow The source row index
+	 * @param sourceColumns The array of source column indexes
+	 * @param sourceIndex The source column result index
+	 */
+	public void addColumnContexts(int rowIndex,int columnIndex,int sourceRow,int[] sourceColumns,int sourceIndex) {
+		for (int i = 0; i < sourceColumns.length; i++) {
+			addColumnContext(rowIndex,columnIndex,sourceRow,sourceColumns[i],sourceIndex);
+		}
+	}
+
+	/**
+	 * Adds column context to the specified column using a single source (1 - 1).
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndex The column index
+	 * @param sourceRow The source row index
+	 * @param sourceColumn The source column index
+	 */
 	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn) {
 		addColumnContext(rowIndex,columnIndex,sourceRow,sourceColumn,0);
 	}
 
+	/**
+	 * Adds column context to the specified column using a single source (1 - 1).
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndex The column index
+	 * @param sourceRow The source row index
+	 * @param sourceColumn The source column index
+	 * @param sourceIndex The source column result index
+	 */
 	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn,int sourceIndex) {
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
-			if (rows.size()>rowIndex && rows.get(rowIndex).columns.size()>columnIndex && sourceRow<rowIndex) {
+			if (numRows>rowIndex && numColumns>columnIndex && sourceRow<rowIndex) {
 				ZGridColumnContext context = new ZGridColumnContext();
 				context.sourceRow = sourceRow;
 				context.sourceColumn = sourceColumn;
@@ -119,6 +236,9 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		unlockMe(this);
 	}
 	
+	/**
+	 * Randomizes connections for all poolers in the grid.
+	 */
 	public void randomizePoolerConnections() {
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
@@ -133,8 +253,17 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		unlockMe(this);
 	}
 
+	/**
+	 * Returns a description of this grid including its encoders and processors.
+	 * 
+	 * @return The description
+	 */
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = new ZStringBuilder();
+		r.append("Grid dimensions: ");
+		r.append("" + numRows);
+		r.append("*");
+		r.append("" + numColumns);
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
 			for (ZGridRow row: rows) {
@@ -166,8 +295,8 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("rows","" + rows.size()));
-		json.rootElement.children.add(new JsElem("columns","" + rows.get(0).columns.size()));
+		json.rootElement.children.add(new JsElem("rows","" + numRows));
+		json.rootElement.children.add(new JsElem("columns","" + numColumns));
 		JsElem cfgsElem = new JsElem("configurations",true);
 		json.rootElement.children.add(cfgsElem);
 		for (ZGridRow row: rows) {
@@ -201,7 +330,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 			int rs = json.rootElement.getChildInt("rows");
 			int cs = json.rootElement.getChildInt("columns");
 			JsElem cfgsElem = json.rootElement.getChildByName("configurations");
-			if (rs>0 && cs>0 && rows.size()==rs && rows.get(0).columns.size()==cs && cfgsElem!=null) {
+			if (rs>0 && cs>0 && numRows==rs && numColumns==cs && cfgsElem!=null) {
 				lockMe(this);
 				if (state.equals(STATE_STOPPED)) {
 					for (JsElem cfgElem: cfgsElem.children) {
@@ -240,6 +369,11 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		}
 	}
 	
+	/**
+	 * Returns a map of the columns state data.
+	 * 
+	 * @return A map of the columns state data
+	 */
 	public SortedMap<String,ZStringBuilder> getColumnStateData() {
 		SortedMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>();
 		lockMe(this);
@@ -262,12 +396,23 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		return r;
 	}
 	
+	/**
+	 * Sets the column state data.
+	 * 
+	 * @param columnIdStateDataMap A tree map of column id strings and state data string builders 
+	 */
 	public void setColumnStateData(SortedMap<String,ZStringBuilder> columnIdStateDataMap) {
 		for (Entry<String,ZStringBuilder> entry: columnIdStateDataMap.entrySet()) {
 			setColumnStateData(entry.getKey(),entry.getValue());
 		}
 	}
 
+	/**
+	 * Sets the column state data of a specific column.
+	 * 
+	 * @param columnId The id of the column
+	 * @param stateData The column state data
+	 */
 	public void setColumnStateData(String columnId, ZStringBuilder stateData) {
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
@@ -283,10 +428,21 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		unlockMe(this);
 	}
 
+	/**
+	 * Returns a new grid request.
+	 * 
+	 * @return A new grid request
+	 */
 	public ZGridRequest getNewRequest() {
-		return new ZGridRequest(rows.get(0).columns.size());
+		return new ZGridRequest(numColumns);
 	}
 	
+	/**
+	 * Adds a request to the grid for processing.
+	 * 
+	 * @param request The request to add
+	 * @return The id assigned to the request
+	 */
 	public long addRequest(ZGridRequest request) {
 		lockMe(this);
 		request.learn = learn;
@@ -331,14 +487,23 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		}
 	}
 
+	/**
+	 * Pauses the calling thread while the grid is inactive.
+	 */
 	public void whileInactive() {
 		whileActive(false);
 	}
 	
+	/**
+	 * Pauses the calling thread while the grid is active.
+	 */
 	public void whileActive() {
 		whileActive(true);
 	}
 	
+	/**
+	 * Destroys the grid and its processors.
+	 */
 	public void destroy() {
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
@@ -398,7 +563,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	}
 
 	protected void addColumn(int rowIndex) {
-		if (rows.size()>rowIndex) {
+		if (numRows>rowIndex) {
 			ZGridRow row = rows.get(rowIndex);
 			row.addColumn();
 		}
@@ -411,6 +576,8 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		if (columns < 1) {
 			columns = 1;
 		}
+		numRows = rows;
+		numColumns = columns;
 		setSleep(1);
 		ZGridRow pRow = null;
 		for (int r = 0; r < rows; r++) {
@@ -426,7 +593,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		if (pRow!=null) {
 			pRow.nextProcessor = this; 
 		}
-		results = new ZGridResults(getMessenger());
+		results = new ZGridResults(getMessenger(),this);
 	}
 	
 	protected ZGridColumn getColumnById(String id) {

@@ -33,7 +33,9 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 	@Override
 	public void start() {
 		for (ZGridColumn col: columns) {
-			col.start();
+			if (col.isActive()) {
+				col.start();
+			}
 		}
 		super.start();
 	}
@@ -41,7 +43,9 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 	@Override
 	public void stop() {
 		for (ZGridColumn col: columns) {
-			col.stop();
+			if (col.isActive()) {
+				col.stop();
+			}
 		}
 		super.stop();
 	}
@@ -86,7 +90,11 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 			lockMe(this);
 			done = 0;
 			for (ZGridColumn col: columns) {
-				col.setRequest(result);
+				if (col.isActive()) {
+					col.setRequest(result);
+				} else {
+					done++;
+				}
 			}
 			unlockMe(this);
 		}

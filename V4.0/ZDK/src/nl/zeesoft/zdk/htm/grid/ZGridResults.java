@@ -9,12 +9,15 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class ZGridResults extends Locker {
+	private ZGrid							grid		= null;
+	
 	private long							uid			= 0;
 	private SortedMap<Long,ZGridResult>		results		= new TreeMap<Long,ZGridResult>();
 	private List<ZGridResultsListener>		listeners	= new ArrayList<ZGridResultsListener>();
 	
-	protected ZGridResults(Messenger msgr) {
+	protected ZGridResults(Messenger msgr,ZGrid grid) {
 		super(msgr);
+		this.grid = grid;
 	}
 	
 	public void addListener(ZGridResultsListener listener) {
@@ -76,7 +79,7 @@ public class ZGridResults extends Locker {
 			for (ZGridResult result: r) {
 				for (ZGridResultsListener listener: list) {
 					try {
-						listener.processedRequest(result);
+						listener.processedRequest(grid,result);
 					} catch(Exception e) {
 						if (getMessenger()!=null) {
 							getMessenger().error(this,"Grid listener exception",e);
@@ -92,6 +95,7 @@ public class ZGridResults extends Locker {
 	
 	protected void destroy() {
 		lockMe(this);
+		grid = null;
 		results.clear();
 		listeners.clear();
 		unlockMe(this);
