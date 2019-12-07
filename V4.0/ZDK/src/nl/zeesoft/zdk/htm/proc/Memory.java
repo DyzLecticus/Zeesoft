@@ -36,11 +36,6 @@ public class Memory extends ProcessorObject {
 		return (MemoryConfig) super.getConfig();
 	}
 
-	/**
-	 * Returns a description of this temporal memory.
-	 * 
-	 * @return A description
-	 */
 	@Override
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = getConfig().getDescription();
@@ -155,28 +150,29 @@ public class Memory extends ProcessorObject {
 	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
 		SDR r = new SDR(getConfig().length * getConfig().depth);
 		burstSDR = getConfig().getNewSDR();
-		long start = 0;
-		
-		start = System.nanoTime();
-		List<MemoryColumnCell> previouslyActiveCells = cycleActiveState();
-		logStatsValue("cycleActiveState",System.nanoTime() - start);
-		
-		start = System.nanoTime();
-		activateColumnCells(input,learn,previouslyActiveCells,r,burstSDR);
-		logStatsValue("activateColumnCells",System.nanoTime() - start);
-		
-		start = System.nanoTime();
-		calculateActivity();
-		logStatsValue("calculateActivity",System.nanoTime() - start);
-		
-		start = System.nanoTime();
-		Set<MemoryColumnCell> predictiveCells = selectPredictiveCells();
-		logStatsValue("selectPredictiveCells",System.nanoTime() - start);
-		
-		start = System.nanoTime();
-		updatePredictions(predictiveCells,learn);
-		logStatsValue("updatePredictions",System.nanoTime() - start);
-		
+		if (input!=null) {
+			long start = 0;
+			
+			start = System.nanoTime();
+			List<MemoryColumnCell> previouslyActiveCells = cycleActiveState();
+			logStatsValue("cycleActiveState",System.nanoTime() - start);
+			
+			start = System.nanoTime();
+			activateColumnCells(input,learn,previouslyActiveCells,r,burstSDR);
+			logStatsValue("activateColumnCells",System.nanoTime() - start);
+			
+			start = System.nanoTime();
+			calculateActivity();
+			logStatsValue("calculateActivity",System.nanoTime() - start);
+			
+			start = System.nanoTime();
+			Set<MemoryColumnCell> predictiveCells = selectPredictiveCells();
+			logStatsValue("selectPredictiveCells",System.nanoTime() - start);
+			
+			start = System.nanoTime();
+			updatePredictions(predictiveCells,learn);
+			logStatsValue("updatePredictions",System.nanoTime() - start);
+		}
 		return r;
 	}
 

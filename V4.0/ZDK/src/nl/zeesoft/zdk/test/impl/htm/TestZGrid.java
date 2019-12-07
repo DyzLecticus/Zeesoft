@@ -45,7 +45,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println("A *ZGrid* consists of several rows and columns where each column can process a certain input value.");
 		System.out.println("It uses multithreading to maximize the throughput of grid requests.");
 		System.out.println("The first row of a *ZGrid* is reserved for *ZGridColumnEncoder* objects that translate request input values into SDRs.");
-		System.out.println("The remaining rows can be used for *Pooler*, *Memory*, *Classifier* and custom processors.");
+		System.out.println("The remaining rows can be used for *Pooler*, *Memory*, *Classifier*, *Merger* and custom processors.");
 		System.out.println("Context routing can be used to route the output of a column to the context of another column.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
@@ -75,7 +75,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println("request.inputValues[0] = request.datetime;");
 		System.out.println("request.inputValues[1] = 1F;");
 		System.out.println("request.inputLabels[1] = \"Normal\";");
-		System.out.println("// [...]");
+		System.out.println("long requestId = grid.addRequest(request);");
 		System.out.println("// Remember to stop and destroy the grid after use");
 		System.out.println("grid.stop();");
 		System.out.println("grid.whileActive();");

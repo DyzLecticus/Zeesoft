@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
+import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
@@ -25,10 +26,6 @@ public class ZGridColumn extends Worker {
 	
 	protected String getId() {
 		return getColumnId(row.index,index);
-	}
-	
-	protected void setSleepMs(int sleep) {
-		setSleep(sleep);
 	}
 	
 	protected void setRequest(ZGridResult result) {
@@ -56,7 +53,18 @@ public class ZGridColumn extends Worker {
 	
 	@Override
 	protected void whileWorking() {
-		lockMe(this);
+		LockedCode code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				processRequestNoLock();
+				return null;
+			}
+		};
+		doLocked(this,code);
+		setSleep(1);
+	}
+	
+	protected void processRequestNoLock() {
 		if (result!=null) {
 			List<SDR> outputs = null;
 			if (encoder!=null) {
@@ -76,25 +84,21 @@ public class ZGridColumn extends Worker {
 					// Use input value SDR as input
 					input = (SDR) result.getRequest().inputValues[index];
 				}
-				if (input!=null) {
-					List<SDR> context = new ArrayList<SDR>();
-					if (contexts.size()>0) {
-						for (ZGridColumnContext ctx: contexts) {
-							SDR contextSDR = result.getColumnOutput(getColumnId(ctx.sourceRow,ctx.sourceColumn),ctx.sourceIndex);
-							if (contextSDR!=null) {
-								context.add(contextSDR);
-							}
+				List<SDR> context = new ArrayList<SDR>();
+				if (contexts.size()>0) {
+					for (ZGridColumnContext ctx: contexts) {
+						SDR contextSDR = result.getColumnOutput(getColumnId(ctx.sourceRow,ctx.sourceColumn),ctx.sourceIndex);
+						if (contextSDR!=null) {
+							context.add(contextSDR);
 						}
 					}
-					outputs = processor.getSDRsForInput(input,context,result.getRequest().learn);
 				}
+				outputs = processor.getSDRsForInput(input,context,result.getRequest().learn);
 			}
 			result.setColumnOutput(getId(),outputs);
 			result = null;
 			row.processedColumn();
 		}
-		unlockMe(this);
-		setSleep(1);
 	}
 	
 	protected static final String getColumnId(int rowIndex,int columnIndex) {

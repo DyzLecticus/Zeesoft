@@ -12,6 +12,8 @@ import nl.zeesoft.zdk.htm.proc.Classifier;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
 import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
+import nl.zeesoft.zdk.htm.proc.Merger;
+import nl.zeesoft.zdk.htm.proc.MergerConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.ProcessorConfigObject;
@@ -27,7 +29,7 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * A ZGrid consists of several rows and columns where each column can process a certain input value.
  * It uses multithreading to maximize the throughput of grid requests.
  * The first row of a ZGrid is reserved for ZGridColumnEncoder* objects that translate request input values into SDRs.
- * The remaining rows can be used for Pooler, Memory, Classifier and custom processors.
+ * The remaining rows can be used for Pooler, Memory, Classifier, Merger and custom processors.
  * Context routing can be used to route the output of a column to the context of another column.
  */
 public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
@@ -628,6 +630,8 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 			r = getNewMemory((MemoryConfig)config);
 		} else if (config instanceof ClassifierConfig) {
 			r = getNewClassifier((ClassifierConfig)config);
+		} else if (config instanceof MergerConfig) {
+			r = getNewMerger((MergerConfig)config);
 		}
 		return r;
 	}
@@ -642,5 +646,9 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	
 	protected Classifier getNewClassifier(ClassifierConfig config) {
 		return new Classifier(config);
+	}
+	
+	protected Merger getNewMerger(MergerConfig config) {
+		return new Merger(config);
 	}
 }

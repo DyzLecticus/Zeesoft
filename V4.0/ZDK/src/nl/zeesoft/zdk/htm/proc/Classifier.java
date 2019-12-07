@@ -37,11 +37,6 @@ public class Classifier extends ProcessorObject {
 		return (ClassifierConfig) super.getConfig();
 	}
 	
-	/**
-	 * Returns a description of this classifier.
-	 * 
-	 * @return A description of this classifier
-	 */
 	@Override
 	public ZStringBuilder getDescription() {
 		return getConfig().getDescription();
@@ -90,11 +85,11 @@ public class Classifier extends ProcessorObject {
 	 * The ability to create classifications depends on the learned associations between input SDRs and corresponding cell activation SDRs.
 	 * 
 	 * @param activationSDR The temporal memory cell activation SDR
-	 * @param inputSDR The input SDR used to learn associations between activations and values (and/or labels)
+	 * @param inputSDR The input DateTimeSDR used to learn associations between activations and values (and/or labels)
 	 * @param learn Indicates the classifier should learn the associations
 	 * @return A list of classification SDRs
 	 */
-	public List<SDR> getSDRsForInput(SDR activationSDR,SDR inputSDR,boolean learn) {
+	public List<SDR> getSDRsForInput(SDR activationSDR,DateTimeSDR inputSDR,boolean learn) {
 		List<SDR> context = new ArrayList<SDR>();
 		context.add(inputSDR);
 		return getSDRsForInput(activationSDR, context, learn);
@@ -123,17 +118,19 @@ public class Classifier extends ProcessorObject {
 	@Override
 	protected SDR getSDRForInputSDR(SDR input, boolean learn) {
 		DateTimeSDR r = null;
-		long start = 0;
-		
 		classifierSDRs.clear();
-		if (inputSDR!=null) {
-			start = System.nanoTime();
-			r = generateClassifications(input,learn);
-			logStatsValue("generateClassifications",System.nanoTime() - start);
+		if (input!=null) {
+			long start = 0;
+			if (inputSDR!=null) {
+				start = System.nanoTime();
+				r = generateClassifications(input,learn);
+				logStatsValue("generateClassifications",System.nanoTime() - start);
+			} else {
+				r = new DateTimeSDR(input.length());
+			}
 		} else {
-			r = new DateTimeSDR(input.length());
+			r = new DateTimeSDR(100);
 		}
-		
 		return r;
 	}
 	

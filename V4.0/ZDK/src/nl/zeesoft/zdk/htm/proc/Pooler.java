@@ -42,11 +42,6 @@ public class Pooler extends ProcessorObject {
 		}
 	}
 	
-	/**
-	 * Returns a description of this spatial pooler.
-	 * 
-	 * @return A description of this spatial pooler
-	 */
 	@Override
 	public ZStringBuilder getDescription() {
 		ZStringBuilder r = getConfig().getDescription();
@@ -123,39 +118,42 @@ public class Pooler extends ProcessorObject {
 	@Override
 	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
 		SDR r = null;
-		List<Integer> onBits = input.getOnBits();
-		long start = 0;
-		
-		start = System.nanoTime();
-		int[] columnOverlapScores = calculateOverlapScores(onBits);
-		logStatsValue("calculateOverlapScores",System.nanoTime() - start);
-		
-		start = System.nanoTime();
-		List<PoolerColumn> activeColumns = selectActiveColumns(columnOverlapScores);
-		logStatsValue("selectActiveColumns",System.nanoTime() - start);
-		
-		if (learn) {
-			start = System.nanoTime();
-			learnActiveColumnsOnBits(activeColumns,onBits);
-			logStatsValue("learnActiveColumnsOnBits",System.nanoTime() - start);
-		}
-		
-		if (getConfig().boostStrength>0) {
-			start = System.nanoTime();
-			logActivity(activeColumns);
-			logStatsValue("logActivity",System.nanoTime() - start);
+		if (input!=null) {
+			List<Integer> onBits = input.getOnBits();
+			long start = 0;
 			
 			start = System.nanoTime();
-			HashMap<PoolerColumnGroup,Float> groupActivity = calculateColumnGroupActivity();
-			logStatsValue("calculateColumnGroupActivity",System.nanoTime() - start);
+			int[] columnOverlapScores = calculateOverlapScores(onBits);
+			logStatsValue("calculateOverlapScores",System.nanoTime() - start);
 			
 			start = System.nanoTime();
-			updateBoostFactors(groupActivity);
-			logStatsValue("updateBoostFactors",System.nanoTime() - start);
+			List<PoolerColumn> activeColumns = selectActiveColumns(columnOverlapScores);
+			logStatsValue("selectActiveColumns",System.nanoTime() - start);
+			
+			if (learn) {
+				start = System.nanoTime();
+				learnActiveColumnsOnBits(activeColumns,onBits);
+				logStatsValue("learnActiveColumnsOnBits",System.nanoTime() - start);
+			}
+			
+			if (getConfig().boostStrength>0) {
+				start = System.nanoTime();
+				logActivity(activeColumns);
+				logStatsValue("logActivity",System.nanoTime() - start);
+				
+				start = System.nanoTime();
+				HashMap<PoolerColumnGroup,Float> groupActivity = calculateColumnGroupActivity();
+				logStatsValue("calculateColumnGroupActivity",System.nanoTime() - start);
+				
+				start = System.nanoTime();
+				updateBoostFactors(groupActivity);
+				logStatsValue("updateBoostFactors",System.nanoTime() - start);
+			}
+			
+			r = recordActiveColumnsInSDR(activeColumns);
+		} else {
+			r = getConfig().getNewSDR();
 		}
-		
-		r = recordActiveColumnsInSDR(activeColumns);
-		
 		return r;
 	}
 	

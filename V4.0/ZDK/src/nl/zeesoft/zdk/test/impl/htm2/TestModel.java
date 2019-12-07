@@ -16,7 +16,7 @@ public class TestModel extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
+		/* TODO: Describe (HTM2)
 		System.out.println("This test shows how to use a *Pooler* to convert encoder out SDRs into consistently sparse representations.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");

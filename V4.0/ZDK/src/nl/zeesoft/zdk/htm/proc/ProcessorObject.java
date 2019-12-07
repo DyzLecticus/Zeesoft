@@ -85,9 +85,8 @@ public abstract class ProcessorObject {
 	
 	/**
 	 * Returns a list of one or more output SDRs for a certain input SDR, in a certain context.
-	 * Used by streams to chain processor IO.
 	 * 
-	 * @param input The input SDR; Different processors expect different SDRs
+	 * @param input The input SDR; Different processors expect different SDRs, can be null
 	 * @param context A list of SDRs that were produced in the previous parts of the processor chain
 	 * @param learn Indicates the processor should learn this input
 	 * @return A list of one or more output SDRs

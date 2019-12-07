@@ -19,7 +19,7 @@ public class TestPooler extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use a *Pooler* to convert encoder out SDRs into consistently sparse representations.");
+		System.out.println("This test shows how to use a *Pooler* to convert encoder output SDRs into consistently sparse representations.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -30,7 +30,7 @@ public class TestPooler extends TestObject {
 		System.out.println("// Randomize the connections");
 		System.out.println("pooler.randomizeConnections();");
 		System.out.println("// Obtain the output SDR for a certain input SDR");
-		System.out.println("SDR sdr = pooler.getSDRForInput(new SDR(),true);");
+		System.out.println("SDR sdr = pooler.getSDRForInput(new SDR(100),true);");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockRegularSDRMap.class.getName());

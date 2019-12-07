@@ -41,7 +41,7 @@ public class TestMemory extends TestObject {
 		System.out.println("// Create the memory");
 		System.out.println("Memory memory = new Memory(config);");
 		System.out.println("// Obtain the output SDR for a certain input SDR");
-		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(),true);");
+		System.out.println("SDR sdr = memory.getSDRForInput(new SDR(100),true);");
 		System.out.println("~~~~");
 		System.out.println();
 		getTester().describeMock(MockRegularSDRMap.class.getName());
