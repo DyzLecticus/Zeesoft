@@ -197,18 +197,13 @@ public class GridEncoder extends CombinedEncoder {
 		initialize(length,bits,dimensions,scaled);
 	}
 	
-	private static GridEncoder getNew2DGridEncoder(int length,int bits, int sizeX, int sizeY,boolean scaled) {
-		int[] dims = new int[2];
-		dims[0] = sizeX;
-		dims[1] = sizeY;
+	private static GridEncoder getNew2DGridEncoder(int length,int bits,int sizeX,int sizeY,boolean scaled) {
+		int[] dims = {sizeX,sizeY};
 		return new GridEncoder(length,bits,dims,scaled);
 	}
 	
-	private static GridEncoder getNew3DGridEncoder(int length,int bits, int sizeX, int sizeY, int sizeZ,boolean scaled) {
-		int[] dims = new int[3];
-		dims[0] = sizeX;
-		dims[1] = sizeY;
-		dims[2] = sizeZ;
+	private static GridEncoder getNew3DGridEncoder(int length,int bits,int sizeX,int sizeY,int sizeZ,boolean scaled) {
+		int[] dims = {sizeX,sizeY,sizeZ};
 		return new GridEncoder(length,bits,dims,scaled);
 	}
 }

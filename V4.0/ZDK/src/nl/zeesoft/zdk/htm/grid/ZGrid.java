@@ -136,7 +136,8 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 * 
 	 * @param rowIndex The row index
 	 * @param columnIndex The column index
-	 * @param processor The processor
+	 * @param config The processor configuration
+	 * @return The processor
 	 */
 	public ProcessorObject setProcessor(int rowIndex,int columnIndex,ProcessorConfigObject config) {
 		ProcessorObject r = null;

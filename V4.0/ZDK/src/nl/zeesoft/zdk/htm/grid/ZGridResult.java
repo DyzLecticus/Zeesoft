@@ -12,6 +12,9 @@ import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
+/**
+ * A ZGridResult is sent to ZGridResultListener implementations to communicate ZGridRequest processing results.
+ */
 public class ZGridResult extends Locker {
 	private ZGridRequest					request			= null;
 	private SortedMap<String,List<SDR>>		columnOutputs	= new TreeMap<String,List<SDR>>();
@@ -21,10 +24,20 @@ public class ZGridResult extends Locker {
 		this.request = request;
 	}
 	
+	/**
+	 * Returns the request that led to this result.
+	 * 
+	 * @return The request
+	 */
 	public ZGridRequest getRequest() {
 		return request;
 	}
 	
+	/**
+	 * Returns a list of all the column ids in this result.
+	 * 
+	 * @return A list of columns ids
+	 */
 	public List<String> getColumnIds() {
 		lockMe(this);
 		List<String> r = new ArrayList<String>(columnOutputs.keySet());
@@ -32,6 +45,13 @@ public class ZGridResult extends Locker {
 		return r;
 	}
 	
+	/**
+	 * Returns the specified column output SDR for a certain column.
+	 * 
+	 * @param columnId The id of the column
+	 * @param index The index of the column output SDR
+	 * @return The column output SDR
+	 */
 	public SDR getColumnOutput(String columnId,int index) {
 		lockMe(this);
 		SDR r = null;
@@ -43,6 +63,12 @@ public class ZGridResult extends Locker {
 		return r;
 	}
 
+	/**
+	 * Returns the first column output SDR for a certain column.
+	 * 
+	 * @param columnId The id of the column
+	 * @return The column output SDR
+	 */
 	public List<SDR> getColumnOutput(String columnId) {
 		lockMe(this);
 		List<SDR> r = new ArrayList<>(columnOutputs.get(columnId));
@@ -50,6 +76,11 @@ public class ZGridResult extends Locker {
 		return r;
 	}
 	
+	/**
+	 * Returns all Classification objects of all column output SDRs in this result.
+	 *  
+	 * @return All Classification objects in this result
+	 */
 	public List<Classification> getClassifications() {
 		List<Classification> r = new ArrayList<Classification>();
 		lockMe(this);
@@ -59,8 +90,11 @@ public class ZGridResult extends Locker {
 					if (outputSDR instanceof DateTimeSDR) {
 						DateTimeSDR classificationSDR = (DateTimeSDR) outputSDR;
 						if (classificationSDR.keyValues.containsKey(Classifier.CLASSIFICATION_KEY)) {
-							Classification classification = (Classification) classificationSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
-							r.add(classification);
+							Object obj = classificationSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
+							if (obj instanceof Classification) {
+								Classification classification = (Classification) obj;
+								r.add(classification);
+							}
 						}
 					}
 				}

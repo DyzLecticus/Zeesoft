@@ -1,5 +1,9 @@
 package nl.zeesoft.zdk.htm.grid;
 
+/**
+ * A ZGridRequest is used to specify values and/or labels for ZGrid processing.
+ * The ZGrid will notify listeners of request results via ZGridResult objects.
+ */
 public class ZGridRequest {
 	public long			id				= 0;
 	public long			dateTime		= 0;
@@ -11,13 +15,12 @@ public class ZGridRequest {
 	public ZGridRequest(int columns) {
 		initialize(columns);
 	}
-		
-	protected void initialize(int columns) {
-		dateTime = System.currentTimeMillis();
-		inputValues = new Object[columns];
-		inputLabels = new String[columns];
-	}
 	
+	/**
+	 * Returns a copy of this request.
+	 * 
+	 * @return A copy of this request
+	 */
 	public ZGridRequest copy() {
 		ZGridRequest r = new ZGridRequest(inputValues.length);
 		r.id = id;
@@ -27,5 +30,11 @@ public class ZGridRequest {
 			r.inputLabels[i] = inputLabels[i];
 		}
 		return r;
+	}
+	
+	protected void initialize(int columns) {
+		dateTime = System.currentTimeMillis();
+		inputValues = new Object[columns];
+		inputLabels = new String[columns];
 	}
 }

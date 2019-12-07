@@ -67,6 +67,18 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println("grid.addColumnContext(3,1,0,1);");
 		System.out.println("// Add a listener for grid results");
 		System.out.println("grid.addListener(this);");
+		System.out.println("// Start the grid");
+		System.out.println("grid.start();");
+		System.out.println("// Add requests");
+		System.out.println("ZGridRequest request = grid.getNewRequest();");
+		System.out.println("request.inputValues[0] = request.datetime;");
+		System.out.println("request.inputValues[1] = 1F;");
+		System.out.println("request.inputLabels[1] = \"Normal\";");
+		System.out.println("// [...]");
+		System.out.println("// Remember to stop and destroy the grid after use");
+		System.out.println("grid.stop();");
+		System.out.println("grid.whileActive();");
+		System.out.println("grid.destroy();");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
@@ -80,7 +92,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println(" * A description of the grid after initialization  ");
 		System.out.println(" * A JSON representation of the grid configuration  ");
 		System.out.println(" * The classifier prediction accuracy of the grid while processing requests   ");
-		System.out.println(" * A description of the grid after processign requests  ");
+		System.out.println(" * A description of the grid after processing requests  ");
 		System.out.println(" * The size of the state data for each grid processor  ");
 	}
 	
