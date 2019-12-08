@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.json.JsFile;
  * The configuration cannot be changed once it has been used to instantiate a merger.
  */
 public class MergerConfig extends ProcessorConfigObject {
+	protected boolean	union			= false;
 	protected int		maxOnBits		= 0;
 
 	public MergerConfig() {
@@ -26,7 +27,19 @@ public class MergerConfig extends ProcessorConfigObject {
 	 */
 	public MergerConfig copy() {
 		MergerConfig r = new MergerConfig(maxOnBits);
+		r.union = union;
 		return r;
+	}
+	
+	/**
+	 * Indicates the merger should create a union out of the incoming SDRs (default is concatenate).
+	 * 
+	 * @param union Indicates the merger should create a union
+	 */
+	public void setUnion(boolean union) {
+		if (!initialized) {
+			this.union = union;
+		}
 	}
 	
 	/**

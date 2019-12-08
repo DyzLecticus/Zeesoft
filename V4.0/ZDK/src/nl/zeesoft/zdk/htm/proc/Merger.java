@@ -12,6 +12,7 @@ import nl.zeesoft.zdk.htm.util.SDR;
 
 /**
  * A Merger is used to merge multiple SDRs into a single DateTimeSDR.
+ * It concatenates SDRs by default but can also be configured to create a union.
  * Key values of input and context DateTimeSDR objects are included in the merged DateTimeSDR.
  */
 public class Merger extends ProcessorObject {
@@ -72,7 +73,11 @@ public class Merger extends ProcessorObject {
 		boolean first = true;
 		for (SDR contextSDR: contextSDRs) {
 			if (!skipFirst || !first) {
-				t = SDR.concat(t,contextSDR);
+				if (getConfig().union) {
+					t = SDR.and(t,contextSDR);
+				} else {
+					t = SDR.concat(t,contextSDR);
+				}
 			}
 			first = false;
 			if (contextSDR instanceof DateTimeSDR) {
@@ -85,6 +90,11 @@ public class Merger extends ProcessorObject {
 				}
 			}
 		}
+		
+		if (getConfig().maxOnBits>0) {
+			t.subsample(getConfig().maxOnBits);
+		}
+		
 		r = new DateTimeSDR(t);
 		r.dateTime = dateTime;
 		for (Entry<String,Object> entry: keyValues.entrySet()) {
