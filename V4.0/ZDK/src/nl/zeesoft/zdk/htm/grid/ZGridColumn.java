@@ -21,7 +21,8 @@ public class ZGridColumn extends Worker {
 
 	protected ZGridColumn(Messenger msgr, WorkerUnion union) {
 		super(msgr, union);
-		setSleep(1);
+		setSleep(0);
+		setSleepNs(ZGrid.SLEEP_NS);
 	}
 	
 	protected String getId() {
@@ -29,7 +30,7 @@ public class ZGridColumn extends Worker {
 	}
 	
 	protected void setRequest(ZGridResult result) {
-		setSleep(0);
+		setSleepNs(0);
 		lockMe(this);
 		this.result = result;
 		unlockMe(this);
@@ -61,7 +62,7 @@ public class ZGridColumn extends Worker {
 			}
 		};
 		doLocked(this,code);
-		setSleep(1);
+		setSleepNs(ZGrid.SLEEP_NS);
 	}
 	
 	protected void processRequestNoLock() {

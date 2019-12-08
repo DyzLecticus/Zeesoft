@@ -20,7 +20,8 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 	
 	protected ZGridRow(Messenger msgr, WorkerUnion union) {
 		super(msgr, union);
-		setSleep(1);
+		setSleep(0);
+		setSleepNs(ZGrid.SLEEP_NS);
 	}
 	
 	protected void addColumn() {
@@ -73,7 +74,7 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 	@Override
 	protected void whileWorking() {
 		boolean r = false;
-		int s = 1;
+		int s = ZGrid.SLEEP_NS;
 		lockMe(this);
 		if (result==null) {
 			result = queue.poll();
@@ -85,7 +86,7 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 			s = 0;
 		}
 		unlockMe(this);
-		setSleep(s);
+		setSleepNs(s);
 		if (r) {
 			lockMe(this);
 			done = 0;

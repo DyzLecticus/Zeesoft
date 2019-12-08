@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 public abstract class Worker extends Locker implements Runnable {
 	private WorkerUnion		union				= null;
 	private int				sleep				= 100; // ms
+	private int				sleepNs				= 0; // ns
 	private Thread 			worker 				= null;
 	private boolean 		working 			= false;
 	private boolean			stopOnException		= true;
@@ -83,6 +84,7 @@ public abstract class Worker extends Locker implements Runnable {
 
 		Thread wrkr = null;
 		int slp = 100;
+		int slpNs = 0;
 		long compensatedSleep = slp;
 		Date started = null;
 		boolean stopOnEx = true;
@@ -91,13 +93,13 @@ public abstract class Worker extends Locker implements Runnable {
 		working = true;
 		wrkr = worker;
 		slp = sleep;
+		slpNs = sleepNs;
 		stopOnEx = stopOnException;
 		unlockMe(this);
 		
 		startedWorking();
 		
 		while ((wrkr!=null) && (!wrkr.isInterrupted())) {
-			compensatedSleep = slp;
 			started = null;
 			if (slp>=10) {
 				started = new Date();
@@ -115,12 +117,15 @@ public abstract class Worker extends Locker implements Runnable {
 					}
 				}
 			}
-			if (slp>=10) {
-				compensatedSleep = (slp - ((new Date()).getTime() - started.getTime()));
-			}
+			
 			wrkr = getWorker();
 			if (wrkr==null || wrkr.isInterrupted()) {
 				break;
+			}
+			
+			compensatedSleep = slp;
+			if (slp>=10) {
+				compensatedSleep = (slp - ((new Date()).getTime() - started.getTime()));
 			}
 			if (compensatedSleep>0) {
 				if (compensatedSleep>=100) {
@@ -135,6 +140,10 @@ public abstract class Worker extends Locker implements Runnable {
 					sleep(compensatedSleep);
 				}
 			}
+			if (slpNs>0) {
+				sleepNs(slpNs);
+			}
+			
 			if (wrkr==null || wrkr.isInterrupted()) {
 				break;
 			} else {
@@ -196,6 +205,17 @@ public abstract class Worker extends Locker implements Runnable {
 	protected final void setSleep(int sleep) {
 		lockMe(this);
 		this.sleep = sleep;
+		unlockMe(this);
+	}
+
+	/**
+	 * Sets the amount of nanoseconds this worker should sleep between whileWorking method calls (default 0).
+	 * 
+	 * @param sleepNs The amount of nanoseconds this worker should sleep between whileWorking method calls
+	 */
+	protected final void setSleepNs(int sleepNs) {
+		lockMe(this);
+		this.sleepNs = sleepNs;
 		unlockMe(this);
 	}
 
@@ -274,6 +294,14 @@ public abstract class Worker extends Locker implements Runnable {
 	private final void sleep(long sleep) {
 		try {
 			Thread.sleep(sleep);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
+	}
+	
+	private final void sleepNs(int sleepNs) {
+		try {
+			Thread.sleep(0,sleepNs);
 		} catch (InterruptedException e) {
 			// Ignore
 		}

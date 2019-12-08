@@ -33,6 +33,8 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * Context routing can be used to route the output of a column to the context of another column.
  */
 public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
+	protected static final int		SLEEP_NS		= 10000;
+	
 	public static final String		STATE_STOPPED	= "STOPPED";
 	public static final String		STATE_STARTING	= "STARTING";
 	public static final String		STATE_STARTED	= "STARTED";
