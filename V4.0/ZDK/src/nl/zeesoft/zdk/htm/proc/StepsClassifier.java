@@ -66,13 +66,15 @@ public class StepsClassifier {
 			String label = (String) inputSDR.keyValues.get(config.labelKey);
 			if (value!=null || label!=null) {
 				SDR histActivationSDR = activationHistory.get(index);
-				for (Integer onBit: histActivationSDR.getOnBits()) {
-					StepsClassifierBit bit = bits.get(onBit);
-					if (bit==null) {
-						bit = new StepsClassifierBit(config,onBit);
-						bits.put(onBit,bit);
+				if (histActivationSDR!=null) {
+					for (Integer onBit: histActivationSDR.getOnBits()) {
+						StepsClassifierBit bit = bits.get(onBit);
+						if (bit==null) {
+							bit = new StepsClassifierBit(config,onBit);
+							bits.put(onBit,bit);
+						}
+						bit.associate(histActivationSDR,inputSDR);
 					}
-					bit.associate(histActivationSDR,inputSDR);
 				}
 			}
 		}
