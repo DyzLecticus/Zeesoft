@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl.htm;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -175,12 +176,12 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		grid.randomizePoolerConnections();
 		
 		System.out.println(grid.getDescription());
-		System.out.println();
 		
 		boolean test = false;
 		ZGrid newGrid = new ZGrid(5,5);
 		if (testJsAble(grid,newGrid,"Grid JSON does not match expectation")) {
 			test = true;
+			System.out.println();
 			System.out.println("Grid JSON;");
 			System.out.println(grid.toJson().toStringBuilderReadFormat());
 		}
@@ -191,7 +192,15 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 			testNewGrid(grid,newGrid);
 		}
 		
-		System.out.println();
+		if (previousClassification!=null) {
+			previousClassification.labelCounts = new HashMap<String,Integer>();
+			previousClassification.labelCounts.put("Pizza",123);
+			previousClassification.labelCounts.put("Coffee",45);
+			previousClassification.mostCountedLabels = new ArrayList<String>();
+			previousClassification.mostCountedLabels.add("Pizza");
+			testJsAble(previousClassification,new Classification(),"Classification JSON does not match expectation");
+		}
+		
 		grid.destroy();
 		newGrid.destroy();
 

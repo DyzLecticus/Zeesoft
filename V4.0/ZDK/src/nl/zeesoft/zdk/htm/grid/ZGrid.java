@@ -546,7 +546,6 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 * Destroys the grid and its processors.
 	 */
 	public void destroy() {
-		boolean r = false;
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
 			for (ZGridRow row: rows) {
@@ -554,12 +553,8 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 			}
 			rows.clear();
 			results.destroy();
-			r = true;
 		}
 		unlockMe(this);
-		if (r && getMessenger()!=null) {
-			getMessenger().debug(this,"Destoyed grid");
-		}
 	}
 
 	@Override

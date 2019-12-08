@@ -123,6 +123,8 @@ public class StepsClassifier {
 			}
 		}
 		Classification classification = new Classification();
+		classification.valueKey = config.valueKey;
+		classification.labelKey = config.labelKey;
 		classification.steps = steps;
 		classification.valueCounts = valueCounts;
 		classification.labelCounts = labelCounts;

@@ -52,13 +52,7 @@ public class ZGridRequest implements JsAble {
 			boolean add = false;
 			if (inputValues[i]!=null) {
 				valElem.children.add(new JsElem("className","" + inputValues[i].getClass().getSimpleName(),true));
-				if (inputValues[i] instanceof String) {
-					valElem.children.add(new JsElem("value",(String)inputValues[i],true));
-				} else if (inputValues[i] instanceof SDR) {
-					valElem.children.add(new JsElem("value",((SDR)inputValues[i]).toStringBuilder(),true));
-				} else {
-					valElem.children.add(new JsElem("value","" + inputValues[i]));
-				}
+				addValueChildElement(valElem,"value",inputValues[i]);
 				add = true;
 			}
 			if (inputLabels[i]!=null && inputLabels[i].length()>0) {
@@ -85,23 +79,7 @@ public class ZGridRequest implements JsAble {
 					if (index<inputValues.length) {
 						if (valElem.getChildByName("value")!=null) {
 							String className = valElem.getChildString("className");
-							Object value = null;
-							if (className.equals("String")) {
-								value = valElem.getChildString("value");
-							} else if (className.equals("Float")) {
-								value = valElem.getChildFloat("value");
-							} else if (className.equals("Integer")) {
-								value = valElem.getChildInt("value");
-							} else if (className.equals("Long")) {
-								value = valElem.getChildLong("value");
-							} else if (className.equals("SDR")) {
-								ZStringBuilder val = valElem.getChildZStringBuilder("value");
-								if (val.length()>0) {
-									SDR sdr = new SDR(100);
-									sdr.fromStringBuilder(valElem.getChildZStringBuilder("value"));
-									value = sdr;
-								}
-							}
+							Object value = getValueFromChildElement(valElem,"value",className);
 							if (value!=null) {
 								inputValues[index] = value;
 							}
@@ -112,6 +90,44 @@ public class ZGridRequest implements JsAble {
 					}
 				}
 			}
+		}
+	}
+
+	public static Object getValueFromElement(JsElem elem, String childName, String className) {
+		elem.name = childName;
+		JsElem wrapper = new JsElem();
+		wrapper.children.add(elem);
+		return getValueFromChildElement(wrapper,childName,className);
+	}
+
+	public static Object getValueFromChildElement(JsElem parent, String childName, String className) {
+		Object value = null;
+		if (className.equals("String")) {
+			value = parent.getChildString(childName);
+		} else if (className.equals("Float")) {
+			value = parent.getChildFloat(childName);
+		} else if (className.equals("Integer")) {
+			value = parent.getChildInt(childName);
+		} else if (className.equals("Long")) {
+			value = parent.getChildLong(childName);
+		} else if (className.equals("SDR")) {
+			ZStringBuilder val = parent.getChildZStringBuilder(childName);
+			if (val.length()>0) {
+				SDR sdr = new SDR(100);
+				sdr.fromStringBuilder(val);
+				value = sdr;
+			}
+		}
+		return value;
+	}
+	
+	public static void addValueChildElement(JsElem parent, String childName, Object value) {
+		if (value instanceof String) {
+			parent.children.add(new JsElem("value",(String)value,true));
+		} else if (value instanceof SDR) {
+			parent.children.add(new JsElem("value",((SDR)value).toStringBuilder(),true));
+		} else {
+			parent.children.add(new JsElem("value","" + value));
 		}
 	}
 	
