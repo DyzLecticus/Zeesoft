@@ -118,7 +118,7 @@ public class Pooler extends ProcessorObject {
 	@Override
 	protected SDR getSDRForInputSDR(SDR input,boolean learn) {
 		SDR r = null;
-		if (input!=null) {
+		if (input!=null && input.onBits()>0) {
 			List<Integer> onBits = input.getOnBits();
 			long start = 0;
 			

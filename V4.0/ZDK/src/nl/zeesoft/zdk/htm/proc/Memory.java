@@ -153,6 +153,10 @@ public class Memory extends ProcessorObject {
 		if (input!=null) {
 			long start = 0;
 			
+			if (learn && input.onBits()==0) {
+				learn = false;
+			}
+			
 			start = System.nanoTime();
 			List<MemoryColumnCell> previouslyActiveCells = cycleActiveState();
 			logStatsValue("cycleActiveState",System.nanoTime() - start);
@@ -313,7 +317,7 @@ public class Memory extends ProcessorObject {
 				cell.activity = 0;
 			}
 		}
-		for (MemoryColumn col: columns) {
+		for (MemoryColumn col: allColumns) {
 			col.calculateActivity();
 		}
 	}

@@ -62,6 +62,17 @@ public class ZGridColumn extends Worker {
 			}
 		};
 		doLocked(this,code);
+		code = new LockedCode() {
+			@Override
+			public Object doLocked() {
+				if (result!=null) {
+					result = null;
+					row.processedColumn();
+				}
+				return null;
+			}
+		};
+		doLocked(this,code);
 		setSleepNs(ZGrid.SLEEP_NS);
 	}
 	
@@ -105,8 +116,6 @@ public class ZGridColumn extends Worker {
 				}
 			}
 			result.setColumnOutput(getId(),outputs);
-			result = null;
-			row.processedColumn();
 		}
 	}
 	

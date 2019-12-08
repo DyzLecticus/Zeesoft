@@ -119,7 +119,7 @@ public class Classifier extends ProcessorObject {
 	protected SDR getSDRForInputSDR(SDR input, boolean learn) {
 		DateTimeSDR r = null;
 		classifierSDRs.clear();
-		if (input!=null) {
+		if (input!=null && input.onBits()>0) {
 			long start = 0;
 			if (inputSDR!=null) {
 				start = System.nanoTime();
@@ -129,7 +129,11 @@ public class Classifier extends ProcessorObject {
 				r = new DateTimeSDR(input.length());
 			}
 		} else {
-			r = new DateTimeSDR(100);
+			if (input==null) {
+				r = new DateTimeSDR(100);
+			} else {
+				r = new DateTimeSDR(input.length());
+			}
 		}
 		return r;
 	}

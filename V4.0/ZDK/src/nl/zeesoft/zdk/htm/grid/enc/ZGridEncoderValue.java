@@ -152,18 +152,21 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		Object value = null;
 		if (hasInputValue(columnIndex,result)) {
 			value = result.getRequest().inputValues[columnIndex];
-		} else {
-			value = 0;
+			if (value instanceof Float) {
+				r = new DateTimeSDR(getSDRForFloatValue((float)value));
+			} else if (value instanceof Integer) {
+				r = new DateTimeSDR(getSDRForIntegerValue((int)value));
+			} else if (value instanceof Long) {
+				r = new DateTimeSDR(getSDRForLongValue((long)value));
+			}
 		}
-		if (result.getRequest().inputValues[columnIndex] instanceof Float) {
-			r = new DateTimeSDR(getSDRForFloatValue((float)value));
-		} else if (result.getRequest().inputValues[columnIndex] instanceof Integer) {
-			r = new DateTimeSDR(getSDRForIntegerValue((int)value));
-		} else if (result.getRequest().inputValues[columnIndex] instanceof Long) {
-			r = new DateTimeSDR(getSDRForLongValue((long)value));
+		if (r==null) {
+			r = new DateTimeSDR(encoder.length());
 		}
 		r.dateTime = result.getRequest().dateTime;
-		r.keyValues.put(valueKey,value);
+		if (value!=null) {
+			r.keyValues.put(valueKey,value);
+		}
 		String label = getInputLabel(columnIndex,result);
 		if (label.length()>0) {
 			r.keyValues.put(DateTimeSDR.LABEL_KEY,label);

@@ -96,6 +96,7 @@ public class ZGridEncoderProperty extends ZGridColumnEncoder {
 	
 	@Override
 	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
+		DateTimeSDR r = null;
 		String property = "";
 		String label = getInputLabel(columnIndex,result);
 		if (hasInputValue(columnIndex,result) &&
@@ -104,17 +105,16 @@ public class ZGridEncoderProperty extends ZGridColumnEncoder {
 			property = (String) result.getRequest().inputValues[columnIndex];
 		} else {
 			property = label;
-		}
-		float value = 0;
-		if (property.length()>0) {
-			value = propertyEncoder.getValueForProperty(property);
 			label = "";
-		} else {
-			value = getInputValueAsFloat(columnIndex,result);
 		}
-		DateTimeSDR r = new DateTimeSDR(getSDRForValue(value));
+		if (property.length()>0) {
+			float value = propertyEncoder.getValueForProperty(property);
+			r = new DateTimeSDR(getSDRForValue(value));
+			r.keyValues.put(valueKey,value);
+		} else {
+			r = new DateTimeSDR(encoder.length());
+		}
 		r.dateTime = result.getRequest().dateTime;
-		r.keyValues.put(valueKey,value);
 		if (label.length()>0) {
 			r.keyValues.put(DateTimeSDR.LABEL_KEY,label);
 		}

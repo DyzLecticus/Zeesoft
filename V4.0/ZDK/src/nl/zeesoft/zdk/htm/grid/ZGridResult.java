@@ -91,14 +91,18 @@ public class ZGridResult extends Locker {
 	
 	protected void setColumnOutput(String columnId,List<SDR> outputs) {
 		lockMe(this);
-		columnOutputs.put(columnId,outputs);
-		for (SDR outputSDR: outputs) {
-			if (outputSDR instanceof DateTimeSDR) {
-				DateTimeSDR classificationSDR = (DateTimeSDR) outputSDR;
-				if (classificationSDR.keyValues.containsKey(Classifier.CLASSIFICATION_KEY)) {
-					Object obj = classificationSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
-					if (obj instanceof Classification) {
-						classifications.add((Classification) obj);
+		if (outputs==null) {
+			columnOutputs.remove(columnId);
+		} else {
+			columnOutputs.put(columnId,outputs);
+			for (SDR outputSDR: outputs) {
+				if (outputSDR instanceof DateTimeSDR) {
+					DateTimeSDR classificationSDR = (DateTimeSDR) outputSDR;
+					if (classificationSDR.keyValues.containsKey(Classifier.CLASSIFICATION_KEY)) {
+						Object obj = classificationSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
+						if (obj instanceof Classification) {
+							classifications.add((Classification) obj);
+						}
 					}
 				}
 			}

@@ -22,6 +22,7 @@ import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.MergerConfig;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
+import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -213,6 +214,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 	public void processedRequest(ZGrid grid,ZGridResult result) {
 		returnedIds.add(result.getRequest().id);
 		
+		String noClassifications = "";
 		List<Classification> classifications = result.getClassifications();
 		if (classifications.size()>0) {
 			if (previousClassification!=null) {
@@ -228,10 +230,20 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 				averageAccuracy.addFloat(accuracy);
 			}
 			previousClassification = classifications.get(0);
-		} 
+		} else {
+			noClassifications = " (!)";
+		}
 			
 		if (returnedIds.size() % 100 == 0) {
-			System.out.println("Processed requests: " + returnedIds.size() + ", accuracy: " + df.format(averageAccuracy.average));
+			if (noClassifications.length()>0) {
+				for (String columnId: result.getColumnIds()) {
+					if (columnId.endsWith("-01")) {
+						SDR sdr = result.getColumnOutput(columnId,0);
+						System.out.println("Empty SDR: " + sdr.toStringBuilder());
+					}
+				}
+			}
+			System.out.println("Processed requests: " + returnedIds.size() + ", accuracy: " + df.format(averageAccuracy.average) + noClassifications);
 		}
 		
 		if (returnedIds.size()==expectedIds.size()) {
@@ -258,10 +270,12 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 				request = grid.getNewRequest();
 				request.dateTime = dateTime;
 				request.inputValues[0] = request.dateTime;
-				request.inputValues[1] = r;
-				request.inputValues[2] = 0;
-				request.inputValues[3] = r;
-				request.inputValues[4] = r * 2;
+				if (c<=200 || c>210) {
+					request.inputValues[1] = r;
+					request.inputValues[2] = 0;
+					request.inputValues[3] = r;
+					request.inputValues[4] = r * 2;
+				}
 				expectedIds.add(grid.addRequest(request));
 				dateTime += 1000;
 			}

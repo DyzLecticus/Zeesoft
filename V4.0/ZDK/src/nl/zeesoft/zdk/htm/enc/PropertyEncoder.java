@@ -38,7 +38,7 @@ public class PropertyEncoder extends StateEncoderObject {
 	}
 
 	/**
-	 * Returns the SDR for a certain value.
+	 * Returns the SDR for a certain property.
 	 * Will return an empty SDR if the property is unknown and there is no more room in the encoder for new properties.
 	 * 
 	 * @param property The property
