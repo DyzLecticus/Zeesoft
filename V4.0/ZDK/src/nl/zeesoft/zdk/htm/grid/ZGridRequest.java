@@ -45,6 +45,7 @@ public class ZGridRequest implements JsAble {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("id","" + id));
 		json.rootElement.children.add(new JsElem("dateTime","" + dateTime));
+		json.rootElement.children.add(new JsElem("columns","" + inputValues.length));
 		JsElem valsElem = new JsElem("values",true);
 		json.rootElement.children.add(valsElem);
 		for (int i = 0; i < inputValues.length; i++) {
@@ -70,6 +71,8 @@ public class ZGridRequest implements JsAble {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
+			int columns = json.rootElement.getChildInt("columns",inputValues.length);
+			initialize(columns);
 			id = json.rootElement.getChildLong("id",id);
 			dateTime = json.rootElement.getChildLong("dateTime",dateTime);
 			JsElem valsElem = json.rootElement.getChildByName("values");
