@@ -4,7 +4,6 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
-import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderProperty;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
 import nl.zeesoft.zdk.htm.util.SDR;
@@ -42,7 +41,6 @@ public class TestZGridColumnEncoders extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
 		System.out.println(" * " + getTester().getLinkForClass(ZGridEncoderDateTime.class));
 		System.out.println(" * " + getTester().getLinkForClass(ZGridEncoderValue.class));
-		System.out.println(" * " + getTester().getLinkForClass(ZGridEncoderPosition.class));
 		System.out.println(" * " + getTester().getLinkForClass(ZGridEncoderProperty.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
@@ -84,22 +82,17 @@ public class TestZGridColumnEncoders extends TestObject {
 		ZGridEncoderValue valueEncoder = new ZGridEncoderValue();
 		err = valueEncoder.testScalarOverlap();
 		assertEqual(err,new ZStringBuilder(),"Error does not match expectation (4)");
+		valueEncoder.setType(ZGridEncoderValue.TYPE_SCALED);
+		err = valueEncoder.testScalarOverlap();
+		assertEqual(err,new ZStringBuilder(),"Error does not match expectation (5)");
+		valueEncoder.setType(ZGridEncoderValue.TYPE_DIMENSIONAL);
+		err = valueEncoder.testScalarOverlap();
+		assertEqual(err,new ZStringBuilder(),"Error does not match expectation (6)");
 		
 		if (testJsAble(valueEncoder,new ZGridEncoderValue(),"Encoder JSON does not match expectation (2)")) {
 			System.out.println();
 			System.out.println("Value encoder JSON:");
 			System.out.println(valueEncoder.toJson().toStringBuilderReadFormat());
-		}
-		
-		// Position encoder
-		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition();
-		err = positionEncoder.testScalarOverlap();
-		assertEqual(err,new ZStringBuilder(),"Error does not match expectation (5)");
-		
-		if (testJsAble(positionEncoder,new ZGridEncoderPosition(),"Encoder JSON does not match expectation (3)")) {
-			System.out.println();
-			System.out.println("Position encoder JSON:");
-			System.out.println(positionEncoder.toJson().toStringBuilderReadFormat());
 		}
 		
 		// Property encoder

@@ -151,6 +151,9 @@ public class CombinedEncoder {
 				r = SDR.concat(r,add);
 			}
 		}
+		if (r==null) {
+			r = new SDR(length());
+		}
 		return r;
 	}
 	
@@ -162,17 +165,20 @@ public class CombinedEncoder {
 	public ZStringBuilder testScalarOverlap() {
 		ZStringBuilder r = new ZStringBuilder();
 		for (String name: getEncoderNames()) {
-			ScalarEncoder encoder = getScalarEncoder(name);
-			if (encoder!=null) {
-				ZStringBuilder err = ((ScalarEncoder) encoder).testScalarOverlap(1,encoder.bits - 1);
-				if (err.length()>0) {
-					if (r.length()>0) {
-						r.append("\n");
-					}
-					r.append(name);
-					r.append(": ");
-					r.append(err);
+			EncoderObject encoder = getEncoder(name);
+			ZStringBuilder err = new ZStringBuilder();
+			if (encoder instanceof ScalarEncoder) {
+				err = ((ScalarEncoder) encoder).testScalarOverlap(1,encoder.bits - 1);
+			} else if (encoder instanceof GridDimensionEncoder) {
+				err = ((GridDimensionEncoder) encoder).testScalarOverlap(1,encoder.bits - 1);
+			}
+			if (err.length()>0) {
+				if (r.length()>0) {
+					r.append("\n");
 				}
+				r.append(name);
+				r.append(": ");
+				r.append(err);
 			}
 		}
 		return r;

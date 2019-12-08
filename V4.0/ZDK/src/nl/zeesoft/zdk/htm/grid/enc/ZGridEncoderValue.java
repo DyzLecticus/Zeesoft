@@ -4,7 +4,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
+import nl.zeesoft.zdk.htm.enc.GridDimensionEncoder;
 import nl.zeesoft.zdk.htm.enc.GridDimensionScaledEncoder;
+import nl.zeesoft.zdk.htm.enc.RDScalarEncoder;
 import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
@@ -14,14 +16,19 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class ZGridEncoderValue extends ZGridColumnEncoder {
-	private String			valueKey		= DateTimeSDR.VALUE_KEY;
-	private int				length			= 256;
-	private int				bits			= 8;
-	private float			resolution		= 1;
-	private float			minValue		= 0;
-	private float			maxValue		= 255 - bits;
-	private boolean			periodic		= false;
-	private boolean			scaled			= false;
+	public static final String	TYPE_SCALAR			= "SCALAR";
+	public static final String	TYPE_SCALED			= "SCALED";
+	public static final String	TYPE_DIMENSIONAL	= "DIMENSIONAL";
+	public static final String	TYPE_RANDOM			= "RANDOM";
+	
+	private String				valueKey			= DateTimeSDR.VALUE_KEY;
+	private String				type				= TYPE_SCALAR;
+	private int					length				= 256;
+	private int					bits				= 8;
+	private float				resolution			= 1;
+	private float				minValue			= 0;
+	private float				maxValue			= 255 - bits;
+	private boolean				periodic			= false;
 
 	public ZGridEncoderValue() {
 		rebuildEncoder();
@@ -34,7 +41,9 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	
 	public ZGridEncoderValue(int length,String valueKey) {
 		this.length = length;
-		this.valueKey = valueKey;
+		if (valueKey.length()>0) {
+			this.valueKey = valueKey;
+		}
 		rebuildEncoder();
 	}
 	
@@ -43,8 +52,21 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		return valueKey;
 	}
 
+	public void setType(String type) {
+		if (type.equals(TYPE_SCALAR) ||
+			type.equals(TYPE_SCALED) ||
+			type.equals(TYPE_DIMENSIONAL) ||
+			type.equals(TYPE_RANDOM)
+			) {
+			this.type = type;
+			rebuildEncoder();
+		}
+	}
+
 	public void setValueKey(String valueKey) {
-		this.valueKey = valueKey;
+		if (valueKey.length()>0) {
+			this.valueKey = valueKey;
+		}
 		rebuildEncoder();
 	}
 
@@ -77,11 +99,6 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		this.periodic = periodic;
 		rebuildEncoder();
 	}
-	
-	public void setScaled(boolean scaled) {
-		this.scaled = scaled;
-		rebuildEncoder();
-	}
 
 	public SDR getSDRForFloatValue(float value) {
 		SDR r = null;
@@ -103,13 +120,13 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("type",type,true));
 		json.rootElement.children.add(new JsElem("length","" + length));
 		json.rootElement.children.add(new JsElem("bits","" + bits));
 		json.rootElement.children.add(new JsElem("resolution","" + resolution));
 		json.rootElement.children.add(new JsElem("minValue","" + minValue));
 		json.rootElement.children.add(new JsElem("maxValue","" + maxValue));
 		json.rootElement.children.add(new JsElem("periodic","" + periodic));
-		json.rootElement.children.add(new JsElem("scaled","" + scaled));
 		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
 		return json;
 	}
@@ -117,13 +134,13 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
+			type = json.rootElement.getChildString("type",type);
 			length = json.rootElement.getChildInt("length",length);
 			bits = json.rootElement.getChildInt("bits",bits);
 			resolution = json.rootElement.getChildFloat("resolution",resolution);
 			minValue = json.rootElement.getChildFloat("minValue",minValue);
 			maxValue = json.rootElement.getChildFloat("maxValue",maxValue);
 			periodic = json.rootElement.getChildBoolean("periodic",periodic);
-			scaled = json.rootElement.getChildBoolean("scaled",scaled);
 			valueKey = json.rootElement.getChildString("valueKey",valueKey);
 			rebuildEncoder();
 		}
@@ -132,15 +149,18 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	@Override
 	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
 		DateTimeSDR r = null;
-		Object value = result.getRequest().inputValues[columnIndex];
+		Object value = null;
 		if (hasInputValue(columnIndex,result)) {
-			if (result.getRequest().inputValues[columnIndex] instanceof Float) {
-				r = new DateTimeSDR(getSDRForFloatValue((float)value));
-			} else if (result.getRequest().inputValues[columnIndex] instanceof Integer) {
-				r = new DateTimeSDR(getSDRForIntegerValue((int)value));
-			} else if (result.getRequest().inputValues[columnIndex] instanceof Long) {
-				r = new DateTimeSDR(getSDRForLongValue((long)value));
-			}
+			value = result.getRequest().inputValues[columnIndex];
+		} else {
+			value = 0;
+		}
+		if (result.getRequest().inputValues[columnIndex] instanceof Float) {
+			r = new DateTimeSDR(getSDRForFloatValue((float)value));
+		} else if (result.getRequest().inputValues[columnIndex] instanceof Integer) {
+			r = new DateTimeSDR(getSDRForIntegerValue((int)value));
+		} else if (result.getRequest().inputValues[columnIndex] instanceof Long) {
+			r = new DateTimeSDR(getSDRForLongValue((long)value));
 		}
 		r.dateTime = result.getRequest().dateTime;
 		r.keyValues.put(valueKey,value);
@@ -153,19 +173,31 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	
 	protected void rebuildEncoder() {
 		encoder = new CombinedEncoder();
-		if (scaled) {
-			GridDimensionScaledEncoder enc = new GridDimensionScaledEncoder(length);
-			if (resolution!=1) {
-				enc.setResolution(resolution);
-			}
-			encoder.addEncoder(valueKey,enc);
-		} else {
+		if (type.equals(TYPE_SCALAR)) {
 			ScalarEncoder enc = new ScalarEncoder(length,bits,minValue,maxValue);
 			if (resolution!=1) {
 				enc.setResolution(resolution);
 			}
 			if (periodic) {
 				enc.setPeriodic(periodic);
+			}
+			encoder.addEncoder(valueKey,enc);
+		} else if (type.equals(TYPE_SCALED)) {
+			GridDimensionScaledEncoder enc = new GridDimensionScaledEncoder(length);
+			if (resolution!=1) {
+				enc.setResolution(resolution);
+			}
+			encoder.addEncoder(valueKey,enc);
+		} else if (type.equals(TYPE_DIMENSIONAL)) {
+			GridDimensionEncoder enc = new GridDimensionEncoder(length,bits);
+			if (resolution!=1) {
+				enc.setResolution(resolution);
+			}
+			encoder.addEncoder(valueKey,enc);
+		} else if (type.equals(TYPE_RANDOM)) {
+			RDScalarEncoder enc = new RDScalarEncoder(length,bits);
+			if (resolution!=1) {
+				enc.setResolution(resolution);
 			}
 			encoder.addEncoder(valueKey,enc);
 		}

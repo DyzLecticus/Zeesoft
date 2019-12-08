@@ -71,6 +71,17 @@ public class GridDimensionEncoder extends EncoderObject {
 		return r;
 	}
 	
+	/**
+	 * Iterates through all possible values of this encoder to determine if the SDR values have a certain minimal and maximal overlap.
+	 * 
+	 * @param minOverlap The minimal overlap between two sequential values
+	 * @param maxOverlap The maximal overlap between two sequential values
+	 * @return An empty string builder or a string builder containing an error message
+	 */
+	public ZStringBuilder testScalarOverlap(int minOverlap, int maxOverlap) {
+		return testScalarOverlap(0,getCapacity() * resolution,minOverlap,maxOverlap);
+	}
+	
 	protected void initializeModules() {
 		modules.initialize();
 		int mods = (bits / 2);

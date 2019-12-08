@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
+import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
@@ -13,15 +14,17 @@ import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.grid.ZGridResultsListener;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
-import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderPosition;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
 import nl.zeesoft.zdk.htm.proc.Classification;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
+import nl.zeesoft.zdk.htm.proc.MergerConfig;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
+import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.thread.WorkerUnion;
 
 public class TestZGrid extends TestObject implements ZGridResultsListener {
 	private List<Long>				expectedIds				= new ArrayList<Long>();
@@ -99,7 +102,14 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 	
 	@Override
 	protected void test(String[] args) {
-		ZGrid grid = new ZGrid(4,3);
+		ZDKFactory factory = new ZDKFactory();
+		Messenger messenger = factory.getMessenger();
+		messenger.setPrintDebugMessages(true);
+		WorkerUnion union = factory.getWorkerUnion(messenger);
+
+		messenger.start();
+		
+		ZGrid grid = new ZGrid(messenger,union,5,5);
 		
 		grid.addListener(this);
 
@@ -111,41 +121,55 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		dateTimeEncoder.setIncludeMinute(false);
 		dateTimeEncoder.setScale(2);
 		
-		ZGridEncoderValue valueEncoder = new ZGridEncoderValue();
-		valueEncoder.setLength(64);
+		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(64);
 		valueEncoder.setMaxValue(20);
 		
-		ZGridEncoderPosition positionEncoder = new ZGridEncoderPosition();
+		ZGridEncoderValue posXEncoder = new ZGridEncoderValue(64,"POSX");
+		posXEncoder.setMaxValue(20);
+
+		ZGridEncoderValue posYEncoder = new ZGridEncoderValue(64,"POSY");
+		posYEncoder.setMaxValue(20);
+
+		ZGridEncoderValue posZEncoder = new ZGridEncoderValue(64,"POSZ");
+		posZEncoder.setMaxValue(20);
 		
 		// Add encoders
 		grid.setEncoder(0,dateTimeEncoder);
 		grid.setEncoder(1,valueEncoder);
-		grid.setEncoder(2,positionEncoder);
+		grid.setEncoder(2,posXEncoder);
+		grid.setEncoder(3,posYEncoder);
+		grid.setEncoder(4,posZEncoder);
 		
 		// Add processors
 		PoolerConfig poolerConfig = new PoolerConfig(dateTimeEncoder.length(),1024,21);
-		grid.setProcessor(1,0,poolerConfig);
+		grid.setProcessor(2,0,poolerConfig);
 		
 		poolerConfig = new PoolerConfig(valueEncoder.length(),1024,21);
-		grid.setProcessor(1,1,poolerConfig);
+		grid.setProcessor(2,1,poolerConfig);
 
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
 		memoryConfig.addContextDimension(1024);
 		memoryConfig.addContextDimension(1024);
-		grid.setProcessor(2,1,memoryConfig);
+		grid.setProcessor(3,1,memoryConfig);
 		
 		ClassifierConfig classifierConfig = new ClassifierConfig(1);
-		grid.setProcessor(3,1,classifierConfig);
+		grid.setProcessor(4,1,classifierConfig);
+
+		grid.setProcessor(1,3,new MergerConfig());
+
+		poolerConfig = new PoolerConfig(posXEncoder.length() * 3,1024,21);
+		grid.setProcessor(2,3,poolerConfig);
 		
-		poolerConfig = new PoolerConfig(positionEncoder.length(),1024,21);
-		grid.setProcessor(1,2,poolerConfig);
+		// Route output from position encoders to position merger context
+		int[] posColumns = {2,4};
+		grid.addColumnContexts(1,3,0,posColumns);
 		
 		// Route output from dateTime and position poolers to memory context
-		int[] sourceColumns = {0,2};
-		grid.addColumnContexts(2,1,1,sourceColumns);
+		int[] dtpColumns = {0,3};
+		grid.addColumnContexts(3,1,2,dtpColumns);
 
 		// Route value DateTimeSDR from encoder to classifier
-		grid.addColumnContext(3,1,0,1);
+		grid.addColumnContext(4,1,0,1);
 		
 		// Randomize pooler connections
 		grid.randomizePoolerConnections();
@@ -154,7 +178,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println();
 		
 		boolean test = false;
-		ZGrid newGrid = new ZGrid(4,3);
+		ZGrid newGrid = new ZGrid(5,5);
 		if (testJsAble(grid,newGrid,"Grid JSON does not match expectation")) {
 			test = true;
 			System.out.println("Grid JSON;");
@@ -167,10 +191,13 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 			testNewGrid(grid,newGrid);
 		}
 		
+		System.out.println();
 		grid.destroy();
 		newGrid.destroy();
-		System.out.println();
-		System.out.println("Destroyed grid");
+
+		messenger.stop();
+		messenger.handleMessages();
+		union.stopWorkers();
 	}
 
 	@Override
@@ -207,28 +234,32 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		// Start grid
 		grid.start();
 		grid.whileInactive();
-		System.out.println("Started grid");
 		
 		long started = System.currentTimeMillis();
 		long dateTime = started;
 		
 		// Add requests
+		ZGridRequest request = null;
 		for (int c = 1; c <= 300; c++) {
 			for (int r = 1; r <= 10; r++) {
 				float[] position = new float[3];
 				position[0] = 0;
 				position[1] = r;
 				position[2] = r * 2;
-				ZGridRequest request = grid.getNewRequest();
+				request = grid.getNewRequest();
 				request.dateTime = dateTime;
 				request.inputValues[0] = request.dateTime;
 				request.inputValues[1] = r;
-				request.inputValues[2] = position;
+				request.inputValues[2] = 0;
+				request.inputValues[3] = r;
+				request.inputValues[4] = r * 2;
 				expectedIds.add(grid.addRequest(request));
 				dateTime += 1000;
 			}
 		}
 		System.out.println("Added requests");
+		
+		testJsAble(request,grid.getNewRequest(),"Request JSON does not match expectation");
 		
 		int i = 0;
 		while(grid.isActive()) {
@@ -246,7 +277,6 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 			grid.stop();
 		}
 		grid.whileActive();
-		System.out.println("Stopped grid");
 
 		// Test assertions
 		boolean success = false;

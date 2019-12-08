@@ -91,28 +91,7 @@ public class ScalarEncoder extends EncoderObject {
 	 * @return An empty string builder or a string builder containing an error message
 	 */
 	public ZStringBuilder testScalarOverlap(int minOverlap, int maxOverlap) {
-		if (maxOverlap==0) {
-			maxOverlap = bits; 
-		}
-		ZStringBuilder r = new ZStringBuilder();
-		float pv = minValue - resolution;
-		SDR prev = null;
-		for (float v = minValue; v < maxValue; v += resolution) {
-			SDR test = getSDRForValue(v);
-			if (prev!=null) {
-				int overlap = test.getOverlapScore(prev);
-				if (overlap<minOverlap) {
-					r.append("Overlap between " + pv + " and " + v + " is less than " + minOverlap);
-					break;
-				} else if (overlap>maxOverlap) {
-					r.append("Overlap between " + pv + " and " + v + " is greater than " + maxOverlap);
-					break;
-				}
-			}
-			pv = v;
-			prev = test;
-		}
-		return r;
+		return testScalarOverlap(minValue,maxValue,minOverlap,maxOverlap);
 	}
 
 	/**

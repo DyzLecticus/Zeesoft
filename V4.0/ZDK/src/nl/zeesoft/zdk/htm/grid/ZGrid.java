@@ -112,13 +112,18 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 * @param encoder The encoder to be placed at the specified column index
 	 */
 	public void setEncoder(int columnIndex,ZGridColumnEncoder encoder) {
+		boolean r = false;
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
 			if (numRows>0 && numColumns>columnIndex) {
 				rows.get(0).columns.get(columnIndex).encoder = encoder;
+				r = true;
 			}
 		}
 		unlockMe(this);
+		if (!r && getMessenger()!=null) {
+			getMessenger().error(this,"Failed to set " + encoder.getClass().getSimpleName() + " at column: " + columnIndex);
+		}
 	}
 
 	/**
@@ -129,14 +134,19 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 * @param processor The processor
 	 */
 	public void setProcessor(int rowIndex,int columnIndex,ProcessorObject processor) {
+		boolean r = false;
 		if (rowIndex>0) {
 			lockMe(this);
 			if (state.equals(STATE_STOPPED)) {
 				if (rowIndex>0 && numRows>rowIndex && numColumns>columnIndex) {
 					rows.get(rowIndex).columns.get(columnIndex).processor = processor;
+					r = true;
 				}
 			}
 			unlockMe(this);
+		}
+		if (!r && getMessenger()!=null) {
+			getMessenger().error(this,"Failed to set " + processor.getClass().getSimpleName() + " at row/column: " + rowIndex + "/" + columnIndex);
 		}
 	}
 
@@ -153,6 +163,8 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		r = getNewProcessor(config);
 		if (r!=null) {
 			setProcessor(rowIndex,columnIndex,r);
+		} else if (getMessenger()!=null) {
+			getMessenger().error(this,"Failed to create processor for configuration " + config.getClass().getSimpleName());
 		}
 		return r;
 	}
@@ -233,17 +245,22 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 * @param sourceIndex The source column result index
 	 */
 	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn,int sourceIndex) {
+		boolean r = false;
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
-			if (numRows>rowIndex && numColumns>columnIndex && sourceRow<rowIndex) {
+			if (numRows>rowIndex && numColumns>columnIndex && sourceRow<rowIndex && sourceColumn<numColumns) {
 				ZGridColumnContext context = new ZGridColumnContext();
 				context.sourceRow = sourceRow;
 				context.sourceColumn = sourceColumn;
 				context.sourceIndex = sourceIndex;
 				rows.get(rowIndex).columns.get(columnIndex).contexts.add(context);
+				r = true;
 			}
 		}
 		unlockMe(this);
+		if (!r && getMessenger()!=null) {
+			getMessenger().error(this,"Failed to add column context at row/column: " + rowIndex + "/" + columnIndex);
+		}
 	}
 	
 	/**
@@ -424,18 +441,24 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 * @param stateData The column state data
 	 */
 	public void setColumnStateData(String columnId, ZStringBuilder stateData) {
+		boolean r = false;
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
 			ZGridColumn col = getColumnById(columnId);
 			if (col!=null) {
 				if (col.encoder!=null) {
 					col.encoder.fromStringBuilder(stateData);
+					r = true;
 				} else if (col.processor!=null) {
 					col.processor.fromStringBuilder(stateData);
+					r = true;
 				}
 			}
 		}
 		unlockMe(this);
+		if (!r && getMessenger()!=null) {
+			getMessenger().error(this,"Failed to set column state data for column id: " + columnId);
+		}
 	}
 
 	/**
@@ -473,6 +496,9 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		}
 		unlockMe(this);
 		if (r) {
+			if (getMessenger()!=null) {
+				getMessenger().debug(this,"Starting grid ...");
+			}
 			for (ZGridRow row: rows) {
 				row.start();
 			}
@@ -490,6 +516,9 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		}
 		unlockMe(this);
 		if (r) {
+			if (getMessenger()!=null) {
+				getMessenger().debug(this,"Stopping grid ...");
+			}
 			for (ZGridRow row: rows) {
 				row.stop();
 			}
@@ -515,6 +544,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 * Destroys the grid and its processors.
 	 */
 	public void destroy() {
+		boolean r = false;
 		lockMe(this);
 		if (state.equals(STATE_STOPPED)) {
 			for (ZGridRow row: rows) {
@@ -522,8 +552,12 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 			}
 			rows.clear();
 			results.destroy();
+			r = true;
 		}
 		unlockMe(this);
+		if (r && getMessenger()!=null) {
+			getMessenger().debug(this,"Destoyed grid");
+		}
 	}
 
 	@Override
@@ -541,6 +575,9 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		lockMe(this);
 		state = STATE_STARTED;
 		unlockMe(this);
+		if (getMessenger()!=null) {
+			getMessenger().debug(this,"Started grid");
+		}
 	}
 	
 	@Override
@@ -549,6 +586,9 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		state = STATE_STOPPED;
 		unlockMe(this);
 		results.flush();
+		if (getMessenger()!=null) {
+			getMessenger().debug(this,"Stopped grid");
+		}
 	}
 
 	protected void whileActive(boolean active) {

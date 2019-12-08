@@ -75,7 +75,13 @@ public class ZGridColumn extends Worker {
 				}
 			} else if (processor!=null) {
 				// Use previous row column output as input
-				SDR input = result.getColumnOutput(getColumnId(row.index - 1,index),0);
+				SDR input = null;
+				for (int r = row.index - 1; r >= 0; r--) {
+					input = result.getColumnOutput(getColumnId(r,index),0);
+					if (input!=null) {
+						break;
+					}
+				}
 				if (input==null && 
 					result.getRequest().inputValues.length>index &&
 					result.getRequest().inputValues[index]!=null &&
@@ -93,7 +99,9 @@ public class ZGridColumn extends Worker {
 						}
 					}
 				}
-				outputs = processor.getSDRsForInput(input,context,result.getRequest().learn);
+				if (input!=null || context.size()>0) {
+					outputs = processor.getSDRsForInput(input,context,result.getRequest().learn);
+				}
 			}
 			result.setColumnOutput(getId(),outputs);
 			result = null;
