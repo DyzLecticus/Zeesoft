@@ -18,6 +18,7 @@ import nl.zeesoft.zdk.thread.Locker;
 public class ZGridResult extends Locker {
 	private ZGridRequest					request			= null;
 	private SortedMap<String,List<SDR>>		columnOutputs	= new TreeMap<String,List<SDR>>();
+	private List<Classification>			classifications	= new ArrayList<Classification>();
 	
 	public ZGridResult(Messenger msgr,ZGridRequest request) {
 		super(msgr);
@@ -82,24 +83,8 @@ public class ZGridResult extends Locker {
 	 * @return All Classification objects in this result
 	 */
 	public List<Classification> getClassifications() {
-		List<Classification> r = new ArrayList<Classification>();
 		lockMe(this);
-		for (List<SDR> outputs: columnOutputs.values()) {
-			if (outputs!=null) {
-				for (SDR outputSDR: outputs) {
-					if (outputSDR instanceof DateTimeSDR) {
-						DateTimeSDR classificationSDR = (DateTimeSDR) outputSDR;
-						if (classificationSDR.keyValues.containsKey(Classifier.CLASSIFICATION_KEY)) {
-							Object obj = classificationSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
-							if (obj instanceof Classification) {
-								Classification classification = (Classification) obj;
-								r.add(classification);
-							}
-						}
-					}
-				}
-			}
-		}
+		List<Classification> r = new ArrayList<Classification>(classifications);
 		unlockMe(this);
 		return r;
 	}
@@ -107,6 +92,17 @@ public class ZGridResult extends Locker {
 	protected void setColumnOutput(String columnId,List<SDR> outputs) {
 		lockMe(this);
 		columnOutputs.put(columnId,outputs);
+		for (SDR outputSDR: outputs) {
+			if (outputSDR instanceof DateTimeSDR) {
+				DateTimeSDR classificationSDR = (DateTimeSDR) outputSDR;
+				if (classificationSDR.keyValues.containsKey(Classifier.CLASSIFICATION_KEY)) {
+					Object obj = classificationSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
+					if (obj instanceof Classification) {
+						classifications.add((Classification) obj);
+					}
+				}
+			}
+		}
 		unlockMe(this);
 	}
 }
