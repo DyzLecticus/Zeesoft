@@ -42,8 +42,10 @@ public class ValueClassifier extends StreamListenerObject {
 			lockMe(this);
 			List<ValueClassifierListener> list = new ArrayList<ValueClassifierListener>(listeners);
 			unlockMe(this);
-			for (ValueClassifierListener listener: list) {
-				listener.classifiedValue(result, classifications);
+			if (classifications.size()>0) {
+				for (ValueClassifierListener listener: list) {
+					listener.classifiedValue(result, classifications);
+				}
 			}
 		}
 	}

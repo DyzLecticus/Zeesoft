@@ -44,23 +44,15 @@ public class StepsClassifier {
 			}
 		}
 	}
-	
-	protected DateTimeSDR getClassificationSDRForActivationSDR(SDR activationSDR,DateTimeSDR inputSDR,boolean learn) {
-		DateTimeSDR r = null;
+
+	protected void associateBits(SDR activationSDR,DateTimeSDR inputSDR) {
 		if (inputSDR!=null) {
-			r = new DateTimeSDR(inputSDR.length());
-			if (learn) {
-				associateBits(inputSDR);
-			}
-			generatePrediction(activationSDR,r);
-		} else {
-			r = new DateTimeSDR(activationSDR.length());
+			associateBits(inputSDR);
 		}
-		return r;
 	}
 
 	protected void associateBits(DateTimeSDR inputSDR) {
-		if (activationHistory.size()>steps) {
+		if (inputSDR!=null && activationHistory.size()>steps) {
 			int index = activationHistory.size() - (steps + 1);
 			Object value = inputSDR.keyValues.get(config.valueKey);
 			String label = (String) inputSDR.keyValues.get(config.labelKey);
@@ -78,6 +70,17 @@ public class StepsClassifier {
 				}
 			}
 		}
+	}
+
+	protected DateTimeSDR getClassificationSDRForActivationSDR(SDR activationSDR,DateTimeSDR inputSDR) {
+		DateTimeSDR r = null;
+		if (inputSDR!=null) {
+			r = new DateTimeSDR(inputSDR.length());
+			generatePrediction(activationSDR,r);
+		} else {
+			r = new DateTimeSDR(activationSDR.length());
+		}
+		return r;
 	}
 
 	protected void generatePrediction(SDR activationSDR,DateTimeSDR outputSDR) {

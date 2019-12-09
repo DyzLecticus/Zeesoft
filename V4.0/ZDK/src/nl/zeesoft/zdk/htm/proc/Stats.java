@@ -26,7 +26,7 @@ public class Stats {
 	}
 	
 	public Long getValue(String name) {
-		Long r = null;
+		Long r = new Long(0);
 		int index = names.indexOf(name);
 		if (index>=0 && index < values.size()) {
 			r = values.get(index);

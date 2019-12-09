@@ -16,6 +16,7 @@ public class StatsLog {
 	public Object							source		= null;
 	public int								maxLogSize	= 99999;
 	public List<Stats>						log			= new ArrayList<Stats>();
+	public List<String>						names		= new ArrayList<String>();
 	
 	public StatsLog(Object source) {
 		this.source = source;
@@ -26,28 +27,36 @@ public class StatsLog {
 		while(log.size()>maxLogSize) {
 			log.remove(0);
 		}
+		for (String name: stats.names) {
+			if (!names.contains(name)) {
+				names.add(name);
+			}
+		}
 	}
 	
 	public StatsLog copy() {
 		StatsLog copy = new StatsLog(source);
+		copy.maxLogSize = maxLogSize;
 		for (Stats stats: log) {
 			copy.log.add(stats.copy());
+		}
+		for (String name: names) {
+			copy.names.add(name);
 		}
 		return copy;
 	}
 	
 	public HashMap<String,Long> getTotals() {
-		return getTotals(log);
+		return getTotals(log,names);
 	}
 	
 	public ZStringBuilder getSummary() {
-		return getSummary(log);
+		return getSummary(log,names);
 	}
 	
-	public static HashMap<String,Long> getTotals(List<Stats> log) {
+	public static HashMap<String,Long> getTotals(List<Stats> log,List<String> names) {
 		HashMap<String,Long> r = new HashMap<String,Long>();
 		if (log.size()>0) {
-			List<String> names = log.get(0).names;
 			for (Stats stats: log) {
 				for (String name: names) {
 					Long total = r.get(name);
@@ -62,11 +71,10 @@ public class StatsLog {
 		return r;
 	}
 	
-	public static ZStringBuilder getSummary(List<Stats> log) {
+	public static ZStringBuilder getSummary(List<Stats> log,List<String> names) {
 		ZStringBuilder r = new ZStringBuilder();
 		
 		if (log.size()>0) {
-			List<String> names = log.get(0).names;
 			int maxNameLength = 10;
 			for (String name: names) {
 				if (name.length()>maxNameLength) {
@@ -74,7 +82,7 @@ public class StatsLog {
 				}
 			}
 			int maxValueLength = 0;
-			HashMap<String,Long> totals = getTotals(log);
+			HashMap<String,Long> totals = getTotals(log,names);
 			for (Long total: totals.values()) {
 				int totalLength = getStringValueForStatsValue(total).length();
 				if (totalLength>maxValueLength) {

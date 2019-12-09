@@ -22,6 +22,8 @@ public class Classifier extends ProcessorObject {
 	protected DateTimeSDR				inputSDR				= null;
 	protected List<DateTimeSDR>			classifierSDRs			= new ArrayList<DateTimeSDR>();
 	
+	protected boolean					classify				= true;
+	
 	public Classifier(ClassifierConfig config) {
 		super(config);
 		for (Integer steps: getConfig().predictSteps) {
@@ -30,6 +32,10 @@ public class Classifier extends ProcessorObject {
 				maxSteps = steps;
 			}
 		}
+	}
+	
+	public void setClassify(boolean classify) {
+		this.classify = classify;
 	}
 	
 	@Override
@@ -120,11 +126,18 @@ public class Classifier extends ProcessorObject {
 		DateTimeSDR r = null;
 		classifierSDRs.clear();
 		if (input!=null && input.onBits()>0) {
-			long start = 0;
 			if (inputSDR!=null) {
-				start = System.nanoTime();
-				r = generateClassifications(input,learn);
-				logStatsValue("generateClassifications",System.nanoTime() - start);
+				long start = 0;
+				if (learn) {
+					start = System.nanoTime();
+					associateBits(input);
+					logStatsValue("associateBits",System.nanoTime() - start);
+				}
+				if (classify) {
+					start = System.nanoTime();
+					r = generateClassifications(input);
+					logStatsValue("generateClassifications",System.nanoTime() - start);
+				}
 			} else {
 				r = new DateTimeSDR(input.length());
 			}
@@ -137,18 +150,26 @@ public class Classifier extends ProcessorObject {
 		}
 		return r;
 	}
-	
-	protected DateTimeSDR generateClassifications(SDR input,boolean learn) {
-		DateTimeSDR r = null;
-		int i = 0;
+
+	protected void associateBits(SDR input) {
 		for (StepsClassifier classifier: classifiers) {
-			DateTimeSDR classificationSDR = classifier.getClassificationSDRForActivationSDR(input,inputSDR,learn);
-			if (i==0) {
-				r = classificationSDR;
-			} else {
-				classifierSDRs.add(classificationSDR);
+			classifier.associateBits(inputSDR);
+		}
+	}
+
+	protected DateTimeSDR generateClassifications(SDR input) {
+		DateTimeSDR r = null;
+		boolean first = true;
+		for (StepsClassifier classifier: classifiers) {
+			DateTimeSDR classificationSDR = classifier.getClassificationSDRForActivationSDR(input,inputSDR);
+			if (classificationSDR!=null) {
+				if (first) {
+					r = classificationSDR;
+					first = false;
+				} else {
+					classifierSDRs.add(classificationSDR);
+				}
 			}
-			i++;
 		}
 		return r;
 	}
