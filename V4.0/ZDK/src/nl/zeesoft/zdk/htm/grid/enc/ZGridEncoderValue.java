@@ -161,7 +161,7 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 			}
 		}
 		if (r==null) {
-			r = new DateTimeSDR(encoder.length());
+			r = getNewDateTimeSDR();
 		}
 		r.dateTime = result.getRequest().dateTime;
 		if (value!=null) {

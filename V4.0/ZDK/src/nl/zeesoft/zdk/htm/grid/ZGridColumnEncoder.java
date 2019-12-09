@@ -64,6 +64,10 @@ public abstract class ZGridColumnEncoder implements JsAble {
 	
 	protected abstract DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result);
 	
+	protected DateTimeSDR getNewDateTimeSDR() {
+		return new DateTimeSDR(encoder.length());
+	}
+	
 	protected boolean hasInputValue(int columnIndex,ZGridResult result) {
 		boolean r = false;
 		if (result.getRequest().inputValues.length>columnIndex &&

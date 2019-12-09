@@ -112,8 +112,14 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 
 	@Override
 	protected DateTimeSDR encodeRequestValue(int columnIndex,ZGridResult result) {
-		long dateTime = getInputValueAsLong(columnIndex,result);
-		return getSDRForDateTime(dateTime);
+		DateTimeSDR r = null;
+		if (hasInputValue(columnIndex,result)) {
+			long dateTime = getInputValueAsLong(columnIndex,result);
+			r = getSDRForDateTime(dateTime);
+		} else {
+			r = getNewDateTimeSDR();
+		}
+		return r;
 	}
 	
 	protected void rebuildEncoder() {

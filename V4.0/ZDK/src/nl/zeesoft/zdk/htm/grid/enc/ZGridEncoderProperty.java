@@ -112,7 +112,7 @@ public class ZGridEncoderProperty extends ZGridColumnEncoder {
 			r = new DateTimeSDR(getSDRForValue(value));
 			r.keyValues.put(valueKey,value);
 		} else {
-			r = new DateTimeSDR(encoder.length());
+			r = getNewDateTimeSDR();
 		}
 		r.dateTime = result.getRequest().dateTime;
 		if (label.length()>0) {
