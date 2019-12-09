@@ -239,7 +239,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 				for (String columnId: result.getColumnIds()) {
 					if (columnId.endsWith("-01")) {
 						SDR sdr = result.getColumnOutput(columnId,0);
-						System.out.println("Empty SDR: " + sdr.toStringBuilder());
+						assertEqual(sdr.onBits(),0,"Number of on bits does not match expectation");
 					}
 				}
 			}
