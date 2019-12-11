@@ -22,7 +22,7 @@ import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
-import nl.zeesoft.zdk.thread.Worker;
+import nl.zeesoft.zdk.thread.StateWorker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
 /**
@@ -32,18 +32,11 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * The remaining rows can be used for Pooler, Memory, Classifier, Merger and custom processors.
  * Context routing can be used to route the output of a column to the context of another column.
  */
-public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
+public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 	protected static final int		SLEEP_NS		= 10000;
-	
-	public static final String		STATE_STOPPED	= "STOPPED";
-	public static final String		STATE_STARTING	= "STARTING";
-	public static final String		STATE_STARTED	= "STARTED";
-	public static final String		STATE_STOPPING	= "STOPPING";
 	
 	private int						numRows			= 1;
 	private int						numColumns		= 1;
-	
-	private String					state			= STATE_STOPPED;
 	
 	private List<ZGridRow>			rows			= new ArrayList<ZGridRow>();
 	private ZGridResults			results			= null;
@@ -60,32 +53,6 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		initialize(rows,columns);
 	}
 	
-	/**
-	 * Returns the grid state.
-	 * 
-	 * @return The grid state
-	 */
-	public String getState() {
-		String r = "";
-		lockMe(this);
-		r = state;
-		unlockMe(this);
-		return r;
-	}
-	
-	/**
-	 * Indicates the grid state does not equal STATE_STOPPED.
-	 * 
-	 * @return True if the grid state does not equal STATE_STOPPED
-	 */
-	public boolean isActive() {
-		boolean r = false;
-		lockMe(this);
-		r = !state.equals(STATE_STOPPED);
-		unlockMe(this);
-		return r;
-	}
-
 	/**
 	 * Adds a result listener to the grid.
 	 * 
@@ -116,7 +83,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	public void setEncoder(int columnIndex,ZGridColumnEncoder encoder) {
 		boolean r = false;
 		lockMe(this);
-		if (state.equals(STATE_STOPPED)) {
+		if (getStateNoLock().equals(STATE_STOPPED)) {
 			if (numRows>0 && numColumns>columnIndex) {
 				rows.get(0).columns.get(columnIndex).encoder = encoder;
 				r = true;
@@ -139,7 +106,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		boolean r = false;
 		if (rowIndex>0) {
 			lockMe(this);
-			if (state.equals(STATE_STOPPED)) {
+			if (getStateNoLock().equals(STATE_STOPPED)) {
 				if (rowIndex>0 && numRows>rowIndex && numColumns>columnIndex) {
 					rows.get(rowIndex).columns.get(columnIndex).processor = processor;
 					r = true;
@@ -249,7 +216,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn,int sourceIndex) {
 		boolean r = false;
 		lockMe(this);
-		if (state.equals(STATE_STOPPED)) {
+		if (getStateNoLock().equals(STATE_STOPPED)) {
 			if (numRows>rowIndex && numColumns>columnIndex && sourceRow<rowIndex && sourceColumn<numColumns) {
 				ZGridColumnContext context = new ZGridColumnContext();
 				context.sourceRow = sourceRow;
@@ -270,7 +237,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 */
 	public void randomizePoolerConnections() {
 		lockMe(this);
-		if (state.equals(STATE_STOPPED)) {
+		if (getStateNoLock().equals(STATE_STOPPED)) {
 			for (ZGridRow row: rows) {
 				for (ZGridColumn col: row.columns) {
 					if (col.processor!=null && col.processor instanceof Pooler) {
@@ -294,7 +261,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		r.append("*");
 		r.append("" + numColumns);
 		lockMe(this);
-		if (state.equals(STATE_STOPPED)) {
+		if (getStateNoLock().equals(STATE_STOPPED)) {
 			for (ZGridRow row: rows) {
 				for (ZGridColumn col: row.columns) {
 					ZStringBuilder desc = null;
@@ -361,7 +328,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 			JsElem cfgsElem = json.rootElement.getChildByName("configurations");
 			if (rs>0 && cs>0 && numRows==rs && numColumns==cs && cfgsElem!=null) {
 				lockMe(this);
-				if (state.equals(STATE_STOPPED)) {
+				if (getStateNoLock().equals(STATE_STOPPED)) {
 					for (JsElem cfgElem: cfgsElem.children) {
 						String id = cfgElem.getChildString("columnId");
 						String className = cfgElem.getChildString("className");
@@ -406,7 +373,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	public SortedMap<String,ZStringBuilder> getColumnStateData() {
 		SortedMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>();
 		lockMe(this);
-		if (state.equals(STATE_STOPPED)) {
+		if (getStateNoLock().equals(STATE_STOPPED)) {
 			for (ZGridRow row: rows) {
 				for (ZGridColumn col: row.columns) {
 					ZStringBuilder state = null;
@@ -445,7 +412,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	public void setColumnStateData(String columnId, ZStringBuilder stateData) {
 		boolean r = false;
 		lockMe(this);
-		if (state.equals(STATE_STOPPED)) {
+		if (getStateNoLock().equals(STATE_STOPPED)) {
 			ZGridColumn col = getColumnById(columnId);
 			if (col!=null) {
 				if (col.encoder!=null) {
@@ -487,59 +454,10 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		unlockMe(this);
 		return r;
 	}
-	
-	@Override
-	public void start() {
-		boolean r = false;
-		lockMe(this);
-		r = state.equals(STATE_STOPPED);
-		if (r) {
-			state = STATE_STARTING;
-		}
-		unlockMe(this);
-		if (r) {
-			if (getMessenger()!=null) {
-				getMessenger().debug(this,"Starting grid ...");
-			}
-			for (ZGridRow row: rows) {
-				row.start();
-			}
-			super.start();
-		}
-	}
-	
-	@Override
-	public void stop() {
-		boolean r = false;
-		lockMe(this);
-		r = state.equals(STATE_STARTED);
-		if (r) {
-			state = STATE_STOPPING;
-		}
-		unlockMe(this);
-		if (r) {
-			if (getMessenger()!=null) {
-				getMessenger().debug(this,"Stopping grid ...");
-			}
-			for (ZGridRow row: rows) {
-				row.stop();
-			}
-			super.stop();
-		}
-	}
 
-	/**
-	 * Pauses the calling thread while the grid is inactive.
-	 */
-	public void whileInactive() {
-		whileActive(false);
-	}
-	
-	/**
-	 * Pauses the calling thread while the grid is active.
-	 */
-	public void whileActive() {
-		whileActive(true);
+	@Override
+	public void processedRequest(ZGridResult result) {
+		results.addResult(result);
 	}
 	
 	/**
@@ -547,7 +465,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	 */
 	public void destroy() {
 		lockMe(this);
-		if (state.equals(STATE_STOPPED)) {
+		if (getStateNoLock().equals(STATE_STOPPED)) {
 			for (ZGridRow row: rows) {
 				row.destroy();
 			}
@@ -556,10 +474,25 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 		}
 		unlockMe(this);
 	}
-
+	
 	@Override
-	public void processedRequest(ZGridResult result) {
-		results.addResult(result);
+	protected void onStart() {
+		if (getMessenger()!=null) {
+			getMessenger().debug(this,"Starting grid ...");
+		}
+		for (ZGridRow row: rows) {
+			row.start();
+		}
+	}
+	
+	@Override
+	protected void onStop() {
+		if (getMessenger()!=null) {
+			getMessenger().debug(this,"Stopping grid ...");
+		}
+		for (ZGridRow row: rows) {
+			row.stop();
+		}
 	}
 	
 	@Override
@@ -569,9 +502,7 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	
 	@Override
 	protected void startedWorking() {
-		lockMe(this);
-		state = STATE_STARTED;
-		unlockMe(this);
+		super.startedWorking();
 		if (getMessenger()!=null) {
 			getMessenger().debug(this,"Started grid");
 		}
@@ -579,26 +510,10 @@ public class ZGrid extends Worker implements ZGridRequestNext, JsAble {
 	
 	@Override
 	protected void stoppedWorking() {
-		lockMe(this);
-		state = STATE_STOPPED;
-		unlockMe(this);
+		super.stoppedWorking();
 		results.flush();
 		if (getMessenger()!=null) {
 			getMessenger().debug(this,"Stopped grid");
-		}
-	}
-
-	protected void whileActive(boolean active) {
-		while(isActive()==active) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				if (getMessenger()!=null) {
-					getMessenger().error(this,"Waiting for grid activity to stop was interrupted",e);
-				} else {
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 	
