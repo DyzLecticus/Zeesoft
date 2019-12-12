@@ -48,7 +48,7 @@ public class MergerConfig extends ProcessorConfigObject {
 	 * 
 	 * @param maxOnBits The maximum number of on bits
 	 */
-	public void setmaxOnBits(int maxOnBits) {
+	public void setMaxOnBits(int maxOnBits) {
 		if (!initialized) {
 			this.maxOnBits = maxOnBits;
 		}
@@ -70,6 +70,7 @@ public class MergerConfig extends ProcessorConfigObject {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("union","" + union));
 		json.rootElement.children.add(new JsElem("maxOnBits","" + maxOnBits));
 		return json;
 	}
@@ -77,6 +78,7 @@ public class MergerConfig extends ProcessorConfigObject {
 	@Override
 	public void fromJson(JsFile json) {
 		if (!initialized && json.rootElement!=null) {
+			union = json.rootElement.getChildBoolean("union",union);
 			maxOnBits = json.rootElement.getChildInt("maxOnBits",maxOnBits);
 		}
 	}

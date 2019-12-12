@@ -34,6 +34,11 @@ public class StatsLog {
 		}
 	}
 	
+	public void clear() {
+		log.clear();
+		names.clear();
+	}
+	
 	public StatsLog copy() {
 		StatsLog copy = new StatsLog(source);
 		copy.maxLogSize = maxLogSize;

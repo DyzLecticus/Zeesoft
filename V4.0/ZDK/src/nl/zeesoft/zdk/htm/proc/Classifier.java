@@ -22,7 +22,7 @@ public class Classifier extends ProcessorObject {
 	protected DateTimeSDR				inputSDR				= null;
 	protected List<DateTimeSDR>			classifierSDRs			= new ArrayList<DateTimeSDR>();
 	
-	protected boolean					classify				= true;
+	protected int						classifyMaxSteps		= 1;
 	
 	public Classifier(ClassifierConfig config) {
 		super(config);
@@ -33,9 +33,16 @@ public class Classifier extends ProcessorObject {
 			}
 		}
 	}
-	
-	public void setClassify(boolean classify) {
-		this.classify = classify;
+
+	/**
+	 * Sets the maximum number of steps for which classifications will be produced.
+	 * Use -1 to turn off all classifications.
+	 * Use 0 to turn off all predictions.
+	 * 
+	 * @param classifyMaxSteps The maximum number of classification steps
+	 */
+	public void setClassifyMaxSteps(int classifyMaxSteps) {
+		this.classifyMaxSteps = classifyMaxSteps;
 	}
 	
 	@Override
@@ -133,7 +140,7 @@ public class Classifier extends ProcessorObject {
 					associateBits(input);
 					logStatsValue("associateBits",System.nanoTime() - start);
 				}
-				if (classify) {
+				if (classifyMaxSteps>=0) {
 					start = System.nanoTime();
 					r = generateClassifications(input);
 					logStatsValue("generateClassifications",System.nanoTime() - start);
@@ -161,13 +168,15 @@ public class Classifier extends ProcessorObject {
 		DateTimeSDR r = null;
 		boolean first = true;
 		for (StepsClassifier classifier: classifiers) {
-			DateTimeSDR classificationSDR = classifier.getClassificationSDRForActivationSDR(input,inputSDR);
-			if (classificationSDR!=null) {
-				if (first) {
-					r = classificationSDR;
-					first = false;
-				} else {
-					classifierSDRs.add(classificationSDR);
+			if (classifier.steps<=classifyMaxSteps) {
+				DateTimeSDR classificationSDR = classifier.getClassificationSDRForActivationSDR(input,inputSDR);
+				if (classificationSDR!=null) {
+					if (first) {
+						r = classificationSDR;
+						first = false;
+					} else {
+						classifierSDRs.add(classificationSDR);
+					}
 				}
 			}
 		}

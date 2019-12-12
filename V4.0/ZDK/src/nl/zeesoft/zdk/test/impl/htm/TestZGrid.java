@@ -16,8 +16,10 @@ import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.grid.ZGridResultsListener;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
+import nl.zeesoft.zdk.htm.proc.Anomaly;
 import nl.zeesoft.zdk.htm.proc.Classification;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
+import nl.zeesoft.zdk.htm.proc.DetectorConfig;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.MergerConfig;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
@@ -143,19 +145,19 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		grid.setEncoder(4,posZEncoder);
 		
 		// Add processors
-		PoolerConfig poolerConfig = new PoolerConfig(dateTimeEncoder.length(),1024,21);
-		grid.setProcessor(2,0,poolerConfig);
+		grid.setProcessor(2,0,new PoolerConfig(dateTimeEncoder.length(),1024,21));
 		
-		poolerConfig = new PoolerConfig(valueEncoder.length(),1024,21);
+		PoolerConfig poolerConfig = new PoolerConfig(valueEncoder.length(),1024,21);
 		grid.setProcessor(2,1,poolerConfig);
 
 		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
 		memoryConfig.addContextDimension(1024);
 		memoryConfig.addContextDimension(1024);
 		grid.setProcessor(3,1,memoryConfig);
-		
-		ClassifierConfig classifierConfig = new ClassifierConfig(1);
-		grid.setProcessor(4,1,classifierConfig);
+
+		grid.setProcessor(4,0,new DetectorConfig());
+
+		grid.setProcessor(4,1,new ClassifierConfig(1));
 
 		grid.setProcessor(1,3,new MergerConfig());
 
@@ -169,6 +171,10 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		// Route output from dateTime and position poolers to memory context
 		int[] dtpColumns = {0,3};
 		grid.addColumnContexts(3,1,2,dtpColumns);
+
+		// Route output from value pooler and memory burst to detector context
+		grid.addColumnContext(4,0,2,1);
+		grid.addColumnContext(4,0,3,1,1);
 
 		// Route value DateTimeSDR from encoder to classifier
 		grid.addColumnContext(4,1,0,1);
@@ -233,13 +239,22 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		} else {
 			noClassifications = " (!)";
 		}
-			
+		
+		List<Anomaly> anomalies = result.getAnomalies();
+		if (anomalies.size()>0) {
+			for (Anomaly anomaly: anomalies) {
+				System.out.println("Detected anomaly at id " + result.getRequest().id + ", average: " + anomaly.averageAccuracy + ", detected: " + anomaly.detectedAccuracy + ", difference: " + anomaly.difference);
+			}
+		}
+		
 		if (returnedIds.size() % 100 == 0) {
 			if (noClassifications.length()>0) {
 				for (String columnId: result.getColumnIds()) {
 					if (columnId.endsWith("-01")) {
 						SDR sdr = result.getColumnOutput(columnId,0);
-						assertEqual(sdr.onBits(),0,"Number of on bits does not match expectation");
+						if (sdr!=null) {
+							assertEqual(sdr.onBits(),0,"Number of on bits does not match expectation");
+						}
 					}
 				}
 			}
@@ -265,7 +280,11 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 			for (int r = 1; r <= 10; r++) {
 				float[] position = new float[3];
 				position[0] = 0;
-				position[1] = r;
+				if (c==275) {
+					position[1] = r;
+				} else {
+					position[1] = r + 10;
+				}
 				position[2] = r * 2;
 				request = grid.getNewRequest();
 				request.dateTime = dateTime;

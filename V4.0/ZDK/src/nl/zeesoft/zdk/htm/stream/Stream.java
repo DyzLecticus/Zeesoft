@@ -136,9 +136,9 @@ public class Stream extends Worker implements JsAble {
 	public void setLogStats(boolean logStats) {
 		lockMe(this);
 		if (logStats!=this.logStats) {
-			statsLog.log.clear();
+			statsLog.clear();
 			for (StatsLog statsLog: processorStatsLogs) {
-				statsLog.log.clear();
+				statsLog.clear();
 			}
 			this.logStats = logStats;
 			for (StreamProcessor processor: streamProcessors) {

@@ -10,6 +10,8 @@ import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.proc.Classifier;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
+import nl.zeesoft.zdk.htm.proc.Detector;
+import nl.zeesoft.zdk.htm.proc.DetectorConfig;
 import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Merger;
@@ -582,6 +584,8 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 			r = getNewMemory((MemoryConfig)config);
 		} else if (config instanceof ClassifierConfig) {
 			r = getNewClassifier((ClassifierConfig)config);
+		} else if (config instanceof DetectorConfig) {
+			r = getNewDetector((DetectorConfig)config);
 		} else if (config instanceof MergerConfig) {
 			r = getNewMerger((MergerConfig)config);
 		}
@@ -598,6 +602,10 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 	
 	protected Classifier getNewClassifier(ClassifierConfig config) {
 		return new Classifier(config);
+	}
+	
+	protected Detector getNewDetector(DetectorConfig config) {
+		return new Detector(config);
 	}
 	
 	protected Merger getNewMerger(MergerConfig config) {

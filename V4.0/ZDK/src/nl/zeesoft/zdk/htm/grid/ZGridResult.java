@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.htm.proc.Anomaly;
 import nl.zeesoft.zdk.htm.proc.Classification;
 import nl.zeesoft.zdk.htm.proc.Classifier;
+import nl.zeesoft.zdk.htm.proc.Detector;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -19,6 +21,7 @@ public class ZGridResult extends Locker {
 	private ZGridRequest					request			= null;
 	private SortedMap<String,List<SDR>>		columnOutputs	= new TreeMap<String,List<SDR>>();
 	private List<Classification>			classifications	= new ArrayList<Classification>();
+	private List<Anomaly>					anomalies		= new ArrayList<Anomaly>();
 	
 	public ZGridResult(Messenger msgr,ZGridRequest request) {
 		super(msgr);
@@ -89,6 +92,18 @@ public class ZGridResult extends Locker {
 		return r;
 	}
 	
+	/**
+	 * Returns all Anomaly objects of all column output SDRs in this result.
+	 *  
+	 * @return All Anomaly objects in this result
+	 */
+	public List<Anomaly> getAnomalies() {
+		lockMe(this);
+		List<Anomaly> r = new ArrayList<Anomaly>(anomalies);
+		unlockMe(this);
+		return r;
+	}
+	
 	protected void setColumnOutput(String columnId,List<SDR> outputs) {
 		lockMe(this);
 		if (outputs==null) {
@@ -97,11 +112,16 @@ public class ZGridResult extends Locker {
 			columnOutputs.put(columnId,outputs);
 			for (SDR outputSDR: outputs) {
 				if (outputSDR instanceof DateTimeSDR) {
-					DateTimeSDR classificationSDR = (DateTimeSDR) outputSDR;
-					if (classificationSDR.keyValues.containsKey(Classifier.CLASSIFICATION_KEY)) {
-						Object obj = classificationSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
+					DateTimeSDR dateTimeSDR = (DateTimeSDR) outputSDR;
+					if (dateTimeSDR.keyValues.containsKey(Classifier.CLASSIFICATION_KEY)) {
+						Object obj = dateTimeSDR.keyValues.get(Classifier.CLASSIFICATION_KEY);
 						if (obj instanceof Classification) {
 							classifications.add((Classification) obj);
+						}
+					} else if (dateTimeSDR.keyValues.containsKey(Detector.ANOMALY_KEY)) {
+						Object obj = dateTimeSDR.keyValues.get(Detector.ANOMALY_KEY);
+						if (obj instanceof Anomaly) {
+							anomalies.add((Anomaly) obj);
 						}
 					}
 				}

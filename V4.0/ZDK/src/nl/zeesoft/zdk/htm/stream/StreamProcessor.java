@@ -71,7 +71,7 @@ public class StreamProcessor extends Worker {
 		}
 		learn = this.learn;
 		processor.logStats = logStats;
-		processor.statsLog.log.clear();
+		processor.statsLog.clear();
 		unlockMe(this);
 		if (input!=null) {
 			List<SDR> context = new ArrayList<SDR>();
