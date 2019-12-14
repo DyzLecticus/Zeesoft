@@ -81,6 +81,12 @@ public class TestScalarEncoder extends TestObject {
 		System.out.println("SDR for value 50: " + sdr.toBitString());
 		sdr = enc.getSDRForValue(51);
 		System.out.println("SDR for value 51: " + sdr.toBitString());
+		
+		enc = new ScalarEncoder(50,4,0,20);
+		sdr = enc.getSDRForValue(0);
+		assertSDREequals(sdr,"50,0,1,2,3","SDR(A) does not match expectation");
+		sdr = enc.getSDRForValue(1);
+		assertSDREequals(sdr,"50,2,3,4,5","SDR(B) does not match expectation");
 
 		enc = new ScalarEncoder(80,4,0,800);
 		sdr = enc.getSDRForValue(0);

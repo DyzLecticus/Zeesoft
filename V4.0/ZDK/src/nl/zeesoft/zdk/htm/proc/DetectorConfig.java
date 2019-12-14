@@ -10,16 +10,18 @@ import nl.zeesoft.zdk.json.JsFile;
  */
 public class DetectorConfig extends ProcessorConfigObject {
 	protected int		start		= 2500;
-	protected int		window		= 500;
+	protected int		windowLong	= 500;
+	protected int		windowShort	= 1;
 	protected float		threshold	= 0.05F;
 
 	public DetectorConfig() {
 		
 	}
 
-	public DetectorConfig(int start,int window,float threshold) {
+	public DetectorConfig(int start,int windowLong,int windowShort,float threshold) {
 		this.start = start;
-		this.window = window;
+		this.windowLong = windowLong;
+		this.windowShort = windowShort;
 		this.threshold = threshold;
 	}
 	
@@ -29,7 +31,7 @@ public class DetectorConfig extends ProcessorConfigObject {
 	 * @return A copy of this configuration
 	 */
 	public DetectorConfig copy() {
-		DetectorConfig r = new DetectorConfig(start,window,threshold);
+		DetectorConfig r = new DetectorConfig(start,windowLong,windowShort,threshold);
 		return r;
 	}
 	
@@ -45,18 +47,31 @@ public class DetectorConfig extends ProcessorConfigObject {
 	}
 	
 	/**
-	 * Sets historical accuracy window size.
+	 * Sets the long term historical accuracy window size.
 	 * 
-	 * @param window The historical accuracy window size
+	 * @param window The long term historical accuracy window size
 	 */
-	public void setWindow(int window) {
+	public void setWindowLong(int window) {
 		if (!initialized) {
-			this.window = window;
+			this.windowLong = window;
+		}
+	}
+	
+	/**
+	 * Sets the short term historical accuracy window size.
+	 * 
+	 * @param window The short term historical accuracy window size
+	 */
+	public void setWindowShort(int window) {
+		if (!initialized) {
+			this.windowShort = window;
 		}
 	}
 	
 	/**
 	 * Sets the accuracy difference threshold to trigger anomaly recording.
+	 * If the difference between the long term average accuracy and the short term average accuracy is greater than the threshold,
+	 * an Anomaly object will be registered with the output DateTimeSDR of the detector.
 	 * 
 	 * @param threshold The accuracy difference threshold to trigger anomaly recording
 	 */
@@ -76,7 +91,7 @@ public class DetectorConfig extends ProcessorConfigObject {
 		r.append("Detector start: ");
 		r.append("" + start);
 		r.append(", window: ");
-		r.append("" + window);
+		r.append("" + windowLong);
 		r.append(", threshold: ");
 		r.append("" + threshold);
 		return r;
@@ -87,7 +102,7 @@ public class DetectorConfig extends ProcessorConfigObject {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("start","" + start));
-		json.rootElement.children.add(new JsElem("window","" + window));
+		json.rootElement.children.add(new JsElem("window","" + windowLong));
 		json.rootElement.children.add(new JsElem("threshold","" + threshold));
 		return json;
 	}
@@ -96,7 +111,7 @@ public class DetectorConfig extends ProcessorConfigObject {
 	public void fromJson(JsFile json) {
 		if (!initialized && json.rootElement!=null) {
 			start = json.rootElement.getChildInt("start",start);
-			window = json.rootElement.getChildInt("window",window);
+			windowLong = json.rootElement.getChildInt("window",windowLong);
 			threshold = json.rootElement.getChildFloat("threshold",threshold);
 		}
 	}

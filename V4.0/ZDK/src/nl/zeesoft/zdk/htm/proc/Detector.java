@@ -12,16 +12,18 @@ import nl.zeesoft.zdk.htm.util.SDR;
  * A Detector is used to detect anomalies in memory burst outputs.
  */
 public class Detector extends ProcessorObject {
-	public static final String	ANOMALY_KEY	= "ANOMALY";
+	public static final String	ANOMALY_KEY		= "ANOMALY";
 	
-	private List<SDR>			contextSDRs	= new ArrayList<SDR>();
+	private List<SDR>			contextSDRs		= new ArrayList<SDR>();
 	
-	private int					seen		= 0;
-	private HistoricalFloats	history		= new HistoricalFloats();
+	private int					seen			= 0;
+	private HistoricalFloats	historyLong		= new HistoricalFloats();
+	private HistoricalFloats	historyShort	= new HistoricalFloats();
 	
 	public Detector(DetectorConfig config) {
 		super(config);
-		history.window = config.window;
+		historyLong.window = config.windowLong;
+		historyShort.window = config.windowShort;
 	}
 	
 	@Override
@@ -63,19 +65,28 @@ public class Detector extends ProcessorObject {
 			if (poolerSDR!=null && poolerSDR.onBits()>0 && burstSDR!=null) {
 				
 				float accuracy = 1F - (float) burstSDR.onBits() / (float) poolerSDR.onBits();
-				float averageAccuracy = history.average;
-				float difference = 1F - getFloatDifference(averageAccuracy,accuracy);
+				historyShort.addFloat(accuracy);
+				historyLong.addFloat(accuracy);
+				
+				float averageLong = historyLong.average;
+				float averageShort = historyShort.average;
+				float difference = 1F - getFloatDifference(averageLong,averageShort);
+				
+				//if (seen>=getConfig().start && seen>=2645 && seen<=2664) {
+				//	System.out.println("Seen: " + seen + ", average long: " + averageLong + ", average short: " + averageShort + ", difference: " + difference + ", onBits: " + burstSDR.onBits());
+				//}
 				
 				if (seen>=getConfig().start && difference>getConfig().threshold) {
 					Anomaly anomaly = new Anomaly();
-					anomaly.averageAccuracy = averageAccuracy;
 					anomaly.detectedAccuracy = accuracy;
+					anomaly.averageLongTermAccuracy = averageLong;
+					anomaly.averageShortTermAccuracy = averageShort;
 					anomaly.difference = difference;
 					r = new DateTimeSDR(input);
 					r.keyValues.put(ANOMALY_KEY,anomaly);
 				}
-				history.addFloat(accuracy);
 				
+				//seen++;
 				if (seen<getConfig().start) {
 					seen++;
 				}

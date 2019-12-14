@@ -125,8 +125,8 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		dateTimeEncoder.setIncludeMinute(false);
 		dateTimeEncoder.setScale(2);
 		
-		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(64);
-		valueEncoder.setMaxValue(20);
+		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(121);
+		valueEncoder.setMaxValue(30);
 		
 		ZGridEncoderValue posXEncoder = new ZGridEncoderValue(64,"POSX");
 		posXEncoder.setMaxValue(20);
@@ -243,7 +243,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		List<Anomaly> anomalies = result.getAnomalies();
 		if (anomalies.size()>0) {
 			for (Anomaly anomaly: anomalies) {
-				System.out.println("Detected anomaly at id " + result.getRequest().id + ", average: " + anomaly.averageAccuracy + ", detected: " + anomaly.detectedAccuracy + ", difference: " + anomaly.difference);
+				System.out.println("Detected anomaly at id " + result.getRequest().id + ", detected: " + anomaly.detectedAccuracy + ", average: " + anomaly.averageLongTermAccuracy + ", difference: " + anomaly.difference);
 			}
 		}
 		
@@ -280,10 +280,10 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 			for (int r = 1; r <= 10; r++) {
 				float[] position = new float[3];
 				position[0] = 0;
-				if (c==275) {
+				if (c>=275 && c<=278) {
 					position[1] = r;
 				} else {
-					position[1] = r + 10;
+					position[1] = r + 20;
 				}
 				position[2] = r * 2;
 				request = grid.getNewRequest();
