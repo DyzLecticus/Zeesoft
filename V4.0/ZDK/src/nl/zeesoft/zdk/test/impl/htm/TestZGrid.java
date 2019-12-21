@@ -125,8 +125,12 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		dateTimeEncoder.setIncludeMinute(false);
 		dateTimeEncoder.setScale(2);
 		
-		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(121);
+		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(256);
+		valueEncoder.setBits(16);
 		valueEncoder.setMaxValue(30);
+		
+		ZStringBuilder err = valueEncoder.testScalarOverlap();
+		assertEqual(err,new ZStringBuilder(),"Error does not match expectation");
 		
 		ZGridEncoderValue posXEncoder = new ZGridEncoderValue(64,"POSX");
 		posXEncoder.setMaxValue(20);
@@ -232,6 +236,9 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 						accuracy = 1;
 						break;
 					}
+				}
+				if (accuracy==1) {
+					accuracy = (accuracy / (float) classification.mostCountedValues.size());
 				}
 				averageAccuracy.addFloat(accuracy);
 			}

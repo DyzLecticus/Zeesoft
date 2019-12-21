@@ -66,7 +66,6 @@ public class Detector extends ProcessorObject {
 				
 				float accuracy = 1F - (float) burstSDR.onBits() / (float) poolerSDR.onBits();
 				historyShort.addFloat(accuracy);
-				historyLong.addFloat(accuracy);
 				
 				float averageLong = historyLong.average;
 				float averageShort = historyShort.average;
@@ -85,6 +84,8 @@ public class Detector extends ProcessorObject {
 					r = new DateTimeSDR(input);
 					r.keyValues.put(ANOMALY_KEY,anomaly);
 				}
+				
+				historyLong.addFloat(accuracy);
 				
 				//seen++;
 				if (seen<getConfig().start) {
