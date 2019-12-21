@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.test.impl.htm2;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.htm.stream.StreamEncoder;
+import nl.zeesoft.zdk.htm.enc.DateTimeValueEncoder;
 import nl.zeesoft.zdk.htm.util.DateTimeValue;
 import nl.zeesoft.zdk.htm.util.DateTimeValueGenerator;
 import nl.zeesoft.zdk.htm.util.SDR;
@@ -59,7 +59,7 @@ public class TestTemporalMemory extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		List<SDR> inputSDRs = new ArrayList<SDR>();
-		StreamEncoder enc = new StreamEncoder();
+		DateTimeValueEncoder enc = new DateTimeValueEncoder();
 		DateTimeValueGenerator generator = new DateTimeValueGenerator(3600,0,42,0.25F);
 		int num = 24 * 7 * 365;
 		for (int i = 0; i < num; i++) {

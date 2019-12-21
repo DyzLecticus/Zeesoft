@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.htm.stream;
+package nl.zeesoft.zdk.htm.enc;
 
 import java.util.Calendar;
 import java.util.SortedMap;
@@ -6,10 +6,6 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZStringBuilder;
-import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
-import nl.zeesoft.zdk.htm.enc.EncoderObject;
-import nl.zeesoft.zdk.htm.enc.RDScalarEncoder;
-import nl.zeesoft.zdk.htm.enc.ScalarEncoder;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.json.JsAble;
@@ -17,10 +13,10 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 /**
- * A StreamEncoder is used by streams to provide an easy and configurable way for encoding date and time related values.
+ * A DateTimeValueEncoder provides an easy and configurable way for encoding date and time related values.
  * By default, it only encodes the value in the SDR.
  */
-public class StreamEncoder extends CombinedEncoder implements JsAble {
+public class DateTimeValueEncoder extends CombinedEncoder implements JsAble {
 	private static final String					MONTH				= "MONTH";
 	private static final String					DAY_OF_WEEK			= "WEEKDAY";
 	private static final String					HOUR_OF_DAY			= "HOUR";
@@ -43,17 +39,17 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	protected float								valueResolution		= 1;
 	protected boolean							valueDistributed	= false;
 	
-	public StreamEncoder() {
+	public DateTimeValueEncoder() {
 		initialize();
 	}
 	
 	/**
-	 * Returns a copy of this stream encoder.
+	 * Returns a copy of this encoder.
 	 * 
-	 * @return A copy of this stream encoder
+	 * @return A copy of this encoder
 	 */
-	public StreamEncoder copy() {
-		StreamEncoder copy = new StreamEncoder();
+	public DateTimeValueEncoder copy() {
+		DateTimeValueEncoder copy = new DateTimeValueEncoder();
 		copy.scale = scale;
 		copy.bitsPerEncoder = bitsPerEncoder;
 		copy.includeMonth = includeMonth;
@@ -71,9 +67,9 @@ public class StreamEncoder extends CombinedEncoder implements JsAble {
 	}
 	
 	/**
-	 * Sets the scale of this stream encoder.
+	 * Sets the scale of this encoder.
 	 * 
-	 * @param scale The scale of the stream encoder.
+	 * @param scale The scale of the encoder.
 	 */
 	public void setScale(int scale) {
 		if (scale>0) {

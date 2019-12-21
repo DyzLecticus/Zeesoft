@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.test.impl.htm;
 
-import nl.zeesoft.zdk.htm.stream.StreamEncoder;
+import nl.zeesoft.zdk.htm.enc.DateTimeValueEncoder;
 import nl.zeesoft.zdk.htm.util.DateTimeValue;
 import nl.zeesoft.zdk.htm.util.DateTimeValueGenerator;
 import nl.zeesoft.zdk.htm.util.SDRMap;
@@ -14,7 +14,7 @@ public class MockRegularSDRMap extends MockObject {
 
 	@Override
 	protected Object initialzeMock() {
-		StreamEncoder enc = new StreamEncoder();
+		DateTimeValueEncoder enc = new DateTimeValueEncoder();
 		enc.setEncodeProperties(true,true,true,false,false,true);
 		SDRMap sdrMap = new SDRMap(enc.length());
 		DateTimeValueGenerator generator = new DateTimeValueGenerator(7200000,0,42,1);
