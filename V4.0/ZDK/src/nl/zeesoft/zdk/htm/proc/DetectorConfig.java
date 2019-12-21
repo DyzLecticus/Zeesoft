@@ -12,7 +12,7 @@ public class DetectorConfig extends ProcessorConfigObject {
 	protected int		start		= 2500;
 	protected int		windowLong	= 500;
 	protected int		windowShort	= 1;
-	protected float		threshold	= 0.05F;
+	protected float		threshold	= 0.3F;
 
 	public DetectorConfig() {
 		
@@ -90,8 +90,10 @@ public class DetectorConfig extends ProcessorConfigObject {
 		ZStringBuilder r = new ZStringBuilder();
 		r.append("Detector start: ");
 		r.append("" + start);
-		r.append(", window: ");
+		r.append(", window long/short: ");
 		r.append("" + windowLong);
+		r.append("/");
+		r.append("" + windowShort);
 		r.append(", threshold: ");
 		r.append("" + threshold);
 		return r;
@@ -102,7 +104,8 @@ public class DetectorConfig extends ProcessorConfigObject {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("start","" + start));
-		json.rootElement.children.add(new JsElem("window","" + windowLong));
+		json.rootElement.children.add(new JsElem("windowLong","" + windowLong));
+		json.rootElement.children.add(new JsElem("windowShort","" + windowShort));
 		json.rootElement.children.add(new JsElem("threshold","" + threshold));
 		return json;
 	}
@@ -111,7 +114,8 @@ public class DetectorConfig extends ProcessorConfigObject {
 	public void fromJson(JsFile json) {
 		if (!initialized && json.rootElement!=null) {
 			start = json.rootElement.getChildInt("start",start);
-			windowLong = json.rootElement.getChildInt("window",windowLong);
+			windowLong = json.rootElement.getChildInt("windowLong",windowLong);
+			windowShort = json.rootElement.getChildInt("windowShort",windowShort);
 			threshold = json.rootElement.getChildFloat("threshold",threshold);
 		}
 	}

@@ -33,10 +33,13 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 public class TestZGrid extends TestObject implements ZGridResultsListener {
 	private List<Long>				expectedIds				= new ArrayList<Long>();
 	private List<Long>				returnedIds				= new ArrayList<Long>();
-	
+
+	private long					firstExpectedAnomalyId	= 0;
+	private long					firstDetectedAnomalyId	= 0;
+
 	private DecimalFormat			df						= new DecimalFormat("0.000");
 	private Classification			previousClassification	= null;
-	private HistoricalFloats		averageAccuracy			= new HistoricalFloats(); 
+	private HistoricalFloats		averageAccuracy			= new HistoricalFloats();
 	
 	public TestZGrid(Tester tester) {
 		super(tester);
@@ -249,6 +252,9 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		
 		List<Anomaly> anomalies = result.getAnomalies();
 		if (anomalies.size()>0) {
+			if (firstDetectedAnomalyId==0) {
+				firstDetectedAnomalyId = result.getRequest().id;
+			}
 			for (Anomaly anomaly: anomalies) {
 				System.out.println("Detected anomaly at id " + result.getRequest().id + ", detected: " + anomaly.detectedAccuracy + ", average: " + anomaly.averageLongTermAccuracy + ", difference: " + anomaly.difference);
 			}
@@ -285,24 +291,24 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		ZGridRequest request = null;
 		for (int c = 1; c <= 300; c++) {
 			for (int r = 1; r <= 10; r++) {
-				float[] position = new float[3];
-				position[0] = 0;
-				if (c>=275 && c<=278) {
-					position[1] = r;
-				} else {
-					position[1] = r + 20;
-				}
-				position[2] = r * 2;
 				request = grid.getNewRequest();
 				request.dateTime = dateTime;
 				request.inputValues[0] = request.dateTime;
 				if (c<=200 || c>210) {
-					request.inputValues[1] = r;
+					if (c>=275 && c<=278) {
+						request.inputValues[1] = r + 19;
+					} else {
+						request.inputValues[1] = r;
+					}
 					request.inputValues[2] = 0;
 					request.inputValues[3] = r;
 					request.inputValues[4] = r * 2;
 				}
-				expectedIds.add(grid.addRequest(request));
+				long id = grid.addRequest(request);
+				expectedIds.add(id);
+				if (c>=275 && c<=278 && firstExpectedAnomalyId==0) {
+					firstExpectedAnomalyId = id;
+				}
 				dateTime += 1000;
 			}
 		}
@@ -341,6 +347,8 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 				i++;
 			}
 		}
+		boolean withinRange = (firstDetectedAnomalyId >= firstExpectedAnomalyId && firstDetectedAnomalyId <= firstExpectedAnomalyId + 10);
+		assertEqual(withinRange,true,"Detected anomaly request id is not within the expected range");
 		if (success) {
 			System.out.println("Processing " + expectedIds.size() + " requests took " + (stopped - started) + " ms");
 		}

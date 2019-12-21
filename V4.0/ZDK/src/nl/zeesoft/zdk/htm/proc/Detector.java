@@ -10,6 +10,8 @@ import nl.zeesoft.zdk.htm.util.SDR;
 
 /**
  * A Detector is used to detect anomalies in memory burst outputs.
+ * It tracks and compares long term and short term accuracy.
+ * If the difference between the long and short term accuracy is above a certain threshold, it will attach Anomaly objects to the output SDR.
  */
 public class Detector extends ProcessorObject {
 	public static final String	ANOMALY_KEY		= "ANOMALY";
@@ -33,18 +35,32 @@ public class Detector extends ProcessorObject {
 	
 	@Override
 	public ZStringBuilder getDescription() {
-		return getConfig().getDescription();
+		ZStringBuilder r = getConfig().getDescription();
+		if (seen>=getConfig().start) {
+			r.append(" (ACTIVE)");
+		}
+		return r;
 	}
 	
 	@Override
 	public ZStringBuilder toStringBuilder() {
-		// TODO: Implement
-		return new ZStringBuilder();
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("" + seen);
+		r.append(";");
+		r.append(historyLong.toStringBuilder());
+		r.append(";");
+		r.append(historyShort.toStringBuilder());
+		return r;
 	}
 
 	@Override
 	public void fromStringBuilder(ZStringBuilder str) {
-		// TODO: Implement
+		List<ZStringBuilder> elems = str.split(";");
+		if (elems.size()==3) {
+			seen = Integer.parseInt(elems.get(0).toString());
+			historyLong.fromStringBuilder(elems.get(1));
+			historyShort.fromStringBuilder(elems.get(2));
+		}
 	}
 	
 	@Override
@@ -56,8 +72,24 @@ public class Detector extends ProcessorObject {
 
 	@Override
 	protected SDR getSDRForInputSDR(SDR input, boolean learn) {
-		// TODO: Stats logging
+		DateTimeSDR r = null;
+
+		long start = System.nanoTime();
+		r = detectAnomalies(input);
+		logStatsValue("detectAnomalies",System.nanoTime() - start);
 		
+		if (r==null) {
+			if (input!=null) {
+				r = new DateTimeSDR(input);
+			} else {
+				r = new DateTimeSDR(100);
+			}
+		}
+		
+		return r;
+	}
+	
+	protected DateTimeSDR detectAnomalies(SDR input) {
 		DateTimeSDR r = null;
 		if (contextSDRs.size()==2) {
 			SDR poolerSDR = contextSDRs.get(0);
@@ -71,33 +103,25 @@ public class Detector extends ProcessorObject {
 				float averageShort = historyShort.average;
 				float difference = 1F - getFloatDifference(averageLong,averageShort);
 				
-				//if (seen>=getConfig().start && seen>=2645 && seen<=2664) {
-				//	System.out.println("Seen: " + seen + ", average long: " + averageLong + ", average short: " + averageShort + ", difference: " + difference + ", onBits: " + burstSDR.onBits());
-				//}
-				
 				if (seen>=getConfig().start && difference>getConfig().threshold) {
 					Anomaly anomaly = new Anomaly();
 					anomaly.detectedAccuracy = accuracy;
 					anomaly.averageLongTermAccuracy = averageLong;
 					anomaly.averageShortTermAccuracy = averageShort;
 					anomaly.difference = difference;
-					r = new DateTimeSDR(input);
+					if (input!=null) {
+						r = new DateTimeSDR(input);
+					} else {
+						r = new DateTimeSDR(100);
+					}
 					r.keyValues.put(ANOMALY_KEY,anomaly);
 				}
 				
 				historyLong.addFloat(accuracy);
 				
-				//seen++;
 				if (seen<getConfig().start) {
 					seen++;
 				}
-			}
-		}
-		if (r==null) {
-			if (input!=null) {
-				r = new DateTimeSDR(input);
-			} else {
-				r = new DateTimeSDR(100);
 			}
 		}
 		return r;
