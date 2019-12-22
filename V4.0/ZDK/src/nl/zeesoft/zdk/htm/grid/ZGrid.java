@@ -295,6 +295,7 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("rows","" + numRows));
 		json.rootElement.children.add(new JsElem("columns","" + numColumns));
+		lockMe(this);
 		JsElem cfgsElem = new JsElem("configurations",true);
 		json.rootElement.children.add(cfgsElem);
 		for (ZGridRow row: rows) {
@@ -319,6 +320,7 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 				}
 			}
 		}
+		unlockMe(this);
 		return json;
 	}
 

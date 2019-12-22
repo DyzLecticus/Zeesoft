@@ -11,18 +11,12 @@ import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zdk.htm.grid.ZGridColumnEncoder;
+import nl.zeesoft.zdk.htm.grid.ZGridFactory;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.grid.ZGridResultsListener;
-import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
-import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
 import nl.zeesoft.zdk.htm.proc.Anomaly;
 import nl.zeesoft.zdk.htm.proc.Classification;
-import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
-import nl.zeesoft.zdk.htm.proc.DetectorConfig;
-import nl.zeesoft.zdk.htm.proc.MemoryConfig;
-import nl.zeesoft.zdk.htm.proc.MergerConfig;
-import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -78,6 +72,8 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println("grid.addColumnContext(3,1,0,1);");
 		System.out.println("// Add a listener for grid results");
 		System.out.println("grid.addListener(this);");
+		System.out.println("// Randomize grid pooler connections");
+		System.out.println("grid.randomizePoolerConnections();");
 		System.out.println("// Start the grid");
 		System.out.println("grid.start();");
 		System.out.println("// Add requests");
@@ -116,77 +112,12 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 
 		messenger.start();
 		
-		ZGrid grid = new ZGrid(messenger,union,5,5);
+		ZGridFactory gridFactory = new ZGridFactory(messenger,union);
+		gridFactory.initializeTestGrid();
+		testJsAble(gridFactory,new ZGridFactory(),"Grid factory JSON does not match expectation");
 		
+		ZGrid grid = gridFactory.buildNewGrid();
 		grid.addListener(this);
-
-		// Create encoders
-		ZGridEncoderDateTime dateTimeEncoder = new ZGridEncoderDateTime();
-		dateTimeEncoder.setIncludeMonth(false);
-		dateTimeEncoder.setIncludeDayOfWeek(false);
-		dateTimeEncoder.setIncludeHourOfDay(false);
-		dateTimeEncoder.setIncludeMinute(false);
-		dateTimeEncoder.setScale(2);
-		
-		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(256);
-		valueEncoder.setBits(16);
-		valueEncoder.setMaxValue(30);
-		
-		ZStringBuilder err = valueEncoder.testScalarOverlap();
-		assertEqual(err,new ZStringBuilder(),"Error does not match expectation");
-		
-		ZGridEncoderValue posXEncoder = new ZGridEncoderValue(64,"POSX");
-		posXEncoder.setMaxValue(20);
-
-		ZGridEncoderValue posYEncoder = new ZGridEncoderValue(64,"POSY");
-		posYEncoder.setMaxValue(20);
-
-		ZGridEncoderValue posZEncoder = new ZGridEncoderValue(64,"POSZ");
-		posZEncoder.setMaxValue(20);
-		
-		// Add encoders
-		grid.setEncoder(0,dateTimeEncoder);
-		grid.setEncoder(1,valueEncoder);
-		grid.setEncoder(2,posXEncoder);
-		grid.setEncoder(3,posYEncoder);
-		grid.setEncoder(4,posZEncoder);
-		
-		// Add processors
-		grid.setProcessor(2,0,new PoolerConfig(dateTimeEncoder.length(),1024,21));
-		
-		PoolerConfig poolerConfig = new PoolerConfig(valueEncoder.length(),1024,21);
-		grid.setProcessor(2,1,poolerConfig);
-
-		MemoryConfig memoryConfig = new MemoryConfig(poolerConfig);
-		memoryConfig.addContextDimension(1024);
-		memoryConfig.addContextDimension(1024);
-		grid.setProcessor(3,1,memoryConfig);
-
-		grid.setProcessor(4,0,new DetectorConfig());
-
-		grid.setProcessor(4,1,new ClassifierConfig(1));
-
-		grid.setProcessor(1,3,new MergerConfig());
-
-		poolerConfig = new PoolerConfig(posXEncoder.length() * 3,1024,21);
-		grid.setProcessor(2,3,poolerConfig);
-		
-		// Route output from position encoders to position merger context
-		int[] posColumns = {2,4};
-		grid.addColumnContexts(1,3,0,posColumns);
-		
-		// Route output from dateTime and position poolers to memory context
-		int[] dtpColumns = {0,3};
-		grid.addColumnContexts(3,1,2,dtpColumns);
-
-		// Route output from value pooler and memory burst to detector context
-		grid.addColumnContext(4,0,2,1);
-		grid.addColumnContext(4,0,3,1,1);
-
-		// Route value DateTimeSDR from encoder to classifier
-		grid.addColumnContext(4,1,0,1);
-		
-		// Randomize pooler connections
 		grid.randomizePoolerConnections();
 		
 		System.out.println(grid.getDescription());
