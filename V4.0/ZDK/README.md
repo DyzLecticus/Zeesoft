@@ -58,10 +58,10 @@ Class references;
 **Test output**  
 The output of this test shows the generated key, the input text, the encoded text, and the decoded text.
 ~~~~
-Key: 2179359262169116468992046052774815546101345937125238952825860084
+Key: 9877408868662200375004484150036017767876829785366336928875083432
 Input text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
-Key encoded text: EVOVD1J2nX9Yx1~WyZ4VSVGZ:2mVDUvZhYFYq1:2P2mWJTAX7ZOUIYCWo1t1nYKZMUDXdY0YrZaUvUFV7XUXkZN2zXRYrVpWuYpWwXu2N2tXQWW2rWTZo2vYtTsUfU#T4VSU31M2mX4YN2qVyZhWZWGYz2vVRVGZZXMZx2n3u1gWXVlX3YGUGY:WKZr1kYR1LVGYyYWXeYoU0
+Key encoded text: NfqfIeueXbu9reufgeheTdpdvadaB819Kbod#bc9k0sclbJeQbM0JcJ9U9FbwdP8b0:d8e3dZemexe8e3eS0wgQeufIbwbKdydnb#b9ePfO0HfzfrexcA0wefalb48K8cfue8exeWbp9Hfiegevf1dpctamaP9e0vaveEcY9W8mczcueMaE0HcF9j9DbtdW9aaBesePcMd#e0
 Key decoded text: Hello, my name is 'Dyz Lecticus'. How are you feeling today? :-) (Don't you know how to: [re;spond]!).
 
 ASCII encoded text: 42,24,59,48,66,63,2,-28,67,73,-10,50,55,61,59,-28,63,67,-10,-21,26,73,80,-28,34,53,57,56,63,51,75,55,-3,-2,-10,12,69,71,-10,37,72,53,-10,61,69,69,-10,42,59,53,66,45,68,55,-10,56,69,52,55,61,21,-16,16,-15,-1,-16,-2,8,69,62,-3,56,-10,73,69,57,-10,59,68,51,77,-16,62,51,77,-16,74,51,16,-16,49,54,59,11,73,52,69,62,58,33,-9,-7,4
@@ -266,19 +266,19 @@ Class references;
 **Test output**  
 The output of this test shows the standard output of the test log messages.
 ~~~~
-2019-10-06 23:56:32:983 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
-2019-10-06 23:56:33:284 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
-2019-10-06 23:56:33:284 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
+2019-12-22 07:59:47:868 DBG nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log debug message before Messenger has started
+2019-12-22 07:59:48:183 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log error message while Messenger is working
+2019-12-22 07:59:48:183 ERR nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log exception stack trace
 java.lang.NumberFormatException: For input string: "A"
 	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
 	at java.lang.Integer.parseInt(Integer.java:580)
 	at java.lang.Integer.parseInt(Integer.java:615)
 	at nl.zeesoft.zdk.test.impl.TestMessenger.test(TestMessenger.java:83)
-	at nl.zeesoft.zdk.test.Tester.test(Tester.java:69)
+	at nl.zeesoft.zdk.test.Tester.test(Tester.java:71)
 	at nl.zeesoft.zdk.test.LibraryObject.describeAndTest(LibraryObject.java:39)
-	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:50)
+	at nl.zeesoft.zdk.test.impl.ZDK.main(ZDK.java:52)
 
-2019-10-06 23:56:33:596 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
+2019-12-22 07:59:48:534 WRN nl.zeesoft.zdk.test.impl.TestMessengerListener: Test log warning message after Messenger has stopped
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestZMatrix
@@ -313,14 +313,14 @@ Scalar multiplied by 3;
 030.00 | 030.00 | 030.00
 
 Randomized;
--00.15 | 000.87 | -00.25
+000.33 | -00.07 | -00.45
 -------+--------+-------
--00.38 | -00.66 | 000.23
+000.37 | -00.36 | 000.66
 
 Randomized multiplied element wise;
--04.42 | 026.24 | -07.63
+009.88 | -02.10 | -13.54
 -------+--------+-------
--11.35 | -19.81 | 007.01
+011.09 | -10.87 | 019.92
 
 Matrix 1;
 001.00 | 001.00 | 001.00
@@ -340,16 +340,16 @@ Matrix multiplication of matrix 1 * matrix 2;
 024.00 | 024.00
 
 New randomized matrix;
-000.24 | -00.02 | -00.83
+000.81 | 000.20 | -00.68
 -------+--------+-------
-000.18 | -00.99 | -00.14
+000.81 | 000.85 | -00.95
 
 Randomized matrix transposed;
-000.24 | 000.18
+000.81 | 000.81
 -------+-------
--00.02 | -00.99
+000.20 | 000.85
 -------+-------
--00.83 | -00.14
+-00.68 | -00.95
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestGeneticCode
@@ -379,45 +379,45 @@ The output of this test shows;
  * A generated genetic code  
  * The mutated genetic code and the resulting scaled property values  
 ~~~~
-Genetic code: 2435395882769080924291769691290494520904847678165596370991439521543592842045988659446129031452077951
-Mutated code: 2437395882769080924291769691290494540904847678165593370991439521543595842045988659746129031452077951
-                 ^                               ^               ^                 ^            ^                 
+Genetic code: 8519913682757773032939471666560381178246733900034371508713024817016888489323242900383468699952403972
+Mutated code: 8519913682757773732939471666560381178245733900034071508713024817016888489323232900303468699952403972
+                              ^                      ^         ^                           ^     ^                
 
 Scaled property values;
-0: 816
-1: 886 <
-2: 584 <
-3: 48
-4: 437 <
-5: 769
-6: 933 <
-7: 454 <
-8: 690
-9: 49
-10: 696
-11: 435
-12: 691 <
-13: 521
-14: 77
-15: 395
-16: 886
-17: 395 <
-18: 540 <
-19: 767
-20: 291
-21: 48
-22: 521
-23: 145 <
-24: 559
-25: 31
-26: 176
-27: 49 <
-28: 207
-29: 769
-30: 655
-31: 914
-32: 291
-Mutated property values: 10
+0: 248
+1: 199
+2: 573 <
+3: 457 <
+4: 686
+5: 71 <
+6: 457 <
+7: 136
+8: 381
+9: 3
+10: 939
+11: 38
+12: 199
+13: 232 <
+14: 130
+15: 373 <
+16: 248 <
+17: 573 <
+18: 368
+19: 715
+20: 489
+21: 524
+22: 952
+23: 732 <
+24: 665
+25: 248
+26: 24 <
+27: 38
+28: 170 <
+29: 471
+30: 573 <
+31: 481
+32: 893
+Mutated property values: 12
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestNeuralNet
@@ -472,32 +472,32 @@ The output of this test shows;
 Neural net activator: nl.zeesoft.zdk.functions.ZLeakyReLU, learning rate: 0.1
 Initial test results;
   Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|1.00], output: [-0.01], expectation: [0.00], error: 0.01, loss: 0.009638871
-  Input: [0.00|1.00], output: [-0.01], expectation: [1.00], error: 1.01, loss: 1.006593
-  Input: [1.00|0.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0030459
+  Input: [1.00|1.00], output: [-0.00], expectation: [0.00], error: 0.00, loss: 0.0026027488
+  Input: [0.00|1.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0015384
+  Input: [1.00|0.00], output: [-0.00], expectation: [1.00], error: 1.00, loss: 1.0010643
   Average error: 0.50, average loss: 0.50, success: false
 Latest test results;
-  Input: [1.00|1.00], output: [0.01], expectation: [0.00], error: -0.01, loss: 0.008854799
-  Input: [0.00|1.00], output: [0.95], expectation: [1.00], error: 0.05, loss: 0.051279604
-  Input: [1.00|0.00], output: [0.95], expectation: [1.00], error: 0.05, loss: 0.048368335
-  Input: [0.00|0.00], output: [0.12], expectation: [0.00], error: -0.12, loss: 0.12358746
-  Average error: 0.06, average loss: 0.06, success: false
-Trained epochs: 10000, total average error: 2899.5056, total average loss: 2899.5056
+  Input: [1.00|0.00], output: [0.67], expectation: [1.00], error: 0.33, loss: 0.3263278
+  Input: [0.00|0.00], output: [0.71], expectation: [0.00], error: -0.71, loss: 0.7070837
+  Input: [0.00|1.00], output: [0.64], expectation: [1.00], error: 0.36, loss: 0.363881
+  Input: [1.00|1.00], output: [-0.00], expectation: [0.00], error: 0.00, loss: 3.1791627E-4
+  Average error: 0.35, average loss: 0.35, success: false
+Trained epochs: 10000, total average error: 3551.554, total average loss: 3551.554
 ================================================================================
 Neural net activator: nl.zeesoft.zdk.functions.ZLeakyReLU, output activator: nl.zeesoft.zdk.functions.ZSoftmaxTop, learning rate: 0.1
 Initial test results;
-  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
-  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
+  Input: [0.00|0.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
+  Input: [1.00|1.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
+  Input: [0.00|1.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.0
+  Input: [1.00|0.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.0
   Average error: 0.50, average loss: 0.50, success: false
 Latest test results;
   Input: [1.00|1.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
   Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
-  Input: [0.00|0.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
   Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
+  Input: [0.00|0.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
   Average error: 1.00, average loss: 1.00, success: false
-Trained epochs: 10000, total average error: 7109.5, total average loss: 7109.5
+Trained epochs: 10000, total average error: 7055.75, total average loss: 7055.75
 
 Neural net JSON;
 {
@@ -511,19 +511,19 @@ Neural net JSON;
   "outputActivator": "nl.zeesoft.zdk.functions.ZSoftmaxTop",
   "learningRate": 0.1,
   "values": [
-    "2,1,0.0,1.0",
-    "2,1,1.1232579,-0.029934349",
-    "1,1,0.0"
+    "2,1,0.0,0.0",
+    "2,1,-0.00584996,0.3512661",
+    "1,1,1.0"
   ],
   "weights": [
     "1,1,0.0",
-    "2,2,-0.042926986,-0.009389047,-0.667572,-0.8089906",
-    "1,2,0.5977514,-0.8952775"
+    "2,2,0.3880834,0.19139282,0.026913956,-0.01964973",
+    "1,2,0.10876596,0.8024111"
   ],
   "biases": [
     "1,1,0.0",
-    "2,1,1.2521971,-2.1862347",
-    "1,1,-0.7099886"
+    "2,1,-0.58510476,0.27102497",
+    "1,1,-0.19330776"
   ]
 }
 ~~~~
@@ -554,49 +554,267 @@ Class references;
 **Test output**  
 The output of this test shows the training program outputs of one or more generated XOR neural nets.  
 ~~~~
-Neural net activator: nl.zeesoft.zdk.functions.ZSigmoid, output activator: nl.zeesoft.zdk.functions.ZReLU, learning rate: 0.0408
+Neural net activator: nl.zeesoft.zdk.functions.ZReLU, output activator: nl.zeesoft.zdk.functions.ZSoftmaxTop, learning rate: 0.19500001
 Initial test results;
-  Input: [0.00|0.00], output: [1.63], expectation: [0.00], error: -1.63, loss: 1.6339092
-  Input: [1.00|1.00], output: [1.51], expectation: [0.00], error: -1.51, loss: 1.5062909
-  Input: [0.00|1.00], output: [1.58], expectation: [1.00], error: -0.58, loss: 0.58254707
-  Input: [1.00|0.00], output: [1.55], expectation: [1.00], error: -0.55, loss: 0.55242884
-  Average error: 1.07, average loss: 1.07, success: false
+  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
+  Input: [1.00|1.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
+  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
+  Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
+  Average error: 0.50, average loss: 0.50, success: false
 
-00100 -----------/ 48%
-00200 -----------| 48%
-00300 -----------| 48%
-00400 -----------| 48%
-00500 -----------| 48%
-00600 ----------/ 47%
-00700 ----------| 47%
-00800 ----------| 47%
-00900 ----------| 47%
-01000 ----------| 47%
-01100 ----------| 47%
-01200 ----------| 47%
-01300 ----------/ 46%
-01400 ----------| 46%
-01500 ----------/ 45%
-01600 ----------/ 44%
-01700 ---------/ 43%
-01800 ---------/ 42%
-01900 ---------/ 40%
-02000 --------/ 37%
-02100 -------/ 34%
-02200 ------/ 29%
-02300 -----/ 25%
-02400 ----/ 21%
-02500 ---/ 16%
-02600 --/ 12%
-02700 -/ 8%
+00100 ------------------------------------\ 150%
+00200 -------------------------------------------------\ 200%
+00300 -------------------------------------------------| 200%
+00400 -------------------------------------------------| 200%
+00500 ------------------------------------/ 150%
+00600 -------------------------------------------------\ 200%
+00700 -------------------------------------------------| 200%
+00800 ------------------------------------/ 150%
+00900 -------------------------------------------------\ 200%
+01000 ------------------------------------/ 150%
+01100 -------------------------------------------------\ 200%
+01200 ------------------------------------/ 150%
+01300 ------------------------------------| 150%
+01400 ------------------------/ 100%
+01500 ------------------------| 100%
+01600 ------------------------------------\ 150%
+01700 ------------------------------------| 150%
+01800 ------------------------------------| 150%
+01900 -------------------------------------------------\ 200%
+02000 ------------------------/ 100%
+02100 -------------------------------------------------\ 200%
+02200 ------------------------------------/ 150%
+02300 ------------------------------------| 150%
+02400 ------------------------------------| 150%
+02500 ------------------------/ 100%
+02600 ------------------------------------\ 150%
+02700 -------------------------------------------------\ 200%
+02800 ------------------------------------/ 150%
+02900 ------------------------/ 100%
+03000 -----------/ 50%
+03100 -------------------------------------------------\ 200%
+03200 ------------------------------------/ 150%
+03300 ------------------------/ 100%
+03400 -------------------------------------------------\ 200%
+03500 -------------------------------------------------| 200%
+03600 ------------------------/ 100%
+03700 -------------------------------------------------\ 200%
+03800 -------------------------------------------------| 200%
+03900 ------------------------------------/ 150%
+04000 ------------------------------------| 150%
+04100 -------------------------------------------------\ 200%
+04200 ------------------------------------/ 150%
+04300 ------------------------------------| 150%
+04400 ------------------------------------| 150%
+04500 ------------------------/ 100%
+04600 ------------------------------------\ 150%
+04700 -------------------------------------------------\ 200%
+04800 -------------------------------------------------| 200%
+04900 ------------------------/ 100%
+05000 ------------------------------------\ 150%
+05100 ------------------------------------| 150%
+05200 -------------------------------------------------\ 200%
+05300 -------------------------------------------------| 200%
+05400 -------------------------------------------------| 200%
+05500 -------------------------------------------------| 200%
+05600 -------------------------------------------------| 200%
+05700 ------------------------/ 100%
+05800 ------------------------------------\ 150%
+05900 ------------------------/ 100%
+06000 ------------------------------------\ 150%
+06100 ------------------------/ 100%
+06200 -------------------------------------------------\ 200%
+06300 -------------------------------------------------| 200%
+06400 -------------------------------------------------| 200%
+06500 ------------------------/ 100%
+06600 ------------------------------------\ 150%
+06700 ------------------------------------| 150%
+06800 ------------------------------------| 150%
+06900 ------------------------------------| 150%
+07000 ------------------------------------| 150%
+07100 ------------------------/ 100%
+07200 ------------------------------------\ 150%
+07300 ------------------------/ 100%
+07400 ------------------------------------\ 150%
+07500 ------------------------/ 100%
+07600 ------------------------| 100%
+07700 -----------/ 50%
+07800 -------------------------------------------------\ 200%
+07900 -------------------------------------------------| 200%
+08000 ------------------------/ 100%
+08100 ------------------------------------\ 150%
+08200 ------------------------/ 100%
+08300 ------------------------------------\ 150%
+08400 -------------------------------------------------\ 200%
+08500 ------------------------------------/ 150%
+08600 -----------/ 50%
+08700 ------------------------------------\ 150%
+08800 ------------------------------------| 150%
+08900 ------------------------------------| 150%
+09000 ------------------------------------| 150%
+09100 -------------------------------------------------\ 200%
+09200 ------------------------------------/ 150%
+09300 -----------/ 50%
+09400 -------------------------------------------------\ 200%
+09500 ------------------------------------/ 150%
+09600 -------------------------------------------------\ 200%
+09700 ------------------------/ 100%
+09800 -----------/ 50%
+09900 -------------------------------------------------\ 200%
+10000 ------------------------------------/ 150%
 
 Latest test results;
-  Input: [1.00|1.00], output: [0.10], expectation: [0.00], error: -0.10, loss: 0.099095404
-  Input: [1.00|0.00], output: [0.93], expectation: [1.00], error: 0.07, loss: 0.07317859
-  Input: [0.00|0.00], output: [0.04], expectation: [0.00], error: -0.04, loss: 0.041377723
-  Input: [0.00|1.00], output: [0.93], expectation: [1.00], error: 0.07, loss: 0.07015109
-  Average error: 0.07, average loss: 0.07, success: true
-Trained epochs: 2787, total average error: 1171.3406, total average loss: 1171.3406
+  Input: [0.00|0.00], output: [0.00], expectation: [0.00], error: 0.00, loss: 0.0
+  Input: [0.00|1.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
+  Input: [1.00|0.00], output: [0.00], expectation: [1.00], error: 1.00, loss: 1.0
+  Input: [1.00|1.00], output: [1.00], expectation: [0.00], error: -1.00, loss: 1.0
+  Average error: 0.75, average loss: 0.75, success: false
+Trained epochs: 10000, total average error: 7276.0, total average loss: 7276.0
+================================================================================
+Neural net activator: nl.zeesoft.zdk.functions.ZReLU, output activator: nl.zeesoft.zdk.functions.ZSigmoid, learning rate: 0.046
+Initial test results;
+  Input: [0.00|0.00], output: [0.42], expectation: [0.00], error: -0.42, loss: 0.41548613
+  Input: [1.00|1.00], output: [0.46], expectation: [0.00], error: -0.46, loss: 0.464503
+  Input: [0.00|1.00], output: [0.40], expectation: [1.00], error: 0.60, loss: 0.5963528
+  Input: [1.00|0.00], output: [0.48], expectation: [1.00], error: 0.52, loss: 0.52329993
+  Average error: 0.50, average loss: 0.50, success: false
+
+00100 ---------------------/ 88%
+00200 ------------------/ 79%
+00300 -----------------/ 74%
+00400 ----------------/ 71%
+00500 ----------------/ 70%
+00600 ----------------/ 69%
+00700 ----------------/ 68%
+00800 ----------------| 68%
+00900 ----------------| 68%
+01000 ---------------/ 67%
+01100 ---------------| 67%
+01200 ---------------| 67%
+01300 ---------------| 67%
+01400 ---------------| 67%
+01500 ---------------| 67%
+01600 ---------------| 67%
+01700 ---------------| 67%
+01800 ---------------| 67%
+01900 ---------------| 67%
+02000 ---------------| 67%
+02100 ---------------| 67%
+02200 ---------------| 67%
+02300 ---------------| 67%
+02400 ---------------| 67%
+02500 ---------------| 67%
+02600 ---------------| 67%
+02700 ---------------| 67%
+02800 ---------------| 67%
+02900 ---------------| 67%
+03000 ---------------| 67%
+03100 ---------------| 67%
+03200 ---------------| 67%
+03300 ---------------| 67%
+03400 ---------------| 67%
+03500 ---------------/ 66%
+03600 ---------------\ 67%
+03700 ---------------/ 66%
+03800 ---------------| 66%
+03900 ---------------| 66%
+04000 ---------------| 66%
+04100 ---------------| 66%
+04200 ---------------| 66%
+04300 ---------------| 66%
+04400 ---------------| 66%
+04500 ---------------| 66%
+04600 ---------------| 66%
+04700 ---------------| 66%
+04800 ---------------| 66%
+04900 ---------------| 66%
+05000 ---------------| 66%
+05100 ---------------| 66%
+05200 ---------------| 66%
+05300 ---------------| 66%
+05400 ---------------| 66%
+05500 ---------------| 66%
+05600 ---------------| 66%
+05700 ---------------| 66%
+05800 ---------------| 66%
+05900 ---------------| 66%
+06000 ---------------| 66%
+06100 ---------------| 66%
+06200 ---------------| 66%
+06300 ---------------| 66%
+06400 ---------------| 66%
+06500 ---------------| 66%
+06600 ---------------| 66%
+06700 ---------------| 66%
+06800 ---------------| 66%
+06900 ---------------| 66%
+07000 ---------------| 66%
+07100 ---------------| 66%
+07200 ---------------| 66%
+07300 ---------------| 66%
+07400 ---------------| 66%
+07500 ---------------| 66%
+07600 ---------------| 66%
+07700 ---------------| 66%
+07800 ---------------| 66%
+07900 ---------------| 66%
+08000 ---------------| 66%
+08100 ---------------| 66%
+08200 ---------------| 66%
+08300 ---------------| 66%
+08400 ---------------| 66%
+08500 ---------------| 66%
+08600 ---------------| 66%
+08700 ---------------| 66%
+08800 ---------------| 66%
+08900 ---------------| 66%
+09000 ---------------| 66%
+09100 ---------------| 66%
+09200 ---------------| 66%
+09300 ---------------| 66%
+09400 ---------------| 66%
+09500 ---------------| 66%
+09600 ---------------| 66%
+09700 ---------------| 66%
+09800 ---------------| 66%
+09900 ---------------| 66%
+10000 ---------------| 66%
+
+Latest test results;
+  Input: [1.00|1.00], output: [0.33], expectation: [0.00], error: -0.33, loss: 0.3331091
+  Input: [0.00|1.00], output: [0.33], expectation: [1.00], error: 0.67, loss: 0.66764665
+  Input: [1.00|0.00], output: [1.00], expectation: [1.00], error: 0.00, loss: 0.001758039
+  Input: [0.00|0.00], output: [0.33], expectation: [0.00], error: -0.33, loss: 0.33386725
+  Average error: 0.33, average loss: 0.33, success: false
+Trained epochs: 10000, total average error: 3384.5186, total average loss: 3384.5186
+================================================================================
+Neural net activator: nl.zeesoft.zdk.functions.ZSigmoid, output activator: nl.zeesoft.zdk.functions.ZTanH, learning rate: 0.102400005
+Initial test results;
+  Input: [0.00|0.00], output: [-0.38], expectation: [0.00], error: 0.38, loss: 0.38246262
+  Input: [1.00|1.00], output: [-0.60], expectation: [0.00], error: 0.60, loss: 0.60165876
+  Input: [0.00|1.00], output: [-0.53], expectation: [1.00], error: 1.53, loss: 1.5322073
+  Input: [1.00|0.00], output: [-0.51], expectation: [1.00], error: 1.51, loss: 1.5058352
+  Average error: 1.01, average loss: 1.01, success: false
+
+00100 ------------/ 52%
+00200 -----------/ 51%
+00300 -----------| 51%
+00400 -----------/ 49%
+00500 ----------/ 46%
+00600 ---------/ 42%
+00700 --------/ 37%
+00800 ------/ 31%
+00900 ----/ 22%
+01000 --/ 14%
+01100 -/ 9%
+
+Latest test results;
+  Input: [0.00|0.00], output: [0.03], expectation: [0.00], error: -0.03, loss: 0.033615198
+  Input: [1.00|0.00], output: [0.90], expectation: [1.00], error: 0.10, loss: 0.0999639
+  Input: [0.00|1.00], output: [0.90], expectation: [1.00], error: 0.10, loss: 0.09764218
+  Input: [1.00|1.00], output: [0.09], expectation: [0.00], error: -0.09, loss: 0.08611067
+  Average error: 0.08, average loss: 0.08, success: true
+Trained epochs: 1182, total average error: 440.637, total average loss: 440.637
 ~~~~
 
 nl.zeesoft.zdk.test.impl.TestEvolver
@@ -631,45 +849,45 @@ Class references;
 **Test output**  
 The output of this test shows the evolver debug output and the evolver object converted to JSON.  
 ~~~~
-2019-10-06 23:56:34:296 DBG nl.zeesoft.zdk.genetic.Evolver: Started
-2019-10-06 23:56:34:376 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 8094276811121005
+2019-12-22 07:59:49:695 DBG nl.zeesoft.zdk.genetic.Evolver: Started
+2019-12-22 07:59:49:804 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 2542712689547456
 - Size: 14
-- Initial average loss: 0.51633 (final: 0.05599)
-- Total average loss: 21.21823 (epochs: 72)
-- Training result: 10.95551
-2019-10-06 23:56:34:768 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 8094276111121005
+- Initial average loss: 0.57275 (final: 0.07393)
+- Total average loss: 25.77682 (epochs: 80)
+- Training result: 14.76378
+2019-12-22 07:59:58:173 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 2541712689547456
 - Size: 14
-- Initial average loss: 0.54678 (final: 0.07705)
-- Total average loss: 17.04869 (epochs: 62)
-- Training result: 9.32194
-2019-10-06 23:56:38:280 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 8094276111125005
+- Initial average loss: 0.55378 (final: 0.07879)
+- Total average loss: 8.67549 (epochs: 35)
+- Training result: 4.80431
+2019-12-22 07:59:58:757 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 2541312689547456
 - Size: 14
-- Initial average loss: 0.55534 (final: 0.06481)
-- Total average loss: 7.61667 (epochs: 25)
-- Training result: 4.22981
-2019-10-06 23:56:38:373 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 8094276111125055
+- Initial average loss: 0.42753 (final: 0.06998)
+- Total average loss: 6.22500 (epochs: 31)
+- Training result: 2.66140
+2019-12-22 07:59:58:921 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 2541312689547156
 - Size: 14
-- Initial average loss: 0.44761 (final: 0.07418)
-- Total average loss: 6.81544 (epochs: 24)
-- Training result: 3.05069
-2019-10-06 23:56:38:477 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 8094273111125055
+- Initial average loss: 0.35830 (final: 0.06177)
+- Total average loss: 5.57194 (epochs: 32)
+- Training result: 1.99641
+2019-12-22 07:59:58:984 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 2541312688547156
 - Size: 14
-- Initial average loss: 0.35884 (final: 0.05790)
-- Total average loss: 6.83307 (epochs: 27)
-- Training result: 2.45199
-2019-10-06 23:56:39:757 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 8094273111125055
+- Initial average loss: 0.25265 (final: 0.07102)
+- Total average loss: 1.92891 (epochs: 13)
+- Training result: 0.48734
+2019-12-22 07:59:59:046 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 2541372688547156
 - Size: 14
-- Initial average loss: 0.30640 (final: 0.07115)
-- Total average loss: 2.82585 (epochs: 16)
-- Training result: 0.86583
-2019-10-06 23:56:39:792 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
-- Code: 8094273111125052
+- Initial average loss: 0.16810 (final: 0.06192)
+- Total average loss: 0.96269 (epochs: 9)
+- Training result: 0.16183
+2019-12-22 07:59:59:210 DBG nl.zeesoft.zdk.genetic.Evolver: Selected new best genetic neural net;
+- Code: 2541372688547156
 - Size: 14
 - Initial average loss: 0.00000 (final: 0.00000)
 - Total average loss: 0.00000 (epochs: 0)
@@ -686,13 +904,13 @@ Evolver JSON;
   "sleepMsFoundBest": 10,
   "maxLogLines": 20,
   "log": [
-    "2019-10-06 23:56:34:376 SEL code: 8094276811121005, size: 14, initial loss: 0.51633 (final: 0.05599), total loss: 21.21823, result: 10.95551 (epochs: 72)",
-    "2019-10-06 23:56:34:768 SEL code: 8094276111121005, size: 14, initial loss: 0.54678 (final: 0.07705), total loss: 17.04869, result: 9.32194 (epochs: 62)",
-    "2019-10-06 23:56:38:280 SEL code: 8094276111125005, size: 14, initial loss: 0.55534 (final: 0.06481), total loss: 7.61667, result: 4.22981 (epochs: 25)",
-    "2019-10-06 23:56:38:373 SEL code: 8094276111125055, size: 14, initial loss: 0.44761 (final: 0.07418), total loss: 6.81544, result: 3.05069 (epochs: 24)",
-    "2019-10-06 23:56:38:477 SEL code: 8094273111125055, size: 14, initial loss: 0.35884 (final: 0.05790), total loss: 6.83307, result: 2.45199 (epochs: 27)",
-    "2019-10-06 23:56:39:757 SEL code: 8094273111125055, size: 14, initial loss: 0.30640 (final: 0.07115), total loss: 2.82585, result: 0.86583 (epochs: 16)",
-    "2019-10-06 23:56:39:792 SEL code: 8094273111125052, size: 14, initial loss: 0.00000 (final: 0.00000), total loss: 0.00000, result: 0.00000 (epochs: 0)"
+    "2019-12-22 07:59:49:804 SEL code: 2542712689547456, size: 14, initial loss: 0.57275 (final: 0.07393), total loss: 25.77682, result: 14.76378 (epochs: 80)",
+    "2019-12-22 07:59:58:173 SEL code: 2541712689547456, size: 14, initial loss: 0.55378 (final: 0.07879), total loss: 8.67549, result: 4.80431 (epochs: 35)",
+    "2019-12-22 07:59:58:757 SEL code: 2541312689547456, size: 14, initial loss: 0.42753 (final: 0.06998), total loss: 6.22500, result: 2.66140 (epochs: 31)",
+    "2019-12-22 07:59:58:921 SEL code: 2541312689547156, size: 14, initial loss: 0.35830 (final: 0.06177), total loss: 5.57194, result: 1.99641 (epochs: 32)",
+    "2019-12-22 07:59:58:984 SEL code: 2541312688547156, size: 14, initial loss: 0.25265 (final: 0.07102), total loss: 1.92891, result: 0.48734 (epochs: 13)",
+    "2019-12-22 07:59:59:046 SEL code: 2541372688547156, size: 14, initial loss: 0.16810 (final: 0.06192), total loss: 0.96269, result: 0.16183 (epochs: 9)",
+    "2019-12-22 07:59:59:210 SEL code: 2541372688547156, size: 14, initial loss: 0.00000 (final: 0.00000), total loss: 0.00000, result: 0.00000 (epochs: 0)"
   ],
   "bestSoFar": [
     {
@@ -703,7 +921,7 @@ Evolver JSON;
           "maxHiddenNeurons": 2,
           "outputNeurons": 1,
           "codePropertyStart": 0,
-          "code": "4MbGpElBoHQENBWORNwK4HqIDGPEJObLfJQNGA4DhBbGDMPGdOjO3DfOlEbCkCPOwCPJ2",
+          "code": "xDHCIEJNALZKmMEMlGCMGADB2HUAfFmMdELBSG#KuDgKZBzAoCnMHGMKFNoGML:NCOjH2",
           "neuralNet": [
             {
               "inputNeurons": 2,
@@ -711,24 +929,24 @@ Evolver JSON;
               "hiddenNeurons": 2,
               "outputNeurons": 1,
               "weightFunction": "nl.zeesoft.zdk.functions.ZWeightXavier",
-              "biasFunction": "nl.zeesoft.zdk.functions.ZWeightKaiming",
-              "activator": "nl.zeesoft.zdk.functions.ZReLU",
+              "biasFunction": "nl.zeesoft.zdk.functions.ZWeightZero",
+              "activator": "nl.zeesoft.zdk.functions.ZLeakyReLU",
               "outputActivator": "nl.zeesoft.zdk.functions.ZSoftmaxTop",
-              "learningRate": 0.1578,
+              "learningRate": 0.1816,
               "values": [
-                "2,1,1.0,0.0",
-                "2,1,0.0,0.33489418",
+                "2,1,0.0,1.0",
+                "2,1,-0.009048376,0.47104135",
                 "1,1,1.0"
               ],
               "weights": [
                 "1,1,0.0",
-                "2,2,-0.85006547,-0.6835578,0.98809147,0.62002194",
-                "1,2,-0.7421954,-0.61237246"
+                "2,2,0.8938832,-0.90483767,-0.90045595,0.47104135",
+                "1,2,0.2008582,0.9969424"
               ],
               "biases": [
                 "1,1,0.0",
-                "2,1,0.73321396,-0.6531973",
-                "1,1,0.5045949"
+                "2,1,0.0,0.0",
+                "1,1,0.0"
               ]
             }
           ]
@@ -757,12 +975,6 @@ Evolver JSON;
                   "errors": "0.0"
                 },
                 {
-                  "inputs": "0.0,1.0",
-                  "outputs": "1.0",
-                  "expectations": "1.0",
-                  "errors": "0.0"
-                },
-                {
                   "inputs": "0.0,0.0",
                   "outputs": "0.0",
                   "expectations": "0.0",
@@ -770,6 +982,12 @@ Evolver JSON;
                 },
                 {
                   "inputs": "1.0,0.0",
+                  "outputs": "1.0",
+                  "expectations": "1.0",
+                  "errors": "0.0"
+                },
+                {
+                  "inputs": "0.0,1.0",
                   "outputs": "1.0",
                   "expectations": "1.0",
                   "errors": "0.0"
@@ -794,12 +1012,6 @@ Evolver JSON;
                   "errors": "0.0"
                 },
                 {
-                  "inputs": "0.0,1.0",
-                  "outputs": "1.0",
-                  "expectations": "1.0",
-                  "errors": "0.0"
-                },
-                {
                   "inputs": "0.0,0.0",
                   "outputs": "0.0",
                   "expectations": "0.0",
@@ -807,6 +1019,12 @@ Evolver JSON;
                 },
                 {
                   "inputs": "1.0,0.0",
+                  "outputs": "1.0",
+                  "expectations": "1.0",
+                  "errors": "0.0"
+                },
+                {
+                  "inputs": "0.0,1.0",
                   "outputs": "1.0",
                   "expectations": "1.0",
                   "errors": "0.0"
@@ -886,9 +1104,9 @@ Class references;
 **Test output**  
 The output of this test shows the SDR map, a third SDR and the number of matches for the that SDR in the set.
 ~~~~
-SDR map: 100,2|77,79|3,59
+SDR map: 100,2|48,57|20,42
 Number of SDR A matches in SDR map: 1
-SDR C: 100,64,42
+SDR C: 100,17,46
 Number of SDR C matches in SDR map: 0
 ~~~~
 
@@ -912,7 +1130,7 @@ Class references;
 **Test output**  
 The output of this test shows two scalar encoders and the SDRs they generate for several values.
 ~~~~
-Encoder size: 52, bits: 2, min: 0, max: 50
+ScalarEncoder length: 52, bits: 2, resolution: 1.0, min: 0.0, max: 50.0, periodic: false
 SDR for value 0:  1100000000000000000000000000000000000000000000000000
 SDR for value 1:  0110000000000000000000000000000000000000000000000000
 SDR for value 24: 0000000000000000000000001100000000000000000000000000
@@ -922,7 +1140,7 @@ SDR for value 49: 0000000000000000000000000000000000000000000000000110
 SDR for value 50: 0000000000000000000000000000000000000000000000000011
 SDR for value 51: 0000000000000000000000000000000000000000000000000011
 
-Periodic encoder size: 50, bits: 2, min: 0, max: 50
+ScalarEncoder length: 50, bits: 2, resolution: 1.0, min: 0.0, max: 50.0, periodic: true
 SDR for value 0:  11000000000000000000000000000000000000000000000000
 SDR for value 1:  01100000000000000000000000000000000000000000000000
 SDR for value 24: 00000000000000000000000011000000000000000000000000
@@ -953,14 +1171,14 @@ Class references;
 **Test output**  
 The output of this test shows a random distributed scalar encoder and the SDRs it generated for several values.
 ~~~~
-Random distributed encoder size: 50, bits: 4, capacity: 230300
-SDR for value 0:  00000000100000000010000000000000011000000000000000
-SDR for value 1:  00000100100000000010000000000000001000000000000000
-SDR for value 24: 01000000000100000000000000010001000000000000000000
-SDR for value 25: 01100000000100000000000000010000000000000000000000
-SDR for value 75: 00001000000000000000010000000001000000000000010000
-SDR for value 76: 00001000000000000000000000000001000000000000010100
-SDR for value -1: 00000000000000000010000000000000011100000000000000
+RDScalarEncoder length: 50, bits: 4, resolution: 1.0, capacity: 230300
+SDR for value 0:  01000100000000000000000000000000000000001000100000
+SDR for value 1:  00000100000000000000000000000100000000001000100000
+SDR for value 24: 00000000000000000100000000000000001000000001000100
+SDR for value 25: 00000000000100000100000000000000000000000001000100
+SDR for value 75: 00000000000000000000000000000000000001000010000110
+SDR for value 76: 00000000001000000000000000000000000001000000000110
+SDR for value -1: 01000000000000000001000000000000000000001000100000
 ~~~~
 
 nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder
@@ -1061,19 +1279,189 @@ The output of this test shows;
  * How the generated SDRs represent several date/time and value combinations.
  * The StringBuilder representation of the encoder state.
 ~~~~
-SDR for 2019-01-01 00:00:00:000, value1: 0, value2: 0; 11111100000000000000000000000000000000000000001111111110000000000000000000000000000000000000000100101000010000000100100000000010000110000010000000000010010001001000001000010100000000111111110000000000
-SDR for 2019-02-02 01:00:00:000, value1: 1, value2: 2; 11111111000000000000000000000000000000000000000000001111111100000000000000000000000000000000000000101000010000000100101000000010000010000010000000000010010001001000100000110000111100000000000000001111
-SDR for 2019-03-03 02:00:00:000, value1: 2, value2: 4; 00111111110000000000000000000000000000000000000000000000111111110000000000000000000000000000000000101000000000000100101000000010000010100011000000000010010000001000100000110000111111110000000000000000
-SDR for 2019-04-04 03:00:00:000, value1: 3, value2: 6; 00111111110000000000000000000000000000000000000000000000000011111111000000000000000000000000000000101000000000000100101000000011000000100011000100000010010000011000100000000000000000000000011111111000
-SDR for 2019-05-05 04:00:00:000, value1: 4, value2: 8; 00001111111100000000000000000000000000000000000000000000000000001111111100000000000000000000000000111000000000000100101000000010000000100010000001000110010000011000100000000000111111110000000000000000
+SDR for 2019-01-01 00:00:00:000, value1: 0, value2: 0; 11111100000000000000000000000000000000000000001111111110000000000000000000000000000000000000000100110100000110000100000000000000010000100011000010010100001100000000000100000000000000111111110000000000
+SDR for 2019-02-02 01:00:00:000, value1: 1, value2: 2; 11111111000000000000000000000000000000000000000000001111111100000000000000000000000000000000000000111100000110000000000000000000010000100000000010010100001100000100000100000010111100000000000000001111
+SDR for 2019-03-03 02:00:00:000, value1: 2, value2: 4; 00111111110000000000000000000000000000000000000000000000111111110000000000000000000000000000000000111100001110000000000000000000000000100000000010010100100101000100000100000000111111110000000000000000
+SDR for 2019-04-04 03:00:00:000, value1: 3, value2: 6; 00111111110000000000000000000000000000000000000000000000000011111111000000000000000000000000000000111000001110000000000000001000000000100000000010010000110001000100100100000000000000000000011111111000
+SDR for 2019-05-05 04:00:00:000, value1: 4, value2: 8; 00001111111100000000000000000000000000000000000000000000000000001111111100000000000000000000000000111000001110000000000000001100000000000100100000010000100001000100100100000000111111110000000000000000
 
 Encoder StringBuilder:
-VALUE1=0.0,17,2,35,4,20,36,9,30;1.0,17,2,4,20,36,22,9,30;2.0,17,2,4,20,36,22,38,30;3.0,17,2,4,20,22,38,30,31;4.0,17,2,3,4,20,22,38,30|VALUE2=0.0,17,2,35,21,37,24,30,14;1.0,17,2,35,21,37,24,28,14;2.0,17,2,34,35,21,24,28,14;3.0,17,2,34,35,24,27,28,14;4.0,17,2,34,35,3,24,28,14;5.0,17,2,34,3,7,24,28,14;6.0,17,2,3,7,23,24,28,14;7.0,17,2,3,23,24,9,28,14;8.0,17,2,23,24,9,28,13,14
+VALUE1=0.0,33,17,2,3,5,38,11,12;1.0,33,2,3,4,5,38,11,12;2.0,2,3,4,5,38,10,11,12;3.0,2,3,4,38,10,11,12,28;4.0,2,3,4,10,11,12,28,29|VALUE2=0.0,18,2,19,3,8,11,13,31;1.0,18,2,19,8,25,11,13,31;2.0,18,19,38,8,25,11,13,31;3.0,16,19,38,8,25,11,13,31;4.0,16,19,21,8,25,11,13,31;5.0,16,19,21,8,25,11,28,31;6.0,16,17,21,8,25,11,28,31;7.0,16,17,1,21,25,11,28,31;8.0,16,1,4,21,25,11,28,31
+~~~~
+
+nl.zeesoft.zdk.test.impl.htm.TestDateTimeValueEncoder
+-----------------------------------------------------
+This test shows how to create and scale a *DateTimeValueEncoder*.
+A *DateTimeValueEncoder* can be used to customize value to SDR translation for date and time related values.
+By default it merely translates values into scalar SDRs.
+it can be customized to include periodic date and/or time representations into the encoded SDRs.
+
+**Example implementation**  
+~~~~
+// Create the encoder
+DateTimeValueEncoder enc = new DateTimeValueEncoder();
+// Customize the encoder scale
+enc.setScale(2);
+// Obtain the SDR for a certain value
+SDR sdr = enc.getSDRForValue(dateTime,value);
+~~~~
+
+Class references;  
+ * [TestDateTimeValueEncoder](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/htm/TestDateTimeValueEncoder.java)
+ * [DateTimeValueEncoder](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/enc/DateTimeValueEncoder.java)
+ * [SDR](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/util/SDR.java)
+
+**Test output**  
+The output of this test shows;  
+ * How scaling changes the output length and bits of the SDRs the encoder will generate.
+ * The JSON structure of the encoder.
+~~~~
+DateTimeValueEncoder length: 256, bits: 32
+- VALUE ScalarEncoder length: 256, bits: 32, resolution: 1.0, min: 0.0, max: 100.0, periodic: false
+
+DateTimeValueEncoder length: 512, bits: 64
+- VALUE ScalarEncoder length: 512, bits: 64, resolution: 1.0, min: 0.0, max: 100.0, periodic: false
+
+DateTimeValueEncoder length: 1024, bits: 128
+- VALUE ScalarEncoder length: 1024, bits: 128, resolution: 1.0, min: 0.0, max: 100.0, periodic: false
+
+Encoder JSON;
+{
+  "scale": 4,
+  "includeMonth": false,
+  "includeDayOfWeek": false,
+  "includeHourOfDay": false,
+  "includeMinute": false,
+  "includeSecond": false,
+  "includeValue": true,
+  "valueMin": 0,
+  "valueMax": 100,
+  "valueResolution": 1.0,
+  "valueDistributed": false
+}
+~~~~
+
+nl.zeesoft.zdk.test.impl.htm.TestGridEncoder
+--------------------------------------------
+This test shows how to use a *GridEncoder* to convert a range of multidimensional positions into sparse distributed representations.
+The *GridEncoder* class provides static helper methods to create different type of 2D or 3D encoders.
+
+**Example implementation**  
+~~~~
+// Create the encoder
+GridEncoder enc = GridEncoder.getNew2DGridEncoder(length,bits,sizeX,sizeY);
+// Obtain the SDR for a certain position
+SDR sdr = enc.getSDRForPosition(0,0);
+~~~~
+
+Class references;  
+ * [TestGridEncoder](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/htm/TestGridEncoder.java)
+ * [GridEncoder](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/enc/GridEncoder.java)
+ * [SDR](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/util/SDR.java)
+
+**Test output**  
+The output of this test shows different grid encoders and the SDRs they generate for several positions.
+~~~~
+GridEncoder length: 128, bits: 16
+- D01 GridDimensionEncoder length: 48, bits: 6, resolution: 1.0, capacity: 1664
+  - 001 ScalarEncoder length: 16, bits: 2, resolution: 1.0, min: 0.0, max: 16.0, periodic: true
+  - 002 ScalarEncoder length: 16, bits: 2, resolution: 14.0, min: 0.0, max: 224.0, periodic: true
+  - 003 ScalarEncoder length: 16, bits: 2, resolution: 52.0, min: 0.0, max: 832.0, periodic: true
+- D02 GridDimensionEncoder length: 80, bits: 10, resolution: 1.0, capacity: 14336
+  - 001 ScalarEncoder length: 16, bits: 2, resolution: 1.0, min: 0.0, max: 16.0, periodic: true
+  - 002 ScalarEncoder length: 16, bits: 2, resolution: 14.0, min: 0.0, max: 224.0, periodic: true
+  - 003 ScalarEncoder length: 16, bits: 2, resolution: 52.0, min: 0.0, max: 832.0, periodic: true
+  - 004 ScalarEncoder length: 16, bits: 2, resolution: 135.0, min: 0.0, max: 2160.0, periodic: true
+  - 005 ScalarEncoder length: 16, bits: 2, resolution: 224.0, min: 0.0, max: 3584.0, periodic: true
+
+SDR for position 00,00: 11000000000000001100000000000000110000000000000011000000000000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 01,01: 01100000000000001100000000000000110000000000000001100000000000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 02,02: 00110000000000001100000000000000110000000000000000110000000000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 03,03: 00011000000000001100000000000000110000000000000000011000000000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 04,04: 00001100000000001100000000000000110000000000000000001100000000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 05,05: 00000110000000001100000000000000110000000000000000000110000000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 06,06: 00000011000000001100000000000000110000000000000000000011000000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 07,07: 00000001100000001100000000000000110000000000000000000001100000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 08,08: 00000000110000001100000000000000110000000000000000000000110000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 09,09: 00000000011000001100000000000000110000000000000000000000011000001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 10,10: 00000000001100001100000000000000110000000000000000000000001100001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 11,11: 00000000000110001100000000000000110000000000000000000000000110001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 12,12: 00000000000011001100000000000000110000000000000000000000000011001100000000000000110000000000000011000000000000001100000000000000
+SDR for position 13,13: 00000000000001101100000000000000110000000000000000000000000001101100000000000000110000000000000011000000000000001100000000000000
+SDR for position 14,14: 00000000000000110110000000000000110000000000000000000000000000110110000000000000110000000000000011000000000000001100000000000000
+SDR for position 15,15: 10000000000000010110000000000000110000000000000010000000000000010110000000000000110000000000000011000000000000001100000000000000
+SDR for position 16,16: 11000000000000000110000000000000110000000000000011000000000000000110000000000000110000000000000011000000000000001100000000000000
+SDR for position 17,17: 01100000000000000110000000000000110000000000000001100000000000000110000000000000110000000000000011000000000000001100000000000000
+SDR for position 18,18: 00110000000000000110000000000000110000000000000000110000000000000110000000000000110000000000000011000000000000001100000000000000
+SDR for position 19,19: 00011000000000000110000000000000110000000000000000011000000000000110000000000000110000000000000011000000000000001100000000000000
+
+GridEncoder length: 128, bits: 12
+- D01 GridDimensionScaledEncoder length: 48, bits: 6, resolution: 1.0, capacity: 360
+  - 001 ScalarEncoder length: 24, bits: 2, resolution: 1.0, min: 0.0, max: 24.0, periodic: true
+  - 002 ScalarEncoder length: 24, bits: 4, resolution: 15.0, min: 0.0, max: 360.0, periodic: true
+- D02 GridDimensionScaledEncoder length: 80, bits: 6, resolution: 1.0, capacity: 720
+  - 001 ScalarEncoder length: 32, bits: 2, resolution: 1.0, min: 0.0, max: 32.0, periodic: true
+  - 002 ScalarEncoder length: 48, bits: 4, resolution: 15.0, min: 0.0, max: 720.0, periodic: true
+
+SDR for position 00,00: 11000000000000000000000011110000000000000000000011000000000000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 01,01: 01100000000000000000000011110000000000000000000001100000000000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 02,02: 00110000000000000000000011110000000000000000000000110000000000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 03,03: 00011000000000000000000011110000000000000000000000011000000000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 04,04: 00001100000000000000000011110000000000000000000000001100000000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 05,05: 00000110000000000000000011110000000000000000000000000110000000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 06,06: 00000011000000000000000011110000000000000000000000000011000000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 07,07: 00000001100000000000000011110000000000000000000000000001100000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 08,08: 00000000110000000000000011110000000000000000000000000000110000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 09,09: 00000000011000000000000011110000000000000000000000000000011000000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 10,10: 00000000001100000000000011110000000000000000000000000000001100000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 11,11: 00000000000110000000000011110000000000000000000000000000000110000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 12,12: 00000000000011000000000011110000000000000000000000000000000011000000000000000000111100000000000000000000000000000000000000000000
+SDR for position 13,13: 00000000000001100000000011110000000000000000000000000000000001100000000000000000111100000000000000000000000000000000000000000000
+SDR for position 14,14: 00000000000000110000000011110000000000000000000000000000000000110000000000000000111100000000000000000000000000000000000000000000
+SDR for position 15,15: 00000000000000011000000001111000000000000000000000000000000000011000000000000000011110000000000000000000000000000000000000000000
+SDR for position 16,16: 00000000000000001100000001111000000000000000000000000000000000001100000000000000011110000000000000000000000000000000000000000000
+SDR for position 17,17: 00000000000000000110000001111000000000000000000000000000000000000110000000000000011110000000000000000000000000000000000000000000
+SDR for position 18,18: 00000000000000000011000001111000000000000000000000000000000000000011000000000000011110000000000000000000000000000000000000000000
+SDR for position 19,19: 00000000000000000001100001111000000000000000000000000000000000000001100000000000011110000000000000000000000000000000000000000000
+
+GridEncoder length: 512, bits: 50
+- D01 GridDimensionScaledEncoder length: 224, bits: 20, resolution: 1.0, capacity: 4064
+  - 001 ScalarEncoder length: 32, bits: 2, resolution: 1.0, min: 0.0, max: 32.0, periodic: true
+  - 002 ScalarEncoder length: 64, bits: 4, resolution: 15.0, min: 0.0, max: 960.0, periodic: true
+  - 003 ScalarEncoder length: 96, bits: 6, resolution: 53.0, min: 0.0, max: 5088.0, periodic: true
+  - 004 ScalarEncoder length: 32, bits: 8, resolution: 127.0, min: 0.0, max: 4064.0, periodic: true
+- D02 GridDimensionScaledEncoder length: 288, bits: 30, resolution: 1.0, capacity: 11952
+  - 001 ScalarEncoder length: 24, bits: 2, resolution: 1.0, min: 0.0, max: 24.0, periodic: true
+  - 002 ScalarEncoder length: 48, bits: 4, resolution: 15.0, min: 0.0, max: 720.0, periodic: true
+  - 003 ScalarEncoder length: 72, bits: 6, resolution: 53.0, min: 0.0, max: 3816.0, periodic: true
+  - 004 ScalarEncoder length: 96, bits: 8, resolution: 127.0, min: 0.0, max: 12192.0, periodic: true
+  - 005 ScalarEncoder length: 48, bits: 10, resolution: 249.0, min: 0.0, max: 11952.0, periodic: true
+
+SDR for position 00,00: 11000000000000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000110000000000000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 01,01: 01100000000000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000011000000000000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 02,02: 00110000000000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000001100000000000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 03,03: 00011000000000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000110000000000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 04,04: 00001100000000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000011000000000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 05,05: 00000110000000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000001100000000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 06,06: 00000011000000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000110000000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 07,07: 00000001100000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000011000000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 08,08: 00000000110000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000001100000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 09,09: 00000000011000000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000110000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 10,10: 00000000001100000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000011000000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 11,11: 00000000000110000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000001100000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 12,12: 00000000000011000000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000110000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 13,13: 00000000000001100000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000011000000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 14,14: 00000000000000110000000000000000111100000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000001100000000111100000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 15,15: 00000000000000011000000000000000011110000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000000110000000011110000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 16,16: 00000000000000001100000000000000011110000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000000011000000011110000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 17,17: 00000000000000000110000000000000011110000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000000001100000011110000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 18,18: 00000000000000000011000000000000011110000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000000000110000011110000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
+SDR for position 19,19: 00000000000000000001100000000000011110000000000000000000000000000000000000000000000000000000000011111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000000000011000011110000000000000000000000000000000000000000000111111000000000000000000000000000000000000000000000000000000000000000000111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000
 ~~~~
 
 nl.zeesoft.zdk.test.impl.htm.TestPooler
 ---------------------------------------
-This test shows how to use a *Pooler* to convert encoder out SDRs into consistently sparse representations.
+This test shows how to use a *Pooler* to convert encoder output SDRs into consistently sparse representations.
 
 **Example implementation**  
 ~~~~
@@ -1084,7 +1472,7 @@ Pooler pooler = new Pooler(config);
 // Randomize the connections
 pooler.randomizeConnections();
 // Obtain the output SDR for a certain input SDR
-SDR sdr = pooler.getSDRForInput(new SDR(),true);
+SDR sdr = pooler.getSDRForInput(new SDR(100),true);
 ~~~~
 
 This test uses the *MockRegularSDRMap*.
@@ -1099,45 +1487,46 @@ Class references;
 The output of this test shows information about the pooler after passing the SDR test set through it.  
 It asserts that learning increases the difference in overlap between the regular weekly recurring values and all the other pooler output SDRs.  
 ~~~~
-Initializing pooler took: 18 ms
-Randomizing connections took: 76 ms
+Initializing pooler took: 16 ms
+Randomizing connections took: 78 ms
 
-Pooler input dimensions: 16x16, output dimensions: 32x32
+Pooler input dimensions: 16*16, output dimensions: 32*32
+- Total proximal links: 92160, active: 45824
 - Average proximal inputs per column: 90
 - Column groups: 144, average columns per group: 441
 
 Processing input SDR map (learning: false) ...
-Processing input SDR map took: 8019 ms
+Processing input SDR map took: 9907 ms
 
 Performance statistics;
-calculateOverlapScores:       1718.086 ms
-selectActiveColumns:           870.309 ms
-logActivity:                  1147.552 ms
-calculateColumnGroupActivity: 2808.459 ms
-updateBoostFactors:           1242.457 ms
-total:                        7847.295 ms
+calculateOverlapScores:       1873.586 ms
+selectActiveColumns:          1740.874 ms
+logActivity:                   872.343 ms
+calculateColumnGroupActivity: 3980.894 ms
+updateBoostFactors:           1228.998 ms
+total:                        9755.092 ms
 logSize:                         15330   
-avgPerLog:                       0.512 ms
+avgPerLog:                       0.636 ms
 
-Combined average: 0.37596637, Combined weekly average: 4.9757214
+Combined average: 0.37086153, Combined weekly average: 5.495956
 
 Processing input SDR map (learning: true) ...
-Processing input SDR map took: 11386 ms
+Processing input SDR map took: 11018 ms
 
 Performance statistics;
-calculateOverlapScores:        2681.246 ms
-selectActiveColumns:            900.980 ms
-learnActiveColumnsOnBits:      2544.721 ms
-logActivity:                    961.656 ms
-calculateColumnGroupActivity:  2816.548 ms
-updateBoostFactors:            1227.795 ms
-total:                        11194.338 ms
+calculateOverlapScores:        2476.677 ms
+selectActiveColumns:            917.431 ms
+logActivity:                    898.785 ms
+calculateColumnGroupActivity:  2794.707 ms
+updateBoostFactors:            1211.649 ms
+total:                        10826.523 ms
+learnActiveColumnsOnBits:      2445.443 ms
 logSize:                          15330   
-avgPerLog:                        0.730 ms
+avgPerLog:                        0.706 ms
 
-Combined average: 0.3209485, Combined weekly average: 7.3554926
+Combined average: 0.30949232, Combined weekly average: 7.7953753
 
-Original ratio: 13.234486, learned ratio: 22.917984
+Original ratio: 14.819428, learned ratio: 25.187622
 ~~~~
 
 nl.zeesoft.zdk.test.impl.htm.TestMemory
@@ -1155,7 +1544,7 @@ MemoryConfig config = new MemoryConfig(1024);
 // Create the memory
 Memory memory = new Memory(config);
 // Obtain the output SDR for a certain input SDR
-SDR sdr = memory.getSDRForInput(new SDR(),true);
+SDR sdr = memory.getSDRForInput(new SDR(100),true);
 ~~~~
 
 This test uses the *MockRegularSDRMap*.
@@ -1171,366 +1560,536 @@ The output of this test shows;
  * How memory column bursting is reduced after leaning several sequences  
  * Information about the memory after passing the SDR test set through it  
 ~~~~
-Memory dimensions: 32x32x4
+Memory dimensions: 32*32*4
 
 Processing input SDR map (5000/15330) ...
-Processed SDRs: 500, bursting average: 4 (max: 9)
-Processed SDRs: 1000, bursting average: 2 (max: 7)
+Processed SDRs: 500, bursting average: 4 (max: 10)
+Processed SDRs: 1000, bursting average: 2 (max: 9)
 Processed SDRs: 1500, bursting average: 1 (max: 8)
-Processed SDRs: 2000, bursting average: 1 (max: 4)
-Processed SDRs: 2500, bursting average: 1 (max: 7)
-Processed SDRs: 3000, bursting average: 1 (max: 4)
-Processed SDRs: 3500, bursting average: 0 (max: 4)
-Processed SDRs: 4000, bursting average: 0 (max: 4)
-Processed SDRs: 4500, bursting average: 0 (max: 3)
-Processed SDRs: 5000, bursting average: 0 (max: 5)
-Processing input SDR map took: 13352 ms
+Processed SDRs: 2000, bursting average: 0 (max: 6)
+Processed SDRs: 2500, bursting average: 1 (max: 5)
+Processed SDRs: 3000, bursting average: 1 (max: 5)
+Processed SDRs: 3500, bursting average: 0 (max: 3)
+Processed SDRs: 4000, bursting average: 0 (max: 6)
+Processed SDRs: 4500, bursting average: 0 (max: 4)
+Processed SDRs: 5000, bursting average: 0 (max: 3)
+Processing input SDR map took: 14225 ms
 
 Performance statistics;
-cycleActiveState:       190.622 ms
-activateColumnCells:    210.260 ms
-calculateActivity:      894.152 ms
-selectPredictiveCells:  424.895 ms
-updatePredictions:     3922.325 ms
-total:                 5653.498 ms
+cycleActiveState:       206.726 ms
+activateColumnCells:    217.794 ms
+calculateActivity:      963.538 ms
+selectPredictiveCells:  441.816 ms
+updatePredictions:     4300.863 ms
+total:                 6144.405 ms
 logSize:                   5000   
-avgPerLog:                1.131 ms
+avgPerLog:                1.229 ms
 
-Average distal inputs per memory cell: 56 (min: 21, max: 105)
-Average connected distal inputs per memory cell: 53 (min: 11, max: 104)
+Memory dimensions: 32*32*4
+- Total distal links: 230669, active: 217737
+- Average distal inputs per memory cell: 56 (min: 0, max: 105)
+- Average connected distal inputs per memory cell: 53 (min: 0, max: 104)
 ~~~~
 
-nl.zeesoft.zdk.test.impl.htm.TestStreamEncoder
-----------------------------------------------
-This test shows how to create and scale a *StreamEncoder*.
-A *StreamEncoder* can be used to customize value to SDR translation for stream input.
-By default it merely translates values into scalar SDRs.
-it can be customized to include periodic date and/or time representations into the encoded SDRs.
+nl.zeesoft.zdk.test.impl.htm.TestMerger
+---------------------------------------
+This test shows how to use a *Merger* to merge multiple SDRs into a single SDR.
 
 **Example implementation**  
 ~~~~
-// Create the encoder
-StreamEncoder enc = new StreamEncoder();
-// Customize the encoder scale
-enc.setScale(2);
-// Obtain the SDR for a certain value
-SDR sdr = enc.getSDRForValue(dateTime,value);
+// Create the merger
+Merger merger = new Merger(new MergerConfig());
+// Create an input SDR
+SDR sdr = new SDR(100);
+sdr.setBit(0,true);
+// Create a context SDR list
+SDR sdr2 = new SDR(100);
+sdr2.setBit(0,true);
+List<SDR> context = new ArrayList<SDR>();
+context.add(sdr2);
+// Obtain the output SDRs for the input SDR and its context SDRs
+Lis<SDR> outputSDRs = merger.getSDRsForInput(sdr,context,false);
 ~~~~
 
 Class references;  
- * [TestStreamEncoder](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/htm/TestStreamEncoder.java)
- * [StreamEncoder](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/StreamEncoder.java)
+ * [TestMerger](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/htm/TestMerger.java)
+ * [Merger](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/proc/Merger.java)
  * [SDR](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/util/SDR.java)
 
 **Test output**  
-The output of this test shows;  
- * How scaling changes the output length and bits of the SDRs the encoder will generate.
- * The JSON structure of the encoder.
+The output of this test shows a description of the merger and the result of several SDR merges.  
 ~~~~
-Default encoding length: 256, bits: 32
-Scaled (factor 2) encoding length: 512, bits: 64
-Scaled (factor 4) encoding length: 1024, bits: 128
+Merger maximum number of on bits: 4
 
-Stream encoder JSON;
-{
-  "scale": 4,
-  "includeMonth": false,
-  "includeDayOfWeek": false,
-  "includeHourOfDay": false,
-  "includeMinute": false,
-  "includeSecond": false,
-  "includeValue": true,
-  "valueMin": 0,
-  "valueMax": 100,
-  "valueResolution": 1.0,
-  "valueDistributed": false
-}
+Input SDR: 50,0,24
+Context SDR: 50,0,24
+Merged SDR: 100,0,50,24,74
+
+Context SDR 1: 50,0,24
+Context SDR 2: 50,0,24
+Merged SDR: 100,0,50,24,74
 ~~~~
 
-nl.zeesoft.zdk.test.impl.htm.TestAnomalyDetector
-------------------------------------------------
-This test shows how to use an *AnomalyDetector* to detect anomalies in an SDR *Stream*.
-It uses a *StreamFactory* to create a *DefaultStream* and then uses that to create an *AnomalyDetector*.
-The *AnomalyDetectorListener* interface can be used to listen for anomaly detections.
+nl.zeesoft.zdk.test.impl.htm.TestZGridColumnEncoders
+----------------------------------------------------
+This test shows the configuration options of several *ZGridColumnEncoder* instances.  
+*ZGridColumnEncoder* instances are used to translate *ZGrid* request values into SDRs for further grid processing.  
 
 **Example implementation**  
 ~~~~
-// Create the stream factory
-StreamFactory factory = new StreamFactory(1024,21);
-// Create the stream
-DefaultStream stream = factory.getNewDefaultStream(true);
-// Create the anomaly detector
-AnomalyDetector detector = stream.getNewAnomalyDetector();
-// Attach a listener (implement the AnomalyDetectorListener interface)
-detector.addListener(this);
-// Start the stream
-stream.start();
-// Add some values to the stream (include an anomaly after 5000 inputs)
-stream.addValue(1);
-stream.addValue(2);
-// Remember to stop and destroy the stream after use
-stream.stop();
-stream.destroy();
+// Create a date/time grid encoder
+ZGridEncoderDateTime dateTimeEncoder = new ZGridEncoderDateTime();
+// Transform the encoder to JSON
+JsFile json = dateTimeEncoder.toJson();
+// Configure the encoder using JSON
+dateTimeEncoder.fromJson(json);
 ~~~~
 
-This test uses the *MockAnomalySDRMap*.
+Class references;  
+ * [TestZGridColumnEncoders](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/htm/TestZGridColumnEncoders.java)
+ * [ZGridColumnEncoder](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/grid/ZGridColumnEncoder.java)
+ * [ZGrid](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/grid/ZGrid.java)
+ * [SDR](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/util/SDR.java)
+ * [ZGridEncoderDateTime](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/grid/enc/ZGridEncoderDateTime.java)
+ * [ZGridEncoderValue](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/grid/enc/ZGridEncoderValue.java)
+ * [ZGridEncoderProperty](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/grid/enc/ZGridEncoderProperty.java)
+
+**Test output**  
+The output of this test shows the JSON representations of several encoders  
+~~~~
+Date/time encoder JSON:
+{
+  "scale": 4,
+  "bitsPerEncoder": 24,
+  "includeMonth": true,
+  "includeDayOfWeek": true,
+  "includeHourOfDay": true,
+  "includeMinute": true,
+  "includeSecond": true
+}
+
+Value encoder JSON:
+{
+  "type": "DIMENSIONAL",
+  "length": 256,
+  "bits": 8,
+  "resolution": 1.0,
+  "minValue": 0.0,
+  "maxValue": 247.0,
+  "periodic": false,
+  "valueKey": "VALUE"
+}
+
+Property encoder JSON:
+{
+  "length": 256,
+  "bits": 8,
+  "valueKey": "PROPERTY"
+}
+~~~~
+
+nl.zeesoft.zdk.test.impl.htm.TestZGrid
+--------------------------------------
+This test shows how to create and configure a *ZGrid* instance to learn and predict sequences of values.
+A *ZGrid* consists of several rows and columns where each column can process a certain input value.
+It uses multithreading to maximize the throughput of grid requests.
+The first row of a *ZGrid* is reserved for *ZGridColumnEncoder* objects that translate request input values into SDRs.
+The remaining rows can be used for *Pooler*, *Memory*, *Classifier*, *Merger* and custom processors.
+Context routing can be used to route the output of a column to the context of another column.
+
+**Example implementation**  
+~~~~
+// Create the grid
+ZGrid grid = new ZGrid(4,2);
+// Add encoders
+grid.setEncoder(0,new ZGridEncoderDateTime());
+grid.setEncoder(1,new ZGridEncoderValue(256));
+// Add processors
+grid.setProcessor(1,0,new PoolerConfig(256,1024,21));
+grid.setProcessor(1,1,new PoolerConfig(256,1024,21));
+MemoryConfig config = new MemoryConfig(1024,21);
+config.addContextDimension(1024);
+grid.setProcessor(2,1,config);
+grid.setProcessor(3,1,new ClassifierConfig(1));
+// Route output from date/time pooler to value memory context
+grid.addColumnContext(2,1,1,0);
+// Route output from value encoder to value classifier context
+grid.addColumnContext(3,1,0,1);
+// Add a listener for grid results
+grid.addListener(this);
+// Start the grid
+grid.start();
+// Add requests
+ZGridRequest request = grid.getNewRequest();
+request.inputValues[0] = request.datetime;
+request.inputValues[1] = 1F;
+request.inputLabels[1] = "Normal";
+long requestId = grid.addRequest(request);
+// Remember to stop and destroy the grid after use
+grid.stop();
+grid.whileActive();
+grid.destroy();
+~~~~
 
 Class references;  
- * [TestAnomalyDetector](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/htm/TestAnomalyDetector.java)
- * [StreamFactory](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/StreamFactory.java)
- * [DefaultStream](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/DefaultStream.java)
- * [AnomalyDetector](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/AnomalyDetector.java)
- * [AnomalyDetectorListener](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/AnomalyDetectorListener.java)
+ * [TestZGrid](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/htm/TestZGrid.java)
+ * [ZGrid](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/grid/ZGrid.java)
+ * [ZGridRequest](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/grid/ZGridRequest.java)
+ * [ZGridColumnEncoder](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/grid/ZGridColumnEncoder.java)
 
 **Test output**  
 The output of this test shows;  
- * Information about the stream factory  
- * A JSON export of the stream factory  
- * The average prediction accuracy  
- * The detected anomaly  
- * Information about the stream after passing the SDR test set through it  
+ * A description of the grid after initialization  
+ * A JSON representation of the grid configuration  
+ * The classifier prediction accuracy of the grid while processing requests   
+ * A description of the grid after processing requests  
+ * The size of the state data for each grid processor  
 ~~~~
-Test set anomaly detection is expected at: 7666
+Grid dimensions: 5*5
+- Column 00-00 = CombinedEncoder length: 128, bits: 32
+  - SECOND ScalarEncoder length: 128, bits: 32, resolution: 1.0, min: 0.0, max: 60.0, periodic: true
+- Column 00-01 = CombinedEncoder length: 256, bits: 16
+  - VALUE ScalarEncoder length: 256, bits: 16, resolution: 1.0, min: 0.0, max: 30.0, periodic: false
+- Column 00-02 = CombinedEncoder length: 64, bits: 8
+  - POSX ScalarEncoder length: 64, bits: 8, resolution: 1.0, min: 0.0, max: 20.0, periodic: false
+- Column 00-03 = CombinedEncoder length: 64, bits: 8
+  - POSY ScalarEncoder length: 64, bits: 8, resolution: 1.0, min: 0.0, max: 20.0, periodic: false
+- Column 00-04 = CombinedEncoder length: 64, bits: 8
+  - POSZ ScalarEncoder length: 64, bits: 8, resolution: 1.0, min: 0.0, max: 20.0, periodic: false
+- Column 01-03 = Merger maximum number of on bits: 0
+- Column 02-00 = Pooler input dimensions: 12*11, output dimensions: 32*32
+  - Total proximal links: 89600, active: 44782
+  - Average proximal inputs per column: 87 (min: 87, max: 88)
+  - Column groups: 144, average columns per group: 441
+- Column 02-01 = Pooler input dimensions: 16*16, output dimensions: 32*32
+  - Total proximal links: 92160, active: 46153
+  - Average proximal inputs per column: 90
+  - Column groups: 144, average columns per group: 441
+- Column 02-03 = Pooler input dimensions: 14*14, output dimensions: 32*32
+  - Total proximal links: 91776, active: 45736
+  - Average proximal inputs per column: 89 (min: 87, max: 90)
+  - Column groups: 144, average columns per group: 441
+- Column 03-01 = Memory dimensions: 32*32*4
+- Column 04-00 = Detector start: 2500, window long/short: 500/1, threshold: 0.3
+- Column 04-01 = Classifier value key: VALUE, predict steps: 1
 
-StreamEncoder length: 256, bits: 32
-Pooler input dimensions: 16x16, output dimensions: 32x32
-Memory dimensions: 32x32x4
-
-Stream factory JSON;
+Grid JSON;
 {
-  "encoder": [
+  "rows": 5,
+  "columns": 5,
+  "configurations": [
     {
-      "scale": 1,
+      "columnId": "00-00",
+      "className": "nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime",
+      "scale": 2,
+      "bitsPerEncoder": 32,
       "includeMonth": false,
       "includeDayOfWeek": false,
       "includeHourOfDay": false,
       "includeMinute": false,
-      "includeSecond": false,
-      "includeValue": true,
-      "valueMin": 0,
-      "valueMax": 100,
-      "valueResolution": 1.0,
-      "valueDistributed": false
-    }
-  ],
-  "outputLength": 1024,
-  "outputBits": 21,
-  "potentialProximalConnections": 0.75,
-  "proximalRadius": 5,
-  "proximalConnectionThreshold": 0.1,
-  "proximalConnectionDecrement": 0.008,
-  "proximalConnectionIncrement": 0.05,
-  "boostStrength": 10,
-  "boostInhibitionRadius": 10,
-  "boostActivityLogSize": 100,
-  "depth": 4,
-  "maxDistalConnectionsPerCell": 9999,
-  "localDistalConnectedRadius": 64,
-  "minAlmostActiveDistalConnections": 5,
-  "distalConnectionThreshold": 0.2,
-  "distalConnectionDecrement": 0.003,
-  "distalConnectionIncrement": 0.1,
-  "predictSteps": "",
-  "classifyValueKey": "value",
-  "classifyLabelKey": "label",
-  "classifyMaxCount": 40
-}
-
-Started stream
-Processed SDRs: 500, average accuracy: 0.452, latest: 0.810
-Processed SDRs: 1000, average accuracy: 0.633, latest: 1.000
-Processed SDRs: 1500, average accuracy: 0.843, latest: 1.000
-Processed SDRs: 2000, average accuracy: 0.902, latest: 0.952
-Processed SDRs: 2500, average accuracy: 0.930, latest: 1.000
-Processed SDRs: 3000, average accuracy: 0.946, latest: 1.000
-Processed SDRs: 3500, average accuracy: 0.959, latest: 0.905
-Processed SDRs: 4000, average accuracy: 0.968, latest: 1.000
-Processed SDRs: 4500, average accuracy: 0.972, latest: 0.952
-Processed SDRs: 5000, average accuracy: 0.972, latest: 0.810
-Processed SDRs: 5500, average accuracy: 0.974, latest: 0.952
-Processed SDRs: 6000, average accuracy: 0.977, latest: 0.905
-Processed SDRs: 6500, average accuracy: 0.978, latest: 0.952
-Processed SDRs: 7000, average accuracy: 0.978, latest: 0.952
-Processed SDRs: 7500, average accuracy: 0.976, latest: 1.000
-Detected anomaly at: 7666, average accuracy: 0.9769547, latest: 0.047619045, difference: 0.9070461
-Stopped stream after 16947 ms
-
-DefaultStream;
-total:      57581540.000 ms
-logSize:            7668   
-avgPerLog:      7509.330 ms
-
-Pooler;
-calculateOverlapScores:        5208.748 ms
-selectActiveColumns:            844.452 ms
-learnActiveColumnsOnBits:      2653.069 ms
-logActivity:                   1378.459 ms
-calculateColumnGroupActivity:  5433.421 ms
-updateBoostFactors:            1228.095 ms
-total:                        16809.283 ms
-logSize:                          13894   
-avgPerLog:                        1.210 ms
-
-Memory;
-cycleActiveState:        501.786 ms
-activateColumnCells:     305.309 ms
-calculateActivity:      1191.905 ms
-selectPredictiveCells:  1016.190 ms
-updatePredictions:     12757.426 ms
-total:                 15787.575 ms
-logSize:                    7668   
-avgPerLog:                 2.059 ms
-
-Total processing time per SDR: 3.269 ms
-Total stream time per SDR:     2.210 ms
-~~~~
-
-nl.zeesoft.zdk.test.impl.htm.TestValueClassifier
-------------------------------------------------
-This test shows how to use a *ClassificationStream* and a *ValueClassifier* to classify and/or predict values.
-It uses a *StreamFactory* to create a *ClassificationStream* and then uses that to create a *ValueClassifer*.
-The *ValueClassiferListener* interface can be used to listen for classifications and/or predictions.
-The *ValueClassifer* creates a list of *Classification* objects for each input SDR and then passes that list to its listeners.
-
-**Example implementation**  
-~~~~
-// Create the stream factory
-StreamFactory factory = new StreamFactory(1024,21);
-// Specify the number of steps to predict (use 0 to specify classification of the current input)
-factory.getPredictSteps().add(1);
-// Create the stream
-ClassificationStream stream = factory.getNewClassificationStream(true);
-// Create the classifier
-ValueClassifier classifier = stream.getNewValueClassifier();
-// Attach a listener (implement the ValueClassifierListener interface)
-classifier.addListener(this);
-// Start the stream
-stream.start();
-// Add some values to the stream
-stream.addValue(1);
-stream.addValue(2);
-// Remember to stop and destroy the stream after use
-stream.stop();
-stream.destroy();
-~~~~
-
-This test uses the *MockRegularSDRMap*.
-
-Class references;  
- * [TestValueClassifier](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/test/impl/htm/TestValueClassifier.java)
- * [StreamFactory](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/StreamFactory.java)
- * [ClassificationStream](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/ClassificationStream.java)
- * [ValueClassifier](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/ValueClassifier.java)
- * [ValueClassifierListener](https://github.com/DyzLecticus/Zeesoft/blob/master/V4.0/ZDK/src/nl/zeesoft/zdk/htm/stream/ValueClassifierListener.java)
-
-**Test output**  
-The output of this test shows;  
- * Information about the stream factory  
- * The average prediction accuracy  
- * Information about the stream after passing the SDR test set through it  
- * A trimmed JSON export of stream encoder and processor state information  
-~~~~
-StreamEncoder length: 256, bits: 32
-Pooler input dimensions: 16x16, output dimensions: 32x32
-Memory dimensions: 32x32x4
-Classifier prediction steps: 1
-
-Started stream
-Processed SDRs: 500, accuracy: 0.297
-Processed SDRs: 1000, accuracy: 0.529
-Processed SDRs: 1500, accuracy: 0.753
-Processed SDRs: 2000, accuracy: 0.800
-Processed SDRs: 2500, accuracy: 0.878
-Processed SDRs: 3000, accuracy: 0.894
-Processed SDRs: 3500, accuracy: 0.919
-Processed SDRs: 4000, accuracy: 0.945
-Processed SDRs: 4500, accuracy: 0.929
-Processed SDRs: 5000, accuracy: 0.933
-Stopped stream after 10015 ms
-
-ClassificationStream;
-total:      23252246.000 ms
-logSize:            5005   
-avgPerLog:      4645.804 ms
-
-Pooler;
-calculateOverlapScores:       3756.707 ms
-selectActiveColumns:           482.117 ms
-learnActiveColumnsOnBits:     1556.507 ms
-logActivity:                   749.814 ms
-calculateColumnGroupActivity: 2646.004 ms
-updateBoostFactors:            659.198 ms
-total:                        9888.814 ms
-logSize:                          7454   
-avgPerLog:                       1.327 ms
-
-Memory;
-cycleActiveState:       334.774 ms
-activateColumnCells:    202.487 ms
-calculateActivity:      771.703 ms
-selectPredictiveCells:  602.947 ms
-updatePredictions:     6609.973 ms
-total:                 8531.671 ms
-logSize:                   5006   
-avgPerLog:                1.704 ms
-
-Classifier;
-generateClassifications: 626.017 ms
-total:                   632.476 ms
-logSize:                    5005   
-avgPerLog:                 0.126 ms
-
-Total processing time per SDR: 3.157 ms
-Total stream time per SDR:     2.001 ms
-
-Stream state JSON;
-{
-  "streamClassName": "nl.zeesoft.zdk.htm.stream.ClassificationStream",
-  "encoderClassName": "nl.zeesoft.zdk.htm.stream.StreamEncoder",
-  "encoderData": "",
-  "uid": "15330",
-  "processors": [
-    {
-      "processorClassName": "nl.zeesoft.zdk.htm.proc.Pooler",
-      "processorData": "0.0,153;0.98399997,68;0.78399956,58;0.0,164;0.1679994,87;0.0,96;0.98399997,113;0 ..."
+      "includeSecond": true
     },
     {
-      "processorClassName": "nl.zeesoft.zdk.htm.proc.Memory",
-      "processorData": "0.38518602,0-1-0;0.28071848,21-3-1;0.29650417,17-4-2;0.22381736,22-4-3;0.3897513 ..."
+      "columnId": "00-01",
+      "className": "nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue",
+      "type": "SCALAR",
+      "length": 256,
+      "bits": 16,
+      "resolution": 1.0,
+      "minValue": 0.0,
+      "maxValue": 30.0,
+      "periodic": false,
+      "valueKey": "VALUE"
     },
     {
-      "processorClassName": "nl.zeesoft.zdk.htm.proc.Classifier",
-      "processorData": "1#0;Float;10.0,5;7.0,1;14.0,2;25.0,2;17.0,1;21.0,1;35.0,1;11.0,3;13.0,1;22.0,7;9 ..."
+      "columnId": "00-02",
+      "className": "nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue",
+      "type": "SCALAR",
+      "length": 64,
+      "bits": 8,
+      "resolution": 1.0,
+      "minValue": 0.0,
+      "maxValue": 20.0,
+      "periodic": false,
+      "valueKey": "POSX"
+    },
+    {
+      "columnId": "00-03",
+      "className": "nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue",
+      "type": "SCALAR",
+      "length": 64,
+      "bits": 8,
+      "resolution": 1.0,
+      "minValue": 0.0,
+      "maxValue": 20.0,
+      "periodic": false,
+      "valueKey": "POSY"
+    },
+    {
+      "columnId": "00-04",
+      "className": "nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue",
+      "type": "SCALAR",
+      "length": 64,
+      "bits": 8,
+      "resolution": 1.0,
+      "minValue": 0.0,
+      "maxValue": 20.0,
+      "periodic": false,
+      "valueKey": "POSZ"
+    },
+    {
+      "columnId": "01-03",
+      "className": "nl.zeesoft.zdk.htm.proc.MergerConfig",
+      "union": false,
+      "maxOnBits": 0,
+      "contexts": [
+        {
+          "sourceRow": 0,
+          "sourceColumn": 2,
+          "sourceIndex": 0
+        },
+        {
+          "sourceRow": 0,
+          "sourceColumn": 4,
+          "sourceIndex": 0
+        }
+      ]
+    },
+    {
+      "columnId": "02-00",
+      "className": "nl.zeesoft.zdk.htm.proc.PoolerConfig",
+      "inputLength": 128,
+      "outputLength": 1024,
+      "outputBits": 21,
+      "inputSizeX": 12,
+      "inputSizeY": 11,
+      "outputSizeX": 32,
+      "outputSizeY": 32,
+      "potentialProximalConnections": 0.75,
+      "proximalRadius": 5,
+      "proximalConnectionThreshold": 0.1,
+      "proximalConnectionDecrement": 0.008,
+      "proximalConnectionIncrement": 0.05,
+      "boostStrength": 10,
+      "boostInhibitionRadius": 10,
+      "boostActivityLogSize": 100
+    },
+    {
+      "columnId": "02-01",
+      "className": "nl.zeesoft.zdk.htm.proc.PoolerConfig",
+      "inputLength": 256,
+      "outputLength": 1024,
+      "outputBits": 21,
+      "inputSizeX": 16,
+      "inputSizeY": 16,
+      "outputSizeX": 32,
+      "outputSizeY": 32,
+      "potentialProximalConnections": 0.75,
+      "proximalRadius": 5,
+      "proximalConnectionThreshold": 0.1,
+      "proximalConnectionDecrement": 0.008,
+      "proximalConnectionIncrement": 0.05,
+      "boostStrength": 10,
+      "boostInhibitionRadius": 10,
+      "boostActivityLogSize": 100
+    },
+    {
+      "columnId": "02-03",
+      "className": "nl.zeesoft.zdk.htm.proc.PoolerConfig",
+      "inputLength": 192,
+      "outputLength": 1024,
+      "outputBits": 21,
+      "inputSizeX": 14,
+      "inputSizeY": 14,
+      "outputSizeX": 32,
+      "outputSizeY": 32,
+      "potentialProximalConnections": 0.75,
+      "proximalRadius": 5,
+      "proximalConnectionThreshold": 0.1,
+      "proximalConnectionDecrement": 0.008,
+      "proximalConnectionIncrement": 0.05,
+      "boostStrength": 10,
+      "boostInhibitionRadius": 10,
+      "boostActivityLogSize": 100
+    },
+    {
+      "columnId": "03-01",
+      "className": "nl.zeesoft.zdk.htm.proc.MemoryConfig",
+      "length": 1024,
+      "sizeX": 32,
+      "sizeY": 32,
+      "bits": 21,
+      "depth": 4,
+      "maxDistalConnectionsPerCell": 9999,
+      "localDistalConnectedRadius": 64,
+      "minAlmostActiveDistalConnections": 5,
+      "distalConnectionThreshold": 0.2,
+      "distalConnectionDecrement": 0.003,
+      "distalConnectionIncrement": 0.1,
+      "contextDimensions": "1024,1024",
+      "contexts": [
+        {
+          "sourceRow": 2,
+          "sourceColumn": 0,
+          "sourceIndex": 0
+        },
+        {
+          "sourceRow": 2,
+          "sourceColumn": 3,
+          "sourceIndex": 0
+        }
+      ]
+    },
+    {
+      "columnId": "04-00",
+      "className": "nl.zeesoft.zdk.htm.proc.DetectorConfig",
+      "start": 2500,
+      "windowLong": 500,
+      "windowShort": 1,
+      "threshold": 0.3,
+      "contexts": [
+        {
+          "sourceRow": 2,
+          "sourceColumn": 1,
+          "sourceIndex": 0
+        },
+        {
+          "sourceRow": 3,
+          "sourceColumn": 1,
+          "sourceIndex": 1
+        }
+      ]
+    },
+    {
+      "columnId": "04-01",
+      "className": "nl.zeesoft.zdk.htm.proc.ClassifierConfig",
+      "predictSteps": "1",
+      "valueKey": "VALUE",
+      "labelKey": "LABEL",
+      "maxCount": 40,
+      "contexts": [
+        {
+          "sourceRow": 0,
+          "sourceColumn": 1,
+          "sourceIndex": 0
+        }
+      ]
     }
   ]
 }
+
+Added requests
+2019-12-22 08:00:43:669 DBG nl.zeesoft.zdk.htm.grid.ZGrid: Starting grid ...
+2019-12-22 08:00:43:671 DBG nl.zeesoft.zdk.htm.grid.ZGrid: Started grid
+Processed requests: 100, accuracy: 0.470
+Processed requests: 200, accuracy: 0.702
+Processed requests: 300, accuracy: 0.802
+Processed requests: 400, accuracy: 0.852
+Processed requests: 500, accuracy: 0.882
+Processed requests: 600, accuracy: 0.901
+Processed requests: 700, accuracy: 0.916
+Processed requests: 800, accuracy: 0.926
+Processed requests: 900, accuracy: 0.934
+Processed requests: 1000, accuracy: 0.938
+Processed requests: 1100, accuracy: 0.989
+Processed requests: 1200, accuracy: 0.996
+Processed requests: 1300, accuracy: 0.995
+Processed requests: 1400, accuracy: 0.994
+Processed requests: 1500, accuracy: 0.994
+Processed requests: 1600, accuracy: 0.994
+Processed requests: 1700, accuracy: 0.994
+Processed requests: 1800, accuracy: 0.994
+Processed requests: 1900, accuracy: 0.993
+Processed requests: 2000, accuracy: 0.995
+Processed requests: 2100, accuracy: 0.995 (!)
+Processed requests: 2200, accuracy: 0.993
+Processed requests: 2300, accuracy: 0.994 (!)
+Processed requests: 2400, accuracy: 0.993
+Processed requests: 2500, accuracy: 0.993
+Processed requests: 2600, accuracy: 0.993
+Processed requests: 2700, accuracy: 0.993
+Detected anomaly at id 2742, detected: 0.38095236, average: 0.9880006, difference: 0.44343978
+Detected anomaly at id 2743, detected: 0.52380955, average: 0.98685765, difference: 0.3065189
+Detected anomaly at id 2744, detected: 0.52380955, average: 0.98590535, difference: 0.30608153
+Detected anomaly at id 2745, detected: 0.47619045, average: 0.9849529, difference: 0.34819478
+Detected anomaly at id 2747, detected: 0.4285714, average: 0.98323864, difference: 0.39287668
+Detected anomaly at id 2756, detected: 0.4285714, average: 0.97838134, difference: 0.3907807
+Processed requests: 2800, accuracy: 0.953
+Processed requests: 2900, accuracy: 0.953
+Processed requests: 3000, accuracy: 0.954
+2019-12-22 08:00:56:622 DBG nl.zeesoft.zdk.htm.grid.ZGrid: Stopping grid ...
+2019-12-22 08:00:56:622 DBG nl.zeesoft.zdk.htm.grid.ZGrid: Stopped grid
+Processing 3000 requests took 12992 ms
+
+Grid dimensions: 5*5
+- Column 00-00 = CombinedEncoder length: 128, bits: 32
+  - SECOND ScalarEncoder length: 128, bits: 32, resolution: 1.0, min: 0.0, max: 60.0, periodic: true
+- Column 00-01 = CombinedEncoder length: 256, bits: 16
+  - VALUE ScalarEncoder length: 256, bits: 16, resolution: 1.0, min: 0.0, max: 30.0, periodic: false
+- Column 00-02 = CombinedEncoder length: 64, bits: 8
+  - POSX ScalarEncoder length: 64, bits: 8, resolution: 1.0, min: 0.0, max: 20.0, periodic: false
+- Column 00-03 = CombinedEncoder length: 64, bits: 8
+  - POSY ScalarEncoder length: 64, bits: 8, resolution: 1.0, min: 0.0, max: 20.0, periodic: false
+- Column 00-04 = CombinedEncoder length: 64, bits: 8
+  - POSZ ScalarEncoder length: 64, bits: 8, resolution: 1.0, min: 0.0, max: 20.0, periodic: false
+- Column 01-03 = Merger maximum number of on bits: 0
+- Column 02-00 = Pooler input dimensions: 12*11, output dimensions: 32*32
+  - Total proximal links: 89600, active: 50177
+  - Average proximal inputs per column: 87 (min: 87, max: 88)
+  - Column groups: 144, average columns per group: 441
+- Column 02-01 = Pooler input dimensions: 16*16, output dimensions: 32*32
+  - Total proximal links: 92160, active: 34356
+  - Average proximal inputs per column: 90
+  - Column groups: 144, average columns per group: 441
+- Column 02-03 = Pooler input dimensions: 14*14, output dimensions: 32*32
+  - Total proximal links: 91776, active: 34460
+  - Average proximal inputs per column: 89 (min: 87, max: 90)
+  - Column groups: 144, average columns per group: 441
+- Column 03-01 = Memory dimensions: 32*32*4
+  - Total distal links: 204482, active: 191188
+  - Average distal inputs per memory cell: 49 (min: 0, max: 126)
+  - Average connected distal inputs per memory cell: 46 (min: 0, max: 126)
+  - Average connected distal context inputs per memory cell: 33 (min: 0, max: 84)
+- Column 04-00 = Detector start: 2500, window long/short: 500/1, threshold: 0.3 (ACTIVE)
+- Column 04-01 = Classifier value key: VALUE, predict steps: 1
+
+Grid column state data;
+- 02-00: 833225
+- 02-01: 947095
+- 02-03: 891921
+- 03-01: 4015141
+- 04-00: 2929
+- 04-01: 122086
+Loading state data took 1657 ms
 ~~~~
 
 Test results
 ------------
-All 22 tests have been executed successfully (149 assertions).  
-Total test duration: 76757 ms (total sleep duration: 32800 ms).  
+All 24 tests have been executed successfully (279288 assertions).  
+Total test duration: 71359 ms (total sleep duration: 22300 ms).  
 
 Memory usage per test;  
- * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 766 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 526 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestCsv: 533 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestJson: 547 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZHttpRequest: 554 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestMessenger: 756 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestZMatrix: 830 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestGeneticCode: 790 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.TestNeuralNet: 3754 Kb / 3 Mb
- * nl.zeesoft.zdk.test.impl.TestGeneticNN: 6464 Kb / 6 Mb
- * nl.zeesoft.zdk.test.impl.TestEvolver: 9073 Kb / 8 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestSDR: 884 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestSDRMap: 892 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestScalarEncoder: 890 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestRDScalarEncoder: 915 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder: 921 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestDateTimeValuesEncoder: 918 Kb / 0 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestPooler: 34957 Kb / 34 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestMemory: 34935 Kb / 34 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestStreamEncoder: 34938 Kb / 34 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestAnomalyDetector: 72895 Kb / 71 Mb
- * nl.zeesoft.zdk.test.impl.htm.TestValueClassifier: 79385 Kb / 77 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringEncoder: 810 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZStringSymbolParser: 528 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestCsv: 535 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestJson: 550 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZHttpRequest: 561 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestMessenger: 767 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestZMatrix: 833 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestGeneticCode: 794 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.TestNeuralNet: 1119 Kb / 1 Mb
+ * nl.zeesoft.zdk.test.impl.TestGeneticNN: 2749 Kb / 2 Mb
+ * nl.zeesoft.zdk.test.impl.TestEvolver: 56936 Kb / 55 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestSDR: 56384 Kb / 55 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestSDRMap: 55554 Kb / 54 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestScalarEncoder: 53992 Kb / 52 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestRDScalarEncoder: 972 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestDateTimeEncoder: 978 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestDateTimeValuesEncoder: 974 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestDateTimeValueEncoder: 989 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestGridEncoder: 994 Kb / 0 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestPooler: 34943 Kb / 34 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestMemory: 34950 Kb / 34 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestMerger: 34958 Kb / 34 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestZGridColumnEncoders: 35002 Kb / 34 Mb
+ * nl.zeesoft.zdk.test.impl.htm.TestZGrid: 35198 Kb / 34 Mb
