@@ -30,11 +30,7 @@ public class ClassifierConfig extends ProcessorConfigObject {
 		predictSteps.add(steps);
 	}
 	
-	/**
-	 * Returns a copy of this configuration.
-	 * 
-	 * @return A copy of this configuration
-	 */
+	@Override
 	public ClassifierConfig copy() {
 		ClassifierConfig r = new ClassifierConfig();
 		r.predictSteps.clear();

@@ -21,14 +21,14 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	public static final String	TYPE_DIMENSIONAL	= "DIMENSIONAL";
 	public static final String	TYPE_RANDOM			= "RANDOM";
 	
-	private String				valueKey			= DateTimeSDR.VALUE_KEY;
-	private String				type				= TYPE_SCALAR;
-	private int					length				= 256;
-	private int					bits				= 8;
-	private float				resolution			= 1;
-	private float				minValue			= 0;
-	private float				maxValue			= 255 - bits;
-	private boolean				periodic			= false;
+	protected String			valueKey			= DateTimeSDR.VALUE_KEY;
+	protected String			type				= TYPE_SCALAR;
+	protected int				length				= 256;
+	protected int				bits				= 8;
+	protected float				resolution			= 1;
+	protected float				minValue			= 0;
+	protected float				maxValue			= 255 - bits;
+	protected boolean			periodic			= false;
 
 	public ZGridEncoderValue() {
 		rebuildEncoder();
@@ -45,6 +45,21 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 			this.valueKey = valueKey;
 		}
 		rebuildEncoder();
+	}
+	
+	@Override
+	public ZGridEncoderValue copy() {
+		ZGridEncoderValue r = new ZGridEncoderValue();
+		r.valueKey = valueKey;
+		r.type = type;
+		r.length = length;
+		r.bits = bits;
+		r.resolution = resolution;
+		r.minValue = minValue;
+		r.maxValue = maxValue;
+		r.periodic = periodic;
+		r.rebuildEncoder();
+		return r;
 	}
 	
 	@Override

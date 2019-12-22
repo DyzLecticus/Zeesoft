@@ -13,9 +13,9 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class ZGridEncoderProperty extends ZGridColumnEncoder {
-	private String			valueKey		= "PROPERTY";
-	private int				length			= 256;
-	private int				bits			= 8;
+	protected String			valueKey		= "PROPERTY";
+	protected int				length			= 256;
+	protected int				bits			= 8;
 	
 	private PropertyEncoder	propertyEncoder	= null;
 
@@ -32,6 +32,16 @@ public class ZGridEncoderProperty extends ZGridColumnEncoder {
 		this.length = length;
 		this.valueKey = valueKey;
 		rebuildEncoder();
+	}
+	
+	@Override
+	public ZGridEncoderProperty copy() {
+		ZGridEncoderProperty r = new ZGridEncoderProperty();
+		r.valueKey = valueKey;
+		r.length = length;
+		r.bits = bits;
+		r.rebuildEncoder();
+		return r;
 	}
 	
 	@Override

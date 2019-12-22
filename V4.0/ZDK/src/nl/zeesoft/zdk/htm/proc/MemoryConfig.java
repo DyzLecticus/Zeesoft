@@ -49,11 +49,7 @@ public class MemoryConfig extends ProcessorConfigObject {
 		calculateDimensions();
 	}
 	
-	/**
-	 * Returns a copy of this configuration.
-	 * 
-	 * @return A copy of this configuration
-	 */
+	@Override
 	public MemoryConfig copy() {
 		MemoryConfig r = new MemoryConfig(length, bits);
 		r.sizeX = sizeX;

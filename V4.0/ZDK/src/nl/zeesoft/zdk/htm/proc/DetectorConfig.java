@@ -25,11 +25,7 @@ public class DetectorConfig extends ProcessorConfigObject {
 		this.threshold = threshold;
 	}
 	
-	/**
-	 * Returns a copy of this configuration.
-	 * 
-	 * @return A copy of this configuration
-	 */
+	@Override
 	public DetectorConfig copy() {
 		DetectorConfig r = new DetectorConfig(start,windowLong,windowShort,threshold);
 		return r;

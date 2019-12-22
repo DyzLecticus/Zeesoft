@@ -42,11 +42,7 @@ public class PoolerConfig extends ProcessorConfigObject {
 		calculateDimensions();
 	}
 
-	/**
-	 * Returns a copy of this configuration.
-	 * 
-	 * @return A copy of this configuration
-	 */
+	@Override
 	public PoolerConfig copy() {
 		PoolerConfig r = new PoolerConfig(inputLength,outputLength,outputBits);
 		r.inputSizeX = inputSizeX;

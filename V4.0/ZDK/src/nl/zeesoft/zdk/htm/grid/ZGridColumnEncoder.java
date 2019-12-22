@@ -10,7 +10,14 @@ import nl.zeesoft.zdk.json.JsAble;
  */
 public abstract class ZGridColumnEncoder implements JsAble {
 	protected CombinedEncoder encoder	=	null;
-	
+
+	/**
+	 * Returns a copy of this encoder.
+	 * 
+	 * @return A copy of this encoder
+	 */
+	public abstract ZGridColumnEncoder copy();
+
 	/**
 	 * Returns the value key used to store the original value that created the DateTimeSDR in its keyValues property.
 	 * 

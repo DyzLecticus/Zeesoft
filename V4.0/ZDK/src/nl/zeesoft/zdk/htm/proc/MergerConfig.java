@@ -20,14 +20,11 @@ public class MergerConfig extends ProcessorConfigObject {
 		this.maxOnBits = maxOnBits;
 	}
 	
-	/**
-	 * Returns a copy of this configuration.
-	 * 
-	 * @return A copy of this configuration
-	 */
+	@Override
 	public MergerConfig copy() {
 		MergerConfig r = new MergerConfig(maxOnBits);
 		r.union = union;
+		r.maxOnBits = maxOnBits;
 		return r;
 	}
 	

@@ -35,6 +35,20 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 	}
 	
 	@Override
+	public ZGridEncoderDateTime copy() {
+		ZGridEncoderDateTime r = new ZGridEncoderDateTime();
+		r.scale = scale;
+		r.bitsPerEncoder = bitsPerEncoder;
+		r.includeMonth = includeMonth;
+		r.includeDayOfWeek = includeDayOfWeek;
+		r.includeHourOfDay = includeHourOfDay;
+		r.includeMinute = includeMinute;
+		r.includeSecond = includeSecond;
+		r.rebuildEncoder();
+		return r;
+	}
+	
+	@Override
 	public String getValueKey() {
 		return "DATETIME";
 	}
