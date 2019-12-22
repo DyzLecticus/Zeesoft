@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.htm.grid;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.htm.proc.Classifier;
+import nl.zeesoft.zdk.htm.proc.Detector;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -112,6 +114,11 @@ public class ZGridColumn extends Worker {
 					}
 				}
 				if (input!=null || context.size()>0) {
+					if (processor instanceof Classifier) {
+						((Classifier)processor).setClassifyMaxSteps(result.getRequest().classifyMaxSteps);
+					} else if (processor instanceof Detector) {
+						((Detector)processor).setDetectAnomalies(result.getRequest().detectAnomalies);
+					}
 					outputs = processor.getSDRsForInput(input,context,result.getRequest().learn);
 				}
 			}

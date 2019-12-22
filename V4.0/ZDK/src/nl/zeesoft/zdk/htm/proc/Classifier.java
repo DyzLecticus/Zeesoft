@@ -22,7 +22,7 @@ public class Classifier extends ProcessorObject {
 	protected DateTimeSDR				inputSDR				= null;
 	protected List<DateTimeSDR>			classifierSDRs			= new ArrayList<DateTimeSDR>();
 	
-	protected int						classifyMaxSteps		= 1;
+	protected int						classifyMaxSteps		= Integer.MAX_VALUE;
 	
 	public Classifier(ClassifierConfig config) {
 		super(config);

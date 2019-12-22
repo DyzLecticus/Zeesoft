@@ -30,20 +30,22 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 /**
  * A ZGrid consists of several rows and columns where each column can process a certain input value.
  * It uses multithreading to maximize the throughput of grid requests.
- * The first row of a ZGrid is reserved for ZGridColumnEncoder* objects that translate request input values into SDRs.
+ * The first row of a ZGrid is reserved for ZGridColumnEncoder objects that translate request input values into SDRs.
  * The remaining rows can be used for Pooler, Memory, Classifier, Merger and custom processors.
  * Context routing can be used to route the output of a column to the context of another column.
  */
 public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
-	protected static final int		SLEEP_NS		= 10000;
+	protected static final int		SLEEP_NS			= 10000;
 	
-	private int						numRows			= 1;
-	private int						numColumns		= 1;
+	private int						numRows				= 1;
+	private int						numColumns			= 1;
 	
-	private List<ZGridRow>			rows			= new ArrayList<ZGridRow>();
-	private ZGridResults			results			= null;
+	private List<ZGridRow>			rows				= new ArrayList<ZGridRow>();
+	private ZGridResults			results				= null;
 	
-	private boolean					learn			= true;
+	private boolean					learn				= true;
+	private int						classifyMaxSteps	= Integer.MAX_VALUE;
+	private boolean					detectAnomalies		= true;
 
 	public ZGrid(int rows, int columns) {
 		super(null,null);
@@ -72,6 +74,30 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 	public void setLearn(boolean learn) {
 		lockMe(this);
 		this.learn = learn;
+		unlockMe(this);
+	}
+
+	/**
+	 * Sets the maximum number of steps for which classifications will be produced.
+	 * Use -1 to turn off all classifications.
+	 * Use 0 to turn off all predictions.
+	 * 
+	 * @param classifyMaxSteps The maximum number of classification steps
+	 */
+	public void setClassifyMaxSteps(int classifyMaxSteps) {
+		lockMe(this);
+		this.classifyMaxSteps = classifyMaxSteps;
+		unlockMe(this);
+	}
+	
+	/**
+	 * Indicates anomalies should be detected.
+	 * 
+	 * @param detectAnomalies Indicates anomalies should be detected
+	 */
+	public void setDetectAnomalies(boolean detectAnomalies) {
+		lockMe(this);
+		this.detectAnomalies = detectAnomalies;
 		unlockMe(this);
 	}
 
@@ -452,6 +478,8 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 	public long addRequest(ZGridRequest request) {
 		lockMe(this);
 		request.learn = learn;
+		request.classifyMaxSteps = classifyMaxSteps;
+		request.detectAnomalies = detectAnomalies;
 		long r = results.assignRequestId(request);
 		ZGridResult result = new ZGridResult(getMessenger(),request.copy()); 
 		rows.get(0).addResult(result);

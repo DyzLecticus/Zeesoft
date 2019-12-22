@@ -22,10 +22,21 @@ public class Detector extends ProcessorObject {
 	private HistoricalFloats	historyLong		= new HistoricalFloats();
 	private HistoricalFloats	historyShort	= new HistoricalFloats();
 	
+	private boolean				detectAnomalies = true;
+	
 	public Detector(DetectorConfig config) {
 		super(config);
 		historyLong.window = config.windowLong;
 		historyShort.window = config.windowShort;
+	}
+	
+	/**
+	 * Indicates anomalies should be detected.
+	 * 
+	 * @param detectAnomalies Indicates anomalies should be detected
+	 */
+	public void setDetectAnomalies(boolean detectAnomalies) {
+		this.detectAnomalies = detectAnomalies;
 	}
 	
 	@Override
@@ -103,7 +114,7 @@ public class Detector extends ProcessorObject {
 				float averageShort = historyShort.average;
 				float difference = 1F - getFloatDifference(averageLong,averageShort);
 				
-				if (seen>=getConfig().start && difference>getConfig().threshold) {
+				if (detectAnomalies && seen>=getConfig().start && difference>getConfig().threshold) {
 					Anomaly anomaly = new Anomaly();
 					anomaly.detectedAccuracy = accuracy;
 					anomaly.averageLongTermAccuracy = averageLong;

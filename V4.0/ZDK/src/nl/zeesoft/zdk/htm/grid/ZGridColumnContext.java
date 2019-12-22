@@ -5,12 +5,20 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 
 public class ZGridColumnContext implements JsAble {
-	protected int sourceRow		= 0;
-	protected int sourceColumn	= 0;
-	protected int sourceIndex	= 0;
+	public int sourceRow	= 0;
+	public int sourceColumn	= 0;
+	public int sourceIndex	= 0;
 	
 	protected ZGridColumnContext() {
 		
+	}
+	
+	protected ZGridColumnContext copy() {
+		ZGridColumnContext r = new ZGridColumnContext();
+		r.sourceRow = sourceRow;
+		r.sourceColumn = sourceColumn;
+		r.sourceIndex = sourceIndex;
+		return r;
 	}
 
 	@Override

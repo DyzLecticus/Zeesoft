@@ -12,12 +12,14 @@ import nl.zeesoft.zdk.json.JsFile;
  * Supported input value data types are Float, Integer, Long, String and SDR.
  */
 public class ZGridRequest implements JsAble {
-	public long			id				= 0;
-	public long			dateTime		= 0;
-	public Object[]		inputValues		= null;
-	public String[]		inputLabels		= null;
+	public long			id					= 0;
+	public long			dateTime			= 0;
+	public Object[]		inputValues			= null;
+	public String[]		inputLabels			= null;
 	
-	protected boolean	learn			= true;
+	protected boolean	learn				= true;
+	protected int		classifyMaxSteps	= Integer.MAX_VALUE;
+	protected boolean	detectAnomalies		= true;
 	
 	public ZGridRequest(int columns) {
 		initialize(columns);

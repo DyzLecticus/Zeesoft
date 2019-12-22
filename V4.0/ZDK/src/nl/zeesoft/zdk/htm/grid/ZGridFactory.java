@@ -59,7 +59,33 @@ public class ZGridFactory extends Locker implements JsAble {
 	}
 	
 	/**
-	 * Removes all configuration from all grid positions.
+	 * Returns the number of rows.
+	 * 
+	 * @return The number of rows
+	 */
+	public int getNumRows() {
+		int r = 0;
+		lockMe(this);
+		r = numRows;
+		unlockMe(this);
+		return r;
+	}
+	
+	/**
+	 * Returns the number of columns.
+	 * 
+	 * @return The number of columns
+	 */
+	public int getNumColumns() {
+		int r = 0;
+		lockMe(this);
+		r = numColumns;
+		unlockMe(this);
+		return r;
+	}
+	
+	/**
+	 * Removes all configurations from all grid positions.
 	 */
 	public void clear() {
 		lockMe(this);
@@ -78,21 +104,21 @@ public class ZGridFactory extends Locker implements JsAble {
 		lockMe(this);
 		if (columnIndex<numColumns) {
 			String id = ZGridColumn.getColumnId(0,columnIndex);
-			ZGridFactoryColumn column = new ZGridFactoryColumn();
-			column.columnId = id;
-			column.rowIndex = 0;
-			column.columnIndex = columnIndex;
-			column.encoder = encoder;
-			columns.put(id,column);
+			ZGridFactoryColumn col = new ZGridFactoryColumn();
+			col.columnId = id;
+			col.rowIndex = 0;
+			col.columnIndex = columnIndex;
+			col.encoder = encoder;
+			columns.put(id,col);
 		}
 		unlockMe(this);
 	}
 	
 	/**
-	 * Returns the encoder from the specified position in the grid.
+	 * Returns a copy of the encoder from the specified position in the grid.
 	 * 
 	 * @param columnIndex The column index
-	 * @return The encoder or null
+	 * @return A copy of the encoder or null
 	 */
 	public ZGridColumnEncoder getEncoder(int columnIndex) {
 		ZGridColumnEncoder r = null;
@@ -100,7 +126,7 @@ public class ZGridFactory extends Locker implements JsAble {
 		String id = ZGridColumn.getColumnId(0,columnIndex);
 		ZGridFactoryColumn col = columns.get(id);
 		if (col!=null && col.encoder!=null) {
-			r = col.encoder;
+			r = col.encoder.copy();
 		}
 		unlockMe(this);
 		return r;
@@ -128,22 +154,22 @@ public class ZGridFactory extends Locker implements JsAble {
 		lockMe(this);
 		if (rowIndex>0 && rowIndex<numRows && columnIndex<numColumns) {
 			String id = ZGridColumn.getColumnId(rowIndex,columnIndex);
-			ZGridFactoryColumn column = new ZGridFactoryColumn();
-			column.columnId = id;
-			column.rowIndex = rowIndex;
-			column.columnIndex = columnIndex;
-			column.processorConfig = config;
-			columns.put(id,column);
+			ZGridFactoryColumn col = new ZGridFactoryColumn();
+			col.columnId = id;
+			col.rowIndex = rowIndex;
+			col.columnIndex = columnIndex;
+			col.processorConfig = config;
+			columns.put(id,col);
 		}
 		unlockMe(this);
 	}
 	
 	/**
-	 * Returns the processor configuration from the specified position in the grid.
+	 * Returns a copy of the processor configuration from the specified position in the grid.
 	 * 
 	 * @param rowIndex The row index
 	 * @param columnIndex The column index
-	 * @return The processor configuration or null
+	 * @return A copy of the processor configuration or null
 	 */
 	public ProcessorConfigObject getProcessor(int rowIndex,int columnIndex) {
 		ProcessorConfigObject r = null;
@@ -151,7 +177,7 @@ public class ZGridFactory extends Locker implements JsAble {
 		String id = ZGridColumn.getColumnId(0,columnIndex);
 		ZGridFactoryColumn col = columns.get(id);
 		if (col!=null && col.processorConfig!=null) {
-			r = col.processorConfig;
+			r = col.processorConfig.copy();
 		}
 		unlockMe(this);
 		return r;
@@ -196,16 +222,37 @@ public class ZGridFactory extends Locker implements JsAble {
 		lockMe(this);
 		if (numRows>rowIndex && numColumns>columnIndex && sourceRow<rowIndex && sourceColumn<numColumns) {
 			String id = ZGridColumn.getColumnId(rowIndex,columnIndex);
-			ZGridFactoryColumn column = columns.get(id);
-			if (column!=null) {
+			ZGridFactoryColumn col = columns.get(id);
+			if (col!=null) {
 				ZGridColumnContext context = new ZGridColumnContext();
 				context.sourceRow = sourceRow;
 				context.sourceColumn = sourceColumn;
 				context.sourceIndex = sourceIndex;
-				column.contexts.add(context);
+				col.contexts.add(context);
 			}
 		}
 		unlockMe(this);
+	}
+	
+	/**
+	 * Returns a copy of the contexts for a specific position in the grid.
+	 * 
+	 * @param rowIndex The row index
+	 * @param columnIndex The column index
+	 * @return A copy of the contexts or an empty list
+	 */
+	public List<ZGridColumnContext> getColumnContexts(int rowIndex,int columnIndex) {
+		List<ZGridColumnContext> r = new ArrayList<ZGridColumnContext>();
+		lockMe(this);
+		String id = ZGridColumn.getColumnId(rowIndex,columnIndex);
+		ZGridFactoryColumn col = columns.get(id);
+		if (col!=null) {
+			for (ZGridColumnContext context: col.contexts) {
+				r.add(context.copy());
+			}
+		}
+		unlockMe(this);
+		return r;
 	}
 	
 	/**
@@ -232,15 +279,15 @@ public class ZGridFactory extends Locker implements JsAble {
 	public ZGrid buildNewGrid() {
 		ZGrid r = null;
 		lockMe(this);
-		r = new ZGrid(getMessenger(),union,numRows,numColumns);
-		for (ZGridFactoryColumn column: columns.values()) {
-			if (column.encoder!=null) {
-				r.setEncoder(column.columnIndex,column.encoder);
-			} else if (column.rowIndex>0) {
-				r.setProcessor(column.rowIndex,column.columnIndex,column.processorConfig.copy());
+		r = getNewGrid(getMessenger(),union,numRows,numColumns);
+		for (ZGridFactoryColumn col: columns.values()) {
+			if (col.encoder!=null) {
+				r.setEncoder(col.columnIndex,col.encoder);
+			} else if (col.rowIndex>0) {
+				r.setProcessor(col.rowIndex,col.columnIndex,col.processorConfig.copy());
 			}
-			for (ZGridColumnContext context: column.contexts) {
-				r.addColumnContext(column.rowIndex,column.columnIndex,context.sourceRow,context.sourceColumn,context.sourceIndex);
+			for (ZGridColumnContext context: col.contexts) {
+				r.addColumnContext(col.rowIndex,col.columnIndex,context.sourceRow,context.sourceColumn,context.sourceIndex);
 			}
 		}
 		unlockMe(this);
@@ -294,6 +341,9 @@ public class ZGridFactory extends Locker implements JsAble {
 				for (JsElem cfgElem: cfgsElem.children) {
 					String id = cfgElem.getChildString("columnId");
 					String className = cfgElem.getChildString("className");
+					Object obj = ZDKFactory.getNewClassInstanceForName(className);
+
+					boolean found = false;
 					ZGridFactoryColumn col = new ZGridFactoryColumn();
 					col.columnId = id;
 					for (int r = 0; r < numRows; r++) {
@@ -302,31 +352,33 @@ public class ZGridFactory extends Locker implements JsAble {
 							if (test.equals(id)) {
 								col.rowIndex = r;
 								col.columnIndex = c;
+								found = true;
+								break;
 							}
 						}
+						if (found) {
+							break;
+						}
 					}
-					columns.put(id,col);
-					if (col!=null) {
-						Object obj = ZDKFactory.getNewClassInstanceForName(className);
-						if (obj!=null && obj instanceof JsAble) {
-							JsFile cfgJs = new JsFile();
-							cfgJs.rootElement = cfgElem;
-							if (obj instanceof ZGridColumnEncoder) {
-								col.encoder = (ZGridColumnEncoder) obj;
-								col.encoder.fromJson(cfgJs);
-							} else if (obj instanceof ProcessorConfigObject) {
-								ProcessorConfigObject config = (ProcessorConfigObject) obj;
-								config.fromJson(cfgJs);
-								col.processorConfig = config;
-								JsElem ctxsElem = cfgElem.getChildByName("contexts");
-								if (ctxsElem!=null) {
-									for (JsElem ctxElem: ctxsElem.children) {
-										JsFile ctxJs = new JsFile();
-										ctxJs.rootElement = ctxElem;
-										ZGridColumnContext ctx = new ZGridColumnContext();
-										ctx.fromJson(ctxJs);
-										col.contexts.add(ctx);
-									}
+					if (found && obj!=null && obj instanceof JsAble) {
+						columns.put(id,col);
+						JsFile cfgJs = new JsFile();
+						cfgJs.rootElement = cfgElem;
+						if (obj instanceof ZGridColumnEncoder) {
+							col.encoder = (ZGridColumnEncoder) obj;
+							col.encoder.fromJson(cfgJs);
+						} else if (obj instanceof ProcessorConfigObject) {
+							ProcessorConfigObject config = (ProcessorConfigObject) obj;
+							config.fromJson(cfgJs);
+							col.processorConfig = config;
+							JsElem ctxsElem = cfgElem.getChildByName("contexts");
+							if (ctxsElem!=null) {
+								for (JsElem ctxElem: ctxsElem.children) {
+									JsFile ctxJs = new JsFile();
+									ctxJs.rootElement = ctxElem;
+									ZGridColumnContext ctx = new ZGridColumnContext();
+									ctx.fromJson(ctxJs);
+									col.contexts.add(ctx);
 								}
 							}
 						}
@@ -471,5 +523,9 @@ public class ZGridFactory extends Locker implements JsAble {
 			column.contexts.clear();
 		}
 		columns.clear();
+	}
+	
+	protected ZGrid getNewGrid(Messenger msgr, WorkerUnion uni,int numRows, int numColumns) {
+		return new ZGrid(msgr,uni,numRows,numColumns);
 	}
 }
