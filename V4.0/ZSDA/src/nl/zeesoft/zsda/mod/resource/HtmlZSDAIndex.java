@@ -24,7 +24,7 @@ public class HtmlZSDAIndex extends HtmlResource {
 		html.append("<tbody>\n");
 			html.append("<tr>\n");
 			html.append("<td width=\"20%\">");
-			html.append("<a href=\"" + url + "/grid.html\">Grid configuration</a>");
+			html.append("<a href=\"" + url + "/gridConfig.html\">Grid configuration</a>");
 			html.append("</td>\n");
 			html.append("<td>");
 			html.append("Configure the SDR processor grid.");
@@ -32,7 +32,7 @@ public class HtmlZSDAIndex extends HtmlResource {
 			html.append("</tr>\n");
 			
 			/*
-			if (getConfiguration().getModule(ModZMC.NAME).selfTest) {
+			if (getConfiguration().getModule(ModZSDA.NAME).selfTest) {
 				html.append("<tr>\n");
 				html.append("<td>");
 				html.append("<a href=\"" + url + JsonModTestResultsHandler.PATH + "\">Test results JSON</a>");

@@ -49,6 +49,7 @@ public class ZGridRow extends Worker implements ZGridRequestNext {
 			}
 		}
 		super.stop();
+		waitForStop(10,false);
 	}
 
 	@Override

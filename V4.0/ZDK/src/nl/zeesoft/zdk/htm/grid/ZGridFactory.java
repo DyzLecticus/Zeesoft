@@ -85,6 +85,19 @@ public class ZGridFactory extends Locker implements JsAble {
 	}
 	
 	/**
+	 * Returns a list of column ids of all positions in the grid.
+	 * 
+	 * @return A list of column ids 
+	 */
+	public List<String> getColumnIds() {
+		List<String> r = null;
+		lockMe(this);
+		r = getColumnIdsNoLock();
+		unlockMe(this);
+		return r;
+	}
+	
+	/**
 	 * Removes all configurations from all grid positions.
 	 */
 	public void clear() {
@@ -437,7 +450,7 @@ public class ZGridFactory extends Locker implements JsAble {
 		dateTimeEncoder.setIncludeMinute(false);
 		dateTimeEncoder.setScale(2);
 		
-		ZGridEncoderValue valueEncoder = new ZGridEncoderValue(256);
+		ZGridEncoderValue valueEncoder = new ZGridEncoderValue( );
 		valueEncoder.setBits(16);
 		valueEncoder.setMaxValue(30);
 		
@@ -499,7 +512,7 @@ public class ZGridFactory extends Locker implements JsAble {
 	}
 	
 	protected void updatedDimensions() {
-		List<String> columnIds = getColumnIds();
+		List<String> columnIds = getColumnIdsNoLock();
 		List<String> colIds = new ArrayList<String>(columns.keySet());
 		for (String colId: colIds) {
 			if (!columnIds.contains(colId)) {
@@ -508,7 +521,7 @@ public class ZGridFactory extends Locker implements JsAble {
 		}
 	}
 	
-	protected List<String> getColumnIds() {
+	protected List<String> getColumnIdsNoLock() {
 		List<String> r = new ArrayList<String>(); 
 		for (int row = 0; row < numRows; row++) {
 			for (int col = 0; col < numColumns; col++) {

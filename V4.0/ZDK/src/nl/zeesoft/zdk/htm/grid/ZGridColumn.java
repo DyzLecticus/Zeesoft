@@ -55,6 +55,12 @@ public class ZGridColumn extends Worker {
 	}
 	
 	@Override
+	public void stop() {
+		super.stop();
+		waitForStop(10,false);
+	}
+
+	@Override
 	protected void whileWorking() {
 		LockedCode code = new LockedCode() {
 			@Override
