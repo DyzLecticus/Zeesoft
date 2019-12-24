@@ -57,6 +57,7 @@ public class ZODBTester extends TesterObject {
 			result = new DatabaseResult();
 			result.id = n;
 			result.name = req.name;
+			result.size = 25;
 			res.results.add(result);
 			addRequestNoLock(req,res);
 		}
@@ -71,6 +72,7 @@ public class ZODBTester extends TesterObject {
 			result.name = req.name;
 			result.id = id;
 			result.object = getTestObject(name);
+			result.size = 25;
 			res.results.add(result);
 			addRequestNoLock(req,res);
 			if (id>=10) {
@@ -88,6 +90,7 @@ public class ZODBTester extends TesterObject {
 		result = new DatabaseResult();
 		result.name = req.name;
 		result.id = 1;
+		result.size = 25;
 		result.encoded = encoder;
 		res.results.add(result);
 		addRequestNoLock(req,res);
@@ -101,6 +104,7 @@ public class ZODBTester extends TesterObject {
 		result = new DatabaseResult();
 		result.name = req.name;
 		result.id = 1;
+		result.size = 25;
 		result.encoded = encoder;
 		res.results.add(result);
 		addRequestNoLock(req,res);
@@ -114,6 +118,7 @@ public class ZODBTester extends TesterObject {
 			result = new DatabaseResult();
 			result.name = getObjectName(name);
 			result.id = id;
+			result.size = 25;
 			res.results.add(result);
 			if (id==req.max) {
 				break;
@@ -132,6 +137,7 @@ public class ZODBTester extends TesterObject {
 			result = new DatabaseResult();
 			result.name = getObjectName(name);
 			result.id = (long) (i + 1);
+			result.size = 25;
 			res.results.add(result);
 		}
 		addRequestNoLock(req,res);

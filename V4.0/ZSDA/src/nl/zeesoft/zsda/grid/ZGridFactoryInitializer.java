@@ -16,9 +16,7 @@ public class ZGridFactoryInitializer extends InitializerObject {
 	}
 	
 	public void updatedFactory() {
-		lockMe(this);
-		updateObjectInDatabaseNoLock(factory);
-		unlockMe(this);
+		updateObject(factory.getObjectName());
 	}
 	
 	@Override

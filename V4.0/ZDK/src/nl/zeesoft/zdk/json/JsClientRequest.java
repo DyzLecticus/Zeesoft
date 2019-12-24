@@ -7,7 +7,7 @@ public class JsClientRequest {
 	
 	public int		retries			= 0;
 	
-	protected JsClientRequest(JsFile request, String url) {
+	public JsClientRequest(JsFile request, String url) {
 		this.request = request;
 		this.url = url;
 	}

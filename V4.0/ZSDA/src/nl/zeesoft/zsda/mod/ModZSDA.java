@@ -55,20 +55,21 @@ public class ModZSDA extends ModObject implements StateListener {
 	public void destroy() {
 		ZGrid grid = factoryInitializer.getGrid();
 		if (grid!=null) {
-			grid.stop();
-			grid.whileActive();
+			if (grid.isActive()) {
+				grid.stop();
+				grid.whileActive();
+			}
+			
+			SortedMap<String,ZStringBuilder> stateData = grid.getColumnStateData();
+			for (Entry<String,ZStringBuilder> entry: stateData.entrySet()) {
+				PersistableProcessorState state = gridInitializer.getProcessorState(entry.getKey());
+				state.setStateData(entry.getValue());
+				gridInitializer.updateProcessorState(entry.getKey());
+			}
+			
+			grid.destroy();
+			gridInitializer.whileBusy(60);
 		}
-		
-		/*
-		SortedMap<String,ZStringBuilder> stateData = grid.getColumnStateData();
-		for (Entry<String,ZStringBuilder> entry: stateData.entrySet()) {
-			PersistableProcessorState state = gridInitializer.getProcessorState(entry.getKey());
-			state.setStateData(entry.getValue());
-			gridInitializer.updateProcessorState(entry.getKey());
-		}
-		*/
-		
-		grid.destroy();
 		
 		factoryInitializer.destroy();
 		gridInitializer.destroy();
@@ -81,7 +82,7 @@ public class ModZSDA extends ModObject implements StateListener {
 		if (source==factoryInitializer && open) {
 			gridInitializer.initialize();
 		} else if (source==gridInitializer && open) {
-			//factoryInitializer.getGrid().start();
+			factoryInitializer.getGrid().start();
 		}
 	}
 	

@@ -14,17 +14,18 @@ public class IndexElement {
 	public long								id				= 0L;
 	public ZStringBuilder					name			= new ZStringBuilder();
 	public long								modified		= 0L;
+	public long								size			= 0L;
 	public int								indexFileNum	= 0;
 	public int								dataFileNum		= 0;
 	public JsFile							obj				= null;
 	
-	public SortedMap<String,ZStringBuilder>	idxValues	= new TreeMap<String,ZStringBuilder>();
+	public SortedMap<String,ZStringBuilder>	idxValues		= new TreeMap<String,ZStringBuilder>();
 	
-	protected boolean						added		= false;
-	protected boolean						removed		= false;
+	protected boolean						added			= false;
+	protected boolean						removed			= false;
 	
 	protected IndexElement() {
-		updateModified();
+		updateMetadata();
 	}
 	
 	public IndexElement copy() {
@@ -32,6 +33,7 @@ public class IndexElement {
 		r.id = this.id;
 		r.name = this.name;
 		r.modified = this.modified;
+		r.size = this.size;
 		r.indexFileNum = this.indexFileNum;
 		r.dataFileNum = this.dataFileNum;
 		r.obj = this.obj;
@@ -43,8 +45,11 @@ public class IndexElement {
 		return r;
 	}
 	
-	protected void updateModified() {
+	protected void updateMetadata() {
 		modified = (new Date()).getTime();
+		if (obj!=null) {
+			size = obj.toStringBuilder().length();
+		}
 	}
 	
 	protected ZStringBuilder toStringBuilder(StringBuilder key) {
@@ -54,6 +59,8 @@ public class IndexElement {
 		r.append(name);
 		r.append("\t");
 		r.append("" + modified);
+		r.append("\t");
+		r.append("" + size);
 		r.append("\t");
 		r.append("" + dataFileNum);
 		r.append("\t");
@@ -73,7 +80,7 @@ public class IndexElement {
 	
 	protected void fromStringBuilder(ZStringBuilder str,StringBuilder key) {
 		List<ZStringBuilder> split = str.split("\t");
-		if (split.size()==5) {
+		if (split.size()==6) {
 			String v = split.get(0).toString();
 			if (ZStringEncoder.isNumber(v)) {
 				id = Long.parseLong(v);
@@ -85,9 +92,13 @@ public class IndexElement {
 			}
 			v = split.get(3).toString();
 			if (ZStringEncoder.isNumber(v)) {
+				size = Long.parseLong(v);
+			}
+			v = split.get(4).toString();
+			if (ZStringEncoder.isNumber(v)) {
 				dataFileNum = Integer.parseInt(v);
 			}
-			ZStringEncoder encoder = new ZStringEncoder(split.get(4));
+			ZStringEncoder encoder = new ZStringEncoder(split.get(5));
 			encoder.decodeKey(key,0);
 			List<ZStringBuilder> idxVals = encoder.split("\t");
 			int i = 0;

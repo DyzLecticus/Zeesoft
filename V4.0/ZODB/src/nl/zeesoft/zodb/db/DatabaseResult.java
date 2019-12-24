@@ -10,6 +10,7 @@ public class DatabaseResult implements JsAble {
 	public ZStringBuilder	name		= new ZStringBuilder();
 	public long				id			= 0L;
 	public long				modified	= 0L;
+	public long				size		= 0L;
 	
 	public JsFile			object		= null;
 	public ZStringBuilder	encoded		= null;
@@ -22,6 +23,7 @@ public class DatabaseResult implements JsAble {
 		this.name = element.name;
 		this.id = element.id;
 		this.modified = element.modified;
+		this.size = element.size;
 		this.object = element.obj;
 	}
 	
@@ -50,6 +52,9 @@ public class DatabaseResult implements JsAble {
 		if (modified>0) {
 			json.rootElement.children.add(new JsElem("modified","" + modified));
 		}
+		if (size>0) {
+			json.rootElement.children.add(new JsElem("size","" + size));
+		}
 		if (encoded!=null && encoded.length()>0) {
 			json.rootElement.children.add(new JsElem("encoded",encoded,true));
 		} else if (object!=null && object.rootElement!=null && object.rootElement.children.size()>0) {
@@ -66,6 +71,7 @@ public class DatabaseResult implements JsAble {
 			name = json.rootElement.getChildZStringBuilder("name",name);
 			id = json.rootElement.getChildLong("id",id);
 			modified = json.rootElement.getChildLong("modified",modified);
+			size = json.rootElement.getChildLong("size",size);
 			encoded = json.rootElement.getChildZStringBuilder("encoded",encoded);
 			JsElem objElem = json.rootElement.getChildByName("object");
 			if (objElem!=null && objElem.children.size()>0) {

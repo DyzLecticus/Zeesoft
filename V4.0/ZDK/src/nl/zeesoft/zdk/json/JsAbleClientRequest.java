@@ -4,7 +4,7 @@ public class JsAbleClientRequest extends JsClientRequest {
 	public JsAble	reqObject	= null;
 	public JsAble	resObject	= null;
 	
-	protected JsAbleClientRequest(JsAble request,String url,JsAble response) {
+	public JsAbleClientRequest(JsAble request,String url,JsAble response) {
 		super(request.toJson(),url);
 		this.reqObject = request;
 		this.resObject = response;

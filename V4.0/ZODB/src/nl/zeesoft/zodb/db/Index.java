@@ -465,6 +465,7 @@ public class Index extends Locker {
 			r.obj = obj;
 			r.idxValues = element.idxValues;
 			r.modified = element.modified;
+			r.size = obj.toStringBuilder().length();
 			r.indexFileNum = getIndexFileNumForNewObjectNoLock();
 			r.dataFileNum = getDataFileNumForNewObjectNoLock();
 			r.added = true;
@@ -645,7 +646,7 @@ public class Index extends Locker {
 						indexConfig.removeObject(element);
 						element.name = name;
 						element.idxValues = copy.idxValues;
-						element.updateModified();
+						element.updateMetadata();
 						indexConfig.addObject(element.copy());
 						changedIndexFileNums.add(element.indexFileNum);
 					}
@@ -666,7 +667,7 @@ public class Index extends Locker {
 					indexConfig.removeObject(element);
 					element.obj = obj;
 					element.idxValues = copy.idxValues;
-					element.updateModified();
+					element.updateMetadata();
 					indexConfig.addObject(element.copy());
 					changedIndexFileNums.add(element.indexFileNum);
 					changedDataFileNums.add(element.dataFileNum);

@@ -62,11 +62,11 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 			@Override
 			public Object doLocked() {
 				initializeDatabaseObjectsNoLock();
-				addObjectsToDatabaseNoLock();
 				if (objects.size()>0) {
 					initializing = true;
 					todo = objects.size();
 				}
+				addObjectsToDatabaseNoLock();
 				return objects.size();
 			}
 		};
@@ -140,6 +140,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	
 	public void updateObjects() {
 		lockMe(this);
+		todo = objects.size();
 		for (Persistable object: objects) {
 			updateObjectInDatabaseNoLock(object);
 		}
@@ -148,6 +149,7 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 	
 	public void updateObject(ZStringBuilder name) {
 		lockMe(this);
+		todo++;
 		updateObjectInDatabaseNoLock(getObjectByNameNoLock(name));
 		unlockMe(this);
 	}
@@ -244,10 +246,46 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 				if (open) {
 					stateChanged(true);
 				}
+			} else if (res.request.type.equals(DatabaseRequest.TYPE_SET)) {
+				lockMe(this);
+				if (todo>0) {
+					todo--;
+				}
+				unlockMe(this);
 			}
 		}
 	}
-	
+
+	public boolean isBusy() {
+		boolean r = false;
+		lockMe(this);
+		r = todo > 0;
+		unlockMe(this);
+		return r;
+	}
+
+	public void whileBusy(int timeoutSeconds) {
+		int i = 0;
+		while(isBusy()) {
+			if (i > timeoutSeconds * 10) {
+				if (getMessenger()!=null) {
+					getMessenger().error(this,"Waiting for initializer to finish timed out after " + timeoutSeconds + " seconds");
+				}
+				break;
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				if (getMessenger()!=null) {
+					getMessenger().error(this,"Waiting for initializer to finish was interrupted",e);
+				} else {
+					e.printStackTrace();
+				}
+			}
+			i++;
+		}
+	}
+
 	protected abstract void initializeDatabaseObjectsNoLock();
 
 	protected abstract Persistable getNewObjectNoLock(ZStringBuilder name);
@@ -331,5 +369,4 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 			listener.stateChanged(this,open);
 		}
 	}
-
 }

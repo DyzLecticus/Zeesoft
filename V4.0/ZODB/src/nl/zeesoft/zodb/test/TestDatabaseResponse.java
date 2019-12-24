@@ -56,6 +56,7 @@ public class TestDatabaseResponse extends TestObject {
 		res.object = new JsFile();
 		res.object.rootElement = new JsElem();
 		res.object.rootElement.children.add(new JsElem("data","testObjectData",true));
+		res.size = res.object.toStringBuilder().length(); 
 		response.results.add(res);
 		System.out.println();
 		testResponse(response,2);
@@ -66,11 +67,13 @@ public class TestDatabaseResponse extends TestObject {
 		res.id = 1;
 		res.name = new ZStringBuilder("testName1");
 		res.modified = (new Date()).getTime();
+		res.size = 123; 
 		response.results.add(res);
 		res = new DatabaseResult();
 		res.id = 1;
 		res.name = new ZStringBuilder("testName2");
 		res.modified = (new Date()).getTime();
+		res.size = 234; 
 		response.results.add(res);
 		System.out.println();
 		testResponse(response,3);
