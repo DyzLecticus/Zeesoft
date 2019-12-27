@@ -290,14 +290,14 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		System.out.println();
 		System.out.println(desc);
 		
-		SortedMap<String,ZStringBuilder> columnIdStateDataMap = grid.getColumnStateData();
+		SortedMap<String,ZStringBuilder> columnIdStateDataMap = grid.getStateData();
 		System.out.println();
 		System.out.println("Grid column state data;");
 		for (Entry<String,ZStringBuilder> entry: columnIdStateDataMap.entrySet()) {
 			System.out.println("- " + entry.getKey() + ": " + entry.getValue().length());
 		}
 		long started = System.currentTimeMillis();
-		newGrid.setColumnStateData(columnIdStateDataMap);
+		newGrid.setStateData(columnIdStateDataMap);
 		System.out.println("Loading state data took " + (System.currentTimeMillis() - started) + " ms");
 		
 		ZStringBuilder newDesc = newGrid.getDescription();

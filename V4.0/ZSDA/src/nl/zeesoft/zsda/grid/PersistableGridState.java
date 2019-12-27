@@ -7,36 +7,36 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.db.init.Persistable;
 
-public class PersistableProcessorState extends Locker implements Persistable {
-	private String			columnId	= "";
+public class PersistableGridState extends Locker implements Persistable {
+	private String			key			= "";
 	private ZStringBuilder 	stateData	= new ZStringBuilder();
 
-	public PersistableProcessorState() {
+	public PersistableGridState() {
 		super(null);
 	}
 
-	public PersistableProcessorState(Messenger msgr) {
+	public PersistableGridState(Messenger msgr) {
 		super(msgr);
 	}
 
 	@Override
 	public ZStringBuilder getObjectName() {
 		lockMe(this);
-		ZStringBuilder r = new ZStringBuilder(columnId);
+		ZStringBuilder r = new ZStringBuilder(key);
 		unlockMe(this);
 		return r;
 	}
 
-	public String getColumnId() {
+	public String getKey() {
 		lockMe(this);
-		String r = columnId;
+		String r = key;
 		unlockMe(this);
 		return r;
 	}
 
-	public void setColumnId(String columnId) {
+	public void setKey(String key) {
 		lockMe(this);
-		this.columnId = columnId;
+		this.key = key;
 		unlockMe(this);
 	}
 
@@ -59,7 +59,7 @@ public class PersistableProcessorState extends Locker implements Persistable {
 		lockMe(this);
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("columnId",columnId,true));
+		json.rootElement.children.add(new JsElem("key",key,true));
 		if (stateData.length()>0) {
 			json.rootElement.children.add(new JsElem("stateData",stateData,true));
 		} else {
@@ -73,7 +73,7 @@ public class PersistableProcessorState extends Locker implements Persistable {
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			lockMe(this);
-			columnId = json.rootElement.getChildString("columnId",columnId);
+			key = json.rootElement.getChildString("key",key);
 			stateData = json.rootElement.getChildZStringBuilder("stateData",stateData);
 			unlockMe(this);
 		}

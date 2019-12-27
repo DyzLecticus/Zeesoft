@@ -270,14 +270,14 @@ public class Config implements JsAble {
 	}
 
 	public void handleDatabaseRequest(DatabaseRequest request,JsClientListener listener,int timeoutSeconds) {
+		request.readTimeOutSeconds = timeoutSeconds;
 		String url = getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH;
 		if (url.startsWith(servletUrl)) {
-			new ConfigRequestWorker(this,request,url,listener);
+			new ConfigRequestWorker(this,request,url,60,listener);
 		} else {
 			JsAbleClient client = new JsAbleClient(getMessenger(),getUnion());
 			client.addJsClientListener(listener);
 			DatabaseResponse response = new DatabaseResponse();
-			request.readTimeOutSeconds = timeoutSeconds;
 			response.request = request;
 			client.handleRequest(request,getModuleUrl(ModZODB.NAME) + JsonZODBRequestHandler.PATH,response,timeoutSeconds);
 		}
@@ -286,7 +286,7 @@ public class Config implements JsAble {
 	public void addObject(Persistable object,ZStringBuilder fullObjectName,JsClientListener listener) {
 		addObject(object,fullObjectName,listener,10);
 	}
-
+	
 	public void addObject(Persistable object,ZStringBuilder fullObjectName,JsClientListener listener,int timeoutSeconds) {
 		DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_ADD);
 		request.name = fullObjectName;

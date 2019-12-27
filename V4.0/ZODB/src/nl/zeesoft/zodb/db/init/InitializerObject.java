@@ -65,8 +65,8 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 				if (objects.size()>0) {
 					initializing = true;
 					todo = objects.size();
+					addObjectsToDatabaseNoLock();
 				}
-				addObjectsToDatabaseNoLock();
 				return objects.size();
 			}
 		};
@@ -253,6 +253,12 @@ public abstract class InitializerObject extends Locker implements JsClientListen
 				}
 				unlockMe(this);
 			}
+		} else {
+			lockMe(this);
+			if (todo>0) {
+				todo--;
+			}
+			unlockMe(this);
 		}
 	}
 

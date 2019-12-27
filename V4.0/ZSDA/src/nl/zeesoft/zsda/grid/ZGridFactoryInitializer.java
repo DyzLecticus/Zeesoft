@@ -5,6 +5,7 @@ import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.init.InitializerObject;
 import nl.zeesoft.zodb.db.init.Persistable;
+import nl.zeesoft.zsda.ZSDAConfig;
 
 public class ZGridFactoryInitializer extends InitializerObject {
 	private PersistableZGridFactory		factory		= null;
@@ -22,7 +23,11 @@ public class ZGridFactoryInitializer extends InitializerObject {
 	@Override
 	protected void initializeDatabaseObjectsNoLock() {
 		factory = new PersistableZGridFactory(getConfiguration().getMessenger(),getConfiguration().getUnion());
-		factory.initializeDefaultGrid();
+		if (getConfiguration() instanceof ZSDAConfig) {
+			((ZSDAConfig) getConfiguration()).initializeFactory(factory);
+		} else {
+			factory.initializeDefaultGrid();
+		}
 		grid = factory.buildNewGrid();
 		addObjectNoLock(factory);
 	}

@@ -25,6 +25,20 @@ public class ZGridResults extends Locker {
 		listeners.add(listener);
 		unlockMe(this);
 	}
+	
+	protected long getUid() {
+		long r = 0;
+		lockMe(this);
+		r = uid;
+		unlockMe(this);
+		return r;
+	}
+	
+	protected void setUid(long uid) {
+		lockMe(this);
+		this.uid = uid;
+		unlockMe(this);
+	}
 
 	protected long assignRequestId(ZGridRequest request) {
 		lockMe(this);

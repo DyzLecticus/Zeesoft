@@ -1,15 +1,13 @@
 package nl.zeesoft.zsda.mod;
 
-import java.util.Map.Entry;
-import java.util.SortedMap;
-
-import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.StateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
-import nl.zeesoft.zsda.grid.PersistableProcessorState;
+import nl.zeesoft.zsda.grid.GeneratorInitializer;
+import nl.zeesoft.zsda.grid.LoggerInitializer;
+import nl.zeesoft.zsda.grid.PersistableGenerator;
 import nl.zeesoft.zsda.grid.ZGridFactoryInitializer;
 import nl.zeesoft.zsda.grid.ZGridInitializer;
 import nl.zeesoft.zsda.mod.handler.HtmlZSDAGridConfigHandler;
@@ -24,6 +22,8 @@ public class ModZSDA extends ModObject implements StateListener {
 
 	private ZGridFactoryInitializer		factoryInitializer			= null;
 	private ZGridInitializer			gridInitializer				= null;
+	private GeneratorInitializer		generatorInitializer		= null;
+	private LoggerInitializer			loggerInitializer			= null;
 	
 	public ModZSDA(Config config) {
 		super(config);
@@ -33,6 +33,10 @@ public class ModZSDA extends ModObject implements StateListener {
 		factoryInitializer.addListener(this);
 		gridInitializer = new ZGridInitializer(config,factoryInitializer);
 		gridInitializer.addListener(this);
+		generatorInitializer = new GeneratorInitializer(config,factoryInitializer);
+		generatorInitializer.addListener(this);
+		loggerInitializer = new LoggerInitializer(config,factoryInitializer);
+		loggerInitializer.addListener(this);
 	}
 	
 	@Override
@@ -53,40 +57,63 @@ public class ModZSDA extends ModObject implements StateListener {
 	
 	@Override
 	public void destroy() {
+		PersistableGenerator generator = generatorInitializer.getGenerator();
+		if (generator!=null) {
+			if (generator.isActive()) {
+				generator.stop();
+				generator.whileActive();
+			}
+			generatorInitializer.updatedGenerator();
+		}
 		ZGrid grid = factoryInitializer.getGrid();
 		if (grid!=null) {
 			if (grid.isActive()) {
 				grid.stop();
 				grid.whileActive();
 			}
-			
-			SortedMap<String,ZStringBuilder> stateData = grid.getColumnStateData();
-			for (Entry<String,ZStringBuilder> entry: stateData.entrySet()) {
-				PersistableProcessorState state = gridInitializer.getProcessorState(entry.getKey());
-				state.setStateData(entry.getValue());
-				gridInitializer.updateProcessorState(entry.getKey());
-			}
-			
+			gridInitializer.updateState();
 			grid.destroy();
-			gridInitializer.whileBusy(60);
 		}
+		loggerInitializer.updatedLogger();
+
+		gridInitializer.whileBusy(60);
+		loggerInitializer.whileBusy(60);
+		generatorInitializer.whileBusy(60);
 		
 		factoryInitializer.destroy();
 		gridInitializer.destroy();
+		generatorInitializer.destroy();
+		loggerInitializer.destroy();
 		
 		super.destroy();
 	}
 	
 	@Override
 	public void stateChanged(Object source, boolean open) {
-		if (source==factoryInitializer && open) {
-			gridInitializer.initialize();
-		} else if (source==gridInitializer && open) {
-			factoryInitializer.getGrid().start();
+		if (open) {
+			if (source==factoryInitializer) {
+				if (selfTest) {
+					//generatorInitializer.initialize();
+				}
+				loggerInitializer.initialize();
+				gridInitializer.initialize();
+			} else if (source==gridInitializer) {
+				factoryInitializer.getGrid().start();
+			} else if (source==generatorInitializer) {
+				generatorInitializer.getGenerator().start();
+			}
 		}
 	}
 	
 	public ZGridFactoryInitializer getFactoryInitializer() {
 		return factoryInitializer;
+	}
+	
+	public ZGridInitializer getGridInitializer() {
+		return gridInitializer;
+	}
+	
+	public GeneratorInitializer getGeneratorInitializer() {
+		return generatorInitializer;
 	}
 }

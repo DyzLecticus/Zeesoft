@@ -242,8 +242,9 @@ public class Memory extends ProcessorObject {
 								MemoryColumnCell toCell = cellsByPos.get(vals.get(1));
 								if (toCell!=null) {
 									DistalLink link = new DistalLink();
-									link.connection = Float.parseFloat(vals.get(0).toString());
 									link.cell = toCell;
+									link.origin = cell;
+									link.connection = Float.parseFloat(vals.get(0).toString());
 									cell.distLinks.add(link);
 									toCell.forwardLinks.add(link);
 								}

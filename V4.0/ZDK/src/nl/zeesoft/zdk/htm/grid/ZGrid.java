@@ -35,6 +35,8 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * Context routing can be used to route the output of a column to the context of another column.
  */
 public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
+	public static final String		SELF_KEY			= "SELF";
+	
 	protected static final int		SLEEP_NS			= 10000;
 	
 	private int						numRows				= 1;
@@ -396,14 +398,24 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 	}
 	
 	/**
-	 * Returns a map of the columns state data.
+	 * Returns a map of the state data.
 	 * 
-	 * @return A map of the columns state data
+	 * @return A map of the state data
 	 */
-	public SortedMap<String,ZStringBuilder> getColumnStateData() {
+	public SortedMap<String,ZStringBuilder> getStateData() {
 		SortedMap<String,ZStringBuilder> r = new TreeMap<String,ZStringBuilder>();
 		lockMe(this);
 		if (getStateNoLock().equals(STATE_STOPPED)) {
+			ZStringBuilder self = new ZStringBuilder();
+			self.append("" + results.getUid());
+			self.append(",");
+			self.append("" + learn);
+			self.append(",");
+			self.append("" + classifyMaxSteps);
+			self.append(",");
+			self.append("" + detectAnomalies);
+			r.put(SELF_KEY,self);
+			
 			for (ZGridRow row: rows) {
 				for (ZGridColumn col: row.columns) {
 					ZStringBuilder state = null;
@@ -423,27 +435,27 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 	}
 	
 	/**
-	 * Sets the column state data.
+	 * Sets the state data.
 	 * 
-	 * @param columnIdStateDataMap A tree map of column id strings and state data string builders 
+	 * @param stateDataMap A tree map of key strings and state data string builders 
 	 */
-	public void setColumnStateData(SortedMap<String,ZStringBuilder> columnIdStateDataMap) {
-		for (Entry<String,ZStringBuilder> entry: columnIdStateDataMap.entrySet()) {
-			setColumnStateData(entry.getKey(),entry.getValue());
+	public void setStateData(SortedMap<String,ZStringBuilder> stateDataMap) {
+		for (Entry<String,ZStringBuilder> entry: stateDataMap.entrySet()) {
+			setStateData(entry.getKey(),entry.getValue());
 		}
 	}
 
 	/**
-	 * Sets the column state data of a specific column.
+	 * Sets the state data of a specific element.
 	 * 
-	 * @param columnId The id of the column
-	 * @param stateData The column state data
+	 * @param key The key of the element
+	 * @param stateData The state data
 	 */
-	public void setColumnStateData(String columnId, ZStringBuilder stateData) {
+	public void setStateData(String key, ZStringBuilder stateData) {
 		boolean r = false;
 		lockMe(this);
 		if (getStateNoLock().equals(STATE_STOPPED)) {
-			ZGridColumn col = getColumnById(columnId);
+			ZGridColumn col = getColumnById(key);
 			if (col!=null) {
 				if (col.encoder!=null) {
 					col.encoder.fromStringBuilder(stateData);
@@ -452,11 +464,20 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 					col.processor.fromStringBuilder(stateData);
 					r = true;
 				}
+			} else if (key.equals(SELF_KEY)) {
+				List<ZStringBuilder> elems = stateData.split(",");
+				if (elems.size()==4) {
+					results.setUid(Long.parseLong("" + elems.get(0)));
+					learn = Boolean.parseBoolean("" + elems.get(1));
+					classifyMaxSteps = Integer.parseInt("" + elems.get(2));
+					detectAnomalies = Boolean.parseBoolean("" + elems.get(3));
+					r = true;
+				}
 			}
 		}
 		unlockMe(this);
 		if (!r && getMessenger()!=null) {
-			getMessenger().error(this,"Failed to set column state data for column id: " + columnId);
+			getMessenger().error(this,"Failed to set state data for key: " + key);
 		}
 	}
 
