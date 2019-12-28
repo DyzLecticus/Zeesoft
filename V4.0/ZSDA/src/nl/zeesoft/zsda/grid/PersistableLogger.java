@@ -12,7 +12,6 @@ import nl.zeesoft.zdk.htm.proc.Anomaly;
 import nl.zeesoft.zdk.htm.proc.Classification;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
-import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
@@ -32,19 +31,22 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
+		lockMe(this);
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("history",history.toStringBuilder(),true));
 		if (prediction!=null) {
-			JsElem predElem = new JsElem("prediction");
+			JsElem predElem = new JsElem("prediction",true);
 			json.rootElement.children.add(predElem);
 			predElem.children.add(prediction.toJson().rootElement);
 		}
+		unlockMe(this);
 		return json;
 	}
 
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
+			lockMe(this);
 			ZStringBuilder str = json.rootElement.getChildZStringBuilder("history");
 			if (str!=null && str.length()>0) {
 				history.fromStringBuilder(str);
@@ -56,6 +58,7 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 				prediction = new Classification();
 				prediction.fromJson(js);
 			}
+			unlockMe(this);
 		}
 	}
 
@@ -66,18 +69,8 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 
 	@Override
 	public void processedRequest(ZGrid grid, ZGridResult result) {
-		int val = Integer.MIN_VALUE;
+		int val = (int) result.getRequest().inputValues[1];
 		int pred = Integer.MIN_VALUE;
-		for (String columnId: result.getColumnIds()) {
-			SDR res = result.getColumnOutput(columnId,0);
-			if (res instanceof DateTimeSDR) {
-				DateTimeSDR inputSDR = (DateTimeSDR) res;
-				if (inputSDR.keyValues.containsKey(DateTimeSDR.VALUE_KEY)) {
-					val = (int) inputSDR.keyValues.get(DateTimeSDR.VALUE_KEY);
-					break;
-				}
-			}
-		}
 		
 		lockMe(this);
 		
@@ -97,8 +90,6 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 			}
 			history.addFloat(accuracy);
 		}
-		
-		//System.out.println("Classifications: " + result.getClassifications().size());
 		
 		if (getMessenger()!=null) {
 			getMessenger().debug(this,"ID: " + result.getRequest().id + ", predicted: " + pred + ", actual: " + val + ", average accuracy: " + history.average);

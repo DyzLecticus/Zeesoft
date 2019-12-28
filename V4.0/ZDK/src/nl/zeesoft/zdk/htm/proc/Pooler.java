@@ -174,6 +174,8 @@ public class Pooler extends ProcessorObject {
 				r.append("" + lnk.inputIndex);
 				first = false;
 			}
+			r.append("@");
+			r.append(col.activityLog.toStringBuilder());
 		}
 		return r;
 	}
@@ -186,16 +188,20 @@ public class Pooler extends ProcessorObject {
 			for (int i = 0; i < cols.size(); i++) {
 				PoolerColumn col = columns.get(i);
 				col.proxLinks.clear();
-				List<ZStringBuilder> links = cols.get(i).split(";");
-				for (ZStringBuilder link: links) {
-					List<ZStringBuilder> vals = link.split(",");
-					if (vals.size()==2) {
-						ProximalLink lnk = new ProximalLink();
-						lnk.connection = Float.parseFloat(vals.get(0).toString());
-						lnk.inputIndex = Integer.parseInt(vals.get(1).toString());
-						col.proxLinks.add(lnk);
-						connections.addColumnLink(col,lnk);
+				List<ZStringBuilder> elems = cols.get(i).split("@");
+				if (elems.size()==2) {
+					List<ZStringBuilder> links = elems.get(0).split(";");
+					for (ZStringBuilder link: links) {
+						List<ZStringBuilder> vals = link.split(",");
+						if (vals.size()==2) {
+							ProximalLink lnk = new ProximalLink();
+							lnk.connection = Float.parseFloat(vals.get(0).toString());
+							lnk.inputIndex = Integer.parseInt(vals.get(1).toString());
+							col.proxLinks.add(lnk);
+							connections.addColumnLink(col,lnk);
+						}
 					}
+					col.activityLog.fromStringBuilder(elems.get(1));
 				}
 			}
 		}

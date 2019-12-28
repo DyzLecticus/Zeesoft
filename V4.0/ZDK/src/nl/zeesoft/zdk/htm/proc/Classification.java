@@ -37,7 +37,7 @@ public class Classification implements JsAble {
 		json.rootElement.children.add(new JsElem("steps","" + steps));
 		if (valueCounts!=null && valueCounts.size()>0) {
 			Object value = valueCounts.keySet().iterator().next();
-			json.rootElement.children.add(new JsElem("className",value.getClass().getSimpleName()));
+			json.rootElement.children.add(new JsElem("className",value.getClass().getSimpleName(),true));
 			JsElem valCountsElem = new JsElem("valueCounts",true);
 			json.rootElement.children.add(valCountsElem);
 			for (Entry<Object,Integer> entry: valueCounts.entrySet()) {

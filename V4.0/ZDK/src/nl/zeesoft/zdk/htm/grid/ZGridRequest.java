@@ -54,7 +54,7 @@ public class ZGridRequest implements JsAble {
 			JsElem valElem = new JsElem();
 			boolean add = false;
 			if (inputValues[i]!=null) {
-				valElem.children.add(new JsElem("className","" + inputValues[i].getClass().getSimpleName(),true));
+				valElem.children.add(new JsElem("className",inputValues[i].getClass().getSimpleName(),true));
 				addValueChildElement(valElem,"value",inputValues[i]);
 				add = true;
 			}

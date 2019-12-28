@@ -435,6 +435,9 @@ public class ZGridFactory extends Locker implements JsAble {
 		// Route output from value pooler and memory burst to detector context
 		addColumnContext(3,0,1,1);
 		addColumnContext(3,0,2,1,1);
+		
+		// Route value DateTimeSDR from encoder to classifier
+		addColumnContext(3,1,0,1);
 	}
 	
 	public void initializeTestGrid() {

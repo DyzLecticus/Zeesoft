@@ -109,7 +109,7 @@ public class PersistableGenerator extends StateWorker implements Persistable {
 		ZGridRequest r = getNewRequest(dateTime,val);
 		dateTime += INTERVAL_MS;
 		value++;
-		if (value>=MAX_VALUE) {
+		if (value>MAX_VALUE) {
 			value = 0;
 		}
 		return r;

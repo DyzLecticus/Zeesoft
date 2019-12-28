@@ -65,6 +65,7 @@ public class ModZSDA extends ModObject implements StateListener {
 			}
 			generatorInitializer.updatedGenerator();
 		}
+		
 		ZGrid grid = factoryInitializer.getGrid();
 		if (grid!=null) {
 			if (grid.isActive()) {
@@ -92,13 +93,14 @@ public class ModZSDA extends ModObject implements StateListener {
 	public void stateChanged(Object source, boolean open) {
 		if (open) {
 			if (source==factoryInitializer) {
-				if (selfTest) {
-					//generatorInitializer.initialize();
-				}
 				loggerInitializer.initialize();
+			} else if (source==loggerInitializer) {
 				gridInitializer.initialize();
 			} else if (source==gridInitializer) {
 				factoryInitializer.getGrid().start();
+				if (selfTest) {
+					generatorInitializer.initialize();
+				}
 			} else if (source==generatorInitializer) {
 				generatorInitializer.getGenerator().start();
 			}

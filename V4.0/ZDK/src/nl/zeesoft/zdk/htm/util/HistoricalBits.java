@@ -1,7 +1,10 @@
 package nl.zeesoft.zdk.htm.util;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+
+import nl.zeesoft.zdk.ZStringBuilder;
 
 public class HistoricalBits {
 	public 	int				window		= 1000;
@@ -33,5 +36,38 @@ public class HistoricalBits {
 		history.clear();
 		totalOn = 0;
 		average = 0;
+	}
+	
+	public ZStringBuilder toStringBuilder() {
+		ZStringBuilder r = new ZStringBuilder();
+		r.append("" + average);
+		r.append(",");
+		r.append("" + totalOn);
+		for (Boolean b: history) {
+			int v = 0;
+			if (b) {
+				v = 1;
+			}
+			r.append(",");
+			r.append("" + v);
+		}
+		return r;
+	}
+	
+	public void fromStringBuilder(ZStringBuilder str) {
+		clear();
+		List<ZStringBuilder> elems = str.split(",");
+		if (elems.size()>=2) {
+			average = Float.parseFloat(elems.get(0).toString());
+			totalOn = Float.parseFloat(elems.get(1).toString());
+			for (int i = 2; i < elems.size(); i++) {
+				int v = Integer.parseInt(elems.get(i).toString());
+				if (v==0) {
+					history.add(false);
+				} else {
+					history.add(true);
+				}
+			}
+		}
 	}
 }

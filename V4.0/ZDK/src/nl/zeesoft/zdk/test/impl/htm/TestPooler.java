@@ -61,7 +61,11 @@ public class TestPooler extends TestObject {
 		start = System.currentTimeMillis();
 		pooler.randomizeConnections();
 		System.out.println("Randomizing connections took: " + (System.currentTimeMillis() - start) + " ms");
-		
+
+		System.out.println();
+		float ratio1 = processInputSDRMap(config,pooler,inputSDRMap,false);
+		assertEqual(ratio1 > 8F,true,"Unlearned ratio is lower than minimal expectation");
+
 		System.out.println();
 		System.out.println(pooler.getDescription());
 		ZStringBuilder strOri = pooler.toStringBuilder();
@@ -78,10 +82,6 @@ public class TestPooler extends TestObject {
 				System.err.println(poolerNew.getDescription());
 			}
 		}
-
-		System.out.println();
-		float ratio1 = processInputSDRMap(config,pooler,inputSDRMap,false);
-		assertEqual(ratio1 > 8F,true,"Unlearned ratio is lower than minimal expectation");
 		
 		pooler.statsLog.log.clear();
 		
