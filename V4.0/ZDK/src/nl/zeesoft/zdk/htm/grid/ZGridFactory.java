@@ -409,7 +409,11 @@ public class ZGridFactory extends Locker implements JsAble {
 		
 		// Create encoders
 		ZGridEncoderDateTime dateTimeEncoder = new ZGridEncoderDateTime();
+		dateTimeEncoder.setIncludeMonth(false);
+		dateTimeEncoder.setIncludeDayOfWeek(false);
+		
 		ZGridEncoderValue valueEncoder = new ZGridEncoderValue();
+		valueEncoder.setMaxValue(50);
 		
 		// Add encoders
 		setEncoder(0,dateTimeEncoder);

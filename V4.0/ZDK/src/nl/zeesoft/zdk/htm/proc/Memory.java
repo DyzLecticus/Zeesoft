@@ -192,6 +192,24 @@ public class Memory extends ProcessorObject {
 				if (!firstCell) {
 					r.append("|");
 				}
+				if (cell.active) {
+					r.append("1");
+				} else {
+					r.append("0");
+				}
+				r.append("@");
+				if (cell.activePreviously) {
+					r.append("1");
+				} else {
+					r.append("0");
+				}
+				r.append("@");
+				if (cell.predictive) {
+					r.append("1");
+				} else {
+					r.append("0");
+				}
+				r.append("@");
 				boolean firstLink = true;
 				for (DistalLink link: cell.distLinks) {
 					if (!firstLink) {
@@ -235,7 +253,17 @@ public class Memory extends ProcessorObject {
 				if (cells.size()==col.cells.size()) {
 					for (int j = 0; j < cells.size(); j++) {
 						MemoryColumnCell cell = col.cells.get(j);
-						List<ZStringBuilder> lnks = cells.get(j).split(";");
+						List<ZStringBuilder> elems = cells.get(j).split("@");
+						if (elems.get(0).toString().equals("1")) {
+							cell.active = true;
+						}
+						if (elems.get(1).toString().equals("1")) {
+							cell.activePreviously = true;
+						}
+						if (elems.get(2).toString().equals("1")) {
+							cell.predictive = true;
+						}
+						List<ZStringBuilder> lnks = elems.get(3).split(";");
 						for (ZStringBuilder lnk: lnks) {
 							List<ZStringBuilder> vals = lnk.split(",");
 							if (vals.size()==2) {

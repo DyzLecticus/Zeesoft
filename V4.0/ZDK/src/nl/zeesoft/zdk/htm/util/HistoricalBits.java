@@ -44,12 +44,11 @@ public class HistoricalBits {
 		r.append(",");
 		r.append("" + totalOn);
 		for (Boolean b: history) {
-			int v = 0;
 			if (b) {
-				v = 1;
+				r.append(",1");
+			} else {
+				r.append(",0");
 			}
-			r.append(",");
-			r.append("" + v);
 		}
 		return r;
 	}

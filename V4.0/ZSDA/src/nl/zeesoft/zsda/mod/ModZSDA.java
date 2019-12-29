@@ -115,6 +115,10 @@ public class ModZSDA extends ModObject implements StateListener {
 		return gridInitializer;
 	}
 	
+	public LoggerInitializer getLoggerInitializer() {
+		return loggerInitializer;
+	}
+	
 	public GeneratorInitializer getGeneratorInitializer() {
 		return generatorInitializer;
 	}

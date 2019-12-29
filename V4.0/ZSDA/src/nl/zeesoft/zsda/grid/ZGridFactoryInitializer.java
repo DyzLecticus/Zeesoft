@@ -2,7 +2,6 @@ package nl.zeesoft.zsda.grid;
 
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
-import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.init.InitializerObject;
 import nl.zeesoft.zodb.db.init.Persistable;
@@ -28,8 +27,6 @@ public class ZGridFactoryInitializer extends InitializerObject {
 			((ZSDAConfig) getConfiguration()).initializeFactory(factory);
 		} else {
 			factory.initializeDefaultGrid();
-			ZGridEncoderValue enc = (ZGridEncoderValue) factory.getEncoder(1);
-			enc.setMaxValue(50);
 		}
 		grid = factory.buildNewGrid();
 		addObjectNoLock(factory);

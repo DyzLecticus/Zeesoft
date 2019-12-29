@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
@@ -92,7 +93,9 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 		}
 		
 		if (getMessenger()!=null) {
-			getMessenger().debug(this,"ID: " + result.getRequest().id + ", predicted: " + pred + ", actual: " + val + ", average accuracy: " + history.average);
+			ZDate date = new ZDate();
+			date.setTime(result.getRequest().dateTime);
+			getMessenger().debug(this,"ID: " + result.getRequest().id + " > " + date.getDateTimeString() + ", predicted: " + pred + ", actual: " + val + ", average accuracy: " + history.average);
 		}
 
 		List<Anomaly> anomalies = result.getAnomalies();

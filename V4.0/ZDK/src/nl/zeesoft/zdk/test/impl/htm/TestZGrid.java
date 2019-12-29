@@ -292,7 +292,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		
 		SortedMap<String,ZStringBuilder> columnIdStateDataMap = grid.getStateData();
 		System.out.println();
-		System.out.println("Grid column state data;");
+		System.out.println("Grid state data;");
 		for (Entry<String,ZStringBuilder> entry: columnIdStateDataMap.entrySet()) {
 			System.out.println("- " + entry.getKey() + ": " + entry.getValue().length());
 		}

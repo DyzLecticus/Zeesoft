@@ -62,7 +62,7 @@ public class TestZGridColumnEncoders extends TestObject {
 		dateTimeEncoder.setScale(2);
 		assertEqual(dateTimeEncoder.testScalarOverlap(),new ZStringBuilder(),"Scalar overlap test results do not match expectation for scale 2");
 		sdr = dateTimeEncoder.getSDRForDateTime(System.currentTimeMillis());
-		assertEqual(sdr.length(),529,"SDR (scale: 2) length does not match expectation");
+		assertEqual(sdr.length(),512,"SDR (scale: 2) length does not match expectation");
 		err = dateTimeEncoder.testScalarOverlap();
 		assertEqual(err,new ZStringBuilder(),"Error does not match expectation (2)");
 		

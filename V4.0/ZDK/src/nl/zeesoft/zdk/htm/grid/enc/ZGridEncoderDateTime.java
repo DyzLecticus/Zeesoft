@@ -138,22 +138,6 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 	
 	protected void rebuildEncoder() {
 		encoder = new CombinedEncoder();
-		
-		int factor = 1;
-		if (includeDayOfWeek) {
-			factor++;
-		}
-		if (includeHourOfDay) {
-			factor++;
-		}
-		if (includeMinute) {
-			factor++;
-		}
-		if (includeSecond) {
-			factor++;
-		}
-		bitsPerEncoder = (32 / factor) * scale;
-		
 		if (includeMonth) {
 			encoder.addEncoder(MONTH,getNewMonthEncoder());
 		}
@@ -172,41 +156,35 @@ public class ZGridEncoderDateTime extends ZGridColumnEncoder {
 	}
 	
 	protected EncoderObject getNewMonthEncoder() {
-		int length = 48 * scale;
+		int length = 20 * scale;
 		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,12);
 		r.setPeriodic(true);
 		return r;
 	}
 	
 	protected EncoderObject getNewDayOfWeekEncoder() {
-		int length = 32 * scale;
-		if (scale==2) {
-			length += 7;
-		}
+		int length = 12 * scale;
 		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,7);
 		r.setPeriodic(true);
 		return r;
 	}
 	
 	protected EncoderObject getNewHourOfDayEncoder() {
-		int length = 48 * scale;
-		if (scale==2) {
-			length += 10;
-		}
+		int length = 40 * scale;
 		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,24);
 		r.setPeriodic(true);
 		return r;
 	}
 	
 	protected EncoderObject getNewMinuteEncoder() {
-		int length = 64 * scale;
+		int length = 92 * scale;
 		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,60);
 		r.setPeriodic(true);
 		return r;
 	}
 	
 	protected EncoderObject getNewSecondEncoder() {
-		int length = 64 * scale;
+		int length = 92 * scale;
 		ScalarEncoder r = new ScalarEncoder(length,bitsPerEncoder,0,60);
 		r.setPeriodic(true);
 		return r;

@@ -79,6 +79,10 @@ public class PersistableGenerator extends StateWorker implements Persistable {
 		if (dateTime==0) {
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.MILLISECOND,0);
+			int sec = cal.get(Calendar.SECOND);
+			int m = sec % (INTERVAL_MS / 1000);
+			sec = sec - m;
+			cal.set(Calendar.SECOND,sec);
 			dateTime = cal.getTimeInMillis() - (GENERATE * INTERVAL_MS);
 		}
 	}
