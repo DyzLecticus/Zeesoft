@@ -21,14 +21,22 @@ public class LoggerInitializer extends InitializerObject {
 	}
 	
 	@Override
+	public void destroy() {
+		super.destroy();
+		if (logger!=null) {
+			logger.destroy();
+		}
+	}
+	
+	@Override
 	protected void initializeDatabaseObjectsNoLock() {
-		logger = new PersistableLogger(getConfiguration().getMessenger(),factoryInitializer.getGrid());
+		logger = new PersistableLogger(getConfiguration().getMessenger(),factoryInitializer.getGrid(),getConfiguration());
 		addObjectNoLock(logger);
 	}
 
 	@Override
 	protected Persistable getNewObjectNoLock(ZStringBuilder name) {
-		return new PersistableLogger(getConfiguration().getMessenger(),factoryInitializer.getGrid());
+		return new PersistableLogger(getConfiguration().getMessenger(),factoryInitializer.getGrid(),getConfiguration());
 	}
 	
 	@Override

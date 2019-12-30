@@ -193,7 +193,7 @@ public class SDR {
 		length = 0;
 		onBits.clear();
 		List<ZStringBuilder> elems = str.split(",");
-		if (elems.size()>1) {
+		if (elems.size()>=1) {
 			length = Integer.parseInt(elems.get(0).toString());
 			for (int i = 1; i<elems.size(); i++) {
 				onBits.add(Integer.parseInt(elems.get(i).toString()));

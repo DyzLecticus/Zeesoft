@@ -57,7 +57,7 @@ public class TestPersistableLogger extends TestObject {
 		ZGridFactory gridFactory = new ZGridFactory(msgr,uni);
 		gridFactory.initializeDefaultGrid();
 		ZGrid grid = gridFactory.buildNewGrid();
-		PersistableLogger logger = new PersistableLogger(msgr,grid);
+		PersistableLogger logger = new PersistableLogger(msgr,grid,null);
 
 		grid.randomizePoolerConnections();
 		

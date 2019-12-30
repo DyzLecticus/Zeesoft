@@ -34,6 +34,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 	private DecimalFormat			df						= new DecimalFormat("0.000");
 	private Classification			previousClassification	= null;
 	private HistoricalFloats		averageAccuracy			= new HistoricalFloats();
+	private ZGridResult 			lastResult				= null;
 	
 	public TestZGrid(Tester tester) {
 		super(tester);
@@ -135,6 +136,10 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 			System.out.println();
 			testGrid(grid);
 			testNewGrid(grid,newGrid);
+			
+			if (lastResult!=null) {
+				testJsAble(lastResult,new ZGridResult(messenger),"Grid result JSON does not match expectation");
+			}
 		}
 		
 		if (previousClassification!=null) {
@@ -156,6 +161,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 
 	@Override
 	public void processedRequest(ZGrid grid,ZGridResult result) {
+		lastResult = result;
 		returnedIds.add(result.getRequest().id);
 		
 		String noClassifications = "";

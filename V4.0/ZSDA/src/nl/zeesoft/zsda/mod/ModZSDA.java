@@ -37,6 +37,7 @@ public class ModZSDA extends ModObject implements StateListener {
 		generatorInitializer.addListener(this);
 		loggerInitializer = new LoggerInitializer(config,factoryInitializer);
 		loggerInitializer.addListener(this);
+		
 	}
 	
 	@Override

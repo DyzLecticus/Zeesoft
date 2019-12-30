@@ -1,6 +1,5 @@
 package nl.zeesoft.zsda.grid;
 
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -9,26 +8,34 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
 import nl.zeesoft.zdk.htm.grid.ZGridResultsListener;
-import nl.zeesoft.zdk.htm.proc.Anomaly;
 import nl.zeesoft.zdk.htm.proc.Classification;
 import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.HistoricalFloats;
+import nl.zeesoft.zdk.json.JsClientListener;
+import nl.zeesoft.zdk.json.JsClientResponse;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
+import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.init.Persistable;
 
-public class PersistableLogger extends Locker implements Persistable, ZGridResultsListener {
-	private HistoricalFloats				history			= new HistoricalFloats();
-	private Classification					prediction		= null;
-	private SortedMap<Long,ResultLog>		logs			= new TreeMap<Long,ResultLog>();
+public class PersistableLogger extends Locker implements Persistable, ZGridResultsListener, JsClientListener {
+	private Config							configuration		= null;
+	private HistoricalFloats				history				= new HistoricalFloats();
+	private Classification					prediction			= null;
+	private SortedMap<Long,Long>			dateTimeLogIdMap	= new TreeMap<Long,Long>();
 	
-	public PersistableLogger(Messenger msgr,ZGrid grid) {
+	public PersistableLogger(Messenger msgr,ZGrid grid,Config config) {
 		super(msgr);
 		grid.addListener(this);
+		this.configuration = config;
 	}
 
+	public void destroy() {
+		configuration = null;
+	}
+	
 	@Override
 	public JsFile toJson() {
 		JsFile json = new JsFile();
@@ -74,7 +81,6 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 		int pred = Integer.MIN_VALUE;
 		
 		lockMe(this);
-		
 		float accuracy = 0;
 		if (prediction!=null) {
 			for (Object pVal: prediction.mostCountedValues) {
@@ -92,24 +98,12 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 			history.addFloat(accuracy);
 		}
 		
+		// TODO: remove
 		if (getMessenger()!=null) {
 			ZDate date = new ZDate();
 			date.setTime(result.getRequest().dateTime);
 			getMessenger().debug(this,"ID: " + result.getRequest().id + " > " + date.getDateTimeString() + ", predicted: " + pred + ", actual: " + val + ", average accuracy: " + history.average);
 		}
-
-		List<Anomaly> anomalies = result.getAnomalies();
-
-		ResultLog log = new ResultLog();
-		log.dateTime = result.getRequest().dateTime;
-		log.predictedValue = pred;
-		log.actualValue = val;
-		log.accuracy = accuracy;
-		log.averageAccuracy = history.average;
-		if (anomalies.size()>0) {
-			log.detectedAnomaly = anomalies.get(0);
-		}
-		logs.put(log.dateTime,log);
 
 		prediction = null;
 		for (Classification c: result.getClassifications()) {
@@ -119,6 +113,15 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 			}
 		}
 		
+		if (configuration!=null) {
+			Persistable obj = new PersistableLog(getMessenger(),result);
+			configuration.addObject(obj,new ZStringBuilder("ZSDA/Logs/" + obj.getObjectName()),this);
+		}
 		unlockMe(this);
+	}
+
+	@Override
+	public void handledRequest(JsClientResponse response) {
+		configuration.handledDatabaseRequest(response);
 	}
 }
