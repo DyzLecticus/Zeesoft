@@ -42,11 +42,11 @@ public class JavaScriptZSDAGridConfig {
 		script.append("        }\n");
 		script.append("    }\n");
 		script.append("};\n");
-		script.append("ZSDA.config.getConfigurationByColumnId = function(columnId) {\n");
+		script.append("ZSDA.config.getConfigurationByColumnId = function(grid,columnId) {\n");
 		script.append("    var config = null;\n");
-		script.append("    for (var name in ZSDA.config.grid.configurations) {\n");
-		script.append("        if (ZSDA.config.grid.configurations[name].columnId==columnId) {\n");
-		script.append("            config = ZSDA.config.grid.configurations[name];\n");
+		script.append("    for (var name in grid.configurations) {\n");
+		script.append("        if (grid.configurations[name].columnId==columnId) {\n");
+		script.append("            config = grid.configurations[name];\n");
 		script.append("            break;\n");
 		script.append("        }\n");
 		script.append("    }\n");
@@ -60,7 +60,7 @@ public class JavaScriptZSDAGridConfig {
 		script.append("        html += '<tr>';\n");
 		script.append("        for (var c = 0; c < ZSDA.config.grid.columns; c++) {\n");
 		script.append("            var id = ZSDA.config.getColumnId(r,c);\n");
-		script.append("            var config = ZSDA.config.getConfigurationByColumnId(id);\n");
+		script.append("            var config = ZSDA.config.getConfigurationByColumnId(ZSDA.config.grid,id);\n");
 		script.append("            html += '<td valign=\"top\">';\n");
 		script.append("            if (config!=null) {\n");
 		script.append("                html += ZSDA.config.getConfigurationTable(config);\n");
@@ -117,7 +117,7 @@ public class JavaScriptZSDAGridConfig {
 		script.append("    for (var name in contexts) {\n");
 		script.append("        var context = contexts[name];\n");
 		script.append("        var id = ZSDA.config.getColumnId(context.sourceRow,context.sourceColumn);\n");
-		script.append("        var config = ZSDA.config.getConfigurationByColumnId(id);\n");
+		script.append("        var config = ZSDA.config.getConfigurationByColumnId(ZSDA.config.grid,id);\n");
 		script.append("        html += '<tr>';\n");
 		script.append("        html += '<td>';\n");
 		script.append("        html += '<b>';\n");

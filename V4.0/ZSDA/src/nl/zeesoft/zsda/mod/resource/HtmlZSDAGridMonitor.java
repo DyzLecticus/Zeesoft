@@ -15,6 +15,7 @@ public class HtmlZSDAGridMonitor extends HtmlResource {
 		setTitle("ZSDA - Grid monitor");	
 
 		getScriptFiles().add("../" + ModZODB.NAME + "/ZODB.js");
+		getScriptFiles().add("../" + ModZSDA.NAME + "/gridConfig.js");
 		getScriptFiles().add("../" + ModZSDA.NAME + "/gridMonitor.js");
 		
 		setOnload("ZSDA.monitor.onload();");

@@ -61,7 +61,6 @@ public class ModZSDA extends ModObject implements StateListener {
 	
 	@Override
 	public void destroy() {
-		configuration.debug(this,"Saving state ...");
 		PersistableGenerator generator = generatorInitializer.getGenerator();
 		if (generator!=null) {
 			if (generator.isActive()) {
@@ -77,16 +76,18 @@ public class ModZSDA extends ModObject implements StateListener {
 				grid.stop();
 				grid.whileActive();
 			}
+			configuration.debug(this,"Saving state ...");
 			gridInitializer.updateState();
 			grid.destroy();
 		}
-		loggerInitializer.updatedLogger();
-
-		gridInitializer.whileBusy(60);
+		
+		if (grid!=null) {
+			gridInitializer.whileBusy(60);
+			configuration.debug(this,"Saved state");
+		}
 		loggerInitializer.whileBusy(60);
 		generatorInitializer.whileBusy(60);
-		configuration.debug(this,"Saved state");
-		
+				
 		factoryInitializer.destroy();
 		gridInitializer.destroy();
 		generatorInitializer.destroy();

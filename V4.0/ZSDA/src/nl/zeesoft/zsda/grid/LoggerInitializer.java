@@ -17,10 +17,6 @@ public class LoggerInitializer extends InitializerObject {
 		setTimeoutSeconds(10);
 	}
 	
-	public void updatedLogger() {
-		updateObject(logger.getObjectName());
-	}
-	
 	@Override
 	public void destroy() {
 		super.destroy();
