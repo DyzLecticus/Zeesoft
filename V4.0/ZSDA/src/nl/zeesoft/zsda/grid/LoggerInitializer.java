@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.init.InitializerObject;
 import nl.zeesoft.zodb.db.init.Persistable;
+import nl.zeesoft.zsda.mod.ModZSDA;
 
 public class LoggerInitializer extends InitializerObject {
 	private ZGridFactoryInitializer		factoryInitializer	= null;
@@ -11,7 +12,7 @@ public class LoggerInitializer extends InitializerObject {
 	private PersistableLogger			logger				= null;
 
 	public LoggerInitializer(Config config,ZGridFactoryInitializer factoryInitializer) {
-		super(config,"ZSDA/Log/");
+		super(config,ModZSDA.NAME + "/Log/");
 		this.factoryInitializer = factoryInitializer;
 		setTimeoutSeconds(10);
 	}

@@ -48,7 +48,7 @@ public class ModZODB extends ModObject implements DatabaseStateListener, Databas
 		whiteList.getList().add("127.0.0.1");
 		whiteList.getList().add("0:0:0:0:0:0:0:1");
 		desc.append(DESC);
-		database = getNewDatabase();
+		database = config.getNewDatabase();
 		database.addListener(this);
 		database.addKeyChangeListener(this);
 	}
@@ -122,7 +122,7 @@ public class ModZODB extends ModObject implements DatabaseStateListener, Databas
 	
 	@Override
 	public void install() {
-		Database db = getNewDatabase();
+		Database db = configuration.getNewDatabase();
 		configureDatabase(db);
 		db.install();
 	}
@@ -206,10 +206,6 @@ public class ModZODB extends ModObject implements DatabaseStateListener, Databas
 			configuration.debug(this,"Database " + r.request.type + " request error: " + r.errors.get(0).toString());
 		}
 		return r;
-	}
-	
-	protected Database getNewDatabase() {
-		return new Database(configuration.getMessenger(),configuration.getUnion());
 	}
 	
 	protected DatabaseRequestHandler getNewDatabaseRequestHandler(Database db) {

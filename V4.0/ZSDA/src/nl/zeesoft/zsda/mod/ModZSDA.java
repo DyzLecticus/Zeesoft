@@ -11,8 +11,10 @@ import nl.zeesoft.zsda.grid.PersistableGenerator;
 import nl.zeesoft.zsda.grid.ZGridFactoryInitializer;
 import nl.zeesoft.zsda.grid.ZGridInitializer;
 import nl.zeesoft.zsda.mod.handler.HtmlZSDAGridConfigHandler;
+import nl.zeesoft.zsda.mod.handler.HtmlZSDAGridMonitorHandler;
 import nl.zeesoft.zsda.mod.handler.HtmlZSDAIndexHandler;
 import nl.zeesoft.zsda.mod.handler.JavaScriptZSDAGridConfigHandler;
+import nl.zeesoft.zsda.mod.handler.JavaScriptZSDAGridMonitorHandler;
 import nl.zeesoft.zsda.mod.handler.JsonZSDAGridConfigHandler;
 
 public class ModZSDA extends ModObject implements StateListener {
@@ -37,7 +39,6 @@ public class ModZSDA extends ModObject implements StateListener {
 		generatorInitializer.addListener(this);
 		loggerInitializer = new LoggerInitializer(config,factoryInitializer);
 		loggerInitializer.addListener(this);
-		
 	}
 	
 	@Override
@@ -50,7 +51,9 @@ public class ModZSDA extends ModObject implements StateListener {
 		handlers.add(new HtmlZSDAIndexHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		handlers.add(new HtmlZSDAGridConfigHandler(configuration,this));
+		handlers.add(new HtmlZSDAGridMonitorHandler(configuration,this));
 		handlers.add(new JavaScriptZSDAGridConfigHandler(configuration,this));
+		handlers.add(new JavaScriptZSDAGridMonitorHandler(configuration,this));
 		handlers.add(new JsonZSDAGridConfigHandler(configuration,this));
 		super.initialize();
 		factoryInitializer.initialize();
@@ -58,6 +61,7 @@ public class ModZSDA extends ModObject implements StateListener {
 	
 	@Override
 	public void destroy() {
+		configuration.debug(this,"Saving state ...");
 		PersistableGenerator generator = generatorInitializer.getGenerator();
 		if (generator!=null) {
 			if (generator.isActive()) {
@@ -81,6 +85,7 @@ public class ModZSDA extends ModObject implements StateListener {
 		gridInitializer.whileBusy(60);
 		loggerInitializer.whileBusy(60);
 		generatorInitializer.whileBusy(60);
+		configuration.debug(this,"Saved state");
 		
 		factoryInitializer.destroy();
 		gridInitializer.destroy();
@@ -96,8 +101,10 @@ public class ModZSDA extends ModObject implements StateListener {
 			if (source==factoryInitializer) {
 				loggerInitializer.initialize();
 			} else if (source==loggerInitializer) {
+				configuration.debug(this,"Loading state ...");
 				gridInitializer.initialize();
 			} else if (source==gridInitializer) {
+				configuration.debug(this,"Loaded state");
 				factoryInitializer.getGrid().start();
 				if (selfTest) {
 					generatorInitializer.initialize();

@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.init.InitializerObject;
 import nl.zeesoft.zodb.db.init.Persistable;
+import nl.zeesoft.zsda.mod.ModZSDA;
 
 public class GeneratorInitializer extends InitializerObject {
 	private ZGridFactoryInitializer		factoryInitializer	= null;
@@ -11,9 +12,9 @@ public class GeneratorInitializer extends InitializerObject {
 	private PersistableGenerator		generator			= null;
 
 	public GeneratorInitializer(Config config,ZGridFactoryInitializer factoryInitializer) {
-		super(config,"ZSDA/Generate/");
+		super(config,ModZSDA.NAME + "/Generate/");
 		this.factoryInitializer = factoryInitializer;
-		setTimeoutSeconds(10);
+		setTimeoutSeconds(60);
 	}
 	
 	public void updatedGenerator() {

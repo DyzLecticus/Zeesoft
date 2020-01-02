@@ -18,6 +18,7 @@ import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.WorkerUnion;
+import nl.zeesoft.zodb.db.Database;
 import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.DatabaseResponse;
 import nl.zeesoft.zodb.db.init.Persistable;
@@ -394,7 +395,11 @@ public class Config implements JsAble {
 	public List<ModObject> getModules() {
 		return new ArrayList<ModObject>(modules);
 	}
-
+	
+	public Database getNewDatabase() {
+		return new Database(getMessenger(),getUnion());
+	}
+	
 	protected HandlerObject getNewHtmlAppIndexHandler() {
 		return new HtmlModIndexHandler(this);
 	}

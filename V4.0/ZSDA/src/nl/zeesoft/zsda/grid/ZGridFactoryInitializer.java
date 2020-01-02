@@ -6,14 +6,15 @@ import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.init.InitializerObject;
 import nl.zeesoft.zodb.db.init.Persistable;
 import nl.zeesoft.zsda.ZSDAConfig;
+import nl.zeesoft.zsda.mod.ModZSDA;
 
 public class ZGridFactoryInitializer extends InitializerObject {
 	private PersistableZGridFactory		factory		= null;
 	private ZGrid						grid		= null;
 
 	public ZGridFactoryInitializer(Config config) {
-		super(config,"ZSDA/Grid/");
-		setTimeoutSeconds(10);
+		super(config,ModZSDA.NAME + "/Grid/");
+		setTimeoutSeconds(60);
 	}
 	
 	public void updatedFactory() {

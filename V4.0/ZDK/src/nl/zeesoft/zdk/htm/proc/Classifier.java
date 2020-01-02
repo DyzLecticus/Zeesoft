@@ -70,6 +70,7 @@ public class Classifier extends ProcessorObject {
 	@Override
 	public void fromStringBuilder(ZStringBuilder str) {
 		List<ZStringBuilder> elems = str.split("@");
+		classifiers.clear();
 		for (ZStringBuilder elem: elems) {
 			StepsClassifier classifier = new StepsClassifier(getConfig(),activationHistory,0);
 			classifier.fromStringBuilder(elem);

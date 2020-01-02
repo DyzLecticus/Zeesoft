@@ -3,6 +3,7 @@ package nl.zeesoft.zsda.grid;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGridRequest;
 import nl.zeesoft.zdk.htm.grid.ZGridResult;
+import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
@@ -32,7 +33,9 @@ public class PersistableLog extends Locker implements Persistable {
 
 	@Override
 	public JsFile toJson() {
-		return result.toJson();
+		JsFile json = result.toJson();
+		json.rootElement.children.add(0,new JsElem("dateTime","" + result.getRequest().dateTime));
+		return json;
 	}
 
 	@Override

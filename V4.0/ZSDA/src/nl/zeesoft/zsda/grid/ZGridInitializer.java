@@ -8,12 +8,13 @@ import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.init.InitializerObject;
 import nl.zeesoft.zodb.db.init.Persistable;
+import nl.zeesoft.zsda.mod.ModZSDA;
 
 public class ZGridInitializer extends InitializerObject {
 	private ZGridFactoryInitializer		factoryInitializer = null;
 	
 	public ZGridInitializer(Config config,ZGridFactoryInitializer factoryInitializer) {
-		super(config,"ZSDA/State/");
+		super(config,ModZSDA.NAME + "/State/");
 		this.factoryInitializer = factoryInitializer;
 		setTimeoutSeconds(60);
 	}

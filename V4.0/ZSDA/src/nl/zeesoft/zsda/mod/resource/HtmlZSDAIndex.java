@@ -31,6 +31,15 @@ public class HtmlZSDAIndex extends HtmlResource {
 			html.append("</td>\n");
 			html.append("</tr>\n");
 			
+			html.append("<tr>\n");
+			html.append("<td>");
+			html.append("<a href=\"" + url + "/gridMonitor.html\">Grid monitor</a>");
+			html.append("</td>\n");
+			html.append("<td>");
+			html.append("Monitor the grid IO");
+			html.append("</td>\n");
+			html.append("</tr>\n");
+			
 			/*
 			if (getConfiguration().getModule(ModZSDA.NAME).selfTest) {
 				html.append("<tr>\n");

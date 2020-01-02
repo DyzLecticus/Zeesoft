@@ -1,8 +1,5 @@
 package nl.zeesoft.zsda.grid;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import nl.zeesoft.zdk.ZDate;
 import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
@@ -18,18 +15,25 @@ import nl.zeesoft.zdk.json.JsFile;
 import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
+import nl.zeesoft.zodb.db.DatabaseRequest;
 import nl.zeesoft.zodb.db.init.Persistable;
+import nl.zeesoft.zsda.mod.ModZSDA;
 
 public class PersistableLogger extends Locker implements Persistable, ZGridResultsListener, JsClientListener {
 	private Config							configuration		= null;
+	
+	private int								keepLogsSeconds		= 86400;
+	
+	private static final int				WINDOW				= 100;
+	
 	private HistoricalFloats				history				= new HistoricalFloats();
 	private Classification					prediction			= null;
-	private SortedMap<Long,Long>			dateTimeLogIdMap	= new TreeMap<Long,Long>();
 	
 	public PersistableLogger(Messenger msgr,ZGrid grid,Config config) {
 		super(msgr);
 		grid.addListener(this);
 		this.configuration = config;
+		history.window = WINDOW;
 	}
 
 	public void destroy() {
@@ -41,12 +45,7 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 		JsFile json = new JsFile();
 		lockMe(this);
 		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("history",history.toStringBuilder(),true));
-		if (prediction!=null) {
-			JsElem predElem = new JsElem("prediction",true);
-			json.rootElement.children.add(predElem);
-			predElem.children.add(prediction.toJson().rootElement);
-		}
+		json.rootElement.children.add(new JsElem("keepLogsSeconds","" + keepLogsSeconds));
 		unlockMe(this);
 		return json;
 	}
@@ -55,17 +54,7 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
 			lockMe(this);
-			ZStringBuilder str = json.rootElement.getChildZStringBuilder("history");
-			if (str!=null && str.length()>0) {
-				history.fromStringBuilder(str);
-			}
-			JsElem predElem = json.rootElement.getChildByName("prediction");
-			if (predElem!=null && predElem.children.size()>0) {
-				JsFile js = new JsFile();
-				js.rootElement = predElem.children.get(0);
-				prediction = new Classification();
-				prediction.fromJson(js);
-			}
+			keepLogsSeconds = json.rootElement.getChildInt("keepLogsSeconds",keepLogsSeconds);
 			unlockMe(this);
 		}
 	}
@@ -96,13 +85,12 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 				accuracy = accuracy / (float) prediction.mostCountedValues.size();
 			}
 			history.addFloat(accuracy);
-		}
-		
-		// TODO: remove
-		if (getMessenger()!=null) {
-			ZDate date = new ZDate();
-			date.setTime(result.getRequest().dateTime);
-			getMessenger().debug(this,"ID: " + result.getRequest().id + " > " + date.getDateTimeString() + ", predicted: " + pred + ", actual: " + val + ", average accuracy: " + history.average);
+			
+			if (configuration!=null) {
+				ZDate date = new ZDate();
+				date.setTime(result.getRequest().dateTime);
+				configuration.debug(this,"ID: " + result.getRequest().id + " > " + date.getDateTimeString() + ", predicted: " + pred + ", actual: " + val + ", average accuracy: " + history.average);
+			}
 		}
 
 		prediction = null;
@@ -113,15 +101,34 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 			}
 		}
 		
-		if (configuration!=null) {
-			Persistable obj = new PersistableLog(getMessenger(),result);
-			configuration.addObject(obj,new ZStringBuilder("ZSDA/Logs/" + obj.getObjectName()),this);
-		}
+		removeOldLogsNoLock();
+		addLogNoLock(result);
 		unlockMe(this);
 	}
 
 	@Override
 	public void handledRequest(JsClientResponse response) {
 		configuration.handledDatabaseRequest(response);
+	}
+	
+	protected void removeOldLogsNoLock() {
+		if (configuration!=null) {
+			long dateTime = System.currentTimeMillis() - (keepLogsSeconds * 1000);
+			
+			DatabaseRequest request = new DatabaseRequest(DatabaseRequest.TYPE_REMOVE);
+			request.index = ModZSDA.NAME + "/Logs/:dateTime";
+			request.operator = DatabaseRequest.OP_GREATER;
+			request.invert = true;
+			request.value = new ZStringBuilder("" + dateTime); 
+			
+			configuration.handleDatabaseRequest(request, this);
+		}
+	}
+	
+	protected void addLogNoLock(ZGridResult result) {
+		if (configuration!=null) {
+			Persistable obj = new PersistableLog(getMessenger(),result);
+			configuration.addObject(obj,new ZStringBuilder(ModZSDA.NAME + "/Logs/" + obj.getObjectName()),this);
+		}
 	}
 }
