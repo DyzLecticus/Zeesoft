@@ -115,4 +115,20 @@ public class DetectorConfig extends ProcessorConfigObject {
 			threshold = json.rootElement.getChildFloat("threshold",threshold);
 		}
 	}
+
+	public int getStart() {
+		return start;
+	}
+
+	public int getWindowLong() {
+		return windowLong;
+	}
+
+	public int getWindowShort() {
+		return windowShort;
+	}
+
+	public float getThreshold() {
+		return threshold;
+	}
 }

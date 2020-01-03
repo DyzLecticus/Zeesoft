@@ -14,6 +14,8 @@ public class HtmlZSDAGridMonitor extends HtmlResource {
 	public ZStringBuilder toStringBuilder() {
 		setTitle("ZSDA - Grid monitor");	
 
+		getStyleFiles().add("../" + ModZSDA.NAME + "/ZSDA.css");
+		
 		getScriptFiles().add("../" + ModZODB.NAME + "/ZODB.js");
 		getScriptFiles().add("../" + ModZSDA.NAME + "/gridConfig.js");
 		getScriptFiles().add("../" + ModZSDA.NAME + "/gridMonitor.js");
@@ -25,6 +27,9 @@ public class HtmlZSDAGridMonitor extends HtmlResource {
 		html.append("<hr />");
 		
 		html.append("<div id=\"columnIO\">\n");
+		html.append("</div>\n");
+		
+		html.append("<div id=\"classifications\">\n");
 		html.append("</div>\n");
 		
 		getBodyElements().add(html);

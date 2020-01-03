@@ -91,7 +91,7 @@ public class Detector extends ProcessorObject {
 		
 		if (r==null) {
 			if (input!=null) {
-				r = new DateTimeSDR(input);
+				r = new DateTimeSDR(input.length());
 			} else {
 				r = new DateTimeSDR(100);
 			}
@@ -121,7 +121,7 @@ public class Detector extends ProcessorObject {
 					anomaly.averageShortTermAccuracy = averageShort;
 					anomaly.difference = difference;
 					if (input!=null) {
-						r = new DateTimeSDR(input);
+						r = new DateTimeSDR(input.length());
 					} else {
 						r = new DateTimeSDR(100);
 					}

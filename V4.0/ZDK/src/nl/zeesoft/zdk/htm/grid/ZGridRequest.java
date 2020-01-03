@@ -99,10 +99,26 @@ public class ZGridRequest implements JsAble {
 	}
 
 	public static Object getValueFromElement(JsElem elem, String childName, String className) {
-		elem.name = childName;
-		JsElem wrapper = new JsElem();
-		wrapper.children.add(elem);
-		return getValueFromChildElement(wrapper,childName,className);
+		Object value = null;
+		if (elem.value!=null) {
+			if (className.equals("String")) {
+				value = elem.value.toString();
+			} else if (className.equals("Float")) {
+				value = Float.parseFloat(elem.value.toString());
+			} else if (className.equals("Integer")) {
+				value = Integer.parseInt(elem.value.toString());
+			} else if (className.equals("Long")) {
+				value = Long.parseLong(elem.value.toString());
+			} else if (className.equals("SDR")) {
+				ZStringBuilder val = elem.value;
+				if (val.length()>0) {
+					SDR sdr = new SDR(100);
+					sdr.fromStringBuilder(val);
+					value = sdr;
+				}
+			}
+		}
+		return value;
 	}
 
 	public static Object getValueFromChildElement(JsElem parent, String childName, String className) {
@@ -128,11 +144,11 @@ public class ZGridRequest implements JsAble {
 	
 	public static void addValueChildElement(JsElem parent, String childName, Object value) {
 		if (value instanceof String) {
-			parent.children.add(new JsElem("value",(String)value,true));
+			parent.children.add(new JsElem(childName,(String)value,true));
 		} else if (value instanceof SDR) {
-			parent.children.add(new JsElem("value",((SDR)value).toStringBuilder(),true));
+			parent.children.add(new JsElem(childName,((SDR)value).toStringBuilder(),true));
 		} else {
-			parent.children.add(new JsElem("value","" + value));
+			parent.children.add(new JsElem(childName,"" + value));
 		}
 	}
 	

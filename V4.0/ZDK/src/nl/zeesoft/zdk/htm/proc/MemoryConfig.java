@@ -260,6 +260,54 @@ public class MemoryConfig extends ProcessorConfigObject {
 		return new SDRMap(length,bits);
 	}
 
+	public int getLength() {
+		return length;
+	}
+
+	public int getBits() {
+		return bits;
+	}
+
+	public int getDepth() {
+		return depth;
+	}
+
+	public int getMaxDistalConnectionsPerCell() {
+		return maxDistalConnectionsPerCell;
+	}
+
+	public int getLocalDistalConnectedRadius() {
+		return localDistalConnectedRadius;
+	}
+
+	public int getMinAlmostActiveDistalConnections() {
+		return minAlmostActiveDistalConnections;
+	}
+
+	public float getDistalConnectionThreshold() {
+		return distalConnectionThreshold;
+	}
+
+	public float getDistalConnectionDecrement() {
+		return distalConnectionDecrement;
+	}
+
+	public float getDistalConnectionIncrement() {
+		return distalConnectionIncrement;
+	}
+
+	public List<Integer> getContextDimensions() {
+		return new ArrayList<Integer>(contextDimensions);
+	}
+
+	public int getSizeX() {
+		return sizeX;
+	}
+
+	public int getSizeY() {
+		return sizeY;
+	}
+
 	protected void calculateDimensions() {
 		sizeX = (int) Math.sqrt(length);
 		sizeY = sizeX;

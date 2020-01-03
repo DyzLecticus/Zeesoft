@@ -79,4 +79,12 @@ public class MergerConfig extends ProcessorConfigObject {
 			maxOnBits = json.rootElement.getChildInt("maxOnBits",maxOnBits);
 		}
 	}
+
+	public boolean isUnion() {
+		return union;
+	}
+
+	public int getMaxOnBits() {
+		return maxOnBits;
+	}
 }

@@ -263,6 +263,66 @@ public class PoolerConfig extends ProcessorConfigObject {
 		return new SDRMap(outputLength,outputBits);
 	}
 
+	public int getInputLength() {
+		return inputLength;
+	}
+
+	public int getOutputLength() {
+		return outputLength;
+	}
+
+	public int getOutputBits() {
+		return outputBits;
+	}
+
+	public float getPotentialProximalConnections() {
+		return potentialProximalConnections;
+	}
+
+	public int getProximalRadius() {
+		return proximalRadius;
+	}
+
+	public float getProximalConnectionThreshold() {
+		return proximalConnectionThreshold;
+	}
+
+	public float getProximalConnectionDecrement() {
+		return proximalConnectionDecrement;
+	}
+
+	public float getProximalConnectionIncrement() {
+		return proximalConnectionIncrement;
+	}
+
+	public int getBoostStrength() {
+		return boostStrength;
+	}
+
+	public int getBoostInhibitionRadius() {
+		return boostInhibitionRadius;
+	}
+
+	public int getBoostActivityLogSize() {
+		return boostActivityLogSize;
+	}
+
+	public int getInputSizeX() {
+		return inputSizeX;
+	}
+
+	public int getInputSizeY() {
+		return inputSizeY;
+	}
+
+	public int getOutputSizeX() {
+		return outputSizeX;
+	}
+
+	public int getOutputSizeY() {
+		return outputSizeY;
+	}
+
 	protected void calculateDimensions() {
 		inputSizeX = (int) Math.sqrt(inputLength);
 		inputSizeY = inputSizeX;

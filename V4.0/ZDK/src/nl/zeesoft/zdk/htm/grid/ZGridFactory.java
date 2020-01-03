@@ -26,12 +26,12 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
  * The configuration can then be used to instantiate an actual ZGrid. 
  */
 public class ZGridFactory extends Locker implements JsAble {
-	private WorkerUnion									union		= null;
+	private WorkerUnion								union			= null;
 	
-	private int											numRows		= 4;
-	private int											numColumns	= 2;
+	private int										numRows			= 4;
+	private int										numColumns		= 2;
 	
-	private SortedMap<String,ZGridFactoryColumn>		columns		= new TreeMap<String,ZGridFactoryColumn>();
+	private SortedMap<String,ZGridFactoryColumn>	columns			= new TreeMap<String,ZGridFactoryColumn>();
 	
 	public ZGridFactory() {
 		super(null);
@@ -144,7 +144,25 @@ public class ZGridFactory extends Locker implements JsAble {
 		unlockMe(this);
 		return r;
 	}
-	
+
+	/**
+	 * Returns the encoder value key for the specified column.
+	 * 
+	 * @param columnIndex The column index
+	 * @return The encoder value key or an empty string
+	 */
+	public String getValueKey(int columnIndex) {
+		String r = "";
+		lockMe(this);
+		String id = ZGridColumn.getColumnId(0,columnIndex);
+		ZGridFactoryColumn col = columns.get(id);
+		if (col!=null && col.encoder!=null) {
+			r = col.encoder.getValueKey();
+		}
+		unlockMe(this);
+		return r;
+	}
+
 	/**
 	 * Removes the encoder from the specified position in the grid.
 	 * 
@@ -321,6 +339,9 @@ public class ZGridFactory extends Locker implements JsAble {
 				JsFile cfgJs = col.encoder.toJson();
 				cfgJs.rootElement.children.add(0,new JsElem("className",col.encoder.getClass().getName(),true));
 				cfgJs.rootElement.children.add(0,new JsElem("columnId",col.columnId,true));
+				if (cfgJs.rootElement.getChildByName("valueKey")==null) {
+					cfgJs.rootElement.children.add(new JsElem("valueKey",col.encoder.getValueKey(),true));
+				}
 				cfgsElem.children.add(cfgJs.rootElement);
 			} else if (col.processorConfig!=null) {
 				JsFile cfgJs = col.processorConfig.toJson();

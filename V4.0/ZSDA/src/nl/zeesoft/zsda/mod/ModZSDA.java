@@ -10,6 +10,7 @@ import nl.zeesoft.zsda.grid.LoggerInitializer;
 import nl.zeesoft.zsda.grid.PersistableGenerator;
 import nl.zeesoft.zsda.grid.ZGridFactoryInitializer;
 import nl.zeesoft.zsda.grid.ZGridInitializer;
+import nl.zeesoft.zsda.mod.handler.CssZSDAHandler;
 import nl.zeesoft.zsda.mod.handler.HtmlZSDAGridConfigHandler;
 import nl.zeesoft.zsda.mod.handler.HtmlZSDAGridMonitorHandler;
 import nl.zeesoft.zsda.mod.handler.HtmlZSDAIndexHandler;
@@ -48,6 +49,7 @@ public class ModZSDA extends ModObject implements StateListener {
 	
 	@Override
 	public void initialize() {
+		handlers.add(new CssZSDAHandler(configuration,this));
 		handlers.add(new HtmlZSDAIndexHandler(configuration,this));
 		handlers.add(new JsonModTestResultsHandler(configuration,this));
 		handlers.add(new HtmlZSDAGridConfigHandler(configuration,this));

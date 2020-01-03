@@ -54,14 +54,14 @@ public class JavaScriptZSDAGridConfig {
 		script.append("};\n");
 		script.append("ZSDA.config.getConfigurationsTable = function() {\n");
 		script.append("    var html = \"\";\n");
-		script.append("    html += '<table width=\"100%\">';\n");
+		script.append("    html += '<table class=\"grid\">';\n");
 		script.append("    html += '<tbody>';\n");
 		script.append("    for (var r = 0; r < ZSDA.config.grid.rows; r++) {\n");
-		script.append("        html += '<tr>';\n");
+		script.append("        html += '<tr class=\"grid\">';\n");
 		script.append("        for (var c = 0; c < ZSDA.config.grid.columns; c++) {\n");
 		script.append("            var id = ZSDA.config.getColumnId(r,c);\n");
 		script.append("            var config = ZSDA.config.getConfigurationByColumnId(ZSDA.config.grid,id);\n");
-		script.append("            html += '<td valign=\"top\">';\n");
+		script.append("            html += '<td valign=\"top\" class=\"grid\">';\n");
 		script.append("            if (config!=null) {\n");
 		script.append("                html += ZSDA.config.getConfigurationTable(config);\n");
 		script.append("            }\n");
@@ -75,7 +75,7 @@ public class JavaScriptZSDAGridConfig {
 		script.append("};\n");
 		script.append("ZSDA.config.getConfigurationTable = function(configuration) {\n");
 		script.append("    var html = \"\";\n");
-		script.append("    html += '<table width=\"100%\">';\n");
+		script.append("    html += '<table>';\n");
 		script.append("    html += '<tbody>';\n");
 		script.append("    html += '<td colspan=\"2\">';\n");
 		script.append("    html += '<b>';\n");
@@ -112,7 +112,7 @@ public class JavaScriptZSDAGridConfig {
 		script.append("};\n");
 		script.append("ZSDA.config.getConfigurationContextsTable = function(contexts) {\n");
 		script.append("    var html = \"\";\n");
-		script.append("    html += '<table width=\"100%\">';\n");
+		script.append("    html += '<table>';\n");
 		script.append("    html += '<tbody>';\n");
 		script.append("    for (var name in contexts) {\n");
 		script.append("        var context = contexts[name];\n");

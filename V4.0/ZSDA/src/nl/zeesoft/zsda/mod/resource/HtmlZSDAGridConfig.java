@@ -14,6 +14,8 @@ public class HtmlZSDAGridConfig extends HtmlResource {
 	public ZStringBuilder toStringBuilder() {
 		setTitle("ZSDA - Grid configuration");	
 
+		getStyleFiles().add("../" + ModZSDA.NAME + "/ZSDA.css");
+
 		getScriptFiles().add("../" + ModZODB.NAME + "/ZODB.js");
 		getScriptFiles().add("../" + ModZSDA.NAME + "/gridConfig.js");
 		

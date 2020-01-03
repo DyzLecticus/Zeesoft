@@ -158,4 +158,20 @@ public class ClassifierConfig extends ProcessorConfigObject {
 			maxCount = json.rootElement.getChildInt("maxCount",maxCount);
 		}
 	}
+
+	public List<Integer> getPredictSteps() {
+		return new ArrayList<Integer>(predictSteps);
+	}
+
+	public String getValueKey() {
+		return valueKey;
+	}
+
+	public String getLabelKey() {
+		return labelKey;
+	}
+
+	public int getMaxCount() {
+		return maxCount;
+	}
 }

@@ -22,7 +22,7 @@ import nl.zeesoft.zsda.mod.ModZSDA;
 public class PersistableLogger extends Locker implements Persistable, ZGridResultsListener, JsClientListener {
 	private Config							configuration		= null;
 	
-	private int								keepLogsSeconds		= 86400;
+	private int								keepLogsSeconds		= 43200;
 	
 	private static final int				WINDOW				= 100;
 	

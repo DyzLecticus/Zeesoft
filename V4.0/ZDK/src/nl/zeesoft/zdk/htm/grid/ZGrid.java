@@ -324,27 +324,32 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 		json.rootElement.children.add(new JsElem("rows","" + numRows));
 		json.rootElement.children.add(new JsElem("columns","" + numColumns));
 		lockMe(this);
-		JsElem cfgsElem = new JsElem("configurations",true);
-		json.rootElement.children.add(cfgsElem);
-		for (ZGridRow row: rows) {
-			for (ZGridColumn col: row.columns) {
-				if (col.encoder!=null) {
-					JsFile cfgJs = col.encoder.toJson();
-					cfgJs.rootElement.children.add(0,new JsElem("className",col.encoder.getClass().getName(),true));
-					cfgJs.rootElement.children.add(0,new JsElem("columnId",col.getId(),true));
-					cfgsElem.children.add(cfgJs.rootElement);
-				} else if (col.processor!=null) {
-					JsFile cfgJs = col.processor.getConfig().toJson();
-					cfgJs.rootElement.children.add(0,new JsElem("className",col.processor.getConfig().getClass().getName(),true));
-					cfgJs.rootElement.children.add(0,new JsElem("columnId",col.getId(),true));
-					if (col.contexts.size()>0) {
-						JsElem ctxsElem = new JsElem("contexts",true);
-						cfgJs.rootElement.children.add(ctxsElem);
-						for (ZGridColumnContext ctx: col.contexts) {
-							ctxsElem.children.add(ctx.toJson().rootElement);
+		if (getStateNoLock().equals(STATE_STOPPED)) {
+			JsElem cfgsElem = new JsElem("configurations",true);
+			json.rootElement.children.add(cfgsElem);
+			for (ZGridRow row: rows) {
+				for (ZGridColumn col: row.columns) {
+					if (col.encoder!=null) {
+						JsFile cfgJs = col.encoder.toJson();
+						cfgJs.rootElement.children.add(0,new JsElem("className",col.encoder.getClass().getName(),true));
+						cfgJs.rootElement.children.add(0,new JsElem("columnId",col.getId(),true));
+						if (cfgJs.rootElement.getChildByName("valueKey")==null) {
+							cfgJs.rootElement.children.add(new JsElem("valueKey",col.encoder.getValueKey(),true));
 						}
+						cfgsElem.children.add(cfgJs.rootElement);
+					} else if (col.processor!=null) {
+						JsFile cfgJs = col.processor.getConfig().toJson();
+						cfgJs.rootElement.children.add(0,new JsElem("className",col.processor.getConfig().getClass().getName(),true));
+						cfgJs.rootElement.children.add(0,new JsElem("columnId",col.getId(),true));
+						if (col.contexts.size()>0) {
+							JsElem ctxsElem = new JsElem("contexts",true);
+							cfgJs.rootElement.children.add(ctxsElem);
+							for (ZGridColumnContext ctx: col.contexts) {
+								ctxsElem.children.add(ctx.toJson().rootElement);
+							}
+						}
+						cfgsElem.children.add(cfgJs.rootElement);
 					}
-					cfgsElem.children.add(cfgJs.rootElement);
 				}
 			}
 		}
