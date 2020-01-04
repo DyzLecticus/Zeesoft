@@ -101,7 +101,7 @@ public class JavaScriptZSDAGridConfig {
 		script.append("            html += name;\n");
 		script.append("            html += '</td>';\n");
 		script.append("            html += '<td>';\n");
-		script.append("            html += '<input type=\"text\" value=\"' + configuration[name] + '\">';\n");
+		script.append("            html += '<input type=\"text\" value=\"' + configuration[name] + '\" />';\n");
 		script.append("            html += '</td>';\n");
 		script.append("        }\n");
 		script.append("        html += '</tr>';\n");

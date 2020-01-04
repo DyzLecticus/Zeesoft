@@ -58,32 +58,19 @@ public class ZGridResult extends Locker implements JsAble {
 	}
 	
 	/**
-	 * Returns the specified column output SDR for a certain column.
+	 * Returns a copy of the specified column output SDR.
 	 * 
 	 * @param columnId The id of the column
 	 * @param index The index of the column output SDR
-	 * @return The column output SDR
+	 * @return A copy of the column output SDR
 	 */
 	public SDR getColumnOutput(String columnId,int index) {
 		lockMe(this);
 		SDR r = null;
 		List<SDR> outputs = columnOutputs.get(columnId);
 		if (outputs!=null && outputs.size()>index) {
-			r = outputs.get(index);
+			r = outputs.get(index).copy();
 		}
-		unlockMe(this);
-		return r;
-	}
-
-	/**
-	 * Returns the first column output SDR for a certain column.
-	 * 
-	 * @param columnId The id of the column
-	 * @return The column output SDR
-	 */
-	public List<SDR> getColumnOutput(String columnId) {
-		lockMe(this);
-		List<SDR> r = new ArrayList<>(columnOutputs.get(columnId));
 		unlockMe(this);
 		return r;
 	}

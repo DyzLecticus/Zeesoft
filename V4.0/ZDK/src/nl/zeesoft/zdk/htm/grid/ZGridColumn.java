@@ -8,7 +8,6 @@ import nl.zeesoft.zdk.htm.proc.Detector;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.messenger.Messenger;
-import nl.zeesoft.zdk.thread.LockedCode;
 import nl.zeesoft.zdk.thread.Worker;
 import nl.zeesoft.zdk.thread.WorkerUnion;
 
@@ -25,6 +24,13 @@ public class ZGridColumn extends Worker {
 		super(msgr, union);
 		setSleep(0);
 		setSleepNs(ZGrid.SLEEP_NS);
+		setStopOnException(false);
+	}
+	
+	@Override
+	public void stop() {
+		super.stop();
+		waitForStop(10,false);
 	}
 	
 	protected String getId() {
@@ -55,32 +61,19 @@ public class ZGridColumn extends Worker {
 	}
 	
 	@Override
-	public void stop() {
-		super.stop();
-		waitForStop(10,false);
+	protected void setCaughtException(Exception caughtException) {
+		super.setCaughtException(caughtException);
+		lockMe(this);
+		if (result!=null) {
+			result = null;
+			row.processedColumn();
+		}
+		unlockMe(this);
 	}
 
 	@Override
 	protected void whileWorking() {
-		LockedCode code = new LockedCode() {
-			@Override
-			public Object doLocked() {
-				processRequestNoLock();
-				return null;
-			}
-		};
-		doLocked(this,code);
-		code = new LockedCode() {
-			@Override
-			public Object doLocked() {
-				if (result!=null) {
-					result = null;
-					row.processedColumn();
-				}
-				return null;
-			}
-		};
-		doLocked(this,code);
+		processRequestNoLock();
 		setSleepNs(ZGrid.SLEEP_NS);
 	}
 	
@@ -92,6 +85,13 @@ public class ZGridColumn extends Worker {
 				if (output!=null) {
 					outputs = new ArrayList<SDR>();
 					outputs.add(output);
+				}
+				if (result.getRequest().inputValues.length>index && result.getRequest().inputValues[index]!=null) {
+					if (outputs==null) {
+						getMessenger().debug(this,encoder.getClass().getSimpleName() + " at " + getId() + " returned null");
+					} else if (outputs.size()==0) {
+						getMessenger().debug(this,encoder.getClass().getSimpleName() + " at " + getId() + " returned an empty list");
+					}
 				}
 			} else if (processor!=null) {
 				// Use previous row column output as input
@@ -125,10 +125,24 @@ public class ZGridColumn extends Worker {
 					} else if (processor instanceof Detector) {
 						((Detector)processor).setDetectAnomalies(result.getRequest().detectAnomalies);
 					}
+					if (context.size()==0 && (processor instanceof Classifier || processor instanceof Detector)) {
+						getMessenger().debug(this,processor.getClass().getSimpleName() + " at " + getId() + " did not recieve any context");
+					}
 					outputs = processor.getSDRsForInput(input,context,result.getRequest().learn);
+					if (getMessenger()!=null) {
+						if (outputs==null) {
+							getMessenger().debug(this,processor.getClass().getSimpleName() + " at " + getId() + " returned null");
+						} else if (outputs.size()==0) {
+							getMessenger().debug(this,processor.getClass().getSimpleName() + " at " + getId() + " returned an empty list");
+						}
+					}
+				} else if (getMessenger()!=null) {
+					getMessenger().debug(this,processor.getClass().getSimpleName() + " at " + getId() + " did not recieve any input");
 				}
 			}
 			result.setColumnOutput(getId(),outputs);
+			result = null;
+			row.processedColumn();
 		}
 	}
 	
