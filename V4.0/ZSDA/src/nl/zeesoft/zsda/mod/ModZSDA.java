@@ -1,5 +1,6 @@
 package nl.zeesoft.zsda.mod;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.StateListener;
@@ -102,6 +103,10 @@ public class ModZSDA extends ModObject implements StateListener {
 	public void stateChanged(Object source, boolean open) {
 		if (open) {
 			if (source==factoryInitializer) {
+				ZStringBuilder err = factoryInitializer.getFactory().testConfiguration();
+				if (err.length()>0) {
+					configuration.error(this,err.toString());
+				}
 				loggerInitializer.initialize();
 			} else if (source==loggerInitializer) {
 				configuration.debug(this,"Loading state ...");

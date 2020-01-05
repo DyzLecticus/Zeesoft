@@ -59,6 +59,8 @@ public class JavaScriptZSDAGridMonitor {
 		script.append("        alert(object.error);\n");
 		script.append("    } else if (object.errors) {\n");
 		script.append("        alert(object.errors[0]);\n");
+		script.append("    } else if (!object.results) {\n");
+		script.append("        setTimeout(function() { ZSDA.monitor.listLogs(); },1000);\n");
 		script.append("    } else {\n");
 		script.append("        for (var name in object.results) {\n");
 		script.append("            var res = object.results[name];\n");
@@ -270,9 +272,15 @@ public class JavaScriptZSDAGridMonitor {
 		script.append("        html += '<tbody>';\n");
 		script.append("        var sizeX = Math.sqrt(length);\n");
 		script.append("        if (sizeX % 1 > 0) {\n");
-		script.append("            sizeX = sizeX - (sizeX % 1) + 1;\n");
+		script.append("            sizeX = sizeX - (sizeX % 1);\n");
 		script.append("        }\n");
 		script.append("        var sizeY = sizeX;\n");
+		script.append("        if (sizeX * sizeY < length) {\n");
+		script.append("            sizeX++;\n");
+		script.append("        }\n");
+		script.append("        if (sizeX * sizeY < length) {\n");
+		script.append("            sizeY++;\n");
+		script.append("        }\n");
 		script.append("        var i = 0;\n");
 		script.append("        for (var y = 0; y < sizeY; y++) {\n");
 		script.append("            html += '<tr class=\"sdrTr\">';\n");

@@ -115,6 +115,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		
 		ZGridFactory gridFactory = new ZGridFactory(messenger,union);
 		gridFactory.initializeTestGrid();
+		assertEqual(gridFactory.testConfiguration(),new ZStringBuilder(),"Factory configuration test results do not match expectation");
 		testJsAble(gridFactory,new ZGridFactory(),"Grid factory JSON does not match expectation");
 		
 		ZGrid grid = gridFactory.buildNewGrid();
@@ -131,7 +132,7 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 			System.out.println("Grid JSON;");
 			System.out.println(grid.toJson().toStringBuilderReadFormat());
 		}
-		
+
 		if (test) {
 			System.out.println();
 			testGrid(grid);

@@ -14,14 +14,14 @@ import nl.zeesoft.zdk.thread.WorkerUnion;
 import nl.zeesoft.zodb.db.init.Persistable;
 
 public class PersistableGenerator extends StateWorker implements Persistable {
-	private static int				GENERATE		= 3000;
+	private static int				GENERATE		= 8640;
 	private static int				MAX_VALUE		= 11;
 	private static int				INTERVAL_MS		= 5000;
 	
 	private ZGrid					grid			= null;
 
 	private long					dateTime		= 0;
-	private int 					value			= MAX_VALUE;
+	private int 					value			= 0;
 	
 	private int						randomize		= 0;
 	
@@ -64,6 +64,9 @@ public class PersistableGenerator extends StateWorker implements Persistable {
 
 	public void setRandomize(int randomize) {
 		lockMe(this);
+		if (randomize > 40) {
+			randomize = 40;
+		}
 		this.randomize = randomize;
 		unlockMe(this);
 	}
@@ -79,10 +82,8 @@ public class PersistableGenerator extends StateWorker implements Persistable {
 		if (dateTime==0) {
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.MILLISECOND,0);
-			int sec = cal.get(Calendar.SECOND);
-			int m = sec % (INTERVAL_MS / 1000);
-			sec = sec - m;
-			cal.set(Calendar.SECOND,sec);
+			cal.set(Calendar.SECOND,0);
+			cal.set(Calendar.MINUTE,0);
 			dateTime = cal.getTimeInMillis() - (GENERATE * INTERVAL_MS);
 		}
 	}
@@ -92,6 +93,9 @@ public class PersistableGenerator extends StateWorker implements Persistable {
 		if (ms>INTERVAL_MS * 1.5) {
 			ms = ms - (ms % INTERVAL_MS);
 			int generate = (int) (ms / INTERVAL_MS);
+			if (generate>10 && getMessenger()!=null) {
+				getMessenger().debug(this,"Generating " + generate + " requests");
+			}
 			for (int i = 0; i < generate; i++) {
 				addRequest();
 			}
@@ -108,14 +112,20 @@ public class PersistableGenerator extends StateWorker implements Persistable {
 		if (randomize>0) {
 			val += ZRandomize.getRandomInt(0,randomize);
 			randomize--;
+		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(dateTime);
+			if (cal.get(Calendar.MINUTE)>=50) {
+				val = val + 20;
+			}
 		}
-		unlockMe(this);
 		ZGridRequest r = getNewRequest(dateTime,val);
 		dateTime += INTERVAL_MS;
 		value++;
 		if (value>MAX_VALUE) {
 			value = 0;
 		}
+		unlockMe(this);
 		return r;
 	}
 	

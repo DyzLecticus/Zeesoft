@@ -23,6 +23,7 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 	private Config							configuration		= null;
 	
 	private int								keepLogsSeconds		= 43200;
+	private boolean							logDebugMessages	= false;
 	
 	private static final int				WINDOW				= 100;
 	
@@ -37,7 +38,9 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 	}
 
 	public void destroy() {
+		lockMe(this);
 		configuration = null;
+		unlockMe(this);
 	}
 	
 	@Override
@@ -46,6 +49,7 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 		lockMe(this);
 		json.rootElement = new JsElem();
 		json.rootElement.children.add(new JsElem("keepLogsSeconds","" + keepLogsSeconds));
+		json.rootElement.children.add(new JsElem("logDebugMessages","" + logDebugMessages));
 		unlockMe(this);
 		return json;
 	}
@@ -55,6 +59,7 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 		if (json.rootElement!=null) {
 			lockMe(this);
 			keepLogsSeconds = json.rootElement.getChildInt("keepLogsSeconds",keepLogsSeconds);
+			logDebugMessages = json.rootElement.getChildBoolean("logDebugMessages",logDebugMessages);
 			unlockMe(this);
 		}
 	}
@@ -66,49 +71,55 @@ public class PersistableLogger extends Locker implements Persistable, ZGridResul
 
 	@Override
 	public void processedRequest(ZGrid grid, ZGridResult result) {
-		int val = (int) result.getRequest().inputValues[1];
-		int pred = Integer.MIN_VALUE;
-		
-		lockMe(this);
-		float accuracy = 0;
-		if (prediction!=null) {
-			for (Object pVal: prediction.mostCountedValues) {
-				if (pVal instanceof Integer) {
-					pred = (Integer)pVal;
-					accuracy = 1;
-					if (pred==val) {
-						break;
+		if (result.getRequest().inputValues[1] instanceof Integer) {
+			int val = (Integer) result.getRequest().inputValues[1];
+			int pred = Integer.MIN_VALUE;
+			
+			lockMe(this);
+			if (prediction!=null) {
+				float accuracy = 0;
+				for (Object pVal: prediction.mostCountedValues) {
+					if (pVal instanceof Integer) {
+						pred = (Integer)pVal;
+						if (pred==val) {
+							accuracy = 1;
+							break;
+						}
 					}
 				}
+				if (accuracy > 0) {
+					accuracy = accuracy / (float) prediction.mostCountedValues.size();
+				}
+				history.addFloat(accuracy);
+				
+				if (logDebugMessages && configuration!=null) {
+					ZDate date = new ZDate();
+					date.setTime(result.getRequest().dateTime);
+					configuration.debug(this,"ID: " + result.getRequest().id + " > " + date.getDateTimeString() + ", predicted: " + pred + ", actual: " + val + ", average accuracy: " + history.average);
+				}
 			}
-			if (accuracy > 0) {
-				accuracy = accuracy / (float) prediction.mostCountedValues.size();
-			}
-			history.addFloat(accuracy);
-			
-			if (configuration!=null) {
-				ZDate date = new ZDate();
-				date.setTime(result.getRequest().dateTime);
-				configuration.debug(this,"ID: " + result.getRequest().id + " > " + date.getDateTimeString() + ", predicted: " + pred + ", actual: " + val + ", average accuracy: " + history.average);
-			}
-		}
 
-		prediction = null;
-		for (Classification c: result.getClassifications()) {
-			if (c.valueKey.equals(DateTimeSDR.VALUE_KEY) && c.steps==1) {
-				prediction = c;
-				break;
+			prediction = null;
+			for (Classification c: result.getClassifications()) {
+				if (c.valueKey.equals(DateTimeSDR.VALUE_KEY) && c.steps==1) {
+					prediction = c;
+					break;
+				}
 			}
+			
+			removeOldLogsNoLock();
+			addLogNoLock(result);
+			unlockMe(this);
 		}
-		
-		removeOldLogsNoLock();
-		addLogNoLock(result);
-		unlockMe(this);
 	}
 
 	@Override
 	public void handledRequest(JsClientResponse response) {
-		configuration.handledDatabaseRequest(response);
+		lockMe(this);
+		if (configuration!=null) {
+			configuration.handledDatabaseRequest(response);
+		}
+		unlockMe(this);
 	}
 	
 	protected void removeOldLogsNoLock() {

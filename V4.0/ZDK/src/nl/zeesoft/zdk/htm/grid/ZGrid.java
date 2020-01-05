@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZDKFactory;
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.proc.Classifier;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
 import nl.zeesoft.zdk.htm.proc.Detector;
@@ -20,6 +21,7 @@ import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zdk.htm.proc.ProcessorConfigObject;
 import nl.zeesoft.zdk.htm.proc.ProcessorObject;
+import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
@@ -279,6 +281,45 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 		unlockMe(this);
 	}
 
+	/**
+	 * Trains the date time pooler for a certain expected interval.
+	 * 
+	 * @param dateTimeStart The start date time in milliseconds since the epoch
+	 * @param intervalMs The interval milliseconds
+	 * @param increments The number of increments
+	 */
+	public void trainDateTimePooler(long dateTimeStart,long intervalMs,int increments) {
+		if (intervalMs>0 && increments>0) {
+			lockMe(this);
+			if (getStateNoLock().equals(STATE_STOPPED)) {
+				ZGridEncoderDateTime encoder = null;
+				Pooler pooler = null;
+				for (ZGridColumn col: rows.get(0).columns) {
+					if (col.encoder instanceof ZGridEncoderDateTime) {
+						for (int r = 1; r < numRows; r++) {
+							ProcessorObject processor = rows.get(r).columns.get(col.index).processor; 
+							if (processor!=null && processor instanceof Pooler) {
+								encoder = (ZGridEncoderDateTime) col.encoder;
+								pooler = (Pooler) processor;
+								break;
+							}
+						}
+					}
+				}
+				if (encoder!=null && pooler!=null) {
+					long dateTime = dateTimeStart;
+					for (int i = 0 ; i < increments; i++) {
+						SDR sdr = encoder.getSDRForDateTime(dateTime);
+						pooler.getSDRForInput(sdr,true);
+						dateTime += intervalMs;
+					}
+					
+				}
+			}
+			unlockMe(this);
+		}
+	}
+	
 	/**
 	 * Returns a description of this grid including its encoders and processors.
 	 * 

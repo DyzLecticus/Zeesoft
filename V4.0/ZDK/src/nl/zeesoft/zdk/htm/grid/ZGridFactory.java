@@ -6,6 +6,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ZDKFactory;
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderValue;
 import nl.zeesoft.zdk.htm.proc.ClassifierConfig;
@@ -53,7 +54,7 @@ public class ZGridFactory extends Locker implements JsAble {
 			lockMe(this);
 			this.numRows = numRows;
 			this.numColumns = numColumns;
-			updatedDimensions();
+			updatedDimensionsNoLock();
 			unlockMe(this);
 		}
 	}
@@ -136,8 +137,7 @@ public class ZGridFactory extends Locker implements JsAble {
 	public ZGridColumnEncoder getEncoder(int columnIndex) {
 		ZGridColumnEncoder r = null;
 		lockMe(this);
-		String id = ZGridColumn.getColumnId(0,columnIndex);
-		ZGridFactoryColumn col = columns.get(id);
+		ZGridFactoryColumn col = getColumnNoLock(0,columnIndex);
 		if (col!=null && col.encoder!=null) {
 			r = col.encoder.copy();
 		}
@@ -154,8 +154,7 @@ public class ZGridFactory extends Locker implements JsAble {
 	public String getValueKey(int columnIndex) {
 		String r = "";
 		lockMe(this);
-		String id = ZGridColumn.getColumnId(0,columnIndex);
-		ZGridFactoryColumn col = columns.get(id);
+		ZGridFactoryColumn col = getColumnNoLock(0,columnIndex);
 		if (col!=null && col.encoder!=null) {
 			r = col.encoder.getValueKey();
 		}
@@ -170,7 +169,7 @@ public class ZGridFactory extends Locker implements JsAble {
 	 */
 	public void removeEncoder(int columnIndex) {
 		lockMe(this);
-		removeColumn(0,columnIndex);
+		removeColumnNoLock(0,columnIndex);
 		unlockMe(this);
 	}
 	
@@ -205,8 +204,7 @@ public class ZGridFactory extends Locker implements JsAble {
 	public ProcessorConfigObject getProcessor(int rowIndex,int columnIndex) {
 		ProcessorConfigObject r = null;
 		lockMe(this);
-		String id = ZGridColumn.getColumnId(0,columnIndex);
-		ZGridFactoryColumn col = columns.get(id);
+		ZGridFactoryColumn col = getColumnNoLock(rowIndex,columnIndex);
 		if (col!=null && col.processorConfig!=null) {
 			r = col.processorConfig.copy();
 		}
@@ -223,7 +221,7 @@ public class ZGridFactory extends Locker implements JsAble {
 	public void removeProcessor(int rowIndex,int columnIndex) {
 		if (rowIndex>0) {
 			lockMe(this);
-			removeColumn(rowIndex,columnIndex);
+			removeColumnNoLock(rowIndex,columnIndex);
 			unlockMe(this);
 		}
 	}
@@ -252,8 +250,7 @@ public class ZGridFactory extends Locker implements JsAble {
 	public void addColumnContext(int rowIndex,int columnIndex,int sourceRow,int sourceColumn,int sourceIndex) {
 		lockMe(this);
 		if (numRows>rowIndex && numColumns>columnIndex && sourceRow<rowIndex && sourceColumn<numColumns) {
-			String id = ZGridColumn.getColumnId(rowIndex,columnIndex);
-			ZGridFactoryColumn col = columns.get(id);
+			ZGridFactoryColumn col = getColumnNoLock(rowIndex,columnIndex);
 			if (col!=null) {
 				ZGridColumnContext context = new ZGridColumnContext();
 				context.sourceRow = sourceRow;
@@ -275,8 +272,7 @@ public class ZGridFactory extends Locker implements JsAble {
 	public List<ZGridColumnContext> getColumnContexts(int rowIndex,int columnIndex) {
 		List<ZGridColumnContext> r = new ArrayList<ZGridColumnContext>();
 		lockMe(this);
-		String id = ZGridColumn.getColumnId(rowIndex,columnIndex);
-		ZGridFactoryColumn col = columns.get(id);
+		ZGridFactoryColumn col = getColumnNoLock(rowIndex,columnIndex);
 		if (col!=null) {
 			for (ZGridColumnContext context: col.contexts) {
 				r.add(context.copy());
@@ -294,12 +290,111 @@ public class ZGridFactory extends Locker implements JsAble {
 	 */
 	public void clearColumnContext(int rowIndex,int columnIndex) {
 		lockMe(this);
-		String id = ZGridColumn.getColumnId(rowIndex,columnIndex);
-		ZGridFactoryColumn column = columns.get(id);
-		if (column!=null) {
-			column.contexts.clear();
+		ZGridFactoryColumn col = getColumnNoLock(rowIndex,columnIndex);
+		if (col!=null) {
+			col.contexts.clear();
 		}
 		unlockMe(this);
+	}
+
+	/**
+	 * Returns a list of configuration errors or an empty string builder.
+	 * This method only tests for common configuration omissions and mistakes.
+	 * 
+	 * @return A list of configuration errors or an empty string builder
+	 */
+	public ZStringBuilder testConfiguration() {
+		ZStringBuilder r = new ZStringBuilder();
+		lockMe(this);
+		// Encoders
+		for (int ci = 0; ci < numColumns; ci++) {
+			ZGridFactoryColumn col = getColumnNoLock(0,ci);
+			if (col!=null && col.encoder!=null) {
+				ZGridColumnEncoder encoder = col.encoder;
+				ZStringBuilder err = encoder.testScalarOverlap();
+				if (err.length()>0) {
+					appendLine(r,col.columnId + ": " + err);
+				}
+			}
+		}
+		// Pooler and memory IO
+		for (ZGridFactoryColumn col: getPoolerAndMemoryColumnsNoLock()) {
+			int expectedLength = 0;
+			if (col.processorConfig instanceof PoolerConfig) {
+				PoolerConfig poolerConfig = (PoolerConfig) col.processorConfig;
+				expectedLength = poolerConfig.getInputLength();
+			} else if (col.processorConfig instanceof MemoryConfig) {
+				MemoryConfig memoryConfig = (MemoryConfig) col.processorConfig;
+				expectedLength = memoryConfig.getLength();
+			}
+			int inputLength = 0;
+			for (int ri = col.rowIndex - 1; ri >= 0; ri--) {
+				inputLength = getColumnOutputLengthNoLock(ri,col.columnIndex);
+				if (inputLength>0) {
+					break;
+				}
+			}
+			if (inputLength!=expectedLength) {
+				appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " input length does not match expectation: " + inputLength + " <> " + expectedLength);
+			}
+		}
+		// Memory context dimensions
+		for (ZGridFactoryColumn col: getMemoryColumnsNoLock()) {
+			MemoryConfig memoryConfig = (MemoryConfig) col.processorConfig;
+			int i = 0;
+			for (Integer expectedLength: memoryConfig.getContextDimensions()) {
+				if (i >= col.contexts.size()) {
+					appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " missing column context for dimension index: " + i + ", length: " + expectedLength);
+				} else {
+					ZGridColumnContext context = col.contexts.get(i);
+					int inputLength = getColumnOutputLengthNoLock(context.sourceRow,context.sourceColumn);
+					if (inputLength!=expectedLength) {
+						appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " column context input length does not match expectation: " + inputLength + " <> " + expectedLength + ", index: " + i);
+					}
+				}
+				i++;
+			}
+		}
+		// Classifier context configuration
+		for (ZGridFactoryColumn col: getClassifierColumnsNoLock()) {
+			if (col.contexts.size()==0) {
+				appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " missing column context configuration");
+			} else {
+				ZGridColumnContext context = col.contexts.get(0);
+				ZGridFactoryColumn sCol = getColumnNoLock(context.sourceRow,context.sourceColumn);
+				if (sCol!=null) {
+				    if (sCol.encoder!=null) {
+						ClassifierConfig classifierConfig = (ClassifierConfig) col.processorConfig;
+						if (!sCol.encoder.getValueKey().equals(classifierConfig.getValueKey())) {
+							appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " column context encoder value key does not match expectation: " + col.encoder.getValueKey() + " <> " + classifierConfig.getValueKey());
+						}
+				    }
+				} else {
+					appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " missing column context input");
+				}
+			}
+		}
+		// Detector context configuration
+		for (ZGridFactoryColumn col: getDetectorColumnsNoLock()) {
+			if (col.contexts.size()<=1) {
+				appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " missing column context configuration(s)");
+			} else {
+				ZGridColumnContext context = col.contexts.get(0);
+				ZGridFactoryColumn sCol = getColumnNoLock(context.sourceRow,context.sourceColumn);
+				if (sCol==null || sCol.processorConfig==null) {
+					appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " missing column context activation input");
+				}
+				context = col.contexts.get(1);
+				sCol = getColumnNoLock(context.sourceRow,context.sourceColumn);
+				if (sCol==null || sCol.processorConfig==null) {
+					appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " missing column context burst input");
+				} else if (context.sourceIndex>0 && !(sCol.processorConfig instanceof MemoryConfig)) {
+					appendLine(r,col.columnId + ": " + col.processorConfig.getClass().getSimpleName() + " missing column context burst input");
+				}
+			}
+		}
+		unlockMe(this);
+		return r;
 	}
 	
 	/**
@@ -534,12 +629,12 @@ public class ZGridFactory extends Locker implements JsAble {
 		addColumnContext(4,1,0,1);
 	}
 
-	protected void removeColumn(int rowIndex, int columnIndex) {
+	protected void removeColumnNoLock(int rowIndex, int columnIndex) {
 		String id = ZGridColumn.getColumnId(rowIndex,columnIndex);
 		columns.remove(id);
 	}
 	
-	protected void updatedDimensions() {
+	protected void updatedDimensionsNoLock() {
 		List<String> columnIds = getColumnIdsNoLock();
 		List<String> colIds = new ArrayList<String>(columns.keySet());
 		for (String colId: colIds) {
@@ -559,6 +654,88 @@ public class ZGridFactory extends Locker implements JsAble {
 		return r;
 	}
 	
+	protected ZGridFactoryColumn getColumnNoLock(int rowIndex, int columnIndex) {
+		String id = ZGridColumn.getColumnId(rowIndex,columnIndex);
+		return columns.get(id);
+	}
+	
+	protected List<ZGridFactoryColumn> getColumnsNoLock(String configClassSimpleName) {
+		List<ZGridFactoryColumn> r = new ArrayList<ZGridFactoryColumn>();
+		for (int ri = 1; ri < numRows; ri++) {
+			for (int ci = 0; ci < numColumns; ci++) {
+				ZGridFactoryColumn col = getColumnNoLock(ri,ci);
+				if (col!=null && col.processorConfig!=null && 
+					(
+						(configClassSimpleName.equals(PoolerConfig.class.getSimpleName()) && col.processorConfig instanceof PoolerConfig) ||
+						(configClassSimpleName.equals(MemoryConfig.class.getSimpleName()) && col.processorConfig instanceof MemoryConfig) ||
+						(configClassSimpleName.equals(MergerConfig.class.getSimpleName()) && col.processorConfig instanceof MergerConfig) ||
+						(configClassSimpleName.equals(ClassifierConfig.class.getSimpleName()) && col.processorConfig instanceof ClassifierConfig) ||
+						(configClassSimpleName.equals(DetectorConfig.class.getSimpleName()) && col.processorConfig instanceof DetectorConfig)
+					)
+					) {
+					r.add(col);
+				}
+			}
+		}
+		return r;
+	}
+	
+	protected List<ZGridFactoryColumn> getPoolerAndMemoryColumnsNoLock() {
+		List<ZGridFactoryColumn> r = getColumnsNoLock(PoolerConfig.class.getSimpleName());
+		for (ZGridFactoryColumn col: getColumnsNoLock(MemoryConfig.class.getSimpleName())) {
+			r.add(col);
+		}
+		return r;
+	}
+	
+	protected List<ZGridFactoryColumn> getMemoryColumnsNoLock() {
+		return getColumnsNoLock(MemoryConfig.class.getSimpleName());
+	}
+	
+	protected List<ZGridFactoryColumn> getClassifierColumnsNoLock() {
+		return getColumnsNoLock(ClassifierConfig.class.getSimpleName());
+	}
+	
+	protected List<ZGridFactoryColumn> getDetectorColumnsNoLock() {
+		return getColumnsNoLock(DetectorConfig.class.getSimpleName());
+	}
+	
+	protected int getColumnOutputLengthNoLock(int rowIndex, int columnIndex) {
+		int r = 0;
+		ZGridFactoryColumn col = getColumnNoLock(rowIndex,columnIndex);
+		if (col!=null) {
+			if (col.encoder!=null) {
+				r = col.encoder.length();
+			} else if (col.processorConfig!=null) {
+				if (col.processorConfig instanceof PoolerConfig) {
+					PoolerConfig cfg = (PoolerConfig) col.processorConfig;
+					r = cfg.getOutputLength();
+				} else if (col.processorConfig instanceof MemoryConfig) {
+					MemoryConfig cfg = (MemoryConfig) col.processorConfig;
+					r = cfg.getLength();
+				} else if (col.processorConfig instanceof MergerConfig) {
+					MergerConfig cfg = (MergerConfig) col.processorConfig;
+					for (ZGridColumnContext context: col.contexts) {
+						r += getColumnOutputLengthNoLock(context.sourceRow,context.sourceColumn);
+						if (cfg.isUnion()) {
+							break;
+						}
+					}
+					if (!cfg.isUnion()) {
+						for (int pr = rowIndex - 1; pr >= 0; pr--) {
+							int add = getColumnOutputLengthNoLock(pr,columnIndex);
+							if (add>0) {
+								r += add;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
 	protected void clearNoLock() {
 		for (ZGridFactoryColumn column: columns.values()) {
 			column.contexts.clear();
@@ -568,5 +745,12 @@ public class ZGridFactory extends Locker implements JsAble {
 	
 	protected ZGrid getNewGrid(Messenger msgr, WorkerUnion uni,int numRows, int numColumns) {
 		return new ZGrid(msgr,uni,numRows,numColumns);
+	}
+	
+	private static void appendLine(ZStringBuilder str, String line) {
+		if (str.length()>0) {
+			str.append("\n");
+		}
+		str.append(line);
 	}
 }

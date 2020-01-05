@@ -160,6 +160,27 @@ public class MemoryConfig extends ProcessorConfigObject {
 	}
 
 	/**
+	 * Specifies a specific context dimension
+	 * 
+	 * @param index The index of the dimension to replace
+	 * @param length The length of the dimension
+	 */
+	public void setContextDimensions(int index, int length) {
+		if (!initialized) {
+			this.contextDimensions.set(index,length);
+		}
+	}
+
+	/**
+	 * Removes all context dimensions.
+	 */
+	public void clearContextDimensions() {
+		if (!initialized) {
+			this.contextDimensions.clear();
+		}
+	}
+
+	/**
 	 * Specifies the exact 2 dimensional size of the temporal memory.
 	 * 
 	 * @param sizeX The x axis size

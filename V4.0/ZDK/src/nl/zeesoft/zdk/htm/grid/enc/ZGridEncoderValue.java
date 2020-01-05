@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.htm.grid.enc;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.htm.enc.CombinedEncoder;
 import nl.zeesoft.zdk.htm.enc.GridDimensionEncoder;
 import nl.zeesoft.zdk.htm.enc.GridDimensionScaledEncoder;
@@ -66,7 +67,12 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	public String getValueKey() {
 		return valueKey;
 	}
-
+	
+	@Override
+	public ZStringBuilder testScalarOverlap() {
+		return new ZStringBuilder();
+	}
+	
 	public void setType(String type) {
 		if (type.equals(TYPE_SCALAR) ||
 			type.equals(TYPE_SCALED) ||

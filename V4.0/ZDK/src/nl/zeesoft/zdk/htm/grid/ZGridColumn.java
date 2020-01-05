@@ -88,9 +88,9 @@ public class ZGridColumn extends Worker {
 				}
 				if (result.getRequest().inputValues.length>index && result.getRequest().inputValues[index]!=null) {
 					if (outputs==null) {
-						getMessenger().debug(this,encoder.getClass().getSimpleName() + " at " + getId() + " returned null");
+						getMessenger().error(this,encoder.getClass().getSimpleName() + " at " + getId() + " returned null");
 					} else if (outputs.size()==0) {
-						getMessenger().debug(this,encoder.getClass().getSimpleName() + " at " + getId() + " returned an empty list");
+						getMessenger().error(this,encoder.getClass().getSimpleName() + " at " + getId() + " returned an empty list");
 					}
 				}
 			} else if (processor!=null) {
@@ -126,18 +126,18 @@ public class ZGridColumn extends Worker {
 						((Detector)processor).setDetectAnomalies(result.getRequest().detectAnomalies);
 					}
 					if (context.size()==0 && (processor instanceof Classifier || processor instanceof Detector)) {
-						getMessenger().debug(this,processor.getClass().getSimpleName() + " at " + getId() + " did not recieve any context");
+						getMessenger().error(this,processor.getClass().getSimpleName() + " at " + getId() + " did not recieve any context");
 					}
 					outputs = processor.getSDRsForInput(input,context,result.getRequest().learn);
 					if (getMessenger()!=null) {
 						if (outputs==null) {
-							getMessenger().debug(this,processor.getClass().getSimpleName() + " at " + getId() + " returned null");
+							getMessenger().error(this,processor.getClass().getSimpleName() + " at " + getId() + " returned null");
 						} else if (outputs.size()==0) {
-							getMessenger().debug(this,processor.getClass().getSimpleName() + " at " + getId() + " returned an empty list");
+							getMessenger().error(this,processor.getClass().getSimpleName() + " at " + getId() + " returned an empty list");
 						}
 					}
 				} else if (getMessenger()!=null) {
-					getMessenger().debug(this,processor.getClass().getSimpleName() + " at " + getId() + " did not recieve any input");
+					getMessenger().error(this,processor.getClass().getSimpleName() + " at " + getId() + " did not recieve any input");
 				}
 			}
 			result.setColumnOutput(getId(),outputs);
