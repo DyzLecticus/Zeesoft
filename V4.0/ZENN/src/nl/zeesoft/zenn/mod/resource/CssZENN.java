@@ -21,14 +21,6 @@ public class CssZENN {
 		css.append("    border-collapse: separate;\n");
 		css.append("    border-spacing: 0px;\n");
 		css.append("}\n");
-		
-		/*
-		css.append("table, th, td {\n");
-		css.append("    border: 1px solid black;\n");
-		css.append("    border-collapse: separate;\n");
-		css.append("    border-spacing: 0px;\n");
-		css.append("}\n");
-		*/
 
 		css.append("@media (max-width: 400px) and (max-height: 400px) {\n");
 		css.append("    .envTable {\n");

@@ -32,6 +32,31 @@ public class CssZSDA {
 		css.append("    font-size: 1px;\n");
 		css.append("}\n");
 		
+		css.append(".histTable {\n");
+		css.append("    border-collapse: separate;\n");
+		css.append("    border-spacing: 0px;\n");
+		css.append("}\n");
+		css.append(".histTr {\n");
+		css.append("    border-collapse: separate;\n");
+		css.append("    border-spacing: 0px;\n");
+		css.append("}\n");
+		css.append(".histTd {\n");
+		css.append("    border-collapse: separate;\n");
+		css.append("    border-spacing: 0px;\n");
+		css.append("    padding: 0px;\n");
+		css.append("    width: 10px;\n");
+		css.append("    height: 10px;\n");
+		css.append("    font-size: 1px;\n");
+		css.append("}\n");
+
+		css.append(".red {\n");
+		css.append("    background-color: red;\n");
+		css.append("    color: red;\n");
+		css.append("}\n");
+		css.append(".green {\n");
+		css.append("    background-color: green;\n");
+		css.append("    color: red;\n");
+		css.append("}\n");
 		css.append(".blue {\n");
 		css.append("    background-color: blue;\n");
 		css.append("    color: blue;\n");

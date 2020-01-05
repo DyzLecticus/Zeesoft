@@ -15,7 +15,7 @@ import nl.zeesoft.zdk.messenger.Messenger;
 import nl.zeesoft.zdk.thread.Locker;
 
 public class ZGridHistory extends Locker implements ZGridResultsListener {
-	private static final int				KEEP_RESULTS			= 720;
+	private static final int				KEEP_RESULTS			= 72;
 	
 	private String							valueKey				= DateTimeSDR.VALUE_KEY;
 	private int								steps					= 1;
@@ -24,13 +24,9 @@ public class ZGridHistory extends Locker implements ZGridResultsListener {
 	
 	private List<ZGridResult>				results					= new ArrayList<ZGridResult>();
 	
-	private float							minVal					= Long.MAX_VALUE;
-	private float							maxVal					= Long.MIN_VALUE;
+	private long							lastUpdate				= 0;
+	private JsFile							json					= null;
 	
-	private List<Float>						relativeActualValues	= new ArrayList<Float>();
-	private List<Float>						relativePredictedValues	= new ArrayList<Float>();
-	private List<Float>						anomalies				= new ArrayList<Float>();
-		
 	public ZGridHistory(Messenger msgr,ZGrid grid) {
 		super(msgr);
 		initialize(grid,valueKey,steps);
@@ -49,54 +45,41 @@ public class ZGridHistory extends Locker implements ZGridResultsListener {
 	@Override
 	public void processedRequest(ZGrid grid, ZGridResult result) {
 		lockMe(this);
-		if (steps>1 && columnIndex>=0) {
+		if (steps>=1 && columnIndex>=0) {
 			results.add(0,result);
 			while(results.size()>(KEEP_RESULTS + steps)) {
 				results.remove(results.size() - 1);
 			}
-			analyzeNoLock();
+			long now = System.currentTimeMillis();
+			if (now - lastUpdate > 4000) {
+				analyzeNoLock();
+				lastUpdate = now;
+			}
 		}
 		unlockMe(this);
 	}
 	
-	public JsFile toJson() {
-		JsFile json = new JsFile();
-		json.rootElement = new JsElem();
-		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
-		json.rootElement.children.add(new JsElem("steps","" + steps));
-		json.rootElement.children.add(new JsElem("minVal","" + minVal));
-		json.rootElement.children.add(new JsElem("maxVal","" + maxVal));
-		JsElem resultsElem = new JsElem("results",true);
-		json.rootElement.children.add(resultsElem);
-		int i = 0;
-		for (Float relVal: relativeActualValues) {
-			JsElem resultElem = new JsElem();
-			resultsElem.children.add(resultElem);
-			if (relVal!=null) {
-				resultElem.children.add(new JsElem("relVal","" + relVal));
-			}
-			Float relPred = relativePredictedValues.get(i);
-			if (relPred!=null) {
-				resultElem.children.add(new JsElem("relPred","" + relPred));
-			}
-			Float anom = anomalies.get(i);
-			if (anom!=null) {
-				resultElem.children.add(new JsElem("anom","" + anom));
-			}
-			i++;
-		}
-		return json;
+	public JsFile getJson() {
+		JsFile r = null;
+		lockMe(this);
+		r = json;
+		unlockMe(this);
+		return r;
 	}
 	
 	protected void analyzeNoLock() {
-		if (steps>1 && columnIndex>=0) {
+		json = new JsFile();
+		json.rootElement = new JsElem();
+		if (steps>=1 && columnIndex>=0) {
 			List<Object> values = new ArrayList<Object>();
 			List<Classification> predictions = new ArrayList<Classification>();
 			
-			anomalies.clear();
+			List<Float> relativeActualValues = new ArrayList<Float>();
+			List<Float> relativePredictedValues = new ArrayList<Float>();
+			List<Float> anomalies = new ArrayList<Float>();
 			
-			minVal = Long.MAX_VALUE;
-			maxVal = Long.MIN_VALUE;
+			float minVal = Long.MAX_VALUE;
+			float maxVal = Long.MIN_VALUE;
 			int i = 0;
 			int pi = steps;
 			for (ZGridResult res: results) {
@@ -156,9 +139,6 @@ public class ZGridHistory extends Locker implements ZGridResultsListener {
 				pi++;
 			}
 
-			relativeActualValues.clear();
-			relativePredictedValues.clear();
-
 			for (i = 0; i < values.size(); i++) {
 				float accuracy = 0;
 				
@@ -193,6 +173,30 @@ public class ZGridHistory extends Locker implements ZGridResultsListener {
 				}
 				
 				pi++;
+			}
+			
+			json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
+			json.rootElement.children.add(new JsElem("steps","" + steps));
+			json.rootElement.children.add(new JsElem("minVal","" + minVal));
+			json.rootElement.children.add(new JsElem("maxVal","" + maxVal));
+			JsElem resultsElem = new JsElem("results",true);
+			json.rootElement.children.add(resultsElem);
+			i = 0;
+			for (Float relVal: relativeActualValues) {
+				JsElem resultElem = new JsElem();
+				resultsElem.children.add(resultElem);
+				if (relVal!=null) {
+					resultElem.children.add(new JsElem("relVal","" + relVal));
+				}
+				Float relPred = relativePredictedValues.get(i);
+				if (relPred!=null) {
+					resultElem.children.add(new JsElem("relPred","" + relPred));
+				}
+				Float anom = anomalies.get(i);
+				if (anom!=null) {
+					resultElem.children.add(new JsElem("anom","" + anom));
+				}
+				i++;
 			}
 		}
 	}
@@ -236,7 +240,9 @@ public class ZGridHistory extends Locker implements ZGridResultsListener {
 				maxVal -= diff;
 				value -= diff;
 			}
-			r = maxVal / value;
+			if (maxVal>0) {
+				r = value / maxVal;
+			}
 		}
 		return r;
 	}

@@ -20,6 +20,7 @@ import nl.zeesoft.zsda.mod.handler.HtmlZSDAIndexHandler;
 import nl.zeesoft.zsda.mod.handler.JavaScriptZSDAGridConfigHandler;
 import nl.zeesoft.zsda.mod.handler.JavaScriptZSDAGridMonitorHandler;
 import nl.zeesoft.zsda.mod.handler.JsonZSDAGridConfigHandler;
+import nl.zeesoft.zsda.mod.handler.JsonZSDAGridHistoryHandler;
 
 public class ModZSDA extends ModObject implements StateListener {
 	public static final String			NAME						= "ZSDA";
@@ -63,6 +64,7 @@ public class ModZSDA extends ModObject implements StateListener {
 		handlers.add(new JavaScriptZSDAGridConfigHandler(configuration,this));
 		handlers.add(new JavaScriptZSDAGridMonitorHandler(configuration,this));
 		handlers.add(new JsonZSDAGridConfigHandler(configuration,this));
+		handlers.add(new JsonZSDAGridHistoryHandler(configuration,this));
 		super.initialize();
 		factoryInitializer.initialize();
 	}

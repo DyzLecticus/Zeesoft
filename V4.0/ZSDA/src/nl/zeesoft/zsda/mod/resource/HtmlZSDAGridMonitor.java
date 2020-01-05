@@ -32,6 +32,9 @@ public class HtmlZSDAGridMonitor extends HtmlResource {
 		html.append("<div id=\"classifications\">\n");
 		html.append("</div>\n");
 		
+		html.append("<div id=\"history\">\n");
+		html.append("</div>\n");
+		
 		getBodyElements().add(html);
 		
 		return super.toStringBuilder();
