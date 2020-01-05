@@ -141,6 +141,7 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 	public JsFile toJson() {
 		JsFile json = new JsFile();
 		json.rootElement = new JsElem();
+		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
 		json.rootElement.children.add(new JsElem("type",type,true));
 		json.rootElement.children.add(new JsElem("length","" + length));
 		json.rootElement.children.add(new JsElem("bits","" + bits));
@@ -148,13 +149,13 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 		json.rootElement.children.add(new JsElem("minValue","" + minValue));
 		json.rootElement.children.add(new JsElem("maxValue","" + maxValue));
 		json.rootElement.children.add(new JsElem("periodic","" + periodic));
-		json.rootElement.children.add(new JsElem("valueKey",valueKey,true));
 		return json;
 	}
 
 	@Override
 	public void fromJson(JsFile json) {
 		if (json.rootElement!=null) {
+			valueKey = json.rootElement.getChildString("valueKey",valueKey);
 			type = json.rootElement.getChildString("type",type);
 			length = json.rootElement.getChildInt("length",length);
 			bits = json.rootElement.getChildInt("bits",bits);
@@ -162,7 +163,6 @@ public class ZGridEncoderValue extends ZGridColumnEncoder {
 			minValue = json.rootElement.getChildFloat("minValue",minValue);
 			maxValue = json.rootElement.getChildFloat("maxValue",maxValue);
 			periodic = json.rootElement.getChildBoolean("periodic",periodic);
-			valueKey = json.rootElement.getChildString("valueKey",valueKey);
 			rebuildEncoder();
 		}
 	}

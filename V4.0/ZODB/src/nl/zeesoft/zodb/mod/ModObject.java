@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.ZStringBuilder;
 import nl.zeesoft.zdk.json.JsAble;
 import nl.zeesoft.zdk.json.JsElem;
 import nl.zeesoft.zdk.json.JsFile;
+import nl.zeesoft.zdk.thread.Locker;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.mod.handler.HandlerObject;
 import nl.zeesoft.zodb.mod.handler.HtmlForbiddenHandler;
@@ -16,7 +17,7 @@ import nl.zeesoft.zodb.mod.handler.HtmlNotFoundHandler;
 import nl.zeesoft.zodb.mod.handler.JsonForbiddenHandler;
 import nl.zeesoft.zodb.mod.handler.JsonNotFoundHandler;
 
-public abstract class ModObject implements JsAble {
+public abstract class ModObject extends Locker implements JsAble {
 	public Config				configuration			= null;
 	
 	public String				name					= "";
@@ -33,6 +34,7 @@ public abstract class ModObject implements JsAble {
 	public List<TesterObject>	testers					= new ArrayList<TesterObject>();
 	
 	public ModObject(Config config) {
+		super(config.getMessenger());
 		configuration = config;
 		addDefaultHandlers();
 	}

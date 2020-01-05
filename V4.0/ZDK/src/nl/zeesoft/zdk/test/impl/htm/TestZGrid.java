@@ -190,11 +190,11 @@ public class TestZGrid extends TestObject implements ZGridResultsListener {
 		
 		List<Anomaly> anomalies = result.getAnomalies();
 		if (anomalies.size()>0) {
-			if (firstDetectedAnomalyId==0) {
-				firstDetectedAnomalyId = result.getRequest().id;
-			}
 			for (Anomaly anomaly: anomalies) {
-				System.out.println("Detected anomaly at id " + result.getRequest().id + ", detected: " + anomaly.detectedAccuracy + ", average: " + anomaly.averageLongTermAccuracy + ", difference: " + anomaly.difference);
+				if (firstDetectedAnomalyId==0) {
+					firstDetectedAnomalyId = result.getRequest().id;
+				}
+				System.out.println("Detected anomaly at id " + result.getRequest().id + ", valueKey: " + anomaly.valueKey + ", detected: " + anomaly.detectedAccuracy + ", average: " + anomaly.averageLongTermAccuracy + ", difference: " + anomaly.difference);
 			}
 		}
 		

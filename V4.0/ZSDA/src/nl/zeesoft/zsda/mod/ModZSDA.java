@@ -6,10 +6,12 @@ import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.StateListener;
 import nl.zeesoft.zodb.mod.ModObject;
 import nl.zeesoft.zodb.mod.handler.JsonModTestResultsHandler;
+import nl.zeesoft.zsda.ZSDAConfig;
 import nl.zeesoft.zsda.grid.GeneratorInitializer;
 import nl.zeesoft.zsda.grid.LoggerInitializer;
 import nl.zeesoft.zsda.grid.PersistableGenerator;
 import nl.zeesoft.zsda.grid.ZGridFactoryInitializer;
+import nl.zeesoft.zsda.grid.ZGridHistory;
 import nl.zeesoft.zsda.grid.ZGridInitializer;
 import nl.zeesoft.zsda.mod.handler.CssZSDAHandler;
 import nl.zeesoft.zsda.mod.handler.HtmlZSDAGridConfigHandler;
@@ -28,6 +30,8 @@ public class ModZSDA extends ModObject implements StateListener {
 	private ZGridInitializer			gridInitializer				= null;
 	private GeneratorInitializer		generatorInitializer		= null;
 	private LoggerInitializer			loggerInitializer			= null;
+
+	private ZGridHistory				gridHistory					= null;
 	
 	public ModZSDA(Config config) {
 		super(config);
@@ -41,6 +45,7 @@ public class ModZSDA extends ModObject implements StateListener {
 		generatorInitializer.addListener(this);
 		loggerInitializer = new LoggerInitializer(config,factoryInitializer);
 		loggerInitializer.addListener(this);
+		
 	}
 	
 	@Override
@@ -103,6 +108,9 @@ public class ModZSDA extends ModObject implements StateListener {
 	public void stateChanged(Object source, boolean open) {
 		if (open) {
 			if (source==factoryInitializer) {
+				lockMe(this);
+				gridHistory = getNewZGridHistory(factoryInitializer.getGrid());
+				unlockMe(this);
 				ZStringBuilder err = factoryInitializer.getFactory().testConfiguration();
 				if (err.length()>0) {
 					configuration.error(this,err.toString());
@@ -137,5 +145,23 @@ public class ModZSDA extends ModObject implements StateListener {
 	
 	public GeneratorInitializer getGeneratorInitializer() {
 		return generatorInitializer;
+	}
+	
+	public ZGridHistory getGridHistory() {
+		ZGridHistory r = null;
+		lockMe(this);
+		r = gridHistory;
+		unlockMe(this);
+		return r;
+	}
+	
+	protected ZGridHistory getNewZGridHistory(ZGrid grid) {
+		ZGridHistory r = null;
+		if (configuration instanceof ZSDAConfig) {
+			r = ((ZSDAConfig) configuration).getNewZGridHistory(grid);
+		} else {
+			r = new ZGridHistory(configuration.getMessenger(),grid);
+		}
+		return r;
 	}
 }

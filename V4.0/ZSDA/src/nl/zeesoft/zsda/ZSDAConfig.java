@@ -1,11 +1,13 @@
 package nl.zeesoft.zsda;
 
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.htm.grid.ZGrid;
 import nl.zeesoft.zdk.htm.grid.ZGridFactory;
 import nl.zeesoft.zdk.htm.grid.enc.ZGridEncoderDateTime;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
 import nl.zeesoft.zodb.Config;
 import nl.zeesoft.zodb.db.Database;
+import nl.zeesoft.zsda.grid.ZGridHistory;
 import nl.zeesoft.zsda.mod.ModZSDA;
 
 public class ZSDAConfig extends Config {
@@ -23,7 +25,7 @@ public class ZSDAConfig extends Config {
 		r.getConfiguration().indexConfig.addIndex(ModZSDA.NAME + "/Logs/","dateTime",true,false);
 		return r;
 	}
-
+	
 	public void initializeFactory(ZGridFactory factory) {
 		factory.initializeDefaultGrid();
 		if (getModule(ModZSDA.NAME).selfTest) {
@@ -42,5 +44,9 @@ public class ZSDAConfig extends Config {
 			poolerConfig.setProximalRadius(2);
 			factory.setProcessor(1,0,poolerConfig);
 		}
+	}
+	
+	public ZGridHistory getNewZGridHistory(ZGrid grid) {
+		return new ZGridHistory(getMessenger(),grid);
 	}
 }

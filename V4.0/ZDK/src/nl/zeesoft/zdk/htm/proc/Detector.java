@@ -116,6 +116,7 @@ public class Detector extends ProcessorObject {
 				
 				if (detectAnomalies && seen>=getConfig().start && difference>getConfig().threshold) {
 					Anomaly anomaly = new Anomaly();
+					anomaly.valueKey = getConfig().getValueKey();
 					anomaly.detectedAccuracy = accuracy;
 					anomaly.averageLongTermAccuracy = averageLong;
 					anomaly.averageShortTermAccuracy = averageShort;

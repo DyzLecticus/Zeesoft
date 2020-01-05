@@ -161,6 +161,26 @@ public class ZGridFactory extends Locker implements JsAble {
 		unlockMe(this);
 		return r;
 	}
+	
+	/**
+	 * Returns the column index for the specified encoder value key.
+	 * 
+	 * @param valueKey The encoder value key
+	 * @return The column index or -1
+	 */
+	public int getColumnIndex(String valueKey) {
+		int r = -1;
+		lockMe(this);
+		for (int c = 0; c < numColumns; c++) {
+			ZGridFactoryColumn col = getColumnNoLock(0,c);
+			if (col!=null && col.encoder!=null && col.encoder.getValueKey().equals(valueKey)) {
+				r = c;
+				break;
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
 
 	/**
 	 * Removes the encoder from the specified position in the grid.
@@ -432,11 +452,11 @@ public class ZGridFactory extends Locker implements JsAble {
 		for (ZGridFactoryColumn col: columns.values()) {
 			if (col.encoder!=null) {
 				JsFile cfgJs = col.encoder.toJson();
+				if (cfgJs.rootElement.getChildByName("valueKey")==null) {
+					cfgJs.rootElement.children.add(0,new JsElem("valueKey",col.encoder.getValueKey(),true));
+				}
 				cfgJs.rootElement.children.add(0,new JsElem("className",col.encoder.getClass().getName(),true));
 				cfgJs.rootElement.children.add(0,new JsElem("columnId",col.columnId,true));
-				if (cfgJs.rootElement.getChildByName("valueKey")==null) {
-					cfgJs.rootElement.children.add(new JsElem("valueKey",col.encoder.getValueKey(),true));
-				}
 				cfgsElem.children.add(cfgJs.rootElement);
 			} else if (col.processorConfig!=null) {
 				JsFile cfgJs = col.processorConfig.toJson();

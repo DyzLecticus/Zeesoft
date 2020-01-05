@@ -69,6 +69,32 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 	public void addListener(ZGridResultsListener listener) {
 		results.addListener(listener);
 	}
+	
+	/**
+	 * Returns the number of rows.
+	 * 
+	 * @return The number of rows
+	 */
+	public int getNumRows() {
+		int r = 0;
+		lockMe(this);
+		r = numRows;
+		unlockMe(this);
+		return r;
+	}
+	
+	/**
+	 * Returns the number of columns.
+	 * 
+	 * @return The number of columns
+	 */
+	public int getNumColumns() {
+		int r = 0;
+		lockMe(this);
+		r = numColumns;
+		unlockMe(this);
+		return r;
+	}
 
 	/**
 	 * Indicates processors should learn from requests (default = true).
@@ -127,6 +153,45 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 		}
 	}
 
+	/**
+	 * Returns the encoder value key for the specified column.
+	 * 
+	 * @param columnIndex The column index
+	 * @return The encoder value key or an empty string
+	 */
+	public String getValueKey(int columnIndex) {
+		String r = "";
+		lockMe(this);
+		if (numRows>0 && numColumns>columnIndex) {
+			ZGridColumnEncoder encoder = rows.get(0).columns.get(columnIndex).encoder;
+			if (encoder!=null) {
+				r = encoder.getValueKey();
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+	
+	/**
+	 * Returns the column index for the specified encoder value key.
+	 * 
+	 * @param valueKey The encoder value key
+	 * @return The column index or -1
+	 */
+	public int getColumnIndex(String valueKey) {
+		int r = -1;
+		lockMe(this);
+		for (int c = 0; c < numColumns; c++) {
+			ZGridColumnEncoder encoder = rows.get(0).columns.get(c).encoder;
+			if (encoder!=null && encoder.getValueKey().equals(valueKey)) {
+				r = c;
+				break;
+			}
+		}
+		unlockMe(this);
+		return r;
+	}
+	
 	/**
 	 * Sets a processor at the specified position in the grid.
 	 * 
@@ -372,11 +437,11 @@ public class ZGrid extends StateWorker implements ZGridRequestNext, JsAble {
 				for (ZGridColumn col: row.columns) {
 					if (col.encoder!=null) {
 						JsFile cfgJs = col.encoder.toJson();
+						if (cfgJs.rootElement.getChildByName("valueKey")==null) {
+							cfgJs.rootElement.children.add(0,new JsElem("valueKey",col.encoder.getValueKey(),true));
+						}
 						cfgJs.rootElement.children.add(0,new JsElem("className",col.encoder.getClass().getName(),true));
 						cfgJs.rootElement.children.add(0,new JsElem("columnId",col.getId(),true));
-						if (cfgJs.rootElement.getChildByName("valueKey")==null) {
-							cfgJs.rootElement.children.add(new JsElem("valueKey",col.encoder.getValueKey(),true));
-						}
 						cfgsElem.children.add(cfgJs.rootElement);
 					} else if (col.processor!=null) {
 						JsFile cfgJs = col.processor.getConfig().toJson();
