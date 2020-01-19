@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.ZMatrix;
 import nl.zeesoft.zdk.ZStringBuilder;
+import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -107,5 +108,14 @@ public class TestZMatrix extends TestObject {
 		if (!m6.toStringBuilder().equals(m5.toStringBuilder())) {
 			System.err.println(m6.getTable());
 		}
+		
+		int distance = StaticFunctions.getDistance(1,1,1,3,3,3);
+		assertEqual(distance,3,"Distance (1) does not match expectation");
+		distance = StaticFunctions.getDistance(0,0,0,4,3,0);
+		assertEqual(distance,5,"Distance (2) does not match expectation");
+		distance = StaticFunctions.getDistance(1,0,0,4,20,30);
+		assertEqual(distance,36,"Distance (4) does not match expectation");
+		distance = StaticFunctions.getDistance(4,20,30,1,0,0);
+		assertEqual(distance,36,"Distance (3) does not match expectation");
 	}
 }

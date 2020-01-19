@@ -77,6 +77,57 @@ public class StaticFunctions {
 		}
 		return r;
 	}
+
+	/**
+	 * Returns the distance between two points in a three dimensional coordinate system assuming all coordinates are greater or equal to zero.
+	 * 
+	 * @param posXA X-axis position of point A
+	 * @param posYA Y-axis position of point A
+	 * @param posZA Z-axis position of point A
+	 * @param posXB X-axis position of point B
+	 * @param posYB Y-axis position of point B
+	 * @param posZB Z-axis position of point B
+	 * @return The distance
+	 */
+	public static int getDistance(int posXA, int posYA, int posZA, int posXB, int posYB, int posZB) {
+		return (int) getDistance((float)posXA,(float)posYA,(float)posZA,(float)posXB,(float)posYB,(float)posZB);
+	}
+
+	/**
+	 * Returns the distance between two points in a three dimensional coordinate system assuming all coordinates are greater or equal to zero.
+	 * 
+	 * @param posXA X-axis position of point A
+	 * @param posYA Y-axis position of point A
+	 * @param posZA Z-axis position of point A
+	 * @param posXB X-axis position of point B
+	 * @param posYB Y-axis position of point B
+	 * @param posZB Z-axis position of point B
+	 * @return The distance
+	 */
+	public static float getDistance(float posXA, float posYA, float posZA, float posXB, float posYB, float posZB) {
+		float r = 0;
+		float distX = 0;
+		float distY = 0;
+		float distZ = 0;
+		if (posXA>posXB) {
+			distX = posXA - posXB;
+		} else {
+			distX = posXB - posXA;
+		}
+		if (posYA>posYB) {
+			distY = posYA - posYB;
+		} else {
+			distY = posYB - posYA;
+		}
+		if (posZA>posZB) {
+			distZ = posZA - posZB;
+		} else {
+			distZ = posZB - posZA;
+		}
+		r = (float) Math.sqrt((distX * distX) + (distY * distY));
+		r = (float) Math.sqrt((r * r) + (distZ * distZ));
+		return r;
+	}
 	
 	private static Object getObjectFromArrayByClassName(Object[] objects, String name) {
 		Object r = null;

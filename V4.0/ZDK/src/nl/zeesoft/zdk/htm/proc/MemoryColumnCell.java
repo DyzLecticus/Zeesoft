@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.htm.proc;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.functions.StaticFunctions;
 import nl.zeesoft.zdk.functions.ZRandomize;
 
 public class MemoryColumnCell {
@@ -62,26 +63,7 @@ public class MemoryColumnCell {
 			for (MemoryColumnCell toCell: toCells) {
 				int dist = 0;
 				if (toCell.posX>=0 && toCell.posY>=0 && toCell.posZ>=0) {
-					int distX = 0;
-					int distY = 0;
-					int distZ = 0;
-					if (toCell.posX>posX) {
-						distX = toCell.posX - posX;
-					} else {
-						distX = posX - toCell.posX;
-					}
-					if (toCell.posY>posY) {
-						distY += toCell.posY - posY;
-					} else {
-						distY += posY - toCell.posY;
-					}
-					if (toCell.posZ>posZ) {
-						distZ += toCell.posZ - posZ;
-					} else {
-						distZ += posZ - toCell.posZ;
-					}
-					dist = (int) Math.sqrt((distX * distX) + (distY * distY));
-					dist = (int) Math.sqrt((dist * dist) + (distZ * distZ));
+					dist = StaticFunctions.getDistance(posX,posY,posZ,toCell.posX,toCell.posY,toCell.posZ);
 				}
 				if (dist<=config.localDistalConnectedRadius) {
 					DistalLink link = new DistalLink();
