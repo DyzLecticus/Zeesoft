@@ -89,7 +89,7 @@ public class TestMemor extends TestObject {
 			SDR burstSDR = outputSDRs.get(1);
 			processedSDR(burstSDR);
 			burstSDRMap.add(burstSDR);
-			if (i==1000) {
+			if (i==3000) {
 				break;
 			}
 		}

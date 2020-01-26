@@ -13,7 +13,7 @@ public class MemorConfig extends ProcessorConfigObject {
 	protected int			maxDistalSegmentsPerCell			= 256;
 	protected int			maxDistalConnectionsPerSegment		= 256;
 	protected int			localDistalConnectedRadius			= 64;
-	protected int			maxAddDistalConnections				= 10;
+	protected int			maxAddDistalConnections				= 21;
 	protected int			minActiveDistalConnections			= 5;
 	protected int			minAlmostActiveDistalConnections	= 3;
 	
