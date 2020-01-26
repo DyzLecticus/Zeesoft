@@ -117,7 +117,7 @@ public class Memor extends ProcessorObject {
 			
 			if (learn) {
 				start = System.nanoTime();
-				learnFromBurstingColumns(input,burstSDR);
+				learnFromBurstingColumns(burstSDR);
 				logStatsValue("learnFromBurstingColumns",System.nanoTime() - start);
 				
 				start = System.nanoTime();
@@ -181,7 +181,7 @@ public class Memor extends ProcessorObject {
 	
 	protected void learnFromBurstingColumns(SDR burstSDR) {
 		if (burstSDR.onBits()>0 && prevWinnerCells.size()>0) {
-			System.out.println("Failed to predict: " + burstSDR.onBits() + "/" + getConfig().bits + ", predictive cells: " + predictiveCells.size() + ", winners: " + winnerCells.size() + ", previous winners: " + prevWinnerCells.size());
+			//System.out.println("Failed to predict: " + burstSDR.onBits() + "/" + getConfig().bits + ", predictive cells: " + predictiveCells.size() + ", winners: " + winnerCells.size() + ", previous winners: " + prevWinnerCells.size());
 			
 			for (Integer onBit: burstSDR.getOnBits()) {
 				MemorColumn column = columns[onBit];
