@@ -121,7 +121,7 @@ public class Memor extends ProcessorObject {
 				logStatsValue("learnFromBurstingColumns",System.nanoTime() - start);
 				
 				start = System.nanoTime();
-				unlearnIncorrectPredictions(input,burstSDR);
+				unlearnIncorrectPredictions();
 				logStatsValue("unlearnIncorrectPredictions",System.nanoTime() - start);
 			}
 			
@@ -179,7 +179,7 @@ public class Memor extends ProcessorObject {
 		}
 	}
 	
-	protected void learnFromBurstingColumns(SDR input,SDR burstSDR) {
+	protected void learnFromBurstingColumns(SDR burstSDR) {
 		if (burstSDR.onBits()>0 && prevWinnerCells.size()>0) {
 			System.out.println("Failed to predict: " + burstSDR.onBits() + "/" + getConfig().bits + ", predictive cells: " + predictiveCells.size() + ", winners: " + winnerCells.size() + ", previous winners: " + prevWinnerCells.size());
 			
@@ -301,7 +301,7 @@ public class Memor extends ProcessorObject {
 		//System.out.println(onBit + ": " + winnerSegment.getId() + ", added: " + added);
 	}
 	
-	protected void unlearnIncorrectPredictions(SDR input,SDR burstSDR) {
+	protected void unlearnIncorrectPredictions() {
 		for (MemorCell cell: predictiveCells) {
 			if (!winnerCells.contains(cell)) {
 				for (MemorDistalSegment segment: cell.segments) {
