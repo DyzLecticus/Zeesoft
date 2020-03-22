@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.htm.proc.Memory;
 import nl.zeesoft.zdk.htm.proc.MemoryConfig;
 import nl.zeesoft.zdk.htm.proc.Pooler;
 import nl.zeesoft.zdk.htm.proc.PoolerConfig;
+import nl.zeesoft.zdk.htm.util.DateTimeSDR;
 import nl.zeesoft.zdk.htm.util.SDR;
 import nl.zeesoft.zdk.htm.util.SDRMap;
 import nl.zeesoft.zdk.test.TestObject;
@@ -61,8 +62,8 @@ public class TestMemor extends TestObject {
 	
 	@Override
 	protected void test(String[] args) {
-		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockRegularSDRMap.class.getName());
-		assertEqual(inputSDRMap.size(),15330,"Input SDR map size does not match expectation");
+		SDRMap inputSDRMap = (SDRMap) getTester().getMockedObject(MockRegularSDRMap2.class.getName());
+		assertEqual(inputSDRMap.size(),3000,"Input SDR map size does not match expectation");
 		
 		PoolerConfig poolerConfig = new PoolerConfig(inputSDRMap.length(),1024,21);
 		Pooler pooler = new Pooler(poolerConfig);
@@ -74,7 +75,7 @@ public class TestMemor extends TestObject {
 		Memor memory = new Memor(memoryConfig);
 		memory.logStats = true;
 
-		int num = 5000;
+		int num = 4;
 		
 		SDRMap burstSDRMap = memoryConfig.getNewSDRMap();
 		
@@ -83,15 +84,24 @@ public class TestMemor extends TestObject {
 		System.out.println("Processing input SDR map (" + num + "/" + inputSDRMap.size() + ") ...");
 		for (int i = 0; i < num; i++) {
 			SDR outputSDR = pooler.getSDRForInput(inputSDRMap.getSDR(i),true);
+
+			DateTimeSDR sdr = new DateTimeSDR(outputSDR.length());
+			if (i%2==0) {
+				for (int b = 0; b < 21; b++) {
+					sdr.setBit(b * 10,true);
+				}
+			} else {
+				for (int b = 0; b < 21; b++) {
+					sdr.setBit((b * 10) + 5,true);
+				}
+			}
+			
 			List<SDR> context = new ArrayList<SDR>();
-			context.add(outputSDR);
-			List<SDR> outputSDRs = memory.getSDRsForInput(outputSDR, context, true);
+			//context.add(outputSDR);
+			List<SDR> outputSDRs = memory.getSDRsForInput(sdr, context, true);
 			SDR burstSDR = outputSDRs.get(1);
 			processedSDR(burstSDR);
 			burstSDRMap.add(burstSDR);
-			if (i==3000) {
-				break;
-			}
 		}
 		System.out.println("Processing input SDR map took: " + (System.currentTimeMillis() - started) + " ms");
 		

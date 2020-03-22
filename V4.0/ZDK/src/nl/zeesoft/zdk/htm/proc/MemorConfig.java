@@ -14,12 +14,12 @@ public class MemorConfig extends ProcessorConfigObject {
 	protected int			maxDistalConnectionsPerSegment		= 256;
 	protected int			localDistalConnectedRadius			= 64;
 	protected int			maxAddDistalConnections				= 21;
-	protected int			minActiveDistalConnections			= 5;
-	protected int			minAlmostActiveDistalConnections	= 3;
+	protected int			minActiveDistalConnections			= 13;
+	protected int			minAlmostActiveDistalConnections	= 10;
 	
 	protected float			distalConnectionThreshold			= 0.2F;
-	protected float			distalConnectionDecrement			= 0.07F;
-	protected float			distalConnectionIncrement			= 0.13F;
+	protected float			distalConnectionDecrement			= 0.13F;
+	protected float			distalConnectionIncrement			= 0.7F;
 	
 	protected int			sizeX								= 16;
 	protected int			sizeY								= 16;

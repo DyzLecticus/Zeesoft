@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.htm.proc;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -15,14 +16,22 @@ public class Memor extends ProcessorObject {
 	private MemorColumn[]							columns				= null;
 	private SortedMap<String,MemorCell>				cellsById			= new TreeMap<String,MemorCell>();
 	
-	private HashSet<MemorCell>						winnerCells			= new HashSet<MemorCell>();
+	private HashSet<MemorCell>						activeCells			= new HashSet<MemorCell>();
+	private HashSet<MemorCell>						prevActiveCells		= new HashSet<MemorCell>();
 
+	private HashSet<MemorCell>						winnerCells			= new HashSet<MemorCell>();
 	private HashSet<MemorCell>						prevWinnerCells		= new HashSet<MemorCell>();
 
 	private HashSet<MemorCell>						predictiveCells		= new HashSet<MemorCell>();
 	private HashSet<MemorDistalSegment>				predictiveSegments	= new HashSet<MemorDistalSegment>();
 	
+	private SortedMap<String,List<MemorDistalLink>>	linksByToCell		= new TreeMap<String,List<MemorDistalLink>>();
+	
 	private SDR										burstSDR			= null;
+	
+	// TODO: Remove
+	private int done = 0;
+	private int doneStart = 0;
 	
 	public Memor(MemorConfig config) {
 		super(config);
@@ -120,19 +129,28 @@ public class Memor extends ProcessorObject {
 				learnFromBurstingColumns(burstSDR);
 				logStatsValue("learnFromBurstingColumns",System.nanoTime() - start);
 				
-				start = System.nanoTime();
-				unlearnIncorrectPredictions();
-				logStatsValue("unlearnIncorrectPredictions",System.nanoTime() - start);
+				//start = System.nanoTime();
+				//unlearnIncorrectPredictions();
+				//logStatsValue("unlearnIncorrectPredictions",System.nanoTime() - start);
 			}
 			
 			start = System.nanoTime();
-			predictActiveCells();
+			predictActiveCells(burstSDR);
 			logStatsValue("predictActiveCells",System.nanoTime() - start);
 		}
+		
+		done++;
+		
 		return r;
 	}
 	
 	protected void cycleActiveState() {
+		prevActiveCells.clear();
+		for (MemorCell cell: activeCells) {
+			prevActiveCells.add(cell);
+		}
+		activeCells.clear();
+		
 		prevWinnerCells.clear();
 		for (MemorCell cell: winnerCells) {
 			prevWinnerCells.add(cell);
@@ -141,26 +159,25 @@ public class Memor extends ProcessorObject {
 	}
 
 	protected void activateColumnCells(SDR input,SDR output,SDR burstSDR,boolean learn) {
+		System.out.println("SDR: " + input.toStringBuilder() + ", predictive cells: " + predictiveCells.size());
 		for (int onBit: input.getOnBits()) {
 			MemorColumn column = columns[onBit];
 			boolean activated = false;
-			List<MemorCell> columnCells = new ArrayList<MemorCell>();
-			for (int z = 0; z < column.cells.length; z++) {
-				columnCells.add(column.cells[z]);
-			}
+			List<MemorCell> columnCells = column.getCellsAsList();
 			for (int z = 0; z < column.cells.length; z++) {
 				MemorCell cell = columnCells.remove(ZRandomize.getRandomInt(0,columnCells.size() - 1));
 				if (predictiveCells.contains(cell)) {
+					activeCells.add(cell);
 					winnerCells.add(cell);
 					output.setBit(cell.index,true);
 					activated = true;
-					if (learn) {
-						for (MemorDistalSegment winnerSegment: cell.segments) {
-							if (predictiveSegments.contains(winnerSegment)) {
-								learnWinnerSegment(winnerSegment);
-							}
-						}
-					}
+					//if (learn) {
+					//	for (MemorDistalSegment winnerSegment: cell.segments) {
+					//		if (predictiveSegments.contains(winnerSegment)) {
+					//			learnWinnerSegment(winnerSegment);
+					//		}
+					//	}
+					//}
 					break;
 				}
 			}
@@ -169,10 +186,11 @@ public class Memor extends ProcessorObject {
 			if (!activated) {
 				for (int z = 0; z < column.cells.length; z++) {
 					output.setBit(column.cells[z].index,true);
+					activeCells.add(column.cells[z]);
 				}
 				burstSDR.setBit(onBit,true);
 				// Select random winner
-				if (prevWinnerCells.size()==0 || learn==false) {
+				if (prevActiveCells.size()==0 || learn==false) {
 					winnerCells.add(column.cells[ZRandomize.getRandomInt(0,column.cells.length - 1)]);
 				}
 			}
@@ -180,8 +198,8 @@ public class Memor extends ProcessorObject {
 	}
 	
 	protected void learnFromBurstingColumns(SDR burstSDR) {
-		if (burstSDR.onBits()>0 && prevWinnerCells.size()>0) {
-			//System.out.println("Failed to predict: " + burstSDR.onBits() + "/" + getConfig().bits + ", predictive cells: " + predictiveCells.size() + ", winners: " + winnerCells.size() + ", previous winners: " + prevWinnerCells.size());
+		if (burstSDR.onBits()>0 && prevActiveCells.size()>0) {
+			//System.out.println("Failed to predict: " + burstSDR.onBits() + "/" + getConfig().bits + ", predictive cells: " + predictiveCells.size() + ", winners: " + winnerCells.size() + ", previous winners: " + prevActiveCells.size());
 			
 			for (Integer onBit: burstSDR.getOnBits()) {
 				MemorColumn column = columns[onBit];
@@ -190,53 +208,50 @@ public class Memor extends ProcessorObject {
 				
 				// Map of segments connected to previous winners by number of connections
 				SortedMap<Integer,List<MemorDistalSegment>> winnerLinksPerSegment = new TreeMap<Integer,List<MemorDistalSegment>>();
-				// Map of open segments arranged by number of links
 				SortedMap<Integer,List<MemorDistalSegment>> activeLinksPerSegment = new TreeMap<Integer,List<MemorDistalSegment>>();
+				// Map of cells by number of segments
+				SortedMap<Integer,List<MemorCell>> cellsBySegment = new TreeMap<Integer,List<MemorCell>>();
 				
 				for (int z = 0; z < column.cells.length; z++) {
 					MemorCell cell = column.cells[z];
 
-					boolean hasFreeSegment = false;
+					if (cell.segments.size()<getConfig().maxDistalSegmentsPerCell) {
+						List<MemorCell> cells = cellsBySegment.get(cell.segments.size());
+						if (cells==null) {
+							cells = new ArrayList<MemorCell>();
+							cellsBySegment.put(cell.segments.size(),cells);
+						}
+						cells.add(cell);
+					}
+					
 					for (MemorDistalSegment segment: cell.segments) {
 						int numWinnerLinks = 0;
-						
 						for (MemorDistalLink link: segment.links) {
-							if (prevWinnerCells.contains(link.toCell)) {
+							if (prevActiveCells.contains(link.toCell)) {
 								numWinnerLinks++;
 							}
 						}
 						
-						if (numWinnerLinks>=getConfig().minActiveDistalConnections) {
-							List<MemorDistalSegment> list = winnerLinksPerSegment.get(numWinnerLinks);
-							if (list==null) {
-								list = new ArrayList<MemorDistalSegment>();
-								winnerLinksPerSegment.put(numWinnerLinks,list);
+						if (numWinnerLinks>0) {
+							List<MemorDistalSegment> activeSegments = activeLinksPerSegment.get(numWinnerLinks);
+							if (activeSegments==null) {
+								activeSegments = new ArrayList<MemorDistalSegment>();
+								activeLinksPerSegment.put(numWinnerLinks,activeSegments);
 							}
-							list.add(segment);
+							activeSegments.add(segment);
 						}
 						
-						if (segment.links.size()<getConfig().maxDistalConnectionsPerSegment - getConfig().maxAddDistalConnections) {
-							hasFreeSegment = true;
-							List<MemorDistalSegment> list = activeLinksPerSegment.get(segment.links.size());
-							if (list==null) {
-								list = new ArrayList<MemorDistalSegment>();
-								activeLinksPerSegment.put(segment.links.size(),list);
+						if (numWinnerLinks>=getConfig().minAlmostActiveDistalConnections) {
+							List<MemorDistalSegment> winningSegments = winnerLinksPerSegment.get(numWinnerLinks);
+							if (winningSegments==null) {
+								winningSegments = new ArrayList<MemorDistalSegment>();
+								winnerLinksPerSegment.put(numWinnerLinks,winningSegments);
 							}
-							list.add(segment);
+							winningSegments.add(segment);
 						}
-					}
-					if (!hasFreeSegment) {
-						MemorDistalSegment segment = new MemorDistalSegment(cell.getId(),cell.segments.size());
-						cell.segments.add(segment);
-						List<MemorDistalSegment> list = activeLinksPerSegment.get(0);
-						if (list==null) {
-							list = new ArrayList<MemorDistalSegment>();
-							activeLinksPerSegment.put(0,list);
-						}
-						list.add(segment);
 					}
 				}
-					
+				
 				// Select almost active winner segment
 				if (winnerLinksPerSegment.size()>0) {
 					List<MemorDistalSegment> list = winnerLinksPerSegment.get(winnerLinksPerSegment.lastKey());
@@ -247,41 +262,76 @@ public class Memor extends ProcessorObject {
 					}
 				}
 				
-				// If no almost active winner segments, get least connected segment
-				if (winnerSegment==null && activeLinksPerSegment.size()>0) {
-					List<MemorDistalSegment> list = activeLinksPerSegment.get(activeLinksPerSegment.firstKey());
+				MemorCell winnerCell = null;
+				
+				// If no almost active winner segments, add segment to least used cell
+				if (winnerSegment==null && cellsBySegment.size()>0) {
+					List<MemorCell> list = cellsBySegment.get(cellsBySegment.firstKey());
 					if (list.size()==1) {
-						winnerSegment = list.get(0);
+						winnerCell = list.get(0);
 					} else {
-						winnerSegment = list.get(ZRandomize.getRandomInt(0,list.size() - 1));
+						winnerCell = list.get(ZRandomize.getRandomInt(0,list.size() - 1));
 					}
+					winnerSegment = addSegment(winnerCell);
 				}
 				
-				learnWinnerSegment(winnerSegment);
-				
-				MemorCell winnerCell = cellsById.get(winnerSegment.cellId);
-				if (!winnerCells.contains(winnerCell)) {
-					winnerCells.add(winnerCell);
+				if (winnerSegment!=null) {
+					learnWinnerSegment(winnerSegment);
+					if (winnerCell==null) {
+						winnerCell = cellsById.get(winnerSegment.cellId);
+					}
+					if (!winnerCells.contains(winnerCell)) {
+						winnerCells.add(winnerCell);
+					}
+					
+					// Weaken connections on losing segments
+					for (Integer key: activeLinksPerSegment.keySet()) {
+						List<MemorDistalSegment> activeSegments = activeLinksPerSegment.get(key);
+						for (MemorDistalSegment segment: activeSegments) {
+							if (segment!=winnerSegment) {
+								List<MemorDistalLink> links = new ArrayList<MemorDistalLink>(segment.links);
+								for (MemorDistalLink link: links) {
+									if (prevActiveCells.contains(link.toCell)) {
+										decrementLink(segment, link);
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}
 	}
 	
+	protected MemorDistalSegment addSegment(MemorCell cell) {
+		MemorDistalSegment r = null;
+		int index = 0;
+		if (cell.segments.size()>0) {
+			index = cell.segments.get(cell.segments.size() - 1).index + 1;
+		}
+		r = new MemorDistalSegment(cell.getId(),index);
+		cell.segments.add(r);
+		return r;
+	}
+	
 	protected void learnWinnerSegment(MemorDistalSegment winnerSegment) {
-		// Strengthen and grow connections to previous winner cells
+		// Strengthen and grow connections to previously active cells
+		int incremented = 0;
 		int added = 0;
 		int maxAdd = getConfig().maxDistalConnectionsPerSegment - winnerSegment.links.size();
 		if (maxAdd>getConfig().maxAddDistalConnections) {
 			maxAdd=getConfig().maxAddDistalConnections;
 		}
-		List<MemorCell> prevWinners = new ArrayList<MemorCell>(prevWinnerCells);
-		for (int i = 0; i < prevWinnerCells.size(); i++) {
-			MemorCell toCell = prevWinners.remove(ZRandomize.getRandomInt(0,prevWinners.size() - 1));
+		List<MemorCell> prevActive = new ArrayList<MemorCell>(prevActiveCells);
+		for (int i = 0; i < prevActiveCells.size(); i++) {
+			MemorCell toCell = prevActive.remove(ZRandomize.getRandomInt(0,prevActive.size() - 1));
 			boolean found = false;
-			for (MemorDistalLink link: winnerSegment.links) {
+			List<MemorDistalLink> list = new ArrayList<MemorDistalLink>(winnerSegment.links);
+			for (MemorDistalLink link: list) {
 				if (link.toCell==toCell) {
 					found = true;
 					link.connection += getConfig().distalConnectionIncrement;
+					incremented++;
 					if (link.connection>=1) {
 						link.connection = 1;
 					}
@@ -294,26 +344,31 @@ public class Memor extends ProcessorObject {
 				link.fromSegment = winnerSegment;
 				link.toCell = toCell;
 				winnerSegment.links.add(link);
-				toCell.toSegments.add(winnerSegment);
+				List<MemorDistalLink> links = linksByToCell.get(toCell.getId());
+				if (links==null) {
+					links = new ArrayList<MemorDistalLink>();
+					linksByToCell.put(toCell.getId(),links);
+				}
+				links.add(link);
 				added++;
+				//System.out.println("Added: " + this.cellsById.get(link.fromSegment.cellId).columnIndex + " -> " + toCell.columnIndex);
 			}
 		}
-		//System.out.println(onBit + ": " + winnerSegment.getId() + ", added: " + added);
+		if (done>doneStart) {
+			System.out.println(winnerSegment.getId() + ", added: " + added + ", incremented: " + incremented);
+		}
 	}
 	
 	protected void unlearnIncorrectPredictions() {
 		for (MemorCell cell: predictiveCells) {
 			if (!winnerCells.contains(cell)) {
-				for (MemorDistalSegment segment: cell.segments) {
+				List<MemorDistalSegment> segments = new ArrayList<MemorDistalSegment>(cell.segments);
+				for (MemorDistalSegment segment: segments) {
 					if (predictiveSegments.contains(segment)) {
-						List<MemorDistalLink> list = new ArrayList<MemorDistalLink>(segment.links);
-						for (MemorDistalLink link: list) {
-							if (prevWinnerCells.contains(link.toCell)) {
-								link.connection -= getConfig().distalConnectionDecrement;
-								if (link.connection<=0) {
-									segment.links.remove(link);
-									link.toCell.toSegments.remove(segment);
-								}
+						List<MemorDistalLink> links = new ArrayList<MemorDistalLink>(segment.links);
+						for (MemorDistalLink link: links) {
+							if (prevActiveCells.contains(link.toCell)) {
+								decrementLink(segment,link);
 							}
 						}
 					}
@@ -322,31 +377,49 @@ public class Memor extends ProcessorObject {
 		}
 	}
 
-	protected void predictActiveCells() {
-		predictiveCells.clear();
-		predictiveSegments.clear();
-		List<MemorDistalSegment> checkedSegments = new ArrayList<MemorDistalSegment>();
-		for (MemorCell cell: winnerCells) {
-			//System.out.println(cell.getId() + ", toSegments: " + cell.toSegments.size());
-			for (MemorDistalSegment segment: cell.toSegments) {
-				if (!checkedSegments.contains(segment)) {
-					int active = 0;
-					for (MemorDistalLink link: segment.links) {
-						if (link.connection>getConfig().distalConnectionThreshold && winnerCells.contains(link.toCell)) {
-							active++;
-						}
-					}
-					if (active>=getConfig().minActiveDistalConnections) {
-						predictiveSegments.add(segment);
-					}
-				}
-				checkedSegments.add(segment);
+	protected void decrementLink(MemorDistalSegment segment,MemorDistalLink link) {
+		link.connection -= getConfig().distalConnectionDecrement;
+		if (link.connection<=0) {
+			segment.links.remove(link);
+			List<MemorDistalLink> links = linksByToCell.get(link.toCell.getId());
+			if (links!=null) {
+				links.remove(link);
 			}
 		}
-		for (MemorDistalSegment segment: predictiveSegments) {
-			MemorCell fromCell = cellsById.get(segment.cellId);
-			if (!predictiveCells.contains(fromCell)) {
-				predictiveCells.add(fromCell);
+		if (segment.links.size()==0) {
+			MemorCell cell = cellsById.get(segment.cellId);
+			cell.segments.remove(segment);
+		}
+	}
+	
+	protected void predictActiveCells(SDR burstSDR) {
+		predictiveCells.clear();
+		predictiveSegments.clear();
+		SortedMap<String,Integer> sourceCellIdActive = new TreeMap<String,Integer>();
+		for (MemorCell cell: activeCells) {
+			List<MemorDistalLink> links = linksByToCell.get(cell.getId());
+			if (links!=null) {
+				for (MemorDistalLink link: links) {
+					if (link.connection>getConfig().distalConnectionThreshold) {
+						Integer active = sourceCellIdActive.get(link.fromSegment.cellId);
+						if (active==null) {
+							active = new Integer(0);
+						}
+						active++;
+						sourceCellIdActive.put(link.fromSegment.cellId,active);
+					}
+				}
+			}
+		}
+		for (Entry<String,Integer> entry: sourceCellIdActive.entrySet()) {
+			if (done>doneStart) {
+				System.out.println(done + ": " + entry.getKey() + ", active: " + entry.getValue());
+			}
+			if (entry.getValue()>=getConfig().minActiveDistalConnections) {
+				MemorCell fromCell = cellsById.get(entry.getKey());
+				if (!predictiveCells.contains(fromCell)) {
+					predictiveCells.add(fromCell);
+				}
 			}
 		}
 	}

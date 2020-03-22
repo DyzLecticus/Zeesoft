@@ -13,8 +13,6 @@ public class MemorCell {
 
 	protected List<MemorDistalSegment>	segments	= new ArrayList<MemorDistalSegment>();
 	
-	protected List<MemorDistalSegment>	toSegments	= new ArrayList<MemorDistalSegment>(); // Redundant
-	
 	protected MemorCell(MemorConfig config,int index,int columnIndex,int posX, int posY, int posZ) {
 		this.config = config;
 		this.index = index;
@@ -31,7 +29,6 @@ public class MemorCell {
 	protected void destroy() {
 		this.config = null;
 		segments.clear();
-		toSegments.clear();
 	}
 	
 	protected String getId() {
