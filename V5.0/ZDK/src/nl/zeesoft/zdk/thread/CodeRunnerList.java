@@ -3,125 +3,95 @@ package nl.zeesoft.zdk.thread;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CodeRunnerList {
-	private Lock				lock			= new Lock();
-	
-	private List<CodeRunner>	runners			= new ArrayList<CodeRunner>();
-	private boolean				running			= false;
-	
-	public void setListener(LockListener listener) {
-		lock.setListener(this, listener);
-	}
+public class CodeRunnerList extends RunnerObject {
+	private List<CodeRunner>	runners		= new ArrayList<CodeRunner>();
 	
 	public void addCode(RunCode code) {
 		CodeRunner runner = getNewCodeRunner(code);
-		runner.setListener(lock.getListener(this));
-		lock.lock(this);
-		if (!running) {
+		runner.setListener(getLock().getListener(this));
+		getLock().lock(this);
+		if (!isRunningNoLock()) {
 			runners.add(runner);
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
+	}
+	
+	public void setListener(LockListener listener) {
+		getLock().setListener(this, listener);
+		getLock().lock(this);
+		for (CodeRunner runner: runners) {
+			runner.setListener(listener);
+		}
+		getLock().unlock(this);
 	}
 	
 	public void setSleepMs(int sleepMs) {
-		lock.lock(this);
+		getLock().lock(this);
 		for (CodeRunner runner: runners) {
 			runner.setSleepMs(sleepMs);
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
 	}
 	
 	public void setSleepNs(int sleepNs) {
-		lock.lock(this);
+		getLock().lock(this);
 		for (CodeRunner runner: runners) {
 			runner.setSleepNs(sleepNs);
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
 	}
 	
-	public boolean isRunning() {
-		lock.lock(this);
-		boolean r = running;
-		lock.unlock(this);
-		return r;
-	}
-	
+	@Override
 	public void start() {
 		boolean started = false;
-		lock.lock(this);
-		if (!running) {
+		getLock().lock(this);
+		if (!isRunningNoLock()) {
 			for (CodeRunner runner: runners) {
 				runner.start();
 			}
-			running = true;
+			setRunningNoLock(true);
 			started = true;
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
 		if (started) {
 			started();
 		}
 	}
 
+	@Override
 	public void stop() {
-		stop(true, 10);
-	}
-
-	public void stop(boolean wait, int sleepMs) {
-		lock.lock(this);
-		if (running) {
+		getLock().lock(this);
+		if (isRunningNoLock()) {
 			for (CodeRunner runner: runners) {
 				runner.stop();
 			}
 		}
-		lock.unlock(this);
-		if (wait && sleepMs>0) {
-			while(isRunning()) {
-				try {
-					Thread.sleep(sleepMs);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		getLock().unlock(this);
 	}
 
 	public List<RunCode> getCodes() {
 		List<RunCode> r = new ArrayList<RunCode>();
-		lock.lock(this);
+		getLock().lock(this);
 		for (CodeRunner runner: runners) {
 			r.add(runner.getCode());
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
 		return r;
 	}
 
 	public void clearCodes() {
-		lock.lock(this);
-		if (!running) {
+		getLock().lock(this);
+		if (!isRunningNoLock()) {
 			runners.clear();
 		}
-		lock.unlock(this);
-	}
-	
-	/**
-	 * Called when the runner has started.
-	 */
-	protected void started() {
-		// Override to implement
-	}
-
-	/**
-	 * Called when the runner has stopped.
-	 */
-	protected void stopped() {
-		// Override to implement
+		getLock().unlock(this);
 	}
 	
 	/**
 	 * Called when an exception has been caught.
 	 */
-	protected void caughtException(Exception ex) {
-		stop(false, 0);
+	protected void caughtException(CodeRunner runner, Exception exception) {
+		stop();
 	}
 	
 	protected CodeRunner getNewCodeRunner(RunCode code) {
@@ -129,29 +99,29 @@ public class CodeRunnerList {
 		CodeRunner r = new CodeRunner(code) {
 			@Override
 			protected void stopped() {
-				owner.stoppedRunning();
+				owner.stoppedRunning(this);
 			}
 			@Override
 			protected void caughtException(Exception exception) {
-				owner.caughtException(exception);
+				owner.caughtException(this,exception);
 			}
 		};
 		return r;
 	}
 	
-	protected void stoppedRunning() {
-		lock.lock(this);
+	protected void stoppedRunning(CodeRunner runner) {
+		getLock().lock(this);
 		boolean stopped = true;
-		for (CodeRunner runner: runners) {
-			if (runner.isRunning()) {
+		for (CodeRunner rnnr: runners) {
+			if (rnnr.isRunning()) {
 				stopped = false;
 				break;
 			}
 		}
 		if (stopped) {
-			running = false;
+			setRunningNoLock(false);
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
 		if (stopped) {
 			stopped();
 		}

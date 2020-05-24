@@ -93,7 +93,7 @@ public class TestRunCode extends TestObject {
 		list.setSleepMs(1);
 		list.start();
 		sleep(5);
-		list.stop();
+		list.stopWait();
 		assertEqual(list.isRunning(),false,"List state does not match expectation");
 		while(list.isRunning()) {
 			sleep(1);

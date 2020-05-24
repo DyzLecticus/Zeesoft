@@ -1,14 +1,11 @@
 package nl.zeesoft.zdk.thread;
 
-public class CodeRunner implements Runnable {
-	private Lock		lock		= new Lock();
-
+public class CodeRunner extends RunnerObject implements Runnable {
 	private RunCode		code		= null;
 	private int			sleepMs		= 100;
 	private int			sleepNs		= 0;
 
 	private Thread		runner 		= null;
-	private boolean		running		= false;
 	
 	public CodeRunner(RunCode code) {
 		this.code = code;
@@ -19,7 +16,7 @@ public class CodeRunner implements Runnable {
 	}
 	
 	public void setListener(LockListener listener) {
-		lock.setListener(this, listener);
+		getLock().setListener(this, listener);
 	}
 
 	public void setSleepMs(int sleepMs) {
@@ -30,63 +27,35 @@ public class CodeRunner implements Runnable {
 		setSleep(sleepNs,false);
 	}
 	
-	public boolean isRunning() {
-		lock.lock(this);
-		boolean r = running;
-		lock.unlock(this);
-		return r;
-	}
-	
+	@Override
 	public void start() {
-		lock.lock(this);
-		if (!running && runner == null) {
+		getLock().lock(this);
+		if (!isRunningNoLock() && runner == null) {
 			runner = new Thread(this);
 			runner.start();
-			running = true;
+			setRunningNoLock(true);
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
 	}
 
+	@Override
 	public void stop() {
-		lock.lock(this);
+		getLock().lock(this);
 		if (runner != null) {
 			runner = null;
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
 	}
 
 	@Override
 	public final void run() {
 		started();
 		
-		lock.lock(this);
-		Thread rnnr = runner;
-		int slpMs = sleepMs;
-		int slpNs = sleepNs;
-		lock.unlock(this);
+		whileRunning();
 		
-		while (rnnr!=null) {
-			boolean stop = code.tryRunCatch();
-			if (code.getException()!=null || stop) {
-				stop();
-			} else {
-				if (slpMs>0) {
-					sleepMs(slpMs);
-				} else {
-					sleepNs(slpNs);
-				}
-			}
-			
-			lock.lock(this);
-			rnnr = runner;
-			slpMs = sleepMs;
-			slpNs = sleepNs;
-			lock.unlock(this);
-		}
-		
-		lock.lock(this);
-		running = false;
-		lock.unlock(this);
+		getLock().lock(this);
+		setRunningNoLock(false);
+		getLock().unlock(this);
 		
 		stopped();
 		
@@ -94,20 +63,39 @@ public class CodeRunner implements Runnable {
 			caughtException(code.getException());
 		}
 	}
-	
-	/**
-	 * Called when the runner has started.
-	 */
-	protected void started() {
-		// Override to implement
+
+	protected void whileRunning() {
+		getLock().lock(this);
+		Thread rnnr = runner;
+		int slpMs = sleepMs;
+		int slpNs = sleepNs;
+		getLock().unlock(this);
+		
+		while (rnnr!=null) {
+			tryRunCatchSleep(slpMs,slpNs);
+			
+			getLock().lock(this);
+			rnnr = runner;
+			slpMs = sleepMs;
+			slpNs = sleepNs;
+			getLock().unlock(this);
+		}
 	}
 
-	/**
-	 * Called when the runner has stopped.
-	 */
-	protected void stopped() {
-		// Override to implement
+	protected void tryRunCatchSleep(int slpMs, int slpNs) {
+		boolean stop = code.tryRunCatch();
+		if (code.getException()!=null || stop) {
+			stop();
+		} else {
+			if (slpMs>0) {
+				sleepMs(slpMs);
+			} else {
+				sleepNs(slpNs);
+			}
+		}
 	}
+	
+	
 	
 	/**
 	 * Called when an exception has been caught.
@@ -117,7 +105,7 @@ public class CodeRunner implements Runnable {
 	}
 	
 	private void setSleep(int sleep, boolean ms) {
-		lock.lock(this);
+		getLock().lock(this);
 		if (ms) {
 			this.sleepMs = sleep;
 			this.sleepNs = 0;
@@ -125,7 +113,7 @@ public class CodeRunner implements Runnable {
 			this.sleepMs = 0;
 			this.sleepNs = sleep;
 		}
-		lock.unlock(this);
+		getLock().unlock(this);
 	}
 
 	private final void sleepMs(long sleepMs) {
