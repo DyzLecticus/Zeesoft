@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Str implements Comparable<Str>{
-	private	String			encoding	= "UTF8";
-	private StringBuilder	sb			= null;
+	private static final String		ENCODING	= "UTF8";
+	
+	private StringBuilder			sb			= null;
 	
 	public Str() {
 		this.sb = new StringBuilder();
@@ -36,6 +37,11 @@ public class Str implements Comparable<Str>{
 	@Override
 	public String toString() {
 		return sb.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return sb.hashCode();
 	}
 	
 	public StringBuilder sb() {
@@ -76,19 +82,49 @@ public class Str implements Comparable<Str>{
 	public boolean endsWith(String str) {
 		return endsWith(new Str(str));
 	}
+	
+	public boolean startsWith(String[] strs) {
+		boolean r = false;
+		for (int i = 0; i < strs.length; i++) {
+			if (startsWith(strs[i])) {
+				r = true;
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public boolean endsWith(String[] strs) {
+		boolean r = false;
+		for (int i = 0; i < strs.length; i++) {
+			if (endsWith(strs[i])) {
+				r = true;
+				break;
+			}
+		}
+		return r;
+	}
 
 	public Str trim() {
-		if (sb!=null) {
-			while (startsWith(" ") || startsWith("\n") || startsWith("\r") || startsWith("\t")) {
-				sb = sb.delete(0,1);
-			}
-			while (endsWith(" ") || endsWith("\n") || endsWith("\r") || endsWith("\t")) {
-				sb.delete(sb.length()-1,sb.length());
-			}
+		String[] characters = {" ", "\n" ,"\r", "\t"};
+		return trim(characters);
+	}
+
+	public Str trim(String character) {
+		String[] characters = {character};
+		return trim(characters);
+	}
+
+	public Str trim(String[] characters) {
+		while (startsWith(characters)) {
+			sb.delete(0,1);
+		}
+		while (endsWith(characters)) {
+			sb.delete(sb.length()-1,sb.length());
 		}
 		return this;
 	}
-	
+
 	public Str replace(String search, String replace) {
 		if (sb.length()>=search.length()) {
 			StringBuilder nsb = new StringBuilder();
@@ -129,19 +165,27 @@ public class Str implements Comparable<Str>{
 	}
 
 	public List<Str> split(String concatenator) {
-		List<Str> strs = new ArrayList<Str>();
-		Str add = new Str();
-		for (int i = 0; i < sb.length(); i++) {
-			String c = sb.substring(i,i+1);
-			if (c.equals(concatenator)) {
-				strs.add(add);
-				add = new Str();
-			} else {
-				add.sb().append(c);
+		List<Str> r = new ArrayList<Str>(); 
+		if (sb.length()>=concatenator.length()) {
+			Str add = new Str();
+			for (int i = 0; i < sb.length(); i++) {
+				if (i + concatenator.length() < sb.length()) {
+					String sub = sb.substring(i, i + concatenator.length());
+					if (sub.equals(concatenator)) {
+						r.add(add);
+						add = new Str();
+						i += (concatenator.length() - 1);
+					} else {
+						add.sb().append(sb.substring(i,i+1));
+					}
+				} else {
+					add.sb().append(sb.substring(i));
+					break;
+				}
 			}
+			r.add(add);
 		}
-		strs.add(add);
-		return strs;
+		return r;
 	}
 
 	public Str merge(List<Str> strs, String concatenator) {
@@ -155,10 +199,17 @@ public class Str implements Comparable<Str>{
 		sb = nsb;
 		return this;
 	}
-
+	
 	public Str fromFile(String fileName) {
+		return fromFile(fileName, null);
+	}
+
+	public Str fromFile(String fileName, String encoding) {
 		Str error = new Str();
 		FileInputStream fis = null;
+		if (encoding==null) {
+			encoding = ENCODING;
+		}
 		try {
 			fis = new FileInputStream(fileName);
 		} catch (FileNotFoundException e) {
@@ -166,19 +217,22 @@ public class Str implements Comparable<Str>{
 			error.sb().append(fileName);
 		}
 		if (fis!=null) {
-			error = fromInputStream(fis);
+			error = fromInputStream(fis, encoding);
 		}
 		return error;
 	}
 
-	public Str fromInputStream(InputStream is) {
+	public Str fromInputStream(InputStream is, String encoding) {
 		Str error = new Str();
+		if (encoding==null) {
+			encoding = ENCODING;
+		}
 		sb = new StringBuilder();
 		InputStreamReader isr = null;
 		try {
 			isr = null;
-			if (getEncoding().length()>0) {
-				isr = new InputStreamReader(is,getEncoding());
+			if (encoding.length()>0) {
+				isr = new InputStreamReader(is, encoding);
 			} else {
 				isr = new InputStreamReader(is);
 			}
@@ -210,14 +264,21 @@ public class Str implements Comparable<Str>{
 	}
 
 	public Str toFile(String fileName) {
+		return toFile(fileName, null);
+	}
+	
+	public Str toFile(String fileName, String encoding) {
 		Str error = new Str();
+		if (encoding==null) {
+			encoding = ENCODING;
+		}
 		char[] chars = toCharArray();
 		FileOutputStream fos = null;
 		Writer wtr = null;
 		try {
 			fos = new FileOutputStream(fileName);
-			if (getEncoding()!=null && getEncoding().length()>0) {
-				wtr = new OutputStreamWriter(fos,getEncoding());
+			if (encoding.length()>0) {
+				wtr = new OutputStreamWriter(fos,encoding);
 			} else {
 				wtr = new OutputStreamWriter(fos);
 			}
@@ -242,24 +303,6 @@ public class Str implements Comparable<Str>{
 			}
 		}
 		return error;
-	}
-	
-	/**
-	 * Returns the encoding for file I/O operations
-	 * 
-	 * @return The encoding 
-	 */
-	public String getEncoding() {
-		return encoding;
-	}
-
-	/**
-	 * Sets the encoding for file I/O operations
-	 * 
-	 * @param encoding The string representation of the file encoding
-	 */
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
 	}
 	
 	private boolean equals(StringBuilder other,boolean ignoreCase) {

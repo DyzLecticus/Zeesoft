@@ -30,10 +30,11 @@ public class ZDK extends LibraryObject {
 		System.out.println("The Zeesoft Development Kit (ZDK) is an open source library for Java application development.  ");
 		System.out.println();
 		System.out.println("It provides support for;  ");
+		System.out.println(" * Self documenting and testing libraries  ");
 		System.out.println(" * Extended StringBuilder manipulation and validation  ");
 		System.out.println(" * Basic file writing and reading  ");
 		System.out.println(" * Multi threading  ");
-		System.out.println(" * Self documenting and testing libraries  ");
+		System.out.println(" * Basic object persistence  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -45,5 +46,6 @@ public class ZDK extends LibraryObject {
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestStr(getTester()));
 		tests.add(new TestRunCode(getTester()));
+		tests.add(new TestPersistables(getTester()));
 	}
 }

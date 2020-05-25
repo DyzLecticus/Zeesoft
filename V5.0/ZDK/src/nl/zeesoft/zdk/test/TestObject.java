@@ -89,7 +89,56 @@ public abstract class TestObject {
 	 * @return True if the assertion is correct
 	 */
 	public boolean assertEqual(Str str1, Str str2,String failMessage) {
-		return handleAssertionResult(str1.equals(str2),failMessage + " ('" + str1 + "' <> '" + str2 + "')");
+		boolean result = str1.equals(str2);
+		Str append = new Str();
+		
+		if (!result) {
+			int diffLine = 0;
+			int diffPos = 0;
+			Str diff1 = new Str();
+			Str diff2 = new Str();
+			for (int c = 0; c < str1.length(); c++) {
+				String c1 = "";
+				if (str1.length()>c) {
+					c1 = str1.sb().substring(c,c+1);
+				}
+				String c2 = str2.sb().substring(c,c+1);
+				if (!c1.equals(c2)) {
+					int max = c + 20;
+					if (str1.length()>c) {
+						if (max > str1.length()) {
+							max = str1.length();
+						}
+						diff1.sb().append(str1.sb().substring(c,max));
+						diff1 = diff1.split("\n").get(0);
+						max = c + 20;
+					}
+					if (max > str2.length()) {
+						max = str2.length();
+					}
+					diff2.sb().append(str2.sb().substring(c,max));
+					diff2 = diff2.split("\n").get(0);
+					break;
+				}
+				diffPos++;
+				if (c1.equals("\n")) {
+					diffLine++;
+					diffPos = 0;
+				}
+			}
+			append.sb().append(" (");
+			append.sb().append("Ln/Pos: ");
+			append.sb().append(diffLine);
+			append.sb().append("/");
+			append.sb().append(diffPos);
+			append.sb().append(", '");
+			append.sb().append(diff1);
+			append.sb().append("' <> '");
+			append.sb().append(diff2);
+			append.sb().append("')\n");
+			append.sb().append(str1);
+		}
+		return handleAssertionResult(str1.equals(str2),failMessage + append);
 	}
 	
 	/**

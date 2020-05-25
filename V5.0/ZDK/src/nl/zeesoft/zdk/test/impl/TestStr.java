@@ -42,7 +42,6 @@ public class TestStr extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Str test = new Str((Str)getTester().getMockedObject(MockStr.class.getName()));
-		assertEqual(test.getEncoding(),"UTF8","Encoding does not match expectation");
 		assertEqual(test.trim(),new Str("qwer,asdf,zxcv"),"Encoding does not match expectation");
 		System.out.println("Input: " + test);
 		List<Str> strs = test.split(",");

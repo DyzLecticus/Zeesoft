@@ -1,9 +1,21 @@
 package nl.zeesoft.zdk;
 
+import java.lang.reflect.Array;
+
 /**
  * This Intstantiator provides static methods to dynamically instantiate classes. 
  */
 public class Instantiator {
+	public static String getClassName(String className) {
+		if (className.contains(" ")) {
+			className = className.split(" ")[1];
+		}
+		if (className.startsWith("[L") && className.endsWith(";")) {
+			className = className.substring(2).substring(0, className.length() - 3);
+		}
+		return className;
+	}
+	
 	public static boolean hasClassForName(String className) {
 		boolean r = true;
 		try {
@@ -56,6 +68,15 @@ public class Instantiator {
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
+		}
+		return r;
+	}
+	
+	public static Object getNewArrayInstanceForName(String className, int length) {
+		Object r = null;
+		if (canInstantiateClass(className)) {
+			Class<?> cls = getClassForName(className);
+			r = Array.newInstance(cls, length);
 		}
 		return r;
 	}
