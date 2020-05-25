@@ -2,8 +2,11 @@ package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.persist.PersistableCollection;
+import nl.zeesoft.zdk.persist.PersistableCollectionBase;
 import nl.zeesoft.zdk.persist.PersistableObject;
 import nl.zeesoft.zdk.persist.PersistableProperty;
+import nl.zeesoft.zdk.persist.Query;
+import nl.zeesoft.zdk.persist.QueryFilter;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -38,11 +41,9 @@ public class TestPersistables extends TestObject {
 		System.out.println("collection.fromFile(\"fileName.txt\");");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockStr.class.getName());
-		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestPersistables.class));
-		System.out.println(" * " + getTester().getLinkForClass(PersistableCollection.class));
+		System.out.println(" * " + getTester().getLinkForClass(PersistableCollectionBase.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableObject.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableProperty.class));
 		System.out.println();
@@ -60,7 +61,7 @@ public class TestPersistables extends TestObject {
 		parent1.getTestFloatList().add(0.2F);
 		String[] strings = {"TestElement1", "TestElement2"};
 		parent1.setTestStringArray(strings);
-		Integer[] ints = {0, 1, 2, 3};
+		int[] ints = {0, 1, 2, 3};
 		parent1.setTestIntArray(ints);
 		
 		PersistableParent parent2 = new PersistableParent();
@@ -88,7 +89,7 @@ public class TestPersistables extends TestObject {
 		parent1.getTestChildren().add(child2);
 		parent2.getTestChildren().add(child2);
 		
-		PersistableCollection collection = new PersistableCollection();
+		PersistableCollectionBase collection = new PersistableCollectionBase();
 		collection.put(parent1);
 		collection.put(parent2);
 		assertEqual(collection.size(),EXPECTED_SIZE,"Collection size does not match expectation");
@@ -120,5 +121,83 @@ public class TestPersistables extends TestObject {
 		collection.fromStr(str);
 		assertEqual(collection.size(),EXPECTED_SIZE,"Failed to parse the collection");
 		assertEqual(collection.toStr(),str,"Collection Str does not match expectation");
+		
+		
+		System.out.println();
+		System.out.println("Compressed;");
+		collection = new PersistableCollection();
+		collection.put(parent1);
+		collection.put(parent2);
+		Str cstr = collection.toStr();
+		collection.fromStr(cstr);
+		cstr = collection.toStr();
+		System.out.println(cstr);
+		
+		Str cstrs = cstr.split(PersistableCollectionBase.START_OBJECTS).get(1);
+		cstrs.sb().append(PersistableCollectionBase.START_OBJECTS);
+		System.out.println();
+		System.out.println("Original: " + str.length() + ", compressed: " + cstr.length() + ", compressed excluding header: " + cstrs.length());
+		
+		// Test equals
+		Query query = collection.query(
+			Query.create(PersistableParent.class)
+			.filter("testString","TestParent1")
+		);
+		assertResultsIsTestParent1(query,1);
+		
+		// Test not equals
+		query = collection.query(
+			Query.create(PersistableParent.class)
+			.filter("testString",true,"TestParent2")
+		);
+		assertResultsIsTestParent1(query,2);
+		
+		// Test contains
+		query = collection.query(
+			Query.create(PersistableParent.class)
+			.filter("testString",QueryFilter.CONTAINS,"1")
+		);
+		assertResultsIsTestParent1(query,3);
+		
+		// Test multiple types
+		query = collection.query(
+			Query.create(PersistableParent.class)
+			.addClass(PersistableChild.class)
+			.filter("testString",QueryFilter.CONTAINS,"1")
+		);
+		assertEqual(query.results.size(),2,"Query results size does not match expectation[4]");
+		
+		// Test multiple types and multiple filters
+		query = collection.query(
+			Query.create(PersistableParent.class)
+			.addClass(PersistableChild.class)
+			.filter("testString",QueryFilter.CONTAINS,"1")
+			.filter("testString",true,QueryFilter.CONTAINS,"Child")
+		);
+		assertResultsIsTestParent1(query,5);
+		
+		// Test less
+		query = collection.query(
+			Query.create(PersistableChild.class)
+			.filter("testInt",QueryFilter.LESS,222)
+		);
+		assertEqual(query.results.size(),1,"Query results size does not match expectation[6]");
+
+		// Test less or equal (invert greater)
+		query = collection.query(
+			Query.create(PersistableChild.class)
+			.filter("testInt",true,QueryFilter.GREATER,222)
+		);
+		assertEqual(query.results.size(),2,"Query results size does not match expectation[7]");
+	}
+	
+	private void assertResultsIsTestParent1(Query query,int num) {
+		if (assertEqual(query.results.size(),1,"Query results size does not match expectation[" + num + "]")) {
+			Object first = query.results.get(query.results.firstKey());
+			if (assertEqual(first.getClass().getName(),PersistableParent.class.getName(),"Query did not return the expected type[" + num + "]")) {
+				PersistableParent result = (PersistableParent) first;
+				assertEqual(result.getTestString(),"TestParent1","Query did not return the expected object[" + num + "]");
+			}
+		}
 	}
 }

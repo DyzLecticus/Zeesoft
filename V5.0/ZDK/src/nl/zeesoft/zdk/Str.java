@@ -125,6 +125,22 @@ public class Str implements Comparable<Str>{
 		return this;
 	}
 
+	public boolean contains(String search) {
+		boolean r = false;
+		if (sb.length()>=search.length()) {
+			for (int i = 0; i < sb.length(); i++) {
+				if (i + search.length() < sb.length()) {
+					String sub = sb.substring(i, i + search.length());
+					if (sub.equals(search)) {
+						r = true;
+						break;
+					}
+				}
+			}
+		}
+		return r;
+	}
+
 	public Str replace(String search, String replace) {
 		if (sb.length()>=search.length()) {
 			StringBuilder nsb = new StringBuilder();

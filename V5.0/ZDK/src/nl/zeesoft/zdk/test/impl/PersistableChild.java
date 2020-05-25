@@ -15,6 +15,7 @@ public class PersistableChild extends PersistableAbstract {
 	@PersistableProperty()
 	private Str					testStr		= new Str();
 	
+	
 	public int getTestInt() {
 		return testInt;
 	}

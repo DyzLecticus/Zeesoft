@@ -13,7 +13,7 @@ public class PersistableParent extends PersistableAbstract {
 	@PersistableProperty()
 	private String[]				testStringArray	= null;
 	@PersistableProperty()
-	private Integer[]				testIntArray	= null;
+	private int[]					testIntArray	= null;
 	@PersistableProperty()
 	private List<PersistableChild>	testChildren	= new ArrayList<PersistableChild>();
 	@PersistableProperty()
@@ -59,11 +59,11 @@ public class PersistableParent extends PersistableAbstract {
 		this.testPartner = testPartner;
 	}
 
-	public Integer[] getTestIntArray() {
+	public int[] getTestIntArray() {
 		return testIntArray;
 	}
 
-	public void setTestIntArray(Integer[] testIntArray) {
+	public void setTestIntArray(int[] testIntArray) {
 		this.testIntArray = testIntArray;
 	}
 }
