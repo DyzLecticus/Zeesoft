@@ -11,35 +11,65 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class QueryableCollection {
+	public final static String				ID_CONCATENATOR			= "@";
+	
 	protected final Lock					lock					= new Lock();
 	
+	protected long							nextId					= 1;
 	protected final SortedMap<Str,Object>	objects					= new TreeMap<Str,Object>();
-	protected final SortedMap<Str,Str>		objectIds				= new TreeMap<Str,Str>();
 	
-	public Str put(Object object) {
-		lock.lock(this);
-		Str id = getObjectIdForObjectNoLock(object);
-		objects.put(id, object);
-		lock.unlock(this);
+	public Str put(Str id,Object object) {
+		if (object!=null) {
+			lock.lock(this);
+			id = putNoLock(id, object);
+			lock.unlock(this);
+		}
 		return id;
 	}
-	
-	public List<Str> putAll(List<Object> objects) {
+
+	public Str put(Object object) {
+		return put(null,object);
+	}
+
+	public List<Str> putAll(SortedMap<Str,Object> objects) {
 		List<Str> ids = new ArrayList<Str>();
-		for (Object object: objects) {
-			Str id = put(object);
+		for (Entry<Str,Object> entry: objects.entrySet()) {
+			Str id = put(entry.getKey(),entry.getValue());
 			ids.add(id);
 		}
 		return ids;
 	}
 	
-	public void remove(Str id) {
-		lock.lock(this);
-		if (objects.containsKey(id)) {
-			Object object = objects.remove(id);
-			Str oid = getObjectId(object);
-			objectIds.remove(oid);
+	public List<Str> putAll(List<Object> objects) {
+		List<Str> ids = new ArrayList<Str>();
+		for (Object object: objects) {
+			Str id = put(null,object);
+			ids.add(id);
 		}
+		return ids;
+	}
+	
+	public Object remove(Str id) {
+		Object r = null;
+		if (id!=null) {
+			lock.lock(this);
+			r = removeNoLock(id);
+			lock.unlock(this);
+		}
+		return r;
+	}
+	
+	public List<Object> removeAll(List<Str> ids) {
+		List<Object> r = new ArrayList<Object>();
+		for (Str id: ids) {
+			r.add(remove(id));
+		}
+		return r;
+	}
+	
+	public void clear() {
+		lock.lock(this);
+		clearNoLock(); 
 		lock.unlock(this);
 	}
 	
@@ -69,16 +99,23 @@ public class QueryableCollection {
 	}
 	
 	public Object get(Str id) {
-		lock.lock(this);
-		Object r = objects.get(id); 
-		lock.unlock(this);
+		Object r = null;
+		if (id!=null) {
+			lock.lock(this);
+			r = objects.get(id); 
+			lock.unlock(this);
+		}
 		return r;
 	}
 	
-	public void clear() {
-		lock.lock(this);
-		clearNoLock(); 
-		lock.unlock(this);
+	public boolean containsId(Str id) {
+		boolean r = false;
+		if (id!=null) {
+			lock.lock(this);
+			r = objects.containsKey(id);
+			lock.unlock(this);
+		}
+		return r;
 	}
 	
 	public Query query(Query query) {
@@ -102,21 +139,23 @@ public class QueryableCollection {
 		return query.applyAllFilters();
 	}
 	
-	protected Str getObjectIdForObjectNoLock(Object object) {
-		Str oid = getObjectId(object);
-		Str r = objectIds.get(oid);
-		if (r==null) {
-			r = oid;
-			objectIds.put(oid, r);
+	protected Str putNoLock(Str id, Object object) {
+		if (id==null) {
+			id = new Str(object.getClass().getName());
+			id.sb().append(ID_CONCATENATOR);
+			id.sb().append(nextId);
+			nextId++;
 		}
-		return r;
+		objects.put(id, object);
+		return id;
 	}
 	
-	protected static Str getObjectId(Object object) {
-		Str r = new Str(object.getClass().getName());
-		r.sb().append("@");
-		r.sb().append(object.hashCode());
-		return r;
+	protected Object removeNoLock(Str id) {
+		return objects.remove(id);
+	}
+	
+	protected void clearNoLock() {
+		objects.clear();
 	}
 	
 	public SortedMap<Str,Object> getObjectsNoLock(String className) {
@@ -131,11 +170,6 @@ public class QueryableCollection {
 			}
 		}
 		return r;
-	}
-	
-	protected void clearNoLock() {
-		objects.clear();
-		objectIds.clear();
 	}
 	
 	protected static Field getFieldByName(Object object, String fieldName) {

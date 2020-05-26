@@ -9,9 +9,10 @@ import java.util.Map.Entry;
 import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Str;
 
-public class PersistableCollectionBase extends QueryableCollection {
+public class PersistableCollectionBase extends CompleteCollection {
 	public static final String		NULL					= "null";
 	
+	public static final String		NEXT_ID					= "@NI|";
 	public static final String		START_OBJECTS			= "@SO|\n";
 	public static final String		NEXT_OBJECT				= "\n@NO|\n";
 	
@@ -23,14 +24,6 @@ public class PersistableCollectionBase extends QueryableCollection {
 	public static final String		LIST_START				= "@LS|";
 	public static final String		LIST_CONCATENATOR		= "|LC|";
 	public static final String		LIST_END				= "|LE@";
-
-	public Str put(Object object) {
-		Str id = null;
-		lock.lock(this);
-		id = putNoLock(object);
-		lock.unlock(this);
-		return id;
-	}
 	
 	public Str toStr() {
 		lock.lock(this);
@@ -58,9 +51,9 @@ public class PersistableCollectionBase extends QueryableCollection {
 		return r;
 	}
 	
-	public Str getObjectAsStr(Object object) {
+	public Str getObjectAsStr(Str id) {
 		lock.lock(this);
-		Str r = getObjectAsStrNoLock(object);
+		Str r = getObjectAsStrNoLock(id);
 		lock.unlock(this);
 		return r;
 	}
@@ -75,6 +68,256 @@ public class PersistableCollectionBase extends QueryableCollection {
 		lock.unlock(this);
 		return r;
 	}
+	
+	@Override
+	protected boolean isSupportedObject(Class<?> cls) {
+		return isPersistableObject(cls);
+	}
+	
+	@Override
+	protected boolean isSupportedObject(String className) {
+		return isPersistableObjectType(className);
+	}
+	
+	@Override
+	protected boolean isSupportedField(Field field) {
+		return field.isAnnotationPresent(PersistableProperty.class);
+	}
+	
+	protected Str getObjectAsStrNoLock(Str id) {
+		Str r = new Str();
+		Object object = objects.get(id);
+		if (object!=null) {
+			r.sb().append(PERSISTABLE_OBJECT);
+			r.sb().append(getObjectIdForObjectNoLock(object));
+			List<Field> fields = getPersistedFields(object);
+			for (Field field : fields) {
+				if (isSupportedValueType(field.getType().toString())) {
+					Object value = getFieldValue(object, field);
+					if (value!=null) {
+						if (value instanceof StringBuilder) {
+							Str str = new Str((StringBuilder)value);
+							str.replace("\n", NEWLINE);
+							value = str.sb();
+						} else if (value instanceof String) {
+							String v = ((String) value);
+							v = v.replace("\n", NEWLINE);
+							value = v;
+						} else if (
+							!isArrayType(field.getType().toString()) &&
+							isPersistableObject(value.getClass())
+							) {
+							value = getObjectIdForObjectNoLock(value);
+						} else if (value instanceof List) {
+							@SuppressWarnings("unchecked")
+							List<Object> objs = (List<Object>) value;
+							Str newValue = new Str();
+							for (Object obj: objs) {
+								if (obj!=null) {
+									if (isPersistableObject(obj.getClass())) {
+										if (newValue.length()>0) {
+											newValue.sb().append(LIST_CONCATENATOR);
+										}
+										newValue.sb().append(getObjectIdForObjectNoLock(obj));
+									}
+								} else {
+									newValue.sb().append(NULL);
+								}
+							}
+							newValue.sb().insert(0, LIST_START);
+							newValue.sb().append(LIST_END);
+							newValue.sb().insert(0, List.class.getName());
+							value = newValue;
+						} else if (
+							isArrayType(field.getType().toString()) &&
+							isSupportedValueType(field.getType().toString())
+							) {
+							String className = Instantiator.getClassName(field.getType().toString());
+							List<Object> values = new ArrayList<Object>();
+							if (value instanceof Object[]) {
+								Object[] vals = (Object[]) value;
+								for (int i = 0; i < vals.length; i++) {
+									values.add(vals[i]);
+								}
+							} else if (value instanceof int[]) {
+								int[] vals = (int[]) value;
+								for (int i = 0; i < vals.length; i++) {
+									values.add(vals[i]);
+								}
+								className = int.class.getName();
+							} else if (value instanceof long[]) {
+								long[] vals = (long[]) value;
+								for (int i = 0; i < vals.length; i++) {
+									values.add(vals[i]);
+								}
+								className = long.class.getName();
+							} else if (value instanceof float[]) {
+								float[] vals = (float[]) value;
+								for (int i = 0; i < vals.length; i++) {
+									values.add(vals[i]);
+								}
+								className = float.class.getName();
+							} else if (value instanceof double[]) {
+								double[] vals = (double[]) value;
+								for (int i = 0; i < vals.length; i++) {
+									values.add(vals[i]);
+								}
+								className = double.class.getName();
+							} else if (value instanceof boolean[]) {
+								boolean[] vals = (boolean[]) value;
+								for (int i = 0; i < vals.length; i++) {
+									values.add(vals[i]);
+								}
+								className = boolean.class.getName();
+							}
+							Str newValue = new Str();
+							for (Object val: values) {
+								if (newValue.length()>0) {
+									newValue.sb().append(LIST_CONCATENATOR);
+								}
+								if (val!=null) {
+									if (isPersistableObject(val.getClass())) {
+										newValue.sb().append(getObjectIdForObjectNoLock(val));
+									} else {
+										newValue.sb().append(val);
+									}
+								} else {
+									newValue.sb().append(NULL);
+								}
+							}
+							newValue.sb().insert(0, LIST_START);
+							newValue.sb().append(LIST_END);
+							newValue.sb().insert(0, className);
+							value = newValue;
+						} else if (value instanceof Str) {
+							Str str = new Str((Str)value);
+							str.replace("\n", NEWLINE);
+							value = str;
+						}
+					}
+					
+					r.sb().append("\n");
+					r.sb().append(PERSISTABLE_PROPERTY);
+					r.sb().append(field.getName());
+					r.sb().append(EQUALS);
+					r.sb().append(value);
+				}
+			}
+		}
+		return r;
+	}
+	
+	protected void expandObjectChildrenNoLock(Object object) {
+		List<Field> fields = getPersistedFields(object);
+		for (Field field : fields) {
+			if (field.getType().isAssignableFrom(List.class)) {
+				List<Object> children = new ArrayList<Object>();
+				@SuppressWarnings("unchecked")
+				List<Object> idList = (List<Object>) getFieldValue(object, field);
+				if (idList!=null && idList.size()>0) {
+					for (Object id: idList) {
+						if (id instanceof Str) {
+							Object child = objects.get((Str) id);
+							if (child!=null) {
+								children.add(child);
+							}
+						}
+					}
+					setFieldValue(object, field, children);
+					for (Object child: children) {
+						expandObjectChildrenNoLock(child);
+					}
+				}
+			}
+		}
+	}
+	
+	protected void expandObjectReferencesNoLock(List<Str> objStrs) {
+		for (Str objStr: objStrs) {
+			Str id = getObjectIdFromObjStr(objStr);
+			Object object = objects.get(id);
+			if (object!=null) {
+				expandObjectReferencesNoLock(object,objStr);
+			}
+		}
+	}
+	
+	protected void expandObjectReferencesNoLock(Object object, Str objStr) {
+		List<Str> lines = objStr.split("\n");
+		for (int l = 1; l < lines.size(); l++) {
+			Str line = lines.get(l);
+			line.sb().delete(0, PERSISTABLE_PROPERTY.length());
+			List<Str> nameValue = line.split(EQUALS);
+			String fieldName = nameValue.get(0).toString();
+			Field field = getFieldByName(object, fieldName);
+			if (field!=null && isPersistableObjectType(field.getType().toString())) {
+				field.setAccessible(true);
+				Str value = nameValue.get(1);
+				if (isArrayType(field.getType().toString())) {
+					Object[] arrayValue = (Object[]) getFieldValue(object, field);
+					if (arrayValue!=null) {
+						List<Str> vals = parseValuesFromArray(value);
+						for (int i = 0; i < arrayValue.length; i++) {
+							Object reference = objects.get(vals.get(i));
+							arrayValue[i] = reference;
+						}
+					}
+				} else {
+					Object reference = objects.get(value);
+					if (reference!=null) {
+						setFieldValue(object, field, reference);
+					}
+				}
+			}
+		}
+	}
+	
+	protected Str toStrNoLock() {
+		Str r = new Str();
+		r.sb().append(NEXT_ID);
+		r.sb().append(nextId);
+		r.sb().append("\n");
+		r.sb().append(START_OBJECTS);
+		boolean first = true;
+		for (Entry<Str,Object> entry: objects.entrySet()) {
+			if (!first) {
+				r.sb().append(NEXT_OBJECT);
+			}
+			Str objStr = getObjectAsStrNoLock(entry.getKey());
+			r.sb().append(objStr);
+			first = false;
+		}
+		return r;
+	}
+	
+	protected void fromStrNoLock(Str str) {
+		clearNoLock();
+		List<Str> headerBody = str.split(START_OBJECTS);
+		List<Str> headerLines = headerBody.get(0).split("\n");
+		for (Str line: headerLines) {
+			if (line.startsWith(NEXT_ID)) {
+				try {
+					nextId = Long.parseLong(line.sb().substring(NEXT_ID.length()).trim());
+				} catch (NumberFormatException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		List<Str> objStrs = headerBody.get(1).split(NEXT_OBJECT);
+		for (Str objStr: objStrs) {
+			Str id = getObjectIdFromObjStr(objStr);
+			if (id!=null) {
+				Object object = getObjectFromObjStr(objStr);
+				if (object!=null) {
+					putNoLock(id, object);
+				}
+			}
+		}
+		for (Object object: objects.values()) {
+			expandObjectChildrenNoLock(object);
+		}
+		expandObjectReferencesNoLock(objStrs);
+	}
 
 	protected static boolean isArrayType(String className) {
 		if (className.contains(" ")) {
@@ -83,127 +326,7 @@ public class PersistableCollectionBase extends QueryableCollection {
 		return className.startsWith("[");
 	}
 
-	protected Str getObjectAsStrNoLock(Object object) {
-		Str r = new Str();
-		r.sb().append(PERSISTABLE_OBJECT);
-		r.sb().append(getObjectIdForObjectNoLock(object));
-		List<Field> fields = getPersistedFields(object);
-		for (Field field : fields) {
-			if (isSupportedValueType(field.getType().toString())) {
-				Object value = getFieldValue(object, field);
-				if (value!=null) {
-					if (value instanceof StringBuilder) {
-						Str str = new Str((StringBuilder)value);
-						str.replace("\n", NEWLINE);
-						value = str.sb();
-					} else if (value instanceof String) {
-						String v = ((String) value);
-						v = v.replace("\n", NEWLINE);
-						value = v;
-					} else if (
-						!isArrayType(field.getType().toString()) &&
-						isPersistableObject(value.getClass())
-						) {
-						value = getObjectIdForObjectNoLock(value);
-					} else if (value instanceof List) {
-						@SuppressWarnings("unchecked")
-						List<Object> objs = (List<Object>) value;
-						Str newValue = new Str();
-						for (Object obj: objs) {
-							if (obj!=null) {
-								if (isPersistableObject(obj.getClass())) {
-									if (newValue.length()>0) {
-										newValue.sb().append(LIST_CONCATENATOR);
-									}
-									newValue.sb().append(getObjectIdForObjectNoLock(obj));
-								}
-							} else {
-								newValue.sb().append(NULL);
-							}
-						}
-						newValue.sb().insert(0, LIST_START);
-						newValue.sb().append(LIST_END);
-						newValue.sb().insert(0, List.class.getName());
-						value = newValue;
-					} else if (
-						isArrayType(field.getType().toString()) &&
-						isSupportedValueType(field.getType().toString())
-						) {
-						String className = Instantiator.getClassName(field.getType().toString());
-						List<Object> values = new ArrayList<Object>();
-						if (value instanceof Object[]) {
-							Object[] vals = (Object[]) value;
-							for (int i = 0; i < vals.length; i++) {
-								values.add(vals[i]);
-							}
-						} else if (value instanceof int[]) {
-							int[] vals = (int[]) value;
-							for (int i = 0; i < vals.length; i++) {
-								values.add(vals[i]);
-							}
-							className = int.class.getName();
-						} else if (value instanceof long[]) {
-							long[] vals = (long[]) value;
-							for (int i = 0; i < vals.length; i++) {
-								values.add(vals[i]);
-							}
-							className = long.class.getName();
-						} else if (value instanceof float[]) {
-							float[] vals = (float[]) value;
-							for (int i = 0; i < vals.length; i++) {
-								values.add(vals[i]);
-							}
-							className = float.class.getName();
-						} else if (value instanceof double[]) {
-							double[] vals = (double[]) value;
-							for (int i = 0; i < vals.length; i++) {
-								values.add(vals[i]);
-							}
-							className = double.class.getName();
-						} else if (value instanceof boolean[]) {
-							boolean[] vals = (boolean[]) value;
-							for (int i = 0; i < vals.length; i++) {
-								values.add(vals[i]);
-							}
-							className = boolean.class.getName();
-						}
-						Str newValue = new Str();
-						for (Object val: values) {
-							if (newValue.length()>0) {
-								newValue.sb().append(LIST_CONCATENATOR);
-							}
-							if (val!=null) {
-								if (isPersistableObject(val.getClass())) {
-									newValue.sb().append(getObjectIdForObjectNoLock(val));
-								} else {
-									newValue.sb().append(val);
-								}
-							} else {
-								newValue.sb().append(NULL);
-							}
-						}
-						newValue.sb().insert(0, LIST_START);
-						newValue.sb().append(LIST_END);
-						newValue.sb().insert(0, className);
-						value = newValue;
-					} else if (value instanceof Str) {
-						Str str = new Str((Str)value);
-						str.replace("\n", NEWLINE);
-						value = str;
-					}
-				}
-				
-				r.sb().append("\n");
-				r.sb().append(PERSISTABLE_PROPERTY);
-				r.sb().append(field.getName());
-				r.sb().append(EQUALS);
-				r.sb().append(value);
-			}
-		}
-		return r;
-	}
-
-	protected static Str getObjectIdFromStr(Str objStr) {
+	protected static Str getObjectIdFromObjStr(Str objStr) {
 		Str r = null;
 		if (objStr.startsWith(PERSISTABLE_OBJECT)) {
 			List<Str> lines = objStr.split("\n");
@@ -219,7 +342,7 @@ public class PersistableCollectionBase extends QueryableCollection {
 			List<Str> lines = objStr.split("\n");
 			Str id = lines.get(0);
 			id.sb().delete(0, PERSISTABLE_OBJECT.length());
-			String className = id.split("@").get(0).toString();
+			String className = id.split(ID_CONCATENATOR).get(0).toString();
 			Object object = Instantiator.getNewClassInstanceForName(className);
 			if (object!=null) {
 				for (int l = 1; l < lines.size(); l++) {
@@ -498,13 +621,6 @@ public class PersistableCollectionBase extends QueryableCollection {
 		return r;
 	}
 	
-	protected static List<Str> parseValuesFromArray(Str arrayStr) {
-		List<Str> typeValues = arrayStr.split(LIST_START);
-		arrayStr = typeValues.get(1);
-		arrayStr.sb().delete(arrayStr.length() - LIST_END.length(), arrayStr.length());
-		return arrayStr.split(LIST_CONCATENATOR);
-	}
-	
 	protected static List<Field> getPersistedFields(Object object) {
 		List<Field> r = new ArrayList<Field>();
 		Class<?> cls = object.getClass();
@@ -520,161 +636,10 @@ public class PersistableCollectionBase extends QueryableCollection {
 		return r;
 	}
 	
-	protected void addObjectChildrenNoLock(Object object) {
-		List<Field> fields = getPersistedFields(object);
-		for (Field field : fields) {
-			if (field.getType().isAssignableFrom(List.class)) {
-				List<?> objects = (List<?>) getFieldValue(object, field);
-				if (objects!=null) {
-					for (Object child: objects) {
-						putNoLock(child);
-					}
-				}
-			}
-		}
-	}
-	
-	protected void addObjectReferencesNoLock(Object object) {
-		List<Field> fields = getPersistedFields(object);
-		for (Field field : fields) {
-			if (isPersistableObjectType(field.getType().toString())) {
-				if (isArrayType(field.getType().toString())) {
-					Object[] arrayValue = (Object[]) getFieldValue(object, field);
-					if (arrayValue!=null) {
-						for (int i = 0; i < arrayValue.length; i++) {
-							if (arrayValue[i]!=null) {
-								putNoLock(arrayValue[i]);
-							}
-						}
-					}
-				} else {
-					Object reference = getFieldValue(object, field);
-					if (reference!=null) {
-						putNoLock(reference);
-					}
-				}
-			}
-		}
-	}
-	
-	protected Str putNoLock(Object object) {
-		return putNoLock(null, object);
-	}
-	
-	protected Str putNoLock(Str id, Object object) {
-		Str r = id;
-		if (isPersistableObject(object.getClass())) {
-			if (id==null) {
-				id = getObjectIdForObjectNoLock(object);
-				r = id;
-			}
-			boolean add = false;
-			if (!objects.containsKey(id)) {
-				add = true;
-			}
-			objects.put(id,object);
-			if (add) {
-				addObjectChildrenNoLock(object);
-				addObjectReferencesNoLock(object);
-			}
-		}
-		return r;
-	}
-	
-	protected void expandObjectChildrenNoLock(Object object) {
-		List<Field> fields = getPersistedFields(object);
-		for (Field field : fields) {
-			if (field.getType().isAssignableFrom(List.class)) {
-				List<Object> children = new ArrayList<Object>();
-				@SuppressWarnings("unchecked")
-				List<Object> idList = (List<Object>) getFieldValue(object, field);
-				if (idList!=null && idList.size()>0) {
-					for (Object id: idList) {
-						if (id instanceof Str) {
-							Object child = objects.get((Str) id);
-							if (child!=null) {
-								children.add(child);
-							}
-						}
-					}
-					setFieldValue(object, field, children);
-					for (Object child: children) {
-						expandObjectChildrenNoLock(child);
-					}
-				}
-			}
-		}
-	}
-	
-	protected void expandObjectReferencesNoLock(List<Str> objStrs) {
-		for (Str objStr: objStrs) {
-			Str id = getObjectIdFromStr(objStr);
-			Object object = objects.get(id);
-			if (object!=null) {
-				expandObjectReferencesNoLock(object,objStr);
-			}
-		}
-	}
-	
-	protected void expandObjectReferencesNoLock(Object object, Str objStr) {
-		List<Str> lines = objStr.split("\n");
-		for (int l = 1; l < lines.size(); l++) {
-			Str line = lines.get(l);
-			line.sb().delete(0, PERSISTABLE_PROPERTY.length());
-			List<Str> nameValue = line.split(EQUALS);
-			String fieldName = nameValue.get(0).toString();
-			Field field = getFieldByName(object, fieldName);
-			if (field!=null && isPersistableObjectType(field.getType().toString())) {
-				field.setAccessible(true);
-				Str value = nameValue.get(1);
-				if (isArrayType(field.getType().toString())) {
-					Object[] arrayValue = (Object[]) getFieldValue(object, field);
-					if (arrayValue!=null) {
-						List<Str> vals = parseValuesFromArray(value);
-						for (int i = 0; i < arrayValue.length; i++) {
-							Object reference = objects.get(vals.get(i));
-							arrayValue[i] = reference;
-						}
-					}
-				} else {
-					Object reference = objects.get(value);
-					if (reference!=null) {
-						setFieldValue(object, field, reference);
-					}
-				}
-			}
-		}
-	}
-	
-	protected Str toStrNoLock() {
-		Str r = new Str();
-		r.sb().append(START_OBJECTS);
-		for (Entry<Str,Object> entry: objects.entrySet()) {
-			if (r.length()>START_OBJECTS.length()) {
-				r.sb().append(NEXT_OBJECT);
-			}
-			Str objStr = getObjectAsStrNoLock(entry.getValue());
-			r.sb().append(objStr);
-		}
-		return r;
-	}
-	
-	protected void fromStrNoLock(Str str) {
-		clearNoLock();
-		List<Str> objStrs = str.split(START_OBJECTS).get(1).split(NEXT_OBJECT);
-		for (Str objStr: objStrs) {
-			Str id = getObjectIdFromStr(objStr);
-			if (id!=null) {
-				Object object = getObjectFromObjStr(objStr);
-				objectIds.put(getObjectId(object),id);
-				if (object!=null) {
-					putNoLock(id, object);
-				}
-			}
-		}
-		for (Object object: objects.values()) {
-			expandObjectChildrenNoLock(object);
-		}
-		expandObjectReferencesNoLock(objStrs);
+	protected static List<Str> parseValuesFromArray(Str arrayStr) {
+		List<Str> typeValues = arrayStr.split(LIST_START);
+		arrayStr = typeValues.get(1);
+		arrayStr.sb().delete(arrayStr.length() - LIST_END.length(), arrayStr.length());
+		return arrayStr.split(LIST_CONCATENATOR);
 	}
 }

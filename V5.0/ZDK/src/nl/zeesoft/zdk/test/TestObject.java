@@ -204,6 +204,19 @@ public abstract class TestObject {
 	}
 
 	/**
+	 * Returns true if the test has failures.
+	 * 
+	 * @return True if the test has failures
+	 */
+	public boolean hasFailures() {
+		boolean r = false;
+		if (failures.size()>0) {
+			r = true;
+		}
+		return r;
+	}
+	
+	/**
 	 * Returns the number of assertions to the Tester.
 	 * 
 	 * @return the number of assertions

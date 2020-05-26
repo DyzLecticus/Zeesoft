@@ -46,6 +46,6 @@ public class ZDK extends LibraryObject {
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestStr(getTester()));
 		tests.add(new TestRunCode(getTester()));
-		tests.add(new TestPersistables(getTester()));
+		tests.add(new TestCollections(getTester()));
 	}
 }

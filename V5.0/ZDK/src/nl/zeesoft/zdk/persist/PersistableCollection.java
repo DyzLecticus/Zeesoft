@@ -45,11 +45,9 @@ public class PersistableCollection extends PersistableCollectionBase {
 	protected Str toStrNoLock() {
 		Str r = super.toStrNoLock();
 		SortedMap<String,String> replacements = getReplacementsNoLock();
-		// Compress
 		for (Entry<String,String> entry: replacements.entrySet()) {
 			r.replace(entry.getValue(),entry.getKey());
 		}
-		// Add replacements
 		r.sb().insert(0,getReplacementsStrNoLock(replacements).sb());
 		return r;
 	}
@@ -57,7 +55,6 @@ public class PersistableCollection extends PersistableCollectionBase {
 	@Override
 	protected void fromStrNoLock(Str str) {
 		SortedMap<String,String> replacements = getReplacementsNoLock();
-		// Decompress
 		for (Entry<String,String> entry: replacements.entrySet()) {
 			str.replace(entry.getKey(),entry.getValue());
 		}
@@ -80,7 +77,7 @@ public class PersistableCollection extends PersistableCollectionBase {
 		list.add(List.class.getName());
 		list.add(Str.class.getName());
 		for (String className: list) {
-			String find = className + "@";
+			String find = className + ID_CONCATENATOR;
 			String rep = CLASS_NAME + String.format("%03d", i) + "@"; 
 			r.put(rep,find);
 			i++;
@@ -114,7 +111,9 @@ public class PersistableCollection extends PersistableCollectionBase {
 		str = str.split(START_OBJECTS).get(0);
 		List<Str> lines = str.split("\n");
 		for (Str line: lines) {
-			if (line.length()>EQUALS.length()) {
+			if (line.length()>EQUALS.length() &&
+				(line.startsWith(CLASS_NAME) || line.startsWith(PROPERTY_NAME))
+				) {
 				List<Str> repFind = line.split(EQUALS);
 				r.put(repFind.get(0).toString(), repFind.get(1).toString());
 			}

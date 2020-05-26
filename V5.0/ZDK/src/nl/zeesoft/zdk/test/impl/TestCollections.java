@@ -1,29 +1,39 @@
 package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.persist.CompleteCollection;
 import nl.zeesoft.zdk.persist.PersistableCollection;
 import nl.zeesoft.zdk.persist.PersistableCollectionBase;
 import nl.zeesoft.zdk.persist.PersistableObject;
 import nl.zeesoft.zdk.persist.PersistableProperty;
 import nl.zeesoft.zdk.persist.Query;
 import nl.zeesoft.zdk.persist.QueryFilter;
+import nl.zeesoft.zdk.persist.QueryableCollection;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
-public class TestPersistables extends TestObject {
+public class TestCollections extends TestObject {
 	private static final int	EXPECTED_SIZE	= 4;
 	
-	public TestPersistables(Tester tester) {
+	public TestCollections(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestPersistables(new Tester())).test(args);
+		(new TestCollections(new Tester())).test(args);
 	}
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how a *PersistableCollection* instance can be used persist objects. ");
+		System.out.println("This test shows how to use different collections provided by this library. ");
+		System.out.println("These collections are a mix between Java List and LinkedList style collections. ");
+		System.out.println("They use Java reflection to provide features like queries and persistence with minimum programming. ");
+		System.out.println("The following collections are provided by this library;  ");
+		System.out.println(" * *QueryableCollection* provides support for queries.  ");
+		System.out.println(" * *CompleteCollection* extends *QueryableCollection* and automatically adds linked objects. ");
+		System.out.println(" * *PersistableCollectionBase* extends *CompleteCollection* and adds persistence. ");
+		System.out.println(" * *PersistableCollection* extends *PersistableCollectionBase* and adds compression to persistence. ");
+		System.out.println();
 		System.out.println("Persisted object classes must be annotated with *PersistableObject*. ");
 		System.out.println("The object properties that are to be persisted must be annotated with *PersistableProperty*. ");
 		System.out.println("Most standard property types are supported including array lists for non primitives. ");
@@ -33,17 +43,25 @@ public class TestPersistables extends TestObject {
 		System.out.println("// Create the PersistableCollection");
 		System.out.println("PersistableCollection collection = new PersistableCollection();");
 		System.out.println("// Add objects to the collection");
-		System.out.println("collection.add(new Object());");
-		System.out.println("collection.add(new Object());");
+		System.out.println("Str id1 = collection.add(new PersistableParent());");
+		System.out.println("Str id2 = collection.add(new PersistableChild());");
 		System.out.println("// Write the data to a file");
 		System.out.println("collection.toFile(\"fileName.txt\");");
 		System.out.println("// Load the collection from a file");
 		System.out.println("collection.fromFile(\"fileName.txt\");");
+		System.out.println("// Query the collection");
+		System.out.println("SortedMap<Str,Object> results = collection.query(");
+		System.out.println("    Query.create(PersistableParent.class)");
+		System.out.println("    .filter(\"testString\",QueryFilter.CONTAINS,\"Parent\")");
+		System.out.println(").results;");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestPersistables.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestCollections.class));
+		System.out.println(" * " + getTester().getLinkForClass(QueryableCollection.class));
+		System.out.println(" * " + getTester().getLinkForClass(CompleteCollection.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableCollectionBase.class));
+		System.out.println(" * " + getTester().getLinkForClass(PersistableCollection.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableObject.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableProperty.class));
 		System.out.println();
@@ -88,60 +106,65 @@ public class TestPersistables extends TestObject {
 		parent1.getTestChildren().add(child1);
 		parent1.getTestChildren().add(child2);
 		parent2.getTestChildren().add(child2);
+
+		testQueries(parent1,parent2);
 		
-		PersistableCollectionBase collection = new PersistableCollectionBase();
-		collection.put(parent1);
-		collection.put(parent2);
-		assertEqual(collection.size(),EXPECTED_SIZE,"Collection size does not match expectation");
-		assertEqual(
-			collection.getObjects(PersistableParent.class.getName()).size(),2,
-			"Number of PersistableParent objects does not match expectation"
-			);
-		collection.put(parent2);
-		assertEqual(collection.size(),EXPECTED_SIZE,"Collection size does not match expectation");
-		
-		Str objStr = collection.getObjectAsStr(parent1);
-		Object object = collection.getObjectFromStr(objStr);
-		if (assertEqual(object.getClass().getName(),PersistableParent.class.getName(),"Class name does not match expectation")) {
-			PersistableParent parent = (PersistableParent) object;
-			assertEqual(parent.getTestString(),"TestParent1","Parent testString does not match expectation");
-			assertEqual(parent.getTestStringList().size(),0,"Parent testStringList size does not match expectation");
-			assertEqual(parent.getTestFloatList().size(),0,"Parent testFloatList size does not match expectation");
-			assertEqual(parent.getTestStringArray().length,2,"Parent testStringArray length does not match expectation");
-			assertEqual(parent.getTestIntArray().length,4,"Parent testIntArray length does not match expectation");
-			if (assertEqual(parent.getTestChildren().size(),2,"Children size does not match expectation")) {
-				assertEqual(parent.getTestChildren().get(0).getTestString(),"TestChild1","Child testString does not match expectation");
+		if (!hasFailures()) {
+			PersistableCollectionBase collection = new PersistableCollectionBase();
+			Str id = collection.put(parent1);
+			collection.put(parent2);
+			assertEqual(collection.size(),EXPECTED_SIZE,"PersistableCollectionBase size does not match expectation[1]");
+			assertEqual(
+				collection.getObjects(PersistableParent.class.getName()).size(),2,
+				"Number of PersistableParent objects does not match expectation"
+				);
+			collection.put(parent2);
+			assertEqual(collection.size(),EXPECTED_SIZE,"PersistableCollectionBase size does not match expectation[2]");
+			
+			Str objStr = collection.getObjectAsStr(id);
+			Object object = collection.getObjectFromStr(objStr);
+			if (assertEqual(object.getClass().getName(),PersistableParent.class.getName(),"Class name does not match expectation")) {
+				PersistableParent parent = (PersistableParent) object;
+				assertEqual(parent.getTestString(),"TestParent1","Parent testString does not match expectation");
+				assertEqual(parent.getTestStringList().size(),0,"Parent testStringList size does not match expectation");
+				assertEqual(parent.getTestFloatList().size(),0,"Parent testFloatList size does not match expectation");
+				assertEqual(parent.getTestStringArray().length,2,"Parent testStringArray length does not match expectation");
+				assertEqual(parent.getTestIntArray().length,4,"Parent testIntArray length does not match expectation");
+				if (assertEqual(parent.getTestChildren().size(),2,"Children size does not match expectation")) {
+					assertEqual(parent.getTestChildren().get(0).getTestString(),"TestChild1","Child testString does not match expectation");
+				}
 			}
+			
+			Str str = collection.toStr();
+			System.out.println(str);
+			collection.clear();
+			assertEqual(collection.size(),0,"Failed to clear the collection");
+			collection.fromStr(str);
+			assertEqual(collection.size(),EXPECTED_SIZE,"Failed to parse the collection");
+			assertEqual(collection.toStr(),str,"Collection Str does not match expectation");
+			
+			System.out.println();
+			System.out.println("Compressed;");
+			collection = new PersistableCollection();
+			collection.put(parent1);
+			collection.put(parent2);
+			Str cstr = collection.toStr();
+			collection.fromStr(cstr);
+			cstr = collection.toStr();
+			System.out.println(cstr);
+			
+			Str cstrs = cstr.split(PersistableCollectionBase.START_OBJECTS).get(1);
+			cstrs.sb().append(PersistableCollectionBase.START_OBJECTS);
+			System.out.println();
+			System.out.println("Original: " + str.length() + ", compressed: " + cstr.length() + ", compressed excluding header: " + cstrs.length());
 		}
-		
-		Str str = collection.toStr();
-		System.out.println(str);
-		collection.clear();
-		assertEqual(collection.size(),0,"Failed to clear the collection");
-		collection.fromStr(str);
-		assertEqual(collection.size(),EXPECTED_SIZE,"Failed to parse the collection");
-		assertEqual(collection.toStr(),str,"Collection Str does not match expectation");
-		
-		
-		System.out.println();
-		System.out.println("Compressed;");
-		collection = new PersistableCollection();
+	}
+	
+	private void testQueries(PersistableParent parent1, PersistableParent parent2) {
+		CompleteCollection collection = new CompleteCollection();
 		collection.put(parent1);
 		collection.put(parent2);
-		Str cstr = collection.toStr();
-		collection.fromStr(cstr);
-		cstr = collection.toStr();
-		System.out.println(cstr);
-		
-		Str cstrs = cstr.split(PersistableCollectionBase.START_OBJECTS).get(1);
-		cstrs.sb().append(PersistableCollectionBase.START_OBJECTS);
-		System.out.println();
-		System.out.println("Original: " + str.length() + ", compressed: " + cstr.length() + ", compressed excluding header: " + cstrs.length());
-		
-		// Test queries
-		collection = new PersistableCollection();
-		collection.put(parent1);
-		collection.put(parent2);
+		assertEqual(collection.size(),EXPECTED_SIZE,"CompleteCollection size does not match expectation");
 		
 		// Test equals
 		Query query = collection.query(
