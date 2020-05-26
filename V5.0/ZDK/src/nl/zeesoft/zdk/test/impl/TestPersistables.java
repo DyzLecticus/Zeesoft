@@ -138,6 +138,11 @@ public class TestPersistables extends TestObject {
 		System.out.println();
 		System.out.println("Original: " + str.length() + ", compressed: " + cstr.length() + ", compressed excluding header: " + cstrs.length());
 		
+		// Test queries
+		collection = new PersistableCollection();
+		collection.put(parent1);
+		collection.put(parent2);
+		
 		// Test equals
 		Query query = collection.query(
 			Query.create(PersistableParent.class)
@@ -189,6 +194,27 @@ public class TestPersistables extends TestObject {
 			.filter("testInt",true,QueryFilter.GREATER,222)
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[7]");
+		
+		// Test list contains
+		query = collection.query(
+			Query.create(PersistableParent.class)
+			.filter("testStringList",QueryFilter.CONTAINS,"TestString2")
+		);
+		assertResultsIsTestParent1(query,8);
+		
+		// Test array contains
+		query = collection.query(
+			Query.create(PersistableChild.class)
+			.filter("testParents",QueryFilter.CONTAINS,parent2)
+		);
+		assertEqual(query.results.size(),2,"Query results size does not match expectation[9]");
+		
+		// Test primitive array contains
+		query = collection.query(
+			Query.create(PersistableParent.class)
+			.filter("testIntArray",QueryFilter.CONTAINS,2)
+		);
+		assertResultsIsTestParent1(query,10);
 	}
 	
 	private void assertResultsIsTestParent1(Query query,int num) {

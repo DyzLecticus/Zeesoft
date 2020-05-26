@@ -51,9 +51,14 @@ public class Str implements Comparable<Str>{
 	public int length() {
 		return sb.length();
 	}
-	
-	public boolean equals(Str other) {
-		return equals(other.sb(), false);
+
+	@Override
+	public boolean equals(Object object) {
+		boolean r = false;
+		if (object instanceof Str) {
+			r = equals(((Str)object).sb(), false);
+		}
+		return r;
 	}
 	
 	public boolean equalsIgnoreCase(Str other) {

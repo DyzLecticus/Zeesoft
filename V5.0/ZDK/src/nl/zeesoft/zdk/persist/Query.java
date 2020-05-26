@@ -144,7 +144,7 @@ public class Query {
 	
 	protected void applyContainsFilter(QueryFilter filter, Object value, Str id) {
 		if (value==null) {
-			if (filter.invert) {
+			if (!filter.invert) {
 				results.remove(id);
 			}
 		} else if (value instanceof StringBuilder && filter.value instanceof StringBuilder) {
@@ -166,12 +166,88 @@ public class Query {
 				) {
 				results.remove(id);
 			}
+		} else if (value instanceof List) {
+			@SuppressWarnings("unchecked")
+			List<Object> values = (List<Object>) value;
+			if ((!filter.invert && !values.contains(filter.value)) ||
+				(filter.invert && values.contains(filter.value))
+				) {
+				results.remove(id);
+			}
+		} else if (value instanceof Object[]) {
+			Object[] values = (Object[]) value;
+			boolean contains = false;
+			for (int i = 0; i < values.length; i++) {
+				if (values[i]!=null && values[i].equals(filter.value)) {
+					contains = true;
+					break;
+				}
+			}
+			if ((!filter.invert && !contains) ||
+				(filter.invert && contains)
+				) {
+				results.remove(id);
+			}
+		} else if (
+			value instanceof int[] && filter.value instanceof Integer ||
+			value instanceof long[] && filter.value instanceof Long ||
+			value instanceof float[] && filter.value instanceof Float ||
+			value instanceof double[] && filter.value instanceof Double ||
+			value instanceof boolean[] && filter.value instanceof Boolean
+			) {
+			boolean contains = false;
+			if (value instanceof int[]) {
+				int[] values = (int[]) value;
+				for (int i = 0; i < values.length; i++) {
+					if ((Integer)filter.value == values[i]) {
+						contains = true;
+						break;
+					}
+				}
+			} else if (value instanceof long[]) {
+				long[] values = (long[]) value;
+				for (int i = 0; i < values.length; i++) {
+					if ((Long)filter.value == values[i]) {
+						contains = true;
+						break;
+					}
+				}
+			} else if (value instanceof float[]) {
+				float[] values = (float[]) value;
+				for (int i = 0; i < values.length; i++) {
+					if ((Float)filter.value == values[i]) {
+						contains = true;
+						break;
+					}
+				}
+			} else if (value instanceof double[]) {
+				double[] values = (double[]) value;
+				for (int i = 0; i < values.length; i++) {
+					if ((Double)filter.value == values[i]) {
+						contains = true;
+						break;
+					}
+				}
+			} else if (value instanceof boolean[]) {
+				boolean[] values = (boolean[]) value;
+				for (int i = 0; i < values.length; i++) {
+					if ((Boolean)filter.value == values[i]) {
+						contains = true;
+						break;
+					}
+				}
+			}
+			if ((!filter.invert && !contains) ||
+				(filter.invert && contains)
+				) {
+				results.remove(id);
+			}
 		}
 	}
 	
 	protected void applyLessFilter(QueryFilter filter, Object value, Str id) {
 		if (value==null) {
-			if (filter.invert) {
+			if (!filter.invert) {
 				results.remove(id);
 			}
 		} else if (value instanceof Integer && filter.value instanceof Integer) {
@@ -209,7 +285,7 @@ public class Query {
 	
 	protected void applyGreaterFilter(QueryFilter filter, Object value, Str id) {
 		if (value==null) {
-			if (filter.invert) {
+			if (!filter.invert) {
 				results.remove(id);
 			}
 		} else if (value instanceof Integer && filter.value instanceof Integer) {
