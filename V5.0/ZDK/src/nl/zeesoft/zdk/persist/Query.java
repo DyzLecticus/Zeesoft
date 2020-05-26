@@ -113,9 +113,7 @@ public class Query {
 				error.sb().append(object.getClass().getName());
 				error.sb().append(".");
 				error.sb().append(filter.propertyName);
-				if (!errors.contains(error)) {
-					errors.add(error);
-				}
+				logError(error);
 			} else {
 				Object value = QueryableCollection.getFieldValue(object, field);
 				if (filter.operator.equals(QueryFilter.EQUALS)) {
@@ -318,6 +316,12 @@ public class Query {
 				) {
 				results.remove(id);
 			}
+		}
+	}
+	
+	private void logError(Str error) {
+		if (!errors.contains(error)) {
+			errors.add(error);
 		}
 	}
 }

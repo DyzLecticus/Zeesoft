@@ -215,6 +215,13 @@ public class TestPersistables extends TestObject {
 			.filter("testIntArray",QueryFilter.CONTAINS,2)
 		);
 		assertResultsIsTestParent1(query,10);
+
+		// Test filter error
+		query = collection.query(
+			Query.create(PersistableParent.class)
+			.filter("qwerqwer",QueryFilter.CONTAINS,2)
+		);
+		assertEqual(query.errors.size(),1,"Query errors size does not match expectation[9]");
 	}
 	
 	private void assertResultsIsTestParent1(Query query,int num) {
