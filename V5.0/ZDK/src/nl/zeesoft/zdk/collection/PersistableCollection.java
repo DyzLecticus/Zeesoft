@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.persist;
+package nl.zeesoft.zdk.collection;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

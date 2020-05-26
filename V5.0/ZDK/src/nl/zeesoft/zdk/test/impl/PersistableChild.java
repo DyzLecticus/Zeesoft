@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.persist.PersistableProperty;
+import nl.zeesoft.zdk.collection.PersistableProperty;
 
 public class PersistableChild extends PersistableAbstract {
 	@PersistableProperty()

@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.persist;
+package nl.zeesoft.zdk.collection;
 
 import java.util.ArrayList;
 import java.util.List;

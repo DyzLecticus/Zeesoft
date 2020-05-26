@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.persist;
+package nl.zeesoft.zdk.collection;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

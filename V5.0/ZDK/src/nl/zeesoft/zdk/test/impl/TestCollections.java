@@ -1,13 +1,13 @@
 package nl.zeesoft.zdk.test.impl;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.persist.CompleteCollection;
-import nl.zeesoft.zdk.persist.PersistableCollection;
-import nl.zeesoft.zdk.persist.PersistableCollectionBase;
-import nl.zeesoft.zdk.persist.PersistableObject;
-import nl.zeesoft.zdk.persist.PersistableProperty;
-import nl.zeesoft.zdk.persist.Query;
-import nl.zeesoft.zdk.persist.QueryableCollection;
+import nl.zeesoft.zdk.collection.CompleteCollection;
+import nl.zeesoft.zdk.collection.PersistableCollection;
+import nl.zeesoft.zdk.collection.PersistableCollectionBase;
+import nl.zeesoft.zdk.collection.PersistableObject;
+import nl.zeesoft.zdk.collection.PersistableProperty;
+import nl.zeesoft.zdk.collection.Query;
+import nl.zeesoft.zdk.collection.QueryableCollection;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 

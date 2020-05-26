@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.test.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.persist.PersistableProperty;
+import nl.zeesoft.zdk.collection.PersistableProperty;
 
 public class PersistableParent extends PersistableAbstract {
 	@PersistableProperty()
