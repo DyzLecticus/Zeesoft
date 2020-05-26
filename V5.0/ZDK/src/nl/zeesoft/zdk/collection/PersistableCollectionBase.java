@@ -11,8 +11,6 @@ import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
 public class PersistableCollectionBase extends CompleteCollection {
-	public static final String		NULL					= "null";
-	
 	public static final String		NEXT_ID					= "@NI|";
 	public static final String		START_OBJECTS			= "@SO|\n";
 	public static final String		NEXT_OBJECT				= "\n@NO|\n";
@@ -147,7 +145,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 					r.sb().append(getObjectIdForObjectNoLock(obj));
 				}
 			} else {
-				r.sb().append(NULL);
+				r.sb().append(Instantiator.NULL);
 			}
 		}
 		r.sb().insert(0, LIST_START);
@@ -206,7 +204,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 					r.sb().append(val);
 				}
 			} else {
-				r.sb().append(NULL);
+				r.sb().append(Instantiator.NULL);
 			}
 		}
 		r.sb().insert(0, LIST_START);
@@ -367,7 +365,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 		value.replace(NEWLINE, "\n");
 		try {
 			Object valueObject = value;
-			if (value.equals(new Str(NULL))) {
+			if (value.equals(new Str(Instantiator.NULL))) {
 				valueObject = null;
 			} else {
 				if (field.getType().isAssignableFrom(List.class)) {
