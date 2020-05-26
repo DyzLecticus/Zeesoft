@@ -77,7 +77,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 	
 	@Override
 	protected boolean isSupportedObject(String className) {
-		return isPersistableObjectType(className);
+		return isPersistableObject(className);
 	}
 	
 	@Override
@@ -111,92 +111,20 @@ public class PersistableCollectionBase extends CompleteCollection {
 							value = getObjectIdForObjectNoLock(value);
 						} else if (value instanceof List) {
 							@SuppressWarnings("unchecked")
-							List<Object> objs = (List<Object>) value;
-							Str newValue = new Str();
-							for (Object obj: objs) {
-								if (obj!=null) {
-									if (isPersistableObject(obj.getClass())) {
-										if (newValue.length()>0) {
-											newValue.sb().append(LIST_CONCATENATOR);
-										}
-										newValue.sb().append(getObjectIdForObjectNoLock(obj));
-									}
-								} else {
-									newValue.sb().append(NULL);
-								}
-							}
-							newValue.sb().insert(0, LIST_START);
-							newValue.sb().append(LIST_END);
-							newValue.sb().insert(0, List.class.getName());
-							value = newValue;
+							List<Object> vals = (List<Object>) value;
+							value = createArrayStrFromListNoLock(vals);
 						} else if (
 							Reflector.isArrayType(field.getType().toString()) &&
 							isSupportedValueType(field.getType().toString())
 							) {
 							String className = Reflector.getClassName(field.getType().toString());
-							List<Object> values = new ArrayList<Object>();
-							if (value instanceof Object[]) {
-								Object[] vals = (Object[]) value;
-								for (int i = 0; i < vals.length; i++) {
-									values.add(vals[i]);
-								}
-							} else if (value instanceof int[]) {
-								int[] vals = (int[]) value;
-								for (int i = 0; i < vals.length; i++) {
-									values.add(vals[i]);
-								}
-								className = int.class.getName();
-							} else if (value instanceof long[]) {
-								long[] vals = (long[]) value;
-								for (int i = 0; i < vals.length; i++) {
-									values.add(vals[i]);
-								}
-								className = long.class.getName();
-							} else if (value instanceof float[]) {
-								float[] vals = (float[]) value;
-								for (int i = 0; i < vals.length; i++) {
-									values.add(vals[i]);
-								}
-								className = float.class.getName();
-							} else if (value instanceof double[]) {
-								double[] vals = (double[]) value;
-								for (int i = 0; i < vals.length; i++) {
-									values.add(vals[i]);
-								}
-								className = double.class.getName();
-							} else if (value instanceof boolean[]) {
-								boolean[] vals = (boolean[]) value;
-								for (int i = 0; i < vals.length; i++) {
-									values.add(vals[i]);
-								}
-								className = boolean.class.getName();
-							}
-							Str newValue = new Str();
-							for (Object val: values) {
-								if (newValue.length()>0) {
-									newValue.sb().append(LIST_CONCATENATOR);
-								}
-								if (val!=null) {
-									if (isPersistableObject(val.getClass())) {
-										newValue.sb().append(getObjectIdForObjectNoLock(val));
-									} else {
-										newValue.sb().append(val);
-									}
-								} else {
-									newValue.sb().append(NULL);
-								}
-							}
-							newValue.sb().insert(0, LIST_START);
-							newValue.sb().append(LIST_END);
-							newValue.sb().insert(0, className);
-							value = newValue;
+							value = createArrayStrFromArrayNoLock(className, value);
 						} else if (value instanceof Str) {
 							Str str = new Str((Str)value);
 							str.replace("\n", NEWLINE);
 							value = str;
 						}
 					}
-					
 					r.sb().append("\n");
 					r.sb().append(PERSISTABLE_PROPERTY);
 					r.sb().append(field.getName());
@@ -205,6 +133,85 @@ public class PersistableCollectionBase extends CompleteCollection {
 				}
 			}
 		}
+		return r;
+	}
+	
+	protected Str createArrayStrFromListNoLock(List<Object> values) {
+		Str r = new Str();
+		for (Object obj: values) {
+			if (obj!=null) {
+				if (isPersistableObject(obj.getClass())) {
+					if (r.length()>0) {
+						r.sb().append(LIST_CONCATENATOR);
+					}
+					r.sb().append(getObjectIdForObjectNoLock(obj));
+				}
+			} else {
+				r.sb().append(NULL);
+			}
+		}
+		r.sb().insert(0, LIST_START);
+		r.sb().append(LIST_END);
+		r.sb().insert(0, List.class.getName());
+		return r;
+	}
+	
+	protected Str createArrayStrFromArrayNoLock(String className, Object value) {
+		Str r = new Str();
+		List<Object> values = new ArrayList<Object>();
+		if (value instanceof Object[]) {
+			Object[] vals = (Object[]) value;
+			for (int i = 0; i < vals.length; i++) {
+				values.add(vals[i]);
+			}
+		} else if (value instanceof int[]) {
+			int[] vals = (int[]) value;
+			for (int i = 0; i < vals.length; i++) {
+				values.add(vals[i]);
+			}
+			className = int.class.getName();
+		} else if (value instanceof long[]) {
+			long[] vals = (long[]) value;
+			for (int i = 0; i < vals.length; i++) {
+				values.add(vals[i]);
+			}
+			className = long.class.getName();
+		} else if (value instanceof float[]) {
+			float[] vals = (float[]) value;
+			for (int i = 0; i < vals.length; i++) {
+				values.add(vals[i]);
+			}
+			className = float.class.getName();
+		} else if (value instanceof double[]) {
+			double[] vals = (double[]) value;
+			for (int i = 0; i < vals.length; i++) {
+				values.add(vals[i]);
+			}
+			className = double.class.getName();
+		} else if (value instanceof boolean[]) {
+			boolean[] vals = (boolean[]) value;
+			for (int i = 0; i < vals.length; i++) {
+				values.add(vals[i]);
+			}
+			className = boolean.class.getName();
+		}
+		for (Object val: values) {
+			if (r.length()>0) {
+				r.sb().append(LIST_CONCATENATOR);
+			}
+			if (val!=null) {
+				if (isPersistableObject(val.getClass())) {
+					r.sb().append(getObjectIdForObjectNoLock(val));
+				} else {
+					r.sb().append(val);
+				}
+			} else {
+				r.sb().append(NULL);
+			}
+		}
+		r.sb().insert(0, LIST_START);
+		r.sb().append(LIST_END);
+		r.sb().insert(0, className);
 		return r;
 	}
 	
@@ -250,8 +257,8 @@ public class PersistableCollectionBase extends CompleteCollection {
 			line.sb().delete(0, PERSISTABLE_PROPERTY.length());
 			List<Str> nameValue = line.split(EQUALS);
 			String fieldName = nameValue.get(0).toString();
-			Field field = Reflector.getFieldByName(object, fieldName);
-			if (field!=null && isPersistableObjectType(field.getType().toString())) {
+			Field field = Reflector.getField(object, fieldName);
+			if (field!=null && isPersistableObject(field.getType().toString())) {
 				field.setAccessible(true);
 				Str value = nameValue.get(1);
 				if (Reflector.isArrayType(field.getType().toString())) {
@@ -344,7 +351,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 					line.sb().delete(0, PERSISTABLE_PROPERTY.length());
 					List<Str> nameValue = line.split(EQUALS);
 					String fieldName = nameValue.get(0).toString();
-					Field field = Reflector.getFieldByName(object, fieldName);
+					Field field = Reflector.getField(object, fieldName);
 					if (field!=null) {
 						setObjectFieldValue(object, field, nameValue.get(1));
 					}
@@ -358,17 +365,16 @@ public class PersistableCollectionBase extends CompleteCollection {
 	protected static void setObjectFieldValue(Object object, Field field, Str value) {
 		field.setAccessible(true);
 		value.replace(NEWLINE, "\n");
-		String className = object.getClass().getName();
 		try {
 			Object valueObject = value;
 			if (value.equals(new Str(NULL))) {
 				valueObject = null;
 			} else {
 				if (field.getType().isAssignableFrom(List.class)) {
-					List<Str> typeValues = value.split(LIST_START);
-					String type = typeValues.get(0).toString();
+					List<Str> classValues = value.split(LIST_START);
+					String className = classValues.get(0).toString();
 					List<Str> vals = parseValuesFromArray(value);
-					valueObject = Instantiator.createTypedList(type, vals);
+					valueObject = Instantiator.createTypedList(className, vals);
 				} else if (field.getType().isAssignableFrom(StringBuilder.class)) {
 					valueObject = value.sb();
 				} else if (field.getType().isAssignableFrom(String.class)) {
@@ -402,14 +408,14 @@ public class PersistableCollectionBase extends CompleteCollection {
 					valueObject = new BigDecimal(value.toCharArray());
 				} else if (
 					!Reflector.isArrayType(field.getType().toString()) && 
-					isPersistableObjectType(field.getType().toString())
+					isPersistableObject(field.getType().toString())
 					) {
 					valueObject = null;
 				} else if (
 					Reflector.isArrayType(field.getType().toString()) && 
 					isSupportedValueType(field.getType().toString())
 					) {
-					className = Reflector.getClassName(field.getType().toString());
+					String className = Reflector.getClassName(field.getType().toString());
 					List<Str> vals = parseValuesFromArray(value);
 					if (Reflector.fieldIsPrimitiveArray(field)) {
 						className = Reflector.getFieldPrimitiveArrayClass(field).getName();
@@ -456,14 +462,9 @@ public class PersistableCollectionBase extends CompleteCollection {
 			r = true;
 		}
 		if (!r) {
-			r = isPersistableObjectType(className);
+			r = isPersistableObject(className);
 		}
 		return r;
-	}
-
-	protected static boolean isPersistableObjectType(String className) {
-		className = Reflector.getClassName(className);
-		return isPersistableObject(Instantiator.getClassForName(className));
 	}
 
 	protected static boolean isPersistableObject(Class<?> cls) {
@@ -475,6 +476,11 @@ public class PersistableCollectionBase extends CompleteCollection {
 			}
 		}
 		return r;
+	}
+
+	protected static boolean isPersistableObject(String className) {
+		className = Reflector.getClassName(className);
+		return isPersistableObject(Instantiator.getClassForName(className));
 	}
 	
 	protected static List<Field> getPersistedFields(Object object) {

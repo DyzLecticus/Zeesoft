@@ -1,6 +1,8 @@
 package nl.zeesoft.zdk;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
 public class Reflector {
@@ -20,8 +22,45 @@ public class Reflector {
 		}
 		return className.startsWith("[");
 	}
-	
-	public static Field getFieldByName(Object object, String fieldName) {
+
+	public static boolean hasMethod(Object object, String methodName) {
+		return getMethod(object, methodName)!=null;
+	}
+
+	public static Method getMethod(Object object, String methodName) {
+		Method r = null;
+		try {
+			r = object.getClass().getMethod(methodName);
+		} catch (NoSuchMethodException e) {
+			// Ignore
+		} catch (SecurityException e) {
+			// Ignore
+		}
+		return r;
+	}
+
+	public static Object invokeMethod(Object object, String methodName) {
+		Object r = null;
+		Method method = getMethod(object,methodName);
+		if (method!=null) {
+			try {
+				r = method.invoke(object);
+			} catch (IllegalAccessException e) {
+				// Ignore
+			} catch (IllegalArgumentException e) {
+				// Ignore
+			} catch (InvocationTargetException e) {
+				// Ignore
+			}
+		}
+		return r;
+	}
+
+	public static boolean hasField(Object object, String fieldName) {
+		return getField(object, fieldName)!=null;
+	}
+
+	public static Field getField(Object object, String fieldName) {
 		Field r = null;
 		Class<?> cls = object.getClass();
 		while(cls!=Object.class) {
@@ -36,6 +75,15 @@ public class Reflector {
 				// Ignore
 			}
 			cls = cls.getSuperclass();
+		}
+		return r;
+	}
+	
+	public static Object getFieldValue(Object object, String fieldName) {
+		Object r = null;
+		Field field = getField(object, fieldName);
+		if (field!=null) {
+			r = getFieldValue(object, field);
 		}
 		return r;
 	}

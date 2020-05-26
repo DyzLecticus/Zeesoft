@@ -78,7 +78,7 @@ public class PersistableCollection extends PersistableCollectionBase {
 		list.add(Str.class.getName());
 		for (String className: list) {
 			String find = className + ID_CONCATENATOR;
-			String rep = CLASS_NAME + String.format("%03d", i) + "@"; 
+			String rep = CLASS_NAME + String.format("%03d", i) + ID_CONCATENATOR; 
 			r.put(rep,find);
 			i++;
 		}

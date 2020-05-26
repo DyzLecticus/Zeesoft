@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.persist;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,36 +48,41 @@ public class Query {
 	
 	public Query addClass(String className) {
 		if (className.length()>0) {
-			filter(QueryFilter.CLASS_NAME,className);
+			equals(QueryFilter.CLASS_NAME,className);
 		}
 		return this;
 	}
 	
-	public Query filter(String propertyName, Object value) {
-		return filter(propertyName,false,value);
+	public Query equals(String methodOrPropertyName, Object value) {
+		return filter(methodOrPropertyName,false,QueryFilter.EQUALS,value);
 	}
 	
-	public Query filter(String propertyName, boolean invert, Object value) {
-		return filter(propertyName,invert,QueryFilter.EQUALS,value);
+	public Query notEquals(String methodOrPropertyName, Object value) {
+		return filter(methodOrPropertyName,true,QueryFilter.EQUALS,value);
 	}
 	
-	public Query filter(String propertyName, String operator, Object value) {
-		return filter(propertyName,false,operator,value);
+	public Query contains(String methodOrPropertyName, Object value) {
+		return filter(methodOrPropertyName,false,QueryFilter.CONTAINS,value);
 	}
 	
-	public Query filter(String propertyName, boolean invert, String operator, Object value) {
-		if (propertyName!=null && propertyName.length()>0 &&
-			QueryFilter.isValidOperator(operator) &&
-			(value!=null || !operator.equals(QueryFilter.EQUALS))
-			) {
-			QueryFilter filter = new QueryFilter();
-			filter.propertyName = propertyName;
-			filter.invert = invert;
-			filter.operator = operator;
-			filter.value = value;
-			filters.add(filter);
-		}
-		return this;
+	public Query notContains(String methodOrPropertyName, Object value) {
+		return filter(methodOrPropertyName,true,QueryFilter.CONTAINS,value);
+	}
+	
+	public Query lessThan(String methodOrPropertyName, Object value) {
+		return filter(methodOrPropertyName,false,QueryFilter.LESS,value);
+	}
+	
+	public Query lessOrEquals(String methodOrPropertyName, Object value) {
+		return filter(methodOrPropertyName,true,QueryFilter.GREATER,value);
+	}
+	
+	public Query greaterThan(String methodOrPropertyName, Object value) {
+		return filter(methodOrPropertyName,false,QueryFilter.GREATER,value);
+	}
+	
+	public Query greaterOrEquals(String methodOrPropertyName, Object value) {
+		return filter(methodOrPropertyName,true,QueryFilter.LESS,value);
 	}
 	
 	public static Query create() {
@@ -95,9 +99,24 @@ public class Query {
 	
 	protected Query applyAllFilters() {
 		for (QueryFilter filter: filters) {
-			if (!filter.propertyName.equals(QueryFilter.CLASS_NAME)) {
+			if (!filter.methodOrPropertyName.equals(QueryFilter.CLASS_NAME)) {
 				applyFilter(filter);
 			}
+		}
+		return this;
+	}
+	
+	protected Query filter(String methodOrPropertyName, boolean invert, String operator, Object value) {
+		if (methodOrPropertyName!=null && methodOrPropertyName.length()>0 &&
+			QueryFilter.isValidOperator(operator) &&
+			(value!=null || !operator.equals(QueryFilter.EQUALS))
+			) {
+			QueryFilter filter = new QueryFilter();
+			filter.methodOrPropertyName = methodOrPropertyName;
+			filter.invert = invert;
+			filter.operator = operator;
+			filter.value = value;
+			filters.add(filter);
 		}
 		return this;
 	}
@@ -106,17 +125,23 @@ public class Query {
 		SortedMap<Str,Object> objects = new TreeMap<Str,Object>(results);
 		for (Entry<Str,Object> entry: objects.entrySet()) {
 			Object object = entry.getValue();
-			Str id = entry.getKey();
-			Field field = Reflector.getFieldByName(object, filter.propertyName);
-			if (field==null) {
+			boolean apply = true;
+			Object value = null;
+			if (Reflector.hasMethod(object, filter.methodOrPropertyName)) {
+				value = Reflector.invokeMethod(object, filter.methodOrPropertyName);
+			} else if (Reflector.hasField(object, filter.methodOrPropertyName)) {
+				value = Reflector.getFieldValue(object, filter.methodOrPropertyName);
+			} else {
 				Str error = new Str();
-				error.sb().append("Property not found: ");
+				error.sb().append("Method or property not found: ");
 				error.sb().append(object.getClass().getName());
 				error.sb().append(".");
-				error.sb().append(filter.propertyName);
+				error.sb().append(filter.methodOrPropertyName);
 				logError(error);
-			} else {
-				Object value = Reflector.getFieldValue(object, field);
+				apply = false;
+			}
+			if (apply) {
+				Str id = entry.getKey();
 				if (filter.operator.equals(QueryFilter.EQUALS)) {
 					applyEqualsFilter(filter,value,id);
 				} else if (filter.operator.equals(QueryFilter.CONTAINS)) {

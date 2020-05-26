@@ -7,7 +7,6 @@ import nl.zeesoft.zdk.persist.PersistableCollectionBase;
 import nl.zeesoft.zdk.persist.PersistableObject;
 import nl.zeesoft.zdk.persist.PersistableProperty;
 import nl.zeesoft.zdk.persist.Query;
-import nl.zeesoft.zdk.persist.QueryFilter;
 import nl.zeesoft.zdk.persist.QueryableCollection;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -52,7 +51,8 @@ public class TestCollections extends TestObject {
 		System.out.println("// Query the collection");
 		System.out.println("SortedMap<Str,Object> results = collection.query(");
 		System.out.println("    Query.create(PersistableParent.class)");
-		System.out.println("    .filter(\"testString\",QueryFilter.CONTAINS,\"Parent\")");
+		System.out.println("    .equals(\"getTestString\",\"Parent\")");
+		System.out.println("    .notContains(\"getTestIntArray\",\"Parent\")");
 		System.out.println(").results;");
 		System.out.println("~~~~");
 		System.out.println();
@@ -169,21 +169,21 @@ public class TestCollections extends TestObject {
 		// Test equals
 		Query query = collection.query(
 			Query.create(PersistableParent.class)
-			.filter("testString","TestParent1")
+			.equals("testString","TestParent1")
 		);
 		assertResultsIsTestParent1(query,1);
 		
 		// Test not equals
 		query = collection.query(
 			Query.create(PersistableParent.class)
-			.filter("testString",true,"TestParent2")
+			.notEquals("testString","TestParent2")
 		);
 		assertResultsIsTestParent1(query,2);
 		
 		// Test contains
 		query = collection.query(
 			Query.create(PersistableParent.class)
-			.filter("testString",QueryFilter.CONTAINS,"1")
+			.contains("testString","1")
 		);
 		assertResultsIsTestParent1(query,3);
 		
@@ -191,7 +191,7 @@ public class TestCollections extends TestObject {
 		query = collection.query(
 			Query.create(PersistableParent.class)
 			.addClass(PersistableChild.class)
-			.filter("testString",QueryFilter.CONTAINS,"1")
+			.contains("testString","1")
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[4]");
 		
@@ -199,52 +199,59 @@ public class TestCollections extends TestObject {
 		query = collection.query(
 			Query.create(PersistableParent.class)
 			.addClass(PersistableChild.class)
-			.filter("testString",QueryFilter.CONTAINS,"1")
-			.filter("testString",true,QueryFilter.CONTAINS,"Child")
+			.contains("testString","1")
+			.notContains("testString","Child")
 		);
 		assertResultsIsTestParent1(query,5);
 		
 		// Test less
 		query = collection.query(
 			Query.create(PersistableChild.class)
-			.filter("testInt",QueryFilter.LESS,222)
+			.lessThan("testInt",222)
 		);
 		assertEqual(query.results.size(),1,"Query results size does not match expectation[6]");
 
-		// Test less or equal (invert greater)
+		// Test less or equal
 		query = collection.query(
 			Query.create(PersistableChild.class)
-			.filter("testInt",true,QueryFilter.GREATER,222)
+			.lessOrEquals("testInt",222)
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[7]");
 		
 		// Test list contains
 		query = collection.query(
 			Query.create(PersistableParent.class)
-			.filter("testStringList",QueryFilter.CONTAINS,"TestString2")
+			.contains("testStringList","TestString2")
 		);
 		assertResultsIsTestParent1(query,8);
 		
 		// Test array contains
 		query = collection.query(
 			Query.create(PersistableChild.class)
-			.filter("testParents",QueryFilter.CONTAINS,parent2)
+			.contains("testParents",parent2)
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[9]");
 		
 		// Test primitive array contains
 		query = collection.query(
 			Query.create(PersistableParent.class)
-			.filter("testIntArray",QueryFilter.CONTAINS,2)
+			.contains("testIntArray",2)
 		);
 		assertResultsIsTestParent1(query,10);
 
 		// Test filter error
 		query = collection.query(
 			Query.create(PersistableParent.class)
-			.filter("qwerqwer",QueryFilter.CONTAINS,2)
+			.equals("qwerqwer",2)
 		);
 		assertEqual(query.errors.size(),1,"Query errors size does not match expectation[9]");
+
+		// Test method invocation
+		query = collection.query(
+			Query.create(PersistableParent.class)
+			.equals("getTestString","TestParent1")
+		);
+		assertResultsIsTestParent1(query,10);
 	}
 	
 	private void assertResultsIsTestParent1(Query query,int num) {

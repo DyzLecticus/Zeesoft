@@ -122,7 +122,7 @@ public class QueryableCollection {
 		lock.lock(this);
 		boolean selected = false;
 		for (QueryFilter filter: query.filters) {
-			if (filter.propertyName.equals(QueryFilter.CLASS_NAME) &&
+			if (filter.methodOrPropertyName.equals(QueryFilter.CLASS_NAME) &&
 				filter.value!=null &&
 				filter.value instanceof String &&
 				((String)filter.value).length()>0
@@ -162,8 +162,9 @@ public class QueryableCollection {
 		if (className==null || className.length()==0) {
 			r.putAll(objects);
 		} else {
+			className += ID_CONCATENATOR;
 			for (Entry<Str,Object> entry: objects.entrySet()) {
-				if (entry.getKey().startsWith(className + "@")) {
+				if (entry.getKey().startsWith(className)) {
 					r.put(entry.getKey(),entry.getValue());
 				}
 			}
