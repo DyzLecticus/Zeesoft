@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.persist;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -170,48 +169,5 @@ public class QueryableCollection {
 			}
 		}
 		return r;
-	}
-	
-	protected static Field getFieldByName(Object object, String fieldName) {
-		Field r = null;
-		Class<?> cls = object.getClass();
-		while(cls!=Object.class) {
-			try {
-				r = cls.getDeclaredField(fieldName);
-				if (r!=null) {
-					break;
-				}
-			} catch (NoSuchFieldException e) {
-				// Ignore
-			} catch (SecurityException e) {
-				// Ignore
-			}
-			cls = cls.getSuperclass();
-		}
-		return r;
-	}
-	
-	protected static Object getFieldValue(Object object, Field field) {
-		Object r = null;
-		try {
-			field.setAccessible(true);
-			r = field.get(object);
-		} catch (IllegalArgumentException e) {
-			// Ignore
-		} catch (IllegalAccessException e) {
-			// Ignore
-		}
-		return r;
-	}
-	
-	protected static void setFieldValue(Object object, Field field, Object value) {
-		try {
-			field.setAccessible(true);
-			field.set(object, value);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
 	}
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import nl.zeesoft.zdk.Instantiator;
+import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
 public class CompleteCollection extends QueryableCollection {
@@ -40,7 +40,7 @@ public class CompleteCollection extends QueryableCollection {
 	
 	protected boolean isSupportedObject(String className) {
 		boolean r = true;
-		className = Instantiator.getClassName(className);
+		className = Reflector.getClassName(className);
 		if ((className.startsWith("[") && !className.equals("[L")) ||
 			className.startsWith("java.lang.") ||
 			className.startsWith("java.util.") ||
@@ -53,7 +53,7 @@ public class CompleteCollection extends QueryableCollection {
 	
 	protected boolean isSupportedField(Field field) {
 		boolean r = true;
-		String className = Instantiator.getClassName(field.getType().toString());
+		String className = Reflector.getClassName(field.getType().toString());
 		if ((className.startsWith("[") && !className.equals("[L")) ||
 			className.startsWith("java.lang.")
 			) {
@@ -92,7 +92,7 @@ public class CompleteCollection extends QueryableCollection {
 		List<Field> fields = getSupportedFields(object);
 		for (Field field : fields) {
 			if (field.getType().isAssignableFrom(List.class)) {
-				List<?> objects = (List<?>) getFieldValue(object, field);
+				List<?> objects = (List<?>) Reflector.getFieldValue(object, field);
 				if (objects!=null) {
 					for (Object child: objects) {
 						putNoLock(child);
@@ -107,7 +107,7 @@ public class CompleteCollection extends QueryableCollection {
 		for (Field field : fields) {
 			if (isSupportedObject(field.getType().toString())) {
 				if (isArrayType(field.getType().toString())) {
-					Object[] arrayValue = (Object[]) getFieldValue(object, field);
+					Object[] arrayValue = (Object[]) Reflector.getFieldValue(object, field);
 					if (arrayValue!=null) {
 						for (int i = 0; i < arrayValue.length; i++) {
 							if (arrayValue[i]!=null) {
@@ -116,7 +116,7 @@ public class CompleteCollection extends QueryableCollection {
 						}
 					}
 				} else {
-					Object reference = getFieldValue(object, field);
+					Object reference = Reflector.getFieldValue(object, field);
 					if (reference!=null) {
 						putNoLock(reference);
 					}

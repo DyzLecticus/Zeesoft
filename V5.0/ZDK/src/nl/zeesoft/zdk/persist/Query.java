@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
 @PersistableObject
@@ -106,7 +107,7 @@ public class Query {
 		for (Entry<Str,Object> entry: objects.entrySet()) {
 			Object object = entry.getValue();
 			Str id = entry.getKey();
-			Field field = QueryableCollection.getFieldByName(object, filter.propertyName);
+			Field field = Reflector.getFieldByName(object, filter.propertyName);
 			if (field==null) {
 				Str error = new Str();
 				error.sb().append("Property not found: ");
@@ -115,7 +116,7 @@ public class Query {
 				error.sb().append(filter.propertyName);
 				logError(error);
 			} else {
-				Object value = QueryableCollection.getFieldValue(object, field);
+				Object value = Reflector.getFieldValue(object, field);
 				if (filter.operator.equals(QueryFilter.EQUALS)) {
 					applyEqualsFilter(filter,value,id);
 				} else if (filter.operator.equals(QueryFilter.CONTAINS)) {
