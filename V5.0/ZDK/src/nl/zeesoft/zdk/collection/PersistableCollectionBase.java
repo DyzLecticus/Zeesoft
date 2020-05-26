@@ -192,6 +192,18 @@ public class PersistableCollectionBase extends CompleteCollection {
 				values.add(vals[i]);
 			}
 			className = boolean.class.getName();
+		} else if (value instanceof byte[]) {
+			byte[] vals = (byte[]) value;
+			for (int i = 0; i < vals.length; i++) {
+				values.add(vals[i]);
+			}
+			className = byte.class.getName();
+		} else if (value instanceof short[]) {
+			short[] vals = (short[]) value;
+			for (int i = 0; i < vals.length; i++) {
+				values.add(vals[i]);
+			}
+			className = short.class.getName();
 		}
 		for (Object val: values) {
 			if (r.length()>0) {
@@ -362,53 +374,64 @@ public class PersistableCollectionBase extends CompleteCollection {
 	
 	protected static void setObjectFieldValue(Object object, Field field, Str value) {
 		field.setAccessible(true);
-		value.replace(NEWLINE, "\n");
 		try {
-			Object valueObject = value;
+			Object newValue = value;
 			if (value.equals(new Str(Instantiator.NULL))) {
-				valueObject = null;
+				newValue = null;
 			} else {
 				if (field.getType().isAssignableFrom(List.class)) {
 					List<Str> classValues = value.split(LIST_START);
 					String className = classValues.get(0).toString();
 					List<Str> vals = parseValuesFromArray(value);
-					valueObject = Instantiator.createTypedList(className, vals);
+					newValue = Instantiator.createTypedList(className, vals);
 				} else if (field.getType().isAssignableFrom(StringBuilder.class)) {
-					valueObject = value.sb();
+					value.replace(NEWLINE, "\n");
+					newValue = value.sb();
 				} else if (field.getType().isAssignableFrom(String.class)) {
-					valueObject = value.toString();
+					value.replace(NEWLINE, "\n");
+					newValue = value.toString();
 				} else if (
 					field.getType().isAssignableFrom(Integer.class) ||
 					field.getType() == int.class
 					) {
-					valueObject = Integer.parseInt(value.toString());
+					newValue = Integer.parseInt(value.toString());
 				} else if (
 					field.getType().isAssignableFrom(Long.class) ||
 					field.getType() == long.class
 					) {
-					valueObject = Long.parseLong(value.toString());
+					newValue = Long.parseLong(value.toString());
 				} else if (
 					field.getType().isAssignableFrom(Float.class) ||
 					field.getType() == float.class
 					) {
-					valueObject = Float.parseFloat(value.toString());
+					newValue = Float.parseFloat(value.toString());
 				} else if (
 					field.getType().isAssignableFrom(Double.class) ||
 					field.getType() == double.class
 					) {
-					valueObject = Double.parseDouble(value.toString());
+					newValue = Double.parseDouble(value.toString());
 				} else if (
 					field.getType().isAssignableFrom(Boolean.class) ||
 					field.getType() == boolean.class
 					) {
-					valueObject = Boolean.parseBoolean(value.toString());
+					newValue = Boolean.parseBoolean(value.toString());
+				} else if (
+					field.getType().isAssignableFrom(Byte.class) ||
+					field.getType() == byte.class
+					) {
+					newValue = Byte.parseByte(value.toString());
+				} else if (
+					field.getType().isAssignableFrom(Short.class) ||
+					field.getType() == short.class
+					) {
+					newValue = Short.parseShort(value.toString());
 				} else if (field.getType().isAssignableFrom(BigDecimal.class)) {
-					valueObject = new BigDecimal(value.toCharArray());
+					newValue = new BigDecimal(value.toCharArray());
 				} else if (
 					!Reflector.isArrayType(field.getType().toString()) && 
 					isPersistableObject(field.getType().toString())
 					) {
-					valueObject = null;
+					newValue = null;
 				} else if (
 					Reflector.isArrayType(field.getType().toString()) && 
 					isSupportedValueType(field.getType().toString())
@@ -417,20 +440,21 @@ public class PersistableCollectionBase extends CompleteCollection {
 					List<Str> vals = parseValuesFromArray(value);
 					if (Reflector.fieldIsPrimitiveArray(field)) {
 						className = Reflector.getFieldPrimitiveArrayClass(field).getName();
-						valueObject = Instantiator.createPrimitiveTypedArray(className,vals);
+						newValue = Instantiator.createPrimitiveTypedArray(className,vals);
 					} else {
 						Class<?> cls = Reflector.getFieldArrayClass(field);
 						if (cls==null) {
-							valueObject = Instantiator.createTypedArray(className,vals);
+							newValue = Instantiator.createTypedArray(className,vals);
 						} else {
-							valueObject = Instantiator.createTypedArray(cls.getName(),vals);
+							newValue = Instantiator.createTypedArray(cls.getName(),vals);
 						}
 					}
 				} else if (field.getType().isAssignableFrom(Str.class)) {
-					valueObject = value;
+					value.replace(NEWLINE, "\n");
+					newValue = value;
 				}
 			}
-			Reflector.setFieldValue(object, field, valueObject);
+			Reflector.setFieldValue(object, field, newValue);
 		} catch (NumberFormatException ex) {
 			ex.printStackTrace();
 		}
@@ -445,7 +469,8 @@ public class PersistableCollectionBase extends CompleteCollection {
 			className.equals(float.class.getName()) ||
 			className.equals(double.class.getName()) ||
 			className.equals(boolean.class.getName()) ||
-			className.equals(Str.class.getName()) ||
+			className.equals(byte.class.getName()) ||
+			className.equals(short.class.getName()) ||
 			className.equals(StringBuilder.class.getName()) ||
 			className.equals(String.class.getName()) ||
 			className.equals(Integer.class.getName()) ||
@@ -453,8 +478,11 @@ public class PersistableCollectionBase extends CompleteCollection {
 			className.equals(Float.class.getName()) ||
 			className.equals(Double.class.getName()) ||
 			className.equals(Boolean.class.getName()) ||
+			className.equals(Byte.class.getName()) ||
+			className.equals(Short.class.getName()) ||
 			className.equals(BigDecimal.class.getName()) ||
 			className.equals(List.class.getName()) ||
+			className.equals(Str.class.getName()) ||
 			(className.startsWith("[") && className.length()==2)
 			) {
 			r = true;

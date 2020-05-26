@@ -118,7 +118,9 @@ public class Reflector {
 			field.getType().isAssignableFrom(long[].class) ||
 			field.getType().isAssignableFrom(float[].class) ||
 			field.getType().isAssignableFrom(double[].class) ||
-			field.getType().isAssignableFrom(boolean[].class)
+			field.getType().isAssignableFrom(boolean[].class) ||
+			field.getType().isAssignableFrom(byte[].class) ||
+			field.getType().isAssignableFrom(short[].class)
 			) {
 			r = true;
 		}
@@ -137,6 +139,10 @@ public class Reflector {
 			r = double.class;
 		} else if (field.getType().isAssignableFrom(boolean[].class)) {
 			r = boolean.class;
+		} else if (field.getType().isAssignableFrom(byte[].class)) {
+			r = byte.class;
+		} else if (field.getType().isAssignableFrom(short[].class)) {
+			r = short.class;
 		}
 		return r;
 	}
@@ -157,6 +163,10 @@ public class Reflector {
 			r = Double.class;
 		} else if (field.getType().isAssignableFrom(Boolean[].class)) {
 			r = Boolean.class;
+		} else if (field.getType().isAssignableFrom(Byte[].class)) {
+			r = Byte.class;
+		} else if (field.getType().isAssignableFrom(Short[].class)) {
+			r = Short.class;
 		} else if (field.getType().isAssignableFrom(BigDecimal[].class)) {
 			r = BigDecimal.class;
 		} else if (field.getType().isAssignableFrom(Str[].class)) {

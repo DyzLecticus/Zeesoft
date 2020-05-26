@@ -298,6 +298,18 @@ public class Query {
 				) {
 				results.remove(id);
 			}
+		} else if (value instanceof Byte && filter.value instanceof Byte) {
+			if ((!filter.invert && !(((Byte)value) < ((Byte)filter.value))) ||
+				(filter.invert && (((Byte)value) < ((Byte)filter.value)))
+				) {
+				results.remove(id);
+			}
+		} else if (value instanceof Short && filter.value instanceof Short) {
+			if ((!filter.invert && !(((Short)value) < ((Short)filter.value))) ||
+				(filter.invert && (((Short)value) < ((Short)filter.value)))
+				) {
+				results.remove(id);
+			}
 		} else if (value instanceof BigDecimal && filter.value instanceof BigDecimal) {
 			if ((!filter.invert && !(((BigDecimal)value).compareTo((BigDecimal)filter.value) < 0)) ||
 				(filter.invert && (((BigDecimal)value).compareTo((BigDecimal)filter.value) < 0))
@@ -333,6 +345,18 @@ public class Query {
 		} else if (value instanceof Double && filter.value instanceof Double) {
 			if ((!filter.invert && !(((Double)value) > ((Double)filter.value))) ||
 				(filter.invert && (((Double)value) > ((Double)filter.value)))
+				) {
+				results.remove(id);
+			}
+		} else if (value instanceof Byte && filter.value instanceof Byte) {
+			if ((!filter.invert && !(((Byte)value) > ((Byte)filter.value))) ||
+				(filter.invert && (((Byte)value) > ((Byte)filter.value)))
+				) {
+				results.remove(id);
+			}
+		} else if (value instanceof Short && filter.value instanceof Short) {
+			if ((!filter.invert && !(((Short)value) > ((Short)filter.value))) ||
+				(filter.invert && (((Short)value) > ((Short)filter.value)))
 				) {
 				results.remove(id);
 			}

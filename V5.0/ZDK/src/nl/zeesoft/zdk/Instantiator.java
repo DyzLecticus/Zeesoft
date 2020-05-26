@@ -95,6 +95,10 @@ public class Instantiator {
 						r.add(Double.parseDouble(val.toString()));
 					} else if (className.equals(Boolean.class.getName())) {
 						r.add(Boolean.parseBoolean(val.toString()));
+					} else if (className.equals(Byte.class.getName())) {
+						r.add(Byte.parseByte(val.toString()));
+					} else if (className.equals(Short.class.getName())) {
+						r.add(Short.parseShort(val.toString()));
 					} else if (className.equals(BigDecimal.class.getName())) {
 						r.add(new BigDecimal(val.toString()));
 					} else {
@@ -163,6 +167,26 @@ public class Instantiator {
 					i++;
 				}
 				r = valObj;
+			} else if (className.equals(byte.class.getName())) {
+				byte[] valObj = new byte[values.size()];
+				int i = 0;
+				for (Str val: values) {
+					if (val!=null && !val.toString().equals(NULL)) {
+						valObj[i] = Byte.parseByte(val.toString());
+					}
+					i++;
+				}
+				r = valObj;
+			} else if (className.equals(short.class.getName())) {
+				short[] valObj = new short[values.size()];
+				int i = 0;
+				for (Str val: values) {
+					if (val!=null && !val.toString().equals(NULL)) {
+						valObj[i] = Short.parseShort(val.toString());
+					}
+					i++;
+				}
+				r = valObj;
 			}
 		} catch (NumberFormatException ex) {
 			ex.printStackTrace();
@@ -190,6 +214,10 @@ public class Instantiator {
 						r[i] = Double.parseDouble(val.toString());
 					} else if (className.equals(Boolean.class.getName())) {
 						r[i] = Boolean.parseBoolean(val.toString());
+					} else if (className.equals(Byte.class.getName())) {
+						r[i] = Byte.parseByte(val.toString());
+					} else if (className.equals(Short.class.getName())) {
+						r[i] = Short.parseShort(val.toString());
 					} else if (className.equals(BigDecimal.class.getName())) {
 						r[i] = new BigDecimal(val.toString());
 					} else if (className.equals(Str.class.getName())) {

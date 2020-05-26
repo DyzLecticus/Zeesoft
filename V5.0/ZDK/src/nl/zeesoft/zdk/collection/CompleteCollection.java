@@ -43,6 +43,7 @@ public class CompleteCollection extends QueryableCollection {
 		className = Reflector.getClassName(className);
 		if ((className.startsWith("[") && !className.equals("[L")) ||
 			className.startsWith("java.lang.") ||
+			className.startsWith("java.math.") ||
 			className.startsWith("java.util.") ||
 			className.equals(Str.class.getName())
 			) {
@@ -55,7 +56,8 @@ public class CompleteCollection extends QueryableCollection {
 		boolean r = true;
 		String className = Reflector.getClassName(field.getType().toString());
 		if ((className.startsWith("[") && !className.equals("[L")) ||
-			className.startsWith("java.lang.")
+			className.startsWith("java.lang.") ||
+			className.startsWith("java.math.")
 			) {
 			r = false;
 		}
