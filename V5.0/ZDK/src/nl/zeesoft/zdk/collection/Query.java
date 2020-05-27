@@ -97,13 +97,28 @@ public class Query {
 		return new Query(className);
 	}
 	
-	protected Query applyAllFilters() {
+	public List<String> getClassNames() {
+		List<String> r = new ArrayList<String>();
 		for (QueryFilter filter: filters) {
-			if (!filter.methodOrPropertyName.equals(QueryFilter.CLASS_NAME)) {
-				applyFilter(filter);
+			if (filter.methodOrPropertyName.equals(QueryFilter.CLASS_NAME) &&
+				filter.value!=null &&
+				filter.value instanceof String &&
+				((String)filter.value).length()>0
+				) {
+				r.add((String)filter.value);
 			}
 		}
-		return this;
+		return r;
+	}
+	
+	public List<QueryFilter> getFilters() {
+		List<QueryFilter> r = new ArrayList<QueryFilter>();
+		for (QueryFilter filter: filters) {
+			if (!filter.methodOrPropertyName.equals(QueryFilter.CLASS_NAME)) {
+				r.add(filter.copy());
+			}
+		}
+		return r;
 	}
 	
 	protected Query filter(String methodOrPropertyName, boolean invert, String operator, Object value) {
@@ -117,6 +132,13 @@ public class Query {
 			filter.operator = operator;
 			filter.value = value;
 			filters.add(filter);
+		}
+		return this;
+	}
+	
+	protected Query applyAllFilters() {
+		for (QueryFilter filter: getFilters()) {
+			applyFilter(filter);
 		}
 		return this;
 	}
@@ -159,7 +181,7 @@ public class Query {
 	protected void applyEqualsFilter(QueryFilter filter, Object value, Str id) {
 		boolean equals = (
 			filter.value==null && value==null ||
-			filter.value!=null && value!=null && filter.value.equals(value)
+			filter.value!=null && value!=null && (filter==value || filter.value.equals(value))
 		);
 		if ((!filter.invert && !equals) || (filter.invert && equals)) {
 			results.remove(id);
@@ -217,7 +239,9 @@ public class Query {
 			value instanceof long[] && filter.value instanceof Long ||
 			value instanceof float[] && filter.value instanceof Float ||
 			value instanceof double[] && filter.value instanceof Double ||
-			value instanceof boolean[] && filter.value instanceof Boolean
+			value instanceof boolean[] && filter.value instanceof Boolean ||
+			value instanceof byte[] && filter.value instanceof Byte ||
+			value instanceof short[] && filter.value instanceof Short
 			) {
 			boolean contains = false;
 			if (value instanceof int[]) {
@@ -256,6 +280,22 @@ public class Query {
 				boolean[] values = (boolean[]) value;
 				for (int i = 0; i < values.length; i++) {
 					if ((Boolean)filter.value == values[i]) {
+						contains = true;
+						break;
+					}
+				}
+			} else if (value instanceof byte[]) {
+				byte[] values = (byte[]) value;
+				for (int i = 0; i < values.length; i++) {
+					if ((Byte)filter.value == values[i]) {
+						contains = true;
+						break;
+					}
+				}
+			} else if (value instanceof short[]) {
+				short[] values = (short[]) value;
+				for (int i = 0; i < values.length; i++) {
+					if ((Short)filter.value == values[i]) {
 						contains = true;
 						break;
 					}

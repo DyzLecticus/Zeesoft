@@ -121,15 +121,9 @@ public class QueryableCollection {
 		query = query.copy();
 		lock.lock(this);
 		boolean selected = false;
-		for (QueryFilter filter: query.filters) {
-			if (filter.methodOrPropertyName.equals(QueryFilter.CLASS_NAME) &&
-				filter.value!=null &&
-				filter.value instanceof String &&
-				((String)filter.value).length()>0
-				) {
-				query.results.putAll(getObjectsNoLock((String)filter.value));
-				selected = true;
-			}
+		for (String className: query.getClassNames()) {
+			query.results.putAll(getObjectsNoLock(className));
+			selected = true;
 		}
 		if (!selected) {
 			query.results.putAll(objects);
