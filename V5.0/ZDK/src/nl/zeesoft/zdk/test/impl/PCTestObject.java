@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.collection.PersistableObject;
 import nl.zeesoft.zdk.collection.PersistableProperty;
 
 @PersistableObject()
-public abstract class PersistableAbstract {
+public abstract class PCTestObject {
 	@PersistableProperty()
 	private String	testString 	= "";
 	

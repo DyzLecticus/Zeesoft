@@ -26,10 +26,10 @@ public class TestCollections extends TestObject {
 	protected void describe() {
 		System.out.println("This test shows how to use different collections provided by this library. ");
 		System.out.println("These collections are a mix between Java List and LinkedList style collections. ");
-		System.out.println("They use Java reflection to provide features like queries and persistence with minimum programming. ");
+		System.out.println("They use Java reflection to provide features like queries and persistence with minimal programming. ");
 		System.out.println("The following collections are provided by this library;  ");
 		System.out.println(" * *QueryableCollection* provides support for queries.  ");
-		System.out.println(" * *CompleteCollection* extends *QueryableCollection* and automatically adds linked objects. ");
+		System.out.println(" * *CompleteCollection* extends *QueryableCollection* and automatically adds referenced objects. ");
 		System.out.println(" * *PersistableCollectionBase* extends *CompleteCollection* and adds persistence. ");
 		System.out.println(" * *PersistableCollection* extends *PersistableCollectionBase* and adds compression to persistence. ");
 		System.out.println();
@@ -71,7 +71,7 @@ public class TestCollections extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		PersistableParent parent1 = new PersistableParent();
+		PCTestParent parent1 = new PCTestParent();
 		parent1.setTestString("TestParent1");
 		parent1.getTestStringList().add("TestString1");
 		parent1.getTestStringList().add("TestString2");
@@ -82,13 +82,13 @@ public class TestCollections extends TestObject {
 		int[] ints = {0, 1, 2, 3};
 		parent1.setTestIntArray(ints);
 		
-		PersistableParent parent2 = new PersistableParent();
+		PCTestParent parent2 = new PCTestParent();
 		parent2.setTestString("TestParent2");
 		
 		parent1.setTestPartner(parent2);
 		parent2.setTestPartner(parent1);
 		
-		PersistableChild child1 = new PersistableChild();
+		PCTestChild child1 = new PCTestChild();
 		child1.setTestString("TestChild1");
 		child1.setTestBoolean(true);
 		child1.setTestInt(111);
@@ -96,7 +96,7 @@ public class TestCollections extends TestObject {
 		child1.getTestParents()[1] = parent2;
 		child1.getTestStr().sb().append("I like pizza!");
 		
-		PersistableChild child2 = new PersistableChild();
+		PCTestChild child2 = new PCTestChild();
 		child2.setTestString("TestChild2");
 		child2.setTestBoolean(false);
 		child2.setTestInt(222);
@@ -115,7 +115,7 @@ public class TestCollections extends TestObject {
 			collection.put(parent2);
 			assertEqual(collection.size(),EXPECTED_SIZE,"PersistableCollectionBase size does not match expectation[1]");
 			assertEqual(
-				collection.getObjects(PersistableParent.class.getName()).size(),2,
+				collection.getObjects(PCTestParent.class.getName()).size(),2,
 				"Number of PersistableParent objects does not match expectation"
 				);
 			collection.put(parent2);
@@ -123,8 +123,8 @@ public class TestCollections extends TestObject {
 			
 			Str objStr = collection.getObjectAsStr(id);
 			Object object = collection.getObjectFromStr(objStr);
-			if (assertEqual(object.getClass().getName(),PersistableParent.class.getName(),"Class name does not match expectation")) {
-				PersistableParent parent = (PersistableParent) object;
+			if (assertEqual(object.getClass().getName(),PCTestParent.class.getName(),"Class name does not match expectation")) {
+				PCTestParent parent = (PCTestParent) object;
 				assertEqual(parent.getTestString(),"TestParent1","Parent testString does not match expectation");
 				assertEqual(parent.getTestStringList().size(),0,"Parent testStringList size does not match expectation");
 				assertEqual(parent.getTestFloatList().size(),0,"Parent testFloatList size does not match expectation");
@@ -160,7 +160,7 @@ public class TestCollections extends TestObject {
 		}
 	}
 	
-	private void testQueries(PersistableParent parent1, PersistableParent parent2) {
+	private void testQueries(PCTestParent parent1, PCTestParent parent2) {
 		CompleteCollection collection = new CompleteCollection();
 		collection.put(parent1);
 		collection.put(parent2);
@@ -168,37 +168,37 @@ public class TestCollections extends TestObject {
 		
 		// Test equals
 		Query query = collection.query(
-			Query.create(PersistableParent.class)
+			Query.create(PCTestParent.class)
 			.equals("testString","TestParent1")
 		);
 		assertResultsIsTestParent1(query,1);
 		
 		// Test not equals
 		query = collection.query(
-			Query.create(PersistableParent.class)
+			Query.create(PCTestParent.class)
 			.notEquals("testString","TestParent2")
 		);
 		assertResultsIsTestParent1(query,2);
 		
 		// Test contains
 		query = collection.query(
-			Query.create(PersistableParent.class)
+			Query.create(PCTestParent.class)
 			.contains("testString","1")
 		);
 		assertResultsIsTestParent1(query,3);
 		
 		// Test multiple types
 		query = collection.query(
-			Query.create(PersistableParent.class)
-			.addClass(PersistableChild.class)
+			Query.create(PCTestParent.class)
+			.addClass(PCTestChild.class)
 			.contains("testString","1")
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[4]");
 		
 		// Test multiple types and multiple filters
 		query = collection.query(
-			Query.create(PersistableParent.class)
-			.addClass(PersistableChild.class)
+			Query.create(PCTestParent.class)
+			.addClass(PCTestChild.class)
 			.contains("testString","1")
 			.notContains("testString","Child")
 		);
@@ -206,49 +206,49 @@ public class TestCollections extends TestObject {
 		
 		// Test less
 		query = collection.query(
-			Query.create(PersistableChild.class)
+			Query.create(PCTestChild.class)
 			.lessThan("testInt",222)
 		);
 		assertEqual(query.results.size(),1,"Query results size does not match expectation[6]");
 
 		// Test less or equal
 		query = collection.query(
-			Query.create(PersistableChild.class)
+			Query.create(PCTestChild.class)
 			.lessOrEquals("testInt",222)
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[7]");
 		
 		// Test list contains
 		query = collection.query(
-			Query.create(PersistableParent.class)
+			Query.create(PCTestParent.class)
 			.contains("testStringList","TestString2")
 		);
 		assertResultsIsTestParent1(query,8);
 		
 		// Test array contains
 		query = collection.query(
-			Query.create(PersistableChild.class)
+			Query.create(PCTestChild.class)
 			.contains("testParents",parent2)
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[9]");
 		
 		// Test primitive array contains
 		query = collection.query(
-			Query.create(PersistableParent.class)
+			Query.create(PCTestParent.class)
 			.contains("testIntArray",2)
 		);
 		assertResultsIsTestParent1(query,10);
 
 		// Test filter error
 		query = collection.query(
-			Query.create(PersistableParent.class)
+			Query.create(PCTestParent.class)
 			.equals("qwerqwer",2)
 		);
 		assertEqual(query.errors.size(),1,"Query errors size does not match expectation[9]");
 
 		// Test method invocation
 		query = collection.query(
-			Query.create(PersistableParent.class)
+			Query.create(PCTestParent.class)
 			.equals("getTestString","TestParent1")
 		);
 		assertResultsIsTestParent1(query,10);
@@ -257,8 +257,8 @@ public class TestCollections extends TestObject {
 	private void assertResultsIsTestParent1(Query query,int num) {
 		if (assertEqual(query.results.size(),1,"Query results size does not match expectation[" + num + "]")) {
 			Object first = query.results.get(query.results.firstKey());
-			if (assertEqual(first.getClass().getName(),PersistableParent.class.getName(),"Query did not return the expected type[" + num + "]")) {
-				PersistableParent result = (PersistableParent) first;
+			if (assertEqual(first.getClass().getName(),PCTestParent.class.getName(),"Query did not return the expected type[" + num + "]")) {
+				PCTestParent result = (PCTestParent) first;
 				assertEqual(result.getTestString(),"TestParent1","Query did not return the expected object[" + num + "]");
 			}
 		}

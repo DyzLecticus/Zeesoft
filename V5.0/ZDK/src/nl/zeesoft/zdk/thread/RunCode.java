@@ -5,6 +5,14 @@ public class RunCode {
 	
 	private Exception	exception	= null;
 	
+	public RunCode() {
+		
+	}
+
+	public RunCode(Object... params) {
+		this.params = params;
+	}
+	
 	/**
 	 * Override this method to implement.
 	 * 

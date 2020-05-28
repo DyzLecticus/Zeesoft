@@ -17,6 +17,20 @@ public class PersistableCollection extends PersistableCollectionBase {
 	protected List<String>			classNames			= new ArrayList<String>();
 	protected List<String>			propertyNames		= new ArrayList<String>();
 	
+	public void addClassName(String className) {
+		lock.lock(this);
+		if (!classNames.contains(className)) {
+			classNames.add(className);
+		}
+		lock.unlock(this);
+	}
+	
+	public void addClassNames(List<String> classNames) {
+		for (String className: classNames) {
+			addClassName(className);
+		}
+	}
+	
 	@Override
 	public Str putNoLock(Str id, Object object) {
 		id = super.putNoLock(id, object);
@@ -54,7 +68,7 @@ public class PersistableCollection extends PersistableCollectionBase {
 	
 	@Override
 	protected void fromStrNoLock(Str str) {
-		SortedMap<String,String> replacements = getReplacementsNoLock();
+		SortedMap<String,String> replacements = parseReplacementsFromStrNoLock(str);
 		for (Entry<String,String> entry: replacements.entrySet()) {
 			str.replace(entry.getKey(),entry.getValue());
 		}
@@ -83,9 +97,10 @@ public class PersistableCollection extends PersistableCollectionBase {
 			i++;
 		}
 		i = 0;
+		String eq = EQUALS.substring(0,EQUALS.length() - 1);
 		for (String propertyName: propertyNames) {
-			String find = PERSISTABLE_PROPERTY + propertyName + EQUALS;
-			String rep = PROPERTY_NAME + String.format("%03d", i) + EQUALS; 
+			String find = PERSISTABLE_PROPERTY + propertyName + eq;
+			String rep = PROPERTY_NAME + String.format("%03d", i) + eq; 
 			r.put(rep,find);
 			i++;
 		}

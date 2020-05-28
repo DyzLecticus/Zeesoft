@@ -23,8 +23,7 @@ public class CompleteCollection extends QueryableCollection {
 			}
 			r = super.putNoLock(id, object);
 			if (add) {
-				addObjectChildrenNoLock(object);
-				addObjectReferencesNoLock(object);
+				addedObjectNoLock(r, object);
 			}
 		}
 		return r;
@@ -90,6 +89,11 @@ public class CompleteCollection extends QueryableCollection {
 		return r;
 	}
 
+	protected void addedObjectNoLock(Str id, Object object) {
+		addObjectChildrenNoLock(object);
+		addObjectReferencesNoLock(object);
+	}
+	
 	protected void addObjectChildrenNoLock(Object object) {
 		List<Field> fields = getSupportedFields(object);
 		for (Field field : fields) {

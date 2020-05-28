@@ -81,7 +81,7 @@ public class QueryableCollection {
 	
 	public List<Str> getObjectIds() {
 		lock.lock(this);
-		List<Str> r = new ArrayList<Str>(objects.keySet()); 
+		List<Str> r = new ArrayList<Str>(objects.keySet());
 		lock.unlock(this);
 		return r;
 	}
@@ -101,7 +101,7 @@ public class QueryableCollection {
 		Object r = null;
 		if (id!=null) {
 			lock.lock(this);
-			r = objects.get(id); 
+			r = getObjectNoLock(id); 
 			lock.unlock(this);
 		}
 		return r;
@@ -151,16 +151,18 @@ public class QueryableCollection {
 		objects.clear();
 	}
 	
-	public SortedMap<Str,Object> getObjectsNoLock(String className) {
-		SortedMap<Str,Object> r = new TreeMap<Str,Object>(); 
-		if (className==null || className.length()==0) {
-			r.putAll(objects);
-		} else {
+	protected Object getObjectNoLock(Str id) {
+		return objects.get(id);
+	}
+	
+	protected SortedMap<Str,Object> getObjectsNoLock(String className) {
+		SortedMap<Str,Object> r = new TreeMap<Str,Object>();
+		if (className!=null && className.length()>0) {
 			className += ID_CONCATENATOR;
-			for (Entry<Str,Object> entry: objects.entrySet()) {
-				if (entry.getKey().startsWith(className)) {
-					r.put(entry.getKey(),entry.getValue());
-				}
+		}
+		for (Entry<Str,Object> entry: objects.entrySet()) {
+			if (className==null || className.length()==0 || entry.getKey().startsWith(className)) {
+				r.put(entry.getKey(),getObjectNoLock(entry.getKey()));
 			}
 		}
 		return r;

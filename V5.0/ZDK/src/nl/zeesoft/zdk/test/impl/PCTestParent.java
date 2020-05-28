@@ -5,7 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.collection.PersistableProperty;
 
-public class PersistableParent extends PersistableAbstract {
+public class PCTestParent extends PCTestObject {
 	@PersistableProperty()
 	private List<String>			testStringList	= new ArrayList<String>();
 	@PersistableProperty()
@@ -15,9 +15,9 @@ public class PersistableParent extends PersistableAbstract {
 	@PersistableProperty()
 	private int[]					testIntArray	= null;
 	@PersistableProperty()
-	private List<PersistableChild>	testChildren	= new ArrayList<PersistableChild>();
+	private List<PCTestChild>		testChildren	= new ArrayList<PCTestChild>();
 	@PersistableProperty()
-	private PersistableParent		testPartner		= null;
+	private PCTestParent			testPartner		= null;
 	
 	public List<String> getTestStringList() {
 		return testStringList;
@@ -43,19 +43,19 @@ public class PersistableParent extends PersistableAbstract {
 		this.testStringArray = testStringArray;
 	}
 	
-	public List<PersistableChild> getTestChildren() {
+	public List<PCTestChild> getTestChildren() {
 		return testChildren;
 	}
 	
-	public void setTestChildren(List<PersistableChild> testChildren) {
+	public void setTestChildren(List<PCTestChild> testChildren) {
 		this.testChildren = testChildren;
 	}
 	
-	public PersistableParent getTestPartner() {
+	public PCTestParent getTestPartner() {
 		return testPartner;
 	}
 	
-	public void setTestPartner(PersistableParent testPartner) {
+	public void setTestPartner(PCTestParent testPartner) {
 		this.testPartner = testPartner;
 	}
 
