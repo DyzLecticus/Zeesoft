@@ -60,10 +60,7 @@ public class DatabaseCollection extends PersistableCollection {
 			if (!loadedBlock(element.blockNum)) {
 				triggerLoadBlock(element.blockNum,true,configuration.getLoadBlockTimeoutMs());
 				if (loadedBlock(element.blockNum)) {
-					r = objects.get(id);
-					if (r!=null && r instanceof DatabaseObject) {
-						r = ((DatabaseObject)r).copy();
-					}
+					r = getObjectNoLock(id);
 				}
 			}
 		}

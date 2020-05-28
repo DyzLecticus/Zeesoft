@@ -87,6 +87,8 @@ public class PersistableCollection extends PersistableCollectionBase {
 		list.add(Float.class.getName());
 		list.add(Double.class.getName());
 		list.add(Boolean.class.getName());
+		list.add(Byte.class.getName());
+		list.add(Short.class.getName());
 		list.add(BigDecimal.class.getName());
 		list.add(List.class.getName());
 		list.add(Str.class.getName());
