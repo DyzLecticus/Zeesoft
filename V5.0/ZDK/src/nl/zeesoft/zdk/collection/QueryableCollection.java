@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
@@ -13,9 +14,18 @@ public class QueryableCollection {
 	public final static String				ID_CONCATENATOR			= "@";
 	
 	protected final Lock					lock					= new Lock();
+	protected Logger						logger					= new Logger();
 	
 	protected long							nextId					= 1;
 	protected final SortedMap<Str,Object>	objects					= new TreeMap<Str,Object>();
+	
+	public QueryableCollection() {
+		
+	}
+	
+	public QueryableCollection(Logger logger) {
+		this.logger = logger;
+	}
 	
 	public Str put(Str id,Object object) {
 		if (object!=null) {
@@ -25,7 +35,7 @@ public class QueryableCollection {
 		}
 		return id;
 	}
-
+	
 	public Str put(Object object) {
 		return put(null,object);
 	}
@@ -92,7 +102,7 @@ public class QueryableCollection {
 	
 	public SortedMap<Str,Object> getObjects(String className) {
 		lock.lock(this);
-		SortedMap<Str,Object> r = getObjectsNoLock(className);
+		SortedMap<Str,Object> r = getExternalObjectsNoLock(className);
 		lock.unlock(this);
 		return r;
 	}
@@ -101,7 +111,7 @@ public class QueryableCollection {
 		Object r = null;
 		if (id!=null) {
 			lock.lock(this);
-			r = getObjectNoLock(id); 
+			r = getExternalObjectNoLock(id); 
 			lock.unlock(this);
 		}
 		return r;
@@ -122,24 +132,26 @@ public class QueryableCollection {
 		lock.lock(this);
 		boolean selected = false;
 		for (String className: query.getClassNames()) {
-			query.results.putAll(getObjectsNoLock(className));
+			query.results.putAll(getExternalObjectsNoLock(className));
 			selected = true;
 		}
 		if (!selected) {
-			query.results.putAll(objects);
+			query.results.putAll(getExternalObjectsNoLock(null));
 		}
 		lock.unlock(this);
 		return query.applyAllFilters();
 	}
 	
 	protected Str putNoLock(Str id, Object object) {
-		if (id==null) {
-			id = new Str(object.getClass().getName());
-			id.sb().append(ID_CONCATENATOR);
-			id.sb().append(nextId);
-			nextId++;
+		if (object!=null) {
+			if (id==null) {
+				id = new Str(object.getClass().getName());
+				id.sb().append(ID_CONCATENATOR);
+				id.sb().append(nextId);
+				nextId++;
+			}
+			objects.put(id, object);
 		}
-		objects.put(id, object);
 		return id;
 	}
 	
@@ -149,20 +161,25 @@ public class QueryableCollection {
 	
 	protected void clearNoLock() {
 		objects.clear();
+		nextId = 0L;
 	}
 	
-	protected Object getObjectNoLock(Str id) {
+	protected Object getExternalObjectNoLock(Str id) {
+		return getInternalObjectNoLock(id);
+	}
+	
+	protected Object getInternalObjectNoLock(Str id) {
 		return objects.get(id);
 	}
 	
-	protected SortedMap<Str,Object> getObjectsNoLock(String className) {
+	protected SortedMap<Str,Object> getExternalObjectsNoLock(String className) {
 		SortedMap<Str,Object> r = new TreeMap<Str,Object>();
 		if (className!=null && className.length()>0) {
 			className += ID_CONCATENATOR;
 		}
 		for (Entry<Str,Object> entry: objects.entrySet()) {
 			if (className==null || className.length()==0 || entry.getKey().startsWith(className)) {
-				r.put(entry.getKey(),getObjectNoLock(entry.getKey()));
+				r.put(entry.getKey(),getExternalObjectNoLock(entry.getKey()));
 			}
 		}
 		return r;

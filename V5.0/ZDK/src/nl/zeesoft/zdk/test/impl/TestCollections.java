@@ -38,6 +38,7 @@ public class TestCollections extends TestObject {
 		System.out.println(" * *CompleteCollection* extends *QueryableCollection* and automatically adds referenced objects. ");
 		System.out.println(" * *PersistableCollectionBase* extends *CompleteCollection* and adds persistence. ");
 		System.out.println(" * *PersistableCollection* extends *PersistableCollectionBase* and adds compression to persistence. ");
+		System.out.println(" * *PartitionableCollection* extends *PersistableCollection* and adds multithreading for saving/loading large collections to/from directories. ");
 		System.out.println();
 		System.out.println("Persisted object classes must be annotated with *PersistableObject*. ");
 		System.out.println("The object properties that are to be persisted must be annotated with *PersistableProperty*. ");
@@ -58,7 +59,7 @@ public class TestCollections extends TestObject {
 		System.out.println("SortedMap<Str,Object> results = collection.query(");
 		System.out.println("    Query.create(PersistableParent.class)");
 		System.out.println("    .equals(\"getTestString\",\"Parent\")");
-		System.out.println("    .notContains(\"getTestIntArray\",\"Parent\")");
+		System.out.println("    .notContains(\"getTestIntArray\",42)");
 		System.out.println(").results;");
 		System.out.println("~~~~");
 		System.out.println();

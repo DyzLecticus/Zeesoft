@@ -1,7 +1,10 @@
 package nl.zeesoft.zdk.test.impl;
 
+import java.util.SortedMap;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.collection.Query;
 import nl.zeesoft.zdk.database.DatabaseConfiguration;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
@@ -71,8 +74,10 @@ public class TestDatabaseCollection extends TestObject {
 		Logger logger = new Logger(true);
 		config.setLogger(logger);
 		config.setBaseDir("dist/");
+		config.rmDirs();
 		config.mkDirs();
 		
+		System.out.println();
 		DCTest collection = new DCTest(config);		
 		config.debug(collection,new Str("Adding objects ..."));
 		for (int i = 0; i < 10000; i++) {
@@ -86,21 +91,50 @@ public class TestDatabaseCollection extends TestObject {
 		config.debug(collection,msg);
 		
 		sleep(2000);
+		System.out.println();
 		config.debug(collection,new Str("Saving index ..."));
 		collection.saveIndex(false);
 		config.debug(collection,new Str("Saved index"));
 		
 		sleep(2000);
+		System.out.println();
 		collection.saveAllBlocks(false);
+		collection.clear();
+		assertEqual(collection.getObjectIds().size(),0,"Collection ids size does not match expectation");
+		assertEqual(collection.size(),0,"Collection size does not match expectation");
+		assertEqual(collection.getAddedClassNames().size(),0,"Collection added class names size does not match expectation");
 		
 		sleep(2000);
+		System.out.println();
+		collection = new DCTest(config);
+		collection.triggerLoadIndex().waitTillDone(10000);
+		assertEqual(collection.getObjectIds().size(),10000,"Collection ids size does not match expectation");
+		assertEqual(collection.size(),0,"Collection size does not match expectation");
+		assertEqual(collection.getAddedClassNames().size(),1,"Collection added class names size does not match expectation");
+		
+		sleep(2000);
+		System.out.println();
+		config.debug(collection,new Str("Loading objects ..."));
+		Waiter.waitTillDone(collection.triggerLoadAllBlocks(), 10000);
+		config.debug(collection,new Str("Loaded objects: " + collection.size()));
+		
+		sleep(2000);
+		System.out.println();
 		collection = new DCTest(config);
 		collection.triggerLoadIndex().waitTillDone(10000);
 		
-		sleep(2000);
-		Waiter.waitTillDone(collection.triggerLoadAllBlocks(), 10000);
-		System.out.println("Loaded data. Objects: " + collection.getObjects().size());
+		Object object = collection.get(new Str(DCTestUser.class.getName() + "@1000"));
+		config.debug(collection,new Str("Loaded object: " + object));
+		config.debug(collection,new Str("Loaded objects: " + collection.size()));
+
 		
+		System.out.println();
+		config.debug(collection,new Str("Loading objects ..."));
+		SortedMap<Str,Object> results = collection.query(Query.create(DCTestUser.class)).results;
+		config.debug(collection,new Str("Loaded objects: " + collection.size()));
+		assertEqual(results.size(),10000,"Results size does not match expectation");
+		
+		System.out.println();
 		config.rmDirs();
 	}
 }

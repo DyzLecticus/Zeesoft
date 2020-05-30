@@ -5,25 +5,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
 public class CompleteCollection extends QueryableCollection {
+	public CompleteCollection() {
+		
+	}
+	
+	public CompleteCollection(Logger logger) {
+		this.logger = logger;
+	}
+	
 	@Override
 	protected Str putNoLock(Str id, Object object) {
 		Str r = id;
-		if (isSupportedObject(object.getClass())) {
-			if (id==null) {
-				id = getObjectIdForObjectNoLock(object);
-				r = id;
-			}
-			boolean add = false;
-			if (r==null) {
-				add = true;
-			}
-			r = super.putNoLock(id, object);
-			if (add) {
-				addedObjectNoLock(r, object);
+		if (object!=null) {
+			if (isSupportedObject(object.getClass())) {
+				if (id==null) {
+					id = getObjectIdForObjectNoLock(object);
+					r = id;
+				}
+				boolean add = false;
+				if (r==null) {
+					add = true;
+				}
+				r = super.putNoLock(id, object);
+				if (add) {
+					addedObjectNoLock(r, object);
+				} else {
+					updatedObjectNoLock(r, object);
+				}
 			}
 		}
 		return r;
@@ -92,6 +105,10 @@ public class CompleteCollection extends QueryableCollection {
 	protected void addedObjectNoLock(Str id, Object object) {
 		addObjectChildrenNoLock(object);
 		addObjectReferencesNoLock(object);
+	}
+	
+	protected void updatedObjectNoLock(Str id, Object object) {
+		// Override to implement
 	}
 	
 	protected void addObjectChildrenNoLock(Object object) {

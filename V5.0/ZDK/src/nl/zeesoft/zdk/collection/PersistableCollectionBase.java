@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 
 import nl.zeesoft.zdk.Instantiator;
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
@@ -24,6 +25,14 @@ public class PersistableCollectionBase extends CompleteCollection {
 	public static final String		LIST_START				= "@LS|";
 	public static final String		LIST_CONCATENATOR		= "|LC|";
 	public static final String		LIST_END				= "|LE@";
+	
+	public PersistableCollectionBase() {
+		
+	}
+	
+	public PersistableCollectionBase(Logger logger) {
+		this.logger = logger;
+	}
 	
 	public Str toStr() {
 		lock.lock(this);
@@ -72,6 +81,22 @@ public class PersistableCollectionBase extends CompleteCollection {
 		return r;
 	}
 	
+	public static Str toFile(Object object, String path) {
+		PersistableCollectionBase collection = new PersistableCollectionBase();
+		collection.put(object);
+		return collection.toPath(path);
+	}
+	
+	public static Object fromFile(String path) {
+		Object r = null;
+		PersistableCollectionBase collection = new PersistableCollectionBase();
+		collection.fromPath(path);
+		if (collection.size()>0) {
+			r = collection.get(collection.getObjectIds().get(0));
+		}
+		return r;
+	}
+	
 	@Override
 	protected boolean isSupportedObject(Class<?> cls) {
 		return isPersistableObject(cls);
@@ -89,7 +114,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 	
 	protected Str getObjectAsStrNoLock(Str id) {
 		Str r = new Str();
-		Object object = objects.get(id);
+		Object object = getInternalObjectNoLock(id);
 		if (object!=null) {
 			r.sb().append(PERSISTABLE_OBJECT);
 			r.sb().append(getObjectIdForObjectNoLock(object));
@@ -239,7 +264,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 				if (idList!=null && idList.size()>0) {
 					for (Object id: idList) {
 						if (id instanceof Str) {
-							Object child = objects.get((Str) id);
+							Object child = getInternalObjectNoLock((Str) id);
 							if (child!=null) {
 								children.add(child);
 							}
@@ -257,7 +282,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 	protected void expandObjectReferencesNoLock(List<Str> objStrs) {
 		for (Str objStr: objStrs) {
 			Str id = getObjectIdFromObjStr(objStr);
-			Object object = objects.get(id);
+			Object object = getInternalObjectNoLock(id);
 			if (object!=null) {
 				expandObjectReferencesNoLock(object,objStr);
 			}
@@ -280,12 +305,12 @@ public class PersistableCollectionBase extends CompleteCollection {
 					if (arrayValue!=null) {
 						List<Str> vals = parseValuesFromArray(value);
 						for (int i = 0; i < arrayValue.length; i++) {
-							Object reference = objects.get(vals.get(i));
+							Object reference = getInternalObjectNoLock(vals.get(i));
 							arrayValue[i] = reference;
 						}
 					}
 				} else {
-					Object reference = objects.get(value);
+					Object reference = getInternalObjectNoLock(value);
 					if (reference!=null) {
 						Reflector.setFieldValue(object, field, reference);
 					}
@@ -315,9 +340,11 @@ public class PersistableCollectionBase extends CompleteCollection {
 
 	protected Str toStrNoLock(SortedMap<Str,Object> objects) {
 		Str r = new Str();
-		r.sb().append(NEXT_ID);
-		r.sb().append(nextId);
-		r.sb().append("\n");
+		if (nextId>0) {
+			r.sb().append(NEXT_ID);
+			r.sb().append(nextId);
+			r.sb().append("\n");
+		}
 		r.sb().append(START_OBJECTS);
 		boolean first = true;
 		for (Entry<Str,Object> entry: objects.entrySet()) {
@@ -342,6 +369,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 				} catch (NumberFormatException ex) {
 					ex.printStackTrace();
 				}
+				break;
 			}
 		}
 		r = headerBody.get(1).split(NEXT_OBJECT);

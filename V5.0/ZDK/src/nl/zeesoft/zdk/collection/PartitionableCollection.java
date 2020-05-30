@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.RunCode;
@@ -16,6 +17,14 @@ public class PartitionableCollection extends PersistableCollection {
 	protected int		partitionSize		= 1000;
 	protected int		timeoutMs			= 10000;
 	protected List<Str>	objStrs				= new ArrayList<Str>();
+	
+	public PartitionableCollection() {
+		
+	}
+	
+	public PartitionableCollection(Logger logger) {
+		this.logger = logger;
+	}
 	
 	public void setPartitionSize(int partitionSize) {
 		lock.lock(this);
@@ -101,6 +110,9 @@ public class PartitionableCollection extends PersistableCollection {
 		Str data = toStrNoLock(objects);
 		lock.unlock(this);
 		Str error = data.toFile(path);
+		if (error.length()>0) {
+			logger.error(this,error);
+		}
 		return error;
 	}
 	
@@ -112,89 +124,11 @@ public class PartitionableCollection extends PersistableCollection {
 			fromStrNoLock(data);
 			objStrs.addAll(fromStrNoLock(data));
 			lock.unlock(this);
+		} else {
+			logger.error(this,error);
 		}
 		return error;
 	}
-	
-	/*
-	@Override
-	protected Str toPathNoLock(String path) {
-		Str error = checkDir(path);
-		if (error.length()==0) {
-			List<CodeRunner> runners = new ArrayList<CodeRunner>();
-			int partitionNum = 0;
-			SortedMap<Str,Object> partition = new TreeMap<Str,Object>();
-			for (Entry<Str,Object> entry: objects.entrySet()) {
-				partition.put(entry.getKey(),entry.getValue());
-				if (partition.size()==partitionSize) {
-					String partitionPath = path + partitionNum + ".txt";
-					RunCode code = new RunCode(this,partition,partitionPath) {
-						@Override
-						protected boolean run() {
-							PartitionedCollection collection = (PartitionedCollection) params[0];
-							@SuppressWarnings("unchecked")
-							SortedMap<Str,Object> partition = (SortedMap<Str,Object>) params[1];
-							String path = (String) params[2];
-							collection.savePartitionNoLock(partition, path);
-							return true;
-						}
-						
-					};
-					CodeRunner runner = new CodeRunner(code);
-					runners.add(runner);
-					partitionNum++;
-					partition = new TreeMap<Str,Object>();
-				}
-			}
-			Waiter.startWait(runners, timeoutMs);
-		}
-		return error;
-	}
-
-	@Override
-	protected Str fromPathNoLock(String path) {
-		Str error = checkDir(path);
-		if (error.length()==0) {
-			List<CodeRunner> runners = new ArrayList<CodeRunner>();
-			List<File> files = getPartitionFiles(path);
-			for (File file: files) {
-				String partitionPath = path + file.getName();
-				RunCode code = new RunCode(this,partitionPath) {
-					@Override
-					protected boolean run() {
-						PartitionedCollection collection = (PartitionedCollection) params[0];
-						String path = (String) params[1];
-						collection.loadPartitionNoLock(path);
-						return true;
-					}
-					
-				};
-				CodeRunner runner = new CodeRunner(code);
-				runners.add(runner);
-			}
-			Waiter.startWait(runners, timeoutMs);
-			expandObjectsNoLock(objStrs);
-			objStrs.clear();
-		}
-		return error;
-	}
-	
-	protected Str savePartitionNoLock(SortedMap<Str,Object> objects, String path) {
-		Str data = toStrNoLock(objects);
-		Str error = data.toFile(path);
-		return error;
-	}
-	
-	protected Str loadPartitionNoLock(String path) {
-		Str data = new Str();
-		Str error = data.fromFile(path);
-		if (error.length()==0) {
-			fromStrNoLock(data);
-			objStrs.addAll(fromStrNoLock(data));
-		}
-		return error;
-	}
-	*/
 	
 	protected Str checkDir(String path) {
 		Str error = new Str();

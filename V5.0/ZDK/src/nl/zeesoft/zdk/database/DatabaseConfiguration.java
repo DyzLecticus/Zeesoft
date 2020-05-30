@@ -27,6 +27,8 @@ public class DatabaseConfiguration {
 	@PersistableProperty
 	private int 		loadIndexTimeoutMs			= 3000;
 	@PersistableProperty
+	private int 		saveIndexTimeoutMs			= 10000;
+	@PersistableProperty
 	private int 		loadAllBlocksTimeoutMs		= 3000;
 	@PersistableProperty
 	private int 		loadBlockTimeoutMs			= 200;
@@ -40,6 +42,7 @@ public class DatabaseConfiguration {
 		r.indexPartitionSize = indexPartitionSize;
 		r.numberOfDataBlocks = numberOfDataBlocks;
 		r.loadIndexTimeoutMs = loadIndexTimeoutMs;
+		r.saveIndexTimeoutMs = saveIndexTimeoutMs;
 		r.loadAllBlocksTimeoutMs = loadAllBlocksTimeoutMs;
 		r.loadBlockTimeoutMs = loadBlockTimeoutMs;
 		return r;
@@ -81,7 +84,9 @@ public class DatabaseConfiguration {
 	}
 
 	public void setBaseDir(String baseDir) {
-		this.baseDir = baseDir;
+		if (baseDir.length()>0) {
+			this.baseDir = addSlashIfMissing(baseDir);
+		}
 	}
 
 	public String getIndexDir() {
@@ -89,7 +94,9 @@ public class DatabaseConfiguration {
 	}
 
 	public void setIndexDir(String indexDir) {
-		this.indexDir = indexDir;
+		if (indexDir.length()>0) {
+			this.indexDir = addSlashIfMissing(indexDir);
+		}
 	}
 
 	public String getDataDir() {
@@ -97,7 +104,9 @@ public class DatabaseConfiguration {
 	}
 
 	public void setDataDir(String dataDir) {
-		this.dataDir = dataDir;
+		if (dataDir.length()>0) {
+			this.dataDir = addSlashIfMissing(dataDir);
+		}
 	}
 
 	public int getIndexPartitionSize() {
@@ -105,7 +114,9 @@ public class DatabaseConfiguration {
 	}
 
 	public void setIndexPartitionSize(int indexPartitionSize) {
-		this.indexPartitionSize = indexPartitionSize;
+		if (indexPartitionSize>=10) {
+			this.indexPartitionSize = indexPartitionSize;
+		}
 	}
 
 	public int getNumberOfDataBlocks() {
@@ -113,7 +124,9 @@ public class DatabaseConfiguration {
 	}
 
 	public void setNumberOfDataBlocks(int numberOfDataBlocks) {
-		this.numberOfDataBlocks = numberOfDataBlocks;
+		if (numberOfDataBlocks>=10) {
+			this.numberOfDataBlocks = numberOfDataBlocks;
+		}
 	}
 
 	public int getLoadIndexTimeoutMs() {
@@ -121,7 +134,19 @@ public class DatabaseConfiguration {
 	}
 
 	public void setLoadIndexTimeoutMs(int loadIndexTimeoutMs) {
-		this.loadIndexTimeoutMs = loadIndexTimeoutMs;
+		if (loadIndexTimeoutMs>=1000) {
+			this.loadIndexTimeoutMs = loadIndexTimeoutMs;
+		}
+	}
+
+	public int getSaveIndexTimeoutMs() {
+		return saveIndexTimeoutMs;
+	}
+
+	public void setSaveIndexTimeoutMs(int saveIndexTimeoutMs) {
+		if (saveIndexTimeoutMs>=1000) {
+			this.saveIndexTimeoutMs = saveIndexTimeoutMs;
+		}
 	}
 	
 	public int getLoadAllBlocksTimeoutMs() {
@@ -129,7 +154,9 @@ public class DatabaseConfiguration {
 	}
 
 	public void setLoadAllBlocksTimeoutMs(int loadDataTimeoutMs) {
-		this.loadAllBlocksTimeoutMs = loadDataTimeoutMs;
+		if (loadDataTimeoutMs>=1000) {
+			this.loadAllBlocksTimeoutMs = loadDataTimeoutMs;
+		}
 	}
 
 	public int getLoadBlockTimeoutMs() {
@@ -137,7 +164,9 @@ public class DatabaseConfiguration {
 	}
 
 	public void setLoadBlockTimeoutMs(int loadBlockTimeoutMs) {
-		this.loadBlockTimeoutMs = loadBlockTimeoutMs;
+		if (loadBlockTimeoutMs>=100) {
+			this.loadBlockTimeoutMs = loadBlockTimeoutMs;
+		}
 	}
 
 	public boolean isDebug() {
@@ -149,7 +178,7 @@ public class DatabaseConfiguration {
 	}
 	
 	public void error(Object source, Str message) {
-		logger.error(this, message);
+		logger.error(source, message);
 	}
 	
 	private boolean mkDir(String path) {
@@ -175,5 +204,12 @@ public class DatabaseConfiguration {
 			dir.delete();
 		}
 		return dir.exists();
+	}
+	
+	private String addSlashIfMissing(String dirName) {
+		if (!dirName.endsWith("/")) {
+			dirName += "/";
+		}
+		return dirName;
 	}
 }
