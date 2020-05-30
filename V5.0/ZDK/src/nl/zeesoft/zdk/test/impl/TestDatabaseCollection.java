@@ -5,6 +5,7 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.database.DatabaseConfiguration;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestDatabaseCollection extends TestObject {
 	public TestDatabaseCollection(Tester tester) {
@@ -94,10 +95,10 @@ public class TestDatabaseCollection extends TestObject {
 		
 		sleep(2000);
 		collection = new DCTest(config);
-		collection.triggerLoadIndex(true, 10000);
+		collection.triggerLoadIndex().waitTillDone(10000);
 		
 		sleep(2000);
-		collection.loadAllBlocks(true, 10000);
+		Waiter.waitTillDone(collection.triggerLoadAllBlocks(), 10000);
 		System.out.println("Loaded data. Objects: " + collection.getObjects().size());
 		
 		config.rmDirs();

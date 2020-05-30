@@ -1,8 +1,11 @@
 package nl.zeesoft.zdk.test.impl;
 
+import java.util.List;
+
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.database.DatabaseCollection;
 import nl.zeesoft.zdk.database.DatabaseConfiguration;
+import nl.zeesoft.zdk.thread.CodeRunner;
 
 public class DCTest extends DatabaseCollection {
 	public DCTest(DatabaseConfiguration config) {
@@ -15,8 +18,8 @@ public class DCTest extends DatabaseCollection {
 	}
 
 	@Override
-	public boolean triggerLoadIndex(boolean wait, int waitMs) {
-		return super.triggerLoadIndex(wait, waitMs);
+	public CodeRunner triggerLoadIndex() {
+		return super.triggerLoadIndex();
 	}
 
 	@Override
@@ -25,7 +28,7 @@ public class DCTest extends DatabaseCollection {
 	}
 
 	@Override
-	public void loadAllBlocks(boolean wait, int waitMs) {
-		super.loadAllBlocks(wait, waitMs);
+	public List<CodeRunner> triggerLoadAllBlocks() {
+		return super.triggerLoadAllBlocks();
 	}
 }

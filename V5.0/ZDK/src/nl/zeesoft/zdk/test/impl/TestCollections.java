@@ -187,8 +187,10 @@ public class TestCollections extends TestObject {
 			collection.put(parent1);
 			collection.put(parent2);
 			collection.setPartitionSize(2);
-			collection.toPath("./");
-			collection.fromPath("./");
+			Str error = collection.toPath("./");
+			assertEqual(error,new Str(),"An unexpected error was returned");
+			error = collection.fromPath("./");
+			assertEqual(error,new Str(),"An unexpected error was returned");
 			assertEqual(collection.size(),0,"Failed to clear the collection");
 		}
 	}

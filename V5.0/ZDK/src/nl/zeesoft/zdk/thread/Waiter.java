@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.thread;
 import java.util.List;
 
 public class Waiter {
-	public static void wait(RunCode whileCode, int waitMs) {
+	public static void waitWhile(RunCode whileCode, int waitMs) {
 		int sleepMs = 1;
 		int waitedMs = 0;
 		while(whileCode.tryRunCatch() && waitedMs < waitMs) {
@@ -21,7 +21,7 @@ public class Waiter {
 		}
 	}
 	
-	public static void wait(Waitable waitable, int waitMs) {
+	public static void waitTillDone(Waitable waitable, int waitMs) {
 		int sleepMs = 1;
 		int waitedMs = 0;
 		while(waitable.isBusy() && waitedMs < waitMs) {
@@ -39,14 +39,16 @@ public class Waiter {
 		}
 	}
 	
-	public static void startWait(List<CodeRunner> runners, int waitMs) {
+	public static void startAndWaitTillDone(List<CodeRunner> runners, int waitMs) {
 		for (CodeRunner runner: runners) {
 			runner.start();
 		}
-		wait(runners, waitMs);
+		if (runners.size()>0) {
+			waitTillDone(runners, waitMs);
+		}
 	}
 	
-	public static void wait(List<CodeRunner> runners, int waitMs) {
+	public static void waitTillDone(List<CodeRunner> runners, int waitMs) {
 		int sleepMs = 1;
 		int waitedMs = 0;
 		while(oneOfRunnersIsBusy(runners) && waitedMs < waitMs) {

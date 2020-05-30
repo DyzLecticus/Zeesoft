@@ -60,7 +60,7 @@ public class PartitionableCollection extends PersistableCollection {
 				}
 			}
 			lock.unlock(this);
-			Waiter.startWait(runners, timeoutMs);
+			Waiter.startAndWaitTillDone(runners, timeoutMs);
 		}
 		return error;
 	}
@@ -69,6 +69,7 @@ public class PartitionableCollection extends PersistableCollection {
 	public Str fromPath(String path) {
 		Str error = checkDir(path);
 		if (error.length()==0) {
+			clear();
 			List<CodeRunner> runners = new ArrayList<CodeRunner>();
 			List<File> files = getPartitionFiles(path);
 			for (File file: files) {
@@ -86,7 +87,7 @@ public class PartitionableCollection extends PersistableCollection {
 				CodeRunner runner = new CodeRunner(code);
 				runners.add(runner);
 			}
-			Waiter.startWait(runners, timeoutMs);
+			Waiter.startAndWaitTillDone(runners, timeoutMs);
 			lock.lock(this);
 			expandObjectsNoLock(objStrs);
 			objStrs.clear();

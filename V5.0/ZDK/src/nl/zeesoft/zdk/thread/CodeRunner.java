@@ -65,6 +65,21 @@ public class CodeRunner extends RunnerObject implements Runnable {
 			caughtException(code.getException());
 		}
 	}
+	
+	public CodeRunner waitTillDone(int waitMs) {
+		Waiter.waitTillDone(this, waitMs);
+		return this;
+	}
+	
+	public static CodeRunner startNewCodeRunner(RunCode code) {
+		CodeRunner r = getNewCodeRunner(code);
+		r.start();
+		return r;
+	}
+	
+	public static CodeRunner getNewCodeRunner(RunCode code) {
+		return new CodeRunner(code);
+	}
 
 	protected void whileRunning() {
 		getLock().lock(this);

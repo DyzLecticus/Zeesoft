@@ -60,7 +60,10 @@ public class DatabaseCollection extends PersistableCollection {
 		IndexElement element = elementsById.get(id);
 		if (element!=null) {
 			if (!loadedBlock(element.blockNum)) {
-				triggerLoadBlock(element.blockNum,true,configuration.getLoadBlockTimeoutMs());
+				CodeRunner runner = triggerLoadBlock(element.blockNum);
+				if (runner!=null) {
+					runner.waitTillDone(configuration.getLoadBlockTimeoutMs());
+				}
 				if (loadedBlock(element.blockNum)) {
 					r = getObjectNoLock(id);
 				}
@@ -73,7 +76,8 @@ public class DatabaseCollection extends PersistableCollection {
 	@Override
 	public SortedMap<Str,Object> getObjects() {
 		if (!loadedAllBlocks()) {
-			loadAllBlocks(true, configuration.getLoadAllBlocksTimeoutMs());
+			List<CodeRunner> runners = triggerLoadAllBlocks();
+			Waiter.waitTillDone(runners, configuration.getLoadAllBlocksTimeoutMs());
 		}
 		return super.getObjects();
 	}
@@ -204,11 +208,10 @@ public class DatabaseCollection extends PersistableCollection {
 		return error;
 	}
 	
-	protected boolean triggerLoadIndex(boolean wait, int waitMs) {
-		boolean r = false;
+	protected CodeRunner triggerLoadIndex() {
+		CodeRunner r = null;
 		if (!loadedIndex()) {
-			r = true;
-			RunCode code = new RunCode() {
+			RunCode code = new RunCode(this) {
 				@Override
 				protected boolean run() {
 					DatabaseCollection collection = (DatabaseCollection) params[0];
@@ -217,12 +220,7 @@ public class DatabaseCollection extends PersistableCollection {
 				}
 				
 			};
-			code.params[0] = this;
-			CodeRunner runner = new CodeRunner(code);
-			runner.start();
-			if (wait) {
-				Waiter.wait(getWaitWhileIndexNotLoadedCode(), waitMs);
-			}
+			r = CodeRunner.startNewCodeRunner(code);
 		}
 		return r;
 	}
@@ -305,27 +303,25 @@ public class DatabaseCollection extends PersistableCollection {
 		return r;
 	}
 	
-	protected void loadAllBlocks(boolean wait, int waitMs) {
+	protected List<CodeRunner> triggerLoadAllBlocks() {
+		List<CodeRunner> r = new ArrayList<CodeRunner>();
 		if (!loadedAllBlocks()) {
 			configuration.debug(this,new Str("Loading all blocks..."));
-			boolean triggered = false;
+			r = new ArrayList<CodeRunner>();
 			for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
-				if (triggerLoadBlock(i, false, 0)) {
-					triggered = true;
+				CodeRunner runner = triggerLoadBlock(i);
+				if (runner!=null) {
+					r.add(runner);
 				}
 			}
-			if (triggered && wait) {
-				Waiter.wait(getWaitWhileBlocksNotAllLoadedCode(), waitMs);
-				configuration.debug(this,new Str("Loaded all blocks"));
-			}
 		}
+		return r;
 	}
 	
-	protected boolean triggerLoadBlock(int blockNum, boolean wait, int waitMs) {
-		boolean r = false;
+	protected CodeRunner triggerLoadBlock(int blockNum) {
+		CodeRunner r = null;
 		if (!loadedBlock(blockNum)) {
-			r = true;
-			RunCode code = new RunCode() {
+			RunCode code = new RunCode(this,blockNum) {
 				@Override
 				protected boolean run() {
 					DatabaseCollection collection = (DatabaseCollection) params[0];
@@ -335,14 +331,7 @@ public class DatabaseCollection extends PersistableCollection {
 				}
 				
 			};
-			code.params = new Object[2];
-			code.params[0] = this;
-			code.params[1] = blockNum;
-			CodeRunner runner = new CodeRunner(code);
-			runner.start();
-			if (wait) {
-				Waiter.wait(getWaitWhileBlockNotLoadedCode(blockNum), waitMs);
-			}
+			r = CodeRunner.startNewCodeRunner(code);
 		}
 		return r;
 	}
@@ -390,39 +379,5 @@ public class DatabaseCollection extends PersistableCollection {
 			loadedBlocks[i] = false;
 			elementsByBlockNum.put(i, new ArrayList<IndexElement>());
 		}
-	}
-	
-	private RunCode getWaitWhileIndexNotLoadedCode() {
-		RunCode r = new RunCode(this) {
-			@Override
-			protected boolean run() {
-				DatabaseCollection collection = (DatabaseCollection) params[0];
-				return !collection.loadedIndex();
-			}
-		};
-		return r;
-	}
-	
-	private RunCode getWaitWhileBlockNotLoadedCode(int blockNum) {
-		RunCode r = new RunCode(this, blockNum) {
-			@Override
-			protected boolean run() {
-				DatabaseCollection collection = (DatabaseCollection) params[0];
-				int blockNum = (int) params[1];
-				return !collection.loadedBlock(blockNum);
-			}
-		};
-		return r;
-	}
-	
-	private RunCode getWaitWhileBlocksNotAllLoadedCode() {
-		RunCode r = new RunCode(this) {
-			@Override
-			protected boolean run() {
-				DatabaseCollection collection = (DatabaseCollection) params[0];
-				return !collection.loadedAllBlocks();
-			}
-		};
-		return r;
 	}
 }
