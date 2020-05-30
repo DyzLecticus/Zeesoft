@@ -56,8 +56,8 @@ public class PersistableCollection extends PersistableCollectionBase {
 	}
 	
 	@Override
-	protected Str toStrNoLock() {
-		Str r = super.toStrNoLock();
+	protected Str toStrNoLock(SortedMap<Str,Object> objects) {
+		Str r = super.toStrNoLock(objects);
 		SortedMap<String,String> replacements = getReplacementsNoLock();
 		for (Entry<String,String> entry: replacements.entrySet()) {
 			r.replace(entry.getValue(),entry.getKey());
@@ -67,12 +67,12 @@ public class PersistableCollection extends PersistableCollectionBase {
 	}
 	
 	@Override
-	protected void fromStrNoLock(Str str) {
+	protected List<Str> fromStrNoLock(Str str) {
 		SortedMap<String,String> replacements = parseReplacementsFromStrNoLock(str);
 		for (Entry<String,String> entry: replacements.entrySet()) {
 			str.replace(entry.getKey(),entry.getValue());
 		}
-		super.fromStrNoLock(str);
+		return super.fromStrNoLock(str);
 	}
 	
 	protected SortedMap<String,String> getReplacementsNoLock() {

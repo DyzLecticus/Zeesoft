@@ -7,9 +7,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.collection.PartitionableCollection;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.RunCode;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class DatabaseCollection extends PersistableCollection {
 	protected DatabaseConfiguration					configuration		= null;
@@ -126,7 +128,7 @@ public class DatabaseCollection extends PersistableCollection {
 		}
 		changedIndex = true;
 		changedBlockNums.clear();
-		for (int i = 0; i < configuration.getNumBlocks(); i++) {
+		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
 			changedBlockNums.add(i);
 		}
 	}
@@ -147,11 +149,13 @@ public class DatabaseCollection extends PersistableCollection {
 			SortedMap<Str,IndexElement> elemsById = new TreeMap<Str,IndexElement>(elementsById);
 			List<String> classNames = new ArrayList<String>(addedClassNames);
 			lock.unlock(this);
-			PersistableCollection index = new PersistableCollection();
+			PartitionableCollection index = new PartitionableCollection();
+			index.setPartitionSize(configuration.getIndexPartitionSize());
+			index.setTimeoutMs(configuration.getLoadIndexTimeoutMs() * 2);
 			List<Object> objects = new ArrayList<Object>(elemsById.values());
 			index.putAll(objects);
 			index.addClassNames(classNames);
-			error = index.toFile(configuration.getIndexFilePath());
+			error = index.toPath(configuration.getIndexPath());
 		}
 		return error;
 	}
@@ -167,8 +171,10 @@ public class DatabaseCollection extends PersistableCollection {
 		Str error = new Str();
 		if (!loadedIndex()) {
 			configuration.debug(this,new Str("Loading index ..."));
-			PersistableCollection index = new PersistableCollection();
-			error = index.fromFile(configuration.getIndexFilePath());
+			PartitionableCollection index = new PartitionableCollection();
+			index.setPartitionSize(configuration.getIndexPartitionSize());
+			index.setTimeoutMs(configuration.getLoadIndexTimeoutMs() * 2);
+			error = index.fromPath(configuration.getIndexPath());
 			if (error.length()==0) {
 				List<IndexElement> elements = new ArrayList<IndexElement>();
 				List<Object> objects = new ArrayList<Object>(index.getObjects().values());
@@ -215,7 +221,7 @@ public class DatabaseCollection extends PersistableCollection {
 			CodeRunner runner = new CodeRunner(code);
 			runner.start();
 			if (wait) {
-				wait(getWaitWhileIndexNotLoadedCode(), waitMs);
+				Waiter.wait(getWaitWhileIndexNotLoadedCode(), waitMs);
 			}
 		}
 		return r;
@@ -238,7 +244,7 @@ public class DatabaseCollection extends PersistableCollection {
 		if (save) {
 			PersistableCollection block = new PersistableCollection();
 			block.putAll(dbObjs);
-			error = block.toFile(configuration.getDataBlockFilePath(blockNum));
+			error = block.toPath(configuration.getDataBlockFilePath(blockNum));
 		}
 		return error;
 	}
@@ -246,7 +252,7 @@ public class DatabaseCollection extends PersistableCollection {
 	protected Str saveAllBlocks(boolean force) {
 		Str error = new Str();
 		configuration.debug(this,new Str("Saving all blocks ..."));
-		for (int i = 0; i < configuration.getNumBlocks(); i++) {
+		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
 			error = saveBlock(i,force);
 			if (error.length()>0) {
 				break;
@@ -272,7 +278,7 @@ public class DatabaseCollection extends PersistableCollection {
 		Str error = new Str();
 		if (!loadedBlock(blockNum)) {
 			PersistableCollection block = new PersistableCollection();
-			error = block.fromFile(configuration.getDataBlockFilePath(blockNum));
+			error = block.fromPath(configuration.getDataBlockFilePath(blockNum));
 			if (error.length()==0) {
 				for (Object object: block.getObjects().values()) {
 					if (object instanceof DatabaseObject) {
@@ -290,7 +296,7 @@ public class DatabaseCollection extends PersistableCollection {
 
 	protected boolean loadedAllBlocks() {
 		boolean r = true;
-		for (int i = 0; i < configuration.getNumBlocks(); i++) {
+		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
 			r = loadedBlock(i);
 			if (!r) {
 				break;
@@ -303,13 +309,13 @@ public class DatabaseCollection extends PersistableCollection {
 		if (!loadedAllBlocks()) {
 			configuration.debug(this,new Str("Loading all blocks..."));
 			boolean triggered = false;
-			for (int i = 0; i < configuration.getNumBlocks(); i++) {
+			for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
 				if (triggerLoadBlock(i, false, 0)) {
 					triggered = true;
 				}
 			}
 			if (triggered && wait) {
-				wait(getWaitWhileBlocksNotAllLoadedCode(), waitMs);
+				Waiter.wait(getWaitWhileBlocksNotAllLoadedCode(), waitMs);
 				configuration.debug(this,new Str("Loaded all blocks"));
 			}
 		}
@@ -335,7 +341,7 @@ public class DatabaseCollection extends PersistableCollection {
 			CodeRunner runner = new CodeRunner(code);
 			runner.start();
 			if (wait) {
-				wait(getWaitWhileBlockNotLoadedCode(blockNum), waitMs);
+				Waiter.wait(getWaitWhileBlockNotLoadedCode(blockNum), waitMs);
 			}
 		}
 		return r;
@@ -379,28 +385,10 @@ public class DatabaseCollection extends PersistableCollection {
 	}
 	
 	private void initialize() {
-		loadedBlocks = new boolean[configuration.getNumBlocks()];
-		for (int i = 0; i < configuration.getNumBlocks(); i++) {
+		loadedBlocks = new boolean[configuration.getNumberOfDataBlocks()];
+		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
 			loadedBlocks[i] = false;
 			elementsByBlockNum.put(i, new ArrayList<IndexElement>());
-		}
-	}
-	
-	private void wait(RunCode whileCode, int waitMs) {
-		int sleepMs = 1;
-		int waitedMs = 0;
-		while(whileCode.tryRunCatch() && waitedMs < waitMs) {
-			try {
-				Thread.sleep(sleepMs);
-				waitedMs += sleepMs;
-				if (waitedMs >= 100) {
-					sleepMs = 50;
-				} else if (waitedMs >= 10) {
-					sleepMs = 10;
-				}
-			} catch (InterruptedException ex) {
-				ex.printStackTrace();
-			}
 		}
 	}
 	

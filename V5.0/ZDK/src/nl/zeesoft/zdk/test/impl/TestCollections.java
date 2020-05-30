@@ -1,7 +1,13 @@
 package nl.zeesoft.zdk.test.impl;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.CompleteCollection;
+import nl.zeesoft.zdk.collection.PartitionableCollection;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.collection.PersistableCollectionBase;
 import nl.zeesoft.zdk.collection.PersistableObject;
@@ -157,6 +163,33 @@ public class TestCollections extends TestObject {
 			cstrs.sb().append(PersistableCollectionBase.START_OBJECTS);
 			System.out.println();
 			System.out.println("Original: " + str.length() + ", compressed: " + cstr.length() + ", compressed excluding header: " + cstrs.length());
+		}
+		if (!hasFailures()) {
+			PartitionableCollection collection = new PartitionableCollection() {
+				@Override
+				protected Str savePartition(SortedMap<Str, Object> objects, String path) {
+					//System.out.println("Mock write " + objects.size() + " objects to " + path);
+					return new Str();
+				}
+				@Override
+				protected Str loadPartition(String path) {
+					//System.out.println("Mock load objects from " + path);
+					return new Str();
+				}
+				@Override
+				protected List<File> getPartitionFiles(String path) {
+					List<File> r = new ArrayList<File>();
+					r.add(new File("0.txt"));
+					r.add(new File("1.txt"));
+					return r;
+				}
+			};
+			collection.put(parent1);
+			collection.put(parent2);
+			collection.setPartitionSize(2);
+			collection.toPath("./");
+			collection.fromPath("./");
+			assertEqual(collection.size(),0,"Failed to clear the collection");
 		}
 	}
 	

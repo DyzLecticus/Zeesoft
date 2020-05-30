@@ -60,7 +60,7 @@ public class TestRunCode extends TestObject {
 		CodeRunner runner = new CodeRunner(testCodeA);
 		runner.setSleepMs(1);
 		runner.start();
-		while(runner.isRunning()) {
+		while(runner.isBusy()) {
 			sleep(1);
 		}
 		Exception exception = runner.getCode().getException();
@@ -78,7 +78,7 @@ public class TestRunCode extends TestObject {
 		runner = new CodeRunner(testCodeB);
 		runner.setSleepMs(1);
 		runner.start();
-		while(runner.isRunning()) {
+		while(runner.isBusy()) {
 			sleep(1);
 		}
 		exception = runner.getCode().getException();
@@ -94,8 +94,8 @@ public class TestRunCode extends TestObject {
 		list.start();
 		sleep(5);
 		list.stopWait();
-		assertEqual(list.isRunning(),false,"List state does not match expectation");
-		while(list.isRunning()) {
+		assertEqual(list.isBusy(),false,"List state does not match expectation");
+		while(list.isBusy()) {
 			sleep(1);
 		}
 		exception = list.getCodes().get(1).getException();
@@ -105,7 +105,7 @@ public class TestRunCode extends TestObject {
 		System.out.println("Test runner list exception handling;");
 		list.addCode(testCodeB);
 		list.start();
-		while(list.isRunning()) {
+		while(list.isBusy()) {
 			sleep(1);
 		}
 		exception = list.getCodes().get(2).getException();

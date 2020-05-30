@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.thread;
 
+import nl.zeesoft.zdk.Logger;
+
 public class CodeRunner extends RunnerObject implements Runnable {
 	private RunCode		code		= null;
 	private int			sleepMs		= 100;
@@ -15,8 +17,8 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		return code;
 	}
 	
-	public void setListener(LockListener listener) {
-		getLock().setListener(this, listener);
+	public void setLogger(Logger logger) {
+		getLock().setLogger(this, logger);
 	}
 
 	public void setSleepMs(int sleepMs) {
@@ -30,10 +32,10 @@ public class CodeRunner extends RunnerObject implements Runnable {
 	@Override
 	public void start() {
 		getLock().lock(this);
-		if (!isRunningNoLock() && runner == null) {
+		if (!isBusyNoLock() && runner == null) {
 			runner = new Thread(this);
 			runner.start();
-			setRunningNoLock(true);
+			setBusyNoLock(true);
 		}
 		getLock().unlock(this);
 	}
@@ -54,7 +56,7 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		whileRunning();
 		
 		getLock().lock(this);
-		setRunningNoLock(false);
+		setBusyNoLock(false);
 		getLock().unlock(this);
 		
 		stopped();
@@ -94,8 +96,6 @@ public class CodeRunner extends RunnerObject implements Runnable {
 			}
 		}
 	}
-	
-	
 	
 	/**
 	 * Called when an exception has been caught.

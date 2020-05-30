@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test.impl;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.database.DatabaseConfiguration;
 import nl.zeesoft.zdk.test.TestObject;
@@ -66,7 +67,8 @@ public class TestDatabaseCollection extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		DatabaseConfiguration config = new DatabaseConfiguration();
-		config.setDebug(true);
+		Logger logger = new Logger(true);
+		config.setLogger(logger);
 		config.setBaseDir("dist/");
 		config.mkDirs();
 		
@@ -81,14 +83,23 @@ public class TestDatabaseCollection extends TestObject {
 		Str msg = new Str("Added objects: ");
 		msg.sb().append(collection.getObjectIds().size());
 		config.debug(collection,msg);
+		
+		sleep(2000);
 		config.debug(collection,new Str("Saving index ..."));
 		collection.saveIndex(false);
 		config.debug(collection,new Str("Saved index"));
+		
+		sleep(2000);
 		collection.saveAllBlocks(false);
 		
+		sleep(2000);
 		collection = new DCTest(config);
 		collection.triggerLoadIndex(true, 10000);
+		
+		sleep(2000);
 		collection.loadAllBlocks(true, 10000);
 		System.out.println("Loaded data. Objects: " + collection.getObjects().size());
+		
+		config.rmDirs();
 	}
 }

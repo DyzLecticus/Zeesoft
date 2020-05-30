@@ -1,12 +1,13 @@
 package nl.zeesoft.zdk.thread;
 
-public abstract class RunnerObject {
+public abstract class RunnerObject implements Waitable {
 	private Lock	lock	= new Lock();
-	private boolean running = false;
+	private boolean	busy	= false;
 	
-	public boolean isRunning() {
+	@Override
+	public boolean isBusy() {
 		lock.lock(this);
-		boolean r = isRunningNoLock();
+		boolean r = isBusyNoLock();
 		lock.unlock(this);
 		return r;
 	}
@@ -16,23 +17,12 @@ public abstract class RunnerObject {
 	public abstract void stop();
 	
 	public void stopWait() {
-		stop();
-		wait(10,100);
+		stopWait(100);
 	}
-
-	public void wait(int sleepMs, int max) {
-		int counter = 0;
-		while(isRunning()) {
-			try {
-				Thread.sleep(sleepMs);
-				counter++;
-				if (counter>=max) {
-					break;
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+	
+	public void stopWait(int waitMs) {
+		stop();
+		Waiter.wait(this,waitMs);
 	}
 	
 	/**
@@ -53,11 +43,11 @@ public abstract class RunnerObject {
 		return lock;
 	}
 	
-	protected boolean isRunningNoLock() {
-		return running;
+	protected boolean isBusyNoLock() {
+		return busy;
 	}
 	
-	protected void setRunningNoLock(boolean running) {
-		this.running = running;
+	protected void setBusyNoLock(boolean busy) {
+		this.busy = busy;
 	}
 }

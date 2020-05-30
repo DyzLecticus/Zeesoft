@@ -3,24 +3,26 @@ package nl.zeesoft.zdk.thread;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Logger;
+
 public class CodeRunnerList extends RunnerObject {
 	private List<CodeRunner>	runners		= new ArrayList<CodeRunner>();
 	
 	public void addCode(RunCode code) {
 		CodeRunner runner = getNewCodeRunner(code);
-		runner.setListener(getLock().getListener(this));
+		runner.setLogger(getLock().getLogger(this));
 		getLock().lock(this);
-		if (!isRunningNoLock()) {
+		if (!isBusyNoLock()) {
 			runners.add(runner);
 		}
 		getLock().unlock(this);
 	}
 	
-	public void setListener(LockListener listener) {
-		getLock().setListener(this, listener);
+	public void setLogger(Logger logger) {
+		getLock().setLogger(this, logger);
 		getLock().lock(this);
 		for (CodeRunner runner: runners) {
-			runner.setListener(listener);
+			runner.setLogger(logger);
 		}
 		getLock().unlock(this);
 	}
@@ -45,11 +47,11 @@ public class CodeRunnerList extends RunnerObject {
 	public void start() {
 		boolean started = false;
 		getLock().lock(this);
-		if (!isRunningNoLock()) {
+		if (!isBusyNoLock()) {
 			for (CodeRunner runner: runners) {
 				runner.start();
 			}
-			setRunningNoLock(true);
+			setBusyNoLock(true);
 			started = true;
 		}
 		getLock().unlock(this);
@@ -61,7 +63,7 @@ public class CodeRunnerList extends RunnerObject {
 	@Override
 	public void stop() {
 		getLock().lock(this);
-		if (isRunningNoLock()) {
+		if (isBusyNoLock()) {
 			for (CodeRunner runner: runners) {
 				runner.stop();
 			}
@@ -81,7 +83,7 @@ public class CodeRunnerList extends RunnerObject {
 
 	public void clearCodes() {
 		getLock().lock(this);
-		if (!isRunningNoLock()) {
+		if (!isBusyNoLock()) {
 			runners.clear();
 		}
 		getLock().unlock(this);
@@ -113,13 +115,13 @@ public class CodeRunnerList extends RunnerObject {
 		getLock().lock(this);
 		boolean stopped = true;
 		for (CodeRunner rnnr: runners) {
-			if (rnnr.isRunning()) {
+			if (rnnr.isBusy()) {
 				stopped = false;
 				break;
 			}
 		}
 		if (stopped) {
-			setRunningNoLock(false);
+			setBusyNoLock(false);
 		}
 		getLock().unlock(this);
 		if (stopped) {

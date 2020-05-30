@@ -1,22 +1,25 @@
 package nl.zeesoft.zdk.thread;
 
+import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Str;
+
 /**
  * Synchronization lock 
  */
 public class Lock {
-	private LockListener	listener	= new LockListener();
+	private Logger			logger		= new Logger();
 	
 	private Object			lockedBy	= null;
 	
-	public void setListener(Object source, LockListener listener) {
+	public void setLogger(Object source, Logger logger) {
 		lock(source);
-		this.listener = listener;
+		this.logger = logger;
 		unlock(source);
 	}
 	
-	public LockListener getListener(Object source) {
+	public Logger getLogger(Object source) {
 		lock(source);
-		LockListener r = listener;
+		Logger r = logger;
 		unlock(source);
 		return r;
 	}
@@ -31,8 +34,12 @@ public class Lock {
 			}
 			attempt ++;
 			if (attempt>=1000) {
-				if (listener!=null) {
-					listener.lockFailed(source, attempt);
+				if (logger!=null) {
+					Str error = new Str();
+					error.sb().append("Lock failed after ");
+					error.sb().append(attempt);
+					error.sb().append(" attempts.");
+					logger.error(source, error);
 				}
 				attempt = 0;
 			}

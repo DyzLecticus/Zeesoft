@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Reflector;
@@ -33,20 +34,23 @@ public class PersistableCollectionBase extends CompleteCollection {
 	
 	public void fromStr(Str str) {
 		lock.lock(this);
-		fromStrNoLock(str);
+		List<Str> objStrs = fromStrNoLock(str);
+		expandObjectsNoLock(objStrs);
 		lock.unlock(this);
 	}
 	
-	public Str toFile(String fileName) {
-		return toStr().toFile(fileName);
+	public Str toPath(String path) {
+		lock.lock(this);
+		Str r = toPathNoLock(path);
+		lock.unlock(this);
+		return r;
 	}
 	
-	public Str fromFile(String fileName) {
-		Str data = new Str();
-		Str r = data.fromFile(fileName);
-		if (data.length()>0) {
-			fromStr(data);
-		}
+	public Str fromPath(String path) {
+		lock.lock(this);
+		clearNoLock();
+		Str r = fromPathNoLock(path);
+		lock.unlock(this);
 		return r;
 	}
 	
@@ -289,8 +293,27 @@ public class PersistableCollectionBase extends CompleteCollection {
 			}
 		}
 	}
+
+	protected Str toPathNoLock(String path) {
+		Str data = toStrNoLock();
+		return data.toFile(path);
+	}
+
+	protected Str fromPathNoLock(String path) {
+		Str data = new Str();
+		Str error = data.fromFile(path);
+		if (error.length()==0) {
+			List<Str> objStrs = fromStrNoLock(data);
+			expandObjectsNoLock(objStrs);
+		}
+		return error;
+	}
 	
 	protected Str toStrNoLock() {
+		return toStrNoLock(objects);
+	}
+
+	protected Str toStrNoLock(SortedMap<Str,Object> objects) {
 		Str r = new Str();
 		r.sb().append(NEXT_ID);
 		r.sb().append(nextId);
@@ -307,9 +330,9 @@ public class PersistableCollectionBase extends CompleteCollection {
 		}
 		return r;
 	}
-	
-	protected void fromStrNoLock(Str str) {
-		clearNoLock();
+
+	protected List<Str> fromStrNoLock(Str str) {
+		List<Str> r = new ArrayList<Str>();
 		List<Str> headerBody = str.split(START_OBJECTS);
 		List<Str> headerLines = headerBody.get(0).split("\n");
 		for (Str line: headerLines) {
@@ -321,8 +344,8 @@ public class PersistableCollectionBase extends CompleteCollection {
 				}
 			}
 		}
-		List<Str> objStrs = headerBody.get(1).split(NEXT_OBJECT);
-		for (Str objStr: objStrs) {
+		r = headerBody.get(1).split(NEXT_OBJECT);
+		for (Str objStr: r) {
 			Str id = getObjectIdFromObjStr(objStr);
 			if (id!=null) {
 				Object object = getObjectFromObjStr(objStr);
@@ -331,6 +354,10 @@ public class PersistableCollectionBase extends CompleteCollection {
 				}
 			}
 		}
+		return r;
+	}
+	
+	protected void expandObjectsNoLock(List<Str> objStrs) {
 		for (Object object: objects.values()) {
 			expandObjectChildrenNoLock(object);
 		}

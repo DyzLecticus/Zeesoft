@@ -2,30 +2,30 @@ package nl.zeesoft.zdk.database;
 
 import java.io.File;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.TimeStamp;
 import nl.zeesoft.zdk.collection.PersistableObject;
 import nl.zeesoft.zdk.collection.PersistableProperty;
 
 @PersistableObject
 public class DatabaseConfiguration {
 	@PersistableProperty
-	private boolean		debug						= false;
+	private Logger		logger						= new Logger();
 	
-	@PersistableProperty
-	private int 		numBlocks					= 100;
 	@PersistableProperty
 	private String 		baseDir						= "";
 	@PersistableProperty
-	private String 		indexDir					= "database/";
+	private String 		indexDir					= "database/index/";
 	@PersistableProperty
 	private String 		dataDir						= "database/data/";
 
 	@PersistableProperty
-	private boolean		compressIndex				= false;
+	private int 		indexPartitionSize			= 100;
 	@PersistableProperty
-	private boolean		compressData				= false;
+	private int 		numberOfDataBlocks			= 1000;
 	
+	@PersistableProperty
+	private int 		loadIndexTimeoutMs			= 3000;
 	@PersistableProperty
 	private int 		loadAllBlocksTimeoutMs		= 3000;
 	@PersistableProperty
@@ -33,71 +33,47 @@ public class DatabaseConfiguration {
 
 	public DatabaseConfiguration copy() {
 		DatabaseConfiguration r = new DatabaseConfiguration();
-		r.debug = debug;
-		r.numBlocks = numBlocks;
+		r.logger = new Logger(logger.isDebug());
 		r.baseDir = baseDir;
 		r.indexDir = indexDir;
 		r.dataDir = dataDir;
+		r.indexPartitionSize = indexPartitionSize;
+		r.numberOfDataBlocks = numberOfDataBlocks;
+		r.loadIndexTimeoutMs = loadIndexTimeoutMs;
 		r.loadAllBlocksTimeoutMs = loadAllBlocksTimeoutMs;
 		r.loadBlockTimeoutMs = loadBlockTimeoutMs;
 		return r;
 	}
 
 	public void mkDirs() {
-		File bDir = new File(baseDir);
-		if (!bDir.exists()) {
-			Str msg = new Str("Creating directory: ");
-			msg.sb().append(bDir.getAbsolutePath());
-			bDir.mkdirs();
-		}
-		File iDir = new File(baseDir + indexDir);
-		if (!iDir.exists()) {
-			Str msg = new Str("Creating directory: ");
-			msg.sb().append(iDir.getAbsolutePath());
-			iDir.mkdirs();
-		}
-		File dDir = new File(baseDir + dataDir);
-		if (!dDir.exists()) {
-			Str msg = new Str("Creating directory: ");
-			msg.sb().append(dDir.getAbsolutePath());
-			dDir.mkdirs();
+		if (mkDir(baseDir)) {
+			mkDir(baseDir + indexDir);
+			mkDir(baseDir + dataDir);
 		}
 	}
 	
-	public String getIndexFilePath() {
-		return baseDir + indexDir + "index.txt";
+	public void rmDirs() {
+		File dir = new File(baseDir);
+		if (dir.exists()) {
+			rmDir(baseDir + indexDir);
+			rmDir(baseDir + dataDir);
+		}
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+	
+	public String getIndexPath() {
+		return baseDir + indexDir;
 	}
 	
 	public String getDataBlockFilePath(int blockNum) {
 		return baseDir + dataDir + blockNum + ".txt";
-	}
-	
-	public void debug(Object source, Str message) {
-		if (debug) {
-			prependSource(source,message);
-			System.out.println(message.sb());
-		}
-	}
-	
-	public void error(Object source, Str message) {
-		prependSource(source,message);
-		System.err.println(message.sb());
-	}
-
-	public boolean isDebug() {
-		return debug;
-	}
-
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
-
-	public int getNumBlocks() {
-		return numBlocks;
-	}
-
-	public void setNumBlocks(int numBlocks) {
-		this.numBlocks = numBlocks;
 	}
 
 	public String getBaseDir() {
@@ -124,22 +100,30 @@ public class DatabaseConfiguration {
 		this.dataDir = dataDir;
 	}
 
-	public boolean isCompressIndex() {
-		return compressIndex;
+	public int getIndexPartitionSize() {
+		return indexPartitionSize;
 	}
 
-	public void setCompressIndex(boolean compressIndex) {
-		this.compressIndex = compressIndex;
+	public void setIndexPartitionSize(int indexPartitionSize) {
+		this.indexPartitionSize = indexPartitionSize;
 	}
 
-	public boolean isCompressData() {
-		return compressData;
+	public int getNumberOfDataBlocks() {
+		return numberOfDataBlocks;
 	}
 
-	public void setCompressData(boolean compressData) {
-		this.compressData = compressData;
+	public void setNumberOfDataBlocks(int numberOfDataBlocks) {
+		this.numberOfDataBlocks = numberOfDataBlocks;
 	}
 
+	public int getLoadIndexTimeoutMs() {
+		return loadIndexTimeoutMs;
+	}
+
+	public void setLoadIndexTimeoutMs(int loadIndexTimeoutMs) {
+		this.loadIndexTimeoutMs = loadIndexTimeoutMs;
+	}
+	
 	public int getLoadAllBlocksTimeoutMs() {
 		return loadAllBlocksTimeoutMs;
 	}
@@ -155,11 +139,41 @@ public class DatabaseConfiguration {
 	public void setLoadBlockTimeoutMs(int loadBlockTimeoutMs) {
 		this.loadBlockTimeoutMs = loadBlockTimeoutMs;
 	}
+
+	public boolean isDebug() {
+		return logger.isDebug();
+	}
 	
-	private void prependSource(Object source, Str message) {
-		message.sb().insert(0, ": ");
-		message.sb().insert(0, source.getClass().getName());
-		message.sb().insert(0, " ");
-		message.sb().insert(0, TimeStamp.getDateTimeString());
+	public void debug(Object source, Str message) {
+		logger.debug(source, message);
+	}
+	
+	public void error(Object source, Str message) {
+		logger.error(this, message);
+	}
+	
+	private boolean mkDir(String path) {
+		File dir = new File(path);
+		if (!dir.exists()) {
+			Str msg = new Str("Creating directory: ");
+			msg.sb().append(dir.getAbsolutePath());
+			logger.debug(this,msg);
+			dir.mkdirs();
+		}
+		return dir.exists();
+	}
+	
+	private boolean rmDir(String path) {
+		File dir = new File(path);
+		if (dir.exists()) {
+			Str msg = new Str("Deleting directory: ");
+			msg.sb().append(dir.getAbsolutePath());
+			logger.debug(this,msg);
+			for (File file: dir.listFiles()) {
+				file.delete();
+			}
+			dir.delete();
+		}
+		return dir.exists();
 	}
 }
