@@ -4,6 +4,7 @@ import java.io.File;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.collection.PartitionableCollection;
 import nl.zeesoft.zdk.collection.PersistableObject;
 import nl.zeesoft.zdk.collection.PersistableProperty;
 
@@ -23,15 +24,17 @@ public class DatabaseConfiguration {
 	private int 		indexPartitionSize			= 100;
 	@PersistableProperty
 	private int 		numberOfDataBlocks			= 1000;
+	@PersistableProperty
+	private int 		blockPageSize				= 100;
 	
 	@PersistableProperty
-	private int 		loadIndexTimeoutMs			= 3000;
+	private int 		loadIndexTimeoutMs			= 10000;
 	@PersistableProperty
-	private int 		saveIndexTimeoutMs			= 10000;
+	private int 		saveIndexTimeoutMs			= 20000;
 	@PersistableProperty
-	private int 		loadAllBlocksTimeoutMs		= 3000;
+	private int 		loadAllBlocksTimeoutMs		= 10000;
 	@PersistableProperty
-	private int 		loadBlockTimeoutMs			= 200;
+	private int 		loadBlockTimeoutMs			= 3000;
 
 	public DatabaseConfiguration copy() {
 		DatabaseConfiguration r = new DatabaseConfiguration();
@@ -76,7 +79,7 @@ public class DatabaseConfiguration {
 	}
 	
 	public String getDataBlockFilePath(int blockNum) {
-		return baseDir + dataDir + blockNum + ".txt";
+		return baseDir + dataDir + blockNum + PartitionableCollection.FILE_TYPE;
 	}
 
 	public String getBaseDir() {
@@ -126,6 +129,16 @@ public class DatabaseConfiguration {
 	public void setNumberOfDataBlocks(int numberOfDataBlocks) {
 		if (numberOfDataBlocks>=10) {
 			this.numberOfDataBlocks = numberOfDataBlocks;
+		}
+	}
+
+	public int getBlockPageSize() {
+		return blockPageSize;
+	}
+
+	public void setBlockPageSize(int blockPageSize) {
+		if (blockPageSize>=10) {
+			this.blockPageSize = blockPageSize;
 		}
 	}
 

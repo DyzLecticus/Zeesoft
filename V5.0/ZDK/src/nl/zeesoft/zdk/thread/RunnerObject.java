@@ -39,7 +39,7 @@ public abstract class RunnerObject implements Waitable {
 		// Override to implement
 	}
 	
-	protected Lock getLock() {
+	protected final Lock getLock() {
 		return lock;
 	}
 	

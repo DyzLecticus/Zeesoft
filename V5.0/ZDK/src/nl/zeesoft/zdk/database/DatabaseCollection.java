@@ -6,23 +6,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.collection.PartitionableCollection;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.collection.Query;
 import nl.zeesoft.zdk.thread.CodeRunner;
-import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class DatabaseCollection extends PersistableCollection {
 	protected DatabaseConfiguration					configuration		= null;
 	
-	protected List<String>							addedClassNames		= new ArrayList<String>();
-	
-	protected SortedMap<Str,IndexElement>			elementsById		= new TreeMap<Str,IndexElement>();
-	protected int									currentBlockNum		= 0;
-	
-	protected boolean								changedIndex		= false;
-	protected boolean								loadedIndex			= false;
+	protected DatabaseIndex							index				= null;
 	protected DatabaseBlock[]						blocks				= null;
 	
 	public DatabaseCollection() {
@@ -39,12 +31,11 @@ public class DatabaseCollection extends PersistableCollection {
 	public Str put(Str id,Object object) {
 		Str r = null;
 		if (object!=null) {
-			resetCurrentBlockNum();
 			if (object instanceof DatabaseObject) {
 				r = super.put(id, ((DatabaseObject)object).copy());
 			} else {
 				Str error = new Str();
-				error.sb().append("Database object ");
+				error.sb().append("Database collection objects ");
 				error.sb().append(object.getClass().getName());
 				error.sb().append(" must extend " + DatabaseObject.class.getName());
 				configuration.error(this, error);
@@ -54,18 +45,12 @@ public class DatabaseCollection extends PersistableCollection {
 	}
 	
 	public List<String> getAddedClassNames() {
-		lock.lock(this);
-		List<String> r = new ArrayList<String>(addedClassNames);
-		lock.unlock(this);
-		return r;
+		return index.getAddedClassNames();
 	}
 	
 	@Override
 	public List<Str> getObjectIds() {
-		lock.lock(this);
-		List<Str> r = new ArrayList<Str>(elementsById.keySet());
-		lock.unlock(this);
-		return r;
+		return index.getIds();
 	}
 	
 	@Override
@@ -87,18 +72,12 @@ public class DatabaseCollection extends PersistableCollection {
 		Str r = super.putNoLock(id, object);
 		if (r!=null && object instanceof DatabaseObject) {
 			DatabaseObject dbObj = (DatabaseObject) object;
-			IndexElement element = elementsById.get(dbObj.getId());
+			IndexElement element = index.get(dbObj.getId());
 			if (element!=null) {
 				blocks[element.blockNum].add(element);
 			}
 		}
 		return r;
-	}
-	
-	protected void resetCurrentBlockNum() {
-		lock.lock(this);
-		currentBlockNum = this.getSmallestBlockNoLock();
-		lock.unlock(this);
 	}
 	
 	@Override
@@ -108,7 +87,7 @@ public class DatabaseCollection extends PersistableCollection {
 			DatabaseObject dbObj = (DatabaseObject) object;
 			if (dbObj.getId().length()==0) {
 				dbObj.setId(id);
-				addObjectToIndexNoLock(dbObj);
+				index.add(dbObj,blocks);
 			}
 		}
 	}
@@ -118,7 +97,7 @@ public class DatabaseCollection extends PersistableCollection {
 		super.updatedObjectNoLock(id, object);
 		if (object instanceof DatabaseObject) {
 			DatabaseObject dbObj = (DatabaseObject) object;
-			IndexElement element = elementsById.get(dbObj.getId());
+			IndexElement element = index.get(dbObj.getId());
 			if (element!=null) {
 				blocks[element.blockNum].setChanged();
 			}
@@ -131,7 +110,7 @@ public class DatabaseCollection extends PersistableCollection {
 		if (r!=null && r instanceof DatabaseObject) {
 			DatabaseObject dbObj = (DatabaseObject) r;
 			if (dbObj.getId().length()>0) {
-				removeObjectFromIndexNoLock(dbObj);
+				index.remove(dbObj);
 			}
 		}
 		return r;
@@ -140,9 +119,7 @@ public class DatabaseCollection extends PersistableCollection {
 	@Override
 	protected void clearNoLock() {
 		super.clearNoLock();
-		addedClassNames.clear();
-		elementsById.clear();
-		changedIndex = true;
+		index.clear();
 		for (DatabaseBlock block: blocks) {
 			block.clear();
 		}
@@ -160,7 +137,7 @@ public class DatabaseCollection extends PersistableCollection {
 	@Override
 	protected Object getInternalObjectNoLock(Str id) {
 		Object r = null;
-		IndexElement element = elementsById.get(id);
+		IndexElement element = index.get(id);
 		if (element!=null) {
 			loadBlockNoLock(element.blockNum);
 			r = super.getInternalObjectNoLock(id);
@@ -168,124 +145,57 @@ public class DatabaseCollection extends PersistableCollection {
 		return r;
 	}
 	
-	protected Str saveIndex(boolean force) {
-		Str error = new Str();
-		lock.lock(this);
-		boolean changed = changedIndex;
-		lock.unlock(this);
-		if (changed || force) {
-			lock.lock(this);
-			SortedMap<Str,IndexElement> elemsById = new TreeMap<Str,IndexElement>(elementsById);
-			List<String> classNames = new ArrayList<String>(addedClassNames);
-			lock.unlock(this);
-			PartitionableCollection index = new PartitionableCollection();
-			index.setPartitionSize(configuration.getIndexPartitionSize());
-			index.setTimeoutMs(configuration.getSaveIndexTimeoutMs());
-			List<Object> objects = new ArrayList<Object>(elemsById.values());
-			index.putAll(objects);
-			index.addClassNames(classNames);
-			error = index.toPath(configuration.getIndexPath());
-		}
-		return error;
-	}
-
-	protected boolean loadedIndex() {
-		lock.lock(this);
-		boolean r = loadedIndex;
-		lock.unlock(this);
-		return r;
+	protected Str saveIndex(boolean force, int minDiffMs) {
+		return index.save(force, minDiffMs);
 	}
 	
-	protected Str loadIndex() {
-		Str error = new Str();
-		if (!loadedIndex()) {
-			configuration.debug(this,new Str("Loading index ..."));
-			PartitionableCollection index = new PartitionableCollection();
-			index.setPartitionSize(configuration.getIndexPartitionSize());
-			index.setTimeoutMs(configuration.getLoadIndexTimeoutMs());
-			error = index.fromPath(configuration.getIndexPath());
-			if (error.length()==0) {
-				List<IndexElement> elements = new ArrayList<IndexElement>();
-				List<Object> objects = new ArrayList<Object>(index.getObjects().values());
-				for (Object object: objects) {
-					if (object instanceof IndexElement) {
-						elements.add((IndexElement) object);
-					}
-				}
-				lock.lock(this);
-				clearNoLock();
-				for (IndexElement element: elements) {
-					String className = element.id.split(ID_CONCATENATOR).get(0).toString();
-					if (!addedClassNames.contains(className)) {
-						addedClassNames.add(className);
-					}
-					elementsById.put(element.id, element);
-					blocks[element.blockNum].add(element);
-				}
-				for (DatabaseBlock block: blocks) {
-					block.setSaved();
-				}
-				changedIndex = false;
-				loadedIndex = true;
-				lock.unlock(this);
-				Str msg = new Str("Loaded index: ");
-				msg.sb().append(elements.size());
-				configuration.debug(this,msg);
-			} else {
-				error.sb().insert(0, "Failed to load index: ");
-				configuration.error(this,error);
-			}
+	protected void loadIndex() {
+		lock.lock(this);
+		clearNoLock();
+		List<IndexElement> elements = index.load();
+		for (IndexElement element: elements) {
+			blocks[element.blockNum].add(element);
 		}
-		return error;
+		for (DatabaseBlock block: blocks) {
+			block.setSaved();
+		}
+		lock.unlock(this);
 	}
 	
 	protected CodeRunner triggerLoadIndex() {
-		CodeRunner r = null;
-		if (!loadedIndex()) {
-			RunCode code = new RunCode(this) {
-				@Override
-				protected boolean run() {
-					DatabaseCollection collection = (DatabaseCollection) params[0];
-					collection.loadIndex();
-					return true;
-				}
-				
-			};
-			r = CodeRunner.startNewCodeRunner(code);
-		}
-		return r;
+		return index.triggerLoad(this);
 	}
 	
-	protected Str saveBlock(int blockNum, boolean force) {
+	protected Str saveBlock(int blockNum, boolean force, int minDiffMs) {
 		Str error = new Str();
-		lock.lock(this);
 		SortedMap<Str,Object> dbObjs = new TreeMap<Str,Object>();
-		boolean save = force || blocks[blockNum].isChanged();
+		boolean save = force || blocks[blockNum].isChanged(minDiffMs);
 		if (save) {
 			List<IndexElement> elements = blocks[blockNum].getElements();
+			lock.lock(this);
 			for (IndexElement element: elements) {
-				Object object = getInternalObjectNoLock(element.id);
+				Object object = getExternalObjectNoLock(element.id);
 				if (object instanceof DatabaseObject) {
 					DatabaseObject dbObj = (DatabaseObject) object;
 					dbObjs.put(element.id,dbObj.copy());
 				}
 			}
+			blocks[blockNum].setSaved();
+			lock.unlock(this);
 		}
-		lock.unlock(this);
 		if (save) {
 			PersistableCollection block = new PersistableCollection();
 			block.putAll(dbObjs);
 			error = block.toPath(configuration.getDataBlockFilePath(blockNum));
-			blocks[blockNum].setSaved();
 		}
 		return error;
 	}
 	
-	protected Str saveAllBlocks(boolean force) {
+	protected Str saveAllBlocks(boolean force, int minDiffMs) {
 		Str error = new Str();
 		configuration.debug(this,new Str("Saving all blocks ..."));
 		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
-			error = saveBlock(i,force);
+			error = saveBlock(i,force,minDiffMs);
 			if (error.length()>0) {
 				break;
 			}
@@ -302,7 +212,7 @@ public class DatabaseCollection extends PersistableCollection {
 	protected List<CodeRunner> triggerLoadAllBlocks() {
 		List<CodeRunner> r = new ArrayList<CodeRunner>();
 		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
-			CodeRunner runner = blocks[i].triggerLoadBlock(this);
+			CodeRunner runner = blocks[i].triggerLoad(this);
 			if (runner!=null) {
 				r.add(runner);
 			}
@@ -311,50 +221,15 @@ public class DatabaseCollection extends PersistableCollection {
 	}
 	
 	protected void loadBlockNoLock(int blockNum) {
-		DatabaseBlock block = blocks[blockNum];
-		List<DatabaseObject> dbObjs = block.loadBlock();
+		List<DatabaseObject> dbObjs = blocks[blockNum].load();
 		for (DatabaseObject dbObj: dbObjs) {
 			putNoLock(dbObj.getId(),dbObj);
 		}
 	}
 	
-	protected void addObjectToIndexNoLock(DatabaseObject dbObj) {
-		if (!addedClassNames.contains(dbObj.getClass().getName())) {
-			addedClassNames.add(dbObj.getClass().getName());
-		}
-		IndexElement element = new IndexElement();
-		element.id = dbObj.getId();
-		element.blockNum = currentBlockNum;
-		elementsById.put(dbObj.getId(), element);
-		changedIndex = true;
-	}
-	
-	protected void removeObjectFromIndexNoLock(DatabaseObject dbObj) {
-		IndexElement element = elementsById.remove(dbObj.getId());
-		if (element!=null) {
-			blocks[element.blockNum].remove(element);
-			changedIndex = true;
-		}
-	}
-	
-	private int getSmallestBlockNoLock() {
-		int r = -1;
-		int min = Integer.MAX_VALUE;
-		for (DatabaseBlock block: blocks) {
-			int size = block.size();
-			if (r==-1 || size<min) {
-				r = block.getBlockNum();
-				min = size;
-			}
-		}
-		if (r==-1) {
-			r = 0;
-		}
-		return r;
-	}
-	
 	private void initializeDatabaseCollection() {
 		logger = configuration.getLogger();
+		index = new DatabaseIndex(configuration);
 		blocks = new DatabaseBlock[configuration.getNumberOfDataBlocks()];
 		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
 			blocks[i] = new DatabaseBlock(configuration, i);

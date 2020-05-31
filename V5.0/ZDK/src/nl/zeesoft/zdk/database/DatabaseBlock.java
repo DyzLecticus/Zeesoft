@@ -7,22 +7,13 @@ import java.util.List;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.thread.CodeRunner;
-import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class DatabaseBlock {
-	private Lock					lock			= new Lock();
-	
+public class DatabaseBlock extends DatabaseStateObject {
 	private DatabaseConfiguration	configuration	= null;
 	private int						blockNum		= 0;
 	
 	private List<IndexElement>		elements		= new ArrayList<IndexElement>();
-	
-	private boolean					loaded			= false;
-	private boolean					loading 		= false;
-	
-	private long					saved 			= 0L;
-	private long					changed 		= 0L;
 	
 	protected DatabaseBlock(DatabaseConfiguration configuration, int blockNum) {
 		this.configuration = configuration;
@@ -33,97 +24,45 @@ public class DatabaseBlock {
 		return blockNum;
 	}
 	
-	public void add(IndexElement element) {
+	protected void add(IndexElement element) {
 		lock.lock(this);
 		elements.add(element);
-		changed = System.currentTimeMillis();
+		setChangedNoLock();
 		lock.unlock(this);
 	}
 	
-	public void remove(IndexElement element) {
+	protected void remove(IndexElement element) {
 		lock.lock(this);
 		elements.remove(element);
-		changed = System.currentTimeMillis();
+		setChangedNoLock();
 		lock.unlock(this);
 	}
 	
-	public int size() {
+	protected int size() {
 		lock.lock(this);
 		int r = elements.size();
 		lock.unlock(this);
 		return r;
 	}
 	
-	public void clear() {
+	protected void clear() {
 		lock.lock(this);
 		elements.clear();
-		changed = System.currentTimeMillis();
+		setChangedNoLock();
 		lock.unlock(this);
 	}
 
-	public List<IndexElement> getElements() {
+	protected List<IndexElement> getElements() {
 		lock.lock(this);
 		List<IndexElement> r = new ArrayList<IndexElement>(elements);
 		lock.unlock(this);
 		return r;
 	}
 	
-	protected boolean isLoaded() {
-		lock.lock(this);
-		boolean r = loaded;
-		lock.unlock(this);
-		return r;
-	}
-
-	protected void setLoaded(boolean loaded) {
-		lock.lock(this);
-		this.loaded = loaded;
-		lock.unlock(this);
-	}
-	
-	protected boolean isLoading() {
-		lock.lock(this);
-		boolean r = loading;
-		lock.unlock(this);
-		return r;
-	}
-
-	protected void setLoading(boolean loading) {
-		lock.lock(this);
-		this.loading = loading;
-		lock.unlock(this);
-	}
-
-	protected long getSaved() {
-		lock.lock(this);
-		long r = saved;
-		lock.unlock(this);
-		return r;
-	}
-
-	protected void setSaved() {
-		lock.lock(this);
-		this.saved = System.currentTimeMillis();
-		lock.unlock(this);
-	}
-
-	protected boolean isChanged() {
-		lock.lock(this);
-		boolean r = changed > saved;
-		lock.unlock(this);
-		return r;
-	}
-
-	protected void setChanged() {
-		lock.lock(this);
-		this.changed = System.currentTimeMillis();
-		lock.unlock(this);
-	}
-	
-	protected CodeRunner triggerLoadBlock(DatabaseCollection collection) {
+	protected CodeRunner triggerLoad(DatabaseCollection collection) {
 		CodeRunner r = null;
 		lock.lock(this);
-		boolean trigger = (!loaded && !loading);
+		boolean trigger = isNotLoadedAndNotLoadingNoLock();
 		lock.unlock(this);
 		if (trigger) {
 			RunCode code = new RunCode(this,collection) {
@@ -131,7 +70,7 @@ public class DatabaseBlock {
 				protected boolean run() {
 					DatabaseBlock block = (DatabaseBlock) params[0];
 					DatabaseCollection collection = (DatabaseCollection) params[1];
-					List<DatabaseObject> dbObjs = block.loadBlock();
+					List<DatabaseObject> dbObjs = block.load();
 					for (DatabaseObject dbObj: dbObjs) {
 						collection.put(dbObj.getId(),dbObj);
 					}
@@ -144,14 +83,14 @@ public class DatabaseBlock {
 		return r;
 	}
 	
-	protected List<DatabaseObject> loadBlock() {
+	protected List<DatabaseObject> load() {
 		List<DatabaseObject> r = new ArrayList<DatabaseObject>();
-		lock.lock(this);
 		String fileName = configuration.getDataBlockFilePath(blockNum);
+		lock.lock(this);
 		File file = new File(fileName);
-		boolean load = !loaded && !loading && file.exists();
+		boolean load = isNotLoadedAndNotLoadingNoLock() && file.exists();
 		if (load) {
-			loading = true;
+			setLoadingNoLock(true);
 		}
 		lock.unlock(this);
 		if (load) {
@@ -168,8 +107,8 @@ public class DatabaseBlock {
 				configuration.error(this,error);
 			}
 			lock.lock(this);
-			loaded = error.length() == 0;
-			loading = false;
+			setLoadedNoLock(error.length() == 0);
+			setLoadingNoLock(false);
 			lock.unlock(this);
 		}
 		return r;

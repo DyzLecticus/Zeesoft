@@ -13,8 +13,8 @@ public class DCTest extends DatabaseCollection {
 	}
 
 	@Override
-	public Str saveIndex(boolean force) {
-		return super.saveIndex(force);
+	public Str saveIndex(boolean force, int minDiffMs) {
+		return super.saveIndex(force, minDiffMs);
 	}
 
 	@Override
@@ -23,8 +23,8 @@ public class DCTest extends DatabaseCollection {
 	}
 
 	@Override
-	public Str saveAllBlocks(boolean force) {
-		return super.saveAllBlocks(force);
+	public Str saveAllBlocks(boolean force, int minDiffMs) {
+		return super.saveAllBlocks(force, minDiffMs);
 	}
 
 	@Override

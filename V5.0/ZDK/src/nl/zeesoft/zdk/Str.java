@@ -206,6 +206,9 @@ public class Str implements Comparable<Str>{
 			}
 			r.add(add);
 		}
+		if (r.size()==0) {
+			r.add(new Str(sb()));
+		}
 		return r;
 	}
 

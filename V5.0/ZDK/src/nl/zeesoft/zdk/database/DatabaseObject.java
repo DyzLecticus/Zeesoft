@@ -8,10 +8,10 @@ import nl.zeesoft.zdk.thread.Lock;
 
 @PersistableObject
 public abstract class DatabaseObject {
-	protected Lock	lock	= new Lock();
+	protected final Lock	lock	= new Lock();
 	
 	@PersistableProperty
-	private Str		id		= new Str();
+	private Str				id		= new Str();
 
 	public DatabaseObject copy() {
 		DatabaseObject r = (DatabaseObject) Instantiator.getNewClassInstanceForName(this.getClass().getName());

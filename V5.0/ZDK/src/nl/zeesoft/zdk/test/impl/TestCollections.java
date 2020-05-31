@@ -167,21 +167,33 @@ public class TestCollections extends TestObject {
 		}
 		if (!hasFailures()) {
 			PartitionableCollection collection = new PartitionableCollection() {
+				private Str savedAndLoaded = new Str();
+				@Override
+				public Str fromPath(String path) {
+					Str error = super.fromPath(path);
+					if (error.length()==0) {
+						error = savedAndLoaded;
+					}
+					return error;
+				}
 				@Override
 				protected Str savePartition(SortedMap<Str, Object> objects, String path) {
-					//System.out.println("Mock write " + objects.size() + " objects to " + path);
+					savedAndLoaded.sb().append("S");
+					savedAndLoaded.sb().append(path);
 					return new Str();
 				}
 				@Override
 				protected Str loadPartition(String path) {
-					//System.out.println("Mock load objects from " + path);
+					savedAndLoaded.sb().append("L");
+					savedAndLoaded.sb().append(path);
 					return new Str();
 				}
 				@Override
-				protected List<File> getPartitionFiles(String path) {
+				protected List<File> getFiles(String path) {
 					List<File> r = new ArrayList<File>();
 					r.add(new File("0.txt"));
 					r.add(new File("1.txt"));
+					r.add(new File("3.txt"));
 					return r;
 				}
 			};
@@ -191,7 +203,8 @@ public class TestCollections extends TestObject {
 			Str error = collection.toPath("./");
 			assertEqual(error,new Str(),"An unexpected error was returned");
 			error = collection.fromPath("./");
-			assertEqual(error,new Str(),"An unexpected error was returned");
+			assertEqual(error,new Str("S./0.txtS./1.txtL./0.txtL./1.txtL./3.txt"),
+				"Expected methods were not called with the expected arguments");
 			assertEqual(collection.size(),0,"Failed to clear the collection");
 		}
 	}

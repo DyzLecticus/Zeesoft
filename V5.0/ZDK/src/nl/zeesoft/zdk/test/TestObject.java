@@ -99,10 +99,13 @@ public abstract class TestObject {
 			Str diff2 = new Str();
 			for (int c = 0; c < str1.length(); c++) {
 				String c1 = "";
+				String c2 = "";
 				if (str1.length()>c) {
 					c1 = str1.sb().substring(c,c+1);
 				}
-				String c2 = str2.sb().substring(c,c+1);
+				if (str2.length()>c) {
+					c2 = str2.sb().substring(c,c+1);
+				}
 				if (!c1.equals(c2)) {
 					int max = c + 20;
 					if (str1.length()>c) {

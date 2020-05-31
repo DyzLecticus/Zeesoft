@@ -93,12 +93,12 @@ public class TestDatabaseCollection extends TestObject {
 		sleep(2000);
 		System.out.println();
 		config.debug(collection,new Str("Saving index ..."));
-		collection.saveIndex(false);
+		collection.saveIndex(false, 0);
 		config.debug(collection,new Str("Saved index"));
 		
 		sleep(2000);
 		System.out.println();
-		collection.saveAllBlocks(false);
+		collection.saveAllBlocks(false,0);
 		collection.clear();
 		assertEqual(collection.getObjectIds().size(),0,"Collection ids size does not match expectation");
 		assertEqual(collection.size(),0,"Collection size does not match expectation");
