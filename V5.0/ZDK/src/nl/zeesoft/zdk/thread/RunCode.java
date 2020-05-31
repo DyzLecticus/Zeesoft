@@ -1,6 +1,8 @@
 package nl.zeesoft.zdk.thread;
 
 public class RunCode {
+	private final Lock	lock		= new Lock();
+	
 	public Object[] 	params		= new Object[1];
 	
 	private Exception	exception	= null;
@@ -25,16 +27,23 @@ public class RunCode {
 	
 	public final boolean tryRunCatch() {
 		boolean r = false;
+		lock.lock(this);
 		exception = null;
+		lock.unlock(this);
 		try {
 			r = run();
 		} catch(Exception ex) {
+			lock.lock(this);
 			exception = ex;
+			lock.unlock(this);
 		}
 		return r;
 	}
 	
 	public final Exception getException() {
-		return exception;
+		lock.lock(this);
+		Exception r = exception;
+		lock.unlock(this);
+		return r;
 	}
 }

@@ -134,7 +134,7 @@ public class Str implements Comparable<Str>{
 		boolean r = false;
 		if (sb.length()>=search.length()) {
 			for (int i = 0; i < sb.length(); i++) {
-				if (i + search.length() < sb.length()) {
+				if (i + search.length() <= sb.length()) {
 					String sub = sb.substring(i, i + search.length());
 					if (sub.equals(search)) {
 						r = true;
@@ -150,7 +150,7 @@ public class Str implements Comparable<Str>{
 		if (sb.length()>=search.length()) {
 			StringBuilder nsb = new StringBuilder();
 			for (int i = 0; i < sb.length(); i++) {
-				if (i + search.length() < sb.length()) {
+				if (i + search.length() <= sb.length()) {
 					String sub = sb.substring(i, i + search.length());
 					if (sub.equals(search)) {
 						nsb.append(replace);

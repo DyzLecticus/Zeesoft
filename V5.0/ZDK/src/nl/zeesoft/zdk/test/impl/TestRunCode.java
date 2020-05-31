@@ -4,8 +4,10 @@ import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
+import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestRunCode extends TestObject {
 	public TestRunCode(Tester tester) {
@@ -92,6 +94,7 @@ public class TestRunCode extends TestObject {
 		list.addCode(getNewTestRunCode());
 		list.setSleepMs(1);
 		list.start();
+		assertEqual(CodeRunnerManager.getActiverRunners().size(),2,"Number of active code runners does not match expectation");
 		sleep(5);
 		list.stopWait();
 		assertEqual(list.isBusy(),false,"List state does not match expectation");
@@ -105,6 +108,7 @@ public class TestRunCode extends TestObject {
 		System.out.println("Test runner list exception handling;");
 		list.addCode(testCodeB);
 		list.start();
+		Waiter.waitTillDone(list,1000);
 		while(list.isBusy()) {
 			sleep(1);
 		}
@@ -114,6 +118,8 @@ public class TestRunCode extends TestObject {
 		
 		list.clearCodes();
 		assertEqual(list.getCodes().size(),0,"List size does not match expectation");
+		
+		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 	}
 
 	private RunCode getNewTestRunCode() {

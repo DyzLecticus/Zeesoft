@@ -36,6 +36,7 @@ public class CodeRunner extends RunnerObject implements Runnable {
 			runner = new Thread(this);
 			runner.start();
 			setBusyNoLock(true);
+			CodeRunnerManager.startedRunner(this);
 		}
 		getLock().unlock(this);
 	}
@@ -64,6 +65,8 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		if (code.getException()!=null) {
 			caughtException(code.getException());
 		}
+		
+		CodeRunnerManager.stoppedRunner(this);
 	}
 	
 	public CodeRunner waitTillDone(int waitMs) {

@@ -43,42 +43,7 @@ public class PartitionableCollection extends PersistableCollection {
 	public Str toPath(String path) {
 		Str error = checkDir(path);
 		if (error.length()==0) {
-			List<CodeRunner> runners = new ArrayList<CodeRunner>();
-			int partitionNum = 0;
-			SortedMap<Str,Object> partition = new TreeMap<Str,Object>();
-			List<String> fileNames = new ArrayList<String>();
-			lock.lock(this);
-			for (Entry<Str,Object> entry: objects.entrySet()) {
-				partition.put(entry.getKey(),entry.getValue());
-				if (partition.size()==partitionSize) {
-					String fileName	= partitionNum + FILE_TYPE;
-					fileNames.add(fileName);
-					String partitionPath = path + fileName;
-					RunCode code = new RunCode(this,partition,partitionPath) {
-						@Override
-						protected boolean run() {
-							PartitionableCollection collection = (PartitionableCollection) params[0];
-							@SuppressWarnings("unchecked")
-							SortedMap<Str,Object> partition = (SortedMap<Str,Object>) params[1];
-							String path = (String) params[2];
-							collection.savePartition(partition, path);
-							return true;
-						}
-						
-					};
-					CodeRunner runner = new CodeRunner(code);
-					runners.add(runner);
-					partitionNum++;
-					partition = new TreeMap<Str,Object>();
-				}
-			}
-			lock.unlock(this);
-			List<File> files = getFiles(path);
-			for (File file: files) {
-				if (!fileNames.contains(file.getName())) {
-					file.delete();
-				}
-			}
+			List<CodeRunner> runners = getCodeRunnersForSave(path);
 			Waiter.startAndWaitTillDone(runners, timeoutMs);
 		}
 		return error;
@@ -88,24 +53,8 @@ public class PartitionableCollection extends PersistableCollection {
 	public Str fromPath(String path) {
 		Str error = checkDir(path);
 		if (error.length()==0) {
+			List<CodeRunner> runners = getCodeRunnersForLoad(path);
 			clear();
-			List<CodeRunner> runners = new ArrayList<CodeRunner>();
-			List<File> files = getFiles(path);
-			for (File file: files) {
-				String partitionPath = path + file.getName();
-				RunCode code = new RunCode(this,partitionPath) {
-					@Override
-					protected boolean run() {
-						PartitionableCollection collection = (PartitionableCollection) params[0];
-						String path = (String) params[1];
-						collection.loadPartition(path);
-						return true;
-					}
-					
-				};
-				CodeRunner runner = new CodeRunner(code);
-				runners.add(runner);
-			}
 			Waiter.startAndWaitTillDone(runners, timeoutMs);
 			lock.lock(this);
 			expandObjectsNoLock(objStrs);
@@ -136,6 +85,84 @@ public class PartitionableCollection extends PersistableCollection {
 		}
 		return r;
 	}
+
+	protected List<SortedMap<Str,Object>> getPartitions() {
+		List<SortedMap<Str,Object>> r = new ArrayList<SortedMap<Str,Object>>();
+		SortedMap<Str,Object> partition = new TreeMap<Str,Object>();
+		lock.lock(this);
+		for (Entry<Str,Object> entry: objects.entrySet()) {
+			partition.put(entry.getKey(),entry.getValue());
+			if (partition.size()==partitionSize) {
+				r.add(partition);
+				partition = new TreeMap<Str,Object>();
+			}
+		}
+		if (partition.size()>0) {
+			r.add(partition);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected List<CodeRunner> getCodeRunnersForSave(String path) {
+		List<CodeRunner> r = new ArrayList<CodeRunner>();
+		List<String> fileNames = new ArrayList<String>();
+		int partitionNum = 0;
+		List<SortedMap<Str,Object>> partitions = getPartitions();
+		for (SortedMap<Str,Object> partition: partitions) {
+			String fileName	= partitionNum + FILE_TYPE;
+			fileNames.add(fileName);
+			String partitionPath = path + fileName;
+			RunCode code = new RunCode(this,partition,partitionPath) {
+				@Override
+				protected boolean run() {
+					PartitionableCollection collection = (PartitionableCollection) params[0];
+					@SuppressWarnings("unchecked")
+					SortedMap<Str,Object> partition = (SortedMap<Str,Object>) params[1];
+					String path = (String) params[2];
+					collection.savePartition(partition, path);
+					return true;
+				}
+			};
+			r.add(new CodeRunner(code));
+			partitionNum++;
+		}
+		List<File> files = getFiles(path);
+		for (File file: files) {
+			if (!fileNames.contains(file.getName())) {
+				RunCode code = new RunCode(file) {
+					@Override
+					protected boolean run() {
+						File file = (File) params[0];
+						file.delete();
+						return true;
+					}
+				};
+				r.add(new CodeRunner(code));
+			}
+		}
+		return r;
+	}
+	
+	protected List<CodeRunner> getCodeRunnersForLoad(String path) {
+		List<CodeRunner> r = new ArrayList<CodeRunner>();
+		List<File> files = getFiles(path);
+		for (File file: files) {
+			String partitionPath = path + file.getName();
+			RunCode code = new RunCode(this,partitionPath) {
+				@Override
+				protected boolean run() {
+					PartitionableCollection collection = (PartitionableCollection) params[0];
+					String path = (String) params[1];
+					collection.loadPartition(path);
+					return true;
+				}
+				
+			};
+			r.add(new CodeRunner(code));
+		}
+		return r;
+	}
 	
 	protected Str savePartition(SortedMap<Str,Object> objects, String path) {
 		lock.lock(this);
@@ -153,7 +180,6 @@ public class PartitionableCollection extends PersistableCollection {
 		Str error = data.fromFile(path);
 		if (error.length()==0) {
 			lock.lock(this);
-			fromStrNoLock(data);
 			objStrs.addAll(fromStrNoLock(data));
 			lock.unlock(this);
 		} else {

@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.database;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -159,6 +160,7 @@ public class DatabaseCollection extends PersistableCollection {
 		for (DatabaseBlock block: blocks) {
 			block.setSaved();
 		}
+		nextId = index.getLoadedNextId();
 		lock.unlock(this);
 	}
 	
@@ -184,9 +186,16 @@ public class DatabaseCollection extends PersistableCollection {
 			lock.unlock(this);
 		}
 		if (save) {
-			PersistableCollection block = new PersistableCollection();
-			block.putAll(dbObjs);
-			error = block.toPath(configuration.getDataBlockFilePath(blockNum));
+			if (dbObjs.size()>0) {
+				PersistableCollection block = new PersistableCollection();
+				block.putAll(dbObjs);
+				error = block.toPath(configuration.getDataBlockFilePath(blockNum));
+			} else {
+				File file = new File(configuration.getDataBlockFilePath(blockNum));
+				if (file.exists()) {
+					file.delete();
+				}
+			}
 		}
 		return error;
 	}

@@ -62,7 +62,8 @@ public class DatabaseBlock extends DatabaseStateObject {
 	protected CodeRunner triggerLoad(DatabaseCollection collection) {
 		CodeRunner r = null;
 		lock.lock(this);
-		boolean trigger = isNotLoadedAndNotLoadingNoLock();
+		File file = new File(configuration.getDataBlockFilePath(blockNum));
+		boolean trigger = isNotLoadedAndNotLoadingNoLock() && file.exists();
 		lock.unlock(this);
 		if (trigger) {
 			RunCode code = new RunCode(this,collection) {

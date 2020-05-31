@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.database;
 
 import java.io.File;
+import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -30,7 +31,7 @@ public class DatabaseConfiguration {
 	@PersistableProperty
 	private int 		loadIndexTimeoutMs			= 10000;
 	@PersistableProperty
-	private int 		saveIndexTimeoutMs			= 20000;
+	private int 		saveIndexTimeoutMs			= 10000;
 	@PersistableProperty
 	private int 		loadAllBlocksTimeoutMs		= 10000;
 	@PersistableProperty
@@ -211,7 +212,8 @@ public class DatabaseConfiguration {
 			Str msg = new Str("Deleting directory: ");
 			msg.sb().append(dir.getAbsolutePath());
 			logger.debug(this,msg);
-			for (File file: dir.listFiles()) {
+			List<File> files = PartitionableCollection.getPartitionFiles(path);
+			for (File file: files) {
 				file.delete();
 			}
 			dir.delete();

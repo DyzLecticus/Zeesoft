@@ -6,12 +6,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.collection.PartitionableCollection;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class DatabaseIndex extends DatabaseStateObject {
 	private DatabaseConfiguration			configuration		= null;
+	
+	private long							loadedNextId		= 0;
 	
 	private int								currentBlockNum		= 0;
 	private int								blockPageCounter	= 0;
@@ -98,7 +99,7 @@ public class DatabaseIndex extends DatabaseStateObject {
 			List<String> classNames = new ArrayList<String>(addedClassNames);
 			setSavedNoLock();
 			lock.unlock(this);
-			PartitionableCollection index = new PartitionableCollection();
+			DatabaseIndexCollection index = new DatabaseIndexCollection();
 			index.setPartitionSize(configuration.getIndexPartitionSize());
 			index.setTimeoutMs(configuration.getSaveIndexTimeoutMs());
 			index.putAll(objects);
@@ -138,7 +139,7 @@ public class DatabaseIndex extends DatabaseStateObject {
 		lock.unlock(this);
 		if (load) {
 			configuration.debug(this,new Str("Loading index ..."));
-			PartitionableCollection index = new PartitionableCollection();
+			DatabaseIndexCollection index = new DatabaseIndexCollection();
 			index.setPartitionSize(configuration.getIndexPartitionSize());
 			index.setTimeoutMs(configuration.getLoadIndexTimeoutMs());
 			Str error = index.fromPath(configuration.getIndexPath());
@@ -160,6 +161,7 @@ public class DatabaseIndex extends DatabaseStateObject {
 				}
 				setLoadedNoLock(true);
 				setLoadingNoLock(false);
+				loadedNextId = index.getNextId();
 				lock.unlock(this);
 				Str msg = new Str("Loaded index: ");
 				msg.sb().append(r.size());
@@ -169,6 +171,13 @@ public class DatabaseIndex extends DatabaseStateObject {
 				configuration.error(this,error);
 			}
 		}
+		return r;
+	}
+
+	protected long getLoadedNextId() {
+		lock.lock(this);
+		long r = loadedNextId;
+		lock.unlock(this);
 		return r;
 	}
 	

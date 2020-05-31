@@ -178,14 +178,18 @@ public class TestCollections extends TestObject {
 				}
 				@Override
 				protected Str savePartition(SortedMap<Str, Object> objects, String path) {
+					lock.lock(this);
 					savedAndLoaded.sb().append("S");
 					savedAndLoaded.sb().append(path);
+					lock.unlock(this);
 					return new Str();
 				}
 				@Override
 				protected Str loadPartition(String path) {
+					lock.lock(this);
 					savedAndLoaded.sb().append("L");
 					savedAndLoaded.sb().append(path);
+					lock.unlock(this);
 					return new Str();
 				}
 				@Override
@@ -193,7 +197,7 @@ public class TestCollections extends TestObject {
 					List<File> r = new ArrayList<File>();
 					r.add(new File("0.txt"));
 					r.add(new File("1.txt"));
-					r.add(new File("3.txt"));
+					r.add(new File("2.txt"));
 					return r;
 				}
 			};
@@ -202,9 +206,13 @@ public class TestCollections extends TestObject {
 			collection.setPartitionSize(2);
 			Str error = collection.toPath("./");
 			assertEqual(error,new Str(),"An unexpected error was returned");
+			sleep(10);
 			error = collection.fromPath("./");
-			assertEqual(error,new Str("S./0.txtS./1.txtL./0.txtL./1.txtL./3.txt"),
-				"Expected methods were not called with the expected arguments");
+			assertEqual(error.contains("S./0.txt"),true,"Expected save partition 0 not called");
+			assertEqual(error.contains("S./1.txt"),true,"Expected save partition 1 not called");
+			assertEqual(error.contains("L./0.txt"),true,"Expected load partition 0 not called");
+			assertEqual(error.contains("L./1.txt"),true,"Expected load partition 1 not called");
+			assertEqual(error.contains("L./2.txt"),true,"Expected load partition 2 not called");
 			assertEqual(collection.size(),0,"Failed to clear the collection");
 		}
 	}
