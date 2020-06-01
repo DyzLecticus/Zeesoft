@@ -20,7 +20,7 @@ public abstract class DatabaseObject {
 		return r;
 	}
 	
-	public Str getId() {
+	public final Str getId() {
 		lock.lock(this);
 		Str r = new Str(id);
 		lock.unlock(this);

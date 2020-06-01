@@ -25,13 +25,23 @@ public class QueryableCollection {
 	
 	public QueryableCollection(Logger logger) {
 		this.logger = logger;
+		lock.setLogger(this, logger);
 	}
 	
 	public Str put(Str id,Object object) {
 		if (object!=null) {
-			lock.lock(this);
-			id = putNoLock(id, object);
-			lock.unlock(this);
+			String idPrefix = object.getClass().getName() + ID_CONCATENATOR;
+			if (id!=null && !id.startsWith(idPrefix)) {
+				Str error = new Str();
+				error.sb().append("ID for ");
+				error.sb().append(object.getClass().getName());
+				error.sb().append(" object must start with  " + idPrefix);
+				logger.error(this, error);
+			} else {
+				lock.lock(this);
+				id = putNoLock(id, object);
+				lock.unlock(this);
+			}
 		}
 		return id;
 	}

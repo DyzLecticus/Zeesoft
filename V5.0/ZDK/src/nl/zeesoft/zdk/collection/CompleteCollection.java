@@ -15,7 +15,7 @@ public class CompleteCollection extends QueryableCollection {
 	}
 	
 	public CompleteCollection(Logger logger) {
-		this.logger = logger;
+		super(logger);
 	}
 	
 	@Override

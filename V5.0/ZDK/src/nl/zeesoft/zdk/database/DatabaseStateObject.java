@@ -1,14 +1,23 @@
 package nl.zeesoft.zdk.database;
 
 import nl.zeesoft.zdk.thread.Lock;
+import nl.zeesoft.zdk.thread.Waitable;
 
-public class DatabaseStateObject {
+public class DatabaseStateObject implements Waitable {
 	protected final Lock			lock			= new Lock();
 	
 	private boolean					loaded			= false;
 	private boolean					loading 		= false;
 	private long					saved 			= 0L;
 	private long					changed 		= 0L;
+
+	@Override
+	public boolean isBusy() {
+		lock.lock(this);
+		boolean r = loading;
+		lock.unlock(this);
+		return r;
+	}
 
 	protected void setSaved() {
 		lock.lock(this);

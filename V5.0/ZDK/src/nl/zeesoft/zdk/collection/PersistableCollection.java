@@ -23,7 +23,7 @@ public class PersistableCollection extends PersistableCollectionBase {
 	}
 	
 	public PersistableCollection(Logger logger) {
-		this.logger = logger;
+		super(logger);
 	}
 	
 	public void addClassName(String className) {

@@ -47,6 +47,24 @@ public class DatabaseCollection extends PersistableCollection {
 	}
 	
 	@Override
+	public Object get(Str id) {
+		return get(id,configuration.getLoadBlockTimeoutMs());
+	}
+	
+	public Object get(Str id, int timeoutMs) {
+		IndexElement element = index.get(id);
+		if (element!=null) {
+			lock.lock(this);
+			loadBlockNoLock(element.blockNum);
+			lock.unlock(this);
+			if (blocks[element.blockNum].isBusy()) {
+				Waiter.waitTillDone(blocks[element.blockNum], timeoutMs);
+			}
+		}
+		return super.get(id);
+	}
+	
+	@Override
 	public List<Str> getObjectIds() {
 		return index.getIds();
 	}
@@ -108,7 +126,10 @@ public class DatabaseCollection extends PersistableCollection {
 		if (r!=null && r instanceof DatabaseObject) {
 			DatabaseObject dbObj = (DatabaseObject) r;
 			if (dbObj.getId().length()>0) {
-				index.remove(dbObj);
+				IndexElement element = index.remove(dbObj);
+				if (element!=null) {
+					blocks[element.blockNum].remove(element);
+				}
 			}
 		}
 		return r;
@@ -169,6 +190,9 @@ public class DatabaseCollection extends PersistableCollection {
 	protected void loadedIndex() {
 		lock.lock(this);
 		List<IndexElement> elements = index.getElements();
+		for (DatabaseBlock block: blocks) {
+			block.clear();
+		}
 		for (IndexElement element: elements) {
 			blocks[element.blockNum].add(element);
 		}

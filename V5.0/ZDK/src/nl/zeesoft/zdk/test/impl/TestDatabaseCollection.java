@@ -5,9 +5,13 @@ import java.util.SortedMap;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.Query;
+import nl.zeesoft.zdk.database.DatabaseCollection;
 import nl.zeesoft.zdk.database.DatabaseConfiguration;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.thread.CodeRunnerList;
+import nl.zeesoft.zdk.thread.RunCode;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestDatabaseCollection extends TestObject {
 	public TestDatabaseCollection(Tester tester) {
@@ -128,8 +132,11 @@ public class TestDatabaseCollection extends TestObject {
 		collection.loadIndex(10000);
 		config.debug(collection,new Str("Loaded index: " + collection.getObjectIds().size()));
 		
-		Object object = collection.get(new Str(DCTestUser.class.getName() + "@1000"));
-		config.debug(collection,new Str("Loaded object: " + object));
+		CodeRunnerList list = new CodeRunnerList();
+		list.add(getNewRunCode(config,collection));
+		list.add(getNewRunCode(config,collection));
+		Waiter.startAndWaitTillDone(list, 1000);
+		
 		config.debug(collection,new Str("Loaded objects: " + collection.size()));
 
 		System.out.println();
@@ -140,5 +147,18 @@ public class TestDatabaseCollection extends TestObject {
 		
 		System.out.println();
 		config.rmDirs();
+	}
+	
+	private RunCode getNewRunCode(DatabaseConfiguration config, DatabaseCollection collection) {
+		RunCode code = new RunCode() {
+			@Override
+			protected boolean run() {
+				config.debug(collection,new Str("Loading object ..."));
+				Object object = collection.get(new Str(DCTestUser.class.getName() + "@1000"));
+				config.debug(collection,new Str("Loaded object: " + object));
+				return true;
+			}
+		};
+		return code;
 	}
 }

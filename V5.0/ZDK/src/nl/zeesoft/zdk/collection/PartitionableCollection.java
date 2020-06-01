@@ -24,7 +24,7 @@ public class PartitionableCollection extends PersistableCollection {
 	}
 	
 	public PartitionableCollection(Logger logger) {
-		this.logger = logger;
+		super(logger);
 	}
 	
 	public void setPartitionSize(int partitionSize) {

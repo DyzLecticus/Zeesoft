@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
@@ -35,9 +36,10 @@ public class Query {
 	}
 	
 	public Query copy() {
-		Query r = new Query();
+		Query r = (Query) Instantiator.getNewClassInstanceForName(this.getClass().getName());
 		for (QueryFilter filter: filters) {
 			r.filters.add(filter.copy());
+			copyTo(r);
 		}
 		return r;
 	}
@@ -119,6 +121,12 @@ public class Query {
 			}
 		}
 		return r;
+	}
+	
+	protected void copyTo(Query query) {
+		for (QueryFilter filter: filters) {
+			query.filters.add(filter.copy());
+		}
 	}
 	
 	protected Query filter(String methodOrPropertyName, boolean invert, String operator, Object value) {

@@ -31,7 +31,7 @@ public class PersistableCollectionBase extends CompleteCollection {
 	}
 	
 	public PersistableCollectionBase(Logger logger) {
-		this.logger = logger;
+		super(logger);
 	}
 	
 	public Str toStr() {

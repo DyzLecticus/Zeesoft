@@ -73,8 +73,12 @@ public class DatabaseIndex extends DatabaseStateObject {
 	}
 
 	protected List<Str> getIds() {
+		List<Str> r = new ArrayList<Str>();
 		lock.lock(this);
-		List<Str> r = new ArrayList<Str>(elementsById.keySet());
+		List<Str> ids = new ArrayList<Str>(elementsById.keySet());
+		for (Str id: ids) {
+			r.add(new Str(id));
+		}
 		lock.unlock(this);
 		return r;
 	}
