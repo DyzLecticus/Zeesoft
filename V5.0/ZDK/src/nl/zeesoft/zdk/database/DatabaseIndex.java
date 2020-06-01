@@ -16,11 +16,13 @@ public class DatabaseIndex extends DatabaseStateObject {
 	
 	private int								currentBlockNum		= 0;
 	private int								blockPageCounter	= 0;
+	
 	private List<String>					addedClassNames		= new ArrayList<String>();
 	private SortedMap<Str,IndexElement>		elementsById		= new TreeMap<Str,IndexElement>();
 
 	protected DatabaseIndex(DatabaseConfiguration configuration) {
 		this.configuration = configuration;
+		blockPageCounter = configuration.getBlockPageSize();
 	}
 	
 	protected List<String> getAddedClassNames() {
@@ -35,15 +37,15 @@ public class DatabaseIndex extends DatabaseStateObject {
 		if (!addedClassNames.contains(dbObj.getClass().getName())) {
 			addedClassNames.add(dbObj.getClass().getName());
 		}
-		IndexElement r = new IndexElement();
-		r.id = dbObj.getId();
-		r.blockNum = currentBlockNum;
-		elementsById.put(dbObj.getId(), r);
 		blockPageCounter++;
 		if (blockPageCounter>=configuration.getBlockPageSize()) {
 			currentBlockNum = getSmallestBlockNoLock(blocks);
 			blockPageCounter = 0;
 		}
+		IndexElement r = new IndexElement();
+		r.id = dbObj.getId();
+		r.blockNum = currentBlockNum;
+		elementsById.put(dbObj.getId(), r);
 		setChangedNoLock();
 		lock.unlock(this);
 		return r;
@@ -95,8 +97,14 @@ public class DatabaseIndex extends DatabaseStateObject {
 		CodeRunnerChain r = null;
 		if (force || isChanged(minDiffMs)) {
 			lock.lock(this);
-			List<Object> objects = new ArrayList<Object>(elementsById.values());
+			List<Object> list = new ArrayList<Object>(elementsById.values());
 			List<String> classNames = new ArrayList<String>(addedClassNames);
+			SortedMap<Str,Object> objects = new TreeMap<Str,Object>();
+			long uid = 0;
+			for (Object object: list) {
+				objects.put(DatabaseIndexCollection.getIdForObject(object,uid),object);
+				uid++;
+			}
 			setSavedNoLock();
 			lock.unlock(this);
 			DatabaseIndexCollection index = new DatabaseIndexCollection(configuration.getLogger());

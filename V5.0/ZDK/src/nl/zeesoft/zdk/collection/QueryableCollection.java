@@ -142,12 +142,17 @@ public class QueryableCollection {
 		return query.applyAllFilters();
 	}
 	
+	protected static Str getIdForObject(Object object, long uid) {
+		Str id = new Str(object.getClass().getName());
+		id.sb().append(ID_CONCATENATOR);
+		id.sb().append(uid);
+		return id;
+	}
+	
 	protected Str putNoLock(Str id, Object object) {
 		if (object!=null) {
 			if (id==null) {
-				id = new Str(object.getClass().getName());
-				id.sb().append(ID_CONCATENATOR);
-				id.sb().append(nextId);
+				id = getIdForObject(object,nextId);
 				nextId++;
 			}
 			objects.put(new Str(id), object);

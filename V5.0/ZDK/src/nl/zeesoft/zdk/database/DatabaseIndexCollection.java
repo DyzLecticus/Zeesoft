@@ -1,16 +1,18 @@
 package nl.zeesoft.zdk.database;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.PartitionableCollection;
+import nl.zeesoft.zdk.collection.QueryableCollection;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 
 public class DatabaseIndexCollection extends PartitionableCollection {
-	public DatabaseIndexCollection() {
-		
-	}
-	
 	public DatabaseIndexCollection(Logger logger) {
 		this.logger = logger;
+	}
+	
+	protected static Str getIdForObject(Object object, long uid) {
+		return QueryableCollection.getIdForObject(object, uid);
 	}
 	
 	protected void setNextId(long nextId) {

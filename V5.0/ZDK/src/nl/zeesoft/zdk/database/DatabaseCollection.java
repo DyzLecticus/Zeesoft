@@ -14,10 +14,10 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class DatabaseCollection extends PersistableCollection {
-	protected DatabaseConfiguration					configuration		= null;
+	protected DatabaseConfiguration		configuration	= null;
 	
-	protected DatabaseIndex							index				= null;
-	protected DatabaseBlock[]						blocks				= null;
+	protected DatabaseIndex				index			= null;
+	protected DatabaseBlock[]			blocks			= null;
 	
 	public DatabaseCollection(DatabaseConfiguration configuration) {
 		super(configuration.getLogger());
@@ -184,8 +184,8 @@ public class DatabaseCollection extends PersistableCollection {
 		SortedMap<Str,Object> dbObjs = new TreeMap<Str,Object>();
 		boolean save = force || blocks[blockNum].isChanged(minDiffMs);
 		if (save) {
-			List<IndexElement> elements = blocks[blockNum].getElements();
 			lock.lock(this);
+			List<IndexElement> elements = blocks[blockNum].getElements();
 			for (IndexElement element: elements) {
 				Object object = getExternalObjectNoLock(element.id);
 				if (object instanceof DatabaseObject) {
