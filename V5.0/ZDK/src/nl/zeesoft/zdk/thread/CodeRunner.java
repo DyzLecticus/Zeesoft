@@ -59,14 +59,16 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		getLock().lock(this);
 		setBusyNoLock(false);
 		getLock().unlock(this);
-		
-		stopped();
-		
+				
 		if (code.getException()!=null) {
 			caughtException(code.getException());
 		}
 		
+		stopped();
+		
 		CodeRunnerManager.stoppedRunner(this);
+		
+		doneCallback();
 	}
 	
 	public CodeRunner waitTillDone(int waitMs) {
@@ -114,14 +116,7 @@ public class CodeRunner extends RunnerObject implements Runnable {
 			}
 		}
 	}
-	
-	/**
-	 * Called when an exception has been caught.
-	 */
-	protected void caughtException(Exception exception) {
-		// Override to implement
-	}
-	
+		
 	private void setSleep(int sleep, boolean ms) {
 		getLock().lock(this);
 		if (ms) {

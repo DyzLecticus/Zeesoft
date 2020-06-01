@@ -6,8 +6,6 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.PersistableCollection;
-import nl.zeesoft.zdk.thread.CodeRunner;
-import nl.zeesoft.zdk.thread.RunCode;
 
 public class DatabaseBlock extends DatabaseStateObject {
 	private DatabaseConfiguration	configuration	= null;
@@ -59,31 +57,6 @@ public class DatabaseBlock extends DatabaseStateObject {
 		return r;
 	}
 	
-	protected CodeRunner triggerLoad(DatabaseCollection collection) {
-		CodeRunner r = null;
-		lock.lock(this);
-		File file = new File(configuration.getDataBlockFilePath(blockNum));
-		boolean trigger = isNotLoadedAndNotLoadingNoLock() && file.exists();
-		lock.unlock(this);
-		if (trigger) {
-			RunCode code = new RunCode(this,collection) {
-				@Override
-				protected boolean run() {
-					DatabaseBlock block = (DatabaseBlock) params[0];
-					DatabaseCollection collection = (DatabaseCollection) params[1];
-					List<DatabaseObject> dbObjs = block.load();
-					for (DatabaseObject dbObj: dbObjs) {
-						collection.put(dbObj.getId(),dbObj);
-					}
-					return true;
-				}
-				
-			};
-			r = CodeRunner.startNewCodeRunner(code);
-		}
-		return r;
-	}
-	
 	protected List<DatabaseObject> load() {
 		List<DatabaseObject> r = new ArrayList<DatabaseObject>();
 		String fileName = configuration.getDataBlockFilePath(blockNum);
@@ -95,7 +68,7 @@ public class DatabaseBlock extends DatabaseStateObject {
 		}
 		lock.unlock(this);
 		if (load) {
-			PersistableCollection block = new PersistableCollection();
+			PersistableCollection block = new PersistableCollection(configuration.getLogger());
 			Str error = block.fromPath(fileName);
 			if (error.length()==0) {
 				for (Object object: block.getObjects().values()) {

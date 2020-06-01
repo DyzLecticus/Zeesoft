@@ -29,10 +29,6 @@ public class DatabaseConfiguration {
 	private int 		blockPageSize				= 100;
 	
 	@PersistableProperty
-	private int 		loadIndexTimeoutMs			= 10000;
-	@PersistableProperty
-	private int 		saveIndexTimeoutMs			= 10000;
-	@PersistableProperty
 	private int 		loadAllBlocksTimeoutMs		= 10000;
 	@PersistableProperty
 	private int 		loadBlockTimeoutMs			= 3000;
@@ -45,8 +41,7 @@ public class DatabaseConfiguration {
 		r.dataDir = dataDir;
 		r.indexPartitionSize = indexPartitionSize;
 		r.numberOfDataBlocks = numberOfDataBlocks;
-		r.loadIndexTimeoutMs = loadIndexTimeoutMs;
-		r.saveIndexTimeoutMs = saveIndexTimeoutMs;
+		r.blockPageSize = blockPageSize;
 		r.loadAllBlocksTimeoutMs = loadAllBlocksTimeoutMs;
 		r.loadBlockTimeoutMs = loadBlockTimeoutMs;
 		return r;
@@ -140,26 +135,6 @@ public class DatabaseConfiguration {
 	public void setBlockPageSize(int blockPageSize) {
 		if (blockPageSize>=10) {
 			this.blockPageSize = blockPageSize;
-		}
-	}
-
-	public int getLoadIndexTimeoutMs() {
-		return loadIndexTimeoutMs;
-	}
-
-	public void setLoadIndexTimeoutMs(int loadIndexTimeoutMs) {
-		if (loadIndexTimeoutMs>=1000) {
-			this.loadIndexTimeoutMs = loadIndexTimeoutMs;
-		}
-	}
-
-	public int getSaveIndexTimeoutMs() {
-		return saveIndexTimeoutMs;
-	}
-
-	public void setSaveIndexTimeoutMs(int saveIndexTimeoutMs) {
-		if (saveIndexTimeoutMs>=1000) {
-			this.saveIndexTimeoutMs = saveIndexTimeoutMs;
 		}
 	}
 	

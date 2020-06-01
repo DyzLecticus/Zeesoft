@@ -6,7 +6,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.thread.CodeRunner;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class DatabaseIndex extends DatabaseStateObject {
@@ -90,47 +90,27 @@ public class DatabaseIndex extends DatabaseStateObject {
 		lock.unlock(this);
 		return r;
 	}
-		
-	protected Str save(boolean force, int minDiffMs) {
-		Str error = new Str();
+	
+	protected CodeRunnerChain getCodeRunnerChainForSave(boolean force, int minDiffMs, long nextId) {
+		CodeRunnerChain r = null;
 		if (force || isChanged(minDiffMs)) {
 			lock.lock(this);
 			List<Object> objects = new ArrayList<Object>(elementsById.values());
 			List<String> classNames = new ArrayList<String>(addedClassNames);
 			setSavedNoLock();
 			lock.unlock(this);
-			DatabaseIndexCollection index = new DatabaseIndexCollection();
+			DatabaseIndexCollection index = new DatabaseIndexCollection(configuration.getLogger());
 			index.setPartitionSize(configuration.getIndexPartitionSize());
-			index.setTimeoutMs(configuration.getSaveIndexTimeoutMs());
 			index.putAll(objects);
 			index.addClassNames(classNames);
-			error = index.toPath(configuration.getIndexPath());
-		}
-		return error;
-	}
-	
-	protected CodeRunner triggerLoad(DatabaseCollection collection) {
-		CodeRunner r = null;
-		lock.lock(this);
-		boolean load = isNotLoadedAndNotLoadingNoLock();
-		lock.unlock(this);
-		if (load) {
-			RunCode code = new RunCode(collection) {
-				@Override
-				protected boolean run() {
-					DatabaseCollection collection = (DatabaseCollection) params[0];
-					collection.loadIndex();
-					return true;
-				}
-				
-			};
-			r = CodeRunner.startNewCodeRunner(code);
+			index.setNextId(nextId);
+			r = index.getCodeRunnerChainForSave(configuration.getIndexPath());
 		}
 		return r;
 	}
-
-	protected List<IndexElement> load() {
-		List<IndexElement> r = new ArrayList<IndexElement>(); 
+	
+	protected CodeRunnerChain getCodeRunnerChainForLoad() {
+		CodeRunnerChain r = null;
 		lock.lock(this);
 		boolean load = isNotLoadedAndNotLoadingNoLock();
 		if (load) {
@@ -138,40 +118,42 @@ public class DatabaseIndex extends DatabaseStateObject {
 		}
 		lock.unlock(this);
 		if (load) {
-			configuration.debug(this,new Str("Loading index ..."));
-			DatabaseIndexCollection index = new DatabaseIndexCollection();
+			DatabaseIndexCollection index = new DatabaseIndexCollection(configuration.getLogger());
 			index.setPartitionSize(configuration.getIndexPartitionSize());
-			index.setTimeoutMs(configuration.getLoadIndexTimeoutMs());
-			Str error = index.fromPath(configuration.getIndexPath());
-			if (error.length()==0) {
-				List<Object> objects = new ArrayList<Object>(index.getObjects().values());
-				for (Object object: objects) {
-					if (object instanceof IndexElement) {
-						r.add((IndexElement) object);
-					}
+			r = index.getCodeRunnerChainForLoad(configuration.getIndexPath());
+			RunCode code = new RunCode() {
+				@Override
+				protected boolean run() {
+					loadedIndex(index);
+					return true;
 				}
-				lock.lock(this);
-				clearNoLock();
-				for (IndexElement element: r) {
-					String className = element.id.split(DatabaseCollection.ID_CONCATENATOR).get(0).toString();
-					if (!addedClassNames.contains(className)) {
-						addedClassNames.add(className);
-					}
-					elementsById.put(element.id, element);
-				}
-				setLoadedNoLock(true);
-				setLoadingNoLock(false);
-				loadedNextId = index.getNextId();
-				lock.unlock(this);
-				Str msg = new Str("Loaded index: ");
-				msg.sb().append(r.size());
-				configuration.debug(this,msg);
-			} else {
-				error.sb().insert(0, "Failed to load index: ");
-				configuration.error(this,error);
-			}
+			};
+			r.add(code);
 		}
 		return r;
+	}
+	
+	protected void loadedIndex(DatabaseIndexCollection index) {
+		List<IndexElement> elements = new ArrayList<IndexElement>();
+		List<Object> objects = new ArrayList<Object>(index.getObjects().values());
+		for (Object object: objects) {
+			if (object instanceof IndexElement) {
+				elements.add((IndexElement) object);
+			}
+		}
+		lock.lock(this);
+		clearNoLock();
+		for (IndexElement element: elements) {
+			String className = element.id.split(DatabaseCollection.ID_CONCATENATOR).get(0).toString();
+			if (!addedClassNames.contains(className)) {
+				addedClassNames.add(className);
+			}
+			elementsById.put(element.id, element);
+		}
+		setLoadedNoLock(true);
+		setLoadingNoLock(false);
+		loadedNextId = index.getNextId();
+		lock.unlock(this);
 	}
 
 	protected long getLoadedNextId() {

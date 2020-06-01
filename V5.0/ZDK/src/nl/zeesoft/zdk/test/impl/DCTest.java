@@ -1,34 +1,45 @@
 package nl.zeesoft.zdk.test.impl;
 
-import java.util.List;
-
-import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.database.DatabaseCollection;
 import nl.zeesoft.zdk.database.DatabaseConfiguration;
-import nl.zeesoft.zdk.thread.CodeRunner;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
+import nl.zeesoft.zdk.thread.ProgressBar;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class DCTest extends DatabaseCollection {
 	public DCTest(DatabaseConfiguration config) {
 		super(config);
 	}
 
-	@Override
-	public Str saveIndex(boolean force, int minDiffMs) {
-		return super.saveIndex(force, minDiffMs);
+	public CodeRunnerChain saveIndex(boolean force, int minDiffMs, int timeoutMs) {
+		CodeRunnerChain r = getSaveIndexChain(force, minDiffMs);
+		if (r!=null) {
+			ProgressBar progressBar = new ProgressBar("Saving index", 10);
+			r.addProgressListener(progressBar);
+			Waiter.startAndWaitTillDone(r,timeoutMs);
+		}
+		return r;
 	}
 
-	@Override
-	public CodeRunner triggerLoadIndex() {
-		return super.triggerLoadIndex();
+	public CodeRunnerChain loadIndex(int timeoutMs) {
+		CodeRunnerChain r = super.getLoadIndexChain();
+		if (r!=null) {
+			ProgressBar progressBar = new ProgressBar("Loading index", 10);
+			r.addProgressListener(progressBar);
+			Waiter.startAndWaitTillDone(r,timeoutMs);
+		}
+		return r;
 	}
 
-	@Override
-	public Str saveAllBlocks(boolean force, int minDiffMs) {
-		return super.saveAllBlocks(force, minDiffMs);
+	public CodeRunnerChain saveAllBlocks(boolean force, int minDiffMs, int timeoutMs) {
+		CodeRunnerChain r = getSaveAllBlocksChain(force, minDiffMs);
+		Waiter.startAndWaitTillDone(r,timeoutMs);
+		return r;
 	}
 
-	@Override
-	public List<CodeRunner> triggerLoadAllBlocks() {
-		return super.triggerLoadAllBlocks();
+	public CodeRunnerChain loadAllBlocks(int timeoutMs) {
+		CodeRunnerChain r = getLoadAllBlocksChain();
+		Waiter.startAndWaitTillDone(r,timeoutMs);
+		return r;
 	}
 }

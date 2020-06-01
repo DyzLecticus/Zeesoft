@@ -150,7 +150,7 @@ public class QueryableCollection {
 				id.sb().append(nextId);
 				nextId++;
 			}
-			objects.put(id, object);
+			objects.put(new Str(id), object);
 		}
 		return id;
 	}
@@ -179,7 +179,7 @@ public class QueryableCollection {
 		}
 		for (Entry<Str,Object> entry: objects.entrySet()) {
 			if (className==null || className.length()==0 || entry.getKey().startsWith(className)) {
-				r.put(entry.getKey(),getExternalObjectNoLock(entry.getKey()));
+				r.put(new Str(entry.getKey()),getExternalObjectNoLock(entry.getKey()));
 			}
 		}
 		return r;

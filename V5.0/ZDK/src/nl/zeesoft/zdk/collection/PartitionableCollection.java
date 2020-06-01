@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.thread.CodeRunner;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
@@ -43,8 +43,8 @@ public class PartitionableCollection extends PersistableCollection {
 	public Str toPath(String path) {
 		Str error = checkDir(path);
 		if (error.length()==0) {
-			List<CodeRunner> runners = getCodeRunnersForSave(path);
-			Waiter.startAndWaitTillDone(runners, timeoutMs);
+			CodeRunnerChain runnerChain = getCodeRunnerChainForSave(path);
+			Waiter.startAndWaitTillDone(runnerChain, timeoutMs);
 		}
 		return error;
 	}
@@ -53,13 +53,9 @@ public class PartitionableCollection extends PersistableCollection {
 	public Str fromPath(String path) {
 		Str error = checkDir(path);
 		if (error.length()==0) {
-			List<CodeRunner> runners = getCodeRunnersForLoad(path);
 			clear();
-			Waiter.startAndWaitTillDone(runners, timeoutMs);
-			lock.lock(this);
-			expandObjectsNoLock(objStrs);
-			objStrs.clear();
-			lock.unlock(this);
+			CodeRunnerChain runnerChain = getCodeRunnerChainForLoad(path);
+			Waiter.startAndWaitTillDone(runnerChain, timeoutMs);
 		}
 		return error;
 	}
@@ -104,8 +100,14 @@ public class PartitionableCollection extends PersistableCollection {
 		return r;
 	}
 	
-	protected List<CodeRunner> getCodeRunnersForSave(String path) {
-		List<CodeRunner> r = new ArrayList<CodeRunner>();
+	protected CodeRunnerChain getCodeRunnerChainForSave(String path) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		r.addAll(getRunCodesForSave(path));
+		return r;
+	}
+	
+	protected List<RunCode> getRunCodesForSave(String path) {
+		List<RunCode> r = new ArrayList<RunCode>();
 		List<String> fileNames = new ArrayList<String>();
 		int partitionNum = 0;
 		List<SortedMap<Str,Object>> partitions = getPartitions();
@@ -113,18 +115,17 @@ public class PartitionableCollection extends PersistableCollection {
 			String fileName	= partitionNum + FILE_TYPE;
 			fileNames.add(fileName);
 			String partitionPath = path + fileName;
-			RunCode code = new RunCode(this,partition,partitionPath) {
+			RunCode code = new RunCode(partition,partitionPath) {
 				@Override
 				protected boolean run() {
-					PartitionableCollection collection = (PartitionableCollection) params[0];
 					@SuppressWarnings("unchecked")
-					SortedMap<Str,Object> partition = (SortedMap<Str,Object>) params[1];
-					String path = (String) params[2];
-					collection.savePartition(partition, path);
+					SortedMap<Str,Object> partition = (SortedMap<Str,Object>) params[0];
+					String path = (String) params[1];
+					savePartition(partition, path);
 					return true;
 				}
 			};
-			r.add(new CodeRunner(code));
+			r.add(code);
 			partitionNum++;
 		}
 		List<File> files = getFiles(path);
@@ -138,28 +139,39 @@ public class PartitionableCollection extends PersistableCollection {
 						return true;
 					}
 				};
-				r.add(new CodeRunner(code));
+				r.add(code);
 			}
 		}
 		return r;
 	}
 	
-	protected List<CodeRunner> getCodeRunnersForLoad(String path) {
-		List<CodeRunner> r = new ArrayList<CodeRunner>();
+	protected CodeRunnerChain getCodeRunnerChainForLoad(String path) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		r.addAll(getRunCodesForLoad(path));
+		r.add(new RunCode() {
+			@Override
+			protected boolean run() {
+				loadedPartitions();
+				return true;
+			}
+		});
+		return r;
+	}
+	
+	protected List<RunCode> getRunCodesForLoad(String path) {
+		List<RunCode> r = new ArrayList<RunCode>();
 		List<File> files = getFiles(path);
 		for (File file: files) {
 			String partitionPath = path + file.getName();
-			RunCode code = new RunCode(this,partitionPath) {
+			RunCode code = new RunCode(partitionPath) {
 				@Override
 				protected boolean run() {
-					PartitionableCollection collection = (PartitionableCollection) params[0];
-					String path = (String) params[1];
-					collection.loadPartition(path);
+					String path = (String) params[0];
+					loadPartition(path);
 					return true;
 				}
-				
 			};
-			r.add(new CodeRunner(code));
+			r.add(code);
 		}
 		return r;
 	}
@@ -186,6 +198,13 @@ public class PartitionableCollection extends PersistableCollection {
 			logger.error(this,error);
 		}
 		return error;
+	}
+	
+	protected void loadedPartitions() {
+		lock.lock(this);
+		expandObjectsNoLock(objStrs);
+		objStrs.clear();
+		lock.unlock(this);
 	}
 	
 	protected List<File> getFiles(String path) {

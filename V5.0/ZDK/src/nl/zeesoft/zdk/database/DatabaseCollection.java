@@ -9,7 +9,8 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.collection.Query;
-import nl.zeesoft.zdk.thread.CodeRunner;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
+import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class DatabaseCollection extends PersistableCollection {
@@ -18,12 +19,8 @@ public class DatabaseCollection extends PersistableCollection {
 	protected DatabaseIndex							index				= null;
 	protected DatabaseBlock[]						blocks				= null;
 	
-	public DatabaseCollection() {
-		this.configuration = new DatabaseConfiguration();
-		initializeDatabaseCollection();
-	}
-	
 	public DatabaseCollection(DatabaseConfiguration configuration) {
+		super(configuration.getLogger());
 		this.configuration = configuration.copy();
 		initializeDatabaseCollection();
 	}
@@ -56,15 +53,15 @@ public class DatabaseCollection extends PersistableCollection {
 	
 	@Override
 	public SortedMap<Str,Object> getObjects() {
-		List<CodeRunner> runners = triggerLoadAllBlocks();
-		Waiter.waitTillDone(runners, configuration.getLoadAllBlocksTimeoutMs());
+		CodeRunnerChain runnerChain = getLoadAllBlocksChain();
+		Waiter.startAndWaitTillDone(runnerChain, configuration.getLoadAllBlocksTimeoutMs());
 		return super.getObjects();
 	}
 	
 	@Override
 	public Query query(Query query) {
-		List<CodeRunner> runners = triggerLoadAllBlocks();
-		Waiter.waitTillDone(runners, configuration.getLoadAllBlocksTimeoutMs());
+		CodeRunnerChain runnerChain = getLoadAllBlocksChain();
+		Waiter.startAndWaitTillDone(runnerChain, configuration.getLoadAllBlocksTimeoutMs());
 		return super.query(query);
 	}
 	
@@ -146,14 +143,32 @@ public class DatabaseCollection extends PersistableCollection {
 		return r;
 	}
 	
-	protected Str saveIndex(boolean force, int minDiffMs) {
-		return index.save(force, minDiffMs);
+	protected CodeRunnerChain getSaveIndexChain(boolean force, int minDiffMs) {
+		lock.lock(this);
+		CodeRunnerChain r = index.getCodeRunnerChainForSave(force, minDiffMs, nextId);
+		lock.unlock(this);
+		return r;
 	}
 	
-	protected void loadIndex() {
+	protected CodeRunnerChain getLoadIndexChain() {
+		CodeRunnerChain r = index.getCodeRunnerChainForLoad();
+		if (r!=null) {
+			clearNoLock();
+			RunCode code = new RunCode() {
+				@Override
+				protected boolean run() {
+					loadedIndex();
+					return true;
+				}
+			};
+			r.add(code);
+		}
+		return r;
+	}
+	
+	protected void loadedIndex() {
 		lock.lock(this);
-		clearNoLock();
-		List<IndexElement> elements = index.load();
+		List<IndexElement> elements = index.getElements();
 		for (IndexElement element: elements) {
 			blocks[element.blockNum].add(element);
 		}
@@ -162,10 +177,6 @@ public class DatabaseCollection extends PersistableCollection {
 		}
 		nextId = index.getLoadedNextId();
 		lock.unlock(this);
-	}
-	
-	protected CodeRunner triggerLoadIndex() {
-		return index.triggerLoad(this);
 	}
 	
 	protected Str saveBlock(int blockNum, boolean force, int minDiffMs) {
@@ -187,7 +198,7 @@ public class DatabaseCollection extends PersistableCollection {
 		}
 		if (save) {
 			if (dbObjs.size()>0) {
-				PersistableCollection block = new PersistableCollection();
+				PersistableCollection block = new PersistableCollection(configuration.getLogger());
 				block.putAll(dbObjs);
 				error = block.toPath(configuration.getDataBlockFilePath(blockNum));
 			} else {
@@ -199,33 +210,46 @@ public class DatabaseCollection extends PersistableCollection {
 		}
 		return error;
 	}
-	
-	protected Str saveAllBlocks(boolean force, int minDiffMs) {
-		Str error = new Str();
-		configuration.debug(this,new Str("Saving all blocks ..."));
+
+	protected CodeRunnerChain getSaveAllBlocksChain(boolean force, int minDiffMs) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		List<RunCode> codes = new ArrayList<RunCode>();
 		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
-			error = saveBlock(i,force,minDiffMs);
-			if (error.length()>0) {
-				break;
-			}
+			RunCode code = new RunCode(i) {
+				@Override
+				protected boolean run() {
+					int blockNum = (int) params[0];
+					Str error = saveBlock(blockNum,force,minDiffMs);
+					if (error.length()>0) {
+						configuration.error(blocks[blockNum], error);
+					}
+					return true;
+				}
+			};
+			codes.add(code);
 		}
-		if (error.length()==0) {
-			configuration.debug(this,new Str("Saved all blocks"));
-		} else {
-			error.sb().insert(0, "Failed to save all blocks: ");
-			configuration.error(this,error);
-		}
-		return error;
+		r.addAll(codes);
+		return r;
 	}
-	
-	protected List<CodeRunner> triggerLoadAllBlocks() {
-		List<CodeRunner> r = new ArrayList<CodeRunner>();
+
+	protected CodeRunnerChain getLoadAllBlocksChain() {
+		CodeRunnerChain r = new CodeRunnerChain();
+		List<RunCode> codes = new ArrayList<RunCode>();
 		for (int i = 0; i < configuration.getNumberOfDataBlocks(); i++) {
-			CodeRunner runner = blocks[i].triggerLoad(this);
-			if (runner!=null) {
-				r.add(runner);
-			}
+			RunCode code = new RunCode(i) {
+				@Override
+				protected boolean run() {
+					int blockNum = (int) params[0];
+					List<DatabaseObject> dbObjs = blocks[blockNum].load();
+					for (DatabaseObject dbObj: dbObjs) {
+						put(dbObj.getId(),dbObj);
+					}
+					return true;
+				}
+			};
+			codes.add(code);
 		}
+		r.addAll(codes);
 		return r;
 	}
 	

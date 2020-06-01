@@ -38,6 +38,20 @@ public abstract class RunnerObject implements Waitable {
 	protected void stopped() {
 		// Override to implement
 	}
+
+	/**
+	 * Called when the runner caught an exception.
+	 */
+	protected void caughtException(Exception exception) {
+		// Override to implement
+	}
+
+	/**
+	 * Called when the runner is done.
+	 */
+	protected void doneCallback() {
+		// Override to implement
+	}
 	
 	protected final Lock getLock() {
 		return lock;

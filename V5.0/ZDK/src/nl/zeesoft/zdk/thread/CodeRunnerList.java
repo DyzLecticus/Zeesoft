@@ -6,9 +6,11 @@ import java.util.List;
 import nl.zeesoft.zdk.Logger;
 
 public class CodeRunnerList extends RunnerObject {
-	private List<CodeRunner>	runners		= new ArrayList<CodeRunner>();
+	private List<CodeRunner>	runners			= new ArrayList<CodeRunner>();
+	private Exception			exception		= null;
+	private List<CodeRunner>	activeRunners	= new ArrayList<CodeRunner>();
 	
-	public void addCode(RunCode code) {
+	public void add(RunCode code) {
 		CodeRunner runner = getNewCodeRunner(code);
 		runner.setLogger(getLock().getLogger(this));
 		getLock().lock(this);
@@ -16,6 +18,12 @@ public class CodeRunnerList extends RunnerObject {
 			runners.add(runner);
 		}
 		getLock().unlock(this);
+	}
+	
+	public void addAll(List<RunCode> codes) {
+		for (RunCode code: codes) {
+			add(code);
+		}
 	}
 	
 	public void setLogger(Logger logger) {
@@ -48,8 +56,10 @@ public class CodeRunnerList extends RunnerObject {
 		boolean started = false;
 		getLock().lock(this);
 		if (!isBusyNoLock()) {
+			exception = null;
 			for (CodeRunner runner: runners) {
 				runner.start();
+				activeRunners.add(runner);
 			}
 			setBusyNoLock(true);
 			started = true;
@@ -71,6 +81,13 @@ public class CodeRunnerList extends RunnerObject {
 		getLock().unlock(this);
 	}
 
+	public int size() {
+		getLock().lock(this);
+		int r = runners.size();
+		getLock().unlock(this);
+		return r;
+	}
+
 	public List<RunCode> getCodes() {
 		List<RunCode> r = new ArrayList<RunCode>();
 		getLock().lock(this);
@@ -89,43 +106,58 @@ public class CodeRunnerList extends RunnerObject {
 		getLock().unlock(this);
 	}
 	
-	/**
-	 * Called when an exception has been caught.
-	 */
-	protected void caughtException(CodeRunner runner, Exception exception) {
-		stop();
+	public Exception getException() {
+		getLock().lock(this);
+		Exception r = exception;
+		getLock().unlock(this);
+		return r;
 	}
 	
 	protected CodeRunner getNewCodeRunner(RunCode code) {
-		final CodeRunnerList owner = this;
 		CodeRunner r = new CodeRunner(code) {
 			@Override
-			protected void stopped() {
-				owner.stoppedRunning(this);
+			protected void doneCallback() {
+				runnerDoneCallback(this);
 			}
 			@Override
 			protected void caughtException(Exception exception) {
-				owner.caughtException(this,exception);
+				runnerCaughtException(this,exception);
 			}
 		};
 		return r;
 	}
 	
-	protected void stoppedRunning(CodeRunner runner) {
+	protected final void runnerDoneCallback(CodeRunner runner) {
+		codeDoneCallback(runner.getCode());
+		boolean stopped = false;
+		Exception ex = null;
 		getLock().lock(this);
-		boolean stopped = true;
-		for (CodeRunner rnnr: runners) {
-			if (rnnr.isBusy()) {
-				stopped = false;
-				break;
-			}
+		activeRunners.remove(runner);
+		if (activeRunners.size()==0) {
+			stopped = true;
+			ex = exception;
 		}
 		if (stopped) {
 			setBusyNoLock(false);
 		}
 		getLock().unlock(this);
+		if (ex!=null) {
+			caughtException(ex);
+		}
 		if (stopped) {
 			stopped();
+			doneCallback();
 		}
+	}
+	
+	protected final void runnerCaughtException(CodeRunner runner, Exception exception) {
+		getLock().lock(this);
+		this.exception = exception;
+		getLock().unlock(this);
+		stop();
+	}
+		
+	protected void codeDoneCallback(RunCode code) {
+		// Override to implement
 	}
 }

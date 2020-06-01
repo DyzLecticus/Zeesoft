@@ -90,8 +90,8 @@ public class TestRunCode extends TestObject {
 		System.out.println();
 		System.out.println("Test runner list;");
 		CodeRunnerList list = new CodeRunnerList();
-		list.addCode(testCodeA);
-		list.addCode(getNewTestRunCode());
+		list.add(testCodeA);
+		list.add(getNewTestRunCode());
 		list.setSleepMs(1);
 		list.start();
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),2,"Number of active code runners does not match expectation");
@@ -106,7 +106,7 @@ public class TestRunCode extends TestObject {
 		
 		System.out.println();
 		System.out.println("Test runner list exception handling;");
-		list.addCode(testCodeB);
+		list.add(testCodeB);
 		list.start();
 		Waiter.waitTillDone(list,1000);
 		while(list.isBusy()) {
