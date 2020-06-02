@@ -10,8 +10,6 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class DatabaseIndex extends DatabaseStateObject {
-	private DatabaseConfiguration			configuration		= null;
-	
 	private long							loadedNextId		= 0;
 	
 	private int								currentBlockNum		= 0;
@@ -21,7 +19,7 @@ public class DatabaseIndex extends DatabaseStateObject {
 	private SortedMap<Str,IndexElement>		elementsById		= new TreeMap<Str,IndexElement>();
 
 	protected DatabaseIndex(DatabaseConfiguration configuration) {
-		this.configuration = configuration;
+		super(configuration);
 		blockPageCounter = configuration.getBlockPageSize();
 	}
 	

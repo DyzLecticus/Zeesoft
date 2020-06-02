@@ -5,12 +5,17 @@ import nl.zeesoft.zdk.thread.Waitable;
 
 public class DatabaseStateObject implements Waitable {
 	protected final Lock			lock			= new Lock();
+	protected DatabaseConfiguration	configuration	= null;
 	
 	private boolean					loaded			= false;
 	private boolean					loading 		= false;
 	private long					saved 			= 0L;
 	private long					changed 		= 0L;
 
+	public DatabaseStateObject(DatabaseConfiguration configuration) {
+		this.configuration = configuration;
+	}
+	
 	@Override
 	public boolean isBusy() {
 		lock.lock(this);

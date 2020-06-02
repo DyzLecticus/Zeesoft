@@ -8,13 +8,12 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 
 public class DatabaseBlock extends DatabaseStateObject {
-	private DatabaseConfiguration	configuration	= null;
-	private int						blockNum		= 0;
+	private int					blockNum	= 0;
 	
-	private List<IndexElement>		elements		= new ArrayList<IndexElement>();
+	private List<IndexElement>	elements	= new ArrayList<IndexElement>();
 	
 	protected DatabaseBlock(DatabaseConfiguration configuration, int blockNum) {
-		this.configuration = configuration;
+		super(configuration);
 		this.blockNum = blockNum;
 	}
 	
