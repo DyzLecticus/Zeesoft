@@ -3,21 +3,13 @@ package nl.zeesoft.zdk.test.impl.collection;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.collection.PersistableProperty;
-
 public class CollectionTestParent extends CollectionTestObject {
-	@PersistableProperty()
-	private List<String>			testStringList	= new ArrayList<String>();
-	@PersistableProperty()
-	private List<Float>				testFloatList	= new ArrayList<Float>();
-	@PersistableProperty()
-	private String[]				testStringArray	= null;
-	@PersistableProperty()
-	private int[]					testIntArray	= null;
-	@PersistableProperty()
-	private List<CollectionTestChild>		testChildren	= new ArrayList<CollectionTestChild>();
-	@PersistableProperty()
-	private CollectionTestParent			testPartner		= null;
+	private List<String>				testStringList	= new ArrayList<String>();
+	private List<Float>					testFloatList	= new ArrayList<Float>();
+	private String[]					testStringArray	= null;
+	private int[]						testIntArray	= null;
+	private List<CollectionTestChild>	testChildren	= new ArrayList<CollectionTestChild>();
+	private CollectionTestParent		testPartner		= null;
 	
 	public List<String> getTestStringList() {
 		return testStringList;

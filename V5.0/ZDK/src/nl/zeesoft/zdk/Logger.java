@@ -1,11 +1,6 @@
 package nl.zeesoft.zdk;
 
-import nl.zeesoft.zdk.collection.PersistableObject;
-import nl.zeesoft.zdk.collection.PersistableProperty;
-
-@PersistableObject
 public class Logger {
-	@PersistableProperty
 	private boolean		debug = false;
 	
 	public Logger() {

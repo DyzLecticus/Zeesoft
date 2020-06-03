@@ -96,58 +96,6 @@ public class ProgressBar implements ProgressListener {
 		return r;
 	}
 	
-	protected void initializeProgressBar(int todo) {
-		if (todo>0) {
-			displayProgressBar(renderProgressBar(0,todo));
-		}
-	}
-	
-	protected void progressed(int dn, int td, int pc) {
-		if (td>0) {
-			int newPc = calculatePercentage(dn, td);
-			int minDiff = 100 / length;
-			if (dn==td || newPc - pc >= minDiff) {
-				updateProgressBar(dn,td);
-				lock.lock(this);
-				percentage = newPc;
-				lock.unlock(this);
-			}
-			if (dn==td) {
-				System.out.println();
-			}
-		}
-	}
-	
-	protected void updateProgressBar(int done, int todo) {
-		if (todo>0) {
-			displayProgressBar(renderProgressBar(done,todo));
-		}
-	}
-	
-	protected Str renderProgressBar(int done, int todo) {
-		Str r = new Str();
-		int filled = (int)((float)done / (float)todo * (float)length);
-		r.sb().append(description);
-		r.sb().append(" [");
-		for (int i = 0; i < filled; i++) {
-			r.sb().append("=");
-		}
-		for (int i = filled; i < length; i++) {
-			r.sb().append(" ");
-		}
-		r.sb().append("] ");
-		r.sb().append(calculatePercentage(done, todo));
-		r.sb().append("%");
-		return r;
-	}
-	
-	protected void displayProgressBar(Str bar) {
-		if (bar.length()>0) {
-			System.out.print(bar);
-			System.out.print("\r");
-		}
-	}
-	
 	private static int calculatePercentage(int done, int todo) {
 		return (int)((float)done / (float)todo * 100F);
 	}

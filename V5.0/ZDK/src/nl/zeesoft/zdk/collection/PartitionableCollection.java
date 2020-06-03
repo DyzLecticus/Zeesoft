@@ -53,7 +53,6 @@ public class PartitionableCollection extends PersistableCollection {
 	public Str fromPath(String path) {
 		Str error = checkDir(path);
 		if (error.length()==0) {
-			clear();
 			CodeRunnerChain runnerChain = getCodeRunnerChainForLoad(path);
 			Waiter.startAndWaitTillDone(runnerChain, timeoutMs);
 		}
@@ -77,6 +76,13 @@ public class PartitionableCollection extends PersistableCollection {
 	protected CodeRunnerChain getCodeRunnerChainForLoad(String path) {
 		CodeRunnerChain r = new CodeRunnerChain();
 		r.setLogger(logger);
+		r.add(new RunCode() {
+			@Override
+			protected boolean run() {
+				clear();
+				return true;
+			}
+		});
 		r.addAll(getRunCodesForLoad(path));
 		r.add(new RunCode() {
 			@Override

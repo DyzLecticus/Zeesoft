@@ -43,7 +43,7 @@ public class PersistableCollection extends PersistableCollectionBase {
 	@Override
 	public Str putNoLock(Str id, Object object) {
 		id = super.putNoLock(id, object);
-		if (isPersistableObject(object.getClass())) {
+		if (id!=null) {
 			if (!classNames.contains(object.getClass().getName())) {
 				classNames.add(object.getClass().getName());
 				List<Field> fields = getPersistedFields(object);

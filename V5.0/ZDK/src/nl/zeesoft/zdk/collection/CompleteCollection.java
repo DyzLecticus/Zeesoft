@@ -10,6 +10,8 @@ import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
 public class CompleteCollection extends QueryableCollection {
+	protected boolean	complete	= true;
+	
 	public CompleteCollection() {
 		
 	}
@@ -18,9 +20,15 @@ public class CompleteCollection extends QueryableCollection {
 		super(logger);
 	}
 	
+	public void setComplete(boolean complete) {
+		lock.lock(this);
+		this.complete = complete;
+		lock.unlock(this);
+	}
+	
 	@Override
 	protected Str putNoLock(Str id, Object object) {
-		Str r = id;
+		Str r = null;
 		if (object!=null) {
 			if (isSupportedObject(object.getClass())) {
 				if (id==null) {
@@ -33,6 +41,10 @@ public class CompleteCollection extends QueryableCollection {
 				}
 				r = super.putNoLock(id, object);
 				if (add) {
+					if (complete) {
+						addObjectChildrenNoLock(object);
+						addObjectReferencesNoLock(object);
+					}
 					addedObjectNoLock(r, object);
 				} else {
 					updatedObjectNoLock(r, object);
@@ -103,8 +115,7 @@ public class CompleteCollection extends QueryableCollection {
 	}
 
 	protected void addedObjectNoLock(Str id, Object object) {
-		addObjectChildrenNoLock(object);
-		addObjectReferencesNoLock(object);
+		// Override to implement
 	}
 	
 	protected void updatedObjectNoLock(Str id, Object object) {

@@ -1,19 +1,13 @@
 package nl.zeesoft.zdk.test.impl.collection;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.collection.PersistableProperty;
 
 public class CollectionTestChild extends CollectionTestObject {
-	@PersistableProperty()
-	private int					testInt 	= 0;
-	@PersistableProperty()
-	private boolean				testBoolean	= false;
-	@PersistableProperty()
-	private CollectionTestParent[]		testParents	= new CollectionTestParent[2];
-	@PersistableProperty()
-	private Str[]				testStrs	= new Str[1];
-	@PersistableProperty()
-	private Str					testStr		= new Str();
+	private int						testInt 	= 0;
+	private boolean					testBoolean	= false;
+	private CollectionTestParent[]	testParents	= new CollectionTestParent[2];
+	private Str[]					testStrs	= new Str[1];
+	private Str						testStr		= new Str();
 	
 	
 	public int getTestInt() {

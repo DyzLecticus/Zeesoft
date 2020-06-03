@@ -11,9 +11,7 @@ import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
-@PersistableObject
 public class Query {
-	@PersistableProperty
 	protected List<QueryFilter>		filters		= new ArrayList<QueryFilter>();
 	
 	public List<Str>				errors		= new ArrayList<Str>();

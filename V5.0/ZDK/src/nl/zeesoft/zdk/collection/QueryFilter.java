@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.collection;
 
-@PersistableObject
 public class QueryFilter {
 	protected static final String	CLASS_NAME				= "@className";
 	
@@ -11,13 +10,9 @@ public class QueryFilter {
 	
 	protected static final String[]	OPERATORS				= {EQUALS,CONTAINS,LESS,GREATER};
 	
-	@PersistableProperty
 	protected String 				methodOrPropertyName	= "";
-	@PersistableProperty
 	protected Boolean 				invert					= false;
-	@PersistableProperty
 	protected String 				operator				= EQUALS;
-	@PersistableProperty
 	protected Object 				value					= null;
 	
 	public QueryFilter copy() {

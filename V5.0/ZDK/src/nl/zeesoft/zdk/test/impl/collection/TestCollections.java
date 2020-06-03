@@ -10,8 +10,6 @@ import nl.zeesoft.zdk.collection.CompleteCollection;
 import nl.zeesoft.zdk.collection.PartitionableCollection;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.collection.PersistableCollectionBase;
-import nl.zeesoft.zdk.collection.PersistableObject;
-import nl.zeesoft.zdk.collection.PersistableProperty;
 import nl.zeesoft.zdk.collection.Query;
 import nl.zeesoft.zdk.collection.QueryableCollection;
 import nl.zeesoft.zdk.test.TestObject;
@@ -40,9 +38,7 @@ public class TestCollections extends TestObject {
 		System.out.println(" * *PersistableCollection* extends *PersistableCollectionBase* and adds compression to persistence. ");
 		System.out.println(" * *PartitionableCollection* extends *PersistableCollection* and adds multithreading for saving/loading large collections to/from directories. ");
 		System.out.println();
-		System.out.println("Persisted object classes must be annotated with *PersistableObject*. ");
-		System.out.println("The object class properties that are to be persisted must be annotated with *PersistableProperty*. ");
-		System.out.println("Most standard property types are supported including array lists for non primitives. ");
+		System.out.println("Persistence for most standard property types is supported including arrays and lists for non primitives. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -70,8 +66,6 @@ public class TestCollections extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(PersistableCollectionBase.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableCollection.class));
 		System.out.println(" * " + getTester().getLinkForClass(PartitionableCollection.class));
-		System.out.println(" * " + getTester().getLinkForClass(PersistableObject.class));
-		System.out.println(" * " + getTester().getLinkForClass(PersistableProperty.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the file structure of an example persistable collection.  ");
@@ -143,6 +137,7 @@ public class TestCollections extends TestObject {
 				}
 			}
 			
+			System.out.println("Regular;");
 			Str str = collection.toStr();
 			System.out.println(str);
 			collection.clear();
