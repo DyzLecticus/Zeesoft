@@ -6,6 +6,8 @@ import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.test.impl.collection.TestCollections;
+import nl.zeesoft.zdk.test.impl.thread.TestCodeRunnerChain;
+import nl.zeesoft.zdk.test.impl.thread.TestRunCode;
 
 /**
  * Documents and tests the ZDK.

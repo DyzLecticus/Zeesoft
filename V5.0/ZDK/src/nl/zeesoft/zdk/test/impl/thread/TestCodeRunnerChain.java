@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test.impl.thread;
 
 import java.util.ArrayList;
 import java.util.List;

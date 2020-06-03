@@ -120,7 +120,10 @@ public abstract class TestObject {
 						max = str2.length();
 					}
 					diff2.sb().append(str2.sb().substring(c,max));
-					diff2 = diff2.split("\n").get(0);
+					List<Str> elems = diff2.split("\n");
+					if (elems.size()>0) {
+						diff2 = elems.get(0);
+					}
 					break;
 				}
 				diffPos++;

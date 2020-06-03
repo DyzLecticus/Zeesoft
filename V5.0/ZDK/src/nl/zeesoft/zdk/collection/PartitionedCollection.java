@@ -9,21 +9,22 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.test.FileIO;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class PartitionableCollection extends PersistableCollection {
+public class PartitionedCollection extends CompressedCollection {
 	public static final String	FILE_TYPE		= ".txt";
 	protected int				partitionSize	= 1000;
 	protected int				timeoutMs		= 10000;
 	protected List<Str>			objStrs			= new ArrayList<Str>();
 	
-	public PartitionableCollection() {
+	public PartitionedCollection() {
 		
 	}
 	
-	public PartitionableCollection(Logger logger) {
+	public PartitionedCollection(Logger logger) {
 		super(logger);
 	}
 	
@@ -41,20 +42,24 @@ public class PartitionableCollection extends PersistableCollection {
 	
 	@Override
 	public Str toPath(String path) {
-		Str error = checkDir(path);
+		Str error = FileIO.checkDirectory(path);
 		if (error.length()==0) {
 			CodeRunnerChain runnerChain = getCodeRunnerChainForSave(path);
 			Waiter.startAndWaitTillDone(runnerChain, timeoutMs);
+		} else {
+			logger.error(this, error);
 		}
 		return error;
 	}
 
 	@Override
 	public Str fromPath(String path) {
-		Str error = checkDir(path);
+		Str error = FileIO.checkDirectory(path);
 		if (error.length()==0) {
 			CodeRunnerChain runnerChain = getCodeRunnerChainForLoad(path);
 			Waiter.startAndWaitTillDone(runnerChain, timeoutMs);
+		} else {
+			logger.error(this, error);
 		}
 		return error;
 	}
@@ -95,18 +100,9 @@ public class PartitionableCollection extends PersistableCollection {
 		return r;
 	}
 	
-	protected void savedPartitions() {
-		// Override to implement
-	}
-	
-	protected void loadedPartitions() {
-		// Override to implement
-	}
-	
 	public static List<File> getPartitionFiles(String path) {
 		List<File> r = new ArrayList<File>();
-		File dir = new File(path);
-		File[] files = dir.listFiles();
+		List<File> files = FileIO.listFiles(path);
 		for (File file: files) {
 			if (file.getName().endsWith(FILE_TYPE)) {
 				String[] split = file.getName().split("\\.");
@@ -123,6 +119,14 @@ public class PartitionableCollection extends PersistableCollection {
 			}
 		}
 		return r;
+	}
+	
+	protected void savedPartitions() {
+		// Override to implement
+	}
+	
+	protected void loadedPartitions() {
+		// Override to implement
 	}
 
 	protected List<SortedMap<Str,Object>> getPartitions() {
@@ -165,14 +169,14 @@ public class PartitionableCollection extends PersistableCollection {
 			r.add(code);
 			partitionNum++;
 		}
-		List<File> files = getFiles(path);
+		List<File> files = getPartitionFiles(path);
 		for (File file: files) {
 			if (!fileNames.contains(file.getName())) {
 				RunCode code = new RunCode(file) {
 					@Override
 					protected boolean run() {
 						File file = (File) params[0];
-						file.delete();
+						FileIO.deleteFile(path + file.getName());
 						return true;
 					}
 				};
@@ -184,7 +188,7 @@ public class PartitionableCollection extends PersistableCollection {
 	
 	protected List<RunCode> getRunCodesForLoad(String path) {
 		List<RunCode> r = new ArrayList<RunCode>();
-		List<File> files = getFiles(path);
+		List<File> files = getPartitionFiles(path);
 		for (File file: files) {
 			String partitionPath = path + file.getName();
 			RunCode code = new RunCode(partitionPath) {
@@ -229,20 +233,5 @@ public class PartitionableCollection extends PersistableCollection {
 		expandObjectsNoLock(objStrs);
 		objStrs.clear();
 		lock.unlock(this);
-	}
-	
-	protected List<File> getFiles(String path) {
-		return getPartitionFiles(path);
-	}
-	
-	protected Str checkDir(String path) {
-		Str error = new Str();
-		File dir = new File(path);
-		if (!dir.exists()) {
-			error.sb().append("Directory does not exist: " + path);
-		} else if(!dir.isDirectory()) {
-			error.sb().append("Path is not a directory: " + path);
-		}
-		return error;
 	}
 }

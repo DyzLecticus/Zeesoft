@@ -13,6 +13,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.test.FileIO;
+
 public class Str implements Comparable<Str>{
 	private static final String		ENCODING	= "UTF8";
 	
@@ -129,15 +131,46 @@ public class Str implements Comparable<Str>{
 		}
 		return this;
 	}
+	
+	public Str substring(int start, int end) {
+		Str r = new Str();
+		if (start<0) {
+			start = 0;
+		}
+		if (end <= start) {
+			end = start + 1;
+		}
+		if (end > sb.length()) {
+			end = sb.length();
+		}
+		if (end>start) {
+			for (int i = start; i < end; i++) {
+				r.sb.append(sb.substring(i,i+1));
+			}
+		}
+		return r;
+	}
 
-	public boolean contains(String search) {
-		boolean r = false;
+	public int indexOf(String search) {
+		return indexOf(search,0);
+	}
+	
+	public int indexOf(String search, int offset) {
+		return indexOf(new Str(search),offset);
+	}
+
+	public int indexOf(Str search) {
+		return indexOf(search,0);
+	}
+
+	public int indexOf(Str search, int offset) {
+		int r = -1;
 		if (sb.length()>=search.length()) {
-			for (int i = 0; i < sb.length(); i++) {
+			for (int i = offset; i < sb.length(); i++) {
 				if (i + search.length() <= sb.length()) {
-					String sub = sb.substring(i, i + search.length());
+					Str sub = substring(i, i + search.length());
 					if (sub.equals(search)) {
-						r = true;
+						r = i;
 						break;
 					}
 				}
@@ -145,25 +178,44 @@ public class Str implements Comparable<Str>{
 		}
 		return r;
 	}
-
-	public Str replace(String search, String replace) {
-		if (sb.length()>=search.length()) {
-			StringBuilder nsb = new StringBuilder();
-			for (int i = 0; i < sb.length(); i++) {
-				if (i + search.length() <= sb.length()) {
-					String sub = sb.substring(i, i + search.length());
-					if (sub.equals(search)) {
-						nsb.append(replace);
-						i += (search.length() - 1);
-					} else {
-						nsb.append(sb.substring(i,i+1));
-					}
-				} else {
-					nsb.append(sb.substring(i));
-					break;
-				}
+	
+	public boolean contains(String search) {
+		return indexOf(new Str(search)) >= 0;
+	}
+	
+	public boolean contains(Str search) {
+		return indexOf(search) >= 0;
+	}
+	
+	public static boolean contains(List<Str> strs, String search) {
+		return contains(strs,new Str(search));
+	}
+	
+	public static boolean contains(List<Str> strs, Str search) {
+		boolean r = false;
+		for (Str str: strs) {
+			if (str.contains(search)) {
+				r = true;
+				break;
 			}
-			sb = nsb;
+		}
+		return r;
+	}
+	
+	public Str replace(String search, String replace) {
+		return replace(new Str(search),new Str(replace));
+	}
+
+	public Str replace(Str search, Str replace) {
+		if (sb.length()>=search.length()) {
+			String rep = replace.toString();
+			int offset = 0;
+			int i = indexOf(search,offset);
+			while (i>=0) {
+				offset = i+search.length();
+				sb.replace(i, offset, rep);
+				i = indexOf(search,offset);
+			}
 		}
 		return this;
 	}
@@ -186,28 +238,22 @@ public class Str implements Comparable<Str>{
 	}
 
 	public List<Str> split(String concatenator) {
+		return split(new Str(concatenator));
+	}
+
+	public List<Str> split(Str concatenator) {
 		List<Str> r = new ArrayList<Str>(); 
 		if (sb.length()>=concatenator.length()) {
-			Str add = new Str();
-			for (int i = 0; i < sb.length(); i++) {
-				if (i + concatenator.length() < sb.length()) {
-					String sub = sb.substring(i, i + concatenator.length());
-					if (sub.equals(concatenator)) {
-						r.add(add);
-						add = new Str();
-						i += (concatenator.length() - 1);
-					} else {
-						add.sb().append(sb.substring(i,i+1));
-					}
-				} else {
-					add.sb().append(sb.substring(i));
-					break;
-				}
+			int offset = 0;
+			int i = indexOf(concatenator,offset);
+			while (i>=0) {
+				r.add(substring(offset,i));
+				offset = i+concatenator.length();
+				i = indexOf(concatenator,offset);
 			}
-			r.add(add);
-		}
-		if (r.size()==0) {
-			r.add(new Str(sb()));
+			if (offset<sb.length()) {
+				r.add(substring(offset,sb.length()));
+			}
 		}
 		return r;
 	}
@@ -224,24 +270,34 @@ public class Str implements Comparable<Str>{
 		return this;
 	}
 	
-	public Str fromFile(String fileName) {
-		return fromFile(fileName, null);
+	public Str fromFile(String path) {
+		return fromFile(path, null);
 	}
 
-	public Str fromFile(String fileName, String encoding) {
+	public Str fromFile(String path, String encoding) {
 		Str error = new Str();
-		FileInputStream fis = null;
-		if (encoding==null) {
-			encoding = ENCODING;
-		}
-		try {
-			fis = new FileInputStream(fileName);
-		} catch (FileNotFoundException e) {
-			error.sb().append("File not found: ");
-			error.sb().append(fileName);
-		}
-		if (fis!=null) {
-			error = fromInputStream(fis, encoding);
+		if (FileIO.mockIO) {
+			Str data = FileIO.readFile(path);
+			if (data==null) {
+				error.sb.append("File not found: ");
+				error.sb.append(path);
+			} else {
+				sb = data.sb;
+			}
+		} else {
+			FileInputStream fis = null;
+			if (encoding==null) {
+				encoding = ENCODING;
+			}
+			try {
+				fis = new FileInputStream(path);
+			} catch (FileNotFoundException e) {
+				error.sb().append("File not found: ");
+				error.sb().append(path);
+			}
+			if (fis!=null) {
+				error = fromInputStream(fis, encoding);
+			}
 		}
 		return error;
 	}
@@ -287,42 +343,46 @@ public class Str implements Comparable<Str>{
 		return error;
 	}
 
-	public Str toFile(String fileName) {
-		return toFile(fileName, null);
+	public Str toFile(String path) {
+		return toFile(path, null);
 	}
 	
-	public Str toFile(String fileName, String encoding) {
+	public Str toFile(String path, String encoding) {
 		Str error = new Str();
-		if (encoding==null) {
-			encoding = ENCODING;
-		}
-		char[] chars = toCharArray();
-		FileOutputStream fos = null;
-		Writer wtr = null;
-		try {
-			fos = new FileOutputStream(fileName);
-			if (encoding.length()>0) {
-				wtr = new OutputStreamWriter(fos,encoding);
-			} else {
-				wtr = new OutputStreamWriter(fos);
+		if (FileIO.mockIO) {
+			FileIO.writeFile(this, path);
+		} else {
+			if (encoding==null) {
+				encoding = ENCODING;
 			}
-			wtr.write(chars);
-			wtr.close();
-		} catch (IOException e) {
-			error.sb().append("" + e);
-		} finally {
-			if (fos!=null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					// Ignore
+			char[] chars = toCharArray();
+			FileOutputStream fos = null;
+			Writer wtr = null;
+			try {
+				fos = new FileOutputStream(path);
+				if (encoding.length()>0) {
+					wtr = new OutputStreamWriter(fos,encoding);
+				} else {
+					wtr = new OutputStreamWriter(fos);
 				}
-			}
-			if (wtr!=null) {
-				try {
-					wtr.close();
-				} catch (IOException e) {
-					// Ignore
+				wtr.write(chars);
+				wtr.close();
+			} catch (IOException e) {
+				error.sb().append("" + e);
+			} finally {
+				if (fos!=null) {
+					try {
+						fos.close();
+					} catch (IOException e) {
+						// Ignore
+					}
+				}
+				if (wtr!=null) {
+					try {
+						wtr.close();
+					} catch (IOException e) {
+						// Ignore
+					}
 				}
 			}
 		}

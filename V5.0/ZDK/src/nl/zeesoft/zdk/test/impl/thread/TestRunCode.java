@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test.impl.thread;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.TestObject;

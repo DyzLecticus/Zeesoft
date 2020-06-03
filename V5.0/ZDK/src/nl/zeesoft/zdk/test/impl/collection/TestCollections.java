@@ -1,17 +1,15 @@
 package nl.zeesoft.zdk.test.impl.collection;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.CompleteCollection;
-import nl.zeesoft.zdk.collection.PartitionableCollection;
+import nl.zeesoft.zdk.collection.CompressedCollection;
+import nl.zeesoft.zdk.collection.PartitionedCollection;
 import nl.zeesoft.zdk.collection.PersistableCollection;
-import nl.zeesoft.zdk.collection.PersistableCollectionBase;
 import nl.zeesoft.zdk.collection.Query;
 import nl.zeesoft.zdk.collection.QueryableCollection;
+import nl.zeesoft.zdk.test.FileIO;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 
@@ -34,9 +32,9 @@ public class TestCollections extends TestObject {
 		System.out.println("The following collections are provided by this library;  ");
 		System.out.println(" * *QueryableCollection* provides support for queries.  ");
 		System.out.println(" * *CompleteCollection* extends *QueryableCollection* and automatically adds referenced objects. ");
-		System.out.println(" * *PersistableCollectionBase* extends *CompleteCollection* and adds persistence. ");
-		System.out.println(" * *PersistableCollection* extends *PersistableCollectionBase* and adds compression to persistence. ");
-		System.out.println(" * *PartitionableCollection* extends *PersistableCollection* and adds multithreading for saving/loading large collections to/from directories. ");
+		System.out.println(" * *PersistableCollection* extends *CompleteCollection* and adds persistence. ");
+		System.out.println(" * *CompressedCollection* extends *PersistableCollection* and adds compression to persistence. ");
+		System.out.println(" * *PartitionedCollection* extends *CompressedCollection* and adds multithreading for saving/loading large collections to/from directories. ");
 		System.out.println();
 		System.out.println("Persistence for most standard property types is supported including arrays and lists for non primitives. ");
 		System.out.println();
@@ -63,9 +61,9 @@ public class TestCollections extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(TestCollections.class));
 		System.out.println(" * " + getTester().getLinkForClass(QueryableCollection.class));
 		System.out.println(" * " + getTester().getLinkForClass(CompleteCollection.class));
-		System.out.println(" * " + getTester().getLinkForClass(PersistableCollectionBase.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableCollection.class));
-		System.out.println(" * " + getTester().getLinkForClass(PartitionableCollection.class));
+		System.out.println(" * " + getTester().getLinkForClass(CompressedCollection.class));
+		System.out.println(" * " + getTester().getLinkForClass(PartitionedCollection.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the file structure of an example persistable collection.  ");
@@ -112,7 +110,7 @@ public class TestCollections extends TestObject {
 		testQueries(parent1,parent2);
 		
 		if (!hasFailures()) {
-			PersistableCollectionBase collection = new PersistableCollectionBase();
+			PersistableCollection collection = new PersistableCollection();
 			Str id = collection.put(parent1);
 			collection.put(parent2);
 			assertEqual(collection.size(),EXPECTED_SIZE,"PersistableCollectionBase size does not match expectation[1]");
@@ -148,7 +146,7 @@ public class TestCollections extends TestObject {
 			
 			System.out.println();
 			System.out.println("Compressed;");
-			collection = new PersistableCollection();
+			collection = new CompressedCollection();
 			collection.put(parent1);
 			collection.put(parent2);
 			Str cstr = collection.toStr();
@@ -156,60 +154,37 @@ public class TestCollections extends TestObject {
 			cstr = collection.toStr();
 			System.out.println(cstr);
 			
-			Str cstrs = cstr.split(PersistableCollectionBase.START_OBJECTS).get(1);
-			cstrs.sb().append(PersistableCollectionBase.START_OBJECTS);
+			Str cstrs = cstr.split(PersistableCollection.START_OBJECTS).get(1);
+			cstrs.sb().append(PersistableCollection.START_OBJECTS);
 			System.out.println();
 			System.out.println("Original: " + str.length() + ", compressed: " + cstr.length() + ", compressed excluding header: " + cstrs.length());
 		}
 		if (!hasFailures()) {
-			PartitionableCollection collection = new PartitionableCollection() {
-				private Str savedAndLoaded = new Str();
-				@Override
-				public Str fromPath(String path) {
-					Str error = super.fromPath(path);
-					if (error.length()==0) {
-						error = savedAndLoaded;
-					}
-					return error;
-				}
-				@Override
-				protected Str savePartition(SortedMap<Str, Object> objects, String path) {
-					lock.lock(this);
-					savedAndLoaded.sb().append("S");
-					savedAndLoaded.sb().append(path);
-					lock.unlock(this);
-					return new Str();
-				}
-				@Override
-				protected Str loadPartition(String path) {
-					lock.lock(this);
-					savedAndLoaded.sb().append("L");
-					savedAndLoaded.sb().append(path);
-					lock.unlock(this);
-					return new Str();
-				}
-				@Override
-				protected List<File> getFiles(String path) {
-					List<File> r = new ArrayList<File>();
-					r.add(new File("0.txt"));
-					r.add(new File("1.txt"));
-					r.add(new File("2.txt"));
-					return r;
-				}
-			};
+			String dir = "data/";
+			FileIO.mockIO = true;
+			FileIO.writeFile(new Str("Remove me"),dir + "2.txt");
+			
+			PartitionedCollection collection = new PartitionedCollection();
 			collection.put(parent1);
 			collection.put(parent2);
 			collection.setPartitionSize(2);
-			Str error = collection.toPath("./");
+			Str error = collection.toPath(dir);
 			assertEqual(error,new Str(),"An unexpected error was returned");
+
 			sleep(10);
-			error = collection.fromPath("./");
-			assertEqual(error.contains("S./0.txt"),true,"Expected save partition 0 not called");
-			assertEqual(error.contains("S./1.txt"),true,"Expected save partition 1 not called");
-			assertEqual(error.contains("L./0.txt"),true,"Expected load partition 0 not called");
-			assertEqual(error.contains("L./1.txt"),true,"Expected load partition 1 not called");
-			assertEqual(error.contains("L./2.txt"),true,"Expected load partition 2 not called");
-			assertEqual(collection.size(),0,"Failed to clear the collection");
+			error = collection.fromPath(dir);
+			
+			List<Str> actionLog = FileIO.getActionLog();
+			assertEqual(actionLog.size(),6,"Number of actions does not match expectation");
+			assertEqual(Str.contains(actionLog,FileIO.WRITE + dir + "2.txt"),true,"Expected write 2 not exectuted");
+			assertEqual(Str.contains(actionLog,FileIO.WRITE + dir + "0.txt"),true,"Expected write 0 not exectuted");
+			assertEqual(Str.contains(actionLog,FileIO.WRITE + dir + "1.txt"),true,"Expected write 1 not exectuted");
+			assertEqual(Str.contains(actionLog,FileIO.DELETE + dir + "2.txt"),true,"Expected delete 2 not exectuted");
+			assertEqual(Str.contains(actionLog,FileIO.READ + dir + "0.txt"),true,"Expected read 0 not exectuted");
+			assertEqual(Str.contains(actionLog,FileIO.READ + dir + "1.txt"),true,"Expected read 1 not exectuted");
+			FileIO.clear();
+
+			assertEqual(collection.size(),4,"Failed to load the partitioned collection");
 		}
 	}
 	

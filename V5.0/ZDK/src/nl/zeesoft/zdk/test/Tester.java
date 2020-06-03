@@ -48,6 +48,8 @@ public final class Tester {
 			return success;
 		}
 
+		FileIO.mockIO = true;
+		
 		int assertions = 0;
 		List<String> failures = new ArrayList<String>();
 		List<Long> usedMemory = new ArrayList<Long>();
@@ -106,7 +108,10 @@ public final class Tester {
 		// Garbage collection
 		tests.clear();
 		mocks.clear();
-		
+		FileIO.clear();
+
+		FileIO.mockIO = false;
+
 		if (failures.size()>0) {
 			success = false;
 		}

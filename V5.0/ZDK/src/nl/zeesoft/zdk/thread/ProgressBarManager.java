@@ -14,14 +14,14 @@ public class ProgressBarManager {
 		ProgressBarManager self = new ProgressBarManager();
 		lock.lock(self);
 		if (!activeProgressBars.contains(bar)) {
+			activeProgressBars.add(bar);
 			if (activeProgressBars.size()==0) {
 				initialize = true;
 			}
-			activeProgressBars.add(bar);
 		}
 		lock.unlock(self);
 		if (initialize) {
-			displayProgressBar(bar.getRenderedBar());
+			displayProgressBar(bar.getRenderedBar(),false);
 		}
 	}
 	
@@ -44,17 +44,20 @@ public class ProgressBarManager {
 		}
 		lock.unlock(self);
 		if (update) {
-			displayProgressBar(bar.getRenderedBar());
+			displayProgressBar(bar.getRenderedBar(),bar.isDone());
 			if (next!=null) {
-				displayProgressBar(next.getRenderedBar());
+				displayProgressBar(next.getRenderedBar(),false);
 			}
 		}
 	}
 	
-	protected static void displayProgressBar(Str bar) {
+	protected static void displayProgressBar(Str bar, boolean done) {
 		if (bar.length()>0) {
+			bar.sb().append("\r");
+			if (done) {
+				bar.sb().append("\n");
+			}
 			System.out.print(bar);
-			System.out.print("\r");
 		}
 	}
 }
