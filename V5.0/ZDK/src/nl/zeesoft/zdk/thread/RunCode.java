@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.thread;
 
+import nl.zeesoft.zdk.Logger;
+
 public class RunCode {
 	private final Lock	lock		= new Lock();
 	
@@ -13,6 +15,10 @@ public class RunCode {
 
 	public RunCode(Object... params) {
 		this.params = params;
+	}
+	
+	public void setLogger(Logger logger) {
+		lock.setLogger(this, logger);
 	}
 	
 	/**

@@ -1,11 +1,11 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test.impl.collection;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.collection.PersistableProperty;
 
-public class PCTestParent extends PCTestObject {
+public class CollectionTestParent extends CollectionTestObject {
 	@PersistableProperty()
 	private List<String>			testStringList	= new ArrayList<String>();
 	@PersistableProperty()
@@ -15,9 +15,9 @@ public class PCTestParent extends PCTestObject {
 	@PersistableProperty()
 	private int[]					testIntArray	= null;
 	@PersistableProperty()
-	private List<PCTestChild>		testChildren	= new ArrayList<PCTestChild>();
+	private List<CollectionTestChild>		testChildren	= new ArrayList<CollectionTestChild>();
 	@PersistableProperty()
-	private PCTestParent			testPartner		= null;
+	private CollectionTestParent			testPartner		= null;
 	
 	public List<String> getTestStringList() {
 		return testStringList;
@@ -43,19 +43,19 @@ public class PCTestParent extends PCTestObject {
 		this.testStringArray = testStringArray;
 	}
 	
-	public List<PCTestChild> getTestChildren() {
+	public List<CollectionTestChild> getTestChildren() {
 		return testChildren;
 	}
 	
-	public void setTestChildren(List<PCTestChild> testChildren) {
+	public void setTestChildren(List<CollectionTestChild> testChildren) {
 		this.testChildren = testChildren;
 	}
 	
-	public PCTestParent getTestPartner() {
+	public CollectionTestParent getTestPartner() {
 		return testPartner;
 	}
 	
-	public void setTestPartner(PCTestParent testPartner) {
+	public void setTestPartner(CollectionTestParent testPartner) {
 		this.testPartner = testPartner;
 	}
 

@@ -3,13 +3,17 @@ package nl.zeesoft.zdk.thread;
 import nl.zeesoft.zdk.Str;
 
 public class ProgressBar implements ProgressListener {
-	private Lock	lock			= new Lock();
-	private String	description		= "";
-	private int		length			= 20;
+	private Lock		lock			= new Lock();
 	
-	private int		todo			= 0;
-	private int		done			= 0;
-	private int		percentage		= 0;
+	private String		description		= "";
+	private int			length			= 20;
+	
+	private int			todo			= 0;
+	private int			done			= 0;
+	private int			percentage		= 0;
+	private int			prevPercentage	= 0;
+	
+	private Str			renderedBar		= new Str();
 
 	public ProgressBar(String description) {
 		this.description = description;
@@ -21,23 +25,84 @@ public class ProgressBar implements ProgressListener {
 	}
 	
 	@Override
-	public void initialize(int todo) {
+	public void initialized(int todo) {
+		boolean initialized = false;
 		lock.lock(this);
-		this.done = 0;
-		this.todo = todo;
-		this.percentage = 0;
+		if (this.done>=this.todo) {
+			this.todo = todo;
+			done = 0;
+			percentage = 0;
+			prevPercentage = 0;
+			renderedBar = renderProgressBarNoLock(description, length, done, todo);
+			initialized = true;
+		}
 		lock.unlock(this);
-		initializeProgressBar(todo);
+		if (initialized) {
+			ProgressBarManager.initializedProgressBar(this);
+		}
 	}
 
 	@Override
-	public void progressed(int done) {
+	public void progressed(int steps) {
+		boolean updated = false;
 		lock.lock(this);
-		this.done += done;
-		int dn = this.done;
-		int td = todo;
-		int pc = percentage;
+		if (todo > 0) {
+			done += steps;
+			percentage = calculatePercentage(done, todo);
+			int minDiff = 100 / length;
+			if (minDiff < 1) {
+				minDiff = 1;
+			}
+			if (done >= todo || percentage - prevPercentage >= minDiff) {
+				prevPercentage = percentage;
+				renderedBar = renderProgressBarNoLock(description, length, done, todo);
+				updated = true;
+			}
+		}
 		lock.unlock(this);
+		if (updated) {
+			ProgressBarManager.updatedProgressBar(this);
+		}
+	}
+	
+	protected Str renderProgressBarNoLock(String description, int length, int done, int todo) {
+		Str r = new Str();
+		int filled = (int)((float)done / (float)todo * (float)length);
+		r.sb().append(description);
+		r.sb().append(" [");
+		for (int i = 0; i < filled; i++) {
+			r.sb().append("=");
+		}
+		for (int i = filled; i < length; i++) {
+			r.sb().append(" ");
+		}
+		r.sb().append("] ");
+		r.sb().append(calculatePercentage(done, todo));
+		r.sb().append("%");
+		return r;
+	}
+
+	protected final boolean isDone() {
+		lock.unlock(this);
+		boolean r = done>=todo; 
+		lock.unlock(this);
+		return r;
+	}
+
+	protected final Str getRenderedBar() {
+		lock.unlock(this);
+		Str r = renderedBar; 
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected void initializeProgressBar(int todo) {
+		if (todo>0) {
+			displayProgressBar(renderProgressBar(0,todo));
+		}
+	}
+	
+	protected void progressed(int dn, int td, int pc) {
 		if (td>0) {
 			int newPc = calculatePercentage(dn, td);
 			int minDiff = 100 / length;
@@ -50,12 +115,6 @@ public class ProgressBar implements ProgressListener {
 			if (dn==td) {
 				System.out.println();
 			}
-		}
-	}
-	
-	protected void initializeProgressBar(int todo) {
-		if (todo>0) {
-			displayProgressBar(renderProgressBar(0,todo));
 		}
 	}
 	

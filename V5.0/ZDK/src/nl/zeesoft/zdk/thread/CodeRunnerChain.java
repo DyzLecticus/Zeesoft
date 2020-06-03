@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.thread;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Logger;
+
 public class CodeRunnerChain implements Waitable {
 	protected Lock						lock					= new Lock();
 	
@@ -13,9 +15,20 @@ public class CodeRunnerChain implements Waitable {
 	protected int						doneCodes				= 0;
 	
 	public void addProgressListener(ProgressListener listener) {
+		lock.lock(this);
 		if (!progressListeners.contains(listener)) {
 			progressListeners.add(listener);
 		}
+		lock.unlock(this);
+	}
+	
+	public void setLogger(Logger logger) {
+		lock.setLogger(this, logger);
+		lock.lock(this);
+		for (CodeRunnerList runnerList: runnerLists) {
+			runnerList.setLogger(logger);
+		}
+		lock.unlock(this);
 	}
 	
 	public void add(RunCode code) {
@@ -28,9 +41,11 @@ public class CodeRunnerChain implements Waitable {
 
 	public void addAll(List<RunCode> codes) {
 		if (codes.size()>0) {
+			Logger logger = lock.getLogger(this);
 			lock.lock(this);
 			if (!isBusyNoLock()) {
 				CodeRunnerList runnerList = getNewCodeRunnerList(codes);
+				runnerList.setLogger(logger);
 				runnerList.addAll(codes);
 				runnerLists.add(runnerList);
 			}
@@ -75,10 +90,12 @@ public class CodeRunnerChain implements Waitable {
 	}
 	
 	public void start() {
-		int todoCodes = -1;
 		lock.lock(this);
 		if (!isBusyNoLock()) {
-			todoCodes = getCodesNoLock().size();
+			int todoCodes = getCodesNoLock().size();
+			for (ProgressListener listener: progressListeners) {
+				listener.initialized(todoCodes);
+			}
 			doneCodes = 0;
 			if (runnerLists.size()>0) {
 				activeRunnerListIndex = 0;
@@ -86,11 +103,6 @@ public class CodeRunnerChain implements Waitable {
 			}
 		}
 		lock.unlock(this);
-		if (todoCodes>=0) {
-			for (ProgressListener listener: progressListeners) {
-				listener.initialize(todoCodes);
-			}
-		}
 	}
 	
 	public int size() {
@@ -150,10 +162,10 @@ public class CodeRunnerChain implements Waitable {
 	protected void codeIsDone(RunCode code) {
 		lock.lock(this);
 		doneCodes++;
-		lock.unlock(this);
 		for (ProgressListener listener: progressListeners) {
 			listener.progressed(1);
 		}
+		lock.unlock(this);
 	}
 	
 	protected void caughtException(Exception exception) {

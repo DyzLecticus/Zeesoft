@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test.impl;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
 import nl.zeesoft.zdk.thread.CodeRunner;
@@ -24,8 +25,16 @@ public class TestRunCode extends TestObject {
 		System.out.println("It also shows how to use a *CodeRunnerList* instance to run different code in multiple threads simultaneously. ");
 		System.out.println("*Lock* instances are used to prevent concurrent modification exceptions. ");
 		System.out.println();
+		System.out.println("A *CodeRunner* will repeat calling the *RunCode*.run() method until the method returns true or the method throws an exception. ");
+		System.out.println("It can also be forced to stop by calling the *CodeRunner*.stop() method. ");
+		System.out.println("The *CodeRunnerList* implements similar logic; it stops when all its *CodeRunner* instances have stopped or one of them throws an exception. ");
+		System.out.println("The *CodeRunnerList* can also be forced to stop by calling the *CodeRunnerList*.stop() method. ");
+		System.out.println();
+		System.out.println("Exceptions are caught and supressed by default but they are available through getException() methods. ");
+		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
+		System.out.println("// Create the run code");
 		System.out.println("RunCode code = new RunCode() {");
 		System.out.println("    private int counter = 0;");
 		System.out.println("    @Override");
@@ -39,8 +48,11 @@ public class TestRunCode extends TestObject {
 		System.out.println("        return r;");
 		System.out.println("    }");
 		System.out.println("};");
+		System.out.println("// Create the code runner");
 		System.out.println("CodeRunner runner = new CodeRunner(code);");
+		System.out.println("// Specify the number of milliseconds to sleep between runs");
 		System.out.println("runner.setSleepMs(1);");
+		System.out.println("// Start the runner");
 		System.out.println("runner.start();");
 		System.out.println("~~~~");
 		System.out.println();
@@ -68,6 +80,9 @@ public class TestRunCode extends TestObject {
 		Exception exception = runner.getCode().getException();
 		assertNull(exception,"Exception does not match expectation (1)");
 
+		// Check set logger method
+		runner.setLogger(new Logger());
+				
 		System.out.println();
 		System.out.println("Test exception handling;");
 		RunCode testCodeB = new RunCode() {
@@ -96,22 +111,19 @@ public class TestRunCode extends TestObject {
 		list.start();
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),2,"Number of active code runners does not match expectation");
 		sleep(5);
-		list.stopWait();
+		Waiter.waitTillDone(list,100);
 		assertEqual(list.isBusy(),false,"List state does not match expectation");
-		while(list.isBusy()) {
-			sleep(1);
-		}
 		exception = list.getCodes().get(1).getException();
 		assertNull(exception,"Exception does not match expectation (3)");
+
+		// Check set logger method
+		list.setLogger(new Logger());
 		
 		System.out.println();
 		System.out.println("Test runner list exception handling;");
 		list.add(testCodeB);
 		list.start();
 		Waiter.waitTillDone(list,1000);
-		while(list.isBusy()) {
-			sleep(1);
-		}
 		exception = list.getCodes().get(2).getException();
 		assertNotNull(exception,"Exception does not match expectation (4)");
 		System.out.println("Caught exception; " + exception);

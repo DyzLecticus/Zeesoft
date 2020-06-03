@@ -1,15 +1,15 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test.impl.collection;
 
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.PersistableProperty;
 
-public class PCTestChild extends PCTestObject {
+public class CollectionTestChild extends CollectionTestObject {
 	@PersistableProperty()
 	private int					testInt 	= 0;
 	@PersistableProperty()
 	private boolean				testBoolean	= false;
 	@PersistableProperty()
-	private PCTestParent[]		testParents	= new PCTestParent[2];
+	private CollectionTestParent[]		testParents	= new CollectionTestParent[2];
 	@PersistableProperty()
 	private Str[]				testStrs	= new Str[1];
 	@PersistableProperty()
@@ -32,11 +32,11 @@ public class PCTestChild extends PCTestObject {
 		this.testBoolean = testBoolean;
 	}
 
-	public PCTestParent[] getTestParents() {
+	public CollectionTestParent[] getTestParents() {
 		return testParents;
 	}
 
-	public void setTestParents(PCTestParent[] testParents) {
+	public void setTestParents(CollectionTestParent[] testParents) {
 		this.testParents = testParents;
 	}
 

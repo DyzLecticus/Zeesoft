@@ -19,6 +19,7 @@ public class CodeRunner extends RunnerObject implements Runnable {
 	
 	public void setLogger(Logger logger) {
 		getLock().setLogger(this, logger);
+		code.setLogger(logger);
 	}
 
 	public void setSleepMs(int sleepMs) {
@@ -69,21 +70,6 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		CodeRunnerManager.stoppedRunner(this);
 		
 		doneCallback();
-	}
-	
-	public CodeRunner waitTillDone(int waitMs) {
-		Waiter.waitTillDone(this, waitMs);
-		return this;
-	}
-	
-	public static CodeRunner startNewCodeRunner(RunCode code) {
-		CodeRunner r = getNewCodeRunner(code);
-		r.start();
-		return r;
-	}
-	
-	public static CodeRunner getNewCodeRunner(RunCode code) {
-		return new CodeRunner(code);
 	}
 
 	protected void whileRunning() {

@@ -5,6 +5,7 @@ import java.util.List;
 import nl.zeesoft.zdk.test.LibraryObject;
 import nl.zeesoft.zdk.test.TestObject;
 import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.test.impl.collection.TestCollections;
 
 /**
  * Documents and tests the ZDK.
@@ -46,6 +47,7 @@ public class ZDK extends LibraryObject {
 	public void addTests(List<TestObject> tests) {
 		tests.add(new TestStr(getTester()));
 		tests.add(new TestRunCode(getTester()));
+		tests.add(new TestCodeRunnerChain(getTester()));
 		tests.add(new TestCollections(getTester()));
 	}
 }

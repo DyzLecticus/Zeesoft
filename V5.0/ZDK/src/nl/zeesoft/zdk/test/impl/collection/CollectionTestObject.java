@@ -1,10 +1,10 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test.impl.collection;
 
 import nl.zeesoft.zdk.collection.PersistableObject;
 import nl.zeesoft.zdk.collection.PersistableProperty;
 
 @PersistableObject()
-public abstract class PCTestObject {
+public abstract class CollectionTestObject {
 	@PersistableProperty()
 	private String	testString 	= "";
 	

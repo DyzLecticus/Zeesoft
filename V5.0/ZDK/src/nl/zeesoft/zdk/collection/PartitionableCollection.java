@@ -60,6 +60,43 @@ public class PartitionableCollection extends PersistableCollection {
 		return error;
 	}
 	
+	public CodeRunnerChain getCodeRunnerChainForSave(String path) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		r.setLogger(logger);
+		r.addAll(getRunCodesForSave(path));
+		r.add(new RunCode() {
+			@Override
+			protected boolean run() {
+				savedPartitions();
+				return true;
+			}
+		});
+		return r;
+	}
+	
+	protected CodeRunnerChain getCodeRunnerChainForLoad(String path) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		r.setLogger(logger);
+		r.addAll(getRunCodesForLoad(path));
+		r.add(new RunCode() {
+			@Override
+			protected boolean run() {
+				loadedAllPartitions();
+				loadedPartitions();
+				return true;
+			}
+		});
+		return r;
+	}
+	
+	protected void savedPartitions() {
+		// Override to implement
+	}
+	
+	protected void loadedPartitions() {
+		// Override to implement
+	}
+	
 	public static List<File> getPartitionFiles(String path) {
 		List<File> r = new ArrayList<File>();
 		File dir = new File(path);
@@ -100,12 +137,6 @@ public class PartitionableCollection extends PersistableCollection {
 		return r;
 	}
 	
-	protected CodeRunnerChain getCodeRunnerChainForSave(String path) {
-		CodeRunnerChain r = new CodeRunnerChain();
-		r.addAll(getRunCodesForSave(path));
-		return r;
-	}
-	
 	protected List<RunCode> getRunCodesForSave(String path) {
 		List<RunCode> r = new ArrayList<RunCode>();
 		List<String> fileNames = new ArrayList<String>();
@@ -142,19 +173,6 @@ public class PartitionableCollection extends PersistableCollection {
 				r.add(code);
 			}
 		}
-		return r;
-	}
-	
-	protected CodeRunnerChain getCodeRunnerChainForLoad(String path) {
-		CodeRunnerChain r = new CodeRunnerChain();
-		r.addAll(getRunCodesForLoad(path));
-		r.add(new RunCode() {
-			@Override
-			protected boolean run() {
-				loadedPartitions();
-				return true;
-			}
-		});
 		return r;
 	}
 	
@@ -200,7 +218,7 @@ public class PartitionableCollection extends PersistableCollection {
 		return error;
 	}
 	
-	protected void loadedPartitions() {
+	protected void loadedAllPartitions() {
 		lock.lock(this);
 		expandObjectsNoLock(objStrs);
 		objStrs.clear();

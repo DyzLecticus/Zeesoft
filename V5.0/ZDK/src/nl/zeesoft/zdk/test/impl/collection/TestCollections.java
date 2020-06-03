@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test.impl.collection;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class TestCollections extends TestObject {
 		System.out.println(" * *PartitionableCollection* extends *PersistableCollection* and adds multithreading for saving/loading large collections to/from directories. ");
 		System.out.println();
 		System.out.println("Persisted object classes must be annotated with *PersistableObject*. ");
-		System.out.println("The object properties that are to be persisted must be annotated with *PersistableProperty*. ");
+		System.out.println("The object class properties that are to be persisted must be annotated with *PersistableProperty*. ");
 		System.out.println("Most standard property types are supported including array lists for non primitives. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
@@ -52,9 +52,9 @@ public class TestCollections extends TestObject {
 		System.out.println("Str id1 = collection.add(new PersistableParent());");
 		System.out.println("Str id2 = collection.add(new PersistableChild());");
 		System.out.println("// Write the data to a file");
-		System.out.println("collection.toFile(\"fileName.txt\");");
+		System.out.println("collection.toPath(\"data/fileName.txt\");");
 		System.out.println("// Load the collection from a file");
-		System.out.println("collection.fromFile(\"fileName.txt\");");
+		System.out.println("collection.fromPath(\"data/fileName.txt\");");
 		System.out.println("// Query the collection");
 		System.out.println("SortedMap<Str,Object> results = collection.query(");
 		System.out.println("    Query.create(PersistableParent.class)");
@@ -69,6 +69,7 @@ public class TestCollections extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(CompleteCollection.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableCollectionBase.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableCollection.class));
+		System.out.println(" * " + getTester().getLinkForClass(PartitionableCollection.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableObject.class));
 		System.out.println(" * " + getTester().getLinkForClass(PersistableProperty.class));
 		System.out.println();
@@ -78,7 +79,7 @@ public class TestCollections extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		PCTestParent parent1 = new PCTestParent();
+		CollectionTestParent parent1 = new CollectionTestParent();
 		parent1.setTestString("TestParent1");
 		parent1.getTestStringList().add("TestString1");
 		parent1.getTestStringList().add("TestString2");
@@ -89,13 +90,13 @@ public class TestCollections extends TestObject {
 		int[] ints = {0, 1, 2, 3};
 		parent1.setTestIntArray(ints);
 		
-		PCTestParent parent2 = new PCTestParent();
+		CollectionTestParent parent2 = new CollectionTestParent();
 		parent2.setTestString("TestParent2");
 		
 		parent1.setTestPartner(parent2);
 		parent2.setTestPartner(parent1);
 		
-		PCTestChild child1 = new PCTestChild();
+		CollectionTestChild child1 = new CollectionTestChild();
 		child1.setTestString("TestChild1");
 		child1.setTestBoolean(true);
 		child1.setTestInt(111);
@@ -103,7 +104,7 @@ public class TestCollections extends TestObject {
 		child1.getTestParents()[1] = parent2;
 		child1.getTestStr().sb().append("I like pizza!");
 		
-		PCTestChild child2 = new PCTestChild();
+		CollectionTestChild child2 = new CollectionTestChild();
 		child2.setTestString("TestChild2");
 		child2.setTestBoolean(false);
 		child2.setTestInt(222);
@@ -122,7 +123,7 @@ public class TestCollections extends TestObject {
 			collection.put(parent2);
 			assertEqual(collection.size(),EXPECTED_SIZE,"PersistableCollectionBase size does not match expectation[1]");
 			assertEqual(
-				collection.getObjects(PCTestParent.class.getName()).size(),2,
+				collection.getObjects(CollectionTestParent.class.getName()).size(),2,
 				"Number of PersistableParent objects does not match expectation"
 				);
 			collection.put(parent2);
@@ -130,8 +131,8 @@ public class TestCollections extends TestObject {
 			
 			Str objStr = collection.getObjectAsStr(id);
 			Object object = collection.getObjectFromStr(objStr);
-			if (assertEqual(object.getClass().getName(),PCTestParent.class.getName(),"Class name does not match expectation")) {
-				PCTestParent parent = (PCTestParent) object;
+			if (assertEqual(object.getClass().getName(),CollectionTestParent.class.getName(),"Class name does not match expectation")) {
+				CollectionTestParent parent = (CollectionTestParent) object;
 				assertEqual(parent.getTestString(),"TestParent1","Parent testString does not match expectation");
 				assertEqual(parent.getTestStringList().size(),0,"Parent testStringList size does not match expectation");
 				assertEqual(parent.getTestFloatList().size(),0,"Parent testFloatList size does not match expectation");
@@ -217,7 +218,7 @@ public class TestCollections extends TestObject {
 		}
 	}
 	
-	private void testQueries(PCTestParent parent1, PCTestParent parent2) {
+	private void testQueries(CollectionTestParent parent1, CollectionTestParent parent2) {
 		CompleteCollection collection = new CompleteCollection();
 		collection.put(parent1);
 		collection.put(parent2);
@@ -225,37 +226,37 @@ public class TestCollections extends TestObject {
 		
 		// Test equals
 		Query query = collection.query(
-			Query.create(PCTestParent.class)
+			Query.create(CollectionTestParent.class)
 			.equals("testString","TestParent1")
 		);
 		assertResultsIsTestParent1(query,1);
 		
 		// Test not equals
 		query = collection.query(
-			Query.create(PCTestParent.class)
+			Query.create(CollectionTestParent.class)
 			.notEquals("testString","TestParent2")
 		);
 		assertResultsIsTestParent1(query,2);
 		
 		// Test contains
 		query = collection.query(
-			Query.create(PCTestParent.class)
+			Query.create(CollectionTestParent.class)
 			.contains("testString","1")
 		);
 		assertResultsIsTestParent1(query,3);
 		
 		// Test multiple types
 		query = collection.query(
-			Query.create(PCTestParent.class)
-			.addClass(PCTestChild.class)
+			Query.create(CollectionTestParent.class)
+			.addClass(CollectionTestChild.class)
 			.contains("testString","1")
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[4]");
 		
 		// Test multiple types and multiple filters
 		query = collection.query(
-			Query.create(PCTestParent.class)
-			.addClass(PCTestChild.class)
+			Query.create(CollectionTestParent.class)
+			.addClass(CollectionTestChild.class)
 			.contains("testString","1")
 			.notContains("testString","Child")
 		);
@@ -263,49 +264,49 @@ public class TestCollections extends TestObject {
 		
 		// Test less
 		query = collection.query(
-			Query.create(PCTestChild.class)
+			Query.create(CollectionTestChild.class)
 			.lessThan("testInt",222)
 		);
 		assertEqual(query.results.size(),1,"Query results size does not match expectation[6]");
 
 		// Test less or equal
 		query = collection.query(
-			Query.create(PCTestChild.class)
+			Query.create(CollectionTestChild.class)
 			.lessOrEquals("testInt",222)
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[7]");
 		
 		// Test list contains
 		query = collection.query(
-			Query.create(PCTestParent.class)
+			Query.create(CollectionTestParent.class)
 			.contains("testStringList","TestString2")
 		);
 		assertResultsIsTestParent1(query,8);
 		
 		// Test array contains
 		query = collection.query(
-			Query.create(PCTestChild.class)
+			Query.create(CollectionTestChild.class)
 			.contains("testParents",parent2)
 		);
 		assertEqual(query.results.size(),2,"Query results size does not match expectation[9]");
 		
 		// Test primitive array contains
 		query = collection.query(
-			Query.create(PCTestParent.class)
+			Query.create(CollectionTestParent.class)
 			.contains("testIntArray",2)
 		);
 		assertResultsIsTestParent1(query,10);
 
 		// Test filter error
 		query = collection.query(
-			Query.create(PCTestParent.class)
+			Query.create(CollectionTestParent.class)
 			.equals("qwerqwer",2)
 		);
 		assertEqual(query.errors.size(),1,"Query errors size does not match expectation[9]");
 
 		// Test method invocation
 		query = collection.query(
-			Query.create(PCTestParent.class)
+			Query.create(CollectionTestParent.class)
 			.equals("getTestString","TestParent1")
 		);
 		assertResultsIsTestParent1(query,10);
@@ -314,8 +315,8 @@ public class TestCollections extends TestObject {
 	private void assertResultsIsTestParent1(Query query,int num) {
 		if (assertEqual(query.results.size(),1,"Query results size does not match expectation[" + num + "]")) {
 			Object first = query.results.get(query.results.firstKey());
-			if (assertEqual(first.getClass().getName(),PCTestParent.class.getName(),"Query did not return the expected type[" + num + "]")) {
-				PCTestParent result = (PCTestParent) first;
+			if (assertEqual(first.getClass().getName(),CollectionTestParent.class.getName(),"Query did not return the expected type[" + num + "]")) {
+				CollectionTestParent result = (CollectionTestParent) first;
 				assertEqual(result.getTestString(),"TestParent1","Query did not return the expected object[" + num + "]");
 			}
 		}

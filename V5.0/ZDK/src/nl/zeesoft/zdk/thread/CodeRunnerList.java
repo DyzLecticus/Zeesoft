@@ -10,7 +10,7 @@ public class CodeRunnerList extends RunnerObject {
 	private Exception			exception		= null;
 	private List<CodeRunner>	activeRunners	= new ArrayList<CodeRunner>();
 	
-	public void add(RunCode code) {
+	public CodeRunner add(RunCode code) {
 		CodeRunner runner = getNewCodeRunner(code);
 		runner.setLogger(getLock().getLogger(this));
 		getLock().lock(this);
@@ -18,6 +18,7 @@ public class CodeRunnerList extends RunnerObject {
 			runners.add(runner);
 		}
 		getLock().unlock(this);
+		return runner;
 	}
 	
 	public void addAll(List<RunCode> codes) {
@@ -152,7 +153,9 @@ public class CodeRunnerList extends RunnerObject {
 	
 	protected final void runnerCaughtException(CodeRunner runner, Exception exception) {
 		getLock().lock(this);
-		this.exception = exception;
+		if (this.exception==null) {
+			this.exception = exception;
+		}
 		getLock().unlock(this);
 		stop();
 	}
