@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.impl.collection;
+package nl.zeesoft.zdk.test.collection;
 
 public abstract class CollectionTestObject {
 	private String	testString 	= "";

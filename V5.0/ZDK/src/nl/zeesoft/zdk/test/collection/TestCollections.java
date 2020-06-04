@@ -1,7 +1,8 @@
-package nl.zeesoft.zdk.test.impl.collection;
+package nl.zeesoft.zdk.test.collection;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.CompleteCollection;
 import nl.zeesoft.zdk.collection.CompressedCollection;
@@ -9,9 +10,8 @@ import nl.zeesoft.zdk.collection.PartitionedCollection;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.collection.Query;
 import nl.zeesoft.zdk.collection.QueryableCollection;
-import nl.zeesoft.zdk.test.FileIO;
-import nl.zeesoft.zdk.test.TestObject;
-import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.test.util.TestObject;
+import nl.zeesoft.zdk.test.util.Tester;
 
 public class TestCollections extends TestObject {
 	private static final int	EXPECTED_SIZE	= 4;

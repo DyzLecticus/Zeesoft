@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test;
+package nl.zeesoft.zdk.test.util;
 
 /**
  * Abstract mock object.

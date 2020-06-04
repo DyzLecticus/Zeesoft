@@ -1,10 +1,10 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test;
 
 import java.util.List;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.test.TestObject;
-import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.test.util.TestObject;
+import nl.zeesoft.zdk.test.util.Tester;
 
 public class TestStr extends TestObject {
 	public TestStr(Tester tester) {
@@ -45,6 +45,7 @@ public class TestStr extends TestObject {
 		assertEqual(test.trim(),new Str("qwer,asdf,zxcv"),"Encoding does not match expectation");
 		System.out.println("Input: " + test);
 		List<Str> strs = test.split(",");
+		assertEqual(strs.size(),test.toString().split(",").length,"Split size does not match expectation");
 		System.out.println("Split; ");
 		for (Str str: strs) {
 			System.out.println("- " + str);
@@ -57,5 +58,6 @@ public class TestStr extends TestObject {
 		assertEqual(strs.get(0).toUpperCase(),new Str("QWER"),"To upper case result does not match expectation");
 		assertEqual(strs.get(0).replace("WE","UAZA"),new Str("QUAZAR"),"Replace result does not match expectation");
 		assertEqual(test.merge(strs,","),new Str("QUAZAR,asdf,zxcv"),"Merge result does not match expectation");
+		assertEqual((new Str("")).split(",").get(0).toString(),"".toString().split(",")[0],"Split does not match expectation");
 	}
 }

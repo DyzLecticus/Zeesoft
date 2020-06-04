@@ -1,13 +1,13 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.test.LibraryObject;
-import nl.zeesoft.zdk.test.TestObject;
-import nl.zeesoft.zdk.test.Tester;
-import nl.zeesoft.zdk.test.impl.collection.TestCollections;
-import nl.zeesoft.zdk.test.impl.thread.TestCodeRunnerChain;
-import nl.zeesoft.zdk.test.impl.thread.TestRunCode;
+import nl.zeesoft.zdk.test.collection.TestCollections;
+import nl.zeesoft.zdk.test.thread.TestCodeRunnerChain;
+import nl.zeesoft.zdk.test.thread.TestRunCode;
+import nl.zeesoft.zdk.test.util.LibraryObject;
+import nl.zeesoft.zdk.test.util.TestObject;
+import nl.zeesoft.zdk.test.util.Tester;
 
 /**
  * Documents and tests the ZDK.

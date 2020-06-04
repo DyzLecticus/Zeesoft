@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test;
+package nl.zeesoft.zdk;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class FileIO {

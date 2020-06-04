@@ -1,11 +1,11 @@
-package nl.zeesoft.zdk.test.impl.thread;
+package nl.zeesoft.zdk.test.thread;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.test.TestObject;
-import nl.zeesoft.zdk.test.Tester;
+import nl.zeesoft.zdk.test.util.TestObject;
+import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.CodeRunnerManager;

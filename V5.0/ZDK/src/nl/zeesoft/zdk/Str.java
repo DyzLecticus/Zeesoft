@@ -13,8 +13,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.test.FileIO;
-
 public class Str implements Comparable<Str>{
 	private static final String		ENCODING	= "UTF8";
 	
@@ -254,6 +252,9 @@ public class Str implements Comparable<Str>{
 			if (offset<sb.length()) {
 				r.add(substring(offset,sb.length()));
 			}
+		}
+		if (r.size()==0) {
+			r.add(new Str());
 		}
 		return r;
 	}

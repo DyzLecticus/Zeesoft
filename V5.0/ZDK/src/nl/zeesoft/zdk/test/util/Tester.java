@@ -1,9 +1,10 @@
-package nl.zeesoft.zdk.test;
+package nl.zeesoft.zdk.test.util;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Instantiator;
 
 /**
@@ -70,7 +71,12 @@ public final class Tester {
 			System.out.println();
 			test.describe();
 			System.out.println("~~~~");
-			test.test(args);
+			try {
+				test.test(args);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				test.assertNull(ex,"" + ex);
+			}
 			assertions += test.getAssertions();
 			failures.addAll(test.getFailures());
 			sleepMs += test.getSleeptMs();

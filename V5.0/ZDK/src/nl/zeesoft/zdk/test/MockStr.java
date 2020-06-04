@@ -1,7 +1,7 @@
-package nl.zeesoft.zdk.test.impl;
+package nl.zeesoft.zdk.test;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.test.MockObject;
+import nl.zeesoft.zdk.test.util.MockObject;
 
 public class MockStr extends MockObject {
 	@Override
