@@ -9,46 +9,34 @@ public class ProgressBarManager {
 	private static Lock					lock					= new Lock();
 	private static List<ProgressBar>	activeProgressBars		= new ArrayList<ProgressBar>();
 	
-	public static void initializedProgressBar(ProgressBar bar) {
-		boolean initialize = false;
+	public static synchronized void initializedProgressBar(ProgressBar bar) {
 		ProgressBarManager self = new ProgressBarManager();
 		lock.lock(self);
 		if (!activeProgressBars.contains(bar)) {
 			activeProgressBars.add(bar);
 			if (activeProgressBars.size()==0) {
-				initialize = true;
+				displayProgressBar(bar.getRenderedBar(),false);
 			}
 		}
 		lock.unlock(self);
-		if (initialize) {
-			displayProgressBar(bar.getRenderedBar(),false);
-		}
 	}
 	
-	public static void updatedProgressBar(ProgressBar bar) {
-		boolean update = false;
-		ProgressBar next = null;
+	public static synchronized void updatedProgressBar(ProgressBar bar) {
 		ProgressBarManager self = new ProgressBarManager();
 		lock.lock(self);
 		if (activeProgressBars.indexOf(bar)==0) {
-			update = true;
+			displayProgressBar(bar.getRenderedBar(),bar.isDone());
 			if (bar.isDone()) {
 				activeProgressBars.remove(bar);
 				if (activeProgressBars.size()>0) {
-					next = activeProgressBars.get(0);
-					if (next.isDone()) {
-						next = null;
+					ProgressBar next = activeProgressBars.get(0);
+					if (!next.isDone()) {
+						displayProgressBar(next.getRenderedBar(),false);
 					}
 				}
 			}
 		}
 		lock.unlock(self);
-		if (update) {
-			displayProgressBar(bar.getRenderedBar(),bar.isDone());
-			if (next!=null) {
-				displayProgressBar(next.getRenderedBar(),false);
-			}
-		}
 	}
 	
 	protected static void displayProgressBar(Str bar, boolean done) {

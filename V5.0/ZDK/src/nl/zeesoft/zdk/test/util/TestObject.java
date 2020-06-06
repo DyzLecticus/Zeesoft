@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Str;
 
 /**
@@ -40,6 +41,25 @@ public abstract class TestObject {
 	 * @param args The arguments
 	 */
 	protected abstract void test(String[] args);
+	
+	/**
+	 * Wraps the test function in a try/catch and ensures file IO is mocked.
+	 * 
+	 * @param args The arguments
+	 */
+	protected final void runTest(String[] args) {
+		FileIO.mockIO = true;
+		try {
+			test(args);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			if (!assertNull(ex,"" + ex)) {
+				ex.printStackTrace();
+			}
+		}
+		FileIO.clear();
+		FileIO.mockIO = false;
+	}
 	
 	/**
 	 * Increments the number of milliseconds spent sleeping.
@@ -245,7 +265,7 @@ public abstract class TestObject {
 	 * 
 	 * @return the number of milliseconds spent sleeping
 	 */
-	protected int getSleeptMs() {
+	protected final int getSleeptMs() {
 		return sleepMs;
 	}
 	

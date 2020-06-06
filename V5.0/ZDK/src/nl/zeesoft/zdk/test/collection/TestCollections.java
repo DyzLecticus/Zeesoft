@@ -21,7 +21,7 @@ public class TestCollections extends TestObject {
 	}
 
 	public static void main(String[] args) {
-		(new TestCollections(new Tester())).test(args);
+		(new TestCollections(new Tester())).runTest(args);
 	}
 
 	@Override
@@ -161,7 +161,6 @@ public class TestCollections extends TestObject {
 		}
 		if (!hasFailures()) {
 			String dir = "data/";
-			FileIO.mockIO = true;
 			FileIO.writeFile(new Str("Remove me"),dir + "2.txt");
 			
 			PartitionedCollection collection = new PartitionedCollection();

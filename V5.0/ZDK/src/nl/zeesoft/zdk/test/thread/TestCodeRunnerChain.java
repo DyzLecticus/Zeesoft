@@ -20,7 +20,7 @@ public class TestCodeRunnerChain extends TestObject {
 	}
 
 	public static void main(String[] args) {
-		(new TestCodeRunnerChain(new Tester())).test(args);
+		(new TestCodeRunnerChain(new Tester())).runTest(args);
 	}
 
 	@Override
@@ -68,6 +68,9 @@ public class TestCodeRunnerChain extends TestObject {
 		chain.addAll(codes);
 		chain.add(getNewTestRunCode("Imported 4 files"));
 		chain.start();
+		while(chain.isBusy()) {
+			sleep(10);
+		}
 		Waiter.waitTillDone(chain,100);
 		assertEqual(chain.getDoneCodes(),5,"Number of done codes does not match expectation");
 		
@@ -82,20 +85,26 @@ public class TestCodeRunnerChain extends TestObject {
 			codes.add(getNewTestRunCode("",50));
 		}
 		chain.addAll(codes);
-		chain.add(getNewTestRunCode(""));
+		chain.add(getNewTestRunCode("",50));
 		chain.addProgressListener(new ProgressBar("Primary tasks"));
 
 		CodeRunnerChain chain2 = new CodeRunnerChain();
 		codes = new ArrayList<RunCode>();
 		for (int i = 0; i < 9; i++) {
-			codes.add(getNewTestRunCode("",50));
+			codes.add(getNewTestRunCode("",51));
 		}
 		chain2.addAll(codes);
-		chain2.add(getNewTestRunCode(""));
+		chain2.add(getNewTestRunCode("",51));
 		chain2.addProgressListener(new ProgressBar("Secondary tasks"));
 
 		chain.start();
 		chain2.start();
+		while(chain.isBusy()) {
+			sleep(10);
+		}
+		while(chain2.isBusy()) {
+			sleep(10);
+		}
 		Waiter.waitTillDone(chain,1000);
 		Waiter.waitTillDone(chain2,1000);
 		assertEqual(chain.getDoneCodes(),10,"Number of done codes does not match expectation(1)");
@@ -116,7 +125,11 @@ public class TestCodeRunnerChain extends TestObject {
 					System.out.println(message);
 				}
 				if (sleep>0) {
-					sleep(sleep);
+					try {
+						Thread.sleep(sleep);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				return true;
 			}

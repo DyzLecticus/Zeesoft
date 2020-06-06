@@ -16,7 +16,7 @@ public class TestRunCode extends TestObject {
 	}
 
 	public static void main(String[] args) {
-		(new TestRunCode(new Tester())).test(args);
+		(new TestRunCode(new Tester())).runTest(args);
 	}
 
 	@Override

@@ -34,43 +34,44 @@ public class Instantiator {
 		return r;
 	}
 	
-	public static boolean canInstantiateClass(String className) {
+	public static boolean canInstantiateClass(Class<?> cls) {
 		boolean r = true;
-		Class<?> cls = getClassForName(className);
-		if (cls==null) {
+		try {
+			Object o = cls.newInstance();
+			r = o!=null;
+		} catch (InstantiationException e) {
 			r = false;
-		} else {
-			try {
-				Object o = cls.newInstance();
-				r = o!=null;
-			} catch (InstantiationException e) {
-				r = false;
-			} catch (IllegalAccessException e) {
-				r = false;
-			}
+		} catch (IllegalAccessException e) {
+			r = false;
+		}
+		return r;
+	}
+	
+	public static Object getNewClassInstance(Class<?> cls) {
+		Object r = null;
+		try {
+			r = cls.newInstance();
+		} catch (InstantiationException e) {
+			// Ignore
+		} catch (IllegalAccessException e) {
+			// Ignore
 		}
 		return r;
 	}
 	
 	public static Object getNewClassInstanceForName(String className) {
 		Object r = null;
-		if (canInstantiateClass(className)) {
-			Class<?> cls = getClassForName(className);
-			try {
-				r = cls.newInstance();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
+		Class<?> cls = getClassForName(className);
+		if (cls!=null) {
+			r = getNewClassInstance(cls);
 		}
 		return r;
 	}
 	
 	public static Object getNewArrayInstanceForName(String className, int length) {
 		Object r = null;
-		if (canInstantiateClass(className)) {
-			Class<?> cls = getClassForName(className);
+		Class<?> cls = getClassForName(className);
+		if (cls!=null) {
 			r = Array.newInstance(cls, length);
 		}
 		return r;

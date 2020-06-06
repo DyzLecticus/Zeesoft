@@ -210,8 +210,8 @@ public class Str implements Comparable<Str>{
 			int offset = 0;
 			int i = indexOf(search,offset);
 			while (i>=0) {
-				offset = i+search.length();
-				sb.replace(i, offset, rep);
+				sb.replace(i, i+search.length(), rep);
+				offset = i+replace.length();
 				i = indexOf(search,offset);
 			}
 		}

@@ -12,7 +12,7 @@ public class TestStr extends TestObject {
 	}
 
 	public static void main(String[] args) {
-		(new TestStr(new Tester())).test(args);
+		(new TestStr(new Tester())).runTest(args);
 	}
 
 	@Override
@@ -59,5 +59,40 @@ public class TestStr extends TestObject {
 		assertEqual(strs.get(0).replace("WE","UAZA"),new Str("QUAZAR"),"Replace result does not match expectation");
 		assertEqual(test.merge(strs,","),new Str("QUAZAR,asdf,zxcv"),"Merge result does not match expectation");
 		assertEqual((new Str("")).split(",").get(0).toString(),"".toString().split(",")[0],"Split does not match expectation");
+		
+		Str longStr = new Str();
+		longStr.sb().append("@PO|nl.zeesoft.zdk.test.collection.CollectionTestChild@2");
+		longStr.sb().append("\n");
+		longStr.sb().append("@PP|testInt|EQ=111");
+		longStr.sb().append("\n");
+		longStr.sb().append("@PP|testBoolean|EQ=true");
+		longStr.sb().append("\n");
+		longStr.sb().append("@PP|testParents|EQ=nl.zeesoft.zdk.test.collection.CollectionTestParent@LS|nl.zeesoft.zdk.test.collection.CollectionTestParent@1|LC|nl.zeesoft.zdk.test.collection.CollectionTestParent@3|LE@");
+		longStr.sb().append("\n");
+		longStr.sb().append("@PP|testStrs|EQ=nl.zeesoft.zdk.Str@LS|null|LE@");
+		longStr.sb().append("\n");
+		longStr.sb().append("@PP|testStr|EQ=I like pizza!");
+		longStr.sb().append("\n");
+		longStr.sb().append("@PP|testString|EQ=TestChild1");
+		
+		longStr.replace("nl.zeesoft.zdk.test.collection.CollectionTestParent@", "@CN|000@");
+		longStr.replace("nl.zeesoft.zdk.test.collection.CollectionTestChild@", "@CN|001@");
+		
+		Str expectedStr = new Str();
+		expectedStr.sb().append("@PO|@CN|001@2");
+		expectedStr.sb().append("\n");
+		expectedStr.sb().append("@PP|testInt|EQ=111");
+		expectedStr.sb().append("\n");
+		expectedStr.sb().append("@PP|testBoolean|EQ=true");
+		expectedStr.sb().append("\n");
+		expectedStr.sb().append("@PP|testParents|EQ=@CN|000@LS|@CN|000@1|LC|@CN|000@3|LE@");
+		expectedStr.sb().append("\n");
+		expectedStr.sb().append("@PP|testStrs|EQ=nl.zeesoft.zdk.Str@LS|null|LE@");
+		expectedStr.sb().append("\n");
+		expectedStr.sb().append("@PP|testStr|EQ=I like pizza!");
+		expectedStr.sb().append("\n");
+		expectedStr.sb().append("@PP|testString|EQ=TestChild1");
+		
+		assertEqual(longStr,expectedStr,"Expected replacecement were not made");
 	}
 }

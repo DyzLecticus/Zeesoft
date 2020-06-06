@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Instantiator;
 
 /**
@@ -49,8 +48,6 @@ public final class Tester {
 			return success;
 		}
 
-		FileIO.mockIO = true;
-		
 		int assertions = 0;
 		List<String> failures = new ArrayList<String>();
 		List<Long> usedMemory = new ArrayList<Long>();
@@ -71,12 +68,7 @@ public final class Tester {
 			System.out.println();
 			test.describe();
 			System.out.println("~~~~");
-			try {
-				test.test(args);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				test.assertNull(ex,"" + ex);
-			}
+			test.runTest(args);
 			assertions += test.getAssertions();
 			failures.addAll(test.getFailures());
 			sleepMs += test.getSleeptMs();
@@ -114,9 +106,6 @@ public final class Tester {
 		// Garbage collection
 		tests.clear();
 		mocks.clear();
-		FileIO.clear();
-
-		FileIO.mockIO = false;
 
 		if (failures.size()>0) {
 			success = false;
