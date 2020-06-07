@@ -12,6 +12,7 @@ import nl.zeesoft.zdk.collection.Query;
 import nl.zeesoft.zdk.collection.QueryableCollection;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
+import nl.zeesoft.zdk.thread.CodeRunnerManager;
 
 public class TestCollections extends TestObject {
 	private static final int	EXPECTED_SIZE	= 4;
@@ -181,9 +182,10 @@ public class TestCollections extends TestObject {
 			assertEqual(Str.contains(actionLog,FileIO.DELETE + dir + "2.txt"),true,"Expected delete 2 not exectuted");
 			assertEqual(Str.contains(actionLog,FileIO.READ + dir + "0.txt"),true,"Expected read 0 not exectuted");
 			assertEqual(Str.contains(actionLog,FileIO.READ + dir + "1.txt"),true,"Expected read 1 not exectuted");
-			FileIO.clear();
 
 			assertEqual(collection.size(),4,"Failed to load the partitioned collection");
+			
+			assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 		}
 	}
 	

@@ -54,17 +54,17 @@ public class FileIO {
 	}
 	
 	public static Str deleteFile(String path) {
-		Str r = null; 
+		Str error = new Str(); 
 		if (mockIO) {
 			path = cleanPath(path);
 			FileIO self = new FileIO();
 			lock.lock(self);
-			r = fileData.remove(path);
-			if (r!=null) {
+			if (fileData.containsKey(path)) {
+				Str data = fileData.remove(path);
 				Str action = new Str(DELETE);
 				action.sb().append(path);
 				action.sb().append(":");
-				action.sb().append(r.length());
+				action.sb().append(data.length());
 				actionLog.add(action);
 			}
 			lock.unlock(self);
@@ -72,9 +72,12 @@ public class FileIO {
 			File file = new File(path);
 			if (file.exists()) {
 				file.delete();
+			} else {
+				error.sb().append("File not found: ");
+				error.sb().append(path);
 			}
 		}
-		return r;
+		return error;
 	}
 
 	public static Str checkDirectory(String path) {
@@ -132,6 +135,11 @@ public class FileIO {
 			lock.unlock(self);
 		}
 		return r;
+	}
+	
+	public static Str getActionLogStr() {
+		Str r = new Str();
+		return r.merge(getActionLog(),"\n");
 	}
 	
 	public static void clear() {

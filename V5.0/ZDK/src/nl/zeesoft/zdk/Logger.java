@@ -23,8 +23,15 @@ public class Logger {
 	}
 	
 	public void error(Object source, Str message) {
+		error(source,message,null);
+	}
+	
+	public void error(Object source, Str message, Exception ex) {
 		prependSource(source,message);
 		System.err.println(message.sb());
+		if (ex!=null) {
+			ex.printStackTrace();
+		}
 	}
 	
 	private void prependSource(Object source, Str message) {

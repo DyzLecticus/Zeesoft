@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.FileIO;
+import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Str;
 
 /**
@@ -85,6 +86,9 @@ public abstract class TestObject {
 	 * @return True if the assertion is correct
 	 */
 	public boolean assertEqual(String s1, String s2,String failMessage) {
+		if (s1==null) {
+			s1 = Instantiator.NULL;
+		}
 		return handleAssertionResult(s1.equals(s2),failMessage + " ('" + s1 + "' <> '" + s2 + "')");
 	}
 
@@ -109,6 +113,9 @@ public abstract class TestObject {
 	 * @return True if the assertion is correct
 	 */
 	public boolean assertEqual(Str str1, Str str2,String failMessage) {
+		if (str1==null) {
+			str1 = new Str(Instantiator.NULL);
+		}
 		boolean result = str1.equals(str2);
 		Str append = new Str();
 		
