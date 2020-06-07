@@ -22,7 +22,7 @@ public class HttpConnection {
 
 	private BufferedReader 		reader				= null;
 	private PrintWriter			writer				= null;
-	private CodeRunner			runner			= null;
+	private CodeRunner			runner				= null;
 	private HttpRequestHandler	requestHandler		= null;
 	
 	protected HttpConnection(HttpServerConfig config, Socket socket) {
@@ -114,7 +114,7 @@ public class HttpConnection {
 			headers.remove(0);
 			for (Str head: headers) {
 				List<Str> h = head.split(": ");
-				request.headerMap.put(h.get(0).toString(),h.get(1).toString());
+				request.headers.add(h.get(0).toString(),h.get(1).toString());
 			}
 			int contentLength = request.getContentLength();
 			
@@ -160,7 +160,7 @@ public class HttpConnection {
 		}
 		writer.flush();
 		lock.unlock(this);
-		if (response.close || request.closeConnection()) {
+		if (!request.keepConnectionAlive()) {
 			close();
 		}
 	}

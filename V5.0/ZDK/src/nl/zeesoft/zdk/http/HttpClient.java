@@ -1,35 +1,40 @@
 package nl.zeesoft.zdk.http;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
-import java.util.ArrayList;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.thread.CodeRunner;
+import nl.zeesoft.zdk.thread.Lock;
+import nl.zeesoft.zdk.thread.RunCode;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class HttpClient {
-	private Logger			logger				= null;
-	private String			method				= "";
-	private String			url					= "";
+	private Lock						lock				= new Lock();
+	private Logger						logger				= null;
 	
-	private int				connectTimeoutMs	= 1000;
-	private int				readTimeoutMs		= 3000;
-	private String			encoding			= "UTF-8";
+	private String						method				= "";
+	private String						url					= "";
+	private HttpHeaderList				headers				= new HttpHeaderList();
+	private int							readTimeoutMs		= 3000;
 	
-	private int				responseCode		= HttpURLConnection.HTTP_OK;
-	private String			responseMessage		= "";
-	private String			error				= "";
-	private Exception		exception			= null;
+	private BufferedReader				reader				= null;
+	private Str							responseBody		= new Str();
+	private int							responseCode		= HttpURLConnection.HTTP_OK;
+	private String						responseMessage		= "";
+	private HttpHeaderList				responseHeaders		= new HttpHeaderList();
+	
+	private Str							error				= new Str();
+	private Exception					exception			= null;
 	
 	public HttpClient(String method,String url) {
 		this.method = method;
@@ -37,45 +42,29 @@ public class HttpClient {
 	}
 	
 	public HttpClient(Logger logger,String method,String url) {
+		lock.setLogger(this, logger);
 		this.logger = logger;
 		this.method = method;
 		this.url = url;
 	}
-	
-	public void setConnectTimeoutMs(int timeoutMs) {
-		this.connectTimeoutMs = timeoutMs;
-	}
-	
-	public void setReadTimeoutMs(int timeoutMs) {
-		this.readTimeoutMs = timeoutMs;
-	}
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
-
-	public Str sendRequest() {
-		return sendRequest(null,null);
-	}
-
-	public Str sendRequest(Str body) {
-		return sendRequest(body,null);
-	}
-
-	public Str sendRequest(List<HttpHeader> headers) {
-		return sendRequest(null,headers);
+	public HttpHeaderList getHeaders() {
+		return headers;
 	}
 	
-	public Str sendRequest(Str body,List<HttpHeader> headers) {
-		Str r = null;
+	public void setReadTimeoutMs(int readTimeoutMs) {
+		this.readTimeoutMs = readTimeoutMs;
+	}
+	
+	public CodeRunner sendRequest() {
+		return sendRequest(null);
+	}
+
+	public CodeRunner sendRequest(Str body) {
+		lock.lock(this);
+		responseBody = new Str();
+		lock.unlock(this);
 		boolean error = false;
-		
-		if (headers==null) {
-			headers = new ArrayList<HttpHeader>();
-		}
-		if (body!=null) {
-			HttpHeader.addContentLengthHeader(headers,body.length());
-		}
 		
 		// Open stuff
 		URL conUrl = null;
@@ -84,135 +73,87 @@ public class HttpClient {
 		} catch (MalformedURLException e) {
 			error = true;
 		}
-		HttpURLConnection con = null;
+		Socket socket = null;
 		if (!error) {
+			int port = conUrl.getPort();
+			if (port==-1) {
+				port = 80;
+			}
 			try {
-				con = (HttpURLConnection) conUrl.openConnection();
-				con.setRequestMethod(method);
-				if (body!=null) {
-					con.setDoOutput(true);
-				}
-				con.setConnectTimeout(connectTimeoutMs);
-				con.setReadTimeout(readTimeoutMs);
-				if (headers!=null) {
-					for (HttpHeader header: headers) {
-						con.addRequestProperty(header.name,header.value);
-					}
-				}
-			} catch (java.net.SocketTimeoutException e) {
-				logError("Socket timed out",e);
+				socket = new Socket(conUrl.getHost(),port);
+			} catch (UnknownHostException ex) {
+				logError("Unknown host:" + conUrl.getHost(),ex);
 				error = true;
-			} catch (IOException e) {
-				logError("I/O exception",e);
+			} catch (IOException ex) {
+				logError("I/O exception",ex);
 				error = true;
 			}
 		}
-		OutputStream outputStream = null;
-		OutputStreamWriter outputStreamWriter = null;
-		if (!error && (method.equals("POST") || method.equals("PUT")) && body!=null) {
-			if (!error) {
-				try {
-					outputStream = con.getOutputStream();
-				} catch (IOException e) {
-					logError("I/O exception",e);
-					error = true;
-				}
+		lock.lock(this);
+		responseBody = new Str();
+		responseCode = HttpURLConnection.HTTP_OK;
+		responseMessage = "";
+		responseHeaders = new HttpHeaderList();
+		reader = null;
+		if (!error) {
+			try {
+				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			} catch (IOException ex) {
+				logError("I/O exception",ex);
+				error = true;
 			}
-			if (!error) {
-				try {
-					outputStreamWriter = new OutputStreamWriter(outputStream,encoding);
-				} catch (UnsupportedEncodingException e) {
-					logError("Unsupported encoding",e);
-					error = true;
-				}
-			}
-			if (!error) {
-				try {
-					outputStreamWriter.write(body.toString());
-					outputStreamWriter.flush();
-				} catch (IOException e) {
-					logError("I/O exception",e);
-					error = true;
-				}
+		}
+		lock.unlock(this);
+		CodeRunner runner = getResponseReaderRunner();
+		runner.start();
+		
+		PrintWriter writer = null;
+		if (!error) {
+			try {
+				writer = new PrintWriter(socket.getOutputStream(), true);
+			} catch (IOException ex) {
+				logError("I/O exception",ex);
+				error = true;
 			}
 		}
 		
-		InputStream inputStream = null;
+		// Send request
 		if (!error) {
-			try {
-				inputStream = con.getInputStream();
-			} catch (FileNotFoundException e) {
-				inputStream = con.getErrorStream();
-			} catch (IOException e) {
-				inputStream = con.getErrorStream();
-				if (inputStream==null) {
-					logError("I/O exception",e);
-					error = true;
-				}
+			headers.addContentTypeHeader("text/html");
+			headers.addHostHeader(conUrl.getHost());
+			headers.addConnectionHeader("keep-alive");
+			if (body!=null) {
+				headers.addContentLengthHeader(body.length());
 			}
-		}
-		InputStreamReader inputStreamReader = null;
-		if (!error) {
-			try {
-				inputStreamReader = new InputStreamReader(inputStream,encoding);
-			} catch (UnsupportedEncodingException e) {
-				logError("Unsupported encoding",e);
-				error = true;
-			}
-		}
-		BufferedReader reader = null;
-	
-		// Read response
-		if (!error) {
-			reader = new BufferedReader(inputStreamReader);
-			
-			String line = "";
-			r = new Str();
-			try {
-				while ((line = reader.readLine()) != null) {
-					if (line.length()>0) {
-						if (r.length()>0) {
-							r.sb().append("\n");
-						}
-						r.sb().append(line);
-					}
-				}
-			} catch (java.net.SocketTimeoutException e) {
-				logError("Read timed out",e);
-				error = true;
-			} catch (IOException e) {
-				logError("I/O exception",e);
-				error = true;
-			}
-			r.trim();
-		}
 
-		if (con!=null) {
-			try {
-				responseCode = con.getResponseCode();
-				responseMessage = con.getResponseMessage();
-			} catch (IOException e) {
-				logError("Failed to obtain response code/message",e);
-				error = true;
+			Str request = new Str();
+			request.sb().append(method);
+			request.sb().append(" ");
+			request.sb().append(conUrl.getPath());
+			request.sb().append(" ");
+			request.sb().append("HTTP/1.1");
+			request.sb().append("\r\n");
+			request.sb().append(headers.toStr());
+			request.sb().append("\r\n");
+			if (!error && (method.equals("POST") || method.equals("PUT")) && body!=null) {
+				request.sb().append(body);
+				request.sb().append("\r\n");
 			}
+			
+			//System.out.println(">>>");
+			//System.out.println(request);
+			
+			writer.print(request);
+			writer.flush();
 		}
+		
+		Waiter.waitTillDone(runner, readTimeoutMs);
+		runner.stop();
 		
 		// Close stuff
-		if (outputStreamWriter!=null) {
-			try {
-				outputStreamWriter.close();
-			} catch (IOException e) {
-				logError("I/O exception",e);
-				error = true;
-			}
-		}
-		if (outputStream!=null) {
-			try {
-				outputStream.close();
-			} catch (IOException e) {
-				logError("I/O exception",e);
-				error = true;
-			}
+		if (writer!=null) {
+			writer.close();
+			writer = null;
 		}
 		if (reader!=null) {
 			try {
@@ -222,52 +163,145 @@ public class HttpClient {
 				error = true;
 			}
 		}
-		if (inputStreamReader!=null) {
+		if (socket!=null) {
 			try {
-				inputStreamReader.close();
+				socket.close();
 			} catch (IOException e) {
 				logError("I/O exception",e);
 				error = true;
 			}
-		}
-		if (inputStream!=null) {
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-				logError("I/O exception",e);
-				error = true;
-			}
-		}
-		if (con!=null) {
-			con.disconnect();
 		}
 		
+		return runner;
+	}
+
+	public Str getResponseBody() {
+		lock.lock(this);
+		Str r = responseBody;
+		lock.unlock(this);
 		return r;
 	}
 
 	public int getResponseCode() {
-		return responseCode;
+		lock.lock(this);
+		int r = responseCode;
+		lock.unlock(this);
+		return r;
 	}
 
 	public String getResponseMessage() {
-		return responseMessage;
+		lock.lock(this);
+		String r = responseMessage;
+		lock.unlock(this);
+		return r;
+	}
+
+	public HttpHeaderList getResponseHeaders() {
+		lock.lock(this);
+		HttpHeaderList r = responseHeaders;
+		lock.unlock(this);
+		return r;
 	}
 	
 	protected void logError(String msg,Exception e) {
+		lock.lock(this);
 		if (error.length()==0) {
-			error = msg;
+			error.sb().append(msg);
 			exception = e;
 		}
 		if (logger!=null) {
 			logger.error(this,new Str(msg),e);
 		}
+		lock.unlock(this);
 	}
 
-	public String getError() {
-		return error;
+	public Str getError() {
+		lock.lock(this);
+		Str r = error;
+		lock.unlock(this);
+		return r;
 	}
 
 	public Exception getException() {
-		return exception;
+		lock.lock(this);
+		Exception r = exception;
+		lock.unlock(this);
+		return r;
+	}
+	
+	private void readResponse() {
+		Str r = new Str();
+		lock.lock(this);
+		BufferedReader rdr = reader;
+		lock.unlock(this);
+		if (rdr!=null) {
+			Str header = new Str();
+			boolean done = false;
+			while(!done) {
+				try {
+					String line = rdr.readLine();
+					if (line==null || line.length()==0) {
+						done = true;
+					} else {
+						header.sb().append(line);
+						header.sb().append("\n");
+					}
+				} catch (IOException ex) {
+					logError("I/O exception",ex);
+					done = true;
+				}
+			}
+			if (header.length()>0) {
+				List<Str> headers = header.split("\n");
+				List<Str> params = headers.get(0).split(" ");
+				
+				lock.lock(this);
+				responseCode = Integer.parseInt(params.get(1).toString());
+				responseMessage = params.get(2).toString();
+				headers.remove(0);
+				for (Str head: headers) {
+					List<Str> h = head.split(": ");
+					responseHeaders.add(h.get(0).toString(),h.get(1).toString());
+				}
+				int contentLength = responseHeaders.getIntegerValue(HttpHeader.CONTENT_LENGTH);
+				lock.unlock(this);
+				
+				if (contentLength>0) {
+					int c = 0;
+					for (int i = 0; i < contentLength; i++) {
+						try {
+							c = rdr.read();
+							r.sb().append((char) c);
+						} catch (IOException ex) {
+							logError("I/O exception",ex);
+						}
+					}
+				}
+			}
+			
+			//System.out.println("<<<");
+			//System.out.println(r);
+			
+			lock.lock(this);
+			responseBody = r;
+			lock.unlock(this);
+		}
+	}
+	
+	private RunCode getResponseReader() {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				readResponse();
+				return true;
+			}
+			
+		};
+	}
+	
+	private CodeRunner getResponseReaderRunner() {
+		CodeRunner r = new CodeRunner(getResponseReader());
+		r.setSleepMs(0);
+		return r;
 	}
 }

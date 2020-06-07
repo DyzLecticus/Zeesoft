@@ -55,6 +55,10 @@ public class HttpRequestHandler {
 		}
 	}
 	
+	protected void handleConnectRequest(HttpRequest request, HttpResponse response) {
+		handleGetRequest(request, response);
+	}
+	
 	protected void handleRequest(HttpRequest request, HttpResponse response) {
 		if (request.method.equals("GET") && config.isAllowGet()) {
 			handleGetRequest(request,response);
@@ -66,6 +70,8 @@ public class HttpRequestHandler {
 			handlePutRequest(request,response);
 		} else if (request.method.equals("DELETE") && config.isAllowDelete()) {
 			handleDeleteRequest(request,response);
+		} else if (request.method.equals("CONNECT") && config.isAllowConnect()) {
+			handleConnectRequest(request,response);
 		} else {
 			Str error = new Str("Method not allowed: ");
 			error.sb().append(request.method);

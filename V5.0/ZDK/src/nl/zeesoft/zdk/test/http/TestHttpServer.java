@@ -16,8 +16,6 @@ import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestHttpServer extends TestObject {
-	private static final boolean	TEST_PROXY	= false;
-	
 	public TestHttpServer(Tester tester) {
 		super(tester);
 	}
@@ -68,55 +66,58 @@ public class TestHttpServer extends TestObject {
 			sleep(10);
 			
 			HttpClient request = new HttpClient(logger,"GET","http://127.0.0.1:8080/");
-			Str response = request.sendRequest();
+			request.sendRequest();
 			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
-			assertEqual(response,indexHtml,"Response body does not match expectation");
+			assertEqual(request.getResponseBody(),indexHtml,"Response body does not match expectation");
 			
 			request = new HttpClient(logger,"GET","http://127.0.0.1:8080/pizza.txt");
-			response = request.sendRequest();
+			request.sendRequest();
 			assertEqual(request.getResponseCode(),404,"Response code does not match expectation");
-			assertEqual(response,new Str("File not found: http/pizza.txt"),"Response body does not match expectation");
+			assertEqual(request.getResponseBody(),new Str("File not found: http/pizza.txt"),"Response body does not match expectation");
 			
 			request = new HttpClient(logger,"PUT","http://127.0.0.1:8080/pizza.txt");
-			response = request.sendRequest(new Str("I like pizza!"));
+			request.sendRequest(new Str("I like pizza!"));
 			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
-			assertEqual(response,new Str(),"Response body does not match expectation");
+			assertEqual(request.getResponseBody(),new Str(),"Response body does not match expectation");
 			
 			request = new HttpClient(logger,"GET","http://127.0.0.1:8080/pizza.txt");
-			response = request.sendRequest();
+			request.sendRequest();
 			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
-			assertEqual(response,new Str("I like pizza!"),"Response body does not match expectation");
+			assertEqual(request.getResponseBody(),new Str("I like pizza!"),"Response body does not match expectation");
 			
 			request = new HttpClient(logger,"DELETE","http://127.0.0.1:8080/pizza.txt");
-			response = request.sendRequest();
+			request.sendRequest();
 			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
-			assertEqual(response,new Str(),"Response body does not match expectation");
+			assertEqual(request.getResponseBody(),new Str(),"Response body does not match expectation");
 			
 			System.out.println();
 			System.out.println("Action log;");
 			System.out.println(FileIO.getActionLogStr());
 			System.out.println();
 			
-			sleep(10);
-			error = server.close();
-			List<CodeRunner> runners = server.getActiveRunners();
-			Waiter.waitTillRunnersDone(runners,1000);
-			assertEqual(error,new Str(),"Closing HTTP server returned an unexpected error");
-		}
-		
-		if (TEST_PROXY) {
-			System.out.println();
 			ProxyServerConfig proxyConfig = new ProxyServerConfig(logger);
 			HttpServer proxy = new HttpServer(proxyConfig);
 			error = proxy.open();
 			assertEqual(error,new Str(),"Opening proxy server returned an unexpected error");
 			if (error.length()==0) {
-				sleep(30000);
+				
+				HttpClient client2 = new HttpClient(logger,"GET","http://127.0.0.1:9090/");
+				client2.getHeaders().addHostHeader("127.0.0.1:8080");
+				client2.sendRequest();
+				assertEqual(client2.getResponseCode(),200,"Proxy response code does not match expectation");
+				assertEqual(client2.getResponseBody(),indexHtml,"Proxy response body does not match expectation");
+				
+				sleep(10);
 				error = proxy.close();
 				List<CodeRunner> runners = proxy.getActiveRunners();
 				Waiter.waitTillRunnersDone(runners,1000);
 				assertEqual(error,new Str(),"Closing proxy server returned an unexpected error");
 			}
+			sleep(10);
+			error = server.close();
+			List<CodeRunner> runners = server.getActiveRunners();
+			Waiter.waitTillRunnersDone(runners,1000);
+			assertEqual(error,new Str(),"Closing HTTP server returned an unexpected error");
 		}
 		
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");

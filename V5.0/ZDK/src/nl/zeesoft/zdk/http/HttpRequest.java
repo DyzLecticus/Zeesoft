@@ -1,11 +1,5 @@
 package nl.zeesoft.zdk.http;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
 import nl.zeesoft.zdk.Str;
 
 public class HttpRequest {
@@ -14,7 +8,7 @@ public class HttpRequest {
 	public String						method		= "";
 	public String						path		= "";
 	public String						protocol	= "";
-	public SortedMap<String,String>		headerMap	= new TreeMap<String,String>();
+	public HttpHeaderList				headers		= new HttpHeaderList();
 	public Str							body		= new Str();
 	
 	protected HttpRequest(HttpServerConfig config) {
@@ -34,25 +28,29 @@ public class HttpRequest {
 	}
 	
 	public int getContentLength() {
-		int r = 0;
-		String contentLength = headerMap.get(HttpHeader.CONTENT_LENGTH);
-		if (contentLength!=null) {
-			try {
-				r = Integer.parseInt(contentLength);
-			} catch (NumberFormatException ex) {
-				config.error(this,new Str("Exception occurred while parsing content length header"),ex);
-			}
-		}
-		return r;
+		return headers.getIntegerValue(HttpHeader.CONTENT_LENGTH);
 	}
 
 	public String getHost() {
-		return headerMap.get("Host");
+		return headers.getValue(HttpHeader.HOST);
+	}
+
+	public boolean isSelfHost() {
+		String host = getHost();
+		return isSelf(host);
 	}
 	
-	public boolean isSelfHost() {
+	public boolean isSelfPath() {
+		return isSelf(path);
+	}
+
+	public boolean isSelf(String host) {
 		boolean r = false;
-		String host = getHost();
+		if (host.startsWith("http://")) {
+			host = host.substring(7);
+		} else if (host.startsWith("https://")) {
+			host = host.substring(8);
+		}
 		if (host.startsWith("127.0.0.1:" + config.getPort()) ||
 			host.startsWith("localhost:" + config.getPort())	
 			) {
@@ -60,22 +58,12 @@ public class HttpRequest {
 		}
 		return r;
 	}
-
-	public List<HttpHeader> getHeaders() {
-		List<HttpHeader> r = new ArrayList<HttpHeader>();
-		for (Entry<String,String> entry: headerMap.entrySet()) {
-			r.add(new HttpHeader(entry.getKey(),entry.getValue()));
-		}
-		return r;
-	}
 	
 	public boolean closeConnection() {
-		String connection = headerMap.get("Connection");
-		return connection==null || connection.equals("close");
+		return headers.getValue(HttpHeader.CONNECTION).equals("close");
 	}
 	
 	public boolean keepConnectionAlive() {
-		String connection = headerMap.get("Connection");
-		return connection!=null && connection.equals("keep-alive");
+		return headers.getValue(HttpHeader.CONNECTION).equals("keep-alive");
 	}
 }

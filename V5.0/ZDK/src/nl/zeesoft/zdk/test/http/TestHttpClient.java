@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test.http;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.http.HttpClient;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -42,9 +43,11 @@ public class TestHttpClient extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		HttpClient request = new HttpClient("GET","http://www.duckduckgo.com/");
+		Logger logger = new Logger(true);
+		HttpClient request = new HttpClient(logger,"GET","http://www.duckduckgo.com/");
 		
-		Str response = request.sendRequest();
+		request.sendRequest();
+		Str response = request.getResponseBody();
 		
 		System.out.println(response);
 		

@@ -17,6 +17,7 @@ public class HttpServerConfig {
 	private boolean		allowPost			= false;
 	private boolean		allowPut			= false;
 	private boolean		allowDelete			= false;
+	private boolean		allowConnect		= false;
 	
 	public HttpServerConfig() {
 		
@@ -72,6 +73,7 @@ public class HttpServerConfig {
 		this.allowPost = true;
 		this.allowPut = true;
 		this.allowDelete = true;
+		this.allowConnect = true;
 	}
 
 	public boolean isAllowGet() {
@@ -112,6 +114,14 @@ public class HttpServerConfig {
 
 	public void setAllowDelete(boolean allowDelete) {
 		this.allowDelete = allowDelete;
+	}
+
+	public boolean isAllowConnect() {
+		return allowConnect;
+	}
+
+	public void setAllowConnect(boolean allowConnect) {
+		this.allowConnect = allowConnect;
 	}
 
 	protected HttpServerConfig copy() {
