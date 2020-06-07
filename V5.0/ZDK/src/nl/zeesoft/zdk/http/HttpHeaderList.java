@@ -82,10 +82,12 @@ public class HttpHeaderList {
 	public Str toStr() {
 		Str r = new Str();
 		for (HttpHeader header: headers) {
+			if (r.length()>0) {
+				r.sb().append("\r\n");
+			}
 			r.sb().append(header.name);
 			r.sb().append(": ");
 			r.sb().append(header.value);
-			r.sb().append("\r\n");
 		}
 		return r;
 

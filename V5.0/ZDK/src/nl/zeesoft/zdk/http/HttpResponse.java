@@ -14,24 +14,35 @@ public class HttpResponse {
 	
 	public boolean				close			= true;
 	
-	public void addContentLengthHeader() {
-		if (body!=null && body.length()>0) {
-			headers.addContentLengthHeader(body.length());
-		}
-	}
-	
-	public Str toStr() {
+	public Str toHeaderStr() {
+		addContentLengthHeader();
 		Str r = new Str();
 		r.sb().append(protocol);
 		r.sb().append(" ");
 		r.sb().append(code);
 		r.sb().append(" ");
 		r.sb().append(message);
+		Str header = headers.toStr();
+		if (header.length()>0) {
+			r.sb().append("\r\n");
+			r.sb().append(header);
+		}
+		return r;
+	}
+	
+	public Str toStr() {
+		Str r = toHeaderStr();
 		r.sb().append("\r\n");
-		r.sb().append(headers.toStr());
 		r.sb().append("\r\n");
 		r.sb().append(body.sb());
-		r.sb().append("\r\n");
 		return r;
+	}
+	
+	private void addContentLengthHeader() {
+		if (body!=null && body.length()>0) {
+			headers.addContentLengthHeader(body.length());
+		} else if (bytes!=null && bytes.length>0) {
+			headers.addContentLengthHeader(bytes.length);
+		}
 	}
 }

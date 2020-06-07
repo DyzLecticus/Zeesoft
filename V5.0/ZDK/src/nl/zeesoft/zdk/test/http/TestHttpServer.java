@@ -56,6 +56,7 @@ public class TestHttpServer extends TestObject {
 		Logger logger = new Logger(true);
 		HttpServerConfig config = new HttpServerConfig(logger);
 		config.setAllowAll();
+		config.setDebugLogHeaders(true);
 		HttpServer server = new HttpServer(config);
 		
 		Str indexHtml = new Str("<html><head><head><body>Index.html<body></html>");
@@ -97,6 +98,7 @@ public class TestHttpServer extends TestObject {
 			System.out.println();
 			
 			ProxyServerConfig proxyConfig = new ProxyServerConfig(logger);
+			proxyConfig.setDebugLogHeaders(true);
 			HttpServer proxy = new HttpServer(proxyConfig);
 			error = proxy.open();
 			assertEqual(error,new Str(),"Opening proxy server returned an unexpected error");

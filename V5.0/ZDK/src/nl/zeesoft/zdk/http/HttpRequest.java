@@ -15,6 +15,21 @@ public class HttpRequest {
 		this.config = config.copy();
 	}
 	
+	public Str toHeaderStr() {
+		Str r = new Str();
+		r.sb().append(method);
+		r.sb().append(" ");
+		r.sb().append(path);
+		r.sb().append(" ");
+		r.sb().append(protocol);
+		Str header = headers.toStr();
+		if (header.length()>0) {
+			r.sb().append("\r\n");
+			r.sb().append(header);
+		}
+		return r;
+	}
+	
 	public String getPath() {
 		String r = path;
 		if (r.startsWith("/")) {
@@ -59,11 +74,11 @@ public class HttpRequest {
 		return r;
 	}
 	
-	public boolean closeConnection() {
-		return headers.getValue(HttpHeader.CONNECTION).equals("close");
-	}
-	
 	public boolean keepConnectionAlive() {
 		return headers.getValue(HttpHeader.CONNECTION).equals("keep-alive");
+	}
+	
+	public boolean keepProxyConnectionAlive() {
+		return headers.getValue(HttpHeader.PROXY_CONNECTION).equals("keep-alive");
 	}
 }

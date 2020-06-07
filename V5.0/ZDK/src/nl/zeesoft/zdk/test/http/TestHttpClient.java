@@ -44,7 +44,7 @@ public class TestHttpClient extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Logger logger = new Logger(true);
-		HttpClient request = new HttpClient(logger,"GET","http://www.duckduckgo.com/");
+		HttpClient request = new HttpClient(logger,"GET","https://github.com/DyzLecticus/Zeesoft");
 		
 		request.sendRequest();
 		Str response = request.getResponseBody();

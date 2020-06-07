@@ -16,8 +16,6 @@ public class ProxyRequestHandler extends HttpRequestHandler {
 
 	@Override
 	protected void handleGetRequest(HttpRequest request, HttpResponse response) {
-		//System.out.println("Request method: " + request.method + ", host: " + request.getHost() + ", path: " + request.path);
-		//System.out.println(request.headers.toStr());
 		String host = request.getHost();
 		if (host!=null && host.length()>0) {
 			String url = "";
@@ -33,20 +31,18 @@ public class ProxyRequestHandler extends HttpRequestHandler {
 					} else {
 						url = "http://" + host;
 					}
+					if (!url.endsWith("/")) {
+						url += "/";
+					}
+					if (request.path.startsWith(url)) {
+						url += request.getPath();
+					}
 				}
-				if (!url.endsWith("/")) {
-					url += "/";
-				}
-				//System.out.println("URL: " + url);
-				//if (request.method.equals("CONNECT")) {
-				//	request.method = "GET";
-				//}
 				HttpClient client = new HttpClient(config.getLogger(),request.method,url);
 				client.setUrl(url);
 				client.setMethod(request.method);
 				client.setHeaders(request.headers.copy());
-				client.sendRequest(request.body,request.keepConnectionAlive());
-				//System.out.println("Response:" + res);
+				client.sendRequest(request.body,request.keepProxyConnectionAlive(),false);
 				if (client.getError().length()>0) {
 					Str error = new Str(client.getError());
 					setError(response, HttpURLConnection.HTTP_INTERNAL_ERROR, error);

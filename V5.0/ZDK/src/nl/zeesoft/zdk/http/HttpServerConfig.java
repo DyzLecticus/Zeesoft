@@ -18,7 +18,9 @@ public class HttpServerConfig {
 	private boolean		allowPut			= false;
 	private boolean		allowDelete			= false;
 	private boolean		allowConnect		= false;
-	
+
+	private boolean		debugLogHeaders		= false;
+
 	public HttpServerConfig() {
 		
 	}
@@ -124,6 +126,14 @@ public class HttpServerConfig {
 		this.allowConnect = allowConnect;
 	}
 
+	public boolean isDebugLogHeaders() {
+		return debugLogHeaders;
+	}
+
+	public void setDebugLogHeaders(boolean debugLogHeaders) {
+		this.debugLogHeaders = debugLogHeaders;
+	}
+
 	protected HttpServerConfig copy() {
 		HttpServerConfig r = (HttpServerConfig) Instantiator.getNewClassInstance(this.getClass());
 		r.setLogger(getLogger());
@@ -136,6 +146,7 @@ public class HttpServerConfig {
 		r.setAllowPost(isAllowPost());
 		r.setAllowPut(isAllowPut());
 		r.setAllowDelete(isAllowDelete());
+		r.setDebugLogHeaders(isDebugLogHeaders());
 		return r;
 	}
 	

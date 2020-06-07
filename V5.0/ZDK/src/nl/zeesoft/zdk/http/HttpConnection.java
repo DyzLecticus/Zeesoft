@@ -107,9 +107,14 @@ public class HttpConnection {
 					header.sb().append(line);
 					header.sb().append("\n");
 				}
+			} catch (java.net.SocketException ex) {
+				if (!sock.isClosed()) {
+					config.error(this,new Str("Socket exception occurred while reading connection input"),ex);
+				}
+				done = true;
 			} catch (IOException ex) {
 				if (!sock.isClosed()) {
-					config.error(this,new Str("Exception occurred while reading connection input"),ex);
+					config.error(this,new Str("I/O exception occurred while reading connection input"),ex);
 				}
 				done = true;
 			}
@@ -153,6 +158,20 @@ public class HttpConnection {
 				response.code = HttpURLConnection.HTTP_INTERNAL_ERROR;
 				response.message = ex.toString();
 			}
+			if (config.getLogger().isDebug() && config.isDebugLogHeaders()) {
+				Str msg = new Str("Request/response headers (Port: ");
+				msg.sb().append(config.getPort());
+				msg.sb().append(");");
+				msg.sb().append("\n");
+				msg.sb().append("<<<");
+				msg.sb().append("\n");
+				msg.sb().append(request.toHeaderStr());
+				msg.sb().append("\n");
+				msg.sb().append(">>>");
+				msg.sb().append("\n");
+				msg.sb().append(response.toHeaderStr());
+				config.debug(this, msg);
+			}
 			handleResponse(request,response);
 		} else {
 			close();
@@ -161,7 +180,6 @@ public class HttpConnection {
 	
 	private void handleResponse(HttpRequest request, HttpResponse response) {
 		lock.lock(this);
-		response.addContentLengthHeader();
 		writer.print(response.toStr().sb());
 		if (response.bytes!=null) {
 			writeOutput(response.bytes);
