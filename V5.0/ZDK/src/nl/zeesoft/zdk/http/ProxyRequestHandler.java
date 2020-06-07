@@ -3,11 +3,15 @@ package nl.zeesoft.zdk.http;
 import java.net.HttpURLConnection;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.thread.CodeRunner;
 
 public class ProxyRequestHandler extends HttpRequestHandler {
+	private HttpClient	client	= null;
+	
 	protected ProxyRequestHandler(HttpServerConfig config) {
 		super(config);
+		client = new HttpClient(config.getLogger());
+		client.setReadTimeoutMs(getConfig().getReadTimeoutMs());
+		runners.add(client.getRunner());
 	}
 
 	@Override
@@ -34,14 +38,14 @@ public class ProxyRequestHandler extends HttpRequestHandler {
 					url += "/";
 				}
 				//System.out.println("URL: " + url);
-				if (request.method.equals("CONNECT")) {
-					request.method = "GET";
-				}
+				//if (request.method.equals("CONNECT")) {
+				//	request.method = "GET";
+				//}
 				HttpClient client = new HttpClient(config.getLogger(),request.method,url);
-				client.getHeaders().addAll(request.headers);
-				client.setReadTimeoutMs(getConfig().getReadTimeoutMs());
-				CodeRunner runner = client.sendRequest();
-				Str res = client.getResponseBody();
+				client.setUrl(url);
+				client.setMethod(request.method);
+				client.setHeaders(request.headers.copy());
+				client.sendRequest(request.body,request.keepConnectionAlive());
 				//System.out.println("Response:" + res);
 				if (client.getError().length()>0) {
 					Str error = new Str(client.getError());
@@ -50,7 +54,7 @@ public class ProxyRequestHandler extends HttpRequestHandler {
 					response.code = client.getResponseCode();
 					response.message = client.getResponseMessage();
 					response.headers.addAll(client.getResponseHeaders());
-					response.body = res;
+					response.body = client.getResponseBody();
 				}
 			}
 		} else {

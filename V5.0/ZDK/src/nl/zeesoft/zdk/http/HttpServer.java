@@ -137,7 +137,7 @@ public class HttpServer {
 					};
 					lock.lock(this);
 					connections.add(r);
-					activeRunners.add(r.getRunner());
+					activeRunners.addAll(r.getRunners());
 					lock.unlock(this);
 					r.open();
 				}

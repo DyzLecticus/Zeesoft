@@ -13,6 +13,12 @@ public class HttpHeaderList {
 	
 	private List<HttpHeader>		headers			= new ArrayList<HttpHeader>();
 	
+	public HttpHeaderList copy() {
+		HttpHeaderList r = new HttpHeaderList();
+		r.addAll(this);
+		return r;
+	}
+	
 	public void add(String name, String value) {
 		headers.add(new HttpHeader(name,value));
 	}

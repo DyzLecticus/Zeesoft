@@ -1,12 +1,16 @@
 package nl.zeesoft.zdk.http;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.thread.CodeRunner;
 
 public class HttpRequestHandler {
 	protected HttpServerConfig	config	= null;
+	protected List<CodeRunner>	runners	= new ArrayList<CodeRunner>();
 	
 	protected HttpRequestHandler(HttpServerConfig config) {
 		this.config = config.copy();

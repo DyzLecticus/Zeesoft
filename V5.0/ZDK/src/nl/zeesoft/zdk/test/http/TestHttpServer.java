@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.http.HttpClient;
+import nl.zeesoft.zdk.http.HttpHeaderList;
 import nl.zeesoft.zdk.http.HttpServer;
 import nl.zeesoft.zdk.http.HttpServerConfig;
 import nl.zeesoft.zdk.http.ProxyServerConfig;
@@ -102,7 +103,9 @@ public class TestHttpServer extends TestObject {
 			if (error.length()==0) {
 				
 				HttpClient client2 = new HttpClient(logger,"GET","http://127.0.0.1:9090/");
-				client2.getHeaders().addHostHeader("127.0.0.1:8080");
+				HttpHeaderList headers = new HttpHeaderList();
+				headers.addHostHeader("127.0.0.1:8080");
+				client2.setHeaders(headers);
 				client2.sendRequest();
 				assertEqual(client2.getResponseCode(),200,"Proxy response code does not match expectation");
 				assertEqual(client2.getResponseBody(),indexHtml,"Proxy response body does not match expectation");

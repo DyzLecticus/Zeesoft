@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Str;
@@ -61,24 +62,29 @@ public class HttpConnection {
 		Str error = new Str();
 		runner.stop();
 		lock.lock(this);
-		try {
-			reader.close();
-		} catch (IOException ex) {
-			config.error(this,new Str("Exception occurred while closing connection socket"),ex);
-		}
-		writer.flush();
-		writer.close();
-		try {
-			socket.close();
-		} catch (IOException ex) {
-			config.error(this,new Str("Exception occurred while closing connection socket"),ex);
-		}
+		BufferedReader rdr = reader;
+		PrintWriter wrtr = writer;
+		Socket sock = socket;
 		lock.unlock(this);
+		wrtr.flush();
+		wrtr.close();
+		try {
+			rdr.close();
+		} catch (IOException ex) {
+			config.error(this,new Str("Exception occurred while closing connection socket"),ex);
+		}
+		try {
+			sock.close();
+		} catch (IOException ex) {
+			config.error(this,new Str("Exception occurred while closing connection socket"),ex);
+		}
 		return error;
 	}
 
-	protected CodeRunner getRunner() {
-		return runner;
+	protected List<CodeRunner> getRunners() {
+		List<CodeRunner> r = new ArrayList<CodeRunner>(requestHandler.runners);
+		r.add(runner);
+		return r;
 	}
 	
 	protected void stoppedRunner(CodeRunner runner) {
@@ -88,10 +94,13 @@ public class HttpConnection {
 	private void handleRequest() {
 		Str header = new Str();
 		boolean done = false;
+		lock.lock(this);
+		BufferedReader rdr = reader;
+		Socket sock = socket;
+		lock.unlock(this);
 		while(!done) {
-			lock.lock(this);
 			try {
-				String line = reader.readLine();
+				String line = rdr.readLine();
 				if (line==null || line.length()==0) {
 					done = true;
 				} else {
@@ -99,10 +108,11 @@ public class HttpConnection {
 					header.sb().append("\n");
 				}
 			} catch (IOException ex) {
-				config.error(this,new Str("Exception occurred while reading connection input"),ex);
+				if (!sock.isClosed()) {
+					config.error(this,new Str("Exception occurred while reading connection input"),ex);
+				}
 				done = true;
 			}
-			lock.unlock(this);
 		}
 		if (header.length()>0) {
 			HttpRequest request = new HttpRequest(config);
@@ -121,19 +131,17 @@ public class HttpConnection {
 			if ((request.method.equals("POST") || request.method.equals("PUT")) && contentLength>0) {
 				int c = 0;
 				for (int i = 0; i < contentLength; i++) {
-					lock.lock(this);
 					try {
-						c = reader.read();
+						c = rdr.read();
 						request.body.sb().append((char) c);
 					} catch (IOException ex) {
 						config.error(this,new Str("Exception occurred while reading POST request body"),ex);
 					}
-					lock.unlock(this);
 				}
 			}
 			if (request.keepConnectionAlive()) {
 				try {
-					socket.setKeepAlive(true);
+					sock.setKeepAlive(true);
 				} catch (SocketException ex) {
 					config.error(this,new Str("Failed to enable keep alive on connection"),ex);
 				}

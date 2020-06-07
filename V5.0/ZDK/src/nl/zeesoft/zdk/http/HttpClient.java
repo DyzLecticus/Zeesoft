@@ -27,7 +27,12 @@ public class HttpClient {
 	private HttpHeaderList				headers				= new HttpHeaderList();
 	private int							readTimeoutMs		= 3000;
 	
+	private String						host				= null;
+	private Socket						socket				= null;
 	private BufferedReader				reader				= null;
+	private PrintWriter					writer				= null;
+	private CodeRunner					runner				= null;
+	
 	private Str							responseBody		= new Str();
 	private int							responseCode		= HttpURLConnection.HTTP_OK;
 	private String						responseMessage		= "";
@@ -36,106 +41,216 @@ public class HttpClient {
 	private Str							error				= new Str();
 	private Exception					exception			= null;
 	
+	public HttpClient(Logger logger) {
+		this.logger = logger;
+		lock.setLogger(this, logger);
+		runner = getNewResponseReader();
+	}
+
 	public HttpClient(String method,String url) {
 		this.method = method;
 		this.url = url;
+		lock.setLogger(this, logger);
+		runner = getNewResponseReader();
 	}
 	
 	public HttpClient(Logger logger,String method,String url) {
-		lock.setLogger(this, logger);
 		this.logger = logger;
 		this.method = method;
 		this.url = url;
-	}
-
-	public HttpHeaderList getHeaders() {
-		return headers;
+		lock.setLogger(this, logger);
+		runner = getNewResponseReader();
 	}
 	
-	public void setReadTimeoutMs(int readTimeoutMs) {
-		this.readTimeoutMs = readTimeoutMs;
-	}
-	
-	public CodeRunner sendRequest() {
-		return sendRequest(null);
-	}
-
-	public CodeRunner sendRequest(Str body) {
+	public void setMethod(String method) {
 		lock.lock(this);
-		responseBody = new Str();
+		this.method = method;
 		lock.unlock(this);
-		boolean error = false;
-		
-		// Open stuff
+	}
+	
+	public void setUrl(String url) {
+		boolean disconnect = false;
 		URL conUrl = null;
 		try {
 			conUrl = new URL(url);
-		} catch (MalformedURLException e) {
-			error = true;
-		}
-		Socket socket = null;
-		if (!error) {
-			int port = conUrl.getPort();
-			if (port==-1) {
-				port = 80;
+			lock.lock(this);
+			this.url = url;
+			if (this.host!=conUrl.getHost()) {
+				disconnect = socket!=null;
 			}
-			try {
-				socket = new Socket(conUrl.getHost(),port);
-			} catch (UnknownHostException ex) {
-				logError("Unknown host:" + conUrl.getHost(),ex);
-				error = true;
-			} catch (IOException ex) {
-				logError("I/O exception",ex);
-				error = true;
-			}
+			lock.unlock(this);
+		} catch (MalformedURLException ex) {
+			logError("Malformed URL: " + url,ex);
 		}
+		if (disconnect) {
+			disconnect();
+		}
+	}
+	
+	public void setHeaders(HttpHeaderList headers) {
 		lock.lock(this);
+		this.headers = headers.copy();
+		lock.unlock(this);
+	}
+	
+	public void setReadTimeoutMs(int readTimeoutMs) {
+		lock.lock(this);
+		this.readTimeoutMs = readTimeoutMs;
+		lock.unlock(this);
+	}
+	
+	public boolean connect() {
+		boolean error = false;
+		
+		lock.lock(this);
+		if (socket==null) {
+			URL conUrl = null;
+			try {
+				conUrl = new URL(url);
+			} catch (MalformedURLException ex) {
+				logErrorNoLock("Malformed URL: " + url,ex);
+				error = true;
+			}
+			if (!error) {
+				int port = conUrl.getPort();
+				if (port==-1) {
+					port = 80;
+				}
+				try {
+					socket = new Socket(conUrl.getHost(),port);
+					host = conUrl.getHost();
+				} catch (UnknownHostException ex) {
+					logErrorNoLock("Unknown host: " + conUrl.getHost(),ex);
+					error = true;
+				} catch (IOException ex) {
+					logErrorNoLock("I/O exception",ex);
+					error = true;
+				}
+			}
+			reader = null;
+			if (!error) {
+				try {
+					reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				} catch (IOException ex) {
+					logErrorNoLock("I/O exception",ex);
+					error = true;
+				}
+			}
+			
+			writer = null;
+			if (!error) {
+				try {
+					writer = new PrintWriter(socket.getOutputStream(), true);
+				} catch (IOException ex) {
+					logErrorNoLock("I/O exception",ex);
+					error = true;
+				}
+			}
+		}
+		lock.unlock(this);
+		
+		return error;
+	}
+	
+	public boolean disconnect() {
+		boolean error = false;
+		
+		lock.lock(this);
+		Socket sock = socket;
+		PrintWriter wrtr = writer;
+		BufferedReader rdr = reader;
+		lock.unlock(this);
+		
+		if (sock!=null) {
+			if (wrtr!=null) {
+				wrtr.close();
+			}
+			if (rdr!=null) {
+				try {
+					rdr.close();
+				} catch (IOException e) {
+					logError("I/O exception",e);
+					error = true;
+				}
+			}
+			if (sock!=null) {
+				try {
+					sock.close();
+				} catch (IOException e) {
+					logError("I/O exception",e);
+					error = true;
+				}
+			}
+		}
+		
+		lock.lock(this);
+		writer = null;
+		reader = null;
+		socket = null;
+		host = null;
+		lock.unlock(this);
+		
+		return error;
+	}
+	
+	public boolean sendRequest() {
+		return sendRequest(null,false);
+	}
+
+	public boolean sendRequest(boolean keepAlive) {
+		return sendRequest(null,keepAlive);
+	}
+	
+	public boolean sendRequest(Str body) {
+		return sendRequest(body,false);
+	}
+
+	public boolean sendRequest(Str body,boolean keepAlive) {
+		boolean error = false;
+		
+		error = connect();		
+		
+		if (!error) {
+			runner.start();
+		}
+		
+		lock.lock(this);
+		String mthd = method;
+		HttpHeaderList hdrs = headers.copy();
+		int readMs = readTimeoutMs;
+		PrintWriter wrtr = writer;
 		responseBody = new Str();
 		responseCode = HttpURLConnection.HTTP_OK;
 		responseMessage = "";
 		responseHeaders = new HttpHeaderList();
-		reader = null;
-		if (!error) {
-			try {
-				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			} catch (IOException ex) {
-				logError("I/O exception",ex);
-				error = true;
-			}
-		}
 		lock.unlock(this);
-		CodeRunner runner = getResponseReaderRunner();
-		runner.start();
-		
-		PrintWriter writer = null;
-		if (!error) {
-			try {
-				writer = new PrintWriter(socket.getOutputStream(), true);
-			} catch (IOException ex) {
-				logError("I/O exception",ex);
-				error = true;
-			}
-		}
-		
+				
 		// Send request
 		if (!error) {
-			headers.addContentTypeHeader("text/html");
-			headers.addHostHeader(conUrl.getHost());
-			headers.addConnectionHeader("keep-alive");
+			URL conUrl = null;
+			try {
+				conUrl = new URL(url);
+			} catch (MalformedURLException e) {
+				error = true;
+			}
+
+			hdrs.addContentTypeHeader("text/html");
+			hdrs.addHostHeader(conUrl.getHost());
+			hdrs.addConnectionHeader("keep-alive");
 			if (body!=null) {
-				headers.addContentLengthHeader(body.length());
+				hdrs.addContentLengthHeader(body.length());
 			}
 
 			Str request = new Str();
-			request.sb().append(method);
+			request.sb().append(mthd);
 			request.sb().append(" ");
 			request.sb().append(conUrl.getPath());
 			request.sb().append(" ");
 			request.sb().append("HTTP/1.1");
 			request.sb().append("\r\n");
-			request.sb().append(headers.toStr());
+			request.sb().append(hdrs.toStr());
 			request.sb().append("\r\n");
-			if (!error && (method.equals("POST") || method.equals("PUT")) && body!=null) {
+			if (!error && (mthd.equals("POST") || mthd.equals("PUT")) && body!=null) {
 				request.sb().append(body);
 				request.sb().append("\r\n");
 			}
@@ -143,35 +258,23 @@ public class HttpClient {
 			//System.out.println(">>>");
 			//System.out.println(request);
 			
-			writer.print(request);
-			writer.flush();
+			wrtr.print(request);
+			wrtr.flush();
 		}
 		
-		Waiter.waitTillDone(runner, readTimeoutMs);
-		runner.stop();
-		
-		// Close stuff
-		if (writer!=null) {
-			writer.close();
-			writer = null;
-		}
-		if (reader!=null) {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				logError("I/O exception",e);
-				error = true;
-			}
-		}
-		if (socket!=null) {
-			try {
-				socket.close();
-			} catch (IOException e) {
-				logError("I/O exception",e);
-				error = true;
-			}
+		if (!error) {
+			Waiter.waitTillDone(runner, readMs);
+			runner.stop();
 		}
 		
+		if (!keepAlive) {
+			disconnect();
+		}
+		
+		return error;
+	}
+
+	public CodeRunner getRunner() {
 		return runner;
 	}
 
@@ -205,6 +308,11 @@ public class HttpClient {
 	
 	protected void logError(String msg,Exception e) {
 		lock.lock(this);
+		logErrorNoLock(msg,e);
+		lock.unlock(this);
+	}
+	
+	protected void logErrorNoLock(String msg,Exception e) {
 		if (error.length()==0) {
 			error.sb().append(msg);
 			exception = e;
@@ -212,7 +320,6 @@ public class HttpClient {
 		if (logger!=null) {
 			logger.error(this,new Str(msg),e);
 		}
-		lock.unlock(this);
 	}
 
 	public Str getError() {
@@ -233,6 +340,7 @@ public class HttpClient {
 		Str r = new Str();
 		lock.lock(this);
 		BufferedReader rdr = reader;
+		Socket sock = socket;
 		lock.unlock(this);
 		if (rdr!=null) {
 			Str header = new Str();
@@ -247,7 +355,9 @@ public class HttpClient {
 						header.sb().append("\n");
 					}
 				} catch (IOException ex) {
-					logError("I/O exception",ex);
+					if (!sock.isClosed()) {
+						logError("I/O exception",ex);
+					}
 					done = true;
 				}
 			}
@@ -288,7 +398,7 @@ public class HttpClient {
 		}
 	}
 	
-	private RunCode getResponseReader() {
+	private RunCode getResponseReaderCode() {
 		return new RunCode() {
 			@Override
 			protected boolean run() {
@@ -299,8 +409,8 @@ public class HttpClient {
 		};
 	}
 	
-	private CodeRunner getResponseReaderRunner() {
-		CodeRunner r = new CodeRunner(getResponseReader());
+	private CodeRunner getNewResponseReader() {
+		CodeRunner r = new CodeRunner(getResponseReaderCode());
 		r.setSleepMs(0);
 		return r;
 	}
