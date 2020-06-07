@@ -29,7 +29,13 @@ public class HttpConnection {
 		this.config = config;
 		this.socket = socket;
 		lock.setLogger(this,config.getLogger());
-		runner = new CodeRunner(getHandler());
+		runner = new CodeRunner(getHandler()) {
+			@Override
+			protected void stopped() {
+				stoppedRunner(this);
+			}
+		};
+		runner.setSleepMs(0);
 		requestHandler = config.getNewHttpRequestHandler();
 	}
 	
@@ -70,9 +76,13 @@ public class HttpConnection {
 		lock.unlock(this);
 		return error;
 	}
-	
+
 	protected CodeRunner getRunner() {
 		return runner;
+	}
+	
+	protected void stoppedRunner(CodeRunner runner) {
+		// Override to implement
 	}
 	
 	private void handleRequest() {

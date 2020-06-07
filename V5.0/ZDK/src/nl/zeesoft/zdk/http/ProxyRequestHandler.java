@@ -13,7 +13,7 @@ public class ProxyRequestHandler extends HttpRequestHandler {
 	protected void handleGetRequest(HttpRequest request, HttpResponse response) {
 		String host = request.getHost();
 		if (host!=null && host.length()>0) {
-			if (host.startsWith("127.0.0.1:" + config.getPort())) {
+			if (request.isSelfHost()) {
 				Str error = new Str("Bad request: invalid Host header");
 				setError(response, HttpURLConnection.HTTP_BAD_REQUEST, error);
 			} else {

@@ -99,7 +99,7 @@ public class TestHttpServer extends TestObject {
 			
 			sleep(10);
 			error = server.close();
-			List<CodeRunner> runners = server.getRunners();
+			List<CodeRunner> runners = server.getActiveRunners();
 			Waiter.waitTillRunnersDone(runners,1000);
 			assertEqual(error,new Str(),"Closing HTTP server returned an unexpected error");
 		}
@@ -113,7 +113,7 @@ public class TestHttpServer extends TestObject {
 			if (error.length()==0) {
 				sleep(30000);
 				error = proxy.close();
-				List<CodeRunner> runners = proxy.getRunners();
+				List<CodeRunner> runners = proxy.getActiveRunners();
 				Waiter.waitTillRunnersDone(runners,1000);
 				assertEqual(error,new Str(),"Closing proxy server returned an unexpected error");
 			}

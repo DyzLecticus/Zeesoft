@@ -56,10 +56,6 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		started();
 		
 		whileRunning();
-		
-		getLock().lock(this);
-		setBusyNoLock(false);
-		getLock().unlock(this);
 				
 		if (code.getException()!=null) {
 			caughtException(code.getException());
@@ -68,6 +64,10 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		stopped();
 		
 		CodeRunnerManager.stoppedRunner(this);
+		
+		getLock().lock(this);
+		setBusyNoLock(false);
+		getLock().unlock(this);
 		
 		doneCallback();
 	}

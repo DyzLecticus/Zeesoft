@@ -20,7 +20,7 @@ public class HttpServer {
 	private CodeRunner				runner				= null;
 	private List<HttpConnection>	connections			= new ArrayList<HttpConnection>();
 	
-	private List<CodeRunner>		runners				= new ArrayList<CodeRunner>();
+	private List<CodeRunner>		activeRunners		= new ArrayList<CodeRunner>();
 	
 	public HttpServer(HttpServerConfig config) {
 		this.config = config.copy();
@@ -32,6 +32,7 @@ public class HttpServer {
 		Str error = new Str();
 		lock.lock(this);
 		if (socket==null) {
+			activeRunners.clear();
 			Str msg = new Str("Opening server socket on port: ");
 			msg.sb().append(config.getPort());
 			msg.sb().append(" ...");
@@ -39,6 +40,7 @@ public class HttpServer {
 			try {
 				socket = new ServerSocket(config.getPort());
 				runner.start();
+				activeRunners.add(runner);
 				msg = new Str("Opened server socket on port: ");
 				msg.sb().append(config.getPort());
 				config.debug(this,msg);
@@ -47,7 +49,6 @@ public class HttpServer {
 				error.sb().append(config.getPort());
 				config.error(this,error,ex);
 			}
-			runners.clear();
 		} else {
 			error.sb().append("Server socket is already open");
 			config.error(this,error);
@@ -61,34 +62,36 @@ public class HttpServer {
 		List<HttpConnection> openConnections = null;
 		
 		lock.lock(this);
-		if (socket!=null) {
+		ServerSocket sock = socket;
+		if (sock!=null) {
 			runner.stop();
 			openConnections = new ArrayList<HttpConnection>(connections);
 		}
-		runners.clear();
 		lock.unlock(this);
 		
 		if (openConnections!=null) {
 			config.debug(this,new Str("Closing connections ..."));
 			for (HttpConnection connection: openConnections) {
 				connection.close();
-				lock.lock(this);
-				runners.add(connection.getRunner());
-				lock.unlock(this);
 			}
 			config.debug(this,new Str("Closed connections"));
 		}
 		
-		lock.lock(this);
-		if (socket!=null) {
+		if (sock!=null) {
 			Str msg = new Str("Closing server socket on port: ");
 			msg.sb().append(config.getPort());
 			msg.sb().append(" ...");
 			config.debug(this,msg);
 			try {
+				lock.lock(this);
 				runner.stop();
-				socket.close();
+				lock.unlock(this);
+				
+				sock.close();
+				
+				lock.lock(this);
 				socket = null;
+				lock.unlock(this);
 				msg = new Str("Closed server socket on port: ");
 				msg.sb().append(config.getPort());
 				config.debug(this,msg);
@@ -100,14 +103,12 @@ public class HttpServer {
 			error.sb().append("Server socket is not open");
 			config.error(this,error);
 		}
-		runners.add(runner);
-		lock.unlock(this);
 		return error;
 	}
 	
-	public List<CodeRunner> getRunners() {
+	public List<CodeRunner> getActiveRunners() {
 		lock.lock(this);
-		List<CodeRunner> r = new ArrayList<CodeRunner>(runners);
+		List<CodeRunner> r = new ArrayList<CodeRunner>(activeRunners);
 		lock.unlock(this);
 		return r;
 	}
@@ -116,10 +117,11 @@ public class HttpServer {
 		HttpConnection r = null;
 		lock.lock(this);
 		int cons = connections.size();
+		ServerSocket sock = socket;
 		lock.unlock(this);
 		if (cons < config.getMaxConnections()) {
 			try {
-				Socket conn = socket.accept();
+				Socket conn = sock.accept();
 				if (conn!=null) {
 					r = new HttpConnection(config,conn) {
 						@Override
@@ -128,19 +130,22 @@ public class HttpServer {
 							closedConnection(this);
 							return error;
 						}
+						@Override
+						protected void stoppedRunner(CodeRunner runner) {
+							stoppedConnectionRunner(runner);
+						}
 					};
 					lock.lock(this);
 					connections.add(r);
+					activeRunners.add(r.getRunner());
 					lock.unlock(this);
 					r.open();
 				}
 			} catch (IOException ex) {
 				boolean closed = false;
-				lock.lock(this);
-				if (socket.isClosed()) {
+				if (sock.isClosed()) {
 					closed = true;
 				}
-				lock.unlock(this);
 				if (!closed) {
 					config.error(this,new Str("Failed to accept connection"),ex);
 				}
@@ -155,6 +160,12 @@ public class HttpServer {
 		lock.lock(this);
 		connections.remove(connection);
 		lock.unlock(this);
+	}
+	
+	private void stoppedConnectionRunner(CodeRunner runner) {
+		lock.lock(this);
+		activeRunners.remove(runner);
+		lock.unlock(this);		
 	}
 	
 	private RunCode getConnector() {

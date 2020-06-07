@@ -63,7 +63,7 @@ public class Lock {
 		return locked;
 	}
 	
-	private synchronized boolean isLocked() {
+	public synchronized boolean isLocked() {
 		return (lockedBy!=null);
 	}
 }	

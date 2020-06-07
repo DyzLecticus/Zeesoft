@@ -49,6 +49,17 @@ public class HttpRequest {
 	public String getHost() {
 		return headerMap.get("Host");
 	}
+	
+	public boolean isSelfHost() {
+		boolean r = false;
+		String host = getHost();
+		if (host.startsWith("127.0.0.1:" + config.getPort()) ||
+			host.startsWith("localhost:" + config.getPort())	
+			) {
+			r = true;
+		}
+		return r;
+	}
 
 	public List<HttpHeader> getHeaders() {
 		List<HttpHeader> r = new ArrayList<HttpHeader>();
