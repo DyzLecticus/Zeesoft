@@ -54,7 +54,11 @@ public class HttpConnection {
 			config.error(this,new Str("Failed to create connection writer"),ex);
 		}
 		lock.unlock(this);
-		runner.start();
+		if (reader!=null && writer!=null) {
+			runner.start();
+		} else {
+			close();
+		}
 		return error;
 	}
 	
@@ -66,12 +70,16 @@ public class HttpConnection {
 		PrintWriter wrtr = writer;
 		Socket sock = socket;
 		lock.unlock(this);
-		wrtr.flush();
-		wrtr.close();
-		try {
-			rdr.close();
-		} catch (IOException ex) {
-			config.error(this,new Str("Exception occurred while closing connection socket"),ex);
+		if (wrtr!=null) {
+			wrtr.flush();
+			wrtr.close();
+		}
+		if (rdr!=null) {
+			try {
+				rdr.close();
+			} catch (IOException ex) {
+				config.error(this,new Str("Exception occurred while closing connection socket"),ex);
+			}
 		}
 		try {
 			sock.close();

@@ -16,6 +16,13 @@ public class HttpRequestHandler {
 		this.config = config.copy();
 	}
 	
+	protected void handleHeadRequest(HttpRequest request, HttpResponse response) {
+		Str error = FileIO.checkFile(request.getPath());
+		if (error.length()>0) {
+			setNotFoundError(response,error);
+		}
+	}
+	
 	protected void handleGetRequest(HttpRequest request, HttpResponse response) {
 		Str data = new Str();
 		Str error = data.fromFile(request.getPath());
@@ -23,14 +30,6 @@ public class HttpRequestHandler {
 			setNotFoundError(response,error);
 		} else {
 			response.body = data;
-		}
-	}
-	
-	protected void handleHeadRequest(HttpRequest request, HttpResponse response) {
-		Str data = new Str();
-		Str error = data.fromFile(request.getPath());
-		if (error.length()>0) {
-			setNotFoundError(response,error);
 		}
 	}
 	
@@ -63,11 +62,11 @@ public class HttpRequestHandler {
 		handleGetRequest(request, response);
 	}
 	
-	protected void handleRequest(HttpRequest request, HttpResponse response) {
-		if (request.method.equals("GET") && config.isAllowGet()) {
-			handleGetRequest(request,response);
-		} else if (request.method.equals("HEAD") && config.isAllowHead()) {
+	protected final void handleRequest(HttpRequest request, HttpResponse response) {
+		if (request.method.equals("HEAD") && config.isAllowHead()) {
 			handleHeadRequest(request,response);
+		} else if (request.method.equals("GET") && config.isAllowGet()) {
+			handleGetRequest(request,response);
 		} else if (request.method.equals("POST") && config.isAllowPost()) {
 			handlePostRequest(request,response);
 		} else if (request.method.equals("PUT") && config.isAllowPut()) {

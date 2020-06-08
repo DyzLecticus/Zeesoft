@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test;
 import java.util.List;
 
 import nl.zeesoft.zdk.test.collection.TestCollections;
+import nl.zeesoft.zdk.test.http.TestHttpServer;
 import nl.zeesoft.zdk.test.thread.TestCodeRunnerChain;
 import nl.zeesoft.zdk.test.thread.TestRunCode;
 import nl.zeesoft.zdk.test.util.LibraryObject;
@@ -35,9 +36,10 @@ public class ZDK extends LibraryObject {
 		System.out.println("It provides support for;  ");
 		System.out.println(" * Self documenting and testing libraries  ");
 		System.out.println(" * Extended StringBuilder manipulation and validation  ");
-		System.out.println(" * Basic file writing and reading  ");
+		System.out.println(" * (Mock) File writing and reading  ");
 		System.out.println(" * Multi threading  ");
-		System.out.println(" * Basic object persistence  ");
+		System.out.println(" * Object persistence  ");
+		System.out.println(" * HTTP servers and requests  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -51,5 +53,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestRunCode(getTester()));
 		tests.add(new TestCodeRunnerChain(getTester()));
 		tests.add(new TestCollections(getTester()));
+		tests.add(new TestHttpServer(getTester()));
 	}
 }

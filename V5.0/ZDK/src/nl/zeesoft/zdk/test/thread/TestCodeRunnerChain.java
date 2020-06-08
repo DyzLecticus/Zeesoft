@@ -12,7 +12,6 @@ import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.ProgressBar;
 import nl.zeesoft.zdk.thread.ProgressListener;
 import nl.zeesoft.zdk.thread.RunCode;
-import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestCodeRunnerChain extends TestObject {
 	public TestCodeRunnerChain(Tester tester) {
@@ -71,7 +70,6 @@ public class TestCodeRunnerChain extends TestObject {
 		while(chain.isBusy()) {
 			sleep(10);
 		}
-		Waiter.waitTillDone(chain,100);
 		assertEqual(chain.getDoneCodes(),5,"Number of done codes does not match expectation");
 		
 		chain.setLogger(new Logger());
@@ -105,8 +103,6 @@ public class TestCodeRunnerChain extends TestObject {
 		while(chain2.isBusy()) {
 			sleep(10);
 		}
-		Waiter.waitTillDone(chain,1000);
-		Waiter.waitTillDone(chain2,1000);
 		assertEqual(chain.getDoneCodes(),10,"Number of done codes does not match expectation(1)");
 		assertEqual(chain2.getDoneCodes(),10,"Number of done codes does not match expectation(2)");
 

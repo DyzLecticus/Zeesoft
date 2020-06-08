@@ -21,27 +21,27 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class HttpClient {
-	private Lock						lock				= new Lock();
-	private Logger						logger				= null;
+	private Lock				lock				= new Lock();
+	private Logger				logger				= null;
 	
-	private String						method				= "";
-	private String						url					= "";
-	private HttpHeaderList				headers				= new HttpHeaderList();
-	private int							readTimeoutMs		= 3000;
+	private String				method				= "";
+	private String				url					= "";
+	private HttpHeaderList		headers				= new HttpHeaderList();
+	private int					readTimeoutMs		= 3000;
 	
-	private String						currentUrlBase		= "";
-	private Socket						socket				= null;
-	private BufferedReader				reader				= null;
-	private PrintWriter					writer				= null;
-	private CodeRunner					runner				= null;
+	private String				currentUrlBase		= "";
+	private Socket				socket				= null;
+	private BufferedReader		reader				= null;
+	private PrintWriter			writer				= null;
+	private CodeRunner			runner				= null;
 	
-	private Str							responseBody		= new Str();
-	private int							responseCode		= HttpURLConnection.HTTP_OK;
-	private String						responseMessage		= "";
-	private HttpHeaderList				responseHeaders		= new HttpHeaderList();
+	private Str					responseBody		= new Str();
+	private int					responseCode		= HttpURLConnection.HTTP_OK;
+	private String				responseMessage		= "";
+	private HttpHeaderList		responseHeaders		= new HttpHeaderList();
 	
-	private Str							error				= new Str();
-	private Exception					exception			= null;
+	private Str					error				= new Str();
+	private Exception			exception			= null;
 	
 	public HttpClient(Logger logger) {
 		this.logger = logger;

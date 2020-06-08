@@ -80,17 +80,12 @@ public class FileIO {
 		return error;
 	}
 
+	public static Str checkFile(String path) {
+		return checkFileExists(path,true);
+	}
+
 	public static Str checkDirectory(String path) {
-		Str error = new Str();
-		if (!mockIO) {
-			File dir = new File(path);
-			if (!dir.exists()) {
-				error.sb().append("Directory does not exist: " + path);
-			} else if(!dir.isDirectory()) {
-				error.sb().append("Path is not a directory: " + path);
-			}
-		}
-		return error;
+		return checkFileExists(path,false);
 	}
 	
 	public static List<File> listFiles(String path) {
@@ -143,8 +138,8 @@ public class FileIO {
 	}
 	
 	public static void clear() {
-		FileIO self = new FileIO();
 		if (mockIO) {
+			FileIO self = new FileIO();
 			lock.lock(self);
 			fileData.clear();
 			actionLog.clear();
@@ -178,5 +173,35 @@ public class FileIO {
 			r += "/";
 		}
 		return r;
+	}
+
+	private static Str checkFileExists(String path, boolean isFile) {
+		Str error = new Str();
+		if (mockIO) {
+			FileIO self = new FileIO();
+			lock.lock(self);
+			if (isFile && !fileData.containsKey(path)) {
+				error.sb().append("File not found: ");
+				error.sb().append(path);
+			}
+			lock.unlock(self);
+		} else {
+			File file = new File(path);
+			if (!file.exists()) {
+				if (isFile) {
+					error.sb().append("File not found: ");
+				} else {
+					error.sb().append("Directory not found: ");
+				}
+				error.sb().append(path);
+			} else if (isFile && !file.isFile()) {
+				error.sb().append("Path is not a file: ");
+				error.sb().append(path);
+			} else if (!isFile && !file.isDirectory()) {
+				error.sb().append("Path is not a directory: ");
+				error.sb().append(path);
+			}
+		}
+		return error;
 	}
 }

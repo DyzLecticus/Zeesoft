@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.Str;
 public class HttpResponse {
 	public String				protocol		= "HTTP/1.1";
 	public int					code			= HttpURLConnection.HTTP_OK;
-	public String				message	= "OK";
+	public String				message			= "OK";
 	public HttpHeaderList		headers			= new HttpHeaderList();
 	public Str					body			= new Str();
 	public byte[]				bytes			= null;

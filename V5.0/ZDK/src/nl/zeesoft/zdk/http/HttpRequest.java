@@ -3,13 +3,13 @@ package nl.zeesoft.zdk.http;
 import nl.zeesoft.zdk.Str;
 
 public class HttpRequest {
-	protected HttpServerConfig			config		= null;
+	protected HttpServerConfig	config		= null;
 	
-	public String						method		= "";
-	public String						path		= "";
-	public String						protocol	= "";
-	public HttpHeaderList				headers		= new HttpHeaderList();
-	public Str							body		= new Str();
+	public String				method		= "";
+	public String				path		= "";
+	public String				protocol	= "";
+	public HttpHeaderList		headers		= new HttpHeaderList();
+	public Str					body		= new Str();
 	
 	protected HttpRequest(HttpServerConfig config) {
 		this.config = config.copy();

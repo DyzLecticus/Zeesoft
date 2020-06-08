@@ -123,7 +123,7 @@ public class TestRunCode extends TestObject {
 		System.out.println("Test runner list exception handling;");
 		list.add(testCodeB);
 		list.start();
-		Waiter.waitTillDone(list,1000);
+		Waiter.waitTillDone(list,100);
 		exception = list.getCodes().get(2).getException();
 		assertNotNull(exception,"Exception does not match expectation (4)");
 		System.out.println("Caught exception; " + exception);

@@ -27,28 +27,36 @@ public class TestHttpServer extends TestObject {
 
 	@Override
 	protected void describe() {
-		/*
-		System.out.println("This test shows how a *Str* instance can be used to split a comma separated string into a list of *Str* instances. ");
-		System.out.println("The *Str* class is designed to add features of the Java String to a Java StringBuilder. ");
-		System.out.println("It also contains methods for file writing and reading. ");
+		System.out.println("This test shows how to configure, start and stop an *HttpServer*. ");
+		System.out.println("It also shows how an *HttpClient* can be used to send HTTP requests and process the responses. ");
+		System.out.println("The *HttpServer* provided by this library does not support HTTPS. ");
+		System.out.println("The behavior of the *HttpServer can be customized by overriding and/or extending the *HttpServerConfig* and *HttpRequestHandler*. ");
+		System.out.println("An example of such customization is the *ProxyServerConfig* and *ProxyRequestHandler* which will make the *HttpServer* function as a proxy server. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the Str");
-		System.out.println("Str str = new Str(\"qwer,asdf,zxcv\");");
-		System.out.println("// Split the Str");
-		System.out.println("List<Str> strs = str.split(\",\");");
+		System.out.println("// Create the configuration");
+		System.out.println("HttpServerConfig config = new HttpServerConfig(logger);");
+		System.out.println("// Create the server");
+		System.out.println("HttpServer server = new HttpServer(config);");
+		System.out.println("// Start the server");
+		System.out.println("server.start();");
+		System.out.println("// Create the client");
+		System.out.println("HttpClient client = new HttpClient(\"GET\",\"http://127.0.0.1:8080/\");");
+		System.out.println("// Send the request and get the response");
+		System.out.println("client.sendRequest();");
+		System.out.println("Str responseBody = client.getResponseBody();");
+		System.out.println("// Stop the server");
+		System.out.println("server.stop();");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockStr.class.getName());
-		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestStr.class));
-		System.out.println(" * " + getTester().getLinkForClass(Str.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestHttpServer.class));
+		System.out.println(" * " + getTester().getLinkForClass(HttpServer.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the string input and lists the *Str* objects.  ");
-		*/
+		System.out.println("The output of this test shows the full debug logging of a regular HTTP server and a proxy server handling some basic requests.  ");
+		System.out.println("It also shows the mocked OS file actions that were performed.  ");
 	}
 
 	@Override
@@ -92,11 +100,6 @@ public class TestHttpServer extends TestObject {
 			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
 			assertEqual(request.getResponseBody(),new Str(),"Response body does not match expectation");
 			
-			System.out.println();
-			System.out.println("Action log;");
-			System.out.println(FileIO.getActionLogStr());
-			System.out.println();
-			
 			ProxyServerConfig proxyConfig = new ProxyServerConfig(logger);
 			proxyConfig.setDebugLogHeaders(true);
 			HttpServer proxy = new HttpServer(proxyConfig);
@@ -124,6 +127,10 @@ public class TestHttpServer extends TestObject {
 			Waiter.waitTillRunnersDone(runners,1000);
 			assertEqual(error,new Str(),"Closing HTTP server returned an unexpected error");
 		}
+		
+		System.out.println();
+		System.out.println("Action log;");
+		System.out.println(FileIO.getActionLogStr());
 		
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 	}
