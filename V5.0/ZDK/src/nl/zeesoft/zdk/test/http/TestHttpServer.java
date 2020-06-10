@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.http.HttpClient;
+import nl.zeesoft.zdk.http.HttpClientManager;
 import nl.zeesoft.zdk.http.HttpHeaderList;
 import nl.zeesoft.zdk.http.HttpServer;
 import nl.zeesoft.zdk.http.HttpServerConfig;
@@ -132,6 +133,7 @@ public class TestHttpServer extends TestObject {
 		System.out.println("Action log;");
 		System.out.println(FileIO.getActionLogStr());
 		
+		assertEqual(HttpClientManager.getConnectedClients().size(),0,"Number of connected clients does not match expectation");		
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 	}
 }

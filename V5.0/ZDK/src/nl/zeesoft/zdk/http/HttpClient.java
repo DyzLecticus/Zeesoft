@@ -2,9 +2,7 @@ package nl.zeesoft.zdk.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -21,24 +19,25 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class HttpClient {
-	private Lock				lock				= new Lock();
-	private Logger				logger				= null;
+	protected Lock				lock				= new Lock();
 	
-	private String				method				= "";
-	private String				url					= "";
-	private HttpHeaderList		headers				= new HttpHeaderList();
-	private int					readTimeoutMs		= 3000;
+	protected Logger			logger				= null;
+	
+	protected String			method				= "";
+	protected URL				url					= null;
+	protected HttpHeaderList	headers				= new HttpHeaderList();
+	protected int				readTimeoutMs		= 3000;
 	
 	private String				currentUrlBase		= "";
 	private Socket				socket				= null;
-	private BufferedReader		reader				= null;
-	private PrintWriter			writer				= null;
+	protected PrintWriter		writer				= null;
+	protected BufferedReader	reader				= null;
 	private CodeRunner			runner				= null;
 	
-	private Str					responseBody		= new Str();
-	private int					responseCode		= HttpURLConnection.HTTP_OK;
-	private String				responseMessage		= "";
-	private HttpHeaderList		responseHeaders		= new HttpHeaderList();
+	protected Str				responseBody		= new Str();
+	protected int				responseCode		= HttpURLConnection.HTTP_OK;
+	protected String			responseMessage		= "";
+	protected HttpHeaderList	responseHeaders		= new HttpHeaderList();
 	
 	private Str					error				= new Str();
 	private Exception			exception			= null;
@@ -51,7 +50,7 @@ public class HttpClient {
 
 	public HttpClient(String method,String url) {
 		this.method = method;
-		this.url = url;
+		setUrl(url);
 		lock.setLogger(this, logger);
 		runner = getNewResponseReader();
 	}
@@ -59,7 +58,7 @@ public class HttpClient {
 	public HttpClient(Logger logger,String method,String url) {
 		this.logger = logger;
 		this.method = method;
-		this.url = url;
+		setUrl(url);
 		lock.setLogger(this, logger);
 		runner = getNewResponseReader();
 	}
@@ -71,20 +70,24 @@ public class HttpClient {
 	}
 	
 	public void setUrl(String url) {
-		boolean disconnect = false;
 		URL conUrl = null;
 		try {
 			conUrl = new URL(url);
-			lock.lock(this);
-			this.url = url;
-			String urlBase = conUrl.getProtocol() + "://" + conUrl.getHost() + ":" + conUrl.getPort();
-			if (this.currentUrlBase.equals(urlBase)) {
-				disconnect = socket!=null;
-			}
-			lock.unlock(this);
+			setUrl(conUrl);
 		} catch (MalformedURLException ex) {
 			logError("Malformed URL: " + url,ex);
 		}
+	}
+	
+	public void setUrl(URL url) {
+		boolean disconnect = false;
+		lock.lock(this);
+		this.url = url;
+		String urlBase = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort();
+		if (this.currentUrlBase.equals(urlBase)) {
+			disconnect = socket!=null;
+		}
+		lock.unlock(this);
 		if (disconnect) {
 			disconnect();
 		}
@@ -104,53 +107,29 @@ public class HttpClient {
 	
 	public boolean connect() {
 		boolean error = false;
-		
+		boolean connected = false;
 		lock.lock(this);
 		if (socket==null) {
-			URL conUrl = null;
+			int port = url.getPort();
+			if (port==-1) {
+				port = 80;
+			}
 			try {
-				conUrl = new URL(url);
-			} catch (MalformedURLException ex) {
-				logErrorNoLock("Malformed URL: " + url,ex);
+				socket = new Socket(url.getHost(),port);
+				connected = true;
+			} catch (UnknownHostException ex) {
+				logErrorNoLock("Unknown host: " + url.getHost(),ex);
+				error = true;
+			} catch (IOException ex) {
+				logErrorNoLock("I/O exception",ex);
 				error = true;
 			}
-			OutputStream oStream = null;
-			InputStream iStream = null;
-			if (!error) {
-				int port = conUrl.getPort();
-				if (port==-1) {
-					port = 80;
-				}
-				try {
-					socket = new Socket(conUrl.getHost(),port);
-					oStream = socket.getOutputStream();
-					iStream = socket.getInputStream();
-				} catch (UnknownHostException ex) {
-					logErrorNoLock("Unknown host: " + conUrl.getHost(),ex);
-					error = true;
-				} catch (IOException ex) {
-					logErrorNoLock("I/O exception",ex);
-					error = true;
-				}
-			}
-			writer = null;
-			reader = null;
-			if (!error) {
-				if (oStream==null) {
-					logErrorNoLock("Failed to obtain output stream: " + conUrl.getHost(),null);
-					error = true;
-				} else {
-					writer = new PrintWriter(oStream, true);
-				}
-				if (iStream==null) {
-					logErrorNoLock("Failed to obtain input stream: " + conUrl.getHost(),null);
-					error = true;
-				} else {
-					reader = new BufferedReader(new InputStreamReader(iStream));
-				}
-			}
+			clearWriterAndReaderNoLock();
 		}
 		lock.unlock(this);
+		if (connected) {
+			HttpClientManager.connectedClient(this);
+		}
 		return error;
 	}
 	
@@ -190,6 +169,8 @@ public class HttpClient {
 		currentUrlBase = "";
 		lock.unlock(this);
 		
+		HttpClientManager.disconnectedClient(this);
+		
 		return error;
 	}
 	
@@ -208,64 +189,46 @@ public class HttpClient {
 	public boolean sendRequest(Str body,boolean keepAlive, boolean addDefaultHeaders) {
 		boolean error = false;
 		
-		error = connect();		
-		
-		if (!error) {
-			runner.start();
+		error = connect();
+		if (error) {
+			return error;
 		}
 		
 		lock.lock(this);
+		clearResponseNoLock();
 		String mthd = method;
-		String ul = url;
-		HttpHeaderList hdrs = headers.copy();
+		URL ul = url;
 		int readMs = readTimeoutMs;
-		PrintWriter wrtr = writer;
-		responseBody = new Str();
-		responseCode = HttpURLConnection.HTTP_OK;
-		responseMessage = "";
-		responseHeaders = new HttpHeaderList();
+		if (addDefaultHeaders) {
+			addDefaultHeadersNoLock(body);
+		}
+		HttpHeaderList hdrs = headers.copy();
 		lock.unlock(this);
 			
-		// Send request
-		if (wrtr!=null) {
-			URL conUrl = null;
-			try {
-				conUrl = new URL(ul);
-			} catch (MalformedURLException e) {
-				// Ignore
-			}
-
-			if (conUrl!=null) {
-				if (addDefaultHeaders) {
-					hdrs.addContentTypeHeader("text/html");
-					hdrs.addHostHeader(conUrl.getHost());
-					hdrs.addConnectionHeader("keep-alive");
-					if ((mthd.equals("POST") || mthd.equals("PUT")) && body!=null) {
-						hdrs.addContentLengthHeader(body.length());
-					}
-				}
-	
-				Str request = new Str();
-				request.sb().append(mthd);
-				request.sb().append(" ");
-				request.sb().append(conUrl.getPath());
-				request.sb().append(" ");
-				request.sb().append("HTTP/1.1");
-				request.sb().append("\r\n");
-				request.sb().append(hdrs.toStr());
-				request.sb().append("\r\n");
-				request.sb().append("\r\n");
-				if (!error && (mthd.equals("POST") || mthd.equals("PUT")) && body!=null) {
-					request.sb().append(body);
-					request.sb().append("\r\n");
-				}
-				
-				wrtr.print(request);
-				wrtr.flush();
-			}
+		Str request = new Str();
+		request.sb().append(mthd);
+		request.sb().append(" ");
+		request.sb().append(ul.getPath());
+		request.sb().append(" ");
+		request.sb().append("HTTP/1.1");
+		request.sb().append("\r\n");
+		request.sb().append(hdrs.toStr());
+		request.sb().append("\r\n");
+		request.sb().append("\r\n");
+		if ((mthd.equals("POST") || mthd.equals("PUT")) && body!=null) {
+			request.sb().append(body);
+			request.sb().append("\r\n");
 		}
 		
-		if (runner.isBusy()) {
+		// Send request
+		lock.lock(this);
+		PrintWriter wrtr = getWriterNoLock();
+		lock.unlock(this);
+		if (wrtr!=null) {
+			wrtr.print(request);
+			wrtr.flush();
+			
+			runner.start();
 			Waiter.waitTillDone(runner, readMs);
 			runner.stop();
 		}
@@ -308,12 +271,6 @@ public class HttpClient {
 		lock.unlock(this);
 		return r;
 	}
-	
-	protected void logError(String msg,Exception e) {
-		lock.lock(this);
-		logErrorNoLock(msg,e);
-		lock.unlock(this);
-	}
 
 	public Str getError() {
 		lock.lock(this);
@@ -329,6 +286,12 @@ public class HttpClient {
 		return r;
 	}
 	
+	protected void logError(String msg,Exception e) {
+		lock.lock(this);
+		logErrorNoLock(msg,e);
+		lock.unlock(this);
+	}
+
 	protected void logErrorNoLock(String msg,Exception e) {
 		if (error.length()==0) {
 			error.sb().append(msg);
@@ -339,10 +302,10 @@ public class HttpClient {
 		}
 	}
 	
-	private void readResponse() {
+	protected void readResponse() {
 		Str r = new Str();
 		lock.lock(this);
-		BufferedReader rdr = reader;
+		BufferedReader rdr = getReaderNoLock();
 		Socket sock = socket;
 		lock.unlock(this);
 		
@@ -359,7 +322,7 @@ public class HttpClient {
 						header.sb().append("\n");
 					}
 				} catch (IOException ex) {
-					if (!sock.isClosed()) {
+					if (sock==null || !sock.isClosed()) {
 						logError("I/O exception",ex);
 					}
 					done = true;
@@ -399,6 +362,49 @@ public class HttpClient {
 			lock.unlock(this);
 		}
 	}
+
+	protected PrintWriter getWriterNoLock() {
+		if (socket!=null && writer==null) {
+			try {
+				writer = new PrintWriter(socket.getOutputStream());
+			} catch (IOException e) {
+				logErrorNoLock("Failed to obtain output stream",e);
+			}
+		}
+		return writer;
+	}
+
+	protected BufferedReader getReaderNoLock() {
+		if (socket!=null && reader==null) {
+			try {
+				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			} catch (IOException e) {
+				logErrorNoLock("Failed to obtain input stream",e);
+			}
+		}
+		return reader;
+	}
+	
+	protected void clearWriterAndReaderNoLock() {
+		writer = null;
+		reader = null;
+	}
+	
+	protected void clearResponseNoLock() {
+		responseBody = new Str();
+		responseCode = HttpURLConnection.HTTP_OK;
+		responseMessage = "";
+		responseHeaders = new HttpHeaderList();
+	}
+	
+	protected void addDefaultHeadersNoLock(Str body) {
+		headers.addContentTypeHeader("text/html");
+		headers.addHostHeader(url.getHost());
+		headers.addConnectionHeader("keep-alive");
+		if ((method.equals("POST") || method.equals("PUT")) && body!=null) {
+			headers.addContentLengthHeader(body.length());
+		}
+	}
 	
 	private RunCode getResponseReaderCode() {
 		return new RunCode() {
@@ -413,6 +419,7 @@ public class HttpClient {
 	
 	private CodeRunner getNewResponseReader() {
 		CodeRunner r = new CodeRunner(getResponseReaderCode());
+		r.setLogger(logger);
 		r.setSleepMs(0);
 		return r;
 	}

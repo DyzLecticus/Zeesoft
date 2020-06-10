@@ -271,6 +271,28 @@ public class Str implements Comparable<Str>{
 		return this;
 	}
 	
+	public static Str mergeList(List<Str> strs, String concatenator) {
+		Str r = new Str();
+		return r.merge(strs,concatenator);
+	}
+
+	public Str mergeStrings(List<String> strs, String concatenator) {
+		StringBuilder nsb = new StringBuilder();
+		for(String str: strs) {
+			if (nsb.length()>0) {
+				nsb.append(concatenator);
+			}
+			nsb.append(str);
+		}
+		sb = nsb;
+		return this;
+	}
+	
+	public static Str mergeStringList(List<String> strs, String concatenator) {
+		Str r = new Str();
+		return r.mergeStrings(strs,concatenator);
+	}
+	
 	public Str fromFile(String path) {
 		return fromFile(path, null);
 	}

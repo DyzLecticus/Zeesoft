@@ -133,8 +133,7 @@ public class FileIO {
 	}
 	
 	public static Str getActionLogStr() {
-		Str r = new Str();
-		return r.merge(getActionLog(),"\n");
+		return Str.mergeList(getActionLog(),"\n");
 	}
 	
 	public static void clear() {
