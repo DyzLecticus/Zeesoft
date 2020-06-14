@@ -47,10 +47,10 @@ public class State {
 		return (60000 / bpm) / spb;
 	}
 	
-	public int getNsPerStep() {
+	public long getNsPerStep() {
 		lock.lock(this);
 		float msPerBeat = (60000F / (float)beatsPerMinute);
-		int nsPerStep = (int)((1000000F * msPerBeat) / (float)stepsPerBeat);
+		long nsPerStep = (long)((1000000F * msPerBeat) / (float)stepsPerBeat);
 		lock.unlock(this);
 		return nsPerStep;
 	}

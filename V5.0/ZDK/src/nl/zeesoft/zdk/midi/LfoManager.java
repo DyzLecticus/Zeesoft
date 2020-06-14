@@ -13,6 +13,7 @@ public class LfoManager {
 
 	private Lfo[]						lfos			= new Lfo[16];
 	private LfoGenerator[]				lfoGenerators	= new LfoGenerator[16];
+	private Inst[]						instruments		= new Inst[16];
 	
 	protected LfoManager(Logger logger, Synth synth, State state) {
 		this.synth = synth;
@@ -69,8 +70,41 @@ public class LfoManager {
 		return r;
 	}
 	
+	protected void setInstrument(int channel, Inst instrument) {
+		lock.lock(this);
+		instruments[channel] = instrument;
+		lock.unlock(this);
+	}
+	
 	protected void lfoSelectedNextValue(int lfoIndex, int value) {
-		// TODO: Finish
-		//System.out.println("LFO: " + lfoIndex + ": " + value);
+		lock.lock(this);
+		Lfo lfo = lfos[lfoIndex];
+		if (lfo!=null) {
+			float percentage = 0;
+			if (value>0) {
+				percentage = (float)value / (float)LfoGenerator.MAX_VALUE;
+			}
+			for (LfoTarget target: lfo.targets) {
+				Inst instrument = instruments[target.channel];
+				if (instrument!=null) {
+					float max = ((float)target.percentage / 100F) * 127F;
+					int val = (int) (percentage * max);
+					int pVal = instrument.getPropertyValue(target.property);
+					if (target.invert) {
+						val = pVal - val;
+						if (val < 0) {
+							val = 0;
+						}
+					} else {
+						val = pVal + val;
+						if (val > 127) {
+							val = 127;
+						}
+					}
+					synth.setInstrumentProperty(target.channel,target.property,val);
+				}
+			}
+		}
+		lock.unlock(this);
 	}
 }

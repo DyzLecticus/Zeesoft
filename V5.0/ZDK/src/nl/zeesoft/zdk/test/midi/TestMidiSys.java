@@ -36,17 +36,7 @@ public class TestMidiSys extends TestObject {
 		State state = MidiSys.getState();
 		state.setBeatsPerMinute(100);
 		
-		Lfo lfo1 = new Lfo();
-		lfo1.addTarget(0,Inst.FILTER,50,true);
-		lfo1.addTarget(1,Inst.FILTER,50,true);
-		lfo1.addTarget(2,Inst.FILTER,50,true);
-		lfo1.addTarget(3,Inst.FILTER,50,true);
-		Lfo lfo2 = new Lfo(Lfo.BINARY);
-
-		LfoManager lfoManager = MidiSys.getLfoManager();
-		lfoManager.setLfo(0,lfo1);
-		lfoManager.setLfo(1,lfo2);
-		
+		LfoManager lfoManager = MidiSys.getLfoManager();		
 		lfoManager.start();
 		
 		Inst inst1 = new Inst();
@@ -88,6 +78,15 @@ public class TestMidiSys extends TestObject {
 			assertEqual(patch.instruments.get(3).channel,3,"Assigned instrument channel does not match expectation");
 		}
 		
+		Lfo lfo1 = new Lfo();
+		lfo1.addTarget(patch.instruments.get(0).channel,Inst.FILTER,25,true);
+		lfo1.addTarget(patch.instruments.get(1).channel,Inst.FILTER,20,true);
+		lfo1.addTarget(patch.instruments.get(2).channel,Inst.FILTER,15,true);
+		lfo1.addTarget(patch.instruments.get(3).channel,Inst.FILTER,10,true);
+		Lfo lfo2 = new Lfo(Lfo.BINARY);
+		lfoManager.setLfo(0,lfo1);
+		lfoManager.setLfo(1,lfo2);
+		
 		NotePlayer player = MidiSys.getNotePlayer();
 		
 		System.out.println("Playing notes F-4, A#4 and C-5 ...");
@@ -113,7 +112,7 @@ public class TestMidiSys extends TestObject {
 		assertEqual(config.getAvailableInstrumentChannels().size(),15,"Number of available channels does not match expectation(3)");
 
 		lfoManager.stop();
-		Waiter.waitTillRunnersDone(lfoManager.getRunners(),1000);
+		Waiter.waitTillRunnersDone(lfoManager.getRunners(),100);
 		
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 	}

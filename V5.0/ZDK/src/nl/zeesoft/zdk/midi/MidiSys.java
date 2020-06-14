@@ -94,7 +94,7 @@ public class MidiSys {
 		if (MidiSys.patchConfig==null) {
 			Synth synth = getSynthesizerNoLock();
 			if (synth!=null) {
-				MidiSys.patchConfig = new PatchConfig(getLoggerNoLock(),synth);
+				MidiSys.patchConfig = new PatchConfig(getLoggerNoLock(),synth,getLfoManagerNoLock());
 			}
 		}
 		return MidiSys.patchConfig;

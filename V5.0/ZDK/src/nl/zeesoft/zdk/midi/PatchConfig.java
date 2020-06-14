@@ -11,13 +11,15 @@ public class PatchConfig {
 	private Lock						lock			= new Lock();
 	private Logger						logger			= null;
 	private Synth						synth			= null;
+	private LfoManager					lfoManager		= null;
 	
 	private Inst[]						instruments 	= new Inst[16];
 	private List<InstGroup>				groups			= new ArrayList<InstGroup>();
 	
-	protected PatchConfig(Logger logger, Synth synth) {
+	protected PatchConfig(Logger logger, Synth synth, LfoManager lfoManager) {
 		this.logger = logger;
 		this.synth = synth;
+		this.lfoManager = lfoManager;
 		lock.setLogger(this, logger);
 	}
 	
@@ -227,6 +229,7 @@ public class PatchConfig {
 			instruments[channel] = instrument;
 			instrument.channel = channel;
 			synth.setInstrument(channel, instrument);
+			lfoManager.setInstrument(channel, instrument.copy());
 		} else {
 			Str error = new Str();
 			error.sb().append("Invalid instrument channel: ");

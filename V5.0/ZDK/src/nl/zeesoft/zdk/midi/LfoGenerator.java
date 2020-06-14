@@ -19,10 +19,8 @@ public class LfoGenerator {
 	
 	private int[]				values		= null;
 	private int					valueIndex	= -1;
-	private int					msPerValue	= 10;
-	private int					nsPerValue	= 0;
-	
-	// TODO: Refactor to improve accuracy and flexibility
+	private long				actionTime	= -1;
+	private long				nsPerValue	= 100000;
 	
 	protected LfoGenerator(Logger logger, State state, int lfoIndex) {
 		this.state = state;
@@ -33,13 +31,13 @@ public class LfoGenerator {
 	protected void setLfo(Lfo lfo) {
 		lock.lock(this);
 		this.lfo = lfo;
-		calculateValuesNoLock();
+		calculateNoLock();
 		lock.unlock(this);
 	}
 	
 	protected void stateChanged() {
 		lock.lock(this);
-		calculateValuesNoLock();
+		calculateNoLock();
 		lock.unlock(this);
 	}
 	
@@ -47,12 +45,9 @@ public class LfoGenerator {
 		lock.lock(this);
 		if (runner==null) {
 			runner = new CodeRunner(getCodeForRunner());
-			if (msPerValue>0) {
-				runner.setSleepMs(msPerValue);
-			} else {
-				runner.setSleepNs(nsPerValue);
-			}
+			runner.setSleepNs(10000);
 		}
+		actionTime = System.nanoTime();
 		runner.start();
 		lock.unlock(this);
 	}
@@ -77,12 +72,18 @@ public class LfoGenerator {
 		lock.lock(this);
 		int index = lfoIndex;
 		if (lfo!=null) {
-			valueIndex++;
-			if (values!=null) { 
-				if (valueIndex>=values.length) {
-					valueIndex = 0;
+			long now = System.nanoTime();
+			if (now>=actionTime) {
+				while(now>=actionTime) {
+					actionTime += nsPerValue;
 				}
-				value = values[valueIndex];
+				valueIndex++;
+				if (values!=null) { 
+					if (valueIndex>=values.length) {
+						valueIndex = 0;
+					}
+					value = values[valueIndex];
+				}
 			}
 		} else {
 			valueIndex = -1;
@@ -107,7 +108,7 @@ public class LfoGenerator {
 		};
 	}
 	
-	private void calculateValuesNoLock() {
+	private void calculateNoLock() {
 		if (lfo!=null) {
 			if (lfo.type.equals(Lfo.LINEAR)) {
 				int increments = MAX_VALUE * 2;
@@ -131,30 +132,10 @@ public class LfoGenerator {
 				values[1] = MAX_VALUE;
 			}
 		}
-		resetTimePerValue();
-	}
-	
-	private void resetTimePerValue() {
-		if (lfo!=null) {
-			nsPerValue = (state.getNsPerStep() / values.length) * lfo.steps;
-			msPerValue = 0;
-			if (nsPerValue>=1000000) {
-				msPerValue = (state.getMsPerStep() / values.length) * lfo.steps;
-				if (msPerValue == 0) {
-					msPerValue = 1;
-				}
-				nsPerValue = 0;
-			}
+		if (lfo!=null && values!=null) {
+			nsPerValue = (state.getNsPerStep() / (long)values.length) * (long)lfo.steps;
 		} else {
-			msPerValue = 10;
-			nsPerValue = 0;
-		}
-		if (runner!=null) {
-			if (msPerValue>0) {
-				runner.setSleepMs(msPerValue);
-			} else {
-				runner.setSleepNs(nsPerValue);
-			}
+			nsPerValue = 100000;
 		}
 	}
 }

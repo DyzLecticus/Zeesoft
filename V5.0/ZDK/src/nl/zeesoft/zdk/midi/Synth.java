@@ -75,6 +75,43 @@ public class Synth {
 		}
 	}
 	
+	protected void setInstrumentProperty(int channel,String property, int value) {
+		MidiChannel chan = synthesizer.getChannels()[channel];
+		if (chan!=null) {
+			if (property.equals(Inst.VOLUME)) {
+				chan.controlChange(VOLUME,value);
+			} else if (property.equals(Inst.ATTACK)) {
+				chan.controlChange(ATTACK,value);
+			} else if (property.equals(Inst.DECAY)) {
+				chan.controlChange(DECAY,value);
+			} else if (property.equals(Inst.RELEASE)) {
+				chan.controlChange(RELEASE,value);
+			} else if (property.equals(Inst.PAN)) {
+				chan.controlChange(PAN,value);
+			} else if (property.equals(Inst.PRESSURE)) {
+				if (chan.getChannelPressure()!=value) {
+					chan.setChannelPressure(value);
+				}
+			} else if (property.equals(Inst.MODULATION)) {
+				chan.controlChange(MODULATION,value);
+			} else if (property.equals(Inst.CHORUS)) {
+				chan.controlChange(CHORUS,value);
+			} else if (property.equals(Inst.FILTER)) {
+				chan.controlChange(FILTER,value);
+			} else if (property.equals(Inst.RESONANCE)) {
+				chan.controlChange(RESONANCE,value);
+			} else if (property.equals(Inst.REVERB)) {
+				chan.controlChange(REVERB,value);
+			} else if (property.equals(Inst.VIB_RATE)) {
+				chan.controlChange(VIB_RATE,value);
+			} else if (property.equals(Inst.VIB_DEPTH)) {
+				chan.controlChange(VIB_DEPTH,value);
+			} else if (property.equals(Inst.VIB_DELAY)) {
+				chan.controlChange(VIB_DELAY,value);
+			} 
+		}
+	}
+	
 	protected void startNotes(List<MidiNote> notes) {
 		lock.lock(this);
 		for (MidiNote note: notes) {
