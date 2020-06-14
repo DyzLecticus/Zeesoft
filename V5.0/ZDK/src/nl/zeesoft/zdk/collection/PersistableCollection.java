@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.collection;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -496,8 +497,10 @@ public class PersistableCollection extends CompleteCollection {
 		Class<?> cls = object.getClass();
 		while(cls!=Object.class) {
 			for (Field field : cls.getDeclaredFields()) {
-				field.setAccessible(true);
-				r.add(field);
+				if (!Modifier.isStatic(field.getModifiers())) {
+					field.setAccessible(true);
+					r.add(field);
+				}
 			}
 			cls = cls.getSuperclass();
 		}

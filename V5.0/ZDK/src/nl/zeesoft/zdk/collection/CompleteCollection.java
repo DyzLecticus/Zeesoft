@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.collection;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -78,12 +79,16 @@ public class CompleteCollection extends QueryableCollection {
 	
 	protected boolean isSupportedField(Field field) {
 		boolean r = true;
-		String className = Reflector.getClassName(field.getType().toString());
-		if ((className.startsWith("[") && !className.equals("[L")) ||
-			className.startsWith("java.lang.") ||
-			className.startsWith("java.math.")
-			) {
+		if (Modifier.isStatic(field.getModifiers())) {
 			r = false;
+		} else {
+			String className = Reflector.getClassName(field.getType().toString());
+			if ((className.startsWith("[") && !className.equals("[L")) ||
+				className.startsWith("java.lang.") ||
+				className.startsWith("java.math.")
+				) {
+				r = false;
+			}
 		}
 		return r;
 	}
