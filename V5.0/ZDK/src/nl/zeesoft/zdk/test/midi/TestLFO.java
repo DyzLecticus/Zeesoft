@@ -1,25 +1,15 @@
 package nl.zeesoft.zdk.test.midi;
 
-import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.midi.Inst;
-import nl.zeesoft.zdk.midi.Lfo;
-import nl.zeesoft.zdk.midi.MidiSys;
-import nl.zeesoft.zdk.midi.NotePlayer;
-import nl.zeesoft.zdk.midi.Patch;
-import nl.zeesoft.zdk.midi.PatchConfig;
-import nl.zeesoft.zdk.midi.State;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
-import nl.zeesoft.zdk.thread.CodeRunnerManager;
-import nl.zeesoft.zdk.thread.Waiter;
 
-public class TestMidiSys extends TestObject {
-	public TestMidiSys(Tester tester) {
+public class TestLFO extends TestObject {
+	public TestLFO(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestMidiSys(new Tester())).runTest(args);
+		(new TestLFO(new Tester())).runTest(args);
 	}
 
 	@Override
@@ -29,49 +19,38 @@ public class TestMidiSys extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
+		/*
 		Logger logger = new Logger(true);
 		MidiSys.setLogger(logger);
 		
-		State state = MidiSys.getState();
-		state.setBeatsPerMinute(100);
-		
 		Inst inst1 = new Inst();
-		inst1.setLfoSource(Inst.FILTER,0,2,true);
 
 		Inst inst2 = new Inst();
-		inst2.velocity = 60;
+		inst2.velocity = 75;
 		inst2.filter = 48;
 		inst2.pan = 0;
 		inst2.reverb = 24;
 		inst2.patchDelaySteps = 3;
-		inst2.setLfoSource(Inst.FILTER,0,2,true);
 		
 		Inst inst3 = new Inst();
-		inst3.velocity = 40;
+		inst3.velocity = 60;
 		inst3.filter = 40;
 		inst3.pan = 127;
-		inst3.reverb = 36;
+		inst2.reverb = 36;
 		inst3.patchDelaySteps = 6;
-		inst3.setLfoSource(Inst.FILTER,0,2,true);
 		
 		Inst inst4 = new Inst();
-		inst4.velocity = 20;
+		inst4.velocity = 45;
 		inst4.filter = 32;
-		inst4.reverb = 48;
+		inst2.reverb = 48;
 		inst4.patchDelaySteps = 9;
-		inst4.setLfoSource(Inst.FILTER,0,2,true);
-
-		Lfo lfo1 = new Lfo();
-		Lfo lfo2 = new Lfo(Lfo.BINARY);
-
+		
 		String patchName = "EchoTest";
 		Patch patch = new Patch(patchName);
 		patch.instruments.add(inst1);
 		patch.instruments.add(inst2);
 		patch.instruments.add(inst3);
 		patch.instruments.add(inst4);
-		patch.lfos[0] = lfo1;
-		patch.lfos[1] = lfo2;
 		
 		PatchConfig config = MidiSys.getPatchConfig();
 		config.loadPatch(patch);
@@ -82,10 +61,6 @@ public class TestMidiSys extends TestObject {
 		if (assertEqual(patch.instruments.size(),4,"Number of patch instruments does not match expectation")) {
 			assertEqual(patch.instruments.get(3).channel,3,"Assigned instrument channel does not match expectation");
 		}
-		assertNotNull(patch.lfos[0],"Patch LFO 1 does not match expectation");
-		assertNotNull(patch.lfos[1],"Patch LFO 2 does not match expectation");
-		assertNull(patch.lfos[2],"Patch LFO 3 does not match expectation");
-		assertEqual(patch.instruments.get(0).lfoSources.size(),1,"Number of instrument LFO sources does not match expectation");
 		
 		NotePlayer player = MidiSys.getNotePlayer();
 		
@@ -98,7 +73,7 @@ public class TestMidiSys extends TestObject {
 		sleep(100);
 		player.stopNotes(patchName,"F-4","A#4","C-5");
 		
-		Waiter.waitTillRunnersDone(player.getDelayedPlayers(),5000);
+		Waiter.waitTillRunnersDone(player.getDelayedPlayers(),3000);
 		assertEqual(player.getDelayedPlayers().size(),0,"Number of delayed note players does not match expectation");
 		sleep(500);
 		System.out.println("Played notes");
@@ -112,5 +87,6 @@ public class TestMidiSys extends TestObject {
 		assertEqual(config.getAvailableInstrumentChannels().size(),15,"Number of available channels does not match expectation(3)");
 		
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
+		*/
 	}
 }

@@ -6,6 +6,25 @@ import java.util.List;
 public class Inst {
 	private static final int	BASE_OCTAVE		= 3;
 	
+	public static final String	INSTRUMENT		= "INSTRUMENT"; 
+	public static final String	VOLUME			= "VOLUME"; 
+	public static final String	ATTACK			= "ATTACK"; 
+	public static final String	DECAY			= "DECAY"; 
+	public static final String	RELEASE			= "RELEASE"; 
+
+	public static final String	PAN				= "PAN"; 
+	public static final String	PRESSURE		= "PRESSURE"; 
+	public static final String	MODULATION		= "MODULATION"; 
+	public static final String	CHORUS			= "CHORUS"; 
+
+	public static final String	FILTER			= "FILTER"; 
+	public static final String	RESONANCE		= "RESONANCE"; 
+	public static final String	REVERB			= "REVERB"; 
+
+	public static final String	VIB_RATE		= "VIB_RATE"; 
+	public static final String	VIB_DEPTH		= "VIB_DEPTH"; 
+	public static final String	VIB_DELAY		= "VIB_DELAY"; 
+
 	public int					channel			= -1;
 	
 	public boolean				solo			= false;
@@ -34,6 +53,99 @@ public class Inst {
 	public int					baseOctave		= 3;
 	public int					patchDelaySteps	= 0;
 	
+	public List<InstLfoSource>	lfoSources		= new ArrayList<InstLfoSource>();
+	
+	public void setLfoSource(String property, int lfoIndex, int percentage) {
+		setLfoSource(property,lfoIndex,percentage,false);
+	}
+	
+	public void setLfoSource(String property, int lfoIndex, int percentage, boolean invert) {
+		unsetLfoSource(property);
+		lfoSources.add(new InstLfoSource(property,lfoIndex,percentage,invert));
+	}
+	
+	public void unsetLfoSource(String property) {
+		InstLfoSource lfoSource = getLfoSource(property);
+		if (lfoSource!=null) {
+			lfoSources.remove(lfoSource);
+		}
+	}
+	
+	public void setPropertyValue(String property, int value) {
+		if (value < 0) {
+			value = 0;
+		} else if (value > 127) {
+			value = 127;
+		}
+		if (property.equals(INSTRUMENT)) {
+			instrument = value;
+		} else if (property.equals(VOLUME)) {
+			volume = value;
+		} else if (property.equals(ATTACK)) {
+			attack = value;
+		} else if (property.equals(DECAY)) {
+			decay = value;
+		} else if (property.equals(RELEASE)) {
+			release = value;
+		} else if (property.equals(PAN)) {
+			pan = value;
+		} else if (property.equals(PRESSURE)) {
+			pressure = value;
+		} else if (property.equals(MODULATION)) {
+			modulation = value;
+		} else if (property.equals(CHORUS)) {
+			chorus = value;
+		} else if (property.equals(FILTER)) {
+			filter = value;
+		} else if (property.equals(RESONANCE)) {
+			resonance = value;
+		} else if (property.equals(REVERB)) {
+			reverb = value;
+		} else if (property.equals(VIB_RATE)) {
+			vib_rate = value;
+		} else if (property.equals(VIB_DEPTH)) {
+			vib_depth = value;
+		} else if (property.equals(VIB_DELAY)) {
+			vib_delay = value;
+		}
+	}
+	
+	public int getPropertyValue(String property) {
+		int r = -1;
+		if (property.equals(INSTRUMENT)) {
+			r = instrument;
+		} else if (property.equals(VOLUME)) {
+			r = volume;
+		} else if (property.equals(ATTACK)) {
+			r = attack;
+		} else if (property.equals(DECAY)) {
+			r = decay;
+		} else if (property.equals(RELEASE)) {
+			r = release;
+		} else if (property.equals(PAN)) {
+			r = pan;
+		} else if (property.equals(PRESSURE)) {
+			r = pressure;
+		} else if (property.equals(MODULATION)) {
+			r = modulation;
+		} else if (property.equals(CHORUS)) {
+			r = chorus;
+		} else if (property.equals(FILTER)) {
+			r = filter;
+		} else if (property.equals(RESONANCE)) {
+			r = resonance;
+		} else if (property.equals(REVERB)) {
+			r = reverb;
+		} else if (property.equals(VIB_RATE)) {
+			r = vib_rate;
+		} else if (property.equals(VIB_DEPTH)) {
+			r = vib_depth;
+		} else if (property.equals(VIB_DELAY)) {
+			r = vib_delay;
+		}
+		return r;
+	}
+	
 	public Inst copy() {
 		Inst r = new Inst();
 		r.channel = channel;
@@ -57,6 +169,20 @@ public class Inst {
 		r.velocity = velocity;
 		r.baseOctave = baseOctave;
 		r.patchDelaySteps = patchDelaySteps;
+		for (InstLfoSource lfoSource: lfoSources) {
+			r.lfoSources.add(lfoSource.copy());
+		}
+		return r;
+	}
+	
+	public InstLfoSource getLfoSource(String property) {
+		InstLfoSource r = null;
+		for (InstLfoSource lfoSource: lfoSources) {
+			if (lfoSource.property.equals(property)) {
+				r = lfoSource;
+				break;
+			}
+		}
 		return r;
 	}
 	

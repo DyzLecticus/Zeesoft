@@ -111,20 +111,20 @@ public class Synth {
 		lock.unlock(this);
 	}
 	
-	protected void startGroupNotes(List<MidiNote> notes, int beatsPerMinute, int stepsPerBeat) {
+	protected void startGroupNotes(List<MidiNote> notes, int msPerStep) {
 		List<MidiNote> nowNotes = new ArrayList<MidiNote>();
 		SortedMap<Integer,List<MidiNote>> delayedNotes = new TreeMap<Integer,List<MidiNote>>();
 		splitNotes(notes,nowNotes,delayedNotes);
 		startNotes(nowNotes);
-		handleDelayedNotes(delayedNotes,beatsPerMinute,stepsPerBeat,true);
+		handleDelayedNotes(delayedNotes,msPerStep,true);
 	}
 	
-	protected void stopGroupNotes(List<MidiNote> notes, int beatsPerMinute, int stepsPerBeat) {
+	protected void stopGroupNotes(List<MidiNote> notes, int msPerStep) {
 		List<MidiNote> nowNotes = new ArrayList<MidiNote>();
 		SortedMap<Integer,List<MidiNote>> delayedNotes = new TreeMap<Integer,List<MidiNote>>();
 		splitNotes(notes,nowNotes,delayedNotes);
 		stopNotes(nowNotes);
-		handleDelayedNotes(delayedNotes,beatsPerMinute,stepsPerBeat,false);
+		handleDelayedNotes(delayedNotes,msPerStep,false);
 	}
 	
 	protected void delayedPlayerDone(DelayedNotePlayer player) {
@@ -170,10 +170,10 @@ public class Synth {
 		}
 	}
 	
-	private void handleDelayedNotes(SortedMap<Integer,List<MidiNote>> delayedNotes, int beatsPerMinute, int stepsPerBeat, boolean actionStart) {
+	private void handleDelayedNotes(SortedMap<Integer,List<MidiNote>> delayedNotes, int msPerStep, boolean actionStart) {
 		for (Entry<Integer,List<MidiNote>> entry: delayedNotes.entrySet()) {
 			DelayedNoteCode code = new DelayedNoteCode(this);
-			code.actionTime = System.currentTimeMillis() + (MidiSys.getMsPerStep(beatsPerMinute, stepsPerBeat) * entry.getKey());
+			code.actionTime = System.currentTimeMillis() + (msPerStep * entry.getKey());
 			code.actionStart = actionStart;
 			code.notes = entry.getValue();
 			DelayedNotePlayer player = new DelayedNotePlayer(code) {
