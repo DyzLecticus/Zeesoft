@@ -22,49 +22,7 @@ public class TestMidiSys extends TestObject {
 
 	@Override
 	protected void describe() {
-		/*
-		System.out.println("This test shows how to use different collections provided by this library. ");
-		System.out.println("These collections are a mix between Java List and LinkedList style collections. ");
-		System.out.println("They use Java reflection to provide features like queries and persistence with minimal programming. ");
-		System.out.println("The following collections are provided by this library;  ");
-		System.out.println(" * *QueryableCollection* provides support for queries.  ");
-		System.out.println(" * *CompleteCollection* extends *QueryableCollection* and automatically adds referenced objects. ");
-		System.out.println(" * *PersistableCollection* extends *CompleteCollection* and adds persistence. ");
-		System.out.println(" * *CompressedCollection* extends *PersistableCollection* and adds compression to persistence. ");
-		System.out.println(" * *PartitionedCollection* extends *CompressedCollection* and adds multithreading for saving/loading large collections to/from directories. ");
-		System.out.println();
-		System.out.println("Persistence for most standard property types is supported including arrays and lists for non primitives. ");
-		System.out.println();
-		System.out.println("**Example implementation**  ");
-		System.out.println("~~~~");
-		System.out.println("// Create the PersistableCollection");
-		System.out.println("PersistableCollection collection = new PersistableCollection();");
-		System.out.println("// Add objects to the collection");
-		System.out.println("Str id1 = collection.add(new PersistableParent());");
-		System.out.println("Str id2 = collection.add(new PersistableChild());");
-		System.out.println("// Write the data to a file");
-		System.out.println("collection.toPath(\"data/fileName.txt\");");
-		System.out.println("// Load the collection from a file");
-		System.out.println("collection.fromPath(\"data/fileName.txt\");");
-		System.out.println("// Query the collection");
-		System.out.println("SortedMap<Str,Object> results = collection.query(");
-		System.out.println("    Query.create(PersistableParent.class)");
-		System.out.println("    .equals(\"getTestString\",\"Parent\")");
-		System.out.println("    .notContains(\"getTestIntArray\",42)");
-		System.out.println(").results;");
-		System.out.println("~~~~");
-		System.out.println();
-		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestMidiSystem.class));
-		System.out.println(" * " + getTester().getLinkForClass(QueryableCollection.class));
-		System.out.println(" * " + getTester().getLinkForClass(CompleteCollection.class));
-		System.out.println(" * " + getTester().getLinkForClass(PersistableCollection.class));
-		System.out.println(" * " + getTester().getLinkForClass(CompressedCollection.class));
-		System.out.println(" * " + getTester().getLinkForClass(PartitionedCollection.class));
-		System.out.println();
-		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the file structure of an example persistable collection.  ");
-		*/
+		System.out.println("This test is not included in the ZDK test set");
 	}
 
 	@Override
@@ -101,7 +59,7 @@ public class TestMidiSys extends TestObject {
 		patch.instruments.add(inst3);
 		patch.instruments.add(inst4);
 		
-		PatchConfig config = MidiSys.getInstrumentConfig();
+		PatchConfig config = MidiSys.getPatchConfig();
 		config.loadPatch(patch);
 		assertEqual(config.getAvailableInstrumentChannels().size(),11,"Number of available channels does not match expectation(1)");
 		

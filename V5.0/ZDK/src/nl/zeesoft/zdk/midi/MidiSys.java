@@ -12,7 +12,7 @@ public class MidiSys {
 	private static Lock			lock		= new Lock();
 	private static Logger		logger		= null;
 	private static Synth		synth		= null;
-	private static PatchConfig	instConfig	= null;
+	private static PatchConfig	patchConfig	= null;
 	private static NotePlayer	notePlayer	= null;
 	
 	public static void setLogger(Logger logger) {
@@ -31,10 +31,10 @@ public class MidiSys {
 		return r;
 	}
 	
-	public static PatchConfig getInstrumentConfig() {
+	public static PatchConfig getPatchConfig() {
 		MidiSys self = new MidiSys();
 		lock.lock(self);
-		PatchConfig r = getInstrumentConfigNoLock();
+		PatchConfig r = getPatchConfigNoLock();
 		lock.unlock(self);
 		return r;
 	}
@@ -54,7 +54,7 @@ public class MidiSys {
 	private static NotePlayer getNotePlayerNoLock() {
 		if (MidiSys.notePlayer==null) {
 			Synth synth = getSynthesizerNoLock();
-			PatchConfig config = getInstrumentConfigNoLock();
+			PatchConfig config = getPatchConfigNoLock();
 			if (synth!=null && config!=null) {
 				MidiSys.notePlayer = new NotePlayer(getLoggerNoLock(),config,synth);
 			}
@@ -62,14 +62,14 @@ public class MidiSys {
 		return MidiSys.notePlayer;
 	}
 	
-	private static PatchConfig getInstrumentConfigNoLock() {
-		if (MidiSys.instConfig==null) {
+	private static PatchConfig getPatchConfigNoLock() {
+		if (MidiSys.patchConfig==null) {
 			Synth synth = getSynthesizerNoLock();
 			if (synth!=null) {
-				MidiSys.instConfig = new PatchConfig(getLoggerNoLock(),synth);
+				MidiSys.patchConfig = new PatchConfig(getLoggerNoLock(),synth);
 			}
 		}
-		return MidiSys.instConfig;
+		return MidiSys.patchConfig;
 	}
 	
 	private static Synth getSynthesizerNoLock() {

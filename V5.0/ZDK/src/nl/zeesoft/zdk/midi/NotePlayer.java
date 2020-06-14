@@ -9,14 +9,14 @@ import nl.zeesoft.zdk.thread.Lock;
 
 public class NotePlayer {
 	private Lock			lock			= new Lock();
-	private PatchConfig		instConfig		= null;
+	private PatchConfig		patchConfig		= null;
 	private Synth			synth			= null;
 	
 	private	int				beatsPerMinute	= 120;
 	private int				stepsPerBeat	= 4;
 	
-	protected NotePlayer(Logger logger, PatchConfig instConfig, Synth synth) {
-		this.instConfig = instConfig;
+	protected NotePlayer(Logger logger, PatchConfig patchConfig, Synth synth) {
+		this.patchConfig = patchConfig;
 		this.synth = synth;
 		lock.setLogger(this, logger);
 	}
@@ -48,24 +48,24 @@ public class NotePlayer {
 	}
 
 	public void startNotes(int channel, String... notes) {
-		List<MidiNote> mns = instConfig.getNotes(channel, notes);
+		List<MidiNote> mns = patchConfig.getNotes(channel, notes);
 		synth.startNotes(mns);
 	}
 
 	public void stopNotes(int channel, String... notes) {
-		List<MidiNote> mns = instConfig.getNotes(channel, notes);
+		List<MidiNote> mns = patchConfig.getNotes(channel, notes);
 		synth.stopNotes(mns);
 	}
 
-	public void startNotes(String groupName, String... notes) {
-		List<MidiNote> mns = instConfig.getNotes(groupName, notes);
+	public void startNotes(String patchName, String... notes) {
+		List<MidiNote> mns = patchConfig.getNotes(patchName, notes);
 		lock.lock(this);
 		synth.startGroupNotes(mns,beatsPerMinute,stepsPerBeat);
 		lock.unlock(this);
 	}
 
-	public void stopNotes(String groupName, String... notes) {
-		List<MidiNote> mns = instConfig.getNotes(groupName, notes);
+	public void stopNotes(String patchName, String... notes) {
+		List<MidiNote> mns = patchConfig.getNotes(patchName, notes);
 		lock.lock(this);
 		synth.stopGroupNotes(mns,beatsPerMinute,stepsPerBeat);
 		lock.unlock(this);
