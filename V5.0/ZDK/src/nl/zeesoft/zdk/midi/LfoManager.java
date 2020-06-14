@@ -21,8 +21,8 @@ public class LfoManager {
 		for (int i = 0; i < lfoGenerators.length; i++) {
 			lfoGenerators[i] = new LfoGenerator(logger,state,i) {
 				@Override
-				protected void selectedNextValue(int lfoIndex, int value) {
-					lfoSelectedNextValue(lfoIndex,value);
+				protected void selectedNextValue(int lfoIndex, float percentage) {
+					lfoSelectedNextValue(lfoIndex,percentage);
 				}
 			};
 		}
@@ -76,18 +76,14 @@ public class LfoManager {
 		lock.unlock(this);
 	}
 	
-	protected void lfoSelectedNextValue(int lfoIndex, int value) {
+	protected void lfoSelectedNextValue(int lfoIndex, float percentage) {
 		lock.lock(this);
 		Lfo lfo = lfos[lfoIndex];
 		if (lfo!=null) {
-			float percentage = 0;
-			if (value>0) {
-				percentage = (float)value / (float)LfoGenerator.MAX_VALUE;
-			}
 			for (LfoTarget target: lfo.targets) {
 				Inst instrument = instruments[target.channel];
 				if (instrument!=null) {
-					float max = ((float)target.percentage / 100F) * 127F;
+					float max = target.percentage * 127F;
 					int val = (int) (percentage * max);
 					int pVal = instrument.getPropertyValue(target.property);
 					if (target.invert) {

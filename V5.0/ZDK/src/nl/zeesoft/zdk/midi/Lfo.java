@@ -32,11 +32,11 @@ public class Lfo {
 		return r;
 	}
 	
-	public void addTarget(int channel, String instProperty, int percentage) {
+	public void addTarget(int channel, String instProperty, float percentage) {
 		addTarget(channel, instProperty, percentage, false);
 	}
 	
-	public void addTarget(int channel, String instProperty, int percentage, boolean invert) {
+	public void addTarget(int channel, String instProperty, float percentage, boolean invert) {
 		targets.add(new LfoTarget(channel, instProperty, percentage, invert));
 	}
 }

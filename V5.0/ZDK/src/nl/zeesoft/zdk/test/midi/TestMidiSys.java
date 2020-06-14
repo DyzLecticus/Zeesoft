@@ -79,10 +79,10 @@ public class TestMidiSys extends TestObject {
 		}
 		
 		Lfo lfo1 = new Lfo();
-		lfo1.addTarget(patch.instruments.get(0).channel,Inst.FILTER,25,true);
-		lfo1.addTarget(patch.instruments.get(1).channel,Inst.FILTER,20,true);
-		lfo1.addTarget(patch.instruments.get(2).channel,Inst.FILTER,15,true);
-		lfo1.addTarget(patch.instruments.get(3).channel,Inst.FILTER,10,true);
+		lfo1.addTarget(patch.instruments.get(0).channel,Inst.FILTER,0.25F,true);
+		lfo1.addTarget(patch.instruments.get(1).channel,Inst.FILTER,0.20F,true);
+		lfo1.addTarget(patch.instruments.get(2).channel,Inst.FILTER,0.15F,true);
+		lfo1.addTarget(patch.instruments.get(3).channel,Inst.FILTER,0.10F,true);
 		Lfo lfo2 = new Lfo(Lfo.BINARY);
 		lfoManager.setLfo(0,lfo1);
 		lfoManager.setLfo(1,lfo2);

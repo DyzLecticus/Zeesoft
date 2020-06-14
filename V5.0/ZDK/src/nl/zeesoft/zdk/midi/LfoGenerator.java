@@ -6,8 +6,8 @@ import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class LfoGenerator {
-	protected static final int	MIN_VALUE	= 0;
-	protected static final int	MAX_VALUE	= 64;
+	private static final int	MIN_VALUE	= 0;
+	private static final int	MAX_VALUE	= 64;
 	
 	private Lock				lock		= new Lock();
 	private State				state		= null;
@@ -69,6 +69,7 @@ public class LfoGenerator {
 	
 	protected void selectNextValue() {
 		int value = -1;
+		float percentage = 0;
 		lock.lock(this);
 		int index = lfoIndex;
 		if (lfo!=null) {
@@ -83,6 +84,9 @@ public class LfoGenerator {
 						valueIndex = 0;
 					}
 					value = values[valueIndex];
+					if (value>0) {
+						percentage = (float)value / (float)MAX_VALUE;
+					}
 				}
 			}
 		} else {
@@ -90,11 +94,11 @@ public class LfoGenerator {
 		}
 		lock.unlock(this);
 		if (value>=0) {
-			selectedNextValue(index,value);
+			selectedNextValue(index,percentage);
 		}
 	}
 	
-	protected void selectedNextValue(int lfoIndex,int value) {
+	protected void selectedNextValue(int lfoIndex,float percentage) {
 		// Override to implement
 	}
 	
