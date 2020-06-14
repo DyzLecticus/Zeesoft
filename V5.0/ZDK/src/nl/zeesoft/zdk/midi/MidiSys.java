@@ -14,6 +14,7 @@ public class MidiSys {
 	private static State		state		= null;
 	private static Synth		synth		= null;
 	private static PatchConfig	patchConfig	= null;
+	private static LfoManager	lfoManager	= null;
 	private static NotePlayer	notePlayer	= null;
 	
 	public static void setLogger(Logger logger) {
@@ -47,6 +48,14 @@ public class MidiSys {
 		lock.unlock(self);
 		return r;
 	}
+
+	public static LfoManager getLfoManager() {
+		MidiSys self = new MidiSys();
+		lock.lock(self);
+		LfoManager r = getLfoManagerNoLock();
+		lock.unlock(self);
+		return r;
+	}
 	
 	public static NotePlayer getNotePlayer() {
 		MidiSys self = new MidiSys();
@@ -69,6 +78,16 @@ public class MidiSys {
 			}
 		}
 		return MidiSys.notePlayer;
+	}
+	
+	private static LfoManager getLfoManagerNoLock() {
+		if (MidiSys.lfoManager==null) {
+			Synth synth = getSynthesizerNoLock();
+			if (synth!=null) {
+				MidiSys.lfoManager = new LfoManager(getLoggerNoLock(),synth,getStateNoLock());
+			}
+		}
+		return MidiSys.lfoManager;
 	}
 	
 	private static PatchConfig getPatchConfigNoLock() {

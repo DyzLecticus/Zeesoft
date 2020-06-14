@@ -2,21 +2,18 @@ package nl.zeesoft.zdk.midi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class PatchConfig {
-	private Lock						lock		= new Lock();
-	private Logger						logger		= null;
-	private Synth						synth		= null;
+	private Lock						lock			= new Lock();
+	private Logger						logger			= null;
+	private Synth						synth			= null;
 	
-	private Inst[]						instruments = new Inst[16];
-	private List<InstGroup>				groups		= new ArrayList<InstGroup>();
-	private SortedMap<String,Lfo[]>	groupLfos	= new TreeMap<String,Lfo[]>();
+	private Inst[]						instruments 	= new Inst[16];
+	private List<InstGroup>				groups			= new ArrayList<InstGroup>();
 	
 	protected PatchConfig(Logger logger, Synth synth) {
 		this.logger = logger;
@@ -72,12 +69,6 @@ public class PatchConfig {
 	public void setInstrument(int channel,Inst instrument) {
 		lock.lock(this);
 		setInstrumentNoLock(channel, instrument);
-		lock.unlock(this);
-	}
-	
-	public void setPatchLfo(String name, int lfoIndex, Lfo lfo) {
-		lock.lock(this);
-		setPatchLfoNoLock(name, lfoIndex, lfo);
 		lock.unlock(this);
 	}
 	
@@ -138,11 +129,6 @@ public class PatchConfig {
 				i++;
 			}
 			groupInstrumentsNoLock(patch.name,channels);
-			for (int lfoIndex = 0; lfoIndex < patch.lfos.length; lfoIndex++) {
-				if (patch.lfos[lfoIndex]!=null) {
-					setPatchLfoNoLock(patch.name,lfoIndex,patch.lfos[lfoIndex]);
-				}
-			}
 		}
 		return error;
 	}
@@ -164,14 +150,6 @@ public class PatchConfig {
 					r.instruments.add(inst.copy());
 				}
 			}
-			Lfo[] lfos = groupLfos.get(name);
-			if (lfos!=null) {
-				for (int lfoIndex = 0; lfoIndex < lfos.length; lfoIndex++) {
-					if (lfos[lfoIndex]!=null) {
-						r.lfos[lfoIndex] = lfos[lfoIndex].copy();
-					}
-				}
-			}
 		}
 		return r;
 	}
@@ -188,7 +166,6 @@ public class PatchConfig {
 			for (int i = 0; i < group.channels.length; i++) {
 				instruments[group.channels[i]] = null;
 			}
-			groupLfos.remove(name);
 		}
 		return error;
 	}
@@ -257,32 +234,7 @@ public class PatchConfig {
 			logger.error(this, error);
 		}
 	}
-	
-	public void setPatchLfoNoLock(String name, int lfoIndex, Lfo lfo) {
-		if (lfoIndex>=0 && lfoIndex<=2) {
-			lfo = lfo.copy();
-			InstGroup group = getGroupNoLock(name);
-			if (group==null) {
-				Str error = new Str();
-				error.sb().append("Patch not found: ");
-				error.sb().append(name);
-				logger.error(this, error);
-			} else {
-				Lfo[] lfos = groupLfos.get(name);
-				if (lfos==null) {
-					lfos = new Lfo[3];
-					groupLfos.put(name,lfos);
-				}
-				lfos[lfoIndex] = lfo;
-			}
-		} else {
-			Str error = new Str();
-			error.sb().append("Invalid LFO index: ");
-			error.sb().append(lfoIndex);
-			logger.error(this, error);
-		}
-	}
-	
+		
 	private void groupInstrumentsNoLock(String groupName, int[] channels) {
 		InstGroup ig = getGroupNoLock(groupName);
 		if (ig==null) {
