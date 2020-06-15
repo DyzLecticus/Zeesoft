@@ -53,6 +53,24 @@ public class Inst {
 	public int					baseOctave		= 3;
 	public int					patchDelaySteps	= 0;
 	
+	public List<InstLfoSource>	lfoSources		= new ArrayList<InstLfoSource>();
+	
+	public void setLfoSource(String property, int lfoIndex, float percentage) {
+		setLfoSource(property, lfoIndex, percentage, false);
+	}
+	
+	public void setLfoSource(String property, int lfoIndex, float percentage, boolean invert) {
+		unsetLfoSource(property);
+		lfoSources.add(new InstLfoSource(property, lfoIndex, percentage, invert));
+	}
+	
+	public void unsetLfoSource(String property) {
+		InstLfoSource lfoSource = getLfoSource(property);
+		if (lfoSource!=null) {
+			lfoSources.remove(lfoSource);
+		}
+	}
+	
 	public void setPropertyValue(String property, int value) {
 		if (value < 0) {
 			value = 0;
@@ -151,6 +169,20 @@ public class Inst {
 		r.velocity = velocity;
 		r.baseOctave = baseOctave;
 		r.patchDelaySteps = patchDelaySteps;
+		for (InstLfoSource lfoSource: lfoSources) {
+			r.lfoSources.add(lfoSource.copy());
+		}
+		return r;
+	}
+	
+	protected InstLfoSource getLfoSource(String property) {
+		InstLfoSource r = null;
+		for (InstLfoSource lfoSource: lfoSources) {
+			if (lfoSource.property.equals(property)) {
+				r = lfoSource;
+				break;
+			}
+		}
 		return r;
 	}
 	

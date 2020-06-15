@@ -35,10 +35,16 @@ public class TestMidiSys extends TestObject {
 		
 		State state = MidiSys.getState();
 		state.setBeatsPerMinute(100);
-		
+
+		// Create some LFOs
 		LfoManager lfoManager = MidiSys.getLfoManager();		
+		Lfo lfo1 = new Lfo();
+		Lfo lfo2 = new Lfo(Lfo.BINARY);
+		lfoManager.setLfo(0,lfo1);
+		lfoManager.setLfo(1,lfo2);
 		lfoManager.start();
 		
+		// Create some instruments
 		Inst inst1 = new Inst();
 
 		Inst inst2 = new Inst();
@@ -60,7 +66,14 @@ public class TestMidiSys extends TestObject {
 		inst4.filter = 32;
 		inst4.reverb = 48;
 		inst4.patchDelaySteps = 9;
+		
+		// Connect instrument properties to LFOs
+		inst1.setLfoSource(Inst.FILTER,0,0.3F,true);
+		inst2.setLfoSource(Inst.FILTER,0,0.25F,true);
+		inst3.setLfoSource(Inst.FILTER,0,0.20F,true);
+		inst4.setLfoSource(Inst.FILTER,0,0.15F,true);
 
+		// Create instrument patch
 		String patchName = "EchoTest";
 		Patch patch = new Patch(patchName);
 		patch.instruments.add(inst1);
@@ -68,27 +81,20 @@ public class TestMidiSys extends TestObject {
 		patch.instruments.add(inst3);
 		patch.instruments.add(inst4);
 		
+		// Load instrument patch
 		PatchConfig config = MidiSys.getPatchConfig();
 		config.loadPatch(patch);
 		assertEqual(config.getAvailableInstrumentChannels().size(),11,"Number of available channels does not match expectation(1)");
 		
+		// Get instrument patch (instrument channels have been assigned)
 		patch = config.getPatch(patchName);
 		assertNotNull(patch,"Patch not found: " + patchName);
 		if (assertEqual(patch.instruments.size(),4,"Number of patch instruments does not match expectation")) {
 			assertEqual(patch.instruments.get(3).channel,3,"Assigned instrument channel does not match expectation");
 		}
 		
-		Lfo lfo1 = new Lfo();
-		lfo1.addTarget(patch.instruments.get(0).channel,Inst.FILTER,0.25F,true);
-		lfo1.addTarget(patch.instruments.get(1).channel,Inst.FILTER,0.20F,true);
-		lfo1.addTarget(patch.instruments.get(2).channel,Inst.FILTER,0.15F,true);
-		lfo1.addTarget(patch.instruments.get(3).channel,Inst.FILTER,0.10F,true);
-		Lfo lfo2 = new Lfo(Lfo.BINARY);
-		lfoManager.setLfo(0,lfo1);
-		lfoManager.setLfo(1,lfo2);
-		
+		// Play some notes
 		NotePlayer player = MidiSys.getNotePlayer();
-		
 		System.out.println("Playing notes F-4, A#4 and C-5 ...");
 		player.startNotes(patchName,"F-4");
 		sleep(100);
@@ -98,6 +104,7 @@ public class TestMidiSys extends TestObject {
 		sleep(100);
 		player.stopNotes(patchName,"F-4","A#4","C-5");
 		
+		// Wait until the delayed notes have been played
 		Waiter.waitTillRunnersDone(player.getDelayedPlayers(),5000);
 		assertEqual(player.getDelayedPlayers().size(),0,"Number of delayed note players does not match expectation");
 		sleep(500);

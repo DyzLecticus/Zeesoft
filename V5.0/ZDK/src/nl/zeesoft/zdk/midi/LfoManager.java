@@ -80,24 +80,28 @@ public class LfoManager {
 		lock.lock(this);
 		Lfo lfo = lfos[lfoIndex];
 		if (lfo!=null) {
-			for (LfoTarget target: lfo.targets) {
-				Inst instrument = instruments[target.channel];
+			for (int channel = 0; channel < instruments.length; channel++) {
+				Inst instrument = instruments[channel];
 				if (instrument!=null) {
-					float max = target.percentage * 127F;
-					int val = (int) (percentage * max);
-					int pVal = instrument.getPropertyValue(target.property);
-					if (target.invert) {
-						val = pVal - val;
-						if (val < 0) {
-							val = 0;
-						}
-					} else {
-						val = pVal + val;
-						if (val > 127) {
-							val = 127;
+					for (InstLfoSource lfoSource: instrument.lfoSources) {
+						if (lfoSource.lfoIndex==lfoIndex) {
+							float max = lfoSource.percentage * 127F;
+							int val = (int) (percentage * max);
+							int pVal = instrument.getPropertyValue(lfoSource.property);
+							if (lfoSource.invert) {
+								val = pVal - val;
+								if (val < 0) {
+									val = 0;
+								}
+							} else {
+								val = pVal + val;
+								if (val > 127) {
+									val = 127;
+								}
+							}
+							synth.setInstrumentProperty(channel,lfoSource.property,val);
 						}
 					}
-					synth.setInstrumentProperty(target.channel,target.property,val);
 				}
 			}
 		}
