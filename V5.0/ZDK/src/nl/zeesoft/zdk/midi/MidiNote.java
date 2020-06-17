@@ -8,8 +8,20 @@ public class MidiNote {
 	public int						channel			= 0;
 	public int						octave			= 3;
 	public int						octaveNote		= 0;
-	public int						velocity		= 128;
+	public int						velocity		= 127;
 	public int						delaySteps		= 0;
+	public float					stepPercentage	= 0;
+	
+	public MidiNote copy() {
+		MidiNote r = new MidiNote();
+		r.channel = channel;
+		r.octave = octave;
+		r.octaveNote = octaveNote;
+		r.velocity = velocity;
+		r.delaySteps = delaySteps;
+		r.stepPercentage = stepPercentage;
+		return r;
+	}
 	
 	@Override
 	public String toString() {

@@ -1,8 +1,8 @@
 package nl.zeesoft.zdk.midi;
 
 public class DrumLayer {
-	public int		midiNoteNum		= 0;
-	public int		velocity		= 100; 
+	public int		midiNoteNum		= 36;
+	public int		velocity		= 127; 
 	public float	stepPercentage	= 0.7F;
 	
 	public DrumLayer copy() {
@@ -11,5 +11,13 @@ public class DrumLayer {
 		r.velocity = velocity;
 		r.stepPercentage = stepPercentage;
 		return r;
+	}
+	
+	public int getOctave() {
+		return (midiNoteNum - (midiNoteNum % 12)) / 12; 
+	}
+	
+	public int getOctaveNote() {
+		return midiNoteNum - (getOctave() * 12); 
 	}
 }

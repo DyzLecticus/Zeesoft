@@ -81,6 +81,7 @@ public class SoundbankLoader {
 						) {
 						synthesizer.unloadInstrument(synthInst);
 						synthesizer.loadInstrument(inst);
+						break;
 					}
 				}
 			}

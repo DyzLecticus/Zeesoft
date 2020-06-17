@@ -176,30 +176,30 @@ public class FileIO {
 
 	private static Str checkFileExists(String path, boolean isFile) {
 		Str error = new Str();
-		if (mockIO) {
-			FileIO self = new FileIO();
-			lock.lock(self);
-			if (isFile && !fileData.containsKey(path)) {
-				error.sb().append("File not found: ");
-				error.sb().append(path);
-			}
-			lock.unlock(self);
-		} else {
-			File file = new File(path);
-			if (!file.exists()) {
+		File file = new File(path);
+		if (!file.exists()) {
+			if (mockIO) {
+				FileIO self = new FileIO();
+				lock.lock(self);
+				if (isFile && !fileData.containsKey(path)) {
+					error.sb().append("File not found: ");
+					error.sb().append(path);
+				}
+				lock.unlock(self);
+			} else {
 				if (isFile) {
 					error.sb().append("File not found: ");
 				} else {
 					error.sb().append("Directory not found: ");
 				}
 				error.sb().append(path);
-			} else if (isFile && !file.isFile()) {
-				error.sb().append("Path is not a file: ");
-				error.sb().append(path);
-			} else if (!isFile && !file.isDirectory()) {
-				error.sb().append("Path is not a directory: ");
-				error.sb().append(path);
 			}
+		} else if (isFile && !file.isFile()) {
+			error.sb().append("Path is not a file: ");
+			error.sb().append(path);
+		} else if (!isFile && !file.isDirectory()) {
+			error.sb().append("Path is not a directory: ");
+			error.sb().append(path);
 		}
 		return error;
 	}

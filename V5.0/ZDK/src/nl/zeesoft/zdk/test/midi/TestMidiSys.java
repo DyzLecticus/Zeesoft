@@ -15,6 +15,7 @@ import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerManager;
+import nl.zeesoft.zdk.thread.ProgressBar;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestMidiSys extends TestObject {
@@ -36,11 +37,14 @@ public class TestMidiSys extends TestObject {
 		Logger logger = new Logger(true);
 		MidiSys.setLogger(logger);
 
+		// Load soundbanks
 		CodeRunnerChain chain = MidiSys.getCodeRunnerChainForSoundbankFiles(
-			"resources/ZeeTrackerSynthesizers.sf2",
-			"resources/ZeeTrackerDrumKit.sf2"
+			"../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2",
+			"../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2"
 		);
+		chain.addProgressListener(new ProgressBar("Loading soundbanks"));
 		Waiter.startAndWaitFor(chain,3000);
+		
 		
 		State state = MidiSys.getState();
 		state.setBeatsPerMinute(100);
@@ -104,6 +108,7 @@ public class TestMidiSys extends TestObject {
 		
 		// Play some notes
 		NotePlayer player = MidiSys.getNotePlayer();
+		System.out.println();
 		System.out.println("Playing notes F-4, A#4 and C-5 ...");
 		player.startNotes(patchName,"F-4");
 		sleep(100);

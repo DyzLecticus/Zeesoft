@@ -194,6 +194,7 @@ public class Inst {
 		for (String note: notes) {
 			MidiNote mn = new MidiNote();
 			mn.fromString(note);
+			mn.stepPercentage = stepPercentage;
 			if (mn.octave!=BASE_OCTAVE) {
 				if (mn.octave>BASE_OCTAVE) {
 					mn.octave = baseOctave + (mn.octave - BASE_OCTAVE);
