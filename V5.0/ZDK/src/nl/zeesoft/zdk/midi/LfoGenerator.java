@@ -33,6 +33,7 @@ public class LfoGenerator implements StateListener {
 		lock.lock(this);
 		this.lfo = lfo;
 		calculateValuesNoLock();
+		calculateNsPerValueNoLock();
 		lock.unlock(this);
 	}
 	
@@ -114,18 +115,14 @@ public class LfoGenerator implements StateListener {
 		};
 	}
 	
-	private void calculateNsPerValueNoLock() {
-		if (lfo!=null && values!=null) {
-			nsPerValue = (state.getNsPerStep() / (long)values.length) * (long)lfo.steps;
-		} else {
-			nsPerValue = 100000;
-		}
-	}
-	
 	private void calculateValuesNoLock() {
 		if (lfo!=null) {
-			if (lfo.type.equals(Lfo.LINEAR)) {
-				int increments = MAX_VALUE * 2;
+			if (lfo.type.equals(Lfo.LINEAR) ||
+				lfo.type.equals(Lfo.SAW)) {
+				int increments = MAX_VALUE;
+				if (lfo.type.equals(Lfo.LINEAR)) {
+					increments = increments * 2;
+				}
 				values = new int[increments];
 				int value = MIN_VALUE;
 				boolean increment = true;
@@ -139,12 +136,41 @@ public class LfoGenerator implements StateListener {
 					} else {
 						value -= 1;
 					}
+					System.out.println(i + " = " + values[i]);
+				}
+			} else if (lfo.type.equals(Lfo.SINE)) {
+				int increments = MAX_VALUE * 2;
+				if (lfo.type.equals(Lfo.LINEAR)) {
+					increments = increments * 2;
+				}
+				values = new int[increments];
+				double value = MIN_VALUE;
+				for (int i = 0; i < increments; i++) {
+					double r = (value / (double)MAX_VALUE) * 360D;
+					double sin = Math.sin(Math.toRadians(r));
+					int base = (MAX_VALUE / 2);
+					int add = (int)(sin * (double)base);
+					if (add>=0) {
+						values[i] = base + add;
+					} else {
+						values[i] = base - (add * -1);
+					}
+					System.out.println(i + " = " + values[i] + " sin=" + Math.sin(Math.toRadians(r)));
+					value += 0.5D;
 				}
 			} else if (lfo.type.equals(Lfo.BINARY)) {
 				values = new int[2];
 				values[0] = MIN_VALUE;
 				values[1] = MAX_VALUE;
 			}
+		}
+	}
+	
+	private void calculateNsPerValueNoLock() {
+		if (lfo!=null && values!=null) {
+			nsPerValue = (state.getNsPerStep() / (long)values.length) * (long)lfo.steps;
+		} else {
+			nsPerValue = 100000;
 		}
 	}
 }
