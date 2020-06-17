@@ -25,6 +25,7 @@ public class LfoManager {
 					lfoSelectedNextValue(lfoIndex,percentage);
 				}
 			};
+			state.addListener(lfoGenerators[i]);
 		}
 	}
 	

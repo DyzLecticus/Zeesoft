@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class LfoGenerator {
+public class LfoGenerator implements StateListener {
 	private static final int	MIN_VALUE	= 0;
 	private static final int	MAX_VALUE	= 64;
 	
@@ -26,18 +26,20 @@ public class LfoGenerator {
 		this.state = state;
 		this.lfoIndex = lfoIndex;
 		lock.setLogger(this, logger);
+		calculateNsPerValueNoLock();
 	}
 
 	protected void setLfo(Lfo lfo) {
 		lock.lock(this);
 		this.lfo = lfo;
-		calculateNoLock();
+		calculateValuesNoLock();
 		lock.unlock(this);
 	}
 	
-	protected void stateChanged() {
+	@Override
+	public void stateChanged(String property) {
 		lock.lock(this);
-		calculateNoLock();
+		calculateNsPerValueNoLock();
 		lock.unlock(this);
 	}
 	
@@ -112,7 +114,15 @@ public class LfoGenerator {
 		};
 	}
 	
-	private void calculateNoLock() {
+	private void calculateNsPerValueNoLock() {
+		if (lfo!=null && values!=null) {
+			nsPerValue = (state.getNsPerStep() / (long)values.length) * (long)lfo.steps;
+		} else {
+			nsPerValue = 100000;
+		}
+	}
+	
+	private void calculateValuesNoLock() {
 		if (lfo!=null) {
 			if (lfo.type.equals(Lfo.LINEAR)) {
 				int increments = MAX_VALUE * 2;
@@ -135,11 +145,6 @@ public class LfoGenerator {
 				values[0] = MIN_VALUE;
 				values[1] = MAX_VALUE;
 			}
-		}
-		if (lfo!=null && values!=null) {
-			nsPerValue = (state.getNsPerStep() / (long)values.length) * (long)lfo.steps;
-		} else {
-			nsPerValue = 100000;
 		}
 	}
 }
