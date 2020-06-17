@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.midi;
 
+import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Str;
 
 public class MidiNote {
@@ -13,7 +14,7 @@ public class MidiNote {
 	public float					stepPercentage	= 0;
 	
 	public MidiNote copy() {
-		MidiNote r = new MidiNote();
+		MidiNote r = (MidiNote) Instantiator.getNewClassInstance(this.getClass());
 		r.channel = channel;
 		r.octave = octave;
 		r.octaveNote = octaveNote;
